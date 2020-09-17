@@ -5,7 +5,7 @@
 **VUE MPA starter theme** - is starter theme is demonstrated a typical out-of-the-box B2B Portal that built using Liquid templates, Vue.JS web progressive framework and Bootstrap CSS.
  This theme represents the VC Team's opinionated starting point for new projects. It strives to include up-to-date best practices and solutions that we have deemed needed for the majority of projects we build. It is a reflection of what’s possible when building a theme! 
 
-The **VUE MPA starter theme** is not only a real-world solution that implements practical business use-cases and  this is also the good starting point for your theme that you can customize by direct code modifications!
+**VUE MPA starter theme** is not only a real-world solution that implements practical business use-cases and  this is also the good starting point for your theme that you can customize by direct code modifications!
 
 # The project non-functional key features:
 
@@ -33,7 +33,7 @@ The **VUE MPA starter theme** is not only a real-world solution that implements 
 - Order approve	Review, approve or reject an order created by account manager
 - Catalog navigation. Full-text  search, faceting search, categories browsing, products details.
 - Product prices browsing.	Review product prices in a product catalog details
-- Product recommendationsspelling. Cross-sell, Up-Sell, Frequently bought together etc.
+- Product recommendations. Cross-sell, Up-Sell, Frequently bought together etc.
 - Wish lists	Create, update, delete wish list and put products to it from catalog or from existent orders
 - Multiple orders drafts. Select order draft, add, modify, remove products in the order drafts
 - Re-ordering	Clone order details to an active order 
@@ -48,7 +48,7 @@ The **VUE MPA starter theme** is not only a real-world solution that implements 
 # How does it work?
 TBD
 # Why MPA (Multi Page Application) instead of SPA (Single Page Application)?
-There are the folowing  reasones why MPA architecture has been chosen. 
+There are the following  reasones why MPA architecture has been chosen. 
 - SEO requirements. One of the weaknesses of the SPA is SEO. Unfortunately, they aren’t as SEO friendly as MPA’s. It’s primarily because the majority of single-page applications are run on JavaScript, which most search engines do not support. MPA enables better website positioning as each page can be optimized for a different keyword. Also, meta tags can be included on every page – this positively impacts Google rankings.
 - Reusing of exists Storefront's functionality such as security, slug routing, multiple stores, currencies, and languages. All these functionalities are hard to be reused in the classical SPA applications. 
 
