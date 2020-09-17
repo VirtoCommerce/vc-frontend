@@ -1,0 +1,14 @@
+<div class="pt-3 pb-3">
+  <table class="table table-sm table-borderless mb-0">
+    <tbody>
+      {% for property in product.properties %}
+        {% if property.value %}
+      <tr>
+        <td class="text-right w-50"><strong>{{ property.display_name }}</strong></td>
+        <td>{{ property.value }}</td>
+      </tr>
+        {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

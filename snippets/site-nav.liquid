@@ -1,0 +1,6 @@
+{% for link in linklists['main-menu'].links %}
+    {% assign child_list_handle = link.title | handleize %}
+    <li class="nav-item">
+        <a href="{{ link.url | absolute_url }}" class="nav-link">{{ link.title }}</a>
+    </li>
+{% endfor %}

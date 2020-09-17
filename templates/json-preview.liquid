@@ -1,0 +1,20 @@
+{% layout 'theme' %}
+
+<script>
+    var platformUrl = window.location.search.substr(1).split('&').find(q => q.startsWith('ep=')).substr(3);
+    var relativeUrl = (platformUrl.endsWith('/') ? '' : '/') + 'Modules/$(VirtoCommerce.PageBuilderModule)/Content/store/designer.bundle.js';
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = platformUrl + relativeUrl;
+    document.body.appendChild(script);
+</script>
+<div id="designer-preview" class="page"></div>
+<style>
+  #designer-preview>block {
+    overflow: hidden;
+  }
+
+  .main-content {
+    margin-top: auto;
+  }
+</style>

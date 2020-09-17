@@ -1,0 +1,5 @@
+{% if inputItem.required == 'True' %}
+<span class="form-error field-validation-error" data-valmsg-for="{{inputItem.fieldName}}" data-valmsg-replace="true" style="display:none">
+    <span id="{{inputItem.fieldName}}-error"></span>
+</span>
+{% endif %}

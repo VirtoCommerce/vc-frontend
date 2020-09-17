@@ -1,0 +1,63 @@
+<div id="{{ block.__id }}" style="position: relative;" class="{{ block.style }}">
+  <div class="{% include 'blocks/helpers/block-paddings' %} block container">
+    <div class="px-5">
+      {% include 'blocks/helpers/block-title' %}
+    </div>
+    {% assign product = products | where: 'Sku', '==', block.sku | first %}
+    {% if product %}
+    <div class="px-5 row">
+      <div class="col">
+        {% assign featured_image = product.selected_or_first_available_variant.featured_image | default: product.featured_image %}
+        <img class="img-fluid border" src="{{ featured_image | img_url }}" />
+      </div>
+      <div class="col">
+        <h2>{{ product.title }}</h2>
+        {% if block.hidePrice != 'True' %}
+        <div class="py-3">
+          {% include 'product-price' product: product %}
+        </div>
+        {% endif %}
+        <div class="py-3">
+          {{ block.description }}
+        </div>
+        <div class="btn-group">
+          <!--<button class="app-add-item-to-cart btn" title="{{ 'products.general.add_to_cart' | t }}" product-id="{{product.id}}" text-visible="">
+            <i class="fas fa-shopping-cart"></i>
+            <span>{{ 'products.general.add_to_cart' | t }}</span>
+          </button>-->
+          {% if block.buttonText %}
+          <a class="btn btn-primary" target="_blank" href="{{ product.url }}">{{ block.buttonText }}</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <div class="jumbotron">
+      <div class="h1 text-danger">Product not found</div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% if is_preview_mode == true %}
+<script src="{{ 'bundle/dist/js/catalog.js' | static_asset_url | append_version }}"></script>
+{% endif %}
+
+{% comment %}
+
+__id: string (unique block id)
+
+name: string
+headerType: [ h1, h2, h3, like-h1, like-h2, like-h3 ]
+titleStyle: [ null, bootstrap styles ]
+style: [ light, dark ]
+noTop: bool
+noBottom: bool
+
+title: string
+sku: string
+description: string (wysiwyg)
+buttonText: string
+hidePrice: bool
+
+{% endcomment %}

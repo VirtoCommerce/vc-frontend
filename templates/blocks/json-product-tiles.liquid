@@ -1,0 +1,53 @@
+<div id="{{ block.__id }}" style="position: relative;" class="{{ block.style }}">
+  <div class="{% include 'blocks/helpers/block-paddings' %} block container">
+    <div class="px-5">
+      {% include 'blocks/helpers/block-title' %}
+
+      {% if block.content %}
+      <div class="block-text"> {{ block.content}} </div>
+      {% endif %}
+
+      {% if block.categoryId %}
+      <div class="col-7 product-grid col-xl-5 col-md-8 col-sm-12">
+
+        <div class="row">
+            {% assign category = collections | where: 'Id', '==', block.categoryId | first %}
+            {% if category.products.empty? == false %}
+
+            {% assign count = category.products.size %}
+            {% if block.count > 0 %}
+            {% assign count = block.count %}
+            {% endif %}
+
+            {% for product in category.products limit:count %}
+
+            {% assign grid_item_width = 'col-xl-3 col-lg-4 col-md-6 col-sm-6 product-card' %}
+            {% include 'product-grid-item' %}
+
+            {% endfor %}
+
+            {% else %}
+            <p class="col-12">{{ 'search.no_results' | t }}</p>
+            {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% comment %}
+
+__id: string (unique block id)
+
+name: string
+headerType: [ h1, h2, h3, like-h1, like-h2, like-h3 ]
+titleStyle: [ null, bootstrap styles ]
+style: [ light, dark ]
+noTop: bool
+noBottom: bool
+
+title: string
+categoryId: string
+
+{% endcomment %}

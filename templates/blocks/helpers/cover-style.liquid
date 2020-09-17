@@ -1,0 +1,23 @@
+<style>
+
+    #{{ block.__id }} {
+      {% if block.overlayColor %}
+        background-color: {{ block.backgroundColor }};
+      {% endif %}
+    }
+
+  {% if block.overlayColor %}
+    #{{block.__id}} > .block:after {
+      content: ' ';
+      background-color: {{ block.overlayColor }};
+      opacity:.7;
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 5;
+    }
+  {% endif %}
+
+</style>

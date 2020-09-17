@@ -1,0 +1,11 @@
+{% if page.layout != blank %}
+    {% layout page.layout %}
+{% endif %}
+
+{% comment %}
+{{ 'blocks.css' | asset_url | stylesheet_tag }}
+{% endcomment %}
+
+<div class="page">
+    {% include 'json-blocks' -%}
+</div>

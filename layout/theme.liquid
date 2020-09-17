@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <meta content="index, follow, noodp" name="robots"/>
+    <meta content="index, follow" name="googlebot"/>
+    <meta content="notranslate" name="google"/>
+    <meta content="telephone=no" name="format-detection"/>
+
+    <title>{{ current_store.name }}</title>
+    <base href="/">
+
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet"/>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{{'apple-touch-icon.png' | static_asset_url }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{'favicon-32x32.png' | static_asset_url }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{'favicon-16x16.png' | static_asset_url }}">
+    <link rel="manifest" href="{{'site.webmanifest' | static_asset_url }}">
+    <link rel="mask-icon" href="{{'safari-pinned-tab.svg' | static_asset_url }}" color="#5bbad5">
+    <meta content="#da532c" name="msapplication-TileColor">
+    <meta content="#ffffff" name="theme-color">
+
+    {{ 'bundle/default.scss.css' | static_asset_url | append_version | stylesheet_tag }}
+    {{ 'bundle/dist/css/chunk-vendors.css' | static_asset_url | append_version | stylesheet_tag }}
+
+
+    <script>
+      window.Features = {{ '' | is_features_active : 'OrdersBrowsing', 'PaymentBrowsing', 'InvoiceBrowsing', 'ManageUsers', 'ManageRoles', 'ContractsInfoBrowsing', 'RetrieveReordering', 'OrderApproval', 'ProductTextSearch', 'ProductsFiltering', 'ProductDetailsBrowsing', 'ProductPriceBrowsing', 'ProductRecommendation', 'OrderDraft', 'WishList', 'SubmitOrder','ProductInventoryBrowsing', 'ManageShipmentDetails', 'ManagePaymentDetails'}};
+      window.BASE_URL = `{{ "/" | full_url }}`;
+      window.STORE_NAME = "{{ current_store.name }}";
+      window.LOCALE = "{{ current_language.culture_name }}";
+      //TODO: load in the VUE app via ajax call
+      window.LOCALIZATION_MESSAGES = {{ '' | t }};
+      window.THEME_SETTINGS = {{ settings | json }};
+    </script>
+  </head>
+  <body class="min-vh-100 d-flex flex-column">
+    <div class="fixed-top">
+      {{ content_for_header }}
+    </div>
+    <main class="container flex-grow-1 pb-5 main-content">
+      <div id="initApp"></div>
+      {{ content_for_layout }}
+    </main>
+    {% include 'footer' %}
+    <script src="{{ 'bundle/dist/js/chunk-vendors.js' | static_asset_url | append_version }}"></script>
+
+    <script src="{{ 'bundle/dist/js/chunk-common.js' | static_asset_url | append_version }}"></script>
+
+    <script src="{{ 'bundle/dist/js/init.js' | static_asset_url | append_version }}"></script>
+  </body>
+</html>

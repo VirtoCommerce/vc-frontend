@@ -1,0 +1,50 @@
+<div id="{{ block.__id }}" style="position: relative;" class="{{ block.style }}">
+  <div class="{% include 'blocks/helpers/block-paddings' %} block">
+    <div class="container">
+        <div class="row px-5 justify-content-center">
+            {% include 'blocks/helpers/block-title' %}
+        </div>
+        <div class="row px-5 justify-content-center">
+            <div class="text-center {{block.textAreaWidth}}">
+                
+                {% if block.content %}
+                    {{ block.content }}
+                {% endif %}
+            </div>
+        </div>
+
+        {% if block.logotypes.size > 0 %}
+            <div class="row justify-content-center">
+                {% for logotype in block.logotypes %}
+                    <div class="col-2 col-md-1">
+                        {% if logotype.url != '' %}
+                            <a href="{{logotype.url}}" {% if logotype.openInNewTab == 'True' %}target="_blank"{% endif %}>
+                                <img src="{{ logotype.image.url }}" title="{{logotype.image.altText}}" class="img-fluid" />
+                            </a>
+                        {% else %}
+                            <img src="{{ logotype.image.url }}" title="{{logotype.image.altText}}" class="img-fluid" />
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% comment %}
+
+__id: string (unique block id)
+
+name: string
+headerType: [ h1, h2, h3, like-h1, like-h2, like-h3 ]
+titleStyle: [ null, bootstrap styles ]
+style: [ light, dark ]
+noTop: bool
+noBottom: bool
+
+textAreaWidth: string (col-lg, col-lg-10, col-lg-8, col-lg-6)
+title: string
+content: string (wysiwyg)
+logotypes: object (image, url, openInNewTab)
+
+{% endcomment %}

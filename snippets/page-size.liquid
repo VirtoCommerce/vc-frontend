@@ -1,0 +1,11 @@
+﻿{% assign current_page_size = current_product_search_criteria.page_size %}
+<div class="dropdown" id="pageSize">
+  <button aria-expanded="false" aria-haspopup="true" class="btn border dropdown-toggle" data-toggle="dropdown" id="pageSizeDropdown" type="button">
+    {{ current_page_size }}
+  </button>
+  <div aria-labelledby="pageSizeDropdown" class="dropdown-menu pt-0 pb-0">
+    {% for pageSize in settings.pageSizes %}
+      <a class="dropdown-item {% if pageSize == current_page_size %}active{% endif %}" href="{{ pageSize | page_size_url }}">{{ pageSize }}</a>
+    {% endfor %}
+  </div>
+</div>

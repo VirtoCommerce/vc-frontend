@@ -1,0 +1,28 @@
+<div id="{{ block.__id }}" style="position: relative;" class="{{ block.style }}">
+  <div class="{% include 'blocks/helpers/block-paddings' %} block container">
+    <div class="px-5">
+      {% include 'blocks/helpers/block-title' %}
+
+      {% if block.content %}
+      <div class="block-text"> {{ block.content}} </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% comment %}
+
+__id: string (unique block id)
+
+name: string
+headerType: [ h1, h2, h3, like-h1, like-h2, like-h3 ]
+titleAlignment: [ center, left ]
+titleStyle: [ null, bg-light ]
+style: [ light, dark ]
+noTop: bool
+noBottom: bool
+
+title: string
+content: string (wysiwyg)
+
+{% endcomment %}

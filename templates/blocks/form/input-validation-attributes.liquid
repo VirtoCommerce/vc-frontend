@@ -1,0 +1,28 @@
+{% if inputItem.required == 'True' %}
+    {% if inputItem.validationMessage == 'Null' or inputItem.validationMessage == '' %}
+        {% if inputItem.labelText == 'Null' or inputItem.labelText == '' %}
+            {% assign fieldInfo = inputItem.placeholder %}
+        {% else %}
+            {% assign fieldInfo = inputItem.labelText %}
+        {% endif %}
+        {% if fieldInfo == 'Null' or fieldInfo == '' %}
+            {% assign fieldInfo = 'value' %}
+        {% endif %}
+        {% if inputItem.fieldType == 'radio' %}
+            {% assign validationMessage = 'Please choose ' | append: fieldInfo %}
+        {% else %}
+            {% assign validationMessage = 'Please enter ' | append: fieldInfo %}
+        {% endif %}
+    {% else %}
+        {% assign validationMessage = inputItem.validationMessage %}
+    {% endif %}
+    data-val="true" data-val-required="{{validationMessage}}" aria-required="true" aria-describedby="{{inputItem.fieldName}}-error" aria-invalid="true"
+{% endif %}
+
+{% if inputItem.fieldType == 'email' %}
+    data-val-email="{{inputItem.labelText}} is invalid"
+{% endif %}
+
+{% if inputItem.fieldType == 'phone' %}
+    data-val-regex="{{item.labelText}} is invalid" data-val-regex-pattern="[0-9]{11,}"
+{% endif %}

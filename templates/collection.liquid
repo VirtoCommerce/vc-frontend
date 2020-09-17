@@ -1,0 +1,4 @@
+{{ paginator =  product_search_result.products | paginate }}
+{% include 'search-result' %}
+
+<script src="{{ 'bundle/dist/js/catalog.js' | static_asset_url | append_version }}"></script>

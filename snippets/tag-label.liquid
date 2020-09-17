@@ -1,0 +1,17 @@
+{% assign tag_label = tag.label %}
+{% if tag.group_type == "range" or tag.group_type == "pricerange" %}
+    {% if tag.lower or tag.upper %}
+        {% capture tag_lower %}{% if tag.lower %}{% if tag.group_type == "pricerange" %}{{ tag.lower | money_with_currency }}{% else %}{{ tag.lower }}{% endif %}{% endif %}{% endcapture %}
+        {% capture tag_upper %}{% if tag.upper %}{% if tag.group_type == "pricerange" %}{{ tag.upper | money_with_currency }}{% else %}{{ tag.upper }}{% endif %}{% endif %}{% endcapture %}
+        {% capture tag_label_template %}collections.tags.{{ tag.group_type }}.{% if tag.lower and tag.upper %}between{% elsif tag.lower %}greater{% elsif tag.upper %}less{% endif %}{% endcapture %}
+        {% capture tag_label %}
+        {% if tag.lower and tag.upper %}
+        {{ tag_label_template | t:  tag_lower, tag_upper }}
+        {% elsif tag.lower %}
+        {{ tag_label_template | t:  tag_lower }}
+        {% else %}
+        {{ tag_label_template | t:  tag_upper }}
+        {% endif %}
+        {% endcapture %}
+    {% endif %}
+{% endif %}

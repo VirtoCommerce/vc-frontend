@@ -1,0 +1,40 @@
+{% include 'blocks/helpers/cover-style' %}
+
+<div id="{{ block.__id }}" style="position: relative;">
+    <div class="{% include 'blocks/helpers/block-paddings' %} block block-cover"
+        {% if block.background != '' and block.background.url != '' %} style="background-image: url({{ block.background.url }})" {% endif %}>
+        <div class="container">
+            <div class="d-flex justify-content-center {% if block.imagePosition == 'right' %} flex-row-reverse {% endif %}">
+              {% if block.containerImage and block.containerImage.url %}
+                <div>
+                    <img src="{{ block.containerImage.url }}" title="{{block.containerImage.altText}}" class="img-fluid" />
+                </div>
+              {% endif %}
+
+              {% include 'blocks/helpers/cover-text' %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% comment %}
+
+__id: string (unique block id)
+
+name: string
+headerType: [ h1, h2, h3, like-h1, like-h2, like-h3 ]
+noTop: bool
+noBottom: bool
+
+backgroundColor: string (hex color)
+overlayColor: string (hex color)
+imagePosition: string [ null, right ]
+note: string
+title: string
+subtitle: string (wysiwyg)
+background: object (url to image, alt text)
+containerImage: object (url to image, alt text)
+firstButton: object (url, text, style [ bootstrap buttons styles ], openInNewTab [True, False]),
+secondButton: object (url, text, style [ bootstrap buttons styles ], openInNewTab [True, False]),
+
+{% endcomment %}

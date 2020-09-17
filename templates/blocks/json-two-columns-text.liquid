@@ -1,0 +1,49 @@
+<div id="{{ block.__id }}" style="position: relative;" class="{{ block.style }}">
+  <div class="{% include 'blocks/helpers/block-paddings' %} block container">
+    <div class="container-fluid
+        {% if block.style == 'dark' %}
+            bg-dark text-white
+        {% endif %}">
+      <div class="row">
+      <div class="px-5">
+        {% include 'blocks/helpers/block-title' %}
+      </div>
+      </div>
+      <div class="row">
+        {% if block.contentBefore != '' %}
+        <div class="col-12 px-5">
+          {{ block.contentBefore }}
+        </div>
+        {% endif %}
+        {% for item in block.items %}
+        <div class="py-3 px-5 {% if (forloop.index | modulo:2) == 0 and forloop.last %}
+                            col-12
+                        {% else %}
+                            col-6
+                        {% endif %}">
+          {{ item.text }}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% comment %}
+
+__id: string (unique block id)
+
+name: string
+headerType: [ h1, h2, h3, like-h1, like-h2, like-h3 ]
+titleAlignment: [ center, left ]
+titleStyle: [ null, bg-light ]
+style: [ light, dark ]
+noTop: bool
+noBottom: bool
+noPad: bool
+
+title: string
+contentBefore: string (wysiwyg)
+items: string[] (wysiwyg)
+
+{% endcomment %}

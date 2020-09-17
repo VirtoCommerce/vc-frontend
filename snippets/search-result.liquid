@@ -1,0 +1,74 @@
+{% assign has_sidebar = false %}
+{% unless product_search_result.aggregations.empty? %}
+  {% assign has_sidebar = true %}
+{% endunless %}
+
+{% include 'breadcrumb' %}
+<div class="row mt-3">
+    <div id="app-cart-sidebar"></div>
+    {% if has_sidebar %}
+    <div class="d-flex justify-content-between filter-mobile">
+      <div class="d-flex flex-wrap justify-content-between">
+        {% include 'collection-sorting' %}
+        <!-- {% include 'collection-views' %} -->
+      </div>
+      <button class="d-lg-none btn btn-primary justify-content-between filter-button" onclick="toggleFiltersSidebar()">{{ 'collections.filter.title' | t }}</button>
+    </div>
+    <aside class="col-lg-2 col-xl-2 col-md-4" id="collectionFilters">
+      {% include 'collection-sidebar' %}
+    </aside>
+    {% endif %}
+
+    <div class="col-7 {% if has_sidebar %}col-lg-8{% endif %} product-grid col-xl-5 col-md-8 col-sm-12">
+
+        <header class="d-flex flex-column mb-4 sorting-header">
+            <div class="d-flex flex-wrap flex-lg-row flex-column">
+              <h1>{{ collection.title }}</h1>
+              <div class="d-flex justify-content-between filter-desktop">
+                <div class="d-flex flex-wrap justify-content-between">
+                  {% include 'collection-sorting' %}
+                  <!-- {% include 'collection-views' %} -->
+                </div>
+                <button class="d-lg-none btn btn-primary justify-content-between filter-button" onclick="toggleFiltersSidebar()">{{ 'collections.filter.title' | t }}</button>
+              </div>
+            </div>
+            {% if page_description.empty? == false %}
+              <div class="mt-2">
+                {{ page_description }}
+              </div>
+            {% endif %}
+        </header>
+
+        <div class="row">
+            {% if product_search_result.products.empty? == false %}
+            {% for product in product_search_result.products %}
+
+            {% if has_sidebar %}
+            {% assign grid_item_width = 'col-xl-3 col-lg-4 col-md-6 col-sm-6 product-card' %}
+            {% else %}
+            {% assign grid_item_width = 'col-xl-3 col-lg-4 col-md-6 col-sm-6 product-card' %}
+            {% endif %}
+            {% include 'product-grid-item' %}
+
+            {% endfor %}
+
+            {% else %}
+            <p class="col-12">{{ 'search.no_results' | t }}</p>
+            {% endif %}
+        </div>
+
+        <div class="d-flex flex-wrap justify-content-between">
+          {% include 'pagination-custom' %}
+          {% include 'page-size' %}
+        </div>
+
+    </div>
+
+</div>
+<script>
+function toggleFiltersSidebar() {
+  var sidebar = document.getElementById("collectionFilters");
+  sidebar.classList.toggle("d-none");
+  sidebar.classList.toggle("d-lg-block");
+}
+</script>

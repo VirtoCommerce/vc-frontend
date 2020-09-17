@@ -1,0 +1,327 @@
+{
+    "current": "Cyan",
+    "presets": {      
+        "Cyan": {
+            "color_primary": "#008B8B",
+            "color_secondary": "#5F9EA0",
+            "link_color": "#000000",
+            "pagination_color": "#008B8B",
+            "pagination_active_color": "#008B8B",
+            "navbar_links_color": "#fff",
+            "copyright": "<p>Copyright ©2020 All rights reserved Virtocommerce Community</p>",
+            "footer_column1_title": "Get to Know Us",
+            "footer_column1_content": "<ul><li>Company info</li><li>News</li><li>Investors</li><li>Careers</li><li>Diversity & Inclusion</li><li>Global Impact</li></ul>",
+            "footer_column2_title": "Community",
+            "footer_column2_content": "<ul><li>Announcements</li><li>Knowledge Base</li><li>Discussion boards</li><li>Shop for Charity</li><li>Charity Shop</li><li>Our Community</li></ul>",
+            "footer_column3_title": "Let Us Help You",
+            "footer_column3_content": "<ul><li>COVID-19</li><li>Your Account</li><li>Your Orders</li><li>Shipping Rates & Policies</li><li>Returns & Replacements</li><li>Help</li></ul>",
+            "footer_column4_title": "More from Smartshop",
+            "footer_column4_content": "<ul><li>Mobile Apps</li><li>Marketplace</li><li>Gift vouchers</li><li>Investors site</li><li>Region Settings</li></ul>",
+            "pageSizes": [
+                10,
+                20,
+                50,
+                100
+            ],
+            "sorting_options": [
+                {
+                    "value": "priority-descending;name-ascending",
+                    "localization": "collections.sorting.featured"
+                },
+                {
+                    "value": "best-selling",
+                    "localization": "collections.sorting.best_selling"
+                },
+                {
+                    "value": "title-ascending",
+                    "localization": "collections.sorting.az"
+                },
+                {
+                    "value": "title-descending",
+                    "localization": "collections.sorting.za"
+                },
+                {
+                    "value": "price-ascending",
+                    "localization": "collections.sorting.price_ascending"
+                },
+                {
+                    "value": "price-descending",
+                    "localization": "collections.sorting.price_descending"
+                },
+                {
+                    "value": "createddate-descending",
+                    "localization": "collections.sorting.date_descending"
+                },
+                {
+                    "value": "createddate-ascending",
+                    "localization": "collections.sorting.date_ascending"
+                }
+            ],
+            "orders_grid_fields": [
+                {
+                    "key": "number",
+                    "sortable": true
+                },
+                {
+                    "key": "status",
+                    "sortable": true
+                },
+                {
+                    "key": "createdDate",
+                    "sortable": true
+                },
+                {
+                    "key": "items.length",
+                    "sortable": false
+                },
+                {
+                    "key": "createdBy",
+                    "sortable": true
+                },
+                {
+                    "key": "total.formattedAmount",
+                    "sortable": false
+                }
+            ],
+            "users_grid_fields": [
+                "userName",
+                "firstName",
+                "lastName",
+                "approvalRole",
+                "role.name",
+                "email",
+                "phoneNumber",
+                "actions"
+            ],
+            "invoices_grid_fields": [
+                "number",
+                "status",
+                "sum.amount",
+                "gatewayCode",
+                "createdDate",
+                "currency.code",
+                "actions"
+            ],
+            "payments_grid_fields": [
+                "number",
+                "sum.amount",
+                "gatewayCode",
+                "capturedDate",
+                "currency.code"
+            ],
+            "drafts_grid_fields": [
+                "name",
+                "itemsCount",
+                "subTotal.formattedAmount",
+                "total.formattedAmount",
+                "actions"
+            ]
+        }
+    },
+    "features": [
+        {
+            "Name": "OrdersBrowsing",
+            "IsActive": true,
+            "Requires": [],
+            "Replaces": [],
+            "Conflicts": []
+        },
+        {
+            "Name": "PaymentBrowsing",
+            "IsActive": true,
+            "Requires": [],
+            "Replaces": [],
+            "Conflicts": []
+        },
+        {
+            "Name": "InvoiceBrowsing",
+            "IsActive": true,
+            "Requires": [],
+            "Replaces": [],
+            "Conflicts": []
+        },
+        {
+            "Name": "ManageUsers",
+            "IsActive": true,
+            "Requires": [],
+            "Replaces": [],
+            "Conflicts": []
+        },
+        {
+            "Name": "ManageRoles",
+            "IsActive": true,
+            "Requires": [],
+            "Replaces": [],
+            "Conflicts": []
+        },
+        {
+            "Name": "ContractsInfoBrowsing",
+            "IsActive": true,
+            "Requires": [],
+            "Replaces": [],
+            "Conflicts": []
+        },
+        {
+            "Name": "RetrieveReordering",
+            "IsActive": true,
+            "Requires": [],
+            "Replaces": [],
+            "Conflicts": [
+                "SubmitOrder",
+                "ProductInventoryBrowsing",
+                "ManageShipmentDetails",
+                "ManagePaymentDetails"
+            ]
+        },
+        {
+            "Name": "OrderApproval",
+            "IsActive": true,
+            "Requires": [],
+            "Replaces": [],
+            "Conflicts": [
+                "SubmitOrder",
+                "ProductInventoryBrowsing",
+                "ManageShipmentDetails",
+                "ManagePaymentDetails"
+            ]
+        },
+        {
+            "Name": "ProductTextSearch",
+            "IsActive": true,
+            "Requires": [
+                "ProductTextSearch",
+                "ProductsFiltering"
+            ],
+            "Replaces": [],
+            "Conflicts": []
+        },
+        {
+            "Name": "ProductsFiltering",
+            "IsActive": true,
+            "Requires": [
+                "ProductTextSearch",
+                "ProductsFiltering"
+            ],
+            "Replaces": [],
+            "Conflicts": []
+        },
+        {
+            "Name": "ProductDetailsBrowsing",
+            "IsActive": true,
+            "Requires": [
+                "ProductTextSearch",
+                "ProductsFiltering"
+            ],
+            "Replaces": [],
+            "Conflicts": []
+        },
+        {
+            "Name": "ProductPriceBrowsing",
+            "IsActive": true,
+            "Requires": [
+                "ProductTextSearch",
+                "ProductsFiltering",
+                "ProductDetailsBrowsing"
+            ],
+            "Replaces": [],
+            "Conflicts": []
+        },
+        {
+            "Name": "ProductRecommendation",
+            "IsActive": true,
+            "Requires": [
+                "ProductTextSearch",
+                "ProductsFiltering",
+                "ProductDetailsBrowsing"
+            ],
+            "Replaces": [],
+            "Conflicts": []
+        },
+        {
+            "Name": "OrderDraft",
+            "IsActive": true,
+            "Requires": [
+                "ProductTextSearch",
+                "ProductsFiltering",
+                "ProductDetailsBrowsing",
+                "ProductPriceBrowsing"
+            ],
+            "Replaces": [
+                "RetrieveReordering",
+                "OrderApproval"
+            ],
+            "Conflicts": []
+        },
+        {
+            "Name": "WishList",
+            "IsActive": true,
+            "Requires": [
+                "ProductTextSearch",
+                "ProductsFiltering",
+                "ProductDetailsBrowsing",
+                "ProductPriceBrowsing"
+            ],
+            "Replaces": [],
+            "Conflicts": []
+        },
+        {
+            "Name": "SubmitOrder",
+            "IsActive": true,
+            "Requires": [
+                "ProductTextSearch",
+                "ProductsFiltering",
+                "ProductDetailsBrowsing",
+                "ProductPriceBrowsing",
+                "OrderDraft",
+                "ProductInventoryBrowsing"
+            ],
+            "Replaces": [
+                "RetrieveReordering",
+                "OrderApproval"
+            ],
+            "Conflicts": []
+        },
+        {
+            "Name": "ProductInventoryBrowsing",
+            "IsActive": true,
+            "Requires": [
+                "ProductTextSearch",
+                "ProductsFiltering",
+                "ProductDetailsBrowsing",
+                "ProductPriceBrowsing",
+                "OrderDraft",
+                "SubmitOrder"
+            ],
+            "Replaces": [],
+            "Conflicts": []
+        },
+        {
+            "Name": "ManageShipmentDetails",
+            "IsActive": true,
+            "Requires": [
+                "ProductTextSearch",
+                "ProductsFiltering",
+                "ProductDetailsBrowsing",
+                "ProductPriceBrowsing",
+                "OrderDraft",
+                "SubmitOrder"
+            ],
+            "Replaces": [],
+            "Conflicts": []
+        },
+        {
+            "Name": "ManagePaymentDetails",
+            "IsActive": true,
+            "Requires": [
+                "ProductTextSearch",
+                "ProductsFiltering",
+                "ProductDetailsBrowsing",
+                "ProductPriceBrowsing",
+                "OrderDraft",
+                "SubmitOrder"
+            ],
+            "Replaces": [],
+            "Conflicts": []
+        }
+    ]
+}

@@ -1,0 +1,8 @@
+<form class="form"
+    {% if block.formId != '' %}id="{{block.formId}}" data-segment-name="{{block.formId}}"{% endif %}
+    {% if block.formName != '' %}name="{{block.formName}}"{% endif %}
+    {% if block.formSubmitRedirectUrl != '' %} data-target-url="{{block.formSubmitRedirectUrl}}" {% endif %}>
+    {% for item in block.formFields %}
+        {% include 'blocks/form/form-field' item: item %}
+    {% endfor %}
+</form>

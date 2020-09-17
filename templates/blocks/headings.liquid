@@ -1,0 +1,5 @@
+{% if headings.size > 0 %}
+    {% for heading in headings %}
+        {% include 'blocks/seo-text' tag: heading.seoTag, text: heading.title, class: 'h2' %}
+    {% endfor %}
+{% endif %}

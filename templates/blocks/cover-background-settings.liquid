@@ -1,0 +1,3 @@
+block--cover {{block.backgroundColor}} {{block.backgroundScrollEffect}} lazyload"
+{% if block.backgroundColorHex != '' and block.background == null or block.background == '' or block.background.url == '' %} style="background-color:{{block.backgroundColorHex}}" {% endif %}
+{% if block.background != '' and block.background.url != '' %} data-bg="{{ block.background.url | image_url }}" {% endif %} 

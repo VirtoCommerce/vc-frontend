@@ -1,0 +1,70 @@
+<div id="{{ block.__id }}" style="position: relative;" class="{{ block.style }}">
+  <div class="{% include 'blocks/helpers/block-paddings' %} block container">
+    <div class="px-5">
+      {% include 'blocks/helpers/block-title' %}
+    </div>
+    <div class="row px-5 justify-content-center">
+      <div class="{{block.textAreaWidth}}">
+        {% if block.content %}
+        {{ block.content }}
+        {% endif %}
+      </div>
+    </div>
+
+    {% if block.columns.size > 0 %}
+    <div class="row p-5 list-items {% if block.iconsType == 'letters' %} list-items-letters {% endif %}">
+      {% for column in block.columns %}
+      <div class="col-{{block.columnsCount}} list-item">
+        <div>
+          {% if block.iconsType == 'numbers' or block.iconsType == 'letters' %}
+          <div class="text-{{column.button.style}} list__num list__num-{{block.iconsFilling}} {% if block.iconsAreFilled == 'True' %} list__num--filled-{{block.iconsFilling}} {% endif %}"></div>
+          {% endif %}
+
+          {% if block.iconsType == 'customIcon' and column.image.url != '' %}
+          <div class="list__image lazyload" title="{{column.image.altText}}" data-bg="{{ column.image.url }}"></div>
+          {% endif %}
+          {% if block.iconsType == 'images' and column.image.url != '' %}
+          <img data-src="{{ column.image.url }}" title="{{column.image.altText}}" class="list__ico lazyload" />
+          {% endif %}
+          {% if column.title != '' %}
+          <div class="h4 py-3">{{ column.title }}</div>
+          {% endif %}
+          {% if column.button != '' and column.button.urlText != '' %}
+          <div class="block__space"></div>
+          <div class="block__actions">
+            <a href="{{column.button.url}}" class="btn {{column.button.style}}" {% if column.openInNewTab == 'True' %} target="_blank" {% endif %}>{{column.button.urlText}}</a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% comment %}
+
+__id: string (unique block id)
+
+name: string
+headerType: [ h1, h2, h3, like-h1, like-h2, like-h3 ]
+titleAlignment: [ center, left ]
+titleStyle: [ null, bg-light ]
+style: [ light, dark ]
+noTop: bool
+noBottom: bool
+
+columnsCount: string (12, 6, 4, 3)
+textAreaWidth: string (col-lg, col-lg-10, col-lg-8, col-lg-6)
+iconsType: string (none, numbers, letters, images, customIcon)
+iconsAreFilled: bool
+title: string
+content: string (wysiwyg)
+columns: object[] {
+  title: string
+  image: object (url to image, alt text)
+  button: object (url, text, style [ bootstrap buttons styles ], openInNewTab)
+}
+
+{% endcomment %}

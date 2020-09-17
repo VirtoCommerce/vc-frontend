@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+<head>
+  <meta charset="utf-8">
+
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <meta content="index, follow, noodp" name="robots"/>
+    <meta content="index, follow" name="googlebot"/>
+    <meta content="notranslate" name="google"/>
+    <meta content="telephone=no" name="format-detection"/>
+
+  <title>{{ store.title }}</title>
+  <base href="/">
+
+  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet"/>
+
+    <link href="{{'favicon.ico' | static_asset_url }}" rel="icon" type="image/x-icon">
+    {{ 'bundle/default.scss.css' | static_asset_url | append_version | stylesheet_tag }}
+
+</head>
+<body class="h-100 login-screens">
+	<main class="h-100 d-flex login-wrapper">
+    <div class="login-left-container">
+      <div class="login-shop-logo">
+                   <a class="navbar-brand" href="{{ "/" | absolute_url }}"><img src="{{ 'shop-logo.svg' | asset_url }}" alt="Smartshop" class="shop-logo" />
+                   <a class="navbar-brand-mobile" href="{{ "/" | absolute_url }}"><img src="{{ 'shop-logo-mobile.svg' | asset_url }}" alt="Smartshop" class="shop-logo" /></a></a>
+       </div>
+      {{ content_for_layout }}
+
+   </div>
+
+   <div class="login-right-container">
+     <div class="login-right-container-bg">
+       <div class="login-info-text-wrapper">
+          <div class="login-info-text">
+          <h2>Registering gives additional bonuses</h2>
+              <ul>
+                <li>Your orders are saved and you will never lose your personal data.
+                <li>You do not need to enter your data every time, everything is securely stored in the system.</li>
+                <li>You will be able to fully enjoy the support system of our shop.</li>
+              </ul>
+          </div>
+       </div>
+     </div>
+   </div>
+  </main>
+</body>
+</html>

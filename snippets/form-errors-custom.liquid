@@ -1,0 +1,20 @@
+{% if form.errors.size > 0 %}
+<div class="alert alert-danger">
+  <p>{{ 'common.error.forms.post' | t }}</p>
+  <ul class="disc">
+    {% for form_error in form.errors %}
+      {% assign form_error_message = form_error.message %}
+      {% if form_error.code %}
+        {% capture form_error_message_key -%}common.error.forms.{{ form_error.code }}{% endcapture %}
+        {% assign form_error_message = form_error_message_key | t %}
+        {% if form_error_message == form_error_message_key %}
+          {% assign form_error_message = form_error.message %}
+        {% endif %}
+      {% endif %}
+      <li>
+        {{ form_error_message }}
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}

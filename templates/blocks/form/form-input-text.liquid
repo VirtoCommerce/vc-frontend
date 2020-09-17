@@ -1,0 +1,6 @@
+<input data-segment-name="{{item.fieldName}}"
+    {% if item.fieldId != '' %} id="{{item.fieldId}}" {% endif %}
+    name="{{item.fieldName}}"
+    placeholder="{{item.placeholder}}"
+    type="text" class="form-control"
+    {% include 'blocks/form/input-validation-attributes' inputItem: item %} />

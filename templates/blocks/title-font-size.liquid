@@ -1,0 +1,8 @@
+{% assign titleFontSize = 'block__t--flexible' %}
+{% if block.titleFontSize == 'small' %}
+    {% assign titleFontSize = titleFontSize | append '-small' %}
+{% elsif block.titleFontSize == 'medium' %}
+    {% assign titleFontSize = titleFontSize | append '-medium' %}
+{% else %}
+    {% assign titleFontSize = titleFontSize | append '-large' %}
+{% endif %}

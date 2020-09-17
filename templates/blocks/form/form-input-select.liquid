@@ -1,0 +1,11 @@
+<select class="form-control"
+    {% if inputItem.fieldId != '' %} id="{{inputItem.fieldId}}" {% endif %}
+    name="{{inputItem.fieldName}}"
+    {% include 'blocks/form/input-validation-attributes' inputItem: item %}>
+
+    {% for option in inputItem.selectOptions %}
+        <option value="{{option.value}}"
+            {% if option.isSelected == 'True' %}selected{% endif %}
+            {% if option.isDisabled == 'True' %}disabled{% endif %}>{{option.label}}</option>
+    {% endfor %}
+</select>

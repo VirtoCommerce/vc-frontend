@@ -1,0 +1,14 @@
+<div class="radio-list">
+    {% for radio in item.radioListItems %}
+        <div class="radio-list__item">
+            <input class="radio-list__input" type="radio" id="{{radio.id}}" name="{{item.fieldName}}" value="{{radio.value}}"
+                {% if radio.isChecked == 'True' %} checked {% endif %}
+                {% if radio.isDisabled == 'True' %} disabled {% endif %}
+                {% include 'blocks/input-validation-attributes' inputItem: item %} />
+            <label class="radio-list__label" for="{{radio.id}}">
+                <span class="radio-list__t">{{radio.title}}</span>
+                <span class="radio-list__descr">{{radio.text}}</span>
+            </label>
+        </div>
+    {% endfor %}
+</div>

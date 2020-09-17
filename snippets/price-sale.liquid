@@ -1,0 +1,12 @@
+{% capture saved_amount %}{{ compare_price | minus: product_price | money }}{% endcapture %}
+
+{% comment %}
+  Unless this store uses multiple currencies,
+  we will wrap the cents in a sup (superscript) element,
+  to hide them with CSS.
+{% endcomment %}
+
+
+{% assign saved_amount = saved_amount | strip %}
+{{ 'products.general.save_html' | t:  saved_amount }}
+
