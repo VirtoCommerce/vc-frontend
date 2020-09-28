@@ -1,19 +1,18 @@
-<div class="d-flex flex-column price-block">
+<div class="d-flex flex-column">
     <span class="d-flex">
-
-        <strong class="font-weight-bold h5 basic-price align-self-center product-price">
-          {% assign price = product.price %}
-          {% include 'price' %}
-        </strong>
         {% if on_sale %}
-        <del class="small mr-1 align-self-center compare-price">
+        <del class="small mr-1 align-self-center">
           {% assign price = product.compare_at_price %}
           {% include 'price' %}
         </del>
         {% endif %}
+        <strong class="font-weight-bold h5 align-self-center">
+          {% assign price = product.price %}
+          {% include 'price' %}
+        </strong>
     </span>
     {% if on_sale %}
-    <strong class="text-uppercase sale-bage">
+    <strong class="border border-primary mr-auto text-primary text-uppercase font-weight-bold p-1">
         {% assign compare_price = product.compare_at_price %}
         {% assign product_price = product.price.actual_price %}
         {% include 'price-sale' %}

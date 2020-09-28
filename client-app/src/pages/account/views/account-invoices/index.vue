@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-3 table-column">
+  <div class="mt-3">
     <invoices-filter :search-criteria="searchCriteria"
                      :available-invoices-statuses="availableInvoicesStatuses"
                      @searchCriteriaChanged="searchCriteriaChanged"></invoices-filter>
@@ -41,10 +41,8 @@
             aria-controls="invoices-table"
             :total-rows="invoices.totalCount"
             :per-page="searchCriteria.pageSize"
-            class="display-by"
             @change="pageChanged($event)"></b-pagination>
           <div>
-            Display by&nbsp;&nbsp;
             <b-dropdown
               id="page-sizes"
               class="form-control p-0"

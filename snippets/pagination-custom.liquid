@@ -1,8 +1,8 @@
 <ul class="pagination">
     {% if paginator.previous %}
-        <li class="page-item prev"><a class="page-link" href="{{ paginator.previous.url }}" title="{{ paginator.previous.title }}">Prev</a></li>
+        <li class="page-item"><a class="page-link" href="{{ paginator.previous.url }}" title="{{ paginator.previous.title }}">&laquo</a></li>
     {% else %}
-        <li class="page-item prev disabled"><span class="page-link">Prev</span></li>
+        <li class="page-item disabled"><span class="page-link">&laquo</span></li>
     {% endif %}
 
     {% for part in paginator.parts %}
@@ -20,8 +20,8 @@
     {% endfor %}
 
     {% if paginator.next %}
-        <li class="page-item next"><a class="page-link" href="{{ paginator.next.url }}" title="{{ paginator.next.title }}">Next</a></li>
+        <li class="page-item"><a class="page-link" href="{{ paginator.next.url }}" title="{{ paginator.next.title }}">&raquo</a></li>
     {% else %}
-        <li class="page-item next disabled"><span class="page-link">Next</span></li>
+        <li class="page-item disabled"><span class="page-link">&raquo</span></li>
     {% endif %}
 </ul>

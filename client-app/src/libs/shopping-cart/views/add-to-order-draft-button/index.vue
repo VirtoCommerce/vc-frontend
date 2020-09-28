@@ -1,8 +1,8 @@
 <template>
-  <div class="app-add-item-to-draft" @click.stop.prevent>
+  <div class="app-add-item-to-draft w-100 h-100" @click.stop.prevent>
     <add-draft-modal @draftAdded="addToNewDraft($event)"></add-draft-modal>
     <b-dropdown ref="dropdown"
-                class="w-100 h-105"
+                class="w-100 h-100"
                 :title="$t('products.general.add_to_order_draft')"
                 right
                 variant="outline-primary">

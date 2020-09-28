@@ -12,7 +12,7 @@
       <div class="col col-sm-auto col-md-auto col-lg-auto align-self-sm-end mt-3">
         <b-button v-can="$permissions.CanCreateUsers"
                   v-b-modal.addUserModal
-                  variant="outline-primary add-button">
+                  variant="outline-primary">
           {{ $t("account.users.add-user.add-user") }}
         </b-button>
       </div>
@@ -79,10 +79,8 @@
             aria-controls="users-table"
             :total-rows="users.totalCount"
             :per-page="searchCriteria.pageSize"
-            class="display-by"
             @change="pageChanged($event)"></b-pagination>
           <div>
-            Display by&nbsp;&nbsp;
             <b-dropdown
               id="page-sizes"
               class="form-control p-0"

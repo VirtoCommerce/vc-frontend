@@ -1,5 +1,5 @@
 <template>
-  <div class="account mb-3 mt-4">
+  <div class="account mb-3 mt-3">
     <ul class="nav nav-tabs border-primary">
       <li v-if="$can($permissions.CanViewOrders) && $isActive($features.OrderBrowsing)" class="nav-item">
         <router-link to="orders"
@@ -19,6 +19,7 @@
           {{ $t('account.menu_titles.invoices') }}
         </router-link>
       </li>
+
       <li v-if="$can($permissions.CanViewOrders) && $isActive($features.PaymentBrowsing)" class="nav-item">
         <router-link
           to="payments"

@@ -1,11 +1,12 @@
 import {  BvTableFieldArray } from 'bootstrap-vue';
-import { removeStoreAndLocaleFromUrl } from "@core/utilities/utilities";
 
 // It is global variables initialized on the layout page
 export const storeName = window.STORE_NAME;
 export const locale = window.LOCALE;
 // Need to trim store and language from base URL because they will be added later as parameters for each API call.
-export const baseUrl = removeStoreAndLocaleFromUrl(window.BASE_URL, storeName, locale);
+export const baseUrl = window.BASE_URL.replace(`/${storeName}`, "/")
+  .replace(`/${locale}`, "/")
+  .replace(/[/]+$/, "");
 
 export const fullBaseUrl = `${baseUrl}/${storeName}/${locale}/`;
 export const loginUrl = `${fullBaseUrl}account/login`;

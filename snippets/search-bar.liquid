@@ -1,5 +1,5 @@
 {% assign search = current_product_search_criteria %}
-<form action="" autocomplete="off" method="get" class="input-group top-search" role="search" name="formSearch">
+<form action="" autocomplete="off" method="get" class="input-group" role="search" name="formSearch">
     <input type="hidden" name="page" value="{{ search.page_number | escape }}" />
     <input type="hidden" name="page_size" value="{{ search.page_size | escape }}" />
     <input type="hidden" name="sort_by" value="{{ search.sort_by | escape }}" />

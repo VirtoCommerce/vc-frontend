@@ -111,8 +111,8 @@ export default class AccountDrafts extends Vue {
       size: 'md',
       buttonSize: 'md',
       title: i18n.t('account.drafts.confirm-delete-modal.title') as string,
-      cancelTitle: i18n.t('account.drafts.confirm-delete-modal.cancel') as string,
       okTitle: i18n.t('account.drafts.confirm-delete-modal.ok') as string,
+      cancelTitle: i18n.t('account.drafts.confirm-delete-modal.cancel') as string,
       footerClass: ['p-2', 'flex-row-reverse justify-content-start'],
       hideHeaderClose: false,
       centered: true

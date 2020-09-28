@@ -2,7 +2,7 @@
 <nav class="breadcrumb d-block bg-white mb-0 pl-0 pr-0" role="navigation" aria-label="breadcrumbs">
   <a href="{{ "/" | absolute_url }}" title="{{ 'breadcrumbs.home_link_title' | t }}">{{ 'breadcrumbs.home' | t }}</a>
   {% for breadcrumb in breadcrumbs %}
-  <span class="divider" aria-hidden="true">&nbsp;&nbsp;/&nbsp;&nbsp;</span>
+  <span class="divider" aria-hidden="true">&rsaquo;</span>
   {% if breadcrumb.type_name == 'Tag' %} {% assign tag = breadcrumb.aggregation_item %}
   {% include 'tag-label' %}
   <span>{{ tag_label | escape }}</span>

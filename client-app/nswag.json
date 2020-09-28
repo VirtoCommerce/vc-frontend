@@ -4,7 +4,7 @@
   "documentGenerator": {
     "fromDocument": {
       "json": "",
-      "url": "http://localhost:2082/docs/v1/docs.json",
+      "url": "http://localhost:2083/docs/v1/docs.json",
       "output": null
     }
   },

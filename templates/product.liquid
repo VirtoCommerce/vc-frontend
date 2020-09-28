@@ -22,35 +22,34 @@
     <meta itemprop="url" content="{{ product.url | absolute_url}}">
     <meta itemprop="image" content="{{ product.featured_image.src | img_url }}">
 
-    <div class="col-12 col-lg-6 flex-column product-imgs">
-      <div class="mw-100 mb-4 d-flex justify-content-center product-main-pic">
+    <div class="col-lg-5 flex-column">
+      <div class="mw-100 mb-5 d-flex justify-content-center">
         {% assign featured_image = product.selected_or_first_available_variant.featured_image | default: product.featured_image %}
         {% if featured_image %}
-          <img id="productPrimaryImg" class="mw-100" src="{{ featured_image | img_url: "630x630" }}" alt="{{ featured_image.alt | escape }}">
+          <img id="productPrimaryImg" class="mw-100" src="{{ featured_image | img_url: "348x348" }}" alt="{{ featured_image.alt | escape }}">
         {% else %}
-          <div class="d-flex justify-content-center h3 no-image">
-            <!-- <i class="fas fa-camera fa-10x mw-100"></i> -->
-            <img src="/static/no-image-placeholder.svg" alt="no image" />
+          <div class="d-flex justify-content-center h3">
+            <i class="fas fa-camera fa-10x mw-100"></i>
           </div>
         {% endif %}
       </div>
       {% if product.images.size > 1 %}
-        <div class="row justify-content-center product-mini-pics">
+        <div class="row justify-content-center">
           {% for image in product.images %}
-            {% capture zoomedImgUrl %}{{ image.url | img_url: "630x630" }}{% endcapture %}
+            {% capture zoomedImgUrl %}{{ image.url | img_url: "348x348" }}{% endcapture %}
             {% capture zoomedImgAlt %}{{ image.alt | escape }}{% endcapture %}
-            <figure class="col-6 col-md-2 d-flex justify-content-center btn product-mini-img">
-              <img src="{{ image.url | img_url: "90x90" }}" onclick="showImage('{{ zoomedImgUrl }}','{{zoomedImgAlt}}')" alt="{{ image.alt | escape }}">
+            <figure class="col-4 col-md-3 d-flex justify-content-center btn">
+              <img src="{{ image.url | img_url: "64x64" }}" onclick="showImage('{{ zoomedImgUrl }}','{{zoomedImgAlt}}')" alt="{{ image.alt | escape }}">
             </figure>
           {% endfor %}
         </div>
       {% endif %}
     </div>
 
-    <div class="col-lg-6 product-description">
-        <h2 itemprop="name" class="product-title">{{ product.title }}</h2>
+    <div class="col-lg-7">
+        <h3 itemprop="name">{{ product.title }}</h3>
 
-        <div class="mt-4 price-and-action" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+        <div class="mt-4" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
 
             {% assign variant = product.selected_or_first_available_variant %}
 
@@ -61,7 +60,7 @@
 
             <link itemprop="availability" href="http://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}">
 
-              <div class="mt-4 product-action-buttons">
+              <div class="mt-4">
 
               {% if product.available %}
                 <div class="btn-group">
@@ -69,14 +68,14 @@
                     <span class="fas fa-shopping-cart"></span>
                     <span id="addToCartText">{{ 'products.general.add_to_cart' | t }}</span>
                   </button> -->
-                  <button class="app-add-item-to-cart btn" title="{{ 'products.general.add_to_cart' | t }}" product-id="{{product.id}}" text-visible><i class="fas fa-shopping-cart"></i>
+                  <button class="app-add-item-to-cart btn btn-outline-primary" title="{{ 'products.general.add_to_cart' | t }}" product-id="{{product.id}}" text-visible><i class="fas fa-shopping-cart"></i>
                     <span>{{ 'products.general.add_to_cart' | t }}</span></button>
                 </div>
               {% endif %}
 
               {% if unavailable %}
                 <div class="btn-group">
-                  <button class="btn btn-primary" id="addToCart" type="button" disabled>
+                  <button class="btn btn-outline-primary" id="addToCart" type="button" disabled>
                     <span class="fas fa-shopping-cart"></span>
                     <span id="addToCartText">{{ 'products.product.unavailable' | t }}</span>
                   </button>
@@ -85,7 +84,7 @@
 
               {% if sold_out %}
                 <div class="btn-group">
-                  <button class="btn btn-primary" id="addToCart" type="button" disabled>
+                  <button class="btn btn-outline-primary" id="addToCart" type="button" disabled>
                     <span class="fas fa-shopping-cart"></span>
                     <span id="addToCartText">{{ 'products.product.sold_out' | t }}</span>
                   </button>
@@ -94,7 +93,7 @@
 
 
                 <div class="btn-group">
-                  <button class="app-add-item-to-draft" title="{{ 'products.general.add_to_order_draft' | t }}" product-id="{{product.id}}" text-visible><i class="fas fa-file-alt"></i>
+                  <button class="app-add-item-to-draft btn btn-outline-primary" title="{{ 'products.general.add_to_order_draft' | t }}" product-id="{{product.id}}" text-visible><i class="fas fa-file-alt"></i>
                     <span>{{ 'products.general.add_to_order_draft' | t }}</span></button>
                 </div>
 
@@ -102,7 +101,7 @@
 
         </div>
 
-
+        <hr>
 
       {% unless product.description == nil and product.properties.size < 1 %}
         <ul class="nav nav-tabs mb-3 border-primary" id="pills-tab" role="tablist">
@@ -122,9 +121,9 @@
           {% endif %}
         </ul>
 
-        <div class="tab-content col-12" id="pills-tabContent">
+        <div class="tab-content" id="pills-tabContent">
           {% if product.description == nil %}
-            <div class="mb-3 row justify-content-around tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
+            <div class="mb-3 bg-light row justify-content-around tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
               {% include 'product-properties' %}
             </div>
           {% else %}
@@ -132,7 +131,7 @@
               {{ product.description }}
             </div>
             {% if product.properties.size > 1 %}
-            <div class="mb-3 row justify-content-around tab-pane fade" id="details" role="tabpanel" aria-labelledby="details-tab">
+            <div class="mb-3 bg-light row justify-content-around tab-pane fade" id="details" role="tabpanel" aria-labelledby="details-tab">
               {% include 'product-properties' %}
             </div>
             {% endif %}

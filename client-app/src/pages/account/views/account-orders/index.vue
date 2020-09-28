@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-3 table-column">
+  <div class="mt-3">
     <order-details-modal :order="selectedOrder"
                          :show-details="true"
                          :show-order-details="false"
@@ -43,10 +43,8 @@
             aria-controls="orders-table"
             :total-rows="orders.totalCount"
             :per-page="searchCriteria.pageSize"
-            class="display-by"
             @change="pageChanged($event)"></b-pagination>
           <div>
-            Display by&nbsp;&nbsp;
             <b-dropdown
               id="page-sizes"
               class="form-control p-0"

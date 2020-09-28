@@ -1513,62 +1513,6 @@ export class ApiCartClient {
     /**
      * @return Success
      */
-    changeCartItem2(changeQty: ChangeCartItemQty[] | null, store: string, language: string , cancelToken?: CancelToken | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/{store}/{language}/storefrontapi/cart/items/bulk";
-        if (store === undefined || store === null)
-            throw new Error("The parameter 'store' must be defined.");
-        url_ = url_.replace("{store}", encodeURIComponent("" + store));
-        if (language === undefined || language === null)
-            throw new Error("The parameter 'language' must be defined.");
-        url_ = url_.replace("{language}", encodeURIComponent("" + language));
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(changeQty);
-
-        let options_ = <AxiosRequestConfig>{
-            data: content_,
-            method: "PUT",
-            url: url_,
-            headers: {
-                "Content-Type": "application/json-patch+json",
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processChangeCartItem2(_response);
-        });
-    }
-
-    protected processChangeCartItem2(response: AxiosResponse): Promise<void> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            return Promise.resolve<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
     clearCart(store: string, language: string , cancelToken?: CancelToken | undefined): Promise<void> {
         let url_ = this.baseUrl + "/{store}/{language}/storefrontapi/cart/clear";
         if (store === undefined || store === null)
@@ -4530,61 +4474,6 @@ export class ApiQuoteRequestClient {
     /**
      * @return Success
      */
-    clear(number: string | null, store: string, language: string , cancelToken?: CancelToken | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/{store}/{language}/storefrontapi/quoterequests/{number}/items";
-        if (number === undefined || number === null)
-            throw new Error("The parameter 'number' must be defined.");
-        url_ = url_.replace("{number}", encodeURIComponent("" + number));
-        if (store === undefined || store === null)
-            throw new Error("The parameter 'store' must be defined.");
-        url_ = url_.replace("{store}", encodeURIComponent("" + store));
-        if (language === undefined || language === null)
-            throw new Error("The parameter 'language' must be defined.");
-        url_ = url_.replace("{language}", encodeURIComponent("" + language));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <AxiosRequestConfig>{
-            method: "DELETE",
-            url: url_,
-            headers: {
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processClear(_response);
-        });
-    }
-
-    protected processClear(response: AxiosResponse): Promise<void> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            return Promise.resolve<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
     submit(number: string | null, quoteForm: QuoteRequestFormModel | null, store: string, language: string , cancelToken?: CancelToken | undefined): Promise<void> {
         let url_ = this.baseUrl + "/{store}/{language}/storefrontapi/quoterequests/{number}/submit";
         if (number === undefined || number === null)
@@ -5318,434 +5207,6 @@ export interface IAddress {
     id?: string | null;
 }
 
-export class Organization implements IOrganization {
-    phoneNumbers?: string[] | null;
-    readonly email?: string | null;
-    emails?: string[] | null;
-    name?: string | null;
-    memberType?: string | null;
-    addresses?: Address[] | null;
-    phones?: string[] | null;
-    groups?: string[] | null;
-    userGroups?: string[] | null;
-    id?: string | null;
-
-    constructor(data?: IOrganization) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            if (Array.isArray(_data["phoneNumbers"])) {
-                this.phoneNumbers = [] as any;
-                for (let item of _data["phoneNumbers"])
-                    this.phoneNumbers!.push(item);
-            }
-            (<any>this).email = _data["email"];
-            if (Array.isArray(_data["emails"])) {
-                this.emails = [] as any;
-                for (let item of _data["emails"])
-                    this.emails!.push(item);
-            }
-            this.name = _data["name"];
-            this.memberType = _data["memberType"];
-            if (Array.isArray(_data["addresses"])) {
-                this.addresses = [] as any;
-                for (let item of _data["addresses"])
-                    this.addresses!.push(Address.fromJS(item));
-            }
-            if (Array.isArray(_data["phones"])) {
-                this.phones = [] as any;
-                for (let item of _data["phones"])
-                    this.phones!.push(item);
-            }
-            if (Array.isArray(_data["groups"])) {
-                this.groups = [] as any;
-                for (let item of _data["groups"])
-                    this.groups!.push(item);
-            }
-            if (Array.isArray(_data["userGroups"])) {
-                this.userGroups = [] as any;
-                for (let item of _data["userGroups"])
-                    this.userGroups!.push(item);
-            }
-            this.id = _data["id"];
-        }
-    }
-
-    static fromJS(data: any): Organization {
-        data = typeof data === 'object' ? data : {};
-        let result = new Organization();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (Array.isArray(this.phoneNumbers)) {
-            data["phoneNumbers"] = [];
-            for (let item of this.phoneNumbers)
-                data["phoneNumbers"].push(item);
-        }
-        data["email"] = this.email;
-        if (Array.isArray(this.emails)) {
-            data["emails"] = [];
-            for (let item of this.emails)
-                data["emails"].push(item);
-        }
-        data["name"] = this.name;
-        data["memberType"] = this.memberType;
-        if (Array.isArray(this.addresses)) {
-            data["addresses"] = [];
-            for (let item of this.addresses)
-                data["addresses"].push(item.toJSON());
-        }
-        if (Array.isArray(this.phones)) {
-            data["phones"] = [];
-            for (let item of this.phones)
-                data["phones"].push(item);
-        }
-        if (Array.isArray(this.groups)) {
-            data["groups"] = [];
-            for (let item of this.groups)
-                data["groups"].push(item);
-        }
-        if (Array.isArray(this.userGroups)) {
-            data["userGroups"] = [];
-            for (let item of this.userGroups)
-                data["userGroups"].push(item);
-        }
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IOrganization {
-    phoneNumbers?: string[] | null;
-    email?: string | null;
-    emails?: string[] | null;
-    name?: string | null;
-    memberType?: string | null;
-    addresses?: Address[] | null;
-    phones?: string[] | null;
-    groups?: string[] | null;
-    userGroups?: string[] | null;
-    id?: string | null;
-}
-
-export class SecurityAccount implements ISecurityAccount {
-    userName?: string | null;
-    isLockedOut?: boolean;
-    roles?: string[] | null;
-    id?: string | null;
-
-    constructor(data?: ISecurityAccount) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.userName = _data["userName"];
-            this.isLockedOut = _data["isLockedOut"];
-            if (Array.isArray(_data["roles"])) {
-                this.roles = [] as any;
-                for (let item of _data["roles"])
-                    this.roles!.push(item);
-            }
-            this.id = _data["id"];
-        }
-    }
-
-    static fromJS(data: any): SecurityAccount {
-        data = typeof data === 'object' ? data : {};
-        let result = new SecurityAccount();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["userName"] = this.userName;
-        data["isLockedOut"] = this.isLockedOut;
-        if (Array.isArray(this.roles)) {
-            data["roles"] = [];
-            for (let item of this.roles)
-                data["roles"].push(item);
-        }
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface ISecurityAccount {
-    userName?: string | null;
-    isLockedOut?: boolean;
-    roles?: string[] | null;
-    id?: string | null;
-}
-
-export class Contact implements IContact {
-    fullName?: string | null;
-    firstName?: string | null;
-    lastName?: string | null;
-    middleName?: string | null;
-    salutation?: string | null;
-    photoUrl?: string | null;
-    timeZone?: string | null;
-    defaultLanguage?: string | null;
-    defaultBillingAddress?: Address | null;
-    defaultShippingAddress?: Address | null;
-    organizationId?: string | null;
-    organization?: Organization | null;
-    organizationsIds?: string[] | null;
-    acceptsMarketing?: boolean;
-    defaultAddress?: Address | null;
-    securityAccounts?: SecurityAccount[] | null;
-    phoneNumbers?: string[] | null;
-    readonly email?: string | null;
-    emails?: string[] | null;
-    name?: string | null;
-    memberType?: string | null;
-    addresses?: Address[] | null;
-    phones?: string[] | null;
-    groups?: string[] | null;
-    userGroups?: string[] | null;
-    id?: string | null;
-
-    constructor(data?: IContact) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.fullName = _data["fullName"];
-            this.firstName = _data["firstName"];
-            this.lastName = _data["lastName"];
-            this.middleName = _data["middleName"];
-            this.salutation = _data["salutation"];
-            this.photoUrl = _data["photoUrl"];
-            this.timeZone = _data["timeZone"];
-            this.defaultLanguage = _data["defaultLanguage"];
-            this.defaultBillingAddress = _data["defaultBillingAddress"] ? Address.fromJS(_data["defaultBillingAddress"]) : _data["defaultBillingAddress"];
-            this.defaultShippingAddress = _data["defaultShippingAddress"] ? Address.fromJS(_data["defaultShippingAddress"]) : _data["defaultShippingAddress"];
-            this.organizationId = _data["organizationId"];
-            this.organization = _data["organization"] ? Organization.fromJS(_data["organization"]) : _data["organization"];
-            if (Array.isArray(_data["organizationsIds"])) {
-                this.organizationsIds = [] as any;
-                for (let item of _data["organizationsIds"])
-                    this.organizationsIds!.push(item);
-            }
-            this.acceptsMarketing = _data["acceptsMarketing"];
-            this.defaultAddress = _data["defaultAddress"] ? Address.fromJS(_data["defaultAddress"]) : _data["defaultAddress"];
-            if (Array.isArray(_data["securityAccounts"])) {
-                this.securityAccounts = [] as any;
-                for (let item of _data["securityAccounts"])
-                    this.securityAccounts!.push(SecurityAccount.fromJS(item));
-            }
-            if (Array.isArray(_data["phoneNumbers"])) {
-                this.phoneNumbers = [] as any;
-                for (let item of _data["phoneNumbers"])
-                    this.phoneNumbers!.push(item);
-            }
-            (<any>this).email = _data["email"];
-            if (Array.isArray(_data["emails"])) {
-                this.emails = [] as any;
-                for (let item of _data["emails"])
-                    this.emails!.push(item);
-            }
-            this.name = _data["name"];
-            this.memberType = _data["memberType"];
-            if (Array.isArray(_data["addresses"])) {
-                this.addresses = [] as any;
-                for (let item of _data["addresses"])
-                    this.addresses!.push(Address.fromJS(item));
-            }
-            if (Array.isArray(_data["phones"])) {
-                this.phones = [] as any;
-                for (let item of _data["phones"])
-                    this.phones!.push(item);
-            }
-            if (Array.isArray(_data["groups"])) {
-                this.groups = [] as any;
-                for (let item of _data["groups"])
-                    this.groups!.push(item);
-            }
-            if (Array.isArray(_data["userGroups"])) {
-                this.userGroups = [] as any;
-                for (let item of _data["userGroups"])
-                    this.userGroups!.push(item);
-            }
-            this.id = _data["id"];
-        }
-    }
-
-    static fromJS(data: any): Contact {
-        data = typeof data === 'object' ? data : {};
-        let result = new Contact();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["fullName"] = this.fullName;
-        data["firstName"] = this.firstName;
-        data["lastName"] = this.lastName;
-        data["middleName"] = this.middleName;
-        data["salutation"] = this.salutation;
-        data["photoUrl"] = this.photoUrl;
-        data["timeZone"] = this.timeZone;
-        data["defaultLanguage"] = this.defaultLanguage;
-        data["defaultBillingAddress"] = this.defaultBillingAddress ? this.defaultBillingAddress.toJSON() : this.defaultBillingAddress;
-        data["defaultShippingAddress"] = this.defaultShippingAddress ? this.defaultShippingAddress.toJSON() : this.defaultShippingAddress;
-        data["organizationId"] = this.organizationId;
-        data["organization"] = this.organization ? this.organization.toJSON() : this.organization;
-        if (Array.isArray(this.organizationsIds)) {
-            data["organizationsIds"] = [];
-            for (let item of this.organizationsIds)
-                data["organizationsIds"].push(item);
-        }
-        data["acceptsMarketing"] = this.acceptsMarketing;
-        data["defaultAddress"] = this.defaultAddress ? this.defaultAddress.toJSON() : this.defaultAddress;
-        if (Array.isArray(this.securityAccounts)) {
-            data["securityAccounts"] = [];
-            for (let item of this.securityAccounts)
-                data["securityAccounts"].push(item.toJSON());
-        }
-        if (Array.isArray(this.phoneNumbers)) {
-            data["phoneNumbers"] = [];
-            for (let item of this.phoneNumbers)
-                data["phoneNumbers"].push(item);
-        }
-        data["email"] = this.email;
-        if (Array.isArray(this.emails)) {
-            data["emails"] = [];
-            for (let item of this.emails)
-                data["emails"].push(item);
-        }
-        data["name"] = this.name;
-        data["memberType"] = this.memberType;
-        if (Array.isArray(this.addresses)) {
-            data["addresses"] = [];
-            for (let item of this.addresses)
-                data["addresses"].push(item.toJSON());
-        }
-        if (Array.isArray(this.phones)) {
-            data["phones"] = [];
-            for (let item of this.phones)
-                data["phones"].push(item);
-        }
-        if (Array.isArray(this.groups)) {
-            data["groups"] = [];
-            for (let item of this.groups)
-                data["groups"].push(item);
-        }
-        if (Array.isArray(this.userGroups)) {
-            data["userGroups"] = [];
-            for (let item of this.userGroups)
-                data["userGroups"].push(item);
-        }
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IContact {
-    fullName?: string | null;
-    firstName?: string | null;
-    lastName?: string | null;
-    middleName?: string | null;
-    salutation?: string | null;
-    photoUrl?: string | null;
-    timeZone?: string | null;
-    defaultLanguage?: string | null;
-    defaultBillingAddress?: Address | null;
-    defaultShippingAddress?: Address | null;
-    organizationId?: string | null;
-    organization?: Organization | null;
-    organizationsIds?: string[] | null;
-    acceptsMarketing?: boolean;
-    defaultAddress?: Address | null;
-    securityAccounts?: SecurityAccount[] | null;
-    phoneNumbers?: string[] | null;
-    email?: string | null;
-    emails?: string[] | null;
-    name?: string | null;
-    memberType?: string | null;
-    addresses?: Address[] | null;
-    phones?: string[] | null;
-    groups?: string[] | null;
-    userGroups?: string[] | null;
-    id?: string | null;
-}
-
-export class Role implements IRole {
-    name?: string | null;
-    permissions?: string[] | null;
-    id?: string | null;
-
-    constructor(data?: IRole) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.name = _data["name"];
-            if (Array.isArray(_data["permissions"])) {
-                this.permissions = [] as any;
-                for (let item of _data["permissions"])
-                    this.permissions!.push(item);
-            }
-            this.id = _data["id"];
-        }
-    }
-
-    static fromJS(data: any): Role {
-        data = typeof data === 'object' ? data : {};
-        let result = new Role();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        if (Array.isArray(this.permissions)) {
-            data["permissions"] = [];
-            for (let item of this.permissions)
-                data["permissions"].push(item);
-        }
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IRole {
-    name?: string | null;
-    permissions?: string[] | null;
-    id?: string | null;
-}
-
 export class Language implements ILanguage {
     readonly isInvariant?: boolean;
     cultureName?: string | null;
@@ -6015,6 +5476,458 @@ export interface IDynamicProperty {
     dictionaryValues?: DynamicPropertyDictionaryItem[] | null;
     dictionaryItems?: DynamicPropertyDictionaryItem[] | null;
     indexKey?: string | null;
+    id?: string | null;
+}
+
+export class Organization implements IOrganization {
+    phoneNumbers?: string[] | null;
+    readonly email?: string | null;
+    emails?: string[] | null;
+    name?: string | null;
+    memberType?: string | null;
+    addresses?: Address[] | null;
+    phones?: string[] | null;
+    groups?: string[] | null;
+    userGroups?: string[] | null;
+    dynamicProperties?: DynamicProperty[] | null;
+    id?: string | null;
+
+    constructor(data?: IOrganization) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["phoneNumbers"])) {
+                this.phoneNumbers = [] as any;
+                for (let item of _data["phoneNumbers"])
+                    this.phoneNumbers!.push(item);
+            }
+            (<any>this).email = _data["email"];
+            if (Array.isArray(_data["emails"])) {
+                this.emails = [] as any;
+                for (let item of _data["emails"])
+                    this.emails!.push(item);
+            }
+            this.name = _data["name"];
+            this.memberType = _data["memberType"];
+            if (Array.isArray(_data["addresses"])) {
+                this.addresses = [] as any;
+                for (let item of _data["addresses"])
+                    this.addresses!.push(Address.fromJS(item));
+            }
+            if (Array.isArray(_data["phones"])) {
+                this.phones = [] as any;
+                for (let item of _data["phones"])
+                    this.phones!.push(item);
+            }
+            if (Array.isArray(_data["groups"])) {
+                this.groups = [] as any;
+                for (let item of _data["groups"])
+                    this.groups!.push(item);
+            }
+            if (Array.isArray(_data["userGroups"])) {
+                this.userGroups = [] as any;
+                for (let item of _data["userGroups"])
+                    this.userGroups!.push(item);
+            }
+            if (Array.isArray(_data["dynamicProperties"])) {
+                this.dynamicProperties = [] as any;
+                for (let item of _data["dynamicProperties"])
+                    this.dynamicProperties!.push(DynamicProperty.fromJS(item));
+            }
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): Organization {
+        data = typeof data === 'object' ? data : {};
+        let result = new Organization();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.phoneNumbers)) {
+            data["phoneNumbers"] = [];
+            for (let item of this.phoneNumbers)
+                data["phoneNumbers"].push(item);
+        }
+        data["email"] = this.email;
+        if (Array.isArray(this.emails)) {
+            data["emails"] = [];
+            for (let item of this.emails)
+                data["emails"].push(item);
+        }
+        data["name"] = this.name;
+        data["memberType"] = this.memberType;
+        if (Array.isArray(this.addresses)) {
+            data["addresses"] = [];
+            for (let item of this.addresses)
+                data["addresses"].push(item.toJSON());
+        }
+        if (Array.isArray(this.phones)) {
+            data["phones"] = [];
+            for (let item of this.phones)
+                data["phones"].push(item);
+        }
+        if (Array.isArray(this.groups)) {
+            data["groups"] = [];
+            for (let item of this.groups)
+                data["groups"].push(item);
+        }
+        if (Array.isArray(this.userGroups)) {
+            data["userGroups"] = [];
+            for (let item of this.userGroups)
+                data["userGroups"].push(item);
+        }
+        if (Array.isArray(this.dynamicProperties)) {
+            data["dynamicProperties"] = [];
+            for (let item of this.dynamicProperties)
+                data["dynamicProperties"].push(item.toJSON());
+        }
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IOrganization {
+    phoneNumbers?: string[] | null;
+    email?: string | null;
+    emails?: string[] | null;
+    name?: string | null;
+    memberType?: string | null;
+    addresses?: Address[] | null;
+    phones?: string[] | null;
+    groups?: string[] | null;
+    userGroups?: string[] | null;
+    dynamicProperties?: DynamicProperty[] | null;
+    id?: string | null;
+}
+
+export class SecurityAccount implements ISecurityAccount {
+    userName?: string | null;
+    isLockedOut?: boolean;
+    roles?: string[] | null;
+    id?: string | null;
+
+    constructor(data?: ISecurityAccount) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userName = _data["userName"];
+            this.isLockedOut = _data["isLockedOut"];
+            if (Array.isArray(_data["roles"])) {
+                this.roles = [] as any;
+                for (let item of _data["roles"])
+                    this.roles!.push(item);
+            }
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): SecurityAccount {
+        data = typeof data === 'object' ? data : {};
+        let result = new SecurityAccount();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userName"] = this.userName;
+        data["isLockedOut"] = this.isLockedOut;
+        if (Array.isArray(this.roles)) {
+            data["roles"] = [];
+            for (let item of this.roles)
+                data["roles"].push(item);
+        }
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ISecurityAccount {
+    userName?: string | null;
+    isLockedOut?: boolean;
+    roles?: string[] | null;
+    id?: string | null;
+}
+
+export class Contact implements IContact {
+    fullName?: string | null;
+    firstName?: string | null;
+    lastName?: string | null;
+    middleName?: string | null;
+    salutation?: string | null;
+    photoUrl?: string | null;
+    timeZone?: string | null;
+    defaultLanguage?: string | null;
+    defaultBillingAddress?: Address | null;
+    defaultShippingAddress?: Address | null;
+    organizationId?: string | null;
+    organization?: Organization | null;
+    organizationsIds?: string[] | null;
+    acceptsMarketing?: boolean;
+    defaultAddress?: Address | null;
+    securityAccounts?: SecurityAccount[] | null;
+    phoneNumbers?: string[] | null;
+    readonly email?: string | null;
+    emails?: string[] | null;
+    name?: string | null;
+    memberType?: string | null;
+    addresses?: Address[] | null;
+    phones?: string[] | null;
+    groups?: string[] | null;
+    userGroups?: string[] | null;
+    dynamicProperties?: DynamicProperty[] | null;
+    id?: string | null;
+
+    constructor(data?: IContact) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.fullName = _data["fullName"];
+            this.firstName = _data["firstName"];
+            this.lastName = _data["lastName"];
+            this.middleName = _data["middleName"];
+            this.salutation = _data["salutation"];
+            this.photoUrl = _data["photoUrl"];
+            this.timeZone = _data["timeZone"];
+            this.defaultLanguage = _data["defaultLanguage"];
+            this.defaultBillingAddress = _data["defaultBillingAddress"] ? Address.fromJS(_data["defaultBillingAddress"]) : _data["defaultBillingAddress"];
+            this.defaultShippingAddress = _data["defaultShippingAddress"] ? Address.fromJS(_data["defaultShippingAddress"]) : _data["defaultShippingAddress"];
+            this.organizationId = _data["organizationId"];
+            this.organization = _data["organization"] ? Organization.fromJS(_data["organization"]) : _data["organization"];
+            if (Array.isArray(_data["organizationsIds"])) {
+                this.organizationsIds = [] as any;
+                for (let item of _data["organizationsIds"])
+                    this.organizationsIds!.push(item);
+            }
+            this.acceptsMarketing = _data["acceptsMarketing"];
+            this.defaultAddress = _data["defaultAddress"] ? Address.fromJS(_data["defaultAddress"]) : _data["defaultAddress"];
+            if (Array.isArray(_data["securityAccounts"])) {
+                this.securityAccounts = [] as any;
+                for (let item of _data["securityAccounts"])
+                    this.securityAccounts!.push(SecurityAccount.fromJS(item));
+            }
+            if (Array.isArray(_data["phoneNumbers"])) {
+                this.phoneNumbers = [] as any;
+                for (let item of _data["phoneNumbers"])
+                    this.phoneNumbers!.push(item);
+            }
+            (<any>this).email = _data["email"];
+            if (Array.isArray(_data["emails"])) {
+                this.emails = [] as any;
+                for (let item of _data["emails"])
+                    this.emails!.push(item);
+            }
+            this.name = _data["name"];
+            this.memberType = _data["memberType"];
+            if (Array.isArray(_data["addresses"])) {
+                this.addresses = [] as any;
+                for (let item of _data["addresses"])
+                    this.addresses!.push(Address.fromJS(item));
+            }
+            if (Array.isArray(_data["phones"])) {
+                this.phones = [] as any;
+                for (let item of _data["phones"])
+                    this.phones!.push(item);
+            }
+            if (Array.isArray(_data["groups"])) {
+                this.groups = [] as any;
+                for (let item of _data["groups"])
+                    this.groups!.push(item);
+            }
+            if (Array.isArray(_data["userGroups"])) {
+                this.userGroups = [] as any;
+                for (let item of _data["userGroups"])
+                    this.userGroups!.push(item);
+            }
+            if (Array.isArray(_data["dynamicProperties"])) {
+                this.dynamicProperties = [] as any;
+                for (let item of _data["dynamicProperties"])
+                    this.dynamicProperties!.push(DynamicProperty.fromJS(item));
+            }
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): Contact {
+        data = typeof data === 'object' ? data : {};
+        let result = new Contact();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["fullName"] = this.fullName;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["middleName"] = this.middleName;
+        data["salutation"] = this.salutation;
+        data["photoUrl"] = this.photoUrl;
+        data["timeZone"] = this.timeZone;
+        data["defaultLanguage"] = this.defaultLanguage;
+        data["defaultBillingAddress"] = this.defaultBillingAddress ? this.defaultBillingAddress.toJSON() : this.defaultBillingAddress;
+        data["defaultShippingAddress"] = this.defaultShippingAddress ? this.defaultShippingAddress.toJSON() : this.defaultShippingAddress;
+        data["organizationId"] = this.organizationId;
+        data["organization"] = this.organization ? this.organization.toJSON() : this.organization;
+        if (Array.isArray(this.organizationsIds)) {
+            data["organizationsIds"] = [];
+            for (let item of this.organizationsIds)
+                data["organizationsIds"].push(item);
+        }
+        data["acceptsMarketing"] = this.acceptsMarketing;
+        data["defaultAddress"] = this.defaultAddress ? this.defaultAddress.toJSON() : this.defaultAddress;
+        if (Array.isArray(this.securityAccounts)) {
+            data["securityAccounts"] = [];
+            for (let item of this.securityAccounts)
+                data["securityAccounts"].push(item.toJSON());
+        }
+        if (Array.isArray(this.phoneNumbers)) {
+            data["phoneNumbers"] = [];
+            for (let item of this.phoneNumbers)
+                data["phoneNumbers"].push(item);
+        }
+        data["email"] = this.email;
+        if (Array.isArray(this.emails)) {
+            data["emails"] = [];
+            for (let item of this.emails)
+                data["emails"].push(item);
+        }
+        data["name"] = this.name;
+        data["memberType"] = this.memberType;
+        if (Array.isArray(this.addresses)) {
+            data["addresses"] = [];
+            for (let item of this.addresses)
+                data["addresses"].push(item.toJSON());
+        }
+        if (Array.isArray(this.phones)) {
+            data["phones"] = [];
+            for (let item of this.phones)
+                data["phones"].push(item);
+        }
+        if (Array.isArray(this.groups)) {
+            data["groups"] = [];
+            for (let item of this.groups)
+                data["groups"].push(item);
+        }
+        if (Array.isArray(this.userGroups)) {
+            data["userGroups"] = [];
+            for (let item of this.userGroups)
+                data["userGroups"].push(item);
+        }
+        if (Array.isArray(this.dynamicProperties)) {
+            data["dynamicProperties"] = [];
+            for (let item of this.dynamicProperties)
+                data["dynamicProperties"].push(item.toJSON());
+        }
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IContact {
+    fullName?: string | null;
+    firstName?: string | null;
+    lastName?: string | null;
+    middleName?: string | null;
+    salutation?: string | null;
+    photoUrl?: string | null;
+    timeZone?: string | null;
+    defaultLanguage?: string | null;
+    defaultBillingAddress?: Address | null;
+    defaultShippingAddress?: Address | null;
+    organizationId?: string | null;
+    organization?: Organization | null;
+    organizationsIds?: string[] | null;
+    acceptsMarketing?: boolean;
+    defaultAddress?: Address | null;
+    securityAccounts?: SecurityAccount[] | null;
+    phoneNumbers?: string[] | null;
+    email?: string | null;
+    emails?: string[] | null;
+    name?: string | null;
+    memberType?: string | null;
+    addresses?: Address[] | null;
+    phones?: string[] | null;
+    groups?: string[] | null;
+    userGroups?: string[] | null;
+    dynamicProperties?: DynamicProperty[] | null;
+    id?: string | null;
+}
+
+export class Role implements IRole {
+    name?: string | null;
+    permissions?: string[] | null;
+    id?: string | null;
+
+    constructor(data?: IRole) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            if (Array.isArray(_data["permissions"])) {
+                this.permissions = [] as any;
+                for (let item of _data["permissions"])
+                    this.permissions!.push(item);
+            }
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): Role {
+        data = typeof data === 'object' ? data : {};
+        let result = new Role();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        if (Array.isArray(this.permissions)) {
+            data["permissions"] = [];
+            for (let item of this.permissions)
+                data["permissions"].push(item);
+        }
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IRole {
+    name?: string | null;
+    permissions?: string[] | null;
     id?: string | null;
 }
 
@@ -7598,6 +7511,7 @@ export class Vendor implements IVendor {
     phones?: string[] | null;
     groups?: string[] | null;
     userGroups?: string[] | null;
+    dynamicProperties?: DynamicProperty[] | null;
     id?: string | null;
 
     constructor(data?: IVendor) {
@@ -7654,6 +7568,11 @@ export class Vendor implements IVendor {
                 this.userGroups = [] as any;
                 for (let item of _data["userGroups"])
                     this.userGroups!.push(item);
+            }
+            if (Array.isArray(_data["dynamicProperties"])) {
+                this.dynamicProperties = [] as any;
+                for (let item of _data["dynamicProperties"])
+                    this.dynamicProperties!.push(DynamicProperty.fromJS(item));
             }
             this.id = _data["id"];
         }
@@ -7712,6 +7631,11 @@ export class Vendor implements IVendor {
             for (let item of this.userGroups)
                 data["userGroups"].push(item);
         }
+        if (Array.isArray(this.dynamicProperties)) {
+            data["dynamicProperties"] = [];
+            for (let item of this.dynamicProperties)
+                data["dynamicProperties"].push(item.toJSON());
+        }
         data["id"] = this.id;
         return data; 
     }
@@ -7734,6 +7658,7 @@ export interface IVendor {
     phones?: string[] | null;
     groups?: string[] | null;
     userGroups?: string[] | null;
+    dynamicProperties?: DynamicProperty[] | null;
     id?: string | null;
 }
 
@@ -8292,8 +8217,6 @@ export class Inventory implements IInventory {
     backorderAvailabilityDate?: Date | null;
     allowPreorder?: boolean | null;
     allowBackorder?: boolean | null;
-    preorderQuantity?: number | null;
-    backorderQuantity?: number | null;
     status?: InventoryStatus2;
     fulfillmentCenterId?: string | null;
     inStockQuantity?: number | null;
@@ -8315,8 +8238,6 @@ export class Inventory implements IInventory {
             this.backorderAvailabilityDate = _data["backorderAvailabilityDate"] ? new Date(_data["backorderAvailabilityDate"].toString()) : _data["backorderAvailabilityDate"];
             this.allowPreorder = _data["allowPreorder"];
             this.allowBackorder = _data["allowBackorder"];
-            this.preorderQuantity = _data["preorderQuantity"];
-            this.backorderQuantity = _data["backorderQuantity"];
             this.status = _data["status"];
             this.fulfillmentCenterId = _data["fulfillmentCenterId"];
             this.inStockQuantity = _data["inStockQuantity"];
@@ -8338,8 +8259,6 @@ export class Inventory implements IInventory {
         data["backorderAvailabilityDate"] = this.backorderAvailabilityDate ? this.backorderAvailabilityDate.toISOString() : this.backorderAvailabilityDate;
         data["allowPreorder"] = this.allowPreorder;
         data["allowBackorder"] = this.allowBackorder;
-        data["preorderQuantity"] = this.preorderQuantity;
-        data["backorderQuantity"] = this.backorderQuantity;
         data["status"] = this.status;
         data["fulfillmentCenterId"] = this.fulfillmentCenterId;
         data["inStockQuantity"] = this.inStockQuantity;
@@ -8354,8 +8273,6 @@ export interface IInventory {
     backorderAvailabilityDate?: Date | null;
     allowPreorder?: boolean | null;
     allowBackorder?: boolean | null;
-    preorderQuantity?: number | null;
-    backorderQuantity?: number | null;
     status?: InventoryStatus2;
     fulfillmentCenterId?: string | null;
     inStockQuantity?: number | null;
@@ -8493,7 +8410,6 @@ export class Product implements IProduct {
     catalogId?: string | null;
     categoryId?: string | null;
     outline?: string | null;
-    outlines?: string | null;
     seoPath?: string | null;
     url?: string | null;
     indexingDate?: Date | null;
@@ -8570,7 +8486,6 @@ export class Product implements IProduct {
             this.catalogId = _data["catalogId"];
             this.categoryId = _data["categoryId"];
             this.outline = _data["outline"];
-            this.outlines = _data["outlines"];
             this.seoPath = _data["seoPath"];
             this.url = _data["url"];
             this.indexingDate = _data["indexingDate"] ? new Date(_data["indexingDate"].toString()) : _data["indexingDate"];
@@ -8687,7 +8602,6 @@ export class Product implements IProduct {
         data["catalogId"] = this.catalogId;
         data["categoryId"] = this.categoryId;
         data["outline"] = this.outline;
-        data["outlines"] = this.outlines;
         data["seoPath"] = this.seoPath;
         data["url"] = this.url;
         data["indexingDate"] = this.indexingDate ? this.indexingDate.toISOString() : this.indexingDate;
@@ -8797,7 +8711,6 @@ export interface IProduct {
     catalogId?: string | null;
     categoryId?: string | null;
     outline?: string | null;
-    outlines?: string | null;
     seoPath?: string | null;
     url?: string | null;
     indexingDate?: Date | null;

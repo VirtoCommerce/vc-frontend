@@ -7,29 +7,21 @@
 <div class="row mt-3">
     <div id="app-cart-sidebar"></div>
     {% if has_sidebar %}
-    <div class="d-flex justify-content-between filter-mobile">
-      <div class="d-flex flex-wrap justify-content-between">
-        {% include 'collection-sorting' %}
-        <!-- {% include 'collection-views' %} -->
-      </div>
-      <button class="d-lg-none btn btn-primary justify-content-between filter-button" onclick="toggleFiltersSidebar()">{{ 'collections.filter.title' | t }}</button>
-    </div>
-    <aside class="col-lg-2 col-xl-2 col-md-4" id="collectionFilters">
+    <aside class="col-lg-2" id="collectionFilters">
       {% include 'collection-sidebar' %}
     </aside>
     {% endif %}
 
-    <div class="col-7 {% if has_sidebar %}col-lg-8{% endif %} product-grid col-xl-5 col-md-8 col-sm-12">
+    <div class="col-12 {% if has_sidebar %}col-lg-10{% endif %}">
 
-        <header class="d-flex flex-column mb-4 sorting-header">
-            <div class="d-flex flex-wrap flex-lg-row flex-column">
+        <header class="d-flex flex-column mb-4">
+            <div class="d-flex flex-wrap flex-lg-row flex-column justify-content-between">
               <h1>{{ collection.title }}</h1>
-              <div class="d-flex justify-content-between filter-desktop">
+              <div class="d-flex justify-content-between">
                 <div class="d-flex flex-wrap justify-content-between">
                   {% include 'collection-sorting' %}
-                  <!-- {% include 'collection-views' %} -->
                 </div>
-                <button class="d-lg-none btn btn-primary justify-content-between filter-button" onclick="toggleFiltersSidebar()">{{ 'collections.filter.title' | t }}</button>
+                <button class="d-lg-none btn btn-primary align-self-center" onclick="toggleFiltersSidebar()">{{ 'collections.filter.title' | t }}</button>
               </div>
             </div>
             {% if page_description.empty? == false %}
@@ -44,9 +36,9 @@
             {% for product in product_search_result.products %}
 
             {% if has_sidebar %}
-            {% assign grid_item_width = 'col-xl-3 col-lg-4 col-md-6 col-sm-6 product-card' %}
+            {% assign grid_item_width = 'col-lg-3 col-md-4 col-sm-6' %}
             {% else %}
-            {% assign grid_item_width = 'col-xl-3 col-lg-4 col-md-6 col-sm-6 product-card' %}
+            {% assign grid_item_width = 'col-lg-2 col-md-4 col-sm-6' %}
             {% endif %}
             {% include 'product-grid-item' %}
 

@@ -1,6 +1,0 @@
-<input type="checkbox" class="form-check-input"
-    {% if item.fieldId != '' %} id="{{item.fieldId}}" {% endif %}
-    {% if item.fieldName != '' %} name="{{item.fieldName}}" {% endif %}
-    {% include 'blocks/form/input-validation-attributes' inputItem: item %}
- />
-<label class="form-check-label" {% if item.fieldId != '' %} for="{{item.fieldId}}" {% endif %}>{{item.labelText}}</label>

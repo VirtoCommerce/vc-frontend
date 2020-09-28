@@ -1,8 +1,8 @@
 <template>
-  <div class="mt-3 table-column">
+  <div class="mt-3">
     <draft-details-sidebar :show-sidebar="showDraftDetailsSidebar" @sidebar-closed="sidebarClosed"></draft-details-sidebar>
     <add-draft-modal @draftAdded="draftAdded($event)"></add-draft-modal>
-    <div class="row flex-sm-row flex-column justify-content-between drafts-row-search">
+    <div class="row flex-sm-row flex-column justify-content-between">
       <drafts-filter
         class="col col-sm-6 col-md-5 col-lg-3"
         :search-criteria="searchCriteria"
@@ -10,7 +10,7 @@
       <div class="col col-sm-auto col-md-auto col-lg-auto align-self-sm-end mt-3">
         <b-button
           v-b-modal.addDraftModal
-          variant="outline-primary add-button">
+          variant="outline-primary">
           {{ $t("account.drafts.add-draft.add-draft") }}
         </b-button>
       </div>
@@ -55,10 +55,8 @@
             aria-controls="drafts-table"
             :total-rows="drafts.totalCount"
             :per-page="searchCriteria.pageSize"
-            class="display-by"
             @change="pageChanged($event)"></b-pagination>
           <div>
-            Display by&nbsp;&nbsp;
             <b-dropdown
               id="page-sizes"
               class="form-control p-0"

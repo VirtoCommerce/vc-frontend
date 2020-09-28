@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-3 table-column">
+  <div class="mt-3">
     <payments-filter :search-criteria="searchCriteria" @searchCriteriaChanged="searchCriteriaChanged"></payments-filter>
     <div class="mt-3">
       <p>{{ $t("account.payments.grid.text-above") }}</p>
@@ -31,10 +31,8 @@
             aria-controls="payments-table"
             :total-rows="payments.totalCount"
             :per-page="searchCriteria.pageSize"
-            class="display-by"
             @change="pageChanged($event)"></b-pagination>
           <div>
-            Display by&nbsp;&nbsp;
             <b-dropdown
               id="page-sizes"
               class="form-control p-0"

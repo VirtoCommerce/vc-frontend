@@ -8,8 +8,8 @@
     <div slot="modal-title">
       {{ $t("account.orders.order-details.title") }}
     </div>
-    <div role="tablist" class="tabs-accord">
-      <b-card no-body class="mb-3 border-0">
+    <div role="tablist">
+      <b-card no-body class="mb-1 border-0">
         <b-card-header v-b-toggle.accordion-1
                        header-tag="header"
                        class="p-3 bg-white"

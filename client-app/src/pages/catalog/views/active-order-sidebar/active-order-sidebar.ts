@@ -71,7 +71,7 @@ export default class ActiveOrderSidebar extends Vue {
         title: i18n.t("shopping-cart.confirm-delete-modal.title") as string,
         okTitle: i18n.t("shopping-cart.confirm-delete-modal.ok") as string,
         cancelTitle: i18n.t("shopping-cart.confirm-delete-modal.cancel") as string,
-        footerClass: ["p-3", "flex-row-reverse justify-content-start"],
+        footerClass: ["p-2", "flex-row-reverse justify-content-start"],
         hideHeaderClose: false,
         centered: true
       }
@@ -89,7 +89,7 @@ export default class ActiveOrderSidebar extends Vue {
       title: i18n.t("shopping-cart.confirm-clear-modal.title") as string,
       okTitle: i18n.t("shopping-cart.confirm-clear-modal.ok") as string,
       cancelTitle: i18n.t("shopping-cart.confirm-clear-modal.cancel") as string,
-      footerClass: ["p-23", "flex-row-reverse justify-content-start"],
+      footerClass: ["p-2", "flex-row-reverse justify-content-start"],
       hideHeaderClose: false,
       centered: true
     });
@@ -111,7 +111,7 @@ export default class ActiveOrderSidebar extends Vue {
         title: i18n.t("shopping-cart.confirm-checkout-modal.title") as string,
         okTitle: i18n.t("shopping-cart.confirm-checkout-modal.ok") as string,
         cancelTitle: i18n.t("shopping-cart.confirm-checkout-modal.cancel") as string,
-        footerClass: ["p-3", "justify-content-end"],
+        footerClass: ["p-2", "flex-row-reverse justify-content-start"],
         hideHeaderClose: false,
         centered: true
       }

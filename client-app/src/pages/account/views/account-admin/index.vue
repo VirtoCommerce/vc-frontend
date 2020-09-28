@@ -1,5 +1,5 @@
 <template>
-  <div class="account mb-3 mt-4">
+  <div class="account mb-3 mt-3">
     <ul class="nav nav-tabs border-primary">
       <li class="nav-item">
         <router-link to="details"

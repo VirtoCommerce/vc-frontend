@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex">
-    <button class="btn btn-sm text-primary mp-controls minus-control" @click="decrement()">
+    <button class="btn btn-sm text-primary" @click="decrement()">
       <font-awesome-icon :icon="minusIcon" size="lg"></font-awesome-icon>
     </button>
     <div>
@@ -11,7 +11,7 @@
              @blur="textChanged($event.target.value)"
              @keyup.enter="textChanged($event.target.value)">
     </div>
-    <button class="btn btn-sm text-primary mp-controls plus-control" @click="increment()">
+    <button class="btn btn-sm text-primary" @click="increment()">
       <font-awesome-icon :icon="plusIcon" size="lg"></font-awesome-icon>
     </button>
   </div>
