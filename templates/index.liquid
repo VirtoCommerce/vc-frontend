@@ -1,4 +1,6 @@
+{% product_search_result = 'home-page.graphql' | graphql_data_source %}
 {{ paginator =  product_search_result.products | paginate }}
+
 {% include 'search-result' %}
 
 

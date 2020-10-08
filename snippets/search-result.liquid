@@ -1,66 +1,65 @@
-{% assign has_sidebar = false %}
-{% unless product_search_result.aggregations.empty? %}
-  {% assign has_sidebar = true %}
-{% endunless %}
-
 {% include 'breadcrumb' %}
 <div class="row mt-3">
-    <div id="app-cart-sidebar"></div>
-    {% if has_sidebar %}
-    <aside class="col-lg-2" id="collectionFilters">
-      {% include 'collection-sidebar' %}
-    </aside>
-    {% endif %}
 
-    <div class="col-12 {% if has_sidebar %}col-lg-10{% endif %}">
+  <div id="app-cart-sidebar"></div>
 
-        <header class="d-flex flex-column mb-4">
-            <div class="d-flex flex-wrap flex-lg-row flex-column justify-content-between">
-              <h1>{{ collection.title }}</h1>
-              <div class="d-flex justify-content-between">
-                <div class="d-flex flex-wrap justify-content-between">
-                  {% include 'collection-sorting' %}
-                </div>
-                <button class="d-lg-none btn btn-primary align-self-center" onclick="toggleFiltersSidebar()">{{ 'collections.filter.title' | t }}</button>
-              </div>
-            </div>
-            {% if page_description.empty? == false %}
-              <div class="mt-2">
-                {{ page_description }}
-              </div>
-            {% endif %}
-        </header>
+  <aside class="col-lg-2" id="collectionFilters">
+    {% include 'collection-sidebar' %}
+  </aside>
 
-        <div class="row">
-            {% if product_search_result.products.empty? == false %}
-            {% for product in product_search_result.products %}
+  <div class="col-12 col-lg-10">
 
-            {% if has_sidebar %}
+    <header class="d-flex flex-column mb-4">
+      <div class="d-flex flex-wrap flex-lg-row flex-column justify-content-between">
+        <h1>{{ product_search_result.category.name }}</h1>
+        <div class="d-flex justify-content-between">
+          <div class="d-flex flex-wrap justify-content-between">
+            {% comment %}
+              {% include 'collection-sorting' %}
+            {% endcomment %}
+          </div>
+          <button class="d-lg-none btn btn-primary align-self-center" onclick="toggleFiltersSidebar()">{{ 'collections.filter.title' | t }}</button>
+        </div>
+      </div>
+      {% unless product_search_result.category.seo_info.meta_description.empty? %}
+        <div class="mt-2">
+          {{ product_search_result.category.seo_info.meta_description }}
+        </div>
+      {% endunless %}
+
+    </header>
+
+    <div class="row">
+      {% if product_search_result.products.empty? == false %}
+        {% for product in product_search_result.products.items %}
+          {% if has_sidebar %}
             {% assign grid_item_width = 'col-lg-3 col-md-4 col-sm-6' %}
-            {% else %}
+          {% else %}
             {% assign grid_item_width = 'col-lg-2 col-md-4 col-sm-6' %}
-            {% endif %}
-            {% include 'product-grid-item' %}
+          {% endif %}
+          {% include 'product-grid-item' %}
 
-            {% endfor %}
+        {% endfor %}
 
-            {% else %}
-            <p class="col-12">{{ 'search.no_results' | t }}</p>
-            {% endif %}
-        </div>
-
-        <div class="d-flex flex-wrap justify-content-between">
-          {% include 'pagination-custom' %}
-          {% include 'page-size' %}
-        </div>
-
+      {% else %}
+        <p class="col-12">{{ 'search.no_results' | t }}</p>
+      {% endif %}
     </div>
+
+    <div class="d-flex flex-wrap justify-content-between">
+      {% include 'pagination-custom' %}
+      {% comment %}
+        {% include 'page-size' %}
+      {% endcomment %}
+    </div>
+
+  </div>
 
 </div>
 <script>
-function toggleFiltersSidebar() {
-  var sidebar = document.getElementById("collectionFilters");
-  sidebar.classList.toggle("d-none");
-  sidebar.classList.toggle("d-lg-block");
-}
+  function toggleFiltersSidebar() {
+    var sidebar = document.getElementById("collectionFilters");
+    sidebar.classList.toggle("d-none");
+    sidebar.classList.toggle("d-lg-block");
+  }
 </script>

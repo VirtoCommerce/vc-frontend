@@ -2,19 +2,17 @@
     <span class="d-flex">
         {% if on_sale %}
         <del class="small mr-1 align-self-center">
-          {% assign price = product.compare_at_price %}
-          {% include 'price' %}
+          {{ product.price.list.formatted_amount }} 
         </del>
         {% endif %}
         <strong class="font-weight-bold h5 align-self-center">
-          {% assign price = product.price %}
-          {% include 'price' %}
+          {{ product.price.sale.formatted_amount }} 
         </strong>
     </span>
     {% if on_sale %}
     <strong class="border border-primary mr-auto text-primary text-uppercase font-weight-bold p-1">
-        {% assign compare_price = product.compare_at_price %}
-        {% assign product_price = product.price.actual_price %}
+        {% assign compare_price = product.price.list.amount %}
+        {% assign product_price = product.price.sale.amount %}
         {% include 'price-sale' %}
     </strong>
     {% endif %}

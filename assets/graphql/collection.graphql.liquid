@@ -1,0 +1,32 @@
+query {
+  category( currencyCode:"{{ context.current_currency.code }}" 
+            storeId: "{{ context.current_store.id }}"
+            id: "{{ context.slug_routing_data.object_id }}"
+            userId: "{{ context.current_user.id }}")
+      {
+        name
+        slug
+        seoInfo { metaDescription }
+      }
+
+    products( currencyCode:"{{ context.current_currency.code }}" 
+              storeId: "{{ context.current_store.id }}"
+              filter: "category.subtree:{{ context.current_store.catalog }}/{{ context.slug_routing_data.object_id }}" 
+              query: "{{ context.query_string.q }}"
+              userId: "{{ context.current_user.id }}"
+              first: {{ context.page_size }}
+      				after: "{{ context.skip_count }}") {   
+   
+      items
+      {        
+        name   
+        code
+        slug
+        outline
+        imgSrc
+        availabilityData { isActive isAvailable isBuyable isInStock }
+        price { sale { amount formattedAmount } list { amount formattedAmount } }
+      }
+    totalCount
+  }
+}

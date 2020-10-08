@@ -3,26 +3,26 @@
 {% endunless %}
 
 {% assign on_sale = false %}
-{% if product.compare_at_price.amount > product.price.actual_price.amount %}
+{% if product.price.list.amount > product.price.sale.amount %}
   {% assign on_sale = true %}
 {% endif %}
 
 {% assign unavailable = false %}
 {% assign sold_out = false %}
 
-{% if product.buyable and product.in_stock != true %}
+{% if product.availability_data.is_buyable and product.availability_data.is_in_stock != true %}
   {% assign sold_out = true %}
 {% endif %}
 
-{% if product.buyable != true  %}
+{% if product.availability_data.is_buyable != true  %}
   {% assign unavailable = true %}
 {% endif %}
 
 <div class="mb-4 {{ grid_item_width }}">
-  <a href="{{ product.url | absolute_url }}" class="text-decoration-none card h-100">
-    {% if product.featured_image %}
+  <a href="{{ product.slug | absolute_url }}" class="text-decoration-none card h-100">
+    {% if product.img_src %}
       <div class="card-img-top d-flex justify-content-center pt-1">
-        <img class="mw-100" src="{{ product.featured_image | img_url: "168x168" }}" alt="{{ product.featured_image.alt | escape }}"/>
+        <img class="mw-100" src="{{ product.img_src | img_url: "168x168" }}"/>
       </div>
     {% else %}
       <div class="card-img-top d-flex justify-content-center h6 pt-1">
@@ -31,7 +31,7 @@
     {% endif %}
     <div class="card-body pb-1">
       <div class="form-row">
-      {% if product.available %}
+      {% if product.availability_data.is_available %}
       <div class="col">
         <button class="app-add-item-to-cart btn btn-outline-primary col" title="{{ 'products.general.add_to_cart' | t }}" product-id="{{product.id}}"><i class="fas fa-shopping-cart"></i></button>
       </div>
@@ -50,7 +50,7 @@
         </button>
       {% endif %}
     </div>
-      <p class="mt-1">{{ product.title }}</p>
+      <p class="mt-1">{{ product.name }}</p>
     </div>
     <div class="card-footer bg-white border-0">
       {% include 'product-price' %}
