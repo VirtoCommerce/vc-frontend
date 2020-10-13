@@ -10,14 +10,6 @@
           {{ $t('account.menu_titles.details') }}
         </router-link>
       </li>
-      <li v-if="$can($permissions.CanViewUsers)" class="nav-item">
-        <router-link to="users"
-                     active-class="active"
-                     tag="a"
-                     class="nav-link">
-          {{ $t('account.menu_titles.users') }}
-        </router-link>
-      </li>
     </ul>
     <router-view></router-view>
   </div>

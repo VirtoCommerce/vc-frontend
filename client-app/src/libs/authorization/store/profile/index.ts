@@ -1,19 +1,17 @@
 import { Module } from "vuex";
-import { User } from 'core/api/api-clients';
+import { UserType } from "@core/api/graphql/types";
 import { actions } from "./actions";
 import { getters } from "./getters";
 import { mutations } from "./mutations";
 import { ProfileState } from "./types";
 
-
 // initial state
 export const initialState: ProfileState = {
   errors: {},
-  profile: new User,
+  profile: {} as UserType,
   isLoading: false,
   loaded: false
 };
-
 
 const profileModule: Module<ProfileState, any> = {
   namespaced: true,

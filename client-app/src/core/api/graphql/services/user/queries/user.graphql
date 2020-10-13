@@ -1,0 +1,22 @@
+query User (
+  $id: String!
+) {
+  user (
+    id: $id
+  ) 
+  {
+    userName
+    email
+    emailConfirmed
+    photoUrl
+    phoneNumber
+    permissions
+    contact
+    {
+      firstName
+      lastName
+      fullName      
+    }
+  }
+  
+}

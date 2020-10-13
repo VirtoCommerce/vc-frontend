@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop, Emit } from "vue-property-decorator";
-import { CartLineItem } from 'core/api/api-clients';
+import { LineItemType } from "core/api/graphql/types";
 import CartItem from "libs/shopping-cart/components/cart-item/index.vue";
 
 
@@ -13,13 +13,13 @@ import CartItem from "libs/shopping-cart/components/cart-item/index.vue";
 })
 export default class CartItemsList extends Vue {
   @Prop()
-  items!: CartLineItem[];
+  items!: LineItemType[];
 
-  public onItemDeleted(item: CartLineItem): void {
+  public onItemDeleted(item: LineItemType): void {
     this.$emit("item-deleted", item);
   }
 
-  public onQuantityChanged(item: CartLineItem, quantity: number): void {
+  public onQuantityChanged(item: LineItemType, quantity: number): void {
     this.$emit("quantity-changed", item, quantity);
   }
 

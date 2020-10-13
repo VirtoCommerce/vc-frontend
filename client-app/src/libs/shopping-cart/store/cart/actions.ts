@@ -1,10 +1,7 @@
 import { ActionTree } from "vuex";
-import { graphqlCartClient } from 'core/services/api-clients.service';
-import { RootState } from 'store/types';
-import {
-  InputAddItemType,
-  InputChangeCartItemQuantityType
-} from '@core/api/graphql/types';
+import { graphqlCartClient } from "core/services/api-clients.service";
+import { RootState } from "store/types";
+import { InputAddItemType, InputChangeCartItemQuantityType } from "@core/api/graphql/types";
 import {
   FETCH_CART,
   FETCH_CART_ITEMS_COUNT,
@@ -15,14 +12,9 @@ import {
   SHOW_CART_SIDEBAR,
   HIDE_CART_SIDEBAR,
   CHECKOUT
-} from './definitions';
-import {
-  SET_CART,
-  SET_CART_ITEMS_COUNT,
-  SET_SIDEBAR_VISIBLE
-} from './mutations';
+} from "./definitions";
+import { SET_CART, SET_CART_ITEMS_COUNT, SET_SIDEBAR_VISIBLE } from "./mutations";
 import { CartState } from "./types";
-
 
 //actions
 export const actions: ActionTree<CartState, RootState> = {
@@ -37,13 +29,13 @@ export const actions: ActionTree<CartState, RootState> = {
     const result = await graphqlCartClient.getCart();
     context.commit(SET_CART_ITEMS_COUNT, result.itemsCount);
   },
-  async [ADD_ITEM_TO_CART](context , payload: InputAddItemType) {
+  async [ADD_ITEM_TO_CART](context, payload: InputAddItemType) {
     context.commit(FETCH_CART);
     const result = await graphqlCartClient.addItemToCart(payload);
     context.commit(SET_CART_ITEMS_COUNT, result);
     await context.dispatch(FETCH_CART);
   },
-  async [CHANGE_ITEM_QUANTITY](context , payload: InputChangeCartItemQuantityType) {
+  async [CHANGE_ITEM_QUANTITY](context, payload: InputChangeCartItemQuantityType) {
     context.commit(FETCH_CART);
     const itemsCount = await graphqlCartClient.changeCartItem(payload);
     context.commit(SET_CART_ITEMS_COUNT, itemsCount);
@@ -64,10 +56,10 @@ export const actions: ActionTree<CartState, RootState> = {
     //const result = await graphqlCartClient.createOrder(payload);
     await context.dispatch(FETCH_CART);
   },
-  [SHOW_CART_SIDEBAR](context){
+  [SHOW_CART_SIDEBAR](context) {
     context.commit(SET_SIDEBAR_VISIBLE, true);
   },
-  [HIDE_CART_SIDEBAR](context){
+  [HIDE_CART_SIDEBAR](context) {
     context.commit(SET_SIDEBAR_VISIBLE, false);
   }
 };

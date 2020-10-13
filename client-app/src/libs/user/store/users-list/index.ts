@@ -14,12 +14,14 @@ export const initialState: UsersListState = {
   errors: null,
   columns: usersGridFields,
   searchCriteria: {
+    orgId: "",
     pageNumber: startPageNumber,
     pageSize: defaultPageSize
   },
   users: {
     totalCount: 0,
-    results: []
+    items: [],
+    pageInfo: { hasNextPage: false, hasPreviousPage: false }
   },
   selectedUser: null
 };

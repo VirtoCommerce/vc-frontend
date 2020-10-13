@@ -1,7 +1,6 @@
 import { ActionTree } from "vuex";
-import { UserUpdateInfo } from "core/api/api-clients";
-import { storeName, locale } from "core/constants";
-import { accountClient } from "core/services/api-clients.service";
+import { graphqlUserClient } from "core/services/api-clients.service";
+import { UserType } from '@core/api/graphql/types';
 import { FETCH_PROFILE, SET_PROFILE, UPDATE_USER  } from "./definitions";
 import { ProfileState } from "./types";
 
@@ -10,7 +9,7 @@ export const actions: ActionTree<ProfileState, any> = {
   async [FETCH_PROFILE](context) {
     try {
       context.commit(FETCH_PROFILE);
-      const user = await accountClient.getCurrentUser(storeName, locale);
+      const user = await graphqlUserClient.getCurrentUser();
       context.commit(SET_PROFILE, user);
       return user;
     } catch (e) {
@@ -18,8 +17,8 @@ export const actions: ActionTree<ProfileState, any> = {
       // context.commit(SET_ERROR, response.data.errors)
     }
   },
-  async [UPDATE_USER](context , userUpdateInfo: UserUpdateInfo) {
-    await accountClient.updateAccount(userUpdateInfo, storeName, locale);
+  async [UPDATE_USER](context , userUpdateInfo: any) {
+    //await accountClient.updateAccount(userUpdateInfo, storeName, locale);
     context.dispatch(FETCH_PROFILE);
   }
 };

@@ -1,5 +1,4 @@
-import {  BvTableFieldArray } from 'bootstrap-vue';
-
+import { BvTableFieldArray } from "bootstrap-vue";
 
 // It is global variables initialized on the layout page
 export const storeName = window.STORE_NAME;
@@ -19,10 +18,10 @@ export const accessDeniedUrl = `${fullBaseUrl}error/AccessDenied`;
 export const isoDateFormat = "YYYY-MM-DD";
 
 // Search
-export const pageSizes = [10, 20, 50, 100]
+export const pageSizes = [10, 20, 50, 100];
 export const defaultPageSize = 10;
 export const startPageNumber = 1;
-export const ordersStatuses = ["New","Cancelled","Processing","Completed","Pending"];
+export const ordersStatuses = ["New", "Cancelled", "Processing", "Completed", "Pending"];
 export const invoicesStatuses = ["New", "Paid"];
 export const paymentsStatuses = ["Paid"];
 export const orderDraftType = "orderDraft";
@@ -31,8 +30,8 @@ export const sortDescending = "desc";
 export const catalogOrderDraftsCount = 100;
 
 // Grids
-export const ordersGridFields =  window.THEME_SETTINGS.orders_grid_fields as BvTableFieldArray;
-export const usersGridFields =  window.THEME_SETTINGS.users_grid_fields as BvTableFieldArray;
+export const ordersGridFields = window.THEME_SETTINGS.orders_grid_fields as BvTableFieldArray;
+export const usersGridFields = window.THEME_SETTINGS.users_grid_fields as BvTableFieldArray;
 export const invoicesGridFields = window.THEME_SETTINGS.invoices_grid_fields as BvTableFieldArray;
 export const paymentsGridFields = window.THEME_SETTINGS.payments_grid_fields as BvTableFieldArray;
 export const draftsGridFields = window.THEME_SETTINGS.drafts_grid_fields as BvTableFieldArray;

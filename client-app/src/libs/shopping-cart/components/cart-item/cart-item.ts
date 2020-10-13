@@ -2,7 +2,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop, Emit } from "vue-property-decorator";
 import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
-import { CartLineItem } from "core/api/api-clients";
+import { LineItemType } from "core/api/graphql/types";
 import ChangeItemQuantity from "libs/shopping-cart/components/change-item-quantity/index.vue";
 
 
@@ -14,7 +14,7 @@ import ChangeItemQuantity from "libs/shopping-cart/components/change-item-quanti
 })
 export default class CartItem extends Vue {
   @Prop()
-  item!: CartLineItem;
+  item!: LineItemType;
 
   deleteIcon = faTrashAlt;
 

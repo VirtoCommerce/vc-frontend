@@ -1,0 +1,20 @@
+query Contact (
+  $id: String!,
+  $userId: String!
+) {
+  contact (
+    id: $id,
+    userId: $userId
+  ) {
+    id
+    firstName
+    lastName
+    memberType
+    name
+    organizationId
+    organizations {
+      name
+    }
+  }
+  
+}

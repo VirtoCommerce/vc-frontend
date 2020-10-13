@@ -834,7 +834,7 @@ export type UserType = {
   normalizedEmail?: Maybe<Scalars['String']>;
   normalizedUserName: Scalars['String'];
   passwordExpired: Scalars['Boolean'];
-  passwordHash?: Maybe<Scalars['String']>;
+  permissions?: Maybe<Array<Maybe<Scalars['String']>>>;
   phoneNumber?: Maybe<Scalars['String']>;
   phoneNumberConfirmed: Scalars['Boolean'];
   photoUrl?: Maybe<Scalars['String']>;
@@ -2663,5 +2663,64 @@ export type OrderQuery = (
         )>>> }
       )> }
     )>> }
+  )> }
+);
+
+export type ContactQueryVariables = Exact<{
+  id: Scalars['String'];
+  userId: Scalars['String'];
+}>;
+
+
+export type ContactQuery = (
+  { __typename?: 'Query' }
+  & { contact?: Maybe<(
+    { __typename?: 'ContactType' }
+    & Pick<ContactType, 'id' | 'firstName' | 'lastName' | 'memberType' | 'name' | 'organizationId'>
+    & { organizations?: Maybe<Array<Maybe<(
+      { __typename?: 'Organization' }
+      & Pick<Organization, 'name'>
+    )>>> }
+  )> }
+);
+
+export type OrganizationContactsQueryVariables = Exact<{
+  id: Scalars['String'];
+  userId: Scalars['String'];
+  skip?: Maybe<Scalars['String']>;
+  take?: Maybe<Scalars['Int']>;
+  keyword?: Maybe<Scalars['String']>;
+}>;
+
+
+export type OrganizationContactsQuery = (
+  { __typename?: 'Query' }
+  & { organization?: Maybe<(
+    { __typename?: 'Organization' }
+    & { contacts?: Maybe<(
+      { __typename?: 'ContactConnection' }
+      & Pick<ContactConnection, 'totalCount'>
+      & { items?: Maybe<Array<Maybe<(
+        { __typename?: 'ContactType' }
+        & Pick<ContactType, 'id' | 'name' | 'firstName' | 'lastName'>
+      )>>> }
+    )> }
+  )> }
+);
+
+export type UserQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type UserQuery = (
+  { __typename?: 'Query' }
+  & { user?: Maybe<(
+    { __typename?: 'UserType' }
+    & Pick<UserType, 'userName' | 'email' | 'emailConfirmed' | 'photoUrl' | 'phoneNumber' | 'permissions'>
+    & { contact?: Maybe<(
+      { __typename?: 'ContactType' }
+      & Pick<ContactType, 'firstName' | 'lastName' | 'fullName'>
+    )> }
   )> }
 );

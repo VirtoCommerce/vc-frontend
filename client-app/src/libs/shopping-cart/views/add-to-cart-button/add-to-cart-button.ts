@@ -3,8 +3,8 @@ import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 import { namespace } from "vuex-class";
 import { currentUserId, storeName } from "core/constants";
-import { ADD_ITEM_TO_CART, SHOW_CART_SIDEBAR } from 'libs/shopping-cart/store/cart/definitions';
-import { InputAddItemType } from '@core/api/graphql/types';
+import { ADD_ITEM_TO_CART, SHOW_CART_SIDEBAR } from "libs/shopping-cart/store/cart/definitions";
+import { InputAddItemType } from "@core/api/graphql/types";
 const cartModule = namespace("cart");
 
 @Component({
@@ -27,11 +27,11 @@ export default class AddToCartButton extends Vue {
   isLoading!: boolean;
 
   public onClick(): void {
-    const addItem: InputAddItemType =  {
+    const addItem: InputAddItemType = {
       productId: this.productId,
       quantity: 1,
-      storeId : storeName,
-      userId : currentUserId
+      storeId: storeName,
+      userId: currentUserId
     };
 
     this.addItemToCart(addItem);
@@ -41,5 +41,4 @@ export default class AddToCartButton extends Vue {
   get busy(): boolean {
     return this.isLoading;
   }
-
 }

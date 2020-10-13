@@ -1,0 +1,23 @@
+query OrganizationContacts (
+  $id: String!,
+  $userId: String!,
+  $skip: String,
+  $take: Int,
+  $keyword: String,
+) {
+  organization(id: $id  userId: $userId)
+  {
+    contacts(after: $skip first: $take searchPhrase: $keyword)
+    {
+      totalCount
+      items
+      {
+        id
+        name
+        firstName
+        lastName        
+      }
+    }
+  }
+  
+}

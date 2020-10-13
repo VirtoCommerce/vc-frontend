@@ -2,99 +2,19 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import i18n from "@i18n";
 import { accessDeniedUrl } from 'core/constants';
-import Permissions from "libs/authorization/constants/permissions"
 import Admin from '@account/views/account-admin/index.vue';
 import AccountInfo from "@account/views/account-details/index.vue";
-import AccountDrafts from '@account/views/account-drafts/index.vue';
-import History from '@account/views/account-history/index.vue';
-import AccountInvoices from '@account/views/account-invoices/index.vue';
-import AccountOrders from "@account/views/account-orders/index.vue";
-import AccountPayments from '@account/views/account-payments/index.vue';
-import AccountUsers from "@account/views/account-users/index.vue";
 
 Vue.use(VueRouter);
 
-// eslint-disable-next-line
-const isPermitted = (...permissions: string[]) => {
-  const authorizationResult = Vue.$can(...permissions);
-  return authorizationResult;
-}
-
-const accessHandler = (permitted: boolean, next: any) => {
-  if (permitted) {
-    next();
-  } else {
-    window.location.assign(accessDeniedUrl);
-  }
-}
 
 const routes = [
-  {
-    path: "/history",
-    component: History,
-    redirect: '/orders',
-    children: [
-      {
-        path: '/orders',
-        component: AccountOrders,
-        meta: {
-          title: i18n.t('account.menu_titles.orders')
-        },
-        // eslint-disable-next-line
-        beforeEnter: (to: any, from: any, next: any) => {
-          const permitted = isPermitted(Permissions.CanViewOrders)
-          accessHandler(permitted, next);
-        }
-      },
-      {
-        path: '/invoices',
-        component: AccountInvoices,
-        meta: {
-          title: i18n.t('account.menu_titles.invoices')
-        },
-        // eslint-disable-next-line
-        beforeEnter: (to: any, from: any, next: any) => {
-          const permitted = isPermitted(Permissions.CanViewOrders);
-          accessHandler(permitted, next);
-        }
-      },
-      {
-        path: '/payments',
-        component: AccountPayments,
-        meta: {
-          title: i18n.t('account.menu_titles.payments')
-        },
-        // eslint-disable-next-line
-        beforeEnter: (to: any, from: any, next: any) => {
-          const permitted = isPermitted(Permissions.CanViewOrders);
-          accessHandler(permitted, next);
-        }
-      },
-      {
-        path: "/drafts",
-        component: AccountDrafts,
-        meta: {
-          title: i18n.t('account.menu_titles.drafts')
-        }
-      }
-    ]
-  },
+
   {
     path: "/admin",
     component: Admin,
-    redirect: '/users',
+    redirect: '/details',
     children: [
-      {
-        path: '/users',
-        component: AccountUsers,
-        meta: {
-          title: i18n.t('account.menu_titles.users')
-        },
-        beforeEnter: (to: any, from: any, next: any) => {
-          const permitted = isPermitted(Permissions.CanViewUsers);
-          accessHandler(permitted, next);
-        }
-      },
       {
         path: '/details',
         component: AccountInfo,
