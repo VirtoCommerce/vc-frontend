@@ -13,8 +13,7 @@ export const initialState: CartState = {
   isLoading: false,
   loaded: false,
   sidebarVisible: false,
-  errors: [],
-  changeProductIdSet: []
+  errors: []
 };
 
 

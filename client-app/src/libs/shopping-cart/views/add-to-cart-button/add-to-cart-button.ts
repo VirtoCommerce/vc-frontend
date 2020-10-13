@@ -2,9 +2,9 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 import { namespace } from "vuex-class";
-import { AddCartItem } from 'libs/shopping-cart/models/types';
+import { currentUserId, storeName } from "core/constants";
 import { ADD_ITEM_TO_CART, SHOW_CART_SIDEBAR } from 'libs/shopping-cart/store/cart/definitions';
-
+import { InputAddItemType } from '@core/api/graphql/types';
 const cartModule = namespace("cart");
 
 @Component({
@@ -18,25 +18,28 @@ export default class AddToCartButton extends Vue {
   textVisible!: boolean;
 
   @cartModule.Action(ADD_ITEM_TO_CART)
-  addItemToCart!: (addItem: AddCartItem) => void;
+  addItemToCart!: (addItem: InputAddItemType) => void;
 
   @cartModule.Action(SHOW_CART_SIDEBAR)
   showCartSidebar!: () => void;
 
-  @cartModule.Getter("changeProductIdSet")
-  changeProductIdSet!: string[];
+  @cartModule.Getter("isLoading")
+  isLoading!: boolean;
 
   public onClick(): void {
-    const addItem = new AddCartItem();
-    addItem.productId = this.productId;
-    addItem.quantity = 1;
+    const addItem: InputAddItemType =  {
+      productId: this.productId,
+      quantity: 1,
+      storeId : storeName,
+      userId : currentUserId
+    };
+
     this.addItemToCart(addItem);
     this.showCartSidebar();
   }
 
   get busy(): boolean {
-    const result = this.changeProductIdSet.indexOf(this.productId) > -1;
-    return result;
+    return this.isLoading;
   }
 
 }

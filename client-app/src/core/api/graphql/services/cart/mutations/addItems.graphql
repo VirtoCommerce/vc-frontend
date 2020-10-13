@@ -1,5 +1,0 @@
-mutation AddItems(
-  $command: InputAddItemsType!,
-) {
-  addItemsCart(command: $command)
-}

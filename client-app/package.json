@@ -10,9 +10,14 @@
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
     "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'",
-    "nswag": "nswag run"
+    "nswag": "nswag run",
+    "generate:graphql": "graphql-codegen -c graphql.codegen.json && eolConverter crlf \"src/core/api/graphql/*\""
   },
   "dependencies": {
+    "@graphql-codegen/add": "^2.0.1",
+    "@graphql-codegen/cli": "1.17.8",
+    "@graphql-codegen/typescript": "1.17.8",
+    "@graphql-codegen/typescript-operations": "1.17.8",
     "@fortawesome/fontawesome-svg-core": "^1.2.29",
     "@fortawesome/free-regular-svg-icons": "^5.13.1",
     "@fortawesome/free-solid-svg-icons": "^5.13.1",
@@ -29,6 +34,7 @@
     "bootstrap": "^4.5.0",
     "bootstrap-vue": "^2.15.0",
     "chai-string": "^1.5.0",
+    "eol-converter-cli": "^1.0.8",
     "core-js": "^3.6.5",
     "jquery": "^3.5.1",
     "rxjs": "^6.5.5",

@@ -3,7 +3,7 @@
 #import "../../../fragments/moneyFields.graphql"
 #import "../../../fragments/currencyFields.graphql"
 
-query CartQuery (
+query Cart (
   $storeId: String!,
   $userId: String!,
   $currencyCode: String!,

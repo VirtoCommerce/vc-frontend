@@ -1,10 +1,10 @@
 import { NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { ApolloClient } from 'apollo-client';
 import {
-  IQuery,
-  IQueryOrderArgs
+  OrderQuery,
+  OrderQueryVariables
 } from '../../types';
-import OrderQuery from './queries/order.graphql';
+import OrderQueryDocument from './queries/order.graphql';
 
 
 export default class ApiOrderService {
@@ -19,8 +19,8 @@ export default class ApiOrderService {
   }
 
   async getOrder(number: string) {
-    const { data: { order } } = await this.client.query<IQuery, IQueryOrderArgs>({
-      query: OrderQuery,
+    const { data: { order } } = await this.client.query<OrderQuery, OrderQueryVariables>({
+      query: OrderQueryDocument,
       variables: {
         userId: this.currentUserId,
         number

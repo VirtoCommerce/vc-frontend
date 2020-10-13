@@ -1,11 +1,9 @@
 import { ActionTree } from "vuex";
 import { graphqlCartClient } from 'core/services/api-clients.service';
-import { AddCartItem, ChangeCartItemQty } from 'libs/shopping-cart/models/types';
-import { findProductInCartByLineItemId } from "libs/shopping-cart/store/cart/helpers";
 import { RootState } from 'store/types';
 import {
-  IInputAddItemType,
-  IInputChangeCartItemQuantityType
+  InputAddItemType,
+  InputChangeCartItemQuantityType
 } from '@core/api/graphql/types';
 import {
   FETCH_CART,
@@ -21,9 +19,7 @@ import {
 import {
   SET_CART,
   SET_CART_ITEMS_COUNT,
-  SET_SIDEBAR_VISIBLE,
-  ADD_PRODUCT_TO_CHANGE_SET,
-  REMOVE_PRODUCT_FROM_CHANGE_SET
+  SET_SIDEBAR_VISIBLE
 } from './mutations';
 import { CartState } from "./types";
 
@@ -41,29 +37,21 @@ export const actions: ActionTree<CartState, RootState> = {
     const result = await graphqlCartClient.getCart();
     context.commit(SET_CART_ITEMS_COUNT, result.itemsCount);
   },
-
-  async [ADD_ITEM_TO_CART](context , payload: AddCartItem) {
+  async [ADD_ITEM_TO_CART](context , payload: InputAddItemType) {
     context.commit(FETCH_CART);
-    context.commit(ADD_PRODUCT_TO_CHANGE_SET, payload.productId);
-    const result = await graphqlCartClient.addItemToCart(payload as IInputAddItemType);
-    context.commit(REMOVE_PRODUCT_FROM_CHANGE_SET, payload.productId);
+    const result = await graphqlCartClient.addItemToCart(payload);
     context.commit(SET_CART_ITEMS_COUNT, result);
     await context.dispatch(FETCH_CART);
   },
-  async [CHANGE_ITEM_QUANTITY](context , payload: ChangeCartItemQty) {
+  async [CHANGE_ITEM_QUANTITY](context , payload: InputChangeCartItemQuantityType) {
     context.commit(FETCH_CART);
-    const product = findProductInCartByLineItemId(context.state.cart!, payload.lineItemId!);
-    context.commit(ADD_PRODUCT_TO_CHANGE_SET, product.id);
-    await graphqlCartClient.changeCartItem(payload as IInputChangeCartItemQuantityType);
-    context.commit(REMOVE_PRODUCT_FROM_CHANGE_SET, product.id);
+    const itemsCount = await graphqlCartClient.changeCartItem(payload);
+    context.commit(SET_CART_ITEMS_COUNT, itemsCount);
     await context.dispatch(FETCH_CART);
   },
   async [DELETE_ITEM_FROM_CART](context, payload: string) {
     context.commit(FETCH_CART);
-    const product = findProductInCartByLineItemId(context.state.cart!, payload);
-    context.commit(ADD_PRODUCT_TO_CHANGE_SET, product.id);
     await graphqlCartClient.removeCartItem(payload);
-    context.commit(REMOVE_PRODUCT_FROM_CHANGE_SET, product.id);
     await context.dispatch(FETCH_CART);
   },
   async [CLEAR_CART](context) {
@@ -73,7 +61,7 @@ export const actions: ActionTree<CartState, RootState> = {
   },
   async [CHECKOUT](context, payload: string) {
     context.commit(FETCH_CART);
-    const result = await graphqlCartClient.createOrder(payload);
+    //const result = await graphqlCartClient.createOrder(payload);
     await context.dispatch(FETCH_CART);
   },
   [SHOW_CART_SIDEBAR](context){

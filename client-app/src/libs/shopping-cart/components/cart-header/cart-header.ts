@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
-import { ShoppingCart } from 'core/api/api-clients';
+import { CartType  } from '@core/api/graphql/types';
 
 
 @Component({
@@ -9,7 +9,7 @@ import { ShoppingCart } from 'core/api/api-clients';
 })
 export default class CartHeader extends Vue {
   @Prop()
-  cart!: ShoppingCart;
+  cart!: CartType;
 
   @Prop()
   title!: string;

@@ -1,11 +1,12 @@
-import { BvTableFieldArray } from "bootstrap-vue";
-import { ShoppingCart } from "core/api/api-clients";
+import {
+  CartType  
+} from '@core/api/graphql/types';
+
 import { AsyncState } from "@core/models/asyncState";
 
 // state type
 export interface CartState extends AsyncState {
-  cart: ShoppingCart | null;
+  cart: CartType | null;
   cartItemsCount: number;
   sidebarVisible: boolean;
-  changeProductIdSet: string[];
 }

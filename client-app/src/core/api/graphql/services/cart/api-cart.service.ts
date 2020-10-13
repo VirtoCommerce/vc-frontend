@@ -1,35 +1,24 @@
 import { NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { ApolloClient } from 'apollo-client';
 import {
-  IInputAddressType,
-  IInputNewCartItemType,
-  IInputPaymentType,
-  IInputShipmentType,
-  IMutations,
-  IMutationsAddItemArgs,
-  IInputAddItemType,
-  IInputChangeCartItemQuantityType,
-  IMutationsAddItemsCartArgs,
-  IMutationsAddOrUpdateCartAddressArgs,
-  IMutationsAddOrUpdateCartPaymentArgs,
-  IMutationsAddOrUpdateCartShipmentArgs,
-  IMutationsChangeCartItemQuantityArgs,
-  IMutationsClearCartArgs,
-  IMutationsCreateOrderFromCartArgs,
-  IMutationsRemoveCartItemArgs,
-  IQuery,
-  IQueryCartArgs
+  CartQuery,
+  CartQueryVariables,
+  AddItemMutation,
+  AddItemMutationVariables,
+  InputAddItemType,
+  ClearCartMutation,
+  ClearCartMutationVariables,
+  ChangeCartItemQuantityMutation,
+  ChangeCartItemQuantityMutationVariables,
+  InputChangeCartItemQuantityType,
+  RemoveCartItemMutation,
+  RemoveCartItemMutationVariables
 } from '../../types';
-import AddItem from './mutations/addItem.graphql';
-import AddItems from './mutations/addItems.graphql';
-import AddOrUpdateCartAddress from './mutations/addOrUpdateCartAddress.graphql';
-import AddOrUpdateCartPayment from './mutations/addOrUpdateCartPayment.graphql';
-import AddOrUpdateCartShipment from './mutations/addOrUpdateCartShipment.graphql';
-import ChangeCartItemQuantity from './mutations/changeCartItemQuantity.graphql';
-import ClearCart from './mutations/clearCart.graphql';
-import CreateOrderMutation from './mutations/createOrder.graphql';
-import RemoveCartItem from './mutations/removeCartItem.graphql';
-import CartQuery from './queries/cart.graphql';
+import AddItemDocument from './mutations/addItem.graphql';
+import ChangeCartItemQtyDocument from './mutations/changeCartItemQuantity.graphql';
+import ClearCartDocument from './mutations/clearCart.graphql';
+import RemoveCartItemDocument from './mutations/removeCartItem.graphql';
+import CartQueryDocument from './queries/cart.graphql';
 
 export default class ApiCartService {
 
@@ -43,8 +32,8 @@ export default class ApiCartService {
   }
 
   async getCart() {
-    const { data: { cart } } = await this.client.query<IQuery, IQueryCartArgs>({
-      query: CartQuery,
+    const { data: { cart } } = await this.client.query<CartQuery, CartQueryVariables>({
+      query: CartQueryDocument,
       variables: {
         storeId: this.storeId,
         userId: this.currentUserId,
@@ -52,15 +41,15 @@ export default class ApiCartService {
         cultureName: this.cultureName
       }
     });
-
     return cart!;
   }
 
   async clearCart() {
-    const { data } = await this.client.mutate<IMutations, IMutationsClearCartArgs>({
-      mutation: ClearCart,
+    const { data } = await this.client.mutate<ClearCartMutation, ClearCartMutationVariables>({
+      mutation: ClearCartDocument,
       variables: {
-        command: {
+        command:
+        {
           storeId: this.storeId,
           userId: this.currentUserId
         }
@@ -70,9 +59,9 @@ export default class ApiCartService {
     return data!.clearCart!.itemsCount!;
   }
 
-  async addItemToCart(body: IInputAddItemType) {
-    const { data } = await this.client.mutate<IMutations, IMutationsAddItemArgs>({
-      mutation: AddItem,
+  async addItemToCart(body: InputAddItemType) {
+    const { data } = await this.client.mutate<AddItemMutation, AddItemMutationVariables>({
+      mutation: AddItemDocument,
       variables: {
         command: {
           storeId: this.storeId,
@@ -87,24 +76,10 @@ export default class ApiCartService {
     return data?.addItem?.itemsQuantity;
   }
 
-  async addItemsToCart(body: IInputNewCartItemType[]) {
-    const { data } = await this.client.mutate<IMutations, IMutationsAddItemsCartArgs>({
-      mutation: AddItems,
-      variables: {
-        command: {
-          storeId: this.storeId,
-          userId: this.currentUserId,
-          addCartItems: body
-        }
-      }
-    });
 
-    return data!.addItemsCart!;
-  }
-
-  async changeCartItem(body?: IInputChangeCartItemQuantityType) {
-    const { data } = await this.client.mutate<IMutations, IMutationsChangeCartItemQuantityArgs>({
-      mutation: ChangeCartItemQuantity,
+  async changeCartItem(body?: InputChangeCartItemQuantityType) {
+    const { data } = await this.client.mutate<ChangeCartItemQuantityMutation, ChangeCartItemQuantityMutationVariables>({
+      mutation: ChangeCartItemQtyDocument,
       variables: {
         command: {
           storeId: this.storeId,
@@ -119,8 +94,8 @@ export default class ApiCartService {
   }
 
   async removeCartItem(lineItemId?: string) {
-    const { data } = await this.client.mutate<IMutations, IMutationsRemoveCartItemArgs>({
-      mutation: RemoveCartItem,
+    const { data } = await this.client.mutate<RemoveCartItemMutation, RemoveCartItemMutationVariables>({
+      mutation: RemoveCartItemDocument,
       variables: {
         command: {
           storeId: this.storeId,
@@ -133,70 +108,5 @@ export default class ApiCartService {
     return data!.removeCartItem!.itemsCount!;
   }
 
-  async addOrUpdateCartAddress(address: IInputAddressType, cartId?: string) {
-    const { data } = await this.client.mutate<IMutations, IMutationsAddOrUpdateCartAddressArgs>({
-      mutation: AddOrUpdateCartAddress,
-      variables: {
-        command: {
-          storeId: this.storeId,
-          userId: this.currentUserId,
-          currency: this.currencyCode,
-          language: this.cultureName,
-          cartId,
-          address
-        }
-      }
-    });
-
-    return data!.addOrUpdateCartAddress!.addresses!;
-  }
-
-  async addOrUpdateCartShipment(shipment: IInputShipmentType) {
-    const { data } = await this.client.mutate<IMutations, IMutationsAddOrUpdateCartShipmentArgs>({
-      mutation: AddOrUpdateCartShipment,
-      variables: {
-        command: {
-          storeId: this.storeId,
-          userId: this.currentUserId,
-          currency: this.currencyCode,
-          language: this.cultureName,
-          shipment
-        }
-      }
-    });
-
-    return data!.addOrUpdateCartShipment!;
-  }
-
-  async addOrUpdateCartPayment(payment: IInputPaymentType) {
-    const { data } = await this.client.mutate<IMutations, IMutationsAddOrUpdateCartPaymentArgs>({
-      mutation: AddOrUpdateCartPayment,
-      variables: {
-        command: {
-          storeId: this.storeId,
-          userId: this.currentUserId,
-          currency: this.currencyCode,
-          language: this.cultureName,
-          payment
-        }
-      }
-    });
-
-    return data!.addOrUpdateCartPayment!;
-  }
-
-
-  async createOrder(id: string) {
-    const { data } = await this.client.mutate<IMutations, IMutationsCreateOrderFromCartArgs>({
-      mutation: CreateOrderMutation,
-      variables: {
-        command: {
-          cartId: id
-        }
-      }
-    });
-
-    return data!.createOrderFromCart!.number;
-  }
 
 }

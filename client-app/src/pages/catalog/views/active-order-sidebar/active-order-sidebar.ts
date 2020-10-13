@@ -3,11 +3,10 @@ import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 import { namespace } from "vuex-class";
 import i18n from "@i18n";
-import { ShoppingCart, CartLineItem } from "core/api/api-clients";
+import { currentUserId, storeName } from "core/constants";
 import CartHeader from "libs/shopping-cart/components/cart-header/index.vue";
 import CartItemsList from "libs/shopping-cart/components/cart-items-list/index.vue";
 import CartSummary from "libs/shopping-cart/components/cart-summary/index.vue";
-import { ChangeCartItemQty } from "libs/shopping-cart/models/types";
 import {
   FETCH_CART,
   DELETE_ITEM_FROM_CART,
@@ -16,6 +15,7 @@ import {
   HIDE_CART_SIDEBAR,
   CHECKOUT
 } from "libs/shopping-cart/store/cart/definitions";
+import { CartType, LineItemType, InputChangeCartItemQuantityType } from '@core/api/graphql/types';
 
 const cartModule = namespace("cart");
 
@@ -38,7 +38,7 @@ export default class ActiveOrderSidebar extends Vue {
   private isLoading!: boolean;
 
   @cartModule.Getter("cart")
-  cart!: ShoppingCart;
+  cart!: CartType;
 
   @cartModule.Action(FETCH_CART)
   fetchCart!: () => void;
@@ -47,7 +47,7 @@ export default class ActiveOrderSidebar extends Vue {
   deleteLineItem!: (id: string) => void;
 
   @cartModule.Action(CHANGE_ITEM_QUANTITY)
-  changeLineItemQuantity!: (payload: ChangeCartItemQty) => void;
+  changeLineItemQuantity!: (payload: InputChangeCartItemQuantityType) => void;
 
   @cartModule.Action(CLEAR_CART)
   clearCart!: () => void;
@@ -63,7 +63,7 @@ export default class ActiveOrderSidebar extends Vue {
     return !!this.cart && this.cart!.isValid && this.cart!.itemsCount! > 0;
   }
 
-  public async confirmDeleteItem(item: CartLineItem): Promise<void> {
+  public async confirmDeleteItem(item: LineItemType): Promise<void> {
     const result = await this.$bvModal.msgBoxConfirm(
       i18n.t("shopping-cart.confirm-delete-modal.message", [item.sku]) as string,
       {
@@ -123,10 +123,14 @@ export default class ActiveOrderSidebar extends Vue {
     }
   }
 
-  public changeQuantity(item: CartLineItem, quantity: number): void {
-    const changeItemQty = new ChangeCartItemQty();
-    changeItemQty.lineItemId = item.id!;
-    changeItemQty.quantity = quantity;
+  public changeQuantity(item: LineItemType, quantity: number): void {
+    const changeItemQty: InputChangeCartItemQuantityType  = {
+      lineItemId : item.id!,
+      quantity : quantity,
+      storeId : storeName,
+      userId: currentUserId
+    };
+
     this.changeLineItemQuantity(changeItemQty);
   }
 

@@ -1,6 +1,6 @@
 #import "../../../fragments/orderAddressFields.graphql"
 
-query OrderQuery (
+query Order (
   $number: String,
   $userId: String!,
 ) {
