@@ -10,7 +10,7 @@
           {{ $t('account.menu_titles.details') }}
         </router-link>
       </li>
-      <li v-if="$can($permissions.CanViewUsers) && $isActive($features.ManageUsers)" class="nav-item">
+      <li v-if="$can($permissions.CanViewUsers)" class="nav-item">
         <router-link to="users"
                      active-class="active"
                      tag="a"

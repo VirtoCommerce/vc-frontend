@@ -2,7 +2,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 import { namespace } from "vuex-class";
-import { AddCartItem } from 'core/api/api-clients';
+import { AddCartItem } from 'libs/shopping-cart/models/types';
 import { ADD_ITEM_TO_CART, SHOW_CART_SIDEBAR } from 'libs/shopping-cart/store/cart/definitions';
 
 const cartModule = namespace("cart");

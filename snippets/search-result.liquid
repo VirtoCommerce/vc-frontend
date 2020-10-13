@@ -32,13 +32,8 @@
     <div class="row">
       {% if product_search_result.products.empty? == false %}
         {% for product in product_search_result.products.items %}
-          {% if has_sidebar %}
-            {% assign grid_item_width = 'col-lg-3 col-md-4 col-sm-6' %}
-          {% else %}
-            {% assign grid_item_width = 'col-lg-2 col-md-4 col-sm-6' %}
-          {% endif %}
+          {% assign grid_item_width = 'col-lg-3 col-md-4 col-sm-6' %}
           {% include 'product-grid-item' %}
-
         {% endfor %}
 
       {% else %}

@@ -1,0 +1,11 @@
+#import "../../../fragments/addressFields.graphql"
+
+mutation AddOrUpdateCartAddress (
+  $command: InputAddOrUpdateCartAddressType!
+) {
+  addOrUpdateCartAddress(command: $command) {
+    addresses {
+      ...addressFields
+    }
+  }
+}

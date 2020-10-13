@@ -1,0 +1,67 @@
+#import "../../../fragments/orderAddressFields.graphql"
+
+query OrderQuery (
+  $number: String,
+  $userId: String!,
+) {
+  order (
+    number: $number,
+    userId: $userId,
+  ) {
+    id
+    addresses {
+      ...orderAddressFields
+    }
+    number
+    createdDate
+    subTotal {
+      formattedAmount
+    }
+    taxTotal {
+      formattedAmount
+    }
+    discountTotal {
+      formattedAmount
+    }
+    shippingTotal {
+      formattedAmount
+    }
+    total {
+      formattedAmount
+    }
+    inPayments {
+      id
+      number
+      createdDate
+      status
+      sum {
+        formattedAmount
+      }
+      billingAddress {
+        ...orderAddressFields
+      }
+    }
+    shipments {
+      shipmentMethodCode
+      deliveryAddress {
+        ...orderAddressFields
+      }
+    }
+    items {
+      id
+      name
+      sku
+      imageUrl
+      quantity
+      placedPrice {
+        formattedAmount
+      }
+      product {
+        properties {
+          name
+          value
+        }
+      }
+    }
+  }
+}

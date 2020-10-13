@@ -31,11 +31,11 @@
     {{ 'bundle/dist/css/chunk-vendors.css' | static_asset_url | append_version | stylesheet_tag }}
 
     <script>
-      window.Features = {{ '' | is_features_active : 'OrdersBrowsing', 'PaymentBrowsing', 'InvoiceBrowsing', 'ManageUsers', 'ManageRoles', 'ContractsInfoBrowsing', 'RetrieveReordering', 'OrderApproval', 'ProductTextSearch', 'ProductsFiltering', 'ProductDetailsBrowsing', 'ProductPriceBrowsing', 'ProductRecommendation', 'OrderDraft', 'WishList', 'SubmitOrder','ProductInventoryBrowsing', 'ManageShipmentDetails', 'ManagePaymentDetails'}};
       window.BASE_URL = `{{ "/" | full_url }}`;
       window.STORE_NAME = "{{ current_store.name }}";
+      window.CURRENCY_CODE ="{{ current_currency.code }}";
       window.LOCALE = "{{ current_language.culture_name }}";
-      window.LOCALIZATION_MESSAGES = {{ '' | t }};
+      window.USER_ID = "{{ current_user.id }}";
       window.THEME_SETTINGS = {{ settings | json }};
     </script>
   </head>

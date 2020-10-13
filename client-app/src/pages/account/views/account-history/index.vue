@@ -1,7 +1,7 @@
 <template>
   <div class="account mb-3 mt-3">
     <ul class="nav nav-tabs border-primary">
-      <li v-if="$can($permissions.CanViewOrders) && $isActive($features.OrderBrowsing)" class="nav-item">
+      <li v-if="$can($permissions.CanViewOrders)" class="nav-item">
         <router-link to="orders"
                      active-class="active"
                      tag="a"
@@ -10,7 +10,7 @@
         </router-link>
       </li>
 
-      <li v-if="$can($permissions.CanViewOrders) && $isActive($features.InvoiceBrowsing)" class="nav-item">
+      <li v-if="$can($permissions.CanViewOrders)" class="nav-item">
         <router-link
           to="invoices"
           active-class="active"
@@ -20,7 +20,7 @@
         </router-link>
       </li>
 
-      <li v-if="$can($permissions.CanViewOrders) && $isActive($features.PaymentBrowsing)" class="nav-item">
+      <li v-if="$can($permissions.CanViewOrders)" class="nav-item">
         <router-link
           to="payments"
           active-class="active"

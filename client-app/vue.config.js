@@ -117,6 +117,14 @@ module.exports = {
     });
     config.output.devtoolFallbackModuleFilenameTemplate("webpack:///[resource-path]?[hash]");
 
+
+    config.module
+      .rule("graphql")
+      .test(/\.(graphql|gql)$/)
+      .use("graphql-tag/loader")
+      .loader("graphql-tag/loader")
+      .end();
+
     // Disable generation of html pages because we don't use them anyway
     Object.keys(pages).forEach(page => {
       config.plugins.delete(`html-${page}`);

@@ -3,10 +3,11 @@ import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 import { namespace } from "vuex-class";
 import i18n from "@i18n";
-import { ShoppingCart, CartLineItem, ChangeCartItemQty } from "core/api/api-clients";
+import { ShoppingCart, CartLineItem } from "core/api/api-clients";
 import CartHeader from "libs/shopping-cart/components/cart-header/index.vue";
 import CartItemsList from "libs/shopping-cart/components/cart-items-list/index.vue";
 import CartSummary from "libs/shopping-cart/components/cart-summary/index.vue";
+import { ChangeCartItemQty } from "libs/shopping-cart/models/types";
 import {
   FETCH_CART,
   DELETE_ITEM_FROM_CART,
@@ -124,7 +125,7 @@ export default class ActiveOrderSidebar extends Vue {
 
   public changeQuantity(item: CartLineItem, quantity: number): void {
     const changeItemQty = new ChangeCartItemQty();
-    changeItemQty.lineItemId = item.id;
+    changeItemQty.lineItemId = item.id!;
     changeItemQty.quantity = quantity;
     this.changeLineItemQuantity(changeItemQty);
   }

@@ -6,13 +6,13 @@
         </del>
         {% endif %}
         <strong class="font-weight-bold h5 align-self-center">
-          {{ product.price.sale.formatted_amount }} 
+          {{ product.price.actual.formatted_amount }} 
         </strong>
     </span>
     {% if on_sale %}
     <strong class="border border-primary mr-auto text-primary text-uppercase font-weight-bold p-1">
         {% assign compare_price = product.price.list.amount %}
-        {% assign product_price = product.price.sale.amount %}
+        {% assign product_price = product.price.actual.amount %}
         {% include 'price-sale' %}
     </strong>
     {% endif %}

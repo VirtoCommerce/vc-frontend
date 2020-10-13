@@ -1,0 +1,19 @@
+#import "../../../fragments/addressFields.graphql"
+#import "../../../fragments/moneyFields.graphql"
+
+mutation addOrUpdateCartPayment (
+  $command: InputAddOrUpdateCartPaymentType!
+) {
+  addOrUpdateCartPayment(command: $command) {
+    payments {
+      id
+      paymentGatewayCode
+      billingAddress {
+        ...addressFields
+      }
+      amount {
+        ...moneyFields
+      }
+    }
+  }
+}

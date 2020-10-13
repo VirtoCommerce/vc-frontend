@@ -3,7 +3,6 @@ import VueRouter from "vue-router";
 import i18n from "@i18n";
 import { accessDeniedUrl } from 'core/constants';
 import Permissions from "libs/authorization/constants/permissions"
-import FeatureNames from "libs/feature/constants/featureNames"
 import Admin from '@account/views/account-admin/index.vue';
 import AccountInfo from "@account/views/account-details/index.vue";
 import AccountDrafts from '@account/views/account-drafts/index.vue';
@@ -16,10 +15,9 @@ import AccountUsers from "@account/views/account-users/index.vue";
 Vue.use(VueRouter);
 
 // eslint-disable-next-line
-const isPermitted = (featureName: string, ...permissions: string[]) => {
+const isPermitted = (...permissions: string[]) => {
   const authorizationResult = Vue.$can(...permissions);
-  const isFeatureActiveResult = Vue.$isActive(featureName);
-  return authorizationResult && isFeatureActiveResult;
+  return authorizationResult;
 }
 
 const accessHandler = (permitted: boolean, next: any) => {
@@ -44,7 +42,7 @@ const routes = [
         },
         // eslint-disable-next-line
         beforeEnter: (to: any, from: any, next: any) => {
-          const permitted = isPermitted(FeatureNames.OrderBrowsing, Permissions.CanViewOrders)
+          const permitted = isPermitted(Permissions.CanViewOrders)
           accessHandler(permitted, next);
         }
       },
@@ -56,7 +54,7 @@ const routes = [
         },
         // eslint-disable-next-line
         beforeEnter: (to: any, from: any, next: any) => {
-          const permitted = isPermitted(FeatureNames.InvoiceBrowsing, Permissions.CanViewOrders);
+          const permitted = isPermitted(Permissions.CanViewOrders);
           accessHandler(permitted, next);
         }
       },
@@ -68,7 +66,7 @@ const routes = [
         },
         // eslint-disable-next-line
         beforeEnter: (to: any, from: any, next: any) => {
-          const permitted = isPermitted(FeatureNames.PaymentBrowsing, Permissions.CanViewOrders);
+          const permitted = isPermitted(Permissions.CanViewOrders);
           accessHandler(permitted, next);
         }
       },
@@ -93,7 +91,7 @@ const routes = [
           title: i18n.t('account.menu_titles.users')
         },
         beforeEnter: (to: any, from: any, next: any) => {
-          const permitted = isPermitted(FeatureNames.ManageUsers, Permissions.CanViewUsers);
+          const permitted = isPermitted(Permissions.CanViewUsers);
           accessHandler(permitted, next);
         }
       },

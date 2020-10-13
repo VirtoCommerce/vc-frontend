@@ -1,0 +1,89 @@
+#import "../../../fragments/addressFields.graphql"
+#import "../../../fragments/lineItemFields.graphql"
+#import "../../../fragments/moneyFields.graphql"
+#import "../../../fragments/currencyFields.graphql"
+
+query CartQuery (
+  $storeId: String!,
+  $userId: String!,
+  $currencyCode: String!,
+  $cultureName: String,
+) {
+  cart (
+    storeId: $storeId,
+    userId: $userId,
+    currencyCode: $currencyCode,
+    cultureName: $cultureName,
+  ) {
+    id
+    itemsCount
+    itemsQuantity
+    isValid
+    addresses {
+      ...addressFields
+    }
+    items {
+      ...lineItemFields
+    }
+    currency {
+      ...currencyFields
+    }
+    payments {
+      id
+      paymentGatewayCode
+      billingAddress {
+        ...addressFields
+      }
+      amount {
+        ...moneyFields
+      }
+    }
+    shipments {
+      id
+      shipmentMethodCode
+      shipmentMethodOption
+      items {
+        lineItem {
+          ...lineItemFields
+        }
+        quantity
+      }
+      currency {
+        ...currencyFields
+      }
+      deliveryAddress {
+        ...addressFields
+      }
+    }
+    total {
+      ...moneyFields
+    }
+    subTotal {
+      ...moneyFields
+    }
+    shippingTotal {
+      ...moneyFields
+    }
+    shippingPrice {
+      ...moneyFields
+    }
+    taxTotal {
+      ...moneyFields
+    }
+    extendedPriceTotal {
+      ...moneyFields
+    }
+    extendedPriceTotalWithTax {
+      ...moneyFields
+    }
+    validationErrors {
+      errorCode
+      errorMessage
+      errorParameters {
+        key
+        value
+      }
+      objectId
+    }
+  }
+}
