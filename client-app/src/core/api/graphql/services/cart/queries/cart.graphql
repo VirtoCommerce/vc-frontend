@@ -27,34 +27,7 @@ query Cart (
     }
     currency {
       ...currencyFields
-    }
-    payments {
-      id
-      paymentGatewayCode
-      billingAddress {
-        ...addressFields
-      }
-      amount {
-        ...moneyFields
-      }
-    }
-    shipments {
-      id
-      shipmentMethodCode
-      shipmentMethodOption
-      items {
-        lineItem {
-          ...lineItemFields
-        }
-        quantity
-      }
-      currency {
-        ...currencyFields
-      }
-      deliveryAddress {
-        ...addressFields
-      }
-    }
+    }   
     total {
       ...moneyFields
     }
