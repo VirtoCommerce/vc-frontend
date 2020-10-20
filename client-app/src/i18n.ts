@@ -7,6 +7,7 @@ import axios from './core/services/axios-instance';
 Vue.use(VueI18n);
 
 const i18n = new VueI18n({
+  locale: window.LOCALE,
   fallbackLocale: "en",
   messages: {
     [window.LOCALE]: window.LOCALIZATION_MESSAGES

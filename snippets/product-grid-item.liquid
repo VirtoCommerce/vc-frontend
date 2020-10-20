@@ -3,7 +3,7 @@
 {% endunless %}
 
 {% assign on_sale = false %}
-{% if product.price.actual.amount > 0 %}
+{% if product.price.discount_amount.amount > 0 %}
   {% assign on_sale = true %}
 {% endif %}
 

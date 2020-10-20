@@ -1,10 +1,9 @@
 import { ActionTree } from "vuex";
-import { ADD_ERROR, REMOVE_ERROR } from "pages/init/store/definitions";
-import { State } from "@init-app/store/state";
-import ErrorInfo from "@init-app/store/types";
+import { ADD_ERROR, REMOVE_ERROR } from "./definitions";
+import { State, ErrorInfo } from "./types";
 
 //actions
-export const actions: ActionTree<State, State> = {
+export const actions: ActionTree<State, any> = {
   [ADD_ERROR](context, error: ErrorInfo) {
     context.commit(ADD_ERROR, error);
   },

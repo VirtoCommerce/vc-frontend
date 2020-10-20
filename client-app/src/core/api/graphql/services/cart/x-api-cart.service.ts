@@ -72,7 +72,6 @@ export default class XApiCartService {
         }
       }
     });
-
     return data?.addItem?.itemsQuantity;
   }
 

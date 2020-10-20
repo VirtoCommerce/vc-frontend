@@ -1,5 +1,7 @@
 query {
-    products( currencyCode:"{{ context.current_currency.code }}" 
+    products( 
+              cultureName:"{{ context.current_language.culture_name }}" 
+              currencyCode:"{{ context.current_currency.code }}" 
               storeId: "{{ context.current_store.id }}"
               query: "{{ context.query_string.q }}"
               filter: "{{ context.query_string.filter }}"

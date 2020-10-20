@@ -36,40 +36,4 @@
     </div>
   </b-toast>
 </template>
-<script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
-import { faCaretRight, faCaretDown } from '@fortawesome/free-solid-svg-icons'
-import { Subscription } from "rxjs";
-import { ReactiveErrorInfo } from "@init-app/store/types";
-
-@Component({
-  name: "ErrorInfo"
-})
-export default class ErrorInfo extends Vue {
-  faCaretRight = faCaretRight;
-  faCaretDown = faCaretDown;
-
-  @Prop({ required: true })
-  id!: string;
-
-  @Prop()
-  errorInfo!: ReactiveErrorInfo;
-
-  timeAgo = "";
-  timestampSubscription!: Subscription;
-
-  showDetails = false;
-
-  mounted() {
-    this.$bvToast.show(this.id);
-    this.timestampSubscription = this.errorInfo.timestamp$.subscribe(timestamp => {
-      this.timeAgo = this.$moment(timestamp).fromNow();
-    });
-  }
-
-  beforeDestroy() {
-    this.timestampSubscription.unsubscribe();
-  }
-}
-</script>
+<script lang="ts" src="./error-detail.ts"></script>

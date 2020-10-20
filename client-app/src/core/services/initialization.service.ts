@@ -1,6 +1,9 @@
 import Vue from "vue";
 import VueAxios from "vue-axios";
 import Loading from "vue-loading-overlay";
+import "bootstrap/js/src";
+import "styles/default.scss";
+import "vue-loading-overlay/dist/vue-loading.css";
 import "vue-moment";
 import VueRx from "vue-rx";
 import Vuelidate from "vuelidate";
@@ -49,15 +52,6 @@ import "@core/directives/only-number";
 export default class InitializationService {
   static async initializeCommon(): Promise<void> {
     Vue.config.productionTip = false;
-
-    // window.onerror will not catch error if we will simple throw it, it still be unhandled.
-    // instead of that, we calling window.onerror directly
-    // undefined used here because js & ts doesn't support set optional parameters by parameter name
-    Vue.config.errorHandler = (err, _vm, info) => {
-      if (window.onerror) {
-        window.onerror(info, undefined, undefined, undefined, err);
-      }
-    };
 
     // Add here icons which you need in liquid
     library.add(

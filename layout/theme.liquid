@@ -44,7 +44,7 @@
       {{ content_for_header }}
     </div>
     <main class="container flex-grow-1 pb-5" style="margin-top: 49px;">
-      <div id="initApp"></div>
+      <div id="error-popup"></div>
       {{ content_for_layout }}
     </main>
     {% include 'footer' %}
@@ -52,6 +52,5 @@
 
     <script src="{{ 'bundle/dist/js/chunk-common.js' | static_asset_url | append_version }}"></script>
 
-    <script src="{{ 'bundle/dist/js/init.js' | static_asset_url | append_version }}"></script>
   </body>
 </html>

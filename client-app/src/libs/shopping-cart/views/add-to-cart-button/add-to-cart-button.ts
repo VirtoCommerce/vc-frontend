@@ -27,6 +27,7 @@ export default class AddToCartButton extends Vue {
   isLoading!: boolean;
 
   public onClick(): void {
+
     const addItem: InputAddItemType = {
       productId: this.productId,
       quantity: 1,

@@ -1,6 +1,11 @@
 import { Observable } from 'rxjs';
 
-export default class ErrorInfo {
+// state type
+export interface State {
+  errors: ErrorInfo[];
+}
+
+export class ErrorInfo {
   public timestamp = new Date();
 
   constructor(

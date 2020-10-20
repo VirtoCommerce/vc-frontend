@@ -1,7 +1,7 @@
 import { MutationTree } from "vuex";
-import { ADD_ERROR, REMOVE_ERROR } from '@init-app/store/definitions';
-import { State } from "@init-app/store/state";
-import ErrorInfo from "@init-app/store/types";
+import { ADD_ERROR, REMOVE_ERROR } from './definitions';
+import { ErrorInfo,  State } from "./types";
+
 
 //mutations
 export const mutations: MutationTree<State> = {

@@ -3,6 +3,7 @@
     "resolveJsonModule": true,
     "target": "es5",
     "module": "esnext",
+    "noImplicitAny": false,
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
@@ -25,8 +26,8 @@
     "paths": {
       "@i18n": [ "i18n" ],
       "@core/*": [ "core/*" ],
+      "@libs/*": [ "libs/*" ],
       "@components/*": [ "components/*" ],
-      "@init-app/*": [ "pages/init/*" ],
       "@account/*": [ "pages/account/*" ],
       "@catalog/*": [ "pages/catalog/*" ]
     },
