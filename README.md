@@ -135,7 +135,7 @@ You need to have local installation of storefront. Follow [this article](https:/
 ```
 4. Build theme scripts and styles for production with minification
 ```bash
-   npm run dev 
+   npm run build:dev 
 ```
 5. Run storefront 
 
