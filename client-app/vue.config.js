@@ -1,6 +1,7 @@
 const pages = {
   account: "src/pages/account/main.ts",
-  catalog: "src/pages/catalog/main.ts"
+  catalog: "src/pages/catalog/main.ts",
+  test: "src/pages/test/main.ts"
 };
 
 module.exports = {
@@ -8,7 +9,7 @@ module.exports = {
   outputDir: "../assets/static/bundle/dist",
   filenameHashing: false,
   runtimeCompiler: true,
-  transpileDependencies: [    
+  transpileDependencies: [
     "@fortawesome/fontawesome-svg-core",
     "@fortawesome/free-regular-svg-icons",
     "@fortawesome/free-solid-svg-icons",

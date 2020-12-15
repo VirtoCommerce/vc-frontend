@@ -40,18 +40,21 @@
       window.THEME_SETTINGS = {{ settings | json }};
     </script>
   </head>
-  <body class="min-vh-100 d-flex flex-column">
-    <div class="fixed-top">
+  <body>
+    <div id="default">
+      <!-- Header -->
       {{ content_for_header }}
+      <!-- Content here -->
+      <main style="height:800px">
+        <script src="{{ 'bundle/dist/js/test.js' | static_asset_url | append_version }}"></script>
+        <div id="loader"></div>
+      </main>
+      <!-- Footer -->
+      {% include 'footer' %}
     </div>
-    <main class="container flex-grow-1 pb-5" style="margin-top: 49px;">
-      <div id="error-popup"></div>
-      {{ content_for_layout }}
-    </main>
-    {% include 'footer' %}
+
+
     <script src="{{ 'bundle/dist/js/chunk-vendors.js' | static_asset_url | append_version }}"></script>
-
     <script src="{{ 'bundle/dist/js/chunk-common.js' | static_asset_url | append_version }}"></script>
-
   </body>
 </html>
