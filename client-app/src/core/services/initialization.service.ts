@@ -2,7 +2,6 @@ import Vue from "vue";
 import VueAxios from "vue-axios";
 import Loading from "vue-loading-overlay";
 import "bootstrap/js/src";
-import "styles/default.scss";
 import "vue-loading-overlay/dist/vue-loading.css";
 import "vue-moment";
 import VueRx from "vue-rx";
