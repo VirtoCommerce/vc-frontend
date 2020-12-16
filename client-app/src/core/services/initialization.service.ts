@@ -18,10 +18,10 @@ import {
   faCalculator,
   faChartBar,
   faFileAlt,
-  faSearch,
-  faUnlock
+  faSearch
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon, FontAwesomeLayers } from "@fortawesome/vue-fontawesome";
+import VueCompositionAPI from '@vue/composition-api';
 import {
   ButtonPlugin,
   CollapsePlugin,
@@ -70,6 +70,9 @@ export default class InitializationService {
     dom.watch();
     // Load data for apps
     await Promise.all([SetLocale(locale)]);
+
+    // Use Composition API
+    Vue.use(VueCompositionAPI);
 
     //plugins
     Vue.use(VueRx);
