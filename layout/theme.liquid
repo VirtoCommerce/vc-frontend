@@ -2,7 +2,6 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
     <meta content="" name="description"/>
     <meta content="" name="keywords"/>
@@ -10,15 +9,11 @@
     <meta content="index, follow" name="googlebot"/>
     <meta content="notranslate" name="google"/>
     <meta content="telephone=no" name="format-detection"/>
-
     <title>{{ current_store.name }}</title>
     <base href="/">
-
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
-
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet"/>
-
     <link rel="apple-touch-icon" sizes="180x180" href="{{'apple-touch-icon.png' | static_asset_url }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{'favicon-32x32.png' | static_asset_url }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{'favicon-16x16.png' | static_asset_url }}">
@@ -26,10 +21,7 @@
     <link rel="mask-icon" href="{{'safari-pinned-tab.svg' | static_asset_url }}" color="#5bbad5">
     <meta content="#da532c" name="msapplication-TileColor">
     <meta content="#ffffff" name="theme-color">
-
-    {{ 'bundle/default.scss.css' | static_asset_url | append_version | stylesheet_tag }}
-    {{ 'bundle/dist/css/chunk-vendors.css' | static_asset_url | append_version | stylesheet_tag }}
-
+    {{ 'bundle/default.css' | static_asset_url | append_version | stylesheet_tag }}
     <script>
       window.BASE_URL = `{{ "/" | full_url }}`;
       window.STORE_NAME = "{{ current_store.name }}";
@@ -39,18 +31,19 @@
       window.THEME_SETTINGS = {{ settings | json }};
     </script>
   </head>
-  <body class="min-vh-100 d-flex flex-column">
-    <div class="fixed-top">
+  <body>
+    <div id="default">
+      <!-- Header -->
       {{ content_for_header }}
+      <!-- Content here -->
+      <main style="height:800px">
+        <script src="{{ 'bundle/dist/js/test.js' | static_asset_url | append_version }}"></script>
+        <div id="loader"></div>
+      </main>
+      <!-- Footer -->
+      {% include 'footer' %}
     </div>
-    <main class="container flex-grow-1 pb-5" style="margin-top: 49px;">
-      <div id="error-popup"></div>
-      {{ content_for_layout }}
-    </main>
-    {% include 'footer' %}
     <script src="{{ 'bundle/dist/js/chunk-vendors.js' | static_asset_url | append_version }}"></script>
-
     <script src="{{ 'bundle/dist/js/chunk-common.js' | static_asset_url | append_version }}"></script>
-
   </body>
 </html>
