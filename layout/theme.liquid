@@ -22,6 +22,7 @@
     <meta content="#da532c" name="msapplication-TileColor">
     <meta content="#ffffff" name="theme-color">
     {{ 'bundle/default.css' | static_asset_url | append_version | stylesheet_tag }}
+    {{ 'bundle/dist/css/chunk-vendors.css' | static_asset_url | append_version | stylesheet_tag }}
     <script>
       window.BASE_URL = `{{ "/" | full_url }}`;
       window.STORE_NAME = "{{ current_store.name }}";
@@ -37,14 +38,11 @@
       {{ content_for_header }}
       <!-- Content here -->
       <main style="height:800px">
-        <script src="{{ 'bundle/dist/js/test.js' | static_asset_url | append_version }}"></script>
-        <div id="loader"></div>
-        <div id="composition-api-test"></div>
+        {{ content_for_layout }}
       </main>
       <!-- Footer -->
       {% include 'footer' %}
     </div>
     <script src="{{ 'bundle/dist/js/chunk-vendors.js' | static_asset_url | append_version }}"></script>
-    <script src="{{ 'bundle/dist/js/chunk-common.js' | static_asset_url | append_version }}"></script>
   </body>
 </html>

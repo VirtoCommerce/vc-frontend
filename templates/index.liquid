@@ -1,7 +1,2 @@
-{% product_search_result = 'home-page.graphql' | graphql_data_source %}
-{{ paginator =  product_search_result.products | paginate }}
-
-{% include 'search-result' %}
-
-
 <script src="{{ 'bundle/dist/js/catalog.js' | static_asset_url | append_version }}"></script>
+<div id="category"></div>
