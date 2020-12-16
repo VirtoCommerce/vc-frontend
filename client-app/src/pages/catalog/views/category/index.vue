@@ -83,8 +83,8 @@
             :style="{ '--index': i }"
             :title="product.name"
             :image="product.imgSrc"
-            :regular-price="product.price.list.amount"
-            :special-price="product.price.list.amount"
+            :regular-price="product.price ? product.price.list.amount : 0"
+            :special-price="product.price ? product.price.list.amount : 0"
             :max-rating="5"
             :score-rating="0"
             :show-add-to-cart-button="true"
@@ -147,7 +147,7 @@ import {
   // SfColor,
   // SfProperty
 } from '@storefront-ui/vue';
-import { ref, computed, onMounted } from '@vue/composition-api';
+import { ref, computed, onMounted, watchEffect} from '@vue/composition-api';
 import { useProducts } from '@libs/catalog'
 import { ProductType } from '@core/api/graphql/types';
 
@@ -159,16 +159,17 @@ export default {
     const { addToCart, isOnCart } = {} ;
     const { addToWishlist } = {};
     const { result, search } = {};
-    const loading = computed(() => false );
     const categoryTree = computed(() => []);
     const breadcrumbs = computed(() => []);
     const sortBy = computed(() => []);
     const facets = computed(() => ['color', 'size']);
     const pagination = computed(() => []);
 
-    const { fetchProducts, products, total } = useProducts();
+    const { fetchProducts, products, total, loading } = useProducts();
 
-    onMounted(() => fetchProducts())
+    watchEffect(() => console.log(loading.value))
+
+    onMounted(async () => await fetchProducts())
 
     // const activeCategory = computed(() => {
     //   const items = categoryTree.value.items;

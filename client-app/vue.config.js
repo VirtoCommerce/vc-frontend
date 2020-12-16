@@ -1,7 +1,5 @@
 const pages = {
-  account: "src/pages/account/main.ts",
-  catalog: "src/pages/catalog/main.ts",
-  test: "src/pages/test/main.ts"
+  catalog: "src/pages/catalog/main.ts"
 };
 
 module.exports = {
