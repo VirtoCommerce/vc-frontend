@@ -26,27 +26,23 @@
             data-cy="category-icon_"></SfIcon>
           Filters
         </SfButton>
+
         <div class="navbar__sort desktop-only">
           <span class="navbar__label">Sort by:</span>
-          <SfSelect
-            :value="sortBy.selected"
-            placeholder="Select sorting"
-            data-cy="category-select_sortBy"
-            class="navbar__select"
-            @input="changeSorting">
-            <SfSelectOption
-              v-for="option in sortBy.options"
-              :key="option.id"
-              :value="option.id"
+          <SfComponentSelect v-model="sortBy" class="navbar__select">
+            <SfComponentSelectOption
+              v-for="option in sortByOptions"
+              :key="option.value"
+              :value="option.value"
               class="sort-by__option">
-              {{ option.value }}
-            </SfSelectOption>
-          </SfSelect>
+              {{ option.label }}
+            </SfComponentSelectOption>
+          </SfComponentSelect>
         </div>
         <div class="navbar__counter">
           <span class="navbar__label desktop-only">Products found: </span>
-          <span class="desktop-only">{{ pagination.totalItems }}</span>
-          <span class="navbar__label smartphone-only">{{ pagination.totalItems }} Items</span>
+          <span class="desktop-only">{{ totalItems }}</span>
+          <span class="navbar__label smartphone-only">{{ totalItems }} Items</span>
         </div>
         <div class="navbar__view">
           <span class="navbar__view-label desktop-only">View</span>
@@ -59,7 +55,7 @@
             role="button"
             aria-label="Change to grid view"
             aria-pressed="true"
-            @click="toggleCategoryGridView"></SfIcon>
+            @click="changeGridViewStyle(true)"></SfIcon>
           <SfIcon
             data-cy="category-icon_list-view"
             class="navbar__view-icon"
@@ -69,7 +65,7 @@
             role="button"
             aria-label="Change to list view"
             aria-pressed="true"
-            @click="toggleCategoryGridView"></SfIcon>
+            @click="changeGridViewStyle(false)"></SfIcon>
         </div>
       </div>
     </div>
@@ -77,59 +73,99 @@
       <div class="sidebar desktop-only">
         <h1>filter panel (todo)</h1>
       </div>
-      <SfLoader :class="{ loading }" :loading="loading">
-        <div v-if="!loading" class="products">
-          <!-- Grid view-->
-          <div class="products__grid">
-            <!-- Products loop -->
-            <SfProductCard
-              v-for="(product, i) in products"
-              :key="product.slug"
-              data-cy="category-product-card"
-              :style="{ '--index': i }"
-              :title="product.name"
-              :image="product.imgSrc"
-              :regular-price="product.price ? product.price.list.amount : 0"
-              :special-price="product.price ? product.price.list.amount : 0"
-              :max-rating="5"
-              :score-rating="0"
-              :show-add-to-cart-button="true"
-              :is-on-wishlist="false"
-              :is-added-to-cart="false"
-              link=""
-              class="products__product-card"
-              @click:wishlist="addToWishlist(product)"
-              @click:add-to-cart="addToCart(product, 1)"></SfProductCard>
-          </div>
-          <!-- Pagination -->
-          <SfPagination
-            v-if="!loading"
-            v-show="pagination.totalPages > 1"
-            data-cy="category-pagination"
-            class="products__pagination desktop-only"
-            :current="pagination.currentPage"
-            :total="pagination.totalPages"
-            :visible="5"></SfPagination>
+      <div class="products">
+        <transition-group
+          v-if="isGridViewStyle"
+          appear
+          name="products__slide"
+          tag="div"
+          class="products__grid">
+          <SfProductCard
+            v-for="(product, i) in products"
+            :key="product.slug + '__grid'"
+            :style="{ '--index': i }"
+            :title="product.name"
+            :image="product.imgSrc"
+            :regular-price="product.price ? product.price.list.amount : 0"
+            :special-price="product.price ? product.price.list.amount : 0"
+            :max-rating="5"
+            :score-rating="5"
+            :is-on-wishlist="false"
+            :is-added-to-cart="false"
+            :show-add-to-cart-button="true"
+            class="products__product-card"
+            @click:wishlist="addToWishlist(product)"
+            @click:add-to-cart="addToCart(product, 1)"></SfProductCard>
+        </transition-group>
+        <transition-group
+          v-else
+          appear
+          name="products__slide"
+          tag="div"
+          class="products__list">
+          <SfProductCardHorizontal
+            v-for="(product, i) in products"
+            :key="product.slug + '__list'"
+            :style="{ '--index': i }"
+            :title="product.name"
+            :description="'Test description'"
+            :image="product.imgSrc"
+            :regular-price="product.price ? product.price.list.amount : 0"
+            :special-price="product.price ? product.price.list.amount : 0"
+            :max-rating="5"
+            :reviews-count="0"
+            :score-rating="5"
+            :is-on-wishlist="false"
+            :is-added-to-cart="false"
+            class="products__product-card-horizontal"
+            @click:wishlist="addToWishlist(product)"
+            @click:add-to-cart="addToCart(product, 1)">
+            <template #actions>
+              <SfButton
+                class="sf-button--text desktop-only"
+                style="margin: 0 0 1rem auto; display: block;"
+                @click="$emit('click:add-to-wishlist')">
+                Save for later
+              </SfButton>
+              <SfButton
+                class="sf-button--text desktop-only"
+                style="margin: 0 0 0 auto; display: block;"
+                @click="$emit('click:add-to-compare')">
+                Add to compare
+              </SfButton>
+            </template>
+          </SfProductCardHorizontal>
+        </transition-group>
 
-          <div
-            v-show="pagination.totalPages > 1"
-            class="products__show-on-page">
-            <span class="products__show-on-page__label">Show on page:</span>
-            <SfSelect
-              :value="pagination.itemsPerPage"
-              class="products__items-per-page"
-              @input="changeItemsPerPage">
-              <SfSelectOption
-                v-for="option in pagination.pageOptions"
-                :key="option"
-                :value="option"
-                class="products__items-per-page__option">
-                {{ option }}
-              </SfSelectOption>
-            </SfSelect>
-          </div>
+        <!-- Pagination -->
+        <SfPagination
+          v-if="!loading"
+          v-show="totalPages > 1"
+          data-cy="category-pagination"
+          class="products__pagination desktop-only"
+          :current="getCurrentPage"
+          :total="totalPages"
+          :visible="5"
+          @click="changeCurrentPage($event)"></SfPagination>
+
+        <div
+          v-show="totalPages > 0"
+          class="products__show-on-page">
+          <span class="products__show-on-page__label">Show on page:</span>
+          <SfSelect
+            :value="getItemsPerPage"
+            class="products__items-per-page"
+            @input="changeItemsPerPage($event)">
+            <SfSelectOption
+              v-for="option in gridViewOptions.pageOptions"
+              :key="option"
+              :value="option"
+              class="products__items-per-page__option">
+              {{ option }}
+            </SfSelectOption>
+          </SfSelect>
         </div>
-      </SfLoader>
+      </div>
     </div>
   </div>
 </template>
@@ -141,11 +177,13 @@ import {
   SfButton,
   // SfList,
   SfIcon,
+  SfComponentSelect,
+  SfComponentSelectOption,
   SfHeading,
   // SfMenuItem,
   // SfFilter,
   SfProductCard,
-  // SfProductCardHorizontal,
+  SfProductCardHorizontal,
   SfPagination,
   // SfAccordion,
   SfSelect,
@@ -166,17 +204,51 @@ export default {
     const { addToCart, isOnCart } = {} ;
     const { addToWishlist } = {};
     const { result, search } = {};
-    const categoryTree = computed(() => []);
-    const breadcrumbs = computed(() => []);
-    const sortBy = computed(() => []);
-    const facets = computed(() => ['color', 'size']);
-    const pagination = computed(() => []);
+
+    const sortBy = 'default';
+
 
     const { fetchProducts, products, total, loading } = useProducts();
 
-    watchEffect(() => console.log(loading.value))
+    // Refs
+    const isGridView = ref(false);
+    const itemsPerPage = ref('20');
+    const currentPage = ref(1);
 
-    onMounted(async () => await fetchProducts())
+    // Computed
+    const categoryTree = computed(() => []);
+    const breadcrumbs = computed(() => []);
+    const sortByOptions = computed(() => [{
+      value: 'default',
+      label: 'Default sorting'
+    }, {
+      value: 'price-asc',
+      label: 'Price sorting (ASC)'
+    }]);
+    const facets = computed(() => ['color', 'size']);
+
+
+    const gridViewOptions = {
+      pageOptions: ['10', '20', '50']
+    };
+
+    const internalFetchProducts = async() => await fetchProducts(Number(itemsPerPage.value), currentPage.value);
+
+    const isGridViewStyle = computed(() => isGridView.value);
+
+
+
+    const totalItems = computed(() =>  total.value);
+
+    const getCurrentPage = computed(() => currentPage.value);
+    const getItemsPerPage = computed(() => itemsPerPage.value);
+    const totalPages = computed(() => Math.ceil(total.value / itemsPerPage.value));
+
+    watchEffect(() => {
+      //console.log(loading.value);
+    })
+
+    onMounted(async () => await internalFetchProducts())
 
     // const activeCategory = computed(() => {
     //   const items = categoryTree.value.items;
@@ -193,10 +265,24 @@ export default {
     //await search();
 
     // const { changeFilters, isFacetColor } = useUiHelpers();
-    const  toggleFilterSidebar  =  () => { console.log("toggleFilterSidebar"); };
-    const  toggleCategoryGridView  =  () => { console.log("toggleCategoryGridView"); };
-    const  changeItemsPerPage  =  () => { console.log("changeItemsPerPage"); };
-    const  changeSorting  =  () => { console.log("changeSorting"); };
+    const toggleFilterSidebar = () => { console.log("toggleFilterSidebar"); };
+
+    const changeGridViewStyle = (isGrid) => isGridView.value = isGrid;
+
+    // Change items per page event
+    const changeItemsPerPage = async (newItemsPerPage) => {
+      itemsPerPage.value = newItemsPerPage;
+      currentPage.value = 1;
+      await internalFetchProducts();
+    };
+
+    // Change current page event
+    const changeCurrentPage = async (newCurrentPage) => {
+      currentPage.value = Number(newCurrentPage);
+      await internalFetchProducts();
+    };
+
+    const changeSorting = () => { console.log("changeSorting"); };
 
     // const selectedFilters = ref({});
 
@@ -232,13 +318,20 @@ export default {
       products,
       categoryTree,
       loading,
-      pagination,
+      gridViewOptions,
+      isGridViewStyle,
+      totalItems,
+      getCurrentPage,
+      getItemsPerPage,
+      totalPages,
       sortBy,
+      sortByOptions,
       facets,
       breadcrumbs,
       toggleFilterSidebar,
-      toggleCategoryGridView,
+      changeGridViewStyle,
       changeItemsPerPage,
+      changeCurrentPage,
       changeSorting
     };
   },
@@ -246,16 +339,17 @@ export default {
     SfButton,
     // SfSidebar,
     SfIcon,
+    SfComponentSelect,
     // SfList,
     // SfFilter,
     SfProductCard,
-    // SfProductCardHorizontal,
+    SfProductCardHorizontal,
     SfPagination,
     // SfMenuItem,
     // SfAccordion,
     SfSelect,
     SfBreadcrumbs,
-    SfLoader,
+    //SfLoader,
     // SfColor,
     SfHeading
     // SfProperty
@@ -434,7 +528,7 @@ export default {
     justify-content: space-between;
   }
   &__product-card {
-    --product-card-max-width: 50%;
+    --product-card-max-width: 25%;
     --product-card-title-margin: var(--spacer-base) 0 0 0;
     flex: 1 1 50%;
   }
