@@ -14,8 +14,8 @@ async function searchProducts(itemsPerPage: number, page: number): Promise<Produ
       userId: currentUserId,
       currencyCode: currencyCode,
       cultureName: locale,
-      first: itemsPerPage ?? 10,
-      after: String(page ?? 1 * itemsPerPage ?? 10)
+      first: itemsPerPage,
+      after: String((page - 1) * itemsPerPage)
     }
   });
   return data.products;
