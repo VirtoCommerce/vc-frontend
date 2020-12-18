@@ -11,6 +11,7 @@
     "lint": "vue-cli-service lint",
     "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'",
     "nswag": "nswag run",
+    "compress": "vue-cli-service build && gulp compress",
     "generate:graphql": "graphql-codegen -c graphql.codegen.json && eolConverter crlf \"src/core/api/graphql/*\""
   },
   "dependencies": {
