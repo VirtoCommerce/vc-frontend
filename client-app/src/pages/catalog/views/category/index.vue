@@ -71,7 +71,7 @@
     </div>
     <div class="main section">
       <div class="sidebar desktop-only">
-        <h1>Categories panel (todo)</h1>
+        <h1>Categories taxonomies </h1>
       </div>
       <div class="products">
         <transition-group
