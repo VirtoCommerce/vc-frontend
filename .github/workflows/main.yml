@@ -37,7 +37,7 @@ jobs:
         node-version: '10.x'
 
     - name: Get Image Version
-      uses: VirtoCommerce/vc-github-actions/get-image-version@3.0.1
+      uses: VirtoCommerce/vc-github-actions/get-image-version@master
       id: image
       with:
         path: './client-app'
