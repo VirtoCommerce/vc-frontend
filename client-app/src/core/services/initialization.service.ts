@@ -45,7 +45,7 @@ import {
 import { SetLocale } from "@i18n";
 import { locale } from "core/constants";
 import axios from "core/services/axios-instance";
-import "@core/filters/img-url";
+import "@core/filters";
 import "@core/directives/only-number";
 
 export default class InitializationService {

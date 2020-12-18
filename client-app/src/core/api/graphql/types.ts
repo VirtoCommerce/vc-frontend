@@ -95,7 +95,7 @@ export type QueryCartsArgs = {
 export type QueryCategoriesArgs = {
   after?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
-  storeId: Scalars['String'];
+  storeId?: Maybe<Scalars['String']>;
   cultureName?: Maybe<Scalars['String']>;
   userId?: Maybe<Scalars['String']>;
   currencyCode?: Maybe<Scalars['String']>;
@@ -241,7 +241,6 @@ export type Product = {
   seoInfo?: Maybe<SeoInfo>;
   /** Request related slug for product */
   slug?: Maybe<Scalars['String']>;
-  tax?: Maybe<TaxCategoryType>;
   variations?: Maybe<Array<Maybe<VariationType>>>;
 };
 
@@ -256,7 +255,7 @@ export type ProductAssociationsArgs = {
 
 export type SeoInfo = {
   __typename?: 'SeoInfo';
-  id: Scalars['String'];
+  id?: Maybe<Scalars['String']>;
   imageAltDescription?: Maybe<Scalars['String']>;
   /** Active/Inactive */
   isActive?: Maybe<Scalars['Boolean']>;
@@ -337,6 +336,7 @@ export type OutlineItemType = {
 
 export type ImageType = {
   __typename?: 'ImageType';
+  cultureName?: Maybe<Scalars['String']>;
   group?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
@@ -489,6 +489,7 @@ export type Property = {
 
 export type Asset = {
   __typename?: 'Asset';
+  cultureName?: Maybe<Scalars['String']>;
   /** Group of the asset. */
   group?: Maybe<Scalars['String']>;
   /** The unique ID of the asset. */
@@ -505,40 +506,6 @@ export type Asset = {
   typeId?: Maybe<Scalars['String']>;
   /** Url of the asset. */
   url?: Maybe<Scalars['String']>;
-};
-
-export type TaxCategoryType = {
-  __typename?: 'TaxCategoryType';
-  rates?: Maybe<Array<Maybe<TaxRate>>>;
-};
-
-export type TaxRate = {
-  __typename?: 'TaxRate';
-  line?: Maybe<TaxLine>;
-  percentRate?: Maybe<Scalars['Decimal']>;
-  rate?: Maybe<Scalars['Decimal']>;
-  taxDetails?: Maybe<Array<Maybe<TaxDetail>>>;
-  /** Tax provider code */
-  taxProviderCode: Scalars['String'];
-};
-
-export type TaxLine = {
-  __typename?: 'TaxLine';
-  amount?: Maybe<Scalars['Decimal']>;
-  code: Scalars['String'];
-  id: Scalars['String'];
-  name: Scalars['String'];
-  price?: Maybe<Scalars['Decimal']>;
-  quantity?: Maybe<Scalars['Int']>;
-  taxType: Scalars['String'];
-};
-
-export type TaxDetail = {
-  __typename?: 'TaxDetail';
-  amount?: Maybe<Scalars['Decimal']>;
-  /** Tax detail name. */
-  name: Scalars['String'];
-  rate?: Maybe<Scalars['Decimal']>;
 };
 
 /** A connection from an object to a list of objects of type `ProductAssociation`. */
@@ -601,7 +568,7 @@ export type ProductConnection = {
   edges?: Maybe<Array<Maybe<ProductEdge>>>;
   filter_facets?: Maybe<Array<Maybe<FilterFacet>>>;
   /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
-  items?: Maybe<Array<Product>>;
+  items?: Maybe<Array<Maybe<Product>>>;
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   range_facets?: Maybe<Array<Maybe<RangeFacet>>>;
@@ -755,7 +722,7 @@ export type UserType = {
 
 export type RoleType = {
   __typename?: 'RoleType';
-  description: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   name: Scalars['String'];
   normalizedName: Scalars['String'];
@@ -1483,7 +1450,7 @@ export type PaymentInType = {
   organizationId?: Maybe<Scalars['String']>;
   organizationName?: Maybe<Scalars['String']>;
   outerId?: Maybe<Scalars['String']>;
-  parentOperationId: Scalars['String'];
+  parentOperationId?: Maybe<Scalars['String']>;
   paymentMethod?: Maybe<OrderPaymentMethodType>;
   purpose?: Maybe<Scalars['String']>;
   status?: Maybe<Scalars['String']>;
@@ -1508,7 +1475,7 @@ export type OrderPaymentMethodType = {
   priceWithTax?: Maybe<MoneyType>;
   priority: Scalars['Int'];
   storeId: Scalars['String'];
-  taxDetails: Array<Maybe<OrderTaxDetailType>>;
+  taxDetails?: Maybe<Array<Maybe<OrderTaxDetailType>>>;
   taxPercentRate: Scalars['Decimal'];
   taxTotal?: Maybe<MoneyType>;
   taxType?: Maybe<Scalars['String']>;
@@ -2174,7 +2141,7 @@ export type InputChangeCartItemCommentType = {
   language?: Maybe<Scalars['String']>;
   cartType?: Maybe<Scalars['String']>;
   lineItemId: Scalars['String'];
-  comment: Scalars['Int'];
+  comment: Scalars['String'];
 };
 
 export type InputRemoveItemType = {
@@ -2521,171 +2488,6 @@ export type InputCancelOrderPaymentType = {
   payment: InputPaymentInType;
 };
 
-export type AddressFieldsFragment = (
-  { __typename?: 'AddressType' }
-  & Pick<AddressType, 'id' | 'name' | 'organization' | 'firstName' | 'lastName' | 'line1' | 'line2' | 'city' | 'countryCode' | 'countryName' | 'regionId' | 'regionName' | 'postalCode' | 'zip' | 'phone' | 'email' | 'addressType'>
-);
-
-export type CurrencyFieldsFragment = (
-  { __typename?: 'CurrencyType' }
-  & Pick<CurrencyType, 'code' | 'customFormatting' | 'exchangeRate' | 'symbol'>
-);
-
-export type LineItemFieldsFragment = (
-  { __typename?: 'LineItemType' }
-  & Pick<LineItemType, 'id' | 'imageUrl' | 'inStockQuantity' | 'isGift' | 'isReadOnly' | 'isReccuring' | 'isValid' | 'name' | 'productId' | 'quantity' | 'sku' | 'thumbnailImageUrl'>
-  & { validationErrors?: Maybe<Array<Maybe<(
-    { __typename?: 'ValidationErrorType' }
-    & Pick<ValidationErrorType, 'errorCode' | 'errorMessage'>
-    & { errorParameters?: Maybe<Array<Maybe<(
-      { __typename?: 'ErrorParameterType' }
-      & Pick<ErrorParameterType, 'key' | 'value'>
-    )>>> }
-  )>>>, extendedPrice?: Maybe<(
-    { __typename?: 'MoneyType' }
-    & MoneyFieldsFragment
-  )>, listPrice?: Maybe<(
-    { __typename?: 'MoneyType' }
-    & MoneyFieldsFragment
-  )>, taxTotal?: Maybe<(
-    { __typename?: 'MoneyType' }
-    & MoneyFieldsFragment
-  )> }
-);
-
-export type MoneyFieldsFragment = (
-  { __typename?: 'MoneyType' }
-  & Pick<MoneyType, 'amount' | 'decimalDigits' | 'formattedAmount' | 'formattedAmountWithoutCurrency' | 'formattedAmountWithoutPoint' | 'formattedAmountWithoutPointAndCurrency'>
-  & { currency?: Maybe<(
-    { __typename?: 'CurrencyType' }
-    & CurrencyFieldsFragment
-  )> }
-);
-
-export type OrderAddressFieldsFragment = (
-  { __typename?: 'OrderAddressType' }
-  & Pick<OrderAddressType, 'id' | 'name' | 'organization' | 'firstName' | 'lastName' | 'line1' | 'line2' | 'city' | 'countryCode' | 'countryName' | 'regionId' | 'regionName' | 'postalCode' | 'zip' | 'phone' | 'email' | 'addressType'>
-);
-
-export type AddItemMutationVariables = Exact<{
-  command: InputAddItemType;
-}>;
-
-
-export type AddItemMutation = (
-  { __typename?: 'Mutations' }
-  & { addItem?: Maybe<(
-    { __typename?: 'CartType' }
-    & Pick<CartType, 'itemsQuantity'>
-  )> }
-);
-
-export type ChangeCartItemQuantityMutationVariables = Exact<{
-  command: InputChangeCartItemQuantityType;
-}>;
-
-
-export type ChangeCartItemQuantityMutation = (
-  { __typename?: 'Mutations' }
-  & { changeCartItemQuantity?: Maybe<(
-    { __typename?: 'CartType' }
-    & Pick<CartType, 'itemsQuantity'>
-  )> }
-);
-
-export type ClearCartMutationVariables = Exact<{
-  command: InputClearCartType;
-}>;
-
-
-export type ClearCartMutation = (
-  { __typename?: 'Mutations' }
-  & { clearCart?: Maybe<(
-    { __typename?: 'CartType' }
-    & Pick<CartType, 'itemsCount'>
-  )> }
-);
-
-export type CreateOrderMutationVariables = Exact<{
-  command: InputCreateOrderFromCartType;
-}>;
-
-
-export type CreateOrderMutation = (
-  { __typename?: 'Mutations' }
-  & { createOrderFromCart?: Maybe<(
-    { __typename?: 'CustomerOrderType' }
-    & Pick<CustomerOrderType, 'number'>
-  )> }
-);
-
-export type RemoveCartItemMutationVariables = Exact<{
-  command: InputRemoveItemType;
-}>;
-
-
-export type RemoveCartItemMutation = (
-  { __typename?: 'Mutations' }
-  & { removeCartItem?: Maybe<(
-    { __typename?: 'CartType' }
-    & Pick<CartType, 'itemsCount'>
-  )> }
-);
-
-export type CartQueryVariables = Exact<{
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
-  currencyCode: Scalars['String'];
-  cultureName?: Maybe<Scalars['String']>;
-}>;
-
-
-export type CartQuery = (
-  { __typename?: 'Query' }
-  & { cart?: Maybe<(
-    { __typename?: 'CartType' }
-    & Pick<CartType, 'id' | 'itemsCount' | 'itemsQuantity' | 'isValid'>
-    & { addresses?: Maybe<Array<Maybe<(
-      { __typename?: 'AddressType' }
-      & AddressFieldsFragment
-    )>>>, items?: Maybe<Array<Maybe<(
-      { __typename?: 'LineItemType' }
-      & LineItemFieldsFragment
-    )>>>, currency?: Maybe<(
-      { __typename?: 'CurrencyType' }
-      & CurrencyFieldsFragment
-    )>, total?: Maybe<(
-      { __typename?: 'MoneyType' }
-      & MoneyFieldsFragment
-    )>, subTotal?: Maybe<(
-      { __typename?: 'MoneyType' }
-      & MoneyFieldsFragment
-    )>, shippingTotal?: Maybe<(
-      { __typename?: 'MoneyType' }
-      & MoneyFieldsFragment
-    )>, shippingPrice?: Maybe<(
-      { __typename?: 'MoneyType' }
-      & MoneyFieldsFragment
-    )>, taxTotal?: Maybe<(
-      { __typename?: 'MoneyType' }
-      & MoneyFieldsFragment
-    )>, extendedPriceTotal?: Maybe<(
-      { __typename?: 'MoneyType' }
-      & MoneyFieldsFragment
-    )>, extendedPriceTotalWithTax?: Maybe<(
-      { __typename?: 'MoneyType' }
-      & MoneyFieldsFragment
-    )>, validationErrors?: Maybe<Array<Maybe<(
-      { __typename?: 'ValidationErrorType' }
-      & Pick<ValidationErrorType, 'errorCode' | 'errorMessage' | 'objectId'>
-      & { errorParameters?: Maybe<Array<Maybe<(
-        { __typename?: 'ErrorParameterType' }
-        & Pick<ErrorParameterType, 'key' | 'value'>
-      )>>> }
-    )>>> }
-  )> }
-);
-
 export type SearchProductsQueryVariables = Exact<{
   storeId: Scalars['String'];
   userId: Scalars['String'];
@@ -2730,65 +2532,66 @@ export type SearchProductsQuery = (
           & Pick<MoneyType, 'amount' | 'formattedAmount'>
         )> }
       )> }
-    )>>> }
-  )> }
-);
-
-export type ContactQueryVariables = Exact<{
-  id: Scalars['String'];
-  userId: Scalars['String'];
-}>;
-
-
-export type ContactQuery = (
-  { __typename?: 'Query' }
-  & { contact?: Maybe<(
-    { __typename?: 'ContactType' }
-    & Pick<ContactType, 'id' | 'firstName' | 'lastName' | 'memberType' | 'name' | 'organizationId'>
-    & { organizations?: Maybe<Array<Maybe<(
-      { __typename?: 'Organization' }
-      & Pick<Organization, 'name'>
-    )>>> }
-  )> }
-);
-
-export type OrganizationContactsQueryVariables = Exact<{
-  id: Scalars['String'];
-  userId: Scalars['String'];
-  skip?: Maybe<Scalars['String']>;
-  take?: Maybe<Scalars['Int']>;
-  keyword?: Maybe<Scalars['String']>;
-}>;
-
-
-export type OrganizationContactsQuery = (
-  { __typename?: 'Query' }
-  & { organization?: Maybe<(
-    { __typename?: 'Organization' }
-    & { contacts?: Maybe<(
-      { __typename?: 'ContactConnection' }
-      & Pick<ContactConnection, 'totalCount'>
-      & { items?: Maybe<Array<Maybe<(
-        { __typename?: 'ContactType' }
-        & Pick<ContactType, 'id' | 'name' | 'firstName' | 'lastName'>
+    )>>>, term_facets?: Maybe<Array<Maybe<(
+      { __typename?: 'TermFacet' }
+      & Pick<TermFacet, 'name'>
+      & { terms?: Maybe<Array<Maybe<(
+        { __typename?: 'FacetTermType' }
+        & Pick<FacetTermType, 'term' | 'count' | 'isSelected'>
       )>>> }
-    )> }
+    )>>>, range_facets?: Maybe<Array<Maybe<(
+      { __typename?: 'RangeFacet' }
+      & Pick<RangeFacet, 'name'>
+      & { ranges?: Maybe<Array<Maybe<(
+        { __typename?: 'FacetRangeType' }
+        & Pick<FacetRangeType, 'label' | 'count' | 'from' | 'to' | 'isSelected'>
+      )>>> }
+    )>>> }
   )> }
 );
 
-export type UserQueryVariables = Exact<{
-  id: Scalars['String'];
-}>;
+export type AddressFieldsFragment = (
+  { __typename?: 'AddressType' }
+  & Pick<AddressType, 'id' | 'name' | 'organization' | 'firstName' | 'lastName' | 'line1' | 'line2' | 'city' | 'countryCode' | 'countryName' | 'regionId' | 'regionName' | 'postalCode' | 'zip' | 'phone' | 'email' | 'addressType'>
+);
 
+export type CurrencyFieldsFragment = (
+  { __typename?: 'CurrencyType' }
+  & Pick<CurrencyType, 'code' | 'customFormatting' | 'exchangeRate' | 'symbol'>
+);
 
-export type UserQuery = (
-  { __typename?: 'Query' }
-  & { user?: Maybe<(
-    { __typename?: 'UserType' }
-    & Pick<UserType, 'userName' | 'email' | 'emailConfirmed' | 'photoUrl' | 'phoneNumber' | 'permissions'>
-    & { contact?: Maybe<(
-      { __typename?: 'ContactType' }
-      & Pick<ContactType, 'firstName' | 'lastName' | 'fullName'>
-    )> }
+export type LineItemFieldsFragment = (
+  { __typename?: 'LineItemType' }
+  & Pick<LineItemType, 'id' | 'imageUrl' | 'inStockQuantity' | 'isGift' | 'isReadOnly' | 'isReccuring' | 'isValid' | 'name' | 'productId' | 'quantity' | 'sku' | 'thumbnailImageUrl'>
+  & { validationErrors?: Maybe<Array<Maybe<(
+    { __typename?: 'ValidationErrorType' }
+    & Pick<ValidationErrorType, 'errorCode' | 'errorMessage'>
+    & { errorParameters?: Maybe<Array<Maybe<(
+      { __typename?: 'ErrorParameterType' }
+      & Pick<ErrorParameterType, 'key' | 'value'>
+    )>>> }
+  )>>>, extendedPrice?: Maybe<(
+    { __typename?: 'MoneyType' }
+    & MoneyFieldsFragment
+  )>, listPrice?: Maybe<(
+    { __typename?: 'MoneyType' }
+    & MoneyFieldsFragment
+  )>, taxTotal?: Maybe<(
+    { __typename?: 'MoneyType' }
+    & MoneyFieldsFragment
   )> }
+);
+
+export type MoneyFieldsFragment = (
+  { __typename?: 'MoneyType' }
+  & Pick<MoneyType, 'amount' | 'decimalDigits' | 'formattedAmount' | 'formattedAmountWithoutCurrency' | 'formattedAmountWithoutPoint' | 'formattedAmountWithoutPointAndCurrency'>
+  & { currency?: Maybe<(
+    { __typename?: 'CurrencyType' }
+    & CurrencyFieldsFragment
+  )> }
+);
+
+export type OrderAddressFieldsFragment = (
+  { __typename?: 'OrderAddressType' }
+  & Pick<OrderAddressType, 'id' | 'name' | 'organization' | 'firstName' | 'lastName' | 'line1' | 'line2' | 'city' | 'countryCode' | 'countryName' | 'regionId' | 'regionName' | 'postalCode' | 'zip' | 'phone' | 'email' | 'addressType'>
 );

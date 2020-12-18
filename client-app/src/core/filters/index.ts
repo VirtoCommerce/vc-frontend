@@ -1,4 +1,6 @@
+
 import Vue from "vue";
+import { MoneyType, PriceType } from "@core/api/graphql/types";
 
 function appendToFilename(filename: string, suffix: string, checkIfSuffixExists = false ){
   const dotIndex = filename.lastIndexOf(".");
@@ -20,3 +22,20 @@ Vue.filter('imgUrl', (value: string, suffix: string) => {
   return result;
 });
 
+
+Vue.filter('list_price', function (value: PriceType) {
+  if (!value) return null;
+
+  return value.list?.formattedAmount;
+})
+
+
+Vue.filter('special_price', function (value: PriceType) {
+  if (!value) return null;
+
+  if(value.actual?.amount != value.list?.amount)
+  {
+    return value.actual?.formattedAmount;
+  }
+  return null;
+})

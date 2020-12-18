@@ -32,5 +32,8 @@
        }
        totalCount
 
+      term_facets { name terms { term count isSelected } }
+      range_facets { name ranges { label count from to isSelected } }
+
   }
 }

@@ -9,12 +9,12 @@ export default () => {
   const loading: Ref<boolean> = ref(true);
 
   async function fetchProducts(itemsPerPage: number, page: number) {
-    console.log('Fetching -> itemsPerPage: '+itemsPerPage+' page: '+page );
     loading.value = true;
     try {
       const productsConnection = await searchProducts(itemsPerPage, page);
-      products.value  = productsConnection?.items ?? [];
+      products.value  = productsConnection?.items as Product[];
       total.value = productsConnection.totalCount ?? 0;
+
     } catch (e) {
       Logger.error('useProduct.fetchProducts', e);
       throw e;
