@@ -10,7 +10,8 @@
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
     "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'",
-    "nswag": "nswag run"
+    "nswag": "nswag run",
+    "compress": "vue-cli-service build && gulp compress"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.29",
