@@ -1,6 +1,4 @@
 const pages = {
-  init: "src/pages/init/main.ts",
-  account: "src/pages/account/main.ts",
   catalog: "src/pages/catalog/main.ts"
 };
 
@@ -9,7 +7,7 @@ module.exports = {
   outputDir: "../assets/static/bundle/dist",
   filenameHashing: false,
   runtimeCompiler: true,
-  transpileDependencies: [    
+  transpileDependencies: [
     "@fortawesome/fontawesome-svg-core",
     "@fortawesome/free-regular-svg-icons",
     "@fortawesome/free-solid-svg-icons",
@@ -73,33 +71,7 @@ module.exports = {
         fix: true,
       });
 
-    // Create bundle for scss
-    // We can't use out of the box functionality based on scss-loader,
-    // because it can only compile scss to css, but unable to create scss bundle
-    // Tip: loaders in webpack working in bottom-to-top order
-    config.module.rules.delete("scss");
-    config.module.rule("default").test(/\.scss$/)
-      // Increase build performance by specific concrete file name
-      // Any way, we will include all scss dependencies into this one file
-      .include.add(/default.scss$/).end()
-      // Save to file
-      .use('file-loader').loader('file-loader').tap(options => ({ outputPath: "scss", name: "default.scss" }))
-      // Export generated js module (yep) into simple string with scss code
-      .before("exports-loader").end().use('exports-loader').loader('exports-loader')
-      // Process scss
-      .before("postcss").end().use("postcss").loader("postcss-loader").tap(options => ({
-        ident: "embedded",
-        syntax: require("postcss-scss"),
-        plugins: (loader) => [
-            // Enable scss import. It's different than import in css specification
-            require("postcss-easy-import")({
-                root: loader.resourcePath,
-                prefix: "_",
-                extensions: ".scss"
-            }),
-        ],
-        sourceMap: "inline"
-      })).end();
+
 
     // Advanced source maps processing (vue-specific)
     // By default vue generate multiple output files and source maps for single file component
@@ -116,6 +88,14 @@ module.exports = {
       return $filename;
     });
     config.output.devtoolFallbackModuleFilenameTemplate("webpack:///[resource-path]?[hash]");
+
+
+    config.module
+      .rule("graphql")
+      .test(/\.(graphql|gql)$/)
+      .use("graphql-tag/loader")
+      .loader("graphql-tag/loader")
+      .end();
 
     // Disable generation of html pages because we don't use them anyway
     Object.keys(pages).forEach(page => {

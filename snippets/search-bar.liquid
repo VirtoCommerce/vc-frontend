@@ -1,10 +1,9 @@
-{% assign search = current_product_search_criteria %}
 <form action="" autocomplete="off" method="get" class="input-group" role="search" name="formSearch">
-    <input type="hidden" name="page" value="{{ search.page_number | escape }}" />
-    <input type="hidden" name="page_size" value="{{ search.page_size | escape }}" />
-    <input type="hidden" name="sort_by" value="{{ search.sort_by | escape }}" />
-    <input type="hidden" name="terms" value="{{ search.terms | terms_to_string | escape }}" />
-    <input class="form-control border-right-0 border rounded-left" name="keyword" value="{{ search.keyword | escape }}" placeholder="{{ 'search_bar.placeholder' | t }}" aria-label="{{ 'search_bar.placeholder' | t }}" />
+    <input type="hidden" name="page" value="{{ context.page_number | escape }}" />
+    <input type="hidden" name="page_size" value="{{ context.page_size | escape }}" />
+    <input type="hidden" name="sort_by" value="{{ context.query_string.sort_by | escape }}" />
+    <input type="hidden" name="filters" value="{{ context.query_string.filters | escape }}" />
+    <input class="form-control border-right-0 border rounded-left" name="q" value="{{ context.query_string.q | escape }}" placeholder="{{ 'search_bar.placeholder' | t }}" aria-label="{{ 'search_bar.placeholder' | t }}" />
     <span class="input-group-append">
       <button class="btn btn-outline-secondary border-left-0 border" type="submit">
           <i class="fa fa-search"></i>

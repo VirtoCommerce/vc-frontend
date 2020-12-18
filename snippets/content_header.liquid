@@ -1,40 +1,51 @@
-<header id="header1">
-    <nav class="navbar navbar-expand-md navbar-dark bg-primary">
-        <a class="navbar-brand" href="{{ "/" | absolute_url }}">{{ "common.header.home" | t }}</a>
-        <button aria-controls="navbarTogglerMenu" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbarTogglerMenu" data-toggle="collapse" type="button">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarTogglerMenu">
-            <ul class="navbar-nav">
-                {% include 'site-nav' %}
-            </ul>
-            <ul class="navbar-nav ml-auto">
-                <li>
-                  <span id="app-cart"></span>
-                </li>
-                <li class="nav-item">
-                    {% if customer.is_registered_user %}
-                        <a href="{{ 'account' | absolute_url }}" class="nav-link">
-                            {% if customer.operator_user_id != null %}
-                                {{ "common.header.logged_in.on_behalf" | t }}
-                            {% else %}
-                                {{ "common.header.logged_in.as" | t }}
-                            {% endif %}
-                            {{ customer.user_name }}
-                        </a>
-                    {% else %}
-                        <a href="{{ 'account/login' | absolute_url }}" class="nav-link">
-                            {{ "common.header.sign_in" | t }}
-                        </a>
-                    {% endif %}
-                </li>
-                {% if customer.is_registered_user %}
-                    <li class="nav-item">
-                        <a href="{{ 'account/logout' | absolute_url }}" class="nav-link">{{ "common.header.log_out" | t }}
-                        </a>
-                    </li>
-                {% endif %}
-            </ul>
+<div class="sf-header" :class="{ 'is-sticky': sticky, 'is-hidden': hidden }">
+  <div class="sf-header__wrapper">
+    <header ref="header" class="sf-header__header">
+      <!-- Logo here -->
+      <a href="{{ "/" | absolute_url }}" class="sf-link">
+        <div class="sf-image sf-header__logo">
+          <img src="https://virtocommerce.com/docs/latest/media/logo.png" alt="{{ "common.header.home" | t }}" />
         </div>
-    </nav>
-</header>
+      </a>
+      <div class="sf-header__aside">
+        <!-- Language or currency selector here -->
+      </div>
+      <div class="sf-header__actions">
+        <nav class="sf-header__navigation is-visible">
+          <!-- Categories navigation -->
+          {% include 'site-nav' %}
+        </nav>
+        <!-- Search bar here-->
+        <div class="sf-header__icons">
+          <!-- Cart button-->
+          <div class="sf-button sf-button--pure sf-header__action">
+            <span id="app-cart"></span>
+          </div>
+          <!-- Account button-->
+          <div class="sf-button sf-button--pure sf-header__action">
+            {% if customer.is_registered_user %}
+                <a href="{{ 'account' | absolute_url }}">
+                    {% if customer.operator_user_id != null %}
+                        {{ "common.header.logged_in.on_behalf" | t }}
+                    {% else %}
+                        {{ "common.header.logged_in.as" | t }}
+                    {% endif %}
+                    {{ customer.user_name }}
+                </a>
+            {% else %}
+                <a href="{{ 'account/login' | absolute_url }}">
+                    {{ "common.header.sign_in" | t }}
+                </a>
+            {% endif %}
+          </div>
+          <!-- Logout button-->
+          {% if customer.is_registered_user %}
+            <div class="sf-button sf-button--pure sf-header__action">
+              <a href="{{ 'account/logout' | absolute_url }}">{{ "common.header.log_out" | t }}</a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </header>
+  </div>
+</div>
