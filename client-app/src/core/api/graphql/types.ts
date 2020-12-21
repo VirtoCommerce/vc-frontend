@@ -2488,6 +2488,114 @@ export type InputCancelOrderPaymentType = {
   payment: InputPaymentInType;
 };
 
+export type MyCartQueryVariables = Exact<{
+  storeId: Scalars['String'];
+  userId: Scalars['String'];
+  currencyCode: Scalars['String'];
+  cultureName?: Maybe<Scalars['String']>;
+}>;
+
+
+export type MyCartQuery = (
+  { __typename?: 'Query' }
+  & { cart?: Maybe<(
+    { __typename?: 'CartType' }
+    & Pick<CartType, 'id' | 'name' | 'itemsCount' | 'itemsQuantity' | 'isValid'>
+    & { shipments?: Maybe<Array<Maybe<(
+      { __typename?: 'ShipmentType' }
+      & Pick<ShipmentType, 'id' | 'shipmentMethodCode'>
+      & { deliveryAddress?: Maybe<(
+        { __typename?: 'AddressType' }
+        & AddressFieldsFragment
+      )> }
+    )>>>, payments?: Maybe<Array<Maybe<(
+      { __typename?: 'PaymentType' }
+      & Pick<PaymentType, 'id' | 'paymentGatewayCode'>
+      & { billingAddress?: Maybe<(
+        { __typename?: 'AddressType' }
+        & AddressFieldsFragment
+      )> }
+    )>>>, availableShippingMethods?: Maybe<Array<Maybe<(
+      { __typename?: 'ShippingMethodType' }
+      & Pick<ShippingMethodType, 'code' | 'logoUrl' | 'optionName'>
+      & { price?: Maybe<(
+        { __typename?: 'MoneyType' }
+        & MoneyFieldsFragment
+      )> }
+    )>>>, availablePaymentMethods?: Maybe<Array<Maybe<(
+      { __typename?: 'PaymentMethodType' }
+      & Pick<PaymentMethodType, 'code' | 'name' | 'logoUrl'>
+      & { price?: Maybe<(
+        { __typename?: 'MoneyType' }
+        & MoneyFieldsFragment
+      )> }
+    )>>>, addresses?: Maybe<Array<Maybe<(
+      { __typename?: 'AddressType' }
+      & AddressFieldsFragment
+    )>>>, items?: Maybe<Array<Maybe<(
+      { __typename?: 'LineItemType' }
+      & LineItemFieldsFragment
+    )>>>, currency?: Maybe<(
+      { __typename?: 'CurrencyType' }
+      & CurrencyFieldsFragment
+    )>, total?: Maybe<(
+      { __typename?: 'MoneyType' }
+      & MoneyFieldsFragment
+    )>, subTotal?: Maybe<(
+      { __typename?: 'MoneyType' }
+      & MoneyFieldsFragment
+    )>, shippingTotal?: Maybe<(
+      { __typename?: 'MoneyType' }
+      & MoneyFieldsFragment
+    )>, shippingPrice?: Maybe<(
+      { __typename?: 'MoneyType' }
+      & MoneyFieldsFragment
+    )>, taxTotal?: Maybe<(
+      { __typename?: 'MoneyType' }
+      & MoneyFieldsFragment
+    )>, extendedPriceTotal?: Maybe<(
+      { __typename?: 'MoneyType' }
+      & MoneyFieldsFragment
+    )>, extendedPriceTotalWithTax?: Maybe<(
+      { __typename?: 'MoneyType' }
+      & MoneyFieldsFragment
+    )>, validationErrors?: Maybe<Array<Maybe<(
+      { __typename?: 'ValidationErrorType' }
+      & Pick<ValidationErrorType, 'errorCode' | 'errorMessage' | 'objectId'>
+      & { errorParameters?: Maybe<Array<Maybe<(
+        { __typename?: 'ErrorParameterType' }
+        & Pick<ErrorParameterType, 'key' | 'value'>
+      )>>> }
+    )>>> }
+  )> }
+);
+
+export type CategoriesQueryVariables = Exact<{
+  storeId: Scalars['String'];
+  userId: Scalars['String'];
+  currencyCode: Scalars['String'];
+  cultureName?: Maybe<Scalars['String']>;
+  after?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type CategoriesQuery = (
+  { __typename?: 'Query' }
+  & { categories?: Maybe<(
+    { __typename?: 'CategoryConnection' }
+    & Pick<CategoryConnection, 'totalCount'>
+    & { items?: Maybe<Array<Maybe<(
+      { __typename?: 'Category' }
+      & Pick<Category, 'id' | 'name' | 'code' | 'slug' | 'path' | 'outline'>
+      & { parent?: Maybe<(
+        { __typename?: 'Category' }
+        & Pick<Category, 'id'>
+      )> }
+    )>>> }
+  )> }
+);
+
 export type SearchProductsQueryVariables = Exact<{
   storeId: Scalars['String'];
   userId: Scalars['String'];

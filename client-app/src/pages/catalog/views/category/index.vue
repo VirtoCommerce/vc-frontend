@@ -1,5 +1,6 @@
 <template>
   <div id="category">
+    <CartSidebar :cart="cart" :is-open="isCartSideBarOpened"></CartSidebar>
     <!-- Breadcrumbs -->
     <SfBreadcrumbs
       class="breadcrumbs desktop-only"
@@ -129,7 +130,7 @@
               :is-added-to-cart="false"
               class="products__product-card-horizontal"
               @click:wishlist="addToWishlist(product)"
-              @click:add-to-cart="addToCart(product, 1)">
+              @click:add-to-cart="addToCartInternal(product.id, 1)">
               <template #actions>
                 <SfButton
                   class="sf-button--text desktop-only"
@@ -206,10 +207,14 @@ import {
   // SfProperty
 } from '@storefront-ui/vue';
 import { ref, watch, computed, onMounted, watchEffect} from '@vue/composition-api';
-import { useProducts, useCategories } from '@libs/catalog'
+import { useCart } from '@libs/cart';
+import { useProducts, useCategories } from '@libs/catalog';
 import { ProductType } from '@core/api/graphql/types';
+import CartSidebar from '../../components/CartSidebar.vue'
+
 export default {
   components: {
+    CartSidebar,
     SfButton,
     // SfSidebar,
     SfIcon,
@@ -226,6 +231,7 @@ export default {
     SfLoader,
     // SfColor,
     SfHeading
+
     // SfProperty
   },
   props: {
@@ -240,7 +246,7 @@ export default {
 
     const th = {};
     const uiState = {};
-    const { addToCart, isOnCart } = {} ;
+    const { isOnCart } = {} ;
     const { addToWishlist } = {};
     const { result, search } = {};
 
@@ -249,12 +255,13 @@ export default {
 
     const { fetchProducts, products, total, loading } = useProducts();
     const { fetchCategories, categories } = useCategories();
-
+    const { cart, loadMyCart, addToCart } = useCart();
 
     // Refs
     const isGridView = ref(false);
     const itemsPerPage = ref('20');
     const currentPage = ref(1);
+    const isCartSideBarOpened = ref(false);
 
     // Computed
     const categoryTree = computed(() => []);
@@ -273,10 +280,7 @@ export default {
       pageOptions: ['10', '20', '50']
     };
 
-
     const isGridViewStyle = computed(() => isGridView.value);
-
-
 
     const totalItems = computed(() =>  total.value);
 
@@ -297,6 +301,7 @@ export default {
     onMounted(async () => {
       await fetchCategories(10, 1);
       await fetchProducts(Number(itemsPerPage.value), currentPage.value);
+      await loadMyCart();
     })
 
     //const route = useRoute();
@@ -321,9 +326,16 @@ export default {
     //await search();
 
     // const { changeFilters, isFacetColor } = useUiHelpers();
+
     const toggleFilterSidebar = () => { console.log("toggleFilterSidebar"); };
+    const toggleCartSidebarSidebar = () => { isCartSideBarOpened.value = !isCartSideBarOpened.value };
 
     const changeGridViewStyle = (isGrid) => isGridView.value = isGrid;
+
+    const addToCartInternal = async (productId, qty) => {
+      await addToCart(productId, qty);
+      toggleCartSidebarSidebar();
+    };
 
     // Change items per page event
     const changeItemsPerPage = async (newItemsPerPage) => {
@@ -372,6 +384,9 @@ export default {
       ...uiState,
       th,
       products,
+      cart,
+      addToCartInternal,
+      isCartSideBarOpened,
       categories,
       activeCategory,
       loading,

@@ -8,6 +8,7 @@ export default () => {
   const total: Ref<number> = ref(0);
   const loading: Ref<boolean> = ref(true);
 
+  //TODO: Combine with searchProducts. Or beeter do a single composable and gql query for each view
   async function fetchCategories(itemsPerPage: number, page: number) {
     loading.value = true;
     try {

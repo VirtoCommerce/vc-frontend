@@ -11,6 +11,4 @@ InitializationService.initializeCommon().then(() => {
     router,
     template: "<router-view></router-view>"
   }).$mount("#category");
-
-
 });
