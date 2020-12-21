@@ -555,6 +555,7 @@ export default {
   box-sizing: border-box;
   flex: 1;
   margin: 0;
+  max-width: 100%;
   &__grid,
   &__list {
     display: flex;
@@ -564,9 +565,12 @@ export default {
     justify-content: space-between;
   }
   &__product-card {
-    --product-card-max-width: 25%;
+    --product-card-max-width: 50%;
     --product-card-title-margin: var(--spacer-base) 0 0 0;
     flex: 1 1 50%;
+    @include for-desktop {
+      --product-card-max-width: 25%;
+    }
   }
   &__product-card-horizontal {
     flex: 0 0 100%;
