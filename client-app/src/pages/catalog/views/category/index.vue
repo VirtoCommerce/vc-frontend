@@ -82,99 +82,101 @@
           </SfListItem>
         </SfList>
       </div>
-      <div class="products">
-        <transition-group
-          v-if="isGridViewStyle"
-          appear
-          name="products__slide"
-          tag="div"
-          class="products__grid">
-          <SfProductCard
-            v-for="(product, i) in products"
-            :key="product.slug + '__grid'"
-            :style="{ '--index': i }"
-            :title="product.name"
-            :image="product.imgSrc"
-            :regular-price="product.price | list_price"
-            :special-price="product.price | special_price"
-            :max-rating="5"
-            :score-rating="5"
-            :is-on-wishlist="false"
-            :is-added-to-cart="false"
-            :show-add-to-cart-button="true"
-            class="products__product-card"
-            @click:wishlist="addToWishlist(product)"
-            @click:add-to-cart="addToCart(product, 1)"></SfProductCard>
-        </transition-group>
-        <transition-group
-          v-else
-          appear
-          name="products__slide"
-          tag="div"
-          class="products__list">
-          <SfProductCardHorizontal
-            v-for="(product, i) in products"
-            :key="product.slug + '__list'"
-            :style="{ '--index': i }"
-            :title="product.name"
-            :description="'Test description'"
-            :image="product.imgSrc"
-            :regular-price="product.price | list_price"
-            :special-price="product.price | special_price"
-            :max-rating="5"
-            :reviews-count="0"
-            :score-rating="5"
-            :is-on-wishlist="false"
-            :is-added-to-cart="false"
-            class="products__product-card-horizontal"
-            @click:wishlist="addToWishlist(product)"
-            @click:add-to-cart="addToCart(product, 1)">
-            <template #actions>
-              <SfButton
-                class="sf-button--text desktop-only"
-                style="margin: 0 0 1rem auto; display: block;"
-                @click="$emit('click:add-to-wishlist')">
-                Save for later
-              </SfButton>
-              <SfButton
-                class="sf-button--text desktop-only"
-                style="margin: 0 0 0 auto; display: block;"
-                @click="$emit('click:add-to-compare')">
-                Add to compare
-              </SfButton>
-            </template>
-          </SfProductCardHorizontal>
-        </transition-group>
+      <SfLoader :loading="loading" style="top:2em">
+        <div class="products">
+          <transition-group
+            v-if="isGridViewStyle"
+            appear
+            name="products__slide"
+            tag="div"
+            class="products__grid">
+            <SfProductCard
+              v-for="(product, i) in products"
+              :key="product.slug + '__grid'"
+              :style="{ '--index': i }"
+              :title="product.name"
+              :image="product.imgSrc"
+              :regular-price="product.price | list_price"
+              :special-price="product.price | special_price"
+              :max-rating="5"
+              :score-rating="5"
+              :is-on-wishlist="false"
+              :is-added-to-cart="false"
+              :show-add-to-cart-button="true"
+              class="products__product-card"
+              @click:wishlist="addToWishlist(product)"
+              @click:add-to-cart="addToCart(product, 1)"></SfProductCard>
+          </transition-group>
+          <transition-group
+            v-else
+            appear
+            name="products__slide"
+            tag="div"
+            class="products__list">
+            <SfProductCardHorizontal
+              v-for="(product, i) in products"
+              :key="product.slug + '__list'"
+              :style="{ '--index': i }"
+              :title="product.name"
+              :description="'Test description'"
+              :image="product.imgSrc"
+              :regular-price="product.price | list_price"
+              :special-price="product.price | special_price"
+              :max-rating="5"
+              :reviews-count="0"
+              :score-rating="5"
+              :is-on-wishlist="false"
+              :is-added-to-cart="false"
+              class="products__product-card-horizontal"
+              @click:wishlist="addToWishlist(product)"
+              @click:add-to-cart="addToCart(product, 1)">
+              <template #actions>
+                <SfButton
+                  class="sf-button--text desktop-only"
+                  style="margin: 0 0 1rem auto; display: block;"
+                  @click="$emit('click:add-to-wishlist')">
+                  Save for later
+                </SfButton>
+                <SfButton
+                  class="sf-button--text desktop-only"
+                  style="margin: 0 0 0 auto; display: block;"
+                  @click="$emit('click:add-to-compare')">
+                  Add to compare
+                </SfButton>
+              </template>
+            </SfProductCardHorizontal>
+          </transition-group>
 
-        <!-- Pagination -->
-        <SfPagination
-          v-if="!loading"
-          v-show="totalPages > 1"
-          data-cy="category-pagination"
-          class="products__pagination desktop-only"
-          :current="getCurrentPage"
-          :total="totalPages"
-          :visible="5"
-          @click="changeCurrentPage($event)"></SfPagination>
+          <!-- Pagination -->
+          <SfPagination
+            v-if="!loading"
+            v-show="totalPages > 1"
+            data-cy="category-pagination"
+            class="products__pagination desktop-only"
+            :current="getCurrentPage"
+            :total="totalPages"
+            :visible="5"
+            @click="changeCurrentPage($event)"></SfPagination>
 
-        <div
-          v-show="totalPages > 0"
-          class="products__show-on-page">
-          <span class="products__show-on-page__label">Show on page:</span>
-          <SfSelect
-            :value="getItemsPerPage"
-            class="products__items-per-page"
-            @input="changeItemsPerPage($event)">
-            <SfSelectOption
-              v-for="option in gridViewOptions.pageOptions"
-              :key="option"
-              :value="option"
-              class="products__items-per-page__option">
-              {{ option }}
-            </SfSelectOption>
-          </SfSelect>
+          <div
+            v-show="totalPages > 0"
+            class="products__show-on-page">
+            <span class="products__show-on-page__label">Show on page:</span>
+            <SfSelect
+              :value="getItemsPerPage"
+              class="products__items-per-page"
+              @input="changeItemsPerPage($event)">
+              <SfSelectOption
+                v-for="option in gridViewOptions.pageOptions"
+                :key="option"
+                :value="option"
+                class="products__items-per-page__option">
+                {{ option }}
+              </SfSelectOption>
+            </SfSelect>
+          </div>
         </div>
-      </div>
+      </SfLoader>
     </div>
   </div>
 </template>
@@ -221,7 +223,7 @@ export default {
     //SfAccordion,
     SfSelect,
     SfBreadcrumbs,
-    //SfLoader,
+    SfLoader,
     // SfColor,
     SfHeading
     // SfProperty
