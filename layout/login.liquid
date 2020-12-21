@@ -12,13 +12,19 @@
   <title>{{ store.title }}</title>
   <base href="/">
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
-    <!-- Google fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet"/>
-    <link href="{{'favicon.ico' | static_asset_url }}" rel="icon" type="image/x-icon">
+  <!-- Google fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet"/>
+  <link href="{{'favicon.ico' | static_asset_url }}" rel="icon" type="image/x-icon">
+  {{ 'bundle/default.css' | static_asset_url | append_version | stylesheet_tag }}
 </head>
-<body class="h-100">
-	<main class="h-100 d-flex justify-content-center align-items-center">
-  {{ content_for_layout }}
-  </main>
+<body>
+	<div id="default">
+      <!-- Header -->
+      {{ content_for_header }}
+      <!-- Content here -->
+      {{ content_for_layout }}
+      <!-- Footer -->
+      {% include 'footer' %}
+    </div>
 </body>
 </html>
