@@ -1,29 +1,40 @@
 {% layout 'login' %}
 
-<form class="d-flex flex-column align-items-center"
-  accept-charset="UTF-8"
-  action="{{ requestUrl }}"
-  method="post"
-  id="customer_login"
-  name="customer_login"
->
-  <h3>{{ "common.login.login_header" | t }}</h3>
+<div class="sf-modal__content" style="margin: auto;width: 300px;">
+  <div class="modal-content">
+    <form class="form"
+      accept-charset="UTF-8"
+      action="{{ requestUrl }}"
+      method="post"
+      id="customer_login"
+      name="customer_login"
+    >
+      <h3>{{ "common.login.login_header" | t }}</h3>
 
-  {% include 'form-errors-custom' %}
+      {% include 'form-errors-custom' %}
 
-  <div class="form-group">
-    <input type="text" id="username" class="form-control" name="customer[user_name]" required placeholder={{ "common.login.username" | t }} />
+      <div class="sf-input form__element">
+        <div class="sf-input__wrapper">
+          <input id="username" name="customer[user_name]" type="text" style="outline: none;" required placeholder={{ "common.login.username" | t }} />
+        </div>
+      </div>
+
+      <div class="sf-input form__element">
+        <div class="sf-input__wrapper">
+          <input id="password" name="customer[password]" type="password" style="outline: none;" class="sf-input--is-password" required placeholder={{ "common.login.password" | t }} />
+        </div>
+      </div>
+
+      <div class="sf-form__element">
+        <input id="RememberMe" class="sf-checkbox__input" type="checkbox" />
+        <label for="RememberMe" class="sf-checkbox__label">{{ "common.login.remember_me" | t }}</label>
+      </div>
+
+      <button type="submit" class="sf-button sf-button--full-width form__submit">{{ "common.login.log_in" | t }}</button>
+
+      <a class="sf-button sf-button--text action-button" href="{{ '/account/forgotpassword' | absolute_url }}">{{ "common.login.forgot_password" | t }}</a>
+
+      {{ antiforgery }}
+    </form>
   </div>
-
-  <div class="form-group">
-    <input type="password" id="password" class="form-control" name="customer[password]" required placeholder={{ "common.login.password" | t }} />
-  </div>
-
-  <div class="custom-control custom-checkbox mt-3">
-    <input id="RememberMe" class="custom-control-input" type="checkbox" />
-    <label for="RememberMe" class="custom-control-label">{{ "common.login.remember_me" | t }}</label>
-  </div>
-  <button type="submit" class="btn btn-primary mt-2">{{ "common.login.log_in" | t }}</button>
-  <a class="mt-3" href="{{ '/account/forgotpassword' | absolute_url }}">{{ "common.login.forgot_password" | t }}</a>
-  {{ antiforgery }}
-</form>
+</div>

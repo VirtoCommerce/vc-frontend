@@ -353,11 +353,11 @@
 	/* Brand colors */
 	/* Should be used to drive attention to the main tasks that should be done while using the app.
    * It is meant to be used in major interactive elements of the page. */
-	--c-primary: var(--_c-green-primary);
-	--c-primary-base: var(--_c-green-primary-base);
-	--c-primary-lighten: var(--_c-green-primary-lighten);
-	--c-primary-darken: var(--_c-green-primary-darken);
-	--c-primary-variant: var(--_c-green-secondary);
+	--c-primary: var(--_c-red-primary);
+	--c-primary-base: var(--_c-red-primary-base);
+	--c-primary-lighten: var(--_c-red-primary-lighten);
+	--c-primary-darken: var(--_c-red-primary-darken);
+	--c-primary-variant: var(--_c-red-secondary);
 	--c-on-primary: var(--_c-light-secondary);
 	/* Should be used to drive attention in the elements with relevant info,
    * but where the user is not intended to take action. */
@@ -437,8 +437,8 @@
 }
 
 :root {
-	--font-family--primary: "Roboto", serif;
-	--font-family--secondary: "Raleway", sans-serif;
+	--font-family--primary: "Verdana", serif;
+	--font-family--secondary: "Verdana", sans-serif;
 	--font-weight--light: 300;
 	--font-weight--normal: 400;
 	--font-weight--medium: 500;
