@@ -22,6 +22,7 @@ declare global {
     USER_ID: string;
     THEME_SETTINGS: Dictionary<any>;
     CATALOG_ID: string;
+    CATEGORY_ID: string;
     FALLBACK_IMG_URL: string;
     LOCALIZATION_MESSAGES: LocaleMessages;
   }

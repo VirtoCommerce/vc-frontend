@@ -1,6 +1,8 @@
 <template>
   <div id="category">
-    <CartSidebar :cart="cart" :is-open="isCartSideBarOpened"></CartSidebar>
+    <CartSidebar :visible="isCartSideBarOpened"
+                 :cart="cart"
+                 @onClose="toggleCartSidebar"></CartSidebar>
     <!-- Breadcrumbs -->
     <SfBreadcrumbs
       class="breadcrumbs desktop-only"
@@ -149,7 +151,7 @@
               :show-add-to-cart-button="true"
               class="products__product-card"
               @click:wishlist="addToWishlist(product)"
-              @click:add-to-cart="addToCart(product, 1)"></SfProductCard>
+              @click:add-to-cart="addToCartInternal(product.id, 1)"></SfProductCard>
           </transition-group>
           <transition-group
             v-else
@@ -252,9 +254,9 @@ import {
 } from '@storefront-ui/vue';
 import { ref, watch, computed, onMounted, watchEffect} from '@vue/composition-api';
 import { useCart } from '@libs/cart';
+import CartSidebar from '@libs/cart/components/CartSidebar.vue'
 import { useProducts, useCategories } from '@libs/catalog';
 import { ProductType } from '@core/api/graphql/types';
-import CartSidebar from '../../components/CartSidebar.vue'
 
 export default {
   components: {
@@ -372,13 +374,13 @@ export default {
     // const { changeFilters, isFacetColor } = useUiHelpers();
 
     const toggleFilterSidebar = () => { console.log("toggleFilterSidebar"); };
-    const toggleCartSidebarSidebar = () => { isCartSideBarOpened.value = !isCartSideBarOpened.value };
+    const toggleCartSidebar = () => { isCartSideBarOpened.value = !isCartSideBarOpened.value };
 
     const changeGridViewStyle = (isGrid) => isGridView.value = isGrid;
 
     const addToCartInternal = async (productId, qty) => {
       await addToCart(productId, qty);
-      toggleCartSidebarSidebar();
+      toggleCartSidebar();
     };
 
     // Change items per page event
@@ -430,6 +432,7 @@ export default {
       products,
       cart,
       addToCartInternal,
+      toggleCartSidebar,
       isCartSideBarOpened,
       categories,
       activeCategory,

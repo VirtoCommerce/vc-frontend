@@ -1,13 +1,7 @@
 {
     "current": "Cyan",
     "presets": {
-        "Cyan": {
-            "color_primary": "#008B8B",
-            "color_secondary": "#5F9EA0",
-            "link_color": "#000000",
-            "pagination_color": "#008B8B",
-            "pagination_active_color": "#008B8B",
-            "navbar_links_color": "#fff"
+        "Cyan": {         
         }
     }
 }

@@ -1,10 +1,10 @@
 <template>
   <div id="cart">
     <SfSidebar
-      :visible="isOpen"
+      :visible="visible"
       title="My Cart"
       class="sf-sidebar--right"
-      @close="toggleCartSidebar">
+      @close="onClose">
       <template #content-top>
         <SfProperty
           v-if="cart"
@@ -24,8 +24,8 @@
                 data-cy="collected-product-cart-sidebar"
                 :image="item.imageUrl"
                 :title="item.name"
-                :regular-price="cart.listPrice | price"
-                :special-price="cart.extendedPrice | price"
+                :regular-price="item.listPrice | price"
+                :special-price="item.extendedPrice | price"
                 :stock="99999"
                 :qty="item.quantity"
                 class="collected-product"
@@ -76,14 +76,14 @@
 
             <SfButton
               class="sf-button--full-width color-secondary"
-              @click="toggleCartSidebar">
+              @click="onClose">
               Go to checkout
             </SfButton>
           </div>
           <div v-else>
             <SfButton
               class="sf-button--full-width color-primary"
-              @click="toggleCartSidebar">
+              @click="onClose">
               Go back shopping
             </SfButton>
           </div>
@@ -121,20 +121,19 @@ export default {
   props:
   {
     cart: {
-      type: CartType,
+      type: Object,
       "default": null
     },
-    isOpen: {
+    visible: {
       type: Boolean,
       "default": false
     }
-
   },
   computed: {
   },
   methods: {
-    toggleCartSidebar() {
-      this.isOpen = !this.isOpen;
+    onClose() {
+      this.$emit("onClose");
     }
   }
 }
