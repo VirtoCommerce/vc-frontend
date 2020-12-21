@@ -2,7 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import i18n from "@i18n";
 import { accessDeniedUrl } from 'core/constants';
-import Category from '@catalog/views/category/index.vue';
+import Category from '@catalog/views/Category.vue';
 
 
 Vue.use(VueRouter);
