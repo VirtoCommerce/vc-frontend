@@ -8,10 +8,10 @@ export default () => {
   const total: Ref<number> = ref(0);
   const loading: Ref<boolean> = ref(true);
 
-  async function fetchProducts(itemsPerPage: number, page: number) {
+  async function fetchProducts(itemsPerPage: number, page: number, catId: string | null) {
     loading.value = true;
     try {
-      const productsConnection = await searchProducts(itemsPerPage, page);
+      const productsConnection = await searchProducts(itemsPerPage, page, catId);
       products.value  = productsConnection?.items as Product[];
       total.value = productsConnection.totalCount ?? 0;
 

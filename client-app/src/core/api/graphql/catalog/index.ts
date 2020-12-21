@@ -1,4 +1,4 @@
+import searchCategories from "./queries/searchCategories"
 import searchProducts from "./queries/searchProducts"
 
-
-export { searchProducts }
+export { searchProducts, searchCategories }

@@ -71,7 +71,16 @@
     </div>
     <div class="main section">
       <div class="sidebar desktop-only">
-        <h1>Categories taxonomies ((</h1>
+        <SfList>
+          <SfListItem
+            v-for="cat in categories"
+            :key="cat.name">
+            <SfMenuItem
+              :label="cat.name"
+              :link="`/c/${cat.id}`">
+            </SfMenuItem>
+          </SfListItem>
+        </SfList>
       </div>
       <div class="products">
         <transition-group
@@ -172,33 +181,61 @@
 
 <script>
 import Vue from 'vue';
+import { useRoute } from "vue-router";
 import {
   // SfSidebar,
   SfButton,
-  // SfList,
+  SfList,
   SfIcon,
   SfComponentSelect,
   SfComponentSelectOption,
   SfHeading,
-  // SfMenuItem,
+  SfMenuItem,
   // SfFilter,
   SfProductCard,
   SfProductCardHorizontal,
   SfPagination,
-  // SfAccordion,
+  //SfAccordion,
+  //SfAccordionItem,
   SfSelect,
   SfBreadcrumbs,
   SfLoader
   // SfColor,
   // SfProperty
 } from '@storefront-ui/vue';
-import { ref, computed, onMounted, watchEffect} from '@vue/composition-api';
-import { useProducts } from '@libs/catalog'
+import { ref, watch, computed, onMounted, watchEffect} from '@vue/composition-api';
+import { useProducts, useCategories } from '@libs/catalog'
 import { ProductType } from '@core/api/graphql/types';
-
 export default {
+  components: {
+    SfButton,
+    // SfSidebar,
+    SfIcon,
+    SfComponentSelect,
+    SfList,
+    // SfFilter,
+    SfProductCard,
+    SfProductCardHorizontal,
+    SfPagination,
+    SfMenuItem,
+    //SfAccordion,
+    SfSelect,
+    SfBreadcrumbs,
+    //SfLoader,
+    // SfColor,
+    SfHeading
+    // SfProperty
+  },
+  props: {
+    catId: {
+      type: String,
+      "default": ''
+    }
+  },
   transition: 'fade',
+
   setup(props, context) {
+
     const th = {};
     const uiState = {};
     const { addToCart, isOnCart } = {} ;
@@ -209,6 +246,8 @@ export default {
 
 
     const { fetchProducts, products, total, loading } = useProducts();
+    const { fetchCategories, categories } = useCategories();
+
 
     // Refs
     const isGridView = ref(false);
@@ -232,7 +271,6 @@ export default {
       pageOptions: ['10', '20', '50']
     };
 
-    const internalFetchProducts = async() => await fetchProducts(Number(itemsPerPage.value), currentPage.value);
 
     const isGridViewStyle = computed(() => isGridView.value);
 
@@ -243,13 +281,29 @@ export default {
     const getCurrentPage = computed(() => currentPage.value);
     const getItemsPerPage = computed(() => itemsPerPage.value);
     const totalPages = computed(() => Math.ceil(total.value / itemsPerPage.value));
+    const activeCategory = computed(() => {
+      if (!categories.value) {
+        return '';
+      }
+      return categories.value[0]?.name;
+    });
 
     watchEffect(() => {
       //console.log(loading.value);
     })
 
-    onMounted(async () => await internalFetchProducts())
+    onMounted(async () => {
+      await fetchCategories(10, 1);
+      await fetchProducts(Number(itemsPerPage.value), currentPage.value);
+    })
 
+    //const route = useRoute();
+
+    watch(() => props.catId,
+      async catId => {
+        await fetchProducts(Number(itemsPerPage.value), currentPage.value, catId);
+      }
+    )
     // const activeCategory = computed(() => {
     //   const items = categoryTree.value.items;
 
@@ -273,13 +327,13 @@ export default {
     const changeItemsPerPage = async (newItemsPerPage) => {
       itemsPerPage.value = newItemsPerPage;
       currentPage.value = 1;
-      await internalFetchProducts();
+      await fetchProducts(Number(itemsPerPage.value), currentPage.value);
     };
 
     // Change current page event
     const changeCurrentPage = async (newCurrentPage) => {
       currentPage.value = Number(newCurrentPage);
-      await internalFetchProducts();
+      await fetchProducts(Number(itemsPerPage.value), currentPage.value);
     };
 
     const changeSorting = () => { console.log("changeSorting"); };
@@ -316,7 +370,8 @@ export default {
       ...uiState,
       th,
       products,
-      categoryTree,
+      categories,
+      activeCategory,
       loading,
       gridViewOptions,
       isGridViewStyle,
@@ -334,25 +389,6 @@ export default {
       changeCurrentPage,
       changeSorting
     };
-  },
-  components: {
-    SfButton,
-    // SfSidebar,
-    SfIcon,
-    SfComponentSelect,
-    // SfList,
-    // SfFilter,
-    SfProductCard,
-    SfProductCardHorizontal,
-    SfPagination,
-    // SfMenuItem,
-    // SfAccordion,
-    SfSelect,
-    SfBreadcrumbs,
-    //SfLoader,
-    // SfColor,
-    SfHeading
-    // SfProperty
   }
 };
 </script>
