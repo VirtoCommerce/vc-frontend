@@ -151,7 +151,7 @@
               :is-added-to-cart="false"
               :show-add-to-cart-button="true"
               class="products__product-card"
-              :link="product.slug"
+              :link="product.slug !== null? product.slug:''"
               @click:wishlist="addToWishlist(product)"
               @click:add-to-cart="addToCartInternal(product.id, 1)"></SfProductCard>
           </transition-group>
@@ -175,7 +175,7 @@
               :score-rating="5"
               :is-on-wishlist="false"
               :is-added-to-cart="false"
-              :link="product.slug"
+              :link="product.slug !== null? product.slug:''"
               class="products__product-card-horizontal"
               @click:wishlist="addToWishlist(product)"
               @click:add-to-cart="addToCartInternal(product.id, 1)">
