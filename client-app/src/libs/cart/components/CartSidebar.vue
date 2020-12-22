@@ -76,7 +76,7 @@
 
             <SfButton
               class="sf-button--full-width color-secondary"
-              @click="onClose">
+              @click="$emit('click:checkout')">
               Go to checkout
             </SfButton>
           </div>

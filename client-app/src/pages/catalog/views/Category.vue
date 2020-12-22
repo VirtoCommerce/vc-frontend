@@ -2,6 +2,7 @@
   <div id="category">
     <CartSidebar :visible="isCartSideBarOpened"
                  :cart="cart"
+                 @click:checkout="openCheckout"
                  @onClose="toggleCartSidebar"></CartSidebar>
     <!-- Breadcrumbs -->
     <SfBreadcrumbs
@@ -150,6 +151,7 @@
               :is-added-to-cart="false"
               :show-add-to-cart-button="true"
               class="products__product-card"
+              :link="product.slug"
               @click:wishlist="addToWishlist(product)"
               @click:add-to-cart="addToCartInternal(product.id, 1)"></SfProductCard>
           </transition-group>
@@ -173,6 +175,7 @@
               :score-rating="5"
               :is-on-wishlist="false"
               :is-added-to-cart="false"
+              :link="product.slug"
               class="products__product-card-horizontal"
               @click:wishlist="addToWishlist(product)"
               @click:add-to-cart="addToCartInternal(product.id, 1)">
@@ -373,8 +376,13 @@ export default {
 
     // const { changeFilters, isFacetColor } = useUiHelpers();
 
+    const openCheckout = () => {
+      context.root.$router.push('checkout');
+    };
     const toggleFilterSidebar = () => { console.log("toggleFilterSidebar"); };
-    const toggleCartSidebar = () => { isCartSideBarOpened.value = !isCartSideBarOpened.value };
+    const toggleCartSidebar = () => {
+      isCartSideBarOpened.value = !isCartSideBarOpened.value
+    };
 
     const changeGridViewStyle = (isGrid) => isGridView.value = isGrid;
 
@@ -451,7 +459,8 @@ export default {
       changeGridViewStyle,
       changeItemsPerPage,
       changeCurrentPage,
-      changeSorting
+      changeSorting,
+      openCheckout
     };
   }
 };
