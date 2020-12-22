@@ -2,8 +2,6 @@
 
 {% product = product_data_source.product %}
 
-{% include 'breadcrumb' %}
-
 <div id="app-cart-sidebar"></div>
 
 {% assign on_sale = false %}
@@ -22,128 +20,181 @@
   {% assign unavailable = true %}
 {% endif %}
 
-
-<div class="row mt-3" itemscope itemtype="http://schema.org/Product">
+<div id="product">
+  <!-- Breadcrumbs -->
+  <nav aria-label="breadcrumb" class="sf-breadcrumbs breadcrumbs desktop-only">
+    <ol class="sf-breadcrumbs__list">
+      <li class="sf-breadcrumbs__list-item">
+        <a
+          href=""
+          class="sf-link sf-breadcrumbs__breadcrumb"
+          data-testid="Home"
+          style="outline: none;">Home </a>
+      </li>
+      <li class="sf-breadcrumbs__list-item">
+        <a
+          href=""
+          class="sf-link sf-breadcrumbs__breadcrumb"
+          data-testid="Category"
+          style="outline: none;">Category </a>
+      </li>
+      <li aria-current="page" class="sf-breadcrumbs__list-item">
+        <a
+          href=""
+          class="sf-link sf-breadcrumbs__breadcrumb current"
+          style="outline: none;">Item</a>
+      </li>
+    </ol>
+  </nav><!-- Breadcrumbs End -->
+  <!-- Product card -->
+  <div class="product" itemscope itemtype="http://schema.org/Product">
     <meta itemprop="url" content="{{ product.slug | absolute_url }}">
     <meta itemprop="image" content="{{ product.img_src | img_url }}">
-
-    <div class="col-lg-5 flex-column">
-      <div class="mw-100 mb-5 d-flex justify-content-center">
+    <!-- Gallery -->
+    <div class="sf-gallery product__gallery">
+      <!-- Main image -->
+      <div class="sf-gallery__stage">
         {% if product.img_src %}
-          <img id="productPrimaryImg" class="mw-100" src="{{ product.img_src | img_url: "348x348" }}"  alt="{{ image.alt | escape }}">
+          <div class="sf-image sf-gallery__big-image has-size" style="--_image-width:422; --_image-height:664;" data-loaded="true">
+            <img
+            id="productPrimaryImg"
+            style="--_image-width:422; --_image-height:664;"
+            src="{{ product.img_src | img_url: "348x348" }}"
+            alt="{{ image.alt | escape }}" />
+          </div>
         {% else %}
           <div class="d-flex justify-content-center h3">
             <i class="fas fa-camera fa-10x mw-100"></i>
           </div>
         {% endif %}
       </div>
+      <!-- Additional images -->
       {% if product.images.size > 1 %}
-        <div class="row justify-content-center">
-          {% for image in product.images %}
+        <div class="sf-gallery__thumbs">
+          {% for image in product.images limit:4 %}
             {% capture zoomedImgUrl %}{{ image.url | img_url: "348x348" }}{% endcapture %}
             {% capture zoomedImgAlt %}{{ image.alt | escape }}{% endcapture %}
-            <figure class="col-4 col-md-3 d-flex justify-content-center btn">
-              <img src="{{ image.url | img_url: "64x64" }}" onclick="showImage('{{ zoomedImgUrl }}','{{zoomedImgAlt}}')" alt="{{ image.alt | escape }}">
-            </figure>
+            <button style="outline: none" class="sf-button sf-button--pure sf-gallery__item">
+              <div class="sf-image sf-gallery__thumb has-size" style="--_image-width:160; --_image-height:160;" data-loaded="true">
+                <img width="160"
+                      height="160"
+                      src="{{ image.url | img_url: "128x128" }}"
+                      onclick="showImage('{{ zoomedImgUrl }}','{{zoomedImgAlt}}')"
+                      alt="{{ image.alt | escape }}" />
+              </div>
+            </button>
           {% endfor %}
         </div>
       {% endif %}
-    </div>
 
-    <div class="col-lg-7">
-        <h3 itemprop="name">{{ product.name }}</h3>
-
-        <div class="mt-4" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
-
-
-            <meta itemprop="priceCurrency" content="{{ shop.currency }}">
-            <meta itemprop="price" content="{{ product.price.formatted_amount }}">
-
-            {% include 'product-price' %}
-
-            <link itemprop="availability" href="http://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}">
-
-              <div class="mt-4">
-
-              {% if product.availability_data.is_available %}
-                <div class="btn-group">
-                  <!-- <button class="btn btn-outline-primary mb-1" id="addToCart" type="button">
-                    <span class="fas fa-shopping-cart"></span>
-                    <span id="addToCartText">{{ 'products.general.add_to_cart' | t }}</span>
-                  </button> -->
-                  <button class="app-add-item-to-cart btn btn-outline-primary" title="{{ 'products.general.add_to_cart' | t }}" product-id="{{product.id}}" text-visible><i class="fas fa-shopping-cart"></i>
-                    <span>{{ 'products.general.add_to_cart' | t }}</span></button>
-                </div>
-              {% endif %}
-
-              {% if unavailable %}
-                <div class="btn-group">
-                  <button class="btn btn-outline-primary" id="addToCart" type="button" disabled>
-                    <span class="fas fa-shopping-cart"></span>
-                    <span id="addToCartText">{{ 'products.product.unavailable' | t }}</span>
-                  </button>
-                </div>
-              {% endif %}
-
-              {% if sold_out %}
-                <div class="btn-group">
-                  <button class="btn btn-outline-primary" id="addToCart" type="button" disabled>
-                    <span class="fas fa-shopping-cart"></span>
-                    <span id="addToCartText">{{ 'products.product.sold_out' | t }}</span>
-                  </button>
-                </div>
-              {% endif %}
-
-
-                <div class="btn-group">
-                  <button class="app-add-item-to-draft btn btn-outline-primary" title="{{ 'products.general.add_to_order_draft' | t }}" product-id="{{product.id}}" text-visible><i class="fas fa-file-alt"></i>
-                    <span>{{ 'products.general.add_to_order_draft' | t }}</span></button>
-                </div>
-
-              </div>
-
+    </div><!-- Gallery End-->
+    <!-- Product Info -->
+    <div class="product__info">
+      <!-- Product Header -->
+      <div class="product__header">
+        <div class="sf-heading sf-heading--no-underline sf-heading--left">
+          <h3 class="sf-heading__title h3" itemprop="name">{{ product.name }}</h3>
         </div>
-
+        <div class="product__drag-icon smartphone-only sf-icon" style="--icon-color:#E0E0E1; --icon-size:42px;">
+          <svg viewBox="0 0 24 24" preserveAspectRatio="none" class="sf-icon-path">
+            <path d="M13.836 9.603c-.234.17-.4.398-.493.65a1.404 1.404 0 00-2.08.584l-1.76-2.423a1.403 1.403 0 10-2.272 1.65l4.026 5.54-1.295-.576a1.403 1.403 0 00-1.141 2.564l.921.41c1 .449 2.101 1.641 3.104 2.09 1.4.624 3.467 1.286 3.584 1.325a.35.35 0 00.22-.666c-.116-.038-2.364-.782-3.52-1.302-.786-.353-2.012-1.607-3.102-2.087l-.922-.41a.702.702 0 01.571-1.283l2.4 1.069c.25.135.713-.218.466-.558L7.8 9.651a.702.702 0 111.135-.825l3.506 4.826a.351.351 0 10.568-.412l-1.032-1.42a.702.702 0 011.136-.824l1.031 1.42a.352.352 0 00.568-.414l-.619-.852a.701.701 0 111.136-.824l1.03 1.419a.351.351 0 00.569-.412l-.62-.852a.702.702 0 011.136-.825l1.444 1.987c1.35 1.86 1.503 4.456 2.577 5.935a.352.352 0 00.568-.413c-.926-1.275-1.221-4.068-2.577-5.934l-1.444-1.988a1.404 1.404 0 00-2.453.34 1.404 1.404 0 00-1.623.02zM5.085 7.892a.35.35 0 11.496.496L4.178 9.792a.35.35 0 01-.496 0L2.278 8.388a.351.351 0 01.497-.496l.804.805v-6.17a.351.351 0 11.701 0v6.172l.805-.807z" fill="var(--icon-color)" style="height: 100%;">
+            </path>
+          </svg>
+        </div>
+      </div><!-- Product Header End -->
+      <!-- Offer -->
+      <div class="product__price-and-rating" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+        <meta itemprop="priceCurrency" content="{{ shop.currency }}">
+        <meta itemprop="price" content="{{ product.price.formatted_amount }}">
+        {% include 'product-price' %}
+        <link itemprop="availability" href="http://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}">
         <hr>
+      </div><!-- Offer End -->
+      <!-- Actions -->
+        {% if product.availability_data.is_available %}
+          <div class="sf-add-to-cart product__add-to-cart">
+            <button class="sf-button sf-add-to-cart__button" style="outline: none;" title="{{ 'products.general.add_to_cart' | t }}" product-id="{{product.id}}">
+              <i class="fas fa-shopping-cart"></i>
+              <span>{{ 'products.general.add_to_cart' | t }}</span>
+            </button>
+          </div>
+        {% endif %}
 
-      {% unless product.description == nil and product.properties.size < 1 %}
-        <ul class="nav nav-tabs mb-3 border-primary" id="pills-tab" role="tablist">
-          {% if product.description == nil %}
-            <li class="nav-item">
-              <a class="nav-link active" data-toggle="tab" role="tab" id="details-tab" href="#details" aria-controls="details" aria-selected="false">{{ 'products.product.details_tab' | t }}</a>
-            </li>
-          {% else %}
-            <li class="nav-item">
-                <a class="nav-link active" data-toggle="tab" role="tab" id="description-tab" href="#description" aria-controls="description" aria-selected="true">{{ 'products.product.description_tab' | t }}</a>
-            </li>
-            {% if product.properties.size > 1 %}
-              <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" role="tab" id="details-tab" href="#details" aria-controls="details" aria-selected="false">{{ 'products.product.details_tab' | t }}</a>
-              </li>
-            {% endif %}
-          {% endif %}
-        </ul>
+        {% if unavailable %}
+          <div class="sf-add-to-cart product__add-to-cart">
+            <button class="sf-button sf-add-to-cart__button" style="outline: none;" disabled>
+              <i class="fas fa-shopping-cart"></i>
+              <span>{{ 'products.product.unavailable' | t }}</span>
+            </button>
+          </div>
+        {% endif %}
 
-        <div class="tab-content" id="pills-tabContent">
-          {% if product.description.content == nil %}
-            <div class="mb-3 bg-light row justify-content-around tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
-              {% include 'product-properties' %}
-            </div>
-          {% else %}
-            <div class="tab-pane fade show active" itemprop="description" id="description" role="tabpanel" aria-labelledby="description-tab">
-              {{ product.description.content }}
-            </div>
-            {% if product.properties.size > 1 %}
-            <div class="mb-3 bg-light row justify-content-around tab-pane fade" id="details" role="tabpanel" aria-labelledby="details-tab">
-              {% include 'product-properties' %}
-            </div>
-            {% endif %}
-          {% endif %}
+        {% if sold_out %}
+          <div class="sf-add-to-cart product__add-to-cart">
+            <button class="sf-button sf-add-to-cart__button" style="outline: none;" disabled>
+              <i class="fas fa-shopping-cart"></i>
+              <span>{{ 'products.product.sold_out' | t }}</span>
+            </button>
+          </div>
+        {% endif %}
+
+        <div class="sf-add-to-cart product__add-to-cart">
+          <button class="sf-button sf-add-to-cart__button" style="outline: none;" title="{{ 'products.general.add_to_order_draft' | t }}" product-id="{{product.id}}">
+            <i class="fas fa-file-alt"></i>
+            <span>{{ 'products.general.add_to_order_draft' | t }}</span>
+          </button>
         </div>
-      {% endunless %}
-
-    </div>
+        <!-- Actions End -->
+      <!-- Product tabs -->
+      <div class="sf-tabs product__tabs">
+        {% unless product.description == nil and product.properties.size < 1 %}
+          <!-- Tab buttons -->
+          {% if product.description == nil %}
+            <button fragment="details"
+                    aria-pressed="true"
+                    class="sf-button sf-button--pure sf-tabs__title is-active"
+                    style="outline: none;">{{ 'products.product.details_tab' | t }}</button>
+          {% else %}
+            <button fragment="description"
+                    aria-pressed="true"
+                    class="sf-button sf-button--pure sf-tabs__title"
+                    style="outline: none;">{{ 'products.product.description_tab' | t }}</button>
+            {% if product.properties.size > 1 %}
+              <button fragment="details"
+                      aria-pressed="true"
+                      class="sf-button sf-button--pure sf-tabs__title"
+                      style="outline: none;">{{ 'products.product.details_tab' | t }}</button>
+            {% endif %}
+          {% endif %}
+          <!-- Tab buttons End-->
+          <!-- Tab content-->
+          {% if product.description.content == nil %}
+            <div fragment="details" class="sf-tabs__content">
+              <div class="sf-tabs__content__tab">
+                {% include 'product-properties' %}
+              </div>
+            </div>
+          {% else %}
+            <div fragment="description" class="sf-tabs__content">
+              <div class="sf-tabs__content__tab">
+                {{ product.description.content }}
+              </div>
+            </div>
+            {% if product.properties.size > 1 %}
+              <div fragment="details" class="sf-tabs__content">
+                <div class="sf-tabs__content__tab">
+                  {% include 'product-properties' %}
+                </div>
+              </div>
+            {% endif %}
+          {% endif %}
+          <!-- Tab content End-->
+        {% endunless %}
+      </div><!-- Product tabs End -->
+    </div><!-- Product Info End -->
+  </div><!-- Product card End-->
 </div>
+
 <script>
   function showImage(url,alt) {
     var primaryImg = document.getElementById('productPrimaryImg');
@@ -153,3 +204,203 @@
 </script>
 
 <script src="{{ 'bundle/dist/js/catalog.js' | static_asset_url | append_version }}"></script>
+
+<style>
+
+@media (min-width: 1024px) {
+	.smartphone-only {
+		display: none !important;
+	}
+}
+
+@media (max-width: 1023px) {
+	.desktop-only {
+		display: none !important;
+	}
+}
+
+#product {
+	box-sizing: border-box;
+}
+
+@media (min-width: 1024px) {
+	#product {
+		max-width: 1272px;
+		padding: 0 var(--spacer-sm);
+		margin: 0 auto;
+	}
+}
+
+@media (min-width: 1024px) {
+	.product {
+		display: flex;
+	}
+}
+
+.product__info {
+	margin: var(--spacer-xs) auto;
+}
+
+@media (min-width: 1024px) {
+	.product__info {
+		max-width: 32.625rem;
+		margin: 0 0 0 7.5rem;
+	}
+}
+
+.product__header {
+	--heading-title-color: var(--c-link);
+	--heading-title-font-weight: var(--font-weight--bold);
+	--heading-padding: 0;
+	margin: 0 var(--spacer-sm);
+	display: flex;
+	justify-content: space-between;
+}
+
+@media (min-width: 1024px) {
+	.product__header {
+		--heading-title-font-weight: var(--font-weight--semibold);
+		margin: 0 auto;
+	}
+}
+
+.product__drag-icon {
+	animation: moveicon 1s ease-in-out infinite;
+}
+
+.product__price-and-rating {
+	margin: 0 var(--spacer-sm) var(--spacer-base);
+	align-items: center;
+}
+
+@media (min-width: 1024px) {
+	.product__price-and-rating {
+		display: flex;
+		justify-content: space-between;
+		margin: var(--spacer-sm) 0 var(--spacer-lg) 0;
+	}
+}
+
+.product__rating {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	margin: var(--spacer-xs) 0 var(--spacer-xs);
+}
+
+.product__count {
+	font: var(--count-font, var(--count-font-weight, var(--font-weight--normal)) var(--count-font-size, var(--font-size--sm))/var(--count-font-line-height, 1.4) var(--count-font-family, var(--font-family--secondary)));
+	color: var(--c-text);
+	text-decoration: none;
+	margin: 0 0 0 var(--spacer-xs);
+}
+
+.product__description {
+	color: var(--c-link);
+	font: var(--product-description-font, var(--product-description-font-weight, var(--font-weight--light)) var(--product-description-font-size, var(--font-size--base))/var(--product-description-font-line-height, 1.6) var(--product-description-font-family, var(--font-family--primary)));
+}
+
+.product__select-size {
+	margin: 0 var(--spacer-sm);
+}
+
+@media (min-width: 1024px) {
+	.product__select-size {
+		margin: 0;
+	}
+}
+
+.product__colors {
+	font: var(--product-color-font, var(--product-color-font-weight, var(--font-weight--normal)) var(--product-color-font-size, var(--font-size--lg))/var(--product-color-font-line-height, 1.6) var(--product-color-font-family, var(--font-family--secondary)));
+	display: flex;
+	align-items: center;
+	margin-top: var(--spacer-xl);
+}
+
+.product__color-label {
+	margin: 0 var(--spacer-lg) 0 0;
+}
+
+.product__color {
+	margin: 0 var(--spacer-2xs);
+}
+
+.product__add-to-cart {
+	margin: var(--spacer-base) var(--spacer-sm) 0;
+}
+
+/*
+@media (min-width: 1024px) {
+	.product__add-to-cart {
+		margin-top: var(--spacer-2xl);
+	}
+}
+*/
+
+.product__guide, .product__compare, .product__save {
+	display: block;
+	margin: var(--spacer-xl) 0 var(--spacer-base) auto;
+}
+
+.product__compare {
+	margin-top: 0;
+}
+
+.product__tabs {
+	margin: var(--spacer-lg) auto var(--spacer-2xl);
+	--tabs-title-font-size: var(--font-size--lg);
+}
+
+@media (min-width: 1024px) {
+	.product__tabs {
+		margin-top: var(--spacer-2xl);
+	}
+}
+
+.product__property {
+	margin: var(--spacer-base) 0;
+}
+
+.product__property__button {
+	--button-font-size: var(--font-size--base);
+}
+
+.product__review {
+	padding-bottom: 24px;
+	border-bottom: var(--c-light) solid 1px;
+	margin-bottom: var(--spacer-base);
+}
+
+.product__additional-info {
+	color: var(--c-link);
+	font: var(--additional-info-font, var(--additional-info-font-weight, var(--font-weight--light)) var(--additional-info-font-size, var(--font-size--sm))/var(--additional-info-font-line-height, 1.6) var(--additional-info-font-family, var(--font-family--primary)));
+}
+
+.product__additional-info__title {
+	font-weight: var(--font-weight--normal);
+	font-size: var(--font-size--base);
+	margin: 0 0 var(--spacer-sm);
+}
+
+.product__additional-info__title:not(:first-child) {
+	margin-top: 3.5rem;
+}
+
+.product__additional-info__paragraph {
+	margin: 0;
+}
+
+.product__gallery {
+	flex: 1;
+}
+
+.breadcrumbs {
+	margin: var(--spacer-base) auto var(--spacer-lg);
+}
+
+@keyframes moveicon {
+	0% {transform: translate3d(0, 0, 0);}
+	50% {transform: translate3d(0, 30%, 0);}
+	100% {transform: translate3d(0, 0, 0);}
+}
+</style>
