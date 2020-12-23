@@ -1,4 +1,4 @@
-<div class="sf-price">
+<div class="sf-price {% if use_price_in_card == true %}sf-product-card__price{% endif %}">
     {% if on_sale %}
       <del class="sf-price__old">
         {{ product.price.list.formatted_amount }}

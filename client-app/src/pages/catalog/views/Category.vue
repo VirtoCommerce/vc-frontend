@@ -349,7 +349,7 @@ export default {
 
     onMounted(async () => {
       await fetchCategories(10, 1);
-      await fetchProducts(Number(itemsPerPage.value), currentPage.value);
+      await fetchProducts(Number(itemsPerPage.value), currentPage.value, props.catId);
       await loadMyCart();
     })
 

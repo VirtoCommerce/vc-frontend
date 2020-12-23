@@ -1,5 +1,6 @@
 const pages = {
-  catalog: "src/pages/catalog/main.ts"
+  catalog: "src/pages/catalog/main.ts",
+  home: "src/pages/home/main.ts",
 };
 
 module.exports = {
