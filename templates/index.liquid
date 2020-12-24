@@ -67,13 +67,13 @@
   <!-- Subscribtion End -->
   {% if product_search_result.products.empty? == false %}
     <!-- Call to action -->
-    <div class="match-with-it">
+    <div class="match-with-it desktop-only">
       <p class="match-with-it__paragraph">Latest products</p>
       <button link="" class="sf-button sf-button--text smartphone-only" style="outline: none;">See all</button>
     </div>
     <!-- Call to action End -->
     <!-- Products -->
-    <div  style="display: flex; flex-direction: row;">
+    <div class="desktop-only" style="display: flex; flex-direction: row;">
       {% for product in product_search_result.products.items limit:5 %}
         <div class="sf-product-card">
           <div class="sf-product-card__image-wrapper">
@@ -85,7 +85,7 @@
             <div
               class="app-add-item-to-cart"
               product-id="{{ product.id }}"
-              buyable="{{ product.availabilityData.isBuyable }}"
+              buyable="{{ product.price.actual.amount > 0 }}"
               title="{{ product.name }}"
             ></div>
           </div>
@@ -188,6 +188,9 @@
 	.desktop-only {
 		display: none !important;
 	}
+  .sf-banner__wrapper{
+    padding: unset;
+  }
 }
 
 #home {
@@ -338,3 +341,5 @@
 	margin: 0 0 0 calc(var(--spacer-xl) / 2);
 }
 </style>
+
+

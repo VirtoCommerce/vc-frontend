@@ -1,5 +1,5 @@
 <template>
-  <SfHero class="hero">
+  <SfHero class="hero desktop-only">
     <SfHeroItem
       v-for="(img, index) in heroes"
       :key="index"

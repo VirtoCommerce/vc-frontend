@@ -29,6 +29,7 @@
 </template>
 
 <script>
+
 import { SfCircleIcon, SfIcon } from '@storefront-ui/vue';
 import { computed, onMounted, ref } from '@vue/composition-api';
 import { useCart } from '@libs/cart';
@@ -61,7 +62,9 @@ export default {
     // Computed
     const isAddingToCart = computed(() => addingToCart.value);
     // Init
-    onMounted(async () => await loadMyCart());
+    onMounted(async () => {
+      await loadMyCart();
+    });
     // Events
     const onAddToCart = async () => {
       addingToCart.value = true;
@@ -70,6 +73,7 @@ export default {
     };
 
     return {
+      addingToCart,
       isAddingToCart,
       onAddToCart
     };
@@ -79,4 +83,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "~@storefront-ui/vue/styles";
 </style>
