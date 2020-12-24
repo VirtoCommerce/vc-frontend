@@ -1,7 +1,7 @@
 import Vue from "vue";
 import i18n from "@i18n";
+import { HeroSlider } from '@libs/home/index.ts'
 import InitializationService from "@core/services/initialization.service";
-import HeroSlider from "./views/HeroSlider.vue"
 
 InitializationService.initializeCommon().then(() => {
   new Vue({
