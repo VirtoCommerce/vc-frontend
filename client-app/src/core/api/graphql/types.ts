@@ -2488,7 +2488,20 @@ export type InputCancelOrderPaymentType = {
   payment: InputPaymentInType;
 };
 
-export type MyCartQueryVariables = Exact<{
+export type AddItemMutationVariables = Exact<{
+  command: InputAddItemType;
+}>;
+
+
+export type AddItemMutation = (
+  { __typename?: 'Mutations' }
+  & { addItem?: Maybe<(
+    { __typename?: 'CartType' }
+    & Pick<CartType, 'name' | 'itemsQuantity'>
+  )> }
+);
+
+export type GetMyCartQueryVariables = Exact<{
   storeId: Scalars['String'];
   userId: Scalars['String'];
   currencyCode: Scalars['String'];
@@ -2496,7 +2509,7 @@ export type MyCartQueryVariables = Exact<{
 }>;
 
 
-export type MyCartQuery = (
+export type GetMyCartQuery = (
   { __typename?: 'Query' }
   & { cart?: Maybe<(
     { __typename?: 'CartType' }
@@ -2508,6 +2521,9 @@ export type MyCartQuery = (
         { __typename?: 'AddressType' }
         & AddressFieldsFragment
       )> }
+    )>>>, discounts?: Maybe<Array<Maybe<(
+      { __typename?: 'DiscountType' }
+      & Pick<DiscountType, 'description' | 'amount' | 'coupon'>
     )>>>, payments?: Maybe<Array<Maybe<(
       { __typename?: 'PaymentType' }
       & Pick<PaymentType, 'id' | 'paymentGatewayCode'>
