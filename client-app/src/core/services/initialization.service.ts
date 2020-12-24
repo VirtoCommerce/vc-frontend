@@ -7,6 +7,8 @@ import "vue-moment";
 import VueRx from "vue-rx";
 import Vuelidate from "vuelidate";
 import { library, dom } from "@fortawesome/fontawesome-svg-core";
+//This is required https://stackoverflow.com/questions/61885716/uncaught-error-vue-composition-api-must-call-vue-useplugin-before-using-any
+import './installCompositionApi';
 import {
   faHeartBroken,
   faLock,
@@ -21,7 +23,6 @@ import {
   faSearch
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon, FontAwesomeLayers } from "@fortawesome/vue-fontawesome";
-import VueCompositionAPI from '@vue/composition-api';
 import {
   ButtonPlugin,
   CollapsePlugin,
@@ -70,9 +71,6 @@ export default class InitializationService {
     dom.watch();
     // Load data for apps
     await Promise.all([SetLocale(locale)]);
-
-    // Use Composition API
-    Vue.use(VueCompositionAPI);
 
     //plugins
     Vue.use(VueRx);

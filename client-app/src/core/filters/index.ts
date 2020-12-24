@@ -22,6 +22,13 @@ Vue.filter('imgUrl', (value: string, suffix: string) => {
   return result;
 });
 
+
+Vue.filter('money', function (value: MoneyType) {
+  if (!value) return null;
+
+  return value?.formattedAmount;
+})
+
 Vue.filter('price', function (value: MoneyType) {
   if (!value) return null;
 

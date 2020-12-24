@@ -1,11 +1,21 @@
 import { Ref, ref } from "@vue/composition-api";
 import { getMyCart, addItemToCart } from "@core/api/graphql/cart";
-import { CartType } from "@core/api/graphql/types";
+import { CartType, ShipmentType, InputShipmentType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 
+const loading: Ref<boolean> = ref(true);
+
+const cart: Ref<CartType | null> = ref(null);
+const cartShippingDetails: Ref<InputShipmentType> = ref({});
+
 export default () => {
-  const cart: Ref<CartType | null> = ref(null);
-  const loading: Ref<boolean> = ref(true);
+
+  async function setShipmentDetails(shippingDetails: any) {
+    console.log(shippingDetails);
+    cartShippingDetails.value = { ...cartShippingDetails.value, ...shippingDetails };
+    console.log("setShipmentDetails");
+    console.log(cartShippingDetails);
+  }
 
   async function loadMyCart() {
     loading.value = true;
@@ -33,5 +43,5 @@ export default () => {
     await loadMyCart();
   }
 
-  return { cart, loadMyCart, addToCart, loading };
+  return { cart, loadMyCart, addToCart, setShipmentDetails, cartShippingDetails, loading };
 };

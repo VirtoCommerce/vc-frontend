@@ -2,21 +2,19 @@
   <div id="checkout">
     <div class="checkout">
       <div class="checkout__main">
-        <SfSteps v-if="currentStep < 4"
-                 :active="currentStep"
-                 class="checkout__steps">
-          <SfStep v-for="(step, index) in STEPS"
-                  :key="step.name"
-                  :name="step.label">
-            <router-view
-              @showReview="handleShowReview"
-              @changeStep="updateStep($event)"
-              @nextStep="handleNextStep(index + 1)"></router-view>
+        <SfSteps v-if="!isThankYou"
+                 :active="currentStepIndex"
+                 :class="{ 'checkout__steps': true, 'checkout__steps-auth': isAuthenticated }"
+                 @change="handleStepClick">
+          <SfStep v-for="(step, key) in STEPS"
+                  :key="key"
+                  :name="step">
+            <router-view></router-view>
           </SfStep>
         </SfSteps>
-        <router-view v-else @changeStep="updateStep($event)"></router-view>
+        <router-view v-else></router-view>
       </div>
-      <div v-if="currentStep < 4" class="checkout__aside desktop-only">
+      <div v-if="!isThankYou" class="checkout__aside desktop-only">
         <transition name="fade">
           <CartPreview v-if="showCartPreview" key="order-summary"></CartPreview>
           <OrderReview v-else key="order-review"></OrderReview>
@@ -28,20 +26,17 @@
 <script>
 
 import { SfSteps } from '@storefront-ui/vue';
-import { ref } from '@vue/composition-api';
+import { ref, computed, onMounted, provide } from '@vue/composition-api';
+import { useCart } from '@libs/cart';
 import CartPreview from '@libs/checkout/components/CartPreview.vue';
 import OrderReview from '@libs/checkout/components/OrderReview.vue';
 
-const STEPS = [
-  { name: 'personal-details',
-    label: 'Personal Details' },
-  { name: 'shipping',
-    label: 'Shipping' },
-  { name: 'payment',
-    label: 'Payment' },
-  { name: 'order-review',
-    label: 'Review' }
-];
+const STEPS = {
+  'personal-details': 'Personal Details',
+  shipping: 'Shipping',
+  payment: 'Payment',
+  'order-review': 'Review'
+};
 
 export default {
   components: {
@@ -50,28 +45,35 @@ export default {
     OrderReview
   },
   setup(props, context) {
+    const currentStep = computed(() => context.root.$route.path.split('/').pop());
+    const isAuthenticated  = ref(false);
     const showCartPreview = ref(true);
-    const currentStep = ref(0);
+    const currentStepIndex = computed(() => Object.keys(STEPS).findIndex(s => s === currentStep.value));
+    const isThankYou = computed(() => currentStep.value === 'thank-you');
+    const { cart, loadMyCart } = useCart();
 
-    const handleShowReview = () => {
-      showCartPreview.value = false;
+    const handleStepClick = (stepIndex) => {
+      const key = Object.keys(STEPS)[stepIndex];
+      context.root.$router.push(`/checkout/${key}`);
     };
 
-    const updateStep = (next) => {
-      currentStep.value = next;
-    };
+    provide("cart", cart);
 
-    const handleNextStep = (nextStep) => {
-      context.root.$router.push(nextStep < 4 ? STEPS[nextStep].name : 'thank-you');
-    };
+    onMounted(async () => {
+      if(!cart?.value){
+        await loadMyCart();
+      }
+    })
 
     return {
+      cart,
+      handleStepClick,
       STEPS,
-      handleNextStep,
+      currentStepIndex,
+      isThankYou,
       currentStep,
-      updateStep,
-      handleShowReview,
-      showCartPreview
+      showCartPreview,
+      isAuthenticated
     };
   }
 };
