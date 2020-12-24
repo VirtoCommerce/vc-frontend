@@ -1,15 +1,7 @@
 <script src="{{ 'bundle/dist/js/catalog.js' | static_asset_url | append_version }}"></script>
 <script>
-window.CATEGORY_ID ="{{ context.slug_routing_data.object_id }}";
+  window.CATEGORY_ID ="{{ context.slug_routing_data.object_id }}";
 </script>
 
 {{ 'bundle/dist/css/catalog.css' | static_asset_url | append_version | stylesheet_tag }}
 <div id="category"></div>
-
-<!-- 
-{% product_search_result = 'collection.graphql' | graphql_data_source %}
-{{ paginator =  product_search_result.products | paginate }}
-
-{% include 'search-result' %}
-
-<script src="{{ 'bundle/dist/js/catalog.js' | static_asset_url | append_version }}"></script> -->

@@ -82,7 +82,12 @@
                 <img width="216" height="326" alt="{{ product.name }}" src="{{ product.img_src }}">
               </div>
             </a>
-            {% include 'add-to-card-button' %}
+            <div
+              class="app-add-item-to-cart"
+              product-id="{{ product.id }}"
+              buyable="{{ product.availabilityData.isBuyable }}"
+              title="{{ product.name }}"
+            ></div>
           </div>
           <a href="" class="sf-link sf-product-card__link" style="outline: none;">
             <h3 class="sf-product-card__title">{{ product.name }}</h3>
