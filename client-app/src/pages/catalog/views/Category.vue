@@ -377,7 +377,7 @@ export default {
     // const { changeFilters, isFacetColor } = useUiHelpers();
 
     const openCheckout = () => {
-      context.root.$router.push('checkout/personal-details');
+      context.root.$router.push('/checkout/personal-details');
     };
     const toggleFilterSidebar = () => { console.log("toggleFilterSidebar"); };
     const toggleCartSidebar = () => {
