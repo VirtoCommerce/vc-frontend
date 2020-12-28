@@ -5,19 +5,11 @@ import { Logger } from "@core/utilities";
 
 const loading: Ref<boolean> = ref(true);
 
-const cart: Ref<CartType | null> = ref(null);
-const cartShippingDetails: Ref<InputShipmentType> = ref({});
+const cart: Ref<CartType> = ref({ name: ''});
 
 export default () => {
 
-  async function setShipmentDetails(shippingDetails: any) {
-    console.log(shippingDetails);
-    cartShippingDetails.value = { ...cartShippingDetails.value, ...shippingDetails };
-    console.log("setShipmentDetails");
-    console.log(cartShippingDetails);
-  }
-
-  async function loadMyCart() {
+  async function loadMyCart(): Promise<CartType> {
     loading.value = true;
     try {
       cart.value = await getMyCart();
@@ -27,6 +19,7 @@ export default () => {
     } finally {
       loading.value = false;
     }
+    return cart.value;
   }
 
   async function addToCart(productId: string, qty: number) {
@@ -43,5 +36,5 @@ export default () => {
     await loadMyCart();
   }
 
-  return { cart, loadMyCart, addToCart, setShipmentDetails, cartShippingDetails, loading };
+  return { cart, loadMyCart, addToCart, loading };
 };

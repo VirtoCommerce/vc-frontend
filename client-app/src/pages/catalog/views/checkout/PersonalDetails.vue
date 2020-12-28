@@ -112,8 +112,7 @@ import {
 import { ref, computed } from '@vue/composition-api';
 import { ValidationProvider, ValidationObserver, extend } from 'vee-validate';
 import { required, min, email } from 'vee-validate/dist/rules';
-//TODO: remove from here
-import { useCart } from '@libs/cart';
+import { useCheckout } from '@libs/checkout';
 
 extend('required', {
   ...required,
@@ -141,15 +140,13 @@ export default {
   },
   setup(props, context) {
 
-    const { setShipmentDetails, cartShippingDetails } = useCart();
+    const { setDeliveryAddress, deliveryAddress, loading } = useCheckout();
 
-    const loading = ref(false);
-    const personalDetails = {};
+    const personalDetails = computed(()=> { return {  ...deliveryAddress.value } } );
     const accountBenefits = ref(false);
     const createAccount = ref(false);
     const handleFormSubmit = (form) => {
-      //TODO: move from here to be  decoupled from state
-      setShipmentDetails({ deliveryAddress : {...personalDetails}});
+      setDeliveryAddress(personalDetails.value);
       context.root.$router.push('/checkout/shipping');
     };
     const toggleLoginModal = () => {

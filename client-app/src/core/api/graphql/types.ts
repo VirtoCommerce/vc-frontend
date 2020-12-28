@@ -1137,6 +1137,7 @@ export type ShippingMethodType = {
   currency?: Maybe<CurrencyType>;
   discountAmount?: Maybe<MoneyType>;
   discountAmountWithTax?: Maybe<MoneyType>;
+  id?: Maybe<Scalars['String']>;
   /** Value of shipping method logo absolute URL */
   logoUrl?: Maybe<Scalars['String']>;
   /** Value of shipping method option description */
@@ -1164,7 +1165,7 @@ export type PaymentType = {
   /** Value of payment outer id */
   outerId?: Maybe<Scalars['String']>;
   /** Value of payment gateway code */
-  paymentGatewayCode: Scalars['String'];
+  paymentGatewayCode?: Maybe<Scalars['String']>;
   price?: Maybe<MoneyType>;
   priceWithTax?: Maybe<MoneyType>;
   taxDetails?: Maybe<Array<Maybe<TaxDetailType>>>;
@@ -2228,6 +2229,8 @@ export type InputShipmentType = {
 };
 
 export type InputAddressType = {
+  /** Id */
+  id?: Maybe<Scalars['String']>;
   /** City */
   city?: Maybe<Scalars['String']>;
   /** Country code */
@@ -2501,6 +2504,101 @@ export type AddItemMutation = (
   )> }
 );
 
+export type AddOrUpdateCartPaymentMutationVariables = Exact<{
+  command: InputAddOrUpdateCartPaymentType;
+}>;
+
+
+export type AddOrUpdateCartPaymentMutation = (
+  { __typename?: 'Mutations' }
+  & { addOrUpdateCartPayment?: Maybe<(
+    { __typename?: 'CartType' }
+    & Pick<CartType, 'id'>
+  )> }
+);
+
+export type AddOrUpdateCartShipmentMutationVariables = Exact<{
+  command: InputAddOrUpdateCartShipmentType;
+}>;
+
+
+export type AddOrUpdateCartShipmentMutation = (
+  { __typename?: 'Mutations' }
+  & { addOrUpdateCartShipment?: Maybe<(
+    { __typename?: 'CartType' }
+    & Pick<CartType, 'id'>
+  )> }
+);
+
+export type CreateOrderFromCartMutationVariables = Exact<{
+  command: InputCreateOrderFromCartType;
+}>;
+
+
+export type CreateOrderFromCartMutation = (
+  { __typename?: 'Mutations' }
+  & { createOrderFromCart?: Maybe<(
+    { __typename?: 'CustomerOrderType' }
+    & Pick<CustomerOrderType, 'id' | 'number'>
+  )> }
+);
+
+export type RemoveCartMutationVariables = Exact<{
+  command: InputRemoveCartType;
+}>;
+
+
+export type RemoveCartMutation = (
+  { __typename?: 'Mutations' }
+  & Pick<Mutations, 'removeCart'>
+);
+
+export type GetAvailPaymentMethodsQueryVariables = Exact<{
+  storeId: Scalars['String'];
+  userId: Scalars['String'];
+  currencyCode: Scalars['String'];
+  cultureName?: Maybe<Scalars['String']>;
+}>;
+
+
+export type GetAvailPaymentMethodsQuery = (
+  { __typename?: 'Query' }
+  & { cart?: Maybe<(
+    { __typename?: 'CartType' }
+    & { availablePaymentMethods?: Maybe<Array<Maybe<(
+      { __typename?: 'PaymentMethodType' }
+      & Pick<PaymentMethodType, 'code' | 'name' | 'logoUrl'>
+      & { price?: Maybe<(
+        { __typename?: 'MoneyType' }
+        & MoneyFieldsFragment
+      )> }
+    )>>> }
+  )> }
+);
+
+export type GetAvailShippingMethodsQueryVariables = Exact<{
+  storeId: Scalars['String'];
+  userId: Scalars['String'];
+  currencyCode: Scalars['String'];
+  cultureName?: Maybe<Scalars['String']>;
+}>;
+
+
+export type GetAvailShippingMethodsQuery = (
+  { __typename?: 'Query' }
+  & { cart?: Maybe<(
+    { __typename?: 'CartType' }
+    & { availableShippingMethods?: Maybe<Array<Maybe<(
+      { __typename?: 'ShippingMethodType' }
+      & Pick<ShippingMethodType, 'id' | 'code' | 'logoUrl' | 'optionName'>
+      & { price?: Maybe<(
+        { __typename?: 'MoneyType' }
+        & MoneyFieldsFragment
+      )> }
+    )>>> }
+  )> }
+);
+
 export type GetMyCartQueryVariables = Exact<{
   storeId: Scalars['String'];
   userId: Scalars['String'];
@@ -2523,27 +2621,13 @@ export type GetMyCartQuery = (
       )> }
     )>>>, discounts?: Maybe<Array<Maybe<(
       { __typename?: 'DiscountType' }
-      & Pick<DiscountType, 'description' | 'amount' | 'coupon'>
+      & Pick<DiscountType, 'promotionId' | 'description' | 'amount' | 'coupon'>
     )>>>, payments?: Maybe<Array<Maybe<(
       { __typename?: 'PaymentType' }
       & Pick<PaymentType, 'id' | 'paymentGatewayCode'>
       & { billingAddress?: Maybe<(
         { __typename?: 'AddressType' }
         & AddressFieldsFragment
-      )> }
-    )>>>, availableShippingMethods?: Maybe<Array<Maybe<(
-      { __typename?: 'ShippingMethodType' }
-      & Pick<ShippingMethodType, 'code' | 'logoUrl' | 'optionName'>
-      & { price?: Maybe<(
-        { __typename?: 'MoneyType' }
-        & MoneyFieldsFragment
-      )> }
-    )>>>, availablePaymentMethods?: Maybe<Array<Maybe<(
-      { __typename?: 'PaymentMethodType' }
-      & Pick<PaymentMethodType, 'code' | 'name' | 'logoUrl'>
-      & { price?: Maybe<(
-        { __typename?: 'MoneyType' }
-        & MoneyFieldsFragment
       )> }
     )>>>, addresses?: Maybe<Array<Maybe<(
       { __typename?: 'AddressType' }
@@ -2555,6 +2639,9 @@ export type GetMyCartQuery = (
       { __typename?: 'CurrencyType' }
       & CurrencyFieldsFragment
     )>, total?: Maybe<(
+      { __typename?: 'MoneyType' }
+      & MoneyFieldsFragment
+    )>, discountTotal?: Maybe<(
       { __typename?: 'MoneyType' }
       & MoneyFieldsFragment
     )>, subTotal?: Maybe<(

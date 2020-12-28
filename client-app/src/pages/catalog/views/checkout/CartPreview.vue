@@ -15,7 +15,7 @@
       <SfProperty
         name="Subtotal"
         :value="cart.subTotal | money"
-        :class="['sf-property--full-width', 'sf-property--large', { discounted: cart.discountTotal.amount > 0 }]"></SfProperty>
+        :class="['sf-property--full-width', 'sf-property--large', { discounted: cart && cart.discountTotal && cart.discountTotal.amount > 0 }]"></SfProperty>
       <SfProperty
         v-for="discount in cart.discounts"
         :key="discount.promotionId"
@@ -24,7 +24,7 @@
         class="sf-property--full-width sf-property--small"></SfProperty>
       <!-- TODO: incorrect special price display -->
       <SfProperty
-        v-if="cart.discountTotal.amount > 0"
+        v-if="cart && cart.discountTotal && cart.discountTotal.amount > 0"
         :value="cart.total | money"
         class="sf-property--full-width sf-property--small property special-price"></SfProperty>
       <SfProperty
@@ -68,6 +68,7 @@ import {
   SfInput
 } from '@storefront-ui/vue';
 import { computed, ref, inject, watchEffect } from '@vue/composition-api';
+import { useCart } from '@libs/cart';
 
 export default {
   components: {
@@ -85,11 +86,11 @@ export default {
     const promoCode = ref('');
     const showPromoCode = ref(false);
 
+    const { cart } = useCart();
+
     const applyCoupon = (coupon) => {
       console.log(coupon);
     }
-    //Inject cart from parent components
-    const cart = inject('cart');
 
     return {
       cart,

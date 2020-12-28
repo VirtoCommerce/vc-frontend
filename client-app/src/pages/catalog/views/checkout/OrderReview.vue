@@ -9,15 +9,13 @@
         <div class="accordion__item">
           <div class="accordion__content">
             <p class="content">
-              {{ cartShippingDetails.deliveryAddress.firstName }} {{ cartShippingDetails.deliveryAddress.lastName }}<br>
+              {{ personalDetails.firstName }} {{ personalDetails.lastName }}<br>
             </p>
             <p class="content">
-              {{ cartShippingDetails.deliveryAddress.email }}
+              {{ personalDetails.email }}
             </p>
           </div>
-          <SfButton data-cy="order-review-btn_personal-edit"
-                    class="sf-button--text color-secondary accordion__edit"
-                    @click="$emit('click:edit', 0)">
+          <SfButton class="sf-button--text color-secondary accordion__edit" @click="$emit('click:edit', 0)">
             Edit
           </SfButton>
         </div>
@@ -26,18 +24,16 @@
         <div class="accordion__item">
           <div class="accordion__content">
             <p class="content">
-              <span class="content__label">{{ cartShippingDetails.shipmentMethodCode }}</span><br>
-              {{ cartShippingDetails.deliveryAddress.streetName }} {{ cartShippingDetails.deliveryAddress.apartment }},
-              {{ cartShippingDetails.deliveryAddress.zipCode }}<br>
-              {{ cartShippingDetails.deliveryAddress.city }}, {{ cartShippingDetails.deliveryAddress.country }}
+              <span class="content__label">{{ chosenShippingMethod.name }}</span><br>
+              {{ deliveryAddress.line1 }} {{ deliveryAddress.line2 }},
+              {{ deliveryAddress.zipCode }}<br>
+              {{ deliveryAddress.city }}, {{ deliveryAddress.country }}
             </p>
             <p class="content">
-              {{ cartShippingDetails.deliveryAddress.phoneNumber }}
+              {{ deliveryAddress.phoneNumber }}
             </p>
           </div>
-          <SfButton data-cy="order-review-btn_shippin-edit"
-                    class="sf-button--text color-secondary accordion__edit"
-                    @click="$emit('click:edit', 1)">
+          <SfButton class="sf-button--text color-secondary accordion__edit" @click="$emit('click:edit', 1)">
             Edit
           </SfButton>
         </div>
@@ -50,19 +46,17 @@
             </p>
             <template v-else>
               <p class="content">
-                <span class="content__label">{{ chosenPaymentMethod.label }}</span><br>
-                {{ billingDetails.streetName }} {{ billingDetails.apartment }},
-                {{ billingDetails.zipCode }}<br>
-                {{ billingDetails.city }}, {{ billingDetails.country }}
+                <span class="content__label">{{ chosenPaymentMethod.name }}</span><br>
+                {{ billingAddress.line1 }} {{ billingAddress.line2 }},
+                {{ billingAddress.zipCode }}<br>
+                {{ billingAddress.city }}, {{ billingAddress.country }}
               </p>
               <p class="content">
-                {{ billingDetails.phoneNumber }}
+                {{ billingAddress.phoneNumber }}
               </p>
             </template>
           </div>
-          <SfButton data-cy="order-review-btn_billing-edit"
-                    class="sf-button--text color-secondary accordion__edit"
-                    @click="$emit('click:edit', 2)">
+          <SfButton class="sf-button--text color-secondary accordion__edit" @click="$emit('click:edit', 2)">
             Edit
           </SfButton>
         </div>
@@ -71,76 +65,60 @@
         <div class="accordion__item">
           <div class="accordion__content">
             <p class="content">
-              {{ chosenPaymentMethod.label }}
+              {{ chosenPaymentMethod.name }}
             </p>
           </div>
-          <SfButton data-cy="order-review-btn_payment-edit2"
-                    class="sf-button--text color-secondary accordion__edit"
-                    @click="$emit('click:edit', 2)">
+          <SfButton class="sf-button--text color-secondary accordion__edit" @click="$emit('click:edit', 2)">
             Edit
           </SfButton>
         </div>
       </SfAccordionItem>
     </SfAccordion>
     <SfTable class="sf-table--bordered table desktop-only">
-      <thead>
-        <SfTableHeading class="table__row">
-          <SfTableHeader class="table__header table__image">
-            Item
-          </SfTableHeader>
-          <SfTableHeader
-            v-for="tableHeader in tableHeaders"
-            :key="tableHeader"
-            class="table__header">
-            {{ tableHeader }}
-          </SfTableHeader>
-          <SfTableHeader class="table__action"></SfTableHeader>
-        </SfTableHeading>
-      </thead>
-      <tbody>
-        <SfTableRow
-          v-for="(item, index) in cart.items"
-          :key="index"
-          class="table__row">
-          <SfTableData class="table__image">
-            <SfImage :src="item.imageUrl"></SfImage>
-          </SfTableData>
-          <SfTableData class="table__data table__data--left">
-            <div class="product-title">
-              {{ item.name }}
-            </div>
-            <div class="product-sku">
-              {{ item.code }}
-            </div>
-          </SfTableData>
-          <SfTableData class="table__data">
-            {{ item.quantity }}
-          </SfTableData>
-          <SfTableData class="table__data">
-            <SfPrice
-              :regular="item.listPrice | price"
-              :special="item.extendedPrice | price"
-              class="product-price"></SfPrice>
-          </SfTableData>
-          <SfTableData class="table__action">
-            <SfIcon
-              data-cy="order-review-icon_remove-from-cart"
-              icon="cross"
-              size="xxs"
-              color="#BEBFC4"
-              role="button"
-              class="button"
-              @click="removeFromCart(product)"></SfIcon>
-          </SfTableData>
-        </SfTableRow>
-      </tbody>
+      <SfTableHeading class="table__row">
+        <SfTableHeader class="table__header table__image">
+          Item
+        </SfTableHeader>
+        <SfTableHeader
+          v-for="tableHeader in tableHeaders"
+          :key="tableHeader"
+          class="table__header"
+          :class="{ table__description: tableHeader === 'Description' }">
+          {{ tableHeader }}
+        </SfTableHeader>
+      </SfTableHeading>
+      <SfTableRow
+        v-for="(lineItem, index) in cart.items"
+        :key="index"
+        class="table__row">
+        <SfTableData class="table__image">
+          <SfImage :src="lineItem.imageUrl"></SfImage>
+        </SfTableData>
+        <SfTableData class="table__data table__description table__data">
+          <div class="product-title">
+            {{ lineItem.name }}
+          </div>
+          <div class="product-sku">
+            {{ lineItem.code }}
+          </div>
+        </SfTableData>
+        <SfTableData class="table__data">
+          {{ lineItem.quantity }}
+        </SfTableData>
+        <SfTableData class="table__data price">
+          <SfPrice
+            :regular="lineItem.listPrice | money"
+            :special="lineItem.extendedPrice | money"
+            class="product-price"></SfPrice>
+        </SfTableData>
+      </SfTableRow>
     </SfTable>
     <div class="summary">
       <div class="summary__group">
         <div class="summary__total">
           <SfProperty
             name="Subtotal"
-            :value="cart.subtotal | money"
+            :value="cart.subTotal | money"
             class="sf-property--full-width property"></SfProperty>
           <SfProperty
             name="Shipping"
@@ -164,14 +142,13 @@
           </template>
         </SfCheckbox>
         <div class="summary__action">
-          <!-- TODO: add nuxt link for navigating back and forward -->
-          <SfButton data-cy="order-review-btn_summary-back" class="color-secondary summary__back-button">
+          <router-link to="/checkout/payment" class="sf-button color-secondary summary__back-button">
             Go back
-          </SfButton>
-          <SfButton data-cy="order-review-btn_summary-conitnue"
-                    class="summary__action-button"
-                    @click="$emit('nextStep')">
-            Continue to shipping
+          </router-link>
+          <SfButton class="summary__action-button"
+                    :disabled="loading"
+                    @click="processOrder">
+            Make an order
           </SfButton>
         </div>
       </div>
@@ -187,15 +164,15 @@ import {
   SfButton,
   SfDivider,
   SfImage,
-  SfIcon,
   SfPrice,
   SfProperty,
   SfAccordion,
   SfLink
 } from '@storefront-ui/vue';
-import { ref, computed, inject } from '@vue/composition-api';
-//TODO: remove from here
+import { ref, computed, onMounted} from '@vue/composition-api';
 import { useCart } from '@libs/cart';
+import { useCheckout } from '@libs/checkout';
+
 export default {
   name: 'ReviewOrder',
   components: {
@@ -205,77 +182,95 @@ export default {
     SfButton,
     SfDivider,
     SfImage,
-    SfIcon,
     SfPrice,
     SfProperty,
     SfAccordion,
     SfLink
   },
   setup(props, context) {
-
     const billingSameAsShipping = ref(false);
-    const billingDetails = ref({});
     const terms = ref(false);
-    const chosenPaymentMethod = ref({});
+    const { cart, removeFromCart, loadMyCart } = useCart();
+
+    const {
+      placeOrder,
+      deliveryAddress,
+      billingAddress,
+      chosenShippingMethod,
+      chosenPaymentMethod,
+      loading,
+      clean
+    } = useCheckout();
+
+
+    const personalDetails = computed(()=> { return {  ...deliveryAddress.value } } );
+
+    onMounted(async () => {
+      await loadMyCart();
+    });
+
     const processOrder = async () => {
-      //await placeOrder();
+      const order = await placeOrder(cart.value.id);
+      context.root.$router.push(`/checkout/thank-you?order=${order.number}`);
+      clean();
     };
-
-    const { cartShippingDetails, setShipmentDetails } = useCart();
-    //Inject cart from parent components. Or change to use from composable.
-    const cart = inject('cart');
-
     return {
       cart,
-      cartShippingDetails,
-      billingSameAsShipping,
+      loading,
+      personalDetails,
+      deliveryAddress,
+      billingAddress,
+      chosenShippingMethod,
       chosenPaymentMethod,
-      billingDetails,
+      billingSameAsShipping,
       terms,
+      removeFromCart,
       processOrder,
       tableHeaders: ['Description', 'Colour', 'Size', 'Quantity', 'Amount']
     };
   }
 };
-
 </script>
 
 <style lang="scss" scoped>
 @import "~@storefront-ui/vue/styles";
-
 .title {
   margin: var(--spacer-xl) 0 var(--spacer-base) 0;
 }
 .table {
-  margin: 0 0 var(--spacer-xl) 0;
-  &__header {
-    @include for-desktop {
+  margin: 0 0 var(--spacer-base) 0;
+  &__row {
+    justify-content: space-between;
+  }
+  @include for-desktop {
+    &__header {
+      text-align: center;
+      &:last-child {
+        text-align: right;
+      }
+    }
+    &__data {
       text-align: center;
     }
-  }
-  &__data {
-    @include for-desktop {
-      text-align: center;
+    &__description {
+      text-align: left;
+      flex: 0 0 12rem;
     }
-  }
-  &__image {
-    @include for-desktop {
-      flex: 0 0 5.125rem;
-    }
-  }
-  &__action {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    @include for-desktop {
-      flex: 0 0 2.5rem;
+    &__image {
+      --image-width: 5.125rem;
+      text-align: left;
+      margin: 0 var(--spacer-xl) 0 0;
     }
   }
 }
-
 .product-sku {
   color: var(--c-text-muted);
   font-size: var(--font-size--sm);
+}
+.price {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
 }
 .product-price {
   --price-font-size: var(--font-size--base);
@@ -358,5 +353,4 @@ export default {
     font-weight: var(--font-weight--normal);
   }
 }
-
 </style>

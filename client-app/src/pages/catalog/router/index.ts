@@ -1,13 +1,14 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import i18n from "@i18n";
-import OrderReview from '@libs/checkout/components/OrderReview.vue';
-import Payment from '@libs/checkout/components/Payment.vue';
-import PersonalDetails from '@libs/checkout/components/PersonalDetails.vue';
-import Shipping from '@libs/checkout/components/Shipping.vue';
 import { accessDeniedUrl } from 'core/constants';
-import Category from '@catalog/views/Category.vue';
-import Checkout from '@catalog/views/Checkout.vue';
+import Category from '../views/Category.vue';
+import Checkout from '../views/Checkout.vue';
+import OrderReview from '../views/checkout/OrderReview.vue';
+import Payment from '../views/checkout/Payment.vue';
+import PersonalDetails from '../views/checkout/PersonalDetails.vue';
+import Shipping from '../views/checkout/Shipping.vue';
+import ThankYou from '../views/checkout/ThankYou.vue';
 
 
 Vue.use(VueRouter);
@@ -37,6 +38,11 @@ const routes = [
         name: "order-review",
         path: "order-review",
         component: OrderReview
+      },
+      {
+        path: 'thank-you',
+        name: 'thank-you',
+        component: ThankYou
       }
     ]
   },
