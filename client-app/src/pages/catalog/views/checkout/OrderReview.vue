@@ -198,8 +198,7 @@ export default {
       billingAddress,
       chosenShippingMethod,
       chosenPaymentMethod,
-      loading,
-      clean
+      loading
     } = useCheckout();
 
 
@@ -212,7 +211,6 @@ export default {
     const processOrder = async () => {
       const order = await placeOrder(cart.value.id);
       context.root.$router.push(`/checkout/thank-you?order=${order.number}`);
-      clean();
     };
     return {
       cart,

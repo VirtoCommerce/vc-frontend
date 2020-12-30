@@ -77,7 +77,7 @@
       {% for product in product_search_result.products.items limit:5 %}
         <div class="sf-product-card">
           <div class="sf-product-card__image-wrapper">
-            <a href="" class="sf-link sf-product-card__link" style="outline: none;">
+            <a href="{{ product.slug }}" class="sf-link sf-product-card__link" style="outline: none;">
               <div class="sf-image sf-product-card__image has-size" style="--_image-width:216; --_image-height:326;" >
                 <img width="216" height="326" alt="{{ product.name }}" src="{{ product.img_src }}">
               </div>
@@ -89,7 +89,7 @@
               title="{{ product.name }}"
             ></div>
           </div>
-          <a href="" class="sf-link sf-product-card__link" style="outline: none;">
+          <a href class="sf-link sf-product-card__link" style="outline: none;">
             <h3 class="sf-product-card__title">{{ product.name }}</h3>
           </a>
           {% assign use_price_in_card = true %}
