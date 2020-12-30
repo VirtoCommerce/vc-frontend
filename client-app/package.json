@@ -12,7 +12,7 @@
     "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'",
     "nswag": "nswag run",
     "compress": "vue-cli-service build && gulp compress",
-    "generate:graphql": "graphql-codegen -c graphql.codegen.json && eolConverter crlf \"src/core/api/graphql/*\""
+    "generate:graphql": "graphql-codegen -c graphql.codegen.yml && eolConverter crlf \"src/core/api/graphql/*\""
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.29",

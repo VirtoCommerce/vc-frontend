@@ -8,7 +8,9 @@ const graphqlClient = new ApolloClient({
   // Provide required constructor fields
   link: new HttpLink({ uri: `${baseUrl}/xapi/graphql` }),
   cache: new InMemoryCache({
-    freezeResults: true
+    freezeResults: true,
+    addTypename: false
+
   }),
 
   // Provide some optional constructor fields

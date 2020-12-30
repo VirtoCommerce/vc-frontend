@@ -19,102 +19,96 @@
                               rules="required|min:2"
                               slim>
             <SfInput
-              :value="deliveryAddress.firstName"
+              v-model="deliveryAddress.firstName"
               label="First name"
               name="firstName"
               class="form__element form__element--half"
               required
               :valid="!errors[0]"
-              :error-message="errors[0]"
-              @input="firstName => setDeliveryAddressAndUnpickAddress({ firstName })"></SfInput>
+              :error-message="errors[0]"></SfInput>
           </ValidationProvider>
           <ValidationProvider v-slot="{ errors }"
                               name="lastName"
                               rules="required|min:2"
                               slim>
             <SfInput
-              :value="deliveryAddress.lastName"
+              v-model="deliveryAddress.lastName"
               label="Last name"
               name="lastName"
               class="form__element form__element--half form__element--half-even"
               required
               :valid="!errors[0]"
-              :error-message="errors[0]"
-              @input="lastName => setDeliveryAddressAndUnpickAddress({ lastName })"></SfInput>
+              :error-message="errors[0]"></SfInput>
           </ValidationProvider>
           <ValidationProvider v-slot="{ errors }"
                               name="streetName"
                               rules="required|min:2"
                               slim>
             <SfInput
-              :value="deliveryAddress.streetName"
+              v-model="deliveryAddress.line1"
               label="Street name"
               name="streetName"
               class="form__element form__element--half"
               required
               :valid="!errors[0]"
-              :error-message="errors[0]"
-              @input="streetName => setDeliveryAddressAndUnpickAddress({ streetName })"></SfInput>
+              :error-message="errors[0]"></SfInput>
           </ValidationProvider>
           <ValidationProvider v-slot="{ errors }"
                               name="apartment"
                               rules="required|min:2"
                               slim>
             <SfInput
-              :value="deliveryAddress.streetNumber"
+              v-model="deliveryAddress.line2"
               label="House/Apartment number"
               name="apartment"
               class="form__element form__element--half form__element--half-even"
               required
               :valid="!errors[0]"
-              :error-message="errors[0]"
-              @input="streetNumber => setDeliveryAddressAndUnpickAddress({ streetNumber })"></SfInput>
+              :error-message="errors[0]"></SfInput>
           </ValidationProvider>
           <ValidationProvider v-slot="{ errors }"
                               name="city"
                               rules="required|min:2"
                               slim>
             <SfInput
-              :value="deliveryAddress.city"
+              v-model="deliveryAddress.city"
               label="City"
               name="city"
               class="form__element form__element--half"
               required
               :valid="!errors[0]"
-              :error-message="errors[0]"
-              @input="city => setDeliveryAddressAndUnpickAddress({ city })"></SfInput>
+              :error-message="errors[0]"></SfInput>
           </ValidationProvider>
           <ValidationProvider v-slot="{ errors }"
                               name="zipCode"
                               rules="required|min:2"
                               slim>
             <SfInput
-              :value="deliveryAddress.postalCode"
+              v-model="deliveryAddress.postalCode"
               label="Zip-code"
               name="zipCode"
               class="form__element form__element--half form__element--half-even"
               required
               :valid="!errors[0]"
-              :error-message="errors[0]"
-              @input="postalCode => setDeliveryAddressAndUnpickAddress({ postalCode })"></SfInput>
+              :error-message="errors[0]"></SfInput>
           </ValidationProvider>
           <ValidationProvider v-slot="{ errors }"
                               name="country"
                               rules="required|min:2"
                               slim>
             <SfSelect
-              :selected="deliveryAddress.country"
+              v-model="deliveryAddress.countryCode"
               label="Country"
               name="country"
               class="form__element form__element--half form__select sf-select--underlined"
               required
               :valid="!errors[0]"
               :error-message="errors[0]"
-              @change="country => setDeliveryAddressAndUnpickAddress({ country })">
+              @input="countryCode => selectCountry(countryCode)">
               <SfSelectOption
                 v-for="countryOption in countries"
-                :key="countryOption.name"
-                :value="countryOption.name">
+                :key="countryOption.key"
+                :value="countryOption.key">
                 {{ countryOption.label }}
               </SfSelectOption>
             </SfSelect>
@@ -124,14 +118,13 @@
                               rules="required|digits:9"
                               slim>
             <SfInput
-              :value="deliveryAddress.phone"
+              v-model="deliveryAddress.phone"
               label="Phone number"
               name="phone"
               class="form__element form__element--half form__element--half-even"
               required
               :valid="!errors[0]"
-              :error-message="errors[0]"
-              @input="phone => setDeliveryAddressAndUnpickAddress({ phone })"></SfInput>
+              :error-message="errors[0]"></SfInput>
           </ValidationProvider>
         </div>
         <SfButton
@@ -205,7 +198,7 @@ import {
   SfSelect,
   SfRadio
 } from '@storefront-ui/vue';
-import { ref, onMounted, computed } from '@vue/composition-api';
+import { ref, onMounted, computed, watch, reactive } from '@vue/composition-api';
 import { ValidationProvider, ValidationObserver, extend } from 'vee-validate';
 import { required, min, digits } from 'vee-validate/dist/rules';
 import { UserAddresses , useCheckout } from '@libs/checkout';
@@ -247,7 +240,7 @@ export default {
   setup(props, context) {
     const {
       loadShipmentMethods,
-      deliveryAddress,
+      deliveryAddress : deliveryAddressRef,
       chosenShippingMethod,
       setDeliveryAddress,
       saveShippingDetails,
@@ -267,19 +260,27 @@ export default {
     const currentAddressId = ref('');
     const setAsDefault = ref(false);
 
+    const deliveryAddress = ref({});
+
+    watch(deliveryAddress, () => {
+      addressIsModified.value = true;
+    });
 
     const setCurrentAddress = async (addressId) => {
-
       const chosenAddress = shippingAddresses.value.find(x=> x.id === addressId);
       if (chosenAddress) {
         currentAddressId.value = addressId;
-        await setDeliveryAddress(chosenAddress);
-        addressIsModified.value = true;
+        deliveryAddress.value = { ...chosenAddress };
       }
     };
 
     onMounted(async () => {
       await loadShipmentMethods();
+      //clone delivery address to lose reactivity in order to prevent the state  mutation
+      //TODO: need to find a better way to make the state Ref objects trully immutable because if bind the deliveryAddress as v-model
+      //the component imput change the deliveryAddress in the state
+      deliveryAddress.value = {...deliveryAddressRef.value};
+
       if (isAuthenticated.value) {
         if (!shippingAddresses.value || !shippingAddresses.value.length) {
           return;
@@ -292,9 +293,10 @@ export default {
     });
 
     const handleShippingAddressSubmit = (reset) => async () => {
-      await setDeliveryAddress(deliveryAddress.value);
 
+      await setDeliveryAddress(deliveryAddress.value);
       reset();
+
       if (currentAddressId.value > -1 && setAsDefault.value) {
         const chosenAddress = shippingAddresses.value.find(x=> x.id === currentAddressId.value );
         if (chosenAddress) {
@@ -310,21 +312,23 @@ export default {
       context.root.$router.push('/checkout/payment');
     };
 
-    const setDeliveryAddressAndUnpickAddress = value => {
-      setDeliveryAddress(value);
-      currentAddressId.value = '';
-      addressIsModified.value = true;
+    const selectCountry = value => {
+      const country = COUNTRIES.find( c => c.key === value);
+      if(country) {
+        deliveryAddress.value.countryCode = country.key;
+        deliveryAddress.value.countryName = country.label;
+      }
     };
 
     const canContinueToPayment = dirty => isShippingAddressCompleted.value && !dirty && !addressIsModified.value;
 
     return {
       loading,
+      selectCountry,
       handleShippingAddressSubmit,
       handleShippingMethodSubmit,
       isShippingAddressCompleted,
       isShippingMethodCompleted,
-      setDeliveryAddressAndUnpickAddress,
       setShippingMethod,
       deliveryAddress,
       chosenShippingMethod,

@@ -1,5 +1,4 @@
-import { Ref, ref } from "@vue/composition-api";
-import { or } from "vuelidate/lib/validators";
+import { Ref, ref, reactive, computed } from "@vue/composition-api";
 import { useCart } from "@libs/cart";
 import {
   addOrUpdateCartShipment,
@@ -41,7 +40,7 @@ const addresses: AddressType[] = [
 
 const loading: Ref<boolean> = ref(false);
 
-const deliveryAddress: Ref<InputAddressType> = ref({ postalCode: "" });
+const deliveryAddress: Ref<InputAddressType> = ref({ postalCode: "", countryCode: "" });
 const billingAddress: Ref<InputAddressType> = ref({ postalCode: "" });
 
 const chosenShippingMethod: Ref<ShippingMethodType> = ref({});
@@ -83,6 +82,7 @@ export default () => {
     await loadMyCart();
     if (cart.value.shipments && cart.value.shipments.length > 0) {
       existShipment.value = cart.value.shipments[0];
+      deliveryAddress.value = { ...cart.value.shipments[0]?.deliveryAddress } ?? deliveryAddress.value;
     }
   }
 
@@ -103,6 +103,8 @@ export default () => {
   }
   async function setDeliveryAddress(address: AddressType) {
     deliveryAddress.value = { ...deliveryAddress.value, ...address };
+    //Delivery address type
+    deliveryAddress.value.addressType = 1;
   }
 
   async function saveBillingDetails() {
@@ -136,14 +138,15 @@ export default () => {
     saveBillingDetails,
     setDefaultDeliveryAddress,
     setDefaultBillingAddress,
-    deliveryAddress,
-    shippingMethods,
-    paymentMethods,
-    chosenShippingMethod,
-    chosenPaymentMethod,
-    shippingAddresses,
-    billingAddress,
-    billingAddresses,
-    loading
+    // make sure that no one will mutate these objects
+    deliveryAddress : computed(()=> deliveryAddress.value ),
+    shippingMethods : computed(()=> shippingMethods.value ),
+    paymentMethods : computed(()=> paymentMethods.value ),
+    chosenShippingMethod : computed(()=> chosenShippingMethod.value ),
+    chosenPaymentMethod  : computed(()=> chosenPaymentMethod.value ),
+    shippingAddresses : computed(()=> shippingAddresses.value ),
+    billingAddress : computed(()=> billingAddress.value ),
+    billingAddresses: computed(()=> billingAddresses.value ),
+    loading: computed(()=> loading.value )
   };
 };
