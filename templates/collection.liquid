@@ -1,7 +1,9 @@
+<div id="category"></div>
+{{ 'bundle/dist/css/catalog.css' | static_asset_url | append_version | stylesheet_tag }}
 <script src="{{ 'bundle/dist/js/catalog.js' | static_asset_url | append_version }}"></script>
 <script>
   window.CATEGORY_ID ="{{ context.slug_routing_data.object_id }}";
 </script>
 
-{{ 'bundle/dist/css/catalog.css' | static_asset_url | append_version | stylesheet_tag }}
-<div id="category"></div>
+
+

@@ -1,32 +1,25 @@
 const pages = {
-  catalog: "src/pages/catalog/main.ts",
-  home: "src/pages/home/main.ts",
+  catalog: {
+    entry: "src/pages/catalog/main.ts",
+    chunks: ["chunk-vendors", "chunk-common", "catalog"]
+  },
+  account: {
+    entry: "src/pages/account/main.ts",
+    chunks: ["chunk-vendors", "chunk-common", "account"]
+  },
+  home: {
+    entry: "src/pages/home/main.ts",
+    chunks: ["chunk-vendors", "chunk-common", "home"]
+  }
 };
+
 
 module.exports = {
   pages,
   outputDir: "../assets/static/bundle/dist",
   filenameHashing: false,
   runtimeCompiler: true,
-  transpileDependencies: [
-    "@fortawesome/fontawesome-svg-core",
-    "@fortawesome/free-regular-svg-icons",
-    "@fortawesome/free-solid-svg-icons",
-    "@fortawesome/vue-fontawesome",
-    "axios",
-    "bootstrap",
-    "bootstrap-vue",
-    "rxjs",
-    "vue-axios",
-    "vue-i18n",
-    "vue-loading-overlay",
-    "vue-moment",
-    "vue-router",
-    "vue-rx",
-    "vuelidate",
-    "vuex",
-    "vuex-class"
-  ],
+  
   devServer: {
     proxy: "http://localhost:2083"
   },
@@ -39,8 +32,9 @@ module.exports = {
     }
   },
 
+  //To avoid of error [mini-css-extract-plugin] warning Conflicting order
   css: {
-    extract: true
+    extract: { ignoreOrder: true }
   },
 
   // Web pack configuration chaining

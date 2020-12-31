@@ -12,9 +12,7 @@ export const categoryId = window.CATEGORY_ID;
 export const baseUrl = window.BASE_URL
   .replace(`/${storeName}`, "/")
   .replace(`/${locale}`, "/")
-  .replace(/[/]+$/, "")
-  .replace(`http`, process.env.NODE_ENV === "production" ? "https" : "http")
-  ;
+  .replace(/[/]+$/, "");
 
 export const fullBaseUrl = `${baseUrl}/${storeName}/${locale}/`;
 export const loginUrl = `${fullBaseUrl}account/login`;
