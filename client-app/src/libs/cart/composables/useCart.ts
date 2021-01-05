@@ -1,4 +1,4 @@
-import { Ref, ref } from "@vue/composition-api";
+import { computed, Ref, ref } from "@vue/composition-api";
 import { getMyCart, addItemToCart } from "@core/api/graphql/cart";
 import { CartType, ShipmentType, InputShipmentType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
@@ -7,7 +7,13 @@ const loading: Ref<boolean> = ref(true);
 
 const cart: Ref<CartType> = ref({ name: ''});
 
+const isCartSidebarOpen: Ref<boolean> = ref(false);
+
+
 export default () => {
+  function toggleCartSidebar(): void {
+    isCartSidebarOpen.value = !isCartSidebarOpen.value;
+  }
 
   async function loadMyCart(): Promise<CartType> {
     loading.value = true;
@@ -36,5 +42,12 @@ export default () => {
     await loadMyCart();
   }
 
-  return { cart, loadMyCart, addToCart, loading };
+  return {
+    cart : computed(() => cart.value),
+    loadMyCart,
+    addToCart,
+    loading : computed(() => loading.value),
+    toggleCartSidebar,
+    isCartSidebarOpen : computed(() => isCartSidebarOpen.value)
+  };
 };

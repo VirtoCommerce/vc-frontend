@@ -5,7 +5,7 @@
     <template #modal-bar>
       <SfBar
         class="sf-modal__bar smartphone-only"
-        :close="true"
+        :close="false"
         :title="'Sign in'"></SfBar>
     </template>
     <transition name="sf-fade" mode="out-in">

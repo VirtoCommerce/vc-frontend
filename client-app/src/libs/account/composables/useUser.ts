@@ -28,6 +28,7 @@ const me: Ref<UserType> = ref({
   }
 });
 const loading: Ref<boolean> = ref(false);
+const isAuthenticated: Ref<boolean> = ref(false);
 
 export default () => {
 
@@ -55,6 +56,7 @@ export default () => {
     console.log("login", signMeIn);
     try {
       const res = await axios.post(`${baseUrl}/storefrontapi/account/login`, signMeIn);
+      isAuthenticated.value = res?.data?.succeeded ?? isAuthenticated.value;
       return res?.data as IdentityResult;
     } catch (e) {
       Logger.error("useUser.signMeIn", e);
@@ -82,6 +84,7 @@ export default () => {
   return {
     me: computed(() => me.value),
     loading: computed(() => loading.value),
+    isAuthenticated: computed(() => me.value.userName != 'Anonymous' ),
     updateUser,
     changePassword,
     loadMe,

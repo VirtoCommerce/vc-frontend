@@ -34,11 +34,11 @@
 <script>
 import { SfBreadcrumbs, SfContentPages } from '@storefront-ui/vue';
 import { computed, ref, watch } from '@vue/composition-api';
+import { baseUrl } from '@core/constants';
 import BillingDetails from './MyAccount/BillingDetails.vue';
 import MyProfile from './MyAccount/MyProfile.vue';
 import OrderHistory from './MyAccount/OrderHistory.vue';
 import ShippingDetails from './MyAccount/ShippingDetails.vue';
-
 export default {
   components: {
     SfBreadcrumbs,
@@ -52,7 +52,6 @@ export default {
 
     const { $router } = context.root;
 
-    const logout = () => { console.log('logout'); }
 
     const activePage = computed(() => {
       const { pageName } = context.root.$route.params;
@@ -63,9 +62,9 @@ export default {
     });
 
     const changeActivePage = async (title) => {
+      //TODO: rework to another routing because title can be localized
       if (title === 'Log out') {
-        await logout();
-        $router.push('/');
+        window.location.href=`${baseUrl}/account/logout`;
         return;
       }
 

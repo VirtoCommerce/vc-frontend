@@ -25,6 +25,8 @@ declare global {
     CATEGORY_ID: string;
     FALLBACK_IMG_URL: string;
     LOCALIZATION_MESSAGES: LocaleMessages;
+    MAIN_MENU: object[];
+    LOCALES: object[];
   }
 
 }

@@ -8,6 +8,10 @@ export const locale = window.LOCALE;
 export const currentUserId = window.USER_ID;
 export const catalogId = window.CATALOG_ID;
 export const categoryId = window.CATEGORY_ID;
+//TODO: load from  storefront API
+export const mainMenu = window.MAIN_MENU;
+export const locales = window.LOCALES;
+
 // Need to trim store and language from base URL because they will be added later as parameters for each API call.
 export const baseUrl = window.BASE_URL
   .replace(`/${storeName}`, "/")

@@ -5,7 +5,7 @@
     <template #modal-bar>
       <SfBar
         class="sf-modal__bar smartphone-only"
-        :close="true"
+        :close="false"
         :title="'Sign in'"></SfBar>
     </template>
     <transition name="sf-fade" mode="out-in">
@@ -34,7 +34,7 @@
                 class="form__element"></SfInput>
             </ValidationProvider>
             <SfCheckbox
-              v-model="form.rememberMe"
+              v-model="rememberMe"
               data-cy="login-checkbox-remember-me"
               name="remember-me"
               label="Remember me"
@@ -78,7 +78,7 @@ import { ref, watch } from '@vue/composition-api';
 import { ValidationProvider, ValidationObserver, extend } from 'vee-validate';
 import { required, email } from 'vee-validate/dist/rules';
 import { useUser } from '@libs/account';
-import { baseUrl } from 'core/constants';
+import { baseUrl } from '@core/constants';
 
 extend('email', {
   ...email,
@@ -106,11 +106,13 @@ export default {
   },
   setup() {
 
+    const rememberMe = ref(false);
     const form = ref({ serverErrors: []});
     const { signMeIn, loading } = useUser();
 
 
     const handleLogin = async () => {
+      form.value.rememberMe = rememberMe.value;
       const result = await signMeIn(form.value);
       if(result.succeeded){
         window.location.href=`${baseUrl}`;
@@ -122,6 +124,7 @@ export default {
 
     return {
       form,
+      rememberMe,
       loading,
       handleLogin,
       baseUrl

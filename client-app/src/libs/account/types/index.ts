@@ -19,7 +19,7 @@ export type SignMeUp = {
 };
 
 export type SignMeIn = {
-  userName: string; 
+  userName: string;
   password: string;
-  rememberMe?: boolean; 
+  rememberMe?: boolean;
 };

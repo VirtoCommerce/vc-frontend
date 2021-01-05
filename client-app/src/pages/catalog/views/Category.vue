@@ -1,9 +1,5 @@
 <template>
   <div id="category">
-    <CartSidebar :visible="isCartSideBarOpened"
-                 :cart="cart"
-                 @click:checkout="openCheckout"
-                 @onClose="toggleCartSidebar"></CartSidebar>
     <!-- Breadcrumbs -->
     <SfBreadcrumbs
       class="breadcrumbs desktop-only"
@@ -257,13 +253,13 @@ import {
 } from '@storefront-ui/vue';
 import { ref, watch, computed, onMounted, watchEffect} from '@vue/composition-api';
 import { useCart } from '@libs/cart';
-import CartSidebar from '@libs/cart/components/CartSidebar.vue'
 import { useProducts, useCategories } from '@libs/catalog';
 import { ProductType } from '@core/api/graphql/types';
+import { categoryId } from '@core/constants';
 
 export default {
   components: {
-    CartSidebar,
+
     SfButton,
     // SfSidebar,
     SfIcon,
@@ -304,13 +300,12 @@ export default {
 
     const { fetchProducts, products, total, loading } = useProducts();
     const { fetchCategories, categories } = useCategories();
-    const { cart, loadMyCart, addToCart } = useCart();
+    const { cart, loadMyCart, addToCart, isCartSideBarOpen, toggleCartSidebar } = useCart();
 
     // Refs
     const isGridView = ref(false);
     const itemsPerPage = ref('20');
     const currentPage = ref(1);
-    const isCartSideBarOpened = ref(false);
 
     // Computed
     const categoryTree = computed(() => []);
@@ -348,8 +343,9 @@ export default {
     })
 
     onMounted(async () => {
+      console.log("onMounted", categoryId);
       await fetchCategories(10, 1);
-      await fetchProducts(Number(itemsPerPage.value), currentPage.value, props.catId);
+      await fetchProducts(Number(itemsPerPage.value), currentPage.value, categoryId);
       await loadMyCart();
     })
 
@@ -376,13 +372,8 @@ export default {
 
     // const { changeFilters, isFacetColor } = useUiHelpers();
 
-    const openCheckout = () => {
-      context.root.$router.push('/checkout/personal-details');
-    };
+
     const toggleFilterSidebar = () => { console.log("toggleFilterSidebar"); };
-    const toggleCartSidebar = () => {
-      isCartSideBarOpened.value = !isCartSideBarOpened.value
-    };
 
     const changeGridViewStyle = (isGrid) => isGridView.value = isGrid;
 
@@ -441,7 +432,6 @@ export default {
       cart,
       addToCartInternal,
       toggleCartSidebar,
-      isCartSideBarOpened,
       categories,
       activeCategory,
       loading,
@@ -459,8 +449,7 @@ export default {
       changeGridViewStyle,
       changeItemsPerPage,
       changeCurrentPage,
-      changeSorting,
-      openCheckout
+      changeSorting
     };
   }
 };

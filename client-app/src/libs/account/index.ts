@@ -5,6 +5,7 @@ import ShippingAddressForm  from './components/ShippingAddressForm.vue';
 import useUser  from './composables/useUser';
 import useUserBilling  from './composables/useUserBilling';
 import useUserOrders  from './composables/useUserOrders';
+import * as userTypes from './types';
 
 export {
   PasswordResetForm,
@@ -13,5 +14,6 @@ export {
   ShippingAddressForm,
   useUserBilling,
   useUser,
-  useUserOrders
+  useUserOrders,
+  userTypes
 };

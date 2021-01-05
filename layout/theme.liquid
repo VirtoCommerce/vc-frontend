@@ -34,12 +34,13 @@
       window.LOCALE = "{{ current_language.culture_name }}";
       window.USER_ID = "{{ current_user.id }}";
       window.THEME_SETTINGS = {{ settings | json }};
+      window.MAIN_MENU = {{ linklists['main-menu'].menu_links | json }};
+      window.LOCALES = {{ current_store.languages | map 'TwoLetterLanguageName' |  json }};
     </script>
   </head>
   <body>
     <div id="layout">
-      <!-- Header -->
-      {{ content_for_header }}
+      <div id="appHeader"></div>
       <!-- Content here -->
       {{ content_for_layout }}
       <!-- Footer -->

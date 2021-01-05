@@ -2,6 +2,7 @@
 import Vue from "vue";
 import { MoneyType, PriceType } from "@core/api/graphql/types";
 
+
 function appendToFilename(filename: string, suffix: string, checkIfSuffixExists = false ){
   const dotIndex = filename.lastIndexOf(".");
   let result = filename
@@ -14,6 +15,12 @@ function appendToFilename(filename: string, suffix: string, checkIfSuffixExists 
   }
   return result;
 }
+
+Vue.filter('assetUrl', function (filename: string) {
+  if (!filename) return null;
+
+  return `/themes/assets/static/${filename}`;
+})
 
 Vue.filter('imgUrl', (value: string, suffix: string) => {
   if (!value) return '';
