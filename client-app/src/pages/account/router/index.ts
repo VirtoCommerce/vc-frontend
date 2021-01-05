@@ -9,7 +9,8 @@ const routes = [
   {
     name: 'my-account',
     path: '/my-account/:pageName?',
-    component: MyAccount
+    component: MyAccount,
+    props: true
   },
   {
     path: "/",

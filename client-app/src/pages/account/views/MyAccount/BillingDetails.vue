@@ -14,6 +14,7 @@
 
         <BillingAddressForm
           :address="activeAddress"
+          :countries="COUNTRIES"
           :is-new="isNewAddress"
           @submit="saveAddress"></BillingAddressForm>
       </SfTab>
@@ -35,7 +36,7 @@
                           class="billing-list">
           <div
             v-for="address in addresses"
-            :key="userBillingGetters.getId(address)"
+            :key="address.id"
             class="billing">
             <div class="billing__content">
               <div class="billing__address">
@@ -82,9 +83,22 @@ import {
   SfButton,
   SfIcon
 } from '@storefront-ui/vue';
-import { ref, computed } from '@vue/composition-api';
+import { ref, computed, onMounted } from '@vue/composition-api';
 import { BillingAddressForm, useUserBilling } from '@libs/account';
 import { UserAddress } from '@libs/misc';
+
+
+//TODO: move to composable
+const COUNTRIES = [
+  { key: 'US',
+    label: 'United States' },
+  { key: 'UK',
+    label: 'United Kingdom' },
+  { key: 'IT',
+    label: 'Italy' },
+  { key: 'PL',
+    label: 'Poland' }
+];
 
 export default {
   components: {
@@ -95,7 +109,7 @@ export default {
     BillingAddressForm
   },
   setup() {
-    const { billingAddresses : addresses, load, addAddress, deleteAddress, updateAddress } = useUserBilling();
+    const { loadMyAddresses, billingAddresses : addresses, load, addAddress, deleteAddress, updateAddress } = useUserBilling();
 
     const edittingAddress = ref(false);
     const activeAddress = ref(undefined);
@@ -108,8 +122,13 @@ export default {
 
     const removeAddress = address => deleteAddress(address);
 
+    onMounted(async () => {
+      await loadMyAddresses();
+    });
+
     const saveAddress = async ({ form, onComplete, onError }) => {
       try {
+        console.log("saveAddress");
         const actionMethod = isNewAddress.value ? addAddress : updateAddress;
         const data = await actionMethod(form);
         edittingAddress.value = false;
@@ -122,6 +141,7 @@ export default {
 
 
     return {
+      COUNTRIES,
       changeAddress,
       updateAddress,
       removeAddress,

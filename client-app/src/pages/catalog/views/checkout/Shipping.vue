@@ -106,10 +106,10 @@
               :error-message="errors[0]"
               @input="countryCode => selectCountry(countryCode)">
               <SfSelectOption
-                v-for="countryOption in countries"
-                :key="countryOption.key"
-                :value="countryOption.key">
-                {{ countryOption.label }}
+                v-for="{ key, label } in countries"
+                :key="key"
+                :value="key">
+                {{ label }}
               </SfSelectOption>
             </SfSelect>
           </ValidationProvider>

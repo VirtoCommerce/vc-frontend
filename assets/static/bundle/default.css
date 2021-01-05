@@ -2,6 +2,13 @@
   margin: 0;
   padding: 0;
 }
+@media (min-width: 1024px) {
+#layout {
+	box-sizing: border-box;
+	  max-width: 1240px;
+	  margin: auto;
+	  } 
+}
 
 @import url("https://fonts.googleapis.com/css?family=Raleway:300,400,400i,500,600,700|Roboto:300,300i,400,400i,500,700&display=swap");
 .glide {

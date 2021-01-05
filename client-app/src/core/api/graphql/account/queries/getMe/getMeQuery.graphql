@@ -1,0 +1,17 @@
+query getMe {
+  me {
+    id
+    userName
+    email
+    emailConfirmed
+    photoUrl
+    phoneNumber
+    permissions
+
+    contact {
+      firstName
+      lastName
+      fullName
+    }
+  }
+}
