@@ -1,7 +1,10 @@
 import { Ref, ref, computed } from "@vue/composition-api";
+import { baseUrl } from 'core/constants';
 import { getMe } from "@core/api/graphql/account";
 import { UserType } from "@core/api/graphql/types";
+import axios from '@core/services/axios-instance';
 import { Logger } from "@core/utilities";
+import { SignMeUp, SignMeIn, IdentityResult } from '../types';
 
 const me: Ref<UserType> = ref({
   userName: "",
@@ -24,7 +27,7 @@ const me: Ref<UserType> = ref({
     phones: []
   }
 });
-const loading: Ref<boolean> = ref(true);
+const loading: Ref<boolean> = ref(false);
 
 export default () => {
 
@@ -48,12 +51,41 @@ export default () => {
     console.log("changePassword");
   }
 
+  async function signMeIn(signMeIn: SignMeIn): Promise<IdentityResult>  {
+    console.log("login", signMeIn);
+    try {
+      const res = await axios.post(`${baseUrl}/storefrontapi/account/login`, signMeIn);
+      return res?.data as IdentityResult;
+    } catch (e) {
+      Logger.error("useUser.signMeIn", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function signMeUp(signMeUp: SignMeUp): Promise<IdentityResult> {
+    console.log("login", signMeUp);
+    try {
+      const res = await axios.post(`${baseUrl}/storefrontapi/account/user`, signMeUp);
+      return res?.data as IdentityResult;
+    } catch (e) {
+      Logger.error("useUser.signMeUp", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+
 
   return {
     me: computed(() => me.value),
     loading: computed(() => loading.value),
     updateUser,
     changePassword,
-    loadMe
+    loadMe,
+    signMeIn,
+    signMeUp
   };
 };
