@@ -170,7 +170,7 @@
           </SfRadio>
         </div>
         <div class="form__action">
-          <router-link to="/checkout/shipping" class="sf-button color-secondary form__back-button">
+          <router-link to="/shipping" class="sf-button color-secondary form__back-button">
             Go back
           </router-link>
           <SfButton v-if="canContinueToReview"
@@ -290,7 +290,7 @@ export default {
 
     const handleFormSubmit = async () => {
       await setBillingAddress(billingAddress.value);
-      context.root.$router.push('/checkout/order-review');
+      context.root.$router.push('/order-review');
     };
 
     const handleBillingAddressSubmit = async () => {

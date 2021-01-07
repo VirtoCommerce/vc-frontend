@@ -303,6 +303,7 @@ export type VariationType = {
   id?: Maybe<Scalars['String']>;
   images?: Maybe<Array<Maybe<ImageType>>>;
   outlines?: Maybe<Array<Maybe<OutlineType>>>;
+  price?: Maybe<PriceType>;
   prices?: Maybe<Array<Maybe<PriceType>>>;
   properties?: Maybe<Array<Maybe<Property>>>;
 };
@@ -2376,7 +2377,7 @@ export type GetMyOrdersQuery = { orders?: Maybe<(
       Pick<CustomerOrderType, 'id' | 'createdDate' | 'status' | 'number' | 'customerId'>
       & { items: Array<Maybe<(
         Pick<OrderLineItemType, 'sku' | 'name' | 'quantity'>
-        & { price?: Maybe<MoneyFieldsFragment> }
+        & { product?: Maybe<Pick<Product, 'slug' | 'name'>>; price?: Maybe<MoneyFieldsFragment> }
       )>>; currency?: Maybe<Pick<CurrencyType, 'code'>>; total?: Maybe<MoneyFieldsFragment>; }
     )>>>; }
   )>; };
@@ -2462,6 +2463,22 @@ export type GetMyCartQuery = { cart?: Maybe<(
       Pick<ValidationErrorType, 'errorCode' | 'errorMessage' | 'objectId'>
       & { errorParameters?: Maybe<Array<Maybe<Pick<ErrorParameterType, 'key' | 'value'>>>> }
     )>>>; }
+  )>; };
+
+export type GetProductQueryVariables = Exact<{
+  storeId: Scalars['String'];
+  currencyCode: Scalars['String'];
+  cultureName?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+}>;
+
+
+export type GetProductQuery = { product?: Maybe<(
+    Pick<Product, 'name' | 'id' | 'code' | 'slug' | 'outline' | 'imgSrc'>
+    & { images?: Maybe<Array<Maybe<Pick<ImageType, 'url'>>>>; description?: Maybe<Pick<DescriptionType, 'content' | 'id' | 'languageCode' | 'reviewType'>>; descriptions?: Maybe<Array<Maybe<Pick<DescriptionType, 'content' | 'id' | 'languageCode' | 'reviewType'>>>>; variations?: Maybe<Array<Maybe<(
+      Pick<VariationType, 'id' | 'code'>
+      & { properties?: Maybe<Array<Maybe<Pick<Property, 'name' | 'value' | 'type'>>>>; availabilityData?: Maybe<Pick<AvailabilityData, 'isActive' | 'isAvailable' | 'isBuyable' | 'isInStock' | 'availableQuantity'>>; price?: Maybe<{ actual?: Maybe<Pick<MoneyType, 'amount' | 'formattedAmount'>>; discountAmount?: Maybe<Pick<MoneyType, 'amount' | 'formattedAmount'>>; sale?: Maybe<Pick<MoneyType, 'amount' | 'formattedAmount'>>; list?: Maybe<Pick<MoneyType, 'amount' | 'formattedAmount'>> }> }
+    )>>>; availabilityData?: Maybe<Pick<AvailabilityData, 'isActive' | 'isAvailable' | 'isBuyable' | 'isInStock' | 'availableQuantity'>>; price?: Maybe<{ actual?: Maybe<Pick<MoneyType, 'amount' | 'formattedAmount'>>; discountAmount?: Maybe<Pick<MoneyType, 'amount' | 'formattedAmount'>>; sale?: Maybe<Pick<MoneyType, 'amount' | 'formattedAmount'>>; list?: Maybe<Pick<MoneyType, 'amount' | 'formattedAmount'>> }>; }
   )>; };
 
 export type CategoriesQueryVariables = Exact<{

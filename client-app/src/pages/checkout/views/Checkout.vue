@@ -28,8 +28,8 @@
 import { SfSteps } from '@storefront-ui/vue';
 import { ref, computed, onMounted, provide } from '@vue/composition-api';
 import { useCart } from '@libs/cart';
-import CartPreview from './checkout/CartPreview.vue';
-import OrderReview from './checkout/OrderReview.vue';
+import CartPreview from './CartPreview.vue';
+import OrderReview from './OrderReview.vue';
 
 const STEPS = {
   'personal-details': 'Personal Details',
@@ -54,7 +54,7 @@ export default {
 
     const handleStepClick = (stepIndex) => {
       const key = Object.keys(STEPS)[stepIndex];
-      context.root.$router.push(`/checkout/${key}`);
+      context.root.$router.push(`/${key}`);
     };
 
     onMounted(async () => {

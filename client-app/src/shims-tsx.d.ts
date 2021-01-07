@@ -23,6 +23,7 @@ declare global {
     THEME_SETTINGS: Dictionary<any>;
     CATALOG_ID: string;
     CATEGORY_ID: string;
+    PRODUCT_ID: string;
     FALLBACK_IMG_URL: string;
     LOCALIZATION_MESSAGES: LocaleMessages;
     MAIN_MENU: object[];

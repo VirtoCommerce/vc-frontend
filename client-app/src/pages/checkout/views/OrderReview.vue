@@ -142,7 +142,7 @@
           </template>
         </SfCheckbox>
         <div class="summary__action">
-          <router-link to="/checkout/payment" class="sf-button color-secondary summary__back-button">
+          <router-link to="/payment" class="sf-button color-secondary summary__back-button">
             Go back
           </router-link>
           <SfButton class="summary__action-button"
@@ -210,7 +210,7 @@ export default {
 
     const processOrder = async () => {
       const order = await placeOrder(cart.value.id);
-      context.root.$router.push(`/checkout/thank-you?order=${order.number}`);
+      context.root.$router.push(`/thank-you?order=${order.number}`);
     };
     return {
       cart,

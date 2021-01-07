@@ -7,7 +7,7 @@
     <SfHeader
       data-cy="app-header"
       :search-value="term"
-      :cart-items-qty="cart.itemsCount"
+      :cart-items-qty="cart.itemsQuantity"
       :account-icon="accountIcon"
       class="sf-header--has-mobile-search"
       @click:cart="toggleCartSidebar"
@@ -80,7 +80,7 @@ export default {
     };
 
     const openCheckout = () => {
-      context.root.$router.push('/checkout/personal-details');
+      window.location.href = "/checkout";
     };
 
     onMounted(async () => {

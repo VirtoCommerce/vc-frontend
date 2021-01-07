@@ -1,15 +1,19 @@
 const pages = {
   catalog: {
     entry: "src/pages/catalog/main.ts",
-    chunks: ["chunk-vendors", "chunk-common", "catalog"]
+    chunks: ["chunk-vendors", "catalog"]
   },
   account: {
     entry: "src/pages/account/main.ts",
-    chunks: ["chunk-vendors", "chunk-common", "account"]
+    chunks: ["chunk-vendors", "account"]
+  },
+  checkout: {
+    entry: "src/pages/checkout/main.ts",
+    chunks: ["chunk-vendors", "checkout"]
   },
   home: {
     entry: "src/pages/home/main.ts",
-    chunks: ["chunk-vendors", "chunk-common", "home"]
+    chunks: ["chunk-vendors", "home"]
   }
 };
 

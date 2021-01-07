@@ -162,7 +162,6 @@
               :key="product.slug + '__list'"
               :style="{ '--index': i }"
               :title="product.name"
-              :description="'Test description'"
               :image="product.imgSrc"
               :regular-price="product.price | list_price"
               :special-price="product.price | special_price"
@@ -175,6 +174,10 @@
               class="products__product-card-horizontal"
               @click:wishlist="addToWishlist(product)"
               @click:add-to-cart="addToCartInternal(product.id, 1)">
+              <template #description>
+                <p class="sf-product-card-horizontal__description desktop-only" v-html="product.description ? product.description.content : ''">
+                </p>
+              </template>
               <template #actions>
                 <SfButton
                   class="sf-button--text desktop-only"

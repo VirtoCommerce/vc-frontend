@@ -26,7 +26,7 @@
         outline
         imgSrc
         images { url }
-        description { content id  languageCode  reviewType }
+        description (type: "QuickReview" ) { content id  languageCode  reviewType }
         availabilityData { isActive isAvailable isBuyable isInStock availableQuantity }
         price { actual { amount formattedAmount } discountAmount { amount formattedAmount } sale { amount formattedAmount } list { amount formattedAmount } }
        }

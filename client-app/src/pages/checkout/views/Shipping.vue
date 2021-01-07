@@ -167,7 +167,7 @@
             </SfRadio>
           </div>
           <div class="form__action">
-            <router-link to="/checkout/personal-details" class="sf-button color-secondary form__back-button">
+            <router-link to="/personal-details" class="sf-button color-secondary form__back-button">
               Go back
             </router-link>
             <SfButton v-if="canContinueToPayment(dirty)"
@@ -309,7 +309,7 @@ export default {
       await setShippingMethod(chosenShippingMethod.value);
       await saveShippingDetails();
       reset();
-      context.root.$router.push('/checkout/payment');
+      context.root.$router.push('/payment');
     };
 
     const selectCountry = value => {

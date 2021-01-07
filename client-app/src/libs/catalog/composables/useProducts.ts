@@ -1,12 +1,32 @@
-import { Ref, ref } from '@vue/composition-api';
-import { searchProducts } from '@core/api/graphql/catalog';
+import { Ref, ref, computed } from '@vue/composition-api';
+import { searchProducts, getProduct } from '@core/api/graphql/catalog';
 import { Product } from '@core/api/graphql/types'
 import { Logger } from '@core/utilities';
 
 export default () => {
   const products: Ref<Product[]> = ref([]);
+  const relatedProducts: Ref<Product[]> = ref([]);
+  const product: Ref<Product> = ref({ code: '', id:'', name:''});
   const total: Ref<number> = ref(0);
   const loading: Ref<boolean> = ref(true);
+
+  async function searchRelatedProducts(id: string)
+  {
+    console.log('searchRelatedProducts');
+  }
+
+  async function loadProduct(id: string)
+  {
+    loading.value = true;
+    try {
+      product.value = await getProduct(id);
+    } catch (e) {
+      Logger.error('getProduct.loadProduct', e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
 
   async function fetchProducts(itemsPerPage: number, page: number, catId: string | null) {
     loading.value = true;
@@ -36,5 +56,14 @@ export default () => {
 
     //   }]
   }
-  return { fetchProducts, products,  total, loading };
+  return {
+    fetchProducts,
+    loadProduct,
+    searchRelatedProducts,
+    relatedProducts: computed(() => relatedProducts.value ),
+    products : computed(() => products.value ),
+    product : computed(() => product.value ),
+    total : computed(() => total.value ),
+    loading : computed(() => loading.value )
+  };
 }

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+<head>
+  <base href="{{ '/' | absolute_url }}" />
+  {{ 'bundle/default.scss.css' | static_asset_url | append_version | stylesheet_tag }}
+  {{ 'bundle/dist/css/chunk-vendors.css' | static_asset_url | append_version | stylesheet_tag }}
+  <style>
+    #error {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 0 var(--spacer-sm);
+    margin: var(--spacer-xl) 0;
+    }
+  </style>
+</head>
+<body>    
+	<div id="layout">
+      <!-- Content here -->
+      {{ content_for_layout }}
+    </div>
+</body>
+</html>

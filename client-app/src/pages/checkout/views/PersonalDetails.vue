@@ -147,7 +147,7 @@ export default {
     const createAccount = ref(false);
     const handleFormSubmit = (form) => {
       setDeliveryAddress(personalDetails.value);
-      context.root.$router.push('/checkout/shipping');
+      context.root.$router.push('/shipping');
     };
     const toggleLoginModal = () => {
       console.log(toggleLoginModal);
