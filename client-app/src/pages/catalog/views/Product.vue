@@ -19,8 +19,8 @@
         </div>
         <div class="product__price-and-rating">
           <SfPrice
-            :regular="product.price | list_price"
-            :special="product.price | special_price"></SfPrice>
+            :regular="product.price.list | price"
+            :special="product.price.actual | price(product.price.list)"></SfPrice>
           <div>
             <div class="product__rating">
               <SfRating
@@ -40,35 +40,6 @@
         <div>
           <p class="product__description desktop-only" v-html="shortDescription">
           </p>
-          <SfButton data-cy="product-btn_size-guide" class="sf-button--text desktop-only product__guide">
-            Size guide
-          </SfButton>
-          <SfSelect
-            v-if="options.size"
-            v-model="configuration.size"
-            data-cy="product-select_size"
-            label="Size"
-            class="sf-select--underlined product__select-size"
-            :required="true">
-            <SfSelectOption
-              v-for="size in options.size"
-              :key="size.value"
-              :value="size.value">
-              {{ size.label }}
-            </SfSelectOption>
-          </SfSelect>
-          <div v-if="options.color" class="product__colors desktop-only">
-            <p class="product__color-label">
-              Color:
-            </p>
-            <SfColor
-              v-for="(color, i) in options.color"
-              :key="i"
-              data-cy="product-color_update"
-              :color="color.value"
-              class="product__color"
-              @click="updateFilter({color})"></SfColor>
-          </div>
           <SfAddToCart
             v-model="qty"
             data-cy="product-cart_add"
@@ -88,6 +59,8 @@
           <SfTab data-cy="product-tab_description" title="Description">
             <div class="product__description" v-html="fullDescription">
             </div>
+          </SfTab>
+          <SfTab data-cy="product-tab_description" title="Properties">
             <SfProperty
               v-for="(property, i) in product.properties"
               :key="i"
@@ -101,7 +74,6 @@
               </template>
             </SfProperty>
           </SfTab>
-
           <SfTab
             title="Additional Information"
             data-cy="product-tab_additional"
@@ -126,11 +98,10 @@
         </SfTabs>
       </div>
     </div>
-    <!-- <RelatedProducts
-      :products="relatedProducts"
-      :loading="loading"
-      title="Match it with"
-    /> -->
+    <RelatedProducts v-if="relatedProducts.length > 0"
+                     :products="relatedProducts"
+                     :loading="loading"
+                     title="Match it with"></RelatedProducts>
     <SfBanner
       image="/homepage/bannerD.png"
       subtitle="Fashion to Take Away"
@@ -178,34 +149,37 @@ import {
   SfButton,
   SfColor
 } from '@storefront-ui/vue';
-//import RelatedProducts from '~/components/RelatedProducts.vue';
 import { ref, computed, onMounted } from '@vue/composition-api';
 import { useCart  } from '@libs/cart';
-import { useProducts  } from '@libs/catalog';
+import { useProducts, RelatedProducts } from '@libs/catalog';
 import { productId } from '@core/constants';
+import { appendSuffixToFilename } from '@core/utilities';
 
 export default {
   transition: 'fade',
   setup(props, context) {
     const qty = ref(1);
     const breadcrumbs = ref([]);
-    const { product, loadProduct, relatedProducts,  searchRelatedProducts, loading } = useProducts();
+    const { product, loadProduct, relatedProducts,  fetchRelatedProducts, loading } = useProducts();
     const { addToCart, loading : cartLoading } = useCart();
 
-    const options = computed(() => ['color', 'size']);
+    const variationProperties = computed(() => product.value.properties.filter(prop => prop.type === 'Variation') );
+    const productProperties = computed(() => product.value.properties.filter(prop => prop.type === 'Product') );
+
     const configuration = computed(() => ['color', 'size']);
     const stock =  computed(() => product.value?.avaibilityData?.availableQuantity);
     const shortDescription =  computed(() => product.value?.descriptions?.find(x=> x.reviewType == "QuickReview")?.content);
     const fullDescription =  computed(() => product.value?.description?.content);
 
-    const productGallery = computed(() => product.value?.images?.map(img => ({
-      mobile: { url: img.url  },
-      desktop: { url: img.url },
+    const productGallery = computed(() => product.value?.images?.slice(0, 3).map(img => ({
+      mobile: { url: appendSuffixToFilename(img.url, '_348x348')  },
+      desktop: { url:  appendSuffixToFilename(img.url, '_348x348') },
       big: { url: img.url }
     })));
 
     onMounted(async () => {
       await loadProduct(productId);
+      await fetchRelatedProducts(productId);
     });
 
     const updateFilter = (filter) => {
@@ -229,7 +203,8 @@ export default {
       totalReviews: computed(() => 10 ),
       relatedProducts: computed(() => relatedProducts.value),
       breadcrumbs,
-      options,
+      variationProperties,
+      productProperties,
       qty,
       addToCart,
       loading,
@@ -239,12 +214,12 @@ export default {
   },
   components: {
     //SfAlert,
-    SfColor,
+    //SfColor,
     SfProperty,
     SfHeading,
     SfPrice,
     SfRating,
-    SfSelect,
+    //SfSelect,
     SfAddToCart,
     SfTabs,
     SfGallery,
@@ -254,8 +229,8 @@ export default {
     //SfSticky,
     //SfReview,
     SfBreadcrumbs,
-    SfButton
-    //RelatedProducts
+    SfButton,
+    RelatedProducts
   }
 };
 </script>

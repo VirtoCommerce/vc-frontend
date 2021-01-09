@@ -1,7 +1,8 @@
 <template>
   <SfModal
     :visible="true"
-    class="modal">
+    class="modal"
+    @close="onClose">
     <template #modal-bar>
       <SfBar
         class="sf-modal__bar smartphone-only"
@@ -99,7 +100,6 @@ import { ref, watch } from '@vue/composition-api';
 import { ValidationProvider, ValidationObserver, extend } from 'vee-validate';
 import { required, email } from 'vee-validate/dist/rules';
 import { useUser } from '@libs/account';
-import { baseUrl } from 'core/constants';
 
 extend('email', {
   ...email,
@@ -129,10 +129,13 @@ export default {
     const form = ref({ serverErrors: []});
     const { signMeUp, loading } = useUser();
 
+    const onClose = () => {
+      window.location.href='/';
+    };
     const handleRegister = async () => {
       const result = await signMeUp(form.value);
       if(result.succeeded){
-        window.location.href=`${baseUrl}/account/login`;
+        window.location.href=`/account/login`;
       }
       else {
         form.value.serverErrors = result.errors;
@@ -142,7 +145,8 @@ export default {
     return {
       form,
       loading,
-      handleRegister
+      handleRegister,
+      onClose
     };
   }
 };

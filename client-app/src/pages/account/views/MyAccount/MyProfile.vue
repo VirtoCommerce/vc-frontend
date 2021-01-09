@@ -9,7 +9,6 @@
       <ProfileUpdateForm
         :user="me"
         @submit="updatePersonalData"></ProfileUpdateForm>
-
       <p class="notice">
         At Brand name, we attach great importance to privacy issues and are
         committed to protecting the personal data of our users. Learn more about
@@ -73,13 +72,18 @@ export default {
 
   setup() {
     const { updateUser, changePassword, loadMe, me, loading } = useUser();
-
     const formHandler = async (fn, onComplete, onError) => {
       try {
         const data = await fn();
-        await onComplete(data);
+        if(data.succeeded){
+          await onComplete(data);
+        }
+        else {
+          console.log(data);
+          onError( data.errors );
+        }
       } catch (error) {
-        onError(error);
+        onError([{ description: error }]);
       }
     };
 

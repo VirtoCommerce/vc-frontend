@@ -24,20 +24,25 @@
             icon="filter2"
             class="navbar__filters-icon"
             data-cy="category-icon_"></SfIcon>
-          Filters
+          {{ $t('collections.filter.title') }}
         </SfButton>
 
         <div class="navbar__sort desktop-only">
-          <span class="navbar__label">Sort by:</span>
-          <SfComponentSelect v-model="sortBy" class="navbar__select">
-            <SfComponentSelectOption
-              v-for="option in sortByOptions"
-              :key="option.value"
-              :value="option.value"
+          <span class="navbar__label">{{ $t('collections.sorting.title') }}:</span>
+          <SfSelect
+            :value="sortBy.selected"
+            placeholder="Select sorting"
+            data-cy="category-select_sortBy"
+            class="navbar__select"
+            @input="changeSorting">
+            <SfSelectOption
+              v-for="option in sortBy.options"
+              :key="option.id"
+              :value="option.id"
               class="sort-by__option">
-              {{ option.label }}
-            </SfComponentSelectOption>
-          </SfComponentSelect>
+              {{ option.value }}
+            </SfSelectOption>
+          </SfSelect>
         </div>
         <div class="navbar__counter">
           <span class="navbar__label desktop-only">Products found: </span>
@@ -71,61 +76,56 @@
     </div>
     <div class="main section">
       <div class="sidebar desktop-only">
-        <SfList>
-          <SfListItem
-            v-for="cat in categories"
-            :key="cat.name">
-            <SfMenuItem
-              :label="cat.name"
-              :link="`/c/${cat.id}`">
-            </SfMenuItem>
-          </SfListItem>
-        </SfList>
+        <SfLoader
+          :class="{ loading: categoryTreeLoading }"
+          :loading="categoryTreeLoading">
+          <SfAccordion
+            :open="activeCategory"
+            :show-chevron="true">
+            <SfAccordionItem
+              v-for="(cat, i) in categoryTree && categoryTree.items"
+              :key="i"
+              :header="cat.label">
+              <template>
+                <SfList class="list">
+                  <SfListItem class="list__item">
+                    <SfMenuItem
+                      :count="cat.count || ''"
+                      :data-cy="`category-link_subcategory_${cat.slug}`"
+                      :label="cat.label">
+                      <template #label>
+                        <SfLink
+                          :href="cat.slug"
+                          :class="cat.isCurrent ? 'sidebar--cat-selected' : ''">
+                          All
+                        </SfLink>
+                      </template>
+                    </SfMenuItem>
+                  </SfListItem>
+                  <SfListItem
+                    v-for="(subCat, j) in cat.items"
+                    :key="j"
+                    class="list__item">
+                    <SfMenuItem
+                      :count="subCat.count || ''"
+                      :data-cy="`category-link_subcategory_${subCat.slug}`"
+                      :label="subCat.label">
+                      <template #label="{ label }">
+                        <SfLink
+                          :href="subCat.slug"
+                          :class="subCat.isCurrent ? 'sidebar--cat-selected' : ''">
+                          {{ label }}
+                        </SfLink>
+                      </template>
+                    </SfMenuItem>
+                  </SfListItem>
+                </SfList>
+              </template>
+            </SfAccordionItem>
+          </SfAccordion>
+        </SfLoader>
       </div>
       <SfLoader :loading="loading" style="top:3em">
-        <template #loader>
-          <svg
-            style="width: 50px; height: 50px; margin: 20px; display:inline-block;"
-            version="1.1"
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-            x="0px"
-            y="0px"
-            viewBox="0 0 100 100"
-            enable-background="new 0 0 100 100"
-            xml:space="preserve">
-            <path fill="var(--_c-green-primary)" d="M31.6,3.5C5.9,13.6-6.6,42.7,3.5,68.4c10.1,25.7,39.2,38.3,64.9,28.1l-3.1-7.9c-21.3,8.4-45.4-2-53.8-23.3 c-8.4-21.3,2-45.4,23.3-53.8L31.6,3.5z">
-              <animateTransform
-                attributeName="transform"
-                attributeType="XML"
-                type="rotate"
-                dur="2s"
-                from="0 50 50"
-                to="360 50 50"
-                repeatCount="indefinite"></animateTransform>
-            </path>
-            <path fill="var(--_c-yellow-primary)" d="M42.3,39.6c5.7-4.3,13.9-3.1,18.1,2.7c4.3,5.7,3.1,13.9-2.7,18.1l4.1,5.5c8.8-6.5,10.6-19,4.1-27.7 c-6.5-8.8-19-10.6-27.7-4.1L42.3,39.6z">
-              <animateTransform
-                attributeName="transform"
-                attributeType="XML"
-                type="rotate"
-                dur="1s"
-                from="0 50 50"
-                to="-360 50 50"
-                repeatCount="indefinite"></animateTransform>
-            </path>
-            <path fill="var(--_c-blue-primary)" d="M82,35.7C74.1,18,53.4,10.1,35.7,18S10.1,46.6,18,64.3l7.6-3.4c-6-13.5,0-29.3,13.5-35.3s29.3,0,35.3,13.5 L82,35.7z">
-              <animateTransform
-                attributeName="transform"
-                attributeType="XML"
-                type="rotate"
-                dur="2s"
-                from="0 50 50"
-                to="360 50 50"
-                repeatCount="indefinite"></animateTransform>
-            </path>
-          </svg>
-        </template>
         <div class="products">
           <transition-group
             v-if="isGridViewStyle"
@@ -138,9 +138,9 @@
               :key="product.slug + '__grid'"
               :style="{ '--index': i }"
               :title="product.name"
-              :image="product.imgSrc"
-              :regular-price="product.price | list_price"
-              :special-price="product.price | special_price"
+              :image="product.imgSrc | imgUrl('348x348')"
+              :regular-price="product.price.list | price"
+              :special-price="product.price.actual | price(product.price.list)"
               :max-rating="5"
               :score-rating="5"
               :is-on-wishlist="false"
@@ -149,7 +149,7 @@
               class="products__product-card"
               :link="product.slug !== null? product.slug:''"
               @click:wishlist="addToWishlist(product)"
-              @click:add-to-cart="addToCartInternal(product.id, 1)"></SfProductCard>
+              @click:add-to-cart="addToCart(product.id, 1)"></SfProductCard>
           </transition-group>
           <transition-group
             v-else
@@ -162,9 +162,9 @@
               :key="product.slug + '__list'"
               :style="{ '--index': i }"
               :title="product.name"
-              :image="product.imgSrc"
-              :regular-price="product.price | list_price"
-              :special-price="product.price | special_price"
+              :image="product.imgSrc | imgUrl('348x348')"
+              :regular-price="product.price.list | price"
+              :special-price="product.price.actual | price(product.price.list)"
               :max-rating="5"
               :reviews-count="0"
               :score-rating="5"
@@ -173,7 +173,7 @@
               :link="product.slug !== null? product.slug:''"
               class="products__product-card-horizontal"
               @click:wishlist="addToWishlist(product)"
-              @click:add-to-cart="addToCartInternal(product.id, 1)">
+              @click:add-to-cart="addToCart(product.id, 1)">
               <template #description>
                 <p class="sf-product-card-horizontal__description desktop-only" v-html="product.description ? product.description.content : ''">
                 </p>
@@ -204,7 +204,6 @@
             :current="getCurrentPage"
             :total="totalPages"
             :visible="5"
-            :has-router="false"
             @click="changeCurrentPage($event)"></SfPagination>
 
           <div
@@ -234,46 +233,48 @@
 import Vue from 'vue';
 import { useRoute } from "vue-router";
 import {
-  // SfSidebar,
+  SfLink,
   SfButton,
   SfList,
   SfIcon,
-  SfComponentSelect,
-  SfComponentSelectOption,
   SfHeading,
   SfMenuItem,
   // SfFilter,
   SfProductCard,
   SfProductCardHorizontal,
-  SfPagination,
-  //SfAccordion,
-  //SfAccordionItem,
+  //SfPagination,
+  SfAccordion,
   SfSelect,
   SfBreadcrumbs,
   SfLoader
   // SfColor,
   // SfProperty
 } from '@storefront-ui/vue';
+//VSUI has a bug with pagination component we fix this bug ourselves
+//our customization can be romeved since they publish the release with this fix
+//https://github.com/vuestorefront/storefront-ui/commit/60fab4a59e47eaa4dadccb0c1c421a4baf317079
 import { ref, watch, computed, onMounted, watchEffect} from '@vue/composition-api';
 import { useCart } from '@libs/cart';
 import { useProducts, useCategories } from '@libs/catalog';
+import {
+  SfPagination
+} from '@libs/storefront-ui';
 import { ProductType } from '@core/api/graphql/types';
 import { categoryId } from '@core/constants';
 
 export default {
   components: {
-
+    SfLink,
     SfButton,
     // SfSidebar,
     SfIcon,
-    SfComponentSelect,
     SfList,
     // SfFilter,
     SfProductCard,
     SfProductCardHorizontal,
     SfPagination,
     SfMenuItem,
-    //SfAccordion,
+    SfAccordion,
     SfSelect,
     SfBreadcrumbs,
     SfLoader,
@@ -298,28 +299,49 @@ export default {
     const { addToWishlist } = {};
     const { result, search } = {};
 
-    const sortBy = 'default';
+    const sortBy = ref({
+      options: [
+        { type: 'sort', id: 'createddate', selected: true, value: 'Latest', count: null },
+        {
+          type: 'sort',
+          id: 'price',
+          selected: false,
+          value: 'Price from low to high',
+          count: null
+        },
+        {
+          type: 'sort',
+          id: 'price:desc',
+          selected: false,
+          value: 'Price from high to low',
+          count: null
+        }
+      ],
+      selected: 'createddate'
+    });
 
 
     const { fetchProducts, products, total, loading } = useProducts();
-    const { fetchCategories, categories } = useCategories();
-    const { cart, loadMyCart, addToCart, isCartSideBarOpen, toggleCartSidebar } = useCart();
+    const { loadCategoriesTree, categoryTree, loading : categoryTreeLoading } = useCategories();
+    const { cart, loadMyCart, addToCart, isCartSideBarOpen } = useCart();
 
     // Refs
     const isGridView = ref(false);
     const itemsPerPage = ref('20');
     const currentPage = ref(1);
 
-    // Computed
-    const categoryTree = computed(() => []);
+
     const breadcrumbs = computed(() => []);
-    const sortByOptions = computed(() => [{
-      value: 'default',
-      label: 'Default sorting'
-    }, {
-      value: 'price-asc',
-      label: 'Price sorting (ASC)'
-    }]);
+
+    const changeSorting = async (sort) =>  {
+      const { query } = context.root.$router.history.current;
+      context.root.$router.push({ query: { ...query, sort } });
+      sortBy.value.selected = sort;
+      //TODO: load from URL
+      await fetchProducts({ itemsPerPage:Number(itemsPerPage.value), currentPage: currentPage.value,  categoryId, sort });
+
+
+    };
     const facets = computed(() => ['color', 'size']);
 
 
@@ -335,10 +357,12 @@ export default {
     const getItemsPerPage = computed(() => itemsPerPage.value);
     const totalPages = computed(() => Math.ceil(total.value / itemsPerPage.value));
     const activeCategory = computed(() => {
-      if (!categories.value) {
+      const items = categoryTree.value.items;
+      if (!items) {
         return '';
       }
-      return categories.value[0]?.name;
+      const category = items.find(({ isCurrent, items }) => isCurrent || items.find(({ isCurrent }) => isCurrent));
+      return category?.label || items[0].label;
     });
 
     watchEffect(() => {
@@ -346,9 +370,9 @@ export default {
     })
 
     onMounted(async () => {
-      console.log("onMounted", categoryId);
-      await fetchCategories(10, 1);
-      await fetchProducts(Number(itemsPerPage.value), currentPage.value, categoryId);
+      await loadCategoriesTree(categoryId);
+      //TODO: load from URL
+      await fetchProducts({ itemsPerPage:Number(itemsPerPage.value), currentPage: currentPage.value,  categoryId });
       await loadMyCart();
     })
 
@@ -380,11 +404,6 @@ export default {
 
     const changeGridViewStyle = (isGrid) => isGridView.value = isGrid;
 
-    const addToCartInternal = async (productId, qty) => {
-      await addToCart(productId, qty);
-      toggleCartSidebar();
-    };
-
     // Change items per page event
     const changeItemsPerPage = async (newItemsPerPage) => {
       itemsPerPage.value = newItemsPerPage;
@@ -397,8 +416,6 @@ export default {
       currentPage.value = Number(newCurrentPage);
       await fetchProducts(Number(itemsPerPage.value), currentPage.value);
     };
-
-    const changeSorting = () => { console.log("changeSorting"); };
 
     // const selectedFilters = ref({});
 
@@ -433,9 +450,9 @@ export default {
       th,
       products,
       cart,
-      addToCartInternal,
-      toggleCartSidebar,
-      categories,
+      addToCart,
+      categoryTree,
+      categoryTreeLoading,
       activeCategory,
       loading,
       gridViewOptions,
@@ -445,7 +462,6 @@ export default {
       getItemsPerPage,
       totalPages,
       sortBy,
-      sortByOptions,
       facets,
       breadcrumbs,
       toggleFilterSidebar,
@@ -587,7 +603,6 @@ export default {
   }
 }
 .sort-by {
-  --component-select-dropdown-z-index: 1;
   flex: unset;
   width: 11.875rem;
 }

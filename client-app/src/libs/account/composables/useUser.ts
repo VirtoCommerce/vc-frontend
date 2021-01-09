@@ -1,10 +1,10 @@
 import { Ref, ref, computed } from "@vue/composition-api";
 import { baseUrl } from 'core/constants';
-import { getMe } from "@core/api/graphql/account";
-import { UserType } from "@core/api/graphql/types";
+import { getMe, updatePersonalData } from "@core/api/graphql/account";
+import { UserType, InputPersonalDataType, IdentityResultType } from "@core/api/graphql/types";
 import axios from '@core/services/axios-instance';
 import { Logger } from "@core/utilities";
-import { SignMeUp, SignMeIn, IdentityResult } from '../types';
+import { SignMeUp, SignMeIn } from '../types';
 
 const me: Ref<UserType> = ref({
   userName: "",
@@ -45,19 +45,42 @@ export default () => {
     }
   }
 
-  async function updateUser(user: UserType): Promise<void>  {
-    console.log("updateUser", user, me);
+  async function updateUser(user: UserType): Promise<IdentityResultType>  {
+    try {
+      loading.value = true;
+      const personalData = { email: user.email, firstName: user.contact?.firstName, lastName: user.contact?.lastName };
+      const result = await updatePersonalData(personalData);
+      if(result.succeeded) {
+        await loadMe();
+      }
+      return result;
+    } catch (e) {
+      Logger.error("useUser.updatePersonalData", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
   }
-  async function changePassword(): Promise<void>  {
-    console.log("changePassword");
+  async function changePassword(oldPassword: string, newPassword: string): Promise<IdentityResultType>  {
+    try {
+      loading.value = true;
+      const res = await axios.post(`${baseUrl}/storefrontapi/account/password`, { oldPassword, newPassword, newPasswordConfirm: newPassword });
+      isAuthenticated.value = res?.data?.succeeded ?? isAuthenticated.value;
+      return res?.data as IdentityResultType;
+    } catch (e) {
+      Logger.error("useUser.changePassword", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
   }
 
-  async function signMeIn(signMeIn: SignMeIn): Promise<IdentityResult>  {
-    console.log("login", signMeIn);
+  async function signMeIn(signMeIn: SignMeIn): Promise<IdentityResultType>  {
     try {
+      loading.value = true;
       const res = await axios.post(`${baseUrl}/storefrontapi/account/login`, signMeIn);
       isAuthenticated.value = res?.data?.succeeded ?? isAuthenticated.value;
-      return res?.data as IdentityResult;
+      return res?.data as IdentityResultType;
     } catch (e) {
       Logger.error("useUser.signMeIn", e);
       throw e;
@@ -66,11 +89,11 @@ export default () => {
     }
   }
 
-  async function signMeUp(signMeUp: SignMeUp): Promise<IdentityResult> {
-    console.log("login", signMeUp);
+  async function signMeUp(signMeUp: SignMeUp): Promise<IdentityResultType> {
     try {
+      loading.value = true;
       const res = await axios.post(`${baseUrl}/storefrontapi/account/user`, signMeUp);
-      return res?.data as IdentityResult;
+      return res?.data as IdentityResultType;
     } catch (e) {
       Logger.error("useUser.signMeUp", e);
       throw e;

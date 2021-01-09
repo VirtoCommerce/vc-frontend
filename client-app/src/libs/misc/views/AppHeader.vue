@@ -7,7 +7,7 @@
     <SfHeader
       data-cy="app-header"
       :search-value="term"
-      :cart-items-qty="cart.itemsQuantity"
+      :cart-items-qty="String(cart.itemsQuantity)"
       :account-icon="accountIcon"
       class="sf-header--has-mobile-search"
       @click:cart="toggleCartSidebar"
@@ -45,7 +45,7 @@ import { computed, ref, onMounted } from '@vue/composition-api';
 import { useUser } from '@libs/account'
 import { useCart } from '@libs/cart';
 import CartSidebar from '@libs/cart/components/CartSidebar.vue'
-import { baseUrl, mainMenu } from '@core/constants';
+import { mainMenu } from '@core/constants';
 import LocaleSelector from '../components/LocaleSelector.vue';
 
 export default {
@@ -72,9 +72,9 @@ export default {
 
 
     const handleAccountClick = async () => {
-      let url = `${baseUrl}/account/login`;
+      let url = `/account/login`;
       if (isAuthenticated.value) {
-        url=`${baseUrl}/account`;
+        url=`/account`;
       }
       window.location.href = url;
     };

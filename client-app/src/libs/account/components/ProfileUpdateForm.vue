@@ -44,11 +44,17 @@
         Update personal data
       </SfButton>
     </form>
+    <div>
+      <SfAlert v-for="{ code, description } in errors"
+               :key="code"
+               :message="description"
+               :type="'danger'"></SfAlert>
+    </div>
   </ValidationObserver>
 </template>
 
 <script>
-import { SfInput, SfButton } from '@storefront-ui/vue';
+import { SfInput, SfButton, SfAlert } from '@storefront-ui/vue';
 import { ref, toRef, computed, watch } from '@vue/composition-api';
 import { ValidationProvider, ValidationObserver } from 'vee-validate';
 
@@ -56,6 +62,7 @@ export default {
   components: {
     SfInput,
     SfButton,
+    SfAlert,
     ValidationProvider,
     ValidationObserver
   },
@@ -68,6 +75,7 @@ export default {
   setup(props, { emit }) {
     const userRef = toRef(props, 'user');
     const form = ref({ ...userRef.value, contact: { ...userRef.value?.contact } });
+    const errors = ref([]);
     //This is required to keep the reactive state immutable. Sue to two way binding the user state can be modified without this code.
     watch(userRef, () => form.value = { ...userRef.value, contact: { ...userRef.value?.contact } } );
 
@@ -75,14 +83,14 @@ export default {
       emit('submit', {
         form,
         onComplete: () => { console.log('onComplete') },
-        // TODO: Handle Error
-        onError: () => { console.log('onError')}
+        onError: (data) => {
+          errors.value = data;
+        }
       });
     };
-
-
     return {
       form,
+      errors,
       submitForm
     };
   }

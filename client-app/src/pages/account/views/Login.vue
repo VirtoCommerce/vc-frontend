@@ -1,7 +1,8 @@
 <template>
   <SfModal
     :visible="true"
-    class="modal">
+    class="modal"
+    @close="onClose">
     <template #modal-bar>
       <SfBar
         class="sf-modal__bar smartphone-only"
@@ -50,7 +51,7 @@
           </form>
         </ValidationObserver>
         <div class="action">
-          <SfLink class="message__link" :href="`${baseUrl}/account/forgotpassword`">
+          <SfLink class="message__link" :href="`/account/forgotpassword`">
             Forgotten password?
           </SfLink>
         </div>
@@ -58,7 +59,7 @@
           <p class="bottom__paragraph">
             Don't have an account yet?
           </p>
-          <SfLink class="message__link" :href="`${baseUrl}/account/register`">
+          <SfLink class="message__link" :href="`/account/register`">
             Register today
           </SfLink>
         </div>
@@ -78,7 +79,6 @@ import { ref, watch } from '@vue/composition-api';
 import { ValidationProvider, ValidationObserver, extend } from 'vee-validate';
 import { required, email } from 'vee-validate/dist/rules';
 import { useUser } from '@libs/account';
-import { baseUrl } from '@core/constants';
 
 extend('email', {
   ...email,
@@ -110,12 +110,15 @@ export default {
     const form = ref({ serverErrors: []});
     const { signMeIn, loading } = useUser();
 
+    const onClose = () => {
+      window.location.href='/';
+    };
 
     const handleLogin = async () => {
       form.value.rememberMe = rememberMe.value;
       const result = await signMeIn(form.value);
       if(result.succeeded){
-        window.location.href=`${baseUrl}`;
+        window.location.href='/account';
       }
       else {
         form.value.serverErrors = result.errors;
@@ -127,7 +130,7 @@ export default {
       rememberMe,
       loading,
       handleLogin,
-      baseUrl
+      onClose
     };
   }
 };

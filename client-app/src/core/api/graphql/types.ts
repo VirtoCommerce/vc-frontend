@@ -208,6 +208,18 @@ export type ProductAssociationsArgs = {
   group?: Maybe<Scalars['String']>;
 };
 
+
+/** Products are the sellable goods in an e-commerce project. */
+export type ProductDescriptionArgs = {
+  type?: Maybe<Scalars['String']>;
+};
+
+
+/** Products are the sellable goods in an e-commerce project. */
+export type ProductDescriptionsArgs = {
+  type?: Maybe<Scalars['String']>;
+};
+
 export type SeoInfo = {
   id?: Maybe<Scalars['String']>;
   imageAltDescription?: Maybe<Scalars['String']>;
@@ -1571,6 +1583,7 @@ export type Mutations = {
   updateAddresses?: Maybe<ContactType>;
   updateContact?: Maybe<ContactType>;
   updateOrganization?: Maybe<Organization>;
+  updatePersonalData?: Maybe<IdentityResultType>;
   updateRole?: Maybe<IdentityResultType>;
   updateUser?: Maybe<IdentityResultType>;
   validateCoupon?: Maybe<Scalars['Boolean']>;
@@ -1727,6 +1740,11 @@ export type MutationsUpdateOrganizationArgs = {
 };
 
 
+export type MutationsUpdatePersonalDataArgs = {
+  command: InputUpdatePersonalDataType;
+};
+
+
 export type MutationsUpdateRoleArgs = {
   command: InputUpdateRoleType;
 };
@@ -1856,6 +1874,18 @@ export type IdentityResultType = {
 export type IdentityErrorType = {
   code?: Maybe<Scalars['String']>;
   description: Scalars['String'];
+};
+
+export type InputUpdatePersonalDataType = {
+  personalData: InputPersonalDataType;
+};
+
+export type InputPersonalDataType = {
+  email?: Maybe<Scalars['String']>;
+  fullName?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  middleName?: Maybe<Scalars['String']>;
 };
 
 export type InputCreateUserType = {
@@ -2351,6 +2381,16 @@ export type InputCancelOrderPaymentType = {
   payment: InputPaymentInType;
 };
 
+export type UpdatePersonalDataMutationVariables = Exact<{
+  command: InputUpdatePersonalDataType;
+}>;
+
+
+export type UpdatePersonalDataMutation = { updatePersonalData?: Maybe<(
+    Pick<IdentityResultType, 'succeeded'>
+    & { errors?: Maybe<Array<Maybe<Pick<IdentityErrorType, 'code' | 'description'>>>> }
+  )>; };
+
 export type GetMeQueryVariables = Exact<{ [key: string]: never }>;
 
 
@@ -2475,7 +2515,7 @@ export type GetProductQueryVariables = Exact<{
 
 export type GetProductQuery = { product?: Maybe<(
     Pick<Product, 'name' | 'id' | 'code' | 'slug' | 'outline' | 'imgSrc'>
-    & { images?: Maybe<Array<Maybe<Pick<ImageType, 'url'>>>>; description?: Maybe<Pick<DescriptionType, 'content' | 'id' | 'languageCode' | 'reviewType'>>; descriptions?: Maybe<Array<Maybe<Pick<DescriptionType, 'content' | 'id' | 'languageCode' | 'reviewType'>>>>; variations?: Maybe<Array<Maybe<(
+    & { images?: Maybe<Array<Maybe<Pick<ImageType, 'url'>>>>; description?: Maybe<Pick<DescriptionType, 'content' | 'id' | 'languageCode' | 'reviewType'>>; descriptions?: Maybe<Array<Maybe<Pick<DescriptionType, 'content' | 'id' | 'languageCode' | 'reviewType'>>>>; properties?: Maybe<Array<Maybe<Pick<Property, 'name' | 'value' | 'type'>>>>; variations?: Maybe<Array<Maybe<(
       Pick<VariationType, 'id' | 'code'>
       & { properties?: Maybe<Array<Maybe<Pick<Property, 'name' | 'value' | 'type'>>>>; availabilityData?: Maybe<Pick<AvailabilityData, 'isActive' | 'isAvailable' | 'isBuyable' | 'isInStock' | 'availableQuantity'>>; price?: Maybe<{ actual?: Maybe<Pick<MoneyType, 'amount' | 'formattedAmount'>>; discountAmount?: Maybe<Pick<MoneyType, 'amount' | 'formattedAmount'>>; sale?: Maybe<Pick<MoneyType, 'amount' | 'formattedAmount'>>; list?: Maybe<Pick<MoneyType, 'amount' | 'formattedAmount'>> }> }
     )>>>; availabilityData?: Maybe<Pick<AvailabilityData, 'isActive' | 'isAvailable' | 'isBuyable' | 'isInStock' | 'availableQuantity'>>; price?: Maybe<{ actual?: Maybe<Pick<MoneyType, 'amount' | 'formattedAmount'>>; discountAmount?: Maybe<Pick<MoneyType, 'amount' | 'formattedAmount'>>; sale?: Maybe<Pick<MoneyType, 'amount' | 'formattedAmount'>>; list?: Maybe<Pick<MoneyType, 'amount' | 'formattedAmount'>> }>; }
@@ -2522,6 +2562,22 @@ export type SearchProductsQuery = { products?: Maybe<(
       Pick<RangeFacet, 'name'>
       & { ranges?: Maybe<Array<Maybe<Pick<FacetRangeType, 'label' | 'count' | 'from' | 'to' | 'isSelected'>>>> }
     )>>>; }
+  )>; };
+
+export type SearchRelatedProductsQueryVariables = Exact<{
+  storeId: Scalars['String'];
+  currencyCode: Scalars['String'];
+  cultureName?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+}>;
+
+
+export type SearchRelatedProductsQuery = { product?: Maybe<(
+    Pick<Product, 'name' | 'id'>
+    & { associations?: Maybe<{ items?: Maybe<Array<Maybe<{ product?: Maybe<(
+          Pick<Product, 'name' | 'id' | 'slug' | 'imgSrc'>
+          & { availabilityData?: Maybe<Pick<AvailabilityData, 'isActive' | 'isAvailable' | 'isBuyable' | 'isInStock' | 'availableQuantity'>>; price?: Maybe<{ actual?: Maybe<Pick<MoneyType, 'amount' | 'formattedAmount'>>; discountAmount?: Maybe<Pick<MoneyType, 'amount' | 'formattedAmount'>>; sale?: Maybe<Pick<MoneyType, 'amount' | 'formattedAmount'>>; list?: Maybe<Pick<MoneyType, 'amount' | 'formattedAmount'>> }> }
+        )>; }>>>; }>; }
   )>; };
 
 export type AddressFieldsFragment = Pick<AddressType, 'id' | 'name' | 'organization' | 'firstName' | 'lastName' | 'line1' | 'line2' | 'city' | 'countryCode' | 'countryName' | 'regionId' | 'regionName' | 'postalCode' | 'zip' | 'phone' | 'email' | 'addressType'>;

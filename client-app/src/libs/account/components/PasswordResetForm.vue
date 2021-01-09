@@ -47,11 +47,17 @@
         Update password
       </SfButton>
     </form>
+    <div>
+      <SfAlert v-for="{ code, description } in errors"
+               :key="code"
+               :message="description"
+               :type="'danger'"></SfAlert>
+    </div>
   </ValidationObserver>
 </template>
 
 <script>
-import { SfInput, SfButton } from '@storefront-ui/vue';
+import { SfInput, SfButton, SfAlert } from '@storefront-ui/vue';
 import { ref } from '@vue/composition-api';
 import { ValidationProvider, ValidationObserver } from 'vee-validate';
 
@@ -60,6 +66,7 @@ export default {
   components: {
     SfInput,
     SfButton,
+    SfAlert,
     ValidationProvider,
     ValidationObserver
   },
@@ -71,6 +78,7 @@ export default {
       newPassword: '',
       repeatPassword: ''
     });
+    const errors = ref([]);
 
     const submitForm = (resetValidationFn) => {
       emit('submit', {
@@ -80,12 +88,15 @@ export default {
           resetValidationFn();
         },
         // TODO: Handle Error
-        onError: (error) => { console.log('onError', error)}
+        onError: (data) => {
+          errors.value = data;
+        }
       });
     };
 
     return {
       form,
+      errors,
       submitForm
     };
   }

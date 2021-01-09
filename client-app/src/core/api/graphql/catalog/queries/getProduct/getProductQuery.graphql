@@ -20,6 +20,7 @@
         images { url }
         description { content id  languageCode  reviewType }
         descriptions { content id  languageCode  reviewType }
+        properties { name value type }
         variations { 
           id
           code

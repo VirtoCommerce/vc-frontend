@@ -6,6 +6,7 @@
         $filter: String,
         $after: String,
         $first: Int,
+        $sort: String
         )
         {
       products(  
@@ -14,6 +15,7 @@
         after: $after,
         first: $first,
         filter: $filter,
+        sort: $sort,
         currencyCode: $currencyCode,
         cultureName: $cultureName) {  
        
