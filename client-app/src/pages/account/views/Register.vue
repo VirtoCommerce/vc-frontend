@@ -58,12 +58,13 @@
             </ValidationProvider>
             <ValidationProvider v-slot="{ errors }" :rules="{ required: { allowFalse: false } }">
               <SfCheckbox
-                v-model="createAccount"
+                :selected="form.createAccount"
                 :valid="!errors[0]"
                 :error-message="errors[0]"
                 name="create-account"
                 label="I want to create an account"
-                class="form__element"></SfCheckbox>
+                class="form__element"
+                @change="changeCreateAccount"></SfCheckbox>
             </ValidationProvider>
             <SfButton
               data-cy="login-btn_submit"
@@ -126,8 +127,10 @@ export default {
   },
   setup() {
 
-    const form = ref({ serverErrors: []});
+    const form = ref({ serverErrors: [], createAccount : false });
     const { signMeUp, loading } = useUser();
+
+    const changeCreateAccount = () => form.value.createAccount = !form.value.createAccount;
 
     const onClose = () => {
       window.location.href='/';
@@ -146,6 +149,7 @@ export default {
       form,
       loading,
       handleRegister,
+      changeCreateAccount,
       onClose
     };
   }
