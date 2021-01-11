@@ -1,5 +1,3 @@
-import { BvTableFieldArray } from "bootstrap-vue";
-
 // It is global variables initialized on the layout page
 //TODO: rework to use one object with propwrites
 export const storeName = window.STORE_NAME;
