@@ -6,7 +6,7 @@ const fetchPolicy = 'no-cache';
 
 const graphqlClient = new ApolloClient({
   // Provide required constructor fields
-  link: new HttpLink({ uri: `${baseUrl}/xapi/graphql` }),
+  link: new HttpLink({ uri: `/xapi/graphql` }),
   cache: new InMemoryCache({
     freezeResults: true,
     addTypename: false

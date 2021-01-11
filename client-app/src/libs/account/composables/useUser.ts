@@ -64,7 +64,7 @@ export default () => {
   async function changePassword(oldPassword: string, newPassword: string): Promise<IdentityResultType>  {
     try {
       loading.value = true;
-      const res = await axios.post(`${baseUrl}/storefrontapi/account/password`, { oldPassword, newPassword, newPasswordConfirm: newPassword });
+      const res = await axios.post('/storefrontapi/account/password`', { oldPassword, newPassword, newPasswordConfirm: newPassword });
       isAuthenticated.value = res?.data?.succeeded ?? isAuthenticated.value;
       return res?.data as IdentityResultType;
     } catch (e) {
@@ -78,7 +78,7 @@ export default () => {
   async function signMeIn(signMeIn: SignMeIn): Promise<IdentityResultType>  {
     try {
       loading.value = true;
-      const res = await axios.post(`${baseUrl}/storefrontapi/account/login`, signMeIn);
+      const res = await axios.post('/storefrontapi/account/login', signMeIn);
       isAuthenticated.value = res?.data?.succeeded ?? isAuthenticated.value;
       return res?.data as IdentityResultType;
     } catch (e) {
@@ -92,7 +92,7 @@ export default () => {
   async function signMeUp(signMeUp: SignMeUp): Promise<IdentityResultType> {
     try {
       loading.value = true;
-      const res = await axios.post(`${baseUrl}/storefrontapi/account/user`, signMeUp);
+      const res = await axios.post('/storefrontapi/account/user', signMeUp);
       return res?.data as IdentityResultType;
     } catch (e) {
       Logger.error("useUser.signMeUp", e);

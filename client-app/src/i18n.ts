@@ -1,6 +1,5 @@
 import Vue from "vue";
 import VueI18n, { LocaleMessages } from 'vue-i18n';
-import { baseUrl } from 'core/constants';
 import axios from './core/services/axios-instance';
 
 
@@ -15,7 +14,7 @@ const i18n = new VueI18n({
 });
 
 export function SetLocale(locale: string): Promise<LocaleMessages> {
-  return axios.get(`${baseUrl}/themes/localization.json?lang=${locale}`)
+  return axios.get(`/themes/localization.json?lang=${locale}`)
     .then(({ data }) => {
       i18n.setLocaleMessage(locale, data);
       return data;

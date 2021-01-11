@@ -64,7 +64,7 @@ export default {
     const changeActivePage = async (title) => {
       //TODO: rework to another routing because title can be localized
       if (title === 'Log out') {
-        window.location.href=`${baseUrl}/account/logout`;
+        window.location.href='/account/logout';
         return;
       }
 
