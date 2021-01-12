@@ -64,7 +64,7 @@ export default () => {
   async function changePassword(oldPassword: string, newPassword: string): Promise<IdentityResultType>  {
     try {
       loading.value = true;
-      const res = await axios.post('/storefrontapi/account/password`', { oldPassword, newPassword, newPasswordConfirm: newPassword });
+      const res = await axios.post('/storefrontapi/account/password', { oldPassword, newPassword, newPasswordConfirm: newPassword });
       isAuthenticated.value = res?.data?.succeeded ?? isAuthenticated.value;
       return res?.data as IdentityResultType;
     } catch (e) {

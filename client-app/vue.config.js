@@ -14,6 +14,10 @@ const pages = {
   home: {
     entry: "src/pages/home/main.ts",
     chunks: ["chunk-vendors", "home"]
+  },
+  //This entry we use only to bundle VSTFUI css that will be used for SSR iquid templates
+  main: {
+    entry: "../assets/static/bundle/main.scss"
   }
 };
 
@@ -38,7 +42,13 @@ module.exports = {
 
   //To avoid of error [mini-css-extract-plugin] warning Conflicting order
   css: {
-    extract: { ignoreOrder: true }
+    extract: { ignoreOrder: true },
+    // loaderOptions: {    
+    //   scss: {
+    //     //This line is required to be able to override the global variables VSFUI
+    //     prependData: `@import "../assets/static/bundle/override.scss";`
+    //   }
+    //}
   },
 
   // Web pack configuration chaining

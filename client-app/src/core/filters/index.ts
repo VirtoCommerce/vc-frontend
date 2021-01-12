@@ -1,13 +1,14 @@
 
 import Vue from "vue";
 import { MoneyType, PriceType } from "@core/api/graphql/types";
+import { baseUrl } from "@core/constants";
 import { appendSuffixToFilename } from "@core/utilities";
 
 
 Vue.filter('assetUrl', function (filename: string) {
   if (!filename) return null;
 
-  return `/themes/assets/static/${filename}`;
+  return `themes/assets/static/${filename}`;
 })
 
 Vue.filter('imgUrl', (value: string, suffix: string) => {

@@ -21,8 +21,11 @@
     <link rel="mask-icon" href="{{'safari-pinned-tab.svg' | static_asset_url }}" color="#5bbad5">
     <meta content="#da532c" name="msapplication-TileColor">
     <meta content="#ffffff" name="theme-color">
-    {{ 'bundle/default.scss.css' | static_asset_url | append_version | stylesheet_tag }}
+
+    {{ 'bundle/dist/css/main.css' | static_asset_url | append_version | stylesheet_tag }}
+    {{ 'bundle/dist/css/chunk-common.css' | static_asset_url | append_version | stylesheet_tag }}
     {{ 'bundle/dist/css/chunk-vendors.css' | static_asset_url | append_version | stylesheet_tag }}
+
     <script src="{{ 'bundle/dist/js/chunk-vendors.js' | static_asset_url | append_version }}"></script>
     <script src="{{ 'bundle/dist/js/chunk-common.js' | static_asset_url | append_version }}"></script>
     <script>
@@ -44,8 +47,8 @@
       <div id="appHeader"></div>
       <!-- Content here -->
       {{ content_for_layout }}
-      <!-- Footer -->
-      <div id="appFooter"></div>
+      
+      {% include 'footer' %}
     </div>
    
   </body>

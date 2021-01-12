@@ -5,10 +5,12 @@
                  @click:checkout="openCheckout"
                  @onClose="toggleCartSidebar"></CartSidebar>
     <SfHeader
-      data-cy="app-header"
       :search-value="term"
+      :is-sticky="false"
       :cart-items-qty="String(cart.itemsQuantity)"
       :account-icon="accountIcon"
+      :logo="'images/logo.svg' | assetUrl"
+      title="VC demo store"
       class="sf-header--has-mobile-search"
       @click:cart="toggleCartSidebar"
       @click:account="handleAccountClick"
@@ -16,12 +18,13 @@
       @change:search="p => term = p">
       <!-- TODO: add mobile view buttons after SFUI team PR -->
       <template #logo>
-        <SfLink href="/">
+        <SfLink href="/" class="sf-header__logo">
           <SfImage :src="'images/logo.svg' | assetUrl"
                    alt="Vue Storefront Next"
                    class="sf-header__logo-image"></SfImage>
         </SfLink>
       </template>
+
       <template #navigation>
         <SfHeaderNavigationItem v-for="{ url, title } in mainMenu"
                                 :key="url"
@@ -30,9 +33,9 @@
                                 :label="title"
                                 :link="url"></SfHeaderNavigationItem>
       </template>
-      <template #aside>
+      <!-- <template #aside>
         <LocaleSelector class="smartphone-only"></LocaleSelector>
-      </template>
+      </template> -->
     </SfHeader>
   </div>
 </template>
@@ -46,14 +49,14 @@ import { useUser } from '@libs/account'
 import { useCart } from '@libs/cart';
 import CartSidebar from '@libs/cart/components/CartSidebar.vue'
 import { mainMenu } from '@core/constants';
-import LocaleSelector from '../components/LocaleSelector.vue';
+//import LocaleSelector from '../components/LocaleSelector.vue';
 
 export default {
   components: {
     SfHeader,
     SfImage,
     SfLink,
-    LocaleSelector,
+    // LocaleSelector,
     CartSidebar
   },
   setup(props, context) {

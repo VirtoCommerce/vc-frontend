@@ -408,13 +408,13 @@ export default {
     const changeItemsPerPage = async (newItemsPerPage) => {
       itemsPerPage.value = newItemsPerPage;
       currentPage.value = 1;
-      await fetchProducts(Number(itemsPerPage.value), currentPage.value);
+      await fetchProducts({ itemsPerPage:Number(itemsPerPage.value), page: currentPage.value,  categoryId });
     };
 
     // Change current page event
     const changeCurrentPage = async (newCurrentPage) => {
       currentPage.value = Number(newCurrentPage);
-      await fetchProducts(Number(itemsPerPage.value), currentPage.value);
+      await fetchProducts({ itemsPerPage:Number(itemsPerPage.value), page: currentPage.value,  categoryId });
     };
 
     // const selectedFilters = ref({});

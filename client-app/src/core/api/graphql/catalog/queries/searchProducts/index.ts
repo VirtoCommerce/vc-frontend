@@ -6,7 +6,6 @@ import searchProductsQueryDocument from './searchProductsQuery.graphql';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function searchProducts({ itemsPerPage = 20, page = 1, categoryId = categoryIdFromRoute, sort = ''}): Promise<ProductConnection> {
-
   const { data } = await client.query({
     query: searchProductsQueryDocument,
     variables: {

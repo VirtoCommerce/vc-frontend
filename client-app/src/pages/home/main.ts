@@ -1,7 +1,7 @@
 import Vue from "vue";
 import i18n from "@i18n";
 import { HeroSlider } from '@libs/home/index.ts';
-import { AppHeader, AppFooter } from "@libs/misc";
+import { AppHeader } from "@libs/misc";
 import InitializationService from "@core/services/initialization.service";
 
 InitializationService.initializeCommon().then(() => {
@@ -11,13 +11,6 @@ InitializationService.initializeCommon().then(() => {
       i18n,
       render: h => h(AppHeader)
     }).$mount("#appHeader");
-  }
-
-  if (document.getElementById("appFooter")) {
-    new Vue({
-      i18n,
-      render: h => h(AppFooter)
-    }).$mount("#appFooter");
   }
 
   if (document.getElementById("hero-slider")) {
