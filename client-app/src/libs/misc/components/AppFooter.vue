@@ -50,13 +50,12 @@
 </template>
 
 <script>
-import { SfFooter, SfList, SfImage, SfMenuItem } from '@storefront-ui/vue';
+import { SfFooter, SfList, SfMenuItem } from '@storefront-ui/vue';
 
 export default {
   components: {
     SfFooter,
     SfList,
-    SfImage,
     SfMenuItem
   },
   data() {
