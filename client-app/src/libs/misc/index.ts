@@ -1,5 +1,6 @@
+import AppFooter  from './components/AppFooter.vue';
+import AppHeader  from './components/AppHeader.vue';
 import LocaleSelector  from './components/LocaleSelector.vue';
 import UserAddress  from './components/UserAddress.vue';
-import AppHeader  from './views/AppHeader.vue';
 
-export { UserAddress, AppHeader, LocaleSelector };
+export { UserAddress, AppHeader, AppFooter, LocaleSelector };

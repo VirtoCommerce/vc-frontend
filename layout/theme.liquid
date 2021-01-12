@@ -34,6 +34,7 @@
       window.LOCALE = "{{ current_language.culture_name }}";
       window.USER_ID = "{{ current_user.id }}";
       window.THEME_SETTINGS = {{ settings | json }};
+      //TODO: Repalce to SSR
       window.MAIN_MENU = {{ linklists['main-menu'].menu_links | json }};
       window.LOCALES = {{ current_store.languages | map 'TwoLetterLanguageName' |  json }};
     </script>
@@ -44,7 +45,7 @@
       <!-- Content here -->
       {{ content_for_layout }}
       <!-- Footer -->
-      {% include 'footer' %}
+      <div id="appFooter"></div>
     </div>
    
   </body>
