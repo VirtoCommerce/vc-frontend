@@ -19,11 +19,11 @@ jobs:
       run:
         working-directory: client-app
 
-    env: 
+    env:
       GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
       BLOB_SAS: ${{ secrets.BLOB_TOKEN }}
       VERSION_SUFFIX: ""
-    
+
     name: ci
 
     steps:
@@ -82,3 +82,16 @@ jobs:
         container_name: 'packages'
         connection_string: ${{ secrets.BLOB_CONNECTION_STRING }}
         sync: false
+
+    - name: Publish
+      if: ${{ github.ref == 'refs/heads/vsf-rnd-integration' }}
+      id: publish
+      uses: VirtoCommerce/vc-github-actions/publish-theme@master
+
+    - name: Invoke Theme deployment workflow
+      if: ${{ github.ref == 'refs/heads/vsf-rnd-integration' }}
+      uses: benc-uk/workflow-dispatch@v1
+      with:
+        workflow: Theme deployment
+        token: ${{ secrets.REPO_TOKEN }}
+        inputs: '{ "blobUrl": "${{ steps.publish.outputs.blobUrl }}", "artifactVersion": "${{ steps.image.outputs.fullVersion }}", "key": "VST_THEME_URL"  }'
