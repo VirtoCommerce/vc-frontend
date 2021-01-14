@@ -1,21 +1,14 @@
-<div class="d-flex flex-column">
-    <span class="d-flex">
-        {% if on_sale %}
-        <del class="small mr-1 align-self-center">
-          {% assign price = product.compare_at_price %}
-          {% include 'price' %}
-        </del>
-        {% endif %}
-        <strong class="font-weight-bold h5 align-self-center">
-          {% assign price = product.price %}
-          {% include 'price' %}
-        </strong>
-    </span>
+<div class="sf-price {% if use_price_in_card == true %}sf-product-card__price{% endif %}">
     {% if on_sale %}
-    <strong class="border border-primary mr-auto text-primary text-uppercase font-weight-bold p-1">
-        {% assign compare_price = product.compare_at_price %}
-        {% assign product_price = product.price.actual_price %}
-        {% include 'price-sale' %}
-    </strong>
+      <del class="sf-price__old">
+        {{ product.price.list.formatted_amount }}
+      </del>
+      <ins class="sf-price__special">
+        {{ product.price.actual.formatted_amount }}
+      </ins>
+    {% else %}
+      <span class="sf-price__regular">
+        {{ product.price.actual.formatted_amount }}
+      </span>
     {% endif %}
 </div>

@@ -53,7 +53,7 @@ jobs:
         $key = "${{ github.event.inputs.key }}"
         $artifactPath = "${{ github.event.inputs.blobUrl }}"
         $content -replace "$key\s*:.*", "$key`: $artifactPath" | Set-Content -Path $fileName
-    
+  
     - name: Commit deployment-cm change
       shell: pwsh
       run: |
@@ -82,7 +82,7 @@ jobs:
           }
         }
         while (-not $syncedAndHealthy)
-    
+
     - name: BUILD_STATE::successful
       if: success()
       run: echo "BUILD_STATE=successful" >> $GITHUB_ENV

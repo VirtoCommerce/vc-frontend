@@ -3,7 +3,7 @@ import { baseUrl, loginUrl, accessDeniedUrl } from 'core/constants';
 
 const axiosInstance = axios.create();
 
-axiosInstance.defaults.baseURL = baseUrl;
+//axiosInstance.defaults.baseURL = baseUrl;
 axiosInstance.interceptors.response.use(
   function (response) {
     return response;

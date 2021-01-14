@@ -1,27 +1,110 @@
-<footer class="bg-secondary pt-3">
-  <div class="container d-flex flex-column">
-    <div class="d-flex w-100 justify-content-between flex-wrap">
-      {% if settings.footer_column1_title %}
-          <div>
-            <h4>{{ settings.footer_column1_title }}</h4>
-            {{ settings.footer_column1_content }}
-          </div>
-      {% endif %}
-      {% if settings.footer_column2_title %}
-          <div>
-            <h4>{{ settings.footer_column2_title }}</h4>
-            {{ settings.footer_column2_content }}
-          </div>
-      {% endif %}
-      {% if settings.footer_column3_title %}
-          <div>
-            <h4>{{ settings.footer_column3_title }}</h4>
-            {{ settings.footer_column3_content }}
-          </div>
-      {% endif %}
+<footer class="sf-footer desktop-only">
+    <div class="sf-footer__container">
+      <!-- Column №1 -->
+      <div class="sf-footer-column">
+        <button class="sf-footer-column__title">Quick links</button>
+        <div class="sf-footer-column__content">
+          <ul class="sf-list">
+            {% for link in linklists['footer'].links %}            
+              <li class="sf-list__item">
+                  <a href="{{ link.url | absolute_url }}" class="sf-button sf-menu-item sf-button--pure">
+                    <span class="sf-menu-item__label">{{ link.title }}</span>    
+                    <span class="sf-menu-item__count"></span>
+                  </a>
+              </li>                             
+            {% endfor %}          
+          </ul>
+        </div>
+      </div>
+      <!-- Column №2 -->
+      <div class="sf-footer-column">
+        <button class="sf-footer-column__title">COMMUNITY</button>
+        <div class="sf-footer-column__content">
+          <ul class="sf-list">
+            <li class="sf-list__item">
+              <button class="sf-button sf-menu-item sf-button--pure" style="outline: none;">
+                <span class="sf-menu-item__label">Announcements</span>
+                <span class="sf-menu-item__count"></span>
+              </button>
+            </li>
+            <li class="sf-list__item">
+              <button class="sf-button sf-menu-item sf-button--pure" style="outline: none;">
+                <span class="sf-menu-item__label">Knowledge Base</span>
+                <span class="sf-menu-item__count"></span>
+              </button>
+            </li>
+            <li class="sf-list__item">
+              <button class="sf-button sf-menu-item sf-button--pure" style="outline: none;">
+                <span class="sf-menu-item__label">Discussion boards</span>
+                <span class="sf-menu-item__count"></span>
+              </button>
+            </li>
+            <li class="sf-list__item">
+              <button class="sf-button sf-menu-item sf-button--pure" style="outline: none;">
+                <span class="sf-menu-item__label">Shop for Charity</span>
+                <span class="sf-menu-item__count"></span>
+              </button>
+            </li>
+            <li class="sf-list__item">
+              <button class="sf-button sf-menu-item sf-button--pure" style="outline: none;">
+                <span class="sf-menu-item__label">Charity Shop</span>
+                <span class="sf-menu-item__count"></span>
+              </button>
+            </li>
+            <li class="sf-list__item">
+              <button class="sf-button sf-menu-item sf-button--pure" style="outline: none;">
+                <span class="sf-menu-item__label">Our Community</span>
+                <span class="sf-menu-item__count"></span>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- Column №3 -->
+      <div class="sf-footer-column">
+        <button class="sf-footer-column__title">LET US HELP YOU</button>
+        <div class="sf-footer-column__content">
+          <ul class="sf-list">
+            <li class="sf-list__item">
+              <button class="sf-button sf-menu-item sf-button--pure" style="outline: none;">
+                <span class="sf-menu-item__label">COVID-19</span>
+                <span class="sf-menu-item__count"></span>
+              </button>
+            </li>
+            <li class="sf-list__item">
+              <button class="sf-button sf-menu-item sf-button--pure" style="outline: none;">
+                <span class="sf-menu-item__label">Your Account</span>
+                <span class="sf-menu-item__count"></span>
+              </button>
+            </li>
+            <li class="sf-list__item">
+              <button class="sf-button sf-menu-item sf-button--pure" style="outline: none;">
+                <span class="sf-menu-item__label">Your Orders</span>
+                <span class="sf-menu-item__count"></span>
+              </button>
+            </li>
+            <li class="sf-list__item">
+              <button class="sf-button sf-menu-item sf-button--pure" style="outline: none;">
+                <span class="sf-menu-item__label">Shipping Rates & Policies</span>
+                <span class="sf-menu-item__count"></span>
+              </button>
+            </li>
+            <li class="sf-list__item">
+              <button class="sf-button sf-menu-item sf-button--pure" style="outline: none;">
+                <span class="sf-menu-item__label">Returns & Replacements</span>
+                <span class="sf-menu-item__count"></span>
+              </button>
+            </li>
+            <li class="sf-list__item">
+              <button class="sf-button sf-menu-item sf-button--pure" style="outline: none;">
+                <span class="sf-menu-item__label">Help</span>
+                <span class="sf-menu-item__count"></span>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    
     </div>
-    <div>
-      {{ settings.copyright }}
-    </div>
-  </div>
-</footer>
+  </footer>
+  
