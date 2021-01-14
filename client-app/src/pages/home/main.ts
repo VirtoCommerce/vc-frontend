@@ -18,5 +18,6 @@ InitializationService.initializeCommon().then(() => {
       i18n,
       render: h => h(HeroSlider)
     }).$mount("#hero-slider");
-  }});
-//addAddProductButtons(initializator);
+  }
+});
+
