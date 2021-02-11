@@ -1,6 +1,5 @@
 # VUE MPA starter/boilerplate theme for VirtoCommerce Storefront.
-
-![Index](https://user-images.githubusercontent.com/66079752/90002067-75540d00-dc92-11ea-9688-3a88ebfcea21.jpg)
+![image](https://user-images.githubusercontent.com/7566324/107653878-c7e6a400-6c8a-11eb-802b-13a38f7f3143.png)
 
 **VUE MPA starter theme** - is starter theme is demonstrated a typical out-of-the-box B2B Portal that built using Liquid templates, Vue.JS web progressive framework and Bootstrap CSS.
  This theme represents the VC Team's opinionated starting point for new projects. It strives to include up-to-date best practices and solutions that we have deemed needed for the majority of projects we build. It is a reflection of what’s possible when building a theme! 
@@ -16,34 +15,7 @@
 - Intentionally lack of using custom CSS an initial styles constructed, using popular Bootstrap CSS library  and have an adaptive markup allows working on all popular devices and resolutions to make the customization process for theme styles  more straightforward. 
 - Liquid templates and SSR (server side rendering)  + MPA (multi-page application) architecture with using Vue.JS progressive framework allow to get the all benefits from both server side and WEB development techniques.
   
-
-![Login Screen](https://user-images.githubusercontent.com/66079752/90002356-daa7fe00-dc92-11ea-82ea-7a9f3aaee41d.jpg)
   
-# The project business key features:
-
-- Authorization. Login, logout, reset password
-- Order history browsing. Review and search the orders history (headers, lines)
-- Order status review. Reviews the status of an order
-- Invoice history. Review and download invoices 
-- Payments history.	Review payments history
-- Manage users.	Create, modify, delete users inside the organization
-- Manage users roles. Assign roles to users
-- Contract status browsing.	Review contract details and status
-- Retrieve re-ordering.	Retrieve order replication with comments – (email)
-- Order approve	Review, approve or reject an order created by account manager
-- Catalog navigation. Full-text  search, faceting search, categories browsing, products details.
-- Product prices browsing.	Review product prices in a product catalog details
-- Product recommendations. Cross-sell, Up-Sell, Frequently bought together etc.
-- Wish lists	Create, update, delete wish list and put products to it from catalog or from existent orders
-- Multiple orders drafts. Select order draft, add, modify, remove products in the order drafts
-- Re-ordering	Clone order details to an active order 
-- Submit the order	Submit order (inventory is locked, prices are locked)
-- Product inventory browsing. Review product stocks (by fulfillment centers if reasonable) in a product catalog details
-- Manage shipment details. Manage order shipment details before submitting and order
-- Manage payment details. Manage order payment details before submitting and order
-- Order approval workflow.	An order should be accepted by multiple roles to be competed
-
-![Product page](https://user-images.githubusercontent.com/66079752/90002565-19d64f00-dc93-11ea-9c7e-b4f0e996af24.jpg)
 
 # How does it work?
 TBD
