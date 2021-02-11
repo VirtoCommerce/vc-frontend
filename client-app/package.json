@@ -11,8 +11,7 @@
     "build:dev": "vue-cli-service build --mode=development",
     "compress": "vue-cli-service build && gulp compress",
     "generate:graphql": "graphql-codegen -c graphql.codegen.yml && eolConverter crlf \"src/core/api/graphql/*\"",
-    "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'",
-    "nswag": "nswag run"
+    "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.29",
@@ -85,7 +84,6 @@
     "eslint-plugin-mocha": "^6.3.0",
     "eslint-plugin-vue": "^6.2.2",
     "exports-loader": "^0.7.0",
-    "nswag": "^13.6.2",
     "postcss-easy-import": "^3.0.0",
     "postcss-loader": "^3.0.0",
     "postcss-scss": "^2.1.1",
