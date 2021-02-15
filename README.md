@@ -83,49 +83,48 @@ There are the following  reasones why MPA architecture has been chosen.
 ├── templates                     // Liquid templates, used in SSR and MPA. Each MPA page needs to have a liquid template here if you want SSR.
 |   └──....
 |
-├── client-app                    // The main folder for components and pages of the Vue.js MPA application.
-│   └── src
-|   |   └── core                  // Common utilities and services that can be shared and used by any pages and libraries.
-|   |   |   ├── api/graphql       // The GraphQL Models to connect with the Virto Backoffice.
-|   |   |   |   └──....
-|   |   |   ├── models            // Core models. (ex. Pagination).
-|   |   |   |   └──....
-|   |   |   ├── services          // Overall shared services. Such as AxiosInstance or InitializationService (implement common init logic for all pages).
-|   |   |   |   └──....
-|   |   |   ├── utilities         // Some helper services and miscellaneous utils.
-|   |   |   |   └──....
-|   |   ├── libs                  // A set of files grouped together in folders by their domain context. The main purpose is code reusing and simple project maintenance.
-|   |   |   ├── catalog           // Represent a grouping folder for aggregate all building blocks for the particular domain context (e.g catalog browsing).
-|   |   |   |   ├── components    // The collections of the dumb or presentation components specific only for this domain context.
-|   |   |   |   |   └──....
-|   |   |   |   ├── composables   // The files to apply Composition API for this module.
-|   |   |   |   |   └──....
-|   |   |   |   ├── types         // The necessary models or types for this module.
-|   |   |   |   |   └──....
-|   |   |   └──....
-|   |   |
-|   |   ├── pages                 // Set of pages. The page is the Vue app that usually added to one of the pages that rendered on the server-side (SSR).
-|   |   |   ├── catalog
-|   |   |   |   ├── views         // Smart components that implements the particular business context use case related to this page.
-|   |   |   |   |   └──....
-|   |   |   |   ├── routes        // Vue application routes.
-|   |   |   |   |   └──....
-|   |   |   |   └── main.ts       // The script logic of Vue app entry point for page (Multiple files component)
-|   |   |   └──....
-|   |   |
-|   ├── tests                     // The e2e/ui and unit tests.
-|   |   └──....
-|   ├──  .browserslistrc          // Browserslist config file to support previous versions of browsers.
-|   ├──  .env                     // Envfile to define different Environment Variables.
-|   ├──  .eslintignore            // Ignore some files in Eslint.
-|   ├──  .eslintrc                // Eslint configuration file.
-|   ├──  babel.config             // Babel configuration file.
-|   ├──  cypress.json             // Cypress configuration file to use in e2e/ui tests.
-|   ├──  graphql.codegen.yml      // GraphQL configuration file to generate types, where schema is your Virto Backoffice url.
-|   ├──  tsconfig.json            // TypeScript configuration file.
-|   └──  vue.config.js            // Vue.js Global CLI Config
+└── client-app                    // The main folder for components and pages of the Vue.js MPA application.
+    └── src
+    |   └── core                  // Common utilities and services that can be shared and used by any pages and libraries.
+    |   |   ├── api/graphql       // The GraphQL Models to connect with the Virto Backoffice.
+    |   |   |   └──....
+    |   |   ├── models            // Core models. (ex. Pagination).
+    |   |   |   └──....
+    |   |   ├── services          // Overall shared services. Such as AxiosInstance or InitializationService (implement common init logic for all pages).
+    |   |   |   └──....
+    |   |   ├── utilities         // Some helper services and miscellaneous utils.
+    |   |   |   └──....
+    |   ├── libs                  // A set of files grouped together in folders by their domain context. The main purpose is code reusing and simple project maintenance.
+    |   |   ├── catalog           // Represent a grouping folder for aggregate all building blocks for the particular domain context (e.g catalog browsing).
+    |   |   |   ├── components    // The collections of the dumb or presentation components specific only for this domain context.
+    |   |   |   |   └──....
+    |   |   |   ├── composables   // The files to apply Composition API for this module.
+    |   |   |   |   └──....
+    |   |   |   ├── types         // The necessary models or types for this module.
+    |   |   |   |   └──....
+    |   |   └──....
+    |   |
+    |   ├── pages                 // Set of pages. The page is the Vue app that usually added to one of the pages that rendered on the server-side (SSR).
+    |   |   ├── catalog
+    |   |   |   ├── views         // Smart components that implements the particular business context use case related to this page.
+    |   |   |   |   └──....
+    |   |   |   ├── routes        // Vue application routes.
+    |   |   |   |   └──....
+    |   |   |   └── main.ts       // The script logic of Vue app entry point for page (Multiple files component)
+    |   |   └──....
+    |   |
+    ├── tests                     // The e2e/ui and unit tests.
+    |   └──....
+    ├──  .browserslistrc          // Browserslist config file to support previous versions of browsers.
+    ├──  .env                     // Envfile to define different Environment Variables.
+    ├──  .eslintignore            // Ignore some files in Eslint.
+    ├──  .eslintrc                // Eslint configuration file.
+    ├──  babel.config             // Babel configuration file.
+    ├──  cypress.json             // Cypress configuration file to use in e2e/ui tests.
+    ├──  graphql.codegen.yml      // GraphQL configuration file to generate types, where schema is your Virto Backoffice url.
+    ├──  tsconfig.json            // TypeScript configuration file.
+    └──  vue.config.js            // Vue.js Global CLI Config
 ```
-
 
 # Getting started
 ## Prerequisites
