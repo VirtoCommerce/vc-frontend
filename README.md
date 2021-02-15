@@ -27,65 +27,76 @@ There are the following  reasones why MPA architecture has been chosen.
 # Theme structure
 ```bash
 .
-├── assets                         //Contains image and other asset files to be copied as-is when you build your application.
-│   └──static
-|      └── bundle  
-|          ├── dist                //The scripts and styles build output folder. Contains all resulting js and css bundles.
+├── assets                         // Images and other asset files to be copied as-is when you build your application, used in SSR and MPA.
+│   ├── graphql                    // Special GraphQL queries used only in liquid templates for SSR.
+|   |   └──....
+│   └── static
+|      └── bundle
+|          ├── dist                // The scripts and styles build output folder. Contains all resulting js and css bundles. The files are auto-generated.
 |          |   └──....
-|          └── default.scss.liquid //Contains a main theme settings variables and used for theme color scheme customization
-├── client-app                     //Contains the component, pages files of the Vue.JS MPA application.
-│   └── src
-|       ├── assets
-|       |   └──....
-|       └── core                  //Contains common utlitites/services that can be shared and used by any pages and libraries.
-|       |   ├── api               //Contains the NSwag generated clients to the storefront REST API
-|       |   |   └──....
-|       |   ├── models            //Contains core models. (ex. Pagination)
-|       |   |   └──....
-|       |   ├── services          //Contains overall shared services. Such as AxiosInstance or InitializationService (implement common init logic for all pages).
-|       |   |   └──....
-|       |   ├── utilities         //some helper services and miscellaneous utils
-|       |   |   └──....
-|       ├── libs                  //Contains a set of files grouped together in folders by their domain context. The main purpose is code reusing and simple project maintenance. 
-|       |   ├── catalog           //Represent a grouping folder for aggregate all building blocks for the particular domain context (e.g catalog browsing)
-|       |   |   ├── components    //Contains the collections of the dumb or presentation components specific only for this domain context. 
-|       |   |   |   └──....
-|       |   |   ├── store         //Contains the libary state - Vuex store modules (state, mutators, getters).
-|       |   |   |   └──....
-|       |   |   ├── views         //Contains the smart components that immplements the particular use cases.
-|       |   |   |   └──....
-|       |   |   ├── plugins       //Contains Vue.JS plugins
-|       |   |   |   └──....
-|       |   |   ├── services      //Contains all domain services
-|       |   |   |   └──....
-|       |   |   └── models        //Contains all domain models definitions
-|       |   |       └──....
-|       |   └──....            
-|       ├── pages                 //Contains a set of pages. The page is the Vue app that usually added to one of the pages that rendered on the server-side.
-|       |   ├── catalog
-|       |   |   ├── views         //Contains the smart components that implements the particular business context use case related to this page
-|       |   |   |   └──....
-|       |   |   ├── routes        //Contains the all Vue application routes 
-|       |   |   |   └──....
-|       |   |   ├── App.vue       //The template of Vue app entry point for page (Multiple files component)
-|       |   |   └── main.ts       //The script logic of Vue app entry point for page (Multiple files component)
-|       |   └──....   
-|       ├── tests                 //Contains unit tests.
-|       |   └──....
-|       ├──  nswag.json           //nswag config for Type script API clients generation
-|       └──  vue.config.js        //Vue.js Global CLI Config
-├── config                        //Contains the theme's settings
-|   └── settings_data.json        //The json file contains all the main settings for the Liquid theme.
-├── layout                        //Contains the theme's layout templates, which by default is the theme.liquid file. 
+|          ├── images              // The static images of the application, are used in SSR and MPA.
+|          |   └──....
+|          ├── scss                // The styles of the application, are used in SSR and MPA.
+|          |   └──....
+|          └── main.scss           // The styles entry-point, will include other /scss files and also will be used in SSR and MPA.
+|
+├── config                        // The Virto theme's settings.
+|   └── settings_data.json        // The json file contains all the main settings for the theme.
+|
+├── layout                        // Layout templates, which by default is the theme.liquid file, used in SSR.
 |   └──....
-├── locales                       //Contains the theme's locale files, which are used to provide translated content for the theme.
+|
+├── locales                       // Locale files, which are used to provide translated content for the theme, used in SSR and MPA.
 |   └──....
-├── snippets                      //Contains all the theme's Liquid snippet files, which are bits of code that can be referenced in other templates of a theme.
+|
+├── snippets                      // Theme's Liquid snippet files, which are bits of code that can be referenced in other templates of a theme, used in SSR.
 |   └──....
-├── templates                     //contains all Liquid templates
+|
+├── templates                     // Liquid templates, used in SSR and MPA. Each MPA page needs to have a liquid template here if you want SSR.
 |   └──....
+|
+└── client-app                    // The main folder for components and pages of the Vue.js MPA application.
+    └── src
+    |   └── core                  // Common utilities and services that can be shared and used by any pages and libraries.
+    |   |   ├── api/graphql       // The GraphQL Models to connect with the Virto Backoffice.
+    |   |   |   └──....
+    |   |   ├── models            // Core models. (ex. Pagination).
+    |   |   |   └──....
+    |   |   ├── services          // Overall shared services. Such as AxiosInstance or InitializationService (implement common init logic for all pages).
+    |   |   |   └──....
+    |   |   ├── utilities         // Some helper services and miscellaneous utils.
+    |   |   |   └──....
+    |   ├── libs                  // A set of files grouped together in folders by their domain context. The main purpose is code reusing and simple project maintenance.
+    |   |   ├── catalog           // Represent a grouping folder for aggregate all building blocks for the particular domain context (e.g catalog browsing).
+    |   |   |   ├── components    // The collections of the dumb or presentation components specific only for this domain context.
+    |   |   |   |   └──....
+    |   |   |   ├── composables   // The files to apply Composition API for this module.
+    |   |   |   |   └──....
+    |   |   |   ├── types         // The necessary models or types for this module.
+    |   |   |   |   └──....
+    |   |   └──....
+    |   |
+    |   ├── pages                 // Set of pages. The page is the Vue app that usually added to one of the pages that rendered on the server-side (SSR).
+    |   |   ├── catalog
+    |   |   |   ├── views         // Smart components that implements the particular business context use case related to this page.
+    |   |   |   |   └──....
+    |   |   |   ├── routes        // Vue application routes.
+    |   |   |   |   └──....
+    |   |   |   └── main.ts       // The script logic of Vue app entry point for page (Multiple files component)
+    |   |   └──....
+    |   |
+    ├── tests                     // The e2e/ui and unit tests.
+    |   └──....
+    ├──  .browserslistrc          // Browserslist config file to support previous versions of browsers.
+    ├──  .env                     // Envfile to define different Environment Variables.
+    ├──  .eslintignore            // Ignore some files in Eslint.
+    ├──  .eslintrc                // Eslint configuration file.
+    ├──  babel.config             // Babel configuration file.
+    ├──  cypress.json             // Cypress configuration file to use in e2e/ui tests.
+    ├──  graphql.codegen.yml      // GraphQL configuration file to generate types, where schema is your Virto Backoffice url.
+    ├──  tsconfig.json            // TypeScript configuration file.
+    └──  vue.config.js            // Vue.js Global CLI Config
 ```
-
 
 # Getting started
 ## Prerequisites
