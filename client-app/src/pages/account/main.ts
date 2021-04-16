@@ -19,7 +19,7 @@ InitializationService.initializeCommon().then(() => {
     new Vue({
       i18n,
       router,
-      template: "<router-view></router-view>"
+      render: (h) => h('router-view'/* this is for routing */)
     }).$mount("#account");
   }
   if (document.getElementById("register")) {

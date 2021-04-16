@@ -27,18 +27,14 @@ There are the following  reasones why MPA architecture has been chosen.
 # Theme structure
 ```bash
 .
-├── assets                         // Images and other asset files to be copied as-is when you build your application, used in SSR and MPA.
-│   ├── graphql                    // Special GraphQL queries used only in liquid templates for SSR.
+├── assets                        // Images and other asset files to be copied as-is when you build your application, used in SSR and MPA.
+│   ├── graphql                   // Special GraphQL queries used only in liquid templates for SSR.
 |   |   └──....
 │   └── static
-|      └── bundle
-|          ├── dist                // The scripts and styles build output folder. Contains all resulting js and css bundles. The files are auto-generated.
-|          |   └──....
-|          ├── images              // The static images of the application, are used in SSR and MPA.
-|          |   └──....
-|          ├── scss                // The styles of the application, are used in SSR and MPA.
-|          |   └──....
-|          └── main.scss           // The styles entry-point, will include other /scss files and also will be used in SSR and MPA.
+|       ├── bundle                // The scripts and styles build output folder. Contains all resulting js and css bundles. The files are auto-generated.
+|       |   └──....
+|       └── images                // The static images of the application, are used in SSR and MPA.
+|           └──....
 |
 ├── config                        // The Virto theme's settings.
 |   └── settings_data.json        // The json file contains all the main settings for the theme.
@@ -56,16 +52,17 @@ There are the following  reasones why MPA architecture has been chosen.
 |   └──....
 |
 └── client-app                    // The main folder for components and pages of the Vue.js MPA application.
-    └── src
-    |   └── core                  // Common utilities and services that can be shared and used by any pages and libraries.
+    ├── src
+    |   ├── core                  // Common utilities and services that can be shared and used by any pages and libraries.
     |   |   ├── api/graphql       // The GraphQL Models to connect with the Virto Backoffice.
     |   |   |   └──....
     |   |   ├── models            // Core models. (ex. Pagination).
     |   |   |   └──....
     |   |   ├── services          // Overall shared services. Such as AxiosInstance or InitializationService (implement common init logic for all pages).
     |   |   |   └──....
-    |   |   ├── utilities         // Some helper services and miscellaneous utils.
-    |   |   |   └──....
+    |   |   └── utilities         // Some helper services and miscellaneous utils.
+    |   |       └──....
+    |   |
     |   ├── libs                  // A set of files grouped together in folders by their domain context. The main purpose is code reusing and simple project maintenance.
     |   |   ├── catalog           // Represent a grouping folder for aggregate all building blocks for the particular domain context (e.g catalog browsing).
     |   |   |   ├── components    // The collections of the dumb or presentation components specific only for this domain context.
@@ -85,8 +82,14 @@ There are the following  reasones why MPA architecture has been chosen.
     |   |   |   └── main.ts       // The script logic of Vue app entry point for page (Multiple files component)
     |   |   └──....
     |   |
+    |   └── styles                // The styles of the application, are used in SSR and MPA.
+    |       ├── scss
+    |       |   └──....
+    |       └── main.scss         // The styles entry-point, will include other /scss files and also will be used in SSR and MPA.  
+    |
     ├── tests                     // The e2e/ui and unit tests.
     |   └──....
+    |
     ├──  .browserslistrc          // Browserslist config file to support previous versions of browsers.
     ├──  .env                     // Envfile to define different Environment Variables.
     ├──  .eslintignore            // Ignore some files in Eslint.

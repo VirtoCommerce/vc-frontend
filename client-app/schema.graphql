@@ -1,0 +1,2205 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+  query: Query
+  mutation: Mutations
+}
+
+interface Facet {
+  "The three types of facets. Terms, Range, Filter"
+  facetType: FacetTypes
+  "The key/name  of the facet."
+  name: String!
+}
+
+type AddressType {
+  addressType: Int
+  "City"
+  city: String
+  "Country code"
+  countryCode: String
+  "Country name"
+  countryName: String
+  "Email"
+  email: String
+  "First name"
+  firstName: String
+  "Id"
+  id: String
+  "Last name"
+  lastName: String
+  "Line1"
+  line1: String
+  "Line2"
+  line2: String
+  "Middle name"
+  middleName: String
+  "Name"
+  name: String
+  "Company name"
+  organization: String
+  "Phone"
+  phone: String
+  "Postal code"
+  postalCode: String!
+  "Region id"
+  regionId: String
+  "Region name"
+  regionName: String
+  "Zip"
+  zip: String
+}
+
+type Asset {
+  cultureName: String
+  "Group of the asset."
+  group: String
+  "The unique ID of the asset."
+  id: String!
+  "MimeType of the asset."
+  mimeType: String
+  "The name of the asset."
+  name: String
+  "RelativeUrl of the asset."
+  relativeUrl: String
+  "Size of the asset."
+  size: Long
+  "Type id of the asset."
+  typeId: String
+  "Url of the asset."
+  url: String
+}
+
+type AvailabilityData {
+  "Available quantity"
+  availableQuantity: Long!
+  inventories: [InventoryInfo]
+  isActive: Boolean
+  isAvailable: Boolean
+  isBuyable: Boolean
+  isInStock: Boolean
+  isTrackInventory: Boolean
+}
+
+"A connection from an object to a list of objects of type `Cart`."
+type CartConnection {
+  "Information to aid in pagination."
+  edges: [CartEdge]
+  "A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for \"{ edges { node } }\" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the \"cursor\" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full \"{ edges { node } } \" version should be used instead."
+  items: [CartType]
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing \"5\" as the argument to `first`, then fetch the total count so it could display \"5 of 83\", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`."
+  totalCount: Int
+}
+
+"An edge in a connection from an object to another object of type `Cart`."
+type CartEdge {
+  "A cursor for use in pagination"
+  cursor: String!
+  "The item at the end of the edge"
+  node: CartType
+}
+
+type CartShipmentItemType {
+  lineItem: LineItemType
+  "Quantity"
+  quantity: Int
+}
+
+type CartType {
+  addresses: [AddressType]
+  availablePaymentMethods: [PaymentMethodType]
+  availableShippingMethods: [ShippingMethodType]
+  "Shopping cart channel id"
+  channelId: String
+  "Shopping cart text comment"
+  comment: String
+  coupons: [CouponType]
+  currency: CurrencyType
+  "Shopping cart user id"
+  customerId: String
+  "Shopping cart user name"
+  customerName: String
+  discountTotal: MoneyType
+  discountTotalWithTax: MoneyType
+  discounts: [DiscountType]
+  extendedPriceTotal: MoneyType
+  extendedPriceTotalWithTax: MoneyType
+  handlingTotal: MoneyType
+  handlingTotalWithTax: MoneyType
+  hasPhysicalProducts: Boolean
+  "Shopping cart Id"
+  id: String
+  "Sign that shopping cart is anonymous"
+  isAnonymous: Boolean
+  "Sign that shopping cart is recurring"
+  isRecuring: Boolean
+  "Is cart valid"
+  isValid: Boolean
+  items: [LineItemType]
+  "Count of different items"
+  itemsCount: Int
+  "Quantity of items"
+  itemsQuantity: Int
+  "Shopping cart name"
+  name: String!
+  "Shopping cart organization id"
+  organizationId: String
+  paymentPrice: MoneyType
+  paymentPriceWithTax: MoneyType
+  paymentTotal: MoneyType
+  paymentTotalWithTax: MoneyType
+  payments: [PaymentType]
+  shipments: [ShipmentType]
+  shippingPrice: MoneyType
+  shippingPriceWithTax: MoneyType
+  shippingTotal: MoneyType
+  shippingTotalWithTax: MoneyType
+  "Shopping cart status"
+  status: String
+  "Shopping cart store id"
+  storeId: String
+  subTotal: MoneyType
+  subTotalWithTax: MoneyType
+  taxDetails: [TaxDetailType]
+  "Tax percent rate"
+  taxPercentRate: Decimal
+  taxTotal: MoneyType
+  "Shipping tax type"
+  taxType: String
+  total: MoneyType
+  "Shopping cart type"
+  type: String
+  validationErrors: [ValidationErrorType]
+  "Shopping cart value of volumetric weight"
+  volumetricWeight: Decimal
+  "Shopping cart value of shopping cart weight"
+  weight: Decimal
+  "Shopping cart value of weight unit"
+  weightUnit: String
+}
+
+type CatalogDiscountType {
+  amount: Decimal
+  amountWithTax: Decimal
+  "Coupon"
+  coupon: String
+  "Value of discount description"
+  description: String
+  promotion: Promotion
+  "Value of promotion id"
+  promotionId: String
+}
+
+type Category {
+  "SKU of category."
+  code: String!
+  hasParent: Boolean
+  "Id of category."
+  id: String!
+  images: [ImageType]
+  "The category image."
+  imgSrc: String
+  "Level in hierarchy"
+  level: Int
+  "Name of category."
+  name: String!
+  "All parent categories ids relative to the requested catalog and concatenated with \\ . E.g. (1/21/344)"
+  outline: String
+  outlines: [OutlineType]
+  parent: Category
+  "Category path in to the requested catalog  (all parent categories names concatenated. E.g. (parent1/parent2))"
+  path: String
+  "Request related SEO info"
+  seoInfo: SeoInfo
+  "Request related slug for category"
+  slug: String
+}
+
+"A connection from an object to a list of objects of type `Category`."
+type CategoryConnection {
+  "Information to aid in pagination."
+  edges: [CategoryEdge]
+  "A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for \"{ edges { node } }\" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the \"cursor\" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full \"{ edges { node } } \" version should be used instead."
+  items: [Category]
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing \"5\" as the argument to `first`, then fetch the total count so it could display \"5 of 83\", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`."
+  totalCount: Int
+}
+
+"An edge in a connection from an object to another object of type `Category`."
+type CategoryEdge {
+  "A cursor for use in pagination"
+  cursor: String!
+  "The item at the end of the edge"
+  node: Category
+}
+
+"A connection from an object to a list of objects of type `Contact`."
+type ContactConnection {
+  "Information to aid in pagination."
+  edges: [ContactEdge]
+  "A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for \"{ edges { node } }\" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the \"cursor\" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full \"{ edges { node } } \" version should be used instead."
+  items: [ContactType]
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing \"5\" as the argument to `first`, then fetch the total count so it could display \"5 of 83\", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`."
+  totalCount: Int
+}
+
+"An edge in a connection from an object to another object of type `Contact`."
+type ContactEdge {
+  "A cursor for use in pagination"
+  cursor: String!
+  "The item at the end of the edge"
+  node: ContactType
+}
+
+type ContactType {
+  addresses: [MemberAddressType]
+  birthDate: Date
+  firstName: String!
+  fullName: String!
+  id: String!
+  lastName: String!
+  memberType: String!
+  middleName: String
+  name: String
+  organizationId: String
+  "All contact's organizations"
+  organizations: [Organization]
+  organizationsIds: [String]!
+  outerId: String
+  phones: [String]!
+  securityAccounts: [UserType]
+}
+
+type CouponType {
+  "Coupon code"
+  code: String
+  "Is coupon was applied successfully"
+  isAppliedSuccessfully: Boolean
+}
+
+"Currency"
+type CurrencyType {
+  "Currency code may be used ISO 4217"
+  code: String!
+  "Currency custom formatting"
+  customFormatting: String
+  "Exchange rate"
+  exchangeRate: Decimal
+  "Symbol"
+  symbol: String
+}
+
+"A connection from an object to a list of objects of type `CustomerOrder`."
+type CustomerOrderConnection {
+  "Information to aid in pagination."
+  edges: [CustomerOrderEdge]
+  "A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for \"{ edges { node } }\" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the \"cursor\" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full \"{ edges { node } } \" version should be used instead."
+  items: [CustomerOrderType]
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing \"5\" as the argument to `first`, then fetch the total count so it could display \"5 of 83\", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`."
+  totalCount: Int
+}
+
+"An edge in a connection from an object to another object of type `CustomerOrder`."
+type CustomerOrderEdge {
+  "A cursor for use in pagination"
+  cursor: String!
+  "The item at the end of the edge"
+  node: CustomerOrderType
+}
+
+type CustomerOrderType {
+  addresses: [OrderAddressType]!
+  cancelReason: String
+  cancelledDate: DateTime
+  channelId: String
+  comment: String
+  createdBy: String
+  createdDate: DateTime!
+  currency: CurrencyType
+  customerId: String!
+  customerName: String
+  discountAmount: MoneyType
+  discountTotal: MoneyType
+  discountTotalWithTax: MoneyType
+  employeeId: String
+  employeeName: String
+  fee: Decimal!
+  feeTotal: Decimal!
+  feeTotalWithTax: Decimal!
+  feeWithTax: Decimal!
+  id: String!
+  inPayments: [PaymentInType]!
+  isApproved: Boolean!
+  isCancelled: Boolean!
+  "Flag determines that the order is the prototype"
+  isPrototype: Boolean!
+  items: [OrderLineItemType]!
+  languageCode: String
+  modifiedBy: String
+  modifiedDate: DateTime
+  number: String!
+  objectType: String!
+  operationType: String!
+  organizationId: String
+  organizationName: String
+  outerId: String
+  parentOperationId: String
+  paymentDiscountTotal: MoneyType
+  paymentDiscountTotalWithTax: MoneyType
+  paymentSubTotal: MoneyType
+  paymentSubTotalWithTax: MoneyType
+  paymentTaxTotal: MoneyType
+  paymentTotal: MoneyType
+  paymentTotalWithTax: MoneyType
+  shipments: [OrderShipmentType]
+  shippingDiscountTotal: MoneyType
+  shippingDiscountTotalWithTax: MoneyType
+  shippingSubTotal: MoneyType
+  shippingSubTotalWithTax: MoneyType
+  shippingTaxTotal: MoneyType
+  shippingTotal: MoneyType
+  shippingTotalWithTax: MoneyType
+  "The basis shopping cart id of which the order was created"
+  shoppingCartId: String
+  status: String
+  storeId: String!
+  storeName: String
+  subTotal: MoneyType
+  subTotalDiscount: MoneyType
+  subTotalDiscountWithTax: MoneyType
+  subTotalTaxTotal: MoneyType
+  subTotalWithTax: MoneyType
+  "Identifier for subscription  associated with this order"
+  subscriptionId: String
+  "Number for subscription  associated with this order"
+  subscriptionNumber: String
+  taxDetails: [OrderTaxDetailType]!
+  taxPercentRate: Decimal!
+  taxTotal: MoneyType
+  "Tax category or type"
+  taxType: String
+  total: MoneyType
+}
+
+type DescriptionType {
+  "Description text."
+  content: String!
+  "Description ID."
+  id: String!
+  "Description language code."
+  languageCode: String!
+  "Description type."
+  reviewType: String!
+}
+
+type DiscountType {
+  amount: Decimal
+  amountWithTax: Decimal
+  "Coupon"
+  coupon: String
+  "Value of discount description"
+  description: String
+  "Value of promotion id"
+  promotionId: String
+}
+
+type ErrorParameterType {
+  "key"
+  key: String!
+  "Value"
+  value: String!
+}
+
+type FacetRangeType {
+  "Amount of products for which the values in a field fall into the specified range"
+  count: Long
+  "The range’s lower endpoint in number format, 0 represents infinity"
+  from: Long
+  "The range’s lower endpoint in string format, empty string represents infinity"
+  fromStr: String
+  "The flag indicates that From exclusive"
+  includeFrom: Boolean!
+  "The flag indicates that To exclusive"
+  includeTo: Boolean!
+  "is selected state"
+  isSelected: Boolean
+  "Localization label"
+  label: String
+  "Maximum value among all values contained within the range"
+  max: Long
+  "Minimum value among all values contained within the range"
+  min: Long
+  "The range’s upper endpoint in number format, 0 represents infinity"
+  to: Long
+  "The range’s upper endpoint in string format, empty string represents infinity"
+  toStr: String
+  "Sum of all values contained in the range"
+  total: Long
+}
+
+type FacetTermType {
+  "count"
+  count: Long
+  "is selected state"
+  isSelected: Boolean
+  label: String!
+  "term"
+  term: String
+}
+
+type FilterFacet implements Facet {
+  "The number of products matching the value specified in the filter facet expression"
+  count: Int!
+  "The three types of facets. Terms, Range, Filter"
+  facetType: FacetTypes
+  label: String!
+  "The key/name  of the facet."
+  name: String!
+}
+
+type IdentityErrorType {
+  code: String
+  description: String!
+}
+
+type IdentityResultType {
+  "The errors that occurred during the identity operation."
+  errors: [IdentityErrorType]
+  succeeded: Boolean!
+}
+
+type ImageType {
+  cultureName: String
+  group: String
+  id: String
+  name: String
+  relativeUrl: String
+  sortOrder: Int
+  url: String
+}
+
+type InventoryInfo {
+  allowBackorder: Boolean
+  allowPreorder: Boolean
+  backorderAvailabilityDate: DateTime
+  fulfillmentCenterId: String!
+  fulfillmentCenterName: String!
+  inStockQuantity: Long
+  preorderAvailabilityDate: DateTime
+  reservedQuantity: Long
+}
+
+type LineItemType {
+  "Value of catalog id"
+  catalogId: String
+  "Value of category id"
+  categoryId: String
+  "Line item created date"
+  createdDate: DateTime
+  discountAmount: MoneyType
+  discountAmountWithTax: MoneyType
+  discountTotal: MoneyType
+  discountTotalWithTax: MoneyType
+  discounts: [DiscountType]
+  extendedPrice: MoneyType
+  extendedPriceWithTax: MoneyType
+  "Value of height"
+  height: Decimal
+  "Line item id"
+  id: String!
+  "Value of line item image absolute URL"
+  imageUrl: String
+  inStockQuantity: Int
+  "flag of line item is a gift"
+  isGift: Boolean
+  "Is readOnly"
+  isReadOnly: Boolean
+  "flag of line item is recurring"
+  isReccuring: Boolean
+  isValid: Boolean
+  "Culture name in ISO 3166-1 alpha-3 format"
+  languageCode: String
+  "Value of length"
+  length: Decimal
+  listPrice: MoneyType
+  listPriceWithTax: MoneyType
+  "Value of measurement unit"
+  measureUnit: String
+  "Value of line item name"
+  name: String
+  "Value of line item comment"
+  note: String
+  "Value of line item quantity"
+  objectType: String
+  placedPrice: MoneyType
+  placedPriceWithTax: MoneyType
+  product: Product
+  "Value of product id"
+  productId: String
+  "type of product (can be Physical, Digital or Subscription)"
+  productType: String
+  "Value of line item quantity"
+  quantity: Int
+  "requirement for line item shipping"
+  requiredShipping: Boolean
+  salePrice: MoneyType
+  salePriceWithTax: MoneyType
+  "Value of line item shipping method code"
+  shipmentMethodCode: String
+  "Value of product SKU"
+  sku: String
+  taxDetails: [TaxDetailType]
+  "Value of total shipping tax amount"
+  taxPercentRate: Decimal
+  taxTotal: MoneyType
+  "Value of shipping tax type"
+  taxType: String
+  "Value of line item thumbnail image absolute URL"
+  thumbnailImageUrl: String
+  validationErrors: [ValidationErrorType]
+  "Value of volumetric weight"
+  volumetricWeight: Decimal
+  warehouseLocation: String
+  "Value of shopping cart weight"
+  weight: Decimal
+  "Value of weight unit"
+  weightUnit: String
+  "Value of width"
+  width: Decimal
+}
+
+type MemberAddressType {
+  addressType: Int
+  "City"
+  city: String!
+  "Country code"
+  countryCode: String!
+  "Country name"
+  countryName: String!
+  "Email"
+  email: String
+  "First name"
+  firstName: String
+  "Id"
+  id: String
+  "Id"
+  key: String
+  "Last name"
+  lastName: String
+  "Line1"
+  line1: String!
+  "Line2"
+  line2: String
+  "Middle name"
+  middleName: String
+  "Name"
+  name: String
+  "Company name"
+  organization: String
+  "Phone"
+  phone: String
+  "Postal code"
+  postalCode: String!
+  "Region id"
+  regionId: String
+  "Region name"
+  regionName: String
+  "Zip"
+  zip: String
+}
+
+type MoneyType {
+  "A decimal with the amount rounded to the significant number of decimal digits."
+  amount: Decimal!
+  currency: CurrencyType
+  "Number of decimal digits for the associated currency."
+  decimalDigits: Int!
+  "Formatted amount."
+  formattedAmount: String!
+  "Formatted amount without currency."
+  formattedAmountWithoutCurrency: String!
+  "Formatted amount without point."
+  formattedAmountWithoutPoint: String!
+  "Formatted amount without point and currency."
+  formattedAmountWithoutPointAndCurrency: String!
+}
+
+type Mutations {
+  addCoupon(command: InputAddCouponType!): CartType
+  addItem(command: InputAddItemType!): CartType
+  addOrUpdateCartAddress(command: InputAddOrUpdateCartAddressType!): CartType
+  addOrUpdateCartPayment(command: InputAddOrUpdateCartPaymentType!): CartType
+  addOrUpdateCartShipment(command: InputAddOrUpdateCartShipmentType!): CartType
+  cancelOrderPayment(command: InputCancelOrderPaymentType!): Boolean
+  changeCartItemComment(command: InputChangeCartItemCommentType): CartType
+  changeCartItemPrice(command: InputChangeCartItemPriceType!): CartType
+  changeCartItemQuantity(command: InputChangeCartItemQuantityType!): CartType
+  changeComment(command: InputChangeCommentType): CartType
+  changeOrderStatus(command: InputChangeOrderStatusType!): Boolean
+  clearCart(command: InputClearCartType!): CartType
+  clearPayments(command: InputClearPaymentsType!): CartType
+  clearShipments(command: InputClearShipmentsType!): CartType
+  confirmOrderPayment(command: InputConfirmOrderPaymentType!): Boolean
+  createContact(command: InputCreateContactType!): ContactType
+  createOrderFromCart(command: InputCreateOrderFromCartType!): CustomerOrderType
+  createOrganization(command: InputCreateOrganizationType!): Organization
+  createUser(command: InputCreateUserType!): IdentityResultType
+  deleteContact(command: InputDeleteContactType!): Boolean
+  deleteUsers(command: InputDeleteUserType!): IdentityResultType
+  mergeCart(command: InputMergeCartType!): CartType
+  removeCart(command: InputRemoveCartType!): Boolean
+  removeCartAddress(command: InputRemoveCartAddressType!): CartType
+  removeCartItem(command: InputRemoveItemType!): CartType
+  removeCoupon(command: InputRemoveCouponType!): CartType
+  removeShipment(command: InputRemoveShipmentType!): CartType
+  sendVerifyEmail(command: InputSendVerifyEmailType): Boolean
+  updateAddresses(command: InputUpdateContactAddressType!): ContactType
+  updateContact(command: InputUpdateContactType!): ContactType
+  updateOrganization(command: InputUpdateOrganizationType!): Organization
+  updatePersonalData(command: InputUpdatePersonalDataType!): IdentityResultType
+  updateRole(command: InputUpdateRoleType!): IdentityResultType
+  updateUser(command: InputUpdateUserType!): IdentityResultType
+  validateCoupon(command: InputValidateCouponType!): Boolean
+}
+
+type OrderAddressType {
+  addressType: Int
+  "City"
+  city: String!
+  "Country code"
+  countryCode: String!
+  "Country name"
+  countryName: String!
+  "Email"
+  email: String
+  "First name"
+  firstName: String
+  "Id"
+  id: String
+  "Last name"
+  lastName: String
+  "Line1"
+  line1: String!
+  "Line2"
+  line2: String
+  "Middle name"
+  middleName: String
+  "Name"
+  name: String
+  "Company name"
+  organization: String
+  "Phone"
+  phone: String
+  "Postal code"
+  postalCode: String!
+  "Region id"
+  regionId: String
+  "Region name"
+  regionName: String
+  "Zip"
+  zip: String
+}
+
+type OrderDiscountType {
+  amount: MoneyType
+  coupon: String
+  description: String
+  promotionId: String
+}
+
+type OrderLineItemType {
+  cancelReason: String
+  cancelledDate: DateTime
+  catalogId: String!
+  categoryId: String
+  comment: String
+  currency: CurrencyType
+  discountAmount: MoneyType
+  discountAmountWithTax: MoneyType
+  discountTotal: MoneyType
+  discountTotalWithTax: MoneyType
+  discounts: [OrderDiscountType]!
+  extendedPrice: MoneyType
+  extendedPriceWithTax: MoneyType
+  fulfillmentCenterId: String
+  fulfillmentCenterName: String
+  fulfillmentLocationCode: String
+  height: Decimal
+  id: String!
+  imageUrl: String
+  isCancelled: Boolean!
+  isGift: Boolean
+  length: Decimal
+  measureUnit: String
+  name: String!
+  objectType: String!
+  outerId: String
+  placedPrice: MoneyType
+  placedPriceWithTax: MoneyType
+  price: MoneyType
+  "Price id"
+  priceId: String
+  priceWithTax: MoneyType
+  product: Product
+  productId: String!
+  productType: String
+  quantity: Int!
+  "Reserve quantity"
+  reserveQuantity: Int!
+  shippingMethodCode: String
+  sku: String!
+  taxDetails: [OrderTaxDetailType]!
+  taxPercentRate: Decimal!
+  taxTotal: MoneyType
+  "Tax category or type"
+  taxType: String
+  weight: Decimal
+  weightUnit: String
+  width: Decimal
+}
+
+type OrderPaymentMethodType {
+  code: String!
+  currency: CurrencyType
+  discountAmount: MoneyType
+  discountAmountWithTax: MoneyType
+  isActive: Boolean!
+  isAvailableForPartial: Boolean!
+  logoUrl: String!
+  paymentMethodGroupType: Int
+  paymentMethodType: Int
+  price: MoneyType
+  priceWithTax: MoneyType
+  priority: Int!
+  storeId: String!
+  taxDetails: [OrderTaxDetailType]
+  taxPercentRate: Decimal!
+  taxTotal: MoneyType
+  taxType: String
+  total: MoneyType
+  totalWithTax: MoneyType
+  typeName: String!
+}
+
+type OrderShipmentItemType {
+  barCode: String
+  id: String!
+  lineItem: OrderLineItemType
+  lineItemId: String!
+  outerId: String
+  quantity: Int!
+}
+
+type OrderShipmentPackageType {
+  barCode: String
+  height: Decimal
+  id: String!
+  items: [OrderShipmentItemType]!
+  length: Decimal
+  measureUnit: String!
+  packageType: String
+  weight: Decimal
+  weightUnit: String!
+  width: Decimal
+}
+
+type OrderShipmentType {
+  cancelReason: String
+  cancelledDate: DateTime
+  comment: String
+  currency: CurrencyType
+  customerOrderId: String
+  deliveryAddress: OrderAddressType
+  discountAmount: MoneyType
+  discountAmountWithTax: MoneyType
+  discounts: [OrderDiscountType]!
+  employeeId: String
+  employeeName: String
+  fulfillmentCenterId: String
+  fulfillmentCenterName: String
+  height: Decimal
+  id: String!
+  inPayments: [PaymentInType]!
+  isApproved: Boolean!
+  isCancelled: Boolean!
+  items: [OrderShipmentItemType]!
+  length: Decimal
+  measureUnit: String
+  number: String!
+  objectType: String!
+  operationType: String!
+  organizationId: String
+  organizationName: String
+  outerId: String
+  packages: [OrderShipmentPackageType]!
+  parentOperationId: String
+  price: MoneyType
+  priceWithTax: MoneyType
+  "Current shipment method code"
+  shipmentMethodCode: String
+  "Current shipment option code"
+  shipmentMethodOption: String
+  shippingMethod: OrderShippingMethodType
+  status: String
+  taxDetails: [OrderTaxDetailType]!
+  taxPercentRate: Decimal!
+  taxTotal: MoneyType
+  "Tax category or type"
+  taxType: String
+  total: MoneyType
+  totalWithTax: MoneyType
+  weight: Decimal
+  weightUnit: String
+  width: Decimal
+}
+
+type OrderShippingMethodType {
+  code: String!
+  id: String!
+  isActive: Boolean!
+  logoUrl: String!
+  priority: Int!
+  storeId: String!
+  taxType: String
+  typeName: String!
+}
+
+type OrderTaxDetailType {
+  amount: MoneyType
+  name: String!
+  rate: MoneyType
+}
+
+"Organization info"
+type Organization {
+  addresses: [MemberAddressType]!
+  "Business category"
+  businessCategory: String
+  contacts(
+    "Only look at connected edges with cursors greater than the value of `after`."
+    after: String,
+    "Specifies the number of edges to return starting from `after` or the first entry if `after` is not specified."
+    first: Int,
+    "Free text search"
+    searchPhrase: String
+  ): ContactConnection
+  "Description"
+  description: String
+  emails: [String]
+  groups: [String]
+  "Description"
+  id: String!
+  "Member type"
+  memberType: String!
+  "Name"
+  name: String
+  "Outer id"
+  outerId: String
+  "Owner id"
+  ownerId: String
+  "Parent id"
+  parentId: String
+  phones: [String]
+  "SEO object type"
+  seoObjectType: String!
+}
+
+"Represents one outline element: catalog, category or product."
+type OutlineItemType {
+  "Object id"
+  id: String!
+  "The name of current item"
+  name: String
+  seoInfos: [SeoInfo]
+  "Object type"
+  seoObjectType: String
+}
+
+"""
+
+Represents the path from the catalog to one of the child objects (product or category):
+catalog/parent-category1/.../parent-categoryN/object
+"""
+type OutlineType {
+  items: [OutlineItemType]
+}
+
+"Information about pagination in a connection."
+type PageInfo {
+  "When paginating forwards, the cursor to continue."
+  endCursor: String
+  "When paginating forwards, are there more items?"
+  hasNextPage: Boolean!
+  "When paginating backwards, are there more items?"
+  hasPreviousPage: Boolean!
+  "When paginating backwards, the cursor to continue."
+  startCursor: String
+}
+
+"A connection from an object to a list of objects of type `PaymentIn`."
+type PaymentInConnection {
+  "Information to aid in pagination."
+  edges: [PaymentInEdge]
+  "A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for \"{ edges { node } }\" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the \"cursor\" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full \"{ edges { node } } \" version should be used instead."
+  items: [PaymentInType]
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing \"5\" as the argument to `first`, then fetch the total count so it could display \"5 of 83\", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`."
+  totalCount: Int
+}
+
+"An edge in a connection from an object to another object of type `PaymentIn`."
+type PaymentInEdge {
+  "A cursor for use in pagination"
+  cursor: String!
+  "The item at the end of the edge"
+  node: PaymentInType
+}
+
+type PaymentInType {
+  authorizedDate: DateTime
+  billingAddress: OrderAddressType
+  cancelReason: String
+  cancelledDate: DateTime
+  capturedDate: DateTime
+  comment: String
+  createdBy: String
+  createdDate: DateTime!
+  currency: CurrencyType
+  customerId: String!
+  customerName: String
+  "Payment method (gateway) code"
+  gatewayCode: String
+  id: String!
+  incomingDate: DateTime
+  isApproved: Boolean!
+  isCancelled: Boolean!
+  modifiedBy: String
+  modifiedDate: DateTime
+  number: String!
+  objectType: String!
+  operationType: String!
+  orderId: String
+  organizationId: String
+  organizationName: String
+  outerId: String
+  parentOperationId: String
+  paymentMethod: OrderPaymentMethodType
+  purpose: String
+  status: String
+  sum: MoneyType
+  tax: MoneyType
+  transactions: [PaymentTransactionType]
+  voidedDate: DateTime
+}
+
+type PaymentMethodType {
+  "Value of payment gateway code"
+  code: String
+  currency: CurrencyType
+  discountAmount: MoneyType
+  discountAmountWithTax: MoneyType
+  "Is payment method available for partial payments"
+  isAvailableForPartial: Boolean
+  "Value of payment method logo absolute URL"
+  logoUrl: String
+  "Value of payment method name"
+  name: String @deprecated(reason : "Left for backward compatibility. Should be removed in future. Use Code.")
+  "Value of payment group type"
+  paymentMethodGroupType: String
+  "Value of payment method type"
+  paymentMethodType: String
+  price: MoneyType
+  priceWithTax: MoneyType
+  "Value of payment method priority"
+  priority: Int
+  taxDetails: [TaxDetailType]
+  "Tax percent rate"
+  taxPercentRate: Decimal
+  taxTotal: MoneyType
+  "Tax type"
+  taxType: String
+  total: MoneyType
+  totalWithTax: MoneyType
+}
+
+type PaymentTransactionType {
+  amount: MoneyType
+  "Gateway IP address"
+  gatewayIpAddress: String!
+  id: String!
+  "Flag represent that current transaction is processed"
+  isProcessed: Boolean!
+  note: String!
+  processAttemptCount: Int!
+  processError: String
+  "Date when this transaction was handled"
+  processedDate: DateTime
+  "Raw request data"
+  requestData: String!
+  "Gateway or VC response status code"
+  responseCode: String!
+  "Raw response data"
+  responseData: String!
+  "\"Active\", \"Expired\", and \"Inactive\" or other"
+  status: String!
+  """
+
+  The type of payment interaction.The payment can be Capture or CheckReceived.
+  The value also includes customer payment interactions such as Website, Call, Store, or Unknown.
+  """
+  type: String!
+}
+
+type PaymentType {
+  amount: MoneyType
+  billingAddress: AddressType
+  currency: CurrencyType
+  discountAmount: MoneyType
+  discountAmountWithTax: MoneyType
+  discounts: [DiscountType]
+  "Payment Id"
+  id: String
+  "Value of payment outer id"
+  outerId: String
+  "Value of payment gateway code"
+  paymentGatewayCode: String
+  price: MoneyType
+  priceWithTax: MoneyType
+  taxDetails: [TaxDetailType]
+  "Tax percent rate"
+  taxPercentRate: Decimal
+  taxTotal: MoneyType
+  "Tax type"
+  taxType: String
+  total: MoneyType
+  totalWithTax: MoneyType
+}
+
+type PriceType {
+  actual: MoneyType
+  actualWithTax: MoneyType
+  currency: String
+  discountAmount: MoneyType
+  discountAmountWithTax: MoneyType
+  "Relative benefit. 30%"
+  discountPercent: Decimal
+  discounts: [CatalogDiscountType]
+  list: MoneyType
+  listWithTax: MoneyType
+  "The product min qty"
+  minQuantity: Int
+  "The product price list"
+  pricelistId: String
+  sale: MoneyType
+  saleWithTax: MoneyType
+  tierPrices: [TierPriceType]
+  validFrom: Date
+  validUntil: Date
+}
+
+"Products are the sellable goods in an e-commerce project."
+type Product {
+  assets: [Asset]
+  associations(
+    "Only look at connected edges with cursors greater than the value of `after`."
+    after: String,
+    "Specifies the number of edges to return starting from `after` or the first entry if `after` is not specified."
+    first: Int,
+    "association group (Accessories, RelatedItem)"
+    group: String,
+    "the search phrase"
+    query: String
+  ): ProductAssociationConnection
+  availabilityData: AvailabilityData
+  "Get brandName for product."
+  brandName: String
+  catalogId: String
+  category: Category
+  "The product SKU."
+  code: String!
+  description(type: String): DescriptionType
+  descriptions(type: String): [DescriptionType]
+  "The unique ID of the product."
+  id: String!
+  images: [ImageType]
+  "The product main image URL."
+  imgSrc: String
+  "The name of the product."
+  name: String!
+  "The outer identifier"
+  outerId: String
+  "All parent categories ids relative to the requested catalog and concatenated with \\ . E.g. (1/21/344)"
+  outline: String
+  outlines: [OutlineType]
+  price: PriceType
+  prices: [PriceType]
+  "The type of product"
+  productType: String
+  properties: [Property]
+  "Request related SEO info"
+  seoInfo: SeoInfo
+  "Request related slug for product"
+  slug: String
+  variations: [VariationType]
+}
+
+"product association."
+type ProductAssociation {
+  """
+
+  Each link element can have an associated object like Product, Category, etc.
+  Is a primary key of associated object
+  """
+  associatedObjectId: String
+  "Associated object type : 'product', 'category' etc"
+  associatedObjectType: String
+  priority: Int
+  product: Product
+  quantity: Int
+  tags: [String]
+  "Association type (Accessories, Up-Sales, Cross-Sales, Related etc)"
+  type: String
+}
+
+"A connection from an object to a list of objects of type `ProductAssociation`."
+type ProductAssociationConnection {
+  "Information to aid in pagination."
+  edges: [ProductAssociationEdge]
+  "A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for \"{ edges { node } }\" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the \"cursor\" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full \"{ edges { node } } \" version should be used instead."
+  items: [ProductAssociation]
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing \"5\" as the argument to `first`, then fetch the total count so it could display \"5 of 83\", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`."
+  totalCount: Int
+}
+
+"An edge in a connection from an object to another object of type `ProductAssociation`."
+type ProductAssociationEdge {
+  "A cursor for use in pagination"
+  cursor: String!
+  "The item at the end of the edge"
+  node: ProductAssociation
+}
+
+"A connection from an object to a list of objects of type `Product`."
+type ProductConnection {
+  "Information to aid in pagination."
+  edges: [ProductEdge]
+  filter_facets: [FilterFacet]
+  "A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for \"{ edges { node } }\" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the \"cursor\" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full \"{ edges { node } } \" version should be used instead."
+  items: [Product]
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  range_facets: [RangeFacet]
+  term_facets: [TermFacet]
+  "A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing \"5\" as the argument to `first`, then fetch the total count so it could display \"5 of 83\", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`."
+  totalCount: Int
+}
+
+"An edge in a connection from an object to another object of type `Product`."
+type ProductEdge {
+  "A cursor for use in pagination"
+  cursor: String!
+  "The item at the end of the edge"
+  node: Product
+}
+
+"Represents promotion object"
+type Promotion {
+  "Promotion description"
+  description: String
+  "The unique ID of the promotion."
+  id: String!
+  "The name of the promotion"
+  name: String!
+  "Promotion type"
+  type: String
+}
+
+"Products attributes."
+type Property {
+  "Is property hidden."
+  hidden: Boolean!
+  "The unique ID of the product."
+  id: String
+  label: String
+  "Is property has multiple values."
+  multivalue: Boolean!
+  "The name of the property."
+  name: String!
+  type: String
+  value: String
+  valueId: String
+  valueType: String
+}
+
+type Query {
+  cart(
+    "Cart name"
+    cartName: String,
+    "Culture name (\"en-Us\")"
+    cultureName: String,
+    "Currency code (\"USD\")"
+    currencyCode: String!,
+    "Store Id"
+    storeId: String!,
+    "Cart type"
+    type: String,
+    "User Id"
+    userId: String
+  ): CartType
+  carts(
+    "Only look at connected edges with cursors greater than the value of `after`."
+    after: String,
+    cartType: String,
+    cultureName: String,
+    currencyCode: String,
+    "This parameter applies a filter to the query results"
+    filter: String,
+    "Specifies the number of edges to return starting from `after` or the first entry if `after` is not specified."
+    first: Int,
+    "The sort expression"
+    sort: String,
+    storeId: String,
+    userId: String
+  ): CartConnection
+  categories(
+    "Only look at connected edges with cursors greater than the value of `after`."
+    after: String,
+    "Category Ids"
+    categoryIds: [String],
+    "The language for which all localized category data will be returned"
+    cultureName: String,
+    "The currency for which all prices data will be returned"
+    currencyCode: String,
+    "Facets calculate statistical counts to aid in faceted navigation."
+    facet: String,
+    "This parameter applies a filter to the query results"
+    filter: String,
+    "Specifies the number of edges to return starting from `after` or the first entry if `after` is not specified."
+    first: Int,
+    "When the fuzzy query parameter is set to true the search endpoint will also return Categorys that contain slight differences to the search text."
+    fuzzy: Boolean,
+    "The fuzziness level is quantified in terms of the Damerau-Levenshtein distance, this distance being the number of operations needed to transform one word into another."
+    fuzzyLevel: Int,
+    "The query parameter performs the full-text search"
+    query: String,
+    "The sort expression"
+    sort: String,
+    "The store id where category are searched"
+    storeId: String,
+    "The customer id for search result impersonalization"
+    userId: String
+  ): CategoryConnection
+  category(
+    "Culture name (\"en-US\")"
+    cultureName: String,
+    "Currency code (\"USD\")"
+    currencyCode: String,
+    "id of the product"
+    id: String!,
+    "Store Id"
+    storeId: String!,
+    "User Id"
+    userId: String
+  ): Category
+  contact(id: String!, userId: String): ContactType
+  me: UserType
+  order(
+    "Culture name (\"en-US\")"
+    cultureName: String,
+    id: String,
+    number: String
+  ): CustomerOrderType
+  orders(
+    "Only look at connected edges with cursors greater than the value of `after`."
+    after: String,
+    "Culture name (\"en-US\")"
+    cultureName: String,
+    "This parameter applies a filter to the query results"
+    filter: String,
+    "Specifies the number of edges to return starting from `after` or the first entry if `after` is not specified."
+    first: Int,
+    "The sort expression"
+    sort: String,
+    userId: String
+  ): CustomerOrderConnection
+  organization(id: String!, userId: String): Organization
+  payments(
+    "Only look at connected edges with cursors greater than the value of `after`."
+    after: String,
+    "Culture name (\"en-US\")"
+    cultureName: String,
+    "This parameter applies a filter to the query results"
+    filter: String,
+    "Specifies the number of edges to return starting from `after` or the first entry if `after` is not specified."
+    first: Int,
+    "The sort expression"
+    sort: String,
+    userId: String!
+  ): PaymentInConnection
+  product(
+    "Culture name (\"en-US\")"
+    cultureName: String,
+    "Currency code (\"USD\")"
+    currencyCode: String,
+    "id of the product"
+    id: String!,
+    "Store Id"
+    storeId: String!,
+    "User Id"
+    userId: String
+  ): Product
+  products(
+    "Only look at connected edges with cursors greater than the value of `after`."
+    after: String,
+    "The culture name for cart context product"
+    cultureName: String,
+    "The currency for which all prices data will be returned"
+    currencyCode: String,
+    "Facets calculate statistical counts to aid in faceted navigation."
+    facet: String,
+    "This parameter applies a filter to the query results"
+    filter: String,
+    "Specifies the number of edges to return starting from `after` or the first entry if `after` is not specified."
+    first: Int,
+    "When the fuzzy query parameter is set to true the search endpoint will also return products that contain slight differences to the search text."
+    fuzzy: Boolean,
+    "The fuzziness level is quantified in terms of the Damerau-Levenshtein distance, this distance being the number of operations needed to transform one word into another."
+    fuzzyLevel: Int,
+    "Product Ids"
+    productIds: [String],
+    "The query parameter performs the full-text search"
+    query: String,
+    "The sort expression"
+    sort: String,
+    "The store id where products are searched"
+    storeId: String!,
+    "The customer id for search result impersonalization"
+    userId: String
+  ): ProductConnection
+  role(roleName: String!): RoleType
+  user(email: String, id: String, loginProvider: String, providerKey: String, userName: String): UserType
+}
+
+type RangeFacet implements Facet {
+  "The three types of facets. Terms, Range, Filter"
+  facetType: FacetTypes
+  "The key/name  of the facet."
+  name: String!
+  "Ranges"
+  ranges: [FacetRangeType]
+}
+
+type RoleType {
+  description: String
+  id: String!
+  name: String!
+  normalizedName: String!
+  "Permissions in Role"
+  permissions: [String]!
+}
+
+type SeoInfo {
+  id: String
+  imageAltDescription: String
+  "Active/Inactive"
+  isActive: Boolean
+  languageCode: String
+  metaDescription: String
+  metaKeywords: String
+  name: String
+  "SEO related object id"
+  objectId: String
+  "SEO related object type name"
+  objectType: String
+  "head title tag content"
+  pageTitle: String
+  "Slug"
+  semanticUrl: String
+  "Tenant StoreId which SEO defined"
+  storeId: String
+}
+
+type ShipmentType {
+  currency: CurrencyType
+  deliveryAddress: AddressType
+  discountAmount: MoneyType
+  discountAmountWithTax: MoneyType
+  discounts: [DiscountType]
+  "Fulfillment center id"
+  fulfillmentCenterId: String
+  "Value of height"
+  height: Decimal
+  "Shipment Id"
+  id: String
+  items: [CartShipmentItemType]
+  "Value of length"
+  length: Decimal
+  "Value of measurement units"
+  measureUnit: String
+  price: MoneyType
+  priceWithTax: MoneyType
+  "Shipment method code"
+  shipmentMethodCode: String
+  "Shipment method option"
+  shipmentMethodOption: String
+  taxDetails: [TaxDetailType]
+  "Tax percent rate"
+  taxPercentRate: Decimal
+  taxTotal: MoneyType
+  "Tax type"
+  taxType: String
+  total: MoneyType
+  totalWithTax: MoneyType
+  "Value of volumetric weight"
+  volumetricWeight: Decimal
+  "Value of weight"
+  weight: Decimal
+  "Value of weight unit"
+  weightUnit: String
+  "Value of width"
+  width: Decimal
+}
+
+type ShippingMethodType {
+  "Value of shipping gateway code"
+  code: String
+  currency: CurrencyType
+  discountAmount: MoneyType
+  discountAmountWithTax: MoneyType
+  id: String
+  "Value of shipping method logo absolute URL"
+  logoUrl: String
+  "Value of shipping method option description"
+  optionDescription: String
+  "Value of shipping method option name"
+  optionName: String
+  price: MoneyType
+  priceWithTax: MoneyType
+  "Value of shipping method priority"
+  priority: Int
+  total: MoneyType
+  totalWithTax: MoneyType
+}
+
+type TaxDetailType {
+  amount: MoneyType
+  name: String
+  price: MoneyType
+  rate: MoneyType
+}
+
+type TermFacet implements Facet {
+  "The three types of facets. Terms, Range, Filter"
+  facetType: FacetTypes
+  "The key/name  of the facet."
+  name: String!
+  "Terms"
+  terms: [FacetTermType]
+}
+
+type TierPriceType {
+  price: MoneyType
+  priceWithTax: MoneyType
+  quantity: Long
+}
+
+type UserType {
+  accessFailedCount: Int!
+  "The associated contact info"
+  contact: ContactType
+  createdBy: String
+  createdDate: DateTime
+  email: String
+  emailConfirmed: Boolean!
+  id: String!
+  isAdministrator: Boolean!
+  lockoutEnabled: Boolean!
+  lockoutEnd: DateTime
+  memberId: String
+  modifiedBy: String
+  modifiedDate: DateTime
+  normalizedEmail: String
+  normalizedUserName: String
+  passwordExpired: Boolean!
+  permissions: [String]
+  phoneNumber: String
+  phoneNumberConfirmed: Boolean!
+  photoUrl: String
+  roles: [RoleType]
+  securityStamp: String!
+  storeId: String
+  twoFactorEnabled: Boolean!
+  userName: String!
+  userType: String
+}
+
+type ValidationErrorType {
+  "Error code"
+  errorCode: String
+  "Error msg"
+  errorMessage: String
+  errorParameters: [ErrorParameterType]
+  "Object id"
+  objectId: String
+  "Object type"
+  objectType: String
+}
+
+type VariationType {
+  assets: [Asset]
+  availabilityData: AvailabilityData
+  "SKU of variation."
+  code: String
+  "Id of variation."
+  id: String
+  images: [ImageType]
+  outlines: [OutlineType]
+  price: PriceType
+  prices: [PriceType]
+  properties: [Property]
+}
+
+enum FacetTypes {
+  FILTER
+  RANGE
+  TERMS
+}
+
+input InputAddCouponType {
+  cartId: String
+  cartName: String
+  cartType: String
+  couponCode: String!
+  currency: String
+  language: String
+  storeId: String!
+  userId: String!
+}
+
+input InputAddItemType {
+  cartId: String
+  cartName: String
+  cartType: String
+  comment: String
+  currency: String
+  language: String
+  price: Decimal
+  productId: String!
+  quantity: Int!
+  storeId: String!
+  userId: String!
+}
+
+input InputAddOrUpdateCartAddressType {
+  address: InputAddressType!
+  cartId: String
+  cartName: String
+  cartType: String
+  currency: String
+  language: String
+  storeId: String!
+  userId: String!
+}
+
+input InputAddOrUpdateCartPaymentType {
+  cartId: String
+  cartName: String
+  cartType: String
+  currency: String
+  language: String
+  payment: InputPaymentType!
+  storeId: String!
+  userId: String!
+}
+
+input InputAddOrUpdateCartShipmentType {
+  cartId: String
+  cartName: String
+  cartType: String
+  currency: String
+  language: String
+  shipment: InputShipmentType!
+  storeId: String!
+  userId: String!
+}
+
+input InputAddressType {
+  addressType: Int
+  "City"
+  city: String
+  "Country code"
+  countryCode: String
+  "Country name"
+  countryName: String
+  "Email"
+  email: String
+  "First name"
+  firstName: String
+  "Id"
+  id: String
+  "Id"
+  key: String
+  "Last name"
+  lastName: String
+  "Line1"
+  line1: String
+  "Line2"
+  line2: String
+  "Middle name"
+  middleName: String
+  "Name"
+  name: String
+  "Company name"
+  organization: String
+  "Phone"
+  phone: String
+  "Postal code"
+  postalCode: String
+  "Region id"
+  regionId: String
+  "Region name"
+  regionName: String
+  "Zip"
+  zip: String
+}
+
+input InputApplicationUserLoginType {
+  loginProvider: String!
+  providerKey: String!
+}
+
+input InputAssignPermissionScopeType {
+  scope: String!
+  type: String!
+}
+
+input InputAssignPermissionType {
+  assignedScopes: [InputAssignPermissionScopeType]
+  name: String!
+}
+
+input InputAssignRoleType {
+  concurrencyStamp: String
+  id: String!
+  name: String!
+  permissions: [InputAssignPermissionType]!
+}
+
+input InputCancelOrderPaymentType {
+  payment: InputPaymentInType!
+}
+
+input InputChangeCartItemCommentType {
+  cartId: String
+  cartName: String
+  cartType: String
+  comment: String!
+  currency: String
+  language: String
+  lineItemId: String!
+  storeId: String!
+  userId: String!
+}
+
+input InputChangeCartItemPriceType {
+  cartId: String
+  cartName: String
+  cartType: String
+  currency: String
+  language: String
+  lineItemId: String!
+  price: Decimal!
+  storeId: String!
+  userId: String!
+}
+
+input InputChangeCartItemQuantityType {
+  cartId: String
+  cartName: String
+  cartType: String
+  currency: String
+  language: String
+  lineItemId: String!
+  quantity: Int!
+  storeId: String!
+  userId: String!
+}
+
+input InputChangeCommentType {
+  cartId: String
+  cartName: String
+  cartType: String
+  comment: String
+  currency: String
+  language: String
+  storeId: String!
+  userId: String!
+}
+
+input InputChangeOrderStatusType {
+  orderId: String!
+  status: String!
+}
+
+input InputClearCartType {
+  cartId: String
+  cartName: String
+  cartType: String
+  currency: String
+  language: String
+  storeId: String!
+  userId: String!
+}
+
+input InputClearPaymentsType {
+  cartId: String
+  cartName: String
+  cartType: String
+  currency: String
+  language: String
+  storeId: String!
+  userId: String!
+}
+
+input InputClearShipmentsType {
+  cartId: String
+  cartName: String
+  cartType: String
+  currency: String
+  language: String
+  storeId: String!
+  userId: String!
+}
+
+input InputConfirmOrderPaymentType {
+  payment: InputPaymentInType!
+}
+
+input InputCreateContactType {
+  addresses: [InputMemberAddressType]
+  defaultLanguage: String
+  emails: [String]
+  firstName: String!
+  fullName: String
+  groups: [String]
+  id: String
+  lastName: String!
+  memberType: String
+  middleName: String
+  name: String
+  organizations: [String]
+  phones: [String]
+  photoUrl: String
+  salutation: String
+  timeZone: String
+}
+
+input InputCreateOrderFromCartType {
+  cartId: String
+}
+
+input InputCreateOrganizationType {
+  addresses: [InputMemberAddressType]
+  emails: [String]
+  groups: [String]
+  id: String
+  memberType: String
+  name: String
+  phones: [String]
+}
+
+input InputCreateUserType {
+  createdBy: String
+  createdDate: DateTime
+  email: String!
+  id: String
+  isAdministrator: Boolean
+  lockoutEnabled: Boolean
+  lockoutEnd: DateTimeOffset
+  logins: [InputApplicationUserLoginType]
+  memberId: String
+  password: String
+  phoneNumber: String
+  phoneNumberConfirmed: Boolean
+  photoUrl: String
+  roles: [InputAssignRoleType]
+  storeId: String
+  twoFactorEnabled: Boolean
+  userName: String!
+  userType: String!
+}
+
+input InputDeleteContactType {
+  contactId: String!
+}
+
+input InputDeleteUserType {
+  userNames: [String]!
+}
+
+input InputMemberAddressType {
+  addressType: Int
+  "City"
+  city: String!
+  "Country code"
+  countryCode: String!
+  "Country name"
+  countryName: String!
+  "Email"
+  email: String
+  "First name"
+  firstName: String
+  id: String
+  "key"
+  key: String
+  "Last name"
+  lastName: String
+  "Line1"
+  line1: String!
+  "Line2"
+  line2: String
+  "Middle name"
+  middleName: String
+  "Name"
+  name: String
+  "Company name"
+  organization: String
+  "Phone"
+  phone: String
+  "Postal code"
+  postalCode: String!
+  "Region id"
+  regionId: String
+  "Region name"
+  regionName: String
+  "Zip"
+  zip: String
+}
+
+input InputMergeCartType {
+  cartId: String
+  cartName: String
+  cartType: String
+  currency: String
+  language: String
+  secondCartId: String!
+  storeId: String!
+  userId: String!
+}
+
+input InputOrderAddressType {
+  addressType: Int
+  "City"
+  city: String
+  "Country code"
+  countryCode: String
+  "Country name"
+  countryName: String
+  "Email"
+  email: String
+  "First name"
+  firstName: String
+  "Id"
+  key: String
+  "Last name"
+  lastName: String
+  "Line1"
+  line1: String
+  "Line2"
+  line2: String
+  "Middle name"
+  middleName: String
+  "Name"
+  name: String
+  "Company name"
+  organization: String
+  "Phone"
+  phone: String
+  "Postal code"
+  postalCode: String
+  "Region id"
+  regionId: String
+  "Region name"
+  regionName: String
+  "Zip"
+  zip: String
+}
+
+input InputOrderDiscountType {
+  coupon: String
+  currency: String!
+  description: String
+  discountAmount: Decimal!
+  discountAmountWithTax: Decimal!
+  id: String
+  promotionId: String
+}
+
+input InputOrderPaymentMethodType {
+  code: String!
+  currency: String
+  discountAmount: Decimal!
+  discountAmountWithTax: Decimal!
+  id: String!
+  isActive: Boolean!
+  isAvailableForPartial: Boolean!
+  logoUrl: String
+  name: String
+  paymentMethodGroupType: Int
+  paymentMethodType: Int
+  price: Decimal!
+  priceWithTax: Decimal!
+  priority: Int!
+  storeId: String
+  taxDetails: [InputOrderTaxDetailType]
+  taxTotal: Decimal!
+  total: Decimal!
+  totalWithTax: Decimal!
+  typeName: String
+}
+
+input InputOrderTaxDetailType {
+  amount: Decimal!
+  name: String!
+  rate: Decimal!
+}
+
+input InputPaymentInType {
+  authorizedDate: DateTime
+  billingAddress: InputOrderAddressType
+  cancelReason: String
+  cancelledDate: DateTime
+  capturedDate: DateTime
+  comment: String
+  currency: String!
+  customerId: String!
+  customerName: String
+  discounts: [InputOrderDiscountType]
+  "Payment method (gateway) code"
+  gatewayCode: String
+  id: String
+  incomingDate: DateTime
+  isApproved: Boolean!
+  isCancelled: Boolean!
+  number: String!
+  objectType: String
+  operationType: String!
+  orderId: String!
+  organizationId: String
+  organizationName: String
+  outerId: String
+  parentOperationId: String
+  paymentMethod: InputOrderPaymentMethodType
+  paymentStatus: Int
+  purpose: String
+  status: String
+  sum: Decimal!
+  taxDetails: [InputOrderTaxDetailType]
+  taxTotal: Decimal!
+  "Tax category or type"
+  taxType: String
+  voidedDate: DateTime
+}
+
+input InputPaymentType {
+  amount: Decimal
+  billingAddress: InputAddressType
+  currency: String
+  "the payment id"
+  id: String
+  "Value of payment outer id"
+  outerId: String
+  "Value of payment gateway code"
+  paymentGatewayCode: String
+  price: Decimal
+}
+
+input InputPersonalDataType {
+  email: String
+  firstName: String
+  fullName: String
+  lastName: String
+  middleName: String
+}
+
+input InputRemoveCartAddressType {
+  addressId: String!
+  cartId: String
+  cartName: String
+  cartType: String
+  currency: String
+  language: String
+  storeId: String!
+  userId: String!
+}
+
+input InputRemoveCartType {
+  cartId: String!
+}
+
+input InputRemoveCouponType {
+  cartId: String
+  cartName: String
+  cartType: String
+  couponCode: String
+  currency: String
+  language: String
+  storeId: String!
+  userId: String!
+}
+
+input InputRemoveItemType {
+  cartId: String
+  cartName: String
+  cartType: String
+  currency: String
+  language: String
+  lineItemId: String!
+  storeId: String!
+  userId: String!
+}
+
+input InputRemoveShipmentType {
+  cartId: String
+  cartName: String
+  cartType: String
+  currency: String
+  language: String
+  shipmentId: String
+  storeId: String!
+  userId: String!
+}
+
+input InputSendVerifyEmailType {
+  email: String
+}
+
+input InputShipmentType {
+  currency: String
+  deliveryAddress: InputAddressType
+  "Fulfillment center id"
+  fulfillmentCenterId: String
+  "Value of height"
+  height: Decimal
+  "Shipment Id"
+  id: String
+  "Value of length"
+  length: Decimal
+  "Value of measurement units"
+  measureUnit: String
+  price: Decimal
+  "Shipment method code"
+  shipmentMethodCode: String
+  "Shipment method option"
+  shipmentMethodOption: String
+  "Value of volumetric weight"
+  volumetricWeight: Decimal
+  "Value of weight"
+  weight: Decimal
+  "Value of weight unit"
+  weightUnit: String
+  "Value of width"
+  width: Decimal
+}
+
+input InputUpdateContactAddressType {
+  addresses: [InputMemberAddressType]!
+  contactId: String!
+}
+
+input InputUpdateContactType {
+  addresses: [InputMemberAddressType]
+  defaultLanguage: String
+  emails: [String]
+  firstName: String!
+  fullName: String
+  groups: [String]
+  id: String!
+  lastName: String!
+  memberType: String
+  middleName: String
+  name: String
+  organizations: [String]
+  phones: [String]
+  photoUrl: String
+  salutation: String
+  timeZone: String
+}
+
+input InputUpdateOrganizationType {
+  addresses: [InputMemberAddressType]
+  emails: [String]
+  groups: [String]
+  id: String!
+  memberType: String
+  name: String
+  phones: [String]
+}
+
+input InputUpdatePersonalDataType {
+  personalData: InputPersonalDataType!
+}
+
+input InputUpdateRoleType {
+  concurrencyStamp: String
+  description: String
+  id: String!
+  name: String!
+  permissions: [InputAssignPermissionType]!
+}
+
+input InputUpdateUserType {
+  accessFailedCount: Int
+  email: String!
+  id: String!
+  isAdministrator: Boolean
+  lockoutEnabled: Boolean
+  lockoutEnd: DateTimeOffset
+  memberId: String
+  passwordHash: String
+  phoneNumber: String
+  phoneNumberConfirmed: Boolean
+  photoUrl: String
+  roles: [InputAssignRoleType]
+  securityStamp: String!
+  storeId: String
+  twoFactorEnabled: Boolean
+  userName: String!
+  userType: String!
+}
+
+input InputValidateCouponType {
+  cartId: String
+  cartName: String
+  cartType: String
+  coupon: String!
+  currency: String
+  language: String
+  storeId: String!
+  userId: String!
+}
+
+
+scalar Long
+
+"The `DateTime` scalar type represents a date and time. `DateTime` expects timestamps to be formatted in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard."
+scalar DateTime
+
+scalar Decimal
+
+"The `Date` scalar type represents a year, month and day in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard."
+scalar Date
+
+"The `DateTimeOffset` scalar type represents a date, time and offset from UTC. `DateTimeOffset` expects timestamps to be formatted in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard."
+scalar DateTimeOffset

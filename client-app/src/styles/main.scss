@@ -54,9 +54,9 @@ h4 {
 }
 
 //Reset VSF UI base variables
-@import "./scss/global";
-@import "./scss/helpers";
-@import "./scss/variables";
+@import "scss/global";
+@import "scss/helpers";
+@import "scss/variables";
 
-//VSF UI component styles are used in the plain LIUID pages 
-@import "~@storefront-ui/shared/styles/components/organisms/SfFooter.scss";
+//VSF UI component styles are used in the plain LIUID pages
+@import "~@storefront-ui/shared/styles/components/organisms/SfFooter";

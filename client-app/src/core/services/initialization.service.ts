@@ -1,10 +1,7 @@
 import Vue from "vue";
 import VueAxios from "vue-axios";
-import "vue-moment";
-import VueRx from "vue-rx";
+import VueMoment from 'vue-moment';
 import { library, dom } from "@fortawesome/fontawesome-svg-core";
-//This is required https://stackoverflow.com/questions/61885716/uncaught-error-vue-composition-api-must-call-vue-useplugin-before-using-any
-import './installCompositionApi';
 import {
   faHeartBroken,
   faLock,
@@ -24,6 +21,8 @@ import { locale } from "core/constants";
 import axios from "core/services/axios-instance";
 import "@core/filters";
 import "@core/directives/only-number";
+//This is required https://stackoverflow.com/questions/61885716/uncaught-error-vue-composition-api-must-call-vue-useplugin-before-using-any
+import './installCompositionApi';
 
 export default class InitializationService {
   static async initializeCommon(): Promise<void> {
@@ -46,16 +45,13 @@ export default class InitializationService {
     );
 
     dom.watch();
+
     // Load data for apps
     await Promise.all([SetLocale(locale)]);
 
-    //plugins
-    Vue.use(VueRx);
+    // Plugins
     Vue.use(VueAxios, axios);
-
-    // workaround because of unstable build caused by broken .d.ts
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    Vue.use(require("vue-moment"));
+    Vue.use(VueMoment);
 
     Vue.component("font-awesome-icon", FontAwesomeIcon);
     Vue.component("font-awesome-layers", FontAwesomeLayers);

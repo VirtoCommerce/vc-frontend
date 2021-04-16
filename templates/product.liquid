@@ -1,6 +1,6 @@
 <div id="product"></div>
-{{ 'bundle/dist/css/catalog.css' | static_asset_url | append_version | stylesheet_tag }}
+{{ 'bundle/css/catalog.css' | static_asset_url | append_version | stylesheet_tag }}
 <script>
   window.PRODUCT_ID ="{{ context.slug_routing_data.object_id }}";
 </script>
-<script src="{{ 'bundle/dist/js/catalog.js' | static_asset_url | append_version }}"></script>
+<script src="{{ 'bundle/js/catalog.js' | static_asset_url | append_version }}"></script>

@@ -22,12 +22,12 @@
     <meta content="#da532c" name="msapplication-TileColor">
     <meta content="#ffffff" name="theme-color">
 
-    {{ 'bundle/dist/css/main.css' | static_asset_url | append_version | stylesheet_tag }}
-    {{ 'bundle/dist/css/chunk-common.css' | static_asset_url | append_version | stylesheet_tag }}
-    {{ 'bundle/dist/css/chunk-vendors.css' | static_asset_url | append_version | stylesheet_tag }}
+    {{ 'bundle/css/main.css' | static_asset_url | append_version | stylesheet_tag }}
+    {{ 'bundle/css/chunk-common.css' | static_asset_url | append_version | stylesheet_tag }}
+    {{ 'bundle/css/chunk-vendors.css' | static_asset_url | append_version | stylesheet_tag }}
 
-    <script src="{{ 'bundle/dist/js/chunk-vendors.js' | static_asset_url | append_version }}"></script>
-    <script src="{{ 'bundle/dist/js/chunk-common.js' | static_asset_url | append_version }}"></script>
+    <script src="{{ 'bundle/js/chunk-vendors.js' | static_asset_url | append_version }}"></script>
+    <script src="{{ 'bundle/js/chunk-common.js' | static_asset_url | append_version }}"></script>
     <script>
       window.BASE_URL = `{{ "/" | full_url }}`;
       window.STORE_NAME = "{{ current_store.name }}";
@@ -47,9 +47,9 @@
       <div id="appHeader"></div>
       <!-- Content here -->
       {{ content_for_layout }}
-      
+
       {% include 'footer' %}
     </div>
-   
+
   </body>
 </html>
