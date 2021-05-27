@@ -1,7 +1,345 @@
 {% product_search_result = 'home-page.graphql' | graphql_data_source %}
-{{ paginator =  product_search_result.products | paginate }}
+{{ paginator = product_search_result.products | paginate }}
 
-{% include 'search-result' %}
+<script src="{{ 'bundle/dist/js/home.js' | static_asset_url | append_version }}"></script>
+{{ 'bundle/dist/css/home.css' | static_asset_url | append_version | stylesheet_tag }}
+
+<div id="home">
+  <!-- Hero slider -->
+  <div id="hero-slider"></div>
+  <!-- Hero slider End -->
+  <!-- Banner grid -->
+  <div class="sf-banner-grid banner-grid">
+    <div class="sf-banner-grid__row">
+      <div class="sf-banner-grid__col">
+        <section class="sf-banner desktop-only" style="--_banner-background-image:url(https://storybook.storefrontui.io/\/assets\/storybook\/Home\/bannerF\.jpg);">
+          <div link="" class="sf-banner__wrapper">
+            <h2 class="sf-banner__subtitle"> Camcorders </h2>
+            <h1 class="sf-banner__title"> Lorem &amp; Ipsum </h1>
+            <p class="sf-banner__description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur nec quam non nisi pulvinar iaculis. Morbi congue lectus id dui pretium, non imperdiet nisl scelerisque.</p>
+            <button link="" class="sf-button sf-banner__call-to-action color-secondary" style="outline: none;"> Shop now </button>
+          </div>
+        </section>
+      </div>
+      <div class="sf-banner-grid__col sf-banner-grid__col--medium">
+        <section class="sf-banner desktop-only" style="--_banner-background-image:url(https://storybook.storefrontui.io/\/assets\/storybook\/Home\/bannerE\.jpg);">
+          <div link="" class="sf-banner__wrapper">
+            <h2 class="sf-banner__subtitle">Cell phones</h2>
+            <h1 class="sf-banner__title">Lorem Ipsum</h1>
+            <p class="sf-banner__description">Nullam vitae dui gravida ipsum vestibulum malesuada at quis ex. Phasellus commodo, orci ac maximus elementum, diam quam accumsan sem, ut pellentesque purus nunc non mi.</p>
+            <button link="" class="sf-button sf-banner__call-to-action color-secondary" style="outline: none;">Shop now</button>
+          </div>
+        </section>
+      </div>
+      <div class="sf-banner-grid__col">
+        <div class="sf-banner-grid__row">
+          <div class="sf-banner-grid__col">
+            <section  class="sf-banner" style="--_banner-background-image:url(https://storybook.storefrontui.io/\/assets\/storybook\/Home\/bannerC\.jpg);">
+              <div link="" class="sf-banner__wrapper">
+                <h2 class="sf-banner__subtitle"> Headphones </h2>
+                <h1 class="sf-banner__title"> Lorem Ipsum </h1>
+              </div>
+            </section>
+          </div>
+        </div>
+        <div class="sf-banner-grid__row">
+          <div class="sf-banner-grid__col">
+            <section  class="sf-banner" style="--_banner-background-image:url(https://storybook.storefrontui.io/\/assets\/storybook\/Home\/bannerG\.jpg);">
+              <div link="" class="sf-banner__wrapper">
+                <h2 class="sf-banner__subtitle"> Televisions </h2>
+                <h1 class="sf-banner__title">Lorem Ipsum</h1>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Banner grid End -->
+  <!-- Subscribtion -->
+  <section class="sf-call-to-action call-to-action" style="--_call-to-action-background-image:url(https://storybook.storefrontui.io/\/assets\/storybook\/Home\/newsletter\.jpg);">
+    <div class="sf-call-to-action__text-container">
+      <h2 class="sf-call-to-action__title">Subscribe to Newsletters</h2>
+      <p class="sf-call-to-action__description">Be aware of upcoming sales and events. Receive gifts and special offers!</p>
+    </div>
+    <button link="" class="sf-button sf-call-to-action__button" style="outline: none;">subscribe</button>
+  </section>
+  <!-- Subscribtion End -->
+  {% if product_search_result.products.empty? == false %}
+    <!-- Call to action -->
+    <div class="match-with-it desktop-only">
+      <p class="match-with-it__paragraph">Latest products</p>
+      <button link="" class="sf-button sf-button--text smartphone-only" style="outline: none;">See all</button>
+    </div>
+    <!-- Call to action End -->
+    <!-- Products -->
+    <div class="desktop-only" style="display: flex; flex-direction: row;">
+      {% for product in product_search_result.products.items limit:5 %}
+        <div class="sf-product-card">
+          <div class="sf-product-card__image-wrapper">
+            <a href="{{ product.slug }}" class="sf-link sf-product-card__link" style="outline: none;">
+              <div class="sf-image sf-product-card__image has-size" style="--_image-width:216; --_image-height:326;" >
+                <img width="216" height="326" alt="{{ product.name }}" src="{{ product.img_src }}">
+              </div>
+            </a>
+            <div
+              class="app-add-item-to-cart"
+              product-id="{{ product.id }}"
+              buyable="{{ product.price.actual.amount > 0 }}"
+              title="{{ product.name }}"
+            ></div>
+          </div>
+          <a href class="sf-link sf-product-card__link" style="outline: none;">
+            <h3 class="sf-product-card__title">{{ product.name }}</h3>
+          </a>
+          {% assign use_price_in_card = true %}
+          {% include 'product-price' %}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+  <!-- Products End -->
+  <!-- Social -->
+  <section  class="sf-section share-your-look">
+    <div class="sf-heading">
+      <h2 class="sf-heading__title h2">Share Your Success</h2>
+      <div class="sf-heading__description">#YOURSUCCESS</div>
+    </div>
+    <div class="sf-section__content">
+      <div class="instagram-grid">
+        <div class="instagram-grid__row">
+          <div class="instagram-grid__col">
+            <div class="sf-image" >
+                <picture>
+                  <source srcset="{{ 'bundle/images/virtocommerce1.jpg' | static_asset_url }}" media="(max-width: 1023px)">
+                  <source srcset="{{ 'bundle/images/virtocommerce1.jpg' | static_asset_url }}" media="(min-width: 1024px)">
+                  <img src="{{ 'bundle/images/virtocommerce1.jpg' | static_asset_url }}">
+                </picture>
+                <div class="sf-image__overlay">VirtoCommerce</div>
+            </div>
+          </div>
+          <div class="instagram-grid__col">
+            <div class="sf-image" >
+                <picture>
+                  <source srcset="{{ 'bundle/images/virtocommerce2.jpg' | static_asset_url }}" media="(max-width: 1023px)">
+                  <source srcset="{{ 'bundle/images/virtocommerce2.jpg' | static_asset_url }}" media="(min-width: 1024px)">
+                  <img src="{{ 'bundle/images/virtocommerce2.jpg' | static_asset_url }}">
+                </picture>
+                <div class="sf-image__overlay">VirtoCommerce</div>
+            </div>
+          </div>
+        </div>
+        <div class="instagram-grid__row">
+          <div class="instagram-grid__col">
+            <div class="sf-image" >
+                <picture>
+                  <source srcset="{{ 'bundle/images/virtocommerce3.jpg' | static_asset_url }}" media="(max-width: 1023px)">
+                  <source srcset="{{ 'bundle/images/virtocommerce3.jpg' | static_asset_url }}" media="(min-width: 1024px)">
+                  <img src="{{ 'bundle/images/virtocommerce3.jpg' | static_asset_url }}">
+                </picture>
+                <div class="sf-image__overlay">VirtoCommerce</div>
+            </div>
+          </div>
+          <div class="instagram-grid__col">
+            <div class="sf-image" >
+                <picture>
+                  <source srcset="{{ 'bundle/images/virtocommerce4.jpg' | static_asset_url }}" media="(max-width: 1023px)">
+                  <source srcset="{{ 'bundle/images/virtocommerce4.jpg' | static_asset_url }}" media="(min-width: 1024px)">
+                  <img src="{{ 'bundle/images/virtocommerce4.jpg' | static_asset_url }}">
+                </picture>
+                <div class="sf-image__overlay">VirtoCommerce</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Social End -->
+  <!-- Mobile App-->
+  <section class="sf-banner app-banner desktop-only" style="--_banner-background-image:url({{ 'bundle/images/mobile-app.png' | static_asset_url }});">
+    <div link="" class="sf-banner__wrapper">
+      <h2 class="sf-banner__subtitle">Professional devices</h2>
+      <h1 class="sf-banner__title">Download our application to your mobile</h1>
+      <div class="app-banner__call-to-action">
+        <button link="" aria-label="Go to Apple Product" class="sf-button app-banner__button" style="outline: none;">
+          <div class="sf-image" >
+            <img src="https://storybook.storefrontui.io/assets/storybook/Home/apple.png">
+          </div>
+         </button>
+        <button link="" aria-label="Go to Google Product" class="sf-button app-banner__button" style="outline: none;">
+          <div class="sf-image" >
+            <img src="https://storybook.storefrontui.io/assets/storybook/Home/google.png">
+          </div>
+        </button>
+      </div>
+    </div>
+  </section>
+  <!-- Mobile App End -->
+</div>
+
+<style>
+@media (min-width: 1024px) {
+	.smartphone-only {
+		display: none !important;
+	}
+}
+
+@media (max-width: 1023px) {
+	.desktop-only {
+		display: none !important;
+	}
+  .sf-banner__wrapper{
+    padding: unset;
+  }
+}
+
+#home {
+	box-sizing: border-box;
+	padding: 0 var(--spacer-sm);
+}
+
+@media (min-width: 1024px) {
+	#home {
+		padding: 0 var(--spacer-sm);
+		max-width: 1272px;
+		margin: 0 auto;
+	}
+}
+
+.hero {
+	--hero-item-background-position: center;
+	--hero-item-container-width: 60%;
+}
+
+.match-with-it {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	margin-top: var(--spacer-xl);
+	font-size: var(--h3-font-size);
+	font-family: var(--font-family--secondary);
+	font-weight: var(--font-weight--bold);
+	border-bottom: solid 1px var(--c-light);
+}
+
+.match-with-it__paragraph {
+	margin-bottom: var(--spacer-xs);
+}
+
+@media (min-width: 1024px) {
+	.match-with-it {
+		border: none;
+		justify-content: center;
+		font-weight: var(--font-weight--semibold);
+	}
+}
+
+.carousel {
+	margin: 0 calc(var(--spacer-sm) * -1) 0 0;
+}
+
+@media (min-width: 1024px) {
+	.carousel {
+		margin: 0;
+	}
+}
+
+.carousel__item {
+	margin: 1.9375rem 0 2.4375rem 0;
+}
+
+.banner-grid {
+	margin: var(--spacer-base) 0;
+	--banner-container-width: 50%;
+}
+
+@media (min-width: 1024px) {
+	.banner-grid {
+		margin: var(--spacer-2xl) 0;
+	}
+}
+
+.share-your-look {
+	--heading-title-font-weight: var(--font-weight--semibold);
+}
+
+@media (min-width: 1024px) {
+	.share-your-look {
+		--section-margin: var(--spacer-2xl) 0;
+	}
+}
+
+.call-to-action {
+	display: flex;
+}
+
+.instagram-grid {
+	max-width: 60rem;
+	margin: 0 auto;
+}
+
+.instagram-grid__row {
+	display: flex;
+}
+
+.instagram-grid__row + .instagram-grid__row {
+	margin: var(--spacer-xs) 0 0 0;
+}
+
+@media (min-width: 1024px) {
+	.instagram-grid__row + .instagram-grid__row {
+		margin: calc(var(--spacer-xl) / 2) 0 0 0;
+	}
+}
+
+.instagram-grid__col {
+	flex: 1;
+	margin: 0;
+  max-height: 443px;
+  overflow: hidden;
+}
+
+.instagram-grid__col + .instagram-grid__col {
+	margin: 0 0 0 var(--spacer-xs);
+}
+
+@media (min-width: 1024px) {
+	.instagram-grid__col + .instagram-grid__col {
+		margin: 0 0 0 calc(var(--spacer-xl) / 2);
+	}
+}
+
+.app-banner {
+	--banner-container-width: 100%;
+	--banner-title-margin: var(--spacer-base) 0 var(--spacer-xl) 0;
+	--banner-padding: 0 var(--spacer-2xl);
+	--banner-title-font-size: var(--h1-font-size);
+	--banner-subtitle-font-size: var(--font-size--xl);
+	--banner-title-font-weight: var(--font-weight--semibold);
+	--banner-subtitle-font-weight: var(--font-weight--medium);
+	--banner-title-text-transform: capitalize;
+	--banner-subtitle-text-transform: capitalize;
+	display: block;
+	min-height: 26.25rem;
+	max-width: 65rem;
+	margin: 0 auto;
+	padding: 0 calc(25% + var(--spacer-2xl)) 0 var(--spacer-xl);
+}
+
+.app-banner__call-to-action {
+	--button-background: transparent;
+	display: flex;
+}
+
+.app-banner__button {
+	--image-width: 8.375rem;
+	--image-height: 2.75rem;
+	--button-padding: 0;
+}
+
+.app-banner__button + .app-banner__button {
+	margin: 0 0 0 calc(var(--spacer-xl) / 2);
+}
+</style>
 
 
-<script src="{{ 'bundle/dist/js/catalog.js' | static_asset_url | append_version }}"></script>

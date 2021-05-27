@@ -1,0 +1,84 @@
+# v1.0.0.vst
+name: VST Theme CI
+on:
+  workflow_dispatch:
+  push:
+    branches: [vsf-rnd-integration]
+    paths-ignore:
+      - '.github/**'
+      - 'docs/**'
+      - 'build/**'
+      - 'README.md'
+      - 'LICENSE'
+
+jobs:
+  build-package:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: client-app
+
+    env: 
+      GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+      BLOB_SAS: ${{ secrets.BLOB_TOKEN }}
+      VERSION_SUFFIX: ""
+    
+    name: ci
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Install Node.js 10
+      uses: actions/setup-node@v1
+      with:
+        node-version: '10.x'
+
+    - name: Get Image Version
+      uses: VirtoCommerce/vc-github-actions/get-image-version@master
+      id: image
+      with:
+        path: './client-app'
+
+    - name: Set VERSION_SUFFIX variable
+      run: |
+        if [ '${{ github.event_name }}' = 'workflow_dispatch' ]; then
+          echo "VERSION_SUFFIX=${{ steps.image.outputs.fullSuffix }}" >> $GITHUB_ENV
+        else
+          echo "VERSION_SUFFIX=${{ steps.image.outputs.suffix }}" >> $GITHUB_ENV
+        fi;
+    - name: Get changelog
+      id: changelog
+      uses: VirtoCommerce/vc-github-actions/changelog-generator@master
+
+      # After anp install 'bower install' cmd will be invoked as package.json script
+    - name: Npm Install
+      run: npm install
+
+    - name: Build theme and compress to zip
+      run: npm run compress
+
+    - name: Set artifact
+      shell: pwsh
+      id: artifact
+      run: |
+        $file = Get-ChildItem -Path ../artifacts -Filter "*.zip" | Select-Object -First 1
+        Write-Host "::set-output name=name::$($file.BaseName)_${{ env.VERSION_SUFFIX }}.zip"
+        Write-Host "::set-output name=full-name::$($file.FullName)"
+    - name: Rename artifact
+      if: ${{ github.ref != 'refs/heads/master' }}
+      shell: pwsh
+      run: |
+        Get-ChildItem ${{ steps.artifact.outputs.full-name }} | ForEach-Object {
+          Rename-Item $_ -NewName ${{steps.artifact.outputs.name}}
+        }
+    - name: Upload a Build Artifact to Azure Blob Storage
+      if: ${{ github.ref == 'refs/heads/vsf-rnd-integration' }}
+      uses: bacongobbler/azure-blob-storage-upload@v1.1.1
+      with:
+        source_dir: './artifacts'
+        container_name: 'packages'
+        connection_string: ${{ secrets.BLOB_CONNECTION_STRING }}
+        sync: false

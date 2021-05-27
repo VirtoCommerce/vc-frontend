@@ -6,6 +6,7 @@ query {
               query: "{{ context.query_string.q }}"
               filter: "{{ context.query_string.filter }}"
               userId: "{{ context.current_user.id }}"
+              sort: "price"
               first: {{ context.page_size }}
       				after: "{{ context.skip_count }}") {      
    
@@ -21,7 +22,5 @@ query {
         price { actual { amount formattedAmount } discountAmount { amount formattedAmount } sale { amount formattedAmount } list { amount formattedAmount } }
       }
     totalCount
-    term_facets { name terms { term count isSelected } }
-    range_facets { name ranges { label count from to isSelected } }
   }
 }

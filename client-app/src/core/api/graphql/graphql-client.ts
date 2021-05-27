@@ -1,14 +1,16 @@
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloClient } from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
-import { baseUrl } from '../../constants';
+import { baseUrl } from '@core/constants';
 const fetchPolicy = 'no-cache';
 
 const graphqlClient = new ApolloClient({
   // Provide required constructor fields
-  link: new HttpLink({ uri: `${baseUrl}/xapi/graphql` }),
+  link: new HttpLink({ uri: `/xapi/graphql` }),
   cache: new InMemoryCache({
-    freezeResults: true
+    freezeResults: true,
+    addTypename: false
+
   }),
 
   // Provide some optional constructor fields

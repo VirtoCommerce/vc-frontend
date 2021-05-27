@@ -1,12 +1,21 @@
-import { BvTableFieldArray } from "bootstrap-vue";
-
 // It is global variables initialized on the layout page
+//TODO: rework to use one object with propwrites
 export const storeName = window.STORE_NAME;
+export const storeId = window.STORE_ID;
 export const currencyCode = window.CURRENCY_CODE;
 export const locale = window.LOCALE;
 export const currentUserId = window.USER_ID;
+export const catalogId = window.CATALOG_ID;
+export const categoryId = window.CATEGORY_ID;
+export const productId = window.PRODUCT_ID;
+
+//TODO: load from  storefront API
+export const mainMenu = window.MAIN_MENU;
+export const locales = window.LOCALES;
+
 // Need to trim store and language from base URL because they will be added later as parameters for each API call.
-export const baseUrl = window.BASE_URL.replace(`/${storeName}`, "/")
+export const baseUrl = window.BASE_URL
+  .replace(`/${storeName}`, "/")
   .replace(`/${locale}`, "/")
   .replace(/[/]+$/, "");
 
@@ -29,12 +38,4 @@ export const sortAscending = "asc";
 export const sortDescending = "desc";
 export const catalogOrderDraftsCount = 100;
 
-// Grids
-export const ordersGridFields = window.THEME_SETTINGS.orders_grid_fields as BvTableFieldArray;
-export const usersGridFields = window.THEME_SETTINGS.users_grid_fields as BvTableFieldArray;
-export const invoicesGridFields = window.THEME_SETTINGS.invoices_grid_fields as BvTableFieldArray;
-export const paymentsGridFields = window.THEME_SETTINGS.payments_grid_fields as BvTableFieldArray;
-export const draftsGridFields = window.THEME_SETTINGS.drafts_grid_fields as BvTableFieldArray;
 
-// features
-export const features = window.Features;

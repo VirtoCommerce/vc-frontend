@@ -15,13 +15,12 @@
     "sourceMap": true,
     "baseUrl": "src",
     "types": [
-      "webpack-env",
-      "mocha",
-      "chai",
       "chai-string",
-      "webpack",
+      "chai",
+      "mocha",
+      "moment",
       "webpack-env",
-      "moment"
+      "webpack",
     ],
     "paths": {
       "@i18n": [ "i18n" ],

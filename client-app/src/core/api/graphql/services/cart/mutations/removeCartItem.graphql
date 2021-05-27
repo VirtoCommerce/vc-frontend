@@ -1,7 +1,0 @@
-mutation RemoveCartItem (
-  $command: InputRemoveItemType!
-) {
-  removeCartItem(command: $command) {
-    itemsCount
-  }
-}

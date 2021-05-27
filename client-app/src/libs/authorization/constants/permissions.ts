@@ -9,3 +9,4 @@ export default class StorefrontPermissions {
   static CanViewOrders = "storefront:order:view";
   static CanChangeOrderStatus = "storefront:order:changestatus";
 }
+

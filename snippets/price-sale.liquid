@@ -1,5 +1,0 @@
-{% capture saved_amount %}{{ compare_price | minus: product_price | money }}{% endcapture %}
-
-{% assign saved_amount = saved_amount | strip %}
-{{ 'products.general.save_html' | t:  saved_amount }}
-

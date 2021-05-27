@@ -1,0 +1,6 @@
+ mutation AddItem($command: InputAddItemType!) {
+    addItem(command: $command) {
+      name,
+      itemsQuantity
+    }
+  }
