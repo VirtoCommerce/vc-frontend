@@ -1,4 +1,8 @@
 {
+  "main_menu": 
+  {
+    "static_page": "Statische Seite (SSR)"
+  },
   "common": {
     "header": {
       "sign_in": "Einloggen",

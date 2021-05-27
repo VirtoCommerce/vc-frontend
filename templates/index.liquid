@@ -1,5 +1,3 @@
-{{ paginator =  product_search_result.products | paginate }}
-{% include 'search-result' %}
-
-
-<script src="{{ 'bundle/dist/js/catalog.js' | static_asset_url | append_version }}"></script>
+<div id="home"></div>
+<script src="{{ 'bundle/dist/js/home.js' | static_asset_url | append_version }}"></script>
+{{ 'bundle/dist/css/home.css' | static_asset_url | append_version | stylesheet_tag }}

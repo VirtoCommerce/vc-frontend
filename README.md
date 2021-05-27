@@ -1,6 +1,5 @@
 # VUE MPA starter/boilerplate theme for VirtoCommerce Storefront.
-
-![Index](https://user-images.githubusercontent.com/66079752/90002067-75540d00-dc92-11ea-9688-3a88ebfcea21.jpg)
+![image](https://user-images.githubusercontent.com/7566324/107653878-c7e6a400-6c8a-11eb-802b-13a38f7f3143.png)
 
 **VUE MPA starter theme** - is starter theme is demonstrated a typical out-of-the-box B2B Portal that built using Liquid templates, Vue.JS web progressive framework and Bootstrap CSS.
  This theme represents the VC Team's opinionated starting point for new projects. It strives to include up-to-date best practices and solutions that we have deemed needed for the majority of projects we build. It is a reflection of what’s possible when building a theme! 
@@ -16,34 +15,7 @@
 - Intentionally lack of using custom CSS an initial styles constructed, using popular Bootstrap CSS library  and have an adaptive markup allows working on all popular devices and resolutions to make the customization process for theme styles  more straightforward. 
 - Liquid templates and SSR (server side rendering)  + MPA (multi-page application) architecture with using Vue.JS progressive framework allow to get the all benefits from both server side and WEB development techniques.
   
-
-![Login Screen](https://user-images.githubusercontent.com/66079752/90002356-daa7fe00-dc92-11ea-82ea-7a9f3aaee41d.jpg)
   
-# The project business key features:
-
-- Authorization. Login, logout, reset password
-- Order history browsing. Review and search the orders history (headers, lines)
-- Order status review. Reviews the status of an order
-- Invoice history. Review and download invoices 
-- Payments history.	Review payments history
-- Manage users.	Create, modify, delete users inside the organization
-- Manage users roles. Assign roles to users
-- Contract status browsing.	Review contract details and status
-- Retrieve re-ordering.	Retrieve order replication with comments – (email)
-- Order approve	Review, approve or reject an order created by account manager
-- Catalog navigation. Full-text  search, faceting search, categories browsing, products details.
-- Product prices browsing.	Review product prices in a product catalog details
-- Product recommendations. Cross-sell, Up-Sell, Frequently bought together etc.
-- Wish lists	Create, update, delete wish list and put products to it from catalog or from existent orders
-- Multiple orders drafts. Select order draft, add, modify, remove products in the order drafts
-- Re-ordering	Clone order details to an active order 
-- Submit the order	Submit order (inventory is locked, prices are locked)
-- Product inventory browsing. Review product stocks (by fulfillment centers if reasonable) in a product catalog details
-- Manage shipment details. Manage order shipment details before submitting and order
-- Manage payment details. Manage order payment details before submitting and order
-- Order approval workflow.	An order should be accepted by multiple roles to be competed
-
-![Product page](https://user-images.githubusercontent.com/66079752/90002565-19d64f00-dc93-11ea-9c7e-b4f0e996af24.jpg)
 
 # How does it work?
 TBD
@@ -55,89 +27,122 @@ There are the following  reasones why MPA architecture has been chosen.
 # Theme structure
 ```bash
 .
-├── assets                         //Contains image and other asset files to be copied as-is when you build your application.
-│   └──static
-|      └── bundle  
-|          ├── dist                //The scripts and styles build output folder. Contains all resulting js and css bundles.
-|          |   └──....
-|          └── default.scss.liquid //Contains a main theme settings variables and used for theme color scheme customization
-├── client-app                     //Contains the component, pages files of the Vue.JS MPA application.
-│   └── src
-|       ├── assets
-|       |   └──....
-|       └── core                  //Contains common utlitites/services that can be shared and used by any pages and libraries.
-|       |   ├── api               //Contains the NSwag generated clients to the storefront REST API
-|       |   |   └──....
-|       |   ├── models            //Contains core models. (ex. Pagination)
-|       |   |   └──....
-|       |   ├── services          //Contains overall shared services. Such as AxiosInstance or InitializationService (implement common init logic for all pages).
-|       |   |   └──....
-|       |   ├── utilities         //some helper services and miscellaneous utils
-|       |   |   └──....
-|       ├── libs                  //Contains a set of files grouped together in folders by their domain context. The main purpose is code reusing and simple project maintenance. 
-|       |   ├── catalog           //Represent a grouping folder for aggregate all building blocks for the particular domain context (e.g catalog browsing)
-|       |   |   ├── components    //Contains the collections of the dumb or presentation components specific only for this domain context. 
-|       |   |   |   └──....
-|       |   |   ├── store         //Contains the libary state - Vuex store modules (state, mutators, getters).
-|       |   |   |   └──....
-|       |   |   ├── views         //Contains the smart components that immplements the particular use cases.
-|       |   |   |   └──....
-|       |   |   ├── plugins       //Contains Vue.JS plugins
-|       |   |   |   └──....
-|       |   |   ├── services      //Contains all domain services
-|       |   |   |   └──....
-|       |   |   └── models        //Contains all domain models definitions
-|       |   |       └──....
-|       |   └──....            
-|       ├── pages                 //Contains a set of pages. The page is the Vue app that usually added to one of the pages that rendered on the server-side.
-|       |   ├── catalog
-|       |   |   ├── views         //Contains the smart components that implements the particular business context use case related to this page
-|       |   |   |   └──....
-|       |   |   ├── routes        //Contains the all Vue application routes 
-|       |   |   |   └──....
-|       |   |   ├── App.vue       //The template of Vue app entry point for page (Multiple files component)
-|       |   |   └── main.ts       //The script logic of Vue app entry point for page (Multiple files component)
-|       |   └──....   
-|       ├── tests                 //Contains unit tests.
-|       |   └──....
-|       ├──  nswag.json           //nswag config for Type script API clients generation
-|       └──  vue.config.js        //Vue.js Global CLI Config
-├── config                        //Contains the theme's settings
-|   └── settings_data.json        //The json file contains all the main settings for the Liquid theme.
-├── layout                        //Contains the theme's layout templates, which by default is the theme.liquid file. 
+├── assets                         // Images and other asset files to be copied as-is when you build your application, used in SSR and MPA.
+│   ├── graphql                    // Special GraphQL queries used only in liquid templates for SSR.
+|   |   └──....
+│   └── static
+|   |   └── bundle
+|   |       ├── dist                // The scripts and styles build output folder. Contains all resulting js and css bundles. The files are auto-generated.
+|   |       |   └──....
+|   |       ├── images              // The static images of the application, are used in SSR and MPA.
+|   |       |   └──....
+|   └─── styles                    // The shared styles of the application, are used in SSR and MPA.
+|          └──....
+|          └── main.scss           // The styles entry-point, will include other /scss files and also will be used in SSR and MPA.
+|
+|
+├── config                        // The Virto theme's settings.
+|   └── settings_data.json        // The json file contains all the main settings for the theme.
+|
+├── layout                        // Layout templates, which by default is the theme.liquid file, used in SSR.
 |   └──....
-├── locales                       //Contains the theme's locale files, which are used to provide translated content for the theme.
+|
+├── locales                       // Locale files, which are used to provide translated content for the theme, used in SSR and MPA.
 |   └──....
-├── snippets                      //Contains all the theme's Liquid snippet files, which are bits of code that can be referenced in other templates of a theme.
+|
+├── snippets                      // Theme's Liquid snippet files, which are bits of code that can be referenced in other templates of a theme, used in SSR.
 |   └──....
-├── templates                     //contains all Liquid templates
+|
+├── templates                     // Liquid templates, used in SSR and MPA. Each MPA page needs to have a liquid template here if you want SSR.
 |   └──....
+|
+└── client-app                    // The main folder for components and pages of the Vue.js MPA application.
+    └── src
+    |   └── core                  // Common utilities and services that can be shared and used by any pages and libraries.
+    |   |   ├── api/graphql       // The GraphQL Models to connect with the Virto Backoffice.
+    |   |   |   └──....
+    |   |   ├── models            // Core models. (ex. Pagination).
+    |   |   |   └──....
+    |   |   ├── services          // Overall shared services. Such as AxiosInstance or InitializationService (implement common init logic for all pages).
+    |   |   |   └──....
+    |   |   ├── utilities         // Some helper services and miscellaneous utils.
+    |   |   |   └──....
+    |   ├── libs                  // A set of files grouped together in folders by their domain context. The main purpose is code reusing and simple project maintenance.
+    |   |   ├── catalog           // Represent a grouping folder for aggregate all building blocks for the particular domain context (e.g catalog browsing).
+    |   |   |   ├── components    // The collections of the dumb or presentation components specific only for this domain context.
+    |   |   |   |   └──....
+    |   |   |   ├── composables   // The files to apply Composition API for this module.
+    |   |   |   |   └──....
+    |   |   |   ├── types         // The necessary models or types for this module.
+    |   |   |   |   └──....
+    |   |   └── storefrontUI      // The set of "dummy" ready-to-use components are designed for e-commerce and based on Atomic design principles.
+    |   |   |
+    |   |   └──....
+    |   |
+    |   ├── pages                 // Set of pages. The page is the Vue app that usually added to one of the pages that rendered on the server-side (SSR).
+    |   |   ├── catalog
+    |   |   |   ├── views         // Smart components that implements the particular business context use case related to this page.
+    |   |   |   |   └──....
+    |   |   |   ├── routes        // Vue application routes.
+    |   |   |   |   └──....
+    |   |   |   └── main.ts       // The script logic of Vue app entry point for page (Multiple files component)
+    |   |   └──....
+    |   |
+    ├── tests                     // The e2e/ui and unit tests.
+    |   └──....
+    ├──  .browserslistrc          // Browserslist config file to support previous versions of browsers.
+    ├──  .env                     // Envfile to define different Environment Variables.
+    ├──  .eslintignore            // Ignore some files in Eslint.
+    ├──  .eslintrc                // Eslint configuration file.
+    ├──  babel.config             // Babel configuration file.
+    ├──  cypress.json             // Cypress configuration file to use in e2e/ui tests.
+    ├──  graphql.codegen.yml      // GraphQL configuration file to generate types, where schema is your Virto Backoffice url.
+    ├──  tsconfig.json            // TypeScript configuration file.
+    └──  vue.config.js            // Vue.js Global CLI Config
 ```
 
 
 # Getting started
+
 ## Prerequisites
+* Install `vc-platform` 3.x the latest version. [Deploy on Windows](https://github.com/VirtoCommerce/vc-platform/blob/master/docs/getting-started/deploy-from-precompiled-binaries-windows.md) or [Deploy on Linux](https://github.com/VirtoCommerce/vc-platform/blob/master/docs/getting-started/deploy-from-precompiled-binaries-linux.md)
+* Install `vc-module-experience-api` module. [Getting started](https://github.com/VirtoCommerce/vc-module-experience-api/blob/dev/docs/getting-started.md)
+  
+## Install the `vc-storefront` from experimental branch `x-api-integration`
+* Clone https://github.com/VirtoCommerce/vc-storefront/tree/feature/x-api-integration in to a local folder
 
-You need to have local installation of storefront. Follow [this article](https://virtocommerce.com/docs/vc2devguide/deployment/storefront-deployment) step-by-step to install storefront from binaries or source code.
+* Open the **appsettings.json** file in a text editor.
+* In the **Endpoint** section change **Url**, **UserName**, **Password** with correct path and credentials for Virto Commerce Platform:
 
-## Deploy theme
-1. Clone repo into the folder where storefront is installed  `{vc-storefront}/wwwroot/cms-content/themes/{store-name}/default`.
-```bash
-  git clone https://github.com/VirtoCommerce/vc-odt-mpa-theme.git "C:\vc-storefront\wwwroot\cms-content\themes\Electronics\default"
+```json
+...
+ "Endpoint": {
+     "Url": "https://localhost:5001",
+     "UserName": "admin",
+     "Password": "store",
 ```
-2. Change the current  directory
+
+## Setup `starter theme`
+
 ```bash
-   cd C:\vc-storefront\wwwroot\cms-content\themes\Electronics\default\clientApp
+# Clone repo into the folder where storefront is installed 
+git clone https://github.com/VirtoCommerce/vue-starter-theme.git "C:\vc-storefront\wwwroot\cms-content\themes\{store-name}\default"
+# Change the current directory
+cd C:\vc-storefront\wwwroot\cms-content\themes\{store-name}\default
+# install dependencies
+npm install 
+# Build and minifies theme files for production   
+npm run build 
 ```
-3. Install Node.js dependencies.
+
+## Run `vc-storefront` application
 ```bash
-   npm install    
+# change the current directory
+cd C:\vc-storefront
+# build and run storefront application
+dotnet run 
 ```
-4. Build theme scripts and styles for production with minification
-```bash
-   npm run dev 
-```
-5. Run storefront 
+
 
 
 # License

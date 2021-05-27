@@ -1,4 +1,8 @@
 {
+  "main_menu": 
+  {
+    "static_page": "Static page (SSR)"
+  },
   "common": {
     "header": {
       "sign_in": "Sign in",
@@ -60,10 +64,12 @@
     "no_results": "No data found"
   },
   "404": {
-    "not-found": "Page not found"
+    "title": "Page not found",
+    "description": "We are sorry that we can’t find the page, please go back or try again"
   },
   "500": {
-    "something-went-wrong": "Something went wrong"
+    "title": "An error occured",
+    "description": "Please go back or try again"
   },
   "access-denied": {
     "title": "Access denied",
