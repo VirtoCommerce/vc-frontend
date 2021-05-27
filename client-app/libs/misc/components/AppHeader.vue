@@ -27,11 +27,11 @@
       <template #header-icons>
         <!-- TODO: Include into SfHeader -->
         <div class="contact">
-          <div>1.888.CAPLUGS</div>
-          <SfLink link="sales@caplugs.com"
+          <div>1.888.Foo</div>
+          <SfLink link="sales@virtocommerce.com"
                   target="_blank"
                   style="outline: none;">
-            sales@caplugs.com
+            sales@virtocommerce.com
           </SfLink>
         </div>
         <CpSwitchLang :languages="storeLanguages"

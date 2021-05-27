@@ -95,7 +95,7 @@
 
     <cp-materials
       title="High Performance Materials"
-      description="Caplugs offers parts in both low density polyethylene and high density
+      description="virtocommerce offers parts in both low density polyethylene and high density
                    polyethylene to keep fabricated components free from damage."
       banner-description="Read how to take care of your baby, see our products avaiablable,
                           clothes and suggestions how stay healthy."
