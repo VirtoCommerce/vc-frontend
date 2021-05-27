@@ -1,0 +1,9 @@
+:root {
+  --font-family--primary: "Roboto", sans-serif;
+  --font-family--secondary: "Roboto", sans-serif;
+}
+
+#layout {
+  max-width: 1440px;
+}
+/*# sourceMappingURL=styles.css.map */
