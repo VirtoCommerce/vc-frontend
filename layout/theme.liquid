@@ -32,13 +32,14 @@
       window.BASE_URL = `{{ "/" | full_url }}`;
       window.STORE_NAME = "{{ current_store.name }}";
       window.STORE_ID = "{{ current_store.id }}";
+      window.STORE_LANGUAGES = {{ current_store.languages  | map 'CultureName' | json }};
       window.CATALOG_ID = "{{ current_store.catalog }}";
       window.CURRENCY_CODE ="{{ current_currency.code }}";
       window.LOCALE = "{{ current_language.culture_name }}";
       window.USER_ID = "{{ current_user.id }}";
       window.THEME_SETTINGS = {{ settings | json }};
       //TODO: Repalce to SSR
-      window.MAIN_MENU = {{ linklists['main-menu'].menu_links | json }};
+      window.MAIN_MENU = {% if linklists['main-menu'].menu_links %}{{ linklists['main-menu'].menu_links | json }}{% else %}[]{% endif %};
       window.LOCALES = {{ current_store.languages | map 'TwoLetterLanguageName' |  json }};
     </script>
   </head>
@@ -47,9 +48,9 @@
       <div id="appHeader"></div>
       <!-- Content here -->
       {{ content_for_layout }}
-      
+
       {% include 'footer' %}
     </div>
-   
+
   </body>
 </html>

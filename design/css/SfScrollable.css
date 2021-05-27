@@ -1,0 +1,30 @@
+@media (min-width: 1024px) {
+  .smartphone-only {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .desktop-only {
+    display: none !important;
+  }
+}
+
+.sf-scrollable__content {
+  max-height: var(--scrollable-max-height, var(--_scrollable-max-height, 5rem));
+}
+
+.sf-scrollable__content .simplebar-scrollbar:before {
+  width: 4px;
+  background: var(--c-gray-variant);
+  border-radius: 10px;
+}
+
+.sf-scrollable.is-open {
+  --scrollable-max-height: auto;
+}
+
+.sf-scrollable__view-all {
+  margin: var(--scrollable-button-margin, var(--spacer-sm) 0 0 0);
+}
+/*# sourceMappingURL=SfScrollable.css.map */

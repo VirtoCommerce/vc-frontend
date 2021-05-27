@@ -31,14 +31,15 @@ There are the following  reasones why MPA architecture has been chosen.
 │   ├── graphql                    // Special GraphQL queries used only in liquid templates for SSR.
 |   |   └──....
 │   └── static
-|      └── bundle
-|          ├── dist                // The scripts and styles build output folder. Contains all resulting js and css bundles. The files are auto-generated.
-|          |   └──....
-|          ├── images              // The static images of the application, are used in SSR and MPA.
-|          |   └──....
-|          ├── scss                // The styles of the application, are used in SSR and MPA.
-|          |   └──....
+|   |   └── bundle
+|   |       ├── dist                // The scripts and styles build output folder. Contains all resulting js and css bundles. The files are auto-generated.
+|   |       |   └──....
+|   |       ├── images              // The static images of the application, are used in SSR and MPA.
+|   |       |   └──....
+|   └─── styles                    // The shared styles of the application, are used in SSR and MPA.
+|          └──....
 |          └── main.scss           // The styles entry-point, will include other /scss files and also will be used in SSR and MPA.
+|
 |
 ├── config                        // The Virto theme's settings.
 |   └── settings_data.json        // The json file contains all the main settings for the theme.
@@ -74,6 +75,8 @@ There are the following  reasones why MPA architecture has been chosen.
     |   |   |   |   └──....
     |   |   |   ├── types         // The necessary models or types for this module.
     |   |   |   |   └──....
+    |   |   └── storefrontUI      // The set of "dummy" ready-to-use components are designed for e-commerce and based on Atomic design principles.
+    |   |   |
     |   |   └──....
     |   |
     |   ├── pages                 // Set of pages. The page is the Vue app that usually added to one of the pages that rendered on the server-side (SSR).
@@ -98,29 +101,48 @@ There are the following  reasones why MPA architecture has been chosen.
     └──  vue.config.js            // Vue.js Global CLI Config
 ```
 
+
 # Getting started
+
 ## Prerequisites
+* Install `vc-platform` 3.x the latest version. [Deploy on Windows](https://github.com/VirtoCommerce/vc-platform/blob/master/docs/getting-started/deploy-from-precompiled-binaries-windows.md) or [Deploy on Linux](https://github.com/VirtoCommerce/vc-platform/blob/master/docs/getting-started/deploy-from-precompiled-binaries-linux.md)
+* Install `vc-module-experience-api` module. [Getting started](https://github.com/VirtoCommerce/vc-module-experience-api/blob/dev/docs/getting-started.md)
+  
+## Install the `vc-storefront` from experimental branch `x-api-integration`
+* Clone https://github.com/VirtoCommerce/vc-storefront/tree/feature/x-api-integration in to a local folder
 
-You need to have local installation of storefront. Follow [this article](https://virtocommerce.com/docs/vc2devguide/deployment/storefront-deployment) step-by-step to install storefront from binaries or source code.
+* Open the **appsettings.json** file in a text editor.
+* In the **Endpoint** section change **Url**, **UserName**, **Password** with correct path and credentials for Virto Commerce Platform:
 
-## Deploy theme
-1. Clone repo into the folder where storefront is installed  `{vc-storefront}/wwwroot/cms-content/themes/{store-name}/default`.
-```bash
-  git clone https://github.com/VirtoCommerce/vc-odt-mpa-theme.git "C:\vc-storefront\wwwroot\cms-content\themes\Electronics\default"
+```json
+...
+ "Endpoint": {
+     "Url": "https://localhost:5001",
+     "UserName": "admin",
+     "Password": "store",
 ```
-2. Change the current  directory
+
+## Setup `starter theme`
+
 ```bash
-   cd C:\vc-storefront\wwwroot\cms-content\themes\Electronics\default\clientApp
+# Clone repo into the folder where storefront is installed 
+git clone https://github.com/VirtoCommerce/vue-starter-theme.git "C:\vc-storefront\wwwroot\cms-content\themes\{store-name}\default"
+# Change the current directory
+cd C:\vc-storefront\wwwroot\cms-content\themes\{store-name}\default
+# install dependencies
+npm install 
+# Build and minifies theme files for production   
+npm run build 
 ```
-3. Install Node.js dependencies.
+
+## Run `vc-storefront` application
 ```bash
-   npm install    
+# change the current directory
+cd C:\vc-storefront
+# build and run storefront application
+dotnet run 
 ```
-4. Build theme scripts and styles for production with minification
-```bash
-   npm run build:dev 
-```
-5. Run storefront 
+
 
 
 # License

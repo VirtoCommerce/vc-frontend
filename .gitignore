@@ -1,4 +1,4 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
+ See http://help.github.com/ignore-files/ for more about ignoring files.
 
 /config/drafts
 # compiled output
@@ -53,3 +53,8 @@ Thumbs.db
 /assets/static/bundle/dist
 /config/draft
 artifacts*
+/client-app/src/libs/.vs
+/client-app/src/.vs
+/client-app/.vs
+/client-app/libs/.vs
+/client-app/libs/storefrontUI/vue/src/components/.vs

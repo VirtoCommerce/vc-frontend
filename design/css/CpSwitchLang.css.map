@@ -1,0 +1,15 @@
+{
+    "version": 3,
+    "mappings": "AEcE,MAAM,EAAE,SAAS,EAAE,MAAM;EAK3B,AAAA,gBAAgB,CAAC;IAEb,OAAO,EAAE,eAAe;GAE3B;;;AAdC,MAAM,EAAE,SAAS,EAAE,MAAM;EAe3B,AAAA,aAAa,CAAC;IAEV,OAAO,EAAE,eAAe;GAE3B;;;AF1BD,AAAA,eAAe,CAAC;EACZ,eAAe,CAAA,KAAC;EAChB,gBAAgB,CAAA,EAAC;EACjB,OAAO,EAAE,IAAI;EACb,cAAc,EAAE,MAAM;EACtB,eAAe,EAAE,MAAM;EACvB,MAAM,EAAE,CAAC,CAAC,iBAAiB,CAAC,CAAC,CAAC,gBAAgB;CA0B/C;;AAzBE,AAAD,oBAAM,CAAC;EACL,KAAK,EAAE,MAAM;EACb,MAAM,EAAE,MAAM;CACf;;AACA,AAAD,qBAAO,CAAC;EACN,YAAY,CAAA,SAAC;EACb,aAAa,CAAA,SAAC;EACd,YAAY,CAAA,uBAAC;EACb,MAAM,EAAE,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,gBAAgB;CAC/B;;AAhBL,AAiBI,eAjBW,CAiBX,KAAK,CAAC;EACJ,QAAQ,EAAE,QAAQ;EAClB,GAAG,EAAE,IAAI;EACT,IAAI,EAAE,IAAI;EACV,OAAO,EAAE,IAAI;EACb,WAAW,EAAE,MAAM;EACnB,OAAO,EAAE,CAAC;CACX;;AAxBL,AAyBI,eAzBW,CAyBX,MAAM,CAAC;EACL,QAAQ,EAAE,QAAQ;EAClB,UAAU,EAAE,IAAI;EAChB,OAAO,EAAE,CAAC;EACV,eAAe,EAAE,IAAI;EACrB,kBAAkB,EAAE,IAAI;CACzB",
+    "sources": [
+        "../../assets/static/bundle/scss/components/molecules/CpSwitchLang.scss",
+        "../../assets/static/bundle/scss/_helpers.scss",
+        "../../assets/static/bundle/scss/helpers/_breakpoints.scss",
+        "../../assets/static/bundle/scss/helpers/_typography.scss",
+        "../../assets/static/bundle/scss/helpers/_layout.scss",
+        "../../assets/static/bundle/scss/helpers/_colors.scss",
+        "../../assets/static/bundle/scss/helpers/_sizes.scss"
+    ],
+    "names": [],
+    "file": "CpSwitchLang.css"
+}
