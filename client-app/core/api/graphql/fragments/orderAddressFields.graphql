@@ -1,4 +1,4 @@
-fragment orderAddressFields on AddressType {
+fragment orderAddressFields on OrderAddressType {
   id
   name
   organization

@@ -14,14 +14,14 @@ import {
   InputAddressType,
   ShippingMethodType,
   PaymentMethodType,
-  AddressType,
+  CartAddressType,
   ShipmentType,
   PaymentType,
   CartType
 } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 
-const addresses: AddressType[] = [
+const addresses: CartAddressType[] = [
   {
     id: "1",
     email: "john@gmail.com",
@@ -45,8 +45,8 @@ const billingAddress: Ref<InputAddressType> = ref({ postalCode: "" });
 
 const chosenShippingMethod: Ref<ShippingMethodType> = ref({});
 const chosenPaymentMethod: Ref<PaymentMethodType> = ref({});
-const shippingAddresses: Ref<AddressType[]> = ref(addresses);
-const billingAddresses: Ref<AddressType[]> = ref(addresses);
+const shippingAddresses: Ref<CartAddressType[]> = ref(addresses);
+const billingAddresses: Ref<CartAddressType[]> = ref(addresses);
 const shippingMethods: Ref<ShippingMethodType[]> = ref([]);
 
 const paymentMethods: Ref<PaymentMethodType[]> = ref([]);
@@ -86,10 +86,10 @@ export default () => {
     }
   }
 
-  async function setDefaultDeliveryAddress(address: AddressType) {
+  async function setDefaultDeliveryAddress(address: CartAddressType) {
     console.log("setDefaultDeliveryAddress");
   }
-  async function setDefaultBillingAddress(address: AddressType) {
+  async function setDefaultBillingAddress(address: CartAddressType) {
     console.log("setDefaultBillingAddress");
   }
   async function setShippingMethod(shippingMethod: ShippingMethodType) {
@@ -98,10 +98,10 @@ export default () => {
   async function setPaymentMethod(paymentMethod: PaymentMethodType) {
     chosenPaymentMethod.value = { ...paymentMethod };
   }
-  async function setBillingAddress(address: AddressType) {
+  async function setBillingAddress(address: CartAddressType) {
     billingAddress.value = { ...billingAddress.value, ...address };
   }
-  async function setDeliveryAddress(address: AddressType) {
+  async function setDeliveryAddress(address: CartAddressType) {
     deliveryAddress.value = { ...deliveryAddress.value, ...address };
     //Delivery address type
     deliveryAddress.value.addressType = 1;

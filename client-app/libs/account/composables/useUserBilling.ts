@@ -1,12 +1,12 @@
 import { Ref, ref, computed } from "@vue/composition-api";
 import { getMyAddresses } from "@core/api/graphql/account";
-import { AddressType } from "@core/api/graphql/types";
+import { MemberAddressType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 
 
 export default () => {
   const loading: Ref<boolean> = ref(true);
-  const billingAddresses: Ref<AddressType[]> = ref([]);
+  const billingAddresses: Ref<MemberAddressType[]> = ref([]);
 
   async function loadMyAddresses(): Promise<void>  {
     loading.value = true;
@@ -21,13 +21,13 @@ export default () => {
     }
   }
 
-  async function addAddress(address: AddressType): Promise<void> {
+  async function addAddress(address: MemberAddressType): Promise<void> {
     console.log("addAddress", address);
   }
-  async function deleteAddress(address: AddressType): Promise<void> {
+  async function deleteAddress(address: MemberAddressType): Promise<void> {
     console.log("deleteAddress", address);
   }
-  async function updateAddress(address: AddressType): Promise<void> {
+  async function updateAddress(address: MemberAddressType): Promise<void> {
     console.log("updateAddress", address);
   }
 

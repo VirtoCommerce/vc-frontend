@@ -1,4 +1,4 @@
-#import "../../../fragments/addressFields.graphql"
+#import "../../../fragments/cartAddressFields.graphql"
 #import "../../../fragments/lineItemFields.graphql"
 #import "../../../fragments/moneyFields.graphql"
 #import "../../../fragments/currencyFields.graphql"
@@ -26,7 +26,7 @@
         shipmentMethodCode
         deliveryAddress 
         {
-          ...addressFields
+          ...cartAddressFields
         }
       }
       discounts
@@ -42,12 +42,12 @@
         paymentGatewayCode
         billingAddress
         {
-          ...addressFields
+          ...cartAddressFields
         }
       }
    
       addresses {
-        ...addressFields
+        ...cartAddressFields
       }
       items {
         ...lineItemFields

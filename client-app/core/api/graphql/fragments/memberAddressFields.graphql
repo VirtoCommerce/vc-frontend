@@ -1,4 +1,4 @@
-fragment memberAddressFields on AddressType {
+fragment memberAddressFields on MemberAddressType {
   id
   name
   organization

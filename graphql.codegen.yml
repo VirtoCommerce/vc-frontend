@@ -1,4 +1,4 @@
-schema: http://localhost:10645/graphql
+schema: http://localhost:5000/graphql
 documents: './client-app/**/*.(graphql|gql|ts)'
 generates:
   ./client-app/core/api/graphql/types.ts:

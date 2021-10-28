@@ -6,7 +6,7 @@ query {
               query: "{{ context.query_string.q }}"
               filter: "{{ context.query_string.filter }}"
               userId: "{{ context.current_user.id }}"
-              sort: "price"
+              sort: "price:desc"
               first: {{ context.page_size }}
       				after: "{{ context.skip_count }}") {      
    

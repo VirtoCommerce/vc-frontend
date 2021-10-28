@@ -6,7 +6,10 @@
     contact
     {
      addresses {
-         ...memberAddressFields
+         items 
+         {
+           ...memberAddressFields
+         }
      }    
     }
   }

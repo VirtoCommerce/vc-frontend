@@ -24,7 +24,8 @@ const me: Ref<UserType> = ref({
     fullName: '',
     memberType: '',
     organizationsIds: [],
-    phones: []
+    phones: [],
+    dynamicProperties: []
   }
 });
 const loading: Ref<boolean> = ref(false);
