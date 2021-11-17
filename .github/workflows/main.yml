@@ -75,17 +75,17 @@ jobs:
         id: changelog
         uses: VirtoCommerce/vc-github-actions/changelog-generator@master
 
+      - name: SonarCloud Scan
+        uses: VirtoCommerce/vc-github-actions/sonar-theme@master
+        with:
+          projectVersion: ${{ env.VERSION_SUFFIX }}
+
       # After anp install 'bower install' cmd will be invoked as package.json script
       - name: Npm Install
         run: npm install
 
       - name: Build theme and compress to zip
         run: npm run compress
-
-      - name: SonarCloud Scan
-        uses: VirtoCommerce/vc-github-actions/sonar-theme@master
-        with:
-          projectVersion: ${{ env.VERSION_SUFFIX }}
 
       - name: Publish
         if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
