@@ -50,9 +50,6 @@ jobs:
         with:
           node-version: '10.x'
 
-      - name: Setup sonarqube
-        uses: warchant/setup-sonar-scanner@v3
-
       - name: Get Image Version
         uses: VirtoCommerce/vc-github-actions/get-image-version@master
         id: image
@@ -74,11 +71,6 @@ jobs:
       - name: Get changelog
         id: changelog
         uses: VirtoCommerce/vc-github-actions/changelog-generator@master
-
-      - name: SonarCloud Scan
-        uses: VirtoCommerce/vc-github-actions/sonar-theme@master
-        with:
-          projectVersion: ${{ env.VERSION_SUFFIX }}
 
       # After anp install 'bower install' cmd will be invoked as package.json script
       - name: Npm Install
