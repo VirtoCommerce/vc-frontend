@@ -2,7 +2,7 @@
 # Set default behavior to automatically normalize line endings.
 ###############################################################################
 [core]
-	autocrlf = true
+	autocrlf=true
 
 * text=auto
 
