@@ -12,7 +12,8 @@
     "compress": "vue-cli-service build && gulp compress",
     "generate:graphql": "graphql-codegen -c graphql.codegen.yml && eolConverter crlf \"client-app/core/api/graphql/*\"",
     "i18n:report": "vue-cli-service i18n:report --src './client-app/**/*.?(js|vue)' --locales './client-app/locales/**/*.json'",
-    "nswag": "nswag run"
+    "nswag": "nswag run",
+    "postinstall": ""
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.29",
