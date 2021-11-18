@@ -13,7 +13,7 @@ function getPackage() {
 function compress(){
   var package = getPackage();
   return merge2(src(["../*/**", '!../client-app/**'])
-         .pipe(gitignore("../.gitignore")),
+         .pipe(gitignore("./.gitignore")),
           // Need to add them manually because otherwise all bundles will be skipped as they are in .gitignore
          src("../assets/static/bundle/**", {base: '../'}))
       .pipe(
