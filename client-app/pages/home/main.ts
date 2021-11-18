@@ -18,3 +18,4 @@ InitializationService.initializeCommon().then(() => {
       render: h => h(Home)
     }).$mount("#home");
   }});
+//addAddProductButtons(initializator);
