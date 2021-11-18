@@ -37,3 +37,4 @@ InitializationService.initializeCommon().then(() => {
     }).$mount("#login");
   }
 });
+
