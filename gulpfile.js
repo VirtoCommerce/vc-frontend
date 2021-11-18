@@ -22,7 +22,7 @@ function compress(){
           })
       )
       .pipe(zip(package.name + "-" + package.version + ".zip"))
-      .pipe(dest("../artifacts"));
+      .pipe(dest("artifacts"));
 }
 
 exports.compress = compress
