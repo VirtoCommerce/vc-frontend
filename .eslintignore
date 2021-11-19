@@ -1,1 +1,2 @@
 **/*.js
+client-app/core/api/graphql/types.ts

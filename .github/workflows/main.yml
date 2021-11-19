@@ -3,7 +3,17 @@ name: VST Theme CI
 on:
   workflow_dispatch:
   push:
-    branches: [vsf-rnd-integration]
+    branches:
+      [master, dev]
+    paths-ignore:
+      - '.github/**'
+      - 'docs/**'
+      - 'build/**'
+      - 'README.md'
+      - 'LICENSE'
+  pull_request:
+    branches:
+      [master, dev]
     paths-ignore:
       - '.github/**'
       - 'docs/**'
@@ -12,73 +22,132 @@ on:
       - 'LICENSE'
 
 jobs:
-  build-package:
-    # The type of runner that the job will run on
+  ci:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: client-app
-
-    env: 
+    env:
+      CLOUD_INSTANCE_BASE_URL: ${{secrets.CLOUD_INSTANCE_BASE_URL}}
+      CLIENT_ID: ${{secrets.CLIENT_ID}}
+      CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
+      SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
       GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
       BLOB_SAS: ${{ secrets.BLOB_TOKEN }}
       VERSION_SUFFIX: ""
-    
-    name: ci
+      BUILD_STATE: 'failed'
+      RELEASE_STATUS: 'false'
+    outputs:
+      artifactUrl: '${{ steps.publish.outputs.blobUrl }}'
+      jira-keys: ${{ steps.jira_keys.outputs.jira-keys }}
+      deployConfigPath: '.deployment/theme/argoDeploy.json'
+
 
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
-    - name: Install Node.js 10
-      uses: actions/setup-node@v1
-      with:
-        node-version: '10.x'
+      - name: Install Node.js 16
+        uses: actions/setup-node@v1
+        with:
+          node-version: '16.x'
 
-    - name: Get Image Version
-      uses: VirtoCommerce/vc-github-actions/get-image-version@master
-      id: image
-      with:
-        path: './client-app'
+      - name: Get Image Version
+        uses: VirtoCommerce/vc-github-actions/get-image-version@master
+        id: image
 
-    - name: Set VERSION_SUFFIX variable
-      run: |
-        if [ '${{ github.event_name }}' = 'workflow_dispatch' ]; then
-          echo "VERSION_SUFFIX=${{ steps.image.outputs.fullSuffix }}" >> $GITHUB_ENV
-        else
+      - name: Set release variables
+        run: |
           echo "VERSION_SUFFIX=${{ steps.image.outputs.suffix }}" >> $GITHUB_ENV
-        fi;
-    - name: Get changelog
-      id: changelog
-      uses: VirtoCommerce/vc-github-actions/changelog-generator@master
 
-      # After anp install 'bower install' cmd will be invoked as package.json script
-    - name: Npm Install
-      run: npm install
+      - name: Set release-alpha variables
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          echo "VERSION_SUFFIX=${{ steps.image.outputs.fullSuffix }}" >> $GITHUB_ENV
 
-    - name: Build theme and compress to zip
-      run: npm run compress
+      - name: Set PR variables
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          echo "VERSION_SUFFIX=${{ steps.image.outputs.suffix }}-${{ steps.image.outputs.SHA }}" >> $GITHUB_ENV
 
-    - name: Set artifact
-      shell: pwsh
-      id: artifact
-      run: |
-        $file = Get-ChildItem -Path ../artifacts -Filter "*.zip" | Select-Object -First 1
-        Write-Host "::set-output name=name::$($file.BaseName)_${{ env.VERSION_SUFFIX }}.zip"
-        Write-Host "::set-output name=full-name::$($file.FullName)"
-    - name: Rename artifact
-      if: ${{ github.ref != 'refs/heads/master' }}
-      shell: pwsh
-      run: |
-        Get-ChildItem ${{ steps.artifact.outputs.full-name }} | ForEach-Object {
-          Rename-Item $_ -NewName ${{steps.artifact.outputs.name}}
-        }
-    - name: Upload a Build Artifact to Azure Blob Storage
-      if: ${{ github.ref == 'refs/heads/vsf-rnd-integration' }}
-      uses: bacongobbler/azure-blob-storage-upload@v1.1.1
-      with:
-        source_dir: './artifacts'
-        container_name: 'packages'
-        connection_string: ${{ secrets.BLOB_CONNECTION_STRING }}
-        sync: false
+      - name: Get changelog
+        id: changelog
+        uses: VirtoCommerce/vc-github-actions/changelog-generator@master
+
+      - name: Build
+        if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request' }}
+        id: build
+        uses: VirtoCommerce/vc-github-actions/build-theme@master
+        with:
+          versionSuffix:  ${{ env.VERSION_SUFFIX }}
+
+      - name: Publish
+        if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
+        id: publish
+        uses: VirtoCommerce/vc-github-actions/publish-theme@master
+        with:
+          artifactPath: ${{ steps.build.outputs.artifactPath }}
+          artifactName: ${{ steps.build.outputs.artifactName }}
+
+      - name: Add link to PR
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: VirtoCommerce/vc-github-actions/publish-artifact-link@master
+        with:
+          artifactUrl: ${{ steps.publish.outputs.blobUrl }}
+
+      - name: Create Release
+        if: ${{ github.ref == 'refs/heads/master' }}
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ steps.image.outputs.prefix }}
+          release_name: ${{ steps.image.outputs.prefix }}
+          draft: false
+          prerelease: false
+          body: ${{ steps.changelog.outputs.changelog }}
+
+      - name: Upload Release Asset
+        if: ${{ github.ref == 'refs/heads/master' }}
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.build.outputs.artifactPath }}
+          asset_name: ${{ steps.build.outputs.artifactName }}
+          asset_content_type: application/zip
+
+      - name: Parse Jira Keys from All Commits
+        uses: VirtoCommerce/vc-github-actions/get-jira-keys@master
+        if: always()
+        id: jira_keys
+        with:
+          release: ${{ env.RELEASE_STATUS }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: BUILD_STATE::successful
+        if: success()
+        run: echo "BUILD_STATE=successful" >> $GITHUB_ENV
+
+      - name: Push Build Info to Jira
+        if: ${{ env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && steps.jira_keys.outputs.jira-keys != '' && always() }}
+        id: push_build_info_to_jira
+        uses: HighwayThree/jira-upload-build-info@master
+        with:
+          cloud-instance-base-url: '${{ secrets.CLOUD_INSTANCE_BASE_URL }}'
+          client-id: '${{ secrets.CLIENT_ID }}'
+          client-secret: '${{ secrets.CLIENT_SECRET }}'
+          pipeline-id: '${{ github.repository }} ${{ github.workflow }}'
+          build-number: ${{ github.run_number }}
+          build-display-name: 'Workflow: ${{ github.workflow }} (#${{ github.run_number }})'
+          build-state: '${{ env.BUILD_STATE }}'
+          build-url: '${{github.event.repository.url}}/actions/runs/${{github.run_id}}'
+          update-sequence-number: '${{ github.run_id }}'
+          last-updated: '${{github.event.head_commit.timestamp}}'
+          issue-keys: '${{ steps.jira_keys.outputs.jira-keys }}'
+          commit-id: '${{ github.sha }}'
+          repo-url: '${{ github.event.repository.url }}'
+          build-ref-url: '${{ github.event.repository.url }}/actions/runs/${{ github.run_id }}'
+
+      - name: Confirm Jira Build Output
+        if: success()
+        run: |
+          echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"

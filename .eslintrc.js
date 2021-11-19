@@ -16,7 +16,6 @@ module.exports = {
     "plugin:editorconfig/noconflict"
   ],
   rules: {
-    "editorconfig/editorconfig": "error",
     //"no-console": process.env.NODE_ENV === "production" ? "error" : "off",
     "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off",
     "vue/max-attributes-per-line": ["error", {
