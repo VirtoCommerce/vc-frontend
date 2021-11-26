@@ -1,10 +1,9 @@
 schema: http://localhost:10645/graphql
-documents: './client-app/**/*.(graphql|gql|ts)'
+documents: "./client-app/**/*.(graphql|gql|ts)"
 generates:
   ./client-app/core/api/graphql/types.ts:
     config:
-     skipTypename: true
+      skipTypename: true
     plugins:
-     - typescript
-     - typescript-operations
-
+      - typescript
+      - typescript-operations

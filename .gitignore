@@ -1,22 +1,19 @@
- See http://help.github.com/ignore-files/ for more about ignoring files.
-
-/config/drafts
 # compiled output
-/dist
-/tmp
-/out-tsc
+dist
+tmp
+out-tsc
 # Only exists if Bazel was run
-/bazel-out
+bazel-out
 
 # dependencies
-/node_modules
+node_modules
 
 # profiling files
 chrome-profiler-events.json
 speed-measure-plugin.json
 
 # IDEs and editors
-/.idea
+.idea
 .project
 .classpath
 .c9/
@@ -36,25 +33,21 @@ speed-measure-plugin.json
 .vs/*
 
 # misc
-/.sass-cache
-/connect.lock
-/coverage
-/libpeerconnection.log
+.sass-cache
+connect.lock
+coverage
+libpeerconnection.log
 npm-debug.log
 yarn-error.log
 testem.log
-/typings
+typings
 
 # System Files
 .DS_Store
 Thumbs.db
 
- # Custom
-/assets/static/bundle/dist
-/config/draft
+# Custom
+assets/static/bundle/dist
+config/draft
+config/drafts
 artifacts*
-/client-app/src/libs/.vs
-/client-app/src/.vs
-/client-app/.vs
-/client-app/libs/.vs
-/client-app/libs/storefrontUI/vue/src/components/.vs
