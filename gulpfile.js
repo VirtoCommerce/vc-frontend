@@ -11,17 +11,19 @@ function getPackage() {
 
 function compress() {
   var package = getPackage();
-  return merge2(src(["./*/**", "!./client-app/**", "!./_references/**"])
+  return merge2(
+    src(["./*/**", "!./client-app/**", "!./_references/**", "!./docs/**"])
     .pipe(gitignore(".gitignore")),
     // Need to add them manually because otherwise all bundles will be skipped as they are in .gitignore
-    src("./assets/static/bundle/**"))
-    .pipe(
-      rename(function(path) {
-        path.dirname = "default/" + path.dirname;
-      })
-    )
-    .pipe(zip(package.name + "-" + package.version + ".zip"))
-    .pipe(dest("./artifacts"));
+    src("./assets/static/bundle")
+  )
+  .pipe(
+    rename(function(path) {
+      path.dirname = "default/" + path.dirname;
+    })
+  )
+  .pipe(zip(package.name + "-" + package.version + ".zip"))
+  .pipe(dest("./artifacts"));
 }
 
 exports.compress = compress;

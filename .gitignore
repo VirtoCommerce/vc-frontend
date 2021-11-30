@@ -47,7 +47,7 @@ typings
 Thumbs.db
 
 # Custom
-assets/static/bundle
+/assets/static/bundle
 config/draft
 config/drafts
 artifacts*

@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [vue()],
   build: {
     outDir: "assets/static/bundle",
+    emptyOutDir: true,
     lib: {
       entry: path.resolve(__dirname, "client-app/main.ts"),
       name: "theme",
