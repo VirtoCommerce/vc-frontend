@@ -1,7 +1,6 @@
 {
-    "current": "Cyan",
-    "presets": {
-        "Cyan": {         
-        }
-    }
+  "current": "Cyan",
+  "presets": {
+    "Cyan": {}
+  }
 }

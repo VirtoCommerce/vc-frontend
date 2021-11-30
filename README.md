@@ -1,4 +1,4 @@
-# VUE MPA starter/boilerplate theme for VirtoCommerce Storefront.
+#  (beta) VUE MPA starter/boilerplate theme for VirtoCommerce Storefront.
 ![image](https://user-images.githubusercontent.com/7566324/107653878-c7e6a400-6c8a-11eb-802b-13a38f7f3143.png)
 
 **VUE MPA starter theme** - is starter theme is demonstrated a typical out-of-the-box B2B Portal that built using Liquid templates, Vue.JS web progressive framework and Bootstrap CSS.
