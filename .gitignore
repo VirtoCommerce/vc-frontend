@@ -51,3 +51,6 @@ assets/static/bundle/dist
 config/draft
 config/drafts
 artifacts*
+
+dist-ssr
+*.local

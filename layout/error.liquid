@@ -2,9 +2,6 @@
 <html lang="en" class="h-100">
 <head>
   <base href="{{ '/' | absolute_url }}" />
-  {{ 'bundle/dist/css/main.css' | static_asset_url | append_version | stylesheet_tag }}
-  {{ 'bundle/dist/css/chunk-common.css' | static_asset_url | append_version | stylesheet_tag }}
-  {{ 'bundle/dist/css/chunk-vendors.css' | static_asset_url | append_version | stylesheet_tag }}
   <style>
     #error {
     box-sizing: border-box;
@@ -18,7 +15,7 @@
     }
   </style>
 </head>
-<body>    
+<body>
 	<div id="layout">
       <!-- Content here -->
       {{ content_for_layout }}

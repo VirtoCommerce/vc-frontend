@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "useDefineForClassFields": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "jsx": "preserve",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "lib": [
+      "esnext",
+      "dom"
+    ]
+  },
+  "include": [
+    "client-app/**/*.ts",
+    "client-app/**/*.d.ts",
+    "client-app/**/*.tsx",
+    "client-app/**/*.vue"
+  ],
+  "exclude": [
+    "_references/**/*.ts",
+    "_references/**/*.d.ts",
+    "_references/**/*.tsx",
+    "_references/**/*.vue"
+  ]
+}
