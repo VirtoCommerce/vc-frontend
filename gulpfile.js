@@ -15,7 +15,7 @@ function compress() {
     src(["./*/**", "!./client-app/**", "!./_references/**", "!./docs/**"])
     .pipe(gitignore(".gitignore")),
     // Need to add them manually because otherwise all bundles will be skipped as they are in .gitignore
-    src("./assets/static/bundle/**", { base: './' })
+    src("./assets/static/bundle", { base: './' })
   )
   .pipe(
     rename(function(path) {
