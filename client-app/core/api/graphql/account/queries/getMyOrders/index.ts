@@ -1,18 +1,17 @@
 import client from "@core/api/graphql/graphql-client";
-import { CustomerOrderConnection, CustomerOrderType } from '@core/api/graphql/types';
+import { CustomerOrderConnection, CustomerOrderType } from "@core/api/graphql/types";
 import { currencyCode, currentUserId, locale, storeId } from "@core/constants";
-import getMyOrdersQueryDocument from './getMyOrdersQuery.graphql';
-
+import getMyOrdersQueryDocument from "./getMyOrdersQuery.graphql";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function getMyOrders(filter: string, itemsPerPage= 20, page = 1): Promise<CustomerOrderConnection> {
+async function getMyOrders(filter: string, itemsPerPage = 20, page = 1): Promise<CustomerOrderConnection> {
   const { data } = await client.query({
     query: getMyOrdersQueryDocument,
     variables: {
       filter: filter,
       first: itemsPerPage,
-      after: String((page - 1) * itemsPerPage)
-    }
+      after: String((page - 1) * itemsPerPage),
+    },
   });
   return data?.orders;
 }

@@ -1,8 +1,7 @@
 import client from "@core/api/graphql/graphql-client";
-import { CategoryConnection } from '@core/api/graphql/types';
+import { CategoryConnection } from "@core/api/graphql/types";
 import { currencyCode, currentUserId, locale, storeId } from "@core/constants";
-import searchCategoriesQueryDocument from './searchCategoriesQuery.graphql';
-
+import searchCategoriesQueryDocument from "./searchCategoriesQuery.graphql";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function searchCategories(itemsPerPage: number, page: number): Promise<CategoryConnection> {
@@ -14,8 +13,8 @@ async function searchCategories(itemsPerPage: number, page: number): Promise<Cat
       currencyCode: currencyCode,
       cultureName: locale,
       first: itemsPerPage,
-      after: String((page - 1) * itemsPerPage)
-    }
+      after: String((page - 1) * itemsPerPage),
+    },
   });
   return data.categories;
 }

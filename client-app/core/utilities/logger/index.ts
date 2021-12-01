@@ -1,7 +1,5 @@
-import defaultLogger from './defaultLogger';
+import defaultLogger from "./defaultLogger";
 
 const Logger = defaultLogger;
 
-export {
-  Logger
-};
+export { Logger };

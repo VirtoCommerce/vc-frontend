@@ -1,3 +1,4 @@
+// @ts-nocheck
 // It is global variables initialized on the layout page
 //TODO: rework to use one object with propwrites
 export const storeName = window.STORE_NAME;
@@ -15,10 +16,7 @@ export const mainMenu = window.MAIN_MENU;
 export const locales = window.LOCALES;
 
 // Need to trim store and language from base URL because they will be added later as parameters for each API call.
-export const baseUrl = window.BASE_URL
-  .replace(`/${storeName}`, "/")
-  .replace(`/${locale}`, "/")
-  .replace(/[/]+$/, "");
+export const baseUrl = window.BASE_URL.replace(`/${storeName}`, "/").replace(`/${locale}`, "/").replace(/[/]+$/, "");
 
 export const fullBaseUrl = `${baseUrl}/${storeName}/${locale}/`;
 export const loginUrl = `${fullBaseUrl}account/login`;
@@ -38,5 +36,3 @@ export const orderDraftType = "orderDraft";
 export const sortAscending = "asc";
 export const sortDescending = "desc";
 export const catalogOrderDraftsCount = 100;
-
-

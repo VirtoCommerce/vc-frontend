@@ -1,6 +1,5 @@
 {
-  "main_menu": 
-  {
+  "main_menu": {
     "static_page": "Static page (SSR)"
   },
   "common": {
@@ -136,7 +135,7 @@
       "cancel": "Cancel",
       "message": "Confirm the checkout for {0} for {1} items."
     },
-    "errors":{
+    "errors": {
       "QuantityError": "Quantity is invalid"
     }
   },

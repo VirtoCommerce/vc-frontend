@@ -1,8 +1,7 @@
 import client from "@core/api/graphql/graphql-client";
-import { CartType } from '@core/api/graphql/types';
+import { CartType } from "@core/api/graphql/types";
 import { currencyCode, currentUserId, locale, storeId } from "@core/constants";
-import getMyCartQueryDocument from './getMyCartQuery.graphql';
-
+import getMyCartQueryDocument from "./getMyCartQuery.graphql";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function getMyCart(): Promise<CartType> {
@@ -12,8 +11,8 @@ async function getMyCart(): Promise<CartType> {
       storeId: storeId,
       userId: currentUserId,
       currencyCode: currencyCode,
-      cultureName: locale
-    }
+      cultureName: locale,
+    },
   });
   return data.cart;
 }

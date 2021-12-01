@@ -15,11 +15,6 @@
   <!-- Google fonts -->
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet"/>
   <link href="{{'favicon.ico' | static_asset_url }}" rel="icon" type="image/x-icon">
-  {{ 'bundle/dist/css/main.css' | static_asset_url | append_version | stylesheet_tag }}
-  {{ 'bundle/dist/css/chunk-common.css' | static_asset_url | append_version | stylesheet_tag }}
-  {{ 'bundle/dist/css/chunk-vendors.css' | static_asset_url | append_version | stylesheet_tag }}
-  <script src="{{ 'bundle/dist/js/chunk-vendors.js' | static_asset_url | append_version }}"></script>
-  <script src="{{ 'bundle/dist/js/chunk-common.js' | static_asset_url | append_version }}"></script>
   <script>
     window.BASE_URL = `{{ "/" | full_url }}`;
     window.STORE_NAME = "{{ current_store.name }}";

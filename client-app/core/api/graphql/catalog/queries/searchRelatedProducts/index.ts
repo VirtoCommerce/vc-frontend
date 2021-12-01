@@ -1,8 +1,7 @@
 import client from "@core/api/graphql/graphql-client";
-import { ProductAssociation } from '@core/api/graphql/types';
+import { ProductAssociation } from "@core/api/graphql/types";
 import { currencyCode, currentUserId, locale, storeId, catalogId, categoryId } from "@core/constants";
-import searchRelatedProductsQueryDocument from './searchRelatedProducts.graphql';
-
+import searchRelatedProductsQueryDocument from "./searchRelatedProducts.graphql";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function searchRelatedProducts(id: string): Promise<ProductAssociation[]> {
@@ -12,8 +11,8 @@ async function searchRelatedProducts(id: string): Promise<ProductAssociation[]> 
       storeId: storeId,
       currencyCode: currencyCode,
       id,
-      cultureName: locale
-    }
+      cultureName: locale,
+    },
   });
   return data?.product?.associations?.items;
 }

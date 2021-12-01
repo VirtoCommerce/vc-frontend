@@ -1,8 +1,7 @@
 import client from "@core/api/graphql/graphql-client";
-import { Product } from '@core/api/graphql/types';
+import { Product } from "@core/api/graphql/types";
 import { currencyCode, currentUserId, locale, storeId, catalogId, categoryId } from "@core/constants";
-import getProductsQueryDocument from './getProductQuery.graphql';
-
+import getProductsQueryDocument from "./getProductQuery.graphql";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function getProduct(id: string): Promise<Product> {
@@ -12,8 +11,8 @@ async function getProduct(id: string): Promise<Product> {
       storeId: storeId,
       currencyCode: currencyCode,
       id,
-      cultureName: locale
-    }
+      cultureName: locale,
+    },
   });
   return data.product;
 }

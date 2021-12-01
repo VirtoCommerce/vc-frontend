@@ -1,6 +1,5 @@
 {
-  "main_menu": 
-  {
+  "main_menu": {
     "static_page": "Statische Seite (SSR)"
   },
   "common": {
@@ -134,7 +133,7 @@
       "cancel": "Abbrechen",
       "message": "Bestätigen Sie die Kaufabwicklung für {0} für  {1} Artikel."
     },
-    "errors":{
+    "errors": {
       "QuantityError": "Menge ist ungültig"
     }
   },

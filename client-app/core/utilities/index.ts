@@ -1,6 +1,3 @@
-import { Logger } from './logger';
-import { appendSuffixToFilename } from './urls';
-export {
-  Logger,
-  appendSuffixToFilename
-};
+import { Logger } from "./logger";
+import { appendSuffixToFilename } from "./urls";
+export { Logger, appendSuffixToFilename };

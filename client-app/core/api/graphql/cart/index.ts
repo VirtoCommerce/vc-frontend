@@ -15,5 +15,5 @@ export {
   addOrUpdateCartShipment,
   addOrUpdateCartPayment,
   createOrderFromCart,
-  removeCart
+  removeCart,
 };

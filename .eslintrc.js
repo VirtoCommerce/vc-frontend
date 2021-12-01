@@ -1,103 +1,43 @@
 module.exports = {
   root: true,
   env: {
-    node: true
+    node: true,
   },
-  plugins: [ "vue", "import", "@typescript-eslint", "editorconfig" ],
+  ignorePatterns: ["**/*.{es,umd}.js"],
+  plugins: ["import"],
   extends: [
-    "plugin:vue/recommended",
+    "plugin:vue/vue3-essential",
     "eslint:recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:import/errors",
-    "plugin:import/warnings",
+    "plugin:import/recommended",
     "plugin:import/typescript",
     "@vue/typescript/recommended",
-    "plugin:editorconfig/noconflict"
+    "@vue/prettier",
+    "@vue/prettier/@typescript-eslint",
   ],
-  rules: {
-    //"no-console": process.env.NODE_ENV === "production" ? "error" : "off",
-    "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off",
-    "vue/max-attributes-per-line": ["error", {
-      "singleline": Infinity,
-      "multiline": {
-        "max": 1,
-        "allowFirstLine": true
-      }
-    }],
-    "vue/html-closing-bracket-newline": ["warn", {
-      "singleline": "never",
-      "multiline": "always"
-    }],
-
-    // Warnings
-    'padded-blocks': ['warn', {
-      blocks: 'never',
-      switches: 'never',
-      classes: 'always',
-    }],
-    'no-trailing-spaces': 'warn',
-    'no-restricted-syntax': 'warn',
-    'no-await-in-loop': 'warn',
-    '@typescript-eslint/camelcase': 'warn',
-
-    // Disabled
-    "vue/html-self-closing": ["off", {
-      "html": {
-        "void": "never",
-        "normal": "never",
-        "component": "never"
-      },
-      "svg": "never",
-      "math": "never"
-    }],
-    "import/order": ["off", {
-      "groups": ["builtin", "external", "internal", "unknown", "parent", "sibling", "index"],
-      "pathGroups": [
-        {
-          "pattern": "vue*",
-          "group": "external",
-          "position": "before"
-        },
-        {
-          "pattern": "{i18n,@core/**,@components/**,@init-app/**,@account/**,@catalog/**}",
-          "group": "unknown",
-          "position": "after"
-        }
-      ],
-      "pathGroupsExcludedImportTypes": [],
-      "newlines-between": "never",
-      "alphabetize": {
-        "order": "asc"
-      }
-    }],
-    "comma-dangle": ["error", "never"],
-    "quote-props": ["error", "as-needed", { "keywords": true, "unnecessary": true }],
-    'import/prefer-default-export': 'off',
-    'class-methods-use-this': 'off',
-    'no-useless-constructor': 'off',
-    'no-prototype-builtins': 'off',
-    'no-plusplus': 'off',
-    'new-cap': 'off',
-  },
   parserOptions: {
-    parser: "@typescript-eslint/parser"
+    ecmaVersion: 2020,
   },
-  overrides: [
-    {
-      files: ["**/__tests__/*.{j,t}s?(x)"],
-      env: {
-        mocha: true
-      }
-    }
-  ],
+  rules: {
+    "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
+    "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
+    "@typescript-eslint/ban-ts-comment": "warn",
+    "vue/script-setup-uses-vars": "error",
+    "import/no-unresolved": "error"
+  },
+  globals: {
+    defineProps: "readonly",
+    defineEmits: "readonly",
+    defineExpose: "readonly",
+    withDefaults: "readonly"
+  },
   settings: {
     "import/parsers": {
-      "vue-eslint-parser": [".vue"]
+      "@typescript-eslint/parser": [".ts", ".tsx"]
     },
     "import/resolver": {
-      typescript: {},
-      node: {}
+      typescript: {
+        alwaysTryTypes: true,
+      }
     }
   }
 };
