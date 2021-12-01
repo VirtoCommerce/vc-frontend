@@ -21,4 +21,12 @@ export default defineConfig({
       fileName: (format) => `theme.${format}.js`,
     },
   },
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:2083/",
+        changeOrigin: false,
+      },
+    },
+  },
 });
