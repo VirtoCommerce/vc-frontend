@@ -45,10 +45,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install Node.js 16
-        uses: actions/setup-node@v1
-        with:
-          node-version: '16.x'
+      # - name: Install Node.js 16
+      #   uses: actions/setup-node@v1
+      #   with:
+      #     node-version: '16.x'
 
       - name: Get Image Version
         uses: VirtoCommerce/vc-github-actions/get-image-version@master
@@ -75,7 +75,7 @@ jobs:
       - name: Build
         if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request' }}
         id: build
-        uses: VirtoCommerce/vc-github-actions/build-theme@master
+        uses: VirtoCommerce/vc-github-actions/build-vue-theme@master
         with:
           versionSuffix:  ${{ env.VERSION_SUFFIX }}
 
