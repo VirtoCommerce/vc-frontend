@@ -4,6 +4,7 @@ module.exports = {
     node: true,
   },
   ignorePatterns: ["**/*.{es,umd}.js"],
+  plugins: ["import"],
   extends: [
     "plugin:vue/vue3-essential",
     "eslint:recommended",
@@ -20,12 +21,23 @@ module.exports = {
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
     "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
     "@typescript-eslint/ban-ts-comment": "warn",
-    "vue/script-setup-uses-vars": "error"
+    "vue/script-setup-uses-vars": "error",
+    "import/no-unresolved": "error"
   },
   globals: {
     defineProps: "readonly",
     defineEmits: "readonly",
     defineExpose: "readonly",
     withDefaults: "readonly"
+  },
+  settings: {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      typescript: {
+        alwaysTryTypes: true,
+      }
+    }
   }
 };

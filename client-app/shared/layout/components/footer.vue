@@ -1,7 +1,7 @@
 <template>
   <!-- Top footer -->
   <div class="bg-gray-800">
-    <div class="container mx-auto flex justify-between max-w-screen-xl py-12">
+    <div class="container mx-auto flex justify-between py-12">
       <!-- Logo column -->
       <div>
         <img src="/assets/static/images/logo_white.svg" class="h-9" />
@@ -67,10 +67,8 @@
   </div>
 
   <!-- Bottom footer -->
-  <div class="bg-gray-900">
-    <div class="container mx-auto flex items-center justify-between h-16 text-white text-xs">
-      <div>© 2021 VirtoCommerce. All Rights Reserved.</div>
-      <div>ASP.NET ecommerce platform <a class="text-blue-400 hover:text-blue-500 font-bold" href="#">by Virto</a></div>
-    </div>
+  <div class="bg-gray-900 flex items-center justify-between h-16 text-white text-xs px-12">
+    <div>© 2021 VirtoCommerce. All Rights Reserved.</div>
+    <div>ASP.NET ecommerce platform <a class="text-blue-400 hover:text-blue-500 font-bold" href="#">by Virto</a></div>
   </div>
 </template>

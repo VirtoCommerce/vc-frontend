@@ -1043,6 +1043,22 @@
     "@nodelib/fs.scandir" "2.1.3"
     fastq "^1.6.0"
 
+"@rollup/plugin-graphql@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@rollup/plugin-graphql/-/plugin-graphql-1.1.0.tgz#492f579816f65bc21ce26394f2f140d95192622d"
+  integrity sha512-X+H6oFlprDlnO3D0UiEytdW97AMphPXO0C7KunS7i/rBXIGQRQVDU5WKTXnBu2tfyYbjCTtfhXMSGI0i885PNg==
+  dependencies:
+    "@rollup/pluginutils" "^4.0.0"
+    graphql-tag "^2.2.2"
+
+"@rollup/pluginutils@^4.0.0":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@rollup/pluginutils/-/pluginutils-4.1.1.tgz#1d4da86dd4eded15656a57d933fda2b9a08d47ec"
+  integrity sha512-clDjivHqWGXi7u+0d2r2sBi4Ie6VLEAzWMIkvJLnDmxoOhBYOTfzGbOQBA32THHm11/LiJbd01tJUpJsbshSWQ==
+  dependencies:
+    estree-walker "^2.0.1"
+    picomatch "^2.2.2"
+
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.1"
   resolved "https://registry.npmjs.org/@samverschueren/stream-to-observable/-/stream-to-observable-0.3.1.tgz"
@@ -3356,6 +3372,17 @@ eslint-import-resolver-node@^0.3.6:
     debug "^3.2.7"
     resolve "^1.20.0"
 
+eslint-import-resolver-typescript@^2.5.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/eslint-import-resolver-typescript/-/eslint-import-resolver-typescript-2.5.0.tgz#07661966b272d14ba97f597b51e1a588f9722f0a"
+  integrity sha512-qZ6e5CFr+I7K4VVhQu3M/9xGv9/YmwsEXrsm3nimw8vWaVHRDrQRp26BgCypTxBp3vUp4o5aVEJRiy0F2DFddQ==
+  dependencies:
+    debug "^4.3.1"
+    glob "^7.1.7"
+    is-glob "^4.0.1"
+    resolve "^1.20.0"
+    tsconfig-paths "^3.9.0"
+
 eslint-module-utils@^2.7.1:
   version "2.7.1"
   resolved "https://registry.npmjs.org/eslint-module-utils/-/eslint-module-utils-2.7.1.tgz"
@@ -3531,7 +3558,7 @@ estraverse@^5.2.0:
   resolved "https://registry.npmjs.org/estraverse/-/estraverse-5.3.0.tgz"
   integrity sha512-MMdARuVEQziNTeJD8DgMqmhwR11BRQ/cBP+pLtYdSTnf3MIO8fFeiINEbX36ZdNlfU/7A9f3gUw49B3oQsvwBA==
 
-estree-walker@^2.0.2:
+estree-walker@^2.0.1, estree-walker@^2.0.2:
   version "2.0.2"
   resolved "https://registry.npmjs.org/estree-walker/-/estree-walker-2.0.2.tgz"
   integrity sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==
@@ -4249,7 +4276,7 @@ graphql-sse@^1.0.1:
   resolved "https://registry.npmjs.org/graphql-sse/-/graphql-sse-1.0.6.tgz"
   integrity sha512-y2mVBN2KwNrzxX2KBncQ6kzc6JWvecxuBernrl0j65hsr6MAS3+Yn8PTFSOgRmtolxugepxveyZVQEuaNEbw3w==
 
-graphql-tag@^2.11.0, graphql-tag@^2.12.6:
+graphql-tag@^2.10.4, graphql-tag@^2.11.0, graphql-tag@^2.12.6, graphql-tag@^2.2.2:
   version "2.12.6"
   resolved "https://registry.npmjs.org/graphql-tag/-/graphql-tag-2.12.6.tgz"
   integrity sha512-FdSNcu2QQcWnM2VNvSCCDCVS5PpPqpzgFT8+GXzqJuoDd0CBncxCY278u4mhRO7tMgo2JjgJA5aZ+nWSQ/Z+xg==
@@ -6330,7 +6357,7 @@ picocolors@^1.0.0:
   resolved "https://registry.npmjs.org/picocolors/-/picocolors-1.0.0.tgz"
   integrity sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==
 
-picomatch@^2.0.4, picomatch@^2.2.1, picomatch@^2.2.3:
+picomatch@^2.0.4, picomatch@^2.2.1, picomatch@^2.2.2, picomatch@^2.2.3:
   version "2.3.0"
   resolved "https://registry.npmjs.org/picomatch/-/picomatch-2.3.0.tgz"
   integrity sha512-lY1Q/PiJGC2zOv/z391WOTD+Z02bCgsFfvxoXXf6h7kv9o+WmsmzYqrAwY63sNgOxE4xEdq0WyUnXfKeBrSvYw==
@@ -7865,7 +7892,7 @@ ts-node@^9:
     source-map-support "^0.5.17"
     yn "3.1.1"
 
-tsconfig-paths@^3.11.0:
+tsconfig-paths@^3.11.0, tsconfig-paths@^3.9.0:
   version "3.12.0"
   resolved "https://registry.npmjs.org/tsconfig-paths/-/tsconfig-paths-3.12.0.tgz"
   integrity sha512-e5adrnOYT6zqVnWqZu7i/BQ3BnhzvGbjEjejFXO20lKIKpwTaupkCPgEfv4GZK1IBciJUEhYs3J3p75FdaTFVg==
@@ -8188,6 +8215,13 @@ vinyl@^2.0.0, vinyl@^2.1.0:
     cloneable-readable "^1.0.0"
     remove-trailing-separator "^1.0.1"
     replace-ext "^1.0.0"
+
+vite-plugin-graphql@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/vite-plugin-graphql/-/vite-plugin-graphql-0.1.0.tgz#f8cf45d4694c4887b8d565a20183c130812870f7"
+  integrity sha512-e8517azfqF7R95gsfQ4WVOySIfmVdK61fJaH0DrH47vVXs+O2BOJF1mkoHV3X65GLDrmMCHp5H+cTmsVlv8kNA==
+  dependencies:
+    graphql-tag "^2.10.4"
 
 vite-plugin-simple-gql@^0.5.0:
   version "0.5.0"

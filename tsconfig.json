@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "esnext",
+    "baseUrl": ".",
     "useDefineForClassFields": true,
     "module": "esnext",
     "moduleResolution": "node",
@@ -12,13 +13,22 @@
     "lib": [
       "esnext",
       "dom"
-    ]
+    ],
+    "paths": {
+      "@/*": [
+        "client-app/*"
+      ],
+      "@core/*": [
+        "client-app/core/*"
+      ]
+    }
   },
   "include": [
     "client-app/**/*.ts",
     "client-app/**/*.d.ts",
     "client-app/**/*.tsx",
-    "client-app/**/*.vue"
+    "client-app/**/*.vue",
+    "client-app/**/*.graphql"
   ],
   "exclude": [
     "_references/**/*.ts",

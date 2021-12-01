@@ -1,0 +1,16 @@
+#import "../../../fragments/memberAddressFields.graphql"
+
+ query getMyAddresses {
+  me
+  {       
+    contact
+    {
+     addresses {
+         items 
+         {
+           ...memberAddressFields
+         }
+     }    
+    }
+  }
+ }
