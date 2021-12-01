@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.polygon-bg {
+  background: url(/assets/static/images/polygon-bg.png) right no-repeat fixed;
+}
