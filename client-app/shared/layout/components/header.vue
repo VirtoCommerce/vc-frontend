@@ -1,7 +1,7 @@
 <template>
   <div class="header hidden lg:block">
     <!-- Top header -->
-    <div class="h-12 px-12 flex items-center justify-end bg-gray-900 font-bold text-xs text-white">
+    <div class="h-12 px-12 flex items-center justify-end bg-gray-900 font-bold text-sm text-white">
       <div class="flex items-center">
         <router-link class="text-blue-400 hover:text-blue-500" to="/login">Sign In</router-link>
         <div class="mx-3 h-1 w-1 bg-yellow-500 rounded"></div>
