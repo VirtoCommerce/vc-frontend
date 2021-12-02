@@ -16,6 +16,7 @@
           <i class="fas fa-chevron-down ml-3 text-yellow-500 align-baseline"></i>
         </div>
       </div>
+
       <!-- Unauthorized menu items -->
       <div v-else class="flex items-center">
         <router-link class="text-blue-400 hover:text-blue-500" to="/login">Sign In</router-link>
@@ -33,7 +34,7 @@
         <div class="flex-grow"></div>
         <div class="flex items-center space-x-8">
           <router-link to="/" class="menu-link uppercase font-extrabold text-gray-500">Home</router-link>
-          <div class="relative">
+          <div class="relative" ref="allProductsMenu">
             <div
               class="uppercase font-extrabold text-gray-500 flex items-center cursor-pointer"
               @click="allProductsVisible = !allProductsVisible"
@@ -213,10 +214,17 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import useUser from "@/shared/account/composables/useUser";
+import { onClickOutside } from "@vueuse/core";
+
 const { isAuthenticated, me } = useUser();
 const mobileMenuVisible = ref(false);
 const searchVisible = ref(false);
 const allProductsVisible = ref(false);
+const allProductsMenu = ref(null);
+
+onClickOutside(allProductsMenu, () => {
+  allProductsVisible.value = false;
+});
 </script>
 
 <style>
