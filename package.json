@@ -16,6 +16,8 @@
     "nswag": "nswag run"
   },
   "dependencies": {
+    "@fontsource/lato": "^4.5.0",
+    "@fontsource/roboto": "^4.5.1",
     "@rollup/plugin-graphql": "^1.1.0",
     "apollo-cache-inmemory": "^1.6.6",
     "apollo-client": "^2.6.10",
