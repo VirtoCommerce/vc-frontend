@@ -83,9 +83,17 @@ export default () => {
       const response = await fetch("/storefrontapi/account/login", {
         method: "POST",
         body: JSON.stringify(signMeIn),
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
       const res = (await response.json()) as IdentityResultType;
       isAuthenticated.value = res?.succeeded ?? isAuthenticated.value;
+
+      if (res.succeeded) {
+        await loadMe();
+      }
+
       return res;
     } catch (e) {
       Logger.error("useUser.signMeIn", e);

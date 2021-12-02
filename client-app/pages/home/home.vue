@@ -70,11 +70,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import useUser from "@/shared/account/composables/useUser";
-const { isAuthenticated, loadMe } = useUser();
-onMounted(async () => {
-  // TODO: Activate in ST-20
-  await loadMe();
-});
+const { isAuthenticated, me, loadMe } = useUser();
 </script>
 
 <style scoped>
