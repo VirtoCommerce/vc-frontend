@@ -55,7 +55,10 @@
         Your&nbsp;connection&nbsp;to&nbsp;what's new&nbsp;at&nbsp;B2B-store.
       </div>
       <div class="flex flex-grow w-full space-x-6">
-        <input class="bg-white rounded h-11 flex-grow shadow-inner px-4 min-w-0" placeholder="Enter E-mail" />
+        <input
+          class="bg-white rounded h-11 flex-grow shadow-inner px-4 min-w-0 outline-none"
+          placeholder="Enter E-mail"
+        />
         <button class="bg-white hover:bg-gray-200 px-6 uppercase text-sm font-roboto font-bold h-11 rounded shadow-md">
           Subscribe
         </button>
