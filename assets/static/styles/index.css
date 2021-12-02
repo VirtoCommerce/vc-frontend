@@ -3,5 +3,14 @@
 @tailwind utilities;
 
 .polygon-bg {
-  background: url(/assets/static/images/polygon-bg.png) right no-repeat fixed;
+  background-image: url(/assets/static/images/polygon.png);
+  background-repeat: no-repeat;
+  background-size: 46%;
+  background-position: right top;
+}
+
+@media (max-width: 768px) {
+  .polygon-bg {
+    background-position: right bottom -120px;
+  }
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="polygon-bg">
-    <div class="mx-auto w-3/5 py-5">
+    <div class="mx-auto w-3/5 pt-5 pb-32">
       <div class="flex justify-between gap-16">
         <div class="flex flex-col py-12">
           <h1 class="text-black-800 text-7xl md:text-8xl font-black mb-5 font-lato">404</h1>
