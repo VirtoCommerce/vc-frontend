@@ -18,6 +18,7 @@
   "dependencies": {
     "@fontsource/lato": "^4.5.0",
     "@fontsource/roboto": "^4.5.1",
+    "@fortawesome/fontawesome-free": "^5.15.4",
     "@rollup/plugin-graphql": "^1.1.0",
     "apollo-cache-inmemory": "^1.6.6",
     "apollo-client": "^2.6.10",
@@ -65,7 +66,7 @@
     "sass-loader": "^8.0.0",
     "tailwindcss": "^2.2.19",
     "typescript": "^4.4.3",
-    "vite": "^2.6.4",
+    "vite": "^2.6.14",
     "vite-plugin-simple-gql": "^0.5.0",
     "vue-tsc": "^0.3.0",
     "yarn": "^1.22.11"

@@ -50,13 +50,13 @@
   <!-- CTA -->
   <div class="py-6 lg:py-10 bg-yellow-500">
     <div class="container mx-auto flex flex-col lg:flex-row items-center space-y-2 lg:space-x-10 px-6 md:px-12">
-      <div class="uppercase font-bold text-3xl text-white whitespace-nowrap">subscribe now!</div>
-      <div class="text-base leading-tight text-white max-w-max lg:max-w-min">
+      <div class="uppercase font-extrabold text-3xl text-white whitespace-nowrap">subscribe now!</div>
+      <div class="text-base font-medium leading-tight text-white max-w-max lg:max-w-min">
         Your&nbsp;connection&nbsp;to&nbsp;what's new&nbsp;at&nbsp;B2B-store.
       </div>
       <div class="flex flex-grow w-full space-x-6">
-        <input class="bg-white rounded h-11 flex-grow shadow-md px-4 min-w-0" placeholder="Enter E-mail" />
-        <button class="bg-gray-100 hover:bg-gray-200 px-6 uppercase text-sm font-bold h-11 rounded shadow-md">
+        <input class="bg-white rounded h-11 flex-grow shadow-inner px-4 min-w-0" placeholder="Enter E-mail" />
+        <button class="bg-white hover:bg-gray-200 px-6 uppercase text-sm font-roboto font-bold h-11 rounded shadow-md">
           Subscribe
         </button>
       </div>
@@ -65,8 +65,13 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from "vue";
 import useUser from "@/shared/account/composables/useUser";
-const { isAuthenticated, me } = useUser();
+const { isAuthenticated, loadMe } = useUser();
+onMounted(async () => {
+  // TODO: Activate in ST-20
+  await loadMe();
+});
 </script>
 
 <style scoped>
