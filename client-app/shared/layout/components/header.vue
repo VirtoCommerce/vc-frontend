@@ -4,7 +4,7 @@
     <!-- Top header -->
     <div class="h-12 px-12 flex items-center justify-end bg-gray-900 font-bold text-sm text-white">
       <!-- Authorized menu items -->
-    <di v-if="!isAuthenticated" class="flex items-center">
+    <div v-if="!isAuthenticated" class="flex items-center">
         <router-link class="text-blue-400 hover:text-blue-500" to="/my/dashboard">Dashboard</router-link>
         <div class="mx-3 h-1 w-1 bg-yellow-500 rounded"></div>
         <router-link class="text-blue-400 hover:text-blue-500" to="/my/orders">Order History</router-link>

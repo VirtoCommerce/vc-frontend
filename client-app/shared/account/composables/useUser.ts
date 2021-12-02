@@ -30,7 +30,7 @@ const loading: Ref<boolean> = ref(false);
 const isAuthenticated: Ref<boolean> = ref(false);
 
 export default () => {
-  async function loadMe(): Promise<void> {
+  async function loadMe() {
     loading.value = true;
     try {
       me.value = await getMe();
