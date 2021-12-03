@@ -1,7 +1,6 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import { createRouter, createWebHistory } from "vue-router";
-import { createMetaManager } from "vue-meta";
 import Home from "./pages/home/home.vue";
 import Error404 from "./pages/404/404.vue";
 import "@fontsource/lato";
@@ -19,5 +18,4 @@ const router = createRouter({
 
 const app = createApp(App);
 app.use(router);
-app.use(createMetaManager());
 app.mount("#app");
