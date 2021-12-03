@@ -1,11 +1,13 @@
 <template>
-  <div class="container mx-auto w-4/5 py-5">
-    <div class="grid grid-cols-1 lg:grid-cols-2 lg:gap-24">
-      <div class="my-8 px-4">
-        <SignInForm @succeeded="onSignIn" />
-      </div>
-      <div class="hidden lg:block">
-        <img class="max-w-md" src="/assets/static/images/sign-in-page-image.png" />
+  <div class="polygon-bg flex-grow">
+    <div class="container mx-auto w-4/5 pt-5">
+      <div class="flex lg:gap-24">
+        <div class="flex-grow my-8 px-4">
+          <SignInForm @succeeded="onSignIn" />
+        </div>
+        <div class="flex-grow hidden lg:block">
+          <img class="max-w-md" src="/assets/static/images/sign-in-page-image.png" />
+        </div>
       </div>
     </div>
   </div>

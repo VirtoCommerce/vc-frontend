@@ -19,7 +19,7 @@
 
       <!-- Unauthorized menu items -->
       <div v-else class="flex items-center">
-        <router-link class="text-blue-400 hover:text-blue-500" to="/login">Sign In</router-link>
+        <router-link class="text-blue-400 hover:text-blue-500" to="/signIn">Sign In</router-link>
         <div class="mx-3 h-1 w-1 bg-yellow-500 rounded"></div>
         <router-link class="text-blue-400 hover:text-blue-500" to="/register">Register now</router-link>
       </div>
@@ -201,7 +201,7 @@
 
     <!-- Unauthorized menu items -->
     <div v-else class="flex flex-col space-y-4 px-12">
-      <router-link to="/login" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
+      <router-link to="/signIn" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
         >Sign In</router-link
       >
       <router-link to="/register" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
