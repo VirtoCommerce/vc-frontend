@@ -8747,6 +8747,11 @@
     "lodash" "^4.17.21"
     "semver" "^6.3.0"
 
+"vue-meta@^3.0.0-alpha.9":
+  "integrity" "sha512-/ff7qNKy4c5NwmDl6N5XK2hhiXEdMeUxvk+SXCs40W9DOgu7VWGqPtgdSnXHnYMRoofkT/nKHE+vXklJ47r9Dw=="
+  "resolved" "https://registry.npmjs.org/vue-meta/-/vue-meta-3.0.0-alpha.9.tgz"
+  "version" "3.0.0-alpha.9"
+
 "vue-router@4":
   "integrity" "sha512-CPXvfqe+mZLB1kBWssssTiWg4EQERyqJZes7USiqfW9B5N2x+nHlnsM1D3b5CaJ6qgCvMmYJnz+G0iWjNCvXrg=="
   "resolved" "https://registry.npmjs.org/vue-router/-/vue-router-4.0.12.tgz"
