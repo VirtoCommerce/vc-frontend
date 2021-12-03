@@ -3,6 +3,9 @@ import App from "./App.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "./pages/home/home.vue";
 import Error404 from "./pages/404/404.vue";
+import "@fontsource/lato";
+import "@fontsource/roboto";
+import "@fortawesome/fontawesome-free/css/all.css";
 import "../assets/static/styles/index.css";
 
 const router = createRouter({

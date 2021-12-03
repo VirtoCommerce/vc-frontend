@@ -1,28 +1,28 @@
-#  (beta) VUE MPA starter/boilerplate theme for VirtoCommerce Storefront.
+# B2B Mercury theme for VirtoCommerce Storefront
 ![image](https://user-images.githubusercontent.com/7566324/107653878-c7e6a400-6c8a-11eb-802b-13a38f7f3143.png)
 
 **VUE MPA starter theme** - is starter theme is demonstrated a typical out-of-the-box B2B Portal that built using Liquid templates, Vue.JS web progressive framework and Bootstrap CSS.
- This theme represents the VC Team's opinionated starting point for new projects. It strives to include up-to-date best practices and solutions that we have deemed needed for the majority of projects we build. It is a reflection of what’s possible when building a theme! 
+This theme represents the VC Team's opinionated starting point for new projects. It strives to include up-to-date best practices and solutions that we have deemed needed for the majority of projects we build. It is a reflection of what’s possible when building a theme!
 
 **VUE MPA starter theme** is not only a real-world solution that implements practical business use-cases and  this is also the good starting point for your theme that you can customize by direct code modifications!
 
 # The project non-functional key features:
 
-- Plays opinionated starting point for all new themes and frontend solution constructed on VC storefront. 
+- Plays opinionated starting point for all new themes and frontend solution constructed on VC storefront.
 - Focus on development performance thanks to maximum reusing of exciting developer experience such as server side functionality, web components and views.
 - SEO friendly thanks to SSR (Server Side Rendering) performing on the VC Storefront ASP.NET Core application.
-- Presentation logic decoupling from backend. You might fully concentrate on  presentation tasks and do not think for backend. 
-- Intentionally lack of using custom CSS an initial styles constructed, using popular Bootstrap CSS library  and have an adaptive markup allows working on all popular devices and resolutions to make the customization process for theme styles  more straightforward. 
+- Presentation logic decoupling from backend. You might fully concentrate on  presentation tasks and do not think for backend.
+- Intentionally lack of using custom CSS an initial styles constructed, using popular Bootstrap CSS library  and have an adaptive markup allows working on all popular devices and resolutions to make the customization process for theme styles  more straightforward.
 - Liquid templates and SSR (server side rendering)  + MPA (multi-page application) architecture with using Vue.JS progressive framework allow to get the all benefits from both server side and WEB development techniques.
-  
-  
+
+
 
 # How does it work?
 TBD
 # Why MPA (Multi Page Application) instead of SPA (Single Page Application)?
-There are the following  reasones why MPA architecture has been chosen. 
+There are the following  reasones why MPA architecture has been chosen.
 - SEO requirements. One of the weaknesses of the SPA is SEO. Unfortunately, they aren’t as SEO friendly as MPA’s. It’s primarily because the majority of single-page applications are run on JavaScript, which most search engines do not support. MPA enables better website positioning as each page can be optimized for a different keyword. Also, meta tags can be included on every page – this positively impacts Google rankings.
-- Reusing of exists Storefront's functionality such as security, slug routing, multiple stores, currencies, and languages. All these functionalities are hard to be reused in the classical SPA applications. 
+- Reusing of exists Storefront's functionality such as security, slug routing, multiple stores, currencies, and languages. All these functionalities are hard to be reused in the classical SPA applications.
 
 # Theme structure
 ```bash
@@ -107,7 +107,7 @@ There are the following  reasones why MPA architecture has been chosen.
 ## Prerequisites
 * Install `vc-platform` 3.x the latest version. [Deploy on Windows](https://github.com/VirtoCommerce/vc-platform/blob/master/docs/getting-started/deploy-from-precompiled-binaries-windows.md) or [Deploy on Linux](https://github.com/VirtoCommerce/vc-platform/blob/master/docs/getting-started/deploy-from-precompiled-binaries-linux.md)
 * Install `vc-module-experience-api` module. [Getting started](https://github.com/VirtoCommerce/vc-module-experience-api/blob/dev/docs/getting-started.md)
-  
+
 ## Install the `vc-storefront` from experimental branch `x-api-integration`
 * Clone https://github.com/VirtoCommerce/vc-storefront/tree/feature/x-api-integration in to a local folder
 
@@ -125,14 +125,14 @@ There are the following  reasones why MPA architecture has been chosen.
 ## Setup `starter theme`
 
 ```bash
-# Clone repo into the folder where storefront is installed 
+# Clone repo into the folder where storefront is installed
 git clone https://github.com/VirtoCommerce/vue-starter-theme.git "C:\vc-storefront\wwwroot\cms-content\themes\{store-name}\default"
 # Change the current directory
 cd C:\vc-storefront\wwwroot\cms-content\themes\{store-name}\default
 # install dependencies
-npm install 
-# Build and minifies theme files for production   
-npm run build 
+npm install
+# Build and minifies theme files for production
+npm run build
 ```
 
 ## Run `vc-storefront` application
@@ -140,7 +140,7 @@ npm run build
 # change the current directory
 cd C:\vc-storefront
 # build and run storefront application
-dotnet run 
+dotnet run
 ```
 
 
