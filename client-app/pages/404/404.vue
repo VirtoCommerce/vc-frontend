@@ -3,9 +3,9 @@
     <div class="mx-auto w-3/5 pt-5 pb-32">
       <div class="flex justify-between gap-16">
         <div class="flex flex-col py-12">
-          <h1 class="text-black-800 text-7xl md:text-8xl font-black mb-5 font-lato">404</h1>
-          <h2 class="text-black-800 text-2xl md:text-4xl font-bold mb-2 font-lato">Page Not Found</h2>
-          <p class="text-gray-700 text-base md:text-xl leading-relaxed mb-10 font-lato">We suggest you back to home</p>
+          <h1 class="text-black-800 text-7xl md:text-8xl font-black mb-5">404</h1>
+          <h2 class="text-black-800 text-2xl md:text-4xl font-bold mb-2">Page Not Found</h2>
+          <p class="text-gray-700 text-base md:text-xl leading-relaxed mb-10">We suggest you back to home</p>
           <div>
             <router-link
               to="/"
