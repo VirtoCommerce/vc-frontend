@@ -3,6 +3,7 @@ import { getMe, updatePersonalData } from "@/core/api/graphql/account";
 import { UserType, IdentityResultType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 import { SignMeUp, SignMeIn } from "../types";
+import useFetch from "@/core/composables/useFetch";
 
 const me: Ref<UserType> = ref({
   userName: "",
@@ -30,11 +31,13 @@ const loading: Ref<boolean> = ref(false);
 const isAuthenticated: Ref<boolean> = ref(false);
 
 export default () => {
+  const { innerFetch } = useFetch();
+
   async function loadMe() {
     loading.value = true;
+
     try {
       me.value = await getMe();
-      console.log(me);
     } catch (e) {
       Logger.error("useUser.loadMe", e);
       throw e;
@@ -80,14 +83,8 @@ export default () => {
   async function signMeIn(signMeIn: SignMeIn): Promise<IdentityResultType> {
     try {
       loading.value = true;
-      const response = await fetch("/storefrontapi/account/login", {
-        method: "POST",
-        body: JSON.stringify(signMeIn),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const res = (await response.json()) as IdentityResultType;
+      const url = "/storefrontapi/account/login";
+      const res = await innerFetch<SignMeIn, IdentityResultType>(url, "POST", signMeIn);
       isAuthenticated.value = res?.succeeded ?? isAuthenticated.value;
 
       if (res.succeeded) {
@@ -106,11 +103,8 @@ export default () => {
   async function signMeUp(signMeUp: SignMeUp): Promise<IdentityResultType> {
     try {
       loading.value = true;
-      const response = await fetch("/storefrontapi/account/user", {
-        method: "POST",
-        body: JSON.stringify(signMeUp),
-      });
-      const res = (await response.json()) as IdentityResultType;
+      const url = "/storefrontapi/account/user";
+      const res = await innerFetch<SignMeUp, IdentityResultType>(url, "POST", signMeUp);
       return res;
     } catch (e) {
       Logger.error("useUser.signMeUp", e);

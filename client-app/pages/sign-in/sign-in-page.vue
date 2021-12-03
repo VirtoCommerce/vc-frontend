@@ -2,8 +2,8 @@
   <div class="container mx-auto w-4/5 py-5">
     <div class="grid grid-cols-1 lg:grid-cols-2 lg:gap-24">
       <div class="my-8 px-4">
-        <h1 class="mb-8 font-semibold uppercase text-4xl">Sign In</h1>
-        <div v-if="authError" class="flex space-x-3 px-3 py-2.5 h-11 bg-red-50 rounded-sm">
+        <h1 class="mb-6 font-semibold uppercase text-4xl">Sign In</h1>
+        <div v-if="authError" class="flex space-x-3 px-3 py-2.5 h-11 bg-red-100 rounded-sm">
           <img class="w-4 h-auto" src="/assets/static/images/error-icon.svg" />
           <span><strong>User</strong> or <strong>password</strong> is incorrect</span>
         </div>
@@ -56,7 +56,7 @@ import { ref, reactive } from "@vue/reactivity";
 import { Ref } from "vue";
 import { useRouter } from "vue-router";
 
-const { isAuthenticated, me, signMeIn } = useUser();
+const { signMeIn } = useUser();
 
 const model = reactive<SignMeIn>({
   userName: "",

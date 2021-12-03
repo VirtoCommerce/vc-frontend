@@ -70,12 +70,31 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import useUser from "@/shared/account/composables/useUser";
-import { onMounted } from "vue";
-const { isAuthenticated, me, loadMe } = useUser();
+import { onMounted, reactive, Ref, ref } from "vue";
+import { SignMeIn } from "@/shared/account/types";
+
+const { isAuthenticated, me, loadMe, signMeIn } = useUser();
 
 onMounted(async () => {
   await loadMe();
 });
+
+const model = reactive<SignMeIn>({
+  userName: "",
+  password: "",
+});
+
+const authError = ref(false);
+
+async function signIn() {
+  authError.value = false;
+
+  var result = await signMeIn(model);
+
+  if (!result.succeeded) {
+    authError.value = true;
+  }
+}
 </script>
 
 <style scoped>
