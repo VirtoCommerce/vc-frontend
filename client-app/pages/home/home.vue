@@ -2,7 +2,7 @@
   <!-- Banner -->
   <div class="banner flex items-center">
     <div class="container mx-auto flex flex-col lg:flex-row items-center space-y-10 lg:space-x-24 p-6 md:p-12">
-      <div v-if="!isAuthenticated" class="w-full lg:w-2/5 bg-white shadow-lg rounded p-10">Login form</div>
+      <div v-if="!isAuthenticated" class="w-full lg:w-2/5 bg-white shadow-lg rounded p-10"><SignInForm /></div>
       <div
         class="w-full lg:w-3/5 text-white font-bold filter drop-shadow-lg text-center lg:text-left text-3xl md:text-5xl select-none"
       >
@@ -70,31 +70,13 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import useUser from "@/shared/account/composables/useUser";
-import { onMounted, reactive, Ref, ref } from "vue";
-import { SignMeIn } from "@/shared/account/types";
+import SignInForm from "@/shared/account/components/sign-in-form.vue";
 
-const { isAuthenticated, me, loadMe, signMeIn } = useUser();
+const { isAuthenticated, me, loadMe } = useUser();
 
 onMounted(async () => {
   await loadMe();
 });
-
-const model = reactive<SignMeIn>({
-  userName: "",
-  password: "",
-});
-
-const authError = ref(false);
-
-async function signIn() {
-  authError.value = false;
-
-  var result = await signMeIn(model);
-
-  if (!result.succeeded) {
-    authError.value = true;
-  }
-}
 </script>
 
 <style scoped>
