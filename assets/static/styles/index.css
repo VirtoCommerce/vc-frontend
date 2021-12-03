@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.polygon-bg {
+  background-image: url(/assets/static/images/polygon.png);
+  background-repeat: no-repeat;
+  background-size: 46%;
+  background-position: right top;
+}
+
+@media (max-width: 768px) {
+  .polygon-bg {
+    background-position: right bottom -120px;
+  }
+}
