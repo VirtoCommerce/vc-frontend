@@ -1,5 +1,5 @@
 <template>
-  <div class="polygon-bg">
+  <div class="polygon-bg flex-grow">
     <div class="mx-auto w-3/5 pt-5 pb-32">
       <div class="flex justify-between gap-16">
         <div class="flex flex-col py-12">
