@@ -135,15 +135,15 @@
       <div class="relative">
         <div
           class="uppercase text-xl font-extrabold text-white flex items-center"
-          @click="allProductsVisible = !allProductsVisible"
+          @click="allProductsMobileVisible = !allProductsMobileVisible"
         >
           <div>All products</div>
           <i
             class="fas ml-3 text-yellow-500 align-baseline"
-            :class="[allProductsVisible ? 'fa-chevron-up' : 'fa-chevron-down']"
+            :class="[allProductsMobileVisible ? 'fa-chevron-up' : 'fa-chevron-down']"
           ></i>
         </div>
-        <div v-if="allProductsVisible" class="flex flex-col px-5 py-4 space-y-3 mt-2">
+        <div v-if="allProductsMobileVisible" class="flex flex-col px-5 py-4 space-y-3 mt-2">
           <router-link
             to="/bolts/carriage-bolts"
             class="font-bold text-gray-200 text-lg"
@@ -220,6 +220,7 @@ const { isAuthenticated, me } = useUser();
 const mobileMenuVisible = ref(false);
 const searchVisible = ref(false);
 const allProductsVisible = ref(false);
+const allProductsMobileVisible = ref(false);
 const allProductsMenu = ref(null);
 
 onClickOutside(allProductsMenu, () => {
