@@ -11,9 +11,23 @@
         <div class="mx-3 h-1 w-1 bg-yellow-500 rounded"></div>
         <router-link class="text-blue-400 hover:text-blue-500" to="/my/lists">Lists</router-link>
         <div class="w-px h-5 bg-yellow-500 mx-4 hidden xl:block"></div>
-        <div class="text-white flex items-center">
-          <div>{{ me.userName }}</div>
-          <i class="fas fa-chevron-down ml-3 text-yellow-500 align-baseline"></i>
+        <div class="relative">
+          <div class="text-white flex items-center" @click="loginMenuVisible = true">
+            <div>{{ me.userName }}</div>
+            <i class="fas fa-chevron-down ml-3 text-yellow-500 align-baseline"></i>
+          </div>
+          <div
+            v-if="loginMenuVisible"
+            class="absolute z-10 bg-white rounded-md shadow-lg flex flex-col px-3 py-4 space-y-3 mt-2 right-0 text-black"
+          >
+            <div class="flex items-center justify-between">
+              <i class="fa fa-user-circle fa-2x fa-fw text-yellow-500"></i>
+              <span class="ml-2">{{ me.userName }}</span>
+              <button class="ml-4 text-gray-400 hover:bg-gray-200 border border-gray-200 rounded h-6 w-6 shadow">
+                <i class="fas fa-sign-out-alt"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -221,6 +235,7 @@ const mobileMenuVisible = ref(false);
 const searchVisible = ref(false);
 const allProductsVisible = ref(false);
 const allProductsMobileVisible = ref(false);
+const loginMenuVisible = ref(false);
 const allProductsMenu = ref(null);
 
 onClickOutside(allProductsMenu, () => {
