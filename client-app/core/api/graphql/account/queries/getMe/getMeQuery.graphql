@@ -7,7 +7,5 @@ query getMe {
     photoUrl
     phoneNumber
     permissions
-
-
   }
 }

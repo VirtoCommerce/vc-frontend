@@ -1,13 +1,13 @@
 <template>
   <h1 class="mb-6 font-semibold uppercase text-4xl">Sign In</h1>
   <form @submit="onSubmit">
-    <div v-if="authError" class="flex space-x-3 px-3 py-2.5 h-11 bg-red-100 rounded-sm">
-      <img class="w-4 h-auto" src="/assets/static/images/error-icon.svg" />
-      <span> <strong>User</strong> or <strong>password</strong> is incorrect </span>
+    <div v-if="authError" class="flex items-center space-x-2 px-3 py-3 h-11 bg-red-100 rounded-sm">
+      <i class="fa fa-times-circle text-red-500" aria-hidden="true"></i>
+      <span><strong>User</strong> or <strong>password</strong> is incorrect</span>
     </div>
-    <div v-if="!_.isEmpty(errors)" class="mt-2 flex space-x-3 px-3 py-2.5 h-11 bg-red-100 rounded-sm">
-      <img class="w-4 h-auto" src="/assets/static/images/error-icon.svg" />
-      <span> <strong>User</strong> and <strong>password</strong> are required </span>
+    <div v-if="!_.isEmpty(errors)" class="mt-2 flex items-center space-x-2 px-3 py-3 h-11 bg-red-100 rounded-sm">
+      <i class="fa fa-times-circle text-red-500" aria-hidden="true"></i>
+      <span> <strong>User</strong> and <strong>password</strong> are required</span>
     </div>
     <div class="mt-4">
       <span class="font-semibold" for>User name</span>
