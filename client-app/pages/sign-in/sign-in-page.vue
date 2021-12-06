@@ -1,8 +1,8 @@
 <template>
   <div class="polygon-bg flex-grow">
-    <div class="container mx-auto w-4/5 pt-5">
+    <div class="container mx-auto w-5/6 md:w-4/5 pt-5">
       <div class="flex lg:gap-24">
-        <div class="flex-grow my-8 px-4">
+        <div class="flex-grow my-8 md:px-4">
           <SignInForm @succeeded="onSignIn" />
         </div>
         <div class="flex-grow hidden lg:block">

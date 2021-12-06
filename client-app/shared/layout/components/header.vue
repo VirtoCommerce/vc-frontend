@@ -252,6 +252,7 @@ onClickOutside(loginMenu, () => {
 
 async function signOut() {
   await signMeOut();
+  loginMenuVisible.value = false;
 }
 </script>
 

@@ -42,17 +42,17 @@
     <div class="mt-1">
       <a href="/" class="text-blue-700 hover:text-blue-500 text-sm font-semibold">Forgot your password?</a>
     </div>
-    <div class="flex space-x-5 mt-8">
+    <div class="flex gap-4 mt-8" :class="{ 'max-w-sm': !props.growButtons }">
       <button
         type="submit"
-        class="flex-1 md:flex-grow-0 bg-yellow-500 uppercase font-bold rounded text-white px-10 py-2 text-sm"
+        class="flex-1 bg-yellow-500 uppercase font-bold rounded text-white px-2 py-2 text-sm"
         :class="{ 'hover:bg-yellow-600': isSubmitEnabled }"
         :disabled="!isSubmitEnabled"
       >
         Login
       </button>
       <button
-        class="flex-1 md:flex-grow-0 border-2 border-yellow-500 hover:bg-yellow-600 hover:text-white hover:border-yellow-600 uppercase font-bold rounded text-yellow-500 px-10 py-2 text-sm"
+        class="flex-1 border-2 border-yellow-500 hover:bg-yellow-600 hover:text-white hover:border-yellow-600 uppercase font-bold rounded text-yellow-500 px-2 py-2 text-sm"
       >
         Registration
       </button>
@@ -69,6 +69,8 @@ import * as yup from "yup";
 import _ from "lodash";
 
 const { signMeIn } = useUser();
+
+const props = withDefaults(defineProps<{ growButtons: boolean }>(), { growButtons: false });
 
 const emit = defineEmits(["succeeded"]);
 

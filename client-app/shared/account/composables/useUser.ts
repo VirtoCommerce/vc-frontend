@@ -28,7 +28,6 @@ const me: Ref<UserType> = ref({
   },
 });
 const loading: Ref<boolean> = ref(false);
-const isAuthenticated: Ref<boolean> = ref(false);
 
 export default () => {
   const { innerFetch } = useFetch();
@@ -70,7 +69,7 @@ export default () => {
         body: JSON.stringify({ oldPassword, newPassword, newPasswordConfirm: newPassword }),
       });
       const res = (await response.json()) as IdentityResultType;
-      isAuthenticated.value = res?.succeeded ?? isAuthenticated.value;
+
       return res;
     } catch (e) {
       Logger.error("useUser.changePassword", e);
@@ -85,7 +84,6 @@ export default () => {
       loading.value = true;
       const url = "/storefrontapi/account/login";
       const res = await innerFetch<SignMeIn, IdentityResultType>(url, "POST", signMeIn);
-      isAuthenticated.value = res?.succeeded ?? isAuthenticated.value;
 
       if (res.succeeded) {
         await loadMe();
@@ -114,14 +112,13 @@ export default () => {
     }
   }
 
-  async function signMeOut() {
+  async function signMeOut(): Promise<void> {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/logout";
 
       await fetch(url, { method: "GET" });
 
-      isAuthenticated.value = false;
       await loadMe();
     } catch (e) {
       Logger.error("useUser.logout", e);
