@@ -114,6 +114,23 @@ export default () => {
     }
   }
 
+  async function signMeOut() {
+    try {
+      loading.value = true;
+      const url = "/storefrontapi/account/logout";
+
+      await fetch(url, { method: "GET" });
+
+      isAuthenticated.value = false;
+      await loadMe();
+    } catch (e) {
+      Logger.error("useUser.logout", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     me: computed(() => me.value),
     loading: computed(() => loading.value),
@@ -123,5 +140,6 @@ export default () => {
     loadMe,
     signMeIn,
     signMeUp,
+    signMeOut,
   };
 };

@@ -23,7 +23,10 @@
             <div class="flex items-center justify-between">
               <i class="fa fa-user-circle fa-2x fa-fw text-yellow-500"></i>
               <span class="ml-2">{{ me.userName }}</span>
-              <button class="ml-4 text-gray-400 hover:bg-gray-200 border border-gray-200 rounded h-6 w-6 shadow">
+              <button
+                class="ml-4 text-gray-400 hover:bg-gray-200 border border-gray-200 rounded h-6 w-6 shadow"
+                @click="signOut"
+              >
                 <i class="fas fa-sign-out-alt"></i>
               </button>
             </div>
@@ -230,7 +233,7 @@ import { ref } from "vue";
 import useUser from "@/shared/account/composables/useUser";
 import { onClickOutside } from "@vueuse/core";
 
-const { isAuthenticated, me } = useUser();
+const { isAuthenticated, me, signMeOut } = useUser();
 const mobileMenuVisible = ref(false);
 const searchVisible = ref(false);
 const allProductsVisible = ref(false);
@@ -241,6 +244,10 @@ const allProductsMenu = ref(null);
 onClickOutside(allProductsMenu, () => {
   allProductsVisible.value = false;
 });
+
+async function signOut() {
+  await signMeOut();
+}
 </script>
 
 <style>
