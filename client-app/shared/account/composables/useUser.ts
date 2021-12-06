@@ -16,17 +16,8 @@ const me: Ref<UserType> = ref({
   emailConfirmed: false,
   isAdministrator: false,
   lockoutEnabled: false,
-  contact: {
-    id: "",
-    firstName: "",
-    lastName: "",
-    fullName: "",
-    memberType: "",
-    organizationsIds: [],
-    phones: [],
-    dynamicProperties: [],
-  },
 });
+
 const loading: Ref<boolean> = ref(false);
 
 export default () => {

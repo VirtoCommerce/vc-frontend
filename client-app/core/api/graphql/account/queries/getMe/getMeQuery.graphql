@@ -8,10 +8,6 @@ query getMe {
     phoneNumber
     permissions
 
-    contact {
-      firstName
-      lastName
-      fullName
-    }
+
   }
 }
