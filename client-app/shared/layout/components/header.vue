@@ -11,7 +11,7 @@
         <div class="mx-3 h-1 w-1 bg-yellow-500 rounded"></div>
         <router-link class="text-blue-400 hover:text-blue-500" to="/my/lists">Lists</router-link>
         <div class="w-px h-5 bg-yellow-500 mx-4 hidden xl:block"></div>
-        <div class="relative">
+        <div class="relative" ref="loginMenu">
           <div class="text-white flex items-center" @click="loginMenuVisible = true">
             <div>{{ me.userName }}</div>
             <i class="fas fa-chevron-down ml-3 text-yellow-500 align-baseline"></i>
@@ -238,11 +238,16 @@ const mobileMenuVisible = ref(false);
 const searchVisible = ref(false);
 const allProductsVisible = ref(false);
 const allProductsMobileVisible = ref(false);
-const loginMenuVisible = ref(false);
 const allProductsMenu = ref(null);
+const loginMenuVisible = ref(false);
+const loginMenu = ref(null);
 
 onClickOutside(allProductsMenu, () => {
   allProductsVisible.value = false;
+});
+
+onClickOutside(loginMenu, () => {
+  loginMenuVisible.value = false;
 });
 
 async function signOut() {
