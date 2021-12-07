@@ -21,4 +21,10 @@ export default defineConfig({
       fileName: (format) => `theme.${format}.js`,
     },
   },
+  server: {
+    proxy: {
+      "/storefrontapi": "http://localhost:2083",
+      "/xapi": "http://localhost:2083",
+    },
+  },
 });

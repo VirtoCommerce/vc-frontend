@@ -3,6 +3,7 @@ import { getMe, updatePersonalData } from "@/core/api/graphql/account";
 import { UserType, IdentityResultType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 import { SignMeUp, SignMeIn } from "../types";
+import useFetch from "@/core/composables/useFetch";
 
 const me: Ref<UserType> = ref({
   userName: "",
@@ -15,26 +16,18 @@ const me: Ref<UserType> = ref({
   emailConfirmed: false,
   isAdministrator: false,
   lockoutEnabled: false,
-  contact: {
-    id: "",
-    firstName: "",
-    lastName: "",
-    fullName: "",
-    memberType: "",
-    organizationsIds: [],
-    phones: [],
-    dynamicProperties: [],
-  },
 });
+
 const loading: Ref<boolean> = ref(false);
-const isAuthenticated: Ref<boolean> = ref(false);
 
 export default () => {
-  async function loadMe(): Promise<void> {
+  const { innerFetch } = useFetch();
+
+  async function loadMe() {
     loading.value = true;
+
     try {
       me.value = await getMe();
-      console.log(me);
     } catch (e) {
       Logger.error("useUser.loadMe", e);
       throw e;
@@ -67,7 +60,7 @@ export default () => {
         body: JSON.stringify({ oldPassword, newPassword, newPasswordConfirm: newPassword }),
       });
       const res = (await response.json()) as IdentityResultType;
-      isAuthenticated.value = res?.succeeded ?? isAuthenticated.value;
+
       return res;
     } catch (e) {
       Logger.error("useUser.changePassword", e);
@@ -80,12 +73,13 @@ export default () => {
   async function signMeIn(signMeIn: SignMeIn): Promise<IdentityResultType> {
     try {
       loading.value = true;
-      const response = await fetch("/storefrontapi/account/login", {
-        method: "POST",
-        body: JSON.stringify(signMeIn),
-      });
-      const res = (await response.json()) as IdentityResultType;
-      isAuthenticated.value = res?.succeeded ?? isAuthenticated.value;
+      const url = "/storefrontapi/account/login";
+      const res = await innerFetch<SignMeIn, IdentityResultType>(url, "POST", signMeIn);
+
+      if (res.succeeded) {
+        await loadMe();
+      }
+
       return res;
     } catch (e) {
       Logger.error("useUser.signMeIn", e);
@@ -98,14 +92,27 @@ export default () => {
   async function signMeUp(signMeUp: SignMeUp): Promise<IdentityResultType> {
     try {
       loading.value = true;
-      const response = await fetch("/storefrontapi/account/user", {
-        method: "POST",
-        body: JSON.stringify(signMeUp),
-      });
-      const res = (await response.json()) as IdentityResultType;
+      const url = "/storefrontapi/account/user";
+      const res = await innerFetch<SignMeUp, IdentityResultType>(url, "POST", signMeUp);
       return res;
     } catch (e) {
       Logger.error("useUser.signMeUp", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function signMeOut(): Promise<void> {
+    try {
+      loading.value = true;
+      const url = "/storefrontapi/account/logout";
+
+      await innerFetch<null, null>(url, "GET");
+
+      await loadMe();
+    } catch (e) {
+      Logger.error("useUser.logout", e);
       throw e;
     } finally {
       loading.value = false;
@@ -121,5 +128,6 @@ export default () => {
     loadMe,
     signMeIn,
     signMeUp,
+    signMeOut,
   };
 };

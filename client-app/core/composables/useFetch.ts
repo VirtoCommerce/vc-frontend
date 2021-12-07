@@ -14,7 +14,7 @@ export default function useFetch() {
     };
 
     return new Promise((resolve, reject) => {
-      fetch(unref(url), { headers, method, body: JSON.stringify(body) })
+      fetch(unref(url), { headers, method, body: body ? JSON.stringify(body) : null })
         .then((result) => {
           statusCode.value = result.status;
           return result.json();

@@ -2,7 +2,9 @@
   <!-- Banner -->
   <div class="banner flex items-center">
     <div class="container mx-auto flex flex-col lg:flex-row items-center space-y-10 lg:space-x-24 p-6 md:p-12">
-      <div v-if="!isAuthenticated" class="w-full lg:w-2/5 bg-white shadow-lg rounded p-10">Login form</div>
+      <div v-if="!isAuthenticated" class="w-full lg:w-2/5 bg-white shadow-lg rounded p-6 md:p-10">
+        <SignInForm :grow-buttons="true" />
+      </div>
       <div
         class="w-full lg:w-3/5 text-white font-bold filter drop-shadow-lg text-center lg:text-left text-3xl md:text-5xl select-none"
       >
@@ -70,9 +72,11 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import useUser from "@/shared/account/composables/useUser";
-const { isAuthenticated, loadMe } = useUser();
+import SignInForm from "@/shared/account/components/sign-in-form.vue";
+
+const { isAuthenticated, me, loadMe } = useUser();
+
 onMounted(async () => {
-  // TODO: Activate in ST-20
   await loadMe();
 });
 </script>

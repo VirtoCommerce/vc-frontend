@@ -10,16 +10,33 @@
         <router-link class="text-blue-400 hover:text-blue-500" to="/my/orders">Order History</router-link>
         <div class="mx-3 h-1 w-1 bg-yellow-500 rounded"></div>
         <router-link class="text-blue-400 hover:text-blue-500" to="/my/lists">Lists</router-link>
-        <div class="w-px h-5 bg-yellow-500 mx-4 hidden xl:block"></div>
-        <div class="text-white flex items-center">
-          <div>{{ me.userName }}</div>
-          <i class="fas fa-chevron-down ml-3 text-yellow-500 align-baseline"></i>
+        <div class="w-px h-5 bg-yellow-500 mx-4 hidden lg:block"></div>
+        <div class="relative cursor-pointer" ref="loginMenu">
+          <div class="text-white flex items-center" @click="loginMenuVisible = true">
+            <div>{{ me.userName }}</div>
+            <i class="fas fa-chevron-down ml-3 text-yellow-500 align-baseline"></i>
+          </div>
+          <div
+            v-if="loginMenuVisible"
+            class="absolute z-10 bg-white rounded-md shadow-lg flex flex-col px-3 py-4 space-y-3 mt-2 right-0 text-black"
+          >
+            <div class="flex items-center justify-between">
+              <i class="fa fa-user-circle fa-2x fa-fw text-yellow-500"></i>
+              <span class="ml-2">{{ me.userName }}</span>
+              <button
+                class="ml-4 text-gray-400 hover:bg-gray-200 border border-gray-200 rounded h-6 w-6 shadow"
+                @click="signOut"
+              >
+                <i class="fas fa-sign-out-alt"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Unauthorized menu items -->
       <div v-else class="flex items-center">
-        <router-link class="text-blue-400 hover:text-blue-500" to="/login">Sign In</router-link>
+        <router-link class="text-blue-400 hover:text-blue-500" to="/sign-in">Sign In</router-link>
         <div class="mx-3 h-1 w-1 bg-yellow-500 rounded"></div>
         <router-link class="text-blue-400 hover:text-blue-500" to="/register">Register now</router-link>
       </div>
@@ -201,7 +218,7 @@
 
     <!-- Unauthorized menu items -->
     <div v-else class="flex flex-col space-y-4 px-12">
-      <router-link to="/login" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
+      <router-link to="/signIn" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
         >Sign In</router-link
       >
       <router-link to="/register" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
@@ -216,16 +233,27 @@ import { ref } from "vue";
 import useUser from "@/shared/account/composables/useUser";
 import { onClickOutside } from "@vueuse/core";
 
-const { isAuthenticated, me } = useUser();
+const { isAuthenticated, me, signMeOut } = useUser();
 const mobileMenuVisible = ref(false);
 const searchVisible = ref(false);
 const allProductsVisible = ref(false);
 const allProductsMobileVisible = ref(false);
 const allProductsMenu = ref(null);
+const loginMenuVisible = ref(false);
+const loginMenu = ref(null);
 
 onClickOutside(allProductsMenu, () => {
   allProductsVisible.value = false;
 });
+
+onClickOutside(loginMenu, () => {
+  loginMenuVisible.value = false;
+});
+
+async function signOut() {
+  await signMeOut();
+  loginMenuVisible.value = false;
+}
 </script>
 
 <style>
