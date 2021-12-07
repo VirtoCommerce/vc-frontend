@@ -7,7 +7,7 @@
     </div>
     <div v-if="!_.isEmpty(errors)" class="mt-2 flex items-center space-x-2 px-3 py-3 h-11 bg-red-100 rounded-sm">
       <i class="fa fa-times-circle text-red-500" aria-hidden="true"></i>
-      <span> <strong>User</strong> and <strong>password</strong> are required</span>
+      <span><strong>User</strong> and <strong>password</strong> are required</span>
     </div>
     <div class="mt-4">
       <span class="font-semibold" for>User name</span>
