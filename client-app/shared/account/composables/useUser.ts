@@ -108,7 +108,7 @@ export default () => {
       loading.value = true;
       const url = "/storefrontapi/account/logout";
 
-      await fetch(url, { method: "GET" });
+      await innerFetch<null, null>(url, "GET");
 
       await loadMe();
     } catch (e) {

@@ -10,7 +10,7 @@
       <span><strong>User</strong> and <strong>password</strong> are required</span>
     </div>
     <div class="mt-4">
-      <span class="font-semibold" for>User name</span>
+      <span class="font-semibold">User name</span>
       <span class="text-red-500">*</span>
       <input
         type="text"
@@ -40,7 +40,9 @@
       />
     </div>
     <div class="mt-1">
-      <a href="/" class="text-blue-700 hover:text-blue-500 text-sm font-semibold">Forgot your password?</a>
+      <router-link to="/" class="text-blue-700 hover:text-blue-500 text-sm font-semibold">
+        Forgot your password?
+      </router-link>
     </div>
     <div class="flex gap-4 mt-8" :class="{ 'max-w-sm': !props.growButtons }">
       <button
@@ -68,7 +70,7 @@ import * as yup from "yup";
 import _ from "lodash";
 import useUser from "@/shared/account/composables/useUser";
 
-const { signMeIn } = useUser();
+const { signMeIn, loading } = useUser();
 
 const props = withDefaults(defineProps<{ growButtons: boolean }>(), { growButtons: false });
 
@@ -95,7 +97,7 @@ function isErrorField(name: string) {
 }
 
 // submit
-const isSubmitEnabled = computed(() => !isSubmitting.value);
+const isSubmitEnabled = computed(() => !isSubmitting.value && !loading.value);
 
 const onSubmit = handleSubmit(async () => {
   var result = await signMeIn(model);
