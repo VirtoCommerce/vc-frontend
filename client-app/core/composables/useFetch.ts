@@ -9,14 +9,22 @@ export default function useFetch() {
   const router = useRouter();
 
   function innerFetch<TBody, TResult>(url: MaybeRef<string>, method = "POST", body?: TBody): Promise<TResult> {
-    const headers = {
-      "Content-Type": "application/json",
-    };
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+
+    const reqInit: RequestInit = { headers, method, body: body ? JSON.stringify(body) : null };
+
+    const request = new Request(unref(url), reqInit);
 
     return new Promise((resolve, reject) => {
-      fetch(unref(url), { headers, method, body: body ? JSON.stringify(body) : null })
+      fetch(request)
         .then((result) => {
           statusCode.value = result.status;
+
+          if (result.status == 204) {
+            return null;
+          }
+
           return result.json();
         })
         .then((result) => {
