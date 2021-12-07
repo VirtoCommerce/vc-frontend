@@ -10,7 +10,7 @@
         <router-link class="text-blue-400 hover:text-blue-500" to="/my/orders">Order History</router-link>
         <div class="mx-3 h-1 w-1 bg-yellow-500 rounded"></div>
         <router-link class="text-blue-400 hover:text-blue-500" to="/my/lists">Lists</router-link>
-        <div class="w-px h-5 bg-yellow-500 mx-4 hidden xl:block"></div>
+        <div class="w-px h-5 bg-yellow-500 mx-4 hidden lg:block"></div>
         <div class="relative cursor-pointer" ref="loginMenu">
           <div class="text-white flex items-center" @click="loginMenuVisible = true">
             <div>{{ me.userName }}</div>
