@@ -61,12 +61,12 @@
 </template>
 
 <script setup lang="ts">
-import useUser from "@/shared/account/composables/useUser";
-import { ref, reactive } from "@vue/reactivity";
 import { computed, Ref } from "vue";
+import { ref, reactive } from "@vue/reactivity";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import _ from "lodash";
+import useUser from "@/shared/account/composables/useUser";
 
 const { signMeIn } = useUser();
 
