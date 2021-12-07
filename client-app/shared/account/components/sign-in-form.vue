@@ -1,14 +1,10 @@
 <template>
   <h1 class="mb-6 font-semibold uppercase text-4xl">Sign In</h1>
   <form @submit="onSubmit">
-    <div v-if="authError" class="flex items-center space-x-2 px-3 py-3 h-11 bg-red-100 rounded-sm">
-      <i class="fa fa-times-circle text-red-500" aria-hidden="true"></i>
-      <span><strong>User</strong> or <strong>password</strong> is incorrect</span>
-    </div>
-    <div v-if="!_.isEmpty(errors)" class="mt-2 flex items-center space-x-2 px-3 py-3 h-11 bg-red-100 rounded-sm">
-      <i class="fa fa-times-circle text-red-500" aria-hidden="true"></i>
-      <span><strong>User</strong> and <strong>password</strong> are required</span>
-    </div>
+    <alert-message v-if="authError"><strong>User</strong> or <strong>password</strong> is incorrect</alert-message>
+    <alert-message v-if="!_.isEmpty(errors)"
+      ><strong>User</strong> and <strong>password</strong> are required
+    </alert-message>
     <div class="mt-4">
       <span class="font-semibold">User name</span>
       <span class="text-red-500">*</span>
@@ -63,6 +59,7 @@
 </template>
 
 <script setup lang="ts">
+import AlertMessage from "@/components/AlertMessage.vue";
 import { computed, Ref } from "vue";
 import { ref, reactive } from "@vue/reactivity";
 import { useForm, useField } from "vee-validate";
@@ -72,7 +69,7 @@ import useUser from "@/shared/account/composables/useUser";
 
 const { signMeIn, loading } = useUser();
 
-const props = withDefaults(defineProps<{ growButtons: boolean }>(), { growButtons: false });
+const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButtons: false });
 
 const emit = defineEmits(["succeeded"]);
 
