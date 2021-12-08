@@ -1,6 +1,6 @@
 <template>
-  <div class="hidden md:flex items-center justify-center">
-    <span class="pr-2">Results per page:</span>
+  <div class="items-center justify-center">
+    <span class="hidden xl:inline pr-2">Results per page:</span>
     <button
       class="uppercase text-sm text-center w-12 h-9 rounded-l"
       :class="[

@@ -1,5 +1,5 @@
 <template>
-  <div class="hidden md:inline-flex mr-6" role="group">
+  <div role="group">
     <button
       type="button"
       class="rounded text-sm font-extrabold px-4 py-2"

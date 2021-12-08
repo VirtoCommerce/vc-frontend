@@ -1,16 +1,18 @@
 <template>
-  <nav class="pb-2 md:pb-8">
+  <nav class="pb-2 md:pb-8 text-sm">
     <ol class="flex">
       <template v-for="(item, i) in items" :key="i">
         <template v-if="i < items.length - 1">
           <li>
-            <router-link :to="item.url" class="text-cyan-700">{{ item.title }}</router-link>
+            <router-link :to="item.url" class="font-medium text-cyan-700 hover:text-cyan-900">{{
+              item.title
+            }}</router-link>
           </li>
           <li><span class="mx-2 text-gray-300">/</span></li>
         </template>
 
         <!-- Last breadcrumbs item -->
-        <li v-else class="text-gray-500">{{ item.title }}</li>
+        <li v-else class="font-medium text-gray-500">{{ item.title }}</li>
       </template>
     </ol>
   </nav>
