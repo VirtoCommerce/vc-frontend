@@ -137,14 +137,26 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-4 md:gap-x-6 gap-y-8">
-            <template v-if="loading">
-              <ProductSkeletonGrid v-for="i in productSearchParams.itemsPerPage" :key="i"></ProductSkeletonGrid>
-            </template>
-            <template v-else>
-              <ProductCardGrid v-for="item in products" :key="item.id" :product="item"></ProductCardGrid>
-            </template>
-          </div>
+          <template v-if="viewMode === 'grid'">
+            <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-4 md:gap-x-6 gap-y-8">
+              <template v-if="loading">
+                <ProductSkeletonGrid v-for="i in productSearchParams.itemsPerPage" :key="i"></ProductSkeletonGrid>
+              </template>
+              <template v-else>
+                <ProductCardGrid v-for="item in products" :key="item.id" :product="item"></ProductCardGrid>
+              </template>
+            </div>
+          </template>
+          <template v-else>
+            <div class="space-y-5">
+              <template v-if="loading">
+                <ProductSkeletonList v-for="i in productSearchParams.itemsPerPage" :key="i"></ProductSkeletonList>
+              </template>
+              <template v-else>
+                <ProductCardList v-for="item in products" :key="item.id" :product="item"></ProductCardList>
+              </template>
+            </div>
+          </template>
 
           <!-- Pagination and options bottom block -->
           <div class="flex justify-center md:justify-between pt-11">
@@ -181,7 +193,9 @@ import FiltersBlock from "@/shared/catalog/components/filters-block.vue";
 import ViewMode from "@/shared/catalog/components/view-mode.vue";
 import PageSize from "@/shared/catalog/components/page-size.vue";
 import ProductCardGrid from "@/shared/catalog/components/product-card-grid.vue";
+import ProductCardList from "@/shared/catalog/components/product-card-list.vue";
 import ProductSkeletonGrid from "@/shared/catalog/components/product-skeleton-grid.vue";
+import ProductSkeletonList from "@/shared/catalog/components/product-skeleton-list.vue";
 import Pagination from "@/shared/catalog/components/pagination.vue";
 import useProducts from "@/shared/catalog/composables/useProducts";
 import { ProductsSearchParams } from "@/shared/catalog/types";
