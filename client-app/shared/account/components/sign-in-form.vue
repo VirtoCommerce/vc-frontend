@@ -42,7 +42,7 @@
         Forgot your password?
       </router-link>
     </div>
-    <div class="flex gap-4 mt-8 text-base font-roboto" :class="{ 'max-w-sm': !props.growButtons }">
+    <div class="flex mt-8 text-base font-roboto" :class="{ 'max-w-sm': !props.growButtons }">
       <button
         type="submit"
         class="flex-1 flex-shrink bg-yellow-500 rounded text-white px-2 py-2 font-bold uppercase"
@@ -52,7 +52,7 @@
         Login
       </button>
       <button
-        class="flex-1 border-2 rounded text-yellow-500 px-2 py-2 border-yellow-500 uppercase font-bold hover:bg-yellow-600 hover:text-white hover:border-yellow-600"
+        class="flex-1 border-2 rounded text-yellow-500 ml-4 px-2 py-2 border-yellow-500 uppercase font-bold hover:bg-yellow-600 hover:text-white hover:border-yellow-600"
       >
         Registration
       </button>
