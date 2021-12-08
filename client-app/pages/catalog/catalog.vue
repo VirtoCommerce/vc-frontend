@@ -6,7 +6,7 @@
 
       <div class="flex items-start lg:gap-6">
         <!-- Filters -->
-        <div class="hidden lg:flex flex-col gap-5">
+        <div class="hidden lg:flex flex-col gap-5 flex-shrink-0 lg:w-1/4 xl:w-1/5">
           <!-- Search results -->
           <FiltersBlock title="Filter results by">
             <p class="text-sm pb-2">Search within these results</p>
@@ -81,19 +81,26 @@
           </div>
         </div>
 
-        <div class="flex-grow">
+        <div class="lg:w-3/4 xl:w-4/5 flex-grow">
           <div class="flex flex-col">
             <h2 class="text-gray-800 text-2xl lg:text-3xl font-bold uppercase">Desktops</h2>
             <p class="py-3">
-              <span class="font-extrabold">12 results found.</span>
-              <span class="font-normal"> 12 displayed that include 12 products</span>
+              <span class="font-extrabold">{{ total }} results found.</span>
+              <span>&nbsp;</span>
+              <span class="font-normal">
+                {{ products.length }} displayed that include {{ products.length }} products.
+              </span>
             </p>
             <div class="flex items-end gap-4 mb-6 mt-4">
               <!-- View options -->
               <ViewMode v-model:mode="viewMode" class="hidden lg:inline-flex mr-6"></ViewMode>
 
               <!-- Page size -->
-              <PageSize v-model:size="pageSize" class="hidden lg:flex"></PageSize>
+              <PageSize
+                v-model:size="productSearchParams.itemsPerPage"
+                class="hidden lg:flex"
+                @update:size="fetchProducts(productSearchParams)"
+              ></PageSize>
 
               <!-- Mobile filters toggler -->
               <div class="lg:hidden">
@@ -131,20 +138,33 @@
           </div>
 
           <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-4 md:gap-x-6 gap-y-8">
-            <ProductCard v-for="i in pageSize" :key="i"></ProductCard>
+            <template v-if="loading">
+              <ProductSkeletonGrid v-for="i in productSearchParams.itemsPerPage" :key="i"></ProductSkeletonGrid>
+            </template>
+            <template v-else>
+              <ProductCardGrid v-for="item in products" :key="item.id" :product="item"></ProductCardGrid>
+            </template>
           </div>
 
           <!-- Pagination and options bottom block -->
           <div class="flex justify-center md:justify-between pt-11">
             <div>
-              <Pagination v-model:page="pagination.page" :pages="pagination.pages"></Pagination>
+              <Pagination
+                v-model:page="productSearchParams.page"
+                :pages="pages"
+                @update:page="fetchProducts(productSearchParams)"
+              ></Pagination>
             </div>
             <div class="flex">
               <!-- View options -->
               <ViewMode v-model:mode="viewMode" class="hidden md:inline-flex mr-6"></ViewMode>
 
               <!-- Page size -->
-              <PageSize v-model:size="pageSize" class="hidden md:flex"></PageSize>
+              <PageSize
+                v-model:size="productSearchParams.itemsPerPage"
+                class="hidden md:flex"
+                @update:size="fetchProducts(productSearchParams)"
+              ></PageSize>
             </div>
           </div>
         </div>
@@ -154,14 +174,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { onClickOutside } from "@vueuse/core";
 import Breadcrumbs from "@/shared/catalog/components/breadcrumbs.vue";
 import FiltersBlock from "@/shared/catalog/components/filters-block.vue";
 import ViewMode from "@/shared/catalog/components/view-mode.vue";
 import PageSize from "@/shared/catalog/components/page-size.vue";
-import ProductCard from "@/shared/catalog/components/product-card.vue";
+import ProductCardGrid from "@/shared/catalog/components/product-card-grid.vue";
+import ProductSkeletonGrid from "@/shared/catalog/components/product-skeleton-grid.vue";
 import Pagination from "@/shared/catalog/components/pagination.vue";
+import useProducts from "@/shared/catalog/composables/useProducts";
+import { ProductsSearchParams } from "@/shared/catalog/types";
+
+const { products, total, loading, fetchProducts, pages } = useProducts();
+
+const productSearchParams = reactive<ProductsSearchParams>({
+  itemsPerPage: 16,
+  page: 1,
+});
+
+onMounted(async () => {
+  await fetchProducts(productSearchParams);
+});
 
 const mobileFiltersVisible = ref(false);
 const mobileFiltersSidebar = ref(null);
@@ -176,11 +210,6 @@ const breadcrumbsItems = [
 ];
 
 const viewMode = ref("grid");
-const pageSize = ref(16);
-const pagination = reactive({
-  page: 1,
-  pages: 10,
-});
 </script>
 
 <style scoped></style>

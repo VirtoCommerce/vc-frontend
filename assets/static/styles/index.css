@@ -21,3 +21,7 @@
   background-position: center;
   background-repeat: no-repeat;
 }
+
+.square {
+  padding-bottom: 100%;
+}

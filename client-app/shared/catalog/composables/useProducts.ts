@@ -9,6 +9,7 @@ export default () => {
   const relatedProducts: Ref<Product[]> = ref([]);
   const product: Ref<Product> = ref({ code: "", id: "", name: "", price: {} });
   const total: Ref<number> = ref(0);
+  const pages: Ref<number> = ref(0);
   const loading: Ref<boolean> = ref(true);
 
   async function fetchRelatedProducts(id: string) {
@@ -44,6 +45,7 @@ export default () => {
       //normalize prices
 
       total.value = productsConnection.totalCount ?? 0;
+      pages.value = Math.ceil(total.value / (searchParams.itemsPerPage || 16));
     } catch (e) {
       Logger.error("useProducts.fetchProducts", e);
       throw e;
@@ -72,6 +74,7 @@ export default () => {
     products: computed(() => products.value),
     product: computed(() => product.value),
     total: computed(() => total.value),
+    pages: computed(() => pages.value),
     loading: computed(() => loading.value),
   };
 };

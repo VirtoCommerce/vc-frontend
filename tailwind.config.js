@@ -5,9 +5,9 @@ module.exports = {
   darkMode: false,
   theme: {
     fontFamily: {
-      'lato': ['Lato', 'sans-serif'],
-      'roboto': ['Roboto', 'sans-serif'],
-      'roboto-condensed': ['Roboto Condensed', 'sans-serif'],
+      lato: ["Lato", "sans-serif"],
+      roboto: ["Roboto", "sans-serif"],
+      "roboto-condensed": ["Roboto Condensed", "sans-serif"],
     },
     extend: {
       colors: {
@@ -33,9 +33,9 @@ module.exports = {
   },
   variants: {
     extend: {
-      backgroundColor: ['checked'],
-      borderColor: ['checked'],
-    }
+      backgroundColor: ["checked"],
+      borderColor: ["checked"],
+    },
   },
   plugins: [require("@tailwindcss/line-clamp")],
 };
