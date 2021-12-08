@@ -136,8 +136,8 @@
   <div class="lg:hidden h-24"></div>
 
   <!-- Mobile menu -->
-  <div v-if="mobileMenuVisible" class="fixed bg-gray-800 opacity-95 z-50 w-full h-screen flex flex-col">
-    <div class="px-6 flex justify-between items-center h-24 flex-shrink-0">
+  <div v-if="mobileMenuVisible" class="fixed bg-gray-800 opacity-95 z-50 w-full h-screen">
+    <div class="px-6 flex justify-between items-center h-24">
       <router-link to="/" @click="mobileMenuVisible = false">
         <img src="/assets/static/images/logo_white.svg" class="h-9" />
       </router-link>
