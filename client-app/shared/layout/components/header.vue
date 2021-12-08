@@ -12,7 +12,7 @@
         <router-link class="text-blue-400 hover:text-blue-500" to="/my/lists">Lists</router-link>
         <div class="w-px h-5 bg-yellow-500 mx-4 hidden lg:block"></div>
         <div class="relative cursor-pointer" ref="loginMenu">
-          <div class="text-white flex items-center" @click="loginMenuVisible = true">
+          <div class="text-white flex items-center" @click="loginMenuVisible = !loginMenuVisible">
             <div>{{ me.userName }}</div>
             <i class="fas fa-chevron-down ml-3 text-yellow-500 align-baseline"></i>
           </div>
@@ -145,7 +145,7 @@
     </div>
 
     <!-- Main menu items-->
-    <div class="flex flex-col space-y-8 mt-8 px-12">
+    <div class="flex flex-col space-y-8 mt-8 px-10">
       <router-link to="/" class="uppercase text-xl font-extrabold text-white" @click="mobileMenuVisible = false"
         >Home</router-link
       >
@@ -160,7 +160,7 @@
             :class="[allProductsMobileVisible ? 'fa-chevron-up' : 'fa-chevron-down']"
           ></i>
         </div>
-        <div v-if="allProductsMobileVisible" class="flex flex-col px-5 py-4 space-y-3 mt-2">
+        <div v-if="allProductsMobileVisible" class="flex flex-col px-5 py-2 space-y-3 mt-2">
           <router-link
             to="/bolts/carriage-bolts"
             class="font-bold text-gray-200 text-lg"
@@ -200,7 +200,7 @@
     <div class="h-px bg-gray-600 mt-10 mb-6"></div>
 
     <!-- Authorized menu items -->
-    <div v-if="isAuthenticated" class="flex flex-col space-y-4 px-12">
+    <div v-if="isAuthenticated" class="flex flex-col space-y-4 px-10">
       <router-link to="/my/dashboard" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
         >Dashboard</router-link
       >
@@ -210,15 +210,32 @@
       <router-link to="/my/lists" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
         >Lists</router-link
       >
-      <div class="text-xl font-bold text-white">
-        <span>{{ me.userName }}</span>
-        <i class="fas fa-chevron-down text-lg ml-3 text-yellow-500 align-baseline"></i>
+      <div class="text-white">
+        <div class="text-xl font-bold" @click="loginMobileMenuVisible = !loginMobileMenuVisible">
+          <span>{{ me.userName }}</span>
+          <i
+            class="fas text-lg ml-3 text-yellow-500 align-baseline"
+            :class="[loginMobileMenuVisible ? 'fa-chevron-up' : 'fa-chevron-down']"
+          ></i>
+        </div>
+        <div v-if="loginMobileMenuVisible" class="flex flex-col pl-2 py-2 space-y-3 mt-2">
+          <div class="flex items-center max-w-sm">
+            <i class="fa fa-user-circle fa-2x fa-fw text-yellow-500"></i>
+            <span class="ml-2 flex-1 font-semibold">{{ me.userName }}</span>
+            <button
+              class="ml-4 px-4 py-1 border-2 border-red-600 rounded uppercase text-sm font-roboto"
+              @click="signOut"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Unauthorized menu items -->
-    <div v-else class="flex flex-col space-y-4 px-12">
-      <router-link to="/signIn" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
+    <div v-else class="flex flex-col space-y-4 px-10">
+      <router-link to="/sign-in" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
         >Sign In</router-link
       >
       <router-link to="/register" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
@@ -240,6 +257,7 @@ const allProductsVisible = ref(false);
 const allProductsMobileVisible = ref(false);
 const allProductsMenu = ref(null);
 const loginMenuVisible = ref(false);
+const loginMobileMenuVisible = ref(false);
 const loginMenu = ref(null);
 
 onClickOutside(allProductsMenu, () => {
