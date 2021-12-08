@@ -5,11 +5,11 @@
     <div class="h-12 px-12 flex items-center justify-end bg-gray-900 font-bold text-sm text-white">
       <!-- Authorized menu items -->
       <div v-if="isAuthenticated" class="flex items-center">
-        <router-link class="text-blue-400 hover:text-blue-500" to="/my/dashboard">Dashboard</router-link>
+        <router-link class="text-blue-400 hover:text-blue-500" to="/403">Dashboard</router-link>
         <div class="mx-3 h-1 w-1 bg-yellow-500 rounded"></div>
-        <router-link class="text-blue-400 hover:text-blue-500" to="/my/orders">Order History</router-link>
+        <router-link class="text-blue-400 hover:text-blue-500" to="/404">Order History</router-link>
         <div class="mx-3 h-1 w-1 bg-yellow-500 rounded"></div>
-        <router-link class="text-blue-400 hover:text-blue-500" to="/my/lists">Lists</router-link>
+        <router-link class="text-blue-400 hover:text-blue-500" to="/500">Lists</router-link>
         <div class="w-px h-5 bg-yellow-500 mx-4 hidden lg:block"></div>
         <div class="relative cursor-pointer" ref="loginMenu">
           <div class="text-white flex items-center" @click="loginMenuVisible = !loginMenuVisible">
@@ -125,7 +125,7 @@
   </div>
 
   <!-- Mobile header -->
-  <div class="lg:hidden fixed z-10 bg-white w-full">
+  <div class="lg:hidden fixed z-10 bg-white w-full border-b shadow-md">
     <div class="px-6 flex justify-between items-center h-24">
       <router-link to="/"><img src="/assets/static/images/logo.svg" class="h-9" /></router-link>
       <i class="fas fa-bars text-2xl text-yellow-500" @click="mobileMenuVisible = true"></i>
@@ -201,13 +201,13 @@
 
     <!-- Authorized menu items -->
     <div v-if="isAuthenticated" class="flex flex-col space-y-4 px-10">
-      <router-link to="/my/dashboard" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
+      <router-link to="/403" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
         >Dashboard</router-link
       >
-      <router-link to="/my/orders" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
+      <router-link to="/404" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
         >Order History</router-link
       >
-      <router-link to="/my/lists" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
+      <router-link to="/500" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
         >Lists</router-link
       >
       <div class="text-white">
