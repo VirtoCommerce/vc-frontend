@@ -12,11 +12,17 @@
             <p class="text-sm pb-2">Search within these results</p>
             <div class="flex gap-3">
               <input
-                type="text"
+                v-model="keyword"
                 class="border rounded text-sm leading-8 flex-1 w-full border-gray-300 h-8 px-2 outline-none focus:border-gray-400"
+                type="text"
+                :disabled="loading"
+                @keypress.enter="onSearchStart"
               />
               <button
-                class="rounded uppercase px-5 border-2 border-yellow-500 text-yellow-500 font-roboto-condensed font-bold text-sm"
+                class="rounded uppercase px-5 border-2 font-roboto-condensed font-bold text-sm"
+                :class="[loading ? 'text-gray-300 border-gray-300' : 'text-yellow-500 border-yellow-500']"
+                :disabled="loading"
+                @click="onSearchStart"
               >
                 Go
               </button>
@@ -92,16 +98,6 @@
               </span>
             </p>
             <div class="flex items-end gap-4 mb-6 mt-4">
-              <!-- View options -->
-              <ViewMode v-model:mode="viewMode" class="hidden lg:inline-flex mr-6"></ViewMode>
-
-              <!-- Page size -->
-              <PageSize
-                v-model:size="productSearchParams.itemsPerPage"
-                class="hidden lg:flex"
-                @update:size="fetchProducts(productSearchParams)"
-              ></PageSize>
-
               <!-- Mobile filters toggler -->
               <div class="lg:hidden">
                 <button
@@ -113,6 +109,16 @@
                   Filters
                 </button>
               </div>
+
+              <!-- View options -->
+              <ViewMode v-model:mode="viewMode" class="hidden md:inline-flex mr-6"></ViewMode>
+
+              <!-- Page size -->
+              <PageSize
+                v-model:size="productSearchParams.itemsPerPage"
+                class="hidden md:flex"
+                @update:size="fetchProducts(productSearchParams)"
+              ></PageSize>
 
               <!-- Sorting -->
               <div class="relative ml-auto flex-grow md:flex-grow-0">
@@ -186,8 +192,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue";
-import { onClickOutside } from "@vueuse/core";
+import { ref, reactive, onMounted, watch } from "vue";
+import { onClickOutside, useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import Breadcrumbs from "@/shared/catalog/components/breadcrumbs.vue";
 import FiltersBlock from "@/shared/catalog/components/filters-block.vue";
 import ViewMode from "@/shared/catalog/components/view-mode.vue";
@@ -200,11 +206,15 @@ import Pagination from "@/shared/catalog/components/pagination.vue";
 import useProducts from "@/shared/catalog/composables/useProducts";
 import { ProductsSearchParams } from "@/shared/catalog/types";
 
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("md");
+
 const { products, total, loading, fetchProducts, pages } = useProducts();
 
 const productSearchParams = reactive<ProductsSearchParams>({
   itemsPerPage: 16,
   page: 1,
+  term: "",
 });
 
 onMounted(async () => {
@@ -224,6 +234,30 @@ const breadcrumbsItems = [
 ];
 
 const viewMode = ref("grid");
+const keyword = ref("");
+
+const onSearchStart = async () => {
+  if (keyword.value !== productSearchParams.term) {
+    productSearchParams.term = keyword.value;
+    await fetchProducts(productSearchParams);
+  }
+};
+
+// Handle window resise to fix parameters on mobile view
+watch(isMobile, async () => {
+  if (isMobile.value) {
+    viewMode.value = "grid";
+    if (productSearchParams.itemsPerPage !== 8) {
+      productSearchParams.itemsPerPage = 8;
+      await fetchProducts(productSearchParams);
+    }
+  } else {
+    if (productSearchParams.itemsPerPage === 8) {
+      productSearchParams.itemsPerPage = 16;
+      await fetchProducts(productSearchParams);
+    }
+  }
+});
 </script>
 
 <style scoped></style>
