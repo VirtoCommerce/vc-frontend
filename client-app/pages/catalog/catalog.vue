@@ -89,7 +89,7 @@
 
         <div class="lg:w-3/4 xl:w-4/5 flex-grow">
           <div class="flex flex-col">
-            <h2 class="text-gray-800 text-2xl lg:text-3xl font-bold uppercase">Desktops</h2>
+            <h2 class="text-gray-800 text-2xl lg:text-3xl font-bold uppercase">{{ category?.label }}</h2>
             <p class="py-3">
               <span class="font-extrabold">{{ total }} results found.</span>
               <span>&nbsp;</span>
@@ -202,7 +202,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch, unref, watchEffect } from "vue";
+import { ref, reactive, onMounted, watch, unref, watchEffect, Ref } from "vue";
 import { onClickOutside, useBreakpoints, breakpointsTailwind, useUrlSearchParams } from "@vueuse/core";
 import Breadcrumbs from "@/shared/catalog/components/breadcrumbs.vue";
 import FiltersBlock from "@/shared/catalog/components/filters-block.vue";
@@ -214,15 +214,23 @@ import ProductSkeletonGrid from "@/shared/catalog/components/product-skeleton-gr
 import ProductSkeletonList from "@/shared/catalog/components/product-skeleton-list.vue";
 import Pagination from "@/shared/catalog/components/pagination.vue";
 import useProducts from "@/shared/catalog/composables/useProducts";
-import { ProductsSearchParams } from "@/shared/catalog/types";
+import { CategoryTree, ProductsSearchParams } from "@/shared/catalog/types";
 import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from "@headlessui/vue";
+import { useRoute } from "vue-router";
+import useCategories from "@/shared/catalog/composables/useCategories";
+import _ from "lodash";
+import { IBreadcrumbsItem } from "@/typings";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
+const category: Ref<CategoryTree | undefined> = ref(undefined);
 
 const params = useUrlSearchParams("history");
 
 const { products, total, loading, fetchProducts, pages } = useProducts();
+const { categoryTree, loadCategoriesTree } = useCategories();
+
+const route = useRoute();
 
 const sortOptions = [
   { id: "priority-descending;name-ascending", name: "Featured" },
@@ -252,12 +260,63 @@ const loadProducts = async () => {
     top: 0,
     behavior: "smooth",
   });
+  }
+);
+
+watch(
+  () => route.params.categoryKey,
+  async (categoryKeyParam) => {
+    const categoryKey = categoryKeyParam as string;
+    await loadProducts(categoryKey);
+  }
+);
+
+watch(
+  () => category.value,
+  () => BuildBreadcrumbs()
+);
+
+onMounted(async () => {
+  // TODO: use active category key instead of id
+  await loadCategoriesTree("");
+  const categoryKey = route.params.categoryKey as string;
+  await loadProducts(categoryKey);
+});
+
+const loadProducts = async (categoryKey: string) => {
+  window.scroll({
+    top: 0,
+    behavior: "smooth",
+  });
+
+  category.value = getCategory(categoryKey);
+  productSearchParams.categoryId = category.value?.id;
   await fetchProducts(productSearchParams);
 };
 
-onMounted(async () => {
-  await loadProducts();
-});
+function getCategory(categoryKey: string): CategoryTree | undefined {
+  const catTree = unref(categoryTree);
+
+  const category = searchCategory(catTree, categoryKey);
+
+  return category;
+}
+
+function searchCategory(categoryTree: CategoryTree, categoryKey: string): CategoryTree | undefined {
+  let category = _.find(categoryTree.items, (x) => x.seoKeyword === categoryKey);
+
+  if (!category && categoryTree.items) {
+    for (let cat of categoryTree.items) {
+      category = searchCategory(cat, categoryKey);
+
+      if (category) {
+        return category;
+      }
+    }
+  }
+
+  return category;
+}
 
 const mobileFiltersVisible = ref(false);
 const mobileFiltersSidebar = ref(null);
@@ -266,10 +325,19 @@ onClickOutside(mobileFiltersSidebar, () => {
   mobileFiltersVisible.value = false;
 });
 
-const breadcrumbsItems = [
+function BuildBreadcrumbs() {
+  if (category.value) {
+    breadcrumbsItems.value = [
+      { url: "/", title: "Home" },
+      { url: category.value.seoKeyword ?? "", title: category.value.label ?? "" },
+    ];
+  }
+}
+
+const breadcrumbsItems: Ref<IBreadcrumbsItem[]> = ref([
   { url: "/", title: "Home" },
-  { url: "/desktops", title: "Desktops" },
-];
+  // { url: "/desktops", title: "Desktops" },
+]);
 
 const viewMode = ref(`${params.viewMode || "grid"}`);
 const keyword = ref("");

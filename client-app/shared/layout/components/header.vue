@@ -67,25 +67,25 @@
               class="absolute z-10 bg-white rounded-md shadow-lg w-60 flex flex-col px-5 py-4 space-y-3 mt-2"
             >
               <router-link
-                to="/bolts/carriage-bolts"
+                to="/catalog/carriage-bolts"
                 class="font-bold text-gray-500 text-sm"
                 @click="allProductsVisible = false"
                 >Carriage Bolts</router-link
               >
               <router-link
-                to="/bolts/flange-bolts"
+                to="/catalog/flange-bolts"
                 class="font-bold text-gray-500 text-sm"
                 @click="allProductsVisible = false"
                 >Flange Bolts</router-link
               >
               <router-link
-                to="/printers/laser"
+                to="/catalog/multifunction-printers"
                 class="font-bold text-gray-500 text-sm"
                 @click="allProductsVisible = false"
                 >Laser Printers</router-link
               >
               <router-link
-                to="/printers/inkjet"
+                to="/catalog/all-in-one"
                 class="font-bold text-gray-500 text-sm"
                 @click="allProductsVisible = false"
                 >Inkjet Printers</router-link

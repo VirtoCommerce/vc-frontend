@@ -12,6 +12,7 @@ const itemToTree = (category: Category, isCurrent: boolean): CategoryTree => {
     slug: category.slug ?? "",
     items: [],
     isCurrent,
+    seoKeyword: category.seoInfo?.semanticUrl ?? "",
   };
 };
 
