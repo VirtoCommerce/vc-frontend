@@ -1,6 +1,6 @@
 <template>
   <div class="polygon-bg flex-grow">
-    <div class="mx-auto w-3/5 pt-5 pb-32">
+    <div class="mx-auto w-4/5 lg:w-3/5 pt-5 pb-32">
       <div class="flex justify-between gap-16">
         <div class="flex flex-col py-12">
           <h1 class="text-yellow-500 text-7xl md:text-8xl font-black mb-5">403</h1>
@@ -18,7 +18,7 @@
           </div>
         </div>
         <div class="hidden md:block py-5">
-          <img src="/assets/static/images/403.png" alt="Access denied" class="max-w-md" />
+          <img src="/assets/static/images/403.png" alt="Access denied" class="w-full max-w-md" />
         </div>
       </div>
     </div>
