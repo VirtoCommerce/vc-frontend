@@ -192,8 +192,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch, unref } from "vue";
-import { onClickOutside, useBreakpoints, breakpointsTailwind } from "@vueuse/core";
+import { ref, reactive, onMounted, watch, unref, watchEffect } from "vue";
+import { onClickOutside, useBreakpoints, breakpointsTailwind, useUrlSearchParams } from "@vueuse/core";
 import Breadcrumbs from "@/shared/catalog/components/breadcrumbs.vue";
 import FiltersBlock from "@/shared/catalog/components/filters-block.vue";
 import ViewMode from "@/shared/catalog/components/view-mode.vue";
@@ -209,11 +209,13 @@ import { ProductsSearchParams } from "@/shared/catalog/types";
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
+const params = useUrlSearchParams("history");
+
 const { products, total, loading, fetchProducts, pages } = useProducts();
 
 const productSearchParams = reactive<ProductsSearchParams>({
-  itemsPerPage: 16,
-  page: 1,
+  itemsPerPage: +(params.size ?? 16),
+  page: +(params.page ?? 1),
   term: "",
 });
 
@@ -241,8 +243,15 @@ const breadcrumbsItems = [
   { url: "/desktops", title: "Desktops" },
 ];
 
-const viewMode = ref("grid");
+const viewMode = ref(`${params.viewMode}` || "grid");
 const keyword = ref("");
+
+// Handle URL change on navigation update
+watchEffect(() => {
+  params.viewMode = viewMode.value;
+  params.size = `${productSearchParams.itemsPerPage}` || "16";
+  params.page = `${productSearchParams.page}` || "1";
+});
 
 const onSearchStart = async () => {
   if (keyword.value !== productSearchParams.term) {
