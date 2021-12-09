@@ -42,7 +42,7 @@
         Forgot your password?
       </router-link>
     </div>
-    <div class="flex mt-8 text-base font-roboto" :class="{ 'max-w-sm': !props.growButtons }">
+    <div class="flex mt-8 text-base font-roboto-condensed" :class="{ 'max-w-sm': !props.growButtons }">
       <button
         type="submit"
         class="flex-1 flex-shrink bg-yellow-500 rounded text-white px-2 py-2 font-bold uppercase"

@@ -1,7 +1,7 @@
 <template>
   <div class="polygon-bg flex-grow">
-    <div class="mx-auto w-4/5 lg:w-3/5 pt-5 pb-32">
-      <div class="flex justify-between gap-16">
+    <div class="mx-auto w-4/5 lg:w-3/5 pt-5 md:pb-32">
+      <div class="flex justify-between md:gap-16">
         <div class="flex flex-col py-12">
           <h1 class="text-yellow-500 text-7xl md:text-8xl font-black mb-5">403</h1>
           <h2 class="text-black-800 text-2xl md:text-4xl font-bold mb-2">Access denied</h2>
