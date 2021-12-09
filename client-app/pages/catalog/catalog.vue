@@ -117,7 +117,7 @@
               <PageSize
                 v-model:size="productSearchParams.itemsPerPage"
                 class="hidden md:flex"
-                @update:size="fetchProducts(productSearchParams)"
+                @update:size="loadProducts"
               ></PageSize>
 
               <!-- Sorting -->
@@ -170,7 +170,7 @@
               <Pagination
                 v-model:page="productSearchParams.page"
                 :pages="pages"
-                @update:page="fetchProducts(productSearchParams)"
+                @update:page="loadProducts"
               ></Pagination>
             </div>
             <div class="flex">
@@ -181,7 +181,7 @@
               <PageSize
                 v-model:size="productSearchParams.itemsPerPage"
                 class="hidden md:flex"
-                @update:size="fetchProducts(productSearchParams)"
+                @update:size="loadProducts"
               ></PageSize>
             </div>
           </div>
@@ -192,7 +192,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch } from "vue";
+import { ref, reactive, onMounted, watch, unref } from "vue";
 import { onClickOutside, useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import Breadcrumbs from "@/shared/catalog/components/breadcrumbs.vue";
 import FiltersBlock from "@/shared/catalog/components/filters-block.vue";
@@ -217,8 +217,16 @@ const productSearchParams = reactive<ProductsSearchParams>({
   term: "",
 });
 
-onMounted(async () => {
+const loadProducts = async () => {
+  window.scroll({
+    top: 0,
+    behavior: "smooth",
+  });
   await fetchProducts(productSearchParams);
+};
+
+onMounted(async () => {
+  await loadProducts();
 });
 
 const mobileFiltersVisible = ref(false);
@@ -238,8 +246,8 @@ const keyword = ref("");
 
 const onSearchStart = async () => {
   if (keyword.value !== productSearchParams.term) {
-    productSearchParams.term = keyword.value;
-    await fetchProducts(productSearchParams);
+    productSearchParams.term = unref(keyword.value);
+    await loadProducts();
   }
 };
 
@@ -249,12 +257,12 @@ watch(isMobile, async () => {
     viewMode.value = "grid";
     if (productSearchParams.itemsPerPage !== 8) {
       productSearchParams.itemsPerPage = 8;
-      await fetchProducts(productSearchParams);
+      await loadProducts();
     }
   } else {
     if (productSearchParams.itemsPerPage === 8) {
       productSearchParams.itemsPerPage = 16;
-      await fetchProducts(productSearchParams);
+      await loadProducts();
     }
   }
 });

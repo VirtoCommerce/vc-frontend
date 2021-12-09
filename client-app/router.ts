@@ -8,6 +8,16 @@ import Error500 from "./pages/500/500.vue";
 
 const router = createRouter({
   history: createWebHistory(),
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    } else {
+      return {
+        top: 0,
+        behavior: "smooth",
+      };
+    }
+  },
   routes: [
     { path: "/", name: "Home", component: Home },
     { path: "/sign-in", name: "SignIn", component: SingInPage },
