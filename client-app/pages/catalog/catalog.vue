@@ -255,19 +255,12 @@ const productSearchParams = reactive<ProductsSearchParams>({
   sort: `${sort.value.id}`,
 });
 
-const loadProducts = async () => {
-  window.scroll({
-    top: 0,
-    behavior: "smooth",
-  });
-  }
-);
-
 watch(
   () => route.params.categoryKey,
   async (categoryKeyParam) => {
     const categoryKey = categoryKeyParam as string;
-    await loadProducts(categoryKey);
+    getCurrentCategory(categoryKey);
+    await loadProducts();
   }
 );
 
@@ -280,26 +273,24 @@ onMounted(async () => {
   // TODO: use active category key instead of id
   await loadCategoriesTree("");
   const categoryKey = route.params.categoryKey as string;
-  await loadProducts(categoryKey);
+  getCurrentCategory(categoryKey);
+  await loadProducts();
 });
 
-const loadProducts = async (categoryKey: string) => {
+const loadProducts = async () => {
   window.scroll({
     top: 0,
     behavior: "smooth",
   });
 
-  category.value = getCategory(categoryKey);
   productSearchParams.categoryId = category.value?.id;
   await fetchProducts(productSearchParams);
 };
 
-function getCategory(categoryKey: string): CategoryTree | undefined {
+function getCurrentCategory(categoryKey: string) {
   const catTree = unref(categoryTree);
-
-  const category = searchCategory(catTree, categoryKey);
-
-  return category;
+  const cat = searchCategory(catTree, categoryKey);
+  category.value = cat;
 }
 
 function searchCategory(categoryTree: CategoryTree, categoryKey: string): CategoryTree | undefined {
