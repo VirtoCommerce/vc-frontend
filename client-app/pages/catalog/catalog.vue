@@ -122,23 +122,33 @@
 
               <!-- Sorting -->
               <div class="relative ml-auto flex-grow md:flex-grow-0">
-                <select
-                  class="w-full h-9 pl-3 pr-16 text-base placeholder-gray-600 border rounded appearance-none outline-none border-gray-300 focus:border-gray-400"
-                  placeholder="Regular input"
-                >
-                  <option>Sort by features</option>
-                  <option>Another option</option>
-                  <option>And one more</option>
-                </select>
-                <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                  <svg class="w-6 h-6 fill-current" viewBox="0 0 20 20">
-                    <path
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clip-rule="evenodd"
-                      fill-rule="evenodd"
-                    ></path>
-                  </svg>
-                </div>
+                <Listbox v-model="sort">
+                  <ListboxButton
+                    class="w-full md:w-52 lg:w-64 h-9 pl-3 pr-16 text-base bg-white border rounded appearance-none outline-none border-gray-300"
+                  >
+                    <span class="block truncate text-left">{{ sort.name }}</span>
+                    <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                      <i class="text-gray-700 fas fa-chevron-down"></i>
+                    </span>
+                  </ListboxButton>
+                  <transition
+                    leave-active-class="transition duration-100 ease-in"
+                    leave-from-class="opacity-100"
+                    leave-to-class="opacity-0"
+                  >
+                    <ListboxOptions
+                      class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base bg-white rounded shadow-lg max-h-60 ring-1 ring-black ring-opacity-5"
+                    >
+                      <ListboxOption v-for="item in sortOptions" :key="item.id" v-slot="{ selected }" :value="item">
+                        <li class="cursor-pointer select-none relative py-1 px-3">
+                          <span :class="[selected ? 'text-yellow-500' : 'text-black', 'block truncate']">{{
+                            item.name
+                          }}</span>
+                        </li>
+                      </ListboxOption>
+                    </ListboxOptions>
+                  </transition>
+                </Listbox>
               </div>
             </div>
           </div>
@@ -205,6 +215,7 @@ import ProductSkeletonList from "@/shared/catalog/components/product-skeleton-li
 import Pagination from "@/shared/catalog/components/pagination.vue";
 import useProducts from "@/shared/catalog/composables/useProducts";
 import { ProductsSearchParams } from "@/shared/catalog/types";
+import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from "@headlessui/vue";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
@@ -213,10 +224,27 @@ const params = useUrlSearchParams("history");
 
 const { products, total, loading, fetchProducts, pages } = useProducts();
 
+const sortOptions = [
+  { id: "priority-descending;name-ascending", name: "Featured" },
+  { id: "name-ascending", name: "Alphabetically, A-Z" },
+  { id: "name-descending", name: "Alphabetically, Z-A" },
+  { id: "price-ascending", name: "Price, low to high" },
+  { id: "price-descending", name: "Price, high to low" },
+  { id: "createddate-descending", name: "Date, new to old" },
+  { id: "createddate-ascending", name: "Date, old to new" },
+];
+const sort = ref(sortOptions.find((item) => item.id === params.sort) || sortOptions[0]);
+
+watch(sort, async () => {
+  productSearchParams.sort = sort.value.id;
+  await loadProducts();
+});
+
 const productSearchParams = reactive<ProductsSearchParams>({
   itemsPerPage: +(params.size ?? 16),
   page: +(params.page ?? 1),
   term: "",
+  sort: `${sort.value.id}`,
 });
 
 const loadProducts = async () => {
@@ -251,6 +279,9 @@ watchEffect(() => {
   params.viewMode = viewMode.value;
   params.size = `${productSearchParams.itemsPerPage}` || "16";
   params.page = `${productSearchParams.page}` || "1";
+  if (productSearchParams.sort) {
+    params.sort = `${productSearchParams.sort}`;
+  }
 });
 
 const onSearchStart = async () => {
