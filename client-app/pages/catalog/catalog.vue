@@ -243,7 +243,7 @@ const breadcrumbsItems = [
   { url: "/desktops", title: "Desktops" },
 ];
 
-const viewMode = ref(`${params.viewMode}` || "grid");
+const viewMode = ref(`${params.viewMode || "grid"}`);
 const keyword = ref("");
 
 // Handle URL change on navigation update
