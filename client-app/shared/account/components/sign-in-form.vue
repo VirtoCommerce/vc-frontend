@@ -1,8 +1,8 @@
 <template>
-  <h1 class="mb-6 font-semibold uppercase text-4xl">Sign In</h1>
+  <h1 class="mb-6 font-semibold uppercase text-xl md:text-4xl">Sign In</h1>
   <form @submit="onSubmit">
     <alert-message v-if="authError"><strong>User</strong> or <strong>password</strong> is incorrect</alert-message>
-    <alert-message v-if="!_.isEmpty(errors)"
+    <alert-message v-if="!_.isEmpty(errors)" class="mt-2"
       ><strong>User</strong> and <strong>password</strong> are required
     </alert-message>
     <div class="mt-4">
@@ -14,6 +14,7 @@
         placeholder="User Name"
         class="h-11 rounded px-3 py-1 w-full"
         v-model="userName"
+        @input="onInput"
         :class="{
           'border border-gray-300': !isErrorField('userName'),
           'border-2 border-red-500': isErrorField('userName'),
@@ -29,6 +30,7 @@
         placeholder="Password"
         class="h-11 rounded px-3 py-1 w-full"
         v-model="password"
+        @input="onInput"
         :class="{
           'border border-gray-300': !isErrorField('password'),
           'border-2 border-red-500': isErrorField('password'),
@@ -40,20 +42,21 @@
         Forgot your password?
       </router-link>
     </div>
-    <div class="flex gap-4 mt-8" :class="{ 'max-w-sm': !props.growButtons }">
+    <div class="flex mt-8 text-base font-roboto-condensed" :class="{ 'max-w-sm': !props.growButtons }">
       <button
         type="submit"
-        class="flex-1 bg-yellow-500 uppercase font-bold rounded text-white px-2 py-2 text-sm"
+        class="flex-1 flex-shrink bg-yellow-500 rounded text-white px-2 py-2 font-bold uppercase"
         :class="{ 'hover:bg-yellow-600': isSubmitEnabled }"
         :disabled="!isSubmitEnabled"
       >
         Login
       </button>
-      <button
-        class="flex-1 border-2 border-yellow-500 hover:bg-yellow-600 hover:text-white hover:border-yellow-600 uppercase font-bold rounded text-yellow-500 px-2 py-2 text-sm"
+      <router-link
+        to="/register"
+        class="flex-1 border-2 rounded text-center text-yellow-500 ml-4 px-2 py-2 border-yellow-500 uppercase font-bold hover:bg-yellow-600 hover:text-white hover:border-yellow-600"
       >
         Registration
-      </button>
+      </router-link>
     </div>
   </form>
 </template>
@@ -91,6 +94,10 @@ const model = reactive({ userName, password });
 
 function isErrorField(name: string) {
   return meta.value.touched && name in errors.value;
+}
+
+function onInput() {
+  authError.value = false;
 }
 
 // submit
