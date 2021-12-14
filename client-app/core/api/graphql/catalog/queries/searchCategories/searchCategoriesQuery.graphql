@@ -24,7 +24,7 @@ query Categories(
       slug
       path
       outline
-      seoInfo  {
+      seoInfo {
         semanticUrl
       }
     }

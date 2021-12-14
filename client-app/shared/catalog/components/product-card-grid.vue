@@ -1,9 +1,9 @@
 <template>
-  <div class="flex flex-col bg-white rounded p-4 shadow-md hover:shadow-xl cursor-pointer">
+  <div class="flex flex-col bg-white rounded border p-4 shadow-sm hover:shadow-lg cursor-pointer">
     <!-- Product image -->
     <div class="square relative flex flex-col justify-center items-center border border-gray-100">
       <img
-        :src="product.imgSrc || '/assets/static/images/no-image.png'"
+        :src="product.imgSrc || '/assets/static/images/no-image.svg'"
         :alt="product.name"
         class="absolute top-0 w-full h-full object-cover object-center"
       />
@@ -51,8 +51,8 @@
       </div>
 
       <!-- Product price -->
-      <div class="flex items-baseline text-sm mb-4">
-        <div class="hidden md:block w-1/2 font-bold text-xs">Your price</div>
+      <div class="flex flex-col md:flex-row items-baseline text-sm mb-4">
+        <div class="w-1/2 font-bold text-xs">Your price</div>
         <div class="md:w-1/2">
           <span class="text-green-700 font-extrabold">{{ product.price?.actual?.formattedAmount }}</span> / each
         </div>

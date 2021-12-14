@@ -1,12 +1,12 @@
 <template>
   <div
-    class="flex items-center justify-between bg-white rounded p-4 shadow-md hover:shadow-lg cursor-pointer space-x-6"
+    class="flex items-center justify-between bg-white rounded border p-4 shadow-sm hover:shadow-lg cursor-pointer space-x-6"
   >
     <div class="flex flex-grow items-center">
       <!-- Product image -->
       <div class="border border-gray-100 w-20 h-20 flex-shrink-0 mr-4">
         <img
-          :src="product.imgSrc || '/assets/static/images/no-image.png'"
+          :src="product.imgSrc || '/assets/static/images/no-image.svg'"
           :alt="product.name"
           class="w-full h-full object-cover object-center"
         />
