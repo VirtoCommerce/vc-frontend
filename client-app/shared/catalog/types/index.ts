@@ -18,3 +18,8 @@ export type ProductsSearchParams = {
   sort?: string;
   [x: string]: any;
 };
+
+export interface IBreadcrumbsItem {
+  url: string;
+  title: string;
+}

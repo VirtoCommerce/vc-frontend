@@ -53,30 +53,13 @@
 
     <!-- Card widget -->
     <div class="flex-shrink-0 w-48">
-      <div class="flex mb-3">
-        <input
-          type="text"
-          class="border rounded-l border-r-0 flex-1 w-full text-sm border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9"
-          :disabled="!product.availabilityData?.isBuyable"
-        />
-        <button
-          class="rounded-r uppercase px-3 border font-roboto-condensed font-bold text-sm"
-          :class="[
-            product.availabilityData?.isBuyable
-              ? 'border-yellow-500 text-yellow-500 hover:text-white hover:bg-yellow-500'
-              : 'border-gray-300 text-gray-300 cursor-default',
-          ]"
-          :disabled="!product.availabilityData?.isBuyable"
-        >
-          Add to cart
-        </button>
-      </div>
+      <slot name="cart-handler"></slot>
 
-      <div v-if="product.availabilityData?.isInStock" class="flex items-center text-green-700 text-xs">
+      <div v-if="product.availabilityData?.isInStock" class="flex items-center text-green-700 text-xs mt-3">
         <div class="w-1.5 h-1.5 bg-green-700 rounded mr-1"></div>
         {{ product.availabilityData.availableQuantity }} in stock
       </div>
-      <div v-else class="flex items-center text-red-500 text-xs">
+      <div v-else class="flex items-center text-red-500 text-xs mt-3">
         <div class="w-1.5 h-1.5 bg-red-500 rounded mr-1"></div>
         Out of stock
       </div>

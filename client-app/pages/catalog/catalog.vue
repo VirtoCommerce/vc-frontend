@@ -159,7 +159,11 @@
                 <ProductSkeletonGrid v-for="i in productSearchParams.itemsPerPage" :key="i"></ProductSkeletonGrid>
               </template>
               <template v-else>
-                <ProductCardGrid v-for="item in products" :key="item.id" :product="item"></ProductCardGrid>
+                <ProductCardGrid v-for="item in products" :key="item.id" :product="item">
+                  <template #cart-handler>
+                    <AddToCart @update:count="cartChange(item, $event)"></AddToCart>
+                  </template>
+                </ProductCardGrid>
               </template>
             </div>
           </template>
@@ -169,7 +173,11 @@
                 <ProductSkeletonList v-for="i in productSearchParams.itemsPerPage" :key="i"></ProductSkeletonList>
               </template>
               <template v-else>
-                <ProductCardList v-for="item in products" :key="item.id" :product="item"></ProductCardList>
+                <ProductCardList v-for="item in products" :key="item.id" :product="item">
+                  <template #cart-handler>
+                    <AddToCart @update:count="cartChange(item, $event)"></AddToCart>
+                  </template>
+                </ProductCardList>
               </template>
             </div>
           </template>
@@ -204,33 +212,43 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, watch, unref, watchEffect, Ref } from "vue";
 import { onClickOutside, useBreakpoints, breakpointsTailwind, useUrlSearchParams } from "@vueuse/core";
-import Breadcrumbs from "@/shared/catalog/components/breadcrumbs.vue";
-import FiltersBlock from "@/shared/catalog/components/filters-block.vue";
-import ViewMode from "@/shared/catalog/components/view-mode.vue";
-import PageSize from "@/shared/catalog/components/page-size.vue";
-import ProductCardGrid from "@/shared/catalog/components/product-card-grid.vue";
-import ProductCardList from "@/shared/catalog/components/product-card-list.vue";
-import ProductSkeletonGrid from "@/shared/catalog/components/product-skeleton-grid.vue";
-import ProductSkeletonList from "@/shared/catalog/components/product-skeleton-list.vue";
-import Pagination from "@/shared/catalog/components/pagination.vue";
-import useProducts from "@/shared/catalog/composables/useProducts";
-import { CategoryTree, ProductsSearchParams } from "@/shared/catalog/types";
+import {
+  Breadcrumbs,
+  FiltersBlock,
+  Pagination,
+  PageSize,
+  ProductCardGrid,
+  ProductCardList,
+  ProductSkeletonGrid,
+  ProductSkeletonList,
+  ViewMode,
+  useProducts,
+  CategoryTree,
+  ProductsSearchParams,
+  useCategories,
+  IBreadcrumbsItem,
+} from "@/shared/catalog";
+import { AddToCart, useCart } from "@/shared/cart";
 import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from "@headlessui/vue";
 import { useRoute } from "vue-router";
-import useCategories from "@/shared/catalog/composables/useCategories";
 import _ from "lodash";
-import { IBreadcrumbsItem } from "@/typings";
+import { Product } from "@/core/api/graphql/types";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
-const category: Ref<CategoryTree | undefined> = ref(undefined);
 
+const route = useRoute();
 const params = useUrlSearchParams("history");
 
 const { products, total, loading, fetchProducts, pages } = useProducts();
 const { categoryTree, loadCategoriesTree } = useCategories();
+const category: Ref<CategoryTree | undefined> = ref(undefined);
 
-const route = useRoute();
+const { addToCart } = useCart();
+
+const cartChange = async (product: Product, qty: number) => {
+  await addToCart(product.id, qty);
+};
 
 const sortOptions = [
   { id: "priority-descending;name-ascending", name: "Featured" },

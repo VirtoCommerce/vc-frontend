@@ -97,8 +97,11 @@
             <div class="flex items-center">
               <i class="fas fa-shopping-cart text-yellow-500 mr-3"></i>
               <div>Cart</div>
-              <div class="flex items-center rounded-xl border border-yellow-500 px-2 font-bold text-xs h-5 ml-3">
-                35
+              <div
+                v-if="cart?.itemsCount"
+                class="flex items-center rounded-xl border border-yellow-500 px-2 font-bold text-xs h-5 ml-3"
+              >
+                {{ cart.itemsCount }}
               </div>
             </div>
           </router-link>
@@ -255,10 +258,13 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import useUser from "@/shared/account/composables/useUser";
+import { useUser } from "@/shared/account";
 import { onClickOutside } from "@vueuse/core";
+import { useCart } from "@/shared/cart";
 
 const { isAuthenticated, me, signMeOut } = useUser();
+const { cart } = useCart();
+
 const mobileMenuVisible = ref(false);
 const searchVisible = ref(false);
 const allProductsVisible = ref(false);
