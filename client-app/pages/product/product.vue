@@ -33,15 +33,22 @@
               <img src="/assets/static/images/technical_specs.svg" alt="technical specs" />
               <h2 class="text-xl font-bold uppercase ml-2">Technical specs</h2>
             </div>
-            <div v-for="property in product.properties" :key="property.name" class="flex mb-4 space-x-3">
+            <div v-for="property in product.properties" :key="property?.name" class="flex mb-4 space-x-3">
               <div class="flex-none text-gray-500">
                 {{ property?.name }}
               </div>
               <div class="flex-1 border-b border-grey-100 border-dotted h-5"></div>
               <div class="flex-none w-32 font-bold">
-                {{ property.value }}
+                {{ property?.value }}
               </div>
             </div>
+          </div>
+          <div v-if="product?.description" class="flex flex-col flex-grow">
+            <div class="flex items-center mb-4">
+              <img src="/assets/static/images/description.svg" alt="description" />
+              <h2 class="text-xl font-bold uppercase ml-2">Description</h2>
+            </div>
+            <div v-html="product?.description"></div>
           </div>
         </div>
         <div class="flex-grow-0 flex flex-col">
@@ -102,7 +109,7 @@ const productId = ref(route.params.id as string);
 const { addToCart } = useCart();
 
 const onAddToCart = async (qty: number) => {
-  await addToCart(product.id, qty);
+  await addToCart(product.value.id, qty);
 };
 
 onMounted(async () => {
