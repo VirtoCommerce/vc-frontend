@@ -9,9 +9,9 @@
       </div>
       <div class="flex flex-col md:flex-row md:space-x-6 mt-3">
         <div
-          class="flex flex-grow flex-col lg:flex-row -mx-5 md:mx-0 lg:space-x-12 mb-12 p-6 bg-white border border-gray-100 rounded-md shadow-sm"
+          class="flex flex-grow flex-col lg:flex-row -mx-5 md:mx-0 lg:space-x-12 mb-6 p-6 bg-white border border-gray-100 rounded-md shadow-sm"
         >
-          <div class="lg:w-1/3">
+          <div class="lg:w-1/3 mb-6 lg:mb-0">
             <div class="square relative flex flex-col justify-center items-center border border-gray-100">
               <img
                 :src="product.imgSrc || '/assets/static/images/no-image.png'"
