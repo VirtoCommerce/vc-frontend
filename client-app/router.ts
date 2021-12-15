@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "./pages/home/home.vue";
+import Product from "./pages/product/product.vue";
 import SingInPage from "./pages/sign-in/sign-in-page.vue";
 import SignUpPage from "./pages/sign-up/sign-up-page.vue";
 import Catalog from "./pages/catalog/catalog.vue";
@@ -27,6 +28,7 @@ const router = createRouter({
     { path: "/catalog", name: "CatalogRoot", component: Catalog },
     { path: "/catalog/:categoryKey", name: "Catalog", component: Catalog },
     { path: "/checkout", name: "Checkout", component: Checkout },
+    { path: "/product/:id", name: "Product", component: Product },
     { path: "/500", name: "InternalError", component: Error500 },
     { path: "/403", name: "NoAccess", component: Error403 },
     { path: "/:pathMatch(.*)*", name: "NotFound", component: Error404 },
