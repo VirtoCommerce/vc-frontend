@@ -6,7 +6,7 @@
       <!-- Product image -->
       <div class="border border-gray-100 w-20 h-20 flex-shrink-0 mr-4">
         <img
-          :src="product.imgSrc || '/assets/static/images/no-image.png'"
+          :src="product.imgSrc || '/static/images/no-image.png'"
           :alt="product.name"
           class="w-full h-full object-cover object-center"
         />

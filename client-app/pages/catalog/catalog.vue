@@ -278,6 +278,7 @@ watch(
   async (categoryKeyParam) => {
     const categoryKey = categoryKeyParam as string;
     getCurrentCategory(categoryKey);
+    productSearchParams.page = 1;
     await loadProducts();
   }
 );
