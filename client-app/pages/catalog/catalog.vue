@@ -161,7 +161,7 @@
               <template v-else>
                 <ProductCardGrid v-for="item in products" :key="item.id" :product="item">
                   <template #cart-handler>
-                    <AddToCart @update:count="cartChange(item, $event)"></AddToCart>
+                    <AddToCart :product="item"></AddToCart>
                   </template>
                 </ProductCardGrid>
               </template>
@@ -175,7 +175,7 @@
               <template v-else>
                 <ProductCardList v-for="item in products" :key="item.id" :product="item">
                   <template #cart-handler>
-                    <AddToCart @update:count="cartChange(item, $event)"></AddToCart>
+                    <AddToCart :product="item"></AddToCart>
                   </template>
                 </ProductCardList>
               </template>
@@ -228,11 +228,10 @@ import {
   useCategories,
   IBreadcrumbsItem,
 } from "@/shared/catalog";
-import { AddToCart, useCart } from "@/shared/cart";
+import { AddToCart } from "@/shared/cart";
 import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from "@headlessui/vue";
 import { useRoute } from "vue-router";
 import _ from "lodash";
-import { Product } from "@/core/api/graphql/types";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
@@ -243,12 +242,6 @@ const params = useUrlSearchParams("history");
 const { products, total, loading, fetchProducts, pages } = useProducts();
 const { categoryTree, loadCategoriesTree } = useCategories();
 const category: Ref<CategoryTree | undefined> = ref(undefined);
-
-const { addToCart } = useCart();
-
-const cartChange = async (product: Product, qty: number) => {
-  await addToCart(product.id, qty);
-};
 
 const sortOptions = [
   { id: "priority-descending;name-ascending", name: "Featured" },
@@ -344,10 +337,7 @@ function BuildBreadcrumbs() {
   }
 }
 
-const breadcrumbsItems: Ref<IBreadcrumbsItem[]> = ref([
-  { url: "/", title: "Home" },
-  // { url: "/desktops", title: "Desktops" },
-]);
+const breadcrumbsItems: Ref<IBreadcrumbsItem[]> = ref([{ url: "/", title: "Home" }]);
 
 const viewMode = ref(`${params.viewMode || "grid"}`);
 const keyword = ref("");

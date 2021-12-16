@@ -98,10 +98,10 @@
               <i class="fas fa-shopping-cart text-yellow-500 mr-3"></i>
               <div>Cart</div>
               <div
-                v-if="cart?.itemsCount"
+                v-if="cart?.itemsQuantity"
                 class="flex items-center rounded-xl border border-yellow-500 px-2 font-bold text-xs h-5 ml-3"
               >
-                {{ cart.itemsCount }}
+                {{ cart.itemsQuantity }}
               </div>
             </div>
           </router-link>
@@ -166,22 +166,25 @@
           </div>
           <div v-if="allProductsMobileVisible" class="flex flex-col px-5 py-2 space-y-3 mt-2">
             <router-link
-              to="/bolts/carriage-bolts"
+              to="/catalog/carriage-bolts"
               class="font-bold text-gray-200 text-lg"
               @click="mobileMenuVisible = false"
               >Carriage Bolts</router-link
             >
             <router-link
-              to="/bolts/flange-bolts"
+              to="/catalog/flange-bolts"
               class="font-bold text-gray-200 text-lg"
               @click="mobileMenuVisible = false"
               >Flange Bolts</router-link
             >
-            <router-link to="/printers/laser" class="font-bold text-gray-200 text-lg" @click="mobileMenuVisible = false"
+            <router-link
+              to="/catalog/multifunction-printers"
+              class="font-bold text-gray-200 text-lg"
+              @click="mobileMenuVisible = false"
               >Laser Printers</router-link
             >
             <router-link
-              to="/printers/inkjet"
+              to="/catalog/all-in-one"
               class="font-bold text-gray-200 text-lg"
               @click="mobileMenuVisible = false"
               >Inkjet Printers</router-link
@@ -196,7 +199,12 @@
         >
           <i class="fas fa-shopping-cart text-yellow-500 mr-3"></i>
           <div>Cart</div>
-          <div class="flex items-center rounded-2xl border border-yellow-500 px-3 font-bold text-sm h-7 ml-3">35</div>
+          <div
+            v-if="cart?.itemsQuantity"
+            class="flex items-center rounded-2xl border border-yellow-500 px-3 font-bold text-sm h-7 ml-3"
+          >
+            {{ cart.itemsQuantity }}
+          </div>
         </router-link>
         <router-link
           to="/contact"

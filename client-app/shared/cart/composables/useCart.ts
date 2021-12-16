@@ -1,6 +1,6 @@
 import { computed, Ref, ref } from "vue";
-import { getMyCart, addItemToCart } from "@core/api/graphql/cart";
-import { CartType } from "@core/api/graphql/types";
+import { getMyCart, addItemToCart, changeCartItemQuantity } from "@core/api/graphql/cart";
+import { CartType, LineItemType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 
 const loading: Ref<boolean> = ref(true);
@@ -34,10 +34,30 @@ export default () => {
     await loadMyCart();
   }
 
+  async function changeItemQuantity(lineItemId: string, qty: number) {
+    loading.value = true;
+    console.log(`changeItemQuantity ${lineItemId} ${qty}`);
+    try {
+      await changeCartItemQuantity(lineItemId, qty);
+    } catch (e) {
+      Logger.error("useCart.changeItemQuantity", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+    await loadMyCart();
+  }
+
+  function itemInCart(productId: string): LineItemType | undefined {
+    return cart.value?.items?.find((product) => product?.productId === productId) as LineItemType;
+  }
+
   return {
     cart: computed(() => cart.value),
     loading: computed(() => loading.value),
     loadMyCart,
     addToCart,
+    itemInCart,
+    changeItemQuantity,
   };
 };
