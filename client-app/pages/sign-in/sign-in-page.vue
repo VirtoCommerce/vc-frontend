@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import SignInForm from "@/shared/account/components/sign-in-form.vue";
+import { SignInForm } from "@/shared/account";
 import { useRouter } from "vue-router";
 
 const router = useRouter();

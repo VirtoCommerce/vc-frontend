@@ -12,9 +12,12 @@
     <title>{{ current_store.name }}</title>
     <base href="{{ '/' | absolute_url }}" />
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+
     <!-- Google fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;0,900;1,400&family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
+
     <link rel="apple-touch-icon" sizes="180x180" href="{{'apple-touch-icon.png' | static_asset_url }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{'favicon-32x32.png' | static_asset_url }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{'favicon-16x16.png' | static_asset_url }}">
@@ -40,7 +43,6 @@
   </head>
   <body class="font-lato">
     <div id="layout">
-      <div id="appHeader"></div>
       <!-- Content here -->
       {{ content_for_layout }}
     </div>

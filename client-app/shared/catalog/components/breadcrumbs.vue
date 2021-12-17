@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { PropType } from "vue";
-import { IBreadcrumbsItem } from "@/typings";
+import { IBreadcrumbsItem } from "@/shared/catalog";
 
 defineProps({
   items: {

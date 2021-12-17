@@ -71,10 +71,9 @@
 
 <script setup lang="ts">
 import { onMounted } from "vue";
-import useUser from "@/shared/account/composables/useUser";
-import SignInForm from "@/shared/account/components/sign-in-form.vue";
+import { useUser, SignInForm } from "@/shared/account";
 
-const { isAuthenticated, me, loadMe } = useUser();
+const { isAuthenticated, loadMe } = useUser();
 
 onMounted(async () => {
   await loadMe();

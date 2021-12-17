@@ -6,10 +6,14 @@ export const storeId = window.STORE_ID || "B2B-store";
 export const currencyCode = window.CURRENCY_CODE || "USD";
 export const storeLanguages = window.STORE_LANGUAGES || "";
 export const locale = window.LOCALE || "";
-export const currentUserId = window.USER_ID || "";
+export let currentUserId = window.USER_ID || "";
 export const catalogId = window.CATALOG_ID || "";
 export const categoryId = window.CATEGORY_ID || "";
 export const productId = window.PRODUCT_ID || "";
+
+export function setUserId(id: string): void {
+  currentUserId = id;
+}
 
 //TODO: load from  storefront API
 export const mainMenu = window.MAIN_MENU;

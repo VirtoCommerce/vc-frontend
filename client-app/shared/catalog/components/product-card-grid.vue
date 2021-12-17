@@ -3,7 +3,7 @@
     <!-- Product image -->
     <div class="square relative flex flex-col justify-center items-center border border-gray-100">
       <img
-        :src="product.imgSrc || '/assets/static/images/no-image.svg'"
+        :src="product.imgSrc || '/static/images/no-image.svg'"
         :alt="product.name"
         class="absolute top-0 w-full h-full object-cover object-center"
       />
@@ -58,26 +58,7 @@
         </div>
       </div>
 
-      <!-- Card widget -->
-      <div class="flex">
-        <input
-          type="text"
-          class="border rounded-l border-r-0 flex-1 w-full text-sm border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9"
-          :disabled="!product.availabilityData?.isBuyable"
-        />
-        <button
-          class="rounded-r uppercase px-3 border font-roboto-condensed font-bold text-sm"
-          :class="[
-            product.availabilityData?.isBuyable
-              ? 'border-yellow-500 text-yellow-500 hover:text-white hover:bg-yellow-500'
-              : 'border-gray-300 text-gray-300 cursor-default',
-          ]"
-          :disabled="!product.availabilityData?.isBuyable"
-        >
-          <span class="hidden lg:inline">Add to cart</span>
-          <i class="inline lg:hidden fas fa-shopping-cart"></i>
-        </button>
-      </div>
+      <slot name="cart-handler"></slot>
     </div>
   </div>
 </template>

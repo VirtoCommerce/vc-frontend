@@ -21,6 +21,7 @@ const router = createRouter({
   routes: [
     { path: "/", name: "Home", component: Home },
     { path: "/sign-in", name: "SignIn", component: SingInPage },
+    { path: "/catalog", name: "CatalogRoot", component: Catalog },
     { path: "/catalog/:categoryKey", name: "Catalog", component: Catalog },
     { path: "/500", name: "InternalError", component: Error500 },
     { path: "/403", name: "NoAccess", component: Error403 },
