@@ -37,3 +37,10 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+
+.dots {
+  display: block;
+  background: radial-gradient(circle, #D0D0D0 1px, transparent 1px) repeat-x;
+  background-size: 20px 28px;
+  flex-grow: 10;
+}

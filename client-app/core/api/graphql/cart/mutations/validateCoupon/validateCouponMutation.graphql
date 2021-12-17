@@ -1,0 +1,3 @@
+mutation ValidateCoupon($command: InputValidateCouponType!) {
+  validateCoupon(command: $command)
+}

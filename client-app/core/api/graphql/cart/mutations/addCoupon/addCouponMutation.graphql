@@ -1,0 +1,5 @@
+mutation AddCoupon($command: InputAddCouponType!) {
+  addCoupon(command: $command) {
+    name
+  }
+}

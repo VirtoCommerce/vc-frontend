@@ -1,5 +1,13 @@
 import { computed, Ref, ref } from "vue";
-import { getMyCart, addItemToCart, changeCartItemQuantity } from "@core/api/graphql/cart";
+import {
+  getMyCart,
+  addItemToCart,
+  changeCartItemQuantity,
+  removeCartItem,
+  removeCoupon,
+  validateCoupon,
+  addCoupon,
+} from "@core/api/graphql/cart";
 import { CartType, LineItemType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 
@@ -48,6 +56,61 @@ export default () => {
     await loadMyCart();
   }
 
+  async function removeItem(lineItemId: string) {
+    loading.value = true;
+    console.log(`removedCartItem ${lineItemId}`);
+    try {
+      await removeCartItem(lineItemId);
+    } catch (e) {
+      Logger.error("useCart.removeItem", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+    await loadMyCart();
+  }
+
+  async function validateCartCoupon(couponCode: string) {
+    loading.value = true;
+    console.log(`validate coupon ${couponCode}`);
+    try {
+      return await validateCoupon(couponCode);
+    } catch (e) {
+      Logger.error("useCart.addCoupon", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function addCartCoupon(couponCode: string) {
+    loading.value = true;
+    console.log(`addCart coupon ${couponCode}`);
+    try {
+      await addCoupon(couponCode);
+    } catch (e) {
+      Logger.error("useCart.addCartCoupon", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+    await loadMyCart();
+  }
+
+  async function removeCartCoupon(couponCode: string) {
+    loading.value = true;
+    console.log(`removeCart coupon ${couponCode}`);
+    try {
+      await removeCoupon(couponCode);
+    } catch (e) {
+      Logger.error("useCart.removeCartCoupon", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+    await loadMyCart();
+  }
+
   function itemInCart(productId: string): LineItemType | undefined {
     return cart.value?.items?.find((product) => product?.productId === productId) as LineItemType;
   }
@@ -59,5 +122,9 @@ export default () => {
     addToCart,
     itemInCart,
     changeItemQuantity,
+    removeItem,
+    validateCartCoupon,
+    addCartCoupon,
+    removeCartCoupon,
   };
 };

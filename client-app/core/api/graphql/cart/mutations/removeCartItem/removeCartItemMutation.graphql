@@ -1,0 +1,5 @@
+mutation RemoveCartItem($command: InputRemoveItemType!) {
+  removeCartItem(command: $command) {
+    name
+  }
+}
