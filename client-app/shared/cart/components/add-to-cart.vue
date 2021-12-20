@@ -25,7 +25,9 @@
       <i class="inline lg:hidden fas fa-shopping-cart"></i>
     </button>
   </div>
-  <div v-if="errorMessage" class="text-xs text-red-500 mt-1">{{ errorMessage }}</div>
+  <div v-if="errorMessage" class="text-xs text-red-500">{{ errorMessage }}</div>
+  <div v-else-if="count && +count > 0" class="text-xs text-gray-400">Already in cart</div>
+  <div v-else class="text-xs text-gray-300">Enter number</div>
 </template>
 
 <script setup lang="ts">
@@ -56,7 +58,7 @@ let rules = yup
   .integer()
   .optional()
   .min(0)
-  .transform((_, val) => (isNaN(val) ? null : +val));
+  .transform((_, val) => (isNaN(val) ? (count.value ? 0 : null) : +val));
 
 if (props.product.availabilityData?.availableQuantity) {
   rules = rules.lessThan(props.product.availabilityData?.availableQuantity);

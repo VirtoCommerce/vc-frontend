@@ -3,7 +3,7 @@
     <!-- Product image -->
     <div class="square relative flex flex-col justify-center items-center border border-gray-100">
       <img
-        :src="product.imgSrc || '/static/images/no-image.png'"
+        :src="product.imgSrc || '/static/images/common/no-image.svg'"
         :alt="product.name"
         class="absolute top-0 w-full h-full object-cover object-center"
       />

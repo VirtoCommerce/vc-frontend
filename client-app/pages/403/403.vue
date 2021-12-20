@@ -18,7 +18,7 @@
           </div>
         </div>
         <div class="hidden md:block py-5">
-          <img src="/assets/static/images/403.png" alt="Access denied" class="w-full max-w-md" />
+          <img src="/assets/static/images/errors/403.webp" alt="Access denied" class="w-full max-w-md" />
         </div>
       </div>
     </div>
