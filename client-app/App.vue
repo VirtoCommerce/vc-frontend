@@ -9,6 +9,9 @@
 </template>
 
 <script setup lang="ts">
-import Header from "./shared/layout/components/header.vue";
-import Footer from "./shared/layout/components/footer.vue";
+import { Header, Footer } from "./shared/layout";
+import { useCart } from "@/shared/cart";
+
+const { loadMyCart } = useCart();
+loadMyCart();
 </script>

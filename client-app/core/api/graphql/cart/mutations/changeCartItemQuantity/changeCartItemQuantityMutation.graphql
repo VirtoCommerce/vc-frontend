@@ -1,0 +1,6 @@
+mutation ChangeCartItemQuantity($command: InputChangeCartItemQuantityType!) {
+  changeCartItemQuantity(command: $command) {
+    name
+    itemsQuantity
+  }
+}

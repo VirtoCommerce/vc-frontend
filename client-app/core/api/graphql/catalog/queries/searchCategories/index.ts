@@ -3,8 +3,7 @@ import { CategoryConnection } from "@core/api/graphql/types";
 import { currencyCode, currentUserId, locale, storeId } from "@core/constants";
 import searchCategoriesQueryDocument from "./searchCategoriesQuery.graphql";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function searchCategories(itemsPerPage: number, page: number): Promise<CategoryConnection> {
+export default async function searchCategories(itemsPerPage: number, page: number): Promise<CategoryConnection> {
   const { data } = await client.query({
     query: searchCategoriesQueryDocument,
     variables: {
@@ -18,4 +17,3 @@ async function searchCategories(itemsPerPage: number, page: number): Promise<Cat
   });
   return data.categories;
 }
-export default searchCategories;

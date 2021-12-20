@@ -14,11 +14,13 @@ export default defineConfig({
   },
   build: {
     outDir: "assets/static/bundle",
+    assetsDir: "./",
     emptyOutDir: true,
-    lib: {
-      entry: path.resolve(__dirname, "client-app/main.ts"),
-      name: "theme",
-      fileName: (format) => `theme.${format}.js`,
+    rollupOptions: {
+      output: {
+        entryFileNames: "[name].js",
+        assetFileNames: "[name][extname]",
+      },
     },
   },
   server: {

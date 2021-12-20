@@ -1,10 +1,9 @@
 import client from "@core/api/graphql/graphql-client";
 import { Product } from "@core/api/graphql/types";
-import { currencyCode, currentUserId, locale, storeId, catalogId, categoryId } from "@core/constants";
+import { currencyCode, locale, storeId } from "@core/constants";
 import getProductsQueryDocument from "./getProductQuery.graphql";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function getProduct(id: string): Promise<Product> {
+export default async function getProduct(id: string): Promise<Product> {
   const { data } = await client.query({
     query: getProductsQueryDocument,
     variables: {
@@ -16,4 +15,3 @@ async function getProduct(id: string): Promise<Product> {
   });
   return data.product;
 }
-export default getProduct;

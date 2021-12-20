@@ -24,6 +24,9 @@ query Categories(
       slug
       path
       outline
+      seoInfo {
+        semanticUrl
+      }
     }
     totalCount
   }

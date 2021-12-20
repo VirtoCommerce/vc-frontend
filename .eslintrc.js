@@ -6,8 +6,8 @@ module.exports = {
   ignorePatterns: ["**/*.{es,umd}.js"],
   plugins: ["import"],
   extends: [
-    "plugin:vue/vue3-essential",
     "eslint:recommended",
+    "plugin:vue/vue3-recommended",
     "plugin:import/recommended",
     "plugin:import/typescript",
     "@vue/typescript/recommended",

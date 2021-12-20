@@ -2,8 +2,9 @@ import { Ref, ref, computed } from "vue";
 import { getMe, updatePersonalData } from "@/core/api/graphql/account";
 import { UserType, IdentityResultType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
-import { SignMeUp, SignMeIn } from "../types";
+import { SignMeUp, SignMeIn } from "@/shared/account";
 import useFetch from "@/core/composables/useFetch";
+import { setUserId } from "@/core/constants";
 
 const me: Ref<UserType> = ref({
   userName: "",
@@ -28,6 +29,7 @@ export default () => {
 
     try {
       me.value = await getMe();
+      setUserId(me.value?.id);
     } catch (e) {
       Logger.error("useUser.loadMe", e);
       throw e;
