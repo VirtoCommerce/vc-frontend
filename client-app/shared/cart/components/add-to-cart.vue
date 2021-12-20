@@ -1,5 +1,8 @@
 <template>
-  <div class="flex">
+  <div class="flex relative">
+    <div v-if="updating" class="absolute z-10 flex items-center justify-center w-full h-full bg-white bg-opacity-70">
+      <i class="fas fa-spinner fa-spin text-yellow-500"></i>
+    </div>
     <input
       v-model="value"
       type="number"
@@ -70,11 +73,14 @@ const { value, validate, errorMessage, setValue } = useField("qty", rules, {
   initialValue: count,
 });
 
+const updating = ref(false);
+
 async function onChange() {
   if (!value.value || isNaN(value.value)) {
     setValue(1);
   }
   if (value.value && (await validate())) {
+    updating.value = true;
     if (lineItem.value) {
       await changeItemQuantity(lineItem.value.id, value.value);
     } else {
@@ -82,6 +88,7 @@ async function onChange() {
     }
     lineItem.value = itemInCart(props.product.id);
     emit("update:lineitem", lineItem.value);
+    updating.value = false;
   }
 }
 </script>
