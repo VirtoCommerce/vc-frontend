@@ -162,7 +162,7 @@
               <template v-else>
                 <ProductCardGrid v-for="item in products" :key="item.id" :product="item">
                   <template #cart-handler>
-                    <AddToCart :product="item"></AddToCart>
+                    <AddToCart :product="item" @update:lineitem="onAddToCart"></AddToCart>
                   </template>
                 </ProductCardGrid>
               </template>
@@ -176,7 +176,7 @@
               <template v-else>
                 <ProductCardList v-for="item in products" :key="item.id" :product="item">
                   <template #cart-handler>
-                    <AddToCart :product="item"></AddToCart>
+                    <AddToCart :product="item" @update:lineitem="onAddToCart"></AddToCart>
                   </template>
                 </ProductCardList>
               </template>
@@ -208,6 +208,7 @@
       </div>
     </div>
   </div>
+  <CartAddInfo :is-open="isCartAddInfoOpen" :line-item="cartAddInfoLineItem" @close="onCartAddInfoClose"></CartAddInfo>
 </template>
 
 <script setup lang="ts">
@@ -233,6 +234,8 @@ import { AddToCart } from "@/shared/cart";
 import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from "@headlessui/vue";
 import { useRoute } from "vue-router";
 import _ from "lodash";
+import CartAddInfo from "@/shared/cart/components/cart-add-info.vue";
+import { LineItemType } from "@/core/api/graphql/types";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
@@ -375,6 +378,19 @@ watch(isMobile, async () => {
     }
   }
 });
+
+const isCartAddInfoOpen = ref(false);
+const cartAddInfoLineItem = ref();
+
+const onAddToCart = function (lineItem?: LineItemType) {
+  cartAddInfoLineItem.value = { ...(lineItem ?? {}) };
+  isCartAddInfoOpen.value = true;
+};
+
+const onCartAddInfoClose = function () {
+  isCartAddInfoOpen.value = false;
+  cartAddInfoLineItem.value = {};
+};
 </script>
 
 <style scoped></style>
