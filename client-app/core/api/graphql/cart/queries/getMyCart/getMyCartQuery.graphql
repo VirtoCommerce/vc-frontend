@@ -7,6 +7,7 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
   cart(storeId: $storeId, userId: $userId, currencyCode: $currencyCode, cultureName: $cultureName) {
     id
     name
+    comment
     itemsCount
     itemsQuantity
     isValid

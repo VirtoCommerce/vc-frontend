@@ -7,6 +7,7 @@ import {
   removeCoupon,
   validateCoupon,
   addCoupon,
+  changeCartComment,
 } from "@core/api/graphql/cart";
 import { CartType, LineItemType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
@@ -111,6 +112,20 @@ export default () => {
     await loadMyCart();
   }
 
+  async function changeComment(comment: string) {
+    loading.value = true;
+    console.log(`change cart comment ${comment}`);
+    try {
+      await changeCartComment(comment);
+    } catch (e) {
+      Logger.error("useCart.changeCartComment", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+    await loadMyCart();
+  }
+
   function itemInCart(productId: string): LineItemType | undefined {
     return cart.value?.items?.find((product) => product?.productId === productId) as LineItemType;
   }
@@ -126,5 +141,6 @@ export default () => {
     validateCartCoupon,
     addCartCoupon,
     removeCartCoupon,
+    changeComment,
   };
 };

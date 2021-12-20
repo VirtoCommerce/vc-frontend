@@ -11,6 +11,7 @@ import removeCartItem from "./mutations/removeCartItem";
 import addCoupon from "./mutations/addCoupon";
 import removeCoupon from "./mutations/removeCoupon";
 import validateCoupon from "./mutations/validateCoupon";
+import changeCartComment from "./mutations/changeCartComment";
 
 export {
   getMyCart,
@@ -26,4 +27,5 @@ export {
   addCoupon,
   removeCoupon,
   validateCoupon,
+  changeCartComment,
 };
