@@ -160,7 +160,7 @@
                 Availability, shipping, tax & promotions are not final until you complete your order.
               </p>
               <button
-                class="uppercase bg-yellow-500 text-white py-2 w-full rounded font-roboto-condensed text-base"
+                class="uppercase bg-yellow-500 text-white py-2 w-full rounded font-roboto-condensed text-base disabled:opacity-30"
                 :disabled="!isValidCheckout"
               >
                 Place order
@@ -194,7 +194,7 @@ const cartCoupon = ref("");
 const couponValidationError = ref(false);
 const cartCouponApplied = ref(false);
 
-const isValidCheckout = computed(() =>
+const isValidCheckout = computed(() => !(cart.value.validationErrors && cart.value.validationErrors?.length > 0));
   cart.value.items?.every((item) => {
     item?.quantity < item?.inStockQuantity;
   })
