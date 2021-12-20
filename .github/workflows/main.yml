@@ -11,6 +11,7 @@ on:
       - 'build/**'
       - 'README.md'
       - 'LICENSE'
+      - '**/argoDeploy.json'
   pull_request:
     branches:
       [master, dev]
@@ -20,6 +21,7 @@ on:
       - 'build/**'
       - 'README.md'
       - 'LICENSE'
+      - '**/argoDeploy.json'
 
 jobs:
   ci:
