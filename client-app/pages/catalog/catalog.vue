@@ -97,9 +97,9 @@
                 {{ products.length }} displayed that include {{ products.length }} products.
               </span>
             </p>
-            <div class="flex items-end gap-4 mb-6 mt-4">
+            <div class="flex justify-start mb-6 mt-4">
               <!-- Mobile filters toggler -->
-              <div class="lg:hidden">
+              <div class="lg:hidden mr-3">
                 <button
                   type="button"
                   class="rounded bg-yellow-500 text-sm font-extrabold px-4 py-2 text-white"
@@ -122,6 +122,7 @@
 
               <!-- Sorting -->
               <div class="relative ml-auto flex-grow md:flex-grow-0">
+                <span class="hidden lg:inline mr-2">Sort by:</span>
                 <Listbox v-model="sort">
                   <ListboxButton
                     class="w-full md:w-52 lg:w-64 h-9 pl-3 pr-16 text-base bg-white border rounded appearance-none outline-none border-gray-300"

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col bg-white rounded p-4 shadow-md">
+  <div class="flex flex-col bg-white rounded border p-4 shadow-sm">
     <!-- Product image -->
     <div class="square flex border border-gray-100 bg-gray-100"></div>
 

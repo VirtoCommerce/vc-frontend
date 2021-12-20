@@ -2,8 +2,7 @@ import client from "@core/api/graphql/graphql-client";
 import { currentUserId, storeId } from "@core/constants";
 import mutationDocument from "./addItemToCartMutation.graphql";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function addItemToCart(productId: string, qty: number): Promise<void> {
+export default async function addItemToCart(productId: string, qty: number): Promise<void> {
   const { data } = await client.mutate({
     mutation: mutationDocument,
     variables: {
@@ -16,4 +15,3 @@ async function addItemToCart(productId: string, qty: number): Promise<void> {
     },
   });
 }
-export default addItemToCart;

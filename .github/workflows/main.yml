@@ -11,6 +11,7 @@ on:
       - 'build/**'
       - 'README.md'
       - 'LICENSE'
+      - '**/argoDeploy.json'
   pull_request:
     branches:
       [master, dev]
@@ -20,6 +21,7 @@ on:
       - 'build/**'
       - 'README.md'
       - 'LICENSE'
+      - '**/argoDeploy.json'
 
 jobs:
   ci:
@@ -37,8 +39,7 @@ jobs:
     outputs:
       artifactUrl: '${{ steps.publish.outputs.blobUrl }}'
       jira-keys: ${{ steps.jira_keys.outputs.jira-keys }}
-      deployConfigPath: '.deployment/theme/argoDeploy.json'
-
+      deployConfigPath: '.deployment/storefront-app/argoDeploy.json'
 
     steps:
       - uses: actions/checkout@v2
@@ -151,3 +152,17 @@ jobs:
         if: success()
         run: |
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
+
+  dev_cd:
+    if: github.ref == 'refs/heads/dev' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')
+    needs: ci
+    runs-on: ubuntu-latest
+    env:
+      DEPLOYMENT_ENV: 'dev'
+    steps:
+      - name: Invoke Module deployment workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: VC deployment
+          token: ${{ secrets.REPO_TOKEN }}
+          inputs: '{ "artifactUrl": "${{ needs.ci.outputs.artifactUrl }}", "deployEnvironment": "${{ env.DEPLOYMENT_ENV }}", "deployConfigPath": "${{ needs.ci.outputs.deployConfigPath}}", "jiraKeys":"${{ needs.ci.outputs.jira-keys }}" }'

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex items-center justify-between bg-white rounded p-4 shadow-md hover:shadow-lg cursor-pointer space-x-6"
+    class="flex items-center justify-between bg-white rounded border p-4 shadow-sm hover:shadow-lg cursor-pointer space-x-6"
   >
     <div class="flex flex-grow items-center">
       <!-- Product image -->

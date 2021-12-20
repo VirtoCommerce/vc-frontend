@@ -8,5 +8,8 @@
     "esbenp.prettier-vscode",
     "bradlc.vscode-tailwindcss",
     "johnsoncodehk.volar"
+  ],
+  "unwantedRecommendations": [
+    "octref.vetur"
   ]
 }
