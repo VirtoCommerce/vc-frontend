@@ -14,12 +14,17 @@ import { Logger } from "@core/utilities";
 
 const loading: Ref<boolean> = ref(true);
 const cart: Ref<CartType> = ref({ name: "" });
+const pages: Ref<number> = ref(0);
+const itemsPerPage: Ref<number> = ref(6);
 
 export default () => {
   async function loadMyCart(): Promise<CartType> {
     loading.value = true;
     try {
       cart.value = await getMyCart();
+      if (cart.value.items && cart.value.items.length > 0) {
+        pages.value = Math.ceil(cart.value.items.length / itemsPerPage.value);
+      }
     } catch (e) {
       Logger.error("useCart.loadMyCart", e);
       throw e;
@@ -132,6 +137,8 @@ export default () => {
 
   return {
     cart: computed(() => cart.value),
+    pages: computed(() => pages.value),
+    itemsPerPage: computed(() => itemsPerPage.value),
     loading: computed(() => loading.value),
     loadMyCart,
     addToCart,

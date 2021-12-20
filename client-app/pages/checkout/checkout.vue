@@ -11,7 +11,7 @@
           <CheckoutSection title="My products" icon-url="/assets/static/images/products.svg" :is-products-block="true">
             <!-- Product card -->
             <ProductCard
-              v-for="item in cart.items"
+              v-for="item in cartItems"
               :key="item.id"
               :line-item="item"
               @update:quantity="updateItemQuantity"
@@ -19,7 +19,12 @@
             ></ProductCard>
 
             <div class="py-8 lg:flex lg:items-center lg:px-5">
-              <Pagination :page="1" :pages="3" class="mb-3 lg:mb-0"></Pagination>
+              <Pagination
+                v-model:page="page"
+                :pages="pages"
+                class="mb-3 lg:mb-0"
+                @update:page="page = $event"
+              ></Pagination>
               <p class="text-center text-sm lg:ml-auto">
                 If you changed multiple quantities, <span class="text-cyan-700 font-extrabold">Update All</span>
               </p>
@@ -154,6 +159,8 @@ import { useRouter } from "vue-router";
 
 const {
   cart,
+  pages,
+  itemsPerPage,
   loadMyCart,
   changeItemQuantity,
   removeItem,
@@ -171,6 +178,11 @@ const router = useRouter();
 const cartCoupon = ref("");
 const couponValidationError = ref(false);
 const cartCouponApplied = ref(false);
+
+const page = ref(1);
+const cartItems = computed(() =>
+  cart.value.items?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
+);
 
 const cartComment = ref("");
 
