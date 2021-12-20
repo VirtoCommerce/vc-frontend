@@ -41,7 +41,8 @@
               </div>
               <div>
                 <button
-                  class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500"
+                  class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 disabled:opacity-30"
+                  disabled
                 >
                   Change
                 </button>
@@ -54,7 +55,8 @@
               </div>
               <div>
                 <button
-                  class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500"
+                  class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 disabled:opacity-30"
+                  disabled
                 >
                   Change
                 </button>
@@ -72,6 +74,8 @@
               <label class="flex items-center text-sm cursor-pointer">
                 <input
                   type="checkbox"
+                  checked="true"
+                  disabled
                   class="form-tick appearance-none w-5 h-5 border-2 border-gray-300 rounded-sm checked:bg-yellow-500 checked:border-transparent focus:outline-none cursor-pointer"
                 />
                 <span class="ml-2 font-medium">Same as shipping address</span>
@@ -84,7 +88,8 @@
               </div>
               <div>
                 <button
-                  class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500"
+                  class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 disabled:opacity-30"
+                  disabled
                 >
                   Change
                 </button>
