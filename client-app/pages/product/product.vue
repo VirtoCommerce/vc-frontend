@@ -53,7 +53,7 @@
             </div>
           </div>
         </div>
-        <div class="flex-grow-0 flex flex-col">
+        <div class="flex-grow-0 md:w-96 flex flex-col">
           <div class="bg-white border shadow-sm rounded-md">
             <div class="border-b p-5 md:p-6">
               <h2 class="text-xl font-bold uppercase">Price &amp; Delivery</h2>
@@ -69,7 +69,7 @@
 
               <AddToCart class="mt-3" :product="product"></AddToCart>
             </div>
-            <div class="flex md:w-96 text-center">
+            <div class="flex text-center">
               <div
                 class="flex items-center justify-center flex-1 py-3 px-1 border-r space-x-2 cursor-pointer hover:bg-gray-100"
               >
