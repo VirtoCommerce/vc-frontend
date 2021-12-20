@@ -15,9 +15,29 @@
           <span>{{ cart.subTotal?.formattedAmount }}</span>
         </div>
         <div class="py-2 border-t border-b font-normal text-base">
-          <div class="flex justify-between">
-            <span>Discount</span>
+          <div class="flex justify-between" @click="discountsCollapsed = !discountsCollapsed">
+            <span class="flex items-center" :class="{ 'cursor-pointer': cart.discounts && cart.discounts.length > 0 }"
+              >Discount
+              <i
+                v-if="cart.discounts && cart.discounts.length > 0 && !discountsCollapsed"
+                class="fas fa-caret-down ml-1 text-yellow-500"
+              ></i
+              ><i
+                v-if="cart.discounts && cart.discounts.length > 0 && discountsCollapsed"
+                class="fas fa-caret-up ml-1 text-yellow-500"
+              ></i>
+            </span>
             <span>{{ cart.discountTotal?.formattedAmount }}</span>
+          </div>
+          <div v-if="cart.discounts && cart.discounts.length > 0 && discountsCollapsed">
+            <ul v-for="(discount, index) in cart.discounts" :key="index" class="list-disc pl-5 text-gray-400">
+              <li>
+                <div class="flex justify-between">
+                  <span class="text-sm">{{ discount?.description }}</span>
+                  <span>{{ cart.currency?.symbol }}{{ discount?.amount }}</span>
+                </div>
+              </li>
+            </ul>
           </div>
           <div class="flex justify-between">
             <span>Tax</span>
@@ -41,7 +61,7 @@
 
 <script setup lang="ts">
 import { CartType } from "@/core/api/graphql/types";
-import { PropType } from "vue";
+import { PropType, ref } from "vue";
 
 defineProps({
   cart: {
@@ -49,6 +69,8 @@ defineProps({
     required: true,
   },
 });
+
+const discountsCollapsed = ref(false);
 </script>
 
 <style scoped></style>
