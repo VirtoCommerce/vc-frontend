@@ -105,21 +105,6 @@
           <!-- Order summary -->
           <OrderSummary :cart="cart">
             <template #coupons>
-              <!-- Purchase order -->
-              <!-- <p class="text-base pb-2 font-extrabold">Purchase order</p>
-              <div class="flex gap-3 mb-5">
-                <input
-                  class="border rounded text-sm leading-8 flex-1 w-full border-gray-300 h-8 px-2 outline-none focus:border-gray-400"
-                  type="text"
-                  placeholder="Enter purchase order number"
-                />
-                <button
-                  class="rounded uppercase px-2 border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500"
-                >
-                  <i class="fas fa-check"></i>
-                </button>
-              </div> -->
-
               <!-- Promotion code -->
               <p class="text-base pb-2 font-extrabold">Promotion code</p>
               <div class="flex gap-3" :class="[!couponValidationError && 'mb-8']">
@@ -195,10 +180,6 @@ const couponValidationError = ref(false);
 const cartCouponApplied = ref(false);
 
 const isValidCheckout = computed(() => !(cart.value.validationErrors && cart.value.validationErrors?.length > 0));
-  cart.value.items?.every((item) => {
-    item?.quantity < item?.inStockQuantity;
-  })
-);
 
 const updateItemQuantity = async (id: string, quantity: number) => {
   await changeItemQuantity(id, quantity);
@@ -210,10 +191,6 @@ const removeCartItem = async (id: string) => {
 
 const useCoupon = async () => {
   const validationResult = await validateCartCoupon(cartCoupon.value);
-  console.log(validationResult.errors);
-  console.log(validationResult.succeeded);
-  // couponValidationError.value = validationResult.succeeded;
-  // console.log(couponValidationError.value);
 
   if (validationResult) {
     await addCartCoupon(cartCoupon.value).then(() => {
