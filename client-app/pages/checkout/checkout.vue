@@ -95,7 +95,7 @@
           <!-- Extra section -->
           <CheckoutSection title="Extra" icon-url="/assets/static/images/extra.svg" :is-products-block="false">
             <p class="font-extrabold text-base mb-1">Order comments</p>
-            <Textarea :resize-class="'resize-none'" :rows="4" :max-length="1000"></Textarea>
+            <Textarea v-model="cartComment" :resize-class="'resize-none'" :rows="4" :max-length="1000"></Textarea>
           </CheckoutSection>
           <div class="shadow-inner h-1 lg:hidden"></div>
         </div>
@@ -104,41 +104,15 @@
         <div class="flex flex-col px-5 mb-7 order-first md:px-0 lg:mb-0 lg:order-1 lg:w-1/4">
           <!-- Order summary -->
           <OrderSummary :cart="cart">
-            <template #coupons>
+            <template #header>
               <!-- Promotion code -->
-              <p class="text-base pb-2 font-extrabold">Promotion code</p>
-              <div class="flex gap-3" :class="[!couponValidationError && 'mb-8']">
-                <input
-                  v-model="cartCoupon"
-                  class="border rounded text-sm leading-8 flex-1 w-full border-gray-300 h-8 px-2 outline-none focus:border-gray-400"
-                  type="text"
-                  placeholder="Enter your code"
-                  :disabled="cartCouponApplied"
-                />
-                <button
-                  v-if="!cartCouponApplied"
-                  class="rounded uppercase w-10 border-2 font-roboto-condensed font-bold text-sm"
-                  :class="[
-                    cartCoupon.length === 0
-                      ? 'border-gray-300 bg-gray-50 text-gray-300'
-                      : 'border-yellow-500 bg-yellow-500 text-white',
-                  ]"
-                  :disabled="cartCoupon.length === 0"
-                  @click="useCoupon"
-                >
-                  <i class="fas fa-check"></i>
-                </button>
-                <button
-                  v-if="cartCouponApplied"
-                  class="rounded uppercase w-10 border-2 font-roboto-condensed font-bold text-sm text-red-500 border-red-500 hover:text-white hover:bg-red-500"
-                  @click="removeCoupon"
-                >
-                  <i class="fas fa-times"></i>
-                </button>
-              </div>
-              <p v-if="couponValidationError" class="text-red-500 text-sm mb-3">
-                This code did not match any active coupon. Was it entered correctly?
-              </p>
+              <PromoCode
+                v-model="cartCoupon"
+                :cart-coupon-applied="cartCouponApplied"
+                :coupon-validation-error="couponValidationError"
+                @click:coupon-used="useCoupon"
+                @click:coupon-removed="removeCoupon"
+              ></PromoCode>
             </template>
             <template #footer>
               <p class="mt-8 mb-3 text-xs font-normal text-gray-400">
@@ -166,18 +140,29 @@ import CheckoutLabeledBlock from "@/shared/checkout/components/checkout-labeled-
 import OrderSummary from "@/shared/checkout/components/order-summary.vue";
 import EmptyCart from "./empty-cart.vue";
 import Textarea from "@/components/Textarea.vue";
+import PromoCode from "@/shared/checkout/components/promo-code.vue";
 import { useCart } from "@/shared/cart";
 import { computed, onMounted, ref } from "vue";
 import useCheckout from "@/shared/cart/composables/useCheckout";
 
-const { cart, loadMyCart, changeItemQuantity, removeItem, validateCartCoupon, addCartCoupon, removeCartCoupon } =
-  useCart();
+const {
+  cart,
+  loadMyCart,
+  changeItemQuantity,
+  removeItem,
+  validateCartCoupon,
+  addCartCoupon,
+  removeCartCoupon,
+  changeComment,
+} = useCart();
 
 const { shippingMethods, chosenShippingMethod, billingAddress, chosenPaymentMethod, placeOrder } = useCheckout();
 
 const cartCoupon = ref("");
 const couponValidationError = ref(false);
 const cartCouponApplied = ref(false);
+
+const cartComment = ref("");
 
 const isValidCheckout = computed(() => !(cart.value.validationErrors && cart.value.validationErrors?.length > 0));
 
@@ -204,15 +189,23 @@ const useCoupon = async () => {
 
 const removeCoupon = async () => {
   await removeCartCoupon(cartCoupon.value).then(() => {
+    cartCoupon.value = "";
     cartCouponApplied.value = false;
   });
 };
 
+const changeCartComment = async () => {
+  await changeComment(cartComment.value);
+};
+
 onMounted(async () => {
-  console.log(cart.value);
-  if (!cart?.value) {
-    await loadMyCart();
-  }
+  await loadMyCart().then(() => {
+    if (cart.value.coupons && cart.value.coupons.length > 0) {
+      cartCoupon.value = cart.value.coupons[0]?.code || "";
+      cartCouponApplied.value = true;
+    }
+    cartComment.value = cart.value.comment || "";
+  });
 });
 </script>
 

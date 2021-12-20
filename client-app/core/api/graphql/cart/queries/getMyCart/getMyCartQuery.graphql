@@ -8,6 +8,9 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
     id
     name
     comment
+    coupons {
+      code
+    }
     itemsCount
     itemsQuantity
     isValid

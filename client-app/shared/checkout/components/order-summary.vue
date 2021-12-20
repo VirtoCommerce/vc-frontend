@@ -6,7 +6,7 @@
       </div>
     </div>
     <div class="p-4">
-      <slot name="coupons"></slot>
+      <slot name="header"></slot>
 
       <!-- Totals block -->
       <div>
