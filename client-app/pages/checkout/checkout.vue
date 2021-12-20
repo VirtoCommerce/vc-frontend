@@ -126,6 +126,7 @@
               <button
                 class="uppercase bg-yellow-500 text-white py-2 w-full rounded font-roboto-condensed text-base disabled:opacity-30"
                 :disabled="!isValidCheckout"
+                @click="createOrder"
               >
                 Place order
               </button>
@@ -149,6 +150,7 @@ import PromoCode from "@/shared/checkout/components/promo-code.vue";
 import { useCart } from "@/shared/cart";
 import { computed, onMounted, ref } from "vue";
 import useCheckout from "@/shared/cart/composables/useCheckout";
+import { useRouter } from "vue-router";
 
 const {
   cart,
@@ -161,7 +163,10 @@ const {
   changeComment,
 } = useCart();
 
-const { shippingMethods, chosenShippingMethod, billingAddress, chosenPaymentMethod, placeOrder } = useCheckout();
+const { shippingMethods, chosenShippingMethod, billingAddress, chosenPaymentMethod, placeOrder, loadShipmentMethods } =
+  useCheckout();
+
+const router = useRouter();
 
 const cartCoupon = ref("");
 const couponValidationError = ref(false);
@@ -199,8 +204,15 @@ const removeCoupon = async () => {
   });
 };
 
-const changeCartComment = async () => {
-  await changeComment(cartComment.value);
+const createOrder = async () => {
+  if (cart.value.id) {
+    if (cartComment.value) {
+      await changeComment(cartComment.value);
+    }
+    await placeOrder(cart.value.id).then(() => {
+      router.push({ name: "OrderComplete" });
+    });
+  }
 };
 
 onMounted(async () => {

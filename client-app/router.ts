@@ -6,6 +6,7 @@ import Checkout from "./pages/checkout/checkout.vue";
 import Error403 from "./pages/403/403.vue";
 import Error404 from "./pages/404/404.vue";
 import Error500 from "./pages/500/500.vue";
+import ThankYou from "./pages/thank-you/thank-you.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -25,6 +26,7 @@ const router = createRouter({
     { path: "/catalog", name: "CatalogRoot", component: Catalog },
     { path: "/catalog/:categoryKey", name: "Catalog", component: Catalog },
     { path: "/checkout/", name: "Checkout", component: Checkout },
+    { path: "/thank-you/", name: "OrderComplete", component: ThankYou },
     { path: "/500", name: "InternalError", component: Error500 },
     { path: "/403", name: "NoAccess", component: Error403 },
     { path: "/:pathMatch(.*)*", name: "NotFound", component: Error404 },
