@@ -11,7 +11,7 @@
         <div
           class="flex flex-grow flex-col lg:flex-row -mx-5 md:mx-0 lg:space-x-12 mb-6 p-6 bg-white border border-gray-100 rounded-md shadow-sm"
         >
-          <div class="lg:w-1/3 mb-6 lg:mb-0">
+          <div class="lg:w-1/3 flex-1 mb-6 lg:mb-0">
             <div class="square relative flex flex-col justify-center items-center border border-gray-100">
               <img
                 :src="product.imgSrc || '/assets/static/images/no-image.png'"
@@ -28,27 +28,29 @@
               <span class="ml-2">Compare</span>
             </div>
           </div>
-          <div class="flex flex-col flex-grow">
-            <div class="flex items-center mb-4">
-              <img src="/assets/static/images/technical_specs.svg" alt="technical specs" />
-              <h2 class="text-xl font-bold uppercase ml-2">Technical specs</h2>
-            </div>
-            <div v-for="property in product.properties" :key="property?.name" class="flex mb-4 space-x-3">
-              <div class="flex-none text-gray-500">
-                {{ property?.name }}
+          <div class="flex flex-col lg:w-2/3 flex-1">
+            <div class="flex flex-col">
+              <div class="flex items-center mb-4">
+                <img src="/assets/static/images/technical_specs.svg" alt="technical specs" />
+                <h2 class="text-xl font-bold uppercase ml-2">Technical specs</h2>
               </div>
-              <div class="flex-1 border-b border-grey-100 border-dotted h-5"></div>
-              <div class="flex-none w-32 font-bold">
-                {{ property?.value }}
+              <div v-for="property in product.properties" :key="property?.name" class="flex mb-4 space-x-3">
+                <div class="flex-none text-gray-500">
+                  {{ property?.name }}
+                </div>
+                <div class="flex-1 border-b border-grey-100 border-dotted h-5"></div>
+                <div class="font-bold">
+                  {{ property?.value }}
+                </div>
               </div>
             </div>
-          </div>
-          <div v-if="product?.description" class="flex flex-col flex-grow">
-            <div class="flex items-center mb-4">
-              <img src="/assets/static/images/description.svg" alt="description" />
-              <h2 class="text-xl font-bold uppercase ml-2">Description</h2>
+            <div v-if="product?.description" class="flex flex-col">
+              <div class="flex items-center mb-4">
+                <img src="/assets/static/images/description.svg" alt="description" />
+                <h2 class="text-xl font-bold uppercase ml-2">Description</h2>
+              </div>
+              <MarkdownRender :src="product?.description?.content" class="text-gray-500"></MarkdownRender>
             </div>
-            <div v-html="product?.description"></div>
           </div>
         </div>
         <div class="flex-grow-0 flex flex-col">
@@ -65,7 +67,7 @@
                 </div>
               </div>
 
-              <AddToCart class="mt-3" @update:count="onAddToCart($event)"></AddToCart>
+              <AddToCart class="mt-3" :product="product"></AddToCart>
             </div>
             <div class="flex md:w-96 text-center">
               <div
@@ -97,6 +99,7 @@ import { ref, reactive, onMounted, watch, unref, watchEffect, Ref } from "vue";
 import { useRoute } from "vue-router";
 import { useProducts, Breadcrumbs, IBreadcrumbsItem } from "@/shared/catalog";
 import { AddToCart, useCart } from "@/shared/cart";
+import MarkdownRender from "@/components/atoms/markdown-render/markdown-render.vue";
 
 const route = useRoute();
 
@@ -106,16 +109,14 @@ const breadcrumbsItems: Ref<IBreadcrumbsItem[]> = ref([{ url: "/", title: "Home"
 
 const productId = ref(route.params.id as string);
 
-const { addToCart } = useCart();
+const description: Ref<string | undefined> = ref("");
 
-const onAddToCart = async (qty: number) => {
-  await addToCart(product.value.id, qty);
-};
+const src = ref("# header");
 
 onMounted(async () => {
   await loadProduct(productId.value);
   BuildBreadcrumbs();
-
+  description.value = product.value.description?.content;
   console.log(product.value);
 });
 
