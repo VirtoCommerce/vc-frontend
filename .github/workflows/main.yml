@@ -37,8 +37,7 @@ jobs:
     outputs:
       artifactUrl: '${{ steps.publish.outputs.blobUrl }}'
       jira-keys: ${{ steps.jira_keys.outputs.jira-keys }}
-      deployConfigPath: '.deployment.storefront-app.argoDeploy.json'
-
+      deployConfigPath: '.deployment/storefront-app/argoDeploy.json'
 
     steps:
       - uses: actions/checkout@v2
