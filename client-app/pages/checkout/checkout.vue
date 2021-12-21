@@ -13,6 +13,7 @@
             <ProductCard
               v-for="item in cartItems"
               :key="item.id"
+              :ref="setProductCardRef"
               :line-item="item"
               @update:quantity="updateItemQuantity"
               @remove:item="removeCartItem"
@@ -26,7 +27,8 @@
                 @update:page="page = $event"
               ></Pagination>
               <p class="text-center text-sm lg:ml-auto">
-                If you changed multiple quantities, <span class="text-cyan-700 font-extrabold">Update All</span>
+                If you changed multiple quantities,
+                <span class="text-cyan-700 font-extrabold" @click="updateAllItems">Update All</span>
               </p>
             </div>
           </CheckoutSection>
@@ -153,9 +155,10 @@ import EmptyCart from "./empty-cart.vue";
 import Textarea from "@/components/Textarea.vue";
 import PromoCode from "@/shared/checkout/components/promo-code.vue";
 import { useCart } from "@/shared/cart";
-import { computed, onMounted, ref } from "vue";
+import { computed, onBeforeUpdate, onMounted, ref } from "vue";
 import useCheckout from "@/shared/cart/composables/useCheckout";
 import { useRouter } from "vue-router";
+import _ from "lodash";
 
 const {
   cart,
@@ -175,6 +178,8 @@ const { shippingMethods, chosenShippingMethod, billingAddress, chosenPaymentMeth
 
 const router = useRouter();
 
+const productCardRefs = ref<typeof ProductCard[]>([]);
+
 const cartCoupon = ref("");
 const couponValidationError = ref(false);
 const cartCouponApplied = ref(false);
@@ -187,6 +192,18 @@ const cartItems = computed(() =>
 const cartComment = ref("");
 
 const isValidCheckout = computed(() => !(cart.value.validationErrors && cart.value.validationErrors?.length > 0));
+
+const setProductCardRef = (el: typeof ProductCard) => {
+  if (el) {
+    productCardRefs.value.push(el);
+  }
+};
+
+const updateAllItems = () => {
+  _.each(productCardRefs.value, (productCard) => {
+    productCard.updateQuantity();
+  });
+};
 
 const updateItemQuantity = async (id: string, quantity: number) => {
   await changeItemQuantity(id, quantity);
@@ -226,6 +243,10 @@ const createOrder = async () => {
     });
   }
 };
+
+onBeforeUpdate(() => {
+  productCardRefs.value = [];
+});
 
 onMounted(async () => {
   await loadMyCart().then(() => {

@@ -53,7 +53,7 @@
           <button
             v-if="!isInputdisabled"
             class="lg:hidden rounded uppercase h-8 px-2 border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500"
-            @click="$emit('update:quantity', lineItem.id, value)"
+            @click="updateQuantity"
           >
             Update
           </button>
@@ -64,9 +64,7 @@
             Remove
           </button>
           <div class="hidden lg:flex flex-col gap-1 text-xs font-semibold text-cyan-700">
-            <span v-if="!isInputdisabled" class="cursor-pointer" @click="$emit('update:quantity', lineItem.id, value)"
-              >Update</span
-            >
+            <span v-if="!isInputdisabled" class="cursor-pointer" @click="updateQuantity">Update</span>
             <span class="cursor-pointer" @click="$emit('remove:item', lineItem.id)">Remove</span>
           </div>
           <div class="hidden lg:flex flex-col text-sm font-extrabold pr-3">
@@ -111,9 +109,16 @@ const { value, validate, errorMessage } = useField("qty", rules, {
 
 const isInputdisabled = computed(() => props.lineItem.inStockQuantity === 0);
 
+const updateQuantity = () => {
+  if (!isInputdisabled.value) {
+    emit("update:quantity", props.lineItem.id, value.value);
+  }
+};
+
 validate();
 
-defineEmits(["update:quantity", "remove:item"]);
+const emit = defineEmits(["update:quantity", "remove:item"]);
+defineExpose({ updateQuantity });
 </script>
 
 <style scoped></style>
