@@ -57,7 +57,8 @@
 
       <div v-if="product.availabilityData?.isInStock" class="flex items-center text-green-700 text-xs mt-3">
         <div class="w-1.5 h-1.5 bg-green-700 rounded mr-1"></div>
-        {{ product.availabilityData.availableQuantity }} in stock
+        {{ product.availabilityData.availableQuantity > 9999 ? "9999+" : product.availabilityData.availableQuantity }}
+        in stock
       </div>
       <div v-else class="flex items-center text-red-500 text-xs mt-3">
         <div class="w-1.5 h-1.5 bg-red-500 rounded mr-1"></div>
