@@ -147,13 +147,15 @@
 
 <script setup lang="ts">
 import Pagination from "@/shared/catalog/components/pagination.vue";
-import ProductCard from "@/shared/checkout/components/product-card.vue";
-import CheckoutSection from "@/shared/checkout/components/checkout-section.vue";
-import CheckoutLabeledBlock from "@/shared/checkout/components/checkout-labeled-block.vue";
-import OrderSummary from "@/shared/checkout/components/order-summary.vue";
-import EmptyCart from "./empty-cart.vue";
+import {
+  CheckoutLabeledBlock,
+  CheckoutSection,
+  OrderSummary,
+  ProductCard,
+  PromoCode,
+  EmptyCart,
+} from "@/shared/checkout";
 import Textarea from "@/components/Textarea.vue";
-import PromoCode from "@/shared/checkout/components/promo-code.vue";
 import { useCart } from "@/shared/cart";
 import { computed, onBeforeUpdate, onMounted, ref } from "vue";
 import useCheckout from "@/shared/cart/composables/useCheckout";
