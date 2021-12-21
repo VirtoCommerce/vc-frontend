@@ -3,7 +3,7 @@
     <div class="p-5 flex flex-wrap overflow-hidden gap-x-4 lg:gap-6">
       <div class="border border-gray-100 w-16 h-16">
         <img
-          :src="lineItem.imageUrl || '/assets/static/images/no-image.svg'"
+          :src="lineItem.imageUrl || '/assets/static/images/common/no-image.svg'"
           :alt="lineItem.product?.name"
           class="w-full h-full object-cover object-center"
         />
