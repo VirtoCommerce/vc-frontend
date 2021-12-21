@@ -15,15 +15,15 @@
             {{ lineItem.name }}
           </router-link>
           <div class="flex">
-            <span class="font-medium text-gray-500">Brand: </span>
+            <span class="font-medium text-gray-500 pr-1">Brand: </span>
             <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
             <span class="w-1/3 lg:w-auto font-bold">{{ lineItem.product?.brandName }}</span>
           </div>
           <div class="flex text-sm">
-            <span class="font-medium text-gray-500">Price: </span>
+            <span class="font-medium text-gray-500 pr-1">Price: </span>
             <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
             <p class="w-1/3 lg:w-auto font-bold">
-              {{ lineItem.listPrice?.formattedAmount }} <span class="hidden lg:inline">/ each</span>
+              <span class="text-green-700">{{ lineItem.listPrice?.formattedAmount }}</span> <span class="hidden lg:inline">/ each</span>
             </p>
           </div>
           <div class="flex text-sm lg:hidden">
