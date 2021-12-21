@@ -12,7 +12,7 @@
           >
         </div>
         <div class="hidden md:block py-5">
-          <img src="/assets/static/images/emptyCart.png" alt="Page not found" class="w-full max-w-md" />
+          <img src="/assets/static/images/errors/emptyCart.webp" alt="Page not found" class="w-full max-w-md" />
         </div>
       </div>
     </div>
