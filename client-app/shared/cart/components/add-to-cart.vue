@@ -6,9 +6,13 @@
     <input
       v-model="value"
       type="number"
+      :max="max"
+      :min="0"
       class="border rounded-l border-r-0 flex-1 w-full text-sm border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9"
       :class="[!!errorMessage ? 'border-red-500 focus:border-red-500 border-r -mr-px z-10' : '']"
       :disabled="disabled"
+      @input="onInput"
+      @keypress="onKeypress"
     />
 
     <button
@@ -42,6 +46,9 @@ import { useField } from "vee-validate";
 import { computed, PropType, ref } from "vue";
 import * as yup from "yup";
 
+// Define max qty available to add
+const max = 999999;
+
 const props = defineProps({
   product: {
     type: Object as PropType<Product>,
@@ -57,38 +64,53 @@ const disabled = computed(() => !props.product.availabilityData?.isAvailable);
 const lineItem = ref(itemInCart(props.product.id));
 const count = computed(() => lineItem.value?.quantity);
 
-let rules = yup
-  .number()
-  .typeError("enter correct number")
-  .integer()
-  .optional()
-  .min(0)
-  .transform((_, val) => (isNaN(val) ? (count.value ? 0 : null) : +val));
+let rules = yup.number().typeError("enter correct number").integer().optional().moreThan(0);
 
 if (props.product.availabilityData?.availableQuantity) {
-  rules = rules.lessThan(props.product.availabilityData?.availableQuantity);
+  rules = rules.max(props.product.availabilityData?.availableQuantity);
 }
 
 const { value, validate, errorMessage, setValue } = useField("qty", rules, {
-  initialValue: count,
+  initialValue: count.value || undefined,
 });
 
 const updating = ref(false);
 
+// Process button click to add/update cart line item
 async function onChange() {
-  if (!value.value || isNaN(value.value)) {
+  if (!count.value && (!value.value || isNaN(value.value))) {
     setValue(1);
   }
-  if (value.value && (await validate())) {
+  if (await validate()) {
     updating.value = true;
-    if (lineItem.value) {
-      await changeItemQuantity(lineItem.value.id, value.value);
-    } else {
-      await addToCart(props.product.id, value.value);
+    try {
+      if (lineItem.value) {
+        await changeItemQuantity(lineItem.value.id, value.value || 0);
+      } else {
+        await addToCart(props.product.id, value.value || 1);
+      }
+      lineItem.value = itemInCart(props.product.id);
+      emit("update:lineitem", lineItem.value);
+    } finally {
+      updating.value = false;
     }
-    lineItem.value = itemInCart(props.product.id);
-    emit("update:lineitem", lineItem.value);
-    updating.value = false;
+  }
+}
+
+// Ignore non-numeric keys
+function onKeypress(event: KeyboardEvent) {
+  if (!/[0-9]/.test(event.key)) {
+    event.preventDefault();
+  }
+}
+
+// Limit max value
+function onInput() {
+  if (value.value && value.value > max) {
+    value.value = max;
+  }
+  if (!value.value) {
+    value.value = undefined;
   }
 }
 </script>
