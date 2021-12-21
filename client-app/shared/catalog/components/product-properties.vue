@@ -9,7 +9,7 @@
         {{ property?.name }}
       </div>
       <div class="flex-1 border-b border-grey-100 border-dotted h-5"></div>
-      <div class="font-bold">
+      <div class="font-bold w-1/2 flex flex-col text-left">
         {{ property.values }}
       </div>
     </div>
