@@ -36,13 +36,13 @@
         <div class="flex items-start gap-2 lg:gap-6">
           <div class="flex flex-col items-center">
             <input
-              :value="disabled ? 0 : lineItem.quantity"
-              type="text"
+              v-model="value"
+              type="number"
               class="w-20 lg:w-14 border rounded overflow-hidden h-8 lg:h-10 focus:ring ring-inset outline-none p-1 text-center"
-              :class="{ 'text-red-500': disabled }"
-              :disabled="disabled"
+              :class="{ 'text-red-500': isInputdisabled, 'border-red-500': errorMessage }"
+              :disabled="isInputdisabled"
             />
-            <div v-if="!disabled" class="flex items-center">
+            <div v-if="!isInputdisabled" class="flex items-center">
               <span class="text-green-700 text-xs pt-1 whitespace-nowrap">{{ lineItem.inStockQuantity }} in stock</span>
             </div>
             <div v-else class="flex items-center">
@@ -51,9 +51,9 @@
           </div>
 
           <button
-            v-if="!disabled"
+            v-if="!isInputdisabled"
             class="lg:hidden rounded uppercase h-8 px-2 border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500"
-            @click="$emit('update:quantity', lineItem.id, 0)"
+            @click="$emit('update:quantity', lineItem.id, value)"
           >
             Update
           </button>
@@ -64,7 +64,7 @@
             Remove
           </button>
           <div class="hidden lg:flex flex-col gap-1 text-xs font-semibold text-cyan-700">
-            <span v-if="!disabled" class="cursor-pointer" @click="$emit('update:quantity', lineItem.id, 0)"
+            <span v-if="!isInputdisabled" class="cursor-pointer" @click="$emit('update:quantity', lineItem.id, value)"
               >Update</span
             >
             <span class="cursor-pointer" @click="$emit('remove:item', lineItem.id)">Remove</span>
@@ -82,6 +82,8 @@
 <script setup lang="ts">
 import { LineItemType } from "@/core/api/graphql/types";
 import { computed, PropType } from "vue";
+import { useField } from "vee-validate";
+import * as yup from "yup";
 
 const props = defineProps({
   lineItem: {
@@ -90,7 +92,26 @@ const props = defineProps({
   },
 });
 
-const disabled = computed(() => props.lineItem.quantity > props.lineItem.inStockQuantity);
+const count = computed(() => props.lineItem.quantity);
+
+let rules = yup
+  .number()
+  .integer()
+  .optional()
+  .min(0)
+  .transform((_, val) => (isNaN(val) ? (count.value ? 0 : null) : +val));
+
+if (props.lineItem.inStockQuantity) {
+  rules = rules.max(props.lineItem.inStockQuantity);
+}
+
+const { value, validate, errorMessage } = useField("qty", rules, {
+  initialValue: props.lineItem.inStockQuantity === 0 ? 0 : count,
+});
+
+const isInputdisabled = computed(() => props.lineItem.inStockQuantity === 0);
+
+validate();
 
 defineEmits(["update:quantity", "remove:item"]);
 </script>
