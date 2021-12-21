@@ -38,7 +38,7 @@
             <input
               :value="disabled ? 0 : lineItem.quantity"
               type="text"
-              class="w-20 lg:w-14 border rounded overflow-hidden h-8 lg:h-10 focus:ring ring-inset outline-none px-4 py-2 text-center"
+              class="w-20 lg:w-14 border rounded overflow-hidden h-8 lg:h-10 focus:ring ring-inset outline-none p-1 text-center"
               :class="{ 'text-red-500': disabled }"
               :disabled="disabled"
             />
