@@ -236,11 +236,10 @@ import {
   useCategories,
   IBreadcrumbsItem,
 } from "@/shared/catalog";
-import { AddToCart } from "@/shared/cart";
+import { AddToCart, CartAddInfo } from "@/shared/cart";
 import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from "@headlessui/vue";
 import { useRoute } from "vue-router";
 import _ from "lodash";
-import CartAddInfo from "@/shared/cart/components/cart-add-info.vue";
 import { LineItemType } from "@/core/api/graphql/types";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -309,13 +308,13 @@ const loadProducts = async () => {
   await fetchProducts(productSearchParams);
 };
 
-function getCurrentCategory(categoryKey: string) {
+const getCurrentCategory = (categoryKey: string) => {
   const catTree = unref(categoryTree);
   const cat = searchCategory(catTree, categoryKey);
   category.value = cat;
-}
+};
 
-function searchCategory(categoryTree: CategoryTree, categoryKey: string): CategoryTree | undefined {
+const searchCategory = (categoryTree: CategoryTree, categoryKey: string): CategoryTree | undefined => {
   let category = _.find(categoryTree.items, (x) => x.seoKeyword === categoryKey);
 
   if (!category && categoryTree.items) {
@@ -329,7 +328,7 @@ function searchCategory(categoryTree: CategoryTree, categoryKey: string): Catego
   }
 
   return category;
-}
+};
 
 const mobileFiltersVisible = ref(false);
 const mobileFiltersSidebar = ref(null);
@@ -338,14 +337,14 @@ onClickOutside(mobileFiltersSidebar, () => {
   mobileFiltersVisible.value = false;
 });
 
-function BuildBreadcrumbs() {
+const BuildBreadcrumbs = () => {
   if (category.value) {
     breadcrumbsItems.value = [
       { url: "/", title: "Home" },
       { url: category.value.seoKeyword ?? "", title: category.value.label ?? "" },
     ];
   }
-}
+};
 
 const breadcrumbsItems: Ref<IBreadcrumbsItem[]> = ref([{ url: "/", title: "Home" }]);
 
@@ -388,7 +387,10 @@ watch(isMobile, async () => {
 const isCartAddInfoOpen = ref(false);
 const cartAddInfoLineItem = ref();
 
-const onAddToCart = function (lineItem?: LineItemType) {
+/**
+ * Handle AddToCart event.
+ */
+const onAddToCart = (lineItem?: LineItemType) => {
   cartAddInfoLineItem.value = { ...(lineItem ?? {}) };
   isCartAddInfoOpen.value = true;
 };

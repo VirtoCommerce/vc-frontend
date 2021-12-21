@@ -1,8 +1,11 @@
 <template>
   <div class="flex relative">
+    <!-- Updating spinner -->
     <div v-if="updating" class="absolute z-10 flex items-center justify-center w-full h-full bg-white bg-opacity-70">
       <i class="fas fa-spinner fa-spin text-yellow-500"></i>
     </div>
+
+    <!-- Input with only numbers restrictions -->
     <input
       v-model="value"
       type="number"
@@ -16,6 +19,7 @@
       @keypress="onKeypress"
     />
 
+    <!-- Confirm button -->
     <button
       class="rounded-r uppercase px-3 border font-roboto-condensed font-bold text-sm"
       :class="[
@@ -35,8 +39,9 @@
     </button>
   </div>
 
+  <!-- Info hint -->
   <div v-if="errorMessage" class="text-xs text-red-500">{{ errorMessage }}</div>
-  <div v-else-if="count && +count > 0" class="text-xs text-gray-400">already in cart</div>
+  <div v-else-if="count && +count > 0" class="text-xs text-gray-400">{{ count }} already in cart</div>
   <div v-else class="mb-4"></div>
 </template>
 
@@ -64,6 +69,7 @@ const { addToCart, itemInCart, changeItemQuantity } = useCart();
 const disabled = computed(() => !props.product.availabilityData?.isAvailable);
 const lineItem = ref(itemInCart(props.product.id));
 const count = computed(() => lineItem.value?.quantity);
+const updating = ref(false);
 
 let rules = yup.number().typeError("enter correct number").integer().optional().moreThan(0);
 
@@ -75,10 +81,10 @@ const { value, validate, errorMessage, setValue } = useField("qty", rules, {
   initialValue: count.value || undefined,
 });
 
-const updating = ref(false);
-
-// Process button click to add/update cart line item
-async function onChange() {
+/**
+ * Process button click to add/update cart line item.
+ */
+const onChange = async () => {
   if (!count.value && (!value.value || isNaN(value.value))) {
     setValue(1);
   }
@@ -96,22 +102,26 @@ async function onChange() {
       updating.value = false;
     }
   }
-}
+};
 
-// Ignore non-numeric keys
-function onKeypress(event: KeyboardEvent) {
+/**
+ * Ignore non-numeric keys.
+ */
+const onKeypress = (event: KeyboardEvent) => {
   if (!/[0-9]/.test(event.key)) {
     event.preventDefault();
   }
-}
+};
 
-// Limit max value
-function onInput() {
+/**
+ * Limit max value.
+ */
+const onInput = () => {
   if (value.value && value.value > max) {
     value.value = max;
   }
   if (!value.value) {
     value.value = undefined;
   }
-}
+};
 </script>
