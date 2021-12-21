@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .polygon-bg {
-  background-image: url(/assets/static/images/polygon.png);
+  background-image: url(/assets/static/images/common/polygon.png);
   background-repeat: no-repeat;
   background-size: 46%;
   background-position: right top;
@@ -24,4 +24,16 @@
 
 .square {
   padding-bottom: 100%;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }

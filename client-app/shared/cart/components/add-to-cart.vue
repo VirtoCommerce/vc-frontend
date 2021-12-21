@@ -1,12 +1,25 @@
 <template>
-  <div class="flex">
+  <div class="flex relative">
+    <!-- Updating spinner -->
+    <div v-if="updating" class="absolute z-10 flex items-center justify-center w-full h-full bg-white bg-opacity-70">
+      <i class="fas fa-spinner fa-spin text-yellow-500"></i>
+    </div>
+
+    <!-- Input with only numbers restrictions -->
     <input
       v-model="value"
-      type="text"
-      class="border rounded-l border-r-0 flex-1 w-full text-sm border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9"
+      type="number"
+      pattern="\d*"
+      :max="max"
+      :min="0"
+      class="appearance-none border rounded-none rounded-l border-r-0 flex-1 w-full text-base lg:text-sm border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9"
       :class="[!!errorMessage ? 'border-red-500 focus:border-red-500 border-r -mr-px z-10' : '']"
       :disabled="disabled"
+      @input="onInput"
+      @keypress="onKeypress"
     />
+
+    <!-- Confirm button -->
     <button
       class="rounded-r uppercase px-3 border font-roboto-condensed font-bold text-sm"
       :class="[
@@ -25,7 +38,11 @@
       <i class="inline lg:hidden fas fa-shopping-cart"></i>
     </button>
   </div>
-  <div v-if="errorMessage" class="text-xs text-red-500 mt-1">{{ errorMessage }}</div>
+
+  <!-- Info hint -->
+  <div v-if="errorMessage" class="text-xs text-red-500">{{ errorMessage }}</div>
+  <div v-else-if="count && +count > 0" class="text-xs text-gray-400">{{ count }} already in cart</div>
+  <div v-else class="mb-4"></div>
 </template>
 
 <script setup lang="ts">
@@ -34,6 +51,9 @@ import { useCart } from "@/shared/cart";
 import { useField } from "vee-validate";
 import { computed, PropType, ref } from "vue";
 import * as yup from "yup";
+
+// Define max qty available to add
+const max = 999999;
 
 const props = defineProps({
   product: {
@@ -46,39 +66,62 @@ const emit = defineEmits(["update:lineitem"]);
 
 const { addToCart, itemInCart, changeItemQuantity } = useCart();
 
-const disabled = computed(() => !props.product.availabilityData?.isBuyable);
+const disabled = computed(() => !props.product.availabilityData?.isAvailable);
 const lineItem = ref(itemInCart(props.product.id));
 const count = computed(() => lineItem.value?.quantity);
+const updating = ref(false);
 
-let rules = yup
-  .number()
-  .typeError("enter correct number")
-  .integer()
-  .optional()
-  .min(0)
-  .transform((_, val) => (isNaN(val) ? null : +val));
+let rules = yup.number().typeError("enter correct number").integer().optional().moreThan(0);
 
 if (props.product.availabilityData?.availableQuantity) {
-  rules = rules.lessThan(props.product.availabilityData?.availableQuantity);
+  rules = rules.max(props.product.availabilityData?.availableQuantity);
 }
 
 const { value, validate, errorMessage, setValue } = useField("qty", rules, {
-  initialValue: count,
+  initialValue: count.value || undefined,
 });
 
-async function onChange() {
-  if (!value.value || isNaN(value.value)) {
+/**
+ * Process button click to add/update cart line item.
+ */
+const onChange = async () => {
+  if (!count.value && (!value.value || isNaN(value.value))) {
     setValue(1);
   }
-  if (value.value && (await validate())) {
-    if (lineItem.value) {
-      await changeItemQuantity(lineItem.value.id, value.value);
+  if (await validate()) {
+    updating.value = true;
+    try {
+      if (lineItem.value) {
+        await changeItemQuantity(lineItem.value.id, value.value || 0);
+      } else {
+        await addToCart(props.product.id, value.value || 1);
+      }
       lineItem.value = itemInCart(props.product.id);
-    } else {
-      await addToCart(props.product.id, value.value);
-      lineItem.value = itemInCart(props.product.id);
+      emit("update:lineitem", lineItem.value);
+    } finally {
+      updating.value = false;
     }
-    emit("update:lineitem", lineItem);
   }
-}
+};
+
+/**
+ * Ignore non-numeric keys.
+ */
+const onKeypress = (event: KeyboardEvent) => {
+  if (!/[0-9]/.test(event.key)) {
+    event.preventDefault();
+  }
+};
+
+/**
+ * Limit max value.
+ */
+const onInput = () => {
+  if (value.value && value.value > max) {
+    value.value = max;
+  }
+  if (!value.value) {
+    value.value = undefined;
+  }
+};
 </script>

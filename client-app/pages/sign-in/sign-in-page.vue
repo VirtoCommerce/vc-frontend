@@ -6,7 +6,7 @@
           <SignInForm @succeeded="onSignIn" />
         </div>
         <div class="flex-grow hidden lg:block">
-          <img class="max-w-md" src="/assets/static/images/sign-in-page-image.png" />
+          <img class="max-w-md" src="/assets/static/images/sign-in/sign-in-page-image.webp" />
         </div>
       </div>
     </div>

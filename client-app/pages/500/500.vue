@@ -16,7 +16,7 @@
           </div>
         </div>
         <div class="hidden md:block py-5">
-          <img src="/assets/static/images/500.png" alt="Internal Server Error" class="w-full max-w-md" />
+          <img src="/assets/static/images/errors/500.webp" alt="Internal Server Error" class="w-full max-w-md" />
         </div>
       </div>
     </div>

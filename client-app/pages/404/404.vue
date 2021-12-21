@@ -16,7 +16,7 @@
           </div>
         </div>
         <div class="hidden md:block py-5">
-          <img src="/assets/static/images/404.png" alt="Page not found" class="w-full max-w-md" />
+          <img src="/assets/static/images/errors/404.webp" alt="Page not found" class="w-full max-w-md" />
         </div>
       </div>
     </div>
