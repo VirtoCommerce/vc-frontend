@@ -29,21 +29,7 @@
             </div>
           </div>
           <div class="flex flex-col lg:w-2/3 flex-1">
-            <div class="flex flex-col">
-              <div class="flex items-center mb-4">
-                <img src="/assets/static/images/technical_specs.svg" alt="technical specs" />
-                <h2 class="text-xl font-bold uppercase ml-2">Technical specs</h2>
-              </div>
-              <div v-for="property in product.properties" :key="property?.name" class="flex mb-4 space-x-3">
-                <div class="flex-none text-gray-500">
-                  {{ property?.name }}
-                </div>
-                <div class="flex-1 border-b border-grey-100 border-dotted h-5"></div>
-                <div class="font-bold">
-                  {{ property?.value }}
-                </div>
-              </div>
-            </div>
+            <ProductProperties v-if="product.properties" :properties="product.properties"></ProductProperties>
             <div v-if="product?.description" class="flex flex-col">
               <div class="flex items-center mb-4">
                 <img src="/assets/static/images/description.svg" alt="description" />
@@ -53,7 +39,7 @@
             </div>
           </div>
         </div>
-        <div class="flex-grow-0 md:w-96 flex flex-col">
+        <div class="flex-none md:w-96 flex flex-col">
           <div class="bg-white border shadow-sm rounded-md">
             <div class="border-b p-5 md:p-6">
               <h2 class="text-xl font-bold uppercase">Price &amp; Delivery</h2>
@@ -66,8 +52,9 @@
                   <span class="text-green-700 font-extrabold">{{ product.price?.actual?.formattedAmount }}</span> / each
                 </div>
               </div>
-
-              <AddToCart class="mt-3" :product="product"></AddToCart>
+              <div class="mt-3">
+                <AddToCart :product="product"></AddToCart>
+              </div>
             </div>
             <div class="flex text-center">
               <div
@@ -100,6 +87,7 @@ import { useRoute } from "vue-router";
 import { useProducts, Breadcrumbs, IBreadcrumbsItem } from "@/shared/catalog";
 import { AddToCart, useCart } from "@/shared/cart";
 import MarkdownRender from "@/components/atoms/markdown-render/markdown-render.vue";
+import ProductProperties from "@/shared/catalog/components/product-properties.vue";
 
 const route = useRoute();
 
@@ -109,14 +97,9 @@ const breadcrumbsItems: Ref<IBreadcrumbsItem[]> = ref([{ url: "/", title: "Home"
 
 const productId = ref(route.params.id as string);
 
-const description: Ref<string | undefined> = ref("");
-
-const src = ref("# header");
-
 onMounted(async () => {
   await loadProduct(productId.value);
   BuildBreadcrumbs();
-  description.value = product.value.description?.content;
   console.log(product.value);
 });
 
