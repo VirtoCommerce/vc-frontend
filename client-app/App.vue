@@ -11,7 +11,10 @@
 <script setup lang="ts">
 import { Header, Footer } from "./shared/layout";
 import { useCart } from "@/shared/cart";
+import { useContext } from "@/shared/context";
 
 const { loadMyCart } = useCart();
+const { loadContext } = useContext();
 loadMyCart();
+loadContext();
 </script>
