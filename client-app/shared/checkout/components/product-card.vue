@@ -1,6 +1,6 @@
 <template>
   <div class="border-b">
-    <div class="p-5 pb-10 flex flex-wrap overflow-hidden gap-x-4 sm:gap-y-4 lg:gap-6">
+    <div class="p-5 pb-10 flex flex-wrap overflow-hidden gap-x-4 lg:gap-6">
       <div class="border border-gray-100 w-16 h-16">
         <img
           :src="lineItem.imageUrl || '/assets/static/images/no-image.svg'"
@@ -10,25 +10,25 @@
       </div>
 
       <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center flex-1">
-        <div class="mb-3 text-sm">
+        <div class="mb-3 lg:mb-0 text-sm">
           <router-link :to="`/`" class="text-cyan-700 font-extrabold line-clamp-3 overflow-hidden">
             {{ lineItem.name }}
           </router-link>
           <div class="flex">
             <span class="font-medium text-gray-500">Brand: </span>
-            <span class="dots lg:hidden"></span>
+            <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
             <span class="w-1/3 lg:w-auto font-bold">{{ lineItem.product?.brandName }}</span>
           </div>
           <div class="flex text-sm">
             <span class="font-medium text-gray-500">Price: </span>
-            <span class="dots lg:hidden"></span>
+            <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
             <p class="w-1/3 lg:w-auto font-bold">
               {{ lineItem.listPrice?.formattedAmount }} <span class="hidden lg:inline">/ each</span>
             </p>
           </div>
           <div class="flex text-sm lg:hidden">
             <span class="font-medium text-gray-500">Total: </span>
-            <span class="dots"></span>
+            <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
             <span class="w-1/3 text-green-700 font-bold">{{ lineItem.extendedPrice?.formattedAmount }}</span>
           </div>
         </div>
