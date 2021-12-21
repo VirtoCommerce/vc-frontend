@@ -12,9 +12,9 @@
             <!-- Product card -->
             <ProductCard
               v-for="item in cartItems"
-              :key="item.id"
+              :key="item?.id"
               :ref="setProductCardRef"
-              :line-item="item"
+              :line-item="item as LineItemType"
               @update:quantity="updateItemQuantity"
               @remove:item="removeCartItem"
             ></ProductCard>
@@ -147,6 +147,7 @@
 
 <script setup lang="ts">
 import Pagination from "@/shared/catalog/components/pagination.vue";
+import { LineItemType } from "@/core/api/graphql/types";
 import {
   CheckoutLabeledBlock,
   CheckoutSection,
