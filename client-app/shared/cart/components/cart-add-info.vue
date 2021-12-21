@@ -1,5 +1,5 @@
 <template>
-  <TransitionRoot appear :show="isOpen" as="template">
+  <TransitionRoot appear :show="isOpen" as="template" @after-leave="$emit('modal:closed')">
     <Dialog as="div">
       <div class="fixed inset-0 z-10 overflow-y-auto">
         <div class="min-h-screen px-4 text-center">
@@ -36,7 +36,7 @@
               >
                 <span v-if="lineItem.quantity === 0" class="flex-grow">1 Product removed from cart</span>
                 <span v-else class="flex-grow">1 Product added to cart</span>
-                <i class="fas fa-times text-2xl cursor-pointer" @click="$emit('close')"></i>
+                <i class="fas fa-times text-2xl cursor-pointer" @click="$emit('modal:close')"></i>
               </DialogTitle>
 
               <div class="hidden lg:block">
@@ -93,13 +93,14 @@
               <div class="px-5 py-4 flex items-center justify-between lg:justify-end space-x-4">
                 <button
                   class="uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-4 h-9 font-roboto-condensed text-base font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white rounded focus:outline-none"
-                  @click="$emit('close')"
+                  @click="$emit('modal:close')"
                 >
                   Continue shopping
                 </button>
                 <router-link
                   to="/checkout"
                   class="uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-4 h-9 font-roboto-condensed text-base font-bold rounded bg-yellow-500 text-white hover:bg-yellow-600 focus:outline-none"
+                  @click="$emit('modal:close')"
                   >View cart</router-link
                 >
               </div>
@@ -128,5 +129,5 @@ defineProps({
   },
 });
 
-defineEmits(["close"]);
+defineEmits(["modal:close", "modal:closed"]);
 </script>

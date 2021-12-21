@@ -208,7 +208,13 @@
       </div>
     </div>
   </div>
-  <CartAddInfo :is-open="isCartAddInfoOpen" :line-item="cartAddInfoLineItem" @close="onCartAddInfoClose"></CartAddInfo>
+
+  <CartAddInfo
+    :is-open="isCartAddInfoOpen"
+    :line-item="cartAddInfoLineItem"
+    @modal:close="isCartAddInfoOpen = false"
+    @modal:closed="cartAddInfoLineItem = {}"
+  ></CartAddInfo>
 </template>
 
 <script setup lang="ts">
@@ -385,11 +391,6 @@ const cartAddInfoLineItem = ref();
 const onAddToCart = function (lineItem?: LineItemType) {
   cartAddInfoLineItem.value = { ...(lineItem ?? {}) };
   isCartAddInfoOpen.value = true;
-};
-
-const onCartAddInfoClose = function () {
-  isCartAddInfoOpen.value = false;
-  cartAddInfoLineItem.value = {};
 };
 </script>
 

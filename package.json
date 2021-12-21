@@ -5,6 +5,7 @@
   "scripts": {
     "postinstall": "husky install",
     "dev": "vite",
+    "dev-expose": "vite --host",
     "build": "vue-tsc --noEmit && vite build",
     "serve": "vite preview",
     "lint-staged": "lint-staged",
