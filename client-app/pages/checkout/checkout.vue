@@ -113,7 +113,9 @@
         </div>
 
         <!-- Sidebar -->
-        <div class="flex flex-col px-5 mb-7 order-first md:px-0 lg:mb-0 lg:order-1 lg:w-1/4">
+        <div
+          class="flex flex-col px-5 mb-7 order-first md:px-0 lg:mb-0 lg:order-1 lg:w-1/4 lg:h-5/6 lg:sticky lg:top-4"
+        >
           <!-- Order summary -->
           <OrderSummary :cart="cart">
             <template #header>
