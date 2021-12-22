@@ -12,7 +12,11 @@
           class="flex flex-grow flex-col lg:flex-row -mx-5 md:mx-0 lg:space-x-12 mb-6 p-6 bg-white border border-gray-100 rounded-md shadow-sm"
         >
           <div class="lg:w-1/3 mb-6 lg:mb-0">
-            <ImageGallery :src="product.imgSrc || ''" :images="product.images || []"></ImageGallery>
+            <ImageGallery
+              :src="product.imgSrc || ''"
+              :images="product.images || []"
+              :is-mobile="isMobile"
+            ></ImageGallery>
             <!-- Compare checkbox -->
             <div class="mt-4 hidden md:flex items-center text-sm cursor-pointer">
               <input
@@ -81,6 +85,10 @@ import { useRoute } from "vue-router";
 import { useProducts, Breadcrumbs, IBreadcrumbsItem, ProductProperties } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 import { MarkdownRender, ImageGallery } from "@/components";
+import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("md");
 
 const route = useRoute();
 
