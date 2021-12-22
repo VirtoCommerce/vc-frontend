@@ -12,13 +12,14 @@
           class="flex flex-grow flex-col lg:flex-row -mx-5 md:mx-0 lg:space-x-12 mb-6 p-6 bg-white border border-gray-100 rounded-md shadow-sm"
         >
           <div class="lg:w-1/3 mb-6 lg:mb-0">
-            <div class="square relative flex flex-col justify-center items-center border border-gray-100">
+            <ImageGallery :src="product.imgSrc ?? ''" :images="product.images || []"></ImageGallery>
+            <!-- <div class="square relative flex flex-col justify-center items-center border border-gray-100">
               <img
                 :src="product.imgSrc || '/assets/static/images/no-image.png'"
                 alt="product.name"
                 class="absolute top-0 w-full h-full object-cover object-center"
               />
-            </div>
+            </div> -->
             <!-- Compare checkbox -->
             <div class="mt-4 hidden md:flex items-center text-sm cursor-pointer">
               <input
@@ -39,7 +40,7 @@
             </div>
           </div>
         </div>
-        <div class="flex-none md:w-96 flex flex-col">
+        <div class="flex-none md:w-80 lg:w-96 flex flex-col">
           <div class="bg-white border shadow-sm rounded-md">
             <div class="border-b p-5 md:p-6">
               <h2 class="text-xl font-bold uppercase">Price &amp; Delivery</h2>
@@ -84,10 +85,9 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, watch, unref, watchEffect, Ref } from "vue";
 import { useRoute } from "vue-router";
-import { useProducts, Breadcrumbs, IBreadcrumbsItem } from "@/shared/catalog";
+import { useProducts, Breadcrumbs, IBreadcrumbsItem, ProductProperties } from "@/shared/catalog";
 import { AddToCart, useCart } from "@/shared/cart";
-import MarkdownRender from "@/components/atoms/markdown-render/markdown-render.vue";
-import ProductProperties from "@/shared/catalog/components/product-properties.vue";
+import { MarkdownRender, ImageGallery } from "@/components";
 
 const route = useRoute();
 

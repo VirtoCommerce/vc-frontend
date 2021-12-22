@@ -7,3 +7,4 @@ export { default as ProductCardList } from "./product-card-list.vue";
 export { default as ProductSkeletonGrid } from "./product-skeleton-grid.vue";
 export { default as ProductSkeletonList } from "./product-skeleton-list.vue";
 export { default as ViewMode } from "./view-mode.vue";
+export { default as ProductProperties } from "./product-properties.vue";
