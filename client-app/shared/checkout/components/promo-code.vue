@@ -1,6 +1,6 @@
 <template>
   <p class="text-base pb-2 font-extrabold">Promotion code</p>
-  <div class="flex gap-3" :class="[!couponValidationError && 'mb-8']">
+  <div class="flex space-x-3" :class="[!couponValidationError && 'mb-8']">
     <input
       v-model="coupon"
       class="border rounded text-sm leading-8 flex-1 w-full border-gray-300 h-8 px-2 outline-none focus:border-gray-400"

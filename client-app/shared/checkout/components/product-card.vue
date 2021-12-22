@@ -1,6 +1,6 @@
 <template>
   <div class="border-b">
-    <div class="p-5 flex flex-wrap overflow-hidden gap-x-4 lg:gap-6">
+    <div class="p-5 flex flex-wrap overflow-hidden space-x-4 lg:space-x-6">
       <div class="border border-gray-100 w-16 h-16">
         <img
           :src="lineItem.imageUrl || '/assets/static/images/common/no-image.svg'"
@@ -37,7 +37,7 @@
           </div>
         </div>
 
-        <div class="flex items-start gap-2 lg:gap-6">
+        <div class="flex items-start space-x-2 lg:space-x-6">
           <div class="flex flex-col items-center">
             <input
               v-model="value"
@@ -74,7 +74,7 @@
           >
             Remove
           </button>
-          <div class="hidden lg:flex flex-col gap-1 text-xs font-semibold text-cyan-700">
+          <div class="hidden lg:flex flex-col space-y-1 text-xs font-semibold text-cyan-700">
             <span v-if="!isInputdisabled" class="cursor-pointer" @click="updateQuantity">Update</span>
             <span class="cursor-pointer" @click="$emit('remove:item', lineItem.id)">Remove</span>
           </div>

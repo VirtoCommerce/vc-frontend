@@ -4,7 +4,7 @@
   <div v-else class="bg-gray-100 pt-7 pb-16 shadow-inner">
     <div class="max-w-screen-2xl md:px-12 mx-auto">
       <h2 class="text-gray-800 px-5 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-7">Checkout</h2>
-      <div class="flex flex-col lg:flex-row lg:flex-nowrap lg:gap-6">
+      <div class="flex flex-col lg:flex-row lg:flex-nowrap lg:space-x-6">
         <!-- Main section -->
         <div class="lg:w-3/4 xl:w-4/5 flex-grow w-full">
           <!-- My products section -->
@@ -60,7 +60,7 @@
               </div>
             </CheckoutLabeledBlock>
             <CheckoutLabeledBlock label="Shipping method">
-              <div class="flex flex-row items-center gap-4">
+              <div class="flex flex-row items-center space-x-4">
                 <img src="/assets/static/images/checkout/fedex.svg" class="h-12 w-12" />
                 <span>Fedex - Express (20$)</span>
               </div>
@@ -93,7 +93,7 @@
               </label>
             </CheckoutLabeledBlock>
             <CheckoutLabeledBlock label="Payment method">
-              <div class="flex flex-row items-center gap-4">
+              <div class="flex flex-row items-center space-x-4">
                 <img src="/assets/static/images/checkout/invoice.svg" class="h-12 w-12" />
                 <span>Invoice</span>
               </div>
