@@ -28,7 +28,7 @@
               ></Pagination>
               <p class="text-center text-sm lg:ml-auto">
                 If you changed multiple quantities,
-                <span class="text-cyan-700 font-extrabold" @click="updateAllItems">Update All</span>
+                <span class="text-cyan-700 font-extrabold cursor-pointer" @click="updateAllItems">Update All</span>
               </p>
             </div>
           </CheckoutSection>
