@@ -1,5 +1,4 @@
 <template>
-  <h1 class="mb-6 font-semibold uppercase text-xl md:text-4xl">Sign In</h1>
   <form @submit="onSubmit">
     <!-- Errors block -->
     <Alert v-if="authError"><strong>User</strong> or <strong>password</strong> is incorrect</Alert>

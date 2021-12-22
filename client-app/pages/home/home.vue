@@ -3,6 +3,7 @@
   <div class="banner flex items-center">
     <div class="container mx-auto flex flex-col lg:flex-row items-center space-y-10 lg:space-x-24 p-6 md:p-12">
       <div v-if="!isAuthenticated" class="w-full lg:w-2/5 bg-white shadow-lg rounded p-6 md:p-10">
+        <h1 class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8">Sign in</h1>
         <SignInForm :grow-buttons="true" />
       </div>
       <div
