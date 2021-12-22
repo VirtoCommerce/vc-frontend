@@ -8,7 +8,11 @@
         <!-- Main section -->
         <div class="lg:w-3/4 xl:w-4/5 flex-grow w-full">
           <!-- My products section -->
-          <CheckoutSection title="My products" icon-url="/assets/static/images/products.svg" :is-products-block="true">
+          <CheckoutSection
+            title="My products"
+            icon-url="/assets/static/images/checkout/products.svg"
+            :is-products-block="true"
+          >
             <!-- Product card -->
             <ProductCard
               v-for="item in cartItems"
@@ -36,7 +40,7 @@
           <!-- Shipping details section -->
           <CheckoutSection
             title="Shipping details"
-            icon-url="/assets/static/images/shipping.svg"
+            icon-url="/assets/static/images/checkout/shipping.svg"
             :is-products-block="false"
           >
             <CheckoutLabeledBlock label="Shipping address">
@@ -57,7 +61,7 @@
             </CheckoutLabeledBlock>
             <CheckoutLabeledBlock label="Shipping method">
               <div class="flex flex-row items-center gap-4">
-                <img src="/assets/static/images/fedex.svg" class="h-12 w-12" />
+                <img src="/assets/static/images/checkout/fedex.svg" class="h-12 w-12" />
                 <span>Fedex - Express (20$)</span>
               </div>
               <div>
@@ -74,7 +78,7 @@
           <!-- Payment details section -->
           <CheckoutSection
             title="Payment details"
-            icon-url="/assets/static/images/payment.svg"
+            icon-url="/assets/static/images/checkout/payment.svg"
             :is-products-block="false"
           >
             <CheckoutLabeledBlock label="Billing address">
@@ -90,7 +94,7 @@
             </CheckoutLabeledBlock>
             <CheckoutLabeledBlock label="Payment method">
               <div class="flex flex-row items-center gap-4">
-                <img src="/assets/static/images/invoice.svg" class="h-12 w-12" />
+                <img src="/assets/static/images/checkout/invoice.svg" class="h-12 w-12" />
                 <span>Invoice</span>
               </div>
               <div>
@@ -105,7 +109,7 @@
           </CheckoutSection>
 
           <!-- Extra section -->
-          <CheckoutSection title="Extra" icon-url="/assets/static/images/extra.svg" :is-products-block="false">
+          <CheckoutSection title="Extra" icon-url="/assets/static/images/checkout/extra.svg" :is-products-block="false">
             <p class="font-extrabold text-base mb-1">Order comments</p>
             <Textarea v-model="cartComment" :resize-class="'resize-none'" :rows="4" :max-length="1000"></Textarea>
           </CheckoutSection>
