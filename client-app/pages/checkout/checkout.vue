@@ -11,29 +11,31 @@
           <CheckoutSection
             title="My products"
             icon-url="/assets/static/images/checkout/products.svg"
-            :is-products-block="true"
+            class="shadow lg:pb-11"
           >
-            <!-- Product card -->
-            <ProductCard
-              v-for="item in cartItems"
-              :key="item?.id"
-              :ref="setProductCardRef"
-              :line-item="item!"
-              @update:quantity="updateItemQuantity"
-              @remove:item="removeCartItem"
-            ></ProductCard>
+            <div class="lg:ml-28 lg:mr-11 lg:border lg:rounded">
+              <!-- Product card -->
+              <ProductCard
+                v-for="item in cartItems"
+                :key="item?.id"
+                :ref="setProductCardRef"
+                :line-item="item!"
+                @update:quantity="updateItemQuantity"
+                @remove:item="removeCartItem"
+              ></ProductCard>
 
-            <div class="py-8 lg:flex lg:items-center lg:px-5">
-              <Pagination
-                v-model:page="page"
-                :pages="pages"
-                class="mb-3 lg:mb-0"
-                @update:page="page = $event"
-              ></Pagination>
-              <p class="text-center text-sm lg:ml-auto">
-                If you changed multiple quantities,
-                <span class="text-cyan-700 font-extrabold cursor-pointer" @click="updateAllItems">Update All</span>
-              </p>
+              <div class="py-8 lg:flex lg:items-center lg:px-5">
+                <Pagination
+                  v-model:page="page"
+                  :pages="pages"
+                  class="mb-3 lg:mb-0"
+                  @update:page="page = $event"
+                ></Pagination>
+                <p class="text-center text-sm lg:ml-auto">
+                  If you changed multiple quantities,
+                  <span class="text-cyan-700 font-extrabold cursor-pointer" @click="updateAllItems">Update All</span>
+                </p>
+              </div>
             </div>
           </CheckoutSection>
 
@@ -41,77 +43,87 @@
           <CheckoutSection
             title="Shipping details"
             icon-url="/assets/static/images/checkout/shipping.svg"
-            :is-products-block="false"
+            class="shadow-inner pb-8 lg:shadow"
           >
-            <CheckoutLabeledBlock label="Shipping address">
-              <div>
-                <span class="font-extrabold">Annete Black</span>
-                <p>3891 Ranchview Dr. Richardson, California 62639</p>
-                <p><span class="font-extrabold">Phone:</span> (684) 555-0102</p>
-                <p><span class="font-extrabold">Email:</span> debra.holt@example.com</p>
-              </div>
-              <div>
-                <button
-                  class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 disabled:opacity-30"
-                  disabled
-                >
-                  Change
-                </button>
-              </div>
-            </CheckoutLabeledBlock>
-            <CheckoutLabeledBlock label="Shipping method">
-              <div class="flex flex-row items-center space-x-4">
-                <img src="/assets/static/images/checkout/fedex.svg" class="h-12 w-12" />
-                <span>Fedex - Express (20$)</span>
-              </div>
-              <div>
-                <button
-                  class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 disabled:opacity-30"
-                  disabled
-                >
-                  Change
-                </button>
-              </div>
-            </CheckoutLabeledBlock>
+            <div class="mx-5 lg:ml-28 lg:mr-11">
+              <CheckoutLabeledBlock label="Shipping address">
+                <div>
+                  <span class="font-extrabold">Annete Black</span>
+                  <p>3891 Ranchview Dr. Richardson, California 62639</p>
+                  <p><span class="font-extrabold">Phone:</span> (684) 555-0102</p>
+                  <p><span class="font-extrabold">Email:</span> debra.holt@example.com</p>
+                </div>
+                <div>
+                  <button
+                    class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 disabled:opacity-30"
+                    disabled
+                  >
+                    Change
+                  </button>
+                </div>
+              </CheckoutLabeledBlock>
+              <CheckoutLabeledBlock label="Shipping method">
+                <div class="flex flex-row items-center space-x-4">
+                  <img src="/assets/static/images/checkout/fedex.svg" class="h-12 w-12" />
+                  <span>Fedex - Express (20$)</span>
+                </div>
+                <div>
+                  <button
+                    class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 disabled:opacity-30"
+                    disabled
+                  >
+                    Change
+                  </button>
+                </div>
+              </CheckoutLabeledBlock>
+            </div>
           </CheckoutSection>
 
           <!-- Payment details section -->
           <CheckoutSection
             title="Payment details"
             icon-url="/assets/static/images/checkout/payment.svg"
-            :is-products-block="false"
+            class="shadow-inner pb-8 lg:shadow"
           >
-            <CheckoutLabeledBlock label="Billing address">
-              <label class="flex items-center text-sm cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked="true"
-                  disabled
-                  class="form-tick appearance-none w-5 h-5 border-2 border-gray-300 rounded-sm checked:bg-yellow-500 checked:border-transparent focus:outline-none cursor-pointer"
-                />
-                <span class="ml-2 font-medium">Same as shipping address</span>
-              </label>
-            </CheckoutLabeledBlock>
-            <CheckoutLabeledBlock label="Payment method">
-              <div class="flex flex-row items-center space-x-4">
-                <img src="/assets/static/images/checkout/invoice.svg" class="h-12 w-12" />
-                <span>Invoice</span>
-              </div>
-              <div>
-                <button
-                  class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 disabled:opacity-30"
-                  disabled
-                >
-                  Change
-                </button>
-              </div>
-            </CheckoutLabeledBlock>
+            <div class="mx-5 lg:ml-28 lg:mr-11">
+              <CheckoutLabeledBlock label="Billing address">
+                <label class="flex items-center text-sm cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked="true"
+                    disabled
+                    class="form-tick appearance-none w-5 h-5 border-2 border-gray-300 rounded-sm checked:bg-yellow-500 checked:border-transparent focus:outline-none cursor-pointer"
+                  />
+                  <span class="ml-2 font-medium">Same as shipping address</span>
+                </label>
+              </CheckoutLabeledBlock>
+              <CheckoutLabeledBlock label="Payment method">
+                <div class="flex flex-row items-center space-x-4">
+                  <img src="/assets/static/images/checkout/invoice.svg" class="h-12 w-12" />
+                  <span>Invoice</span>
+                </div>
+                <div>
+                  <button
+                    class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 disabled:opacity-30"
+                    disabled
+                  >
+                    Change
+                  </button>
+                </div>
+              </CheckoutLabeledBlock>
+            </div>
           </CheckoutSection>
 
           <!-- Extra section -->
-          <CheckoutSection title="Extra" icon-url="/assets/static/images/checkout/extra.svg" :is-products-block="false">
-            <p class="font-extrabold text-base mb-1">Order comments</p>
-            <Textarea v-model="cartComment" :resize-class="'resize-none'" :rows="4" :max-length="1000"></Textarea>
+          <CheckoutSection
+            title="Extra"
+            icon-url="/assets/static/images/checkout/extra.svg"
+            class="shadow-inner pb-8 lg:shadow"
+          >
+            <div class="mx-5 lg:ml-28 lg:mr-11">
+              <p class="font-extrabold text-base mb-1">Order comments</p>
+              <Textarea v-model="cartComment" :resize-class="'resize-none'" :rows="4" :max-length="1000"></Textarea>
+            </div>
           </CheckoutSection>
           <div class="shadow-inner h-1 lg:hidden"></div>
         </div>
