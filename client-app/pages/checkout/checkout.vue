@@ -185,7 +185,8 @@ const { placeOrder } = useCheckout();
 
 const router = useRouter();
 
-const productCardRefs = ref<typeof ProductCard[]>([]);
+//TODO: change 'any' for a normal type
+const productCardRefs = ref<any[]>([]);
 
 const cartCoupon = ref("");
 const couponValidationError = ref(false);
@@ -200,7 +201,8 @@ const cartComment = ref("");
 
 const isValidCheckout = computed(() => !(cart.value.validationErrors && cart.value.validationErrors?.length > 0));
 
-const setProductCardRef = (el: typeof ProductCard) => {
+//TODO: change 'any' for a normal type
+const setProductCardRef = (el: any) => {
   if (el) {
     productCardRefs.value.push(el);
   }
