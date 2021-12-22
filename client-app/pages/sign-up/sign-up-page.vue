@@ -39,7 +39,7 @@
         <div class="block lg:flex justify-between lg:space-x-6">
           <VcInput
             v-model="password"
-            class="mb-4 flex-grow"
+            class="mb-4 w-full lg:w-1/2"
             label="Password"
             placeholder="Enter your password"
             type="password"
@@ -48,7 +48,7 @@
           ></VcInput>
           <VcInput
             v-model="confirmPassword"
-            class="mb-4 flex-grow"
+            class="mb-4 w-full lg:w-1/2"
             label="Confirm password"
             placeholder="Confirm your password"
             type="password"
@@ -56,10 +56,11 @@
             :error-message="errors.confirmPassword"
           ></VcInput>
         </div>
-        <div class="mt-12 lg:mt-7">
+        <div class="mt-6 lg:mt-4">
+          <Alert v-for="error in commonErrors" :key="error" class="mb-4 text-xs">{{ error }}</Alert>
           <button
             type="submit"
-            class="w-full lg:w-48 flex justify-center items-center uppercase text-white bg-yellow-500 hover:bg-yellow-600 font-roboto-condensed text-lg h-11 rounded"
+            class="mt-6 lg:mt-3 w-full lg:w-48 flex justify-center items-center uppercase text-white bg-yellow-500 hover:bg-yellow-600 font-roboto-condensed text-lg h-11 rounded"
           >
             Register
           </button>
@@ -73,21 +74,22 @@
 </template>
 
 <script setup lang="ts">
-import { Input as VcInput } from "@/components";
+import { Alert, Input as VcInput } from "@/components";
 import { useUser } from "@/shared/account";
 import { useRouter } from "vue-router";
 import { TwoColumn } from "@/shared/layout";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
+import { ref } from "vue";
 
 const { signMeUp } = useUser();
 const router = useRouter();
 
 const schema = yup.object({
   email: yup.string().required("This field is required").email("Enter correct email please (ex. john@gmail.com)"),
-  userName: yup.string().required("This field is required"),
-  firstName: yup.string().required("This field is required"),
-  lastName: yup.string().required("This field is required"),
+  userName: yup.string().required("This field is required").max(64),
+  firstName: yup.string().required("This field is required").max(64),
+  lastName: yup.string().required("This field is required").max(64),
   password: yup.string().required("This field is required"),
   confirmPassword: yup
     .string()
@@ -95,7 +97,7 @@ const schema = yup.object({
     .oneOf([yup.ref("password"), null], "Passwords must match"),
 });
 
-const { errors, handleSubmit, setFieldError, meta } = useForm({
+const { errors, handleSubmit, setFieldError } = useForm({
   validationSchema: schema,
   initialValues: {
     userName: "",
@@ -115,7 +117,11 @@ const { value: email } = useField<string>("email");
 const { value: password } = useField<string>("password");
 const { value: confirmPassword } = useField<string>("confirmPassword");
 
+const commonErrors = ref<string[]>([]);
+
 const onSubmit = handleSubmit(async (data) => {
+  commonErrors.value = [];
+
   const result = await signMeUp({
     email: `${data.email}`,
     firstName: `${data.firstName}`,
@@ -127,29 +133,47 @@ const onSubmit = handleSubmit(async (data) => {
   if (result.succeeded) {
     router.push({ name: "Home" });
   } else {
-    result.errors?.forEach((error) => {
-      // Process password field server errors
-      if (
-        error?.code &&
-        [
-          "password-too-weak",
-          "PasswordTooShort",
-          "PasswordRequiresLower",
-          "PasswordRequiresUpper",
-          "passwordRequiresUniqueChars",
-          "passwordRequiresDigit",
-          "passwordRequiresNonAlphanumeric",
-          "recentPasswordUsed",
-        ].includes(error.code)
-      ) {
-        setFieldError("password", error?.description);
-      }
+    if (result.errors?.length) {
+      for (let i = 0; i < result.errors?.length; i++) {
+        const error = result.errors[i];
 
-      // Process confirmPassword field server errors
-      if (error?.code === "repeat-password") {
-        setFieldError("confirmPassword", error?.description);
+        switch (error?.code) {
+          case "password-too-weak":
+          case "PasswordTooShort":
+          case "PasswordRequiresLower":
+          case "PasswordRequiresUpper":
+          case "PasswordRequiresUniqueChars":
+          case "PasswordRequiresDigit":
+          case "PasswordRequiresNonAlphanumeric":
+          case "RecentPasswordUsed":
+          case "InvalidPasswordHasherCompatibilityMode":
+          case "InvalidPasswordHasherIterationCount":
+            setFieldError("password", error?.description);
+            break;
+
+          case "repeat-password":
+          case "PasswordMismatch":
+            setFieldError("confirmPassword", error?.description);
+            break;
+
+          case "DuplicateUserName":
+          case "InvalidUserName":
+          case "LoginAlreadyAssociated":
+            setFieldError("userName", error?.description);
+            break;
+
+          case "DuplicateEmail":
+          case "InvalidEmail":
+            setFieldError("email", error?.description);
+            break;
+
+          default:
+            if (error?.description) {
+              commonErrors.value.push(error.description);
+            }
+        }
       }
-    });
+    }
   }
 });
 </script>
