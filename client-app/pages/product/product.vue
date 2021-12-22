@@ -1,6 +1,6 @@
 <template>
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner">
-    <div class="max-w-screen-2xl px-5 md:px-12 mx-auto">
+    <div v-if="!loading" class="max-w-screen-2xl px-5 md:px-12 mx-auto">
       <!-- Breadcrumbs -->
       <Breadcrumbs :items="breadcrumbsItems"></Breadcrumbs>
       <h1 class="text-2xl font-bold uppercase mb-1">{{ product.name }}</h1>
@@ -12,14 +12,7 @@
           class="flex flex-grow flex-col lg:flex-row -mx-5 md:mx-0 lg:space-x-12 mb-6 p-6 bg-white border border-gray-100 rounded-md shadow-sm"
         >
           <div class="lg:w-1/3 mb-6 lg:mb-0">
-            <ImageGallery :src="product.imgSrc ?? ''" :images="product.images || []"></ImageGallery>
-            <!-- <div class="square relative flex flex-col justify-center items-center border border-gray-100">
-              <img
-                :src="product.imgSrc || '/assets/static/images/no-image.png'"
-                alt="product.name"
-                class="absolute top-0 w-full h-full object-cover object-center"
-              />
-            </div> -->
+            <ImageGallery :src="product.imgSrc || ''" :images="product.images || []"></ImageGallery>
             <!-- Compare checkbox -->
             <div class="mt-4 hidden md:flex items-center text-sm cursor-pointer">
               <input
@@ -83,10 +76,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch, unref, watchEffect, Ref } from "vue";
+import { ref, onMounted, Ref } from "vue";
 import { useRoute } from "vue-router";
 import { useProducts, Breadcrumbs, IBreadcrumbsItem, ProductProperties } from "@/shared/catalog";
-import { AddToCart, useCart } from "@/shared/cart";
+import { AddToCart } from "@/shared/cart";
 import { MarkdownRender, ImageGallery } from "@/components";
 
 const route = useRoute();
