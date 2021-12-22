@@ -12,6 +12,7 @@ fragment lineItemFields on LineItemType {
   productId
   product {
     brandName
+    slug
   }
   quantity
   sku

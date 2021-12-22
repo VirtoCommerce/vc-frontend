@@ -11,7 +11,10 @@
 
       <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center flex-1">
         <div class="mb-3 lg:mb-0 text-sm lg:w-1/2">
-          <router-link :to="`/`" class="text-cyan-700 font-extrabold line-clamp-3 overflow-hidden">
+          <router-link
+            :to="`/catalog/${lineItem.product?.slug}`"
+            class="text-cyan-700 font-extrabold line-clamp-3 overflow-hidden"
+          >
             {{ lineItem.name }}
           </router-link>
           <div class="flex">
