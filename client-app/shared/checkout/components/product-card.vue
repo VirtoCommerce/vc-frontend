@@ -52,13 +52,13 @@
 
           <button
             v-if="!isInputdisabled"
-            class="lg:hidden rounded uppercase h-8 px-2 border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500"
+            class="lg:hidden rounded uppercase h-8 px-2 border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 hover:text-white hover:bg-yellow-500"
             @click="updateQuantity"
           >
             Update
           </button>
           <button
-            class="lg:hidden rounded uppercase h-8 px-2 border-2 font-roboto-condensed font-bold text-sm text-black border-black"
+            class="lg:hidden rounded uppercase h-8 px-2 border-2 font-roboto-condensed font-bold text-sm text-black border-black hover:text-white hover:bg-black"
             @click="$emit('remove:item', lineItem.id)"
           >
             Remove
