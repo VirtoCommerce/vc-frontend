@@ -26,7 +26,8 @@
             <span class="font-medium text-gray-500 pr-1">Price: </span>
             <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
             <p class="w-1/3 lg:w-auto font-bold">
-              <span class="text-green-700">{{ lineItem.listPrice?.formattedAmount }}</span> <span class="hidden lg:inline">/ each</span>
+              <span class="text-green-700">{{ lineItem.listPrice?.formattedAmount }}</span>
+              <span class="hidden lg:inline"> / each</span>
             </p>
           </div>
           <div class="flex text-sm lg:hidden">
@@ -41,12 +42,19 @@
             <input
               v-model="value"
               type="number"
+              pattern="\d*"
+              :max="max"
+              :min="0"
               class="w-20 lg:w-14 border rounded overflow-hidden h-8 lg:h-10 focus:ring ring-inset outline-none p-1 text-center"
               :class="{ 'text-red-500': isInputdisabled, 'border-red-500': errorMessage }"
               :disabled="isInputdisabled"
+              @input="onInput"
+              @keypress="onKeypress"
             />
             <div v-if="!isInputdisabled" class="flex items-center">
-              <span class="text-green-700 text-xs pt-1 whitespace-nowrap">{{ lineItem.inStockQuantity }} in stock</span>
+              <span class="text-green-700 text-xs pt-1 whitespace-nowrap"
+                >{{ lineItem.inStockQuantity! > 9999 ? "9999+" : lineItem.inStockQuantity }} in stock</span
+              >
             </div>
             <div v-else class="flex items-center">
               <span class="text-red-500 text-xs pt-1 whitespace-nowrap">Out of stock</span>
@@ -86,6 +94,9 @@ import { computed, PropType } from "vue";
 import { useField } from "vee-validate";
 import * as yup from "yup";
 
+// Define max qty available to add
+const max = 999999;
+
 const props = defineProps({
   lineItem: {
     type: Object as PropType<LineItemType>,
@@ -95,12 +106,7 @@ const props = defineProps({
 
 const count = computed(() => props.lineItem.quantity);
 
-let rules = yup
-  .number()
-  .integer()
-  .optional()
-  .min(0)
-  .transform((_, val) => (isNaN(val) ? (count.value ? 0 : null) : +val));
+let rules = yup.number().integer().optional().moreThan(0);
 
 if (props.lineItem.inStockQuantity) {
   rules = rules.max(props.lineItem.inStockQuantity);
@@ -122,6 +128,27 @@ validate();
 
 const emit = defineEmits(["update:quantity", "remove:item"]);
 defineExpose({ updateQuantity });
+
+/**
+ * Ignore non-numeric keys.
+ */
+const onKeypress = (event: KeyboardEvent) => {
+  if (!/[0-9]/.test(event.key)) {
+    event.preventDefault();
+  }
+};
+
+/**
+ * Limit max value.
+ */
+const onInput = () => {
+  if (value.value && value.value > max) {
+    value.value = max;
+  }
+  if (!value.value) {
+    value.value = undefined;
+  }
+};
 </script>
 
 <style scoped></style>
