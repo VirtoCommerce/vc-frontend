@@ -11,14 +11,14 @@
         <div
           class="flex flex-grow flex-col lg:flex-row -mx-5 md:mx-0 lg:space-x-12 mb-6 p-6 bg-white border border-gray-100 rounded-md shadow-sm"
         >
-          <div class="lg:w-1/3 mb-6 lg:mb-0">
+          <div class="lg:w-1/3 mb-8 lg:mb-0">
             <ImageGallery
               :src="product.imgSrc || ''"
               :images="product.images || []"
               :is-mobile="isMobile"
             ></ImageGallery>
             <!-- Compare checkbox -->
-            <div class="mt-4 hidden md:flex items-center text-sm cursor-pointer">
+            <div class="mt-8 hidden md:flex items-center text-sm cursor-pointer">
               <input
                 type="checkbox"
                 class="form-tick appearance-none w-5 h-5 border-2 border-gray-300 rounded-sm checked:bg-cyan-700 checked:border-transparent focus:outline-none cursor-pointer"
@@ -37,7 +37,7 @@
             </div>
           </div>
         </div>
-        <div class="flex-none md:w-80 lg:w-96 flex flex-col">
+        <div class="flex-none md:w-80 flex flex-col">
           <div class="bg-white border shadow-sm rounded-md">
             <div class="border-b p-5 md:p-6">
               <h2 class="text-xl font-bold uppercase">Price &amp; Delivery</h2>
@@ -88,7 +88,7 @@ import { MarkdownRender, ImageGallery } from "@/components";
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("md");
+const isMobile = breakpoints.smaller("lg");
 
 const route = useRoute();
 
