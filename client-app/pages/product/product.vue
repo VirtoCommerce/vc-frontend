@@ -28,16 +28,47 @@
           </div>
           <div class="flex flex-col lg:w-2/3">
             <ProductProperties v-if="product.properties" :properties="product.properties"></ProductProperties>
-            <div v-if="product?.description" class="flex flex-col">
+            <div v-if="!withVariations && product?.description" class="flex flex-col">
               <div class="flex items-center mb-4">
                 <img src="/assets/static/images/description.svg" alt="description" />
                 <h2 class="text-xl font-bold uppercase ml-2">Description</h2>
               </div>
               <MarkdownRender :src="product?.description?.content" class="text-gray-500"></MarkdownRender>
             </div>
+            <div v-if="withVariations" class="flex flex-col">
+              <div class="flex items-center mb-4">
+                <img src="/assets/static/images/variations_customize.svg" alt="customize order" />
+                <h2 class="text-xl font-bold uppercase ml-2">Customize your order</h2>
+              </div>
+              <div v-for="variation in product.variations" :key="variation?.id ?? ''" class="flex flex-col">
+                <div class="flex flex-row space-x-2.5 border border-gray-100 rounded-sm mb-5 p-3">
+                  <div class="w-12 h-12">
+                    <div
+                      v-if="variation?.images?.length"
+                      class="square relative flex flex-col justify-center items-center border border-gray-100 rounded-sm"
+                    >
+                      <img
+                        :src="variation?.images[0]?.url ?? ''"
+                        alt="variation"
+                        class="absolute top-0 w-full h-full object-cover object-center rounded-sm"
+                      />
+                    </div>
+                  </div>
+                  <div class="flex flex-col w-1/2 mt-3">
+                    <div class="text-base font-bold uppercase">item #{{ variation?.code }}</div>
+                    <div class="flex flex-row">
+                      <div class="w-1/2">Your price</div>
+                      <div class="w-1/2 font-bold">{{ variation?.price?.actual?.formattedAmount }} / each</div>
+                    </div>
+                  </div>
+                  <div class="flex-1"></div>
+                  <div>Quantity</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="flex-none md:w-80 flex flex-col">
+        <div class="flex-none md:w-80 lg:w-96 flex flex-col">
           <div class="bg-white border shadow-sm rounded-md">
             <div class="border-b p-5 md:p-6">
               <h2 class="text-xl font-bold uppercase">Price &amp; Delivery</h2>
@@ -50,7 +81,7 @@
                   <span class="text-green-700 font-extrabold">{{ product.price?.actual?.formattedAmount }}</span> / each
                 </div>
               </div>
-              <div class="mt-3">
+              <div v-if="!withVariations" class="mt-3">
                 <AddToCart :product="product"></AddToCart>
               </div>
             </div>
@@ -80,7 +111,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, Ref } from "vue";
+import { ref, onMounted, Ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import { useProducts, Breadcrumbs, IBreadcrumbsItem, ProductProperties } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
@@ -103,6 +134,8 @@ onMounted(async () => {
   BuildBreadcrumbs();
   console.log(product.value);
 });
+
+const withVariations = computed(() => product.value.variations?.length);
 
 function BuildBreadcrumbs() {
   if (product.value) {

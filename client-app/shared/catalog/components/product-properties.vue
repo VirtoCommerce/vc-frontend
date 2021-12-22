@@ -26,7 +26,7 @@ const props = defineProps<{ properties: Array<Maybe<Property>> }>();
 
 const grouped = computed(() => {
   var propertyGroups = _(props.properties)
-    .filter((p) => !!p)
+    .filter((p) => !!p && p.type === "Product")
     .groupBy((p) => p!.name)
     .map((props, propName) => {
       return {

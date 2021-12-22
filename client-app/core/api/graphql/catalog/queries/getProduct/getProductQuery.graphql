@@ -32,6 +32,10 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
     }
     variations {
       id
+      name
+      images {
+        url
+      }
       code
       properties {
         name
