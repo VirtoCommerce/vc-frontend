@@ -5,10 +5,12 @@
       <h2 class="text-xl font-bold uppercase ml-2">Technical specs</h2>
     </div>
     <div v-for="property in grouped" :key="property.name" class="flex mb-4 space-x-3">
-      <div class="flex-none text-gray-500">
-        {{ property?.name }}
+      <div class="flex w-1/2 space-x-3">
+        <div class="flex-shrink text-gray-500">
+          {{ property?.name }}
+        </div>
+        <div class="flex-1 border-b border-grey-100 border-dotted h-5"></div>
       </div>
-      <div class="flex-1 border-b border-grey-100 border-dotted h-5"></div>
       <div class="font-bold w-1/2 flex flex-col text-left">
         {{ property.values }}
       </div>
