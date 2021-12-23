@@ -1,6 +1,6 @@
 <template>
   <div class="bg-white rounded border shadow-sm">
-    <div class="px-4 py-2 border-b uppercase font-extrabold text-sm">
+    <div class="px-4 py-3 border-b uppercase font-extrabold text-sm">
       <div class="flex items-center">
         <div class="flex-grow text-xl font-extrabold">{{ title }}</div>
         <div v-if="isCollapsible" class="ml-3">
@@ -12,7 +12,7 @@
         </div>
       </div>
     </div>
-    <div v-if="isCollapsed" class="p-4">
+    <div v-if="isCollapsed" class="px-6 py-4">
       <slot></slot>
     </div>
   </div>
