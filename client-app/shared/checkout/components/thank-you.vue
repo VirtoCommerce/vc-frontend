@@ -6,7 +6,7 @@
         Order {{ order.number }} has be successfully submitted. You will be notified via email when your order is ready
         for shipping
       </p>
-      <div class="flex flex-col lg:flex-row lg:flex-nowrap lg:gap-6">
+      <div class="flex flex-col lg:flex-row lg:flex-nowrap lg:space-x-6">
         <!-- Main section -->
         <div class="lg:w-3/4 xl:w-4/5 flex-grow w-full">
           <!-- My products section -->
