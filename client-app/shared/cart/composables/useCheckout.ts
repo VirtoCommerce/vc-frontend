@@ -58,6 +58,8 @@ export default () => {
     const order = await createOrderFromCart(cartId);
     if (order) {
       await removeCart(cartId);
+      const { loadMyCart } = useCart();
+      await loadMyCart();
     }
     return order;
   }

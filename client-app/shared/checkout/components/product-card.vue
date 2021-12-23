@@ -26,7 +26,9 @@
             <span class="font-medium text-gray-500 pr-1">Price: </span>
             <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
             <p class="w-1/3 lg:w-auto font-bold">
-              <span class="text-green-700">{{ lineItem.listPrice?.formattedAmount }}</span>
+              <span class="text-green-700">{{
+                lineItem.listPrice?.formattedAmount || lineItem.placedPrice?.formattedAmount
+              }}</span>
               <span class="hidden lg:inline"> / each</span>
             </p>
           </div>
@@ -47,34 +49,38 @@
               :min="0"
               class="w-20 lg:w-14 border rounded overflow-hidden h-8 lg:h-10 focus:ring ring-inset outline-none p-1 text-center"
               :class="{ 'text-red-500': isInputdisabled, 'border-red-500': errorMessage }"
-              :disabled="isInputdisabled"
+              :disabled="isInputdisabled || readOnly"
               @input="onInput"
               @keypress="onKeypress"
             />
-            <div v-if="!isInputdisabled" class="flex items-center">
-              <span class="text-green-700 text-xs pt-1 whitespace-nowrap"
-                >{{ lineItem.inStockQuantity! > 9999 ? "9999+" : lineItem.inStockQuantity }} in stock</span
-              >
-            </div>
-            <div v-else class="flex items-center">
-              <span class="text-red-500 text-xs pt-1 whitespace-nowrap">Out of stock</span>
+            <div v-if="!readOnly">
+              <div v-if="!isInputdisabled" class="flex items-center">
+                <span class="text-green-700 text-xs pt-1 whitespace-nowrap"
+                  >{{ lineItem.inStockQuantity! > 9999 ? "9999+" : lineItem.inStockQuantity }} in stock</span
+                >
+              </div>
+              <div v-else class="flex items-center">
+                <span class="text-red-500 text-xs pt-1 whitespace-nowrap">Out of stock</span>
+              </div>
             </div>
           </div>
 
-          <button
-            v-if="!isInputdisabled"
-            class="lg:hidden rounded uppercase h-8 px-2 border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 hover:text-white hover:bg-yellow-500"
-            @click="updateQuantity"
-          >
-            Update
-          </button>
-          <button
-            class="lg:hidden rounded uppercase h-8 px-2 border-2 font-roboto-condensed font-bold text-sm text-black border-black hover:text-white hover:bg-black"
-            @click="$emit('remove:item', lineItem.id)"
-          >
-            Remove
-          </button>
-          <div class="hidden lg:flex flex-col space-y-1 text-xs font-semibold text-cyan-700">
+          <div v-if="!readOnly" class="space-x-2">
+            <button
+              v-if="!isInputdisabled"
+              class="lg:hidden rounded uppercase h-8 px-2 border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 hover:text-white hover:bg-yellow-500"
+              @click="updateQuantity"
+            >
+              Update
+            </button>
+            <button
+              class="lg:hidden rounded uppercase h-8 px-2 border-2 font-roboto-condensed font-bold text-sm text-black border-black hover:text-white hover:bg-black"
+              @click="$emit('remove:item', lineItem.id)"
+            >
+              Remove
+            </button>
+          </div>
+          <div v-if="!readOnly" class="hidden lg:flex flex-col space-y-1 text-xs font-semibold text-cyan-700">
             <span v-if="!isInputdisabled" class="cursor-pointer" @click="updateQuantity">Update</span>
             <span class="cursor-pointer" @click="$emit('remove:item', lineItem.id)">Remove</span>
           </div>
@@ -101,6 +107,10 @@ const props = defineProps({
   lineItem: {
     type: Object as PropType<LineItemType>,
     required: true,
+  },
+  readOnly: {
+    type: Boolean,
+    default: false,
   },
 });
 
