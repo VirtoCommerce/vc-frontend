@@ -9,3 +9,4 @@ export { default as ProductSkeletonList } from "./product-skeleton-list.vue";
 export { default as ViewMode } from "./view-mode.vue";
 export { default as ProductProperties } from "./product-properties.vue";
 export { default as VariationProperties } from "./variation-properties.vue";
+export { default as ProductTitledBlock } from "./product-titled-block.vue";

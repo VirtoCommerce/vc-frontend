@@ -27,20 +27,22 @@
             </div>
           </div>
           <div class="flex flex-col lg:w-2/3">
-            <ProductProperties v-if="product.properties" :properties="product.properties"></ProductProperties>
-            <div v-if="!withVariations && product?.description" class="flex flex-col">
-              <div class="flex items-center mb-4">
-                <img src="/assets/static/images/description.svg" alt="description" />
-                <h2 class="text-xl font-bold uppercase ml-2">Description</h2>
-              </div>
+            <ProductTitledBlock image-src="/assets/static/images/technical_specs.svg" title="technical specs">
+              <ProductProperties v-if="product.properties" :properties="product.properties"></ProductProperties>
+            </ProductTitledBlock>
+            <ProductTitledBlock
+              v-if="!withVariations && product?.description"
+              image-src="/assets/static/images/description.svg"
+              title="Description"
+            >
               <MarkdownRender :src="product?.description?.content" class="text-gray-500"></MarkdownRender>
-            </div>
+            </ProductTitledBlock>
             <!-- variations  -->
-            <div v-if="withVariations" class="flex flex-col">
-              <div class="flex items-center mb-4">
-                <img src="/assets/static/images/variations_customize.svg" alt="customize order" />
-                <h2 class="text-xl font-bold uppercase ml-2">Customize your order</h2>
-              </div>
+            <ProductTitledBlock
+              v-if="withVariations"
+              image-src="/assets/static/images/variations_customize.svg"
+              title="Customize your order"
+            >
               <div v-for="variation in product.variations" :key="variation?.id ?? ''" class="flex flex-col">
                 <div class="flex flex-row space-x-2.5 border border-gray-100 rounded-sm mb-5 p-5">
                   <!-- image -->
@@ -78,7 +80,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </ProductTitledBlock>
           </div>
         </div>
         <div class="flex-none md:w-80 lg:w-96 flex flex-col">
@@ -133,7 +135,14 @@
 <script setup lang="ts">
 import { ref, onMounted, Ref, computed } from "vue";
 import { useRoute } from "vue-router";
-import { useProducts, Breadcrumbs, IBreadcrumbsItem, ProductProperties, VariationProperties } from "@/shared/catalog";
+import {
+  useProducts,
+  Breadcrumbs,
+  IBreadcrumbsItem,
+  ProductProperties,
+  VariationProperties,
+  ProductTitledBlock,
+} from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 import { MarkdownRender, ImageGallery } from "@/components";
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
