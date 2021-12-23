@@ -10,3 +10,4 @@ export { default as ViewMode } from "./view-mode.vue";
 export { default as ProductProperties } from "./product-properties.vue";
 export { default as VariationProperties } from "./variation-properties.vue";
 export { default as ProductTitledBlock } from "./product-titled-block.vue";
+export { default as ProductVariationCard } from "./product-variation-card.vue";

@@ -2,7 +2,7 @@
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner">
     <div v-if="!loading" class="max-w-screen-2xl px-5 md:px-12 mx-auto">
       <!-- Breadcrumbs -->
-      <Breadcrumbs :items="breadcrumbsItems"></Breadcrumbs>
+      <Breadcrumbs class="invisible md:visible" :items="breadcrumbsItems"></Breadcrumbs>
       <h1 class="text-2xl font-bold uppercase mb-3">{{ product.name }}</h1>
       <div v-if="!withVariations" class="text-sm">
         <span>Item #</span><span class="font-semibold pl-1">{{ product.code }}</span>
@@ -43,42 +43,13 @@
               image-src="/assets/static/images/variations_customize.svg"
               title="Customize your order"
             >
-              <div v-for="variation in product.variations" :key="variation?.id ?? ''" class="flex flex-col">
-                <div class="flex flex-row space-x-2.5 border border-gray-100 rounded-sm mb-5 p-5">
-                  <!-- image -->
-                  <div class="w-12 h-12">
-                    <div
-                      v-if="variation?.images?.length"
-                      class="-mt-2 -ml-2 square relative flex flex-col justify-center items-center"
-                    >
-                      <img
-                        :src="variation?.images[0]?.url ?? ''"
-                        alt="variation"
-                        class="absolute top-0 w-full h-full object-cover object-center rounded-sm"
-                      />
-                    </div>
-                  </div>
-                  <div class="flex-1 flex flex-col xl:flex-row xl:space-x-3">
-                    <!-- variations description -->
-                    <div class="flex-1 flex flex-col">
-                      <div class="text-base font-bold uppercase mb-2">item #{{ variation?.code }}</div>
-                      <VariationProperties :properties="variation?.properties || []"></VariationProperties>
-                      <div class="flex flex-row space-x-3">
-                        <div class="w-1/2 text-sm text-gray-500">Your price</div>
-                        <div class="w-1/2 font-bold">
-                          <span class="text-green-800">{{ variation?.price?.actual?.formattedAmount }}</span>
-                          <span class="invisible lg:visible">/ each</span>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- add to cart -->
-                    <div class="flex-1 xl:self-center flex flex-row items-center">
-                      <div class="flex flex-col w-full mt-4">
-                        <AddToCart :product="product"></AddToCart>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              <div v-for="variation in product.variations" :key="variation?.id ?? ''">
+                <ProductVariationCard
+                  v-if="variation"
+                  class="mb-5"
+                  :variation="variation"
+                  :product="product"
+                ></ProductVariationCard>
               </div>
             </ProductTitledBlock>
           </div>
@@ -135,17 +106,11 @@
 <script setup lang="ts">
 import { ref, onMounted, Ref, computed } from "vue";
 import { useRoute } from "vue-router";
-import {
-  useProducts,
-  Breadcrumbs,
-  IBreadcrumbsItem,
-  ProductProperties,
-  VariationProperties,
-  ProductTitledBlock,
-} from "@/shared/catalog";
+import { useProducts, Breadcrumbs, IBreadcrumbsItem, ProductProperties, ProductTitledBlock } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 import { MarkdownRender, ImageGallery } from "@/components";
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
+import ProductVariationCard from "../../shared/catalog/components/product-variation-card.vue";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
