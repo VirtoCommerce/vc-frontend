@@ -27,6 +27,7 @@
     "apollo-client": "^2.6.10",
     "apollo-link-http": "^1.5.17",
     "core-js": "^3.6.5",
+    "dompurify": "^2.3.4",
     "graphql": "^15.0.0",
     "graphql-tag": "^2.12.6",
     "marked": "^4.0.8",
