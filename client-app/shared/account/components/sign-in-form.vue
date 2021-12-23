@@ -1,5 +1,4 @@
 <template>
-  <h1 class="mb-6 font-semibold uppercase text-xl md:text-4xl">Sign In</h1>
   <form @submit="onSubmit">
     <!-- Errors block -->
     <Alert v-if="authError"><strong>User</strong> or <strong>password</strong> is incorrect</Alert>
@@ -58,7 +57,7 @@
         Login
       </button>
       <router-link
-        to="/register"
+        to="/sign-up"
         class="flex-1 border-2 rounded text-center text-yellow-500 ml-4 px-2 py-2 border-yellow-500 uppercase font-bold hover:bg-yellow-600 hover:text-white hover:border-yellow-600"
       >
         Registration
