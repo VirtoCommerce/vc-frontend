@@ -86,14 +86,15 @@ const { signMeUp } = useUser();
 const router = useRouter();
 
 const schema = yup.object({
-  email: yup.string().required("This field is required").email("Enter correct email please (ex. john@gmail.com)"),
-  userName: yup.string().required("This field is required").max(64),
-  firstName: yup.string().required("This field is required").max(64),
-  lastName: yup.string().required("This field is required").max(64),
-  password: yup.string().required("This field is required"),
+  email: yup.string().label("Email").required().email("Enter correct email please (ex. john@gmail.com)").max(64),
+  userName: yup.string().label("Username").required().max(64),
+  firstName: yup.string().label("First Name").required().max(64),
+  lastName: yup.string().label("Last Name").required().max(64),
+  password: yup.string().label("Password").required(),
   confirmPassword: yup
     .string()
-    .required("This field is required")
+    .label("Confirm password")
+    .required()
     .oneOf([yup.ref("password"), null], "Passwords must match"),
 });
 
