@@ -3,9 +3,9 @@
     <div v-if="!loading" class="max-w-screen-2xl px-5 md:px-12 mx-auto">
       <!-- Breadcrumbs -->
       <Breadcrumbs :items="breadcrumbsItems"></Breadcrumbs>
-      <h1 class="text-2xl font-bold uppercase mb-1">{{ product.name }}</h1>
-      <div class="text-sm">
-        <span>Itme #</span><span class="font-semibold pl-1">{{ product.code }}</span>
+      <h1 class="text-2xl font-bold uppercase mb-3">{{ product.name }}</h1>
+      <div v-if="!withVariations" class="text-sm">
+        <span>Item #</span><span class="font-semibold pl-1">{{ product.code }}</span>
       </div>
       <div class="flex flex-col md:flex-row md:space-x-6 mt-3">
         <div
@@ -35,6 +35,7 @@
               </div>
               <MarkdownRender :src="product?.description?.content" class="text-gray-500"></MarkdownRender>
             </div>
+            <!-- variations  -->
             <div v-if="withVariations" class="flex flex-col">
               <div class="flex items-center mb-4">
                 <img src="/assets/static/images/variations_customize.svg" alt="customize order" />
@@ -42,10 +43,11 @@
               </div>
               <div v-for="variation in product.variations" :key="variation?.id ?? ''" class="flex flex-col">
                 <div class="flex flex-row space-x-2.5 border border-gray-100 rounded-sm mb-5 p-3">
+                  <!-- image -->
                   <div class="w-12 h-12">
                     <div
                       v-if="variation?.images?.length"
-                      class="square relative flex flex-col justify-center items-center border border-gray-100 rounded-sm"
+                      class="square relative flex flex-col justify-center items-center"
                     >
                       <img
                         :src="variation?.images[0]?.url ?? ''"
@@ -54,15 +56,25 @@
                       />
                     </div>
                   </div>
-                  <div class="flex flex-col w-1/2 mt-3">
-                    <div class="text-base font-bold uppercase">item #{{ variation?.code }}</div>
-                    <div class="flex flex-row">
-                      <div class="w-1/2">Your price</div>
-                      <div class="w-1/2 font-bold">{{ variation?.price?.actual?.formattedAmount }} / each</div>
+                  <div class="flex-1 flex flex-col xl:flex-row xl:space-x-3">
+                    <!-- variations description -->
+                    <div class="flex-1 flex flex-col mt-3">
+                      <div class="text-base font-bold uppercase">item #{{ variation?.code }}</div>
+                      <VariationProperties :properties="variation?.properties || []"></VariationProperties>
+                      <div class="flex flex-row space-x-3">
+                        <div class="w-1/2 text-sm text-gray-500">Your price</div>
+                        <div class="w-1/2 font-bold">
+                          <span class="text-green-800">{{ variation?.price?.actual?.formattedAmount }}</span> / each
+                        </div>
+                      </div>
+                    </div>
+                    <!-- add to cart -->
+                    <div class="flex-1 xl:self-center flex flex-row items-center">
+                      <div class="flex flex-col w-full mt-4">
+                        <AddToCart :product="product"></AddToCart>
+                      </div>
                     </div>
                   </div>
-                  <div class="flex-1"></div>
-                  <div>Quantity</div>
                 </div>
               </div>
             </div>
@@ -76,9 +88,9 @@
             <div class="border-b p-5 md:p-6">
               <!-- Product price -->
               <div class="flex items-baseline justify-between text-sm">
-                <div class="font-bold text-base">Your price:</div>
-                <div>
-                  <span class="text-green-700 font-extrabold">{{ product.price?.actual?.formattedAmount }}</span> / each
+                <div class="font-extrabold text-base">Your price:</div>
+                <div class="font-semibold">
+                  <span class="text-green-800">{{ product.price?.actual?.formattedAmount }}</span> / each
                 </div>
               </div>
               <div v-if="!withVariations" class="mt-3">
@@ -113,7 +125,7 @@
 <script setup lang="ts">
 import { ref, onMounted, Ref, computed } from "vue";
 import { useRoute } from "vue-router";
-import { useProducts, Breadcrumbs, IBreadcrumbsItem, ProductProperties } from "@/shared/catalog";
+import { useProducts, Breadcrumbs, IBreadcrumbsItem, ProductProperties, VariationProperties } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 import { MarkdownRender, ImageGallery } from "@/components";
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
