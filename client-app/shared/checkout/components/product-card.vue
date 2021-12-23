@@ -39,8 +39,8 @@
           </div>
         </div>
 
-        <div class="flex items-start space-x-2 lg:space-x-6">
-          <div class="flex flex-col items-center">
+        <div class="flex items-start space-x-2 lg:space-x-4 lg:w-2/5 lg:justify-end">
+          <div class="flex flex-col items-center lg:w-1/4">
             <input
               v-model="value"
               type="number"
@@ -80,11 +80,11 @@
               Remove
             </button>
           </div>
-          <div v-if="!readOnly" class="hidden lg:flex flex-col space-y-1 text-xs font-semibold text-cyan-700">
+          <div v-if="!readOnly" class="hidden lg:flex lg:w-1/4 flex-col space-y-1 text-xs font-semibold text-cyan-700">
             <span v-if="!isInputdisabled" class="cursor-pointer" @click="updateQuantity">Update</span>
             <span class="cursor-pointer" @click="$emit('remove:item', lineItem.id)">Remove</span>
           </div>
-          <div class="hidden lg:flex flex-col text-sm font-extrabold pr-3">
+          <div class="hidden lg:flex lg:w-2/4 lg:items-end flex-col text-sm font-extrabold pr-3">
             <span class="text-black self-end">Total</span>
             <span class="text-green-700">{{ lineItem.extendedPrice?.formattedAmount }}</span>
           </div>
