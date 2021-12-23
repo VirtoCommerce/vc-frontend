@@ -42,7 +42,7 @@
             icon-url="/assets/static/images/checkout/extra.svg"
             class="shadow-inner pb-8 lg:shadow"
           >
-            <div class="mx-5 lg:ml-28 lg:mr-11">
+            <div class="ml-24 mr-5 lg:ml-28 lg:mr-11">
               <p>
                 {{ order.comment }}
               </p>

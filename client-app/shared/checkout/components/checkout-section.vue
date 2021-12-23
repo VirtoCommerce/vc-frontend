@@ -1,6 +1,6 @@
 <template>
   <div class="bg-white lg:mb-6 lg:rounded">
-    <div class="flex items-center p-5">
+    <div class="flex items-center px-5 py-7">
       <img :src="iconUrl" :alt="title" class="mr-5 lg:mr-8" />
       <h3 class="text-gray-800 text-2xl lg:text-3xl font-bold uppercase">{{ title }}</h3>
     </div>
