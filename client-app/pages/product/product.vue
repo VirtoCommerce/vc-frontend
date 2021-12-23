@@ -42,12 +42,12 @@
                 <h2 class="text-xl font-bold uppercase ml-2">Customize your order</h2>
               </div>
               <div v-for="variation in product.variations" :key="variation?.id ?? ''" class="flex flex-col">
-                <div class="flex flex-row space-x-2.5 border border-gray-100 rounded-sm mb-5 p-3">
+                <div class="flex flex-row space-x-2.5 border border-gray-100 rounded-sm mb-5 p-5">
                   <!-- image -->
                   <div class="w-12 h-12">
                     <div
                       v-if="variation?.images?.length"
-                      class="square relative flex flex-col justify-center items-center"
+                      class="-mt-2 -ml-2 square relative flex flex-col justify-center items-center"
                     >
                       <img
                         :src="variation?.images[0]?.url ?? ''"
@@ -58,13 +58,14 @@
                   </div>
                   <div class="flex-1 flex flex-col xl:flex-row xl:space-x-3">
                     <!-- variations description -->
-                    <div class="flex-1 flex flex-col mt-3">
-                      <div class="text-base font-bold uppercase">item #{{ variation?.code }}</div>
+                    <div class="flex-1 flex flex-col">
+                      <div class="text-base font-bold uppercase mb-2">item #{{ variation?.code }}</div>
                       <VariationProperties :properties="variation?.properties || []"></VariationProperties>
                       <div class="flex flex-row space-x-3">
                         <div class="w-1/2 text-sm text-gray-500">Your price</div>
                         <div class="w-1/2 font-bold">
-                          <span class="text-green-800">{{ variation?.price?.actual?.formattedAmount }}</span> / each
+                          <span class="text-green-800">{{ variation?.price?.actual?.formattedAmount }}</span>
+                          <span class="invisible lg:visible">/ each</span>
                         </div>
                       </div>
                     </div>
@@ -93,8 +94,15 @@
                   <span class="text-green-800">{{ product.price?.actual?.formattedAmount }}</span> / each
                 </div>
               </div>
-              <div v-if="!withVariations" class="mt-3">
-                <AddToCart :product="product"></AddToCart>
+              <div class="mt-3">
+                <AddToCart v-if="!withVariations" :product="product"></AddToCart>
+                <div v-else>
+                  <router-link
+                    class="block text-center bg-yellow-500 rounded text-white px-2 py-2 font-bold uppercase hover:bg-yellow-600 cursor-pointer"
+                    to="/cart"
+                    >view cart</router-link
+                  >
+                </div>
               </div>
             </div>
             <div class="flex text-center">
@@ -112,7 +120,7 @@
               </div>
               <div class="flex items-center justify-center flex-1 py-3 px-1 space-x-2 cursor-pointer hover:bg-gray-100">
                 <i class="fas fa-print text-yellow-500"></i>
-                <span class="text-sm text-blue-800 font-bold">Print</span>
+                <span class="text-sm text-blue-800 font-bold" @click="print()">Print</span>
               </div>
             </div>
           </div>
@@ -156,6 +164,10 @@ function BuildBreadcrumbs() {
       { url: "/product/" + product.value.id ?? "", title: product.value.name ?? "" },
     ];
   }
+}
+
+function print() {
+  window.print();
 }
 </script>
 
