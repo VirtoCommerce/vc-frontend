@@ -24,7 +24,7 @@ const router = createRouter({
     { path: "/sign-in", name: "SignIn", component: SingInPage },
     { path: "/catalog", name: "CatalogRoot", component: Catalog },
     { path: "/catalog/:categoryKey", name: "Catalog", component: Catalog },
-    { path: "/checkout/", name: "Checkout", component: Checkout },
+    { path: "/checkout", name: "Checkout", component: Checkout },
     { path: "/500", name: "InternalError", component: Error500 },
     { path: "/403", name: "NoAccess", component: Error403 },
     { path: "/:pathMatch(.*)*", name: "NotFound", component: Error404 },
