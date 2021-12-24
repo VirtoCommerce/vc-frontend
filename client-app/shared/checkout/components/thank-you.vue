@@ -43,7 +43,7 @@
             class="shadow-inner pb-8 lg:shadow"
           >
             <div class="ml-24 mr-5 lg:ml-28 lg:mr-11">
-              <p>
+              <p class="break-words">
                 {{ order.comment }}
               </p>
             </div>
