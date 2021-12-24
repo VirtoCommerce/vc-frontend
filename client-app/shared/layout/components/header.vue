@@ -38,14 +38,14 @@
       <div v-else class="flex items-center">
         <router-link class="text-blue-400 hover:text-blue-500" to="/sign-in">Sign In</router-link>
         <div class="mx-3 h-1 w-1 bg-yellow-500 rounded"></div>
-        <router-link class="text-blue-400 hover:text-blue-500" to="/register">Register now</router-link>
+        <router-link class="text-blue-400 hover:text-blue-500" to="/sign-up">Register now</router-link>
       </div>
     </div>
 
     <!-- Bottom header-->
     <div class="relative">
       <div class="px-12 py-7 flex items-center justify-between bg-white">
-        <router-link to="/"><img src="/assets/static/images/logo.svg" class="h-12" /></router-link>
+        <router-link to="/"><img src="/assets/static/images/common/logo.svg" class="h-12" /></router-link>
         <div class="w-0.5 h-6 bg-yellow-500 mx-5 hidden xl:block"></div>
         <div class="italic text-lg text-gray-900 hidden xl:block">Construction goods</div>
         <div class="flex-grow"></div>
@@ -116,7 +116,7 @@
         class="absolute top-0 w-full z-10 px-12 py-7 flex items-center justify-between bg-gray-800 select-none"
       >
         <router-link to="/" @click="searchVisible = false">
-          <img src="/assets/static/images/logo_white.svg" class="h-12" />
+          <img src="/assets/static/images/common/logo-white.svg" class="h-12" />
         </router-link>
         <input
           class="flex-grow ml-8 mr-4 rounded h-10 px-4 font-medium text-sm outline-none"
@@ -130,7 +130,7 @@
   <!-- Mobile header -->
   <div class="lg:hidden fixed z-10 bg-white w-full border-b shadow-md">
     <div class="px-6 flex justify-between items-center h-24">
-      <router-link to="/"><img src="/assets/static/images/logo.svg" class="h-9" /></router-link>
+      <router-link to="/"><img src="/assets/static/images/common/logo.svg" class="h-9" /></router-link>
       <i class="fas fa-bars text-2xl text-yellow-500" @click="mobileMenuVisible = true"></i>
     </div>
   </div>
@@ -142,7 +142,7 @@
   <div v-if="mobileMenuVisible" class="fixed bg-gray-800 opacity-95 z-50 w-full h-screen flex flex-col">
     <div class="px-6 flex justify-between items-center h-24 flex-shrink-0">
       <router-link to="/" @click="mobileMenuVisible = false">
-        <img src="/assets/static/images/logo_white.svg" class="h-9" />
+        <img src="/assets/static/images/common/logo-white.svg" class="h-9" />
       </router-link>
       <i class="fas fa-times text-2xl text-yellow-500" @click="mobileMenuVisible = false"></i>
     </div>
@@ -256,7 +256,7 @@
         <router-link to="/sign-in" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
           >Sign In</router-link
         >
-        <router-link to="/register" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
+        <router-link to="/sign-up" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
           >Register now</router-link
         >
       </div>

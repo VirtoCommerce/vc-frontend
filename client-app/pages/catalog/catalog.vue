@@ -162,7 +162,7 @@
               <template v-else>
                 <ProductCardGrid v-for="item in products" :key="item.id" :product="item">
                   <template #cart-handler>
-                    <AddToCart :product="item"></AddToCart>
+                    <AddToCart :product="item" @update:lineitem="onAddToCart"></AddToCart>
                   </template>
                 </ProductCardGrid>
               </template>
@@ -176,7 +176,7 @@
               <template v-else>
                 <ProductCardList v-for="item in products" :key="item.id" :product="item">
                   <template #cart-handler>
-                    <AddToCart :product="item"></AddToCart>
+                    <AddToCart :product="item" @update:lineitem="onAddToCart"></AddToCart>
                   </template>
                 </ProductCardList>
               </template>
@@ -208,6 +208,13 @@
       </div>
     </div>
   </div>
+
+  <CartAddInfo
+    :is-open="isCartAddInfoOpen"
+    :line-item="cartAddInfoLineItem"
+    @modal:close="isCartAddInfoOpen = false"
+    @modal:closed="cartAddInfoLineItem = {}"
+  ></CartAddInfo>
 </template>
 
 <script setup lang="ts">
@@ -229,10 +236,11 @@ import {
   useCategories,
   IBreadcrumbsItem,
 } from "@/shared/catalog";
-import { AddToCart } from "@/shared/cart";
+import { AddToCart, CartAddInfo } from "@/shared/cart";
 import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from "@headlessui/vue";
 import { useRoute } from "vue-router";
 import _ from "lodash";
+import { LineItemType } from "@/core/api/graphql/types";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
@@ -300,13 +308,13 @@ const loadProducts = async () => {
   await fetchProducts(productSearchParams);
 };
 
-function getCurrentCategory(categoryKey: string) {
+const getCurrentCategory = (categoryKey: string) => {
   const catTree = unref(categoryTree);
   const cat = searchCategory(catTree, categoryKey);
   category.value = cat;
-}
+};
 
-function searchCategory(categoryTree: CategoryTree, categoryKey: string): CategoryTree | undefined {
+const searchCategory = (categoryTree: CategoryTree, categoryKey: string): CategoryTree | undefined => {
   let category = _.find(categoryTree.items, (x) => x.seoKeyword === categoryKey);
 
   if (!category && categoryTree.items) {
@@ -320,7 +328,7 @@ function searchCategory(categoryTree: CategoryTree, categoryKey: string): Catego
   }
 
   return category;
-}
+};
 
 const mobileFiltersVisible = ref(false);
 const mobileFiltersSidebar = ref(null);
@@ -329,14 +337,14 @@ onClickOutside(mobileFiltersSidebar, () => {
   mobileFiltersVisible.value = false;
 });
 
-function BuildBreadcrumbs() {
+const BuildBreadcrumbs = () => {
   if (category.value) {
     breadcrumbsItems.value = [
       { url: "/", title: "Home" },
       { url: category.value.seoKeyword ?? "", title: category.value.label ?? "" },
     ];
   }
-}
+};
 
 const breadcrumbsItems: Ref<IBreadcrumbsItem[]> = ref([{ url: "/", title: "Home" }]);
 
@@ -375,6 +383,17 @@ watch(isMobile, async () => {
     }
   }
 });
+
+const isCartAddInfoOpen = ref(false);
+const cartAddInfoLineItem = ref();
+
+/**
+ * Handle AddToCart event.
+ */
+const onAddToCart = (lineItem?: LineItemType) => {
+  cartAddInfoLineItem.value = { ...(lineItem ?? {}) };
+  isCartAddInfoOpen.value = true;
+};
 </script>
 
 <style scoped></style>

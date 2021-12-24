@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "./pages/home/home.vue";
 import SingInPage from "./pages/sign-in/sign-in-page.vue";
+import SignUpPage from "./pages/sign-up/sign-up-page.vue";
 import Catalog from "./pages/catalog/catalog.vue";
 import Error403 from "./pages/403/403.vue";
 import Error404 from "./pages/404/404.vue";
@@ -21,6 +22,7 @@ const router = createRouter({
   routes: [
     { path: "/", name: "Home", component: Home },
     { path: "/sign-in", name: "SignIn", component: SingInPage },
+    { path: "/sign-up", name: "SignUp", component: SignUpPage },
     { path: "/catalog", name: "CatalogRoot", component: Catalog },
     { path: "/catalog/:categoryKey", name: "Catalog", component: Catalog },
     { path: "/500", name: "InternalError", component: Error500 },

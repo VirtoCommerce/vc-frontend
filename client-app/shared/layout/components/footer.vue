@@ -4,7 +4,7 @@
     <div class="container mx-auto grid grid-cols-2 gap-4 lg:grid-cols-4 xl:grid-cols-5 p-12">
       <!-- Logo column -->
       <div class="hidden xl:block">
-        <img src="/assets/static/images/logo_white.svg" class="h-9" />
+        <img src="/assets/static/images/common/logo-white.svg" class="h-9" />
       </div>
 
       <!-- Column 1 -->
