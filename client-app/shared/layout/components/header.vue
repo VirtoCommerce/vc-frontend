@@ -38,7 +38,7 @@
       <div v-else class="flex items-center">
         <router-link class="text-blue-400 hover:text-blue-500" to="/sign-in">Sign In</router-link>
         <div class="mx-3 h-1 w-1 bg-yellow-500 rounded"></div>
-        <router-link class="text-blue-400 hover:text-blue-500" to="/register">Register now</router-link>
+        <router-link class="text-blue-400 hover:text-blue-500" to="/sign-up">Register now</router-link>
       </div>
     </div>
 
@@ -256,7 +256,7 @@
         <router-link to="/sign-in" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
           >Sign In</router-link
         >
-        <router-link to="/register" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
+        <router-link to="/sign-up" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
           >Register now</router-link
         >
       </div>
