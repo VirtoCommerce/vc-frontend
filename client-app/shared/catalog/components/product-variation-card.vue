@@ -29,7 +29,7 @@
       <!-- add to cart -->
       <div class="flex-1 xl:self-center flex flex-row items-center">
         <div class="flex flex-col w-full mt-4">
-          <AddToCart :product="product"></AddToCart>
+          <AddToCart :product="variation"></AddToCart>
         </div>
       </div>
     </div>

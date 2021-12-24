@@ -27,11 +27,16 @@
             </div>
           </div>
           <div class="flex flex-col lg:w-2/3">
-            <ProductTitledBlock image-src="/assets/static/images/technical_specs.svg" title="technical specs">
+            <ProductTitledBlock
+              class="mt-5"
+              image-src="/assets/static/images/technical_specs.svg"
+              title="technical specs"
+            >
               <ProductProperties v-if="product.properties" :properties="product.properties"></ProductProperties>
             </ProductTitledBlock>
             <ProductTitledBlock
               v-if="!withVariations && product?.description"
+              class="mt-5"
               image-src="/assets/static/images/description.svg"
               title="Description"
             >
@@ -40,6 +45,7 @@
             <!-- variations  -->
             <ProductTitledBlock
               v-if="withVariations"
+              class="mt-5"
               image-src="/assets/static/images/variations_customize.svg"
               title="Customize your order"
             >
