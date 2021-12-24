@@ -124,7 +124,7 @@
             >
               <div class="mx-5 lg:ml-28 lg:mr-11">
                 <p class="font-extrabold text-base mb-1">Order comments</p>
-                <TextArea v-model="cartComment" :resize-class="'resize-none'" :rows="4" :max-length="1000"></TextArea>
+                <TextArea v-model="cartComment" class="resize-none" :rows="4" :max-length="1000"></TextArea>
               </div>
             </CheckoutSection>
             <div class="shadow-inner h-1 lg:hidden"></div>
