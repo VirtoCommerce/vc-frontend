@@ -65,7 +65,7 @@
           </Card>
           <Card title="Shipping method" :is-collapsible="true" class="mb-5">
             <div class="flex items-center space-x-4 text-sm">
-              <img src="/static/images/checkout/fedex.svg" class="h-12 w-12" />
+              <img src="/assets/static/images/checkout/fedex.svg" class="h-12 w-12" />
               <span>Fedex - Express (20$)</span>
             </div>
           </Card>
@@ -79,7 +79,7 @@
           </Card>
           <Card title="Payment method" :is-collapsible="true" class="mb-5">
             <div class="flex items-center space-x-4 text-sm">
-              <img src="/static/images/checkout/invoice.svg" class="h-12 w-12" />
+              <img src="/assets/static/images/checkout/invoice.svg" class="h-12 w-12" />
               <span>Invoice</span>
             </div>
           </Card>

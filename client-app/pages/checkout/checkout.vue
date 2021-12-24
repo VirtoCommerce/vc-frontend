@@ -66,7 +66,7 @@
                 </CheckoutLabeledBlock>
                 <CheckoutLabeledBlock label="Shipping method">
                   <div class="flex flex-row items-center space-x-4">
-                    <img src="/static/images/checkout/fedex.svg" class="h-12 w-12" />
+                    <img src="/assets/static/images/checkout/fedex.svg" class="h-12 w-12" />
                     <span>Fedex - Express (20$)</span>
                   </div>
                   <div>
@@ -101,7 +101,7 @@
                 </CheckoutLabeledBlock>
                 <CheckoutLabeledBlock label="Payment method">
                   <div class="flex flex-row items-center space-x-4">
-                    <img src="/static/images/checkout/invoice.svg" class="h-12 w-12" />
+                    <img src="/assets/static/images/checkout/invoice.svg" class="h-12 w-12" />
                     <span>Invoice</span>
                   </div>
                   <div>
