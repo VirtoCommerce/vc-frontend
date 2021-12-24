@@ -12,7 +12,7 @@
           <!-- My products section -->
           <CheckoutSection
             title="My purchased products"
-            icon-url="/assets/static/images/checkout/products.svg"
+            icon-url="/static/images/checkout/products.svg"
             class="shadow lg:pb-11"
           >
             <div class="lg:ml-28 lg:mr-11 lg:border lg:rounded">
@@ -39,7 +39,7 @@
           <CheckoutSection
             v-if="order.comment"
             title="Order comment"
-            icon-url="/assets/static/images/checkout/extra.svg"
+            icon-url="/static/images/checkout/extra.svg"
             class="shadow-inner pb-8 lg:shadow"
           >
             <div class="ml-24 mr-5 lg:ml-28 lg:mr-11">
@@ -65,7 +65,7 @@
           </Card>
           <Card title="Shipping method" :is-collapsible="true" class="mb-5">
             <div class="flex items-center space-x-4 text-sm">
-              <img src="/assets/static/images/checkout/fedex.svg" class="h-12 w-12" />
+              <img src="/static/images/checkout/fedex.svg" class="h-12 w-12" />
               <span>Fedex - Express (20$)</span>
             </div>
           </Card>
@@ -79,7 +79,7 @@
           </Card>
           <Card title="Payment method" :is-collapsible="true" class="mb-5">
             <div class="flex items-center space-x-4 text-sm">
-              <img src="/assets/static/images/checkout/invoice.svg" class="h-12 w-12" />
+              <img src="/static/images/checkout/invoice.svg" class="h-12 w-12" />
               <span>Invoice</span>
             </div>
           </Card>
