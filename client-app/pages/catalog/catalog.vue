@@ -160,12 +160,7 @@
                 <ProductSkeletonGrid v-for="i in productSearchParams.itemsPerPage" :key="i"></ProductSkeletonGrid>
               </template>
               <template v-else>
-                <ProductCardGrid
-                  v-for="item in products"
-                  :key="item.id"
-                  :product="item"
-                  @click="showProductDetail(item.id)"
-                >
+                <ProductCardGrid v-for="item in products" :key="item.id" :product="item">
                   <template #cart-handler>
                     <AddToCart :product="item" @update:lineitem="onAddToCart"></AddToCart>
                   </template>
@@ -179,12 +174,7 @@
                 <ProductSkeletonList v-for="i in productSearchParams.itemsPerPage" :key="i"></ProductSkeletonList>
               </template>
               <template v-else>
-                <ProductCardList
-                  v-for="item in products"
-                  :key="item.id"
-                  :product="item"
-                  @click="showProductDetail(item.id)"
-                >
+                <ProductCardList v-for="item in products" :key="item.id" :product="item">
                   <template #cart-handler>
                     <AddToCart :product="item" @update:lineitem="onAddToCart"></AddToCart>
                   </template>
@@ -255,7 +245,6 @@ import { LineItemType } from "@/core/api/graphql/types";
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
-const router = useRouter();
 const route = useRoute();
 const params = useUrlSearchParams("history");
 
@@ -395,9 +384,6 @@ watch(isMobile, async () => {
   }
 });
 
-function showProductDetail(id: string) {
-  router.push({ name: "Product", params: { id } });
-}
 const isCartAddInfoOpen = ref(false);
 const cartAddInfoLineItem = ref();
 

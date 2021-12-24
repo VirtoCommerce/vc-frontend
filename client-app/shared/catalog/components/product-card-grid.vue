@@ -1,13 +1,15 @@
 <template>
-  <div class="flex flex-col bg-white rounded border p-4 shadow-sm hover:shadow-lg cursor-pointer">
+  <div class="flex flex-col bg-white rounded border p-4 shadow-sm hover:shadow-lg">
     <!-- Product image -->
-    <div class="square relative flex flex-col justify-center items-center border border-gray-100">
-      <img
-        :src="product.imgSrc || '/static/images/common/no-image.svg'"
-        :alt="product.name"
-        class="absolute top-0 w-full h-full object-cover object-center"
-      />
-    </div>
+    <router-link :to="`/product/${product.id}`" class="cursor-pointer">
+      <div class="square relative flex flex-col justify-center items-center border border-gray-100">
+        <img
+          :src="product.imgSrc || '/static/images/common/no-image.svg'"
+          :alt="product.name"
+          class="absolute top-0 w-full h-full object-cover object-center"
+        />
+      </div>
+    </router-link>
 
     <div class="flex flex-col flex-grow pt-4">
       <div class="flex items-center justify-between mb-3">
@@ -33,8 +35,8 @@
 
       <!-- Product title -->
       <router-link
-        :to="`/catalog/${product.slug}`"
-        class="text-cyan-700 font-extrabold text-sm mb-3 flex-grow line-clamp-3 overflow-hidden"
+        :to="`/product/${product.id}`"
+        class="text-cyan-700 font-extrabold text-sm mb-3 flex-grow line-clamp-3 overflow-hidden cursor-pointer"
       >
         {{ product.name }}
       </router-link>
