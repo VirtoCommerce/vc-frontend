@@ -13,6 +13,9 @@ mutation CreateOrderFromCart($command: InputCreateOrderFromCartType!) {
     subTotal {
       ...moneyFields
     }
+    total {
+      ...moneyFields
+    }
     discountTotal {
       ...moneyFields
     }
