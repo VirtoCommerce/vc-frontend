@@ -165,6 +165,8 @@ watch(
         .map((x) => x?.id as string)
         .value();
 
+      variationsIds.push(product.value.id);
+
       variationsCartTotal.value = getItemsTotal(variationsIds);
     }
   }
