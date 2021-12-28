@@ -29,7 +29,6 @@ export default () => {
 
     try {
       me.value = await getMe();
-      setUserId(me.value?.id);
     } catch (e) {
       Logger.error("useUser.loadMe", e);
       throw e;
