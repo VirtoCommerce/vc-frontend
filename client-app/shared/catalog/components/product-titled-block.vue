@@ -9,5 +9,5 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{ imageSrc: string; title: string }>();
+defineProps<{ imageSrc: string; title: string }>();
 </script>

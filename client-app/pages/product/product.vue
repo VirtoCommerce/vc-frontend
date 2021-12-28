@@ -1,6 +1,6 @@
 <template>
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner">
-    <div v-if="!loading" class="max-w-screen-2xl px-5 md:px-12 mx-auto">
+    <div v-if="!productLoading" class="max-w-screen-2xl px-5 md:px-12 mx-auto">
       <!-- Breadcrumbs -->
       <Breadcrumbs class="invisible md:visible" :items="breadcrumbsItems"></Breadcrumbs>
       <h1 class="text-2xl font-bold uppercase mb-3">{{ product.name }}</h1>
@@ -67,10 +67,16 @@
             </div>
             <div class="border-b p-5 md:p-6">
               <!-- Product price -->
-              <div class="flex items-baseline justify-between text-sm">
+              <div v-if="!withVariations" class="flex items-baseline justify-between text-sm">
                 <div class="font-extrabold text-base">Your price:</div>
                 <div class="font-semibold">
                   <span class="text-green-800">{{ product.price?.actual?.formattedAmount }}</span> / each
+                </div>
+              </div>
+              <div v-else class="flex items-baseline justify-between text-sm">
+                <div class="font-extrabold text-base">Total in your cart:</div>
+                <div class="font-semibold">
+                  <span class="text-green-800">{{ currency?.symbol }}{{ variationsCartTotal.toFixed(2) }}</span>
                 </div>
               </div>
               <div class="mt-3">
@@ -110,20 +116,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, Ref, computed } from "vue";
+import { ref, onMounted, Ref, computed, watch } from "vue";
 import { useRoute } from "vue-router";
-import { useProducts, Breadcrumbs, IBreadcrumbsItem, ProductProperties, ProductTitledBlock } from "@/shared/catalog";
-import { AddToCart } from "@/shared/cart";
+import {
+  useProducts,
+  Breadcrumbs,
+  IBreadcrumbsItem,
+  ProductProperties,
+  ProductTitledBlock,
+  ProductVariationCard,
+} from "@/shared/catalog";
+import { AddToCart, useCart } from "@/shared/cart";
 import { MarkdownRender, ImageGallery } from "@/components";
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
-import ProductVariationCard from "../../shared/catalog/components/product-variation-card.vue";
+import _ from "lodash";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 
 const route = useRoute();
 
-const { product, loading, loadProduct } = useProducts();
+const { product, loading: productLoading, loadProduct } = useProducts();
+const { loading: cartLoading, getItemsTotal, currency } = useCart();
 
 const breadcrumbsItems: Ref<IBreadcrumbsItem[]> = ref([{ url: "/", title: "Home" }]);
 
@@ -136,6 +150,22 @@ onMounted(async () => {
 });
 
 const withVariations = computed(() => product.value.variations?.length);
+
+const variationsCartTotal = ref(0);
+
+watch(
+  () => cartLoading.value === false && productLoading.value === false,
+  (condition) => {
+    if (condition && product.value.variations?.length) {
+      const variationsIds = _(product.value.variations)
+        .filter((x) => !!x?.id)
+        .map((x) => x?.id as string)
+        .value();
+
+      variationsCartTotal.value = getItemsTotal(variationsIds);
+    }
+  }
+);
 
 function BuildBreadcrumbs() {
   if (product.value) {
