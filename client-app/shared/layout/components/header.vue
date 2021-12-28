@@ -269,8 +269,12 @@ import { ref } from "vue";
 import { useUser } from "@/shared/account";
 import { onClickOutside } from "@vueuse/core";
 import { useCart } from "@/shared/cart";
+import { useContext } from "@/shared/context";
+import { setUserId } from "@/core/constants";
 
 const { isAuthenticated, me, signMeOut } = useUser();
+const { loadMyCart } = useCart();
+const { loadContext, themeContext } = useContext();
 const { cart } = useCart();
 
 const mobileMenuVisible = ref(false);
@@ -292,6 +296,10 @@ onClickOutside(loginMenu, () => {
 
 async function signOut() {
   await signMeOut();
+  await loadContext();
+
+  setUserId(themeContext.value?.userId || me.value?.id);
+  await loadMyCart();
   loginMenuVisible.value = false;
 }
 </script>

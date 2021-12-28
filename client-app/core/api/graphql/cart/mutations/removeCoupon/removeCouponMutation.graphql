@@ -1,0 +1,5 @@
+mutation RemoveCoupon($command: InputRemoveCouponType!) {
+  removeCoupon(command: $command) {
+    name
+  }
+}

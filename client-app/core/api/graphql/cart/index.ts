@@ -7,6 +7,11 @@ import changeCartItemQuantity from "./mutations/changeCartItemQuantity";
 import getAvailPaymentMethods from "./queries/getAvailPaymentMethods";
 import getAvailShippingMethods from "./queries/getAvailShippingMethods";
 import getMyCart from "./queries/getMyCart";
+import removeCartItem from "./mutations/removeCartItem";
+import addCoupon from "./mutations/addCoupon";
+import removeCoupon from "./mutations/removeCoupon";
+import validateCoupon from "./mutations/validateCoupon";
+import changeCartComment from "./mutations/changeCartComment";
 
 export {
   getMyCart,
@@ -18,4 +23,9 @@ export {
   createOrderFromCart,
   removeCart,
   changeCartItemQuantity,
+  removeCartItem,
+  addCoupon,
+  removeCoupon,
+  validateCoupon,
+  changeCartComment,
 };

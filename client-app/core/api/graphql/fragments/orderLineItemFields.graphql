@@ -1,0 +1,24 @@
+#import "./moneyFields.graphql"
+
+fragment orderLineItemFields on OrderLineItemType {
+  id
+  imageUrl
+  isGift
+  name
+  productId
+  product {
+    brandName
+    slug
+  }
+  quantity
+  sku
+  extendedPrice {
+    ...moneyFields
+  }
+  placedPrice {
+    ...moneyFields
+  }
+  taxTotal {
+    ...moneyFields
+  }
+}

@@ -1,4 +1,4 @@
-const colors = require('tailwindcss/colors');
+const colors = require("tailwindcss/colors");
 
 module.exports = {
   purge: ["./index.html", "./client-app/**/*.{vue,js,ts,jsx,tsx}"],
@@ -36,6 +36,7 @@ module.exports = {
       backgroundColor: ["checked"],
       borderColor: ["checked"],
     },
+    opacity: ({ after }) => after(["disabled"]),
   },
   plugins: [require("@tailwindcss/line-clamp")],
 };

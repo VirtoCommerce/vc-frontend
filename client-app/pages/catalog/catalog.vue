@@ -8,7 +8,7 @@
         <!-- Filters -->
         <div class="hidden lg:flex flex-col gap-5 flex-shrink-0 lg:w-1/4 xl:w-1/5">
           <!-- Search results -->
-          <FiltersBlock title="Filter results by">
+          <Card title="Filter results by">
             <p class="text-sm pb-2">Search within these results</p>
             <div class="flex gap-3">
               <input
@@ -27,10 +27,10 @@
                 Go
               </button>
             </div>
-          </FiltersBlock>
+          </Card>
 
           <!-- Previously purchased -->
-          <FiltersBlock title="Previously purchased">
+          <Card title="Previously purchased">
             <label class="flex items-center text-sm cursor-pointer">
               <input
                 type="checkbox"
@@ -38,15 +38,15 @@
               />
               <span class="ml-2 font-medium">View previously purchased products</span>
             </label>
-          </FiltersBlock>
+          </Card>
 
           <!-- Branch availability -->
-          <FiltersBlock title="Branch availability">
+          <Card title="Branch availability">
             <p class="text-sm font-medium">
               <span class="text-cyan-700 font-semibold cursor-pointer hover:text-cyan-900">Select a pickup branch</span>
               to see products in stock now.
             </p>
-          </FiltersBlock>
+          </Card>
         </div>
 
         <!-- Mobile filters -->
@@ -58,7 +58,7 @@
         >
           <div class="flex flex-col gap-5">
             <!-- Search results -->
-            <FiltersBlock title="Filter results by">
+            <Card title="Filter results by">
               <p class="text-sm pb-2">Search within these results</p>
               <div class="flex gap-3">
                 <input type="text" class="border rounded text-sm flex-1 w-full border-gray-300 p-2.5" />
@@ -68,22 +68,22 @@
                   Go
                 </button>
               </div>
-            </FiltersBlock>
+            </Card>
 
             <!-- Previously purchased -->
-            <FiltersBlock title="Previously purchased">
+            <Card title="Previously purchased">
               <label class="flex items-center text-sm">
                 <input type="checkbox" class="appearance-none w-4 h-4 border-2 border-gray-300 rounded-sm" />
                 <span class="ml-2">View previously purchased products</span>
               </label>
-            </FiltersBlock>
+            </Card>
 
             <!-- Branch availability -->
-            <FiltersBlock title="Branch availability">
+            <Card title="Branch availability">
               <p class="text-sm">
                 <span class="text-cyan-700">Select a pickup branch</span> to see products in stock now.
               </p>
-            </FiltersBlock>
+            </Card>
           </div>
         </div>
 
@@ -222,7 +222,6 @@ import { ref, reactive, onMounted, watch, unref, watchEffect, Ref } from "vue";
 import { onClickOutside, useBreakpoints, breakpointsTailwind, useUrlSearchParams } from "@vueuse/core";
 import {
   Breadcrumbs,
-  FiltersBlock,
   Pagination,
   PageSize,
   ProductCardGrid,
@@ -236,6 +235,7 @@ import {
   useCategories,
   IBreadcrumbsItem,
 } from "@/shared/catalog";
+import { Card } from "@/components";
 import { AddToCart, CartAddInfo } from "@/shared/cart";
 import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from "@headlessui/vue";
 import { useRoute } from "vue-router";

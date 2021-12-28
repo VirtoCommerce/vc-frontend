@@ -4,7 +4,7 @@
     <div class="container mx-auto flex flex-col lg:flex-row items-center space-y-10 lg:space-x-24 p-6 md:p-12">
       <div v-if="!isAuthenticated" class="w-full lg:w-2/5 bg-white shadow-lg rounded p-6 md:p-10">
         <h1 class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8">Sign in</h1>
-        <SignInForm :grow-buttons="true" />
+        <SignInForm :grow-buttons="true" @succeeded="onSignIn" />
       </div>
       <div
         class="w-full lg:w-3/5 text-white font-bold filter drop-shadow-lg text-center lg:text-left text-3xl md:text-5xl select-none"
@@ -71,14 +71,20 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
 import { useUser, SignInForm } from "@/shared/account";
+import { useCart } from "@/shared/cart";
+import { useContext } from "@/shared/context";
+import { setUserId } from "@/core/constants";
 
-const { isAuthenticated, loadMe } = useUser();
+const { isAuthenticated, me } = useUser();
+const { loadMyCart } = useCart();
+const { loadContext, themeContext } = useContext();
 
-onMounted(async () => {
-  await loadMe();
-});
+async function onSignIn() {
+  await loadContext();
+  setUserId(themeContext.value?.userId || me.value?.id);
+  await loadMyCart();
+}
 </script>
 
 <style scoped>

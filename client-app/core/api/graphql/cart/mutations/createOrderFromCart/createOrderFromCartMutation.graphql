@@ -1,6 +1,32 @@
+#import "../../../fragments/moneyFields.graphql"
+#import "../../../fragments/currencyFields.graphql"
+#import "../../../fragments/orderLineItemFields.graphql"
+
 mutation CreateOrderFromCart($command: InputCreateOrderFromCartType!) {
-    createOrderFromCart(command: $command) {
-      id
-      number
+  createOrderFromCart(command: $command) {
+    id
+    number
+    comment
+    taxTotal {
+      ...moneyFields
+    }
+    subTotal {
+      ...moneyFields
+    }
+    total {
+      ...moneyFields
+    }
+    discountTotal {
+      ...moneyFields
+    }
+    shippingTotal {
+      ...moneyFields
+    }
+    currency {
+      ...currencyFields
+    }
+    items {
+      ...orderLineItemFields
     }
   }
+}
