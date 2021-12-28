@@ -86,7 +86,7 @@
                 <div v-else>
                   <router-link
                     class="block text-center bg-yellow-500 rounded text-white px-2 py-2 font-bold uppercase hover:bg-yellow-600 cursor-pointer"
-                    to="/cart"
+                    to="/checkout"
                     >view cart</router-link
                   >
                 </div>
