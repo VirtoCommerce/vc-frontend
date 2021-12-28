@@ -47,7 +47,7 @@
               pattern="\d*"
               :max="max"
               :min="0"
-              class="w-20 lg:w-14 border rounded overflow-hidden h-8 lg:h-10 focus:ring ring-inset outline-none p-1 text-center"
+              class="w-20 border rounded overflow-hidden h-8 lg:h-10 focus:ring ring-inset outline-none p-1 text-center"
               :class="{ 'text-red-500': isInputdisabled, 'border-red-500': errorMessage }"
               :disabled="isInputdisabled || readOnly"
               @input="onInput"
