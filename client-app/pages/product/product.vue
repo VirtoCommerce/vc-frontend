@@ -2,7 +2,7 @@
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner">
     <div v-if="!productLoading" class="max-w-screen-2xl px-5 md:px-12 mx-auto">
       <!-- Breadcrumbs -->
-      <Breadcrumbs class="hidden md:block" :items="breadcrumbsItems"></Breadcrumbs>
+      <Breadcrumbs class="hidden md:block mb-2" :items="breadcrumbsItems"></Breadcrumbs>
       <div class="md:hidden mb-3">
         <button class="border border-grey-200 rounded bg-white px-3 py-2 hover:bg-gray-100" @click="back()">
           <i class="fas fa-chevron-left text-yellow-500"></i><span class="ml-2 text-cyan-700">Back</span>

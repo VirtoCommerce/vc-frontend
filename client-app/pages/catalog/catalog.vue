@@ -2,7 +2,7 @@
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner">
     <div class="max-w-screen-2xl px-5 md:px-12 mx-auto">
       <!-- Breadcrumbs -->
-      <Breadcrumbs :items="breadcrumbsItems"></Breadcrumbs>
+      <Breadcrumbs class="mb-2 md:mb-8" :items="breadcrumbsItems"></Breadcrumbs>
 
       <div class="flex items-start lg:gap-6">
         <!-- Filters -->
