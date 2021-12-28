@@ -66,7 +66,15 @@ const emit = defineEmits(["update:lineitem"]);
 
 const { addToCart, itemInCart, changeItemQuantity } = useCart();
 
-const disabled = computed(() => !props.product.availabilityData?.isAvailable);
+const disabled = computed(
+  () =>
+    !(
+      props.product.availabilityData?.isAvailable &&
+      props.product.availabilityData?.isInStock &&
+      props.product.availabilityData?.isBuyable &&
+      props.product.availabilityData?.availableQuantity
+    )
+);
 const lineItem = ref(itemInCart(props.product.id!));
 const count = computed(() => lineItem.value?.quantity);
 const updating = ref(false);

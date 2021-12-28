@@ -2,7 +2,12 @@
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner">
     <div v-if="!productLoading" class="max-w-screen-2xl px-5 md:px-12 mx-auto">
       <!-- Breadcrumbs -->
-      <Breadcrumbs class="invisible md:visible" :items="breadcrumbsItems"></Breadcrumbs>
+      <Breadcrumbs class="hidden md:block" :items="breadcrumbsItems"></Breadcrumbs>
+      <div class="md:hidden mb-3">
+        <button class="border border-grey-200 rounded bg-white px-3 py-2 hover:bg-gray-100" @click="back()">
+          <i class="fas fa-chevron-left text-yellow-500"></i><span class="ml-2 text-cyan-700">Back</span>
+        </button>
+      </div>
       <h1 class="text-2xl font-bold uppercase mb-3">{{ product.name }}</h1>
       <div v-if="!withVariations" class="text-sm">
         <span>Item #</span><span class="font-semibold pl-1">{{ product.code }}</span>
@@ -27,17 +32,13 @@
             </div>
           </div>
           <div class="flex flex-col lg:w-2/3">
-            <ProductTitledBlock
-              class="mt-5"
-              image-src="/assets/static/images/technical_specs.svg"
-              title="technical specs"
-            >
+            <ProductTitledBlock class="mt-5" image-src="/static/images/technical_specs.svg" title="technical specs">
               <ProductProperties v-if="product.properties" :properties="product.properties"></ProductProperties>
             </ProductTitledBlock>
             <ProductTitledBlock
               v-if="!withVariations && product?.description"
               class="mt-5"
-              image-src="/assets/static/images/description.svg"
+              image-src="/static/images/description.svg"
               title="Description"
             >
               <MarkdownRender :src="product?.description?.content" class="text-gray-500"></MarkdownRender>
@@ -46,9 +47,10 @@
             <ProductTitledBlock
               v-if="withVariations"
               class="mt-5"
-              image-src="/assets/static/images/variations_customize.svg"
+              image-src="/static/images/variations_customize.svg"
               title="Customize your order"
             >
+              <ProductVariationCard class="mb-5" :variation="product"></ProductVariationCard>
               <div v-for="variation in product.variations" :key="variation?.id ?? ''">
                 <ProductVariationCard
                   v-if="variation"
@@ -117,7 +119,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, Ref, computed, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import {
   useProducts,
   Breadcrumbs,
@@ -135,6 +137,7 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 
 const route = useRoute();
+const router = useRouter();
 
 const { product, loading: productLoading, loadProduct } = useProducts();
 const { loading: cartLoading, getItemsTotal, currency } = useCart();
@@ -178,6 +181,10 @@ function BuildBreadcrumbs() {
 
 function print() {
   window.print();
+}
+
+function back() {
+  router.back();
 }
 </script>
 

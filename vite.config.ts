@@ -25,8 +25,8 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/storefrontapi": "https://st-storefront.dev.govirto.com",
-      "/xapi": "https://st-storefront.dev.govirto.com",
+      "/storefrontapi": "http://localhost:2083",
+      "/xapi": "http://localhost:2083",
     },
   },
 });
