@@ -122,6 +122,7 @@ import { ref, onMounted, Ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import {
   useProducts,
+  useBreadcrumbs,
   Breadcrumbs,
   IBreadcrumbsItem,
   ProductProperties,
@@ -131,6 +132,7 @@ import {
 import { AddToCart, useCart } from "@/shared/cart";
 import { MarkdownRender, ImageGallery } from "@/components";
 import { useBreakpoints, breakpointsTailwind, throttleFilter } from "@vueuse/core";
+import { Breadcrumb } from "@/core/api/graphql/types";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
@@ -142,33 +144,34 @@ const { product, loading, loadProduct, withVariations, variationsCartTotal } = u
 const { currency } = useCart();
 
 const breadcrumbsItems: Ref<IBreadcrumbsItem[]> = ref([{ url: "/", title: "Home" }]);
+const { buildBreadcrumbs } = useBreadcrumbs();
 
 const productId = ref(route.params.id as string);
 
 onMounted(async () => {
   await loadProduct(productId.value);
-  BuildBreadcrumbs();
+  buildBreadcrumbs(product.value.breadcrumbs as Breadcrumb[]);
   console.log(product.value);
 });
 
-function BuildBreadcrumbs() {
-  if (product.value) {
-    const result: IBreadcrumbsItem[] = [{ url: "/", title: "Home" }];
+// function BuildBreadcrumbs() {
+//   if (product.value) {
+//     const result: IBreadcrumbsItem[] = [{ url: "/", title: "Home" }];
 
-    const productBreadcrumbs = product.value.breadcrumbs?.map((x) => {
-      return {
-        title: x?.title,
-        url: x?.typeName === "CatalogProduct" ? "/product/" + x.itemId : "/catalog/" + x?.seoPath,
-      } as IBreadcrumbsItem;
-    });
+//     const productBreadcrumbs = product.value.breadcrumbs?.map((x) => {
+//       return {
+//         title: x?.title,
+//         url: x?.typeName === "CatalogProduct" ? "/product/" + x.itemId : "/catalog/" + x?.seoPath,
+//       } as IBreadcrumbsItem;
+//     });
 
-    if (productBreadcrumbs?.length) {
-      result.push(...productBreadcrumbs);
-    }
+//     if (productBreadcrumbs?.length) {
+//       result.push(...productBreadcrumbs);
+//     }
 
-    breadcrumbsItems.value = result;
-  }
-}
+//     breadcrumbsItems.value = result;
+//   }
+// }
 
 function print() {
   window.print();
