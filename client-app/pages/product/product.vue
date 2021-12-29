@@ -150,28 +150,9 @@ const productId = ref(route.params.id as string);
 
 onMounted(async () => {
   await loadProduct(productId.value);
-  buildBreadcrumbs(product.value.breadcrumbs as Breadcrumb[]);
+  breadcrumbsItems.value = buildBreadcrumbs(product.value.breadcrumbs as Breadcrumb[]);
   console.log(product.value);
 });
-
-// function BuildBreadcrumbs() {
-//   if (product.value) {
-//     const result: IBreadcrumbsItem[] = [{ url: "/", title: "Home" }];
-
-//     const productBreadcrumbs = product.value.breadcrumbs?.map((x) => {
-//       return {
-//         title: x?.title,
-//         url: x?.typeName === "CatalogProduct" ? "/product/" + x.itemId : "/catalog/" + x?.seoPath,
-//       } as IBreadcrumbsItem;
-//     });
-
-//     if (productBreadcrumbs?.length) {
-//       result.push(...productBreadcrumbs);
-//     }
-
-//     breadcrumbsItems.value = result;
-//   }
-// }
 
 function print() {
   window.print();
