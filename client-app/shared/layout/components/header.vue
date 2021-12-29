@@ -129,7 +129,7 @@
 
   <!-- Mobile header -->
   <div class="lg:hidden fixed z-10 bg-white w-full border-b shadow-md">
-    <div class="px-6 flex justify-between items-center h-24">
+    <div class="px-6 flex justify-between items-center h-14">
       <router-link to="/"><img src="/assets/static/images/common/logo.svg" class="h-9" /></router-link>
       <i class="fas fa-bars text-2xl text-yellow-500" @click="mobileMenuVisible = true"></i>
     </div>
@@ -140,7 +140,7 @@
 
   <!-- Mobile menu -->
   <div v-if="mobileMenuVisible" class="fixed bg-gray-800 opacity-95 z-50 w-full h-screen flex flex-col">
-    <div class="px-6 flex justify-between items-center h-24 flex-shrink-0">
+    <div class="px-6 flex justify-between items-center h-14 flex-shrink-0">
       <router-link to="/" @click="mobileMenuVisible = false">
         <img src="/assets/static/images/common/logo-white.svg" class="h-9" />
       </router-link>
