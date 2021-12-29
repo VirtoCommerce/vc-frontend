@@ -29,7 +29,7 @@
         }"
       >
         <img
-          :src="image?.url || '/assets/static/images/no-image.png'"
+          :src="image?.url || '/static/images/no-image.png'"
           alt="product.name"
           class="absolute top-0 w-full h-full object-cover object-center rounded-sm"
         />

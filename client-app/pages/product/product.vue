@@ -131,7 +131,7 @@ import {
 } from "@/shared/catalog";
 import { AddToCart, useCart } from "@/shared/cart";
 import { MarkdownRender, ImageGallery } from "@/components";
-import { useBreakpoints, breakpointsTailwind, throttleFilter } from "@vueuse/core";
+import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import { Breadcrumb } from "@/core/api/graphql/types";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
