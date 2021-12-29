@@ -1,6 +1,6 @@
 <template>
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner">
-    <div v-if="!productLoading" class="max-w-screen-2xl px-5 md:px-12 mx-auto">
+    <div v-if="!loading" class="max-w-screen-2xl px-5 md:px-12 mx-auto">
       <!-- Breadcrumbs -->
       <Breadcrumbs class="hidden md:block mb-2" :items="breadcrumbsItems"></Breadcrumbs>
       <div class="md:hidden mb-3">
@@ -118,7 +118,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, Ref, computed, watch } from "vue";
+import { ref, onMounted, Ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import {
   useProducts,
@@ -130,8 +130,7 @@ import {
 } from "@/shared/catalog";
 import { AddToCart, useCart } from "@/shared/cart";
 import { MarkdownRender, ImageGallery } from "@/components";
-import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
-import _ from "lodash";
+import { useBreakpoints, breakpointsTailwind, throttleFilter } from "@vueuse/core";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
@@ -139,8 +138,8 @@ const isMobile = breakpoints.smaller("lg");
 const route = useRoute();
 const router = useRouter();
 
-const { product, loading: productLoading, loadProduct } = useProducts();
-const { loading: cartLoading, getItemsTotal, currency } = useCart();
+const { product, loading, loadProduct, withVariations, variationsCartTotal } = useProducts();
+const { currency } = useCart();
 
 const breadcrumbsItems: Ref<IBreadcrumbsItem[]> = ref([{ url: "/", title: "Home" }]);
 
@@ -152,32 +151,22 @@ onMounted(async () => {
   console.log(product.value);
 });
 
-const withVariations = computed(() => product.value.variations?.length);
-
-const variationsCartTotal = ref(0);
-
-watch(
-  () => cartLoading.value === false && productLoading.value === false,
-  (condition) => {
-    if (condition && product.value.variations?.length) {
-      const variationsIds = _(product.value.variations)
-        .filter((x) => !!x?.id)
-        .map((x) => x?.id as string)
-        .value();
-
-      variationsIds.push(product.value.id);
-
-      variationsCartTotal.value = getItemsTotal(variationsIds);
-    }
-  }
-);
-
 function BuildBreadcrumbs() {
   if (product.value) {
-    breadcrumbsItems.value = [
-      { url: "/", title: "Home" },
-      { url: "/product/" + product.value.id ?? "", title: product.value.name ?? "" },
-    ];
+    const result: IBreadcrumbsItem[] = [{ url: "/", title: "Home" }];
+
+    const productBreadcrumbs = product.value.breadcrumbs?.map((x) => {
+      return {
+        title: x?.title,
+        url: x?.typeName === "CatalogProduct" ? "/product/" + x.itemId : "/catalog/" + x?.seoPath,
+      } as IBreadcrumbsItem;
+    });
+
+    if (productBreadcrumbs?.length) {
+      result.push(...productBreadcrumbs);
+    }
+
+    breadcrumbsItems.value = result;
   }
 }
 
