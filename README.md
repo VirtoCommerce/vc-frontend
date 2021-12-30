@@ -1,62 +1,49 @@
 # B2B Mercury theme for VirtoCommerce Storefront
-![image](https://user-images.githubusercontent.com/7566324/107653878-c7e6a400-6c8a-11eb-802b-13a38f7f3143.png)
 
-**VUE MPA starter theme** - is starter theme is demonstrated a typical out-of-the-box B2B Portal that built using Liquid templates, Vue.JS web progressive framework and Bootstrap CSS.
-This theme represents the VC Team's opinionated starting point for new projects. It strives to include up-to-date best practices and solutions that we have deemed needed for the majority of projects we build. It is a reflection of what’s possible when building a theme!
+![image](https://user-images.githubusercontent.com/619699/147751949-c2a7e180-bf6c-4a68-a7b1-cbb6134f170f.png)
 
-**VUE MPA starter theme** is not only a real-world solution that implements practical business use-cases and  this is also the good starting point for your theme that you can customize by direct code modifications!
+**B2B Mercury theme** is a fresh look on the field of eCommerce solutions. This is a place where common B2B and B2C scenarios are combined with the most bleeding edge technologies to deliver blazing fast and fully functional solution. It implements common business use-cases needed for a vast majority of projects we build.
 
-# The project non-functional key features:
+This theme is designed to be used as-is within actual **VC Storefront**. You can modify it by implementing desired components, pages, shared logic to correspond with your project goals.
 
-- Plays opinionated starting point for all new themes and frontend solution constructed on VC storefront.
-- Focus on development performance thanks to maximum reusing of exciting developer experience such as server side functionality, web components and views.
-- SEO friendly thanks to SSR (Server Side Rendering) performing on the VC Storefront ASP.NET Core application.
-- Presentation logic decoupling from backend. You might fully concentrate on  presentation tasks and do not think for backend.
-- Intentionally lack of using custom CSS an initial styles constructed, using popular Bootstrap CSS library  and have an adaptive markup allows working on all popular devices and resolutions to make the customization process for theme styles  more straightforward.
-- Liquid templates and SSR (server side rendering)  + MPA (multi-page application) architecture with using Vue.JS progressive framework allow to get the all benefits from both server side and WEB development techniques.
+**VC Storefront Team** is proud to present **B2B Mercury theme** as a good starting point for new projects.
 
+## The project non-functional key features
 
+- **Development performance.** Really fast development using the most effective solution. Enroll starter theme in seconds and start to modify code with HMR features.
+- **Client performance.** We are supposed to reach and hold green metrics provided by Google PageSpeed Insights.
+- **Decoupled structure.** Presentation layer is decoupled from backend. Shared logic is decoupled from visual components. Developer can concentrate on single task without the need of massive code manipulations.
+- **Atomic Design Pattern.** Theme UI is based on Atoms, Molecules and Organisms, combined within Pages and shared Components. This provides a high level of code reusability.
+- **Simple styling and theme customization.** We use TailwindCSS to provide the easiest and convinient way of CSS usage. Write as less of code as possible, reuse existing highly-customizable framework features.
+- **Fully aligned with VirtoCommerce Storefront.** Thus theme is just a visual representation, we are fully aligned with VC Storefront to provide all common B2B and B2C scenarios processed by VC Platform.
 
-# How does it work?
+## How does it work?
+
 TBD
-# Why MPA (Multi Page Application) instead of SPA (Single Page Application)?
-There are the following  reasones why MPA architecture has been chosen.
-- SEO requirements. One of the weaknesses of the SPA is SEO. Unfortunately, they aren’t as SEO friendly as MPA’s. It’s primarily because the majority of single-page applications are run on JavaScript, which most search engines do not support. MPA enables better website positioning as each page can be optimized for a different keyword. Also, meta tags can be included on every page – this positively impacts Google rankings.
-- Reusing of exists Storefront's functionality such as security, slug routing, multiple stores, currencies, and languages. All these functionalities are hard to be reused in the classical SPA applications.
 
-# Theme structure
-```bash
-.
-├── assets                         // Images and other asset files to be copied as-is when you build your application, used in SSR and MPA.
-│   ├── graphql                    // Special GraphQL queries used only in liquid templates for SSR.
-|   |   └──....
+## Theme structure
+
+```text
+├── assets                        // Images and other asset files used inside your application.
 │   └── static
-|   |   └── bundle
-|   |       ├── dist                // The scripts and styles build output folder. Contains all resulting js and css bundles. The files are auto-generated.
-|   |       |   └──....
-|   |       ├── images              // The static images of the application, are used in SSR and MPA.
-|   |       |   └──....
-|   └─── styles                    // The shared styles of the application, are used in SSR and MPA.
-|          └──....
-|          └── main.scss           // The styles entry-point, will include other /scss files and also will be used in SSR and MPA.
+|       ├── bundle                // Scripts, styles and other assets compiled and minified for production.
+|       ├── icons                 // Icons used for favicons, PWA, etc.
+|       ├── images                // Static images used inside the application.
+|       └── styles                // Common styles used inside the application.
 |
-|
-├── config                        // The Virto theme's settings.
+├── config                        // The Virto theme settings.
 |   └── settings_data.json        // The json file contains all the main settings for the theme.
 |
-├── layout                        // Layout templates, which by default is the theme.liquid file, used in SSR.
-|   └──....
+├── layout                        // Layout templates used to render theme within Storefront.
+|   └──theme.liquid               // Wrapper for SPA, providing HTML document structure.
 |
-├── locales                       // Locale files, which are used to provide translated content for the theme, used in SSR and MPA.
-|   └──....
-|
-├── snippets                      // Theme's Liquid snippet files, which are bits of code that can be referenced in other templates of a theme, used in SSR.
+├── locales                       // Locale files used to provide translated content for the theme.
 |   └──....
 |
 ├── templates                     // Liquid templates, used in SSR and MPA. Each MPA page needs to have a liquid template here if you want SSR.
-|   └──....
+|   └──index.liquid               // Entry point for SPA, providing container with necessary scripts and styles.
 |
-└── client-app                    // The main folder for components and pages of the Vue.js MPA application.
+└── client-app                    // The main folder for the application.
     └── src
     |   └── core                  // Common utilities and services that can be shared and used by any pages and libraries.
     |   |   ├── api/graphql       // The GraphQL Models to connect with the Virto Backoffice.
@@ -101,18 +88,19 @@ There are the following  reasones why MPA architecture has been chosen.
     └──  vue.config.js            // Vue.js Global CLI Config
 ```
 
+## Getting started
 
-# Getting started
+### Prerequisites
 
-## Prerequisites
-* Install `vc-platform` 3.x the latest version. [Deploy on Windows](https://github.com/VirtoCommerce/vc-platform/blob/master/docs/getting-started/deploy-from-precompiled-binaries-windows.md) or [Deploy on Linux](https://github.com/VirtoCommerce/vc-platform/blob/master/docs/getting-started/deploy-from-precompiled-binaries-linux.md)
-* Install `vc-module-experience-api` module. [Getting started](https://github.com/VirtoCommerce/vc-module-experience-api/blob/dev/docs/getting-started.md)
+- Install `vc-platform` 3.x the latest version. [Deploy on Windows](https://github.com/VirtoCommerce/vc-platform/blob/master/docs/getting-started/deploy-from-precompiled-binaries-windows.md) or [Deploy on Linux](https://github.com/VirtoCommerce/vc-platform/blob/master/docs/getting-started/deploy-from-precompiled-binaries-linux.md)
+- Install `vc-module-experience-api` module. [Getting started](https://github.com/VirtoCommerce/vc-module-experience-api/blob/dev/docs/getting-started.md)
 
-## Install the `vc-storefront` from experimental branch `x-api-integration`
-* Clone https://github.com/VirtoCommerce/vc-storefront/tree/feature/x-api-integration in to a local folder
+### Install the `vc-storefront`
 
-* Open the **appsettings.json** file in a text editor.
-* In the **Endpoint** section change **Url**, **UserName**, **Password** with correct path and credentials for Virto Commerce Platform:
+- Clone https://github.com/VirtoCommerce/vc-storefront in to a local folder
+
+- Open the **appsettings.json** file in a text editor.
+- In the **Endpoint** section change **Url**, **UserName**, **Password** with correct path and credentials for Virto Commerce Platform:
 
 ```json
 ...
@@ -122,7 +110,7 @@ There are the following  reasones why MPA architecture has been chosen.
      "Password": "store",
 ```
 
-## Setup `starter theme`
+### Setup `B2B Mercury theme`
 
 ```bash
 # Clone repo into the folder where storefront is installed
@@ -130,12 +118,15 @@ git clone https://github.com/VirtoCommerce/vue-starter-theme.git "C:\vc-storefro
 # Change the current directory
 cd C:\vc-storefront\wwwroot\cms-content\themes\{store-name}\default
 # install dependencies
-npm install
-# Build and minifies theme files for production
-npm run build
+yarn
+# Start theme in development mode with HMR support
+yarn dev
+# or build theme to get installable artifact
+yarn compress
 ```
 
-## Run `vc-storefront` application
+### Run `vc-storefront` application
+
 ```bash
 # change the current directory
 cd C:\vc-storefront
@@ -143,10 +134,9 @@ cd C:\vc-storefront
 dotnet run
 ```
 
+## License
 
-
-# License
-Copyright (c) Virtosoftware Ltd.  All rights reserved.
+Copyright (c) Virtosoftware Ltd. All rights reserved.
 
 Licensed under the Virto Commerce Open Software License (the "License"); you
 may not use this file except in compliance with the License. You may
