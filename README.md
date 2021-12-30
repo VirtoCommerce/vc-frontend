@@ -8,7 +8,16 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 
 **VC Storefront Team** is proud to present **B2B Mercury theme** as a good starting point for new projects.
 
-## The project non-functional key features
+## Technologies used
+
+- **Vue3.** Progressive frontend framework with its key features allows to build fast applications.
+- **Typescript.** All components and composables have type definitions, so IDE can help you to build clean and working code.
+- **TailwindCSS.** The most popular and growing CSS framework providing wonderful flexible structure to speed up styling.
+- **Husky + ESLint + Prettier.** Autoformat, check and fix your code and prevent ugly codestyle within repository.
+- **Vite.** It is faster than Webpack. Really FASTER. Use it to develop with HMR benefits and to build for production.
+- **GraphQL.** Forget about REST, use flexible GraphQL queries and mutations to safely work with backend.
+
+## Non-functional key features
 
 - **Development performance.** Really fast development using the most effective solution. Enroll starter theme in seconds and start to modify code with HMR features.
 - **Client performance.** We are supposed to reach and hold green metrics provided by Google PageSpeed Insights.
@@ -16,10 +25,7 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 - **Atomic Design Pattern.** Theme UI is based on Atoms, Molecules and Organisms, combined within Pages and shared Components. This provides a high level of code reusability.
 - **Simple styling and theme customization.** We use TailwindCSS to provide the easiest and convinient way of CSS usage. Write as less of code as possible, reuse existing highly-customizable framework features.
 - **Fully aligned with VirtoCommerce Storefront.** Thus theme is just a visual representation, we are fully aligned with VC Storefront to provide all common B2B and B2C scenarios processed by VC Platform.
-
-## How does it work?
-
-TBD
+- **Fully responsive.** We made our theme working on a number of devices from Desktops to Mobile phones, concentrated both on UI and UX.
 
 ## Theme structure
 
@@ -30,6 +36,39 @@ TBD
 |       ├── icons                 // Icons used for favicons, PWA, etc.
 |       ├── images                // Static images used inside the application.
 |       └── styles                // Common styles used inside the application.
+├── client-app                    // The main folder for the application.
+|   ├── components                // Atoms, Molecules, Organisms, used within whhole application.
+|   |   └──....
+|   ├── core                      // Common utilities and shared logic that can be used by any pages and libraries.
+|   |   ├── api/graphql           // GraphQL Models aligned with the Virto Backoffice.
+|   |   |   └──....
+|   |   ├── composables           // Core composables (app-level shared logic).
+|   |   |   └──....
+|   |   ├── helpers               // Core helpers (functions, syntax sugar, etc).
+|   |   |   └──....
+|   |   ├── utilities             // Some miscellaneous utils.
+|   |   |   └──....
+|   |
+|   ├── pages                     // Set of application pages used within Application router.
+|   |   └──....
+|   |
+|   ├── shared                    // A set of shared files grouped by their domain context.
+|   |   ├── catalog               // Grouping context (ex.: catalog browsing).
+|   |   |   ├── components        // The collection of components specific for this domain context.
+|   |   |   |   └──....
+|   |   |   ├── composables       // The collection of shared logic written using Composable API pattern.
+|   |   |   |   └──....
+|   |   |   ├── types             // Types used in this context.
+|   |   |   |   └──....
+|   |   |   └── index.ts          // Entry point for this context used as library.
+|   |   |
+|   |   └──....
+|   |
+|   ├── App.vue                   // Main Application component. Use it as a wrapper for routable pages.
+|   ├── env.d.ts                  // Definition file to provide IDE IntelliSense support for importing *.vue files.
+|   ├── main.ts                   // Application entry point. Main initialization script.
+|   ├── router.ts                 // SPA routing configuraion.
+|   └── shims-graphql.d.ts        // Definition file to provide IDE IntelliSense support for importing *.graphql files.
 |
 ├── config                        // The Virto theme settings.
 |   └── settings_data.json        // The json file contains all the main settings for the theme.
@@ -43,49 +82,24 @@ TBD
 ├── templates                     // Liquid templates, used in SSR and MPA. Each MPA page needs to have a liquid template here if you want SSR.
 |   └──index.liquid               // Entry point for SPA, providing container with necessary scripts and styles.
 |
-└── client-app                    // The main folder for the application.
-    └── src
-    |   └── core                  // Common utilities and services that can be shared and used by any pages and libraries.
-    |   |   ├── api/graphql       // The GraphQL Models to connect with the Virto Backoffice.
-    |   |   |   └──....
-    |   |   ├── models            // Core models. (ex. Pagination).
-    |   |   |   └──....
-    |   |   ├── services          // Overall shared services. Such as AxiosInstance or InitializationService (implement common init logic for all pages).
-    |   |   |   └──....
-    |   |   ├── utilities         // Some helper services and miscellaneous utils.
-    |   |   |   └──....
-    |   ├── libs                  // A set of files grouped together in folders by their domain context. The main purpose is code reusing and simple project maintenance.
-    |   |   ├── catalog           // Represent a grouping folder for aggregate all building blocks for the particular domain context (e.g catalog browsing).
-    |   |   |   ├── components    // The collections of the dumb or presentation components specific only for this domain context.
-    |   |   |   |   └──....
-    |   |   |   ├── composables   // The files to apply Composition API for this module.
-    |   |   |   |   └──....
-    |   |   |   ├── types         // The necessary models or types for this module.
-    |   |   |   |   └──....
-    |   |   └── storefrontUI      // The set of "dummy" ready-to-use components are designed for e-commerce and based on Atomic design principles.
-    |   |   |
-    |   |   └──....
-    |   |
-    |   ├── pages                 // Set of pages. The page is the Vue app that usually added to one of the pages that rendered on the server-side (SSR).
-    |   |   ├── catalog
-    |   |   |   ├── views         // Smart components that implements the particular business context use case related to this page.
-    |   |   |   |   └──....
-    |   |   |   ├── routes        // Vue application routes.
-    |   |   |   |   └──....
-    |   |   |   └── main.ts       // The script logic of Vue app entry point for page (Multiple files component)
-    |   |   └──....
-    |   |
-    ├── tests                     // The e2e/ui and unit tests.
-    |   └──....
-    ├──  .browserslistrc          // Browserslist config file to support previous versions of browsers.
-    ├──  .env                     // Envfile to define different Environment Variables.
-    ├──  .eslintignore            // Ignore some files in Eslint.
-    ├──  .eslintrc                // Eslint configuration file.
-    ├──  babel.config             // Babel configuration file.
-    ├──  cypress.json             // Cypress configuration file to use in e2e/ui tests.
-    ├──  graphql.codegen.yml      // GraphQL configuration file to generate types, where schema is your Virto Backoffice url.
-    ├──  tsconfig.json            // TypeScript configuration file.
-    └──  vue.config.js            // Vue.js Global CLI Config
+├── .browserslistrc               // Browserslist config file to support actual versions of browsers.
+├── .commitlintrc.json            // Config for Conventional commit hook.
+├── .editorconfig                 // Common editor settings to sync codestyle.
+├── .env                          // Envfile to define different Environment Variables.
+├── .eslintignore                 // Ignore some files from ESlint.
+├── .eslintrc                     // ESlint configuration file.
+├── .gitignore                    // Ignore some files from GIT.
+├── .prettierignore               // Ignore some files from Prettier.
+├── .prettierrc                   // Config for Prettier.
+├── README.md                     // This file.
+├── graphql.codegen.yml           // GraphQL configuration file to generate types for schemas from your Virto Backoffice url.
+├── gulpfile.js                   // Artifact build script to product zip-file installable by VC Storefront.
+├── index.html                    // Vite Development entry point.
+├── package.json                  // NPM Package description.
+├── postcss.config.js             // PostCSS configuration for Tailwind.
+├── tailwind.config.js            // TailwindCSS configuration file.
+├── tsconfig.json                 // TypeScript configuration file.
+├── vite.config.ts                // Vite configuration file.
 ```
 
 ## Getting started
@@ -97,9 +111,9 @@ TBD
 
 ### Install the `vc-storefront`
 
-- Clone https://github.com/VirtoCommerce/vc-storefront in to a local folder
+- Clone [https://github.com/VirtoCommerce/vc-storefront](https://github.com/VirtoCommerce/vc-storefront) in to a local folder
 
-- Open the **appsettings.json** file in a text editor.
+- Open the **appsettings.json** file in a text editor.
 - In the **Endpoint** section change **Url**, **UserName**, **Password** with correct path and credentials for Virto Commerce Platform:
 
 ```json
@@ -142,7 +156,7 @@ Licensed under the Virto Commerce Open Software License (the "License"); you
 may not use this file except in compliance with the License. You may
 obtain a copy of the License at
 
-http://virtocommerce.com/opensourcelicense
+[https://virtocommerce.com/opensourcelicense](https://virtocommerce.com/opensourcelicense)
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
