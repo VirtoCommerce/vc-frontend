@@ -2,17 +2,17 @@
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner">
     <div v-if="!loading" class="max-w-screen-2xl px-5 md:px-12 mx-auto">
       <!-- Breadcrumbs -->
-      <Breadcrumbs class="hidden md:block mb-2" :items="breadcrumbsItems"></Breadcrumbs>
-      <div class="md:hidden mb-3">
+      <Breadcrumbs class="hidden md:block mb-3" :items="breadcrumbsItems"></Breadcrumbs>
+      <div class="md:hidden mb-5">
         <button class="border border-grey-200 rounded bg-white px-3 py-2 hover:bg-gray-100" @click="back()">
           <i class="fas fa-chevron-left text-yellow-500"></i><span class="ml-2 text-cyan-700">Back</span>
         </button>
       </div>
-      <h1 class="text-2xl font-bold uppercase mb-3">{{ product.name }}</h1>
-      <div v-if="!withVariations" class="text-sm">
-        <span>Item #</span><span class="font-semibold pl-1">{{ product.code }}</span>
+      <h1 class="text-2xl md:text-4xl font-bold uppercase">{{ product.name }}</h1>
+      <div v-if="!withVariations && !isMobile" class="text-sm mt-1">
+        <span>Item #</span><span class="font-extrabold pl-1">{{ product.code }}</span>
       </div>
-      <div class="flex flex-col md:flex-row md:space-x-6 mt-3">
+      <div class="flex flex-col md:flex-row md:space-x-6 mt-5">
         <div
           class="flex flex-grow flex-col lg:flex-row -mx-5 md:mx-0 lg:space-x-12 mb-6 p-6 bg-white border border-gray-100 rounded-md shadow-sm"
         >
@@ -65,16 +65,15 @@
         <div class="flex-none md:w-80 lg:w-96 flex flex-col">
           <div class="bg-white border shadow-sm rounded-md">
             <div class="border-b px-5 py-4 md:px-7">
-              <h2 class="text-xl font-bold uppercase">Price &amp; Delivery</h2>
+              <h2 class="text-xl font-extrabold uppercase">Price &amp; Delivery</h2>
             </div>
             <div class="border-b px-5 py-8 md:px-7 md:py-5">
               <!-- Product price -->
               <div v-if="!withVariations" class="flex items-baseline justify-between text-sm">
                 <div class="font-extrabold text-base">Your price:</div>
                 <div>
-                  <span class="font-extrabold text-green-700">{{ product.price?.actual?.formattedAmount }}</span>
-                  &nbsp;
-                  <span class="font-semibold hidden lg:inline-block">/ each</span>
+                  <span class="font-extrabold text-green-700">{{ product.price?.actual?.formattedAmount }}</span
+                  >&nbsp;<span class="font-semibold hidden lg:inline-block">/ each</span>
                 </div>
               </div>
               <div v-else class="flex items-baseline justify-between text-sm">

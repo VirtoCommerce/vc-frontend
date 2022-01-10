@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col">
-    <div v-for="property in grouped" :key="property.name" class="flex mb-3 md:mb-1 space-x-3">
+    <div v-for="property in grouped" :key="property.name" class="flex mb-3 md:mb-1 space-x-3 text-xs">
       <div class="flex w-1/2 space-x-3">
         <div class="flex-shrink text-gray-500">
           {{ property?.name }}

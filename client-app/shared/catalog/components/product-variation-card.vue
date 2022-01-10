@@ -18,12 +18,11 @@
       <div class="flex-1 flex flex-col">
         <div class="text-base font-bold uppercase mb-2">item #{{ variation?.code }}</div>
         <VariationProperties :properties="variation?.properties || []"></VariationProperties>
-        <div class="flex flex-row space-x-3">
-          <div class="w-1/2 text-sm text-gray-500">Your price</div>
+        <div class="flex flex-row items-center space-x-3 text-xs">
+          <div class="w-1/2 text-gray-500">Your price</div>
           <div class="w-1/2">
-            <span class="font-extrabold text-green-700">{{ variation?.price?.actual?.formattedAmount }}</span>
-            &nbsp;
-            <span class="font-semibold hidden lg:inline-block">/ each</span>
+            <span class="font-extrabold text-sm text-green-700">{{ variation?.price?.actual?.formattedAmount }}</span
+            >&nbsp;<span class="font-extrabold hidden lg:inline-block">/ each</span>
           </div>
         </div>
       </div>
