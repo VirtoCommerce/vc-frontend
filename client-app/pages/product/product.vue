@@ -64,10 +64,10 @@
         </div>
         <div class="flex-none md:w-80 lg:w-96 flex flex-col">
           <div class="bg-white border shadow-sm rounded-md">
-            <div class="border-b p-5 md:p-6">
+            <div class="border-b px-5 py-4 md:px-7">
               <h2 class="text-xl font-bold uppercase">Price &amp; Delivery</h2>
             </div>
-            <div class="border-b p-5 md:p-6">
+            <div class="border-b px-5 py-8 md:px-7 md:py-5">
               <!-- Product price -->
               <div v-if="!withVariations" class="flex items-baseline justify-between text-sm">
                 <div class="font-extrabold text-base">Your price:</div>
@@ -81,8 +81,8 @@
                   <span class="text-green-800">{{ currency?.symbol }}{{ variationsCartTotal.toFixed(2) }}</span>
                 </div>
               </div>
-              <div class="mt-3">
-                <AddToCart v-if="!withVariations" :product="product"></AddToCart>
+              <div class="mt-7 md:mt-5">
+                <AddToCart v-if="!withVariations" class="-mb-3" :product="product"></AddToCart>
                 <div v-else>
                   <router-link
                     class="block text-center bg-yellow-500 rounded text-white px-2 py-2 font-bold uppercase hover:bg-yellow-600 cursor-pointer"
@@ -94,18 +94,18 @@
             </div>
             <div class="flex text-center">
               <div
-                class="flex items-center justify-center flex-1 py-3 px-1 border-r space-x-2 cursor-pointer hover:bg-gray-100"
+                class="flex items-center justify-center flex-1 py-4 px-1 border-r space-x-2 cursor-pointer hover:bg-gray-100"
               >
                 <i class="fas fa-plus text-base text-yellow-500"></i>
                 <span class="text-sm text-blue-800 font-bold">Add to list</span>
               </div>
               <div
-                class="flex items-center justify-center flex-1 py-3 px-1 border-r space-x-2 cursor-pointer hover:bg-gray-100"
+                class="flex items-center justify-center flex-1 py-4 px-1 border-r space-x-2 cursor-pointer hover:bg-gray-100"
               >
                 <i class="fas fa-envelope fa-xl text-yellow-500"></i
                 ><span class="text-sm text-blue-800 font-bold">Email</span>
               </div>
-              <div class="flex items-center justify-center flex-1 py-3 px-1 space-x-2 cursor-pointer hover:bg-gray-100">
+              <div class="flex items-center justify-center flex-1 py-4 px-1 space-x-2 cursor-pointer hover:bg-gray-100">
                 <i class="fas fa-print text-yellow-500"></i>
                 <span class="text-sm text-blue-800 font-bold" @click="print()">Print</span>
               </div>

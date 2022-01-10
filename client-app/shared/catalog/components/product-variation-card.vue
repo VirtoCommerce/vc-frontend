@@ -22,6 +22,7 @@
           <div class="w-1/2 text-sm text-gray-500">Your price</div>
           <div class="w-1/2 font-bold">
             <span class="text-green-800">{{ variation?.price?.actual?.formattedAmount }}</span>
+            &nbsp;
             <span class="hidden lg:inline-block">/ each</span>
           </div>
         </div>
