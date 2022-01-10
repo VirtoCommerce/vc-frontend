@@ -18,8 +18,8 @@
         >
           <div class="lg:w-1/3 mb-8 lg:mb-0">
             <ImageGallery
-              :src="product.imgSrc || ''"
-              :images="product.images || []"
+              :src="product.imgSrc ?? ''"
+              :images="product.images ?? []"
               :is-mobile="isMobile"
             ></ImageGallery>
             <!-- Compare checkbox -->
@@ -51,7 +51,7 @@
               title="Customize your order"
             >
               <ProductVariationCard class="mb-5" :variation="product"></ProductVariationCard>
-              <div v-for="variation in product.variations" :key="variation?.id ?? ''">
+              <div v-for="(variation, i) in product.variations" :key="variation?.id ?? i">
                 <ProductVariationCard
                   v-if="variation"
                   class="mb-5"
@@ -71,14 +71,16 @@
               <!-- Product price -->
               <div v-if="!withVariations" class="flex items-baseline justify-between text-sm">
                 <div class="font-extrabold text-base">Your price:</div>
-                <div class="font-semibold">
-                  <span class="text-green-800">{{ product.price?.actual?.formattedAmount }}</span> / each
+                <div>
+                  <span class="font-extrabold text-green-700">{{ product.price?.actual?.formattedAmount }}</span>
+                  &nbsp;
+                  <span class="font-semibold hidden lg:inline-block">/ each</span>
                 </div>
               </div>
               <div v-else class="flex items-baseline justify-between text-sm">
                 <div class="font-extrabold text-base">Total in your cart:</div>
-                <div class="font-semibold">
-                  <span class="text-green-800">{{ currency?.symbol }}{{ variationsCartTotal.toFixed(2) }}</span>
+                <div class="font-extrabold">
+                  <span class="text-green-700">{{ currency?.symbol }}{{ variationsCartTotal.toFixed(2) }}</span>
                 </div>
               </div>
               <div class="mt-7 md:mt-5">

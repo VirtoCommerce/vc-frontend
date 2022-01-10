@@ -44,7 +44,6 @@
     "@graphql-codegen/typescript": "^2.4.1",
     "@graphql-codegen/typescript-operations": "^2.2.1",
     "@types/dompurify": "^2.3.2",
-    "@types/markdown-it": "^12.2.3",
     "@types/marked": "^4.0.1",
     "@typescript-eslint/eslint-plugin": "^4.28.4",
     "@typescript-eslint/parser": "^4.28.4",

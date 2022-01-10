@@ -9,5 +9,8 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{ imageSrc: string; title: string }>();
+defineProps({
+  imageSrc: { type: String, required: true },
+  title: { type: String, required: true },
+});
 </script>

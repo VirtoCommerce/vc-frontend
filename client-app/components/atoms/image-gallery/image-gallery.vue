@@ -4,24 +4,24 @@
     class="square relative flex flex-col justify-center items-center border border-gray-100 rounded-sm"
   >
     <img
-      :src="activeSrc"
+      :src="activeSrc || '/static/images/common/no-image.svg'"
       alt="product.name"
       class="absolute top-0 w-full h-full object-cover object-center rounded-sm"
     />
   </div>
   <div v-if="isMobile && images && images.length > 1" class="mt-4 flex flex-row justify-center space-x-2.5">
     <div
-      v-for="image in images"
-      :key="image?.url || ''"
+      v-for="(image, i) in images"
+      :key="image?.url || i"
       class="border border-yellow-500 w-4 h-4 rounded-full cursor-pointer"
       :class="{
         'bg-yellow-500': image?.url == activeSrc,
       }"
-      @click="setActiveImage(image?.url || '')"
+      @click="setActiveImage(image?.url)"
     ></div>
   </div>
   <div v-if="!isMobile && images && images.length > 1" class="mt-6 grid grid-cols-3 gap-5">
-    <div v-for="image in images" :key="image?.url || ''" @click="setActiveImage(image?.url || '')">
+    <div v-for="(image, i) in images" :key="image?.url || i" @click="setActiveImage(image?.url)">
       <div
         class="square relative flex flex-col justify-center items-center cursor-pointer border border-gray-100 rounded-sm hover:ring hover:ring-yellow-200"
         :class="{
@@ -29,7 +29,7 @@
         }"
       >
         <img
-          :src="image?.url || '/static/images/no-image.png'"
+          :src="image?.url || '/static/images/common/no-image.svg'"
           alt="product.name"
           class="absolute top-0 w-full h-full object-cover object-center rounded-sm"
         />
@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
 import { ImageType, Maybe } from "@/core/api/graphql/types";
-import { onMounted, ref } from "vue";
+import { onMounted, PropType, ref } from "vue";
 import { SwipeDirection, useSwipe } from "@vueuse/core";
 import _ from "lodash";
 
@@ -65,16 +65,28 @@ useSwipe(mainImageDiv, {
   },
 });
 
-const props = defineProps<{ src: string; images: Array<Maybe<ImageType>>; isMobile: boolean }>();
+const props = defineProps({
+  src: {
+    type: String,
+    required: true,
+  },
+  images: {
+    type: Object as PropType<Array<Maybe<ImageType>>>,
+    default: () => new Array<Maybe<ImageType>>(),
+  },
+  isMobile: {
+    type: Boolean,
+    default: false,
+  },
+});
 
 const activeSrc = ref("");
 
 onMounted(() => {
   activeSrc.value = props.src;
-  console.log(activeSrc.value);
 });
 
-function setActiveImage(url: string) {
-  activeSrc.value = url;
+function setActiveImage(url?: string | null) {
+  activeSrc.value = url || "";
 }
 </script>

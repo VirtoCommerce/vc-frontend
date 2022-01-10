@@ -7,7 +7,7 @@ import { computed } from "vue";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
 
-const props = defineProps<{ src: string }>();
+const props = defineProps({ src: { type: String, required: true } });
 
 const markdown = computed(() => DOMPurify.sanitize(marked(props.src), { USE_PROFILES: { html: true } }));
 </script>

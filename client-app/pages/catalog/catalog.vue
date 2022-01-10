@@ -238,7 +238,7 @@ import {
 import { Card } from "@/components";
 import { AddToCart, CartAddInfo } from "@/shared/cart";
 import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from "@headlessui/vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import _ from "lodash";
 import { LineItemType } from "@/core/api/graphql/types";
 

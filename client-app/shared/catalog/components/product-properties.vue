@@ -11,12 +11,18 @@
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
 import _ from "lodash";
-import { computed } from "vue";
+import { computed, PropType } from "vue";
 import { Maybe, Property } from "@core/api/graphql/types";
 
-const props = defineProps<{ properties: Array<Maybe<Property>> }>();
+const props = defineProps({
+  properties: {
+    type: Object as PropType<Array<Maybe<Property>>>,
+    default: () => new Array<Maybe<Property>>(),
+  },
+});
 
 const grouped = computed(() => {
   var propertyGroups = _(props.properties)

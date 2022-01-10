@@ -7,8 +7,8 @@
         class="-mt-2 -ml-2 square relative flex flex-col justify-center items-center"
       >
         <img
-          :src="variation?.images[0]?.url ?? ''"
-          alt="variation"
+          :src="variation?.images[0]?.url ?? '/static/images/common/no-image.svg'"
+          :alt="variation?.name ?? ''"
           class="absolute top-0 w-full h-full object-cover object-center rounded-sm"
         />
       </div>
@@ -20,10 +20,10 @@
         <VariationProperties :properties="variation?.properties || []"></VariationProperties>
         <div class="flex flex-row space-x-3">
           <div class="w-1/2 text-sm text-gray-500">Your price</div>
-          <div class="w-1/2 font-bold">
-            <span class="text-green-800">{{ variation?.price?.actual?.formattedAmount }}</span>
+          <div class="w-1/2">
+            <span class="font-extrabold text-green-700">{{ variation?.price?.actual?.formattedAmount }}</span>
             &nbsp;
-            <span class="hidden lg:inline-block">/ each</span>
+            <span class="font-semibold hidden lg:inline-block">/ each</span>
           </div>
         </div>
       </div>
@@ -41,6 +41,12 @@
 import { VariationType, Product } from "@core/api/graphql/types";
 import { VariationProperties } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
+import { PropType } from "vue";
 
-defineProps<{ variation: VariationType | Product }>();
+defineProps({
+  variation: {
+    type: Object as PropType<VariationType | Product>,
+    required: true,
+  },
+});
 </script>
