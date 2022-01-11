@@ -136,7 +136,7 @@
   </div>
 
   <!-- Placeholder for correct padding due to fixed mobile menu -->
-  <div class="lg:hidden h-24"></div>
+  <div class="lg:hidden h-14"></div>
 
   <!-- Mobile menu -->
   <div v-if="mobileMenuVisible" class="fixed bg-gray-800 opacity-95 z-50 w-full h-screen flex flex-col">
