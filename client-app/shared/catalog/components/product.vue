@@ -36,6 +36,7 @@
         <div class="flex items-baseline justify-between text-sm">
           <div class="font-extrabold text-base">Your price:</div>
           <div>
+            <!-- todo: extract a component for price and use it here -->
             <span class="font-extrabold text-green-700">{{ product.price?.actual?.formattedAmount }}</span
             >&nbsp;<span class="font-semibold hidden lg:inline-block">/ each</span>
           </div>

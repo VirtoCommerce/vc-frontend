@@ -21,6 +21,7 @@
         <div class="flex flex-row items-center space-x-3 text-xs">
           <div class="w-1/2 text-gray-500">Your price</div>
           <div class="w-1/2">
+            <!-- todo: extract a component for price and use it here -->
             <span class="font-extrabold text-sm text-green-700">{{ variation?.price?.actual?.formattedAmount }}</span
             >&nbsp;<span class="font-extrabold hidden lg:inline-block">/ each</span>
           </div>

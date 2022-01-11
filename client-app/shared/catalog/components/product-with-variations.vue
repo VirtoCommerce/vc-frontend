@@ -49,6 +49,7 @@
         <div class="flex items-baseline justify-between text-sm">
           <div class="font-extrabold text-base">Total in your cart:</div>
           <div class="font-extrabold">
+            <!-- todo: extract a component for price and use it here -->
             <span class="text-green-700">{{ currency?.symbol }}{{ variationsCartTotal.toFixed(2) }}</span>
           </div>
         </div>

@@ -24,6 +24,7 @@ const props = defineProps({
   },
 });
 
+// todo: move this logic to the separated helper. For variations properties also
 const grouped = computed(() => {
   var propertyGroups = _(props.properties)
     .filter((p) => !!p && p.type === "Product")
