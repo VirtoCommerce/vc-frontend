@@ -152,7 +152,6 @@ const productId = ref(route.params.id as string);
 onMounted(async () => {
   await loadProduct(productId.value);
   breadcrumbsItems.value = buildBreadcrumbs(product.value.breadcrumbs as Breadcrumb[]);
-  console.log(product.value);
 });
 
 function print() {
