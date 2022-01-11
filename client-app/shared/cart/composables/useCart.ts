@@ -136,6 +136,7 @@ export default () => {
     return cart.value?.items?.find((product) => product?.productId === productId) as LineItemType;
   }
 
+  // calculate total price of items in the cart for some set of products
   function getItemsTotal(productIds: string[]): number {
     if (!cart.value?.items?.length) {
       return 0;

@@ -60,6 +60,7 @@ export default () => {
     }
   }
 
+  //calculation of total price of variations in the cart
   watch(
     () => cartLoading.value === false && loading.value === false,
     (condition) => {

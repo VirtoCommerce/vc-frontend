@@ -11,3 +11,6 @@ export { default as ProductProperties } from "./product-properties.vue";
 export { default as VariationProperties } from "./variation-properties.vue";
 export { default as ProductTitledBlock } from "./product-titled-block.vue";
 export { default as ProductVariationCard } from "./product-variation-card.vue";
+export { default as ProductCard } from "./product.vue";
+export { default as ProductWithVariationsCard } from "./product-with-variations.vue";
+export { default as ProductPriceBlock } from "./product-price-block.vue";
