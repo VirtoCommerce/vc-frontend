@@ -11,24 +11,24 @@
         <div class="flex flex-col w-full px-5 space-y-5 lg:w-3/5">
           <Card title="Last orders" class="h-52"></Card>
           <div class="flex flex-col space-y-5 lg:flex-row lg:space-x-5 lg:space-y-0">
-            <Card title="Monthly spend report" class="h-52">
-              <div class="flex content-center space-x-9">
-                <img src="/assets/static/images/dashboard/spend-chart.svg" alt="Spend chart" />
+            <Card title="Monthly spend report" class="lg:w-1/2">
+              <div class="flex content-center space-x-9 lg:space-x-4">
+                <img src="/assets/static/images/dashboard/spend-chart.svg" class="h-24 w-24" alt="Spend chart" />
                 <div
                   class="flex flex-col space-y-1 sm:space-y-0 sm:flex-row sm:flex-wrap sm:space-x-5 sm:items-center xl:space-x-7 justify-center"
                 >
                   <div class="flex flex-col lg:items-center lg:space-y-3">
                     <span class="text-xs text-gray-400 lg:text-gray-600 lg:font-bold">Budget</span>
-                    <span class="text-2xl font-extrabold">$58,152</span>
+                    <span class="text-xl font-extrabold">$58,152</span>
                   </div>
                   <div class="flex flex-col lg:items-center lg:space-y-3">
                     <span class="text-xs text-gray-400 lg:text-gray-600 lg:font-bold">Total spend</span>
-                    <span class="text-2xl font-extrabold">$530,152</span>
+                    <span class="text-xl font-extrabold">$530,152</span>
                   </div>
                 </div>
               </div>
             </Card>
-            <Card title="Orders status" class="h-52 lg:flex-1"></Card>
+            <Card title="Orders status" class="h-52 lg:h-auto lg:w-1/2"></Card>
           </div>
           <Card title="Users" class="h-52"></Card>
           <Card title="Current user roles" class="h-36"></Card>
