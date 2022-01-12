@@ -10,7 +10,11 @@
       </div>
       <h1 class="text-2xl md:text-4xl font-bold uppercase">{{ product.name }}</h1>
       <ProductCard v-if="!withVariations" :product="product"></ProductCard>
-      <ProductWithVariationsCard v-else :product="product"></ProductWithVariationsCard>
+      <ProductWithVariationsCard
+        v-else
+        :product="product"
+        :variations-cart-total="variationsCartTotal"
+      ></ProductWithVariationsCard>
     </div>
   </div>
 </template>
@@ -31,7 +35,7 @@ import { Breadcrumb } from "@/core/api/graphql/types";
 const route = useRoute();
 const router = useRouter();
 
-const { product, loading, loadProduct, withVariations } = useProducts();
+const { product, loading, loadProduct, withVariations, variationsCartTotal } = useProducts();
 
 const breadcrumbsItems: Ref<IBreadcrumbsItem[]> = ref([{ url: "/", title: "Home" }]);
 const { buildBreadcrumbs } = useBreadcrumbs();

@@ -72,16 +72,9 @@ import { Product } from "@/core/api/graphql/types";
 import { PropType } from "vue";
 import { useCart } from "@/shared/cart";
 import { MarkdownRender, ImageGallery } from "@/components";
-import {
-  ProductProperties,
-  ProductTitledBlock,
-  ProductVariationCard,
-  ProductPriceBlock,
-  useProducts,
-} from "@/shared/catalog";
+import { ProductProperties, ProductTitledBlock, ProductVariationCard, ProductPriceBlock } from "@/shared/catalog";
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 
-const { variationsCartTotal } = useProducts();
 const { currency } = useCart();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -90,6 +83,10 @@ const isMobile = breakpoints.smaller("lg");
 defineProps({
   product: {
     type: Object as PropType<Product>,
+    required: true,
+  },
+  variationsCartTotal: {
+    type: Number,
     required: true,
   },
 });
