@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { Product } from "@/core/api/graphql/types";
+import { Product, VariationType } from "@/core/api/graphql/types";
 import { useCart } from "@/shared/cart";
 import { useField } from "vee-validate";
 import { computed, PropType, ref } from "vue";
@@ -57,7 +57,7 @@ const max = 999999;
 
 const props = defineProps({
   product: {
-    type: Object as PropType<Product>,
+    type: Object as PropType<Product | VariationType>,
     required: true,
   },
 });
@@ -66,8 +66,16 @@ const emit = defineEmits(["update:lineitem"]);
 
 const { addToCart, itemInCart, changeItemQuantity } = useCart();
 
-const disabled = computed(() => !props.product.availabilityData?.isAvailable);
-const lineItem = ref(itemInCart(props.product.id));
+const disabled = computed(
+  () =>
+    !(
+      props.product.availabilityData?.isAvailable &&
+      props.product.availabilityData?.isInStock &&
+      props.product.availabilityData?.isBuyable &&
+      props.product.availabilityData?.availableQuantity
+    )
+);
+const lineItem = ref(itemInCart(props.product.id!));
 const count = computed(() => lineItem.value?.quantity);
 const updating = ref(false);
 
@@ -94,9 +102,9 @@ const onChange = async () => {
       if (lineItem.value) {
         await changeItemQuantity(lineItem.value.id, value.value || 0);
       } else {
-        await addToCart(props.product.id, value.value || 1);
+        await addToCart(props.product.id!, value.value || 1);
       }
-      lineItem.value = itemInCart(props.product.id);
+      lineItem.value = itemInCart(props.product.id!);
       emit("update:lineitem", lineItem.value);
     } finally {
       updating.value = false;

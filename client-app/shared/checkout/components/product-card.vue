@@ -4,7 +4,7 @@
       <div class="border border-gray-100 w-16 h-16">
         <img
           :src="lineItem.imageUrl || '/static/images/common/no-image.svg'"
-          :alt="lineItem.product?.name"
+          :alt="lineItem.name ?? ''"
           class="w-full h-full object-cover object-center"
         />
       </div>
@@ -12,7 +12,7 @@
       <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center flex-1">
         <div class="mb-3 lg:mb-0 text-sm lg:w-1/2">
           <router-link
-            :to="`/catalog/${lineItem.product?.slug}`"
+            :to="`/product/${lineItem.productId}`"
             class="text-cyan-700 font-extrabold line-clamp-3 overflow-hidden"
           >
             {{ lineItem.name }}

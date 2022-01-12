@@ -1,21 +1,21 @@
 <template>
-  <div
-    class="flex items-center justify-between bg-white rounded border p-4 shadow-sm hover:shadow-lg cursor-pointer space-x-6"
-  >
+  <div class="flex items-center justify-between bg-white rounded border p-4 shadow-sm hover:shadow-lg space-x-6">
     <div class="flex flex-grow items-center">
       <!-- Product image -->
-      <div class="border border-gray-100 w-20 h-20 flex-shrink-0 mr-4">
-        <img
-          :src="product.imgSrc || '/static/images/common/no-image.svg'"
-          :alt="product.name"
-          class="w-full h-full object-cover object-center"
-        />
-      </div>
+      <router-link :to="`/product/${product.id}`" class="cursor-pointer">
+        <div class="border border-gray-100 w-20 h-20 flex-shrink-0 mr-4">
+          <img
+            :src="product.imgSrc || '/static/images/common/no-image.svg'"
+            :alt="product.name"
+            class="w-full h-full object-cover object-center"
+          />
+        </div>
+      </router-link>
 
       <div>
         <!-- Product title -->
         <router-link
-          :to="`/catalog/${product.slug}`"
+          :to="`/product/${product.id}`"
           class="text-cyan-700 font-extrabold text-sm mb-3 flex-grow line-clamp-2 overflow-hidden"
         >
           {{ product.name }}

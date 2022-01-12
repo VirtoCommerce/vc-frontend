@@ -1,0 +1,43 @@
+<template>
+  <div class="flex flex-col">
+    <div v-for="property in grouped" :key="property.name" class="flex mb-3 md:mb-1 space-x-3 text-xs">
+      <div class="flex w-1/2 space-x-3">
+        <div class="flex-shrink text-gray-500">
+          {{ property?.name }}
+        </div>
+      </div>
+      <div class="font-bold w-1/2 flex flex-col text-left">
+        {{ property.values }}
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import _ from "lodash";
+import { computed, PropType } from "vue";
+import { Maybe, Property } from "@core/api/graphql/types";
+
+const props = defineProps({
+  properties: {
+    type: Object as PropType<Array<Maybe<Property>>>,
+    default: () => new Array<Maybe<Property>>(),
+  },
+});
+
+// todo: move this logic to the separated helper. For product properties also
+const grouped = computed(() => {
+  var propertyGroups = _(props.properties)
+    .filter((p) => !!p && p.type === "Variation")
+    .groupBy((p) => p!.name)
+    .map((props, propName) => {
+      return {
+        name: propName,
+        values: props.map((x) => x!.value).join(", "),
+      };
+    })
+    .value();
+
+  return propertyGroups;
+});
+</script>

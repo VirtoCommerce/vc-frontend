@@ -1,5 +1,5 @@
 <template>
-  <nav class="pb-2 md:pb-8 text-sm">
+  <nav class="text-sm">
     <ol class="flex">
       <template v-for="(item, i) in items" :key="i">
         <template v-if="i < items.length - 1">

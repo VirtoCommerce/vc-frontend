@@ -11,6 +11,7 @@ import {
 } from "@core/api/graphql/cart";
 import { CartType, LineItemType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
+import _ from "lodash";
 
 const loading: Ref<boolean> = ref(true);
 const cart: Ref<CartType> = ref({ name: "" });
@@ -135,11 +136,29 @@ export default () => {
     return cart.value?.items?.find((product) => product?.productId === productId) as LineItemType;
   }
 
+  // calculate total price of items in the cart for some set of products
+  function getItemsTotal(productIds: string[]): number {
+    if (!cart.value?.items?.length) {
+      return 0;
+    }
+
+    const filteredItems = _(cart.value.items)
+      .filter((x) => !!x?.productId && productIds.includes(x?.productId as string))
+      .map((x) => x as LineItemType)
+      .value();
+
+    const result = _.sumBy(filteredItems, (x) => x.extendedPrice?.amount);
+
+    return result;
+  }
+
   return {
     cart: computed(() => cart.value),
     pages: computed(() => pages.value),
     itemsPerPage: computed(() => itemsPerPage.value),
     loading: computed(() => loading.value),
+    currency: computed(() => cart.value.total?.currency),
+    getItemsTotal,
     loadMyCart,
     addToCart,
     itemInCart,
