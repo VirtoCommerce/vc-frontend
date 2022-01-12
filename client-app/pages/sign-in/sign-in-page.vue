@@ -27,6 +27,6 @@ async function onSignIn() {
   await loadContext();
   setUserId(themeContext.value?.userId || me.value?.id);
   await loadMyCart();
-  router.push({ name: "Home" });
+  router.push({ name: "Dashboard" });
 }
 </script>

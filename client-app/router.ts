@@ -7,6 +7,7 @@ import Checkout from "./pages/checkout/checkout.vue";
 import Error403 from "./pages/403/403.vue";
 import Error404 from "./pages/404/404.vue";
 import Error500 from "./pages/500/500.vue";
+import Dashboard from "./pages/dashboard/dashboard.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -24,6 +25,7 @@ const router = createRouter({
     { path: "/", name: "Home", component: Home },
     { path: "/sign-in", name: "SignIn", component: SingInPage },
     { path: "/sign-up", name: "SignUp", component: SignUpPage },
+    { path: "/dashboard", name: "Dashboard", component: Dashboard },
     { path: "/catalog", name: "CatalogRoot", component: Catalog },
     { path: "/catalog/:categoryKey", name: "Catalog", component: Catalog },
     { path: "/checkout", name: "Checkout", component: Checkout },

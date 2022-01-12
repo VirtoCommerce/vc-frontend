@@ -5,7 +5,7 @@
     <div class="h-12 px-12 flex items-center justify-end bg-gray-900 font-bold text-sm text-white">
       <!-- Authorized menu items -->
       <div v-if="isAuthenticated" class="flex items-center">
-        <router-link class="text-blue-400 hover:text-blue-500" to="/403">Dashboard</router-link>
+        <router-link class="text-blue-400 hover:text-blue-500" to="/dashboard">Dashboard</router-link>
         <div class="mx-3 h-1 w-1 bg-yellow-500 rounded"></div>
         <router-link class="text-blue-400 hover:text-blue-500" to="/404">Order History</router-link>
         <div class="mx-3 h-1 w-1 bg-yellow-500 rounded"></div>
@@ -217,17 +217,73 @@
       <!-- Menu divider -->
       <div class="h-px bg-gray-600 mt-10 mb-6"></div>
 
+      <!-- My account and corporate blocks-->
+      <div v-if="isAuthenticated" class="flex flex-col space-y-8 mt-8 px-10">
+        <div class="relative">
+          <div
+            class="uppercase text-xl font-extrabold text-white flex items-center"
+            @click="myAccountMobileVisible = !myAccountMobileVisible"
+          >
+            <div>My account</div>
+            <i
+              class="fas ml-3 text-yellow-500 align-baseline"
+              :class="[myAccountMobileVisible ? 'fa-chevron-up' : 'fa-chevron-down']"
+            ></i>
+          </div>
+          <div v-if="myAccountMobileVisible" class="flex flex-col px-5 py-2 space-y-3 mt-2">
+            <router-link to="/dashboard" class="font-bold text-gray-200 text-lg" @click="mobileMenuVisible = false"
+              >Dashboard</router-link
+            >
+            <router-link to="/profile" class="font-bold text-gray-200 text-lg" @click="mobileMenuVisible = false"
+              >Profile</router-link
+            >
+            <router-link to="/addresses" class="font-bold text-gray-200 text-lg" @click="mobileMenuVisible = false"
+              >Addresses</router-link
+            >
+            <router-link to="/changePassword" class="font-bold text-gray-200 text-lg" @click="mobileMenuVisible = false"
+              >Change password</router-link
+            >
+            <router-link to="/orders" class="font-bold text-gray-200 text-lg" @click="mobileMenuVisible = false"
+              >Orders</router-link
+            >
+            <router-link to="/yourList" class="font-bold text-gray-200 text-lg" @click="mobileMenuVisible = false"
+              >Your list</router-link
+            >
+            <router-link
+              to="/checkoutDetails"
+              class="font-bold text-gray-200 text-lg"
+              @click="mobileMenuVisible = false"
+              >Checkout details</router-link
+            >
+          </div>
+        </div>
+        <div class="relative">
+          <div
+            class="uppercase text-xl font-extrabold text-white flex items-center"
+            @click="corporateMobileVisible = !corporateMobileVisible"
+          >
+            <div>Corporate</div>
+            <i
+              class="fas ml-3 text-yellow-500 align-baseline"
+              :class="[corporateMobileVisible ? 'fa-chevron-up' : 'fa-chevron-down']"
+            ></i>
+          </div>
+          <div v-if="corporateMobileVisible" class="flex flex-col px-5 py-2 space-y-3 mt-2">
+            <router-link to="/dashboard" class="font-bold text-gray-200 text-lg" @click="mobileMenuVisible = false"
+              >Company Info</router-link
+            >
+            <router-link to="/profile" class="font-bold text-gray-200 text-lg" @click="mobileMenuVisible = false"
+              >Company Members</router-link
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Menu divider -->
+      <div v-if="isAuthenticated" class="h-px bg-gray-600 mt-10 mb-6"></div>
+
       <!-- Authorized menu items -->
       <div v-if="isAuthenticated" class="flex flex-col space-y-4 px-10">
-        <router-link to="/403" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
-          >Dashboard</router-link
-        >
-        <router-link to="/404" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
-          >Order History</router-link
-        >
-        <router-link to="/500" class="text-xl font-bold text-blue-500" @click="mobileMenuVisible = false"
-          >Lists</router-link
-        >
         <div class="text-white">
           <div class="text-xl font-bold" @click="loginMobileMenuVisible = !loginMobileMenuVisible">
             <span>{{ me.userName }}</span>
@@ -281,6 +337,8 @@ const mobileMenuVisible = ref(false);
 const searchVisible = ref(false);
 const allProductsVisible = ref(false);
 const allProductsMobileVisible = ref(false);
+const myAccountMobileVisible = ref(false);
+const corporateMobileVisible = ref(false);
 const allProductsMenu = ref(null);
 const loginMenuVisible = ref(false);
 const loginMobileMenuVisible = ref(false);
