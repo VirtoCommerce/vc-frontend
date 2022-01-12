@@ -4,6 +4,7 @@
     <span class="ml-3 text-gray-500 font-extrabold text-sm">{{ text }}</span>
   </router-link>
 </template>
+
 <script setup lang="ts">
 defineProps({
   text: {
@@ -17,6 +18,7 @@ defineProps({
   },
 });
 </script>
+
 <style>
 /* Icons */
 .icon > div {

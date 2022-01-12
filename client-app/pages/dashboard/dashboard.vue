@@ -42,6 +42,7 @@
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
 import { Card } from "@/components";
 import { AccountNavigation } from "@/shared/account";

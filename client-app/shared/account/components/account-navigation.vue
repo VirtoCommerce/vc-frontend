@@ -25,6 +25,7 @@
     </div>
   </Card>
 </template>
+
 <script setup lang="ts">
 import { Card } from "@/components";
 import { AccountNavigationLink } from ".";
