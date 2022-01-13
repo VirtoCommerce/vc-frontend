@@ -339,7 +339,8 @@ const searchVisible = ref(false);
 const allProductsVisible = ref(false);
 const allProductsMobileVisible = ref(false);
 const myAccountMobileVisible = ref(false);
-const corporateMobileVisible = ref(false);
+//Commented due to accetpance criteria, will be used in future
+//const corporateMobileVisible = ref(false);
 const allProductsMenu = ref(null);
 const loginMenuVisible = ref(false);
 const loginMobileMenuVisible = ref(false);
