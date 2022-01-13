@@ -4,7 +4,6 @@
       <AccountNavigationLink to="/dashboard" text="Dashboard" class="dashboard-icon"></AccountNavigationLink>
       <AccountNavigationLink to="/profile" text="Profile" class="profile-icon"></AccountNavigationLink>
       <AccountNavigationLink to="/addresses" text="Addresses" class="addresses-icon"></AccountNavigationLink>
-      <AccountNavigationLink to="/changePassword" text="Change password" class="password-icon"></AccountNavigationLink>
       <AccountNavigationLink to="/orders" text="Orders" class="orders-icon"></AccountNavigationLink>
       <AccountNavigationLink to="/list" text="Your List" class="list-icon"></AccountNavigationLink>
       <AccountNavigationLink
@@ -14,7 +13,8 @@
       ></AccountNavigationLink>
     </div>
   </Card>
-  <Card title="Corporate">
+  <!-- Commented due to accetpance criteria, will be used in future-->
+  <!-- <Card title="Corporate">
     <div class="flex flex-col">
       <AccountNavigationLink to="/companyInfo" text="Company info" class="company-icon"></AccountNavigationLink>
       <AccountNavigationLink
@@ -23,7 +23,7 @@
         class="company-members-icon"
       ></AccountNavigationLink>
     </div>
-  </Card>
+  </Card> -->
 </template>
 
 <script setup lang="ts">

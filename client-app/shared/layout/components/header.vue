@@ -257,7 +257,8 @@
             >
           </div>
         </div>
-        <div class="relative">
+        <!-- Commented due to accetpance criteria, will be used in future-->
+        <!-- <div class="relative">
           <div
             class="uppercase text-xl font-extrabold text-white flex items-center"
             @click="corporateMobileVisible = !corporateMobileVisible"
@@ -276,7 +277,7 @@
               >Company Members</router-link
             >
           </div>
-        </div>
+        </div> -->
       </div>
 
       <!-- Menu divider -->
