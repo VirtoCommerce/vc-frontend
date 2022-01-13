@@ -75,7 +75,9 @@ import { useUser, SignInForm } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { useContext } from "@/shared/context";
 import { setUserId } from "@/core/constants";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const { isAuthenticated, me } = useUser();
 const { loadMyCart } = useCart();
 const { loadContext, themeContext } = useContext();
@@ -84,6 +86,7 @@ async function onSignIn() {
   await loadContext();
   setUserId(themeContext.value?.userId || me.value?.id);
   await loadMyCart();
+  router.push({ name: "Dashboard" });
 }
 </script>
 
