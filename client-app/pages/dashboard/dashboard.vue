@@ -31,7 +31,6 @@
             <Card title="Orders status" class="h-52 lg:h-auto lg:w-1/2"></Card>
           </div>
           <Card title="Users" class="h-52"></Card>
-          <Card title="Current user roles" class="h-36"></Card>
         </div>
         <!-- Third column-->
         <div class="hidden lg:flex flex-col lg:w-1/5 space-y-5">
