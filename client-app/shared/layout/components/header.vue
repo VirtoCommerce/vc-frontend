@@ -240,9 +240,6 @@
             <router-link to="/addresses" class="font-bold text-gray-200 text-lg" @click="mobileMenuVisible = false"
               >Addresses</router-link
             >
-            <router-link to="/changePassword" class="font-bold text-gray-200 text-lg" @click="mobileMenuVisible = false"
-              >Change password</router-link
-            >
             <router-link to="/orders" class="font-bold text-gray-200 text-lg" @click="mobileMenuVisible = false"
               >Orders</router-link
             >
