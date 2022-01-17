@@ -41,7 +41,7 @@
     </div>
 
     <div class="mt-1">
-      <router-link to="/" class="text-blue-700 hover:text-blue-500 text-sm font-semibold">
+      <router-link to="/forgot-password" class="text-blue-700 hover:text-blue-500 text-sm font-semibold">
         Forgot your password?
       </router-link>
     </div>

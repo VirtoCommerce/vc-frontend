@@ -9,6 +9,7 @@ import Error403 from "./pages/403/403.vue";
 import Error404 from "./pages/404/404.vue";
 import Error500 from "./pages/500/500.vue";
 import Dashboard from "./pages/account/dashboard.vue";
+import ForgotPassword from "./pages/forgot-password/forgot-password.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -27,6 +28,7 @@ const router = createRouter({
     { path: "/sign-in", name: "SignIn", component: SingInPage },
     { path: "/sign-up", name: "SignUp", component: SignUpPage },
     { path: "/dashboard", name: "Dashboard", component: Dashboard },
+    { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword },
     { path: "/catalog", name: "CatalogRoot", component: Catalog },
     { path: "/catalog/:categoryKey", name: "Catalog", component: Catalog },
     { path: "/checkout", name: "Checkout", component: Checkout },
