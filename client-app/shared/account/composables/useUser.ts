@@ -2,7 +2,7 @@ import { Ref, ref, computed } from "vue";
 import { getMe, updatePersonalData } from "@/core/api/graphql/account";
 import { UserType, IdentityResultType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
-import { SignMeUp, SignMeIn } from "@/shared/account";
+import { SignMeUp, SignMeIn, ForgotPassword, ValidateToken, ResetPassword } from "@/shared/account";
 import useFetch from "@/core/composables/useFetch";
 import { setUserId } from "@/core/constants";
 
@@ -120,6 +120,48 @@ export default () => {
     }
   }
 
+  async function forgotPassword(forgotPassword: ForgotPassword): Promise<IdentityResultType> {
+    try {
+      loading.value = true;
+      const url = "/storefrontapi/account/forgotPassword";
+      const res = await innerFetch<ForgotPassword, IdentityResultType>(url, "POST", forgotPassword);
+      return res;
+    } catch (e) {
+      Logger.error("useUser.forgotPassword", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function validateToken(validateToken: ValidateToken): Promise<IdentityResultType> {
+    try {
+      loading.value = true;
+      const url = "/storefrontapi/account/validateToken";
+      const res = await innerFetch<ValidateToken, IdentityResultType>(url, "POST", validateToken);
+      return res;
+    } catch (e) {
+      Logger.error("useUser.validateToken", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function resetPassword(resetPassword: ResetPassword): Promise<IdentityResultType> {
+    try {
+      loading.value = true;
+      const url = "/storefrontapi/account/validateToken";
+      const res = await innerFetch<ResetPassword, IdentityResultType>(url, "POST", resetPassword);
+      return res;
+    } catch (e) {
+      Logger.error("useUser.resetPassword", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     me: computed(() => me.value),
     loading: computed(() => loading.value),
@@ -130,5 +172,8 @@ export default () => {
     signMeIn,
     signMeUp,
     signMeOut,
+    forgotPassword,
+    validateToken,
+    resetPassword,
   };
 };
