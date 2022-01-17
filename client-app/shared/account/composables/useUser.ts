@@ -151,7 +151,7 @@ export default () => {
   async function resetPassword(resetPassword: ResetPassword): Promise<IdentityResultType> {
     try {
       loading.value = true;
-      const url = "/storefrontapi/account/validateToken";
+      const url = "/storefrontapi/account/resetPassword";
       const res = await innerFetch<ResetPassword, IdentityResultType>(url, "POST", resetPassword);
       return res;
     } catch (e) {

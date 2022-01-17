@@ -13,7 +13,7 @@
       <Alert v-for="error in commonErrors" :key="error" class="mb-4 text-xs">{{ error }}</Alert>
       <button
         type="submit"
-        class="mt-6 lg:mt-3 w-full lg:w-48 px-8 flex justify-center items-center uppercase text-white bg-yellow-500 hover:bg-yellow-600 font-roboto-condensed text-lg h-11 rounded cursor-pointer"
+        class="mt-6 lg:mt-3 w-full lg:w-48 h-11 rounded cursor-pointer flex justify-center items-center uppercase text-white bg-yellow-500 hover:bg-yellow-600 font-roboto-condensed text-lg"
         :class="{ 'hover:bg-yellow-600': !loading }"
         :disabled="loading"
       >
@@ -53,7 +53,7 @@ const commonErrors = ref<string[]>([]);
 const onSubmit = handleSubmit(async (data) => {
   commonErrors.value = [];
 
-  const resetPasswordUrl = location.origin + "/resetPassword";
+  const resetPasswordUrl = location.origin + "/reset-password";
 
   const result = await forgotPassword({
     email: `${data.email}`,
