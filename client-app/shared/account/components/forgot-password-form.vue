@@ -13,8 +13,8 @@
       <Alert v-for="error in commonErrors" :key="error" class="mb-4 text-xs">{{ error }}</Alert>
       <button
         type="submit"
-        class="mt-6 lg:mt-3 w-full lg:w-48 h-11 rounded cursor-pointer flex justify-center items-center uppercase text-white bg-yellow-500 hover:bg-yellow-600 font-roboto-condensed text-lg"
-        :class="{ 'hover:bg-yellow-600': !loading }"
+        class="mt-6 lg:mt-3 w-full lg:w-48 h-11 rounded cursor-pointer flex justify-center items-center uppercase text-white bg-yellow-500 font-roboto-condensed text-lg"
+        :class="{ 'hover:bg-yellow-600': !loading, 'cursor-wait': loading }"
         :disabled="loading"
       >
         Submit
