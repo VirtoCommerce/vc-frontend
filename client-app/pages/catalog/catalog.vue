@@ -15,6 +15,7 @@
                 v-model="keyword"
                 class="border rounded text-sm leading-8 flex-1 w-full border-gray-300 h-8 px-2 outline-none focus:border-gray-400"
                 type="text"
+                maxlength="30"
                 :disabled="loading"
                 @keypress.enter="onSearchStart"
               />
@@ -31,13 +32,7 @@
 
           <!-- Previously purchased -->
           <Card title="Previously purchased">
-            <label class="flex items-center text-sm cursor-pointer">
-              <input
-                type="checkbox"
-                class="form-tick appearance-none w-5 h-5 border-2 border-gray-300 rounded-sm checked:bg-cyan-700 checked:border-transparent focus:outline-none cursor-pointer"
-              />
-              <span class="ml-2 font-medium">View previously purchased products</span>
-            </label>
+            <Checkbox color="cyan-700">View previously purchased products</Checkbox>
           </Card>
 
           <!-- Branch availability -->
@@ -61,9 +56,19 @@
             <Card title="Filter results by">
               <p class="text-sm pb-2">Search within these results</p>
               <div class="flex gap-3">
-                <input type="text" class="border rounded text-sm flex-1 w-full border-gray-300 p-2.5" />
+                <input
+                  v-model="keyword"
+                  type="text"
+                  class="border rounded text-sm flex-1 w-full border-gray-300 p-2.5"
+                  maxlength="30"
+                  :disabled="loading"
+                  @keypress.enter="onSearchStart"
+                />
                 <button
-                  class="rounded uppercase px-3 border-2 border-yellow-500 text-yellow-500 text-roboto font-bold text-sm"
+                  class="rounded uppercase px-3 border-2 text-roboto font-bold text-sm"
+                  :class="[loading ? 'text-gray-300 border-gray-300' : 'text-yellow-500 border-yellow-500']"
+                  :disabled="loading"
+                  @click="onSearchStart"
                 >
                   Go
                 </button>
@@ -251,7 +256,7 @@ import {
   useCategories,
   IBreadcrumbsItem,
 } from "@/shared/catalog";
-import { Card } from "@/components";
+import { Card, Checkbox } from "@/components";
 import { AddToCart, CartAddInfo } from "@/shared/cart";
 import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from "@headlessui/vue";
 import { useRoute } from "vue-router";
@@ -262,11 +267,13 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
 const route = useRoute();
-const params = useUrlSearchParams("history");
+const params = useUrlSearchParams("history", { removeFalsyValues: true });
 
 const { products, total, loading, fetchProducts, pages } = useProducts();
 const { categoryTree, loadCategoriesTree } = useCategories();
+
 const category: Ref<CategoryTree | undefined> = ref(undefined);
+const keyword: Ref<string> = ref(`${params.keyword || ""}`);
 
 const sortOptions = [
   { id: "priority-descending;name-ascending", name: "Featured" },
@@ -287,7 +294,7 @@ watch(sort, async () => {
 const productSearchParams = reactive<ProductsSearchParams>({
   itemsPerPage: +(params.size ?? 16),
   page: +(params.page ?? 1),
-  term: "",
+  query: keyword.value,
   sort: `${sort.value.id}`,
 });
 
@@ -296,7 +303,11 @@ watch(
   async (categoryKeyParam) => {
     const categoryKey = categoryKeyParam as string;
     getCurrentCategory(categoryKey);
+
     productSearchParams.page = 1;
+    productSearchParams.query = "";
+    keyword.value = "";
+
     await loadProducts();
   }
 );
@@ -365,21 +376,24 @@ const BuildBreadcrumbs = () => {
 const breadcrumbsItems: Ref<IBreadcrumbsItem[]> = ref([{ url: "/", title: "Home" }]);
 
 const viewMode = ref(`${params.viewMode || "grid"}`);
-const keyword = ref("");
 
 // Handle URL change on navigation update
 watchEffect(() => {
   params.viewMode = viewMode.value;
   params.size = `${productSearchParams.itemsPerPage}` || "16";
   params.page = `${productSearchParams.page}` || "1";
+  params.keyword = productSearchParams.query || "";
+
   if (productSearchParams.sort) {
     params.sort = `${productSearchParams.sort}`;
   }
 });
 
 const onSearchStart = async () => {
-  if (keyword.value !== productSearchParams.term) {
-    productSearchParams.term = unref(keyword.value);
+  if (keyword.value !== productSearchParams.query && keyword.value.length <= 30) {
+    productSearchParams.query = keyword.value;
+    mobileFiltersVisible.value = false;
+    productSearchParams.page = 1;
     await loadProducts();
   }
 };
@@ -411,5 +425,3 @@ const onAddToCart = (lineItem?: LineItemType) => {
   isCartAddInfoOpen.value = true;
 };
 </script>
-
-<style scoped></style>
