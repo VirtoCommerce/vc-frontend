@@ -162,7 +162,15 @@
               <template v-else>
                 <ProductCardGrid v-for="item in products" :key="item.id" :product="item">
                   <template #cart-handler>
-                    <AddToCart :product="item" @update:lineitem="onAddToCart"></AddToCart>
+                    <router-link
+                      v-if="item.variations?.length"
+                      :to="`/product/${item.id}`"
+                      tag="button"
+                      class="bg-yellow-500 hover:bg-yellow-600 uppercase font-bold rounded text-white justify-center h-9 flex items-center text-sm font-roboto mb-4"
+                    >
+                      Choose
+                    </router-link>
+                    <AddToCart v-else :product="item" @update:lineitem="onAddToCart"></AddToCart>
                   </template>
                 </ProductCardGrid>
               </template>
@@ -176,7 +184,15 @@
               <template v-else>
                 <ProductCardList v-for="item in products" :key="item.id" :product="item">
                   <template #cart-handler>
-                    <AddToCart :product="item" @update:lineitem="onAddToCart"></AddToCart>
+                    <router-link
+                      v-if="item.variations?.length"
+                      :to="`/product/${item.id}`"
+                      tag="button"
+                      class="bg-yellow-500 hover:bg-yellow-600 uppercase font-bold rounded text-white justify-center h-9 flex items-center text-sm font-roboto mb-4"
+                    >
+                      Choose
+                    </router-link>
+                    <AddToCart v-else :product="item" @update:lineitem="onAddToCart"></AddToCart>
                   </template>
                 </ProductCardList>
               </template>

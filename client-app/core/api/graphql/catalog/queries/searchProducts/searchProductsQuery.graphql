@@ -22,6 +22,11 @@ query SearchProducts(
       name
       id
       code
+      minQuantity
+      maxQuantity
+      variations {
+        id
+      }
       slug
       outline
       imgSrc

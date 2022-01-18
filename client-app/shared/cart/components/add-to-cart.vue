@@ -10,8 +10,8 @@
       v-model="value"
       type="number"
       pattern="\d*"
-      :max="max"
-      :min="0"
+      :max="maxQty"
+      :min="minQty"
       class="appearance-none border rounded-none rounded-l border-r-0 flex-1 w-full text-base lg:text-sm border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9"
       :class="[!!errorMessage ? 'border-red-500 focus:border-red-500 border-r -mr-px z-10' : '']"
       :disabled="disabled"
@@ -62,6 +62,13 @@ const props = defineProps({
   },
 });
 
+const isProduct = "variations" in (props.product as Product);
+const minQty = (props.product as Product).minQuantity || 1;
+const maxQty = Math.min(
+  props.product.availabilityData?.availableQuantity,
+  (props.product as Product).maxQuantity || max
+);
+
 const emit = defineEmits(["update:lineitem"]);
 
 const { addToCart, itemInCart, changeItemQuantity } = useCart();
@@ -81,12 +88,14 @@ const updating = ref(false);
 
 let rules = yup.number().typeError("enter correct number").integer().optional().moreThan(0);
 
-if (props.product.availabilityData?.availableQuantity) {
-  rules = rules.max(props.product.availabilityData?.availableQuantity);
+if (isProduct) {
+  rules = rules.min(minQty);
 }
 
+rules = rules.max(maxQty);
+
 const { value, validate, errorMessage, setValue } = useField("qty", rules, {
-  initialValue: count.value || undefined,
+  initialValue: count.value || minQty,
 });
 
 /**
@@ -94,7 +103,7 @@ const { value, validate, errorMessage, setValue } = useField("qty", rules, {
  */
 const onChange = async () => {
   if (!count.value && (!value.value || isNaN(value.value))) {
-    setValue(1);
+    setValue(minQty);
   }
   if (await validate()) {
     updating.value = true;
@@ -102,7 +111,7 @@ const onChange = async () => {
       if (lineItem.value) {
         await changeItemQuantity(lineItem.value.id, value.value || 0);
       } else {
-        await addToCart(props.product.id!, value.value || 1);
+        await addToCart(props.product.id!, value.value || minQty);
       }
       lineItem.value = itemInCart(props.product.id!);
       emit("update:lineitem", lineItem.value);

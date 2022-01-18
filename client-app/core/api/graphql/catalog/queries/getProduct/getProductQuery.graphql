@@ -5,6 +5,8 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
     code
     slug
     outline
+    minQuantity
+    maxQuantity
     imgSrc
     images {
       url
