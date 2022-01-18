@@ -1,19 +1,26 @@
 import client from "@core/api/graphql/graphql-client";
-import { ProductConnection } from "@core/api/graphql/types";
+import { ProductConnection, Query, QueryProductsArgs } from "@core/api/graphql/types";
 import { currencyCode, currentUserId, locale, storeId, catalogId } from "@core/constants";
 import searchProductsQueryDocument from "./searchProductsQuery.graphql";
+import { ProductsSearchParams } from "@/shared/catalog";
 
 export default async function searchProducts({
   itemsPerPage = 20,
   page = 1,
   categoryId = "",
-  sort = "",
-}): Promise<ProductConnection> {
-  const { data } = await client.query({
+  sort,
+  query,
+  fuzzy,
+  fuzzyLevel,
+}: ProductsSearchParams): Promise<ProductConnection> {
+  const { data } = await client.query<Required<Pick<Query, "products">>, QueryProductsArgs>({
     query: searchProductsQueryDocument,
     variables: {
-      storeId: storeId,
-      sort: sort,
+      storeId,
+      sort,
+      query,
+      fuzzy,
+      fuzzyLevel,
       userId: currentUserId,
       currencyCode: currencyCode,
       filter: categoryId ? `category.subtree:${catalogId}/${categoryId}` : "",

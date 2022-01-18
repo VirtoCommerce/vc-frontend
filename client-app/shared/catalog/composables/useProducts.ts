@@ -46,11 +46,11 @@ export default () => {
   async function fetchProducts(searchParams: ProductsSearchParams) {
     loading.value = true;
     try {
-      const productsConnection = await searchProducts(searchParams);
-      products.value = productsConnection?.items as Product[];
+      const { items = [], totalCount = 0 } = await searchProducts(searchParams);
+      products.value = items;
       //normalize prices
 
-      total.value = productsConnection.totalCount ?? 0;
+      total.value = totalCount;
       pages.value = Math.ceil(total.value / (searchParams.itemsPerPage || 16));
     } catch (e) {
       Logger.error("useProducts.fetchProducts", e);

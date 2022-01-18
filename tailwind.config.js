@@ -35,6 +35,7 @@ module.exports = {
     extend: {
       backgroundColor: ["checked"],
       borderColor: ["checked"],
+      cursor: ["disabled"],
       ringWidth: ['hover', 'active'],
       ringColor: ['hover', 'active'],
     },

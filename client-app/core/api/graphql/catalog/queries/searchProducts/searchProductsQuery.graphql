@@ -7,6 +7,9 @@ query SearchProducts(
   $after: String
   $first: Int
   $sort: String
+  $query: String
+  $fuzzy: Boolean
+  $fuzzyLevel: Int
 ) {
   products(
     storeId: $storeId
@@ -17,6 +20,9 @@ query SearchProducts(
     sort: $sort
     currencyCode: $currencyCode
     cultureName: $cultureName
+    query: $query
+    fuzzy: $fuzzy
+    fuzzyLevel: $fuzzyLevel
   ) {
     items {
       name
