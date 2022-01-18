@@ -64,6 +64,7 @@ const props = defineProps({
 
 const isVariation = "variations" in (props.product as Product);
 const isProduct = !isVariation;
+const minQty = (props.product as Product).minQuantity || 1;
 
 const emit = defineEmits(["update:lineitem"]);
 
@@ -85,7 +86,7 @@ const updating = ref(false);
 let rules = yup.number().typeError("enter correct number").integer().optional().moreThan(0);
 
 if (isProduct) {
-  rules = rules.min((props.product as Product).minQuantity || 1);
+  rules = rules.min(minQty);
 }
 
 rules = rules.max(
@@ -93,7 +94,7 @@ rules = rules.max(
 );
 
 const { value, validate, errorMessage, setValue } = useField("qty", rules, {
-  initialValue: count.value || (props.product as Product).minQuantity || 1,
+  initialValue: count.value || minQty,
 });
 
 /**
@@ -101,7 +102,7 @@ const { value, validate, errorMessage, setValue } = useField("qty", rules, {
  */
 const onChange = async () => {
   if (!count.value && (!value.value || isNaN(value.value))) {
-    setValue((props.product as Product).minQuantity || 1);
+    setValue(minQty);
   }
   if (await validate()) {
     updating.value = true;
@@ -109,7 +110,7 @@ const onChange = async () => {
       if (lineItem.value) {
         await changeItemQuantity(lineItem.value.id, value.value || 0);
       } else {
-        await addToCart(props.product.id!, value.value || (props.product as Product).minQuantity || 1);
+        await addToCart(props.product.id!, value.value || minQty);
       }
       lineItem.value = itemInCart(props.product.id!);
       emit("update:lineitem", lineItem.value);
