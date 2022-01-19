@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-100 pt-6 pb-16 shadow-inner">
+  <div class="bg-gray-100 flex-grow pt-6 pb-16 shadow-inner">
     <div class="max-w-screen-2xl md:px-12 mx-auto">
       <div class="flex lg:space-x-5">
         <!-- First column-->
@@ -156,8 +156,16 @@
               </tbody>
               <tbody v-else>
                 <tr>
-                  <td colspan="6" class="h-96 flex flex-col items-center justify-center align-middle content-center">
-                    <div class="flex items-center space-x-10">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td colspan="6" class="polygons-bg">
+                    <div class="flex items-center pl-56 space-x-10 h-80">
                       <img src="/assets/static/images/account/icons/no-addresses.svg" alt="No addresses" />
                       <div class="flex flex-col space-y-2">
                         <span class="text-base">There are no addresses yet</span>
@@ -207,7 +215,7 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
 const page = ref(1);
-const itemsPerPage = ref(2);
+const itemsPerPage = ref(6);
 const pages = computed(() => Math.ceil(addresses.value.length / itemsPerPage.value));
 const paginatedAddresses = computed(() =>
   addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
@@ -227,6 +235,7 @@ const actionBuilder = (address: MemberAddressType) => {
       icon: "fas fa-pencil-alt",
       title: "Edit",
       variant: "grey",
+      position: "right",
       clickHandler() {
         console.log("edit address", address);
       },
@@ -234,6 +243,7 @@ const actionBuilder = (address: MemberAddressType) => {
     {
       icon: "fas fa-trash-alt",
       title: "Delete",
+      position: "left",
       variant: "danger",
       clickHandler() {
         removeAddress(address);
@@ -245,6 +255,7 @@ const actionBuilder = (address: MemberAddressType) => {
     result.push({
       icon: "fas fa-check",
       title: "Make default",
+      position: "right",
       variant: "primary",
       clickHandler() {
         setDefaultAddress(address);
@@ -314,5 +325,11 @@ function getSortingExpression(sort: SortInfo): string {
   border: 1.5em solid transparent;
   border-top-color: #f0ad4e;
   border-right-color: #f0ad4e;
+}
+
+.polygons-bg {
+  background-image: url(/assets/static/images/account/addresses-bg.svg);
+  background-repeat: no-repeat;
+  background-position: right;
 }
 </style>
