@@ -3,7 +3,7 @@
     <!-- First available action -->
     <div
       class="vc-table-mobile__item-action"
-      :class="[`vc-table-mobile__item-action_${itemActions[0].variant}`]"
+      :class="itemActions[0].bgColor"
       @click.stop="itemActions[0].clickHandler(item)"
     >
       <i :class="itemActions[0].icon"></i>
@@ -16,7 +16,7 @@
     <div
       v-if="itemActions.length === 2"
       class="vc-table-mobile__item-action"
-      :class="[`vc-table-mobile__item-action_${itemActions[1].variant}`]"
+      :class="itemActions[1].bgColor"
       @click.stop="itemActions[1].clickHandler(item)"
     >
       <i :class="itemActions[1].icon"></i>

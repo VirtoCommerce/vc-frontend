@@ -8,7 +8,7 @@ export interface IValidationRules {
 export interface ItemAction {
   icon: string;
   title: string;
-  variant: string;
+  bgColor: string;
   position: string;
   clickHandler(item: any): any;
 }

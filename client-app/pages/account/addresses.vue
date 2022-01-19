@@ -229,7 +229,7 @@ const actionBuilder = (address: MemberAddressType) => {
     {
       icon: "fas fa-pencil-alt",
       title: "Edit",
-      variant: "grey",
+      bgColor: "bg-gray-300",
       position: "right",
       clickHandler() {
         console.log("edit address", address);
@@ -239,7 +239,7 @@ const actionBuilder = (address: MemberAddressType) => {
       icon: "fas fa-trash-alt",
       title: "Delete",
       position: "left",
-      variant: "danger",
+      bgColor: "bg-red-500",
       clickHandler() {
         removeAddress(address);
       },
@@ -251,7 +251,7 @@ const actionBuilder = (address: MemberAddressType) => {
       icon: "fas fa-check",
       title: "Make default",
       position: "right",
-      variant: "primary",
+      bgColor: "bg-yellow-500",
       clickHandler() {
         setDefaultAddress(address);
       },
