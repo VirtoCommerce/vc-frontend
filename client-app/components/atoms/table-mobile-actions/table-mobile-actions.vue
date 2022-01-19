@@ -82,21 +82,6 @@ const isActionsPopupVisible = ref(false);
 </script>
 <style lang="scss" scoped>
 .vc-table-mobile__item {
-  position: relative;
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: stretch;
-  transition: transform ease 0.2s;
-
-  &_moving {
-    transition: none;
-  }
-
-  &-content {
-    flex-shrink: 0;
-    width: 100%;
-  }
-
   &-actions {
     flex-shrink: 0;
     width: 80px;
