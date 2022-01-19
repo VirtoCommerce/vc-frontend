@@ -12,3 +12,8 @@ export interface ItemAction {
   position: string;
   clickHandler(item: any): any;
 }
+
+export interface ISortInfo {
+  column: string;
+  direction: string;
+}

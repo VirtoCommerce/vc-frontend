@@ -198,18 +198,13 @@
 
 <script setup lang="ts">
 import Pagination from "@/shared/catalog/components/pagination.vue";
-import { TableMobileItem } from "@/components";
+import { ISortInfo, TableMobileItem } from "@/components";
 import { AccountNavigation, useUser } from "@/shared/account";
 import { computed, onMounted, Ref, ref } from "vue";
 import { MemberAddressType } from "@/core/api/graphql/types";
 import { sortAscending, sortDescending } from "@/core/constants";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 const { loadAddresses, addresses, deleteAddress, defaultShippingAddress } = useUser();
-
-interface SortInfo {
-  column: string;
-  direction: string;
-}
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
@@ -220,7 +215,7 @@ const pages = computed(() => Math.ceil(addresses.value.length / itemsPerPage.val
 const paginatedAddresses = computed(() =>
   addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
 );
-const sort: Ref<SortInfo> = ref({
+const sort: Ref<ISortInfo> = ref({
   column: "lastName",
   direction: sortAscending,
 });
@@ -303,7 +298,7 @@ async function loadItems(): Promise<void> {
   await loadAddresses(sortingExpression);
 }
 
-function getSortingExpression(sort: SortInfo): string {
+function getSortingExpression(sort: ISortInfo): string {
   return `${sort.column}:${sort.direction}`;
 }
 </script>
