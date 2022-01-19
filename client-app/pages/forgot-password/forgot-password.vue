@@ -11,12 +11,7 @@
           <i class="fas fa-check-circle text-7xl lg:text-4xl text-green-600"></i>
           <div class="text-lg">Reset link was sent to your email</div>
         </div>
-        <router-link
-          to="/"
-          class="bg-yellow-500 rounded text-white text-center w-48 py-2 font-bold uppercase cursor-pointer hover:bg-yellow-600"
-        >
-          Home page
-        </router-link>
+        <VcButton to="/" type="link" kind="primary" class="w-48">Home page</VcButton>
       </div>
     </template>
     <template #right>
@@ -29,6 +24,7 @@
 import { ref } from "vue";
 import { TwoColumn } from "@/shared/layout";
 import { ForgotPasswordForm } from "@/shared/account";
+import { Button as VcButton } from "@/components";
 
 const isSucceeded = ref(false);
 
