@@ -12,3 +12,19 @@ export type SignMeIn = {
   password: string;
   rememberMe?: boolean;
 };
+
+export type ForgotPassword = {
+  email: string;
+  resetPasswordUrl: string;
+};
+
+export type ValidateToken = {
+  userId: string;
+  token: string;
+};
+
+export type ResetPassword = {
+  userId: string;
+  token: string;
+  password: string;
+};
