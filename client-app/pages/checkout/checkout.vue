@@ -72,7 +72,7 @@
                   <div>
                     <button
                       class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 disabled:opacity-30"
-                      disabled
+                      @click="showShipmentMethodDialog"
                     >
                       Change
                     </button>
@@ -107,7 +107,7 @@
                   <div>
                     <button
                       class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 disabled:opacity-30"
-                      disabled
+                      @click="showPaymentMethodDialog"
                     >
                       Change
                     </button>
@@ -177,11 +177,13 @@ import {
   PromoCode,
   EmptyCart,
   ThankYou,
+  ShippingMethodDialog,
+  PaymentMethodDialog,
 } from "@/shared/checkout";
 import { TextArea } from "@/components";
-import { useCart } from "@/shared/cart";
+import { useCart, useCheckout } from "@/shared/cart";
+import { usePopup } from "@/shared/popup";
 import { computed, onBeforeUpdate, onMounted, ref } from "vue";
-import useCheckout from "@/shared/cart/composables/useCheckout";
 import _ from "lodash";
 
 const {
@@ -198,6 +200,7 @@ const {
 } = useCart();
 
 const { placeOrder } = useCheckout();
+const { openPopup } = usePopup();
 
 //TODO: change 'any' for a normal type
 const productCardRefs = ref<any[]>([]);
@@ -284,6 +287,20 @@ onMounted(async () => {
     cartComment.value = cart.value.comment || "";
   });
 });
+
+function showShipmentMethodDialog(): void {
+  openPopup({
+    component: ShippingMethodDialog,
+    props: {},
+  });
+}
+
+function showPaymentMethodDialog(): void {
+  openPopup({
+    component: PaymentMethodDialog,
+    props: {},
+  });
+}
 </script>
 
 <style scoped></style>

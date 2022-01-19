@@ -4,5 +4,5 @@ export { default as Card } from "./molecules/card/card.vue";
 export { default as MarkdownRender } from "./atoms/markdown-render/markdown-render.vue";
 export { default as ImageGallery } from "./atoms/image-gallery/image-gallery.vue";
 export { default as Input } from "./molecules/input/input.vue";
+export { default as Popup } from "./organisms/popup/popup.vue";
 export * from "./types";
-
