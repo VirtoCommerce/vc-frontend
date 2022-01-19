@@ -13,12 +13,7 @@
               <i class="fas fa-check-circle text-7xl lg:text-4xl text-green-600"></i>
               <div class="text-lg">Password was successfully changed</div>
             </div>
-            <router-link
-              to="/sign-in"
-              class="bg-yellow-500 rounded text-white text-center w-48 py-2 font-bold uppercase cursor-pointer hover:bg-yellow-600"
-            >
-              Log in
-            </router-link>
+            <VcButton to="/sign-in" type="link" class="w-48">Log in</VcButton>
           </div>
         </div>
         <div v-else class="flex flex-col items-center space-y-10 lg:space-y-12 lg:items-start lg:mt-12">
@@ -26,12 +21,7 @@
             <i class="fas fa-times-circle text-7xl lg:text-4xl text-red-500"></i>
             <div class="text-lg">User ID or token is invalid.</div>
           </div>
-          <router-link
-            to="/"
-            class="bg-yellow-500 rounded text-white text-center w-48 py-2 font-bold uppercase cursor-pointer hover:bg-yellow-600"
-          >
-            Home page
-          </router-link>
+          <VcButton to="/" type="link" class="w-48">Home page</VcButton>
         </div>
       </div>
     </template>
@@ -46,6 +36,7 @@ import { onMounted, ref } from "vue";
 import { TwoColumn } from "@/shared/layout";
 import { ResetPasswordForm, useUser } from "@/shared/account";
 import { useRoute } from "vue-router";
+import { Button as VcButton } from "@/components";
 
 const route = useRoute();
 const { validateToken } = useUser();
