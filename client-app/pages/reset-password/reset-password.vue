@@ -5,7 +5,7 @@
       <div v-if="isMounted">
         <div v-if="tokenDataIsValid">
           <div v-if="!isSucceeded">
-            <div class="text-lg md:text-base mb-4">Enter a new password for</div>
+            <div class="text-lg md:text-base mb-4">Enter a new password</div>
             <ResetPasswordForm :user-id="userId" :token="token" @succeeded="onSucceeded()"></ResetPasswordForm>
           </div>
           <div v-else class="flex flex-col items-center space-y-10 lg:space-y-12 lg:items-start lg:mt-12">
