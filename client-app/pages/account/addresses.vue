@@ -165,6 +165,7 @@
                 </tr>
               </tbody>
               <tbody v-else>
+                <!-- Workaround for using colspan -->
                 <tr>
                   <td></td>
                   <td></td>
