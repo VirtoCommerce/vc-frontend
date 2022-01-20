@@ -30,9 +30,15 @@
                 >
                   <div
                     class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200"
-                    :class="{ 'relative mobile-default-badge': address.id === defaultShippingAddress.id }"
+                    :class="{
+                      'relative mobile-default-badge':
+                        defaultShippingAddress && address.id === defaultShippingAddress.id,
+                    }"
                   >
-                    <div v-if="address.id === defaultShippingAddress.id" class="absolute top-0 right-0 z-10">
+                    <div
+                      v-if="defaultShippingAddress && address.id === defaultShippingAddress.id"
+                      class="absolute top-0 right-0 z-10"
+                    >
                       <i class="fas fa-check text-white mr-2"></i>
                     </div>
                     <div class="flex flex-col">
@@ -131,7 +137,10 @@
                   </td>
                   <td class="p-5">{{ address.phone }}</td>
                   <td class="p-5">{{ address.email }}</td>
-                  <td v-if="address.id === defaultShippingAddress.id" class="px-3 py-5 font-bold">
+                  <td
+                    v-if="defaultShippingAddress && address.id === defaultShippingAddress.id"
+                    class="px-3 py-5 font-bold"
+                  >
                     <i class="fas fa-check text-yellow-500"></i> Default
                   </td>
                   <td v-else class="p-5 text-blue-400 font-semibold">
@@ -247,7 +256,7 @@ const actionBuilder = (address: MemberAddressType) => {
     },
   ];
 
-  if (address.id !== defaultShippingAddress.value.id) {
+  if (defaultShippingAddress.value && address.id !== defaultShippingAddress.value.id) {
     result.push({
       icon: "fas fa-check",
       title: "Make default",
