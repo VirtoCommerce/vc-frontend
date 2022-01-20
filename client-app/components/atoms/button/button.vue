@@ -4,14 +4,7 @@
     v-bind="$attrs"
     :to="to"
     class="h-11 rounded flex justify-center items-center uppercase font-roboto-condensed cursor-pointer"
-    :class="{
-      'bg-yellow-500 text-white hover:bg-yellow-600 ': kind == 'primary' && !outline,
-      'border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:text-white hover:border-yellow-600':
-        kind == 'primary' && outline,
-      'bg-black text-white hover:bg-yellow-600': kind == 'secondary' && !outline,
-      'bg-white border-black hover:bg-yellow-600 hover:text-white hover:border-yellow-600':
-        kind == 'secondary' && outline,
-    }"
+    :class="linkClass"
   >
     <slot></slot>
   </router-link>
@@ -20,20 +13,7 @@
     v-bind="$attrs"
     :type="isSubmit ? 'submit' : 'button'"
     class="h-11 rounded flex justify-center items-center uppercase font-roboto-condensed cursor-pointer"
-    :class="{
-      'bg-yellow-500 text-white hover:bg-yellow-600 ': kind == 'primary' && !outline && isEnabled,
-      'border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:text-white hover:border-yellow-600':
-        kind == 'primary' && outline && isEnabled,
-      'bg-black text-white hover:bg-yellow-600': kind == 'secondary' && !outline && isEnabled,
-      'bg-white border-black hover:bg-yellow-600 hover:text-white hover:border-yellow-600':
-        kind == 'secondary' && outline && isEnabled,
-      'bg-yellow-500 text-white': kind == 'primary' && !outline && !isEnabled,
-      'border-yellow-500 text-yellow-500': kind == 'primary' && outline && !isEnabled,
-      'bg-black text-white': kind == 'secondary' && !outline && !isEnabled,
-      'bg-white border-black': kind == 'secondary' && outline && !isEnabled,
-      'cursor-wait': waiting,
-      'cursor-not-allowed': disabled,
-    }"
+    :class="buttonClass"
     :disabled="!isEnabled"
     @click="$emit('click')"
   >
@@ -88,4 +68,32 @@ const props = defineProps({
 const emit = defineEmits(["click"]);
 
 const isEnabled = computed(() => !props.disabled && !props.waiting);
+
+const linkClass = computed(() => {
+  return {
+    "bg-yellow-500 text-white hover:bg-yellow-600 ": props.kind == "primary" && !props.outline,
+    "border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:text-white hover:border-yellow-600":
+      props.kind == "primary" && props.outline,
+    "bg-black text-white hover:bg-yellow-600": props.kind == "secondary" && !props.outline,
+    "bg-white border-black hover:bg-yellow-600 hover:text-white hover:border-yellow-600":
+      props.kind == "secondary" && props.outline,
+  };
+});
+
+const buttonClass = computed(() => {
+  return {
+    "bg-yellow-500 text-white hover:bg-yellow-600 ": props.kind == "primary" && !props.outline && isEnabled,
+    "border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:text-white hover:border-yellow-600":
+      props.kind == "primary" && props.outline && isEnabled,
+    "bg-black text-white hover:bg-yellow-600": props.kind == "secondary" && !props.outline && isEnabled,
+    "bg-white border-black hover:bg-yellow-600 hover:text-white hover:border-yellow-600":
+      props.kind == "secondary" && props.outline && isEnabled,
+    "bg-yellow-500 text-white": props.kind == "primary" && !props.outline && !isEnabled.value,
+    "border-yellow-500 text-yellow-500": props.kind == "primary" && props.outline && !isEnabled.value,
+    "bg-black text-white": props.kind == "secondary" && !props.outline && !isEnabled.value,
+    "bg-white border-black": props.kind == "secondary" && props.outline && !isEnabled.value,
+    "cursor-wait": props.waiting,
+    "cursor-not-allowed": props.disabled,
+  };
+});
 </script>
