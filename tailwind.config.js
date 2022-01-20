@@ -36,6 +36,8 @@ module.exports = {
       backgroundColor: ["checked"],
       borderColor: ["checked"],
       cursor: ["disabled"],
+      margin: ['first', 'last'],
+      padding: ['first', 'last'],
       ringWidth: ['hover', 'active'],
       ringColor: ['hover', 'active'],
     },
