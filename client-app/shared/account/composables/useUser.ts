@@ -23,6 +23,7 @@ const me: Ref<UserType> = ref({
 const addresses: Ref<MemberAddressType[]> = ref([]);
 const defaultShippingAddress: Ref<MemberAddressType> = ref({
   postalCode: "",
+  isDefault: false,
 });
 
 const loading: Ref<boolean> = ref(false);
