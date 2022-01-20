@@ -1,22 +1,16 @@
 <template>
-  <Popup
-    :is-open="isOpen"
-    :variant="variant"
-    :title="title"
-    @modal:close="$emit('modal:close')"
-    @modal:closed="$emit('modal:closed')"
-  >
+  <Popup :variant="variant" :title="title" @close="closePopup">
     <template #actions>
       <button
         class="uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-4 h-9 font-roboto-condensed text-base font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white rounded focus:outline-none"
-        @click="$emit('modal:close')"
+        @click="closePopup"
       >
         Continue shopping
       </button>
       <router-link
         to="/checkout"
         class="uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-4 h-9 font-roboto-condensed text-base font-bold rounded bg-yellow-500 text-white hover:bg-yellow-600 focus:outline-none"
-        @click="$emit('modal:close')"
+        @click="closePopup"
         >View cart</router-link
       >
     </template>
@@ -78,6 +72,7 @@
 import { computed, PropType } from "vue";
 import { LineItemType } from "@/core/api/graphql/types";
 import { Popup } from "@/components";
+import { usePopup } from "@/shared/popup";
 
 const props = defineProps({
   isOpen: {
@@ -91,10 +86,12 @@ const props = defineProps({
   },
 });
 
-defineEmits(["modal:close", "modal:closed"]);
+defineEmits(["close"]);
 
-const variant = computed(() => (props.lineItem?.quantity === 0 ? "warn" : "success"));
+const { closePopup } = usePopup();
+
+const variant = computed(() => (props.lineItem.quantity === 0 ? "warn" : "success"));
 const title = computed(() =>
-  props.lineItem?.quantity === 0 ? "1 Product removed from cart" : "1 Product added to cart"
+  props.lineItem.quantity === 0 ? "1 Product removed from cart" : "1 Product added to cart"
 );
 </script>

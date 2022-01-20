@@ -16,9 +16,11 @@ import { getAvailShippingMethods } from "@core/api/graphql/cart";
 import { onMounted, ref } from "vue";
 
 const methods = ref<ShippingMethodType[]>([]);
+const loading = ref(true);
 
 onMounted(async () => {
   const result = await getAvailShippingMethods();
   methods.value = result;
+  loading.value = false;
 });
 </script>

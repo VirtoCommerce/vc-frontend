@@ -4,7 +4,7 @@
     v-for="(popup, i) in popupStack"
     :key="i"
     v-bind="popup.props"
-    @close="closePopup(i)"
+    @close="closePopup"
   ></component>
 </template>
 

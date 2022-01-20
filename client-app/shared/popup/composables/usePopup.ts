@@ -15,9 +15,9 @@ export default function usePopup() {
       });
     },
 
-    closePopup(i: number) {
-      console.log(`Close popup #${i}`);
-      stack.value.splice(i, 1);
+    closePopup() {
+      console.log(`Close popup`);
+      stack.value.pop();
     },
   };
 }

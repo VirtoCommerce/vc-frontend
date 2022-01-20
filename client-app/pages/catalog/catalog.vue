@@ -224,13 +224,6 @@
       </div>
     </div>
   </div>
-
-  <CartAddInfo
-    :is-open="isCartAddInfoOpen"
-    :line-item="cartAddInfoLineItem"
-    @modal:close="isCartAddInfoOpen = false"
-    @modal:closed="cartAddInfoLineItem = {}"
-  ></CartAddInfo>
 </template>
 
 <script setup lang="ts">
@@ -257,12 +250,14 @@ import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from "@headless
 import { useRoute } from "vue-router";
 import _ from "lodash";
 import { LineItemType } from "@/core/api/graphql/types";
+import { usePopup } from "@/shared/popup";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
 const route = useRoute();
 const params = useUrlSearchParams("history");
+const { openPopup } = usePopup();
 
 const { products, total, loading, fetchProducts, pages } = useProducts();
 const { categoryTree, loadCategoriesTree } = useCategories();
@@ -400,15 +395,16 @@ watch(isMobile, async () => {
   }
 });
 
-const isCartAddInfoOpen = ref(false);
-const cartAddInfoLineItem = ref();
-
 /**
  * Handle AddToCart event.
  */
 const onAddToCart = (lineItem?: LineItemType) => {
-  cartAddInfoLineItem.value = { ...(lineItem ?? {}) };
-  isCartAddInfoOpen.value = true;
+  openPopup({
+    component: CartAddInfo,
+    props: {
+      lineItem: { ...(lineItem ?? {}) },
+    },
+  });
 };
 </script>
 
