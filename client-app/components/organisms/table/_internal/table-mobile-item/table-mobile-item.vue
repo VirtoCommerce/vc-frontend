@@ -41,7 +41,7 @@ const props = defineProps({
   },
 
   actionBuilder: {
-    type: Function as PropType<(obj: unknown) => ItemAction[]>,
+    type: Function as PropType<(obj: any) => ItemAction[]>,
     default: undefined,
   },
 });
