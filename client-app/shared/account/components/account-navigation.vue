@@ -1,9 +1,9 @@
 <template>
   <Card title="My account">
     <div class="flex flex-col">
-      <AccountNavigationLink to="/dashboard" text="Dashboard" class="dashboard-icon"></AccountNavigationLink>
+      <AccountNavigationLink to="/account/dashboard" text="Dashboard" class="dashboard-icon"></AccountNavigationLink>
       <AccountNavigationLink to="/profile" text="Profile" class="profile-icon"></AccountNavigationLink>
-      <AccountNavigationLink to="/addresses" text="Addresses" class="addresses-icon"></AccountNavigationLink>
+      <AccountNavigationLink to="/account/addresses" text="Addresses" class="addresses-icon"></AccountNavigationLink>
       <AccountNavigationLink to="/orders" text="Orders" class="orders-icon"></AccountNavigationLink>
       <AccountNavigationLink to="/list" text="Your List" class="list-icon"></AccountNavigationLink>
       <AccountNavigationLink
