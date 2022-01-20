@@ -69,7 +69,7 @@ import { ItemAction } from "../../../../types";
 
 defineProps({
   itemActions: {
-    type: Object as PropType<ItemAction[]>,
+    type: Array as PropType<ItemAction[]>,
     required: true,
   },
   item: {

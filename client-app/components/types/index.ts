@@ -9,7 +9,7 @@ export interface ItemAction {
   icon: string;
   title: string;
   bgColor: string;
-  position: string;
+  position: "left" | "right";
   clickHandler(item: any): any;
 }
 

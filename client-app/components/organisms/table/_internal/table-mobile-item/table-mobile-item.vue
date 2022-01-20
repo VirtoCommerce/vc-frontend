@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 import TableMobileActions from "../table-mobile-actions/table-mobile-actions.vue";
-import { computed, Ref, ref } from "vue";
+import { computed, PropType, Ref, ref } from "vue";
 import { ItemAction } from "../../../../types";
 
 const props = defineProps({
@@ -41,7 +41,7 @@ const props = defineProps({
   },
 
   actionBuilder: {
-    type: Function,
+    type: Function as PropType<(obj: unknown) => ItemAction[]>,
     default: undefined,
   },
 });

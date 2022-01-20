@@ -273,8 +273,7 @@ const actionBuilder = (address: MemberAddressType) => {
 };
 
 const setDefaultAddress = async (address: MemberAddressType) => {
-  console.log(address);
-  // await updateDefaultAddress(address);
+  //TODO: will be implemented in the separate story
 };
 
 const applySorting = async (column: string): Promise<void> => {
@@ -296,7 +295,6 @@ const removeAddress = async (address: MemberAddressType) => {
 
     if (address.id === defaultShippingAddress.value.id && updatedAddresses.length > 0) {
       //todo: set the first item in updatedAddresses to default one
-      //await updateDefaultAddress(updatedAddresses[0]);
     }
 
     const sortingExpression = getSortingExpression(sort.value);
