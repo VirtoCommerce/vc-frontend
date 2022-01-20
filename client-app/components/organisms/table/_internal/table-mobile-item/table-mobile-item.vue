@@ -52,7 +52,7 @@ const startY = ref(0);
 const startOffsetX = ref(0);
 const isMoving = ref(false);
 const threshold = 10;
-const maxWidth = 160;
+const maxWidth = 0;
 const itemActions: Ref<ItemAction[]> = ref([]);
 const itemActionsLeft = computed(() => itemActions.value.filter((item) => item.position === "left"));
 const itemActionsRight = computed(() => itemActions.value.filter((item) => item.position === "right"));

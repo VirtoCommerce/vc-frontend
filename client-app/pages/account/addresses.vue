@@ -26,6 +26,7 @@
                   :key="address.id!"
                   :action-builder="actionBuilder"
                   :item="address"
+                  class="overflow-auto"
                 >
                   <div
                     class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200"
