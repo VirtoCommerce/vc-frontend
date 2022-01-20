@@ -64,8 +64,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ItemAction } from "@/components/types";
 import { PropType, ref } from "vue";
+import { ItemAction } from "../../../../types";
 
 defineProps({
   itemActions: {
