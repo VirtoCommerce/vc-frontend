@@ -1,13 +1,27 @@
-import { Ref, ref, computed, watch } from "vue";
+import { Ref, ref, computed, watch, shallowRef } from "vue";
 import { searchProducts, searchRelatedProducts, getProduct } from "@core/api/graphql/catalog";
-import { Product } from "@core/api/graphql/types";
+import { FacetRangeType, Product, RangeFacet, TermFacet } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 import { ProductsSearchParams } from "../types";
 import { useCart } from "@/shared/cart";
 import _ from "lodash";
 
+const regexpForRangeFacetValue = /^[[(](\d\.?\d* )?TO( \d\.?\d*)?[\])]$/; // examples: (TO 100] or [1 TO 20] or [10 TO)
+
+function getFilterValueFromRangeFacet(facetRange: FacetRangeType): string {
+  const { from, to } = facetRange;
+
+  const firstCondition = from ? `[${from} ` : "(";
+  const lastCondition = to ? ` ${to}]` : ")";
+
+  return `${firstCondition}TO${lastCondition}`;
+}
+
 export default () => {
   const products: Ref<Product[]> = ref([]);
+  const termFacets: Ref<TermFacet[]> = shallowRef([]);
+  const rangeFacets: Ref<RangeFacet[]> = shallowRef([]);
+  const selectedFacets: Ref<Record<string, string[]>> = ref({});
   const relatedProducts: Ref<Product[]> = ref([]);
   const product: Ref<Product> = ref({ code: "", id: "", name: "", price: {} });
   const total: Ref<number> = ref(0);
@@ -17,6 +31,29 @@ export default () => {
   const variationsCartTotal = ref(0);
 
   const { loading: cartLoading, getItemsTotal } = useCart();
+
+  /**
+   * Learn more about filter syntax:
+   * https://github.com/VirtoCommerce/vc-module-experience-api/blob/master/docs/filter-syntax.md#filters
+   * https://github.com/VirtoCommerce/vc-module-experience-api/blob/master/docs/x-catalog-reference.md#filter-by-price
+   */
+  const filterStringFromSelectedFacets = computed<string>(() => {
+    const result: string[] = [];
+
+    for (const facetName in selectedFacets.value) {
+      const selectedValues: string[] = selectedFacets.value[facetName];
+
+      if (!selectedValues.length) continue;
+
+      const conditions = regexpForRangeFacetValue.test(selectedValues[0])
+        ? `${selectedValues.join(",")}` // Ranges
+        : `"${selectedValues.join('","')}"`; // Terms
+
+      result.push(`"${facetName}":${conditions}`);
+    }
+
+    return result.join(" ");
+  });
 
   async function fetchRelatedProducts(id: string) {
     loading.value = true;
@@ -46,8 +83,11 @@ export default () => {
   async function fetchProducts(searchParams: ProductsSearchParams) {
     loading.value = true;
     try {
-      const { items = [], totalCount = 0 } = await searchProducts(searchParams);
+      const { items = [], term_facets = [], range_facets = [], totalCount = 0 } = await searchProducts(searchParams);
+
       products.value = items;
+      termFacets.value = term_facets;
+      rangeFacets.value = range_facets;
       //normalize prices
 
       total.value = totalCount;
@@ -78,11 +118,16 @@ export default () => {
   );
 
   return {
+    selectedFacets,
+    filterStringFromSelectedFacets,
+    getFilterValueFromRangeFacet,
     fetchProducts,
     loadProduct,
     fetchRelatedProducts,
     relatedProducts: computed(() => relatedProducts.value),
     products: computed(() => products.value),
+    termFacets: computed(() => termFacets.value),
+    rangeFacets: computed(() => rangeFacets.value),
     product: computed(() => product.value),
     total: computed(() => total.value),
     pages: computed(() => pages.value),

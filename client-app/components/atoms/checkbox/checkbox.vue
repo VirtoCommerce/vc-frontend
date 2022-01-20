@@ -1,5 +1,5 @@
 <template>
-  <label class="flex items-center select-none">
+  <label class="flex items-center select-none" :class="disabled ? 'cursor-not-allowed' : 'cursor-pointer'">
     <input
       type="checkbox"
       :name="name"

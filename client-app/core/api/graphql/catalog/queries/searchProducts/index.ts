@@ -7,12 +7,17 @@ import { ProductsSearchParams } from "@/shared/catalog";
 export default async function searchProducts({
   itemsPerPage = 20,
   page = 1,
-  categoryId = "",
+  categoryId,
+  filter,
   sort,
   query,
   fuzzy,
   fuzzyLevel,
 }: ProductsSearchParams): Promise<ProductConnection> {
+  const filterString = [categoryId ? `category.subtree:${catalogId}/${categoryId}` : "", filter]
+    .filter(Boolean)
+    .join(" ");
+
   const { data } = await client.query<Required<Pick<Query, "products">>, QueryProductsArgs>({
     query: searchProductsQueryDocument,
     variables: {
@@ -23,7 +28,7 @@ export default async function searchProducts({
       fuzzyLevel,
       userId: currentUserId,
       currencyCode: currencyCode,
-      filter: categoryId ? `category.subtree:${catalogId}/${categoryId}` : "",
+      filter: filterString,
       cultureName: locale,
       first: itemsPerPage,
       after: String((page - 1) * itemsPerPage),

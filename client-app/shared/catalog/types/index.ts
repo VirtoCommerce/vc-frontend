@@ -16,6 +16,7 @@ export type ProductsSearchParams = {
   page?: number;
   itemsPerPage?: number;
   sort?: string;
+  filter?: string;
   fuzzy?: boolean;
   fuzzyLevel?: number;
 };
