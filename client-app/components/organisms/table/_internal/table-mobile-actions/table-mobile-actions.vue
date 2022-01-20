@@ -175,18 +175,6 @@ const isActionsPopupVisible = ref(false);
       font-size: 14px;
       text-align: center;
     }
-
-    &_primary {
-      background-color: #f0ad4e;
-    }
-
-    &_danger {
-      background-color: #ff4a4a;
-    }
-
-    &_grey {
-      background-color: #a3afcd;
-    }
   }
 }
 </style>
