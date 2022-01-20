@@ -30,9 +30,9 @@
 </template>
 
 <script setup lang="ts">
-import { TableMobileActions } from "@/components";
-import { ItemAction } from "@/components/types";
+import TableMobileActions from "../table-mobile-actions/table-mobile-actions.vue";
 import { computed, Ref, ref } from "vue";
+import { ItemAction } from "../../../../types";
 
 const props = defineProps({
   item: {
