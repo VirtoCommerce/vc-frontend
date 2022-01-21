@@ -1,10 +1,11 @@
 import { Ref, ref, computed } from "vue";
-import { getMe, updatePersonalData } from "@/core/api/graphql/account";
-import { UserType, IdentityResultType } from "@core/api/graphql/types";
+import { getMe, getMyAddresses, updateMemberAddresses, updatePersonalData } from "@/core/api/graphql/account";
+import { UserType, IdentityResultType, MemberAddressType, InputMemberAddressType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 import { SignMeUp, SignMeIn, ForgotPassword, ValidateToken, ResetPassword } from "@/shared/account";
 import useFetch from "@/core/composables/useFetch";
 import { setUserId } from "@/core/constants";
+import getDefaultShippingAddress from "@/core/api/graphql/account/queries/getDefaultShippingAddress";
 
 const me: Ref<UserType> = ref({
   userName: "",
@@ -17,6 +18,12 @@ const me: Ref<UserType> = ref({
   emailConfirmed: false,
   isAdministrator: false,
   lockoutEnabled: false,
+});
+
+const addresses: Ref<MemberAddressType[]> = ref([]);
+const defaultShippingAddress: Ref<MemberAddressType> = ref({
+  postalCode: "",
+  isDefault: false,
 });
 
 const loading: Ref<boolean> = ref(false);
@@ -35,6 +42,34 @@ export default () => {
     } finally {
       loading.value = false;
     }
+  }
+
+  async function loadAddresses(sort: string) {
+    loading.value = true;
+
+    try {
+      addresses.value = await getMyAddresses(sort);
+      defaultShippingAddress.value = await getDefaultShippingAddress();
+    } catch (e) {
+      Logger.error("useUser.loadAddresses", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function deleteAddress(addresses: MemberAddressType[], sort: string) {
+    loading.value = true;
+
+    try {
+      await updateMemberAddresses(addresses);
+    } catch (e) {
+      Logger.error("useUser.deleteAddresses", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+    await loadAddresses(sort);
   }
 
   async function updateUser(user: UserType): Promise<IdentityResultType> {
@@ -164,6 +199,8 @@ export default () => {
 
   return {
     me: computed(() => me.value),
+    addresses: computed(() => addresses.value),
+    defaultShippingAddress: computed(() => defaultShippingAddress.value),
     loading: computed(() => loading.value),
     isAuthenticated: computed(() => me.value && me.value.userName && me.value.userName !== "Anonymous"),
     updateUser,
@@ -172,6 +209,8 @@ export default () => {
     signMeIn,
     signMeUp,
     signMeOut,
+    loadAddresses,
+    deleteAddress,
     forgotPassword,
     validateToken,
     resetPassword,

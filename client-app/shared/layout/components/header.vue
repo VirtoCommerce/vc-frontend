@@ -5,7 +5,7 @@
     <div class="h-12 px-12 flex items-center justify-end bg-gray-900 font-bold text-sm text-white">
       <!-- Authorized menu items -->
       <div v-if="isAuthenticated" class="flex items-center">
-        <router-link class="text-blue-400 hover:text-blue-500" to="/dashboard">Dashboard</router-link>
+        <router-link class="text-blue-400 hover:text-blue-500" to="/account/dashboard">Dashboard</router-link>
         <div class="mx-3 h-1 w-1 bg-yellow-500 rounded"></div>
         <router-link class="text-blue-400 hover:text-blue-500" to="/404">Order History</router-link>
         <div class="mx-3 h-1 w-1 bg-yellow-500 rounded"></div>
@@ -231,13 +231,19 @@
             ></i>
           </div>
           <div v-if="myAccountMobileVisible" class="flex flex-col px-5 py-2 space-y-3 mt-2">
-            <router-link to="/dashboard" class="font-bold text-gray-200 text-lg" @click="mobileMenuVisible = false"
+            <router-link
+              to="/account/dashboard"
+              class="font-bold text-gray-200 text-lg"
+              @click="mobileMenuVisible = false"
               >Dashboard</router-link
             >
             <router-link to="/profile" class="font-bold text-gray-200 text-lg" @click="mobileMenuVisible = false"
               >Profile</router-link
             >
-            <router-link to="/addresses" class="font-bold text-gray-200 text-lg" @click="mobileMenuVisible = false"
+            <router-link
+              to="/account/addresses"
+              class="font-bold text-gray-200 text-lg"
+              @click="mobileMenuVisible = false"
               >Addresses</router-link
             >
             <router-link to="/orders" class="font-bold text-gray-200 text-lg" @click="mobileMenuVisible = false"
