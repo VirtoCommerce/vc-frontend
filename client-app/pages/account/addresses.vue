@@ -198,7 +198,6 @@
               :pages="pages"
               class="self-start"
               :class="[isMobile ? 'px-6 py-10' : 'pb-5 px-5 mt-5']"
-              @update:page="page = $event"
             ></Pagination>
           </div>
         </div>
