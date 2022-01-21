@@ -1,16 +1,16 @@
 <template>
-  <Popup :variant="variant" :title="title" @close="closePopup">
-    <template #actions>
+  <Popup :variant="variant" :title="title">
+    <template #actions="{ close }">
       <button
         class="uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-4 h-9 font-roboto-condensed text-base font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white rounded focus:outline-none"
-        @click="closePopup"
+        @click="close"
       >
         Continue shopping
       </button>
       <router-link
         to="/checkout"
         class="uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-4 h-9 font-roboto-condensed text-base font-bold rounded bg-yellow-500 text-white hover:bg-yellow-600 focus:outline-none"
-        @click="closePopup"
+        @click="close"
         >View cart</router-link
       >
     </template>
@@ -85,10 +85,6 @@ const props = defineProps({
     required: true,
   },
 });
-
-defineEmits(["close"]);
-
-const { closePopup } = usePopup();
 
 const variant = computed(() => (props.lineItem.quantity === 0 ? "warn" : "success"));
 const title = computed(() =>

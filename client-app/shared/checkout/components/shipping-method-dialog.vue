@@ -3,7 +3,7 @@
     <template v-for="method in methods" :key="method.id">
       <div class="border-b border-gray-300 px-5 py-3 flex justify-between items-center space-x-4">
         <img :src="method.logoUrl || '/static/images/checkout/shipping.svg'" class="h-10 w-10 object-center" />
-        <span class="flex-grow">{{ method.optionName }}</span>
+        <span class="flex-grow">{{ method.optionName }} ({{ method.price?.formattedAmount }})</span>
       </div>
     </template>
   </Popup>
