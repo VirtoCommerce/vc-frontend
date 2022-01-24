@@ -42,8 +42,8 @@
                       <i class="fas fa-check text-white mr-2"></i>
                     </div>
                     <div class="flex flex-col">
-                      <span class="text-sm text-gray-400">Company name</span>
-                      <span class="font-extrabold">{{ address.organization }}</span>
+                      <span class="text-sm text-gray-400"> Recipient's name </span>
+                      <span class="font-extrabold">{{ address.firstName }} {{ address.lastName }}</span>
                     </div>
                     <div class="flex flex-col">
                       <span class="text-sm text-gray-400">Address</span>
