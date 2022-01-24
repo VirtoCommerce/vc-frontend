@@ -15,13 +15,14 @@
               {{ isMobile ? "Add new" : "Add new address" }}
             </VcButton>
           </div>
+
           <div class="flex flex-col bg-white shadow-sm" :class="{ 'rounded border': !isMobile }">
             <!-- Mobile table view -->
             <template v-if="isMobile">
               <div v-if="addresses && addresses.length > 0">
                 <TableMobileItem
                   v-for="address in paginatedAddresses"
-                  :key="address.id!"
+                  :key="address.id"
                   :action-builder="actionBuilder"
                   :item="address"
                   class="overflow-auto"
@@ -121,7 +122,7 @@
               <tbody v-if="addresses && addresses.length > 0">
                 <tr
                   v-for="(address, index) in paginatedAddresses"
-                  :key="address.id!"
+                  :key="address.id"
                   :class="{ 'bg-gray-50': index % 2 }"
                 >
                   <td class="p-5">{{ address.firstName }} {{ address.lastName }}</td>
@@ -206,27 +207,26 @@ import { MemberAddressType } from "@/core/api/graphql/types";
 import { sortAscending, sortDescending } from "@/core/constants";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
-const { loadAddresses, addresses, deleteAddress, defaultShippingAddress } = useUser();
-
 const breakpoints = useBreakpoints(breakpointsTailwind);
+const { loadAddresses, addresses, deleteAddress, defaultShippingAddress } = useUser();
 const isMobile = breakpoints.smaller("md");
-
 const page = ref(1);
 const itemsPerPage = ref(6);
-const pages = computed(() => Math.ceil(addresses.value.length / itemsPerPage.value));
-const paginatedAddresses = computed(() =>
-  addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
-);
 const sort: Ref<ISortInfo> = ref({
   column: "lastName",
   direction: sortAscending,
 });
 
-onMounted(async () => {
-  await loadItems();
-});
+const pages = computed(() => Math.ceil(addresses.value.length / itemsPerPage.value));
+const paginatedAddresses = computed(() =>
+  addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
+);
 
-const actionBuilder = (address: MemberAddressType) => {
+function getSortingExpression(sort: ISortInfo): string {
+  return `${sort.column}:${sort.direction}`;
+}
+
+function actionBuilder(address: MemberAddressType) {
   let result = [
     {
       icon: "fas fa-pencil-alt",
@@ -261,13 +261,13 @@ const actionBuilder = (address: MemberAddressType) => {
   }
 
   return result;
-};
+}
 
-const setDefaultAddress = async (address: MemberAddressType) => {
+async function setDefaultAddress(address: MemberAddressType) {
   //TODO: will be implemented in the separate story
-};
+}
 
-const applySorting = async (column: string): Promise<void> => {
+async function applySorting(column: string): Promise<void> {
   if (sort.value.column === column) {
     sort.value.direction = sort.value.direction === sortDescending ? sortAscending : sortDescending;
   } else {
@@ -276,9 +276,9 @@ const applySorting = async (column: string): Promise<void> => {
   }
 
   await loadItems();
-};
+}
 
-const removeAddress = async (address: MemberAddressType) => {
+async function removeAddress(address: MemberAddressType) {
   const result = window.confirm("Are you sure you want do delete this address?");
 
   if (result) {
@@ -291,17 +291,18 @@ const removeAddress = async (address: MemberAddressType) => {
     const sortingExpression = getSortingExpression(sort.value);
     await deleteAddress(updatedAddresses, sortingExpression);
   }
-};
+}
 
 async function loadItems(): Promise<void> {
   const sortingExpression = getSortingExpression(sort.value);
   await loadAddresses(sortingExpression);
 }
 
-function getSortingExpression(sort: ISortInfo): string {
-  return `${sort.column}:${sort.direction}`;
-}
+onMounted(async () => {
+  await loadItems();
+});
 </script>
+
 <style scoped>
 .mobile-default-badge::before {
   /* we need this to create the pseudo-element */
