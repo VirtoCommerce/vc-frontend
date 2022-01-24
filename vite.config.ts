@@ -1,17 +1,17 @@
-import { ConfigEnv, defineConfig, loadEnv, UserConfigExport } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import path from "path";
 import vue from "@vitejs/plugin-vue";
 import graphqlPlugin from "@rollup/plugin-graphql";
 
 // https://vitejs.dev/config/
-export default async ({ mode }: ConfigEnv): Promise<UserConfigExport> => {
+export default defineConfig(({ mode }) => {
   // https://stackoverflow.com/a/66389044
   process.env = {
     ...process.env,
     ...loadEnv(mode, process.cwd(), "APP_"),
   };
 
-  return defineConfig({
+  return {
     envPrefix: "APP_",
     plugins: [vue(), graphqlPlugin()],
     resolve: {
@@ -37,5 +37,5 @@ export default async ({ mode }: ConfigEnv): Promise<UserConfigExport> => {
         "/xapi": `${process.env.APP_BACKEND_URL}`,
       },
     },
-  });
-};
+  };
+});
