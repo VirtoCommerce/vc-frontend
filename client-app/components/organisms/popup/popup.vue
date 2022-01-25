@@ -27,8 +27,7 @@
             leave-to="opacity-0 scale-95"
           >
             <div
-              class="inline-block w-full my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-md"
-              :class="`max-w-${maxWidth}`"
+              class="inline-block w-full max-w-2xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-md"
             >
               <!-- Title bar -->
               <DialogTitle
@@ -82,11 +81,6 @@ const props = defineProps({
   loading: {
     type: Boolean,
     default: false,
-  },
-
-  maxWidth: {
-    type: String,
-    default: "2xl",
   },
 
   isPersistent: {

@@ -1,5 +1,5 @@
 <template>
-  <Popup variant="success" title="Registration" is-persistent max-width="lg">
+  <Popup variant="success" title="Registration" is-persistent>
     <template #actions="{ close }">
       <router-link
         to="/"
