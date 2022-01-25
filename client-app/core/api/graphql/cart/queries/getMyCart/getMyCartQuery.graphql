@@ -92,6 +92,7 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
       code
       logoUrl
       optionName
+      optionDescription
       price {
         ...moneyFields
       }
