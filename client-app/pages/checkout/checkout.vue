@@ -185,6 +185,7 @@ import { useCart, useCheckout } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import { computed, onBeforeUpdate, onMounted, ref } from "vue";
 import _ from "lodash";
+import { PaymentMethodType, ShippingMethodType } from "@/core/api/graphql/types";
 
 const {
   cart,
@@ -291,14 +292,24 @@ onMounted(async () => {
 function showShipmentMethodDialog(): void {
   openPopup({
     component: ShippingMethodDialog,
-    props: {},
+    props: {
+      currentMethod: undefined,
+      onResult(method: ShippingMethodType) {
+        console.dir(method);
+      },
+    },
   });
 }
 
 function showPaymentMethodDialog(): void {
   openPopup({
     component: PaymentMethodDialog,
-    props: {},
+    props: {
+      currentMethod: undefined,
+      onResult(method: PaymentMethodType) {
+        console.dir(method);
+      },
+    },
   });
 }
 </script>
