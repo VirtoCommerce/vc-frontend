@@ -75,15 +75,15 @@
 
 <script setup lang="ts">
 import { Alert, Input as VcInput } from "@/components";
-import { useUser } from "@/shared/account";
-import { useRouter } from "vue-router";
+import { useUser, RegistationSuccessDialog } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import { ref } from "vue";
+import { usePopup } from "@/shared/popup";
 
 const { signMeUp } = useUser();
-const router = useRouter();
+const { openPopup } = usePopup();
 
 const schema = yup.object({
   email: yup.string().label("Email").required().email("Enter correct email please (ex. john@gmail.com)").max(64),
@@ -132,7 +132,9 @@ const onSubmit = handleSubmit(async (data) => {
   });
 
   if (result.succeeded) {
-    router.push({ name: "Home" });
+    openPopup({
+      component: RegistationSuccessDialog,
+    });
   } else {
     if (result.errors?.length) {
       for (let i = 0; i < result.errors?.length; i++) {
