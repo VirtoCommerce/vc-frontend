@@ -48,9 +48,11 @@
 <script setup lang="ts">
 import { Product, VariationType } from "@/core/api/graphql/types";
 import { useCart } from "@/shared/cart";
+import { usePopup } from "@/shared/popup";
 import { useField } from "vee-validate";
 import { computed, PropType, ref } from "vue";
 import * as yup from "yup";
+import { CartAddInfo } from ".";
 
 // Define max qty available to add
 const max = 999999;
@@ -72,6 +74,7 @@ const maxQty = Math.min(
 const emit = defineEmits(["update:lineitem"]);
 
 const { addToCart, itemInCart, changeItemQuantity } = useCart();
+const { openPopup } = usePopup();
 
 const disabled = computed(
   () =>
@@ -115,6 +118,13 @@ const onChange = async () => {
       }
       lineItem.value = itemInCart(props.product.id!);
       emit("update:lineitem", lineItem.value);
+
+      openPopup({
+        component: CartAddInfo,
+        props: {
+          lineItem: { ...(lineItem.value ?? {}) },
+        },
+      });
     } finally {
       updating.value = false;
     }

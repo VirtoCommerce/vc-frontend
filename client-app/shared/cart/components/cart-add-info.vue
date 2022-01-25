@@ -72,7 +72,6 @@
 import { computed, PropType } from "vue";
 import { LineItemType } from "@/core/api/graphql/types";
 import { Popup } from "@/components";
-import { usePopup } from "@/shared/popup";
 
 const props = defineProps({
   isOpen: {

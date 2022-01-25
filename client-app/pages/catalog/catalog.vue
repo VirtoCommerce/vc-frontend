@@ -170,7 +170,7 @@
                     >
                       Choose
                     </router-link>
-                    <AddToCart v-else :product="item" @update:lineitem="onAddToCart"></AddToCart>
+                    <AddToCart v-else :product="item"></AddToCart>
                   </template>
                 </ProductCardGrid>
               </template>
@@ -192,7 +192,7 @@
                     >
                       Choose
                     </router-link>
-                    <AddToCart v-else :product="item" @update:lineitem="onAddToCart"></AddToCart>
+                    <AddToCart v-else :product="item"></AddToCart>
                   </template>
                 </ProductCardList>
               </template>
@@ -245,19 +245,16 @@ import {
   IBreadcrumbsItem,
 } from "@/shared/catalog";
 import { Card } from "@/components";
-import { AddToCart, CartAddInfo } from "@/shared/cart";
+import { AddToCart } from "@/shared/cart";
 import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from "@headlessui/vue";
 import { useRoute } from "vue-router";
 import _ from "lodash";
-import { LineItemType } from "@/core/api/graphql/types";
-import { usePopup } from "@/shared/popup";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
 const route = useRoute();
 const params = useUrlSearchParams("history");
-const { openPopup } = usePopup();
 
 const { products, total, loading, fetchProducts, pages } = useProducts();
 const { categoryTree, loadCategoriesTree } = useCategories();
@@ -394,18 +391,6 @@ watch(isMobile, async () => {
     }
   }
 });
-
-/**
- * Handle AddToCart event.
- */
-const onAddToCart = (lineItem?: LineItemType) => {
-  openPopup({
-    component: CartAddInfo,
-    props: {
-      lineItem: { ...(lineItem ?? {}) },
-    },
-  });
-};
 </script>
 
 <style scoped></style>
