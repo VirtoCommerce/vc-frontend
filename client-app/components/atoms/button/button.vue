@@ -69,23 +69,36 @@ const isEnabled = computed(() => !props.disabled && !props.waiting);
 
 const isLink = computed(() => !!props.to);
 
+const primaryEnabledClasses = "bg-yellow-500 text-white hover:bg-yellow-600";
+const primaryDisabledClasses = "bg-yellow-500 text-white";
+const primaryOutlineEnabledClasses =
+  "border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:text-white hover:border-yellow-600";
+const primaryOutlineDisabledClasses = "border-2 border-yellow-500 text-yellow-500";
+const secondaryEnabledClasses = "bg-black text-white hover:bg-yellow-600";
+const secondaryDisabledClasses = "bg-black text-white";
+const secondaryOutlineEnabledClasses = "border-2 g-white border-black hover:bg-black hover:text-white";
+const secondaryOutlineDisabledClasses = "border-2 bg-white border-black";
+const waitingStateClasses = "cursor-wait opacity-30";
+const disabledStateClasses = "cursor-not-allowed opacity-30";
+const smSizeClasses = "h-8 text-sm";
+const mdSizeClasses = "h-9 text-base";
+const lgSizeClasses = "h-11 text-lg";
+
 const buttonClass = computed(() => {
   return {
-    "bg-yellow-500 text-white hover:bg-yellow-600 ": props.kind == "primary" && !props.outline && isEnabled.value,
-    "border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:text-white hover:border-yellow-600":
-      props.kind == "primary" && props.outline && isEnabled.value,
-    "bg-black text-white hover:bg-yellow-600": props.kind == "secondary" && !props.outline && isEnabled.value,
-    "border-2 g-white border-black hover:bg-yellow-600 hover:text-white hover:border-yellow-600":
-      props.kind == "secondary" && props.outline && isEnabled.value,
-    "bg-yellow-500 text-white": props.kind == "primary" && !props.outline && !isEnabled.value,
-    "border-2 border-yellow-500 text-yellow-500": props.kind == "primary" && props.outline && !isEnabled.value,
-    "bg-black text-white": props.kind == "secondary" && !props.outline && !isEnabled.value,
-    "border-2 bg-white border-black": props.kind == "secondary" && props.outline && !isEnabled.value,
-    "cursor-wait opacity-30": props.waiting,
-    "cursor-not-allowed opacity-30": props.disabled,
-    "h-11 text-lg": props.size == "lg",
-    "h-9 text-base": props.size == "md",
-    "h-8 text-sm": props.size == "sm",
+    [primaryEnabledClasses]: props.kind == "primary" && !props.outline && isEnabled.value,
+    [primaryOutlineEnabledClasses]: props.kind == "primary" && props.outline && isEnabled.value,
+    [secondaryEnabledClasses]: props.kind == "secondary" && !props.outline && isEnabled.value,
+    [secondaryOutlineEnabledClasses]: props.kind == "secondary" && props.outline && isEnabled.value,
+    [primaryDisabledClasses]: props.kind == "primary" && !props.outline && !isEnabled.value,
+    [primaryOutlineDisabledClasses]: props.kind == "primary" && props.outline && !isEnabled.value,
+    [secondaryDisabledClasses]: props.kind == "secondary" && !props.outline && !isEnabled.value,
+    [secondaryOutlineDisabledClasses]: props.kind == "secondary" && props.outline && !isEnabled.value,
+    [waitingStateClasses]: props.waiting,
+    [disabledStateClasses]: props.disabled,
+    [smSizeClasses]: props.size == "sm",
+    [mdSizeClasses]: props.size == "md",
+    [lgSizeClasses]: props.size == "lg",
   };
 });
 </script>
