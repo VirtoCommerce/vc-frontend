@@ -82,7 +82,14 @@
   <div
     class="bg-gray-900 flex flex-col md:flex-row items-center justify-between h-16 text-white text-xs px-4 md:px-12 py-3"
   >
-    <div class="font-medium">© 2021 <span class="font-bold">VirtoCommerce</span>. All Rights Reserved.</div>
+    <div class="font-medium">
+      Ver. {{ version }}. © {{ new Date().getFullYear() }} <span class="font-bold">VirtoCommerce</span>. All Rights
+      Reserved.
+    </div>
     <div>ASP.NET ecommerce platform <a class="text-blue-400 hover:text-blue-500 font-bold" href="#">by Virto</a></div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { version } from "../../../../package.json";
+</script>
