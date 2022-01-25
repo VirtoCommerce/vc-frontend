@@ -17,8 +17,12 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
     shipments {
       id
       shipmentMethodCode
+      shipmentMethodOption
       deliveryAddress {
         ...cartAddressFields
+      }
+      price {
+        ...moneyFields
       }
     }
     discounts {
@@ -76,6 +80,26 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
         value
       }
       objectId
+    }
+
+    availablePaymentMethods {
+      code
+      name
+      logoUrl
+      price {
+        ...moneyFields
+      }
+    }
+
+    availableShippingMethods {
+      id
+      code
+      logoUrl
+      optionName
+      optionDescription
+      price {
+        ...moneyFields
+      }
     }
   }
 }

@@ -66,13 +66,20 @@
                 </CheckoutLabeledBlock>
                 <CheckoutLabeledBlock label="Shipping method">
                   <div class="flex flex-row items-center space-x-4">
-                    <img src="/assets/static/images/checkout/fedex.svg" class="h-12 w-12" />
-                    <span>Fedex - Express (20$)</span>
+                    <template v-if="cart.shipments?.[0]?.shipmentMethodCode">
+                      <img src="/assets/static/images/checkout/fedex.svg" class="h-12 w-12" />
+                      <span
+                        >{{ cart.shipments?.[0].shipmentMethodCode }} {{ cart.shipments?.[0].shipmentMethodOption }} ({{
+                          cart.shipments?.[0].price?.formattedAmount
+                        }})</span
+                      >
+                    </template>
+                    <div v-else class="text-gray-600">Not defined</div>
                   </div>
                   <div>
                     <button
                       class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 disabled:opacity-30"
-                      disabled
+                      @click="showShipmentMethodDialog"
                     >
                       Change
                     </button>
@@ -101,13 +108,16 @@
                 </CheckoutLabeledBlock>
                 <CheckoutLabeledBlock label="Payment method">
                   <div class="flex flex-row items-center space-x-4">
-                    <img src="/assets/static/images/checkout/invoice.svg" class="h-12 w-12" />
-                    <span>Invoice</span>
+                    <template v-if="cart.payments?.[0]?.paymentGatewayCode">
+                      <img src="/assets/static/images/checkout/invoice.svg" class="h-12 w-12" />
+                      <span>{{ cart.payments?.[0].paymentGatewayCode }}</span>
+                    </template>
+                    <div v-else class="text-gray-600">Not defined</div>
                   </div>
                   <div>
                     <button
                       class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 disabled:opacity-30"
-                      disabled
+                      @click="showPaymentMethodDialog"
                     >
                       Change
                     </button>
@@ -177,12 +187,15 @@ import {
   PromoCode,
   EmptyCart,
   ThankYou,
+  ShippingMethodDialog,
+  PaymentMethodDialog,
 } from "@/shared/checkout";
 import { TextArea } from "@/components";
-import { useCart } from "@/shared/cart";
+import { useCart, useCheckout } from "@/shared/cart";
+import { usePopup } from "@/shared/popup";
 import { computed, onBeforeUpdate, onMounted, ref } from "vue";
-import useCheckout from "@/shared/cart/composables/useCheckout";
 import _ from "lodash";
+import { PaymentMethodType, ShippingMethodType } from "@/core/api/graphql/types";
 
 const {
   cart,
@@ -195,9 +208,12 @@ const {
   addCartCoupon,
   removeCartCoupon,
   changeComment,
+  updateShipment,
+  updatePayment,
 } = useCart();
 
 const { placeOrder } = useCheckout();
+const { openPopup } = usePopup();
 
 //TODO: change 'any' for a normal type
 const productCardRefs = ref<any[]>([]);
@@ -284,6 +300,40 @@ onMounted(async () => {
     cartComment.value = cart.value.comment || "";
   });
 });
+
+function showShipmentMethodDialog(): void {
+  openPopup({
+    component: ShippingMethodDialog,
+    props: {
+      currentMethodCode: cart.value.shipments?.[0]?.shipmentMethodCode,
+      currentMethodOption: cart.value.shipments?.[0]?.shipmentMethodOption,
+      availableMethods: cart.value.availableShippingMethods,
+      onResult(method: ShippingMethodType) {
+        updateShipment({
+          shipmentMethodCode: method.code,
+          shipmentMethodOption: method.optionName,
+          id: cart.value.shipments?.[0]?.id,
+        });
+      },
+    },
+  });
+}
+
+function showPaymentMethodDialog(): void {
+  openPopup({
+    component: PaymentMethodDialog,
+    props: {
+      currentMethodCode: cart.value.payments?.[0]?.paymentGatewayCode,
+      availableMethods: cart.value.availablePaymentMethods,
+      onResult(method: PaymentMethodType) {
+        updatePayment({
+          paymentGatewayCode: method.code,
+          id: cart.value.payments?.[0]?.id,
+        });
+      },
+    },
+  });
+}
 </script>
 
 <style scoped></style>

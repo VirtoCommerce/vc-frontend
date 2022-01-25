@@ -1,5 +1,10 @@
 import client from "@core/api/graphql/graphql-client";
-import { InputPersonalDataType, IdentityResultType, InputMemberAddressType, MemberAddressType } from "@core/api/graphql/types";
+import {
+  InputPersonalDataType,
+  IdentityResultType,
+  InputMemberAddressType,
+  MemberAddressType,
+} from "@core/api/graphql/types";
 import { currentUserId } from "@core/constants";
 import mutationDocument from "./updateMemberAddressesMutation.graphql";
 

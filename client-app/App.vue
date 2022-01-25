@@ -5,6 +5,7 @@
       <RouterView />
     </div>
     <Footer />
+    <PopupHost />
   </div>
 </template>
 
@@ -15,6 +16,7 @@ import { useUser } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { useContext } from "@/shared/context";
 import { setUserId } from "@/core/constants";
+import { PopupHost } from "@/shared/popup";
 
 const { loadMe, me } = useUser();
 const { loadMyCart } = useCart();

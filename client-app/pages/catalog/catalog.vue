@@ -170,7 +170,7 @@
                     >
                       Choose
                     </router-link>
-                    <AddToCart v-else :product="item" @update:lineitem="onAddToCart"></AddToCart>
+                    <AddToCart v-else :product="item"></AddToCart>
                   </template>
                 </ProductCardGrid>
               </template>
@@ -192,7 +192,7 @@
                     >
                       Choose
                     </router-link>
-                    <AddToCart v-else :product="item" @update:lineitem="onAddToCart"></AddToCart>
+                    <AddToCart v-else :product="item"></AddToCart>
                   </template>
                 </ProductCardList>
               </template>
@@ -224,13 +224,6 @@
       </div>
     </div>
   </div>
-
-  <CartAddInfo
-    :is-open="isCartAddInfoOpen"
-    :line-item="cartAddInfoLineItem"
-    @modal:close="isCartAddInfoOpen = false"
-    @modal:closed="cartAddInfoLineItem = {}"
-  ></CartAddInfo>
 </template>
 
 <script setup lang="ts">
@@ -252,11 +245,10 @@ import {
   IBreadcrumbsItem,
 } from "@/shared/catalog";
 import { Card } from "@/components";
-import { AddToCart, CartAddInfo } from "@/shared/cart";
+import { AddToCart } from "@/shared/cart";
 import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from "@headlessui/vue";
 import { useRoute } from "vue-router";
 import _ from "lodash";
-import { LineItemType } from "@/core/api/graphql/types";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
@@ -399,17 +391,6 @@ watch(isMobile, async () => {
     }
   }
 });
-
-const isCartAddInfoOpen = ref(false);
-const cartAddInfoLineItem = ref();
-
-/**
- * Handle AddToCart event.
- */
-const onAddToCart = (lineItem?: LineItemType) => {
-  cartAddInfoLineItem.value = { ...(lineItem ?? {}) };
-  isCartAddInfoOpen.value = true;
-};
 </script>
 
 <style scoped></style>
