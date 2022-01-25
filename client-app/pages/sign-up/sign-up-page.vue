@@ -58,7 +58,9 @@
         </div>
         <div class="mt-6 lg:mt-4">
           <Alert v-for="error in commonErrors" :key="error" class="mb-4 text-xs">{{ error }}</Alert>
-          <VcButton is-submit size="lg" class="uppercase mt-6 lg:mt-3 w-full lg:w-48">Register</VcButton>
+          <VcButton is-submit size="lg" class="uppercase mt-6 lg:mt-3 w-full lg:w-48" :waiting="loading"
+            >Register</VcButton
+          >
         </div>
       </form>
     </template>

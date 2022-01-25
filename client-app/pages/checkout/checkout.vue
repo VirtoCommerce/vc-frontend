@@ -145,7 +145,7 @@
                 <p class="mt-8 mb-3 text-xs font-normal text-gray-400">
                   Availability, shipping, tax & promotions are not final until you complete your order.
                 </p>
-                <VcButton class="uppercase w-full" :disabled="!isValidCheckout" @click="createOrder">
+                <VcButton class="uppercase w-full" :disabled="!isValidCheckout" :waiting="loading" @click="createOrder">
                   Place order
                 </VcButton>
               </template>
@@ -191,6 +191,7 @@ const {
   changeComment,
   updateShipment,
   updatePayment,
+  loading,
 } = useCart();
 
 const { placeOrder } = useCheckout();
