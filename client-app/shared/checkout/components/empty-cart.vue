@@ -4,12 +4,7 @@
       <div class="flex flex-col h-full py-12 justify-center items-center lg:items-start">
         <img src="/assets/static/images/errors/emptyCartMobile.webp" alt="emptyCartMobile" class="lg:hidden mb-8" />
         <h2 class="text-black-800 text-2xl md:text-4xl font-bold mb-8">Your cart is empty</h2>
-        <router-link
-          to="/catalog"
-          tag="button"
-          class="bg-yellow-500 hover:bg-yellow-600 w-48 uppercase font-bold text-center rounded text-white py-3 text-base whitespace-nowrap font-roboto"
-          >Continue shopping</router-link
-        >
+        <VcButton type="link" size="lg" to="/catalog" class="w-48 uppercase font-bold">Continue shopping</VcButton>
       </div>
     </template>
     <template #right>
@@ -20,6 +15,7 @@
 
 <script setup lang="ts">
 import { TwoColumn } from "@/shared/layout";
+import { Button as VcButton } from "@/components";
 </script>
 
 <style scoped></style>

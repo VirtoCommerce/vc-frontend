@@ -5,12 +5,7 @@
       <h2 class="text-black-800 text-2xl md:text-4xl font-bold mb-2">Internal Server Error</h2>
       <p class="text-gray-700 text-base md:text-xl leading-relaxed mb-10">We suggest you back to home</p>
       <div>
-        <router-link
-          to="/"
-          tag="button"
-          class="bg-yellow-500 hover:bg-yellow-600 uppercase font-bold rounded text-white px-9 py-3 text-base whitespace-nowrap font-roboto"
-          >Home page</router-link
-        >
+        <VcButton to="/" type="link" size="md" class="w-40 uppercase">Home page</VcButton>
       </div>
     </template>
     <template #right>
@@ -21,4 +16,5 @@
 
 <script setup lang="ts">
 import { TwoColumn } from "@/shared/layout";
+import { Button as VcButton } from "@/components";
 </script>

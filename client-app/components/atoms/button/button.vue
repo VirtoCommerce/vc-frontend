@@ -1,15 +1,16 @@
 <template>
   <router-link
-    v-if="type == 'link'"
+    v-if="isLink"
     v-bind="$attrs"
     :to="to"
-    class="rounded flex justify-center items-center font-roboto-condensed cursor-pointer"
+    tag="button"
+    class="rounded flex justify-center items-center font-roboto-condensed cursor-pointer whitespace-nowrap"
     :class="linkClass"
   >
     <slot></slot>
   </router-link>
   <button
-    v-if="type == 'button'"
+    v-else
     v-bind="$attrs"
     :type="isSubmit ? 'submit' : 'button'"
     class="rounded flex justify-center items-center font-roboto-condensed cursor-pointer"
@@ -25,13 +26,6 @@
 import { computed } from "vue";
 
 const props = defineProps({
-  type: {
-    type: String,
-    default: "button",
-    validator(value: string) {
-      return ["button", "link"].includes(value);
-    },
-  },
   kind: {
     type: String,
     default: "primary",
@@ -54,10 +48,6 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  classes: {
-    type: String,
-    default: "",
-  },
   disabled: {
     type: Boolean,
     default: false,
@@ -68,13 +58,15 @@ const props = defineProps({
   },
   to: {
     type: String,
-    default: "/",
+    default: null,
   },
 });
 
 const emit = defineEmits(["click"]);
 
 const isEnabled = computed(() => !props.disabled && !props.waiting);
+
+const isLink = computed(() => !!props.to);
 
 const linkClass = computed(() => {
   return {

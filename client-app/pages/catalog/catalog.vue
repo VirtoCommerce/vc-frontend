@@ -158,14 +158,9 @@
               <template v-else>
                 <ProductCardGrid v-for="item in products" :key="item.id" :product="item">
                   <template #cart-handler>
-                    <router-link
-                      v-if="item.variations?.length"
-                      :to="`/product/${item.id}`"
-                      tag="button"
-                      class="bg-yellow-500 hover:bg-yellow-600 uppercase font-bold rounded text-white justify-center h-9 flex items-center text-sm font-roboto mb-4"
-                    >
+                    <VcButton v-if="item.variations?.length" :to="`/product/${item.id}`" class="uppercase mb-4">
                       Choose
-                    </router-link>
+                    </VcButton>
                     <AddToCart v-else :product="item"></AddToCart>
                   </template>
                 </ProductCardGrid>
@@ -180,14 +175,9 @@
               <template v-else>
                 <ProductCardList v-for="item in products" :key="item.id" :product="item">
                   <template #cart-handler>
-                    <router-link
-                      v-if="item.variations?.length"
-                      :to="`/product/${item.id}`"
-                      tag="button"
-                      class="bg-yellow-500 hover:bg-yellow-600 uppercase font-bold rounded text-white justify-center h-9 flex items-center text-sm font-roboto mb-4"
-                    >
+                    <VcButton v-if="item.variations?.length" :to="`/product/${item.id}`" class="uppercase mb-4 w-full">
                       Choose
-                    </router-link>
+                    </VcButton>
                     <AddToCart v-else :product="item"></AddToCart>
                   </template>
                 </ProductCardList>
