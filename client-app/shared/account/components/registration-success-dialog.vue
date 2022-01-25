@@ -1,5 +1,5 @@
 <template>
-  <Popup variant="success" title="Registration">
+  <Popup variant="success" title="Registration" is-persistent max-width="lg">
     <template #actions="{ close }">
       <router-link
         to="/"
@@ -14,6 +14,7 @@
     </div>
   </Popup>
 </template>
+
 <script setup lang="ts">
 import { Popup } from "@/components";
 </script>

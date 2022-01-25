@@ -27,7 +27,8 @@
             leave-to="opacity-0 scale-95"
           >
             <div
-              class="inline-block w-full max-w-2xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-md"
+              class="inline-block w-full my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-md"
+              :class="`max-w-${maxWidth}`"
             >
               <!-- Title bar -->
               <DialogTitle
@@ -38,7 +39,7 @@
                 <slot name="title">
                   <span class="flex-grow">{{ title }}</span>
                 </slot>
-                <i class="fas fa-times text-2xl cursor-pointer" @click="onClose"></i>
+                <i v-if="!isPersistent" class="fas fa-times text-2xl cursor-pointer" @click="onClose"></i>
               </DialogTitle>
 
               <!-- Dialog contents -->
@@ -79,6 +80,16 @@ const props = defineProps({
   },
 
   loading: {
+    type: Boolean,
+    default: false,
+  },
+
+  maxWidth: {
+    type: String,
+    default: "2xl",
+  },
+
+  isPersistent: {
     type: Boolean,
     default: false,
   },
