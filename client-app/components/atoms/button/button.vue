@@ -2,10 +2,11 @@
   <router-link
     v-if="isLink"
     v-bind="$attrs"
-    :to="to"
+    :to="isEnabled ? to : ''"
     tag="button"
     class="rounded flex justify-center items-center font-roboto-condensed cursor-pointer whitespace-nowrap"
-    :class="linkClass"
+    :class="buttonClass"
+    :disabled="!isEnabled"
   >
     <slot></slot>
   </router-link>
@@ -62,34 +63,20 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["click"]);
+defineEmits(["click"]);
 
 const isEnabled = computed(() => !props.disabled && !props.waiting);
 
 const isLink = computed(() => !!props.to);
 
-const linkClass = computed(() => {
-  return {
-    "bg-yellow-500 text-white hover:bg-yellow-600 ": props.kind == "primary" && !props.outline,
-    "border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:text-white hover:border-yellow-600":
-      props.kind == "primary" && props.outline,
-    "bg-black text-white hover:bg-yellow-600": props.kind == "secondary" && !props.outline,
-    "border-2 bg-white border-black hover:bg-yellow-600 hover:text-white hover:border-yellow-600":
-      props.kind == "secondary" && props.outline,
-    "h-11 text-lg": props.size == "lg",
-    "h-9 text-base": props.size == "md",
-    "h-8 text-sm": props.size == "sm",
-  };
-});
-
 const buttonClass = computed(() => {
   return {
-    "bg-yellow-500 text-white hover:bg-yellow-600 ": props.kind == "primary" && !props.outline && isEnabled,
+    "bg-yellow-500 text-white hover:bg-yellow-600 ": props.kind == "primary" && !props.outline && isEnabled.value,
     "border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:text-white hover:border-yellow-600":
-      props.kind == "primary" && props.outline && isEnabled,
-    "bg-black text-white hover:bg-yellow-600": props.kind == "secondary" && !props.outline && isEnabled,
+      props.kind == "primary" && props.outline && isEnabled.value,
+    "bg-black text-white hover:bg-yellow-600": props.kind == "secondary" && !props.outline && isEnabled.value,
     "border-2 g-white border-black hover:bg-yellow-600 hover:text-white hover:border-yellow-600":
-      props.kind == "secondary" && props.outline && isEnabled,
+      props.kind == "secondary" && props.outline && isEnabled.value,
     "bg-yellow-500 text-white": props.kind == "primary" && !props.outline && !isEnabled.value,
     "border-2 border-yellow-500 text-yellow-500": props.kind == "primary" && props.outline && !isEnabled.value,
     "bg-black text-white": props.kind == "secondary" && !props.outline && !isEnabled.value,

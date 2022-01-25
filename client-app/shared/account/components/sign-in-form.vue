@@ -51,14 +51,7 @@
       <VcButton is-submit size="lg" class="flex-1 flex-shrink px-2 font-bold uppercase" :disabled="!isSubmitEnabled">
         Login
       </VcButton>
-      <VcButton
-        to="/sign-up"
-        size="lg"
-        outline
-        class="flex-1 ml-4 px-2 uppercase font-bold hover:bg-yellow-600 hover:text-white hover:border-yellow-600 cursor-pointer"
-      >
-        Registration
-      </VcButton>
+      <VcButton to="/sign-up" size="lg" outline class="flex-1 ml-4 px-2 uppercase font-bold"> Registration </VcButton>
     </div>
   </form>
 </template>
