@@ -9,6 +9,7 @@
         <div
           :class="{ hidden: !mobileSidebarVisible }"
           class="fixed z-40 inset-0 w-full h-screen lg:hidden bg-gray-800 opacity-95"
+          @click="hideMobileSidebar"
         />
 
         <!-- Sidebar -->
@@ -233,7 +234,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, watch, unref, watchEffect, Ref, shallowRef } from "vue";
-import { onClickOutside, useBreakpoints, breakpointsTailwind, useUrlSearchParams, whenever } from "@vueuse/core";
+import { useBreakpoints, breakpointsTailwind, useUrlSearchParams, whenever } from "@vueuse/core";
 import {
   Breadcrumbs,
   Pagination,
@@ -364,11 +365,13 @@ const searchCategory = (categoryTree: CategoryTree, categoryKey: string): Catego
 
 function hideMobileSidebar() {
   if (!mobileSidebarVisible.value) return;
-  mobileSidebarVisible.value = false;
-  sidebarElement.value!.scrollTop = 0;
-}
 
-onClickOutside(sidebarElement, hideMobileSidebar);
+  mobileSidebarVisible.value = false;
+
+  if (sidebarElement.value) {
+    sidebarElement.value.scrollTop = 0;
+  }
+}
 
 whenever(
   () => !isMobileSidebar.value,
@@ -378,6 +381,7 @@ whenever(
 watch(filterStringFromSelectedFacets, async (value: string) => {
   productSearchParams.filter = value;
   productSearchParams.page = 1;
+  hideMobileSidebar();
   await loadProducts();
 });
 
