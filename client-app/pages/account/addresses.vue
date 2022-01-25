@@ -200,34 +200,28 @@
 
 <script setup lang="ts">
 import Pagination from "@/shared/catalog/components/pagination.vue";
-import { ISortInfo, TableMobileItem, Button as VcButton } from "@/components";
-import { AccountNavigation, useUser } from "@/shared/account";
-import { computed, onMounted, Ref, ref } from "vue";
+import { TableMobileItem, Button as VcButton } from "@/components";
+import { AccountNavigation, useUserAddresses } from "@/shared/account";
+import { computed, onMounted, ref } from "vue";
 import { MemberAddressType } from "@/core/api/graphql/types";
 import { sortAscending, sortDescending } from "@/core/constants";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { loadAddresses, addresses, deleteAddress, defaultShippingAddress } = useUser();
+const { addresses, sort, loadAddresses, setDefaultAddress, removeAddresses, defaultShippingAddress } =
+  useUserAddresses();
+
 const isMobile = breakpoints.smaller("md");
 const page = ref(1);
 const itemsPerPage = ref(6);
-const sort: Ref<ISortInfo> = ref({
-  column: "lastName",
-  direction: sortAscending,
-});
 
 const pages = computed(() => Math.ceil(addresses.value.length / itemsPerPage.value));
 const paginatedAddresses = computed(() =>
   addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
 );
 
-function getSortingExpression(sort: ISortInfo): string {
-  return `${sort.column}:${sort.direction}`;
-}
-
 function actionBuilder(address: MemberAddressType) {
-  let result = [
+  const result = [
     {
       icon: "fas fa-pencil-alt",
       title: "Edit",
@@ -263,10 +257,6 @@ function actionBuilder(address: MemberAddressType) {
   return result;
 }
 
-async function setDefaultAddress(address: MemberAddressType) {
-  //TODO: will be implemented in the separate story
-}
-
 async function applySorting(column: string): Promise<void> {
   if (sort.value.column === column) {
     sort.value.direction = sort.value.direction === sortDescending ? sortAscending : sortDescending;
@@ -275,31 +265,21 @@ async function applySorting(column: string): Promise<void> {
     sort.value.direction = sortDescending;
   }
 
-  await loadItems();
+  await loadAddresses();
 }
 
-async function removeAddress(address: MemberAddressType) {
-  const result = window.confirm("Are you sure you want do delete this address?");
+async function removeAddress(address: MemberAddressType): Promise<void> {
+  if (!window.confirm("Are you sure you want do delete this address?")) return;
 
-  if (result) {
-    const updatedAddresses = addresses.value.filter((item) => item.id !== address.id);
+  await removeAddresses([address]);
 
-    if (address.id === defaultShippingAddress.value.id && updatedAddresses.length > 0) {
-      //todo: set the first item in updatedAddresses to default one
-    }
-
-    const sortingExpression = getSortingExpression(sort.value);
-    await deleteAddress(updatedAddresses, sortingExpression);
+  if (addresses.value.length > 0 && defaultShippingAddress.value && address.id === defaultShippingAddress.value.id) {
+    //todo: set the first item in updatedAddresses to default one
   }
 }
 
-async function loadItems(): Promise<void> {
-  const sortingExpression = getSortingExpression(sort.value);
-  await loadAddresses(sortingExpression);
-}
-
 onMounted(async () => {
-  await loadItems();
+  await loadAddresses();
 });
 </script>
 

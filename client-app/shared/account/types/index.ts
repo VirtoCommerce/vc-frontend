@@ -28,3 +28,8 @@ export type ResetPassword = {
   token: string;
   password: string;
 };
+
+export interface ISortInfo {
+  column: string;
+  direction: string;
+}
