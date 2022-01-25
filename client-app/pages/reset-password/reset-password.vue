@@ -13,7 +13,7 @@
               <i class="fas fa-check-circle text-7xl lg:text-4xl text-green-600"></i>
               <div class="text-lg">Password was successfully changed</div>
             </div>
-            <VcButton to="/sign-in" type="link" class="w-48 uppercase">Log in</VcButton>
+            <VcButton to="/sign-in" class="w-48 uppercase">Log in</VcButton>
           </div>
         </div>
         <div v-else class="flex flex-col items-center space-y-10 lg:space-y-12 lg:items-start lg:mt-12">
@@ -21,7 +21,7 @@
             <i class="fas fa-times-circle text-7xl lg:text-4xl text-red-500"></i>
             <div class="text-lg">User ID or token is invalid.</div>
           </div>
-          <VcButton to="/" type="link" class="w-48 uppercase">Home page</VcButton>
+          <VcButton to="/" class="w-48 uppercase">Home page</VcButton>
         </div>
       </div>
     </template>

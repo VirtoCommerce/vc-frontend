@@ -11,9 +11,9 @@
         <div class="flex flex-col w-full lg:w-4/5 space-y-5">
           <div class="flex justify-between items-center mx-5 lg:mx-0">
             <h2 class="text-gray-800 text-3xl font-bold uppercase">Addresses</h2>
-            <VcButton outline size="sm" class="px-3 uppercase border">{{
-              isMobile ? "Add new" : "Add new address"
-            }}</VcButton>
+            <VcButton outline size="sm" class="px-3 uppercase border">
+              {{ isMobile ? "Add new" : "Add new address" }}
+            </VcButton>
           </div>
           <div class="flex flex-col bg-white shadow-sm" :class="{ 'rounded border': !isMobile }">
             <!-- Mobile table view -->
@@ -65,7 +65,7 @@
                 <img src="/assets/static/images/account/icons/no-addresses.svg" alt="No addresses" />
                 <div class="flex flex-col space-y-2">
                   <span class="text-base">There are no addresses yet</span>
-                  <VcButton class="uppercase w-full"> Add new address</VcButton>
+                  <VcButton class="uppercase w-full">Add new address</VcButton>
                 </div>
               </div>
             </template>

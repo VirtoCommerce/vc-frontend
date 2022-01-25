@@ -11,7 +11,7 @@
           <i class="fas fa-check-circle text-7xl lg:text-4xl text-green-600"></i>
           <div class="text-lg">Reset link was sent to your email</div>
         </div>
-        <VcButton to="/" type="link" class="w-48 uppercase">Home page</VcButton>
+        <VcButton to="/" class="w-48 uppercase">Home page</VcButton>
       </div>
     </template>
     <template #right>

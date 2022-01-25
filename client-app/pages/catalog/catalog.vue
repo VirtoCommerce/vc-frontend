@@ -35,9 +35,9 @@
                   :disabled="loading"
                   @keypress.enter="onSearchStart"
                 />
-              <VcButton class="px-5 uppercase" size="sm" outline :disabled="loading" @click="onSearchStart"
-                >Go</VcButton
-              >
+              <VcButton class="px-5 uppercase" size="sm" outline :disabled="loading" @click="onSearchStart">
+                Go
+              </VcButton>
               </div>
             </Card>
 

@@ -10,7 +10,6 @@
                 </VcButton>
                 <VcButton
                   to="/checkout"
-                  type="link"
                   class="uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-4"
                   @click="close"
                   >View cart</VcButton

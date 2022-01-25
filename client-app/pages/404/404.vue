@@ -5,7 +5,7 @@
       <h2 class="text-black-800 text-2xl md:text-4xl font-bold mb-2">Page Not Found</h2>
       <p class="text-gray-700 text-base md:text-xl leading-relaxed mb-10">We suggest you back to home</p>
       <div>
-        <VcButton to="/" type="link" size="md" class="w-40 uppercase">Home page</VcButton>
+        <VcButton to="/" size="md" class="w-40 uppercase">Home page</VcButton>
       </div>
     </template>
     <template #right>

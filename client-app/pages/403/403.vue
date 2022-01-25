@@ -7,7 +7,7 @@
         You don't have permission to access requested page.
       </p>
       <div>
-        <VcButton to="/" type="link" size="md" class="w-40 uppercase">Home page</VcButton>
+        <VcButton to="/" size="md" class="w-40 uppercase">Home page</VcButton>
       </div>
     </template>
     <template #right>
