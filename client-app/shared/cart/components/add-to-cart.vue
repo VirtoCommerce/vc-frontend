@@ -20,6 +20,7 @@
     />
 
     <!-- Confirm button -->
+    <!-- todo: Use VcButton -->
     <button
       class="rounded-r uppercase px-3 border font-roboto-condensed font-bold text-sm"
       :class="[

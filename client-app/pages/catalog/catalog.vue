@@ -35,14 +35,9 @@
                   :disabled="loading"
                   @keypress.enter="onSearchStart"
                 />
-                <button
-                  class="rounded uppercase px-5 border-2 font-roboto-condensed font-bold text-sm"
-                  :class="[loading ? 'text-gray-300 border-gray-300' : 'text-yellow-500 border-yellow-500']"
-                  :disabled="loading"
-                  @click="onSearchStart"
-                >
-                  Go
-                </button>
+              <VcButton class="px-5 uppercase" size="sm" outline :disabled="loading" @click="onSearchStart"
+                >Go</VcButton
+              >
               </div>
             </Card>
 
@@ -106,14 +101,9 @@
             <div class="flex justify-start mb-6 mt-4">
               <!-- Mobile filters toggler -->
               <div class="lg:hidden mr-3">
-                <button
-                  type="button"
-                  class="rounded bg-yellow-500 text-sm font-extrabold px-4 py-2 text-white"
-                  @click="mobileSidebarVisible = true"
-                >
-                  <i class="fas fa-filter mr-1"></i>
-                  Filters
-                </button>
+                <VcButton class="px-4 font-extrabold" size="sm" @click="mobileSidebarVisible = true">
+                  <i class="fas fa-filter mr-1"></i> Filters
+                </VcButton>
               </div>
 
               <!-- View options -->
@@ -250,7 +240,7 @@ import {
   useCategories,
   IBreadcrumbsItem,
 } from "@/shared/catalog";
-import { Card, Checkbox } from "@/components";
+import { Card, Checkbox, Button as VcButton } from "@/components";
 import { AddToCart } from "@/shared/cart";
 import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from "@headlessui/vue";
 import { useRoute } from "vue-router";

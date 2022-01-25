@@ -58,12 +58,7 @@
         </div>
         <div class="mt-6 lg:mt-4">
           <Alert v-for="error in commonErrors" :key="error" class="mb-4 text-xs">{{ error }}</Alert>
-          <button
-            type="submit"
-            class="mt-6 lg:mt-3 w-full lg:w-48 flex justify-center items-center uppercase text-white bg-yellow-500 hover:bg-yellow-600 font-roboto-condensed text-lg h-11 rounded"
-          >
-            Register
-          </button>
+          <VcButton is-submit size="lg" class="uppercase mt-6 lg:mt-3 w-full lg:w-48">Register</VcButton>
         </div>
       </form>
     </template>
@@ -74,7 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import { Alert, Input as VcInput } from "@/components";
+import { Alert, Input as VcInput, Button as VcButton } from "@/components";
 import { useUser, RegistationSuccessDialog } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 import { useForm, useField } from "vee-validate";

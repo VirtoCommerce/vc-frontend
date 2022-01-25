@@ -11,7 +11,7 @@
     ></VcInput>
     <div class="mt-8 md:mt-9">
       <Alert v-for="error in commonErrors" :key="error" class="mb-4 text-xs">{{ error }}</Alert>
-      <VcButton is-submit class="mt-6 lg:mt-3 w-full lg:w-48" :waiting="loading"> Submit </VcButton>
+      <VcButton is-submit class="mt-6 lg:mt-3 w-full lg:w-48 uppercase" :waiting="loading"> Submit </VcButton>
     </div>
   </form>
 </template>

@@ -3,7 +3,7 @@
     v-if="type == 'link'"
     v-bind="$attrs"
     :to="to"
-    class="h-11 rounded flex justify-center items-center uppercase font-roboto-condensed cursor-pointer"
+    class="rounded flex justify-center items-center font-roboto-condensed cursor-pointer"
     :class="linkClass"
   >
     <slot></slot>
@@ -12,7 +12,7 @@
     v-if="type == 'button'"
     v-bind="$attrs"
     :type="isSubmit ? 'submit' : 'button'"
-    class="h-11 rounded flex justify-center items-center uppercase font-roboto-condensed cursor-pointer"
+    class="rounded flex justify-center items-center font-roboto-condensed cursor-pointer"
     :class="buttonClass"
     :disabled="!isEnabled"
     @click="$emit('click')"
@@ -37,6 +37,13 @@ const props = defineProps({
     default: "primary",
     validator(value: string) {
       return ["primary", "secondary"].includes(value);
+    },
+  },
+  size: {
+    type: String,
+    default: "md",
+    validator(value: string) {
+      return ["sm", "md", "lg"].includes(value);
     },
   },
   isSubmit: {
@@ -72,28 +79,34 @@ const isEnabled = computed(() => !props.disabled && !props.waiting);
 const linkClass = computed(() => {
   return {
     "bg-yellow-500 text-white hover:bg-yellow-600 ": props.kind == "primary" && !props.outline,
-    "border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:text-white hover:border-yellow-600":
+    "border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:text-white hover:border-yellow-600":
       props.kind == "primary" && props.outline,
     "bg-black text-white hover:bg-yellow-600": props.kind == "secondary" && !props.outline,
-    "bg-white border-black hover:bg-yellow-600 hover:text-white hover:border-yellow-600":
+    "border-2 bg-white border-black hover:bg-yellow-600 hover:text-white hover:border-yellow-600":
       props.kind == "secondary" && props.outline,
+    "h-11 text-lg": props.size == "lg",
+    "h-9 text-base": props.size == "md",
+    "h-8 text-sm": props.size == "sm",
   };
 });
 
 const buttonClass = computed(() => {
   return {
     "bg-yellow-500 text-white hover:bg-yellow-600 ": props.kind == "primary" && !props.outline && isEnabled,
-    "border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:text-white hover:border-yellow-600":
+    "border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:text-white hover:border-yellow-600":
       props.kind == "primary" && props.outline && isEnabled,
     "bg-black text-white hover:bg-yellow-600": props.kind == "secondary" && !props.outline && isEnabled,
-    "bg-white border-black hover:bg-yellow-600 hover:text-white hover:border-yellow-600":
+    "border-2 g-white border-black hover:bg-yellow-600 hover:text-white hover:border-yellow-600":
       props.kind == "secondary" && props.outline && isEnabled,
     "bg-yellow-500 text-white": props.kind == "primary" && !props.outline && !isEnabled.value,
-    "border-yellow-500 text-yellow-500": props.kind == "primary" && props.outline && !isEnabled.value,
+    "border-2 border-yellow-500 text-yellow-500": props.kind == "primary" && props.outline && !isEnabled.value,
     "bg-black text-white": props.kind == "secondary" && !props.outline && !isEnabled.value,
-    "bg-white border-black": props.kind == "secondary" && props.outline && !isEnabled.value,
-    "cursor-wait": props.waiting,
-    "cursor-not-allowed": props.disabled,
+    "border-2 bg-white border-black": props.kind == "secondary" && props.outline && !isEnabled.value,
+    "cursor-wait opacity-30": props.waiting,
+    "cursor-not-allowed opacity-30": props.disabled,
+    "h-11 text-lg": props.size == "lg",
+    "h-9 text-base": props.size == "md",
+    "h-8 text-sm": props.size == "sm",
   };
 });
 </script>
