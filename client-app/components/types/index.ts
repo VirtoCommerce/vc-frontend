@@ -4,3 +4,16 @@ export interface IValidationRules {
   max?: number;
   regex?: RegExp;
 }
+
+export interface ItemAction {
+  icon: string;
+  title: string;
+  bgColor: string;
+  position: string;
+  clickHandler(item: any): any;
+}
+
+export interface ISortInfo {
+  column: string;
+  direction: string;
+}
