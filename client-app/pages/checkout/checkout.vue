@@ -66,8 +66,15 @@
                 </CheckoutLabeledBlock>
                 <CheckoutLabeledBlock label="Shipping method">
                   <div class="flex flex-row items-center space-x-4">
-                    <img src="/assets/static/images/checkout/fedex.svg" class="h-12 w-12" />
-                    <span>Fedex - Express (20$)</span>
+                    <template v-if="cart.shipments?.[0].shipmentMethodCode">
+                      <img src="/assets/static/images/checkout/fedex.svg" class="h-12 w-12" />
+                      <span
+                        >{{ cart.shipments?.[0].shipmentMethodCode }} {{ cart.shipments?.[0].shipmentMethodOption }} ({{
+                          cart.shipments?.[0].price?.formattedAmount
+                        }})</span
+                      >
+                    </template>
+                    <div v-else class="text-gray-600">Not defined</div>
                   </div>
                   <div>
                     <button
@@ -101,8 +108,11 @@
                 </CheckoutLabeledBlock>
                 <CheckoutLabeledBlock label="Payment method">
                   <div class="flex flex-row items-center space-x-4">
-                    <img src="/assets/static/images/checkout/invoice.svg" class="h-12 w-12" />
-                    <span>Invoice</span>
+                    <template v-if="cart.payments?.[0].paymentGatewayCode">
+                      <img src="/assets/static/images/checkout/invoice.svg" class="h-12 w-12" />
+                      <span>{{ cart.payments?.[0].paymentGatewayCode }}</span>
+                    </template>
+                    <div v-else class="text-gray-600">Not defined</div>
                   </div>
                   <div>
                     <button
@@ -198,6 +208,8 @@ const {
   addCartCoupon,
   removeCartCoupon,
   changeComment,
+  updateShipment,
+  updatePayment,
 } = useCart();
 
 const { placeOrder } = useCheckout();
@@ -293,9 +305,15 @@ function showShipmentMethodDialog(): void {
   openPopup({
     component: ShippingMethodDialog,
     props: {
-      currentMethod: undefined,
+      currentMethodCode: cart.value.shipments?.[0]?.shipmentMethodCode,
+      currentMethodOption: cart.value.shipments?.[0]?.shipmentMethodOption,
+      availableMethods: cart.value.availableShippingMethods,
       onResult(method: ShippingMethodType) {
-        console.dir(method);
+        updateShipment({
+          shipmentMethodCode: method.code,
+          shipmentMethodOption: method.optionName,
+          id: cart.value.shipments?.[0]?.id,
+        });
       },
     },
   });
@@ -305,9 +323,13 @@ function showPaymentMethodDialog(): void {
   openPopup({
     component: PaymentMethodDialog,
     props: {
-      currentMethod: undefined,
+      currentMethodCode: cart.value.payments?.[0]?.paymentGatewayCode,
+      availableMethods: cart.value.availablePaymentMethods,
       onResult(method: PaymentMethodType) {
-        console.dir(method);
+        updatePayment({
+          paymentGatewayCode: method.code,
+          id: cart.value.payments?.[0]?.id,
+        });
       },
     },
   });

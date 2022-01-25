@@ -17,10 +17,10 @@
         OK
       </button>
     </template>
-    <template v-for="method in methods" :key="method.code">
+    <template v-for="method in availableMethods" :key="method.code">
       <div class="border-b border-gray-300 px-5 py-3 flex justify-between items-center space-x-4">
         <img :src="method.logoUrl || '/static/images/checkout/invoice.svg'" class="h-10 w-10 object-center" />
-        <span class="flex-grow">{{ method.name }} ({{ method.price?.formattedAmount }})</span>
+        <span class="flex-grow">{{ method.code }} ({{ method.price?.formattedAmount }})</span>
         <div class="w-20 flex items-center justify-center">
           <div
             v-if="method.code === selectedMethod?.code"
@@ -44,14 +44,19 @@
 <script setup lang="ts">
 import { Popup } from "@/components";
 import { PaymentMethodType } from "@/core/api/graphql/types";
-import { getAvailPaymentMethods } from "@core/api/graphql/cart";
-import { onMounted, ref } from "vue";
+import { PropType, ref } from "vue";
 
 const props = defineProps({
-  currentMethod: {
+  currentMethodCode: {
     type: String,
     default: undefined,
   },
+
+  availableMethods: {
+    type: Array as PropType<PaymentMethodType[]>,
+    default: () => [],
+  },
+
   onResult: {
     type: Function,
     default: undefined,
@@ -60,18 +65,10 @@ const props = defineProps({
 
 defineEmits(["result"]);
 
-const methods = ref<PaymentMethodType[]>([]);
-const loading = ref(true);
-const selectedMethod = ref();
+const currentMethod = props.availableMethods.find((item) => item.code === props.currentMethodCode);
+const selectedMethod = ref(currentMethod);
 
 function setMethod(method: PaymentMethodType): void {
   selectedMethod.value = method;
 }
-
-onMounted(async () => {
-  selectedMethod.value = props.currentMethod;
-  const result = await getAvailPaymentMethods();
-  methods.value = result;
-  loading.value = false;
-});
 </script>

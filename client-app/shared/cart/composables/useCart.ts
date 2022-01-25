@@ -8,8 +8,10 @@ import {
   validateCoupon,
   addCoupon,
   changeCartComment,
+  addOrUpdateCartShipment,
+  addOrUpdateCartPayment,
 } from "@core/api/graphql/cart";
-import { CartType, LineItemType } from "@core/api/graphql/types";
+import { CartType, InputPaymentType, InputShipmentType, LineItemType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 import _ from "lodash";
 
@@ -132,6 +134,34 @@ export default () => {
     await loadMyCart();
   }
 
+  async function updateShipment(shipment: InputShipmentType) {
+    loading.value = true;
+    console.log(`change cart shipment details`);
+    try {
+      await addOrUpdateCartShipment(shipment);
+    } catch (e) {
+      Logger.error("useCart.updateShipment", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+    await loadMyCart();
+  }
+
+  async function updatePayment(payment: InputPaymentType) {
+    loading.value = true;
+    console.log(`change cart payment details`);
+    try {
+      await addOrUpdateCartPayment(payment);
+    } catch (e) {
+      Logger.error("useCart.updatePayment", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+    await loadMyCart();
+  }
+
   function itemInCart(productId: string): LineItemType | undefined {
     return cart.value?.items?.find((product) => product?.productId === productId) as LineItemType;
   }
@@ -168,5 +198,7 @@ export default () => {
     addCartCoupon,
     removeCartCoupon,
     changeComment,
+    updateShipment,
+    updatePayment,
   };
 };

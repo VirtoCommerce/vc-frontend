@@ -77,5 +77,24 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
       }
       objectId
     }
+
+    availablePaymentMethods {
+      code
+      name
+      logoUrl
+      price {
+        ...moneyFields
+      }
+    }
+
+    availableShippingMethods {
+      id
+      code
+      logoUrl
+      optionName
+      price {
+        ...moneyFields
+      }
+    }
   }
 }
