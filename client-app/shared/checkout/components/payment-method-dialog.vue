@@ -8,7 +8,7 @@
         Cancel
       </button>
       <button
-        class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-4 h-9 font-roboto-condensed text-base font-bold border-2 border-yellow-500 bg-yellow-500 text-white hover:bg-yellow-600 rounded focus:outline-none"
+        class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-4 h-9 font-roboto-condensed text-base font-bold border-2 border-yellow-500 bg-yellow-500 text-white hover:bg-yellow-600 hover:border-yellow-600 rounded focus:outline-none"
         @click="
           $emit('result', selectedMethod);
           close();
@@ -18,7 +18,7 @@
       </button>
     </template>
     <template v-for="method in availableMethods" :key="method.code">
-      <div class="border-b border-gray-300 px-5 py-3 flex justify-between items-center space-x-4">
+      <div class="border-b border-gray-300 px-5 py-4 flex justify-between items-center space-x-4">
         <img :src="method.logoUrl || '/static/images/checkout/invoice.svg'" class="h-10 w-10 object-center" />
         <div class="flex-grow overflow-ellipsis overflow-hidden">
           {{ method.code }}
@@ -35,7 +35,7 @@
             class="uppercase flex-grow flex items-center justify-center px-3 h-9 font-roboto-condensed text-base font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white rounded focus:outline-none"
             @click="setMethod(method)"
           >
-            Choose
+            Select
           </button>
         </div>
       </div>

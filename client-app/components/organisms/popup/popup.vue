@@ -33,7 +33,7 @@
               <DialogTitle
                 as="h3"
                 class="text-lg font-bold leading-6 text-white h-14 flex items-center px-5"
-                :class="generateHeaderStyle()"
+                :class="headerStyle"
               >
                 <slot name="title">
                   <span class="flex-grow">{{ title }}</span>
@@ -65,7 +65,7 @@
 
 <script setup lang="ts">
 import { TransitionRoot, TransitionChild, Dialog, DialogOverlay, DialogTitle } from "@headlessui/vue";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 const props = defineProps({
   title: {
@@ -97,7 +97,7 @@ function onClose() {
   show.value = false;
 }
 
-function generateHeaderStyle(): string {
+const headerStyle = computed(() => {
   switch (props.variant) {
     case "warn":
       return "bg-yellow-500";
@@ -108,5 +108,5 @@ function generateHeaderStyle(): string {
     default:
       return "bg-gray-900";
   }
-}
+});
 </script>
