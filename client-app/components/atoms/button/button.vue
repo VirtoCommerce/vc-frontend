@@ -7,6 +7,7 @@
     class="rounded flex justify-center items-center font-roboto-condensed cursor-pointer whitespace-nowrap"
     :class="buttonClass"
     :disabled="!isEnabled"
+    @click="$emit('click')"
   >
     <slot></slot>
   </router-link>

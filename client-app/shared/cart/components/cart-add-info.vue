@@ -1,19 +1,12 @@
 <template>
   <Popup :variant="variant" :title="title">
     <template #actions="{ close }">
-      <VcButton
-                  outline
-                  class="lg:px-4 uppercase flex-grow lg:flex-grow-0 inline-flex"
-                  @click="close"
-                >
-                  Continue shopping
-                </VcButton>
-                <VcButton
-                  to="/checkout"
-                  class="uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-4"
-                  @click="close"
-                  >View cart</VcButton
-                >
+      <VcButton outline class="lg:px-4 uppercase flex-grow lg:flex-grow-0 inline-flex" @click="close">
+        Continue shopping
+      </VcButton>
+      <VcButton to="/checkout" class="uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-4" @click="close">
+        View cart
+      </VcButton>
     </template>
 
     <div class="hidden lg:block">
@@ -72,7 +65,7 @@
 <script setup lang="ts">
 import { computed, PropType } from "vue";
 import { LineItemType } from "@/core/api/graphql/types";
-import { Button as VcButton } from "@/components";
+import { Popup, Button as VcButton } from "@/components";
 
 const props = defineProps({
   isOpen: {
