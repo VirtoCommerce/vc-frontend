@@ -1,6 +1,8 @@
+![ci](https://github.com/VirtoCommerce/vue-starter-theme/actions/workflows/main.yml/badge.svg) ![cd](https://github.com/VirtoCommerce/vue-starter-theme/actions/workflows/deploy.yml/badge.svg) ![size](https://img.shields.io/github/repo-size/VirtoCommerce/vue-starter-theme) ![version](https://img.shields.io/github/package-json/v/VirtoCommerce/vue-starter-theme) ![discord](https://img.shields.io/discord/932283445596553228)
+
 # B2B Mercury theme for VirtoCommerce Storefront
 
-![image](https://user-images.githubusercontent.com/619699/147751949-c2a7e180-bf6c-4a68-a7b1-cbb6134f170f.png)
+![preview](https://user-images.githubusercontent.com/619699/147751949-c2a7e180-bf6c-4a68-a7b1-cbb6134f170f.png)
 
 **B2B Mercury theme** is a fresh look on the field of eCommerce solutions. This is a place where common B2B and B2C scenarios are combined with the most bleeding edge technologies to deliver blazing fast and fully functional solution. It implements common business use-cases needed for a vast majority of projects we build.
 
