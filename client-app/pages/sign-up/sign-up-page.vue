@@ -79,7 +79,7 @@ import * as yup from "yup";
 import { ref } from "vue";
 import { usePopup } from "@/shared/popup";
 
-const { signMeUp } = useUser();
+const { signMeUp, loading } = useUser();
 const { openPopup } = usePopup();
 
 const schema = yup.object({

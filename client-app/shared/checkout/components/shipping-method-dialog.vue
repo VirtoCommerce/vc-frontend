@@ -1,21 +1,23 @@
 <template>
   <Popup title="Select shipping method">
     <template #actions="{ close }">
-      <button
-        class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-5 h-9 font-roboto-condensed text-base font-bold border-2 border-black text-black hover:bg-black hover:text-white rounded focus:outline-none"
+      <VcButton
+        class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-5"
+        kind="secondary"
+        outline
         @click="close"
       >
         Cancel
-      </button>
-      <button
-        class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-10 h-9 font-roboto-condensed text-base font-bold border-2 border-yellow-500 bg-yellow-500 text-white hover:bg-yellow-600 hover:border-yellow-600 rounded focus:outline-none"
+      </VcButton>
+      <VcButton
+        class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-10"
         @click="
           $emit('result', selectedMethod);
           close();
         "
       >
         OK
-      </button>
+      </VcButton>
     </template>
 
     <template v-for="method in availableMethods" :key="method.id">
@@ -35,13 +37,7 @@
           >
             <i class="fas fa-check"></i>
           </div>
-          <button
-            v-else
-            class="uppercase flex-grow flex items-center justify-center px-3 h-9 font-roboto-condensed text-base font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white rounded focus:outline-none"
-            @click="setMethod(method)"
-          >
-            Select
-          </button>
+          <VcButton v-else outline class="uppercase flex-grow px-3" @click="setMethod(method)"> Select </VcButton>
         </div>
       </div>
     </template>
@@ -49,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { Popup } from "@/components";
+import { Popup, Button as VcButton } from "@/components";
 import { ShippingMethodType } from "@/core/api/graphql/types";
 import { PropType, ref } from "vue";
 
