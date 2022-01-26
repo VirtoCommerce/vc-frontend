@@ -10,8 +10,9 @@ import {
   changeCartComment,
   addOrUpdateCartShipment,
   addOrUpdateCartPayment,
+  addOrUpdateCartAddress,
 } from "@core/api/graphql/cart";
-import { CartType, InputPaymentType, InputShipmentType, LineItemType } from "@core/api/graphql/types";
+import { CartType, InputAddressType, InputPaymentType, InputShipmentType, LineItemType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 import _ from "lodash";
 
@@ -162,6 +163,20 @@ export default () => {
     await loadMyCart();
   }
 
+  async function updateCartAddress(address: InputAddressType) {
+    loading.value = true;
+    console.log(`update cart address`);
+    try {
+      await addOrUpdateCartAddress(address);
+    } catch (e) {
+      Logger.error("useCart.updateAddress", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+    await loadMyCart();
+  }
+
   function itemInCart(productId: string): LineItemType | undefined {
     return cart.value?.items?.find((product) => product?.productId === productId) as LineItemType;
   }
@@ -200,5 +215,6 @@ export default () => {
     changeComment,
     updateShipment,
     updatePayment,
+    updateCartAddress,
   };
 };

@@ -1,9 +1,16 @@
 import { Ref, ref, computed } from "vue";
-import { getMe, updatePersonalData } from "@/core/api/graphql/account";
-import { UserType, IdentityResultType } from "@core/api/graphql/types";
+import {
+  getMe,
+  getMyAddresses,
+  updateMemberAddresses,
+  updatePersonalData,
+  getDefaultShippingAddress,
+} from "@/core/api/graphql/account";
+import { UserType, IdentityResultType, MemberAddressType, InputMemberAddressType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 import { SignMeUp, SignMeIn, ForgotPassword, ValidateToken, ResetPassword } from "@/shared/account";
 import useFetch from "@/core/composables/useFetch";
+import { setUserId } from "@/core/constants";
 
 const me: Ref<UserType> = ref({
   userName: "",

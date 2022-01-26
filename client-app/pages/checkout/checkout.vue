@@ -49,15 +49,40 @@
             >
               <div class="mx-5 lg:ml-28 lg:mr-11">
                 <CheckoutLabeledBlock label="Shipping address">
-                  <div>
-                    <span class="font-extrabold">Annete Black</span>
-                    <p>3891 Ranchview Dr. Richardson, California 62639</p>
-                    <p><span class="font-extrabold">Phone:</span> (684) 555-0102</p>
-                    <p><span class="font-extrabold">Email:</span> debra.holt@example.com</p>
-                  </div>
-                  <div>
-                    <VcButton size="sm" outline class="px-3 self-start uppercase font-bold" disabled>Change</VcButton>
-                  </div>
+                  <template v-if="cart.addresses && cart.addresses.length > 0">
+                    <div>
+                      <span class="font-extrabold"
+                        >{{ cart.addresses[0].firstName }} {{ cart.addresses[0].lastName }}</span
+                      >
+                      <p>
+                        {{ cart.addresses[0].countryCode }} {{ cart.addresses[0].regionName }}
+                        {{ cart.addresses[0].city }} {{ cart.addresses[0].line1 }} {{ cart.addresses[0].postalCode }}
+                      </p>
+                      <p><span class="font-extrabold">Phone:</span>{{ cart.addresses[0].phone }}</p>
+                      <p><span class="font-extrabold">Email:</span>{{ cart.addresses[0].email }}</p>
+                    </div>
+                    <div>
+                      <button
+                        class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500"
+                        @click="selectShippingAddressDialog"
+                      >
+                        Change
+                      </button>
+                    </div>
+                  </template>
+                  <template v-else>
+                    <div class="text-red-500 flex items-center space-x-4">
+                      <i class="fas fa-exclamation-triangle text-2xl"></i>
+                      <span>You do not have a shipping address. Please create a new one.</span>
+                    </div>
+                    <div>
+                      <button
+                        class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 disabled:opacity-30"
+                      >
+                        New address
+                      </button>
+                    </div>
+                  </template>
                 </CheckoutLabeledBlock>
                 <CheckoutLabeledBlock label="Shipping method">
                   <div class="flex flex-row items-center space-x-4">
@@ -170,13 +195,15 @@ import {
   ThankYou,
   ShippingMethodDialog,
   PaymentMethodDialog,
+  ShippingAddressDialog,
 } from "@/shared/checkout";
 import { TextArea, Button as VcButton } from "@/components";
 import { useCart, useCheckout } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import { computed, onBeforeUpdate, onMounted, ref } from "vue";
 import _ from "lodash";
-import { PaymentMethodType, ShippingMethodType } from "@/core/api/graphql/types";
+import { InputAddressType, PaymentMethodType, ShippingMethodType } from "@/core/api/graphql/types";
+import { getDefaultShippingAddress } from "@/core/api/graphql/account";
 
 const {
   cart,
@@ -191,7 +218,7 @@ const {
   changeComment,
   updateShipment,
   updatePayment,
-  loading,
+  updateCartAddress,
 } = useCart();
 
 const { placeOrder } = useCheckout();
@@ -210,6 +237,8 @@ const cartItems = computed(() =>
 );
 
 const cartComment = ref("");
+
+const defaultShippingAddressId = ref<string | undefined>("");
 
 const isValidCheckout = computed(() => !(cart.value.validationErrors && cart.value.validationErrors?.length > 0));
 
@@ -274,12 +303,25 @@ onBeforeUpdate(() => {
 });
 
 onMounted(async () => {
-  await loadMyCart().then(() => {
+  await loadMyCart().then(async () => {
     if (cart.value.coupons && cart.value.coupons.length > 0) {
       cartCoupon.value = cart.value.coupons[0]?.code || "";
       cartCouponApplied.value = true;
     }
     cartComment.value = cart.value.comment || "";
+
+    if (cart.value.addresses?.length === 0) {
+      // const result = await getDefaultShippingAddress();
+      // defaultShippingAddressId.value = result.id;
+      // console.log("defaultShipping", defaultShippingAddressId.value);
+      // await updateCartAddress(result);
+
+      await getDefaultShippingAddress().then(async (result) => {
+        defaultShippingAddressId.value = result.id;
+        console.log("defaultShipping", defaultShippingAddressId.value);
+        await updateCartAddress(result);
+      });
+    }
   });
 });
 
@@ -312,6 +354,19 @@ function showPaymentMethodDialog(): void {
           paymentGatewayCode: method.code,
           id: cart.value.payments?.[0]?.id,
         });
+      },
+    },
+  });
+}
+
+function selectShippingAddressDialog(): void {
+  openPopup({
+    component: ShippingAddressDialog,
+    props: {
+      //currentAddress: cart.value.addresses?.[0],
+      currentAddressId: defaultShippingAddressId.value,
+      onResult(address: InputAddressType) {
+        updateCartAddress(address);
       },
     },
   });
