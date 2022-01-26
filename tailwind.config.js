@@ -35,8 +35,11 @@ module.exports = {
     extend: {
       backgroundColor: ["checked"],
       borderColor: ["checked"],
-      ringWidth: ['hover', 'active'],
-      ringColor: ['hover', 'active'],
+      cursor: ["disabled"],
+      margin: ["first", "last"],
+      padding: ["first", "last"],
+      ringWidth: ["hover", "active"],
+      ringColor: ["hover", "active"],
     },
     opacity: ({ after }) => after(["disabled"]),
   },

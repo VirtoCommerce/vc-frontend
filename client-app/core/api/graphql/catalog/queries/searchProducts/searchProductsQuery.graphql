@@ -7,6 +7,9 @@ query SearchProducts(
   $after: String
   $first: Int
   $sort: String
+  $query: String
+  $fuzzy: Boolean
+  $fuzzyLevel: Int
 ) {
   products(
     storeId: $storeId
@@ -17,6 +20,9 @@ query SearchProducts(
     sort: $sort
     currencyCode: $currencyCode
     cultureName: $cultureName
+    query: $query
+    fuzzy: $fuzzy
+    fuzzyLevel: $fuzzyLevel
   ) {
     items {
       name
@@ -69,7 +75,9 @@ query SearchProducts(
 
     term_facets {
       name
+      label
       terms {
+        label
         term
         count
         isSelected
@@ -77,6 +85,7 @@ query SearchProducts(
     }
     range_facets {
       name
+      label
       ranges {
         label
         count

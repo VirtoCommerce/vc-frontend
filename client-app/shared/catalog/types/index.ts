@@ -12,11 +12,13 @@ export type CategoryTree = {
 
 export type ProductsSearchParams = {
   categoryId?: string;
-  term?: string;
+  query?: string;
   page?: number;
   itemsPerPage?: number;
   sort?: string;
-  [x: string]: any;
+  filter?: string;
+  fuzzy?: boolean;
+  fuzzyLevel?: number;
 };
 
 export interface IBreadcrumbsItem {

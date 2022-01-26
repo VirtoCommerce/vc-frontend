@@ -5,65 +5,41 @@
       <Breadcrumbs class="mb-2 md:mb-8" :items="breadcrumbsItems"></Breadcrumbs>
 
       <div class="flex items-start lg:gap-6">
-        <!-- Filters -->
-        <div class="hidden lg:flex flex-col gap-5 flex-shrink-0 lg:w-1/4 xl:w-1/5">
-          <!-- Search results -->
-          <Card title="Filter results by">
-            <p class="text-sm pb-2">Search within these results</p>
-            <div class="flex gap-3">
-              <input
-                v-model="keyword"
-                class="border rounded text-sm leading-8 flex-1 w-full border-gray-300 h-8 px-2 outline-none focus:border-gray-400"
-                type="text"
-                :disabled="loading"
-                @keypress.enter="onSearchStart"
-              />
-              <button
-                class="rounded uppercase px-5 border-2 font-roboto-condensed font-bold text-sm"
-                :class="[loading ? 'text-gray-300 border-gray-300' : 'text-yellow-500 border-yellow-500']"
-                :disabled="loading"
-                @click="onSearchStart"
-              >
-                Go
-              </button>
-            </div>
-          </Card>
-
-          <!-- Previously purchased -->
-          <Card title="Previously purchased">
-            <label class="flex items-center text-sm cursor-pointer">
-              <input
-                type="checkbox"
-                class="form-tick appearance-none w-5 h-5 border-2 border-gray-300 rounded-sm checked:bg-cyan-700 checked:border-transparent focus:outline-none cursor-pointer"
-              />
-              <span class="ml-2 font-medium">View previously purchased products</span>
-            </label>
-          </Card>
-
-          <!-- Branch availability -->
-          <Card title="Branch availability">
-            <p class="text-sm font-medium">
-              <span class="text-cyan-700 font-semibold cursor-pointer hover:text-cyan-900">Select a pickup branch</span>
-              to see products in stock now.
-            </p>
-          </Card>
-        </div>
-
-        <!-- Mobile filters -->
-        <div v-if="mobileFiltersVisible" class="fixed inset-0 bg-gray-800 opacity-95 z-40 w-full h-screen"></div>
+        <!-- Mobile sidebar back cover -->
         <div
-          v-if="mobileFiltersVisible"
-          ref="mobileFiltersSidebar"
-          class="fixed inset-0 bg-white w-72 z-50 h-screen px-5 pt-12"
+          :class="{ hidden: !mobileSidebarVisible }"
+          class="fixed z-40 inset-0 w-full h-screen lg:hidden bg-gray-800 opacity-95"
+          @click="hideMobileSidebar"
+        />
+
+        <!-- Sidebar -->
+        <div
+          ref="sidebarElement"
+          :class="[
+            { hidden: !mobileSidebarVisible },
+            isMobileSidebar
+              ? 'fixed z-50 inset-0 w-72 h-screen overflow-y-auto px-5 py-12 bg-white'
+              : 'lg:flex lg:w-1/4 xl:w-1/5 flex-shrink-0',
+          ]"
         >
-          <div class="flex flex-col gap-5">
+          <div class="flex flex-col gap-4 lg:gap-5">
             <!-- Search results -->
             <Card title="Filter results by">
               <p class="text-sm pb-2">Search within these results</p>
               <div class="flex gap-3">
-                <input type="text" class="border rounded text-sm flex-1 w-full border-gray-300 p-2.5" />
+                <input
+                  v-model="keyword"
+                  class="border rounded text-sm leading-8 flex-1 w-full border-gray-300 h-8 px-2 outline-none focus:border-gray-400"
+                  type="text"
+                  maxlength="30"
+                  :disabled="loading"
+                  @keypress.enter="onSearchStart"
+                />
                 <button
-                  class="rounded uppercase px-3 border-2 border-yellow-500 text-yellow-500 text-roboto font-bold text-sm"
+                  class="rounded uppercase px-5 border-2 font-roboto-condensed font-bold text-sm"
+                  :class="[loading ? 'text-gray-300 border-gray-300' : 'text-yellow-500 border-yellow-500']"
+                  :disabled="loading"
+                  @click="onSearchStart"
                 >
                   Go
                 </button>
@@ -72,17 +48,47 @@
 
             <!-- Previously purchased -->
             <Card title="Previously purchased">
-              <label class="flex items-center text-sm">
-                <input type="checkbox" class="appearance-none w-4 h-4 border-2 border-gray-300 rounded-sm" />
-                <span class="ml-2">View previously purchased products</span>
-              </label>
+              <Checkbox color="cyan-700">View previously purchased products</Checkbox>
             </Card>
 
             <!-- Branch availability -->
             <Card title="Branch availability">
-              <p class="text-sm">
-                <span class="text-cyan-700">Select a pickup branch</span> to see products in stock now.
+              <p class="text-sm font-medium">
+                <span class="text-cyan-700 font-semibold cursor-pointer hover:text-cyan-900">
+                  Select a pickup branch
+                </span>
+                to see products in stock now.
               </p>
+            </Card>
+
+            <!-- Term Facets Filters -->
+            <Card v-for="(termFacet, index) in termFacets" :key="index" :title="termFacet.label" is-collapsible>
+              <Checkbox
+                v-for="(facetTerm, itemIndex) in termFacet.terms"
+                :key="itemIndex"
+                v-model="selectedFacets[termFacet.name]"
+                :value="facetTerm.term"
+                :disabled="loading"
+                class="mt-3 first:mt-0"
+                color="cyan-700"
+              >
+                {{ facetTerm.label }} ({{ facetTerm.count }})
+              </Checkbox>
+            </Card>
+
+            <!-- Range Facets Filters -->
+            <Card v-for="(rangeFacet, index) in rangeFacets" :key="index" :title="rangeFacet.label" is-collapsible>
+              <Checkbox
+                v-for="(rangeObject, rangeIndex) in rangeFacet.ranges"
+                :key="rangeIndex"
+                v-model="selectedFacets[rangeFacet.name]"
+                :value="getFilterValueFromRangeFacet(rangeObject)"
+                :disabled="loading"
+                color="cyan-700"
+                class="mt-3 first:mt-0"
+              >
+                {{ rangeObject.label }} ({{ rangeObject.count }})
+              </Checkbox>
             </Card>
           </div>
         </div>
@@ -103,7 +109,7 @@
                 <button
                   type="button"
                   class="rounded bg-yellow-500 text-sm font-extrabold px-4 py-2 text-white"
-                  @click="mobileFiltersVisible = true"
+                  @click="mobileSidebarVisible = true"
                 >
                   <i class="fas fa-filter mr-1"></i>
                   Filters
@@ -227,8 +233,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch, unref, watchEffect, Ref } from "vue";
-import { onClickOutside, useBreakpoints, breakpointsTailwind, useUrlSearchParams } from "@vueuse/core";
+import { ref, reactive, onMounted, watch, unref, watchEffect, Ref, shallowRef } from "vue";
+import { useBreakpoints, breakpointsTailwind, useUrlSearchParams, whenever } from "@vueuse/core";
 import {
   Breadcrumbs,
   Pagination,
@@ -244,7 +250,7 @@ import {
   useCategories,
   IBreadcrumbsItem,
 } from "@/shared/catalog";
-import { Card } from "@/components";
+import { Card, Checkbox } from "@/components";
 import { AddToCart } from "@/shared/cart";
 import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from "@headlessui/vue";
 import { useRoute } from "vue-router";
@@ -252,13 +258,28 @@ import _ from "lodash";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
+const isMobileSidebar = breakpoints.smaller("lg");
+const mobileSidebarVisible = ref(false);
+const sidebarElement = shallowRef<HTMLElement | null>(null);
 
 const route = useRoute();
-const params = useUrlSearchParams("history");
-
-const { products, total, loading, fetchProducts, pages } = useProducts();
+const params = useUrlSearchParams("history", { removeFalsyValues: true });
+const {
+  products,
+  total,
+  loading,
+  pages,
+  termFacets,
+  rangeFacets,
+  selectedFacets,
+  filterStringFromSelectedFacets,
+  getFilterValueFromRangeFacet,
+  fetchProducts,
+} = useProducts();
 const { categoryTree, loadCategoriesTree } = useCategories();
+
 const category: Ref<CategoryTree | undefined> = ref(undefined);
+const keyword: Ref<string> = ref(`${params.keyword || ""}`);
 
 const sortOptions = [
   { id: "priority-descending;name-ascending", name: "Featured" },
@@ -279,7 +300,7 @@ watch(sort, async () => {
 const productSearchParams = reactive<ProductsSearchParams>({
   itemsPerPage: +(params.size ?? 16),
   page: +(params.page ?? 1),
-  term: "",
+  query: keyword.value,
   sort: `${sort.value.id}`,
 });
 
@@ -288,7 +309,11 @@ watch(
   async (categoryKeyParam) => {
     const categoryKey = categoryKeyParam as string;
     getCurrentCategory(categoryKey);
+
     productSearchParams.page = 1;
+    productSearchParams.query = "";
+    keyword.value = "";
+
     await loadProducts();
   }
 );
@@ -338,11 +363,26 @@ const searchCategory = (categoryTree: CategoryTree, categoryKey: string): Catego
   return category;
 };
 
-const mobileFiltersVisible = ref(false);
-const mobileFiltersSidebar = ref(null);
+function hideMobileSidebar() {
+  if (!mobileSidebarVisible.value) return;
 
-onClickOutside(mobileFiltersSidebar, () => {
-  mobileFiltersVisible.value = false;
+  mobileSidebarVisible.value = false;
+
+  if (sidebarElement.value) {
+    sidebarElement.value.scrollTop = 0;
+  }
+}
+
+whenever(
+  () => !isMobileSidebar.value,
+  () => hideMobileSidebar()
+);
+
+watch(filterStringFromSelectedFacets, async (value: string) => {
+  productSearchParams.filter = value;
+  productSearchParams.page = 1;
+  hideMobileSidebar();
+  await loadProducts();
 });
 
 const BuildBreadcrumbs = () => {
@@ -357,21 +397,24 @@ const BuildBreadcrumbs = () => {
 const breadcrumbsItems: Ref<IBreadcrumbsItem[]> = ref([{ url: "/", title: "Home" }]);
 
 const viewMode = ref(`${params.viewMode || "grid"}`);
-const keyword = ref("");
 
 // Handle URL change on navigation update
 watchEffect(() => {
   params.viewMode = viewMode.value;
   params.size = `${productSearchParams.itemsPerPage}` || "16";
   params.page = `${productSearchParams.page}` || "1";
+  params.keyword = productSearchParams.query || "";
+
   if (productSearchParams.sort) {
     params.sort = `${productSearchParams.sort}`;
   }
 });
 
 const onSearchStart = async () => {
-  if (keyword.value !== productSearchParams.term) {
-    productSearchParams.term = unref(keyword.value);
+  if (keyword.value !== productSearchParams.query && keyword.value.length <= 30) {
+    productSearchParams.query = keyword.value;
+    productSearchParams.page = 1;
+    hideMobileSidebar();
     await loadProducts();
   }
 };
@@ -392,5 +435,3 @@ watch(isMobile, async () => {
   }
 });
 </script>
-
-<style scoped></style>
