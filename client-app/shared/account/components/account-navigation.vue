@@ -7,7 +7,7 @@
       <AccountNavigationLink to="/orders" text="Orders" class="orders-icon"></AccountNavigationLink>
       <AccountNavigationLink to="/list" text="Your List" class="list-icon"></AccountNavigationLink>
       <AccountNavigationLink
-        to="/checkoutDefaults"
+        to="/account/checkout-defaults"
         text="Checkout Details"
         class="checkout-icon"
       ></AccountNavigationLink>

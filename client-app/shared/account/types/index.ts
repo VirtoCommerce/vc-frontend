@@ -35,7 +35,7 @@ export interface ISortInfo {
 }
 
 export type CheckoutDefaults = {
-  deliveryMethod: string;
-  shippingMethodCode: string;
-  paymentMethodCode: string;
+  deliveryMethod?: string;
+  shippingMethodCode?: string;
+  paymentMethodCode?: string;
 };
