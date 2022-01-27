@@ -33,3 +33,9 @@ export interface ISortInfo {
   column: string;
   direction: string;
 }
+
+export type CheckoutDefaults = {
+  deliveryMethod: string;
+  shippingMethodCode: string;
+  paymentMethodCode: string;
+};
