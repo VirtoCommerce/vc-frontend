@@ -67,7 +67,7 @@
                 <CheckoutLabeledBlock label="Shipping method">
                   <div class="flex flex-row items-center space-x-4">
                     <template v-if="cart.shipments?.[0]?.shipmentMethodCode">
-                      <Image src="/assets/static/images/checkout/fedex.svg" class="h-12 w-12" />
+                      <Image src="/static/images/checkout/fedex.svg" class="h-12 w-12" />
                       <span
                         >{{ cart.shipments?.[0].shipmentMethodCode }}
                         {{ cart.shipments?.[0].shipmentMethodOption }} (<PriceDisplay
@@ -110,7 +110,7 @@
                 <CheckoutLabeledBlock label="Payment method">
                   <div class="flex flex-row items-center space-x-4">
                     <template v-if="cart.payments?.[0]?.paymentGatewayCode">
-                      <Image src="/assets/static/images/checkout/invoice.svg" class="h-12 w-12" />
+                      <Image src="/static/images/checkout/invoice.svg" class="h-12 w-12" />
                       <span>{{ cart.payments?.[0].paymentGatewayCode }}</span>
                     </template>
                     <div v-else class="text-gray-600">Not defined</div>

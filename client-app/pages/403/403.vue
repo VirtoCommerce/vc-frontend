@@ -16,7 +16,7 @@
       </div>
     </template>
     <template #right>
-      <Image src="/assets/static/images/errors/403.webp" alt="Access denied" class="w-full max-w-md" />
+      <Image src="/static/images/errors/403.webp" alt="Access denied" class="w-full max-w-md" />
     </template>
   </TwoColumn>
 </template>

@@ -14,7 +14,7 @@
       </div>
     </template>
     <template #right>
-      <Image src="/assets/static/images/errors/404.webp" alt="Page not found" class="w-full max-w-md" />
+      <Image src="/static/images/errors/404.webp" alt="Page not found" class="w-full max-w-md" />
     </template>
   </TwoColumn>
 </template>

@@ -20,7 +20,7 @@
       </div>
     </template>
     <template #right>
-      <Image class="max-w-md" src="/assets/static/images/sign-in/sign-in-page-image.webp" />
+      <Image class="max-w-md" src="/static/images/sign-in/sign-in-page-image.webp" />
     </template>
   </TwoColumn>
 </template>

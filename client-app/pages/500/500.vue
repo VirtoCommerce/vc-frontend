@@ -14,7 +14,7 @@
       </div>
     </template>
     <template #right>
-      <Image src="/assets/static/images/errors/500.webp" alt="Internal Server Error" class="w-full max-w-md" />
+      <Image src="/static/images/errors/500.webp" alt="Internal Server Error" class="w-full max-w-md" />
     </template>
   </TwoColumn>
 </template>

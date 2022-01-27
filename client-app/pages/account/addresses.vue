@@ -64,7 +64,7 @@
                 </TableMobileItem>
               </div>
               <div v-else class="flex items-center justify-center space-x-10 p-5">
-                <Image src="/assets/static/images/account/icons/no-addresses.svg" alt="No addresses" />
+                <Image src="/static/images/account/icons/no-addresses.svg" alt="No addresses" />
                 <div class="flex flex-col space-y-2">
                   <span class="text-base">There are no addresses yet</span>
                   <button
@@ -177,7 +177,7 @@
                 <tr>
                   <td colspan="6" class="polygons-bg">
                     <div class="flex items-center pl-56 space-x-10 h-80">
-                      <Image src="/assets/static/images/account/icons/no-addresses.svg" alt="No addresses" />
+                      <Image src="/static/images/account/icons/no-addresses.svg" alt="No addresses" />
                       <div class="flex flex-col space-y-2">
                         <span class="text-base">There are no addresses yet</span>
                         <button
@@ -331,7 +331,7 @@ function getSortingExpression(sort: ISortInfo): string {
 }
 
 .polygons-bg {
-  background-image: url(/assets/static/images/account/addresses-bg.svg);
+  background-image: url(/static/images/account/addresses-bg.svg);
   background-repeat: no-repeat;
   background-position: right;
 }

@@ -28,6 +28,11 @@ module.exports = {
         },
         trueGray: colors.trueGray,
         warmGray: colors.warmGray,
+
+        primary: "#F0AD4E",
+        "primary-darken": "",
+        success: "#479048",
+        secondary: "#151B1E",
       },
     },
   },
