@@ -62,6 +62,7 @@
           class="bg-white rounded h-11 flex-grow shadow-inner px-4 min-w-0 outline-none"
           placeholder="Enter E-mail"
         />
+        <!-- todo: use VcButton -->
         <button class="bg-white hover:bg-gray-200 px-6 uppercase text-sm font-roboto font-bold h-11 rounded shadow-md">
           Subscribe
         </button>

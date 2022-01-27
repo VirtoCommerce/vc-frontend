@@ -11,20 +11,13 @@
     ></VcInput>
     <div class="mt-8 md:mt-9">
       <Alert v-for="error in commonErrors" :key="error" class="mb-4 text-xs">{{ error }}</Alert>
-      <button
-        type="submit"
-        class="mt-6 lg:mt-3 w-full lg:w-48 h-11 rounded cursor-pointer flex justify-center items-center uppercase text-white bg-yellow-500 font-roboto-condensed text-lg"
-        :class="{ 'hover:bg-yellow-600': !loading, 'cursor-wait': loading }"
-        :disabled="loading"
-      >
-        Submit
-      </button>
+      <VcButton is-submit class="mt-6 lg:mt-3 w-full lg:w-48 uppercase" :waiting="loading"> Submit </VcButton>
     </div>
   </form>
 </template>
 
 <script setup lang="ts">
-import { Alert, Input as VcInput } from "@/components";
+import { Alert, Input as VcInput, Button as VcButton } from "@/components";
 import { ref } from "vue";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";

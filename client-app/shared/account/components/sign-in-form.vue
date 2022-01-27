@@ -48,26 +48,16 @@
 
     <!-- Form actions -->
     <div class="flex mt-8 text-base font-roboto-condensed" :class="{ 'max-w-sm': !props.growButtons }">
-      <button
-        type="submit"
-        class="flex-1 flex-shrink bg-yellow-500 rounded text-white px-2 py-2 font-bold uppercase cursor-pointer"
-        :class="{ 'hover:bg-yellow-600': isSubmitEnabled }"
-        :disabled="!isSubmitEnabled"
-      >
+      <VcButton is-submit size="lg" class="flex-1 flex-shrink px-2 font-bold uppercase" :waiting="!isSubmitEnabled">
         Login
-      </button>
-      <router-link
-        to="/sign-up"
-        class="flex-1 border-2 rounded text-center text-yellow-500 ml-4 px-2 py-2 border-yellow-500 uppercase font-bold hover:bg-yellow-600 hover:text-white hover:border-yellow-600 cursor-pointer"
-      >
-        Registration
-      </router-link>
+      </VcButton>
+      <VcButton to="/sign-up" size="lg" outline class="flex-1 ml-4 px-2 uppercase font-bold"> Registration </VcButton>
     </div>
   </form>
 </template>
 
 <script setup lang="ts">
-import { Alert } from "@/components";
+import { Alert, Button as VcButton } from "@/components";
 import { ref, reactive, computed, Ref } from "vue";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
