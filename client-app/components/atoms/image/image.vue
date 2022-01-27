@@ -1,12 +1,14 @@
 <template>
-  <img :src="src" :alt="alt" @error="setFallbackSrc" />
+  <img :src="src" :alt="alt" :class="additionalClass" @error="setFallbackSrc" />
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
+
 const props = defineProps({
   src: {
     type: String,
-    required: true,
+    default: undefined,
   },
 
   alt: {
@@ -16,9 +18,11 @@ const props = defineProps({
 
   fallbackSrc: {
     type: String,
-    default: "/static/images/no-image.png",
+    default: "/static/images/common/no-image.svg",
   },
 });
+
+const additionalClass = ref("");
 
 /**
  * Set fallback source when image loading error occures.
@@ -26,5 +30,6 @@ const props = defineProps({
  */
 function setFallbackSrc(event: Event): void {
   (event.target as HTMLImageElement).src = props.fallbackSrc;
+  additionalClass.value = "object-scale-down object-center";
 }
 </script>

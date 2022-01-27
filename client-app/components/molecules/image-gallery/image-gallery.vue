@@ -3,11 +3,7 @@
     ref="mainImageDiv"
     class="square relative flex flex-col justify-center items-center border border-gray-100 rounded-sm"
   >
-    <img
-      :src="activeSrc || '/static/images/common/no-image.svg'"
-      alt="product.name"
-      class="absolute top-0 w-full h-full object-cover object-center rounded-sm"
-    />
+    <Image :src="activeSrc" class="absolute top-0 w-full h-full object-cover object-center rounded-sm" />
   </div>
   <div v-if="isMobile && images && images.length > 1" class="mt-4 flex flex-row justify-center space-x-2.5">
     <div
@@ -28,9 +24,9 @@
           'ring ring-yellow-500': image?.url == activeSrc,
         }"
       >
-        <img
-          :src="image?.url || '/static/images/common/no-image.svg'"
-          alt="product.name"
+        <Image
+          :src="image?.url"
+          :alt="image?.name"
           class="absolute top-0 w-full h-full object-cover object-center rounded-sm"
         />
       </div>
@@ -39,6 +35,7 @@
 </template>
 
 <script setup lang="ts">
+import { Image } from "@/components";
 import { ImageType, Maybe } from "@/core/api/graphql/types";
 import { onMounted, PropType, ref } from "vue";
 import { SwipeDirection, useSwipe } from "@vueuse/core";

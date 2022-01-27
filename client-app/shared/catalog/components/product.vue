@@ -37,7 +37,7 @@
           <div class="font-extrabold text-base">Your price:</div>
           <div>
             <!-- todo: extract a component for price and use it here -->
-            <span class="font-extrabold text-green-700">{{ product.price?.actual?.formattedAmount }}</span
+            <span class="font-extrabold text-green-700"><PriceDisplay :value="product.price?.actual" /></span
             >&nbsp;<span class="font-semibold hidden lg:inline-block">/ each</span>
           </div>
         </div>
@@ -53,7 +53,7 @@
 import { Product } from "@/core/api/graphql/types";
 import { PropType } from "vue";
 import { AddToCart } from "@/shared/cart";
-import { MarkdownRender, ImageGallery } from "@/components";
+import { MarkdownRender, ImageGallery, PriceDisplay } from "@/components";
 import { ProductProperties, ProductTitledBlock, ProductPriceBlock } from "@/shared/catalog";
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 

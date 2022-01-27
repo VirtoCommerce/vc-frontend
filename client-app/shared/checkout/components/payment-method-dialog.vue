@@ -19,7 +19,7 @@
     </template>
     <template v-for="method in availableMethods" :key="method.code">
       <div class="border-b border-gray-300 px-5 py-6 lg:py-4 flex justify-between items-center space-x-4">
-        <img :src="method.logoUrl || '/static/images/checkout/invoice.svg'" class="h-10 w-10 object-center" />
+        <Image :src="method.logoUrl" class="h-10 w-10 object-center" />
         <div class="flex-grow overflow-ellipsis overflow-hidden">
           {{ method.code }}
         </div>
@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { Popup } from "@/components";
+import { Popup, Image } from "@/components";
 import { PaymentMethodType } from "@/core/api/graphql/types";
 import { PropType, ref } from "vue";
 

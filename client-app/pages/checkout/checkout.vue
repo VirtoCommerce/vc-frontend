@@ -67,11 +67,12 @@
                 <CheckoutLabeledBlock label="Shipping method">
                   <div class="flex flex-row items-center space-x-4">
                     <template v-if="cart.shipments?.[0]?.shipmentMethodCode">
-                      <img src="/assets/static/images/checkout/fedex.svg" class="h-12 w-12" />
+                      <Image src="/assets/static/images/checkout/fedex.svg" class="h-12 w-12" />
                       <span
-                        >{{ cart.shipments?.[0].shipmentMethodCode }} {{ cart.shipments?.[0].shipmentMethodOption }} ({{
-                          cart.shipments?.[0].price?.formattedAmount
-                        }})</span
+                        >{{ cart.shipments?.[0].shipmentMethodCode }}
+                        {{ cart.shipments?.[0].shipmentMethodOption }} (<PriceDisplay
+                          :value="cart.shipments?.[0].price"
+                        />)</span
                       >
                     </template>
                     <div v-else class="text-gray-600">Not defined</div>
@@ -109,7 +110,7 @@
                 <CheckoutLabeledBlock label="Payment method">
                   <div class="flex flex-row items-center space-x-4">
                     <template v-if="cart.payments?.[0]?.paymentGatewayCode">
-                      <img src="/assets/static/images/checkout/invoice.svg" class="h-12 w-12" />
+                      <Image src="/assets/static/images/checkout/invoice.svg" class="h-12 w-12" />
                       <span>{{ cart.payments?.[0].paymentGatewayCode }}</span>
                     </template>
                     <div v-else class="text-gray-600">Not defined</div>
@@ -134,7 +135,7 @@
             >
               <div class="mx-5 lg:ml-28 lg:mr-11">
                 <p class="font-extrabold text-base mb-1">Order comments</p>
-                <TextArea v-model="cartComment" class="resize-none" :rows="4" :max-length="1000"></TextArea>
+                <Textarea v-model="cartComment" class="resize-none" :rows="4" :max-length="1000" />
               </div>
             </CheckoutSection>
             <div class="shadow-inner h-1 lg:hidden"></div>
@@ -190,7 +191,7 @@ import {
   ShippingMethodDialog,
   PaymentMethodDialog,
 } from "@/shared/checkout";
-import { TextArea } from "@/components";
+import { Textarea, Image, PriceDisplay } from "@/components";
 import { useCart, useCheckout } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import { computed, onBeforeUpdate, onMounted, ref } from "vue";

@@ -68,13 +68,13 @@
       </form>
     </template>
     <template #right>
-      <img class="max-w-md" src="/assets/static/images/sign-up/image.webp" />
+      <Image class="max-w-md" src="/assets/static/images/sign-up/image.webp" />
     </template>
   </TwoColumn>
 </template>
 
 <script setup lang="ts">
-import { Alert, Input as VcInput } from "@/components";
+import { Alert, Input as VcInput, Image } from "@/components";
 import { useUser, RegistationSuccessDialog } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 import { useForm, useField } from "vee-validate";

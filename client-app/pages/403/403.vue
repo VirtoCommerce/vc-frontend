@@ -16,11 +16,12 @@
       </div>
     </template>
     <template #right>
-      <img src="/assets/static/images/errors/403.webp" alt="Access denied" class="w-full max-w-md" />
+      <Image src="/assets/static/images/errors/403.webp" alt="Access denied" class="w-full max-w-md" />
     </template>
   </TwoColumn>
 </template>
 
 <script setup lang="ts">
 import { TwoColumn } from "@/shared/layout";
+import { Image } from "@/components";
 </script>

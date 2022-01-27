@@ -20,13 +20,14 @@
       </div>
     </template>
     <template #right>
-      <img class="max-w-md" src="/assets/static/images/sign-in/sign-in-page-image.webp" />
+      <Image class="max-w-md" src="/assets/static/images/sign-in/sign-in-page-image.webp" />
     </template>
   </TwoColumn>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { Image } from "@/components";
 import { TwoColumn } from "@/shared/layout";
 import { ForgotPasswordForm } from "@/shared/account";
 

@@ -28,18 +28,13 @@
           <tr>
             <td class="px-5 py-3">
               <div class="flex items-center">
-                <img
-                  class="border object-contain rounded-sm"
-                  :src="lineItem.imageUrl || '/static/images/common/no-image.svg'"
-                  width="72"
-                  height="72"
-                />
+                <Image class="border object-contain rounded-sm" :src="lineItem.imageUrl" width="72" height="72" />
                 <div class="ml-4 font-bold text-blue-700">{{ lineItem.name }}</div>
               </div>
             </td>
             <td class="px-5 py-3 text-center">{{ lineItem.quantity }}</td>
             <td class="px-5 py-3 text-right text-green-700 font-bold">
-              {{ lineItem.extendedPrice?.formattedAmount }}
+              <PriceDisplay :value="lineItem.extendedPrice" />
             </td>
           </tr>
         </tbody>
@@ -47,12 +42,7 @@
     </div>
     <div class="block lg:hidden">
       <div class="flex items-center border-b border-gray-200 p-5">
-        <img
-          class="border object-contain rounded-sm"
-          :src="lineItem.imageUrl || '/static/images/common/no-image.svg'"
-          width="72"
-          height="72"
-        />
+        <Image class="border object-contain rounded-sm" :src="lineItem.imageUrl" width="72" height="72" />
         <div class="ml-4 font-bold text-blue-700">{{ lineItem.name }}</div>
       </div>
 
@@ -61,7 +51,10 @@
           Quantity: <span class="font-bold">{{ lineItem.quantity }}</span>
         </div>
         <div>
-          Total: <span class="font-bold text-green-700">{{ lineItem.extendedPrice?.formattedAmount }}</span>
+          Total:
+          <span class="font-bold text-green-700">
+            <PriceDisplay :value="lineItem.extendedPrice" />
+          </span>
         </div>
       </div>
     </div>
@@ -71,7 +64,7 @@
 <script setup lang="ts">
 import { computed, PropType } from "vue";
 import { LineItemType } from "@/core/api/graphql/types";
-import { Popup } from "@/components";
+import { Popup, Image, PriceDisplay } from "@/components";
 
 const props = defineProps({
   isOpen: {

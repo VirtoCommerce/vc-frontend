@@ -64,7 +64,7 @@
                 </TableMobileItem>
               </div>
               <div v-else class="flex items-center justify-center space-x-10 p-5">
-                <img src="/assets/static/images/account/icons/no-addresses.svg" alt="No addresses" />
+                <Image src="/assets/static/images/account/icons/no-addresses.svg" alt="No addresses" />
                 <div class="flex flex-col space-y-2">
                   <span class="text-base">There are no addresses yet</span>
                   <button
@@ -177,7 +177,7 @@
                 <tr>
                   <td colspan="6" class="polygons-bg">
                     <div class="flex items-center pl-56 space-x-10 h-80">
-                      <img src="/assets/static/images/account/icons/no-addresses.svg" alt="No addresses" />
+                      <Image src="/assets/static/images/account/icons/no-addresses.svg" alt="No addresses" />
                       <div class="flex flex-col space-y-2">
                         <span class="text-base">There are no addresses yet</span>
                         <button
@@ -208,7 +208,7 @@
 
 <script setup lang="ts">
 import Pagination from "@/shared/catalog/components/pagination.vue";
-import { ISortInfo, TableMobileItem } from "@/components";
+import { ISortInfo, TableMobileItem, Image } from "@/components";
 import { AccountNavigation, useUser } from "@/shared/account";
 import { computed, onMounted, Ref, ref } from "vue";
 import { MemberAddressType } from "@/core/api/graphql/types";

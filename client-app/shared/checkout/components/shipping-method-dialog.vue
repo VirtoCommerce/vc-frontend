@@ -20,12 +20,12 @@
 
     <template v-for="method in availableMethods" :key="method.id">
       <div class="border-b border-gray-300 px-5 py-6 lg:py-4 flex justify-between items-center space-x-4">
-        <img :src="method.logoUrl || '/static/images/checkout/shipping.svg'" class="h-10 w-10 object-center" />
+        <Image :src="method.logoUrl" class="h-10 w-10 object-center" />
         <div class="flex-grow flex flex-col lg:flex-row">
           <div class="lg:w-2/6">{{ method.code }} {{ method.optionName }}</div>
           <div class="lg:w-3/6">{{ method.optionDescription }}</div>
           <div class="lg:w-1/6 lg:text-right text-sm lg:text-base">
-            <span class="font-bold lg:hidden mr-1">Price:</span>{{ method.price?.formattedAmount }}
+            <span class="font-bold lg:hidden mr-1">Price:</span><PriceDisplay :value="method.price" />
           </div>
         </div>
         <div class="w-20 flex items-center justify-end lg:justify-center">
@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { Popup } from "@/components";
+import { Popup, Image, PriceDisplay } from "@/components";
 import { ShippingMethodType } from "@/core/api/graphql/types";
 import { PropType, ref } from "vue";
 

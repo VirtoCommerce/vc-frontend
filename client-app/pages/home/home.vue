@@ -29,19 +29,19 @@
       <div class="font-bold text-3xl text-center px-6">Professional purchases have never been that easy</div>
       <div class="flex flex-wrap justify-between mx-auto mt-24">
         <div class="w-full md:w-1/2 lg:w-1/4 md:mt-44 mb-24 md:mb-0">
-          <img src="/assets/static/images/home/hexa-1.webp" class="mx-auto w-full" />
+          <Image src="/assets/static/images/home/hexa-1.webp" class="mx-auto w-full" />
           <div class="px-8 font-bold text-2xl md:text-xl text-center mt-5">Corporate account management</div>
         </div>
         <div class="w-full md:w-1/2 lg:w-1/4 mb-24 md:mb-0">
-          <img src="/assets/static/images/home/hexa-2.webp" class="mx-auto w-full" />
+          <Image src="/assets/static/images/home/hexa-2.webp" class="mx-auto w-full" />
           <div class="px-8 font-bold text-2xl md:text-xl text-center mt-5">Quote management price negotiation</div>
         </div>
         <div class="w-full md:w-1/2 lg:w-1/4 md:mt-44 mb-24 md:mb-0">
-          <img src="/assets/static/images/home/hexa-3.webp" class="mx-auto w-full" />
+          <Image src="/assets/static/images/home/hexa-3.webp" class="mx-auto w-full" />
           <div class="px-8 font-bold text-2xl md:text-xl text-center mt-5">Multiple stores, channels and regions</div>
         </div>
         <div class="w-full md:w-1/2 lg:w-1/4 mb-24 md:mb-0">
-          <img src="/assets/static/images/home/hexa-4.webp" class="mx-auto w-full" />
+          <Image src="/assets/static/images/home/hexa-4.webp" class="mx-auto w-full" />
           <div class="px-8 font-bold text-2xl md:text-xl text-center mt-5">
             B2B personalization and price management
           </div>
@@ -71,6 +71,7 @@
 </template>
 
 <script setup lang="ts">
+import { Image } from "@/components";
 import { useUser, SignInForm } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { useContext } from "@/shared/context";
