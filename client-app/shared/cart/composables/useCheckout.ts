@@ -168,6 +168,5 @@ export default () => {
     billingAddresses: computed(() => billingAddresses.value),
     loading: computed(() => loading.value),
     defaultShippingAddress: computed(() => defaultShippingAddress.value),
-    defaultShippingAddressId: computed(() => defaultShippingAddress.value.id),
   };
 };
