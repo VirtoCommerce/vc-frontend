@@ -221,7 +221,7 @@ const {
   updateCartAddress,
 } = useCart();
 
-const { placeOrder } = useCheckout();
+const { placeOrder, loadDefaultShippingAddress, defaultShippingAddress } = useCheckout();
 const { openPopup } = usePopup();
 
 //TODO: change 'any' for a normal type
@@ -237,8 +237,7 @@ const cartItems = computed(() =>
 );
 
 const cartComment = ref("");
-
-const defaultShippingAddressId = ref<string | undefined>("");
+const cartShippingAddressId = ref<string | undefined>("");
 
 const isValidCheckout = computed(() => !(cart.value.validationErrors && cart.value.validationErrors?.length > 0));
 
@@ -311,15 +310,9 @@ onMounted(async () => {
     cartComment.value = cart.value.comment || "";
 
     if (cart.value.addresses?.length === 0) {
-      // const result = await getDefaultShippingAddress();
-      // defaultShippingAddressId.value = result.id;
-      // console.log("defaultShipping", defaultShippingAddressId.value);
-      // await updateCartAddress(result);
-
-      await getDefaultShippingAddress().then(async (result) => {
-        defaultShippingAddressId.value = result.id;
-        console.log("defaultShipping", defaultShippingAddressId.value);
-        await updateCartAddress(result);
+      await loadDefaultShippingAddress().then(async () => {
+        cartShippingAddressId.value = defaultShippingAddress.value.id;
+        await updateCartAddress(defaultShippingAddress.value);
       });
     }
   });
@@ -363,10 +356,10 @@ function selectShippingAddressDialog(): void {
   openPopup({
     component: ShippingAddressDialog,
     props: {
-      //currentAddress: cart.value.addresses?.[0],
-      currentAddressId: defaultShippingAddressId.value,
+      currentAddressId: cartShippingAddressId.value,
       onResult(address: InputAddressType) {
-        updateCartAddress(address);
+        cartShippingAddressId.value = address.id;
+        updateCartAddress({ ...address, id: cart.value.addresses?.[0].id });
       },
     },
   });

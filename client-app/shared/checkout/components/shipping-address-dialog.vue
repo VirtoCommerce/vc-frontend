@@ -2,7 +2,8 @@
   <Popup title="Select address">
     <template #actions="{ close }">
       <button
-        class="uppercase inline-flex items-center justify-center lg:mr-auto px-5 h-9 font-roboto-condensed text-base font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:border-yellow-600 hover:text-white rounded focus:outline-none"
+        class="uppercase inline-flex items-center justify-center lg:mr-auto px-5 h-9 font-roboto-condensed text-sm font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:border-yellow-600 hover:text-white rounded focus:outline-none"
+        :class="[isMobile && 'flex-grow w-1/2']"
         @click="
           $emit('addNewAddress');
           close();
@@ -10,27 +11,60 @@
       >
         Add new address
       </button>
-      <div class="w-1/3 flex justify-between space-x-3">
+      <div class="flex justify-between space-x-3" :class="[isMobile ? 'flex-grow w-1/2' : 'w-1/3']">
         <button
-          class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-5 h-9 font-roboto-condensed text-base font-bold border-2 border-black text-black hover:bg-black hover:text-white rounded focus:outline-none"
+          v-if="!isMobile"
+          class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-5 h-9 font-roboto-condensed text-sm font-bold border-2 border-black text-black hover:bg-black hover:text-white rounded focus:outline-none"
           @click="close"
         >
           Cancel
         </button>
         <button
-          class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-10 h-9 font-roboto-condensed text-base font-bold border-2 border-yellow-500 bg-yellow-500 text-white hover:bg-yellow-600 hover:border-yellow-600 rounded focus:outline-none"
+          class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-10 h-9 font-roboto-condensed text-sm font-bold border-2 border-yellow-500 bg-yellow-500 text-white hover:bg-yellow-600 hover:border-yellow-600 rounded focus:outline-none"
           @click="
             $emit('result', selectedAddress);
             close();
           "
         >
-          OK
+          {{ isMobile ? "Save" : "OK" }}
         </button>
       </div>
     </template>
 
+    <!-- Mobile table view -->
+    <template v-if="isMobile">
+      <div
+        v-for="address in paginatedAddresses"
+        :key="address.id"
+        class="flex items-center space-x-3 p-6 border-b border-gray-200"
+      >
+        <div class="w-1/2 flex-grow">
+          <span class="font-extrabold">{{ address.firstName }} {{ address.lastName }}</span>
+          <p>
+            {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
+            {{ address.postalCode }}
+          </p>
+          <p><span class="font-extrabold">Phone:</span>{{ address.phone }}</p>
+          <p><span class="font-extrabold">Email:</span>{{ address.email }}</p>
+        </div>
+        <div v-if="address.id === selectedAddress?.id" class="w-1/4">
+          <div class="flex items-center justify-center mx-auto rounded-full w-6 h-6 bg-green-600 text-white text-sm">
+            <i class="fas fa-check"></i>
+          </div>
+        </div>
+        <div v-else class="w-1/4">
+          <button
+            class="uppercase flex-grow flex items-center mx-auto justify-center px-3 h-9 font-roboto-condensed text-base font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white rounded focus:outline-none"
+            @click="setAddress(address)"
+          >
+            Select
+          </button>
+        </div>
+      </div>
+    </template>
+
     <!-- Desctop table view -->
-    <table class="table-auto text-sm text-left">
+    <table v-else class="table-auto text-sm text-left">
       <thead class="border-b border-gray-200">
         <tr>
           <th class="py-3 px-5 font-extrabold">Recipient's name</th>
@@ -75,29 +109,15 @@
 import { Popup } from "@/components";
 import Pagination from "@/shared/catalog/components/pagination.vue";
 import { MemberAddressType } from "@/core/api/graphql/types";
-import { computed, onMounted, PropType, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { getMyAddresses } from "@/core/api/graphql/account";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
 const props = defineProps({
   currentAddressId: {
     type: String,
     default: undefined,
   },
-
-  // currentAddress: {
-  //   type: Object as PropType<MemberAddressType>,
-  //   default: undefined,
-  // },
-
-  // currentMethodOption: {
-  //   type: String,
-  //   default: undefined,
-  // },
-
-  // availableAddresses: {
-  //   type: Array as PropType<CartAddressType[]>,
-  //   default: () => [],
-  // },
 
   onResult: {
     type: Function,
@@ -106,6 +126,9 @@ const props = defineProps({
 });
 
 defineEmits(["result", "addNewAddress"]);
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("md");
 
 const availableAddresses = ref<MemberAddressType[]>([]);
 

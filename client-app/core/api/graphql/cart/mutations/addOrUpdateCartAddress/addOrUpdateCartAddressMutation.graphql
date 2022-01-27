@@ -1,5 +1,5 @@
-  mutation AddOrUpdateCartAddress($command: InputAddOrUpdateCartAddressType!) {
-    addOrUpdateCartAddress(command: $command) {
-      id
-    }
+mutation AddOrUpdateCartAddress($command: InputAddOrUpdateCartAddressType!) {
+  addOrUpdateCartAddress(command: $command) {
+    id
   }
+}
