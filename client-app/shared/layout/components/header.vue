@@ -253,10 +253,10 @@
               >Your list</router-link
             >
             <router-link
-              to="/checkoutDetails"
+              to="/account/checkout-defaults"
               class="font-bold text-gray-200 text-lg"
               @click="mobileMenuVisible = false"
-              >Checkout details</router-link
+              >Checkout Defaults</router-link
             >
           </div>
         </div>

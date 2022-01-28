@@ -8,7 +8,7 @@
       <AccountNavigationLink to="/list" text="Your List" class="list-icon"></AccountNavigationLink>
       <AccountNavigationLink
         to="/account/checkout-defaults"
-        text="Checkout Details"
+        text="Checkout Defaults"
         class="checkout-icon"
       ></AccountNavigationLink>
     </div>
