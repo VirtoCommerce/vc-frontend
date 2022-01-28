@@ -36,6 +36,9 @@ mutation CreateOrderFromCart($command: InputCreateOrderFromCartType!) {
         logoUrl
         typeName
       }
+      price {
+        ...moneyFields
+      }
       deliveryAddress {
         ...orderAddressFields
       }
