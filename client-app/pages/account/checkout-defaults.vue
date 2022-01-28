@@ -16,13 +16,18 @@
             <div class="flex flex-col lg:w-1/2">
               <div class="font-bold">Preferred Delivery Method</div>
               <div class="mt-3 md:mt-1 flex flex-col space-y-5 md:space-y-0 md:flex-row md:space-x-7">
-                <Radio
+                <RadioButton
                   id="shipping"
                   v-model="checkoutDefaults.deliveryMethod"
                   value="shipping"
                   label="Shipping"
-                ></Radio>
-                <Radio id="pickup" v-model="checkoutDefaults.deliveryMethod" value="pickup" label="Pickup"></Radio>
+                ></RadioButton>
+                <RadioButton
+                  id="pickup"
+                  v-model="checkoutDefaults.deliveryMethod"
+                  value="pickup"
+                  label="Pickup"
+                ></RadioButton>
               </div>
               <div class="font-bold mt-8">Preferred Payment Method</div>
               <select
@@ -56,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { Radio, Button as VcButton } from "@/components";
+import { RadioButton, Button as VcButton } from "@/components";
 import { AccountNavigation, useUserCheckoutDefaults, CheckoutDefaults } from "@/shared/account";
 import { computed, onMounted, Ref, ref, reactive } from "vue";
 import { useCart } from "@/shared/cart";
