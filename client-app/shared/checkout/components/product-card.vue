@@ -42,13 +42,13 @@
               :max="max"
               :min="0"
               class="w-20 border rounded overflow-hidden h-8 lg:h-10 focus:ring ring-inset outline-none p-1 text-center"
-              :class="{ 'text-red-500': isInputdisabled, 'border-red-500': errorMessage }"
-              :disabled="isInputdisabled || readOnly"
+              :class="{ 'text-red-500': isInputDisabled, 'border-red-500': errorMessage }"
+              :disabled="isInputDisabled || readOnly"
               @input="onInput"
               @keypress="onKeypress"
             />
             <div v-if="!readOnly">
-              <div v-if="!isInputdisabled" class="flex items-center">
+              <div v-if="!isInputDisabled" class="flex items-center">
                 <span class="text-green-700 text-xs pt-1 whitespace-nowrap"
                   >{{ lineItem.inStockQuantity! > 9999 ? "9999+" : lineItem.inStockQuantity }} in stock</span
                 >
@@ -59,23 +59,27 @@
             </div>
           </div>
 
-          <div v-if="!readOnly" class="lg:hidden space-x-2">
-            <button
-              v-if="!isInputdisabled"
-              class="rounded uppercase h-8 px-2 border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 hover:text-white hover:bg-yellow-500"
+          <div v-if="!readOnly" class="lg:hidden flex flex-row space-x-2">
+            <VcButton
+              v-if="!isInputDisabled"
+              size="sm"
+              outline
+              class="uppercase px-2 font-bold"
               @click="updateQuantity"
             >
               Update
-            </button>
-            <button
-              class="rounded uppercase h-8 px-2 border-2 font-roboto-condensed font-bold text-sm text-black border-black hover:text-white hover:bg-black"
+            </VcButton>
+            <VcButton
+              size="sm"
+              kind="secondary"
+              outline
+              class="uppercase px-2"
               @click="$emit('remove:item', lineItem.id)"
+              >Remove</VcButton
             >
-              Remove
-            </button>
           </div>
           <div v-if="!readOnly" class="hidden lg:flex lg:w-1/4 flex-col space-y-1 text-xs font-semibold text-cyan-700">
-            <span v-if="!isInputdisabled" class="cursor-pointer" @click="updateQuantity">Update</span>
+            <span v-if="!isInputDisabled" class="cursor-pointer" @click="updateQuantity">Update</span>
             <span class="cursor-pointer" @click="$emit('remove:item', lineItem.id)">Remove</span>
           </div>
           <div class="hidden lg:flex lg:w-2/4 lg:items-end flex-col text-sm font-extrabold pr-3">
@@ -89,7 +93,7 @@
 </template>
 
 <script setup lang="ts">
-import { Image, PriceDisplay } from "@/components";
+import { Image, PriceDisplay, Button as VcButton } from "@/components";
 import { LineItemType } from "@/core/api/graphql/types";
 import { computed, PropType } from "vue";
 import { useField } from "vee-validate";
@@ -121,10 +125,10 @@ const { value, validate, errorMessage } = useField("qty", rules, {
   initialValue: props.lineItem.inStockQuantity === 0 ? 0 : count,
 });
 
-const isInputdisabled = computed(() => props.lineItem.inStockQuantity === 0);
+const isInputDisabled = computed(() => props.lineItem.inStockQuantity === 0);
 
 const updateQuantity = () => {
-  if (!isInputdisabled.value) {
+  if (!isInputDisabled.value) {
     emit("update:quantity", props.lineItem.id, value.value);
   }
 };

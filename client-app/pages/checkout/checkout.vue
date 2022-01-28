@@ -56,12 +56,7 @@
                     <p><span class="font-extrabold">Email:</span> debra.holt@example.com</p>
                   </div>
                   <div>
-                    <button
-                      class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 disabled:opacity-30"
-                      disabled
-                    >
-                      Change
-                    </button>
+                    <VcButton size="sm" outline class="px-3 self-start uppercase font-bold" disabled>Change</VcButton>
                   </div>
                 </CheckoutLabeledBlock>
                 <CheckoutLabeledBlock label="Shipping method">
@@ -78,12 +73,13 @@
                     <div v-else class="text-gray-600">Not defined</div>
                   </div>
                   <div>
-                    <button
-                      class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 disabled:opacity-30"
+                    <VcButton
+                      size="sm"
+                      outline
+                      class="px-3 self-start uppercase font-bold"
                       @click="showShipmentMethodDialog"
+                      >Change</VcButton
                     >
-                      Change
-                    </button>
                   </div>
                 </CheckoutLabeledBlock>
               </div>
@@ -116,12 +112,13 @@
                     <div v-else class="text-gray-600">Not defined</div>
                   </div>
                   <div>
-                    <button
-                      class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 disabled:opacity-30"
+                    <VcButton
+                      size="sm"
+                      outline
+                      class="px-3 self-start uppercase font-bold"
                       @click="showPaymentMethodDialog"
+                      >Change</VcButton
                     >
-                      Change
-                    </button>
                   </div>
                 </CheckoutLabeledBlock>
               </div>
@@ -161,13 +158,9 @@
                 <p class="mt-8 mb-3 text-xs font-normal text-gray-400">
                   Availability, shipping, tax & promotions are not final until you complete your order.
                 </p>
-                <button
-                  class="uppercase bg-yellow-500 text-white py-2 w-full rounded font-roboto-condensed text-base disabled:opacity-30"
-                  :disabled="!isValidCheckout"
-                  @click="createOrder"
-                >
+                <VcButton class="uppercase w-full" :disabled="!isValidCheckout" :waiting="loading" @click="createOrder">
                   Place order
-                </button>
+                </VcButton>
               </template>
             </OrderSummary>
           </div>
@@ -190,7 +183,7 @@ import {
   ShippingMethodDialog,
   PaymentMethodDialog,
 } from "@/shared/checkout";
-import { Textarea, Image, PriceDisplay, Pagination } from "@/components";
+import { Textarea, Image, PriceDisplay, Pagination, Button as VcButton } from "@/components";
 import { useCart, useCheckout } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import { computed, onBeforeUpdate, onMounted, ref } from "vue";
@@ -210,6 +203,7 @@ const {
   changeComment,
   updateShipment,
   updatePayment,
+  loading,
 } = useCart();
 
 const { placeOrder } = useCheckout();

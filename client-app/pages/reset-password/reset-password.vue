@@ -5,7 +5,7 @@
       <div v-if="isMounted">
         <div v-if="tokenDataIsValid">
           <div v-if="!isSucceeded">
-            <div class="text-lg md:text-base mb-4">Enter a new password for</div>
+            <div class="text-lg md:text-base mb-4">Enter a new password</div>
             <ResetPasswordForm :user-id="userId" :token="token" @succeeded="onSucceeded()"></ResetPasswordForm>
           </div>
           <div v-else class="flex flex-col items-center space-y-10 lg:space-y-12 lg:items-start lg:mt-12">
@@ -13,12 +13,7 @@
               <i class="fas fa-check-circle text-7xl lg:text-4xl text-green-600"></i>
               <div class="text-lg">Password was successfully changed</div>
             </div>
-            <router-link
-              to="/sign-in"
-              class="bg-yellow-500 rounded text-white text-center w-48 py-2 font-bold uppercase cursor-pointer hover:bg-yellow-600"
-            >
-              Log in
-            </router-link>
+            <VcButton to="/sign-in" class="w-48 uppercase">Log in</VcButton>
           </div>
         </div>
         <div v-else class="flex flex-col items-center space-y-10 lg:space-y-12 lg:items-start lg:mt-12">
@@ -26,12 +21,7 @@
             <i class="fas fa-times-circle text-7xl lg:text-4xl text-red-500"></i>
             <div class="text-lg">User ID or token is invalid.</div>
           </div>
-          <router-link
-            to="/"
-            class="bg-yellow-500 rounded text-white text-center w-48 py-2 font-bold uppercase cursor-pointer hover:bg-yellow-600"
-          >
-            Home page
-          </router-link>
+          <VcButton to="/" class="w-48 uppercase">Home page</VcButton>
         </div>
       </div>
     </template>
@@ -43,7 +33,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { Image } from "@/components";
+import { Image, Button as VcButton } from "@/components";
 import { TwoColumn } from "@/shared/layout";
 import { ResetPasswordForm, useUser } from "@/shared/account";
 import { useRoute } from "vue-router";

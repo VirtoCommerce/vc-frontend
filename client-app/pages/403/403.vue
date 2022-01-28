@@ -7,12 +7,7 @@
         You don't have permission to access requested page.
       </p>
       <div>
-        <router-link
-          to="/"
-          tag="button"
-          class="bg-yellow-500 hover:bg-yellow-600 uppercase font-bold rounded text-white px-9 py-3 text-base whitespace-nowrap font-roboto"
-          >Home page</router-link
-        >
+        <VcButton to="/" size="md" class="w-40 uppercase">Home page</VcButton>
       </div>
     </template>
     <template #right>
@@ -23,5 +18,5 @@
 
 <script setup lang="ts">
 import { TwoColumn } from "@/shared/layout";
-import { Image } from "@/components";
+import { Image, Button as VcButton } from "@/components";
 </script>

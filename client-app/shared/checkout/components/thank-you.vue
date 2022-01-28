@@ -83,12 +83,7 @@
               <span>Invoice</span>
             </div>
           </Card>
-          <button
-            class="uppercase bg-yellow-500 text-white py-2 w-full rounded font-roboto-condensed text-base disabled:opacity-30"
-            @click="printOrder"
-          >
-            Print order
-          </button>
+          <VcButton class="uppercase w-full" @click="printOrder">Print order</VcButton>
         </div>
       </div>
     </div>
@@ -100,7 +95,7 @@ import { CheckoutSection, OrderSummary, ProductCard } from "@/shared/checkout";
 import { CustomerOrderType } from "@/core/api/graphql/types";
 import { useCart } from "@/shared/cart";
 import { computed, PropType, ref } from "vue";
-import { Card, Image, Pagination } from "@/components";
+import { Card, Image, Pagination, Button as VcButton } from "@/components";
 
 const { itemsPerPage } = useCart();
 
