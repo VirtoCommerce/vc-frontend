@@ -207,8 +207,7 @@
 </template>
 
 <script setup lang="ts">
-import Pagination from "@/shared/catalog/components/pagination.vue";
-import { ISortInfo, TableMobileItem, Image } from "@/components";
+import { ISortInfo, TableMobileItem, Image, Pagination } from "@/components";
 import { AccountNavigation, useUser } from "@/shared/account";
 import { computed, onMounted, Ref, ref } from "vue";
 import { MemberAddressType } from "@/core/api/graphql/types";

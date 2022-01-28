@@ -237,7 +237,6 @@ import { ref, reactive, onMounted, watch, unref, watchEffect, Ref, shallowRef } 
 import { useBreakpoints, breakpointsTailwind, useUrlSearchParams, whenever } from "@vueuse/core";
 import {
   Breadcrumbs,
-  Pagination,
   PageSize,
   ProductCardGrid,
   ProductCardList,
@@ -250,7 +249,7 @@ import {
   useCategories,
   IBreadcrumbsItem,
 } from "@/shared/catalog";
-import { Card, Checkbox } from "@/components";
+import { Card, Checkbox, Pagination } from "@/components";
 import { AddToCart } from "@/shared/cart";
 import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from "@headlessui/vue";
 import { useRoute } from "vue-router";

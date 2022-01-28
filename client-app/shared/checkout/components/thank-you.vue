@@ -98,10 +98,9 @@
 <script setup lang="ts">
 import { CheckoutSection, OrderSummary, ProductCard } from "@/shared/checkout";
 import { CustomerOrderType } from "@/core/api/graphql/types";
-import Pagination from "@/shared/catalog/components/pagination.vue";
 import { useCart } from "@/shared/cart";
 import { computed, PropType, ref } from "vue";
-import { Card, Image } from "@/components";
+import { Card, Image, Pagination } from "@/components";
 
 const { itemsPerPage } = useCart();
 

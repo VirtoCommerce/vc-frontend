@@ -179,7 +179,6 @@
 </template>
 
 <script setup lang="ts">
-import Pagination from "@/shared/catalog/components/pagination.vue";
 import {
   CheckoutLabeledBlock,
   CheckoutSection,
@@ -191,7 +190,7 @@ import {
   ShippingMethodDialog,
   PaymentMethodDialog,
 } from "@/shared/checkout";
-import { Textarea, Image, PriceDisplay } from "@/components";
+import { Textarea, Image, PriceDisplay, Pagination } from "@/components";
 import { useCart, useCheckout } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import { computed, onBeforeUpdate, onMounted, ref } from "vue";
