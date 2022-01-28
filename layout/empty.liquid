@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" class="h-100">
+<html lang="en" style="height: 100%;">
 <head>
-  <meta charset="utf-8">
+    <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
     <meta content="" name="description"/>
     <meta content="" name="keywords"/>
@@ -9,30 +9,8 @@
     <meta content="index, follow" name="googlebot"/>
     <meta content="notranslate" name="google"/>
     <meta content="telephone=no" name="format-detection"/>
-  <title>{{ store.title }}</title>
-  <base href="{{ '/' | absolute_url }}" />
-  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
-
-  <!-- Google fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;0,900;1,400&family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
-
-  <link href="{{'favicon.ico' | static_asset_url }}" rel="icon" type="image/x-icon">
-  <script>
-    window.BASE_URL = `{{ "/" | full_url }}`;
-    window.STORE_NAME = "{{ current_store.name }}";
-    window.STORE_ID = "{{ current_store.id }}";
-    window.LOCALE = "{{ current_language.culture_name }}";
-    window.USER_ID = "{{ current_user.id }}";
-  </script>
 </head>
-<body class="font-lato">
-	<div id="layout">
-
-      <!-- Content here -->
-      {{ content_for_layout }}
-
-    </div>
+<body style="height: 100%; margin: 0; padding: 0;">
+    {{ content_for_layout }}
 </body>
 </html>

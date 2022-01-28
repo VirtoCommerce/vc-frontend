@@ -1,6 +1,7 @@
 {% layout 'empty' %}
 
 <style>
+
 .preview-frame {
     border: none;
     height: 100%;
@@ -10,11 +11,12 @@
 }
 </style>
 
-<iframe class="preview-frame" id="preview-a" src="" title=""></iframe>
+<iframe class="preview-frame" style="display: block;" id="preview-a" src="http://localhost:2082" title=""></iframe>
 <iframe class="preview-frame" id="preview-1" src="" title=""></iframe>
 
 <script>
     (function(){
+        return;
         var platformUrl = window.location.search.substr(1).split('&').find(q => q.startsWith('ep=')).substr(3);
         var relativeUrl = (platformUrl.endsWith('/') ? '' : '/') + 'Modules/$(VirtoCommerce.PageBuilderModule)/Content/store/bridge.bundle.js';
         var script = document.createElement("script");
