@@ -62,9 +62,15 @@
 
 <script setup lang="ts">
 import { RadioButton, Button as VcButton } from "@/components";
-import { AccountNavigation, useUserCheckoutDefaults, CheckoutDefaults } from "@/shared/account";
+import {
+  AccountNavigation,
+  useUserCheckoutDefaults,
+  CheckoutDefaults,
+  CheckoutDefaultsSuccessDialog,
+} from "@/shared/account";
 import { computed, onMounted, Ref, ref, reactive } from "vue";
 import { useCart } from "@/shared/cart";
+import { usePopup } from "@/shared/popup";
 
 const { cart, loading } = useCart();
 
@@ -72,6 +78,7 @@ const shippingMethods = computed(() => cart.value.availableShippingMethods);
 const paymentMethods = computed(() => cart.value.availablePaymentMethods);
 
 const { getUserCheckoutDefaults, setUserCheckoutDefaults } = useUserCheckoutDefaults();
+const { openPopup } = usePopup();
 
 let checkoutDefaults: Ref<CheckoutDefaults> = ref<CheckoutDefaults>({});
 
@@ -84,5 +91,8 @@ onMounted(() => {
 
 function saveDefaults() {
   setUserCheckoutDefaults(checkoutDefaults.value);
+  openPopup({
+    component: CheckoutDefaultsSuccessDialog,
+  });
 }
 </script>
