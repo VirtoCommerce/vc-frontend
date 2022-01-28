@@ -8,6 +8,7 @@
       placeholder="Enter your code"
       :disabled="cartCouponApplied"
     />
+    <!-- todo: use VcButton -->
     <button
       v-if="!cartCouponApplied"
       class="rounded uppercase w-10 border-2 font-roboto-condensed font-bold text-sm"

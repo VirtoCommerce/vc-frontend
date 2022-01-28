@@ -11,11 +11,9 @@
         <div class="flex flex-col w-full lg:w-4/5 space-y-5">
           <div class="flex justify-between items-center mx-5 lg:mx-0">
             <h2 class="text-gray-800 text-3xl font-bold uppercase">Addresses</h2>
-            <button
-              class="uppercase border border-yellow-500 text-yellow-500 py-1 px-3 rounded font-roboto-condensed text-base disabled:opacity-30"
-            >
+            <VcButton outline size="sm" class="px-3 uppercase border">
               {{ isMobile ? "Add new" : "Add new address" }}
-            </button>
+            </VcButton>
           </div>
           <div class="flex flex-col bg-white shadow-sm" :class="{ 'rounded border': !isMobile }">
             <!-- Mobile table view -->
@@ -67,11 +65,7 @@
                 <img src="/assets/static/images/account/icons/no-addresses.svg" alt="No addresses" />
                 <div class="flex flex-col space-y-2">
                   <span class="text-base">There are no addresses yet</span>
-                  <button
-                    class="uppercase bg-yellow-500 text-white py-2 w-full rounded font-roboto-condensed text-base disabled:opacity-30"
-                  >
-                    Add new address
-                  </button>
+                  <VcButton class="uppercase w-full">Add new address</VcButton>
                 </div>
               </div>
             </template>
@@ -151,6 +145,7 @@
                     >
                   </td>
                   <td class="p-5 flex space-x-2">
+                    <!-- todo: use VcButton -->
                     <button type="button" class="h-6 w-6 shadow rounded text-yellow-500 hover:bg-gray-100">
                       <i class="fas fa-pencil-alt"></i>
                     </button>
@@ -180,11 +175,7 @@
                       <img src="/assets/static/images/account/icons/no-addresses.svg" alt="No addresses" />
                       <div class="flex flex-col space-y-2">
                         <span class="text-base">There are no addresses yet</span>
-                        <button
-                          class="uppercase bg-yellow-500 text-white py-2 w-full rounded font-roboto-condensed text-base disabled:opacity-30"
-                        >
-                          Add new address
-                        </button>
+                        <VcButton class="uppercase w-full">Add new address</VcButton>
                       </div>
                     </div>
                   </td>
@@ -208,12 +199,13 @@
 
 <script setup lang="ts">
 import Pagination from "@/shared/catalog/components/pagination.vue";
-import { ISortInfo, TableMobileItem } from "@/components";
+import { ISortInfo, TableMobileItem, Button as VcButton } from "@/components";
 import { AccountNavigation, useUser } from "@/shared/account";
 import { computed, onMounted, Ref, ref } from "vue";
 import { MemberAddressType } from "@/core/api/graphql/types";
 import { sortAscending, sortDescending } from "@/core/constants";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+
 const { loadAddresses, addresses, deleteAddress, defaultShippingAddress } = useUser();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);

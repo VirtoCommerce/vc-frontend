@@ -55,11 +55,7 @@
         </div>
         <div class="mt-7 md:mt-5">
           <div>
-            <router-link
-              class="block text-center bg-yellow-500 rounded text-white px-2 py-2 font-bold uppercase hover:bg-yellow-600 cursor-pointer"
-              to="/checkout"
-              >view cart</router-link
-            >
+            <VcButton to="/checkout" class="uppercase px-2">view cart</VcButton>
           </div>
         </div>
       </ProductPriceBlock>
@@ -71,7 +67,7 @@
 import { Product } from "@/core/api/graphql/types";
 import { PropType } from "vue";
 import { useCart } from "@/shared/cart";
-import { MarkdownRender, ImageGallery } from "@/components";
+import { MarkdownRender, ImageGallery, Button as VcButton } from "@/components";
 import { ProductProperties, ProductTitledBlock, ProductVariationCard, ProductPriceBlock } from "@/shared/catalog";
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 

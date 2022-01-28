@@ -7,4 +7,5 @@ export { default as ImageGallery } from "./atoms/image-gallery/image-gallery.vue
 export { default as Input } from "./molecules/input/input.vue";
 export { default as Popup } from "./organisms/popup/popup.vue";
 export { default as TableMobileItem } from "./organisms/table/_internal/table-mobile-item/table-mobile-item.vue";
+export { default as Button } from "./atoms/button/button.vue";
 export * from "./types";
