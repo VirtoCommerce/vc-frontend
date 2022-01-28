@@ -1,6 +1,7 @@
 #import "../../../fragments/moneyFields.graphql"
 #import "../../../fragments/currencyFields.graphql"
 #import "../../../fragments/orderLineItemFields.graphql"
+#import "../../../fragments/orderAddressFields.graphql"
 
 mutation CreateOrderFromCart($command: InputCreateOrderFromCartType!) {
   createOrderFromCart(command: $command) {
@@ -27,6 +28,27 @@ mutation CreateOrderFromCart($command: InputCreateOrderFromCartType!) {
     }
     items {
       ...orderLineItemFields
+    }
+    shipments {
+      shipmentMethodCode
+      shipmentMethodOption
+      shippingMethod {
+        logoUrl
+        typeName
+      }
+      deliveryAddress {
+        ...orderAddressFields
+      }
+    }
+    inPayments {
+      gatewayCode
+      paymentMethod {
+        logoUrl
+        typeName
+      }
+      billingAddress {
+        ...orderAddressFields
+      }
     }
   }
 }

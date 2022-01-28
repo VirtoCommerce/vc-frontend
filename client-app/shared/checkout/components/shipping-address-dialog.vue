@@ -82,7 +82,7 @@
             {{ address.postalCode }}
           </td>
           <td class="p-5">{{ address.phone }}</td>
-          <td class="p-5">{{ address.id }}</td>
+          <td class="p-5">{{ address.email }}</td>
           <td v-if="address.id === selectedAddress?.id" class="p-5">
             <div class="flex items-center justify-center mx-auto rounded-full w-6 h-6 bg-green-600 text-white text-sm">
               <i class="fas fa-check"></i>

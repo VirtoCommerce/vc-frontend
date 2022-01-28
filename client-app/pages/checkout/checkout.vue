@@ -49,7 +49,7 @@
             >
               <div class="mx-5 lg:ml-28 lg:mr-11">
                 <CheckoutLabeledBlock label="Shipping address">
-                  <template v-if="cart.shipments && cart.shipments?.length > 0">
+                  <template v-if="cart.shipments && cart.shipments[0].deliveryAddress">
                     <div>
                       <span class="font-extrabold"
                         >{{ cart.shipments[0].deliveryAddress?.firstName }}
@@ -76,7 +76,7 @@
                   <template v-else>
                     <div class="text-red-500 flex items-center space-x-4">
                       <i class="fas fa-exclamation-triangle text-2xl"></i>
-                      <span>You do not have a shipping address. Please create a new one.</span>
+                      <span>You do not have a shipping address. Please choose/create a new one.</span>
                     </div>
                     <div>
                       <button
@@ -117,14 +117,30 @@
                 <CheckoutLabeledBlock label="Billing address">
                   <label class="flex items-center text-sm cursor-pointer">
                     <input
+                      v-model="billingSameAsShipping"
                       type="checkbox"
-                      checked="true"
-                      disabled
                       class="form-tick appearance-none w-5 h-5 border-2 border-gray-300 rounded-sm checked:bg-yellow-500 checked:border-transparent focus:outline-none cursor-pointer"
                     />
                     <span class="ml-2 font-medium">Same as shipping address</span>
                   </label>
                 </CheckoutLabeledBlock>
+                <div
+                  v-if="!billingSameAsShipping && !cart.payments?.[0]?.billingAddress"
+                  class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 p-5 flex justify-between"
+                >
+                  <div class="text-red-500 flex items-center space-x-4">
+                    <i class="fas fa-exclamation-triangle text-2xl"></i>
+                    <span>You do not have a billing address. Please choose/create a new one.</span>
+                  </div>
+                  <div>
+                    <button
+                      class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 disabled:opacity-30"
+                      @click="selectBillingAddressDialog"
+                    >
+                      New address
+                    </button>
+                  </div>
+                </div>
                 <CheckoutLabeledBlock label="Payment method">
                   <div class="flex flex-row items-center space-x-4">
                     <template v-if="cart.payments?.[0]?.paymentGatewayCode">
@@ -233,6 +249,8 @@ const cartCoupon = ref("");
 const couponValidationError = ref(false);
 const cartCouponApplied = ref(false);
 
+const billingSameAsShipping = ref(true);
+
 const page = ref(1);
 const cartItems = computed(() =>
   cart.value.items?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
@@ -240,7 +258,19 @@ const cartItems = computed(() =>
 
 const cartComment = ref("");
 
-const isValidCheckout = computed(() => !(cart.value.validationErrors && cart.value.validationErrors?.length > 0));
+const isValidCheckout = computed(
+  () =>
+    !(cart.value.validationErrors && cart.value.validationErrors?.length > 0) &&
+    isValidShipment.value &&
+    isValidPayment.value
+);
+const isValidShipment = computed(
+  () =>
+    cart.value.shipments?.[0] &&
+    cart.value.shipments?.[0]?.shipmentMethodCode &&
+    cart.value.shipments?.[0]?.deliveryAddress
+);
+const isValidPayment = computed(() => cart.value.payments?.[0] && cart.value.payments?.[0]?.paymentGatewayCode);
 
 const completedOrder = ref({});
 const showThankYou = ref(false);
@@ -291,6 +321,12 @@ const createOrder = async () => {
     if (cartComment.value) {
       await changeComment(cartComment.value);
     }
+    if (billingSameAsShipping.value) {
+      await updatePayment({
+        id: cart.value.payments?.[0]?.id,
+        billingAddress: { ...cart.value.shipments?.[0]?.deliveryAddress },
+      });
+    }
     await placeOrder(cart.value.id).then((order) => {
       completedOrder.value = order;
       showThankYou.value = true;
@@ -324,7 +360,6 @@ function showShipmentMethodDialog(): void {
           shipmentMethodCode: method.code,
           shipmentMethodOption: method.optionName,
           id: cart.value.shipments?.[0]?.id,
-          deliveryAddress: { ...cart.value.shipments?.[0].deliveryAddress },
         });
       },
     },
@@ -354,10 +389,22 @@ function selectShippingAddressDialog(): void {
       currentAddress: cart.value.shipments?.[0]?.deliveryAddress,
       onResult(address: InputAddressType) {
         updateShipment({
-          shipmentMethodCode: cart.value.shipments?.[0]?.shipmentMethodCode,
-          shipmentMethodOption: cart.value.shipments?.[0]?.shipmentMethodOption,
           id: cart.value.shipments?.[0]?.id,
           deliveryAddress: { ...address },
+        });
+      },
+    },
+  });
+}
+function selectBillingAddressDialog(): void {
+  openPopup({
+    component: ShippingAddressDialog,
+    props: {
+      currentAddress: cart.value.payments?.[0]?.billingAddress,
+      onResult(address: InputAddressType) {
+        updatePayment({
+          id: cart.value.payments?.[0]?.id,
+          billingAddress: { ...address },
         });
       },
     },
@@ -366,5 +413,3 @@ function selectShippingAddressDialog(): void {
 </script>
 
 <style scoped></style>
-
-//TODO: ввести функцию isEqualAddress для сравнения адресов в модальном окне (смотри B2B тему)
