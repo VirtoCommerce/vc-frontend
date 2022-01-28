@@ -84,7 +84,6 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
 
     availablePaymentMethods {
       code
-      name
       logoUrl
       price {
         ...moneyFields

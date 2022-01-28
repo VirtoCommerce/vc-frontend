@@ -1,3 +1,5 @@
+import { PaymentMethodType, ShippingMethodType } from "@core/api/graphql/types";
+
 export type SignMeUp = {
   userName: string;
   email: string;
@@ -36,6 +38,6 @@ export interface ISortInfo {
 
 export type CheckoutDefaults = {
   deliveryMethod?: string;
-  shippingMethodCode?: string;
-  paymentMethodCode?: string;
+  shippingMethod?: ShippingMethodType;
+  paymentMethod?: PaymentMethodType;
 };

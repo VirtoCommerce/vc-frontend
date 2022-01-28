@@ -18898,6 +18898,17 @@
             "deprecationReason": null
           },
           {
+            "name": "masterVariation",
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "VariationType",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "maxQuantity",
             "args": [],
             "type": {
