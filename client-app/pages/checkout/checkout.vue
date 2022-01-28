@@ -72,7 +72,13 @@
                     <div v-else class="text-gray-600">Not defined</div>
                   </div>
                   <div>
-                    <VcButton size="sm" outline class="px-3 self-start uppercase font-bold" @click="showShipmentMethodDialog">Change</VcButton>
+                    <VcButton
+                      size="sm"
+                      outline
+                      class="px-3 self-start uppercase font-bold"
+                      @click="showShipmentMethodDialog"
+                      >Change</VcButton
+                    >
                   </div>
                 </CheckoutLabeledBlock>
               </div>
@@ -105,7 +111,13 @@
                     <div v-else class="text-gray-600">Not defined</div>
                   </div>
                   <div>
-                    <VcButton size="sm" outline class="px-3 self-start uppercase font-bold" @click="showPaymentMethodDialog">Change</VcButton>
+                    <VcButton
+                      size="sm"
+                      outline
+                      class="px-3 self-start uppercase font-bold"
+                      @click="showPaymentMethodDialog"
+                      >Change</VcButton
+                    >
                   </div>
                 </CheckoutLabeledBlock>
               </div>
@@ -177,6 +189,7 @@ import { usePopup } from "@/shared/popup";
 import { computed, onBeforeUpdate, onMounted, ref } from "vue";
 import _ from "lodash";
 import { PaymentMethodType, ShippingMethodType } from "@/core/api/graphql/types";
+import { useUserCheckoutDefaults } from "@/shared/account";
 
 const {
   cart,
@@ -193,6 +206,8 @@ const {
   updatePayment,
   loading,
 } = useCart();
+
+const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
 
 const { placeOrder } = useCheckout();
 const { openPopup } = usePopup();
@@ -274,12 +289,32 @@ onBeforeUpdate(() => {
 });
 
 onMounted(async () => {
-  await loadMyCart().then(() => {
+  await loadMyCart().then(async () => {
     if (cart.value.coupons && cart.value.coupons.length > 0) {
       cartCoupon.value = cart.value.coupons[0]?.code || "";
       cartCouponApplied.value = true;
     }
     cartComment.value = cart.value.comment || "";
+
+    //#region set checkout defaults
+    const checkoutDefaults = getUserCheckoutDefaults();
+    if (!cart.value.shipments?.[0]?.id && checkoutDefaults?.shippingMethod) {
+      const method = checkoutDefaults?.shippingMethod;
+      await updateShipment({
+        shipmentMethodCode: method.code,
+        shipmentMethodOption: method.optionName,
+        id: cart.value.shipments?.[0]?.id,
+      });
+    }
+
+    if (!cart.value.payments?.[0]?.id && checkoutDefaults?.paymentMethod) {
+      const method = checkoutDefaults?.paymentMethod;
+      await updatePayment({
+        paymentGatewayCode: method.code,
+        id: cart.value.payments?.[0]?.id,
+      });
+    }
+    //#endregion set checkout defaults
   });
 });
 
@@ -290,8 +325,8 @@ function showShipmentMethodDialog(): void {
       currentMethodCode: cart.value.shipments?.[0]?.shipmentMethodCode,
       currentMethodOption: cart.value.shipments?.[0]?.shipmentMethodOption,
       availableMethods: cart.value.availableShippingMethods,
-      onResult(method: ShippingMethodType) {
-        updateShipment({
+      async onResult(method: ShippingMethodType) {
+        await updateShipment({
           shipmentMethodCode: method.code,
           shipmentMethodOption: method.optionName,
           id: cart.value.shipments?.[0]?.id,
