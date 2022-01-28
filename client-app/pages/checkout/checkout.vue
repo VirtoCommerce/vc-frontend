@@ -49,17 +49,20 @@
             >
               <div class="mx-5 lg:ml-28 lg:mr-11">
                 <CheckoutLabeledBlock label="Shipping address">
-                  <template v-if="cart.addresses && cart.addresses.length > 0">
+                  <template v-if="cart.shipments && cart.shipments?.length > 0">
                     <div>
                       <span class="font-extrabold"
-                        >{{ cart.addresses[0].firstName }} {{ cart.addresses[0].lastName }}</span
+                        >{{ cart.shipments[0].deliveryAddress?.firstName }}
+                        {{ cart.shipments[0].deliveryAddress?.lastName }}</span
                       >
                       <p>
-                        {{ cart.addresses[0].countryCode }} {{ cart.addresses[0].regionName }}
-                        {{ cart.addresses[0].city }} {{ cart.addresses[0].line1 }} {{ cart.addresses[0].postalCode }}
+                        {{ cart.shipments[0].deliveryAddress?.countryCode }}
+                        {{ cart.shipments[0].deliveryAddress?.regionName }}
+                        {{ cart.shipments[0].deliveryAddress?.city }} {{ cart.shipments[0].deliveryAddress?.line1 }}
+                        {{ cart.shipments[0].deliveryAddress?.postalCode }}
                       </p>
-                      <p><span class="font-extrabold">Phone:</span>{{ cart.addresses[0].phone }}</p>
-                      <p><span class="font-extrabold">Email:</span>{{ cart.addresses[0].email }}</p>
+                      <p><span class="font-extrabold">Phone:</span>{{ cart.shipments[0].deliveryAddress?.phone }}</p>
+                      <p><span class="font-extrabold">Email:</span>{{ cart.shipments[0].deliveryAddress?.email }}</p>
                     </div>
                     <div>
                       <button
@@ -78,6 +81,7 @@
                     <div>
                       <button
                         class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 disabled:opacity-30"
+                        @click="selectShippingAddressDialog"
                       >
                         New address
                       </button>
@@ -203,7 +207,6 @@ import { usePopup } from "@/shared/popup";
 import { computed, onBeforeUpdate, onMounted, ref } from "vue";
 import _ from "lodash";
 import { InputAddressType, PaymentMethodType, ShippingMethodType } from "@/core/api/graphql/types";
-import { getDefaultShippingAddress } from "@/core/api/graphql/account";
 
 const {
   cart,
@@ -218,10 +221,9 @@ const {
   changeComment,
   updateShipment,
   updatePayment,
-  updateCartAddress,
 } = useCart();
 
-const { placeOrder, loadDefaultShippingAddress, defaultShippingAddress } = useCheckout();
+const { placeOrder } = useCheckout();
 const { openPopup } = usePopup();
 
 //TODO: change 'any' for a normal type
@@ -237,7 +239,6 @@ const cartItems = computed(() =>
 );
 
 const cartComment = ref("");
-const cartShippingAddressId = ref<string | undefined>("");
 
 const isValidCheckout = computed(() => !(cart.value.validationErrors && cart.value.validationErrors?.length > 0));
 
@@ -308,13 +309,6 @@ onMounted(async () => {
       cartCouponApplied.value = true;
     }
     cartComment.value = cart.value.comment || "";
-
-    if (cart.value.addresses?.length === 0) {
-      await loadDefaultShippingAddress().then(async () => {
-        cartShippingAddressId.value = defaultShippingAddress.value.id;
-        await updateCartAddress(defaultShippingAddress.value);
-      });
-    }
   });
 });
 
@@ -330,6 +324,7 @@ function showShipmentMethodDialog(): void {
           shipmentMethodCode: method.code,
           shipmentMethodOption: method.optionName,
           id: cart.value.shipments?.[0]?.id,
+          deliveryAddress: { ...cart.value.shipments?.[0].deliveryAddress },
         });
       },
     },
@@ -356,10 +351,14 @@ function selectShippingAddressDialog(): void {
   openPopup({
     component: ShippingAddressDialog,
     props: {
-      currentAddressId: cartShippingAddressId.value,
+      currentAddress: cart.value.shipments?.[0]?.deliveryAddress,
       onResult(address: InputAddressType) {
-        cartShippingAddressId.value = address.id;
-        updateCartAddress({ ...address, id: cart.value.addresses?.[0].id });
+        updateShipment({
+          shipmentMethodCode: cart.value.shipments?.[0]?.shipmentMethodCode,
+          shipmentMethodOption: cart.value.shipments?.[0]?.shipmentMethodOption,
+          id: cart.value.shipments?.[0]?.id,
+          deliveryAddress: { ...address },
+        });
       },
     },
   });
@@ -367,3 +366,5 @@ function selectShippingAddressDialog(): void {
 </script>
 
 <style scoped></style>
+
+//TODO: ввести функцию isEqualAddress для сравнения адресов в модальном окне (смотри B2B тему)

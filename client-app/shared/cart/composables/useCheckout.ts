@@ -21,7 +21,6 @@ import {
 } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 import { useCart } from ".";
-import { getDefaultShippingAddress } from "@/core/api/graphql/account";
 
 const addresses: CartAddressType[] = [
   {
@@ -55,8 +54,6 @@ const paymentMethods: Ref<PaymentMethodType[]> = ref([]);
 const existShipment: Ref<ShipmentType | null> = ref(null);
 const existPayment: Ref<PaymentType | null> = ref(null);
 
-const defaultShippingAddress: Ref<MemberAddressType> = ref({ postalCode: "", isDefault: false });
-
 export default () => {
   async function placeOrder(cartId: string) {
     const order = await createOrderFromCart(cartId);
@@ -76,19 +73,6 @@ export default () => {
     await loadMyCart();
     if (cart.value.payments && cart.value.payments.length > 0) {
       existPayment.value = cart.value.payments[0];
-    }
-  }
-
-  async function loadDefaultShippingAddress() {
-    loading.value = true;
-    console.log(`get default shipping address`);
-    try {
-      defaultShippingAddress.value = await getDefaultShippingAddress();
-    } catch (e) {
-      Logger.error("useCheckout.getDefaultShippingAddress", e);
-      throw e;
-    } finally {
-      loading.value = false;
     }
   }
 
@@ -156,7 +140,6 @@ export default () => {
     saveBillingDetails,
     setDefaultDeliveryAddress,
     setDefaultBillingAddress,
-    loadDefaultShippingAddress,
     // make sure that no one will mutate these objects
     deliveryAddress: computed(() => deliveryAddress.value),
     shippingMethods: computed(() => shippingMethods.value),
@@ -167,6 +150,5 @@ export default () => {
     billingAddress: computed(() => billingAddress.value),
     billingAddresses: computed(() => billingAddresses.value),
     loading: computed(() => loading.value),
-    defaultShippingAddress: computed(() => defaultShippingAddress.value),
   };
 };

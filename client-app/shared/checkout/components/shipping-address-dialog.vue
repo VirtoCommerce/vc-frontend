@@ -108,14 +108,15 @@
 <script setup lang="ts">
 import { Popup } from "@/components";
 import Pagination from "@/shared/catalog/components/pagination.vue";
-import { MemberAddressType } from "@/core/api/graphql/types";
-import { computed, onMounted, ref } from "vue";
+import { CartAddressType, MemberAddressType } from "@/core/api/graphql/types";
+import { computed, onMounted, PropType, ref } from "vue";
 import { getMyAddresses } from "@/core/api/graphql/account";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import _ from "lodash";
 
 const props = defineProps({
-  currentAddressId: {
-    type: String,
+  currentAddress: {
+    type: Object as PropType<CartAddressType>,
     default: undefined,
   },
 
@@ -140,18 +141,15 @@ const paginatedAddresses = computed(() =>
 );
 const selectedAddress = ref();
 
-// const currentAddress = availableAddresses.value.find((item) => item.id === props.currentAddress?.id);
-// const selectedAddress = ref(currentAddress);
-
 function setAddress(address: MemberAddressType): void {
   selectedAddress.value = address;
 }
 
 onMounted(async () => {
-  //selectedAddress.value = props.currentAddress;
-  console.log("selectedAddressId", props.currentAddressId);
   const result = await getMyAddresses();
   availableAddresses.value = result;
-  selectedAddress.value = availableAddresses.value.find((item) => item.id === props.currentAddressId);
+  selectedAddress.value = availableAddresses.value.find((item) => {
+    return _.isEqual(_.omit(item, ["id"]), _.omit(props.currentAddress, ["id"]));
+  });
 });
 </script>
