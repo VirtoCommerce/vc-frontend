@@ -59,7 +59,7 @@
             <template v-else>
               <!-- Mobile table view -->
               <template v-if="isMobile">
-                <div v-if="addresses && addresses.length > 0">
+                <div v-if="addresses.length">
                   <TableMobileItem
                     v-for="address in paginatedAddresses"
                     :key="address.id"
@@ -102,11 +102,37 @@
                     </div>
                   </TableMobileItem>
                 </div>
-                <div v-else class="flex items-center justify-center space-x-10 p-5">
+
+                <div v-else-if="!addressesLoading" class="flex items-center justify-center space-x-10 p-5">
                   <img src="/assets/static/images/account/icons/no-addresses.svg" alt="No addresses" />
                   <div class="flex flex-col space-y-2">
                     <span class="text-base">There are no addresses yet</span>
                     <VcButton class="uppercase w-full" @click="openEditMode()">Add new address</VcButton>
+                  </div>
+                </div>
+
+                <!-- Grid Skeleton -->
+                <div v-else>
+                  <div v-for="i of 4" :key="i" class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200">
+                    <div class="flex flex-col">
+                      <span class="text-sm text-gray-400">Recipient's name</span>
+                      <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
+                    </div>
+
+                    <div class="flex flex-col">
+                      <span class="text-sm text-gray-400">Address</span>
+                      <div class="h-6 bg-gray-200 animate-pulse"></div>
+                    </div>
+
+                    <div class="flex flex-col">
+                      <span class="text-sm text-gray-400">Phone</span>
+                      <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
+                    </div>
+
+                    <div class="flex flex-col">
+                      <span class="text-sm text-gray-400">Email</span>
+                      <div class="h-6 bg-gray-200 animate-pulse"></div>
+                    </div>
                   </div>
                 </div>
               </template>
@@ -159,12 +185,9 @@
                     <th class="py-3 px-5 font-extrabold">Actions</th>
                   </tr>
                 </thead>
-                <tbody v-if="addresses && addresses.length > 0">
-                  <tr
-                    v-for="(address, index) in paginatedAddresses"
-                    :key="address.id"
-                    :class="{ 'bg-gray-50': index % 2 }"
-                  >
+
+                <tbody v-if="addresses.length">
+                  <tr v-for="address in paginatedAddresses" :key="address.id" class="even:bg-gray-50">
                     <td class="p-5">{{ address.firstName }} {{ address.lastName }}</td>
                     <td class="p-5">
                       {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
@@ -205,7 +228,8 @@
                     </td>
                   </tr>
                 </tbody>
-                <tbody v-else>
+
+                <tbody v-else-if="!addressesLoading">
                   <!-- Workaround for using colspan -->
                   <tr>
                     <td></td>
@@ -224,6 +248,30 @@
                           <VcButton class="uppercase w-full" @click="openEditMode()">Add new address</VcButton>
                         </div>
                       </div>
+                    </td>
+                  </tr>
+                </tbody>
+
+                <!-- Table Skeleton -->
+                <tbody v-else>
+                  <tr v-for="i of itemsPerPage" :key="i" class="even:bg-gray-50">
+                    <td class="p-5">
+                      <div class="h-6 bg-gray-200 animate-pulse"></div>
+                    </td>
+                    <td class="w-4/12 p-5">
+                      <div class="h-6 bg-gray-200 animate-pulse"></div>
+                    </td>
+                    <td class="p-5">
+                      <div class="h-6 bg-gray-200 animate-pulse"></div>
+                    </td>
+                    <td class="p-5">
+                      <div class="h-6 bg-gray-200 animate-pulse"></div>
+                    </td>
+                    <td class="p-5">
+                      <div class="h-6 bg-gray-200 animate-pulse"></div>
+                    </td>
+                    <td class="p-5">
+                      <div class="h-6 bg-gray-200 animate-pulse"></div>
                     </td>
                   </tr>
                 </tbody>
@@ -259,6 +307,7 @@ import { AddressType } from "@core/types";
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { countries, loadCountries } = useCountries();
 const {
+  loading: addressesLoading,
   addresses,
   sort,
   loadAddresses,

@@ -53,6 +53,7 @@
             :is-disabled="disabled"
             :items="countries"
             label="Country"
+            placeholder="Select country"
             class="mb-4 w-full xl:w-7/12"
             is-required
           />
@@ -74,6 +75,7 @@
             :is-required="!!regions.length"
             :is-disabled="disabled || !regions.length"
             label="Region"
+            placeholder="Select region"
             class="mb-4 order-2 xl:order-none xl:w-5/12"
           />
 

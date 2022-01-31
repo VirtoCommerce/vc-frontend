@@ -122,6 +122,8 @@ const props = defineProps({
     type: String,
     default: undefined,
   },
+
+  // TODO: add size prop and etc...
 });
 
 const emit = defineEmits<{
