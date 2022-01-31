@@ -13,21 +13,21 @@
             <h2 class="text-gray-800 text-3xl font-bold uppercase">Checkout defaults</h2>
           </div>
           <div class="bg-white shadow-sm rounded border px-9 py-8">
-            <div class="flex flex-col lg:w-1/2">
+            <div v-if="!loading" class="flex flex-col lg:w-1/2">
               <div class="font-bold">Preferred Delivery Method</div>
               <div class="mt-3 md:mt-1 flex flex-col space-y-5 md:space-y-0 md:flex-row md:space-x-7">
-                <RadioButton
+                <VcRadioButton
                   id="shipping"
                   v-model="checkoutDefaults.deliveryMethod"
                   value="shipping"
                   label="Shipping"
-                ></RadioButton>
-                <RadioButton
+                ></VcRadioButton>
+                <VcRadioButton
                   id="pickup"
                   v-model="checkoutDefaults.deliveryMethod"
                   value="pickup"
                   label="Pickup"
-                ></RadioButton>
+                ></VcRadioButton>
               </div>
               <div class="font-bold mt-8">Preferred Payment Method</div>
               <select
@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { RadioButton, Button as VcButton } from "@/components";
+import { VcRadioButton, Button as VcButton } from "@/components";
 import {
   AccountNavigation,
   useUserCheckoutDefaults,
