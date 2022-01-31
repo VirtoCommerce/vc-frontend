@@ -35,7 +35,7 @@
                 class="appearance-none rounded px-3 py-3 text-base leading-none box-border border border-gray-300 w-full outline-none focus:border-gray-400"
                 placeholder="Please select preferred Payment Method"
               >
-                <option value=""></option>
+                <option :value="undefined"></option>
                 <option v-for="method in paymentMethods" :key="method.code" :value="method">
                   {{ method.code }}
                 </option>
@@ -46,7 +46,7 @@
                 class="appearance-none rounded px-3 py-3 text-base leading-none box-border border border-gray-300 w-full outline-none focus:border-gray-400"
                 placeholder="Please select preferred Shipping Method"
               >
-                <option value=""></option>
+                <option :value="undefined"></option>
                 <option v-for="method in shippingMethods" :key="method.id" :value="method">
                   {{ method.code }} {{ method.optionName }}
                 </option>
