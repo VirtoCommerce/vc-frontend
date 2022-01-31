@@ -10,187 +10,233 @@
         <!-- Second column-->
         <div class="flex flex-col w-full lg:w-4/5 space-y-5">
           <div class="flex justify-between items-center mx-5 lg:mx-0">
-            <h2 class="text-gray-800 text-3xl font-bold uppercase">Addresses</h2>
-            <VcButton outline size="sm" class="px-3 uppercase border">
+            <h2 class="text-gray-800 text-3xl font-bold uppercase">{{ title }}</h2>
+
+            <VcButton v-if="!editingMode" class="px-3 uppercase border" size="sm" outline @click="openEditMode()">
               {{ isMobile ? "Add new" : "Add new address" }}
             </VcButton>
           </div>
 
           <div class="flex flex-col bg-white shadow-sm" :class="{ 'rounded border': !isMobile }">
-            <!-- Mobile table view -->
-            <template v-if="isMobile">
-              <div v-if="addresses && addresses.length > 0">
-                <TableMobileItem
-                  v-for="address in paginatedAddresses"
-                  :key="address.id"
-                  :action-builder="actionBuilder"
-                  :item="address"
-                  class="overflow-auto"
-                >
-                  <div
-                    class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200"
-                    :class="{
-                      'relative mobile-default-badge':
-                        defaultShippingAddress && address.id === defaultShippingAddress.id,
-                    }"
+            <AddressForm
+              v-if="editingMode"
+              :model-value="editableAddress"
+              :countries="countries"
+              :disabled="saveAddressLoading"
+              class="px-6 py-4"
+              required-email
+              required-city
+              @save="saveAddress"
+            >
+              <template #append="{ dirty }">
+                <div class="flex space-x-4 pb-3 pt-7 sm:pb-4 sm:pt-4 sm:float-right">
+                  <VcButton
+                    kind="secondary"
+                    :size="isMobile ? 'md' : 'lg'"
+                    :disabled="saveAddressLoading"
+                    class="uppercase w-32 sm:w-auto sm:px-12"
+                    outline
+                    @click="closeEditMode"
+                  >
+                    Cancel
+                  </VcButton>
+
+                  <VcButton
+                    :size="isMobile ? 'md' : 'lg'"
+                    :disabled="!dirty"
+                    :waiting="saveAddressLoading"
+                    class="uppercase flex-grow sm:flex-none sm:px-16"
+                    is-submit
+                  >
+                    {{ editableAddress ? "Save" : "Create" }}
+                  </VcButton>
+                </div>
+              </template>
+            </AddressForm>
+
+            <!-- View Table -->
+            <!-- TODO: make a component to view the addresses table -->
+            <template v-else>
+              <!-- Mobile table view -->
+              <template v-if="isMobile">
+                <div v-if="addresses && addresses.length > 0">
+                  <TableMobileItem
+                    v-for="address in paginatedAddresses"
+                    :key="address.id"
+                    :action-builder="actionBuilder"
+                    :item="address"
+                    class="overflow-auto"
                   >
                     <div
-                      v-if="defaultShippingAddress && address.id === defaultShippingAddress.id"
-                      class="absolute top-0 right-0 z-10"
+                      class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200"
+                      :class="{
+                        'relative mobile-default-badge':
+                          defaultShippingAddress && address.id === defaultShippingAddress.id,
+                      }"
                     >
-                      <i class="fas fa-check text-white mr-2"></i>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-sm text-gray-400"> Recipient's name </span>
-                      <span class="font-extrabold">{{ address.firstName }} {{ address.lastName }}</span>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-sm text-gray-400">Address</span>
-                      <span>
-                        {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
-                        {{ address.postalCode }}</span
+                      <div
+                        v-if="defaultShippingAddress && address.id === defaultShippingAddress.id"
+                        class="absolute top-0 right-0 z-10"
                       >
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-sm text-gray-400">Phone</span>
-                      <span>{{ address.phone }}</span>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-sm text-gray-400">Email</span>
-                      <span>{{ address.email }}</span>
-                    </div>
-                  </div>
-                </TableMobileItem>
-              </div>
-              <div v-else class="flex items-center justify-center space-x-10 p-5">
-                <img src="/assets/static/images/account/icons/no-addresses.svg" alt="No addresses" />
-                <div class="flex flex-col space-y-2">
-                  <span class="text-base">There are no addresses yet</span>
-                  <VcButton class="uppercase w-full">Add new address</VcButton>
-                </div>
-              </div>
-            </template>
-
-            <!-- Desctop table view -->
-            <table v-else class="table-auto text-sm text-left">
-              <thead class="border-b border-gray-200">
-                <tr>
-                  <th
-                    class="py-3 px-5 font-extrabold"
-                    :class="{
-                      desc: sort.column === 'firstName' && sort.direction === sortDescending,
-                      asc: sort.column === 'firstName' && sort.direction === sortAscending,
-                    }"
-                    @click="applySorting('firstName')"
-                  >
-                    Recipient's name
-                  </th>
-                  <th
-                    class="py-3 px-5 font-extrabold"
-                    :class="{
-                      desc: sort.column === 'countryCode' && sort.direction === sortDescending,
-                      asc: sort.column === 'countryCode' && sort.direction === sortAscending,
-                    }"
-                    @click="applySorting('countryCode')"
-                  >
-                    Address
-                  </th>
-                  <th
-                    class="py-3 px-5 font-extrabold"
-                    :class="{
-                      desc: sort.column === 'phone' && sort.direction === sortDescending,
-                      asc: sort.column === 'phone' && sort.direction === sortAscending,
-                    }"
-                    @click="applySorting('phone')"
-                  >
-                    Phone
-                  </th>
-                  <th
-                    class="py-3 px-5 font-extrabold"
-                    :class="{
-                      desc: sort.column === 'email' && sort.direction === sortDescending,
-                      asc: sort.column === 'email' && sort.direction === sortAscending,
-                    }"
-                    @click="applySorting('email')"
-                  >
-                    Email
-                  </th>
-                  <th class="py-3 px-5 font-extrabold">Default</th>
-                  <th class="py-3 px-5 font-extrabold">Actions</th>
-                </tr>
-              </thead>
-              <tbody v-if="addresses && addresses.length > 0">
-                <tr
-                  v-for="(address, index) in paginatedAddresses"
-                  :key="address.id"
-                  :class="{ 'bg-gray-50': index % 2 }"
-                >
-                  <td class="p-5">{{ address.firstName }} {{ address.lastName }}</td>
-                  <td class="p-5">
-                    {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
-                    {{ address.postalCode }}
-                  </td>
-                  <td class="p-5">{{ address.phone }}</td>
-                  <td class="p-5">{{ address.email }}</td>
-                  <td
-                    v-if="defaultShippingAddress && address.id === defaultShippingAddress.id"
-                    class="px-3 py-5 font-bold"
-                  >
-                    <i class="fas fa-check text-yellow-500"></i> Default
-                  </td>
-                  <td v-else class="p-5 text-blue-400 font-semibold">
-                    <span
-                      class="border-b border-dashed border-blue-400 cursor-pointer"
-                      @click="setDefaultAddress(address)"
-                      >Make default</span
-                    >
-                  </td>
-                  <td class="p-5 flex space-x-2">
-                    <!-- todo: use VcButton -->
-                    <button type="button" class="h-6 w-6 shadow rounded text-yellow-500 hover:bg-gray-100">
-                      <i class="fas fa-pencil-alt"></i>
-                    </button>
-                    <button
-                      type="button"
-                      class="h-6 w-6 shadow rounded text-red-500 hover:bg-gray-100"
-                      @click="removeAddress(address)"
-                    >
-                      <i class="fas fa-times"></i>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-              <tbody v-else>
-                <!-- Workaround for using colspan -->
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td colspan="6" class="polygons-bg">
-                    <div class="flex items-center pl-56 space-x-10 h-80">
-                      <img src="/assets/static/images/account/icons/no-addresses.svg" alt="No addresses" />
-                      <div class="flex flex-col space-y-2">
-                        <span class="text-base">There are no addresses yet</span>
-                        <VcButton class="uppercase w-full">Add new address</VcButton>
+                        <i class="fas fa-check text-white mr-2"></i>
+                      </div>
+                      <div class="flex flex-col">
+                        <span class="text-sm text-gray-400"> Recipient's name </span>
+                        <span class="font-extrabold">{{ address.firstName }} {{ address.lastName }}</span>
+                      </div>
+                      <div class="flex flex-col">
+                        <span class="text-sm text-gray-400">Address</span>
+                        <span>
+                          {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
+                          {{ address.postalCode }}</span
+                        >
+                      </div>
+                      <div class="flex flex-col">
+                        <span class="text-sm text-gray-400">Phone</span>
+                        <span>{{ address.phone }}</span>
+                      </div>
+                      <div class="flex flex-col">
+                        <span class="text-sm text-gray-400">Email</span>
+                        <span>{{ address.email }}</span>
                       </div>
                     </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                  </TableMobileItem>
+                </div>
+                <div v-else class="flex items-center justify-center space-x-10 p-5">
+                  <img src="/assets/static/images/account/icons/no-addresses.svg" alt="No addresses" />
+                  <div class="flex flex-col space-y-2">
+                    <span class="text-base">There are no addresses yet</span>
+                    <VcButton class="uppercase w-full" @click="openEditMode()">Add new address</VcButton>
+                  </div>
+                </div>
+              </template>
 
-            <Pagination
-              v-if="pages > 1"
-              v-model:page="page"
-              :pages="pages"
-              class="self-start"
-              :class="[isMobile ? 'px-6 py-10' : 'pb-5 px-5 mt-5']"
-            ></Pagination>
+              <!-- Desktop table view -->
+              <table v-else class="table-auto text-sm text-left">
+                <thead class="border-b border-gray-200">
+                  <tr>
+                    <th
+                      class="py-3 px-5 font-extrabold"
+                      :class="{
+                        desc: sort.column === 'firstName' && sort.direction === sortDescending,
+                        asc: sort.column === 'firstName' && sort.direction === sortAscending,
+                      }"
+                      @click="applySorting('firstName')"
+                    >
+                      Recipient's name
+                    </th>
+                    <th
+                      class="py-3 px-5 font-extrabold"
+                      :class="{
+                        desc: sort.column === 'countryCode' && sort.direction === sortDescending,
+                        asc: sort.column === 'countryCode' && sort.direction === sortAscending,
+                      }"
+                      @click="applySorting('countryCode')"
+                    >
+                      Address
+                    </th>
+                    <th
+                      class="py-3 px-5 font-extrabold"
+                      :class="{
+                        desc: sort.column === 'phone' && sort.direction === sortDescending,
+                        asc: sort.column === 'phone' && sort.direction === sortAscending,
+                      }"
+                      @click="applySorting('phone')"
+                    >
+                      Phone
+                    </th>
+                    <th
+                      class="py-3 px-5 font-extrabold"
+                      :class="{
+                        desc: sort.column === 'email' && sort.direction === sortDescending,
+                        asc: sort.column === 'email' && sort.direction === sortAscending,
+                      }"
+                      @click="applySorting('email')"
+                    >
+                      Email
+                    </th>
+                    <th class="py-3 px-5 font-extrabold">Default</th>
+                    <th class="py-3 px-5 font-extrabold">Actions</th>
+                  </tr>
+                </thead>
+                <tbody v-if="addresses && addresses.length > 0">
+                  <tr
+                    v-for="(address, index) in paginatedAddresses"
+                    :key="address.id"
+                    :class="{ 'bg-gray-50': index % 2 }"
+                  >
+                    <td class="p-5">{{ address.firstName }} {{ address.lastName }}</td>
+                    <td class="p-5">
+                      {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
+                      {{ address.postalCode }}
+                    </td>
+                    <td class="p-5">{{ address.phone }}</td>
+                    <td class="p-5">{{ address.email }}</td>
+                    <td
+                      v-if="defaultShippingAddress && address.id === defaultShippingAddress.id"
+                      class="px-3 py-5 font-bold"
+                    >
+                      <i class="fas fa-check text-yellow-500"></i> Default
+                    </td>
+                    <td v-else class="p-5 text-blue-400 font-semibold">
+                      <span
+                        class="border-b border-dashed border-blue-400 cursor-pointer"
+                        @click="setDefaultAddress(address)"
+                        >Make default</span
+                      >
+                    </td>
+                    <td class="p-5 flex space-x-2">
+                      <!-- todo: use VcButton -->
+                      <button
+                        type="button"
+                        class="h-6 w-6 shadow rounded text-yellow-500 hover:bg-gray-100"
+                        @click="openEditMode(address)"
+                      >
+                        <i class="fas fa-pencil-alt"></i>
+                      </button>
+
+                      <button
+                        type="button"
+                        class="h-6 w-6 shadow rounded text-red-500 hover:bg-gray-100"
+                        @click="removeAddress(address)"
+                      >
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+                <tbody v-else>
+                  <!-- Workaround for using colspan -->
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td colspan="6" class="polygons-bg">
+                      <div class="flex items-center pl-56 space-x-10 h-80">
+                        <img src="/assets/static/images/account/icons/no-addresses.svg" alt="No addresses" />
+                        <div class="flex flex-col space-y-2">
+                          <span class="text-base">There are no addresses yet</span>
+                          <VcButton class="uppercase w-full" @click="openEditMode()">Add new address</VcButton>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <Pagination
+                v-if="pages > 1"
+                v-model:page="page"
+                :pages="pages"
+                class="self-start"
+                :class="[isMobile ? 'px-6 py-10' : 'pb-5 px-5 mt-5']"
+              ></Pagination>
+            </template>
           </div>
         </div>
       </div>
@@ -201,24 +247,58 @@
 <script setup lang="ts">
 import Pagination from "@/shared/catalog/components/pagination.vue";
 import { TableMobileItem, Button as VcButton } from "@/components";
-import { AccountNavigation, useUserAddresses } from "@/shared/account";
-import { computed, onMounted, ref } from "vue";
+import { AccountNavigation, AddressForm, useUserAddresses } from "@/shared/account";
+import { computed, ComputedRef, onMounted, Ref, ref } from "vue";
+import { clone } from "lodash";
 import { MemberAddressType } from "@/core/api/graphql/types";
 import { sortAscending, sortDescending } from "@/core/constants";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { useCountries } from "@core/composables";
+import { AddressType } from "@core/types";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { addresses, sort, loadAddresses, setDefaultAddress, removeAddresses, defaultShippingAddress } =
-  useUserAddresses();
+const { countries, loadCountries } = useCountries();
+const {
+  addresses,
+  sort,
+  loadAddresses,
+  setDefaultAddress,
+  removeAddresses,
+  defaultShippingAddress,
+  addOrUpdateAddresses,
+} = useUserAddresses();
 
 const isMobile = breakpoints.smaller("md");
+const editingMode: Ref<boolean> = ref(false);
+const editableAddress: Ref<MemberAddressType | null> = ref(null);
 const page = ref(1);
 const itemsPerPage = ref(6);
+const saveAddressLoading = ref(false);
 
-const pages = computed(() => Math.ceil(addresses.value.length / itemsPerPage.value));
-const paginatedAddresses = computed(() =>
+const pages: ComputedRef<number> = computed(() => Math.ceil(addresses.value.length / itemsPerPage.value));
+const paginatedAddresses: ComputedRef<MemberAddressType[]> = computed(() =>
   addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
 );
+const title: ComputedRef<string> = computed(() => {
+  if (editingMode.value) {
+    return editableAddress.value
+      ? `${editableAddress.value.firstName} ${editableAddress.value.lastName}`
+      : "New address";
+  } else {
+    return "Addresses";
+  }
+});
+
+// if address parameter is NULL, then adding a new address will open
+async function openEditMode(address: MemberAddressType | null = null) {
+  editableAddress.value = clone(address);
+  editingMode.value = true;
+}
+
+function closeEditMode() {
+  editableAddress.value = null;
+  editingMode.value = false;
+}
 
 function actionBuilder(address: MemberAddressType) {
   const result = [
@@ -228,7 +308,7 @@ function actionBuilder(address: MemberAddressType) {
       bgColor: "bg-gray-300",
       position: "right",
       clickHandler() {
-        console.log("edit address", address);
+        openEditMode(address);
       },
     },
     {
@@ -268,6 +348,13 @@ async function applySorting(column: string): Promise<void> {
   await loadAddresses();
 }
 
+async function saveAddress(address: MemberAddressType): Promise<void> {
+  saveAddressLoading.value = true;
+  await addOrUpdateAddresses([{ ...address, addressType: AddressType.BillingAndShipping }]);
+  closeEditMode();
+  saveAddressLoading.value = false;
+}
+
 async function removeAddress(address: MemberAddressType): Promise<void> {
   if (!window.confirm("Are you sure you want do delete this address?")) return;
 
@@ -280,6 +367,10 @@ async function removeAddress(address: MemberAddressType): Promise<void> {
 
 onMounted(async () => {
   await loadAddresses();
+
+  if (!countries.value.length) {
+    await loadCountries();
+  }
 });
 </script>
 

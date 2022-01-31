@@ -33,8 +33,9 @@ module.exports = {
   },
   variants: {
     extend: {
-      backgroundColor: ["checked"],
+      backgroundColor: ["checked", "disabled"],
       borderColor: ["checked"],
+      borderWidth: ["first", "last"],
       cursor: ["disabled"],
       margin: ["first", "last"],
       padding: ["first", "last"],

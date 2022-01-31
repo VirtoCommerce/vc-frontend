@@ -1,12 +1,13 @@
 import { computed, readonly, ref, Ref, shallowRef } from "vue";
 import { InputMemberAddressType, MemberAddressType } from "@core/api/graphql/types";
 import { getMyAddresses, updateMemberAddresses } from "@core/api/graphql/account";
-import { Logger } from "@core/utilities";
-import { getSortingExpression, ISortInfo, toInputAddress } from "@/shared/account";
+import { Logger, toInputAddress } from "@core/utilities";
+import { getSortingExpression, ISortInfo } from "@/shared/account";
 import { sortAscending } from "@core/constants";
 
 export default () => {
   const loading: Ref<boolean> = ref(false);
+  const contactId: Ref<string> = ref("");
   const addresses: Ref<MemberAddressType[]> = shallowRef<MemberAddressType[]>([]);
   const defaultShippingAddress: Ref<MemberAddressType | undefined> = ref();
   const defaultBillingAddress: Ref<MemberAddressType | undefined> = ref();
@@ -23,9 +24,13 @@ export default () => {
     const sortingExpression = getSortingExpression(sort.value);
 
     try {
-      addresses.value = await getMyAddresses(sortingExpression);
+      const result = await getMyAddresses(sortingExpression);
+
+      addresses.value = result.addresses?.items ?? [];
+      contactId.value = result.id;
     } catch (e) {
       Logger.error("useUserAddresses.loadAddresses", e);
+      throw e;
     } finally {
       loading.value = false;
     }
@@ -35,13 +40,13 @@ export default () => {
     //TODO: will be implemented in the separate story
   }
 
-  async function updateAddresses(items: MemberAddressType[]): Promise<void> {
+  async function updateAddresses(items: MemberAddressType[], memberId = contactId.value): Promise<void> {
     loading.value = true;
 
     const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
 
     try {
-      await updateMemberAddresses(inputAddresses);
+      await updateMemberAddresses(memberId, inputAddresses);
     } catch (e) {
       Logger.error("useUserAddresses.updateAddresses", e);
       throw e;
@@ -53,7 +58,7 @@ export default () => {
     await loadAddresses();
   }
 
-  async function addOrUpdateAddresses(items: MemberAddressType[]): Promise<void> {
+  async function addOrUpdateAddresses(items: MemberAddressType[], memberId?: string): Promise<void> {
     if (!items.length) return;
 
     loading.value = true;
@@ -70,10 +75,10 @@ export default () => {
       }
     });
 
-    await updateAddresses(updatedAddresses);
+    await updateAddresses(updatedAddresses, memberId);
   }
 
-  async function removeAddresses(idsOrAddress: Array<string | MemberAddressType>): Promise<void> {
+  async function removeAddresses(idsOrAddress: Array<string | MemberAddressType>, memberId?: string): Promise<void> {
     if (!idsOrAddress.length) return;
 
     loading.value = true;
@@ -87,7 +92,7 @@ export default () => {
       (address) => !addressIdsToRemove.includes(address.id!)
     );
 
-    await updateAddresses(updatedAddresses);
+    await updateAddresses(updatedAddresses, memberId);
   }
 
   return {

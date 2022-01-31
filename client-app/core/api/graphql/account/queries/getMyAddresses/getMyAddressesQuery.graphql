@@ -3,6 +3,7 @@
 query getMyAddresses($sort: String) {
   me {
     contact {
+      id
       addresses(sort: $sort) {
         items {
           ...memberAddressFields

@@ -1,10 +1,9 @@
 import client from "@core/api/graphql/graphql-client";
-import { MemberAddressType } from "@core/api/graphql/types";
-import { currencyCode, currentUserId, locale, storeId } from "@core/constants";
+import { ContactType } from "@core/api/graphql/types";
 import getMyAddressesQueryDocument from "./getMyAddressesQuery.graphql";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function getMyAddresses(sort: string): Promise<MemberAddressType[]> {
+async function getMyAddresses(sort: string): Promise<ContactType> {
   const { data } = await client.query({
     query: getMyAddressesQueryDocument,
     variables: {
@@ -13,7 +12,7 @@ async function getMyAddresses(sort: string): Promise<MemberAddressType[]> {
       },
     },
   });
-  console.log(data);
-  return data?.me?.contact?.addresses.items;
+
+  return data!.me!.contact!;
 }
 export default getMyAddresses;
