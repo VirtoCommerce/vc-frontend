@@ -5,7 +5,7 @@
     </template>
     <div class="flex justify-center items-center px-5 py-10">
       <i class="fas fa-check-circle text-green-500 text-5xl mr-4"></i>
-      <span class="text-lg">Checkout defaults are success updated!</span>
+      <span class="text-lg">Checkout defaults successfully updated.</span>
     </div>
   </Popup>
 </template>

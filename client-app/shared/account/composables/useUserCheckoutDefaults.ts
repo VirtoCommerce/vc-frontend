@@ -1,5 +1,7 @@
 import { useUser } from ".";
 import { CheckoutDefaults } from "./../types/index";
+import { Logger } from "@core/utilities";
+
 export default () => {
   const { me } = useUser();
   const keyPrefix = "checkout_defaults_";
@@ -9,8 +11,19 @@ export default () => {
   }
 
   function getUserCheckoutDefaults(): CheckoutDefaults | null {
+    let result: CheckoutDefaults | null = null;
+
     const value = localStorage.getItem(`${keyPrefix}${me.value.id}`);
-    return value == null ? null : (JSON.parse(value) as CheckoutDefaults);
+
+    if (value) {
+      try {
+        result = JSON.parse(value) as CheckoutDefaults;
+      } catch (e) {
+        Logger.error("useUserCheckoutDefaults.getUserCheckoutDefaults", e);
+      }
+    }
+
+    return result;
   }
 
   return {

@@ -31,7 +31,11 @@
                 label="Preferred Payment Method"
                 placeholder="Please select preferred Payment Method"
                 class="mt-8 w-full"
-              />
+              >
+                <template #item="{ item }">
+                  {{ item ? item.code : "&nbsp;" }}
+                </template>
+              </VcSelect>
               <VcSelect
                 v-model="checkoutDefaults.shippingMethod"
                 :items="shippingMethods"
@@ -92,10 +96,11 @@ const paymentMethods = computed(() => {
 const { getUserCheckoutDefaults, setUserCheckoutDefaults } = useUserCheckoutDefaults();
 const { openPopup } = usePopup();
 
-let checkoutDefaults: Ref<CheckoutDefaults> = ref<CheckoutDefaults>({});
+const checkoutDefaults = ref<CheckoutDefaults>({});
 
 onMounted(() => {
   const savedDefaults = getUserCheckoutDefaults();
+
   if (savedDefaults) {
     checkoutDefaults.value = savedDefaults;
   }
