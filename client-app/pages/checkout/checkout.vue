@@ -361,7 +361,7 @@ onBeforeUpdate(() => {
 });
 
 onMounted(async () => {
-  await loadMyCart().then(async () => {
+  await loadMyCart().then(() => {
     if (cart.value.coupons && cart.value.coupons.length > 0) {
       cartCoupon.value = cart.value.coupons[0]?.code || "";
       cartCouponApplied.value = true;
