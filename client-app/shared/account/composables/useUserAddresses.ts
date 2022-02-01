@@ -1,13 +1,15 @@
-import { computed, readonly, ref, Ref, shallowRef } from "vue";
-import { InputMemberAddressType, MemberAddressType } from "@core/api/graphql/types";
+import { computed, readonly, ref, Ref, shallowRef, unref } from "vue";
+import { InputMemberAddressType, MemberAddressType, UserType } from "@core/api/graphql/types";
 import { getMyAddresses, updateMemberAddresses } from "@core/api/graphql/account";
 import { Logger, toInputAddress } from "@core/utilities";
 import { getSortingExpression, ISortInfo } from "@/shared/account";
 import { sortAscending } from "@core/constants";
+import { MaybeRef } from "@vueuse/core";
 
-export default () => {
+export default (options: { user: MaybeRef<UserType> }) => {
+  const { user } = options;
+
   const loading: Ref<boolean> = ref(false);
-  const contactId: Ref<string> = ref("");
   const addresses: Ref<MemberAddressType[]> = shallowRef<MemberAddressType[]>([]);
   const defaultShippingAddress: Ref<MemberAddressType | undefined> = ref();
   const defaultBillingAddress: Ref<MemberAddressType | undefined> = ref();
@@ -24,10 +26,7 @@ export default () => {
     const sortingExpression = getSortingExpression(sort.value);
 
     try {
-      const result = await getMyAddresses(sortingExpression);
-
-      addresses.value = result.addresses?.items ?? [];
-      contactId.value = result.id;
+      addresses.value = await getMyAddresses({ sort: sortingExpression });
     } catch (e) {
       Logger.error("useUserAddresses.loadAddresses", e);
       throw e;
@@ -40,7 +39,7 @@ export default () => {
     //TODO: will be implemented in the separate story
   }
 
-  async function updateAddresses(items: MemberAddressType[], memberId = contactId.value): Promise<void> {
+  async function updateAddresses(items: MemberAddressType[], memberId = unref(user).memberId!): Promise<void> {
     loading.value = true;
 
     const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
@@ -54,7 +53,6 @@ export default () => {
       loading.value = false;
     }
 
-    // TODO: Remove. Return addresses from mutation
     await loadAddresses();
   }
 

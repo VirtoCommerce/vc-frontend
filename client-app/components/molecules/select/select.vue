@@ -175,7 +175,9 @@ function toggle() {
 }
 
 function select(item: any) {
-  if (props.isDisabled) return;
+  if (props.isDisabled) {
+    return;
+  }
 
   const newValue = props.itemValueKey ? item[props.itemValueKey] : item;
 

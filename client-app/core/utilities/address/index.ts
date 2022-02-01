@@ -1,9 +1,9 @@
 import { AnyAddressType } from "@core/types";
 import { InputMemberAddressType, MemberAddressType } from "@core/api/graphql/types";
-import { clone } from "lodash";
+import _ from "lodash";
 
 export function toInputAddress(address: AnyAddressType): InputMemberAddressType {
-  const newAddress = clone(address) as Record<keyof MemberAddressType, any>;
+  const newAddress = _.clone(address) as Record<keyof MemberAddressType, any>;
 
   newAddress.key = newAddress.id;
 

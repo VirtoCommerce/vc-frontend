@@ -197,7 +197,7 @@ const emailRules = computed(() => {
 });
 
 const phoneRules = computed(() => {
-  let rules = yup.string().max(256).nullable();
+  let rules = yup.string().max(64).nullable();
   if (props.requiredPhone) rules = rules.required();
   return rules;
 });
@@ -237,7 +237,6 @@ const { value: city } = useField<string>("city", cityRules);
 const { value: phone } = useField<string>("phone", phoneRules);
 const { value: firstName } = useField<string>("firstName", yup.string().max(128).required().nullable());
 const { value: lastName } = useField<string>("lastName", yup.string().max(128).required().nullable());
-// const { value: organization } = useField<string>("organization", yup.string().max(128).nullable());
 const { value: postalCode } = useField<string>("postalCode", yup.string().max(32).required().nullable());
 const { value: countryCode } = useField<string>("countryCode", yup.string().required().nullable());
 const { value: countryName } = useField<string>("countryName", yup.string().max(128).nullable());

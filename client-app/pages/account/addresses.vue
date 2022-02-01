@@ -113,7 +113,7 @@
 
                 <!-- Grid Skeleton -->
                 <div v-else>
-                  <div v-for="i of 4" :key="i" class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200">
+                  <div v-for="i of itemsPerPage" :key="i" class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200">
                     <div class="flex flex-col">
                       <span class="text-sm text-gray-400">Recipient's name</span>
                       <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
@@ -295,7 +295,7 @@
 <script setup lang="ts">
 import Pagination from "@/shared/catalog/components/pagination.vue";
 import { TableMobileItem, Button as VcButton } from "@/components";
-import { AccountNavigation, AddressForm, useUserAddresses } from "@/shared/account";
+import { AccountNavigation, AddressForm, useUser, useUserAddresses } from "@/shared/account";
 import { computed, ComputedRef, onMounted, Ref, ref } from "vue";
 import { clone } from "lodash";
 import { MemberAddressType } from "@/core/api/graphql/types";
@@ -305,6 +305,7 @@ import { useCountries } from "@core/composables";
 import { AddressType } from "@core/types";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
+const { me: user } = useUser();
 const { countries, loadCountries } = useCountries();
 const {
   loading: addressesLoading,
@@ -315,7 +316,7 @@ const {
   removeAddresses,
   defaultShippingAddress,
   addOrUpdateAddresses,
-} = useUserAddresses();
+} = useUserAddresses({ user });
 
 const isMobile = breakpoints.smaller("md");
 const editingMode: Ref<boolean> = ref(false);

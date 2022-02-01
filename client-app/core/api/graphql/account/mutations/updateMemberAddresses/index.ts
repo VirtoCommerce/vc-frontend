@@ -1,20 +1,12 @@
 import client from "@core/api/graphql/graphql-client";
-import {
-  InputMemberAddressType,
-  MemberAddressType,
-  Mutations,
-  MutationsUpdateMemberAddressesArgs,
-} from "@core/api/graphql/types";
+import { InputMemberAddressType, Mutations, MutationsUpdateMemberAddressesArgs } from "@core/api/graphql/types";
 import mutationDocument from "./updateMemberAddressesMutation.graphql";
 
-async function updateMemberAddresses(
+export default async function updateMemberAddresses(
   memberId: string,
   addresses: InputMemberAddressType[]
-): Promise<MemberAddressType[]> {
-  const { data } = await client.mutate<
-    Required<Pick<Mutations, "updateMemberAddresses">>,
-    MutationsUpdateMemberAddressesArgs
-  >({
+): Promise<void> {
+  await client.mutate<Pick<Mutations, "updateMemberAddresses">, MutationsUpdateMemberAddressesArgs>({
     mutation: mutationDocument,
     variables: {
       command: {
@@ -23,8 +15,4 @@ async function updateMemberAddresses(
       },
     },
   });
-
-  return data!.updateMemberAddresses.addresses!;
 }
-
-export default updateMemberAddresses;
