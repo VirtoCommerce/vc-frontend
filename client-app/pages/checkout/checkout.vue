@@ -134,7 +134,7 @@
                 </CheckoutLabeledBlock>
                 <div
                   v-if="!billingSameAsShipping && !cart.payments?.[0]?.billingAddress"
-                  class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 p-5 flex justify-between"
+                  class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 mb-6 p-5 flex justify-between"
                 >
                   <div class="text-red-500 flex items-center space-x-4">
                     <i class="fas fa-exclamation-triangle text-2xl"></i>
@@ -410,13 +410,16 @@ function selectShippingAddressDialog(): void {
     props: {
       currentAddress: cart.value.shipments?.[0]?.deliveryAddress,
       onResult(address: InputAddressType) {
+        const convertedAddress = _.omit(address, ["isDefault"]);
         updateShipment({
           id: cart.value.shipments?.[0]?.id,
-          deliveryAddress: { ...address },
+          deliveryAddress: { ...convertedAddress },
         });
       },
       onAddNewAddress() {
-        addNewAddressDialog();
+        setTimeout(() => {
+          addNewAddressDialog();
+        }, 500);
       },
     },
   });
@@ -428,13 +431,16 @@ function selectBillingAddressDialog(): void {
     props: {
       currentAddress: cart.value.payments?.[0]?.billingAddress,
       onResult(address: InputAddressType) {
+        const convertedAddress = _.omit(address, ["isDefault"]);
         updatePayment({
           id: cart.value.payments?.[0]?.id,
-          billingAddress: { ...address },
+          billingAddress: { ...convertedAddress },
         });
       },
       onAddNewAddress() {
-        addNewAddressDialog();
+        setTimeout(() => {
+          addNewAddressDialog();
+        }, 500);
       },
     },
   });
