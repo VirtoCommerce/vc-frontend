@@ -138,7 +138,7 @@
                 >
                   <div class="text-red-500 flex items-center space-x-4">
                     <i class="fas fa-exclamation-triangle text-2xl"></i>
-                    <span>You do not have a billing address. Please choose/create a new one.</span>
+                    <span class="text-sm">You do not have a billing address. Please choose/create a new one.</span>
                   </div>
                   <div>
                     <VcButton
