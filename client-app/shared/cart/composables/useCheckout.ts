@@ -1,4 +1,4 @@
-import { Ref, ref, reactive, computed } from "vue";
+import { Ref, ref, computed } from "vue";
 import {
   addOrUpdateCartShipment,
   addOrUpdateCartPayment,
@@ -16,10 +16,7 @@ import {
   CartAddressType,
   ShipmentType,
   PaymentType,
-  CartType,
-  MemberAddressType,
 } from "@core/api/graphql/types";
-import { Logger } from "@core/utilities";
 import { useCart } from ".";
 
 const addresses: CartAddressType[] = [

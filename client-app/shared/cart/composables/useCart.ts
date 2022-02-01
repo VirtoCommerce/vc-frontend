@@ -11,7 +11,7 @@ import {
   addOrUpdateCartShipment,
   addOrUpdateCartPayment,
 } from "@core/api/graphql/cart";
-import { CartType, InputAddressType, InputPaymentType, InputShipmentType, LineItemType } from "@core/api/graphql/types";
+import { CartType, InputPaymentType, InputShipmentType, LineItemType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 import _ from "lodash";
 
