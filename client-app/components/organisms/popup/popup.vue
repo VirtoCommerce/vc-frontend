@@ -27,7 +27,8 @@
             leave-to="opacity-0 scale-95"
           >
             <div
-              class="inline-block w-full max-w-2xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-md"
+              class="inline-block w-full my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-md"
+              :class="modalWidth"
             >
               <!-- Title bar -->
               <DialogTitle
@@ -42,10 +43,10 @@
               </DialogTitle>
 
               <!-- Dialog contents -->
-              <div><slot></slot></div>
+              <div><slot :close="onClose"></slot></div>
 
               <!-- Dialog actions -->
-              <div class="px-5 py-4 flex items-center justify-between lg:justify-end space-x-4">
+              <div v-if="!hideActions" class="px-5 py-4 flex items-center justify-between lg:justify-end space-x-4">
                 <slot name="actions" :close="onClose">
                   <button
                     class="uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-4 h-9 font-roboto-condensed text-base font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white rounded focus:outline-none"
@@ -84,6 +85,16 @@ const props = defineProps({
   },
 
   isPersistent: {
+    type: Boolean,
+    default: false,
+  },
+
+  modalWidth: {
+    type: String,
+    default: "max-w-2xl",
+  },
+
+  hideActions: {
     type: Boolean,
     default: false,
   },

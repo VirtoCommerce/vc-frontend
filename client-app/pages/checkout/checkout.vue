@@ -49,7 +49,7 @@
             >
               <div class="mx-5 lg:ml-28 lg:mr-11">
                 <CheckoutLabeledBlock label="Shipping address">
-                  <template v-if="cart.shipments && cart.shipments[0].deliveryAddress">
+                  <template v-if="cart.shipments && cart.shipments?.[0]?.deliveryAddress">
                     <div>
                       <span class="font-extrabold"
                         >{{ cart.shipments[0].deliveryAddress?.firstName }}
@@ -65,12 +65,13 @@
                       <p><span class="font-extrabold">Email:</span>{{ cart.shipments[0].deliveryAddress?.email }}</p>
                     </div>
                     <div>
-                      <button
-                        class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500"
+                      <VcButton
+                        size="sm"
+                        outline
+                        class="px-3 self-start uppercase font-bold"
                         @click="selectShippingAddressDialog"
+                        >Change</VcButton
                       >
-                        Change
-                      </button>
                     </div>
                   </template>
                   <template v-else>
@@ -79,12 +80,13 @@
                       <span>You do not have a shipping address. Please choose/create a new one.</span>
                     </div>
                     <div>
-                      <button
-                        class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 disabled:opacity-30"
+                      <VcButton
+                        size="sm"
+                        outline
+                        class="px-3 self-start uppercase font-bold"
                         @click="selectShippingAddressDialog"
+                        >New address</VcButton
                       >
-                        New address
-                      </button>
                     </div>
                   </template>
                 </CheckoutLabeledBlock>
@@ -101,7 +103,13 @@
                     <div v-else class="text-gray-600">Not defined</div>
                   </div>
                   <div>
-                    <VcButton size="sm" outline class="px-3 self-start uppercase font-bold" @click="showShipmentMethodDialog">Change</VcButton>
+                    <VcButton
+                      size="sm"
+                      outline
+                      class="px-3 self-start uppercase font-bold"
+                      @click="showShipmentMethodDialog"
+                      >Change</VcButton
+                    >
                   </div>
                 </CheckoutLabeledBlock>
               </div>
@@ -133,12 +141,13 @@
                     <span>You do not have a billing address. Please choose/create a new one.</span>
                   </div>
                   <div>
-                    <button
-                      class="rounded uppercase h-8 px-3 self-start border-2 font-roboto-condensed font-bold text-sm text-yellow-500 border-yellow-500 disabled:opacity-30"
+                    <VcButton
+                      size="sm"
+                      outline
+                      class="px-3 self-start uppercase font-bold"
                       @click="selectBillingAddressDialog"
+                      >New address</VcButton
                     >
-                      New address
-                    </button>
                   </div>
                 </div>
                 <CheckoutLabeledBlock label="Payment method">
@@ -150,7 +159,13 @@
                     <div v-else class="text-gray-600">Not defined</div>
                   </div>
                   <div>
-                    <VcButton size="sm" outline class="px-3 self-start uppercase font-bold" @click="showPaymentMethodDialog">Change</VcButton>
+                    <VcButton
+                      size="sm"
+                      outline
+                      class="px-3 self-start uppercase font-bold"
+                      @click="showPaymentMethodDialog"
+                      >Change</VcButton
+                    >
                   </div>
                 </CheckoutLabeledBlock>
               </div>
@@ -216,15 +231,20 @@ import {
   ShippingMethodDialog,
   PaymentMethodDialog,
   ShippingAddressDialog,
+  CreateAddressDialog,
 } from "@/shared/checkout";
 import { TextArea, Button as VcButton } from "@/components";
 import { useCart, useCheckout } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import { computed, onBeforeUpdate, onMounted, ref } from "vue";
 import _ from "lodash";
-import { InputAddressType, PaymentMethodType, ShippingMethodType } from "@/core/api/graphql/types";
+import { InputAddressType, MemberAddressType, PaymentMethodType, ShippingMethodType } from "@/core/api/graphql/types";
+import { useUser, useUserAddresses } from "@/shared/account";
+import { AddressType } from "@/core/types";
 
+const { me: user } = useUser();
 const {
+  loading,
   cart,
   pages,
   itemsPerPage,
@@ -239,8 +259,10 @@ const {
   updatePayment,
 } = useCart();
 
+const { addOrUpdateAddresses } = useUserAddresses({ user });
+
 const { placeOrder } = useCheckout();
-const { openPopup } = usePopup();
+const { openPopup, closePopup } = usePopup();
 
 //TODO: change 'any' for a normal type
 const productCardRefs = ref<any[]>([]);
@@ -393,9 +415,13 @@ function selectShippingAddressDialog(): void {
           deliveryAddress: { ...address },
         });
       },
+      onAddNewAddress() {
+        addNewAddressDialog();
+      },
     },
   });
 }
+
 function selectBillingAddressDialog(): void {
   openPopup({
     component: ShippingAddressDialog,
@@ -406,6 +432,21 @@ function selectBillingAddressDialog(): void {
           id: cart.value.payments?.[0]?.id,
           billingAddress: { ...address },
         });
+      },
+      onAddNewAddress() {
+        addNewAddressDialog();
+      },
+    },
+  });
+}
+
+function addNewAddressDialog(): void {
+  openPopup({
+    component: CreateAddressDialog,
+    props: {
+      async onResult(address: MemberAddressType) {
+        closePopup();
+        await addOrUpdateAddresses([{ ...address, addressType: AddressType.BillingAndShipping }]);
       },
     },
   });

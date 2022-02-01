@@ -8,3 +8,4 @@ export { default as ThankYou } from "./thank-you.vue";
 export { default as ShippingMethodDialog } from "./shipping-method-dialog.vue";
 export { default as PaymentMethodDialog } from "./payment-method-dialog.vue";
 export { default as ShippingAddressDialog } from "./shipping-address-dialog.vue";
+export { default as CreateAddressDialog } from "./create-address-dialog.vue";
