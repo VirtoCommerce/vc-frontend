@@ -5,13 +5,13 @@
       <SignInForm @succeeded="onSignIn" />
     </template>
     <template #right>
-      <Image class="max-w-md" src="/static/images/sign-in/sign-in-page-image.webp" />
+      <VcImage class="max-w-md" src="/static/images/sign-in/sign-in-page-image.webp" />
     </template>
   </TwoColumn>
 </template>
 
 <script setup lang="ts">
-import { Image } from "@/components";
+import { VcImage } from "@/components";
 import { SignInForm, useUser } from "@/shared/account";
 import { useRouter } from "vue-router";
 import { TwoColumn } from "@/shared/layout";

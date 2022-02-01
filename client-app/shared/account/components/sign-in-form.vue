@@ -1,10 +1,10 @@
 <template>
   <form @submit="onSubmit">
     <!-- Errors block -->
-    <Alert v-if="authError"><strong>User</strong> or <strong>password</strong> is incorrect</Alert>
-    <Alert v-if="!_.isEmpty(errors)" class="mt-2"
+    <VcAlert v-if="authError"><strong>User</strong> or <strong>password</strong> is incorrect</VcAlert>
+    <VcAlert v-if="!_.isEmpty(errors)" class="mt-2"
       ><strong>User</strong> and <strong>password</strong> are required
-    </Alert>
+    </VcAlert>
 
     <div class="mt-4">
       <span class="font-semibold">User name</span>
@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { Alert, Button as VcButton } from "@/components";
+import { VcAlert, VcButton } from "@/components";
 import { ref, reactive, computed, Ref } from "vue";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";

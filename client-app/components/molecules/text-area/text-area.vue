@@ -10,13 +10,16 @@
     <p class="absolute text-xs text-gray-300 bottom-5 right-3">{{ symbolsCount }}</p>
   </div>
 </template>
+
 <script lang="ts">
 export default {
   inheritAttrs: false,
 };
 </script>
+
 <script setup lang="ts">
-import { computed, toRef } from "vue";
+import { computed } from "vue";
+
 const props = defineProps({
   rows: {
     type: Number,
@@ -33,12 +36,13 @@ const props = defineProps({
     default: "",
   },
 });
+
+const emit = defineEmits(["update:modelValue"]);
+
 const text = computed({
   get: () => props.modelValue,
   set: (newValue) => emit("update:modelValue", newValue),
 });
-const symbolsCount = computed(() => text.value.length + "/" + props.maxLength);
-const emit = defineEmits(["update:modelValue"]);
-</script>
 
-<style scoped></style>
+const symbolsCount = computed(() => text.value.length + "/" + props.maxLength);
+</script>

@@ -26,14 +26,14 @@
       </div>
     </template>
     <template #right>
-      <Image class="max-w-md" src="/static/images/sign-in/sign-in-page-image.webp" />
+      <VcImage class="max-w-md" src="/static/images/sign-in/sign-in-page-image.webp" />
     </template>
   </TwoColumn>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { Image, Button as VcButton } from "@/components";
+import { VcImage, VcButton } from "@/components";
 import { TwoColumn } from "@/shared/layout";
 import { ResetPasswordForm, useUser } from "@/shared/account";
 import { useRoute } from "vue-router";

@@ -2,7 +2,7 @@
   <div class="border-b">
     <div class="p-5 flex flex-wrap overflow-hidden space-x-4 lg:space-x-6">
       <div class="border border-gray-100 w-16 h-16">
-        <Image :src="lineItem.imageUrl" :alt="lineItem.name" class="w-full h-full object-cover object-center" />
+        <VcImage :src="lineItem.imageUrl" :alt="lineItem.name" class="w-full h-full object-cover object-center" />
       </div>
 
       <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center flex-1">
@@ -22,14 +22,14 @@
             <span class="font-medium text-gray-500 pr-1">Price: </span>
             <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
             <p class="w-1/3 lg:w-auto font-bold">
-              <span class="text-green-700"><PriceDisplay :value="lineItem.listPrice || lineItem.placedPrice" /></span>
+              <span class="text-green-700"><VcPriceDisplay :value="lineItem.listPrice || lineItem.placedPrice" /></span>
               <span class="hidden lg:inline"> / each</span>
             </p>
           </div>
           <div class="flex text-sm lg:hidden">
             <span class="font-medium text-gray-500">Total: </span>
             <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
-            <span class="w-1/3 text-green-700 font-bold"><PriceDisplay :value="lineItem.extendedPrice" /></span>
+            <span class="w-1/3 text-green-700 font-bold"><VcPriceDisplay :value="lineItem.extendedPrice" /></span>
           </div>
         </div>
 
@@ -84,7 +84,7 @@
           </div>
           <div class="hidden lg:flex lg:w-2/4 lg:items-end flex-col text-sm font-extrabold pr-3">
             <span class="text-black self-end">Total</span>
-            <span class="text-green-700"><PriceDisplay :value="lineItem.extendedPrice" /></span>
+            <span class="text-green-700"><VcPriceDisplay :value="lineItem.extendedPrice" /></span>
           </div>
         </div>
       </div>
@@ -93,7 +93,7 @@
 </template>
 
 <script setup lang="ts">
-import { Image, PriceDisplay, Button as VcButton } from "@/components";
+import { VcImage, VcPriceDisplay, VcButton } from "@/components";
 import { LineItemType } from "@/core/api/graphql/types";
 import { computed, PropType } from "vue";
 import { useField } from "vee-validate";

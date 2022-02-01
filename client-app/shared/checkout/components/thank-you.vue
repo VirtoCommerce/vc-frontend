@@ -25,12 +25,12 @@
               ></ProductCard>
 
               <div v-if="pages > 1" class="py-8 lg:flex lg:items-center lg:px-5">
-                <Pagination
+                <VcPagination
                   v-model:page="page"
                   :pages="pages"
                   class="mb-3 lg:mb-0"
                   @update:page="page = $event"
-                ></Pagination>
+                ></VcPagination>
               </div>
             </div>
           </CheckoutSection>
@@ -55,34 +55,34 @@
         <div class="flex flex-col px-5 mb-7 order-first md:px-0 lg:mb-0 lg:order-1 lg:w-1/4">
           <!-- Order summary -->
           <OrderSummary :cart="order" class="mb-5"></OrderSummary>
-          <Card title="Billing address" :is-collapsible="true" class="mb-5">
+          <VcCard title="Billing address" :is-collapsible="true" class="mb-5">
             <div class="flex flex-col text-sm">
               <span class="font-extrabold">Annete Black</span>
               <p>3891 Ranchview Dr. Richardson, California 62639</p>
               <p><span class="font-extrabold">Phone:</span> (684) 555-0102</p>
               <p><span class="font-extrabold">Email:</span> debra.holt@example.com</p>
             </div>
-          </Card>
-          <Card title="Shipping method" :is-collapsible="true" class="mb-5">
+          </VcCard>
+          <VcCard title="Shipping method" :is-collapsible="true" class="mb-5">
             <div class="flex items-center space-x-4 text-sm">
-              <Image src="/static/images/checkout/fedex.svg" class="h-12 w-12" />
+              <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" />
               <span>Fedex - Express (20$)</span>
             </div>
-          </Card>
-          <Card title="Shipping address" :is-collapsible="true" class="mb-5">
+          </VcCard>
+          <VcCard title="Shipping address" :is-collapsible="true" class="mb-5">
             <div class="flex flex-col text-sm">
               <span class="font-extrabold">Annete Black</span>
               <p>3891 Ranchview Dr. Richardson, California 62639</p>
               <p><span class="font-extrabold">Phone:</span> (684) 555-0102</p>
               <p><span class="font-extrabold">Email:</span> debra.holt@example.com</p>
             </div>
-          </Card>
-          <Card title="Payment method" :is-collapsible="true" class="mb-5">
+          </VcCard>
+          <VcCard title="Payment method" :is-collapsible="true" class="mb-5">
             <div class="flex items-center space-x-4 text-sm">
-              <Image src="/static/images/checkout/invoice.svg" class="h-12 w-12" />
+              <VcImage src="/static/images/checkout/invoice.svg" class="h-12 w-12" />
               <span>Invoice</span>
             </div>
-          </Card>
+          </VcCard>
           <VcButton class="uppercase w-full" @click="printOrder">Print order</VcButton>
         </div>
       </div>
@@ -95,7 +95,7 @@ import { CheckoutSection, OrderSummary, ProductCard } from "@/shared/checkout";
 import { CustomerOrderType } from "@/core/api/graphql/types";
 import { useCart } from "@/shared/cart";
 import { computed, PropType, ref } from "vue";
-import { Card, Image, Pagination, Button as VcButton } from "@/components";
+import { VcCard, VcImage, VcPagination, VcButton } from "@/components";
 
 const { itemsPerPage } = useCart();
 

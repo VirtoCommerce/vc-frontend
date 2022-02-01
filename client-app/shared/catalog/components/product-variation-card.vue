@@ -6,7 +6,7 @@
         v-if="variation?.images?.length"
         class="-mt-2 -ml-2 square relative flex flex-col justify-center items-center"
       >
-        <Image
+        <VcImage
           :src="variation?.images[0]?.url"
           :alt="variation?.name"
           class="absolute top-0 w-full h-full object-cover object-center rounded-sm"
@@ -22,7 +22,8 @@
           <div class="w-1/2 text-gray-500">Your price</div>
           <div class="w-1/2">
             <!-- todo: extract a component for price and use it here -->
-            <span class="font-extrabold text-sm text-green-700"><PriceDisplay :value="variation?.price?.actual" /></span
+            <span class="font-extrabold text-sm text-green-700"
+              ><VcPriceDisplay :value="variation?.price?.actual" /></span
             >&nbsp;<span class="font-extrabold hidden lg:inline-block">/ each</span>
           </div>
         </div>
@@ -38,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { Image, PriceDisplay } from "@/components";
+import { VcImage, VcPriceDisplay } from "@/components";
 import { VariationType, Product } from "@core/api/graphql/types";
 import { VariationProperties } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";

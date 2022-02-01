@@ -1,9 +1,10 @@
 <template>
   <div>
-    <div>
+    <div v-if="label">
       <span class="font-bold text-gray-900">{{ label }}</span>
       <span v-if="isRequired" class="text-red-500">*</span>
     </div>
+
     <input
       class="appearance-none rounded px-3 py-3 text-base leading-none box-border border border-gray-300 w-full outline-none focus:border-gray-400"
       :value="modelValue"
@@ -11,6 +12,7 @@
       :placeholder="placeholder"
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     />
+
     <div v-if="errorMessage" class="text-xs text-red-500">{{ errorMessage }}</div>
   </div>
 </template>
@@ -19,7 +21,7 @@
 defineProps({
   label: {
     type: String,
-    required: true,
+    default: undefined,
   },
 
   isRequired: {

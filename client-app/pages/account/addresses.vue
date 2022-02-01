@@ -62,7 +62,7 @@
                 </TableMobileItem>
               </div>
               <div v-else class="flex items-center justify-center space-x-10 p-5">
-                <Image src="/static/images/account/icons/no-addresses.svg" alt="No addresses" />
+                <VcImage src="/static/images/account/icons/no-addresses.svg" alt="No addresses" />
                 <div class="flex flex-col space-y-2">
                   <span class="text-base">There are no addresses yet</span>
                   <VcButton class="uppercase w-full">Add new address</VcButton>
@@ -172,7 +172,7 @@
                 <tr>
                   <td colspan="6" class="polygons-bg">
                     <div class="flex items-center pl-56 space-x-10 h-80">
-                      <Image src="/static/images/account/icons/no-addresses.svg" alt="No addresses" />
+                      <VcImage src="/static/images/account/icons/no-addresses.svg" alt="No addresses" />
                       <div class="flex flex-col space-y-2">
                         <span class="text-base">There are no addresses yet</span>
                         <VcButton class="uppercase w-full">Add new address</VcButton>
@@ -183,13 +183,13 @@
               </tbody>
             </table>
 
-            <Pagination
+            <VcPagination
               v-if="pages > 1"
               v-model:page="page"
               :pages="pages"
               class="self-start"
               :class="[isMobile ? 'px-6 py-10' : 'pb-5 px-5 mt-5']"
-            ></Pagination>
+            ></VcPagination>
           </div>
         </div>
       </div>
@@ -198,7 +198,7 @@
 </template>
 
 <script setup lang="ts">
-import { ISortInfo, TableMobileItem, Image, Pagination, Button as VcButton } from "@/components";
+import { ISortInfo, TableMobileItem, VcImage, VcPagination, VcButton } from "@/components";
 import { AccountNavigation, useUser } from "@/shared/account";
 import { computed, onMounted, Ref, ref } from "vue";
 import { MemberAddressType } from "@/core/api/graphql/types";

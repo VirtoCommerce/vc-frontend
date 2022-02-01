@@ -1,5 +1,5 @@
 <template>
-  <Popup :variant="variant" :title="title">
+  <VcPopup :variant="variant" :title="title">
     <template #actions="{ close }">
       <VcButton outline class="lg:px-4 uppercase flex-grow lg:flex-grow-0 inline-flex" @click="close">
         Continue shopping
@@ -22,13 +22,13 @@
           <tr>
             <td class="px-5 py-3">
               <div class="flex items-center">
-                <Image class="border object-contain rounded-sm" :src="lineItem.imageUrl" width="72" height="72" />
+                <VcImage class="border object-contain rounded-sm" :src="lineItem.imageUrl" width="72" height="72" />
                 <div class="ml-4 font-bold text-blue-700">{{ lineItem.name }}</div>
               </div>
             </td>
             <td class="px-5 py-3 text-center">{{ lineItem.quantity }}</td>
             <td class="px-5 py-3 text-right text-green-700 font-bold">
-              <PriceDisplay :value="lineItem.extendedPrice" />
+              <VcPriceDisplay :value="lineItem.extendedPrice" />
             </td>
           </tr>
         </tbody>
@@ -36,7 +36,7 @@
     </div>
     <div class="block lg:hidden">
       <div class="flex items-center border-b border-gray-200 p-5">
-        <Image class="border object-contain rounded-sm" :src="lineItem.imageUrl" width="72" height="72" />
+        <VcImage class="border object-contain rounded-sm" :src="lineItem.imageUrl" width="72" height="72" />
         <div class="ml-4 font-bold text-blue-700">{{ lineItem.name }}</div>
       </div>
 
@@ -47,18 +47,18 @@
         <div>
           Total:
           <span class="font-bold text-green-700">
-            <PriceDisplay :value="lineItem.extendedPrice" />
+            <VcPriceDisplay :value="lineItem.extendedPrice" />
           </span>
         </div>
       </div>
     </div>
-  </Popup>
+  </VcPopup>
 </template>
 
 <script setup lang="ts">
 import { computed, PropType } from "vue";
 import { LineItemType } from "@/core/api/graphql/types";
-import { Popup, Image, PriceDisplay, Button as VcButton } from "@/components";
+import { VcPopup, VcImage, VcPriceDisplay, VcButton } from "@/components";
 
 const props = defineProps({
   isOpen: {

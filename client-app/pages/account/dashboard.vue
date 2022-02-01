@@ -9,11 +9,11 @@
         </div>
         <!-- Second column-->
         <div class="flex flex-col w-full px-5 space-y-5 lg:w-3/5">
-          <Card title="Last orders" class="h-52"></Card>
+          <VcCard title="Last orders" class="h-52"></VcCard>
           <div class="flex flex-col space-y-5 lg:flex-row lg:space-x-5 lg:space-y-0">
-            <Card title="Monthly spend report" class="lg:w-1/2">
+            <VcCard title="Monthly spend report" class="lg:w-1/2">
               <div class="flex content-center space-x-9 lg:space-x-4">
-                <Image src="/static/images/dashboard/spend-chart.svg" class="h-24 w-24" alt="Spend chart" />
+                <VcImage src="/static/images/dashboard/spend-chart.svg" class="h-24 w-24" alt="Spend chart" />
                 <div
                   class="flex flex-col space-y-1 sm:space-y-0 sm:flex-row sm:flex-wrap sm:space-x-5 sm:items-center xl:space-x-7 justify-center"
                 >
@@ -27,17 +27,17 @@
                   </div>
                 </div>
               </div>
-            </Card>
-            <Card title="Orders status" class="h-52 lg:h-auto lg:w-1/2"></Card>
+            </VcCard>
+            <VcCard title="Orders status" class="h-52 lg:h-auto lg:w-1/2"></VcCard>
           </div>
           <!-- Commented due to accetpance criteria, will be used in future-->
-          <!-- <Card title="Users" class="h-52"></Card> -->
+          <!-- <VcCard title="Users" class="h-52"></VcCard> -->
         </div>
         <!-- Third column-->
         <div class="hidden lg:flex flex-col lg:w-1/5 space-y-5">
-          <Card title="Bulk order pad" class="h-96"></Card>
+          <VcCard title="Bulk order pad" class="h-96"></VcCard>
           <!-- Commented due to accetpance criteria, will be used in future-->
-          <!-- <Card title="Current user roles" class="h-80"></Card> -->
+          <!-- <VcCard title="Current user roles" class="h-80"></VcCard> -->
         </div>
       </div>
     </div>
@@ -45,6 +45,6 @@
 </template>
 
 <script setup lang="ts">
-import { Card, Image } from "@/components";
+import { VcCard, VcImage } from "@/components";
 import { AccountNavigation } from "@/shared/account";
 </script>

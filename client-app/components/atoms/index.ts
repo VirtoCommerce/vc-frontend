@@ -1,7 +1,7 @@
-export { default as Alert } from "./alert/alert.vue";
-export { default as Button } from "./button/button.vue";
-export { default as Checkbox } from "./checkbox/checkbox.vue";
-export { default as Image } from "./image/image.vue";
-export { default as MarkdownRender } from "./markdown-render/markdown-render.vue";
-export { default as Pagination } from "./pagination/pagination.vue";
-export { default as PriceDisplay } from "./price-display/price-display.vue";
+export { default as VcAlert } from "./alert/alert.vue";
+export { default as VcButton } from "./button/button.vue";
+export { default as VcCheckbox } from "./checkbox/checkbox.vue";
+export { default as VcImage } from "./image/image.vue";
+export { default as VcMarkdownRender } from "./markdown-render/markdown-render.vue";
+export { default as VcPagination } from "./pagination/pagination.vue";
+export { default as VcPriceDisplay } from "./price-display/price-display.vue";
