@@ -25,7 +25,6 @@
               :disabled="saveAddressLoading"
               class="px-6 py-4"
               required-email
-              required-city
               @save="saveAddress"
             >
               <template #append="{ dirty }">
@@ -82,7 +81,7 @@
                       </div>
                       <div class="flex flex-col">
                         <span class="text-sm text-gray-400"> Recipient's name </span>
-                        <span class="font-extrabold">{{ address.firstName }} {{ address.lastName }}</span>
+                        <span class="pr-4 font-extrabold">{{ address.firstName }} {{ address.lastName }}</span>
                       </div>
                       <div class="flex flex-col">
                         <span class="text-sm text-gray-400">Address</span>
@@ -93,11 +92,11 @@
                       </div>
                       <div class="flex flex-col">
                         <span class="text-sm text-gray-400">Phone</span>
-                        <span>{{ address.phone }}</span>
+                        <span class="pr-4 truncate">{{ address.phone }}</span>
                       </div>
                       <div class="flex flex-col">
                         <span class="text-sm text-gray-400">Email</span>
-                        <span>{{ address.email }}</span>
+                        <span class="truncate">{{ address.email }}</span>
                       </div>
                     </div>
                   </TableMobileItem>
@@ -138,11 +137,11 @@
               </template>
 
               <!-- Desktop table view -->
-              <table v-else class="table-auto text-sm text-left">
+              <table v-else class="table-fixed text-sm text-left w-full">
                 <thead class="border-b border-gray-200">
                   <tr>
                     <th
-                      class="py-3 px-5 font-extrabold"
+                      class="py-3 px-5 font-extrabold w-40"
                       :class="{
                         desc: sort.column === 'firstName' && sort.direction === sortDescending,
                         asc: sort.column === 'firstName' && sort.direction === sortAscending,
@@ -152,7 +151,7 @@
                       Recipient's name
                     </th>
                     <th
-                      class="py-3 px-5 font-extrabold"
+                      class="py-3 px-5 font-extrabold w-auto"
                       :class="{
                         desc: sort.column === 'countryCode' && sort.direction === sortDescending,
                         asc: sort.column === 'countryCode' && sort.direction === sortAscending,
@@ -162,7 +161,7 @@
                       Address
                     </th>
                     <th
-                      class="py-3 px-5 font-extrabold"
+                      class="py-3 px-5 font-extrabold w-1/6"
                       :class="{
                         desc: sort.column === 'phone' && sort.direction === sortDescending,
                         asc: sort.column === 'phone' && sort.direction === sortAscending,
@@ -172,7 +171,7 @@
                       Phone
                     </th>
                     <th
-                      class="py-3 px-5 font-extrabold"
+                      class="py-3 px-5 font-extrabold w-1/6"
                       :class="{
                         desc: sort.column === 'email' && sort.direction === sortDescending,
                         asc: sort.column === 'email' && sort.direction === sortAscending,
@@ -181,8 +180,8 @@
                     >
                       Email
                     </th>
-                    <th class="py-3 px-5 font-extrabold">Default</th>
-                    <th class="py-3 px-5 font-extrabold">Actions</th>
+                    <th class="py-3 px-5 font-extrabold w-32">Default</th>
+                    <th class="py-3 px-5 text-center font-extrabold w-28">Actions</th>
                   </tr>
                 </thead>
 
@@ -193,8 +192,8 @@
                       {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
                       {{ address.postalCode }}
                     </td>
-                    <td class="p-5">{{ address.phone }}</td>
-                    <td class="p-5">{{ address.email }}</td>
+                    <td class="p-5 truncate">{{ address.phone }}</td>
+                    <td class="p-5 truncate">{{ address.email }}</td>
                     <td
                       v-if="defaultShippingAddress && address.id === defaultShippingAddress.id"
                       class="px-3 py-5 font-bold"
@@ -208,23 +207,25 @@
                         >Make default</span
                       >
                     </td>
-                    <td class="p-5 flex space-x-2">
-                      <!-- todo: use VcButton -->
-                      <button
-                        type="button"
-                        class="h-6 w-6 shadow rounded text-yellow-500 hover:bg-gray-100"
-                        @click="openEditMode(address)"
-                      >
-                        <i class="fas fa-pencil-alt"></i>
-                      </button>
+                    <td class="p-5 text-center">
+                      <div class="inline-block space-x-2">
+                        <!-- todo: use VcButton -->
+                        <button
+                          type="button"
+                          class="h-7 w-7 shadow rounded text-yellow-500 hover:bg-gray-100"
+                          @click="openEditMode(address)"
+                        >
+                          <i class="fas fa-pencil-alt"></i>
+                        </button>
 
-                      <button
-                        type="button"
-                        class="h-6 w-6 shadow rounded text-red-500 hover:bg-gray-100"
-                        @click="removeAddress(address)"
-                      >
-                        <i class="fas fa-times"></i>
-                      </button>
+                        <button
+                          type="button"
+                          class="h-7 w-7 shadow rounded text-red-500 hover:bg-gray-100"
+                          @click="removeAddress(address)"
+                        >
+                          <i class="fas fa-times"></i>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 </tbody>

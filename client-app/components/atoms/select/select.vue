@@ -5,7 +5,7 @@
       <span v-if="isRequired" class="text-red-500">*</span>
     </div>
 
-    <div ref="wrapperElement" class="relative select-none">
+    <div v-click-outside="hideList" class="relative select-none">
       <button
         type="button"
         class="relative truncate text-left h-11 w-full appearance-none rounded pl-3 pr-7 py-3 text-base leading-none box-border border border-gray-300 outline-none disabled:bg-gray-50 disabled:cursor-not-allowed focus:border-gray-400"
@@ -60,9 +60,18 @@
   </div>
 </template>
 
+<script lang="ts">
+import { clickOutside } from "@core/directives";
+
+export default {
+  directives: {
+    clickOutside, // VueUse (v7.5.5) onClickOutside doesn't work in Safari
+  },
+};
+</script>
+
 <script setup lang="ts">
 import { computed, PropType, ref, shallowRef } from "vue";
-import { onClickOutside } from "@vueuse/core";
 
 const props = defineProps({
   label: {
@@ -134,7 +143,6 @@ const emit = defineEmits<{
 const transitionDuration = 100;
 
 const open = ref(false);
-const wrapperElement = shallowRef<HTMLElement | null>(null);
 const listElement = shallowRef<HTMLElement | null>(null);
 
 const selected = computed(() => {
@@ -188,6 +196,4 @@ function select(item: any) {
 
   hideList();
 }
-
-onClickOutside(wrapperElement, hideList);
 </script>
