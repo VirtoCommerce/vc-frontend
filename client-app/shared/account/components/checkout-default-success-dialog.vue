@@ -1,5 +1,5 @@
 <template>
-  <Popup variant="success" title="Registration" is-persistent>
+  <Popup variant="success" title="Checkout Defaults" is-persistent>
     <template #actions="{ close }">
       <VcButton class="uppercase mx-auto inline-flex px-10" @click="close">Ok</VcButton>
     </template>

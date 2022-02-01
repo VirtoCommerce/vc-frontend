@@ -10,9 +10,9 @@
         <!-- Second column-->
         <div class="flex flex-col w-full lg:w-4/5 space-y-5">
           <div class="flex justify-between items-center mx-5 lg:mx-0">
-            <h2 class="text-gray-800 text-3xl font-bold uppercase">Checkout defaults</h2>
+            <h2 class="text-gray-800 text-3xl font-bold uppercase">Checkout Defaults</h2>
           </div>
-          <div class="bg-white shadow-sm rounded border px-9 py-8">
+          <div class="bg-white shadow-sm rounded border px-7 py-7 md:px-9 md:py-8">
             <div v-if="!loading" class="flex flex-col lg:w-1/2">
               <div class="font-bold">Preferred Delivery Method</div>
               <div class="mt-3 md:mt-1 flex flex-col space-y-5 md:space-y-0 md:flex-row md:space-x-7">
@@ -21,36 +21,30 @@
                   v-model="checkoutDefaults.deliveryMethod"
                   value="shipping"
                   label="Shipping"
-                ></VcRadioButton>
-                <VcRadioButton
-                  id="pickup"
-                  v-model="checkoutDefaults.deliveryMethod"
-                  value="pickup"
-                  label="Pickup"
-                ></VcRadioButton>
+                />
+                <VcRadioButton id="pickup" v-model="checkoutDefaults.deliveryMethod" value="pickup" label="Pickup" />
               </div>
-              <div class="font-bold mt-8">Preferred Payment Method</div>
-              <select
+              <VcSelect
                 v-model="checkoutDefaults.paymentMethod"
-                class="appearance-none rounded px-3 py-3 text-base leading-none box-border border border-gray-300 w-full outline-none focus:border-gray-400"
+                item-text-key="code"
+                :items="paymentMethods"
+                label="Preferred Payment Method"
                 placeholder="Please select preferred Payment Method"
-              >
-                <option :value="undefined"></option>
-                <option v-for="method in paymentMethods" :key="method.code" :value="method">
-                  {{ method.code }}
-                </option>
-              </select>
-              <div class="font-bold mt-8">Preferred Shipping Method</div>
-              <select
+                class="mt-8 w-full"
+              />
+              <VcSelect
                 v-model="checkoutDefaults.shippingMethod"
-                class="appearance-none rounded px-3 py-3 text-base leading-none box-border border border-gray-300 w-full outline-none focus:border-gray-400"
+                :items="shippingMethods"
+                label="Preferred Shipping Method"
                 placeholder="Please select preferred Shipping Method"
+                class="mt-8 w-full"
               >
-                <option :value="undefined"></option>
-                <option v-for="method in shippingMethods" :key="method.id" :value="method">
-                  {{ method.code }} {{ method.optionName }}
-                </option>
-              </select>
+                <template #selected="{ item }">{{ item?.code }} {{ item?.optionName }}</template>
+                <template #item="{ item }">
+                  <template v-if="item">{{ item?.code }} {{ item?.optionName }} </template>
+                  <template v-else> &nbsp; </template>
+                </template>
+              </VcSelect>
               <VcButton class="uppercase mt-8 px-12 self-center lg:self-start" @click="saveDefaults()">Update</VcButton>
             </div>
           </div>
@@ -61,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { VcRadioButton, Button as VcButton } from "@/components";
+import { VcRadioButton, Button as VcButton, VcSelect } from "@/components";
 import {
   AccountNavigation,
   useUserCheckoutDefaults,
@@ -71,11 +65,29 @@ import {
 import { computed, onMounted, Ref, ref, reactive } from "vue";
 import { useCart } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
+import { ShippingMethodType, PaymentMethodType } from "@/core/api/graphql/types";
 
 const { cart, loading } = useCart();
 
-const shippingMethods = computed(() => cart.value.availableShippingMethods);
-const paymentMethods = computed(() => cart.value.availablePaymentMethods);
+const shippingMethods = computed(() => {
+  const result: Array<ShippingMethodType | undefined> = [undefined];
+
+  if (cart.value.availableShippingMethods?.length) {
+    result.push(...cart.value.availableShippingMethods);
+  }
+
+  return result;
+});
+
+const paymentMethods = computed(() => {
+  const result: Array<PaymentMethodType | undefined> = [undefined];
+
+  if (cart.value.availablePaymentMethods?.length) {
+    result.push(...cart.value.availablePaymentMethods);
+  }
+
+  return result;
+});
 
 const { getUserCheckoutDefaults, setUserCheckoutDefaults } = useUserCheckoutDefaults();
 const { openPopup } = usePopup();
