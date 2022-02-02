@@ -59,7 +59,7 @@
         </div>
         <div class="mt-7 md:mt-5">
           <div>
-            <VcButton to="/checkout" class="uppercase px-2">view cart</VcButton>
+            <VcButton to="/checkout" class="uppercase px-2 w-full">view cart</VcButton>
           </div>
         </div>
       </ProductPriceBlock>
