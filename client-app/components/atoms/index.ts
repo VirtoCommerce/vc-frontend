@@ -6,3 +6,4 @@ export { default as VcMarkdownRender } from "./markdown-render/markdown-render.v
 export { default as VcPagination } from "./pagination/pagination.vue";
 export { default as VcPriceDisplay } from "./price-display/price-display.vue";
 export { default as VcSelect } from "./select/select.vue";
+export { default as VcRadioButton } from "./radio-button/radio-button.vue";

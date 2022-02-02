@@ -302,8 +302,8 @@ function showShipmentMethodDialog(): void {
       currentMethodCode: cart.value.shipments?.[0]?.shipmentMethodCode,
       currentMethodOption: cart.value.shipments?.[0]?.shipmentMethodOption,
       availableMethods: cart.value.availableShippingMethods,
-      onResult(method: ShippingMethodType) {
-        updateShipment({
+      async onResult(method: ShippingMethodType) {
+        await updateShipment({
           shipmentMethodCode: method.code,
           shipmentMethodOption: method.optionName,
           id: cart.value.shipments?.[0]?.id,
