@@ -26,15 +26,13 @@
               </div>
               <VcSelect
                 v-model="checkoutDefaults.paymentMethod"
-                item-text-key="code"
+                text-field="code"
                 :items="paymentMethods"
                 label="Preferred Payment Method"
                 placeholder="Please select preferred Payment Method"
                 class="mt-8 w-full"
               >
-                <template #item="{ item }">
-                  {{ item ? item.code : "&nbsp;" }}
-                </template>
+                <template #first> &nbsp; </template>
               </VcSelect>
               <VcSelect
                 v-model="checkoutDefaults.shippingMethod"
@@ -44,10 +42,8 @@
                 class="mt-8 w-full"
               >
                 <template #selected="{ item }">{{ item?.code }} {{ item?.optionName }}</template>
-                <template #item="{ item }">
-                  <template v-if="item">{{ item?.code }} {{ item?.optionName }} </template>
-                  <template v-else> &nbsp; </template>
-                </template>
+                <template #first> &nbsp; </template>
+                <template #item="{ item }"> {{ item?.code }} {{ item?.optionName }} </template>
               </VcSelect>
               <VcButton class="uppercase mt-8 px-12 self-center lg:self-start" @click="saveDefaults()">Update</VcButton>
             </div>
@@ -66,32 +62,15 @@ import {
   CheckoutDefaults,
   CheckoutDefaultsSuccessDialog,
 } from "@/shared/account";
-import { computed, onMounted, Ref, ref, reactive } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useCart } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
-import { ShippingMethodType, PaymentMethodType } from "@/core/api/graphql/types";
 
 const { cart, loading } = useCart();
 
-const shippingMethods = computed(() => {
-  const result: Array<ShippingMethodType | undefined> = [undefined];
+const shippingMethods = computed(() => cart.value.availableShippingMethods);
 
-  if (cart.value.availableShippingMethods?.length) {
-    result.push(...cart.value.availableShippingMethods);
-  }
-
-  return result;
-});
-
-const paymentMethods = computed(() => {
-  const result: Array<PaymentMethodType | undefined> = [undefined];
-
-  if (cart.value.availablePaymentMethods?.length) {
-    result.push(...cart.value.availablePaymentMethods);
-  }
-
-  return result;
-});
+const paymentMethods = computed(() => cart.value.availablePaymentMethods);
 
 const { getUserCheckoutDefaults, setUserCheckoutDefaults } = useUserCheckoutDefaults();
 const { openPopup } = usePopup();
