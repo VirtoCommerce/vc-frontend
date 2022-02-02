@@ -21,8 +21,19 @@ module.exports = {
     "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
     "@typescript-eslint/ban-ts-comment": "warn",
     "vue/script-setup-uses-vars": "error",
-    "import/no-unresolved": "error"
+    "import/no-unresolved": "error",
+    "vue/multi-word-component-names": "off"
   },
+  overrides: [
+    // Fix no-used-vars when importing ts types in .vue files
+    {
+      files: ["*.vue"],
+      rules: {
+        'no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-vars': 'error'
+      }
+    }
+  ],
   globals: {
     defineProps: "readonly",
     defineEmits: "readonly",

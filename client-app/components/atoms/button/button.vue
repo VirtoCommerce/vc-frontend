@@ -3,8 +3,7 @@
     v-if="isLink"
     v-bind="$attrs"
     :to="isEnabled ? to : ''"
-    tag="button"
-    class="rounded flex justify-center items-center font-roboto-condensed cursor-pointer whitespace-nowrap"
+    class="rounded inline-flex justify-center items-center font-roboto-condensed cursor-pointer whitespace-nowrap"
     :class="buttonClass"
     :disabled="!isEnabled"
     @click="$emit('click')"
@@ -15,7 +14,7 @@
     v-else
     v-bind="$attrs"
     :type="isSubmit ? 'submit' : 'button'"
-    class="rounded flex justify-center items-center font-roboto-condensed cursor-pointer"
+    class="rounded inline-flex justify-center items-center font-roboto-condensed cursor-pointer"
     :class="buttonClass"
     :disabled="!isEnabled"
     @click="$emit('click')"

@@ -6,7 +6,7 @@
     </div>
 
     <input
-      class="appearance-none rounded px-3 py-3 text-base leading-none box-border border border-gray-300 w-full outline-none focus:border-gray-400"
+      class="appearance-none h-11 rounded px-3 py-3 text-base leading-none box-border border border-gray-300 w-full outline-none focus:border-gray-400"
       :value="modelValue"
       :type="type"
       :placeholder="placeholder"

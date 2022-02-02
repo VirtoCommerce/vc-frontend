@@ -101,7 +101,7 @@
             <div class="flex justify-start mb-6 mt-4">
               <!-- Mobile filters toggler -->
               <div class="lg:hidden mr-3">
-                <VcButton class="px-4 font-extrabold" size="sm" @click="mobileSidebarVisible = true">
+                <VcButton class="px-4 font-extrabold" size="md" @click="mobileSidebarVisible = true">
                   <i class="fas fa-filter mr-1"></i> Filters
                 </VcButton>
               </div>

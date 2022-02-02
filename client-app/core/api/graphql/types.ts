@@ -3604,19 +3604,21 @@ export type UpdatePersonalDataMutation = { updatePersonalData?: { succeeded: boo
 export type GetDefaultShippingAddressesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetDefaultShippingAddressesQuery = { me?: { contact?: { defaultShippingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, zip?: string, phone?: string, email?: string, addressType?: number } } } };
+export type GetDefaultShippingAddressesQuery = { me?: { contact?: { defaultShippingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, isDefault: boolean, phone?: string, email?: string, addressType?: number } } } };
 
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeQuery = { me?: { id: string, userName: string, email?: string, emailConfirmed: boolean, photoUrl?: string, phoneNumber?: string, permissions?: Array<string> } };
+export type GetMeQuery = { me?: { id: string, memberId?: string, userName: string, email?: string, emailConfirmed: boolean, photoUrl?: string, phoneNumber?: string, permissions?: Array<string> } };
 
 export type GetMyAddressesQueryVariables = Exact<{
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
   sort?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetMyAddressesQuery = { me?: { contact?: { addresses?: { items?: Array<{ id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, zip?: string, phone?: string, email?: string, addressType?: number }> } } } };
+export type GetMyAddressesQuery = { me?: { contact?: { addresses?: { items?: Array<{ id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, isDefault: boolean, phone?: string, email?: string, addressType?: number }> } } } };
 
 export type GetMyOrdersQueryVariables = Exact<{
   filter: Scalars['String'];
@@ -3783,13 +3785,18 @@ export type SearchRelatedProductsQueryVariables = Exact<{
 
 export type SearchRelatedProductsQuery = { product?: { name: string, id: string, associations?: { items?: Array<{ product?: { name: string, id: string, slug?: string, imgSrc?: string, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any }, price?: { actual?: { amount: any, formattedAmount: string }, discountAmount?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string } } } }> } } };
 
+export type GetCountriesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetCountriesQuery = { countries?: Array<{ id: string, name: string, regions?: Array<{ id: string, name: string }> }> };
+
 export type CartAddressFieldsFragment = { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, zip?: string, phone?: string, email?: string, addressType?: number };
 
 export type CurrencyFieldsFragment = { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string };
 
 export type LineItemFieldsFragment = { id: string, imageUrl?: string, inStockQuantity?: number, isGift?: boolean, isReadOnly?: boolean, isReccuring?: boolean, isValid?: boolean, name?: string, productId?: string, quantity?: number, sku?: string, thumbnailImageUrl?: string, product?: { brandName?: string, slug?: string }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }>, extendedPrice?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, listPrice?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, taxTotal?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } } };
 
-export type MemberAddressFieldsFragment = { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, zip?: string, phone?: string, email?: string, addressType?: number };
+export type MemberAddressFieldsFragment = { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, isDefault: boolean, phone?: string, email?: string, addressType?: number };
 
 export type MoneyFieldsFragment = { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } };
 
