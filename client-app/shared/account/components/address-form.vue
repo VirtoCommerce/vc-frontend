@@ -48,7 +48,7 @@
         <div class="flex flex-col xl:flex-row xl:flex-wrap">
           <VcSelect
             v-model="country"
-            item-text-key="name"
+            text-field="name"
             :error-message="errors.countryCode"
             :is-disabled="disabled"
             :items="countries"
@@ -69,7 +69,7 @@
 
           <VcSelect
             v-model="region"
-            item-text-key="name"
+            text-field="name"
             :items="regions"
             :error-message="errors.regionId"
             :is-required="!!regions.length"
@@ -214,7 +214,7 @@ const regionRules = computed(() => {
   return rules;
 });
 
-const country = computed({
+const country = computed<CountryType | undefined>({
   get: () => props.countries.find((item) => countryCode.value === item.id),
   set: (value?: CountryType) => {
     countryCode.value = value?.id ?? "";
@@ -223,8 +223,8 @@ const country = computed({
     regionName.value = "";
   },
 });
-const regions = computed(() => country.value?.regions ?? []);
-const region = computed({
+const regions = computed<CountryRegionType[]>(() => country.value?.regions ?? []);
+const region = computed<CountryRegionType | undefined>({
   get: () => regions.value.find((item) => regionId.value === item.id),
   set: (value?: CountryRegionType) => {
     regionId.value = value?.id ?? "";

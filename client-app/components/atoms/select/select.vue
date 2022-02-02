@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>
+    <div v-if="label">
       <span class="font-bold text-gray-900">{{ label }}</span>
       <span v-if="isRequired" class="text-red-500">*</span>
     </div>
@@ -17,7 +17,7 @@
         </slot>
 
         <slot v-if="selected" name="selected" v-bind="{ item: selected }">
-          {{ itemTextKey && selected ? selected[itemTextKey] : selected }}
+          {{ textField && selected ? selected[textField] : selected }}
         </slot>
 
         <span
@@ -39,6 +39,14 @@
         >
           <ul ref="listElement" class="max-h-52 overflow-auto">
             <li
+              v-if="$slots.first"
+              :class="`px-3 py-2 text-gray-400 hover:text-white hover:bg-${color} cursor-pointer`"
+              @click="select()"
+            >
+              <slot name="first" />
+            </li>
+
+            <li
               v-for="(item, index) in items"
               :key="index"
               :class="[
@@ -48,7 +56,7 @@
               @click="select(item)"
             >
               <slot name="item" v-bind="{ item, index, selected }">
-                {{ itemTextKey ? item[itemTextKey] : item }}
+                {{ textField && item ? item[textField] : item }}
               </slot>
             </li>
           </ul>
@@ -91,7 +99,7 @@ const props = defineProps({
 
   modelValue: {
     type: [Object, String],
-    default: "",
+    default: undefined,
   },
 
   items: {
@@ -103,7 +111,7 @@ const props = defineProps({
    * The property of the object that will be displayed in the "selected" and "item" slots.
    * (Optional) Only for objects array of modelValue.
    */
-  itemTextKey: {
+  textField: {
     type: String,
     default: undefined,
   },
@@ -112,7 +120,7 @@ const props = defineProps({
    * An object property passed as a new value for the "modelValue" or "change" events
    * (Optional) Only for objects array of modelValue.
    */
-  itemValueKey: {
+  valueField: {
     type: String,
     default: undefined,
   },
@@ -146,7 +154,7 @@ const open = ref(false);
 const listElement = shallowRef<HTMLElement | null>(null);
 
 const selected = computed(() => {
-  const returnValueKey: string | undefined = props.itemValueKey;
+  const returnValueKey: string | undefined = props.valueField;
 
   if (returnValueKey) {
     return props.items.find((item) => item[returnValueKey] === props.modelValue);
@@ -156,7 +164,7 @@ const selected = computed(() => {
 });
 
 function isActiveItem(item: any): boolean {
-  const itemValue = props.itemValueKey ? item[props.itemValueKey] : item;
+  const itemValue = props.valueField && item ? item[props.valueField] : item;
   return itemValue === props.modelValue;
 }
 
@@ -182,12 +190,12 @@ function toggle() {
   }
 }
 
-function select(item: any) {
+function select(item?: any) {
   if (props.isDisabled) {
     return;
   }
 
-  const newValue = props.itemValueKey ? item[props.itemValueKey] : item;
+  const newValue = props.valueField && item ? item[props.valueField] : item;
 
   if (newValue !== props.modelValue) {
     emit("update:modelValue", newValue);
