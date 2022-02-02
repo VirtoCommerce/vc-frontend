@@ -31,77 +31,83 @@
       </div>
     </template>
 
-    <!-- Mobile table view -->
-    <template v-if="isMobile">
-      <div
-        v-for="address in paginatedAddresses"
-        :key="address.id"
-        class="flex items-center space-x-3 p-6 border-b border-gray-200"
-      >
-        <div class="w-1/2 flex-grow">
-          <span class="font-extrabold">{{ address.firstName }} {{ address.lastName }}</span>
-          <p>
-            {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
-            {{ address.postalCode }}
-          </p>
-          <p><span class="font-extrabold">Phone:</span>{{ address.phone }}</p>
-          <p><span class="font-extrabold">Email:</span>{{ address.email }}</p>
-        </div>
-        <div v-if="address.id === selectedAddress?.id" class="w-1/4">
-          <div class="flex items-center justify-center mx-auto rounded-full w-6 h-6 bg-green-600 text-white text-sm">
-            <i class="fas fa-check"></i>
+    <template v-if="paginatedAddresses.length">
+      <!-- Mobile table view -->
+      <template v-if="isMobile">
+        <div
+          v-for="address in paginatedAddresses"
+          :key="address.id"
+          class="flex items-center space-x-3 p-6 border-b border-gray-200"
+        >
+          <div class="w-1/2 flex-grow">
+            <span class="font-extrabold">{{ address.firstName }} {{ address.lastName }}</span>
+            <p>
+              {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
+              {{ address.postalCode }}
+            </p>
+            <p><span class="font-extrabold">Phone:</span>{{ address.phone }}</p>
+            <p><span class="font-extrabold">Email:</span>{{ address.email }}</p>
           </div>
-        </div>
-        <div v-else class="w-1/4">
-          <button
-            class="uppercase flex-grow flex items-center mx-auto justify-center px-3 h-9 font-roboto-condensed text-base font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white rounded focus:outline-none"
-            @click="setAddress(address)"
-          >
-            Select
-          </button>
-        </div>
-      </div>
-    </template>
-
-    <!-- Desctop table view -->
-    <table v-else class="table-auto text-sm text-left w-full">
-      <thead class="border-b border-gray-200">
-        <tr>
-          <th class="py-3 px-5 font-extrabold">Recipient's name</th>
-          <th class="py-3 px-5 font-extrabold">Address</th>
-          <th class="py-3 px-5 font-extrabold">Phone</th>
-          <th class="py-3 px-5 font-extrabold">Email</th>
-          <th class="py-3 px-5 font-extrabold">Active address</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(address, index) in paginatedAddresses" :key="address.id" :class="{ 'bg-gray-50': index % 2 }">
-          <td class="p-5">{{ address.firstName }} {{ address.lastName }}</td>
-          <td class="p-5">
-            {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
-            {{ address.postalCode }}
-          </td>
-          <td class="p-5">{{ address.phone }}</td>
-          <td class="p-5">{{ address.email }}</td>
-          <td v-if="address.id === selectedAddress?.id" class="p-5">
+          <div v-if="address.id === selectedAddress?.id" class="w-1/4">
             <div class="flex items-center justify-center mx-auto rounded-full w-6 h-6 bg-green-600 text-white text-sm">
               <i class="fas fa-check"></i>
             </div>
-          </td>
-          <td v-else class="p-5">
+          </div>
+          <div v-else class="w-1/4">
             <button
               class="uppercase flex-grow flex items-center mx-auto justify-center px-3 h-9 font-roboto-condensed text-base font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white rounded focus:outline-none"
               @click="setAddress(address)"
             >
               Select
             </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="flex justify-start border-b border-gray-200">
-      <Pagination v-if="pages > 1" v-model:page="page" :pages="pages" class="self-start pb-5 px-5 mt-5"></Pagination>
-    </div>
+          </div>
+        </div>
+      </template>
+
+      <!-- Desctop table view -->
+      <table v-else class="table-auto text-sm text-left w-full">
+        <thead class="border-b border-gray-200">
+          <tr>
+            <th class="py-3 px-5 font-extrabold">Recipient's name</th>
+            <th class="py-3 px-5 font-extrabold">Address</th>
+            <th class="py-3 px-5 font-extrabold">Phone</th>
+            <th class="py-3 px-5 font-extrabold">Email</th>
+            <th class="py-3 px-5 font-extrabold">Active address</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(address, index) in paginatedAddresses" :key="address.id" :class="{ 'bg-gray-50': index % 2 }">
+            <td class="p-5">{{ address.firstName }} {{ address.lastName }}</td>
+            <td class="p-5">
+              {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
+              {{ address.postalCode }}
+            </td>
+            <td class="p-5">{{ address.phone }}</td>
+            <td class="p-5">{{ address.email }}</td>
+            <td v-if="address.id === selectedAddress?.id" class="p-5">
+              <div
+                class="flex items-center justify-center mx-auto rounded-full w-6 h-6 bg-green-600 text-white text-sm"
+              >
+                <i class="fas fa-check"></i>
+              </div>
+            </td>
+            <td v-else class="p-5">
+              <button
+                class="uppercase flex-grow flex items-center mx-auto justify-center px-3 h-9 font-roboto-condensed text-base font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white rounded focus:outline-none"
+                @click="setAddress(address)"
+              >
+                Select
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div v-if="pages > 1" class="flex justify-start border-b border-gray-200">
+        <Pagination v-model:page="page" :pages="pages" class="self-start pb-5 px-5 mt-5"></Pagination>
+      </div>
+    </template>
+
+    <div v-else class="flex items-center space-x-3 p-6 border-b border-gray-200">There are no addresses yet</div>
   </Popup>
 </template>
 

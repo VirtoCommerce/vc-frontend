@@ -446,7 +446,7 @@ function selectShippingAddressDialog(): void {
       },
       onAddNewAddress() {
         setTimeout(() => {
-          addNewAddressDialog();
+          addNewAddressDialog(AddressType.Shipping);
         }, 500);
       },
     },
@@ -467,20 +467,34 @@ function selectBillingAddressDialog(): void {
       },
       onAddNewAddress() {
         setTimeout(() => {
-          addNewAddressDialog();
+          addNewAddressDialog(AddressType.Billing);
         }, 500);
       },
     },
   });
 }
 
-function addNewAddressDialog(): void {
+function addNewAddressDialog(addressType: AddressType.Billing | AddressType.Shipping): void {
   openPopup({
     component: CreateAddressDialog,
     props: {
       async onResult(address: MemberAddressType) {
         closePopup();
-        await addOrUpdateAddresses([{ ...address, addressType: AddressType.BillingAndShipping }]);
+        const newAddress = { ...address, addressType: AddressType.BillingAndShipping };
+        await addOrUpdateAddresses([newAddress]);
+        const convertedAddress = _.omit(newAddress, ["isDefault"]);
+
+        if (addressType.valueOf() === AddressType.Billing) {
+          updatePayment({
+            id: cart.value.payments?.[0]?.id,
+            billingAddress: { ...convertedAddress },
+          });
+        } else {
+          updateShipment({
+            id: cart.value.shipments?.[0]?.id,
+            deliveryAddress: { ...convertedAddress },
+          });
+        }
       },
     },
   });
