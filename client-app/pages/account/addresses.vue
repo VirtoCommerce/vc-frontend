@@ -303,6 +303,7 @@ import { sortAscending, sortDescending } from "@/core/constants";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useCountries } from "@core/composables";
 import { AddressType } from "@core/types";
+
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { me: user } = useUser();
 const { countries, loadCountries } = useCountries();
@@ -316,12 +317,14 @@ const {
   defaultShippingAddress,
   addOrUpdateAddresses,
 } = useUserAddresses({ user });
+
 const isMobile = breakpoints.smaller("md");
 const editingMode: Ref<boolean> = ref(false);
 const editableAddress: Ref<MemberAddressType | null> = ref(null);
 const page = ref(1);
 const itemsPerPage = ref(6);
 const saveAddressLoading = ref(false);
+
 const pages: ComputedRef<number> = computed(() => Math.ceil(addresses.value.length / itemsPerPage.value));
 const paginatedAddresses: ComputedRef<MemberAddressType[]> = computed(() =>
   addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
@@ -335,15 +338,18 @@ const title: ComputedRef<string> = computed(() => {
     return "Addresses";
   }
 });
+
 // if address parameter is NULL, then adding a new address will open
 async function openEditMode(address: MemberAddressType | null = null) {
   editableAddress.value = clone(address);
   editingMode.value = true;
 }
+
 function closeEditMode() {
   editableAddress.value = null;
   editingMode.value = false;
 }
+
 function actionBuilder(address: MemberAddressType) {
   const result = [
     {
@@ -365,6 +371,7 @@ function actionBuilder(address: MemberAddressType) {
       },
     },
   ];
+
   if (defaultShippingAddress.value && address.id !== defaultShippingAddress.value.id) {
     result.push({
       icon: "fas fa-check",
@@ -376,8 +383,10 @@ function actionBuilder(address: MemberAddressType) {
       },
     });
   }
+
   return result;
 }
+
 async function applySorting(column: string): Promise<void> {
   if (sort.value.column === column) {
     sort.value.direction = sort.value.direction === sortDescending ? sortAscending : sortDescending;
@@ -385,23 +394,30 @@ async function applySorting(column: string): Promise<void> {
     sort.value.column = column;
     sort.value.direction = sortDescending;
   }
+
   await loadAddresses();
 }
+
 async function saveAddress(address: MemberAddressType): Promise<void> {
   saveAddressLoading.value = true;
   await addOrUpdateAddresses([{ ...address, addressType: AddressType.BillingAndShipping }]);
   closeEditMode();
   saveAddressLoading.value = false;
 }
+
 async function removeAddress(address: MemberAddressType): Promise<void> {
   if (!window.confirm("Are you sure you want do delete this address?")) return;
+
   await removeAddresses([address]);
+
   if (addresses.value.length > 0 && defaultShippingAddress.value && address.id === defaultShippingAddress.value.id) {
     //todo: set the first item in updatedAddresses to default one
   }
 }
+
 onMounted(async () => {
   await loadAddresses();
+
   if (!countries.value.length) {
     await loadCountries();
   }
@@ -413,11 +429,13 @@ onMounted(async () => {
   /* we need this to create the pseudo-element */
   content: "";
   display: block;
+
   /* position the triangle in the top right corner */
   position: absolute;
   z-index: 0;
   top: 0;
   right: 0;
+
   /* create the triangle */
   width: 0;
   height: 0;
@@ -425,6 +443,7 @@ onMounted(async () => {
   border-top-color: #f0ad4e;
   border-right-color: #f0ad4e;
 }
+
 .polygons-bg {
   background-image: url(/static/images/account/addresses-bg.svg);
   background-repeat: no-repeat;
