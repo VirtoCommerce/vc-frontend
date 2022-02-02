@@ -150,6 +150,34 @@
                     >
                   </div>
                 </div>
+                <div
+                  v-else-if="!billingSameAsShipping && cart.payments?.[0]?.billingAddress"
+                  class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 mb-6 p-5 flex justify-between items-center text-sm"
+                >
+                  <div>
+                    <span class="font-extrabold"
+                      >{{ cart.payments[0].billingAddress?.firstName }}
+                      {{ cart.payments[0].billingAddress?.lastName }}</span
+                    >
+                    <p>
+                      {{ cart.payments[0].billingAddress?.countryCode }}
+                      {{ cart.payments[0].billingAddress?.regionName }}
+                      {{ cart.payments[0].billingAddress?.city }} {{ cart.payments[0].billingAddress?.line1 }}
+                      {{ cart.payments[0].billingAddress?.postalCode }}
+                    </p>
+                    <p><span class="font-extrabold">Phone:</span>{{ cart.payments[0].billingAddress?.phone }}</p>
+                    <p><span class="font-extrabold">Email:</span>{{ cart.payments[0].billingAddress?.email }}</p>
+                  </div>
+                  <div>
+                    <VcButton
+                      size="sm"
+                      outline
+                      class="px-3 self-start uppercase font-bold"
+                      @click="selectBillingAddressDialog"
+                      >Change</VcButton
+                    >
+                  </div>
+                </div>
                 <CheckoutLabeledBlock label="Payment method">
                   <div class="flex flex-row items-center space-x-4">
                     <template v-if="cart.payments?.[0]?.paymentGatewayCode">

@@ -1,5 +1,5 @@
 <template>
-  <Popup title="Select address">
+  <Popup title="Select address" modal-width="max-w-5xl">
     <template #actions="{ close }">
       <button
         class="uppercase inline-flex items-center justify-center lg:mr-auto px-5 h-9 font-roboto-condensed text-sm font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:border-yellow-600 hover:text-white rounded focus:outline-none"
@@ -11,7 +11,7 @@
       >
         Add new address
       </button>
-      <div class="flex justify-between space-x-3" :class="[isMobile ? 'flex-grow w-1/2' : 'w-1/3']">
+      <div class="flex justify-between space-x-3" :class="[isMobile ? 'flex-grow w-1/2' : 'w-1/5']">
         <button
           v-if="!isMobile"
           class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-5 h-9 font-roboto-condensed text-sm font-bold border-2 border-black text-black hover:bg-black hover:text-white rounded focus:outline-none"
@@ -64,7 +64,7 @@
     </template>
 
     <!-- Desctop table view -->
-    <table v-else class="table-auto text-sm text-left">
+    <table v-else class="table-auto text-sm text-left w-full">
       <thead class="border-b border-gray-200">
         <tr>
           <th class="py-3 px-5 font-extrabold">Recipient's name</th>
@@ -90,7 +90,7 @@
           </td>
           <td v-else class="p-5">
             <button
-              class="uppercase flex-grow flex items-center justify-center px-3 h-9 font-roboto-condensed text-base font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white rounded focus:outline-none"
+              class="uppercase flex-grow flex items-center mx-auto justify-center px-3 h-9 font-roboto-condensed text-base font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white rounded focus:outline-none"
               @click="setAddress(address)"
             >
               Select
