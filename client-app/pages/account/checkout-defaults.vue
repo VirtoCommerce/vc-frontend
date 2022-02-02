@@ -32,7 +32,7 @@
                 placeholder="Please select preferred Payment Method"
                 class="mt-8 w-full"
               >
-                <template #first> &nbsp; </template>
+                <template #first>Not selected</template>
               </VcSelect>
               <VcSelect
                 v-model="checkoutDefaults.shippingMethod"
@@ -42,7 +42,7 @@
                 class="mt-8 w-full"
               >
                 <template #selected="{ item }">{{ item?.code }} {{ item?.optionName }}</template>
-                <template #first> &nbsp; </template>
+                <template #first>Not selected</template>
                 <template #item="{ item }"> {{ item?.code }} {{ item?.optionName }} </template>
               </VcSelect>
               <VcButton class="uppercase mt-8 px-12 self-center lg:self-start" @click="saveDefaults()">Update</VcButton>
