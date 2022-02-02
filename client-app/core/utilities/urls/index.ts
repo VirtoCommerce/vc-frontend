@@ -1,4 +1,4 @@
-const appendSuffixToFilename = (filename: string, suffix: string, checkIfSuffixExists = false): string => {
+export const appendSuffixToFilename = (filename: string, suffix: string, checkIfSuffixExists = false): string => {
   const dotIndex = filename.lastIndexOf(".");
   let result = filename;
   if (dotIndex == -1) {
@@ -12,5 +12,3 @@ const appendSuffixToFilename = (filename: string, suffix: string, checkIfSuffixE
   }
   return result;
 };
-
-export { appendSuffixToFilename };

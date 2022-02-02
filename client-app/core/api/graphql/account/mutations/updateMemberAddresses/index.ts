@@ -1,22 +1,18 @@
 import client from "@core/api/graphql/graphql-client";
-import {
-  InputPersonalDataType,
-  IdentityResultType,
-  InputMemberAddressType,
-  MemberAddressType,
-} from "@core/api/graphql/types";
-import { currentUserId } from "@core/constants";
+import { InputMemberAddressType, Mutations, MutationsUpdateMemberAddressesArgs } from "@core/api/graphql/types";
 import mutationDocument from "./updateMemberAddressesMutation.graphql";
 
-async function updateMemberAddresses(addresses: MemberAddressType[]): Promise<void> {
-  const { data } = await client.mutate({
+export default async function updateMemberAddresses(
+  memberId: string,
+  addresses: InputMemberAddressType[]
+): Promise<void> {
+  await client.mutate<Pick<Mutations, "updateMemberAddresses">, MutationsUpdateMemberAddressesArgs>({
     mutation: mutationDocument,
     variables: {
       command: {
+        memberId,
         addresses,
-        memberId: currentUserId,
       },
     },
   });
 }
-export default updateMemberAddresses;

@@ -1,5 +1,6 @@
 export { default as Alert } from "./atoms/alert/alert.vue";
 export { default as Checkbox } from "./atoms/checkbox/checkbox.vue";
+export { default as VcSelect } from "./atoms/select/select.vue";
 export { default as TextArea } from "./molecules/textarea/textarea.vue";
 export { default as Card } from "./molecules/card/card.vue";
 export { default as MarkdownRender } from "./atoms/markdown-render/markdown-render.vue";
