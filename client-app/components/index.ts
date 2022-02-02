@@ -9,4 +9,5 @@ export { default as Input } from "./molecules/input/input.vue";
 export { default as Popup } from "./organisms/popup/popup.vue";
 export { default as TableMobileItem } from "./organisms/table/_internal/table-mobile-item/table-mobile-item.vue";
 export { default as Button } from "./atoms/button/button.vue";
+export { default as VcRadioButton } from "./atoms/radio-button/radio-button.vue";
 export * from "./types";

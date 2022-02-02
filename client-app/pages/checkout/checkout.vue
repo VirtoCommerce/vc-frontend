@@ -72,7 +72,13 @@
                     <div v-else class="text-gray-600">Not defined</div>
                   </div>
                   <div>
-                    <VcButton size="sm" outline class="px-3 self-start uppercase font-bold" @click="showShipmentMethodDialog">Change</VcButton>
+                    <VcButton
+                      size="sm"
+                      outline
+                      class="px-3 self-start uppercase font-bold"
+                      @click="showShipmentMethodDialog"
+                      >Change</VcButton
+                    >
                   </div>
                 </CheckoutLabeledBlock>
               </div>
@@ -105,7 +111,13 @@
                     <div v-else class="text-gray-600">Not defined</div>
                   </div>
                   <div>
-                    <VcButton size="sm" outline class="px-3 self-start uppercase font-bold" @click="showPaymentMethodDialog">Change</VcButton>
+                    <VcButton
+                      size="sm"
+                      outline
+                      class="px-3 self-start uppercase font-bold"
+                      @click="showPaymentMethodDialog"
+                      >Change</VcButton
+                    >
                   </div>
                 </CheckoutLabeledBlock>
               </div>
@@ -290,8 +302,8 @@ function showShipmentMethodDialog(): void {
       currentMethodCode: cart.value.shipments?.[0]?.shipmentMethodCode,
       currentMethodOption: cart.value.shipments?.[0]?.shipmentMethodOption,
       availableMethods: cart.value.availableShippingMethods,
-      onResult(method: ShippingMethodType) {
-        updateShipment({
+      async onResult(method: ShippingMethodType) {
+        await updateShipment({
           shipmentMethodCode: method.code,
           shipmentMethodOption: method.optionName,
           id: cart.value.shipments?.[0]?.id,
