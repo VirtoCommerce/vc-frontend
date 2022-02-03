@@ -221,11 +221,24 @@
             <!-- Order summary -->
             <OrderSummary :cart="cart">
               <template #header>
+                <!-- Purchase order -->
+                <VcApplyInput
+                  v-model="purchaseOrderNumber"
+                  class="mb-5"
+                  label="Purchase order"
+                  placeholder="Enter purchase order number"
+                  :applied="purchaseOrderNumberApplied"
+                  @click:apply="setPurchaseOrderNumber"
+                  @click:deny="removePurchaseOrderNumber"
+                  @update:model-value="couponValidationError = ''"
+                ></VcApplyInput>
+
                 <!-- Promotion code -->
                 <VcApplyInput
                   v-model="cartCoupon"
-                  :class="[couponValidationError ? 'mb-3' : 'mb-8']"
+                  :class="[couponValidationError ? 'mb-0' : 'mb-8']"
                   label="Promotion code"
+                  placeholder="Enter your code"
                   :applied="cartCouponApplied"
                   :error-message="couponValidationError"
                   @click:apply="useCoupon"
@@ -287,6 +300,8 @@ const {
   changeComment,
   updateShipment,
   updatePayment,
+  updatePurchaseOrderNumber,
+  loading,
 } = useCart();
 
 const { addOrUpdateAddresses } = useUserAddresses({ user });
@@ -300,6 +315,9 @@ const productCardRefs = ref<any[]>([]);
 const cartCoupon = ref("");
 const couponValidationError = ref("");
 const cartCouponApplied = ref(false);
+
+const purchaseOrderNumber = ref("");
+const purchaseOrderNumberApplied = computed(() => !!cart.value.purchaseOrderNumber);
 
 const billingSameAsShipping = ref(true);
 
@@ -370,6 +388,15 @@ const removeCoupon = async () => {
   });
 };
 
+const setPurchaseOrderNumber = async () => {
+  await updatePurchaseOrderNumber(purchaseOrderNumber.value);
+};
+
+const removePurchaseOrderNumber = async () => {
+  purchaseOrderNumber.value = "";
+  await updatePurchaseOrderNumber("");
+};
+
 const createOrder = async () => {
   if (cart.value.id) {
     if (cartComment.value) {
@@ -400,6 +427,8 @@ onMounted(async () => {
       cartCouponApplied.value = true;
     }
     cartComment.value = cart.value.comment || "";
+
+    purchaseOrderNumber.value = cart.value.purchaseOrderNumber || "";
   });
 });
 

@@ -8,6 +8,7 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
     id
     name
     comment
+    purchaseOrderNumber
     coupons {
       code
     }

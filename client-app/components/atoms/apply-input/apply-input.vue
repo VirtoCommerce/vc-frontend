@@ -7,7 +7,7 @@
         class="border rounded text-sm leading-8 flex-1 w-full border-gray-300 h-8 px-2 outline-none focus:border-gray-400"
         type="text"
         :placeholder="placeholder"
-        :disabled="applied"
+        :disabled="applied || isDisabled"
       />
       <!-- todo: use VcButton -->
       <button
@@ -18,7 +18,7 @@
             ? 'border-gray-300 bg-gray-50 text-gray-300'
             : 'border-yellow-500 bg-yellow-500 text-white',
         ]"
-        :disabled="value.length === 0"
+        :disabled="value.length === 0 || isDisabled"
         @click="$emit('click:apply')"
       >
         <i class="fas fa-check"></i>
@@ -26,6 +26,7 @@
       <button
         v-if="applied"
         class="rounded uppercase w-10 border-2 font-roboto-condensed font-bold text-sm text-red-500 border-red-500 hover:text-white hover:bg-red-500"
+        :disabled="isDisabled"
         @click="$emit('click:deny')"
       >
         <i class="fas fa-times"></i>
@@ -59,6 +60,10 @@ const props = defineProps({
   modelValue: {
     type: String,
     default: "",
+  },
+  isDisabled: {
+    type: Boolean,
+    default: false,
   },
 });
 const value = computed({

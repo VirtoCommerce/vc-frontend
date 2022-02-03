@@ -15,6 +15,7 @@ import { CartType, InputPaymentType, InputShipmentType, LineItemType } from "@co
 import { Logger } from "@core/utilities";
 import _ from "lodash";
 import { useUserCheckoutDefaults } from "@/shared/account";
+import changePurchaseOrderNumber from "@/core/api/graphql/cart/mutations/changePurchaseOrderNumber";
 
 const loading: Ref<boolean> = ref(true);
 const cart: Ref<CartType> = ref({ name: "" });
@@ -129,6 +130,20 @@ export default () => {
     await loadMyCart();
   }
 
+  async function updatePurchaseOrderNumber(purchaseOrderNumber: string) {
+    loading.value = true;
+    console.log(`purchaseOrderNumber ${purchaseOrderNumber}`);
+    try {
+      await changePurchaseOrderNumber(purchaseOrderNumber);
+    } catch (e) {
+      Logger.error("useCart.updatePurchaseOrderNumber", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+    await loadMyCart();
+  }
+
   async function removeCartCoupon(couponCode: string) {
     loading.value = true;
     console.log(`removeCart coupon ${couponCode}`);
@@ -223,5 +238,6 @@ export default () => {
     changeComment,
     updateShipment,
     updatePayment,
+    updatePurchaseOrderNumber,
   };
 };
