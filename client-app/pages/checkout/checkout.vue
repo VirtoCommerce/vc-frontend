@@ -222,13 +222,16 @@
             <OrderSummary :cart="cart">
               <template #header>
                 <!-- Promotion code -->
-                <PromoCode
+                <VcApplyInput
                   v-model="cartCoupon"
-                  :cart-coupon-applied="cartCouponApplied"
-                  :coupon-validation-error="couponValidationError"
-                  @click:coupon-used="useCoupon"
-                  @click:coupon-removed="removeCoupon"
-                ></PromoCode>
+                  :class="[couponValidationError ? 'mb-3' : 'mb-8']"
+                  label="Promotion code"
+                  :applied="cartCouponApplied"
+                  :error-message="couponValidationError"
+                  @click:apply="useCoupon"
+                  @click:deny="removeCoupon"
+                  @update:model-value="couponValidationError = ''"
+                ></VcApplyInput>
               </template>
               <template #footer>
                 <p class="mt-8 mb-3 text-xs font-normal text-gray-400">
@@ -253,7 +256,6 @@ import {
   CheckoutSection,
   OrderSummary,
   ProductCard,
-  PromoCode,
   EmptyCart,
   ThankYou,
   ShippingMethodDialog,
@@ -296,7 +298,7 @@ const { openPopup, closePopup } = usePopup();
 const productCardRefs = ref<any[]>([]);
 
 const cartCoupon = ref("");
-const couponValidationError = ref(false);
+const couponValidationError = ref("");
 const cartCouponApplied = ref(false);
 
 const billingSameAsShipping = ref(true);
@@ -353,11 +355,11 @@ const useCoupon = async () => {
 
   if (validationResult) {
     await addCartCoupon(cartCoupon.value).then(() => {
-      couponValidationError.value = false;
+      couponValidationError.value = "";
       cartCouponApplied.value = true;
     });
   } else {
-    couponValidationError.value = true;
+    couponValidationError.value = "This code did not match any active coupon. Was it entered correctly?";
   }
 };
 
