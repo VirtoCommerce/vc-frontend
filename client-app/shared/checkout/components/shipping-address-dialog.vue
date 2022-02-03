@@ -2,7 +2,7 @@
   <Popup title="Select address" modal-width="max-w-5xl">
     <template #actions="{ close }">
       <button
-        class="uppercase inline-flex items-center justify-center lg:mr-auto px-5 h-9 font-roboto-condensed text-sm font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:border-yellow-600 hover:text-white rounded focus:outline-none"
+        class="uppercase inline-flex items-center justify-center lg:mr-auto px-2 h-9 font-roboto-condensed text-sm font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:border-yellow-600 hover:text-white rounded focus:outline-none"
         :class="[isMobile && 'flex-grow w-1/2']"
         @click="
           $emit('addNewAddress');
@@ -40,13 +40,13 @@
           class="flex items-center space-x-3 p-6 border-b border-gray-200"
         >
           <div class="w-1/2 flex-grow">
-            <span class="font-extrabold">{{ address.firstName }} {{ address.lastName }}</span>
-            <p>
+            <span class="font-bold text-base">{{ address.firstName }} {{ address.lastName }}</span>
+            <p class="text-sm">
               {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
               {{ address.postalCode }}
             </p>
-            <p><span class="font-extrabold">Phone:</span>{{ address.phone }}</p>
-            <p><span class="font-extrabold">Email:</span>{{ address.email }}</p>
+            <p class="text-gray-400 text-sm"><span class="font-semibold">Phone: </span>{{ address.phone }}</p>
+            <p class="text-gray-400 text-sm"><span class="font-semibold">Email: </span>{{ address.email }}</p>
           </div>
           <div v-if="address.id === selectedAddress?.id" class="w-1/4">
             <div class="flex items-center justify-center mx-auto rounded-full w-6 h-6 bg-green-600 text-white text-sm">
