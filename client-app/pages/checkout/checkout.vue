@@ -314,12 +314,14 @@ const isValidCheckout = computed(
     isValidShipment.value &&
     isValidPayment.value
 );
+
 const isValidShipment = computed(
   () =>
     cart.value.shipments?.[0] &&
     cart.value.shipments?.[0]?.shipmentMethodCode &&
     cart.value.shipments?.[0]?.deliveryAddress
 );
+
 const isValidPayment = computed(() => cart.value.payments?.[0] && cart.value.payments?.[0]?.paymentGatewayCode);
 
 const completedOrder = ref({});
@@ -371,6 +373,7 @@ const createOrder = async () => {
     if (cartComment.value) {
       await changeComment(cartComment.value);
     }
+
     if (billingSameAsShipping.value) {
       await updatePayment({
         id: cart.value.payments?.[0]?.id,
