@@ -49,15 +49,46 @@
             >
               <div class="mx-5 lg:ml-28 lg:mr-11">
                 <CheckoutLabeledBlock label="Shipping address">
-                  <div>
-                    <span class="font-extrabold">Annete Black</span>
-                    <p>3891 Ranchview Dr. Richardson, California 62639</p>
-                    <p><span class="font-extrabold">Phone:</span> (684) 555-0102</p>
-                    <p><span class="font-extrabold">Email:</span> debra.holt@example.com</p>
-                  </div>
-                  <div>
-                    <VcButton size="sm" outline class="px-3 self-start uppercase font-bold" disabled>Change</VcButton>
-                  </div>
+                  <template v-if="cart.shipments && cart.shipments?.[0]?.deliveryAddress">
+                    <div>
+                      <span class="font-extrabold"
+                        >{{ cart.shipments[0].deliveryAddress?.firstName }}
+                        {{ cart.shipments[0].deliveryAddress?.lastName }}</span
+                      >
+                      <p>
+                        {{ cart.shipments[0].deliveryAddress?.countryCode }}
+                        {{ cart.shipments[0].deliveryAddress?.regionName }}
+                        {{ cart.shipments[0].deliveryAddress?.city }} {{ cart.shipments[0].deliveryAddress?.line1 }}
+                        {{ cart.shipments[0].deliveryAddress?.postalCode }}
+                      </p>
+                      <p><span class="font-extrabold">Phone:</span>{{ cart.shipments[0].deliveryAddress?.phone }}</p>
+                      <p><span class="font-extrabold">Email:</span>{{ cart.shipments[0].deliveryAddress?.email }}</p>
+                    </div>
+                    <div>
+                      <VcButton
+                        size="sm"
+                        outline
+                        class="px-3 self-start uppercase font-bold"
+                        @click="selectShippingAddressDialog"
+                        >Change</VcButton
+                      >
+                    </div>
+                  </template>
+                  <template v-else>
+                    <div class="text-red-500 flex items-center space-x-4">
+                      <i class="fas fa-exclamation-triangle text-2xl"></i>
+                      <span>You do not have a shipping address. Please choose/create a new one.</span>
+                    </div>
+                    <div>
+                      <VcButton
+                        size="sm"
+                        outline
+                        class="px-3 self-start uppercase font-bold"
+                        @click="selectShippingAddressDialog"
+                        >New address</VcButton
+                      >
+                    </div>
+                  </template>
                 </CheckoutLabeledBlock>
                 <CheckoutLabeledBlock label="Shipping method">
                   <div class="flex flex-row items-center space-x-4">
@@ -94,14 +125,59 @@
                 <CheckoutLabeledBlock label="Billing address">
                   <label class="flex items-center text-sm cursor-pointer">
                     <input
+                      v-model="billingSameAsShipping"
                       type="checkbox"
-                      checked="true"
-                      disabled
                       class="form-tick appearance-none w-5 h-5 border-2 border-gray-300 rounded-sm checked:bg-yellow-500 checked:border-transparent focus:outline-none cursor-pointer"
                     />
                     <span class="ml-2 font-medium">Same as shipping address</span>
                   </label>
                 </CheckoutLabeledBlock>
+                <div
+                  v-if="!billingSameAsShipping && !cart.payments?.[0]?.billingAddress"
+                  class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 mb-6 p-5 flex flex-col space-y-2 lg:space-y-0 lg:flex-row lg:items-center justify-between"
+                >
+                  <div class="text-red-500 flex items-center space-x-4">
+                    <i class="fas fa-exclamation-triangle text-2xl"></i>
+                    <span class="text-sm">You do not have a billing address. Please choose/create a new one.</span>
+                  </div>
+                  <div>
+                    <VcButton
+                      size="sm"
+                      outline
+                      class="px-3 self-start uppercase font-bold"
+                      @click="selectBillingAddressDialog"
+                      >New address</VcButton
+                    >
+                  </div>
+                </div>
+                <div
+                  v-else-if="!billingSameAsShipping && cart.payments?.[0]?.billingAddress"
+                  class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 mb-6 p-5 flex justify-between items-center text-sm"
+                >
+                  <div>
+                    <span class="font-extrabold"
+                      >{{ cart.payments[0].billingAddress?.firstName }}
+                      {{ cart.payments[0].billingAddress?.lastName }}</span
+                    >
+                    <p>
+                      {{ cart.payments[0].billingAddress?.countryCode }}
+                      {{ cart.payments[0].billingAddress?.regionName }}
+                      {{ cart.payments[0].billingAddress?.city }} {{ cart.payments[0].billingAddress?.line1 }}
+                      {{ cart.payments[0].billingAddress?.postalCode }}
+                    </p>
+                    <p><span class="font-extrabold">Phone:</span>{{ cart.payments[0].billingAddress?.phone }}</p>
+                    <p><span class="font-extrabold">Email:</span>{{ cart.payments[0].billingAddress?.email }}</p>
+                  </div>
+                  <div>
+                    <VcButton
+                      size="sm"
+                      outline
+                      class="px-3 self-start uppercase font-bold"
+                      @click="selectBillingAddressDialog"
+                      >Change</VcButton
+                    >
+                  </div>
+                </div>
                 <CheckoutLabeledBlock label="Payment method">
                   <div class="flex flex-row items-center space-x-4">
                     <template v-if="cart.payments?.[0]?.paymentGatewayCode">
@@ -182,15 +258,21 @@ import {
   ThankYou,
   ShippingMethodDialog,
   PaymentMethodDialog,
+  ShippingAddressDialog,
+  CreateAddressDialog,
 } from "@/shared/checkout";
 import { TextArea, Button as VcButton } from "@/components";
 import { useCart, useCheckout } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import { computed, onBeforeUpdate, onMounted, ref } from "vue";
 import _ from "lodash";
-import { PaymentMethodType, ShippingMethodType } from "@/core/api/graphql/types";
+import { InputAddressType, MemberAddressType, PaymentMethodType, ShippingMethodType } from "@/core/api/graphql/types";
+import { useUser, useUserAddresses } from "@/shared/account";
+import { AddressType } from "@/core/types";
 
+const { me: user } = useUser();
 const {
+  loading,
   cart,
   pages,
   itemsPerPage,
@@ -203,11 +285,12 @@ const {
   changeComment,
   updateShipment,
   updatePayment,
-  loading,
 } = useCart();
 
+const { addOrUpdateAddresses } = useUserAddresses({ user });
+
 const { placeOrder } = useCheckout();
-const { openPopup } = usePopup();
+const { openPopup, closePopup } = usePopup();
 
 //TODO: change 'any' for a normal type
 const productCardRefs = ref<any[]>([]);
@@ -216,6 +299,8 @@ const cartCoupon = ref("");
 const couponValidationError = ref(false);
 const cartCouponApplied = ref(false);
 
+const billingSameAsShipping = ref(true);
+
 const page = ref(1);
 const cartItems = computed(() =>
   cart.value.items?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
@@ -223,7 +308,21 @@ const cartItems = computed(() =>
 
 const cartComment = ref("");
 
-const isValidCheckout = computed(() => !(cart.value.validationErrors && cart.value.validationErrors?.length > 0));
+const isValidCheckout = computed(
+  () =>
+    !(cart.value.validationErrors && cart.value.validationErrors?.length > 0) &&
+    isValidShipment.value &&
+    isValidPayment.value
+);
+
+const isValidShipment = computed(
+  () =>
+    cart.value.shipments?.[0] &&
+    cart.value.shipments?.[0]?.shipmentMethodCode &&
+    cart.value.shipments?.[0]?.deliveryAddress
+);
+
+const isValidPayment = computed(() => cart.value.payments?.[0] && cart.value.payments?.[0]?.paymentGatewayCode);
 
 const completedOrder = ref({});
 const showThankYou = ref(false);
@@ -274,6 +373,13 @@ const createOrder = async () => {
     if (cartComment.value) {
       await changeComment(cartComment.value);
     }
+
+    if (billingSameAsShipping.value) {
+      await updatePayment({
+        id: cart.value.payments?.[0]?.id,
+        billingAddress: { ...cart.value.shipments?.[0]?.deliveryAddress },
+      });
+    }
     await placeOrder(cart.value.id).then((order) => {
       completedOrder.value = order;
       showThankYou.value = true;
@@ -319,11 +425,79 @@ function showPaymentMethodDialog(): void {
     props: {
       currentMethodCode: cart.value.payments?.[0]?.paymentGatewayCode,
       availableMethods: cart.value.availablePaymentMethods,
-      onResult(method: PaymentMethodType) {
-        updatePayment({
+      async onResult(method: PaymentMethodType) {
+        await updatePayment({
           paymentGatewayCode: method.code,
           id: cart.value.payments?.[0]?.id,
         });
+      },
+    },
+  });
+}
+
+function selectShippingAddressDialog(): void {
+  openPopup({
+    component: ShippingAddressDialog,
+    props: {
+      currentAddress: cart.value.shipments?.[0]?.deliveryAddress,
+      async onResult(address: InputAddressType) {
+        const convertedAddress = _.omit(address, ["isDefault"]);
+        await updateShipment({
+          id: cart.value.shipments?.[0]?.id,
+          deliveryAddress: { ...convertedAddress },
+        });
+      },
+      onAddNewAddress() {
+        setTimeout(() => {
+          addNewAddressDialog(AddressType.Shipping);
+        }, 500);
+      },
+    },
+  });
+}
+
+function selectBillingAddressDialog(): void {
+  openPopup({
+    component: ShippingAddressDialog,
+    props: {
+      currentAddress: cart.value.payments?.[0]?.billingAddress,
+      async onResult(address: InputAddressType) {
+        const convertedAddress = _.omit(address, ["isDefault"]);
+        await updatePayment({
+          id: cart.value.payments?.[0]?.id,
+          billingAddress: { ...convertedAddress },
+        });
+      },
+      onAddNewAddress() {
+        setTimeout(() => {
+          addNewAddressDialog(AddressType.Billing);
+        }, 500);
+      },
+    },
+  });
+}
+
+function addNewAddressDialog(addressType: AddressType.Billing | AddressType.Shipping): void {
+  openPopup({
+    component: CreateAddressDialog,
+    props: {
+      async onResult(address: MemberAddressType) {
+        closePopup();
+        const newAddress = { ...address, addressType: AddressType.BillingAndShipping };
+        await addOrUpdateAddresses([newAddress]);
+        const convertedAddress = _.omit(newAddress, ["isDefault"]);
+
+        if (addressType.valueOf() === AddressType.Billing) {
+          updatePayment({
+            id: cart.value.payments?.[0]?.id,
+            billingAddress: { ...convertedAddress },
+          });
+        } else {
+          updateShipment({
+            id: cart.value.shipments?.[0]?.id,
+            deliveryAddress: { ...convertedAddress },
+          });
+        }
       },
     },
   });
