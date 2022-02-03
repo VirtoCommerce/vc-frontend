@@ -422,8 +422,8 @@ function showPaymentMethodDialog(): void {
     props: {
       currentMethodCode: cart.value.payments?.[0]?.paymentGatewayCode,
       availableMethods: cart.value.availablePaymentMethods,
-      onResult(method: PaymentMethodType) {
-        updatePayment({
+      async onResult(method: PaymentMethodType) {
+        await updatePayment({
           paymentGatewayCode: method.code,
           id: cart.value.payments?.[0]?.id,
         });
@@ -437,9 +437,9 @@ function selectShippingAddressDialog(): void {
     component: ShippingAddressDialog,
     props: {
       currentAddress: cart.value.shipments?.[0]?.deliveryAddress,
-      onResult(address: InputAddressType) {
+      async onResult(address: InputAddressType) {
         const convertedAddress = _.omit(address, ["isDefault"]);
-        updateShipment({
+        await updateShipment({
           id: cart.value.shipments?.[0]?.id,
           deliveryAddress: { ...convertedAddress },
         });
@@ -458,9 +458,9 @@ function selectBillingAddressDialog(): void {
     component: ShippingAddressDialog,
     props: {
       currentAddress: cart.value.payments?.[0]?.billingAddress,
-      onResult(address: InputAddressType) {
+      async onResult(address: InputAddressType) {
         const convertedAddress = _.omit(address, ["isDefault"]);
-        updatePayment({
+        await updatePayment({
           id: cart.value.payments?.[0]?.id,
           billingAddress: { ...convertedAddress },
         });
