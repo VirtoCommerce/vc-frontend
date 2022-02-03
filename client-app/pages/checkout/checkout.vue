@@ -303,7 +303,6 @@ const {
   updateShipment,
   updatePayment,
   updatePurchaseOrderNumber,
-  loading,
 } = useCart();
 
 const { addOrUpdateAddresses } = useUserAddresses({ user });
