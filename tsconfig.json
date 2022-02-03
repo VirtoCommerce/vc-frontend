@@ -25,6 +25,7 @@
   },
   "include": [
     "client-app/**/*.ts",
+    "client-app/**/*.json",
     "client-app/**/*.d.ts",
     "client-app/**/*.tsx",
     "client-app/**/*.vue",

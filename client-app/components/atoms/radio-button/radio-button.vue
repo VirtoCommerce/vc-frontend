@@ -1,5 +1,5 @@
 <template>
-  <label class="inline-flex flex-row items-center space-x-2">
+  <label class="inline-flex flex-row items-center space-x-2 cursor-pointer">
     <input
       class="appearance-none rounded-full h-6 w-6 border-2 border-gray-300 bg-white checked:border-8 checked:border-yellow-500 focus:outline-none cursor-pointer"
       type="radio"

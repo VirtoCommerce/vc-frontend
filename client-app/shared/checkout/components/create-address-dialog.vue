@@ -1,5 +1,5 @@
 <template>
-  <Popup title="Select address" modal-width="max-w-5xl" :hide-actions="true">
+  <VcPopup title="Select address" modal-width="max-w-5xl" :hide-actions="true">
     <template #default="{ close }">
       <AddressForm
         :model-value="editableAddress"
@@ -29,7 +29,7 @@
         </template>
       </AddressForm>
     </template>
-  </Popup>
+  </VcPopup>
 </template>
 
 <script setup lang="ts">
@@ -37,7 +37,7 @@ import { MemberAddressType } from "@/core/api/graphql/types";
 import { useCountries } from "@/core/composables";
 import { AddressForm } from "@/shared/account";
 import { onMounted, ref, Ref } from "vue";
-import { Popup, Button as VcButton } from "@/components";
+import { VcPopup, VcButton } from "@/components";
 
 const { countries, loadCountries } = useCountries();
 const editableAddress: Ref<MemberAddressType | null> = ref(null);

@@ -24,7 +24,7 @@
         >
           <div class="flex flex-col gap-4 lg:gap-5">
             <!-- Search results -->
-            <Card title="Filter results by">
+            <VcCard title="Filter results by">
               <p class="text-sm pb-2">Search within these results</p>
               <div class="flex gap-3">
                 <input
@@ -35,30 +35,30 @@
                   :disabled="loading"
                   @keypress.enter="onSearchStart"
                 />
-              <VcButton class="px-5 uppercase" size="sm" outline :disabled="loading" @click="onSearchStart">
-                Go
-              </VcButton>
+                <VcButton class="px-5 uppercase" size="sm" outline :disabled="loading" @click="onSearchStart">
+                  Go
+                </VcButton>
               </div>
-            </Card>
+            </VcCard>
 
             <!-- Previously purchased -->
-            <Card title="Previously purchased">
-              <Checkbox color="cyan-700">View previously purchased products</Checkbox>
-            </Card>
+            <VcCard title="Previously purchased">
+              <VcCheckbox color="cyan-700">View previously purchased products</VcCheckbox>
+            </VcCard>
 
             <!-- Branch availability -->
-            <Card title="Branch availability">
+            <VcCard title="Branch availability">
               <p class="text-sm font-medium">
                 <span class="text-cyan-700 font-semibold cursor-pointer hover:text-cyan-900">
                   Select a pickup branch
                 </span>
                 to see products in stock now.
               </p>
-            </Card>
+            </VcCard>
 
             <!-- Term Facets Filters -->
-            <Card v-for="(termFacet, index) in termFacets" :key="index" :title="termFacet.label" is-collapsible>
-              <Checkbox
+            <VcCard v-for="(termFacet, index) in termFacets" :key="index" :title="termFacet.label" is-collapsible>
+              <VcCheckbox
                 v-for="(facetTerm, itemIndex) in termFacet.terms"
                 :key="itemIndex"
                 v-model="selectedFacets[termFacet.name]"
@@ -68,12 +68,12 @@
                 color="cyan-700"
               >
                 {{ facetTerm.label }} ({{ facetTerm.count }})
-              </Checkbox>
-            </Card>
+              </VcCheckbox>
+            </VcCard>
 
             <!-- Range Facets Filters -->
-            <Card v-for="(rangeFacet, index) in rangeFacets" :key="index" :title="rangeFacet.label" is-collapsible>
-              <Checkbox
+            <VcCard v-for="(rangeFacet, index) in rangeFacets" :key="index" :title="rangeFacet.label" is-collapsible>
+              <VcCheckbox
                 v-for="(rangeObject, rangeIndex) in rangeFacet.ranges"
                 :key="rangeIndex"
                 v-model="selectedFacets[rangeFacet.name]"
@@ -83,8 +83,8 @@
                 class="mt-3 first:mt-0"
               >
                 {{ rangeObject.label }} ({{ rangeObject.count }})
-              </Checkbox>
-            </Card>
+              </VcCheckbox>
+            </VcCard>
           </div>
         </div>
 
@@ -101,7 +101,7 @@
             <div class="flex justify-start mb-6 mt-4">
               <!-- Mobile filters toggler -->
               <div class="lg:hidden mr-3">
-                <VcButton class="px-4 font-extrabold" size="sm" @click="mobileSidebarVisible = true">
+                <VcButton class="px-4 font-extrabold" size="md" @click="mobileSidebarVisible = true">
                   <i class="fas fa-filter mr-1"></i> Filters
                 </VcButton>
               </div>
@@ -185,14 +185,14 @@
             </div>
           </template>
 
-          <!-- Pagination and options bottom block -->
+          <!-- VcPagination and options bottom block -->
           <div class="flex justify-center md:justify-between pt-11">
             <div>
-              <Pagination
+              <VcPagination
                 v-model:page="productSearchParams.page"
                 :pages="pages"
                 @update:page="loadProducts"
-              ></Pagination>
+              ></VcPagination>
             </div>
             <div class="flex">
               <!-- View options -->
@@ -217,7 +217,6 @@ import { ref, reactive, onMounted, watch, unref, watchEffect, Ref, shallowRef } 
 import { useBreakpoints, breakpointsTailwind, useUrlSearchParams, whenever } from "@vueuse/core";
 import {
   Breadcrumbs,
-  Pagination,
   PageSize,
   ProductCardGrid,
   ProductCardList,
@@ -230,7 +229,7 @@ import {
   useCategories,
   IBreadcrumbsItem,
 } from "@/shared/catalog";
-import { Card, Checkbox, Button as VcButton } from "@/components";
+import { VcCard, VcCheckbox, VcPagination, VcButton } from "@/components";
 import { AddToCart } from "@/shared/cart";
 import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from "@headlessui/vue";
 import { useRoute } from "vue-router";

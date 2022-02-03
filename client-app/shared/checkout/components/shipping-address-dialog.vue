@@ -1,5 +1,5 @@
 <template>
-  <Popup title="Select address" modal-width="max-w-5xl">
+  <VcPopup title="Select address" modal-width="max-w-5xl">
     <template #actions="{ close }">
       <button
         class="uppercase inline-flex items-center justify-center lg:mr-auto px-2 h-9 font-roboto-condensed text-sm font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:border-yellow-600 hover:text-white rounded focus:outline-none"
@@ -103,17 +103,16 @@
         </tbody>
       </table>
       <div v-if="pages > 1" class="flex justify-start border-b border-gray-200">
-        <Pagination v-model:page="page" :pages="pages" class="self-start pb-5 px-5 mt-5"></Pagination>
+        <VcPagination v-model:page="page" :pages="pages" class="self-start pb-5 px-5 mt-5"></VcPagination>
       </div>
     </template>
 
     <div v-else class="flex items-center space-x-3 p-6 border-b border-gray-200">There are no addresses yet</div>
-  </Popup>
+  </VcPopup>
 </template>
 
 <script setup lang="ts">
-import { Popup } from "@/components";
-import Pagination from "@/shared/catalog/components/pagination.vue";
+import { VcPopup, VcPagination } from "@/components";
 import { CartAddressType, MemberAddressType } from "@/core/api/graphql/types";
 import { computed, onMounted, PropType, ref } from "vue";
 import { getMyAddresses } from "@/core/api/graphql/account";

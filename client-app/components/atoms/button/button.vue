@@ -3,7 +3,6 @@
     v-if="isLink"
     v-bind="$attrs"
     :to="isEnabled ? to : ''"
-    tag="button"
     class="rounded inline-flex justify-center items-center font-roboto-condensed cursor-pointer whitespace-nowrap"
     :class="buttonClass"
     :disabled="!isEnabled"

@@ -1,5 +1,5 @@
 <template>
-  <Popup variant="success" title="Checkout Defaults" is-persistent>
+  <VcPopup variant="success" title="Checkout Defaults" is-persistent>
     <template #actions="{ close }">
       <VcButton class="uppercase mx-auto inline-flex px-10" @click="close">Ok</VcButton>
     </template>
@@ -7,9 +7,9 @@
       <i class="fas fa-check-circle text-green-500 text-5xl mr-4"></i>
       <span class="text-lg">Checkout defaults successfully updated.</span>
     </div>
-  </Popup>
+  </VcPopup>
 </template>
 
 <script setup lang="ts">
-import { Popup, Button as VcButton } from "@/components";
+import { VcPopup, VcButton } from "@/components";
 </script>

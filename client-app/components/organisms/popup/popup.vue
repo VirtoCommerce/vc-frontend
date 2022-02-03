@@ -1,7 +1,7 @@
 <template>
   <TransitionRoot appear :show="show" as="template" @after-leave="$emit('close')">
     <Dialog as="div">
-      <div class="fixed inset-0 z-10 overflow-y-auto">
+      <div class="fixed inset-0 z-50 overflow-y-auto">
         <div class="min-h-screen px-4 text-center">
           <TransitionChild
             as="template"

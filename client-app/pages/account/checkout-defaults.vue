@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { VcRadioButton, Button as VcButton, VcSelect } from "@/components";
+import { VcRadioButton, VcButton, VcSelect } from "@/components";
 import {
   AccountNavigation,
   useUserCheckoutDefaults,

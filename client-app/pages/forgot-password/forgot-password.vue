@@ -15,16 +15,16 @@
       </div>
     </template>
     <template #right>
-      <img class="max-w-md" src="/assets/static/images/sign-in/sign-in-page-image.webp" />
+      <VcImage class="max-w-md" src="/static/images/sign-in/sign-in-page-image.webp" />
     </template>
   </TwoColumn>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { VcImage, VcButton } from "@/components";
 import { TwoColumn } from "@/shared/layout";
 import { ForgotPasswordForm } from "@/shared/account";
-import { Button as VcButton } from "@/components";
 
 const isSucceeded = ref(false);
 

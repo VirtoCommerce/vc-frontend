@@ -18,3 +18,7 @@ export default {
   inheritAttrs: false,
 };
 </script>
+
+<script setup lang="ts">
+// Keep this block for proper parsing of $attrs within template
+</script>

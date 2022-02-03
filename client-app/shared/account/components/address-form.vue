@@ -116,7 +116,7 @@
 import { computed, PropType, ref, Ref, watch } from "vue";
 import { clone } from "lodash";
 import { useForm, useField } from "vee-validate";
-import { Input as VcInput, VcSelect } from "@/components";
+import { VcInput, VcSelect } from "@/components";
 import { CountryRegionType, CountryType, MemberAddressType } from "@core/api/graphql/types";
 import { getAddressName, Logger } from "@core/utilities";
 import * as yup from "yup";

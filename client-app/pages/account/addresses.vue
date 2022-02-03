@@ -110,7 +110,7 @@
                 </div>
 
                 <div v-else-if="!addressesLoading" class="flex items-center justify-center space-x-10 p-5">
-                  <img src="/assets/static/images/account/icons/no-addresses.svg" alt="No addresses" />
+                  <img src="/static/images/account/icons/no-addresses.svg" alt="No addresses" />
                   <div class="flex flex-col space-y-2">
                     <span class="text-base">There are no addresses yet</span>
                     <VcButton class="uppercase w-full" @click="openEditMode()">Add new address</VcButton>
@@ -252,7 +252,7 @@
                   <tr>
                     <td colspan="6" class="polygons-bg">
                       <div class="flex items-center pl-56 space-x-10 h-80">
-                        <img src="/assets/static/images/account/icons/no-addresses.svg" alt="No addresses" />
+                        <img src="/static/images/account/icons/no-addresses.svg" alt="No addresses" />
                         <div class="flex flex-col space-y-2">
                           <span class="text-base">There are no addresses yet</span>
                           <VcButton class="uppercase w-full" @click="openEditMode()">Add new address</VcButton>
@@ -287,13 +287,13 @@
                 </tbody>
               </table>
 
-              <Pagination
+              <VcPagination
                 v-if="pages > 1"
                 v-model:page="page"
                 :pages="pages"
                 class="self-start"
                 :class="[isMobile ? 'px-6 py-10' : 'pb-5 px-5 mt-5']"
-              ></Pagination>
+              ></VcPagination>
             </template>
           </div>
         </div>
@@ -303,8 +303,7 @@
 </template>
 
 <script setup lang="ts">
-import Pagination from "@/shared/catalog/components/pagination.vue";
-import { TableMobileItem, Button as VcButton } from "@/components";
+import { TableMobileItem, VcButton, VcPagination } from "@/components";
 import { AccountNavigation, AddressForm, useUser, useUserAddresses } from "@/shared/account";
 import { computed, ComputedRef, onMounted, Ref, ref } from "vue";
 import { clone } from "lodash";
@@ -455,7 +454,7 @@ onMounted(async () => {
 }
 
 .polygons-bg {
-  background-image: url(/assets/static/images/account/addresses-bg.svg);
+  background-image: url(/static/images/account/addresses-bg.svg);
   background-repeat: no-repeat;
   background-position: right;
 }

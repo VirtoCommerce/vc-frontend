@@ -26,17 +26,17 @@
       </div>
     </template>
     <template #right>
-      <img class="max-w-md" src="/assets/static/images/sign-in/sign-in-page-image.webp" />
+      <VcImage class="max-w-md" src="/static/images/sign-in/sign-in-page-image.webp" />
     </template>
   </TwoColumn>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { VcImage, VcButton } from "@/components";
 import { TwoColumn } from "@/shared/layout";
 import { ResetPasswordForm, useUser } from "@/shared/account";
 import { useRoute } from "vue-router";
-import { Button as VcButton } from "@/components";
 
 const route = useRoute();
 const { validateToken } = useUser();

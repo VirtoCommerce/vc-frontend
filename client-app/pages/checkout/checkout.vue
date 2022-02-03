@@ -26,13 +26,13 @@
                 ></ProductCard>
 
                 <div class="py-8 lg:flex lg:items-center lg:px-5">
-                  <Pagination
+                  <VcPagination
                     v-if="pages > 1"
                     v-model:page="page"
                     :pages="pages"
                     class="mb-3 lg:mb-0"
                     @update:page="page = $event"
-                  ></Pagination>
+                  ></VcPagination>
                   <p class="text-center text-sm lg:ml-auto">
                     If you changed multiple quantities,
                     <span class="text-cyan-700 font-extrabold cursor-pointer" @click="updateAllItems">Update All</span>
@@ -93,11 +93,12 @@
                 <CheckoutLabeledBlock label="Shipping method">
                   <div class="flex flex-row items-center space-x-4">
                     <template v-if="cart.shipments?.[0]?.shipmentMethodCode">
-                      <img src="/assets/static/images/checkout/fedex.svg" class="h-12 w-12" />
+                      <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" />
                       <span
-                        >{{ cart.shipments?.[0].shipmentMethodCode }} {{ cart.shipments?.[0].shipmentMethodOption }} ({{
-                          cart.shipments?.[0].price?.formattedAmount
-                        }})</span
+                        >{{ cart.shipments?.[0].shipmentMethodCode }}
+                        {{ cart.shipments?.[0].shipmentMethodOption }} (<VcPriceDisplay
+                          :value="cart.shipments?.[0].price"
+                        />)</span
                       >
                     </template>
                     <div v-else class="text-gray-600">Not defined</div>
@@ -181,7 +182,7 @@
                 <CheckoutLabeledBlock label="Payment method">
                   <div class="flex flex-row items-center space-x-4">
                     <template v-if="cart.payments?.[0]?.paymentGatewayCode">
-                      <img src="/assets/static/images/checkout/invoice.svg" class="h-12 w-12" />
+                      <VcImage src="/static/images/checkout/invoice.svg" class="h-12 w-12" />
                       <span>{{ cart.payments?.[0].paymentGatewayCode }}</span>
                     </template>
                     <div v-else class="text-gray-600">Not defined</div>
@@ -207,7 +208,7 @@
             >
               <div class="mx-5 lg:ml-28 lg:mr-11">
                 <p class="font-extrabold text-base mb-1">Order comments</p>
-                <TextArea v-model="cartComment" class="resize-none" :rows="4" :max-length="1000"></TextArea>
+                <VcTextArea v-model="cartComment" class="resize-none" :rows="4" :max-length="1000" />
               </div>
             </CheckoutSection>
             <div class="shadow-inner h-1 lg:hidden"></div>
@@ -247,7 +248,6 @@
 </template>
 
 <script setup lang="ts">
-import Pagination from "@/shared/catalog/components/pagination.vue";
 import {
   CheckoutLabeledBlock,
   CheckoutSection,
@@ -261,7 +261,7 @@ import {
   ShippingAddressDialog,
   CreateAddressDialog,
 } from "@/shared/checkout";
-import { TextArea, Button as VcButton } from "@/components";
+import { VcTextArea, VcImage, VcPriceDisplay, VcPagination, VcButton } from "@/components";
 import { useCart, useCheckout } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import { computed, onBeforeUpdate, onMounted, ref } from "vue";
