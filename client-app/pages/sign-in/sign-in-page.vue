@@ -12,22 +12,13 @@
 
 <script setup lang="ts">
 import { VcImage } from "@/components";
-import { SignInForm, useUser } from "@/shared/account";
-import { useRouter } from "vue-router";
+import { SignInForm } from "@/shared/account";
+import { useRoute } from "vue-router";
 import { TwoColumn } from "@/shared/layout";
-import { useCart } from "@/shared/cart";
-import { useContext } from "@/shared/context";
-import { setUserId } from "@/core/constants";
 
-const router = useRouter();
-const { me } = useUser();
-const { loadMyCart } = useCart();
-const { loadContext, themeContext } = useContext();
+const { query } = useRoute();
 
 async function onSignIn() {
-  await loadContext();
-  setUserId(themeContext.value?.userId || me.value?.id);
-  await loadMyCart();
-  router.push({ name: "Dashboard" });
+  location.href = query.redirect || "/";
 }
 </script>

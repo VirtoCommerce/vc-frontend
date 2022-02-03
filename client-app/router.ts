@@ -1,22 +1,28 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "./pages/home/home.vue";
-import Product from "./pages/product/product.vue";
-import SingInPage from "./pages/sign-in/sign-in-page.vue";
-import SignUpPage from "./pages/sign-up/sign-up-page.vue";
-import Catalog from "./pages/catalog/catalog.vue";
-import Checkout from "./pages/checkout/checkout.vue";
-import Error403 from "./pages/403/403.vue";
-import Error404 from "./pages/404/404.vue";
-import Error500 from "./pages/500/500.vue";
-import CheckoutDefaults from "./pages/account/checkout-defaults.vue";
-import Dashboard from "./pages/account/dashboard.vue";
-import Addresses from "./pages/account/addresses.vue";
-import Account from "./pages/account/account.vue";
-import ForgotPassword from "./pages/forgot-password/forgot-password.vue";
-import ResetPassword from "./pages/reset-password/reset-password.vue";
 
+// Pages
+const Home = () => import("./pages/home/home.vue");
+const Product = () => import("./pages/product/product.vue");
+const SingInPage = () => import("./pages/sign-in/sign-in-page.vue");
+const SignUpPage = () => import("./pages/sign-up/sign-up-page.vue");
+const Catalog = () => import("./pages/catalog/catalog.vue");
+const Checkout = () => import("./pages/checkout/checkout.vue");
+const Error403 = () => import("./pages/403/403.vue");
+const Error404 = () => import("./pages/404/404.vue");
+const Error500 = () => import("./pages/500/500.vue");
+const CheckoutDefaults = () => import("./pages/account/checkout-defaults.vue");
+const Dashboard = () => import("./pages/account/dashboard.vue");
+const Addresses = () => import("./pages/account/addresses.vue");
+const Account = () => import("./pages/account/account.vue");
+const ForgotPassword = () => import("./pages/forgot-password/forgot-password.vue");
+const ResetPassword = () => import("./pages/reset-password/reset-password.vue");
+
+// Router definition
 const router = createRouter({
+  // History mode
   history: createWebHistory(),
+
+  // Setup scroll behavior on route change
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition;
@@ -27,6 +33,8 @@ const router = createRouter({
       };
     }
   },
+
+  // Router map
   routes: [
     { path: "/", name: "Home", component: Home },
     { path: "/sign-in", name: "SignIn", component: SingInPage },
@@ -35,9 +43,10 @@ const router = createRouter({
       path: "/account",
       component: Account,
       redirect: { name: "Dashboard" },
+      meta: { requiresAuth: true },
       children: [
         { path: "dashboard", name: "Dashboard", component: Dashboard },
-        { path: "addresses", name: "Adresses", component: Addresses },
+        { path: "addresses", name: "Addresses", component: Addresses },
         { path: "checkout-defaults", name: "CheckoutDefaults", component: CheckoutDefaults },
       ],
     },
