@@ -19,6 +19,6 @@ import { TwoColumn } from "@/shared/layout";
 const { query } = useRoute();
 
 async function onSignIn() {
-  location.href = (query.redirect as String) || "/";
+  location.href = (query.redirect as string) || "/";
 }
 </script>
