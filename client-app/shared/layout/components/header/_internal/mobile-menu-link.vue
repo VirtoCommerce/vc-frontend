@@ -24,7 +24,13 @@
     </div>
   </div>
   <!-- Regular link -->
-  <router-link v-else :to="to" class="uppercase text-xl font-extrabold text-white" @click="$emit('close')">
+  <router-link
+    v-else
+    :to="to"
+    class="uppercase text-xl font-extrabold text-white"
+    :class="$attrs.class"
+    @click="$emit('close')"
+  >
     <slot>{{ title }}</slot>
   </router-link>
 </template>

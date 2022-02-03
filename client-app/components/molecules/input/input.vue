@@ -9,6 +9,7 @@
       class="appearance-none h-11 rounded px-3 py-3 text-base leading-none box-border border border-gray-300 w-full outline-none focus:border-gray-400"
       :value="modelValue"
       :type="type"
+      :name="name"
       :placeholder="placeholder"
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     />
@@ -47,6 +48,11 @@ defineProps({
   type: {
     type: String,
     default: "text",
+  },
+
+  name: {
+    type: String,
+    default: undefined,
   },
 
   errorMessage: {

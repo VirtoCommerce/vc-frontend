@@ -27,7 +27,7 @@
     </div>
   </div>
   <!-- Regular link -->
-  <router-link v-else :to="to" class="menu-link uppercase font-extrabold text-gray-500">
+  <router-link v-else :to="to" class="menu-link uppercase font-extrabold text-gray-500" :class="$attrs.class">
     <slot>{{ title }}</slot>
   </router-link>
 </template>
