@@ -14,11 +14,14 @@ import {
 import { CartType, InputPaymentType, InputShipmentType, LineItemType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 import _ from "lodash";
+import { useUserCheckoutDefaults } from "@/shared/account";
 
 const loading: Ref<boolean> = ref(true);
 const cart: Ref<CartType> = ref({ name: "" });
 const pages: Ref<number> = ref(0);
 const itemsPerPage: Ref<number> = ref(6);
+
+const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
 
 export default () => {
   async function loadMyCart(): Promise<CartType> {
@@ -28,6 +31,26 @@ export default () => {
       if (cart.value.items && cart.value.items.length > 0) {
         pages.value = Math.ceil(cart.value.items.length / itemsPerPage.value);
       }
+
+      //#region set checkout defaults
+      const checkoutDefaults = getUserCheckoutDefaults();
+      if (!cart.value.shipments?.[0]?.id && checkoutDefaults?.shippingMethod) {
+        const method = checkoutDefaults?.shippingMethod;
+        await updateShipment({
+          shipmentMethodCode: method.code,
+          shipmentMethodOption: method.optionName,
+          id: cart.value.shipments?.[0]?.id,
+        });
+      }
+
+      if (!cart.value.payments?.[0]?.id && checkoutDefaults?.paymentMethod) {
+        const method = checkoutDefaults?.paymentMethod;
+        await updatePayment({
+          paymentGatewayCode: method.code,
+          id: cart.value.payments?.[0]?.id,
+        });
+      }
+      //#endregion set checkout defaults
     } catch (e) {
       Logger.error("useCart.loadMyCart", e);
       throw e;

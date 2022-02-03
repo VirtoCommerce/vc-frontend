@@ -2810,6 +2810,7 @@ export type Product = {
   images?: Maybe<Array<Maybe<ImageType>>>;
   /** The product main image URL. */
   imgSrc?: Maybe<Scalars['String']>;
+  masterVariation?: Maybe<VariationType>;
   /** Max. quantity */
   maxQuantity?: Maybe<Scalars['Int']>;
   /** Min. quantity */
@@ -3714,7 +3715,7 @@ export type GetAvailPaymentMethodsQueryVariables = Exact<{
 }>;
 
 
-export type GetAvailPaymentMethodsQuery = { cart?: { availablePaymentMethods?: Array<{ code?: string, name?: string, logoUrl?: string, price?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } } }> } };
+export type GetAvailPaymentMethodsQuery = { cart?: { availablePaymentMethods?: Array<{ code?: string, logoUrl?: string, price?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } } }> } };
 
 export type GetAvailShippingMethodsQueryVariables = Exact<{
   storeId: Scalars['String'];

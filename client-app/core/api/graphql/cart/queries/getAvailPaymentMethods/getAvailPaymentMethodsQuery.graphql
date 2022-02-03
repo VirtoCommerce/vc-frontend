@@ -12,15 +12,14 @@
       currencyCode: $currencyCode
       cultureName: $cultureName
     ) {
-    
+
       availablePaymentMethods {
         code
-        name
         logoUrl
         price {
           ...moneyFields
         }
       }
-     
+
     }
   }
