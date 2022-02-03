@@ -25,6 +25,7 @@
               :disabled="saveAddressLoading"
               class="px-6 py-4"
               required-email
+              required-city
               @save="saveAddress"
             >
               <template #append="{ dirty }">
