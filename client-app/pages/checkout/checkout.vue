@@ -222,7 +222,7 @@
             <OrderSummary :cart="cart">
               <template #header>
                 <!-- Purchase order -->
-                <VcApplyInput
+                <VcActionInput
                   v-model="purchaseOrderNumber"
                   class="mb-5"
                   label="Purchase order"
@@ -231,10 +231,10 @@
                   @click:apply="setPurchaseOrderNumber"
                   @click:deny="removePurchaseOrderNumber"
                   @update:model-value="couponValidationError = ''"
-                ></VcApplyInput>
+                ></VcActionInput>
 
                 <!-- Promotion code -->
-                <VcApplyInput
+                <VcActionInput
                   v-model="cartCoupon"
                   :class="[couponValidationError ? 'mb-0' : 'mb-8']"
                   label="Promotion code"
@@ -244,7 +244,7 @@
                   @click:apply="useCoupon"
                   @click:deny="removeCoupon"
                   @update:model-value="couponValidationError = ''"
-                ></VcApplyInput>
+                ></VcActionInput>
               </template>
               <template #footer>
                 <p class="mt-8 mb-3 text-xs font-normal text-gray-400">
@@ -276,7 +276,7 @@ import {
   ShippingAddressDialog,
   CreateAddressDialog,
 } from "@/shared/checkout";
-import { VcTextArea, VcImage, VcPriceDisplay, VcPagination, VcButton } from "@/components";
+import { VcTextArea, VcImage, VcPriceDisplay, VcPagination, VcButton, VcActionInput } from "@/components";
 import { useCart, useCheckout } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import { computed, onBeforeUpdate, onMounted, ref } from "vue";
