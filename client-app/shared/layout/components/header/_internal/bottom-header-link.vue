@@ -57,7 +57,7 @@ defineProps({
 const submenu = ref(null);
 const submenuVisible = ref(false);
 
-onClickOutside(submenu.value, () => {
+onClickOutside(submenu, () => {
   submenuVisible.value = false;
 });
 </script>
