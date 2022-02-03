@@ -1,6 +1,6 @@
 #import "../../../fragments/memberAddressFields.graphql"
 
-query getDefaultShippingAddresses {
+query getDefaultShippingAddress {
   me {
     contact {
       defaultShippingAddress {
