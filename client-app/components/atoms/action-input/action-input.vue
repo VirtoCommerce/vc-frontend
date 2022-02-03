@@ -12,7 +12,7 @@
       <!-- todo: use VcButton -->
       <button
         v-if="!applied"
-        class="rounded uppercase w-10 border-2 font-roboto-condensed font-bold text-sm"
+        class="rounded uppercase w-10 border-2 font-roboto-condensed font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
         :class="[
           value.length === 0
             ? 'border-gray-300 bg-gray-50 text-gray-300'
@@ -25,7 +25,7 @@
       </button>
       <button
         v-if="applied"
-        class="rounded uppercase w-10 border-2 font-roboto-condensed font-bold text-sm text-red-500 border-red-500 hover:text-white hover:bg-red-500"
+        class="rounded uppercase w-10 border-2 font-roboto-condensed font-bold text-sm text-red-500 border-red-500 hover:text-white hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
         :disabled="isDisabled"
         @click="$emit('click:deny')"
       >
