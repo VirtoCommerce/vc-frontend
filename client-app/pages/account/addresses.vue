@@ -25,6 +25,7 @@
               :disabled="saveAddressLoading"
               class="px-6 py-4"
               required-email
+              required-city
               @save="saveAddress"
             >
               <template #append="{ dirty }">
@@ -79,24 +80,30 @@
                       >
                         <i class="fas fa-check text-white mr-2"></i>
                       </div>
+
                       <div class="flex flex-col">
                         <span class="text-sm text-gray-400"> Recipient's name </span>
-                        <span class="pr-4 font-extrabold">{{ address.firstName }} {{ address.lastName }}</span>
+                        <span class="pr-4 font-extrabold overflow-hidden overflow-ellipsis">
+                          {{ address.firstName }} {{ address.lastName }}
+                        </span>
                       </div>
+
                       <div class="flex flex-col">
                         <span class="text-sm text-gray-400">Address</span>
-                        <span>
+                        <span class="overflow-hidden overflow-ellipsis">
                           {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
-                          {{ address.postalCode }}</span
-                        >
+                          {{ address.postalCode }}
+                        </span>
                       </div>
+
                       <div class="flex flex-col">
                         <span class="text-sm text-gray-400">Phone</span>
-                        <span class="pr-4 truncate">{{ address.phone }}</span>
+                        <span class="pr-4 overflow-hidden overflow-ellipsis">{{ address.phone }}</span>
                       </div>
+
                       <div class="flex flex-col">
                         <span class="text-sm text-gray-400">Email</span>
-                        <span class="truncate">{{ address.email }}</span>
+                        <span class="overflow-hidden overflow-ellipsis">{{ address.email }}</span>
                       </div>
                     </div>
                   </TableMobileItem>
@@ -187,13 +194,15 @@
 
                 <tbody v-if="addresses.length">
                   <tr v-for="address in paginatedAddresses" :key="address.id" class="even:bg-gray-50">
-                    <td class="p-5">{{ address.firstName }} {{ address.lastName }}</td>
-                    <td class="p-5">
+                    <td class="p-5 overflow-hidden overflow-ellipsis">
+                      {{ address.firstName }} {{ address.lastName }}
+                    </td>
+                    <td class="p-5 overflow-hidden overflow-ellipsis">
                       {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
                       {{ address.postalCode }}
                     </td>
-                    <td class="p-5 truncate">{{ address.phone }}</td>
-                    <td class="p-5 truncate">{{ address.email }}</td>
+                    <td class="p-5 overflow-hidden overflow-ellipsis">{{ address.phone }}</td>
+                    <td class="p-5 overflow-hidden overflow-ellipsis">{{ address.email }}</td>
                     <td
                       v-if="defaultShippingAddress && address.id === defaultShippingAddress.id"
                       class="px-3 py-5 font-bold"
