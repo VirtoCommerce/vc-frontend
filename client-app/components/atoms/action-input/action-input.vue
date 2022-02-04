@@ -8,6 +8,7 @@
         type="text"
         :placeholder="placeholder"
         :disabled="isApplied || isDisabled"
+        :maxlength="maxLength"
       />
       <!-- todo: use VcButton -->
       <button
@@ -64,6 +65,10 @@ const props = defineProps({
   isDisabled: {
     type: Boolean,
     default: false,
+  },
+  maxLength: {
+    type: Number,
+    default: undefined,
   },
 });
 const value = computed({

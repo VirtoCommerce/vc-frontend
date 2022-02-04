@@ -229,6 +229,7 @@
                   placeholder="Enter purchase order number"
                   :is-applied="purchaseOrderNumberApplied"
                   :is-disabled="loading"
+                  :max-length="128"
                   @click:apply="setPurchaseOrderNumber"
                   @click:deny="removePurchaseOrderNumber"
                   @update:model-value="couponValidationError = ''"
