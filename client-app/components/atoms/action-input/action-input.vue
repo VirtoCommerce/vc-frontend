@@ -4,7 +4,7 @@
     <div class="flex space-x-3">
       <input
         v-model="value"
-        class="border rounded text-sm leading-8 flex-1 w-full border-gray-300 h-8 px-2 outline-none focus:border-gray-400"
+        class="border rounded text-sm leading-8 flex-1 border-gray-300 h-8 px-2 outline-none focus:border-gray-400"
         type="text"
         :placeholder="placeholder"
         :disabled="isApplied || isDisabled"
@@ -13,7 +13,7 @@
       <!-- todo: use VcButton -->
       <button
         v-if="!isApplied"
-        class="rounded uppercase w-10 border-2 font-roboto-condensed font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+        class="rounded uppercase flex-none w-10 border-2 font-roboto-condensed font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
         :class="[
           value.length === 0
             ? 'border-gray-300 bg-gray-50 text-gray-300'
