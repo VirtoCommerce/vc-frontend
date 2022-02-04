@@ -35,7 +35,7 @@
                   :disabled="loading"
                   @keypress.enter="onSearchStart"
                 />
-                <VcButton class="px-5 uppercase" size="sm" outline :disabled="loading" @click="onSearchStart">
+                <VcButton class="px-5 uppercase" size="sm" is-outline :is-disabled="loading" @click="onSearchStart">
                   Go
                 </VcButton>
               </div>

@@ -16,7 +16,7 @@
     :type="isSubmit ? 'submit' : 'button'"
     class="rounded inline-flex justify-center items-center font-roboto-condensed cursor-pointer"
     :class="buttonClass"
-    :disabled="!isEnabled"
+    :is-disabled="!isEnabled"
     @click="$emit('click')"
   >
     <slot></slot>
@@ -45,15 +45,15 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  outline: {
+  isOutline: {
     type: Boolean,
     default: false,
   },
-  disabled: {
+  isDisabled: {
     type: Boolean,
     default: false,
   },
-  waiting: {
+  isWaiting: {
     type: Boolean,
     default: false,
   },
@@ -65,7 +65,7 @@ const props = defineProps({
 
 defineEmits(["click"]);
 
-const isEnabled = computed(() => !props.disabled && !props.waiting);
+const isEnabled = computed(() => !props.isDisabled && !props.isWaiting);
 
 const isLink = computed(() => !!props.to);
 
@@ -86,16 +86,16 @@ const lgSizeClasses = "h-11 text-lg";
 
 const buttonClass = computed(() => {
   return {
-    [primaryEnabledClasses]: props.kind == "primary" && !props.outline && isEnabled.value,
-    [primaryOutlineEnabledClasses]: props.kind == "primary" && props.outline && isEnabled.value,
-    [secondaryEnabledClasses]: props.kind == "secondary" && !props.outline && isEnabled.value,
-    [secondaryOutlineEnabledClasses]: props.kind == "secondary" && props.outline && isEnabled.value,
-    [primaryDisabledClasses]: props.kind == "primary" && !props.outline && !isEnabled.value,
-    [primaryOutlineDisabledClasses]: props.kind == "primary" && props.outline && !isEnabled.value,
-    [secondaryDisabledClasses]: props.kind == "secondary" && !props.outline && !isEnabled.value,
-    [secondaryOutlineDisabledClasses]: props.kind == "secondary" && props.outline && !isEnabled.value,
-    [waitingStateClasses]: props.waiting,
-    [disabledStateClasses]: props.disabled,
+    [primaryEnabledClasses]: props.kind == "primary" && !props.isOutline && isEnabled.value,
+    [primaryOutlineEnabledClasses]: props.kind == "primary" && props.isOutline && isEnabled.value,
+    [secondaryEnabledClasses]: props.kind == "secondary" && !props.isOutline && isEnabled.value,
+    [secondaryOutlineEnabledClasses]: props.kind == "secondary" && props.isOutline && isEnabled.value,
+    [primaryDisabledClasses]: props.kind == "primary" && !props.isOutline && !isEnabled.value,
+    [primaryOutlineDisabledClasses]: props.kind == "primary" && props.isOutline && !isEnabled.value,
+    [secondaryDisabledClasses]: props.kind == "secondary" && !props.isOutline && !isEnabled.value,
+    [secondaryOutlineDisabledClasses]: props.kind == "secondary" && props.isOutline && !isEnabled.value,
+    [waitingStateClasses]: props.isWaiting,
+    [disabledStateClasses]: props.isDisabled,
     [smSizeClasses]: props.size == "sm",
     [mdSizeClasses]: props.size == "md",
     [lgSizeClasses]: props.size == "lg",

@@ -58,7 +58,7 @@
         </div>
         <div class="mt-6 lg:mt-4">
           <VcAlert v-for="error in commonErrors" :key="error" class="mb-4 text-xs">{{ error }}</VcAlert>
-          <VcButton is-submit size="lg" class="uppercase mt-6 lg:mt-3 w-full lg:w-48" :waiting="loading"
+          <VcButton is-submit size="lg" class="uppercase mt-6 lg:mt-3 w-full lg:w-48" :is-waiting="loading"
             >Register</VcButton
           >
         </div>

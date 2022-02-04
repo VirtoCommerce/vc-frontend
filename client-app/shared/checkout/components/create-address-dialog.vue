@@ -15,7 +15,7 @@
               kind="secondary"
               size="md"
               class="uppercase w-1/2 sm:px-5"
-              outline
+              is-outline
               @click="
                 editableAddress = null;
                 close();
@@ -24,7 +24,7 @@
               Cancel
             </VcButton>
 
-            <VcButton size="md" :disabled="!dirty" class="uppercase w-1/2 sm:px-5" is-submit> Create </VcButton>
+            <VcButton size="md" :is-disabled="!dirty" class="uppercase w-1/2 sm:px-5" is-submit> Create </VcButton>
           </div>
         </template>
       </AddressForm>

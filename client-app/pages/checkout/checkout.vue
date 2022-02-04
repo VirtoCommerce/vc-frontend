@@ -67,7 +67,7 @@
                     <div>
                       <VcButton
                         size="sm"
-                        outline
+                        is-outline
                         class="px-3 self-start uppercase font-bold"
                         @click="selectShippingAddressDialog"
                         >Change</VcButton
@@ -82,7 +82,7 @@
                     <div>
                       <VcButton
                         size="sm"
-                        outline
+                        is-outline
                         class="px-3 self-start uppercase font-bold"
                         @click="selectShippingAddressDialog"
                         >New address</VcButton
@@ -106,7 +106,7 @@
                   <div>
                     <VcButton
                       size="sm"
-                      outline
+                      is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="showShipmentMethodDialog"
                       >Change</VcButton
@@ -144,7 +144,7 @@
                   <div>
                     <VcButton
                       size="sm"
-                      outline
+                      is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="selectBillingAddressDialog"
                       >New address</VcButton
@@ -172,7 +172,7 @@
                   <div>
                     <VcButton
                       size="sm"
-                      outline
+                      is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="selectBillingAddressDialog"
                       >Change</VcButton
@@ -190,7 +190,7 @@
                   <div>
                     <VcButton
                       size="sm"
-                      outline
+                      is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="showPaymentMethodDialog"
                       >Change</VcButton
@@ -252,7 +252,12 @@
                 <p class="mt-8 mb-3 text-xs font-normal text-gray-400">
                   Availability, shipping, tax & promotions are not final until you complete your order.
                 </p>
-                <VcButton class="uppercase w-full" :disabled="!isValidCheckout" :waiting="loading" @click="createOrder">
+                <VcButton
+                  class="uppercase w-full"
+                  :is-disabled="!isValidCheckout"
+                  :is-waiting="loading"
+                  @click="createOrder"
+                >
                   Place order
                 </VcButton>
               </template>

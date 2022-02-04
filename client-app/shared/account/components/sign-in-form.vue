@@ -34,10 +34,10 @@
 
     <!-- Form actions -->
     <div class="flex mt-8 text-base font-roboto-condensed" :class="{ 'max-w-sm': !props.growButtons }">
-      <VcButton is-submit size="lg" class="flex-1 flex-shrink px-2 font-bold uppercase" :waiting="!isSubmitEnabled">
+      <VcButton is-submit size="lg" class="flex-1 flex-shrink px-2 font-bold uppercase" :is-waiting="!isSubmitEnabled">
         Login
       </VcButton>
-      <VcButton to="/sign-up" size="lg" outline class="flex-1 ml-4 px-2 uppercase font-bold">Registration</VcButton>
+      <VcButton to="/sign-up" size="lg" is-outline class="flex-1 ml-4 px-2 uppercase font-bold">Registration</VcButton>
     </div>
   </form>
 </template>
