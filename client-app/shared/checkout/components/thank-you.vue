@@ -17,12 +17,7 @@
           >
             <div class="lg:ml-28 lg:mr-11 lg:border lg:rounded">
               <!-- Product card -->
-              <ProductCard
-                v-for="item in orderItems"
-                :key="item?.id"
-                :line-item="item!"
-                :read-only="true"
-              ></ProductCard>
+              <ProductCard v-for="item in orderItems" :key="item?.id" :line-item="item" :read-only="true"></ProductCard>
 
               <div v-if="pages > 1" class="py-8 lg:flex lg:items-center lg:px-5">
                 <VcPagination

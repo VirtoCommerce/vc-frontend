@@ -4,16 +4,30 @@ module.exports = {
     node: true,
   },
   ignorePatterns: ["**/*.{es,umd}.js"],
-  plugins: ["import"],
+  plugins: ["vue", "import", "@typescript-eslint"],
   extends: [
     "eslint:recommended",
     "plugin:vue/vue3-essential",
-    '@vue/eslint-config-typescript',
+    "@vue/eslint-config-typescript/recommended",
+    "@vue/eslint-config-prettier",
     "plugin:import/recommended",
     "plugin:import/typescript",
     "@vue/prettier",
   ],
+  parser: "vue-eslint-parser",
   parserOptions: {
+    parser: {
+      // Script parser for `<script>`
+      js: "espree",
+
+      // Script parser for `<script lang="ts">`
+      ts: "@typescript-eslint/parser",
+
+      // Script parser for vue directives (e.g. `v-if=` or `:attribute=`)
+      // and vue interpolations (e.g. `{{variable}}`).
+      // If not specified, the parser determined by `<script lang ="...">` is used.
+      //"<template>": "espree",
+    },
     ecmaVersion: 2020,
   },
   rules: {
@@ -22,32 +36,32 @@ module.exports = {
     "@typescript-eslint/ban-ts-comment": "warn",
     "vue/script-setup-uses-vars": "error",
     "import/no-unresolved": "error",
-    "vue/multi-word-component-names": "off"
+    "vue/multi-word-component-names": "off",
   },
   overrides: [
     // Fix no-used-vars when importing ts types in .vue files
     {
       files: ["*.vue"],
       rules: {
-        'no-unused-vars': 'off',
-        '@typescript-eslint/no-unused-vars': 'error'
-      }
-    }
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": "error",
+      },
+    },
   ],
   globals: {
     defineProps: "readonly",
     defineEmits: "readonly",
     defineExpose: "readonly",
-    withDefaults: "readonly"
+    withDefaults: "readonly",
   },
   settings: {
     "import/parsers": {
-      "@typescript-eslint/parser": [".ts", ".tsx"]
+      "@typescript-eslint/parser": [".ts", ".tsx"],
     },
     "import/resolver": {
       typescript: {
         alwaysTryTypes: true,
-      }
-    }
-  }
+      },
+    },
+  },
 };

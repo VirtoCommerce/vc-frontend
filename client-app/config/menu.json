@@ -2,12 +2,16 @@
   "header": {
     "main": [
       { "id": "home", "title": "Home", "url": "/" },
-      { "id": "catalog", "title": "All products", "children": [
-        { "title": "Carriage Bolts", "url": "/catalog/carriage-bolts" },
-        { "title": "Flange Bolts", "url": "/catalog/flange-bolts" },
-        { "title": "Laser Printers", "url": "/catalog/multifunction-printers" },
-        { "title": "Inkjet Printers", "url": "/catalog/all-in-one" }
-      ] },
+      {
+        "id": "catalog",
+        "title": "All products",
+        "children": [
+          { "title": "Carriage Bolts", "url": "/catalog/carriage-bolts" },
+          { "title": "Flange Bolts", "url": "/catalog/flange-bolts" },
+          { "title": "Laser Printers", "url": "/catalog/multifunction-printers" },
+          { "title": "Inkjet Printers", "url": "/catalog/all-in-one" }
+        ]
+      },
       { "id": "bulk", "title": "Bulk order pad", "url": "/bulk-order" },
       { "id": "checkout", "title": "Cart", "url": "/checkout" },
       { "id": "contact", "title": "Contact us", "url": "/contact" }
