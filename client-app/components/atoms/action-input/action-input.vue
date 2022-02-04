@@ -7,11 +7,11 @@
         class="border rounded text-sm leading-8 flex-1 w-full border-gray-300 h-8 px-2 outline-none focus:border-gray-400"
         type="text"
         :placeholder="placeholder"
-        :disabled="applied || isDisabled"
+        :disabled="isApplied || isDisabled"
       />
       <!-- todo: use VcButton -->
       <button
-        v-if="!applied"
+        v-if="!isApplied"
         class="rounded uppercase w-10 border-2 font-roboto-condensed font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
         :class="[
           value.length === 0
@@ -24,7 +24,7 @@
         <i class="fas fa-check"></i>
       </button>
       <button
-        v-if="applied"
+        v-if="isApplied"
         class="rounded uppercase w-10 border-2 font-roboto-condensed font-bold text-sm text-red-500 border-red-500 hover:text-white hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
         :disabled="isDisabled"
         @click="$emit('click:deny')"
@@ -53,7 +53,7 @@ const props = defineProps({
     type: String,
     default: undefined,
   },
-  applied: {
+  isApplied: {
     type: Boolean,
     required: true,
   },
