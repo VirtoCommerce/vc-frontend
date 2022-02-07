@@ -1,25 +1,13 @@
 #import "../../../fragments/moneyFields.graphql"
 
- query getAvailPaymentMethods(
-    $storeId: String!
-    $userId: String!
-    $currencyCode: String!
-    $cultureName: String
-  ) {
-    cart(
-      storeId: $storeId
-      userId: $userId
-      currencyCode: $currencyCode
-      cultureName: $cultureName
-    ) {
-
-      availablePaymentMethods {
-        code
-        logoUrl
-        price {
-          ...moneyFields
-        }
+query getAvailPaymentMethods($storeId: String!, $userId: String!, $currencyCode: String!, $cultureName: String) {
+  cart(storeId: $storeId, userId: $userId, currencyCode: $currencyCode, cultureName: $cultureName) {
+    availablePaymentMethods {
+      code
+      logoUrl
+      price {
+        ...moneyFields
       }
-
     }
   }
+}

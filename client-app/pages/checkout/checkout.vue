@@ -20,7 +20,7 @@
                   v-for="item in cartItems"
                   :key="item?.id"
                   :ref="setProductCardRef"
-                  :line-item="item!"
+                  :line-item="item"
                   @update:quantity="updateItemQuantity"
                   @remove:item="removeCartItem"
                 ></ProductCard>

@@ -3,7 +3,7 @@ import { currentUserId, storeId } from "@core/constants";
 import mutationDocument from "./changeCartCommentMutation.graphql";
 
 export default async function changeCartComment(comment: string): Promise<void> {
-  const { data } = await client.mutate({
+  await client.mutate({
     mutation: mutationDocument,
     variables: {
       command: {

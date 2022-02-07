@@ -1,11 +1,10 @@
 import client from "@core/api/graphql/graphql-client";
 import { InputPaymentType } from "@core/api/graphql/types";
-import { currencyCode, currentUserId, locale, storeId } from "@core/constants";
+import { currentUserId, storeId } from "@core/constants";
 import mutationDocument from "./addOrUpdateCartPaymentMutation.graphql";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function addOrUpdateCartPayment(payment: InputPaymentType): Promise<void> {
-  const { data } = await client.mutate({
+export default async function addOrUpdateCartPayment(payment: InputPaymentType): Promise<void> {
+  await client.mutate({
     mutation: mutationDocument,
     variables: {
       command: {
@@ -16,4 +15,3 @@ async function addOrUpdateCartPayment(payment: InputPaymentType): Promise<void> 
     },
   });
 }
-export default addOrUpdateCartPayment;
