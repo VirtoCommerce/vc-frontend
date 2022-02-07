@@ -63,7 +63,7 @@
             <VcButton
               v-if="!isInputDisabled"
               size="sm"
-              outline
+              is-outline
               class="uppercase px-2 font-bold"
               @click="updateQuantity"
             >
@@ -72,7 +72,7 @@
             <VcButton
               size="sm"
               kind="secondary"
-              outline
+              is-outline
               class="uppercase px-2"
               @click="$emit('remove:item', lineItem.id)"
               >Remove</VcButton

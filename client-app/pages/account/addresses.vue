@@ -12,7 +12,7 @@
           <div class="flex justify-between items-center mx-5 lg:mx-0">
             <h2 class="text-gray-800 text-3xl font-bold uppercase">{{ title }}</h2>
 
-            <VcButton v-if="!editingMode" class="px-3 uppercase border" size="sm" outline @click="openEditMode()">
+            <VcButton v-if="!editingMode" class="px-3 uppercase border" size="sm" is-outline @click="openEditMode()">
               {{ isMobile ? "Add new" : "Add new address" }}
             </VcButton>
           </div>
@@ -33,9 +33,9 @@
                   <VcButton
                     kind="secondary"
                     :size="isMobile ? 'md' : 'lg'"
-                    :disabled="saveAddressLoading"
+                    :is-disabled="saveAddressLoading"
                     class="uppercase w-32 sm:w-auto sm:px-12"
-                    outline
+                    is-outline
                     @click="closeEditMode"
                   >
                     Cancel
@@ -43,8 +43,8 @@
 
                   <VcButton
                     :size="isMobile ? 'md' : 'lg'"
-                    :disabled="!dirty"
-                    :waiting="saveAddressLoading"
+                    :is-disabled="!dirty"
+                    :is-waiting="saveAddressLoading"
                     class="uppercase flex-grow sm:flex-none sm:px-16"
                     is-submit
                   >

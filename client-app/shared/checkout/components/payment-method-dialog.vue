@@ -4,7 +4,7 @@
       <VcButton
         class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-5"
         kind="secondary"
-        outline
+        is-outline
         @click="close"
       >
         Cancel
@@ -32,7 +32,7 @@
           >
             <i class="fas fa-check"></i>
           </div>
-          <VcButton v-else outline class="uppercase flex-grow px-3" @click="setMethod(method)"> Select </VcButton>
+          <VcButton v-else is-outline class="uppercase flex-grow px-3" @click="setMethod(method)"> Select </VcButton>
         </div>
       </div>
     </template>

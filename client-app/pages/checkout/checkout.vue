@@ -67,7 +67,7 @@
                     <div>
                       <VcButton
                         size="sm"
-                        outline
+                        is-outline
                         class="px-3 self-start uppercase font-bold"
                         @click="selectShippingAddressDialog"
                         >Change</VcButton
@@ -82,7 +82,7 @@
                     <div>
                       <VcButton
                         size="sm"
-                        outline
+                        is-outline
                         class="px-3 self-start uppercase font-bold"
                         @click="selectShippingAddressDialog"
                         >New address</VcButton
@@ -106,7 +106,7 @@
                   <div>
                     <VcButton
                       size="sm"
-                      outline
+                      is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="showShipmentMethodDialog"
                       >Change</VcButton
@@ -144,7 +144,7 @@
                   <div>
                     <VcButton
                       size="sm"
-                      outline
+                      is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="selectBillingAddressDialog"
                       >New address</VcButton
@@ -172,7 +172,7 @@
                   <div>
                     <VcButton
                       size="sm"
-                      outline
+                      is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="selectBillingAddressDialog"
                       >Change</VcButton
@@ -190,7 +190,7 @@
                   <div>
                     <VcButton
                       size="sm"
-                      outline
+                      is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="showPaymentMethodDialog"
                       >Change</VcButton
@@ -221,20 +221,44 @@
             <!-- Order summary -->
             <OrderSummary :cart="cart">
               <template #header>
+                <!-- Purchase order -->
+                <VcActionInput
+                  v-model="purchaseOrderNumber"
+                  class="mb-5"
+                  label="Purchase order"
+                  placeholder="Enter purchase order number"
+                  :is-applied="purchaseOrderNumberApplied"
+                  :is-disabled="loading"
+                  :max-length="128"
+                  @click:apply="setPurchaseOrderNumber"
+                  @click:deny="removePurchaseOrderNumber"
+                  @update:model-value="couponValidationError = ''"
+                ></VcActionInput>
+
                 <!-- Promotion code -->
-                <PromoCode
+                <VcActionInput
                   v-model="cartCoupon"
-                  :cart-coupon-applied="cartCouponApplied"
-                  :coupon-validation-error="couponValidationError"
-                  @click:coupon-used="useCoupon"
-                  @click:coupon-removed="removeCoupon"
-                ></PromoCode>
+                  :class="[couponValidationError ? 'mb-0' : 'mb-8']"
+                  label="Promotion code"
+                  placeholder="Enter your code"
+                  :is-applied="cartCouponApplied"
+                  :error-message="couponValidationError"
+                  :is-disabled="loading"
+                  @click:apply="useCoupon"
+                  @click:deny="removeCoupon"
+                  @update:model-value="couponValidationError = ''"
+                ></VcActionInput>
               </template>
               <template #footer>
                 <p class="mt-8 mb-3 text-xs font-normal text-gray-400">
                   Availability, shipping, tax & promotions are not final until you complete your order.
                 </p>
-                <VcButton class="uppercase w-full" :disabled="!isValidCheckout" :waiting="loading" @click="createOrder">
+                <VcButton
+                  class="uppercase w-full"
+                  :is-disabled="!isValidCheckout"
+                  :is-waiting="loading"
+                  @click="createOrder"
+                >
                   Place order
                 </VcButton>
               </template>
@@ -253,7 +277,6 @@ import {
   CheckoutSection,
   OrderSummary,
   ProductCard,
-  PromoCode,
   EmptyCart,
   ThankYou,
   ShippingMethodDialog,
@@ -261,7 +284,7 @@ import {
   ShippingAddressDialog,
   CreateAddressDialog,
 } from "@/shared/checkout";
-import { VcTextArea, VcImage, VcPriceDisplay, VcPagination, VcButton } from "@/components";
+import { VcTextArea, VcImage, VcPriceDisplay, VcPagination, VcButton, VcActionInput } from "@/components";
 import { useCart, useCheckout } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import { computed, onBeforeUpdate, onMounted, ref } from "vue";
@@ -285,6 +308,7 @@ const {
   changeComment,
   updateShipment,
   updatePayment,
+  updatePurchaseOrderNumber,
 } = useCart();
 
 const { addOrUpdateAddresses } = useUserAddresses({ user });
@@ -296,8 +320,11 @@ const { openPopup, closePopup } = usePopup();
 const productCardRefs = ref<any[]>([]);
 
 const cartCoupon = ref("");
-const couponValidationError = ref(false);
+const couponValidationError = ref("");
 const cartCouponApplied = ref(false);
+
+const purchaseOrderNumber = ref("");
+const purchaseOrderNumberApplied = computed(() => !!cart.value.purchaseOrderNumber);
 
 const billingSameAsShipping = ref(true);
 
@@ -353,11 +380,11 @@ const useCoupon = async () => {
 
   if (validationResult) {
     await addCartCoupon(cartCoupon.value).then(() => {
-      couponValidationError.value = false;
+      couponValidationError.value = "";
       cartCouponApplied.value = true;
     });
   } else {
-    couponValidationError.value = true;
+    couponValidationError.value = "This code did not match any active coupon. Was it entered correctly?";
   }
 };
 
@@ -366,6 +393,15 @@ const removeCoupon = async () => {
     cartCoupon.value = "";
     cartCouponApplied.value = false;
   });
+};
+
+const setPurchaseOrderNumber = async () => {
+  await updatePurchaseOrderNumber(purchaseOrderNumber.value);
+};
+
+const removePurchaseOrderNumber = async () => {
+  purchaseOrderNumber.value = "";
+  await updatePurchaseOrderNumber("");
 };
 
 const createOrder = async () => {
@@ -398,6 +434,8 @@ onMounted(async () => {
       cartCouponApplied.value = true;
     }
     cartComment.value = cart.value.comment || "";
+
+    purchaseOrderNumber.value = cart.value.purchaseOrderNumber || "";
   });
 });
 
