@@ -12,7 +12,7 @@
       pattern="\d*"
       :max="maxQty"
       :min="minQty"
-      class="appearance-none border rounded-none rounded-l border-r-0 flex-1 w-full text-base lg:text-sm border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9"
+      class="appearance-none border rounded-none rounded-l border-r-0 flex-1 w-full text-base lg:text-sm border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9 min-w-0"
       :class="[!!errorMessage ? 'border-red-500 focus:border-red-500 border-r -mr-px z-10' : '']"
       :disabled="disabled"
       @input="onInput"
