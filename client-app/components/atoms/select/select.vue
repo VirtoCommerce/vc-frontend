@@ -28,11 +28,7 @@
         </span>
       </button>
 
-      <transition
-        :leave-active-class="`transition duration-${transitionDuration} ease-in`"
-        leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
-      >
+      <transition :leave-active-class="`transition duration-${transitionDuration} ease-in`" leave-to-class="opacity-0">
         <div
           v-show="open"
           class="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-52 rounded border border-gray-300 overflow-hidden"
