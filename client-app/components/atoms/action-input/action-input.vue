@@ -4,7 +4,7 @@
     <div class="flex space-x-3">
       <input
         v-model="value"
-        class="border rounded text-sm leading-8 flex-1 border-gray-300 h-8 px-2 outline-none focus:border-gray-400 min-w-0"
+        class="border rounded text-base leading-8 flex-1 border-gray-300 h-8 px-2 outline-none focus:border-gray-400 min-w-0"
         type="text"
         :placeholder="placeholder"
         :disabled="isApplied || isDisabled"
