@@ -8,7 +8,7 @@
     <div v-click-outside="hideList" class="relative select-none">
       <button
         type="button"
-        class="relative truncate text-left h-11 w-full appearance-none rounded pl-3 pr-7 py-3 text-base leading-none box-border border border-gray-300 outline-none disabled:bg-gray-50 disabled:cursor-not-allowed focus:border-gray-400"
+        class="relative truncate text-left h-11 w-full appearance-none rounded pl-3 pr-7 py-3 text-base leading-none box-border border border-gray-300 outline-none bg-white disabled:bg-gray-50 disabled:cursor-not-allowed focus:border-gray-400"
         :disabled="isDisabled"
         @click="toggle"
       >
@@ -80,7 +80,6 @@ import { computed, PropType, ref, shallowRef } from "vue";
 const props = defineProps({
   label: {
     type: String,
-    required: true,
   },
 
   isRequired: {

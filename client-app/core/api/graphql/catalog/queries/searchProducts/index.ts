@@ -1,31 +1,39 @@
 import client from "@core/api/graphql/graphql-client";
 import { ProductConnection, Query, QueryProductsArgs } from "@core/api/graphql/types";
-import { currencyCode, currentUserId, locale, storeId, catalogId } from "@core/constants";
+import { currencyCode, currentUserId, locale, storeId, catalogId, defaultPageSize } from "@core/constants";
 import searchProductsQueryDocument from "./searchProductsQuery.graphql";
 import { ProductsSearchParams } from "@/shared/catalog";
 
-export default async function searchProducts({
-  itemsPerPage = 20,
-  page = 1,
-  categoryId,
-  filter,
-  sort,
-  query,
-  fuzzy,
-  fuzzyLevel,
-}: ProductsSearchParams): Promise<ProductConnection> {
+export default async function searchProducts(
+  {
+    itemsPerPage = defaultPageSize,
+    page = 1,
+    categoryId,
+    filter,
+    sort,
+    keyword,
+    fuzzy,
+    fuzzyLevel,
+  }: Partial<ProductsSearchParams>,
+  options: {
+    // @default false
+    withFacets?: boolean;
+  } = {}
+): Promise<ProductConnection> {
+  const { withFacets = false } = options;
   const filterString = [categoryId ? `category.subtree:${catalogId}/${categoryId}` : "", filter]
     .filter(Boolean)
     .join(" ");
 
-  const { data } = await client.query<Required<Pick<Query, "products">>, QueryProductsArgs>({
+  const { data } = await client.query<Required<Pick<Query, "products">>, QueryProductsArgs & { withFacets: boolean }>({
     query: searchProductsQueryDocument,
     variables: {
       storeId,
       sort,
-      query,
       fuzzy,
       fuzzyLevel,
+      withFacets,
+      query: keyword,
       userId: currentUserId,
       currencyCode: currencyCode,
       filter: filterString,
