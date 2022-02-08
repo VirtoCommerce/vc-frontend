@@ -1,0 +1,47 @@
+# v1.1
+
+name: Deploy to environments
+on:
+  pull_request:
+    paths-ignore:
+      - '.github/**'
+      - 'docs/**'
+      - 'build/**'
+      - 'README.md'
+      - 'LICENSE'
+      - '**/argoDeploy.json'
+    branches: [dev]
+    types: [labeled, closed]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+
+    steps:
+
+    - name: Read deployment config
+      if: contains(github.event.pull_request.labels.*.name, 'deploy-demo') || contains(github.event.pull_request.labels.*.name, 'deploy-qa')
+      uses: VirtoCommerce/vc-github-actions/get-deploy-param@master
+      id: deployConfig
+      with:
+        envName: 'qa'
+        deployConfigPath: '.deployment/storefront-app/argoDeploy.json'
+
+
+    - name: Gets artifact link
+      if: contains(github.event.pull_request.labels.*.name, 'deploy-demo') || contains(github.event.pull_request.labels.*.name, 'deploy-qa')
+      uses: VirtoCommerce/vc-github-actions/get-artifact-link@master
+      id: artifactLink
+
+    - name: Create deploy PR in QA
+      if: github.event.action != 'closed' && contains(github.event.pull_request.labels.*.name, 'deploy-qa') && !contains(github.event.pull_request.labels.*.name, 'deploy-demo')
+      uses: VirtoCommerce/vc-github-actions/create-deploy-pr@master
+      with:
+        deployRepo: ${{ steps.deployConfig.outputs.deployRepo }}
+        deployBranch: ${{ fromJSON(steps.deployConfig.outputs.deployConfig).qa.deployBranch }}
+        artifactKey: ${{ steps.deployConfig.outputs.artifactKey }}
+        artifactUrl: ${{ steps.artifactLink.outputs.artifactUrl }}
+        taskNumber: ${{ steps.artifactLink.outputs.qaTaskNumber }}
+        cmPath: ${{ steps.deployConfig.outputs.cmPath }}
