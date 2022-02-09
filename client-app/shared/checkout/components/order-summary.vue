@@ -34,7 +34,7 @@
               <li>
                 <div class="flex justify-between items-center">
                   <span class="text-sm">{{ discount?.description }}</span>
-                  <span>{{ cart.currency?.symbol }}{{ typeof discount?.amount === 'object' && discount?.amount !== null ? discount?.amount.amount : discount?.amount }}</span>
+                  <span>{{ cart.currency?.symbol }}{{ getDiscountAmmount(discount) }}</span>
                 </div>
               </li>
             </ul>
@@ -61,8 +61,8 @@
 
 <script setup lang="ts">
 import { VcPriceDisplay } from "@/components";
-import { CartType, CustomerOrderType } from "@/core/api/graphql/types";
-import { PropType, ref } from "vue";
+import { CartType, CustomerOrderType, DiscountType, OrderDiscountType } from "@/core/api/graphql/types";
+import { computed, PropType, ref } from "vue";
 
 defineProps({
   cart: {
@@ -72,6 +72,10 @@ defineProps({
 });
 
 const discountsCollapsed = ref(false);
+
+const getDiscountAmmount = (discount: DiscountType | OrderDiscountType) => {
+  return typeof discount?.amount === "object" && discount?.amount !== null ? discount?.amount.amount : discount?.amount;
+};
 </script>
 
 <style scoped></style>
