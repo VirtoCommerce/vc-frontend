@@ -118,32 +118,23 @@
 
 <script setup lang="ts">
 import { CheckoutSection, OrderSummary, ProductCard } from "@/shared/checkout";
-import { CustomerOrderType } from "@/core/api/graphql/types";
 import { computed, onMounted, PropType, Ref, ref } from "vue";
 import { VcCard, VcImage, VcPagination, VcButton } from "@/components";
-import { getMyOrder } from "@/core/api/graphql/account";
 import { useRoute } from "vue-router";
+import { useUserOrder } from "@/shared/account";
 import moment from "moment";
 
-const route = useRoute();
+const { itemsPerPage, pages, order, loadOrder } = useUserOrder();
 
-const order: Ref<CustomerOrderType | null> = ref(null);
+const route = useRoute();
 const orderId = ref(route.params.id as string);
 
-const itemsPerPage = ref(4);
 const page = ref(1);
-const pages = computed(() => {
-  if (order.value) {
-    return Math.ceil(order.value?.items.length / itemsPerPage.value);
-  } else {
-    return 0;
-  }
-});
 const orderItems = computed(() =>
   order.value?.items?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
 );
 
 onMounted(async () => {
-  order.value = await getMyOrder(orderId.value);
+  await loadOrder(orderId.value);
 });
 </script>
