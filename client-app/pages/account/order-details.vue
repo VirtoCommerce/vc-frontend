@@ -104,7 +104,9 @@
               <p><span class="font-extrabold">Payment #:</span> {{ order?.inPayments?.[0]?.number }}</p>
               <p><span class="font-extrabold">Payment type:</span> {{ order?.inPayments?.[0]?.gatewayCode }}</p>
               <div class="mt-3">
-                <VcButton class="px-2 py-1 uppercase text-xs" size="xs" is-outline :is-disabled="true">View invoice</VcButton>
+                <VcButton class="px-2 py-1 uppercase text-xs" size="xs" is-outline :is-disabled="true"
+                  >View invoice</VcButton
+                >
               </div>
             </div>
           </VcCard>
@@ -130,7 +132,13 @@ const orderId = ref(route.params.id as string);
 
 const itemsPerPage = ref(4);
 const page = ref(1);
-const pages = computed(() => Math.ceil(order.value?.items?.length / itemsPerPage.value));
+const pages = computed(() => {
+  if (order.value) {
+    return Math.ceil(order.value?.items.length / itemsPerPage.value);
+  } else {
+    return 0;
+  }
+});
 const orderItems = computed(() =>
   order.value?.items?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
 );
