@@ -57,19 +57,16 @@
           <VcButton class="uppercase w-full mb-5" :is-disabled="true">Reorder all</VcButton>
           <VcCard title="Billing address" :is-collapsible="true" class="mb-5">
             <div class="flex flex-col text-sm">
-              <span class="font-extrabold"
-                >{{ order?.inPayments?.[0]?.billingAddress?.firstName }}
-                {{ order?.inPayments?.[0]?.billingAddress?.lastName }}</span
-              >
+              <span class="font-extrabold">{{ billingAddress?.firstName }} {{ billingAddress?.lastName }}</span>
               <p>
-                {{ order?.inPayments?.[0]?.billingAddress?.countryCode }}
-                {{ order?.inPayments?.[0]?.billingAddress?.regionName }}
-                {{ order?.inPayments?.[0]?.billingAddress?.city }}
-                {{ order?.inPayments?.[0]?.billingAddress?.line1 }}
-                {{ order?.inPayments?.[0]?.billingAddress?.postalCode }}
+                {{ billingAddress?.countryCode }}
+                {{ billingAddress?.regionName }}
+                {{ billingAddress?.city }}
+                {{ billingAddress?.line1 }}
+                {{ billingAddress?.postalCode }}
               </p>
-              <p><span class="font-extrabold">Phone:</span> {{ order?.inPayments?.[0]?.billingAddress?.phone }}</p>
-              <p><span class="font-extrabold">Email:</span> {{ order?.inPayments?.[0]?.billingAddress?.email }}</p>
+              <p><span class="font-extrabold">Phone:</span> {{ billingAddress?.phone }}</p>
+              <p><span class="font-extrabold">Email:</span> {{ billingAddress?.email }}</p>
             </div>
           </VcCard>
           <VcCard title="Shipping method" :is-collapsible="true" class="mb-5">
@@ -84,19 +81,16 @@
           </VcCard>
           <VcCard title="Shipping address" :is-collapsible="true" class="mb-5">
             <div class="flex flex-col text-sm">
-              <span class="font-extrabold"
-                >{{ order?.shipments?.[0]?.deliveryAddress?.firstName }}
-                {{ order?.shipments?.[0]?.deliveryAddress?.lastName }}</span
-              >
+              <span class="font-extrabold">{{ deliveryAddress?.firstName }} {{ deliveryAddress?.lastName }}</span>
               <p>
-                {{ order?.shipments?.[0]?.deliveryAddress?.countryCode }}
-                {{ order?.shipments?.[0]?.deliveryAddress?.regionName }}
-                {{ order?.shipments?.[0]?.deliveryAddress?.city }}
-                {{ order?.shipments?.[0]?.deliveryAddress?.line1 }}
-                {{ order?.shipments?.[0]?.deliveryAddress?.postalCode }}
+                {{ deliveryAddress?.countryCode }}
+                {{ deliveryAddress?.regionName }}
+                {{ deliveryAddress?.city }}
+                {{ deliveryAddress?.line1 }}
+                {{ deliveryAddress?.postalCode }}
               </p>
-              <p><span class="font-extrabold">Phone:</span> {{ order?.shipments?.[0]?.deliveryAddress?.phone }}</p>
-              <p><span class="font-extrabold">Email:</span> {{ order?.shipments?.[0]?.deliveryAddress?.email }}</p>
+              <p><span class="font-extrabold">Phone:</span> {{ deliveryAddress?.phone }}</p>
+              <p><span class="font-extrabold">Email:</span> {{ deliveryAddress?.email }}</p>
             </div>
           </VcCard>
           <VcCard title="Payment details" :is-collapsible="true" class="mb-5">
@@ -118,13 +112,13 @@
 
 <script setup lang="ts">
 import { CheckoutSection, OrderSummary, ProductCard } from "@/shared/checkout";
-import { computed, onMounted, PropType, Ref, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { VcCard, VcImage, VcPagination, VcButton } from "@/components";
 import { useRoute } from "vue-router";
 import { useUserOrder } from "@/shared/account";
 import moment from "moment";
 
-const { itemsPerPage, pages, order, loadOrder } = useUserOrder();
+const { itemsPerPage, pages, order, deliveryAddress, billingAddress, loadOrder } = useUserOrder();
 
 const route = useRoute();
 const orderId = ref(route.params.id as string);

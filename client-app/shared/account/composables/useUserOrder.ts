@@ -31,6 +31,8 @@ export default () => {
     pages: computed(() => pages.value),
     itemsPerPage: computed(() => itemsPerPage.value),
     order: computed(() => order.value),
+    deliveryAddress: computed(() => order.value?.shipments?.[0]?.deliveryAddress),
+    billingAddress: computed(() => order.value?.inPayments?.[0]?.billingAddress),
     loadOrder,
   };
 };
