@@ -1,39 +1,31 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "ESNext",
     "baseUrl": ".",
     "useDefineForClassFields": true,
-    "module": "esnext",
+    "module": "ESNext",
     "moduleResolution": "node",
     "strict": true,
     "jsx": "preserve",
     "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "lib": [
-      "esnext",
-      "dom"
-    ],
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "lib": ["ESNext", "DOM"],
     "paths": {
-      "@/*": [
-        "client-app/*"
-      ],
-      "@core/*": [
-        "client-app/core/*"
-      ]
+      "@/*": ["client-app/*"],
+      "@core/*": ["client-app/core/*"]
     }
   },
   "include": [
     "client-app/**/*.ts",
+    "client-app/**/*.json",
     "client-app/**/*.d.ts",
     "client-app/**/*.tsx",
     "client-app/**/*.vue",
     "client-app/**/*.graphql"
   ],
-  "exclude": [
-    "_references/**/*.ts",
-    "_references/**/*.d.ts",
-    "_references/**/*.tsx",
-    "_references/**/*.vue"
-  ]
+  "exclude": ["node_modules", "**/*.js", "_references"]
 }

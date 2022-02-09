@@ -6,3 +6,4 @@
 <script src="{{ 'bundle/index.js' | static_asset_url | append_version }}" type="module"></script>
 {% endif %}
 {{ 'bundle/index.css' | static_asset_url | append_version | stylesheet_tag }}
+{{ 'index.css' | asset_url | append_version | stylesheet_tag }}

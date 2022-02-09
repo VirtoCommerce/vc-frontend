@@ -57,21 +57,21 @@
           ></VcInput>
         </div>
         <div class="mt-6 lg:mt-4">
-          <Alert v-for="error in commonErrors" :key="error" class="mb-4 text-xs">{{ error }}</Alert>
-          <VcButton is-submit size="lg" class="uppercase mt-6 lg:mt-3 w-full lg:w-48" :waiting="loading"
+          <VcAlert v-for="error in commonErrors" :key="error" class="mb-4 text-xs">{{ error }}</VcAlert>
+          <VcButton is-submit size="lg" class="uppercase mt-6 lg:mt-3 w-full lg:w-48" :is-waiting="loading"
             >Register</VcButton
           >
         </div>
       </form>
     </template>
     <template #right>
-      <img class="max-w-md" src="/assets/static/images/sign-up/image.webp" />
+      <VcImage class="max-w-md" src="/static/images/sign-up/image.webp" />
     </template>
   </TwoColumn>
 </template>
 
 <script setup lang="ts">
-import { Alert, Input as VcInput, Button as VcButton } from "@/components";
+import { VcAlert, VcInput, VcImage, VcButton } from "@/components";
 import { useUser, RegistationSuccessDialog } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 import { useForm, useField } from "vee-validate";

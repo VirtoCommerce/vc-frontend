@@ -21,7 +21,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     build: {
-      outDir: "assets/static/bundle",
+      outDir: "assets",
       assetsDir: "./",
       emptyOutDir: true,
       watch: mode === "development" ? {} : null,
@@ -36,6 +36,7 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
+    publicDir: "./client-app/public",
     server: {
       proxy: {
         "/storefrontapi": `${process.env.APP_BACKEND_URL}`,

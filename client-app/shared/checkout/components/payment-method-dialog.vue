@@ -1,10 +1,10 @@
 <template>
-  <Popup title="Select Payment method">
+  <VcPopup title="Select Payment method">
     <template #actions="{ close }">
       <VcButton
         class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-5"
         kind="secondary"
-        outline
+        is-outline
         @click="close"
       >
         Cancel
@@ -21,7 +21,7 @@
     </template>
     <template v-for="method in availableMethods" :key="method.code">
       <div class="border-b border-gray-300 px-5 py-6 lg:py-4 flex justify-between items-center space-x-4">
-        <img :src="method.logoUrl || '/static/images/checkout/invoice.svg'" class="h-10 w-10 object-center" />
+        <VcImage :src="method.logoUrl" class="h-10 w-10 object-center" />
         <div class="flex-grow overflow-ellipsis overflow-hidden">
           {{ method.code }}
         </div>
@@ -32,15 +32,15 @@
           >
             <i class="fas fa-check"></i>
           </div>
-          <VcButton v-else outline class="uppercase flex-grow px-3" @click="setMethod(method)"> Select </VcButton>
+          <VcButton v-else is-outline class="uppercase flex-grow px-3" @click="setMethod(method)"> Select </VcButton>
         </div>
       </div>
     </template>
-  </Popup>
+  </VcPopup>
 </template>
 
 <script setup lang="ts">
-import { Popup, Button as VcButton } from "@/components";
+import { VcPopup, VcImage, VcButton } from "@/components";
 import { PaymentMethodType } from "@/core/api/graphql/types";
 import { PropType, ref } from "vue";
 

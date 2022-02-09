@@ -20,19 +20,19 @@
                   v-for="item in cartItems"
                   :key="item?.id"
                   :ref="setProductCardRef"
-                  :line-item="item!"
+                  :line-item="item"
                   @update:quantity="updateItemQuantity"
                   @remove:item="removeCartItem"
                 ></ProductCard>
 
                 <div class="py-8 lg:flex lg:items-center lg:px-5">
-                  <Pagination
+                  <VcPagination
                     v-if="pages > 1"
                     v-model:page="page"
                     :pages="pages"
                     class="mb-3 lg:mb-0"
                     @update:page="page = $event"
-                  ></Pagination>
+                  ></VcPagination>
                   <p class="text-center text-sm lg:ml-auto">
                     If you changed multiple quantities,
                     <span class="text-cyan-700 font-extrabold cursor-pointer" @click="updateAllItems">Update All</span>
@@ -49,30 +49,68 @@
             >
               <div class="mx-5 lg:ml-28 lg:mr-11">
                 <CheckoutLabeledBlock label="Shipping address">
-                  <div>
-                    <span class="font-extrabold">Annete Black</span>
-                    <p>3891 Ranchview Dr. Richardson, California 62639</p>
-                    <p><span class="font-extrabold">Phone:</span> (684) 555-0102</p>
-                    <p><span class="font-extrabold">Email:</span> debra.holt@example.com</p>
-                  </div>
-                  <div>
-                    <VcButton size="sm" outline class="px-3 self-start uppercase font-bold" disabled>Change</VcButton>
-                  </div>
+                  <template v-if="cart.shipments && cart.shipments?.[0]?.deliveryAddress">
+                    <div>
+                      <span class="font-extrabold"
+                        >{{ cart.shipments[0].deliveryAddress?.firstName }}
+                        {{ cart.shipments[0].deliveryAddress?.lastName }}</span
+                      >
+                      <p>
+                        {{ cart.shipments[0].deliveryAddress?.countryCode }}
+                        {{ cart.shipments[0].deliveryAddress?.regionName }}
+                        {{ cart.shipments[0].deliveryAddress?.city }} {{ cart.shipments[0].deliveryAddress?.line1 }}
+                        {{ cart.shipments[0].deliveryAddress?.postalCode }}
+                      </p>
+                      <p><span class="font-extrabold">Phone:</span>{{ cart.shipments[0].deliveryAddress?.phone }}</p>
+                      <p><span class="font-extrabold">Email:</span>{{ cart.shipments[0].deliveryAddress?.email }}</p>
+                    </div>
+                    <div>
+                      <VcButton
+                        size="sm"
+                        is-outline
+                        class="px-3 self-start uppercase font-bold"
+                        @click="selectShippingAddressDialog"
+                        >Change</VcButton
+                      >
+                    </div>
+                  </template>
+                  <template v-else>
+                    <div class="text-red-500 flex items-center space-x-4">
+                      <i class="fas fa-exclamation-triangle text-2xl"></i>
+                      <span>You do not have a shipping address. Please choose/create a new one.</span>
+                    </div>
+                    <div>
+                      <VcButton
+                        size="sm"
+                        is-outline
+                        class="px-3 self-start uppercase font-bold"
+                        @click="selectShippingAddressDialog"
+                        >New address</VcButton
+                      >
+                    </div>
+                  </template>
                 </CheckoutLabeledBlock>
                 <CheckoutLabeledBlock label="Shipping method">
                   <div class="flex flex-row items-center space-x-4">
                     <template v-if="cart.shipments?.[0]?.shipmentMethodCode">
-                      <img src="/assets/static/images/checkout/fedex.svg" class="h-12 w-12" />
+                      <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" />
                       <span
-                        >{{ cart.shipments?.[0].shipmentMethodCode }} {{ cart.shipments?.[0].shipmentMethodOption }} ({{
-                          cart.shipments?.[0].price?.formattedAmount
-                        }})</span
+                        >{{ cart.shipments?.[0].shipmentMethodCode }}
+                        {{ cart.shipments?.[0].shipmentMethodOption }} (<VcPriceDisplay
+                          :value="cart.shipments?.[0].price"
+                        />)</span
                       >
                     </template>
                     <div v-else class="text-gray-600">Not defined</div>
                   </div>
                   <div>
-                    <VcButton size="sm" outline class="px-3 self-start uppercase font-bold" @click="showShipmentMethodDialog">Change</VcButton>
+                    <VcButton
+                      size="sm"
+                      is-outline
+                      class="px-3 self-start uppercase font-bold"
+                      @click="showShipmentMethodDialog"
+                      >Change</VcButton
+                    >
                   </div>
                 </CheckoutLabeledBlock>
               </div>
@@ -88,24 +126,75 @@
                 <CheckoutLabeledBlock label="Billing address">
                   <label class="flex items-center text-sm cursor-pointer">
                     <input
+                      v-model="billingSameAsShipping"
                       type="checkbox"
-                      checked="true"
-                      disabled
                       class="form-tick appearance-none w-5 h-5 border-2 border-gray-300 rounded-sm checked:bg-yellow-500 checked:border-transparent focus:outline-none cursor-pointer"
                     />
                     <span class="ml-2 font-medium">Same as shipping address</span>
                   </label>
                 </CheckoutLabeledBlock>
+                <div
+                  v-if="!billingSameAsShipping && !cart.payments?.[0]?.billingAddress"
+                  class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 mb-6 p-5 flex flex-col space-y-2 lg:space-y-0 lg:flex-row lg:items-center justify-between"
+                >
+                  <div class="text-red-500 flex items-center space-x-4">
+                    <i class="fas fa-exclamation-triangle text-2xl"></i>
+                    <span class="text-sm">You do not have a billing address. Please choose/create a new one.</span>
+                  </div>
+                  <div>
+                    <VcButton
+                      size="sm"
+                      is-outline
+                      class="px-3 self-start uppercase font-bold"
+                      @click="selectBillingAddressDialog"
+                      >New address</VcButton
+                    >
+                  </div>
+                </div>
+                <div
+                  v-else-if="!billingSameAsShipping && cart.payments?.[0]?.billingAddress"
+                  class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 mb-6 p-5 flex justify-between items-center text-sm"
+                >
+                  <div>
+                    <span class="font-extrabold"
+                      >{{ cart.payments[0].billingAddress?.firstName }}
+                      {{ cart.payments[0].billingAddress?.lastName }}</span
+                    >
+                    <p>
+                      {{ cart.payments[0].billingAddress?.countryCode }}
+                      {{ cart.payments[0].billingAddress?.regionName }}
+                      {{ cart.payments[0].billingAddress?.city }} {{ cart.payments[0].billingAddress?.line1 }}
+                      {{ cart.payments[0].billingAddress?.postalCode }}
+                    </p>
+                    <p><span class="font-extrabold">Phone:</span>{{ cart.payments[0].billingAddress?.phone }}</p>
+                    <p><span class="font-extrabold">Email:</span>{{ cart.payments[0].billingAddress?.email }}</p>
+                  </div>
+                  <div>
+                    <VcButton
+                      size="sm"
+                      is-outline
+                      class="px-3 self-start uppercase font-bold"
+                      @click="selectBillingAddressDialog"
+                      >Change</VcButton
+                    >
+                  </div>
+                </div>
                 <CheckoutLabeledBlock label="Payment method">
                   <div class="flex flex-row items-center space-x-4">
                     <template v-if="cart.payments?.[0]?.paymentGatewayCode">
-                      <img src="/assets/static/images/checkout/invoice.svg" class="h-12 w-12" />
+                      <VcImage src="/static/images/checkout/invoice.svg" class="h-12 w-12" />
                       <span>{{ cart.payments?.[0].paymentGatewayCode }}</span>
                     </template>
                     <div v-else class="text-gray-600">Not defined</div>
                   </div>
                   <div>
-                    <VcButton size="sm" outline class="px-3 self-start uppercase font-bold" @click="showPaymentMethodDialog">Change</VcButton>
+                    <VcButton
+                      size="sm"
+                      is-outline
+                      class="px-3 self-start uppercase font-bold"
+                      @click="showPaymentMethodDialog"
+                      >Change</VcButton
+                    >
                   </div>
                 </CheckoutLabeledBlock>
               </div>
@@ -119,7 +208,7 @@
             >
               <div class="mx-5 lg:ml-28 lg:mr-11">
                 <p class="font-extrabold text-base mb-1">Order comments</p>
-                <TextArea v-model="cartComment" class="resize-none" :rows="4" :max-length="1000"></TextArea>
+                <VcTextArea v-model="cartComment" class="resize-none" :rows="4" :max-length="1000" />
               </div>
             </CheckoutSection>
             <div class="shadow-inner h-1 lg:hidden"></div>
@@ -132,20 +221,44 @@
             <!-- Order summary -->
             <OrderSummary :cart="cart">
               <template #header>
+                <!-- Purchase order -->
+                <VcActionInput
+                  v-model="purchaseOrderNumber"
+                  class="mb-5"
+                  label="Purchase order"
+                  placeholder="Enter purchase order number"
+                  :is-applied="purchaseOrderNumberApplied"
+                  :is-disabled="loading"
+                  :max-length="128"
+                  @click:apply="setPurchaseOrderNumber"
+                  @click:deny="removePurchaseOrderNumber"
+                  @update:model-value="couponValidationError = ''"
+                ></VcActionInput>
+
                 <!-- Promotion code -->
-                <PromoCode
+                <VcActionInput
                   v-model="cartCoupon"
-                  :cart-coupon-applied="cartCouponApplied"
-                  :coupon-validation-error="couponValidationError"
-                  @click:coupon-used="useCoupon"
-                  @click:coupon-removed="removeCoupon"
-                ></PromoCode>
+                  :class="[couponValidationError ? 'mb-0' : 'mb-8']"
+                  label="Promotion code"
+                  placeholder="Enter your code"
+                  :is-applied="cartCouponApplied"
+                  :error-message="couponValidationError"
+                  :is-disabled="loading"
+                  @click:apply="useCoupon"
+                  @click:deny="removeCoupon"
+                  @update:model-value="couponValidationError = ''"
+                ></VcActionInput>
               </template>
               <template #footer>
                 <p class="mt-8 mb-3 text-xs font-normal text-gray-400">
                   Availability, shipping, tax & promotions are not final until you complete your order.
                 </p>
-                <VcButton class="uppercase w-full" :disabled="!isValidCheckout" :waiting="loading" @click="createOrder">
+                <VcButton
+                  class="uppercase w-full"
+                  :is-disabled="!isValidCheckout"
+                  :is-waiting="loading"
+                  @click="createOrder"
+                >
                   Place order
                 </VcButton>
               </template>
@@ -159,26 +272,30 @@
 </template>
 
 <script setup lang="ts">
-import Pagination from "@/shared/catalog/components/pagination.vue";
 import {
   CheckoutLabeledBlock,
   CheckoutSection,
   OrderSummary,
   ProductCard,
-  PromoCode,
   EmptyCart,
   ThankYou,
   ShippingMethodDialog,
   PaymentMethodDialog,
+  ShippingAddressDialog,
+  CreateAddressDialog,
 } from "@/shared/checkout";
-import { TextArea, Button as VcButton } from "@/components";
+import { VcTextArea, VcImage, VcPriceDisplay, VcPagination, VcButton, VcActionInput } from "@/components";
 import { useCart, useCheckout } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import { computed, onBeforeUpdate, onMounted, ref } from "vue";
 import _ from "lodash";
-import { PaymentMethodType, ShippingMethodType } from "@/core/api/graphql/types";
+import { InputAddressType, MemberAddressType, PaymentMethodType, ShippingMethodType } from "@/core/api/graphql/types";
+import { useUser, useUserAddresses } from "@/shared/account";
+import { AddressType } from "@/core/types";
 
+const { me: user } = useUser();
 const {
+  loading,
   cart,
   pages,
   itemsPerPage,
@@ -191,18 +308,25 @@ const {
   changeComment,
   updateShipment,
   updatePayment,
-  loading,
+  updatePurchaseOrderNumber,
 } = useCart();
 
+const { addOrUpdateAddresses } = useUserAddresses({ user });
+
 const { placeOrder } = useCheckout();
-const { openPopup } = usePopup();
+const { openPopup, closePopup } = usePopup();
 
 //TODO: change 'any' for a normal type
 const productCardRefs = ref<any[]>([]);
 
 const cartCoupon = ref("");
-const couponValidationError = ref(false);
+const couponValidationError = ref("");
 const cartCouponApplied = ref(false);
+
+const purchaseOrderNumber = ref("");
+const purchaseOrderNumberApplied = computed(() => !!cart.value.purchaseOrderNumber);
+
+const billingSameAsShipping = ref(true);
 
 const page = ref(1);
 const cartItems = computed(() =>
@@ -211,7 +335,21 @@ const cartItems = computed(() =>
 
 const cartComment = ref("");
 
-const isValidCheckout = computed(() => !(cart.value.validationErrors && cart.value.validationErrors?.length > 0));
+const isValidCheckout = computed(
+  () =>
+    !(cart.value.validationErrors && cart.value.validationErrors?.length > 0) &&
+    isValidShipment.value &&
+    isValidPayment.value
+);
+
+const isValidShipment = computed(
+  () =>
+    cart.value.shipments?.[0] &&
+    cart.value.shipments?.[0]?.shipmentMethodCode &&
+    cart.value.shipments?.[0]?.deliveryAddress
+);
+
+const isValidPayment = computed(() => cart.value.payments?.[0] && cart.value.payments?.[0]?.paymentGatewayCode);
 
 const completedOrder = ref({});
 const showThankYou = ref(false);
@@ -242,11 +380,11 @@ const useCoupon = async () => {
 
   if (validationResult) {
     await addCartCoupon(cartCoupon.value).then(() => {
-      couponValidationError.value = false;
+      couponValidationError.value = "";
       cartCouponApplied.value = true;
     });
   } else {
-    couponValidationError.value = true;
+    couponValidationError.value = "This code did not match any active coupon. Was it entered correctly?";
   }
 };
 
@@ -257,10 +395,26 @@ const removeCoupon = async () => {
   });
 };
 
+const setPurchaseOrderNumber = async () => {
+  await updatePurchaseOrderNumber(purchaseOrderNumber.value);
+};
+
+const removePurchaseOrderNumber = async () => {
+  purchaseOrderNumber.value = "";
+  await updatePurchaseOrderNumber("");
+};
+
 const createOrder = async () => {
   if (cart.value.id) {
     if (cartComment.value) {
       await changeComment(cartComment.value);
+    }
+
+    if (billingSameAsShipping.value) {
+      await updatePayment({
+        id: cart.value.payments?.[0]?.id,
+        billingAddress: { ...cart.value.shipments?.[0]?.deliveryAddress },
+      });
     }
     await placeOrder(cart.value.id).then((order) => {
       completedOrder.value = order;
@@ -280,6 +434,8 @@ onMounted(async () => {
       cartCouponApplied.value = true;
     }
     cartComment.value = cart.value.comment || "";
+
+    purchaseOrderNumber.value = cart.value.purchaseOrderNumber || "";
   });
 });
 
@@ -290,8 +446,8 @@ function showShipmentMethodDialog(): void {
       currentMethodCode: cart.value.shipments?.[0]?.shipmentMethodCode,
       currentMethodOption: cart.value.shipments?.[0]?.shipmentMethodOption,
       availableMethods: cart.value.availableShippingMethods,
-      onResult(method: ShippingMethodType) {
-        updateShipment({
+      async onResult(method: ShippingMethodType) {
+        await updateShipment({
           shipmentMethodCode: method.code,
           shipmentMethodOption: method.optionName,
           id: cart.value.shipments?.[0]?.id,
@@ -307,11 +463,79 @@ function showPaymentMethodDialog(): void {
     props: {
       currentMethodCode: cart.value.payments?.[0]?.paymentGatewayCode,
       availableMethods: cart.value.availablePaymentMethods,
-      onResult(method: PaymentMethodType) {
-        updatePayment({
+      async onResult(method: PaymentMethodType) {
+        await updatePayment({
           paymentGatewayCode: method.code,
           id: cart.value.payments?.[0]?.id,
         });
+      },
+    },
+  });
+}
+
+function selectShippingAddressDialog(): void {
+  openPopup({
+    component: ShippingAddressDialog,
+    props: {
+      currentAddress: cart.value.shipments?.[0]?.deliveryAddress,
+      async onResult(address: InputAddressType) {
+        const convertedAddress = _.omit(address, ["isDefault"]);
+        await updateShipment({
+          id: cart.value.shipments?.[0]?.id,
+          deliveryAddress: { ...convertedAddress },
+        });
+      },
+      onAddNewAddress() {
+        setTimeout(() => {
+          addNewAddressDialog(AddressType.Shipping);
+        }, 500);
+      },
+    },
+  });
+}
+
+function selectBillingAddressDialog(): void {
+  openPopup({
+    component: ShippingAddressDialog,
+    props: {
+      currentAddress: cart.value.payments?.[0]?.billingAddress,
+      async onResult(address: InputAddressType) {
+        const convertedAddress = _.omit(address, ["isDefault"]);
+        await updatePayment({
+          id: cart.value.payments?.[0]?.id,
+          billingAddress: { ...convertedAddress },
+        });
+      },
+      onAddNewAddress() {
+        setTimeout(() => {
+          addNewAddressDialog(AddressType.Billing);
+        }, 500);
+      },
+    },
+  });
+}
+
+function addNewAddressDialog(addressType: AddressType.Billing | AddressType.Shipping): void {
+  openPopup({
+    component: CreateAddressDialog,
+    props: {
+      async onResult(address: MemberAddressType) {
+        closePopup();
+        const newAddress = { ...address, addressType: AddressType.BillingAndShipping };
+        await addOrUpdateAddresses([newAddress]);
+        const convertedAddress = _.omit(newAddress, ["isDefault"]);
+
+        if (addressType.valueOf() === AddressType.Billing) {
+          updatePayment({
+            id: cart.value.payments?.[0]?.id,
+            billingAddress: { ...convertedAddress },
+          });
+        } else {
+          updateShipment({
+            id: cart.value.shipments?.[0]?.id,
+            deliveryAddress: { ...convertedAddress },
+          });
+        }
       },
     },
   });

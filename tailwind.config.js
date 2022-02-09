@@ -1,8 +1,7 @@
 const colors = require("tailwindcss/colors");
 
 module.exports = {
-  purge: ["./index.html", "./client-app/**/*.{vue,js,ts,jsx,tsx}"],
-  darkMode: false,
+  content: ["./index.html", "./client-app/**/*.{vue,js,ts,jsx,tsx}"],
   theme: {
     fontFamily: {
       lato: ["Lato", "sans-serif"],
@@ -11,6 +10,7 @@ module.exports = {
     },
     extend: {
       colors: {
+        // Generated with https://www.tailwindshades.com/
         yellow: {
           500: "#F0AD4E",
         },
@@ -18,30 +18,26 @@ module.exports = {
           500: "#FF4A4A",
         },
         cyan: {
-          ...colors.cyan,
           500: "#5294AD",
           700: "#00739E",
         },
-        blueGray: {
-          ...colors.blueGray,
-          300: "#C2C9E0",
+
+        primary: {
+          DEFAULT: "#F0AD4E",
         },
-        trueGray: colors.trueGray,
-        warmGray: colors.warmGray,
+        secondary: {
+          DEFAULT: "#151B1E",
+        },
+        focus: {
+          DEFAULT: "#00739E",
+        },
+
+        info: "#292D3B",
+        success: "#479048",
+        warning: "#F0AD4E",
+        danger: "#EC6A5E",
       },
     },
-  },
-  variants: {
-    extend: {
-      backgroundColor: ["checked"],
-      borderColor: ["checked"],
-      cursor: ["disabled"],
-      margin: ["first", "last"],
-      padding: ["first", "last"],
-      ringWidth: ["hover", "active"],
-      ringColor: ["hover", "active"],
-    },
-    opacity: ({ after }) => after(["disabled"]),
   },
   plugins: [require("@tailwindcss/line-clamp")],
 };

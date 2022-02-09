@@ -3,8 +3,8 @@
     <!-- Product image -->
     <router-link :to="`/product/${product.id}`" class="cursor-pointer">
       <div class="square relative flex flex-col justify-center items-center border border-gray-100">
-        <img
-          :src="product.imgSrc || '/static/images/common/no-image.svg'"
+        <VcImage
+          :src="product.imgSrc"
           :alt="product.name"
           class="absolute top-0 w-full h-full object-cover object-center"
         />
@@ -57,7 +57,7 @@
       <div class="flex flex-col md:flex-row items-baseline text-sm mb-4">
         <div class="w-1/2 font-bold text-xs">Your price</div>
         <div class="md:w-1/2">
-          <span class="text-green-700 font-extrabold">{{ product.price?.actual?.formattedAmount }}</span> / each
+          <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span> / each
         </div>
       </div>
 
@@ -68,6 +68,7 @@
 
 <script setup lang="ts">
 import { PropType } from "vue";
+import { VcImage, VcPriceDisplay } from "@/components";
 import { Product } from "@/core/api/graphql/types";
 
 defineProps({

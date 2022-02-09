@@ -4,7 +4,11 @@
       class="flex flex-grow flex-col lg:flex-row -mx-5 md:mx-0 lg:space-x-12 mb-6 p-6 bg-white border border-gray-100 rounded-md shadow-sm"
     >
       <div class="lg:w-1/3 mb-8 lg:mb-0">
-        <ImageGallery :src="product.imgSrc ?? ''" :images="product.images ?? []" :is-mobile="isMobile"></ImageGallery>
+        <VcImageGallery
+          :src="product.imgSrc ?? ''"
+          :images="product.images ?? []"
+          :is-mobile="isMobile"
+        ></VcImageGallery>
         <!-- Compare checkbox -->
         <div class="mt-8 hidden md:flex items-center text-sm cursor-pointer">
           <input
@@ -40,7 +44,7 @@
           image-src="/static/images/description.svg"
           title="Description"
         >
-          <MarkdownRender :src="product?.description?.content" class="text-gray-500"></MarkdownRender>
+          <VcMarkdownRender :src="product?.description?.content" class="text-gray-500"></VcMarkdownRender>
         </ProductTitledBlock>
       </div>
     </div>
@@ -55,7 +59,7 @@
         </div>
         <div class="mt-7 md:mt-5">
           <div>
-            <VcButton to="/checkout" class="uppercase px-2">view cart</VcButton>
+            <VcButton to="/checkout" class="uppercase px-2 w-full">view cart</VcButton>
           </div>
         </div>
       </ProductPriceBlock>
@@ -67,7 +71,7 @@
 import { Product } from "@/core/api/graphql/types";
 import { PropType } from "vue";
 import { useCart } from "@/shared/cart";
-import { MarkdownRender, ImageGallery, Button as VcButton } from "@/components";
+import { VcMarkdownRender, VcImageGallery, VcButton } from "@/components";
 import { ProductProperties, ProductTitledBlock, ProductVariationCard, ProductPriceBlock } from "@/shared/catalog";
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 

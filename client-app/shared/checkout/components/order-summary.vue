@@ -12,13 +12,13 @@
       <div>
         <div class="flex justify-between font-extrabold text-base mb-4">
           <span>Subtotal</span>
-          <span>{{ cart.subTotal?.formattedAmount }}</span>
+          <span><VcPriceDisplay :value="cart.subTotal" /></span>
         </div>
         <div class="py-2 border-t border-b font-normal text-base">
           <!-- Remove when discounts will be added to the CustomerOrderType -->
           <div class="flex justify-between">
             <span class="flex items-center">Discount</span>
-            <span>{{ cart.discountTotal?.amount > 0 ? "-" : "" }}{{ cart.discountTotal?.formattedAmount }}</span>
+            <span>{{ cart.discountTotal?.amount > 0 ? "-" : "" }}<VcPriceDisplay :value="cart.discountTotal" /></span>
           </div>
           <!-- Uncomment when discounts will be added to the CustomerOrderType -->
           <!-- <div class="flex justify-between" @click="discountsCollapsed = !discountsCollapsed">
@@ -33,7 +33,7 @@
                 class="fas fa-caret-up ml-1 text-yellow-500"
               ></i>
             </span>
-            <span>{{ cart.discountTotal?.amount > 0 ? "-" : "" }}{{ cart.discountTotal?.formattedAmount }}</span>
+            <span>{{ cart.discountTotal?.amount > 0 ? "-" : "" }}<VcPriceDisplay :value="cart.discountTotal" /></span>
           </div>
           <div v-if="cart.discounts && cart.discounts.length > 0 && discountsCollapsed">
             <ul v-for="(discount, index) in cart.discounts" :key="index" class="list-disc pl-5 text-gray-400">
@@ -47,16 +47,16 @@
           </div> -->
           <div class="flex justify-between">
             <span>Tax</span>
-            <span>{{ cart.taxTotal?.amount > 0 ? "+" : "" }}{{ cart.taxTotal?.formattedAmount }}</span>
+            <span>{{ cart.taxTotal?.amount > 0 ? "+" : "" }}<VcPriceDisplay :value="cart.taxTotal" /></span>
           </div>
           <div class="flex justify-between">
             <span>Shipping cost</span>
-            <span>{{ cart.shippingTotal?.amount > 0 ? "+" : "" }}{{ cart.shippingTotal?.formattedAmount }}</span>
+            <span>{{ cart.shippingTotal?.amount > 0 ? "+" : "" }}<VcPriceDisplay :value="cart.shippingTotal" /></span>
           </div>
         </div>
         <div class="flex justify-between font-extrabold text-base mt-4">
           <span>Total</span>
-          <span class="text-green-700">{{ cart.total?.formattedAmount }}</span>
+          <span class="text-green-700"><VcPriceDisplay :value="cart.total" /></span>
         </div>
       </div>
 
@@ -66,8 +66,9 @@
 </template>
 
 <script setup lang="ts">
+import { VcPriceDisplay } from "@/components";
 import { CartType, CustomerOrderType } from "@/core/api/graphql/types";
-import { PropType, ref } from "vue";
+import { PropType } from "vue";
 
 defineProps({
   cart: {

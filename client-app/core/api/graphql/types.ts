@@ -216,6 +216,8 @@ export type CartType = {
   paymentTotalWithTax?: Maybe<MoneyType>;
   /** Payments */
   payments?: Maybe<Array<Maybe<PaymentType>>>;
+  /** Purchase order number */
+  purchaseOrderNumber?: Maybe<Scalars['String']>;
   /** Shipments */
   shipments?: Maybe<Array<Maybe<ShipmentType>>>;
   /** Shipping price */
@@ -510,6 +512,7 @@ export type CustomerOrderType = {
   discountAmount?: Maybe<MoneyType>;
   discountTotal?: Maybe<MoneyType>;
   discountTotalWithTax?: Maybe<MoneyType>;
+  discounts?: Maybe<Array<Maybe<OrderDiscountType>>>;
   /** Customer order dynamic property values */
   dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
   employeeId?: Maybe<Scalars['String']>;
@@ -1046,6 +1049,18 @@ export type InputChangeOrderStatusType = {
   orderId: Scalars['String'];
   /** Order status */
   status: Scalars['String'];
+};
+
+export type InputChangePurchaseOrderNumber = {
+  cartId?: InputMaybe<Scalars['String']>;
+  cartName?: InputMaybe<Scalars['String']>;
+  cartType?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']>;
+  currencyCode?: InputMaybe<Scalars['String']>;
+  /** Purchase Order Number */
+  purchaseOrderNumber?: InputMaybe<Scalars['String']>;
+  storeId: Scalars['String'];
+  userId: Scalars['String'];
 };
 
 export type InputClearCartType = {
@@ -1916,6 +1931,7 @@ export type Mutations = {
   changeCartItemQuantity?: Maybe<CartType>;
   changeComment?: Maybe<CartType>;
   changeOrderStatus?: Maybe<Scalars['Boolean']>;
+  changePurchaseOrderNumber?: Maybe<CartType>;
   clearCart?: Maybe<CartType>;
   clearPayments?: Maybe<CartType>;
   clearShipments?: Maybe<CartType>;
@@ -2028,6 +2044,11 @@ export type MutationsChangeCommentArgs = {
 
 export type MutationsChangeOrderStatusArgs = {
   command: InputChangeOrderStatusType;
+};
+
+
+export type MutationsChangePurchaseOrderNumberArgs = {
+  command?: InputMaybe<InputChangePurchaseOrderNumber>;
 };
 
 
@@ -2810,6 +2831,7 @@ export type Product = {
   images?: Maybe<Array<Maybe<ImageType>>>;
   /** The product main image URL. */
   imgSrc?: Maybe<Scalars['String']>;
+  masterVariation?: Maybe<VariationType>;
   /** Max. quantity */
   maxQuantity?: Maybe<Scalars['Int']>;
   /** Min. quantity */
@@ -3492,6 +3514,10 @@ export type VariationType = {
   id?: Maybe<Scalars['String']>;
   /** Product images */
   images?: Maybe<Array<Maybe<ImageType>>>;
+  /** Max. quantity. */
+  maxQuantity?: Maybe<Scalars['Int']>;
+  /** Min. quantity. */
+  minQuantity?: Maybe<Scalars['Int']>;
   /** Name of variation. */
   name?: Maybe<Scalars['String']>;
   /** Outlines */
@@ -3604,19 +3630,21 @@ export type UpdatePersonalDataMutation = { updatePersonalData?: { succeeded: boo
 export type GetDefaultShippingAddressesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetDefaultShippingAddressesQuery = { me?: { contact?: { defaultShippingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, zip?: string, phone?: string, email?: string, addressType?: number } } } };
+export type GetDefaultShippingAddressesQuery = { me?: { contact?: { defaultShippingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, isDefault: boolean, phone?: string, email?: string, addressType?: number } } } };
 
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeQuery = { me?: { id: string, userName: string, email?: string, emailConfirmed: boolean, photoUrl?: string, phoneNumber?: string, permissions?: Array<string> } };
+export type GetMeQuery = { me?: { id: string, memberId?: string, userName: string, email?: string, emailConfirmed: boolean, photoUrl?: string, phoneNumber?: string, permissions?: Array<string> } };
 
 export type GetMyAddressesQueryVariables = Exact<{
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
   sort?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetMyAddressesQuery = { me?: { contact?: { addresses?: { items?: Array<{ id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, zip?: string, phone?: string, email?: string, addressType?: number }> } } } };
+export type GetMyAddressesQuery = { me?: { contact?: { addresses?: { items?: Array<{ id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, isDefault: boolean, phone?: string, email?: string, addressType?: number }> } } } };
 
 export type GetMyOrdersQueryVariables = Exact<{
   filter: Scalars['String'];
@@ -3669,6 +3697,13 @@ export type ChangeCartItemQuantityMutationVariables = Exact<{
 
 export type ChangeCartItemQuantityMutation = { changeCartItemQuantity?: { name: string, itemsQuantity?: number } };
 
+export type ChangePurchaseOrderNumberMutationVariables = Exact<{
+  command?: InputMaybe<InputChangePurchaseOrderNumber>;
+}>;
+
+
+export type ChangePurchaseOrderNumberMutation = { changePurchaseOrderNumber?: { id?: string, name: string, purchaseOrderNumber?: string } };
+
 export type CreateOrderFromCartMutationVariables = Exact<{
   command: InputCreateOrderFromCartType;
 }>;
@@ -3712,7 +3747,7 @@ export type GetAvailPaymentMethodsQueryVariables = Exact<{
 }>;
 
 
-export type GetAvailPaymentMethodsQuery = { cart?: { availablePaymentMethods?: Array<{ code?: string, name?: string, logoUrl?: string, price?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } } }> } };
+export type GetAvailPaymentMethodsQuery = { cart?: { availablePaymentMethods?: Array<{ code?: string, logoUrl?: string, price?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } } }> } };
 
 export type GetAvailShippingMethodsQueryVariables = Exact<{
   storeId: Scalars['String'];
@@ -3732,7 +3767,7 @@ export type GetMyCartQueryVariables = Exact<{
 }>;
 
 
-export type GetMyCartQuery = { cart?: { id?: string, name: string, comment?: string, itemsCount?: number, itemsQuantity?: number, isValid?: boolean, coupons?: Array<{ code?: string }>, shipments?: Array<{ id?: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, zip?: string, phone?: string, email?: string, addressType?: number }, price?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } } }>, discounts?: Array<{ promotionId?: string, description?: string, amount?: any, coupon?: string }>, payments?: Array<{ id?: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, zip?: string, phone?: string, email?: string, addressType?: number } }>, addresses?: Array<{ id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, zip?: string, phone?: string, email?: string, addressType?: number }>, items?: Array<{ id: string, imageUrl?: string, inStockQuantity?: number, isGift?: boolean, isReadOnly?: boolean, isReccuring?: boolean, isValid?: boolean, name?: string, productId?: string, quantity?: number, sku?: string, thumbnailImageUrl?: string, product?: { brandName?: string, slug?: string }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }>, extendedPrice?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, listPrice?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, taxTotal?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } } }>, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string }, total?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, discountTotal?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, subTotal?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, shippingTotal?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, shippingPrice?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, taxTotal?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, extendedPriceTotal?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, extendedPriceTotalWithTax?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, errorParameters?: Array<{ key: string, value: string }> }>, availablePaymentMethods?: Array<{ code?: string, name?: string, logoUrl?: string, price?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } } }>, availableShippingMethods?: Array<{ id?: string, code?: string, logoUrl?: string, optionName?: string, optionDescription?: string, price?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } } }> } };
+export type GetMyCartQuery = { cart?: { id?: string, name: string, comment?: string, purchaseOrderNumber?: string, itemsCount?: number, itemsQuantity?: number, isValid?: boolean, coupons?: Array<{ code?: string }>, shipments?: Array<{ id?: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, zip?: string, phone?: string, email?: string, addressType?: number }, price?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } } }>, discounts?: Array<{ promotionId?: string, description?: string, amount?: any, coupon?: string }>, payments?: Array<{ id?: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, zip?: string, phone?: string, email?: string, addressType?: number } }>, addresses?: Array<{ id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, zip?: string, phone?: string, email?: string, addressType?: number }>, items?: Array<{ id: string, imageUrl?: string, inStockQuantity?: number, isGift?: boolean, isReadOnly?: boolean, isReccuring?: boolean, isValid?: boolean, name?: string, productId?: string, quantity?: number, sku?: string, thumbnailImageUrl?: string, product?: { brandName?: string, slug?: string }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }>, extendedPrice?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, listPrice?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, taxTotal?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } } }>, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string }, total?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, discountTotal?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, subTotal?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, shippingTotal?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, shippingPrice?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, taxTotal?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, extendedPriceTotal?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, extendedPriceTotalWithTax?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, errorParameters?: Array<{ key: string, value: string }> }>, availablePaymentMethods?: Array<{ code?: string, logoUrl?: string, price?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } } }>, availableShippingMethods?: Array<{ id?: string, code?: string, logoUrl?: string, optionName?: string, optionDescription?: string, price?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } } }> } };
 
 export type GetProductQueryVariables = Exact<{
   storeId: Scalars['String'];
@@ -3783,13 +3818,18 @@ export type SearchRelatedProductsQueryVariables = Exact<{
 
 export type SearchRelatedProductsQuery = { product?: { name: string, id: string, associations?: { items?: Array<{ product?: { name: string, id: string, slug?: string, imgSrc?: string, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any }, price?: { actual?: { amount: any, formattedAmount: string }, discountAmount?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string } } } }> } } };
 
+export type GetCountriesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetCountriesQuery = { countries?: Array<{ id: string, name: string, regions?: Array<{ id: string, name: string }> }> };
+
 export type CartAddressFieldsFragment = { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, zip?: string, phone?: string, email?: string, addressType?: number };
 
 export type CurrencyFieldsFragment = { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string };
 
 export type LineItemFieldsFragment = { id: string, imageUrl?: string, inStockQuantity?: number, isGift?: boolean, isReadOnly?: boolean, isReccuring?: boolean, isValid?: boolean, name?: string, productId?: string, quantity?: number, sku?: string, thumbnailImageUrl?: string, product?: { brandName?: string, slug?: string }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }>, extendedPrice?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, listPrice?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, taxTotal?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } } };
 
-export type MemberAddressFieldsFragment = { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, zip?: string, phone?: string, email?: string, addressType?: number };
+export type MemberAddressFieldsFragment = { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, isDefault: boolean, phone?: string, email?: string, addressType?: number };
 
 export type MoneyFieldsFragment = { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } };
 

@@ -17,20 +17,15 @@
           >
             <div class="lg:ml-28 lg:mr-11 lg:border lg:rounded">
               <!-- Product card -->
-              <ProductCard
-                v-for="item in orderItems"
-                :key="item?.id"
-                :line-item="item!"
-                :read-only="true"
-              ></ProductCard>
+              <ProductCard v-for="item in orderItems" :key="item?.id" :line-item="item" :read-only="true"></ProductCard>
 
               <div v-if="pages > 1" class="py-8 lg:flex lg:items-center lg:px-5">
-                <Pagination
+                <VcPagination
                   v-model:page="page"
                   :pages="pages"
                   class="mb-3 lg:mb-0"
                   @update:page="page = $event"
-                ></Pagination>
+                ></VcPagination>
               </div>
             </div>
           </CheckoutSection>
@@ -55,34 +50,56 @@
         <div class="flex flex-col px-5 mb-7 order-first md:px-0 lg:mb-0 lg:order-1 lg:w-1/4">
           <!-- Order summary -->
           <OrderSummary :cart="order" class="mb-5"></OrderSummary>
-          <Card title="Billing address" :is-collapsible="true" class="mb-5">
+          <VcCard title="Billing address" :is-collapsible="true" class="mb-5">
             <div class="flex flex-col text-sm">
-              <span class="font-extrabold">Annete Black</span>
-              <p>3891 Ranchview Dr. Richardson, California 62639</p>
-              <p><span class="font-extrabold">Phone:</span> (684) 555-0102</p>
-              <p><span class="font-extrabold">Email:</span> debra.holt@example.com</p>
+              <span class="font-extrabold"
+                >{{ order.inPayments?.[0]?.billingAddress?.firstName }}
+                {{ order.inPayments?.[0]?.billingAddress?.lastName }}</span
+              >
+              <p>
+                {{ order.inPayments?.[0]?.billingAddress?.countryCode }}
+                {{ order.inPayments?.[0]?.billingAddress?.regionName }}
+                {{ order.inPayments?.[0]?.billingAddress?.city }}
+                {{ order.inPayments?.[0]?.billingAddress?.line1 }}
+                {{ order.inPayments?.[0]?.billingAddress?.postalCode }}
+              </p>
+              <p><span class="font-extrabold">Phone:</span> {{ order.inPayments?.[0]?.billingAddress?.phone }}</p>
+              <p><span class="font-extrabold">Email:</span> {{ order.inPayments?.[0]?.billingAddress?.email }}</p>
             </div>
-          </Card>
-          <Card title="Shipping method" :is-collapsible="true" class="mb-5">
+          </VcCard>
+          <VcCard title="Shipping method" :is-collapsible="true" class="mb-5">
             <div class="flex items-center space-x-4 text-sm">
-              <img src="/assets/static/images/checkout/fedex.svg" class="h-12 w-12" />
-              <span>Fedex - Express (20$)</span>
+              <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" />
+              <span
+                >{{ order.shipments?.[0]?.shipmentMethodCode }} {{ order.shipments?.[0]?.shipmentMethodOption }} ({{
+                  order.shipments?.[0]?.price?.formattedAmount
+                }})</span
+              >
             </div>
-          </Card>
-          <Card title="Shipping address" :is-collapsible="true" class="mb-5">
+          </VcCard>
+          <VcCard title="Shipping address" :is-collapsible="true" class="mb-5">
             <div class="flex flex-col text-sm">
-              <span class="font-extrabold">Annete Black</span>
-              <p>3891 Ranchview Dr. Richardson, California 62639</p>
-              <p><span class="font-extrabold">Phone:</span> (684) 555-0102</p>
-              <p><span class="font-extrabold">Email:</span> debra.holt@example.com</p>
+              <span class="font-extrabold"
+                >{{ order.shipments?.[0]?.deliveryAddress?.firstName }}
+                {{ order.shipments?.[0]?.deliveryAddress?.lastName }}</span
+              >
+              <p>
+                {{ order.shipments?.[0]?.deliveryAddress?.countryCode }}
+                {{ order.shipments?.[0]?.deliveryAddress?.regionName }}
+                {{ order.shipments?.[0]?.deliveryAddress?.city }}
+                {{ order.shipments?.[0]?.deliveryAddress?.line1 }}
+                {{ order.shipments?.[0]?.deliveryAddress?.postalCode }}
+              </p>
+              <p><span class="font-extrabold">Phone:</span> {{ order.shipments?.[0]?.deliveryAddress?.phone }}</p>
+              <p><span class="font-extrabold">Email:</span> {{ order.shipments?.[0]?.deliveryAddress?.email }}</p>
             </div>
-          </Card>
-          <Card title="Payment method" :is-collapsible="true" class="mb-5">
+          </VcCard>
+          <VcCard title="Payment method" :is-collapsible="true" class="mb-5">
             <div class="flex items-center space-x-4 text-sm">
-              <img src="/assets/static/images/checkout/invoice.svg" class="h-12 w-12" />
-              <span>Invoice</span>
+              <VcImage src="/static/images/checkout/invoice.svg" class="h-12 w-12" />
+              <span>{{ order.inPayments?.[0]?.gatewayCode }}</span>
             </div>
-          </Card>
+          </VcCard>
           <VcButton class="uppercase w-full" @click="printOrder">Print order</VcButton>
         </div>
       </div>
@@ -93,10 +110,9 @@
 <script setup lang="ts">
 import { CheckoutSection, OrderSummary, ProductCard } from "@/shared/checkout";
 import { CustomerOrderType } from "@/core/api/graphql/types";
-import Pagination from "@/shared/catalog/components/pagination.vue";
 import { useCart } from "@/shared/cart";
 import { computed, PropType, ref } from "vue";
-import { Card, Button as VcButton } from "@/components";
+import { VcCard, VcImage, VcPagination, VcButton } from "@/components";
 
 const { itemsPerPage } = useCart();
 
