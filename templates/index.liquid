@@ -1,3 +1,8 @@
 <div id="app"></div>
+{% if is_preview_mode %}
+<script src="http://localhost:8098"></script>
+<script src="{{ 'bundle/builder.js' | static_asset_url | append_version }}" type="module"></script>
+{% else %}
 <script src="{{ 'bundle/index.js' | static_asset_url | append_version }}" type="module"></script>
+{% endif %}
 {{ 'bundle/index.css' | static_asset_url | append_version | stylesheet_tag }}
