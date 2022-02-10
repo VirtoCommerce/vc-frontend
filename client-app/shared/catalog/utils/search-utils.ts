@@ -11,14 +11,12 @@ import { defaultPageSize } from "@core/constants";
 import { unref } from "vue";
 import { MaybeRef } from "@vueuse/core";
 
-const RANGE_PARAMS_SEPARATOR_IN_URL = "|";
-
 /**
  * Learn more about filter syntax:
  * https://github.com/VirtoCommerce/vc-module-experience-api/blob/master/docs/filter-syntax.md#filters
  * https://github.com/VirtoCommerce/vc-module-experience-api/blob/master/docs/x-catalog-reference.md#filter-by-price
  */
-function getFilterExpressionFromFacetRange(facetRange: Partial<FacetRangeType>): string {
+function getFilterExpressionFromFacetRange(facetRange: FacetRangeType): string {
   const { from, to } = facetRange;
 
   const firstCondition = from ? `[${from} ` : "(";
@@ -27,35 +25,9 @@ function getFilterExpressionFromFacetRange(facetRange: Partial<FacetRangeType>):
   return `${firstCondition}TO${lastCondition}`;
 }
 
-function getFacetRangeUrlParamValue(facetRange: FacetRangeType): string {
-  const { from, to } = facetRange;
-  return `${from || ""}${RANGE_PARAMS_SEPARATOR_IN_URL}${to || ""}`;
-}
-
-// Example logic for converting a filter expression from a URL parameter
-function fromFilterUrlParamValue(filterValueFromQuery: string): string {
-  const filters: string[] = filterValueFromQuery
-    .replace(/^"|"$/g, "")
-    .split(/"? "/)
-    .map((item) => {
-      const [paramName, rawValues] = item.split(/":"?/);
-      const values = rawValues.split(/"?,"?/);
-      const isRange = new RegExp(`^\\d*\\${RANGE_PARAMS_SEPARATOR_IN_URL}\\d*$`).test(values[0]);
-      let rangeValues = "";
-
-      if (isRange) {
-        rangeValues = values
-          .map((value) => {
-            const [from, to] = value.split(RANGE_PARAMS_SEPARATOR_IN_URL);
-            return getFilterExpressionFromFacetRange({ from, to });
-          })
-          .join(",");
-      }
-
-      return isRange ? `"${paramName}":${rangeValues}` : `"${item}"`;
-    });
-
-  return filters.join(" ");
+function fromFilterUrlParamValue(value: string): string {
+  // add logic if necessary
+  return value;
 }
 
 function toFilterUrlParamValue(filterExpression: string): string {
@@ -143,7 +115,7 @@ export function rangeFacetToProductsFilter(rangeFacet: RangeFacet): ProductsFilt
     values: rangeFacet.ranges!.map<ProductsFilterValue>((facetRange: FacetRangeType) => ({
       count: facetRange.count,
       label: facetRange.label!,
-      value: getFacetRangeUrlParamValue(facetRange),
+      value: getFilterExpressionFromFacetRange(facetRange),
       selected: facetRange.isSelected!,
     })),
   };
