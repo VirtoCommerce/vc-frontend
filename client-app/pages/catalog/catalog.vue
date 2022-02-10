@@ -37,7 +37,7 @@
                 />
 
                 <VcButton
-                  :disabled="loading || isAppliedKeyword"
+                  :is-disabled="loading || isAppliedKeyword"
                   class="px-5 uppercase"
                   outline
                   size="sm"
