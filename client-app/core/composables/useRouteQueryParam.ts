@@ -30,20 +30,27 @@ export default function useRouteQueryParam<T = LocationQueryValue | LocationQuer
     },
 
     set(value) {
-      const query: Dictionary = { ...router.currentRoute.value.query };
+      const { hash, params, query } = router.currentRoute.value;
+      const newLocation: Dictionary = {
+        hash,
+        params,
+        query: {
+          ...query,
+        },
+      };
 
       if (
         (removeFalsyValues && !value) ||
         (removeNullishValues && value === null) ||
         (removeDefaultValues && value === defaultValue)
       ) {
-        delete query[key];
+        delete newLocation.query[key];
       } else {
-        query[key] = value;
+        newLocation.query[key] = value;
       }
 
-      if (router.currentRoute.value.fullPath !== router.resolve({ query }).fullPath) {
-        router[updateMethod]({ query });
+      if (router.currentRoute.value.fullPath !== router.resolve(newLocation).fullPath) {
+        router[updateMethod](newLocation);
       }
     },
   });

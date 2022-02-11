@@ -234,10 +234,10 @@ import { VcButton, VcCard, VcCardSkeleton, VcCheckbox, VcPagination } from "@/co
 import { AddToCart } from "@/shared/cart";
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/vue";
 import { useRouteQueryParam } from "@core/composables";
+import { defaultPageSize, pageSizes } from "@core/constants";
 
 const props = defineProps({ categoryKey: String });
 
-const itemsPerPageList = [16, 32, 48];
 const sortList = [
   { id: "priority-descending;name-ascending", name: "Featured" },
   { id: "name-ascending", name: "Alphabetically, A-Z" },
@@ -254,8 +254,8 @@ const { fetchProducts, loading, products, total, pages, filters } = useProducts(
 const { searchParams, updateSearchParams } = useProductsSearchParams({
   defaultSortBy: sortList[0].id,
   sortList: sortList.map((item) => item.id),
-  defaultItemsPerPage: itemsPerPageList[0],
-  itemsPerPageList: [...itemsPerPageList, /* for mobile */ 8],
+  defaultItemsPerPage: defaultPageSize,
+  itemsPerPageList: [...pageSizes, /* for mobile */ 8],
 });
 
 const isMobile = breakpoints.smaller("md");
@@ -289,9 +289,7 @@ const itemsPerPage = computed<number>({
 });
 
 const sort = computed<typeof sortList[0]>({
-  get() {
-    return sortList.find((item) => item.id === searchParams.value.sort)!;
-  },
+  get: () => sortList.find((item) => item.id === searchParams.value.sort)!,
   set(value) {
     updateSearchParams({
       sort: value.id,
@@ -351,11 +349,11 @@ async function loadProducts() {
 
 onMounted(async () => {
   await loadCategoriesTree(""); // TODO: use active category key instead of id
-  selectCategoryBySeoUrl(props.categoryKey as string);
+  selectCategoryBySeoUrl(props.categoryKey);
 
-  if (!isMobile.value && searchParams.value.itemsPerPage < itemsPerPageList[0]) {
+  if (!isMobile.value && searchParams.value.itemsPerPage < defaultPageSize) {
     await updateSearchParams({
-      itemsPerPage: itemsPerPageList[0],
+      itemsPerPage: defaultPageSize,
       page: 1,
     });
   } else {
@@ -375,7 +373,7 @@ debouncedWatch(() => `${props.categoryKey} ${JSON.stringify(searchParams.value)}
 // Handle window resize to fix parameters on mobile view
 watch(isMobile, (mobileView) => {
   updateSearchParams({
-    itemsPerPage: mobileView ? 8 : itemsPerPageList[0],
+    itemsPerPage: mobileView ? 8 : defaultPageSize,
     page: 1,
   });
 });
