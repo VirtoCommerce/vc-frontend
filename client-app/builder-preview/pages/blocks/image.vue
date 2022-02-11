@@ -4,7 +4,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 // import { ref, reactive, onMounted, watch, unref, watchEffect, Ref, shallowRef } from "vue";
 export default {
   props: {

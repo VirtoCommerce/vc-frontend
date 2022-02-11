@@ -8,6 +8,7 @@
 // import { ref, reactive, onMounted, watch, unref, watchEffect, Ref, shallowRef } from "vue";
 // import { onMounted } from "vue";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const blocks: any[] = [
   {
     id: 1,

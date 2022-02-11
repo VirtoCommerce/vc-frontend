@@ -4,16 +4,18 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 // import { ref, reactive, onMounted, watch, unref, watchEffect, Ref, shallowRef } from "vue";
-export default {
-  props: {
-    model: Object,
+import { onMounted } from "vue";
+
+defineProps({
+  model: {
+    type: Object,
+    required: true,
   },
-  methods: {
-    onMounted() {
-      console.log("text started");
-    },
-  },
-};
+});
+
+onMounted(async () => {
+  console.log("text started");
+});
 </script>

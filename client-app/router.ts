@@ -59,7 +59,7 @@ const router = createRouter({
     { path: "/product/:id", name: "Product", component: Product },
     { path: "/500", name: "InternalError", component: Error500 },
     { path: "/403", name: "NoAccess", component: Error403 },
-    { path: "/pages/:path", name: "Pages", component: Pages },
+    { path: "/pages", name: "Pages", component: Pages },
     { path: "/:pathMatch(.*)*", name: "NotFound", component: Error404 },
   ],
 });
