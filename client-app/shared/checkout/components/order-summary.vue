@@ -15,13 +15,7 @@
           <span><VcPriceDisplay :value="cart.subTotal" /></span>
         </div>
         <div class="py-2 border-t border-b font-normal text-base">
-          <!-- Remove when discounts will be added to the CustomerOrderType -->
-          <div class="flex justify-between">
-            <span class="flex items-center">Discount</span>
-            <span>{{ cart.discountTotal?.amount > 0 ? "-" : "" }}<VcPriceDisplay :value="cart.discountTotal" /></span>
-          </div>
-          <!-- Uncomment when discounts will be added to the CustomerOrderType -->
-          <!-- <div class="flex justify-between" @click="discountsCollapsed = !discountsCollapsed">
+          <div class="flex justify-between" @click="discountsCollapsed = !discountsCollapsed">
             <span class="flex items-center" :class="{ 'cursor-pointer': cart.discounts && cart.discounts.length > 0 }"
               >Discount
               <i
@@ -38,13 +32,13 @@
           <div v-if="cart.discounts && cart.discounts.length > 0 && discountsCollapsed">
             <ul v-for="(discount, index) in cart.discounts" :key="index" class="list-disc pl-5 text-gray-400">
               <li>
-                <div class="flex justify-between">
+                <div class="flex justify-between items-center">
                   <span class="text-sm">{{ discount?.description }}</span>
-                  <span>{{ cart.currency?.symbol }}{{ discount?.amount }}</span>
+                  <span>{{ cart.currency?.symbol }}{{ getDiscountAmmount(discount) }}</span>
                 </div>
               </li>
             </ul>
-          </div> -->
+          </div>
           <div class="flex justify-between">
             <span>Tax</span>
             <span>{{ cart.taxTotal?.amount > 0 ? "+" : "" }}<VcPriceDisplay :value="cart.taxTotal" /></span>
@@ -67,8 +61,8 @@
 
 <script setup lang="ts">
 import { VcPriceDisplay } from "@/components";
-import { CartType, CustomerOrderType } from "@/core/api/graphql/types";
-import { PropType } from "vue";
+import { CartType, CustomerOrderType, DiscountType, OrderDiscountType } from "@/core/api/graphql/types";
+import { PropType, ref } from "vue";
 
 defineProps({
   cart: {
@@ -77,8 +71,11 @@ defineProps({
   },
 });
 
-//TODO: Uncomment when discounts will be added to the CustomerOrderType
-//const discountsCollapsed = ref(false);
+const discountsCollapsed = ref(false);
+
+const getDiscountAmmount = (discount: DiscountType | OrderDiscountType) => {
+  return typeof discount?.amount === "object" && discount?.amount !== null ? discount?.amount.amount : discount?.amount;
+};
 </script>
 
 <style scoped></style>

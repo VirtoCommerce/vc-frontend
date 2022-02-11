@@ -3,11 +3,13 @@
 #import "../../../fragments/orderLineItemFields.graphql"
 #import "../../../fragments/orderAddressFields.graphql"
 
-mutation CreateOrderFromCart($command: InputCreateOrderFromCartType!) {
-  createOrderFromCart(command: $command) {
+query GetMyOrder($id: String, $number: String, $cultureName: String) {
+  order(id: $id, number: $number, cultureName: $cultureName) {
     id
     number
     comment
+    createdDate
+    status
     discounts {
       amount {
         amount
@@ -57,6 +59,7 @@ mutation CreateOrderFromCart($command: InputCreateOrderFromCartType!) {
     }
     inPayments {
       gatewayCode
+      number
       paymentMethod {
         logoUrl
         typeName
