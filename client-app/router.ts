@@ -16,6 +16,7 @@ const Addresses = () => import("./pages/account/addresses.vue");
 const Account = () => import("./pages/account/account.vue");
 const ForgotPassword = () => import("./pages/forgot-password/forgot-password.vue");
 const ResetPassword = () => import("./pages/reset-password/reset-password.vue");
+const Pages = () => import("./builder-preview/pages/pages.vue");
 
 // Router definition
 const router = createRouter({
@@ -58,6 +59,7 @@ const router = createRouter({
     { path: "/product/:id", name: "Product", component: Product },
     { path: "/500", name: "InternalError", component: Error500 },
     { path: "/403", name: "NoAccess", component: Error403 },
+    { path: "/pages/:path", name: "Pages", component: Pages },
     { path: "/:pathMatch(.*)*", name: "NotFound", component: Error404 },
   ],
 });
