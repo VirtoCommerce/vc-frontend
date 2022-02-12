@@ -219,13 +219,11 @@ import useUserOrders from "@/shared/account/composables/useUserOrders";
 import moment from "moment";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { loading: ordersLoading, orders, loadOrders, sort } = useUserOrders();
+const { loading: ordersLoading, orders, loadOrders, sort, pages, itemsPerPage } = useUserOrders();
 
 const isMobile = breakpoints.smaller("md");
 const page = ref(1);
-const itemsPerPage = ref(6);
 
-const pages: ComputedRef<number> = computed(() => Math.ceil(orders.value.length / itemsPerPage.value));
 const paginatedOrders: ComputedRef<CustomerOrderType[]> = computed(() =>
   orders.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
 );
