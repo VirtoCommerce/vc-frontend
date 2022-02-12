@@ -1,29 +1,20 @@
 #import "../../../fragments/moneyFields.graphql"
 
-query GetMyOrders($filter: String!, $after: String, $first: Int) {
-  orders(filter: $filter, after: $after, first: $first) {
+query GetMyOrders($filter: String, $sort: String, $cultureName: String, $userId: String, $after: String, $first: Int) {
+  orders(filter: $filter, sort: $sort, cultureName: $cultureName, userId: $userId, after: $after, first: $first) {
     totalCount
     items {
       id
       createdDate
       status
-      items {
-        sku
-        name
-        quantity
-        product {
-          slug
-          name
-        }
-        price {
-          ...moneyFields
-        }
-      }
       currency {
         code
       }
       total {
         ...moneyFields
+      }
+      inPayments {
+        number
       }
       number
       customerId
