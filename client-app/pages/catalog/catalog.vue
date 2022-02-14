@@ -165,7 +165,11 @@
               <template v-else>
                 <ProductCardGrid v-for="item in products" :key="item.id" :product="item">
                   <template #cart-handler>
-                    <VcButton v-if="item.variations?.length" :to="`/product/${item.id}`" class="uppercase mb-4">
+                    <VcButton
+                      v-if="item.variations?.length"
+                      :to="`/${SeoUrl.Product}/${item.id}`"
+                      class="uppercase mb-4"
+                    >
                       Choose
                     </VcButton>
                     <AddToCart v-else :product="item"></AddToCart>
@@ -183,7 +187,11 @@
               <template v-else>
                 <ProductCardList v-for="item in products" :key="item.id" :product="item">
                   <template #cart-handler>
-                    <VcButton v-if="item.variations?.length" :to="`/product/${item.id}`" class="uppercase mb-4 w-full">
+                    <VcButton
+                      v-if="item.variations?.length"
+                      :to="`/${SeoUrl.Product}/${item.id}`"
+                      class="uppercase mb-4 w-full"
+                    >
                       Choose
                     </VcButton>
                     <AddToCart v-else :product="item"></AddToCart>
@@ -214,7 +222,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, shallowRef, watch, onMounted, watchEffect } from "vue";
+import { computed, ref, shallowRef, watch, onMounted, watchEffect, PropType } from "vue";
 import { breakpointsTailwind, debouncedWatch, useBreakpoints, whenever } from "@vueuse/core";
 import {
   Breadcrumbs,
@@ -235,8 +243,9 @@ import { AddToCart } from "@/shared/cart";
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/vue";
 import { useRouteQueryParam } from "@core/composables";
 import { defaultPageSize, pageSizes } from "@core/constants";
+import SeoUrl from "@core/seo-routes.enum";
 
-const props = defineProps({ categoryKey: String });
+const props = defineProps({ categorySeoUrls: [String, Array] as PropType<string | string[]> });
 
 const sortList = [
   { id: "priority-descending;name-ascending", name: "Featured" },
@@ -268,6 +277,8 @@ const viewMode = useRouteQueryParam<"grid" | "list">("viewMode", {
   defaultValue: "grid",
   validator: (value) => (isMobile.value ? false : ["grid", "list"].includes(value)),
 });
+
+const categorySeoUrl = computed<string>(() => props.categorySeoUrls?.[props.categorySeoUrls?.length - 1] ?? "");
 
 const page = computed<number>({
   get: () => searchParams.value.page,
@@ -349,7 +360,7 @@ async function loadProducts() {
 
 onMounted(async () => {
   await loadCategoriesTree(""); // TODO: use active category key instead of id
-  selectCategoryBySeoUrl(props.categoryKey);
+  selectCategoryBySeoUrl(categorySeoUrl.value);
 
   if (!isMobile.value && searchParams.value.itemsPerPage < defaultPageSize) {
     await updateSearchParams({
@@ -363,9 +374,9 @@ onMounted(async () => {
 
 watchEffect(() => (keyword.value = searchParams.value.keyword ?? ""));
 whenever(() => !isMobileSidebar.value, hideMobileSidebar);
-watch(() => props.categoryKey, selectCategoryBySeoUrl);
+watch(categorySeoUrl, selectCategoryBySeoUrl);
 
-debouncedWatch(() => `${props.categoryKey} ${JSON.stringify(searchParams.value)}`, loadProducts, {
+debouncedWatch(() => `${categorySeoUrl.value} ${JSON.stringify(searchParams.value)}`, loadProducts, {
   flush: "post",
   debounce: 200,
 });
