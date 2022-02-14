@@ -4,16 +4,17 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 // import { ref, reactive, onMounted, watch, unref, watchEffect, Ref, shallowRef } from "vue";
-export default {
-  props: {
-    model: Object,
+import { onMounted } from "vue";
+defineProps({
+  model: {
+    type: Object,
+    required: true,
   },
-  methods: {
-    onMounted() {
-      console.log("image started");
-    },
-  },
-};
+});
+
+onMounted(async () => {
+  console.log("image started");
+});
 </script>
