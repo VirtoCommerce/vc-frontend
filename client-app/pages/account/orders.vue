@@ -23,7 +23,9 @@
                     <div class="flex flex-col">
                       <span class="text-sm text-gray-400"> Order number </span>
                       <span class="pr-4 font-extrabold overflow-hidden overflow-ellipsis">
-                        {{ order.number }}
+                        <router-link :to="`order-details/${order.id}`">
+                          {{ order.number }}
+                        </router-link>
                       </span>
                     </div>
 
@@ -135,7 +137,9 @@
               <tbody v-if="orders.length">
                 <tr v-for="order in paginatedOrders" :key="order.id" class="even:bg-gray-50">
                   <td class="p-5 overflow-hidden overflow-ellipsis">
-                    {{ order.number }}
+                    <router-link :to="`order-details/${order.id}`">
+                      {{ order.number }}
+                    </router-link>
                   </td>
                   <td class="p-5 overflow-hidden overflow-ellipsis">
                     {{ order.purchaseOrderNumber }}
