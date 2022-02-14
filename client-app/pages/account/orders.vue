@@ -83,47 +83,51 @@
             <table v-else class="table-fixed text-sm text-left w-full">
               <thead class="border-b border-gray-200">
                 <tr>
-                  <th
-                    class="py-3 px-5 font-extrabold"
-                    :class="{
-                      desc: sort.column === 'number' && sort.direction === sortDescending,
-                      asc: sort.column === 'number' && sort.direction === sortAscending,
-                    }"
-                    @click="applySorting('number')"
-                  >
+                  <th class="py-3 px-5 font-extrabold" @click="applySorting('number')">
                     Order number
+                    <i
+                      class="fas fa-caret-down ml-2"
+                      v-if="sort.column === 'number' && sort.direction === sortDescending"
+                    ></i>
+                    <i
+                      class="fas fa-caret-up ml-2"
+                      v-if="sort.column === 'number' && sort.direction === sortAscending"
+                    ></i>
                   </th>
                   <th class="py-3 px-5 font-extrabold">Purchase order</th>
                   <th class="py-3 px-5 font-extrabold">Invoice</th>
-                  <th
-                    class="py-3 px-5 font-extrabold"
-                    :class="{
-                      desc: sort.column === 'createdDate' && sort.direction === sortDescending,
-                      asc: sort.column === 'createdDate' && sort.direction === sortAscending,
-                    }"
-                    @click="applySorting('createdDate')"
-                  >
+                  <th class="py-3 px-5 font-extrabold" @click="applySorting('createdDate')">
                     Date
+                    <i
+                      class="fas fa-caret-down ml-2"
+                      v-if="sort.column === 'createdDate' && sort.direction === sortDescending"
+                    ></i>
+                    <i
+                      class="fas fa-caret-up ml-2"
+                      v-if="sort.column === 'createdDate' && sort.direction === sortAscending"
+                    ></i>
                   </th>
-                  <th
-                    class="py-3 px-5 font-extrabold"
-                    :class="{
-                      desc: sort.column === 'status' && sort.direction === sortDescending,
-                      asc: sort.column === 'status' && sort.direction === sortAscending,
-                    }"
-                    @click="applySorting('status')"
-                  >
+                  <th class="py-3 px-5 font-extrabold text-center" @click="applySorting('status')">
                     Status
+                    <i
+                      class="fas fa-caret-down ml-2"
+                      v-if="sort.column === 'status' && sort.direction === sortDescending"
+                    ></i>
+                    <i
+                      class="fas fa-caret-up ml-2"
+                      v-if="sort.column === 'status' && sort.direction === sortAscending"
+                    ></i>
                   </th>
-                  <th
-                    class="py-3 px-5 font-extrabold"
-                    :class="{
-                      desc: sort.column === 'total' && sort.direction === sortDescending,
-                      asc: sort.column === 'total' && sort.direction === sortAscending,
-                    }"
-                    @click="applySorting('total')"
-                  >
+                  <th class="py-3 px-5 font-extrabold text-right" @click="applySorting('total')">
                     Total
+                    <i
+                      class="fas fa-caret-down ml-2"
+                      v-if="sort.column === 'total' && sort.direction === sortDescending"
+                    ></i>
+                    <i
+                      class="fas fa-caret-up ml-2"
+                      v-if="sort.column === 'total' && sort.direction === sortAscending"
+                    ></i>
                   </th>
                 </tr>
               </thead>
@@ -141,9 +145,9 @@
                     {{ moment(order?.createdDate).format("YYYY-MM-DD") }}
                   </td>
                   <td class="p-5 overflow-hidden overflow-ellipsis">
-                    <TableStatusBadge :status="order.status"></TableStatusBadge>
+                    <TableStatusBadge :status="order.status" class="mx-auto"></TableStatusBadge>
                   </td>
-                  <td class="p-5 overflow-hidden overflow-ellipsis">{{ order.total?.formattedAmount }}</td>
+                  <td class="p-5 overflow-hidden overflow-ellipsis text-right">{{ order.total?.formattedAmount }}</td>
                 </tr>
               </tbody>
 
