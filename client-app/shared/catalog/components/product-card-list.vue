@@ -67,12 +67,12 @@
 <script setup lang="ts">
 import { PropType } from "vue";
 import { VcImage, VcPriceDisplay } from "@/components";
-import { Product } from "@/core/api/graphql/types";
+import { Product as ProductType } from "@/core/api/graphql/types";
 import SeoUrl from "@core/seo-routes.enum";
 
 defineProps({
   product: {
-    type: Object as PropType<Product>,
+    type: Object as PropType<ProductType>,
     required: true,
   },
 });
