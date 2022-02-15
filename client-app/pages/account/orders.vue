@@ -18,7 +18,7 @@
             <!-- Mobile table view -->
             <template v-if="isMobile">
               <div v-if="orders.length">
-                <TableMobileItem v-for="order in orders" :key="order.id" :item="order" class="overflow-auto" @click="openOrderDetails(order.id)">
+                <TableMobileItem v-for="order in orders" :key="order.id" :item="order" class="overflow-auto cursor-pointer" @click="openOrderDetails(order.id)">
                   <div class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200">
                     <div class="flex flex-col">
                       <span class="text-sm text-gray-400"> Order number </span>
@@ -83,7 +83,7 @@
             <table v-else class="table-fixed text-sm text-left w-full">
               <thead class="border-b border-gray-200">
                 <tr>
-                  <th class="py-3 px-5 font-extrabold" @click="applySorting('number')">
+                  <th class="py-3 px-5 font-extrabold cursor-pointer" @click="applySorting('number')">
                     Order number
                     <i
                       class="fas fa-caret-down ml-2"
@@ -96,7 +96,7 @@
                   </th>
                   <th class="py-3 px-5 font-extrabold">Purchase order</th>
                   <th class="py-3 px-5 font-extrabold">Invoice</th>
-                  <th class="py-3 px-5 font-extrabold" @click="applySorting('createdDate')">
+                  <th class="py-3 px-5 font-extrabold cursor-pointer" @click="applySorting('createdDate')">
                     Date
                     <i
                       class="fas fa-caret-down ml-2"
@@ -107,7 +107,7 @@
                       v-if="sort.column === 'createdDate' && sort.direction === sortAscending"
                     ></i>
                   </th>
-                  <th class="py-3 px-5 font-extrabold text-center" @click="applySorting('status')">
+                  <th class="py-3 px-5 font-extrabold text-center cursor-pointer" @click="applySorting('status')">
                     Status
                     <i
                       class="fas fa-caret-down ml-2"
@@ -118,7 +118,7 @@
                       v-if="sort.column === 'status' && sort.direction === sortAscending"
                     ></i>
                   </th>
-                  <th class="py-3 px-5 font-extrabold text-right" @click="applySorting('total')">
+                  <th class="py-3 px-5 font-extrabold text-right cursor-pointer" @click="applySorting('total')">
                     Total
                     <i
                       class="fas fa-caret-down ml-2"
@@ -136,7 +136,7 @@
                 <tr
                   v-for="order in orders"
                   :key="order.id"
-                  class="even:bg-gray-50 hover:bg-gray-200"
+                  class="even:bg-gray-50 hover:bg-gray-200 cursor-pointer"
                   @click="openOrderDetails(order.id)"
                 >
                   <td class="p-5 overflow-hidden overflow-ellipsis">
