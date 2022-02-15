@@ -3,11 +3,11 @@ import { CustomerOrderConnection, CustomerOrderType, QueryOrdersArgs } from "@co
 import getMyOrdersQueryDocument from "./getMyOrdersQuery.graphql";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function getMyOrders(variables?: QueryOrdersArgs): Promise<CustomerOrderType[]> {
+async function getMyOrders(variables?: QueryOrdersArgs): Promise<CustomerOrderConnection> {
   const { data } = await client.query({
     query: getMyOrdersQueryDocument,
     variables,
   });
-  return data?.orders?.items ?? [];
+  return data?.orders;
 }
 export default getMyOrders;

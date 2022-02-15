@@ -5,11 +5,11 @@ import { Logger } from "@core/utilities";
 import { getSortingExpression, ISortInfo } from "@/shared/account";
 import { sortAscending } from "@core/constants";
 
-const loading: Ref<boolean> = ref(false);
 const orders: Ref<CustomerOrderType[]> = shallowRef<CustomerOrderType[]>([]);
 
 const itemsPerPage: Ref<number> = ref(10);
 const pages: Ref<number> = ref(0);
+const page: Ref<number> = ref(1);
 
 // TODO: refine the sorting logic
 const sort: Ref<ISortInfo> = ref({
@@ -18,16 +18,21 @@ const sort: Ref<ISortInfo> = ref({
 });
 
 export default () => {
+  const loading: Ref<boolean> = ref(false);
+
   async function loadOrders() {
     loading.value = true;
 
     const sortingExpression = getSortingExpression(sort.value);
 
     try {
-      orders.value = await getMyOrders({ sort: sortingExpression });
-      if (orders.value && orders.value.length > 0) {
-        pages.value = Math.ceil(orders.value.length / itemsPerPage.value);
-      }
+      const response = await getMyOrders({
+        sort: sortingExpression,
+        first: itemsPerPage.value,
+        after: String((page.value - 1) * itemsPerPage.value),
+      });
+      orders.value = response.items ?? [];
+      pages.value = Math.ceil(response.totalCount ?? 0 / itemsPerPage.value);
     } catch (e) {
       Logger.error("useUserOrders.loadOrders", e);
       throw e;
@@ -43,5 +48,6 @@ export default () => {
     orders: computed(() => orders.value),
     itemsPerPage,
     pages,
+    page,
   };
 };

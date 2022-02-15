@@ -1,5 +1,5 @@
 <template>
-  <div class="w-20 py-1 text-center rounded-sm" :class="badgeClass">{{ status }}</div>
+  <div class="w-20 py-1 text-center rounded-sm text-xs" :class="badgeClass">{{ status }}</div>
 </template>
 <script setup lang="ts">
 import { computed } from "vue";

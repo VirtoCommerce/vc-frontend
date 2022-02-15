@@ -18,14 +18,12 @@
             <!-- Mobile table view -->
             <template v-if="isMobile">
               <div v-if="orders.length">
-                <TableMobileItem v-for="order in paginatedOrders" :key="order.id" :item="order" class="overflow-auto">
+                <TableMobileItem v-for="order in orders" :key="order.id" :item="order" class="overflow-auto" @click="openOrderDetails(order.id)">
                   <div class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200">
                     <div class="flex flex-col">
                       <span class="text-sm text-gray-400"> Order number </span>
                       <span class="pr-4 font-extrabold overflow-hidden overflow-ellipsis">
-                        <router-link :to="`order-details/${order.id}`">
-                          {{ order.number }}
-                        </router-link>
+                        {{ order.number }}
                       </span>
                     </div>
 
@@ -135,11 +133,14 @@
               </thead>
 
               <tbody v-if="orders.length">
-                <tr v-for="order in paginatedOrders" :key="order.id" class="even:bg-gray-50">
+                <tr
+                  v-for="order in orders"
+                  :key="order.id"
+                  class="even:bg-gray-50 hover:bg-gray-200"
+                  @click="openOrderDetails(order.id)"
+                >
                   <td class="p-5 overflow-hidden overflow-ellipsis">
-                    <router-link :to="`order-details/${order.id}`">
-                      {{ order.number }}
-                    </router-link>
+                    {{ order.number }}
                   </td>
                   <td class="p-5 overflow-hidden overflow-ellipsis">
                     {{ order.purchaseOrderNumber }}
@@ -208,6 +209,7 @@
               :pages="pages"
               class="self-start"
               :class="[isMobile ? 'px-6 py-10' : 'pb-5 px-5 mt-5']"
+              @update:page="loadOrders"
             ></VcPagination>
           </div>
         </div>
@@ -219,22 +221,23 @@
 <script setup lang="ts">
 import { TableMobileItem, TableStatusBadge, VcPagination } from "@/components";
 import { AccountNavigation } from "@/shared/account";
-import { computed, ComputedRef, onMounted, ref } from "vue";
-import { CustomerOrderType } from "@/core/api/graphql/types";
+import { onMounted } from "vue";
 import { sortAscending, sortDescending } from "@/core/constants";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import useUserOrders from "@/shared/account/composables/useUserOrders";
 import moment from "moment";
+import { useRouter } from "vue-router";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { loading: ordersLoading, orders, loadOrders, sort, pages, itemsPerPage } = useUserOrders();
+const { loading: ordersLoading, orders, loadOrders, sort, pages, itemsPerPage, page } = useUserOrders();
 
 const isMobile = breakpoints.smaller("md");
-const page = ref(1);
 
-const paginatedOrders: ComputedRef<CustomerOrderType[]> = computed(() =>
-  orders.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
-);
+const router = useRouter();
+
+const openOrderDetails = (orderId: string) => {
+  router.push({ name: "OrderDetails", params: { id: orderId } });
+};
 
 async function applySorting(column: string): Promise<void> {
   if (sort.value.column === column) {
@@ -244,8 +247,8 @@ async function applySorting(column: string): Promise<void> {
     sort.value.direction = sortDescending;
   }
 
-  await loadOrders();
   page.value = 1;
+  await loadOrders();
 }
 
 onMounted(async () => {
