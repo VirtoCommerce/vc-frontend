@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white border shadow-sm rounded-md">
+  <div class="bg-white border shadow-sm rounded">
     <div class="border-b px-5 py-4 md:px-7">
       <h2 class="text-xl font-extrabold uppercase">Price &amp; Delivery</h2>
     </div>

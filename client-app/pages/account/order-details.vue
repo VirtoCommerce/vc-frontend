@@ -14,11 +14,7 @@
         <!-- Main section -->
         <div class="lg:w-3/4 xl:w-4/5 flex-grow w-full">
           <!-- My products section -->
-          <CheckoutSection
-            title="Purchased products"
-            icon-url="/static/images/checkout/products.svg"
-            class="shadow lg:pb-11"
-          >
+          <VcSection title="Purchased products" icon-url="/static/images/checkout/products.svg" class="shadow lg:pb-11">
             <div class="lg:ml-28 lg:mr-11 lg:border lg:rounded">
               <!-- Product card -->
               <ProductCard v-for="item in orderItems" :key="item?.id" :line-item="item" :read-only="true"></ProductCard>
@@ -32,10 +28,10 @@
                 ></VcPagination>
               </div>
             </div>
-          </CheckoutSection>
+          </VcSection>
 
           <!-- Order comment section -->
-          <CheckoutSection
+          <VcSection
             v-if="order?.comment"
             title="Order comment"
             icon-url="/static/images/checkout/extra.svg"
@@ -46,7 +42,7 @@
                 {{ order?.comment }}
               </p>
             </div>
-          </CheckoutSection>
+          </VcSection>
           <div class="shadow-inner h-1 lg:hidden"></div>
         </div>
 
@@ -98,9 +94,9 @@
               <p><span class="font-extrabold">Payment #:</span> {{ order?.inPayments?.[0]?.number }}</p>
               <p><span class="font-extrabold">Payment type:</span> {{ order?.inPayments?.[0]?.gatewayCode }}</p>
               <div class="mt-3">
-                <VcButton class="px-2 py-1 uppercase text-xs" size="xs" is-outline :is-disabled="true"
-                  >View invoice</VcButton
-                >
+                <VcButton class="px-2 py-1 uppercase text-xs" size="xs" is-outline :is-disabled="true">
+                  View invoice
+                </VcButton>
               </div>
             </div>
           </VcCard>
@@ -111,9 +107,9 @@
 </template>
 
 <script setup lang="ts">
-import { CheckoutSection, OrderSummary, ProductCard } from "@/shared/checkout";
+import { OrderSummary, ProductCard } from "@/shared/checkout";
 import { computed, onMounted, ref } from "vue";
-import { VcCard, VcImage, VcPagination, VcButton } from "@/components";
+import { VcCard, VcImage, VcPagination, VcButton, VcSection } from "@/components";
 import { useRoute } from "vue-router";
 import { useUserOrder } from "@/shared/account";
 import moment from "moment";

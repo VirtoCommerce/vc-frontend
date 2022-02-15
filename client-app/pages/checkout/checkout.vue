@@ -9,11 +9,7 @@
           <!-- Main section -->
           <div class="lg:w-3/4 xl:w-4/5 flex-grow w-full">
             <!-- My products section -->
-            <CheckoutSection
-              title="My products"
-              icon-url="/static/images/checkout/products.svg"
-              class="shadow lg:pb-11"
-            >
+            <VcSection title="My products" icon-url="/static/images/checkout/products.svg" class="shadow lg:pb-11">
               <div class="xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6 lg:border lg:rounded">
                 <!-- Product card -->
                 <ProductCard
@@ -39,10 +35,10 @@
                   </p>
                 </div>
               </div>
-            </CheckoutSection>
+            </VcSection>
 
             <!-- Shipping details section -->
-            <CheckoutSection
+            <VcSection
               title="Shipping details"
               icon-url="/static/images/checkout/shipping.svg"
               class="shadow-inner pb-8 lg:shadow"
@@ -51,10 +47,10 @@
                 <CheckoutLabeledBlock label="Shipping address">
                   <template v-if="cart.shipments && cart.shipments?.[0]?.deliveryAddress">
                     <div>
-                      <span class="font-extrabold"
-                        >{{ cart.shipments[0].deliveryAddress?.firstName }}
-                        {{ cart.shipments[0].deliveryAddress?.lastName }}</span
-                      >
+                      <span class="font-extrabold">
+                        {{ cart.shipments[0].deliveryAddress?.firstName }}
+                        {{ cart.shipments[0].deliveryAddress?.lastName }}
+                      </span>
                       <p>
                         {{ cart.shipments[0].deliveryAddress?.countryCode }}
                         {{ cart.shipments[0].deliveryAddress?.regionName }}
@@ -70,8 +66,9 @@
                         is-outline
                         class="px-3 self-start uppercase font-bold"
                         @click="selectShippingAddressDialog"
-                        >Change</VcButton
                       >
+                        Change
+                      </VcButton>
                     </div>
                   </template>
                   <template v-else>
@@ -85,8 +82,9 @@
                         is-outline
                         class="px-3 self-start uppercase font-bold"
                         @click="selectShippingAddressDialog"
-                        >New address</VcButton
                       >
+                        New address
+                      </VcButton>
                     </div>
                   </template>
                 </CheckoutLabeledBlock>
@@ -109,15 +107,16 @@
                       is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="showShipmentMethodDialog"
-                      >Change</VcButton
                     >
+                      Change
+                    </VcButton>
                   </div>
                 </CheckoutLabeledBlock>
               </div>
-            </CheckoutSection>
+            </VcSection>
 
             <!-- Payment details section -->
-            <CheckoutSection
+            <VcSection
               title="Payment details"
               icon-url="/static/images/checkout/payment.svg"
               class="shadow-inner pb-8 lg:shadow"
@@ -147,8 +146,9 @@
                       is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="selectBillingAddressDialog"
-                      >New address</VcButton
                     >
+                      New address
+                    </VcButton>
                   </div>
                 </div>
                 <div
@@ -175,8 +175,9 @@
                       is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="selectBillingAddressDialog"
-                      >Change</VcButton
                     >
+                      Change
+                    </VcButton>
                   </div>
                 </div>
                 <CheckoutLabeledBlock label="Payment method">
@@ -193,24 +194,21 @@
                       is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="showPaymentMethodDialog"
-                      >Change</VcButton
                     >
+                      Change
+                    </VcButton>
                   </div>
                 </CheckoutLabeledBlock>
               </div>
-            </CheckoutSection>
+            </VcSection>
 
             <!-- Extra section -->
-            <CheckoutSection
-              title="Extra"
-              icon-url="/static/images/checkout/extra.svg"
-              class="shadow-inner pb-8 lg:shadow"
-            >
+            <VcSection title="Extra" icon-url="/static/images/checkout/extra.svg" class="shadow-inner pb-8 lg:shadow">
               <div class="mx-5 xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6">
                 <p class="font-extrabold text-base mb-1">Order comments</p>
                 <VcTextArea v-model="cartComment" class="resize-none" :rows="4" :max-length="1000" />
               </div>
-            </CheckoutSection>
+            </VcSection>
             <div class="shadow-inner h-1 lg:hidden"></div>
           </div>
 
@@ -274,7 +272,6 @@
 <script setup lang="ts">
 import {
   CheckoutLabeledBlock,
-  CheckoutSection,
   OrderSummary,
   ProductCard,
   EmptyCart,
@@ -284,7 +281,7 @@ import {
   ShippingAddressDialog,
   CreateAddressDialog,
 } from "@/shared/checkout";
-import { VcTextArea, VcImage, VcPriceDisplay, VcPagination, VcButton, VcActionInput } from "@/components";
+import { VcTextArea, VcImage, VcPriceDisplay, VcPagination, VcButton, VcActionInput, VcSection } from "@/components";
 import { useCart, useCheckout } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import { computed, onBeforeUpdate, onMounted, ref } from "vue";
