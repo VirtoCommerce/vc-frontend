@@ -7,10 +7,7 @@
 
       <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center flex-1">
         <div class="mb-3 lg:mb-0 text-sm lg:w-1/2">
-          <router-link
-            :to="`/product/${lineItem.productId}`"
-            class="text-cyan-700 font-extrabold line-clamp-3 overflow-hidden"
-          >
+          <router-link :to="`/product/${productId}`" class="text-cyan-700 font-extrabold line-clamp-3 overflow-hidden">
             {{ lineItem.name }}
           </router-link>
           <div class="flex">
@@ -114,6 +111,8 @@ const props = defineProps({
 });
 
 const count = computed(() => props.lineItem.quantity);
+
+const productId = computed(() => props.lineItem.product?.masterVariation?.id || props.lineItem.productId);
 
 let rules = yup.number().integer().optional().moreThan(0);
 
