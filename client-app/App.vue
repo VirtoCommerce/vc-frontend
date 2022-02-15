@@ -15,7 +15,7 @@ import { Header, Footer } from "./shared/layout";
 import { useUser } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { useContext } from "@/shared/context";
-import { setUserId } from "@/core/constants";
+import { setCatalogId, setUserId } from "@/core/constants";
 import { PopupHost } from "@/shared/popup";
 import { useRouter } from "vue-router";
 
@@ -51,7 +51,11 @@ onMounted(async () => {
   await loadMe();
   await loadContext();
 
+  // FIXME
+  // temporary solution
   setUserId(themeContext.value?.userId || me.value?.id);
+  setCatalogId(themeContext.value.catalogId!);
+
   await loadMyCart();
 });
 </script>

@@ -8,8 +8,9 @@
       :checked="checked"
       :aria-checked="checked"
       :class="[
-        checked && disabled ? 'bg-gray-300' : `checked:bg-${color}`,
-        disabled ? 'border-gray-200 bg-gray-50' : 'border-gray-300 bg-white',
+        disabled
+          ? `border-gray-200 ${checked ? 'bg-gray-300' : 'bg-gray-50'}`
+          : `border-gray-300 bg-white checked:bg-${color}`,
       ]"
       class="form-tick appearance-none flex-shrink-0 w-5 h-5 border-2 rounded-sm cursor-pointer disabled:cursor-not-allowed checked:border-transparent"
       @change="change"
@@ -50,7 +51,8 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
-  (event: "update:modelValue", newValue: boolean | unknown[]): void;
+  (event: "update:modelValue", value: boolean | any[]): void;
+  (event: "change", value: boolean | any[]): void;
 }>();
 
 const checked = computed<boolean>(() =>
@@ -59,7 +61,9 @@ const checked = computed<boolean>(() =>
 
 function change() {
   if (typeof props.modelValue === "boolean") {
-    emit("update:modelValue", !props.modelValue);
+    const newValue = !props.modelValue;
+    emit("update:modelValue", newValue);
+    emit("change", newValue);
   } else {
     const newArray = [...props.modelValue];
     const index = newArray.indexOf(props.value);
@@ -71,6 +75,7 @@ function change() {
     }
 
     emit("update:modelValue", newArray);
+    emit("change", newArray);
   }
 }
 </script>

@@ -22,9 +22,9 @@ const cart: Ref<CartType> = ref({ name: "" });
 const pages: Ref<number> = ref(0);
 const itemsPerPage: Ref<number> = ref(6);
 
-const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
-
 export default () => {
+  const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
+
   async function loadMyCart(): Promise<CartType> {
     loading.value = true;
     try {
