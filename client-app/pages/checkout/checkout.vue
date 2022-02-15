@@ -14,7 +14,7 @@
               icon-url="/static/images/checkout/products.svg"
               class="shadow lg:pb-11"
             >
-              <div class="lg:ml-28 lg:mr-11 lg:border lg:rounded">
+              <div class="xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6 lg:border lg:rounded">
                 <!-- Product card -->
                 <ProductCard
                   v-for="item in cartItems"
@@ -47,7 +47,7 @@
               icon-url="/static/images/checkout/shipping.svg"
               class="shadow-inner pb-8 lg:shadow"
             >
-              <div class="mx-5 lg:ml-28 lg:mr-11">
+              <div class="mx-5 xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6">
                 <CheckoutLabeledBlock label="Shipping address">
                   <template v-if="cart.shipments && cart.shipments?.[0]?.deliveryAddress">
                     <div>
@@ -122,7 +122,7 @@
               icon-url="/static/images/checkout/payment.svg"
               class="shadow-inner pb-8 lg:shadow"
             >
-              <div class="mx-5 lg:ml-28 lg:mr-11">
+              <div class="mx-5 xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6">
                 <CheckoutLabeledBlock label="Billing address">
                   <label class="flex items-center text-sm cursor-pointer">
                     <input
@@ -206,7 +206,7 @@
               icon-url="/static/images/checkout/extra.svg"
               class="shadow-inner pb-8 lg:shadow"
             >
-              <div class="mx-5 lg:ml-28 lg:mr-11">
+              <div class="mx-5 xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6">
                 <p class="font-extrabold text-base mb-1">Order comments</p>
                 <VcTextArea v-model="cartComment" class="resize-none" :rows="4" :max-length="1000" />
               </div>

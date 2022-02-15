@@ -16,6 +16,13 @@ fragment lineItemFields on LineItemType {
     masterVariation {
       id
     }
+    minQuantity
+    maxQuantity
+    variations {
+      id
+      minQuantity
+      maxQuantity
+    }
   }
   quantity
   sku

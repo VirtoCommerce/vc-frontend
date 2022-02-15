@@ -1,5 +1,5 @@
 <template>
-  <img :src="src" :alt="alt" :class="additionalClass" @error="setFallbackSrc" />
+  <img :src="src || fallbackSrc" :alt="alt" :class="additionalClass" @error="setFallbackSrc" />
 </template>
 
 <script setup lang="ts">
