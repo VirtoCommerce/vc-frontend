@@ -18,6 +18,7 @@ const Account = () => import("./pages/account/account.vue");
 const ForgotPassword = () => import("./pages/forgot-password/forgot-password.vue");
 const ResetPassword = () => import("./pages/reset-password/reset-password.vue");
 const OrderDetails = () => import("./pages/account/order-details.vue");
+const Orders = () => import("./pages/account/orders.vue");
 
 // Router definition
 const router = createRouter({
@@ -50,6 +51,7 @@ const router = createRouter({
         { path: "dashboard", name: "Dashboard", component: Dashboard },
         { path: "addresses", name: "Addresses", component: Addresses },
         { path: "checkout-defaults", name: "CheckoutDefaults", component: CheckoutDefaults },
+        { path: "orders", name: "Orders", component: Orders },
         { path: "order-details/:id", name: "OrderDetails", component: OrderDetails },
       ],
     },
