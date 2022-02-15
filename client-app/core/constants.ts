@@ -7,12 +7,16 @@ export const currencyCode = window.CURRENCY_CODE || "USD";
 export const storeLanguages = window.STORE_LANGUAGES || "";
 export const locale = window.LOCALE || "";
 export let currentUserId = window.USER_ID || "";
-export const catalogId = window.CATALOG_ID || "";
+export let catalogId = window.CATALOG_ID || "";
 export const categoryId = window.CATEGORY_ID || "";
 export const productId = window.PRODUCT_ID || "";
 
 export function setUserId(id: string): void {
   currentUserId = id;
+}
+
+export function setCatalogId(id: string): void {
+  catalogId = id;
 }
 
 //TODO: load from  storefront API
@@ -30,8 +34,8 @@ export const accessDeniedUrl = `${fullBaseUrl}error/AccessDenied`;
 export const isoDateFormat = "YYYY-MM-DD";
 
 // Search
-export const pageSizes = [10, 20, 50, 100];
-export const defaultPageSize = 10;
+export const pageSizes = [16, 32, 48];
+export const defaultPageSize = 16;
 export const startPageNumber = 1;
 export const ordersStatuses = ["New", "Cancelled", "Processing", "Completed", "Pending"];
 export const invoicesStatuses = ["New", "Paid"];

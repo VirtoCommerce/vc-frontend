@@ -82,7 +82,7 @@
 
 <script setup lang="ts">
 import MobileMenuLink from "./mobile-menu-link.vue";
-import menuSchema from "@/config/menu.json";
+import menuSchema from "@/config/menu";
 import { useCart } from "@/shared/cart";
 import { useUser } from "@/shared/account";
 import { ref } from "vue";

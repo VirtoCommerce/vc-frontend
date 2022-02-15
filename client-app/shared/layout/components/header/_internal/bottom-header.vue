@@ -50,7 +50,7 @@
 <script setup lang="ts">
 import { VcImage } from "@/components";
 import BottomHeaderLink from "./bottom-header-link.vue";
-import menuSchema from "@/config/menu.json";
+import menuSchema from "@/config/menu";
 import { ref } from "vue";
 import { useCart } from "@/shared/cart";
 

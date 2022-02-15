@@ -45,7 +45,7 @@
       <div>
         <div class="uppercase font-extrabold text-base text-white mb-3">Online resources</div>
         <div class="flex flex-col space-y-1">
-          <FooterLink to="/catalog">Catalog</FooterLink>
+          <FooterLink :to="`/${SeoUrl.Catalog}`">Catalog</FooterLink>
           <FooterLink to="/hot-buys">Hot Buys</FooterLink>
           <FooterLink to="/rebates">Rebates</FooterLink>
           <FooterLink to="/replacement-parts">Replacement Parts</FooterLink>
@@ -70,4 +70,5 @@
 import { VcImage } from "@/components";
 import { version } from "../../../../../package.json";
 import FooterLink from "./_internal/footer-link.vue";
+import SeoUrl from "@core/seo-routes.enum";
 </script>

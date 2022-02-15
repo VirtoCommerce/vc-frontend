@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import SeoUrl from "@core/seo-routes.enum";
 
 // Pages
 const Home = () => import("./pages/home/home.vue");
@@ -49,15 +50,14 @@ const router = createRouter({
         { path: "dashboard", name: "Dashboard", component: Dashboard },
         { path: "addresses", name: "Addresses", component: Addresses },
         { path: "checkout-defaults", name: "CheckoutDefaults", component: CheckoutDefaults },
-        { path: "order-details/:id", name: "OrderDetails", component: OrderDetails }
+        { path: "order-details/:id", name: "OrderDetails", component: OrderDetails },
       ],
     },
     { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword },
     { path: "/reset-password", name: "ResetPassword", component: ResetPassword },
-    { path: "/catalog", name: "CatalogRoot", component: Catalog },
-    { path: "/catalog/:categoryKey", name: "Catalog", component: Catalog },
+    { path: `/${SeoUrl.Catalog}/:categorySeoUrls*`, name: "Catalog", component: Catalog, props: true },
+    { path: `/${SeoUrl.Product}/:id`, name: "Product", component: Product },
     { path: "/checkout", name: "Checkout", component: Checkout },
-    { path: "/product/:id", name: "Product", component: Product },
     { path: "/500", name: "InternalError", component: Error500 },
     { path: "/403", name: "NoAccess", component: Error403 },
     { path: "/:pathMatch(.*)*", name: "NotFound", component: Error404 },
