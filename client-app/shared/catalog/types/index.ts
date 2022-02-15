@@ -1,3 +1,5 @@
+export * from "./search";
+
 export type CategoryTree = {
   id?: string;
   parent?: string;
@@ -6,22 +8,10 @@ export type CategoryTree = {
   items?: CategoryTree[];
   isCurrent?: boolean;
   count?: number;
-  seoKeyword?: string;
-  [x: string]: unknown;
-};
-
-export type ProductsSearchParams = {
-  categoryId?: string;
-  query?: string;
-  page?: number;
-  itemsPerPage?: number;
-  sort?: string;
-  filter?: string;
-  fuzzy?: boolean;
-  fuzzyLevel?: number;
+  seoUrl?: string;
 };
 
 export interface IBreadcrumbsItem {
-  url: string;
   title: string;
+  url?: string;
 }
