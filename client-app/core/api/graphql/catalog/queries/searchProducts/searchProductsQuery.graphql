@@ -10,6 +10,7 @@ query SearchProducts(
   $query: String
   $fuzzy: Boolean
   $fuzzyLevel: Int
+  $withFacets: Boolean!
 ) {
   products(
     storeId: $storeId
@@ -24,6 +25,7 @@ query SearchProducts(
     fuzzy: $fuzzy
     fuzzyLevel: $fuzzyLevel
   ) {
+    totalCount
     items {
       name
       id
@@ -71,9 +73,7 @@ query SearchProducts(
         }
       }
     }
-    totalCount
-
-    term_facets {
+    term_facets @include(if: $withFacets) {
       name
       label
       terms {
@@ -83,7 +83,7 @@ query SearchProducts(
         isSelected
       }
     }
-    range_facets {
+    range_facets @include(if: $withFacets) {
       name
       label
       ranges {

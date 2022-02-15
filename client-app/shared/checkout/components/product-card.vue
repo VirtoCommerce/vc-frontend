@@ -8,7 +8,7 @@
       <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center flex-1">
         <div class="mb-3 lg:mb-0 text-sm lg:w-1/2">
           <router-link
-            :to="`/product/${lineItem.productId}`"
+            :to="`/${SeoUrl.Product}/${lineItem.productId}`"
             class="text-cyan-700 font-extrabold line-clamp-3 overflow-hidden"
           >
             {{ lineItem.name }}
@@ -98,6 +98,7 @@ import { LineItemType } from "@/core/api/graphql/types";
 import { computed, PropType } from "vue";
 import { useField } from "vee-validate";
 import * as yup from "yup";
+import SeoUrl from "@core/seo-routes.enum";
 
 // Define max qty available to add
 const max = 999999;

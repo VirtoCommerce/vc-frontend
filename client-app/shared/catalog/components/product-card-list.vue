@@ -2,7 +2,7 @@
   <div class="flex items-center justify-between bg-white rounded border p-4 shadow-sm hover:shadow-lg space-x-6">
     <div class="flex flex-grow items-center">
       <!-- Product image -->
-      <router-link :to="`/product/${product.id}`" class="cursor-pointer">
+      <router-link :to="`/${SeoUrl.Product}/${product.id}`" class="cursor-pointer">
         <div class="border border-gray-100 w-20 h-20 flex-shrink-0 mr-4">
           <VcImage :src="product.imgSrc" :alt="product.name" class="w-full h-full object-cover object-center" />
         </div>
@@ -11,7 +11,7 @@
       <div>
         <!-- Product title -->
         <router-link
-          :to="`/product/${product.id}`"
+          :to="`/${SeoUrl.Product}/${product.id}`"
           class="text-cyan-700 font-extrabold text-sm mb-3 flex-grow line-clamp-2 overflow-hidden"
         >
           {{ product.name }}
@@ -67,11 +67,12 @@
 <script setup lang="ts">
 import { PropType } from "vue";
 import { VcImage, VcPriceDisplay } from "@/components";
-import { Product } from "@/core/api/graphql/types";
+import { Product as ProductType } from "@/core/api/graphql/types";
+import SeoUrl from "@core/seo-routes.enum";
 
 defineProps({
   product: {
-    type: Object as PropType<Product>,
+    type: Object as PropType<ProductType>,
     required: true,
   },
 });
