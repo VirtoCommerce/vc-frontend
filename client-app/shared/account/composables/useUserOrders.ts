@@ -32,7 +32,7 @@ export default () => {
         after: String((page.value - 1) * itemsPerPage.value),
       });
       orders.value = response.items ?? [];
-      pages.value = Math.ceil(response.totalCount ?? 0 / itemsPerPage.value);
+      pages.value = Math.ceil((response.totalCount ?? 0) / itemsPerPage.value);
     } catch (e) {
       Logger.error("useUserOrders.loadOrders", e);
       throw e;
