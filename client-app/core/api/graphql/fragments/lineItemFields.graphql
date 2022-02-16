@@ -13,6 +13,16 @@ fragment lineItemFields on LineItemType {
   product {
     brandName
     slug
+    masterVariation {
+      id
+    }
+    minQuantity
+    maxQuantity
+    variations {
+      id
+      minQuantity
+      maxQuantity
+    }
   }
   quantity
   sku

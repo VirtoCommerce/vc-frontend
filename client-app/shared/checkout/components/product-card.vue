@@ -6,9 +6,9 @@
       </div>
 
       <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center flex-1">
-        <div class="mb-3 lg:mb-0 text-sm lg:w-1/2">
+        <div class="mb-3 lg:mb-0 text-sm xl:w-1/2">
           <router-link
-            :to="`/${SeoUrl.Product}/${lineItem.productId}`"
+            :to="`/${SeoUrl.Product}/${productId}`"
             class="text-cyan-700 font-extrabold line-clamp-3 overflow-hidden"
           >
             {{ lineItem.name }}
@@ -33,14 +33,14 @@
           </div>
         </div>
 
-        <div class="flex items-start space-x-2 lg:space-x-4 lg:w-2/5 lg:justify-end">
-          <div class="flex flex-col items-center lg:w-1/4">
+        <div class="flex items-start space-x-2 lg:space-x-4 xl:w-2/5 lg:justify-end">
+          <div class="flex flex-col items-center lg:w-24 lg:shrink-0 xl:w-1/4">
             <input
               v-model="value"
               type="number"
               pattern="\d*"
-              :max="max"
-              :min="0"
+              :max="maxQty"
+              :min="minQty"
               class="w-20 border rounded overflow-hidden h-8 lg:h-10 focus:ring ring-inset outline-none p-1 text-center"
               :class="{ 'text-red-500': isInputDisabled, 'border-red-500': errorMessage }"
               :disabled="isInputDisabled || readOnly"
@@ -78,11 +78,11 @@
               >Remove</VcButton
             >
           </div>
-          <div v-if="!readOnly" class="hidden lg:flex lg:w-1/4 flex-col space-y-1 text-xs font-semibold text-cyan-700">
+          <div v-if="!readOnly" class="hidden lg:flex xl:w-1/4 flex-col space-y-1 text-xs font-semibold text-cyan-700">
             <span v-if="!isInputDisabled" class="cursor-pointer" @click="updateQuantity">Update</span>
             <span class="cursor-pointer" @click="$emit('remove:item', lineItem.id)">Remove</span>
           </div>
-          <div class="hidden lg:flex lg:w-2/4 lg:items-end flex-col text-sm font-extrabold pr-3">
+          <div class="hidden lg:flex lg:w-28 lg:shrink-0 xl:w-2/4 lg:items-end flex-col text-sm font-extrabold pr-3">
             <span class="text-black self-end">Total</span>
             <span class="text-green-700"><VcPriceDisplay :value="lineItem.extendedPrice" /></span>
           </div>
@@ -115,11 +115,21 @@ const props = defineProps({
 });
 
 const count = computed(() => props.lineItem.quantity);
+const variation = computed(() => props.lineItem.product?.variations?.find((v) => v.id === props.lineItem.productId));
+const minQty = computed(
+  () => (variation.value ? variation.value?.minQuantity : props.lineItem.product?.minQuantity) || 0
+);
+const maxQty = computed(
+  () => (variation.value ? variation.value?.maxQuantity : props.lineItem.product?.maxQuantity) || max
+);
+
+const productId = computed(() => props.lineItem.product?.masterVariation?.id || props.lineItem.productId);
 
 let rules = yup.number().integer().optional().moreThan(0);
+rules = rules.min(minQty.value);
 
 if (props.lineItem.inStockQuantity) {
-  rules = rules.max(props.lineItem.inStockQuantity);
+  rules = rules.max(Math.min(props.lineItem.inStockQuantity, maxQty.value, max));
 }
 
 const { value, validate, errorMessage } = useField("qty", rules, {

@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex flex-col font-lato">
+  <div v-if="loaded" class="min-h-screen flex flex-col font-lato">
     <Header />
     <div class="flex-grow flex flex-col">
       <RouterView />
@@ -7,10 +7,11 @@
     <Footer />
     <PopupHost />
   </div>
+  <div v-else></div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { Header, Footer } from "./shared/layout";
 import { useUser } from "@/shared/account";
 import { useCart } from "@/shared/cart";
@@ -47,6 +48,8 @@ beforeEach(async (to) => {
   }
 });
 
+const loaded = ref(false);
+
 onMounted(async () => {
   await loadMe();
   await loadContext();
@@ -57,5 +60,6 @@ onMounted(async () => {
   setCatalogId(themeContext.value.catalogId!);
 
   await loadMyCart();
+  loaded.value = true;
 });
 </script>

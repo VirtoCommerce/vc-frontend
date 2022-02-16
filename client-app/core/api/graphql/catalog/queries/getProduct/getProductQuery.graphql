@@ -40,6 +40,8 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
       images {
         url
       }
+      minQuantity
+      maxQuantity
       code
       properties {
         name

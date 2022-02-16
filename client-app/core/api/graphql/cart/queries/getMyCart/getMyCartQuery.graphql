@@ -14,7 +14,6 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
     }
     itemsCount
     itemsQuantity
-    isValid
     shipments {
       id
       shipmentMethodCode
