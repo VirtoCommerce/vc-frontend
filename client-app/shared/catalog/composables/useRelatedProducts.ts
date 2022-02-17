@@ -1,17 +1,17 @@
-import { Ref, ref, computed, readonly } from "vue";
-import { searchRelatedProducts } from "@core/api/graphql/catalog";
+import { ref, computed, readonly, shallowRef } from "vue";
+import { searchRelatedProducts, RelatedProductsSearchParams } from "@core/api/graphql/catalog";
 import { Product } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 
 export default () => {
-  const loading: Ref<boolean> = ref(true);
-  const relatedProducts: Ref<Product[]> = ref([]);
+  const loading = ref(true);
+  const relatedProducts = shallowRef<Product[]>([]);
 
-  async function fetchRelatedProducts(id: string) {
+  async function fetchRelatedProducts(params: RelatedProductsSearchParams) {
     loading.value = true;
     try {
-      const associations = await searchRelatedProducts(id);
-      relatedProducts.value = associations.map((x) => x.product!);
+      const associations = await searchRelatedProducts(params);
+      relatedProducts.value = associations.map((association) => association.product!);
     } catch (e) {
       Logger.error("useRelatedProducts.fetchRelatedProducts", e);
       throw e;

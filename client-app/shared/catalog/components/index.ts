@@ -1,4 +1,5 @@
 export { default as Breadcrumbs } from "./breadcrumbs.vue";
+export { default as CarouselProductCard } from "./carousel-product-card.vue";
 export { default as FiltersBlock } from "./filters-block.vue";
 export { default as PageSize } from "./page-size.vue";
 export { default as ProductCardGrid } from "./product-card-grid.vue";
