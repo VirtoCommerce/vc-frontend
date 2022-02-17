@@ -42,8 +42,6 @@ query SearchProducts(
       description(type: "QuickReview") {
         content
         id
-        languageCode
-        reviewType
       }
       availabilityData {
         isActive
