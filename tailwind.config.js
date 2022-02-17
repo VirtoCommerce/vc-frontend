@@ -23,10 +23,10 @@ module.exports = {
         },
 
         primary: {
-          DEFAULT: "#F0AD4E",
+          DEFAULT: "var(--color-primary, #f0ad4e)",
         },
         secondary: {
-          DEFAULT: "#151B1E",
+          DEFAULT: "var(--color-secondary, #151b1e)",
         },
         focus: {
           DEFAULT: "#00739E",

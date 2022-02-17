@@ -58,7 +58,7 @@ const router = createRouter({
     { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword },
     { path: "/reset-password", name: "ResetPassword", component: ResetPassword },
     { path: `/${SeoUrl.Catalog}/:categorySeoUrls*`, name: "Catalog", component: Catalog, props: true },
-    { path: `/${SeoUrl.Product}/:id`, name: "Product", component: Product },
+    { path: `/${SeoUrl.Product}/:productId`, name: "Product", component: Product, props: true },
     { path: "/checkout", name: "Checkout", component: Checkout },
     { path: "/500", name: "InternalError", component: Error500 },
     { path: "/403", name: "NoAccess", component: Error403 },

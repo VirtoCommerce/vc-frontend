@@ -8,7 +8,6 @@ import _ from "lodash";
 export default () => {
   const loading: Ref<boolean> = ref(true);
   const product: Ref<Product | null> = ref(null);
-  const withVariations = computed(() => product.value?.variations?.length);
   const variationsCartTotal = ref(0);
 
   const { loading: cartLoading, getItemsTotal } = useCart();
@@ -46,7 +45,6 @@ export default () => {
     loadProduct,
     loading: readonly(loading),
     product: computed(() => product.value),
-    withVariations: computed(() => withVariations.value),
     variationsCartTotal: computed(() => variationsCartTotal.value),
   };
 };

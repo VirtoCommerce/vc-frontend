@@ -10,7 +10,7 @@
         <!-- Main section -->
         <div class="lg:w-3/4 xl:w-4/5 flex-grow w-full">
           <!-- My products section -->
-          <CheckoutSection
+          <VcSection
             title="My purchased products"
             icon-url="/static/images/checkout/products.svg"
             class="shadow lg:pb-11"
@@ -28,10 +28,10 @@
                 ></VcPagination>
               </div>
             </div>
-          </CheckoutSection>
+          </VcSection>
 
           <!-- Order comment section -->
-          <CheckoutSection
+          <VcSection
             v-if="order.comment"
             title="Order comment"
             icon-url="/static/images/checkout/extra.svg"
@@ -42,7 +42,7 @@
                 {{ order.comment }}
               </p>
             </div>
-          </CheckoutSection>
+          </VcSection>
           <div class="shadow-inner h-1 lg:hidden"></div>
         </div>
 
@@ -108,11 +108,11 @@
 </template>
 
 <script setup lang="ts">
-import { CheckoutSection, OrderSummary, ProductCard } from "@/shared/checkout";
+import { OrderSummary, ProductCard } from "@/shared/checkout";
 import { CustomerOrderType } from "@/core/api/graphql/types";
 import { useCart } from "@/shared/cart";
 import { computed, PropType, ref } from "vue";
-import { VcCard, VcImage, VcPagination, VcButton } from "@/components";
+import { VcCard, VcImage, VcPagination, VcButton, VcSection } from "@/components";
 
 const { itemsPerPage } = useCart();
 

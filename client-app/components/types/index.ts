@@ -1,3 +1,16 @@
+import { SwiperOptions } from "swiper/types/swiper-options";
+
+type NonNullableSwiperOptions = {
+  [prop in keyof Omit<
+    SwiperOptions,
+    "navigation" | "pagination" | "createElements" | "onAny" | "swipeHandler" | "_emitClasses"
+  >]?: NonNullable<SwiperOptions[prop]>;
+};
+
+export interface CarouselOptions extends NonNullableSwiperOptions {
+  swipeHandler?: boolean;
+}
+
 export interface IValidationRules {
   required?: boolean;
   min?: number;
