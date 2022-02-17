@@ -165,11 +165,7 @@
               <template v-else>
                 <ProductCardGrid v-for="item in products" :key="item.id" :product="item">
                   <template #cart-handler>
-                    <VcButton
-                      v-if="item.variations?.length"
-                      :to="`/${SeoUrl.Product}/${item.id}`"
-                      class="uppercase mb-4"
-                    >
+                    <VcButton v-if="item.hasVariations" :to="`/${SeoUrl.Product}/${item.id}`" class="uppercase mb-4">
                       Choose
                     </VcButton>
                     <AddToCart v-else :product="item"></AddToCart>
@@ -188,7 +184,7 @@
                 <ProductCardList v-for="item in products" :key="item.id" :product="item">
                   <template #cart-handler>
                     <VcButton
-                      v-if="item.variations?.length"
+                      v-if="item.hasVariations"
                       :to="`/${SeoUrl.Product}/${item.id}`"
                       class="uppercase mb-4 w-full"
                     >

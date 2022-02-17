@@ -4245,6 +4245,15 @@
         "possibleTypes": null
       },
       {
+        "kind": "SCALAR",
+        "name": "DynamicPropertyValue",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "OBJECT",
         "name": "DynamicPropertyValueType",
         "fields": [
@@ -4286,7 +4295,7 @@
             "args": [],
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "DynamicPropertyValue",
               "ofType": null
             },
             "isDeprecated": false,
@@ -8063,7 +8072,7 @@
             "name": "value",
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "DynamicPropertyValue",
               "ofType": null
             },
             "defaultValue": null,
@@ -19012,6 +19021,17 @@
             "deprecationReason": null
           },
           {
+            "name": "hasVariations",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "id",
             "args": [],
             "type": {
@@ -19805,7 +19825,7 @@
             "args": [],
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "PropertyValue",
               "ofType": null
             },
             "isDeprecated": false,
@@ -20122,6 +20142,15 @@
             "deprecationReason": null
           }
         ],
+        "possibleTypes": null
+      },
+      {
+        "kind": "SCALAR",
+        "name": "PropertyValue",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
         "possibleTypes": null
       },
       {

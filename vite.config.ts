@@ -31,6 +31,9 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
+    optimizeDeps: {
+      exclude: ["swiper/vue", "swiper/types"],
+    },
     publicDir: "./client-app/public",
     server: {
       proxy: {

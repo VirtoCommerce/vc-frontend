@@ -32,9 +32,7 @@ query SearchProducts(
       code
       minQuantity
       maxQuantity
-      variations {
-        id
-      }
+      hasVariations
       slug
       outline
       imgSrc
