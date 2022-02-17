@@ -129,6 +129,7 @@
                 </tr>
               </template>
               <template #desktop-empty>
+                <!-- Workaround for using colspan -->
                 <tr>
                   <td></td>
                   <td></td>
