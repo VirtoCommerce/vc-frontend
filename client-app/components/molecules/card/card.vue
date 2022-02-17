@@ -12,7 +12,7 @@
         </div>
       </div>
     </div>
-    <div v-if="isCollapsed" class="px-6 py-4">
+    <div v-if="isCollapsed" :class="{ 'px-6 py-4': !fullWidthContent }">
       <slot></slot>
     </div>
   </div>
@@ -28,6 +28,11 @@ defineProps({
   },
 
   isCollapsible: {
+    type: Boolean,
+    default: false,
+  },
+
+  fullWidthContent: {
     type: Boolean,
     default: false,
   },

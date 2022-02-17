@@ -12,3 +12,10 @@ export interface ItemAction {
   position: string;
   clickHandler(item: any): any;
 }
+
+export interface ITableColumn {
+  id: string;
+  title: string;
+  sortable?: boolean;
+  titlePosition?: "text-center" | "text-right" | "text-left";
+}
