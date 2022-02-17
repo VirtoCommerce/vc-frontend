@@ -13,7 +13,9 @@
       </div>
     </div>
     <div v-if="isCollapsed" class="px-6 py-4">
-      <slot></slot>
+      <div class="overflow-hidden">
+        <slot></slot>
+      </div>
     </div>
   </div>
 </template>

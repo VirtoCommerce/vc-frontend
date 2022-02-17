@@ -24,7 +24,7 @@
     </div>
 
     <div class="bg-white py-10 lg:py-24">
-      <div class="w-full max-w-screen-2xl mx-auto px-14 lg:px-32">
+      <div class="w-full max-w-screen-xl mx-auto px-14 lg:px-32">
         <div class="font-bold text-2xl lg:text-4xl mb-6 text-center">
           Readability is primarily the concern of designer
         </div>
@@ -37,7 +37,7 @@
     </div>
 
     <div class="bg-gray-100 py-10 lg:py-24">
-      <div class="w-full max-w-screen-2xl mx-auto px-5 md:px-12">
+      <div class="w-full max-w-screen-xl mx-auto px-5 md:px-12">
         <div class="font-bold text-2xl lg:text-5xl mb-6 text-center">Explore the features</div>
         <div class="text-base text-center">
           With a crystal-clear camera, real-time HD video display, and intuitive flight controls, what will you create?
@@ -72,7 +72,7 @@
     </div>
 
     <div class="bg-gray-800 py-10 lg:py-24">
-      <div class="w-full max-w-screen-2xl mx-auto px-5 md:px-12">
+      <div class="w-full max-w-screen-xl mx-auto px-5 md:px-12">
         <div class="flex flex-col lg:block justify-between items-center space-y-10">
           <div class="font-bold text-2xl lg:text-3xl text-white text-center">Book a free e-commerce consulting</div>
           <div class="flex w-full items-center justify-center space-x-6">
@@ -84,7 +84,7 @@
     </div>
 
     <div class="bg-gray-100 py-10 lg:py-24">
-      <div class="w-full max-w-screen-2xl mx-auto px-5 md:px-12">
+      <div class="w-full max-w-screen-xl mx-auto px-5 md:px-12">
         <h2 class="text-center font-bold text-3xl lg:text-4xl mb-2 lg:mb-4">Game laptops</h2>
         <div class="text-center lg:text-lg">
           With a crystal-clear camera, real-time HD video display, and intuitive flight controls, what will you create?
@@ -104,7 +104,7 @@
     </div>
 
     <div class="bg-white py-10 lg:py-24">
-      <div class="w-full max-w-screen-2xl mx-auto px-14 lg:px-32">
+      <div class="w-full max-w-screen-xl mx-auto px-14 lg:px-32">
         <div class="font-bold text-2xl lg:text-4xl mb-6 text-center">
           Readability is primarily the concern of designer
         </div>
@@ -117,7 +117,7 @@
     </div>
 
     <div class="bg-gray-100 py-10 lg:py-24">
-      <div class="w-full max-w-screen-2xl mx-auto px-14 lg:px-32">
+      <div class="w-full max-w-screen-xl mx-auto px-14 lg:px-32">
         <div class="font-bold text-2xl lg:text-4xl mb-4 text-center">Subscribe to our promotions</div>
         <div class="font-bold text-lg mb-8 text-center">And be among the first to hear about upcoming events.</div>
         <VcInput class="max-w-lg mx-auto" placeholder="tanya.hill@example.com" />

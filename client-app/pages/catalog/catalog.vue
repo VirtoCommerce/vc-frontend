@@ -22,7 +22,7 @@
               : 'lg:flex lg:w-1/4 xl:w-1/5 flex-shrink-0',
           ]"
         >
-          <div class="flex flex-col gap-4 lg:gap-5">
+          <div class="flex flex-col gap-4 lg:gap-5 overflow-hidden">
             <!-- Search results -->
             <VcCard title="Filter results by">
               <p class="text-sm pb-2">Search within these results</p>
@@ -92,7 +92,10 @@
                   color="cyan-700"
                   @change="applyFilters"
                 >
-                  {{ item.label }} ({{ item.count }})
+                  <div class="flex">
+                    <span class="truncate">{{ item.label }}</span>
+                    <span class="ml-1">({{ item.count }})</span>
+                  </div>
                 </VcCheckbox>
               </VcCard>
             </template>

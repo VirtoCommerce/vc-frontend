@@ -16,7 +16,7 @@
       @change="change"
     />
 
-    <span v-if="$slots.default" :class="{ 'opacity-60': disabled }" class="ml-2 text-sm">
+    <span v-if="$slots.default" :class="{ 'opacity-60': disabled }" class="ml-2 text-sm overflow-hidden">
       <slot v-bind="{ checked }" />
     </span>
   </label>
