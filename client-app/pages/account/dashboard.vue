@@ -10,6 +10,19 @@
         <!-- Second column-->
         <div class="flex flex-col w-full px-5 space-y-5 lg:w-3/5">
           <VcCard title="Last orders" :full-width-content="true">
+            <template #header-button>
+              <div v-if="isMobile">
+                <VcButton :to="`/account/orders`" :is-outline="true" class="px-2 uppercase text-sm"
+                  >All orders</VcButton
+                >
+              </div>
+              <div class="flex items-center" v-else>
+                <router-link :to="`/account/orders`" class="text-xs text-blue-500 hover:text-blue-700 font-bold mr-3"
+                  >All Orders</router-link
+                >
+                <i class="fas fa-arrow-right text-yellow-500"></i>
+              </div>
+            </template>
             <VcTable
               :loading="ordersLoading"
               :columns="columns"
@@ -208,7 +221,7 @@
 </template>
 
 <script setup lang="ts">
-import { ITableColumn, VcCard, VcImage, VcTable, TableStatusBadge } from "@/components";
+import { ITableColumn, VcCard, VcImage, VcTable, TableStatusBadge, VcButton } from "@/components";
 import { CustomerOrderType } from "@/core/api/graphql/types";
 import { sortDescending } from "@/core/constants";
 import { AccountNavigation } from "@/shared/account";
@@ -216,6 +229,10 @@ import useUserOrders from "@/shared/account/composables/useUserOrders";
 import { onMounted, ref } from "vue";
 import moment from "moment";
 import { useRouter } from "vue-router";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("md");
 
 const { loading: ordersLoading, orders, loadOrders, sort, itemsPerPage } = useUserOrders();
 
