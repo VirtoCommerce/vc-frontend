@@ -30,3 +30,10 @@ export interface IBreadcrumbs {
   title: string;
   url: string;
 }
+
+export interface ITableColumn {
+  id: string;
+  title: string;
+  sortable?: boolean;
+  titlePosition?: "text-center" | "text-right" | "text-left";
+}

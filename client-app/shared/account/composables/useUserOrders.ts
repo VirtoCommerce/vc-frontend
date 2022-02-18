@@ -5,20 +5,18 @@ import { Logger } from "@core/utilities";
 import { getSortingExpression, ISortInfo } from "@/shared/account";
 import { sortAscending } from "@core/constants";
 
-const orders: Ref<CustomerOrderType[]> = shallowRef<CustomerOrderType[]>([]);
-
-const itemsPerPage: Ref<number> = ref(10);
-const pages: Ref<number> = ref(0);
-const page: Ref<number> = ref(1);
-
-// TODO: refine the sorting logic
-const sort: Ref<ISortInfo> = ref({
-  column: "number",
-  direction: sortAscending,
-});
-
 export default () => {
+  const orders: Ref<CustomerOrderType[]> = shallowRef<CustomerOrderType[]>([]);
   const loading: Ref<boolean> = ref(false);
+  const itemsPerPage: Ref<number> = ref(10);
+  const pages: Ref<number> = ref(0);
+  const page: Ref<number> = ref(1);
+
+  // TODO: refine the sorting logic
+  const sort: Ref<ISortInfo> = ref({
+    column: "number",
+    direction: sortAscending,
+  });
 
   async function loadOrders() {
     loading.value = true;

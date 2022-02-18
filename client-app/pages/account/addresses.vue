@@ -55,70 +55,70 @@
             </AddressForm>
 
             <!-- View Table -->
-            <!-- TODO: make a component to view the addresses table -->
             <template v-else>
-              <!-- Mobile table view -->
-              <template v-if="isMobile">
-                <div v-if="addresses.length">
-                  <TableMobileItem
-                    v-for="address in paginatedAddresses"
-                    :key="address.id"
-                    :action-builder="actionBuilder"
-                    :item="address"
-                    class="overflow-auto"
+              <VcTable
+                :loading="addressesLoading"
+                :item-action-builder="actionBuilder"
+                :columns="columns"
+                :items="paginatedAddresses"
+                :sort="sort"
+                :pages="pages"
+                :page="page"
+                @pageChanged="onPageChange"
+                @headerClick="applySorting"
+              >
+                <template #mobile-item="itemData">
+                  <div
+                    class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200"
+                    :class="{
+                      'relative mobile-default-badge':
+                        defaultShippingAddress && itemData.item.id === defaultShippingAddress.id,
+                    }"
                   >
                     <div
-                      class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200"
-                      :class="{
-                        'relative mobile-default-badge':
-                          defaultShippingAddress && address.id === defaultShippingAddress.id,
-                      }"
+                      v-if="defaultShippingAddress && itemData.item.id === defaultShippingAddress.id"
+                      class="absolute top-0 right-0 z-10"
                     >
-                      <div
-                        v-if="defaultShippingAddress && address.id === defaultShippingAddress.id"
-                        class="absolute top-0 right-0 z-10"
-                      >
-                        <i class="fas fa-check text-white mr-2"></i>
-                      </div>
-
-                      <div class="flex flex-col">
-                        <span class="text-sm text-gray-400"> Recipient's name </span>
-                        <span class="pr-4 font-extrabold overflow-hidden overflow-ellipsis">
-                          {{ address.firstName }} {{ address.lastName }}
-                        </span>
-                      </div>
-
-                      <div class="flex flex-col">
-                        <span class="text-sm text-gray-400">Address</span>
-                        <span class="overflow-hidden overflow-ellipsis">
-                          {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
-                          {{ address.postalCode }}
-                        </span>
-                      </div>
-
-                      <div class="flex flex-col">
-                        <span class="text-sm text-gray-400">Phone</span>
-                        <span class="pr-4 overflow-hidden overflow-ellipsis">{{ address.phone }}</span>
-                      </div>
-
-                      <div class="flex flex-col">
-                        <span class="text-sm text-gray-400">Email</span>
-                        <span class="overflow-hidden overflow-ellipsis">{{ address.email }}</span>
-                      </div>
+                      <i class="fas fa-check text-white mr-2"></i>
                     </div>
-                  </TableMobileItem>
-                </div>
 
-                <div v-else-if="!addressesLoading" class="flex items-center justify-center space-x-10 p-5">
-                  <img src="/static/images/account/icons/no-addresses.svg" alt="No addresses" />
-                  <div class="flex flex-col space-y-2">
-                    <span class="text-base">There are no addresses yet</span>
-                    <VcButton class="uppercase w-full" @click="openEditMode()">Add new address</VcButton>
+                    <div class="flex flex-col">
+                      <span class="text-sm text-gray-400"> Recipient's name </span>
+                      <span class="pr-4 font-extrabold overflow-hidden overflow-ellipsis">
+                        {{ itemData.item.firstName }} {{ itemData.item.lastName }}
+                      </span>
+                    </div>
+
+                    <div class="flex flex-col">
+                      <span class="text-sm text-gray-400">Address</span>
+                      <span class="overflow-hidden overflow-ellipsis">
+                        {{ itemData.item.countryCode }} {{ itemData.item.regionName }} {{ itemData.item.city }}
+                        {{ itemData.item.line1 }}
+                        {{ itemData.item.postalCode }}
+                      </span>
+                    </div>
+
+                    <div class="flex flex-col">
+                      <span class="text-sm text-gray-400">Phone</span>
+                      <span class="pr-4 overflow-hidden overflow-ellipsis">{{ itemData.item.phone }}</span>
+                    </div>
+
+                    <div class="flex flex-col">
+                      <span class="text-sm text-gray-400">Email</span>
+                      <span class="overflow-hidden overflow-ellipsis">{{ itemData.item.email }}</span>
+                    </div>
                   </div>
-                </div>
-
-                <!-- Grid Skeleton -->
-                <div v-else>
+                </template>
+                <template #mobile-empty>
+                  <div class="flex items-center justify-center space-x-10 p-5">
+                    <img src="/static/images/account/icons/no-addresses.svg" alt="No addresses" />
+                    <div class="flex flex-col space-y-2">
+                      <span class="text-base">There are no addresses yet</span>
+                      <VcButton class="uppercase w-full" @click="openEditMode()">Add new address</VcButton>
+                    </div>
+                  </div>
+                </template>
+                <template #mobile-skeleton>
                   <div v-for="i of itemsPerPage" :key="i" class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200">
                     <div class="flex flex-col">
                       <span class="text-sm text-gray-400">Recipient's name</span>
@@ -140,59 +140,8 @@
                       <div class="h-6 bg-gray-200 animate-pulse"></div>
                     </div>
                   </div>
-                </div>
-              </template>
-
-              <!-- Desktop table view -->
-              <table v-else class="table-fixed text-sm text-left w-full">
-                <thead class="border-b border-gray-200">
-                  <tr>
-                    <th
-                      class="py-3 px-5 font-extrabold w-40"
-                      :class="{
-                        desc: sort.column === 'firstName' && sort.direction === sortDescending,
-                        asc: sort.column === 'firstName' && sort.direction === sortAscending,
-                      }"
-                      @click="applySorting('firstName')"
-                    >
-                      Recipient's name
-                    </th>
-                    <th
-                      class="py-3 px-5 font-extrabold w-auto"
-                      :class="{
-                        desc: sort.column === 'countryCode' && sort.direction === sortDescending,
-                        asc: sort.column === 'countryCode' && sort.direction === sortAscending,
-                      }"
-                      @click="applySorting('countryCode')"
-                    >
-                      Address
-                    </th>
-                    <th
-                      class="py-3 px-5 font-extrabold w-1/6"
-                      :class="{
-                        desc: sort.column === 'phone' && sort.direction === sortDescending,
-                        asc: sort.column === 'phone' && sort.direction === sortAscending,
-                      }"
-                      @click="applySorting('phone')"
-                    >
-                      Phone
-                    </th>
-                    <th
-                      class="py-3 px-5 font-extrabold w-1/6"
-                      :class="{
-                        desc: sort.column === 'email' && sort.direction === sortDescending,
-                        asc: sort.column === 'email' && sort.direction === sortAscending,
-                      }"
-                      @click="applySorting('email')"
-                    >
-                      Email
-                    </th>
-                    <th class="py-3 px-5 font-extrabold w-32">Default</th>
-                    <th class="py-3 px-5 text-center font-extrabold w-28">Actions</th>
-                  </tr>
-                </thead>
-
-                <tbody v-if="addresses.length">
+                </template>
+                <template #desktop-body>
                   <tr v-for="address in paginatedAddresses" :key="address.id" class="even:bg-gray-50">
                     <td class="p-5 overflow-hidden overflow-ellipsis">
                       {{ address.firstName }} {{ address.lastName }}
@@ -237,9 +186,8 @@
                       </div>
                     </td>
                   </tr>
-                </tbody>
-
-                <tbody v-else-if="!addressesLoading">
+                </template>
+                <template #desktop-empty>
                   <!-- Workaround for using colspan -->
                   <tr>
                     <td></td>
@@ -259,11 +207,9 @@
                         </div>
                       </div>
                     </td>
-                  </tr>
-                </tbody>
-
-                <!-- Table Skeleton -->
-                <tbody v-else>
+                  </tr></template
+                >
+                <template #desktop-skeleton>
                   <tr v-for="i of itemsPerPage" :key="i" class="even:bg-gray-50">
                     <td class="p-5">
                       <div class="h-6 bg-gray-200 animate-pulse"></div>
@@ -284,16 +230,8 @@
                       <div class="h-6 bg-gray-200 animate-pulse"></div>
                     </td>
                   </tr>
-                </tbody>
-              </table>
-
-              <VcPagination
-                v-if="pages > 1"
-                v-model:page="page"
-                :pages="pages"
-                class="self-start"
-                :class="[isMobile ? 'px-6 py-10' : 'pb-5 px-5 mt-5']"
-              ></VcPagination>
+                </template>
+              </VcTable>
             </template>
           </div>
         </div>
@@ -303,7 +241,7 @@
 </template>
 
 <script setup lang="ts">
-import { TableMobileItem, VcButton, VcPagination } from "@/components";
+import { ITableColumn, VcButton, VcTable } from "@/components";
 import { AccountNavigation, AddressForm, useUser, useUserAddresses } from "@/shared/account";
 import { computed, ComputedRef, onMounted, Ref, ref } from "vue";
 import { clone } from "lodash";
@@ -347,6 +285,41 @@ const title: ComputedRef<string> = computed(() => {
     return "Addresses";
   }
 });
+
+const columns = ref<ITableColumn[]>([
+  {
+    id: "firstName",
+    title: "Recipient's name",
+    sortable: true,
+  },
+  {
+    id: "countryCode",
+    title: "Address",
+    sortable: true,
+  },
+  {
+    id: "phone",
+    title: "Phone",
+    sortable: true,
+  },
+  {
+    id: "email",
+    title: "Email",
+    sortable: true,
+  },
+  {
+    id: "default",
+    title: "Default",
+  },
+  {
+    id: "actions",
+    title: "Actions",
+  },
+]);
+
+const onPageChange = async (newPage: number) => {
+  page.value = newPage;
+};
 
 // if address parameter is NULL, then adding a new address will open
 async function openEditMode(address: MemberAddressType | null = null) {
@@ -396,7 +369,7 @@ function actionBuilder(address: MemberAddressType) {
   return result;
 }
 
-async function applySorting(column: string): Promise<void> {
+const applySorting = async (column: string): Promise<void> => {
   if (sort.value.column === column) {
     sort.value.direction = sort.value.direction === sortDescending ? sortAscending : sortDescending;
   } else {
@@ -404,8 +377,9 @@ async function applySorting(column: string): Promise<void> {
     sort.value.direction = sortDescending;
   }
 
+  page.value = 1;
   await loadAddresses();
-}
+};
 
 async function saveAddress(address: MemberAddressType): Promise<void> {
   saveAddressLoading.value = true;
