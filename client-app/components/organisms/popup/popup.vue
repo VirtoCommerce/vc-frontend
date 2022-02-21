@@ -1,6 +1,6 @@
 <template>
-  <TransitionRoot appear :show="show" as="template" @after-leave="$emit('close')">
-    <Dialog as="div">
+  <TransitionRoot appear :show="show" as="template" @after-leave.once="$emit('close')">
+    <Dialog as="div" :initialFocus="getActiveElement()" @close="() => {}">
       <div class="fixed inset-0 z-50 overflow-y-auto">
         <div class="min-h-screen px-4 text-center">
           <TransitionChild
@@ -120,4 +120,18 @@ const headerStyle = computed(() => {
       return "bg-gray-900";
   }
 });
+
+/**
+ * Fixes issue with maximum call stack upon multiple popups opening.
+ * See: https://github.com/tailwindlabs/headlessui/issues/825#issuecomment-962071295
+ */
+function getActiveElement() {
+  return document.activeElement as HTMLElement;
+}
+</script>
+
+<script lang="ts">
+export default {
+  inheritAttrs: false,
+};
 </script>

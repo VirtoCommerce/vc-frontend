@@ -12,3 +12,9 @@
 import { usePopup } from "@/shared/popup";
 const { popupStack, closePopup } = usePopup();
 </script>
+
+<script lang="ts">
+export default {
+  inheritAttrs: false,
+};
+</script>
