@@ -32,9 +32,7 @@ query SearchProducts(
       code
       minQuantity
       maxQuantity
-      variations {
-        id
-      }
+      hasVariations
       slug
       outline
       imgSrc
@@ -44,8 +42,6 @@ query SearchProducts(
       description(type: "QuickReview") {
         content
         id
-        languageCode
-        reviewType
       }
       availabilityData {
         isActive

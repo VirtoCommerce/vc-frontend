@@ -49,6 +49,7 @@
           <FooterLink to="/hot-buys">Hot Buys</FooterLink>
           <FooterLink to="/rebates">Rebates</FooterLink>
           <FooterLink to="/replacement-parts">Replacement Parts</FooterLink>
+          <FooterLink to="/demo-landing">Demo landing</FooterLink>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 <template>
   <!-- Desktop header -->
-  <div class="header hidden lg:block">
+  <div class="header hidden lg:block shadow-md">
     <!-- Top header -->
     <TopHeader />
 

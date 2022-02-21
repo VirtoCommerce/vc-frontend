@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col bg-white rounded border p-4 shadow-sm hover:shadow-lg">
+  <div class="flex flex-col bg-white rounded border p-4 shadow-sm hover:shadow-lg overflow-hidden">
     <!-- Product image -->
     <router-link :to="`/${SeoUrl.Product}/${product.id}`" class="cursor-pointer">
       <div class="square relative flex flex-col justify-center items-center border border-gray-100">
@@ -45,11 +45,11 @@
       <div class="hidden md:block text-sm pb-2">
         <div class="flex items-baseline">
           <div class="w-1/2 font-bold text-xs">Item #</div>
-          <span class="w-1/2 text-cyan-700">{{ product.code }}</span>
+          <span class="w-1/2 text-cyan-700 truncate">{{ product.code }}</span>
         </div>
         <div class="flex items-baseline">
           <div class="w-1/2 font-bold text-xs">Mfr. model #</div>
-          <span class="w-1/2 text-cyan-700">-</span>
+          <span class="w-1/2 text-cyan-700 truncate">-</span>
         </div>
       </div>
 

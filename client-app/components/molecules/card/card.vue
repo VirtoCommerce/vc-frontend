@@ -14,7 +14,9 @@
       </div>
     </div>
     <div v-if="isCollapsed" :class="{ 'px-6 py-4': !fullWidthContent }">
-      <slot></slot>
+      <div class="overflow-hidden">
+        <slot></slot>
+      </div>
     </div>
   </div>
 </template>

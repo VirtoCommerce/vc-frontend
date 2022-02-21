@@ -22,7 +22,7 @@
               : 'lg:flex lg:w-1/4 xl:w-1/5 flex-shrink-0',
           ]"
         >
-          <div class="flex flex-col gap-4 lg:gap-5">
+          <div class="flex flex-col gap-4 lg:gap-5 overflow-hidden">
             <!-- Search results -->
             <VcCard title="Filter results by">
               <p class="text-sm pb-2">Search within these results</p>
@@ -92,7 +92,10 @@
                   color="cyan-700"
                   @change="applyFilters"
                 >
-                  {{ item.label }} ({{ item.count }})
+                  <div class="flex">
+                    <span class="truncate">{{ item.label }}</span>
+                    <span class="ml-1">({{ item.count }})</span>
+                  </div>
                 </VcCheckbox>
               </VcCard>
             </template>
@@ -165,11 +168,7 @@
               <template v-else>
                 <ProductCardGrid v-for="item in products" :key="item.id" :product="item">
                   <template #cart-handler>
-                    <VcButton
-                      v-if="item.variations?.length"
-                      :to="`/${SeoUrl.Product}/${item.id}`"
-                      class="uppercase mb-4"
-                    >
+                    <VcButton v-if="item.hasVariations" :to="`/${SeoUrl.Product}/${item.id}`" class="uppercase mb-4">
                       Choose
                     </VcButton>
                     <AddToCart v-else :product="item"></AddToCart>
@@ -188,7 +187,7 @@
                 <ProductCardList v-for="item in products" :key="item.id" :product="item">
                   <template #cart-handler>
                     <VcButton
-                      v-if="item.variations?.length"
+                      v-if="item.hasVariations"
                       :to="`/${SeoUrl.Product}/${item.id}`"
                       class="uppercase mb-4 w-full"
                     >

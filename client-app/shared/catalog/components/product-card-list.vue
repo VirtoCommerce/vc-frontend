@@ -31,12 +31,12 @@
     <!-- Product props -->
     <div class="hidden xl:block text-sm flex-shrink-0 w-20">
       <div class="font-bold text-xs">Item #</div>
-      <div class="text-cyan-700">{{ product.code }}</div>
+      <div class="text-cyan-700 truncate">{{ product.code }}</div>
     </div>
 
     <div class="hidden xl:block text-sm flex-shrink-0 w-24">
       <div class="font-bold text-xs">Mfr. model #</div>
-      <div class="text-cyan-700">-</div>
+      <div class="text-cyan-700 truncate">-</div>
     </div>
 
     <!-- Product price -->

@@ -1,7 +1,6 @@
 <template>
   <router-link
     v-if="isLink"
-    v-bind="$attrs"
     :to="isEnabled ? to : ''"
     class="rounded inline-flex justify-center items-center font-roboto-condensed cursor-pointer whitespace-nowrap"
     :class="buttonClass"
@@ -12,7 +11,6 @@
   </router-link>
   <button
     v-else
-    v-bind="$attrs"
     :type="isSubmit ? 'submit' : 'button'"
     class="rounded inline-flex justify-center items-center font-roboto-condensed cursor-pointer"
     :class="buttonClass"

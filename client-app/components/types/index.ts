@@ -26,6 +26,11 @@ export interface ItemAction {
   clickHandler(item: any): any;
 }
 
+export interface IBreadcrumbs {
+  title: string;
+  url: string;
+}
+
 export interface ITableColumn {
   id: string;
   title: string;

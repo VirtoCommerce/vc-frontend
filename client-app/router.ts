@@ -19,6 +19,7 @@ const ForgotPassword = () => import("./pages/forgot-password/forgot-password.vue
 const ResetPassword = () => import("./pages/reset-password/reset-password.vue");
 const OrderDetails = () => import("./pages/account/order-details.vue");
 const Orders = () => import("./pages/account/orders.vue");
+const DemoLanding = () => import("./pages/demo-landing/demo-landing.vue");
 
 // Router definition
 const router = createRouter({
@@ -60,6 +61,7 @@ const router = createRouter({
     { path: `/${SeoUrl.Catalog}/:categorySeoUrls*`, name: "Catalog", component: Catalog, props: true },
     { path: `/${SeoUrl.Product}/:productId`, name: "Product", component: Product, props: true },
     { path: "/checkout", name: "Checkout", component: Checkout },
+    { path: "/demo-landing", name: "DemoLanding", component: DemoLanding },
     { path: "/500", name: "InternalError", component: Error500 },
     { path: "/403", name: "NoAccess", component: Error403 },
     { path: "/:pathMatch(.*)*", name: "NotFound", component: Error404 },
