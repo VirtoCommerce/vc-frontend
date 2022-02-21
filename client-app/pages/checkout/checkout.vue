@@ -77,8 +77,8 @@
                         {{ cart.shipments[0].deliveryAddress?.city }} {{ cart.shipments[0].deliveryAddress?.line1 }}
                         {{ cart.shipments[0].deliveryAddress?.postalCode }}
                       </p>
-                      <p><span class="font-extrabold">Phone:</span>{{ cart.shipments[0].deliveryAddress?.phone }}</p>
-                      <p><span class="font-extrabold">Email:</span>{{ cart.shipments[0].deliveryAddress?.email }}</p>
+                      <p><span class="font-extrabold">Phone:</span> {{ cart.shipments[0].deliveryAddress?.phone }}</p>
+                      <p><span class="font-extrabold">Email:</span> {{ cart.shipments[0].deliveryAddress?.email }}</p>
                     </div>
                     <div>
                       <VcButton
