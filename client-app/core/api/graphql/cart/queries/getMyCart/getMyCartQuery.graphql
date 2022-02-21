@@ -105,14 +105,14 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
       id
       imageUrl
       name
-      productId
+      lineItemId
     }
 
     availableGifts {
       id
       imageUrl
       name
-      productId
+      lineItemId
     }
   }
 }

@@ -575,14 +575,16 @@ function addNewAddressDialog(addressType: AddressType.Billing | AddressType.Ship
 }
 
 function checkGift(gift: GiftItemType): boolean {
-  return !!cart.value.gifts?.find((giftData) => giftData.productId === gift.productId);
+  return !!cart.value.gifts?.find((giftData) => giftData.lineItemId === gift.lineItemId);
 }
 
 async function toggleGift(state: boolean | any[], gift: GiftItemType) {
   if (state) {
     await addGiftItems([gift.id]);
   } else {
-    await rejectGiftItems([gift.id]);
+    if (gift.lineItemId) {
+      await rejectGiftItems([gift.lineItemId]);
+    }
   }
   await loadMyCart();
 }

@@ -1,5 +1,9 @@
 <template>
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner">
+    <div class="w-full max-w-screen-2xl mx-auto pb-5 px-5 md:px-12">
+      <VcBreadcrumbs :items="breadcrumbs"></VcBreadcrumbs>
+    </div>
+
     <div class="max-w-screen-2xl md:px-12 mx-auto">
       <h2 class="text-gray-800 px-5 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-2">
         Order #{{ order?.number }}
@@ -29,6 +33,9 @@
               </div>
             </div>
           </VcSection>
+
+          <!-- Gifts section -->
+          <AcceptedGifts :items="giftItems" />
 
           <!-- Order comment section -->
           <VcSection
@@ -107,9 +114,9 @@
 </template>
 
 <script setup lang="ts">
-import { OrderSummary, ProductCard } from "@/shared/checkout";
+import { OrderSummary, ProductCard, AcceptedGifts } from "@/shared/checkout";
 import { computed, onMounted, ref } from "vue";
-import { VcCard, VcImage, VcPagination, VcButton, VcSection } from "@/components";
+import { VcCard, VcImage, VcPagination, VcButton, VcSection, VcBreadcrumbs, IBreadcrumbs } from "@/components";
 import { useRoute } from "vue-router";
 import { useUserOrder } from "@/shared/account";
 import moment from "moment";
@@ -121,8 +128,19 @@ const orderId = ref(route.params.id as string);
 
 const page = ref(1);
 const orderItems = computed(() =>
-  order.value?.items?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
+  order.value?.items
+    ?.filter((item) => !item.isGift)
+    ?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
 );
+
+const giftItems = computed(() => order.value?.items?.filter((item) => item.isGift));
+
+const breadcrumbs = ref<IBreadcrumbs[]>([
+  { title: "Home", url: "/" },
+  { title: "Account", url: "/account" },
+  { title: "Orders", url: "/account/orders" },
+  { title: `${order.value?.number}`, url: `/account/order-details/${order.value?.id}` },
+]);
 
 onMounted(async () => {
   await loadOrder(orderId.value);

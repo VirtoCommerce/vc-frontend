@@ -30,6 +30,9 @@
             </div>
           </VcSection>
 
+          <!-- Gifts section -->
+          <AcceptedGifts :items="giftItems" />
+
           <!-- Order comment section -->
           <VcSection
             v-if="order.comment"
@@ -108,7 +111,7 @@
 </template>
 
 <script setup lang="ts">
-import { OrderSummary, ProductCard } from "@/shared/checkout";
+import { OrderSummary, ProductCard, AcceptedGifts } from "@/shared/checkout";
 import { CustomerOrderType } from "@/core/api/graphql/types";
 import { useCart } from "@/shared/cart";
 import { computed, PropType, ref } from "vue";
@@ -126,8 +129,12 @@ const props = defineProps({
 const page = ref(1);
 const pages = computed(() => Math.ceil(props.order.items.length / itemsPerPage.value));
 const orderItems = computed(() =>
-  props.order.items?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
+  props.order.items
+    ?.filter((item) => !item.isGift)
+    ?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
 );
+
+const giftItems = computed(() => props.order.items?.filter((item) => item.isGift));
 
 const printOrder = () => {
   window.print();
