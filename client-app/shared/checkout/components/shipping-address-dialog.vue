@@ -87,7 +87,21 @@
         </tr>
       </template>
       <template #desktop-empty>
-        <div class="flex items-center space-x-3 p-6 border-b border-gray-200">There are no addresses yet</div>
+        <!-- Workaround for using colspan -->
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td colspan="5">
+            <div class="flex items-center p-5 border-b border-gray-200">
+              <span class="text-base">There are no addresses yet</span>
+            </div>
+          </td>
+        </tr>
       </template>
       <template #footer>
         <div v-if="pages > 1" class="flex justify-start border-b border-gray-200">
