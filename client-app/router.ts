@@ -61,8 +61,31 @@ const router = createRouter({
     { path: "/product/:id", name: "Product", component: Product },
     { path: "/500", name: "InternalError", component: Error500 },
     { path: "/403", name: "NoAccess", component: Error403 },
-    { path: "/pages", name: "Pages", component: Pages },
-    { path: "/:pathMatch(.*)*", name: "NotFound", component: Error404 },
+    {
+      path: "/:pages*",
+      name: "Pages",
+      component: Pages,
+      beforeEnter: async (to, from, next) => {
+        console.log(to, from);
+
+        if (to.path === "/pages") {
+          next();
+        } else {
+          next({
+            name: "NotFound",
+          });
+        }
+      },
+    },
+    {
+      path: "/:pathMatch(.*)*",
+      name: "NotFound",
+      component: Error404,
+      beforeEnter: (to, from) => {
+        console.log(to, from);
+        return true;
+      },
+    },
   ],
 });
 
