@@ -1,31 +1,16 @@
-import addItemToCart from "./mutations/addItemToCart";
-import addOrUpdateCartPayment from "./mutations/addOrUpdateCartPayment";
-import addOrUpdateCartShipment from "./mutations/addOrUpdateCartShipment";
-import createOrderFromCart from "./mutations/createOrderFromCart";
-import removeCart from "./mutations/removeCart";
-import changeCartItemQuantity from "./mutations/changeCartItemQuantity";
-import getAvailPaymentMethods from "./queries/getAvailPaymentMethods";
-import getAvailShippingMethods from "./queries/getAvailShippingMethods";
-import getMyCart from "./queries/getMyCart";
-import removeCartItem from "./mutations/removeCartItem";
-import addCoupon from "./mutations/addCoupon";
-import removeCoupon from "./mutations/removeCoupon";
-import validateCoupon from "./mutations/validateCoupon";
-import changeCartComment from "./mutations/changeCartComment";
-
-export {
-  getMyCart,
-  getAvailPaymentMethods,
-  getAvailShippingMethods,
-  addItemToCart,
-  addOrUpdateCartShipment,
-  addOrUpdateCartPayment,
-  createOrderFromCart,
-  removeCart,
-  changeCartItemQuantity,
-  removeCartItem,
-  addCoupon,
-  removeCoupon,
-  validateCoupon,
-  changeCartComment,
-};
+export { default as addItemToCart } from "./mutations/addItemToCart";
+export { default as addOrUpdateCartPayment } from "./mutations/addOrUpdateCartPayment";
+export { default as addOrUpdateCartShipment } from "./mutations/addOrUpdateCartShipment";
+export { default as createOrderFromCart } from "./mutations/createOrderFromCart";
+export { default as removeCart } from "./mutations/removeCart";
+export { default as changeCartItemQuantity } from "./mutations/changeCartItemQuantity";
+export { default as getAvailPaymentMethods } from "./queries/getAvailPaymentMethods";
+export { default as getAvailShippingMethods } from "./queries/getAvailShippingMethods";
+export { default as getMyCart } from "./queries/getMyCart";
+export { default as removeCartItem } from "./mutations/removeCartItem";
+export { default as addCoupon } from "./mutations/addCoupon";
+export { default as removeCoupon } from "./mutations/removeCoupon";
+export { default as validateCoupon } from "./mutations/validateCoupon";
+export { default as changeCartComment } from "./mutations/changeCartComment";
+export { default as addGiftItems } from "./mutations/addGiftItems";
+export { default as rejectGiftItems } from "./mutations/rejectGiftItems";

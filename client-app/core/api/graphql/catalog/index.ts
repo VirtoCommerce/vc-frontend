@@ -1,7 +1,6 @@
-import getProduct from "./queries/getProduct";
-import searchCategories from "./queries/searchCategories";
-import searchProducts from "./queries/searchProducts";
-import searchRelatedProducts from "./queries/searchRelatedProducts";
+export { default as getProduct } from "./queries/getProduct";
+export { default as searchCategories } from "./queries/searchCategories";
+export { default as searchProducts } from "./queries/searchProducts";
+export { default as searchRelatedProducts } from "./queries/searchRelatedProducts";
 
 export * from "./types";
-export { searchProducts, searchCategories, getProduct, searchRelatedProducts };

@@ -1,0 +1,5 @@
+mutation AddGiftItems($command: InputAddGiftItemsType!) {
+  addGiftItems(command: $command) {
+    name
+  }
+}
