@@ -46,7 +46,7 @@
                 class="mb-4"
                 label="Email"
                 placeholder="Email"
-                :is-disabled="true"
+                is-disabled
               ></VcInput>
 
               <!-- Form actions -->
