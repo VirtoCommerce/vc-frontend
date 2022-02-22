@@ -57,31 +57,9 @@
         <div class="flex flex-col px-5 mb-7 order-first md:px-0 lg:mb-0 lg:order-1 lg:w-1/4">
           <!-- Order summary -->
           <OrderSummary v-if="order" :cart="order" class="mb-5"></OrderSummary>
+
           <VcButton class="uppercase w-full mb-5" :is-disabled="true">Reorder all</VcButton>
-          <VcCard title="Billing address" :is-collapsible="true" class="mb-5">
-            <div class="flex flex-col text-sm">
-              <span class="font-extrabold">{{ billingAddress?.firstName }} {{ billingAddress?.lastName }}</span>
-              <p>
-                {{ billingAddress?.countryCode }}
-                {{ billingAddress?.regionName }}
-                {{ billingAddress?.city }}
-                {{ billingAddress?.line1 }}
-                {{ billingAddress?.postalCode }}
-              </p>
-              <p><span class="font-extrabold">Phone:</span> {{ billingAddress?.phone }}</p>
-              <p><span class="font-extrabold">Email:</span> {{ billingAddress?.email }}</p>
-            </div>
-          </VcCard>
-          <VcCard title="Shipping method" :is-collapsible="true" class="mb-5">
-            <div class="flex items-center space-x-4 text-sm">
-              <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" />
-              <span
-                >{{ order?.shipments?.[0]?.shipmentMethodCode }} {{ order?.shipments?.[0]?.shipmentMethodOption }} ({{
-                  order?.shipments?.[0]?.price?.formattedAmount
-                }})</span
-              >
-            </div>
-          </VcCard>
+
           <VcCard title="Shipping address" :is-collapsible="true" class="mb-5">
             <div class="flex flex-col text-sm">
               <span class="font-extrabold">{{ deliveryAddress?.firstName }} {{ deliveryAddress?.lastName }}</span>
@@ -96,6 +74,18 @@
               <p><span class="font-extrabold">Email:</span> {{ deliveryAddress?.email }}</p>
             </div>
           </VcCard>
+
+          <VcCard title="Shipping method" :is-collapsible="true" class="mb-5">
+            <div class="flex items-center space-x-4 text-sm">
+              <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" />
+              <span
+                >{{ order?.shipments?.[0]?.shipmentMethodCode }} {{ order?.shipments?.[0]?.shipmentMethodOption }} ({{
+                  order?.shipments?.[0]?.price?.formattedAmount
+                }})</span
+              >
+            </div>
+          </VcCard>
+
           <VcCard title="Payment details" :is-collapsible="true" class="mb-5">
             <div class="flex flex-col text-sm">
               <p><span class="font-extrabold">Payment #:</span> {{ order?.inPayments?.[0]?.number }}</p>
@@ -105,6 +95,21 @@
                   View invoice
                 </VcButton>
               </div>
+            </div>
+          </VcCard>
+
+          <VcCard title="Billing address" :is-collapsible="true" class="mb-5">
+            <div class="flex flex-col text-sm">
+              <span class="font-extrabold">{{ billingAddress?.firstName }} {{ billingAddress?.lastName }}</span>
+              <p>
+                {{ billingAddress?.countryCode }}
+                {{ billingAddress?.regionName }}
+                {{ billingAddress?.city }}
+                {{ billingAddress?.line1 }}
+                {{ billingAddress?.postalCode }}
+              </p>
+              <p><span class="font-extrabold">Phone:</span> {{ billingAddress?.phone }}</p>
+              <p><span class="font-extrabold">Email:</span> {{ billingAddress?.email }}</p>
             </div>
           </VcCard>
         </div>
