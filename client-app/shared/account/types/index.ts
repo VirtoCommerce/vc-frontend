@@ -41,3 +41,8 @@ export type CheckoutDefaults = {
   shippingMethod?: ShippingMethodType;
   paymentMethod?: PaymentMethodType;
 };
+
+export type UserPersonalData = {
+  firstName: string;
+  lastName: string;
+};
