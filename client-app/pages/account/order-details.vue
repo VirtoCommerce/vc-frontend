@@ -144,10 +144,10 @@ const breadcrumbs = ref<IBreadcrumbs[]>([
   { title: "Home", url: "/" },
   { title: "Account", url: "/account" },
   { title: "Orders", url: "/account/orders" },
-  { title: `${order.value?.number}`, url: `/account/order-details/${order.value?.id}` },
 ]);
 
 onMounted(async () => {
   await loadOrder(orderId.value);
+  breadcrumbs.value.push({ title: `${order.value?.number}`, url: `/account/order-details/${order.value?.id}` });
 });
 </script>
