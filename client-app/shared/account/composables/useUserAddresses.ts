@@ -1,6 +1,6 @@
 import { computed, readonly, ref, Ref, shallowRef, unref } from "vue";
 import { InputMemberAddressType, MemberAddressType, UserType } from "@core/api/graphql/types";
-import { getMyAddresses, updateMemberAddresses } from "@core/api/graphql/account";
+import { getMyAddresses, updateMemberAddresses, deleteMemberAddresses } from "@core/api/graphql/account";
 import { Logger, toInputAddress } from "@core/utilities";
 import { getSortingExpression, ISortInfo } from "@/shared/account";
 import { sortAscending } from "@core/constants";
@@ -86,11 +86,24 @@ export default (options: { user: MaybeRef<UserType> }) => {
         ? (idsOrAddress as string[])
         : (idsOrAddress as MemberAddressType[]).map((item) => item.id!);
 
-    const updatedAddresses: MemberAddressType[] = addresses.value.filter(
+    const removeAddresses: MemberAddressType[] = addresses.value.filter(
       (address) => !addressIdsToRemove.includes(address.id!)
     );
 
-    await updateAddresses(updatedAddresses, memberId);
+    loading.value = true;
+
+    const inputAddresses: InputMemberAddressType[] = removeAddresses.map(toInputAddress);
+
+    try {
+      await deleteMemberAddresses((memberId = unref(user).memberId!), inputAddresses);
+    } catch (e) {
+      Logger.error("useUserAddresses.removeAddresses", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+
+    await loadAddresses();
   }
 
   return {

@@ -1192,6 +1192,11 @@ export type InputDeleteContactType = {
   contactId: Scalars['String'];
 };
 
+export type InputDeleteMemberAddressType = {
+  addresses: Array<InputMaybe<InputMemberAddressType>>;
+  memberId: Scalars['String'];
+};
+
 export type InputDeleteUserType = {
   userNames: Array<InputMaybe<Scalars['String']>>;
 };
@@ -1943,6 +1948,7 @@ export type Mutations = {
   createUser?: Maybe<IdentityResultType>;
   createWishlist?: Maybe<WishlistType>;
   deleteContact?: Maybe<Scalars['Boolean']>;
+  deleteMemberAddresses?: Maybe<MemberType>;
   deleteUsers?: Maybe<IdentityResultType>;
   inviteUser?: Maybe<CustomIdentityResultType>;
   mergeCart?: Maybe<CartType>;
@@ -2096,6 +2102,11 @@ export type MutationsCreateWishlistArgs = {
 
 export type MutationsDeleteContactArgs = {
   command: InputDeleteContactType;
+};
+
+
+export type MutationsDeleteMemberAddressesArgs = {
+  command: InputDeleteMemberAddressType;
 };
 
 

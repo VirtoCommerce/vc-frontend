@@ -1,5 +1,6 @@
 export { default as updatePersonalData } from "./mutations/updatePersonalData";
 export { default as updateMemberAddresses } from "./mutations/updateMemberAddresses";
+export { default as deleteMemberAddresses } from "./mutations/deleteMemberAddresses";
 export { default as getMe } from "./queries/getMe";
 export { default as getMyAddresses } from "./queries/getMyAddresses";
 export { default as getDefaultShippingAddress } from "./queries/getDefaultShippingAddress";
