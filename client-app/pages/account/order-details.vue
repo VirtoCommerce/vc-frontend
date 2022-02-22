@@ -1,5 +1,9 @@
 <template>
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner">
+    <div class="w-full max-w-screen-2xl mx-auto pb-5 px-5 md:px-12">
+      <VcBreadcrumbs :items="breadcrumbs"></VcBreadcrumbs>
+    </div>
+
     <div class="max-w-screen-2xl md:px-12 mx-auto">
       <h2 class="text-gray-800 px-5 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-2">
         Order #{{ order?.number }}
@@ -30,6 +34,9 @@
             </div>
           </VcSection>
 
+          <!-- Gifts section -->
+          <AcceptedGifts :items="giftItems" />
+
           <!-- Order comment section -->
           <VcSection
             v-if="order?.comment"
@@ -50,31 +57,9 @@
         <div class="flex flex-col px-5 mb-7 order-first md:px-0 lg:mb-0 lg:order-1 lg:w-1/4">
           <!-- Order summary -->
           <OrderSummary v-if="order" :cart="order" class="mb-5"></OrderSummary>
+
           <VcButton class="uppercase w-full mb-5" :is-disabled="true">Reorder all</VcButton>
-          <VcCard title="Billing address" :is-collapsible="true" class="mb-5">
-            <div class="flex flex-col text-sm">
-              <span class="font-extrabold">{{ billingAddress?.firstName }} {{ billingAddress?.lastName }}</span>
-              <p>
-                {{ billingAddress?.countryCode }}
-                {{ billingAddress?.regionName }}
-                {{ billingAddress?.city }}
-                {{ billingAddress?.line1 }}
-                {{ billingAddress?.postalCode }}
-              </p>
-              <p><span class="font-extrabold">Phone:</span> {{ billingAddress?.phone }}</p>
-              <p><span class="font-extrabold">Email:</span> {{ billingAddress?.email }}</p>
-            </div>
-          </VcCard>
-          <VcCard title="Shipping method" :is-collapsible="true" class="mb-5">
-            <div class="flex items-center space-x-4 text-sm">
-              <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" />
-              <span
-                >{{ order?.shipments?.[0]?.shipmentMethodCode }} {{ order?.shipments?.[0]?.shipmentMethodOption }} ({{
-                  order?.shipments?.[0]?.price?.formattedAmount
-                }})</span
-              >
-            </div>
-          </VcCard>
+
           <VcCard title="Shipping address" :is-collapsible="true" class="mb-5">
             <div class="flex flex-col text-sm">
               <span class="font-extrabold">{{ deliveryAddress?.firstName }} {{ deliveryAddress?.lastName }}</span>
@@ -89,6 +74,18 @@
               <p><span class="font-extrabold">Email:</span> {{ deliveryAddress?.email }}</p>
             </div>
           </VcCard>
+
+          <VcCard title="Shipping method" :is-collapsible="true" class="mb-5">
+            <div class="flex items-center space-x-4 text-sm">
+              <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" />
+              <span
+                >{{ order?.shipments?.[0]?.shipmentMethodCode }} {{ order?.shipments?.[0]?.shipmentMethodOption }} ({{
+                  order?.shipments?.[0]?.price?.formattedAmount
+                }})</span
+              >
+            </div>
+          </VcCard>
+
           <VcCard title="Payment details" :is-collapsible="true" class="mb-5">
             <div class="flex flex-col text-sm">
               <p><span class="font-extrabold">Payment #:</span> {{ order?.inPayments?.[0]?.number }}</p>
@@ -100,6 +97,21 @@
               </div>
             </div>
           </VcCard>
+
+          <VcCard title="Billing address" :is-collapsible="true" class="mb-5">
+            <div class="flex flex-col text-sm">
+              <span class="font-extrabold">{{ billingAddress?.firstName }} {{ billingAddress?.lastName }}</span>
+              <p>
+                {{ billingAddress?.countryCode }}
+                {{ billingAddress?.regionName }}
+                {{ billingAddress?.city }}
+                {{ billingAddress?.line1 }}
+                {{ billingAddress?.postalCode }}
+              </p>
+              <p><span class="font-extrabold">Phone:</span> {{ billingAddress?.phone }}</p>
+              <p><span class="font-extrabold">Email:</span> {{ billingAddress?.email }}</p>
+            </div>
+          </VcCard>
         </div>
       </div>
     </div>
@@ -107,9 +119,9 @@
 </template>
 
 <script setup lang="ts">
-import { OrderSummary, ProductCard } from "@/shared/checkout";
+import { OrderSummary, ProductCard, AcceptedGifts } from "@/shared/checkout";
 import { computed, onMounted, ref } from "vue";
-import { VcCard, VcImage, VcPagination, VcButton, VcSection } from "@/components";
+import { VcCard, VcImage, VcPagination, VcButton, VcSection, VcBreadcrumbs, IBreadcrumbs } from "@/components";
 import { useRoute } from "vue-router";
 import { useUserOrder } from "@/shared/account";
 import moment from "moment";
@@ -121,10 +133,21 @@ const orderId = ref(route.params.id as string);
 
 const page = ref(1);
 const orderItems = computed(() =>
-  order.value?.items?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
+  order.value?.items
+    ?.filter((item) => !item.isGift)
+    ?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
 );
+
+const giftItems = computed(() => order.value?.items?.filter((item) => item.isGift));
+
+const breadcrumbs = ref<IBreadcrumbs[]>([
+  { title: "Home", url: "/" },
+  { title: "Account", url: "/account" },
+  { title: "Orders", url: "/account/orders" },
+]);
 
 onMounted(async () => {
   await loadOrder(orderId.value);
+  breadcrumbs.value.push({ title: `${order.value?.number}`, url: `/account/order-details/${order.value?.id}` });
 });
 </script>

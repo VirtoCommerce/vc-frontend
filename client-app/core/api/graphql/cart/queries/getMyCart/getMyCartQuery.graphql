@@ -100,5 +100,19 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
         ...moneyFields
       }
     }
+
+    gifts {
+      id
+      imageUrl
+      name
+      lineItemId
+    }
+
+    availableGifts {
+      id
+      imageUrl
+      name
+      lineItemId
+    }
   }
 }

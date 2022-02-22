@@ -1,0 +1,5 @@
+mutation RejectGiftItems($command: InputRejectGiftItemsType!) {
+  rejectGiftItems(command: $command) {
+    name
+  }
+}

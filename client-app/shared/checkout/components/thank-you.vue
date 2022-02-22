@@ -30,6 +30,9 @@
             </div>
           </VcSection>
 
+          <!-- Gifts section -->
+          <AcceptedGifts :items="giftItems" />
+
           <!-- Order comment section -->
           <VcSection
             v-if="order.comment"
@@ -50,34 +53,8 @@
         <div class="flex flex-col px-5 mb-7 order-first md:px-0 lg:mb-0 lg:order-1 lg:w-1/4">
           <!-- Order summary -->
           <OrderSummary :cart="order" class="mb-5"></OrderSummary>
-          <VcCard title="Billing address" :is-collapsible="true" class="mb-5">
-            <div class="flex flex-col text-sm">
-              <span class="font-extrabold"
-                >{{ order.inPayments?.[0]?.billingAddress?.firstName }}
-                {{ order.inPayments?.[0]?.billingAddress?.lastName }}</span
-              >
-              <p>
-                {{ order.inPayments?.[0]?.billingAddress?.countryCode }}
-                {{ order.inPayments?.[0]?.billingAddress?.regionName }}
-                {{ order.inPayments?.[0]?.billingAddress?.city }}
-                {{ order.inPayments?.[0]?.billingAddress?.line1 }}
-                {{ order.inPayments?.[0]?.billingAddress?.postalCode }}
-              </p>
-              <p><span class="font-extrabold">Phone:</span> {{ order.inPayments?.[0]?.billingAddress?.phone }}</p>
-              <p><span class="font-extrabold">Email:</span> {{ order.inPayments?.[0]?.billingAddress?.email }}</p>
-            </div>
-          </VcCard>
-          <VcCard title="Shipping method" :is-collapsible="true" class="mb-5">
-            <div class="flex items-center space-x-4 text-sm">
-              <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" />
-              <span
-                >{{ order.shipments?.[0]?.shipmentMethodCode }} {{ order.shipments?.[0]?.shipmentMethodOption }} ({{
-                  order.shipments?.[0]?.price?.formattedAmount
-                }})</span
-              >
-            </div>
-          </VcCard>
-          <VcCard title="Shipping address" :is-collapsible="true" class="mb-5">
+
+          <VcCard title="Shipping address" is-collapsible class="mb-5">
             <div class="flex flex-col text-sm">
               <span class="font-extrabold"
                 >{{ order.shipments?.[0]?.deliveryAddress?.firstName }}
@@ -94,12 +71,43 @@
               <p><span class="font-extrabold">Email:</span> {{ order.shipments?.[0]?.deliveryAddress?.email }}</p>
             </div>
           </VcCard>
-          <VcCard title="Payment method" :is-collapsible="true" class="mb-5">
+
+          <VcCard title="Shipping method" is-collapsible class="mb-5">
+            <div class="flex items-center space-x-4 text-sm">
+              <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" />
+              <span
+                >{{ order.shipments?.[0]?.shipmentMethodCode }} {{ order.shipments?.[0]?.shipmentMethodOption }} ({{
+                  order.shipments?.[0]?.price?.formattedAmount
+                }})</span
+              >
+            </div>
+          </VcCard>
+
+          <VcCard title="Payment method" is-collapsible class="mb-5">
             <div class="flex items-center space-x-4 text-sm">
               <VcImage src="/static/images/checkout/invoice.svg" class="h-12 w-12" />
               <span>{{ order.inPayments?.[0]?.gatewayCode }}</span>
             </div>
           </VcCard>
+
+          <VcCard title="Billing address" is-collapsible class="mb-5">
+            <div class="flex flex-col text-sm">
+              <span class="font-extrabold"
+                >{{ order.inPayments?.[0]?.billingAddress?.firstName }}
+                {{ order.inPayments?.[0]?.billingAddress?.lastName }}</span
+              >
+              <p>
+                {{ order.inPayments?.[0]?.billingAddress?.countryCode }}
+                {{ order.inPayments?.[0]?.billingAddress?.regionName }}
+                {{ order.inPayments?.[0]?.billingAddress?.city }}
+                {{ order.inPayments?.[0]?.billingAddress?.line1 }}
+                {{ order.inPayments?.[0]?.billingAddress?.postalCode }}
+              </p>
+              <p><span class="font-extrabold">Phone:</span> {{ order.inPayments?.[0]?.billingAddress?.phone }}</p>
+              <p><span class="font-extrabold">Email:</span> {{ order.inPayments?.[0]?.billingAddress?.email }}</p>
+            </div>
+          </VcCard>
+
           <VcButton class="uppercase w-full" @click="printOrder">Print order</VcButton>
         </div>
       </div>
@@ -108,7 +116,7 @@
 </template>
 
 <script setup lang="ts">
-import { OrderSummary, ProductCard } from "@/shared/checkout";
+import { OrderSummary, ProductCard, AcceptedGifts } from "@/shared/checkout";
 import { CustomerOrderType } from "@/core/api/graphql/types";
 import { useCart } from "@/shared/cart";
 import { computed, PropType, ref } from "vue";
@@ -126,8 +134,12 @@ const props = defineProps({
 const page = ref(1);
 const pages = computed(() => Math.ceil(props.order.items.length / itemsPerPage.value));
 const orderItems = computed(() =>
-  props.order.items?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
+  props.order.items
+    ?.filter((item) => !item.isGift)
+    ?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
 );
+
+const giftItems = computed(() => props.order.items?.filter((item) => item.isGift));
 
 const printOrder = () => {
   window.print();

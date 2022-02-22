@@ -37,6 +37,26 @@
               </div>
             </VcSection>
 
+            <!-- Gifts section -->
+            <VcSection
+              v-if="cart.availableGifts?.length"
+              title="+ Add a Gift"
+              icon-url="/static/images/checkout/gifts.svg"
+              class="shadow-inner pb-8 lg:shadow"
+            >
+              <div class="xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6 lg:border lg:rounded">
+                <div
+                  v-for="gift in cart.availableGifts"
+                  :key="gift.id"
+                  class="border-b last:border-b-0 flex items-center justify-between px-7 py-6"
+                >
+                  <VcCheckbox class="mr-7" :model-value="checkGift(gift)" @change="toggleGift($event, gift)" />
+                  <VcImage :src="gift.imageUrl" class="mr-4 border aspect-square w-16 h-16" />
+                  <div class="flex-grow font-bold text-cyan-700">{{ gift.name }}</div>
+                </div>
+              </div>
+            </VcSection>
+
             <!-- Shipping details section -->
             <VcSection
               title="Shipping details"
@@ -57,8 +77,8 @@
                         {{ cart.shipments[0].deliveryAddress?.city }} {{ cart.shipments[0].deliveryAddress?.line1 }}
                         {{ cart.shipments[0].deliveryAddress?.postalCode }}
                       </p>
-                      <p><span class="font-extrabold">Phone:</span>{{ cart.shipments[0].deliveryAddress?.phone }}</p>
-                      <p><span class="font-extrabold">Email:</span>{{ cart.shipments[0].deliveryAddress?.email }}</p>
+                      <p><span class="font-extrabold">Phone:</span> {{ cart.shipments[0].deliveryAddress?.phone }}</p>
+                      <p><span class="font-extrabold">Email:</span> {{ cart.shipments[0].deliveryAddress?.email }}</p>
                     </div>
                     <div>
                       <VcButton
@@ -281,14 +301,30 @@ import {
   ShippingAddressDialog,
   CreateAddressDialog,
 } from "@/shared/checkout";
-import { VcTextArea, VcImage, VcPriceDisplay, VcPagination, VcButton, VcActionInput, VcSection } from "@/components";
+import {
+  VcTextArea,
+  VcImage,
+  VcPriceDisplay,
+  VcPagination,
+  VcButton,
+  VcActionInput,
+  VcSection,
+  VcCheckbox,
+} from "@/components";
 import { useCart, useCheckout } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import { computed, onBeforeUpdate, onMounted, ref } from "vue";
 import _ from "lodash";
-import { InputAddressType, MemberAddressType, PaymentMethodType, ShippingMethodType } from "@/core/api/graphql/types";
+import {
+  GiftItemType,
+  InputAddressType,
+  MemberAddressType,
+  PaymentMethodType,
+  ShippingMethodType,
+} from "@/core/api/graphql/types";
 import { useUser, useUserAddresses } from "@/shared/account";
 import { AddressType } from "@/core/types";
+import { addGiftItems, rejectGiftItems } from "@core/api/graphql/cart";
 
 const { me: user } = useUser();
 const {
@@ -536,6 +572,21 @@ function addNewAddressDialog(addressType: AddressType.Billing | AddressType.Ship
       },
     },
   });
+}
+
+function checkGift(gift: GiftItemType): boolean {
+  return !!cart.value.gifts?.find((giftData) => giftData.lineItemId === gift.lineItemId);
+}
+
+async function toggleGift(state: boolean | any[], gift: GiftItemType) {
+  if (state) {
+    await addGiftItems([gift.id]);
+  } else {
+    if (gift.lineItemId) {
+      await rejectGiftItems([gift.lineItemId]);
+    }
+  }
+  await loadMyCart();
 }
 </script>
 
