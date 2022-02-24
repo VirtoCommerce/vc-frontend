@@ -53,9 +53,7 @@
           <template #item>
             <div class="text-white flex items-center max-w-sm">
               <i class="fa fa-user-circle fa-2x fa-fw text-yellow-500"></i>
-              <span class="ml-2 flex-1 font-semibold overflow-hidden overflow-ellipsis">{{
-                me.contact?.fullName
-              }}</span>
+              <span class="ml-2 flex-1 font-semibold truncate">{{ me.contact?.fullName }}</span>
               <button
                 class="ml-4 px-4 py-1 border-2 border-red-600 rounded uppercase text-sm font-roboto"
                 @click="signOut"
