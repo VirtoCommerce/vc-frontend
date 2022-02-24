@@ -16,9 +16,6 @@
             <form @submit="onSubmit" class="lg:w-1/2 flex flex-col">
               <!-- Errors block -->
               <VcAlert v-if="updateProfileError" class="mb-2">There was an error during profile update</VcAlert>
-              <VcAlert v-if="!_.isEmpty(errors)" class="mb-2">
-                <strong>First name</strong> and <strong>Last name</strong> are required
-              </VcAlert>
 
               <VcInput
                 v-model="firstName"
@@ -74,7 +71,6 @@ import { AccountNavigation, ProfileUpdateSuccessDialog, useUser } from "@/shared
 import { reactive, computed, Ref, ref } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useForm, useField } from "vee-validate";
-import _ from "lodash";
 import * as yup from "yup";
 import { usePopup } from "@/shared/popup";
 
@@ -84,8 +80,8 @@ const { openPopup } = usePopup();
 const updateProfileError: Ref<boolean> = ref(false);
 
 const schema = yup.object({
-  firstName: yup.string().label("First name").required(),
-  lastName: yup.string().label("Last name").required(),
+  firstName: yup.string().label("First name").required().max(64),
+  lastName: yup.string().label("Last name").required().max(64),
   email: yup.string().label("Email"),
 });
 
