@@ -49,11 +49,11 @@
       <!-- Authorized menu items -->
       <div v-if="isAuthenticated" class="flex flex-col space-y-4 px-10">
         <MobileMenuLink :children="[{ title: '' }]" @close="$emit('close')">
-          {{ me.userName }}
+          {{ me.contact?.fullName }}
           <template #item>
             <div class="text-white flex items-center max-w-sm">
               <i class="fa fa-user-circle fa-2x fa-fw text-yellow-500"></i>
-              <span class="ml-2 flex-1 font-semibold">{{ me.userName }}</span>
+              <span class="ml-2 flex-1 font-semibold truncate">{{ me.contact?.fullName }}</span>
               <button
                 class="ml-4 px-4 py-1 border-2 border-red-600 rounded uppercase text-sm font-roboto"
                 @click="signOut"

@@ -11,6 +11,7 @@
       :type="type"
       :name="name"
       :placeholder="placeholder"
+      :disabled="isDisabled"
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     />
 

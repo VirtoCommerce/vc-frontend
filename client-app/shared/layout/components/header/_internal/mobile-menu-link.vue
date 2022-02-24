@@ -5,7 +5,7 @@
       class="uppercase text-xl font-extrabold text-white flex items-center"
       @click="submenuVisible = !submenuVisible"
     >
-      <div>
+      <div class="truncate">
         <slot>{{ title }}</slot>
       </div>
       <i

@@ -2,7 +2,7 @@ import { Ref, ref, computed } from "vue";
 import { getMe, updatePersonalData } from "@/core/api/graphql/account";
 import { UserType, IdentityResultType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
-import { SignMeUp, SignMeIn, ForgotPassword, ValidateToken, ResetPassword } from "@/shared/account";
+import { SignMeUp, SignMeIn, ForgotPassword, ValidateToken, ResetPassword, UserPersonalData } from "@/shared/account";
 import useFetch from "@/core/composables/useFetch";
 
 const me: Ref<UserType> = ref({
@@ -36,10 +36,9 @@ export default () => {
     }
   }
 
-  async function updateUser(user: UserType): Promise<IdentityResultType> {
+  async function updateUser(personalData: UserPersonalData): Promise<IdentityResultType> {
     try {
       loading.value = true;
-      const personalData = { email: user.email, firstName: user.contact?.firstName, lastName: user.contact?.lastName };
       const result = await updatePersonalData(personalData);
       if (result.succeeded) {
         await loadMe();

@@ -8,5 +8,10 @@ query getMe {
     photoUrl
     phoneNumber
     permissions
+    contact {
+      firstName
+      lastName
+      fullName
+    }
   }
 }
