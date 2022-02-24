@@ -9,6 +9,7 @@
   >
     <slot></slot>
   </router-link>
+
   <button
     v-else
     :type="isSubmit ? 'submit' : 'button'"
@@ -22,7 +23,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, PropType } from "vue";
+import { RouteLocationRaw } from "vue-router";
 
 const props = defineProps({
   kind: {
@@ -56,7 +58,7 @@ const props = defineProps({
     default: false,
   },
   to: {
-    type: String,
+    type: [String, Object] as PropType<RouteLocationRaw>,
     default: null,
   },
 });

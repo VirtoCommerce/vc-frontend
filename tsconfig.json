@@ -13,10 +13,7 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "isolatedModules": true,
-    "lib": [
-      "ESNext",
-      "DOM"
-    ],
+    "lib": ["ESNext", "DOM"],
     "paths": {
       "@/*": ["client-app/*"],
       "@core/*": ["client-app/core/*"]
@@ -30,9 +27,5 @@
     "client-app/**/*.vue",
     "client-app/**/*.graphql"
   ],
-  "exclude": [
-    "node_modules",
-    "**/*.js",
-    "_references"
-  ]
+  "exclude": ["node_modules", "assets", "**/*.js", "_references"]
 }

@@ -87,6 +87,7 @@ import { useCart } from "@/shared/cart";
 import { useUser } from "@/shared/account";
 import { ref } from "vue";
 import { IMenuItem } from "@/shared/layout/types";
+import { VcImage } from "@/components";
 
 defineProps({
   isVisible: {
