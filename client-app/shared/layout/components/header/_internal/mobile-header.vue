@@ -2,7 +2,7 @@
   <div class="fixed z-40 w-full shadow-md">
     <div class="relative z-10 h-14 flex justify-between items-center bg-white">
       <router-link to="/" class="px-6">
-        <VcImage src="/static/images/common/logo.svg" class="h-9" />
+        <VcImage src="/static/images/common/logo.svg" class="h-9" lazy />
       </router-link>
 
       <div class="flex items-center h-full pr-3">

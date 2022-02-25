@@ -4,7 +4,7 @@
     v-click-outside="() => searchDropdownVisible && hideSearchDropdown()"
   >
     <router-link to="/">
-      <VcImage src="/static/images/common/logo-white.svg" class="h-12 mr-8" />
+      <VcImage src="/static/images/common/logo-white.svg" class="h-12 mr-8" lazy />
     </router-link>
 
     <div class="flex flex-grow relative">
@@ -15,6 +15,7 @@
         placeholder="Enter keyword, item, model or replacement part number"
         class="flex-grow mr-4 rounded h-10 px-4 font-medium text-sm outline-none disabled:bg-gray-200"
         @keyup.enter="search"
+        @keyup.esc="searchDropdownVisible && hideSearchDropdown()"
         @input="searchDropdownVisible && hideSearchDropdown()"
       />
 
@@ -22,35 +23,49 @@
 
       <!-- Dropdown -->
       <transition name="slide-fade-top">
-        <div v-if="searchDropdownVisible" class="absolute top-14 w-full rounded bg-white shadow-lg overflow-hidden">
+        <div
+          v-if="searchDropdownVisible"
+          class="absolute flex flex-col gap-3 top-14 w-full rounded bg-white shadow-lg overflow-hidden"
+        >
           <!-- Results -->
           <template v-if="categories.length || products.length">
             <!-- Categories -->
             <section v-if="categories.length">
               <header class="px-5 py-2 text-xs text-gray-500 bg-gray-100">Categories</header>
 
-              <ul v-for="(column, index) in categoriesColumns" :key="index" class="px-5 py-3 text-sm inline-block">
-                <li v-for="category in column" :key="category.name">
-                  <router-link
-                    :to="{ name: 'Catalog', params: { categorySeoUrls: category.seoInfo?.semanticUrl } }"
-                    v-html="category.name"
-                    class="py-1 block"
-                  />
-                </li>
-              </ul>
+              <div class="flex gap-5 px-5 py-3 text-sm">
+                <ul v-for="(column, index) in categoriesColumns" :key="index" class="w-1/5">
+                  <li v-for="category in column" :key="category.name">
+                    <router-link
+                      :to="{
+                        name: 'Catalog',
+                        params: { categorySeoUrls: category.seoInfo?.semanticUrl },
+                      }"
+                      v-html="category.name"
+                      class="py-1 block"
+                      @click="hideSearchBar"
+                    />
+                  </li>
+                </ul>
+              </div>
             </section>
 
             <!-- Products -->
-            <section v-if="products.length" :class="{ 'mt-3': categories.length }">
+            <section v-if="products.length">
               <header class="px-5 py-2 text-xs text-gray-500 bg-gray-100">Products</header>
 
-              <div class="px-5 pt-5 pb-6 grid grid-cols-3 gap-5 xl:gap-7">
-                <SearchBarProductCard v-for="product in products" :key="product.id" :product="product" />
+              <div class="px-5 pt-5 pb-3 grid grid-cols-3 gap-5 xl:gap-7">
+                <SearchBarProductCard
+                  v-for="product in products"
+                  :key="product.id"
+                  :product="product"
+                  @link-click="hideSearchBar"
+                />
               </div>
             </section>
 
             <!-- Actions -->
-            <section class="px-5 py-4 border-t border-gray-100">
+            <section v-if="total" class="px-5 py-4 border-t border-gray-100">
               <VcButton
                 :to="{ name: 'Search', query: { [QueryParamName.searchPhrase]: searchPhrase } }"
                 class="uppercase px-4"
@@ -142,7 +157,7 @@ async function search() {
       itemsPerPage: 9,
     },
     categories: {
-      itemsPerPage: CATEGORIES_ITEMS_PER_COLUMN * 3, // three columns
+      itemsPerPage: CATEGORIES_ITEMS_PER_COLUMN * 5, // five columns
     },
   });
 

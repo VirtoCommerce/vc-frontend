@@ -1,13 +1,17 @@
 <template>
   <div class="flex flex-row gap-2">
     <!-- Product image -->
-    <router-link :to="link" class="shrink-0 w-20 h-20 border border-gray-200">
+    <router-link :to="link" class="shrink-0 w-20 h-20 border border-gray-200" @click="$emit('link-click', $event)">
       <VcImage :src="product.imgSrc" :alt="product.name" class="w-full h-full object-cover object-center" lazy />
     </router-link>
 
     <div class="flex flex-col justify-evenly gap-2 overflow-hidden">
       <!-- Product title -->
-      <router-link :to="link" class="text-cyan-700 font-extrabold text-sm leading-tight line-clamp-2">
+      <router-link
+        :to="link"
+        class="text-cyan-700 font-extrabold text-sm leading-tight line-clamp-2"
+        @click="$emit('link-click', $event)"
+      >
         {{ product.name }}
       </router-link>
 
@@ -32,6 +36,8 @@ import { computed, PropType } from "vue";
 import { VcImage, VcPriceDisplay } from "@/components";
 import { Product as ProductType } from "@/core/api/graphql/types";
 import { RouteLocationRaw } from "vue-router";
+
+defineEmits(["link-click"]);
 
 const props = defineProps({
   product: {

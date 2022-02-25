@@ -244,7 +244,12 @@ import { useRouteQueryParam } from "@core/composables";
 import { defaultPageSize, pageSizes } from "@core/constants";
 import SeoUrl from "@core/seo-routes.enum";
 
-const props = defineProps({ categorySeoUrls: [String, Array] as PropType<string | string[]> });
+const props = defineProps({
+  categorySeoUrls: {
+    type: [String, Array] as PropType<string | string[]>,
+    default: "",
+  },
+});
 
 const sortList = [
   { id: "priority-descending;name-ascending", name: "Featured" },
@@ -277,7 +282,11 @@ const viewMode = useRouteQueryParam<"grid" | "list">("viewMode", {
   validator: (value) => (isMobile.value ? false : ["grid", "list"].includes(value)),
 });
 
-const categorySeoUrl = computed<string>(() => props.categorySeoUrls?.[props.categorySeoUrls?.length - 1] ?? "");
+const categorySeoUrl = computed<string>(() =>
+  typeof props.categorySeoUrls === "string"
+    ? props.categorySeoUrls
+    : props.categorySeoUrls?.[props.categorySeoUrls?.length - 1] ?? ""
+);
 
 const page = computed<number>({
   get: () => searchParams.value.page,

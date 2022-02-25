@@ -1,9 +1,14 @@
-import { computed, readonly, ref, shallowRef, unref } from "vue";
+import { computed, reactive, readonly, ref, shallowRef, toRef, unref } from "vue";
 import { Logger, sleep } from "@core/utilities";
 import { Category, Product } from "@core/api/graphql/types";
 import { getSearchResults, SearchResultsParams } from "@core/api/graphql/catalog";
 import { highlightSearchText, prepareSearchText } from "@/shared/layout";
 import { MaybeRef } from "@vueuse/core";
+
+const activeAnimations = reactive<Record<"bar" | "dropdown", Promise<void> | null>>({
+  bar: null,
+  dropdown: null,
+});
 
 const loading = ref(false);
 const searchBarVisible = ref(false);
@@ -23,29 +28,58 @@ export default (
 ) => {
   const { animationDuration = 300, dropdownAnimationDuration = 200 } = options;
 
-  async function showSearchDropdown() {
+  async function showSearchDropdown(): Promise<void> {
     if (searchDropdownVisible.value) return;
     searchDropdownVisible.value = true;
     await sleep(unref(dropdownAnimationDuration));
   }
 
-  async function hideSearchDropdown() {
-    if (!searchDropdownVisible.value) return;
+  async function hideSearchDropdown(): Promise<void> {
+    const activeAnimation = toRef(activeAnimations, "dropdown");
+
+    if (activeAnimation.value) {
+      return activeAnimation.value;
+    }
+
+    if (!searchDropdownVisible.value) {
+      return;
+    }
+
     searchDropdownVisible.value = false;
-    await sleep(unref(dropdownAnimationDuration));
+    activeAnimation.value = sleep(unref(dropdownAnimationDuration)).finally(() => {
+      activeAnimation.value = null;
+    });
+
+    return activeAnimation.value;
   }
 
-  async function showSearchBar() {
+  async function showSearchBar(): Promise<void> {
     if (searchBarVisible.value) return;
     searchBarVisible.value = true;
     await sleep(unref(animationDuration));
   }
 
-  async function hideSearchBar() {
-    await hideSearchDropdown();
-    if (!searchBarVisible.value) return;
-    searchBarVisible.value = false;
-    await sleep(unref(animationDuration));
+  async function hideSearchBar(): Promise<void> {
+    const activeAnimation = toRef(activeAnimations, "bar");
+
+    if (activeAnimation.value) {
+      return activeAnimation.value;
+    }
+
+    if (!searchBarVisible.value) {
+      return;
+    }
+
+    activeAnimation.value = hideSearchDropdown()
+      .then(() => {
+        searchBarVisible.value = false;
+        return sleep(unref(animationDuration));
+      })
+      .finally(() => {
+        activeAnimation.value = null;
+      });
+
+    return activeAnimation.value;
   }
 
   async function searchResults(params: SearchResultsParams) {
