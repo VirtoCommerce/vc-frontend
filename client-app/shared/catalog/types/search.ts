@@ -1,11 +1,3 @@
-export enum SearchQueryParamNames {
-  Page = "page",
-  Sort = "sort",
-  Filter = "filter",
-  Keyword = "keyword",
-  ItemsPerPage = "size",
-}
-
 export type ProductsSearchParams = {
   page: number;
   itemsPerPage: number;

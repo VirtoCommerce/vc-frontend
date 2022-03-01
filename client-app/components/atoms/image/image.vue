@@ -1,11 +1,19 @@
 <template>
-  <img :src="src || fallbackSrc" :alt="alt" :class="additionalClass" @error="setFallbackSrc" />
+  <img
+    :src="src || fallbackSrc"
+    :alt="alt"
+    :loading="lazy ? 'lazy' : null"
+    :class="additionalClass"
+    @error="setFallbackSrc"
+  />
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
 
 const props = defineProps({
+  lazy: Boolean,
+
   src: {
     type: String,
     default: undefined,

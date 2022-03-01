@@ -60,6 +60,7 @@ const router = createRouter({
     },
     { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword },
     { path: "/reset-password", name: "ResetPassword", component: ResetPassword },
+    { path: "/search", name: "Search", component: {} }, // TODO: implement in another user story
     { path: `/${SeoUrl.Catalog}/:categorySeoUrls*`, name: "Catalog", component: Catalog, props: true },
     { path: `/${SeoUrl.Product}/:productId`, name: "Product", component: Product, props: true },
     { path: "/checkout", name: "Checkout", component: Checkout },

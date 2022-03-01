@@ -1,34 +1,22 @@
 <template>
-  <!-- Desktop header -->
-  <div class="header hidden lg:block shadow-md">
-    <!-- Top header -->
-    <TopHeader />
+  <!-- Mobile header -->
+  <MobileHeader v-if="isMobile" />
 
-    <!-- Bottom header-->
+  <!-- Desktop header -->
+  <div v-else class="z-10 shadow-md">
+    <TopHeader />
     <BottomHeader />
   </div>
-
-  <!-- Mobile header -->
-  <div class="lg:hidden fixed z-40 bg-white w-full border-b shadow-md">
-    <div class="px-6 flex justify-between items-center h-14">
-      <router-link to="/"><VcImage src="/static/images/common/logo.svg" class="h-9" /></router-link>
-      <i class="fas fa-bars text-2xl text-yellow-500" @click="mobileMenuVisible = true"></i>
-    </div>
-  </div>
-
-  <!-- Placeholder for correct padding due to fixed mobile menu -->
-  <div class="lg:hidden h-14"></div>
-
-  <!-- Mobile menu -->
-  <MobileMenu v-if="mobileMenuVisible" @close="mobileMenuVisible = false" />
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { VcImage } from "@/components";
 import TopHeader from "./_internal/top-header.vue";
 import BottomHeader from "./_internal/bottom-header.vue";
-import MobileMenu from "./_internal/mobile-menu.vue";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import MobileHeader from "@/shared/layout/components/header/_internal/mobile-header.vue";
 
-const mobileMenuVisible = ref(false);
+const breakpoints = useBreakpoints(breakpointsTailwind);
+
+// For optimization on mobile devices
+const isMobile = breakpoints.smaller("lg");
 </script>
