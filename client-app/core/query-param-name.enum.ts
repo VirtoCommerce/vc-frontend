@@ -4,7 +4,7 @@ enum QueryParamName {
   Filter = "filter",
   Keyword = "keyword",
   ItemsPerPage = "size",
-  searchPhrase = "q",
+  SearchPhrase = "q",
 }
 
 export default QueryParamName;

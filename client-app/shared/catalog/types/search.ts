@@ -23,18 +23,26 @@ export type ProductsFilter = {
   values: ProductsFilterValue[];
 };
 
+export type UrlParamKeys = {
+  [key in keyof Omit<ProductsSearchParams, "categoryId" | "fuzzy" | "fuzzyLevel"> as `${key}Key`]?: string;
+};
+
 export type UseProductsSearchParamsOptions = {
   sortList?: string[];
   defaultSortBy?: string;
   itemsPerPageList?: number[];
   defaultItemsPerPage?: number;
-  // @default "push"
-  routeUpdateMethod?: "push" | "replace";
+  urlParamKeys?: UrlParamKeys;
 };
 
 export type FromRouteQueryOptions = {
+  urlParamKeys: Required<UrlParamKeys>;
   sortList?: string[];
   defaultSortBy?: string;
   itemsPerPageList?: number[];
   defaultItemsPerPage?: number;
+};
+
+export type ToRouteQueryOptions = {
+  urlParamKeys: Required<UrlParamKeys>;
 };

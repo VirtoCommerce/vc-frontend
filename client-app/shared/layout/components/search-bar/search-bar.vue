@@ -25,7 +25,7 @@
       <transition name="slide-fade-top">
         <div
           v-if="searchDropdownVisible"
-          class="absolute flex flex-col gap-3 top-14 w-full rounded bg-white shadow-lg overflow-hidden"
+          class="absolute top-14 w-full flex flex-col gap-3 rounded bg-white shadow-lg overflow-hidden"
         >
           <!-- Results -->
           <template v-if="categories.length || products.length">
@@ -67,7 +67,7 @@
             <!-- Actions -->
             <section v-if="total" class="px-5 py-4 border-t border-gray-100">
               <VcButton
-                :to="{ name: 'Search', query: { [QueryParamName.searchPhrase]: searchPhrase } }"
+                :to="{ name: 'Search', query: { [QueryParamName.SearchPhrase]: searchPhrase } }"
                 class="uppercase px-4"
                 size="sm"
                 @click="isApplied && hideSearchDropdown()"
@@ -133,7 +133,7 @@ const {
 } = useSearchBar();
 
 const searchPhrase = ref("");
-const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.searchPhrase);
+const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 
 const isApplied = computed<boolean>(() => searchPhraseInUrl.value === searchPhrase.value);
 

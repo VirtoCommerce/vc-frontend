@@ -31,6 +31,7 @@
                 label="Preferred Payment Method"
                 placeholder="Please select preferred Payment Method"
                 class="mt-8 w-full"
+                size="lg"
               >
                 <template #first>Not selected</template>
               </VcSelect>
@@ -40,6 +41,7 @@
                 label="Preferred Shipping Method"
                 placeholder="Please select preferred Shipping Method"
                 class="mt-8 w-full"
+                size="lg"
               >
                 <template #selected="{ item }">{{ item?.code }} {{ item?.optionName }}</template>
                 <template #first>Not selected</template>
