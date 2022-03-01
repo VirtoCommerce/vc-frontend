@@ -14,6 +14,7 @@ export default async function searchProducts(
     keyword,
     fuzzy,
     fuzzyLevel,
+    productIds,
   }: Partial<ProductsSearchParams>,
   options: {
     // @default false
@@ -40,6 +41,7 @@ export default async function searchProducts(
       cultureName: locale,
       first: itemsPerPage,
       after: String((page - 1) * itemsPerPage),
+      productIds: productIds,
     },
   });
   return data.products;

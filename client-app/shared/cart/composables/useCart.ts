@@ -16,6 +16,8 @@ import { Logger } from "@core/utilities";
 import _ from "lodash";
 import { useUserCheckoutDefaults } from "@/shared/account";
 import changePurchaseOrderNumber from "@/core/api/graphql/cart/mutations/changePurchaseOrderNumber";
+import { CartItemType } from "../types";
+import addItemsToCart from "@/core/api/graphql/cart/mutations/addItemsToCart";
 
 const loading: Ref<boolean> = ref(true);
 const cart: Ref<CartType> = ref({ name: "" });
@@ -68,6 +70,20 @@ export default () => {
       await addItemToCart(productId, qty);
     } catch (e) {
       Logger.error("useCart.addItemToCart", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+    await loadMyCart();
+  }
+
+  async function addMultipleItemsToCart(cartItems: CartItemType[]) {
+    loading.value = true;
+    console.log(`addMultipleItemsToCart ${cartItems}`);
+    try {
+      await addItemsToCart(cartItems);
+    } catch (e) {
+      Logger.error("useCart.addMultipleItemsToCart", e);
       throw e;
     } finally {
       loading.value = false;
@@ -239,5 +255,6 @@ export default () => {
     updateShipment,
     updatePayment,
     updatePurchaseOrderNumber,
+    addMultipleItemsToCart,
   };
 };

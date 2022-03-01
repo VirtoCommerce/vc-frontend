@@ -11,6 +11,7 @@ query SearchProducts(
   $fuzzy: Boolean
   $fuzzyLevel: Int
   $withFacets: Boolean!
+  $productIds: [String]
 ) {
   products(
     storeId: $storeId
@@ -24,6 +25,7 @@ query SearchProducts(
     query: $query
     fuzzy: $fuzzy
     fuzzyLevel: $fuzzyLevel
+    productIds: $productIds
   ) {
     totalCount
     items {
