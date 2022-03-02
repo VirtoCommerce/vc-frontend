@@ -15,7 +15,6 @@
         </VcButton>
 
         <VcButton
-          to="/checkout"
           class="uppercase flex-grow lg:flex-grow-0 inline-flex px-4"
           @click="
             close();
@@ -67,6 +66,7 @@ import { ProductCardReorder } from "@/shared/account";
 import _ from "lodash";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { CartItemType, useCart } from "@/shared/cart";
+import { useRouter } from "vue-router";
 
 const itemsPerPage = 4;
 
@@ -92,6 +92,7 @@ const props = defineProps({
 
 const { addMultipleItemsToCart } = useCart();
 
+const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
@@ -150,7 +151,7 @@ const setProductCardRef = (el: any) => {
   }
 };
 
-const addToCart = () => {
+const addToCart = async () => {
   let modifiedCartLineItems: CartItemType[] = [];
   _.each(productCardRefs.value, (productCard) => modifiedCartLineItems.push(productCard.updateQuantity()));
   modifiedCartLineItems = _.uniq(modifiedCartLineItems);
@@ -169,7 +170,9 @@ const addToCart = () => {
     }
   });
 
-  addMultipleItemsToCart(originalCartLineItems);
+  await addMultipleItemsToCart(originalCartLineItems).then(() => {
+    router.push({ name: "Checkout" });
+  });
 };
 
 onMounted(() => {
