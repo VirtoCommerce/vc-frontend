@@ -156,7 +156,6 @@ const openReorderPopup = async () => {
   const orderItemsInfo = _.map(orderItems.value, (item) => {
     return _.pick(item, "productId", "quantity", "id");
   });
-  console.log(orderItemsInfo);
   await fetchProducts({ itemsPerPage: 4, productIds: productIds });
   openPopup({
     component: ReorderInfo,
