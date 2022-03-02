@@ -10,6 +10,7 @@
           <router-link
             :to="`/${SeoUrl.Product}/${productItem.id}`"
             class="text-cyan-700 font-extrabold line-clamp-3 overflow-hidden"
+            @click="$emit('close-popup')"
           >
             {{ productItem.name }}
           </router-link>
@@ -88,6 +89,7 @@
           <router-link
             :to="`/${SeoUrl.Product}/${productItem.id}`"
             class="text-cyan-700 font-extrabold line-clamp-3 overflow-hidden"
+            @click="$emit('close-popup')"
           >
             {{ productItem.name }}
           </router-link>
@@ -182,6 +184,8 @@ const props = defineProps({
     default: false,
   },
 });
+
+defineEmits(["close-popup"]);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");

@@ -26,33 +26,36 @@
         </VcButton>
       </div>
     </template>
-    <div class="flex items-center p-5 space-x-4 shadow-lg">
-      <span v-if="!isMobile" class="text-sm">Filter products:</span>
-      <VcCheckbox
-        v-model="reducedQuantityFilter"
-        :class="!reducedQuantityFilter && 'text-gray-300'"
-        @change="applyFilters"
-        >Reduced quantity</VcCheckbox
-      >
-      <VcCheckbox v-model="outOfStockFilter" :class="!outOfStockFilter && 'text-gray-300'" @change="applyFilters"
-        >Out of stock</VcCheckbox
-      >
-      <VcCheckbox
-        v-model="withoutChangesFilter"
-        :class="!withoutChangesFilter && 'text-gray-300'"
-        @change="applyFilters"
-        >Items without changes</VcCheckbox
-      >
-    </div>
-    <ProductCardReorder
-      v-for="item in paginatedItems"
-      :ref="setProductCardRef"
-      :key="item?.id"
-      :product-item="item"
-    ></ProductCardReorder>
-    <div v-if="pages > 1 && isMobile" class="flex p-5">
-      <VcPagination v-model:page="page" :pages="pages" class="lg:mb-0" @update:page="page = $event"></VcPagination>
-    </div>
+    <template #default="{ close }">
+      <div class="flex items-center p-5 space-x-4 shadow-lg">
+        <span v-if="!isMobile" class="text-sm">Filter products:</span>
+        <VcCheckbox
+          v-model="reducedQuantityFilter"
+          :class="!reducedQuantityFilter && 'text-gray-300'"
+          @change="applyFilters"
+          >Reduced quantity</VcCheckbox
+        >
+        <VcCheckbox v-model="outOfStockFilter" :class="!outOfStockFilter && 'text-gray-300'" @change="applyFilters"
+          >Out of stock</VcCheckbox
+        >
+        <VcCheckbox
+          v-model="withoutChangesFilter"
+          :class="!withoutChangesFilter && 'text-gray-300'"
+          @change="applyFilters"
+          >Items without changes</VcCheckbox
+        >
+      </div>
+      <ProductCardReorder
+        v-for="item in paginatedItems"
+        :ref="setProductCardRef"
+        :key="item?.id"
+        :product-item="item"
+        @close-popup="close"
+      ></ProductCardReorder>
+      <div v-if="pages > 1 && isMobile" class="flex p-5">
+        <VcPagination v-model:page="page" :pages="pages" class="lg:mb-0" @update:page="page = $event"></VcPagination>
+      </div>
+    </template>
   </VcPopup>
 </template>
 
