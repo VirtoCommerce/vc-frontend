@@ -78,14 +78,16 @@
           </template>
 
           <!-- Not found -->
-          <p v-else-if="!loading" class="my-16 text-center">
+          <div v-else-if="!loading" class="my-16 text-center">
             <svg width="47" height="47" class="inline-block mr-5 text-primary">
               <use href="/static/images/search-not-found.svg#search-not-found" />
             </svg>
 
-            No results were found for your "<strong>{{ searchPhrase }}</strong
-            >" query
-          </p>
+            <p class="inline-block">
+              No results were found for your "<strong>{{ searchPhrase }}</strong
+              >" query
+            </p>
+          </div>
         </div>
       </transition>
     </div>

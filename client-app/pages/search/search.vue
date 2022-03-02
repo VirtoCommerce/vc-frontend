@@ -1,73 +1,91 @@
 <template>
-  <div class="bg-gray-100 pt-7 pb-16 shadow-inner">
+  <div class="bg-gray-100 pt-7 pb-16 shadow-inner grow">
     <div class="max-w-screen-2xl px-5 md:px-12 mx-auto">
       <div class="flex items-start lg:gap-6">
         <!-- Content -->
         <div class="lg:w-3/4 xl:w-4/5 flex-grow">
-          <div class="flex flex-col">
-            <h1 class="text-2xl md:mt-2 md:mb-4">
-              Your search for "<strong>{{ searchParams.keyword }}</strong
-              >" revealed the following
-            </h1>
+          <template v-if="products.length || loading">
+            <div class="flex flex-col">
+              <h1 class="text-2xl md:mt-2 md:mb-4">
+                Your search for "<strong>{{ searchParams.keyword }}</strong
+                >" revealed the following
+              </h1>
 
-            <div class="flex justify-start mb-6 mt-4">
-              <!-- View options -->
-              <ViewMode v-model:mode="viewMode" class="hidden md:inline-flex mr-6" />
+              <div class="flex justify-start mb-6 mt-4">
+                <!-- View options -->
+                <ViewMode v-model:mode="viewMode" class="hidden md:inline-flex mr-6" />
 
-              <!-- Page size -->
-              <PageSize v-model:size="itemsPerPage" class="hidden md:flex" />
+                <!-- Page size -->
+                <PageSize v-model:size="itemsPerPage" class="hidden md:flex" />
 
-              <!-- Sorting -->
-              <div class="flex items-center flex-grow md:flex-grow-0 ml-auto">
-                <span class="shrink-0 mr-2">Sort by:</span>
+                <!-- Sorting -->
+                <div class="flex items-center flex-grow md:flex-grow-0 ml-auto">
+                  <span class="shrink-0 mr-2">Sort by:</span>
 
-                <VcSelect
-                  v-model="sort"
-                  text-field="name"
-                  :is-disabled="loading"
-                  :items="productSortingList"
-                  class="w-full md:w-52 lg:w-64"
-                />
+                  <VcSelect
+                    v-model="sort"
+                    text-field="name"
+                    :is-disabled="loading"
+                    :items="productSortingList"
+                    class="w-full md:w-52 lg:w-64"
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- Products -->
-          <DisplayProducts
-            :loading="loading"
-            :view-mode="viewMode"
-            :items-per-page="itemsPerPage"
-            :products="products"
-            :class="
-              viewMode === 'list'
-                ? 'space-y-5'
-                : 'grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-6 lg:gap-x-6 lg:gap-y-8'
-            "
-          >
-            <template #cart-handler="{ item }">
-              <VcButton
-                v-if="item.hasVariations"
-                :to="{ name: 'Product', params: { productId: item.id } }"
-                :class="{ 'w-full': viewMode === 'list' }"
-                class="uppercase mb-4"
-              >
-                Choose
-              </VcButton>
+            <!-- Products -->
+            <DisplayProducts
+              :loading="loading"
+              :view-mode="viewMode"
+              :items-per-page="itemsPerPage"
+              :products="products"
+              :class="
+                viewMode === 'list'
+                  ? 'space-y-5'
+                  : 'grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-6 lg:gap-x-6 lg:gap-y-8'
+              "
+            >
+              <template #cart-handler="{ item }">
+                <VcButton
+                  v-if="item.hasVariations"
+                  :to="{ name: 'Product', params: { productId: item.id } }"
+                  :class="{ 'w-full': viewMode === 'list' }"
+                  class="uppercase mb-4"
+                >
+                  Choose
+                </VcButton>
 
-              <AddToCart v-else :product="item"></AddToCart>
-            </template>
-          </DisplayProducts>
+                <AddToCart v-else :product="item"></AddToCart>
+              </template>
+            </DisplayProducts>
 
-          <!-- VcPagination and options bottom block -->
-          <div class="flex justify-center md:justify-between pt-11">
-            <VcPagination v-model:page="page" :pages="pages" />
+            <!-- VcPagination and options bottom block -->
+            <div class="flex justify-center md:justify-between pt-11">
+              <VcPagination v-model:page="page" :pages="pages" />
 
-            <div class="flex">
-              <!-- View options -->
-              <ViewMode v-model:mode="viewMode" class="hidden md:inline-flex mr-6" />
+              <div class="flex">
+                <!-- View options -->
+                <ViewMode v-model:mode="viewMode" class="hidden md:inline-flex mr-6" />
 
-              <!-- Page size -->
-              <PageSize v-model:size="itemsPerPage" class="hidden md:flex" />
+                <!-- Page size -->
+                <PageSize v-model:size="itemsPerPage" class="hidden md:flex" />
+              </div>
+            </div>
+          </template>
+
+          <!-- Not found -->
+          <div v-else class="my-16 text-center">
+            <svg width="47" height="47" class="inline-block mb-4 md:mb-0 md:mr-5 text-primary">
+              <use href="/static/images/search-not-found.svg#search-not-found" />
+            </svg>
+
+            <p class="md:inline-block">
+              No results were found for your "<strong>{{ searchParams.keyword }}</strong
+              >" query
+            </p>
+
+            <div class="md:hidden mt-10">
+              <VcButton to="/" size="md" class="w-40 uppercase">Home page</VcButton>
             </div>
           </div>
         </div>
