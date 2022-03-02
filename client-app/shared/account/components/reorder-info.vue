@@ -1,27 +1,30 @@
 <template>
   <VcPopup title="Reorder confirmation">
     <template #actions="{ close }">
-      <div v-if="pages > 1 && !isMobile">
+      <div v-if="pages > 1 && !isMobile" class="lg:flex lg:flex-1">
         <VcPagination v-model:page="page" :pages="pages" @update:page="page = $event"></VcPagination>
       </div>
-      <VcButton
-        is-outline
-        kind="secondary"
-        class="lg:px-4 uppercase flex-grow lg:flex-grow-0 inline-flex"
-        @click="close"
-      >
-        Cancel
-      </VcButton>
-      <VcButton
-        to="/checkout"
-        class="uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-4"
-        @click="
-          close();
-          addToCart();
-        "
-      >
-        Confirm
-      </VcButton>
+      <div class="flex flex-1 sm:flex-initial space-x-3">
+        <VcButton
+          is-outline
+          kind="secondary"
+          class="px-4 uppercase flex-grow lg:flex-grow-0 inline-flex"
+          @click="close"
+        >
+          Cancel
+        </VcButton>
+
+        <VcButton
+          to="/checkout"
+          class="uppercase flex-grow lg:flex-grow-0 inline-flex px-4"
+          @click="
+            close();
+            addToCart();
+          "
+        >
+          Confirm
+        </VcButton>
+      </div>
     </template>
     <div class="flex items-center p-5 space-x-4 shadow-lg">
       <span v-if="!isMobile" class="text-sm">Filter products:</span>
