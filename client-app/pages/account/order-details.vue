@@ -150,13 +150,15 @@ const breadcrumbs = ref<IBreadcrumbs[]>([
 ]);
 
 const openReorderPopup = async () => {
-  const productIds = _.map(orderItems.value, (item) => {
+  const orderItemsInfo = order.value?.items
+    .filter((item) => !item.isGift)
+    .map((item) => {
+      return _.pick(item, "productId", "quantity", "id");
+    });
+  const productIds = _.map(orderItemsInfo, (item) => {
     return item.productId;
   });
-  const orderItemsInfo = _.map(orderItems.value, (item) => {
-    return _.pick(item, "productId", "quantity", "id");
-  });
-  await fetchProducts({ itemsPerPage: 4, productIds: productIds });
+  await fetchProducts({ itemsPerPage: 6, productIds: productIds });
   openPopup({
     component: ReorderInfo,
     props: {
