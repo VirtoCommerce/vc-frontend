@@ -21,7 +21,7 @@ export default async function searchProducts(
   } = {}
 ): Promise<ProductConnection> {
   const { withFacets = false } = options;
-  const filterString = [categoryId ? `category.subtree:${catalogId}/${categoryId}` : "", filter]
+  const filterString = [`category.subtree:${catalogId}${categoryId ? "/" + categoryId : ""}`, filter]
     .filter(Boolean)
     .join(" ");
 

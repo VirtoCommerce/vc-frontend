@@ -36,6 +36,7 @@ export const isoDateFormat = "YYYY-MM-DD";
 // Search
 export const pageSizes = [16, 32, 48];
 export const defaultPageSize = 16;
+export const defaultMobilePageSize = 8;
 export const startPageNumber = 1;
 export const ordersStatuses = ["New", "Cancelled", "Processing", "Completed", "Pending"];
 export const invoicesStatuses = ["New", "Paid"];
@@ -44,3 +45,13 @@ export const orderDraftType = "orderDraft";
 export const sortAscending = "asc";
 export const sortDescending = "desc";
 export const catalogOrderDraftsCount = 100;
+
+export const productSortingList = [
+  { id: "priority-descending;name-ascending", name: "Featured" },
+  { id: "name-ascending", name: "Alphabetically, A-Z" },
+  { id: "name-descending", name: "Alphabetically, Z-A" },
+  { id: "price-ascending", name: "Price, low to high" },
+  { id: "price-descending", name: "Price, high to low" },
+  { id: "createddate-descending", name: "Date, new to old" },
+  { id: "createddate-ascending", name: "Date, old to new" },
+];

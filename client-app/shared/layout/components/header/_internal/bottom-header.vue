@@ -36,11 +36,13 @@
     </div>
 
     <!-- Desktop Search bar -->
-    <transition enter-from-class="translate-x-full" leave-to-class="translate-x-full">
-      <SearchBar
-        v-if="searchBarVisible"
-        class="absolute top-0 w-full z-20 transition-transform ease-in-out duration-300"
-      />
+    <transition
+      enter-from-class="translate-x-full"
+      leave-to-class="translate-x-full"
+      enter-active-class="will-change-transform"
+      leave-active-class="will-change-transform"
+    >
+      <SearchBar v-if="searchBarVisible" class="absolute top-0 w-full z-20 transition-transform duration-300" />
     </transition>
   </div>
 </template>

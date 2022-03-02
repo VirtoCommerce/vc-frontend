@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center justify-center">
+  <div class="flex items-center justify-center z-0">
     <!-- Previous page -->
     <button
       v-if="page > 1"

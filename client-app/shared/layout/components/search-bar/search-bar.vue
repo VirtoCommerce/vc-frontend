@@ -25,7 +25,7 @@
       <transition name="slide-fade-top">
         <div
           v-if="searchDropdownVisible"
-          class="absolute flex flex-col gap-3 top-14 w-full rounded bg-white shadow-lg overflow-hidden"
+          class="absolute top-14 w-full flex flex-col gap-3 rounded bg-white shadow-lg overflow-hidden"
         >
           <!-- Results -->
           <template v-if="categories.length || products.length">
@@ -67,7 +67,7 @@
             <!-- Actions -->
             <section v-if="total" class="px-5 py-4 border-t border-gray-100">
               <VcButton
-                :to="{ name: 'Search', query: { [QueryParamName.searchPhrase]: searchPhrase } }"
+                :to="{ name: 'Search', query: { [QueryParamName.SearchPhrase]: searchPhrase } }"
                 class="uppercase px-4"
                 size="sm"
                 @click="isApplied && hideSearchDropdown()"
@@ -78,14 +78,16 @@
           </template>
 
           <!-- Not found -->
-          <p v-else-if="!loading" class="my-16 text-center">
+          <div v-else-if="!loading" class="my-16 text-center">
             <svg width="47" height="47" class="inline-block mr-5 text-primary">
               <use href="/static/images/search-not-found.svg#search-not-found" />
             </svg>
 
-            No results were found for your "<strong>{{ searchPhrase }}</strong
-            >" query
-          </p>
+            <p class="inline-block">
+              No results were found for your "<strong>{{ searchPhrase }}</strong
+              >" query
+            </p>
+          </div>
         </div>
       </transition>
     </div>
@@ -133,7 +135,7 @@ const {
 } = useSearchBar();
 
 const searchPhrase = ref("");
-const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.searchPhrase);
+const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 
 const isApplied = computed<boolean>(() => searchPhraseInUrl.value === searchPhrase.value);
 
