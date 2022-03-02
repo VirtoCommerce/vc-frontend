@@ -41,7 +41,7 @@ export default async function searchProducts(
       cultureName: locale,
       first: itemsPerPage,
       after: String((page - 1) * itemsPerPage),
-      productIds: productIds,
+      productIds,
     },
   });
   return data.products;
