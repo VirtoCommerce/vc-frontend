@@ -124,23 +124,15 @@ const applyFilters = () => {
   }
 
   if (reducedQuantityFilter.value) {
-    let filteredProducts = _.filter(extendedProducts.value, (item) => {
-      const oldQuantity = _.find(props.orderItemsInfo, (orderItem) => orderItem.productId === item.id)?.quantity;
-      return oldQuantity! > item.availabilityData?.availableQuantity;
-    });
+    let filteredProducts = applyReducedQuantityFilter();
     filteredItems.value = [...filteredItems.value, ...filteredProducts];
   }
   if (outOfStockFilter.value) {
-    let filteredProducts = _.filter(extendedProducts.value, (item) => {
-      return !item.availabilityData?.isInStock;
-    });
+    let filteredProducts = applyOutOfStockFilter();
     filteredItems.value = [...filteredItems.value, ...filteredProducts];
   }
   if (withoutChangesFilter.value) {
-    let filteredProducts = _.filter(extendedProducts.value, (item) => {
-      const oldQuantity = _.find(props.orderItemsInfo, (orderItem) => orderItem.productId === item.id)?.quantity;
-      return oldQuantity! < item.availabilityData?.availableQuantity;
-    });
+    let filteredProducts = applyWithoutChangesFilter();
     filteredItems.value = [...filteredItems.value, ...filteredProducts];
   }
 };
@@ -153,10 +145,10 @@ const setProductCardRef = (el: any) => {
 };
 
 const addToCart = () => {
-  let cart: CartItemType[] = [];
-  _.each(productCardRefs.value, (productCard) => cart.push(productCard.updateQuantity()));
-  cart = _.uniq(cart);
-  cart = _.filter(cart, (item) => item !== undefined && item.quantity !== 0);
+  let modifiedCartLineItems: CartItemType[] = [];
+  _.each(productCardRefs.value, (productCard) => modifiedCartLineItems.push(productCard.updateQuantity()));
+  modifiedCartLineItems = _.uniq(modifiedCartLineItems);
+  modifiedCartLineItems = _.filter(modifiedCartLineItems, (item) => item !== undefined && item.quantity !== 0);
 
   const originalCartLineItems = _.filter(props.orderItemsInfo, (itemInfo) => itemInfo.quantity !== 0).map(
     (itemInfo) => {
@@ -164,7 +156,7 @@ const addToCart = () => {
     }
   );
 
-  _.each(cart, (reorderItem) => {
+  _.each(modifiedCartLineItems, (reorderItem) => {
     const itemToReplace = _.find(originalCartLineItems, (lineItem) => lineItem.productId === reorderItem.productId);
     if (itemToReplace) {
       itemToReplace.quantity = reorderItem.quantity;
@@ -185,4 +177,26 @@ onMounted(() => {
 onBeforeUpdate(() => {
   productCardRefs.value = [];
 });
+
+function applyReducedQuantityFilter() {
+  return _.filter(extendedProducts.value, (item) => {
+    const oldQuantity = _.find(props.orderItemsInfo, (orderItem) => orderItem.productId === item.id)?.quantity;
+    if (item.availabilityData?.isInStock) {
+      return oldQuantity! > item.availabilityData?.availableQuantity;
+    } else return false;
+  });
+}
+
+function applyOutOfStockFilter() {
+  return _.filter(extendedProducts.value, (item) => {
+    return !item.availabilityData?.isInStock;
+  });
+}
+
+function applyWithoutChangesFilter() {
+  return _.filter(extendedProducts.value, (item) => {
+    const oldQuantity = _.find(props.orderItemsInfo, (orderItem) => orderItem.productId === item.id)?.quantity;
+    return oldQuantity! < item.availabilityData?.availableQuantity;
+  });
+}
 </script>

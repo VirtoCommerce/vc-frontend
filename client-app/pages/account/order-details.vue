@@ -157,7 +157,7 @@ const openReorderPopup = async () => {
     return _.pick(item, "productId", "quantity", "id");
   });
   console.log(orderItemsInfo);
-  await fetchProducts({ itemsPerPage: 4, propductIds: productIds });
+  await fetchProducts({ itemsPerPage: 4, productIds: productIds });
   openPopup({
     component: ReorderInfo,
     props: {
