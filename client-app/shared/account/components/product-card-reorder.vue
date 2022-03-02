@@ -3,7 +3,7 @@
   <div v-if="isMobile" class="border-b">
     <div class="flex flex-col p-5">
       <div class="flex overflow-hidden space-x-5 items-center justify-between mb-4">
-        <div class="w-16 h-16">
+        <div class="w-16 h-16 flex-shrink-0">
           <VcImage :src="productItem.imgSrc" :alt="productItem.name" class="w-full h-full object-cover object-center" />
         </div>
         <div class="text-sm">
@@ -17,7 +17,7 @@
             class="flex items-center space-x-1"
             v-if="(props.productItem.quantity! > props.productItem.availabilityData?.availableQuantity) && !isInputDisabled"
           >
-            <i class="fas fa-exclamation-circle text-yellow-500"></i>
+            <i class="fas fa-exclamation-circle text-yellow-500 self-start mt-1"></i>
             <span class="text-xs text-gray-400">
               The number of items in the order was
               <span class="text-gray-500"
@@ -95,7 +95,7 @@
             class="flex items-center space-x-1"
             v-if="(props.productItem.quantity! > props.productItem.availabilityData?.availableQuantity) && !isInputDisabled"
           >
-            <i class="fas fa-exclamation-circle text-yellow-500"></i>
+            <i class="fas fa-exclamation-circle text-yellow-500 self-start mt-1"></i>
             <span class="text-xs text-gray-400">
               The number of items in the order was
               <span class="text-gray-500"
@@ -107,7 +107,7 @@
           </div>
         </div>
 
-        <div class="flex items-start space-x-2 lg:space-x-4 xl:w-2/5 lg:justify-end">
+        <div class="flex items-start space-x-2 lg:space-x-4 xl:w-2/5 justify-between lg:justify-end">
           <div class="flex flex-col items-center lg:w-24 lg:shrink-0 xl:w-1/4">
             <input
               v-model="value"
@@ -144,7 +144,7 @@
             </div>
           </div>
 
-          <div class="hidden lg:flex lg:w-28 lg:shrink-0 xl:w-2/4 lg:items-end flex-col text-sm font-extrabold pr-3">
+          <div class="hidden md:flex lg:w-28 lg:shrink-0 xl:w-2/4 md:items-end flex-col text-sm font-extrabold pr-3">
             <span class="text-black self-end">Total</span>
             <span class="text-green-700">{{ currency?.symbol }}{{ total }}</span>
           </div>
@@ -162,13 +162,19 @@ import * as yup from "yup";
 import SeoUrl from "@core/seo-routes.enum";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useCart } from "@/shared/cart";
+import { Product as ProductType } from "@/core/api/graphql/types";
 
 // Define max qty available to add
 const max = 999999;
 
 const props = defineProps({
   productItem: {
-    type: Object as PropType<any>,
+    type: Object as PropType<
+      ProductType & {
+        quantity: number | undefined;
+        lineItemId: string | undefined;
+      }
+    >,
     required: true,
   },
   readOnly: {
