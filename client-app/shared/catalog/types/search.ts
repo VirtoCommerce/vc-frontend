@@ -7,6 +7,7 @@ export type ProductsSearchParams = {
   fuzzy?: boolean;
   fuzzyLevel?: number;
   categoryId?: string;
+  productIds?: string[];
 };
 
 export type ProductsFilterValue = {

@@ -57,9 +57,7 @@
         <div class="flex flex-col px-5 mb-7 order-first md:px-0 lg:mb-0 lg:order-1 lg:w-1/4">
           <!-- Order summary -->
           <OrderSummary v-if="order" :cart="order" class="mb-5"></OrderSummary>
-
-          <VcButton class="uppercase w-full mb-5" :is-disabled="true">Reorder all</VcButton>
-
+          <VcButton class="uppercase w-full mb-5" @click="openReorderPopup">Reorder all</VcButton>
           <VcCard title="Shipping address" :is-collapsible="true" class="mb-5">
             <div class="flex flex-col text-sm">
               <span class="font-extrabold">{{ deliveryAddress?.firstName }} {{ deliveryAddress?.lastName }}</span>
@@ -123,10 +121,15 @@ import { OrderSummary, ProductCard, AcceptedGifts } from "@/shared/checkout";
 import { computed, onMounted, ref } from "vue";
 import { VcCard, VcImage, VcPagination, VcButton, VcSection, VcBreadcrumbs, IBreadcrumbs } from "@/components";
 import { useRoute } from "vue-router";
-import { useUserOrder } from "@/shared/account";
+import { ReorderInfo, useUserOrder } from "@/shared/account";
 import moment from "moment";
+import _ from "lodash";
+import { usePopup } from "@/shared/popup";
+import { useProducts } from "@/shared/catalog";
 
 const { itemsPerPage, pages, order, deliveryAddress, billingAddress, loadOrder } = useUserOrder();
+const { fetchProducts, products } = useProducts();
+const { openPopup } = usePopup();
 
 const route = useRoute();
 const orderId = ref(route.params.id as string);
@@ -145,6 +148,25 @@ const breadcrumbs = ref<IBreadcrumbs[]>([
   { title: "Account", url: "/account" },
   { title: "Orders", url: "/account/orders" },
 ]);
+
+const openReorderPopup = async () => {
+  const orderItemsInfo = order.value?.items
+    .filter((item) => !item.isGift)
+    .map((item) => {
+      return _.pick(item, "productId", "quantity", "id");
+    });
+  const productIds = _.map(orderItemsInfo, (item) => {
+    return item.productId;
+  });
+  await fetchProducts({ itemsPerPage: 6, productIds: productIds });
+  openPopup({
+    component: ReorderInfo,
+    props: {
+      productItems: products.value,
+      orderItemsInfo: orderItemsInfo,
+    },
+  });
+};
 
 onMounted(async () => {
   await loadOrder(orderId.value);
