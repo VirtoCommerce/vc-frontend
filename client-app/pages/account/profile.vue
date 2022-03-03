@@ -15,7 +15,9 @@
           <div class="flex flex-col bg-white shadow-sm p-6" :class="{ 'rounded border polygon-bg': !isMobile }">
             <form @submit="onSubmit" class="lg:w-1/2 flex flex-col">
               <!-- Errors block -->
-              <VcAlert v-if="updateProfileError" class="mb-2">There was an error during profile update</VcAlert>
+              <VcAlert v-if="updateProfileError" type="error" class="mb-2" icon text>
+                There was an error during profile update
+              </VcAlert>
 
               <VcInput
                 v-model="firstName"
