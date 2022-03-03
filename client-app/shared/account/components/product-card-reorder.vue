@@ -71,7 +71,7 @@
         </div>
         <div class="flex text-sm items-start space-x-3">
           <span class="mt-1">Total:</span>
-          <span class="text-green-700 font-extrabold mt-1"><VcPriceDisplay :value="productItem.price?.actual" /></span>
+          <span class="text-green-700 font-extrabold mt-1">{{ currency?.symbol }}{{ total }}</span>
         </div>
       </div>
     </div>
@@ -157,7 +157,7 @@
 </template>
 
 <script setup lang="ts">
-import { VcImage, VcPriceDisplay } from "@/components";
+import { VcImage } from "@/components";
 import { computed, PropType } from "vue";
 import { useField } from "vee-validate";
 import * as yup from "yup";
