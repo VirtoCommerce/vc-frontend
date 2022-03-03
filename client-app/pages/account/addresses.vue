@@ -314,6 +314,7 @@ const columns = ref<ITableColumn[]>([
   {
     id: "actions",
     title: "Actions",
+    titlePosition: "text-center",
   },
 ]);
 
