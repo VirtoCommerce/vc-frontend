@@ -25,7 +25,10 @@ export type ProductsFilter = {
 };
 
 export type UrlParamKeys = {
-  [key in keyof Omit<ProductsSearchParams, "categoryId" | "fuzzy" | "fuzzyLevel"> as `${key}Key`]?: string;
+  [key in keyof Omit<
+    ProductsSearchParams,
+    "categoryId" | "fuzzy" | "fuzzyLevel" | "productIds"
+  > as `${key}Key`]?: string;
 };
 
 export type UseProductsSearchParamsOptions = {
