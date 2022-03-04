@@ -1,4 +1,6 @@
 export { default as addItemToCart } from "./mutations/addItemToCart";
+export { default as addItemsToCart } from "./mutations/addItemsToCart";
+export { default as addBulkItemsToCart } from "./mutations/addBulkItemsToCart";
 export { default as addOrUpdateCartPayment } from "./mutations/addOrUpdateCartPayment";
 export { default as addOrUpdateCartShipment } from "./mutations/addOrUpdateCartShipment";
 export { default as createOrderFromCart } from "./mutations/createOrderFromCart";
@@ -14,3 +16,5 @@ export { default as validateCoupon } from "./mutations/validateCoupon";
 export { default as changeCartComment } from "./mutations/changeCartComment";
 export { default as addGiftItems } from "./mutations/addGiftItems";
 export { default as rejectGiftItems } from "./mutations/rejectGiftItems";
+
+export * from "./types";

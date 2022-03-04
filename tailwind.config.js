@@ -13,7 +13,8 @@ module.exports = {
     extend: {
       colors: {
         yellow: {
-          500: "#F0AD4E", // TODO: delete when switching all components to the primary and secondary colors
+          // TODO: delete when switching all components to the "primary" and "secondary" colors
+          500: "#F0AD4E",
         },
 
         // Generated with https://www.tailwindshades.com/
@@ -101,6 +102,11 @@ module.exports = {
           900: "#740707",
         },
 
+        link: {
+          DEFAULT: "#00739E",
+          hover: "#00678d",
+        },
+
         /**
          * Custom colors
          */
@@ -118,6 +124,7 @@ module.exports = {
         },
 
         cyan: {
+          // TODO: delete when switching all links elements to the "link" color
           500: "#5294AD",
           700: "#00739E",
         },
