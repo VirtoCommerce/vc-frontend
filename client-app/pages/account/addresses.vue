@@ -314,6 +314,7 @@ const columns = ref<ITableColumn[]>([
   {
     id: "actions",
     title: "Actions",
+    titlePosition: "text-center",
   },
 ]);
 
@@ -338,7 +339,6 @@ function actionBuilder(address: MemberAddressType) {
       icon: "fas fa-pencil-alt",
       title: "Edit",
       bgColor: "bg-gray-300",
-      position: "right",
       clickHandler() {
         openEditMode(address);
       },
@@ -346,7 +346,7 @@ function actionBuilder(address: MemberAddressType) {
     {
       icon: "fas fa-trash-alt",
       title: "Delete",
-      position: "left",
+      leftActions: true,
       bgColor: "bg-red-500",
       clickHandler() {
         removeAddress(address);
@@ -358,7 +358,6 @@ function actionBuilder(address: MemberAddressType) {
     result.push({
       icon: "fas fa-check",
       title: "Make default",
-      position: "right",
       bgColor: "bg-yellow-500",
       clickHandler() {
         setDefaultAddress(address);

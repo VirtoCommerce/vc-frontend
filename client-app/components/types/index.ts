@@ -22,7 +22,7 @@ export interface ItemAction {
   icon: string;
   title: string;
   bgColor: string;
-  position: string;
+  leftActions?: boolean;
   clickHandler(item: any): any;
 }
 

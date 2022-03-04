@@ -52,10 +52,20 @@ const startY = ref(0);
 const startOffsetX = ref(0);
 const isMoving = ref(false);
 const threshold = 10;
-const maxWidth = 0;
+const maxWidth = 80;
 const itemActions: Ref<ItemAction[]> = ref([]);
-const itemActionsLeft = computed(() => itemActions.value.filter((item) => item.position === "left"));
-const itemActionsRight = computed(() => itemActions.value.filter((item) => item.position === "right"));
+const itemActionsLeft = computed(
+  () =>
+    itemActions.value &&
+    itemActions.value.length &&
+    itemActions.value.filter((action: ItemAction) => action.leftActions)
+);
+const itemActionsRight = computed(
+  () =>
+    itemActions.value &&
+    itemActions.value.length &&
+    itemActions.value.filter((action: ItemAction) => !action.leftActions)
+);
 
 const touchStart = async (e: TouchEvent): Promise<void> => {
   startX.value = e.touches[0].clientX;
@@ -66,6 +76,11 @@ const touchStart = async (e: TouchEvent): Promise<void> => {
   if (!itemActions.value.length) {
     if (typeof props.actionBuilder === "function") {
       itemActions.value = await props.actionBuilder(props.item);
+
+      if (itemActions.value.some((action: ItemAction) => action.leftActions)) {
+        offsetX.value = -maxWidth;
+        startOffsetX.value = offsetX.value;
+      }
     }
   }
 };
@@ -77,7 +92,9 @@ const touchMove = (e: TouchEvent): void => {
 
     if (
       Math.abs(deltaX) > threshold &&
-      Math.abs(startOffsetX.value + deltaX) <= maxWidth &&
+      (itemActionsLeft.value && itemActionsLeft.value.length
+        ? Math.abs(startOffsetX.value + deltaX) <= maxWidth * 2
+        : Math.abs(startOffsetX.value + deltaX) <= maxWidth) &&
       startOffsetX.value + deltaX < 0
     ) {
       if (Math.abs(deltaY) < threshold * 2) {
@@ -89,12 +106,24 @@ const touchMove = (e: TouchEvent): void => {
 };
 
 const touchEnd = (): void => {
-  offsetX.value = offsetX.value < -(maxWidth / 2) ? -maxWidth : 0;
+  const absoluteOffsetX = Math.abs(offsetX.value);
+  if (absoluteOffsetX < maxWidth) {
+    offsetX.value = absoluteOffsetX < maxWidth / 2 ? 0 : -maxWidth;
+  } else {
+    offsetX.value = absoluteOffsetX <= maxWidth * 2 - threshold * 2 ? -maxWidth : -maxWidth * 2;
+  }
+
   isMoving.value = false;
 };
 
 const touchCancel = (): void => {
-  offsetX.value = offsetX.value < -(maxWidth / 2) ? -maxWidth : 0;
+  const absoluteOffsetX = Math.abs(offsetX.value);
+  if (absoluteOffsetX < maxWidth) {
+    offsetX.value = absoluteOffsetX < maxWidth / 2 ? 0 : -maxWidth;
+  } else {
+    offsetX.value = absoluteOffsetX <= maxWidth * 2 - threshold * 2 ? -maxWidth : -maxWidth * 2;
+  }
+
   isMoving.value = false;
 };
 </script>

@@ -8,7 +8,6 @@
         :item="item"
         :actionBuilder="itemActionBuilder"
         @click="$emit('itemClick', item)"
-        class="overflow-auto"
       >
         <slot name="mobile-item" :item="item"></slot>
       </TableMobileItem>
