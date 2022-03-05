@@ -12,6 +12,24 @@
           <div class="flex justify-between items-center mx-5 lg:mx-0">
             <h2 class="text-gray-800 text-3xl font-bold uppercase">Orders</h2>
           </div>
+          <div class="flex mx-5 lg:mx-0">
+            <input
+              v-model.trim="keyword"
+              :disabled="ordersLoading"
+              type="search"
+              class="flex-grow appearance-none bg-white rounded rounded-r-none h-9 px-4 font-medium outline-none text-sm border border-gray-300 focus:border-gray-400 disabled:bg-gray-200"
+              @keypress.enter="applyKeyword"
+            />
+            <VcButton
+              :is-disabled="ordersLoading"
+              class="px-4 rounded-l-none uppercase"
+              outline
+              size="md"
+              @click="applyKeyword"
+            >
+              <i class="fas fa-search text-lg"></i>
+            </VcButton>
+          </div>
           <div class="flex flex-col bg-white shadow-sm" :class="{ 'rounded border': !isMobile }">
             <VcTable
               :loading="ordersLoading"
@@ -156,7 +174,7 @@
 </template>
 
 <script setup lang="ts">
-import { ITableColumn, TableStatusBadge, VcTable } from "@/components";
+import { ITableColumn, TableStatusBadge, VcTable, VcButton } from "@/components";
 import { AccountNavigation } from "@/shared/account";
 import { onMounted, ref } from "vue";
 import { sortAscending, sortDescending } from "@/core/constants";
@@ -167,7 +185,7 @@ import { useRouter } from "vue-router";
 import { CustomerOrderType } from "@/core/api/graphql/types";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { loading: ordersLoading, orders, loadOrders, sort, pages, itemsPerPage, page } = useUserOrders();
+const { loading: ordersLoading, orders, loadOrders, sort, pages, itemsPerPage, page, keyword } = useUserOrders();
 
 const isMobile = breakpoints.smaller("md");
 
@@ -190,6 +208,11 @@ const applySorting = async (column: string) => {
     sort.value.direction = sortDescending;
   }
 
+  page.value = 1;
+  await loadOrders();
+};
+
+const applyKeyword = async () => {
   page.value = 1;
   await loadOrders();
 };

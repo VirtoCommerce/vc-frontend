@@ -11,6 +11,7 @@ export default () => {
   const itemsPerPage: Ref<number> = ref(10);
   const pages: Ref<number> = ref(0);
   const page: Ref<number> = ref(1);
+  const keyword: Ref<string> = ref("");
 
   // TODO: refine the sorting logic
   const sort: Ref<ISortInfo> = ref({
@@ -28,6 +29,7 @@ export default () => {
         sort: sortingExpression,
         first: itemsPerPage.value,
         after: String((page.value - 1) * itemsPerPage.value),
+        filter: keyword.value,
       });
       orders.value = response.items ?? [];
       pages.value = Math.ceil((response.totalCount ?? 0) / itemsPerPage.value);
@@ -47,5 +49,6 @@ export default () => {
     itemsPerPage,
     pages,
     page,
+    keyword,
   };
 };
