@@ -17,7 +17,7 @@
               v-model.trim="keyword"
               :disabled="ordersLoading"
               type="search"
-              class="flex-grow rounded rounded-r-none h-9 px-4 font-medium outline-none text-sm border border-gray-300 focus:border-gray-400 disabled:bg-gray-200"
+              class="flex-grow appearance-none bg-white rounded rounded-r-none h-9 px-4 font-medium outline-none text-sm border border-gray-300 focus:border-gray-400 disabled:bg-gray-200"
               @keypress.enter="applyKeyword"
             />
             <VcButton
