@@ -29,12 +29,13 @@
               type="number"
               placeholder="0"
               @update:modelValue="$nextTick(() => (item.quantity = String(validateQuantity($event) || '')))"
+              @keypress="onKeypress"
             />
           </div>
         </div>
       </div>
 
-      <div class="mt-4 text-center md:text-left">
+      <div class="mt-4">
         <button @click="increment" class="appearance-none inline-flex items-center py-1.5 md:py-0">
           <i class="fa fa-plus mr-1.5 mt-[3px] text-primary" />
           <span
@@ -45,27 +46,27 @@
         </button>
       </div>
 
-      <div class="flex flex-row justify-center md:justify-start gap-x-5 mt-5 mb-2 md:mb-0">
-        <div class="w-full hidden md:block font-bold">
+      <div class="flex flex-row flex-wrap md:flex-nowrap justify-between gap-3 mt-5 mb-2 md:mb-0">
+        <div class="w-auto md:w-full font-bold">
           <VcButton
             :is-disabled="!dirty || loading"
             @click="resetItems"
             kind="secondary"
             size="lg"
-            class="uppercase px-10 lg:px-5 xl:px-8"
+            class="uppercase px-5 xl:px-8"
             is-outline
           >
             Reset
           </VcButton>
         </div>
 
-        <div class="md:w-1/3 xl:w-1/4 font-bold md:max-w-[164px]">
+        <div class="w-auto md:w-1/3 xl:w-1/4 font-bold md:max-w-[164px]">
           <VcButton
             :is-disabled="!dirty"
             :is-waiting="loading"
             @click="addToCart"
             size="lg"
-            class="uppercase px-10 md:px-0 md:w-full"
+            class="uppercase px-5 md:px-0 md:w-full"
           >
             Add to cart
           </VcButton>
@@ -116,10 +117,19 @@ function addToCart() {
       productSku: item.productSku,
       quantity: validateQuantity(item.quantity!),
     }))
-    .filter((item) => item.productSku && item.quantity! > 0);
+    .filter((item) => item.productSku);
 
   if (validItems.length) {
     emit("add-to-cart", validItems);
+  }
+}
+
+/**
+ * Ignore non-numeric keys.
+ */
+function onKeypress(event: KeyboardEvent) {
+  if (!/[0-9]/.test(event.key)) {
+    event.preventDefault();
   }
 }
 </script>

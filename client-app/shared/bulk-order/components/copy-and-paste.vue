@@ -17,13 +17,13 @@
         class="resize-none min-h-[292px] xl:min-h-[312px]"
       />
 
-      <div class="flex flex-wrap justify-center md:justify-between gap-3 mt-5 mb-2 md:mt-2 md:mb-0">
+      <div class="flex flex-wrap justify-between gap-3 mt-5 mb-2 md:mt-2 md:mb-0">
         <VcButton
           :is-disabled="!text || loading"
           @click="text = ''"
           kind="secondary"
           size="lg"
-          class="hidden md:inline-flex uppercase px-10 lg:px-5 xl:px-8"
+          class="uppercase px-5 xl:px-8"
           is-outline
         >
           Reset
@@ -34,7 +34,7 @@
           :is-waiting="loading"
           @click="addToCart"
           size="lg"
-          class="flex justify-self-end uppercase px-10 lg:px-5 xl:px-8"
+          class="flex justify-self-end uppercase px-5 xl:px-8"
         >
           Add to cart
         </VcButton>
@@ -60,10 +60,6 @@ defineProps({
 const text = ref("");
 
 async function addToCart() {
-  const pattern = /^(\s*[A-Za-z0-9_-]+\s*,\s*\d{1,9}\s*)+$/;
-
-  if (!pattern.test(text.value)) return;
-
   const validItems: InputNewBulkItemType[] = text.value
     .replace(/\s*,\s*/g, ",")
     .replace(/\s+/g, " ")
@@ -74,8 +70,7 @@ async function addToCart() {
         productSku,
         quantity: validateQuantity(quantity),
       };
-    })
-    .filter((item) => item.productSku && item.quantity! > 0);
+    });
 
   if (validItems.length) {
     emit("add-to-cart", validItems);

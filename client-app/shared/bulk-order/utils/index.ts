@@ -1,4 +1,4 @@
-export const maxQuantity = 99999;
+export const maxQuantity = 999999;
 
 export function validateQuantity(value: string | number, max = maxQuantity): number {
   if (value < 0) return 0;
