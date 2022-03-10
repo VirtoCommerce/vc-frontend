@@ -5,6 +5,17 @@ import App from "./App.vue";
 import router from "./router";
 import "@fortawesome/fontawesome-free/css/all.css";
 import "./assets/styles/main.scss";
+import { createI18n } from "vue-i18n";
+
+/*eslint import/no-unresolved: [2, { ignore: ['@intlify\/vite\-plugin\-vue\-i18n\/messages'] }]*/
+import messages from "@intlify/vite-plugin-vue-i18n/messages";
+
+const i18n = createI18n({
+  legacy: false,
+  globalInjection: true,
+  locale: "en",
+  messages: messages,
+});
 
 // Async application init
 (async () => {
@@ -15,6 +26,7 @@ import "./assets/styles/main.scss";
   const app = createApp(App);
 
   app.use(config, cfg);
+  app.use(i18n);
   app.use(context, themeContext);
   app.use(menu, menus);
   app.use(router);
