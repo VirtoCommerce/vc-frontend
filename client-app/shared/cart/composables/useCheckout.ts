@@ -16,6 +16,7 @@ import {
   CartAddressType,
   ShipmentType,
   PaymentType,
+  CustomerOrderType,
 } from "@core/api/graphql/types";
 import { useCart } from ".";
 
@@ -52,13 +53,19 @@ const existShipment: Ref<ShipmentType | null> = ref(null);
 const existPayment: Ref<PaymentType | null> = ref(null);
 
 export default () => {
-  async function placeOrder(cartId: string) {
+  const { loadMyCart } = useCart();
+
+  async function placeOrder(cartId: string, reloadCart = true): Promise<CustomerOrderType | null> {
     const order = await createOrderFromCart(cartId);
-    if (order) {
-      await removeCart(cartId);
-      const { loadMyCart } = useCart();
+
+    if (!order) return null;
+
+    await removeCart(cartId); // TODO: implement in "useCart"
+
+    if (reloadCart) {
       await loadMyCart();
     }
+
     return order;
   }
 
