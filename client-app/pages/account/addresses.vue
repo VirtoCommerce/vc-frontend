@@ -68,20 +68,7 @@
                 @headerClick="applySorting"
               >
                 <template #mobile-item="itemData">
-                  <div
-                    class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200"
-                    :class="{
-                      'relative mobile-default-badge':
-                        defaultShippingAddress && itemData.item.id === defaultShippingAddress.id,
-                    }"
-                  >
-                    <div
-                      v-if="defaultShippingAddress && itemData.item.id === defaultShippingAddress.id"
-                      class="absolute top-0 right-0 z-10"
-                    >
-                      <i class="fas fa-check text-white mr-2"></i>
-                    </div>
-
+                  <div class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200">
                     <div class="flex flex-col">
                       <span class="text-sm text-gray-400"> Recipient's name </span>
                       <span class="pr-4 font-extrabold overflow-hidden overflow-ellipsis">
@@ -152,19 +139,6 @@
                     </td>
                     <td class="p-5 overflow-hidden overflow-ellipsis">{{ address.phone }}</td>
                     <td class="p-5 overflow-hidden overflow-ellipsis">{{ address.email }}</td>
-                    <td
-                      v-if="defaultShippingAddress && address.id === defaultShippingAddress.id"
-                      class="px-3 py-5 font-bold"
-                    >
-                      <i class="fas fa-check text-yellow-500"></i> Default
-                    </td>
-                    <td v-else class="p-5 text-blue-400 font-semibold">
-                      <span
-                        class="border-b border-dashed border-blue-400 cursor-pointer"
-                        @click="setDefaultAddress(address)"
-                        >Make default</span
-                      >
-                    </td>
                     <td class="p-5 text-center">
                       <div class="inline-block space-x-2">
                         <!-- todo: use VcButton -->
@@ -195,7 +169,6 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td></td>
                   </tr>
                   <tr>
                     <td colspan="6" class="polygons-bg">
@@ -215,9 +188,6 @@
                       <div class="h-6 bg-gray-200 animate-pulse"></div>
                     </td>
                     <td class="w-4/12 p-5">
-                      <div class="h-6 bg-gray-200 animate-pulse"></div>
-                    </td>
-                    <td class="p-5">
                       <div class="h-6 bg-gray-200 animate-pulse"></div>
                     </td>
                     <td class="p-5">
@@ -306,10 +276,6 @@ const columns = ref<ITableColumn[]>([
     id: "email",
     title: "Email",
     sortable: true,
-  },
-  {
-    id: "default",
-    title: "Default",
   },
   {
     id: "actions",
@@ -407,25 +373,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.mobile-default-badge::before {
-  /* we need this to create the pseudo-element */
-  content: "";
-  display: block;
-
-  /* position the triangle in the top right corner */
-  position: absolute;
-  z-index: 0;
-  top: 0;
-  right: 0;
-
-  /* create the triangle */
-  width: 0;
-  height: 0;
-  border: 1.5em solid transparent;
-  border-top-color: #f0ad4e;
-  border-right-color: #f0ad4e;
-}
-
 .polygons-bg {
   background-image: url(/static/images/account/addresses-bg.svg);
   background-repeat: no-repeat;
