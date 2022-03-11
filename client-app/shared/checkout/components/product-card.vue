@@ -13,6 +13,10 @@
           >
             {{ lineItem.name }}
           </router-link>
+          <div class="flex items-center space-x-1 py-1" v-if="validationError">
+            <i class="fas fa-exclamation-circle text-yellow-500"></i>
+            <span class="text-xs text-gray-400"> {{ validationError.errorMessage }} </span>
+          </div>
           <div class="flex">
             <span class="font-medium text-gray-500 pr-1">Brand: </span>
             <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
@@ -94,7 +98,7 @@
 
 <script setup lang="ts">
 import { VcImage, VcPriceDisplay, VcButton } from "@/components";
-import { LineItemType } from "@/core/api/graphql/types";
+import { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import { computed, PropType } from "vue";
 import { useField } from "vee-validate";
 import * as yup from "yup";
@@ -111,6 +115,10 @@ const props = defineProps({
   readOnly: {
     type: Boolean,
     default: false,
+  },
+  validationError: {
+    type: Object as PropType<ValidationErrorType>,
+    default: undefined,
   },
 });
 
