@@ -357,10 +357,6 @@ async function removeAddress(address: MemberAddressType): Promise<void> {
   if (!window.confirm("Are you sure you want do delete this address?")) return;
 
   await removeAddresses([address]);
-
-  if (addresses.value.length > 0 && defaultShippingAddress.value && address.id === defaultShippingAddress.value.id) {
-    //todo: set the first item in updatedAddresses to default one
-  }
 }
 
 onMounted(async () => {
