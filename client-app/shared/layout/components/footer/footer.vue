@@ -1,15 +1,15 @@
 <template>
   <!-- Top footer -->
-  <div class="hidden md:block bg-gray-800">
+  <div class="hidden md:block bg-[color:var(--color-footer-top-bg)] text-[color:var(--color-footer-top-text)]">
     <div class="container mx-auto grid grid-cols-2 gap-4 lg:grid-cols-4 xl:grid-cols-5 p-12">
       <!-- Logo column -->
       <div class="hidden xl:block">
-        <VcImage src="/static/images/common/logo-white.svg" class="h-9" />
+        <VcImage :src="$cfg.logo_inverted_image" class="h-9" />
       </div>
 
       <!-- Column 1 -->
       <div>
-        <div class="uppercase font-extrabold text-base text-white mb-3">Company information</div>
+        <div class="uppercase font-extrabold text-base mb-3">Company information</div>
         <div class="flex flex-col space-y-1">
           <FooterLink to="/about">About Us</FooterLink>
           <FooterLink to="/investor-relations">Investor Relations</FooterLink>
@@ -20,7 +20,7 @@
 
       <!-- Column 2 -->
       <div>
-        <div class="uppercase font-extrabold text-base text-white mb-3">Customer support</div>
+        <div class="uppercase font-extrabold text-base mb-3">Customer support</div>
         <div class="flex flex-col space-y-1">
           <FooterLink to="/catalog-request">Catalog Request</FooterLink>
           <FooterLink to="/contact-us">Contact Us</FooterLink>
@@ -31,7 +31,7 @@
 
       <!-- Column 3 -->
       <div>
-        <div class="uppercase font-extrabold text-base text-white mb-3">Order support</div>
+        <div class="uppercase font-extrabold text-base mb-3">Order support</div>
         <div class="flex flex-col space-y-1">
           <FooterLink to="/orders">Orders</FooterLink>
           <FooterLink to="/pick-up">Pick-Up</FooterLink>
@@ -43,7 +43,7 @@
 
       <!-- Column 4 -->
       <div>
-        <div class="uppercase font-extrabold text-base text-white mb-3">Online resources</div>
+        <div class="uppercase font-extrabold text-base mb-3">Online resources</div>
         <div class="flex flex-col space-y-1">
           <FooterLink :to="`/${SeoUrl.Catalog}`">Catalog</FooterLink>
           <FooterLink to="/hot-buys">Hot Buys</FooterLink>
@@ -57,13 +57,20 @@
 
   <!-- Bottom footer -->
   <div
-    class="bg-gray-900 flex flex-col md:flex-row items-center justify-between h-16 text-white text-xs px-4 md:px-12 py-3"
+    class="flex flex-col md:flex-row items-center justify-between h-16 text-xs px-4 md:px-12 py-3 bg-[color:var(--color-footer-bottom-bg)] text-[color:var(--color-footer-bottom-text)]"
   >
     <div class="font-medium">
       Ver. {{ version }}. © {{ new Date().getFullYear() }} <span class="font-bold">VirtoCommerce</span>. All Rights
       Reserved.
     </div>
-    <div>ASP.NET ecommerce platform <a class="text-blue-400 hover:text-blue-500 font-bold" href="#">by Virto</a></div>
+    <div>
+      ASP.NET ecommerce platform
+      <a
+        class="font-bold text-[color:var(--color-footer-bottom-link)] hover:text-[color:var(--color-footer-bottom-link-hover)]"
+        href="#"
+        >by Virto</a
+      >
+    </div>
   </div>
 </template>
 

@@ -1,12 +1,12 @@
 <template>
   <div class="relative">
-    <div class="px-12 py-7 flex items-center justify-between bg-white">
+    <div class="px-12 py-7 flex items-center justify-between bg-[color:var(--color-header-bottom-bg)]">
       <router-link to="/">
-        <VcImage src="/static/images/common/logo.svg" class="h-12" />
+        <VcImage :src="$cfg.logo_image" class="h-12" />
       </router-link>
 
-      <div class="w-0.5 h-6 bg-yellow-500 mx-5 hidden xl:block"></div>
-      <div class="italic text-lg text-gray-900 hidden xl:block">Construction goods</div>
+      <div class="w-0.5 h-6 bg-[color:var(--color-primary)] mx-5 hidden xl:block"></div>
+      <div class="italic text-lg text-[color:var(--color-header-bottom-text)] hidden xl:block">Construction goods</div>
       <div class="flex-grow"></div>
 
       <div class="flex items-center space-x-8">
@@ -19,11 +19,11 @@
         >
           <template v-if="item.id === 'checkout'">
             <div class="flex items-center">
-              <i class="fas fa-shopping-cart text-yellow-500 mr-3"></i>
+              <i class="fas fa-shopping-cart text-[color:var(--color-primary)] mr-3"></i>
               <div>{{ item.title }}</div>
               <div
                 v-if="cart?.itemsQuantity"
-                class="flex items-center rounded-xl border border-yellow-500 px-2 font-bold text-xs h-5 ml-3"
+                class="flex items-center rounded-xl border border-[color:var(--color-primary)] px-2 font-bold text-xs h-5 ml-3"
               >
                 {{ cart.itemsQuantity }}
               </div>
@@ -31,7 +31,7 @@
           </template>
         </BottomHeaderLink>
 
-        <i class="fas fa-search text-yellow-500 cursor-pointer" @click="showSearchBar" />
+        <i class="fas fa-search text-[color:var(--color-primary)] cursor-pointer" @click="showSearchBar" />
       </div>
     </div>
 
