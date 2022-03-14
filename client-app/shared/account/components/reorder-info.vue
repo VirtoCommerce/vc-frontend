@@ -34,8 +34,11 @@
           @change="applyFilters"
           >Reduced quantity</VcCheckbox
         >
-        <VcCheckbox v-model="outOfStockFilter" :class="!outOfStockFilter && 'text-gray-300'" @change="applyFilters"
-          >Out of stock</VcCheckbox
+        <VcCheckbox
+          v-model="cantBePurchasedFilter"
+          :class="!cantBePurchasedFilter && 'text-gray-300'"
+          @change="applyFilters"
+          >Can’t be purchased</VcCheckbox
         >
         <VcCheckbox
           v-model="withoutChangesFilter"
@@ -97,7 +100,7 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
 const reducedQuantityFilter = ref(false);
-const outOfStockFilter = ref(false);
+const cantBePurchasedFilter = ref(false);
 const withoutChangesFilter = ref(false);
 
 const extendedProducts = ref<
@@ -125,7 +128,7 @@ const applyFilters = () => {
   filteredItems.value = [];
   page.value = 1;
 
-  if (!withoutChangesFilter.value && !outOfStockFilter.value && !reducedQuantityFilter.value) {
+  if (!withoutChangesFilter.value && !cantBePurchasedFilter.value && !reducedQuantityFilter.value) {
     filteredItems.value = extendedProducts.value;
     return;
   }
@@ -134,8 +137,8 @@ const applyFilters = () => {
     let filteredProducts = applyReducedQuantityFilter();
     filteredItems.value = [...filteredItems.value, ...filteredProducts];
   }
-  if (outOfStockFilter.value) {
-    let filteredProducts = applyOutOfStockFilter();
+  if (cantBePurchasedFilter.value) {
+    let filteredProducts = applyCantBePurchasedFilter();
     filteredItems.value = [...filteredItems.value, ...filteredProducts];
   }
   if (withoutChangesFilter.value) {
@@ -157,11 +160,12 @@ const addToCart = async () => {
   modifiedCartLineItems = _.uniq(modifiedCartLineItems);
   modifiedCartLineItems = _.filter(modifiedCartLineItems, (item) => item !== undefined && item.quantity !== 0);
 
-  const originalCartLineItems = _.filter(props.orderItemsInfo, (itemInfo) => itemInfo.quantity !== 0).map(
-    (itemInfo) => {
-      return { productId: itemInfo.productId, quantity: itemInfo.quantity };
-    }
-  );
+  const originalCartLineItems = _.filter(
+    extendedProducts.value,
+    (product) => product.availabilityData?.isAvailable === true
+  ).map((product) => {
+    return { productId: product.id, quantity: product.quantity! };
+  });
 
   _.each(modifiedCartLineItems, (reorderItem) => {
     const itemToReplace = _.find(originalCartLineItems, (lineItem) => lineItem.productId === reorderItem.productId);
@@ -196,16 +200,16 @@ function applyReducedQuantityFilter() {
   });
 }
 
-function applyOutOfStockFilter() {
+function applyCantBePurchasedFilter() {
   return _.filter(extendedProducts.value, (item) => {
-    return !item.availabilityData?.isInStock;
+    return !item.availabilityData?.isInStock || !item.availabilityData.isAvailable;
   });
 }
 
 function applyWithoutChangesFilter() {
   return _.filter(extendedProducts.value, (item) => {
     const oldQuantity = _.find(props.orderItemsInfo, (orderItem) => orderItem.productId === item.id)?.quantity;
-    return oldQuantity! < item.availabilityData?.availableQuantity;
+    return oldQuantity! < item.availabilityData?.availableQuantity && item.availabilityData?.isAvailable === true;
   });
 }
 </script>
