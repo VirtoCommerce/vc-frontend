@@ -33,6 +33,33 @@
           "your_list": "Your List",
           "checkout_defaults": "Checkout Defaults"
         }
+      },
+      "footer": {
+        "company_information_link_group": "Company information",
+        "about_us_link": "About Us",
+        "investor_relations_link": "Investor Relations",
+        "supplier_overview_link": "Supplier Overview",
+        "worldwide_link": "Worldwide",
+        "customer_support_link_group": "Customer support",
+        "catalog_request_link": "Catalog Request",
+        "contact_us_link": "Contact Us",
+        "feedback_link": "Feedback",
+        "find_a_branch_link": "Find A Branch",
+        "order_support_link_group": "Order support",
+        "orders_link": "Orders",
+        "pick_up_link": "Pick-Up",
+        "auto_reorder_link": "Auto-Reorder",
+        "special_orders_link": "Special Orders",
+        "returns_cancellations_link": "Returns & Cancellations",
+        "online_resources_ling_group": "Online resources",
+        "catalog_link": "Catalog",
+        "hot_buys_link": "Hot Buys",
+        "rebates_link": "Rebates",
+        "replacement_parts_link": "Replacement Parts",
+        "demo_landing_link": "Demo landing",
+        "all_rights_reserved": "All Rights Reserved.",
+        "asp_net_e_commerce_platform": "ASP.NET e-commerce platform",
+        "by_virto": "by Virto"
       }
     }
   },

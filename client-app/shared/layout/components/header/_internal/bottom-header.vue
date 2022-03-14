@@ -6,7 +6,10 @@
       </router-link>
 
       <div class="w-0.5 h-6 bg-[color:var(--color-primary)] mx-5 hidden xl:block"></div>
-      <div class="italic text-lg text-[color:var(--color-header-bottom-text)] hidden xl:block" v-t="'shared.layout.header.logo_label'"></div>
+      <div
+        class="italic text-lg text-[color:var(--color-header-bottom-text)] hidden xl:block"
+        v-t="'shared.layout.header.logo_label'"
+      ></div>
       <div class="flex-grow"></div>
 
       <div class="flex items-center space-x-8">

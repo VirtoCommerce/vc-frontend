@@ -9,47 +9,59 @@
 
       <!-- Column 1 -->
       <div>
-        <div class="uppercase font-extrabold text-base mb-3">Company information</div>
+        <div
+          class="uppercase font-extrabold text-base text-white mb-3"
+          v-t="'shared.layout.footer.company_information_link_group'"
+        ></div>
         <div class="flex flex-col space-y-1">
-          <FooterLink to="/about">About Us</FooterLink>
-          <FooterLink to="/investor-relations">Investor Relations</FooterLink>
-          <FooterLink to="/supplier-overview">Supplier Overview</FooterLink>
-          <FooterLink to="/worldwide">Worlwide</FooterLink>
+          <FooterLink to="/about" v-t="'shared.layout.footer.about_us_link'"></FooterLink>
+          <FooterLink to="/investor-relations" v-t="'shared.layout.footer.investor_relations_link'"></FooterLink>
+          <FooterLink to="/supplier-overview" v-t="'shared.layout.footer.supplier_overview_link'"></FooterLink>
+          <FooterLink to="/worldwide" v-t="'shared.layout.footer.worldwide_link'"></FooterLink>
         </div>
       </div>
 
       <!-- Column 2 -->
       <div>
-        <div class="uppercase font-extrabold text-base mb-3">Customer support</div>
+        <div
+          class="uppercase font-extrabold text-base text-white mb-3"
+          v-t="'shared.layout.footer.customer_support_link_group'"
+        ></div>
         <div class="flex flex-col space-y-1">
-          <FooterLink to="/catalog-request">Catalog Request</FooterLink>
-          <FooterLink to="/contact-us">Contact Us</FooterLink>
-          <FooterLink to="/feedback">Feedback</FooterLink>
-          <FooterLink to="/find-a-branch">Find A Branch</FooterLink>
+          <FooterLink to="/catalog-request" v-t="'shared.layout.footer.catalog_request_link'"></FooterLink>
+          <FooterLink to="/contact-us" v-t="'shared.layout.footer.contact_us_link'"></FooterLink>
+          <FooterLink to="/feedback" v-t="'shared.layout.footer.feedback_link'"></FooterLink>
+          <FooterLink to="/find-a-branch" v-t="'shared.layout.footer.find_a_branch_link'"></FooterLink>
         </div>
       </div>
 
       <!-- Column 3 -->
       <div>
-        <div class="uppercase font-extrabold text-base mb-3">Order support</div>
+        <div
+          class="uppercase font-extrabold text-base text-white mb-3"
+          v-t="'shared.layout.footer.order_support_link_group'"
+        ></div>
         <div class="flex flex-col space-y-1">
-          <FooterLink to="/orders">Orders</FooterLink>
-          <FooterLink to="/pick-up">Pick-Up</FooterLink>
-          <FooterLink to="/auto-reorder">Auto-Reorder</FooterLink>
-          <FooterLink to="/special-orders">Special Orders</FooterLink>
-          <FooterLink to="/returns">Returns & Cancellations</FooterLink>
+          <FooterLink to="/orders" v-t="'shared.layout.footer.orders_link'"></FooterLink>
+          <FooterLink to="/pick-up" v-t="'shared.layout.footer.pick_up_link'"></FooterLink>
+          <FooterLink to="/auto-reorder" v-t="'shared.layout.footer.auto_reorder_link'"></FooterLink>
+          <FooterLink to="/special-orders" v-t="'shared.layout.footer.special_orders_link'"></FooterLink>
+          <FooterLink to="/returns" v-t="'shared.layout.footer.returns_cancellations_link'"></FooterLink>
         </div>
       </div>
 
       <!-- Column 4 -->
       <div>
-        <div class="uppercase font-extrabold text-base mb-3">Online resources</div>
+        <div
+          class="uppercase font-extrabold text-base text-white mb-3"
+          v-t="'shared.layout.footer.online_resources_ling_group'"
+        ></div>
         <div class="flex flex-col space-y-1">
-          <FooterLink :to="`/${SeoUrl.Catalog}`">Catalog</FooterLink>
-          <FooterLink to="/hot-buys">Hot Buys</FooterLink>
-          <FooterLink to="/rebates">Rebates</FooterLink>
-          <FooterLink to="/replacement-parts">Replacement Parts</FooterLink>
-          <FooterLink to="/demo-landing">Demo landing</FooterLink>
+          <FooterLink :to="`/${SeoUrl.Catalog}`" v-t="'shared.layout.footer.catalog_link'"></FooterLink>
+          <FooterLink to="/hot-buys" v-t="'shared.layout.footer.hot_buys_link'"></FooterLink>
+          <FooterLink to="/rebates" v-t="'shared.layout.footer.rebates_link'"></FooterLink>
+          <FooterLink to="/replacement-parts" v-t="'shared.layout.footer.replacement_parts_link'"></FooterLink>
+          <FooterLink to="/demo-landing" v-t="'shared.layout.footer.demo_landing_link'"></FooterLink>
         </div>
       </div>
     </div>
@@ -60,17 +72,13 @@
     class="flex flex-col md:flex-row items-center justify-between h-16 text-xs px-4 md:px-12 py-3 bg-[color:var(--color-footer-bottom-bg)] text-[color:var(--color-footer-bottom-text)]"
   >
     <div class="font-medium">
-      Ver. {{ version }}. © {{ new Date().getFullYear() }} <span class="font-bold">VirtoCommerce</span>. All Rights
-      Reserved.
+      Ver. {{ version }}. © {{ new Date().getFullYear() }} <span class="font-bold">VirtoCommerce</span>.
+      {{ $t("shared.layout.footer.all_rights_reserved") }}
     </div>
-    <div>
-      ASP.NET ecommerce platform
-      <a
-        class="font-bold text-[color:var(--color-footer-bottom-link)] hover:text-[color:var(--color-footer-bottom-link-hover)]"
-        href="#"
-        >by Virto</a
-      >
-    </div>
+    
+    <i18n-t keypath="shared.layout.footer.asp_net_e_commerce_platform" tag="div">
+      <a class="font-bold text-[color:var(--color-footer-bottom-link)] hover:text-[color:var(--color-footer-bottom-link-hover)]" href="#" v-t="'shared.layout.footer.by_virto'"></a>
+    </i18n-t>
   </div>
 </template>
 
