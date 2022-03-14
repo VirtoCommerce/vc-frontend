@@ -18,10 +18,13 @@ export default (
   const products: Ref<Product[]> = shallowRef([]);
   const filters: Ref<ProductsFilter[]> = shallowRef([]);
   const total: Ref<number> = ref(0);
-  const pages: Ref<number> = ref(0);
+  const pages: Ref<number> = ref(1);
 
   async function fetchProducts(searchParams: Partial<ProductsSearchParams>) {
     loading.value = true;
+    products.value = [];
+    total.value = 0;
+    pages.value = 1;
 
     try {
       const {

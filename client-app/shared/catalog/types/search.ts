@@ -1,9 +1,9 @@
 export type ProductsSearchParams = {
-  page: number;
-  itemsPerPage: number;
-  keyword: string;
-  sort: string;
-  filter: string;
+  page?: number;
+  itemsPerPage?: number;
+  keyword?: string;
+  sort?: string;
+  filter?: string;
   fuzzy?: boolean;
   fuzzyLevel?: number;
   categoryId?: string;

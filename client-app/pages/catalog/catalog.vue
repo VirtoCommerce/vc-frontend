@@ -244,12 +244,11 @@ const categorySeoUrl = computed<string>(() =>
 );
 
 const searchParams = computed<ProductsSearchParams>(() => ({
-  page: 1,
+  categoryId: selectedCategory.value?.id,
   itemsPerPage: itemsPerPage.value,
   sort: sortQueryParam.value,
   keyword: keywordQueryParam.value,
   filter: filterQueryParam.value,
-  categoryId: selectedCategory.value?.id,
 }));
 
 const isAppliedKeyword = computed<boolean>(() => keyword.value === keywordQueryParam.value);
