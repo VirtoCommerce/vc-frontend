@@ -7,6 +7,7 @@
           :src="product.imgSrc"
           :alt="product.name"
           class="absolute top-0 w-full h-full object-cover object-center"
+          lazy
         />
       </div>
     </router-link>

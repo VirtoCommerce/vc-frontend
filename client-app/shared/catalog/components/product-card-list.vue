@@ -4,7 +4,7 @@
       <!-- Product image -->
       <router-link :to="`/${SeoUrl.Product}/${product.id}`" class="cursor-pointer">
         <div class="border border-gray-100 w-20 h-20 flex-shrink-0 mr-4">
-          <VcImage :src="product.imgSrc" :alt="product.name" class="w-full h-full object-cover object-center" />
+          <VcImage :src="product.imgSrc" :alt="product.name" class="w-full h-full object-cover object-center" lazy />
         </div>
       </router-link>
 
