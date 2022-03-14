@@ -38,7 +38,11 @@
       @click="onChange"
     >
       <span class="hidden lg:inline">
-        {{ count && +count > 0 ? "Update cart" : "Add to cart" }}
+        {{
+          count && +count > 0
+            ? $t("shared.cart.add_to_cart.update_cart_button")
+            : $t("shared.cart.add_to_cart.add_to_cart_button")
+        }}
       </span>
       <i class="inline lg:hidden fas fa-shopping-cart"></i>
     </button>
@@ -46,7 +50,9 @@
 
   <!-- Info hint -->
   <div v-if="errorMessage" class="text-xs text-[color:var(--color-danger)]">{{ errorMessage }}</div>
-  <div v-else-if="count && +count > 0" class="text-xs text-gray-400">{{ count }} already in cart</div>
+  <div v-else-if="count && +count > 0" class="text-xs text-gray-400">
+    {{ $t("shared.cart.add_to_cart.already_in_cart_message", [count]) }}
+  </div>
   <div v-else class="mb-4"></div>
 </template>
 
@@ -56,8 +62,11 @@ import { useCart } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import { useField } from "vee-validate";
 import { computed, PropType, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 import { CartAddInfo } from ".";
+
+const { t } = useI18n();
 
 // Define max qty available to add
 const max = 999999;
@@ -94,7 +103,12 @@ const lineItem = ref(itemInCart(props.product.id!));
 const count = computed(() => lineItem.value?.quantity);
 const updating = ref(false);
 
-let rules = yup.number().typeError("enter correct number").integer().optional().moreThan(0);
+let rules = yup
+  .number()
+  .typeError(t("shared.cart.add_to_cart.enter_correct_number_message"))
+  .integer()
+  .optional()
+  .moreThan(0);
 
 if (isProduct) {
   rules = rules.min(minQty);
