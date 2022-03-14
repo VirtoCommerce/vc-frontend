@@ -8,7 +8,7 @@
           v-model="firstName"
           :error-message="errors.firstName"
           :is-disabled="disabled"
-          label="First Name"
+          :label="$t('shared.account.address_form.first_name_label')"
           class="mb-4"
           is-required
         />
@@ -17,7 +17,7 @@
           v-model="lastName"
           :error-message="errors.lastName"
           :is-disabled="disabled"
-          label="Last Name"
+          label="$t('shared.account.address_form.last_name_label')"
           class="mb-4"
           is-required
         />
@@ -27,7 +27,7 @@
           :error-message="errors.email"
           :is-disabled="disabled"
           :is-required="requiredEmail"
-          label="Work email"
+          :label="$t('shared.account.address_form.work_email_label')"
           class="mb-4"
         />
 
@@ -36,7 +36,7 @@
           :error-message="errors.phone"
           :is-disabled="disabled"
           :is-required="requiredPhone"
-          label="Phone"
+          :label="$t('shared.account.address_form.phone_label')"
           class="mb-4"
         />
       </div>
@@ -54,7 +54,7 @@
             :error-message="errors.countryCode"
             :is-disabled="disabled"
             :items="countries"
-            label="Country"
+            :label="$t('shared.account.address_form.country_label')"
             placeholder="Select country"
             class="mb-4 w-full xl:w-7/12"
             size="lg"
@@ -65,7 +65,7 @@
             v-model="postalCode"
             :error-message="errors.postalCode"
             :is-disabled="disabled"
-            label="Zip / Postal code"
+            :label="$t('shared.account.address_form.zip_label')"
             class="mb-4 order-3 xl:order-none xl:ml-4 xl:w-4/12 xl:flex-grow"
             is-required
           />
@@ -77,8 +77,8 @@
             :error-message="errors.regionId"
             :is-required="!!regions.length"
             :is-disabled="disabled || !regions.length"
-            label="Region"
-            placeholder="Select region"
+            :label="$t('shared.account.address_form.region_label')"
+            :placeholder="$t('shared.account.address_form.region_placeholder')"
             class="mb-4 order-2 xl:order-none xl:w-5/12"
             size="lg"
           />
@@ -87,7 +87,7 @@
             v-model="city"
             :error-message="errors.city"
             :is-disabled="disabled"
-            label="City"
+            :label="$t('shared.account.address_form.city_label')"
             class="mb-4 order-4 xl:order-none xl:ml-4 xl:flex-grow"
             :is-required="requiredCity"
           />
@@ -97,7 +97,7 @@
           v-model="line1"
           :error-message="errors.line1"
           :is-disabled="disabled"
-          label="Address"
+          :label="$t('shared.account.address_form.line1_label')"
           class="mb-4"
           is-required
         />
@@ -106,7 +106,7 @@
           v-model="line2"
           :error-message="errors.line2"
           :is-disabled="disabled"
-          label="Apt, suite, etc."
+          :label="$t('shared.account.address_form.line2_label')"
           class="mb-4"
         />
       </div>

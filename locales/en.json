@@ -61,6 +61,86 @@
         "asp_net_e_commerce_platform": "ASP.NET e-commerce platform",
         "by_virto": "by Virto"
       }
+    },
+    "account": {
+      "navigation": {
+        "dashboard": "Dashboard",
+        "profile": "Profile",
+        "addresses": "Addresses",
+        "orders": "Orders",
+        "your_list": "Your List",
+        "checkout_defaults": "Checkout Defaults"
+      },
+      "address_form": {
+        "first_name_label": "First Name",
+        "last_name_label": "Last Name",
+        "work_email_label": "Work email",
+        "phone_label": "Phone",
+        "country_label": "Country",
+        "zip_label": "Zip / Postal code",
+        "region_label": "Region",
+        "region_placeholder": "Select region",
+        "city_label": "City",
+        "line1_label": "Address",
+        "line2_label": "Apt, suite, etc."
+      },
+      "sign_in_form": {
+        "user_name_label": "User name",
+        "user_name_placeholder": "User name",
+        "password_label": "Password",
+        "password_placeholder": "Password",
+        "forgot_password_link": "Forgot your password?",
+        "login_button": "Login",
+        "registration_button": "Registration",
+        "user_or_password_incorrect_alert": "<strong>User</strong>&nbsp;or <strong>password</strong>&nbsp;is incorrect",
+        "user_and_password_are_required_alert": "<strong>User</strong>&nbsp;and <strong>password</strong>&nbsp; are required"
+      },
+      "reset_password_form": {
+        "password_label": "Password",
+        "password_placeholder": "Enter your password",
+        "confirm_password_label": "Confirm password",
+        "confirm_password_placeholder": "Confirm your password",
+        "reset_password_button": "Reset password",
+        "password_must_match_message": "Passwords must match"
+      },
+      "forgot_password_form": {
+        "email_label": "Email",
+        "email_placeholder": "Enter your e-mail",
+        "submit_button": "Submit"
+      },
+      "checkout_default_success_dialog": {
+        "title": "Checkout Defaults",
+        "message": "Checkout defaults successfully updated.",
+        "ok_button": "Ok"
+      },
+      "profile_update_success_dialog": {
+        "title": "Profile update",
+        "message": "Profile successfully updated!",
+        "ok_button": "Ok"
+      },
+      "registration_success_dialog": {
+        "title": "Registration",
+        "message": "Registration successfully completed!",
+        "ok_button": "Home page"
+      },
+      "reorder_info_popup": {
+        "title": "Reorder confirmation",
+        "cancel_button": "Cancel",
+        "confirm_button": "Confirm",
+        "filter": {
+          "title": "Filter products:",
+          "reduced_quantity_checkbox": "Reduced quantity",
+          "out_of_stock_checkbox": "Out of stock",
+          "items_without_changes_checkbox": "Items without changes"
+        }
+      },
+      "product_card_reorder": {
+        "quantity_label": "Quantity:",
+        "total_label": "Total",
+        "in_stock_label": "in stock",
+        "out_of_stock_label": "Out of stock",
+        "reduced_message": "The number of items in the order was <span class=\"text-gray-500\">reduced from {0} to {1}</span> due to stock restrictions"
+      }
     }
   },
   "pages": {}

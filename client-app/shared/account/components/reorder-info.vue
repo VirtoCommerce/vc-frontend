@@ -1,5 +1,5 @@
 <template>
-  <VcPopup title="Reorder confirmation">
+  <VcPopup :title="$t('shared.account.reorder_info_popup.title')">
     <template #actions="{ close }">
       <div v-if="pages > 1 && !isMobile" class="lg:flex lg:flex-1">
         <VcPagination v-model:page="page" :pages="pages" @update:page="page = $event"></VcPagination>
@@ -10,8 +10,8 @@
           kind="secondary"
           class="px-4 uppercase flex-grow lg:flex-grow-0 inline-flex"
           @click="close"
+          v-t="'shared.account.reorder_info_popup.cancel_button'"
         >
-          Cancel
         </VcButton>
 
         <VcButton
@@ -20,31 +20,30 @@
             close();
             addToCart();
           "
+          v-t="'shared.account.reorder_info_popup.confirm_button'"
         >
-          Confirm
         </VcButton>
       </div>
     </template>
     <template #default="{ close }">
       <div class="flex items-center p-5 space-x-4 shadow-lg">
-        <span v-if="!isMobile" class="text-sm">Filter products:</span>
+        <span v-if="!isMobile" class="text-sm" v-t="'shared.account.reorder_info_popup.filter.title'"></span>
         <VcCheckbox
           v-model="reducedQuantityFilter"
           :class="!reducedQuantityFilter && 'text-gray-300'"
           @change="applyFilters"
-          >Reduced quantity</VcCheckbox
-        >
+          >{{ $t("shared.account.reorder_info_popup.filter.reduced_quantity_checkbox") }}
+        </VcCheckbox>
         <VcCheckbox
           v-model="cantBePurchasedFilter"
           :class="!cantBePurchasedFilter && 'text-gray-300'"
           @change="applyFilters"
           >Can’t be purchased</VcCheckbox
-        >
         <VcCheckbox
           v-model="withoutChangesFilter"
           :class="!withoutChangesFilter && 'text-gray-300'"
           @change="applyFilters"
-          >Items without changes</VcCheckbox
+          >{{ $t("shared.account.reorder_info_popup.filter.items_without_changes_checkbox") }}</VcCheckbox
         >
       </div>
       <ProductCardReorder
