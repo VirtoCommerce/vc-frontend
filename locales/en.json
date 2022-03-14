@@ -1,3 +1,40 @@
 {
-  "hello": "hello world"
+  "hello": "hello world",
+  "shared": {
+    "layout": {
+      "header": {
+        "logo_label": "Construction goods",
+        "top_header": {
+          "link_dashboard": "Dashboard",
+          "link_order_history": "Order History",
+          "link_lists": "Lists"
+        },
+        "link_sign_in": "Sign In",
+        "link_register_now": "Register now",
+        "link_logout": "Logout",
+        "menu": {
+          "home": "Home",
+          "all_products": "All products",
+          "all_products_children": {
+            "carriage_bolts": "Carriage Bolts",
+            "flange_bolts": "Flange Bolts",
+            "laser_printers": "Laser Printers",
+            "inkjet_printers": "Inkjet Printers"
+          },
+          "bulk": "Bulk order pad",
+          "cart": "Cart",
+          "contact_us": "Contact us"
+        },
+        "mobile_account_menu": {
+          "dashboard": "Dashboard",
+          "profile": "Profile",
+          "addresses": "Addresses",
+          "orders": "Orders",
+          "your_list": "Your List",
+          "checkout_defaults": "Checkout Defaults"
+        }
+      }
+    }
+  },
+  "pages": {}
 }

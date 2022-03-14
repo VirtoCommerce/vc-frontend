@@ -57,9 +57,8 @@
               <button
                 class="ml-4 px-4 py-1 border-2 border-red-600 rounded uppercase text-sm font-roboto"
                 @click="signOut"
-              >
-                Logout
-              </button>
+                v-t="'shared.layout.header.link_logout'"
+              ></button>
             </div>
           </template>
         </MobileMenuLink>
@@ -104,12 +103,12 @@ const { cart } = useCart();
 const headerMenu = menuSchema?.header?.main;
 
 const myAccountMenu = ref<IMenuItem[]>([
-  { title: "Dashboard", url: "/account/dashboard" },
-  { title: "Profile", url: "/account/profile" },
-  { title: "Addresses", url: "/account/addresses" },
-  { title: "Orders", url: "/account/orders" },
-  { title: "Your List", url: "/account/lists" },
-  { title: "Checkout Defaults", url: "/account/checkout-defaults" },
+  { title: "shared.layout.header.mobile_account_menu.dashboard", url: "/account/dashboard" },
+  { title: "shared.layout.header.mobile_account_menu.profile", url: "/account/profile" },
+  { title: "shared.layout.header.mobile_account_menu.addresses", url: "/account/addresses" },
+  { title: "shared.layout.header.mobile_account_menu.orders", url: "/account/orders" },
+  { title: "shared.layout.header.mobile_account_menu.your_list", url: "/account/lists" },
+  { title: "shared.layout.header.mobile_account_menu.checkout_defaults", url: "/account/checkout-defaults" },
 ]);
 
 /*
@@ -120,8 +119,8 @@ const corporateMenu = ref([
 */
 
 const unauthorizedMenu = ref([
-  { title: "Sign In", url: "/sign-in" },
-  { title: "Register now", url: "/sign-up" },
+  { title: "shared.layout.header.link_sign_in", url: "/sign-in" },
+  { title: "shared.layout.header.link_register_now", url: "/sign-up" },
 ]);
 
 async function signOut() {
