@@ -19,6 +19,7 @@
                   :line-item="item"
                   @update:quantity="updateItemQuantity"
                   @remove:item="removeCartItem"
+                  :validation-error="getItemValidationError(item?.id)"
                 ></ProductCard>
 
                 <div class="py-8 lg:flex lg:items-center lg:px-5">
@@ -321,6 +322,7 @@ import {
   MemberAddressType,
   PaymentMethodType,
   ShippingMethodType,
+  ValidationErrorType,
 } from "@/core/api/graphql/types";
 import { useUser, useUserAddresses } from "@/shared/account";
 import { AddressType } from "@/core/types";
@@ -471,6 +473,10 @@ onMounted(async () => {
     purchaseOrderNumber.value = cart.value.purchaseOrderNumber || "";
   });
 });
+
+function getItemValidationError(lineItemId: string): ValidationErrorType | undefined {
+  return _.find(cart.value.validationErrors, (error) => error.objectId === lineItemId);
+}
 
 function showShipmentMethodDialog(): void {
   openPopup({
