@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-100 pt-7 pb-16 shadow-inner">
+  <div class="bg-gray-100 pt-7 pb-16 shadow-inner grow">
     <div class="max-w-screen-2xl px-5 md:px-12 mx-auto">
       <!-- Breadcrumbs -->
       <Breadcrumbs class="mb-2 md:mb-8" :items="breadcrumbsItems"></Breadcrumbs>
@@ -170,7 +170,7 @@
             v-if="!loading"
             :loading="loadingMore"
             distance="400"
-            class="pt-10 -mb-6"
+            class="mt-9 -mb-6"
             @visible="loadMoreProducts"
           />
         </div>

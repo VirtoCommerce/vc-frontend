@@ -61,7 +61,7 @@
               v-if="!loading"
               :loading="loadingMore"
               distance="400"
-              class="pt-10 -mb-6"
+              class="mt-9 -mb-6"
               @visible="loadMoreProducts"
             />
           </template>
