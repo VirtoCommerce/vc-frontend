@@ -38,7 +38,8 @@
           v-model="cantBePurchasedFilter"
           :class="!cantBePurchasedFilter && 'text-gray-300'"
           @change="applyFilters"
-          >Can’t be purchased</VcCheckbox
+          >{{ $t("shared.account.reorder_info_popup.filter.can_t_be_purchased_checkbox") }}</VcCheckbox
+        >
         <VcCheckbox
           v-model="withoutChangesFilter"
           :class="!withoutChangesFilter && 'text-gray-300'"
