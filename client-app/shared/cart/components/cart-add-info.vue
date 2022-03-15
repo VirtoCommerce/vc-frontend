@@ -5,14 +5,14 @@
         is-outline
         class="lg:px-4 uppercase flex-grow lg:flex-grow-0 inline-flex"
         @click="close"
-        v-t="'shared.cart.cart_add_info.continue_shopping_button'"
+        v-t="'shared.cart.cart_add_info_popup.continue_shopping_button'"
       >
       </VcButton>
       <VcButton
         to="/checkout"
         class="uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-4"
         @click="close"
-        v-t="'shared.cart.cart_add_info.view_cart_button'"
+        v-t="'shared.cart.cart_add_info_popup.view_cart_button'"
       >
       </VcButton>
     </template>
@@ -21,14 +21,16 @@
       <table class="w-full">
         <thead class="border-b border-gray-200">
           <tr>
-            <th class="px-5 py-3 text-sm font-bold" v-t="'shared.cart.cart_add_info.table.product_column'">Product</th>
+            <th class="px-5 py-3 text-sm font-bold" v-t="'shared.cart.cart_add_info_popup.table.product_column'">
+              Product
+            </th>
             <th
               class="px-5 py-3 text-sm font-bold text-center"
-              v-t="'shared.cart.cart_add_info.table.quantity_column'"
+              v-t="'shared.cart.cart_add_info_popup.table.quantity_column'"
             ></th>
             <th
               class="px-5 py-3 text-sm font-bold text-right"
-              v-t="'shared.cart.cart_add_info.table.total_column'"
+              v-t="'shared.cart.cart_add_info_popup.table.total_column'"
             ></th>
           </tr>
         </thead>
@@ -56,10 +58,11 @@
 
       <div class="flex items-center justify-between px-5 py-3">
         <div>
-          {{ $t("shared.cart.cart_add_info.quantity_label") }} <span class="font-bold">{{ lineItem.quantity }}</span>
+          {{ $t("shared.cart.cart_add_info_popup.quantity_label") }}
+          <span class="font-bold">{{ lineItem.quantity }}</span>
         </div>
         <div>
-          {{ $t("shared.cart.cart_add_info.total_label") }}
+          {{ $t("shared.cart.cart_add_info_popup.total_label") }}
           <span class="font-bold text-green-700">
             <VcPriceDisplay :value="lineItem.extendedPrice" />
           </span>

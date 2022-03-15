@@ -78,7 +78,7 @@
                       ? "9999+"
                       : productItem.availabilityData?.availableQuantity
                   }}
-                  {{ $t("shared.account.reorder_info_popup.product_card.in_stock_label") }}</span
+                  {{ $t("shared.account.reorder_info_popup.product_card.in_stock_suffix") }}</span
                 >
               </div>
               <div v-else-if="isOutOfStock" class="flex items-center">
@@ -176,7 +176,7 @@
                       ? "9999+"
                       : productItem.availabilityData?.availableQuantity
                   }}
-                  {{ $t("shared.account.reorder_info_popup.product_card.in_stock_label") }}</span
+                  {{ $t("shared.account.reorder_info_popup.product_card.in_stock_suffix") }}</span
                 >
               </div>
               <div v-else-if="isOutOfStock" class="flex items-center">

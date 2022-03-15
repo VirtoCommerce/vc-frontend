@@ -1,5 +1,21 @@
 {
-  "hello": "hello world",
+  "common": {
+    "buttons": {
+      "home": "Home page",
+      "ok": "Ok",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "submit": "Submit"
+    },
+    "labels": {
+      "quantity": "Quantity",
+      "total": "Total"
+    },
+    "suffixes": {
+      "product_price": "&nbsp;/ each",
+      "product_count_in_stock": "in stock"
+    }
+  },
   "shared": {
     "layout": {
       "header": {
@@ -106,27 +122,27 @@
       "forgot_password_form": {
         "email_label": "Email",
         "email_placeholder": "Enter your e-mail",
-        "submit_button": "Submit"
+        "submit_button": "@:common.buttons.submit"
       },
       "checkout_default_success_dialog": {
         "title": "Checkout Defaults",
         "message": "Checkout defaults successfully updated.",
-        "ok_button": "Ok"
+        "ok_button": "@:common.buttons.ok"
       },
       "profile_update_success_dialog": {
         "title": "Profile update",
         "message": "Profile successfully updated!",
-        "ok_button": "Ok"
+        "ok_button": "@:common.buttons.ok"
       },
       "registration_success_dialog": {
         "title": "Registration",
         "message": "Registration successfully completed!",
-        "ok_button": "Home page"
+        "ok_button": "@:common.buttons.home"
       },
       "reorder_info_popup": {
         "title": "Reorder confirmation",
-        "cancel_button": "Cancel",
-        "confirm_button": "Confirm",
+        "cancel_button": "@:common.buttons.cancel",
+        "confirm_button": "@:common.buttons.confirm",
         "filter": {
           "title": "Filter products:",
           "reduced_quantity_checkbox": "Reduced quantity",
@@ -134,9 +150,9 @@
           "items_without_changes_checkbox": "Items without changes"
         },
         "product_card": {
-          "quantity_label": "Quantity:",
-          "total_label": "Total",
-          "in_stock_label": "in stock",
+          "quantity_label": "@:common.labels.quantity",
+          "total_label": "@:common.labels.total",
+          "in_stock_suffix": "@:common.suffixes.product_count_in_stock",
           "out_of_stock_label": "Out of stock",
           "reduced_message": "The number of items in the order was <span class=\"text-gray-500\">reduced from {0} to {1}</span> due to stock restrictions",
           "item_can_t_be_purchased_message": " Item can't be purchased ",
@@ -151,18 +167,24 @@
         "already_in_cart_message": "{0} already in cart",
         "enter correct number_message": "enter correct number"
       },
-      "cart_add_info": {
+      "cart_add_info_popup": {
         "continue_shopping_button": "Continue shopping",
         "view_cart_button": "View cart",
         "table": {
           "product_column": "Product",
-          "quantity_column": "Quantity",
-          "total_column": "Total"
+          "quantity_column": "@:common.labels.quantity",
+          "total_column": "@:common.labels.total"
         },
-        "quantity_label": "Quantity:",
-        "total_label": "Total:"
+        "quantity_label": "@:common.labels.quantity:",
+        "total_label": "@:common.labels.total:"
       }
-    }
+    },
+    "catalog": {
+      "page_size": {
+        "label": "Results per page:"
+      }
+    },
+    "checkout": {}
   },
   "pages": {}
 }
