@@ -86,6 +86,7 @@ type InputNewBulkItemExtendedType = { [prop in keyof InputNewBulkItemType]: stri
 
 const emit = defineEmits<{
   (event: "add-to-cart", value: InputNewBulkItemType[]): void;
+  (event: "error", value: InputNewBulkItemType[]): void;
 }>();
 
 defineProps({
@@ -112,15 +113,22 @@ function increment() {
 }
 
 function addToCart() {
-  const validItems: InputNewBulkItemType[] = items.value
+  const customItems: InputNewBulkItemType[] = items.value
     .map<InputNewBulkItemType>((item) => ({
       productSku: item.productSku,
       quantity: validateQuantity(item.quantity!),
     }))
     .filter((item) => item.productSku);
 
-  if (validItems.length) {
-    emit("add-to-cart", validItems);
+  const incorrectItems = customItems.filter((item) => !Number.isInteger(item.quantity));
+
+  if (incorrectItems.length) {
+    emit("error", incorrectItems);
+    return;
+  }
+
+  if (customItems.length) {
+    emit("add-to-cart", customItems);
   }
 }
 

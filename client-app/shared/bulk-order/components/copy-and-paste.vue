@@ -51,6 +51,7 @@ import { validateQuantity } from "@/shared/bulk-order";
 
 const emit = defineEmits<{
   (event: "add-to-cart", value: InputNewBulkItemType[]): void;
+  (event: "error", value?: string): void;
 }>();
 
 defineProps({
@@ -60,6 +61,13 @@ defineProps({
 const text = ref("");
 
 async function addToCart() {
+  const pattern = /^(\s*[A-Za-z0-9_-]+\s*,\s*\d{1,9}\s*)+$/;
+
+  if (!pattern.test(text.value)) {
+    emit("error");
+    return;
+  }
+
   const validItems: InputNewBulkItemType[] = text.value
     .replace(/\s*,\s*/g, ",")
     .replace(/\s+/g, " ")

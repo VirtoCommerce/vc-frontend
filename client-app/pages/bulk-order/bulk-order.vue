@@ -5,14 +5,25 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-y-5 lg:gap-5">
         <!-- Error section -->
-        <transition name="slide-fade-top">
+        <transition name="slide-fade-top" mode="out-in">
           <VcAlert
             v-if="SKUsWithErrors.length"
             class="mx-6 md:mx-0 mb-5 lg:mb-0 col-span-1 lg:col-span-2"
             type="error"
+            key="sku"
             icon
           >
             Products with following SKUs was not added to cart: {{ SKUsWithErrors.join(", ") }}
+          </VcAlert>
+
+          <VcAlert
+            v-else-if="incorrectData"
+            key="incorrect"
+            class="mx-6 md:mx-0 mb-5 lg:mb-0 col-span-1 lg:col-span-2"
+            type="error"
+            icon
+          >
+            The entered data is invalid
           </VcAlert>
         </transition>
 
@@ -30,6 +41,7 @@
           <Manually
             :loading="loadingManually"
             @add-to-cart="addManuallyItems"
+            @error="showIncorrectDataError"
             class="bg-white md:rounded-b lg:rounded md:border-x md:border-b lg:border shadow-sm"
           />
         </div>
@@ -39,6 +51,7 @@
           <CopyAndPaste
             :loading="loadingCSV"
             @add-to-cart="addItemsFromCSVText"
+            @error="showIncorrectDataError"
             class="bg-white md:rounded-b lg:rounded md:border-x md:border-b lg:border shadow-sm"
           />
         </div>
@@ -66,9 +79,16 @@ const { loading: loadingCart, cart, addBulkMultipleItemsToCart } = useCart();
 const loadingManually = ref(false);
 const loadingCSV = ref(false);
 const activeTab = ref<"manually" | "copy&paste">(tabs[0].id as "manually");
+const incorrectData = ref(false);
 const SKUsWithErrors = ref<string[]>([]);
 
+function showIncorrectDataError() {
+  SKUsWithErrors.value = [];
+  incorrectData.value = true;
+}
+
 async function addItems(items: InputNewBulkItemType[]) {
+  incorrectData.value = false;
   SKUsWithErrors.value = [];
 
   if (!items.length || loadingCart.value) return;
