@@ -17,3 +17,9 @@ export function getAddressName(address: AnyAddressType): string {
   const { countryCode, regionName, city, line1 } = address;
   return [countryCode, regionName, city, line1].filter(Boolean).join(", ");
 }
+
+export function isEqualAddresses(address1: AnyAddressType, address2: AnyAddressType): boolean {
+  const first = _.omit(address1, ["id", "zip", "isDefault"]);
+  const second = _.omit(address2, ["id", "zip", "isDefault"]);
+  return _.isEqual(first, second);
+}

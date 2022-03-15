@@ -11,6 +11,7 @@
       >
         Add new address
       </button>
+
       <div class="flex justify-between space-x-3" :class="[isMobile ? 'flex-grow w-1/2' : 'w-1/5']">
         <button
           v-if="!isMobile"
@@ -19,6 +20,7 @@
         >
           Cancel
         </button>
+
         <button
           class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-10 h-9 font-roboto-condensed text-sm font-bold border-2 border-yellow-500 bg-yellow-500 text-white hover:bg-yellow-600 hover:border-yellow-600 rounded focus:outline-none"
           @click="
@@ -44,11 +46,13 @@
             <p class="text-gray-400 text-sm"><span class="font-semibold">Phone: </span>{{ itemData.item.phone }}</p>
             <p class="text-gray-400 text-sm"><span class="font-semibold">Email: </span>{{ itemData.item.email }}</p>
           </div>
+
           <div v-if="itemData.item.id === selectedAddress?.id" class="w-1/4">
             <div class="flex items-center justify-center mx-auto rounded-full w-6 h-6 bg-green-600 text-white text-sm">
               <i class="fas fa-check"></i>
             </div>
           </div>
+
           <div v-else class="w-1/4">
             <button
               class="uppercase flex-grow flex items-center mx-auto justify-center px-3 h-9 font-roboto-condensed text-base font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white rounded focus:outline-none"
@@ -59,9 +63,11 @@
           </div>
         </div>
       </template>
+
       <template #mobile-empty>
         <div class="flex items-center space-x-3 p-6 border-b border-gray-200">There are no addresses yet</div>
       </template>
+
       <template #desktop-body>
         <tr v-for="(address, index) in paginatedAddresses" :key="address.id" :class="{ 'bg-gray-50': index % 2 }">
           <td class="p-5">{{ address.firstName }} {{ address.lastName }}</td>
@@ -86,6 +92,7 @@
           </td>
         </tr>
       </template>
+
       <template #desktop-empty>
         <!-- Workaround for using colspan -->
         <tr>
@@ -103,6 +110,7 @@
           </td>
         </tr>
       </template>
+
       <template #footer>
         <div v-if="pages > 1" class="flex justify-start border-b border-gray-200">
           <VcPagination v-model:page="page" :pages="pages" class="self-start pb-5 px-5 mt-5"></VcPagination>
@@ -114,16 +122,20 @@
 
 <script setup lang="ts">
 import { VcPopup, VcPagination, VcTable, ITableColumn } from "@/components";
-import { CartAddressType, MemberAddressType } from "@/core/api/graphql/types";
-import { computed, onMounted, PropType, ref } from "vue";
-import { getMyAddresses } from "@/core/api/graphql/account";
+import { MemberAddressType } from "@/core/api/graphql/types";
+import { computed, watchEffect, PropType, ref } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import _ from "lodash";
+import { isEqualAddresses } from "@core/utilities";
 
 const props = defineProps({
   currentAddress: {
-    type: Object as PropType<CartAddressType>,
+    type: Object as PropType<MemberAddressType>,
     default: undefined,
+  },
+
+  addresses: {
+    type: Array as PropType<MemberAddressType[]>,
+    default: () => [],
   },
 
   onResult: {
@@ -137,15 +149,14 @@ defineEmits(["result", "addNewAddress"]);
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
-const availableAddresses = ref<MemberAddressType[]>([]);
-
+const selectedAddress = ref<MemberAddressType>();
 const page = ref(1);
 const itemsPerPage = ref(4);
-const pages = computed(() => Math.ceil(availableAddresses.value.length / itemsPerPage.value));
+
+const pages = computed(() => Math.ceil(props.addresses.length / itemsPerPage.value));
 const paginatedAddresses = computed(() =>
-  availableAddresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
+  props.addresses.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
 );
-const selectedAddress = ref();
 
 const columns = ref<ITableColumn[]>([
   {
@@ -179,14 +190,7 @@ function setAddress(address: MemberAddressType): void {
   selectedAddress.value = address;
 }
 
-onMounted(async () => {
-  const result = await getMyAddresses();
-  availableAddresses.value = result;
-  selectedAddress.value = availableAddresses.value.find((item) => {
-    return _.isEqual(
-      _.omit(item, ["id", "zip", "isDefault"]),
-      _.omit(props.currentAddress, ["id", "zip", "isDefault"])
-    );
-  });
+watchEffect(() => {
+  selectedAddress.value = props.addresses.find((item) => isEqualAddresses(item, props.currentAddress!));
 });
 </script>
