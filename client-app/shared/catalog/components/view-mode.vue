@@ -7,7 +7,7 @@
       @click="$emit('update:mode', 'grid')"
     >
       <i class="fas fa-th mr-1"></i>
-      Grid
+      {{ $t("shared.catalog.view_mode.grid_label") }}
     </button>
     <button
       type="button"
@@ -16,7 +16,7 @@
       @click="$emit('update:mode', 'list')"
     >
       <i class="fas fa-list mr-1"></i>
-      List
+      {{ $t("shared.catalog.view_mode.list_label") }}
     </button>
   </div>
 </template>

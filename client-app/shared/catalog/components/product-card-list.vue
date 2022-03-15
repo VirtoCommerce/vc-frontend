@@ -26,25 +26,25 @@
             type="checkbox"
             class="form-tick appearance-none w-5 h-5 border-2 border-gray-300 rounded-sm checked:bg-[color:var(--color-link)] checked:border-transparent focus:outline-none cursor-pointer"
           />
-          <span class="ml-2">Compare</span>
+          <span class="ml-2">{{ $t("common.labels.compare") }}</span>
         </label>
       </div>
     </div>
 
     <!-- Product props -->
     <div class="hidden xl:block text-sm flex-shrink-0 w-20">
-      <div class="font-bold text-xs">Item #</div>
+      <div class="font-bold text-xs" v-t="'shared.catalog.product_card.product_sku_label'"></div>
       <div class="text-[color:var(--color-link)] truncate">{{ product.code }}</div>
     </div>
 
     <div class="hidden xl:block text-sm flex-shrink-0 w-24">
-      <div class="font-bold text-xs">Mfr. model #</div>
+      <div class="font-bold text-xs" v-t="'shared.catalog.product_card.manufacture_model_label'"></div>
       <div class="text-[color:var(--color-link)] truncate">-</div>
     </div>
 
     <!-- Product price -->
     <div class="text-sm flex-shrink-0 w-28">
-      <div class="font-bold text-xs">Your price</div>
+      <div class="font-bold text-xs" v-t="'shared.catalog.product_card.price_label'"></div>
       <div class="">
         <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span> / each
       </div>
@@ -57,11 +57,11 @@
       <div v-if="product.availabilityData?.isInStock" class="flex items-center text-green-700 text-xs mt-3">
         <div class="w-1.5 h-1.5 bg-green-700 rounded mr-1"></div>
         {{ product.availabilityData.availableQuantity > 9999 ? "9999+" : product.availabilityData.availableQuantity }}
-        in stock
+        {{ $t("common.suffixes.product_count_in_stock") }}
       </div>
       <div v-else class="flex items-center text-[color:var(--color-danger)] text-xs mt-3">
         <div class="w-1.5 h-1.5 bg-[color:var(--color-danger)] rounded mr-1"></div>
-        Out of stock
+        {{ $t("common.suffixes.product_out_of_stock") }}
       </div>
     </div>
   </div>

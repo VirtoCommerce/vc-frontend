@@ -84,7 +84,7 @@
               <div v-else-if="isOutOfStock" class="flex items-center">
                 <span
                   class="text-[color:var(--color-danger)] text-xs pt-1 whitespace-nowrap"
-                  v-t="'shared.account.reorder_info_popup.product_card.out_of_stock_label'"
+                  v-t="'shared.account.reorder_info_popup.product_card.out_of_stock_suffix'"
                 ></span>
               </div>
             </div>
@@ -116,7 +116,7 @@
           </router-link>
           <div
             class="flex items-center space-x-1"
-            v-if="(props.productItem.quantity! < props.productItem.availabilityData?.availableQuantity) && !isInputDisabled"
+            v-if="(props.productItem.quantity! > props.productItem.availabilityData?.availableQuantity) && !isInputDisabled"
           >
             <i class="fas fa-exclamation-circle text-[color:var(--color-primary)] self-start mt-1"></i>
             <span
@@ -182,7 +182,7 @@
               <div v-else-if="isOutOfStock" class="flex items-center">
                 <span
                   class="text-[color:var(--color-danger)] text-xs pt-1 whitespace-nowrap"
-                  v-t="'shared.account.reorder_info_popup.product_card.out_of_stock_label'"
+                  v-t="'shared.account.reorder_info_popup.product_card.out_of_stock_suffix'"
                 ></span>
               </div>
             </div>

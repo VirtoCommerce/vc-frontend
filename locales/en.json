@@ -9,11 +9,14 @@
     },
     "labels": {
       "quantity": "Quantity",
-      "total": "Total"
+      "total": "Total",
+      "compare": "Compare",
+      "product_price": "Your price"
     },
     "suffixes": {
-      "product_price": "&nbsp;/ each",
-      "product_count_in_stock": "in stock"
+      "product_price": " / each",
+      "product_count_in_stock": "in stock",
+      "product_out_of_stock": "Out of stock"
     }
   },
   "shared": {
@@ -153,7 +156,7 @@
           "quantity_label": "@:common.labels.quantity",
           "total_label": "@:common.labels.total",
           "in_stock_suffix": "@:common.suffixes.product_count_in_stock",
-          "out_of_stock_label": "Out of stock",
+          "out_of_stock_suffix": "@:common.suffixes.product_out_of_stock",
           "reduced_message": "The number of items in the order was <span class=\"text-gray-500\">reduced from {0} to {1}</span> due to stock restrictions",
           "item_can_t_be_purchased_message": " Item can't be purchased ",
           "item_is_out_of_stock_message": " Item is out of stock "
@@ -180,8 +183,31 @@
       }
     },
     "catalog": {
+      "view_mode": {
+        "grid_label": "Grid",
+        "list_label": "List"
+      },
       "page_size": {
         "label": "Results per page:"
+      },
+      "product_card": {
+        "product_sku_label": "Item #",
+        "manufacture_model_label": "Mfr. model #",
+        "price_label": "@:common.labels.product_price"
+      },
+      "product_details": {
+        "technical_specs_block_title": "technical specs",
+        "variations_block_title": "Customize your order",
+        "description_block_title": "Description",
+        "price_block": {
+          "title": "Price & Delivery",
+          "add_to_list_button": "Add to list",
+          "send_email_button": "Email",
+          "print_button": "Print"
+        },
+        "product_variation_card": {
+          "price_label": "@:common.labels.product_price"
+        }
       }
     },
     "checkout": {}

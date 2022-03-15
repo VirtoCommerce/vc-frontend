@@ -23,17 +23,17 @@
             type="checkbox"
             class="form-tick appearance-none w-5 h-5 border-2 border-gray-300 rounded-sm checked:bg-[color:var(--color-link)] checked:border-transparent focus:outline-none cursor-pointer"
           />
-          <span class="ml-2">Compare</span>
+          <span class="ml-2" v-t="'common.labels.compare'"></span>
         </label>
 
         <div v-if="product.availabilityData?.isInStock" class="flex items-center text-green-700 text-xs">
           <div class="w-1.5 h-1.5 bg-green-700 rounded mr-1"></div>
           {{ product.availabilityData.availableQuantity > 9999 ? "9999+" : product.availabilityData.availableQuantity }}
-          in stock
+          {{ $t("common.suffixes.product_count_in_stock") }}
         </div>
         <div v-else class="flex items-center text-[color:var(--color-danger)] text-xs">
           <div class="w-1.5 h-1.5 bg-[color:var(--color-danger)] rounded mr-1"></div>
-          Out of stock
+          {{ $t("common.suffixes.product_out_of_stock") }}
         </div>
       </div>
 
@@ -48,20 +48,21 @@
       <!-- Product props -->
       <div class="hidden md:block text-sm pb-2">
         <div class="flex items-baseline">
-          <div class="w-1/2 font-bold text-xs">Item #</div>
+          <div class="w-1/2 font-bold text-xs" v-t="'shared.catalog.product_card.product_sku_label'"></div>
           <span class="w-1/2 text-[color:var(--color-link)] truncate">{{ product.code }}</span>
         </div>
         <div class="flex items-baseline">
-          <div class="w-1/2 font-bold text-xs">Mfr. model #</div>
+          <div class="w-1/2 font-bold text-xs" v-t="'shared.catalog.product_card.manufacture_model_label'"></div>
           <span class="w-1/2 text-[color:var(--color-link)] truncate">-</span>
         </div>
       </div>
 
       <!-- Product price -->
       <div class="flex flex-col md:flex-row items-baseline text-sm mb-4">
-        <div class="w-1/2 font-bold text-xs">Your price</div>
+        <div class="w-1/2 font-bold text-xs" v-t="'shared.catalog.product_card.price_label'"></div>
         <div class="md:w-1/2">
-          <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span> / each
+          <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span
+          >{{ $t("common.suffixes.product_price") }}
         </div>
       </div>
 
