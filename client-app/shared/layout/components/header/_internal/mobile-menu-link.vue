@@ -9,7 +9,7 @@
         <slot>{{ title }}</slot>
       </div>
       <i
-        class="fas ml-3 text-yellow-500 align-baseline"
+        class="fas ml-3 text-[color:var(--color-primary)] align-baseline"
         :class="[submenuVisible ? 'fa-chevron-up' : 'fa-chevron-down']"
       ></i>
     </div>

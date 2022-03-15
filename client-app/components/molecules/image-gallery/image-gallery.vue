@@ -9,9 +9,9 @@
     <div
       v-for="(image, i) in images"
       :key="image?.url || i"
-      class="border border-yellow-500 w-4 h-4 rounded-full cursor-pointer"
+      class="border border-[color:var(--color-primary)] w-4 h-4 rounded-full cursor-pointer"
       :class="{
-        'bg-yellow-500': image?.url == activeSrc,
+        'bg-[color:var(--color-primary)]': image?.url == activeSrc,
       }"
       @click="setActiveImage(image?.url)"
     ></div>
@@ -21,7 +21,7 @@
       <div
         class="square relative flex flex-col justify-center items-center cursor-pointer border border-gray-100 rounded-sm hover:ring hover:ring-yellow-200"
         :class="{
-          'ring ring-yellow-500': image?.url == activeSrc,
+          'ring ring-[color:var(--color-primary)]': image?.url == activeSrc,
         }"
       >
         <VcImage

@@ -77,7 +77,9 @@
           <div class="font-bold text-2xl lg:text-3xl text-white text-center">Book a free e-commerce consulting</div>
           <div class="flex w-full items-center justify-center space-x-6">
             <VcButton class="w-1/2 md:w-auto uppercase px-2 md:px-8">Learn more</VcButton>
-            <VcButton class="w-1/2 md:w-auto uppercase px-2 md:px-8 bg-gray-50 text-yellow-500">Get in touch</VcButton>
+            <VcButton class="w-1/2 md:w-auto uppercase px-2 md:px-8 bg-gray-50 text-[color:var(--color-primary)]"
+              >Get in touch</VcButton
+            >
           </div>
         </div>
       </div>
@@ -125,7 +127,9 @@
           <div class="mt-4">
             <VcCheckbox class="inline-flex">
               By clicking "Submit" I understand that I consent to opt-in to the
-              <router-link class="text-cyan-700 hover:text-cyan-900" to="/terms">Terms and Policy</router-link>
+              <router-link class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]" to="/terms"
+                >Terms and Policy</router-link
+              >
             </VcCheckbox>
           </div>
           <VcButton class="uppercase px-12 mt-10">Submit</VcButton>

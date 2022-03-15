@@ -3,7 +3,7 @@
     <button
       type="button"
       class="rounded text-sm font-extrabold px-4 py-2"
-      :class="[mode === 'grid' ? 'bg-yellow-500 text-white' : 'bg-transparent']"
+      :class="[mode === 'grid' ? 'bg-[color:var(--color-primary)] text-white' : 'bg-transparent']"
       @click="$emit('update:mode', 'grid')"
     >
       <i class="fas fa-th mr-1"></i>
@@ -12,7 +12,7 @@
     <button
       type="button"
       class="rounded text-sm font-extrabold px-4 py-2"
-      :class="[mode === 'list' ? 'bg-yellow-500 text-white' : 'bg-transparent']"
+      :class="[mode === 'list' ? 'bg-[color:var(--color-primary)] text-white' : 'bg-transparent']"
       @click="$emit('update:mode', 'list')"
     >
       <i class="fas fa-list mr-1"></i>

@@ -4,7 +4,7 @@
       <router-link to="/" @click="$emit('close')">
         <VcImage src="/static/images/common/logo-white.svg" class="h-9" />
       </router-link>
-      <i class="fas fa-times text-2xl text-yellow-500" @click="$emit('close')"></i>
+      <i class="fas fa-times text-2xl text-[color:var(--color-primary)]" @click="$emit('close')"></i>
     </div>
 
     <div class="flex-grow overflow-y-auto pb-16">
@@ -20,11 +20,11 @@
         >
           <template v-if="item.id === 'checkout'">
             <div class="flex items-center">
-              <i class="fas fa-shopping-cart text-yellow-500 mr-3"></i>
+              <i class="fas fa-shopping-cart text-[color:var(--color-primary)] mr-3"></i>
               <div>Cart</div>
               <div
                 v-if="cart?.itemsQuantity"
-                class="flex items-center rounded-2xl border border-yellow-500 px-3 font-bold text-sm h-7 ml-3"
+                class="flex items-center rounded-2xl border border-[color:var(--color-primary)] px-3 font-bold text-sm h-7 ml-3"
               >
                 {{ cart.itemsQuantity }}
               </div>
@@ -52,7 +52,7 @@
           {{ me.contact?.fullName }}
           <template #item>
             <div class="text-white flex items-center max-w-sm">
-              <i class="fa fa-user-circle fa-2x fa-fw text-yellow-500"></i>
+              <i class="fa fa-user-circle fa-2x fa-fw text-[color:var(--color-primary)]"></i>
               <span class="ml-2 flex-1 font-semibold truncate">{{ me.contact?.fullName }}</span>
               <button
                 class="ml-4 px-4 py-1 border-2 border-red-600 rounded uppercase text-sm font-roboto"

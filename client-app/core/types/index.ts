@@ -26,7 +26,7 @@ export type UseRouteQueryParamOptions<T = LocationQueryValue | LocationQueryValu
 };
 
 export interface IThemeConfig {
-  current: string;
+  current: string | IThemeConfigPreset;
   presets: Record<string, IThemeConfigPreset>;
 }
 
@@ -55,8 +55,8 @@ export interface IThemeConfigPreset {
   social_auth_ad?: boolean;
   social_auth_facebook?: boolean;
 
-  catalog_items_limit?: number,
-  catalog_items_selector?: number[],
+  catalog_items_limit?: number;
+  catalog_items_selector?: number[];
   infinite_scrolling_enabled?: boolean;
   in_stock_count_enabled?: boolean;
   sort_by_price_enabled?: boolean;

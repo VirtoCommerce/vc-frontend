@@ -2,7 +2,7 @@
   <div>
     <div v-if="label">
       <span class="font-bold text-gray-900">{{ label }}</span>
-      <span v-if="isRequired" class="text-red-500">*</span>
+      <span v-if="isRequired" class="text-[color:var(--color-danger)]">*</span>
     </div>
 
     <div v-click-outside="hideList" class="relative select-none">
@@ -61,7 +61,7 @@
       </transition>
     </div>
 
-    <div v-if="errorMessage" class="text-xs text-red-500">{{ errorMessage }}</div>
+    <div v-if="errorMessage" class="text-xs text-[color:var(--color-danger)]">{{ errorMessage }}</div>
   </div>
 </template>
 
@@ -128,7 +128,7 @@ const props = defineProps({
 
   color: {
     type: String,
-    default: "yellow-500",
+    default: "[color:var(--color-primary)]",
   },
 
   size: {

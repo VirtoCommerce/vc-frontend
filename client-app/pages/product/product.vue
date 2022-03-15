@@ -7,7 +7,8 @@
       <div class="md:hidden mb-5">
         <!-- todo: use VcButton -->
         <button class="border border-grey-200 rounded bg-white px-3 py-2 hover:bg-gray-100" @click="$router.back()">
-          <i class="fas fa-chevron-left text-yellow-500"></i><span class="ml-2 text-cyan-700">Back</span>
+          <i class="fas fa-chevron-left text-[color:var(--color-primary)]"></i
+          ><span class="ml-2 text-[color:var(--color-link)]">Back</span>
         </button>
       </div>
 

@@ -15,7 +15,7 @@
       <!-- Product title -->
       <router-link
         :to="`/${SeoUrl.Product}/${product.id}`"
-        class="text-cyan-700 font-extrabold text-sm line-clamp-3 mt-2"
+        class="text-[color:var(--color-link)] font-extrabold text-sm line-clamp-3 mt-2"
       >
         {{ product.name }}
       </router-link>

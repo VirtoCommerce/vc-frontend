@@ -9,7 +9,7 @@
         <div class="text-sm">
           <router-link
             :to="`/${SeoUrl.Product}/${productItem.id}`"
-            class="text-cyan-700 font-extrabold line-clamp-3 overflow-hidden"
+            class="text-[color:var(--color-link)] font-extrabold line-clamp-3 overflow-hidden"
             @click="$emit('close-popup')"
           >
             {{ productItem.name }}
@@ -18,7 +18,7 @@
             class="flex items-center space-x-1"
             v-if="(props.productItem.quantity! > props.productItem.availabilityData?.availableQuantity) && !isInputDisabled"
           >
-            <i class="fas fa-exclamation-circle text-yellow-500 self-start mt-1"></i>
+            <i class="fas fa-exclamation-circle text-[color:var(--color-primary)] self-start mt-1"></i>
             <span class="text-xs text-gray-400">
               The number of items in the order was
               <span class="text-gray-500"
@@ -29,7 +29,7 @@
             </span>
           </div>
           <div class="flex items-center space-x-1" v-else-if="!props.productItem.availabilityData?.isAvailable">
-            <i class="fas fa-exclamation-circle text-yellow-500 self-start mt-1"></i>
+            <i class="fas fa-exclamation-circle text-[color:var(--color-primary)] self-start mt-1"></i>
             <span class="text-xs text-gray-400" v-if="!isOutOfStock"> Item can't be purchased </span>
             <span class="text-xs text-gray-400" v-else> Item is out of stock </span>
           </div>
@@ -46,7 +46,10 @@
               :max="maxQty"
               :min="minQty"
               class="w-20 border rounded overflow-hidden h-8 focus:ring ring-inset outline-none p-1 text-center"
-              :class="{ 'text-red-500': isInputDisabled, 'border-red-500': errorMessage }"
+              :class="{
+                'text-[color:var(--color-danger)]': isInputDisabled,
+                'border-[color:var(--color-danger)]': errorMessage,
+              }"
               :disabled="isInputDisabled || readOnly"
               @input="onInput"
               @keypress="onKeypress"
@@ -57,7 +60,7 @@
                   class="text-xs pt-1 whitespace-nowrap"
                   :class="
                     productItem.quantity! > productItem.availabilityData?.availableQuantity
-                      ? 'text-yellow-500'
+                      ? 'text-[color:var(--color-primary)]'
                       : 'text-green-700'
                   "
                   >{{
@@ -69,7 +72,7 @@
                 >
               </div>
               <div v-else-if="isOutOfStock" class="flex items-center">
-                <span class="text-red-500 text-xs pt-1 whitespace-nowrap">Out of stock</span>
+                <span class="text-[color:var(--color-danger)] text-xs pt-1 whitespace-nowrap">Out of stock</span>
               </div>
             </div>
           </div>
@@ -93,7 +96,7 @@
         <div class="mb-3 lg:mb-0 text-sm xl:w-1/2">
           <router-link
             :to="`/${SeoUrl.Product}/${productItem.id}`"
-            class="text-cyan-700 font-extrabold line-clamp-3 overflow-hidden"
+            class="text-[color:var(--color-link)] font-extrabold line-clamp-3 overflow-hidden"
             @click="$emit('close-popup')"
           >
             {{ productItem.name }}
@@ -102,7 +105,7 @@
             class="flex items-center space-x-1"
             v-if="(props.productItem.quantity! > props.productItem.availabilityData?.availableQuantity) && !isInputDisabled"
           >
-            <i class="fas fa-exclamation-circle text-yellow-500 self-start mt-1"></i>
+            <i class="fas fa-exclamation-circle text-[color:var(--color-primary)] self-start mt-1"></i>
             <span class="text-xs text-gray-400">
               The number of items in the order was
               <span class="text-gray-500"
@@ -113,7 +116,7 @@
             </span>
           </div>
           <div class="flex items-center space-x-1" v-else-if="!props.productItem.availabilityData?.isAvailable">
-            <i class="fas fa-exclamation-circle text-yellow-500 self-start mt-1"></i>
+            <i class="fas fa-exclamation-circle text-[color:var(--color-primary)] self-start mt-1"></i>
             <span class="text-xs text-gray-400" v-if="!isOutOfStock"> Item can't be purchased </span>
             <span class="text-xs text-gray-400" v-else> Item is out of stock </span>
           </div>
@@ -128,7 +131,10 @@
               :max="maxQty"
               :min="minQty"
               class="w-20 border rounded overflow-hidden h-8 lg:h-10 focus:ring ring-inset outline-none p-1 text-center"
-              :class="{ 'text-red-500': isInputDisabled, 'border-red-500': errorMessage }"
+              :class="{
+                'text-[color:var(--color-danger)]': isInputDisabled,
+                'border-[color:var(--color-danger)]': errorMessage,
+              }"
               :disabled="isInputDisabled || readOnly"
               @input="onInput"
               @keypress="onKeypress"
@@ -139,7 +145,7 @@
                   class="text-xs pt-1 whitespace-nowrap"
                   :class="
                     productItem.quantity! > productItem.availabilityData?.availableQuantity
-                      ? 'text-yellow-500'
+                      ? 'text-[color:var(--color-primary)]'
                       : 'text-green-700'
                   "
                   >{{
@@ -151,7 +157,7 @@
                 >
               </div>
               <div v-else-if="isOutOfStock" class="flex items-center">
-                <span class="text-red-500 text-xs pt-1 whitespace-nowrap">Out of stock</span>
+                <span class="text-[color:var(--color-danger)] text-xs pt-1 whitespace-nowrap">Out of stock</span>
               </div>
             </div>
           </div>

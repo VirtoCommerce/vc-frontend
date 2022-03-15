@@ -62,7 +62,6 @@ router.beforeEach(async (to) => {
 });
 
 onMounted(async () => {
-  console.log("App mount start");
   await loadMe();
   await loadContext();
 
@@ -73,6 +72,5 @@ onMounted(async () => {
 
   await loadMyCart();
   loaded.value = true;
-  console.log("App mount end");
 });
 </script>

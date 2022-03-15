@@ -20,7 +20,7 @@
                 <router-link :to="`/account/orders`" class="text-xs text-blue-500 hover:text-blue-700 font-bold mr-3"
                   >All Orders</router-link
                 >
-                <i class="fas fa-arrow-right text-yellow-500"></i>
+                <i class="fas fa-arrow-right text-[color:var(--color-primary)]"></i>
               </div>
             </template>
             <VcTable

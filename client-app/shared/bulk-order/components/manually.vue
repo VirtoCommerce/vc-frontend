@@ -5,7 +5,7 @@
     <div class="p-6 pb-5 md:p-5 pt-4">
       <p class="text-sm">
         Quickly add items to your
-        <router-link :to="{ name: 'Checkout' }" class="text-link">Cart</router-link>
+        <router-link :to="{ name: 'Checkout' }" class="text-[color:var(--color-link)]">Cart</router-link>
         by entering item SKUs and quantities.
       </p>
 
@@ -39,7 +39,7 @@
         <button @click="increment" class="appearance-none inline-flex items-center py-1.5 md:py-0">
           <i class="fa fa-plus mr-1.5 mt-[3px] text-primary" />
           <span
-            class="leading-tight text-link hover:text-link-hover border-b border-dashed border-link hover:border-link-hover"
+            class="leading-tight text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)] border-b border-dashed border-link hover:border-link-hover"
           >
             Add 5 more rows
           </span>

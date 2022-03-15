@@ -42,7 +42,9 @@
       </div>
 
       <!-- Divider -->
-      <div class="border-t md:border-l border-yellow-500 mt-8 mb-6 md:mt-6 md:mb-4 -mx-96 md:mx-9"></div>
+      <div
+        class="border-t md:border-l border-[color:var(--color-primary)] mt-8 mb-6 md:mt-6 md:mb-4 -mx-96 md:mx-9"
+      ></div>
 
       <div class="md:w-1/2">
         <div class="flex flex-col xl:flex-row xl:flex-wrap">

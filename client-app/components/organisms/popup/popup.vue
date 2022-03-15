@@ -49,7 +49,7 @@
               <div v-if="!hideActions" class="px-5 py-4 flex items-center justify-between lg:justify-end space-x-4">
                 <slot name="actions" :close="onClose">
                   <button
-                    class="uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-4 h-9 font-roboto-condensed text-base font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white rounded focus:outline-none"
+                    class="uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-4 h-9 font-roboto-condensed text-base font-bold border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white rounded focus:outline-none"
                     @click="onClose"
                   >
                     Close
@@ -111,9 +111,9 @@ function onClose() {
 const headerStyle = computed(() => {
   switch (props.variant) {
     case "warn":
-      return "bg-yellow-500";
+      return "bg-[color:var(--color-primary)]";
     case "danger":
-      return "bg-red-500";
+      return "bg-[color:var(--color-danger)]";
     case "success":
       return "bg-green-500";
     default:

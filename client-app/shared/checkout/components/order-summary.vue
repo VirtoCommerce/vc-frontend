@@ -20,11 +20,11 @@
               >Discount
               <i
                 v-if="cart.discounts && cart.discounts.length > 0 && !discountsCollapsed"
-                class="fas fa-caret-down ml-1 text-yellow-500"
+                class="fas fa-caret-down ml-1 text-[color:var(--color-primary)]"
               ></i
               ><i
                 v-if="cart.discounts && cart.discounts.length > 0 && discountsCollapsed"
-                class="fas fa-caret-up ml-1 text-yellow-500"
+                class="fas fa-caret-up ml-1 text-[color:var(--color-primary)]"
               ></i>
             </span>
             <span>{{ cart.discountTotal?.amount > 0 ? "-" : "" }}<VcPriceDisplay :value="cart.discountTotal" /></span>

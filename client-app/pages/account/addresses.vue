@@ -144,7 +144,7 @@
                         <!-- todo: use VcButton -->
                         <button
                           type="button"
-                          class="h-7 w-7 shadow rounded text-yellow-500 hover:bg-gray-100"
+                          class="h-7 w-7 shadow rounded text-[color:var(--color-primary)] hover:bg-gray-100"
                           @click="openEditMode(address)"
                         >
                           <i class="fas fa-pencil-alt"></i>
@@ -152,7 +152,7 @@
 
                         <button
                           type="button"
-                          class="h-7 w-7 shadow rounded text-red-500 hover:bg-gray-100"
+                          class="h-7 w-7 shadow rounded text-[color:var(--color-danger)] hover:bg-gray-100"
                           @click="removeAddress(address)"
                         >
                           <i class="fas fa-times"></i>
@@ -313,7 +313,7 @@ function actionBuilder(address: MemberAddressType) {
       icon: "fas fa-trash-alt",
       title: "Delete",
       leftActions: true,
-      bgColor: "bg-red-500",
+      bgColor: "bg-[color:var(--color-danger)]",
       clickHandler() {
         removeAddress(address);
       },
@@ -324,7 +324,7 @@ function actionBuilder(address: MemberAddressType) {
     result.push({
       icon: "fas fa-check",
       title: "Make default",
-      bgColor: "bg-yellow-500",
+      bgColor: "bg-[color:var(--color-primary)]",
       clickHandler() {
         setDefaultAddress(address);
       },

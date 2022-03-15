@@ -18,7 +18,7 @@
         </div>
         <div v-else class="flex flex-col items-center space-y-10 lg:space-y-12 lg:items-start lg:mt-12">
           <div class="flex flex-col items-center lg:flex-row space-x-0 space-y-10 lg:space-x-3 lg:space-y-0">
-            <i class="fas fa-times-circle text-7xl lg:text-4xl text-red-500"></i>
+            <i class="fas fa-times-circle text-7xl lg:text-4xl text-[color:var(--color-danger)]"></i>
             <div class="text-lg">User ID or token is invalid.</div>
           </div>
           <VcButton to="/" class="w-48 uppercase">Home page</VcButton>

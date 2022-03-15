@@ -7,11 +7,11 @@
 
       <div class="flex items-center h-full pr-3">
         <button v-show="!searchBarVisible" class="h-full px-3" @click="showSearchBar">
-          <i class="fas fa-search text-lg text-yellow-500" />
+          <i class="fas fa-search text-lg text-[color:var(--color-primary)]" />
         </button>
 
         <button class="h-full px-3" @click="mobileMenuVisible = true">
-          <i class="fas fa-bars text-2xl text-yellow-500" />
+          <i class="fas fa-bars text-2xl text-[color:var(--color-primary)]" />
         </button>
       </div>
     </div>

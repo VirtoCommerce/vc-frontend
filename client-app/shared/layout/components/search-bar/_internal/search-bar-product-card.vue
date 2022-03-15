@@ -9,7 +9,7 @@
       <!-- Product title -->
       <router-link
         :to="link"
-        class="text-cyan-700 font-extrabold text-sm leading-tight line-clamp-2"
+        class="text-[color:var(--color-link)] font-extrabold text-sm leading-tight line-clamp-2"
         @click="$emit('link-click', $event)"
       >
         {{ product.name }}

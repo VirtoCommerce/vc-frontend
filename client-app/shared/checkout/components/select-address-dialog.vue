@@ -2,7 +2,7 @@
   <VcPopup title="Select address" modal-width="max-w-5xl">
     <template #actions="{ close }">
       <button
-        class="uppercase inline-flex items-center justify-center lg:mr-auto px-2 h-9 font-roboto-condensed text-sm font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:border-yellow-600 hover:text-white rounded focus:outline-none"
+        class="uppercase inline-flex items-center justify-center lg:mr-auto px-2 h-9 font-roboto-condensed text-sm font-bold border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary-hover)] hover:border-[color:var(--color-primary-hover)] hover:text-white rounded focus:outline-none"
         :class="[isMobile && 'flex-grow w-1/2']"
         @click="
           $emit('addNewAddress');
@@ -22,7 +22,7 @@
         </button>
 
         <button
-          class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-10 h-9 font-roboto-condensed text-sm font-bold border-2 border-yellow-500 bg-yellow-500 text-white hover:bg-yellow-600 hover:border-yellow-600 rounded focus:outline-none"
+          class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-10 h-9 font-roboto-condensed text-sm font-bold border-2 border-[color:var(--color-primary)] bg-[color:var(--color-primary)] text-white hover:bg-[color:var(--color-primary-hover)] hover:border-[color:var(--color-primary-hover)] rounded focus:outline-none"
           @click="
             $emit('result', selectedAddress);
             close();
@@ -55,7 +55,7 @@
 
           <div v-else class="w-1/4">
             <button
-              class="uppercase flex-grow flex items-center mx-auto justify-center px-3 h-9 font-roboto-condensed text-base font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white rounded focus:outline-none"
+              class="uppercase flex-grow flex items-center mx-auto justify-center px-3 h-9 font-roboto-condensed text-base font-bold border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white rounded focus:outline-none"
               @click="setAddress(itemData.item)"
             >
               Select
@@ -84,7 +84,7 @@
           </td>
           <td v-else class="p-5">
             <button
-              class="uppercase flex-grow flex items-center mx-auto justify-center px-3 h-9 font-roboto-condensed text-base font-bold border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white rounded focus:outline-none"
+              class="uppercase flex-grow flex items-center mx-auto justify-center px-3 h-9 font-roboto-condensed text-base font-bold border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white rounded focus:outline-none"
               @click="setAddress(address)"
             >
               Select
