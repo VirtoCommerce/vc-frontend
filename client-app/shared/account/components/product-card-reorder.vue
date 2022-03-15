@@ -28,6 +28,11 @@
               due to stock restrictions
             </span>
           </div>
+          <div class="flex items-center space-x-1" v-else-if="!props.productItem.availabilityData?.isAvailable">
+            <i class="fas fa-exclamation-circle text-yellow-500 self-start mt-1"></i>
+            <span class="text-xs text-gray-400" v-if="!isOutOfStock"> Item can't be purchased </span>
+            <span class="text-xs text-gray-400" v-else> Item is out of stock </span>
+          </div>
         </div>
       </div>
       <div class="flex justify-between">
@@ -63,7 +68,7 @@
                   in stock</span
                 >
               </div>
-              <div v-else class="flex items-center">
+              <div v-else-if="isOutOfStock" class="flex items-center">
                 <span class="text-red-500 text-xs pt-1 whitespace-nowrap">Out of stock</span>
               </div>
             </div>
@@ -107,6 +112,11 @@
               due to stock restrictions
             </span>
           </div>
+          <div class="flex items-center space-x-1" v-else-if="!props.productItem.availabilityData?.isAvailable">
+            <i class="fas fa-exclamation-circle text-yellow-500 self-start mt-1"></i>
+            <span class="text-xs text-gray-400" v-if="!isOutOfStock"> Item can't be purchased </span>
+            <span class="text-xs text-gray-400" v-else> Item is out of stock </span>
+          </div>
         </div>
 
         <div class="flex items-start space-x-2 lg:space-x-4 xl:w-2/5 justify-between lg:justify-end">
@@ -140,7 +150,7 @@
                   in stock</span
                 >
               </div>
-              <div v-else class="flex items-center">
+              <div v-else-if="isOutOfStock" class="flex items-center">
                 <span class="text-red-500 text-xs pt-1 whitespace-nowrap">Out of stock</span>
               </div>
             </div>
@@ -205,7 +215,11 @@ if (props.productItem.availabilityData?.availableQuantity) {
   rules = rules.max(Math.min(props.productItem.availabilityData.availableQuantity, maxQty.value, max));
 }
 
-const isInputDisabled = computed(() => !props.productItem.availabilityData?.isInStock);
+const isInputDisabled = computed(
+  () => !props.productItem.availabilityData?.isInStock || !props.productItem.availabilityData?.isAvailable
+);
+
+const isOutOfStock = computed(() => !props.productItem.availabilityData?.isInStock);
 
 const { value, validate, errorMessage } = useField("qty", rules, {
   initialValue: isInputDisabled.value

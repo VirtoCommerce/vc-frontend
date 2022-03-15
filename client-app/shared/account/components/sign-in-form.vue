@@ -1,8 +1,11 @@
 <template>
   <form @submit="onSubmit">
     <!-- Errors block -->
-    <VcAlert v-if="authError" class="mb-2"><strong>User</strong> or <strong>password</strong> is incorrect</VcAlert>
-    <VcAlert v-if="!_.isEmpty(errors)" class="mb-2">
+    <VcAlert v-if="authError" type="error" class="mb-2" icon text>
+      <strong>User</strong> or <strong>password</strong> is incorrect
+    </VcAlert>
+
+    <VcAlert v-if="!_.isEmpty(errors)" type="error" class="mb-2" icon text>
       <strong>User</strong> and <strong>password</strong> are required
     </VcAlert>
 

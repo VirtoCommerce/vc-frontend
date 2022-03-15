@@ -8,6 +8,7 @@ const SingInPage = () => import("./pages/sign-in/sign-in-page.vue");
 const SignUpPage = () => import("./pages/sign-up/sign-up-page.vue");
 const Search = () => import("./pages/search/search.vue");
 const Catalog = () => import("./pages/catalog/catalog.vue");
+const BulkOrder = () => import("./pages/bulk-order/bulk-order.vue");
 const Checkout = () => import("./pages/checkout/checkout.vue");
 const Error403 = () => import("./pages/403/403.vue");
 const Error404 = () => import("./pages/404/404.vue");
@@ -64,6 +65,7 @@ const router = createRouter({
     { path: "/search", name: "Search", component: Search },
     { path: `/${SeoUrl.Catalog}/:categorySeoUrls*`, name: "Catalog", component: Catalog, props: true },
     { path: `/${SeoUrl.Product}/:productId`, name: "Product", component: Product, props: true },
+    { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },
     { path: "/checkout", name: "Checkout", component: Checkout },
     { path: "/demo-landing", name: "DemoLanding", component: DemoLanding },
     { path: "/500", name: "InternalError", component: Error500 },

@@ -24,7 +24,9 @@
               Cancel
             </VcButton>
 
-            <VcButton size="md" :is-disabled="!dirty" class="uppercase w-1/2 sm:px-5" is-submit> Create </VcButton>
+            <VcButton size="md" :is-disabled="!dirty" class="uppercase w-1/2 sm:px-5" is-submit>
+              {{ editableAddress ? "Save" : "Create" }}
+            </VcButton>
           </div>
         </template>
       </AddressForm>
@@ -36,8 +38,16 @@
 import { MemberAddressType } from "@/core/api/graphql/types";
 import { useCountries } from "@/core/composables";
 import { AddressForm } from "@/shared/account";
-import { onMounted, ref, Ref } from "vue";
+import { onMounted, PropType, ref, Ref, watchEffect } from "vue";
 import { VcPopup, VcButton } from "@/components";
+import { clone } from "lodash";
+
+const props = defineProps({
+  address: {
+    type: Object as PropType<MemberAddressType>,
+    default: null,
+  },
+});
 
 const { countries, loadCountries } = useCountries();
 const editableAddress: Ref<MemberAddressType | null> = ref(null);
@@ -53,4 +63,8 @@ onMounted(async () => {
 function saveAddress(address: MemberAddressType) {
   emit("result", address);
 }
+
+watchEffect(() => {
+  editableAddress.value = clone(props.address);
+});
 </script>
