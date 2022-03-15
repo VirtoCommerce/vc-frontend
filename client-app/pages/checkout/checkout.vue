@@ -227,7 +227,7 @@
             <VcSection title="Extra" icon-url="/static/images/checkout/extra.svg" class="shadow-inner pb-8 lg:shadow">
               <div class="mx-5 xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6">
                 <p class="font-extrabold text-base mb-1">Order comments</p>
-                <VcTextArea v-model="cartComment" class="resize-none" :rows="4" :max-length="1000" />
+                <VcTextArea v-model="cartComment" class="resize-none" :rows="4" :max-length="1000" counter />
               </div>
             </VcSection>
             <div class="shadow-inner h-1 lg:hidden"></div>

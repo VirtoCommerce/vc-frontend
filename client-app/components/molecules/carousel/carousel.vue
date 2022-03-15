@@ -101,7 +101,7 @@ const paginationParams = computed<PaginationOptions | boolean>(() =>
   --navigation-offset: 0px;
   --pagination-offset: -5px;
 
-  --swiper-theme-color: var(--color-primary);
+  --swiper-theme-color: theme("colors.primary.DEFAULT");
   --swiper-pagination-bullet-size: 13px;
   --swiper-pagination-bullet-inactive-color: transparent;
   --swiper-pagination-bullet-inactive-opacity: 1;

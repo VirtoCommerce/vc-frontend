@@ -10,7 +10,10 @@
       :error-message="errors.email"
     ></VcInput>
     <div class="mt-8 md:mt-9">
-      <VcAlert v-for="error in commonErrors" :key="error" class="mb-4 text-xs">{{ error }}</VcAlert>
+      <VcAlert v-for="error in commonErrors" :key="error" type="error" class="mb-4 text-xs" icon text>
+        {{ error }}
+      </VcAlert>
+
       <VcButton is-submit class="mt-6 lg:mt-3 w-full lg:w-48 uppercase" :is-waiting="loading"> Submit </VcButton>
     </div>
   </form>
