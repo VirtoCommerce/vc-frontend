@@ -1,11 +1,11 @@
 <template>
   <TwoColumn class="max-w-screen-lg">
     <template #left>
-      <h1 class="text-black-800 text-7xl md:text-8xl font-black mb-5">500</h1>
-      <h2 class="text-black-800 text-2xl md:text-4xl font-bold mb-2">Internal Server Error</h2>
-      <p class="text-gray-700 text-base md:text-xl leading-relaxed mb-10">We suggest you back to home</p>
+      <h1 class="text-black-800 text-7xl md:text-8xl font-black mb-5" v-t="'pages.500.header_1'"></h1>
+      <h2 class="text-black-800 text-2xl md:text-4xl font-bold mb-2" v-t="'pages.500.header_2'"></h2>
+      <p class="text-gray-700 text-base md:text-xl leading-relaxed mb-10" v-t="'pages.500.message'"></p>
       <div>
-        <VcButton to="/" size="md" class="w-40 uppercase">Home page</VcButton>
+        <VcButton to="/" size="md" class="w-40 uppercase" v-t="'pages.500.home_button'"></VcButton>
       </div>
     </template>
     <template #right>

@@ -14,6 +14,11 @@
       "select": "Select"
     },
     "labels": {
+      "user_name": "Username",
+      "password": "Password",
+      "confirm_password": "Confirm password",
+      "first_name": "First Name",
+      "last_name": "Last Name",
       "phone": "Phone",
       "email": "Email",
       "quantity": "Quantity",
@@ -103,8 +108,8 @@
         "checkout_defaults": "Checkout Defaults"
       },
       "address_form": {
-        "first_name_label": "First Name",
-        "last_name_label": "Last Name",
+        "first_name_label": "@:common.labels.first_name",
+        "last_name_label": "@:common.labels.last_name",
         "work_email_label": "Work email",
         "phone_label": "@:common.labels.phone",
         "country_label": "Country",
@@ -116,10 +121,10 @@
         "line2_label": "Apt, suite, etc."
       },
       "sign_in_form": {
-        "user_name_label": "User name",
-        "user_name_placeholder": "User name",
-        "password_label": "Password",
-        "password_placeholder": "Password",
+        "user_name_label": "@:common.labels.user_name",
+        "user_name_placeholder": "@:common.labels.user_name",
+        "password_label": "@:common.labels.password",
+        "password_placeholder": "@:common.labels.password",
         "forgot_password_link": "Forgot your password?",
         "login_button": "Login",
         "registration_button": "Registration",
@@ -127,9 +132,9 @@
         "user_and_password_are_required_alert": "<strong>User</strong>&nbsp;and <strong>password</strong>&nbsp; are required"
       },
       "reset_password_form": {
-        "password_label": "Password",
+        "password_label": "@:common.labels.password",
         "password_placeholder": "Enter your password",
-        "confirm_password_label": "Confirm password",
+        "confirm_password_label": "common.labels.confirm_password",
         "confirm_password_placeholder": "Confirm your password",
         "reset_password_button": "Reset password",
         "password_must_match_message": "Passwords must match"
@@ -281,5 +286,57 @@
       }
     }
   },
-  "pages": {}
+  "pages": {
+    "403": {
+      "header_1": "403",
+      "header_2": "Access denied",
+      "message": "You don't have permission to access requested page.",
+      "home_button": "@:common.buttons.home"
+    },
+    "404": {
+      "header_1": "404",
+      "header_2": "Page Not Found",
+      "message": "We suggest you back to home.",
+      "home_button": "@:common.buttons.home"
+    },
+    "500": {
+      "header_1": "500",
+      "header_2": "Internal Server Error",
+      "message": "We suggest you back to home.",
+      "home_button": "@:common.buttons.home"
+    },
+    "forgot_password": {
+      "header": "reset your password",
+      "email_will_be_sended_message": "We will send you an email to reset your password",
+      "reset_link_was_sent_message": "Reset link was sent to your email",
+      "home_button": "@:common.buttons.home"
+    },
+    "reset-password": {
+      "header": "reset your password",
+      "home_button": "@:common.buttons.home",
+      "enter_new_password_message": "Enter a new password",
+      "success_message": "Password was successfully changed",
+      "log_in_button": "Log in",
+      "data_invalid_error_message": "User ID or token is invalid."
+    },
+    "sign_in": {
+      "header": "Sign in"
+    },
+    "sign-up": {
+      "header": "Registration",
+      "first_name_label": "@:common.labels.first_name",
+      "first_name_placeholder": "Enter your first name",
+      "last_name_label": "@:common.labels.last_name",
+      "last_name_placeholder": "Enter your last name",
+      "email_label": "@:common.labels.email",
+      "email_placeholder": "Enter your e-mail address",
+      "username_label": "@:common.labels.user_name",
+      "username_placeholder": "Enter your username",
+      "password_label": "@:common.labels.password",
+      "password_placeholder": "Enter your password",
+      "confirm_password_label": "@:common.labels.confirm_password",
+      "confirm_password_placeholder": "Confirm your password",
+      "register_button": "Register"
+    }
+  }
 }
