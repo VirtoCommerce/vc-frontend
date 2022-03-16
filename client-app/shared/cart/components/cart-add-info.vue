@@ -58,11 +58,11 @@
 
       <div class="flex items-center justify-between px-5 py-3">
         <div>
-          {{ $t("shared.cart.cart_add_info_popup.quantity_label") }}
+          {{ $t("shared.cart.cart_add_info_popup.quantity_label") }}:
           <span class="font-bold">{{ lineItem.quantity }}</span>
         </div>
         <div>
-          {{ $t("shared.cart.cart_add_info_popup.total_label") }}
+          {{ $t("shared.cart.cart_add_info_popup.total_label") }}:
           <span class="font-bold text-green-700">
             <VcPriceDisplay :value="lineItem.extendedPrice" />
           </span>

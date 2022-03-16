@@ -17,7 +17,7 @@
           v-model="lastName"
           :error-message="errors.lastName"
           :is-disabled="disabled"
-          label="$t('shared.account.address_form.last_name_label')"
+          :label="$t('shared.account.address_form.last_name_label')"
           class="mb-4"
           is-required
         />

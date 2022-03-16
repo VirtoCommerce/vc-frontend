@@ -1,10 +1,12 @@
 <template>
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner">
     <div class="max-w-screen-2xl md:px-12 mx-auto">
-      <h2 class="text-gray-800 px-5 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-2">Order complete</h2>
+      <h2
+        class="text-gray-800 px-5 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-2"
+        v-t="'shared.checkout.thank_you.header'"
+      ></h2>
       <p class="text-green-700 px-5 md:px-0 font-extrabold mb-5">
-        Order {{ order.number }} has be successfully submitted. You will be notified via email when your order is ready
-        for shipping
+        {{ $t("shared.checkout.thank_you.success_order_message", [order.number]) }}
       </p>
       <div class="flex flex-col lg:flex-row lg:flex-nowrap lg:space-x-6">
         <!-- Main section -->
@@ -67,8 +69,14 @@
                 {{ order.shipments?.[0]?.deliveryAddress?.line1 }}
                 {{ order.shipments?.[0]?.deliveryAddress?.postalCode }}
               </p>
-              <p><span class="font-extrabold">Phone:</span> {{ order.shipments?.[0]?.deliveryAddress?.phone }}</p>
-              <p><span class="font-extrabold">Email:</span> {{ order.shipments?.[0]?.deliveryAddress?.email }}</p>
+              <p>
+                <span class="font-extrabold">{{ $t("shared.checkout.thank_you.phone_label") }}:</span>
+                {{ order.shipments?.[0]?.deliveryAddress?.phone }}
+              </p>
+              <p>
+                <span class="font-extrabold">{{ $t("shared.checkout.thank_you.email_label") }}:</span>
+                {{ order.shipments?.[0]?.deliveryAddress?.email }}
+              </p>
             </div>
           </VcCard>
 
@@ -103,12 +111,22 @@
                 {{ order.inPayments?.[0]?.billingAddress?.line1 }}
                 {{ order.inPayments?.[0]?.billingAddress?.postalCode }}
               </p>
-              <p><span class="font-extrabold">Phone:</span> {{ order.inPayments?.[0]?.billingAddress?.phone }}</p>
-              <p><span class="font-extrabold">Email:</span> {{ order.inPayments?.[0]?.billingAddress?.email }}</p>
+              <p>
+                <span class="font-extrabold">{{ $t("shared.checkout.thank_you.phone_label") }}:</span>
+                {{ order.inPayments?.[0]?.billingAddress?.phone }}
+              </p>
+              <p>
+                <span class="font-extrabold">{{ $t("shared.checkout.thank_you.email_label") }}:</span>
+                {{ order.inPayments?.[0]?.billingAddress?.email }}
+              </p>
             </div>
           </VcCard>
 
-          <VcButton class="uppercase w-full" @click="printOrder">Print order</VcButton>
+          <VcButton
+            class="uppercase w-full"
+            @click="printOrder"
+            v-t="'shared.checkout.thank_you.print_order'"
+          ></VcButton>
         </div>
       </div>
     </div>

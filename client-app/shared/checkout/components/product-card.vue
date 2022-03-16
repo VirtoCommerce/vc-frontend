@@ -18,20 +18,20 @@
             <span class="text-xs text-gray-400"> {{ validationError.errorMessage }} </span>
           </div>
           <div class="flex">
-            <span class="font-medium text-gray-500 pr-1">Brand: </span>
+            <span class="font-medium text-gray-500 pr-1">{{ $t("shared.checkout.product_card.brand_label") }}: </span>
             <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
             <span class="w-1/3 lg:w-auto font-bold">{{ lineItem.product?.brandName }}</span>
           </div>
           <div class="flex text-sm">
-            <span class="font-medium text-gray-500 pr-1">Price: </span>
+            <span class="font-medium text-gray-500 pr-1">{{ $t("shared.checkout.product_card.price_label") }}: </span>
             <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
             <p class="w-1/3 lg:w-auto font-bold">
               <span class="text-green-700"><VcPriceDisplay :value="lineItem.listPrice || lineItem.placedPrice" /></span>
-              <span class="hidden lg:inline"> / each</span>
+              <span class="hidden lg:inline" v-t="'common.suffixes.product_price'"></span>
             </p>
           </div>
           <div class="flex text-sm lg:hidden">
-            <span class="font-medium text-gray-500">Total: </span>
+            <span class="font-medium text-gray-500">{{ $t("shared.checkout.product_card.total_label") }}: </span>
             <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
             <span class="w-1/3 text-green-700 font-bold"><VcPriceDisplay :value="lineItem.extendedPrice" /></span>
           </div>
@@ -57,11 +57,14 @@
             <div v-if="!readOnly">
               <div v-if="!isInputDisabled" class="flex items-center">
                 <span class="text-green-700 text-xs pt-1 whitespace-nowrap"
-                  >{{ lineItem.inStockQuantity! > 9999 ? "9999+" : lineItem.inStockQuantity }} in stock</span
+                  >{{ lineItem.inStockQuantity! > 9999 ? "9999+" : lineItem.inStockQuantity }}
+                  {{ $t("common.suffixes.product_count_in_stock") }}</span
                 >
               </div>
               <div v-else class="flex items-center">
-                <span class="text-[color:var(--color-danger)] text-xs pt-1 whitespace-nowrap">Out of stock</span>
+                <span class="text-[color:var(--color-danger)] text-xs pt-1 whitespace-nowrap">{{
+                  $t("common.suffixes.product_out_of_stock")
+                }}</span>
               </div>
             </div>
           </div>
@@ -73,8 +76,8 @@
               is-outline
               class="uppercase px-2 font-bold"
               @click="updateQuantity"
+              v-t="'shared.checkout.product_card.update_button'"
             >
-              Update
             </VcButton>
             <VcButton
               size="sm"
@@ -82,18 +85,27 @@
               is-outline
               class="uppercase px-2"
               @click="$emit('remove:item', lineItem.id)"
-              >Remove</VcButton
-            >
+              v-t="'shared.checkout.product_card.remove_button'"
+            ></VcButton>
           </div>
           <div
             v-if="!readOnly"
             class="hidden lg:flex xl:w-1/4 flex-col space-y-1 text-xs font-semibold text-[color:var(--color-link)]"
           >
-            <span v-if="!isInputDisabled" class="cursor-pointer" @click="updateQuantity">Update</span>
-            <span class="cursor-pointer" @click="$emit('remove:item', lineItem.id)">Remove</span>
+            <span
+              v-if="!isInputDisabled"
+              class="cursor-pointer"
+              @click="updateQuantity"
+              v-t="'shared.checkout.product_card.update_button'"
+            ></span>
+            <span
+              class="cursor-pointer"
+              @click="$emit('remove:item', lineItem.id)"
+              v-t="'shared.checkout.product_card.remove_button'"
+            ></span>
           </div>
           <div class="hidden lg:flex lg:w-28 lg:shrink-0 xl:w-2/4 lg:items-end flex-col text-sm font-extrabold pr-3">
-            <span class="text-black self-end">Total</span>
+            <span class="text-black self-end" v-t="'shared.checkout.product_card.total_label'"></span>
             <span class="text-green-700"><VcPriceDisplay :value="lineItem.extendedPrice" /></span>
           </div>
         </div>

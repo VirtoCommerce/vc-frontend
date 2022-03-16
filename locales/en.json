@@ -5,13 +5,25 @@
       "ok": "Ok",
       "cancel": "Cancel",
       "confirm": "Confirm",
-      "submit": "Submit"
+      "submit": "Submit",
+      "create": "Create",
+      "update": "Update",
+      "remove": "Remove",
+      "save": "Save",
+      "continue_shopping_button": "Continue shopping",
+      "select": "Select"
     },
     "labels": {
+      "phone": "Phone",
+      "email": "Email",
       "quantity": "Quantity",
       "total": "Total",
       "compare": "Compare",
-      "product_price": "Your price"
+      "price": "Price",
+      "product_price": "Your price",
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "tax": "Tax"
     },
     "suffixes": {
       "product_price": " / each",
@@ -94,7 +106,7 @@
         "first_name_label": "First Name",
         "last_name_label": "Last Name",
         "work_email_label": "Work email",
-        "phone_label": "Phone",
+        "phone_label": "@:common.labels.phone",
         "country_label": "Country",
         "zip_label": "Zip / Postal code",
         "region_label": "Region",
@@ -123,7 +135,7 @@
         "password_must_match_message": "Passwords must match"
       },
       "forgot_password_form": {
-        "email_label": "Email",
+        "email_label": "@:common.labels.email",
         "email_placeholder": "Enter your e-mail",
         "submit_button": "@:common.buttons.submit"
       },
@@ -171,15 +183,15 @@
         "enter correct number_message": "enter correct number"
       },
       "cart_add_info_popup": {
-        "continue_shopping_button": "Continue shopping",
+        "continue_shopping_button": "@:common.buttons.continue_shopping_button",
         "view_cart_button": "View cart",
         "table": {
           "product_column": "Product",
-          "quantity_column": "@:common.labels.quantity",
+          " ": "@:common.labels.quantity",
           "total_column": "@:common.labels.total"
         },
-        "quantity_label": "@:common.labels.quantity:",
-        "total_label": "@:common.labels.total:"
+        "quantity_label": "@:common.labels.quantity",
+        "total_label": "@:common.labels.total"
       }
     },
     "catalog": {
@@ -202,7 +214,7 @@
         "price_block": {
           "title": "Price & Delivery",
           "add_to_list_button": "Add to list",
-          "send_email_button": "Email",
+          "send_email_button": "@:common.labels.email",
           "print_button": "Print"
         },
         "product_variation_card": {
@@ -210,7 +222,64 @@
         }
       }
     },
-    "checkout": {}
+    "checkout": {
+      "product_card": {
+        "brand_label": "Brand",
+        "price_label": "@:common.labels.price",
+        "total_label": "@:common.labels.total",
+        "update_button": "@:common.buttons.update",
+        "remove_button": "@:common.buttons.remove"
+      },
+      "empty_cart": {
+        "header": "Your cart is empty",
+        "continue_shopping_button": "@:common.buttons.continue_shopping_button"
+      },
+      "accepted_gifts": {
+        "gift_label": "Gift",
+        "quantity_label": "@:common.labels.quantity"
+      },
+      "create_address_dialog": {
+        "title": "Select address",
+        "cancel_button": "@:common.buttons.cancel",
+        "create_button": "@:common.buttons.create"
+      },
+      "order_summary": {
+        "title": "Order summary",
+        "subtotal_label": "@:common.labels.subtotal",
+        "discount_label": "@:common.labels.discount",
+        "tax_label": "@:common.labels.tax",
+        "shipping_label": "Shipping cost",
+        "total_label": "@:common.labels.total"
+      },
+      "payment-method-dialog": {
+        "cancel_button": "@:common.buttons.cancel",
+        "ok_button": "@:common.buttons.ok",
+        "select_button": "@:common.buttons.select"
+      },
+      "shipping_address_dialog": {
+        "cancel_button": "@:common.buttons.cancel",
+        "ok_button": "@:common.buttons.ok",
+        "save_button": "@:common.buttons.save",
+        "select_button": "@:common.buttons.select",
+        "add_address_button": "Add new address",
+        "phone_label": "@:common.labels.phone",
+        "email_label": "@:common.labels.email",
+        "no_addresses_message": "There are no addresses yet"
+      },
+      "shipping_method_dialog": {
+        "cancel_button": "@:common.buttons.cancel",
+        "ok_button": "@:common.buttons.ok",
+        "select_button": "@:common.buttons.select",
+        "price_label": "@:common.labels.price"
+      },
+      "thank_you": {
+        "header": "Order completed",
+        "success_order_message": "Order {0} has be successfully submitted. You will be notified via email when your order is ready for shipping",
+        "phone_label": "@:common.labels.phone",
+        "email_label": "@:common.labels.email",
+        "print_order": "Print order"
+      }
+    }
   },
   "pages": {}
 }
