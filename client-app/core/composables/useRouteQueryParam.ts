@@ -7,12 +7,13 @@ export default function useRouteQueryParam<T = LocationQueryValue | LocationQuer
   options: UseRouteQueryParamOptions<T> = {}
 ) {
   const {
+    onChange,
     validator,
     defaultValue,
     updateMethod = "push",
-    removeFalsyValues = false,
-    removeNullishValues = true,
-    removeDefaultValues = false,
+    removeFalsyValue = true,
+    removeNullishValue = true,
+    removeDefaultValue = true,
   } = options;
 
   const router = useRouter();
@@ -29,7 +30,7 @@ export default function useRouteQueryParam<T = LocationQueryValue | LocationQuer
       return value as T;
     },
 
-    set(value) {
+    async set(value) {
       const { hash, params, query } = router.currentRoute.value;
       const newLocation: Dictionary = {
         hash,
@@ -40,17 +41,24 @@ export default function useRouteQueryParam<T = LocationQueryValue | LocationQuer
       };
 
       if (
-        (removeFalsyValues && !value) ||
-        (removeNullishValues && value === null) ||
-        (removeDefaultValues && value === defaultValue)
+        (removeFalsyValue && !value) ||
+        (removeNullishValue && value === null) ||
+        (removeDefaultValue && value === defaultValue)
       ) {
         delete newLocation.query[key];
       } else {
         newLocation.query[key] = value;
       }
 
-      if (router.currentRoute.value.fullPath !== router.resolve(newLocation).fullPath) {
-        router[updateMethod](newLocation);
+      const mustBeDone = router.currentRoute.value.fullPath !== router.resolve(newLocation).fullPath;
+      let navigationFailure;
+
+      if (mustBeDone) {
+        navigationFailure = await router[updateMethod](newLocation);
+      }
+
+      if (onChange) {
+        await onChange(value, mustBeDone && !navigationFailure);
       }
     },
   });

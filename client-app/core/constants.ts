@@ -36,7 +36,7 @@ export const isoDateFormat = "YYYY-MM-DD";
 // Search
 export const pageSizes = [16, 32, 48];
 export const defaultPageSize = 16;
-export const defaultMobilePageSize = 8;
+export const defaultSearchPageSize = 20;
 export const startPageNumber = 1;
 export const ordersStatuses = ["New", "Cancelled", "Processing", "Completed", "Pending"];
 export const invoicesStatuses = ["New", "Paid"];

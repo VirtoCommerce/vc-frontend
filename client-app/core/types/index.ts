@@ -14,12 +14,13 @@ export type AnyAddressType = MemberAddressType | OrderAddressType | CartAddressT
 export type UseRouteQueryParamOptions<T = LocationQueryValue | LocationQueryValue[]> = {
   defaultValue?: T | null;
   validator?(queryValue: any): boolean;
+  onChange?(value: T, isChanged: boolean): void | Promise<void>;
   // @default push
   updateMethod?: "push" | "replace";
-  // @default false
-  removeFalsyValues?: boolean;
   // @default true
-  removeNullishValues?: boolean;
-  // @default false
-  removeDefaultValues?: boolean;
+  removeFalsyValue?: boolean;
+  // @default true
+  removeNullishValue?: boolean;
+  // @default true
+  removeDefaultValue?: boolean;
 };
