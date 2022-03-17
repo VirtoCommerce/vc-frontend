@@ -24,8 +24,8 @@
         >
           <div class="flex flex-col gap-4 lg:gap-5 overflow-hidden">
             <!-- Search results -->
-            <VcCard title="Filter results by">
-              <p class="text-sm pb-2">Search within these results</p>
+            <VcCard :title="$t('pages.catalog.search_card.title')">
+              <p class="text-sm pb-2" v-t="'pages.catalog.search_card.search_label'"></p>
               <div class="flex gap-3">
                 <input
                   v-model="keyword"
@@ -42,26 +42,26 @@
                   outline
                   size="sm"
                   @click="onSearchStart"
+                  v-t="'pages.catalog.search_card.search_button'"
                 >
-                  Go
                 </VcButton>
               </div>
             </VcCard>
 
             <!-- Previously purchased -->
-            <VcCard title="Previously purchased">
-              <VcCheckbox color="[color:var(--color-link)]">View previously purchased products</VcCheckbox>
+            <VcCard :title="$t('pages.catalog.purchased_filter_card.title')">
+              <VcCheckbox color="[color:var(--color-link)]">{{ $t("pages.catalog.purchased_filter_card.checkbox_label") }}</VcCheckbox>
             </VcCard>
 
             <!-- Branch availability -->
-            <VcCard title="Branch availability">
+            <VcCard :title="$t('pages.catalog.branch_availability_filter_card.title')">
               <p class="text-sm font-medium">
                 <span
                   class="text-[color:var(--color-link)] font-semibold cursor-pointer hover:text-[color:var(--color-link-hover)]"
                 >
-                  Select a pickup branch
+                  {{ $t("pages.catalog.branch_availability_filter_card.select_branch_link") }}
                 </span>
-                to see products in stock now.
+                {{ $t("pages.catalog.branch_availability_filter_card.select_branch_link_end") }}
               </p>
             </VcCard>
 
@@ -96,7 +96,7 @@
                 >
                   <div class="flex">
                     <span class="truncate">{{ item.label }}</span>
-                    <span class="ml-1">({{ item.count }})</span>
+                    <span class="ml-1">{{ $t("pages.catalog.facet_card.item_count_format", [item.count]) }}</span>
                   </div>
                 </VcCheckbox>
               </VcCard>
@@ -110,14 +110,14 @@
             <h2 class="text-gray-800 text-2xl lg:text-3xl font-bold uppercase">{{ selectedCategory?.label }}</h2>
 
             <p class="py-3">
-              <span class="font-extrabold">{{ total }} results found.</span>
+              <span class="font-extrabold">{{ $t("pages.catalog.products_found_message", [total]) }}</span>
             </p>
 
             <div class="flex justify-start mb-6 mt-4">
               <!-- Mobile filters toggler -->
               <div class="lg:hidden mr-3">
                 <VcButton class="px-4 font-extrabold" size="md" @click="mobileSidebarVisible = true">
-                  <i class="fas fa-filter mr-1"></i> Filters
+                  <i class="fas fa-filter mr-1"></i> {{ $t("pages.catalog.filters_button") }}
                 </VcButton>
               </div>
 
@@ -126,7 +126,7 @@
 
               <!-- Sorting -->
               <div class="flex items-center flex-grow md:flex-grow-0 ml-auto">
-                <span class="hidden lg:block shrink-0 mr-2">Sort by:</span>
+                <span class="hidden lg:block shrink-0 mr-2" v-t="'pages.catalog.sort_by_label'"></span>
 
                 <VcSelect
                   v-model="sortQueryParam"
@@ -158,8 +158,8 @@
                 :to="{ name: 'Product', params: { productId: item.id } }"
                 :class="{ 'w-full': viewModeQueryParam === 'list' }"
                 class="uppercase mb-4"
+                v-t="'pages.catalog.choose_button'"
               >
-                Choose
               </VcButton>
 
               <AddToCart v-else :product="item" />
@@ -216,6 +216,9 @@ import { AddToCart } from "@/shared/cart";
 import { useRouteQueryParam } from "@core/composables";
 import { defaultPageSize, productSortingList } from "@core/constants";
 import QueryParamName from "@core/query-param-name.enum";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const watchStopHandles: WatchStopHandle[] = [];
 
@@ -275,7 +278,7 @@ const searchParams = computed<ProductsSearchParams>(() => ({
 const isAppliedKeyword = computed<boolean>(() => keyword.value === keywordQueryParam.value);
 
 const breadcrumbsItems = computed<IBreadcrumbsItem[]>(() => {
-  const items: IBreadcrumbsItem[] = [{ url: "/", title: "Home" }];
+  const items: IBreadcrumbsItem[] = [{ url: "/", title: t("common.links.home") }];
 
   if (selectedCategory.value) {
     items.push({

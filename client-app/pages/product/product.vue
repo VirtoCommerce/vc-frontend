@@ -8,14 +8,14 @@
         <!-- todo: use VcButton -->
         <button class="border border-grey-200 rounded bg-white px-3 py-2 hover:bg-gray-100" @click="$router.back()">
           <i class="fas fa-chevron-left text-[color:var(--color-primary)]"></i
-          ><span class="ml-2 text-[color:var(--color-link)]">Back</span>
+          ><span class="ml-2 text-[color:var(--color-link)]">{{ $t("pages.product.back_button") }}</span>
         </button>
       </div>
 
       <h1 class="text-2xl md:text-4xl font-bold uppercase">{{ product.name }}</h1>
 
       <div v-if="!productWithVariations && !isMobile" class="text-sm mt-1">
-        Item # <span class="font-extrabold">{{ product.code }}</span>
+        {{ $t("pages.product.sku_label") }} <span class="font-extrabold">{{ product.code }}</span>
       </div>
 
       <div class="flex flex-col lg:flex-row lg:space-x-8 mt-5" :class="{ 'mb-6': !relatedProducts.length }">
@@ -27,7 +27,7 @@
           <!-- Price & Delivery (with variations) -->
           <ProductPriceBlock v-if="productWithVariations" :product="product">
             <div class="flex items-baseline justify-between text-sm">
-              <div class="font-extrabold text-base">Total in your cart:</div>
+              <div class="font-extrabold text-base" v-t="'pages.product.variations_total_label'"></div>
 
               <div class="font-extrabold">
                 <!-- todo: extract a component for price and use it here -->
@@ -36,18 +36,18 @@
             </div>
 
             <div class="mt-7 md:mt-5">
-              <VcButton to="/checkout" class="uppercase px-2 w-full">view cart</VcButton>
+              <VcButton to="/checkout" class="uppercase px-2 w-full" v-t="'pages.product.view_cart_button'"></VcButton>
             </div>
           </ProductPriceBlock>
 
           <!-- Price & Delivery (without variations) -->
           <ProductPriceBlock v-else :product="product">
             <div class="flex items-baseline justify-between text-sm">
-              <div class="font-extrabold text-base">Your price:</div>
+              <div class="font-extrabold text-base" v-t="'pages.product.price_label'"></div>
 
               <div>
                 <VcPriceDisplay :value="product.price?.actual" class="font-extrabold text-green-700" />
-                <span class="font-semibold hidden lg:inline-block ml-1">/ each</span>
+                <span class="font-semibold hidden lg:inline-block ml-1" v-t="'common.suffixes.product_price'"></span>
               </div>
             </div>
 
@@ -62,7 +62,7 @@
       <div v-show="relatedProducts.length" class="flex flex-col lg:flex-row lg:space-x-8 mt-10 lg:mt-6">
         <div class="flex flex-col -mx-5 md:mx-0 lg:w-8/12 xl:w-9/12">
           <VcSection
-            title="Related products"
+            :title="$t('pages.product.related_product_section_title')"
             icon-url="/static/images/checkout/products.svg"
             class="shadow-sm border rounded-none md:rounded"
           >
@@ -104,6 +104,9 @@ import {
   ProductPriceBlock,
   CarouselProductCard,
 } from "@/shared/catalog";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const Error404 = defineAsyncComponent(() => import("@/pages/404/404.vue"));
 
@@ -146,7 +149,7 @@ const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
 const isMobile = breakpoints.smaller("lg");
-const breadcrumbs: Ref<IBreadcrumbsItem[]> = ref([{ url: "/", title: "Home" }]);
+const breadcrumbs: Ref<IBreadcrumbsItem[]> = ref([{ url: "/", title: t("common.links.home") }]);
 
 const productWithVariations = computed<boolean>(() => !!product.value?.variations?.length);
 

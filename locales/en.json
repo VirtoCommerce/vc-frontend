@@ -13,7 +13,10 @@
       "edit": "Edit",
       "delete": "Delete",
       "continue_shopping_button": "Continue shopping",
-      "select": "Select"
+      "select": "Select",
+      "choose": "Choose",
+      "filters": "Filters",
+      "back": "Back"
     },
     "labels": {
       "actions": "Actions",
@@ -34,7 +37,9 @@
       "discount": "Discount",
       "tax": "Tax",
       "status": "Status",
-      "date": "Date"
+      "date": "Date",
+      "sort_by": "Sort by",
+      "sku": "Item #"
     },
     "suffixes": {
       "product_price": " / each",
@@ -43,6 +48,9 @@
     },
     "placeholders": {
       "not_selected": "Not selected"
+    },
+    "links": {
+      "home": "Home"
     }
   },
   "shared": {
@@ -217,7 +225,7 @@
         "label": "Results per page:"
       },
       "product_card": {
-        "product_sku_label": "Item #",
+        "product_sku_label": "@:common.labels.sku",
         "manufacture_model_label": "Mfr. model #",
         "price_label": "@:common.labels.product_price"
       },
@@ -460,6 +468,38 @@
         "email_placeholder": "@:common.labels.email",
         "update_button": "@:common.buttons.update"
       }
+    },
+    "catalog": {
+      "search_card": {
+        "title": "Filter results by",
+        "search_label": "Search within these results",
+        "search_button": "Go"
+      },
+      "purchased_filter_card": {
+        "title": "Previously purchased",
+        "checkbox_label": "View previously purchased products"
+      },
+      "branch_availability_filter_card": {
+        "title": "Branch availability",
+        "select_branch_link": "Select a pickup branch",
+        "select_branch_link_end": "to see products in stock now."
+      },
+      "facet_card": {
+        "item_count_format": "({0})"
+      },
+      "products_found_message": "{0} results found.",
+      "products_found_message2": "{0} displayed that include {1} products.",
+      "filters_button": "@:common.buttons.filters",
+      "sort_by_label": "@:common.labels.sort_by{':'}",
+      "choose_button": "@:common.buttons.choose"
+    },
+    "product": {
+      "back_button": "@:common.buttons.back",
+      "sku_label": "@:common.labels.sku",
+      "variations_total_label": "Total in your cart:",
+      "view_cart_button": "view cart",
+      "related_product_section_title": "Related products",
+      "price_label": "@:common.labels.product_price{':'}"
     }
   }
 }
