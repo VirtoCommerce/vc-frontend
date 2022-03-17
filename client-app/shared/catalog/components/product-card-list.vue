@@ -18,7 +18,10 @@
         </router-link>
 
         <!-- Compare checkbox -->
-        <label class="flex-grow hidden md:inline-flex items-center text-sm cursor-pointer">
+        <label
+          v-if="$cfg.product_compare_enabled"
+          class="flex-grow hidden md:inline-flex items-center text-sm cursor-pointer"
+        >
           <input
             type="checkbox"
             class="form-tick appearance-none w-5 h-5 border-2 border-gray-300 rounded-sm checked:bg-[color:var(--color-link)] checked:border-transparent focus:outline-none cursor-pointer"

@@ -1,6 +1,5 @@
 import { CartAddressType, MemberAddressType, OrderAddressType } from "@core/api/graphql/types";
 import { LocationQueryValue } from "vue-router";
-import { string } from "yup";
 
 export type Dictionary = { [key: string | symbol | number]: any };
 
@@ -137,4 +136,18 @@ export interface IThemeConfigPreset {
   color_footer_bottom_text?: string;
   color_footer_bottom_link?: string;
   color_footer_bottom_link_hover?: string;
+}
+
+export interface IThemeContext {
+  baseUrl?: string;
+  storeId?: string;
+  storeName?: string;
+  language?: string;
+  availLanguages?: string[];
+  catalogId?: string;
+  currency?: string;
+  availCurrencies?: string[];
+  userId?: string;
+  userName?: string;
+  settings?: { key: string; value: unknown }[];
 }

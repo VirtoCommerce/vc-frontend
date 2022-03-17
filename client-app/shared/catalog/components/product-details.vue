@@ -4,7 +4,7 @@
       <VcImageGallery :src="product.imgSrc ?? ''" :images="product.images ?? []" :is-mobile="isMobile" />
 
       <!-- Compare checkbox -->
-      <div class="mt-8 hidden md:flex items-center text-sm cursor-pointer">
+      <div v-if="$cfg.product_compare_enabled" class="mt-8 hidden md:flex items-center text-sm cursor-pointer">
         <input
           type="checkbox"
           class="form-tick appearance-none w-5 h-5 border-2 border-gray-300 rounded-sm checked:bg-[color:var(--color-link)] checked:border-transparent focus:outline-none cursor-pointer"

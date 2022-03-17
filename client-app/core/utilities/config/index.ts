@@ -1,12 +1,16 @@
 import { IThemeConfig, IThemeConfigPreset } from "@/core/types";
 
+export let cfg: IThemeConfigPreset = {};
+
 export async function initCfg(file = "/static/config/settings_data.json"): Promise<IThemeConfigPreset> {
-  const cfg = (await (await fetch(file)).json()) as IThemeConfig;
-  const preset = cfg.current;
+  const config = (await (await fetch(file)).json()) as IThemeConfig;
+  const preset = config.current;
 
   if (typeof preset === "string") {
-    return cfg.presets[preset];
+    cfg = config.presets[preset];
   } else {
-    return preset;
+    cfg = preset;
   }
+
+  return cfg;
 }
