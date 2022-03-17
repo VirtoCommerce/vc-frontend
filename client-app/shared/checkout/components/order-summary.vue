@@ -17,7 +17,7 @@
         <div class="py-2 border-t border-b font-normal text-base">
           <div class="flex justify-between" @click="discountsCollapsed = !discountsCollapsed">
             <span class="flex items-center" :class="{ 'cursor-pointer': cart.discounts && cart.discounts.length > 0 }">
-              $t('shared.checkout.order_summary.discount_label')
+              {{ $t("shared.checkout.order_summary.discount_label") }}
               <i
                 v-if="cart.discounts && cart.discounts.length > 0 && !discountsCollapsed"
                 class="fas fa-caret-down ml-1 text-[color:var(--color-primary)]"

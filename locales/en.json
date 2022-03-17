@@ -11,6 +11,7 @@
       "remove": "Remove",
       "save": "Save",
       "edit": "Edit",
+      "change": "Change",
       "delete": "Delete",
       "continue_shopping_button": "Continue shopping",
       "select": "Select",
@@ -500,6 +501,63 @@
       "view_cart_button": "view cart",
       "related_product_section_title": "Related products",
       "price_label": "@:common.labels.product_price{':'}"
+    },
+    "checkout": {
+      "title": "Checkout",
+      "products_section": {
+        "title": "My products",
+        "update_all_link_label": "If you changed multiple quantities,",
+        "update_all_link": "Update All"
+      },
+      "shipping_details_section": {
+        "title": "Shipping details",
+        "shipping_address_block": {
+          "title": "Shipping address",
+          "change_button": "@:common.buttons.change",
+          "phone_label": "Phone:",
+          "email_label": "Email:",
+          "no_addresses_message": "You do not have a shipping address. Please choose/create a new one.",
+          "add_address_button": "New address"
+        },
+        "shipping_method_block": {
+          "title": "Shipping method",
+          "not_defined_message": "Not defined",
+          "change_button": "Change"
+        }
+      },
+      "payment_details_section": {
+        "title": "Payment details",
+        "billing_address_block": {
+          "title": "Billing address",
+          "same_as_shipping_checkbox_label": "Same as shipping address",
+          "no_addresses_message": "You do not have a billing address. Please choose/create a new one.",
+          "add_address_button": "New address",
+          "phone_label": "Phone:",
+          "email_label": "Email:",
+          "change_button": "Change"
+        },
+        "payment_method_block": {
+          "title": "Payment method",
+          "not_defined_message": "Not defined",
+          "change_button": "Change"
+        }
+      },
+      "extra_section": {
+        "title": "Extra",
+        "comment_label": "Order comments"
+      },
+      "gifts_section": {
+        "title": "+ Add a Gift"
+      },
+      "order_summary_block": {
+        "purchase_order_label": "Purchase order",
+        "purchase_order_placeholder": "Enter purchase order number",
+        "promotion_code_label": "Promotion code",
+        "promotion_code_placeholder": "Enter your code",
+        "warning_message": "Availability, shipping, tax & promotions are not final until you complete your order.",
+        "place_order_button": "Place order"
+      },
+      "invalid_cuppon_message": "This code did not match any active coupon. Was it entered correctly?"
     }
   }
 }
