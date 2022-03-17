@@ -305,6 +305,27 @@
     }
   },
   "pages": {
+    "home": {
+      "sign_in_form_title": "Sign in",
+      "main_banner_block": {
+        "message": "We can help you <br />to make the right<br />and wise decisions",
+        "key_feature_1": "Result oriented",
+        "key_feature_2": "Trustworthy",
+        "key_feature_3": "Reliable"
+      },
+      "feature_descriptions_block": {
+        "title": "Professional purchases have never been that easy",
+        "feature_1": "Corporate account management",
+        "feature_2": "Quote management price negotiation",
+        "feature_3": "Multiple stores, channels and regions",
+        "feature_4": "B2B personalization and price management"
+      },
+      "subscription_block": {
+        "subscribe_now": "subscribe now!",
+        "email_placeholder": "Enter E-mail",
+        "subscribe_button": "Subscribe"
+      }
+    },
     "403": {
       "header_1": "403",
       "header_2": "Access denied",
@@ -562,7 +583,7 @@
     "search": {
       "header": "Your search for \"<strong>{0}</strong>\" revealed the following",
       "sort_by_label": "@:common.labels.sort_by",
-      "choose_button": "Choose",
+      "choose_button": "@:common.buttons.choose",
       "no_results_message": "No results were found for your \"<strong>{0}</strong>\" query",
       "home_button": "@:common.buttons.home"
     }
