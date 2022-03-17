@@ -89,7 +89,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch, onMounted, ref } from "vue";
+import { computed, watch, onMounted, ref, onBeforeUnmount } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { DisplayProducts, ProductsSearchParams, useProducts, ViewMode } from "@/shared/catalog";
 import { VcButton, VcInfinityScrollLoader, VcSelect, VcScrollTopButton } from "@/components";
@@ -102,6 +102,7 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const { fetchProducts, fetchMoreProducts, loading, loadingMore, products, pages } = useProducts();
 
 const isMobile = breakpoints.smaller("md");
+const activeWatching = ref(false);
 const page = ref(1);
 const itemsPerPage = ref(defaultSearchPageSize);
 
@@ -145,11 +146,24 @@ async function loadMoreProducts() {
   });
 }
 
-onMounted(loadProducts);
+onMounted(async () => {
+  await loadProducts();
+
+  // Watch for changes after initial data load
+  activeWatching.value = true;
+});
+
+onBeforeUnmount(() => {
+  activeWatching.value = false;
+});
 
 watch(
   computed(() => JSON.stringify(searchParams.value)),
-  loadProducts,
+  () => {
+    if (activeWatching.value) {
+      loadProducts();
+    }
+  },
   {
     flush: "post",
   }

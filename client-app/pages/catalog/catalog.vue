@@ -179,7 +179,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, shallowRef, watch, onMounted, watchEffect, PropType } from "vue";
+import { computed, ref, shallowRef, watch, onMounted, watchEffect, PropType, onBeforeUnmount } from "vue";
 import { breakpointsTailwind, useBreakpoints, whenever } from "@vueuse/core";
 import {
   Breadcrumbs,
@@ -222,6 +222,7 @@ const isMobile = breakpoints.smaller("md");
 const isMobileSidebar = breakpoints.smaller("lg");
 const mobileSidebarVisible = ref(false);
 const sidebarElement = shallowRef<HTMLElement | null>(null);
+const activeWatching = ref(false);
 const keyword = ref("");
 const page = ref(1);
 const itemsPerPage = ref(defaultPageSize);
@@ -318,6 +319,13 @@ onMounted(async () => {
   await loadCategoriesTree(""); // TODO: use active category key instead of id
   selectCategoryBySeoUrl(categorySeoUrl.value);
   await loadProducts();
+
+  // Watch for changes after initial data load
+  activeWatching.value = true;
+});
+
+onBeforeUnmount(() => {
+  activeWatching.value = false;
 });
 
 watchEffect(() => (keyword.value = keywordQueryParam.value ?? ""));
@@ -326,7 +334,11 @@ watch(categorySeoUrl, selectCategoryBySeoUrl);
 
 watch(
   computed(() => JSON.stringify(searchParams.value)),
-  loadProducts,
+  () => {
+    if (activeWatching.value) {
+      loadProducts();
+    }
+  },
   {
     flush: "post",
   }

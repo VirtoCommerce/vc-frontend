@@ -9,12 +9,15 @@ import { MaybeRef } from "@vueuse/core";
  * https://github.com/VirtoCommerce/vc-module-experience-api/blob/master/docs/x-catalog-reference.md#filter-by-price
  */
 function getFilterExpressionFromFacetRange(facetRange: FacetRangeType): string {
-  const { from, to } = facetRange;
+  const { from, to, includeFrom, includeTo } = facetRange;
 
-  const firstCondition = from ? `[${from} ` : "(";
-  const lastCondition = to ? ` ${to}]` : ")";
+  const firstBracket = includeFrom ? "[" : "(";
+  const lastBracket = includeTo ? "]" : ")";
 
-  return `${firstCondition}TO${lastCondition}`;
+  const fromStr = from ? `${from} ` : "";
+  const toStr = to ? ` ${to}` : "";
+
+  return `${firstBracket}${fromStr}TO${toStr}${lastBracket}`;
 }
 
 export function toFilterExpression(filters: MaybeRef<ProductsFilter[]>) {
