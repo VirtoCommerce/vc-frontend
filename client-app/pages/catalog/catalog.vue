@@ -179,7 +179,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, shallowRef, watch, onMounted, watchEffect, PropType, onBeforeUnmount } from "vue";
+import {
+  computed,
+  ref,
+  shallowRef,
+  watch,
+  onMounted,
+  watchEffect,
+  PropType,
+  onBeforeUnmount,
+  WatchStopHandle,
+} from "vue";
 import { breakpointsTailwind, useBreakpoints, whenever } from "@vueuse/core";
 import {
   Breadcrumbs,
@@ -205,6 +215,8 @@ import { useRouteQueryParam } from "@core/composables";
 import { defaultPageSize, productSortingList } from "@core/constants";
 import QueryParamName from "@core/query-param-name.enum";
 
+const watchStopHandles: WatchStopHandle[] = [];
+
 const props = defineProps({
   categorySeoUrls: {
     type: [String, Array] as PropType<string | string[]>,
@@ -222,7 +234,6 @@ const isMobile = breakpoints.smaller("md");
 const isMobileSidebar = breakpoints.smaller("lg");
 const mobileSidebarVisible = ref(false);
 const sidebarElement = shallowRef<HTMLElement | null>(null);
-const activeWatching = ref(false);
 const keyword = ref("");
 const page = ref(1);
 const itemsPerPage = ref(defaultPageSize);
@@ -320,27 +331,31 @@ onMounted(async () => {
   selectCategoryBySeoUrl(categorySeoUrl.value);
   await loadProducts();
 
-  // Watch for changes after initial data load
-  activeWatching.value = true;
+  // Start change tracking after initial data load
+  watchStopHandles.push(
+    /**
+     * You must force the watch to stop before unmounting the component
+     * because the computed value being watched includes the global reactive object.
+     * In this case, it is the "current route" inside the "useRouteQueryParam" function.
+     *
+     * Related links:
+     * https://github.com/vuejs/core/issues/2291
+     */
+    watch(
+      computed(() => JSON.stringify(searchParams.value)),
+      loadProducts,
+      {
+        flush: "post",
+      }
+    )
+  );
 });
 
 onBeforeUnmount(() => {
-  activeWatching.value = false;
+  watchStopHandles.forEach((watchStopHandle) => watchStopHandle());
 });
 
 watchEffect(() => (keyword.value = keywordQueryParam.value ?? ""));
 whenever(() => !isMobileSidebar.value, hideMobileSidebar);
 watch(categorySeoUrl, selectCategoryBySeoUrl);
-
-watch(
-  computed(() => JSON.stringify(searchParams.value)),
-  () => {
-    if (activeWatching.value) {
-      loadProducts();
-    }
-  },
-  {
-    flush: "post",
-  }
-);
 </script>
