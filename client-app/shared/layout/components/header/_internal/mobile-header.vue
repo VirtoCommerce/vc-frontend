@@ -55,7 +55,6 @@ import MobileMenu from "./mobile-menu.vue";
 import { useRouteQueryParam } from "@core/composables";
 import QueryParamName from "@core/query-param-name.enum";
 import { whenever } from "@vueuse/core";
-import { defaultMobilePageSize } from "@core/constants";
 
 const { searchBarVisible, showSearchBar, hideSearchBar } = useSearchBar();
 
@@ -67,7 +66,6 @@ const searchPageLink = computed<RouteLocationRaw>(() => ({
   name: "Search",
   query: {
     [QueryParamName.SearchPhrase]: searchPhrase.value,
-    [QueryParamName.ItemsPerPage]: defaultMobilePageSize,
   },
 }));
 

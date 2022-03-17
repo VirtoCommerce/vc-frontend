@@ -14,13 +14,17 @@ export default (
   const { withFilters = false } = options;
 
   const loading: Ref<boolean> = ref(true);
+  const loadingMore: Ref<boolean> = ref(false);
   const products: Ref<Product[]> = shallowRef([]);
   const filters: Ref<ProductsFilter[]> = shallowRef([]);
   const total: Ref<number> = ref(0);
-  const pages: Ref<number> = ref(0);
+  const pages: Ref<number> = ref(1);
 
   async function fetchProducts(searchParams: Partial<ProductsSearchParams>) {
     loading.value = true;
+    products.value = [];
+    total.value = 0;
+    pages.value = 1;
 
     try {
       const {
@@ -48,12 +52,31 @@ export default (
     }
   }
 
+  async function fetchMoreProducts(searchParams: Partial<ProductsSearchParams>) {
+    loadingMore.value = true;
+
+    try {
+      const { items = [], totalCount = 0 } = await searchProducts(searchParams);
+
+      products.value = products.value.concat(items);
+      total.value = totalCount;
+      pages.value = Math.ceil(total.value / (searchParams.itemsPerPage || 16));
+    } catch (e) {
+      Logger.error(`useProducts.${fetchMoreProducts.name}`, e);
+      throw e;
+    } finally {
+      loadingMore.value = false;
+    }
+  }
+
   return {
     filters,
     fetchProducts,
+    fetchMoreProducts,
     total: readonly(total),
     pages: readonly(pages),
     loading: readonly(loading),
+    loadingMore: readonly(loadingMore),
     products: computed(() => products.value),
   };
 };

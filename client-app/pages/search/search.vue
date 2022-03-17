@@ -13,18 +13,16 @@
 
               <div class="flex justify-start mb-6 mt-4">
                 <!-- View options -->
-                <ViewMode v-model:mode="viewMode" class="hidden md:inline-flex mr-6" />
-
-                <!-- Page size -->
-                <PageSize v-model:size="itemsPerPage" class="hidden md:flex" />
+                <ViewMode v-model:mode="viewModeQueryParam" class="hidden md:inline-flex mr-6" />
 
                 <!-- Sorting -->
                 <div class="flex items-center flex-grow md:flex-grow-0 ml-auto">
                   <span class="shrink-0 mr-2">Sort by:</span>
 
                   <VcSelect
-                    v-model="sort"
+                    v-model="sortQueryParam"
                     text-field="name"
+                    value-field="id"
                     :is-disabled="loading"
                     :items="productSortingList"
                     class="w-full md:w-52 lg:w-64"
@@ -36,20 +34,20 @@
             <!-- Products -->
             <DisplayProducts
               :loading="loading"
-              :view-mode="viewMode"
+              :view-mode="viewModeQueryParam"
               :items-per-page="itemsPerPage"
               :products="products"
               :class="
-                viewMode === 'list'
+                viewModeQueryParam === 'list'
                   ? 'space-y-5'
-                  : 'grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-6 lg:gap-x-6 lg:gap-y-8'
+                  : 'grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-5 xl:gap-x-6 xl:gap-y-8'
               "
             >
               <template #cart-handler="{ item }">
                 <VcButton
                   v-if="item.hasVariations"
                   :to="{ name: 'Product', params: { productId: item.id } }"
-                  :class="{ 'w-full': viewMode === 'list' }"
+                  :class="{ 'w-full': viewModeQueryParam === 'list' }"
                   class="uppercase mb-4"
                 >
                   Choose
@@ -59,18 +57,13 @@
               </template>
             </DisplayProducts>
 
-            <!-- VcPagination and options bottom block -->
-            <div class="flex justify-center md:justify-between pt-11">
-              <VcPagination v-model:page="page" :pages="pages" />
-
-              <div class="flex">
-                <!-- View options -->
-                <ViewMode v-model:mode="viewMode" class="hidden md:inline-flex mr-6" />
-
-                <!-- Page size -->
-                <PageSize v-model:size="itemsPerPage" class="hidden md:flex" />
-              </div>
-            </div>
+            <VcInfinityScrollLoader
+              v-if="!loading"
+              :loading="loadingMore"
+              distance="400"
+              class="mt-9 -mb-6"
+              @visible="loadMoreProducts"
+            />
           </template>
 
           <!-- Not found -->
@@ -95,99 +88,69 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch, onMounted } from "vue";
-import { breakpointsTailwind, debouncedWatch, useBreakpoints } from "@vueuse/core";
-import { PageSize, DisplayProducts, useProducts, useProductsSearchParams, ViewMode } from "@/shared/catalog";
-import { VcButton, VcPagination, VcSelect } from "@/components";
+import { computed, watch, onMounted, ref } from "vue";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { DisplayProducts, ProductsSearchParams, useProducts, ViewMode } from "@/shared/catalog";
+import { VcButton, VcInfinityScrollLoader, VcSelect } from "@/components";
 import { AddToCart } from "@/shared/cart";
 import { useRouteQueryParam } from "@core/composables";
-import { defaultMobilePageSize, defaultPageSize, pageSizes, productSortingList } from "@core/constants";
+import { defaultSearchPageSize, productSortingList } from "@core/constants";
+import QueryParamName from "@core/query-param-name.enum";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { fetchProducts, loading, products, pages } = useProducts();
-const { searchParams, updateSearchParams } = useProductsSearchParams({
-  defaultSortBy: productSortingList[0].id,
-  sortList: productSortingList.map((item) => item.id),
-  defaultItemsPerPage: defaultPageSize,
-  itemsPerPageList: [...pageSizes, /* for mobile */ defaultMobilePageSize],
-});
+const { fetchProducts, fetchMoreProducts, loading, loadingMore, products, pages } = useProducts();
 
 const isMobile = breakpoints.smaller("md");
+const page = ref(1);
+const itemsPerPage = ref(defaultSearchPageSize);
 
-const viewMode = useRouteQueryParam<"grid" | "list">("viewMode", {
+const viewModeQueryParam = useRouteQueryParam<"grid" | "list">("viewMode", {
   defaultValue: "grid",
   validator: (value) => (isMobile.value ? false : ["grid", "list"].includes(value)),
 });
 
-const page = computed<number>({
-  get: () => searchParams.value.page,
-  set(value) {
-    updateSearchParams({
-      page: value,
-    });
-  },
+const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
+  defaultValue: productSortingList[0].id,
+  validator: (value) => productSortingList.some((item) => item.id === value),
 });
 
-const itemsPerPage = computed<number>({
-  get: () => searchParams.value.itemsPerPage,
-  set(value) {
-    updateSearchParams({
-      itemsPerPage: value,
-      page: 1,
-    });
-  },
+const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.SearchPhrase, {
+  defaultValue: "",
 });
 
-const sort = computed<typeof productSortingList[0]>({
-  get: () => productSortingList.find((item) => item.id === searchParams.value.sort)!,
-  set(value) {
-    updateSearchParams({
-      sort: value.id,
-      page: 1,
-    });
-  },
-});
+const searchParams = computed<ProductsSearchParams>(() => ({
+  itemsPerPage: itemsPerPage.value,
+  sort: sortQueryParam.value,
+  keyword: keywordQueryParam.value,
+}));
 
 async function loadProducts() {
+  page.value = 1;
   await fetchProducts(searchParams.value);
 }
 
-onMounted(async () => {
-  // Check the number of items on the page
-  if (isMobile.value && itemsPerPage.value !== defaultMobilePageSize) {
-    await updateSearchParams(
-      {
-        itemsPerPage: defaultMobilePageSize,
-        page: 1,
-      },
-      "replace"
-    );
-  } else if (!isMobile.value && !pageSizes.includes(itemsPerPage.value)) {
-    await updateSearchParams(
-      {
-        itemsPerPage: defaultPageSize,
-        page: 1,
-      },
-      "replace"
-    );
-  } else {
-    await loadProducts();
+async function loadMoreProducts() {
+  if (page.value === pages.value) {
+    return;
   }
 
-  // Handle window resize to fix parameters on mobile view
-  watch(isMobile, (mobileView) => {
-    updateSearchParams(
-      {
-        itemsPerPage: mobileView ? defaultMobilePageSize : defaultPageSize,
-        page: 1,
-      },
-      "replace"
-    );
-  });
-});
+  const nextPage = page.value + 1;
 
-debouncedWatch(() => JSON.stringify(searchParams.value), loadProducts, {
-  flush: "post",
-  debounce: 200,
-});
+  page.value = nextPage;
+
+  await fetchMoreProducts({
+    ...searchParams.value,
+    page: nextPage,
+  });
+}
+
+onMounted(loadProducts);
+
+watch(
+  computed(() => JSON.stringify(searchParams.value)),
+  loadProducts,
+  {
+    flush: "post",
+  }
+);
 </script>
