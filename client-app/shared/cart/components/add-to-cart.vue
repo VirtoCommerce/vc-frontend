@@ -79,7 +79,7 @@ const maxQty = Math.min(
 const emit = defineEmits(["update:lineitem"]);
 
 const { addToCart, itemInCart, changeItemQuantity } = useCart();
-const { openPopup } = usePopup();
+const { openPopup, closePopup } = usePopup();
 
 const disabled = computed(
   () =>
@@ -124,6 +124,7 @@ const onChange = async () => {
       lineItem.value = itemInCart(props.product.id!);
       emit("update:lineitem", lineItem.value);
 
+      closePopup();
       openPopup({
         component: CartAddInfo,
         props: {
