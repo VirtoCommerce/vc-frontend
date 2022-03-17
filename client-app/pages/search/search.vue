@@ -64,11 +64,7 @@
               class="mt-9 -mb-6"
               @visible="loadMoreProducts"
             />
-            <i
-              v-if="showScrollButton"
-              class="fas fa-arrow-circle-up text-primary-300 cursor-pointer hover:text-primary-500 text-5xl z-20 fixed bottom-10 right-3"
-              @click="scrollToTop"
-            ></i>
+            <VcScrollTopButton></VcScrollTopButton>
           </template>
 
           <!-- Not found -->
@@ -96,7 +92,7 @@
 import { computed, watch, onMounted, ref } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { DisplayProducts, ProductsSearchParams, useProducts, ViewMode } from "@/shared/catalog";
-import { VcButton, VcInfinityScrollLoader, VcSelect } from "@/components";
+import { VcButton, VcInfinityScrollLoader, VcSelect, VcScrollTopButton } from "@/components";
 import { AddToCart } from "@/shared/cart";
 import { useRouteQueryParam } from "@core/composables";
 import { defaultSearchPageSize, productSortingList } from "@core/constants";
@@ -108,7 +104,6 @@ const { fetchProducts, fetchMoreProducts, loading, loadingMore, products, pages 
 const isMobile = breakpoints.smaller("md");
 const page = ref(1);
 const itemsPerPage = ref(defaultSearchPageSize);
-const showScrollButton = ref(false);
 
 const viewModeQueryParam = useRouteQueryParam<"grid" | "list">("viewMode", {
   defaultValue: "grid",
@@ -129,13 +124,6 @@ const searchParams = computed<ProductsSearchParams>(() => ({
   sort: sortQueryParam.value,
   keyword: keywordQueryParam.value,
 }));
-
-const scrollToTop = () => {
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth",
-  });
-};
 
 async function loadProducts() {
   page.value = 1;
@@ -167,11 +155,4 @@ watch(
   }
 );
 
-window.onscroll = () => {
-  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-    showScrollButton.value = true;
-  } else {
-    showScrollButton.value = false;
-  }
-};
 </script>

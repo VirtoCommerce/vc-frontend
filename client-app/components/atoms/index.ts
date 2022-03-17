@@ -13,3 +13,4 @@ export { default as VcSelect } from "./select/select.vue";
 export { default as VcRadioButton } from "./radio-button/radio-button.vue";
 export { default as VcActionInput } from "./action-input/action-input.vue";
 export { default as VcTabs } from "./tabs/tabs.vue";
+export { default as VcScrollTopButton } from "./scroll-top-button/scroll-top-button.vue";
