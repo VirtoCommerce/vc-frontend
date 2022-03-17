@@ -305,6 +305,24 @@
     }
   },
   "pages": {
+    "403": {
+      "header_1": "403",
+      "header_2": "Access denied",
+      "message": "You don't have permission to access requested page.",
+      "home_button": "@:common.buttons.home"
+    },
+    "404": {
+      "header_1": "404",
+      "header_2": "Page Not Found",
+      "message": "We suggest you back to home.",
+      "home_button": "@:common.buttons.home"
+    },
+    "500": {
+      "header_1": "500",
+      "header_2": "Internal Server Error",
+      "message": "We suggest you back to home.",
+      "home_button": "@:common.buttons.home"
+    },
     "home": {
       "sign_in_form_title": "Sign in",
       "main_banner_block": {
@@ -325,24 +343,6 @@
         "email_placeholder": "Enter E-mail",
         "subscribe_button": "Subscribe"
       }
-    },
-    "403": {
-      "header_1": "403",
-      "header_2": "Access denied",
-      "message": "You don't have permission to access requested page.",
-      "home_button": "@:common.buttons.home"
-    },
-    "404": {
-      "header_1": "404",
-      "header_2": "Page Not Found",
-      "message": "We suggest you back to home.",
-      "home_button": "@:common.buttons.home"
-    },
-    "500": {
-      "header_1": "500",
-      "header_2": "Internal Server Error",
-      "message": "We suggest you back to home.",
-      "home_button": "@:common.buttons.home"
     },
     "forgot_password": {
       "header": "reset your password",
@@ -586,6 +586,57 @@
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "No results were found for your \"<strong>{0}</strong>\" query",
       "home_button": "@:common.buttons.home"
+    },
+    "demo_landing": {
+      "header": "Gaming laptop market overview",
+      "primary_block": {
+        "primary_text": "Professional purchases have never been that easy",
+        "secondary_text": "Anything you dream about is possible to realise just at the moment when you decide to win",
+        "first_button": "Learn more",
+        "second_button": "Get in touch"
+      },
+      "secondary_block": {
+        "primary_text": "Readability is primarily the concern of designer",
+        "secondary_text": "In quo enim maxime consuevit iactare vestra se repellere, idque instituit docere sic: omne animal, simul atque insitam in liberos atque haec ratio late patet in quo quaerimus, non ero tibique, si ob rem aperiam eaque ipsa, quae sunt in gravissimo bello animadversionis metu contineret."
+      },
+      "features_block": {
+        "primary_text": "Explore the features",
+        "secondary_text": "With a crystal-clear camera, real-time HD video display, and intuitive flight controls, what will you create?",
+        "feature_1": {
+          "title": "Epic Aerial Video",
+          "text": "With the Phantom 3 Professional, you're shooting 4K video at up to 30 frames per second and capturing 12 megapixel photos."
+        },
+        "feature_2": {
+          "title": "Live HD View",
+          "text": "Simply connect your phone or tablet, and a 720p HD view of everything your camera sees as you fly is displayed live."
+        },
+        "feature_3": {
+          "title": "Complete Control",
+          "text": " Keep your Phantom 3 fully under your command while accessing the most-used features right on the included remote"
+        }
+      },
+      "booking_block": {
+        "message": "Book a free e-commerce consulting",
+        "first_button": "Learn more",
+        "second_button": "Get in touch"
+      },
+      "products_block": {
+        "title": "Game laptops",
+        "message": "With a crystal-clear camera, real-time HD video display, and intuitive flight controls, what will you create?",
+        "choose_button": "Choose"
+      },
+      "after_products_block": {
+        "primary_text": "Readability is primarily the concern of designer",
+        "secondary_text": "In quo enim maxime consuevit iactare vestra se repellere, idque instituit docere sic: omne animal, simul atque insitam in liberos atque haec ratio late patet in quo quaerimus, non ero tibique, si ob rem aperiam eaque ipsa, quae sunt in gravissimo bello animadversionis metu contineret."
+      },
+      "subscription_block": {
+        "primary_text": "Subscribe to our promotions",
+        "secondary_text": "And be among the first to hear about upcoming events.",
+        "input_placeholder": "tanya.hill{'@'}example.com",
+        "agreement_checkbox_label": "By clicking \"Submit\" I understand that I consent to opt-in to the",
+        "terms_and_policy_link": "Terms and Policy",
+        "submit_button": "@:common.buttons.submit"
+      }
     }
   }
 }
