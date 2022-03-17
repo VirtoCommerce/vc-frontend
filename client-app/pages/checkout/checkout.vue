@@ -307,6 +307,10 @@
                 >
                   Place order
                 </VcButton>
+                <div v-if="!isValidCheckout" class="flex space-x-2 bg-primary-100 rounded mt-3 p-3 text-xs">
+                  <i class="fas fa-exclamation-triangle text-xl text-primary-600"></i>
+                  <span>There is something wrong in Cart. Please verify it to place order.</span>
+                </div>
               </template>
             </OrderSummary>
           </div>
