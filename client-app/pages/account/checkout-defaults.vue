@@ -10,44 +10,53 @@
         <!-- Second column-->
         <div class="flex flex-col w-full lg:w-4/5 space-y-5">
           <div class="flex justify-between items-center mx-5 lg:mx-0">
-            <h2 class="text-gray-800 text-3xl font-bold uppercase">Checkout Defaults</h2>
+            <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.account.checkout_defaults.title'"></h2>
           </div>
           <div class="bg-white shadow-sm rounded border px-7 py-7 md:px-9 md:py-8">
             <div v-if="!loading" class="flex flex-col lg:w-1/2">
-              <div class="font-bold">Preferred Delivery Method</div>
+              <div class="font-bold" v-t="'pages.account.checkout_defaults.select_delivery_method_label'"></div>
               <div class="mt-3 md:mt-1 flex flex-col space-y-5 md:space-y-0 md:flex-row md:space-x-7">
                 <VcRadioButton
                   id="shipping"
                   v-model="checkoutDefaults.deliveryMethod"
                   value="shipping"
-                  label="Shipping"
+                  :label="$t('pages.account.checkout_defaults.shipping_radio_label')"
                 />
-                <VcRadioButton id="pickup" v-model="checkoutDefaults.deliveryMethod" value="pickup" label="Pickup" />
+                <VcRadioButton
+                  id="pickup"
+                  v-model="checkoutDefaults.deliveryMethod"
+                  value="pickup"
+                  :label="$t('pages.account.checkout_defaults.pickup_radio_label')"
+                />
               </div>
               <VcSelect
                 v-model="checkoutDefaults.paymentMethod"
                 text-field="code"
                 :items="paymentMethods"
-                label="Preferred Payment Method"
-                placeholder="Please select preferred Payment Method"
+                :label="$t('pages.account.checkout_defaults.payment_method_label')"
+                :placeholder="$t('pages.account.checkout_defaults.payment_method_placeholder')"
                 class="mt-8 w-full"
                 size="lg"
               >
-                <template #first>Not selected</template>
+                <template #first>{{ $t("pages.account.checkout_defaults.not_selected_placeholder") }}</template>
               </VcSelect>
               <VcSelect
                 v-model="checkoutDefaults.shippingMethod"
                 :items="shippingMethods"
-                label="Preferred Shipping Method"
-                placeholder="Please select preferred Shipping Method"
+                :label="$t('pages.account.checkout_defaults.shipping_method_label')"
+                :placeholder="$t('pages.account.checkout_defaults.shipping_method_placeholder')"
                 class="mt-8 w-full"
                 size="lg"
               >
                 <template #selected="{ item }">{{ item?.code }} {{ item?.optionName }}</template>
-                <template #first>Not selected</template>
+                <template #first>{{ $t("pages.account.checkout_defaults.not_selected_placeholder") }}</template>
                 <template #item="{ item }"> {{ item?.code }} {{ item?.optionName }} </template>
               </VcSelect>
-              <VcButton class="uppercase mt-8 px-12 self-center lg:self-start" @click="saveDefaults()">Update</VcButton>
+              <VcButton
+                class="uppercase mt-8 px-12 self-center lg:self-start"
+                @click="saveDefaults()"
+                v-t="'pages.account.checkout_defaults.update_button'"
+              ></VcButton>
             </div>
           </div>
         </div>

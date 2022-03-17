@@ -10,15 +10,19 @@
       "update": "Update",
       "remove": "Remove",
       "save": "Save",
+      "edit": "Edit",
+      "delete": "Delete",
       "continue_shopping_button": "Continue shopping",
       "select": "Select"
     },
     "labels": {
+      "actions": "Actions",
       "user_name": "Username",
       "password": "Password",
       "confirm_password": "Confirm password",
       "first_name": "First Name",
       "last_name": "Last Name",
+      "address": "Address",
       "phone": "Phone",
       "email": "Email",
       "quantity": "Quantity",
@@ -28,12 +32,17 @@
       "product_price": "Your price",
       "subtotal": "Subtotal",
       "discount": "Discount",
-      "tax": "Tax"
+      "tax": "Tax",
+      "status": "Status",
+      "date": "Date"
     },
     "suffixes": {
       "product_price": " / each",
       "product_count_in_stock": "in stock",
       "product_out_of_stock": "Out of stock"
+    },
+    "placeholders": {
+      "not_selected": "Not selected"
     }
   },
   "shared": {
@@ -337,6 +346,120 @@
       "confirm_password_label": "@:common.labels.confirm_password",
       "confirm_password_placeholder": "Confirm your password",
       "register_button": "Register"
+    },
+    "account": {
+      "addresses": {
+        "add_new_address_mobile_button": "Add new",
+        "add_new_address_button": "Add new address",
+        "cancel_button": "@:common.buttons.cancel",
+        "save_button": "@:common.buttons.save",
+        "create_button": "@:common.buttons.create",
+        "recipient_name_label": "Recipient's name",
+        "address_label": "@:common.labels.address",
+        "phone_label": "@:common.labels.phone",
+        "email_label": "@:common.labels.email",
+        "no_addresses_message": "There are no addresses yet",
+        "new_address_title": "New address",
+        "addresses_title": "Addresses",
+        "actions_label": "@:common.labels.actions",
+        "edit_button": "@:common.buttons.edit",
+        "delete_button": "@:common.buttons.delete",
+        "make_default_button": "Make default",
+        "confirm_delete_message": "Are you sure you want do delete this address?",
+        "no_addresses_img_alt": "No addresses"
+      },
+      "checkout_defaults": {
+        "title": "Checkout Defaults",
+        "select_delivery_method_label": "Preferred Delivery Method",
+        "shipping_radio_label": "Shipping",
+        "pickup_radio_label": "Pickup",
+        "not_selected_placeholder": "@:common.placeholders.not_selected",
+        "update_button": "@:common.buttons.update",
+        "payment_method_label": "Preferred Payment Method",
+        "payment_method_placeholder": "Please select preferred Payment Method",
+        "shipping_method_label": "Preferred Shipping Method",
+        "shipping_method_placeholder": "Please select preferred Shipping Method"
+      },
+      "dashboard": {
+        "title": "Dashboard",
+        "last_orders_card": {
+          "title": "Last orders",
+          "all_orders_link": "All orders",
+          "order_number_label": "Order number",
+          "purchase_number_label": "Purchase number",
+          "status_label": "@:common.labels.status",
+          "invoice_label": "Invoice",
+          "date_label": "@:common.labels.date",
+          "total_label": "@:common.labels.total",
+          "no_orders_img_alt": "No orders",
+          "no_orders_message": "There are no orders yet"
+        },
+        "monthly_report_card": {
+          "title": "Monthly spend report",
+          "budget_title": "Budget",
+          "total_spend_label": "Total spend",
+          "spend_chart_alt": "Spend chart"
+        },
+        "orders_status_card": {
+          "title": "Orders status"
+        },
+        "bulk_order_card": {
+          "title": "Bulk order pad"
+        }
+      },
+      "orders": {
+        "title": "Orders",
+        "order_number_label": "Order number",
+        "purchase_number_label": "Purchase number",
+        "status_label": "@:common.labels.status",
+        "invoice_label": "Invoice",
+        "date_label": "@:common.labels.date",
+        "total_label": "@:common.labels.total",
+        "no_orders_img_alt": "No orders",
+        "no_orders_message": "There are no orders yet"
+      },
+      "order_details": {
+        "title_prefix": "Order #",
+        "status_label": "@:common.labels.status",
+        "placed_on_label": "Placed on",
+        "products_section": {
+          "title": "Purchased products"
+        },
+        "order_comment_section": {
+          "title": "Order comment"
+        },
+        "reorder_all_button": "Reorder all",
+        "shipping_address_card": {
+          "title": "Shipping address",
+          "phone_label": "@:common.labels.phone",
+          "email_label": "@:common.labels.email"
+        },
+        "shipping_method_card": {
+          "title": "Shipping method"
+        },
+        "payment_details_card": {
+          "title": "Payment details",
+          "payment_number_label": "Payment #",
+          "payment_type_label": "Payment type",
+          "view_invoice_button": "View invoice"
+        },
+        "billing_address_card": {
+          "title": "Billing address",
+          "phone_label": "@:common.labels.phone",
+          "email_label": "@:common.labels.email"
+        }
+      },
+      "profile": {
+        "title": "Profile",
+        "update_error_alert": "There was an error during profile update",
+        "first_name_label": "@:common.labels.first_name",
+        "first_name_placeholder": "@:common.labels.first_name",
+        "last_name_label": "@:common.labels.last_name",
+        "last_name_placeholder": "@:common.labels.last_name",
+        "email_label": "@:common.labels.email",
+        "email_placeholder": "@:common.labels.email",
+        "update_button": "@:common.buttons.update"
+      }
     }
   }
 }

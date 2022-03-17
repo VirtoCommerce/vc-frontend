@@ -13,7 +13,11 @@
             <h2 class="text-gray-800 text-3xl font-bold uppercase">{{ title }}</h2>
 
             <VcButton v-if="!editingMode" class="px-3 uppercase border" size="sm" is-outline @click="openEditMode()">
-              {{ isMobile ? "Add new" : "Add new address" }}
+              {{
+                isMobile
+                  ? $t("pages.account.addresses.add_new_address_mobile_button")
+                  : $t("pages.account.addresses.add_new_address_button")
+              }}
             </VcButton>
           </div>
 
@@ -37,8 +41,8 @@
                     class="uppercase w-32 sm:w-auto sm:px-12"
                     is-outline
                     @click="closeEditMode"
+                    v-t="'pages.account.addresses.cancel_button'"
                   >
-                    Cancel
                   </VcButton>
 
                   <VcButton
@@ -48,7 +52,11 @@
                     class="uppercase flex-grow sm:flex-none sm:px-16"
                     is-submit
                   >
-                    {{ editableAddress ? "Save" : "Create" }}
+                    {{
+                      editableAddress
+                        ? $t("pages.account.addresses.save_button")
+                        : $t("pages.account.addresses.create_button")
+                    }}
                   </VcButton>
                 </div>
               </template>
@@ -70,14 +78,14 @@
                 <template #mobile-item="itemData">
                   <div class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200">
                     <div class="flex flex-col">
-                      <span class="text-sm text-gray-400"> Recipient's name </span>
+                      <span class="text-sm text-gray-400" v-t="'pages.account.addresses.recipient_name_label'"></span>
                       <span class="pr-4 font-extrabold overflow-hidden overflow-ellipsis">
                         {{ itemData.item.firstName }} {{ itemData.item.lastName }}
                       </span>
                     </div>
 
                     <div class="flex flex-col">
-                      <span class="text-sm text-gray-400">Address</span>
+                      <span class="text-sm text-gray-400" v-t="'pages.account.addresses.address_label'"></span>
                       <span class="overflow-hidden overflow-ellipsis">
                         {{ itemData.item.countryCode }} {{ itemData.item.regionName }} {{ itemData.item.city }}
                         {{ itemData.item.line1 }}
@@ -86,44 +94,51 @@
                     </div>
 
                     <div class="flex flex-col">
-                      <span class="text-sm text-gray-400">Phone</span>
+                      <span class="text-sm text-gray-400" v-t="'pages.account.addresses.phone_label'"></span>
                       <span class="pr-4 overflow-hidden overflow-ellipsis">{{ itemData.item.phone }}</span>
                     </div>
 
                     <div class="flex flex-col">
-                      <span class="text-sm text-gray-400">Email</span>
+                      <span class="text-sm text-gray-400" v-t="'pages.account.addresses.email_label'"></span>
                       <span class="overflow-hidden overflow-ellipsis">{{ itemData.item.email }}</span>
                     </div>
                   </div>
                 </template>
                 <template #mobile-empty>
                   <div class="flex items-center justify-center space-x-10 p-5">
-                    <img src="/static/images/account/icons/no-addresses.svg" alt="No addresses" />
+                    <img
+                      src="/static/images/account/icons/no-addresses.svg"
+                      :alt="$t('pages.account.addresses.no_addresses_img_alt')"
+                    />
                     <div class="flex flex-col space-y-2">
-                      <span class="text-base">There are no addresses yet</span>
-                      <VcButton class="uppercase w-full" @click="openEditMode()">Add new address</VcButton>
+                      <span class="text-base" v-t="'pages.account.addresses.no_addresses_message'"></span>
+                      <VcButton
+                        class="uppercase w-full"
+                        @click="openEditMode()"
+                        v-t="'pages.account.addresses.add_new_address_button'"
+                      ></VcButton>
                     </div>
                   </div>
                 </template>
                 <template #mobile-skeleton>
                   <div v-for="i of itemsPerPage" :key="i" class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200">
                     <div class="flex flex-col">
-                      <span class="text-sm text-gray-400">Recipient's name</span>
+                      <span class="text-sm text-gray-400" v-t="'pages.account.addresses.recipient_name_label'"></span>
                       <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
                     </div>
 
                     <div class="flex flex-col">
-                      <span class="text-sm text-gray-400">Address</span>
+                      <span class="text-sm text-gray-400" v-t="'pages.account.addresses.address_label'"></span>
                       <div class="h-6 bg-gray-200 animate-pulse"></div>
                     </div>
 
                     <div class="flex flex-col">
-                      <span class="text-sm text-gray-400">Phone</span>
+                      <span class="text-sm text-gray-400" v-t="'pages.account.addresses.phone_label'"></span>
                       <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
                     </div>
 
                     <div class="flex flex-col">
-                      <span class="text-sm text-gray-400">Email</span>
+                      <span class="text-sm text-gray-400" v-t="'pages.account.addresses.email_label'"></span>
                       <div class="h-6 bg-gray-200 animate-pulse"></div>
                     </div>
                   </div>
@@ -173,15 +188,21 @@
                   <tr>
                     <td colspan="6" class="polygons-bg">
                       <div class="flex items-center pl-56 space-x-10 h-80">
-                        <img src="/static/images/account/icons/no-addresses.svg" alt="No addresses" />
+                        <img
+                          src="/static/images/account/icons/no-addresses.svg"
+                          :alt="$t('pages.account.addresses.no_addresses_img_alt')"
+                        />
                         <div class="flex flex-col space-y-2">
-                          <span class="text-base">There are no addresses yet</span>
-                          <VcButton class="uppercase w-full" @click="openEditMode()">Add new address</VcButton>
+                          <span class="text-base" м-е="'pages.account.addresses.no_addresses_message'"></span>
+                          <VcButton
+                            class="uppercase w-full"
+                            @click="openEditMode()"
+                            v-t="'pages.account.addresses.add_new_address_button'"
+                          ></VcButton>
                         </div>
                       </div>
-                    </td>
-                  </tr></template
-                >
+                    </td></tr
+                ></template>
                 <template #desktop-skeleton>
                   <tr v-for="i of itemsPerPage" :key="i" class="even:bg-gray-50">
                     <td class="p-5">
@@ -220,6 +241,9 @@ import { sortAscending, sortDescending } from "@/core/constants";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useCountries } from "@core/composables";
 import { AddressType } from "@core/types";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { me: user } = useUser();
@@ -250,36 +274,36 @@ const title: ComputedRef<string> = computed(() => {
   if (editingMode.value) {
     return editableAddress.value
       ? `${editableAddress.value.firstName} ${editableAddress.value.lastName}`
-      : "New address";
+      : t("pages.account.addresses.new_address_title");
   } else {
-    return "Addresses";
+    return t("pages.account.addresses.addresses_title");
   }
 });
 
 const columns = ref<ITableColumn[]>([
   {
     id: "firstName",
-    title: "Recipient's name",
+    title: t("pages.account.addresses.recipient_name_label"),
     sortable: true,
   },
   {
     id: "countryCode",
-    title: "Address",
+    title: t("pages.account.addresses.address_label"),
     sortable: true,
   },
   {
     id: "phone",
-    title: "Phone",
+    title: t("pages.account.addresses.phone_label"),
     sortable: true,
   },
   {
     id: "email",
-    title: "Email",
+    title: t("pages.account.addresses.email_label"),
     sortable: true,
   },
   {
     id: "actions",
-    title: "Actions",
+    title: t("pages.account.addresses.actions_label"),
     titlePosition: "text-center",
   },
 ]);
@@ -303,7 +327,7 @@ function actionBuilder(address: MemberAddressType) {
   const result = [
     {
       icon: "fas fa-pencil-alt",
-      title: "Edit",
+      title: t("pages.account.addresses.edit_button"),
       bgColor: "bg-gray-300",
       clickHandler() {
         openEditMode(address);
@@ -311,7 +335,7 @@ function actionBuilder(address: MemberAddressType) {
     },
     {
       icon: "fas fa-trash-alt",
-      title: "Delete",
+      title: t("pages.account.addresses.delete_button"),
       leftActions: true,
       bgColor: "bg-[color:var(--color-danger)]",
       clickHandler() {
@@ -323,7 +347,7 @@ function actionBuilder(address: MemberAddressType) {
   if (defaultShippingAddress.value && address.id !== defaultShippingAddress.value.id) {
     result.push({
       icon: "fas fa-check",
-      title: "Make default",
+      title: t("pages.account.addresses.make_default_button"),
       bgColor: "bg-[color:var(--color-primary)]",
       clickHandler() {
         setDefaultAddress(address);
@@ -354,7 +378,7 @@ async function saveAddress(address: MemberAddressType): Promise<void> {
 }
 
 async function removeAddress(address: MemberAddressType): Promise<void> {
-  if (!window.confirm("Are you sure you want do delete this address?")) return;
+  if (!window.confirm(t("pages.account.addresses.confirm_delete_message"))) return;
 
   await removeAddresses([address]);
 }

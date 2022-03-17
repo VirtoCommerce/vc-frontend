@@ -10,21 +10,25 @@
         <!-- Second column-->
         <div class="flex flex-col w-full lg:w-4/5 space-y-5">
           <div class="flex justify-between items-center mx-5 lg:mx-0">
-            <h2 class="text-gray-800 text-3xl font-bold uppercase">Profile</h2>
+            <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.account.profile.title'"></h2>
           </div>
           <div class="flex flex-col bg-white shadow-sm p-6" :class="{ 'rounded border polygon-bg': !isMobile }">
             <form @submit="onSubmit" class="lg:w-1/2 flex flex-col">
               <!-- Errors block -->
-              <VcAlert v-if="updateProfileError" type="error" class="mb-2" icon text>
-                There was an error during profile update
-              </VcAlert>
+              <VcAlert
+                v-if="updateProfileError"
+                class="mb-2"
+                icon
+                text
+                v-t="'pages.account.profile.update_error_alert'"
+              ></VcAlert>
 
               <VcInput
                 v-model="firstName"
                 name="firstName"
                 class="mb-4"
-                label="First name"
-                placeholder="First Name"
+                :label="$t('pages.account.profile.first_name_label')"
+                :placeholder="$t('pages.account.profile.first_name_placeholder')"
                 is-required
                 :error-message="errors.firstName"
               ></VcInput>
@@ -33,8 +37,8 @@
                 v-model="lastName"
                 name="lastName"
                 class="mb-4"
-                label="Last name"
-                placeholder="Last name"
+                :label="$t('pages.account.profile.last_name_label')"
+                :placeholder="$t('pages.account.profile.last_name_placeholder')"
                 is-required
                 :error-message="errors.lastName"
               ></VcInput>
@@ -43,8 +47,8 @@
                 v-model="email"
                 name="email"
                 class="mb-4"
-                label="Email"
-                placeholder="Email"
+                :label="$t('pages.account.profile.email_label')"
+                :placeholder="$t('pages.account.profile.email_placeholder')"
                 is-disabled
               ></VcInput>
 
@@ -55,8 +59,8 @@
                   size="lg"
                   class="uppercase mt-6 lg:mt-3 w-full lg:w-48"
                   :is-waiting="!isSubmitEnabled"
+                  v-t="'pages.account.profile.update_button'"
                 >
-                  Update
                 </VcButton>
               </div>
             </form>
@@ -75,6 +79,9 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import { usePopup } from "@/shared/popup";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const { me, loading, updateUser } = useUser();
 const { openPopup } = usePopup();
@@ -82,9 +89,9 @@ const { openPopup } = usePopup();
 const updateProfileError: Ref<boolean> = ref(false);
 
 const schema = yup.object({
-  firstName: yup.string().label("First name").required().max(64),
-  lastName: yup.string().label("Last name").required().max(64),
-  email: yup.string().label("Email"),
+  firstName: yup.string().label(t("pages.account.profile.first_name_label")).required().max(64),
+  lastName: yup.string().label(t("pages.account.profile.last_name_placeholder")).required().max(64),
+  email: yup.string().label(t("pages.account.profile.email_placeholder")),
 });
 
 const { errors, handleSubmit, isSubmitting } = useForm({
