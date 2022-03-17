@@ -173,6 +173,7 @@
             class="mt-9 -mb-6"
             @visible="loadMoreProducts"
           />
+          <VcScrollTopButton></VcScrollTopButton>
         </div>
       </div>
     </div>
@@ -192,7 +193,15 @@ import {
   ViewMode,
   ProductsSearchParams,
 } from "@/shared/catalog";
-import { VcButton, VcCard, VcCardSkeleton, VcCheckbox, VcInfinityScrollLoader, VcSelect } from "@/components";
+import {
+  VcButton,
+  VcCard,
+  VcCardSkeleton,
+  VcCheckbox,
+  VcInfinityScrollLoader,
+  VcSelect,
+  VcScrollTopButton,
+} from "@/components";
 import { AddToCart } from "@/shared/cart";
 import { useRouteQueryParam } from "@core/composables";
 import { defaultPageSize, productSortingList } from "@core/constants";
@@ -324,4 +333,5 @@ watch(
     flush: "post",
   }
 );
+
 </script>
