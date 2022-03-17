@@ -520,7 +520,7 @@ const useCoupon = async () => {
       cartCouponApplied.value = true;
     });
   } else {
-    couponValidationError.value = t("pages.checkout.invalid_cuppon_message");
+    couponValidationError.value = t("pages.checkout.invalid_coupon_message");
   }
 };
 

@@ -6,18 +6,14 @@
         <div class="lg:w-3/4 xl:w-4/5 flex-grow">
           <template v-if="products.length || loading">
             <div class="flex flex-col">
-              <h1 class="text-2xl md:mt-2 md:mb-4">
-                Your search for "<strong>{{ searchParams.keyword }}</strong
-                >" revealed the following
-              </h1>
-
+              <h1 class="text-2xl md:mt-2 md:mb-4" v-html="$t('pages.search.header', [searchParams.keyword])"></h1>
               <div class="flex justify-start mb-6 mt-4">
                 <!-- View options -->
                 <ViewMode v-model:mode="viewModeQueryParam" class="hidden md:inline-flex mr-6" />
 
                 <!-- Sorting -->
                 <div class="flex items-center flex-grow md:flex-grow-0 ml-auto">
-                  <span class="shrink-0 mr-2">Sort by:</span>
+                  <span class="shrink-0 mr-2" v-t="'pages.search.sort_by_label'"></span>
 
                   <VcSelect
                     v-model="sortQueryParam"
@@ -49,8 +45,8 @@
                   :to="{ name: 'Product', params: { productId: item.id } }"
                   :class="{ 'w-full': viewModeQueryParam === 'list' }"
                   class="uppercase mb-4"
+                  v-t="'pages.search.choose_button'"
                 >
-                  Choose
                 </VcButton>
 
                 <AddToCart v-else :product="item"></AddToCart>
@@ -73,13 +69,10 @@
               <use href="/static/images/search-not-found.svg#search-not-found" />
             </svg>
 
-            <p class="md:inline-block">
-              No results were found for your "<strong>{{ searchParams.keyword }}</strong
-              >" query
-            </p>
+            <p class="md:inline-block" v-html="$t('pages.search.no_results_message', [searchParams.keyword])"></p>
 
             <div class="md:hidden mt-10">
-              <VcButton to="/" size="md" class="w-40 uppercase">Home page</VcButton>
+              <VcButton to="/" size="md" class="w-40 uppercase" v-t="'pages.search.home_button'"></VcButton>
             </div>
           </div>
         </div>

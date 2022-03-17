@@ -39,7 +39,7 @@
       "tax": "Tax",
       "status": "Status",
       "date": "Date",
-      "sort_by": "Sort by",
+      "sort_by": "Sort by:",
       "sku": "Item #"
     },
     "suffixes": {
@@ -491,7 +491,7 @@
       "products_found_message": "{0} results found.",
       "products_found_message2": "{0} displayed that include {1} products.",
       "filters_button": "@:common.buttons.filters",
-      "sort_by_label": "@:common.labels.sort_by{':'}",
+      "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose"
     },
     "product": {
@@ -557,7 +557,14 @@
         "warning_message": "Availability, shipping, tax & promotions are not final until you complete your order.",
         "place_order_button": "Place order"
       },
-      "invalid_cuppon_message": "This code did not match any active coupon. Was it entered correctly?"
+      "invalid_coupon_message": "This code did not match any active coupon. Was it entered correctly?"
+    },
+    "search": {
+      "header": "Your search for \"<strong>{0}</strong>\" revealed the following",
+      "sort_by_label": "@:common.labels.sort_by",
+      "choose_button": "Choose",
+      "no_results_message": "No results were found for your \"<strong>{0}</strong>\" query",
+      "home_button": "@:common.buttons.home"
     }
   }
 }
