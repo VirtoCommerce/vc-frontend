@@ -89,6 +89,8 @@ query SearchProducts(
         count
         from
         to
+        includeFrom
+        includeTo
         isSelected
       }
     }
