@@ -99,7 +99,7 @@
       "color_header_bottom_dropdown_bg": "#FFFFFF",
       "color_header_bottom_dropdown_link": "#645D54",
       "color_header_bottom_dropdown_link_hover": "",
-      "color_search_bar_bg": "#2E293B",
+      "color_search_bar_bg": "rgba(46, 41, 59, 0.9)",
       "color_footer_top_bg": "#292D3B",
       "color_footer_top_text": "#FFFFFF",
       "color_footer_top_link": "#A0A0A0",

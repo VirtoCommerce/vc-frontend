@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex items-center justify-between px-12 py-7 bg-[color:var(--color-search-bar-bg)] select-none opacity-95"
+    class="flex items-center justify-between px-12 py-7 bg-[color:var(--color-search-bar-bg)] select-none"
     v-click-outside="() => searchDropdownVisible && hideSearchDropdown()"
   >
     <router-link to="/">
