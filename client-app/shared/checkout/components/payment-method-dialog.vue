@@ -1,5 +1,5 @@
 <template>
-  <VcPopup title="Select Payment method">
+  <VcPopup :title="$t('shared.checkout.payment-method-dialog.title')">
     <template #actions="{ close }">
       <VcButton
         class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-5"

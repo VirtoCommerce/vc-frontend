@@ -55,7 +55,7 @@
             :is-disabled="disabled"
             :items="countries"
             :label="$t('shared.account.address_form.country_label')"
-            placeholder="Select country"
+            :placeholder="$t('shared.account.address_form.country_placeholder')"
             class="mb-4 w-full xl:w-7/12"
             size="lg"
             is-required

@@ -47,7 +47,7 @@
       </div>
       <div class="flex justify-between">
         <div class="flex items-center space-x-3">
-          <span class="self-start">{{ $t("shared.account.reorder_info_popup.product_card.quantity_label") }}:</span>
+          <span class="self-start">{{ $t("shared.account.reorder_info_popup.product_card.quantity_label") }}</span>
           <div class="flex flex-col items-center">
             <input
               v-model="value"
@@ -91,7 +91,7 @@
           </div>
         </div>
         <div class="flex text-sm items-start space-x-3">
-          <span class="mt-1">{{ $t("shared.account.reorder_info_popup.product_card.total_label") }}:</span>
+          <span class="mt-1">{{ $t("shared.account.reorder_info_popup.product_card.total_label") }}</span>
           <span class="text-green-700 font-extrabold mt-1">{{ currency?.symbol }}{{ total }}</span>
         </div>
       </div>

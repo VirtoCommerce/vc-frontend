@@ -51,7 +51,14 @@
       "not_selected": "Not selected"
     },
     "links": {
-      "home": "Home"
+      "home": "Home",
+      "dashboard": "Dashboard",
+      "account": "Account",
+      "profile": "Profile",
+      "addresses": "Addresses",
+      "orders": "Orders",
+      "your_list": "Your List",
+      "checkout_defaults": "Checkout Defaults"
     }
   },
   "shared": {
@@ -59,7 +66,7 @@
       "header": {
         "logo_label": "Construction goods",
         "top_header": {
-          "link_dashboard": "Dashboard",
+          "link_dashboard": "common.links.dashboard",
           "link_order_history": "Order History",
           "link_lists": "Lists"
         },
@@ -77,15 +84,21 @@
           },
           "bulk": "Bulk order pad",
           "cart": "Cart",
-          "contact_us": "Contact us"
+          "contact_us": "Contact us",
+          "my_account": "My account"
         },
-        "mobile_account_menu": {
-          "dashboard": "Dashboard",
-          "profile": "Profile",
-          "addresses": "Addresses",
-          "orders": "Orders",
-          "your_list": "Your List",
-          "checkout_defaults": "Checkout Defaults"
+        "mobile": {
+          "account_menu": {
+            "dashboard": "common.links.dashboard",
+            "profile": "common.links.profile",
+            "addresses": "common.links.addresses",
+            "orders": "common.links.orders",
+            "your_list": "common.links.your_list",
+            "checkout_defaults": "common.links.checkout_defaults"
+          },
+          "search_bar": {
+            "input_placeholder": "Enter keyword, item, model or replacement part number"
+          }
         }
       },
       "footer": {
@@ -118,12 +131,13 @@
     },
     "account": {
       "navigation": {
-        "dashboard": "Dashboard",
-        "profile": "Profile",
-        "addresses": "Addresses",
-        "orders": "Orders",
-        "your_list": "Your List",
-        "checkout_defaults": "Checkout Defaults"
+        "dashboard": "@:common.links.dashboard",
+        "profile": "@:common.links.profile",
+        "addresses": "@:common.links.",
+        "orders": "@:common.links.",
+        "your_list": "@:common.links.",
+        "checkout_defaults": "@:common.links.checkout_defaults",
+        "title": "My account"
       },
       "address_form": {
         "first_name_label": "@:common.labels.first_name",
@@ -136,7 +150,8 @@
         "region_placeholder": "Select region",
         "city_label": "City",
         "line1_label": "Address",
-        "line2_label": "Apt, suite, etc."
+        "line2_label": "Apt, suite, etc.",
+        "country_placeholder": "Select country"
       },
       "sign_in_form": {
         "user_name_label": "@:common.labels.user_name",
@@ -160,7 +175,8 @@
       "forgot_password_form": {
         "email_label": "@:common.labels.email",
         "email_placeholder": "Enter your e-mail",
-        "submit_button": "@:common.buttons.submit"
+        "submit_button": "@:common.buttons.submit",
+        "invalid_email_format_message": "Enter correct email please (ex. john{'@'}gmail.com)"
       },
       "checkout_default_success_dialog": {
         "title": "Checkout Defaults",
@@ -183,13 +199,13 @@
         "confirm_button": "@:common.buttons.confirm",
         "filter": {
           "title": "Filter products:",
-          "reduced_quantity_checkbox": "Reduced quantity",
+          "reduced_quantity_checkbox": "Reduced quantity:",
           "can_t_be_purchased_checkbox": "Can't be purchased",
           "items_without_changes_checkbox": "Items without changes"
         },
         "product_card": {
           "quantity_label": "@:common.labels.quantity",
-          "total_label": "@:common.labels.total",
+          "total_label": "@:common.labels.total{':'}",
           "in_stock_suffix": "@:common.suffixes.product_count_in_stock",
           "out_of_stock_suffix": "@:common.suffixes.product_out_of_stock",
           "reduced_message": "The number of items in the order was <span class=\"text-gray-500\">reduced from {0} to {1}</span> due to stock restrictions",
@@ -210,11 +226,13 @@
         "view_cart_button": "View cart",
         "table": {
           "product_column": "Product",
-          " ": "@:common.labels.quantity",
-          "total_column": "@:common.labels.total"
+          " ": "@:common.labels.quantity{':'}",
+          "total_column": "@:common.labels.total{':'}"
         },
         "quantity_label": "@:common.labels.quantity",
-        "total_label": "@:common.labels.total"
+        "total_label": "@:common.labels.total",
+        "title_1": "1 Product removed from cart",
+        "title_2": "1 Product added to cart"
       }
     },
     "catalog": {
@@ -241,15 +259,16 @@
           "print_button": "Print"
         },
         "product_variation_card": {
+          "variation_sku_label": "@:common.labels.sku",
           "price_label": "@:common.labels.product_price"
         }
       }
     },
     "checkout": {
       "product_card": {
-        "brand_label": "Brand",
-        "price_label": "@:common.labels.price",
-        "total_label": "@:common.labels.total",
+        "brand_label": "Brand:",
+        "price_label": "@:common.labels.price{':'}",
+        "total_label": "@:common.labels.total{':'}",
         "update_button": "@:common.buttons.update",
         "remove_button": "@:common.buttons.remove"
       },
@@ -259,7 +278,8 @@
       },
       "accepted_gifts": {
         "gift_label": "Gift",
-        "quantity_label": "@:common.labels.quantity"
+        "quantity_label": "@:common.labels.quantity",
+        "title": "Accepted Gifts"
       },
       "create_address_dialog": {
         "title": "Select address",
@@ -277,7 +297,8 @@
       "payment-method-dialog": {
         "cancel_button": "@:common.buttons.cancel",
         "ok_button": "@:common.buttons.ok",
-        "select_button": "@:common.buttons.select"
+        "select_button": "@:common.buttons.select",
+        "title": "Select Payment method"
       },
       "shipping_address_dialog": {
         "cancel_button": "@:common.buttons.cancel",
@@ -285,42 +306,72 @@
         "save_button": "@:common.buttons.save",
         "select_button": "@:common.buttons.select",
         "add_address_button": "Add new address",
-        "phone_label": "@:common.labels.phone",
-        "email_label": "@:common.labels.email",
-        "no_addresses_message": "There are no addresses yet"
+        "phone_label": "@:common.labels.phone{':'}",
+        "email_label": "@:common.labels.email{':'}",
+        "no_addresses_message": "There are no addresses yet",
+        "title": "Select address",
+        "table_columns": {
+          "recipient": "Recipient's name",
+          "address": "Address",
+          "phone": "Phone",
+          "email": "Email",
+          "active_address": "Active address"
+        }
       },
       "shipping_method_dialog": {
         "cancel_button": "@:common.buttons.cancel",
         "ok_button": "@:common.buttons.ok",
         "select_button": "@:common.buttons.select",
-        "price_label": "@:common.labels.price"
+        "price_label": "@:common.labels.price{':'}",
+        "title": "Select shipping method"
       },
       "thank_you": {
         "header": "Order completed",
         "success_order_message": "Order {0} has be successfully submitted. You will be notified via email when your order is ready for shipping",
-        "phone_label": "@:common.labels.phone",
-        "email_label": "@:common.labels.email",
-        "print_order": "Print order"
+        "phone_label": "@:common.labels.phone{':'}",
+        "email_label": "@:common.labels.email{':'}",
+        "print_order": "Print order",
+        "products_section": {
+          "title": "My purchased products"
+        },
+        "comment_section": {
+          "title": "Order comment"
+        },
+        "shipping_address_card": {
+          "title": "Shipping address"
+        },
+        "shipping_method_card": {
+          "title": "Shipping method"
+        },
+        "payment_method_card": {
+          "title": "Payment method"
+        },
+        "billing_address_card": {
+          "title": "Billing address"
+        }
       }
     }
   },
   "pages": {
     "403": {
-      "header_1": "403",
-      "header_2": "Access denied",
+      "error_code": "403",
+      "error_text": "Access denied",
       "message": "You don't have permission to access requested page.",
+      "img_alt": "Access denied",
       "home_button": "@:common.buttons.home"
     },
     "404": {
-      "header_1": "404",
-      "header_2": "Page Not Found",
+      "error_code": "404",
+      "error_text": "Page Not Found",
       "message": "We suggest you back to home.",
+      "img_alt": "Page not found",
       "home_button": "@:common.buttons.home"
     },
     "500": {
-      "header_1": "500",
-      "header_2": "Internal Server Error",
+      "error_code": "500",
+      "error_text": "Internal Server Error",
       "message": "We suggest you back to home.",
+      "img_alt": "Internal Server Error",
       "home_button": "@:common.buttons.home"
     },
     "home": {
@@ -450,8 +501,8 @@
       },
       "order_details": {
         "title_prefix": "Order #",
-        "status_label": "@:common.labels.status",
-        "placed_on_label": "Placed on",
+        "status_label": "@:common.labels.status{':'}",
+        "placed_on_label": "Placed on:",
         "products_section": {
           "title": "Purchased products"
         },
@@ -461,22 +512,22 @@
         "reorder_all_button": "Reorder all",
         "shipping_address_card": {
           "title": "Shipping address",
-          "phone_label": "@:common.labels.phone",
-          "email_label": "@:common.labels.email"
+          "phone_label": "@:common.labels.phone{':'}",
+          "email_label": "@:common.labels.email{':'}"
         },
         "shipping_method_card": {
           "title": "Shipping method"
         },
         "payment_details_card": {
           "title": "Payment details",
-          "payment_number_label": "Payment #",
-          "payment_type_label": "Payment type",
+          "payment_number_label": "Payment #:",
+          "payment_type_label": "Payment type:",
           "view_invoice_button": "View invoice"
         },
         "billing_address_card": {
           "title": "Billing address",
-          "phone_label": "@:common.labels.phone",
-          "email_label": "@:common.labels.email"
+          "phone_label": "@:common.labels.phone{':'}",
+          "email_label": "@:common.labels.email{':'}"
         }
       },
       "profile": {

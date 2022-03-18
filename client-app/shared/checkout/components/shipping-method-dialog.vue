@@ -1,5 +1,5 @@
 <template>
-  <VcPopup title="Select shipping method">
+  <VcPopup :title="$t('shared.checkout.shipping_method_dialog.title')">
     <template #actions="{ close }">
       <VcButton
         class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-5"
@@ -27,7 +27,7 @@
           <div class="lg:w-2/6">{{ method.code }} {{ method.optionName }}</div>
           <div class="lg:w-3/6">{{ method.optionDescription }}</div>
           <div class="lg:w-1/6 lg:text-right text-sm lg:text-base">
-            <span class="font-bold lg:hidden mr-1">{{ $t("shared.checkout.shipping_method_dialog.price_label") }}:</span
+            <span class="font-bold lg:hidden mr-1">{{ $t("shared.checkout.shipping_method_dialog.price_label") }}</span
             ><VcPriceDisplay :value="method.price" />
           </div>
         </div>

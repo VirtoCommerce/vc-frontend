@@ -1,5 +1,5 @@
 <template>
-  <VcCard title="My account">
+  <VcCard :title="$t('shared.account.navigation.title')">
     <div class="flex flex-col">
       <AccountNavigationLink
         to="/account/dashboard"

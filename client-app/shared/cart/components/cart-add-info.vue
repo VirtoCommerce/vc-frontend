@@ -21,9 +21,7 @@
       <table class="w-full">
         <thead class="border-b border-gray-200">
           <tr>
-            <th class="px-5 py-3 text-sm font-bold" v-t="'shared.cart.cart_add_info_popup.table.product_column'">
-              Product
-            </th>
+            <th class="px-5 py-3 text-sm font-bold" v-t="'shared.cart.cart_add_info_popup.table.product_column'"></th>
             <th
               class="px-5 py-3 text-sm font-bold text-center"
               v-t="'shared.cart.cart_add_info_popup.table.quantity_column'"
@@ -58,11 +56,11 @@
 
       <div class="flex items-center justify-between px-5 py-3">
         <div>
-          {{ $t("shared.cart.cart_add_info_popup.quantity_label") }}:
+          {{ $t("shared.cart.cart_add_info_popup.quantity_label") }}
           <span class="font-bold">{{ lineItem.quantity }}</span>
         </div>
         <div>
-          {{ $t("shared.cart.cart_add_info_popup.total_label") }}:
+          {{ $t("shared.cart.cart_add_info_popup.total_label") }}
           <span class="font-bold text-green-700">
             <VcPriceDisplay :value="lineItem.extendedPrice" />
           </span>
@@ -76,6 +74,9 @@
 import { computed, PropType } from "vue";
 import { LineItemType } from "@/core/api/graphql/types";
 import { VcPopup, VcImage, VcPriceDisplay, VcButton } from "@/components";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const props = defineProps({
   isOpen: {
@@ -91,6 +92,8 @@ const props = defineProps({
 
 const variant = computed(() => (props.lineItem.quantity === 0 ? "warn" : "success"));
 const title = computed(() =>
-  props.lineItem.quantity === 0 ? "1 Product removed from cart" : "1 Product added to cart"
+  props.lineItem.quantity === 0
+    ? t("shared.cart.cart_add_info_popup.title_1")
+    : t("shared.cart.cart_add_info_popup.title_2")
 );
 </script>

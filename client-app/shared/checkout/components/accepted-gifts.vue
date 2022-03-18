@@ -1,7 +1,7 @@
 <template>
   <VcSection
     v-if="items?.length"
-    title="Accepted Gifts"
+    :title="$t('shared.checkout.accepted_gifts.title')"
     icon-url="/static/images/checkout/gifts.svg"
     class="shadow-inner pb-8 lg:shadow"
   >

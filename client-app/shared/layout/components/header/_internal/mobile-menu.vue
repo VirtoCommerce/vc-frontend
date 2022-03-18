@@ -21,7 +21,7 @@
           <template v-if="item.id === 'checkout'">
             <div class="flex items-center">
               <i class="fas fa-shopping-cart text-[color:var(--color-primary)] mr-3"></i>
-              <div>Cart</div>
+              <div v-t="item.title"></div>
               <div
                 v-if="cart?.itemsQuantity"
                 class="flex items-center rounded-2xl border border-[color:var(--color-primary)] px-3 font-bold text-sm h-7 ml-3"
@@ -38,7 +38,9 @@
 
       <!-- My account and corporate blocks-->
       <div v-if="isAuthenticated" class="flex flex-col space-y-8 mt-8 px-10">
-        <MobileMenuLink :children="myAccountMenu" @close="$emit('close')">My account</MobileMenuLink>
+        <MobileMenuLink :children="myAccountMenu" @close="$emit('close')">{{
+          $t("shared.layout.header.menu.my_account")
+        }}</MobileMenuLink>
         <!-- Commented due to accetpance criteria, will be used in future-->
         <!-- <MobileMenuLink :children="corporateMenu">Corporate</MobileMenuLink> -->
       </div>
@@ -103,12 +105,12 @@ const { cart } = useCart();
 const headerMenu = menuSchema?.header?.main;
 
 const myAccountMenu = ref<IMenuItem[]>([
-  { title: "shared.layout.header.mobile_account_menu.dashboard", url: "/account/dashboard" },
-  { title: "shared.layout.header.mobile_account_menu.profile", url: "/account/profile" },
-  { title: "shared.layout.header.mobile_account_menu.addresses", url: "/account/addresses" },
-  { title: "shared.layout.header.mobile_account_menu.orders", url: "/account/orders" },
-  { title: "shared.layout.header.mobile_account_menu.your_list", url: "/account/lists" },
-  { title: "shared.layout.header.mobile_account_menu.checkout_defaults", url: "/account/checkout-defaults" },
+  { title: "shared.layout.header.mobile.account_menu.dashboard", url: "/account/dashboard" },
+  { title: "shared.layout.header.mobile.account_menu.profile", url: "/account/profile" },
+  { title: "shared.layout.header.mobile.account_menu.addresses", url: "/account/addresses" },
+  { title: "shared.layout.header.mobile.account_menu.orders", url: "/account/orders" },
+  { title: "shared.layout.header.mobile.account_menu.your_list", url: "/account/lists" },
+  { title: "shared.layout.header.mobile.account_menu.checkout_defaults", url: "/account/checkout-defaults" },
 ]);
 
 /*

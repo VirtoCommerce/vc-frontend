@@ -10,10 +10,10 @@
       </h2>
       <div class="flex px-5 md:px-0 mb-5 space-x-4">
         <div class="text-sm">
-          <span class="font-bold">{{ $t("pages.account.order_details.status_label") }}: </span>{{ order?.status }}
+          <span class="font-bold">{{ $t("pages.account.order_details.status_label") }} </span>{{ order?.status }}
         </div>
         <div class="text-sm">
-          <span class="font-bold">{{ $t("pages.account.order_details.placed_on_label") }}: </span
+          <span class="font-bold">{{ $t("pages.account.order_details.placed_on_label") }} </span
           >{{ moment(order?.createdDate).format("MMM DD, YYYY HH:mm:ss A") }}
         </div>
       </div>
@@ -84,15 +84,15 @@
                 {{ deliveryAddress?.postalCode }}
               </p>
               <p>
-                <span class="font-extrabold"
-                  >{{ $t("pages.account.order_details.shipping_address_card.phone_label") }}:</span
-                >
+                <span class="font-extrabold" v-t="'pages.account.order_details.shipping_address_card.phone_label'">
+                </span>
                 {{ deliveryAddress?.phone }}
               </p>
               <p>
-                <span class="font-extrabold"
-                  >{{ $t("pages.account.order_details.shipping_address_card.email_label") }}:</span
-                >
+                <span
+                  class="font-extrabold"
+                  v-t="'pages.account.order_details.shipping_address_card.email_label'"
+                ></span>
                 {{ deliveryAddress?.email }}
               </p>
             </div>
@@ -120,15 +120,15 @@
           >
             <div class="flex flex-col text-sm">
               <p>
-                <span class="font-extrabold"
-                  >{{ $t("pages.account.order_details.payment_details_card.payment_number_label") }}:</span
-                >
+                <span class="font-extrabold">{{
+                  $t("pages.account.order_details.payment_details_card.payment_number_label")
+                }}</span>
                 {{ order?.inPayments?.[0]?.number }}
               </p>
               <p>
-                <span class="font-extrabold"
-                  >{{ $t("pages.account.order_details.payment_details_card.payment_type_label") }}:</span
-                >
+                <span class="font-extrabold">{{
+                  $t("pages.account.order_details.payment_details_card.payment_type_label")
+                }}</span>
                 {{ order?.inPayments?.[0]?.gatewayCode }}
               </p>
               <div class="mt-3">
@@ -159,15 +159,15 @@
                 {{ billingAddress?.postalCode }}
               </p>
               <p>
-                <span class="font-extrabold"
-                  >{{ $t("pages.account.order_details.billing_address_card.phone_label") }}:</span
-                >
+                <span class="font-extrabold">{{
+                  $t("pages.account.order_details.billing_address_card.phone_label")
+                }}</span>
                 {{ billingAddress?.phone }}
               </p>
               <p>
-                <span class="font-extrabold"
-                  >{{ $t("pages.account.order_details.billing_address_card.email_label") }}:</span
-                >
+                <span class="font-extrabold">{{
+                  $t("pages.account.order_details.billing_address_card.email_label")
+                }}</span>
                 {{ billingAddress?.email }}
               </p>
             </div>
@@ -188,6 +188,9 @@ import moment from "moment";
 import _ from "lodash";
 import { usePopup } from "@/shared/popup";
 import { useProducts } from "@/shared/catalog";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const { itemsPerPage, pages, order, deliveryAddress, billingAddress, loadOrder } = useUserOrder();
 const { fetchProducts, products } = useProducts();
@@ -206,9 +209,9 @@ const orderItems = computed(() =>
 const giftItems = computed(() => order.value?.items?.filter((item) => item.isGift));
 
 const breadcrumbs = ref<IBreadcrumbs[]>([
-  { title: "Home", url: "/" },
-  { title: "Account", url: "/account" },
-  { title: "Orders", url: "/account/orders" },
+  { title: t("common.links.home"), url: "/" },
+  { title: t("common.links.account"), url: "/account" },
+  { title: t("common.links.orders"), url: "/account/orders" },
 ]);
 
 const openReorderPopup = async () => {

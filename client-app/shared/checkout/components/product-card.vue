@@ -18,12 +18,12 @@
             <span class="text-xs text-gray-400"> {{ validationError.errorMessage }} </span>
           </div>
           <div class="flex">
-            <span class="font-medium text-gray-500 pr-1">{{ $t("shared.checkout.product_card.brand_label") }}: </span>
+            <span class="font-medium text-gray-500 pr-1">{{ $t("shared.checkout.product_card.brand_label") }} </span>
             <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
             <span class="w-1/3 lg:w-auto font-bold">{{ lineItem.product?.brandName }}</span>
           </div>
           <div class="flex text-sm">
-            <span class="font-medium text-gray-500 pr-1">{{ $t("shared.checkout.product_card.price_label") }}: </span>
+            <span class="font-medium text-gray-500 pr-1">{{ $t("shared.checkout.product_card.price_label") }} </span>
             <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
             <p class="w-1/3 lg:w-auto font-bold">
               <span class="text-green-700"><VcPriceDisplay :value="lineItem.listPrice || lineItem.placedPrice" /></span>
@@ -31,7 +31,7 @@
             </p>
           </div>
           <div class="flex text-sm lg:hidden">
-            <span class="font-medium text-gray-500">{{ $t("shared.checkout.product_card.total_label") }}: </span>
+            <span class="font-medium text-gray-500">{{ $t("shared.checkout.product_card.total_label") }} </span>
             <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
             <span class="w-1/3 text-green-700 font-bold"><VcPriceDisplay :value="lineItem.extendedPrice" /></span>
           </div>
