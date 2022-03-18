@@ -69,11 +69,11 @@ export default () => {
     }
   }
 
-  async function signMeIn(signMeIn: SignMeIn): Promise<IdentityResultType> {
+  async function signMeIn(payload: SignMeIn): Promise<IdentityResultType> {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/login";
-      const res = await innerFetch<SignMeIn, IdentityResultType>(url, "POST", signMeIn);
+      const res = await innerFetch<SignMeIn, IdentityResultType>(url, "POST", payload);
 
       if (res.succeeded) {
         await loadMe();
@@ -88,11 +88,11 @@ export default () => {
     }
   }
 
-  async function signMeUp(signMeUp: SignMeUp): Promise<IdentityResultType> {
+  async function signMeUp(payload: SignMeUp): Promise<IdentityResultType> {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/user";
-      const res = await innerFetch<SignMeUp, IdentityResultType>(url, "POST", signMeUp);
+      const res = await innerFetch<SignMeUp, IdentityResultType>(url, "POST", payload);
       return res;
     } catch (e) {
       Logger.error("useUser.signMeUp", e);
@@ -118,11 +118,11 @@ export default () => {
     }
   }
 
-  async function forgotPassword(forgotPassword: ForgotPassword): Promise<IdentityResultType> {
+  async function forgotPassword(payload: ForgotPassword): Promise<IdentityResultType> {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/forgotPassword";
-      const res = await innerFetch<ForgotPassword, IdentityResultType>(url, "POST", forgotPassword);
+      const res = await innerFetch<ForgotPassword, IdentityResultType>(url, "POST", payload);
       return res;
     } catch (e) {
       Logger.error("useUser.forgotPassword", e);
@@ -132,11 +132,11 @@ export default () => {
     }
   }
 
-  async function validateToken(validateToken: ValidateToken): Promise<IdentityResultType> {
+  async function validateToken(payload: ValidateToken): Promise<IdentityResultType> {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/validateToken";
-      const res = await innerFetch<ValidateToken, IdentityResultType>(url, "POST", validateToken);
+      const res = await innerFetch<ValidateToken, IdentityResultType>(url, "POST", payload);
       return res;
     } catch (e) {
       Logger.error("useUser.validateToken", e);
@@ -146,11 +146,11 @@ export default () => {
     }
   }
 
-  async function resetPassword(resetPassword: ResetPassword): Promise<IdentityResultType> {
+  async function resetPassword(payload: ResetPassword): Promise<IdentityResultType> {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/resetPassword";
-      const res = await innerFetch<ResetPassword, IdentityResultType>(url, "POST", resetPassword);
+      const res = await innerFetch<ResetPassword, IdentityResultType>(url, "POST", payload);
       return res;
     } catch (e) {
       Logger.error("useUser.resetPassword", e);
