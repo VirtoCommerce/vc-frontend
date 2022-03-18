@@ -179,7 +179,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, shallowRef, watch, onMounted, watchEffect, PropType } from "vue";
+import {
+  computed,
+  ref,
+  shallowRef,
+  watch,
+  onMounted,
+  watchEffect,
+  PropType,
+  onBeforeUnmount,
+  WatchStopHandle,
+} from "vue";
 import { breakpointsTailwind, useBreakpoints, whenever } from "@vueuse/core";
 import {
   Breadcrumbs,
@@ -204,6 +214,8 @@ import { AddToCart } from "@/shared/cart";
 import { useRouteQueryParam } from "@core/composables";
 import { defaultPageSize, productSortingList } from "@core/constants";
 import QueryParamName from "@core/query-param-name.enum";
+
+const watchStopHandles: WatchStopHandle[] = [];
 
 const props = defineProps({
   categorySeoUrls: {
@@ -318,17 +330,32 @@ onMounted(async () => {
   await loadCategoriesTree(""); // TODO: use active category key instead of id
   selectCategoryBySeoUrl(categorySeoUrl.value);
   await loadProducts();
+
+  // Start change tracking after initial data load
+  watchStopHandles.push(
+    /**
+     * You must force the watch to stop before unmounting the component
+     * because the computed value being watched includes the global reactive object.
+     * In this case, it is the "current route" inside the "useRouteQueryParam" function.
+     *
+     * Related links:
+     * https://github.com/vuejs/core/issues/2291
+     */
+    watch(
+      computed(() => JSON.stringify(searchParams.value)),
+      loadProducts,
+      {
+        flush: "post",
+      }
+    )
+  );
+});
+
+onBeforeUnmount(() => {
+  watchStopHandles.forEach((watchStopHandle) => watchStopHandle());
 });
 
 watchEffect(() => (keyword.value = keywordQueryParam.value ?? ""));
 whenever(() => !isMobileSidebar.value, hideMobileSidebar);
 watch(categorySeoUrl, selectCategoryBySeoUrl);
-
-watch(
-  computed(() => JSON.stringify(searchParams.value)),
-  loadProducts,
-  {
-    flush: "post",
-  }
-);
 </script>

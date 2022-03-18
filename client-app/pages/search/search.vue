@@ -89,7 +89,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch, onMounted, ref } from "vue";
+import { computed, watch, onMounted, ref, onBeforeUnmount, WatchStopHandle } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { DisplayProducts, ProductsSearchParams, useProducts, ViewMode } from "@/shared/catalog";
 import { VcButton, VcInfinityScrollLoader, VcSelect, VcScrollTopButton } from "@/components";
@@ -97,6 +97,8 @@ import { AddToCart } from "@/shared/cart";
 import { useRouteQueryParam } from "@core/composables";
 import { defaultSearchPageSize, productSortingList } from "@core/constants";
 import QueryParamName from "@core/query-param-name.enum";
+
+const watchStopHandles: WatchStopHandle[] = [];
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { fetchProducts, fetchMoreProducts, loading, loadingMore, products, pages } = useProducts();
@@ -145,14 +147,30 @@ async function loadMoreProducts() {
   });
 }
 
-onMounted(loadProducts);
+onMounted(async () => {
+  await loadProducts();
 
-watch(
-  computed(() => JSON.stringify(searchParams.value)),
-  loadProducts,
-  {
-    flush: "post",
-  }
-);
+  // Start change tracking after initial data load
+  watchStopHandles.push(
+    /**
+     * You must force the watch to stop before unmounting the component
+     * because the computed value being watched includes the global reactive object.
+     * In this case, it is the "current route" inside the "useRouteQueryParam" function.
+     *
+     * Related links:
+     * https://github.com/vuejs/core/issues/2291
+     */
+    watch(
+      computed(() => JSON.stringify(searchParams.value)),
+      loadProducts,
+      {
+        flush: "post",
+      }
+    )
+  );
+});
 
+onBeforeUnmount(() => {
+  watchStopHandles.forEach((watchStopHandle) => watchStopHandle());
+});
 </script>
