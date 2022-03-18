@@ -108,13 +108,11 @@
         <div class="lg:w-3/4 xl:w-4/5 flex-grow">
           <div class="flex flex-col">
             <h2 class="text-gray-800 text-2xl lg:text-3xl font-bold uppercase">{{ selectedCategory?.label }}</h2>
+
             <p class="py-3">
               <span class="font-extrabold">{{ total }} results found.</span>
-              <span>&nbsp;</span>
-              <span class="font-normal">
-                {{ products.length }} displayed that include {{ products.length }} products.
-              </span>
             </p>
+
             <div class="flex justify-start mb-6 mt-4">
               <!-- Mobile filters toggler -->
               <div class="lg:hidden mr-3">
@@ -175,6 +173,7 @@
             class="mt-9 -mb-6"
             @visible="loadMoreProducts"
           />
+          <VcScrollTopButton></VcScrollTopButton>
         </div>
       </div>
     </div>
@@ -194,7 +193,15 @@ import {
   ViewMode,
   ProductsSearchParams,
 } from "@/shared/catalog";
-import { VcButton, VcCard, VcCardSkeleton, VcCheckbox, VcInfinityScrollLoader, VcSelect } from "@/components";
+import {
+  VcButton,
+  VcCard,
+  VcCardSkeleton,
+  VcCheckbox,
+  VcInfinityScrollLoader,
+  VcSelect,
+  VcScrollTopButton,
+} from "@/components";
 import { AddToCart } from "@/shared/cart";
 import { useRouteQueryParam } from "@core/composables";
 import { defaultPageSize, productSortingList } from "@core/constants";

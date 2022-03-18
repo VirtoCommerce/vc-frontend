@@ -64,6 +64,7 @@
               class="mt-9 -mb-6"
               @visible="loadMoreProducts"
             />
+            <VcScrollTopButton></VcScrollTopButton>
           </template>
 
           <!-- Not found -->
@@ -91,7 +92,7 @@
 import { computed, watch, onMounted, ref } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { DisplayProducts, ProductsSearchParams, useProducts, ViewMode } from "@/shared/catalog";
-import { VcButton, VcInfinityScrollLoader, VcSelect } from "@/components";
+import { VcButton, VcInfinityScrollLoader, VcSelect, VcScrollTopButton } from "@/components";
 import { AddToCart } from "@/shared/cart";
 import { useRouteQueryParam } from "@core/composables";
 import { defaultSearchPageSize, productSortingList } from "@core/constants";
@@ -153,4 +154,5 @@ watch(
     flush: "post",
   }
 );
+
 </script>
