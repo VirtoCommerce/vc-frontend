@@ -85,10 +85,12 @@
       </div>
     </div>
   </div>
+
+  <Error404 v-else-if="!loading" />
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, computed, watchEffect } from "vue";
+import { ref, Ref, computed, watchEffect, defineAsyncComponent } from "vue";
 import { VcCarousel, VcSection, VcButton, VcPriceDisplay, CarouselOptions } from "@/components";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useCart, AddToCart } from "@/shared/cart";
@@ -102,6 +104,8 @@ import {
   ProductPriceBlock,
   CarouselProductCard,
 } from "@/shared/catalog";
+
+const Error404 = defineAsyncComponent(() => import("@/pages/404/404.vue"));
 
 const props = defineProps({
   productId: {
@@ -137,7 +141,7 @@ const relatedProductsCarouselOptions: CarouselOptions = {
 
 const { currency } = useCart();
 const { buildBreadcrumbs } = useBreadcrumbs();
-const { product, loadProduct, variationsCartTotal } = useProduct();
+const { product, loading, loadProduct, variationsCartTotal } = useProduct();
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
