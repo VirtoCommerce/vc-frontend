@@ -14,9 +14,9 @@
           class="flex flex-col md:flex-row items-center justify-center lg:justify-start space-y-2 md:space-y-0 md:space-x-7 text-xl md:text-2xl"
         >
           <div>Result oriented</div>
-          <div class="w-2.5 h-2.5 bg-yellow-500 rounded-full"></div>
+          <div class="w-2.5 h-2.5 bg-[color:var(--color-primary)] rounded-full"></div>
           <div>Trustworthy</div>
-          <div class="w-2.5 h-2.5 bg-yellow-500 rounded-full"></div>
+          <div class="w-2.5 h-2.5 bg-[color:var(--color-primary)] rounded-full"></div>
           <div>Reliable</div>
         </div>
       </div>
@@ -51,7 +51,7 @@
   </div>
 
   <!-- CTA -->
-  <div class="py-6 lg:py-10 bg-yellow-500">
+  <div class="py-6 lg:py-10 bg-[color:var(--color-primary)]">
     <div class="container mx-auto flex flex-col lg:flex-row items-center space-y-2 lg:space-x-10 px-6 md:px-12">
       <div class="uppercase font-extrabold text-3xl text-white whitespace-nowrap">subscribe now!</div>
       <div class="text-base font-medium leading-tight text-white max-w-max lg:max-w-min">
@@ -74,21 +74,11 @@
 <script setup lang="ts">
 import { VcImage } from "@/components";
 import { useUser, SignInForm } from "@/shared/account";
-import { useCart } from "@/shared/cart";
-import { useContext } from "@/shared/context";
-import { setUserId } from "@/core/constants";
-import { useRouter } from "vue-router";
 
-const router = useRouter();
-const { isAuthenticated, me } = useUser();
-const { loadMyCart } = useCart();
-const { loadContext, themeContext } = useContext();
+const { isAuthenticated } = useUser();
 
 async function onSignIn() {
-  await loadContext();
-  setUserId(themeContext.value?.userId || me.value?.id);
-  await loadMyCart();
-  router.push({ name: "Dashboard" });
+  location.href = "/";
 }
 </script>
 

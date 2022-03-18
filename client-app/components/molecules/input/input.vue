@@ -2,7 +2,7 @@
   <div>
     <div v-if="label">
       <span class="font-bold text-gray-900">{{ label }}</span>
-      <span v-if="isRequired" class="text-red-500">*</span>
+      <span v-if="isRequired" class="text-[color:var(--color-danger)]">*</span>
     </div>
 
     <input
@@ -20,7 +20,7 @@
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     />
 
-    <div v-if="errorMessage" class="text-xs text-red-500">{{ errorMessage }}</div>
+    <div v-if="errorMessage" class="text-xs text-[color:var(--color-danger)]">{{ errorMessage }}</div>
   </div>
 </template>
 

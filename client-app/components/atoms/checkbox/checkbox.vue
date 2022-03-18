@@ -40,7 +40,7 @@ const props = defineProps({
 
   color: {
     type: String,
-    default: "yellow-500",
+    default: "[color:var(--color-primary)]",
   },
 
   // only for array of model value

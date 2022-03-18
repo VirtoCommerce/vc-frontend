@@ -9,12 +9,12 @@
         <div class="mb-3 lg:mb-0 text-sm xl:w-1/2">
           <router-link
             :to="`/${SeoUrl.Product}/${productId}`"
-            class="text-cyan-700 font-extrabold line-clamp-3 overflow-hidden"
+            class="text-[color:var(--color-link)] font-extrabold line-clamp-3 overflow-hidden"
           >
             {{ lineItem.name }}
           </router-link>
           <div class="flex items-center space-x-1 py-1" v-if="validationError">
-            <i class="fas fa-exclamation-circle text-yellow-500"></i>
+            <i class="fas fa-exclamation-circle text-[color:var(--color-primary)]"></i>
             <span class="text-xs text-gray-400"> {{ validationError.errorMessage }} </span>
           </div>
           <div class="flex">
@@ -46,7 +46,10 @@
               :max="maxQty"
               :min="minQty"
               class="w-20 border rounded overflow-hidden h-8 lg:h-10 focus:ring ring-inset outline-none p-1 text-center"
-              :class="{ 'text-red-500': isInputDisabled, 'border-red-500': errorMessage }"
+              :class="{
+                'text-[color:var(--color-danger)]': isInputDisabled,
+                'border-[color:var(--color-danger)]': errorMessage,
+              }"
               :disabled="isInputDisabled || readOnly"
               @input="onInput"
               @keypress="onKeypress"
@@ -58,7 +61,7 @@
                 >
               </div>
               <div v-else class="flex items-center">
-                <span class="text-red-500 text-xs pt-1 whitespace-nowrap">Out of stock</span>
+                <span class="text-[color:var(--color-danger)] text-xs pt-1 whitespace-nowrap">Out of stock</span>
               </div>
             </div>
           </div>
@@ -82,7 +85,10 @@
               >Remove</VcButton
             >
           </div>
-          <div v-if="!readOnly" class="hidden lg:flex xl:w-1/4 flex-col space-y-1 text-xs font-semibold text-cyan-700">
+          <div
+            v-if="!readOnly"
+            class="hidden lg:flex xl:w-1/4 flex-col space-y-1 text-xs font-semibold text-[color:var(--color-link)]"
+          >
             <span v-if="!isInputDisabled" class="cursor-pointer" @click="updateQuantity">Update</span>
             <span class="cursor-pointer" @click="$emit('remove:item', lineItem.id)">Remove</span>
           </div>

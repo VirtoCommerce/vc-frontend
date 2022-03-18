@@ -1,10 +1,10 @@
 <template>
   <div
-    class="flex items-center justify-between px-12 py-7 bg-gray-800 select-none"
+    class="flex items-center justify-between px-12 py-7 bg-[color:var(--color-search-bar-bg)] select-none"
     v-click-outside="() => searchDropdownVisible && hideSearchDropdown()"
   >
     <router-link to="/">
-      <VcImage src="/static/images/common/logo-white.svg" class="h-12 mr-8" lazy />
+      <VcImage :src="$cfg.logo_inverted_image" class="h-12 mr-8" lazy />
     </router-link>
 
     <div class="flex flex-grow relative">

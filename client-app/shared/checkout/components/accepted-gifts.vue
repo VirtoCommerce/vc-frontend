@@ -18,7 +18,7 @@
         <div class="flex-grow flex items-center">
           <VcImage :src="gift.imageUrl" class="mr-4 border aspect-square w-16 h-16" />
           <div>
-            <div class="flex-grow font-bold text-cyan-700">{{ gift.name }}</div>
+            <div class="flex-grow font-bold text-[color:var(--color-link)]">{{ gift.name }}</div>
             <div class="lg:hidden"><span class="font-bold">Quantity:</span> {{ gift.quantity }}</div>
           </div>
         </div>

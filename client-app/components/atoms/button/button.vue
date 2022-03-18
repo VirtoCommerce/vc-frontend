@@ -69,12 +69,12 @@ const isEnabled = computed(() => !props.isDisabled && !props.isWaiting);
 
 const isLink = computed(() => !!props.to);
 
-const primaryEnabledClasses = "bg-yellow-500 text-white hover:bg-yellow-600";
-const primaryDisabledClasses = "bg-yellow-500 text-white";
+const primaryEnabledClasses = "bg-[color:var(--color-primary)] text-white hover:bg-[color:var(--color-primary-hover)]";
+const primaryDisabledClasses = "bg-[color:var(--color-primary)] text-white";
 const primaryOutlineEnabledClasses =
-  "border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:text-white hover:border-yellow-600";
-const primaryOutlineDisabledClasses = "border-2 border-yellow-500 text-yellow-500";
-const secondaryEnabledClasses = "bg-black text-white hover:bg-yellow-600";
+  "border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary-hover)] hover:text-white hover:border-[color:var(--color-primary-hover)]";
+const primaryOutlineDisabledClasses = "border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)]";
+const secondaryEnabledClasses = "bg-black text-white hover:bg-[color:var(--color-primary-hover)]";
 const secondaryDisabledClasses = "bg-black text-white";
 const secondaryOutlineEnabledClasses = "border-2 bg-white border-black hover:bg-black hover:text-white";
 const secondaryOutlineDisabledClasses = "border-2 bg-white border-black";

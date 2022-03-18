@@ -17,7 +17,7 @@
         :class="[
           value.length === 0
             ? 'border-gray-300 bg-gray-50 text-gray-300'
-            : 'border-yellow-500 bg-yellow-500 text-white',
+            : 'border-[color:var(--color-primary)] bg-[color:var(--color-primary)] text-white',
         ]"
         :disabled="value.length === 0 || isDisabled"
         @click="$emit('click:apply')"
@@ -26,7 +26,7 @@
       </button>
       <button
         v-if="isApplied"
-        class="rounded uppercase w-10 border-2 font-roboto-condensed font-bold text-sm text-red-500 border-red-500 hover:text-white hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        class="rounded uppercase w-10 border-2 font-roboto-condensed font-bold text-sm text-[color:var(--color-danger)] border-[color:var(--color-danger)] hover:text-white hover:bg-[color:var(--color-danger)] disabled:opacity-50 disabled:cursor-not-allowed"
         :disabled="isDisabled"
         @click="$emit('click:deny')"
       >
@@ -34,7 +34,7 @@
       </button>
     </div>
 
-    <div v-if="errorMessage" class="text-xs text-red-500">{{ errorMessage }}</div>
+    <div v-if="errorMessage" class="text-xs text-[color:var(--color-danger)]">{{ errorMessage }}</div>
   </div>
 </template>
 

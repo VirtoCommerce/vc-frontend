@@ -16,7 +16,7 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { Header, Footer, useSearchBar } from "./shared/layout";
 import { useUser } from "@/shared/account";
 import { useCart } from "@/shared/cart";
-import { useContext } from "@/shared/context";
+import { themeContext } from "@/core/utilities";
 import { setCatalogId, setUserId } from "@/core/constants";
 import { PopupHost } from "@/shared/popup";
 import { useRouter } from "vue-router";
@@ -25,7 +25,6 @@ const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { loadMe, me, isAuthenticated } = useUser();
 const { loadMyCart } = useCart();
-const { loadContext, themeContext } = useContext();
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
 
 const isMobile = breakpoints.smaller("lg");
@@ -63,12 +62,11 @@ router.beforeEach(async (to) => {
 
 onMounted(async () => {
   await loadMe();
-  await loadContext();
 
   // FIXME
   // temporary solution
-  setUserId(themeContext.value?.userId || me.value?.id);
-  setCatalogId(themeContext.value.catalogId!);
+  setUserId(themeContext.userId || me.value?.id);
+  setCatalogId(themeContext.catalogId!);
 
   await loadMyCart();
   loaded.value = true;

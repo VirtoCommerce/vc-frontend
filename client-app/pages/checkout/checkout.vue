@@ -32,7 +32,9 @@
                   ></VcPagination>
                   <p class="text-center text-sm lg:ml-auto">
                     If you changed multiple quantities,
-                    <span class="text-cyan-700 font-extrabold cursor-pointer" @click="updateAllItems">Update All</span>
+                    <span class="text-[color:var(--color-link)] font-extrabold cursor-pointer" @click="updateAllItems"
+                      >Update All</span
+                    >
                   </p>
                 </div>
               </div>
@@ -40,7 +42,7 @@
 
             <!-- Gifts section -->
             <VcSection
-              v-if="cart.availableGifts?.length"
+              v-if="$cfg.checkout_gifts_enabled && cart.availableGifts?.length"
               title="+ Add a Gift"
               icon-url="/static/images/checkout/gifts.svg"
               class="shadow-inner pb-8 lg:shadow"
@@ -53,7 +55,7 @@
                 >
                   <VcCheckbox class="mr-7" :model-value="checkGift(gift)" @change="toggleGift($event, gift)" />
                   <VcImage :src="gift.imageUrl" class="mr-4 border aspect-square w-16 h-16" />
-                  <div class="flex-grow font-bold text-cyan-700">{{ gift.name }}</div>
+                  <div class="flex-grow font-bold text-[color:var(--color-link)]">{{ gift.name }}</div>
                 </div>
               </div>
             </VcSection>
@@ -97,7 +99,7 @@
                     </div>
                   </template>
                   <template v-else>
-                    <div class="text-red-500 flex items-center space-x-4">
+                    <div class="text-[color:var(--color-danger)] flex items-center space-x-4">
                       <i class="fas fa-exclamation-triangle text-2xl"></i>
 
                       <span v-if="isAuthenticated">
@@ -162,7 +164,7 @@
                     <input
                       v-model="billingSameAsShipping"
                       type="checkbox"
-                      class="form-tick appearance-none w-5 h-5 border-2 border-gray-300 rounded-sm checked:bg-yellow-500 checked:border-transparent focus:outline-none cursor-pointer"
+                      class="form-tick appearance-none w-5 h-5 border-2 border-gray-300 rounded-sm checked:bg-[color:var(--color-primary)] checked:border-transparent focus:outline-none cursor-pointer"
                     />
                     <span class="ml-2 font-medium">Same as shipping address</span>
                   </label>
@@ -171,7 +173,7 @@
                   v-if="!billingSameAsShipping && !payment?.billingAddress"
                   class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 mb-6 p-5 flex flex-col space-y-2 lg:space-y-0 lg:flex-row lg:items-center justify-between"
                 >
-                  <div class="text-red-500 flex items-center space-x-4">
+                  <div class="text-[color:var(--color-danger)] flex items-center space-x-4">
                     <i class="fas fa-exclamation-triangle text-2xl"></i>
 
                     <span v-if="isAuthenticated" class="text-sm">
@@ -251,7 +253,12 @@
             </VcSection>
 
             <!-- Extra section -->
-            <VcSection title="Extra" icon-url="/static/images/checkout/extra.svg" class="shadow-inner pb-8 lg:shadow">
+            <VcSection
+              v-if="$cfg.checkout_comment_enabled"
+              title="Extra"
+              icon-url="/static/images/checkout/extra.svg"
+              class="shadow-inner pb-8 lg:shadow"
+            >
               <div class="mx-5 xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6">
                 <p class="font-extrabold text-base mb-1">Order comments</p>
                 <VcTextArea v-model="cartComment" class="resize-none" :rows="4" :max-length="1000" counter />
@@ -269,6 +276,7 @@
               <template #header>
                 <!-- Purchase order -->
                 <VcActionInput
+                  v-if="$cfg.checkout_purchase_order_enabled"
                   v-model="purchaseOrderNumber"
                   class="mb-5"
                   label="Purchase order"
@@ -283,6 +291,7 @@
 
                 <!-- Promotion code -->
                 <VcActionInput
+                  v-if="$cfg.checkout_coupon_enabled"
                   v-model="cartCoupon"
                   :class="[couponValidationError ? 'mb-0' : 'mb-8']"
                   label="Promotion code"

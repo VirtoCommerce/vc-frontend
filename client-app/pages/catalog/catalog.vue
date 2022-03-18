@@ -50,13 +50,15 @@
 
             <!-- Previously purchased -->
             <VcCard title="Previously purchased">
-              <VcCheckbox color="cyan-700">View previously purchased products</VcCheckbox>
+              <VcCheckbox color="[color:var(--color-link)]">View previously purchased products</VcCheckbox>
             </VcCard>
 
             <!-- Branch availability -->
             <VcCard title="Branch availability">
               <p class="text-sm font-medium">
-                <span class="text-cyan-700 font-semibold cursor-pointer hover:text-cyan-900">
+                <span
+                  class="text-[color:var(--color-link)] font-semibold cursor-pointer hover:text-[color:var(--color-link-hover)]"
+                >
                   Select a pickup branch
                 </span>
                 to see products in stock now.
@@ -89,7 +91,7 @@
                   :value="item.value"
                   :disabled="loading"
                   class="mt-3 first:mt-0"
-                  color="cyan-700"
+                  color="[color:var(--color-link)]"
                   @change="applyFilters"
                 >
                   <div class="flex">

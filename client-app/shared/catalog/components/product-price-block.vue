@@ -10,16 +10,17 @@
       <div
         class="flex items-center justify-center flex-1 py-4 px-1 border-r space-x-2 cursor-pointer hover:bg-gray-100"
       >
-        <i class="fas fa-plus text-base text-yellow-500"></i>
+        <i class="fas fa-plus text-base text-[color:var(--color-primary)]"></i>
         <span class="text-sm text-blue-800 font-bold">Add to list</span>
       </div>
       <div
         class="flex items-center justify-center flex-1 py-4 px-1 border-r space-x-2 cursor-pointer hover:bg-gray-100"
       >
-        <i class="fas fa-envelope fa-xl text-yellow-500"></i><span class="text-sm text-blue-800 font-bold">Email</span>
+        <i class="fas fa-envelope fa-xl text-[color:var(--color-primary)]"></i
+        ><span class="text-sm text-blue-800 font-bold">Email</span>
       </div>
       <div class="flex items-center justify-center flex-1 py-4 px-1 space-x-2 cursor-pointer hover:bg-gray-100">
-        <i class="fas fa-print text-yellow-500"></i>
+        <i class="fas fa-print text-[color:var(--color-primary)]"></i>
         <span class="text-sm text-blue-800 font-bold" @click="print()">Print</span>
       </div>
     </div>

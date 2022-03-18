@@ -2,24 +2,28 @@
   <!-- Dropdown menu -->
   <div v-if="children?.length" ref="submenu" class="relative">
     <div
-      class="uppercase font-extrabold text-gray-500 flex items-center cursor-pointer"
+      class="uppercase font-extrabold text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)] flex items-center cursor-pointer tracking-wide"
       @click="submenuVisible = !submenuVisible"
     >
       <div>
         <slot>{{ title }}</slot>
       </div>
       <i
-        class="fas ml-3 text-yellow-500 align-baseline"
+        class="fas ml-3 text-[color:var(--color-primary)] align-baseline"
         :class="[submenuVisible ? 'fa-chevron-up' : 'fa-chevron-down']"
       ></i>
     </div>
     <div
       v-if="submenuVisible"
-      class="absolute z-10 bg-white rounded-md shadow-lg w-60 flex flex-col px-5 py-4 space-y-3 mt-2"
+      class="absolute z-10 bg-[color:var(--color-header-bottom-dropdown-bg)] rounded-md shadow-lg w-60 flex flex-col px-5 py-4 space-y-3 mt-2"
     >
       <template v-for="(item, i) in children" :key="i">
         <slot name="item">
-          <router-link :to="item.url" class="font-bold text-gray-500 text-sm" @click="submenuVisible = false">
+          <router-link
+            :to="item.url"
+            class="font-bold text-[color:var(--color-header-bottom-dropdown-link)] hover:text-[color:var(--color-header-bottom-dropdown-link-hover)] text-sm"
+            @click="submenuVisible = false"
+          >
             {{ item.title }}
           </router-link>
         </slot>
@@ -27,7 +31,12 @@
     </div>
   </div>
   <!-- Regular link -->
-  <router-link v-else :to="to" class="menu-link uppercase font-extrabold text-gray-500" :class="$attrs.class">
+  <router-link
+    v-else
+    :to="to"
+    class="menu-link uppercase font-extrabold text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)] tracking-wide"
+    :class="$attrs.class"
+  >
     <slot>{{ title }}</slot>
   </router-link>
 </template>
@@ -70,7 +79,7 @@ onClickOutside(submenu, () => {
 .menu-link.router-link-active:after {
   content: "";
   height: 3px;
-  background-color: #ffbe2e;
+  background-color: var(--color-primary);
   position: absolute;
   width: 100%;
   margin-top: 5px;
