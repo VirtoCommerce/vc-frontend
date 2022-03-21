@@ -20,13 +20,28 @@
         >
           <template v-if="item.id === 'checkout'">
             <div class="flex items-center">
-              <i class="fas fa-shopping-cart text-[color:var(--color-primary)] mr-3"></i>
-              <div>{{ item.title }}</div>
+              <i class="fas fa-shopping-cart text-[color:var(--color-primary)] mr-3" />
+
+              <span>{{ item.title }}</span>
+
               <div
                 v-if="cart?.itemsQuantity"
                 class="flex items-center rounded-2xl border border-[color:var(--color-primary)] px-3 font-bold text-sm h-7 ml-3"
               >
                 {{ cart.itemsQuantity }}
+              </div>
+            </div>
+          </template>
+
+          <template v-else-if="item.id === 'compare'">
+            <div class="flex items-center">
+              <span>{{ item.title }}</span>
+
+              <div
+                v-if="count"
+                class="flex items-center rounded-2xl border border-[color:var(--color-primary)] px-3 font-bold text-sm h-7 ml-3"
+              >
+                {{ count }}
               </div>
             </div>
           </template>
@@ -90,8 +105,7 @@ import { ref } from "vue";
 import { MenuLinkType } from "@/core/api/graphql/types";
 import { VcImage } from "@/components";
 import { useI18n } from "vue-i18n";
-
-const { t } = useI18n();
+import { useCompareProducts } from "@/shared/compare";
 
 defineProps({
   isVisible: {
@@ -104,6 +118,8 @@ defineEmits(["close"]);
 
 const { me, isAuthenticated, signMeOut } = useUser();
 const { cart } = useCart();
+const { count } = useCompareProducts();
+const { t } = useI18n();
 
 const headerMenu = menuSchema?.header?.main;
 
