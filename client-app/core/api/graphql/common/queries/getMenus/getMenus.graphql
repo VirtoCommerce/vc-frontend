@@ -1,0 +1,10 @@
+query getMenus($storeId: String!, $cultureName: String, $keyword: String) {
+  menus(storeId: $storeId, cultureName: $cultureName, keyword: $keyword) {
+    name
+    items {
+      title
+      url
+      priority
+    }
+  }
+}

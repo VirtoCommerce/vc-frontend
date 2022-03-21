@@ -3,4 +3,3 @@ client-app/core/api/graphql/types.ts
 node_modules
 dist
 assets
-_references
