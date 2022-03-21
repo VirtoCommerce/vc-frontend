@@ -17,7 +17,9 @@
       "select": "Select",
       "choose": "Choose",
       "filters": "Filters",
-      "back": "Back"
+      "back": "Back",
+      "reset": "Reset",
+      "add_to_cart": "Add to cart"
     },
     "labels": {
       "actions": "Actions",
@@ -218,7 +220,7 @@
     },
     "cart": {
       "add_to_cart": {
-        "add_to_cart_button": "Add to cart",
+        "add_to_cart_button": "@:common.buttons.add_to_cart",
         "update_cart_button": "Update cart",
         "already_in_cart_message": "{0} already in cart",
         "enter correct number_message": "enter correct number"
@@ -352,6 +354,27 @@
         "billing_address_card": {
           "title": "Billing address"
         }
+      }
+    },
+    "bulk_order": {
+      "manually": {
+        "title": "Manually",
+        "product_sku_label": "Product SKU",
+        "quantity_label": "@:common.labels.quantity",
+        "add_rows_action_link": "Add 5 more rows",
+        "reset_button": "@:common_buttons.reset",
+        "add_to_cart_button": "@:common.buttons.add_to_cart",
+        "subtitle_message_start": "Quickly add items to your",
+        "cart_link": "Cart",
+        "subtitle_message_end": "by entering item SKUs and quantities."
+      },
+      "copy_n_past": {
+        "title": "Copy & Paste",
+        "subtitle_message": "Want to save time and order faster?",
+        "guide_message": "Simply copy and paste item records from your CSV file into the field below using the following format: <strong>SKU,Quantity</strong>. Each record should starts from a new line.",
+        "text_area_placeholder": "Formatting example:\n6AF8SM0VPFV6,10\n3RO1GEQI34E8,20",
+        "reset_button": "@:common_buttons.reset",
+        "add_to_cart_button": "@:common.buttons.add_to_cart"
       }
     }
   },
@@ -640,6 +663,13 @@
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "No results were found for your \"<strong>{0}</strong>\" query",
       "home_button": "@:common.buttons.home"
+    },
+    "bulk_order": {
+      "title": "Bulk Order Pad",
+      "product_was_not_added_alert": "Products with following SKUs was not added to cart: {0}",
+      "data_is_invalid_alert": "The entered data is invalid",
+      "manually_tab": "Manually",
+      "copy_n_past_tab": "Copy & Paste"
     },
     "demo_landing": {
       "header": "Gaming laptop market overview",
