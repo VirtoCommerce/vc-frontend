@@ -53,12 +53,12 @@
 <script setup lang="ts">
 import { VcImage } from "@/components";
 import BottomHeaderLink from "./bottom-header-link.vue";
-import menuSchema from "@/config/menu";
 import { useCart } from "@/shared/cart";
 import { useSearchBar, SearchBar } from "@/shared/layout";
+import { useMenu } from "@/shared/layout/composables";
+
+const { headerMenu } = useMenu();
 
 const { cart } = useCart();
 const { searchBarVisible, showSearchBar } = useSearchBar();
-
-const headerMenu = menuSchema?.header?.main;
 </script>

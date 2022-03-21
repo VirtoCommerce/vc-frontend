@@ -6,7 +6,7 @@
       @click="submenuVisible = !submenuVisible"
     >
       <div>
-        <slot>{{ $t(title) }}</slot>
+        <slot>{{ title }}</slot>
       </div>
       <i
         class="fas ml-3 text-[color:var(--color-primary)] align-baseline"
@@ -23,8 +23,8 @@
             :to="item.url"
             class="font-bold text-[color:var(--color-header-bottom-dropdown-link)] hover:text-[color:var(--color-header-bottom-dropdown-link-hover)] text-sm"
             @click="submenuVisible = false"
-            v-t="item.title"
           >
+            {{ item.title }}
           </router-link>
         </slot>
       </template>
@@ -37,7 +37,7 @@
     class="menu-link uppercase font-extrabold text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)] tracking-wide"
     :class="$attrs.class"
   >
-    <slot>{{ $t(title) }}</slot>
+    <slot>{{ title }}</slot>
   </router-link>
 </template>
 
