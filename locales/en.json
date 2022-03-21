@@ -66,7 +66,7 @@
       "header": {
         "logo_label": "Construction goods",
         "top_header": {
-          "link_dashboard": "common.links.dashboard",
+          "link_dashboard": "@:common.links.dashboard",
           "link_order_history": "Order History",
           "link_lists": "Lists"
         },
@@ -89,12 +89,12 @@
         },
         "mobile": {
           "account_menu": {
-            "dashboard": "common.links.dashboard",
-            "profile": "common.links.profile",
-            "addresses": "common.links.addresses",
-            "orders": "common.links.orders",
-            "your_list": "common.links.your_list",
-            "checkout_defaults": "common.links.checkout_defaults"
+            "dashboard": "@:common.links.dashboard",
+            "profile": "@:common.links.profile",
+            "addresses": "@:common.links.addresses",
+            "orders": "@:common.links.orders",
+            "your_list": "@:common.links.your_list",
+            "checkout_defaults": "@:common.links.checkout_defaults"
           },
           "search_bar": {
             "input_placeholder": "Enter keyword, item, model or replacement part number"
@@ -131,13 +131,15 @@
     },
     "account": {
       "navigation": {
-        "dashboard": "@:common.links.dashboard",
-        "profile": "@:common.links.profile",
-        "addresses": "@:common.links.",
-        "orders": "@:common.links.",
-        "your_list": "@:common.links.",
-        "checkout_defaults": "@:common.links.checkout_defaults",
-        "title": "My account"
+        "title": "My account",
+        "links": {
+          "dashboard": "@:common.links.dashboard",
+          "profile": "@:common.links.profile",
+          "addresses": "@:common.links.addresses",
+          "orders": "@:common.links.orders",
+          "your_list": "@:common.links.your_list",
+          "checkout_defaults": "@:common.links.checkout_defaults"
+        }
       },
       "address_form": {
         "first_name_label": "@:common.labels.first_name",
@@ -167,7 +169,7 @@
       "reset_password_form": {
         "password_label": "@:common.labels.password",
         "password_placeholder": "Enter your password",
-        "confirm_password_label": "common.labels.confirm_password",
+        "confirm_password_label": "@:common.labels.confirm_password",
         "confirm_password_placeholder": "Confirm your password",
         "reset_password_button": "Reset password",
         "password_must_match_message": "Passwords must match"
@@ -281,10 +283,11 @@
         "quantity_label": "@:common.labels.quantity",
         "title": "Accepted Gifts"
       },
-      "create_address_dialog": {
+      "add_or_update_address_dialog": {
         "title": "Select address",
         "cancel_button": "@:common.buttons.cancel",
-        "create_button": "@:common.buttons.create"
+        "create_button": "@:common.buttons.create",
+        "save_button": "@:common.buttons.save"
       },
       "order_summary": {
         "title": "Order summary",
@@ -300,7 +303,7 @@
         "select_button": "@:common.buttons.select",
         "title": "Select Payment method"
       },
-      "shipping_address_dialog": {
+      "select_address_dialog": {
         "cancel_button": "@:common.buttons.cancel",
         "ok_button": "@:common.buttons.ok",
         "save_button": "@:common.buttons.save",
