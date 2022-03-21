@@ -27,17 +27,15 @@ const props = defineProps({
 
 // todo: move this logic to the separated helper. For product properties also
 const grouped = computed(() => {
-  var propertyGroups = _(props.properties)
+  return _(props.properties)
     .filter((p) => !!p && p.type === "Variation")
     .groupBy((p) => p.name)
-    .map((props, propName) => {
+    .map((properties, propName) => {
       return {
         name: propName,
-        values: props.map((x) => x.value).join(", "),
+        values: properties.map((x) => x.value).join(", "),
       };
     })
     .value();
-
-  return propertyGroups;
 });
 </script>

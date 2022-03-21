@@ -9,13 +9,14 @@ import "./assets/styles/main.scss";
 // Async application init
 (async () => {
   // Load and prepare app config and context
-  const cfg = await initCfg();
-  const themeContext = await initContext();
+  const [cfg, themeContext] = await Promise.all([initCfg(), initContext()]);
 
   // Create and mount application
   const app = createApp(App);
+
   app.use(config, cfg);
   app.use(context, themeContext);
   app.use(router);
+
   app.mount("#app");
 })();

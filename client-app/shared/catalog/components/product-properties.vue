@@ -29,10 +29,10 @@ const grouped = computed(() => {
   return _(props.properties)
     .filter((p) => !!p && p.type === "Product")
     .groupBy((p) => p.name)
-    .map((props, propName) => {
+    .map((properties, propName) => {
       return {
         name: propName,
-        values: props.map((x) => x.value).join(", "),
+        values: properties.map((x) => x.value).join(", "),
       };
     })
     .value();

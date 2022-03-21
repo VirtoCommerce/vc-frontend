@@ -181,7 +181,7 @@ const addToCart = async () => {
 
 onMounted(() => {
   extendedProducts.value = _.map(props.productItems, (product) => {
-    const orderItem = _.find(props.orderItemsInfo, (orderItem) => orderItem.productId === product.id);
+    const orderItem = _.find(props.orderItemsInfo, (item) => item.productId === product.id);
     return _.extend(product, { quantity: orderItem?.quantity, lineItemId: orderItem?.id });
   });
   filteredItems.value = extendedProducts.value;
