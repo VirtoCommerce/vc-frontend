@@ -27,5 +27,5 @@
     "client-app/**/*.vue",
     "client-app/**/*.graphql"
   ],
-  "exclude": ["node_modules", "assets", "**/*.js", "_references"]
+  "exclude": ["node_modules", "assets", "**/*.js"]
 }

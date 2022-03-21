@@ -3,4 +3,3 @@ dist
 assets
 client-app/core/api/graphql/types.ts
 client-app/core/api/graphql/schema.json
-_references
