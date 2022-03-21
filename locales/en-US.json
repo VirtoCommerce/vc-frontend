@@ -225,7 +225,7 @@
         "add_to_cart_button": "@:common.buttons.add_to_cart",
         "update_cart_button": "Update cart",
         "already_in_cart_message": "{0} already in cart",
-        "enter correct number_message": "enter correct number"
+        "enter_correct_number_message": "enter correct number"
       },
       "cart_add_info_popup": {
         "continue_shopping_button": "@:common.buttons.continue_shopping_button",

@@ -38,10 +38,10 @@
               <span>{{ item.title }}</span>
 
               <div
-                v-if="count"
+                v-if="productsIds.length"
                 class="flex items-center rounded-2xl border border-[color:var(--color-primary)] px-3 font-bold text-sm h-7 ml-3"
               >
-                {{ count }}
+                {{ productsIds.length }}
               </div>
             </div>
           </template>
@@ -118,7 +118,7 @@ defineEmits(["close"]);
 
 const { me, isAuthenticated, signMeOut } = useUser();
 const { cart } = useCart();
-const { count } = useCompareProducts();
+const { productsIds } = useCompareProducts();
 const { t } = useI18n();
 
 const headerMenu = menuSchema?.header?.main;

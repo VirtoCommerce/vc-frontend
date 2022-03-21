@@ -17,17 +17,7 @@
           {{ product.name }}
         </router-link>
 
-        <!-- Compare checkbox -->
-        <label
-          v-if="$cfg.product_compare_enabled"
-          class="flex-grow hidden md:inline-flex items-center text-sm cursor-pointer"
-        >
-          <input
-            type="checkbox"
-            class="form-tick appearance-none w-5 h-5 border-2 border-gray-300 rounded-sm checked:bg-[color:var(--color-link)] checked:border-transparent focus:outline-none cursor-pointer"
-          />
-          <span class="ml-2">{{ $t("common.labels.compare") }}</span>
-        </label>
+        <AddToCompare v-if="$cfg.product_compare_enabled" :product="product" class="inline-flex" />
       </div>
     </div>
 
@@ -71,6 +61,7 @@
 <script setup lang="ts">
 import { PropType } from "vue";
 import { VcImage, VcPriceDisplay } from "@/components";
+import { AddToCompare } from "@/shared/compare";
 import { Product as ProductType } from "@/core/api/graphql/types";
 import SeoUrl from "@core/seo-routes.enum";
 

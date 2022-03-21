@@ -45,10 +45,10 @@
 
               <transition name="slide-fade-right">
                 <div
-                  v-if="count"
+                  v-if="productsIds.length"
                   class="flex items-center rounded-xl border border-[color:var(--color-primary)] px-2 font-bold text-xs h-5 ml-2"
                 >
-                  {{ count }}
+                  {{ productsIds.length }}
                 </div>
               </transition>
             </div>
@@ -80,7 +80,7 @@ import { useSearchBar, SearchBar } from "@/shared/layout";
 import { useCompareProducts } from "@/shared/compare";
 
 const { cart } = useCart();
-const { count } = useCompareProducts();
+const { productsIds } = useCompareProducts();
 const { searchBarVisible, showSearchBar } = useSearchBar();
 
 const headerMenu = menuSchema?.header?.main;

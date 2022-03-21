@@ -3,6 +3,7 @@
   "presets": {
     "Mercury": {
       "product_compare_enabled": true,
+      "product_compare_limit": 5,
 
       "checkout_comment_enabled": true,
       "checkout_purchase_order_enabled": true,

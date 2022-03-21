@@ -6,6 +6,7 @@
     </div>
     <Footer />
     <PopupHost />
+    <NotificationsHost />
   </div>
   <div v-else></div>
 </template>
@@ -19,6 +20,7 @@ import { useCart } from "@/shared/cart";
 import { themeContext } from "@/core/utilities";
 import { setCatalogId, setUserId, setLocale } from "@/core/constants";
 import { PopupHost } from "@/shared/popup";
+import { NotificationsHost } from "@/shared/notification";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
