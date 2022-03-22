@@ -21,7 +21,7 @@
           <template v-if="item.id === 'checkout'">
             <div class="flex items-center">
               <i class="fas fa-shopping-cart text-[color:var(--color-primary)] mr-3"></i>
-              <div v-t="item.title"></div>
+              <div>{{ item.title }}</div>
               <div
                 v-if="cart?.itemsQuantity"
                 class="flex items-center rounded-2xl border border-[color:var(--color-primary)] px-3 font-bold text-sm h-7 ml-3"
@@ -38,9 +38,13 @@
 
       <!-- My account and corporate blocks-->
       <div v-if="isAuthenticated" class="flex flex-col space-y-8 mt-8 px-10">
-        <MobileMenuLink :children="myAccountMenu" @close="$emit('close')">{{
-          $t("shared.layout.header.menu.my_account")
-        }}</MobileMenuLink>
+        <MobileMenuLink
+          v-for="(item, i) in mobileAccountMenu"
+          :key="i"
+          :children="item.children"
+          :title="item.title"
+          @close="$emit('close')"
+        ></MobileMenuLink>
         <!-- Commented due to accetpance criteria, will be used in future-->
         <!-- <MobileMenuLink :children="corporateMenu">Corporate</MobileMenuLink> -->
       </div>
@@ -83,12 +87,11 @@
 
 <script setup lang="ts">
 import MobileMenuLink from "./mobile-menu-link.vue";
-import menuSchema from "@/config/menu";
 import { useCart } from "@/shared/cart";
 import { useUser } from "@/shared/account";
 import { ref } from "vue";
-import { IMenuItem } from "@/shared/layout/types";
 import { VcImage } from "@/components";
+import { useMenu } from "@/shared/layout/composables";
 
 defineProps({
   isVisible: {
@@ -102,16 +105,7 @@ defineEmits(["close"]);
 const { me, isAuthenticated, signMeOut } = useUser();
 const { cart } = useCart();
 
-const headerMenu = menuSchema?.header?.main;
-
-const myAccountMenu = ref<IMenuItem[]>([
-  { title: "shared.layout.header.mobile.account_menu.dashboard", url: "/account/dashboard" },
-  { title: "shared.layout.header.mobile.account_menu.profile", url: "/account/profile" },
-  { title: "shared.layout.header.mobile.account_menu.addresses", url: "/account/addresses" },
-  { title: "shared.layout.header.mobile.account_menu.orders", url: "/account/orders" },
-  { title: "shared.layout.header.mobile.account_menu.your_list", url: "/account/lists" },
-  { title: "shared.layout.header.mobile.account_menu.checkout_defaults", url: "/account/checkout-defaults" },
-]);
+const { headerMenu, mobileAccountMenu } = useMenu();
 
 /*
 const corporateMenu = ref([

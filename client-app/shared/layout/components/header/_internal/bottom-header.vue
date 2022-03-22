@@ -23,7 +23,7 @@
           <template v-if="item.id === 'checkout'">
             <div class="flex items-center">
               <i class="fas fa-shopping-cart text-[color:var(--color-primary)] mr-3"></i>
-              <div>{{ $t(item.title) }}</div>
+              <div>{{ item.title }}</div>
               <div
                 v-if="cart?.itemsQuantity"
                 class="flex items-center rounded-xl border border-[color:var(--color-primary)] px-2 font-bold text-xs h-5 ml-3"

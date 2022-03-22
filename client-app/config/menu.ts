@@ -30,6 +30,21 @@ export default {
       { id: "checkout", title: "shared.layout.header.menu.cart", url: "/checkout" },
       { id: "contact", title: "shared.layout.header.menu.contact_us", url: "/contact" },
     ],
+    mobile_account: [
+      {
+        id: "home",
+        title: "shared.layout.header.menu.home",
+        url: "/",
+        children: [
+          { title: "shared.layout.header.mobile.account_menu.dashboard", url: "/account/dashboard" },
+          { title: "shared.layout.header.mobile.account_menu.profile", url: "/account/profile" },
+          { title: "shared.layout.header.mobile.account_menu.addresses", url: "/account/addresses" },
+          { title: "shared.layout.header.mobile.account_menu.orders", url: "/account/orders" },
+          { title: "shared.layout.header.mobile.account_menu.your_list", url: "/account/lists" },
+          { title: "shared.layout.header.mobile.account_menu.checkout_defaults", url: "/account/checkout-defaults" },
+        ],
+      },
+    ],
   },
   footer: [],
 };

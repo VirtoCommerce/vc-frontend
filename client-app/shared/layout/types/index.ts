@@ -3,4 +3,5 @@ export interface IMenuItem {
   title: string;
   url?: string;
   onClick?: (event: Event) => void;
+  children?: IMenuItem[];
 }

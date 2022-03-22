@@ -6,7 +6,7 @@
       @click="submenuVisible = !submenuVisible"
     >
       <div class="truncate">
-        <slot> {{ $t(title) }} </slot>
+        <slot>{{ title }}</slot>
       </div>
       <i
         class="fas ml-3 text-[color:var(--color-primary)] align-baseline"
@@ -16,7 +16,8 @@
     <div v-if="submenuVisible" class="flex flex-col px-5 py-2 space-y-3 mt-2">
       <template v-for="(item, i) in children" :key="i">
         <slot name="item">
-          <router-link :to="item.url" class="font-bold text-gray-200 text-lg" @click="$emit('close')" v-t="item.title">
+          <router-link :to="item.url" class="font-bold text-gray-200 text-lg" @click="$emit('close')">
+            {{ item.title }}
           </router-link>
         </slot>
       </template>
@@ -30,7 +31,7 @@
     :class="$attrs.class"
     @click="$emit('close')"
   >
-    <slot>{{ $t(title) }}</slot>
+    <slot>{{ title }}</slot>
   </router-link>
 </template>
 
