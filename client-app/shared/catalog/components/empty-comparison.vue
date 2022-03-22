@@ -6,8 +6,10 @@
   <TwoColumn class="max-w-screen-lg">
     <template #left>
       <div class="flex flex-col h-full py-12 justify-center items-center lg:items-start">
-        <VcImage src="/static/images/errors/emptyCartMobile.webp" alt="emptyCartMobile" class="lg:hidden mb-8" />
-        <h2 class="text-black-800 text-2xl font-bold mb-8">Your product compare list is currently empty</h2>
+        <VcImage src="/static/images/errors/emptyCart.webp" alt="emptyCartMobile" class="lg:hidden mb-8" />
+        <h2 class="text-black-800 text-2xl font-bold mb-8 text-center md:text-left">
+          Your product compare list is currently empty
+        </h2>
         <VcButton :to="`/${SeoUrl.Catalog}`" size="lg" class="p-4 uppercase font-bold">Continue browsing here</VcButton>
       </div>
     </template>
