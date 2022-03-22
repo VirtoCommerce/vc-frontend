@@ -14,3 +14,4 @@ export { default as ProductTitledBlock } from "./product-titled-block.vue";
 export { default as ProductVariationCard } from "./product-variation-card.vue";
 export { default as ProductDetails } from "./product-details.vue";
 export { default as ProductPriceBlock } from "./product-price-block.vue";
+export { default as EmptyComparison } from "./empty-comparison.vue";

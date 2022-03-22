@@ -23,6 +23,7 @@ const OrderDetails = () => import("./pages/account/order-details.vue");
 const Orders = () => import("./pages/account/orders.vue");
 const Profile = () => import("./pages/account/profile.vue");
 const DemoLanding = () => import("./pages/demo-landing/demo-landing.vue");
+const CompareProducts = () => import("./pages/compare-products/compare-products.vue");
 
 // Router definition
 const router = createRouter({
@@ -68,6 +69,7 @@ const router = createRouter({
     { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },
     { path: "/checkout", name: "Checkout", component: Checkout },
     { path: "/demo-landing", name: "DemoLanding", component: DemoLanding },
+    { path: "/compare-products", name: "CompareProducts", component: CompareProducts },
     { path: "/500", name: "InternalError", component: Error500 },
     { path: "/403", name: "NoAccess", component: Error403 },
     { path: "/:pathMatch(.*)*", name: "NotFound", component: Error404 },
