@@ -14,19 +14,19 @@
         >Added <span class="font-bold">{{ products.length }}</span> items out of <span class="font-bold">5</span></span
       >
       <!-- Products block -->
-      <div class="shadow py-8 bg-white rounded">
+      <div class="shadow py-8 bg-white rounded overflow-x-auto">
         <table class="w-full">
           <tr>
-            <td></td>
-            <td v-for="product in products" :key="product.id">
-              <div class="flex flex-col">
+            <td class="w-1/6"></td>
+            <td v-for="product in products" :key="product.id" class="px-4 w-1/5 h-0 pb-6">
+              <div class="flex flex-col space-y-3 justify-start h-full">
                 <!-- Product image -->
-                <router-link :to="`/${SeoUrl.Product}/${product.id}`" class="cursor-pointer w-52">
-                  <div class="square relative flex flex-col justify-center items-center border border-gray-100">
+                <router-link :to="`/${SeoUrl.Product}/${product.id}`" class="cursor-pointer">
+                  <div class="flex flex-col justify-center items-center border border-gray-100 h-48 w-48">
                     <VcImage
                       :src="product.imgSrc"
                       :alt="product.name"
-                      class="absolute top-0 w-full h-full object-cover object-center"
+                      class="w-full h-full object-cover object-center"
                       lazy
                     />
                   </div>
@@ -41,7 +41,7 @@
                 </router-link>
 
                 <!-- Product price -->
-                <div class="flex flex-col md:flex-row items-baseline text-sm mb-4">
+                <div class="flex flex-col md:flex-row items-baseline text-sm">
                   <div class="w-1/2 font-bold text-xs">Your price</div>
                   <div class="md:w-1/2">
                     <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span>
@@ -54,16 +54,24 @@
             </td>
           </tr>
           <tr v-for="(values, key, index) in computedProperties" :key="index" class="even:bg-gray-50">
-            <td class="pl-8">
-              <span class="font-bold">{{ key }}</span>
+            <td class="pl-8 font-extrabold text-sm">
+              <span>{{ key }}</span>
             </td>
-            <td v-for="value in values" :key="value" class="p-3">
+            <td v-for="value in values" :key="value" class="p-6 text-sm">
               {{ value.value }}
             </td>
           </tr>
           <tr>
             <td></td>
-            <td v-for="product in products" :key="product.id">
+            <td v-for="product in products" :key="product.id" class="p-3">
+              <!-- Product price -->
+              <div class="flex flex-col md:flex-row items-baseline text-sm my-4">
+                <div class="w-1/2 font-bold text-xs">Your price</div>
+                <div class="md:w-1/2">
+                  <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span>
+                  / each
+                </div>
+              </div>
               <AddToCart :product="product" />
             </td>
           </tr>
