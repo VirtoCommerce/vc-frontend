@@ -32,8 +32,8 @@ export default {
     ],
     mobile_account: [
       {
-        id: "home",
-        title: "shared.layout.header.menu.home",
+        id: "my_account",
+        title: "shared.layout.header.menu.my_account",
         url: "/",
         children: [
           { title: "shared.layout.header.mobile.account_menu.dashboard", url: "/account/dashboard" },
