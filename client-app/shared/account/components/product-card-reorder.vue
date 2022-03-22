@@ -84,7 +84,7 @@
               <div v-else-if="isOutOfStock" class="flex items-center">
                 <span
                   class="text-[color:var(--color-danger)] text-xs pt-1 whitespace-nowrap"
-                  v-t="'shared.account.reorder_info_popup.product_card.out_of_stock_suffix'"
+                  v-t="'shared.account.reorder_info_popup.product_card.out_of_stock_message'"
                 ></span>
               </div>
             </div>
@@ -182,7 +182,7 @@
               <div v-else-if="isOutOfStock" class="flex items-center">
                 <span
                   class="text-[color:var(--color-danger)] text-xs pt-1 whitespace-nowrap"
-                  v-t="'shared.account.reorder_info_popup.product_card.out_of_stock_suffix'"
+                  v-t="'shared.account.reorder_info_popup.product_card.out_of_stock_message'"
                 ></span>
               </div>
             </div>
