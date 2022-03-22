@@ -63,7 +63,7 @@
               </div>
               <div v-else class="flex items-center">
                 <span class="text-[color:var(--color-danger)] text-xs pt-1 whitespace-nowrap">{{
-                  $t("common.suffixes.product_out_of_stock")
+                  $t("common.messages.product_out_of_stock")
                 }}</span>
               </div>
             </div>

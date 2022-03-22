@@ -2,18 +2,18 @@
   <section class="flex flex-col">
     <h2
       class="hidden lg:block px-5 py-2 border-b font-extrabold uppercase"
-      v-t="'shared.bulk_order.copy_n_past.title'"
+      v-t="'shared.bulk_order.copy_n_paste.title'"
     ></h2>
 
     <div class="p-6 pb-5 md:p-5 pt-4 h-full">
-      <p class="font-bold mb-2 text-sm" v-t="'shared.bulk_order.copy_n_past.subtitle_message'"></p>
+      <p class="font-bold mb-2 text-sm" v-t="'shared.bulk_order.copy_n_paste.subtitle_message'"></p>
 
-      <p class="mb-2 text-sm text-gray-500" v-html="$t('shared.bulk_order.copy_n_past.guide_message')"></p>
+      <p class="mb-2 text-sm text-gray-500" v-html="$t('shared.bulk_order.copy_n_paste.guide_message')"></p>
 
       <VcTextArea
         v-model.trim="text"
         :is-disabled="loading"
-        :placeholder="$t('shared.bulk_order.copy_n_past.text_area_placeholder')"
+        :placeholder="$t('shared.bulk_order.copy_n_paste.text_area_placeholder')"
         class="resize-none min-h-[292px] xl:min-h-[312px]"
       />
 
@@ -25,7 +25,7 @@
           size="lg"
           class="uppercase px-5 xl:px-8"
           is-outline
-          v-t="'shared.bulk_order.copy_n_past.reset_button'"
+          v-t="'shared.bulk_order.copy_n_paste.reset_button'"
         >
         </VcButton>
 
@@ -35,7 +35,7 @@
           @click="addToCart"
           size="lg"
           class="flex justify-self-end uppercase px-5 xl:px-8"
-          v-t="'shared.bulk_order.copy_n_past.add_to_cart_button'"
+          v-t="'shared.bulk_order.copy_n_paste.add_to_cart_button'"
         >
         </VcButton>
       </div>

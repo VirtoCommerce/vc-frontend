@@ -93,7 +93,7 @@ const props = defineProps({
 const variant = computed(() => (props.lineItem.quantity === 0 ? "warn" : "success"));
 const title = computed(() =>
   props.lineItem.quantity === 0
-    ? t("shared.cart.cart_add_info_popup.title_1")
-    : t("shared.cart.cart_add_info_popup.title_2")
+    ? t("shared.cart.cart_add_info_popup.title_removed")
+    : t("shared.cart.cart_add_info_popup.title_added")
 );
 </script>

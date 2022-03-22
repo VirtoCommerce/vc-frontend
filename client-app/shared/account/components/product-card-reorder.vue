@@ -40,7 +40,7 @@
             <span
               class="text-xs text-gray-400"
               v-else
-              v-t="$t('shared.account.reorder_info_popup.product_card.item_can_t_be_purchased_message')"
+              v-t="$t('shared.account.reorder_info_popup.product_card.item_is_out_of_stock_message')"
             ></span>
           </div>
         </div>

@@ -46,7 +46,9 @@
     },
     "suffixes": {
       "per_item": " / each",
-      "product_count_in_stock": "in stock",
+      "product_count_in_stock": "in stock"
+    },
+    "messages": {
       "product_out_of_stock": "Out of stock"
     },
     "placeholders": {
@@ -211,7 +213,7 @@
           "quantity_label": "@:common.labels.quantity",
           "total_label": "@:common.labels.total{':'}",
           "in_stock_suffix": "@:common.suffixes.product_count_in_stock",
-          "out_of_stock_suffix": "@:common.suffixes.product_out_of_stock",
+          "out_of_stock_suffix": "@:common.messages.product_out_of_stock",
           "reduced_message": "The number of items in the order was <span class=\"text-gray-500\">reduced from {0} to {1}</span> due to stock restrictions",
           "item_can_t_be_purchased_message": " Item can't be purchased ",
           "item_is_out_of_stock_message": " Item is out of stock "
@@ -235,8 +237,8 @@
         },
         "quantity_label": "@:common.labels.quantity",
         "total_label": "@:common.labels.total",
-        "title_1": "1 Product removed from cart",
-        "title_2": "1 Product added to cart"
+        "title_removed": "1 Product removed from cart",
+        "title_added": "1 Product added to cart"
       }
     },
     "catalog": {
@@ -362,18 +364,18 @@
         "product_sku_label": "Product SKU",
         "quantity_label": "@:common.labels.quantity",
         "add_rows_action_link": "Add 5 more rows",
-        "reset_button": "@:common_buttons.reset",
+        "reset_button": "@:common.buttons.reset",
         "add_to_cart_button": "@:common.buttons.add_to_cart",
         "subtitle_message_start": "Quickly add items to your",
         "cart_link": "Cart",
         "subtitle_message_end": "by entering item SKUs and quantities."
       },
-      "copy_n_past": {
+      "copy_n_paste": {
         "title": "Copy & Paste",
         "subtitle_message": "Want to save time and order faster?",
         "guide_message": "Simply copy and paste item records from your CSV file into the field below using the following format: <strong>SKU,Quantity</strong>. Each record should starts from a new line.",
         "text_area_placeholder": "Formatting example:\n6AF8SM0VPFV6,10\n3RO1GEQI34E8,20",
-        "reset_button": "@:common_buttons.reset",
+        "reset_button": "@:common.buttons.reset",
         "add_to_cart_button": "@:common.buttons.add_to_cart"
       }
     }
@@ -602,6 +604,7 @@
     },
     "checkout": {
       "title": "Checkout",
+      "invalid_checkout_message": "There is something wrong in Cart. Please verify it to place order.",
       "products_section": {
         "title": "My products",
         "update_all_link_label": "If you changed multiple quantities,",

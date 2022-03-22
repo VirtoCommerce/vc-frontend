@@ -33,7 +33,7 @@
         </div>
         <div v-else class="flex items-center text-[color:var(--color-danger)] text-xs">
           <div class="w-1.5 h-1.5 bg-[color:var(--color-danger)] rounded mr-1"></div>
-          {{ $t("common.suffixes.product_out_of_stock") }}
+          {{ $t("common.messages.product_out_of_stock") }}
         </div>
       </div>
 
