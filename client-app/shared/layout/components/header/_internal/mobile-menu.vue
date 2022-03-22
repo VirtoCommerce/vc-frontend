@@ -76,7 +76,7 @@
           v-for="(item, i) in unauthorizedMenu"
           :key="i"
           class="text-xl font-bold text-blue-500 normal-case"
-          :title="item.title"
+          :title="$t(item.title)"
           :to="item.url"
           @close="$emit('close')"
         ></MobileMenuLink>
