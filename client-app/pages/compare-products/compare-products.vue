@@ -1,28 +1,40 @@
 <template>
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner grow">
     <EmptyComparison v-if="!comparisonProducts"></EmptyComparison>
-    <div class="max-w-screen-2xl px-5 md:px-12 mx-auto" v-else>
-      <VcBreadcrumbs :items="breadcrumbs"></VcBreadcrumbs>
-      <div class="flex items-center justify-between my-2">
-        <div class="flex items-center space-x-12">
+    <div class="w-full md:max-w-screen-2xl md:px-12 mx-auto" v-else>
+      <VcBreadcrumbs :items="breadcrumbs" class="mb-2 px-5"></VcBreadcrumbs>
+      <div class="flex flex-wrap md:space-x-12 px-5">
+        <div class="flex flex-col">
           <h1 class="text-black-800 text-3xl uppercase font-bold">Compare products</h1>
-          <VcCheckbox>Show only differences</VcCheckbox>
+          <span class="block mb-3"
+            >Added <span class="font-bold">{{ products.length }}</span> items out of
+            <span class="font-bold">5</span></span
+          >
         </div>
-        <VcButton is-outline class="p-3 uppercase">Clear product compare list</VcButton>
+        <div class="flex justify-between items-start grow mb-5 md:mb-0">
+          <VcCheckbox class="mt-2">Show only differences</VcCheckbox>
+          <VcButton is-outline class="p-3 uppercase">{{
+            isMobile ? "Clear compare list" : "Clear product compare list"
+          }}</VcButton>
+        </div>
       </div>
-      <span class="block mb-5"
-        >Added <span class="font-bold">{{ products.length }}</span> items out of <span class="font-bold">5</span></span
-      >
       <!-- Products block -->
-      <div class="shadow py-8 bg-white rounded overflow-x-auto">
+      <div class="shadow py-8 bg-white md:rounded overflow-x-auto">
         <table class="w-full">
           <tr>
-            <td class="w-1/6"></td>
-            <td v-for="product in products" :key="product.id" class="px-4 w-1/5 h-0 pb-6">
+            <td class="w-1/6" v-if="!isMobile"></td>
+            <td v-for="product in products" :key="product.id" class="px-4 w-1/4 md:w-1/5 h-0 md:pb-6">
               <div class="flex flex-col space-y-3 justify-start h-full">
                 <!-- Product image -->
                 <router-link :to="`/${SeoUrl.Product}/${product.id}`" class="cursor-pointer">
-                  <div class="flex flex-col justify-center items-center border border-gray-100 h-48 w-48">
+                  <div
+                    class="flex flex-col justify-center items-center border border-gray-100 h-32 w-32 md:h-48 md:w-48 relative"
+                  >
+                    <div
+                      class="h-6 w-6 rounded-full border border-gray-200 flex items-center justify-center absolute -top-3 -right-3 z-10 bg-white hover:bg-gray-100"
+                    >
+                      <i class="fas fa-times text-red-500"></i>
+                    </div>
                     <VcImage
                       :src="product.imgSrc"
                       :alt="product.name"
@@ -53,16 +65,17 @@
               </div>
             </td>
           </tr>
-          <tr v-for="(values, key, index) in computedProperties" :key="index" class="even:bg-gray-50">
-            <td class="pl-8 font-extrabold text-sm">
+          <tr v-for="(values, key, index) in computedProperties" :key="index" :class="!isMobile && 'even:bg-gray-50'">
+            <td class="pl-8 font-extrabold text-sm" v-if="!isMobile">
               <span>{{ key }}</span>
             </td>
-            <td v-for="value in values" :key="value" class="p-6 text-sm">
+            <td v-for="(value, index) in values" :key="index" class="p-6 text-sm">
+              <span v-if="isMobile" class="block font-extrabold text-sm">{{ key }}</span>
               {{ value.value }}
             </td>
           </tr>
           <tr>
-            <td></td>
+            <td v-if="!isMobile"></td>
             <td v-for="product in products" :key="product.id" class="p-3">
               <!-- Product price -->
               <div class="flex flex-col md:flex-row items-baseline text-sm my-4">
@@ -87,6 +100,7 @@ import { AddToCart } from "@/shared/cart";
 import SeoUrl from "@core/seo-routes.enum";
 import _ from "lodash";
 import { onMounted, ref } from "vue";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 const { fetchProducts, products } = useProducts();
 
 const comparisonProducts = ref(true);
@@ -95,11 +109,14 @@ const breadcrumbs = ref<IBreadcrumbs[]>([
   { title: "Compare products", url: "/compare-products" },
 ]);
 
-const computedProperties = ref({});
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("md");
+
+const computedProperties = ref<{ [key: string]: { value: string }[] }>({});
 
 function getProductProperties() {
   if (_.isEmpty(products.value)) return;
-  const grouped: { [key: string]: any } = {};
+  const grouped: { [key: string]: { value: string }[] } = {};
   const properties = _.flatten(
     _.map(products.value, (product) => {
       return product.properties;
