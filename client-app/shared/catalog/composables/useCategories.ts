@@ -32,8 +32,8 @@ const buildCategoryTree = (parent: CategoryTree, allCats: Category[], activeCatI
   return parent;
 };
 
-function searchCategory(categoryTree: CategoryTree, seoUrl: string): CategoryTree | undefined {
-  const items = categoryTree.items ?? [];
+function searchCategory(categoryTreeItem: CategoryTree, seoUrl: string): CategoryTree | undefined {
+  const items = categoryTreeItem.items ?? [];
   let category = items.find((item) => item.seoUrl === seoUrl);
 
   if (category) {

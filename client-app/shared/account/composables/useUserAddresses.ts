@@ -81,28 +81,17 @@ export default (options: { user: MaybeRef<UserType> }) => {
     await updateAddresses(updatedAddresses, memberId);
   }
 
-  async function removeAddresses(idsOrAddress: Array<string | MemberAddressType>, memberId?: string): Promise<void> {
-    if (!idsOrAddress.length) return;
+  async function removeAddresses(items: MemberAddressType[], memberId = unref(user).memberId!): Promise<void> {
+    if (!items.length) return;
 
     loading.value = true;
 
-    const addressIdsToRemove: string[] =
-      typeof idsOrAddress[0] === "string"
-        ? (idsOrAddress as string[])
-        : (idsOrAddress as MemberAddressType[]).map((item) => item.id!);
-
-    const removeAddresses: MemberAddressType[] = addresses.value.filter(
-      (address) => !addressIdsToRemove.includes(address.id!)
-    );
-
-    loading.value = true;
-
-    const inputAddresses: InputMemberAddressType[] = removeAddresses.map(toInputAddress);
+    const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
 
     try {
-      await deleteMemberAddresses((memberId = unref(user).memberId!), inputAddresses);
+      await deleteMemberAddresses(inputAddresses, memberId);
     } catch (e) {
-      Logger.error("useUserAddresses.removeAddresses", e);
+      Logger.error(`useUserAddresses.${removeAddresses.name}`, e);
       throw e;
     } finally {
       loading.value = false;

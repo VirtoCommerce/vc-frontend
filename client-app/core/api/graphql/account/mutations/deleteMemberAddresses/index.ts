@@ -3,8 +3,8 @@ import { InputMemberAddressType, Mutations, MutationsDeleteMemberAddressesArgs }
 import mutationDocument from "./deleteMemberAddressesMutation.graphql";
 
 export default async function deleteMemberAddresses(
-  memberId: string,
-  addresses: InputMemberAddressType[]
+  addresses: InputMemberAddressType[],
+  memberId: string
 ): Promise<void> {
   await client.mutate<Pick<Mutations, "deleteMemberAddresses">, MutationsDeleteMemberAddressesArgs>({
     mutation: mutationDocument,

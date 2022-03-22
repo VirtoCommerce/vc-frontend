@@ -20,6 +20,7 @@ export default defineConfig(({ mode }) => {
         "@core": path.resolve(__dirname, "./client-app/core"),
       },
     },
+    base: mode === "production" ? "/themes/assets/" : "/",
     build: {
       outDir: "assets",
       assetsDir: "./",
