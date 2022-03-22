@@ -124,12 +124,16 @@
                   <template v-else>
                     <div class="text-[color:var(--color-danger)] flex items-center space-x-4">
                       <i class="fas fa-exclamation-triangle text-2xl"></i>
-                      <span v-if="isAuthenticated"
+                      <span
+                        v-if="isAuthenticated"
                         v-t="'pages.checkout.shipping_details_section.shipping_address_block.no_addresses_message'"
                       ></span>
-                      </span>
-
-                      <span v-else>You do not have a shipping address. Please create a new one.</span>
+                      <span
+                        v-else
+                        v-t="
+                          'pages.checkout.shipping_details_section.shipping_address_block.unauthenticated_no_addresses_message'
+                        "
+                      ></span>
                     </div>
 
                     <div>
@@ -208,12 +212,19 @@
                 >
                   <div class="text-[color:var(--color-danger)] flex items-center space-x-4">
                     <i class="fas fa-exclamation-triangle text-2xl"></i>
-                    <span v-if="isAuthenticated"
+                    <span
+                      v-if="isAuthenticated"
                       class="text-sm"
                       v-t="'pages.checkout.payment_details_section.billing_address_block.no_addresses_message'"
                     ></span>
 
-                    <span v-else class="text-sm">You do not have a billing address. Please create a new one.</span>
+                    <span
+                      v-else
+                      class="text-sm"
+                      v-t="
+                        'pages.checkout.payment_details_section.billing_address_block.unauthenticated_no_addresses_message'
+                      "
+                    ></span>
                   </div>
 
                   <div>
@@ -368,7 +379,7 @@
                 </VcButton>
                 <div v-if="!isValidCheckout" class="flex space-x-2 bg-primary-100 rounded mt-3 p-3 text-xs">
                   <i class="fas fa-exclamation-triangle text-xl text-primary-600"></i>
-                  <span>There is something wrong in Cart. Please verify it to place order.</span>
+                  <span v-t="'pages.checkout.invalid_checkout_message'"></span>
                 </div>
               </template>
             </OrderSummary>

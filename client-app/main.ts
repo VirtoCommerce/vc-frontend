@@ -25,6 +25,7 @@ import messages from "@intlify/vite-plugin-vue-i18n/messages";
   const i18n = createI18n({
     legacy: false,
     globalInjection: true,
+    fallbackLocale: "en-US",
     locale: themeContext.language,
     messages: messages,
   });
