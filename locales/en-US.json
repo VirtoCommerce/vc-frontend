@@ -45,7 +45,7 @@
       "sku": "Item #"
     },
     "suffixes": {
-      "product_price": " / each",
+      "per_item": " / each",
       "product_count_in_stock": "in stock",
       "product_out_of_stock": "Out of stock"
     },
@@ -299,7 +299,7 @@
         "shipping_label": "Shipping cost",
         "total_label": "@:common.labels.total"
       },
-      "payment-method-dialog": {
+      "payment_method_dialog": {
         "cancel_button": "@:common.buttons.cancel",
         "ok_button": "@:common.buttons.ok",
         "select_button": "@:common.buttons.select",
@@ -427,7 +427,7 @@
       "reset_link_was_sent_message": "Reset link was sent to your email",
       "home_button": "@:common.buttons.home"
     },
-    "reset-password": {
+    "reset_password": {
       "header": "reset your password",
       "home_button": "@:common.buttons.home",
       "enter_new_password_message": "Enter a new password",
@@ -438,7 +438,7 @@
     "sign_in": {
       "header": "Sign in"
     },
-    "sign-up": {
+    "sign_up": {
       "header": "Registration",
       "first_name_label": "@:common.labels.first_name",
       "first_name_placeholder": "Enter your first name",
@@ -456,7 +456,7 @@
     },
     "account": {
       "addresses": {
-        "add_new_address_mobile_button": "Add new",
+        "add_new_address_button_mobile": "Add new",
         "add_new_address_button": "Add new address",
         "cancel_button": "@:common.buttons.cancel",
         "save_button": "@:common.buttons.save",
@@ -526,7 +526,7 @@
         "no_orders_message": "There are no orders yet"
       },
       "order_details": {
-        "title_prefix": "Order #",
+        "title": "Order #{0}",
         "status_label": "@:common.labels.status{':'}",
         "placed_on_label": "Placed on:",
         "products_section": {
@@ -671,7 +671,7 @@
       "product_was_not_added_alert": "Products with following SKUs was not added to cart: {0}",
       "data_is_invalid_alert": "The entered data is invalid",
       "manually_tab": "Manually",
-      "copy_n_past_tab": "Copy & Paste"
+      "copy_n_paste_tab": "Copy & Paste"
     },
     "demo_landing": {
       "header": "Gaming laptop market overview",

@@ -76,7 +76,7 @@ const { t } = useI18n();
 
 const tabs = [
   { id: "manually", label: t("pages.bulk_order.manually_tab") },
-  { id: "copy&paste", label: t("pages.bulk_order.copy_n_past_tab") },
+  { id: "copy&paste", label: t("pages.bulk_order.copy_n_paste_tab") },
 ];
 
 const router = useRouter();

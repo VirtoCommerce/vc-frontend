@@ -6,7 +6,7 @@
 
     <div class="max-w-screen-2xl md:px-12 mx-auto">
       <h2 class="text-gray-800 px-5 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-2">
-        {{ $t("pages.account.order_details.title_prefix") }}{{ order?.number }}
+        {{ $t("pages.account.order_details.title", [order?.number]) }}
       </h2>
       <div class="flex px-5 md:px-0 mb-5 space-x-4">
         <div class="text-sm">

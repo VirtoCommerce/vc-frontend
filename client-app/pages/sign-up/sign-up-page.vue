@@ -1,29 +1,29 @@
 <template>
   <TwoColumn class="max-w-screen-xl">
     <template #left>
-      <h1 class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8 lg:mt-5" v-t="'pages.sign-up.header'"></h1>
+      <h1 class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8 lg:mt-5" v-t="'pages.sign_up.header'"></h1>
       <form @submit="onSubmit">
         <VcInput
           v-model="firstName"
           class="mb-4"
-          :label="$t('pages.sign-up.first_name_label')"
-          :placeholder="$t('pages.sign-up.first_name_placeholder')"
+          :label="$t('pages.sign_up.first_name_label')"
+          :placeholder="$t('pages.sign_up.first_name_placeholder')"
           is-required
           :error-message="errors.firstName"
         ></VcInput>
         <VcInput
           v-model="lastName"
           class="mb-4"
-          :label="$t('pages.sign-up.last_name_label')"
-          :placeholder="$t('pages.sign-up.last_name_placeholder')"
+          :label="$t('pages.sign_up.last_name_label')"
+          :placeholder="$t('pages.sign_up.last_name_placeholder')"
           is-required
           :error-message="errors.lastName"
         ></VcInput>
         <VcInput
           v-model="email"
           class="mb-4"
-          :label="$t('pages.sign-up.email_label')"
-          :placeholder="$t('pages.sign-up.email_placeholder')"
+          :label="$t('pages.sign_up.email_label')"
+          :placeholder="$t('pages.sign_up.email_placeholder')"
           type="email"
           is-required
           :error-message="errors.email"
@@ -31,8 +31,8 @@
         <VcInput
           v-model="userName"
           class="mb-4"
-          :label="$t('pages.sign-up.username_label')"
-          :placeholder="$t('pages.sign-up.username_placeholder')"
+          :label="$t('pages.sign_up.username_label')"
+          :placeholder="$t('pages.sign_up.username_placeholder')"
           is-required
           :error-message="errors.userName"
         ></VcInput>
@@ -40,8 +40,8 @@
           <VcInput
             v-model="password"
             class="mb-4 w-full lg:w-1/2"
-            :label="$t('pages.sign-up.password_label')"
-            :placeholder="$t('pages.sign-up.password_placeholder')"
+            :label="$t('pages.sign_up.password_label')"
+            :placeholder="$t('pages.sign_up.password_placeholder')"
             type="password"
             is-required
             :error-message="errors.password"
@@ -49,8 +49,8 @@
           <VcInput
             v-model="confirmPassword"
             class="mb-4 w-full lg:w-1/2"
-            :label="$t('pages.sign-up.confirm_password_label')"
-            :placeholder="$t('pages.sign-up.confirm_password_placeholder')"
+            :label="$t('pages.sign_up.confirm_password_label')"
+            :placeholder="$t('pages.sign_up.confirm_password_placeholder')"
             type="password"
             is-required
             :error-message="errors.confirmPassword"
@@ -66,7 +66,7 @@
             size="lg"
             class="uppercase mt-6 lg:mt-3 w-full lg:w-48"
             :is-waiting="loading"
-            v-t="'pages.sign-up.register_button'"
+            v-t="'pages.sign_up.register_button'"
           ></VcButton>
         </div>
       </form>

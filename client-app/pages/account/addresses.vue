@@ -15,7 +15,7 @@
             <VcButton v-if="!editingMode" class="px-3 uppercase border" size="sm" is-outline @click="openEditMode()">
               {{
                 isMobile
-                  ? $t("pages.account.addresses.add_new_address_mobile_button")
+                  ? $t("pages.account.addresses.add_new_address_button_mobile")
                   : $t("pages.account.addresses.add_new_address_button")
               }}
             </VcButton>

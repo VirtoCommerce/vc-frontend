@@ -1,12 +1,12 @@
 <template>
-  <VcPopup :title="$t('shared.checkout.payment-method-dialog.title')">
+  <VcPopup :title="$t('shared.checkout.payment_method_dialog.title')">
     <template #actions="{ close }">
       <VcButton
         class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-5"
         kind="secondary"
         is-outline
         @click="close"
-        v-t="'shared.checkout.payment-method-dialog.cancel_button'"
+        v-t="'shared.checkout.payment_method_dialog.cancel_button'"
       >
       </VcButton>
       <VcButton
@@ -15,7 +15,7 @@
           $emit('result', selectedMethod);
           close();
         "
-        v-t="'shared.checkout.payment-method-dialog.ok_button'"
+        v-t="'shared.checkout.payment_method_dialog.ok_button'"
       >
       </VcButton>
     </template>
@@ -37,7 +37,7 @@
             is-outline
             class="uppercase flex-grow px-3"
             @click="setMethod(method)"
-            v-t="'shared.checkout.payment-method-dialog.select_button'"
+            v-t="'shared.checkout.payment_method_dialog.select_button'"
           ></VcButton>
         </div>
       </div>

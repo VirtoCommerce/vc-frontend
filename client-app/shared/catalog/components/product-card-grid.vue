@@ -62,7 +62,7 @@
         <div class="w-1/2 font-bold text-xs" v-t="'shared.catalog.product_card.price_label'"></div>
         <div class="md:w-1/2">
           <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span
-          >{{ $t("common.suffixes.product_price") }}
+          >{{ $t("common.suffixes.per_item") }}
         </div>
       </div>
 

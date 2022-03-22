@@ -27,7 +27,7 @@
             <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
             <p class="w-1/3 lg:w-auto font-bold">
               <span class="text-green-700"><VcPriceDisplay :value="lineItem.listPrice || lineItem.placedPrice" /></span>
-              <span class="hidden lg:inline" v-t="'common.suffixes.product_price'"></span>
+              <span class="hidden lg:inline" v-t="'common.suffixes.per_item'"></span>
             </p>
           </div>
           <div class="flex text-sm lg:hidden">

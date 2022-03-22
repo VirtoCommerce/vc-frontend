@@ -23,7 +23,7 @@
       <!-- Product price -->
       <div class="text-sm mt-2">
         <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span
-        >{{ $t("common.suffixes.product_price") }}
+        >{{ $t("common.suffixes.per_item") }}
       </div>
     </div>
   </div>

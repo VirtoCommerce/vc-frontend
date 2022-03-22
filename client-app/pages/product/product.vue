@@ -47,7 +47,7 @@
 
               <div>
                 <VcPriceDisplay :value="product.price?.actual" class="font-extrabold text-green-700" />
-                <span class="font-semibold hidden lg:inline-block ml-1" v-t="'common.suffixes.product_price'"></span>
+                <span class="font-semibold hidden lg:inline-block ml-1" v-t="'common.suffixes.per_item'"></span>
               </div>
             </div>
 

@@ -29,7 +29,7 @@
             <!-- todo: extract a component for price and use it here -->
             <span class="font-extrabold text-sm text-green-700"
               ><VcPriceDisplay :value="variation?.price?.actual" /></span
-            >&nbsp;<span class="font-extrabold hidden lg:inline-block" v-t="'common.suffixes.product_price'"></span>
+            >&nbsp;<span class="font-extrabold hidden lg:inline-block" v-t="'common.suffixes.per_item'"></span>
           </div>
         </div>
       </div>
