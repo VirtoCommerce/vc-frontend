@@ -20,75 +20,78 @@
       </div>
       <!-- Products block -->
       <div class="shadow py-8 bg-white md:rounded overflow-x-auto">
-        <table class="w-full">
-          <tr>
-            <td class="w-1/6" v-if="!isMobile"></td>
-            <td v-for="product in products" :key="product.id" class="px-4 w-1/4 md:w-1/5 h-0 md:pb-6">
-              <div class="flex flex-col space-y-3 justify-start h-full">
-                <!-- Product image -->
-                <router-link :to="`/${SeoUrl.Product}/${product.id}`" class="cursor-pointer">
-                  <div
-                    class="flex flex-col justify-center items-center border border-gray-100 h-32 w-32 md:h-48 md:w-48 relative"
-                  >
-                    <div
-                      class="h-6 w-6 rounded-full border border-gray-200 flex items-center justify-center absolute -top-3 -right-3 z-10 bg-white hover:bg-gray-100"
-                    >
-                      <i class="fas fa-times text-red-500"></i>
-                    </div>
-                    <VcImage
-                      :src="product.imgSrc"
-                      :alt="product.name"
-                      class="w-full h-full object-cover object-center"
-                      lazy
-                    />
-                  </div>
-                </router-link>
-
-                <!-- Product title -->
-                <router-link
-                  :to="`/${SeoUrl.Product}/${product.id}`"
-                  class="text-[color:var(--color-link)] font-extrabold text-sm mb-3 flex-grow line-clamp-3 overflow-hidden cursor-pointer"
+        <div class="flex space-x-5 px-5 lg:px-0">
+          <div class="w-1/6" v-if="!isMobile"></div>
+          <div
+            v-for="product in products"
+            :key="product.id"
+            class="w-32 flex-shrink-0 lg:flex-shrink md:w-48 md:pb-6 flex flex-col"
+          >
+            <!-- Product image -->
+            <router-link :to="`/${SeoUrl.Product}/${product.id}`" class="cursor-pointer mb-3">
+              <div
+                class="flex flex-col justify-center items-center border border-gray-100 h-32 w-32 md:h-48 md:w-48 relative"
+              >
+                <div
+                  class="h-6 w-6 rounded-full border border-gray-200 flex items-center justify-center absolute -top-3 -right-3 z-10 bg-white hover:bg-gray-100"
                 >
-                  {{ product.name }}
-                </router-link>
-
-                <!-- Product price -->
-                <div class="flex flex-col md:flex-row items-baseline text-sm">
-                  <div class="w-1/2 font-bold text-xs">Your price</div>
-                  <div class="md:w-1/2">
-                    <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span>
-                    / each
-                  </div>
+                  <i class="fas fa-times text-red-500"></i>
                 </div>
+                <VcImage
+                  :src="product.imgSrc"
+                  :alt="product.name"
+                  class="w-full h-full object-cover object-center"
+                  lazy
+                />
+              </div>
+            </router-link>
 
-                <AddToCart :product="product" />
+            <!-- Product title -->
+            <router-link
+              :to="`/${SeoUrl.Product}/${product.id}`"
+              class="text-[color:var(--color-link)] font-extrabold text-sm mb-3 flex-grow line-clamp-3 overflow-hidden cursor-pointer"
+            >
+              {{ product.name }}
+            </router-link>
+
+            <!-- Product price -->
+            <div class="flex flex-col md:flex-row items-baseline text-sm mb-3">
+              <div class="w-1/2 font-bold text-xs" v-if="!isMobile">Your price</div>
+              <div class="md:w-1/2">
+                <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span>
+                / each
               </div>
-            </td>
-          </tr>
-          <tr v-for="(values, key, index) in computedProperties" :key="index" :class="!isMobile && 'even:bg-gray-50'">
-            <td class="pl-8 font-extrabold text-sm" v-if="!isMobile">
-              <span>{{ key }}</span>
-            </td>
-            <td v-for="(value, index) in values" :key="index" class="p-6 text-sm">
-              <span v-if="isMobile" class="block font-extrabold text-sm">{{ key }}</span>
-              {{ value.value }}
-            </td>
-          </tr>
-          <tr>
-            <td v-if="!isMobile"></td>
-            <td v-for="product in products" :key="product.id" class="p-3">
-              <!-- Product price -->
-              <div class="flex flex-col md:flex-row items-baseline text-sm my-4">
-                <div class="w-1/2 font-bold text-xs">Your price</div>
-                <div class="md:w-1/2">
-                  <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span>
-                  / each
-                </div>
+            </div>
+
+            <AddToCart :product="product" />
+          </div>
+        </div>
+        <div
+          class="flex items-start md:items-center space-x-5 px-5 lg:px-0 border-b border-gray-100 lg:border-0"
+          v-for="(values, key, index) in computedProperties"
+          :key="index"
+          :class="!isMobile && 'even:bg-gray-50'"
+        >
+          <div class="w-1/6 pl-8 font-extrabold text-sm" v-if="!isMobile">{{ key }}</div>
+          <div class="w-32 flex-shrink-0 lg:flex-shrink md:w-48 py-5" v-for="(value, index) in values" :key="index">
+            <span v-if="isMobile" class="block font-extrabold text-sm">{{ key }}</span>
+            {{ value.value }}
+          </div>
+        </div>
+        <div class="flex items-center space-x-5 px-5 lg:px-0">
+          <div class="w-1/6" v-if="!isMobile"></div>
+          <div v-for="product in products" :key="product.id" class="w-32 flex-shrink-0 lg:flex-shrink md:w-48">
+            <!-- Product price -->
+            <div class="flex flex-col md:flex-row items-baseline text-sm my-4">
+              <div class="w-1/2 font-bold text-xs" v-if="!isMobile">Your price</div>
+              <div class="md:w-1/2">
+                <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span>
+                / each
               </div>
-              <AddToCart :product="product" />
-            </td>
-          </tr>
-        </table>
+            </div>
+            <AddToCart :product="product" />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -110,7 +113,7 @@ const breadcrumbs = ref<IBreadcrumbs[]>([
 ]);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("md");
+const isMobile = breakpoints.smaller("lg");
 
 const computedProperties = ref<{ [key: string]: { value: string }[] }>({});
 
