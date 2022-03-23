@@ -14,7 +14,7 @@
           v-for="(item, i) in headerMenu"
           :key="i"
           :to="item.url"
-          :children="item.children"
+          :children="$menus[item.id]"
           :title="item.title"
           @close="$emit('close')"
         >

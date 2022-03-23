@@ -5,7 +5,7 @@ export const storeName = window.STORE_NAME || "B2B-store";
 export const storeId = window.STORE_ID || "B2B-store";
 export const currencyCode = window.CURRENCY_CODE || "USD";
 export const storeLanguages = window.STORE_LANGUAGES || "";
-export const locale = window.LOCALE || "";
+export let locale = window.LOCALE || "en-US";
 export let currentUserId = window.USER_ID || "";
 export let catalogId = window.CATALOG_ID || "";
 export const categoryId = window.CATEGORY_ID || "";
@@ -17,6 +17,10 @@ export function setUserId(id: string): void {
 
 export function setCatalogId(id: string): void {
   catalogId = id;
+}
+
+export function setLocale(id: string): void {
+  locale = id;
 }
 
 //TODO: load from  storefront API

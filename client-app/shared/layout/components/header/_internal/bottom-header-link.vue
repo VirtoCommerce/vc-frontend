@@ -32,7 +32,7 @@
   </div>
   <!-- Regular link -->
   <router-link
-    v-else
+    v-else-if="to"
     :to="to"
     class="menu-link uppercase font-extrabold text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)] tracking-wide"
     :class="$attrs.class"
@@ -44,7 +44,7 @@
 <script setup lang="ts">
 import { PropType, ref } from "vue";
 import { onClickOutside } from "@vueuse/core";
-import { IMenuItem } from "../../../";
+import { MenuLinkType } from "@/core/api/graphql/types";
 
 defineProps({
   title: {
@@ -58,7 +58,7 @@ defineProps({
   },
 
   children: {
-    type: Array as PropType<IMenuItem[]>,
+    type: Array as PropType<MenuLinkType[]>,
     default: null,
   },
 });

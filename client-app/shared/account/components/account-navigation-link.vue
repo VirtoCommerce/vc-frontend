@@ -53,7 +53,7 @@ defineProps({
 /* Active/hover state styles */
 .router-link-active > div,
 .icon:hover > div {
-  background-color: orange;
+  background-color: var(--color-primary);
 }
 .icon:hover span {
   color: #4b5563;
