@@ -67,7 +67,7 @@
           </div>
         </div>
         <div
-          class="flex items-start md:items-center space-x-5 px-5 lg:px-0 border-b border-gray-100 lg:border-0"
+          class="inline-flex lg:flex items-start md:items-center space-x-5 px-5 lg:px-0 border-b border-gray-100 lg:border-0"
           v-for="(values, key, index) in computedProperties"
           :key="index"
           :class="!isMobile && 'even:bg-gray-50'"
