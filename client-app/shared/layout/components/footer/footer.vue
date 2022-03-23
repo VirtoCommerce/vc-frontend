@@ -75,9 +75,13 @@
       Ver. {{ version }}. © {{ new Date().getFullYear() }} <span class="font-bold">VirtoCommerce</span>.
       {{ $t("shared.layout.footer.all_rights_reserved") }}
     </div>
-    
+
     <i18n-t keypath="shared.layout.footer.asp_net_e_commerce_platform" tag="div">
-      <a class="font-bold text-[color:var(--color-footer-bottom-link)] hover:text-[color:var(--color-footer-bottom-link-hover)]" href="#" v-t="'shared.layout.footer.by_virto'"></a>
+      <a
+        class="font-bold text-[color:var(--color-footer-bottom-link)] hover:text-[color:var(--color-footer-bottom-link-hover)]"
+      >
+        {{ $t("shared.layout.footer.by_virto") }}
+      </a>
     </i18n-t>
   </div>
 </template>

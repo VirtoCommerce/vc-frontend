@@ -129,7 +129,7 @@
         "replacement_parts_link": "Replacement Parts",
         "demo_landing_link": "Demo landing",
         "all_rights_reserved": "All Rights Reserved.",
-        "asp_net_e_commerce_platform": "ASP.NET e-commerce platform",
+        "asp_net_e_commerce_platform": "ASP.NET e-commerce platform  {0}",
         "by_virto": "by Virto"
       }
     },
@@ -232,7 +232,7 @@
         "view_cart_button": "View cart",
         "table": {
           "product_column": "Product",
-          " ": "@:common.labels.quantity{':'}",
+          "quantity_column": "@:common.labels.quantity{':'}",
           "total_column": "@:common.labels.total{':'}"
         },
         "quantity_label": "@:common.labels.quantity",
@@ -419,6 +419,7 @@
       },
       "subscription_block": {
         "subscribe_now": "subscribe now!",
+        "info_message": "Your&nbsp;connection&nbsp;to&nbsp;what's new&nbsp;at&nbsp;B2B-store.",
         "email_placeholder": "Enter E-mail",
         "subscribe_button": "Subscribe"
       }
@@ -493,9 +494,9 @@
         "title": "Dashboard",
         "last_orders_card": {
           "title": "Last orders",
-          "all_orders_link": "All orders",
+          "all_orders_link": "All Orders",
           "order_number_label": "Order number",
-          "purchase_number_label": "Purchase number",
+          "purchase_number_label": "Purchase order",
           "status_label": "@:common.labels.status",
           "invoice_label": "Invoice",
           "date_label": "@:common.labels.date",
@@ -519,7 +520,7 @@
       "orders": {
         "title": "Orders",
         "order_number_label": "Order number",
-        "purchase_number_label": "Purchase number",
+        "purchase_number_label": "Purchase order",
         "status_label": "@:common.labels.status",
         "invoice_label": "Invoice",
         "date_label": "@:common.labels.date",

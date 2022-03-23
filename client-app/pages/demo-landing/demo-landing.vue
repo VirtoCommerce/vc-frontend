@@ -85,7 +85,7 @@
           ></div>
           <div class="flex w-full items-center justify-center space-x-6">
             <VcButton
-              class="w-1/2 md:w-auto uppercase px-2 md:px-8 bg-gray-50 text-[color:var(--color-primary)]"
+              class="w-1/2 md:w-auto uppercase px-2 md:px-8"
               v-t="'pages.demo_landing.booking_block.first_button'"
             ></VcButton>
             <VcButton
@@ -150,9 +150,11 @@
           <div class="mt-4">
             <VcCheckbox class="inline-flex">
               {{ $t("pages.demo_landing.subscription_block.agreement_checkbox_label") }}
-              <router-link class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]" to="/terms">{{
-                $t("pages.demo_landing.subscription_block.terms_and_policy_link")
-              }}</router-link>
+              <router-link
+                class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
+                to="/terms"
+                >{{ $t("pages.demo_landing.subscription_block.terms_and_policy_link") }}</router-link
+              >
             </VcCheckbox>
           </div>
           <VcButton
