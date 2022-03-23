@@ -1,20 +1,28 @@
 <template>
   <form @submit="onSubmit">
     <!-- Errors block -->
-    <VcAlert v-if="authError" type="error" class="mb-2" icon text>
-      <strong>User</strong> or <strong>password</strong> is incorrect
-    </VcAlert>
-
-    <VcAlert v-if="!_.isEmpty(errors)" type="error" class="mb-2" icon text>
-      <strong>User</strong> and <strong>password</strong> are required
+    <VcAlert
+      v-if="authError"
+      class="mb-2"
+      icon
+      text
+      v-html="$t('shared.account.sign_in_form.user_or_password_incorrect_alert')"
+    ></VcAlert>
+    <VcAlert
+      v-if="!_.isEmpty(errors)"
+      class="mb-2"
+      icon
+      text
+      v-html="$t('shared.account.sign_in_form.user_and_password_are_required_alert')"
+    >
     </VcAlert>
 
     <VcInput
       v-model="userName"
       name="userName"
       class="mb-4"
-      label="User name"
-      placeholder="User Name"
+      :label="$t('shared.account.sign_in_form.user_name_label')"
+      :placeholder="$t('shared.account.sign_in_form.user_name_placeholder')"
       is-required
       :error-message="errors.userName"
     ></VcInput>
@@ -22,25 +30,39 @@
     <VcInput
       v-model="password"
       class="mb-4"
-      label="Password"
-      placeholder="Password"
+      :label="$t('shared.account.sign_in_form.password_label')"
+      :placeholder="$t('shared.account.sign_in_form.password_placeholder')"
       type="password"
       is-required
       :error-message="errors.password"
     ></VcInput>
 
     <div class="mt-1">
-      <router-link to="/forgot-password" class="text-blue-700 hover:text-blue-500 text-sm font-semibold">
-        Forgot your password?
+      <router-link
+        to="/forgot-password"
+        class="text-blue-700 hover:text-blue-500 text-sm font-semibold"
+        v-t="'shared.account.sign_in_form.forgot_password_link'"
+      >
       </router-link>
     </div>
 
     <!-- Form actions -->
     <div class="flex mt-8 text-base font-roboto-condensed" :class="{ 'max-w-sm': !props.growButtons }">
-      <VcButton is-submit size="lg" class="flex-1 flex-shrink px-2 font-bold uppercase" :is-waiting="!isSubmitEnabled">
-        Login
+      <VcButton
+        is-submit
+        size="lg"
+        class="flex-1 flex-shrink px-2 font-bold uppercase"
+        :is-waiting="!isSubmitEnabled"
+        v-t="'shared.account.sign_in_form.login_button'"
+      >
       </VcButton>
-      <VcButton to="/sign-up" size="lg" is-outline class="flex-1 ml-4 px-2 uppercase font-bold">Registration</VcButton>
+      <VcButton
+        to="/sign-up"
+        size="lg"
+        is-outline
+        class="flex-1 ml-4 px-2 uppercase font-bold"
+        v-t="'shared.account.sign_in_form.registration_button'"
+      ></VcButton>
     </div>
   </form>
 </template>
@@ -52,7 +74,9 @@ import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import _ from "lodash";
 import { useUser } from "@/shared/account";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 const { signMeIn, loading } = useUser();
 
 const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButtons: false });
@@ -62,8 +86,8 @@ const emit = defineEmits(["succeeded"]);
 const authError: Ref<boolean> = ref(false);
 
 const schema = yup.object({
-  userName: yup.string().label("User name").required(),
-  password: yup.string().label("Password").required(),
+  userName: yup.string().label(t("shared.account.sign_in_form.user_name_label")).required(),
+  password: yup.string().label(t("shared.account.sign_in_form.password_label")).required(),
 });
 
 const { errors, handleSubmit, isSubmitting } = useForm({

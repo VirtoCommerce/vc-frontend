@@ -1,17 +1,24 @@
 <template>
   <section>
-    <h2 class="hidden lg:block px-5 py-2 border-b font-extrabold uppercase">Manually</h2>
+    <h2
+      class="hidden lg:block px-5 py-2 border-b font-extrabold uppercase"
+      v-t="'shared.bulk_order.manually.title'"
+    ></h2>
 
     <div class="p-6 pb-5 md:p-5 pt-4">
       <p class="text-sm">
-        Quickly add items to your
-        <router-link :to="{ name: 'Checkout' }" class="text-[color:var(--color-link)]">Cart</router-link>
-        by entering item SKUs and quantities.
+        {{ $t("shared.bulk_order.manually.subtitle_message_start") }}
+        <router-link
+          :to="{ name: 'Checkout' }"
+          class="text-[color:var(--color-link)]"
+          v-t="'shared.bulk_order.manually.cart_link'"
+        ></router-link>
+        {{ $t("shared.bulk_order.manually.subtitle_message_end") }}
       </p>
 
       <div class="flex flex-row gap-x-5 mt-3 mb-1.5">
-        <div class="w-full font-bold">Product SKU</div>
-        <div class="w-1/3 xl:w-1/4 max-w-[164px] font-bold">Quantity</div>
+        <div class="w-full font-bold" v-t="'shared.bulk_order.manually.product_sku_label'"></div>
+        <div class="w-1/3 xl:w-1/4 max-w-[164px] font-bold" v-t="'shared.bulk_order.manually.quantity_label'"></div>
       </div>
 
       <div class="flex flex-col gap-y-5">
@@ -41,7 +48,7 @@
           <span
             class="leading-tight text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)] border-b border-dashed border-link hover:border-link-hover"
           >
-            Add 5 more rows
+            {{ $t("shared.bulk_order.manually.add_rows_action_link") }}
           </span>
         </button>
       </div>
@@ -55,8 +62,8 @@
             size="lg"
             class="uppercase px-5 xl:px-8"
             is-outline
+            v-t="'shared.bulk_order.manually.reset_button'"
           >
-            Reset
           </VcButton>
         </div>
 
@@ -67,8 +74,8 @@
             @click="addToCart"
             size="lg"
             class="uppercase px-5 md:px-0 md:w-full"
+            v-t="'shared.bulk_order.manually.add_to_cart_button'"
           >
-            Add to cart
           </VcButton>
         </div>
       </div>

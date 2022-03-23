@@ -16,15 +16,20 @@
     <div class="flex-1 flex flex-col xl:flex-row xl:space-x-3">
       <!-- variations description -->
       <div class="flex-1 flex flex-col">
-        <div class="text-base font-bold uppercase mb-2">item #{{ variation?.code }}</div>
+        <div class="text-base font-bold uppercase mb-2">
+          {{ $t("shared.catalog.product_details.product_variation_card.variation_sku_label") }}{{ variation?.code }}
+        </div>
         <VariationProperties :properties="variation?.properties || []"></VariationProperties>
         <div class="flex flex-row items-center space-x-3 text-xs">
-          <div class="w-1/2 text-gray-500">Your price</div>
+          <div
+            class="w-1/2 text-gray-500"
+            v-t="'shared.catalog.product_details.product_variation_card.price_label'"
+          ></div>
           <div class="w-1/2">
             <!-- todo: extract a component for price and use it here -->
             <span class="font-extrabold text-sm text-green-700"
               ><VcPriceDisplay :value="variation?.price?.actual" /></span
-            >&nbsp;<span class="font-extrabold hidden lg:inline-block">/ each</span>
+            >&nbsp;<span class="font-extrabold hidden lg:inline-block" v-t="'common.suffixes.per_item'"></span>
           </div>
         </div>
       </div>

@@ -1,5 +1,3 @@
-import SeoUrl from "@core/seo-routes.enum";
-
 export default {
   header: {
     main: [

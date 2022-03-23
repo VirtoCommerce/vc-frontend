@@ -1,7 +1,10 @@
 <template>
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner grow">
     <div class="max-w-screen-2xl md:px-12 mx-auto">
-      <h2 class="text-gray-800 px-6 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-5">Bulk Order Pad</h2>
+      <h2
+        class="text-gray-800 px-6 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-5"
+        v-t="'pages.bulk_order.title'"
+      ></h2>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-y-5 lg:gap-5">
         <!-- Error section -->
@@ -12,8 +15,8 @@
             type="error"
             key="sku"
             icon
+            v-t="'pages.bulk_order.product_was_not_added_alert'"
           >
-            Products with following SKUs was not added to cart: {{ SKUsWithErrors.join(", ") }}
           </VcAlert>
 
           <VcAlert
@@ -22,8 +25,8 @@
             class="mx-6 md:mx-0 mb-5 lg:mb-0 col-span-1 lg:col-span-2"
             type="error"
             icon
+            v-t="'pages.bulk_order.data_is_invalid_alert'"
           >
-            The entered data is invalid
           </VcAlert>
         </transition>
 
@@ -67,10 +70,13 @@ import { CopyAndPaste, Manually } from "@/shared/bulk-order";
 import { InputNewBulkItemType } from "@core/api/graphql/types";
 import { useCart } from "@/shared/cart";
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const tabs = [
-  { id: "manually", label: "Manually" },
-  { id: "copy&paste", label: "Copy & Paste" },
+  { id: "manually", label: t("pages.bulk_order.manually_tab") },
+  { id: "copy&paste", label: t("pages.bulk_order.copy_n_paste_tab") },
 ];
 
 const router = useRouter();

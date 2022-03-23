@@ -21,7 +21,7 @@
           <template v-if="item.id === 'checkout'">
             <div class="flex items-center">
               <i class="fas fa-shopping-cart text-[color:var(--color-primary)] mr-3"></i>
-              <div>Cart</div>
+              <div>{{ item.title }}</div>
               <div
                 v-if="cart?.itemsQuantity"
                 class="flex items-center rounded-2xl border border-[color:var(--color-primary)] px-3 font-bold text-sm h-7 ml-3"
@@ -38,7 +38,9 @@
 
       <!-- My account and corporate blocks-->
       <div v-if="isAuthenticated" class="flex flex-col space-y-8 mt-8 px-10">
-        <MobileMenuLink :children="myAccountMenu" @close="$emit('close')">My account</MobileMenuLink>
+        <MobileMenuLink :children="myAccountMenu" @close="$emit('close')">{{
+          $t("shared.layout.header.menu.my_account")
+        }}</MobileMenuLink>
         <!-- Commented due to accetpance criteria, will be used in future-->
         <!-- <MobileMenuLink :children="corporateMenu">Corporate</MobileMenuLink> -->
       </div>
@@ -57,9 +59,8 @@
               <button
                 class="ml-4 px-4 py-1 border-2 border-red-600 rounded uppercase text-sm font-roboto"
                 @click="signOut"
-              >
-                Logout
-              </button>
+                v-t="'shared.layout.header.link_logout'"
+              ></button>
             </div>
           </template>
         </MobileMenuLink>
@@ -86,8 +87,11 @@ import menuSchema from "@/config/menu";
 import { useCart } from "@/shared/cart";
 import { useUser } from "@/shared/account";
 import { ref } from "vue";
-import { IMenuItem } from "@/shared/layout/types";
+import { MenuLinkType } from "@/core/api/graphql/types";
 import { VcImage } from "@/components";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 defineProps({
   isVisible: {
@@ -103,13 +107,13 @@ const { cart } = useCart();
 
 const headerMenu = menuSchema?.header?.main;
 
-const myAccountMenu = ref<IMenuItem[]>([
-  { title: "Dashboard", url: "/account/dashboard" },
-  { title: "Profile", url: "/account/profile" },
-  { title: "Addresses", url: "/account/addresses" },
-  { title: "Orders", url: "/account/orders" },
-  { title: "Your List", url: "/account/lists" },
-  { title: "Checkout Defaults", url: "/account/checkout-defaults" },
+const myAccountMenu = ref<MenuLinkType[]>([
+  { title: t("shared.layout.header.mobile.account_menu.dashboard"), url: "/account/dashboard" },
+  { title: t("shared.layout.header.mobile.account_menu.profile"), url: "/account/profile" },
+  { title: t("shared.layout.header.mobile.account_menu.addresses"), url: "/account/addresses" },
+  { title: t("shared.layout.header.mobile.account_menu.orders"), url: "/account/orders" },
+  { title: t("shared.layout.header.mobile.account_menu.your_list"), url: "/account/lists" },
+  { title: t("shared.layout.header.mobile.account_menu.checkout_defaults"), url: "/account/checkout-defaults" },
 ]);
 
 /*
@@ -119,9 +123,9 @@ const corporateMenu = ref([
 ]);
 */
 
-const unauthorizedMenu = ref([
-  { title: "Sign In", url: "/sign-in" },
-  { title: "Register now", url: "/sign-up" },
+const unauthorizedMenu = ref<MenuLinkType[]>([
+  { title: t("shared.layout.header.link_sign_in"), url: "/sign-in" },
+  { title: t("shared.layout.header.link_register_now"), url: "/sign-up" },
 ]);
 
 async function signOut() {

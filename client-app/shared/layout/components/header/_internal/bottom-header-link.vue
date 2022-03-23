@@ -49,7 +49,7 @@ import { MenuLinkType } from "@/core/api/graphql/types";
 defineProps({
   title: {
     type: String,
-    default: undefined,
+    default: "",
   },
 
   to: {

@@ -1,13 +1,13 @@
 <template>
-  <VcPopup title="Select shipping method">
+  <VcPopup :title="$t('shared.checkout.shipping_method_dialog.title')">
     <template #actions="{ close }">
       <VcButton
         class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-5"
         kind="secondary"
         is-outline
         @click="close"
+        v-t="'shared.checkout.shipping_method_dialog.cancel_button'"
       >
-        Cancel
       </VcButton>
       <VcButton
         class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-10"
@@ -15,8 +15,8 @@
           $emit('result', selectedMethod);
           close();
         "
+        v-t="'shared.checkout.shipping_method_dialog.ok_button'"
       >
-        OK
       </VcButton>
     </template>
 
@@ -27,7 +27,8 @@
           <div class="lg:w-2/6">{{ method.code }} {{ method.optionName }}</div>
           <div class="lg:w-3/6">{{ method.optionDescription }}</div>
           <div class="lg:w-1/6 lg:text-right text-sm lg:text-base">
-            <span class="font-bold lg:hidden mr-1">Price:</span><VcPriceDisplay :value="method.price" />
+            <span class="font-bold lg:hidden mr-1">{{ $t("shared.checkout.shipping_method_dialog.price_label") }}</span
+            ><VcPriceDisplay :value="method.price" />
           </div>
         </div>
         <div class="w-20 flex items-center justify-end lg:justify-center">
@@ -37,7 +38,14 @@
           >
             <i class="fas fa-check"></i>
           </div>
-          <VcButton v-else is-outline class="uppercase flex-grow px-3" @click="setMethod(method)"> Select </VcButton>
+          <VcButton
+            v-else
+            is-outline
+            class="uppercase flex-grow px-3"
+            @click="setMethod(method)"
+            v-t="'shared.checkout.shipping_method_dialog.select_button'"
+          >
+          </VcButton>
         </div>
       </div>
     </template>

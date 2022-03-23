@@ -1,6 +1,6 @@
 <template>
   <div class="items-center justify-center z-0">
-    <span class="hidden xl:inline pr-2">Results per page:</span>
+    <span class="hidden xl:inline pr-2" v-t="'shared.catalog.page_size.label'"></span>
     <button
       class="uppercase text-sm text-center w-12 h-9 rounded-l"
       :class="[

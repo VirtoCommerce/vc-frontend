@@ -42,7 +42,7 @@ import { PropType, ref } from "vue";
 defineProps({
   title: {
     type: String,
-    default: undefined,
+    default: "",
   },
 
   to: {
