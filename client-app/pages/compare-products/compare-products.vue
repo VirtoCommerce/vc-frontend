@@ -2,6 +2,7 @@
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner grow">
     <EmptyComparison v-if="!comparisonProducts"></EmptyComparison>
     <div class="w-full md:max-w-screen-2xl md:px-12 mx-auto" v-else>
+      <!-- Page header -->
       <VcBreadcrumbs :items="breadcrumbs" class="mb-2 px-5"></VcBreadcrumbs>
       <div class="flex flex-wrap md:space-x-12 px-5">
         <div class="flex flex-col">
@@ -18,8 +19,10 @@
           }}</VcButton>
         </div>
       </div>
-      <!-- Products block -->
+
+      <!-- Main block -->
       <div class="shadow py-8 bg-white md:rounded overflow-x-auto">
+        <!-- Product cards block -->
         <div class="flex space-x-5 px-5 lg:px-0">
           <div class="w-1/6" v-if="!isMobile"></div>
           <div
@@ -66,6 +69,8 @@
             <AddToCart :product="product" />
           </div>
         </div>
+
+        <!-- Properties block -->
         <div
           class="inline-flex lg:flex items-start md:items-center space-x-5 px-5 lg:px-0 border-b border-gray-100 lg:border-0"
           v-for="(values, key, index) in computedProperties"
