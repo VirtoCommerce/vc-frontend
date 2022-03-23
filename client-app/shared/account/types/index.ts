@@ -1,5 +1,17 @@
 import { PaymentMethodType, ShippingMethodType } from "@core/api/graphql/types";
 
+export type RegistrationKind = "personal" | "organization";
+
+export type RegisterOrganization = {
+  userName: string;
+  email: string;
+  password: string;
+  firstName?: string;
+  lastName?: string;
+  middleName?: string;
+  organizationName?: string;
+};
+
 export type SignMeUp = {
   userName: string;
   email: string;

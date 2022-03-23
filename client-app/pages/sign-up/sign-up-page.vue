@@ -2,6 +2,12 @@
   <TwoColumn class="max-w-screen-xl">
     <template #left>
       <h1 class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8 lg:mt-5" v-t="'pages.sign_up.header'"></h1>
+
+      <div class="mt-5 mb-5 flex flex-col space-y-5 md:space-y-0 md:flex-row md:space-x-7">
+        <VcRadioButton id="shipping" v-model="registrationKind" value="personal" label="Personal" />
+        <VcRadioButton id="pickup" v-model="registrationKind" value="organization" label="Organization" />
+      </div>
+
       <form @submit="onSubmit">
         <VcInput
           v-model="firstName"
@@ -78,13 +84,15 @@
 </template>
 
 <script setup lang="ts">
-import { VcAlert, VcInput, VcImage, VcButton } from "@/components";
-import { useUser, RegistrationSuccessDialog } from "@/shared/account";
+import { VcAlert, VcInput, VcImage, VcButton, VcRadioButton } from "@/components";
+import { useUser, RegistationSuccessDialog, RegistrationKind } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import { ref } from "vue";
 import { usePopup } from "@/shared/popup";
+
+const registrationKind = ref<RegistrationKind>("personal");
 
 const { signMeUp, loading } = useUser();
 const { openPopup } = usePopup();

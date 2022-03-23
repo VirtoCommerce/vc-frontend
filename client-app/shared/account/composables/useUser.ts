@@ -4,6 +4,7 @@ import { UserType, IdentityResultType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 import { SignMeUp, SignMeIn, ForgotPassword, ValidateToken, ResetPassword, UserPersonalData } from "@/shared/account";
 import useFetch from "@/core/composables/useFetch";
+import { RegisterOrganization } from "../types";
 
 const me: Ref<UserType> = ref({
   userName: "",
@@ -96,6 +97,20 @@ export default () => {
       return res;
     } catch (e) {
       Logger.error("useUser.signMeUp", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function registerOrganization(payload: RegisterOrganization): Promise<IdentityResultType> {
+    try {
+      loading.value = true;
+      const url = "/storefrontapi/account/organization";
+      const res = await innerFetch<RegisterOrganization, IdentityResultType>(url, "POST", payload);
+      return res;
+    } catch (e) {
+      Logger.error("useUser.RegisterOrganization", e);
       throw e;
     } finally {
       loading.value = false;
