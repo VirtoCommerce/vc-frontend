@@ -80,8 +80,9 @@
       <a
         class="font-bold text-[color:var(--color-footer-bottom-link)] hover:text-[color:var(--color-footer-bottom-link-hover)]"
         href="#"
-        v-t="'shared.layout.footer.by_virto'"
-      ></a>
+      >
+        {{ $t("shared.layout.footer.by_virto") }}
+      </a>
     </i18n-t>
   </div>
 </template>

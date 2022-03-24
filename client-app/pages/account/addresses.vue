@@ -193,7 +193,7 @@
                           :alt="$t('pages.account.addresses.no_addresses_img_alt')"
                         />
                         <div class="flex flex-col space-y-2">
-                          <span class="text-base" м-е="'pages.account.addresses.no_addresses_message'"></span>
+                          <span class="text-base" v-t="'pages.account.addresses.no_addresses_message'"></span>
                           <VcButton
                             class="uppercase w-full"
                             @click="openEditMode()"

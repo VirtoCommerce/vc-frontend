@@ -70,7 +70,10 @@
         class="uppercase font-extrabold text-3xl text-white whitespace-nowrap"
         v-t="'pages.home.subscription_block.subscribe_now'"
       ></div>
-      <div class="text-base font-medium leading-tight text-white max-w-max lg:max-w-min"></div>
+      <div
+        class="text-base font-medium leading-tight text-white max-w-max lg:max-w-min"
+        v-html="$t('pages.home.subscription_block.info_message')"
+      ></div>
       <div class="flex flex-grow w-full space-x-6">
         <input
           class="bg-white rounded h-11 flex-grow shadow-inner px-4 min-w-0 outline-none"

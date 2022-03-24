@@ -16,7 +16,7 @@
             key="sku"
             icon
           >
-            <span v-t="'pages.bulk_order.product_was_not_added_alert'"></span>
+            <span>{{ $t("pages.bulk_order.product_was_not_added_alert", [SKUsWithErrors.join(", ")]) }}</span>
           </VcAlert>
 
           <VcAlert

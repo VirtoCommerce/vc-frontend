@@ -80,7 +80,7 @@
             </div>
           </VcCard>
 
-          <VcCard title="$t('shared.checkout.thank_you.shipping_method_card.title')" is-collapsible class="mb-5">
+          <VcCard :title="$t('shared.checkout.thank_you.shipping_method_card.title')" is-collapsible class="mb-5">
             <div class="flex items-center space-x-4 text-sm">
               <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" />
               <span
