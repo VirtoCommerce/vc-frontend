@@ -1,7 +1,7 @@
 mutation ChangePurchaseOrderNumber($command: InputChangePurchaseOrderNumber) {
   changePurchaseOrderNumber(command: $command) {
-      id
-      name
-      purchaseOrderNumber
-    }
+    id
+    name
+    purchaseOrderNumber
+  }
 }

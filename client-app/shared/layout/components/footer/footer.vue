@@ -79,6 +79,7 @@
     <i18n-t keypath="shared.layout.footer.asp_net_e_commerce_platform" tag="div">
       <a
         class="font-bold text-[color:var(--color-footer-bottom-link)] hover:text-[color:var(--color-footer-bottom-link-hover)]"
+        href="#"
       >
         {{ $t("shared.layout.footer.by_virto") }}
       </a>

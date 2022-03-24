@@ -17,7 +17,7 @@
           v-for="(item, i) in headerMenu"
           :key="i"
           :to="item.url"
-          :children="item.children"
+          :children="$menus[item.id]"
           :title="item.title"
         >
           <template v-if="item.id === 'checkout'">
@@ -53,12 +53,12 @@
 <script setup lang="ts">
 import { VcImage } from "@/components";
 import BottomHeaderLink from "./bottom-header-link.vue";
+import menuSchema from "@/config/menu";
 import { useCart } from "@/shared/cart";
 import { useSearchBar, SearchBar } from "@/shared/layout";
-import { useMenu } from "@/shared/layout/composables";
-
-const { headerMenu } = useMenu();
 
 const { cart } = useCart();
 const { searchBarVisible, showSearchBar } = useSearchBar();
+
+const headerMenu = menuSchema?.header?.main;
 </script>

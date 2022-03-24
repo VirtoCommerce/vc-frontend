@@ -85,7 +85,7 @@
           ></div>
           <div class="flex w-full items-center justify-center space-x-6">
             <VcButton
-              class="w-1/2 md:w-auto uppercase px-2 md:px-8"
+              class="w-1/2 md:w-auto uppercase px-2 md:px-8 bg-gray-50 text-[color:var(--color-primary)]"
               v-t="'pages.demo_landing.booking_block.first_button'"
             ></VcButton>
             <VcButton

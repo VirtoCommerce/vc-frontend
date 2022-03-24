@@ -50,7 +50,9 @@
 
             <!-- Previously purchased -->
             <VcCard :title="$t('pages.catalog.purchased_filter_card.title')">
-              <VcCheckbox color="[color:var(--color-link)]">{{ $t("pages.catalog.purchased_filter_card.checkbox_label") }}</VcCheckbox>
+              <VcCheckbox color="[color:var(--color-link)]">{{
+                $t("pages.catalog.purchased_filter_card.checkbox_label")
+              }}</VcCheckbox>
             </VcCard>
 
             <!-- Branch availability -->
