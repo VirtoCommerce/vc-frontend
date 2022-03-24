@@ -3,8 +3,8 @@
     <VcInput
       v-model="email"
       class="mb-4"
-      label="Email"
-      placeholder="Enter your e-mail"
+      :label="$t('shared.account.forgot_password_form.email_label')"
+      :placeholder="$t('shared.account.forgot_password_form.email_placeholder')"
       type="email"
       is-required
       :error-message="errors.email"
@@ -14,7 +14,13 @@
         {{ error }}
       </VcAlert>
 
-      <VcButton is-submit class="mt-6 lg:mt-3 w-full lg:w-48 uppercase" :is-waiting="loading"> Submit </VcButton>
+      <VcButton
+        is-submit
+        class="mt-6 lg:mt-3 w-full lg:w-48 uppercase"
+        :is-waiting="loading"
+        v-t="'shared.account.forgot_password_form.submit_button'"
+      >
+      </VcButton>
     </div>
   </form>
 </template>
@@ -25,13 +31,21 @@ import { ref } from "vue";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import { useUser } from "@/shared/account";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const { forgotPassword, loading } = useUser();
 
 const emit = defineEmits(["succeeded"]);
 
 const schema = yup.object({
-  email: yup.string().label("Email").required().email("Enter correct email please (ex. john@gmail.com)").max(64),
+  email: yup
+    .string()
+    .label(t("shared.account.forgot_password_form.email_label"))
+    .required()
+    .email(t("shared.account.forgot_password_form.invalid_email_format_message"))
+    .max(64),
 });
 
 const { errors, handleSubmit } = useForm({

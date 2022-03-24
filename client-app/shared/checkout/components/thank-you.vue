@@ -1,17 +1,19 @@
 <template>
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner">
     <div class="max-w-screen-2xl md:px-12 mx-auto">
-      <h2 class="text-gray-800 px-5 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-2">Order complete</h2>
+      <h2
+        class="text-gray-800 px-5 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-2"
+        v-t="'shared.checkout.thank_you.header'"
+      ></h2>
       <p class="text-green-700 px-5 md:px-0 font-extrabold mb-5">
-        Order {{ order.number }} has be successfully submitted. You will be notified via email when your order is ready
-        for shipping
+        {{ $t("shared.checkout.thank_you.success_order_message", [order.number]) }}
       </p>
       <div class="flex flex-col lg:flex-row lg:flex-nowrap lg:space-x-6">
         <!-- Main section -->
         <div class="lg:w-3/4 xl:w-4/5 flex-grow w-full">
           <!-- My products section -->
           <VcSection
-            title="My purchased products"
+            :title="$t('shared.checkout.thank_you.products_section.title')"
             icon-url="/static/images/checkout/products.svg"
             class="shadow lg:pb-11"
           >
@@ -36,7 +38,7 @@
           <!-- Order comment section -->
           <VcSection
             v-if="order.comment"
-            title="Order comment"
+            :title="$t('shared.checkout.thank_you.comment_section.title')"
             icon-url="/static/images/checkout/extra.svg"
             class="shadow-inner pb-8 lg:shadow"
           >
@@ -54,7 +56,7 @@
           <!-- Order summary -->
           <OrderSummary :cart="order" class="mb-5"></OrderSummary>
 
-          <VcCard title="Shipping address" is-collapsible class="mb-5">
+          <VcCard :title="$t('shared.checkout.thank_you.shipping_address_card.title')" is-collapsible class="mb-5">
             <div class="flex flex-col text-sm">
               <span class="font-extrabold"
                 >{{ order.shipments?.[0]?.deliveryAddress?.firstName }}
@@ -67,12 +69,18 @@
                 {{ order.shipments?.[0]?.deliveryAddress?.line1 }}
                 {{ order.shipments?.[0]?.deliveryAddress?.postalCode }}
               </p>
-              <p><span class="font-extrabold">Phone:</span> {{ order.shipments?.[0]?.deliveryAddress?.phone }}</p>
-              <p><span class="font-extrabold">Email:</span> {{ order.shipments?.[0]?.deliveryAddress?.email }}</p>
+              <p>
+                <span class="font-extrabold">{{ $t("shared.checkout.thank_you.phone_label") }}</span>
+                {{ order.shipments?.[0]?.deliveryAddress?.phone }}
+              </p>
+              <p>
+                <span class="font-extrabold">{{ $t("shared.checkout.thank_you.email_label") }}</span>
+                {{ order.shipments?.[0]?.deliveryAddress?.email }}
+              </p>
             </div>
           </VcCard>
 
-          <VcCard title="Shipping method" is-collapsible class="mb-5">
+          <VcCard :title="$t('shared.checkout.thank_you.shipping_method_card.title')" is-collapsible class="mb-5">
             <div class="flex items-center space-x-4 text-sm">
               <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" />
               <span
@@ -83,14 +91,14 @@
             </div>
           </VcCard>
 
-          <VcCard title="Payment method" is-collapsible class="mb-5">
+          <VcCard :title="$t('shared.checkout.thank_you.payment_method_card.title')" is-collapsible class="mb-5">
             <div class="flex items-center space-x-4 text-sm">
               <VcImage src="/static/images/checkout/invoice.svg" class="h-12 w-12" />
               <span>{{ order.inPayments?.[0]?.gatewayCode }}</span>
             </div>
           </VcCard>
 
-          <VcCard title="Billing address" is-collapsible class="mb-5">
+          <VcCard :title="$t('shared.checkout.thank_you.billing_address_card.title')" is-collapsible class="mb-5">
             <div class="flex flex-col text-sm">
               <span class="font-extrabold"
                 >{{ order.inPayments?.[0]?.billingAddress?.firstName }}
@@ -103,12 +111,22 @@
                 {{ order.inPayments?.[0]?.billingAddress?.line1 }}
                 {{ order.inPayments?.[0]?.billingAddress?.postalCode }}
               </p>
-              <p><span class="font-extrabold">Phone:</span> {{ order.inPayments?.[0]?.billingAddress?.phone }}</p>
-              <p><span class="font-extrabold">Email:</span> {{ order.inPayments?.[0]?.billingAddress?.email }}</p>
+              <p>
+                <span class="font-extrabold">{{ $t("shared.checkout.thank_you.phone_label") }}</span>
+                {{ order.inPayments?.[0]?.billingAddress?.phone }}
+              </p>
+              <p>
+                <span class="font-extrabold">{{ $t("shared.checkout.thank_you.email_label") }}</span>
+                {{ order.inPayments?.[0]?.billingAddress?.email }}
+              </p>
             </div>
           </VcCard>
 
-          <VcButton class="uppercase w-full" @click="printOrder">Print order</VcButton>
+          <VcButton
+            class="uppercase w-full"
+            @click="printOrder"
+            v-t="'shared.checkout.thank_you.print_order'"
+          ></VcButton>
         </div>
       </div>
     </div>

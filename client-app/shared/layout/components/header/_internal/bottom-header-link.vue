@@ -49,7 +49,7 @@ import { IMenuItem } from "../../../";
 defineProps({
   title: {
     type: String,
-    default: undefined,
+    default: "",
   },
 
   to: {

@@ -38,6 +38,7 @@
     "swiper": "^8.0.6",
     "vee-validate": "^4.5.6",
     "vue": "^3.2.31",
+    "vue-i18n": "9",
     "vue-router": "^4.0.12",
     "yup": "^0.32.11"
   },
@@ -49,6 +50,7 @@
     "@graphql-codegen/introspection": "^2.1.1",
     "@graphql-codegen/typescript": "^2.4.2",
     "@graphql-codegen/typescript-operations": "^2.2.2",
+    "@intlify/vite-plugin-vue-i18n": "^3.3.1",
     "@rollup/plugin-graphql": "^1.1.0",
     "@types/dompurify": "^2.3.3",
     "@types/lodash": "^4.14.177",

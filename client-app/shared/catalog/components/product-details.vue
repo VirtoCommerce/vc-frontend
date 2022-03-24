@@ -9,12 +9,16 @@
           type="checkbox"
           class="form-tick appearance-none w-5 h-5 border-2 border-gray-300 rounded-sm checked:bg-[color:var(--color-link)] checked:border-transparent focus:outline-none cursor-pointer"
         />
-        <span class="ml-2">Compare</span>
+        <span class="ml-2">{{ $t("common.labels.compare") }}</span>
       </div>
     </div>
 
     <div class="flex flex-col lg:w-2/3">
-      <ProductTitledBlock class="mt-5" image-src="/static/images/technical_specs.svg" title="technical specs">
+      <ProductTitledBlock
+        class="mt-5"
+        image-src="/static/images/technical_specs.svg"
+        :title="$t('shared.catalog.product_details.technical_specs_block_title')"
+      >
         <ProductProperties v-if="product.properties" :properties="product.properties" />
       </ProductTitledBlock>
 
@@ -23,7 +27,7 @@
         v-if="product.variations?.length"
         class="mt-5"
         image-src="/static/images/variations_customize.svg"
-        title="Customize your order"
+        :title="$t('shared.catalog.product_details.variations_block_title')"
       >
         <ProductVariationCard class="mb-5" :variation="product" />
 
@@ -36,7 +40,7 @@
         v-if="product.description"
         class="mt-5"
         image-src="/static/images/description.svg"
-        title="Description"
+        :title="$t('shared.catalog.product_details.description_block_title')"
       >
         <VcMarkdownRender :src="product.description?.content" class="text-gray-500"></VcMarkdownRender>
       </ProductTitledBlock>

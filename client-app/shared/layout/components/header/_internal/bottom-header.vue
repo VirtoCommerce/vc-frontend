@@ -6,7 +6,10 @@
       </router-link>
 
       <div class="w-0.5 h-6 bg-[color:var(--color-primary)] mx-5 hidden xl:block"></div>
-      <div class="italic text-lg text-[color:var(--color-header-bottom-text)] hidden xl:block">Construction goods</div>
+      <div
+        class="italic text-lg text-[color:var(--color-header-bottom-text)] hidden xl:block"
+        v-t="'shared.layout.header.logo_label'"
+      ></div>
       <div class="flex-grow"></div>
 
       <div class="flex items-center space-x-8">
@@ -50,12 +53,12 @@
 <script setup lang="ts">
 import { VcImage } from "@/components";
 import BottomHeaderLink from "./bottom-header-link.vue";
-import menuSchema from "@/config/menu";
 import { useCart } from "@/shared/cart";
 import { useSearchBar, SearchBar } from "@/shared/layout";
+import { useMenu } from "@/shared/layout/composables";
+
+const { headerMenu } = useMenu();
 
 const { cart } = useCart();
 const { searchBarVisible, showSearchBar } = useSearchBar();
-
-const headerMenu = menuSchema?.header?.main;
 </script>

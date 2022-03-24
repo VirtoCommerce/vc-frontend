@@ -1,14 +1,34 @@
 <template>
-  <VcCard title="My account">
+  <VcCard :title="$t('shared.account.navigation.title')">
     <div class="flex flex-col">
-      <AccountNavigationLink to="/account/dashboard" text="Dashboard" class="dashboard-icon"></AccountNavigationLink>
-      <AccountNavigationLink to="/account/profile" text="Profile" class="profile-icon"></AccountNavigationLink>
-      <AccountNavigationLink to="/account/addresses" text="Addresses" class="addresses-icon"></AccountNavigationLink>
-      <AccountNavigationLink to="/account/orders" text="Orders" class="orders-icon"></AccountNavigationLink>
-      <AccountNavigationLink to="/list" text="Your List" class="list-icon"></AccountNavigationLink>
+      <AccountNavigationLink
+        to="/account/dashboard"
+        :text="$t('shared.account.navigation.links.dashboard')"
+        class="dashboard-icon"
+      ></AccountNavigationLink>
+      <AccountNavigationLink
+        to="/account/profile"
+        :text="$t('shared.account.navigation.links.profile')"
+        class="profile-icon"
+      ></AccountNavigationLink>
+      <AccountNavigationLink
+        to="/account/addresses"
+        :text="$t('shared.account.navigation.links.addresses')"
+        class="addresses-icon"
+      ></AccountNavigationLink>
+      <AccountNavigationLink
+        to="/account/orders"
+        :text="$t('shared.account.navigation.links.orders')"
+        class="orders-icon"
+      ></AccountNavigationLink>
+      <AccountNavigationLink
+        to="/list"
+        :text="$t('shared.account.navigation.links.your_list')"
+        class="list-icon"
+      ></AccountNavigationLink>
       <AccountNavigationLink
         to="/account/checkout-defaults"
-        text="Checkout Defaults"
+        :text="$t('shared.account.navigation.links.checkout_defaults')"
         class="checkout-icon"
       ></AccountNavigationLink>
     </div>

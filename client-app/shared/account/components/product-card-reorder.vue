@@ -19,25 +19,35 @@
             v-if="(props.productItem.quantity! > props.productItem.availabilityData?.availableQuantity) && !isInputDisabled"
           >
             <i class="fas fa-exclamation-circle text-[color:var(--color-primary)] self-start mt-1"></i>
-            <span class="text-xs text-gray-400">
-              The number of items in the order was
-              <span class="text-gray-500"
-                >reduced from {{ props.productItem.quantity }} to
-                {{ props.productItem.availabilityData?.availableQuantity }}</span
-              >
-              due to stock restrictions
+            <span
+              class="text-xs text-gray-400"
+              v-html="
+                $t('shared.account.reorder_info_popup.product_card.reduced_message', [
+                  props.productItem.quantity,
+                  props.productItem.availabilityData?.availableQuantity,
+                ])
+              "
+            >
             </span>
           </div>
           <div class="flex items-center space-x-1" v-else-if="!props.productItem.availabilityData?.isAvailable">
             <i class="fas fa-exclamation-circle text-[color:var(--color-primary)] self-start mt-1"></i>
-            <span class="text-xs text-gray-400" v-if="!isOutOfStock"> Item can't be purchased </span>
-            <span class="text-xs text-gray-400" v-else> Item is out of stock </span>
+            <span
+              class="text-xs text-gray-400"
+              v-if="!isOutOfStock"
+              v-t="$t('shared.account.reorder_info_popup.product_card.item_can_t_be_purchased_message')"
+            ></span>
+            <span
+              class="text-xs text-gray-400"
+              v-else
+              v-t="$t('shared.account.reorder_info_popup.product_card.item_is_out_of_stock_message')"
+            ></span>
           </div>
         </div>
       </div>
       <div class="flex justify-between">
         <div class="flex items-center space-x-3">
-          <span class="self-start">Quantity:</span>
+          <span class="self-start">{{ $t("shared.account.reorder_info_popup.product_card.quantity_label") }}</span>
           <div class="flex flex-col items-center">
             <input
               v-model="value"
@@ -68,17 +78,20 @@
                       ? "9999+"
                       : productItem.availabilityData?.availableQuantity
                   }}
-                  in stock</span
+                  {{ $t("shared.account.reorder_info_popup.product_card.in_stock_suffix") }}</span
                 >
               </div>
               <div v-else-if="isOutOfStock" class="flex items-center">
-                <span class="text-[color:var(--color-danger)] text-xs pt-1 whitespace-nowrap">Out of stock</span>
+                <span
+                  class="text-[color:var(--color-danger)] text-xs pt-1 whitespace-nowrap"
+                  v-t="'shared.account.reorder_info_popup.product_card.out_of_stock_message'"
+                ></span>
               </div>
             </div>
           </div>
         </div>
         <div class="flex text-sm items-start space-x-3">
-          <span class="mt-1">Total:</span>
+          <span class="mt-1">{{ $t("shared.account.reorder_info_popup.product_card.total_label") }}</span>
           <span class="text-green-700 font-extrabold mt-1">{{ currency?.symbol }}{{ total }}</span>
         </div>
       </div>
@@ -106,19 +119,29 @@
             v-if="(props.productItem.quantity! > props.productItem.availabilityData?.availableQuantity) && !isInputDisabled"
           >
             <i class="fas fa-exclamation-circle text-[color:var(--color-primary)] self-start mt-1"></i>
-            <span class="text-xs text-gray-400">
-              The number of items in the order was
-              <span class="text-gray-500"
-                >reduced from {{ props.productItem.quantity }} to
-                {{ props.productItem.availabilityData?.availableQuantity }}</span
-              >
-              due to stock restrictions
+            <span
+              class="text-xs text-gray-400"
+              v-html="
+                $t('shared.account.reorder_info_popup.product_card.reduced_message', [
+                  props.productItem.quantity,
+                  props.productItem.availabilityData?.availableQuantity,
+                ])
+              "
+            >
             </span>
           </div>
           <div class="flex items-center space-x-1" v-else-if="!props.productItem.availabilityData?.isAvailable">
             <i class="fas fa-exclamation-circle text-[color:var(--color-primary)] self-start mt-1"></i>
-            <span class="text-xs text-gray-400" v-if="!isOutOfStock"> Item can't be purchased </span>
-            <span class="text-xs text-gray-400" v-else> Item is out of stock </span>
+            <span
+              class="text-xs text-gray-400"
+              v-if="!isOutOfStock"
+              v-t="$t('shared.account.reorder_info_popup.product_card.item_can_t_be_purchased_message')"
+            ></span>
+            <span
+              class="text-xs text-gray-400"
+              v-else
+              v-t="$t('shared.account.reorder_info_popup.product_card.item_is_out_of_stock_message')"
+            ></span>
           </div>
         </div>
 
@@ -153,17 +176,22 @@
                       ? "9999+"
                       : productItem.availabilityData?.availableQuantity
                   }}
-                  in stock</span
+                  {{ $t("shared.account.reorder_info_popup.product_card.in_stock_suffix") }}</span
                 >
               </div>
               <div v-else-if="isOutOfStock" class="flex items-center">
-                <span class="text-[color:var(--color-danger)] text-xs pt-1 whitespace-nowrap">Out of stock</span>
+                <span
+                  class="text-[color:var(--color-danger)] text-xs pt-1 whitespace-nowrap"
+                  v-t="'shared.account.reorder_info_popup.product_card.out_of_stock_message'"
+                ></span>
               </div>
             </div>
           </div>
 
           <div class="hidden md:flex lg:w-28 lg:shrink-0 xl:w-2/4 md:items-end flex-col text-sm font-extrabold pr-3">
-            <span class="text-black self-end">Total</span>
+            <span class="text-black self-end">{{
+              $t("shared.account.reorder_info_popup.product_card.total_label")
+            }}</span>
             <span class="text-green-700">{{ currency?.symbol }}{{ total }}</span>
           </div>
         </div>

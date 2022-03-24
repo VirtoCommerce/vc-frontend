@@ -1,11 +1,19 @@
 <template>
   <VcPopup :variant="variant" :title="title">
     <template #actions="{ close }">
-      <VcButton is-outline class="lg:px-4 uppercase flex-grow lg:flex-grow-0 inline-flex" @click="close">
-        Continue shopping
+      <VcButton
+        is-outline
+        class="lg:px-4 uppercase flex-grow lg:flex-grow-0 inline-flex"
+        @click="close"
+        v-t="'shared.cart.cart_add_info_popup.continue_shopping_button'"
+      >
       </VcButton>
-      <VcButton to="/checkout" class="uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-4" @click="close">
-        View cart
+      <VcButton
+        to="/checkout"
+        class="uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-4"
+        @click="close"
+        v-t="'shared.cart.cart_add_info_popup.view_cart_button'"
+      >
       </VcButton>
     </template>
 
@@ -13,9 +21,15 @@
       <table class="w-full">
         <thead class="border-b border-gray-200">
           <tr>
-            <th class="px-5 py-3 text-sm font-bold">Product</th>
-            <th class="px-5 py-3 text-sm font-bold text-center">Quantity</th>
-            <th class="px-5 py-3 text-sm font-bold text-right">Total</th>
+            <th class="px-5 py-3 text-sm font-bold" v-t="'shared.cart.cart_add_info_popup.table.product_column'"></th>
+            <th
+              class="px-5 py-3 text-sm font-bold text-center"
+              v-t="'shared.cart.cart_add_info_popup.table.quantity_column'"
+            ></th>
+            <th
+              class="px-5 py-3 text-sm font-bold text-right"
+              v-t="'shared.cart.cart_add_info_popup.table.total_column'"
+            ></th>
           </tr>
         </thead>
         <tbody class="border-b border-gray-200">
@@ -42,10 +56,11 @@
 
       <div class="flex items-center justify-between px-5 py-3">
         <div>
-          Quantity: <span class="font-bold">{{ lineItem.quantity }}</span>
+          {{ $t("shared.cart.cart_add_info_popup.quantity_label") }}
+          <span class="font-bold">{{ lineItem.quantity }}</span>
         </div>
         <div>
-          Total:
+          {{ $t("shared.cart.cart_add_info_popup.total_label") }}
           <span class="font-bold text-green-700">
             <VcPriceDisplay :value="lineItem.extendedPrice" />
           </span>
@@ -59,6 +74,9 @@
 import { computed, PropType } from "vue";
 import { LineItemType } from "@/core/api/graphql/types";
 import { VcPopup, VcImage, VcPriceDisplay, VcButton } from "@/components";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const props = defineProps({
   isOpen: {
@@ -74,6 +92,8 @@ const props = defineProps({
 
 const variant = computed(() => (props.lineItem.quantity === 0 ? "warn" : "success"));
 const title = computed(() =>
-  props.lineItem.quantity === 0 ? "1 Product removed from cart" : "1 Product added to cart"
+  props.lineItem.quantity === 0
+    ? t("shared.cart.cart_add_info_popup.title_removed")
+    : t("shared.cart.cart_add_info_popup.title_added")
 );
 </script>

@@ -21,7 +21,7 @@
       <input
         v-model.trim="searchPhrase"
         maxlength="30"
-        placeholder="Enter keyword, item, model or replacement part number"
+        :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
         class="flex-grow mr-4 rounded h-10 px-4 font-medium text-sm outline-none disabled:bg-gray-200"
         @keyup.enter="$router.push(searchPageLink)"
       />

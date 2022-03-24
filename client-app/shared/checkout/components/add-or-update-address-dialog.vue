@@ -1,5 +1,9 @@
 <template>
-  <VcPopup title="Select address" modal-width="max-w-5xl" :hide-actions="true">
+  <VcPopup
+    :title="$t('shared.checkout.add_or_update_address_dialog.title')"
+    modal-width="max-w-5xl"
+    :hide-actions="true"
+  >
     <template #default="{ close }">
       <AddressForm
         :model-value="editableAddress"
@@ -20,12 +24,16 @@
                 editableAddress = null;
                 close();
               "
+              v-t="'shared.checkout.add_or_update_address_dialog.cancel_button'"
             >
-              Cancel
             </VcButton>
 
             <VcButton size="md" :is-disabled="!dirty" class="uppercase w-1/2 sm:px-5" is-submit>
-              {{ editableAddress ? "Save" : "Create" }}
+              {{
+                editableAddress
+                  ? $t("shared.checkout.add_or_update_address_dialog.save_button")
+                  : $t("shared.checkout.add_or_update_address_dialog.create_button")
+              }}
             </VcButton>
           </div>
         </template>
