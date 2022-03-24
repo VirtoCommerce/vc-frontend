@@ -1,20 +1,11 @@
 <template>
   <form @submit="onSubmit">
     <!-- Errors block -->
-    <VcAlert
-      v-if="authError"
-      class="mb-2"
-      icon
-      text
-      v-html="$t('shared.account.sign_in_form.user_or_password_incorrect_alert')"
-    ></VcAlert>
-    <VcAlert
-      v-if="!_.isEmpty(errors)"
-      class="mb-2"
-      icon
-      text
-      v-html="$t('shared.account.sign_in_form.user_and_password_are_required_alert')"
-    >
+    <VcAlert v-if="authError" class="mb-2" icon type="error" text>
+      <span v-html="$t('shared.account.sign_in_form.user_or_password_incorrect_alert')"></span>
+    </VcAlert>
+    <VcAlert v-if="!_.isEmpty(errors)" class="mb-2" icon type="error" text>
+      <span v-html="$t('shared.account.sign_in_form.user_and_password_are_required_alert')"></span>
     </VcAlert>
 
     <VcInput

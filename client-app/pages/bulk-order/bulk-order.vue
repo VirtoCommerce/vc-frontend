@@ -15,8 +15,8 @@
             type="error"
             key="sku"
             icon
-            v-t="'pages.bulk_order.product_was_not_added_alert'"
           >
+            <span v-t="'pages.bulk_order.product_was_not_added_alert'"></span>
           </VcAlert>
 
           <VcAlert
@@ -25,8 +25,8 @@
             class="mx-6 md:mx-0 mb-5 lg:mb-0 col-span-1 lg:col-span-2"
             type="error"
             icon
-            v-t="'pages.bulk_order.data_is_invalid_alert'"
           >
+            <span v-t="'pages.bulk_order.data_is_invalid_alert'"></span>
           </VcAlert>
         </transition>
 
