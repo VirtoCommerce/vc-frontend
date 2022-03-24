@@ -13,7 +13,9 @@
           >
         </div>
         <div class="flex justify-between items-start grow mb-5 md:mb-0">
-          <VcCheckbox class="mt-2">Show only differences</VcCheckbox>
+          <VcCheckbox class="mt-2" v-model="showOnlyDifferences" @change="onShowOnlyDifferencesChange"
+            >Show only differences</VcCheckbox
+          >
           <VcButton is-outline class="p-3 uppercase">{{
             isMobile ? "Clear compare list" : "Clear product compare list"
           }}</VcButton>
@@ -120,7 +122,27 @@ const breadcrumbs = ref<IBreadcrumbs[]>([
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 
+const showOnlyDifferences = ref(false);
+
+const originalProperties = ref<{ [key: string]: { value: string }[] }>({});
 const computedProperties = ref<{ [key: string]: { value: string }[] }>({});
+
+const onShowOnlyDifferencesChange = () => {
+  if (showOnlyDifferences.value) {
+    _.each(_.keys(computedProperties.value), (key) => {
+      const values = _.map(_.values(computedProperties.value[key]), (value) => {
+        return value.value;
+      });
+      const uniqueValues = _.uniq(values);
+
+      if (uniqueValues.length === 1) {
+        delete computedProperties.value[key];
+      }
+    });
+  } else {
+    computedProperties.value = { ...originalProperties.value };
+  }
+};
 
 function getProductProperties() {
   if (_.isEmpty(products.value)) return;
@@ -152,13 +174,14 @@ function getProductProperties() {
       });
     }
   });
-  computedProperties.value = grouped;
+  computedProperties.value = { ...grouped };
+  originalProperties.value = { ...grouped };
 }
 
 onMounted(async () => {
   const productIds = [
-    "aad7a78a899048d6b21e646887bddaa6",
     "5512e3a5201541769e1d81fc5217490c",
+    "24cd1f338dfc4d89ad68633932a4225e",
     "14f8279fc25d4e509c017f66f09ff562",
     "b4e347da31b842ccbf9bd847ac5c1849",
     "3b4e335592444025bf89be55757789d9",
