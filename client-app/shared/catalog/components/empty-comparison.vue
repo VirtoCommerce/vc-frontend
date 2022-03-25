@@ -28,9 +28,12 @@ import { VcImage, VcBreadcrumbs, VcButton, IBreadcrumbs } from "@/components";
 import { TwoColumn } from "@/shared/layout";
 import SeoUrl from "@core/seo-routes.enum";
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const breadcrumbs = ref<IBreadcrumbs[]>([
-  { title: "Home", url: "/" },
-  { title: "Compare products", url: "/compare-products" },
+  { title: t("pages.compare.links.home"), url: "/" },
+  { title: t("pages.compare.links.compare_products"), url: "/compare-products" },
 ]);
 </script>

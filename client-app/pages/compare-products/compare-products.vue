@@ -122,12 +122,14 @@ import { onMounted, ref, watch } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useCompareProducts } from "@/shared/compare";
 import { Product as ProductType } from "@/core/api/graphql/types";
+import { useI18n } from "vue-i18n";
 const { fetchProducts, products } = useProducts();
 const { clearCompareList, productsLimit, removeFromCompareList, productsIds } = useCompareProducts();
+const { t } = useI18n();
 
 const breadcrumbs = ref<IBreadcrumbs[]>([
-  { title: "Home", url: "/" },
-  { title: "Compare products", url: "/compare-products" },
+  { title: t("pages.compare.links.home"), url: "/" },
+  { title: t("pages.compare.links.compare_products"), url: "/compare-products" },
 ]);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);

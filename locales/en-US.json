@@ -743,6 +743,10 @@
       },
       "main_block": {
         "price_label": "@:common.labels.product_price"
+      },
+      "links": {
+        "home": "Home",
+        "compare_products": "Compare products"
       }
     }
   }
