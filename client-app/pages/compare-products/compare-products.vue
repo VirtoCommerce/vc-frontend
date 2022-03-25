@@ -6,18 +6,20 @@
       <VcBreadcrumbs :items="breadcrumbs" class="mb-2 px-5"></VcBreadcrumbs>
       <div class="flex flex-wrap md:space-x-12 px-5">
         <div class="flex flex-col">
-          <h1 class="text-black-800 text-3xl uppercase font-bold">Compare products</h1>
-          <span class="block mb-3"
-            >Added <span class="font-bold">{{ products.length }}</span> items out of
-            <span class="font-bold">{{ productsLimit }}</span></span
-          >
+          <h1 class="text-black-800 text-3xl uppercase font-bold">{{ $t("pages.compare.header_block.title") }}</h1>
+          <span
+            class="block mb-3"
+            v-html="$t('pages.compare.header_block.counter_message', [productsIds.length, productsLimit])"
+          ></span>
         </div>
         <div class="flex justify-between items-start grow mb-5 md:mb-0">
-          <VcCheckbox class="mt-2" v-model="showOnlyDifferences" @change="onShowOnlyDifferencesChange"
-            >Show only differences</VcCheckbox
-          >
+          <VcCheckbox class="mt-2" v-model="showOnlyDifferences" @change="onShowOnlyDifferencesChange">{{
+            $t("pages.compare.header_block.differences_checkbox_label")
+          }}</VcCheckbox>
           <VcButton is-outline class="p-3 uppercase" @click="clearList">{{
-            isMobile ? "Clear compare list" : "Clear product compare list"
+            isMobile
+              ? $t("pages.compare.header_block.clear_button_mobile")
+              : $t("pages.compare.header_block.clear_button_desktop")
           }}</VcButton>
         </div>
       </div>
@@ -62,10 +64,12 @@
 
             <!-- Product price -->
             <div class="flex flex-col md:flex-row items-baseline text-sm mb-3">
-              <div class="w-1/2 font-bold text-xs" v-if="!isMobile">Your price</div>
+              <div class="w-1/2 font-bold text-xs" v-if="!isMobile">
+                {{ $t("pages.compare.main_block.price_label") }}
+              </div>
               <div class="md:w-1/2">
                 <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span>
-                / each
+                {{ $t("common.suffixes.per_item") }}
               </div>
             </div>
 
@@ -91,10 +95,12 @@
           <div v-for="product in products" :key="product.id" class="w-32 flex-shrink-0 lg:flex-shrink md:w-48">
             <!-- Product price -->
             <div class="flex flex-col md:flex-row items-baseline text-sm my-4">
-              <div class="w-1/2 font-bold text-xs" v-if="!isMobile">Your price</div>
+              <div class="w-1/2 font-bold text-xs" v-if="!isMobile">
+                {{ $t("pages.compare.main_block.price_label") }}
+              </div>
               <div class="md:w-1/2">
                 <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span>
-                / each
+                {{ $t("common.suffixes.per_item") }}
               </div>
             </div>
             <AddToCart :product="product" />

@@ -727,6 +727,23 @@
         "terms_and_policy_link": "Terms and Policy",
         "submit_button": "@:common.buttons.submit"
       }
+    },
+    "compare": {
+      "empty_list": {
+        "title": "Compare product",
+        "message": "Your product compare list is currently empty",
+        "button_text": "Continue browsing here"
+      },
+      "header_block": {
+        "title": "Compare products",
+        "counter_message": "Added <strong>{0}</strong> items out of <strong>{1}</strong>",
+        "differences_checkbox_label": "Show only differences",
+        "clear_button_mobile": "Clear compare list",
+        "clear_button_desktop": "Clear product compare list"
+      },
+      "main_block": {
+        "price_label": "@:common.labels.product_price"
+      }
     }
   }
 }
