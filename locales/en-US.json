@@ -732,7 +732,9 @@
       "empty_list": {
         "title": "Compare product",
         "message": "Your product compare list is currently empty",
-        "button_text": "Continue browsing here"
+        "button_text": "Continue browsing here",
+        "img_alt": "emptyCart",
+        "img_alt_mobile": "emptyCartMobile"
       },
       "header_block": {
         "title": "Compare products",

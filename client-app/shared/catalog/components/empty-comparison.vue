@@ -8,7 +8,11 @@
   <TwoColumn class="max-w-screen-lg">
     <template #left>
       <div class="flex flex-col h-full py-12 justify-center items-center lg:items-start">
-        <VcImage src="/static/images/errors/emptyCart.webp" alt="emptyCartMobile" class="lg:hidden mb-8" />
+        <VcImage
+          src="/static/images/errors/emptyCart.webp"
+          :alt="$t('pages.compare.empty_list.img_alt_mobile')"
+          class="lg:hidden mb-8"
+        />
         <h2 class="text-black-800 text-2xl font-bold mb-8 text-center md:text-left">
           {{ $t("pages.compare.empty_list.message") }}
         </h2>
@@ -18,7 +22,11 @@
       </div>
     </template>
     <template #right>
-      <VcImage src="/static/images/errors/emptyCart.webp" alt="emptyCart" class="w-full max-w-md" />
+      <VcImage
+        src="/static/images/errors/emptyCart.webp"
+        :alt="$t('pages.compare.empty_list.img_alt')"
+        class="w-full max-w-md"
+      />
     </template>
   </TwoColumn>
 </template>
