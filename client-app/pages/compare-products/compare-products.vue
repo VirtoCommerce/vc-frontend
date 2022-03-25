@@ -113,7 +113,15 @@
 </template>
 
 <script setup lang="ts">
-import { VcBreadcrumbs, VcCheckbox, VcButton, IBreadcrumbs, VcImage, VcPriceDisplay } from "@/components";
+import {
+  VcBreadcrumbs,
+  VcCheckbox,
+  VcButton,
+  IBreadcrumbs,
+  VcImage,
+  VcPriceDisplay,
+  IProductProperties,
+} from "@/components";
 import { EmptyComparison, useProducts } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 import SeoUrl from "@core/seo-routes.enum";
@@ -137,8 +145,8 @@ const isMobile = breakpoints.smaller("lg");
 
 const showOnlyDifferences = ref(false);
 
-const originalProperties = ref<{ [key: string]: { value: string }[] }>({});
-const computedProperties = ref<{ [key: string]: { value: string }[] }>({});
+const originalProperties = ref<IProductProperties>({});
+const computedProperties = ref<IProductProperties>({});
 
 const removeProduct = (product: ProductType) => {
   removeFromCompareList(product);
@@ -167,7 +175,7 @@ const onShowOnlyDifferencesChange = () => {
 
 function getProductProperties() {
   if (_.isEmpty(products.value)) return;
-  const grouped: { [key: string]: { value: string }[] } = {};
+  const grouped: IProductProperties = {};
   const properties = _.flatten(
     _.map(products.value, (product) => {
       return product.properties;
