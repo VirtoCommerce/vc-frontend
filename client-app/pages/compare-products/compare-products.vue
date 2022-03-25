@@ -79,10 +79,10 @@
 
         <!-- Properties block -->
         <div
-          class="inline-flex lg:flex items-start md:items-center space-x-5 px-5 lg:px-0 border-b border-gray-100 lg:border-0"
+          class="items-start md:items-center space-x-5 px-5 lg:px-0 border-b border-gray-100 lg:border-0"
           v-for="(values, key, index) in computedProperties"
           :key="index"
-          :class="!isMobile && 'even:bg-gray-50'"
+          :class="!isMobile ? 'even:bg-gray-50 flex' : productsIds.length >= 3 ? 'inline-flex' : 'flex'"
         >
           <div class="w-1/6 pl-8 font-extrabold text-sm" v-if="!isMobile">{{ key }}</div>
           <div class="w-32 flex-shrink-0 lg:flex-shrink md:w-48 py-5" v-for="(value, index) in values" :key="index">
@@ -116,7 +116,7 @@ import { EmptyComparison, useProducts } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 import SeoUrl from "@core/seo-routes.enum";
 import _ from "lodash";
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useCompareProducts } from "@/shared/compare";
 import { Product as ProductType } from "@/core/api/graphql/types";
