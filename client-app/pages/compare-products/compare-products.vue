@@ -1,6 +1,7 @@
 <template>
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner grow">
     <EmptyComparison v-if="!productsIds.length"></EmptyComparison>
+
     <div class="w-full md:max-w-screen-2xl md:px-12 mx-auto" v-else>
       <!-- Page header -->
       <VcBreadcrumbs :items="breadcrumbs" class="mb-2 px-5"></VcBreadcrumbs>
@@ -110,6 +111,7 @@
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
 import { VcBreadcrumbs, VcCheckbox, VcButton, IBreadcrumbs, VcImage, VcPriceDisplay } from "@/components";
 import { EmptyComparison, useProducts } from "@/shared/catalog";
