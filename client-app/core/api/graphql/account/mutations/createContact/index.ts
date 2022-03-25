@@ -4,7 +4,7 @@ import client from "@core/api/graphql/graphql-client";
 
 import mutationDocument from "./createContact.graphql";
 
-export default async function createContact(contact: InputCreateContactType): Promise<ContactType | undefined> {
+export default async function createContact(contact: InputCreateContactType): Promise<ContactType> {
   const { data } = await client.mutate<Pick<Mutations, "createContact">, MutationsCreateContactArgs>({
     mutation: mutationDocument,
     variables: {
@@ -12,5 +12,5 @@ export default async function createContact(contact: InputCreateContactType): Pr
     },
   });
 
-  return data?.createContact;
+  return data?.createContact as ContactType;
 }

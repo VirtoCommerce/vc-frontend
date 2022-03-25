@@ -101,9 +101,7 @@ import { ref } from "vue";
 import { usePopup } from "@/shared/popup";
 import { IdentityResultType } from "@/core/api/graphql/types";
 
-//const registrationKind = ref<RegistrationKind>("personal");
-
-const { signMeUp, registerOrganization, loading } = useUser();
+const { registerUser, registerOrganization, loading } = useUser();
 const { openPopup } = usePopup();
 
 const schema = yup.object({
@@ -155,7 +153,7 @@ const onSubmit = handleSubmit(async (data) => {
 
   let result: IdentityResultType;
   if (registrationKind.value == "personal") {
-    result = await signMeUp({
+    result = await registerUser({
       email: `${data.email}`,
       firstName: `${data.firstName}`,
       lastName: `${data.lastName}`,

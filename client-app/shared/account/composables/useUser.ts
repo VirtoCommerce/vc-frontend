@@ -1,10 +1,17 @@
 import { Ref, ref, computed } from "vue";
-import { getMe, updatePersonalData } from "@/core/api/graphql/account";
+import { getMe, updatePersonalData, createUser, createOrganization, createContact } from "@/core/api/graphql/account";
 import { UserType, IdentityResultType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
-import { SignMeUp, SignMeIn, ForgotPassword, ValidateToken, ResetPassword, UserPersonalData } from "@/shared/account";
+import {
+  RegisterOrganization,
+  SignMeUp,
+  SignMeIn,
+  ForgotPassword,
+  ValidateToken,
+  ResetPassword,
+  UserPersonalData,
+} from "@/shared/account";
 import useFetch from "@/core/composables/useFetch";
-import { RegisterOrganization } from "../types";
 
 const me: Ref<UserType> = ref({
   userName: "",
@@ -52,6 +59,7 @@ export default () => {
       loading.value = false;
     }
   }
+
   async function changePassword(oldPassword: string, newPassword: string): Promise<IdentityResultType> {
     try {
       loading.value = true;
@@ -103,14 +111,52 @@ export default () => {
     }
   }
 
+  async function registerUser(payload: SignMeUp): Promise<IdentityResultType> {
+    try {
+      loading.value = true;
+      const contact = await createContact({
+        firstName: payload.firstName as string,
+        lastName: payload.lastName as string,
+        name: `${payload.firstName} ${payload.lastName}`,
+        emails: [payload.email],
+      });
+      const result = await createUser({
+        userName: payload.userName,
+        email: payload.email,
+        memberId: contact.id,
+        userType: "Customer",
+      });
+      return result;
+    } catch (e) {
+      Logger.error("useUser.registerUser", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   async function registerOrganization(payload: RegisterOrganization): Promise<IdentityResultType> {
     try {
       loading.value = true;
-      const url = "/storefrontapi/account/organization";
-      const res = await innerFetch<RegisterOrganization, IdentityResultType>(url, "POST", payload);
-      return res;
+      const organization = await createOrganization({
+        name: payload.organizationName,
+      });
+      const contact = await createContact({
+        firstName: payload.firstName as string,
+        lastName: payload.lastName as string,
+        name: `${payload.firstName} ${payload.lastName}`,
+        emails: [payload.email],
+        organizations: [organization.id],
+      });
+      const result = await createUser({
+        userName: payload.userName,
+        email: payload.email,
+        memberId: contact.id,
+        userType: "Customer",
+      });
+      return result;
     } catch (e) {
-      Logger.error("useUser.RegisterOrganization", e);
+      Logger.error("useUser.registerOrganization", e);
       throw e;
     } finally {
       loading.value = false;
@@ -184,6 +230,7 @@ export default () => {
     loadMe,
     signMeIn,
     signMeUp,
+    registerUser,
     registerOrganization,
     signMeOut,
     forgotPassword,

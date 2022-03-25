@@ -7,9 +7,7 @@ import {
 } from "@core/api/graphql/types";
 import mutationDocument from "./createOrganization.graphql";
 
-export default async function createOrganization(
-  organization: InputCreateOrganizationType
-): Promise<Organization | undefined> {
+export default async function createOrganization(organization: InputCreateOrganizationType): Promise<Organization> {
   const { data } = await client.mutate<Pick<Mutations, "createOrganization">, MutationsCreateOrganizationArgs>({
     mutation: mutationDocument,
     variables: {
@@ -17,5 +15,5 @@ export default async function createOrganization(
     },
   });
 
-  return data?.createOrganization;
+  return data?.createOrganization as Organization;
 }
