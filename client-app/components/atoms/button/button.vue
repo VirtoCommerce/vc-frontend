@@ -2,23 +2,22 @@
   <router-link
     v-if="isLink"
     :to="isEnabled ? to : ''"
-    class="rounded inline-flex justify-center items-center font-roboto-condensed cursor-pointer whitespace-nowrap"
+    class="rounded select-none inline-flex justify-center items-center font-roboto-condensed cursor-pointer whitespace-nowrap"
     :class="buttonClass"
-    :disabled="!isEnabled"
-    @click="$emit('click')"
+    @click="isEnabled ? $emit('click') : null"
   >
-    <slot></slot>
+    <slot />
   </router-link>
 
   <button
     v-else
     :type="isSubmit ? 'submit' : 'button'"
-    class="rounded inline-flex justify-center items-center font-roboto-condensed cursor-pointer"
+    class="rounded select-none inline-flex justify-center items-center font-roboto-condensed cursor-pointer"
     :class="buttonClass"
-    :is-disabled="!isEnabled"
-    @click="$emit('click')"
+    :disabled="!isEnabled"
+    @click="isEnabled ? $emit('click') : null"
   >
-    <slot></slot>
+    <slot />
   </button>
 </template>
 

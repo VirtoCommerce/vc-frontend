@@ -261,6 +261,7 @@
         "price_block": {
           "title": "Price & Delivery",
           "add_to_list_button": "Add to list",
+          "add_to_list_button_unauthorized_title": "Wishlists are available only for authorized users",
           "send_email_button": "@:common.labels.email",
           "print_button": "Print"
         },
@@ -268,6 +269,19 @@
           "variation_sku_label": "@:common.labels.sku",
           "price_label": "@:common.labels.product_price"
         }
+      },
+      "add_to_wishlists_dialog": {
+        "title": "Please select list",
+        "empty_list": "You don't have wish lists",
+        "item_already_in_list": "Item already in the list",
+        "cancel_button": "@:common.buttons.cancel",
+        "add_to_list_button": "Add to list"
+      },
+      "added_to_wishlists_dialog": {
+        "title": "Item added to list | Item added to lists",
+        "sku_label": "SKU",
+        "continue_shopping_button": "@:common.buttons.continue_shopping_button",
+        "view_your_list_button": "View your list | View your lists"
       }
     },
     "checkout": {
