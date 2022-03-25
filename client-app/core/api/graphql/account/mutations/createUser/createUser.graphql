@@ -1,0 +1,5 @@
+mutation createUser($command: InputCreateUserType!) {
+  createUser(command: $command) {
+    succeeded
+  }
+}
