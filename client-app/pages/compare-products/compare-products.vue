@@ -1,6 +1,6 @@
 <template>
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner grow">
-    <EmptyComparison v-if="!comparisonProducts"></EmptyComparison>
+    <EmptyComparison v-if="!productsIds.length"></EmptyComparison>
     <div class="w-full md:max-w-screen-2xl md:px-12 mx-auto" v-else>
       <!-- Page header -->
       <VcBreadcrumbs :items="breadcrumbs" class="mb-2 px-5"></VcBreadcrumbs>
@@ -9,14 +9,14 @@
           <h1 class="text-black-800 text-3xl uppercase font-bold">Compare products</h1>
           <span class="block mb-3"
             >Added <span class="font-bold">{{ products.length }}</span> items out of
-            <span class="font-bold">5</span></span
+            <span class="font-bold">{{ productsLimit }}</span></span
           >
         </div>
         <div class="flex justify-between items-start grow mb-5 md:mb-0">
           <VcCheckbox class="mt-2" v-model="showOnlyDifferences" @change="onShowOnlyDifferencesChange"
             >Show only differences</VcCheckbox
           >
-          <VcButton is-outline class="p-3 uppercase">{{
+          <VcButton is-outline class="p-3 uppercase" @click="clearList">{{
             isMobile ? "Clear compare list" : "Clear product compare list"
           }}</VcButton>
         </div>
@@ -39,6 +39,7 @@
               >
                 <div
                   class="h-6 w-6 rounded-full border border-gray-200 flex items-center justify-center absolute -top-3 -right-3 z-10 bg-white hover:bg-gray-100"
+                  @click.prevent="removeProduct(product)"
                 >
                   <i class="fas fa-times text-red-500"></i>
                 </div>
@@ -109,11 +110,13 @@ import { EmptyComparison, useProducts } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 import SeoUrl from "@core/seo-routes.enum";
 import _ from "lodash";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { useCompareProducts } from "@/shared/compare";
+import { Product as ProductType } from "@/core/api/graphql/types";
 const { fetchProducts, products } = useProducts();
+const { clearCompareList, productsLimit, removeFromCompareList, productsIds } = useCompareProducts();
 
-const comparisonProducts = ref(true);
 const breadcrumbs = ref<IBreadcrumbs[]>([
   { title: "Home", url: "/" },
   { title: "Compare products", url: "/compare-products" },
@@ -126,6 +129,14 @@ const showOnlyDifferences = ref(false);
 
 const originalProperties = ref<{ [key: string]: { value: string }[] }>({});
 const computedProperties = ref<{ [key: string]: { value: string }[] }>({});
+
+const removeProduct = (product: ProductType) => {
+  removeFromCompareList(product);
+};
+
+const clearList = () => {
+  clearCompareList();
+};
 
 const onShowOnlyDifferencesChange = () => {
   if (showOnlyDifferences.value) {
@@ -179,14 +190,16 @@ function getProductProperties() {
 }
 
 onMounted(async () => {
-  const productIds = [
-    "5512e3a5201541769e1d81fc5217490c",
-    "24cd1f338dfc4d89ad68633932a4225e",
-    "14f8279fc25d4e509c017f66f09ff562",
-    "b4e347da31b842ccbf9bd847ac5c1849",
-    "3b4e335592444025bf89be55757789d9",
-  ];
-  await fetchProducts({ itemsPerPage: 6, productIds: productIds });
+  await fetchProducts({ productIds: productsIds.value });
   getProductProperties();
 });
+
+watch(
+  () => productsIds.value,
+  async () => {
+    showOnlyDifferences.value = false;
+    await fetchProducts({ productIds: productsIds.value });
+    getProductProperties();
+  }
+);
 </script>

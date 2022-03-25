@@ -73,6 +73,7 @@ export default () => {
     addToCompareList,
     removeFromCompareList,
     clearCompareList,
+    productsLimit,
     productsIds: computed(() => productsIds.value.slice(0, productsLimit)),
   };
 };
