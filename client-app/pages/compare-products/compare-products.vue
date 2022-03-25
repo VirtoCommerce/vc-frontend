@@ -86,9 +86,9 @@
           :class="!isMobile ? 'even:bg-gray-50 flex' : productsIds.length >= 3 ? 'inline-flex' : 'flex'"
         >
           <div class="w-1/6 pl-8 font-extrabold text-sm" v-if="!isMobile">{{ key }}</div>
-          <div class="w-32 flex-shrink-0 lg:flex-shrink md:w-48 py-5" v-for="(value, index) in values" :key="index">
+          <div class="w-32 flex-shrink-0 lg:flex-shrink md:w-48 py-5" v-for="(property, index) in values" :key="index">
             <span v-if="isMobile" class="block font-extrabold text-sm">{{ key }}</span>
-            {{ value.value }}
+            {{ property.value }}
           </div>
         </div>
         <div class="flex items-center space-x-5 px-5 lg:px-0">
