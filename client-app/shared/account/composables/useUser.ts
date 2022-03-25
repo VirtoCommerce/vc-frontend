@@ -184,6 +184,7 @@ export default () => {
     loadMe,
     signMeIn,
     signMeUp,
+    registerOrganization,
     signMeOut,
     forgotPassword,
     validateToken,

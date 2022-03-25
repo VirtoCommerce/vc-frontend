@@ -2,13 +2,12 @@
   <TwoColumn class="max-w-screen-xl">
     <template #left>
       <h1 class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8 lg:mt-5" v-t="'pages.sign_up.header'"></h1>
-
-      <div class="mt-5 mb-5 flex flex-col space-y-5 md:space-y-0 md:flex-row md:space-x-7">
-        <VcRadioButton id="shipping" v-model="registrationKind" value="personal" label="Personal" />
-        <VcRadioButton id="pickup" v-model="registrationKind" value="organization" label="Organization" />
-      </div>
-
       <form @submit="onSubmit">
+        <div class="mt-5 mb-5 flex flex-col space-y-5 md:space-y-0 md:flex-row md:space-x-7">
+          <VcRadioButton id="shipping" v-model="registrationKind" value="personal" label="Personal" />
+          <VcRadioButton id="pickup" v-model="registrationKind" value="organization" label="Organization" />
+        </div>
+
         <VcInput
           v-model="firstName"
           class="mb-4"
@@ -33,6 +32,15 @@
           type="email"
           is-required
           :error-message="errors.email"
+        ></VcInput>
+        <VcInput
+          v-if="registrationKind == 'organization'"
+          v-model="organizationName"
+          class="mb-4"
+          label="Organization name"
+          placeholder="Enter organization name"
+          is-required
+          :error-message="errors.organizationName"
         ></VcInput>
         <VcInput
           v-model="userName"
@@ -85,19 +93,25 @@
 
 <script setup lang="ts">
 import { VcAlert, VcInput, VcImage, VcButton, VcRadioButton } from "@/components";
-import { useUser, RegistationSuccessDialog, RegistrationKind } from "@/shared/account";
+import { useUser, RegistrationSuccessDialog, RegistrationKind } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import { ref } from "vue";
 import { usePopup } from "@/shared/popup";
+import { IdentityResultType } from "@/core/api/graphql/types";
 
-const registrationKind = ref<RegistrationKind>("personal");
+//const registrationKind = ref<RegistrationKind>("personal");
 
-const { signMeUp, loading } = useUser();
+const { signMeUp, registerOrganization, loading } = useUser();
 const { openPopup } = usePopup();
 
 const schema = yup.object({
+  registrationKind: yup.string().required(),
+  organizationName: yup.string().when("registrationKind", {
+    is: "organization",
+    then: yup.string().label("Organization Name").required(),
+  }),
   email: yup.string().label("Email").required().email("Enter correct email please (ex. john@gmail.com)").max(64),
   userName: yup.string().label("Username").required().max(64),
   firstName: yup.string().label("First Name").required().max(64),
@@ -113,8 +127,10 @@ const schema = yup.object({
 const { errors, handleSubmit, setFieldError } = useForm({
   validationSchema: schema,
   initialValues: {
+    registrationKind: "personal",
     userName: "",
     email: "",
+    organizationName: "",
     password: "",
     confirmPassword: "",
     firstName: "",
@@ -123,10 +139,12 @@ const { errors, handleSubmit, setFieldError } = useForm({
   validateOnMount: false,
 });
 
+const { value: registrationKind } = useField<RegistrationKind>("registrationKind");
 const { value: firstName } = useField<string>("firstName");
 const { value: lastName } = useField<string>("lastName");
 const { value: userName } = useField<string>("userName");
 const { value: email } = useField<string>("email");
+const { value: organizationName } = useField<string>("organizationName");
 const { value: password } = useField<string>("password");
 const { value: confirmPassword } = useField<string>("confirmPassword");
 
@@ -135,13 +153,25 @@ const commonErrors = ref<string[]>([]);
 const onSubmit = handleSubmit(async (data) => {
   commonErrors.value = [];
 
-  const result = await signMeUp({
-    email: `${data.email}`,
-    firstName: `${data.firstName}`,
-    lastName: `${data.lastName}`,
-    userName: `${data.userName}`,
-    password: `${data.password}`,
-  });
+  let result: IdentityResultType;
+  if (registrationKind.value == "personal") {
+    result = await signMeUp({
+      email: `${data.email}`,
+      firstName: `${data.firstName}`,
+      lastName: `${data.lastName}`,
+      userName: `${data.userName}`,
+      password: `${data.password}`,
+    });
+  } else {
+    result = await registerOrganization({
+      organizationName: `${data.organizationName}`,
+      email: `${data.email}`,
+      firstName: `${data.firstName}`,
+      lastName: `${data.lastName}`,
+      userName: `${data.userName}`,
+      password: `${data.password}`,
+    });
+  }
 
   if (result.succeeded) {
     openPopup({
