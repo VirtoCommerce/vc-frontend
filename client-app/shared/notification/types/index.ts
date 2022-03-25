@@ -2,6 +2,8 @@ import { Component } from "vue";
 import { ComponentObjectPropsOptions } from "@vue/runtime-core";
 import { RouteLocationRaw } from "vue-router";
 
+export type CloseNotificationHandle = () => void;
+
 export type NotificationCustomButton = {
   text?: string;
   html?: string;
@@ -16,11 +18,9 @@ export interface INotification {
   html?: string;
   classes?: string;
   group?: string;
-
-  /**
-   * @default alert
-   */
-  type?: "primary" | "secondary" | "alert" | "success" | "warning" | "danger";
+  button?: NotificationCustomButton;
+  component?: Component;
+  props?: ComponentObjectPropsOptions;
 
   /**
    * in milliseconds
@@ -32,17 +32,32 @@ export interface INotification {
    */
   closeButton?: boolean;
 
-  component?: Component;
-  props?: ComponentObjectPropsOptions;
-  button?: NotificationCustomButton;
-  beforeOpen?: (notificationId: string) => void | Promise<void>;
-  beforeClose?: () => void | Promise<void>;
-  onClose?: () => void | Promise<void>;
+  /**
+   * If this is true, then all previous notifications will be hidden.
+   * @default false
+   */
+  single?: boolean;
+
+  /**
+   * If this is true, then all notifications in other groups will be hidden.
+   * Including those that don't have a group. If the group is not specified,
+   * then the action is similar to the "single" option.
+   * @default false
+   */
+  singleGroup?: boolean;
+
+  /**
+   * If this is true, then all notifications in group will be hidden.
+   * If the group is not specified, then the action is similar to the "single" option.
+   * @default false
+   */
+  singleInGroup?: boolean;
 }
 
 export interface INotificationExtended extends INotification {
   /**
-   * @private
+   * @default info
    */
+  type?: "info" | "success" | "warning" | "danger";
   autoCloseTimeout?: number;
 }

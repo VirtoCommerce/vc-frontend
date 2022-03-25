@@ -20,7 +20,7 @@ const props = defineProps({
 
 const { productsIds, addToCompareList, removeFromCompareList } = useCompareProducts();
 
-const workaround = ref(true); // See lines 32-34
+const workaround = ref(true); // See lines 34-36
 
 const isInCompareList = eagerComputed<boolean>(() => productsIds.value.includes(props.product.id));
 

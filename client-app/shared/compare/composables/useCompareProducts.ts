@@ -15,23 +15,25 @@ export default () => {
   const productsLimit = config?.product_compare_limit || 5;
 
   function addToCompareList(product: Product) {
+    if (productsIds.value.includes(product.id)) return;
+
     if (productsIds.value.length >= productsLimit) {
-      notifications.show({
+      notifications.warning({
         duration: 15000,
-        type: "primary",
-        html: `Only ${productsLimit} products can be compared`,
         group: NOTIFICATIONS_GROUP,
+        singleInGroup: true,
+        text: `Only ${productsLimit} products can be compared`,
       });
 
       return;
     }
 
-    if (productsIds.value.includes(product.id)) return;
-
     productsIds.value.push(product.id);
 
     notifications.success({
       duration: 15000,
+      group: NOTIFICATIONS_GROUP,
+      singleInGroup: true,
       html:
         `Product <span class="hidden lg:inline">“<strong>${truncate(product.name, 60)}</strong>”</span> ` +
         `is added to compare list ` +
@@ -43,7 +45,6 @@ export default () => {
           notifications.clear(NOTIFICATIONS_GROUP);
         },
       },
-      group: NOTIFICATIONS_GROUP,
     });
   }
 
@@ -54,13 +55,13 @@ export default () => {
 
     productsIds.value.splice(index, 1);
 
-    notifications.show({
+    notifications.warning({
       duration: 15000,
-      type: "primary",
+      group: NOTIFICATIONS_GROUP,
+      singleInGroup: true,
       html:
         `Product <span class="hidden lg:inline">“<strong>${truncate(product.name, 60)}</strong>”</span> ` +
         `was removed from the compare list`,
-      group: NOTIFICATIONS_GROUP,
     });
   }
 

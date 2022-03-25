@@ -52,7 +52,7 @@ const { stack, close } = useNotifications();
 </script>
 
 <style lang="scss">
-$status-colors: primary, secondary, success, warning, danger;
+$status-colors: success, warning, danger;
 
 .vc-notifications {
   $self: &;
@@ -73,7 +73,7 @@ $status-colors: primary, secondary, success, warning, danger;
 
     z-index: 5000;
 
-    &--alert {
+    &--info {
       @apply bg-white;
 
       text-shadow: none;
