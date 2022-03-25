@@ -116,7 +116,7 @@ import { EmptyComparison, useProducts } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 import SeoUrl from "@core/seo-routes.enum";
 import _ from "lodash";
-import { computed, onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useCompareProducts } from "@/shared/compare";
 import { Product as ProductType } from "@/core/api/graphql/types";
