@@ -1,3 +1,5 @@
+import { themeContext } from "./../../../core/utilities/context/index";
+import { storeId } from "@core/constants";
 import { Ref, ref, computed } from "vue";
 import { getMe, updatePersonalData, createUser, createOrganization, createContact } from "@/core/api/graphql/account";
 import { UserType, IdentityResultType } from "@core/api/graphql/types";
@@ -125,6 +127,7 @@ export default () => {
         email: payload.email,
         memberId: contact.id,
         userType: "Customer",
+        storeId: themeContext.storeId as string,
       });
       return result;
     } catch (e) {
@@ -153,6 +156,7 @@ export default () => {
         email: payload.email,
         memberId: contact.id,
         userType: "Customer",
+        storeId: themeContext.storeId as string,
       });
       return result;
     } catch (e) {
