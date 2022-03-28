@@ -110,6 +110,7 @@ const myAccountMenu = ref<IMenuItem[]>([
   { title: "Orders", url: "/account/orders" },
   { title: "Your List", url: "/account/lists" },
   { title: "Checkout Defaults", url: "/account/checkout-defaults" },
+  { title: "Loyalty", url: "/account/loyalty" },
 ]);
 
 /*

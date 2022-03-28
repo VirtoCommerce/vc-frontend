@@ -1,0 +1,13 @@
+query GetMyBalance($userId: String, $storeId: String, $includeOperations: Boolean) {
+  balance(storeId: $storeId, userId: $userId, includeOperations: $includeOperations) {
+    amount
+    pointsOperations {
+      id
+      createdDate
+      reason
+      isDeposit
+      amount
+      balance
+    }
+  }
+}

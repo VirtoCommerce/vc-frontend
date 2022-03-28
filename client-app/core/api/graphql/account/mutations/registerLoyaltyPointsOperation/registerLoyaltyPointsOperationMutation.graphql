@@ -1,0 +1,3 @@
+mutation AddLoyaltyPointsOperation($command: RegisterPointsOperationType!) {
+  registerPointsOperation(command: $command)
+}

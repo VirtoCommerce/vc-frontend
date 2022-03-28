@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+
 import SeoUrl from "@core/seo-routes.enum";
 
 // Pages
@@ -22,6 +23,7 @@ const ResetPassword = () => import("./pages/reset-password/reset-password.vue");
 const OrderDetails = () => import("./pages/account/order-details.vue");
 const Orders = () => import("./pages/account/orders.vue");
 const Profile = () => import("./pages/account/profile.vue");
+const Loyalty = () => import("./pages/account/loyalty.vue");
 const DemoLanding = () => import("./pages/demo-landing/demo-landing.vue");
 
 // Router definition
@@ -58,6 +60,7 @@ const router = createRouter({
         { path: "checkout-defaults", name: "CheckoutDefaults", component: CheckoutDefaults },
         { path: "orders", name: "Orders", component: Orders },
         { path: "order-details/:id", name: "OrderDetails", component: OrderDetails },
+        { path: "loyalty", name: "Loyalty", component: Loyalty },
       ],
     },
     { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword },
