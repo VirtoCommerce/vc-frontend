@@ -6,13 +6,15 @@
       </router-link>
 
       <div class="w-0.5 h-6 bg-[color:var(--color-primary)] mx-5 hidden xl:block"></div>
+
       <div
-        class="italic text-lg text-[color:var(--color-header-bottom-text)] hidden xl:block"
+        class="italic leading-tight text-lg text-[color:var(--color-header-bottom-text)] hidden xl:block"
         v-t="'shared.layout.header.logo_label'"
       ></div>
+
       <div class="flex-grow"></div>
 
-      <div class="flex items-center space-x-8">
+      <div class="flex items-center space-x-8 ml-8">
         <BottomHeaderLink
           v-for="(item, i) in headerMenu"
           :key="i"
@@ -22,14 +24,33 @@
         >
           <template v-if="item.id === 'checkout'">
             <div class="flex items-center">
-              <i class="fas fa-shopping-cart text-[color:var(--color-primary)] mr-3"></i>
-              <div>{{ item.title }}</div>
-              <div
-                v-if="cart?.itemsQuantity"
-                class="flex items-center rounded-xl border border-[color:var(--color-primary)] px-2 font-bold text-xs h-5 ml-3"
-              >
-                {{ cart.itemsQuantity }}
-              </div>
+              <i class="fas fa-shopping-cart text-[color:var(--color-primary)] mr-2" />
+
+              <span>{{ item.title }}</span>
+
+              <transition name="slide-fade-right">
+                <div
+                  v-if="cart?.itemsQuantity"
+                  class="flex items-center rounded-xl border border-[color:var(--color-primary)] px-2 font-bold text-xs h-5 ml-2"
+                >
+                  {{ cart.itemsQuantity }}
+                </div>
+              </transition>
+            </div>
+          </template>
+
+          <template v-else-if="item.id === 'compare'">
+            <div class="flex items-center">
+              <span>{{ item.title }}</span>
+
+              <transition name="slide-fade-right">
+                <div
+                  v-if="productsIds.length"
+                  class="flex items-center rounded-xl border border-[color:var(--color-primary)] px-2 font-bold text-xs h-5 ml-2"
+                >
+                  {{ productsIds.length }}
+                </div>
+              </transition>
             </div>
           </template>
         </BottomHeaderLink>
@@ -56,8 +77,10 @@ import BottomHeaderLink from "./bottom-header-link.vue";
 import menuSchema from "@/config/menu";
 import { useCart } from "@/shared/cart";
 import { useSearchBar, SearchBar } from "@/shared/layout";
+import { useCompareProducts } from "@/shared/compare";
 
 const { cart } = useCart();
+const { productsIds } = useCompareProducts();
 const { searchBarVisible, showSearchBar } = useSearchBar();
 
 const headerMenu = menuSchema?.header?.main;

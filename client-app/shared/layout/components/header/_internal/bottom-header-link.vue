@@ -45,6 +45,7 @@
 import { PropType, ref } from "vue";
 import { onClickOutside } from "@vueuse/core";
 import { MenuLinkType } from "@/core/api/graphql/types";
+import { RouteLocationRaw } from "vue-router";
 
 defineProps({
   title: {
@@ -53,7 +54,7 @@ defineProps({
   },
 
   to: {
-    type: String,
+    type: [String, Object] as PropType<RouteLocationRaw>,
     default: undefined,
   },
 
@@ -74,6 +75,7 @@ onClickOutside(submenu, () => {
 <style>
 .menu-link.router-link-active {
   position: relative;
+  color: var(--color-header-bottom-link-hover);
 }
 
 .menu-link.router-link-active:after {

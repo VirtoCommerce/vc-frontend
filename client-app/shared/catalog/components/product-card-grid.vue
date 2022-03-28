@@ -12,25 +12,16 @@
       </div>
     </router-link>
 
-    <div class="flex flex-col flex-grow pt-4">
-      <div class="flex items-center justify-between mb-3">
-        <!-- Compare checkbox -->
-        <label
-          v-if="$cfg.product_compare_enabled"
-          class="flex-grow hidden md:inline-flex items-center text-sm cursor-pointer"
-        >
-          <input
-            type="checkbox"
-            class="form-tick appearance-none w-5 h-5 border-2 border-gray-300 rounded-sm checked:bg-[color:var(--color-link)] checked:border-transparent focus:outline-none cursor-pointer"
-          />
-          <span class="ml-2" v-t="'common.labels.compare'"></span>
-        </label>
+    <div class="flex flex-col flex-grow pt-3 xl:pt-4">
+      <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between mb-1.5 xl:mb-3">
+        <AddToCompare v-if="$cfg.product_compare_enabled" :product="product" class="mb-2 xl:mb-0" />
 
         <div v-if="product.availabilityData?.isInStock" class="flex items-center text-green-700 text-xs">
           <div class="w-1.5 h-1.5 bg-green-700 rounded mr-1"></div>
           {{ product.availabilityData.availableQuantity > 9999 ? "9999+" : product.availabilityData.availableQuantity }}
           {{ $t("common.suffixes.product_count_in_stock") }}
         </div>
+
         <div v-else class="flex items-center text-[color:var(--color-danger)] text-xs">
           <div class="w-1.5 h-1.5 bg-[color:var(--color-danger)] rounded mr-1"></div>
           {{ $t("common.messages.product_out_of_stock") }}
@@ -74,6 +65,7 @@
 <script setup lang="ts">
 import { PropType } from "vue";
 import { VcImage, VcPriceDisplay } from "@/components";
+import { AddToCompare } from "@/shared/compare";
 import { Product as ProductType } from "@/core/api/graphql/types";
 import SeoUrl from "@core/seo-routes.enum";
 

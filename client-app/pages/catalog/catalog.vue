@@ -93,7 +93,6 @@
                   :value="item.value"
                   :disabled="loading"
                   class="mt-3 first:mt-0"
-                  color="[color:var(--color-link)]"
                   @change="applyFilters"
                 >
                   <div class="flex">

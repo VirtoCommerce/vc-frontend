@@ -76,7 +76,7 @@
       {{ $t("shared.layout.footer.all_rights_reserved") }}
     </div>
 
-    <i18n-t keypath="shared.layout.footer.asp_net_e_commerce_platform" tag="div">
+    <i18n-t keypath="shared.layout.footer.asp_net_e_commerce_platform" tag="div" scope="global">
       <a
         class="font-bold text-[color:var(--color-footer-bottom-link)] hover:text-[color:var(--color-footer-bottom-link-hover)]"
         href="#"
