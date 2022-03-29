@@ -74,7 +74,7 @@
               </div>
             </div>
 
-            <AddToCart :product="product" />
+            <AddToCart :product="product" @update:lineitem="refreshProducts" />
           </div>
         </div>
 
@@ -104,7 +104,7 @@
                 {{ $t("common.suffixes.per_item") }}
               </div>
             </div>
-            <AddToCart :product="product" />
+            <AddToCart :product="product" @update:lineitem="refreshProducts" />
           </div>
         </div>
       </div>
@@ -173,6 +173,11 @@ const onShowOnlyDifferencesChange = () => {
   }
 };
 
+const refreshProducts = async () => {
+  await fetchProducts({ productIds: productsIds.value });
+  getProductProperties();
+};
+
 function getProductProperties() {
   if (_.isEmpty(products.value)) return;
   const grouped: IProductProperties = {};
@@ -207,17 +212,15 @@ function getProductProperties() {
   originalProperties.value = { ...grouped };
 }
 
-onMounted(async () => {
-  await fetchProducts({ productIds: productsIds.value });
-  getProductProperties();
+onMounted(() => {
+  refreshProducts();
 });
 
 watch(
   () => productsIds.value,
-  async () => {
+  () => {
     showOnlyDifferences.value = false;
-    await fetchProducts({ productIds: productsIds.value });
-    getProductProperties();
+    refreshProducts();
   }
 );
 </script>
