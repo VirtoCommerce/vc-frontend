@@ -101,14 +101,14 @@ import { ref } from "vue";
 import { usePopup } from "@/shared/popup";
 import { IdentityResultType } from "@/core/api/graphql/types";
 
-const { registerUser, registerOrganization, loading } = useUser();
+const { signMeIn, registerUser, registerOrganization, loading } = useUser();
 const { openPopup } = usePopup();
 
 const schema = yup.object({
   registrationKind: yup.string().required(),
   organizationName: yup.string().when("registrationKind", {
     is: "organization",
-    then: yup.string().label("Organization Name").required(),
+    then: yup.string().label("Organization Name").required().max(512),
   }),
   email: yup.string().label("Email").required().email("Enter correct email please (ex. john@gmail.com)").max(64),
   userName: yup.string().label("Username").required().max(64),
@@ -172,6 +172,12 @@ const onSubmit = handleSubmit(async (data) => {
   }
 
   if (result.succeeded) {
+    await signMeIn({
+      userName: `${data.userName}`,
+      password: `${data.password}`,
+      rememberMe: true,
+    });
+
     openPopup({
       component: RegistrationSuccessDialog,
     });

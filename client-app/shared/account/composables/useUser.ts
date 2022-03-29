@@ -1,5 +1,4 @@
-import { themeContext } from "./../../../core/utilities/context/index";
-import { storeId } from "@core/constants";
+import { themeContext } from "@core/utilities/context/index";
 import { Ref, ref, computed } from "vue";
 import { getMe, updatePersonalData, createUser, createOrganization, createContact } from "@/core/api/graphql/account";
 import { UserType, IdentityResultType } from "@core/api/graphql/types";
@@ -99,20 +98,6 @@ export default () => {
     }
   }
 
-  async function signMeUp(payload: SignMeUp): Promise<IdentityResultType> {
-    try {
-      loading.value = true;
-      const url = "/storefrontapi/account/user";
-      const res = await innerFetch<SignMeUp, IdentityResultType>(url, "POST", payload);
-      return res;
-    } catch (e) {
-      Logger.error("useUser.signMeUp", e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-  }
-
   async function registerUser(payload: SignMeUp): Promise<IdentityResultType> {
     try {
       loading.value = true;
@@ -124,6 +109,7 @@ export default () => {
       });
       const result = await createUser({
         userName: payload.userName,
+        password: payload.password,
         email: payload.email,
         memberId: contact.id,
         userType: "Customer",
@@ -153,6 +139,7 @@ export default () => {
       });
       const result = await createUser({
         userName: payload.userName,
+        password: payload.password,
         email: payload.email,
         memberId: contact.id,
         userType: "Customer",
@@ -229,6 +216,10 @@ export default () => {
     me: computed(() => me.value),
     loading: computed(() => loading.value),
     isAuthenticated: computed(() => me.value && me.value.userName && me.value.userName !== "Anonymous"),
+    organization: computed(() => {
+      const orgs = me.value?.contact?.organizations?.items;
+      return orgs && orgs.length ? orgs[0] : null;
+    }),
     updateUser,
     changePassword,
     loadMe,

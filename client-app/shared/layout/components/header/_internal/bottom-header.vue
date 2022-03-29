@@ -4,13 +4,13 @@
       <router-link to="/">
         <VcImage :src="$cfg.logo_image" class="h-12" />
       </router-link>
+      <template v-if="organization">
+        <div class="w-0.5 h-6 bg-[color:var(--color-primary)] mx-5 hidden xl:block"></div>
 
-      <div class="w-0.5 h-6 bg-[color:var(--color-primary)] mx-5 hidden xl:block"></div>
-
-      <div
-        class="italic leading-tight text-lg text-[color:var(--color-header-bottom-text)] hidden xl:block"
-        v-t="'shared.layout.header.logo_label'"
-      ></div>
+        <div class="italic leading-tight text-lg text-[color:var(--color-header-bottom-text)] hidden xl:block">
+          {{ organization.name }}
+        </div>
+      </template>
 
       <div class="flex-grow"></div>
 
@@ -78,6 +78,9 @@ import menuSchema from "@/config/menu";
 import { useCart } from "@/shared/cart";
 import { useSearchBar, SearchBar } from "@/shared/layout";
 import { useCompareProducts } from "@/shared/compare";
+import { useUser } from "@/shared/account";
+
+const { organization } = useUser();
 
 const { cart } = useCart();
 const { productsIds } = useCompareProducts();

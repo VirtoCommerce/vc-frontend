@@ -68,7 +68,6 @@
   "shared": {
     "layout": {
       "header": {
-        "logo_label": "Construction goods",
         "top_header": {
           "link_dashboard": "@:common.links.dashboard",
           "link_order_history": "Order History",
