@@ -224,7 +224,6 @@ export default () => {
     changePassword,
     loadMe,
     signMeIn,
-    signMeUp,
     registerUser,
     registerOrganization,
     signMeOut,
