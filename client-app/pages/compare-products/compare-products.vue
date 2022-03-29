@@ -4,8 +4,8 @@
 
     <div class="w-full md:max-w-screen-2xl md:px-12 mx-auto" v-else>
       <!-- Page header -->
-      <VcBreadcrumbs :items="breadcrumbs" class="mb-2 px-5"></VcBreadcrumbs>
-      <div class="flex flex-wrap md:space-x-12 px-5">
+      <VcBreadcrumbs :items="breadcrumbs" class="mb-2 px-5 md:px-0"></VcBreadcrumbs>
+      <div class="flex flex-col lg:flex-row lg:space-x-12 px-5 md:px-0">
         <div class="flex flex-col">
           <h1 class="text-black-800 text-3xl uppercase font-bold">{{ $t("pages.compare.header_block.title") }}</h1>
           <span
@@ -13,7 +13,7 @@
             v-html="$t('pages.compare.header_block.counter_message', [productsIds.length, productsLimit])"
           ></span>
         </div>
-        <div class="flex justify-between items-start grow mb-5 md:mb-0">
+        <div class="flex justify-between items-start grow mb-5 lg:mb-0">
           <VcCheckbox class="mt-2" v-model="showOnlyDifferences" @change="onShowOnlyDifferencesChange">{{
             $t("pages.compare.header_block.differences_checkbox_label")
           }}</VcCheckbox>
