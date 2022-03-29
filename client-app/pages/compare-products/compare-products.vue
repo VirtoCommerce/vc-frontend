@@ -95,7 +95,7 @@
           <div class="w-1/6" v-if="!isMobile"></div>
           <div v-for="product in products" :key="product.id" class="w-32 flex-shrink-0 lg:flex-shrink md:w-48">
             <!-- Product price -->
-            <div class="flex flex-col md:flex-row items-baseline text-sm my-4">
+            <div class="flex flex-col md:flex-row items-baseline text-sm my-4 h-8">
               <div class="w-1/2 font-bold text-xs" v-if="!isMobile">
                 {{ $t("pages.compare.main_block.price_label") }}
               </div>
