@@ -4,9 +4,9 @@
 
     <div class="w-full md:max-w-screen-2xl md:px-12 mx-auto" v-else>
       <!-- Page header -->
-      <VcBreadcrumbs :items="breadcrumbs" class="mb-2 px-5 md:px-0"></VcBreadcrumbs>
-      <div class="flex flex-col lg:flex-row lg:space-x-12 px-5 md:px-0">
-        <div class="flex flex-col">
+      <VcBreadcrumbs :items="breadcrumbs" class="mb-3 px-5 md:px-0"></VcBreadcrumbs>
+      <div class="flex flex-col lg:flex-row lg:space-x-12 px-5 md:px-0 lg:mb-5">
+        <div class="flex flex-col space-y-1.5">
           <h1 class="text-black-800 text-3xl uppercase font-bold">{{ $t("pages.compare.header_block.title") }}</h1>
           <span
             class="block mb-3"
