@@ -37,3 +37,7 @@ export interface ITableColumn {
   sortable?: boolean;
   titlePosition?: "text-center" | "text-right" | "text-left";
 }
+
+export interface IProductProperties {
+  [key: string]: { value: string }[];
+}

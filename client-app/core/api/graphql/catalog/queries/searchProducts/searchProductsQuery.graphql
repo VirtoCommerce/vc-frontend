@@ -70,6 +70,11 @@ query SearchProducts(
           formattedAmount
         }
       }
+      properties {
+        name
+        value
+        id
+      }
     }
     term_facets @include(if: $withFacets) {
       name
