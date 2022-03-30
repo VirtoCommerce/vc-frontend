@@ -1,5 +1,3 @@
-#import "../../../fragments/wishlistFields.graphql"
-
 query GetWishlists(
   $storeId: String!
   $userId: String!
@@ -19,7 +17,11 @@ query GetWishlists(
     sort: $sort
   ) {
     items {
-      ...wishlistFields
+      id
+      name
+      items {
+        productId
+      }
     }
   }
 }

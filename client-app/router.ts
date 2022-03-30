@@ -21,6 +21,7 @@ const ForgotPassword = () => import("./pages/forgot-password/forgot-password.vue
 const ResetPassword = () => import("./pages/reset-password/reset-password.vue");
 const OrderDetails = () => import("./pages/account/order-details.vue");
 const Orders = () => import("./pages/account/orders.vue");
+const Lists = () => import("./pages/account/lists.vue");
 const Profile = () => import("./pages/account/profile.vue");
 const DemoLanding = () => import("./pages/demo-landing/demo-landing.vue");
 const CompareProducts = () => import("./pages/compare-products/compare-products.vue");
@@ -49,6 +50,7 @@ const router = createRouter({
     { path: "/sign-up", name: "SignUp", component: SignUpPage },
     {
       path: "/account",
+      name: "Account",
       component: Account,
       redirect: { name: "Dashboard" },
       meta: { requiresAuth: true },
@@ -59,18 +61,8 @@ const router = createRouter({
         { path: "checkout-defaults", name: "CheckoutDefaults", component: CheckoutDefaults },
         { path: "orders", name: "Orders", component: Orders },
         { path: "order-details/:id", name: "OrderDetails", component: OrderDetails },
-        {
-          path: "lists",
-          name: "Lists",
-          component: {}, // TODO: implement in another user story
-          children: [
-            {
-              path: ":id",
-              name: "ListDetails",
-              component: {}, // TODO: implement in another user story
-            },
-          ],
-        },
+        { path: "lists", name: "Lists", component: Lists },
+        { path: "lists/:listId", name: "ListDetails", component: {}, props: true }, // TODO: implement in another user story
       ],
     },
     { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword },

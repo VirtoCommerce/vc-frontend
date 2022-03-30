@@ -1,5 +1,5 @@
 <template>
-  <VcPopup :title="$t('shared.catalog.added_to_wishlists_dialog.title', listIds.length)" variant="success">
+  <VcPopup :title="$t('shared.wishlists.added_to_wishlists_dialog.title', listIds.length)" variant="success">
     <div class="max-h-[50vh] lg:max-h-64 overflow-y-auto px-6 py-8 border-b">
       <div class="flex flex-grow items-center">
         <router-link :to="{ name: 'Product', params: { productId: product.id } }">
@@ -17,7 +17,7 @@
           </router-link>
 
           <p class="md:hidden text-sm mt-1">
-            <span class="font-bold">{{ $t("shared.catalog.added_to_wishlists_dialog.sku_label") }}:</span>
+            <span class="font-bold">{{ $t("shared.wishlists.added_to_wishlists_dialog.sku_label") }}:</span>
             {{ product.code }}
           </p>
         </div>
@@ -31,15 +31,15 @@
 
     <template #actions="{ close }">
       <VcButton is-outline class="uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-5" @click="close">
-        {{ $t("shared.catalog.added_to_wishlists_dialog.continue_shopping_button") }}
+        {{ $t("shared.wishlists.added_to_wishlists_dialog.continue_shopping_button") }}
       </VcButton>
 
       <VcButton
-        :to="listIds.length === 1 ? { name: 'ListDetails', params: { id: listIds[0] } } : { name: 'Lists' }"
+        :to="listIds.length === 1 ? { name: 'ListDetails', params: { listId: listIds[0] } } : { name: 'Lists' }"
         class="uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-5"
         @click="close"
       >
-        {{ $t("shared.catalog.added_to_wishlists_dialog.view_your_list_button", listIds.length) }}
+        {{ $t("shared.wishlists.added_to_wishlists_dialog.view_your_list_button", listIds.length) }}
       </VcButton>
     </template>
   </VcPopup>

@@ -128,7 +128,7 @@ const myAccountMenu = ref<MenuLinkType[]>([
   { title: t("shared.layout.header.mobile.account_menu.profile"), url: "/account/profile" },
   { title: t("shared.layout.header.mobile.account_menu.addresses"), url: "/account/addresses" },
   { title: t("shared.layout.header.mobile.account_menu.orders"), url: "/account/orders" },
-  { title: t("shared.layout.header.mobile.account_menu.your_list"), url: "/account/lists" },
+  { title: t("shared.layout.header.mobile.account_menu.your_lists"), url: "/account/lists" },
   { title: t("shared.layout.header.mobile.account_menu.checkout_defaults"), url: "/account/checkout-defaults" },
 ]);
 

@@ -111,10 +111,12 @@ export interface IThemeConfigPreset {
   color_alert_warning_text?: string;
   color_alert_info_text?: string;
   color_danger?: string;
+  color_danger_hover?: string;
   color_success?: string;
+  color_success_hover?: string;
   color_warning?: string;
+  color_warning_hover?: string;
   color_price_color?: string;
-  color_checkbox?: string;
   color_header_top_bg?: string;
   color_header_top_text?: string;
   color_header_top_link?: string;
