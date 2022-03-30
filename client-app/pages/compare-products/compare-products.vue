@@ -28,8 +28,8 @@
       <!-- Main block -->
       <div class="shadow py-8 bg-white md:rounded overflow-x-auto">
         <!-- Product cards block -->
-        <div class="flex space-x-5 px-5 lg:px-0">
-          <div class="w-1/6" v-if="!isMobile"></div>
+        <div class="flex space-x-5 pr-8" :class="isMobile && 'pl-8'">
+          <div class="w-56 flex-shrink-0" v-if="!isMobile"></div>
           <div
             v-for="product in products"
             :key="product.id"
@@ -80,20 +80,20 @@
 
         <!-- Properties block -->
         <div
-          class="items-start md:items-center space-x-5 px-5 lg:px-0 border-b border-gray-100 lg:border-0"
+          class="items-start md:items-center space-x-5 px-8 lg:px-0 border-b border-gray-100 lg:border-0"
           v-for="(values, key, index) in computedProperties"
           :key="index"
           :class="!isMobile ? 'even:bg-gray-50 flex' : productsIds.length >= 3 ? 'inline-flex' : 'flex'"
         >
-          <div class="w-1/6 pl-8 font-extrabold text-sm" v-if="!isMobile">{{ key }}</div>
-          <div class="w-32 flex-shrink-0 lg:flex-shrink md:w-48 py-5" v-for="(property, index) in values" :key="index">
+          <div class="w-56 pl-8 font-extrabold text-sm flex-shrink-0" v-if="!isMobile">{{ key }}</div>
+          <div class="w-32 flex-shrink-0 md:w-48 py-5 last:pr-8" v-for="(property, index) in values" :key="index">
             <span v-if="isMobile" class="block font-extrabold text-sm">{{ key }}</span>
             {{ property.value }}
           </div>
         </div>
         <div class="flex items-center space-x-5 px-5 lg:px-0">
-          <div class="w-1/6" v-if="!isMobile"></div>
-          <div v-for="product in products" :key="product.id" class="w-32 flex-shrink-0 lg:flex-shrink md:w-48">
+          <div class="w-56 flex-shrink-0" v-if="!isMobile"></div>
+          <div v-for="product in products" :key="product.id" class="w-32 flex-shrink-0 md:w-48">
             <!-- Product price -->
             <div class="flex flex-col md:flex-row items-baseline text-sm my-4 h-8">
               <div class="w-1/2 font-bold text-xs" v-if="!isMobile">
@@ -186,6 +186,7 @@ function getProductProperties() {
       return product.properties;
     })
   );
+
   const propertyDisplayNames = _.uniq(
     _.map(properties, (property) => {
       return property?.name;
