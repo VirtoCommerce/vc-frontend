@@ -1,0 +1,10 @@
+#import "./lineItemFields.graphql"
+
+fragment wishlistFields on WishlistType {
+  id
+  name
+  itemsCount
+  items {
+    ...lineItemFields
+  }
+}

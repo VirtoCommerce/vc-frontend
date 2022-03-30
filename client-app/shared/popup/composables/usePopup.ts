@@ -1,23 +1,38 @@
-import { computed, ref, shallowRef } from "vue";
-import { IPopup } from "..";
+import { computed, shallowRef, triggerRef } from "vue";
+import { ClosePopupHandle, IPopup } from "..";
+import _ from "lodash";
 
-const stack = ref<IPopup[]>([]);
+const stack = shallowRef<IPopup[]>([]);
 
 export default function usePopup() {
-  return {
-    popupStack: computed(() => stack.value),
+  function openPopup(options: IPopup): ClosePopupHandle {
+    const id = options.id || _.uniqueId();
 
-    openPopup({ component, props }: IPopup) {
-      console.log(`Open popup`);
-      stack.value.push({
-        component: shallowRef(component),
-        props,
-      });
-    },
+    stack.value.push({ id, ...options });
+    triggerRef(stack);
 
-    closePopup() {
-      console.log(`Close popup`);
+    return () => closePopup(id);
+  }
+
+  function closePopup(id?: string) {
+    if (!id) {
+      // Close last popup window
       stack.value.pop();
-    },
+      triggerRef(stack);
+      return;
+    }
+
+    const index = stack.value.findIndex((item) => item.id === id);
+
+    if (index === -1) return;
+
+    stack.value.splice(index, 1);
+    triggerRef(stack);
+  }
+
+  return {
+    openPopup,
+    closePopup,
+    popupStack: computed(() => stack.value),
   };
 }

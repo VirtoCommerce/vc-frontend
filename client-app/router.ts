@@ -58,6 +58,18 @@ const router = createRouter({
         { path: "checkout-defaults", name: "CheckoutDefaults", component: CheckoutDefaults },
         { path: "orders", name: "Orders", component: Orders },
         { path: "order-details/:id", name: "OrderDetails", component: OrderDetails },
+        {
+          path: "lists",
+          name: "Lists",
+          component: {}, // TODO: implement in another user story
+          children: [
+            {
+              path: ":id",
+              name: "ListDetails",
+              component: {}, // TODO: implement in another user story
+            },
+          ],
+        },
       ],
     },
     { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword },

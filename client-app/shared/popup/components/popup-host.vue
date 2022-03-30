@@ -1,11 +1,11 @@
 <template>
   <component
+    v-for="popup in popupStack"
+    :key="popup.id"
     :is="popup.component"
-    v-for="(popup, i) in popupStack"
-    :key="i"
     v-bind="popup.props"
-    @close="closePopup"
-  ></component>
+    @close="closePopup(popup.id)"
+  />
 </template>
 
 <script setup lang="ts">
