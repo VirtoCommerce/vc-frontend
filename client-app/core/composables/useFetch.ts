@@ -1,6 +1,5 @@
 import { shallowRef, unref } from "vue";
 import { useRouter } from "vue-router";
-import { MaybeRef } from "../helpers/maybeRef";
 
 export default function useFetch() {
   const data = shallowRef<unknown | undefined>();
@@ -8,7 +7,7 @@ export default function useFetch() {
   const statusCode = shallowRef<number | null>();
   const router = useRouter();
 
-  function innerFetch<TBody, TResult>(url: MaybeRef<string>, method = "POST", body?: TBody): Promise<TResult> {
+  function innerFetch<TBody, TResult>(url: string, method = "POST", body?: TBody): Promise<TResult> {
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
 

@@ -1,5 +1,5 @@
-  mutation AddOrUpdateCartShipment($command: InputAddOrUpdateCartShipmentType!) {
-    addOrUpdateCartShipment(command: $command) {
-      id
-    }
+mutation AddOrUpdateCartShipment($command: InputAddOrUpdateCartShipmentType!) {
+  addOrUpdateCartShipment(command: $command) {
+    id
   }
+}

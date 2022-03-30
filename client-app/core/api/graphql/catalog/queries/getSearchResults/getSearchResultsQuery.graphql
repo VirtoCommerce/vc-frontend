@@ -1,0 +1,70 @@
+query GetSearchResults(
+  $storeId: String!
+  $userId: String!
+  $currencyCode: String!
+  $cultureName: String
+  $query: String
+  $filter: String
+  $productsAfter: String
+  $productsFirst: Int
+  $productsSort: String
+  $productsFuzzy: Boolean
+  $productsFuzzyLevel: Int
+  $categoriesAfter: String
+  $categoriesFirst: Int
+  $categoriesSort: String
+  $categoriesFuzzy: Boolean
+  $categoriesFuzzyLevel: Int
+) {
+  products(
+    storeId: $storeId
+    userId: $userId
+    currencyCode: $currencyCode
+    cultureName: $cultureName
+    query: $query
+    filter: $filter
+    after: $productsAfter
+    first: $productsFirst
+    sort: $productsSort
+    fuzzy: $productsFuzzy
+    fuzzyLevel: $productsFuzzyLevel
+  ) {
+    totalCount
+    items {
+      id
+      name
+      code
+      slug
+      imgSrc
+      price {
+        actual {
+          amount
+          formattedAmount
+        }
+      }
+    }
+  }
+
+  categories(
+    storeId: $storeId
+    userId: $userId
+    currencyCode: $currencyCode
+    cultureName: $cultureName
+    query: $query
+    filter: $filter
+    after: $categoriesAfter
+    first: $categoriesFirst
+    sort: $categoriesSort
+    fuzzy: $categoriesFuzzy
+    fuzzyLevel: $categoriesFuzzyLevel
+  ) {
+    totalCount
+    items {
+      id
+      name
+      seoInfo {
+        semanticUrl
+      }
+    }
+  }
+}

@@ -9,6 +9,9 @@ fragment orderLineItemFields on OrderLineItemType {
   product {
     brandName
     slug
+    masterVariation {
+      id
+    }
   }
   quantity
   sku

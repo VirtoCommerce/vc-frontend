@@ -1,11 +1,17 @@
 query getMe {
   me {
     id
+    memberId
     userName
     email
     emailConfirmed
     photoUrl
     phoneNumber
     permissions
+    contact {
+      firstName
+      lastName
+      fullName
+    }
   }
 }

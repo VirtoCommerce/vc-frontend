@@ -1,7 +1,6 @@
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { ApolloClient } from "apollo-client";
 import { HttpLink } from "apollo-link-http";
-import { baseUrl } from "@core/constants";
 const fetchPolicy = "no-cache";
 
 const graphqlClient = new ApolloClient({
@@ -16,7 +15,7 @@ const graphqlClient = new ApolloClient({
   name: "x-api-graphql-client",
   connectToDevTools: true,
   assumeImmutableResults: true,
-  // queryDeduplication: false,
+  queryDeduplication: false,
 
   defaultOptions: {
     watchQuery: { fetchPolicy },

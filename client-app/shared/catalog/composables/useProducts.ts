@@ -1,57 +1,49 @@
-import { Ref, ref, computed, watch } from "vue";
-import { searchProducts, searchRelatedProducts, getProduct } from "@core/api/graphql/catalog";
+import { Ref, ref, computed, readonly, shallowRef } from "vue";
+import { searchProducts } from "@core/api/graphql/catalog";
 import { Product } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
-import { ProductsSearchParams } from "../types";
-import { useCart } from "@/shared/cart";
-import _ from "lodash";
+import { ProductsFilter, ProductsSearchParams } from "../types";
+import { rangeFacetToProductsFilter, termFacetToProductsFilter } from "@/shared/catalog";
 
-export default () => {
-  const products: Ref<Product[]> = ref([]);
-  const relatedProducts: Ref<Product[]> = ref([]);
-  const product: Ref<Product> = ref({ code: "", id: "", name: "", price: {} });
-  const total: Ref<number> = ref(0);
-  const pages: Ref<number> = ref(0);
+export default (
+  options: {
+    // @default false
+    withFilters?: boolean;
+  } = {}
+) => {
+  const { withFilters = false } = options;
+
   const loading: Ref<boolean> = ref(true);
-  const withVariations = computed(() => product.value.variations?.length);
-  const variationsCartTotal = ref(0);
+  const loadingMore: Ref<boolean> = ref(false);
+  const products: Ref<Product[]> = shallowRef([]);
+  const filters: Ref<ProductsFilter[]> = shallowRef([]);
+  const total: Ref<number> = ref(0);
+  const pages: Ref<number> = ref(1);
 
-  const { loading: cartLoading, getItemsTotal } = useCart();
-
-  async function fetchRelatedProducts(id: string) {
+  async function fetchProducts(searchParams: Partial<ProductsSearchParams>) {
     loading.value = true;
-    try {
-      const associations = await searchRelatedProducts(id);
-      relatedProducts.value = associations?.map((x) => x.product) as Product[];
-    } catch (e) {
-      Logger.error("useProducts.fetchRelatedProducts", e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-  }
+    products.value = [];
+    total.value = 0;
+    pages.value = 1;
 
-  async function loadProduct(id: string) {
-    loading.value = true;
     try {
-      product.value = await getProduct(id);
-    } catch (e) {
-      Logger.error("useProducts.loadProduct", e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-  }
+      const {
+        items = [],
+        term_facets = [],
+        range_facets = [],
+        totalCount = 0,
+      } = await searchProducts(searchParams, { withFacets: withFilters });
 
-  async function fetchProducts(searchParams: ProductsSearchParams) {
-    loading.value = true;
-    try {
-      const productsConnection = await searchProducts(searchParams);
-      products.value = productsConnection?.items as Product[];
-      //normalize prices
-
-      total.value = productsConnection.totalCount ?? 0;
+      products.value = items;
+      total.value = totalCount;
       pages.value = Math.ceil(total.value / (searchParams.itemsPerPage || 16));
+
+      if (withFilters) {
+        filters.value = [
+          ...term_facets.sort((a, b) => a.label.localeCompare(b.label)).map(termFacetToProductsFilter),
+          ...range_facets.sort((a, b) => a.label.localeCompare(b.label)).map(rangeFacetToProductsFilter),
+        ];
+      }
     } catch (e) {
       Logger.error("useProducts.fetchProducts", e);
       throw e;
@@ -60,34 +52,31 @@ export default () => {
     }
   }
 
-  //calculation of total price of variations in the cart
-  watch(
-    () => cartLoading.value === false && loading.value === false,
-    (condition) => {
-      if (condition && product.value.variations?.length) {
-        const variationsIds = _(product.value.variations)
-          .filter((x) => !!x?.id)
-          .map((x) => x?.id as string)
-          .value();
+  async function fetchMoreProducts(searchParams: Partial<ProductsSearchParams>) {
+    loadingMore.value = true;
 
-        variationsIds.push(product.value.id);
+    try {
+      const { items = [], totalCount = 0 } = await searchProducts(searchParams);
 
-        variationsCartTotal.value = getItemsTotal(variationsIds);
-      }
+      products.value = products.value.concat(items);
+      total.value = totalCount;
+      pages.value = Math.ceil(total.value / (searchParams.itemsPerPage || 16));
+    } catch (e) {
+      Logger.error(`useProducts.${fetchMoreProducts.name}`, e);
+      throw e;
+    } finally {
+      loadingMore.value = false;
     }
-  );
+  }
 
   return {
+    filters,
     fetchProducts,
-    loadProduct,
-    fetchRelatedProducts,
-    relatedProducts: computed(() => relatedProducts.value),
+    fetchMoreProducts,
+    total: readonly(total),
+    pages: readonly(pages),
+    loading: readonly(loading),
+    loadingMore: readonly(loadingMore),
     products: computed(() => products.value),
-    product: computed(() => product.value),
-    total: computed(() => total.value),
-    pages: computed(() => pages.value),
-    loading: computed(() => loading.value),
-    withVariations: computed(() => withVariations.value),
-    variationsCartTotal: computed(() => variationsCartTotal.value),
   };
 };

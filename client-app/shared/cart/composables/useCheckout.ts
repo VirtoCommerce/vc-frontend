@@ -1,4 +1,4 @@
-import { Ref, ref, reactive, computed } from "vue";
+import { Ref, ref, computed } from "vue";
 import {
   addOrUpdateCartShipment,
   addOrUpdateCartPayment,
@@ -16,9 +16,8 @@ import {
   CartAddressType,
   ShipmentType,
   PaymentType,
-  CartType,
+  CustomerOrderType,
 } from "@core/api/graphql/types";
-import { Logger } from "@core/utilities";
 import { useCart } from ".";
 
 const addresses: CartAddressType[] = [
@@ -54,22 +53,27 @@ const existShipment: Ref<ShipmentType | null> = ref(null);
 const existPayment: Ref<PaymentType | null> = ref(null);
 
 export default () => {
-  async function placeOrder(cartId: string) {
+  const { cart, loadMyCart } = useCart();
+
+  async function placeOrder(cartId: string, reloadCart = true): Promise<CustomerOrderType | null> {
     const order = await createOrderFromCart(cartId);
-    if (order) {
-      await removeCart(cartId);
-      const { loadMyCart } = useCart();
+
+    if (!order) return null;
+
+    await removeCart(cartId); // TODO: implement in "useCart"
+
+    if (reloadCart) {
       await loadMyCart();
     }
+
     return order;
   }
 
   async function loadPaymentMethods() {
     paymentMethods.value = await getAvailPaymentMethods();
 
-    //TODO: remove later
-    const { cart, loadMyCart } = useCart();
     await loadMyCart();
+
     if (cart.value.payments && cart.value.payments.length > 0) {
       existPayment.value = cart.value.payments[0];
     }
@@ -78,9 +82,8 @@ export default () => {
   async function loadShipmentMethods() {
     shippingMethods.value = await getAvailShippingMethods();
 
-    //TODO: remove later
-    const { cart, loadMyCart } = useCart();
     await loadMyCart();
+
     if (cart.value.shipments && cart.value.shipments.length > 0) {
       existShipment.value = cart.value.shipments[0];
       deliveryAddress.value = { ...cart.value.shipments[0]?.deliveryAddress } ?? deliveryAddress.value;

@@ -15,28 +15,26 @@
 <script setup lang="ts">
 import _ from "lodash";
 import { computed, PropType } from "vue";
-import { Maybe, Property } from "@core/api/graphql/types";
+import { Property } from "@core/api/graphql/types";
 
 const props = defineProps({
   properties: {
-    type: Object as PropType<Array<Maybe<Property>>>,
-    default: () => new Array<Maybe<Property>>(),
+    type: Array as PropType<Property[]>,
+    default: () => [],
   },
 });
 
 // todo: move this logic to the separated helper. For variations properties also
 const grouped = computed(() => {
-  var propertyGroups = _(props.properties)
+  return _(props.properties)
     .filter((p) => !!p && p.type === "Product")
-    .groupBy((p) => p!.name)
-    .map((props, propName) => {
+    .groupBy((p) => p.name)
+    .map((properties, propName) => {
       return {
         name: propName,
-        values: props.map((x) => x!.value).join(", "),
+        values: properties.map((x) => x.value).join(", "),
       };
     })
     .value();
-
-  return propertyGroups;
 });
 </script>

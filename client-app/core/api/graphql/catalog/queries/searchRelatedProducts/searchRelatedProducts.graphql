@@ -1,36 +1,23 @@
-query SearchRelatedProducts($storeId: String!, $currencyCode: String!, $cultureName: String, $id: String!) {
+query SearchRelatedProducts(
+  $storeId: String!
+  $currencyCode: String!
+  $cultureName: String
+  $id: String!
+  $after: String
+  $first: Int
+  $group: String
+  $query: String
+) {
   product(storeId: $storeId, id: $id, currencyCode: $currencyCode, cultureName: $cultureName) {
-    name
-    id
-    associations(first: 15) {
+    associations(after: $after, first: $first, group: $group, query: $query) {
       items {
         product {
           name
           id
           slug
           imgSrc
-          availabilityData {
-            isActive
-            isAvailable
-            isBuyable
-            isInStock
-            availableQuantity
-          }
           price {
             actual {
-              amount
-              formattedAmount
-            }
-            discountAmount {
-              amount
-              formattedAmount
-            }
-            sale {
-              amount
-              formattedAmount
-            }
-            list {
-              amount
               formattedAmount
             }
           }

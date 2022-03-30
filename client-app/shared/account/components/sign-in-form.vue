@@ -1,79 +1,73 @@
 <template>
   <form @submit="onSubmit">
     <!-- Errors block -->
-    <Alert v-if="authError"><strong>User</strong> or <strong>password</strong> is incorrect</Alert>
-    <Alert v-if="!_.isEmpty(errors)" class="mt-2"
-      ><strong>User</strong> and <strong>password</strong> are required
-    </Alert>
+    <VcAlert v-if="authError" class="mb-2" icon type="error" text>
+      <span v-html="$t('shared.account.sign_in_form.user_or_password_incorrect_alert')"></span>
+    </VcAlert>
+    <VcAlert v-if="!_.isEmpty(errors)" class="mb-2" icon type="error" text>
+      <span v-html="$t('shared.account.sign_in_form.user_and_password_are_required_alert')"></span>
+    </VcAlert>
 
-    <div class="mt-4">
-      <span class="font-semibold">User name</span>
-      <span class="text-red-500">*</span>
-      <input
-        v-model="userName"
-        type="text"
-        name="userName"
-        placeholder="User Name"
-        class="h-11 rounded px-3 py-1 w-full"
-        :class="{
-          'border border-gray-300': !isErrorField('userName'),
-          'border-2 border-red-500': isErrorField('userName'),
-        }"
-        @input="onInput"
-      />
-    </div>
+    <VcInput
+      v-model="userName"
+      name="userName"
+      class="mb-4"
+      :label="$t('shared.account.sign_in_form.user_name_label')"
+      :placeholder="$t('shared.account.sign_in_form.user_name_placeholder')"
+      is-required
+      :error-message="errors.userName"
+    ></VcInput>
 
-    <div class="mt-4">
-      <span class="font-semibold" for>Password</span>
-      <span class="text-red-500">*</span>
-      <input
-        v-model="password"
-        type="password"
-        name="password"
-        placeholder="Password"
-        class="h-11 rounded px-3 py-1 w-full"
-        :class="{
-          'border border-gray-300': !isErrorField('password'),
-          'border-2 border-red-500': isErrorField('password'),
-        }"
-        @input="onInput"
-      />
-    </div>
+    <VcInput
+      v-model="password"
+      class="mb-4"
+      :label="$t('shared.account.sign_in_form.password_label')"
+      :placeholder="$t('shared.account.sign_in_form.password_placeholder')"
+      type="password"
+      is-required
+      :error-message="errors.password"
+    ></VcInput>
 
     <div class="mt-1">
-      <router-link to="/" class="text-blue-700 hover:text-blue-500 text-sm font-semibold">
-        Forgot your password?
+      <router-link
+        to="/forgot-password"
+        class="text-blue-700 hover:text-blue-500 text-sm font-semibold"
+        v-t="'shared.account.sign_in_form.forgot_password_link'"
+      >
       </router-link>
     </div>
 
     <!-- Form actions -->
     <div class="flex mt-8 text-base font-roboto-condensed" :class="{ 'max-w-sm': !props.growButtons }">
-      <button
-        type="submit"
-        class="flex-1 flex-shrink bg-yellow-500 rounded text-white px-2 py-2 font-bold uppercase"
-        :class="{ 'hover:bg-yellow-600': isSubmitEnabled }"
-        :disabled="!isSubmitEnabled"
+      <VcButton
+        is-submit
+        size="lg"
+        class="flex-1 flex-shrink px-2 font-bold uppercase"
+        :is-waiting="!isSubmitEnabled"
+        v-t="'shared.account.sign_in_form.login_button'"
       >
-        Login
-      </button>
-      <router-link
+      </VcButton>
+      <VcButton
         to="/sign-up"
-        class="flex-1 border-2 rounded text-center text-yellow-500 ml-4 px-2 py-2 border-yellow-500 uppercase font-bold hover:bg-yellow-600 hover:text-white hover:border-yellow-600"
-      >
-        Registration
-      </router-link>
+        size="lg"
+        is-outline
+        class="flex-1 ml-4 px-2 uppercase font-bold"
+        v-t="'shared.account.sign_in_form.registration_button'"
+      ></VcButton>
     </div>
   </form>
 </template>
 
 <script setup lang="ts">
-import { Alert } from "@/components";
+import { VcAlert, VcButton, VcInput } from "@/components";
 import { ref, reactive, computed, Ref } from "vue";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import _ from "lodash";
 import { useUser } from "@/shared/account";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 const { signMeIn, loading } = useUser();
 
 const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButtons: false });
@@ -83,11 +77,11 @@ const emit = defineEmits(["succeeded"]);
 const authError: Ref<boolean> = ref(false);
 
 const schema = yup.object({
-  userName: yup.string().required(),
-  password: yup.string().required(),
+  userName: yup.string().label(t("shared.account.sign_in_form.user_name_label")).required(),
+  password: yup.string().label(t("shared.account.sign_in_form.password_label")).required(),
 });
 
-const { errors, meta, handleSubmit, isSubmitting } = useForm({
+const { errors, handleSubmit, isSubmitting } = useForm({
   validationSchema: schema,
 });
 
@@ -95,14 +89,6 @@ const { value: userName } = useField<string>("userName");
 const { value: password } = useField<string>("password");
 
 const model = reactive({ userName, password });
-
-function isErrorField(name: string) {
-  return meta.value.touched && name in errors.value;
-}
-
-function onInput() {
-  authError.value = false;
-}
 
 // submit
 const isSubmitEnabled = computed(() => !isSubmitting.value && !loading.value);
@@ -117,5 +103,3 @@ const onSubmit = handleSubmit(async () => {
   }
 });
 </script>
-
-<style lang="scss" scoped></style>

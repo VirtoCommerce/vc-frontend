@@ -12,7 +12,7 @@ fragment memberAddressFields on MemberAddressType {
   regionId
   regionName
   postalCode
-  zip # deprecated
+  isDefault
   phone
   email
   addressType

@@ -1,0 +1,24 @@
+{
+  "name": "GraphQL Schema",
+  "schemaPath": "client-app/core/api/graphql/schema.json",
+  "extensions": {
+    "endpoints": {
+      "GraphQL Endpoint": {
+        "url": "${env:APP_BACKEND_URL}/xapi/graphql",
+        "headers": {
+          "user-agent": "JS GraphQL"
+        },
+        "introspect": false
+      }
+    }
+  },
+  "includes": [
+    "client-app/**/*.gql",
+    "client-app/**/*.graphql",
+    "client-app/**/*.ts",
+    "client-app/**/*.vue"
+  ],
+  "excludes": [
+    "node_modules"
+  ]
+}

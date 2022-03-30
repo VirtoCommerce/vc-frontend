@@ -5,6 +5,8 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
     code
     slug
     outline
+    minQuantity
+    maxQuantity
     imgSrc
     images {
       url
@@ -18,19 +20,18 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
     description {
       content
       id
-      languageCode
-      reviewType
     }
     descriptions {
       content
       id
-      languageCode
-      reviewType
     }
     properties {
       name
       value
       type
+      hidden
+      valueType
+      label
     }
     variations {
       id
@@ -38,6 +39,8 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
       images {
         url
       }
+      minQuantity
+      maxQuantity
       code
       properties {
         name

@@ -1,16 +1,13 @@
 #import "../../../fragments/memberAddressFields.graphql"
 
- query getMyAddresses {
-  me
-  {       
-    contact
-    {
-     addresses {
-         items 
-         {
-           ...memberAddressFields
-         }
-     }    
+query getMyAddresses($after: String, $first: Int, $sort: String) {
+  me {
+    contact {
+      addresses(after: $after, first: $first, sort: $sort) {
+        items {
+          ...memberAddressFields
+        }
+      }
     }
   }
- }
+}
