@@ -667,7 +667,7 @@ function selectShippingAddressDialog(): void {
   openPopup({
     component: SelectAddressDialog,
     props: {
-      addresses,
+      addresses: addresses.value,
       currentAddress: shipment.value?.deliveryAddress,
       async onResult(address?: InputAddressType) {
         if (!address) return;
@@ -690,7 +690,7 @@ function selectBillingAddressDialog(): void {
   openPopup({
     component: SelectAddressDialog,
     props: {
-      addresses,
+      addresses: addresses.value,
       currentAddress: payment.value?.billingAddress,
       async onResult(address?: InputAddressType) {
         if (!address) return;
