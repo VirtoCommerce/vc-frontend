@@ -74,7 +74,7 @@
             :is-collapsible="true"
             class="mb-5"
           >
-            <div class="flex flex-col text-sm">
+            <div class="flex flex-col space-y-1.5 text-sm">
               <span class="font-extrabold">{{ deliveryAddress?.firstName }} {{ deliveryAddress?.lastName }}</span>
               <p>
                 {{ deliveryAddress?.countryCode }}
