@@ -29,7 +29,6 @@
           class="mb-4"
           :label="$t('pages.sign_up.email_label')"
           :placeholder="$t('pages.sign_up.email_placeholder')"
-          type="email"
           is-required
           :error-message="errors.email"
         ></VcInput>
@@ -77,6 +76,7 @@
 
           <VcButton
             is-submit
+            :is-disabled="hasFormErrors"
             size="lg"
             class="uppercase mt-6 lg:mt-3 w-full lg:w-48"
             :is-waiting="loading"
@@ -100,15 +100,20 @@ import * as yup from "yup";
 import { ref } from "vue";
 import { usePopup } from "@/shared/popup";
 import { IdentityResultType } from "@/core/api/graphql/types";
+import { computed } from "@vue/reactivity";
+import { isObjectEmpty } from "@/core/utilities";
+import { useI18n } from "vue-i18n";
 
-const { signMeIn, registerUser, registerOrganization, loading } = useUser();
+const { t } = useI18n();
+
+const { registerUser, registerOrganization, loading } = useUser();
 const { openPopup } = usePopup();
 
 const schema = yup.object({
   registrationKind: yup.string().required(),
   organizationName: yup.string().when("registrationKind", {
     is: "organization",
-    then: yup.string().label("Organization Name").required().max(512),
+    then: yup.string().label("Organization Name").required().max(64),
   }),
   email: yup.string().label("Email").required().email("Enter correct email please (ex. john@gmail.com)").max(64),
   userName: yup.string().label("Username").required().max(64),
@@ -146,6 +151,7 @@ const { value: organizationName } = useField<string>("organizationName");
 const { value: password } = useField<string>("password");
 const { value: confirmPassword } = useField<string>("confirmPassword");
 
+const hasFormErrors = computed(() => !isObjectEmpty(errors.value));
 const commonErrors = ref<string[]>([]);
 
 const onSubmit = handleSubmit(async (data) => {
@@ -154,30 +160,24 @@ const onSubmit = handleSubmit(async (data) => {
   let result: IdentityResultType;
   if (registrationKind.value == "personal") {
     result = await registerUser({
-      email: `${data.email}`,
-      firstName: `${data.firstName}`,
-      lastName: `${data.lastName}`,
-      userName: `${data.userName}`,
+      email: `${data.email?.trim()}`,
+      firstName: `${data.firstName?.trim()}`,
+      lastName: `${data.lastName?.trim()}`,
+      userName: `${data.userName?.trim()}`,
       password: `${data.password}`,
     });
   } else {
     result = await registerOrganization({
-      organizationName: `${data.organizationName}`,
-      email: `${data.email}`,
-      firstName: `${data.firstName}`,
-      lastName: `${data.lastName}`,
-      userName: `${data.userName}`,
+      organizationName: `${data.organizationName?.trim()}`,
+      email: `${data.email?.trim()}`,
+      firstName: `${data.firstName?.trim()}`,
+      lastName: `${data.lastName?.trim()}`,
+      userName: `${data.userName?.trim()}`,
       password: `${data.password}`,
     });
   }
 
   if (result.succeeded) {
-    await signMeIn({
-      userName: `${data.userName}`,
-      password: `${data.password}`,
-      rememberMe: true,
-    });
-
     openPopup({
       component: RegistrationSuccessDialog,
     });
@@ -185,7 +185,8 @@ const onSubmit = handleSubmit(async (data) => {
     if (result.errors?.length) {
       for (let i = 0; i < result.errors?.length; i++) {
         const error = result.errors[i];
-
+        // TODO: Localize all messages on a front side
+        // improve XAPI: pass error's parameters with error
         switch (error?.code) {
           case "password-too-weak":
           case "PasswordTooShort":
@@ -197,7 +198,8 @@ const onSubmit = handleSubmit(async (data) => {
           case "RecentPasswordUsed":
           case "InvalidPasswordHasherCompatibilityMode":
           case "InvalidPasswordHasherIterationCount":
-            setFieldError("password", error?.description);
+            // t() is the workaround for the empty description.
+            setFieldError("password", error?.description || t("pages.sign_up.errors." + error.code));
             break;
 
           case "repeat-password":
@@ -213,7 +215,7 @@ const onSubmit = handleSubmit(async (data) => {
 
           case "DuplicateEmail":
           case "InvalidEmail":
-            setFieldError("email", error?.description);
+            setFieldError("email", error?.description || t("pages.sign_up.errors." + error.code));
             break;
 
           default:

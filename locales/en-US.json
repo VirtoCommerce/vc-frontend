@@ -468,7 +468,11 @@
       "password_placeholder": "Enter your password",
       "confirm_password_label": "@:common.labels.confirm_password",
       "confirm_password_placeholder": "Confirm your password",
-      "register_button": "Register"
+      "register_button": "Register",
+      "errors": {
+        "PasswordTooShort": "Passwords must be at least 8 characters.",
+        "InvalidEmail": "Enter correct email please (ex. john{'@'}gmail.com)"
+      }
     },
     "account": {
       "addresses": {

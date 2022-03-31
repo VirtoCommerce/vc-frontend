@@ -2,11 +2,9 @@
   <VcPopup variant="success" :title="$t('shared.account.registration_success_dialog.title')" is-persistent>
     <template #actions="{ close }">
       <VcButton
+        to="/"
         class="uppercase mx-auto inline-flex px-10"
-        @click="
-          close();
-          reload();
-        "
+        @click="close"
         v-t="'shared.account.registration_success_dialog.ok_button'"
       ></VcButton>
     </template>
@@ -19,8 +17,4 @@
 
 <script setup lang="ts">
 import { VcPopup, VcButton } from "@/components";
-
-function reload() {
-  location.href = "/";
-}
 </script>
