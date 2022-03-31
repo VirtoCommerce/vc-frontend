@@ -1,6 +1,8 @@
+[![stage](https://img.shields.io/badge/Stage-EDGE-blue)](https://virtocommerce.atlassian.net/wiki/spaces/DE/pages/2329018420/Classification) ![ci](https://github.com/VirtoCommerce/vue-starter-theme/actions/workflows/main.yml/badge.svg) ![cd](https://github.com/VirtoCommerce/vue-starter-theme/actions/workflows/deploy.yml/badge.svg) ![size](https://img.shields.io/github/repo-size/VirtoCommerce/vue-starter-theme) ![version](https://img.shields.io/github/package-json/v/VirtoCommerce/vue-starter-theme) ![discord](https://img.shields.io/discord/932283445596553228)
+
 # B2B Mercury theme for VirtoCommerce Storefront
 
-![image](https://user-images.githubusercontent.com/619699/147751949-c2a7e180-bf6c-4a68-a7b1-cbb6134f170f.png)
+![mercury-theme-preview](https://user-images.githubusercontent.com/619699/161065622-163bb3e9-0078-4e9d-9231-eb9d34f5d146.jpeg)
 
 **B2B Mercury theme** is a fresh look on the field of eCommerce solutions. This is a place where common B2B and B2C scenarios are combined with the most bleeding edge technologies to deliver blazing fast and fully functional solution. It implements common business use-cases needed for a vast majority of projects we build.
 
@@ -30,54 +32,71 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 ## Theme structure
 
 ```text
-├── assets                        // Images and other asset files used inside your application.
-│   └── static
-|       ├── bundle                // Scripts, styles and other assets compiled and minified for production.
-|       ├── icons                 // Icons used for favicons, PWA, etc.
-|       ├── images                // Static images used inside the application.
-|       └── styles                // Common styles used inside the application.
+├── assets                        // Scripts, styles and other assets compiled and minified for production.
+|
 ├── client-app                    // The main folder for the application.
-|   ├── components                // Atoms, Molecules, Organisms, used within whhole application.
-|   |   └──....
+|   ├── assets                    // Assets needed to be precompiled during building.
+|   |   └──...
+|   |
+|   ├── components                // Atoms, Molecules, Organisms and their types, used within the whole application.
+|   |   └──...
+|   |
+|   ├── config                    // Theme config scripts.
+|   |   └──...
+|   |
 |   ├── core                      // Common utilities and shared logic that can be used by any pages and libraries.
 |   |   ├── api/graphql           // GraphQL Models aligned with the Virto Backoffice.
-|   |   |   └──....
+|   |   |   └──...
 |   |   ├── composables           // Core composables (app-level shared logic).
-|   |   |   └──....
-|   |   ├── helpers               // Core helpers (functions, syntax sugar, etc).
-|   |   |   └──....
+|   |   |   └──...
+|   |   ├── directives            // Core Vue directives.
+|   |   |   └──...
+|   |   ├── plugins               // Core Vue plugins.
+|   |   |   └──...
+|   |   ├── types                 // Core types.
+|   |   |   └──...
 |   |   ├── utilities             // Some miscellaneous utils.
-|   |   |   └──....
+|   |   |   └──...
+|   |   └── constants.ts          // Global-available constants (DO NOT USE, will be removed later).
 |   |
 |   ├── pages                     // Set of application pages used within Application router.
-|   |   └──....
+|   |   └──...
+|   |
+|   ├── public                    // Statically served files
+|   |   ├── static
+|   |   |   ├── icons             // Icons used for favicons, PWA, etc.
+|   |   |   └── images            // Static images used inside the application.
+|   |   └── config.json           // Theme config file FOR DEVELOPMENT.
 |   |
 |   ├── shared                    // A set of shared files grouped by their domain context.
 |   |   ├── catalog               // Grouping context (ex.: catalog browsing).
 |   |   |   ├── components        // The collection of components specific for this domain context.
-|   |   |   |   └──....
+|   |   |   |   └──...
 |   |   |   ├── composables       // The collection of shared logic written using Composable API pattern.
-|   |   |   |   └──....
+|   |   |   |   └──...
 |   |   |   ├── types             // Types used in this context.
-|   |   |   |   └──....
+|   |   |   |   └──...
+|   |   |   ├── utils             // Utilities and helpers specific for this context.
+|   |   |   |   └──...
 |   |   |   └── index.ts          // Entry point for this context used as library.
 |   |   |
-|   |   └──....
+|   |   └──...
 |   |
 |   ├── App.vue                   // Main Application component. Use it as a wrapper for routable pages.
 |   ├── env.d.ts                  // Definition file to provide IDE IntelliSense support for importing *.vue files.
 |   ├── main.ts                   // Application entry point. Main initialization script.
 |   ├── router.ts                 // SPA routing configuraion.
-|   └── shims-graphql.d.ts        // Definition file to provide IDE IntelliSense support for importing *.graphql files.
+|   ├── shims-graphql.d.ts        // Definition file to provide IDE IntelliSense support for importing *.graphql files.
+|   └── vue-shims.d.ts            // Definition file to provide IDE IntelliSense support for specific Vue features.
 |
 ├── config                        // The Virto theme settings.
-|   └── settings_data.json        // The json file contains all the main settings for the theme.
+|   └── settings_data.json        // Theme config file FOR PRODUCTION.
 |
 ├── layout                        // Layout templates used to render theme within Storefront.
 |   └──theme.liquid               // Wrapper for SPA, providing HTML document structure.
 |
 ├── locales                       // Locale files used to provide translated content for the theme.
-|   └──....
+|   └──...
 |
 ├── templates                     // Liquid templates, used in SSR and MPA. Each MPA page needs to have a liquid template here if you want SSR.
 |   └──index.liquid               // Entry point for SPA, providing container with necessary scripts and styles.
@@ -89,14 +108,15 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 ├── .eslintignore                 // Ignore some files from ESlint.
 ├── .eslintrc                     // ESlint configuration file.
 ├── .gitignore                    // Ignore some files from GIT.
+├── .graphqlconfig                // Config file for GraphQL.
 ├── .prettierignore               // Ignore some files from Prettier.
 ├── .prettierrc                   // Config for Prettier.
-├── README.md                     // This file.
 ├── graphql.codegen.yml           // GraphQL configuration file to generate types for schemas from your Virto Backoffice url.
 ├── gulpfile.js                   // Artifact build script to product zip-file installable by VC Storefront.
 ├── index.html                    // Vite Development entry point.
 ├── package.json                  // NPM Package description.
 ├── postcss.config.js             // PostCSS configuration for Tailwind.
+├── README.md                     // This file.
 ├── tailwind.config.js            // TailwindCSS configuration file.
 ├── tsconfig.json                 // TypeScript configuration file.
 ├── vite.config.ts                // Vite configuration file.
