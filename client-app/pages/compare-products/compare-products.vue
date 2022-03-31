@@ -138,8 +138,8 @@ const { clearCompareList, productsLimit, removeFromCompareList, productsIds } = 
 const { t } = useI18n();
 
 const breadcrumbs = ref<IBreadcrumbs[]>([
-  { title: t("pages.compare.links.home"), url: "/" },
-  { title: t("pages.compare.links.compare_products"), url: "/compare-products" },
+  { title: t("pages.compare.links.home"), route: "/" },
+  { title: t("pages.compare.links.compare_products"), route: "/compare-products" },
 ]);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);

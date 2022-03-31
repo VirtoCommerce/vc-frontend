@@ -209,9 +209,9 @@ const orderItems = computed(() =>
 const giftItems = computed(() => order.value?.items?.filter((item) => item.isGift));
 
 const breadcrumbs = ref<IBreadcrumbs[]>([
-  { title: t("common.links.home"), url: "/" },
-  { title: t("common.links.account"), url: "/account" },
-  { title: t("common.links.orders"), url: "/account/orders" },
+  { title: t("common.links.home"), route: "/" },
+  { title: t("common.links.account"), route: "/account" },
+  { title: t("common.links.orders"), route: "/account/orders" },
 ]);
 
 const openReorderPopup = async () => {
@@ -235,6 +235,6 @@ const openReorderPopup = async () => {
 
 onMounted(async () => {
   await loadOrder(orderId.value);
-  breadcrumbs.value.push({ title: `${order.value?.number}`, url: `/account/order-details/${order.value?.id}` });
+  breadcrumbs.value.push({ title: `${order.value?.number}`, route: `/account/order-details/${order.value?.id}` });
 });
 </script>

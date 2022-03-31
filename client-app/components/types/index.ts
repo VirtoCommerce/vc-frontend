@@ -29,7 +29,7 @@ export interface ItemAction {
 
 export interface IBreadcrumbs {
   title: string;
-  url: RouteLocationRaw;
+  route: RouteLocationRaw;
 }
 
 export interface ITableColumn {

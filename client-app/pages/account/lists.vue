@@ -87,9 +87,9 @@ const { openPopup } = usePopup();
 const { loading, lists, fetchWishlists } = useWishlists();
 
 const breadcrumbs: IBreadcrumbs[] = [
-  { title: t("common.links.home"), url: { name: "Home" } },
-  { title: t("common.links.account"), url: { name: "Account" } },
-  { title: t("shared.account.navigation.links.your_lists"), url: { name: "Lists" } },
+  { title: t("common.links.home"), route: { name: "Home" } },
+  { title: t("common.links.account"), route: { name: "Account" } },
+  { title: t("shared.account.navigation.links.your_lists"), route: { name: "Lists" } },
 ];
 
 function addAllToCart(items: LineItemType[]) {

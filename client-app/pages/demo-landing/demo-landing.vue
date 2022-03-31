@@ -183,7 +183,7 @@ onMounted(async () => {
 });
 
 const breadcrumbs = ref<IBreadcrumbs[]>([
-  { title: "Home", url: "/" },
-  { title: "Demo landing", url: "/demo-landing" },
+  { title: "Home", route: "/" },
+  { title: "Demo landing", route: "/demo-landing" },
 ]);
 </script>
