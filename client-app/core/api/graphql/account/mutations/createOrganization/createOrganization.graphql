@@ -1,0 +1,5 @@
+mutation createOrganization($command: InputCreateOrganizationType!) {
+  createOrganization(command: $command) {
+    id
+  }
+}
