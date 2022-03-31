@@ -1,6 +1,0 @@
- mutation UpdatePersonalData($command: InputUpdatePersonalDataType!) {
-    updatePersonalData(command: $command) {
-      succeeded,
-      errors { code description }
-    }
-  }

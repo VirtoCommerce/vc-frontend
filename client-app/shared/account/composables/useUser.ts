@@ -2,9 +2,8 @@ import { Ref, ref, computed } from "vue";
 import { getMe, updatePersonalData } from "@/core/api/graphql/account";
 import { UserType, IdentityResultType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
-import { SignMeUp, SignMeIn } from "@/shared/account";
+import { SignMeUp, SignMeIn, ForgotPassword, ValidateToken, ResetPassword, UserPersonalData } from "@/shared/account";
 import useFetch from "@/core/composables/useFetch";
-import { setUserId } from "@/core/constants";
 
 const me: Ref<UserType> = ref({
   userName: "",
@@ -37,10 +36,9 @@ export default () => {
     }
   }
 
-  async function updateUser(user: UserType): Promise<IdentityResultType> {
+  async function updateUser(personalData: UserPersonalData): Promise<IdentityResultType> {
     try {
       loading.value = true;
-      const personalData = { email: user.email, firstName: user.contact?.firstName, lastName: user.contact?.lastName };
       const result = await updatePersonalData(personalData);
       if (result.succeeded) {
         await loadMe();
@@ -71,11 +69,11 @@ export default () => {
     }
   }
 
-  async function signMeIn(signMeIn: SignMeIn): Promise<IdentityResultType> {
+  async function signMeIn(payload: SignMeIn): Promise<IdentityResultType> {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/login";
-      const res = await innerFetch<SignMeIn, IdentityResultType>(url, "POST", signMeIn);
+      const res = await innerFetch<SignMeIn, IdentityResultType>(url, "POST", payload);
 
       if (res.succeeded) {
         await loadMe();
@@ -90,11 +88,11 @@ export default () => {
     }
   }
 
-  async function signMeUp(signMeUp: SignMeUp): Promise<IdentityResultType> {
+  async function signMeUp(payload: SignMeUp): Promise<IdentityResultType> {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/user";
-      const res = await innerFetch<SignMeUp, IdentityResultType>(url, "POST", signMeUp);
+      const res = await innerFetch<SignMeUp, IdentityResultType>(url, "POST", payload);
       return res;
     } catch (e) {
       Logger.error("useUser.signMeUp", e);
@@ -120,6 +118,48 @@ export default () => {
     }
   }
 
+  async function forgotPassword(payload: ForgotPassword): Promise<IdentityResultType> {
+    try {
+      loading.value = true;
+      const url = "/storefrontapi/account/forgotPassword";
+      const res = await innerFetch<ForgotPassword, IdentityResultType>(url, "POST", payload);
+      return res;
+    } catch (e) {
+      Logger.error("useUser.forgotPassword", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function validateToken(payload: ValidateToken): Promise<IdentityResultType> {
+    try {
+      loading.value = true;
+      const url = "/storefrontapi/account/validateToken";
+      const res = await innerFetch<ValidateToken, IdentityResultType>(url, "POST", payload);
+      return res;
+    } catch (e) {
+      Logger.error("useUser.validateToken", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function resetPassword(payload: ResetPassword): Promise<IdentityResultType> {
+    try {
+      loading.value = true;
+      const url = "/storefrontapi/account/resetPassword";
+      const res = await innerFetch<ResetPassword, IdentityResultType>(url, "POST", payload);
+      return res;
+    } catch (e) {
+      Logger.error("useUser.resetPassword", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     me: computed(() => me.value),
     loading: computed(() => loading.value),
@@ -130,5 +170,8 @@ export default () => {
     signMeIn,
     signMeUp,
     signMeOut,
+    forgotPassword,
+    validateToken,
+    resetPassword,
   };
 };

@@ -2,16 +2,24 @@ import { computed, Ref, ref } from "vue";
 import {
   getMyCart,
   addItemToCart,
+  addItemsToCart,
+  addBulkItemsToCart,
   changeCartItemQuantity,
   removeCartItem,
   removeCoupon,
   validateCoupon,
   addCoupon,
   changeCartComment,
+  addOrUpdateCartShipment,
+  addOrUpdateCartPayment,
+  InputBulkItemsType,
 } from "@core/api/graphql/cart";
-import { CartType, LineItemType } from "@core/api/graphql/types";
+import { BulkCartType, CartType, InputPaymentType, InputShipmentType, LineItemType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 import _ from "lodash";
+import { useUserCheckoutDefaults } from "@/shared/account";
+import changePurchaseOrderNumber from "@/core/api/graphql/cart/mutations/changePurchaseOrderNumber";
+import { CartItemType } from "../types";
 
 const loading: Ref<boolean> = ref(true);
 const cart: Ref<CartType> = ref({ name: "" });
@@ -19,6 +27,8 @@ const pages: Ref<number> = ref(0);
 const itemsPerPage: Ref<number> = ref(6);
 
 export default () => {
+  const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
+
   async function loadMyCart(): Promise<CartType> {
     loading.value = true;
     try {
@@ -26,6 +36,26 @@ export default () => {
       if (cart.value.items && cart.value.items.length > 0) {
         pages.value = Math.ceil(cart.value.items.length / itemsPerPage.value);
       }
+
+      //#region set checkout defaults
+      const checkoutDefaults = getUserCheckoutDefaults();
+      if (!cart.value.shipments?.[0]?.id && checkoutDefaults?.shippingMethod) {
+        const method = checkoutDefaults?.shippingMethod;
+        await updateShipment({
+          shipmentMethodCode: method.code,
+          shipmentMethodOption: method.optionName,
+          id: cart.value.shipments?.[0]?.id,
+        });
+      }
+
+      if (!cart.value.payments?.[0]?.id && checkoutDefaults?.paymentMethod) {
+        const method = checkoutDefaults?.paymentMethod;
+        await updatePayment({
+          paymentGatewayCode: method.code,
+          id: cart.value.payments?.[0]?.id,
+        });
+      }
+      //#endregion set checkout defaults
     } catch (e) {
       Logger.error("useCart.loadMyCart", e);
       throw e;
@@ -47,6 +77,39 @@ export default () => {
       loading.value = false;
     }
     await loadMyCart();
+  }
+
+  async function addMultipleItemsToCart(cartItems: CartItemType[]) {
+    loading.value = true;
+    console.log(`addMultipleItemsToCart ${cartItems}`);
+    try {
+      await addItemsToCart(cartItems);
+    } catch (e) {
+      Logger.error("useCart.addMultipleItemsToCart", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+    await loadMyCart();
+  }
+
+  async function addBulkMultipleItemsToCart(payload: InputBulkItemsType): Promise<BulkCartType> {
+    let result: BulkCartType = {};
+
+    loading.value = true;
+
+    try {
+      result = await addBulkItemsToCart(payload);
+    } catch (e: any) {
+      Logger.error(`useCart.${addItemsToCart.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+
+    await loadMyCart();
+
+    return result;
   }
 
   async function changeItemQuantity(lineItemId: string, qty: number) {
@@ -104,6 +167,20 @@ export default () => {
     await loadMyCart();
   }
 
+  async function updatePurchaseOrderNumber(purchaseOrderNumber: string) {
+    loading.value = true;
+    console.log(`purchaseOrderNumber ${purchaseOrderNumber}`);
+    try {
+      await changePurchaseOrderNumber(purchaseOrderNumber);
+    } catch (e) {
+      Logger.error("useCart.updatePurchaseOrderNumber", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+    await loadMyCart();
+  }
+
   async function removeCartCoupon(couponCode: string) {
     loading.value = true;
     console.log(`removeCart coupon ${couponCode}`);
@@ -125,6 +202,34 @@ export default () => {
       await changeCartComment(comment);
     } catch (e) {
       Logger.error("useCart.changeCartComment", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+    await loadMyCart();
+  }
+
+  async function updateShipment(shipment: InputShipmentType) {
+    loading.value = true;
+    console.log(`change cart shipment details`);
+    try {
+      await addOrUpdateCartShipment(shipment);
+    } catch (e) {
+      Logger.error("useCart.updateShipment", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+    await loadMyCart();
+  }
+
+  async function updatePayment(payment: InputPaymentType) {
+    loading.value = true;
+    console.log(`change cart payment details`);
+    try {
+      await addOrUpdateCartPayment(payment);
+    } catch (e) {
+      Logger.error("useCart.updatePayment", e);
       throw e;
     } finally {
       loading.value = false;
@@ -161,6 +266,7 @@ export default () => {
     getItemsTotal,
     loadMyCart,
     addToCart,
+    addBulkMultipleItemsToCart,
     itemInCart,
     changeItemQuantity,
     removeItem,
@@ -168,5 +274,9 @@ export default () => {
     addCartCoupon,
     removeCartCoupon,
     changeComment,
+    updateShipment,
+    updatePayment,
+    updatePurchaseOrderNumber,
+    addMultipleItemsToCart,
   };
 };

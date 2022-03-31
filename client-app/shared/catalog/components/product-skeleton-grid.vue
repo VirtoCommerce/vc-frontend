@@ -47,7 +47,7 @@
         </div>
       </div>
 
-      <!-- Card widget -->
+      <!-- Cart widget -->
       <div class="flex">
         <div class="border border-r-0 flex-1 w-full border-gray-100 h-9"></div>
         <div class="bg-gray-100 w-2/5"></div>

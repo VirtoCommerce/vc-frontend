@@ -1,3 +1,10 @@
+.deployment
+.github
+.husky
+.vscode
+.idea
 node_modules
 dist
-_references
+assets
+client-app/core/api/graphql/types.ts
+client-app/core/api/graphql/schema.json

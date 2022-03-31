@@ -8,17 +8,21 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
     id
     name
     comment
+    purchaseOrderNumber
     coupons {
       code
     }
     itemsCount
     itemsQuantity
-    isValid
     shipments {
       id
       shipmentMethodCode
+      shipmentMethodOption
       deliveryAddress {
         ...cartAddressFields
+      }
+      price {
+        ...moneyFields
       }
     }
     discounts {
@@ -76,6 +80,39 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
         value
       }
       objectId
+    }
+
+    availablePaymentMethods {
+      code
+      logoUrl
+      price {
+        ...moneyFields
+      }
+    }
+
+    availableShippingMethods {
+      id
+      code
+      logoUrl
+      optionName
+      optionDescription
+      price {
+        ...moneyFields
+      }
+    }
+
+    gifts {
+      id
+      imageUrl
+      name
+      lineItemId
+    }
+
+    availableGifts {
+      id
+      imageUrl
+      name
+      lineItemId
     }
   }
 }

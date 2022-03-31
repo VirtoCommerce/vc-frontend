@@ -1,9 +1,18 @@
-schema: http://localhost:10645/graphql
-documents: "./client-app/**/*.(graphql|gql|ts)"
+schema: ${APP_BACKEND_URL}/xapi/graphql
+documents: ./client-app/**/*.(graphql|gql|ts)
 generates:
   ./client-app/core/api/graphql/types.ts:
     config:
       skipTypename: true
+      maybeValue: "T"
     plugins:
+      - add:
+          content: "// This file was generated based on \"graphql.codegen.yml\". Do not edit manually.\n/* eslint-disable */\n"
       - typescript
       - typescript-operations
+
+  ./client-app/core/api/graphql/schema.json:
+    plugins:
+      - introspection
+    config:
+      descriptions: false

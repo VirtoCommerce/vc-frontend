@@ -4,9 +4,11 @@
       <template v-for="(item, i) in items" :key="i">
         <template v-if="i < items.length - 1">
           <li>
-            <router-link :to="item.url" class="font-medium text-cyan-700 hover:text-cyan-900">{{
-              item.title
-            }}</router-link>
+            <router-link
+              :to="item.url"
+              class="font-medium text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
+              >{{ item.title }}</router-link
+            >
           </li>
           <li><span class="mx-2 text-gray-300">/</span></li>
         </template>

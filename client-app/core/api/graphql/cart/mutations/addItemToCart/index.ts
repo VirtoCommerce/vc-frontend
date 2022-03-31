@@ -3,7 +3,7 @@ import { currentUserId, storeId } from "@core/constants";
 import mutationDocument from "./addItemToCartMutation.graphql";
 
 export default async function addItemToCart(productId: string, qty: number): Promise<void> {
-  const { data } = await client.mutate({
+  await client.mutate({
     mutation: mutationDocument,
     variables: {
       command: {

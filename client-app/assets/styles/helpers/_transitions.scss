@@ -1,0 +1,35 @@
+$duration: var(--transition-duration, .2s);
+
+// fade
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity $duration;
+  will-change: opacity;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0
+}
+
+// slide-fade-<direction>
+$slide-fade: (
+  'left': (coordinate: 'X', value: -10px),
+  'right': (coordinate: 'X', value: 10px),
+  'top': (coordinate: 'Y', value: -10px),
+  'bottom': (coordinate: 'Y', value: 10px),
+);
+
+@each $direction, $data in $slide-fade {
+  .slide-fade-#{$direction}-enter-active,
+  .slide-fade-#{$direction}-leave-active {
+    transition: transform $duration ease, opacity $duration ease;
+    will-change: transform, opacity;
+  }
+
+  .slide-fade-#{$direction}-enter-from,
+  .slide-fade-#{$direction}-leave-to {
+    opacity: 0;
+    transform: translate#{map-get($data, coordinate)}(map-get($data, value));
+  }
+}

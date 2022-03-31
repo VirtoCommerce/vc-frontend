@@ -1,29 +1,29 @@
 <template>
   <TwoColumn class="max-w-screen-xl">
     <template #left>
-      <h1 class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8 lg:mt-5">Registration</h1>
+      <h1 class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8 lg:mt-5" v-t="'pages.sign_up.header'"></h1>
       <form @submit="onSubmit">
         <VcInput
           v-model="firstName"
           class="mb-4"
-          label="First Name"
-          placeholder="Enter your first name"
+          :label="$t('pages.sign_up.first_name_label')"
+          :placeholder="$t('pages.sign_up.first_name_placeholder')"
           is-required
           :error-message="errors.firstName"
         ></VcInput>
         <VcInput
           v-model="lastName"
           class="mb-4"
-          label="Last Name"
-          placeholder="Enter your last name"
+          :label="$t('pages.sign_up.last_name_label')"
+          :placeholder="$t('pages.sign_up.last_name_placeholder')"
           is-required
           :error-message="errors.lastName"
         ></VcInput>
         <VcInput
           v-model="email"
           class="mb-4"
-          label="Email"
-          placeholder="Enter your e-mail address"
+          :label="$t('pages.sign_up.email_label')"
+          :placeholder="$t('pages.sign_up.email_placeholder')"
           type="email"
           is-required
           :error-message="errors.email"
@@ -31,8 +31,8 @@
         <VcInput
           v-model="userName"
           class="mb-4"
-          label="Username"
-          placeholder="Enter your username"
+          :label="$t('pages.sign_up.username_label')"
+          :placeholder="$t('pages.sign_up.username_placeholder')"
           is-required
           :error-message="errors.userName"
         ></VcInput>
@@ -40,8 +40,8 @@
           <VcInput
             v-model="password"
             class="mb-4 w-full lg:w-1/2"
-            label="Password"
-            placeholder="Enter your password"
+            :label="$t('pages.sign_up.password_label')"
+            :placeholder="$t('pages.sign_up.password_placeholder')"
             type="password"
             is-required
             :error-message="errors.password"
@@ -49,41 +49,45 @@
           <VcInput
             v-model="confirmPassword"
             class="mb-4 w-full lg:w-1/2"
-            label="Confirm password"
-            placeholder="Confirm your password"
+            :label="$t('pages.sign_up.confirm_password_label')"
+            :placeholder="$t('pages.sign_up.confirm_password_placeholder')"
             type="password"
             is-required
             :error-message="errors.confirmPassword"
           ></VcInput>
         </div>
         <div class="mt-6 lg:mt-4">
-          <Alert v-for="error in commonErrors" :key="error" class="mb-4 text-xs">{{ error }}</Alert>
-          <button
-            type="submit"
-            class="mt-6 lg:mt-3 w-full lg:w-48 flex justify-center items-center uppercase text-white bg-yellow-500 hover:bg-yellow-600 font-roboto-condensed text-lg h-11 rounded"
-          >
-            Register
-          </button>
+          <VcAlert v-for="error in commonErrors" :key="error" type="error" class="mb-4 text-xs" icon text>
+            {{ error }}
+          </VcAlert>
+
+          <VcButton
+            is-submit
+            size="lg"
+            class="uppercase mt-6 lg:mt-3 w-full lg:w-48"
+            :is-waiting="loading"
+            v-t="'pages.sign_up.register_button'"
+          ></VcButton>
         </div>
       </form>
     </template>
     <template #right>
-      <img class="max-w-md" src="/assets/static/images/sign-up/image.webp" />
+      <VcImage class="max-w-md" src="/static/images/sign-up/image.webp" />
     </template>
   </TwoColumn>
 </template>
 
 <script setup lang="ts">
-import { Alert, Input as VcInput } from "@/components";
-import { useUser } from "@/shared/account";
-import { useRouter } from "vue-router";
+import { VcAlert, VcInput, VcImage, VcButton } from "@/components";
+import { useUser, RegistrationSuccessDialog } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import { ref } from "vue";
+import { usePopup } from "@/shared/popup";
 
-const { signMeUp } = useUser();
-const router = useRouter();
+const { signMeUp, loading } = useUser();
+const { openPopup } = usePopup();
 
 const schema = yup.object({
   email: yup.string().label("Email").required().email("Enter correct email please (ex. john@gmail.com)").max(64),
@@ -132,7 +136,9 @@ const onSubmit = handleSubmit(async (data) => {
   });
 
   if (result.succeeded) {
-    router.push({ name: "Home" });
+    openPopup({
+      component: RegistrationSuccessDialog,
+    });
   } else {
     if (result.errors?.length) {
       for (let i = 0; i < result.errors?.length; i++) {
