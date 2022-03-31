@@ -1,4 +1,4 @@
-# v1.0.0.vst
+# v1.0.1.vst
 name: VST Theme CI
 on:
   workflow_dispatch:
