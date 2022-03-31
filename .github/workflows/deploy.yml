@@ -4,10 +4,10 @@ name: VC deployment
 on:
   workflow_dispatch:
     inputs:
-      artifactUrl: 
+      artifactUrl:
         description: 'Full link to artifact docker image or artifact download url'
         required: true
-      deployEnvironment: 
+      deployEnvironment:
         description: 'Deployment environment type. Allowed values: dev, qa, prod'
         required: true
         default: 'dev'
@@ -30,7 +30,7 @@ jobs:
       CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
       ARGO_SERVER: argo.govirto.com
 
-    steps: 
+    steps:
 
     - name: Read deployment config
       uses: VirtoCommerce/vc-github-actions/get-deploy-param@master
@@ -61,6 +61,7 @@ jobs:
 
     - name: Wait for environment is up
       uses: VirtoCommerce/vc-github-actions/vc-argocd-cli@master
+      timeout-minutes: 5
       id: argocd-cli
       with:
         server: ${{env.ARGO_SERVER}}
