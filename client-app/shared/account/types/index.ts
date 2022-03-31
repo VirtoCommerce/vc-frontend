@@ -1,6 +1,9 @@
 import { PaymentMethodType, ShippingMethodType } from "@core/api/graphql/types";
 
-export type RegistrationKind = "personal" | "organization";
+export enum RegistrationKind {
+  personal = "personal",
+  organization = "organization",
+}
 
 export type RegisterOrganization = {
   userName: string;

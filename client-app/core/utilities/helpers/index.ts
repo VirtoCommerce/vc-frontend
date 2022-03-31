@@ -13,3 +13,7 @@ export function isObjectEmpty(object: Record<string, unknown>): boolean {
 
   return true;
 }
+
+export function trimString(str: string | null | undefined): string {
+  return str?.trim() || "";
+}
