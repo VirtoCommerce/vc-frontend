@@ -62,6 +62,7 @@
           <FooterLink to="/rebates" v-t="'shared.layout.footer.rebates_link'"></FooterLink>
           <FooterLink to="/replacement-parts" v-t="'shared.layout.footer.replacement_parts_link'"></FooterLink>
           <FooterLink to="/demo-landing" v-t="'shared.layout.footer.demo_landing_link'"></FooterLink>
+          <FooterLink v-if="isDevelopment" :to="{ name: 'DevUIKit' }" v-t="'shared.layout.footer.ui_kit_link'" />
         </div>
       </div>
     </div>
@@ -92,4 +93,6 @@ import { VcImage } from "@/components";
 import { version } from "../../../../../package.json";
 import FooterLink from "./_internal/footer-link.vue";
 import SeoUrl from "@core/seo-routes.enum";
+
+const isDevelopment = import.meta.env.MODE === "development";
 </script>
