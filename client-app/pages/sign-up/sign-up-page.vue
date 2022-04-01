@@ -4,12 +4,17 @@
       <h1 class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8 lg:mt-5" v-t="'pages.sign_up.header'"></h1>
       <form @submit="onSubmit">
         <div class="mt-5 mb-5 flex flex-col space-y-5 md:space-y-0 md:flex-row md:space-x-7">
-          <VcRadioButton id="shipping" v-model="registrationKind" :value="RegistrationKind.personal" label="Personal" />
+          <VcRadioButton
+            id="shipping"
+            v-model="registrationKind"
+            :value="RegistrationKind.personal"
+            :label="$t('pages.sign_up.personal_registration_kind_label')"
+          />
           <VcRadioButton
             id="pickup"
             v-model="registrationKind"
             :value="RegistrationKind.organization"
-            label="Organization"
+            :label="$t('pages.sign_up.organization_registration_kind_label')"
           />
         </div>
 
@@ -85,8 +90,8 @@
             size="lg"
             class="uppercase mt-6 lg:mt-3 w-full lg:w-48"
             :is-waiting="loading"
-            v-t="'pages.sign_up.register_button'"
-          ></VcButton>
+            >{{ $t("pages.sign_up.register_button") }}
+          </VcButton>
         </div>
       </form>
     </template>

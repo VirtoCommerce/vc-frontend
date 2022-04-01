@@ -456,6 +456,8 @@
     },
     "sign_up": {
       "header": "Registration",
+      "personal_registration_kind_label": "Personal",
+      "organization_registration_kind_label": "Organization",
       "first_name_label": "@:common.labels.first_name",
       "first_name_placeholder": "Enter your first name",
       "last_name_label": "@:common.labels.last_name",
