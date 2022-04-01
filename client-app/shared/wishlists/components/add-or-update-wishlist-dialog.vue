@@ -15,6 +15,7 @@
         :is-disabled="loading"
         :error-message="errors[0]"
         is-required
+        autofocus
       />
     </div>
 
@@ -63,6 +64,7 @@ import { PropType } from "vue";
 import { WishlistType } from "@core/api/graphql/types";
 import { eagerComputed } from "@vueuse/core";
 import { usePopup } from "@/shared/popup";
+import { useI18n } from "vue-i18n";
 
 const props = defineProps({
   list: {
@@ -73,9 +75,17 @@ const props = defineProps({
 
 useForm({ initialValues: { listName: props.list?.name || "" } });
 
-const { value: listName, meta, errors } = useField<string>("listName", yup.string().max(64).required().nullable());
-const { loading, createWishlist, renameWishlist } = useWishlists();
+const { t } = useI18n();
 const { openPopup, closePopup } = usePopup();
+const { loading, createWishlist, renameWishlist } = useWishlists();
+const {
+  value: listName,
+  meta,
+  errors,
+} = useField<string>(
+  "listName",
+  yup.string().label(t("shared.wishlists.add_or_update_wishlist_dialog.list_name_label")).max(64).required().nullable()
+);
 
 const isEditMode = eagerComputed(() => !!props.list);
 
