@@ -1,4 +1,4 @@
-# v1.0.0.vst
+# v1.0.1.vst
 name: VST Theme CI
 on:
   workflow_dispatch:
@@ -37,9 +37,8 @@ jobs:
       BUILD_STATE: 'failed'
       RELEASE_STATUS: 'false'
     outputs:
-      artifactUrl: '${{ steps.publish.outputs.blobUrl }}'
+      artifactUrl: '${{ steps.artifactUrl.outputs.download_url }}'
       jira-keys: ${{ steps.jira_keys.outputs.jira-keys }}
-      deployConfigPath: '.deployment/storefront-app/argoDeploy.json'
 
     steps:
       - uses: actions/checkout@v2
@@ -81,7 +80,7 @@ jobs:
           versionSuffix:  ${{ env.VERSION_SUFFIX }}
 
       - name: Publish
-        if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
+        if: ${{ github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
         id: publish
         uses: VirtoCommerce/vc-github-actions/publish-theme@master
         with:
@@ -114,6 +113,16 @@ jobs:
           asset_path: ${{ steps.build.outputs.artifactPath }}
           asset_name: ${{ steps.build.outputs.artifactName }}
           asset_content_type: application/zip
+
+      - name: Set download artifactUrl
+        id: artifactUrl
+        run: |
+          if [ '${{ github.ref }}' = 'refs/heads/master' ]; then
+            echo ::set-output name=download_url:: ${{ steps.upload-release-asset.outputs.browser_download_url }}
+          else
+            echo ::set-output name=download_url::${{ steps.publish.outputs.blobUrl }}
+          fi;
+
 
       - name: Parse Jira Keys from All Commits
         uses: VirtoCommerce/vc-github-actions/get-jira-keys@master
@@ -153,16 +162,26 @@ jobs:
         run: |
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
 
-  dev_cd:
-    if: github.ref == 'refs/heads/dev' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')
+  deploy:
+    if: ${{ (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master') && github.event_name == 'push' }}
     needs: ci
     runs-on: ubuntu-latest
     env:
-      DEPLOYMENT_ENV: 'dev'
+      CONFIG_PATH: '.deployment/storefront-app/argoDeploy.json'
     steps:
+
+      - name: Set deployment environment
+        id: deployEnv
+        run: |
+          if [ '${{ github.ref }}' = 'refs/heads/master' ]; then
+            echo ::set-output name=NAME::prod
+          else
+            echo ::set-output name=NAME::dev
+          fi;
+
       - name: Invoke Module deployment workflow
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: VC deployment
           token: ${{ secrets.REPO_TOKEN }}
-          inputs: '{ "artifactUrl": "${{ needs.ci.outputs.artifactUrl }}", "deployEnvironment": "${{ env.DEPLOYMENT_ENV }}", "deployConfigPath": "${{ needs.ci.outputs.deployConfigPath}}", "jiraKeys":"${{ needs.ci.outputs.jira-keys }}" }'
+          inputs: '{ "artifactUrl": "${{ needs.ci.outputs.artifactUrl }}", "deployEnvironment": "${{  steps.deployEnv.outputs.NAME }}", "deployConfigPath": "${{ env.CONFIG_PATH }}", "jiraKeys":"${{ needs.ci.outputs.jira-keys }}" }'
