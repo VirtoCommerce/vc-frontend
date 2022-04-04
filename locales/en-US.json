@@ -4,6 +4,7 @@
       "home": "Home page",
       "ok": "Ok",
       "cancel": "Cancel",
+      "close": "Close",
       "confirm": "Confirm",
       "submit": "Submit",
       "create": "Create",
@@ -61,7 +62,7 @@
       "profile": "Profile",
       "addresses": "Addresses",
       "orders": "Orders",
-      "your_list": "Your List",
+      "your_lists": "Your Lists",
       "checkout_defaults": "Checkout Defaults"
     }
   },
@@ -96,7 +97,7 @@
             "profile": "@:common.links.profile",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
-            "your_list": "@:common.links.your_list",
+            "your_lists": "@:common.links.your_lists",
             "checkout_defaults": "@:common.links.checkout_defaults"
           },
           "search_bar": {
@@ -140,7 +141,7 @@
           "profile": "@:common.links.profile",
           "addresses": "@:common.links.addresses",
           "orders": "@:common.links.orders",
-          "your_list": "@:common.links.your_list",
+          "your_lists": "@:common.links.your_lists",
           "checkout_defaults": "@:common.links.checkout_defaults"
         }
       },
@@ -268,19 +269,6 @@
           "variation_sku_label": "@:common.labels.sku",
           "price_label": "@:common.labels.product_price"
         }
-      },
-      "add_to_wishlists_dialog": {
-        "title": "Please select list",
-        "empty_list": "You don't have wish lists",
-        "item_already_in_list": "Item already in the list",
-        "cancel_button": "@:common.buttons.cancel",
-        "add_to_list_button": "Add to list"
-      },
-      "added_to_wishlists_dialog": {
-        "title": "Item added to list | Item added to lists",
-        "sku_label": "SKU",
-        "continue_shopping_button": "@:common.buttons.continue_shopping_button",
-        "view_your_list_button": "View your list | View your lists"
       }
     },
     "checkout": {
@@ -390,6 +378,44 @@
         "text_area_placeholder": "Formatting example:\n6AF8SM0VPFV6,10\n3RO1GEQI34E8,20",
         "reset_button": "@:common.buttons.reset",
         "add_to_cart_button": "@:common.buttons.add_to_cart"
+      }
+    },
+    "wishlists": {
+      "list_card": {
+        "quantity_label": "Products Qty",
+        "add_all_to_cart_button": "Add all to cart",
+        "list_settings_button": "List settings",
+        "remove_list_button": "Remove list"
+      },
+      "add_to_wishlists_dialog": {
+        "title": "Please select list",
+        "empty_list": "You don't have wish lists",
+        "item_already_in_list": "Item already in the list",
+        "cancel_button": "@:common.buttons.cancel",
+        "add_to_list_button": "Add to list"
+      },
+      "added_to_wishlists_dialog": {
+        "title": "Item added to list | Item added to lists",
+        "sku_label": "SKU",
+        "continue_shopping_button": "@:common.buttons.continue_shopping_button",
+        "view_your_list_button": "View your list | View your lists"
+      },
+      "add_or_update_wishlist_dialog": {
+        "title": "New list",
+        "edit_mode_title": "List settings",
+        "list_name_label": "List name",
+        "list_name_placeholder": "Enter name",
+        "delete_button": "Delete list",
+        "delete_button_mobile": "Delete",
+        "create_button": "Create list",
+        "save_button": "@:common.buttons.save",
+        "cancel_button": "@:common.buttons.cancel"
+      },
+      "delete_wishlist_dialog": {
+        "title": "Delete warning",
+        "message": "Are you sure you want to remove “<span class=\"font-extrabold\">{listName}</span>” list?",
+        "delete_button": "@:common.buttons.delete",
+        "cancel_button": "@:common.buttons.cancel"
       }
     }
   },
@@ -577,6 +603,11 @@
           "phone_label": "@:common.labels.phone{':'}",
           "email_label": "@:common.labels.email{':'}"
         }
+      },
+      "your_lists": {
+        "no_lists": "You don't have any lists created",
+        "create_list_button": "Create list",
+        "create_list_button_mobile": "Create"
       },
       "profile": {
         "title": "Profile",

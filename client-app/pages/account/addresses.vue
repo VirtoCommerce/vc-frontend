@@ -9,7 +9,7 @@
 
         <!-- Second column-->
         <div class="flex flex-col w-full lg:w-4/5 space-y-5">
-          <div class="flex justify-between items-center mx-5 lg:mx-0">
+          <div class="flex justify-between items-center mx-5 md:mx-0">
             <h2 class="text-gray-800 text-3xl font-bold uppercase">{{ title }}</h2>
 
             <VcButton v-if="!editingMode" class="px-3 uppercase border" size="sm" is-outline @click="openEditMode()">

@@ -38,6 +38,7 @@
 <script setup lang="ts">
 import { MenuLinkType } from "@/core/api/graphql/types";
 import { PropType, ref } from "vue";
+import { RouteLocationRaw } from "vue-router";
 
 defineProps({
   title: {
@@ -46,7 +47,7 @@ defineProps({
   },
 
   to: {
-    type: String,
+    type: [String, Object] as PropType<RouteLocationRaw>,
     default: undefined,
   },
 

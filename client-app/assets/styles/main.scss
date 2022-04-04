@@ -11,6 +11,12 @@
   background-position: right top;
 }
 
+.polygon-gray-bg {
+  background-image: url(/static/images/common/polygon-gray.png);
+  background-repeat: no-repeat;
+  background-position: right bottom -120px;
+}
+
 @media (max-width: 768px) {
   .polygon-bg {
     background-position: right bottom -120px;

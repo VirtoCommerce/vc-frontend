@@ -22,8 +22,8 @@
         class="orders-icon"
       ></AccountNavigationLink>
       <AccountNavigationLink
-        to="/list"
-        :text="$t('shared.account.navigation.links.your_list')"
+        :to="{ name: 'Lists' }"
+        :text="$t('shared.account.navigation.links.your_lists')"
         class="list-icon"
       ></AccountNavigationLink>
       <AccountNavigationLink

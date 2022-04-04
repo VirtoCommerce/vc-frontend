@@ -5,7 +5,7 @@
         <template v-if="i < items.length - 1">
           <li>
             <router-link
-              :to="item.url"
+              :to="item.route"
               class="font-medium text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
               >{{ item.title }}</router-link
             >

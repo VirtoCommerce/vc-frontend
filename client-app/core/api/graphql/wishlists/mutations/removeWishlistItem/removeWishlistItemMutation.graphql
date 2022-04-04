@@ -1,5 +1,0 @@
-mutation RemoveWishlistItem($command: InputRemoveWishlistItemType!) {
-  removeWishlistItem(command: $command) {
-    id
-  }
-}

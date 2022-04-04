@@ -30,7 +30,7 @@ const props = defineProps({
     type: String,
     default: "primary",
     validator(value: string) {
-      return ["primary", "secondary"].includes(value);
+      return ["primary", "secondary"].includes(value); // TODO: add color options (success, warning, danger)
     },
   },
   size: {

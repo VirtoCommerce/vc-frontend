@@ -2,7 +2,7 @@ import client from "@core/api/graphql/graphql-client";
 import { currencyCode, currentUserId, defaultPageSize, locale, storeId } from "@core/constants";
 import queryDocument from "./getWishlists.graphql";
 import { Query, QueryWishlistsArgs, WishlistConnection } from "@core/api/graphql/types";
-import { WishlistsSearchParams } from "@core/api/graphql/wishlists";
+import { WishlistsSearchParams } from "@core/api/graphql/account";
 
 export default async function getWishlists({
   itemsPerPage = defaultPageSize,
