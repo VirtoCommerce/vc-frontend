@@ -1,19 +1,16 @@
 <template>
   <VcPopup :variant="variant" :title="title">
     <template #actions="{ close }">
-      <VcButton
-        is-outline
-        class="lg:px-4 uppercase flex-grow lg:flex-grow-0 inline-flex"
-        @click="close"
-        v-t="'shared.cart.cart_add_info_popup.continue_shopping_button'"
-      >
+      <VcButton is-outline class="lg:px-4 uppercase flex-grow lg:flex-grow-0 inline-flex" @click="close">
+        {{ $t("shared.cart.cart_add_info_popup.continue_shopping_button") }}
       </VcButton>
+
       <VcButton
-        to="/checkout"
+        :to="{ name: 'Checkout' }"
         class="uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-4"
         @click="close"
-        v-t="'shared.cart.cart_add_info_popup.view_cart_button'"
       >
+        {{ $t("shared.cart.cart_add_info_popup.view_cart_button") }}
       </VcButton>
     </template>
 

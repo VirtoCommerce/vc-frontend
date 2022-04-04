@@ -50,13 +50,12 @@
               >
                 <template #selected="{ item }">{{ item?.code }} {{ item?.optionName }}</template>
                 <template #first>{{ $t("pages.account.checkout_defaults.not_selected_placeholder") }}</template>
-                <template #item="{ item }"> {{ item?.code }} {{ item?.optionName }} </template>
+                <template #item="{ item }"> {{ item?.code }} {{ item?.optionName }}</template>
               </VcSelect>
-              <VcButton
-                class="uppercase mt-8 px-12 self-center lg:self-start"
-                @click="saveDefaults()"
-                v-t="'pages.account.checkout_defaults.update_button'"
-              ></VcButton>
+
+              <VcButton class="uppercase mt-8 px-12 self-center lg:self-start" @click="saveDefaults()">
+                {{ $t("pages.account.checkout_defaults.update_button") }}
+              </VcButton>
             </div>
           </div>
         </div>

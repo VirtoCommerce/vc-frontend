@@ -55,8 +55,8 @@
                   size="lg"
                   class="uppercase mt-6 lg:mt-3 w-full lg:w-48"
                   :is-waiting="!isSubmitEnabled"
-                  v-t="'pages.account.profile.update_button'"
                 >
+                  {{ $t("pages.account.profile.update_button") }}
                 </VcButton>
               </div>
             </form>

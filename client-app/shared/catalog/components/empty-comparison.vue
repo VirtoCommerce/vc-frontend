@@ -16,9 +16,10 @@
         <h2 class="text-black-800 text-2xl font-bold mb-8 text-center md:text-left">
           {{ $t("pages.compare.empty_list.message") }}
         </h2>
-        <VcButton :to="`/${SeoUrl.Catalog}`" size="lg" class="p-4 uppercase font-bold">{{
-          $t("pages.compare.empty_list.button_text")
-        }}</VcButton>
+
+        <VcButton :to="{ name: 'Catalog' }" size="lg" class="p-4 uppercase font-bold">
+          {{ $t("pages.compare.empty_list.button_text") }}
+        </VcButton>
       </div>
     </template>
     <template #right>
@@ -34,7 +35,6 @@
 <script setup lang="ts">
 import { VcImage, VcBreadcrumbs, VcButton, IBreadcrumbs } from "@/components";
 import { TwoColumn } from "@/shared/layout";
-import SeoUrl from "@core/seo-routes.enum";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 

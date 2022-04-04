@@ -39,21 +39,13 @@
 
     <!-- Form actions -->
     <div class="flex mt-8 text-base font-roboto-condensed" :class="{ 'max-w-sm': !props.growButtons }">
-      <VcButton
-        is-submit
-        size="lg"
-        class="flex-1 flex-shrink px-2 font-bold uppercase"
-        :is-waiting="!isSubmitEnabled"
-        v-t="'shared.account.sign_in_form.login_button'"
-      >
+      <VcButton is-submit size="lg" class="flex-1 flex-shrink px-2 font-bold uppercase" :is-waiting="!isSubmitEnabled">
+        {{ $t("shared.account.sign_in_form.login_button") }}
       </VcButton>
-      <VcButton
-        to="/sign-up"
-        size="lg"
-        is-outline
-        class="flex-1 ml-4 px-2 uppercase font-bold"
-        v-t="'shared.account.sign_in_form.registration_button'"
-      ></VcButton>
+
+      <VcButton :to="{ name: 'SignUp' }" size="lg" is-outline class="flex-1 ml-4 px-2 uppercase font-bold">
+        {{ $t("shared.account.sign_in_form.registration_button") }}
+      </VcButton>
     </div>
   </form>
 </template>

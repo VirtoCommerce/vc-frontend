@@ -116,8 +116,8 @@
                             ? selectShippingAddressDialog()
                             : addOrUpdateAddressDialog(AddressType.Shipping, shipment?.deliveryAddress)
                         "
-                        v-t="'pages.checkout.shipping_details_section.shipping_address_block.change_button'"
                       >
+                        {{ $t("pages.checkout.shipping_details_section.shipping_address_block.change_button") }}
                       </VcButton>
                     </div>
                   </template>
@@ -146,8 +146,8 @@
                             ? selectShippingAddressDialog()
                             : addOrUpdateAddressDialog(AddressType.Shipping)
                         "
-                        v-t="'pages.checkout.shipping_details_section.shipping_address_block.add_address_button'"
                       >
+                        {{ $t("pages.checkout.shipping_details_section.shipping_address_block.add_address_button") }}
                       </VcButton>
                     </div>
                   </template>
@@ -176,8 +176,8 @@
                       is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="showShipmentMethodDialog"
-                      v-t="'pages.checkout.shipping_details_section.shipping_method_block.change_button'"
                     >
+                      {{ $t("pages.checkout.shipping_details_section.shipping_method_block.change_button") }}
                     </VcButton>
                   </div>
                 </CheckoutLabeledBlock>
@@ -235,8 +235,8 @@
                       @click="
                         isAuthenticated ? selectBillingAddressDialog() : addOrUpdateAddressDialog(AddressType.Billing)
                       "
-                      v-t="'pages.checkout.payment_details_section.billing_address_block.add_address_button'"
                     >
+                      {{ $t("pages.checkout.payment_details_section.billing_address_block.add_address_button") }}
                     </VcButton>
                   </div>
                 </div>
@@ -281,8 +281,8 @@
                           ? selectBillingAddressDialog()
                           : addOrUpdateAddressDialog(AddressType.Billing, payment?.billingAddress)
                       "
-                      v-t="'pages.checkout.payment_details_section.billing_address_block.change_button'"
                     >
+                      {{ $t("pages.checkout.payment_details_section.billing_address_block.change_button") }}
                     </VcButton>
                   </div>
                 </div>
@@ -304,8 +304,8 @@
                       is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="showPaymentMethodDialog"
-                      v-t="'pages.checkout.payment_details_section.payment_method_block.change_button'"
                     >
+                      {{ $t("pages.checkout.payment_details_section.payment_method_block.change_button") }}
                     </VcButton>
                   </div>
                 </CheckoutLabeledBlock>
@@ -369,14 +369,16 @@
                   class="mt-8 mb-3 text-xs font-normal text-gray-400"
                   v-t="'pages.checkout.order_summary_block.warning_message'"
                 ></p>
+
                 <VcButton
                   class="uppercase w-full"
                   :is-disabled="!isValidCheckout"
                   :is-waiting="creatingOrder"
                   @click="createOrder"
-                  v-t="'pages.checkout.order_summary_block.place_order_button'"
                 >
+                  {{ $t("pages.checkout.order_summary_block.place_order_button") }}
                 </VcButton>
+
                 <div v-if="!isValidCheckout" class="flex space-x-2 bg-primary-100 rounded mt-3 p-3 text-xs">
                   <i class="fas fa-exclamation-triangle text-xl text-primary-600"></i>
                   <span v-t="'pages.checkout.invalid_checkout_message'"></span>

@@ -16,7 +16,10 @@
               <i class="fas fa-check-circle text-7xl lg:text-4xl text-green-600"></i>
               <div class="text-lg" v-t="'pages.reset_password.success_message'"></div>
             </div>
-            <VcButton to="/sign-in" class="w-48 uppercase" v-t="'pages.reset_password.log_in_button'"></VcButton>
+
+            <VcButton :to="{ name: 'SignIn' }" class="w-48 uppercase">
+              {{ $t("pages.reset_password.log_in_button") }}
+            </VcButton>
           </div>
         </div>
         <div v-else class="flex flex-col items-center space-y-10 lg:space-y-12 lg:items-start lg:mt-12">
@@ -24,7 +27,10 @@
             <i class="fas fa-times-circle text-7xl lg:text-4xl text-[color:var(--color-danger)]"></i>
             <div class="text-lg" v-t="'pages.reset_password.data_invalid_error_message'"></div>
           </div>
-          <VcButton to="/" class="w-48 uppercase" v-t="'pages.reset_password.home_button'"></VcButton>
+
+          <VcButton to="/" class="w-48 uppercase">
+            {{ $t("pages.reset_password.home_button") }}
+          </VcButton>
         </div>
       </div>
     </template>

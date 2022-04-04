@@ -122,11 +122,9 @@
             </div>
           </VcCard>
 
-          <VcButton
-            class="uppercase w-full"
-            @click="printOrder"
-            v-t="'shared.checkout.thank_you.print_order'"
-          ></VcButton>
+          <VcButton class="uppercase w-full" @click="printOrder">
+            {{ $t("shared.checkout.thank_you.print_order") }}
+          </VcButton>
         </div>
       </div>
     </div>

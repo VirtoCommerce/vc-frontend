@@ -36,7 +36,9 @@
             </div>
 
             <div class="mt-7 md:mt-5">
-              <VcButton to="/checkout" class="uppercase px-2 w-full" v-t="'pages.product.view_cart_button'"></VcButton>
+              <VcButton :to="{ name: 'Checkout' }" class="uppercase px-2 w-full">
+                {{ $t("pages.product.view_cart_button") }}
+              </VcButton>
             </div>
           </ProductPriceBlock>
 

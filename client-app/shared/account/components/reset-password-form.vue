@@ -23,12 +23,8 @@
         {{ error }}
       </VcAlert>
 
-      <VcButton
-        is-submit
-        class="mt-6 lg:mt-3 w-full lg:w-52 uppercase"
-        :is-waiting="loading"
-        v-t="'shared.account.reset_password_form.reset_password_button'"
-      >
+      <VcButton is-submit class="mt-6 lg:mt-3 w-full lg:w-52 uppercase" :is-waiting="loading">
+        {{ $t("shared.account.reset_password_form.reset_password_button") }}
       </VcButton>
     </div>
   </form>

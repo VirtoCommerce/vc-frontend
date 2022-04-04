@@ -42,17 +42,17 @@
                   outline
                   size="sm"
                   @click="onSearchStart"
-                  v-t="'pages.catalog.search_card.search_button'"
                 >
+                  {{ $t("pages.catalog.search_card.search_button") }}
                 </VcButton>
               </div>
             </VcCard>
 
             <!-- Previously purchased -->
             <VcCard :title="$t('pages.catalog.purchased_filter_card.title')">
-              <VcCheckbox color="[color:var(--color-link)]">{{
-                $t("pages.catalog.purchased_filter_card.checkbox_label")
-              }}</VcCheckbox>
+              <VcCheckbox color="[color:var(--color-link)]">
+                {{ $t("pages.catalog.purchased_filter_card.checkbox_label") }}
+              </VcCheckbox>
             </VcCard>
 
             <!-- Branch availability -->
@@ -159,8 +159,8 @@
                 :to="{ name: 'Product', params: { productId: item.id } }"
                 :class="{ 'w-full': viewModeQueryParam === 'list' }"
                 class="uppercase mb-4"
-                v-t="'pages.catalog.choose_button'"
               >
+                {{ $t("pages.catalog.choose_button") }}
               </VcButton>
 
               <AddToCart v-else :product="item" />

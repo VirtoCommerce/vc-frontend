@@ -25,8 +25,8 @@
           size="lg"
           class="uppercase px-5 xl:px-8"
           is-outline
-          v-t="'shared.bulk_order.copy_n_paste.reset_button'"
         >
+          {{ $t("shared.bulk_order.copy_n_paste.reset_button") }}
         </VcButton>
 
         <VcButton
@@ -35,8 +35,8 @@
           @click="addToCart"
           size="lg"
           class="flex justify-self-end uppercase px-5 xl:px-8"
-          v-t="'shared.bulk_order.copy_n_paste.add_to_cart_button'"
         >
+          {{ $t("shared.bulk_order.copy_n_paste.add_to_cart_button") }}
         </VcButton>
       </div>
     </div>

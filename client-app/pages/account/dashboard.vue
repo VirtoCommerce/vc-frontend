@@ -15,16 +15,13 @@
           <VcCard :title="$t('pages.account.dashboard.last_orders_card.title')" :full-width-content="true">
             <template #header-button>
               <div v-if="isMobile">
-                <VcButton
-                  :to="`/account/orders`"
-                  :is-outline="true"
-                  class="px-2 uppercase text-sm"
-                  v-t="'pages.account.dashboard.last_orders_card.all_orders_link'"
-                ></VcButton>
+                <VcButton :to="{ name: 'Orders' }" :is-outline="true" class="px-2 uppercase text-sm">
+                  {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
+                </VcButton>
               </div>
               <div class="flex items-center" v-else>
                 <router-link
-                  :to="`/account/orders`"
+                  :to="{ name: 'Orders' }"
                   class="text-xs text-blue-500 hover:text-blue-700 font-bold mr-3"
                   v-t="'pages.account.dashboard.last_orders_card.all_orders_link'"
                 ></router-link>
