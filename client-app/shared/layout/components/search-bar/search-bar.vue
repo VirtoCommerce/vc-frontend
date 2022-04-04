@@ -11,15 +11,17 @@
       <input
         v-model.trim="searchPhrase"
         :disabled="loading"
+        :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
         maxlength="30"
-        placeholder="Enter keyword, item, model or replacement part number"
         class="flex-grow mr-4 rounded h-10 px-4 font-medium text-sm outline-none disabled:bg-gray-200"
         @keyup.enter="search"
         @keyup.esc="searchDropdownVisible && hideSearchDropdown()"
         @input="searchDropdownVisible && hideSearchDropdown()"
       />
 
-      <VcButton class="uppercase px-4 h-10" @click="search">Search</VcButton>
+      <VcButton class="uppercase px-4 h-10" @click="search">
+        {{ $t("shared.layout.search_bar.search_button") }}
+      </VcButton>
 
       <!-- Dropdown -->
       <transition name="slide-fade-top">
@@ -31,7 +33,9 @@
           <template v-if="categories.length || products.length">
             <!-- Categories -->
             <section v-if="categories.length">
-              <header class="px-5 py-2 text-xs text-gray-500 bg-gray-100">Categories</header>
+              <header class="px-5 py-2 text-xs text-gray-500 bg-gray-100">
+                {{ $t("shared.layout.search_bar.categories_label") }}
+              </header>
 
               <div class="flex gap-5 px-5 py-3 text-sm">
                 <ul v-for="(column, index) in categoriesColumns" :key="index" class="w-1/5">
@@ -52,7 +56,9 @@
 
             <!-- Products -->
             <section v-if="products.length">
-              <header class="px-5 py-2 text-xs text-gray-500 bg-gray-100">Products</header>
+              <header class="px-5 py-2 text-xs text-gray-500 bg-gray-100">
+                {{ $t("shared.layout.search_bar.products_label") }}
+              </header>
 
               <div class="px-5 pt-5 pb-3 grid grid-cols-3 gap-5 xl:gap-7">
                 <SearchBarProductCard
@@ -72,7 +78,7 @@
                 size="sm"
                 @click="isApplied && hideSearchDropdown()"
               >
-                View all {{ total }} results
+                {{ $t("shared.layout.search_bar.view_all_results_button", { total }) }}
               </VcButton>
             </section>
           </template>
@@ -83,10 +89,7 @@
               <use href="/static/images/search-not-found.svg#search-not-found" />
             </svg>
 
-            <p class="inline-block">
-              No results were found for your "<strong>{{ searchPhrase }}</strong
-              >" query
-            </p>
+            <p class="inline-block" v-html="$t('shared.layout.search_bar.no_results', { searchPhrase })" />
           </div>
         </div>
       </transition>

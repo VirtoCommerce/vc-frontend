@@ -62,8 +62,8 @@
             size="lg"
             class="uppercase px-5 xl:px-8"
             is-outline
-            v-t="'shared.bulk_order.manually.reset_button'"
           >
+            {{ $t("shared.bulk_order.manually.reset_button") }}
           </VcButton>
         </div>
 
@@ -74,8 +74,8 @@
             @click="addToCart"
             size="lg"
             class="uppercase px-5 md:px-0 md:w-full"
-            v-t="'shared.bulk_order.manually.add_to_cart_button'"
           >
+            {{ $t("shared.bulk_order.manually.add_to_cart_button") }}
           </VcButton>
         </div>
       </div>

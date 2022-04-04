@@ -14,7 +14,10 @@
           <i class="fas fa-check-circle text-7xl lg:text-4xl text-green-600"></i>
           <div class="text-lg">{{ $t("pages.forgot_password.reset_link_was_sent_message") }}</div>
         </div>
-        <VcButton to="/" class="w-48 uppercase" v-t="'pages.forgot_password.home_button'"></VcButton>
+
+        <VcButton to="/" class="w-48 uppercase">
+          {{ $t("pages.forgot_password.home_button") }}
+        </VcButton>
       </div>
     </template>
     <template #right>

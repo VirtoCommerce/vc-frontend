@@ -90,7 +90,8 @@
             size="lg"
             class="uppercase mt-6 lg:mt-3 w-full lg:w-48"
             :is-waiting="loading"
-            >{{ $t("pages.sign_up.register_button") }}
+          >
+            {{ $t("pages.sign_up.register_button") }}
           </VcButton>
         </div>
       </form>

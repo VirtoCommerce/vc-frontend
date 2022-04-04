@@ -76,17 +76,19 @@
               is-outline
               class="uppercase px-2 font-bold"
               @click="updateQuantity"
-              v-t="'shared.checkout.product_card.update_button'"
             >
+              {{ $t("shared.checkout.product_card.update_button") }}
             </VcButton>
+
             <VcButton
               size="sm"
               kind="secondary"
               is-outline
               class="uppercase px-2"
               @click="$emit('remove:item', lineItem.id)"
-              v-t="'shared.checkout.product_card.remove_button'"
-            ></VcButton>
+            >
+              {{ $t("shared.checkout.product_card.remove_button") }}
+            </VcButton>
           </div>
           <div
             v-if="!readOnly"

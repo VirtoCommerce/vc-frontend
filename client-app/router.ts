@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import SeoUrl from "@core/seo-routes.enum";
 
 // Pages
@@ -26,8 +26,56 @@ const Profile = () => import("./pages/account/profile.vue");
 const DemoLanding = () => import("./pages/demo-landing/demo-landing.vue");
 const CompareProducts = () => import("./pages/compare-products/compare-products.vue");
 
+const DevUIKit = () => import("./pages/_ui-kit/ui-kit.vue");
+
+// Router map
+const routes: RouteRecordRaw[] = [
+  { path: "/", name: "Home", component: Home },
+  { path: "/sign-in", name: "SignIn", component: SingInPage },
+  { path: "/sign-up", name: "SignUp", component: SignUpPage },
+  {
+    path: "/account",
+    name: "Account",
+    component: Account,
+    redirect: { name: "Dashboard" },
+    meta: { requiresAuth: true },
+    children: [
+      { path: "dashboard", name: "Dashboard", component: Dashboard },
+      { path: "addresses", name: "Addresses", component: Addresses },
+      { path: "profile", name: "Profile", component: Profile },
+      { path: "checkout-defaults", name: "CheckoutDefaults", component: CheckoutDefaults },
+      { path: "orders", name: "Orders", component: Orders },
+      { path: "order-details/:id", name: "OrderDetails", component: OrderDetails },
+      { path: "lists", name: "Lists", component: Lists },
+      { path: "lists/:listId", name: "ListDetails", component: {}, props: true }, // TODO: implement in another user story
+    ],
+  },
+  { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword },
+  { path: "/reset-password", name: "ResetPassword", component: ResetPassword },
+  { path: "/search", name: "Search", component: Search },
+  { path: `/${SeoUrl.Catalog}/:categorySeoUrls*`, name: "Catalog", component: Catalog, props: true },
+  { path: `/${SeoUrl.Product}/:productId`, name: "Product", component: Product, props: true },
+  { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },
+  { path: "/checkout", name: "Checkout", component: Checkout },
+  { path: "/demo-landing", name: "DemoLanding", component: DemoLanding },
+  { path: "/compare", name: "CompareProducts", component: CompareProducts },
+  { path: "/500", name: "InternalError", component: Error500 },
+  { path: "/403", name: "NoAccess", component: Error403 },
+  { path: "/:pathMatch(.*)*", name: "NotFound", component: Error404 },
+];
+
+if (import.meta.env.MODE === "development") {
+  routes.push({
+    path: "/dev-ui-kit",
+    name: "DevUIKit",
+    component: DevUIKit,
+  });
+}
+
 // Router definition
 const router = createRouter({
+  routes,
+
   // History mode
   history: createWebHistory(),
 
@@ -42,42 +90,6 @@ const router = createRouter({
       };
     }
   },
-
-  // Router map
-  routes: [
-    { path: "/", name: "Home", component: Home },
-    { path: "/sign-in", name: "SignIn", component: SingInPage },
-    { path: "/sign-up", name: "SignUp", component: SignUpPage },
-    {
-      path: "/account",
-      name: "Account",
-      component: Account,
-      redirect: { name: "Dashboard" },
-      meta: { requiresAuth: true },
-      children: [
-        { path: "dashboard", name: "Dashboard", component: Dashboard },
-        { path: "addresses", name: "Addresses", component: Addresses },
-        { path: "profile", name: "Profile", component: Profile },
-        { path: "checkout-defaults", name: "CheckoutDefaults", component: CheckoutDefaults },
-        { path: "orders", name: "Orders", component: Orders },
-        { path: "order-details/:id", name: "OrderDetails", component: OrderDetails },
-        { path: "lists", name: "Lists", component: Lists },
-        { path: "lists/:listId", name: "ListDetails", component: {}, props: true }, // TODO: implement in another user story
-      ],
-    },
-    { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword },
-    { path: "/reset-password", name: "ResetPassword", component: ResetPassword },
-    { path: "/search", name: "Search", component: Search },
-    { path: `/${SeoUrl.Catalog}/:categorySeoUrls*`, name: "Catalog", component: Catalog, props: true },
-    { path: `/${SeoUrl.Product}/:productId`, name: "Product", component: Product, props: true },
-    { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },
-    { path: "/checkout", name: "Checkout", component: Checkout },
-    { path: "/demo-landing", name: "DemoLanding", component: DemoLanding },
-    { path: "/compare", name: "CompareProducts", component: CompareProducts },
-    { path: "/500", name: "InternalError", component: Error500 },
-    { path: "/403", name: "NoAccess", component: Error403 },
-    { path: "/:pathMatch(.*)*", name: "NotFound", component: Error404 },
-  ],
 });
 
 export default router;

@@ -45,8 +45,8 @@
                   :to="{ name: 'Product', params: { productId: item.id } }"
                   :class="{ 'w-full': viewModeQueryParam === 'list' }"
                   class="uppercase mb-4"
-                  v-t="'pages.search.choose_button'"
                 >
+                  {{ $t("pages.search.choose_button") }}
                 </VcButton>
 
                 <AddToCart v-else :product="item"></AddToCart>
@@ -72,7 +72,9 @@
             <p class="md:inline-block" v-html="$t('pages.search.no_results_message', [searchParams.keyword])"></p>
 
             <div class="md:hidden mt-10">
-              <VcButton to="/" size="md" class="w-40 uppercase" v-t="'pages.search.home_button'"></VcButton>
+              <VcButton to="/" size="md" class="w-40 uppercase">
+                {{ $t("pages.search.home_button") }}
+              </VcButton>
             </div>
           </div>
         </div>

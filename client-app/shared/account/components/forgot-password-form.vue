@@ -14,12 +14,8 @@
         {{ error }}
       </VcAlert>
 
-      <VcButton
-        is-submit
-        class="mt-6 lg:mt-3 w-full lg:w-48 uppercase"
-        :is-waiting="loading"
-        v-t="'shared.account.forgot_password_form.submit_button'"
-      >
+      <VcButton is-submit class="mt-6 lg:mt-3 w-full lg:w-48 uppercase" :is-waiting="loading">
+        {{ $t("shared.account.forgot_password_form.submit_button") }}
       </VcButton>
     </div>
   </form>

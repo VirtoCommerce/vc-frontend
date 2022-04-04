@@ -10,6 +10,7 @@ export let currentUserId = window.USER_ID || "";
 export let catalogId = window.CATALOG_ID || "";
 export const categoryId = window.CATEGORY_ID || "";
 export const productId = window.PRODUCT_ID || "";
+export const isDevelopment = import.meta.env.MODE === "development";
 
 export function setUserId(id: string): void {
   currentUserId = id;
