@@ -1,7 +1,7 @@
 <template>
   <template v-if="!showThankYou">
     <!-- Empty cart view -->
-    <EmptyCart v-if="cart.items && cart.items?.length === 0 && !showThankYou"></EmptyCart>
+    <EmptyCart v-if="cart.items && cart.items?.length === 0 && !showThankYou && !creatingOrder"></EmptyCart>
     <div v-else class="bg-gray-100 pt-7 pb-16 shadow-inner">
       <div class="max-w-screen-2xl md:px-12 mx-auto">
         <h2

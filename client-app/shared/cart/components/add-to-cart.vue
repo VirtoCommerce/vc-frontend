@@ -12,11 +12,11 @@
       pattern="\d*"
       :max="maxQty"
       :min="minQty"
-      class="appearance-none border rounded-none rounded-l border-r-0 flex-1 w-full text-base lg:text-sm border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9 min-w-0"
+      class="appearance-none border rounded-none rounded-l flex-1 w-full text-base lg:text-sm border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9 min-w-0"
       :class="[
         !!errorMessage
           ? 'border-[color:var(--color-danger)] focus:border-[color:var(--color-danger)] border-r -mr-px z-10'
-          : '',
+          : 'border-r-0',
       ]"
       :disabled="disabled"
       @input="onInput"

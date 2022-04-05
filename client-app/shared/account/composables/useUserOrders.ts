@@ -3,7 +3,7 @@ import { CustomerOrderType } from "@core/api/graphql/types";
 import { getMyOrders } from "@core/api/graphql/account";
 import { Logger } from "@core/utilities";
 import { getSortingExpression, ISortInfo } from "@/shared/account";
-import { sortAscending } from "@core/constants";
+import { sortDescending } from "@core/constants";
 
 export default () => {
   const orders: Ref<CustomerOrderType[]> = shallowRef<CustomerOrderType[]>([]);
@@ -15,8 +15,8 @@ export default () => {
 
   // TODO: refine the sorting logic
   const sort: Ref<ISortInfo> = ref({
-    column: "number",
-    direction: sortAscending,
+    column: "createdDate",
+    direction: sortDescending,
   });
 
   async function loadOrders() {

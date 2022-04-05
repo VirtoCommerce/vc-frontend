@@ -583,8 +583,8 @@
       },
       "order_details": {
         "title": "Order #{0}",
-        "status_label": "@:common.labels.status{':'}",
-        "placed_on_label": "Placed on:",
+        "status_label": "@:common.labels.status{':'} ",
+        "placed_on_label": "Placed on: ",
         "products_section": {
           "title": "Purchased products"
         },
