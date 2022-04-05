@@ -99,7 +99,7 @@
           </VcCard>
 
           <VcCard :title="$t('shared.checkout.thank_you.billing_address_card.title')" is-collapsible class="mb-5">
-            <div class="flex flex-col text-sm">
+            <div class="flex flex-col space-y-1.5 text-sm">
               <span class="font-extrabold"
                 >{{ order.inPayments?.[0]?.billingAddress?.firstName }}
                 {{ order.inPayments?.[0]?.billingAddress?.lastName }}</span
