@@ -62,7 +62,7 @@
 <script setup lang="ts">
 import { VcCard } from "@/components";
 import { AccountNavigationLink } from ".";
-import { watch } from "vue";
+import { watchEffect } from "vue";
 import { useWishlists } from "@/shared/wishlists";
 
 const { lists, fetchWishlists } = useWishlists();
@@ -78,12 +78,9 @@ const props = defineProps({
   },
 });
 
-watch(
-  () => props.listDetails,
-  () => {
-    if (props.listDetails) {
-      fetchWishlists();
-    }
+watchEffect(() => {
+  if (props.listDetails) {
+    fetchWishlists();
   }
-);
+});
 </script>
