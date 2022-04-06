@@ -69,7 +69,7 @@ onMounted(async () => {
   // temporary solution
   setUserId(themeContext.userId || me.value?.id);
   setCatalogId(themeContext.catalogId!);
-  setLocale(themeContext.language || "en-US");
+  setLocale(themeContext.language?.cultureName || "en-US");
 
   await loadMyCart();
   loaded.value = true;
