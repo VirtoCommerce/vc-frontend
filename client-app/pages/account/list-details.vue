@@ -69,9 +69,12 @@
           </template>
 
           <!-- Skeletons -->
-          <div v-else-if="loading" class="flex flex-col md:space-y-3 divide-y md:divide-none">
-            <WishlistCardSkeleton v-for="item in 5" :key="item" />
-          </div>
+          <template v-else-if="loading">
+            <div v-if="!isMobile" class="flex flex-col md:space-y-3 divide-y md:divide-none">
+              <WishlistCardSkeleton v-for="i in itemsPerPage" :key="i" />
+            </div>
+            <div v-else><ProductSkeletonGrid v-for="i in itemsPerPage" :key="i"></ProductSkeletonGrid></div>
+          </template>
 
           <!-- Empty -->
           <div v-else class="flex grow items-center justify-center">
@@ -126,7 +129,7 @@ import {
   DeleteWishlistProductDialog,
 } from "@/shared/wishlists";
 import { LineItemType } from "@core/api/graphql/types";
-import { ProductCardGrid } from "@/shared/catalog";
+import { ProductCardGrid, ProductSkeletonGrid } from "@/shared/catalog";
 import { useI18n } from "vue-i18n";
 import { usePopup } from "@/shared/popup";
 import { computed, ref, watchEffect } from "vue";
