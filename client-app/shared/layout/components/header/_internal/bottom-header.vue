@@ -16,11 +16,11 @@
 
       <div class="flex items-center space-x-8 ml-8">
         <BottomHeaderLink
-          v-for="(item, i) in headerMenu"
-          :key="i"
-          :to="item.url"
-          :children="$menus[item.id]"
+          v-for="item in mainMenuLinks"
+          :key="item.title"
+          :to="item.route"
           :title="item.title"
+          :children="item.children"
         >
           <template v-if="item.id === 'checkout'">
             <div class="flex items-center">
@@ -74,17 +74,14 @@
 <script setup lang="ts">
 import { VcImage } from "@/components";
 import BottomHeaderLink from "./bottom-header-link.vue";
-import menuSchema from "@/config/menu";
 import { useCart } from "@/shared/cart";
-import { useSearchBar, SearchBar } from "@/shared/layout";
+import { useSearchBar, SearchBar, useNavigations } from "@/shared/layout";
 import { useCompareProducts } from "@/shared/compare";
 import { useUser } from "@/shared/account";
 
 const { organization } = useUser();
-
 const { cart } = useCart();
+const { mainMenuLinks } = useNavigations();
 const { productsIds } = useCompareProducts();
 const { searchBarVisible, showSearchBar } = useSearchBar();
-
-const headerMenu = menuSchema?.header?.main;
 </script>

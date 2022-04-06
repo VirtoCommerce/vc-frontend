@@ -79,19 +79,14 @@
         "link_logout": "Logout",
         "menu": {
           "home": "Home",
-          "all_products": "All products",
-          "all_products_children": {
-            "carriage_bolts": "Carriage Bolts",
-            "flange_bolts": "Flange Bolts",
-            "laser_printers": "Laser Printers",
-            "inkjet_printers": "Inkjet Printers"
-          },
-          "bulk": "Bulk order pad",
+          "all_products": "Products",
+          "bulk": "Bulk order",
+          "compare": "Compare",
           "cart": "Cart",
-          "contact_us": "Contact us",
-          "my_account": "My account"
+          "contact_us": "Contact"
         },
         "mobile": {
+          "my_account": "@:common.links.account",
           "account_menu": {
             "dashboard": "@:common.links.dashboard",
             "profile": "@:common.links.profile",
@@ -100,6 +95,8 @@
             "your_lists": "@:common.links.your_lists",
             "checkout_defaults": "@:common.links.checkout_defaults"
           },
+          "settings": "Settings",
+          "currency": "Currency",
           "search_bar": {
             "input_placeholder": "Enter keyword, item, model or replacement part number"
           }

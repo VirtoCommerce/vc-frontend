@@ -74,8 +74,8 @@ const props = defineProps({
 
 defineEmits(["click"]);
 
-const isEnabled = eagerComputed(() => !props.isDisabled && !props.isWaiting);
-const isLink = eagerComputed(() => !!props.to && isEnabled.value);
+const isEnabled = eagerComputed<boolean>(() => !props.isDisabled && !props.isWaiting);
+const isLink = eagerComputed<boolean>(() => !!props.to && isEnabled.value);
 </script>
 
 <style scoped lang="scss">

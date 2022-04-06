@@ -43,7 +43,14 @@
   <div v-show="searchBarVisible" class="h-16 mt-2"></div>
 
   <!-- Mobile menu -->
-  <MobileMenu v-if="mobileMenuVisible" @close="mobileMenuVisible = false" />
+  <transition
+    enter-from-class="translate-x-full"
+    leave-to-class="translate-x-full"
+    enter-active-class="will-change-transform"
+    leave-active-class="will-change-transform"
+  >
+    <MobileMenu v-if="mobileMenuVisible" @close="mobileMenuVisible = false" class="transition-transform duration-150" />
+  </transition>
 </template>
 
 <script setup lang="ts">

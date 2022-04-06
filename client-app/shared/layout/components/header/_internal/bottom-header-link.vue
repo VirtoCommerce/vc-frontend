@@ -8,19 +8,21 @@
       <div>
         <slot>{{ title }}</slot>
       </div>
+
       <i
         class="fas ml-3 text-[color:var(--color-primary)] align-baseline"
         :class="[submenuVisible ? 'fa-chevron-up' : 'fa-chevron-down']"
-      ></i>
+      />
     </div>
+
     <div
       v-if="submenuVisible"
       class="absolute z-10 bg-[color:var(--color-header-bottom-dropdown-bg)] rounded-md shadow-lg w-60 flex flex-col px-5 py-4 space-y-3 mt-2"
     >
-      <template v-for="(item, i) in children" :key="i">
-        <slot name="item">
+      <template v-for="item in children" :key="item.title">
+        <slot name="item" v-bind="{ item }">
           <router-link
-            :to="item.url"
+            :to="item.route"
             class="font-bold text-[color:var(--color-header-bottom-dropdown-link)] hover:text-[color:var(--color-header-bottom-dropdown-link-hover)] text-sm"
             @click="submenuVisible = false"
           >
@@ -30,6 +32,7 @@
       </template>
     </div>
   </div>
+
   <!-- Regular link -->
   <router-link
     v-else-if="to"
@@ -42,9 +45,9 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, ref } from "vue";
+import { PropType, ref, shallowRef } from "vue";
 import { onClickOutside } from "@vueuse/core";
-import { MenuLinkType } from "@/core/api/graphql/types";
+import { MenuLink } from "@/shared/layout";
 import { RouteLocationRaw } from "vue-router";
 
 defineProps({
@@ -59,12 +62,12 @@ defineProps({
   },
 
   children: {
-    type: Array as PropType<MenuLinkType[]>,
+    type: Array as PropType<MenuLink[]>,
     default: null,
   },
 });
 
-const submenu = ref(null);
+const submenu = shallowRef<HTMLElement | null>(null);
 const submenuVisible = ref(false);
 
 onClickOutside(submenu, () => {
