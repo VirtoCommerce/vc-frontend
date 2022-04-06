@@ -16,5 +16,6 @@ export { default as getDefaultShippingAddress } from "./queries/getDefaultShippi
 export { default as getMyOrders } from "./queries/getMyOrders";
 export { default as getMyOrder } from "./queries/getMyOrder";
 export { default as getWishlists } from "./queries/getWishlists";
+export { default as getWishList } from "./queries/getWishList";
 
 export * from "./types";

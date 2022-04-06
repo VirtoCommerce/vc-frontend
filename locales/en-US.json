@@ -63,7 +63,8 @@
       "addresses": "Addresses",
       "orders": "Orders",
       "your_lists": "Your Lists",
-      "checkout_defaults": "Checkout Defaults"
+      "checkout_defaults": "Checkout Defaults",
+      "list_details": "List Details"
     }
   },
   "shared": {
@@ -150,7 +151,8 @@
           "addresses": "@:common.links.addresses",
           "orders": "@:common.links.orders",
           "your_lists": "@:common.links.your_lists",
-          "checkout_defaults": "@:common.links.checkout_defaults"
+          "checkout_defaults": "@:common.links.checkout_defaults",
+          "list_details": "@:common.links.list_details"
         }
       },
       "address_form": {
@@ -395,6 +397,11 @@
         "list_settings_button": "List settings",
         "remove_list_button": "Remove list"
       },
+      "list_details": {
+        "add_all_to_cart_button": "Add all products to cart",
+        "list_settings_button": "List settings",
+        "empty_list": "Your list is currently empty"
+      },
       "add_to_wishlists_dialog": {
         "title": "Please select list",
         "empty_list": "You don't have wish lists",
@@ -422,6 +429,12 @@
       "delete_wishlist_dialog": {
         "title": "Delete warning",
         "message": "Are you sure you want to remove “<span class=\"font-extrabold\">{listName}</span>” list?",
+        "delete_button": "@:common.buttons.delete",
+        "cancel_button": "@:common.buttons.cancel"
+      },
+      "delete_wishlist_product_dialog": {
+        "title": "Delete warning",
+        "message": "Are you sure you want to remove “<span class=\"font-extrabold\">{productName}</span>” from the list?",
         "delete_button": "@:common.buttons.delete",
         "cancel_button": "@:common.buttons.cancel"
       }

@@ -1,4 +1,4 @@
-import { computed, readonly, ref, shallowRef } from "vue";
+import { computed, readonly, Ref, ref, shallowRef } from "vue";
 import { Logger } from "@core/utilities";
 import {
   InputAddWishlistItemType,
@@ -13,11 +13,13 @@ import {
   deleteWishlist,
   deleteWishlistItem,
   renameWishlist as _renameWishlist,
+  getWishList,
 } from "@core/api/graphql/account";
 import { sortAscending } from "@core/constants";
 
 const loading = ref(true);
 const lists = shallowRef<WishlistType[]>([]);
+const list: Ref<WishlistType | null> = ref(null);
 
 export default function useWishlists() {
   async function createWishlist(name: string) {
@@ -47,6 +49,19 @@ export default function useWishlists() {
       }
     } catch (e) {
       Logger.error(`${useWishlists.name}.${fetchWishlists.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function fetchWishList(listId: string) {
+    loading.value = true;
+
+    try {
+      list.value = await getWishList(listId);
+    } catch (e) {
+      Logger.error(`${useWishlists.name}.${fetchWishList.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -112,11 +127,14 @@ export default function useWishlists() {
       }
     }
 
-    await fetchWishlists();
+    if (list.value?.id) {
+      await fetchWishList(list.value?.id);
+    }
   }
 
   return {
     fetchWishlists,
+    fetchWishList,
     createWishlist,
     renameWishlist,
     removeWishlist,
@@ -124,5 +142,6 @@ export default function useWishlists() {
     removeItemsFromWishlists,
     loading: readonly(loading),
     lists: computed(() => lists.value),
+    list: computed(() => list.value),
   };
 }
