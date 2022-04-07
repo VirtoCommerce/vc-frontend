@@ -183,11 +183,10 @@ function openDeleteProductDialog(item: LineItemType) {
 }
 
 function openListSettingsDialog() {
-  console.log(list.value);
   openPopup({
     component: AddOrUpdateWishlistDialog,
     props: {
-      list,
+      list: list.value,
     },
   });
 }
