@@ -96,6 +96,7 @@ function openDeleteDialog() {
     component: DeleteWishlistsDialog,
     props: {
       list: props.list,
+      redirectToLists: true
     },
   });
 }
