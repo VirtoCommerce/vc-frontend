@@ -10,7 +10,7 @@
         />
       </div>
       <router-link
-        :to="`/${SeoUrl.Product}/${lineItem.product?.id}`"
+        :to="{ name: 'Product', params: { productId: lineItem.product?.id } }"
         class="text-sm text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)] break-words font-extrabold line-clamp-3 overflow-hidden"
       >
         {{ lineItem.name }}
@@ -66,7 +66,6 @@ import { PropType } from "vue";
 import { VcImage, VcPriceDisplay } from "@/components";
 import { AddToCart } from "@/shared/cart";
 import { LineItemType } from "@core/api/graphql/types";
-import SeoUrl from "@core/seo-routes.enum";
 
 defineEmits(["remove"]);
 

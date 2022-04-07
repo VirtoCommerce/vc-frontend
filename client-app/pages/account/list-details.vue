@@ -46,7 +46,7 @@
                 @remove="openDeleteProductDialog(item)"
               ></WishlistProductItem>
               <div class="flex p-5" v-if="pages > 1">
-                <VcPagination v-model:page="page" :pages="pages" @update:page="page = $event"></VcPagination>
+                <VcPagination v-model:page="page" :pages="pages"></VcPagination>
               </div>
             </div>
             <div v-else class="grid grid-cols-2 gap-x-4 gap-y-6">
@@ -89,13 +89,7 @@
 
           <!-- Mobile footer block -->
           <div v-if="isMobile" class="flex flex-col space-y-4">
-            <VcPagination
-              v-if="pages > 1"
-              v-model:page="page"
-              :pages="pages"
-              class="mb-3 lg:mb-0"
-              @update:page="page = $event"
-            ></VcPagination>
+            <VcPagination v-if="pages > 1" v-model:page="page" :pages="pages" class="mb-3 lg:mb-0"></VcPagination>
             <VcButton
               v-if="listItems?.length"
               class="px-3 uppercase w-full"
