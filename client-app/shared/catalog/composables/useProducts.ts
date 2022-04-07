@@ -39,10 +39,10 @@ export default (
       pages.value = Math.ceil(total.value / (searchParams.itemsPerPage || 16));
 
       if (withFilters) {
-        filters.value = [
-          ...term_facets.sort((a, b) => a.label.localeCompare(b.label)).map(termFacetToProductsFilter),
-          ...range_facets.sort((a, b) => a.label.localeCompare(b.label)).map(rangeFacetToProductsFilter),
-        ];
+        filters.value = Array<ProductsFilter>().concat(
+          term_facets.sort((a, b) => a.label.localeCompare(b.label)).map(termFacetToProductsFilter),
+          range_facets.sort((a, b) => a.label.localeCompare(b.label)).map(rangeFacetToProductsFilter)
+        );
       }
     } catch (e) {
       Logger.error("useProducts.fetchProducts", e);

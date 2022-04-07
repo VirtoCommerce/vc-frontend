@@ -139,6 +139,41 @@
                 />
               </div>
             </div>
+
+            <!-- Filters chips -->
+            <div v-if="isExistSelectedFilters" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
+              <VcChip
+                class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
+                size="sm"
+                is-outline
+                clickable
+                closable
+                @click="resetFilters"
+                @close="resetFilters"
+              >
+                {{ $t("pages.catalog.reset_filters_button") }}
+              </VcChip>
+
+              <template v-for="filter in filters">
+                <template v-for="filterItem in filter.values">
+                  <VcChip
+                    v-if="filterItem.selected"
+                    :key="filter.paramName + filterItem.value"
+                    class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
+                    size="sm"
+                    closable
+                    @close="
+                      removeFilterItem({
+                        paramName: filter.paramName,
+                        value: filterItem.value,
+                      })
+                    "
+                  >
+                    {{ filterItem.label }}
+                  </VcChip>
+                </template>
+              </template>
+            </div>
           </div>
 
           <!-- Products -->
@@ -192,8 +227,9 @@ import {
   PropType,
   onBeforeUnmount,
   WatchStopHandle,
+  triggerRef,
 } from "vue";
-import { breakpointsTailwind, useBreakpoints, whenever } from "@vueuse/core";
+import { breakpointsTailwind, eagerComputed, useBreakpoints, whenever } from "@vueuse/core";
 import {
   Breadcrumbs,
   IBreadcrumbsItem,
@@ -203,12 +239,15 @@ import {
   useProducts,
   ViewMode,
   ProductsSearchParams,
+  ProductsFilterValue,
+  ProductsFilter,
 } from "@/shared/catalog";
 import {
   VcButton,
   VcCard,
   VcCardSkeleton,
   VcCheckbox,
+  VcChip,
   VcInfinityScrollLoader,
   VcSelect,
   VcScrollTopButton,
@@ -276,7 +315,10 @@ const searchParams = computed<ProductsSearchParams>(() => ({
   filter: filterQueryParam.value,
 }));
 
-const isAppliedKeyword = computed<boolean>(() => keyword.value === keywordQueryParam.value);
+const isAppliedKeyword = eagerComputed<boolean>(() => keyword.value === keywordQueryParam.value);
+const isExistSelectedFilters = eagerComputed<boolean>(() =>
+  filters.value.some((filter) => filter.values.some((value) => value.selected))
+);
 
 const breadcrumbsItems = computed<IBreadcrumbsItem[]>(() => {
   const items: IBreadcrumbsItem[] = [{ url: "/", title: t("common.links.home") }];
@@ -310,6 +352,22 @@ function onSearchStart() {
 function applyFilters() {
   hideMobileSidebar();
   filterQueryParam.value = toFilterExpression(filters);
+  triggerRef(filters);
+}
+
+function removeFilterItem(payload: Pick<ProductsFilter, "paramName"> & Pick<ProductsFilterValue, "value">) {
+  const filter = filters.value.find((item) => item.paramName === payload.paramName);
+  const filterItem = filter?.values.find((item) => item.value === payload.value);
+
+  if (filterItem) {
+    filterItem.selected = false;
+    applyFilters();
+  }
+}
+
+function resetFilters() {
+  filters.value.forEach((filter) => filter.values.forEach((filterItem) => (filterItem.selected = false)));
+  applyFilters();
 }
 
 async function loadProducts() {

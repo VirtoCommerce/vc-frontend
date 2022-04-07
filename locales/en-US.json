@@ -648,7 +648,8 @@
       "products_found_message2": "{0} displayed that include {1} products.",
       "filters_button": "@:common.buttons.filters",
       "sort_by_label": "@:common.labels.sort_by",
-      "choose_button": "@:common.buttons.choose"
+      "choose_button": "@:common.buttons.choose",
+      "reset_filters_button": "Reset filters"
     },
     "product": {
       "back_button": "@:common.buttons.back",
