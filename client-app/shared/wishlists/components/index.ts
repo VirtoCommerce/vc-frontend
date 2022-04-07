@@ -6,3 +6,4 @@ export { default as WishlistCard } from "./wishlist-card.vue";
 export { default as WishlistCardSkeleton } from "./wishlist-card-skeleton.vue";
 export { default as WishlistProductItem } from "./wishlist-product-item.vue";
 export { default as DeleteWishlistProductDialog } from "./delete-wishlist-product.vue";
+export { default as UnsuccessfulCreateWishlistDialog } from "./unsuccessful-create-list-dialog.vue";

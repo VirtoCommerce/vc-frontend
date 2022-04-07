@@ -24,6 +24,7 @@
               size="sm"
               is-outline
               @click="openCreateListDialog"
+              :class="creationButtonDisabled && 'vc-button--disabled'"
             >
               <i class="fa fa-plus text-inherit -ml-0.5 mr-2" />
 
@@ -77,10 +78,14 @@ import {
   useWishlists,
   AddOrUpdateWishlistDialog,
   DeleteWishlistsDialog,
+  UnsuccessfulCreateWishlistDialog,
 } from "@/shared/wishlists";
 import { LineItemType, WishlistType } from "@core/api/graphql/types";
 import { useI18n } from "vue-i18n";
 import { usePopup } from "@/shared/popup";
+import { configInjectionKey } from "@/core/injection-keys";
+import { inject } from "vue";
+import { computed } from "@vue/reactivity";
 
 const { t } = useI18n();
 const { openPopup } = usePopup();
@@ -92,15 +97,26 @@ const breadcrumbs: IBreadcrumbs[] = [
   { title: t("shared.account.navigation.links.your_lists"), route: { name: "Lists" } },
 ];
 
+const config = inject(configInjectionKey);
+const listsLimit = config?.wishlists_limit || 10;
+
+const creationButtonDisabled = computed(() => lists.value.length >= listsLimit);
+
 function addAllToCart(items: LineItemType[]) {
   // TODO: implement in another user story
   console.log(items);
 }
 
 function openCreateListDialog() {
-  openPopup({
-    component: AddOrUpdateWishlistDialog,
-  });
+  if (creationButtonDisabled.value) {
+    openPopup({
+      component: UnsuccessfulCreateWishlistDialog,
+    });
+  } else {
+    openPopup({
+      component: AddOrUpdateWishlistDialog,
+    });
+  }
 }
 
 function openListSettingsDialog(list: WishlistType) {

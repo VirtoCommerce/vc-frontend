@@ -415,6 +415,10 @@
         "continue_shopping_button": "@:common.buttons.continue_shopping_button",
         "view_your_list_button": "View your list | View your lists"
       },
+      "unsuccessful_create_wishlist_dialog": {
+        "message": "You’ve reached max number of lists. Please delete one, that you do not use, or reshuffle products to reuse the existing list.",
+        "ok_button": "@:common.buttons.ok"
+      },
       "add_or_update_wishlist_dialog": {
         "title": "New list",
         "edit_mode_title": "List settings",
