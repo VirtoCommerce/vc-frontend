@@ -19,9 +19,10 @@ import { sortAscending } from "@core/constants";
 
 const loading = ref(true);
 const lists = shallowRef<WishlistType[]>([]);
-const list: Ref<WishlistType | null> = ref(null);
 
 export default function useWishlists() {
+  const list: Ref<WishlistType | null> = ref(null);
+
   async function createWishlist(name: string) {
     loading.value = true;
 
