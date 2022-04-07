@@ -18,62 +18,6 @@ query GetWishlist($listId: String!) {
         images {
           url
         }
-        description {
-          content
-          id
-        }
-        descriptions {
-          content
-          id
-        }
-        properties {
-          name
-          value
-          type
-          hidden
-          valueType
-          label
-        }
-        variations {
-          id
-          name
-          images {
-            url
-          }
-          minQuantity
-          maxQuantity
-          code
-          properties {
-            name
-            value
-            type
-          }
-          availabilityData {
-            isActive
-            isAvailable
-            isBuyable
-            isInStock
-            availableQuantity
-          }
-          price {
-            actual {
-              amount
-              formattedAmount
-            }
-            discountAmount {
-              amount
-              formattedAmount
-            }
-            sale {
-              amount
-              formattedAmount
-            }
-            list {
-              amount
-              formattedAmount
-            }
-          }
-        }
         availabilityData {
           isActive
           isAvailable
