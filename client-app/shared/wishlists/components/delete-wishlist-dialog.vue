@@ -29,32 +29,21 @@ import { VcButton, VcPopup } from "@/components";
 import { useWishlists } from "@/shared/wishlists";
 import { PropType } from "vue";
 import { WishlistType } from "@core/api/graphql/types";
-import { useRouter } from "vue-router";
 
 const props = defineProps({
   list: {
     type: Object as PropType<WishlistType>,
     required: true,
   },
-  redirectToLists: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 const { loading, removeWishlist } = useWishlists();
-
-const router = useRouter();
 
 async function remove(closingHandle: () => void) {
   const result: boolean = await removeWishlist(props.list.id!);
 
   if (result) {
     closingHandle();
-  }
-
-  if (props.redirectToLists) {
-    router.push({ name: "Lists" });
   }
 }
 </script>

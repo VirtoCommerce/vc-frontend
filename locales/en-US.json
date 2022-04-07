@@ -420,8 +420,6 @@
         "edit_mode_title": "List settings",
         "list_name_label": "List name",
         "list_name_placeholder": "Enter name",
-        "delete_button": "Delete list",
-        "delete_button_mobile": "Delete",
         "create_button": "Create list",
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel"

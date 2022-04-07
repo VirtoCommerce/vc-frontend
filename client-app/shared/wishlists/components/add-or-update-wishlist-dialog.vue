@@ -22,15 +22,6 @@
     <template #actions="{ close }">
       <div class="flex grow sm:justify-between space-x-4 sm:space-x-10">
         <!-- TODO: add color options (success, warning, danger) to VcButton -->
-        <VcButton
-          v-if="isEditMode"
-          class="uppercase max-w-[10rem] grow sm:grow-0 sm:px-4 hover:!bg-[color:var(--color-danger-hover)] !bg-[color:var(--color-danger)]"
-          @click="openDeleteDialog"
-        >
-          <span class="hidden sm:inline">{{ $t("shared.wishlists.add_or_update_wishlist_dialog.delete_button") }}</span>
-          <span class="sm:hidden">{{ $t("shared.wishlists.add_or_update_wishlist_dialog.delete_button_mobile") }}</span>
-        </VcButton>
-
         <div class="flex grow justify-end space-x-4">
           <VcButton kind="secondary" class="uppercase grow sm:grow-0 sm:px-5" is-outline @click="close">
             {{ $t("shared.wishlists.add_or_update_wishlist_dialog.cancel_button") }}
@@ -59,11 +50,10 @@
 import { VcButton, VcInput, VcPopup } from "@/components";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
-import { DeleteWishlistsDialog, useWishlists } from "@/shared/wishlists";
+import { useWishlists } from "@/shared/wishlists";
 import { PropType } from "vue";
 import { WishlistType } from "@core/api/graphql/types";
 import { eagerComputed } from "@vueuse/core";
-import { usePopup } from "@/shared/popup";
 import { useI18n } from "vue-i18n";
 
 const props = defineProps({
@@ -76,7 +66,6 @@ const props = defineProps({
 useForm({ initialValues: { listName: props.list?.name || "" } });
 
 const { t } = useI18n();
-const { openPopup, closePopup } = usePopup();
 const { loading, createWishlist, renameWishlist } = useWishlists();
 const {
   value: listName,
@@ -88,18 +77,6 @@ const {
 );
 
 const isEditMode = eagerComputed(() => !!props.list);
-
-function openDeleteDialog() {
-  closePopup();
-
-  openPopup({
-    component: DeleteWishlistsDialog,
-    props: {
-      list: props.list,
-      redirectToLists: true
-    },
-  });
-}
 
 async function save(closingHandle: () => void) {
   if (!listName.value || errors.value.length) return;
