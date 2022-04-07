@@ -60,7 +60,7 @@
                   </div>
                   <ProductCardGrid :product="item.product!" class="h-full">
                     <template #cart-handler>
-                      <AddToCart :product="item" />
+                      <AddToCart :product="item.product!" />
                     </template>
                   </ProductCardGrid>
                 </div>
