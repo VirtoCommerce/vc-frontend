@@ -48,7 +48,7 @@ const routes: RouteRecordRaw[] = [
       { path: "orders", name: "Orders", component: Orders },
       { path: "order-details/:id", name: "OrderDetails", component: OrderDetails },
       { path: "lists", name: "Lists", component: Lists },
-      { path: "lists/:listId", name: "ListDetails", component: ListDetails, props: true }, // TODO: implement in another user story
+      { path: "lists/:listId", name: "ListDetails", component: ListDetails, props: true },
     ],
   },
   { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword },
