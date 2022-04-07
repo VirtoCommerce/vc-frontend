@@ -73,7 +73,7 @@ const {
   errors,
 } = useField<string>(
   "listName",
-  yup.string().label(t("shared.wishlists.add_or_update_wishlist_dialog.list_name_label")).max(64).required().nullable()
+  yup.string().label(t("shared.wishlists.add_or_update_wishlist_dialog.list_name_label")).max(25).required().nullable()
 );
 
 const isEditMode = eagerComputed(() => !!props.list);
