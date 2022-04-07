@@ -79,6 +79,10 @@ export default function useWishlists() {
     }
 
     await fetchWishlists();
+
+    if (list.value) {
+      await fetchWishList(list.value.id!);
+    }
   }
 
   async function removeWishlist(listId: string): Promise<boolean> {
