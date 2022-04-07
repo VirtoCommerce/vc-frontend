@@ -120,6 +120,8 @@ export interface IThemeConfigPreset {
   color_warning?: string;
   color_warning_hover?: string;
   color_price_color?: string;
+  color_mobile_menu_bg?: string;
+  color_mobile_menu_link?: string;
   color_header_top_bg?: string;
   color_header_top_text?: string;
   color_header_top_link?: string;

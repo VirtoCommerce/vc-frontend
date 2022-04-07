@@ -1,63 +1,62 @@
 <template>
-  <!-- Dropdown menu -->
-  <div v-if="children?.length" class="relative">
-    <div
-      class="uppercase text-xl font-extrabold text-white flex items-center"
-      @click="submenuVisible = !submenuVisible"
+  <router-link :to="to" custom v-slot="{ href, navigate, isActive, isExactActive }">
+    <component
+      :is="isLink ? 'a' : 'div'"
+      :href="isLink ? href : null"
+      :class="['flex items-center leading-none', { 'text-white': isLink && (isActive || isExactActive) }, $attrs.class]"
+      @click.prevent="isLink ? navigate() && $emit('close') : $emit('select')"
     >
-      <div class="truncate">
-        <slot>{{ title }}</slot>
-      </div>
-      <i
-        class="fas ml-3 text-[color:var(--color-primary)] align-baseline"
-        :class="[submenuVisible ? 'fa-chevron-up' : 'fa-chevron-down']"
-      ></i>
-    </div>
-    <div v-if="submenuVisible" class="flex flex-col px-5 py-2 space-y-3 mt-2">
-      <template v-for="(item, i) in children" :key="i">
-        <slot name="item">
-          <router-link :to="item.url" class="font-bold text-gray-200 text-lg" @click="$emit('close')">
-            {{ item.title }}
-          </router-link>
-        </slot>
-      </template>
-    </div>
-  </div>
-  <!-- Regular link -->
-  <router-link
-    v-else-if="to"
-    :to="to"
-    class="uppercase text-xl font-extrabold text-white"
-    :class="$attrs.class"
-    @click="$emit('close')"
-  >
-    <slot>{{ title }}</slot>
+      <slot name="icon" v-bind="{ isActive, isExactActive }">
+        <svg
+          v-if="icon"
+          height="20"
+          width="20"
+          :class="[
+            'shrink-0 scale-150 ml-0.5 mr-3.5',
+            { 'text-[color:var(--color-primary)]': isLink && (isActive || isExactActive) },
+          ]"
+        >
+          <use :href="icon" />
+        </svg>
+      </slot>
+
+      <slot v-bind="{ isActive, isExactActive }">
+        <span>{{ title }}</span>
+      </slot>
+
+      <i v-if="isParent" class="fas fa-chevron-right ml-3 -mb-px text-[color:var(--color-primary)]" />
+    </component>
   </router-link>
 </template>
 
 <script setup lang="ts">
-import { MenuLinkType } from "@/core/api/graphql/types";
-import { PropType, ref } from "vue";
+import { PropType } from "vue";
 import { RouteLocationRaw } from "vue-router";
+import { eagerComputed } from "@vueuse/core";
 
-defineProps({
+defineEmits(["select", "close"]);
+
+const props = defineProps({
+  isParent: {
+    type: Boolean,
+    default: false,
+  },
+
   title: {
+    type: String,
+    default: "",
+  },
+
+  icon: {
     type: String,
     default: "",
   },
 
   to: {
     type: [String, Object] as PropType<RouteLocationRaw>,
-    default: undefined,
-  },
-
-  children: {
-    type: Array as PropType<MenuLinkType[]>,
-    default: null,
+    default: "",
   },
 });
 
-defineEmits(["close"]);
-
-const submenuVisible = ref(false);
+const isLink = eagerComputed<boolean>(() => !!props.to && !props.isParent);
 </script>

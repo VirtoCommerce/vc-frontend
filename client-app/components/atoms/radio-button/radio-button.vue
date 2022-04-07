@@ -19,7 +19,7 @@ import { computed } from "vue";
 const props = defineProps({
   label: {
     type: String,
-    required: true,
+    default: "",
   },
   value: {
     type: String,
