@@ -76,6 +76,8 @@ export interface IThemeConfigPreset {
   show_prices_with_taxes?: boolean;
   default_delivery_method?: string;
 
+  wishlists_limit?: number;
+
   checkout_comment_enabled?: boolean;
   checkout_purchase_order_enabled?: boolean;
   checkout_coupon_enabled?: boolean;
