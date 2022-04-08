@@ -18,13 +18,13 @@
             </h2>
 
             <div class="flex space-x-3" v-if="!isMobile">
-              <VcButton class="px-3 uppercase" size="sm" is-outline @click="openListSettingsDialog">
+              <VcButton class="px-3 uppercase w-36" size="sm" is-outline @click="openListSettingsDialog">
                 <i class="fas fa-cog text-inherit -ml-0.5 mr-2" />
                 {{ $t("shared.wishlists.list_card.list_settings_button") }}
               </VcButton>
               <VcButton
                 v-if="listItems?.length"
-                class="px-3 uppercase"
+                class="px-3 uppercase w-56"
                 size="sm"
                 :is-disabled="!listItems.length"
                 @click="$emit('add-to-cart')"
