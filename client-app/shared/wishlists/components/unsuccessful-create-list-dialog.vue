@@ -1,5 +1,5 @@
 <template>
-  <VcPopup variant="warn" is-persistent>
+  <VcPopup variant="warn">
     <template #actions="{ close }">
       <VcButton class="uppercase mx-auto inline-flex px-10" @click="close">
         {{ $t("shared.wishlists.unsuccessful_create_wishlist_dialog.ok_button") }}
