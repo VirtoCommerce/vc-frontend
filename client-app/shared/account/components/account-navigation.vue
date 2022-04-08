@@ -24,8 +24,21 @@
       <AccountNavigationLink
         :to="{ name: 'Lists' }"
         :text="$t('shared.account.navigation.links.your_lists')"
-        class="list-icon"
-      ></AccountNavigationLink>
+        class="list-icon pb-2"
+      >
+      </AccountNavigationLink>
+      <template v-if="listDetails">
+        <div class="px-3 ml-8 flex text-xs items-center space-x-2" v-for="list in lists" :key="list.id">
+          <i class="fas fa-minus text-[color:var(--color-primary)]"></i>
+          <router-link
+            class="text-gray-500 font-semibold hover:text-black cursor-pointer"
+            :class="activeList === list.name && 'text-black'"
+            :to="{ name: 'ListDetails', params: { listId: list.id } }"
+          >
+            {{ list.name }}
+          </router-link>
+        </div>
+      </template>
       <AccountNavigationLink
         to="/account/checkout-defaults"
         :text="$t('shared.account.navigation.links.checkout_defaults')"
@@ -49,4 +62,25 @@
 <script setup lang="ts">
 import { VcCard } from "@/components";
 import { AccountNavigationLink } from ".";
+import { watchEffect } from "vue";
+import { useWishlists } from "@/shared/wishlists";
+
+const { lists, fetchWishlists } = useWishlists();
+
+const props = defineProps({
+  listDetails: {
+    type: Boolean,
+    default: false,
+  },
+  activeList: {
+    type: String,
+    default: "",
+  },
+});
+
+watchEffect(() => {
+  if (props.listDetails) {
+    fetchWishlists();
+  }
+});
 </script>
