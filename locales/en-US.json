@@ -670,7 +670,8 @@
       "products_section": {
         "title": "My products",
         "update_all_link_label": "If you changed multiple quantities,",
-        "update_all_link": "Update All"
+        "update_all_link": "Update All",
+        "clear_cart_button": "Clear all"
       },
       "shipping_details_section": {
         "title": "Shipping details",

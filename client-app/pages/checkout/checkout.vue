@@ -30,7 +30,7 @@
                       is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="openClearCartDialog"
-                      >Clear all</VcButton
+                      >{{ $t("pages.checkout.products_section.clear_cart_button") }}</VcButton
                     >
                   </div>
                 </div>
