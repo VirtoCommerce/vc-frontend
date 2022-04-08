@@ -661,6 +661,12 @@
     "checkout": {
       "title": "Checkout",
       "invalid_checkout_message": "There is something wrong in Cart. Please verify it to place order.",
+      "clear_cart_dialog": {
+        "title": "Clear cart",
+        "message": "Do you want to clear your cart?",
+        "yes_button": "Yes",
+        "no_button": "No"
+      },
       "products_section": {
         "title": "My products",
         "update_all_link_label": "If you changed multiple quantities,",
