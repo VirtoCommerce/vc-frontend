@@ -21,7 +21,7 @@ import { themeContext } from "@/core/utilities";
 import { setCatalogId, setUserId, setLocale } from "@/core/constants";
 import { PopupHost } from "@/shared/popup";
 import { NotificationsHost } from "@/shared/notification";
-import { useRouter } from "vue-router";
+import { RouteRecordName, useRouter } from "vue-router";
 
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -46,7 +46,7 @@ router.beforeEach(async (to) => {
   }
 
   // Make Dashboard the default Home page for authorized users
-  if (to.name === "Home" && isAuthenticated.value) {
+  if (Array<RouteRecordName>("Home", "SignIn", "SignUp").includes(to.name!) && isAuthenticated.value) {
     return {
       name: "Dashboard",
     };

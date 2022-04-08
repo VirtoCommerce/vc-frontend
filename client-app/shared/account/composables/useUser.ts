@@ -1,8 +1,8 @@
-import { themeContext } from "@core/utilities/context/index";
-import { Ref, ref, computed } from "vue";
+import { Ref, ref, computed, readonly } from "vue";
+import { eagerComputed } from "@vueuse/core";
 import { getMe, updatePersonalData, createUser, createOrganization, createContact } from "@/core/api/graphql/account";
-import { UserType, IdentityResultType } from "@core/api/graphql/types";
-import { Logger } from "@core/utilities";
+import { UserType, IdentityResultType, Organization } from "@core/api/graphql/types";
+import { Logger, themeContext } from "@core/utilities";
 import {
   RegisterOrganization,
   SignMeUp,
@@ -28,6 +28,8 @@ const me: Ref<UserType> = ref({
 });
 
 const loading: Ref<boolean> = ref(false);
+const isAuthenticated = eagerComputed<boolean>(() => !!me.value.userName && me.value.userName !== "Anonymous");
+const organization = computed<Organization | null>(() => me.value?.contact?.organizations?.items?.[0] ?? null);
 
 export default () => {
   const { innerFetch } = useFetch();
@@ -127,7 +129,7 @@ export default () => {
   async function registerOrganization(payload: RegisterOrganization): Promise<IdentityResultType> {
     try {
       loading.value = true;
-      const organization = await createOrganization({
+      const createdOrganization = await createOrganization({
         name: payload.organizationName,
       });
       const contact = await createContact({
@@ -135,7 +137,7 @@ export default () => {
         lastName: payload.lastName as string,
         name: `${payload.firstName} ${payload.lastName}`,
         emails: [payload.email],
-        organizations: [organization.id],
+        organizations: [createdOrganization.id],
       });
       const result = await createUser({
         userName: payload.userName,
@@ -213,13 +215,8 @@ export default () => {
   }
 
   return {
-    me: computed(() => me.value),
-    loading: computed(() => loading.value),
-    isAuthenticated: computed(() => me.value && me.value.userName && me.value.userName !== "Anonymous"),
-    organization: computed(() => {
-      const orgs = me.value?.contact?.organizations?.items;
-      return orgs && orgs.length ? orgs[0] : null;
-    }),
+    isAuthenticated,
+    organization,
     updateUser,
     changePassword,
     loadMe,
@@ -230,5 +227,7 @@ export default () => {
     forgotPassword,
     validateToken,
     resetPassword,
+    loading: readonly(loading),
+    me: computed(() => me.value),
   };
 };
