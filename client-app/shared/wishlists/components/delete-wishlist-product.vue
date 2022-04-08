@@ -41,6 +41,8 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(["result"]);
+
 const { loading, removeItemsFromWishlists } = useWishlists();
 
 async function remove(closingHandle: () => void) {
@@ -51,5 +53,6 @@ async function remove(closingHandle: () => void) {
   await removeItemsFromWishlists([payload]);
 
   closingHandle();
+  emit("result");
 }
 </script>

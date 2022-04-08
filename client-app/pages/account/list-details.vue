@@ -152,7 +152,7 @@ const breadcrumbs: IBreadcrumbs[] = [
 
 const itemsPerPage = ref(6);
 const page = ref(1);
-const pages = computed(() => Math.ceil((list.value?.itemsCount || 0) / itemsPerPage.value));
+const pages = computed(() => Math.ceil((list.value?.itemsCount ?? 0) / itemsPerPage.value));
 
 const listItems = computed(() =>
   list.value?.items?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
@@ -172,6 +172,11 @@ function openDeleteProductDialog(item: LineItemType) {
     props: {
       listItem: item,
       listId: list.value?.id,
+      onResult() {
+        if (pages.value === 1) {
+          page.value = 1;
+        }
+      },
     },
   });
 }
