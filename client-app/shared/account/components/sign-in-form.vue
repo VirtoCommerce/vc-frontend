@@ -46,7 +46,7 @@
         :is-waiting="loading"
         is-submit
         size="lg"
-        class="flex-1 flex-shrink px-2 font-bold uppercase"
+        class="flex-1 flex-shrink px-2 uppercase"
       >
         {{ $t("shared.account.sign_in_form.login_button") }}
       </VcButton>
@@ -56,7 +56,7 @@
         :is-disabled="isAuthenticated"
         size="lg"
         is-outline
-        class="flex-1 ml-4 px-2 uppercase font-bold"
+        class="flex-1 ml-4 px-2 uppercase"
       >
         {{ $t("shared.account.sign_in_form.registration_button") }}
       </VcButton>
