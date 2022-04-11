@@ -33,7 +33,14 @@
           <tr>
             <td class="px-5 py-3">
               <div class="flex items-center">
-                <VcImage class="border object-contain rounded-sm" :src="lineItem.imageUrl" width="72" height="72" />
+                <VcImage
+                  class="border object-contain rounded-sm"
+                  :src="lineItem.imageUrl"
+                  size-suffix="sm"
+                  width="72"
+                  height="72"
+                  lazy
+                />
                 <div class="ml-4 font-bold text-blue-700">{{ lineItem.name }}</div>
               </div>
             </td>
@@ -47,7 +54,14 @@
     </div>
     <div class="block lg:hidden">
       <div class="flex items-center border-b border-gray-200 p-5">
-        <VcImage class="border object-contain rounded-sm" :src="lineItem.imageUrl" width="72" height="72" />
+        <VcImage
+          class="border object-contain rounded-sm"
+          :src="lineItem.imageUrl"
+          size-suffix="sm"
+          width="72"
+          height="72"
+          lazy
+        />
         <div class="ml-4 font-bold text-blue-700">{{ lineItem.name }}</div>
       </div>
 

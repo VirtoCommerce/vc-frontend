@@ -104,7 +104,7 @@
             class="mb-5"
           >
             <div class="flex items-center space-x-4 text-sm">
-              <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" />
+              <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" lazy />
               <span
                 >{{ order?.shipments?.[0]?.shipmentMethodCode }} {{ order?.shipments?.[0]?.shipmentMethodOption }} ({{
                   order?.shipments?.[0]?.price?.formattedAmount

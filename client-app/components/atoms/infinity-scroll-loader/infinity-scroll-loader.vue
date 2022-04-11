@@ -2,7 +2,14 @@
   <div ref="target">
     <slot v-if="loading" name="loader">
       <p class="flex items-center justify-center">
-        <img src="/static/images/loader.png" class="inline-block animate-spin" alt="spinner" width="29" height="29" />
+        <img
+          src="/static/images/loader.png"
+          class="inline-block animate-spin"
+          alt="spinner"
+          width="29"
+          height="29"
+          loading="lazy"
+        />
       </p>
     </slot>
 

@@ -81,7 +81,7 @@
                   class="border-b last:border-b-0 flex items-center justify-between px-7 py-6"
                 >
                   <VcCheckbox class="mr-7" :model-value="checkGift(gift)" @change="toggleGift($event, gift)" />
-                  <VcImage :src="gift.imageUrl" class="mr-4 border aspect-square w-16 h-16" />
+                  <VcImage :src="gift.imageUrl" class="mr-4 border aspect-square w-16 h-16" lazy />
                   <div class="flex-grow font-bold text-[color:var(--color-link)]">{{ gift.name }}</div>
                 </div>
               </div>
@@ -175,7 +175,7 @@
                 >
                   <div class="flex flex-row items-center space-x-4">
                     <template v-if="shipment?.shipmentMethodCode">
-                      <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" />
+                      <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" lazy />
                       <span>
                         {{ shipment.shipmentMethodCode }} {{ shipment.shipmentMethodOption }} (<VcPriceDisplay
                           :value="shipment.price"
@@ -307,7 +307,7 @@
                 <CheckoutLabeledBlock :label="$t('pages.checkout.payment_details_section.payment_method_block.title')">
                   <div class="flex flex-row items-center space-x-4">
                     <template v-if="payment?.paymentGatewayCode">
-                      <VcImage src="/static/images/checkout/invoice.svg" class="h-12 w-12" />
+                      <VcImage src="/static/images/checkout/invoice.svg" class="h-12 w-12" lazy />
                       <span>{{ payment.paymentGatewayCode }}</span>
                     </template>
                     <div

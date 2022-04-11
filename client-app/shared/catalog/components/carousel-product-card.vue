@@ -6,7 +6,9 @@
         <VcImage
           :src="product.imgSrc"
           :alt="product.name"
+          size-suffix="md"
           class="absolute top-0 w-full h-full object-cover object-center"
+          lazy
         />
       </div>
     </router-link>

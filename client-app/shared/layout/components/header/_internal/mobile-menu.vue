@@ -4,7 +4,7 @@
   >
     <header class="px-6 flex justify-between items-center h-14 flex-shrink-0">
       <router-link to="/" @click="$emit('close')">
-        <VcImage src="/static/images/common/logo-white.svg" class="h-9" />
+        <VcImage src="/static/images/common/logo-white.svg" class="h-9" lazy />
       </router-link>
 
       <button class="appearance-none py-2 px-4 -mr-4" @click="$emit('close')">

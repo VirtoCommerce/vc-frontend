@@ -2,7 +2,13 @@
   <div class="flex flex-row gap-2">
     <!-- Product image -->
     <router-link :to="link" class="shrink-0 w-20 h-20 border border-gray-200" @click="$emit('link-click', $event)">
-      <VcImage :src="product.imgSrc" :alt="product.name" class="w-full h-full object-cover object-center" lazy />
+      <VcImage
+        :src="product.imgSrc"
+        :alt="product.name"
+        size-suffix="sm"
+        class="w-full h-full object-cover object-center"
+        lazy
+      />
     </router-link>
 
     <div class="flex flex-col justify-evenly gap-2 overflow-hidden">

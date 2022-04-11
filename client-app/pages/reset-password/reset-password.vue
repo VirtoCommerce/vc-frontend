@@ -35,7 +35,7 @@
       </div>
     </template>
     <template #right>
-      <VcImage class="max-w-md" src="/static/images/sign-in/sign-in-page-image.webp" />
+      <VcImage class="max-w-md" src="/static/images/sign-in/sign-in-page-image.webp" lazy />
     </template>
   </TwoColumn>
 </template>
