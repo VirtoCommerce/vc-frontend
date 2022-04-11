@@ -9,7 +9,9 @@
         <VcImage
           :src="variation?.images[0]?.url"
           :alt="variation?.name"
+          size-suffix="sm"
           class="absolute top-0 w-full h-full object-cover object-center rounded-sm"
+          lazy
         />
       </div>
     </div>

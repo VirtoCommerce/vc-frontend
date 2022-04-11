@@ -23,7 +23,7 @@
 
     <template v-for="method in availableMethods" :key="method.id">
       <div class="border-b border-gray-300 px-5 py-6 lg:py-4 flex justify-between items-center space-x-4">
-        <VcImage :src="method.logoUrl" class="h-10 w-10 object-center" />
+        <VcImage :src="method.logoUrl" class="h-10 w-10 object-center" lazy />
         <div class="flex-grow flex flex-col lg:flex-row">
           <div class="lg:w-2/6">{{ method.code }} {{ method.optionName }}</div>
           <div class="lg:w-3/6">{{ method.optionDescription }}</div>

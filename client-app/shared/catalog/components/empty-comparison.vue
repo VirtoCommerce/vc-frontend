@@ -12,6 +12,7 @@
           src="/static/images/errors/emptyCart.webp"
           :alt="$t('pages.compare.empty_list.img_alt_mobile')"
           class="lg:hidden mb-8"
+          lazy
         />
         <h2 class="text-black-800 text-2xl font-bold mb-8 text-center md:text-left">
           {{ $t("pages.compare.empty_list.message") }}
@@ -27,6 +28,7 @@
         src="/static/images/errors/emptyCart.webp"
         :alt="$t('pages.compare.empty_list.img_alt')"
         class="w-full max-w-md"
+        lazy
       />
     </template>
   </TwoColumn>

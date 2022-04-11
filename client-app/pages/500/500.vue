@@ -11,7 +11,7 @@
       </div>
     </template>
     <template #right>
-      <VcImage src="/static/images/errors/500.webp" :alt="$t('pages.500.img_alt')" class="w-full max-w-md" />
+      <VcImage src="/static/images/errors/500.webp" :alt="$t('pages.500.img_alt')" class="w-full max-w-md" lazy />
     </template>
   </TwoColumn>
 </template>

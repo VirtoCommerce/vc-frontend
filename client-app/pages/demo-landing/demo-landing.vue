@@ -48,7 +48,7 @@
         <div class="text-base text-center" v-t="'pages.demo_landing.features_block.secondary_text'"></div>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-x-20 gap-y-10 items-center mt-16 px-8 lg:px-0">
           <div class="text-center">
-            <VcImage src="/static/images/demo-landing/feat-1.svg" class="h-24 mx-auto mb-9" />
+            <VcImage src="/static/images/demo-landing/feat-1.svg" class="h-24 mx-auto mb-9" lazy />
             <div
               class="font-roboto-condensed uppercase font-bold text-2xl mb-3"
               v-t="'pages.demo_landing.features_block.feature_1.title'"
@@ -56,7 +56,7 @@
             <div class="text-sm" v-t="'pages.demo_landing.features_block.feature_1.text'"></div>
           </div>
           <div class="text-center">
-            <VcImage src="/static/images/demo-landing/feat-2.svg" class="h-24 mx-auto mb-9" />
+            <VcImage src="/static/images/demo-landing/feat-2.svg" class="h-24 mx-auto mb-9" lazy />
             <div
               class="font-roboto-condensed uppercase font-bold text-2xl mb-3"
               v-t="'pages.demo_landing.features_block.feature_2.title'"
@@ -64,7 +64,7 @@
             <div class="text-sm" v-t="'pages.demo_landing.features_block.feature_2.text'"></div>
           </div>
           <div class="text-center">
-            <VcImage src="/static/images/demo-landing/feat-3.svg" class="h-24 mx-auto mb-9" />
+            <VcImage src="/static/images/demo-landing/feat-3.svg" class="h-24 mx-auto mb-9" lazy />
             <div
               class="font-roboto-condensed uppercase font-bold text-2xl mb-3"
               v-t="'pages.demo_landing.features_block.feature_3.title'"

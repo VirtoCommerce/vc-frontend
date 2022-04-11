@@ -6,6 +6,22 @@ export function truncate(str: string, length: number): string {
   return str.length > length ? `${str.slice(0, length)}...` : str;
 }
 
+export function appendSuffixToFilename(filename: string, suffix: string, checkIfSuffixExists = false) {
+  if (!filename) return filename;
+
+  const dotIndex = filename.lastIndexOf(".");
+
+  if (dotIndex === -1) {
+    return checkIfSuffixExists && filename.endsWith(suffix) ? filename : filename + suffix;
+  }
+
+  const fileNameWithoutExtension = filename.substring(0, dotIndex);
+
+  return checkIfSuffixExists && fileNameWithoutExtension.endsWith(suffix)
+    ? filename
+    : fileNameWithoutExtension + suffix + filename.substring(dotIndex);
+}
+
 export function isObjectEmpty(object: Record<string, unknown>): boolean {
   for (const property in object) {
     return false;

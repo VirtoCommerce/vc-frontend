@@ -4,7 +4,13 @@
       <div class="flex flex-grow items-center">
         <router-link :to="{ name: 'Product', params: { productId: product.id } }">
           <div class="border border-gray-100 w-20 h-20 flex-shrink-0">
-            <VcImage :src="product.imgSrc" :alt="product.name" class="w-full h-full object-cover object-center" lazy />
+            <VcImage
+              :src="product.imgSrc"
+              :alt="product.name"
+              size-suffix="sm"
+              class="w-full h-full object-cover object-center"
+              lazy
+            />
           </div>
         </router-link>
 

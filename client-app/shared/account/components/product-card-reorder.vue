@@ -4,7 +4,13 @@
     <div class="flex flex-col p-5">
       <div class="flex overflow-hidden space-x-5 items-center justify-between mb-4">
         <div class="w-16 h-16 flex-shrink-0">
-          <VcImage :src="productItem.imgSrc" :alt="productItem.name" class="w-full h-full object-cover object-center" />
+          <VcImage
+            :src="productItem.imgSrc"
+            :alt="productItem.name"
+            size-suffix="sm"
+            class="w-full h-full object-cover object-center"
+            lazy
+          />
         </div>
         <div class="text-sm">
           <router-link
@@ -102,7 +108,13 @@
   <div v-else class="border-b">
     <div class="p-5 flex flex-wrap overflow-hidden space-x-4 lg:space-x-6">
       <div class="w-16 h-16">
-        <VcImage :src="productItem.imgSrc" :alt="productItem.name" class="w-full h-full object-cover object-center" />
+        <VcImage
+          :src="productItem.imgSrc"
+          :alt="productItem.name"
+          size-suffix="sm"
+          class="w-full h-full object-cover object-center"
+          lazy
+        />
       </div>
 
       <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center flex-1">

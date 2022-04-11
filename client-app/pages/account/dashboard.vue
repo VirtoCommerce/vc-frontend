@@ -231,6 +231,7 @@
                   src="/static/images/dashboard/spend-chart.svg"
                   class="h-24 w-24"
                   :alt="$t('pages.account.dashboard.monthly_report_card.spend_chart_alt')"
+                  lazy
                 />
                 <div
                   class="flex flex-col space-y-1 sm:space-y-0 sm:flex-row sm:flex-wrap sm:space-x-5 sm:items-center xl:space-x-7 justify-center"
