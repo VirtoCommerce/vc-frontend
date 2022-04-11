@@ -16,7 +16,7 @@ export default () => {
 
   function setLocaleAndReload(locale: string) {
     setI18nLocale(locale);
-    location.reload();
+    location.href = "/";
   }
 
   return {
