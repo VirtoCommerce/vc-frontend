@@ -10,7 +10,8 @@
         <!-- TODO: add color options (success, warning, danger) to VcButton -->
         <VcButton
           :is-waiting="loading"
-          class="uppercase flex-grow lg:flex-grow-0 lg:px-12 hover:!bg-[color:var(--color-danger-hover)] !bg-[color:var(--color-danger)]"
+          kind="danger"
+          class="uppercase flex-grow lg:flex-grow-0 lg:px-12"
           @click="remove(close)"
         >
           {{ $t("shared.wishlists.delete_wishlist_dialog.delete_button") }}

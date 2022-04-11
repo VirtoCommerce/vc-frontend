@@ -12,7 +12,7 @@
           <div class="flex justify-between items-center mx-5 md:mx-0">
             <h2 class="text-gray-800 text-3xl font-bold uppercase">{{ title }}</h2>
 
-            <VcButton v-if="!editingMode" class="px-3 uppercase border" size="sm" is-outline @click="openEditMode()">
+            <VcButton v-if="!editingMode" class="px-3 uppercase" size="sm" is-outline @click="openEditMode()">
               {{
                 isMobile
                   ? $t("pages.account.addresses.add_new_address_button_mobile")
