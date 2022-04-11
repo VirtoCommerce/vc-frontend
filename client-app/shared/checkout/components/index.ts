@@ -8,3 +8,4 @@ export { default as PaymentMethodDialog } from "./payment-method-dialog.vue";
 export { default as SelectAddressDialog } from "./select-address-dialog.vue";
 export { default as AddOrUpdateAddressDialog } from "./add-or-update-address-dialog.vue";
 export { default as AcceptedGifts } from "./accepted-gifts.vue";
+export { default as ClearCartDialog } from "./clear-cart-dialog.vue";

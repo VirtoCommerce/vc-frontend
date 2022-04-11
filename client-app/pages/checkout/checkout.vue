@@ -12,11 +12,29 @@
           <!-- Main section -->
           <div class="lg:w-3/4 xl:w-4/5 flex-grow w-full">
             <!-- My products section -->
-            <VcSection
-              :title="$t('pages.checkout.products_section.title')"
-              icon-url="/static/images/checkout/products.svg"
-              class="shadow lg:pb-11"
-            >
+            <VcSection class="shadow lg:pb-11">
+              <template #title>
+                <div class="flex items-center px-5 py-7">
+                  <VcImage
+                    :src="'/static/images/checkout/products.svg'"
+                    :alt="$t('pages.checkout.products_section.title')"
+                    class="mr-5 lg:mr-8"
+                  />
+                  <div class="w-full flex justify-between">
+                    <h3 class="text-gray-800 text-2xl lg:text-3xl font-bold uppercase">
+                      {{ $t("pages.checkout.products_section.title") }}
+                    </h3>
+                    <VcButton
+                      size="sm"
+                      kind="secondary"
+                      is-outline
+                      class="px-3 self-start uppercase font-bold"
+                      @click="openClearCartDialog"
+                      >{{ $t("pages.checkout.products_section.clear_cart_button") }}</VcButton
+                    >
+                  </div>
+                </div>
+              </template>
               <div class="xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6 lg:border lg:rounded">
                 <!-- Product card -->
                 <ProductCard
@@ -404,6 +422,7 @@ import {
   PaymentMethodDialog,
   SelectAddressDialog,
   AddOrUpdateAddressDialog,
+  ClearCartDialog,
 } from "@/shared/checkout";
 import {
   VcTextArea,
@@ -451,6 +470,7 @@ const {
   updateShipment,
   updatePayment,
   updatePurchaseOrderNumber,
+  clearCart,
 } = useCart();
 
 const { t } = useI18n();
@@ -735,6 +755,17 @@ function addOrUpdateAddressDialog(
             deliveryAddress: { ...convertedAddress },
           });
         }
+      },
+    },
+  });
+}
+
+function openClearCartDialog() {
+  openPopup({
+    component: ClearCartDialog,
+    props: {
+      onResult() {
+        clearCart(cart.value.id!);
       },
     },
   });

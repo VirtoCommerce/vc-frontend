@@ -13,6 +13,7 @@ import {
   addOrUpdateCartShipment,
   addOrUpdateCartPayment,
   InputBulkItemsType,
+  removeCart,
 } from "@core/api/graphql/cart";
 import { BulkCartType, CartType, InputPaymentType, InputShipmentType, LineItemType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
@@ -72,6 +73,20 @@ export default () => {
       await addItemToCart(productId, qty);
     } catch (e) {
       Logger.error("useCart.addItemToCart", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+    await loadMyCart();
+  }
+
+  async function clearCart(cartId: string) {
+    loading.value = true;
+    console.log(`clearCart ${cartId}`);
+    try {
+      await removeCart(cartId);
+    } catch (e) {
+      Logger.error("useCart.clearCart", e);
       throw e;
     } finally {
       loading.value = false;
@@ -278,5 +293,6 @@ export default () => {
     updatePayment,
     updatePurchaseOrderNumber,
     addMultipleItemsToCart,
+    clearCart,
   };
 };
