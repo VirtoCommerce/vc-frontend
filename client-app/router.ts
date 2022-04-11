@@ -1,5 +1,13 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import SeoUrl from "@core/seo-routes.enum";
+import {
+  i18n,
+  defaultLocale,
+  supportedLocales,
+  setI18nLocale,
+  loadLocaleMessages,
+  addLocaleAliasToRoutes,
+} from "./i18n";
 
 // Pages
 const Home = () => import("./pages/home/home.vue");
@@ -73,24 +81,59 @@ if (import.meta.env.MODE === "development") {
   });
 }
 
-// Router definition
-const router = createRouter({
-  routes,
+// todo: move to plugin
+export default function setupRouter() {
+  addLocaleAliasToRoutes(routes);
 
-  // History mode
-  history: createWebHistory(),
+  // Router definition
+  const router = createRouter({
+    routes,
 
-  // Setup scroll behavior on route change
-  scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition;
-    } else {
-      return {
-        top: 0,
-        behavior: "smooth",
-      };
+    // History mode
+    history: createWebHistory(),
+
+    // Setup scroll behavior on route change
+    scrollBehavior(to, from, savedPosition) {
+      if (savedPosition) {
+        return savedPosition;
+      } else {
+        return {
+          top: 0,
+          behavior: "smooth",
+        };
+      }
+    },
+  });
+
+  router.beforeEach(async (to, from, next) => {
+    let locale = to.path.split("/")[1];
+
+    // use saved or default locale if path locale is not exists in available
+    if (!supportedLocales.includes(locale)) {
+      const savedLocale = localStorage.getItem("locale") as string;
+
+      if (supportedLocales.includes(savedLocale)) {
+        locale = savedLocale;
+      } else {
+        locale = defaultLocale;
+      }
+
+      if (locale !== defaultLocale) {
+        const newPath = `/${locale}${to.path.charAt(0) != "/" ? "/" : ""}${to.path}`;
+        return next({ path: newPath, query: to.query, hash: to.hash });
+      }
     }
-  },
-});
 
-export default router;
+    // load locale messages if not yet
+    if (i18n && !i18n.global.availableLocales.includes(locale)) {
+      await loadLocaleMessages(locale);
+    }
+
+    // set i18n language
+    setI18nLocale(locale);
+
+    return next();
+  });
+
+  return router;
+}
