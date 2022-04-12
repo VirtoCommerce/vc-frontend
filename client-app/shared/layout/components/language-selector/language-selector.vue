@@ -19,8 +19,11 @@
     </button>
 
     <transition name="slide-fade-top">
-      <div v-show="open" class="absolute -mt-1 right-0 z-10 bg-white shadow-lg max-h-96 rounded border overflow-hidden">
-        <ul ref="listElement" class="max-h-56 overflow-auto divide-y">
+      <div
+        v-show="open"
+        class="absolute -mt-1 right-0 z-10 bg-white shadow-lg max-h-[260px] rounded border overflow-hidden"
+      >
+        <ul ref="listElement" class="max-h-[260px] overflow-auto divide-y">
           <li
             v-for="item in availableLanguages"
             :key="item.twoLetterLanguageName"
