@@ -278,7 +278,7 @@ export default () => {
     pages: computed(() => pages.value),
     itemsPerPage: computed(() => itemsPerPage.value),
     loading: computed(() => loading.value),
-    currency: computed(() => cart.value.total?.currency),
+    currency: computed(() => cart.value.currency!),
     getItemsTotal,
     loadMyCart,
     addToCart,
