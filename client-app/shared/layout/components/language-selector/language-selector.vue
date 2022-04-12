@@ -31,7 +31,9 @@
             ]"
             class="flex items-center space-x-2 p-2.5 pr-3 font-normal text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
             @click="
-              item.twoLetterLanguageName === currentLanguage?.twoLetterLanguageName ? null : select(item.cultureName)
+              item.twoLetterLanguageName === currentLanguage?.twoLetterLanguageName
+                ? null
+                : select(item.twoLetterLanguageName)
             "
           >
             <lang-flag class="rounded-full shrink-0 fa-2x" :iso="item.twoLetterLanguageName" />
