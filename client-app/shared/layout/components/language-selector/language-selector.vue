@@ -41,7 +41,7 @@
             <span
               :class="{ 'font-bold text-black': item.twoLetterLanguageName === currentLanguage?.twoLetterLanguageName }"
             >
-              {{ item.nativeName }}
+              {{ item.nativeName.replace(/ *\([^)]*\) */g, "") }}
             </span>
           </li>
         </ul>
