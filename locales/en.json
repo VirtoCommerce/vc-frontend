@@ -63,7 +63,8 @@
       "addresses": "Addresses",
       "orders": "Orders",
       "your_lists": "Your Lists",
-      "checkout_defaults": "Checkout Defaults"
+      "checkout_defaults": "Checkout Defaults",
+      "list_details": "List Details"
     }
   },
   "shared": {
@@ -78,14 +79,15 @@
         "link_register_now": "Register now",
         "link_logout": "Logout",
         "menu": {
-          "home": "@common.links.home",
-          "all_products": "All products",
-          "bulk": "Bulk order pad",
+          "home": "@:common.links.home",
+          "all_products": "Products",
+          "bulk": "Bulk order",
+          "compare": "Compare",
           "cart": "Cart",
-          "contact_us": "Contact us",
-          "my_account": "My account"
+          "contact_us": "Contact"
         },
         "mobile": {
+          "my_account": "@:common.links.account",
           "account_menu": {
             "dashboard": "@:common.links.dashboard",
             "profile": "@:common.links.profile",
@@ -94,6 +96,8 @@
             "your_lists": "@:common.links.your_lists",
             "checkout_defaults": "@:common.links.checkout_defaults"
           },
+          "settings": "Settings",
+          "currency": "Currency",
           "search_bar": {
             "input_placeholder": "Enter keyword, item, model or replacement part number"
           }
@@ -144,7 +148,8 @@
           "addresses": "@:common.links.addresses",
           "orders": "@:common.links.orders",
           "your_lists": "@:common.links.your_lists",
-          "checkout_defaults": "@:common.links.checkout_defaults"
+          "checkout_defaults": "@:common.links.checkout_defaults",
+          "list_details": "@:common.links.list_details"
         }
       },
       "address_form": {
@@ -389,6 +394,11 @@
         "list_settings_button": "List settings",
         "remove_list_button": "Remove list"
       },
+      "list_details": {
+        "add_all_to_cart_button": "Add all products to cart",
+        "list_settings_button": "List settings",
+        "empty_list": "Your list is currently empty"
+      },
       "add_to_wishlists_dialog": {
         "title": "Please select list",
         "empty_list": "You don't have wish lists",
@@ -402,13 +412,15 @@
         "continue_shopping_button": "@:common.buttons.continue_shopping_button",
         "view_your_list_button": "View your list | View your lists"
       },
+      "unsuccessful_create_wishlist_dialog": {
+        "message": "You’ve reached max number of lists. Please delete one, that you do not use, or reshuffle products to reuse the existing list.",
+        "ok_button": "@:common.buttons.ok"
+      },
       "add_or_update_wishlist_dialog": {
         "title": "New list",
         "edit_mode_title": "List settings",
         "list_name_label": "List name",
         "list_name_placeholder": "Enter name",
-        "delete_button": "Delete list",
-        "delete_button_mobile": "Delete",
         "create_button": "Create list",
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel"
@@ -416,6 +428,12 @@
       "delete_wishlist_dialog": {
         "title": "Delete warning",
         "message": "Are you sure you want to remove “<span class=\"font-extrabold\">{listName}</span>” list?",
+        "delete_button": "@:common.buttons.delete",
+        "cancel_button": "@:common.buttons.cancel"
+      },
+      "delete_wishlist_product_dialog": {
+        "title": "Delete warning",
+        "message": "Are you sure you want to remove “<span class=\"font-extrabold\">{productName}</span>” from the list?",
         "delete_button": "@:common.buttons.delete",
         "cancel_button": "@:common.buttons.cancel"
       }
@@ -645,7 +663,8 @@
       "products_found_message2": "{0} displayed that include {1} products.",
       "filters_button": "@:common.buttons.filters",
       "sort_by_label": "@:common.labels.sort_by",
-      "choose_button": "@:common.buttons.choose"
+      "choose_button": "@:common.buttons.choose",
+      "reset_filters_button": "Reset filters"
     },
     "product": {
       "back_button": "@:common.buttons.back",
@@ -658,10 +677,17 @@
     "checkout": {
       "title": "Checkout",
       "invalid_checkout_message": "There is something wrong in Cart. Please verify it to place order.",
+      "clear_cart_dialog": {
+        "title": "Clear cart",
+        "message": "Do you want to clear your cart?",
+        "yes_button": "Yes",
+        "no_button": "No"
+      },
       "products_section": {
         "title": "My products",
         "update_all_link_label": "If you changed multiple quantities,",
-        "update_all_link": "Update All"
+        "update_all_link": "Update All",
+        "clear_cart_button": "Clear all"
       },
       "shipping_details_section": {
         "title": "Shipping details",
@@ -799,7 +825,7 @@
         "price_label": "@:common.labels.product_price"
       },
       "links": {
-        "home": "@common.links.home",
+        "home": "@:common.links.home",
         "compare_products": "Compare products"
       }
     }

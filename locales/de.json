@@ -78,9 +78,10 @@
         "link_register_now": "Register now",
         "link_logout": "Ausloggen",
         "menu": {
-          "home": "@common.links.home",
+          "home": "@:common.links.home",
           "all_products": "Alle Produkte",
           "bulk": "Großauftragsblock",
+          "compare": "Vergleichen",
           "cart": "Wagen",
           "contact_us": "Kontaktiere uns",
           "my_account": "Mein Konto"
@@ -799,7 +800,7 @@
         "price_label": "@:common.labels.product_price"
       },
       "links": {
-        "home": "@common.links.home",
+        "home": "@:common.links.home",
         "compare_products": "Compare products"
       }
     }
