@@ -39,6 +39,7 @@
     "vee-validate": "^4.5.6",
     "vue": "^3.2.31",
     "vue-i18n": "9",
+    "vue-lang-code-flags": "^1.0.13",
     "vue-router": "^4.0.12",
     "yup": "^0.32.11"
   },

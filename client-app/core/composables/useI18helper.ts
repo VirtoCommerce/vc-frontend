@@ -8,7 +8,7 @@ export default () => {
 
   const defaultLanguage = readonly(ref(themeContext.defaultLanguage));
 
-  const availableLanguage = readonly(ref(themeContext.availLanguages));
+  const availableLanguages = readonly(ref(themeContext.availLanguages));
 
   const currentLanguage = computed(() =>
     themeContext.availLanguages?.find((x) => x.twoLetterLanguageName === i18n.locale.value)
@@ -24,7 +24,7 @@ export default () => {
     currentLocale: readonly(i18n.locale),
     currentLanguage,
     defaultLanguage,
-    availableLanguage,
+    availableLanguages,
     setI18nLocale,
     setLocaleAndReload,
   };

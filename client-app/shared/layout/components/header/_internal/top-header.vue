@@ -2,6 +2,11 @@
   <div
     class="h-12 px-12 flex items-center justify-between bg-[color:var(--color-header-top-bg)] font-bold text-sm text-[color:var(--color-header-top-text)]"
   >
+    <!-- Language block -->
+    <div class="flex gap-x-8">
+      <LanguageSelector v-if="$context.availLanguages && $context.availLanguages.length > 1" />
+    </div>
+
     <div class="flex gap-x-8">
       <CurrencySelector v-if="$context.availCurrencies && $context.availCurrencies.length > 1" />
     </div>
@@ -56,6 +61,7 @@ import { ref } from "vue";
 import { onClickOutside } from "@vueuse/core";
 import { CurrencySelector } from "@/shared/layout";
 import { useUser } from "@/shared/account";
+import { LanguageSelector } from "@/shared/layout";
 import TopHeaderLink from "./top-header-link.vue";
 
 const { isAuthenticated, me, signMeOut } = useUser();
