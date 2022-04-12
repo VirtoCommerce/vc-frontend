@@ -125,7 +125,7 @@
                 }}</span>
                 {{ order?.inPayments?.[0]?.number }}
               </p>
-              <p>
+              <p class="overflow-x-hidden break-words">
                 <span class="font-extrabold">{{
                   $t("pages.account.order_details.payment_details_card.payment_type_label")
                 }}</span>
