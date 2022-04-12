@@ -1,15 +1,15 @@
-import { CurrencyType } from "./../api/graphql/types";
 import { Language } from "./language";
+import { Currency } from "./currency";
 
 export interface IThemeContext {
   baseUrl?: string;
   storeId?: string;
   storeName?: string;
-  language?: Language;
+  defaultLanguage?: Language;
   availLanguages?: Language[];
   catalogId?: string;
-  currency?: CurrencyType;
-  availCurrencies?: CurrencyType[];
+  defaultCurrency?: Currency;
+  availCurrencies?: Currency[];
   userId?: string;
   userName?: string;
   settings?: { key: string; value: unknown }[];

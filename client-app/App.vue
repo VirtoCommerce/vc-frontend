@@ -18,15 +18,17 @@ import { Header, Footer, useSearchBar } from "./shared/layout";
 import { useUser } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { themeContext } from "@/core/utilities";
-import { setCatalogId, setUserId, setLocale } from "@/core/constants";
+import { setCatalogId, setUserId, setLocale, setCurrencyCode } from "@/core/constants";
 import { PopupHost } from "@/shared/popup";
 import { NotificationsHost } from "@/shared/notification";
 import { RouteRecordName, useRouter } from "vue-router";
+import { useCurrency } from "@core/composables";
 
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { loadMe, me, isAuthenticated } = useUser();
 const { loadMyCart } = useCart();
+const { currentCurrency } = useCurrency();
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
 
 const isMobile = breakpoints.smaller("lg");
@@ -69,7 +71,8 @@ onMounted(async () => {
   // temporary solution
   setUserId(themeContext.userId || me.value?.id);
   setCatalogId(themeContext.catalogId!);
-  setLocale(themeContext.language?.cultureName || "en-US");
+  setLocale(themeContext.defaultLanguage?.cultureName || "en-US");
+  setCurrencyCode(currentCurrency.value.code);
 
   await loadMyCart();
   loaded.value = true;

@@ -1,5 +1,6 @@
 export * from "./theme-context";
 export * from "./language";
+export * from "./currency";
 
 import { CartAddressType, MemberAddressType, OrderAddressType } from "@core/api/graphql/types";
 import { LocationQueryValue } from "vue-router";

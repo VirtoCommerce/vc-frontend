@@ -68,14 +68,15 @@
               </h2>
 
               <VcRadioButton
-                v-for="currencyItem in ['USD']"
-                v-model="currentCurrency"
-                :key="currencyItem"
-                :value="currencyItem"
+                v-for="currencyItem in $context.availCurrencies"
+                :model-value="currentCurrency.code"
+                :key="currencyItem.code"
+                :value="currencyItem.code"
                 class="py-2.5"
+                @click="currentCurrency.code === currencyItem.code ? null : setCurrencyByCode(currencyItem.code)"
               >
-                <span :class="{ 'text-white': currentCurrency === currencyItem }" class="uppercase">
-                  {{ currencyItem }}
+                <span :class="{ 'text-white': currentCurrency.code === currencyItem.code }" class="uppercase">
+                  {{ currencyItem.code }}
                 </span>
               </VcRadioButton>
             </div>
@@ -160,7 +161,12 @@
         />
 
         <!-- Settings link -->
-        <MobileMenuLink class="uppercase text-xl font-bold" is-parent @select="selectMenuItem(settingsMenuLink)">
+        <MobileMenuLink
+          v-if="$context.availCurrencies && $context.availCurrencies.length > 1"
+          class="uppercase text-xl font-bold"
+          is-parent
+          @select="selectMenuItem(settingsMenuLink)"
+        >
           {{ $t("shared.layout.header.mobile.settings") }}
         </MobileMenuLink>
       </div>
@@ -170,13 +176,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { VcImage, VcRadioButton } from "@/components";
 import { useCart } from "@/shared/cart";
 import { useUser } from "@/shared/account";
 import { useCompareProducts } from "@/shared/compare";
+import { useCurrency } from "@core/composables";
 import { MenuLink, useNavigations } from "@/shared/layout";
 import MobileMenuLink from "./mobile-menu-link.vue";
 
@@ -186,10 +193,9 @@ const route = useRoute();
 const { t } = useI18n();
 const { cart } = useCart();
 const { productsIds } = useCompareProducts();
+const { currentCurrency, setCurrencyByCode } = useCurrency();
 const { me, isAuthenticated, signMeOut } = useUser();
 const { mainMenuLinks, openedItem, selectMenuItem, goBack, goMainMenu } = useNavigations();
-
-const currentCurrency = ref("USD"); // TODO: will be used in future
 
 const unauthorizedMenuLinks: MenuLink[] = [
   { route: { name: "SignIn" }, title: t("shared.layout.header.link_sign_in") },
