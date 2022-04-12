@@ -1,7 +1,7 @@
-import { themeContext } from "./../utilities/context/index";
+import { themeContext } from "../utilities/context/index";
 import { computed, readonly, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { setI18nLocale } from "@/i18n";
+import { saveLocale } from "@/i18n";
 
 export default () => {
   const i18n = useI18n();
@@ -14,9 +14,9 @@ export default () => {
     themeContext.availLanguages?.find((x) => x.twoLetterLanguageName === i18n.locale.value)
   );
 
-  function setLocaleAndReload(locale: string) {
-    setI18nLocale(locale);
-    location.href = "/";
+  function saveLocaleAndReload(locale: string) {
+    saveLocale(locale);
+    location.href = locale === defaultLanguage.value?.twoLetterLanguageName ? "/" : `/${locale}/`;
   }
 
   return {
@@ -25,7 +25,6 @@ export default () => {
     currentLanguage,
     defaultLanguage,
     availableLanguages,
-    setI18nLocale,
-    setLocaleAndReload,
+    saveLocaleAndReload,
   };
 };

@@ -24,15 +24,17 @@ export function setupI18n(options: { defaultLocale: string; supportedLocales: st
   return i18n;
 }
 
+export function saveLocale(locale: string) {
+  localStorage.setItem("locale", locale);
+}
+
 export function setI18nLocale(locale: string) {
   if (!i18n) {
     return;
   }
 
   i18n.global.locale.value = locale;
-
-  localStorage.setItem("locale", locale);
-
+  saveLocale(locale);
   document?.querySelector("html")?.setAttribute("lang", locale);
 }
 

@@ -63,10 +63,10 @@ export default {
 <script setup lang="ts">
 import LangFlag from "vue-lang-code-flags";
 import { ref, shallowRef } from "vue";
-import useI18helper from "@/core/composables/useI18helper";
+import useLocalization from "@/core/composables/useLocalization";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
-const { currentLanguage, availableLanguages, setLocaleAndReload } = useI18helper();
+const { currentLanguage, availableLanguages, saveLocaleAndReload } = useLocalization();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
 const isMobile = breakpoints.smaller("md");
@@ -92,7 +92,7 @@ function toggle() {
 }
 
 function select(locale: string) {
-  setLocaleAndReload(locale);
+  saveLocaleAndReload(locale);
   hideList();
 }
 </script>
