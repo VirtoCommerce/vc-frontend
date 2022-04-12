@@ -397,7 +397,10 @@
                   {{ $t("pages.checkout.order_summary_block.place_order_button") }}
                 </VcButton>
 
-                <div v-if="!isValidCheckout" class="flex space-x-2 bg-primary-100 rounded mt-3 p-3 text-xs">
+                <div
+                  v-if="!isValidCheckout && !creatingOrder"
+                  class="flex space-x-2 bg-primary-100 rounded mt-3 p-3 text-xs"
+                >
                   <i class="fas fa-exclamation-triangle text-xl text-primary-600"></i>
                   <span v-t="'pages.checkout.invalid_checkout_message'"></span>
                 </div>
