@@ -1,4 +1,4 @@
-query getMenus($storeId: String!, $cultureName: String, $keyword: String) {
+query GetMenus($storeId: String!, $cultureName: String, $keyword: String) {
   menus(storeId: $storeId, cultureName: $cultureName, keyword: $keyword) {
     name
     items {

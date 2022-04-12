@@ -1,13 +1,17 @@
 import client from "@core/api/graphql/graphql-client";
-import { CustomerOrderConnection, CustomerOrderType, QueryOrdersArgs } from "@core/api/graphql/types";
+import { CustomerOrderConnection, Query, QueryOrdersArgs } from "@core/api/graphql/types";
 import getMyOrdersQueryDocument from "./getMyOrdersQuery.graphql";
+import { currentUserId, locale } from "@core/constants";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function getMyOrders(variables?: QueryOrdersArgs): Promise<CustomerOrderConnection> {
-  const { data } = await client.query({
+export default async function getMyOrders(payload?: QueryOrdersArgs): Promise<CustomerOrderConnection> {
+  const { data } = await client.query<Required<Pick<Query, "orders">>, QueryOrdersArgs>({
     query: getMyOrdersQueryDocument,
-    variables,
+    variables: {
+      cultureName: locale,
+      userId: currentUserId,
+      ...payload,
+    },
   });
-  return data?.orders;
+
+  return data.orders;
 }
-export default getMyOrders;

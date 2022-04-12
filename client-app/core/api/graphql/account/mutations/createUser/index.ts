@@ -8,12 +8,12 @@ import {
 import mutationDocument from "./createUser.graphql";
 
 export default async function createUser(user: InputCreateApplicationUserType): Promise<IdentityResultType> {
-  const { data } = await client.mutate<Pick<Mutations, "createUser">, MutationsCreateUserArgs>({
+  const { data } = await client.mutate<Required<Pick<Mutations, "createUser">>, MutationsCreateUserArgs>({
     mutation: mutationDocument,
     variables: {
       command: { applicationUser: user },
     },
   });
 
-  return data?.createUser as IdentityResultType;
+  return data!.createUser;
 }

@@ -6,7 +6,7 @@ export default async function deleteMemberAddresses(
   addresses: InputMemberAddressType[],
   memberId: string
 ): Promise<void> {
-  await client.mutate<Pick<Mutations, "deleteMemberAddresses">, MutationsDeleteMemberAddressesArgs>({
+  await client.mutate<Required<Pick<Mutations, "deleteMemberAddresses">>, MutationsDeleteMemberAddressesArgs>({
     mutation: mutationDocument,
     variables: {
       command: {

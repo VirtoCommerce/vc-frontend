@@ -44,5 +44,6 @@ export default async function searchProducts(
       productIds,
     },
   });
+
   return data.products;
 }

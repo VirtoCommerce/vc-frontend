@@ -6,7 +6,7 @@ export default async function updateMemberAddresses(
   memberId: string,
   addresses: InputMemberAddressType[]
 ): Promise<void> {
-  await client.mutate<Pick<Mutations, "updateMemberAddresses">, MutationsUpdateMemberAddressesArgs>({
+  await client.mutate<Required<Pick<Mutations, "updateMemberAddresses">>, MutationsUpdateMemberAddressesArgs>({
     mutation: mutationDocument,
     variables: {
       command: {

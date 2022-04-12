@@ -1,17 +1,16 @@
 import client from "@core/api/graphql/graphql-client";
 import getMyOrderQueryDocument from "./getMyOrderQuery.graphql";
 import { locale } from "@core/constants";
-import { CustomerOrderType } from "@core/api/graphql/types";
+import { CustomerOrderType, Query, QueryOrderArgs } from "@core/api/graphql/types";
 
-async function getMyOrder(id?: string, number?: string): Promise<CustomerOrderType> {
-  const { data } = await client.query({
+export default async function getMyOrder(payload: QueryOrderArgs): Promise<CustomerOrderType> {
+  const { data } = await client.query<Required<Pick<Query, "order">>, QueryOrderArgs>({
     query: getMyOrderQueryDocument,
     variables: {
-      id: id,
-      number: number,
       cultureName: locale,
+      ...payload,
     },
   });
-  return data?.order;
+
+  return data.order;
 }
-export default getMyOrder;
