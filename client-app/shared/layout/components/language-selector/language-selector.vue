@@ -4,7 +4,7 @@
       class="relative flex items-center space-x-1 py-3 pr-3.5 appearance-none leading-none text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
       @click="toggle"
     >
-      <span class="text-white mr-1.5" v-if="!isMobile"> Language: </span>
+      <span class="text-white mr-1.5" v-if="!isMobile" v-t="'shared.layout.language_selector.language_label'"></span>
       <lang-flag class="rounded-full fa-2x" :iso="currentLanguage?.twoLetterLanguageName" />
       <span
         v-if="!isMobile"
