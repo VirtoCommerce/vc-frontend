@@ -14,13 +14,13 @@
             <!-- My products section -->
             <VcSection class="shadow lg:pb-11">
               <template #title>
-                <div class="flex items-center px-5 py-7">
+                <div class="flex items-center px-5 lg:pr-0 py-7">
                   <VcImage
                     :src="'/static/images/checkout/products.svg'"
                     :alt="$t('pages.checkout.products_section.title')"
                     class="mr-5 lg:mr-8"
                   />
-                  <div class="w-full flex justify-between">
+                  <div class="w-full flex justify-between xl:mr-11 lg:mr-6">
                     <h3 class="text-gray-800 text-2xl lg:text-3xl font-bold uppercase">
                       {{ $t("pages.checkout.products_section.title") }}
                     </h3>
