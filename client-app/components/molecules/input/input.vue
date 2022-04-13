@@ -17,7 +17,7 @@
       :max="maxValue"
       :maxlength="maxlength"
       :step="stepValue"
-      @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+      @input="change"
     />
 
     <div v-if="errorMessage" class="text-xs text-[color:var(--color-danger)]">{{ errorMessage }}</div>
@@ -83,6 +83,11 @@ const isNumberTypeSafari = ref(false);
 const minValue = computed(() => (props.type === "number" ? props.min : undefined));
 const maxValue = computed(() => (props.type === "number" ? props.max : undefined));
 const stepValue = computed(() => (props.type === "number" ? props.step : undefined));
+
+function change(event: Event) {
+  const newValue: string = (event.target as HTMLInputElement).value;
+  emit("update:modelValue", props.type === "number" ? Number(newValue) : newValue);
+}
 
 watchEffect(() => {
   let type = props.type;

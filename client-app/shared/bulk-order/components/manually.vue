@@ -54,30 +54,26 @@
       </div>
 
       <div class="flex flex-row flex-wrap md:flex-nowrap justify-between gap-3 mt-5 mb-2 md:mb-0">
-        <div class="w-auto md:w-full font-bold">
-          <VcButton
-            :is-disabled="!dirty || loading"
-            @click="resetItems"
-            kind="secondary"
-            size="lg"
-            class="uppercase px-5 xl:px-8"
-            is-outline
-          >
-            {{ $t("shared.bulk_order.manually.reset_button") }}
-          </VcButton>
-        </div>
+        <VcButton
+          :is-disabled="!dirty || loading"
+          @click="resetItems"
+          kind="secondary"
+          size="lg"
+          class="uppercase px-5 xl:px-8"
+          is-outline
+        >
+          {{ $t("shared.bulk_order.manually.reset_button") }}
+        </VcButton>
 
-        <div class="w-auto md:w-1/3 xl:w-1/4 font-bold md:max-w-[164px]">
-          <VcButton
-            :is-disabled="!dirty"
-            :is-waiting="loading"
-            @click="addToCart"
-            size="lg"
-            class="uppercase px-5 md:px-0 md:w-full"
-          >
-            {{ $t("shared.bulk_order.manually.add_to_cart_button") }}
-          </VcButton>
-        </div>
+        <VcButton
+          :is-disabled="!dirty"
+          :is-waiting="loading"
+          @click="addToCart"
+          size="lg"
+          class="uppercase px-5 xl:px-8"
+        >
+          {{ $t("shared.bulk_order.manually.add_to_cart_button") }}
+        </VcButton>
       </div>
     </div>
   </section>
