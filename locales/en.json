@@ -139,7 +139,10 @@
         "view_all_results_button": "View all {total} results"
       },
       "language_selector": {
-        "language_label": "Language:"
+        "label": "Language:"
+      },
+      "currency_selector": {
+        "label": "Currency:"
       }
     },
     "account": {
