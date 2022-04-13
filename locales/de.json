@@ -75,7 +75,7 @@
           "link_order_history": "Bestellverlauf",
           "link_lists": "Listen"
         },
-        "link_sign_in": "Anmelden",
+        "link_sign_in": "Einloggen",
         "link_register_now": "Register now",
         "link_logout": "Ausloggen",
         "menu": {
@@ -175,8 +175,8 @@
         "password_label": "@:common.labels.password",
         "password_placeholder": "@:common.labels.password",
         "forgot_password_link": "Haben Sie Ihr Passwort vergessen?",
-        "login_button": "Anmeldung",
-        "registration_button": "Anmeldung",
+        "login_button": "Einloggen",
+        "registration_button": "Registrierung",
         "user_or_password_incorrect_alert": "<strong>User</strong>&nbsp;or <strong>password</strong>&nbsp;is incorrect",
         "user_and_password_are_required_alert": "<strong>User</strong>&nbsp;and <strong>password</strong>&nbsp; are required"
       },
@@ -467,7 +467,7 @@
       "home_button": "@:common.buttons.home"
     },
     "home": {
-      "sign_in_form_title": "Anmelden",
+      "sign_in_form_title": "Einloggen",
       "main_banner_block": {
         "message": "We can help you <br />to make the right<br />and wise decisions",
         "key_feature_1": "Result oriented",

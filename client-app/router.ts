@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import SeoUrl from "@core/seo-routes.enum";
-import { addLocaleAliasToRoutes } from "./i18n";
+import { addLocaleAliasToRoutes, i18n } from "./i18n";
 
 // Pages
 const Home = () => import("./pages/home/home.vue");
@@ -76,7 +76,7 @@ if (import.meta.env.MODE === "development") {
 
 // todo: move to plugin
 export default function setupRouter(baseUrl?: string) {
-  addLocaleAliasToRoutes(routes);
+  addLocaleAliasToRoutes(routes, i18n?.global.locale.value as string);
 
   // Router definition
   const router = createRouter({

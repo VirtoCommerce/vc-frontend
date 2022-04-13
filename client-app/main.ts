@@ -44,6 +44,9 @@ import setupRouter from "./router";
   const i18n = setupI18n({ defaultLocale, supportedLocales });
   const router = setupRouter(baseUrl);
 
+  // load default locale messages for fallback
+  await loadLocaleMessages(defaultLocale);
+
   // set i18n language
   setI18nLocale(locale);
 

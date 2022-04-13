@@ -6,6 +6,7 @@ export let defaultLocale: string;
 
 export let supportedLocales: string[];
 
+// global instance of VueI18n
 export let i18n: I18n<unknown, unknown, unknown, false> | null = null;
 
 export function setupI18n(options: { defaultLocale: string; supportedLocales: string[] }) {
@@ -30,7 +31,7 @@ export function saveLocale(locale: string) {
 
 export function setI18nLocale(locale: string) {
   if (!i18n) {
-    return;
+    throw new Error("i18n is not instanced");
   }
 
   i18n.global.locale.value = locale;
@@ -40,44 +41,49 @@ export function setI18nLocale(locale: string) {
 
 export async function loadLocaleMessages(locale: string) {
   if (!i18n) {
-    return nextTick();
+    throw new Error("i18n is not instanced");
   }
-  // load locale messages with dynamic import
-  const messages = await import(/* webpackChunkName: "locale-[request]" */ `../locales/${locale}.json`);
+  try {
+    // load locale messages with dynamic import
+    const messages = await import(/* webpackChunkName: "locale-[request]" */ `../locales/${locale}.json`);
 
-  // add locale messages to i18n global
-  i18n.global.setLocaleMessage(locale, messages.default);
+    // add locale messages to i18n global
+    i18n.global.setLocaleMessage(locale, messages.default);
+  } catch (err) {
+    console.log(
+      `Localization file for '${locale}' locale was not found. An fallback locale will be used for this locale.`
+    );
+  }
 
   return nextTick();
 }
 
-export function addLocaleAliasToRoutes(routes: RouteRecordRaw[], child = false) {
-  supportedLocales.forEach((locale) => {
-    routes.forEach((route) => {
-      let alias = route.path;
+// add to each route alias with locale segment at start. ex. '/checkout' => '/de/checkout
+export function addLocaleAliasToRoutes(routes: RouteRecordRaw[], locale: string, child = false) {
+  routes.forEach((route) => {
+    let alias = route.path;
 
-      if (!child) {
-        alias = `/${locale}${alias.charAt(0) != "/" ? "/" : ""}${alias}`;
-      }
+    if (!child) {
+      alias = `/${locale}${alias.charAt(0) != "/" ? "/" : ""}${alias}`;
+    }
 
-      // Make sure alias array exists
-      if (route.alias) {
-        if (!Array.isArray(route.alias)) {
-          route.alias = [route.alias];
-        }
-      } else {
-        route.alias = [];
+    // Make sure alias array exists
+    if (route.alias) {
+      if (!Array.isArray(route.alias)) {
+        route.alias = [route.alias];
       }
+    } else {
+      route.alias = [];
+    }
 
-      // Push alias into alias array
-      if (route.path != alias && route.alias.indexOf(alias) == -1) {
-        route.alias.push(alias);
-      }
+    // Push alias into alias array
+    if (route.path != alias && route.alias.indexOf(alias) == -1) {
+      route.alias.push(alias);
+    }
 
-      // If the route has children, iterate over those too
-      if (route.children) {
-        addLocaleAliasToRoutes(route.children, true);
-      }
-    });
+    // If the route has children, iterate over those too
+    if (route.children) {
+      addLocaleAliasToRoutes(route.children, locale, true);
+    }
   });
 }
