@@ -31,7 +31,7 @@
 
               <div class="font-extrabold">
                 <!-- todo: extract a component for price and use it here -->
-                <span class="text-green-700">{{ currency?.symbol }}{{ variationsCartTotal.toFixed(2) }}</span>
+                <span class="text-green-700">{{ currency?.symbol }}{{ variationsCartTotalAmount.toFixed(2) }}</span>
               </div>
             </div>
 
@@ -92,9 +92,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, computed, watchEffect, defineAsyncComponent } from "vue";
+import { ref, Ref, watchEffect, defineAsyncComponent } from "vue";
 import { VcCarousel, VcSection, VcButton, VcPriceDisplay, CarouselOptions } from "@/components";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
 import { useCart, AddToCart } from "@/shared/cart";
 import {
   useProduct,
@@ -144,16 +144,24 @@ const relatedProductsCarouselOptions: CarouselOptions = {
   },
 };
 
-const { currency } = useCart();
+const { currency, getItemsTotal } = useCart();
 const { buildBreadcrumbs } = useBreadcrumbs();
-const { product, loading, loadProduct, variationsCartTotal } = useProduct();
+const { product, loading, loadProduct } = useProduct();
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
 const isMobile = breakpoints.smaller("lg");
 const breadcrumbs: Ref<IBreadcrumbsItem[]> = ref([{ url: "/", title: t("common.links.home") }]);
 
-const productWithVariations = computed<boolean>(() => !!product.value?.variations?.length);
+const productWithVariations = eagerComputed<boolean>(() => !!product.value?.variations?.length);
+const variationsCartTotalAmount = eagerComputed<number>(() => {
+  if (!product.value) return 0;
+
+  const variationsIds = product.value.variations!.map((variation) => variation.id!);
+  variationsIds.push(product.value.id);
+
+  return getItemsTotal(variationsIds);
+});
 
 watchEffect(() => {
   const productId = props.productId;

@@ -1,18 +1,21 @@
 import client from "@core/api/graphql/graphql-client";
-import { currentUserId, storeId } from "@core/constants";
-import { IdentityResultType } from "@core/api/graphql/types";
+import { currencyCode, currentUserId, locale, storeId } from "@core/constants";
+import { Mutations, MutationsValidateCouponArgs } from "@core/api/graphql/types";
 import mutationDocument from "./validateCouponMutation.graphql";
 
-export default async function validateCoupon(coupon: string): Promise<IdentityResultType> {
-  const { data } = await client.mutate({
+export default async function validateCoupon(coupon: string): Promise<boolean> {
+  const { data } = await client.mutate<Required<Pick<Mutations, "validateCoupon">>, MutationsValidateCouponArgs>({
     mutation: mutationDocument,
     variables: {
       command: {
-        coupon: coupon,
-        storeId: storeId,
+        coupon,
+        storeId,
+        currencyCode,
+        cultureName: locale,
         userId: currentUserId,
       },
     },
   });
-  return data?.validateCoupon;
+
+  return data!.validateCoupon;
 }

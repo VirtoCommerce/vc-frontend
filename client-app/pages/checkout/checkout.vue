@@ -470,7 +470,7 @@ const {
   updateShipment,
   updatePayment,
   updatePurchaseOrderNumber,
-  clearCart,
+  removeCart,
 } = useCart();
 
 const { t } = useI18n();
@@ -545,7 +545,7 @@ const removeCartItem = async (id: string) => {
 };
 
 const useCoupon = async () => {
-  const validationResult = await validateCartCoupon(cartCoupon.value);
+  const validationResult: boolean = await validateCartCoupon(cartCoupon.value);
 
   if (validationResult) {
     await addCartCoupon(cartCoupon.value).then(() => {
@@ -765,7 +765,7 @@ function openClearCartDialog() {
     component: ClearCartDialog,
     props: {
       onResult() {
-        clearCart(cart.value.id!);
+        removeCart(cart.value.id!);
       },
     },
   });

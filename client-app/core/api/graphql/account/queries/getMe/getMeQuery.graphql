@@ -1,4 +1,4 @@
-query getMe($after: String, $first: Int, $sort: String) {
+query GetMe($after: String, $first: Int, $sort: String) {
   me {
     id
     memberId

@@ -13,7 +13,7 @@ import {
   addOrUpdateCartShipment,
   addOrUpdateCartPayment,
   InputBulkItemsType,
-  removeCart,
+  removeCart as _removeCart,
 } from "@core/api/graphql/cart";
 import { BulkCartType, CartType, InputPaymentType, InputShipmentType, LineItemType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
@@ -80,17 +80,18 @@ export default () => {
     await loadMyCart();
   }
 
-  async function clearCart(cartId: string) {
+  async function removeCart(cartId: string) {
     loading.value = true;
-    console.log(`clearCart ${cartId}`);
+
     try {
-      await removeCart(cartId);
+      await _removeCart(cartId);
     } catch (e) {
-      Logger.error("useCart.clearCart", e);
+      Logger.error(`useCart.${removeCart.name}`, e);
       throw e;
     } finally {
       loading.value = false;
     }
+
     await loadMyCart();
   }
 
@@ -277,7 +278,7 @@ export default () => {
     pages: computed(() => pages.value),
     itemsPerPage: computed(() => itemsPerPage.value),
     loading: computed(() => loading.value),
-    currency: computed(() => cart.value.total?.currency),
+    currency: computed(() => cart.value.currency!),
     getItemsTotal,
     loadMyCart,
     addToCart,
@@ -293,6 +294,6 @@ export default () => {
     updatePayment,
     updatePurchaseOrderNumber,
     addMultipleItemsToCart,
-    clearCart,
+    removeCart,
   };
 };

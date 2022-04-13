@@ -3,8 +3,8 @@
 //TODO: rework to use one object with propwrites
 export const storeName = window.STORE_NAME || "B2B-store";
 export const storeId = window.STORE_ID || "B2B-store";
-export const currencyCode = window.CURRENCY_CODE || "USD";
 export const storeLanguages = window.STORE_LANGUAGES || "";
+export let currencyCode = window.CURRENCY_CODE || "USD";
 export let locale = window.LOCALE || "en-US";
 export let currentUserId = window.USER_ID || "";
 export let catalogId = window.CATALOG_ID || "";
@@ -22,6 +22,10 @@ export function setCatalogId(id: string): void {
 
 export function setLocale(id: string): void {
   locale = id;
+}
+
+export function setCurrencyCode(code: string): void {
+  currencyCode = code;
 }
 
 //TODO: load from  storefront API

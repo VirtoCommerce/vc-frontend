@@ -1,15 +1,18 @@
 import client from "@core/api/graphql/graphql-client";
-import { currentUserId, storeId } from "@core/constants";
+import { currencyCode, currentUserId, locale, storeId } from "@core/constants";
 import mutationDocument from "./changeCartItemQuantityMutation.graphql";
+import { Mutations, MutationsChangeCartItemQuantityArgs } from "@core/api/graphql/types";
 
-export default async function changeCartItemQuantity(lineItemId: string, qty: number): Promise<void> {
-  await client.mutate({
+export default async function changeCartItemQuantity(lineItemId: string, quantity: number): Promise<void> {
+  await client.mutate<Required<Pick<Mutations, "changeCartItemQuantity">>, MutationsChangeCartItemQuantityArgs>({
     mutation: mutationDocument,
     variables: {
       command: {
-        lineItemId: lineItemId,
-        quantity: +qty,
-        storeId: storeId,
+        lineItemId,
+        quantity,
+        storeId,
+        currencyCode,
+        cultureName: locale,
         userId: currentUserId,
       },
     },

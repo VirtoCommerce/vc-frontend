@@ -29,7 +29,7 @@ import "@/assets/styles/main.scss";
     legacy: false,
     globalInjection: true,
     fallbackLocale: "en-US",
-    locale: themeContext.language?.cultureName,
+    locale: themeContext.defaultLanguage?.cultureName,
   });
 
   // Create and mount application

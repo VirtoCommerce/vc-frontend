@@ -60,7 +60,7 @@ export default () => {
 
     if (!order) return null;
 
-    await removeCart(cartId); // TODO: implement in "useCart"
+    await removeCart(cartId);
 
     if (reloadCart) {
       await loadMyCart();

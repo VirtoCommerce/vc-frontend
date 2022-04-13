@@ -132,7 +132,7 @@
                 {{ order?.inPayments?.[0]?.gatewayCode }}
               </p>
               <div class="mt-3">
-                <VcButton class="px-2 py-1 uppercase text-xs" size="xs" is-outline :is-disabled="true">
+                <VcButton class="px-2 py-1 uppercase !text-xs !h-auto" is-outline :is-disabled="true">
                   {{ $t("pages.account.order_details.payment_details_card.view_invoice_button") }}
                 </VcButton>
               </div>
@@ -229,7 +229,7 @@ const openReorderPopup = async () => {
 };
 
 onMounted(async () => {
-  await loadOrder(orderId.value);
+  await loadOrder({ id: orderId.value });
   breadcrumbs.value.push({ title: `${order.value?.number}`, route: `/account/order-details/${order.value?.id}` });
 });
 </script>
