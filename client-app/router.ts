@@ -1,6 +1,5 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import { RouteRecordRaw } from "vue-router";
 import SeoUrl from "@core/seo-routes.enum";
-import { addLocaleAliasToRoutes, i18n } from "./i18n";
 
 // Pages
 const Home = () => import("./pages/home/home.vue");
