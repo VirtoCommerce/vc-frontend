@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import { RouteRecordRaw } from "vue-router";
 import SeoUrl from "@core/seo-routes.enum";
 
 // Pages
@@ -73,24 +73,4 @@ if (import.meta.env.MODE === "development") {
   });
 }
 
-// Router definition
-const router = createRouter({
-  routes,
-
-  // History mode
-  history: createWebHistory(),
-
-  // Setup scroll behavior on route change
-  scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition;
-    } else {
-      return {
-        top: 0,
-        behavior: "smooth",
-      };
-    }
-  },
-});
-
-export default router;
+export default routes;
