@@ -8,7 +8,10 @@
       </router-link>
       <!-- Language block -->
       <LanguageSelector v-if="$context.availLanguages && $context.availLanguages.length > 1" />
-      <i class="fas fa-times text-2xl text-[color:var(--color-primary)]" @click="$emit('close')"></i>
+
+      <button class="appearance-none py-2 px-4 -mr-4" @click="$emit('close')">
+        <i class="fas fa-times text-2xl text-[color:var(--color-primary)]" />
+      </button>
     </header>
 
     <!-- region Children links section -->
