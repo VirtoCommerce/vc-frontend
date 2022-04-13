@@ -74,29 +74,4 @@ if (import.meta.env.MODE === "development") {
   });
 }
 
-// todo: move to plugin
-export default function setupRouter(baseUrl?: string) {
-  addLocaleAliasToRoutes(routes, i18n?.global.locale.value as string);
-
-  // Router definition
-  const router = createRouter({
-    routes,
-
-    // History mode
-    history: createWebHistory(baseUrl),
-
-    // Setup scroll behavior on route change
-    scrollBehavior(to, from, savedPosition) {
-      if (savedPosition) {
-        return savedPosition;
-      } else {
-        return {
-          top: 0,
-          behavior: "smooth",
-        };
-      }
-    },
-  });
-
-  return router;
-}
+export default routes;

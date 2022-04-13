@@ -8,8 +8,8 @@ import App from "./App.vue";
  */
 import "@fortawesome/fontawesome-free/css/all.css";
 import "@/assets/styles/main.scss";
-import { loadLocaleMessages, setI18nLocale, setupI18n } from "./i18n";
-import setupRouter from "./router";
+import createI18nRouter, { currentCultureName, createI18nWithCurrentLocale } from "./i18n";
+import routes from "./router";
 
 /**
  * Async application init
@@ -21,44 +21,10 @@ import setupRouter from "./router";
   const defaultLocale = themeContext.defaultLanguage?.twoLetterLanguageName || "en";
   const supportedLocales = themeContext.availLanguages?.map((x) => x.twoLetterLanguageName) || [defaultLocale];
 
-  // todo: move to plugin
-  let locale = location.pathname.split("/")[1];
-  let baseUrl;
+  const i18n = await createI18nWithCurrentLocale({ defaultLocale, supportedLocales });
+  const router = createI18nRouter(routes);
 
-  // use saved or default locale if path locale is not exists in available
-  if (!supportedLocales.includes(locale)) {
-    const savedLocale = localStorage.getItem("locale") as string;
-
-    if (supportedLocales.includes(savedLocale)) {
-      locale = savedLocale;
-    } else {
-      locale = defaultLocale;
-    }
-  }
-
-  if (locale !== defaultLocale) {
-    baseUrl = `${locale}`;
-  }
-
-  // todo: move to plugin
-  const i18n = setupI18n({ defaultLocale, supportedLocales });
-  const router = setupRouter(baseUrl);
-
-  // load default locale messages for fallback
-  await loadLocaleMessages(defaultLocale);
-
-  // set i18n language
-  setI18nLocale(locale);
-
-  // load locale messages if not yet
-  if (i18n && !i18n.global.availableLocales.includes(locale)) {
-    await loadLocaleMessages(locale);
-  }
-
-  const currentCultureName =
-    themeContext.availLanguages?.find((x) => x.twoLetterLanguageName == locale)?.cultureName || "en-US";
-
-  const menus = await initMenu(currentCultureName);
+  const menus = await initMenu(currentCultureName.value);
 
   // Create and mount application
   const app = createApp(App);
