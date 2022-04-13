@@ -63,7 +63,8 @@
       "addresses": "Adressen",
       "orders": "Aufträge",
       "your_lists": "Ihre Listen",
-      "checkout_defaults": "Checkout-Standardwerte"
+      "checkout_defaults": "Checkout-Standardwerte",
+      "list_details": "Details auflisten"
     }
   },
   "shared": {
@@ -83,10 +84,10 @@
           "bulk": "Großauftragsblock",
           "compare": "Vergleichen",
           "cart": "Wagen",
-          "contact_us": "Kontaktiere uns",
-          "my_account": "Mein Konto"
+          "contact_us": "Kontaktiere uns"
         },
         "mobile": {
+          "my_account": "Mein Konto",
           "account_menu": {
             "dashboard": "@:common.links.dashboard",
             "profile": "@:common.links.profile",
@@ -95,6 +96,8 @@
             "your_lists": "@:common.links.your_lists",
             "checkout_defaults": "@:common.links.checkout_defaults"
           },
+          "settings": "Details auflisten",
+          "currency": "Währung",
           "search_bar": {
             "input_placeholder": "Geben Sie Stichwort, Artikel, Modell oder Ersatzteilnummer ein"
           }
@@ -145,7 +148,8 @@
           "addresses": "@:common.links.addresses",
           "orders": "@:common.links.orders",
           "your_lists": "@:common.links.your_lists",
-          "checkout_defaults": "@:common.links.checkout_defaults"
+          "checkout_defaults": "@:common.links.checkout_defaults",
+          "list_details": "@:common.links.list_details"
         }
       },
       "address_form": {
@@ -390,6 +394,11 @@
         "list_settings_button": "List settings",
         "remove_list_button": "Remove list"
       },
+      "list_details": {
+        "add_all_to_cart_button": "Add all products to cart",
+        "list_settings_button": "List settings",
+        "empty_list": "Your list is currently empty"
+      },
       "add_to_wishlists_dialog": {
         "title": "Please select list",
         "empty_list": "You don't have wish lists",
@@ -402,6 +411,10 @@
         "sku_label": "SKU",
         "continue_shopping_button": "@:common.buttons.continue_shopping_button",
         "view_your_list_button": "View your list | View your lists"
+      },
+      "unsuccessful_create_wishlist_dialog": {
+        "message": "You’ve reached max number of lists. Please delete one, that you do not use, or reshuffle products to reuse the existing list.",
+        "ok_button": "@:common.buttons.ok"
       },
       "add_or_update_wishlist_dialog": {
         "title": "New list",
@@ -417,6 +430,12 @@
       "delete_wishlist_dialog": {
         "title": "Delete warning",
         "message": "Are you sure you want to remove “<span class=\"font-extrabold\">{listName}</span>” list?",
+        "delete_button": "@:common.buttons.delete",
+        "cancel_button": "@:common.buttons.cancel"
+      },
+      "delete_wishlist_product_dialog": {
+        "title": "Delete warning",
+        "message": "Are you sure you want to remove “<span class=\"font-extrabold\">{productName}</span>” from the list?",
         "delete_button": "@:common.buttons.delete",
         "cancel_button": "@:common.buttons.cancel"
       }
@@ -659,10 +678,17 @@
     "checkout": {
       "title": "Checkout",
       "invalid_checkout_message": "There is something wrong in Cart. Please verify it to place order.",
+      "clear_cart_dialog": {
+        "title": "Clear cart",
+        "message": "Do you want to clear your cart?",
+        "yes_button": "Yes",
+        "no_button": "No"
+      },
       "products_section": {
         "title": "My products",
         "update_all_link_label": "If you changed multiple quantities,",
-        "update_all_link": "Update All"
+        "update_all_link": "Update All",
+        "clear_cart_button": "Clear all"
       },
       "shipping_details_section": {
         "title": "Shipping details",

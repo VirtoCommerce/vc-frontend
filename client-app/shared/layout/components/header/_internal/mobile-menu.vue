@@ -9,10 +9,6 @@
       <!-- Language block -->
       <LanguageSelector v-if="$context.availLanguages && $context.availLanguages.length > 1" />
       <i class="fas fa-times text-2xl text-[color:var(--color-primary)]" @click="$emit('close')"></i>
-
-      <button class="appearance-none py-2 px-4 -mr-4" @click="$emit('close')">
-        <i class="fas fa-times text-2xl text-[color:var(--color-primary)]" />
-      </button>
     </header>
 
     <!-- region Children links section -->
@@ -185,10 +181,9 @@ import { useI18n } from "vue-i18n";
 import { VcImage, VcRadioButton } from "@/components";
 import { useCart } from "@/shared/cart";
 import { useUser } from "@/shared/account";
-import { LanguageSelector } from "@/shared/layout";
+import { LanguageSelector, MenuLink, useNavigations } from "@/shared/layout";
 import { useCompareProducts } from "@/shared/compare";
 import { useCurrency } from "@core/composables";
-import { MenuLink, useNavigations } from "@/shared/layout";
 import MobileMenuLink from "./mobile-menu-link.vue";
 
 defineEmits(["close"]);
