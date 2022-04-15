@@ -1,22 +1,46 @@
 # v1.0.0.vst
-name: Release hotfix
+name: Release - branch
 
 on:
   workflow_dispatch:
+    inputs:
+      incrementVersion:
+        description: 'Increment automatically minor\patch version before release created. If "none" version will not be incremented.'
+        required: true
+        default: 'none'
+        type: choice
+        options:
+        - IncrementMinor
+        - IncrementPatch
+        - none
 
 jobs:
-  build-theme:
+  release-theme:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
     steps:
 
     - name: Install VirtoCommerce.GlobalTool
-      uses: VirtoCommerce/vc-github-actions/setup-vcbuild@master
+      run: dotnet tool install --global VirtoCommerce.GlobalTool --version 3.3.0-alpha.70
 
     - uses: actions/checkout@v2
       with:
             fetch-depth: 0
+
+    - name: Setup Git Credentials
+      if: ${{ !(contains(github.event.inputs.incrementVersion, 'none')) }}
+      uses: VirtoCommerce/vc-github-actions/setup-git-credentials-github@master
+      with:
+        githubToken: ${{ secrets.REPO_TOKEN }}
+
+    - name: Increment Version
+      if: ${{ !(contains(github.event.inputs.incrementVersion, 'none')) }}
+      run: |
+        vc-build ${{ github.event.inputs.incrementVersion }}
+        git add ${{ github.workspace }}/package.json
+        git commit -m "ci: Auto ${{ github.event.inputs.incrementVersion }}"
+        git push
 
     - name: Get Artifact Version
       uses: VirtoCommerce/vc-github-actions/get-image-version@master
@@ -31,7 +55,6 @@ jobs:
       uses: VirtoCommerce/vc-github-actions/build-vue-theme@master
 
     - name: Create Release
-      if: ${{ github.ref == 'refs/heads/master' }}
       id: create_release
       uses: actions/create-release@v1
       with:
@@ -42,7 +65,6 @@ jobs:
         body: ${{ steps.changelog.outputs.changelog }}
 
     - name: Upload Release Asset
-      if: ${{ github.ref == 'refs/heads/master' }}
       id: upload-release-asset
       uses: actions/upload-release-asset@v1
       with:
