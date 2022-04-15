@@ -486,26 +486,6 @@ export type CustomIdentityResultType = {
   succeeded: Scalars['Boolean'];
 };
 
-/** A connection from an object to a list of objects of type `CustomerOrder`. */
-export type CustomerOrderConnection = {
-  /** A list of all of the edges returned in the connection. */
-  edges?: Maybe<Array<Maybe<CustomerOrderEdge>>>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
-  items?: Maybe<Array<Maybe<CustomerOrderType>>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']>;
-};
-
-/** An edge in a connection from an object to another object of type `CustomerOrder`. */
-export type CustomerOrderEdge = {
-  /** A cursor for use in pagination */
-  cursor: Scalars['String'];
-  /** The item at the end of the edge */
-  node?: Maybe<CustomerOrderType>;
-};
-
 export type CustomerOrderType = {
   addresses: Array<Maybe<OrderAddressType>>;
   cancelReason?: Maybe<Scalars['String']>;
@@ -537,6 +517,7 @@ export type CustomerOrderType = {
   isPrototype: Scalars['Boolean'];
   items: Array<Maybe<OrderLineItemType>>;
   languageCode?: Maybe<Scalars['String']>;
+  loyaltyCalculated?: Maybe<Scalars['Boolean']>;
   modifiedBy?: Maybe<Scalars['String']>;
   modifiedDate?: Maybe<Scalars['DateTime']>;
   number: Scalars['String'];
@@ -1353,6 +1334,17 @@ export type InputPersonalDataType = {
   middleName?: InputMaybe<Scalars['String']>;
 };
 
+export type InputPointsOperationType = {
+  /** Amount of points */
+  amount: Scalars['Decimal'];
+  /** The reason of operation */
+  reason: Scalars['String'];
+  /** Store ID (may be nullable) */
+  storeId?: InputMaybe<Scalars['String']>;
+  /** User ID */
+  userId: Scalars['String'];
+};
+
 export type InputProcessOrderPaymentType = {
   /** Credit card details */
   bankCardInfo?: InputMaybe<InputOrderBankCardInfoType>;
@@ -1827,6 +1819,26 @@ export type LineItemTypeDynamicPropertiesArgs = {
   cultureName?: InputMaybe<Scalars['String']>;
 };
 
+/** A connection from an object to a list of objects of type `LoyaltedOrder`. */
+export type LoyaltedOrderConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<LoyaltedOrderEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<CustomerOrderType>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+/** An edge in a connection from an object to another object of type `LoyaltedOrder`. */
+export type LoyaltedOrderEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge */
+  node?: Maybe<CustomerOrderType>;
+};
+
 /** A connection from an object to a list of objects of type `MemberAddress`. */
 export type MemberAddressConnection = {
   /** A list of all of the edges returned in the connection. */
@@ -1959,6 +1971,7 @@ export type Mutations = {
   addOrUpdateCartAddress?: Maybe<CartType>;
   addOrUpdateCartPayment?: Maybe<CartType>;
   addOrUpdateCartShipment?: Maybe<CartType>;
+  addPoints?: Maybe<Scalars['Decimal']>;
   addWishlistItem?: Maybe<WishlistType>;
   changeCartItemComment?: Maybe<CartType>;
   changeCartItemPrice?: Maybe<CartType>;
@@ -2054,6 +2067,11 @@ export type MutationsAddOrUpdateCartPaymentArgs = {
 
 export type MutationsAddOrUpdateCartShipmentArgs = {
   command: InputAddOrUpdateCartShipmentType;
+};
+
+
+export type MutationsAddPointsArgs = {
+  command: InputPointsOperationType;
 };
 
 
@@ -2798,6 +2816,44 @@ export type PaymentTypeDynamicPropertiesArgs = {
   cultureName?: InputMaybe<Scalars['String']>;
 };
 
+/** Represents points opertation */
+export type PointsOperation = {
+  /** Amount of points in operation */
+  amount?: Maybe<Scalars['Decimal']>;
+  /** User balance after operation */
+  balance?: Maybe<Scalars['Decimal']>;
+  /** Is the operaion deposit, or debit */
+  date?: Maybe<Scalars['String']>;
+  /** Is the operaion deposit, or debit */
+  isDeposit?: Maybe<Scalars['Boolean']>;
+  /** The reason of points operation */
+  reason?: Maybe<Scalars['String']>;
+  /** The unique ID of the store (may be nullable). */
+  storeId?: Maybe<Scalars['String']>;
+  /** The unique ID of the user. */
+  userId: Scalars['String'];
+};
+
+/** A connection from an object to a list of objects of type `PointsOperation`. */
+export type PointsOperationConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<PointsOperationEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<PointsOperation>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+/** An edge in a connection from an object to another object of type `PointsOperation`. */
+export type PointsOperationEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge */
+  node?: Maybe<PointsOperation>;
+};
+
 export type PriceType = {
   /** Actual price */
   actual?: Maybe<MoneyType>;
@@ -3093,6 +3149,7 @@ export enum PropertyType {
 }
 
 export type Query = {
+  balance?: Maybe<UserBalance>;
   cart?: Maybe<CartType>;
   carts?: Maybe<CartConnection>;
   categories?: Maybe<CategoryConnection>;
@@ -3107,10 +3164,11 @@ export type Query = {
   me?: Maybe<UserType>;
   menus?: Maybe<Array<Maybe<MenuLinkListType>>>;
   order?: Maybe<CustomerOrderType>;
-  orders?: Maybe<CustomerOrderConnection>;
+  orders?: Maybe<LoyaltedOrderConnection>;
   organization?: Maybe<Organization>;
   organizations?: Maybe<OrganizationConnection>;
   payments?: Maybe<PaymentInConnection>;
+  pointsOperations?: Maybe<PointsOperationConnection>;
   product?: Maybe<Product>;
   products?: Maybe<ProductConnection>;
   properties?: Maybe<PropertyConnection>;
@@ -3122,6 +3180,13 @@ export type Query = {
   validatePassword?: Maybe<CustomIdentityResultType>;
   wishlist?: Maybe<WishlistType>;
   wishlists?: Maybe<WishlistConnection>;
+};
+
+
+export type QueryBalanceArgs = {
+  showOperations?: InputMaybe<Scalars['Boolean']>;
+  storeId?: InputMaybe<Scalars['String']>;
+  userId: Scalars['String'];
 };
 
 
@@ -3260,6 +3325,17 @@ export type QueryPaymentsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   sort?: InputMaybe<Scalars['String']>;
   userId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryPointsOperationsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']>;
+  filter?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  sort?: InputMaybe<Scalars['String']>;
+  storeId?: InputMaybe<Scalars['String']>;
+  userId: Scalars['String'];
 };
 
 
@@ -3504,6 +3580,18 @@ export type TierPriceType = {
   quantity?: Maybe<Scalars['Long']>;
 };
 
+/** Represents user balance */
+export type UserBalance = {
+  /** User loyalty balance */
+  balance?: Maybe<Scalars['Decimal']>;
+  /** Points operations */
+  operations?: Maybe<Array<Maybe<PointsOperation>>>;
+  /** The ID of the store (may be nullable). */
+  storeId?: Maybe<Scalars['String']>;
+  /** The unique ID of the user. */
+  userId: Scalars['String'];
+};
+
 export type UserType = {
   accessFailedCount: Scalars['Int'];
   /** The associated contact info */
@@ -3659,12 +3747,75 @@ export type WishlistType = {
   storeId?: Maybe<Scalars['String']>;
 };
 
+export type AddPointsOperationMutationVariables = Exact<{
+  command: InputPointsOperationType;
+}>;
+
+
+export type AddPointsOperationMutation = { addPoints?: any };
+
+export type AddWishlistMutationVariables = Exact<{
+  command: InputCreateWishlistType;
+}>;
+
+
+export type AddWishlistMutation = { createWishlist?: { id?: string } };
+
+export type AddWishlistItemMutationVariables = Exact<{
+  command: InputAddWishlistItemType;
+}>;
+
+
+export type AddWishlistItemMutation = { addWishlistItem?: { id?: string } };
+
+export type CreateContactMutationVariables = Exact<{
+  command: InputCreateContactType;
+}>;
+
+
+export type CreateContactMutation = { createContact?: { id: string } };
+
+export type CreateOrganizationMutationVariables = Exact<{
+  command: InputCreateOrganizationType;
+}>;
+
+
+export type CreateOrganizationMutation = { createOrganization?: { id: string } };
+
+export type CreateUserMutationVariables = Exact<{
+  command: InputCreateUserType;
+}>;
+
+
+export type CreateUserMutation = { createUser?: { succeeded: boolean, errors?: Array<{ code?: string, description: string }> } };
+
 export type DeleteMemberAddressesMutationVariables = Exact<{
   command: InputDeleteMemberAddressType;
 }>;
 
 
 export type DeleteMemberAddressesMutation = { deleteMemberAddresses?: { id: string } };
+
+export type DeleteWishlistMutationVariables = Exact<{
+  command: InputRemoveWishlistType;
+}>;
+
+
+export type DeleteWishlistMutation = { removeWishlist?: boolean };
+
+export type DeleteWishlistItemMutationVariables = Exact<{
+  command: InputRemoveWishlistItemType;
+}>;
+
+
+export type DeleteWishlistItemMutation = { removeWishlistItem?: { id?: string } };
+
+export type RenameWishlistMutationVariables = Exact<{
+  command: InputRenameWishlistType;
+}>;
+
+
+export type RenameWishlistMutation = { renameWishlist?: { id?: string } };
 
 export type UpdateMemberAddressesMutationVariables = Exact<{
   command: InputUpdateMemberAddressType;
@@ -3719,6 +3870,45 @@ export type GetMyOrdersQueryVariables = Exact<{
 
 
 export type GetMyOrdersQuery = { orders?: { totalCount?: number, items?: Array<{ id: string, createdDate: any, status?: string, number: string, customerId: string, purchaseOrderNumber?: string, currency?: { code: string }, total?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, inPayments: Array<{ number: string }> }> } };
+
+export type BalanceQueryQueryVariables = Exact<{
+  userId: Scalars['String'];
+  storeId?: InputMaybe<Scalars['String']>;
+  showOperations?: InputMaybe<Scalars['Boolean']>;
+}>;
+
+
+export type BalanceQueryQuery = { balance?: { balance?: any, operations?: Array<{ amount?: any, reason?: string, date?: string, isDeposit?: boolean, balance?: any }> } };
+
+export type GetWishlistQueryVariables = Exact<{
+  listId: Scalars['String'];
+}>;
+
+
+export type GetWishlistQuery = { wishlist?: { name: string, id?: string, itemsCount?: number, items?: Array<{ name?: string, id: string, product?: { name: string, id: string, code: string, slug?: string, outline?: string, minQuantity?: number, maxQuantity?: number, imgSrc?: string, images?: Array<{ url?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any }, price?: { actual?: { amount: any, formattedAmount: string }, discountAmount?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string } } } }> } };
+
+export type GetWishlistsQueryVariables = Exact<{
+  storeId: Scalars['String'];
+  userId: Scalars['String'];
+  currencyCode: Scalars['String'];
+  cultureName?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  sort?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetWishlistsQuery = { wishlists?: { items?: Array<{ id?: string, name: string, items?: Array<{ productId?: string }> }> } };
+
+export type SearchPointsOperationsQueryVariables = Exact<{
+  userId: Scalars['String'];
+  storeId?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type SearchPointsOperationsQuery = { pointsOperations?: { totalCount?: number, items?: Array<{ amount?: any, reason?: string, date?: string, isDeposit?: boolean, balance?: any, userId: string, storeId?: string }> } };
 
 export type AddBulkItemsToCartMutationVariables = Exact<{
   command: InputAddBulkItemsType;
@@ -3796,6 +3986,13 @@ export type CreateOrderFromCartMutationVariables = Exact<{
 
 
 export type CreateOrderFromCartMutation = { createOrderFromCart?: { id: string, number: string, comment?: string, discounts?: Array<{ coupon?: string, description?: string, promotionId?: string, amount?: { amount: any, formattedAmount: string, currency?: { code: string } } }>, taxTotal?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, subTotal?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, total?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, discountTotal?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, shippingTotal?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string }, items: Array<{ id: string, imageUrl?: string, isGift?: boolean, name: string, productId: string, quantity: number, sku: string, product?: { brandName?: string, slug?: string, masterVariation?: { id?: string } }, extendedPrice?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, placedPrice?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, taxTotal?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } } }>, shipments?: Array<{ shipmentMethodCode?: string, shipmentMethodOption?: string, shippingMethod?: { logoUrl: string, typeName: string }, price?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, zip?: string, phone?: string, email?: string, addressType?: number } }>, inPayments: Array<{ gatewayCode?: string, paymentMethod?: { logoUrl: string, typeName: string }, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, zip?: string, phone?: string, email?: string, addressType?: number } }> } };
+
+export type MergeCartMutationVariables = Exact<{
+  command: InputMergeCartType;
+}>;
+
+
+export type MergeCartMutation = { mergeCart?: { id?: string } };
 
 export type RejectGiftItemsMutationVariables = Exact<{
   command: InputRejectGiftItemsType;

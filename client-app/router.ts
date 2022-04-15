@@ -24,6 +24,7 @@ const Orders = () => import("./pages/account/orders.vue");
 const Lists = () => import("./pages/account/lists.vue");
 const ListDetails = () => import("./pages/account/list-details.vue");
 const Profile = () => import("./pages/account/profile.vue");
+const Loyalty = () => import("./pages/account/loyalty.vue");
 const DemoLanding = () => import("./pages/demo-landing/demo-landing.vue");
 const CompareProducts = () => import("./pages/compare-products/compare-products.vue");
 
@@ -47,6 +48,7 @@ const routes: RouteRecordRaw[] = [
       { path: "checkout-defaults", name: "CheckoutDefaults", component: CheckoutDefaults },
       { path: "orders", name: "Orders", component: Orders },
       { path: "order-details/:id", name: "OrderDetails", component: OrderDetails },
+      { path: "loyalty", name: "Loyalty", component: Loyalty },
       { path: "lists", name: "Lists", component: Lists },
       { path: "lists/:listId", name: "ListDetails", component: ListDetails, props: true },
     ],

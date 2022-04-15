@@ -240,6 +240,11 @@ const accountMenuLink: MenuLink = {
       icon: "/static/images/dashboard/icons/check-circle.svg#main",
     },
     {
+      route: { name: "Loyalty" },
+      title: t("shared.layout.header.mobile.account_menu.loyalty"),
+      icon: "/static/images/dashboard/icons/list.svg#main",
+    },
+    {
       id: "logout",
       icon: "/static/images/common/user-circle.svg#main",
     },

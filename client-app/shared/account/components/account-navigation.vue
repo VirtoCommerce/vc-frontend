@@ -44,6 +44,11 @@
         :text="$t('shared.account.navigation.links.checkout_defaults')"
         class="checkout-icon"
       ></AccountNavigationLink>
+      <AccountNavigationLink
+        to="/account/loyalty"
+        :text="$t('shared.account.navigation.links.loyalty')"
+        class="dashboard-icon"
+      ></AccountNavigationLink>
     </div>
   </VcCard>
   <!-- Commented due to accetpance criteria, will be used in future-->

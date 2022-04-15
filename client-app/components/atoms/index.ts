@@ -15,3 +15,4 @@ export { default as VcRadioButton } from "./radio-button/radio-button.vue";
 export { default as VcActionInput } from "./action-input/action-input.vue";
 export { default as VcTabs } from "./tabs/tabs.vue";
 export { default as VcScrollTopButton } from "./scroll-top-button/scroll-top-button.vue";
+export { default as VcLoyaltedOrderBadge } from "./loyalted-order-badge/loyalted-order-badge.vue";

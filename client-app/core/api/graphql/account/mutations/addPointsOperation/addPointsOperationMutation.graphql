@@ -1,0 +1,3 @@
+mutation addPointsOperation($command: InputPointsOperationType!) {
+  addPoints(command: $command)
+}

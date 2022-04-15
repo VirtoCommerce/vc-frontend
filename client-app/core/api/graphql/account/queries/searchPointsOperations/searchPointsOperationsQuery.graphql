@@ -1,0 +1,14 @@
+query SearchPointsOperations($userId: String!, $storeId: String, $after: String, $first: Int) {
+  pointsOperations(userId: $userId, storeId: $storeId, after: $after, first: $first) {
+    totalCount
+    items {
+      amount
+      reason
+      date
+      isDeposit
+      balance
+      userId
+      storeId
+    }
+  }
+}

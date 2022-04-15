@@ -1,0 +1,12 @@
+query balanceQuery($userId: String!, $storeId: String, $showOperations: Boolean) {
+  balance(userId: $userId, storeId: $storeId, showOperations: $showOperations) {
+    balance
+    operations {
+      amount
+      reason
+      date
+      isDeposit
+      balance
+    }
+  }
+}

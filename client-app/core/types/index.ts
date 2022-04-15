@@ -4,6 +4,7 @@ export * from "./currency";
 
 import { CartAddressType, MemberAddressType, OrderAddressType } from "@core/api/graphql/types";
 import { LocationQueryValue } from "vue-router";
+import { string } from "yup";
 
 export type Dictionary = { [key: string | symbol | number]: any };
 
@@ -148,3 +149,8 @@ export interface IThemeConfigPreset {
   color_footer_bottom_link?: string;
   color_footer_bottom_link_hover?: string;
 }
+
+export type SelectorLineItem = {
+  text: string;
+  value: string;
+};

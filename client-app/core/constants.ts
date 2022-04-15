@@ -2,7 +2,7 @@
 // It is global variables initialized on the layout page
 //TODO: rework to use one object with propwrites
 export const storeName = window.STORE_NAME || "B2B-store";
-export const storeId = window.STORE_ID || "B2B-store";
+export let storeId = window.STORE_ID || "B2B-store";
 export const storeLanguages = window.STORE_LANGUAGES || "";
 export let currencyCode = window.CURRENCY_CODE || "USD";
 export let locale = window.LOCALE || "en-US";
@@ -22,6 +22,10 @@ export function setCatalogId(id: string): void {
 
 export function setLocale(id: string): void {
   locale = id;
+}
+
+export function setStore(id: string): void {
+  storeId = id;
 }
 
 export function setCurrencyCode(code: string): void {

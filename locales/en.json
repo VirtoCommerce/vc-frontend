@@ -94,7 +94,8 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "your_lists": "@:common.links.your_lists",
-            "checkout_defaults": "@:common.links.checkout_defaults"
+            "checkout_defaults": "@:common.links.checkout_defaults",
+            "loyalty": "Loyalty"
           },
           "settings": "Settings",
           "currency": "Currency",
@@ -155,7 +156,8 @@
           "orders": "@:common.links.orders",
           "your_lists": "@:common.links.your_lists",
           "checkout_defaults": "@:common.links.checkout_defaults",
-          "list_details": "@:common.links.list_details"
+          "list_details": "@:common.links.list_details",
+          "loyalty": "Loyalty"
         }
       },
       "address_form": {
@@ -231,6 +233,18 @@
           "item_can_t_be_purchased_message": " Item can't be purchased ",
           "item_is_out_of_stock_message": " Item is out of stock "
         }
+      },
+      "add_points_operation_dialog": {
+        "title": "Add Points",
+        "reason": "Reason",
+        "amount": "Amount",
+        "buttons": {
+          "add_points_operation": "Add Points",
+          "cancel": "Cancel"
+        }
+      },
+      "loyalty": {
+        "loyalty_calculated": "Loyalty calculated"
       }
     },
     "cart": {
@@ -282,6 +296,19 @@
           "variation_sku_label": "@:common.labels.sku",
           "price_label": "@:common.labels.product_price"
         }
+      },
+      "add_to_wishlists_dialog": {
+        "title": "Please select list",
+        "empty_list": "You don't have wish lists",
+        "item_already_in_list": "Item already in the list",
+        "cancel_button": "@:common.buttons.cancel",
+        "add_to_list_button": "Add to list"
+      },
+      "added_to_wishlists_dialog": {
+        "title": "Item added to list | Item added to lists",
+        "sku_label": "SKU",
+        "continue_shopping_button": "@:common.buttons.continue_shopping_button",
+        "view_your_list_button": "View your list | View your lists"
       }
     },
     "checkout": {
@@ -645,6 +672,24 @@
         "email_label": "@:common.labels.email",
         "email_placeholder": "@:common.labels.email",
         "update_button": "@:common.buttons.update"
+      },
+      "loyalty": {
+        "title": "Points Balance",
+        "operation_amount": "Amount",
+        "operation_balance": "Balance after",
+        "operation_date": "Date",
+        "operation_reason": "Reason",
+        "no_operations_img_alt": "No points operations",
+        "no_operations_message": "There are no points operations yet",
+        "points_operations": "Points Operations",
+        "operations_per_page": "per page",
+        "buttons": {
+          "switch_to_pagination_mode": "Switch to paginate",
+          "switch_to_pagination_mode_mobile": "> Paginate",
+          "switch_to_infinite_scroll": "Switch to infinite",
+          "switch_to_infinite_scroll_mobile": "> Infinite",
+          "add_points_operation": "Add Loyalty Points"
+        }
       }
     },
     "catalog": {

@@ -8,13 +8,19 @@
       <h2 class="text-gray-800 px-5 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-2">
         {{ $t("pages.account.order_details.title", [order?.number]) }}
       </h2>
-      <div class="flex px-5 md:px-0 mb-5 space-x-4">
-        <div class="text-sm">
-          <span class="font-bold">{{ $t("pages.account.order_details.status_label") }} </span>{{ order?.status }}
+      <div class="flex flex-col lg:flex-row lg:flex-nowrap lg:space-x-6">
+        <div class="flex px-5 md:px-0 mb-5 space-x-4 lg:w-3/4 xl:w-4/5 flex-grow w-full">
+          <div class="text-sm">
+            <span class="font-bold">{{ $t("pages.account.order_details.status_label") }} </span>{{ order?.status }}
+          </div>
+          <div class="text-sm">
+            <span class="font-bold">{{ $t("pages.account.order_details.placed_on_label") }} </span
+            >{{ moment(order?.createdDate).format("MMM DD, YYYY HH:mm:ss A") }}
+          </div>
         </div>
-        <div class="text-sm">
-          <span class="font-bold">{{ $t("pages.account.order_details.placed_on_label") }} </span
-          >{{ moment(order?.createdDate).format("MMM DD, YYYY HH:mm:ss A") }}
+        <div class="flex flex-col px-5 mb-7 md:px-0 lg:mb-0 lg:w-1/4 lg:order-1">
+          <VcLoyaltedOrderBadge :is-loyalty-calculated="order?.loyaltyCalculated" class="w-auto">
+          </VcLoyaltedOrderBadge>
         </div>
       </div>
       <div class="flex flex-col lg:flex-row lg:flex-nowrap lg:space-x-6">
@@ -176,7 +182,16 @@
 <script setup lang="ts">
 import { OrderSummary, ProductCard, AcceptedGifts } from "@/shared/checkout";
 import { computed, onMounted, ref } from "vue";
-import { VcCard, VcImage, VcPagination, VcButton, VcSection, VcBreadcrumbs, IBreadcrumbs } from "@/components";
+import {
+  VcCard,
+  VcImage,
+  VcPagination,
+  VcButton,
+  VcSection,
+  VcBreadcrumbs,
+  IBreadcrumbs,
+  VcLoyaltedOrderBadge,
+} from "@/components";
 import { useRoute } from "vue-router";
 import { ReorderInfo, useUserOrder } from "@/shared/account";
 import moment from "moment";

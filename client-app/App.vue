@@ -18,7 +18,7 @@ import { Header, Footer, useSearchBar } from "./shared/layout";
 import { useUser } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { themeContext } from "@/core/utilities";
-import { setCatalogId, setUserId, setLocale, setCurrencyCode } from "@/core/constants";
+import { setCatalogId, setUserId, setLocale, setCurrencyCode, setStore } from "@/core/constants";
 import { PopupHost } from "@/shared/popup";
 import { NotificationsHost } from "@/shared/notification";
 import { RouteRecordName, useRouter } from "vue-router";
@@ -77,6 +77,7 @@ onMounted(async () => {
       "en-US"
   );
   setCurrencyCode(currentCurrency.value.code);
+  setStore(themeContext.storeId || "B2B-store");
 
   await loadMyCart();
   loaded.value = true;
