@@ -1,4 +1,4 @@
-# v1.0.1.vst
+# v1.0.0.vst
 name: VST Theme CI
 on:
   workflow_dispatch:
@@ -41,6 +41,12 @@ jobs:
       jira-keys: ${{ steps.jira_keys.outputs.jira-keys }}
 
     steps:
+
+      - name: Set RELEASE_STATUS
+        if: ${{ github.ref == 'refs/heads/master' && github.event_name == 'push' }}
+        run: |
+          echo "RELEASE_STATUS=true" >> $GITHUB_ENV
+
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
