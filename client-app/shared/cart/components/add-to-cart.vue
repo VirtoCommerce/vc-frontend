@@ -1,75 +1,60 @@
 <template>
   <div class="flex relative">
-    <!-- Updating spinner -->
-    <div v-if="updating" class="absolute z-10 flex items-center justify-center w-full h-full bg-white bg-opacity-70">
-      <i class="fas fa-spinner fa-spin text-[color:var(--color-primary)]"></i>
-    </div>
-
-    <!-- Input with only numbers restrictions -->
     <input
-      v-model="value"
       type="number"
-      pattern="\d*"
+      v-model.number="enteredQuantity"
+      :disabled="disabled"
       :max="maxQty"
       :min="minQty"
-      class="appearance-none border rounded-none rounded-l flex-1 w-full text-base lg:text-sm border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9 min-w-0"
-      :class="[
-        !!errorMessage
-          ? 'border-[color:var(--color-danger)] focus:border-[color:var(--color-danger)] border-r -mr-px z-10'
-          : 'border-r-0',
-      ]"
-      :disabled="disabled"
+      :class="{
+        'border-[color:var(--color-danger)] focus:border-[color:var(--color-danger-hover)] z-10': !!errorMessage,
+      }"
+      class="appearance-none rounded-l flex-1 w-full text-base lg:text-sm -mr-px border border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9 min-w-0"
       @input="onInput"
       @keypress="onKeypress"
     />
 
-    <!-- Confirm button -->
-    <!-- todo: Use VcButton -->
-    <button
-      class="rounded-r uppercase px-3 border font-roboto-condensed font-bold text-sm"
-      :class="[
-        disabled || !!errorMessage
-          ? 'border-gray-300 text-gray-300 cursor-default'
-          : count && +count > 0
-          ? 'border-[color:var(--color-primary)] bg-[color:var(--color-primary)] text-white hover:bg-[color:var(--color-primary-hover)] hover:border-[color:var(--color-primary-hover)]'
-          : 'border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:text-white hover:bg-[color:var(--color-primary)]',
-      ]"
-      :disabled="disabled || !!errorMessage"
+    <VcButton
+      class="!rounded-l-none !border uppercase px-3 !text-sm"
+      :is-outline="!countInCart"
+      :is-waiting="loading"
+      :is-disabled="disabled || !!errorMessage"
+      :title="buttonText"
       @click="onChange"
     >
-      <span class="hidden lg:inline">
-        {{
-          count && +count > 0
-            ? $t("shared.cart.add_to_cart.update_cart_button")
-            : $t("shared.cart.add_to_cart.add_to_cart_button")
-        }}
+      <span class="hidden xl:inline">
+        {{ buttonText }}
       </span>
-      <i class="inline lg:hidden fas fa-shopping-cart"></i>
-    </button>
+      <i class="inline xl:hidden fas fa-shopping-cart" />
+    </VcButton>
   </div>
 
   <!-- Info hint -->
-  <div v-if="errorMessage" class="text-xs text-[color:var(--color-danger)]">{{ errorMessage }}</div>
-  <div v-else-if="count && +count > 0" class="text-xs text-gray-400">
-    {{ $t("shared.cart.add_to_cart.already_in_cart_message", [count]) }}
+  <div v-if="errorMessage" class="text-xs text-[color:var(--color-danger)]">
+    {{ errorMessage }}
   </div>
+
+  <div v-else-if="countInCart" class="text-xs text-gray-400">
+    {{ $t("shared.cart.add_to_cart.already_in_cart_message", [countInCart]) }}
+  </div>
+
   <div v-else class="mb-4"></div>
 </template>
 
 <script setup lang="ts">
-import { Product, VariationType } from "@/core/api/graphql/types";
+import { VcButton } from "@/components";
+import { LineItemType, Product, VariationType } from "@/core/api/graphql/types";
 import { useCart } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import { useField } from "vee-validate";
-import { computed, PropType, ref } from "vue";
+import { computed, PropType, ref, watchEffect } from "vue";
+import { eagerComputed } from "@vueuse/core";
+import { clone } from "lodash";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 import { CartAddInfo } from ".";
 
-const { t } = useI18n();
-
-// Define max qty available to add
-const max = 999999;
+const emit = defineEmits(["update:lineitem"]);
 
 const props = defineProps({
   product: {
@@ -78,20 +63,28 @@ const props = defineProps({
   },
 });
 
-const isProduct = "variations" in (props.product as Product);
-const minQty = (props.product as Product).minQuantity || 1;
-const maxQty = Math.min(
-  props.product.availabilityData?.availableQuantity,
-  (props.product as Product).maxQuantity || max
+// Define max qty available to add
+const max = 999999;
+
+const { cart, addToCart, changeItemQuantity } = useCart();
+const { openPopup } = usePopup();
+const { t } = useI18n();
+
+const loading = ref(false);
+const initialValue = ref(1);
+
+const lineItemInCart = computed<LineItemType | undefined>(() =>
+  cart.value?.items?.find((item) => item.productId === props.product.id)
+);
+const countInCart = eagerComputed<number>(() => lineItemInCart.value?.quantity || 0);
+const minQty = eagerComputed<number>(() => props.product.minQuantity || 1);
+const maxQty = eagerComputed<number>(() =>
+  Math.min(props.product.availabilityData?.availableQuantity, props.product.maxQuantity || max)
 );
 
-const emit = defineEmits(["update:lineitem"]);
-
-const { addToCart, itemInCart, changeItemQuantity } = useCart();
-const { openPopup, closePopup } = usePopup();
-
-const disabled = computed(
+const disabled = eagerComputed<boolean>(
   () =>
+    loading.value ||
     !(
       props.product.availabilityData?.isAvailable &&
       props.product.availabilityData?.isInStock &&
@@ -99,76 +92,86 @@ const disabled = computed(
       props.product.availabilityData?.availableQuantity
     )
 );
-const lineItem = ref(itemInCart(props.product.id!));
-const count = computed(() => lineItem.value?.quantity);
-const updating = ref(false);
 
-let rules = yup
-  .number()
-  .typeError(t("shared.cart.add_to_cart.enter_correct_number_message"))
-  .integer()
-  .optional()
-  .moreThan(0);
+const buttonText = computed<string>(() =>
+  countInCart.value ? t("shared.cart.add_to_cart.update_cart_button") : t("shared.cart.add_to_cart.add_to_cart_button")
+);
 
-if (isProduct) {
-  rules = rules.min(minQty);
-}
+const rules = computed(() =>
+  yup
+    .number()
+    .typeError(t("shared.cart.add_to_cart.enter_correct_number_message"))
+    .integer()
+    .positive()
+    .min(minQty.value)
+    .max(maxQty.value)
+);
 
-rules = rules.max(maxQty);
-
-const { value, validate, errorMessage, setValue } = useField("qty", rules, {
-  initialValue: count.value || minQty,
-});
+const { value: enteredQuantity, validate, errorMessage, setValue } = useField("qty", rules, { initialValue });
 
 /**
  * Process button click to add/update cart line item.
  */
-const onChange = async () => {
-  if (!count.value && (!value.value || isNaN(value.value))) {
-    setValue(minQty);
+async function onChange() {
+  if (!countInCart.value && (!enteredQuantity.value || isNaN(enteredQuantity.value))) {
+    setValue(minQty.value);
   }
-  if (await validate()) {
-    updating.value = true;
-    try {
-      if (lineItem.value) {
-        await changeItemQuantity(lineItem.value.id, value.value || 0);
-      } else {
-        await addToCart(props.product.id!, value.value || minQty);
-      }
-      lineItem.value = itemInCart(props.product.id!);
-      emit("update:lineitem", lineItem.value);
 
-      closePopup();
-      openPopup({
-        component: CartAddInfo,
-        props: {
-          lineItem: { ...(lineItem.value ?? {}) },
-        },
-      });
-    } finally {
-      updating.value = false;
-    }
+  const { valid } = await validate();
+
+  if (!valid || disabled.value) return;
+
+  loading.value = true;
+
+  const isRemoving = !!lineItemInCart.value && !enteredQuantity.value;
+  let lineItem = clone(lineItemInCart.value);
+
+  if (lineItem) {
+    await changeItemQuantity(lineItem.id, enteredQuantity.value || 0);
+  } else {
+    await addToCart(props.product.id!, enteredQuantity.value || minQty.value);
   }
-};
+
+  if (isRemoving) {
+    lineItem!.quantity = 0;
+    initialValue.value = minQty.value;
+    setValue(initialValue.value);
+  } else {
+    lineItem = clone(lineItemInCart.value);
+  }
+
+  emit("update:lineitem", lineItem);
+
+  openPopup({
+    component: CartAddInfo,
+    props: { lineItem },
+  });
+
+  loading.value = false;
+}
 
 /**
  * Ignore non-numeric keys.
  */
-const onKeypress = (event: KeyboardEvent) => {
+function onKeypress(event: KeyboardEvent) {
   if (!/[0-9]/.test(event.key)) {
     event.preventDefault();
   }
-};
+}
 
 /**
  * Limit max value.
  */
-const onInput = () => {
-  if (value.value && value.value > max) {
-    value.value = max;
+function onInput() {
+  if (!enteredQuantity.value) {
+    enteredQuantity.value = undefined;
+  } else if (enteredQuantity.value > max) {
+    enteredQuantity.value = max;
   }
-  if (!value.value) {
-    value.value = undefined;
-  }
-};
+}
+
+watchEffect(() => {
+  initialValue.value = countInCart.value || minQty.value;
+  setValue(initialValue.value);
+});
 </script>

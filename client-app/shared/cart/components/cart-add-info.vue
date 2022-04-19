@@ -90,21 +90,16 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 
 const props = defineProps({
-  isOpen: {
-    type: Boolean,
-    default: false,
-  },
-
   lineItem: {
     type: Object as PropType<LineItemType>,
     required: true,
   },
 });
 
-const variant = computed(() => (props.lineItem.quantity === 0 ? "warn" : "success"));
+const variant = computed(() => (props.lineItem.quantity ? "success" : "warn"));
 const title = computed(() =>
-  props.lineItem.quantity === 0
-    ? t("shared.cart.cart_add_info_popup.title_removed")
-    : t("shared.cart.cart_add_info_popup.title_added")
+  props.lineItem.quantity
+    ? t("shared.cart.cart_add_info_popup.title_added")
+    : t("shared.cart.cart_add_info_popup.title_removed")
 );
 </script>
