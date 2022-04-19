@@ -41,9 +41,9 @@
     <!-- Product price -->
     <div class="text-sm flex-shrink-0 w-28">
       <div class="font-bold text-xs" v-t="'shared.catalog.product_card.price_label'"></div>
-      <div class="">
-        <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span>
-        {{ $t("common.suffixes.per_item") }}
+      <div class="flex space-x-1">
+        <VcPriceDisplay class="text-green-700 font-extrabold" :value="product.price?.actual" />
+        <span class="hidden lg:inline" v-t="'common.suffixes.per_item'"></span>
       </div>
     </div>
 

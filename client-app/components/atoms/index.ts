@@ -8,6 +8,7 @@ export { default as VcInfinityScrollLoader } from "./infinity-scroll-loader/infi
 export { default as VcMarkdownRender } from "./markdown-render/markdown-render.vue";
 export { default as VcPagination } from "./pagination/pagination.vue";
 export { default as VcPriceDisplay } from "./price-display/price-display.vue";
+export { default as VcPastPriceDisplay } from "./past-price-display/past-price-display.vue";
 export { default as VcCardSkeleton } from "./card-skeleton/card-skeleton.vue";
 export { default as VcSection } from "./section/section.vue";
 export { default as VcSelect } from "./select/select.vue";

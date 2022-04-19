@@ -52,9 +52,21 @@
       <!-- Product price -->
       <div class="flex flex-col md:flex-row items-baseline text-sm mb-4">
         <div class="w-1/2 font-bold text-xs" v-t="'shared.catalog.product_card.price_label'"></div>
-        <div class="md:w-1/2">
-          <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span
-          >{{ $t("common.suffixes.per_item") }}
+        <div class="md:w-1/2 flex flex-col">
+          <div class="flex space-x-1">
+            <VcPriceDisplay
+              v-if="product.price?.list?.amount > product.price?.sale?.amount"
+              class="text-green-700 font-extrabold"
+              :value="product.price?.sale"
+            />
+            <VcPriceDisplay v-else class="text-green-700 font-extrabold" :value="product.price?.list" />
+            <span class="hidden lg:inline" v-t="'common.suffixes.per_item'"></span>
+          </div>
+          <VcPastPriceDisplay
+            v-if="product.price?.list?.amount > product.price?.sale?.amount"
+            :value="product?.price?.list"
+          >
+          </VcPastPriceDisplay>
         </div>
       </div>
 
@@ -65,7 +77,7 @@
 
 <script setup lang="ts">
 import { PropType } from "vue";
-import { VcImage, VcPriceDisplay } from "@/components";
+import { VcImage, VcPriceDisplay, VcPastPriceDisplay } from "@/components";
 import { AddToCompare } from "@/shared/compare";
 import { Product as ProductType } from "@/core/api/graphql/types";
 import SeoUrl from "@core/seo-routes.enum";
