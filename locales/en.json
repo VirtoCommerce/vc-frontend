@@ -302,7 +302,7 @@
         "title": "Accepted Gifts"
       },
       "add_or_update_address_dialog": {
-        "title": "Select address",
+        "title": "New address",
         "cancel_button": "@:common.buttons.cancel",
         "create_button": "@:common.buttons.create",
         "save_button": "@:common.buttons.save"
