@@ -179,6 +179,10 @@ const onShowOnlyDifferencesChange = () => {
 const refreshProducts = async () => {
   await fetchProducts({ productIds: productsIds.value });
   getProductProperties();
+
+  if (showOnlyDifferences.value) {
+    onShowOnlyDifferencesChange();
+  }
 };
 
 function getProductProperties() {
