@@ -5,13 +5,13 @@
         class="md:hidden text-gray-800 px-5 text-3xl font-bold uppercase mb-5"
         v-t="'pages.account.dashboard.title'"
       ></h2>
-      <div class="flex">
+      <div class="flex md:space-x-5">
         <!-- First column-->
         <div class="hidden lg:flex flex-col lg:w-1/5 space-y-5">
           <AccountNavigation></AccountNavigation>
         </div>
         <!-- Second column-->
-        <div class="flex flex-col w-full px-5 space-y-5 lg:w-3/5">
+        <div class="flex flex-col w-full px-5 md:px-0 space-y-5 lg:w-4/5">
           <VcCard :title="$t('pages.account.dashboard.last_orders_card.title')" :full-width-content="true">
             <template #header-button>
               <div v-if="isMobile">
@@ -262,11 +262,10 @@
           <!-- <VcCard title="Users" class="h-52"></VcCard> -->
         </div>
         <!-- Third column-->
-        <div class="hidden lg:flex flex-col lg:w-1/5 space-y-5">
-          <VcCard :title="$t('pages.account.dashboard.bulk_order_card.title')" class="h-96"></VcCard>
-          <!-- Commented due to accetpance criteria, will be used in future-->
-          <!-- <VcCard title="Current user roles" class="h-80"></VcCard> -->
-        </div>
+        <!-- Commented due to accetpance criteria, will be used in future-->
+        <!-- <div class="hidden lg:flex flex-col lg:w-1/5 space-y-5">
+          <VcCard title="Current user roles" class="h-80"></VcCard>
+        </div> -->
       </div>
     </div>
   </div>
