@@ -11,11 +11,11 @@
       />
     </router-link>
 
-    <div class="flex flex-col justify-evenly gap-2 overflow-hidden">
+    <div class="flex flex-col justify-start space-y-2 overflow-hidden">
       <!-- Product title -->
       <router-link
         :to="link"
-        class="text-[color:var(--color-link)] font-extrabold text-sm leading-tight line-clamp-2"
+        class="shrink-0 h-8 text-[color:var(--color-link)] font-extrabold text-sm leading-tight line-clamp-2"
         @click="$emit('link-click', $event)"
       >
         {{ product.name }}
@@ -28,9 +28,9 @@
           <span>{{ product.code }}</span>
         </p>
 
-        <p class="truncate">
+        <p class="truncate flex">
           <span class="font-bold mr-1">Price</span>
-          <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span> / each
+          <VcItemPrice :value="product.price" />
         </p>
       </div>
     </div>
@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { computed, PropType } from "vue";
-import { VcImage, VcPriceDisplay } from "@/components";
+import { VcImage, VcItemPrice } from "@/components";
 import { Product as ProductType } from "@/core/api/graphql/types";
 import { RouteLocationRaw } from "vue-router";
 

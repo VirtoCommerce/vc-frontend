@@ -65,14 +65,11 @@
             </router-link>
 
             <!-- Product price -->
-            <div class="flex flex-col md:flex-row items-baseline text-sm mb-3">
-              <div class="w-1/2 font-bold text-xs" v-if="!isMobile">
+            <div class="flex flex-col md:flex-row items-baseline justify-between text-sm mb-3 h-8">
+              <div class="font-bold text-xs" v-if="!isMobile">
                 {{ $t("pages.compare.main_block.price_label") }}
               </div>
-              <div class="md:w-1/2">
-                <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span>
-                {{ $t("common.suffixes.per_item") }}
-              </div>
+              <VcItemPrice :value="product.price" />
             </div>
 
             <div class="h-12">
@@ -98,14 +95,11 @@
           <div class="w-56 flex-shrink-0" v-if="!isMobile"></div>
           <div v-for="product in products" :key="product.id" class="w-32 flex-shrink-0 md:w-48">
             <!-- Product price -->
-            <div class="flex flex-col md:flex-row items-baseline text-sm my-4 h-8">
-              <div class="w-1/2 font-bold text-xs" v-if="!isMobile">
+            <div class="flex flex-col md:flex-row items-baseline justify-between text-sm my-4 h-8">
+              <div class="font-bold text-xs" v-if="!isMobile">
                 {{ $t("pages.compare.main_block.price_label") }}
               </div>
-              <div class="md:w-1/2">
-                <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span>
-                {{ $t("common.suffixes.per_item") }}
-              </div>
+              <VcItemPrice :value="product.price" />
             </div>
             <AddToCart :product="product" @update:lineitem="refreshProducts" />
           </div>
@@ -122,7 +116,7 @@ import {
   VcButton,
   IBreadcrumbs,
   VcImage,
-  VcPriceDisplay,
+  VcItemPrice,
   IProductProperties,
 } from "@/components";
 import { EmptyComparison, useProducts } from "@/shared/catalog";
