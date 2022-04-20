@@ -41,10 +41,7 @@
     <!-- Product price -->
     <div class="text-sm flex-shrink-0 w-28">
       <div class="font-bold text-xs" v-t="'shared.catalog.product_card.price_label'"></div>
-      <div class="flex space-x-1">
-        <VcPriceDisplay class="text-green-700 font-extrabold" :value="product.price?.actual" />
-        <span class="hidden lg:inline" v-t="'common.suffixes.per_item'"></span>
-      </div>
+      <VcItemPrice :value="product.price"></VcItemPrice>
     </div>
 
     <!-- VcCard widget -->
@@ -66,7 +63,7 @@
 
 <script setup lang="ts">
 import { PropType } from "vue";
-import { VcImage, VcPriceDisplay } from "@/components";
+import { VcImage, VcItemPrice } from "@/components";
 import { AddToCompare } from "@/shared/compare";
 import { Product as ProductType } from "@/core/api/graphql/types";
 import SeoUrl from "@core/seo-routes.enum";
