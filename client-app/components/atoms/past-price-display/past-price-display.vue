@@ -1,5 +1,5 @@
 <template>
-  <s class="text-gray-400 text-xs font-semibold">{{ value?.formattedAmount }}</s>
+  <s>{{ value?.formattedAmount }}</s>
 </template>
 
 <script setup lang="ts">

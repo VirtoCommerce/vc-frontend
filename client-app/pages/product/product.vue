@@ -48,8 +48,7 @@
               <div class="font-extrabold text-base" v-t="'pages.product.price_label'"></div>
 
               <div>
-                <VcPriceDisplay :value="product.price?.actual" class="font-extrabold text-green-700" />
-                <span class="font-semibold hidden lg:inline-block ml-1" v-t="'common.suffixes.per_item'"></span>
+                <VcItemPrice :value="product.price" />
               </div>
             </div>
 
@@ -93,7 +92,7 @@
 
 <script setup lang="ts">
 import { ref, Ref, watchEffect, defineAsyncComponent } from "vue";
-import { VcCarousel, VcSection, VcButton, VcPriceDisplay, CarouselOptions } from "@/components";
+import { VcCarousel, VcSection, VcButton, VcItemPrice, CarouselOptions } from "@/components";
 import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
 import { useCart, AddToCart } from "@/shared/cart";
 import {
