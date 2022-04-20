@@ -54,6 +54,7 @@ export const orderDraftType = "orderDraft";
 export const sortAscending = "asc";
 export const sortDescending = "desc";
 export const catalogOrderDraftsCount = 100;
+export const inStockFilterExpression = "instock_quantity:(1 TO)";
 
 export const productSortingList = [
   { id: "priority-descending;name-ascending", name: "Featured" },

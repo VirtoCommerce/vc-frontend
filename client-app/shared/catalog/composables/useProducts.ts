@@ -4,6 +4,7 @@ import { Product } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 import { ProductsFilter, ProductsSearchParams } from "../types";
 import { rangeFacetToProductsFilter, termFacetToProductsFilter } from "@/shared/catalog";
+import { inStockFilterExpression } from "@/core/constants";
 
 export default (
   options: {
@@ -19,6 +20,7 @@ export default (
   const filters: Ref<ProductsFilter[]> = shallowRef([]);
   const total: Ref<number> = ref(0);
   const pages: Ref<number> = ref(1);
+  const showInStock: Ref<boolean> = ref(false);
 
   async function fetchProducts(searchParams: Partial<ProductsSearchParams>) {
     loading.value = true;
@@ -27,6 +29,10 @@ export default (
     pages.value = 1;
 
     try {
+      if (searchParams.filter?.includes(inStockFilterExpression)) {
+        showInStock.value = true;
+      }
+
       const {
         items = [],
         term_facets = [],
@@ -71,6 +77,7 @@ export default (
 
   return {
     filters,
+    showInStock,
     fetchProducts,
     fetchMoreProducts,
     total: readonly(total),
