@@ -23,7 +23,7 @@
           <ProductDetails :product="product" class="shadow-sm border rounded-none md:rounded" />
         </div>
 
-        <div class="lg:w-4/12 mt-6 lg:mt-0 xl:w-3/12">
+        <div class="lg:w-4/12 lg:h-full lg:sticky lg:top-4 mt-6 lg:mt-0 xl:w-3/12">
           <!-- Price & Delivery (with variations) -->
           <ProductPriceBlock v-if="productWithVariations" :product="product">
             <div class="flex items-baseline justify-between text-sm">

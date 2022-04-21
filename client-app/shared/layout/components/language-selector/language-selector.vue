@@ -5,7 +5,9 @@
       @click="toggle"
     >
       <span class="text-white mr-1.5" v-if="!isMobile" v-t="'shared.layout.language_selector.label'"></span>
-      <lang-flag class="rounded-full fa-2x" :iso="currentLanguage?.twoLetterLanguageName" />
+
+      <lang-flag class="rounded-full fa-2x -my-3" :iso="currentLanguage?.twoLetterLanguageName" />
+
       <span
         v-if="!isMobile"
         class="uppercase text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
@@ -21,7 +23,8 @@
     <transition name="slide-fade-top">
       <div
         v-show="open"
-        class="absolute -mt-1 right-0 z-10 bg-white shadow-lg max-h-[260px] rounded border overflow-hidden"
+        class="absolute right-0 z-30 bg-white shadow-lg max-h-[260px] rounded border overflow-hidden"
+        :class="{ 'mt-2': isMobile }"
       >
         <ul ref="listElement" class="max-h-[260px] overflow-auto divide-y">
           <li

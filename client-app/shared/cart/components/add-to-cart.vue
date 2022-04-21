@@ -9,7 +9,7 @@
       :class="{
         'border-[color:var(--color-danger)] focus:border-[color:var(--color-danger-hover)] z-10': !!errorMessage,
       }"
-      class="appearance-none rounded-l flex-1 w-full text-base lg:text-sm -mr-px border border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9 min-w-0"
+      class="appearance-none rounded-l rounded-r-none flex-1 w-full text-base lg:text-sm -mr-px border border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9 min-w-0"
       @input="onInput"
       @keypress="onKeypress"
     />

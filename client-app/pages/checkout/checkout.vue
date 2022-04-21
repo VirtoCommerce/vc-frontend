@@ -1,13 +1,44 @@
 <template>
   <template v-if="!showThankYou">
-    <!-- Empty cart view -->
-    <EmptyCart v-if="cart.items && cart.items?.length === 0 && !showThankYou && !creatingOrder"></EmptyCart>
-    <div v-else class="bg-gray-100 pt-7 pb-16 shadow-inner">
+    <EmptyCart v-if="cart.items && cart.items?.length === 0 && !showThankYou && !creatingOrder" />
+
+    <div v-else class="bg-gray-100 pt-7 pb-8 shadow-inner">
+      <!-- Mobile sticky header -->
+      <div
+        v-if="isVisibleStickyMobileHeader"
+        class="fixed top-0 h-14 w-full z-40 px-5 md:px-12 flex justify-between items-center gap-x-3 bg-[color:var(--color-header-bottom-bg)]"
+      >
+        <div>
+          <h2 class="text-gray-800 font-extrabold uppercase leading-none mb-1.5" v-t="'pages.checkout.title'" />
+
+          <div class="font-bold leading-none">
+            <span>{{ $t("shared.checkout.order_summary.total_label") }}:</span>
+
+            <span class="ml-1 text-green-700">
+              <VcPriceDisplay :value="cart.total" />
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <VcButton
+            :is-disabled="!isValidCheckout"
+            :is-waiting="creatingOrder"
+            size="sm"
+            class="uppercase px-3"
+            @click="createOrder"
+          >
+            {{ $t("pages.checkout.order_summary_block.place_order_button") }}
+          </VcButton>
+        </div>
+      </div>
+
       <div class="max-w-screen-2xl md:px-12 mx-auto">
         <h2
           class="text-gray-800 px-5 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-7"
           v-t="'pages.checkout.title'"
-        ></h2>
+        />
+
         <div class="flex flex-col lg:flex-row lg:flex-nowrap lg:space-x-6">
           <!-- Main section -->
           <div class="lg:w-3/4 xl:w-4/5 flex-grow w-full">
@@ -20,21 +51,25 @@
                     :alt="$t('pages.checkout.products_section.title')"
                     class="mr-5 lg:mr-8"
                   />
+
                   <div class="w-full flex justify-between xl:mr-11 lg:mr-6">
                     <h3 class="text-gray-800 text-2xl lg:text-3xl font-bold uppercase">
                       {{ $t("pages.checkout.products_section.title") }}
                     </h3>
+
                     <VcButton
                       size="sm"
                       kind="secondary"
                       is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="openClearCartDialog"
-                      >{{ $t("pages.checkout.products_section.clear_cart_button") }}</VcButton
                     >
+                      {{ $t("pages.checkout.products_section.clear_cart_button") }}
+                    </VcButton>
                   </div>
                 </div>
               </template>
+
               <div class="xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6 lg:border lg:rounded">
                 <!-- Product card -->
                 <ProductCard
@@ -45,7 +80,7 @@
                   @update:quantity="updateItemQuantity"
                   @remove:item="removeCartItem"
                   :validation-error="getItemValidationError(item?.id)"
-                ></ProductCard>
+                />
 
                 <div class="py-8 lg:flex lg:items-center lg:px-5">
                   <VcPagination
@@ -54,7 +89,8 @@
                     :pages="pages"
                     class="mb-3 lg:mb-0"
                     @update:page="page = $event"
-                  ></VcPagination>
+                  />
+
                   <p class="text-center text-sm lg:ml-auto">
                     {{ $t("pages.checkout.products_section.update_all_link_label") }}
                     <span
@@ -124,6 +160,7 @@
                         {{ shipment.deliveryAddress?.email }}
                       </p>
                     </div>
+
                     <div>
                       <VcButton
                         size="sm"
@@ -139,13 +176,16 @@
                       </VcButton>
                     </div>
                   </template>
+
                   <template v-else>
                     <div class="text-[color:var(--color-danger)] flex items-center space-x-4">
-                      <i class="fas fa-exclamation-triangle text-2xl"></i>
+                      <i class="fas fa-exclamation-triangle text-2xl" />
+
                       <span
                         v-if="isAuthenticated"
                         v-t="'pages.checkout.shipping_details_section.shipping_address_block.no_addresses_message'"
                       ></span>
+
                       <span
                         v-else
                         v-t="
@@ -170,6 +210,7 @@
                     </div>
                   </template>
                 </CheckoutLabeledBlock>
+
                 <CheckoutLabeledBlock
                   :label="$t('pages.checkout.shipping_details_section.shipping_method_block.title')"
                 >
@@ -182,12 +223,14 @@
                         />)
                       </span>
                     </template>
+
                     <div
                       v-else
                       class="text-gray-600"
                       v-t="'pages.checkout.shipping_details_section.shipping_method_block.not_defined_message'"
                     ></div>
                   </div>
+
                   <div>
                     <VcButton
                       size="sm"
@@ -224,12 +267,14 @@
                     ></span>
                   </label>
                 </CheckoutLabeledBlock>
+
                 <div
                   v-if="!billingSameAsShipping && !payment?.billingAddress"
                   class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 mb-6 p-5 flex flex-col space-y-2 lg:space-y-0 lg:flex-row lg:items-center justify-between"
                 >
                   <div class="text-[color:var(--color-danger)] flex items-center space-x-4">
-                    <i class="fas fa-exclamation-triangle text-2xl"></i>
+                    <i class="fas fa-exclamation-triangle text-2xl" />
+
                     <span
                       v-if="isAuthenticated"
                       class="text-sm"
@@ -289,6 +334,7 @@
                       >{{ payment.billingAddress?.email }}
                     </p>
                   </div>
+
                   <div>
                     <VcButton
                       size="sm"
@@ -304,18 +350,21 @@
                     </VcButton>
                   </div>
                 </div>
+
                 <CheckoutLabeledBlock :label="$t('pages.checkout.payment_details_section.payment_method_block.title')">
                   <div class="flex flex-row items-center space-x-4">
                     <template v-if="payment?.paymentGatewayCode">
                       <VcImage src="/static/images/checkout/invoice.svg" class="h-12 w-12" lazy />
                       <span>{{ payment.paymentGatewayCode }}</span>
                     </template>
+
                     <div
                       v-else
                       class="text-gray-600"
                       v-t="'pages.checkout.payment_details_section.payment_method_block.not_defined_message'"
                     ></div>
                   </div>
+
                   <div>
                     <VcButton
                       size="sm"
@@ -342,12 +391,13 @@
                 <VcTextArea v-model="cartComment" class="resize-none" :rows="4" :max-length="1000" counter />
               </div>
             </VcSection>
-            <div class="shadow-inner h-1 lg:hidden"></div>
+
+            <div class="shadow-inner h-2 lg:hidden"></div>
           </div>
 
           <!-- Sidebar -->
           <div
-            class="flex flex-col px-5 mb-7 order-first md:px-0 lg:mb-0 lg:order-1 lg:w-1/4 lg:h-5/6 lg:sticky lg:top-4"
+            class="flex flex-col px-5 mb-7 order-first md:px-0 lg:mb-6 lg:order-1 lg:w-1/4 lg:h-full lg:sticky lg:top-4"
           >
             <!-- Order summary -->
             <OrderSummary :cart="cart">
@@ -365,7 +415,7 @@
                   @click:apply="setPurchaseOrderNumber"
                   @click:deny="removePurchaseOrderNumber"
                   @update:model-value="couponValidationError = ''"
-                ></VcActionInput>
+                />
 
                 <!-- Promotion code -->
                 <VcActionInput
@@ -380,15 +430,19 @@
                   @click:apply="useCoupon"
                   @click:deny="removeCoupon"
                   @update:model-value="couponValidationError = ''"
-                ></VcActionInput>
+                />
               </template>
+
               <template #footer>
                 <p
                   class="mt-8 mb-3 text-xs font-normal text-gray-400"
                   v-t="'pages.checkout.order_summary_block.warning_message'"
                 ></p>
 
+                <div ref="stickyMobileHeaderAnchor" class="absolute -mt-2.5"></div>
+
                 <VcButton
+                  ref="createOrderButton"
                   class="uppercase w-full"
                   :is-disabled="!isValidCheckout"
                   :is-waiting="creatingOrder"
@@ -399,10 +453,10 @@
 
                 <div
                   v-if="!isValidCheckout && !creatingOrder"
-                  class="flex space-x-2 bg-primary-100 rounded mt-3 p-3 text-xs"
+                  class="flex items-center space-x-2 bg-primary-100 rounded mt-3 p-3 text-xs"
                 >
-                  <i class="fas fa-exclamation-triangle text-xl text-primary-600"></i>
-                  <span v-t="'pages.checkout.invalid_checkout_message'"></span>
+                  <i class="fas fa-exclamation-triangle text-xl text-primary-600" />
+                  <span v-t="'pages.checkout.invalid_checkout_message'" />
                 </div>
               </template>
             </OrderSummary>
@@ -411,7 +465,8 @@
       </div>
     </div>
   </template>
-  <ThankYou v-else :order="completedOrder"></ThankYou>
+
+  <ThankYou v-else :order="completedOrder" />
 </template>
 
 <script setup lang="ts">
@@ -439,7 +494,7 @@ import {
 } from "@/components";
 import { useCart, useCheckout } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
-import { computed, onBeforeUpdate, onMounted, ref } from "vue";
+import { computed, onBeforeUpdate, onMounted, ref, shallowRef } from "vue";
 import _ from "lodash";
 import {
   CartAddressType,
@@ -456,7 +511,10 @@ import { useUser, useUserAddresses } from "@/shared/account";
 import { AddressType } from "@/core/types";
 import { addGiftItems, rejectGiftItems } from "@core/api/graphql/cart";
 import { useI18n } from "vue-i18n";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { useElementVisibility } from "@core/composables";
 
+const breakpoints = useBreakpoints(breakpointsTailwind);
 const { me: user, isAuthenticated } = useUser();
 const {
   loading,
@@ -489,8 +547,8 @@ const {
 const { placeOrder } = useCheckout();
 const { openPopup, closePopup } = usePopup();
 
-//TODO: change 'any' for a normal type
-const productCardRefs = ref<any[]>([]);
+const isMobile = breakpoints.smaller("lg");
+const productCardRefs = ref<InstanceType<typeof ProductCard>[]>([]);
 const creatingOrder = ref(false);
 const completedOrder = ref({});
 const showThankYou = ref(false);
@@ -501,6 +559,10 @@ const cartCouponApplied = ref(false);
 const billingSameAsShipping = ref(true);
 const page = ref(1);
 const purchaseOrderNumber = ref("");
+
+const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
+const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
+const isVisibleStickyMobileHeader = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
 const purchaseOrderNumberApplied = computed(() => !!cart.value.purchaseOrderNumber);
 
@@ -609,10 +671,10 @@ onBeforeUpdate(() => {
   productCardRefs.value = [];
 });
 
-onMounted(async () => {
+onMounted(() => {
   loadAddresses();
 
-  await loadMyCart().then(() => {
+  loadMyCart().then(() => {
     if (cart.value.coupons && cart.value.coupons.length > 0) {
       cartCoupon.value = cart.value.coupons[0]?.code || "";
       cartCouponApplied.value = true;

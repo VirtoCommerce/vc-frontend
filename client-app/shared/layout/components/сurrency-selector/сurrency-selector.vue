@@ -18,7 +18,7 @@
     </button>
 
     <transition name="slide-fade-top">
-      <div v-show="open" class="absolute -mt-1 right-0 z-10 bg-white shadow-lg max-h-56 rounded border overflow-hidden">
+      <div v-show="open" class="absolute right-0 z-30 bg-white shadow-lg max-h-56 rounded border overflow-hidden">
         <ul ref="listElement" class="max-h-56 overflow-auto divide-y">
           <li
             v-for="item in $context.availCurrencies"

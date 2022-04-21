@@ -122,7 +122,7 @@ export interface IThemeConfigPreset {
   color_success_hover?: string;
   color_warning?: string;
   color_warning_hover?: string;
-  color_price_color?: string;
+  color_price?: string;
   color_mobile_menu_bg?: string;
   color_mobile_menu_link?: string;
   color_header_top_bg?: string;

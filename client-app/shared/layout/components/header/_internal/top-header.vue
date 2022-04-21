@@ -2,15 +2,10 @@
   <div
     class="h-12 px-12 flex items-center justify-between bg-[color:var(--color-header-top-bg)] font-bold text-sm text-[color:var(--color-header-top-text)]"
   >
-    <!-- Language block -->
     <div class="flex space-x-8 items-center">
       <LanguageSelector v-if="$context.availLanguages && $context.availLanguages.length > 1" />
       <CurrencySelector v-if="$context.availCurrencies && $context.availCurrencies.length > 1" />
     </div>
-
-    <!-- <div class="flex gap-x-8">
-
-    </div> -->
 
     <!-- Authorized menu items -->
     <div v-if="isAuthenticated" class="flex items-center">

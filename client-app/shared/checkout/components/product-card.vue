@@ -191,7 +191,7 @@ const isInputDisabled = computed(() => props.lineItem.inStockQuantity === 0);
 
 const updateQuantity = () => {
   if (!isInputDisabled.value) {
-    emit("update:quantity", props.lineItem.id, value.value);
+    emit("update:quantity", props.lineItem.id, value.value || 0);
   }
 };
 
