@@ -39,7 +39,10 @@
               </span>
               <span class="h-4 mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
               <p class="w-1/3 lg:w-auto">
-                <VcItemPrice :value="{ list: lineItem.listPrice || lineItem.placedPrice, sale: lineItem.salePrice }" />
+                <VcItemPrice
+                  :price-color-class="isMobile ? 'text-black' : undefined"
+                  :value="{ list: lineItem.listPrice || lineItem.placedPrice, sale: lineItem.salePrice }"
+                />
               </p>
             </div>
             <div class="flex text-sm lg:hidden">
@@ -135,9 +138,14 @@
 import { VcImage, VcPriceDisplay, VcItemPrice, VcButton } from "@/components";
 import { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import { computed, PropType } from "vue";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useField } from "vee-validate";
 import * as yup from "yup";
 import SeoUrl from "@core/seo-routes.enum";
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
+
+const isMobile = breakpoints.smaller("lg");
 
 // Define max qty available to add
 const max = 999999;

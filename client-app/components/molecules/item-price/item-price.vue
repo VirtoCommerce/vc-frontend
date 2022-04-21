@@ -3,7 +3,8 @@
     <div class="flex space-x-1">
       <VcPriceDisplay
         v-if="value?.list?.amount > value?.sale?.amount"
-        class="text-green-700 font-extrabold"
+        class="font-extrabold"
+        :class="priceColorClass"
         :value="value?.sale"
       />
       <VcPriceDisplay v-else class="text-green-700 font-extrabold" :value="value?.list" />
@@ -26,6 +27,10 @@ defineProps({
   value: {
     type: Object as PropType<PriceType | { list: MoneyType; sale: MoneyType }>,
     default: undefined,
+  },
+  priceColorClass: {
+    type: String,
+    default: "text-[color:var(--color-price)]",
   },
 });
 </script>
