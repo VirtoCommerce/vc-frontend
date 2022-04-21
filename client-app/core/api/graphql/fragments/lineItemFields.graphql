@@ -41,6 +41,9 @@ fragment lineItemFields on LineItemType {
   listPrice {
     ...moneyFields
   }
+  salePrice {
+    ...moneyFields
+  }
   taxTotal {
     ...moneyFields
   }

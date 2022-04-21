@@ -30,10 +30,9 @@
           </div>
           <div class="flex text-sm">
             <span class="font-medium text-gray-500 pr-1">{{ $t("shared.checkout.product_card.price_label") }} </span>
-            <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
+            <span class="h-5 mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
             <p class="w-1/3 lg:w-auto font-bold">
-              <span class="text-green-700"><VcPriceDisplay :value="lineItem.listPrice || lineItem.placedPrice" /></span>
-              <span class="hidden lg:inline" v-t="'common.suffixes.per_item'"></span>
+              <VcItemPrice :value="{ list: lineItem.listPrice || lineItem.placedPrice, sale: lineItem.salePrice }" />
             </p>
           </div>
           <div class="flex text-sm lg:hidden">
@@ -123,7 +122,7 @@
 </template>
 
 <script setup lang="ts">
-import { VcImage, VcPriceDisplay, VcButton } from "@/components";
+import { VcImage, VcPriceDisplay, VcItemPrice, VcButton } from "@/components";
 import { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import { computed, PropType } from "vue";
 import { useField } from "vee-validate";

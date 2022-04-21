@@ -20,11 +20,11 @@
 <script setup lang="ts">
 import { PropType } from "vue";
 import { VcPriceDisplay, VcPastPriceDisplay } from "@/components";
-import { PriceType } from "@/core/api/graphql/types";
+import { MoneyType, PriceType } from "@/core/api/graphql/types";
 
 defineProps({
   value: {
-    type: Object as PropType<PriceType>,
+    type: Object as PropType<PriceType | { list: MoneyType; sale: MoneyType }>,
     default: undefined,
   },
 });
