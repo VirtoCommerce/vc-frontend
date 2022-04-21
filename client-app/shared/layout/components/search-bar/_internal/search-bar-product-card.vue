@@ -24,12 +24,12 @@
       <!-- Product props -->
       <div class="text-xs overflow-hidden">
         <p class="truncate">
-          <span class="font-bold mr-1">Item</span>
+          <span class="font-bold mr-1">{{ $t("common.labels.item") }}</span>
           <span>{{ product.code }}</span>
         </p>
 
         <p class="truncate flex">
-          <span class="font-bold mr-1">Price</span>
+          <span class="font-bold mr-1">{{ $t("common.labels.price") }}</span>
           <VcItemPrice :value="product.price" />
         </p>
       </div>

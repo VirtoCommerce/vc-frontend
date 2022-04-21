@@ -43,7 +43,8 @@
       "status": "Status",
       "date": "Datum",
       "sort_by": "Sortieren nach:",
-      "sku": "Artikel #"
+      "sku": "Artikel #",
+      "item": "Artikel"
     },
     "suffixes": {
       "per_item": "/ jeder",
