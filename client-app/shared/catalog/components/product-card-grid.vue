@@ -50,7 +50,7 @@
       </div>
 
       <!-- Product price -->
-      <div class="flex h-8 flex-col md:flex-row items-baseline text-sm mb-4">
+      <div class="flex h-10 md:h-8 flex-col md:flex-row items-baseline text-sm mb-4">
         <div class="w-1/2 font-bold text-xs" v-t="'shared.catalog.product_card.price_label'"></div>
         <div class="md:w-1/2">
           <VcItemPrice :value="product.price"></VcItemPrice>
