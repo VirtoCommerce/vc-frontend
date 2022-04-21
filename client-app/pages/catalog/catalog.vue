@@ -49,9 +49,9 @@
             </VcCard>
 
             <!-- Previously purchased -->
-            <VcCard :title="$t('pages.catalog.purchased_filter_card.title')">
-              <VcCheckbox color="[color:var(--color-link)]">
-                {{ $t("pages.catalog.purchased_filter_card.checkbox_label") }}
+            <VcCard :title="$t('pages.catalog.instock_filter_card.title')">
+              <VcCheckbox v-model="showInStock" :disabled="loading" @change="applyFilters">
+                {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
               </VcCheckbox>
             </VcCard>
 
@@ -141,7 +141,7 @@
             </div>
 
             <!-- Filters chips -->
-            <div v-if="isExistSelectedFilters" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
+            <div v-if="isExistSelectedFilters || showInStock" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
               <VcChip
                 class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
                 size="sm"
@@ -172,6 +172,20 @@
                     {{ filterItem.label }}
                   </VcChip>
                 </template>
+              </template>
+
+              <template v-if="showInStock">
+                <VcChip
+                  class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
+                  size="sm"
+                  closable
+                  @close="
+                    showInStock = false;
+                    applyFilters();
+                  "
+                >
+                  {{ $t("pages.catalog.instock_filter_card.title") }}
+                </VcChip>
               </template>
             </div>
           </div>
@@ -271,9 +285,10 @@ const props = defineProps({
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { selectedCategory, selectCategoryBySeoUrl, loadCategoriesTree } = useCategories();
-const { fetchProducts, fetchMoreProducts, loading, loadingMore, products, total, pages, filters } = useProducts({
-  withFilters: true,
-});
+const { fetchProducts, fetchMoreProducts, loading, loadingMore, products, total, pages, filters, showInStock } =
+  useProducts({
+    withFilters: true,
+  });
 
 const isMobile = breakpoints.smaller("md");
 const isMobileSidebar = breakpoints.smaller("lg");
@@ -351,7 +366,7 @@ function onSearchStart() {
 
 function applyFilters() {
   hideMobileSidebar();
-  filterQueryParam.value = toFilterExpression(filters);
+  filterQueryParam.value = toFilterExpression(filters, showInStock);
   triggerRef(filters);
 }
 
@@ -367,6 +382,7 @@ function removeFilterItem(payload: Pick<ProductsFilter, "paramName"> & Pick<Prod
 
 function resetFilters() {
   filters.value.forEach((filter) => filter.values.forEach((filterItem) => (filterItem.selected = false)));
+  showInStock.value = false;
   applyFilters();
 }
 

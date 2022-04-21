@@ -655,9 +655,9 @@
         "search_label": "Search within these results",
         "search_button": "Go"
       },
-      "purchased_filter_card": {
-        "title": "Previously purchased",
-        "checkbox_label": "View previously purchased products"
+      "instock_filter_card": {
+        "title": "In stock",
+        "checkbox_label": "View in stock products"
       },
       "branch_availability_filter_card": {
         "title": "Branch availability",
