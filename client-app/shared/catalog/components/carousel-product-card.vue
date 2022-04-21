@@ -24,7 +24,7 @@
 
       <!-- Product price -->
       <div class="text-sm mt-2">
-        <VcItemPrice :value="product.price"></VcItemPrice>
+        <VcItemPrice class="items-center" :value="product.price"></VcItemPrice>
       </div>
     </div>
   </div>

@@ -10,11 +10,13 @@
       <VcPriceDisplay v-else class="text-green-700 font-extrabold" :value="value?.list" />
       <span class="hidden lg:inline" v-t="'common.suffixes.per_item'"></span>
     </div>
-    <VcPastPriceDisplay
-      class="text-gray-400 text-xs font-semibold"
-      v-if="value?.list?.amount > value?.sale?.amount"
-      :value="value?.list"
-    />
+    <div>
+      <VcPastPriceDisplay
+        class="text-gray-400 text-xs font-semibold"
+        v-if="value?.list?.amount > value?.sale?.amount"
+        :value="value?.list"
+      />
+    </div>
   </div>
 </template>
 
