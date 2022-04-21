@@ -13,32 +13,42 @@
 
       <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center flex-1">
         <div class="mb-3 lg:mb-0 text-sm xl:w-1/2">
-          <router-link
-            :to="`/${SeoUrl.Product}/${productId}`"
-            class="text-[color:var(--color-link)] font-extrabold line-clamp-3 overflow-hidden"
-          >
-            {{ lineItem.name }}
-          </router-link>
-          <div class="flex items-center space-x-1 py-1" v-if="validationError">
-            <i class="fas fa-exclamation-circle text-[color:var(--color-primary)]"></i>
-            <span class="text-xs text-gray-400"> {{ validationError.errorMessage }} </span>
+          <div class="mb-1">
+            <router-link
+              :to="`/${SeoUrl.Product}/${productId}`"
+              class="text-[color:var(--color-link)] font-extrabold line-clamp-3 overflow-hidden"
+            >
+              {{ lineItem.name }}
+            </router-link>
+            <div class="flex items-center space-x-1 py-1" v-if="validationError">
+              <i class="fas fa-exclamation-circle text-[color:var(--color-primary)]"></i>
+              <span class="text-xs text-gray-400"> {{ validationError.errorMessage }} </span>
+            </div>
           </div>
-          <div class="flex">
-            <span class="font-medium text-gray-500 pr-1">{{ $t("shared.checkout.product_card.brand_label") }} </span>
-            <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
-            <span class="w-1/3 lg:w-auto font-bold">{{ lineItem.product?.brandName }}</span>
-          </div>
-          <div class="flex text-sm">
-            <span class="font-medium text-gray-500 pr-1">{{ $t("shared.checkout.product_card.price_label") }} </span>
-            <span class="h-5 mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
-            <p class="w-1/3 lg:w-auto font-bold">
-              <VcItemPrice :value="{ list: lineItem.listPrice || lineItem.placedPrice, sale: lineItem.salePrice }" />
-            </p>
-          </div>
-          <div class="flex text-sm lg:hidden">
-            <span class="font-medium text-gray-500">{{ $t("shared.checkout.product_card.total_label") }} </span>
-            <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
-            <span class="w-1/3 text-green-700 font-bold"><VcPriceDisplay :value="lineItem.extendedPrice" /></span>
+          <div class="flex flex-col space-y-1 lg:space-y-0">
+            <div class="flex">
+              <span class="font-medium lg:font-extrabold text-gray-500 lg:text-black pr-1"
+                >{{ $t("shared.checkout.product_card.brand_label") }}
+              </span>
+              <span class="h-4 mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
+              <span class="w-1/3 lg:w-auto font-bold lg:font-medium">{{ lineItem.product?.brandName }}</span>
+            </div>
+            <div class="flex">
+              <span class="font-medium lg:font-extrabold text-gray-500 lg:text-black pr-1"
+                >{{ $t("shared.checkout.product_card.price_label") }}
+              </span>
+              <span class="h-4 mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
+              <p class="w-1/3 lg:w-auto">
+                <VcItemPrice :value="{ list: lineItem.listPrice || lineItem.placedPrice, sale: lineItem.salePrice }" />
+              </p>
+            </div>
+            <div class="flex text-sm lg:hidden">
+              <span class="font-medium text-gray-500">{{ $t("shared.checkout.product_card.total_label") }} </span>
+              <span class="h-4 mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
+              <span class="w-1/3 text-green-700 font-extrabold"
+                ><VcPriceDisplay :value="lineItem.extendedPrice"
+              /></span>
+            </div>
           </div>
         </div>
 
