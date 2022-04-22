@@ -10,9 +10,9 @@
       <VcPriceDisplay v-else class="text-green-700 font-extrabold" :value="value?.list" />
       <span class="hidden lg:inline" v-t="'common.suffixes.per_item'"></span>
     </div>
-    <div>
-      <VcPastPriceDisplay
-        class="text-gray-400 text-xs font-semibold"
+    <div class="leading-4">
+      <VcPriceDisplay
+        class="text-gray-400 text-xs font-semibold line-through"
         v-if="value?.list?.amount > value?.sale?.amount"
         :value="value?.list"
       />
@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { PropType } from "vue";
-import { VcPriceDisplay, VcPastPriceDisplay } from "@/components";
+import { VcPriceDisplay } from "@/components";
 import { MoneyType, PriceType } from "@/core/api/graphql/types";
 
 defineProps({
