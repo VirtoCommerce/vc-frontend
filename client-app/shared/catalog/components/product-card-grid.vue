@@ -50,11 +50,10 @@
       </div>
 
       <!-- Product price -->
-      <div class="flex flex-col md:flex-row items-baseline text-sm mb-4">
+      <div class="flex h-10 md:h-8 flex-col md:flex-row items-baseline text-sm mb-4">
         <div class="w-1/2 font-bold text-xs" v-t="'shared.catalog.product_card.price_label'"></div>
         <div class="md:w-1/2">
-          <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span
-          >{{ $t("common.suffixes.per_item") }}
+          <VcItemPrice :value="product.price"></VcItemPrice>
         </div>
       </div>
 
@@ -65,7 +64,7 @@
 
 <script setup lang="ts">
 import { PropType } from "vue";
-import { VcImage, VcPriceDisplay } from "@/components";
+import { VcImage, VcItemPrice } from "@/components";
 import { AddToCompare } from "@/shared/compare";
 import { Product as ProductType } from "@/core/api/graphql/types";
 import SeoUrl from "@core/seo-routes.enum";

@@ -24,8 +24,7 @@
 
       <!-- Product price -->
       <div class="text-sm mt-2">
-        <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span
-        >{{ $t("common.suffixes.per_item") }}
+        <VcItemPrice class="items-center" :value="product.price"></VcItemPrice>
       </div>
     </div>
   </div>
@@ -33,7 +32,7 @@
 
 <script setup lang="ts">
 import { PropType } from "vue";
-import { VcImage, VcPriceDisplay } from "@/components";
+import { VcImage, VcItemPrice } from "@/components";
 import { Product as ProductType } from "@/core/api/graphql/types";
 import SeoUrl from "@core/seo-routes.enum";
 

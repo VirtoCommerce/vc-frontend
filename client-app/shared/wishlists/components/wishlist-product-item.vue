@@ -23,8 +23,7 @@
         {{ $t("pages.compare.main_block.price_label") }}
       </span>
       <div>
-        <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="lineItem.product?.price?.actual" /></span>
-        {{ $t("common.suffixes.per_item") }}
+        <VcItemPrice :value="lineItem.product?.price" />
       </div>
     </div>
 
@@ -63,7 +62,7 @@
 
 <script setup lang="ts">
 import { PropType } from "vue";
-import { VcImage, VcPriceDisplay } from "@/components";
+import { VcImage, VcItemPrice } from "@/components";
 import { AddToCart } from "@/shared/cart";
 import { LineItemType } from "@core/api/graphql/types";
 
