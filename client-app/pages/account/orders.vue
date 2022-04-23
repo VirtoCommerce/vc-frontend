@@ -12,27 +12,39 @@
           <div class="flex justify-between items-center mx-5 md:mx-0">
             <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.account.orders.title'"></h2>
           </div>
+          <div class="flex space-x-3">
+            <div class="flex flex-grow mx-5 md:mx-0">
+              <input
+                v-model.trim="keyword"
+                :disabled="ordersLoading"
+                type="search"
+                class="flex-grow appearance-none bg-white rounded rounded-r-none h-9 px-4 font-medium outline-none text-sm border border-gray-300 focus:border-gray-400 disabled:bg-gray-200"
+                @keypress.enter="applyKeyword"
+              />
 
-          <div class="flex mx-5 md:mx-0">
-            <input
-              v-model.trim="keyword"
-              :disabled="ordersLoading"
-              type="search"
-              class="flex-grow appearance-none bg-white rounded rounded-r-none h-9 px-4 font-medium outline-none text-sm border border-gray-300 focus:border-gray-400 disabled:bg-gray-200"
-              @keypress.enter="applyKeyword"
-            />
+              <VcButton
+                :is-disabled="ordersLoading"
+                class="px-4 rounded-l-none uppercase"
+                size="md"
+                @click="applyKeyword"
+              >
+                <i class="fas fa-search text-lg"></i>
+              </VcButton>
+            </div>
+            <div class="relative">
+              <VcButton :is-disabled="ordersLoading" class="p-4 uppercase" @click="toggleFilters">Filters</VcButton>
+              <div
+                v-if="filtersVisible"
+                class="absolute right-0 z-10 bg-white shadow-lg pb-6 rounded border border-gray-300 overflow-hidden mt-2"
+              >
+                <button class="absolute right-0 appearance-none px-4 py-2" @click="hideFilters">
+                  <span class="fa fa-times text-[color:var(--color-primary)]"></span>
+                </button>
 
-            <VcButton
-              :is-disabled="ordersLoading"
-              class="px-4 rounded-l-none uppercase"
-              outline
-              size="md"
-              @click="applyKeyword"
-            >
-              <i class="fas fa-search text-lg"></i>
-            </VcButton>
+                <OrdersFilter ref="filtersElement" class="px-8 pt-9" />
+              </div>
+            </div>
           </div>
-
           <div class="flex flex-col bg-white shadow-sm md:rounded md:border">
             <VcTable
               :loading="ordersLoading"
@@ -189,9 +201,11 @@
 
 <script setup lang="ts">
 import { ITableColumn, TableStatusBadge, VcTable, VcButton } from "@/components";
-import { AccountNavigation } from "@/shared/account";
-import { onMounted, ref } from "vue";
+import { OrdersFilter, AccountNavigation } from "@/shared/account";
+
+import { onMounted, ref, shallowRef } from "vue";
 import { sortAscending, sortDescending } from "@/core/constants";
+import { breakpointsTailwind, useBreakpoints, onClickOutside } from "@vueuse/core";
 import useUserOrders from "@/shared/account/composables/useUserOrders";
 import moment from "moment";
 import { useRouter } from "vue-router";
@@ -199,7 +213,12 @@ import { CustomerOrderType } from "@/core/api/graphql/types";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
 const { loading: ordersLoading, orders, loadOrders, sort, pages, itemsPerPage, page, keyword } = useUserOrders();
+
+const isMobile = breakpoints.smaller("md");
+
 const router = useRouter();
 
 const openOrderDetails = (item: CustomerOrderType) => {
@@ -264,6 +283,21 @@ const columns = ref<ITableColumn[]>([
     titlePosition: "text-right",
   },
 ]);
+
+const filtersVisible = ref(false);
+
+function toggleFilters() {
+  filtersVisible.value = !filtersVisible.value;
+}
+
+function hideFilters() {
+  filtersVisible.value = false;
+}
+
+const filtersElement = shallowRef<HTMLElement | null>(null);
+onClickOutside(filtersElement, () => {
+  hideFilters();
+});
 </script>
 
 <style scoped>
