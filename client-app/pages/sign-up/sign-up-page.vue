@@ -114,11 +114,15 @@ import { IdentityResultType } from "@/core/api/graphql/types";
 import { computed } from "@vue/reactivity";
 import { isObjectEmpty, trimString } from "@/core/utilities";
 import { useI18n } from "vue-i18n";
+import { checkEmailUniqueness, checkUsernameUniqueness } from "@/core/api/graphql/account";
+import _ from "lodash";
 
 const { t } = useI18n();
 
 const { registerUser, registerOrganization, loading } = useUser();
 const { openPopup } = usePopup();
+
+const ASYNC_VALIDATION_TIMEOUT_IN_MS = 3000;
 
 const schema = yup.object({
   registrationKind: yup.string().required(),
@@ -126,8 +130,27 @@ const schema = yup.object({
     is: RegistrationKind.organization,
     then: yup.string().label("Organization Name").required().max(64),
   }),
-  email: yup.string().label("Email").required().email("Enter correct email please (ex. john@gmail.com)").max(64),
-  userName: yup.string().label("Username").required().max(64),
+  email: yup
+    .string()
+    .label("Email")
+    .required()
+    .email("Enter correct email please (ex. john@gmail.com)")
+    .max(64)
+    .test(
+      "is-unique-email",
+      "This email is already taken",
+      (value) => new Promise((resolve) => emailValidationDebounced(value!, resolve))
+    ),
+  userName: yup
+    .string()
+    .label("Username")
+    .required()
+    .max(64)
+    .test(
+      "is-unique-username",
+      "This username is already taken",
+      (value) => new Promise((resolve) => usernameValidationDebounced(value!, resolve))
+    ),
   firstName: yup.string().label("First Name").required().max(64),
   lastName: yup.string().label("Last Name").required().max(64),
   password: yup.string().label("Password").required(),
@@ -238,4 +261,25 @@ const onSubmit = handleSubmit(async (data) => {
     }
   }
 });
+
+const validateUsernameUniqueness = async (value: string, resolve: (value: boolean) => void) => {
+  try {
+    const response = await checkUsernameUniqueness({ username: value });
+    resolve(response === true);
+  } catch (error) {
+    resolve(false);
+  }
+};
+
+const validateEmailUniqueness = async (value: string, resolve: (value: boolean) => void) => {
+  try {
+    const response = await checkEmailUniqueness({ email: value });
+    resolve(response === true);
+  } catch (error) {
+    resolve(false);
+  }
+};
+
+const usernameValidationDebounced = _.debounce(validateUsernameUniqueness, ASYNC_VALIDATION_TIMEOUT_IN_MS);
+const emailValidationDebounced = _.debounce(validateEmailUniqueness, ASYNC_VALIDATION_TIMEOUT_IN_MS);
 </script>
