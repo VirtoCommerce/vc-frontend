@@ -41,7 +41,12 @@
                   <span class="fa fa-times text-[color:var(--color-primary)]"></span>
                 </button>
 
-                <OrdersFilter ref="filtersElement" class="px-8 pt-9" />
+                <OrdersFilter
+                  ref="filtersElement"
+                  :value="filterData"
+                  class="px-8 pt-9"
+                  @change="filterChanged($event)"
+                />
               </div>
             </div>
           </div>
@@ -201,7 +206,7 @@
 
 <script setup lang="ts">
 import { ITableColumn, TableStatusBadge, VcTable, VcButton } from "@/components";
-import { OrdersFilter, AccountNavigation } from "@/shared/account";
+import { OrdersFilter, AccountNavigation, OrdersFilterData } from "@/shared/account";
 
 import { onMounted, ref, shallowRef } from "vue";
 import { sortAscending, sortDescending } from "@/core/constants";
@@ -215,7 +220,17 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { loading: ordersLoading, orders, loadOrders, sort, pages, itemsPerPage, page, keyword } = useUserOrders();
+const {
+  loading: ordersLoading,
+  orders,
+  loadOrders,
+  sort,
+  pages,
+  itemsPerPage,
+  page,
+  keyword,
+  filterData,
+} = useUserOrders();
 
 const isMobile = breakpoints.smaller("md");
 
@@ -298,6 +313,13 @@ const filtersElement = shallowRef<HTMLElement | null>(null);
 onClickOutside(filtersElement, () => {
   hideFilters();
 });
+
+function filterChanged(newFilterData: OrdersFilterData) {
+  console.log(newFilterData);
+  filterData.value = newFilterData;
+  hideFilters();
+  loadOrders();
+}
 </script>
 
 <style scoped>

@@ -22,8 +22,11 @@ export function appendSuffixToFilename(filename: string, suffix: string, checkIf
     : fileNameWithoutExtension + suffix + filename.substring(dotIndex);
 }
 
-export function isObjectEmpty(object: Record<string, unknown>): boolean {
+export function isObjectEmpty(object: Record<string, unknown>, checkArrayLength = false): boolean {
   for (const property in object) {
+    if (checkArrayLength && Array.isArray(object[property]) && (object[property] as []).length) {
+      continue;
+    }
     return false;
   }
 

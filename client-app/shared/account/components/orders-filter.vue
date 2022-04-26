@@ -3,7 +3,13 @@
     <div class="flex flex-col lg:flex-row lg:space-x-14">
       <div class="flex flex-col space-y-4">
         <div class="font-bold text-gray-400">Status filter</div>
-        <VcCheckbox class="" v-for="status in statuses" :key="status" v-model="selectedStatuses" :value="status">
+        <VcCheckbox
+          :class="{ 'font-bold': isSelectedStatus(status) }"
+          v-for="status in availableStatuses"
+          :key="status"
+          v-model="statuses"
+          :value="status"
+        >
           {{ status }}
         </VcCheckbox>
       </div>
@@ -18,16 +24,54 @@
       </div>
     </div>
     <div class="mt-8 flex justify-end space-x-3">
-      <VcButton class="uppercase px-8" kind="secondary" is-outline size="sm">{{ $t("common.buttons.reset") }}</VcButton>
-      <VcButton class="uppercase px-8" size="sm">Apply</VcButton>
+      <VcButton class="uppercase px-8" kind="secondary" is-outline size="sm" @click="resetFilters">{{
+        $t("common.buttons.reset")
+      }}</VcButton>
+      <VcButton class="uppercase px-8" size="sm" @click="applyFilters">Apply</VcButton>
     </div>
   </div>
 </template>
 <script setup lang="ts">
 import { VcCheckbox, VcDateSelector, VcButton } from "@/components";
-import { Ref, ref } from "vue";
-const statuses = ["New", "Processed", "Panding", "Canceled"];
-const selectedStatuses: Ref<string[]> = ref([]);
-const startDate: Ref<string | undefined> = ref(undefined);
-const endDate: Ref<string | undefined> = ref(undefined);
+import { PropType, toRef } from "vue";
+import { OrdersFilterData } from "../types";
+const availableStatuses = ["New", "Processing", "Pending", "Canceled", "Complete"];
+
+function isSelectedStatus(status: string) {
+  return statuses.value.indexOf(status) !== -1;
+}
+
+const props = defineProps({
+  value: {
+    type: Object as PropType<OrdersFilterData>,
+    required: true,
+  },
+});
+
+const statuses = toRef(props.value, "statuses");
+const startDate = toRef(props.value, "startDate");
+const endDate = toRef(props.value, "endDate");
+
+const emit = defineEmits<{ (e: "change", filter: OrdersFilterData): void }>();
+
+function onChange() {
+  const eventPayload: OrdersFilterData = {
+    statuses: statuses.value,
+    startDate: startDate?.value,
+    endDate: endDate?.value,
+  };
+
+  emit("change", eventPayload);
+}
+
+function applyFilters() {
+  onChange();
+}
+
+function resetFilters() {
+  statuses.value = [];
+  startDate.value = undefined;
+  endDate.value = undefined;
+  onChange();
+}
 </script>

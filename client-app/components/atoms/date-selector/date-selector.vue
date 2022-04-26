@@ -6,7 +6,7 @@
   <input
     class="appearance-none h-11 rounded px-3 py-3 text-base leading-none box-border border border-gray-300 w-full outline-none focus:border-gray-400 min-w-0"
     type="date"
-    :value="props.modelValue"
+    :value="inputValue"
     :disabled="isDisabled"
     :autofocus="autofocus"
     :name="name"
@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-//const value = ref(null);
+import { computed } from "vue";
 
 const props = defineProps({
   autofocus: Boolean,
@@ -37,8 +37,8 @@ const props = defineProps({
     default: false,
   },
   modelValue: {
-    type: String,
-    default: "",
+    type: Date,
+    default: undefined,
   },
 
   errorMessage: {
@@ -47,10 +47,18 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["update:modelValue"]);
+// convert input value to string format yyyy-MM-dd
+const inputValue = computed(() => props.modelValue?.toISOString()?.substring(0, 10));
+
+const emit = defineEmits<{
+  (e: "update:modelValue", value: Date | undefined): void;
+  (e: "change", value: Date | undefined): void;
+}>();
 
 function change(event: Event) {
   const newValue: string = (event.target as HTMLInputElement).value;
-  emit("update:modelValue", newValue);
+  const dateValue = newValue ? new Date(Date.parse(newValue)) : undefined;
+  emit("update:modelValue", dateValue);
+  emit("change", dateValue);
 }
 </script>
