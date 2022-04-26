@@ -1,7 +1,8 @@
+import { OrdersFilterChipsItem } from "./../types/index";
 import { computed, readonly, ref, Ref, shallowRef } from "vue";
 import { CustomerOrderType } from "@core/api/graphql/types";
 import { getMyOrders } from "@core/api/graphql/account";
-import { dateToIsoDateString, Logger } from "@core/utilities";
+import { dateToIsoDateString, isObjectEmpty, Logger } from "@core/utilities";
 import { getSortingExpression, ISortInfo, OrdersFilterData } from "@/shared/account";
 import { sortDescending } from "@core/constants";
 
@@ -20,6 +21,30 @@ export default () => {
   });
 
   const filterData: Ref<OrdersFilterData> = ref({ statuses: [] });
+
+  const isFilterEmpty = computed(() => {
+    const res = isObjectEmpty(filterData.value, true);
+    return res;
+  });
+
+  const filterChipsItems = computed(() => {
+    const items: OrdersFilterChipsItem[] = [];
+
+    if (filterData.value.statuses.length) {
+      for (const status of filterData.value.statuses) {
+        items.push({ fieldName: "status", value: status, label: status });
+      }
+    }
+    if (filterData.value.startDate) {
+      const isoDateString = dateToIsoDateString(filterData.value.startDate) as string;
+      items.push({ fieldName: "startDate", value: isoDateString, label: `Start: ${isoDateString}` });
+    }
+    if (filterData.value.endDate) {
+      const isoDateString = dateToIsoDateString(filterData.value.endDate) as string;
+      items.push({ fieldName: "endDate", value: isoDateString, label: `End: ${isoDateString}` });
+    }
+    return items;
+  });
 
   async function loadOrders() {
     loading.value = true;
@@ -55,8 +80,11 @@ export default () => {
     page,
     keyword,
     filterData,
+    isFilterEmpty,
+    filterChipsItems,
   };
 };
+
 function getFilterExpression(keyword: string, filterData: OrdersFilterData): string {
   let filterExpression = "";
   if (keyword) {

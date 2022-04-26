@@ -67,3 +67,9 @@ export type OrdersFilterData = {
   startDate?: Date;
   endDate?: Date;
 };
+
+export type OrdersFilterChipsItem = {
+  fieldName: string;
+  value: string;
+  label: string;
+};

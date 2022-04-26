@@ -25,12 +25,14 @@
     </div>
     <div class="flex-grow lg:flex-grow-0"></div>
     <div class="mt-8 flex flex-col lg:flex-row-reverse space-y-4 lg:justify-start lg:space-y-0">
-      <VcButton class="uppercase px-8 w-full lg:w-auto" size="sm" @click="applyFilters">Apply</VcButton>
+      <VcButton class="uppercase px-8 w-full lg:w-auto" :size="isMobile ? 'md' : 'sm'" @click="applyFilters"
+        >Apply</VcButton
+      >
       <VcButton
         class="uppercase px-8 w-full lg:w-auto lg:mr-3"
         kind="secondary"
         is-outline
-        size="sm"
+        :size="isMobile ? 'md' : 'sm'"
         @click="resetFilters"
         >{{ $t("common.buttons.reset") }}</VcButton
       >
@@ -42,6 +44,10 @@ import { VcCheckbox, VcDateSelector, VcButton } from "@/components";
 import { cfg } from "@/core/utilities";
 import { PropType, toRef } from "vue";
 import { OrdersFilterData } from "../types";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("lg");
 
 const availableStatuses = cfg?.orders_statuses || [];
 

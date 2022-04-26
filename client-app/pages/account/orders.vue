@@ -24,6 +24,7 @@
           <div class="flex justify-between items-center mx-5 md:mx-0">
             <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.account.orders.title'"></h2>
           </div>
+          <!-- search & filters -->
           <div class="flex gap-3 lg:flex-row-reverse">
             <div class="relative ml-5 md:mx-0">
               <VcButton :is-disabled="ordersLoading" class="p-4 uppercase" @click="toggleFilters"
@@ -63,6 +64,31 @@
                 <i class="fas fa-search text-lg"></i>
               </VcButton>
             </div>
+          </div>
+          <!-- Filters chips -->
+          <div v-if="!isMobile && !isFilterEmpty" class="flex flex-wrap gap-x-3 gap-y-2 mb-2">
+            <VcChip
+              class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
+              size="sm"
+              is-outline
+              clickable
+              closable
+              @click="resetFilters"
+              @close="resetFilters"
+            >
+              {{ $t("pages.catalog.reset_filters_button") }}
+            </VcChip>
+
+            <template v-for="item in filterChipsItems" :key="item.value">
+              <VcChip
+                class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
+                size="sm"
+                closable
+                @close="removeFilterItem(item)"
+              >
+                {{ item.label }}
+              </VcChip>
+            </template>
           </div>
           <div class="flex flex-col bg-white shadow-sm md:rounded md:border">
             <VcTable
@@ -219,8 +245,8 @@
 </template>
 
 <script setup lang="ts">
-import { ITableColumn, TableStatusBadge, VcTable, VcButton, VcPopupSidebar } from "@/components";
-import { OrdersFilter, AccountNavigation, OrdersFilterData } from "@/shared/account";
+import { ITableColumn, TableStatusBadge, VcTable, VcButton, VcPopupSidebar, VcChip } from "@/components";
+import { OrdersFilter, AccountNavigation, OrdersFilterData, OrdersFilterChipsItem } from "@/shared/account";
 
 import { onMounted, ref, shallowRef } from "vue";
 import { sortAscending, sortDescending } from "@/core/constants";
@@ -244,6 +270,8 @@ const {
   page,
   keyword,
   filterData,
+  isFilterEmpty,
+  filterChipsItems,
 } = useUserOrders();
 
 const isMobile = breakpoints.smaller("lg");
@@ -333,6 +361,14 @@ function filterChanged(newFilterData: OrdersFilterData) {
   filterData.value = newFilterData;
   hideFilters();
   loadOrders();
+}
+
+function resetFilters() {
+  filterData.value = { statuses: [] };
+  loadOrders();
+}
+function removeFilterItem(item: OrdersFilterChipsItem) {
+  console.log(item);
 }
 </script>
 

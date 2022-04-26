@@ -25,7 +25,7 @@ export function appendSuffixToFilename(filename: string, suffix: string, checkIf
 // check if object is empty
 export function isObjectEmpty(object: Record<string, unknown>, checkArrayLength = false): boolean {
   for (const property in object) {
-    if (checkArrayLength && Array.isArray(object[property]) && (object[property] as []).length) {
+    if (checkArrayLength && Array.isArray(object[property]) && !(object[property] as []).length) {
       continue;
     }
     return false;
