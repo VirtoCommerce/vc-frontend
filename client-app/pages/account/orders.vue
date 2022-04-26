@@ -12,27 +12,12 @@
           <div class="flex justify-between items-center mx-5 md:mx-0">
             <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.account.orders.title'"></h2>
           </div>
-          <div class="flex space-x-3">
-            <div class="flex flex-grow mx-5 md:mx-0">
-              <input
-                v-model.trim="keyword"
-                :disabled="ordersLoading"
-                type="search"
-                class="flex-grow appearance-none bg-white rounded rounded-r-none h-9 px-4 font-medium outline-none text-sm border border-gray-300 focus:border-gray-400 disabled:bg-gray-200"
-                @keypress.enter="applyKeyword"
-              />
+          <div class="flex gap-3 lg:flex-row-reverse">
+            <div class="relative ml-5 md:mx-0">
+              <VcButton :is-disabled="ordersLoading" class="p-4 uppercase" @click="toggleFilters"
+                ><span class="hidden lg:inline-block">Filters</span><span class="lg:hidden fa fa-filter"></span>
 
-              <VcButton
-                :is-disabled="ordersLoading"
-                class="px-4 rounded-l-none uppercase"
-                size="md"
-                @click="applyKeyword"
-              >
-                <i class="fas fa-search text-lg"></i>
               </VcButton>
-            </div>
-            <div class="relative">
-              <VcButton :is-disabled="ordersLoading" class="p-4 uppercase" @click="toggleFilters">Filters</VcButton>
               <div
                 v-if="filtersVisible"
                 class="absolute right-0 z-10 bg-white shadow-lg pb-6 rounded border border-gray-300 overflow-hidden mt-2"
@@ -48,6 +33,23 @@
                   @change="filterChanged($event)"
                 />
               </div>
+            </div>
+            <div class="flex flex-grow mr-5 md:mx-0">
+              <input
+                v-model.trim="keyword"
+                :disabled="ordersLoading"
+                type="search"
+                class="flex-grow appearance-none bg-white rounded rounded-r-none h-9 px-4 font-medium outline-none text-sm border border-gray-300 focus:border-gray-400 disabled:bg-gray-200"
+                @keypress.enter="applyKeyword"
+              />
+              <VcButton
+                :is-disabled="ordersLoading"
+                class="px-4 rounded-l-none uppercase"
+                size="md"
+                @click="applyKeyword"
+              >
+                <i class="fas fa-search text-lg"></i>
+              </VcButton>
             </div>
           </div>
           <div class="flex flex-col bg-white shadow-sm md:rounded md:border">
