@@ -442,7 +442,6 @@
                 <div ref="stickyMobileHeaderAnchor" class="absolute -mt-2.5"></div>
 
                 <VcButton
-                  ref="createOrderButton"
                   class="uppercase w-full"
                   :is-disabled="!isValidCheckout"
                   :is-waiting="creatingOrder"

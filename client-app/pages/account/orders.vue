@@ -12,6 +12,7 @@
           <div class="flex justify-between items-center mx-5 md:mx-0">
             <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.account.orders.title'"></h2>
           </div>
+
           <div class="flex mx-5 md:mx-0">
             <input
               v-model.trim="keyword"
@@ -20,6 +21,7 @@
               class="flex-grow appearance-none bg-white rounded rounded-r-none h-9 px-4 font-medium outline-none text-sm border border-gray-300 focus:border-gray-400 disabled:bg-gray-200"
               @keypress.enter="applyKeyword"
             />
+
             <VcButton
               :is-disabled="ordersLoading"
               class="px-4 rounded-l-none uppercase"
@@ -30,7 +32,8 @@
               <i class="fas fa-search text-lg"></i>
             </VcButton>
           </div>
-          <div class="flex flex-col bg-white shadow-sm" :class="{ 'rounded border': !isMobile }">
+
+          <div class="flex flex-col bg-white shadow-sm md:rounded md:border">
             <VcTable
               :loading="ordersLoading"
               :columns="columns"
@@ -68,6 +71,7 @@
                   </div>
                 </div>
               </template>
+
               <template #mobile-empty>
                 <div class="flex items-center justify-center space-x-10 p-5">
                   <img
@@ -79,6 +83,7 @@
                   </div>
                 </div>
               </template>
+
               <template #mobile-skeleton>
                 <div v-for="i of itemsPerPage" :key="i" class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200">
                   <div class="flex flex-col">
@@ -102,6 +107,7 @@
                   </div>
                 </div>
               </template>
+
               <template #desktop-body>
                 <tr
                   v-for="order in orders"
@@ -125,6 +131,7 @@
                   <td class="p-5 overflow-hidden overflow-ellipsis text-right">{{ order.total?.formattedAmount }}</td>
                 </tr>
               </template>
+
               <template #desktop-empty>
                 <!-- Workaround for using colspan -->
                 <tr>
@@ -149,6 +156,7 @@
                   </td>
                 </tr>
               </template>
+
               <template #desktop-skeleton>
                 <tr v-for="i of itemsPerPage" :key="i" class="even:bg-gray-50">
                   <td class="p-5">
@@ -184,7 +192,6 @@ import { ITableColumn, TableStatusBadge, VcTable, VcButton } from "@/components"
 import { AccountNavigation } from "@/shared/account";
 import { onMounted, ref } from "vue";
 import { sortAscending, sortDescending } from "@/core/constants";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import useUserOrders from "@/shared/account/composables/useUserOrders";
 import moment from "moment";
 import { useRouter } from "vue-router";
@@ -192,12 +199,7 @@ import { CustomerOrderType } from "@/core/api/graphql/types";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
-
-const breakpoints = useBreakpoints(breakpointsTailwind);
 const { loading: ordersLoading, orders, loadOrders, sort, pages, itemsPerPage, page, keyword } = useUserOrders();
-
-const isMobile = breakpoints.smaller("md");
-
 const router = useRouter();
 
 const openOrderDetails = (item: CustomerOrderType) => {

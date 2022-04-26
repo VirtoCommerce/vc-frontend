@@ -71,7 +71,7 @@
         @after-enter="isAnimatedSearchBar = false"
         @after-leave="isAnimatedSearchBar = false"
       >
-        <SearchBar v-if="searchBarVisible" class="w-full z-20 transition-transform duration-300" />
+        <SearchBar v-if="searchBarVisible" class="w-full transition-transform duration-300" />
       </transition>
     </div>
   </div>

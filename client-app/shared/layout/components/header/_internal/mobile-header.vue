@@ -54,7 +54,7 @@
   </div>
 
   <!-- Height placeholder for mobile header due to fixed position -->
-  <div :style="{ height: height + 'px' }" class="h-14"></div>
+  <div :style="placeholderStyle" class="h-14"></div>
 
   <!-- Mobile menu -->
   <transition
@@ -68,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref, StyleValue, watchEffect } from "vue";
 import { RouteLocationRaw } from "vue-router";
 import { VcButton, VcImage } from "@/components";
 import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
@@ -85,6 +85,10 @@ const headerElement = ref<HTMLElement | null>(null);
 const { customSlots, isAnimated } = useNestedMobileHeader();
 const { searchBarVisible, showSearchBar, hideSearchBar } = useSearchBar();
 const { height } = useElementSize(headerElement);
+
+const placeholderStyle = computed<StyleValue | undefined>(() =>
+  height.value ? { height: height.value + "px" } : undefined
+);
 
 const searchPageLink = computed<RouteLocationRaw>(() => ({
   name: "Search",

@@ -4,7 +4,7 @@ import { currencyCode, currentUserId, locale, storeId } from "@core/constants";
 import getProductsQueryDocument from "./getProductQuery.graphql";
 
 export default async function getProduct(id: string): Promise<Product | null> {
-  const { data } = await client.query<Pick<Query, "product">, QueryProductArgs>({
+  const { data } = await client.query<Required<Pick<Query, "product">>, QueryProductArgs>({
     query: getProductsQueryDocument,
     variables: {
       id,
@@ -15,5 +15,5 @@ export default async function getProduct(id: string): Promise<Product | null> {
     },
   });
 
-  return data.product!;
+  return data.product;
 }

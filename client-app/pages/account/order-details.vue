@@ -1,5 +1,7 @@
 <template>
-  <div class="bg-gray-100 pt-7 pb-16 shadow-inner">
+  <div class="bg-gray-100 grow pt-6 pb-16 shadow-inner">
+    <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
+
     <div class="w-full max-w-screen-2xl mx-auto pb-5 px-5 md:px-12">
       <VcBreadcrumbs :items="breadcrumbs"></VcBreadcrumbs>
     </div>
@@ -178,6 +180,8 @@ import { OrderSummary, ProductCard, AcceptedGifts } from "@/shared/checkout";
 import { computed, onMounted, ref } from "vue";
 import { VcCard, VcImage, VcPagination, VcButton, VcSection, VcBreadcrumbs, IBreadcrumbs } from "@/components";
 import { useRoute } from "vue-router";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { BackButtonInHeader } from "@/shared/layout";
 import { ReorderInfo, useUserOrder } from "@/shared/account";
 import moment from "moment";
 import _ from "lodash";
@@ -185,15 +189,15 @@ import { usePopup } from "@/shared/popup";
 import { useProducts } from "@/shared/catalog";
 import { useI18n } from "vue-i18n";
 
-const { t } = useI18n();
-
+const breakpoints = useBreakpoints(breakpointsTailwind);
 const { itemsPerPage, pages, order, deliveryAddress, billingAddress, loadOrder } = useUserOrder();
 const { fetchProducts, products } = useProducts();
 const { openPopup } = usePopup();
-
+const { t } = useI18n();
 const route = useRoute();
-const orderId = ref(route.params.id as string);
 
+const isMobile = breakpoints.smaller("lg");
+const orderId = ref(route.params.id as string);
 const page = ref(1);
 const orderItems = computed(() =>
   order.value?.items
