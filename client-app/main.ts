@@ -2,6 +2,7 @@ import { createApp } from "vue";
 import { initCfg, initContext, initMenu } from "@core/utilities";
 import { config, context, menu } from "@core/plugins";
 import App from "./App.vue";
+import * as yup from "yup";
 
 /**
  * Global Styles
@@ -25,6 +26,16 @@ import routes from "./router";
   const router = createI18nRouter(routes);
 
   const menus = await initMenu(currentCultureName.value);
+
+  yup.setLocale({
+    mixed: {
+      required: i18n.global.t("common.messages.required_field"),
+    },
+    string: {
+      email: i18n.global.t("common.messages.email_is_not_correct"),
+      max: ({ max }) => i18n.global.t("common.messages.max_length", { max }),
+    },
+  });
 
   // Create and mount application
   const app = createApp(App);

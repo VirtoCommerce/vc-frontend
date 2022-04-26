@@ -46,8 +46,8 @@
           v-if="registrationKind == RegistrationKind.organization"
           v-model="organizationName"
           class="mb-4"
-          label="Organization name"
-          placeholder="Enter organization name"
+          :label="$t('pages.sign_up.organization_name_label')"
+          :placeholder="$t('pages.sign_up.organization_name_placeholder')"
           is-required
           :error-message="errors.organizationName"
         ></VcInput>
@@ -134,11 +134,11 @@ const schema = yup.object({
     .string()
     .label("Email")
     .required()
-    .email("Enter correct email please (ex. john@gmail.com)")
+    .email()
     .max(64)
     .test(
       "is-unique-email",
-      "This email is already taken",
+      t("pages.sign_up.errors.email_not_unique"),
       (value) => new Promise((resolve) => emailValidationDebounced(value!, resolve))
     ),
   userName: yup
@@ -148,7 +148,7 @@ const schema = yup.object({
     .max(64)
     .test(
       "is-unique-username",
-      "This username is already taken",
+      t("pages.sign_up.errors.user_name_not_unique"),
       (value) => new Promise((resolve) => usernameValidationDebounced(value!, resolve))
     ),
   firstName: yup.string().label("First Name").required().max(64),
@@ -158,7 +158,7 @@ const schema = yup.object({
     .string()
     .label("Confirm password")
     .required()
-    .oneOf([yup.ref("password"), null], "Passwords must match"),
+    .oneOf([yup.ref("password"), null], t("pages.sign_up.errors.passwords_must_match")),
 });
 
 const { errors, handleSubmit, setFieldError } = useForm({
