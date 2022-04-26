@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col">
     <div class="flex flex-col lg:flex-row lg:space-x-14">
-      <div class="flex flex-col space-y-4">
+      <div v-if="availableStatuses.length" class="flex flex-col space-y-4">
         <div class="font-bold text-gray-400">Status filter</div>
         <VcCheckbox
           :class="{ 'font-bold': isSelectedStatus(status) }"
@@ -33,9 +33,11 @@
 </template>
 <script setup lang="ts">
 import { VcCheckbox, VcDateSelector, VcButton } from "@/components";
+import { cfg } from "@/core/utilities";
 import { PropType, toRef } from "vue";
 import { OrdersFilterData } from "../types";
-const availableStatuses = ["New", "Processing", "Pending", "Canceled", "Complete"];
+
+const availableStatuses = cfg?.orders_statuses || [];
 
 function isSelectedStatus(status: string) {
   return statuses.value.indexOf(status) !== -1;

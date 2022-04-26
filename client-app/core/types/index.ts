@@ -90,6 +90,7 @@ export interface IThemeConfigPreset {
   orders_search_enabled?: boolean;
   orders_filter_enabled?: boolean;
   orders_reorder_enabled?: boolean;
+  orders_statuses?: string[];
 
   logo_image?: string;
   logo_inverted_image?: string;
