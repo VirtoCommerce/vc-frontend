@@ -2,6 +2,18 @@
   <div class="bg-gray-100 flex-grow pt-6 pb-16 shadow-inner">
     <div class="max-w-screen-2xl md:px-12 mx-auto">
       <div class="flex lg:space-x-5">
+        <!-- Mobile filters sidebar -->
+        <VcPopupSidebar class="px-5 py-12 w-56" :visible="isMobile && filtersVisible" @hide="hideFilters">
+          <div class="h-full flex flex-col">
+            <div class="relative">
+              <button class="absolute right-1 appearance-none px-4 py-2" @click="hideFilters">
+                <span class="text-lg fa fa-times text-[color:var(--color-primary)]"></span>
+              </button>
+            </div>
+            <div class="font-semibold text-2xl pt-1 mb-8">Filters</div>
+            <OrdersFilter class="flex-grow" :value="filterData" @change="filterChanged($event)" />
+          </div>
+        </VcPopupSidebar>
         <!-- First column-->
         <div class="hidden lg:flex flex-col lg:w-1/5 space-y-5">
           <AccountNavigation></AccountNavigation>
@@ -19,7 +31,7 @@
 
               </VcButton>
               <div
-                v-if="filtersVisible"
+                v-if="filtersVisible && !isMobile"
                 class="absolute right-0 z-10 bg-white shadow-lg pb-6 rounded border border-gray-300 overflow-hidden mt-2"
               >
                 <button class="absolute right-0 appearance-none px-4 py-2" @click="hideFilters">
@@ -207,7 +219,7 @@
 </template>
 
 <script setup lang="ts">
-import { ITableColumn, TableStatusBadge, VcTable, VcButton } from "@/components";
+import { ITableColumn, TableStatusBadge, VcTable, VcButton, VcPopupSidebar } from "@/components";
 import { OrdersFilter, AccountNavigation, OrdersFilterData } from "@/shared/account";
 
 import { onMounted, ref, shallowRef } from "vue";
@@ -234,7 +246,7 @@ const {
   filterData,
 } = useUserOrders();
 
-const isMobile = breakpoints.smaller("md");
+const isMobile = breakpoints.smaller("lg");
 
 const router = useRouter();
 

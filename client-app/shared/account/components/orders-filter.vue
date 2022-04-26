@@ -1,8 +1,8 @@
 <template>
-  <div class="flex flex-col">
-    <div class="flex flex-col lg:flex-row lg:space-x-14">
+  <div class="flex flex-col justify-between lg:justify-start">
+    <div class="flex flex-col space-y-8 lg:flex-row lg:space-x-14 lg:space-y-0">
       <div v-if="availableStatuses.length" class="flex flex-col space-y-4">
-        <div class="font-bold text-gray-400">Status filter</div>
+        <div class="font-extrabold uppercase lg:normal-case lg:text-gray-400">Status</div>
         <VcCheckbox
           :class="{ 'font-bold': isSelectedStatus(status) }"
           v-for="status in availableStatuses"
@@ -13,8 +13,8 @@
           {{ status }}
         </VcCheckbox>
       </div>
-      <div class="flex flex-col space-y-2">
-        <div class="font-bold text-gray-400">Created date</div>
+      <div class="flex flex-col space-y-3">
+        <div class="font-extrabold uppercase lg:normal-case lg:text-gray-400">Created date</div>
         <div>
           <VcDateSelector v-model="startDate" label="Start date"></VcDateSelector>
         </div>
@@ -23,11 +23,17 @@
         </div>
       </div>
     </div>
-    <div class="mt-8 flex justify-end space-x-3">
-      <VcButton class="uppercase px-8" kind="secondary" is-outline size="sm" @click="resetFilters">{{
-        $t("common.buttons.reset")
-      }}</VcButton>
-      <VcButton class="uppercase px-8" size="sm" @click="applyFilters">Apply</VcButton>
+    <div class="flex-grow lg:flex-grow-0"></div>
+    <div class="mt-8 flex flex-col lg:flex-row-reverse space-y-4 lg:justify-start lg:space-y-0">
+      <VcButton class="uppercase px-8 w-full lg:w-auto" size="sm" @click="applyFilters">Apply</VcButton>
+      <VcButton
+        class="uppercase px-8 w-full lg:w-auto lg:mr-3"
+        kind="secondary"
+        is-outline
+        size="sm"
+        @click="resetFilters"
+        >{{ $t("common.buttons.reset") }}</VcButton
+      >
     </div>
   </div>
 </template>
