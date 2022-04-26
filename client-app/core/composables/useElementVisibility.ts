@@ -46,16 +46,13 @@ export default function useElementVisibility(
     }
   }
 
-  tryOnMounted(checkVisibility);
-
-  if (window) {
-    tryOnMounted(() =>
-      useEventListener(unrefElement(scrollTarget) || window, "scroll", checkVisibility, {
-        capture: false,
-        passive: true,
-      })
-    );
-  }
+  tryOnMounted(() => {
+    checkVisibility();
+    useEventListener(unrefElement(scrollTarget) || window, "scroll", checkVisibility, {
+      capture: false,
+      passive: true,
+    });
+  });
 
   return readonly(isVisible);
 }

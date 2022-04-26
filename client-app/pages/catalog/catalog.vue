@@ -8,7 +8,7 @@
         <!-- Mobile sidebar back cover -->
         <div
           :class="{ hidden: !mobileSidebarVisible }"
-          class="fixed z-40 inset-0 w-full h-screen lg:hidden bg-gray-800 opacity-95"
+          class="fixed z-50 inset-0 w-full h-screen lg:hidden bg-gray-800 opacity-95"
           @click="hideMobileSidebar"
         />
 
@@ -107,87 +107,93 @@
 
         <!-- Content -->
         <div class="lg:w-3/4 xl:w-4/5 flex-grow">
-          <div class="flex flex-col">
-            <h2 class="text-gray-800 text-2xl lg:text-3xl font-bold uppercase">{{ selectedCategory?.label }}</h2>
+          <h2 class="text-gray-800 text-2xl lg:text-3xl font-bold uppercase">{{ selectedCategory?.label }}</h2>
 
-            <p class="py-3">
-              <span class="font-extrabold">{{ $t("pages.catalog.products_found_message", [total]) }}</span>
-            </p>
+          <p class="py-3">
+            <span class="font-extrabold">{{ $t("pages.catalog.products_found_message", [total]) }}</span>
+          </p>
 
-            <div class="flex justify-start mb-6 mt-4">
-              <!-- Mobile filters toggler -->
-              <div class="lg:hidden mr-3">
-                <VcButton class="px-4 font-extrabold" size="md" @click="mobileSidebarVisible = true">
-                  <i class="fas fa-filter mr-1"></i> {{ $t("pages.catalog.filters_button") }}
-                </VcButton>
-              </div>
+          <div ref="stickyMobileHeaderAnchor" class="-mb-2"></div>
 
-              <!-- View options -->
-              <ViewMode v-model:mode="viewModeQueryParam" class="hidden md:inline-flex mr-6" />
-
-              <!-- Sorting -->
-              <div class="flex items-center flex-grow md:flex-grow-0 ml-auto">
-                <span class="hidden lg:block shrink-0 mr-2" v-t="'pages.catalog.sort_by_label'"></span>
-
-                <VcSelect
-                  v-model="sortQueryParam"
-                  text-field="name"
-                  value-field="id"
-                  :is-disabled="loading"
-                  :items="productSortingList"
-                  class="w-full md:w-52 lg:w-64"
-                />
-              </div>
+          <div
+            class="sticky lg:relative top-0 z-10 flex items-center h-14 mt-2 mb-3"
+            :class="{
+              'z-40 px-5 md:px-12 -mx-5 md:-mx-12 bg-[color:var(--color-header-bottom-bg)]':
+                isVisibleStickyMobileHeader,
+            }"
+          >
+            <!-- Mobile filters toggler -->
+            <div class="lg:hidden mr-3">
+              <VcButton class="px-4 font-extrabold" size="md" @click="mobileSidebarVisible = true">
+                <i class="fas fa-filter mr-1"></i> {{ $t("pages.catalog.filters_button") }}
+              </VcButton>
             </div>
 
-            <!-- Filters chips -->
-            <div v-if="isExistSelectedFilters || showInStock" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
-              <VcChip
-                class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
-                size="sm"
-                is-outline
-                clickable
-                closable
-                @click="resetFilters"
-                @close="resetFilters"
-              >
-                {{ $t("pages.catalog.reset_filters_button") }}
-              </VcChip>
+            <!-- View options -->
+            <ViewMode v-model:mode="viewModeQueryParam" class="hidden md:inline-flex mr-6" />
 
-              <template v-for="filter in filters">
-                <template v-for="filterItem in filter.values">
-                  <VcChip
-                    v-if="filterItem.selected"
-                    :key="filter.paramName + filterItem.value"
-                    class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
-                    size="sm"
-                    closable
-                    @close="
-                      removeFilterItem({
-                        paramName: filter.paramName,
-                        value: filterItem.value,
-                      })
-                    "
-                  >
-                    {{ filterItem.label }}
-                  </VcChip>
-                </template>
-              </template>
+            <!-- Sorting -->
+            <div class="flex items-center flex-grow md:flex-grow-0 z-10 ml-auto">
+              <span class="hidden lg:block shrink-0 mr-2" v-t="'pages.catalog.sort_by_label'"></span>
 
-              <template v-if="showInStock">
+              <VcSelect
+                v-model="sortQueryParam"
+                text-field="name"
+                value-field="id"
+                :is-disabled="loading"
+                :items="productSortingList"
+                class="w-full md:w-52 lg:w-64"
+              />
+            </div>
+          </div>
+
+          <!-- Filters chips -->
+          <div v-if="isExistSelectedFilters || showInStock" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
+            <VcChip
+              class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
+              size="sm"
+              is-outline
+              clickable
+              closable
+              @click="resetFilters"
+              @close="resetFilters"
+            >
+              {{ $t("pages.catalog.reset_filters_button") }}
+            </VcChip>
+
+            <template v-for="filter in filters">
+              <template v-for="filterItem in filter.values">
                 <VcChip
+                  v-if="filterItem.selected"
+                  :key="filter.paramName + filterItem.value"
                   class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
                   size="sm"
                   closable
                   @close="
-                    showInStock = false;
-                    applyFilters();
+                    removeFilterItem({
+                      paramName: filter.paramName,
+                      value: filterItem.value,
+                    })
                   "
                 >
-                  {{ $t("pages.catalog.instock_filter_card.title") }}
+                  {{ filterItem.label }}
                 </VcChip>
               </template>
-            </div>
+            </template>
+
+            <template v-if="showInStock">
+              <VcChip
+                class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
+                size="sm"
+                closable
+                @close="
+                  showInStock = false;
+                  applyFilters();
+                "
+              >
+                {{ $t("pages.catalog.instock_filter_card.title") }}
+              </VcChip>
+            </template>
           </div>
 
           <!-- Products -->
@@ -267,7 +273,7 @@ import {
   VcScrollTopButton,
 } from "@/components";
 import { AddToCart } from "@/shared/cart";
-import { useRouteQueryParam } from "@core/composables";
+import { useElementVisibility, useRouteQueryParam } from "@core/composables";
 import { defaultPageSize, productSortingList } from "@core/constants";
 import QueryParamName from "@core/query-param-name.enum";
 import { useI18n } from "vue-i18n";
@@ -294,9 +300,12 @@ const isMobile = breakpoints.smaller("md");
 const isMobileSidebar = breakpoints.smaller("lg");
 const mobileSidebarVisible = ref(false);
 const sidebarElement = shallowRef<HTMLElement | null>(null);
+const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const keyword = ref("");
 const page = ref(1);
 const itemsPerPage = ref(defaultPageSize);
+
+const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
 
 const viewModeQueryParam = useRouteQueryParam<"grid" | "list">("viewMode", {
   defaultValue: "grid",
@@ -315,6 +324,10 @@ const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
 const filterQueryParam = useRouteQueryParam<string>(QueryParamName.Filter, {
   defaultValue: "",
 });
+
+const isVisibleStickyMobileHeader = computed<boolean>(
+  () => !stickyMobileHeaderAnchorIsVisible.value && isMobileSidebar.value
+);
 
 const categorySeoUrl = computed<string>(() =>
   typeof props.categorySeoUrls === "string"
