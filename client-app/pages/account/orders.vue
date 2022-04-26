@@ -84,7 +84,7 @@
                 class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
                 size="sm"
                 closable
-                @close="removeFilterItem(item)"
+                @close="removeFilterChipsItem(item)"
               >
                 {{ item.label }}
               </VcChip>
@@ -246,7 +246,7 @@
 
 <script setup lang="ts">
 import { ITableColumn, TableStatusBadge, VcTable, VcButton, VcPopupSidebar, VcChip } from "@/components";
-import { OrdersFilter, AccountNavigation, OrdersFilterData, OrdersFilterChipsItem } from "@/shared/account";
+import { OrdersFilter, AccountNavigation, OrdersFilterData } from "@/shared/account";
 
 import { onMounted, ref, shallowRef } from "vue";
 import { sortAscending, sortDescending } from "@/core/constants";
@@ -270,8 +270,11 @@ const {
   page,
   keyword,
   filterData,
+  appliedFilterData,
   isFilterEmpty,
   filterChipsItems,
+  resetFilters,
+  removeFilterChipsItem,
 } = useUserOrders();
 
 const isMobile = breakpoints.smaller("lg");
@@ -357,18 +360,9 @@ onClickOutside(filtersElement, () => {
 });
 
 function filterChanged(newFilterData: OrdersFilterData) {
-  console.log(newFilterData);
-  filterData.value = newFilterData;
   hideFilters();
+  appliedFilterData.value = { ...newFilterData };
   loadOrders();
-}
-
-function resetFilters() {
-  filterData.value = { statuses: [] };
-  loadOrders();
-}
-function removeFilterItem(item: OrdersFilterChipsItem) {
-  console.log(item);
 }
 </script>
 

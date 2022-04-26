@@ -2,7 +2,7 @@ import { OrdersFilterChipsItem } from "./../types/index";
 import { computed, readonly, ref, Ref, shallowRef } from "vue";
 import { CustomerOrderType } from "@core/api/graphql/types";
 import { getMyOrders } from "@core/api/graphql/account";
-import { dateToIsoDateString, isObjectEmpty, Logger } from "@core/utilities";
+import { dateToIsoDateString, Logger, nameOf } from "@core/utilities";
 import { getSortingExpression, ISortInfo, OrdersFilterData } from "@/shared/account";
 import { sortDescending } from "@core/constants";
 
@@ -21,37 +21,69 @@ export default () => {
   });
 
   const filterData: Ref<OrdersFilterData> = ref({ statuses: [] });
+  const appliedFilterData: Ref<OrdersFilterData> = ref({ ...filterData.value });
 
   const isFilterEmpty = computed(() => {
-    const res = isObjectEmpty(filterData.value, true);
-    return res;
+    const { statuses, startDate, endDate } = appliedFilterData.value;
+    return !statuses.length && !startDate && !endDate;
   });
 
   const filterChipsItems = computed(() => {
     const items: OrdersFilterChipsItem[] = [];
 
-    if (filterData.value.statuses.length) {
-      for (const status of filterData.value.statuses) {
-        items.push({ fieldName: "status", value: status, label: status });
+    if (appliedFilterData.value.statuses.length) {
+      for (const status of appliedFilterData.value.statuses) {
+        items.push({ fieldName: nameOf<OrdersFilterData>("statuses"), value: status, label: status });
       }
     }
-    if (filterData.value.startDate) {
-      const isoDateString = dateToIsoDateString(filterData.value.startDate) as string;
-      items.push({ fieldName: "startDate", value: isoDateString, label: `Start: ${isoDateString}` });
+    if (appliedFilterData.value.startDate) {
+      const isoDateString = dateToIsoDateString(appliedFilterData.value.startDate) as string;
+      items.push({
+        fieldName: nameOf<OrdersFilterData>("startDate"),
+        value: isoDateString,
+        label: `Start: ${isoDateString}`,
+      });
     }
-    if (filterData.value.endDate) {
-      const isoDateString = dateToIsoDateString(filterData.value.endDate) as string;
-      items.push({ fieldName: "endDate", value: isoDateString, label: `End: ${isoDateString}` });
+    if (appliedFilterData.value.endDate) {
+      const isoDateString = dateToIsoDateString(appliedFilterData.value.endDate) as string;
+      items.push({
+        fieldName: nameOf<OrdersFilterData>("endDate"),
+        value: isoDateString,
+        label: `End: ${isoDateString}`,
+      });
     }
     return items;
   });
+
+  function resetFilters() {
+    filterData.value = { statuses: [] };
+    appliedFilterData.value = { ...filterData.value };
+    loadOrders();
+  }
+
+  function removeFilterChipsItem(item: OrdersFilterChipsItem) {
+    if (item.fieldName === nameOf<OrdersFilterData>("statuses")) {
+      appliedFilterData.value.statuses.splice(appliedFilterData.value.statuses.indexOf(item.value), 1);
+    }
+
+    if (item.fieldName === nameOf<OrdersFilterData>("startDate")) {
+      appliedFilterData.value.startDate = undefined;
+    }
+
+    if (item.fieldName === nameOf<OrdersFilterData>("endDate")) {
+      appliedFilterData.value.endDate = undefined;
+    }
+
+    filterData.value = { ...appliedFilterData.value };
+    loadOrders();
+  }
 
   async function loadOrders() {
     loading.value = true;
 
     const sortingExpression = getSortingExpression(sort.value);
 
-    const filterExpression = getFilterExpression(keyword.value, filterData.value);
+    const filterExpression = getFilterExpression(keyword.value, appliedFilterData.value);
 
     try {
       const response = await getMyOrders({
@@ -80,8 +112,11 @@ export default () => {
     page,
     keyword,
     filterData,
+    appliedFilterData,
     isFilterEmpty,
     filterChipsItems,
+    resetFilters,
+    removeFilterChipsItem,
   };
 };
 
