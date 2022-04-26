@@ -1,3 +1,4 @@
+export { default as BackButtonInHeader } from "./back-button-in-header/back-button-in-header.vue";
 export { default as Footer } from "./footer/footer.vue";
 export { default as Header } from "./header/header.vue";
 export { default as SearchBar } from "./search-bar/search-bar.vue";

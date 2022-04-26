@@ -675,7 +675,6 @@
       "choose_button": "@:common.buttons.choose"
     },
     "product": {
-      "back_button": "@:common.buttons.back",
       "sku_label": "@:common.labels.sku",
       "variations_total_label": "Total in your cart:",
       "view_cart_button": "view cart",

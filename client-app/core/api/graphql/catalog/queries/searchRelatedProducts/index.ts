@@ -11,7 +11,7 @@ export default async function searchRelatedProducts({
   page = 1,
   itemsPerPage = defaultPageSize,
 }: RelatedProductsSearchParams): Promise<ProductAssociation[]> {
-  const { data } = await client.query<Required<Pick<Query, "product">>, QueryProductArgs & ProductAssociationsArgs>({
+  const { data } = await client.query<Pick<Query, "product">, QueryProductArgs & ProductAssociationsArgs>({
     query: searchRelatedProductsQueryDocument,
     variables: {
       group,
@@ -26,5 +26,5 @@ export default async function searchRelatedProducts({
     },
   });
 
-  return data.product.associations?.items ?? [];
+  return data.product?.associations?.items ?? [];
 }
