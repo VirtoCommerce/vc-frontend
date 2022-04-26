@@ -1,5 +1,7 @@
 <template>
   <div class="bg-gray-100 flex-grow pt-6 pb-16 shadow-inner">
+    <BackButtonInHeader v-if="isMobile && editingMode" @click="closeEditMode" />
+
     <div class="max-w-screen-2xl md:px-12 mx-auto">
       <div class="flex lg:space-x-5">
         <!-- First column-->
@@ -13,15 +15,12 @@
             <h2 class="text-gray-800 text-3xl font-bold uppercase">{{ title }}</h2>
 
             <VcButton v-if="!editingMode" class="px-3 uppercase" size="sm" is-outline @click="openEditMode()">
-              {{
-                isMobile
-                  ? $t("pages.account.addresses.add_new_address_button_mobile")
-                  : $t("pages.account.addresses.add_new_address_button")
-              }}
+              <span class="sm:hidden">{{ $t("pages.account.addresses.add_new_address_button_mobile") }}</span>
+              <span class="hidden sm:inline">{{ $t("pages.account.addresses.add_new_address_button") }}</span>
             </VcButton>
           </div>
 
-          <div class="flex flex-col bg-white shadow-sm" :class="{ 'rounded border': !isMobile }">
+          <div class="flex flex-col bg-white shadow-sm md:rounded md:border">
             <AddressForm
               v-if="editingMode"
               :model-value="editableAddress"
@@ -36,7 +35,6 @@
                 <div class="flex space-x-4 pb-3 pt-7 sm:pb-4 sm:pt-4 sm:float-right">
                   <VcButton
                     kind="secondary"
-                    :size="isMobile ? 'md' : 'lg'"
                     :is-disabled="saveAddressLoading"
                     class="uppercase w-32 sm:w-auto sm:px-12"
                     is-outline
@@ -46,7 +44,6 @@
                   </VcButton>
 
                   <VcButton
-                    :size="isMobile ? 'md' : 'lg'"
                     :is-disabled="!dirty"
                     :is-waiting="saveAddressLoading"
                     class="uppercase flex-grow sm:flex-none sm:px-16"
@@ -238,6 +235,7 @@ import { clone } from "lodash";
 import { MemberAddressType } from "@/core/api/graphql/types";
 import { sortAscending, sortDescending } from "@/core/constants";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { BackButtonInHeader } from "@/shared/layout";
 import { useCountries } from "@core/composables";
 import { AddressType } from "@core/types";
 import { useI18n } from "vue-i18n";
@@ -258,7 +256,7 @@ const {
   addOrUpdateAddresses,
 } = useUserAddresses({ user });
 
-const isMobile = breakpoints.smaller("md");
+const isMobile = breakpoints.smaller("lg");
 const editingMode: Ref<boolean> = ref(false);
 const editableAddress: Ref<MemberAddressType | null> = ref(null);
 const page = ref(1);
