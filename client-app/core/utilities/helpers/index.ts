@@ -22,6 +22,7 @@ export function appendSuffixToFilename(filename: string, suffix: string, checkIf
     : fileNameWithoutExtension + suffix + filename.substring(dotIndex);
 }
 
+// check if object is empty
 export function isObjectEmpty(object: Record<string, unknown>, checkArrayLength = false): boolean {
   for (const property in object) {
     if (checkArrayLength && Array.isArray(object[property]) && (object[property] as []).length) {
@@ -35,4 +36,9 @@ export function isObjectEmpty(object: Record<string, unknown>, checkArrayLength 
 
 export function trimString(str: string | null | undefined): string {
   return str?.trim() || "";
+}
+
+// convert Date value to string with format 'yyyy-MM-dd'
+export function dateToIsoDateString(date: Date | undefined) {
+  return date?.toISOString().substring(0, 10);
 }

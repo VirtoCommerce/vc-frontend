@@ -16,6 +16,7 @@
 </template>
 
 <script setup lang="ts">
+import { dateToIsoDateString } from "@/core/utilities";
 import { computed } from "vue";
 
 const props = defineProps({
@@ -48,7 +49,7 @@ const props = defineProps({
 });
 
 // convert input value to string format yyyy-MM-dd
-const inputValue = computed(() => props.modelValue?.toISOString()?.substring(0, 10));
+const inputValue = computed(() => dateToIsoDateString(props.modelValue));
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: Date | undefined): void;

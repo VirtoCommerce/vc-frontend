@@ -1,7 +1,7 @@
 import { computed, readonly, ref, Ref, shallowRef } from "vue";
 import { CustomerOrderType } from "@core/api/graphql/types";
 import { getMyOrders } from "@core/api/graphql/account";
-import { Logger } from "@core/utilities";
+import { dateToIsoDateString, Logger } from "@core/utilities";
 import { getSortingExpression, ISortInfo, OrdersFilterData } from "@/shared/account";
 import { sortDescending } from "@core/constants";
 
@@ -67,13 +67,13 @@ function getFilterExpression(keyword: string, filterData: OrdersFilterData): str
   }
 
   if (filterData.startDate && filterData.endDate) {
-    filterExpression += `createddate:[${filterData.startDate.toISOString().substring(0, 10)} TO ${filterData.endDate
-      .toISOString()
-      .substring(0, 10)}] `;
+    filterExpression += `createddate:[${dateToIsoDateString(filterData.startDate)} TO ${dateToIsoDateString(
+      filterData.endDate
+    )}] `;
   } else if (filterData.startDate) {
-    filterExpression += `createddate:[${filterData.startDate.toISOString().substring(0, 10)} TO *] `;
+    filterExpression += `createddate:[${dateToIsoDateString(filterData.startDate)} TO] `;
   } else if (filterData.endDate) {
-    filterExpression += `createddate:[* TO ${filterData.endDate.toISOString().substring(0, 10)}] `;
+    filterExpression += `createddate:[TO ${dateToIsoDateString(filterData.endDate)}] `;
   }
 
   filterExpression = filterExpression.trim();
