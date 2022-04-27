@@ -1,12 +1,14 @@
-import { OrdersFilterChipsItem } from "./../types/index";
-import { computed, readonly, ref, Ref, shallowRef } from "vue";
+import { computed, readonly, ref, Ref, shallowRef, watch } from "vue";
 import { CustomerOrderType } from "@core/api/graphql/types";
 import { getMyOrders } from "@core/api/graphql/account";
 import { dateToIsoDateString, Logger, nameOf } from "@core/utilities";
 import { getSortingExpression, ISortInfo, OrdersFilterData } from "@/shared/account";
 import { sortDescending } from "@core/constants";
+import useUserOrdersFilter from "./useUserOrdersFilter";
 
 export default () => {
+  const { appliedFilterData } = useUserOrdersFilter();
+
   const orders: Ref<CustomerOrderType[]> = shallowRef<CustomerOrderType[]>([]);
   const loading: Ref<boolean> = ref(false);
   const itemsPerPage: Ref<number> = ref(10);
@@ -20,69 +22,10 @@ export default () => {
     direction: sortDescending,
   });
 
-  const filterData: Ref<OrdersFilterData> = ref({ statuses: [] });
-  const appliedFilterData: Ref<OrdersFilterData> = ref({ ...filterData.value });
-
-  const isFilterEmpty = computed(() => {
-    const { statuses, startDate, endDate } = appliedFilterData.value;
-    return !statuses.length && !startDate && !endDate;
-  });
-
-  const isFilterDirty = computed(() => {
-    return JSON.stringify(filterData.value) !== JSON.stringify(appliedFilterData.value);
-  });
-
-  const filterChipsItems = computed(() => {
-    const items: OrdersFilterChipsItem[] = [];
-
-    if (appliedFilterData.value.statuses.length) {
-      for (const status of appliedFilterData.value.statuses) {
-        items.push({ fieldName: nameOf<OrdersFilterData>("statuses"), value: status, label: status });
-      }
-    }
-    if (appliedFilterData.value.startDate) {
-      const isoDateString = dateToIsoDateString(appliedFilterData.value.startDate) as string;
-      items.push({
-        fieldName: nameOf<OrdersFilterData>("startDate"),
-        value: isoDateString,
-        label: `Start: ${isoDateString}`,
-      });
-    }
-    if (appliedFilterData.value.endDate) {
-      const isoDateString = dateToIsoDateString(appliedFilterData.value.endDate) as string;
-      items.push({
-        fieldName: nameOf<OrdersFilterData>("endDate"),
-        value: isoDateString,
-        label: `End: ${isoDateString}`,
-      });
-    }
-    return items;
-  });
-
-  function resetFilters() {
-    filterData.value = { statuses: [] };
-    appliedFilterData.value = { ...filterData.value };
-    page.value = 1;
-    loadOrders();
-  }
-
-  function removeFilterChipsItem(item: OrdersFilterChipsItem) {
-    if (item.fieldName === nameOf<OrdersFilterData>("statuses")) {
-      appliedFilterData.value.statuses.splice(appliedFilterData.value.statuses.indexOf(item.value), 1);
-    }
-
-    if (item.fieldName === nameOf<OrdersFilterData>("startDate")) {
-      appliedFilterData.value.startDate = undefined;
-    }
-
-    if (item.fieldName === nameOf<OrdersFilterData>("endDate")) {
-      appliedFilterData.value.endDate = undefined;
-    }
-
-    filterData.value = { ...appliedFilterData.value };
-    page.value = 1;
-    loadOrders();
-  }
+  // watch(appliedFilterData.value, () => {
+  //   page.value = 1;
+  //   loadOrders();
+  // });
 
   async function loadOrders() {
     loading.value = true;
@@ -117,13 +60,6 @@ export default () => {
     pages,
     page,
     keyword,
-    filterData,
-    appliedFilterData,
-    isFilterEmpty,
-    isFilterDirty,
-    filterChipsItems,
-    resetFilters,
-    removeFilterChipsItem,
   };
 };
 

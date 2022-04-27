@@ -11,12 +11,7 @@
               </button>
             </div>
             <div class="font-semibold text-2xl pt-1 mb-6">{{ $t("common.buttons.filters") }}</div>
-            <OrdersFilter
-              class="flex-grow"
-              :value="filterData"
-              :is-dirty="isFilterDirty"
-              @change="filterChanged($event)"
-            />
+            <OrdersFilter class="flex-grow" @change="filterChanged()" />
           </div>
         </VcPopupSidebar>
         <!-- First column-->
@@ -49,13 +44,7 @@
                   <span class="fa fa-times text-[color:var(--color-primary)]"></span>
                 </button>
 
-                <OrdersFilter
-                  ref="filtersElement"
-                  :value="filterData"
-                  :is-dirty="isFilterDirty"
-                  class="px-8 pt-9"
-                  @change="filterChanged($event)"
-                />
+                <OrdersFilter ref="filtersElement" class="px-8 pt-9" @change="filterChanged()" />
               </div>
             </div>
             <div class="flex flex-grow mr-5 md:mx-0">
@@ -257,12 +246,12 @@
 
 <script setup lang="ts">
 import { ITableColumn, TableStatusBadge, VcTable, VcButton, VcPopupSidebar, VcChip } from "@/components";
-import { OrdersFilter, AccountNavigation, OrdersFilterData } from "@/shared/account";
+import { OrdersFilter, AccountNavigation, useUserOrdersFilter, useUserOrders } from "@/shared/account";
 
-import { onMounted, ref, shallowRef } from "vue";
+import { onMounted, ref, shallowRef, watch } from "vue";
 import { sortAscending, sortDescending } from "@/core/constants";
 import { breakpointsTailwind, useBreakpoints, onClickOutside } from "@vueuse/core";
-import useUserOrders from "@/shared/account/composables/useUserOrders";
+
 import moment from "moment";
 import { useRouter } from "vue-router";
 import { CustomerOrderType } from "@/core/api/graphql/types";
@@ -271,23 +260,10 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const {
-  loading: ordersLoading,
-  orders,
-  loadOrders,
-  sort,
-  pages,
-  itemsPerPage,
-  page,
-  keyword,
-  filterData,
-  appliedFilterData,
-  isFilterEmpty,
-  isFilterDirty,
-  filterChipsItems,
-  resetFilters,
-  removeFilterChipsItem,
-} = useUserOrders();
+const { loading: ordersLoading, orders, loadOrders, sort, pages, itemsPerPage, page, keyword } = useUserOrders();
+
+const { appliedFilterData, isFilterEmpty, filterChipsItems, resetFilters, resetDataToApplied, removeFilterChipsItem } =
+  useUserOrdersFilter();
 
 const isMobile = breakpoints.smaller("lg");
 
@@ -296,6 +272,11 @@ const router = useRouter();
 const openOrderDetails = (item: CustomerOrderType) => {
   router.push({ name: "OrderDetails", params: { id: item.id } });
 };
+
+watch(appliedFilterData, () => {
+  page.value = 1;
+  loadOrders();
+});
 
 const onPageChange = async (newPage: number) => {
   page.value = newPage;
@@ -320,6 +301,7 @@ const applyKeyword = async () => {
 };
 
 onMounted(async () => {
+  resetFilters();
   await loadOrders();
 });
 
@@ -364,7 +346,7 @@ function toggleFilters() {
   }
   filtersVisible.value = !filtersVisible.value;
   if (!filtersVisible.value) {
-    filterData.value = { ...appliedFilterData.value };
+    resetDataToApplied();
   }
 }
 
@@ -383,15 +365,17 @@ onClickOutside(
   { ignore: [filterButtonElement] }
 );
 
-function filterChanged(newFilterData: OrdersFilterData) {
+function filterChanged() {
   hideFilters();
-  if (JSON.stringify(appliedFilterData.value) === JSON.stringify(newFilterData)) {
-    return;
-  }
+  // page.value = 1;
+  // loadOrders();
+  // if (JSON.stringify(appliedFilterData.value) === JSON.stringify(newFilterData)) {
+  //   return;
+  // }
 
-  page.value = 1;
-  appliedFilterData.value = { ...newFilterData };
-  loadOrders();
+  // page.value = 1;
+  // appliedFilterData.value = { ...newFilterData };
+  // loadOrders();
 }
 </script>
 

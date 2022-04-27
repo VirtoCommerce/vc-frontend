@@ -9,7 +9,7 @@
           :class="{ 'font-bold': isSelectedStatus(status) }"
           v-for="status in availableStatuses"
           :key="status"
-          v-model="statuses"
+          v-model="filterData.statuses"
           :value="status"
         >
           {{ status }}
@@ -21,12 +21,15 @@
         </div>
         <div>
           <VcDateSelector
-            v-model="startDate"
+            v-model="filterData.startDate"
             :label="$t('shared.account.orders-filter.start-date-label')"
           ></VcDateSelector>
         </div>
         <div>
-          <VcDateSelector v-model="endDate" :label="$t('shared.account.orders-filter.end-date-label')"></VcDateSelector>
+          <VcDateSelector
+            v-model="filterData.endDate"
+            :label="$t('shared.account.orders-filter.end-date-label')"
+          ></VcDateSelector>
         </div>
       </div>
     </div>
@@ -35,8 +38,8 @@
       <VcButton
         class="uppercase px-8 w-full lg:w-auto"
         :size="isMobile ? 'md' : 'sm'"
-        :is-disabled="!isDirty"
-        @click="applyFilters"
+        :is-disabled="!isFilterDirty"
+        @click="apply"
         >{{ $t("shared.account.orders-filter.apply-button") }}</VcButton
       >
       <VcButton
@@ -44,7 +47,7 @@
         kind="secondary"
         is-outline
         :size="isMobile ? 'md' : 'sm'"
-        @click="resetFilters"
+        @click="reset"
         >{{ $t("shared.account.orders-filter.reset-button") }}</VcButton
       >
     </div>
@@ -53,9 +56,10 @@
 <script setup lang="ts">
 import { VcCheckbox, VcDateSelector, VcButton } from "@/components";
 import { cfg } from "@/core/utilities";
-import { PropType, toRef } from "vue";
-import { OrdersFilterData } from "../types";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { useUserOrdersFilter } from "@/shared/account/";
+
+const { filterData, applyFilters, resetFilters, isFilterDirty } = useUserOrdersFilter();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
@@ -63,44 +67,22 @@ const isMobile = breakpoints.smaller("lg");
 const availableStatuses = cfg?.orders_statuses || [];
 
 function isSelectedStatus(status: string) {
-  return statuses.value.indexOf(status) !== -1;
+  return filterData.value.statuses.indexOf(status) !== -1;
 }
 
-const props = defineProps({
-  value: {
-    type: Object as PropType<OrdersFilterData>,
-    required: true,
-  },
-  isDirty: {
-    type: Boolean,
-    required: true,
-  },
-});
-
-const statuses = toRef(props.value, "statuses");
-const startDate = toRef(props.value, "startDate");
-const endDate = toRef(props.value, "endDate");
-
-const emit = defineEmits<{ (e: "change", filter: OrdersFilterData): void }>();
+const emit = defineEmits(["change"]);
 
 function onChange() {
-  const eventPayload: OrdersFilterData = {
-    statuses: statuses.value,
-    startDate: startDate?.value,
-    endDate: endDate?.value,
-  };
-
-  emit("change", eventPayload);
+  emit("change");
 }
 
-function applyFilters() {
+function apply() {
+  applyFilters();
   onChange();
 }
 
-function resetFilters() {
-  statuses.value = [];
-  startDate.value = undefined;
-  endDate.value = undefined;
+function reset() {
+  resetFilters();
   onChange();
 }
 </script>
