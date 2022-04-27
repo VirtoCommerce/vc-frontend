@@ -359,10 +359,10 @@ const columns = ref<ITableColumn[]>([
 const filtersVisible = ref(false);
 
 function toggleFilters() {
-  filtersVisible.value = !filtersVisible.value;
   if (!filtersVisible.value) {
     filterData.value = { ...appliedFilterData.value };
   }
+  filtersVisible.value = !filtersVisible.value;
 }
 
 function hideFilters() {

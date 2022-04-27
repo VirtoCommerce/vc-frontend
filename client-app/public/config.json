@@ -14,7 +14,7 @@
       "logo_inverted_image": "/static/images/common/logo-white.svg",
       "favicon_image": null,
 
-      "orders_statuses": ["New", "Processing", "Pending", "Canceled", "Complete"],
+      "orders_statuses": ["New", "Processing", "Pending", "Cancelled", "Completed"],
 
       "color_primary": "#F0AD4E",
       "color_primary_hover": "#EC951A",
