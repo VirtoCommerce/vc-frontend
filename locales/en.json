@@ -20,7 +20,8 @@
       "filters": "Filters",
       "back": "Back",
       "reset": "Reset",
-      "add_to_cart": "Add to cart"
+      "add_to_cart": "Add to cart",
+      "apply": "Apply"
     },
     "labels": {
       "actions": "Actions",
@@ -235,6 +236,14 @@
           "item_can_t_be_purchased_message": " Item can't be purchased ",
           "item_is_out_of_stock_message": " Item is out of stock "
         }
+      },
+      "orders-filter": {
+        "status-label": "@:common.labels.status",
+        "created-date-label": "Created date",
+        "start-date-label": "Start date",
+        "end-date-label": "End date",
+        "apply-button": "@:common.buttons.apply",
+        "reset-button": "@:common.buttons.reset"
       }
     },
     "cart": {

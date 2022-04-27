@@ -10,7 +10,7 @@
                 <span class="text-lg fa fa-times text-[color:var(--color-primary)]"></span>
               </button>
             </div>
-            <div class="font-semibold text-2xl pt-1 mb-8">Filters</div>
+            <div class="font-semibold text-2xl pt-1 mb-8" v-t="$t('common.buttons.filters')"></div>
             <OrdersFilter class="flex-grow" :value="filterData" @change="filterChanged($event)" />
           </div>
         </VcPopupSidebar>
@@ -27,9 +27,9 @@
           <!-- search & filters -->
           <div class="flex gap-3 lg:flex-row-reverse">
             <div class="relative ml-5 md:mx-0">
-              <VcButton :is-disabled="ordersLoading" class="p-4 uppercase" @click="toggleFilters"
-                ><span class="hidden lg:inline-block">Filters</span><span class="lg:hidden fa fa-filter"></span>
-
+              <VcButton :is-disabled="ordersLoading" class="p-4 uppercase" @click="toggleFilters">
+                <span class="hidden lg:inline-block" v-t="$t('common.buttons.filters')"></span>
+                <span class="lg:hidden fa fa-filter"></span>
               </VcButton>
               <div
                 v-if="filtersVisible && !isMobile"
