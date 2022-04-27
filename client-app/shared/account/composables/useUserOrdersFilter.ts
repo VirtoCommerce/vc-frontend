@@ -1,6 +1,7 @@
 import { computed, ref, Ref } from "vue";
 import { OrdersFilterData, OrdersFilterChipsItem } from "@/shared/account";
 import { dateToIsoDateString, nameOf } from "@core/utilities";
+import moment from "moment";
 
 const filterData: Ref<OrdersFilterData> = ref({ statuses: [] });
 const appliedFilterData: Ref<OrdersFilterData> = ref({ ...filterData.value });
@@ -24,19 +25,19 @@ export default () => {
       }
     }
     if (appliedFilterData.value.startDate) {
-      const isoDateString = dateToIsoDateString(appliedFilterData.value.startDate) as string;
+      const formattedDate = moment(appliedFilterData.value.startDate).format("YYYY-MM-DD");
       items.push({
         fieldName: nameOf<OrdersFilterData>("startDate"),
-        value: isoDateString,
-        label: `Start: ${isoDateString}`,
+        value: appliedFilterData.value.startDate,
+        label: `Start: ${formattedDate}`,
       });
     }
     if (appliedFilterData.value.endDate) {
-      const isoDateString = dateToIsoDateString(appliedFilterData.value.endDate) as string;
+      const formattedDate = moment(appliedFilterData.value.endDate).format("YYYY-MM-DD");
       items.push({
         fieldName: nameOf<OrdersFilterData>("endDate"),
-        value: isoDateString,
-        label: `End: ${isoDateString}`,
+        value: appliedFilterData.value.endDate,
+        label: `End: ${formattedDate}`,
       });
     }
     return items;
@@ -60,7 +61,7 @@ export default () => {
 
   function removeFilterChipsItem(item: OrdersFilterChipsItem) {
     if (item.fieldName === nameOf<OrdersFilterData>("statuses")) {
-      appliedFilterData.value.statuses.splice(appliedFilterData.value.statuses.indexOf(item.value), 1);
+      appliedFilterData.value.statuses.splice(appliedFilterData.value.statuses.indexOf(item.value as string), 1);
     }
 
     if (item.fieldName === nameOf<OrdersFilterData>("startDate")) {

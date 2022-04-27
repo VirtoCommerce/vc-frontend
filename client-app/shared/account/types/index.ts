@@ -70,6 +70,6 @@ export type OrdersFilterData = {
 
 export type OrdersFilterChipsItem = {
   fieldName: string;
-  value: string;
+  value: string | Date;
   label: string;
 };
