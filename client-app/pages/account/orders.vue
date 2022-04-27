@@ -363,6 +363,9 @@ function toggleFilters() {
     filterData.value = { ...appliedFilterData.value };
   }
   filtersVisible.value = !filtersVisible.value;
+  if (!filtersVisible.value) {
+    filterData.value = { ...appliedFilterData.value };
+  }
 }
 
 function hideFilters() {
