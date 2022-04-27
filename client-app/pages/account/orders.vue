@@ -3,14 +3,14 @@
     <div class="max-w-screen-2xl md:px-12 mx-auto">
       <div class="flex lg:space-x-5">
         <!-- Mobile filters sidebar -->
-        <VcPopupSidebar class="px-5 py-12 w-56" :visible="isMobile && filtersVisible" @hide="hideFilters">
+        <VcPopupSidebar class="px-7 py-12 w-60" :visible="isMobile && filtersVisible" @hide="hideFilters">
           <div class="h-full flex flex-col">
             <div class="relative">
-              <button class="absolute right-1 appearance-none px-4 py-2" @click="hideFilters">
-                <span class="text-lg fa fa-times text-[color:var(--color-primary)]"></span>
+              <button class="absolute -right-3 appearance-none px-3 py-1" @click="hideFilters">
+                <span class="text-2xl fa fa-times text-[color:var(--color-primary)]"></span>
               </button>
             </div>
-            <div class="font-semibold text-2xl pt-1 mb-8">{{ $t("common.buttons.filters") }}</div>
+            <div class="font-semibold text-2xl pt-1 mb-6">{{ $t("common.buttons.filters") }}</div>
             <OrdersFilter class="flex-grow" :value="filterData" @change="filterChanged($event)" />
           </div>
         </VcPopupSidebar>
@@ -57,7 +57,7 @@
               />
               <VcButton
                 :is-disabled="ordersLoading"
-                class="px-4 rounded-l-none uppercase"
+                class="px-4 !rounded-l-none uppercase"
                 size="md"
                 @click="applyKeyword"
               >
