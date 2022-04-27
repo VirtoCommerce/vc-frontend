@@ -1,5 +1,5 @@
 <template>
-  <div class="flex relative">
+  <div class="flex relative z-0">
     <input
       type="number"
       v-model.number="enteredQuantity"
