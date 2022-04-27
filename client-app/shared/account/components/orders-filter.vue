@@ -2,10 +2,9 @@
   <div class="flex flex-col justify-between lg:justify-start">
     <div class="flex flex-col space-y-8 lg:flex-row lg:space-x-14 lg:space-y-0">
       <div v-if="availableStatuses.length" class="flex flex-col space-y-4">
-        <div
-          class="font-extrabold uppercase lg:normal-case lg:text-gray-400"
-          v-t="$t($t('shared.account.orders-filter.status-label'))"
-        ></div>
+        <div class="font-extrabold uppercase lg:normal-case lg:text-gray-400">
+          {{ $t("shared.account.orders-filter.status-label") }}
+        </div>
         <VcCheckbox
           :class="{ 'font-bold': isSelectedStatus(status) }"
           v-for="status in availableStatuses"
@@ -17,10 +16,9 @@
         </VcCheckbox>
       </div>
       <div class="flex flex-col space-y-3">
-        <div
-          class="font-extrabold uppercase lg:normal-case lg:text-gray-400"
-          v-t="$t('shared.account.orders-filter.created-date-label')"
-        ></div>
+        <div class="font-extrabold uppercase lg:normal-case lg:text-gray-400">
+          {{ $t("shared.account.orders-filter.created-date-label") }}
+        </div>
         <div>
           <VcDateSelector
             v-model="startDate"
