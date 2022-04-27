@@ -23,7 +23,7 @@ export function appendSuffixToFilename(filename: string, suffix: string, checkIf
 }
 
 // check if object is empty
-export function isObjectEmpty(object: Record<string, unknown>, checkArrayLength = false): boolean {
+export function isObjectEmpty(object: Record<string, unknown>): boolean {
   for (const property in object) {
     return false;
   }
