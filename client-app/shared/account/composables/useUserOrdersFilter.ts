@@ -1,6 +1,6 @@
 import { computed, ref, Ref } from "vue";
 import { OrdersFilterData, OrdersFilterChipsItem } from "@/shared/account";
-import { dateToIsoDateString, nameOf } from "@core/utilities";
+import { nameOf } from "@core/utilities";
 import moment from "moment";
 
 const filterData: Ref<OrdersFilterData> = ref({ statuses: [] });
@@ -13,7 +13,7 @@ export default () => {
   });
 
   const isFilterDirty = computed(() => {
-    return JSON.stringify(filterData.value) != JSON.stringify(appliedFilterData.value);
+    return JSON.stringify(filterData.value) !== JSON.stringify(appliedFilterData.value);
   });
 
   const filterChipsItems = computed(() => {

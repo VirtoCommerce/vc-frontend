@@ -1,7 +1,7 @@
-import { computed, readonly, ref, Ref, shallowRef, watch } from "vue";
+import { computed, readonly, ref, Ref, shallowRef } from "vue";
 import { CustomerOrderType } from "@core/api/graphql/types";
 import { getMyOrders } from "@core/api/graphql/account";
-import { dateToIsoDateString, Logger, nameOf } from "@core/utilities";
+import { dateToIsoDateString, Logger } from "@core/utilities";
 import { getSortingExpression, ISortInfo, OrdersFilterData } from "@/shared/account";
 import { sortDescending } from "@core/constants";
 import useUserOrdersFilter from "./useUserOrdersFilter";
