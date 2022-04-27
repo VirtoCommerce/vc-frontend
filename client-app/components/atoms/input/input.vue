@@ -1,24 +1,36 @@
 <template>
-  <div>
+  <div class="vc-input">
     <div v-if="label">
       <span class="font-bold text-gray-900">{{ label }}</span>
       <span v-if="isRequired" class="text-[color:var(--color-danger)]">*</span>
     </div>
 
-    <input
-      class="appearance-none h-11 rounded px-3 py-3 text-base leading-none box-border border border-gray-300 w-full outline-none focus:border-gray-400 min-w-0"
-      :value="modelValue"
-      :type="inputType"
-      :name="name"
-      :placeholder="placeholder"
-      :disabled="isDisabled"
-      :autofocus="autofocus"
-      :min="minValue"
-      :max="maxValue"
-      :maxlength="maxlength"
-      :step="stepValue"
-      @input="change"
-    />
+    <div class="relative h-11">
+      <input
+        class="appearance-none rounded h-full px-3 text-base leading-none box-border border border-gray-300 w-full outline-none focus:border-gray-400 min-w-0"
+        :class="{ 'pr-12': isPasswordIconVisible }"
+        :value="modelValue"
+        :type="inputType"
+        :name="name"
+        :placeholder="placeholder"
+        :disabled="isDisabled"
+        :autofocus="autofocus"
+        :min="minValue"
+        :max="maxValue"
+        :maxlength="maxlength"
+        :step="stepValue"
+        @input="change"
+      />
+
+      <button
+        v-if="isPasswordIconVisible"
+        type="button"
+        class="appearance-none absolute top-0 right-0 h-full w-12 flex items-center justify-center cursor-pointer text-[color:var(--color-primary)]"
+        @click="togglePasswordVisibility"
+      >
+        <i class="fa text-xl" :class="passwordVisibilityIcon" />
+      </button>
+    </div>
 
     <div v-if="errorMessage" class="text-xs text-[color:var(--color-danger)]">{{ errorMessage }}</div>
   </div>
@@ -31,33 +43,20 @@ const emit = defineEmits(["update:modelValue"]);
 
 const props = defineProps({
   autofocus: Boolean,
+  isDisabled: Boolean,
+  isRequired: Boolean,
+  hidePasswordSwitcher: Boolean,
+  label: String,
+  name: String,
+  placeholder: String,
   min: [String, Number],
   max: [String, Number],
   step: [String, Number],
   maxlength: [String, Number],
-
-  label: {
-    type: String,
-    default: undefined,
-  },
-
-  isRequired: {
-    type: Boolean,
-    default: false,
-  },
-
-  isDisabled: {
-    type: Boolean,
-    default: false,
-  },
+  errorMessage: String,
 
   modelValue: {
     type: [String, Number],
-    default: "",
-  },
-
-  placeholder: {
-    type: String,
     default: "",
   },
 
@@ -65,26 +64,28 @@ const props = defineProps({
     type: String,
     default: "text",
   },
-
-  name: {
-    type: String,
-    default: undefined,
-  },
-
-  errorMessage: {
-    type: String,
-    default: undefined,
-  },
 });
 
 const inputType = ref("");
+const isPasswordVisible = ref(false);
 const isNumberTypeSafari = ref(false);
 
 const minValue = computed(() => (props.type === "number" ? props.min : undefined));
 const maxValue = computed(() => (props.type === "number" ? props.max : undefined));
 const stepValue = computed(() => (props.type === "number" ? props.step : undefined));
 
+const passwordVisibilityIcon = computed<string>(() => (isPasswordVisible.value ? "fa-eye-slash" : "fa-eye"));
+const isPasswordIconVisible = computed<boolean>(() => props.type === "password" && !props.hidePasswordSwitcher);
+
+function togglePasswordVisibility() {
+  isPasswordVisible.value = !isPasswordVisible.value;
+  inputType.value = isPasswordVisible.value ? "text" : "password";
+}
+
 function change(event: Event) {
+  if (props.isDisabled) {
+    return;
+  }
   const newValue: string = (event.target as HTMLInputElement).value;
   emit("update:modelValue", props.type === "number" ? Number(newValue) : newValue);
 }
