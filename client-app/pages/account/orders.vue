@@ -355,12 +355,18 @@ function hideFilters() {
 }
 
 const filtersElement = shallowRef<HTMLElement | null>(null);
+
 onClickOutside(filtersElement, () => {
   hideFilters();
 });
 
 function filterChanged(newFilterData: OrdersFilterData) {
   hideFilters();
+  if (JSON.stringify(appliedFilterData.value) === JSON.stringify(newFilterData)) {
+    return;
+  }
+
+  page.value = 1;
   appliedFilterData.value = { ...newFilterData };
   loadOrders();
 }

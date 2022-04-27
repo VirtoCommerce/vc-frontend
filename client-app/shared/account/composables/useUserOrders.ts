@@ -58,6 +58,7 @@ export default () => {
   function resetFilters() {
     filterData.value = { statuses: [] };
     appliedFilterData.value = { ...filterData.value };
+    page.value = 1;
     loadOrders();
   }
 
@@ -75,6 +76,7 @@ export default () => {
     }
 
     filterData.value = { ...appliedFilterData.value };
+    page.value = 1;
     loadOrders();
   }
 
