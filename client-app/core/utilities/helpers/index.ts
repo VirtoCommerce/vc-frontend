@@ -37,7 +37,8 @@ export function trimString(str: string | null | undefined): string {
 
 // convert Date value to string with format 'yyyy-MM-dd'
 export function dateToIsoDateString(date: Date | undefined) {
-  return date?.toISOString().substring(0, 10);
+  const lastDateSymbolIndex = 10;
+  return date?.toISOString().substring(0, lastDateSymbolIndex);
 }
 
 export function nameOf<T>(key: keyof T, instance?: T): keyof T {
