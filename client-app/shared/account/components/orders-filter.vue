@@ -46,6 +46,7 @@
         class="uppercase px-8 w-full lg:w-auto lg:mr-3"
         kind="secondary"
         is-outline
+        :is-disabled="isFilterEmpty && !isFilterDirty"
         :size="isMobile ? 'md' : 'sm'"
         @click="reset"
         >{{ $t("shared.account.orders-filter.reset-button") }}</VcButton
@@ -59,7 +60,7 @@ import { cfg } from "@/core/utilities";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useUserOrdersFilter } from "@/shared/account/";
 
-const { filterData, applyFilters, resetFilters, isFilterDirty } = useUserOrdersFilter();
+const { filterData, applyFilters, resetFilters, isFilterEmpty, isFilterDirty } = useUserOrdersFilter();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");

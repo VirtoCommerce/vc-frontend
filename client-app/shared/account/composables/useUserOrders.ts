@@ -22,11 +22,6 @@ export default () => {
     direction: sortDescending,
   });
 
-  // watch(appliedFilterData.value, () => {
-  //   page.value = 1;
-  //   loadOrders();
-  // });
-
   async function loadOrders() {
     loading.value = true;
 

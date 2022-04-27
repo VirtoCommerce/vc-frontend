@@ -273,10 +273,14 @@ const openOrderDetails = (item: CustomerOrderType) => {
   router.push({ name: "OrderDetails", params: { id: item.id } });
 };
 
-watch(appliedFilterData, () => {
-  page.value = 1;
-  loadOrders();
-});
+watch(
+  appliedFilterData,
+  () => {
+    page.value = 1;
+    loadOrders();
+  },
+  { deep: true }
+);
 
 const onPageChange = async (newPage: number) => {
   page.value = newPage;
@@ -342,12 +346,9 @@ const filtersVisible = ref(false);
 
 function toggleFilters() {
   if (!filtersVisible.value) {
-    filterData.value = { ...appliedFilterData.value };
-  }
-  filtersVisible.value = !filtersVisible.value;
-  if (!filtersVisible.value) {
     resetDataToApplied();
   }
+  filtersVisible.value = !filtersVisible.value;
 }
 
 function hideFilters() {
@@ -367,15 +368,6 @@ onClickOutside(
 
 function filterChanged() {
   hideFilters();
-  // page.value = 1;
-  // loadOrders();
-  // if (JSON.stringify(appliedFilterData.value) === JSON.stringify(newFilterData)) {
-  //   return;
-  // }
-
-  // page.value = 1;
-  // appliedFilterData.value = { ...newFilterData };
-  // loadOrders();
 }
 </script>
 

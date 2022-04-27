@@ -1,4 +1,4 @@
-import { computed, readonly, ref, Ref, shallowRef } from "vue";
+import { computed, ref, Ref } from "vue";
 import { OrdersFilterData, OrdersFilterChipsItem } from "@/shared/account";
 import { dateToIsoDateString, nameOf } from "@core/utilities";
 
@@ -70,7 +70,7 @@ export default () => {
     if (item.fieldName === nameOf<OrdersFilterData>("endDate")) {
       appliedFilterData.value.endDate = undefined;
     }
-    appliedFilterData.value = { ...appliedFilterData.value };
+
     filterData.value = { ...appliedFilterData.value };
   }
 
