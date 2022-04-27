@@ -11,7 +11,12 @@
               </button>
             </div>
             <div class="font-semibold text-2xl pt-1 mb-6">{{ $t("common.buttons.filters") }}</div>
-            <OrdersFilter class="flex-grow" :value="filterData" @change="filterChanged($event)" />
+            <OrdersFilter
+              class="flex-grow"
+              :value="filterData"
+              :is-dirty="isFilterDirty"
+              @change="filterChanged($event)"
+            />
           </div>
         </VcPopupSidebar>
         <!-- First column-->
@@ -27,7 +32,12 @@
           <!-- search & filters -->
           <div class="flex gap-3 lg:flex-row-reverse">
             <div class="relative ml-5 md:mx-0">
-              <VcButton :is-disabled="ordersLoading" class="p-4 uppercase" @click="toggleFilters">
+              <VcButton
+                ref="filterButtonElement"
+                :is-disabled="ordersLoading"
+                class="p-4 uppercase"
+                @click="toggleFilters"
+              >
                 <span class="hidden lg:inline-block">{{ $t("common.buttons.filters") }}</span>
                 <span class="lg:hidden fa fa-filter"></span>
               </VcButton>
@@ -42,6 +52,7 @@
                 <OrdersFilter
                   ref="filtersElement"
                   :value="filterData"
+                  :is-dirty="isFilterDirty"
                   class="px-8 pt-9"
                   @change="filterChanged($event)"
                 />
@@ -272,6 +283,7 @@ const {
   filterData,
   appliedFilterData,
   isFilterEmpty,
+  isFilterDirty,
   filterChipsItems,
   resetFilters,
   removeFilterChipsItem,
@@ -348,6 +360,9 @@ const filtersVisible = ref(false);
 
 function toggleFilters() {
   filtersVisible.value = !filtersVisible.value;
+  if (!filtersVisible.value) {
+    filterData.value = { ...appliedFilterData.value };
+  }
 }
 
 function hideFilters() {
@@ -355,10 +370,15 @@ function hideFilters() {
 }
 
 const filtersElement = shallowRef<HTMLElement | null>(null);
+const filterButtonElement = shallowRef<HTMLElement | null>(null);
 
-onClickOutside(filtersElement, () => {
-  hideFilters();
-});
+onClickOutside(
+  filtersElement,
+  () => {
+    hideFilters();
+  },
+  { ignore: [filterButtonElement] }
+);
 
 function filterChanged(newFilterData: OrdersFilterData) {
   hideFilters();

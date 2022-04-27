@@ -32,9 +32,13 @@
     </div>
     <div class="flex-grow lg:flex-grow-0"></div>
     <div class="mt-8 flex flex-col lg:flex-row-reverse space-y-4 lg:justify-start lg:space-y-0">
-      <VcButton class="uppercase px-8 w-full lg:w-auto" :size="isMobile ? 'md' : 'sm'" @click="applyFilters">{{
-        $t("shared.account.orders-filter.apply-button")
-      }}</VcButton>
+      <VcButton
+        class="uppercase px-8 w-full lg:w-auto"
+        :size="isMobile ? 'md' : 'sm'"
+        :is-disabled="!isDirty"
+        @click="applyFilters"
+        >{{ $t("shared.account.orders-filter.apply-button") }}</VcButton
+      >
       <VcButton
         class="uppercase px-8 w-full lg:w-auto lg:mr-3"
         kind="secondary"
@@ -65,6 +69,10 @@ function isSelectedStatus(status: string) {
 const props = defineProps({
   value: {
     type: Object as PropType<OrdersFilterData>,
+    required: true,
+  },
+  isDirty: {
+    type: Boolean,
     required: true,
   },
 });

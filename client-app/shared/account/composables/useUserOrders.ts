@@ -28,6 +28,10 @@ export default () => {
     return !statuses.length && !startDate && !endDate;
   });
 
+  const isFilterDirty = computed(() => {
+    return JSON.stringify(filterData.value) !== JSON.stringify(appliedFilterData.value);
+  });
+
   const filterChipsItems = computed(() => {
     const items: OrdersFilterChipsItem[] = [];
 
@@ -116,6 +120,7 @@ export default () => {
     filterData,
     appliedFilterData,
     isFilterEmpty,
+    isFilterDirty,
     filterChipsItems,
     resetFilters,
     removeFilterChipsItem,
