@@ -3,7 +3,7 @@ import { searchProducts } from "@core/api/graphql/catalog";
 import { Product } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 import { ProductsFilter, ProductsSearchParams } from "../types";
-import { rangeFacetToProductsFilter, termFacetToProductsFilter } from "@/shared/catalog";
+import { rangeFacetToProductsFilter, termFacetToProductsFilter, toFilterExpression } from "@/shared/catalog";
 import { inStockFilterExpression } from "@/core/constants";
 
 export default (
@@ -31,6 +31,10 @@ export default (
     try {
       if (searchParams.filter?.includes(inStockFilterExpression)) {
         showInStock.value = true;
+      }
+
+      if (!searchParams.filter?.includes(inStockFilterExpression) && showInStock.value === true) {
+        searchParams.filter = toFilterExpression(filters, showInStock);
       }
 
       const {
