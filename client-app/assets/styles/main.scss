@@ -8,7 +8,7 @@
   background-image: url(/static/images/common/polygon.png);
   background-repeat: no-repeat;
   background-size: 46%;
-  background-position: right top;
+  background-position: var(--polygon-bg-position, right top);
 }
 
 .polygon-gray-bg {
