@@ -1,4 +1,7 @@
 <template>
+  <Head>
+    <link rel="icon" :href="$cfg.favicon_image" />
+  </Head>
   <div v-if="loaded" class="min-h-screen flex flex-col font-lato">
     <Header />
     <div class="flex-grow flex flex-col">
@@ -14,6 +17,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { Head } from "@vueuse/head";
 import { Header, Footer, useSearchBar } from "./shared/layout";
 import { useUser } from "@/shared/account";
 import { useCart } from "@/shared/cart";
