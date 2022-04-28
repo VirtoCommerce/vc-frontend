@@ -4,7 +4,7 @@
     <span v-if="isRequired" class="text-[color:var(--color-danger)]">*</span>
   </div>
   <input
-    class="appearance-none h-11 rounded px-3 py-3 text-base leading-none box-border border border-gray-300 w-full outline-none focus:border-gray-400 min-w-0"
+    class="appearance-none h-11 rounded px-3 py-3 text-base leading-none bg-white box-border border border-gray-300 w-full outline-none focus:border-gray-400 min-w-0"
     type="date"
     :value="inputValue"
     :disabled="isDisabled"
