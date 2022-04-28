@@ -14,38 +14,35 @@
           ></span>
         </div>
         <div class="flex justify-between items-start grow mb-5 lg:mb-0">
-          <VcCheckbox class="mt-2" v-model="showOnlyDifferences" @change="onShowOnlyDifferencesChange">{{
-            $t("pages.compare.header_block.differences_checkbox_label")
-          }}</VcCheckbox>
-          <VcButton is-outline class="p-3 uppercase" @click="clearList">{{
-            isMobile
-              ? $t("pages.compare.header_block.clear_button_mobile")
-              : $t("pages.compare.header_block.clear_button_desktop")
-          }}</VcButton>
+          <VcCheckbox class="mt-2" v-model="showOnlyDifferences" @change="onShowOnlyDifferencesChange">
+            {{ $t("pages.compare.header_block.differences_checkbox_label") }}
+          </VcCheckbox>
+
+          <VcButton is-outline class="p-3 uppercase" @click="clearCompareList">
+            {{
+              isMobile
+                ? $t("pages.compare.header_block.clear_button_mobile")
+                : $t("pages.compare.header_block.clear_button_desktop")
+            }}
+          </VcButton>
         </div>
       </div>
 
       <!-- Main block -->
       <div class="shadow py-8 bg-white md:rounded overflow-x-auto">
         <!-- Product cards block -->
-        <div class="flex space-x-5 pr-8" :class="isMobile && 'pl-8'">
-          <div class="w-56 flex-shrink-0" v-if="!isMobile"></div>
+        <div class="flex gap-x-5 pr-8 pl-8 lg:pl-0">
+          <div class="w-56 flex-shrink-0 hidden lg:block"></div>
           <div
             v-for="product in products"
             :key="product.id"
             class="w-32 flex-shrink-0 lg:flex-shrink md:w-48 md:pb-6 flex flex-col"
           >
             <!-- Product image -->
-            <router-link :to="`/${SeoUrl.Product}/${product.id}`" class="cursor-pointer mb-3">
+            <router-link :to="{ name: 'Product', params: { productId: product.id } }" class="cursor-pointer mb-3">
               <div
                 class="flex flex-col justify-center items-center border border-gray-100 h-32 w-32 md:h-48 md:w-48 relative"
               >
-                <div
-                  class="h-6 w-6 rounded-full border border-gray-200 flex items-center justify-center absolute -top-3 -right-3 z-10 bg-white hover:bg-gray-100"
-                  @click.prevent="removeProduct(product)"
-                >
-                  <i class="fas fa-times text-red-500"></i>
-                </div>
                 <VcImage
                   :src="product.imgSrc"
                   :alt="product.name"
@@ -53,12 +50,19 @@
                   class="w-full h-full object-cover object-center"
                   lazy
                 />
+
+                <div
+                  class="h-6 w-6 rounded-full border border-gray-200 flex items-center justify-center absolute -top-3 -right-3 bg-white hover:bg-gray-100"
+                  @click.prevent="removeFromCompareList(product)"
+                >
+                  <i class="fas fa-times text-red-500"></i>
+                </div>
               </div>
             </router-link>
 
             <!-- Product title -->
             <router-link
-              :to="`/${SeoUrl.Product}/${product.id}`"
+              :to="{ name: 'Product', params: { productId: product.id } }"
               class="text-[color:var(--color-link)] font-extrabold text-sm mb-3 flex-grow line-clamp-3 overflow-hidden cursor-pointer"
             >
               {{ product.name }}
@@ -121,13 +125,12 @@ import {
 } from "@/components";
 import { EmptyComparison, useProducts } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
-import SeoUrl from "@core/seo-routes.enum";
 import _ from "lodash";
 import { onMounted, ref, watch } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useCompareProducts } from "@/shared/compare";
-import { Product as ProductType } from "@/core/api/graphql/types";
 import { useI18n } from "vue-i18n";
+
 const { fetchProducts, products } = useProducts();
 const { clearCompareList, productsLimit, removeFromCompareList, productsIds } = useCompareProducts();
 const { t } = useI18n();
@@ -145,15 +148,7 @@ const showOnlyDifferences = ref(false);
 const originalProperties = ref<IProductProperties>({});
 const computedProperties = ref<IProductProperties>({});
 
-const removeProduct = (product: ProductType) => {
-  removeFromCompareList(product);
-};
-
-const clearList = () => {
-  clearCompareList();
-};
-
-const onShowOnlyDifferencesChange = () => {
+function onShowOnlyDifferencesChange() {
   if (showOnlyDifferences.value) {
     _.each(_.keys(computedProperties.value), (key) => {
       const values = _.map(_.values(computedProperties.value[key]), (value) => {
@@ -168,19 +163,21 @@ const onShowOnlyDifferencesChange = () => {
   } else {
     computedProperties.value = { ...originalProperties.value };
   }
-};
+}
 
-const refreshProducts = async () => {
+async function refreshProducts() {
   await fetchProducts({ productIds: productsIds.value });
+
   getProductProperties();
 
   if (showOnlyDifferences.value) {
     onShowOnlyDifferencesChange();
   }
-};
+}
 
 function getProductProperties() {
   if (_.isEmpty(products.value)) return;
+
   const grouped: IProductProperties = {};
   const properties = _.flatten(
     _.map(products.value, (product) => {
@@ -193,6 +190,7 @@ function getProductProperties() {
       return property?.name;
     })
   );
+
   _.each(propertyDisplayNames, (displayName) => {
     if (displayName) {
       grouped[displayName] = [];
@@ -210,6 +208,7 @@ function getProductProperties() {
       });
     }
   });
+
   computedProperties.value = { ...grouped };
   originalProperties.value = { ...grouped };
 }

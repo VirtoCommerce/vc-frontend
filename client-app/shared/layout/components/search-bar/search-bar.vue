@@ -27,7 +27,7 @@
       <transition name="slide-fade-top">
         <div
           v-if="searchDropdownVisible"
-          class="absolute top-14 w-full flex flex-col gap-3 rounded bg-white shadow-lg overflow-hidden"
+          class="absolute top-14 z-20 w-full flex flex-col gap-3 rounded bg-white shadow-lg overflow-hidden"
         >
           <!-- Results -->
           <template v-if="categories.length || products.length">
