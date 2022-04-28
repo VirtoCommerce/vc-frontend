@@ -2,6 +2,18 @@
   <div class="bg-gray-100 flex-grow pt-6 pb-16 shadow-inner">
     <div class="max-w-screen-2xl md:px-12 mx-auto">
       <div class="flex lg:space-x-5">
+        <!-- Mobile filters sidebar -->
+        <VcPopupSidebar class="px-7 py-12 w-60" :visible="isMobile && filtersVisible" @hide="hideFilters">
+          <div class="h-full flex flex-col">
+            <div class="relative">
+              <button class="absolute -right-3 appearance-none px-3 py-1" @click="hideFilters">
+                <span class="text-2xl fa fa-times text-[color:var(--color-primary)]"></span>
+              </button>
+            </div>
+            <div class="font-semibold text-2xl pt-1 mb-6">{{ $t("common.buttons.filters") }}</div>
+            <OrdersFilter class="flex-grow" @change="filterChanged()" />
+          </div>
+        </VcPopupSidebar>
         <!-- First column-->
         <div class="hidden lg:flex flex-col lg:w-1/5 space-y-5">
           <AccountNavigation></AccountNavigation>
@@ -12,27 +24,73 @@
           <div class="flex justify-between items-center mx-5 md:mx-0">
             <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.account.orders.title'"></h2>
           </div>
+          <!-- search & filters -->
+          <div class="flex gap-3 lg:flex-row-reverse">
+            <div class="relative ml-5 md:mx-0">
+              <VcButton
+                ref="filterButtonElement"
+                :is-disabled="ordersLoading"
+                size="lg"
+                class="p-4 uppercase"
+                @click="toggleFilters"
+              >
+                <span class="hidden lg:inline-block">{{ $t("common.buttons.filters") }}</span>
+                <span class="lg:hidden fa fa-filter"></span>
+              </VcButton>
+              <div
+                v-if="filtersVisible && !isMobile"
+                class="absolute right-0 z-10 bg-white shadow-lg pb-6 rounded border border-gray-300 overflow-hidden mt-2"
+              >
+                <button class="absolute right-0 appearance-none px-4 py-2" @click="hideFilters">
+                  <span class="fa fa-times text-[color:var(--color-primary)]"></span>
+                </button>
 
-          <div class="flex mx-5 md:mx-0">
-            <input
-              v-model.trim="keyword"
-              :disabled="ordersLoading"
-              type="search"
-              class="flex-grow appearance-none bg-white rounded rounded-r-none h-9 px-4 font-medium outline-none text-sm border border-gray-300 focus:border-gray-400 disabled:bg-gray-200"
-              @keypress.enter="applyKeyword"
-            />
-
-            <VcButton
-              :is-disabled="ordersLoading"
-              class="px-4 rounded-l-none uppercase"
-              outline
-              size="md"
-              @click="applyKeyword"
-            >
-              <i class="fas fa-search text-lg"></i>
-            </VcButton>
+                <OrdersFilter ref="filtersElement" class="px-8 pt-9" @change="filterChanged()" />
+              </div>
+            </div>
+            <div class="flex flex-grow mr-5 md:mx-0">
+              <input
+                v-model.trim="keyword"
+                :disabled="ordersLoading"
+                type="search"
+                class="flex-grow appearance-none bg-white rounded rounded-r-none h-11 px-4 font-medium outline-none text-sm border border-gray-300 focus:border-gray-400 disabled:bg-gray-200"
+                @keypress.enter="applyKeyword"
+              />
+              <VcButton
+                :is-disabled="ordersLoading"
+                class="px-4 !rounded-l-none uppercase"
+                size="lg"
+                @click="applyKeyword"
+              >
+                <i class="fas fa-search text-lg"></i>
+              </VcButton>
+            </div>
           </div>
+          <!-- Filters chips -->
+          <div v-if="!isMobile && !isFilterEmpty" class="flex flex-wrap gap-x-3 gap-y-2 mb-2">
+            <VcChip
+              class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
+              size="sm"
+              is-outline
+              clickable
+              closable
+              @click="resetFilters"
+              @close="resetFilters"
+            >
+              {{ $t("pages.catalog.reset_filters_button") }}
+            </VcChip>
 
+            <template v-for="item in filterChipsItems" :key="item.value">
+              <VcChip
+                class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
+                size="sm"
+                closable
+                @close="removeFilterChipsItem(item)"
+              >
+                {{ item.label }}
+              </VcChip>
+            </template>
+          </div>
           <div class="flex flex-col bg-white shadow-sm md:rounded md:border">
             <VcTable
               :loading="ordersLoading"
@@ -188,23 +246,42 @@
 </template>
 
 <script setup lang="ts">
-import { ITableColumn, TableStatusBadge, VcTable, VcButton } from "@/components";
-import { AccountNavigation } from "@/shared/account";
-import { onMounted, ref } from "vue";
+import { ITableColumn, TableStatusBadge, VcTable, VcButton, VcPopupSidebar, VcChip } from "@/components";
+import { OrdersFilter, AccountNavigation, useUserOrdersFilter, useUserOrders } from "@/shared/account";
+
+import { onMounted, ref, shallowRef, watch } from "vue";
 import { sortAscending, sortDescending } from "@/core/constants";
-import useUserOrders from "@/shared/account/composables/useUserOrders";
+import { breakpointsTailwind, useBreakpoints, onClickOutside } from "@vueuse/core";
+
 import moment from "moment";
 import { useRouter } from "vue-router";
 import { CustomerOrderType } from "@/core/api/graphql/types";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
 const { loading: ordersLoading, orders, loadOrders, sort, pages, itemsPerPage, page, keyword } = useUserOrders();
+
+const { appliedFilterData, isFilterEmpty, filterChipsItems, resetFilters, resetDataToApplied, removeFilterChipsItem } =
+  useUserOrdersFilter();
+
+const isMobile = breakpoints.smaller("lg");
+
 const router = useRouter();
 
 const openOrderDetails = (item: CustomerOrderType) => {
   router.push({ name: "OrderDetails", params: { id: item.id } });
 };
+
+watch(
+  appliedFilterData,
+  () => {
+    page.value = 1;
+    loadOrders();
+  },
+  { deep: true }
+);
 
 const onPageChange = async (newPage: number) => {
   page.value = newPage;
@@ -229,6 +306,7 @@ const applyKeyword = async () => {
 };
 
 onMounted(async () => {
+  resetFilters();
   await loadOrders();
 });
 
@@ -264,6 +342,34 @@ const columns = ref<ITableColumn[]>([
     titlePosition: "text-right",
   },
 ]);
+
+const filtersVisible = ref(false);
+
+function toggleFilters() {
+  if (!filtersVisible.value) {
+    resetDataToApplied();
+  }
+  filtersVisible.value = !filtersVisible.value;
+}
+
+function hideFilters() {
+  filtersVisible.value = false;
+}
+
+const filtersElement = shallowRef<HTMLElement | null>(null);
+const filterButtonElement = shallowRef<HTMLElement | null>(null);
+
+onClickOutside(
+  filtersElement,
+  () => {
+    hideFilters();
+  },
+  { ignore: [filterButtonElement] }
+);
+
+function filterChanged() {
+  hideFilters();
+}
 </script>
 
 <style scoped>

@@ -1,11 +1,14 @@
 import { computed, readonly, ref, Ref, shallowRef } from "vue";
 import { CustomerOrderType } from "@core/api/graphql/types";
 import { getMyOrders } from "@core/api/graphql/account";
-import { Logger } from "@core/utilities";
-import { getSortingExpression, ISortInfo } from "@/shared/account";
+import { dateToIsoDateString, Logger } from "@core/utilities";
+import { getSortingExpression, ISortInfo, OrdersFilterData } from "@/shared/account";
 import { sortDescending } from "@core/constants";
+import useUserOrdersFilter from "./useUserOrdersFilter";
 
 export default () => {
+  const { appliedFilterData } = useUserOrdersFilter();
+
   const orders: Ref<CustomerOrderType[]> = shallowRef<CustomerOrderType[]>([]);
   const loading: Ref<boolean> = ref(false);
   const itemsPerPage: Ref<number> = ref(10);
@@ -24,12 +27,14 @@ export default () => {
 
     const sortingExpression = getSortingExpression(sort.value);
 
+    const filterExpression = getFilterExpression(keyword.value, appliedFilterData.value);
+
     try {
       const response = await getMyOrders({
         sort: sortingExpression,
         first: itemsPerPage.value,
         after: String((page.value - 1) * itemsPerPage.value),
-        filter: keyword.value,
+        filter: filterExpression,
       });
       orders.value = response.items ?? [];
       pages.value = Math.ceil((response.totalCount ?? 0) / itemsPerPage.value);
@@ -52,3 +57,27 @@ export default () => {
     keyword,
   };
 };
+
+function getFilterExpression(keyword: string, filterData: OrdersFilterData): string {
+  let filterExpression = "";
+  if (keyword) {
+    filterExpression += `${keyword} `;
+  }
+  if (filterData.statuses.length) {
+    filterExpression += `status:${filterData.statuses.join(",")} `;
+  }
+
+  if (filterData.startDate && filterData.endDate) {
+    filterExpression += `createddate:[${dateToIsoDateString(filterData.startDate)} TO ${dateToIsoDateString(
+      filterData.endDate
+    )}] `;
+  } else if (filterData.startDate) {
+    filterExpression += `createddate:[${dateToIsoDateString(filterData.startDate)} TO] `;
+  } else if (filterData.endDate) {
+    filterExpression += `createddate:[TO ${dateToIsoDateString(filterData.endDate)}] `;
+  }
+
+  filterExpression = filterExpression.trim();
+
+  return filterExpression;
+}

@@ -1619,6 +1619,11 @@
     "@vueuse/shared" "7.6.0"
     vue-demi "*"
 
+"@vueuse/head@^0.7.6":
+  version "0.7.6"
+  resolved "https://registry.yarnpkg.com/@vueuse/head/-/head-0.7.6.tgz#39eb2aa593db6f02d10ba469b33d8cfbce038183"
+  integrity sha512-cOWqCkT3WiF5oEpw+VVEWUJd9RLD5rc7DmnFp3cePsejp+t7686uKD9Z9ZU7Twb7R/BI8iexKTmXo9D/F3v6UA==
+
 "@vueuse/shared@7.6.0":
   version "7.6.0"
   resolved "https://registry.npmjs.org/@vueuse/shared/-/shared-7.6.0.tgz"
