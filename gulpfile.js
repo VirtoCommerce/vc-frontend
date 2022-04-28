@@ -8,7 +8,8 @@ function getPackage() {
 }
 
 function compress() {
-  var package = getPackage();
+  const pkg = getPackage();
+
   return src(
     ["./assets/**", "./config/**", "./layout/**", "./locales/**", "./templates/**", "!./assets/index.html"],
     { base: "./" }
@@ -17,7 +18,7 @@ function compress() {
       path.dirname = "default/" + path.dirname;
     })
   ).pipe(
-    zip(package.name + "-" + package.version + ".zip")
+    zip(pkg.name + "-" + pkg.version + ".zip")
   ).pipe(dest("./artifacts"));
 }
 

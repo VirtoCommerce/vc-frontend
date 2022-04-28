@@ -1,16 +1,10 @@
 <template>
   <div v-if="product" class="bg-gray-100 pt-7 pb-8 shadow-inner">
+    <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
+
     <div class="max-w-screen-2xl px-5 md:px-12 mx-auto">
       <!-- Breadcrumbs -->
-      <Breadcrumbs class="hidden md:block mb-3" :items="breadcrumbs" />
-
-      <div class="md:hidden mb-5">
-        <!-- todo: use VcButton -->
-        <button class="border border-grey-200 rounded bg-white px-3 py-2 hover:bg-gray-100" @click="$router.back()">
-          <i class="fas fa-chevron-left text-[color:var(--color-primary)]"></i
-          ><span class="ml-2 text-[color:var(--color-link)]">{{ $t("pages.product.back_button") }}</span>
-        </button>
-      </div>
+      <Breadcrumbs class="hidden lg:block mb-3" :items="breadcrumbs" />
 
       <h1 class="text-2xl md:text-4xl font-bold uppercase">{{ product.name }}</h1>
 
@@ -23,7 +17,7 @@
           <ProductDetails :product="product" class="shadow-sm border rounded-none md:rounded" />
         </div>
 
-        <div class="lg:w-4/12 mt-6 lg:mt-0 xl:w-3/12">
+        <div class="lg:w-4/12 lg:h-full lg:sticky lg:top-4 mt-6 lg:mt-0 xl:w-3/12">
           <!-- Price & Delivery (with variations) -->
           <ProductPriceBlock v-if="productWithVariations" :product="product">
             <div class="flex items-baseline justify-between text-sm">
@@ -105,6 +99,7 @@ import {
   ProductPriceBlock,
   CarouselProductCard,
 } from "@/shared/catalog";
+import { BackButtonInHeader } from "@/shared/layout";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();

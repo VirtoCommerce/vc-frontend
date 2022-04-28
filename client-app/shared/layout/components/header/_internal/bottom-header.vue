@@ -60,18 +60,25 @@
     </div>
 
     <!-- Desktop Search bar -->
-    <transition
-      enter-from-class="translate-x-full"
-      leave-to-class="translate-x-full"
-      enter-active-class="will-change-transform"
-      leave-active-class="will-change-transform"
-    >
-      <SearchBar v-if="searchBarVisible" class="absolute top-0 w-full z-20 transition-transform duration-300" />
-    </transition>
+    <div class="absolute top-0 w-full" :class="{ 'overflow-hidden': isAnimatedSearchBar }">
+      <transition
+        enter-from-class="translate-x-full"
+        leave-to-class="translate-x-full"
+        enter-active-class="will-change-transform"
+        leave-active-class="will-change-transform"
+        @enter="isAnimatedSearchBar = true"
+        @leave="isAnimatedSearchBar = true"
+        @after-enter="isAnimatedSearchBar = false"
+        @after-leave="isAnimatedSearchBar = false"
+      >
+        <SearchBar v-if="searchBarVisible" class="w-full transition-transform duration-300" />
+      </transition>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import { VcImage } from "@/components";
 import BottomHeaderLink from "./bottom-header-link.vue";
 import { useCart } from "@/shared/cart";
@@ -84,4 +91,6 @@ const { cart } = useCart();
 const { mainMenuLinks } = useNavigations();
 const { productsIds } = useCompareProducts();
 const { searchBarVisible, showSearchBar } = useSearchBar();
+
+const isAnimatedSearchBar = ref(false);
 </script>

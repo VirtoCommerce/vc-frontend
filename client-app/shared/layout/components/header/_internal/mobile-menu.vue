@@ -1,11 +1,12 @@
 <template>
   <div
-    class="fixed z-50 w-full h-screen flex flex-col bg-[color:var(--color-mobile-menu-bg)] opacity-[0.98] text-[color:var(--color-mobile-menu-link)]"
+    class="fixed z-50 w-full h-screen flex flex-col bg-[color:var(--color-mobile-menu-bg)] text-[color:var(--color-mobile-menu-link)]"
   >
     <header class="px-6 flex justify-between items-center h-14 flex-shrink-0">
       <router-link to="/" @click="$emit('close')">
         <VcImage src="/static/images/common/logo-white.svg" class="h-9" lazy />
       </router-link>
+
       <!-- Language block -->
       <LanguageSelector v-if="$context.availLanguages && $context.availLanguages.length > 1" />
 

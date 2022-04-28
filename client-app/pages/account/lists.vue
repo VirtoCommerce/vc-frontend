@@ -20,11 +20,11 @@
 
             <VcButton
               v-if="lists.length || loading"
+              :is-disabled="creationButtonDisabled"
               class="px-3 uppercase"
               size="sm"
               is-outline
               @click="openCreateListDialog"
-              :class="creationButtonDisabled && 'vc-button--disabled'"
             >
               <i class="fa fa-plus text-inherit -ml-0.5 mr-2" />
 

@@ -1,23 +1,39 @@
 <template>
-  <div class="fixed z-40 w-full shadow-md">
-    <div class="relative z-10 h-14 flex justify-between items-center bg-white">
-      <router-link to="/" class="px-6">
-        <VcImage src="/static/images/common/logo.svg" class="h-9" lazy />
-      </router-link>
-
-      <div class="flex items-center h-full pr-3">
-        <button v-show="!searchBarVisible" class="h-full px-3" @click="showSearchBar">
-          <i class="fas fa-search text-lg text-[color:var(--color-primary)]" />
-        </button>
-
-        <button class="h-full px-3" @click="mobileMenuVisible = true">
-          <i class="fas fa-bars text-2xl text-[color:var(--color-primary)]" />
-        </button>
+  <div ref="headerElement" class="fixed z-40 w-full shadow-md bg-[color:var(--color-header-bottom-bg)]">
+    <!-- region Default slot -->
+    <transition :name="isAnimated ? 'slide-fade-top' : ''" mode="out-in">
+      <div v-if="customSlots.default">
+        <component :is="customSlots.default" />
       </div>
-    </div>
 
-    <!-- Mobile Search Bar -->
-    <div v-show="searchBarVisible" class="flex p-4 bg-gray-800 select-none">
+      <div v-else class="relative w-full z-10 h-14 flex justify-between items-center">
+        <!-- region Left slot -->
+        <component v-if="customSlots.left" :is="customSlots.left" />
+
+        <router-link v-else to="/" class="px-6">
+          <VcImage src="/static/images/common/logo.svg" class="h-9" lazy />
+        </router-link>
+        <!-- endregion Left slot -->
+
+        <!-- region Right slot -->
+        <component v-if="customSlots.right" :is="customSlots.right" />
+
+        <div v-else class="flex items-center h-full pr-3">
+          <button v-show="!searchBarVisible" class="h-full px-3" @click="showSearchBar">
+            <i class="fas fa-search text-lg text-[color:var(--color-primary)]" />
+          </button>
+
+          <button class="h-full px-3" @click="mobileMenuVisible = true">
+            <i class="fas fa-bars text-2xl text-[color:var(--color-primary)]" />
+          </button>
+        </div>
+        <!-- endregion Right slot -->
+      </div>
+    </transition>
+    <!-- endregion Default slot -->
+
+    <!-- region Mobile Search Bar -->
+    <div v-show="searchBarVisible" class="flex p-4 bg-[color:var(--color-search-bar-bg)] select-none">
       <input
         v-model.trim="searchPhrase"
         maxlength="30"
@@ -26,7 +42,7 @@
         @keyup.enter="$router.push(searchPageLink)"
       />
 
-      <VcButton class="w-10 h-10" :to="searchPageLink">
+      <VcButton class="w-10 !h-10" :to="searchPageLink">
         <i class="fas fa-search text-lg" />
       </VcButton>
 
@@ -34,13 +50,11 @@
         <i class="fas fa-times text-2xl text-white" />
       </button>
     </div>
+    <!-- endregion Mobile Search Bar -->
   </div>
 
   <!-- Height placeholder for mobile header due to fixed position -->
-  <div class="h-14"></div>
-
-  <!-- Height placeholder for search bar due to fixed mobile header -->
-  <div v-show="searchBarVisible" class="h-16 mt-2"></div>
+  <div :style="placeholderStyle" class="h-14"></div>
 
   <!-- Mobile menu -->
   <transition
@@ -54,20 +68,27 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref, StyleValue, watchEffect } from "vue";
 import { RouteLocationRaw } from "vue-router";
 import { VcButton, VcImage } from "@/components";
-import { useSearchBar } from "@/shared/layout";
+import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
 import MobileMenu from "./mobile-menu.vue";
 import { useRouteQueryParam } from "@core/composables";
 import QueryParamName from "@core/query-param-name.enum";
-import { whenever } from "@vueuse/core";
-
-const { searchBarVisible, showSearchBar, hideSearchBar } = useSearchBar();
+import { useElementSize, whenever } from "@vueuse/core";
 
 const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const mobileMenuVisible = ref(false);
+const headerElement = ref<HTMLElement | null>(null);
+
+const { customSlots, isAnimated } = useNestedMobileHeader();
+const { searchBarVisible, showSearchBar, hideSearchBar } = useSearchBar();
+const { height } = useElementSize(headerElement);
+
+const placeholderStyle = computed<StyleValue | undefined>(() =>
+  height.value ? { height: height.value + "px" } : undefined
+);
 
 const searchPageLink = computed<RouteLocationRaw>(() => ({
   name: "Search",

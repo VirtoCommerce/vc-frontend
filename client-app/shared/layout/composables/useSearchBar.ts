@@ -67,7 +67,7 @@ export default (
     }
 
     if (!searchBarVisible.value) {
-      return;
+      return Promise.resolve();
     }
 
     activeAnimation.value = hideSearchDropdown()

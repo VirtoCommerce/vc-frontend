@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loaded" class="min-h-screen flex flex-col font-lato overflow-x-hidden">
+  <div v-if="loaded" class="min-h-screen flex flex-col font-lato">
     <Header />
     <div class="flex-grow flex flex-col">
       <RouterView />
