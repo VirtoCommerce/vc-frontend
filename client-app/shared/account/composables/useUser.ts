@@ -69,6 +69,10 @@ export default () => {
       const response = await fetch("/storefrontapi/account/password", {
         method: "POST",
         body: JSON.stringify({ oldPassword, newPassword, newPasswordConfirm: newPassword }),
+        headers: {
+          Accept: "text/plain",
+          "Content-Type": "application/json-patch+json",
+        },
       });
       const res = (await response.json()) as IdentityResultType;
 
