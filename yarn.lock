@@ -4086,10 +4086,10 @@ fined@^1.0.1:
     object.pick "^1.2.0"
     parse-filepath "^1.0.1"
 
-flag-icon-css@^3.2.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/flag-icon-css/-/flag-icon-css-3.5.0.tgz#430747d5cb91e60babf85494de99173c16dc7cf2"
-  integrity sha512-pgJnJLrtb0tcDgU1fzGaQXmR8h++nXvILJ+r5SmOXaaL/2pocunQo2a8TAXhjQnBpRLPtZ1KCz/TYpqeNuE2ew==
+flag-icons@^6.3.0:
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/flag-icons/-/flag-icons-6.3.0.tgz#f5831c5a1b83f67f9952342b033792c09aea223a"
+  integrity sha512-/LrS5M4iJO2aCpZxwXfoxiOCvknN/k3c07v1r0wLTJY4B4oft8UijYr24ZAPEcaqbw/g4UiZjIgstMDatJ5VVg==
 
 flagged-respawn@^1.0.0:
   version "1.0.1"
@@ -8394,13 +8394,6 @@ vue-i18n@9:
     "@intlify/shared" "9.1.9"
     "@intlify/vue-devtools" "9.1.9"
     "@vue/devtools-api" "^6.0.0-beta.7"
-
-vue-lang-code-flags@^1.0.13:
-  version "1.0.13"
-  resolved "https://registry.yarnpkg.com/vue-lang-code-flags/-/vue-lang-code-flags-1.0.13.tgz#7370c8536eb3a5f5331e544f39e5b186f8e5a45e"
-  integrity sha512-s0MuSMFuf8oN83TNXxSjidrQp9aVKJS1GE2bf/6mNPTHyER8pAD49R9JSH/Xry793z93/G1vGZDAw9fdnfUfLQ==
-  dependencies:
-    flag-icon-css "^3.2.0"
 
 vue-router@^4.0.12:
   version "4.0.12"
