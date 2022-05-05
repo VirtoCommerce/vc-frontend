@@ -1,5 +1,8 @@
 <template>
-  <div class="bg-gray-100 flex-grow pt-6 pb-16 shadow-inner">
+  <div
+    class="bg-gray-100 flex-grow pt-6 pb-16 shadow-inner"
+    :class="{ 'polygon-gray-bg': !orders.length && !ordersLoading }"
+  >
     <div class="max-w-screen-2xl md:px-12 mx-auto">
       <div class="flex lg:space-x-5">
         <!-- Mobile filters sidebar -->
@@ -91,7 +94,7 @@
               </VcChip>
             </template>
           </div>
-          <div class="flex flex-col bg-white shadow-sm md:rounded md:border">
+          <div class="flex flex-col bg-white shadow-sm md:rounded md:border" v-if="orders.length">
             <VcTable
               :loading="ordersLoading"
               :columns="columns"
@@ -126,18 +129,6 @@
                   <div class="flex flex-col">
                     <span class="text-sm text-gray-400" v-t="'pages.account.orders.total_label'"></span>
                     <span class="overflow-hidden overflow-ellipsis">{{ itemData.item.total?.formattedAmount }}</span>
-                  </div>
-                </div>
-              </template>
-
-              <template #mobile-empty>
-                <div class="flex items-center justify-center space-x-10 p-5">
-                  <img
-                    src="/static/images/account/icons/no-addresses.svg"
-                    :alt="$t('pages.account.orders.no_orders_img_alt')"
-                  />
-                  <div class="flex flex-col space-y-2">
-                    <span class="text-base" v-t="'pages.account.orders.no_orders_message'"></span>
                   </div>
                 </div>
               </template>
@@ -190,31 +181,6 @@
                 </tr>
               </template>
 
-              <template #desktop-empty>
-                <!-- Workaround for using colspan -->
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td colspan="6" class="polygons-bg">
-                    <div class="flex items-center pl-56 space-x-10 h-80">
-                      <img
-                        src="/static/images/account/icons/no-addresses.svg"
-                        :alt="$t('pages.account.orders.no_orders_img_alt')"
-                      />
-                      <div class="flex flex-col space-y-2">
-                        <span class="text-base" v-t="'pages.account.orders.no_orders_message'"></span>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              </template>
-
               <template #desktop-skeleton>
                 <tr v-for="i of itemsPerPage" :key="i" class="even:bg-gray-50">
                   <td class="p-5">
@@ -239,6 +205,19 @@
               </template>
             </VcTable>
           </div>
+
+          <!-- Empty view -->
+          <VcEmptyView class="grow" :text="$t('pages.account.orders.no_orders_message')" v-else>
+            <template #icon v-if="isMobile">
+              <VcImage :src="'/static/images/common/order.svg'" />
+            </template>
+            <template #button>
+              <VcButton class="px-6 uppercase" size="lg" @click="resetFilters">
+                <i class="fas fa-undo text-inherit -ml-0.5 mr-2.5"></i>
+                {{ $t("pages.account.orders.no_orders_button") }}
+              </VcButton>
+            </template>
+          </VcEmptyView>
         </div>
       </div>
     </div>
@@ -246,7 +225,16 @@
 </template>
 
 <script setup lang="ts">
-import { ITableColumn, TableStatusBadge, VcTable, VcButton, VcPopupSidebar, VcChip } from "@/components";
+import {
+  ITableColumn,
+  TableStatusBadge,
+  VcTable,
+  VcButton,
+  VcPopupSidebar,
+  VcChip,
+  VcEmptyView,
+  VcImage,
+} from "@/components";
 import { OrdersFilter, AccountNavigation, useUserOrdersFilter, useUserOrders } from "@/shared/account";
 
 import { onMounted, ref, shallowRef, watch } from "vue";

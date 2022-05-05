@@ -616,7 +616,8 @@
         "date_label": "@:common.labels.date",
         "total_label": "@:common.labels.total",
         "no_orders_img_alt": "No orders",
-        "no_orders_message": "There are no orders yet"
+        "no_orders_message": "There are no results found",
+        "no_orders_button": "Reset search"
       },
       "order_details": {
         "title": "Order #{0}",
