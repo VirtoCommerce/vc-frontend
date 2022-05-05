@@ -20,3 +20,4 @@ export { default as VcScrollTopButton } from "./scroll-top-button/scroll-top-but
 export { default as VcDateSelector } from "./date-selector/date-selector.vue";
 export { default as VcPopupSidebar } from "./popup-sidebar/popup-sidebar.vue";
 export { default as VcTextArea } from "./text-area/text-area.vue";
+export { default as VcEmptyView } from "./empty-view/empty-view.vue";

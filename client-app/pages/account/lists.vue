@@ -51,18 +51,17 @@
           </div>
 
           <!-- Empty -->
-          <div v-else class="flex grow items-center justify-center">
-            <div class="text-center my-20 lg:my-0 p-6">
-              <p class="font-bold mb-7 text-xl md:text-2xl">
-                {{ $t("pages.account.your_lists.no_lists") }}
-              </p>
-
+          <VcEmptyView class="grow" :text="$t('pages.account.your_lists.no_lists')" v-else>
+            <template #icon>
+              <VcImage :src="'/static/images/common/lists.svg'" />
+            </template>
+            <template #button>
               <VcButton class="px-6 uppercase" size="lg" @click="openCreateListDialog">
                 <i class="fa fa-plus text-inherit -ml-0.5 mr-2.5" />
                 {{ $t("pages.account.your_lists.create_list_button") }}
               </VcButton>
-            </div>
-          </div>
+            </template>
+          </VcEmptyView>
         </div>
       </div>
     </div>
@@ -70,7 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import { VcButton, VcBreadcrumbs, IBreadcrumbs } from "@/components";
+import { VcButton, VcBreadcrumbs, IBreadcrumbs, VcEmptyView, VcImage } from "@/components";
 import { AccountNavigation } from "@/shared/account";
 import {
   WishlistCard,
