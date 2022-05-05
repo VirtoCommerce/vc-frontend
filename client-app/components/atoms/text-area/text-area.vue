@@ -54,5 +54,5 @@ const text = computed<string>({
   set: (newValue) => emit("update:modelValue", newValue),
 });
 
-const symbolsCount = computed(() => text.value.length + "/" + props.maxLength);
+const symbolsCount = computed(() => `${text.value.length}/${props.maxLength}`);
 </script>

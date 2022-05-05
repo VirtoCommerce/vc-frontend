@@ -657,6 +657,7 @@
       },
       "profile": {
         "title": "Profile",
+        "change_password_title": "Change Password",
         "update_error_alert": "There was an error during profile update",
         "first_name_label": "@:common.labels.first_name",
         "first_name_placeholder": "@:common.labels.first_name",
@@ -664,7 +665,18 @@
         "last_name_placeholder": "@:common.labels.last_name",
         "email_label": "@:common.labels.email",
         "email_placeholder": "@:common.labels.email",
-        "update_button": "@:common.buttons.update"
+        "old_password_label": "Old Password",
+        "old_password_placeholder": "Enter old password",
+        "new_password_label": "New Password",
+        "new_password_placeholder": "Enter new password",
+        "confirm_new_password_label": "Confirm New Password",
+        "confirm_new_password_placeholder": "Repeat new password",
+        "update_button": "@:common.buttons.update",
+        "errors": {
+          "password_mismatch": "Incorrect old password",
+          "passwords_do_not_match": "Passwords do not match",
+          "password_new_same_old": "Old password and new password should be different"
+        }
       }
     },
     "catalog": {
