@@ -147,7 +147,10 @@ const validationSchema = yup.object({
     .label(t("pages.account.profile.new_password_label"))
     .when("oldPassword", {
       is: (value: string) => !!value,
-      then: yup.string().required(),
+      then: yup
+        .string()
+        .required()
+        .notOneOf([yup.ref("oldPassword")], t("pages.account.profile.errors.password_new_same_old")),
     }),
   confirmNewPassword: yup
     .string()
