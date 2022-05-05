@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center justify-center space-y-5">
+  <div class="flex grow flex-col items-center justify-center space-y-5">
     <slot name="icon"></slot>
     <p class="text-xl">
       {{ text }}

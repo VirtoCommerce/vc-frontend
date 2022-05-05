@@ -77,7 +77,7 @@
           </template>
 
           <!-- Empty -->
-          <VcEmptyView class="grow" :text="$t('shared.wishlists.list_details.empty_list')" v-else>
+          <VcEmptyView :text="$t('shared.wishlists.list_details.empty_list')" v-else>
             <template #icon>
               <VcImage :src="'/static/images/common/list.svg'" :alt="list?.name" />
             </template>

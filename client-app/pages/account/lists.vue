@@ -51,7 +51,7 @@
           </div>
 
           <!-- Empty -->
-          <VcEmptyView class="grow" :text="$t('pages.account.your_lists.no_lists')" v-else>
+          <VcEmptyView :text="$t('pages.account.your_lists.no_lists')" v-else>
             <template #icon>
               <VcImage :src="'/static/images/common/lists.svg'" />
             </template>
