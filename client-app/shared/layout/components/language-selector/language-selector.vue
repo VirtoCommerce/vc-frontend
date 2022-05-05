@@ -6,8 +6,10 @@
     >
       <span class="text-white mr-1.5" v-if="!isMobile" v-t="'shared.layout.language_selector.label'"></span>
 
-      <lang-flag class="rounded-full fa-2x -my-3" :iso="currentLanguage?.twoLetterLanguageName" />
-
+      <span
+        class="fi fis rounded-full fa-2x -my-3"
+        :class="`fi-${currentLanguage?.twoLetterRegionName.toLowerCase()}`"
+      ></span>
       <span
         v-if="!isMobile"
         class="uppercase text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
@@ -42,7 +44,10 @@
                 : select(item.twoLetterLanguageName)
             "
           >
-            <lang-flag class="rounded-full shrink-0 fa-2x" :iso="item.twoLetterLanguageName" />
+            <span
+              class="fi fis rounded-full shrink-0 fa-2x"
+              :class="`fi-${item.twoLetterRegionName.toLowerCase()}`"
+            ></span>
 
             <span
               :class="{ 'font-bold text-black': item.twoLetterLanguageName === currentLanguage?.twoLetterLanguageName }"
@@ -67,7 +72,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import LangFlag from "vue-lang-code-flags";
+import "flag-icons/css/flag-icons.css";
 import { ref, shallowRef } from "vue";
 import useLocalization from "@/core/composables/useLocalization";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
