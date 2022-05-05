@@ -675,7 +675,7 @@
         "errors": {
           "password_mismatch": "Incorrect old password",
           "passwords_do_not_match": "Passwords do not match",
-          "password_new_same_old": "The new password must not be the same as the old one."
+          "password_new_same_old": "Old password and new password should be different"
         }
       }
     },
