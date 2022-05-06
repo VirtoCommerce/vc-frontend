@@ -703,7 +703,11 @@
       "products_found_message2": "{0} displayed that include {1} products.",
       "filters_button": "@:common.buttons.filters",
       "sort_by_label": "@:common.labels.sort_by",
-      "choose_button": "@:common.buttons.choose"
+      "choose_button": "@:common.buttons.choose",
+      "reset_filters_button": "Reset filters",
+      "no_products_message": "There are no products in this category",
+      "no_products_filtered_message": "There are no results found",
+      "no_products_button": "Reset search"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
