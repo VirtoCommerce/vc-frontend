@@ -79,7 +79,7 @@
           <!-- Empty -->
           <VcEmptyView :text="$t('shared.wishlists.list_details.empty_list')" v-else>
             <template #icon>
-              <VcImage :src="'/static/images/common/list.svg'" :alt="list?.name" />
+              <VcImage src="/static/images/common/list.svg" :alt="list?.name" />
             </template>
             <template #button>
               <VcButton :to="{ name: 'Catalog' }" size="lg" class="w-48 uppercase font-bold">

@@ -209,7 +209,7 @@
           <!-- Empty view -->
           <VcEmptyView :text="$t('pages.account.orders.no_orders_message')" v-else>
             <template #icon v-if="isMobile">
-              <VcImage :src="'/static/images/common/order.svg'" />
+              <VcImage src="/static/images/common/order.svg" />
             </template>
             <template #button>
               <VcButton class="px-6 uppercase" size="lg" @click="resetFilters">

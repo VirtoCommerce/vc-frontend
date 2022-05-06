@@ -35,7 +35,7 @@
             v-if="!paginatedAddresses.length && !editingMode"
           >
             <template #icon>
-              <VcImage :src="'/static/images/account/icons/no-addresses.svg'" />
+              <VcImage src="/static/images/account/icons/no-addresses.svg" />
             </template>
             <template #button>
               <VcButton class="px-6 uppercase" size="lg" @click="openEditMode">
