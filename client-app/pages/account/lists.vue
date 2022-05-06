@@ -53,7 +53,7 @@
           <!-- Empty -->
           <VcEmptyView :text="$t('pages.account.your_lists.no_lists')" v-else>
             <template #icon>
-              <VcImage src="/static/images/common/lists.svg" />
+              <VcImage src="/static/images/common/lists.svg" :alt="$t('pages.account.your_lists.lists_icon')" />
             </template>
             <template #button>
               <VcButton class="px-6 uppercase" size="lg" @click="openCreateListDialog">

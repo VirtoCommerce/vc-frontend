@@ -244,7 +244,7 @@
             v-else
           >
             <template #icon>
-              <VcImage src="/static/images/common/stock.svg" />
+              <VcImage src="/static/images/common/stock.svg" :alt="$t('pages.catalog.products_icon')" />
             </template>
             <template #button>
               <VcButton
