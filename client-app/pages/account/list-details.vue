@@ -101,10 +101,6 @@
               <i class="fa fa-shopping-cart text-inherit text-xs mr-2" />
               {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
             </VcButton>
-            <VcButton class="px-3 uppercase w-full" size="md" is-outline @click="openListSettingsDialog">
-              <i class="fas fa-cog text-inherit -ml-0.5 mr-2" />
-              {{ $t("shared.wishlists.list_card.list_settings_button") }}
-            </VcButton>
           </div>
         </div>
       </div>

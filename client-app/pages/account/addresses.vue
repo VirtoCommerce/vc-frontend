@@ -17,7 +17,13 @@
           <div class="flex justify-between items-center mx-5 md:mx-0">
             <h2 class="text-gray-800 text-3xl font-bold uppercase">{{ title }}</h2>
 
-            <VcButton v-if="!editingMode" class="px-3 uppercase" size="sm" is-outline @click="openEditMode()">
+            <VcButton
+              v-if="!editingMode && paginatedAddresses.length"
+              class="px-3 uppercase"
+              size="sm"
+              is-outline
+              @click="openEditMode()"
+            >
               <span class="sm:hidden">{{ $t("pages.account.addresses.add_new_address_button_mobile") }}</span>
               <span class="hidden sm:inline">{{ $t("pages.account.addresses.add_new_address_button") }}</span>
             </VcButton>

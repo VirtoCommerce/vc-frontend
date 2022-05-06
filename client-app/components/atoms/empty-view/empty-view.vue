@@ -1,5 +1,5 @@
 <template>
-  <div class="flex grow flex-col items-center justify-center space-y-5">
+  <div class="flex grow flex-col items-center justify-center space-y-5" :class="isMobile && 'h-96'">
     <slot name="icon"></slot>
     <p class="text-xl">
       {{ text }}
@@ -8,10 +8,15 @@
   </div>
 </template>
 <script setup lang="ts">
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+
 defineProps({
   text: {
     type: String,
     default: "",
   },
 });
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("lg");
 </script>

@@ -28,7 +28,7 @@
             <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.account.orders.title'"></h2>
           </div>
           <!-- search & filters -->
-          <div class="flex gap-3 lg:flex-row-reverse">
+          <div class="flex gap-3 lg:flex-row-reverse" v-if="!isMobile || orders.length">
             <div class="relative ml-5 md:mx-0">
               <VcButton
                 ref="filterButtonElement"
