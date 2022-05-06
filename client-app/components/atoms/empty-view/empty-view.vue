@@ -9,6 +9,7 @@
     <slot name="button"></slot>
   </div>
 </template>
+
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
