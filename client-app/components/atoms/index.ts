@@ -5,6 +5,7 @@ export { default as VcCard } from "./card/card.vue";
 export { default as VcCheckbox } from "./checkbox/checkbox.vue";
 export { default as VcChip } from "./chip/chip.vue";
 export { default as VcInput } from "./input/input.vue";
+export { default as VcIcon } from "./icon/icon.vue";
 export { default as VcImage } from "./image/image.vue";
 export { default as VcInfinityScrollLoader } from "./infinity-scroll-loader/infinity-scroll-loader.vue";
 export { default as VcMarkdownRender } from "./markdown-render/markdown-render.vue";
