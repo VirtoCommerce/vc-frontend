@@ -8,17 +8,26 @@
 import { PropType } from "vue";
 
 defineProps({
+  /**
+   * Icon SVG source.
+   */
   svg: {
     type: String,
     required: true,
   },
 
+  /**
+   * Icon size.
+   */
   size: {
     type: String as PropType<"sm" | "md" | "lg">,
     default: "md",
     validator: (value: string) => ["sm", "md", "lg"].includes(value),
   },
 
+  /**
+   * Icon disabled state.
+   */
   isDisabled: {
     type: Boolean,
     default: false,
