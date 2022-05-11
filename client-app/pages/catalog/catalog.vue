@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-100 pt-7 pb-16 shadow-inner grow">
+  <div class="bg-gray-100 pt-7 pb-16 shadow-inner grow" :class="{ 'polygon-gray-bg': !products.length && !loading }">
     <div class="max-w-screen-2xl px-5 md:px-12 mx-auto">
       <!-- Breadcrumbs -->
       <Breadcrumbs class="mb-2 md:mb-8" :items="breadcrumbsItems"></Breadcrumbs>
@@ -197,39 +197,67 @@
           </div>
 
           <!-- Products -->
-          <DisplayProducts
-            :loading="loading"
-            :view-mode="viewModeQueryParam"
-            :items-per-page="itemsPerPage"
-            :products="products"
-            :class="
-              viewModeQueryParam === 'list'
-                ? 'space-y-5'
-                : 'grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-6 xl:gap-x-6 xl:gap-y-8'
+          <template v-if="products.length">
+            <DisplayProducts
+              :loading="loading"
+              :view-mode="viewModeQueryParam"
+              :items-per-page="itemsPerPage"
+              :products="products"
+              :class="
+                viewModeQueryParam === 'list'
+                  ? 'space-y-5'
+                  : 'grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-6 xl:gap-x-6 xl:gap-y-8'
+              "
+            >
+              <template #cart-handler="{ item }">
+                <VcButton
+                  v-if="item.hasVariations"
+                  :to="{ name: 'Product', params: { productId: item.id } }"
+                  :class="{ 'w-full': viewModeQueryParam === 'list' }"
+                  class="uppercase mb-4"
+                >
+                  {{ $t("pages.catalog.choose_button") }}
+                </VcButton>
+
+                <AddToCart v-else :product="item" />
+              </template>
+            </DisplayProducts>
+
+            <VcInfinityScrollLoader
+              v-if="!loading"
+              :loading="loadingMore"
+              distance="400"
+              class="mt-9 -mb-6"
+              @visible="loadMoreProducts"
+            />
+            <VcScrollTopButton></VcScrollTopButton>
+          </template>
+
+          <!-- Empty view -->
+          <VcEmptyView
+            :text="
+              isExistSelectedFilters || showInStock
+                ? $t('pages.catalog.no_products_filtered_message')
+                : $t('pages.catalog.no_products_message')
             "
+            class="h-96"
+            v-else
           >
-            <template #cart-handler="{ item }">
-              <VcButton
-                v-if="item.hasVariations"
-                :to="{ name: 'Product', params: { productId: item.id } }"
-                :class="{ 'w-full': viewModeQueryParam === 'list' }"
-                class="uppercase mb-4"
-              >
-                {{ $t("pages.catalog.choose_button") }}
-              </VcButton>
-
-              <AddToCart v-else :product="item" />
+            <template #icon>
+              <VcImage src="/static/images/common/stock.svg" :alt="$t('pages.catalog.products_icon')" />
             </template>
-          </DisplayProducts>
-
-          <VcInfinityScrollLoader
-            v-if="!loading"
-            :loading="loadingMore"
-            distance="400"
-            class="mt-9 -mb-6"
-            @visible="loadMoreProducts"
-          />
-          <VcScrollTopButton></VcScrollTopButton>
+            <template #button>
+              <VcButton
+                class="px-6 uppercase"
+                size="lg"
+                @click="resetFilters"
+                v-if="isExistSelectedFilters || showInStock"
+              >
+                <i class="fas fa-undo text-inherit -ml-0.5 mr-2.5"></i>
+                {{ $t("pages.catalog.no_products_button") }}
+              </VcButton>
+            </template>
+          </VcEmptyView>
         </div>
       </div>
     </div>
@@ -271,6 +299,8 @@ import {
   VcInfinityScrollLoader,
   VcSelect,
   VcScrollTopButton,
+  VcEmptyView,
+  VcImage,
 } from "@/components";
 import { AddToCart } from "@/shared/cart";
 import { useElementVisibility, useRouteQueryParam } from "@core/composables";
