@@ -1,12 +1,16 @@
 import { Ref, ref, computed, readonly, shallowRef } from "vue";
 import { searchProducts } from "@core/api/graphql/catalog";
-import { Product } from "@core/api/graphql/types";
+import { Product, RangeFacet, TermFacet } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 import { ProductsFilter, ProductsSearchParams } from "../types";
 import { rangeFacetToProductsFilter, termFacetToProductsFilter, toFilterExpression } from "@/shared/catalog";
 import { inStockFilterExpression } from "@/core/constants";
 
 const DEFAULT_ITEMS_PER_PAGE = 16;
+
+function facetSortByLabel(a: TermFacet | RangeFacet, b: TermFacet | RangeFacet) {
+  return a.label.localeCompare(b.label);
+}
 
 export default (
   options: {
@@ -51,11 +55,9 @@ export default (
       pages.value = Math.ceil(total.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE));
 
       if (withFilters) {
-        const sortedTerms = term_facets.sort((a, b) => a.label.localeCompare(b.label));
-        const sortedRanges = range_facets.sort((a, b) => a.label.localeCompare(b.label));
         filters.value = Array<ProductsFilter>().concat(
-          sortedTerms.map(termFacetToProductsFilter),
-          sortedRanges.map(rangeFacetToProductsFilter)
+          term_facets.sort(facetSortByLabel).map(termFacetToProductsFilter),
+          range_facets.sort(facetSortByLabel).map(rangeFacetToProductsFilter)
         );
       }
     } catch (e) {
