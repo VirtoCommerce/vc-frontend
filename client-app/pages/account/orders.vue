@@ -212,7 +212,7 @@
               <VcImage src="/static/images/common/order.svg" :alt="$t('pages.account.orders.orders_icon')" />
             </template>
             <template #button>
-              <VcButton class="px-6 uppercase" size="lg" @click="resetFilters">
+              <VcButton class="px-6 uppercase" size="lg" @click="resetFiltersWithKeyword">
                 <i class="fas fa-undo text-inherit -ml-0.5 mr-2.5"></i>
                 {{ $t("pages.account.orders.no_orders_button") }}
               </VcButton>
@@ -291,6 +291,12 @@ const applySorting = async (column: string) => {
 const applyKeyword = async () => {
   page.value = 1;
   await loadOrders();
+};
+
+const resetFiltersWithKeyword = async () => {
+  keyword.value = "";
+  page.value = 1;
+  resetFilters();
 };
 
 onMounted(async () => {
