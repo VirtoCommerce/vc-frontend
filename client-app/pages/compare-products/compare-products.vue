@@ -1,8 +1,20 @@
 <template>
-  <div class="bg-gray-100 pt-7 pb-16 shadow-inner grow">
-    <EmptyComparison v-if="!productsIds.length"></EmptyComparison>
-
-    <div class="w-full md:max-w-screen-2xl md:px-12 mx-auto" v-else>
+  <div class="bg-gray-100 pb-16 shadow-inner grow">
+    <VcEmptyPage
+      v-if="!productsIds.length"
+      :breadcrumbs="breadcrumbs"
+      :title="$t('pages.compare.empty_list.title')"
+      :description="$t('pages.compare.empty_list.message')"
+      image="/static/images/errors/emptyCompareList.webp"
+      mobile-image="/static/images/errors/emptyCompareListMobile.webp"
+    >
+      <template #actions>
+        <VcButton :to="{ name: 'Catalog' }" size="lg" class="p-4 uppercase font-bold">
+          {{ $t("pages.compare.empty_list.button_text") }}
+        </VcButton>
+      </template>
+    </VcEmptyPage>
+    <div class="w-full md:max-w-screen-2xl md:px-12 mx-auto pt-7" v-else>
       <!-- Page header -->
       <VcBreadcrumbs :items="breadcrumbs" class="mb-3 px-5 md:px-0"></VcBreadcrumbs>
       <div class="flex flex-col lg:flex-row lg:space-x-12 px-5 md:px-0 lg:mb-5">
@@ -122,8 +134,9 @@ import {
   VcImage,
   VcItemPrice,
   IProductProperties,
+  VcEmptyPage,
 } from "@/components";
-import { EmptyComparison, useProducts } from "@/shared/catalog";
+import { useProducts } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 import _ from "lodash";
 import { onMounted, ref, watch } from "vue";
