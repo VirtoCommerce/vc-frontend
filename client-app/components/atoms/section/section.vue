@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white lg:mb-6 lg:rounded">
+  <div class="bg-white lg:mb-6 lg:rounded" :class="$attrs.class">
     <slot name="title">
       <div class="flex items-center px-5 py-7">
         <VcImage v-if="icon" :src="icon" :alt="title" class="mr-5 lg:mr-8" lazy />
