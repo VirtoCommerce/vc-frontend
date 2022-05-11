@@ -8,9 +8,12 @@ import { marked } from "marked";
 import DOMPurify from "dompurify";
 
 const props = defineProps({
+  /**
+   * Markdown source.
+   */
   src: {
     type: String,
-    required: true,
+    default: "",
   },
 });
 
