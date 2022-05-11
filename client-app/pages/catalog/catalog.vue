@@ -236,7 +236,7 @@
           <!-- Empty view -->
           <VcEmptyView
             :text="
-              isExistSelectedFilters || showInStock
+              isExistSelectedFilters || showInStock || isAppliedKeyword
                 ? $t('pages.catalog.no_products_filtered_message')
                 : $t('pages.catalog.no_products_message')
             "
@@ -250,8 +250,8 @@
               <VcButton
                 class="px-6 uppercase"
                 size="lg"
-                @click="resetFilters"
-                v-if="isExistSelectedFilters || showInStock"
+                @click="resetFiltersWithKeyword"
+                v-if="isExistSelectedFilters || showInStock || isAppliedKeyword"
               >
                 <i class="fas fa-undo text-inherit -ml-0.5 mr-2.5"></i>
                 {{ $t("pages.catalog.no_products_button") }}
@@ -325,6 +325,8 @@ const { fetchProducts, fetchMoreProducts, loading, loadingMore, products, total,
   useProducts({
     withFilters: true,
   });
+
+const FILTERS_RESET_TIMEOUT_IN_MS = 500;
 
 const isMobile = breakpoints.smaller("md");
 const isMobileSidebar = breakpoints.smaller("lg");
@@ -427,6 +429,13 @@ function resetFilters() {
   filters.value.forEach((filter) => filter.values.forEach((filterItem) => (filterItem.selected = false)));
   showInStock.value = false;
   applyFilters();
+}
+
+function resetFiltersWithKeyword() {
+  keywordQueryParam.value = "";
+  setTimeout(() => {
+    resetFilters();
+  }, FILTERS_RESET_TIMEOUT_IN_MS);
 }
 
 async function loadProducts() {
