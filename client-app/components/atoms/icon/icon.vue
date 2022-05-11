@@ -1,19 +1,19 @@
 <template>
-  <svg @click="!isDisabled && $emit('click', $event)" :class="$attrs.class">
+  <svg :class="[$attrs.class, calculatedSize]" @click="!isDisabled && $emit('click', $event)">
     <use :href="svg" />
   </svg>
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
+import { computed, PropType } from "vue";
 
-defineProps({
+const props = defineProps({
   /**
    * Icon SVG source.
    */
   svg: {
     type: String,
-    required: true,
+    default: "",
   },
 
   /**
@@ -35,6 +35,26 @@ defineProps({
 });
 
 defineEmits(["click"]);
+
+const calculatedSize = computed(() => {
+  let additionalClass = "";
+
+  switch (props.size) {
+    case "sm": {
+      additionalClass = "h-4 w-4";
+      break;
+    }
+    case "lg": {
+      additionalClass = "h-16 w-16";
+      break;
+    }
+    default: {
+      additionalClass = "h-8 w-8";
+    }
+  }
+
+  return additionalClass;
+});
 </script>
 
 <script lang="ts">
