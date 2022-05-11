@@ -270,9 +270,7 @@ export default () => {
       .map((x) => x as LineItemType)
       .value();
 
-    const result = _.sumBy(filteredItems, (x) => x.extendedPrice?.amount);
-
-    return result;
+    return _.sumBy(filteredItems, (x) => x.extendedPrice?.amount);
   }
 
   return {

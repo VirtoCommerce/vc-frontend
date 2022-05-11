@@ -72,7 +72,7 @@ export default function createI18nRouter(routes: RouteRecordRaw[]) {
 
   addLocaleAliasToRoutes(routes, locale);
 
-  const router = createRouter({
+  return createRouter({
     routes,
 
     // History mode
@@ -90,8 +90,6 @@ export default function createI18nRouter(routes: RouteRecordRaw[]) {
       }
     },
   });
-
-  return router;
 }
 
 // save locale to local storage

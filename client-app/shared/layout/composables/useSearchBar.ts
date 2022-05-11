@@ -42,7 +42,7 @@ export default (
     const activeAnimation = toRef(activeAnimations, "dropdown");
 
     if (activeAnimation.value) {
-      return activeAnimation.value;
+      return;
     }
 
     if (!searchDropdownVisible.value) {
@@ -54,7 +54,7 @@ export default (
       activeAnimation.value = null;
     });
 
-    return activeAnimation.value;
+    return;
   }
 
   async function showSearchBar(): Promise<void> {

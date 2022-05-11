@@ -7,9 +7,9 @@ export default async function getMyCart(): Promise<CartType> {
   const { data } = await client.query<Required<Pick<Query, "cart">>, QueryCartArgs>({
     query: getMyCartQueryDocument,
     variables: {
-      storeId: storeId,
+      storeId,
       userId: currentUserId,
-      currencyCode: currencyCode,
+      currencyCode,
       cultureName: locale,
     },
   });

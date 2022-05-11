@@ -74,9 +74,7 @@ export default () => {
           "Content-Type": "application/json-patch+json",
         },
       });
-      const res = (await response.json()) as IdentityResultType;
-
-      return res;
+      return (await response.json()) as IdentityResultType;
     } catch (e) {
       Logger.error("useUser.changePassword", e);
       throw e;
@@ -113,7 +111,7 @@ export default () => {
         name: `${payload.firstName} ${payload.lastName}`,
         emails: [payload.email],
       });
-      const result = await createUser({
+      return await createUser({
         userName: payload.userName,
         password: payload.password,
         email: payload.email,
@@ -121,7 +119,6 @@ export default () => {
         userType: "Customer",
         storeId: themeContext.storeId as string,
       });
-      return result;
     } catch (e) {
       Logger.error("useUser.registerUser", e);
       throw e;
@@ -143,7 +140,7 @@ export default () => {
         emails: [payload.email],
         organizations: [createdOrganization.id],
       });
-      const result = await createUser({
+      return await createUser({
         userName: payload.userName,
         password: payload.password,
         email: payload.email,
@@ -151,7 +148,6 @@ export default () => {
         userType: "Customer",
         storeId: themeContext.storeId as string,
       });
-      return result;
     } catch (e) {
       Logger.error("useUser.registerOrganization", e);
       throw e;
@@ -180,8 +176,7 @@ export default () => {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/forgotPassword";
-      const res = await innerFetch<ForgotPassword, IdentityResultType>(url, "POST", payload);
-      return res;
+      return await innerFetch<ForgotPassword, IdentityResultType>(url, "POST", payload);
     } catch (e) {
       Logger.error("useUser.forgotPassword", e);
       throw e;
@@ -194,8 +189,7 @@ export default () => {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/validateToken";
-      const res = await innerFetch<ValidateToken, IdentityResultType>(url, "POST", payload);
-      return res;
+      return await innerFetch<ValidateToken, IdentityResultType>(url, "POST", payload);
     } catch (e) {
       Logger.error("useUser.validateToken", e);
       throw e;
@@ -208,8 +202,7 @@ export default () => {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/resetPassword";
-      const res = await innerFetch<ResetPassword, IdentityResultType>(url, "POST", payload);
-      return res;
+      return await innerFetch<ResetPassword, IdentityResultType>(url, "POST", payload);
     } catch (e) {
       Logger.error("useUser.resetPassword", e);
       throw e;

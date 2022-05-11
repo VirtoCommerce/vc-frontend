@@ -13,7 +13,7 @@ export default async function addItemsToCart(cartItems: CartItemType[]): Promise
         currencyCode,
         cultureName: locale,
         userId: currentUserId,
-        cartItems: cartItems,
+        cartItems,
       },
     },
   });
