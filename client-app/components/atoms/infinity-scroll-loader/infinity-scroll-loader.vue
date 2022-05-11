@@ -31,16 +31,25 @@ import { onBeforeUnmount, onMounted, PropType, shallowRef, watch } from "vue";
 const emit = defineEmits<{ (event: "visible"): void }>();
 
 const props = defineProps({
+  /**
+   * Set scrollable area within component should be observed.
+   */
   viewport: {
     type: Object as PropType<Element | Document | null>,
     default: null,
   },
 
+  /**
+   * Set ahead distance to trigger loading.
+   */
   threshold: {
     type: Number,
     default: 0,
   },
 
+  /**
+   * Toggle loading state.
+   */
   isLoading: {
     type: Boolean,
     default: false,

@@ -45,6 +45,9 @@ import { PropType } from "vue";
 import { IBreadcrumbs } from "@/components";
 
 defineProps({
+  /**
+   * Items array.
+   */
   items: {
     type: Array as PropType<IBreadcrumbs[]>,
     default: () => [],
