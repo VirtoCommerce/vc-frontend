@@ -1,6 +1,6 @@
 import { Ref, ref, computed, readonly, shallowRef } from "vue";
 import { searchProducts } from "@core/api/graphql/catalog";
-import { Product, RangeFacet, TermFacet } from "@core/api/graphql/types";
+import { Product } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 import { ProductsFilter, ProductsSearchParams } from "../types";
 import { rangeFacetToProductsFilter, termFacetToProductsFilter, toFilterExpression } from "@/shared/catalog";
