@@ -24,11 +24,6 @@ export function setCurrencyCode(code: string): void {
   currencyCode = code;
 }
 
-// Need to trim store and language from base URL because they will be added later as parameters for each API call.
-export const baseUrl = window.BASE_URL?.replace(`/${storeName}`, "/").replace(`/${locale}`, "/").replace(/[/]+$/, "");
-
-export const fullBaseUrl = `${baseUrl}/${storeName}/${locale}/`;
-
 // Search
 export const defaultPageSize = 16;
 export const defaultSearchPageSize = 20;
