@@ -1,5 +1,5 @@
 <template>
-  <div v-html="markdown"></div>
+  <div :class="$attrs.class" v-html="markdown"></div>
 </template>
 
 <script setup lang="ts">
@@ -18,4 +18,10 @@ const props = defineProps({
 });
 
 const markdown = computed(() => DOMPurify.sanitize(marked(props.src), { USE_PROFILES: { html: true } }));
+</script>
+
+<script lang="ts">
+export default {
+  inheritAttrs: false,
+};
 </script>
