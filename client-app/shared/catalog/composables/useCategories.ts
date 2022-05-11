@@ -23,7 +23,7 @@ const itemToTree = (category: Category, isCurrent: boolean): CategoryTree => {
 const buildCategoryTree = (parent: CategoryTree, allCats: Category[], activeCatId: string): CategoryTree => {
   //TODO: replace to loop instead of recursion
   parent.items = allCats
-    .filter((c) => c.id != parent.id && c.parent?.id === parent.id)
+    .filter((c) => c.id !== parent.id && c.parent?.id === parent.id)
     // .sort((a, b) => (a.outline ?? "").localeCompare(b.outline ?? ""))
     .map((c) => {
       return buildCategoryTree(itemToTree(c, activeCatId === c.id), allCats, activeCatId);
@@ -56,10 +56,11 @@ function selectCategoryBySeoUrl(seoUrl?: string) {
 }
 
 async function loadCategoriesTree(activeCatId: string) {
+  const MAX_CATEGORIES = 100;
   loading.value = true;
 
   try {
-    const { items = [] } = await searchCategories(100, 1);
+    const { items = [] } = await searchCategories(MAX_CATEGORIES, 1);
     categoryTree.value = buildCategoryTree({}, items, activeCatId);
   } catch (e) {
     Logger.error("useCategories.loadCategoriesTree", e);

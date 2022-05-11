@@ -85,13 +85,14 @@ const open = ref(false);
 const listElement = shallowRef<HTMLElement | null>(null);
 
 function hideList() {
+  const HIDE_TIMEOUT = 350;
   open.value = false;
 
   setTimeout(() => {
     if (listElement.value) {
       listElement.value.scrollTop = 0;
     }
-  }, 350);
+  }, HIDE_TIMEOUT);
 }
 
 function toggle() {

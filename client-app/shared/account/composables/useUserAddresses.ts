@@ -40,7 +40,7 @@ export default (options: { user: MaybeRef<UserType> }) => {
     }
   }
 
-  async function setDefaultAddress(address: MemberAddressType): Promise<void> {
+  async function setDefaultAddress(_address: MemberAddressType): Promise<void> {
     //TODO: will be implemented in the separate story
   }
 
@@ -62,7 +62,9 @@ export default (options: { user: MaybeRef<UserType> }) => {
   }
 
   async function addOrUpdateAddresses(items: MemberAddressType[], memberId?: string): Promise<void> {
-    if (!items.length) return;
+    if (!items.length) {
+      return;
+    }
 
     loading.value = true;
 
@@ -82,7 +84,9 @@ export default (options: { user: MaybeRef<UserType> }) => {
   }
 
   async function removeAddresses(items: MemberAddressType[], memberId = unref(user).memberId!): Promise<void> {
-    if (!items.length) return;
+    if (!items.length) {
+      return;
+    }
 
     loading.value = true;
 

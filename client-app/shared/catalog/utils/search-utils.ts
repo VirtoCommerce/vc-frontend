@@ -29,7 +29,9 @@ export function toFilterExpression(filters: MaybeRef<ProductsFilter[]>, showInSt
       .filter((item) => item.selected) //
       .map((item) => item.value);
 
-    if (!selectedValues.length) continue;
+    if (!selectedValues.length) {
+      continue;
+    }
 
     const conditions =
       filter.type === "term"

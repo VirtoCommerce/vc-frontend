@@ -6,7 +6,9 @@ import { getMyOrder } from "@/core/api/graphql/account";
 const loading: Ref<boolean> = ref(false);
 const order: Ref<CustomerOrderType | null> = ref(null);
 
-const itemsPerPage: Ref<number> = ref(6);
+const DEFAULT_ITEMS_PER_PAGE = 6;
+
+const itemsPerPage: Ref<number> = ref(DEFAULT_ITEMS_PER_PAGE);
 const pages: Ref<number> = ref(0);
 
 export default () => {
