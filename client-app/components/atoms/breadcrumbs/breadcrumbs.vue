@@ -1,5 +1,5 @@
 <template>
-  <nav class="text-sm">
+  <nav class="text-sm" :class="$attrs.class">
     <ol itemscope itemtype="https://schema.org/BreadcrumbList" class="flex">
       <template v-for="(item, i) in items" :key="i">
         <template v-if="i < items.length - 1">
@@ -50,4 +50,10 @@ defineProps({
     default: () => [],
   },
 });
+</script>
+
+<script lang="ts">
+export default {
+  inheritAttrs: false,
+};
 </script>

@@ -1,7 +1,7 @@
 <template>
-  <div ref="target">
-    <slot v-if="loading" name="loader">
-      <p class="flex items-center justify-center">
+  <div ref="target" :class="$attrs.class">
+    <slot v-if="isLoading" name="loader">
+      <div class="flex items-center justify-center">
         <img
           src="/static/images/loader.png"
           class="inline-block animate-spin"
@@ -10,17 +10,17 @@
           height="29"
           loading="lazy"
         />
-      </p>
+      </div>
     </slot>
 
     <slot v-else name="loaded">
-      <p class="flex items-center justify-center">
+      <div class="flex items-center justify-center">
         <svg width="29" height="29" class="inline-block text-primary">
           <use href="/static/images/badge-check.svg#badge-check" />
         </svg>
 
-        <span class="ml-3">You have reached the end of the list</span>
-      </p>
+        <span class="ml-3">{{ $t("common.messages.infinity_scroll_end") }}</span>
+      </div>
     </slot>
   </div>
 </template>
@@ -31,19 +31,19 @@ import { onBeforeUnmount, onMounted, PropType, shallowRef, watch } from "vue";
 const emit = defineEmits<{ (event: "visible"): void }>();
 
 const props = defineProps({
-  loading: {
-    type: Boolean,
-    default: false,
-  },
-
   viewport: {
     type: Object as PropType<Element | Document | null>,
     default: null,
   },
 
-  distance: {
-    type: [Number, String],
+  threshold: {
+    type: Number,
     default: 0,
+  },
+
+  isLoading: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -63,7 +63,7 @@ async function initObserver() {
 
   observer = new IntersectionObserver(intersectionCallback, {
     root: props.viewport,
-    rootMargin: `${props.distance}px`,
+    rootMargin: `${props.threshold}px`,
   });
 
   observer.observe(target.value!);
@@ -76,5 +76,11 @@ onBeforeUnmount(() => {
   observer = null;
 });
 
-watch(() => [props.viewport, props.distance], initObserver);
+watch(() => [props.viewport, props.threshold], initObserver);
+</script>
+
+<script lang="ts">
+export default {
+  inheritAttrs: false,
+};
 </script>

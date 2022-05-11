@@ -55,7 +55,8 @@
       "product_out_of_stock": "Ausverkauft",
       "required_field": "Dieses Feld wird benötigt",
       "email_is_not_correct": "Geben Sie bitte die richtige E-Mail-Adresse ein (ex. john{'@'}gmail.com)",
-      "max_length": "Dieses Feld darf höchstens {max} Zeichen lang sein"
+      "max_length": "Dieses Feld darf höchstens {max} Zeichen lang sein",
+      "infinity_scroll_end": "Sie haben das Ende der Liste erreicht"
     },
     "placeholders": {
       "not_selected": "Nicht ausgewählt"

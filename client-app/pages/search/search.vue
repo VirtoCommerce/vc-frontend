@@ -55,8 +55,8 @@
 
             <VcInfinityScrollLoader
               v-if="!loading"
-              :loading="loadingMore"
-              distance="400"
+              :is-loading="loadingMore"
+              :threshold="400"
               class="mt-9 -mb-6"
               @visible="loadMoreProducts"
             />

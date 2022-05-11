@@ -55,7 +55,8 @@
       "product_out_of_stock": "Out of stock",
       "required_field": "This field is required",
       "email_is_not_correct": "Enter correct email please (ex. john{'@'}gmail.com)",
-      "max_length": "This field must be at most {max} characters"
+      "max_length": "This field must be at most {max} characters",
+      "infinity_scroll_end": "You have reached the end of the list"
     },
     "placeholders": {
       "not_selected": "Not selected"
