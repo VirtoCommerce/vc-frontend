@@ -152,7 +152,9 @@ const categoriesColumns = computed<Array<Category[]>>(() => {
 });
 
 async function search() {
-  if (loading.value || !searchPhrase.value || searchPhrase.value.length > 30) {
+  const MAX_LENGTH = 30;
+  const COLUMNS = 5;
+  if (loading.value || !searchPhrase.value || searchPhrase.value.length > MAX_LENGTH) {
     return;
   }
 
@@ -162,7 +164,7 @@ async function search() {
       itemsPerPage: 9,
     },
     categories: {
-      itemsPerPage: CATEGORIES_ITEMS_PER_COLUMN * 5, // five columns
+      itemsPerPage: CATEGORIES_ITEMS_PER_COLUMN * COLUMNS,
     },
   });
 

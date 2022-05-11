@@ -11,7 +11,7 @@ export let i18n: I18n<unknown, unknown, unknown, false> | null = null;
 
 export const currentCultureName = computed(
   () =>
-    themeContext.availLanguages?.find((x) => x.twoLetterLanguageName == i18n?.global.locale.value)?.cultureName ||
+    themeContext.availLanguages?.find((x) => x.twoLetterLanguageName === i18n?.global.locale.value)?.cultureName ||
     "en-US"
 );
 
@@ -134,7 +134,7 @@ function addLocaleAliasToRoutes(routes: RouteRecordRaw[], locale: string, child 
     let alias = route.path;
 
     if (!child) {
-      alias = `/${locale}${alias.charAt(0) != "/" ? "/" : ""}${alias}`;
+      alias = `/${locale}${alias.charAt(0) !== "/" ? "/" : ""}${alias}`;
     }
 
     // Make sure alias array exists
@@ -147,7 +147,7 @@ function addLocaleAliasToRoutes(routes: RouteRecordRaw[], locale: string, child 
     }
 
     // Push alias into alias array
-    if (route.path != alias && route.alias.indexOf(alias) == -1) {
+    if (route.path !== alias && route.alias.indexOf(alias) === -1) {
       route.alias.push(alias);
     }
 

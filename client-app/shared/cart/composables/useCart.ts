@@ -22,10 +22,12 @@ import { useUserCheckoutDefaults } from "@/shared/account";
 import changePurchaseOrderNumber from "@/core/api/graphql/cart/mutations/changePurchaseOrderNumber";
 import { CartItemType } from "../types";
 
+const DEFAULT_ITEMS_PER_PAGE = 6;
+
 const loading: Ref<boolean> = ref(true);
 const cart: Ref<CartType> = ref({ name: "" });
 const pages: Ref<number> = ref(0);
-const itemsPerPage: Ref<number> = ref(6);
+const itemsPerPage: Ref<number> = ref(DEFAULT_ITEMS_PER_PAGE);
 
 export default () => {
   const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
@@ -116,7 +118,7 @@ export default () => {
 
     try {
       result = await addBulkItemsToCart(payload);
-    } catch (e: any) {
+    } catch (e) {
       Logger.error(`useCart.${addItemsToCart.name}`, e);
       throw e;
     } finally {

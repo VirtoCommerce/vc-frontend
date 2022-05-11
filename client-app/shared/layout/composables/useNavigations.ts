@@ -17,7 +17,9 @@ function goMainMenu() {
 }
 
 function selectMenuItem(item: MenuLink) {
-  if (!item.children) return;
+  if (!item.children) {
+    return;
+  }
   openedMenuLinksStack.value.push(item);
   triggerRef(openedMenuLinksStack);
 }

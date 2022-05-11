@@ -43,8 +43,13 @@ export const accessDeniedUrl = `${fullBaseUrl}error/AccessDenied`;
 export const isoDateFormat = "YYYY-MM-DD";
 
 // Search
-export const pageSizes = [16, 32, 48];
-export const defaultPageSize = 16;
+enum PAGE_SIZE {
+  SMALL = 16,
+  MEDIUM = 32,
+  LARGE = 48,
+}
+export const pageSizes = [PAGE_SIZE.SMALL, PAGE_SIZE.MEDIUM, PAGE_SIZE.LARGE];
+export const defaultPageSize = PAGE_SIZE.SMALL;
 export const defaultSearchPageSize = 20;
 export const startPageNumber = 1;
 export const ordersStatuses = ["New", "Cancelled", "Processing", "Completed", "Pending"];

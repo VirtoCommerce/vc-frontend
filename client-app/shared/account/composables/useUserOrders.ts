@@ -6,12 +6,14 @@ import { getSortingExpression, ISortInfo, OrdersFilterData } from "@/shared/acco
 import { sortDescending } from "@core/constants";
 import useUserOrdersFilter from "./useUserOrdersFilter";
 
+const DEFAULT_ITEMS_PER_PAGE = 10;
+
 export default () => {
   const { appliedFilterData } = useUserOrdersFilter();
 
   const orders: Ref<CustomerOrderType[]> = shallowRef<CustomerOrderType[]>([]);
   const loading: Ref<boolean> = ref(false);
-  const itemsPerPage: Ref<number> = ref(10);
+  const itemsPerPage: Ref<number> = ref(DEFAULT_ITEMS_PER_PAGE);
   const pages: Ref<number> = ref(0);
   const page: Ref<number> = ref(1);
   const keyword: Ref<string> = ref("");

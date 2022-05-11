@@ -6,6 +6,8 @@ import { ProductsFilter, ProductsSearchParams } from "../types";
 import { rangeFacetToProductsFilter, termFacetToProductsFilter, toFilterExpression } from "@/shared/catalog";
 import { inStockFilterExpression } from "@/core/constants";
 
+const DEFAULT_ITEMS_PER_PAGE = 16;
+
 export default (
   options: {
     // @default false
@@ -46,12 +48,14 @@ export default (
 
       products.value = items;
       total.value = totalCount;
-      pages.value = Math.ceil(total.value / (searchParams.itemsPerPage || 16));
+      pages.value = Math.ceil(total.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE));
 
       if (withFilters) {
+        const sortedTerms = term_facets.sort((a, b) => a.label.localeCompare(b.label));
+        const sortedRanges = range_facets.sort((a, b) => a.label.localeCompare(b.label));
         filters.value = Array<ProductsFilter>().concat(
-          term_facets.sort((a, b) => a.label.localeCompare(b.label)).map(termFacetToProductsFilter),
-          range_facets.sort((a, b) => a.label.localeCompare(b.label)).map(rangeFacetToProductsFilter)
+          sortedTerms.map(termFacetToProductsFilter),
+          sortedRanges.map(rangeFacetToProductsFilter)
         );
       }
     } catch (e) {
@@ -70,7 +74,7 @@ export default (
 
       products.value = products.value.concat(items);
       total.value = totalCount;
-      pages.value = Math.ceil(total.value / (searchParams.itemsPerPage || 16));
+      pages.value = Math.ceil(total.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE));
     } catch (e) {
       Logger.error(`useProducts.${fetchMoreProducts.name}`, e);
       throw e;
