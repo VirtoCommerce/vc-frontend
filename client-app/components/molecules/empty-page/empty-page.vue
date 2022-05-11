@@ -11,7 +11,7 @@
         <div class="flex flex-col h-full justify-center items-center lg:items-start">
           <VcImage v-if="mobileImage" :src="mobileImage" class="lg:hidden mb-8" lazy />
           <slot name="description">
-            <h2 class="text-black-800 text-2xl font-semibold mb-8">
+            <h2 class="text-black-800 text-center lg:text-left text-2xl font-semibold mb-8">
               {{ description }}
             </h2>
           </slot>
