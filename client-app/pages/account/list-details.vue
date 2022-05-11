@@ -77,15 +77,16 @@
           </template>
 
           <!-- Empty -->
-          <div v-else class="flex grow items-center justify-center">
-            <div class="text-center my-20 lg:my-0 p-6">
-              <p class="font-bold mb-7 text-xl md:text-2xl">{{ $t("shared.wishlists.list_details.empty_list") }}</p>
-
+          <VcEmptyView :text="$t('shared.wishlists.list_details.empty_list')" v-else>
+            <template #icon>
+              <VcImage src="/static/images/common/list.svg" :alt="$t('shared.wishlists.list_details.list_icon')" />
+            </template>
+            <template #button>
               <VcButton :to="{ name: 'Catalog' }" size="lg" class="w-48 uppercase font-bold">
-                {{ $t("shared.checkout.empty_cart.continue_shopping_button") }}
+                {{ $t("shared.wishlists.list_details.empty_list_button") }}
               </VcButton>
-            </div>
-          </div>
+            </template>
+          </VcEmptyView>
 
           <!-- Mobile footer block -->
           <div v-if="isMobile" class="flex flex-col space-y-4">
@@ -100,10 +101,6 @@
               <i class="fa fa-shopping-cart text-inherit text-xs mr-2" />
               {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
             </VcButton>
-            <VcButton class="px-3 uppercase w-full" size="md" is-outline @click="openListSettingsDialog">
-              <i class="fas fa-cog text-inherit -ml-0.5 mr-2" />
-              {{ $t("shared.wishlists.list_card.list_settings_button") }}
-            </VcButton>
           </div>
         </div>
       </div>
@@ -112,7 +109,7 @@
 </template>
 
 <script setup lang="ts">
-import { VcButton, VcBreadcrumbs, IBreadcrumbs, VcPagination } from "@/components";
+import { VcButton, VcBreadcrumbs, IBreadcrumbs, VcPagination, VcEmptyView, VcImage } from "@/components";
 import { AccountNavigation } from "@/shared/account";
 import { AddToCart } from "@/shared/cart";
 import {

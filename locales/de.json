@@ -417,7 +417,9 @@
       "list_details": {
         "add_all_to_cart_button": "Add all products to cart",
         "list_settings_button": "List settings",
-        "empty_list": "Your list is currently empty"
+        "empty_list": "Your list is currently empty",
+        "empty_list_button": "Continue browsing",
+        "list_icon": "List icon"
       },
       "add_to_wishlists_dialog": {
         "title": "Please select list",
@@ -561,6 +563,7 @@
         "phone_label": "@:common.labels.phone",
         "email_label": "@:common.labels.email",
         "no_addresses_message": "There are no addresses yet",
+        "addresses_icon": "Addresses icon",
         "new_address_title": "New address",
         "addresses_title": "Addresses",
         "actions_label": "@:common.labels.actions",
@@ -618,7 +621,9 @@
         "date_label": "@:common.labels.date",
         "total_label": "@:common.labels.total",
         "no_orders_img_alt": "No orders",
-        "no_orders_message": "There are no orders yet"
+        "no_orders_message": "There are no results found",
+        "no_orders_button": "Reset search",
+        "orders_icon": "Orders icon"
       },
       "order_details": {
         "title": "Order #{0}",
@@ -654,7 +659,8 @@
       "your_lists": {
         "no_lists": "You don't have any lists created",
         "create_list_button": "Create list",
-        "create_list_button_mobile": "Create"
+        "create_list_button_mobile": "Create",
+        "lists_icon": "Lists icon"
       },
       "profile": {
         "title": "Profile",
@@ -702,7 +708,12 @@
       "products_found_message2": "{0} displayed that include {1} products.",
       "filters_button": "@:common.buttons.filters",
       "sort_by_label": "@:common.labels.sort_by",
-      "choose_button": "@:common.buttons.choose"
+      "choose_button": "@:common.buttons.choose",
+      "reset_filters_button": "Reset filters",
+      "no_products_message": "There are no products in this category",
+      "no_products_filtered_message": "There are no results found",
+      "no_products_button": "Reset search",
+      "products_icon": "Products icon"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
