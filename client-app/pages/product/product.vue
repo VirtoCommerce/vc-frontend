@@ -58,7 +58,7 @@
         <div class="flex flex-col -mx-5 md:mx-0 lg:w-8/12 xl:w-9/12">
           <VcSection
             :title="$t('pages.product.related_product_section_title')"
-            icon-url="/static/images/checkout/products.svg"
+            icon="/static/images/checkout/products.svg"
             class="shadow-sm border rounded-none md:rounded"
           >
             <VcCarousel

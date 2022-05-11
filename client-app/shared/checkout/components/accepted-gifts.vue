@@ -2,7 +2,7 @@
   <VcSection
     v-if="items?.length"
     :title="$t('shared.checkout.accepted_gifts.title')"
-    icon-url="/static/images/checkout/gifts.svg"
+    icon="/static/images/checkout/gifts.svg"
     class="shadow-inner pb-8 lg:shadow"
   >
     <div class="xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6 lg:border lg:rounded">

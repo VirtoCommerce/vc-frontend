@@ -107,7 +107,7 @@
             <VcSection
               v-if="$cfg.checkout_gifts_enabled && cart.availableGifts?.length"
               :title="$t('pages.checkout.gifts_section.title')"
-              icon-url="/static/images/checkout/gifts.svg"
+              icon="/static/images/checkout/gifts.svg"
               class="shadow-inner pb-8 lg:shadow"
             >
               <div class="xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6 lg:border lg:rounded">
@@ -126,7 +126,7 @@
             <!-- Shipping details section -->
             <VcSection
               :title="$t('pages.checkout.shipping_details_section.title')"
-              icon-url="/static/images/checkout/shipping.svg"
+              icon="/static/images/checkout/shipping.svg"
               class="shadow-inner pb-8 lg:shadow"
             >
               <div class="mx-5 xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6">
@@ -248,7 +248,7 @@
             <!-- Payment details section -->
             <VcSection
               :title="$t('pages.checkout.payment_details_section.title')"
-              icon-url="/static/images/checkout/payment.svg"
+              icon="/static/images/checkout/payment.svg"
               class="shadow-inner pb-8 lg:shadow"
             >
               <div class="mx-5 xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6">
@@ -383,7 +383,7 @@
             <VcSection
               v-if="$cfg.checkout_comment_enabled"
               :title="$t('pages.checkout.extra_section.title')"
-              icon-url="/static/images/checkout/extra.svg"
+              icon="/static/images/checkout/extra.svg"
               class="shadow-inner pb-8 lg:shadow"
             >
               <div class="mx-5 xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6">

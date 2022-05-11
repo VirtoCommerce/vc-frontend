@@ -25,7 +25,7 @@
           <!-- My products section -->
           <VcSection
             :title="$t('pages.account.order_details.products_section.title')"
-            icon-url="/static/images/checkout/products.svg"
+            icon="/static/images/checkout/products.svg"
             class="shadow lg:pb-11"
           >
             <div class="lg:ml-28 lg:mr-11 lg:border lg:rounded">
@@ -50,7 +50,7 @@
           <VcSection
             v-if="order?.comment"
             :title="$t('pages.account.order_details.order_comment_section.title')"
-            icon-url="/static/images/checkout/extra.svg"
+            icon="/static/images/checkout/extra.svg"
             class="shadow-inner pb-8 lg:shadow"
           >
             <div class="ml-24 mr-5 lg:ml-28 lg:mr-11">
