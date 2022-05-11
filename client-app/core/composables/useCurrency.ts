@@ -5,7 +5,7 @@ import { Currency } from "@core/types";
 
 export default function useCurrency() {
   const context = inject(contextInjectionKey);
-  const currentCurrencyCode = useLocalStorage<string | null>("currency", context!.defaultCurrency!.code || null);
+  const currentCurrencyCode = useLocalStorage<string | null>("currency", context?.defaultCurrency?.code || null);
 
   const currentCurrency = computed<Currency>(
     () => context!.availCurrencies!.find((item) => item.code === currentCurrencyCode.value) || context!.defaultCurrency!

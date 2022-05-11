@@ -36,7 +36,7 @@ export default async function searchProducts(
       withFacets,
       query: keyword,
       userId: currentUserId,
-      currencyCode: currencyCode,
+      currencyCode,
       filter: filterString,
       cultureName: locale,
       first: itemsPerPage,

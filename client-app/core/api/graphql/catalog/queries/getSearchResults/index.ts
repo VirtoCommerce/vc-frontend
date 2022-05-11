@@ -38,7 +38,7 @@ export default async function getSearchResults({
       query: keyword,
       cultureName: locale,
       userId: currentUserId,
-      currencyCode: currencyCode,
+      currencyCode,
       filter: `category.subtree:${catalogId}`,
       productsFirst: productsItemsPerPage,
       productsAfter: String((productsPage - 1) * productsItemsPerPage),
