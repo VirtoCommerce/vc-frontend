@@ -53,8 +53,6 @@ export default (
     activeAnimation.value = sleep(unref(dropdownAnimationDuration)).finally(() => {
       activeAnimation.value = null;
     });
-
-    return;
   }
 
   async function showSearchBar(): Promise<void> {
