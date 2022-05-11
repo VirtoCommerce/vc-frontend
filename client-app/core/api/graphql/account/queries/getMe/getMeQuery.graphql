@@ -1,4 +1,4 @@
-query getMe {
+query getMe($after: String, $first: Int, $sort: String) {
   me {
     id
     memberId
@@ -12,6 +12,12 @@ query getMe {
       firstName
       lastName
       fullName
+      organizations(after: $after, first: $first, sort: $sort) {
+        items {
+          id
+          name
+        }
+      }
     }
   }
 }

@@ -74,7 +74,9 @@
               </div>
             </div>
 
-            <AddToCart :product="product" @update:lineitem="refreshProducts" />
+            <div class="h-12">
+              <AddToCart :product="product" @update:lineitem="refreshProducts" />
+            </div>
           </div>
         </div>
 
