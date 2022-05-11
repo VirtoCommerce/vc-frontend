@@ -8,10 +8,6 @@ import { inStockFilterExpression } from "@/core/constants";
 
 const DEFAULT_ITEMS_PER_PAGE = 16;
 
-function facetSortByLabel(a: TermFacet | RangeFacet, b: TermFacet | RangeFacet) {
-  return a.label.localeCompare(b.label);
-}
-
 export default (
   options: {
     // @default false
@@ -55,9 +51,11 @@ export default (
       pages.value = Math.ceil(total.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE));
 
       if (withFilters) {
+        term_facets.sort((a, b) => a.label.localeCompare(b.label));
+        range_facets.sort((a, b) => a.label.localeCompare(b.label));
         filters.value = Array<ProductsFilter>().concat(
-          term_facets.sort(facetSortByLabel).map(termFacetToProductsFilter),
-          range_facets.sort(facetSortByLabel).map(rangeFacetToProductsFilter)
+          term_facets.map(termFacetToProductsFilter),
+          range_facets.map(rangeFacetToProductsFilter)
         );
       }
     } catch (e) {
