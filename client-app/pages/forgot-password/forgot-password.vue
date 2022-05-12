@@ -1,5 +1,5 @@
 <template>
-  <TwoColumn class="max-w-screen-xl">
+  <VcTwoColumnPage class="max-w-screen-xl">
     <template #left>
       <h1
         class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8 lg:mb-9 lg:mt-6"
@@ -23,13 +23,12 @@
     <template #right>
       <VcImage class="max-w-md" src="/static/images/sign-in/sign-in-page-image.webp" is-lazy />
     </template>
-  </TwoColumn>
+  </VcTwoColumnPage>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { VcImage, VcButton } from "@/components";
-import { TwoColumn } from "@/shared/layout";
+import { VcImage, VcButton, VcTwoColumnPage } from "@/components";
 import { ForgotPasswordForm } from "@/shared/account";
 
 const isSucceeded = ref(false);

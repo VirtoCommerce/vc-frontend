@@ -1,5 +1,5 @@
 <template>
-  <TwoColumn class="max-w-screen-lg">
+  <VcTwoColumnPage class="max-w-screen-lg">
     <template #left>
       <h1 class="text-black-800 text-7xl md:text-8xl font-black mb-5" v-t="'pages.404.error_code'"></h1>
       <h2 class="text-black-800 text-2xl md:text-4xl font-bold mb-2" v-t="'pages.404.error_text'"></h2>
@@ -13,10 +13,9 @@
     <template #right>
       <VcImage src="/static/images/errors/404.webp" :alt="$t('pages.404.img_alt')" class="w-full max-w-md" is-lazy />
     </template>
-  </TwoColumn>
+  </VcTwoColumnPage>
 </template>
 
 <script setup lang="ts">
-import { TwoColumn } from "@/shared/layout";
-import { VcImage, VcButton } from "@/components";
+import { VcImage, VcButton, VcTwoColumnPage } from "@/components";
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <TwoColumn class="max-w-screen-xl">
+  <VcTwoColumnPage class="max-w-screen-xl">
     <template #left>
       <h1 class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8 lg:mt-5" v-t="'pages.sign_up.header'"></h1>
       <form @submit="onSubmit">
@@ -99,13 +99,12 @@
     <template #right>
       <VcImage class="max-w-md" src="/static/images/sign-up/image.webp" is-lazy />
     </template>
-  </TwoColumn>
+  </VcTwoColumnPage>
 </template>
 
 <script setup lang="ts">
-import { VcAlert, VcInput, VcImage, VcButton, VcRadioButton } from "@/components";
+import { VcAlert, VcInput, VcImage, VcButton, VcRadioButton, VcTwoColumnPage } from "@/components";
 import { useUser, RegistrationSuccessDialog, RegistrationKind } from "@/shared/account";
-import { TwoColumn } from "@/shared/layout";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import { ref } from "vue";
