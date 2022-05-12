@@ -858,7 +858,7 @@
     "compare": {
       "empty_list": {
         "title": "Compare products",
-        "message": "Your product compare list is currently empty",
+        "message": "Your product compare list is empty",
         "button_text": "Continue browsing here",
         "img_alt": "emptyCart",
         "img_alt_mobile": "emptyCartMobile"
