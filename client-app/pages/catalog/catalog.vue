@@ -236,7 +236,7 @@
           <!-- Empty view -->
           <VcEmptyView
             :text="
-              isExistSelectedFilters || showInStock || isAppliedKeyword
+              isExistSelectedFilters || showInStock || keywordQueryParam !== ''
                 ? $t('pages.catalog.no_products_filtered_message')
                 : $t('pages.catalog.no_products_message')
             "
@@ -251,7 +251,7 @@
                 class="px-6 uppercase"
                 size="lg"
                 @click="resetFiltersWithKeyword"
-                v-if="isExistSelectedFilters || showInStock || isAppliedKeyword"
+                v-if="isExistSelectedFilters || showInStock || keywordQueryParam !== ''"
               >
                 <i class="fas fa-undo text-inherit -ml-0.5 mr-2.5"></i>
                 {{ $t("pages.catalog.no_products_button") }}
