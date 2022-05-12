@@ -1,6 +1,19 @@
 <template>
   <template v-if="!showThankYou">
-    <EmptyCart v-if="cart.items && cart.items?.length === 0 && !showThankYou && !creatingOrder" />
+    <VcEmptyPage
+      v-if="cart.items && cart.items?.length === 0 && !showThankYou && !creatingOrder"
+      :title="$t('shared.checkout.empty_cart.title')"
+      :description="$t('shared.checkout.empty_cart.description')"
+      image="/static/images/errors/emptyCart.webp"
+      mobile-image="/static/images/errors/emptyCartMobile.webp"
+      :breadcrumbs="breadcrumbs"
+    >
+      <template #actions>
+        <VcButton :to="{ name: 'Catalog' }" size="lg" class="w-48 uppercase font-bold">
+          {{ $t("shared.checkout.empty_cart.continue_shopping_button") }}
+        </VcButton>
+      </template>
+    </VcEmptyPage>
 
     <div v-else class="bg-gray-100 pt-7 pb-8 shadow-inner">
       <!-- Mobile sticky header -->
@@ -473,7 +486,6 @@ import {
   CheckoutLabeledBlock,
   OrderSummary,
   ProductCard,
-  EmptyCart,
   ThankYou,
   ShippingMethodDialog,
   PaymentMethodDialog,
@@ -490,6 +502,8 @@ import {
   VcActionInput,
   VcSection,
   VcCheckbox,
+  VcEmptyPage,
+  IBreadcrumbs,
 } from "@/components";
 import { useCart, useCheckout } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
@@ -586,6 +600,11 @@ const isValidShipment = computed(() => shipment.value?.shipmentMethodCode && shi
 const isValidPayment = computed(
   () => payment.value?.paymentGatewayCode && (billingSameAsShipping.value || payment.value?.billingAddress)
 );
+
+const breadcrumbs: IBreadcrumbs[] = [
+  { title: t("common.links.home"), route: { name: "Home" } },
+  { title: t("common.links.cart"), route: { name: "Cart" } },
+];
 
 //TODO: change 'any' for a normal type
 const setProductCardRef = (el: any) => {
