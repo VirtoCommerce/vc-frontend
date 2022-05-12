@@ -69,7 +69,8 @@
       "orders": "Orders",
       "your_lists": "Your Lists",
       "checkout_defaults": "Checkout Defaults",
-      "list_details": "List Details"
+      "list_details": "List Details",
+      "cart": "Cart"
     }
   },
   "shared": {
@@ -306,8 +307,9 @@
         "remove_button": "@:common.buttons.remove"
       },
       "empty_cart": {
-        "header": "Your cart is empty",
-        "continue_shopping_button": "@:common.buttons.continue_shopping_button"
+        "description": "Your cart is empty",
+        "continue_shopping_button": "@:common.buttons.continue_shopping_button",
+        "title": "Cart"
       },
       "accepted_gifts": {
         "gift_label": "Gift",
@@ -854,7 +856,7 @@
     "compare": {
       "empty_list": {
         "title": "Compare products",
-        "message": "Your product compare list is currently empty",
+        "message": "Your product compare list is empty",
         "button_text": "Continue browsing here",
         "img_alt": "emptyCart",
         "img_alt_mobile": "emptyCartMobile"
