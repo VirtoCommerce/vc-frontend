@@ -70,6 +70,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Pagination component with small screens support.
+ */
+
 import { PropType } from "vue";
 
 defineProps({

@@ -6,11 +6,16 @@
         <h3 class="text-gray-800 text-2xl lg:text-3xl font-bold uppercase">{{ title }}</h3>
       </div>
     </slot>
+
     <slot></slot>
   </div>
 </template>
 
 <script setup lang="ts">
+/**
+ * Generic content section with title and optional icon.
+ */
+
 import { VcImage } from "@/components";
 
 defineProps({

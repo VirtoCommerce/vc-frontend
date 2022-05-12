@@ -1,13 +1,19 @@
 <template>
-  <i
-    v-if="isButtonVisible"
-    class="text-primary-300 cursor-pointer hover:text-primary-500 text-5xl z-20 fixed bottom-10 right-3"
-    :class="[$attrs.class, icon]"
-    @click="scrollToTop"
-  ></i>
+  <slot>
+    <i
+      v-if="isButtonVisible"
+      class="text-primary-300 cursor-pointer hover:text-primary-500 text-5xl z-20 fixed bottom-10 right-3"
+      :class="[$attrs.class, icon]"
+      @click="scrollToTop"
+    ></i>
+  </slot>
 </template>
 
 <script setup lang="ts">
+/**
+ * Button which becomes visible after scroll and allows fast scroll to top of the page.
+ */
+
 import { ref } from "vue";
 
 const props = defineProps({

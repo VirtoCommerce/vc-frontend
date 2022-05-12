@@ -3,6 +3,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Price render component supporting MoneyField format.
+ */
+
 import { MoneyType } from "@/core/api/graphql/types";
 import { PropType } from "vue";
 

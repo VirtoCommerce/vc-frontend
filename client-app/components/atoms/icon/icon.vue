@@ -5,6 +5,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Icon component created to display colorized icons from SVG or icon font.
+ */
+
 import { computed, PropType } from "vue";
 
 const props = defineProps({

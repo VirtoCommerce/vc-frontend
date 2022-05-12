@@ -31,6 +31,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Empty page layout.
+ */
+
 import { PropType } from "vue";
 import { VcImage, IBreadcrumbs, VcBreadcrumbs, VcTwoColumnPage } from "@/components";
 

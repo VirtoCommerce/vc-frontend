@@ -14,12 +14,14 @@
   </div>
 </template>
 
+<script setup lang="ts">
+/**
+ * Two-column layout with equal width columns.
+ */
+</script>
+
 <script lang="ts">
 export default {
   inheritAttrs: false,
 };
-</script>
-
-<script setup lang="ts">
-// Keep this block for proper parsing of $attrs within template
 </script>

@@ -10,6 +10,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Image display component with fallback and vc-module-image-tools support.
+ */
+
 import { computed } from "vue";
 import { appendSuffixToFilename } from "@core/utilities";
 

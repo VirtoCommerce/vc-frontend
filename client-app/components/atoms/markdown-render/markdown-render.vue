@@ -3,6 +3,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Markdown display component.
+ */
+
 import { computed } from "vue";
 import { marked } from "marked";
 import DOMPurify from "dompurify";

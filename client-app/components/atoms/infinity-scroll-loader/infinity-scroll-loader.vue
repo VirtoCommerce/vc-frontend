@@ -26,6 +26,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Infinity scroll trigger with loader.
+ */
+
 import { onBeforeUnmount, onMounted, PropType, shallowRef, watch } from "vue";
 
 const emit = defineEmits<{ (event: "visible"): void }>();

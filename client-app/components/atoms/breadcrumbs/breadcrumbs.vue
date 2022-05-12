@@ -41,6 +41,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Display page breadcrumbs with clickable path and microdata markup.
+ */
+
 import { PropType } from "vue";
 import { IBreadcrumbs } from "@/components";
 
