@@ -1,11 +1,11 @@
 <template>
   <div class="bg-white rounded border shadow-sm">
-    <div class="px-6 py-3 border-b uppercase font-extrabold text-sm">
+    <div class="px-4 py-3 border-b uppercase font-extrabold text-sm">
       <div class="flex">
-        <div class="flex-grow text-xl font-extrabold" v-t="'shared.checkout.order_summary.title'"></div>
+        <div class="flex-grow text-lg font-extrabold" v-t="'shared.checkout.order_summary.title'"></div>
       </div>
     </div>
-    <div class="px-6 py-4">
+    <div class="p-4">
       <slot name="header"></slot>
 
       <!-- Totals block -->

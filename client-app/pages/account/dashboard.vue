@@ -12,8 +12,14 @@
         </div>
         <!-- Second column-->
         <div class="flex flex-col w-full px-5 md:px-0 space-y-5 lg:w-4/5">
-          <VcCard :title="$t('pages.account.dashboard.last_orders_card.title')" :full-width-content="true">
-            <template #header-button>
+          <VcCard>
+            <template #title>
+              <div class="text-lg font-extrabold uppercase my-1">
+                {{ $t("pages.account.dashboard.last_orders_card.title") }}
+              </div>
+            </template>
+
+            <template #header-actions>
               <div v-if="isMobile">
                 <VcButton :to="{ name: 'Orders' }" :is-outline="true" class="px-2 uppercase text-sm">
                   {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
@@ -28,6 +34,7 @@
                 <i class="fas fa-arrow-right text-[color:var(--color-primary)]"></i>
               </div>
             </template>
+
             <VcTable
               :loading="ordersLoading"
               :columns="columns"
@@ -224,9 +231,16 @@
               </template>
             </VcTable>
           </VcCard>
+
           <div class="flex flex-col space-y-5 lg:flex-row lg:space-x-5 lg:space-y-0">
-            <VcCard :title="$t('pages.account.dashboard.monthly_report_card.title')" class="lg:w-1/2">
-              <div class="flex content-center space-x-9 lg:space-x-4">
+            <VcCard class="lg:w-1/2">
+              <template #title>
+                <div class="text-lg font-extrabold uppercase my-1">
+                  {{ $t("pages.account.dashboard.monthly_report_card.title") }}
+                </div>
+              </template>
+
+              <div class="px-4 py-3 flex content-center space-x-9 lg:space-x-4">
                 <VcImage
                   src="/static/images/dashboard/spend-chart.svg"
                   class="h-24 w-24"
@@ -253,10 +267,14 @@
                 </div>
               </div>
             </VcCard>
-            <VcCard
-              :title="$t('pages.account.dashboard.orders_status_card.title')"
-              class="h-52 lg:h-auto lg:w-1/2"
-            ></VcCard>
+
+            <VcCard class="h-52 lg:h-auto lg:w-1/2">
+              <template #title>
+                <div class="text-lg font-extrabold uppercase my-1">
+                  {{ $t("pages.account.dashboard.orders_status_card.title") }}
+                </div>
+              </template>
+            </VcCard>
           </div>
           <!-- Commented due to accetpance criteria, will be used in future-->
           <!-- <VcCard title="Users" class="h-52"></VcCard> -->

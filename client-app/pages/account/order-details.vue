@@ -71,12 +71,14 @@
             {{ $t("pages.account.order_details.reorder_all_button") }}
           </VcButton>
 
-          <VcCard
-            :title="$t('pages.account.order_details.shipping_address_card.title')"
-            :is-collapsible="true"
-            class="mb-5"
-          >
-            <div class="flex flex-col space-y-1.5 text-sm">
+          <VcCard is-collapsible class="mb-5">
+            <template #title>
+              <div class="text-lg font-extrabold uppercase">
+                {{ $t("pages.account.order_details.shipping_address_card.title") }}
+              </div>
+            </template>
+
+            <div class="p-4 flex flex-col space-y-1.5 text-sm">
               <span class="font-extrabold">{{ deliveryAddress?.firstName }} {{ deliveryAddress?.lastName }}</span>
               <p>
                 {{ deliveryAddress?.countryCode }}
@@ -100,12 +102,14 @@
             </div>
           </VcCard>
 
-          <VcCard
-            :title="$t('pages.account.order_details.shipping_method_card.title')"
-            :is-collapsible="true"
-            class="mb-5"
-          >
-            <div class="flex items-center space-x-4 text-sm">
+          <VcCard is-collapsible class="mb-5">
+            <template #title>
+              <div class="text-lg font-extrabold uppercase">
+                {{ $t("pages.account.order_details.shipping_method_card.title") }}
+              </div>
+            </template>
+
+            <div class="p-4 flex items-center space-x-4 text-sm">
               <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" is-lazy />
               <span
                 >{{ order?.shipments?.[0]?.shipmentMethodCode }} {{ order?.shipments?.[0]?.shipmentMethodOption }} ({{
@@ -115,12 +119,14 @@
             </div>
           </VcCard>
 
-          <VcCard
-            :title="$t('pages.account.order_details.payment_details_card.title')"
-            :is-collapsible="true"
-            class="mb-5"
-          >
-            <div class="flex flex-col text-sm">
+          <VcCard is-collapsible class="mb-5">
+            <template #title>
+              <div class="text-lg font-extrabold uppercase">
+                {{ $t("pages.account.order_details.payment_details_card.title") }}
+              </div>
+            </template>
+
+            <div class="p-4 flex flex-col text-sm">
               <p>
                 <span class="font-extrabold">{{
                   $t("pages.account.order_details.payment_details_card.payment_number_label")
@@ -141,12 +147,14 @@
             </div>
           </VcCard>
 
-          <VcCard
-            :title="$t('pages.account.order_details.billing_address_card.title')"
-            :is-collapsible="true"
-            class="mb-5"
-          >
-            <div class="flex flex-col space-y-1.5 text-sm">
+          <VcCard is-collapsible class="mb-5">
+            <template #title>
+              <div class="text-lg font-extrabold uppercase">
+                {{ $t("pages.account.order_details.billing_address_card.title") }}
+              </div>
+            </template>
+
+            <div class="p-4 flex flex-col space-y-1.5 text-sm">
               <span class="font-extrabold">{{ billingAddress?.firstName }} {{ billingAddress?.lastName }}</span>
               <p>
                 {{ billingAddress?.countryCode }}

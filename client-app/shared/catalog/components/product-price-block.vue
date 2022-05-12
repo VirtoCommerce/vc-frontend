@@ -1,12 +1,12 @@
 <template>
   <div class="bg-white border shadow-sm rounded">
-    <div class="border-b px-5 py-4 md:px-7">
+    <div class="border-b px-4 py-3">
       <h2 class="text-xl font-extrabold uppercase">
         {{ $t("shared.catalog.product_details.price_block.title") }}
       </h2>
     </div>
 
-    <div class="border-b px-5 py-8 md:px-7 md:py-5">
+    <div class="border-b p-4">
       <slot />
     </div>
 

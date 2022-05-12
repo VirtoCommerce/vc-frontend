@@ -1,6 +1,12 @@
 <template>
-  <VcCard :title="$t('shared.account.navigation.title')">
-    <div class="flex flex-col">
+  <VcCard>
+    <template #title>
+      <div class="text-lg font-extrabold uppercase my-1">
+        {{ $t("shared.account.navigation.title") }}
+      </div>
+    </template>
+
+    <div class="px-4 py-3 flex flex-col">
       <AccountNavigationLink
         to="/account/dashboard"
         :text="$t('shared.account.navigation.links.dashboard')"
@@ -48,7 +54,7 @@
   </VcCard>
   <!-- Commented due to accetpance criteria, will be used in future-->
   <!-- <VcCard title="Corporate">
-    <div class="flex flex-col">
+    <div class="px-4 py-3 flex flex-col">
       <AccountNavigationLink to="/companyInfo" text="Company info" class="company-icon"></AccountNavigationLink>
       <AccountNavigationLink
         to="/companyMembers"

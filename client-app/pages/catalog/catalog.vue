@@ -25,57 +25,61 @@
           <div class="flex flex-col gap-4 lg:gap-5 overflow-hidden">
             <!-- Search results -->
             <VcCard :title="$t('pages.catalog.search_card.title')">
-              <p class="text-sm pb-2" v-t="'pages.catalog.search_card.search_label'"></p>
-              <div class="flex gap-3">
-                <input
-                  v-model="keyword"
-                  class="border rounded text-sm leading-8 flex-1 w-full border-gray-300 h-8 px-2 outline-none focus:border-gray-400"
-                  type="text"
-                  maxlength="30"
-                  :disabled="loading"
-                  @keypress.enter="onSearchStart"
-                />
+              <div class="p-4">
+                <p class="text-sm pb-2" v-t="'pages.catalog.search_card.search_label'"></p>
+                <div class="flex gap-3">
+                  <input
+                    v-model="keyword"
+                    class="border rounded text-sm leading-8 flex-1 w-full border-gray-300 h-8 px-2 outline-none focus:border-gray-400"
+                    type="text"
+                    maxlength="30"
+                    :disabled="loading"
+                    @keypress.enter="onSearchStart"
+                  />
 
-                <VcButton
-                  :is-disabled="loading || isAppliedKeyword"
-                  class="px-5 uppercase"
-                  outline
-                  size="sm"
-                  @click="onSearchStart"
-                >
-                  {{ $t("pages.catalog.search_card.search_button") }}
-                </VcButton>
+                  <VcButton
+                    :is-disabled="loading || isAppliedKeyword"
+                    class="px-5 uppercase"
+                    outline
+                    size="sm"
+                    @click="onSearchStart"
+                  >
+                    {{ $t("pages.catalog.search_card.search_button") }}
+                  </VcButton>
+                </div>
               </div>
             </VcCard>
 
-            <!-- Previously purchased -->
+            <!-- In stock -->
             <VcCard :title="$t('pages.catalog.instock_filter_card.title')">
-              <VcCheckbox v-model="showInStock" :disabled="loading" @change="applyFilters">
-                {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
-              </VcCheckbox>
+              <div class="p-4">
+                <VcCheckbox v-model="showInStock" :disabled="loading" @change="applyFilters">
+                  {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
+                </VcCheckbox>
+              </div>
             </VcCard>
 
             <!-- Branch availability -->
             <VcCard :title="$t('pages.catalog.branch_availability_filter_card.title')">
-              <p class="text-sm font-medium">
+              <div class="p-4 text-sm font-medium">
                 <span
                   class="text-[color:var(--color-link)] font-semibold cursor-pointer hover:text-[color:var(--color-link-hover)]"
                 >
                   {{ $t("pages.catalog.branch_availability_filter_card.select_branch_link") }}
                 </span>
                 {{ $t("pages.catalog.branch_availability_filter_card.select_branch_link_end") }}
-              </p>
+              </div>
             </VcCard>
 
             <!-- Facet Filters Skeletons -->
             <template v-if="loading && !filters.length">
-              <VcCardSkeleton is-collapsible v-for="i in 6" :key="i">
+              <VcCard is-collapsible is-collapsed is-loading v-for="i in 6" :key="i">
                 <!-- TODO: add checkbox skeleton -->
-                <div class="flex items-center mt-3 first:mt-0" v-for="i in 5" :key="i">
+                <div class="p-4 flex items-center mt-3 first:mt-0" v-for="i in 5" :key="i">
                   <div class="w-5 h-5 bg-gray-100 inline-block"></div>
                   <div class="ml-2 text-sm bg-gray-100 w-11/12">&nbsp;</div>
                 </div>
-              </VcCardSkeleton>
+              </VcCard>
             </template>
 
             <!-- Facet Filters -->
@@ -85,21 +89,24 @@
                 :key="`${filter.paramName}_${index}`"
                 :title="filter.label"
                 is-collapsible
+                is-collapsed
               >
-                <VcCheckbox
-                  v-for="(item, itemIndex) in filter.values"
-                  :key="`${item.value}_${index}_${itemIndex}`"
-                  v-model="item.selected"
-                  :value="item.value"
-                  :disabled="loading"
-                  class="mt-3 first:mt-0"
-                  @change="applyFilters"
-                >
-                  <div class="flex">
-                    <span class="truncate">{{ item.label }}</span>
-                    <span class="ml-1">{{ $t("pages.catalog.facet_card.item_count_format", [item.count]) }}</span>
-                  </div>
-                </VcCheckbox>
+                <div class="p-4">
+                  <VcCheckbox
+                    v-for="(item, itemIndex) in filter.values"
+                    :key="`${item.value}_${index}_${itemIndex}`"
+                    v-model="item.selected"
+                    :value="item.value"
+                    :disabled="loading"
+                    class="mt-3 first:mt-0"
+                    @change="applyFilters"
+                  >
+                    <div class="flex">
+                      <span class="truncate">{{ item.label }}</span>
+                      <span class="ml-1">{{ $t("pages.catalog.facet_card.item_count_format", [item.count]) }}</span>
+                    </div>
+                  </VcCheckbox>
+                </div>
               </VcCard>
             </template>
           </div>
@@ -293,7 +300,6 @@ import {
 import {
   VcButton,
   VcCard,
-  VcCardSkeleton,
   VcCheckbox,
   VcChip,
   VcInfinityScrollLoader,
