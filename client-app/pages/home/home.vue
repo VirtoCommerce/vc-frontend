@@ -32,28 +32,28 @@
       <div class="font-bold text-3xl text-center px-6" v-t="'pages.home.feature_descriptions_block.title'"></div>
       <div class="flex flex-wrap justify-between mx-auto mt-24">
         <div class="w-full md:w-1/2 lg:w-1/4 md:mt-44 mb-24 md:mb-0">
-          <VcImage src="/static/images/home/hexa-1.webp" class="mx-auto w-full" lazy />
+          <VcImage src="/static/images/home/hexa-1.webp" class="mx-auto w-full" is-lazy />
           <div
             class="px-8 font-bold text-2xl md:text-xl text-center mt-5"
             v-t="'pages.home.feature_descriptions_block.feature_1'"
           ></div>
         </div>
         <div class="w-full md:w-1/2 lg:w-1/4 mb-24 md:mb-0">
-          <VcImage src="/static/images/home/hexa-2.webp" class="mx-auto w-full" lazy />
+          <VcImage src="/static/images/home/hexa-2.webp" class="mx-auto w-full" is-lazy />
           <div
             class="px-8 font-bold text-2xl md:text-xl text-center mt-5"
             v-t="'pages.home.feature_descriptions_block.feature_2'"
           ></div>
         </div>
         <div class="w-full md:w-1/2 lg:w-1/4 md:mt-44 mb-24 md:mb-0">
-          <VcImage src="/static/images/home/hexa-3.webp" class="mx-auto w-full" lazy />
+          <VcImage src="/static/images/home/hexa-3.webp" class="mx-auto w-full" is-lazy />
           <div
             class="px-8 font-bold text-2xl md:text-xl text-center mt-5"
             v-t="'pages.home.feature_descriptions_block.feature_3'"
           ></div>
         </div>
         <div class="w-full md:w-1/2 lg:w-1/4 mb-24 md:mb-0">
-          <VcImage src="/static/images/home/hexa-4.webp" class="mx-auto w-full" lazy />
+          <VcImage src="/static/images/home/hexa-4.webp" class="mx-auto w-full" is-lazy />
           <div
             class="px-8 font-bold text-2xl md:text-xl text-center mt-5"
             v-t="'pages.home.feature_descriptions_block.feature_4'"

@@ -9,7 +9,7 @@
             :alt="productItem.name"
             size-suffix="sm"
             class="w-full h-full object-cover object-center"
-            lazy
+            is-lazy
           />
         </div>
         <div class="text-sm">
@@ -113,7 +113,7 @@
           :alt="productItem.name"
           size-suffix="sm"
           class="w-full h-full object-cover object-center"
-          lazy
+          is-lazy
         />
       </div>
 

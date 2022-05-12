@@ -4,7 +4,7 @@
   >
     <header class="px-6 flex justify-between items-center h-14 flex-shrink-0">
       <router-link to="/" @click="$emit('close')">
-        <VcImage src="/static/images/common/logo-white.svg" class="h-9" lazy />
+        <VcImage src="/static/images/common/logo-white.svg" class="h-9" is-lazy />
       </router-link>
 
       <!-- Language block -->

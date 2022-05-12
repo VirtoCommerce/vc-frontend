@@ -11,7 +11,7 @@
         <component v-if="customSlots.left" :is="customSlots.left" />
 
         <router-link v-else to="/" class="px-6">
-          <VcImage src="/static/images/common/logo.svg" class="h-9" lazy />
+          <VcImage src="/static/images/common/logo.svg" class="h-9" is-lazy />
         </router-link>
         <!-- endregion Left slot -->
 

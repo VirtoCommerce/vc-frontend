@@ -39,7 +39,7 @@
                   size-suffix="sm"
                   width="72"
                   height="72"
-                  lazy
+                  is-lazy
                 />
                 <div class="ml-4 font-bold text-blue-700">{{ lineItem.name }}</div>
               </div>
@@ -60,7 +60,7 @@
           size-suffix="sm"
           width="72"
           height="72"
-          lazy
+          is-lazy
         />
         <div class="ml-4 font-bold text-blue-700">{{ lineItem.name }}</div>
       </div>

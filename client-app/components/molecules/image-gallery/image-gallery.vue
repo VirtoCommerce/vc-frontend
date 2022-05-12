@@ -7,7 +7,7 @@
       :src="activeSrc"
       size-suffix="md"
       class="absolute top-0 w-full h-full object-cover object-center rounded-sm"
-      lazy
+      is-lazy
     />
   </div>
   <div v-if="isMobile && images && images.length > 1" class="mt-4 flex flex-row justify-center space-x-2.5">
@@ -34,7 +34,7 @@
           :alt="image?.name"
           size-suffix="sm"
           class="absolute top-0 w-full h-full object-cover object-center rounded-sm"
-          lazy
+          is-lazy
         />
       </div>
     </div>

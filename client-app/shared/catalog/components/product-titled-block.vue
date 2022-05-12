@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col">
     <div class="flex items-center mb-4">
-      <VcImage :src="imageSrc" :alt="title" lazy />
+      <VcImage :src="imageSrc" :alt="title" is-lazy />
       <h2 class="text-xl font-extrabold uppercase ml-2">{{ title }}</h2>
     </div>
     <slot></slot>

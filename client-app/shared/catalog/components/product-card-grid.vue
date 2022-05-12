@@ -8,7 +8,7 @@
           :alt="product.name"
           size-suffix="md"
           class="absolute top-0 w-full h-full object-cover object-center"
-          lazy
+          is-lazy
         />
       </div>
     </router-link>

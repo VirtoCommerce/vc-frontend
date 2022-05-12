@@ -11,7 +11,7 @@
           :alt="variation?.name"
           size-suffix="sm"
           class="absolute top-0 w-full h-full object-cover object-center rounded-sm"
-          lazy
+          is-lazy
         />
       </div>
     </div>

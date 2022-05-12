@@ -9,7 +9,7 @@
     <TwoColumn class="max-w-screen-lg">
       <template #left>
         <div class="flex flex-col h-full justify-center items-center lg:items-start">
-          <VcImage v-if="mobileImage" :src="mobileImage" class="lg:hidden mb-8" lazy />
+          <VcImage v-if="mobileImage" :src="mobileImage" class="lg:hidden mb-8" is-lazy />
           <slot name="description">
             <h2 class="text-black-800 text-center lg:text-left text-2xl font-semibold mb-8">
               {{ description }}
@@ -19,7 +19,7 @@
         </div>
       </template>
       <template #right>
-        <VcImage :src="image" class="w-full max-w-md" lazy />
+        <VcImage :src="image" class="w-full max-w-md" is-lazy />
       </template>
     </TwoColumn>
   </slot>

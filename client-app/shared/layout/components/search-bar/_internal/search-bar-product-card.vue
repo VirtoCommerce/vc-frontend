@@ -7,7 +7,7 @@
         :alt="product.name"
         size-suffix="sm"
         class="w-full h-full object-cover object-center"
-        lazy
+        is-lazy
       />
     </router-link>
 

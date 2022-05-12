@@ -60,7 +60,7 @@
                   :alt="product.name"
                   size-suffix="md"
                   class="w-full h-full object-cover object-center"
-                  lazy
+                  is-lazy
                 />
 
                 <div

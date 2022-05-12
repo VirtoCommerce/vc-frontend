@@ -2,7 +2,7 @@
   <div class="relative">
     <div class="px-12 py-7 flex items-center justify-between bg-[color:var(--color-header-bottom-bg)]">
       <router-link to="/">
-        <VcImage :src="$cfg.logo_image" class="h-12" lazy />
+        <VcImage :src="$cfg.logo_image" class="h-12" is-lazy />
       </router-link>
       <template v-if="organization">
         <div class="w-0.5 h-6 bg-[color:var(--color-primary)] mx-5 hidden xl:block"></div>

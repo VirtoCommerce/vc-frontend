@@ -97,7 +97,7 @@
       </form>
     </template>
     <template #right>
-      <VcImage class="max-w-md" src="/static/images/sign-up/image.webp" lazy />
+      <VcImage class="max-w-md" src="/static/images/sign-up/image.webp" is-lazy />
     </template>
   </TwoColumn>
 </template>

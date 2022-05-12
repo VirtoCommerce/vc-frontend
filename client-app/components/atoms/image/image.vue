@@ -2,7 +2,7 @@
   <img
     :src="preparedSrc"
     :alt="alt"
-    :loading="lazy || isLazy ? 'lazy' : null"
+    :loading="isLazy ? 'lazy' : null"
     :class="[$attrs.class, { [fallbackClass]: preparedSrc === fallbackSrc }]"
     @click="!isDisabled && $emit('click', $event)"
     @error="setFallbackSrc"
@@ -44,15 +44,6 @@ const props = defineProps({
   alt: {
     type: String,
     default: undefined,
-  },
-
-  /**
-   * Image lazy loading.
-   * @deprecated see isLazy property.
-   */
-  lazy: {
-    type: Boolean,
-    default: false,
   },
 
   /**
