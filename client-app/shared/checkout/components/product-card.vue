@@ -22,7 +22,7 @@
             </router-link>
             <div class="flex items-center space-x-1 py-1" v-if="validationError">
               <i class="fas fa-exclamation-circle text-[color:var(--color-primary)]"></i>
-              <span class="text-xs text-gray-400"> {{ validationError.errorMessage }} </span>
+              <span class="text-xs text-gray-400"> {{ itemErrorMessage }} </span>
             </div>
           </div>
           <div class="flex flex-col space-y-1 lg:space-y-0">
@@ -142,8 +142,10 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useField } from "vee-validate";
 import * as yup from "yup";
 import SeoUrl from "@core/seo-routes.enum";
+import { useI18n } from "vue-i18n";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
+const { t } = useI18n();
 
 const isMobile = breakpoints.smaller("lg");
 
@@ -175,6 +177,16 @@ const maxQty = computed(
 );
 
 const productId = computed(() => props.lineItem.product?.masterVariation?.id || props.lineItem.productId);
+
+const itemErrorMessage = computed(() => {
+  if (props.validationError?.errorCode === "PRODUCT_PRICE_CHANGED") {
+    return t("shared.checkout.product_card.errors.product_price_changed", [
+      Number(props.validationError.errorParameters?.find((error) => error.key === "new_price")?.value).toFixed(2),
+    ]);
+  } else {
+    return props.validationError?.errorMessage;
+  }
+});
 
 let rules = yup.number().integer().optional().moreThan(0);
 rules = rules.min(minQty.value);
