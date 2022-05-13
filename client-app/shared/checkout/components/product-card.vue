@@ -179,13 +179,12 @@ const maxQty = computed(
 const productId = computed(() => props.lineItem.product?.masterVariation?.id || props.lineItem.productId);
 
 const itemErrorMessage = computed(() => {
-  switch (props.validationError?.errorCode) {
-    case "PRODUCT_PRICE_CHANGED":
-      return t("shared.checkout.product_card.errors.product_price_changed", [
-        Number(props.validationError.errorParameters?.find((error) => error.key === "new_price")?.value).toFixed(2),
-      ]);
-    default:
-      return props.validationError?.errorMessage;
+  if (props.validationError?.errorCode === "PRODUCT_PRICE_CHANGED") {
+    return t("shared.checkout.product_card.errors.product_price_changed", [
+      Number(props.validationError.errorParameters?.find((error) => error.key === "new_price")?.value).toFixed(2),
+    ]);
+  } else {
+    return props.validationError?.errorMessage;
   }
 });
 
