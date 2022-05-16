@@ -197,7 +197,7 @@
           </div>
 
           <!-- Products -->
-          <template v-if="products.length">
+          <template v-if="products.length || loading">
             <DisplayProducts
               :loading="loading"
               :view-mode="viewModeQueryParam"
@@ -230,7 +230,8 @@
               class="mt-9 -mb-6"
               @visible="loadMoreProducts"
             />
-            <VcScrollTopButton></VcScrollTopButton>
+
+            <VcScrollTopButton />
           </template>
 
           <!-- Empty view -->

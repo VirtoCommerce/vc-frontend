@@ -9,7 +9,7 @@
       "type" : "namespaced",
       "translationsDirectory" : "$PROJECT_DIR$/locales",
       "fileType" : "json",
-      "defaultLocale" : "en-US",
+      "defaultLocale" : "en",
       "namespaces" : [ "messages" ],
       "outputFilenameTemplate" : "%locale%.json",
       "nestingType" : "DOT",
