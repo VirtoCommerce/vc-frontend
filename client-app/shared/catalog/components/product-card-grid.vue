@@ -43,10 +43,6 @@
           <div class="w-1/2 font-bold text-xs" v-t="'shared.catalog.product_card.product_sku_label'"></div>
           <span class="w-1/2 text-[color:var(--color-link)] truncate">{{ product.code }}</span>
         </div>
-        <div class="flex items-baseline">
-          <div class="w-1/2 font-bold text-xs" v-t="'shared.catalog.product_card.manufacture_model_label'"></div>
-          <span class="w-1/2 text-[color:var(--color-link)] truncate">-</span>
-        </div>
       </div>
 
       <!-- Product price -->

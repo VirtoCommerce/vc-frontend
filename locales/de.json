@@ -278,7 +278,6 @@
       },
       "product_card": {
         "product_sku_label": "@:common.labels.sku",
-        "manufacture_model_label": "Mfr. model #",
         "price_label": "@:common.labels.product_price"
       },
       "product_details": {
