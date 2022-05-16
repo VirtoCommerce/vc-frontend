@@ -4,7 +4,7 @@
     v-click-outside="() => searchDropdownVisible && hideSearchDropdown()"
   >
     <router-link to="/">
-      <VcImage :src="$cfg.logo_inverted_image" class="h-12 mr-8" lazy />
+      <VcImage :src="$cfg.logo_inverted_image" class="h-12 mr-8" />
     </router-link>
 
     <div class="flex flex-grow relative">
@@ -19,7 +19,7 @@
         @input="searchDropdownVisible && hideSearchDropdown()"
       />
 
-      <VcButton class="uppercase px-4 h-10" @click="search">
+      <VcButton class="uppercase px-4 !h-10" @click="search">
         {{ $t("shared.layout.search_bar.search_button") }}
       </VcButton>
 

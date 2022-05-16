@@ -3,7 +3,7 @@
   <MobileHeader v-if="isMobile" />
 
   <!-- Desktop header -->
-  <div v-else class="z-10 shadow-md">
+  <div v-else class="z-20 shadow-md">
     <TopHeader />
     <BottomHeader />
   </div>

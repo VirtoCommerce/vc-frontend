@@ -288,7 +288,7 @@ onMounted(() => {
 
   if (["Catalog", "Product"].some((item) => matchedRouteNames.includes(item))) {
     preSelectedLink = allProductsMenuLink.value;
-  } else if (matchedRouteNames.includes("Account")) {
+  } else if (matchedRouteNames.includes("Account") && !matchedRouteNames.includes("Dashboard")) {
     preSelectedLink = accountMenuLink;
   }
 

@@ -42,17 +42,19 @@ export default (
     const activeAnimation = toRef(activeAnimations, "dropdown");
 
     if (activeAnimation.value) {
-      return;
+      return activeAnimation.value;
     }
 
     if (!searchDropdownVisible.value) {
-      return;
+      return Promise.resolve();
     }
 
     searchDropdownVisible.value = false;
     activeAnimation.value = sleep(unref(dropdownAnimationDuration)).finally(() => {
       activeAnimation.value = null;
     });
+
+    return activeAnimation.value;
   }
 
   async function showSearchBar(): Promise<void> {
