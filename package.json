@@ -1,6 +1,6 @@
 {
-  "name": "client-app",
-  "version": "0.0.4",
+  "name": "vc-theme-b2b-vue",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "postinstall": "husky install",
