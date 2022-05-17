@@ -1,8 +1,3 @@
 <div id="app"></div>
-{% if is_preview_mode %}
-<script src="http://localhost:8098"></script>
-<script src="{{ 'builder.js' | asset_url | append_version }}" type="module"></script>
-{% else %}
-<script src="{{ 'index.js' | asset_url | append_version }}" type="module"></script>
-{% endif %}
-{{ 'index.css' | asset_url | append_version | stylesheet_tag }}
+<script src="{{ 'index.js' | asset_url }}" type="module"></script>
+{{ 'index.css' | asset_url | stylesheet_tag }}

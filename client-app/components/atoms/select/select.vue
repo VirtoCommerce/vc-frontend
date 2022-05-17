@@ -2,14 +2,15 @@
   <div>
     <div v-if="label">
       <span class="font-bold text-gray-900">{{ label }}</span>
-      <span v-if="isRequired" class="text-red-500">*</span>
+      <span v-if="isRequired" class="text-[color:var(--color-danger)]">*</span>
     </div>
 
     <div v-click-outside="hideList" class="relative select-none">
       <button
         type="button"
-        class="relative truncate text-left h-11 w-full appearance-none rounded pl-3 pr-7 py-3 text-base leading-none box-border border border-gray-300 outline-none disabled:bg-gray-50 disabled:cursor-not-allowed focus:border-gray-400"
         :disabled="isDisabled"
+        :class="buttonClasses"
+        class="relative truncate text-left w-full appearance-none rounded pl-3 pr-7 leading-none border border-gray-300 outline-none bg-white disabled:bg-gray-50 disabled:cursor-not-allowed focus:border-gray-400"
         @click="toggle"
       >
         <slot v-if="placeholder && !selected" name="placeholder">
@@ -60,7 +61,7 @@
       </transition>
     </div>
 
-    <div v-if="errorMessage" class="text-xs text-red-500">{{ errorMessage }}</div>
+    <div v-if="errorMessage" class="text-xs text-[color:var(--color-danger)]">{{ errorMessage }}</div>
   </div>
 </template>
 
@@ -80,7 +81,6 @@ import { computed, PropType, ref, shallowRef } from "vue";
 const props = defineProps({
   label: {
     type: String,
-    required: true,
   },
 
   isRequired: {
@@ -128,7 +128,15 @@ const props = defineProps({
 
   color: {
     type: String,
-    default: "yellow-500",
+    default: "[color:var(--color-primary)]",
+  },
+
+  size: {
+    type: String as PropType<"sm" | "md" | "lg">,
+    default: "md",
+    validator(value: string) {
+      return ["sm", "md", "lg"].includes(value);
+    },
   },
 
   errorMessage: {
@@ -157,6 +165,20 @@ const selected = computed(() => {
   }
 
   return props.modelValue;
+});
+
+const buttonClasses = computed<string>(() => {
+  switch (props.size) {
+    case "lg":
+      return "h-11 text-base";
+
+    case "sm":
+      return "h-8 text-sm";
+
+    case "md":
+    default:
+      return "h-9 text-base";
+  }
 });
 
 function isActiveItem(item: any): boolean {

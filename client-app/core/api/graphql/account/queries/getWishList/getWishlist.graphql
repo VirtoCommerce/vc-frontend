@@ -1,0 +1,49 @@
+query GetWishlist($listId: String!) {
+  wishlist(listId: $listId) {
+    name
+    id
+    itemsCount
+    items {
+      name
+      id
+      product {
+        name
+        id
+        code
+        slug
+        outline
+        minQuantity
+        maxQuantity
+        imgSrc
+        images {
+          url
+        }
+        availabilityData {
+          isActive
+          isAvailable
+          isBuyable
+          isInStock
+          availableQuantity
+        }
+        price {
+          actual {
+            amount
+            formattedAmount
+          }
+          discountAmount {
+            amount
+            formattedAmount
+          }
+          sale {
+            amount
+            formattedAmount
+          }
+          list {
+            amount
+            formattedAmount
+          }
+        }
+      }
+    }
+  }
+}

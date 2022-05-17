@@ -13,6 +13,16 @@ fragment lineItemFields on LineItemType {
   product {
     brandName
     slug
+    masterVariation {
+      id
+    }
+    minQuantity
+    maxQuantity
+    variations {
+      id
+      minQuantity
+      maxQuantity
+    }
   }
   quantity
   sku
@@ -29,6 +39,9 @@ fragment lineItemFields on LineItemType {
     ...moneyFields
   }
   listPrice {
+    ...moneyFields
+  }
+  salePrice {
     ...moneyFields
   }
   taxTotal {

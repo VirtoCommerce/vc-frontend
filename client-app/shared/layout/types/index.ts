@@ -1,6 +1,9 @@
-export interface IMenuItem {
+import { RouteLocationRaw } from "vue-router";
+
+export type MenuLink = {
   id?: string;
-  title: string;
-  url?: string;
-  onClick?: (event: Event) => void;
-}
+  title?: string;
+  icon?: string;
+  route?: RouteLocationRaw;
+  children?: MenuLink[];
+};

@@ -14,7 +14,6 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
     }
     itemsCount
     itemsQuantity
-    isValid
     shipments {
       id
       shipmentMethodCode
@@ -100,6 +99,20 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
       price {
         ...moneyFields
       }
+    }
+
+    gifts {
+      id
+      imageUrl
+      name
+      lineItemId
+    }
+
+    availableGifts {
+      id
+      imageUrl
+      name
+      lineItemId
     }
   }
 }

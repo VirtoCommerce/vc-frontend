@@ -3,8 +3,8 @@
     <VcInput
       v-model="password"
       class="mb-4 w-full"
-      label="Password"
-      placeholder="Enter your password"
+      :label="$t('shared.account.reset_password_form.password_label')"
+      :placeholder="$t('shared.account.reset_password_form.password_placeholder')"
       type="password"
       is-required
       :error-message="errors.password"
@@ -12,16 +12,19 @@
     <VcInput
       v-model="confirmPassword"
       class="mb-4 w-full"
-      label="Confirm password"
-      placeholder="Confirm your password"
+      :label="$t('shared.account.reset_password_form.confirm_password_label')"
+      :placeholder="$t('shared.account.reset_password_form.confirm_password_placeholder')"
       type="password"
       is-required
       :error-message="errors.confirmPassword"
     ></VcInput>
     <div class="mt-8 md:mt-9">
-      <VcAlert v-for="error in commonErrors" :key="error" class="mb-4 text-xs">{{ error }}</VcAlert>
+      <VcAlert v-for="error in commonErrors" :key="error" type="error" class="mb-4 text-xs" icon text>
+        {{ error }}
+      </VcAlert>
+
       <VcButton is-submit class="mt-6 lg:mt-3 w-full lg:w-52 uppercase" :is-waiting="loading">
-        Reset password
+        {{ $t("shared.account.reset_password_form.reset_password_button") }}
       </VcButton>
     </div>
   </form>
@@ -33,8 +36,11 @@ import { ref } from "vue";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import { useUser } from "@/shared/account";
+import { useI18n } from "vue-i18n";
 
 const { resetPassword, loading } = useUser();
+
+const { t } = useI18n();
 
 const emit = defineEmits(["succeeded"]);
 
@@ -50,12 +56,12 @@ const props = defineProps({
 });
 
 const schema = yup.object({
-  password: yup.string().label("Password").required(),
+  password: yup.string().label(t("shared.account.reset_password_form.password_label")).required(),
   confirmPassword: yup
     .string()
-    .label("Confirm password")
+    .label(t("shared.account.reset_password_form.confirm_password_label"))
     .required()
-    .oneOf([yup.ref("password"), null], "Passwords must match"),
+    .oneOf([yup.ref("password"), null], t("shared.account.reset_password_form.password_must_match_message")),
 });
 
 const { errors, handleSubmit } = useForm({

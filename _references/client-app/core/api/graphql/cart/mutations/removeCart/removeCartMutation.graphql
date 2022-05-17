@@ -1,3 +1,0 @@
-mutation RemoveCart($command: InputRemoveCartType!) {
-    removeCart(command: $command) 
-  }

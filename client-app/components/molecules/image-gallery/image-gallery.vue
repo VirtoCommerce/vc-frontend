@@ -3,15 +3,20 @@
     ref="mainImageDiv"
     class="square relative flex flex-col justify-center items-center border border-gray-100 rounded-sm"
   >
-    <VcImage :src="activeSrc" class="absolute top-0 w-full h-full object-cover object-center rounded-sm" />
+    <VcImage
+      :src="activeSrc"
+      size-suffix="md"
+      class="absolute top-0 w-full h-full object-cover object-center rounded-sm"
+      lazy
+    />
   </div>
   <div v-if="isMobile && images && images.length > 1" class="mt-4 flex flex-row justify-center space-x-2.5">
     <div
       v-for="(image, i) in images"
       :key="image?.url || i"
-      class="border border-yellow-500 w-4 h-4 rounded-full cursor-pointer"
+      class="border border-[color:var(--color-primary)] w-4 h-4 rounded-full cursor-pointer"
       :class="{
-        'bg-yellow-500': image?.url == activeSrc,
+        'bg-[color:var(--color-primary)]': image?.url == activeSrc,
       }"
       @click="setActiveImage(image?.url)"
     ></div>
@@ -21,13 +26,15 @@
       <div
         class="square relative flex flex-col justify-center items-center cursor-pointer border border-gray-100 rounded-sm hover:ring hover:ring-yellow-200"
         :class="{
-          'ring ring-yellow-500': image?.url == activeSrc,
+          'ring ring-[color:var(--color-primary)]': image?.url == activeSrc,
         }"
       >
         <VcImage
           :src="image?.url"
           :alt="image?.name"
+          size-suffix="sm"
           class="absolute top-0 w-full h-full object-cover object-center rounded-sm"
+          lazy
         />
       </div>
     </div>
@@ -37,7 +44,7 @@
 <script setup lang="ts">
 import { VcImage } from "@/components";
 import { ImageType, Maybe } from "@/core/api/graphql/types";
-import { onMounted, PropType, ref } from "vue";
+import { watchEffect, PropType, ref } from "vue";
 import { SwipeDirection, useSwipe } from "@vueuse/core";
 import _ from "lodash";
 
@@ -79,7 +86,7 @@ const props = defineProps({
 
 const activeSrc = ref("");
 
-onMounted(() => {
+watchEffect(() => {
   activeSrc.value = props.src;
 });
 

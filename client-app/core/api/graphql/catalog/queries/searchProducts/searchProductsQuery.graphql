@@ -10,6 +10,8 @@ query SearchProducts(
   $query: String
   $fuzzy: Boolean
   $fuzzyLevel: Int
+  $withFacets: Boolean!
+  $productIds: [String]
 ) {
   products(
     storeId: $storeId
@@ -23,16 +25,16 @@ query SearchProducts(
     query: $query
     fuzzy: $fuzzy
     fuzzyLevel: $fuzzyLevel
+    productIds: $productIds
   ) {
+    totalCount
     items {
       name
       id
       code
       minQuantity
       maxQuantity
-      variations {
-        id
-      }
+      hasVariations
       slug
       outline
       imgSrc
@@ -42,8 +44,6 @@ query SearchProducts(
       description(type: "QuickReview") {
         content
         id
-        languageCode
-        reviewType
       }
       availabilityData {
         isActive
@@ -70,10 +70,13 @@ query SearchProducts(
           formattedAmount
         }
       }
+      properties {
+        name
+        value
+        id
+      }
     }
-    totalCount
-
-    term_facets {
+    term_facets @include(if: $withFacets) {
       name
       label
       terms {
@@ -83,7 +86,7 @@ query SearchProducts(
         isSelected
       }
     }
-    range_facets {
+    range_facets @include(if: $withFacets) {
       name
       label
       ranges {
@@ -91,6 +94,8 @@ query SearchProducts(
         count
         from
         to
+        includeFrom
+        includeTo
         isSelected
       }
     }

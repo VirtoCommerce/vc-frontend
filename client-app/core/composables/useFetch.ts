@@ -1,6 +1,12 @@
 import { shallowRef, unref } from "vue";
 import { useRouter } from "vue-router";
 
+enum HTTP_ERRORS {
+  NO_CONTENT = 204,
+  FORBIDDEN = 403,
+  SERVER_ERROR = 500,
+}
+
 export default function useFetch() {
   const data = shallowRef<unknown | undefined>();
   const error = shallowRef<Error | undefined>();
@@ -20,7 +26,7 @@ export default function useFetch() {
         .then((result) => {
           statusCode.value = result.status;
 
-          if (result.status == 204) {
+          if (result.status === HTTP_ERRORS.NO_CONTENT) {
             return null;
           }
 
@@ -33,12 +39,12 @@ export default function useFetch() {
         .catch((e) => {
           error.value = e;
           switch (statusCode.value) {
-            case 500:
+            case HTTP_ERRORS.SERVER_ERROR:
               router.push({
                 name: "InternalError",
               });
               break;
-            case 403:
+            case HTTP_ERRORS.FORBIDDEN:
               router.push({
                 name: "NoAccess",
               });

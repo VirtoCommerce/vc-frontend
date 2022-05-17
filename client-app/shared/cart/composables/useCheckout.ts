@@ -16,6 +16,7 @@ import {
   CartAddressType,
   ShipmentType,
   PaymentType,
+  CustomerOrderType,
 } from "@core/api/graphql/types";
 import { useCart } from ".";
 
@@ -52,22 +53,29 @@ const existShipment: Ref<ShipmentType | null> = ref(null);
 const existPayment: Ref<PaymentType | null> = ref(null);
 
 export default () => {
-  async function placeOrder(cartId: string) {
+  const { cart, loadMyCart } = useCart();
+
+  async function placeOrder(cartId: string, reloadCart = true): Promise<CustomerOrderType | null> {
     const order = await createOrderFromCart(cartId);
-    if (order) {
-      await removeCart(cartId);
-      const { loadMyCart } = useCart();
+
+    if (!order) {
+      return null;
+    }
+
+    await removeCart(cartId);
+
+    if (reloadCart) {
       await loadMyCart();
     }
+
     return order;
   }
 
   async function loadPaymentMethods() {
     paymentMethods.value = await getAvailPaymentMethods();
 
-    //TODO: remove later
-    const { cart, loadMyCart } = useCart();
     await loadMyCart();
+
     if (cart.value.payments && cart.value.payments.length > 0) {
       existPayment.value = cart.value.payments[0];
     }
@@ -76,19 +84,18 @@ export default () => {
   async function loadShipmentMethods() {
     shippingMethods.value = await getAvailShippingMethods();
 
-    //TODO: remove later
-    const { cart, loadMyCart } = useCart();
     await loadMyCart();
+
     if (cart.value.shipments && cart.value.shipments.length > 0) {
       existShipment.value = cart.value.shipments[0];
       deliveryAddress.value = { ...cart.value.shipments[0]?.deliveryAddress } ?? deliveryAddress.value;
     }
   }
 
-  async function setDefaultDeliveryAddress(address: CartAddressType) {
+  async function setDefaultDeliveryAddress(_address: CartAddressType) {
     console.log("setDefaultDeliveryAddress");
   }
-  async function setDefaultBillingAddress(address: CartAddressType) {
+  async function setDefaultBillingAddress(_address: CartAddressType) {
     console.log("setDefaultBillingAddress");
   }
   async function setShippingMethod(shippingMethod: ShippingMethodType) {

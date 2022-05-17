@@ -7,7 +7,7 @@
     "csstools.postcss",
     "esbenp.prettier-vscode",
     "bradlc.vscode-tailwindcss",
-    "johnsoncodehk.volar"
+    "vue.volar"
   ],
   "unwantedRecommendations": [
     "octref.vetur"

@@ -1,20 +1,23 @@
 import { Logger } from "@core/utilities";
 import { computed, ref, Ref } from "vue";
-import { CustomerOrderType, OrderLineItemType } from "@/core/api/graphql/types";
+import { CustomerOrderType, QueryOrderArgs } from "@/core/api/graphql/types";
 import { getMyOrder } from "@/core/api/graphql/account";
 
 const loading: Ref<boolean> = ref(false);
 const order: Ref<CustomerOrderType | null> = ref(null);
 
-const itemsPerPage: Ref<number> = ref(6);
+const DEFAULT_ITEMS_PER_PAGE = 6;
+
+const itemsPerPage: Ref<number> = ref(DEFAULT_ITEMS_PER_PAGE);
 const pages: Ref<number> = ref(0);
 
 export default () => {
-  async function loadOrder(id: string, number?: string) {
+  async function loadOrder(payload: QueryOrderArgs) {
     loading.value = true;
 
     try {
-      order.value = await getMyOrder(id, number);
+      order.value = await getMyOrder(payload);
+
       if (order.value.items && order.value.items.length > 0) {
         pages.value = Math.ceil(order.value.items.length / itemsPerPage.value);
       }

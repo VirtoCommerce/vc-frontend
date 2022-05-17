@@ -2,6 +2,8 @@ import { computed, Ref, ref } from "vue";
 import {
   getMyCart,
   addItemToCart,
+  addItemsToCart,
+  addBulkItemsToCart,
   changeCartItemQuantity,
   removeCartItem,
   removeCoupon,
@@ -10,21 +12,26 @@ import {
   changeCartComment,
   addOrUpdateCartShipment,
   addOrUpdateCartPayment,
+  InputBulkItemsType,
+  removeCart as _removeCart,
 } from "@core/api/graphql/cart";
-import { CartType, InputPaymentType, InputShipmentType, LineItemType } from "@core/api/graphql/types";
+import { BulkCartType, CartType, InputPaymentType, InputShipmentType, LineItemType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 import _ from "lodash";
 import { useUserCheckoutDefaults } from "@/shared/account";
 import changePurchaseOrderNumber from "@/core/api/graphql/cart/mutations/changePurchaseOrderNumber";
+import { CartItemType } from "../types";
+
+const DEFAULT_ITEMS_PER_PAGE = 6;
 
 const loading: Ref<boolean> = ref(true);
 const cart: Ref<CartType> = ref({ name: "" });
 const pages: Ref<number> = ref(0);
-const itemsPerPage: Ref<number> = ref(6);
-
-const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
+const itemsPerPage: Ref<number> = ref(DEFAULT_ITEMS_PER_PAGE);
 
 export default () => {
+  const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
+
   async function loadMyCart(): Promise<CartType> {
     loading.value = true;
     try {
@@ -73,6 +80,54 @@ export default () => {
       loading.value = false;
     }
     await loadMyCart();
+  }
+
+  async function removeCart(cartId: string) {
+    loading.value = true;
+
+    try {
+      await _removeCart(cartId);
+    } catch (e) {
+      Logger.error(`useCart.${removeCart.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+
+    await loadMyCart();
+  }
+
+  async function addMultipleItemsToCart(cartItems: CartItemType[]) {
+    loading.value = true;
+    console.log(`addMultipleItemsToCart ${cartItems}`);
+    try {
+      await addItemsToCart(cartItems);
+    } catch (e) {
+      Logger.error("useCart.addMultipleItemsToCart", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+    await loadMyCart();
+  }
+
+  async function addBulkMultipleItemsToCart(payload: InputBulkItemsType): Promise<BulkCartType> {
+    let result: BulkCartType = {};
+
+    loading.value = true;
+
+    try {
+      result = await addBulkItemsToCart(payload);
+    } catch (e) {
+      Logger.error(`useCart.${addItemsToCart.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+
+    await loadMyCart();
+
+    return result;
   }
 
   async function changeItemQuantity(lineItemId: string, qty: number) {
@@ -215,9 +270,7 @@ export default () => {
       .map((x) => x as LineItemType)
       .value();
 
-    const result = _.sumBy(filteredItems, (x) => x.extendedPrice?.amount);
-
-    return result;
+    return _.sumBy(filteredItems, (x) => x.extendedPrice?.amount);
   }
 
   return {
@@ -225,10 +278,11 @@ export default () => {
     pages: computed(() => pages.value),
     itemsPerPage: computed(() => itemsPerPage.value),
     loading: computed(() => loading.value),
-    currency: computed(() => cart.value.total?.currency),
+    currency: computed(() => cart.value.currency!),
     getItemsTotal,
     loadMyCart,
     addToCart,
+    addBulkMultipleItemsToCart,
     itemInCart,
     changeItemQuantity,
     removeItem,
@@ -239,5 +293,7 @@ export default () => {
     updateShipment,
     updatePayment,
     updatePurchaseOrderNumber,
+    addMultipleItemsToCart,
+    removeCart,
   };
 };

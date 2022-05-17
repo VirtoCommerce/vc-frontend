@@ -1,0 +1,5 @@
+mutation MergeCart($command: InputMergeCartType!) {
+  mergeCart(command: $command) {
+    id
+  }
+}

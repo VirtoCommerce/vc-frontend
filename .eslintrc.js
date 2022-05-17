@@ -36,6 +36,8 @@ module.exports = {
     "@typescript-eslint/ban-ts-comment": "warn",
     "vue/script-setup-uses-vars": "error",
     "import/no-unresolved": "error",
+    "@typescript-eslint/no-shadow": "error",
+    "@typescript-eslint/no-non-null-assertion": "off",
     "vue/multi-word-component-names": "off",
   },
   overrides: [

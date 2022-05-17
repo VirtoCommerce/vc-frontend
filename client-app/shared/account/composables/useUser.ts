@@ -1,8 +1,17 @@
-import { Ref, ref, computed } from "vue";
-import { getMe, updatePersonalData } from "@/core/api/graphql/account";
-import { UserType, IdentityResultType } from "@core/api/graphql/types";
-import { Logger } from "@core/utilities";
-import { SignMeUp, SignMeIn, ForgotPassword, ValidateToken, ResetPassword } from "@/shared/account";
+import { Ref, ref, computed, readonly } from "vue";
+import { eagerComputed } from "@vueuse/core";
+import { getMe, updatePersonalData, createUser, createOrganization, createContact } from "@/core/api/graphql/account";
+import { UserType, IdentityResultType, Organization } from "@core/api/graphql/types";
+import { Logger, themeContext } from "@core/utilities";
+import {
+  RegisterOrganization,
+  SignMeUp,
+  SignMeIn,
+  ForgotPassword,
+  ValidateToken,
+  ResetPassword,
+  UserPersonalData,
+} from "@/shared/account";
 import useFetch from "@/core/composables/useFetch";
 
 const me: Ref<UserType> = ref({
@@ -19,6 +28,8 @@ const me: Ref<UserType> = ref({
 });
 
 const loading: Ref<boolean> = ref(false);
+const isAuthenticated = eagerComputed<boolean>(() => !!me.value.userName && me.value.userName !== "Anonymous");
+const organization = computed<Organization | null>(() => me.value?.contact?.organizations?.items?.[0] ?? null);
 
 export default () => {
   const { innerFetch } = useFetch();
@@ -36,10 +47,9 @@ export default () => {
     }
   }
 
-  async function updateUser(user: UserType): Promise<IdentityResultType> {
+  async function updateUser(personalData: UserPersonalData): Promise<IdentityResultType> {
     try {
       loading.value = true;
-      const personalData = { email: user.email, firstName: user.contact?.firstName, lastName: user.contact?.lastName };
       const result = await updatePersonalData(personalData);
       if (result.succeeded) {
         await loadMe();
@@ -52,16 +62,19 @@ export default () => {
       loading.value = false;
     }
   }
+
   async function changePassword(oldPassword: string, newPassword: string): Promise<IdentityResultType> {
     try {
       loading.value = true;
       const response = await fetch("/storefrontapi/account/password", {
         method: "POST",
         body: JSON.stringify({ oldPassword, newPassword, newPasswordConfirm: newPassword }),
+        headers: {
+          Accept: "text/plain",
+          "Content-Type": "application/json-patch+json",
+        },
       });
-      const res = (await response.json()) as IdentityResultType;
-
-      return res;
+      return (await response.json()) as IdentityResultType;
     } catch (e) {
       Logger.error("useUser.changePassword", e);
       throw e;
@@ -70,11 +83,11 @@ export default () => {
     }
   }
 
-  async function signMeIn(signMeIn: SignMeIn): Promise<IdentityResultType> {
+  async function signMeIn(payload: SignMeIn): Promise<IdentityResultType> {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/login";
-      const res = await innerFetch<SignMeIn, IdentityResultType>(url, "POST", signMeIn);
+      const res = await innerFetch<SignMeIn, IdentityResultType>(url, "POST", payload);
 
       if (res.succeeded) {
         await loadMe();
@@ -89,14 +102,54 @@ export default () => {
     }
   }
 
-  async function signMeUp(signMeUp: SignMeUp): Promise<IdentityResultType> {
+  async function registerUser(payload: SignMeUp): Promise<IdentityResultType> {
     try {
       loading.value = true;
-      const url = "/storefrontapi/account/user";
-      const res = await innerFetch<SignMeUp, IdentityResultType>(url, "POST", signMeUp);
-      return res;
+      const contact = await createContact({
+        firstName: payload.firstName as string,
+        lastName: payload.lastName as string,
+        name: `${payload.firstName} ${payload.lastName}`,
+        emails: [payload.email],
+      });
+      return await createUser({
+        userName: payload.userName,
+        password: payload.password,
+        email: payload.email,
+        memberId: contact.id,
+        userType: "Customer",
+        storeId: themeContext.storeId as string,
+      });
     } catch (e) {
-      Logger.error("useUser.signMeUp", e);
+      Logger.error("useUser.registerUser", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function registerOrganization(payload: RegisterOrganization): Promise<IdentityResultType> {
+    try {
+      loading.value = true;
+      const createdOrganization = await createOrganization({
+        name: payload.organizationName,
+      });
+      const contact = await createContact({
+        firstName: payload.firstName as string,
+        lastName: payload.lastName as string,
+        name: `${payload.firstName} ${payload.lastName}`,
+        emails: [payload.email],
+        organizations: [createdOrganization.id],
+      });
+      return await createUser({
+        userName: payload.userName,
+        password: payload.password,
+        email: payload.email,
+        memberId: contact.id,
+        userType: "Customer",
+        storeId: themeContext.storeId as string,
+      });
+    } catch (e) {
+      Logger.error("useUser.registerOrganization", e);
       throw e;
     } finally {
       loading.value = false;
@@ -119,12 +172,11 @@ export default () => {
     }
   }
 
-  async function forgotPassword(forgotPassword: ForgotPassword): Promise<IdentityResultType> {
+  async function forgotPassword(payload: ForgotPassword): Promise<IdentityResultType> {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/forgotPassword";
-      const res = await innerFetch<ForgotPassword, IdentityResultType>(url, "POST", forgotPassword);
-      return res;
+      return await innerFetch<ForgotPassword, IdentityResultType>(url, "POST", payload);
     } catch (e) {
       Logger.error("useUser.forgotPassword", e);
       throw e;
@@ -133,12 +185,11 @@ export default () => {
     }
   }
 
-  async function validateToken(validateToken: ValidateToken): Promise<IdentityResultType> {
+  async function validateToken(payload: ValidateToken): Promise<IdentityResultType> {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/validateToken";
-      const res = await innerFetch<ValidateToken, IdentityResultType>(url, "POST", validateToken);
-      return res;
+      return await innerFetch<ValidateToken, IdentityResultType>(url, "POST", payload);
     } catch (e) {
       Logger.error("useUser.validateToken", e);
       throw e;
@@ -147,12 +198,11 @@ export default () => {
     }
   }
 
-  async function resetPassword(resetPassword: ResetPassword): Promise<IdentityResultType> {
+  async function resetPassword(payload: ResetPassword): Promise<IdentityResultType> {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/resetPassword";
-      const res = await innerFetch<ResetPassword, IdentityResultType>(url, "POST", resetPassword);
-      return res;
+      return await innerFetch<ResetPassword, IdentityResultType>(url, "POST", payload);
     } catch (e) {
       Logger.error("useUser.resetPassword", e);
       throw e;
@@ -162,17 +212,19 @@ export default () => {
   }
 
   return {
-    me: computed(() => me.value),
-    loading: computed(() => loading.value),
-    isAuthenticated: computed(() => me.value && me.value.userName && me.value.userName !== "Anonymous"),
+    isAuthenticated,
+    organization,
     updateUser,
     changePassword,
     loadMe,
     signMeIn,
-    signMeUp,
+    registerUser,
+    registerOrganization,
     signMeOut,
     forgotPassword,
     validateToken,
     resetPassword,
+    loading: readonly(loading),
+    me: computed(() => me.value),
   };
 };

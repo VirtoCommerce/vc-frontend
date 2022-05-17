@@ -20,6 +20,7 @@ export default defineConfig(({ mode }) => {
         "@core": path.resolve(__dirname, "./client-app/core"),
       },
     },
+    base: mode === "production" ? "/themes/assets/" : "/",
     build: {
       outDir: "assets",
       assetsDir: "./",
@@ -35,6 +36,9 @@ export default defineConfig(({ mode }) => {
           assetFileNames: "[name][extname]",
         },
       },
+    },
+    optimizeDeps: {
+      exclude: ["swiper/vue", "swiper/types"],
     },
     publicDir: "./client-app/public",
     server: {

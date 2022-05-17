@@ -15,7 +15,7 @@ const graphqlClient = new ApolloClient({
   name: "x-api-graphql-client",
   connectToDevTools: true,
   assumeImmutableResults: true,
-  // queryDeduplication: false,
+  queryDeduplication: false,
 
   defaultOptions: {
     watchQuery: { fetchPolicy },

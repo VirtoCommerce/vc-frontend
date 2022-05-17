@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center justify-center">
+  <div class="flex items-center justify-center z-0">
     <!-- Previous page -->
     <button
       v-if="page > 1"
@@ -38,7 +38,7 @@
 
     <!-- Current page -->
     <div
-      class="uppercase text-sm leading-9 text-center w-10 h-9 -mx-px font-bold bg-yellow-500 text-white z-10 cursor-default"
+      class="uppercase text-sm leading-9 text-center w-10 h-9 -mx-px font-bold bg-[color:var(--color-primary)] text-white z-10 cursor-default"
     >
       {{ page }}
     </div>

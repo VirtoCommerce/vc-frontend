@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-100 pt-7 pb-16 shadow-inner">
+  <div class="bg-gray-100 pt-7 pb-16 shadow-inner grow" :class="{ 'polygon-gray-bg': !products.length && !loading }">
     <div class="max-w-screen-2xl px-5 md:px-12 mx-auto">
       <!-- Breadcrumbs -->
       <Breadcrumbs class="mb-2 md:mb-8" :items="breadcrumbsItems"></Breadcrumbs>
@@ -8,7 +8,7 @@
         <!-- Mobile sidebar back cover -->
         <div
           :class="{ hidden: !mobileSidebarVisible }"
-          class="fixed z-40 inset-0 w-full h-screen lg:hidden bg-gray-800 opacity-95"
+          class="fixed z-50 inset-0 w-full h-screen lg:hidden bg-gray-800 opacity-95"
           @click="hideMobileSidebar"
         />
 
@@ -22,10 +22,10 @@
               : 'lg:flex lg:w-1/4 xl:w-1/5 flex-shrink-0',
           ]"
         >
-          <div class="flex flex-col gap-4 lg:gap-5">
+          <div class="flex flex-col gap-4 lg:gap-5 overflow-hidden">
             <!-- Search results -->
-            <VcCard title="Filter results by">
-              <p class="text-sm pb-2">Search within these results</p>
+            <VcCard :title="$t('pages.catalog.search_card.title')">
+              <p class="text-sm pb-2" v-t="'pages.catalog.search_card.search_label'"></p>
               <div class="flex gap-3">
                 <input
                   v-model="keyword"
@@ -35,177 +35,230 @@
                   :disabled="loading"
                   @keypress.enter="onSearchStart"
                 />
-                <VcButton class="px-5 uppercase" size="sm" is-outline :is-disabled="loading" @click="onSearchStart">
-                  Go
+
+                <VcButton
+                  :is-disabled="loading || isAppliedKeyword"
+                  class="px-5 uppercase"
+                  outline
+                  size="sm"
+                  @click="onSearchStart"
+                >
+                  {{ $t("pages.catalog.search_card.search_button") }}
                 </VcButton>
               </div>
             </VcCard>
 
             <!-- Previously purchased -->
-            <VcCard title="Previously purchased">
-              <VcCheckbox color="cyan-700">View previously purchased products</VcCheckbox>
+            <VcCard :title="$t('pages.catalog.instock_filter_card.title')">
+              <VcCheckbox v-model="showInStock" :disabled="loading" @change="applyFilters">
+                {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
+              </VcCheckbox>
             </VcCard>
 
             <!-- Branch availability -->
-            <VcCard title="Branch availability">
+            <VcCard :title="$t('pages.catalog.branch_availability_filter_card.title')">
               <p class="text-sm font-medium">
-                <span class="text-cyan-700 font-semibold cursor-pointer hover:text-cyan-900">
-                  Select a pickup branch
+                <span
+                  class="text-[color:var(--color-link)] font-semibold cursor-pointer hover:text-[color:var(--color-link-hover)]"
+                >
+                  {{ $t("pages.catalog.branch_availability_filter_card.select_branch_link") }}
                 </span>
-                to see products in stock now.
+                {{ $t("pages.catalog.branch_availability_filter_card.select_branch_link_end") }}
               </p>
             </VcCard>
 
-            <!-- Term Facets Filters -->
-            <VcCard v-for="(termFacet, index) in termFacets" :key="index" :title="termFacet.label" is-collapsible>
-              <VcCheckbox
-                v-for="(facetTerm, itemIndex) in termFacet.terms"
-                :key="itemIndex"
-                v-model="selectedFacets[termFacet.name]"
-                :value="facetTerm.term"
-                :disabled="loading"
-                class="mt-3 first:mt-0"
-                color="cyan-700"
-              >
-                {{ facetTerm.label }} ({{ facetTerm.count }})
-              </VcCheckbox>
-            </VcCard>
+            <!-- Facet Filters Skeletons -->
+            <template v-if="loading && !filters.length">
+              <VcCardSkeleton is-collapsible v-for="i in 6" :key="i">
+                <!-- TODO: add checkbox skeleton -->
+                <div class="flex items-center mt-3 first:mt-0" v-for="i in 5" :key="i">
+                  <div class="w-5 h-5 bg-gray-100 inline-block"></div>
+                  <div class="ml-2 text-sm bg-gray-100 w-11/12">&nbsp;</div>
+                </div>
+              </VcCardSkeleton>
+            </template>
 
-            <!-- Range Facets Filters -->
-            <VcCard v-for="(rangeFacet, index) in rangeFacets" :key="index" :title="rangeFacet.label" is-collapsible>
-              <VcCheckbox
-                v-for="(rangeObject, rangeIndex) in rangeFacet.ranges"
-                :key="rangeIndex"
-                v-model="selectedFacets[rangeFacet.name]"
-                :value="getFilterValueFromRangeFacet(rangeObject)"
-                :disabled="loading"
-                color="cyan-700"
-                class="mt-3 first:mt-0"
+            <!-- Facet Filters -->
+            <template v-else>
+              <VcCard
+                v-for="(filter, index) in filters"
+                :key="`${filter.paramName}_${index}`"
+                :title="filter.label"
+                is-collapsible
               >
-                {{ rangeObject.label }} ({{ rangeObject.count }})
-              </VcCheckbox>
-            </VcCard>
+                <VcCheckbox
+                  v-for="(item, itemIndex) in filter.values"
+                  :key="`${item.value}_${index}_${itemIndex}`"
+                  v-model="item.selected"
+                  :value="item.value"
+                  :disabled="loading"
+                  class="mt-3 first:mt-0"
+                  @change="applyFilters"
+                >
+                  <div class="flex">
+                    <span class="truncate">{{ item.label }}</span>
+                    <span class="ml-1">{{ $t("pages.catalog.facet_card.item_count_format", [item.count]) }}</span>
+                  </div>
+                </VcCheckbox>
+              </VcCard>
+            </template>
           </div>
         </div>
 
+        <!-- Content -->
         <div class="lg:w-3/4 xl:w-4/5 flex-grow">
-          <div class="flex flex-col">
-            <h2 class="text-gray-800 text-2xl lg:text-3xl font-bold uppercase">{{ category?.label }}</h2>
-            <p class="py-3">
-              <span class="font-extrabold">{{ total }} results found.</span>
-              <span>&nbsp;</span>
-              <span class="font-normal">
-                {{ products.length }} displayed that include {{ products.length }} products.
-              </span>
-            </p>
-            <div class="flex justify-start mb-6 mt-4">
-              <!-- Mobile filters toggler -->
-              <div class="lg:hidden mr-3">
-                <VcButton class="px-4 font-extrabold" size="md" @click="mobileSidebarVisible = true">
-                  <i class="fas fa-filter mr-1"></i> Filters
+          <h2 class="text-gray-800 text-2xl lg:text-3xl font-bold uppercase">{{ selectedCategory?.label }}</h2>
+
+          <p class="py-3">
+            <span class="font-extrabold">{{ $t("pages.catalog.products_found_message", [total]) }}</span>
+          </p>
+
+          <div ref="stickyMobileHeaderAnchor" class="-mb-2"></div>
+
+          <div
+            class="sticky lg:relative top-0 z-10 flex items-center h-14 mt-2 mb-3"
+            :class="{
+              'z-40 px-5 md:px-12 -mx-5 md:-mx-12 bg-[color:var(--color-header-bottom-bg)]':
+                isVisibleStickyMobileHeader,
+            }"
+          >
+            <!-- Mobile filters toggler -->
+            <div class="lg:hidden mr-3">
+              <VcButton class="px-4 font-extrabold" size="md" @click="mobileSidebarVisible = true">
+                <i class="fas fa-filter mr-1"></i> {{ $t("pages.catalog.filters_button") }}
+              </VcButton>
+            </div>
+
+            <!-- View options -->
+            <ViewMode v-model:mode="viewModeQueryParam" class="hidden md:inline-flex mr-6" />
+
+            <!-- Sorting -->
+            <div class="flex items-center flex-grow md:flex-grow-0 z-10 ml-auto">
+              <span class="hidden lg:block shrink-0 mr-2" v-t="'pages.catalog.sort_by_label'"></span>
+
+              <VcSelect
+                v-model="sortQueryParam"
+                text-field="name"
+                value-field="id"
+                :is-disabled="loading"
+                :items="productSortingList"
+                class="w-full md:w-52 lg:w-64"
+              />
+            </div>
+          </div>
+
+          <!-- Filters chips -->
+          <div v-if="isExistSelectedFilters || showInStock" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
+            <VcChip
+              class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
+              size="sm"
+              is-outline
+              clickable
+              closable
+              @click="resetFilters"
+              @close="resetFilters"
+            >
+              {{ $t("pages.catalog.reset_filters_button") }}
+            </VcChip>
+
+            <template v-for="filter in filters">
+              <template v-for="filterItem in filter.values">
+                <VcChip
+                  v-if="filterItem.selected"
+                  :key="filter.paramName + filterItem.value"
+                  class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
+                  size="sm"
+                  closable
+                  @close="
+                    removeFilterItem({
+                      paramName: filter.paramName,
+                      value: filterItem.value,
+                    })
+                  "
+                >
+                  {{ filterItem.label }}
+                </VcChip>
+              </template>
+            </template>
+
+            <template v-if="showInStock">
+              <VcChip
+                class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
+                size="sm"
+                closable
+                @close="
+                  showInStock = false;
+                  applyFilters();
+                "
+              >
+                {{ $t("pages.catalog.instock_filter_card.title") }}
+              </VcChip>
+            </template>
+          </div>
+
+          <!-- Products -->
+          <template v-if="products.length || loading">
+            <DisplayProducts
+              :loading="loading"
+              :view-mode="viewModeQueryParam"
+              :items-per-page="itemsPerPage"
+              :products="products"
+              :class="
+                viewModeQueryParam === 'list'
+                  ? 'space-y-5'
+                  : 'grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-6 xl:gap-x-6 xl:gap-y-8'
+              "
+            >
+              <template #cart-handler="{ item }">
+                <VcButton
+                  v-if="item.hasVariations"
+                  :to="{ name: 'Product', params: { productId: item.id } }"
+                  :class="{ 'w-full': viewModeQueryParam === 'list' }"
+                  class="uppercase mb-4"
+                >
+                  {{ $t("pages.catalog.choose_button") }}
                 </VcButton>
-              </div>
 
-              <!-- View options -->
-              <ViewMode v-model:mode="viewMode" class="hidden md:inline-flex mr-6"></ViewMode>
+                <AddToCart v-else :product="item" />
+              </template>
+            </DisplayProducts>
 
-              <!-- Page size -->
-              <PageSize
-                v-model:size="productSearchParams.itemsPerPage"
-                class="hidden md:flex"
-                @update:size="loadProducts"
-              ></PageSize>
+            <VcInfinityScrollLoader
+              v-if="!loading"
+              :loading="loadingMore"
+              distance="400"
+              class="mt-9 -mb-6"
+              @visible="loadMoreProducts"
+            />
 
-              <!-- Sorting -->
-              <div class="relative ml-auto flex-grow md:flex-grow-0">
-                <span class="hidden lg:inline mr-2">Sort by:</span>
-                <Listbox v-model="sort">
-                  <ListboxButton
-                    class="w-full md:w-52 lg:w-64 h-9 pl-3 pr-16 text-base bg-white border rounded appearance-none outline-none border-gray-300"
-                  >
-                    <span class="block truncate text-left">{{ sort.name }}</span>
-                    <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                      <i class="text-gray-700 fas fa-chevron-down"></i>
-                    </span>
-                  </ListboxButton>
-                  <transition
-                    leave-active-class="transition duration-100 ease-in"
-                    leave-from-class="opacity-100"
-                    leave-to-class="opacity-0"
-                  >
-                    <ListboxOptions
-                      class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base bg-white rounded shadow-lg max-h-60 ring-1 ring-black ring-opacity-5"
-                    >
-                      <ListboxOption v-for="item in sortOptions" :key="item.id" v-slot="{ selected }" :value="item">
-                        <li class="cursor-pointer select-none relative py-1 px-3">
-                          <span :class="[selected ? 'text-yellow-500' : 'text-black', 'block truncate']">{{
-                            item.name
-                          }}</span>
-                        </li>
-                      </ListboxOption>
-                    </ListboxOptions>
-                  </transition>
-                </Listbox>
-              </div>
-            </div>
-          </div>
-
-          <template v-if="viewMode === 'grid'">
-            <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-4 md:gap-x-6 gap-y-8">
-              <template v-if="loading">
-                <ProductSkeletonGrid v-for="i in productSearchParams.itemsPerPage" :key="i"></ProductSkeletonGrid>
-              </template>
-              <template v-else>
-                <ProductCardGrid v-for="item in products" :key="item.id" :product="item">
-                  <template #cart-handler>
-                    <VcButton v-if="item.variations?.length" :to="`/product/${item.id}`" class="uppercase mb-4">
-                      Choose
-                    </VcButton>
-                    <AddToCart v-else :product="item"></AddToCart>
-                  </template>
-                </ProductCardGrid>
-              </template>
-            </div>
-          </template>
-          <template v-else>
-            <div class="space-y-5">
-              <template v-if="loading">
-                <ProductSkeletonList v-for="i in productSearchParams.itemsPerPage" :key="i"></ProductSkeletonList>
-              </template>
-              <template v-else>
-                <ProductCardList v-for="item in products" :key="item.id" :product="item">
-                  <template #cart-handler>
-                    <VcButton v-if="item.variations?.length" :to="`/product/${item.id}`" class="uppercase mb-4 w-full">
-                      Choose
-                    </VcButton>
-                    <AddToCart v-else :product="item"></AddToCart>
-                  </template>
-                </ProductCardList>
-              </template>
-            </div>
+            <VcScrollTopButton />
           </template>
 
-          <!-- VcPagination and options bottom block -->
-          <div class="flex justify-center md:justify-between pt-11">
-            <div>
-              <VcPagination
-                v-model:page="productSearchParams.page"
-                :pages="pages"
-                @update:page="loadProducts"
-              ></VcPagination>
-            </div>
-            <div class="flex">
-              <!-- View options -->
-              <ViewMode v-model:mode="viewMode" class="hidden md:inline-flex mr-6"></ViewMode>
-
-              <!-- Page size -->
-              <PageSize
-                v-model:size="productSearchParams.itemsPerPage"
-                class="hidden md:flex"
-                @update:size="loadProducts"
-              ></PageSize>
-            </div>
-          </div>
+          <!-- Empty view -->
+          <VcEmptyView
+            :text="
+              isExistSelectedFilters || showInStock || keywordQueryParam !== ''
+                ? $t('pages.catalog.no_products_filtered_message')
+                : $t('pages.catalog.no_products_message')
+            "
+            class="h-96"
+            v-else
+          >
+            <template #icon>
+              <VcImage src="/static/images/common/stock.svg" :alt="$t('pages.catalog.products_icon')" />
+            </template>
+            <template #button>
+              <VcButton
+                class="px-6 uppercase"
+                size="lg"
+                @click="resetFiltersWithKeyword"
+                v-if="isExistSelectedFilters || showInStock || keywordQueryParam !== ''"
+              >
+                <i class="fas fa-undo text-inherit -ml-0.5 mr-2.5"></i>
+                {{ $t("pages.catalog.no_products_button") }}
+              </VcButton>
+            </template>
+          </VcEmptyView>
         </div>
       </div>
     </div>
@@ -213,138 +266,134 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch, unref, watchEffect, Ref, shallowRef } from "vue";
-import { useBreakpoints, breakpointsTailwind, useUrlSearchParams, whenever } from "@vueuse/core";
+import {
+  computed,
+  ref,
+  shallowRef,
+  watch,
+  onMounted,
+  watchEffect,
+  PropType,
+  onBeforeUnmount,
+  WatchStopHandle,
+  triggerRef,
+} from "vue";
+import { breakpointsTailwind, eagerComputed, useBreakpoints, whenever } from "@vueuse/core";
 import {
   Breadcrumbs,
-  PageSize,
-  ProductCardGrid,
-  ProductCardList,
-  ProductSkeletonGrid,
-  ProductSkeletonList,
-  ViewMode,
-  useProducts,
-  CategoryTree,
-  ProductsSearchParams,
-  useCategories,
   IBreadcrumbsItem,
+  DisplayProducts,
+  toFilterExpression,
+  useCategories,
+  useProducts,
+  ViewMode,
+  ProductsSearchParams,
+  ProductsFilterValue,
+  ProductsFilter,
 } from "@/shared/catalog";
-import { VcCard, VcCheckbox, VcPagination, VcButton } from "@/components";
+import {
+  VcButton,
+  VcCard,
+  VcCardSkeleton,
+  VcCheckbox,
+  VcChip,
+  VcInfinityScrollLoader,
+  VcSelect,
+  VcScrollTopButton,
+  VcEmptyView,
+  VcImage,
+} from "@/components";
 import { AddToCart } from "@/shared/cart";
-import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from "@headlessui/vue";
-import { useRoute } from "vue-router";
-import _ from "lodash";
+import { useElementVisibility, useRouteQueryParam } from "@core/composables";
+import { defaultPageSize, productSortingList } from "@core/constants";
+import QueryParamName from "@core/query-param-name.enum";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
+
+const watchStopHandles: WatchStopHandle[] = [];
+
+const props = defineProps({
+  categorySeoUrls: {
+    type: [String, Array] as PropType<string | string[]>,
+    default: "",
+  },
+});
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
+const { selectedCategory, selectCategoryBySeoUrl, loadCategoriesTree } = useCategories();
+const { fetchProducts, fetchMoreProducts, loading, loadingMore, products, total, pages, filters, showInStock } =
+  useProducts({
+    withFilters: true,
+  });
+
+const FILTERS_RESET_TIMEOUT_IN_MS = 500;
+
 const isMobile = breakpoints.smaller("md");
 const isMobileSidebar = breakpoints.smaller("lg");
 const mobileSidebarVisible = ref(false);
 const sidebarElement = shallowRef<HTMLElement | null>(null);
+const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
+const keyword = ref("");
+const page = ref(1);
+const itemsPerPage = ref(defaultPageSize);
 
-const route = useRoute();
-const params = useUrlSearchParams("history", { removeFalsyValues: true });
-const {
-  products,
-  total,
-  loading,
-  pages,
-  termFacets,
-  rangeFacets,
-  selectedFacets,
-  filterStringFromSelectedFacets,
-  getFilterValueFromRangeFacet,
-  fetchProducts,
-} = useProducts();
-const { categoryTree, loadCategoriesTree } = useCategories();
+const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
 
-const category: Ref<CategoryTree | undefined> = ref(undefined);
-const keyword: Ref<string> = ref(`${params.keyword || ""}`);
-
-const sortOptions = [
-  { id: "priority-descending;name-ascending", name: "Featured" },
-  { id: "name-ascending", name: "Alphabetically, A-Z" },
-  { id: "name-descending", name: "Alphabetically, Z-A" },
-  { id: "price-ascending", name: "Price, low to high" },
-  { id: "price-descending", name: "Price, high to low" },
-  { id: "createddate-descending", name: "Date, new to old" },
-  { id: "createddate-ascending", name: "Date, old to new" },
-];
-const sort = ref(sortOptions.find((item) => item.id === params.sort) || sortOptions[0]);
-
-watch(sort, async () => {
-  productSearchParams.sort = sort.value.id;
-  await loadProducts();
+const viewModeQueryParam = useRouteQueryParam<"grid" | "list">("viewMode", {
+  defaultValue: "grid",
+  validator: (value) => (isMobile.value ? false : ["grid", "list"].includes(value)),
 });
 
-const productSearchParams = reactive<ProductsSearchParams>({
-  itemsPerPage: +(params.size ?? 16),
-  page: +(params.page ?? 1),
-  query: keyword.value,
-  sort: `${sort.value.id}`,
+const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
+  defaultValue: productSortingList[0].id,
+  validator: (value) => productSortingList.some((item) => item.id === value),
 });
 
-watch(
-  () => route.params.categoryKey,
-  async (categoryKeyParam) => {
-    const categoryKey = categoryKeyParam as string;
-    getCurrentCategory(categoryKey);
+const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
+  defaultValue: "",
+});
 
-    productSearchParams.page = 1;
-    productSearchParams.query = "";
-    keyword.value = "";
+const filterQueryParam = useRouteQueryParam<string>(QueryParamName.Filter, {
+  defaultValue: "",
+});
 
-    await loadProducts();
-  }
+const isVisibleStickyMobileHeader = computed<boolean>(
+  () => !stickyMobileHeaderAnchorIsVisible.value && isMobileSidebar.value
 );
 
-watch(
-  () => category.value,
-  () => BuildBreadcrumbs()
+const categorySeoUrl = computed<string>(() =>
+  typeof props.categorySeoUrls === "string"
+    ? props.categorySeoUrls
+    : props.categorySeoUrls?.[props.categorySeoUrls?.length - 1] ?? ""
 );
 
-onMounted(async () => {
-  // TODO: use active category key instead of id
-  await loadCategoriesTree("");
-  const categoryKey = route.params.categoryKey as string;
-  getCurrentCategory(categoryKey);
-  await loadProducts();
-});
+const searchParams = computed<ProductsSearchParams>(() => ({
+  categoryId: selectedCategory.value?.id,
+  itemsPerPage: itemsPerPage.value,
+  sort: sortQueryParam.value,
+  keyword: keywordQueryParam.value,
+  filter: filterQueryParam.value,
+}));
 
-const loadProducts = async () => {
-  window.scroll({
-    top: 0,
-    behavior: "smooth",
-  });
+const isAppliedKeyword = eagerComputed<boolean>(() => keyword.value === keywordQueryParam.value);
+const isExistSelectedFilters = eagerComputed<boolean>(() =>
+  filters.value.some((filter) => filter.values.some((value) => value.selected))
+);
 
-  productSearchParams.categoryId = category.value?.id;
-  await fetchProducts(productSearchParams);
-};
+const breadcrumbsItems = computed<IBreadcrumbsItem[]>(() => {
+  const items: IBreadcrumbsItem[] = [{ url: "/", title: t("common.links.home") }];
 
-const getCurrentCategory = (categoryKey: string) => {
-  const catTree = unref(categoryTree);
-  const cat = searchCategory(catTree, categoryKey);
-  category.value = cat;
-};
-
-const searchCategory = (categoryTree: CategoryTree, categoryKey: string): CategoryTree | undefined => {
-  let category = _.find(categoryTree.items, (x) => x.seoKeyword === categoryKey);
-
-  if (!category && categoryTree.items) {
-    for (let cat of categoryTree.items) {
-      category = searchCategory(cat, categoryKey);
-
-      if (category) {
-        return category;
-      }
-    }
+  if (selectedCategory.value) {
+    items.push({
+      title: selectedCategory.value.label!,
+    });
   }
 
-  return category;
-};
+  return items;
+});
 
 function hideMobileSidebar() {
-  if (!mobileSidebarVisible.value) return;
-
   mobileSidebarVisible.value = false;
 
   if (sidebarElement.value) {
@@ -352,65 +401,94 @@ function hideMobileSidebar() {
   }
 }
 
-whenever(
-  () => !isMobileSidebar.value,
-  () => hideMobileSidebar()
-);
+function onSearchStart() {
+  const searchText = keyword.value;
 
-watch(filterStringFromSelectedFacets, async (value: string) => {
-  productSearchParams.filter = value;
-  productSearchParams.page = 1;
-  hideMobileSidebar();
-  await loadProducts();
-});
-
-const BuildBreadcrumbs = () => {
-  if (category.value) {
-    breadcrumbsItems.value = [
-      { url: "/", title: "Home" },
-      { url: category.value.seoKeyword ?? "", title: category.value.label ?? "" },
-    ];
-  }
-};
-
-const breadcrumbsItems: Ref<IBreadcrumbsItem[]> = ref([{ url: "/", title: "Home" }]);
-
-const viewMode = ref(`${params.viewMode || "grid"}`);
-
-// Handle URL change on navigation update
-watchEffect(() => {
-  params.viewMode = viewMode.value;
-  params.size = `${productSearchParams.itemsPerPage}` || "16";
-  params.page = `${productSearchParams.page}` || "1";
-  params.keyword = productSearchParams.query || "";
-
-  if (productSearchParams.sort) {
-    params.sort = `${productSearchParams.sort}`;
-  }
-});
-
-const onSearchStart = async () => {
-  if (keyword.value !== productSearchParams.query && keyword.value.length <= 30) {
-    productSearchParams.query = keyword.value;
-    productSearchParams.page = 1;
+  if (searchText !== keywordQueryParam.value && searchText.length <= 30) {
     hideMobileSidebar();
-    await loadProducts();
+    keywordQueryParam.value = searchText;
   }
-};
+}
 
-// Handle window resise to fix parameters on mobile view
-watch(isMobile, async () => {
-  if (isMobile.value) {
-    viewMode.value = "grid";
-    if (productSearchParams.itemsPerPage !== 8) {
-      productSearchParams.itemsPerPage = 8;
-      await loadProducts();
-    }
-  } else {
-    if (productSearchParams.itemsPerPage === 8) {
-      productSearchParams.itemsPerPage = 16;
-      await loadProducts();
-    }
+function applyFilters() {
+  hideMobileSidebar();
+  filterQueryParam.value = toFilterExpression(filters, showInStock);
+  triggerRef(filters);
+}
+
+function removeFilterItem(payload: Pick<ProductsFilter, "paramName"> & Pick<ProductsFilterValue, "value">) {
+  const filter = filters.value.find((item) => item.paramName === payload.paramName);
+  const filterItem = filter?.values.find((item) => item.value === payload.value);
+
+  if (filterItem) {
+    filterItem.selected = false;
+    applyFilters();
   }
+}
+
+function resetFilters() {
+  filters.value.forEach((filter) => filter.values.forEach((filterItem) => (filterItem.selected = false)));
+  showInStock.value = false;
+  applyFilters();
+}
+
+function resetFiltersWithKeyword() {
+  keywordQueryParam.value = "";
+  setTimeout(() => {
+    resetFilters();
+  }, FILTERS_RESET_TIMEOUT_IN_MS);
+}
+
+async function loadProducts() {
+  page.value = 1;
+  await fetchProducts(searchParams.value);
+}
+
+async function loadMoreProducts() {
+  if (page.value === pages.value) {
+    return;
+  }
+
+  const nextPage = page.value + 1;
+
+  page.value = nextPage;
+
+  await fetchMoreProducts({
+    ...searchParams.value,
+    page: nextPage,
+  });
+}
+
+onMounted(async () => {
+  await loadCategoriesTree(""); // TODO: use active category key instead of id
+  selectCategoryBySeoUrl(categorySeoUrl.value);
+  await loadProducts();
+
+  // Start change tracking after initial data load
+  watchStopHandles.push(
+    /**
+     * You must force the watch to stop before unmounting the component
+     * because the computed value being watched includes the global reactive object.
+     * In this case, it is the "current route" inside the "useRouteQueryParam" function.
+     *
+     * Related links:
+     * https://github.com/vuejs/core/issues/2291
+     */
+    watch(
+      computed(() => JSON.stringify(searchParams.value)),
+      loadProducts,
+      {
+        flush: "post",
+      }
+    )
+  );
 });
+
+onBeforeUnmount(() => {
+  watchStopHandles.forEach((watchStopHandle) => watchStopHandle());
+});
+
+watchEffect(() => (keyword.value = keywordQueryParam.value ?? ""));
+whenever(() => !isMobileSidebar.value, hideMobileSidebar);
+watch(categorySeoUrl, selectCategoryBySeoUrl);
 </script>

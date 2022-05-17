@@ -1,28 +1,46 @@
 <template>
-  <img :src="src" :alt="alt" :class="additionalClass" @error="setFallbackSrc" />
+  <img :src="preparedSrc" :alt="alt" :loading="lazy ? 'lazy' : null" :class="additionalClass" @error="setFallbackSrc" />
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref, watch } from "vue";
+import { appendSuffixToFilename } from "@core/utilities";
 
 const props = defineProps({
+  lazy: Boolean,
+
   src: {
     type: String,
-    default: undefined,
+    default: "",
   },
 
   alt: {
     type: String,
-    default: undefined,
+    default: null,
   },
 
   fallbackSrc: {
     type: String,
     default: "/static/images/common/no-image.svg",
   },
+
+  /**
+   * First you need to generate thumbnails in admin panel, section "Thumbnails" (vc-module-image-tools).
+   * You can also set up suffixes there.
+   * @see https://github.com/VirtoCommerce/vc-module-image-tools
+   */
+  sizeSuffix: {
+    type: String,
+    validator: (value: string) => ["sm", "md", "lg"].includes(value),
+  },
 });
 
 const additionalClass = ref("");
+
+const preparedSrc = computed<string>(() => {
+  const result = props.sizeSuffix ? appendSuffixToFilename(props.src, `_${props.sizeSuffix}`) : props.src;
+  return result || props.fallbackSrc;
+});
 
 /**
  * Set fallback source when image loading error occures.
@@ -32,4 +50,6 @@ function setFallbackSrc(event: Event): void {
   (event.target as HTMLImageElement).src = props.fallbackSrc;
   additionalClass.value = "object-scale-down object-center";
 }
+
+watch(preparedSrc, () => (additionalClass.value = ""));
 </script>

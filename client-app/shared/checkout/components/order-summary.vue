@@ -2,7 +2,7 @@
   <div class="bg-white rounded border shadow-sm">
     <div class="px-6 py-3 border-b uppercase font-extrabold text-sm">
       <div class="flex">
-        <div class="flex-grow text-xl font-extrabold">Order summary</div>
+        <div class="flex-grow text-xl font-extrabold" v-t="'shared.checkout.order_summary.title'"></div>
       </div>
     </div>
     <div class="px-6 py-4">
@@ -11,20 +11,20 @@
       <!-- Totals block -->
       <div>
         <div class="flex justify-between font-extrabold text-base mb-4">
-          <span>Subtotal</span>
+          <span v-t="'shared.checkout.order_summary.subtotal_label'"></span>
           <span><VcPriceDisplay :value="cart.subTotal" /></span>
         </div>
         <div class="py-2 border-t border-b font-normal text-base">
           <div class="flex justify-between" @click="discountsCollapsed = !discountsCollapsed">
-            <span class="flex items-center" :class="{ 'cursor-pointer': cart.discounts && cart.discounts.length > 0 }"
-              >Discount
+            <span class="flex items-center" :class="{ 'cursor-pointer': cart.discounts && cart.discounts.length > 0 }">
+              {{ $t("shared.checkout.order_summary.discount_label") }}
               <i
                 v-if="cart.discounts && cart.discounts.length > 0 && !discountsCollapsed"
-                class="fas fa-caret-down ml-1 text-yellow-500"
+                class="fas fa-caret-down ml-1 text-[color:var(--color-primary)]"
               ></i
               ><i
                 v-if="cart.discounts && cart.discounts.length > 0 && discountsCollapsed"
-                class="fas fa-caret-up ml-1 text-yellow-500"
+                class="fas fa-caret-up ml-1 text-[color:var(--color-primary)]"
               ></i>
             </span>
             <span>{{ cart.discountTotal?.amount > 0 ? "-" : "" }}<VcPriceDisplay :value="cart.discountTotal" /></span>
@@ -40,16 +40,16 @@
             </ul>
           </div>
           <div class="flex justify-between">
-            <span>Tax</span>
+            <span v-t="'shared.checkout.order_summary.tax_label'"></span>
             <span>{{ cart.taxTotal?.amount > 0 ? "+" : "" }}<VcPriceDisplay :value="cart.taxTotal" /></span>
           </div>
           <div class="flex justify-between">
-            <span>Shipping cost</span>
+            <span v-t="'shared.checkout.order_summary.shipping_label'"></span>
             <span>{{ cart.shippingTotal?.amount > 0 ? "+" : "" }}<VcPriceDisplay :value="cart.shippingTotal" /></span>
           </div>
         </div>
         <div class="flex justify-between font-extrabold text-base mt-4">
-          <span>Total</span>
+          <span v-t="'shared.checkout.order_summary.total_label'"></span>
           <span class="text-green-700"><VcPriceDisplay :value="cart.total" /></span>
         </div>
       </div>

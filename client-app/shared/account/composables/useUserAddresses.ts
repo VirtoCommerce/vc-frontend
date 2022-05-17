@@ -1,10 +1,11 @@
 import { computed, readonly, ref, Ref, shallowRef, unref } from "vue";
 import { InputMemberAddressType, MemberAddressType, UserType } from "@core/api/graphql/types";
-import { getMyAddresses, updateMemberAddresses } from "@core/api/graphql/account";
-import { Logger, toInputAddress } from "@core/utilities";
+import { getMyAddresses, updateMemberAddresses, deleteMemberAddresses } from "@core/api/graphql/account";
+import { isEqualAddresses, Logger, toInputAddress } from "@core/utilities";
 import { getSortingExpression, ISortInfo } from "@/shared/account";
 import { sortAscending } from "@core/constants";
 import { MaybeRef } from "@vueuse/core";
+import { AnyAddressType } from "@core/types";
 
 export default (options: { user: MaybeRef<UserType> }) => {
   const { user } = options;
@@ -19,6 +20,10 @@ export default (options: { user: MaybeRef<UserType> }) => {
     column: "lastName",
     direction: sortAscending,
   });
+
+  function isExistAddress(address: AnyAddressType): boolean {
+    return addresses.value.some((item) => isEqualAddresses(item, address));
+  }
 
   async function loadAddresses() {
     loading.value = true;
@@ -35,7 +40,7 @@ export default (options: { user: MaybeRef<UserType> }) => {
     }
   }
 
-  async function setDefaultAddress(address: MemberAddressType): Promise<void> {
+  async function setDefaultAddress(_address: MemberAddressType): Promise<void> {
     //TODO: will be implemented in the separate story
   }
 
@@ -57,7 +62,9 @@ export default (options: { user: MaybeRef<UserType> }) => {
   }
 
   async function addOrUpdateAddresses(items: MemberAddressType[], memberId?: string): Promise<void> {
-    if (!items.length) return;
+    if (!items.length) {
+      return;
+    }
 
     loading.value = true;
 
@@ -76,25 +83,30 @@ export default (options: { user: MaybeRef<UserType> }) => {
     await updateAddresses(updatedAddresses, memberId);
   }
 
-  async function removeAddresses(idsOrAddress: Array<string | MemberAddressType>, memberId?: string): Promise<void> {
-    if (!idsOrAddress.length) return;
+  async function removeAddresses(items: MemberAddressType[], memberId = unref(user).memberId!): Promise<void> {
+    if (!items.length) {
+      return;
+    }
 
     loading.value = true;
 
-    const addressIdsToRemove: string[] =
-      typeof idsOrAddress[0] === "string"
-        ? (idsOrAddress as string[])
-        : (idsOrAddress as MemberAddressType[]).map((item) => item.id!);
+    const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
 
-    const updatedAddresses: MemberAddressType[] = addresses.value.filter(
-      (address) => !addressIdsToRemove.includes(address.id!)
-    );
+    try {
+      await deleteMemberAddresses(inputAddresses, memberId);
+    } catch (e) {
+      Logger.error(`useUserAddresses.${removeAddresses.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
 
-    await updateAddresses(updatedAddresses, memberId);
+    await loadAddresses();
   }
 
   return {
     sort,
+    isExistAddress,
     loadAddresses,
     setDefaultAddress,
     updateAddresses,
