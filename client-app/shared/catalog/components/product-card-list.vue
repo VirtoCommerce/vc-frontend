@@ -33,11 +33,6 @@
         <div class="text-[color:var(--color-link)] truncate">{{ product.code }}</div>
       </div>
 
-      <div class="hidden xl:block text-sm flex-shrink-0 w-24">
-        <div class="font-bold text-xs" v-t="'shared.catalog.product_card.manufacture_model_label'"></div>
-        <div class="text-[color:var(--color-link)] truncate">-</div>
-      </div>
-
       <!-- Product price -->
       <div class="text-sm flex-shrink-0 w-28">
         <div class="font-bold text-xs" v-t="'shared.catalog.product_card.price_label'"></div>
