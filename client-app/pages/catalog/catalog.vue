@@ -130,7 +130,7 @@
             </div>
 
             <!-- View options -->
-            <ViewMode v-model:mode="viewModeQueryParam" class="hidden md:inline-flex mr-6" />
+            <ViewMode v-model:mode="viewMode" class="hidden md:inline-flex mr-6" />
 
             <!-- Sorting -->
             <div class="flex items-center flex-grow md:flex-grow-0 z-10 ml-auto">
@@ -200,11 +200,11 @@
           <template v-if="products.length || loading">
             <DisplayProducts
               :loading="loading"
-              :view-mode="viewModeQueryParam"
+              :view-mode="viewMode"
               :items-per-page="itemsPerPage"
               :products="products"
               :class="
-                viewModeQueryParam === 'list'
+                viewMode === 'list'
                   ? 'space-y-5'
                   : 'grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-6 xl:gap-x-6 xl:gap-y-8'
               "
@@ -213,7 +213,7 @@
                 <VcButton
                   v-if="item.hasVariations"
                   :to="{ name: 'Product', params: { productId: item.id } }"
-                  :class="{ 'w-full': viewModeQueryParam === 'list' }"
+                  :class="{ 'w-full': viewMode === 'list' }"
                   class="uppercase mb-4"
                 >
                   {{ $t("pages.catalog.choose_button") }}
@@ -278,7 +278,7 @@ import {
   WatchStopHandle,
   triggerRef,
 } from "vue";
-import { breakpointsTailwind, eagerComputed, useBreakpoints, whenever } from "@vueuse/core";
+import { breakpointsTailwind, eagerComputed, useBreakpoints, whenever, useLocalStorage } from "@vueuse/core";
 import {
   Breadcrumbs,
   IBreadcrumbsItem,
@@ -329,7 +329,6 @@ const { fetchProducts, fetchMoreProducts, loading, loadingMore, products, total,
 
 const FILTERS_RESET_TIMEOUT_IN_MS = 500;
 
-const isMobile = breakpoints.smaller("md");
 const isMobileSidebar = breakpoints.smaller("lg");
 const mobileSidebarVisible = ref(false);
 const sidebarElement = shallowRef<HTMLElement | null>(null);
@@ -340,10 +339,7 @@ const itemsPerPage = ref(defaultPageSize);
 
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
 
-const viewModeQueryParam = useRouteQueryParam<"grid" | "list">("viewMode", {
-  defaultValue: "grid",
-  validator: (value) => (isMobile.value ? false : ["grid", "list"].includes(value)),
-});
+const viewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: productSortingList[0].id,
