@@ -1,4 +1,4 @@
 import builderPreview from "./builder-preview/BuilderPreview";
-import runner from "./runner";
+import runner from "./app-runner";
 
 runner([builderPreview]);

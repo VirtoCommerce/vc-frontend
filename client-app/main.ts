@@ -1,3 +1,3 @@
-import runner from "./runner";
+import runner from "./app-runner";
 
 runner();
