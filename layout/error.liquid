@@ -1,22 +1,34 @@
 <!DOCTYPE html>
 <html lang="en" class="h-100">
-<head>
-  <base href="{{ '/' | absolute_url }}" />
-  <style>
-    #error {
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    padding: 0 var(--spacer-sm);
-    margin: var(--spacer-xl) 0;
-    }
-  </style>
-</head>
-<body class="font-lato">
-    <!-- Content here -->
-    {{ content_for_layout }}
-</body>
+  <head>
+    <base href="{{ '/' | absolute_url }}" />
+  </head>
+  <body class="font-lato">
+    <div class="flex-grow flex flex-col">
+      <div class="polygon-bg flex-grow">
+        <div class="container mx-auto pt-5 pb-52 px-7 max-w-screen-lg">
+          <div class="flex lg:space-x-24">
+            <div class="w-full lg:w-1/2 lg:mt-8">
+              <h1 class="text-black-800 text-7xl md:text-8xl font-black mb-5">500</h1>
+              <h2 class="text-black-800 text-2xl md:text-4xl font-bold mb-2">Internal Server Error</h2>
+              <p class="text-gray-700 text-base md:text-xl leading-relaxed mb-10">We suggest you back to home.</p>
+              <div>
+                <a href="/" class="vc-button vc-button--md vc-button--primary w-40 uppercase"
+                  ><span class="vc-button__content">Home page</span></a
+                >
+              </div>
+            </div>
+            <div class="w-full lg:w-1/2 hidden lg:block">
+              <img
+                src="/static/images/errors/500.webp"
+                alt="Internal Server Error"
+                loading="lazy"
+                class="w-full max-w-md"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
