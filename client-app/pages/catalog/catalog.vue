@@ -200,11 +200,11 @@
           <template v-if="products.length || loading">
             <DisplayProducts
               :loading="loading"
-              :view-mode="viewMode"
+              :view-mode="isMobile ? 'grid' : viewMode"
               :items-per-page="itemsPerPage"
               :products="products"
               :class="
-                viewMode === 'list'
+                viewMode === 'list' && !isMobile
                   ? 'space-y-5'
                   : 'grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-6 xl:gap-x-6 xl:gap-y-8'
               "
@@ -329,6 +329,7 @@ const { fetchProducts, fetchMoreProducts, loading, loadingMore, products, total,
 
 const FILTERS_RESET_TIMEOUT_IN_MS = 500;
 
+const isMobile = breakpoints.smaller("md");
 const isMobileSidebar = breakpoints.smaller("lg");
 const mobileSidebarVisible = ref(false);
 const sidebarElement = shallowRef<HTMLElement | null>(null);
