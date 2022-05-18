@@ -52,8 +52,8 @@ export default async (plugins: any[] = []) => {
   app.use(router);
   app.use(head);
 
-  for (let plugin in plugins) {
-    app.use(<any>plugin);
+  for (const plugin of plugins) {
+    app.use(plugin);
   }
 
   app.mount("#app");

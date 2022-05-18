@@ -1,6 +1,6 @@
 import Vue from "vue";
 
-export default function install(app: Vue.App): void {
+export default function(app: Vue.App): void {
   console.log("install buidler preview plugin");
   console.log(app);
 
