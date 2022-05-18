@@ -9,7 +9,7 @@
               <h1 class="text-2xl md:mt-2 md:mb-4" v-html="$t('pages.search.header', [searchParams.keyword])"></h1>
               <div class="flex justify-start mb-6 mt-4">
                 <!-- View options -->
-                <ViewMode v-model:mode="viewModeQueryParam" class="hidden md:inline-flex mr-6" />
+                <ViewMode v-model:mode="viewMode" class="hidden md:inline-flex mr-6" />
 
                 <!-- Sorting -->
                 <div class="flex items-center flex-grow md:flex-grow-0 ml-auto">
@@ -30,11 +30,11 @@
             <!-- Products -->
             <DisplayProducts
               :loading="loading"
-              :view-mode="viewModeQueryParam"
+              :view-mode="isMobile ? 'grid' : viewMode"
               :items-per-page="itemsPerPage"
               :products="products"
               :class="
-                viewModeQueryParam === 'list'
+                viewMode === 'list' && !isMobile
                   ? 'space-y-5'
                   : 'grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-5 xl:gap-x-6 xl:gap-y-8'
               "
@@ -43,7 +43,7 @@
                 <VcButton
                   v-if="item.hasVariations"
                   :to="{ name: 'Product', params: { productId: item.id } }"
-                  :class="{ 'w-full': viewModeQueryParam === 'list' }"
+                  :class="{ 'w-full': viewMode === 'list' }"
                   class="uppercase mb-4"
                 >
                   {{ $t("pages.search.choose_button") }}
@@ -85,7 +85,7 @@
 
 <script setup lang="ts">
 import { computed, watch, onMounted, ref, onBeforeUnmount, WatchStopHandle } from "vue";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { breakpointsTailwind, useBreakpoints, useLocalStorage } from "@vueuse/core";
 import { DisplayProducts, ProductsSearchParams, useProducts, ViewMode } from "@/shared/catalog";
 import { VcButton, VcInfinityScrollLoader, VcSelect, VcScrollTopButton } from "@/components";
 import { AddToCart } from "@/shared/cart";
@@ -102,10 +102,7 @@ const isMobile = breakpoints.smaller("md");
 const page = ref(1);
 const itemsPerPage = ref(defaultSearchPageSize);
 
-const viewModeQueryParam = useRouteQueryParam<"grid" | "list">("viewMode", {
-  defaultValue: "grid",
-  validator: (value) => (isMobile.value ? false : ["grid", "list"].includes(value)),
-});
+const viewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: productSortingList[0].id,
