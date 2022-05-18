@@ -42,7 +42,7 @@
               <template #cart-handler="{ item }">
                 <VcButton
                   v-if="item.hasVariations"
-                  :to="{ name: 'Product', params: { productId: item.id } }"
+                  :to="productsRoutes[item.id]"
                   :class="{ 'w-full': viewMode === 'list' }"
                   class="uppercase mb-4"
                 >
@@ -86,7 +86,8 @@
 <script setup lang="ts">
 import { computed, watch, onMounted, ref, onBeforeUnmount, WatchStopHandle } from "vue";
 import { breakpointsTailwind, useBreakpoints, useLocalStorage } from "@vueuse/core";
-import { DisplayProducts, ProductsSearchParams, useProducts, ViewMode } from "@/shared/catalog";
+import { RouteLocationRaw } from "vue-router";
+import { DisplayProducts, getProductRoute, ProductsSearchParams, useProducts, ViewMode } from "@/shared/catalog";
 import { VcButton, VcInfinityScrollLoader, VcSelect, VcScrollTopButton } from "@/components";
 import { AddToCart } from "@/shared/cart";
 import { useRouteQueryParam } from "@core/composables";
@@ -118,6 +119,13 @@ const searchParams = computed<ProductsSearchParams>(() => ({
   sort: sortQueryParam.value,
   keyword: keywordQueryParam.value,
 }));
+
+const productsRoutes = computed(() =>
+  products.value.reduce<Record<string, RouteLocationRaw>>((result, product) => {
+    result[product.id] = getProductRoute(product);
+    return result;
+  }, {})
+);
 
 async function loadProducts() {
   page.value = 1;

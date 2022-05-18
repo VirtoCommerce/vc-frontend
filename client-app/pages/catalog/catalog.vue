@@ -2,7 +2,7 @@
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner grow" :class="{ 'polygon-gray-bg': !products.length && !loading }">
     <div class="max-w-screen-2xl px-5 md:px-12 mx-auto">
       <!-- Breadcrumbs -->
-      <Breadcrumbs class="mb-2 md:mb-8" :items="breadcrumbsItems"></Breadcrumbs>
+      <Breadcrumbs class="mb-2 md:mb-8" :items="breadcrumbs" />
 
       <div class="flex items-start lg:gap-6">
         <!-- Mobile sidebar back cover -->
@@ -212,7 +212,7 @@
               <template #cart-handler="{ item }">
                 <VcButton
                   v-if="item.hasVariations"
-                  :to="{ name: 'Product', params: { productId: item.id } }"
+                  :to="productsRoutes[item.id]"
                   :class="{ 'w-full': viewMode === 'list' }"
                   class="uppercase mb-4"
                 >
@@ -290,6 +290,7 @@ import {
   ProductsSearchParams,
   ProductsFilterValue,
   ProductsFilter,
+  getProductRoute,
 } from "@/shared/catalog";
 import {
   VcButton,
@@ -308,6 +309,7 @@ import { useElementVisibility, useRouteQueryParam } from "@core/composables";
 import { defaultPageSize, productSortingList } from "@core/constants";
 import QueryParamName from "@core/query-param-name.enum";
 import { useI18n } from "vue-i18n";
+import { RouteLocationRaw } from "vue-router";
 
 const { t } = useI18n();
 
@@ -378,7 +380,7 @@ const isExistSelectedFilters = eagerComputed<boolean>(() =>
   filters.value.some((filter) => filter.values.some((value) => value.selected))
 );
 
-const breadcrumbsItems = computed<IBreadcrumbsItem[]>(() => {
+const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
   const items: IBreadcrumbsItem[] = [{ url: "/", title: t("common.links.home") }];
 
   if (selectedCategory.value) {
@@ -389,6 +391,13 @@ const breadcrumbsItems = computed<IBreadcrumbsItem[]>(() => {
 
   return items;
 });
+
+const productsRoutes = computed(() =>
+  products.value.reduce<Record<string, RouteLocationRaw>>((result, product) => {
+    result[product.id] = getProductRoute(product);
+    return result;
+  }, {})
+);
 
 function hideMobileSidebar() {
   mobileSidebarVisible.value = false;

@@ -87,7 +87,7 @@ export default () => {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/login";
-      const res = await innerFetch<SignMeIn, IdentityResultType>(url, "POST", payload);
+      const res = await innerFetch<IdentityResultType, SignMeIn>(url, "POST", payload);
 
       if (res.succeeded) {
         await loadMe();
@@ -160,9 +160,7 @@ export default () => {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/logout";
-
-      await innerFetch<null, null>(url, "GET");
-
+      await innerFetch(url);
       await loadMe();
     } catch (e) {
       Logger.error("useUser.logout", e);
@@ -176,7 +174,7 @@ export default () => {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/forgotPassword";
-      return await innerFetch<ForgotPassword, IdentityResultType>(url, "POST", payload);
+      return await innerFetch<IdentityResultType, ForgotPassword>(url, "POST", payload);
     } catch (e) {
       Logger.error("useUser.forgotPassword", e);
       throw e;
@@ -189,7 +187,7 @@ export default () => {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/validateToken";
-      return await innerFetch<ValidateToken, IdentityResultType>(url, "POST", payload);
+      return await innerFetch<IdentityResultType, ValidateToken>(url, "POST", payload);
     } catch (e) {
       Logger.error("useUser.validateToken", e);
       throw e;
@@ -202,7 +200,7 @@ export default () => {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/resetPassword";
-      return await innerFetch<ResetPassword, IdentityResultType>(url, "POST", payload);
+      return await innerFetch<IdentityResultType, ResetPassword>(url, "POST", payload);
     } catch (e) {
       Logger.error("useUser.resetPassword", e);
       throw e;

@@ -40,15 +40,7 @@
               <div class="flex gap-5 px-5 py-3 text-sm">
                 <ul v-for="(column, index) in categoriesColumns" :key="index" class="w-1/5">
                   <li v-for="category in column" :key="category.name">
-                    <router-link
-                      :to="{
-                        name: 'Catalog',
-                        params: { categorySeoUrls: category.seoInfo?.semanticUrl },
-                      }"
-                      v-html="category.name"
-                      class="py-1 block"
-                      @click="hideSearchBar"
-                    />
+                    <router-link :to="category.slug" v-html="category.name" class="py-1 block" @click="hideSearchBar" />
                   </li>
                 </ul>
               </div>
