@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import { createApp, Plugin } from "vue";
 import { createHead } from "@vueuse/head";
 import { initCfg, initContext, initMenu } from "@core/utilities";
 import { config, context, menu } from "@core/plugins";
@@ -17,7 +17,7 @@ import routes from "./router";
 /**
  * Async application init
  */
-export default async (plugins: any[] = []) => {
+export default async (plugins: Plugin[] = []) => {
   // Load and prepare app config and context
   const [cfg, themeContext] = await Promise.all([initCfg(), initContext()]);
 
