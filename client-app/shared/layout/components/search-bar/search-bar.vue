@@ -16,7 +16,7 @@
         class="flex-grow mr-4 rounded h-10 px-4 font-medium text-sm outline-none disabled:bg-gray-200"
         @keyup.enter="search"
         @keyup.esc="searchDropdownVisible && hideSearchDropdown()"
-        @input="searchDropdownVisible && hideSearchDropdown()"
+        @input="search"
       />
 
       <VcButton class="uppercase px-4 !h-10" @click="search">
@@ -114,15 +114,18 @@ export default {
 <script setup lang="ts">
 import { VcButton, VcImage } from "@/components";
 import { useSearchBar } from "@/shared/layout";
+import { cfg } from "@/core/utilities";
 import { computed, ref, watchEffect } from "vue";
 import { useRouteQueryParam } from "@core/composables";
 import QueryParamName from "@core/query-param-name.enum";
 import { Category } from "@core/api/graphql/types";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
-import { whenever } from "@vueuse/core";
+import { useDebounceFn, whenever } from "@vueuse/core";
 
 // Number of categories column items in dropdown list
 const CATEGORIES_ITEMS_PER_COLUMN = 4;
+
+const SEARCH_BAR_DEBOUNCE_TIME = 2000;
 
 const {
   total,
@@ -153,10 +156,26 @@ const categoriesColumns = computed<Array<Category[]>>(() => {
 
 async function search() {
   const MAX_LENGTH = 30;
-  const COLUMNS = 5;
-  if (loading.value || !searchPhrase.value || searchPhrase.value.length > MAX_LENGTH) {
+  const MIN_LENGTH = cfg.search_min_chars || 0;
+
+  if (searchDropdownVisible) {
+    hideSearchDropdown();
+  }
+
+  if (
+    loading.value ||
+    !searchPhrase.value ||
+    searchPhrase.value.length > MAX_LENGTH ||
+    searchPhrase.value.length < MIN_LENGTH
+  ) {
     return;
   }
+
+  searchProductsDebounced();
+}
+
+const searchProductsDebounced = useDebounceFn(async () => {
+  const COLUMNS = 5;
 
   await searchResults({
     keyword: searchPhrase.value,
@@ -167,9 +186,8 @@ async function search() {
       itemsPerPage: CATEGORIES_ITEMS_PER_COLUMN * COLUMNS,
     },
   });
-
   await showSearchDropdown();
-}
+}, SEARCH_BAR_DEBOUNCE_TIME);
 
 watchEffect(() => (searchPhrase.value = searchPhraseInUrl.value ?? ""));
 whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });
