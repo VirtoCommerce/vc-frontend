@@ -4,7 +4,6 @@ import { Category, Product } from "@core/api/graphql/types";
 import { getSearchResults, SearchResultsParams } from "@core/api/graphql/catalog";
 import { highlightSearchText, prepareSearchText } from "@/shared/layout";
 import { MaybeRef } from "@vueuse/core";
-import { getCategoryLink } from "@/shared/catalog";
 
 const activeAnimations = reactive<Record<"bar" | "dropdown", Promise<void> | null>>({
   bar: null,
@@ -112,7 +111,6 @@ export default (
       categories.value = categoriesItems.map((item) => ({
         ...item,
         name: highlightSearchText(item.name, params.keyword),
-        slug: getCategoryLink(item),
       }));
 
       searchPhraseOfUploadedResults.value = preparedParams.keyword;

@@ -86,8 +86,7 @@
 <script setup lang="ts">
 import { computed, watch, onMounted, ref, onBeforeUnmount, WatchStopHandle } from "vue";
 import { breakpointsTailwind, useBreakpoints, useLocalStorage } from "@vueuse/core";
-import { RouteLocationRaw } from "vue-router";
-import { DisplayProducts, getProductRoute, ProductsSearchParams, useProducts, ViewMode } from "@/shared/catalog";
+import { DisplayProducts, ProductsSearchParams, useProducts, useProductsRoutes, ViewMode } from "@/shared/catalog";
 import { VcButton, VcInfinityScrollLoader, VcSelect, VcScrollTopButton } from "@/components";
 import { AddToCart } from "@/shared/cart";
 import { useRouteQueryParam } from "@core/composables";
@@ -98,6 +97,8 @@ const watchStopHandles: WatchStopHandle[] = [];
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { fetchProducts, fetchMoreProducts, loading, loadingMore, products, pages } = useProducts();
+
+const productsRoutes = useProductsRoutes(products);
 
 const isMobile = breakpoints.smaller("md");
 const page = ref(1);
@@ -119,13 +120,6 @@ const searchParams = computed<ProductsSearchParams>(() => ({
   sort: sortQueryParam.value,
   keyword: keywordQueryParam.value,
 }));
-
-const productsRoutes = computed(() =>
-  products.value.reduce<Record<string, RouteLocationRaw>>((result, product) => {
-    result[product.id] = getProductRoute(product);
-    return result;
-  }, {})
-);
 
 async function loadProducts() {
   page.value = 1;

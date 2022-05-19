@@ -40,7 +40,12 @@
               <div class="flex gap-5 px-5 py-3 text-sm">
                 <ul v-for="(column, index) in categoriesColumns" :key="index" class="w-1/5">
                   <li v-for="category in column" :key="category.name">
-                    <router-link :to="category.slug" v-html="category.name" class="py-1 block" @click="hideSearchBar" />
+                    <router-link
+                      :to="categoriesRoutes[category.id]"
+                      v-html="category.name"
+                      class="py-1 block"
+                      @click="hideSearchBar"
+                    />
                   </li>
                 </ul>
               </div>
@@ -113,6 +118,7 @@ import QueryParamName from "@core/query-param-name.enum";
 import { Category } from "@core/api/graphql/types";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 import { useDebounceFn, whenever } from "@vueuse/core";
+import { useCategoriesRoutes } from "@/shared/catalog";
 
 // Number of categories column items in dropdown list
 const CATEGORIES_ITEMS_PER_COLUMN = 4;
@@ -132,8 +138,10 @@ const {
   searchResults,
 } = useSearchBar();
 
-const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
+const categoriesRoutes = useCategoriesRoutes(categories);
+
+const searchPhrase = ref("");
 
 const isApplied = computed<boolean>(() => searchPhraseInUrl.value === searchPhrase.value);
 

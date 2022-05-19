@@ -1,15 +1,11 @@
 <template>
-  <template v-if="seoInfo">
-    <component v-if="seoInfo.objectType === 'Category'" :is="Catalog" :categorySeoUrls="pathMatch" />
-    <component v-else-if="seoInfo.objectType === 'CatalogProduct'" :is="Product" :productId="seoInfo.objectId" />
-    <NotFound v-else />
-  </template>
-
+  <component v-if="seoInfo?.objectType === 'Category'" :is="Category" :category-seo-urls="seoInfo?.slug" />
+  <component v-else-if="seoInfo?.objectType === 'CatalogProduct'" :is="Product" :product-id="seoInfo?.objectId" />
   <NotFound v-else-if="!loading" />
 </template>
 
 <script setup lang="ts">
-import Catalog from "@/pages/catalog/catalog.vue";
+import Category from "@/pages/category/category.vue";
 import Product from "@/pages/product/product.vue";
 import NotFound from "@/pages/404/404.vue";
 

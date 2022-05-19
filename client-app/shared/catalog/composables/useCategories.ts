@@ -6,7 +6,6 @@ import { CategoryTree } from "../types";
 
 const categoryTree: Ref<CategoryTree> = ref({});
 const loading: Ref<boolean> = ref(true);
-const selectedCategory: Ref<CategoryTree | undefined> = ref();
 
 const itemToTree = (category: Category, isCurrent: boolean): CategoryTree => {
   return {
@@ -17,6 +16,7 @@ const itemToTree = (category: Category, isCurrent: boolean): CategoryTree => {
     items: [],
     isCurrent,
     seoUrl: category.seoInfo?.semanticUrl ?? "",
+    breadcrumbs: category.breadcrumbs,
   };
 };
 
@@ -32,16 +32,20 @@ const buildCategoryTree = (parent: CategoryTree, allCats: Category[], activeCatI
   return parent;
 };
 
-function searchCategory(categoryTreeItem: CategoryTree, seoUrl: string): CategoryTree | undefined {
+function searchCategoryByKey(
+  categoryTreeItem: CategoryTree,
+  key: keyof CategoryTree,
+  value: any
+): CategoryTree | undefined {
   const items = categoryTreeItem.items ?? [];
-  let category = items.find((item) => item.seoUrl === seoUrl);
+  let category = items.find((item) => item[key] === value);
 
   if (category) {
     return category;
   }
 
   for (const item of items) {
-    category = searchCategory(item, seoUrl);
+    category = searchCategoryByKey(item, key, value);
 
     if (category) {
       break;
@@ -49,10 +53,6 @@ function searchCategory(categoryTreeItem: CategoryTree, seoUrl: string): Categor
   }
 
   return category;
-}
-
-function selectCategoryBySeoUrl(seoUrl?: string) {
-  selectedCategory.value = seoUrl ? searchCategory(categoryTree.value, seoUrl) : undefined;
 }
 
 async function loadCategoriesTree(activeCatId: string) {
@@ -70,10 +70,18 @@ async function loadCategoriesTree(activeCatId: string) {
   }
 }
 
-export default () => ({
-  selectCategoryBySeoUrl,
-  loadCategoriesTree,
-  loading: readonly(loading),
-  categoryTree: computed(() => categoryTree.value),
-  selectedCategory: computed(() => selectedCategory.value),
-});
+export default () => {
+  const selectedCategory: Ref<CategoryTree | undefined> = ref();
+
+  function selectCategoryByKey(key: keyof CategoryTree, value: any) {
+    selectedCategory.value = value ? searchCategoryByKey(categoryTree.value, key, value) : undefined;
+  }
+
+  return {
+    selectCategoryByKey,
+    loadCategoriesTree,
+    loading: readonly(loading),
+    categoryTree: computed(() => categoryTree.value),
+    selectedCategory: computed(() => selectedCategory.value),
+  };
+};

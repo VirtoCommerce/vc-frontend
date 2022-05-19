@@ -136,18 +136,19 @@ import {
   IProductProperties,
   VcEmptyPage,
 } from "@/components";
-import { getProductRoute, useProducts } from "@/shared/catalog";
+import { useProducts, useProductsRoutes } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 import _ from "lodash";
-import { computed, onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useCompareProducts } from "@/shared/compare";
 import { useI18n } from "vue-i18n";
-import { RouteLocationRaw } from "vue-router";
 
+const { t } = useI18n();
 const { fetchProducts, products } = useProducts();
 const { clearCompareList, productsLimit, removeFromCompareList, productsIds } = useCompareProducts();
-const { t } = useI18n();
+
+const productsRoutes = useProductsRoutes(products);
 
 const breadcrumbs: IBreadcrumbs[] = [
   { title: t("pages.compare.links.home"), route: "/" },
@@ -161,13 +162,6 @@ const showOnlyDifferences = ref(false);
 
 const originalProperties = ref<IProductProperties>({});
 const computedProperties = ref<IProductProperties>({});
-
-const productsRoutes = computed(() =>
-  products.value.reduce<Record<string, RouteLocationRaw>>((result, product) => {
-    result[product.id] = getProductRoute(product);
-    return result;
-  }, {})
-);
 
 function onShowOnlyDifferencesChange() {
   if (showOnlyDifferences.value) {

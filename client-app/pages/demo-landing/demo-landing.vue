@@ -166,26 +166,20 @@
 
 <script setup lang="ts">
 import { IBreadcrumbs, VcBreadcrumbs, VcButton, VcImage, VcInput, VcCheckbox } from "@/components";
-import { computed, onMounted } from "vue";
+import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { RouteLocationRaw } from "vue-router";
-import { getProductRoute, ProductCardGrid, useProducts } from "@/shared/catalog";
+import { ProductCardGrid, useProducts, useProductsRoutes } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 
 const { t } = useI18n();
 const { products, fetchProducts } = useProducts();
 
+const productsRoutes = useProductsRoutes(products);
+
 const breadcrumbs: IBreadcrumbs[] = [
   { route: "/", title: t("pages.compare.links.home") },
   { title: t("shared.layout.footer.demo_landing_link") },
 ];
-
-const productsRoutes = computed(() =>
-  products.value.reduce<Record<string, RouteLocationRaw>>((result, product) => {
-    result[product.id] = getProductRoute(product);
-    return result;
-  }, {})
-);
 
 onMounted(async () => {
   await fetchProducts({

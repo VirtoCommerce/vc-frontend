@@ -10,7 +10,7 @@ const SingInPage = () => import("./pages/sign-in/sign-in-page.vue");
 const SignUpPage = () => import("./pages/sign-up/sign-up-page.vue");
 const Search = () => import("./pages/search/search.vue");
 const Matcher = () => import("./shared/catalog/components/matcher.vue");
-const Catalog = () => import("./pages/catalog/catalog.vue");
+const Category = () => import("./pages/category/category.vue");
 const BulkOrder = () => import("./pages/bulk-order/bulk-order.vue");
 const Checkout = () => import("./pages/checkout/checkout.vue");
 const CheckoutDefaults = () => import("./pages/account/checkout-defaults.vue");
@@ -61,7 +61,8 @@ const routes: RouteRecordRaw[] = [
   { path: "/403", name: "NoAccess", component: Error403 },
   { path: "/404", name: "NotFound", component: Error404 },
   { path: "/500", name: "InternalError", component: Error500 },
-  { path: "/catalog/:categorySeoUrls*", name: "Catalog", component: Catalog, props: true },
+  { path: "/catalog", name: "Catalog", component: Category, props: true },
+  { path: "/category/:categoryId", name: "Category", component: Category, props: true },
   { path: "/product/:productId", name: "Product", component: Product, props: true },
   { path: "/:pathMatch(.*)*", name: "Matcher", component: Matcher, props: true },
 ];
