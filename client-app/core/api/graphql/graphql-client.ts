@@ -12,7 +12,7 @@ const errorHandler = onError(({ graphQLErrors }) => {
   if (graphQLErrors && graphQLErrors.length) {
     const unauthorizedError = _.find(graphQLErrors, (x) => x.extensions?.code === "Unauthorized");
     if (unauthorizedError) {
-      location.href = "/";
+      location.href = "/sign-in";
     }
   }
 });
