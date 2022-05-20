@@ -2,6 +2,13 @@
 <html lang="en" class="h-100">
   <head>
     <base href="{{ '/' | absolute_url }}" />
+    {{ 'index.css' | asset_url | stylesheet_tag }}
+    <style>
+      :root {
+        --color-primary: #f0ad4e;
+        --color-primary-hover: #EC951A;
+      }
+    </style>
   </head>
   <body class="font-lato">
     <div class="flex-grow flex flex-col">
@@ -13,8 +20,12 @@
               <h2 class="text-black-800 text-2xl md:text-4xl font-bold mb-2">Internal Server Error</h2>
               <p class="text-gray-700 text-base md:text-xl leading-relaxed mb-10">We suggest you back to home.</p>
               <div>
-                <a href="/" class="vc-button vc-button--md vc-button--primary w-40 uppercase"
-                  ><span class="vc-button__content">Home page</span></a
+                <a
+                  href="/"
+                  class="vc-button vc-button--md vc-button--primary w-40 uppercase"
+                  disabled="false"
+                  data-v-2994eb52=""
+                  ><span class="vc-button__content" data-v-2994eb52="">Home page</span></a
                 >
               </div>
             </div>
