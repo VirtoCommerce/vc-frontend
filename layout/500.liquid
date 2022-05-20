@@ -5,8 +5,8 @@
     {{ 'index.css' | asset_url | stylesheet_tag }}
     <style>
       :root {
-        --color-primary: #f0ad4e;
-        --color-primary-hover: #EC951A;
+        --color-primary: {{ 'color_primary' | setting }};
+        --color-primary-hover: {{ 'color_primary_hover' | setting }};
       }
     </style>
   </head>
@@ -22,14 +22,12 @@
               <div>
                 <a
                   href="/"
-                  class=" relative inline-flex justify-center items-center rounded
+                  class="relative inline-flex justify-center items-center rounded
                   border-2 border-transparent font-roboto-condensed select-none
                   focus:outline-dotted outline-1 outline-offset-[3px] w-40 uppercase
                   h-9 text-base
                   bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary-hover)]
                   outline-[color:var(--color-primary)] text-white"
-                  disabled="false"
-
                   ><span class="flex justify-center items-center">Home page</span></a
                 >
               </div>
