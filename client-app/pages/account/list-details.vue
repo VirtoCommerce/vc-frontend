@@ -41,7 +41,7 @@
               <WishlistProductItem
                 v-for="item in listItems"
                 :key="item.id"
-                :line-item="item"
+                :product="item.product!"
                 class="even:bg-gray-50"
                 @remove="openDeleteProductDialog(item)"
               ></WishlistProductItem>
@@ -141,10 +141,7 @@ const breadcrumbs: IBreadcrumbs[] = [
   { title: t("common.links.home"), route: { name: "Home" } },
   { title: t("common.links.account"), route: { name: "Account" } },
   { title: t("shared.account.navigation.links.your_lists"), route: { name: "Lists" } },
-  {
-    title: t("shared.account.navigation.links.list_details"),
-    route: { name: "ListDetails", params: { listId: list.value?.id } },
-  },
+  { title: t("shared.account.navigation.links.list_details") },
 ];
 
 const itemsPerPage = ref(6);

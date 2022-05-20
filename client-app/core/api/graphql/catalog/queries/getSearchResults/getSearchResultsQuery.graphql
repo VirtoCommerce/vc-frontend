@@ -70,6 +70,7 @@ query GetSearchResults(
     items {
       id
       name
+      slug
       seoInfo {
         semanticUrl
       }

@@ -2,7 +2,7 @@
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner grow" :class="{ 'polygon-gray-bg': !products.length && !loading }">
     <div class="max-w-screen-2xl px-5 md:px-12 mx-auto">
       <!-- Breadcrumbs -->
-      <Breadcrumbs class="mb-2 md:mb-8" :items="breadcrumbsItems"></Breadcrumbs>
+      <Breadcrumbs class="mb-2 md:mb-8" :items="breadcrumbs" />
 
       <div class="flex items-start lg:gap-6">
         <!-- Mobile sidebar back cover -->
@@ -212,7 +212,7 @@
               <template #cart-handler="{ item }">
                 <VcButton
                   v-if="item.hasVariations"
-                  :to="{ name: 'Product', params: { productId: item.id } }"
+                  :to="productsRoutes[item.id]"
                   :class="{ 'w-full': viewMode === 'list' }"
                   class="uppercase mb-4"
                 >
@@ -277,6 +277,7 @@ import {
   onBeforeUnmount,
   WatchStopHandle,
   triggerRef,
+  toRef,
 } from "vue";
 import { breakpointsTailwind, eagerComputed, useBreakpoints, whenever, useLocalStorage } from "@vueuse/core";
 import {
@@ -290,6 +291,7 @@ import {
   ProductsSearchParams,
   ProductsFilterValue,
   ProductsFilter,
+  useProductsRoutes,
 } from "@/shared/catalog";
 import {
   VcButton,
@@ -314,6 +316,11 @@ const { t } = useI18n();
 const watchStopHandles: WatchStopHandle[] = [];
 
 const props = defineProps({
+  categoryId: {
+    type: String,
+    default: "",
+  },
+
   categorySeoUrls: {
     type: [String, Array] as PropType<string | string[]>,
     default: "",
@@ -321,11 +328,13 @@ const props = defineProps({
 });
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { selectedCategory, selectCategoryBySeoUrl, loadCategoriesTree } = useCategories();
+const { selectedCategory, selectCategoryByKey, loadCategoriesTree } = useCategories();
 const { fetchProducts, fetchMoreProducts, loading, loadingMore, products, total, pages, filters, showInStock } =
   useProducts({
     withFilters: true,
   });
+
+const productsRoutes = useProductsRoutes(products);
 
 const FILTERS_RESET_TIMEOUT_IN_MS = 500;
 
@@ -378,13 +387,22 @@ const isExistSelectedFilters = eagerComputed<boolean>(() =>
   filters.value.some((filter) => filter.values.some((value) => value.selected))
 );
 
-const breadcrumbsItems = computed<IBreadcrumbsItem[]>(() => {
+const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
   const items: IBreadcrumbsItem[] = [{ url: "/", title: t("common.links.home") }];
 
-  if (selectedCategory.value) {
-    items.push({
-      title: selectedCategory.value.label!,
+  if (!selectedCategory.value) {
+    return items;
+  }
+
+  if (selectedCategory.value.breadcrumbs!.length) {
+    selectedCategory.value.breadcrumbs!.forEach((breadcrumb) => {
+      items.push({
+        title: breadcrumb.title,
+        url: `/${breadcrumb.seoPath}`,
+      });
     });
+  } else {
+    items.push({ title: selectedCategory.value.label! });
   }
 
   return items;
@@ -457,8 +475,18 @@ async function loadMoreProducts() {
 }
 
 onMounted(async () => {
+  const categoryId = toRef(props, "categoryId");
+
   await loadCategoriesTree(""); // TODO: use active category key instead of id
-  selectCategoryBySeoUrl(categorySeoUrl.value);
+
+  if (categoryId.value) {
+    selectCategoryByKey("id", categoryId.value);
+    watch(categoryId, (value) => selectCategoryByKey("id", value));
+  } else {
+    selectCategoryByKey("seoUrl", categorySeoUrl.value);
+    watch(categorySeoUrl, (value) => selectCategoryByKey("seoUrl", value));
+  }
+
   await loadProducts();
 
   // Start change tracking after initial data load
@@ -487,5 +515,4 @@ onBeforeUnmount(() => {
 
 watchEffect(() => (keyword.value = keywordQueryParam.value ?? ""));
 whenever(() => !isMobileSidebar.value, hideMobileSidebar);
-watch(categorySeoUrl, selectCategoryBySeoUrl);
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div v-click-outside="hideList" class="relative select-none">
+  <div v-click-outside="() => open && hideList()" class="relative select-none">
     <button
       class="relative flex items-center space-x-1 py-3 pr-3.5 appearance-none leading-none text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
       @click="toggle"

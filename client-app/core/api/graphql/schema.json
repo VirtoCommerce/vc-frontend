@@ -332,6 +332,31 @@
       },
       {
         "kind": "OBJECT",
+        "name": "BulkWishlistType",
+        "fields": [
+          {
+            "name": "wishlists",
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "WishlistType",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
         "name": "CartAddressType",
         "fields": [
           {
@@ -4968,13 +4993,9 @@
             "name": "description",
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -6038,6 +6059,50 @@
           },
           {
             "name": "userId",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "InputAddWishlistBulkItemType",
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "listIds",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "productId",
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -13532,6 +13597,33 @@
             "deprecationReason": null
           },
           {
+            "name": "addWishlistBulkItem",
+            "args": [
+              {
+                "name": "command",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "InputAddWishlistBulkItemType",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "BulkWishlistType",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "addWishlistItem",
             "args": [
               {
@@ -15795,6 +15887,17 @@
             "type": {
               "kind": "OBJECT",
               "name": "CurrencyType",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "description",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null
             },
             "isDeprecated": false,
@@ -18199,6 +18302,17 @@
             "deprecationReason": null
           },
           {
+            "name": "description",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "discountAmount",
             "args": [],
             "type": {
@@ -18250,8 +18364,8 @@
               "name": "String",
               "ofType": null
             },
-            "isDeprecated": true,
-            "deprecationReason": "Left for backward compatibility. Should be removed in future. Use Code."
+            "isDeprecated": false,
+            "deprecationReason": null
           },
           {
             "name": "paymentMethodGroupType",
@@ -23725,6 +23839,17 @@
                 "name": "Property",
                 "ofType": null
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "slug",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null

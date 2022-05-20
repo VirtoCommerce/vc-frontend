@@ -51,7 +51,7 @@
             class="w-32 flex-shrink-0 lg:flex-shrink md:w-48 md:pb-6 flex flex-col"
           >
             <!-- Product image -->
-            <router-link :to="{ name: 'Product', params: { productId: product.id } }" class="cursor-pointer mb-3">
+            <router-link :to="productsRoutes[product.id]" class="cursor-pointer mb-3">
               <div
                 class="flex flex-col justify-center items-center border border-gray-100 h-32 w-32 md:h-48 md:w-48 relative"
               >
@@ -74,7 +74,7 @@
 
             <!-- Product title -->
             <router-link
-              :to="{ name: 'Product', params: { productId: product.id } }"
+              :to="productsRoutes[product.id]"
               class="text-[color:var(--color-link)] font-extrabold text-sm mb-3 flex-grow line-clamp-3 overflow-hidden cursor-pointer"
             >
               {{ product.name }}
@@ -136,7 +136,7 @@ import {
   IProductProperties,
   VcEmptyPage,
 } from "@/components";
-import { useProducts } from "@/shared/catalog";
+import { useProducts, useProductsRoutes } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 import _ from "lodash";
 import { onMounted, ref, watch } from "vue";
@@ -144,14 +144,16 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useCompareProducts } from "@/shared/compare";
 import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 const { fetchProducts, products } = useProducts();
 const { clearCompareList, productsLimit, removeFromCompareList, productsIds } = useCompareProducts();
-const { t } = useI18n();
 
-const breadcrumbs = ref<IBreadcrumbs[]>([
+const productsRoutes = useProductsRoutes(products);
+
+const breadcrumbs: IBreadcrumbs[] = [
   { title: t("pages.compare.links.home"), route: "/" },
-  { title: t("pages.compare.links.compare_products"), route: "/compare-products" },
-]);
+  { title: t("pages.compare.links.compare_products") },
+];
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");

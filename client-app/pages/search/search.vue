@@ -42,7 +42,7 @@
               <template #cart-handler="{ item }">
                 <VcButton
                   v-if="item.hasVariations"
-                  :to="{ name: 'Product', params: { productId: item.id } }"
+                  :to="productsRoutes[item.id]"
                   :class="{ 'w-full': viewMode === 'list' }"
                   class="uppercase mb-4"
                 >
@@ -86,7 +86,7 @@
 <script setup lang="ts">
 import { computed, watch, onMounted, ref, onBeforeUnmount, WatchStopHandle } from "vue";
 import { breakpointsTailwind, useBreakpoints, useLocalStorage } from "@vueuse/core";
-import { DisplayProducts, ProductsSearchParams, useProducts, ViewMode } from "@/shared/catalog";
+import { DisplayProducts, ProductsSearchParams, useProducts, useProductsRoutes, ViewMode } from "@/shared/catalog";
 import { VcButton, VcInfinityScrollLoader, VcSelect, VcScrollTopButton } from "@/components";
 import { AddToCart } from "@/shared/cart";
 import { useRouteQueryParam } from "@core/composables";
@@ -97,6 +97,8 @@ const watchStopHandles: WatchStopHandle[] = [];
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { fetchProducts, fetchMoreProducts, loading, loadingMore, products, pages } = useProducts();
+
+const productsRoutes = useProductsRoutes(products);
 
 const isMobile = breakpoints.smaller("md");
 const page = ref(1);
