@@ -79,6 +79,8 @@ export interface IThemeConfigPreset {
 
   wishlists_limit?: number;
 
+  search_min_chars?: number;
+
   checkout_comment_enabled?: boolean;
   checkout_purchase_order_enabled?: boolean;
   checkout_coupon_enabled?: boolean;
