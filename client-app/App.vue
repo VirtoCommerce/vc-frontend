@@ -31,7 +31,7 @@ import { i18n } from "./i18n";
 
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { loadMe, me, isAuthenticated } = useUser();
+const { me, isAuthenticated } = useUser();
 const { loadMyCart } = useCart();
 const { currentCurrency } = useCurrency();
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
@@ -47,10 +47,10 @@ router.beforeEach(async (to) => {
     await hideSearchDropdown();
   }
 
-  // Load user if needed (used during SSR)
-  if (!me.value.id) {
-    await loadMe();
-  }
+  // // Load user if needed (used during SSR)
+  // if (!me.value.id) {
+  //   await loadMe();
+  // }
 
   // Make Dashboard the default Home page for authorized users
   if (Array<RouteRecordName>("Home", "SignIn", "SignUp").includes(to.name!) && isAuthenticated.value) {
@@ -70,7 +70,7 @@ router.beforeEach(async (to) => {
 });
 
 onMounted(async () => {
-  await loadMe();
+  // await loadMe();
 
   // FIXME
   // temporary solution

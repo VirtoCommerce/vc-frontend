@@ -14,38 +14,44 @@ import {
 } from "@/shared/account";
 import useFetch from "@/core/composables/useFetch";
 
-const me: Ref<UserType> = ref({
-  userName: "",
-  phoneNumberConfirmed: false,
-  twoFactorEnabled: false,
-  securityStamp: "",
-  passwordExpired: false,
-  id: "",
-  accessFailedCount: 0,
-  emailConfirmed: false,
-  isAdministrator: false,
-  lockoutEnabled: false,
-});
+let me: UserType;
+// = ref({
+//   userName: "",
+//   phoneNumberConfirmed: false,
+//   twoFactorEnabled: false,
+//   securityStamp: "",
+//   passwordExpired: false,
+//   id: "",
+//   accessFailedCount: 0,
+//   emailConfirmed: false,
+//   isAdministrator: false,
+//   lockoutEnabled: false,
+// });
 
 const loading: Ref<boolean> = ref(false);
-const isAuthenticated = eagerComputed<boolean>(() => !!me.value.userName && me.value.userName !== "Anonymous");
-const organization = computed<Organization | null>(() => me.value?.contact?.organizations?.items?.[0] ?? null);
+let isAuthenticated = false;
+
+// const isAuthenticated = eagerComputed<boolean>(() => !!me.value.userName && me.value.userName !== "Anonymous");
+let organization: Organization | null;
+// const organization = computed<Organization | null>(() => me.value?.contact?.organizations?.items?.[0] ?? null);
+
+async function loadMe() {
+  try {
+    me = await getMe();
+    isAuthenticated = !!me.userName && me.userName !== "Anonymous";
+    organization = me?.contact?.organizations?.items?.[0] ?? null;
+  } catch (e) {
+    Logger.error("useUser.loadMe", e);
+    throw e;
+  } finally {
+    loading.value = false;
+  }
+}
+
+await loadMe();
 
 export default () => {
   const { innerFetch } = useFetch();
-
-  async function loadMe() {
-    loading.value = true;
-
-    try {
-      me.value = await getMe();
-    } catch (e) {
-      Logger.error("useUser.loadMe", e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-  }
 
   async function updateUser(personalData: UserPersonalData): Promise<IdentityResultType> {
     try {
@@ -210,11 +216,10 @@ export default () => {
   }
 
   return {
-    isAuthenticated,
-    organization,
+    isAuthenticated: computed(() => isAuthenticated),
+    organization: computed(() => organization),
     updateUser,
     changePassword,
-    loadMe,
     signMeIn,
     registerUser,
     registerOrganization,
@@ -223,6 +228,6 @@ export default () => {
     validateToken,
     resetPassword,
     loading: readonly(loading),
-    me: computed(() => me.value),
+    me: computed(() => me),
   };
 };
