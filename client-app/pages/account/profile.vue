@@ -1,129 +1,116 @@
 <template>
-  <div class="bg-gray-100 flex-grow pt-6 pb-16 shadow-inner">
-    <div class="max-w-screen-2xl md:px-12 mx-auto">
-      <div class="flex lg:space-x-5">
-        <!-- First column-->
-        <div class="hidden lg:flex flex-col lg:w-1/5 space-y-5">
-          <AccountNavigation />
-        </div>
+  <!-- Title block -->
+  <div class="flex justify-between items-center mx-5 md:mx-0">
+    <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.account.profile.title'" />
+  </div>
 
-        <!-- Second column-->
-        <div class="flex flex-col w-full lg:w-4/5 space-y-5">
-          <div class="flex justify-between items-center mx-5 md:mx-0">
-            <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.account.profile.title'" />
-          </div>
+  <div
+    class="flex flex-col bg-white shadow-sm p-6 md:rounded md:border polygon-bg [--polygon-bg-position:right_bottom_-180px]"
+  >
+    <form @submit.prevent="onSubmit" class="lg:w-1/2 flex flex-col">
+      <!-- Errors block -->
+      <VcAlert v-if="updateProfileError" class="mb-2" icon text type="error">
+        <span v-t="'pages.account.profile.update_error_alert'" />
+      </VcAlert>
 
-          <div
-            class="flex flex-col bg-white shadow-sm p-6 md:rounded md:border polygon-bg [--polygon-bg-position:right_bottom_-180px]"
-          >
-            <form @submit.prevent="onSubmit" class="lg:w-1/2 flex flex-col">
-              <!-- Errors block -->
-              <VcAlert v-if="updateProfileError" class="mb-2" icon text type="error">
-                <span v-t="'pages.account.profile.update_error_alert'" />
-              </VcAlert>
+      <VcInput
+        v-model="firstName"
+        :label="$t('pages.account.profile.first_name_label')"
+        :placeholder="$t('pages.account.profile.first_name_placeholder')"
+        :is-disabled="isSubmitting"
+        :error-message="errors.firstName"
+        name="firstName"
+        class="mb-5"
+        is-required
+      />
 
-              <VcInput
-                v-model="firstName"
-                :label="$t('pages.account.profile.first_name_label')"
-                :placeholder="$t('pages.account.profile.first_name_placeholder')"
-                :is-disabled="isSubmitting"
-                :error-message="errors.firstName"
-                name="firstName"
-                class="mb-5"
-                is-required
-              />
+      <VcInput
+        v-model="lastName"
+        :label="$t('pages.account.profile.last_name_label')"
+        :placeholder="$t('pages.account.profile.last_name_placeholder')"
+        :is-disabled="isSubmitting"
+        :error-message="errors.lastName"
+        name="lastName"
+        class="mb-5"
+        is-required
+      />
 
-              <VcInput
-                v-model="lastName"
-                :label="$t('pages.account.profile.last_name_label')"
-                :placeholder="$t('pages.account.profile.last_name_placeholder')"
-                :is-disabled="isSubmitting"
-                :error-message="errors.lastName"
-                name="lastName"
-                class="mb-5"
-                is-required
-              />
+      <VcInput
+        :model-value="email"
+        :label="$t('pages.account.profile.email_label')"
+        :placeholder="$t('pages.account.profile.email_placeholder')"
+        name="email"
+        class="mb-5"
+        is-disabled
+      />
 
-              <VcInput
-                :model-value="email"
-                :label="$t('pages.account.profile.email_label')"
-                :placeholder="$t('pages.account.profile.email_placeholder')"
-                name="email"
-                class="mb-5"
-                is-disabled
-              />
+      <div class="flex items-center my-5">
+        <svg width="54" height="54" class="-ml-0.5 mr-2 text-[color:var(--color-primary)]">
+          <use href="/static/images/polygon-key.svg#main" />
+        </svg>
 
-              <div class="flex items-center my-5">
-                <svg width="54" height="54" class="-ml-0.5 mr-2 text-[color:var(--color-primary)]">
-                  <use href="/static/images/polygon-key.svg#main" />
-                </svg>
-
-                <h3
-                  class="text-gray-800 text-xl font-extrabold uppercase"
-                  v-t="'pages.account.profile.change_password_title'"
-                />
-              </div>
-
-              <VcInput
-                v-model="oldPassword"
-                :label="$t('pages.account.profile.old_password_label')"
-                :placeholder="$t('pages.account.profile.old_password_placeholder')"
-                :is-disabled="isSubmitting"
-                :error-message="errors.oldPassword"
-                type="password"
-                name="oldPassword"
-                class="mb-5"
-              />
-
-              <VcInput
-                :model-value="newPassword"
-                :label="$t('pages.account.profile.new_password_label')"
-                :placeholder="$t('pages.account.profile.new_password_placeholder')"
-                :is-disabled="isSubmitting"
-                :is-required="!!oldPassword"
-                :error-message="errors.newPassword"
-                type="password"
-                name="newPassword"
-                class="mb-5"
-                @update:model-value="oldPassword ? (newPassword = $event.trim()) : null"
-              />
-
-              <VcInput
-                :model-value="confirmNewPassword"
-                :label="$t('pages.account.profile.confirm_new_password_label')"
-                :placeholder="$t('pages.account.profile.confirm_new_password_placeholder')"
-                :is-disabled="isSubmitting"
-                :is-required="!!oldPassword"
-                :error-message="errors.confirmNewPassword"
-                type="password"
-                name="confirmNewPassword"
-                class="mb-5"
-                @update:model-value="oldPassword ? (confirmNewPassword = $event.trim()) : null"
-              />
-
-              <!-- Form actions -->
-              <div class="mt-5 w-1/2 self-center lg:self-auto">
-                <VcButton
-                  :is-disabled="!meta.dirty || !meta.valid || meta.pending"
-                  :is-waiting="isSubmitting"
-                  size="lg"
-                  class="uppercase w-full lg:w-48"
-                  is-submit
-                >
-                  {{ $t("pages.account.profile.update_button") }}
-                </VcButton>
-              </div>
-            </form>
-          </div>
-        </div>
+        <h3
+          class="text-gray-800 text-xl font-extrabold uppercase"
+          v-t="'pages.account.profile.change_password_title'"
+        />
       </div>
-    </div>
+
+      <VcInput
+        v-model="oldPassword"
+        :label="$t('pages.account.profile.old_password_label')"
+        :placeholder="$t('pages.account.profile.old_password_placeholder')"
+        :is-disabled="isSubmitting"
+        :error-message="errors.oldPassword"
+        type="password"
+        name="oldPassword"
+        class="mb-5"
+      />
+
+      <VcInput
+        :model-value="newPassword"
+        :label="$t('pages.account.profile.new_password_label')"
+        :placeholder="$t('pages.account.profile.new_password_placeholder')"
+        :is-disabled="isSubmitting"
+        :is-required="!!oldPassword"
+        :error-message="errors.newPassword"
+        type="password"
+        name="newPassword"
+        class="mb-5"
+        @update:model-value="oldPassword ? (newPassword = $event.trim()) : null"
+      />
+
+      <VcInput
+        :model-value="confirmNewPassword"
+        :label="$t('pages.account.profile.confirm_new_password_label')"
+        :placeholder="$t('pages.account.profile.confirm_new_password_placeholder')"
+        :is-disabled="isSubmitting"
+        :is-required="!!oldPassword"
+        :error-message="errors.confirmNewPassword"
+        type="password"
+        name="confirmNewPassword"
+        class="mb-5"
+        @update:model-value="oldPassword ? (confirmNewPassword = $event.trim()) : null"
+      />
+
+      <!-- Form actions -->
+      <div class="mt-5 w-1/2 self-center lg:self-auto">
+        <VcButton
+          :is-disabled="!meta.dirty || !meta.valid || meta.pending"
+          :is-waiting="isSubmitting"
+          size="lg"
+          class="uppercase w-full lg:w-48"
+          is-submit
+        >
+          {{ $t("pages.account.profile.update_button") }}
+        </VcButton>
+      </div>
+    </form>
   </div>
 </template>
 
 <script setup lang="ts">
 import { VcAlert, VcButton, VcInput } from "@/components";
-import { AccountNavigation, ProfileUpdateSuccessDialog, useUser } from "@/shared/account";
+import { ProfileUpdateSuccessDialog, useUser } from "@/shared/account";
 import { computed, Ref, ref } from "vue";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";

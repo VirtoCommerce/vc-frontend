@@ -1,6 +1,6 @@
 <template>
   <nav class="text-sm">
-    <ol class="flex">
+    <ol class="flex flex-wrap">
       <template v-for="(item, i) in items" :key="i">
         <template v-if="i < items.length - 1">
           <li>
