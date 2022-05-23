@@ -147,7 +147,7 @@
                   :label="$t('pages.checkout.shipping_details_section.shipping_address_block.title')"
                 >
                   <template v-if="shipment?.deliveryAddress">
-                    <div>
+                    <div class="truncate">
                       <span class="font-extrabold">
                         {{ shipment.deliveryAddress?.firstName }}
                         {{ shipment.deliveryAddress?.lastName }}
@@ -319,9 +319,9 @@
 
                 <div
                   v-else-if="!billingSameAsShipping && payment?.billingAddress"
-                  class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 mb-6 p-5 flex justify-between items-center text-sm"
+                  class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 mb-6 p-5 flex justify-between space-x-3 items-center text-sm"
                 >
-                  <div>
+                  <div class="truncate">
                     <span class="font-extrabold">
                       {{ payment.billingAddress?.firstName }}
                       {{ payment.billingAddress?.lastName }}
