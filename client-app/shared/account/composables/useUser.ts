@@ -1,4 +1,4 @@
-import { Ref, ref, computed, readonly } from "vue";
+import { Ref, ref, readonly } from "vue";
 import { eagerComputed } from "@vueuse/core";
 import { getMe, updatePersonalData, createUser, createOrganization, createContact } from "@/core/api/graphql/account";
 import { UserType, IdentityResultType, Organization } from "@core/api/graphql/types";
