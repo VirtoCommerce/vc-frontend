@@ -563,7 +563,7 @@ const {
   loadAddresses,
   addOrUpdateAddresses,
   loading: loadingAddresses,
-} = useUserAddresses({ user: user.value });
+} = useUserAddresses({ user });
 
 const { placeOrder } = useCheckout();
 const { openPopup, closePopup } = usePopup();

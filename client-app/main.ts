@@ -18,11 +18,8 @@ import { loadMe } from "./shared/account/composables/useUser";
  * Async application init
  */
 (async () => {
-  //Load user at first module import. Single request per app loading.
-  await loadMe();
-
   // Load and prepare app config and context
-  const [cfg, themeContext] = await Promise.all([initCfg(), initContext()]);
+  const [cfg, themeContext] = await Promise.all([initCfg(), initContext(), loadMe()]);
 
   const defaultLocale = themeContext.defaultLanguage?.twoLetterLanguageName || "en";
   const supportedLocales = themeContext.availLanguages?.map((x) => x.twoLetterLanguageName) || [defaultLocale];

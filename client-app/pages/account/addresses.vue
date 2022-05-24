@@ -245,7 +245,7 @@ const {
   removeAddresses,
   defaultShippingAddress,
   addOrUpdateAddresses,
-} = useUserAddresses({ user: user.value });
+} = useUserAddresses({ user });
 
 const isMobile = breakpoints.smaller("lg");
 const editingMode: Ref<boolean> = ref(false);

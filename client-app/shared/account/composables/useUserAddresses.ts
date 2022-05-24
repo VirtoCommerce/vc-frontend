@@ -1,12 +1,13 @@
-import { computed, readonly, ref, Ref, shallowRef } from "vue";
+import { computed, readonly, ref, Ref, shallowRef, unref } from "vue";
 import { InputMemberAddressType, MemberAddressType, UserType } from "@core/api/graphql/types";
 import { getMyAddresses, updateMemberAddresses, deleteMemberAddresses } from "@core/api/graphql/account";
 import { isEqualAddresses, Logger, toInputAddress } from "@core/utilities";
 import { getSortingExpression, ISortInfo } from "@/shared/account";
 import { sortAscending } from "@core/constants";
 import { AnyAddressType } from "@core/types";
+import { MaybeRef } from "@vueuse/core";
 
-export default (options: { user: UserType }) => {
+export default (options: { user: MaybeRef<UserType> }) => {
   const { user } = options;
 
   const loading: Ref<boolean> = ref(false);
@@ -43,7 +44,7 @@ export default (options: { user: UserType }) => {
     //TODO: will be implemented in the separate story
   }
 
-  async function updateAddresses(items: MemberAddressType[], memberId = user.memberId!): Promise<void> {
+  async function updateAddresses(items: MemberAddressType[], memberId = unref(user).memberId!): Promise<void> {
     loading.value = true;
 
     const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
@@ -82,7 +83,7 @@ export default (options: { user: UserType }) => {
     await updateAddresses(updatedAddresses, memberId);
   }
 
-  async function removeAddresses(items: MemberAddressType[], memberId = user.memberId!): Promise<void> {
+  async function removeAddresses(items: MemberAddressType[], memberId = unref(user).memberId!): Promise<void> {
     if (!items.length) {
       return;
     }
