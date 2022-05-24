@@ -14,32 +14,22 @@ import {
 } from "@/shared/account";
 import useFetch from "@/core/composables/useFetch";
 
-let me: UserType;
-// = ref({
-//   userName: "",
-//   phoneNumberConfirmed: false,
-//   twoFactorEnabled: false,
-//   securityStamp: "",
-//   passwordExpired: false,
-//   id: "",
-//   accessFailedCount: 0,
-//   emailConfirmed: false,
-//   isAdministrator: false,
-//   lockoutEnabled: false,
-// });
+let me: Ref<UserType | null> = ref(null);
 
 const loading: Ref<boolean> = ref(false);
-let isAuthenticated = false;
 
-// const isAuthenticated = eagerComputed<boolean>(() => !!me.value.userName && me.value.userName !== "Anonymous");
-let organization: Organization | null;
-// const organization = computed<Organization | null>(() => me.value?.contact?.organizations?.items?.[0] ?? null);
+const isAuthenticated = eagerComputed<boolean>(() => !!me.value?.userName && me.value.userName !== "Anonymous");
+const organization = computed<Organization | null>(() => me.value?.contact?.organizations?.items?.[0] ?? null);
 
 async function loadMe() {
   try {
-    me = await getMe();
-    isAuthenticated = !!me.userName && me.userName !== "Anonymous";
-    organization = me?.contact?.organizations?.items?.[0] ?? null;
+    const user = await getMe();
+    if (!me.value) {
+      me = ref(user);
+    }
+    {
+      me.value = user;
+    }
   } catch (e) {
     Logger.error("useUser.loadMe", e);
     throw e;
@@ -48,6 +38,7 @@ async function loadMe() {
   }
 }
 
+//Load user at first module import. Single request per app loading.
 await loadMe();
 
 export default () => {
@@ -94,10 +85,6 @@ export default () => {
       loading.value = true;
       const url = "/storefrontapi/account/login";
       const res = await innerFetch<IdentityResultType, SignMeIn>(url, "POST", payload);
-
-      if (res.succeeded) {
-        await loadMe();
-      }
 
       return res;
     } catch (e) {
@@ -167,7 +154,6 @@ export default () => {
       loading.value = true;
       const url = "/storefrontapi/account/logout";
       await innerFetch(url);
-      await loadMe();
     } catch (e) {
       Logger.error("useUser.logout", e);
       throw e;
@@ -216,8 +202,8 @@ export default () => {
   }
 
   return {
-    isAuthenticated: computed(() => isAuthenticated),
-    organization: computed(() => organization),
+    isAuthenticated: computed(() => isAuthenticated.value),
+    organization: computed(() => organization.value),
     updateUser,
     changePassword,
     signMeIn,
@@ -228,6 +214,6 @@ export default () => {
     validateToken,
     resetPassword,
     loading: readonly(loading),
-    me: computed(() => me),
+    me: computed(() => me.value),
   };
 };
