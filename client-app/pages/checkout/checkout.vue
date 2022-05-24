@@ -251,7 +251,11 @@
                       class="px-3 self-start uppercase font-bold"
                       @click="showShipmentMethodDialog"
                     >
-                      {{ $t("pages.checkout.shipping_details_section.shipping_method_block.change_button") }}
+                      {{
+                        shipment?.shipmentMethodCode
+                          ? $t("pages.checkout.shipping_details_section.shipping_method_block.change_button")
+                          : $t("pages.checkout.shipping_details_section.shipping_method_block.select_button")
+                      }}
                     </VcButton>
                   </div>
                 </CheckoutLabeledBlock>
@@ -385,7 +389,11 @@
                       class="px-3 self-start uppercase font-bold"
                       @click="showPaymentMethodDialog"
                     >
-                      {{ $t("pages.checkout.payment_details_section.payment_method_block.change_button") }}
+                      {{
+                        payment?.paymentGatewayCode
+                          ? $t("pages.checkout.payment_details_section.payment_method_block.change_button")
+                          : $t("pages.checkout.payment_details_section.payment_method_block.select_button")
+                      }}
                     </VcButton>
                   </div>
                 </CheckoutLabeledBlock>
