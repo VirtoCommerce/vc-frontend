@@ -177,16 +177,6 @@ const onSubmit = handleSubmit(async (data) => {
 
   updateProfileError.value = false;
 
-  // updating user data
-  if (initialValues.value.firstName !== data.firstName || initialValues.value.lastName !== data.lastName) {
-    const userDataUpdateResult = await updateUser({
-      firstName: data.firstName!,
-      lastName: data.lastName!,
-    });
-
-    results.push(userDataUpdateResult.succeeded);
-  }
-
   // updating user password
   if (oldPassword.value) {
     const userPasswordUpdateResult = await changePassword(data.oldPassword!, data.newPassword!);
@@ -200,6 +190,16 @@ const onSubmit = handleSubmit(async (data) => {
         setFieldError("newPassword", description); // TODO: Localize all messages
       }
     });
+  }
+
+  // updating user data
+  if (initialValues.value.firstName !== data.firstName || initialValues.value.lastName !== data.lastName) {
+    const userDataUpdateResult = await updateUser({
+      firstName: data.firstName!,
+      lastName: data.lastName!,
+    });
+
+    results.push(userDataUpdateResult.succeeded);
   }
 
   if (results.every((item) => item)) {
