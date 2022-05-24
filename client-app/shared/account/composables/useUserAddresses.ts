@@ -4,10 +4,9 @@ import { getMyAddresses, updateMemberAddresses, deleteMemberAddresses } from "@c
 import { isEqualAddresses, Logger, toInputAddress } from "@core/utilities";
 import { getSortingExpression, ISortInfo } from "@/shared/account";
 import { sortAscending } from "@core/constants";
-import { MaybeRef } from "@vueuse/core";
 import { AnyAddressType } from "@core/types";
 
-export default (options: { user: MaybeRef<UserType> }) => {
+export default (options: { user: UserType }) => {
   const { user } = options;
 
   const loading: Ref<boolean> = ref(false);
@@ -44,7 +43,7 @@ export default (options: { user: MaybeRef<UserType> }) => {
     //TODO: will be implemented in the separate story
   }
 
-  async function updateAddresses(items: MemberAddressType[], memberId = unref(user).memberId!): Promise<void> {
+  async function updateAddresses(items: MemberAddressType[], memberId = user.memberId!): Promise<void> {
     loading.value = true;
 
     const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
@@ -83,7 +82,7 @@ export default (options: { user: MaybeRef<UserType> }) => {
     await updateAddresses(updatedAddresses, memberId);
   }
 
-  async function removeAddresses(items: MemberAddressType[], memberId = unref(user).memberId!): Promise<void> {
+  async function removeAddresses(items: MemberAddressType[], memberId = user.memberId!): Promise<void> {
     if (!items.length) {
       return;
     }

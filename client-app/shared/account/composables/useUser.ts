@@ -1,4 +1,4 @@
-import { Ref, ref, readonly } from "vue";
+import { Ref, ref, readonly, computed } from "vue";
 import { eagerComputed } from "@vueuse/core";
 import { getMe, updatePersonalData, createUser, createOrganization, createContact } from "@/core/api/graphql/account";
 import { UserType, IdentityResultType, Organization } from "@core/api/graphql/types";
@@ -209,6 +209,6 @@ export default () => {
     validateToken,
     resetPassword,
     loading: readonly(loading),
-    me: readonly(me),
+    me: computed(() => me.value!),
   };
 };

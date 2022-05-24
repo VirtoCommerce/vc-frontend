@@ -67,7 +67,7 @@ router.beforeEach(async (to) => {
 onMounted(async () => {
   // FIXME
   // temporary solution
-  setUserId(themeContext.userId || me.value!.id);
+  setUserId(themeContext.userId || me.value.id);
   setCatalogId(themeContext.catalogId!);
   setLocale(
     themeContext.availLanguages?.find((x) => x.twoLetterLanguageName === i18n?.global.locale.value)?.cultureName ||

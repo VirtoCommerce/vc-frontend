@@ -7,13 +7,13 @@ export default () => {
   const keyPrefix = "checkout_defaults_";
 
   function setUserCheckoutDefaults(defaults: CheckoutDefaults) {
-    localStorage.setItem(`${keyPrefix}${me.value!.id}`, JSON.stringify(defaults));
+    localStorage.setItem(`${keyPrefix}${me.value.id}`, JSON.stringify(defaults));
   }
 
   function getUserCheckoutDefaults(): CheckoutDefaults | null {
     let result: CheckoutDefaults | null = null;
 
-    const value = localStorage.getItem(`${keyPrefix}${me.value!.id}`);
+    const value = localStorage.getItem(`${keyPrefix}${me.value.id}`);
 
     if (value) {
       try {
