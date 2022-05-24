@@ -2,84 +2,82 @@
   <VcCard :title="$t('shared.account.navigation.title')">
     <div class="flex flex-col">
       <AccountNavigationLink
-        to="/account/dashboard"
+        :to="{ name: 'Dashboard' }"
         :text="$t('shared.account.navigation.links.dashboard')"
         class="dashboard-icon"
-      ></AccountNavigationLink>
+      />
+
       <AccountNavigationLink
-        to="/account/profile"
+        :to="{ name: 'Profile' }"
         :text="$t('shared.account.navigation.links.profile')"
         class="profile-icon"
-      ></AccountNavigationLink>
+      />
+
       <AccountNavigationLink
-        to="/account/addresses"
+        :to="{ name: 'Addresses' }"
         :text="$t('shared.account.navigation.links.addresses')"
         class="addresses-icon"
-      ></AccountNavigationLink>
+      />
+
       <AccountNavigationLink
-        to="/account/orders"
+        :to="{ name: 'Orders' }"
         :text="$t('shared.account.navigation.links.orders')"
         class="orders-icon"
-      ></AccountNavigationLink>
+      />
+
       <AccountNavigationLink
         :to="{ name: 'Lists' }"
         :text="$t('shared.account.navigation.links.your_lists')"
         class="list-icon pb-2"
-      >
-      </AccountNavigationLink>
-      <template v-if="listDetails">
-        <div class="px-3 ml-8 flex text-xs items-center space-x-2" v-for="list in lists" :key="list.id">
-          <i class="fas fa-minus text-[color:var(--color-primary)]"></i>
+      />
+
+      <template v-if="isListDetails">
+        <div class="px-3 ml-8 flex text-sm items-center space-x-2" v-for="list in lists" :key="list.id">
+          <i class="fas fa-minus text-[color:var(--color-primary)]" />
+
           <router-link
-            class="text-gray-500 font-semibold hover:text-black cursor-pointer"
-            :class="activeList === list.name && 'text-black'"
             :to="{ name: 'ListDetails', params: { listId: list.id } }"
+            class="text-gray-500 font-semibold hover:text-black cursor-pointer py-0.5"
+            active-class="text-black"
           >
             {{ list.name }}
           </router-link>
         </div>
       </template>
+
       <AccountNavigationLink
-        to="/account/checkout-defaults"
+        :to="{ name: 'CheckoutDefaults' }"
         :text="$t('shared.account.navigation.links.checkout_defaults')"
         class="checkout-icon"
-      ></AccountNavigationLink>
+      />
     </div>
   </VcCard>
-  <!-- Commented due to accetpance criteria, will be used in future-->
-  <!-- <VcCard title="Corporate">
+
+  <!-- Commented due to accetpance criteria, will be used in future
+  <VcCard title="Corporate">
     <div class="flex flex-col">
-      <AccountNavigationLink to="/companyInfo" text="Company info" class="company-icon"></AccountNavigationLink>
-      <AccountNavigationLink
-        to="/companyMembers"
-        text="Company members"
-        class="company-members-icon"
-      ></AccountNavigationLink>
+      <AccountNavigationLink to="/companyInfo" text="Company info" class="company-icon"/>
+      <AccountNavigationLink to="/companyMembers" text="Company members" class="company-members-icon" />
     </div>
-  </VcCard> -->
+  </VcCard>
+  -->
 </template>
 
 <script setup lang="ts">
 import { VcCard } from "@/components";
 import { AccountNavigationLink } from ".";
 import { watchEffect } from "vue";
+import { useRoute } from "vue-router";
+import { eagerComputed } from "@vueuse/core";
 import { useWishlists } from "@/shared/wishlists";
 
+const route = useRoute();
 const { lists, fetchWishlists } = useWishlists();
 
-const props = defineProps({
-  listDetails: {
-    type: Boolean,
-    default: false,
-  },
-  activeList: {
-    type: String,
-    default: "",
-  },
-});
+const isListDetails = eagerComputed(() => route.name === "ListDetails");
 
 watchEffect(() => {
-  if (props.listDetails) {
+  if (isListDetails.value) {
     fetchWishlists();
   }
 });
