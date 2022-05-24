@@ -14,22 +14,17 @@ import {
 } from "@/shared/account";
 import useFetch from "@/core/composables/useFetch";
 
-let me: Ref<UserType | null> = ref(null);
+const me: Ref<UserType | null> = ref(null);
 
 const loading: Ref<boolean> = ref(false);
 
 const isAuthenticated = eagerComputed<boolean>(() => !!me.value?.userName && me.value.userName !== "Anonymous");
-const organization = computed<Organization | null>(() => me.value?.contact?.organizations?.items?.[0] ?? null);
+const organization = eagerComputed<Organization | null>(() => me.value?.contact?.organizations?.items?.[0] ?? null);
 
 async function loadMe() {
   try {
     const user = await getMe();
-    if (!me.value) {
-      me = ref(user);
-    }
-    {
-      me.value = user;
-    }
+    me.value = user;
   } catch (e) {
     Logger.error("useUser.loadMe", e);
     throw e;
@@ -202,8 +197,8 @@ export default () => {
   }
 
   return {
-    isAuthenticated: computed(() => isAuthenticated.value),
-    organization: computed(() => organization.value),
+    isAuthenticated,
+    organization,
     updateUser,
     changePassword,
     signMeIn,
@@ -214,6 +209,6 @@ export default () => {
     validateToken,
     resetPassword,
     loading: readonly(loading),
-    me: computed(() => me.value),
+    me: readonly(me),
   };
 };

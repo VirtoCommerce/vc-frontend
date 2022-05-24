@@ -115,7 +115,7 @@ const onSubmit = handleSubmit(async () => {
     return;
   }
 
-  await mergeCart(me.value.id, cart.value.id!);
+  await mergeCart(me.value!.id, cart.value.id!);
   emit("succeeded");
 });
 </script>

@@ -47,11 +47,6 @@ router.beforeEach(async (to) => {
     await hideSearchDropdown();
   }
 
-  // // Load user if needed (used during SSR)
-  // if (!me.value.id) {
-  //   await loadMe();
-  // }
-
   // Make Dashboard the default Home page for authorized users
   if (Array<RouteRecordName>("Home", "SignIn", "SignUp").includes(to.name!) && isAuthenticated.value) {
     return {
@@ -70,11 +65,9 @@ router.beforeEach(async (to) => {
 });
 
 onMounted(async () => {
-  // await loadMe();
-
   // FIXME
   // temporary solution
-  setUserId(themeContext.userId || me.value?.id);
+  setUserId(themeContext.userId || me.value!.id);
   setCatalogId(themeContext.catalogId!);
   setLocale(
     themeContext.availLanguages?.find((x) => x.twoLetterLanguageName === i18n?.global.locale.value)?.cultureName ||

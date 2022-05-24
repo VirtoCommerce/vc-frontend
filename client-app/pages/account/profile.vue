@@ -152,9 +152,9 @@ const validationSchema = yup.object({
 });
 
 const initialValues = computed(() => ({
-  firstName: me.value.contact?.firstName,
-  lastName: me.value.contact?.lastName,
-  email: me.value.email,
+  firstName: me.value!.contact?.firstName,
+  lastName: me.value!.contact?.lastName,
+  email: me.value!.email,
   oldPassword: "",
   newPassword: "",
   confirmNewPassword: "",
