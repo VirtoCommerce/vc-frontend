@@ -21,7 +21,7 @@ const loading: Ref<boolean> = ref(false);
 const isAuthenticated = eagerComputed<boolean>(() => !!me.value?.userName && me.value.userName !== "Anonymous");
 const organization = eagerComputed<Organization | null>(() => me.value?.contact?.organizations?.items?.[0] ?? null);
 
-async function loadMe() {
+export async function loadMe() {
   try {
     const user = await getMe();
     me.value = user;
@@ -32,9 +32,6 @@ async function loadMe() {
     loading.value = false;
   }
 }
-
-//Load user at first module import. Single request per app loading.
-loadMe();
 
 export default () => {
   const { innerFetch } = useFetch();

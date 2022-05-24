@@ -12,11 +12,15 @@ import "@fortawesome/fontawesome-free/css/all.css";
 import "@/assets/styles/main.scss";
 import createI18nRouter, { currentCultureName, createI18nWithCurrentLocale } from "./i18n";
 import routes from "./router";
+import { loadMe } from "./shared/account/composables/useUser";
 
 /**
  * Async application init
  */
 (async () => {
+  //Load user at first module import. Single request per app loading.
+  await loadMe();
+
   // Load and prepare app config and context
   const [cfg, themeContext] = await Promise.all([initCfg(), initContext()]);
 
