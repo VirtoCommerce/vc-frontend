@@ -34,7 +34,7 @@ async function loadMe() {
 }
 
 //Load user at first module import. Single request per app loading.
-await loadMe();
+loadMe();
 
 export default () => {
   const { innerFetch } = useFetch();
