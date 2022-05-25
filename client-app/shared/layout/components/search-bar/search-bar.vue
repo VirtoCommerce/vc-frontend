@@ -10,13 +10,12 @@
     <div class="flex flex-grow relative">
       <input
         v-model.trim="searchPhrase"
-        :disabled="loading"
         :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
         maxlength="30"
         class="flex-grow mr-4 rounded h-10 px-4 font-medium text-sm outline-none disabled:bg-gray-200"
         @keyup.enter="search"
         @keyup.esc="searchDropdownVisible && hideSearchDropdown()"
-        @input="search"
+        @input="searchProductsDebounced"
       />
 
       <VcButton class="uppercase px-4 !h-10" @click="search">
@@ -123,7 +122,7 @@ import { useCategoriesRoutes } from "@/shared/catalog";
 // Number of categories column items in dropdown list
 const CATEGORIES_ITEMS_PER_COLUMN = 4;
 
-const SEARCH_BAR_DEBOUNCE_TIME = 2000;
+const SEARCH_BAR_DEBOUNCE_TIME = 500;
 
 const {
   total,
@@ -157,25 +156,20 @@ const categoriesColumns = computed<Array<Category[]>>(() => {
 async function search() {
   const MAX_LENGTH = 30;
   const MIN_LENGTH = cfg.search_min_chars || 0;
+  const COLUMNS = 5;
 
-  if (searchDropdownVisible) {
-    hideSearchDropdown();
+  if (searchDropdownVisible.value) {
+    await hideSearchDropdown();
   }
 
   if (
     loading.value ||
-    !searchPhrase.value ||
+    searchPhrase.value === "" ||
     searchPhrase.value.length > MAX_LENGTH ||
     searchPhrase.value.length < MIN_LENGTH
   ) {
     return;
   }
-
-  searchProductsDebounced();
-}
-
-const searchProductsDebounced = useDebounceFn(async () => {
-  const COLUMNS = 5;
 
   await searchResults({
     keyword: searchPhrase.value,
@@ -186,7 +180,12 @@ const searchProductsDebounced = useDebounceFn(async () => {
       itemsPerPage: CATEGORIES_ITEMS_PER_COLUMN * COLUMNS,
     },
   });
+
   await showSearchDropdown();
+}
+
+const searchProductsDebounced = useDebounceFn(() => {
+  search();
 }, SEARCH_BAR_DEBOUNCE_TIME);
 
 watchEffect(() => (searchPhrase.value = searchPhraseInUrl.value ?? ""));
