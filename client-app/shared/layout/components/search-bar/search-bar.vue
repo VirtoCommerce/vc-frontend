@@ -13,12 +13,12 @@
         :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
         maxlength="30"
         class="flex-grow mr-4 rounded h-10 px-4 font-medium text-sm outline-none disabled:bg-gray-200"
-        @keyup.enter="onInputChange"
+        @keyup.enter="search"
         @keyup.esc="searchDropdownVisible && hideSearchDropdown()"
-        @input="onInputChange"
+        @input="searchProductsDebounced"
       />
 
-      <VcButton class="uppercase px-4 !h-10" @click="onSearchButtonClick">
+      <VcButton class="uppercase px-4 !h-10" @click="search">
         {{ $t("shared.layout.search_bar.search_button") }}
       </VcButton>
 
@@ -153,55 +153,40 @@ const categoriesColumns = computed<Array<Category[]>>(() => {
   });
 });
 
-function onSearchButtonClick() {
-  if (searchDropdownVisible) {
-    hideSearchDropdown();
-  }
-
-  callSearch();
-}
-
-function onInputChange() {
+async function search() {
   const MAX_LENGTH = 30;
   const MIN_LENGTH = cfg.search_min_chars || 0;
+  const COLUMNS = 5;
 
-  if (searchDropdownVisible) {
-    hideSearchDropdown();
+  if (searchDropdownVisible.value) {
+    await hideSearchDropdown();
   }
 
   if (
     loading.value ||
-    !searchPhrase.value ||
+    searchPhrase.value === "" ||
     searchPhrase.value.length > MAX_LENGTH ||
     searchPhrase.value.length < MIN_LENGTH
   ) {
     return;
   }
 
-  searchProductsDebounced();
+  await searchResults({
+    keyword: searchPhrase.value,
+    products: {
+      itemsPerPage: 9,
+    },
+    categories: {
+      itemsPerPage: CATEGORIES_ITEMS_PER_COLUMN * COLUMNS,
+    },
+  });
+
+  await showSearchDropdown();
 }
 
 const searchProductsDebounced = useDebounceFn(() => {
-  callSearch();
+  search();
 }, SEARCH_BAR_DEBOUNCE_TIME);
-
-async function callSearch() {
-  const COLUMNS = 5;
-
-  if (searchPhrase.value.length !== 0) {
-    await searchResults({
-      keyword: searchPhrase.value,
-      products: {
-        itemsPerPage: 9,
-      },
-      categories: {
-        itemsPerPage: CATEGORIES_ITEMS_PER_COLUMN * COLUMNS,
-      },
-    });
-
-    await showSearchDropdown();
-  }
-}
 
 watchEffect(() => (searchPhrase.value = searchPhraseInUrl.value ?? ""));
 whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });
