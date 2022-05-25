@@ -18,7 +18,7 @@
         @input="onInputChange"
       />
 
-      <VcButton class="uppercase px-4 !h-10" @click="searchPhrase.length > 0 && onSearchButtonClick">
+      <VcButton class="uppercase px-4 !h-10" @click="onSearchButtonClick">
         {{ $t("shared.layout.search_bar.search_button") }}
       </VcButton>
 
