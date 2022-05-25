@@ -1,4 +1,4 @@
-import { Ref, ref, computed, readonly } from "vue";
+import { Ref, ref, readonly, computed } from "vue";
 import { eagerComputed } from "@vueuse/core";
 import { getMe, updatePersonalData, createUser, createOrganization, createContact } from "@/core/api/graphql/account";
 import { UserType, IdentityResultType, Organization } from "@core/api/graphql/types";
@@ -14,38 +14,27 @@ import {
 } from "@/shared/account";
 import useFetch from "@/core/composables/useFetch";
 
-const me: Ref<UserType> = ref({
-  userName: "",
-  phoneNumberConfirmed: false,
-  twoFactorEnabled: false,
-  securityStamp: "",
-  passwordExpired: false,
-  id: "",
-  accessFailedCount: 0,
-  emailConfirmed: false,
-  isAdministrator: false,
-  lockoutEnabled: false,
-});
+const me: Ref<UserType | null> = ref(null);
 
 const loading: Ref<boolean> = ref(false);
-const isAuthenticated = eagerComputed<boolean>(() => !!me.value.userName && me.value.userName !== "Anonymous");
-const organization = computed<Organization | null>(() => me.value?.contact?.organizations?.items?.[0] ?? null);
+
+const isAuthenticated = eagerComputed<boolean>(() => !!me.value?.userName && me.value.userName !== "Anonymous");
+const organization = eagerComputed<Organization | null>(() => me.value?.contact?.organizations?.items?.[0] ?? null);
+
+export async function loadMe() {
+  try {
+    const user = await getMe();
+    me.value = user;
+  } catch (e) {
+    Logger.error("useUser.loadMe", e);
+    throw e;
+  } finally {
+    loading.value = false;
+  }
+}
 
 export default () => {
   const { innerFetch } = useFetch();
-
-  async function loadMe() {
-    loading.value = true;
-
-    try {
-      me.value = await getMe();
-    } catch (e) {
-      Logger.error("useUser.loadMe", e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-  }
 
   async function updateUser(personalData: UserPersonalData): Promise<IdentityResultType> {
     try {
@@ -88,10 +77,6 @@ export default () => {
       loading.value = true;
       const url = "/storefrontapi/account/login";
       const res = await innerFetch<IdentityResultType, SignMeIn>(url, "POST", payload);
-
-      if (res.succeeded) {
-        await loadMe();
-      }
 
       return res;
     } catch (e) {
@@ -161,7 +146,6 @@ export default () => {
       loading.value = true;
       const url = "/storefrontapi/account/logout";
       await innerFetch(url);
-      await loadMe();
     } catch (e) {
       Logger.error("useUser.logout", e);
       throw e;
@@ -214,7 +198,6 @@ export default () => {
     organization,
     updateUser,
     changePassword,
-    loadMe,
     signMeIn,
     registerUser,
     registerOrganization,
@@ -223,6 +206,6 @@ export default () => {
     validateToken,
     resetPassword,
     loading: readonly(loading),
-    me: computed(() => me.value),
+    me: computed(() => me.value!),
   };
 };

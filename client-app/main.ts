@@ -12,13 +12,14 @@ import "@fortawesome/fontawesome-free/css/all.css";
 import "@/assets/styles/main.scss";
 import createI18nRouter, { currentCultureName, createI18nWithCurrentLocale } from "./i18n";
 import routes from "./router";
+import { loadMe } from "./shared/account/composables/useUser";
 
 /**
  * Async application init
  */
 (async () => {
   // Load and prepare app config and context
-  const [cfg, themeContext] = await Promise.all([initCfg(), initContext()]);
+  const [cfg, themeContext] = await Promise.all([initCfg(), initContext(), loadMe()]);
 
   const defaultLocale = themeContext.defaultLanguage?.twoLetterLanguageName || "en";
   const supportedLocales = themeContext.availLanguages?.map((x) => x.twoLetterLanguageName) || [defaultLocale];
