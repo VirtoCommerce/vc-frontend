@@ -27,6 +27,8 @@ const Profile = () => import("./pages/account/profile.vue");
 const DemoLanding = () => import("./pages/demo-landing/demo-landing.vue");
 const CompareProducts = () => import("./pages/compare-products/compare-products.vue");
 
+const Pages = () => import("./builder-preview/pages/pages.vue");
+
 const DevUIKit = () => import("./pages/_ui-kit/ui-kit.vue");
 
 // Router map
@@ -63,6 +65,7 @@ const routes: RouteRecordRaw[] = [
   { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },
   { path: "/checkout", name: "Checkout", component: Checkout },
   { path: "/demo-landing", name: "DemoLanding", component: DemoLanding },
+  { path: "/demo-page", name: "DemoPage", component: Pages },
   { path: "/compare", name: "CompareProducts", component: CompareProducts },
   { path: "/403", name: "NoAccess", component: Error403 },
   { path: "/404", name: "NotFound", component: Error404 },

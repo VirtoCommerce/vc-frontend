@@ -7,6 +7,7 @@
     "dev": "vite",
     "dev-expose": "vite --host",
     "build": "vue-tsc --noEmit && vite build",
+    "builder": "vue-tsc --noEmit && vite build --mode=development",
     "serve": "vite preview",
     "lint-staged": "lint-staged",
     "init-changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
