@@ -22,6 +22,15 @@
               : 'lg:flex lg:w-1/4 xl:w-1/5 flex-shrink-0',
           ]"
         >
+          <div v-if="isMobileSidebar" class="relative">
+            <button class="absolute -right-3 appearance-none px-3 py-1" @click="hideMobileSidebar">
+              <span class="text-2xl fa fa-times text-[color:var(--color-primary)]"></span>
+            </button>
+          </div>
+
+          <div v-if="isMobileSidebar" class="font-semibold text-2xl pt-1 mb-6">
+            {{ $t("common.buttons.filters") }}
+          </div>
           <div class="flex flex-col gap-4 lg:gap-5 overflow-hidden">
             <!-- Search results -->
             <VcCard :title="$t('pages.catalog.search_card.title')">
@@ -105,8 +114,12 @@
           </div>
           <div v-show="isMobileSidebar" class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
             <div class="flex space-x-4">
-              <VcButton class="flex-1 uppercase" size="lg" is-outline @click="resetFilters">Reset</VcButton>
-              <VcButton class="flex-1 uppercase" size="lg" @click="applyFiltersAndHideSidebar">Apply</VcButton>
+              <VcButton class="flex-1 uppercase" size="lg" is-outline @click="resetFilters">
+                {{ $t("common.buttons.reset") }}
+              </VcButton>
+              <VcButton class="flex-1 uppercase" size="lg" @click="applyFiltersAndHideSidebar">
+                {{ $t("common.buttons.apply") }}
+              </VcButton>
             </div>
           </div>
         </div>
