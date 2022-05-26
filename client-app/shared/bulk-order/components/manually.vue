@@ -66,7 +66,7 @@
         </VcButton>
 
         <VcButton
-          :is-disabled="!dirty"
+          :is-disabled="!valid"
           :is-waiting="loading"
           @click="addToCart"
           size="lg"
@@ -99,6 +99,7 @@ defineProps({
 const items: Ref<InputNewBulkItemExtendedType[]> = ref(createItems(5));
 
 const dirty = computed<boolean>(() => !!items.value.filter((item) => item.productSku || +item.quantity! > 0).length);
+const valid = computed<boolean>(() => !!items.value.filter((item) => item.productSku && +item.quantity! > 0).length);
 
 function createItems(quantity: number): InputNewBulkItemExtendedType[] {
   return Array.from({ length: quantity }).map<InputNewBulkItemExtendedType>(() => ({

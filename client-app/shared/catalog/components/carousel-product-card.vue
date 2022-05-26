@@ -1,7 +1,7 @@
 <template>
   <div class="bg-white rounded border border-transparent lg:hover:border-gray-100 lg:hover:shadow-lg lg:p-2">
     <!-- Product image -->
-    <router-link :to="`/${SeoUrl.Product}/${product.id}`">
+    <router-link :to="link">
       <div class="square relative border border-gray-200">
         <VcImage
           :src="product.imgSrc"
@@ -15,10 +15,7 @@
 
     <div class="md:text-center">
       <!-- Product title -->
-      <router-link
-        :to="`/${SeoUrl.Product}/${product.id}`"
-        class="text-[color:var(--color-link)] font-extrabold text-sm line-clamp-3 mt-2"
-      >
+      <router-link :to="link" class="text-[color:var(--color-link)] font-extrabold text-sm line-clamp-3 mt-2">
         {{ product.name }}
       </router-link>
 
@@ -31,15 +28,18 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
+import { computed, PropType } from "vue";
 import { VcImage, VcItemPrice } from "@/components";
-import { Product as ProductType } from "@/core/api/graphql/types";
-import SeoUrl from "@core/seo-routes.enum";
+import { Product } from "@/core/api/graphql/types";
+import { RouteLocationRaw } from "vue-router";
+import { getProductRoute } from "@/shared/catalog";
 
-defineProps({
+const props = defineProps({
   product: {
-    type: Object as PropType<ProductType>,
+    type: Object as PropType<Product>,
     required: true,
   },
 });
+
+const link = computed<RouteLocationRaw>(() => getProductRoute(props.product));
 </script>

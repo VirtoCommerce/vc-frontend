@@ -1,5 +1,7 @@
 import { RouteRecordRaw } from "vue-router";
-import SeoUrl from "@core/seo-routes.enum";
+import Error403 from "./pages/403/403.vue";
+import Error404 from "./pages/404/404.vue";
+import Error500 from "./pages/500/500.vue";
 
 // Pages
 const Home = () => import("./pages/home/home.vue");
@@ -7,12 +9,10 @@ const Product = () => import("./pages/product/product.vue");
 const SingInPage = () => import("./pages/sign-in/sign-in-page.vue");
 const SignUpPage = () => import("./pages/sign-up/sign-up-page.vue");
 const Search = () => import("./pages/search/search.vue");
-const Catalog = () => import("./pages/catalog/catalog.vue");
+const Matcher = () => import("./shared/catalog/components/matcher.vue");
+const Category = () => import("./pages/category/category.vue");
 const BulkOrder = () => import("./pages/bulk-order/bulk-order.vue");
 const Checkout = () => import("./pages/checkout/checkout.vue");
-const Error403 = () => import("./pages/403/403.vue");
-const Error404 = () => import("./pages/404/404.vue");
-const Error500 = () => import("./pages/500/500.vue");
 const CheckoutDefaults = () => import("./pages/account/checkout-defaults.vue");
 const Dashboard = () => import("./pages/account/dashboard.vue");
 const Addresses = () => import("./pages/account/addresses.vue");
@@ -44,28 +44,36 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true },
     children: [
       { path: "dashboard", name: "Dashboard", component: Dashboard },
-      { path: "addresses", name: "Addresses", component: Addresses },
       { path: "profile", name: "Profile", component: Profile },
-      { path: "checkout-defaults", name: "CheckoutDefaults", component: CheckoutDefaults },
+      { path: "addresses", name: "Addresses", component: Addresses },
       { path: "orders", name: "Orders", component: Orders },
-      { path: "order-details/:id", name: "OrderDetails", component: OrderDetails },
+      {
+        path: "orders/:orderId",
+        name: "OrderDetails",
+        component: OrderDetails,
+        props: true,
+        meta: { hideNavigation: true },
+      },
       { path: "lists", name: "Lists", component: Lists },
       { path: "lists/:listId", name: "ListDetails", component: ListDetails, props: true },
+      { path: "checkout-defaults", name: "CheckoutDefaults", component: CheckoutDefaults },
     ],
   },
   { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword },
   { path: "/reset-password", name: "ResetPassword", component: ResetPassword },
   { path: "/search", name: "Search", component: Search },
-  { path: `/${SeoUrl.Catalog}/:categorySeoUrls*`, name: "Catalog", component: Catalog, props: true },
-  { path: `/${SeoUrl.Product}/:productId`, name: "Product", component: Product, props: true },
   { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },
   { path: "/checkout", name: "Checkout", component: Checkout },
   { path: "/demo-landing", name: "DemoLanding", component: DemoLanding },
   { path: "/demo-page", name: "DemoPage", component: Pages },
   { path: "/compare", name: "CompareProducts", component: CompareProducts },
-  { path: "/500", name: "InternalError", component: Error500 },
   { path: "/403", name: "NoAccess", component: Error403 },
-  { path: "/:pathMatch(.*)*", name: "NotFound", component: Error404 },
+  { path: "/404", name: "NotFound", component: Error404 },
+  { path: "/500", name: "InternalError", component: Error500 },
+  { path: "/catalog", name: "Catalog", component: Category, props: true },
+  { path: "/category/:categoryId", name: "Category", component: Category, props: true },
+  { path: "/product/:productId", name: "Product", component: Product, props: true },
+  { path: "/:pathMatch(.*)*", name: "Matcher", component: Matcher, props: true },
 ];
 
 if (import.meta.env.MODE === "development") {

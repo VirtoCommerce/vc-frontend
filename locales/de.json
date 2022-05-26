@@ -278,7 +278,6 @@
       },
       "product_card": {
         "product_sku_label": "@:common.labels.sku",
-        "manufacture_model_label": "Mfr. model #",
         "price_label": "@:common.labels.product_price"
       },
       "product_details": {
@@ -755,7 +754,8 @@
         "shipping_method_block": {
           "title": "Shipping method",
           "not_defined_message": "Not defined",
-          "change_button": "Change"
+          "change_button": "@:common.buttons.change",
+          "select_button": "@:common.buttons.select"
         }
       },
       "payment_details_section": {
@@ -773,7 +773,8 @@
         "payment_method_block": {
           "title": "Payment method",
           "not_defined_message": "Not defined",
-          "change_button": "Change"
+          "change_button": "@:common.buttons.change",
+          "select_button": "@:common.buttons.select"
         }
       },
       "extra_section": {

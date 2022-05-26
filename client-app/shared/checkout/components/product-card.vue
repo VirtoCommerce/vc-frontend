@@ -14,10 +14,7 @@
       <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center flex-1">
         <div class="mb-3 lg:mb-0 text-sm xl:w-1/2">
           <div class="mb-1">
-            <router-link
-              :to="`/${SeoUrl.Product}/${productId}`"
-              class="text-[color:var(--color-link)] font-extrabold line-clamp-3 overflow-hidden"
-            >
+            <router-link :to="link" class="text-[color:var(--color-link)] font-extrabold line-clamp-3 overflow-hidden">
               {{ lineItem.name }}
             </router-link>
             <div class="flex items-center space-x-1 py-1" v-if="validationError">
@@ -141,8 +138,9 @@ import { computed, PropType } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useField } from "vee-validate";
 import * as yup from "yup";
-import SeoUrl from "@core/seo-routes.enum";
 import { useI18n } from "vue-i18n";
+import { RouteLocationRaw } from "vue-router";
+import { getProductRoute } from "@/shared/catalog";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { t } = useI18n();
@@ -176,7 +174,9 @@ const maxQty = computed(
   () => (variation.value ? variation.value?.maxQuantity : props.lineItem.product?.maxQuantity) || max
 );
 
-const productId = computed(() => props.lineItem.product?.masterVariation?.id || props.lineItem.productId);
+const link = computed<RouteLocationRaw>(() =>
+  getProductRoute(props.lineItem.product!.masterVariation || props.lineItem.product!)
+);
 
 const itemErrorMessage = computed(() => {
   if (props.validationError?.errorCode === "PRODUCT_PRICE_CHANGED") {

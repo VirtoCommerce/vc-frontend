@@ -5,7 +5,7 @@
       <span v-if="isRequired" class="text-[color:var(--color-danger)]">*</span>
     </div>
 
-    <div v-click-outside="hideList" class="relative select-none">
+    <div v-click-outside="() => open && hideList()" class="relative select-none">
       <button
         type="button"
         :disabled="isDisabled"

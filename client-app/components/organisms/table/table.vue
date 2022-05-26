@@ -1,7 +1,7 @@
 <template>
   <!-- Mobile table view -->
   <template v-if="isMobile && $slots['mobile-item']">
-    <div v-if="items.length">
+    <div v-if="items.length" class="overflow-x-hidden">
       <TableMobileItem
         v-for="item in items"
         :key="item.id"
