@@ -18,7 +18,7 @@
           :class="[
             { hidden: !mobileSidebarVisible },
             isMobileSidebar
-              ? 'fixed z-50 inset-0 w-72 h-screen overflow-y-auto px-5 py-12 bg-white'
+              ? 'fixed z-50 inset-0 w-72 h-screen overflow-y-auto px-5 pt-12 bg-white'
               : 'lg:flex lg:w-1/4 xl:w-1/5 flex-shrink-0',
           ]"
         >
@@ -50,7 +50,7 @@
 
             <!-- Previously purchased -->
             <VcCard :title="$t('pages.catalog.instock_filter_card.title')">
-              <VcCheckbox v-model="showInStock" :disabled="loading" @change="applyFilters">
+              <VcCheckbox v-model="showInStock" :disabled="loading" @change="onFilterChanged">
                 {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
               </VcCheckbox>
             </VcCard>
@@ -93,7 +93,7 @@
                   :value="item.value"
                   :disabled="loading"
                   class="mt-3 first:mt-0"
-                  @change="applyFilters"
+                  @change="onFilterChanged"
                 >
                   <div class="flex">
                     <span class="truncate">{{ item.label }}</span>
@@ -102,6 +102,12 @@
                 </VcCheckbox>
               </VcCard>
             </template>
+          </div>
+          <div v-show="isMobileSidebar" class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
+            <div class="flex space-x-4">
+              <VcButton class="flex-1 uppercase" size="lg" is-outline @click="resetFilters">Reset</VcButton>
+              <VcButton class="flex-1 uppercase" size="lg" @click="applyFiltersAndHideSidebar">Apply</VcButton>
+            </div>
           </div>
         </div>
 
@@ -425,8 +431,18 @@ function onSearchStart() {
   }
 }
 
-function applyFilters() {
+function onFilterChanged() {
+  if (!isMobileSidebar.value) {
+    applyFilters();
+  }
+}
+
+function applyFiltersAndHideSidebar() {
   hideMobileSidebar();
+  applyFilters();
+}
+
+function applyFilters() {
   filterQueryParam.value = toFilterExpression(filters, showInStock);
   triggerRef(filters);
 }
