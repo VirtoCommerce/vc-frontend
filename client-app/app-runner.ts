@@ -17,7 +17,7 @@ import routes from "./router";
 /**
  * Async application init
  */
-export default async (plugins: Plugin[] = []) => {
+export default async (getPlugins: ((options: any) => { plugin: Plugin, options: any }[]) | null = null) => {
   // Load and prepare app config and context
   const [cfg, themeContext] = await Promise.all([initCfg(), initContext()]);
 
@@ -52,8 +52,14 @@ export default async (plugins: Plugin[] = []) => {
   app.use(router);
   app.use(head);
 
-  for (const plugin of plugins) {
-    app.use(plugin);
+  if (getPlugins) {
+    const plugins = getPlugins({
+      router
+    });
+
+    for (const plugin of plugins) {
+      app.use(plugin.plugin, plugin.options);
+    }
   }
 
   app.mount("#app");

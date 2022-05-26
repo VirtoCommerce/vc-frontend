@@ -1,6 +1,7 @@
 <template>
   <div>
-    {{ model.text }}
+    <h1>{{ model.header }}</h1>
+    <div v-html="model.text"></div>
   </div>
 </template>
 

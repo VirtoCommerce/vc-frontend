@@ -2,26 +2,34 @@
 
 <style>
 
-.preview-frame {
-    border: none;
-    height: 100%;
-    width: 100%;
-    display: none;
-    z-index: 0;
-}
+  html, body, .preview-frame {
+      border: none;
+      height: 100%;
+      width: 100%;
+      /* display: none; */
+      z-index: 0;
+      margin: 0;
+      padding: 0;
+  }
+
 </style>
 
-<iframe class="preview-frame" style="display: block;" id="preview-a" src="http://localhost:2082" title=""></iframe>
-<iframe class="preview-frame" id="preview-1" src="" title=""></iframe>
+<iframe class="preview-frame" style="display: block;" id="preview-a" src="" title=""></iframe>
 
 <script>
     (function() {
-      return;
         var platformUrl = window.location.search.substr(1).split('&').find(q => q.startsWith('ep=')).substr(3);
+
+        var storeUrl = window.location.origin + '/themes/assets/builder-preview.html';
+        var frame = document.getElementById('preview-a');
+        frame.src = storeUrl;
         var relativeUrl = (platformUrl.endsWith('/') ? '' : '/') + 'Modules/$(VirtoCommerce.PageBuilderModule)/Content/bridge/bridge.bundle.js';
         var script = document.createElement("script");
         script.type = "text/javascript";
         script.src = platformUrl + relativeUrl;
+        script.onload = function() {
+          window['designerPreviewApp'](frame);
+        };
         document.body.appendChild(script);
     })();
 </script>
