@@ -106,11 +106,7 @@
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 md:gap-x-6 gap-y-4 mt-12">
           <ProductCardGrid v-for="item in products" :key="item.id" :product="item">
             <template #cart-handler>
-              <VcButton
-                v-if="item.variations?.length"
-                :to="{ name: 'Product', params: { productId: item.id } }"
-                class="uppercase mb-4"
-              >
+              <VcButton v-if="item.hasVariations" :to="productsRoutes[item.id]" class="uppercase mb-4">
                 {{ $t("pages.demo_landing.products_block.choose_button") }}
               </VcButton>
 
@@ -170,11 +166,20 @@
 
 <script setup lang="ts">
 import { IBreadcrumbs, VcBreadcrumbs, VcButton, VcImage, VcInput, VcCheckbox } from "@/components";
-import { onMounted, ref } from "vue";
-import { ProductCardGrid, useProducts } from "@/shared/catalog";
+import { onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import { ProductCardGrid, useProducts, useProductsRoutes } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 
+const { t } = useI18n();
 const { products, fetchProducts } = useProducts();
+
+const productsRoutes = useProductsRoutes(products);
+
+const breadcrumbs: IBreadcrumbs[] = [
+  { route: "/", title: t("pages.compare.links.home") },
+  { title: t("shared.layout.footer.demo_landing_link") },
+];
 
 onMounted(async () => {
   await fetchProducts({
@@ -182,9 +187,4 @@ onMounted(async () => {
     filter: '"BRAND":"HP"',
   });
 });
-
-const breadcrumbs = ref<IBreadcrumbs[]>([
-  { title: "Home", route: "/" },
-  { title: "Demo landing", route: "/demo-landing" },
-]);
 </script>

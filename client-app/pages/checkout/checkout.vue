@@ -147,7 +147,7 @@
                   :label="$t('pages.checkout.shipping_details_section.shipping_address_block.title')"
                 >
                   <template v-if="shipment?.deliveryAddress">
-                    <div>
+                    <div class="truncate">
                       <span class="font-extrabold">
                         {{ shipment.deliveryAddress?.firstName }}
                         {{ shipment.deliveryAddress?.lastName }}
@@ -251,7 +251,11 @@
                       class="px-3 self-start uppercase font-bold"
                       @click="showShipmentMethodDialog"
                     >
-                      {{ $t("pages.checkout.shipping_details_section.shipping_method_block.change_button") }}
+                      {{
+                        shipment?.shipmentMethodCode
+                          ? $t("pages.checkout.shipping_details_section.shipping_method_block.change_button")
+                          : $t("pages.checkout.shipping_details_section.shipping_method_block.select_button")
+                      }}
                     </VcButton>
                   </div>
                 </CheckoutLabeledBlock>
@@ -319,9 +323,9 @@
 
                 <div
                   v-else-if="!billingSameAsShipping && payment?.billingAddress"
-                  class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 mb-6 p-5 flex justify-between items-center text-sm"
+                  class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 mb-6 p-5 flex justify-between space-x-3 items-center text-sm"
                 >
-                  <div>
+                  <div class="truncate">
                     <span class="font-extrabold">
                       {{ payment.billingAddress?.firstName }}
                       {{ payment.billingAddress?.lastName }}
@@ -385,7 +389,11 @@
                       class="px-3 self-start uppercase font-bold"
                       @click="showPaymentMethodDialog"
                     >
-                      {{ $t("pages.checkout.payment_details_section.payment_method_block.change_button") }}
+                      {{
+                        payment?.paymentGatewayCode
+                          ? $t("pages.checkout.payment_details_section.payment_method_block.change_button")
+                          : $t("pages.checkout.payment_details_section.payment_method_block.select_button")
+                      }}
                     </VcButton>
                   </div>
                 </CheckoutLabeledBlock>

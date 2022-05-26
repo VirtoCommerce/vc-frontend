@@ -2,7 +2,7 @@
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner grow" :class="{ 'polygon-gray-bg': !products.length && !loading }">
     <div class="max-w-screen-2xl px-5 md:px-12 mx-auto">
       <!-- Breadcrumbs -->
-      <Breadcrumbs class="mb-2 md:mb-8" :items="breadcrumbsItems"></Breadcrumbs>
+      <Breadcrumbs class="mb-2 md:mb-8" :items="breadcrumbs" />
 
       <div class="flex items-start lg:gap-6">
         <!-- Mobile sidebar back cover -->
@@ -130,7 +130,7 @@
             </div>
 
             <!-- View options -->
-            <ViewMode v-model:mode="viewModeQueryParam" class="hidden md:inline-flex mr-6" />
+            <ViewMode v-model:mode="viewMode" class="hidden md:inline-flex mr-6" />
 
             <!-- Sorting -->
             <div class="flex items-center flex-grow md:flex-grow-0 z-10 ml-auto">
@@ -200,11 +200,11 @@
           <template v-if="products.length || loading">
             <DisplayProducts
               :loading="loading"
-              :view-mode="viewModeQueryParam"
+              :view-mode="isMobile ? 'grid' : viewMode"
               :items-per-page="itemsPerPage"
               :products="products"
               :class="
-                viewModeQueryParam === 'list'
+                viewMode === 'list' && !isMobile
                   ? 'space-y-5'
                   : 'grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-6 xl:gap-x-6 xl:gap-y-8'
               "
@@ -212,8 +212,8 @@
               <template #cart-handler="{ item }">
                 <VcButton
                   v-if="item.hasVariations"
-                  :to="{ name: 'Product', params: { productId: item.id } }"
-                  :class="{ 'w-full': viewModeQueryParam === 'list' }"
+                  :to="productsRoutes[item.id]"
+                  :class="{ 'w-full': viewMode === 'list' }"
                   class="uppercase mb-4"
                 >
                   {{ $t("pages.catalog.choose_button") }}
@@ -277,8 +277,9 @@ import {
   onBeforeUnmount,
   WatchStopHandle,
   triggerRef,
+  toRef,
 } from "vue";
-import { breakpointsTailwind, eagerComputed, useBreakpoints, whenever } from "@vueuse/core";
+import { breakpointsTailwind, eagerComputed, useBreakpoints, whenever, useLocalStorage } from "@vueuse/core";
 import {
   Breadcrumbs,
   IBreadcrumbsItem,
@@ -290,6 +291,7 @@ import {
   ProductsSearchParams,
   ProductsFilterValue,
   ProductsFilter,
+  useProductsRoutes,
 } from "@/shared/catalog";
 import {
   VcButton,
@@ -314,6 +316,11 @@ const { t } = useI18n();
 const watchStopHandles: WatchStopHandle[] = [];
 
 const props = defineProps({
+  categoryId: {
+    type: String,
+    default: "",
+  },
+
   categorySeoUrls: {
     type: [String, Array] as PropType<string | string[]>,
     default: "",
@@ -321,11 +328,13 @@ const props = defineProps({
 });
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { selectedCategory, selectCategoryBySeoUrl, loadCategoriesTree } = useCategories();
+const { selectedCategory, selectCategoryByKey, loadCategoriesTree } = useCategories();
 const { fetchProducts, fetchMoreProducts, loading, loadingMore, products, total, pages, filters, showInStock } =
   useProducts({
     withFilters: true,
   });
+
+const productsRoutes = useProductsRoutes(products);
 
 const FILTERS_RESET_TIMEOUT_IN_MS = 500;
 
@@ -340,10 +349,7 @@ const itemsPerPage = ref(defaultPageSize);
 
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
 
-const viewModeQueryParam = useRouteQueryParam<"grid" | "list">("viewMode", {
-  defaultValue: "grid",
-  validator: (value) => (isMobile.value ? false : ["grid", "list"].includes(value)),
-});
+const viewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: productSortingList[0].id,
@@ -381,13 +387,22 @@ const isExistSelectedFilters = eagerComputed<boolean>(() =>
   filters.value.some((filter) => filter.values.some((value) => value.selected))
 );
 
-const breadcrumbsItems = computed<IBreadcrumbsItem[]>(() => {
+const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
   const items: IBreadcrumbsItem[] = [{ url: "/", title: t("common.links.home") }];
 
-  if (selectedCategory.value) {
-    items.push({
-      title: selectedCategory.value.label!,
+  if (!selectedCategory.value) {
+    return items;
+  }
+
+  if (selectedCategory.value.breadcrumbs!.length) {
+    selectedCategory.value.breadcrumbs!.forEach((breadcrumb) => {
+      items.push({
+        title: breadcrumb.title,
+        url: `/${breadcrumb.seoPath}`,
+      });
     });
+  } else {
+    items.push({ title: selectedCategory.value.label! });
   }
 
   return items;
@@ -460,8 +475,18 @@ async function loadMoreProducts() {
 }
 
 onMounted(async () => {
+  const categoryId = toRef(props, "categoryId");
+
   await loadCategoriesTree(""); // TODO: use active category key instead of id
-  selectCategoryBySeoUrl(categorySeoUrl.value);
+
+  if (categoryId.value) {
+    selectCategoryByKey("id", categoryId.value);
+    watch(categoryId, (value) => selectCategoryByKey("id", value));
+  } else {
+    selectCategoryByKey("seoUrl", categorySeoUrl.value);
+    watch(categorySeoUrl, (value) => selectCategoryByKey("seoUrl", value));
+  }
+
   await loadProducts();
 
   // Start change tracking after initial data load
@@ -490,5 +515,4 @@ onBeforeUnmount(() => {
 
 watchEffect(() => (keyword.value = keywordQueryParam.value ?? ""));
 whenever(() => !isMobileSidebar.value, hideMobileSidebar);
-watch(categorySeoUrl, selectCategoryBySeoUrl);
 </script>

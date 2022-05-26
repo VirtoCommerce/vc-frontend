@@ -29,7 +29,10 @@ export interface ItemAction {
 
 export interface IBreadcrumbs {
   title: string;
-  route: RouteLocationRaw;
+  /**
+   * Not needed for last element
+   */
+  route?: RouteLocationRaw;
 }
 
 export interface ITableColumn {

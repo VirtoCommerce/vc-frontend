@@ -4,8 +4,8 @@ import { getMyAddresses, updateMemberAddresses, deleteMemberAddresses } from "@c
 import { isEqualAddresses, Logger, toInputAddress } from "@core/utilities";
 import { getSortingExpression, ISortInfo } from "@/shared/account";
 import { sortAscending } from "@core/constants";
-import { MaybeRef } from "@vueuse/core";
 import { AnyAddressType } from "@core/types";
+import { MaybeRef } from "@vueuse/core";
 
 export default (options: { user: MaybeRef<UserType> }) => {
   const { user } = options;

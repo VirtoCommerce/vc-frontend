@@ -13,7 +13,7 @@ export default function useFetch() {
   const statusCode = shallowRef<number | null>();
   const router = useRouter();
 
-  function innerFetch<TBody, TResult>(url: string, method = "POST", body?: TBody): Promise<TResult> {
+  function innerFetch<TResult, TBody = unknown>(url: string, method = "GET", body?: TBody): Promise<TResult> {
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
 

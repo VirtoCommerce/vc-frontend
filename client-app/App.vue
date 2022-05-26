@@ -31,7 +31,7 @@ import { i18n } from "./i18n";
 
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { loadMe, me, isAuthenticated } = useUser();
+const { me, isAuthenticated } = useUser();
 const { loadMyCart } = useCart();
 const { currentCurrency } = useCurrency();
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
@@ -45,11 +45,6 @@ router.beforeEach(async (to) => {
     await hideSearchBar();
   } else if (!isMobile.value) {
     await hideSearchDropdown();
-  }
-
-  // Load user if needed (used during SSR)
-  if (!me.value.id) {
-    await loadMe();
   }
 
   // Make Dashboard the default Home page for authorized users
@@ -70,11 +65,9 @@ router.beforeEach(async (to) => {
 });
 
 onMounted(async () => {
-  await loadMe();
-
   // FIXME
   // temporary solution
-  setUserId(themeContext.userId || me.value?.id);
+  setUserId(themeContext.userId || me.value.id);
   setCatalogId(themeContext.catalogId!);
   setLocale(
     themeContext.availLanguages?.find((x) => x.twoLetterLanguageName === i18n?.global.locale.value)?.cultureName ||
