@@ -5,6 +5,7 @@ import { config, context, menu } from "@core/plugins";
 import App from "./App.vue";
 import blocks from "./builder-preview/pages/blocks";
 import * as yup from "yup";
+import { loadMe } from "./shared/account/composables/useUser";
 
 /**
  * Global Styles
@@ -17,9 +18,9 @@ import routes from "./router";
 /**
  * Async application init
  */
-export default async (getPlugins: ((options: any) => { plugin: Plugin, options: any }[]) | null = null) => {
+export default async (getPlugins: ((options: any) => { plugin: Plugin; options: any }[]) | null = null) => {
   // Load and prepare app config and context
-  const [cfg, themeContext] = await Promise.all([initCfg(), initContext()]);
+  const [cfg, themeContext] = await Promise.all([initCfg(), initContext(), loadMe()]);
 
   const defaultLocale = themeContext.defaultLanguage?.twoLetterLanguageName || "en";
   const supportedLocales = themeContext.availLanguages?.map((x) => x.twoLetterLanguageName) || [defaultLocale];
@@ -54,7 +55,7 @@ export default async (getPlugins: ((options: any) => { plugin: Plugin, options: 
 
   if (getPlugins) {
     const plugins = getPlugins({
-      router
+      router,
     });
 
     for (const plugin of plugins) {
