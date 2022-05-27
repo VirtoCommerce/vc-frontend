@@ -9,7 +9,10 @@
         <div
           :class="{ hidden: !mobileSidebarVisible }"
           class="fixed z-50 inset-0 w-full h-screen lg:hidden bg-gray-800 opacity-95"
-          @click="hideMobileSidebar"
+          @click="
+            restoreFilters();
+            hideMobileSidebar();
+          "
         />
 
         <!-- Sidebar -->
@@ -23,7 +26,7 @@
           ]"
         >
           <div v-if="isMobileSidebar" class="relative">
-            <button class="absolute -right-3 appearance-none px-3 py-1" @click="hideMobileSidebar">
+            <button class="absolute -right-3 appearance-none px-3 py-1" @click="restoreFilters()">
               <span class="text-2xl fa fa-times text-[color:var(--color-primary)]"></span>
             </button>
           </div>
@@ -143,7 +146,7 @@
           >
             <!-- Mobile filters toggler -->
             <div class="lg:hidden mr-3">
-              <VcButton class="px-4 font-extrabold" size="md" @click="mobileSidebarVisible = true">
+              <VcButton class="px-4 font-extrabold" size="md" @click="showMobileSidebar">
                 <i class="fas fa-filter mr-1"></i> {{ $t("pages.catalog.filters_button") }}
               </VcButton>
             </div>
@@ -329,6 +332,7 @@ import { useElementVisibility, useRouteQueryParam } from "@core/composables";
 import { defaultPageSize, productSortingList } from "@core/constants";
 import QueryParamName from "@core/query-param-name.enum";
 import { useI18n } from "vue-i18n";
+import _ from "lodash";
 
 const { t } = useI18n();
 
@@ -365,6 +369,8 @@ const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const keyword = ref("");
 const page = ref(1);
 const itemsPerPage = ref(defaultPageSize);
+let origFilters: ProductsFilter[];
+let origShowInStock: boolean;
 
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
 
@@ -426,6 +432,37 @@ const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
 
   return items;
 });
+
+function showMobileSidebar() {
+  origFilters = _.cloneDeep<ProductsFilter[]>(filters.value);
+  origShowInStock = showInStock.value;
+  mobileSidebarVisible.value = true;
+}
+
+function restoreFilters() {
+  const origText = JSON.stringify(origFilters);
+  const currentText = JSON.stringify(filters.value);
+  if (origText !== currentText) {
+    filters.value.forEach((filter) => {
+      const origFilter = origFilters.find((f) => f.paramName === filter.paramName);
+      filter.values.forEach((valueItem) => {
+        const origValue = origFilter?.values.find((origValueItem) => origValueItem.value === valueItem.value);
+        if (valueItem.selected !== origValue?.selected) {
+          valueItem.selected = origValue?.selected || false;
+        }
+      });
+    });
+    //filters.value = origFilters;
+
+    triggerRef(filters);
+  }
+
+  if (origShowInStock !== showInStock.value) {
+    showInStock.value = origShowInStock;
+  }
+
+  hideMobileSidebar();
+}
 
 function hideMobileSidebar() {
   mobileSidebarVisible.value = false;
