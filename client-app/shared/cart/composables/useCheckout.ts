@@ -58,9 +58,11 @@ export default () => {
   async function placeOrder(cartId: string, reloadCart = true): Promise<CustomerOrderType | null> {
     const order = await createOrderFromCart(cartId);
 
-    if (!order) return null;
+    if (!order) {
+      return null;
+    }
 
-    await removeCart(cartId); // TODO: implement in "useCart"
+    await removeCart(cartId);
 
     if (reloadCart) {
       await loadMyCart();
@@ -90,10 +92,10 @@ export default () => {
     }
   }
 
-  async function setDefaultDeliveryAddress(address: CartAddressType) {
+  async function setDefaultDeliveryAddress(_address: CartAddressType) {
     console.log("setDefaultDeliveryAddress");
   }
-  async function setDefaultBillingAddress(address: CartAddressType) {
+  async function setDefaultBillingAddress(_address: CartAddressType) {
     console.log("setDefaultBillingAddress");
   }
   async function setShippingMethod(shippingMethod: ShippingMethodType) {

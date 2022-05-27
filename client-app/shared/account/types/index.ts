@@ -61,3 +61,15 @@ export type UserPersonalData = {
   firstName: string;
   lastName: string;
 };
+
+export type OrdersFilterData = {
+  statuses: string[];
+  startDate?: Date;
+  endDate?: Date;
+};
+
+export type OrdersFilterChipsItem = {
+  fieldName: string;
+  value: string | Date;
+  label: string;
+};

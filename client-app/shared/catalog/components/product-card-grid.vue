@@ -1,11 +1,12 @@
 <template>
   <div class="flex flex-col bg-white rounded border p-4 shadow-sm hover:shadow-lg overflow-hidden">
     <!-- Product image -->
-    <router-link :to="`/${SeoUrl.Product}/${product.id}`" class="cursor-pointer">
+    <router-link :to="link" class="cursor-pointer">
       <div class="square relative flex flex-col justify-center items-center border border-gray-100">
         <VcImage
           :src="product.imgSrc"
           :alt="product.name"
+          size-suffix="md"
           class="absolute top-0 w-full h-full object-cover object-center"
           lazy
         />
@@ -30,7 +31,7 @@
 
       <!-- Product title -->
       <router-link
-        :to="`/${SeoUrl.Product}/${product.id}`"
+        :to="link"
         class="text-[color:var(--color-link)] font-extrabold text-sm mb-3 flex-grow line-clamp-3 overflow-hidden cursor-pointer"
       >
         {{ product.name }}
@@ -42,18 +43,13 @@
           <div class="w-1/2 font-bold text-xs" v-t="'shared.catalog.product_card.product_sku_label'"></div>
           <span class="w-1/2 text-[color:var(--color-link)] truncate">{{ product.code }}</span>
         </div>
-        <div class="flex items-baseline">
-          <div class="w-1/2 font-bold text-xs" v-t="'shared.catalog.product_card.manufacture_model_label'"></div>
-          <span class="w-1/2 text-[color:var(--color-link)] truncate">-</span>
-        </div>
       </div>
 
       <!-- Product price -->
-      <div class="flex flex-col md:flex-row items-baseline text-sm mb-4">
+      <div class="flex h-10 md:h-8 flex-col md:flex-row items-baseline text-sm mb-4">
         <div class="w-1/2 font-bold text-xs" v-t="'shared.catalog.product_card.price_label'"></div>
         <div class="md:w-1/2">
-          <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span
-          >{{ $t("common.suffixes.per_item") }}
+          <VcItemPrice :value="product.price"></VcItemPrice>
         </div>
       </div>
 
@@ -63,16 +59,19 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
-import { VcImage, VcPriceDisplay } from "@/components";
+import { computed, PropType } from "vue";
+import { VcImage, VcItemPrice } from "@/components";
 import { AddToCompare } from "@/shared/compare";
-import { Product as ProductType } from "@/core/api/graphql/types";
-import SeoUrl from "@core/seo-routes.enum";
+import { Product } from "@/core/api/graphql/types";
+import { RouteLocationRaw } from "vue-router";
+import { getProductRoute } from "@/shared/catalog";
 
-defineProps({
+const props = defineProps({
   product: {
-    type: Object as PropType<ProductType>,
+    type: Object as PropType<Product>,
     required: true,
   },
 });
+
+const link = computed<RouteLocationRaw>(() => getProductRoute(props.product));
 </script>

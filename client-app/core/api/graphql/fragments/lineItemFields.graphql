@@ -11,10 +11,12 @@ fragment lineItemFields on LineItemType {
   name
   productId
   product {
+    id
     brandName
     slug
     masterVariation {
       id
+      slug
     }
     minQuantity
     maxQuantity
@@ -39,6 +41,9 @@ fragment lineItemFields on LineItemType {
     ...moneyFields
   }
   listPrice {
+    ...moneyFields
+  }
+  salePrice {
     ...moneyFields
   }
   taxTotal {

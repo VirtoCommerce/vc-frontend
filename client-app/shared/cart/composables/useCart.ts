@@ -13,6 +13,7 @@ import {
   addOrUpdateCartShipment,
   addOrUpdateCartPayment,
   InputBulkItemsType,
+  removeCart as _removeCart,
 } from "@core/api/graphql/cart";
 import { BulkCartType, CartType, InputPaymentType, InputShipmentType, LineItemType } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
@@ -21,10 +22,12 @@ import { useUserCheckoutDefaults } from "@/shared/account";
 import changePurchaseOrderNumber from "@/core/api/graphql/cart/mutations/changePurchaseOrderNumber";
 import { CartItemType } from "../types";
 
+const DEFAULT_ITEMS_PER_PAGE = 6;
+
 const loading: Ref<boolean> = ref(true);
 const cart: Ref<CartType> = ref({ name: "" });
 const pages: Ref<number> = ref(0);
-const itemsPerPage: Ref<number> = ref(6);
+const itemsPerPage: Ref<number> = ref(DEFAULT_ITEMS_PER_PAGE);
 
 export default () => {
   const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
@@ -79,6 +82,21 @@ export default () => {
     await loadMyCart();
   }
 
+  async function removeCart(cartId: string) {
+    loading.value = true;
+
+    try {
+      await _removeCart(cartId);
+    } catch (e) {
+      Logger.error(`useCart.${removeCart.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+
+    await loadMyCart();
+  }
+
   async function addMultipleItemsToCart(cartItems: CartItemType[]) {
     loading.value = true;
     console.log(`addMultipleItemsToCart ${cartItems}`);
@@ -100,7 +118,7 @@ export default () => {
 
     try {
       result = await addBulkItemsToCart(payload);
-    } catch (e: any) {
+    } catch (e) {
       Logger.error(`useCart.${addItemsToCart.name}`, e);
       throw e;
     } finally {
@@ -252,9 +270,7 @@ export default () => {
       .map((x) => x as LineItemType)
       .value();
 
-    const result = _.sumBy(filteredItems, (x) => x.extendedPrice?.amount);
-
-    return result;
+    return _.sumBy(filteredItems, (x) => x.extendedPrice?.amount);
   }
 
   return {
@@ -262,7 +278,7 @@ export default () => {
     pages: computed(() => pages.value),
     itemsPerPage: computed(() => itemsPerPage.value),
     loading: computed(() => loading.value),
-    currency: computed(() => cart.value.total?.currency),
+    currency: computed(() => cart.value.currency!),
     getItemsTotal,
     loadMyCart,
     addToCart,
@@ -278,5 +294,6 @@ export default () => {
     updatePayment,
     updatePurchaseOrderNumber,
     addMultipleItemsToCart,
+    removeCart,
   };
 };

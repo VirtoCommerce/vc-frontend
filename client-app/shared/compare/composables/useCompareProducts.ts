@@ -6,16 +6,20 @@ import { truncate } from "@core/utilities";
 import { configInjectionKey } from "@core/injection-keys";
 
 const NOTIFICATIONS_GROUP = "compare-pruducts";
+const DEFAULT_MAX_PRODUCTS = 5;
+const NAME_MAX_LENGTH = 60;
 
 const productsIds = useLocalStorage<string[]>("productCompareListIds", []);
 
 export default () => {
   const config = inject(configInjectionKey);
   const notifications = useNotifications();
-  const productsLimit = config?.product_compare_limit || 5;
+  const productsLimit = config?.product_compare_limit || DEFAULT_MAX_PRODUCTS;
 
   function addToCompareList(product: Product) {
-    if (productsIds.value.includes(product.id)) return;
+    if (productsIds.value.includes(product.id)) {
+      return;
+    }
 
     if (productsIds.value.length >= productsLimit) {
       notifications.warning({
@@ -35,7 +39,7 @@ export default () => {
       group: NOTIFICATIONS_GROUP,
       singleInGroup: true,
       html:
-        `Product <span class="hidden lg:inline">“<strong>${truncate(product.name, 60)}</strong>”</span> ` +
+        `Product <span class="hidden lg:inline">“<strong>${truncate(product.name, NAME_MAX_LENGTH)}</strong>”</span> ` +
         `is added to compare list ` +
         `<span class="hidden lg:inline">(${productsLimit - productsIds.value.length} items left)</span>`,
       button: {
@@ -51,7 +55,9 @@ export default () => {
   function removeFromCompareList(product: Product) {
     const index = productsIds.value.indexOf(product.id);
 
-    if (index === -1) return;
+    if (index === -1) {
+      return;
+    }
 
     productsIds.value.splice(index, 1);
 
@@ -60,7 +66,7 @@ export default () => {
       group: NOTIFICATIONS_GROUP,
       singleInGroup: true,
       html:
-        `Product <span class="hidden lg:inline">“<strong>${truncate(product.name, 60)}</strong>”</span> ` +
+        `Product <span class="hidden lg:inline">“<strong>${truncate(product.name, NAME_MAX_LENGTH)}</strong>”</span> ` +
         `was removed from the compare list`,
     });
   }

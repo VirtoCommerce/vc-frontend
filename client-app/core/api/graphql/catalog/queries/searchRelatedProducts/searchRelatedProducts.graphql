@@ -18,6 +18,15 @@ query SearchRelatedProducts(
           imgSrc
           price {
             actual {
+              amount
+              formattedAmount
+            }
+            list {
+              amount
+              formattedAmount
+            }
+            sale {
+              amount
               formattedAmount
             }
           }

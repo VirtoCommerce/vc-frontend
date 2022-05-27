@@ -3,7 +3,10 @@ import { searchProducts } from "@core/api/graphql/catalog";
 import { Product } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 import { ProductsFilter, ProductsSearchParams } from "../types";
-import { rangeFacetToProductsFilter, termFacetToProductsFilter } from "@/shared/catalog";
+import { rangeFacetToProductsFilter, termFacetToProductsFilter, toFilterExpression } from "@/shared/catalog";
+import { inStockFilterExpression } from "@/core/constants";
+
+const DEFAULT_ITEMS_PER_PAGE = 16;
 
 export default (
   options: {
@@ -19,6 +22,7 @@ export default (
   const filters: Ref<ProductsFilter[]> = shallowRef([]);
   const total: Ref<number> = ref(0);
   const pages: Ref<number> = ref(1);
+  const showInStock: Ref<boolean> = ref(false);
 
   async function fetchProducts(searchParams: Partial<ProductsSearchParams>) {
     loading.value = true;
@@ -27,6 +31,14 @@ export default (
     pages.value = 1;
 
     try {
+      if (searchParams.filter?.includes(inStockFilterExpression)) {
+        showInStock.value = true;
+      }
+
+      if (!searchParams.filter?.includes(inStockFilterExpression) && showInStock.value === true) {
+        searchParams.filter = toFilterExpression(filters, showInStock);
+      }
+
       const {
         items = [],
         term_facets = [],
@@ -36,13 +48,15 @@ export default (
 
       products.value = items;
       total.value = totalCount;
-      pages.value = Math.ceil(total.value / (searchParams.itemsPerPage || 16));
+      pages.value = Math.ceil(total.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE));
 
       if (withFilters) {
-        filters.value = [
-          ...term_facets.sort((a, b) => a.label.localeCompare(b.label)).map(termFacetToProductsFilter),
-          ...range_facets.sort((a, b) => a.label.localeCompare(b.label)).map(rangeFacetToProductsFilter),
-        ];
+        term_facets.sort((a, b) => a.label.localeCompare(b.label));
+        range_facets.sort((a, b) => a.label.localeCompare(b.label));
+        filters.value = Array<ProductsFilter>().concat(
+          term_facets.map(termFacetToProductsFilter),
+          range_facets.map(rangeFacetToProductsFilter)
+        );
       }
     } catch (e) {
       Logger.error("useProducts.fetchProducts", e);
@@ -60,7 +74,7 @@ export default (
 
       products.value = products.value.concat(items);
       total.value = totalCount;
-      pages.value = Math.ceil(total.value / (searchParams.itemsPerPage || 16));
+      pages.value = Math.ceil(total.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE));
     } catch (e) {
       Logger.error(`useProducts.${fetchMoreProducts.name}`, e);
       throw e;
@@ -71,6 +85,7 @@ export default (
 
   return {
     filters,
+    showInStock,
     fetchProducts,
     fetchMoreProducts,
     total: readonly(total),

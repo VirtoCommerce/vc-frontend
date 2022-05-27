@@ -5,11 +5,13 @@
       <h2 class="text-black-800 text-2xl md:text-4xl font-bold mb-2" v-t="'pages.403.error_text'"></h2>
       <p class="text-gray-700 text-base md:text-xl leading-relaxed mb-10" v-t="'pages.403.message'"></p>
       <div>
-        <VcButton to="/" size="md" class="w-40 uppercase" v-t="'pages.403.home_button'"></VcButton>
+        <VcButton to="/" size="md" class="w-40 uppercase">
+          {{ $t("pages.403.home_button") }}
+        </VcButton>
       </div>
     </template>
     <template #right>
-      <VcImage src="/static/images/errors/403.webp" :alt="$t('pages.403.img_alt')" class="w-full max-w-md" />
+      <VcImage src="/static/images/errors/403.webp" :alt="$t('pages.403.img_alt')" class="w-full max-w-md" lazy />
     </template>
   </TwoColumn>
 </template>

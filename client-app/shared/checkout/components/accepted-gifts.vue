@@ -16,7 +16,7 @@
         class="border-b last:border-b-0 flex items-center justify-between px-6 py-6"
       >
         <div class="flex-grow flex items-center">
-          <VcImage :src="gift.imageUrl" class="mr-4 border aspect-square w-16 h-16" />
+          <VcImage :src="gift.imageUrl" class="mr-4 border aspect-square w-16 h-16" lazy />
           <div>
             <div class="flex-grow font-bold text-[color:var(--color-link)]">{{ gift.name }}</div>
             <div class="lg:hidden">

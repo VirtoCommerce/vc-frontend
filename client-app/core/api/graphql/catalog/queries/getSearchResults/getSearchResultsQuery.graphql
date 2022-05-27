@@ -41,6 +41,14 @@ query GetSearchResults(
           amount
           formattedAmount
         }
+        list {
+          amount
+          formattedAmount
+        }
+        sale {
+          amount
+          formattedAmount
+        }
       }
     }
   }
@@ -62,6 +70,7 @@ query GetSearchResults(
     items {
       id
       name
+      slug
       seoInfo {
         semanticUrl
       }

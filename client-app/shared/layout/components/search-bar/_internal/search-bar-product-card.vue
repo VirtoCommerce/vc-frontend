@@ -2,14 +2,20 @@
   <div class="flex flex-row gap-2">
     <!-- Product image -->
     <router-link :to="link" class="shrink-0 w-20 h-20 border border-gray-200" @click="$emit('link-click', $event)">
-      <VcImage :src="product.imgSrc" :alt="product.name" class="w-full h-full object-cover object-center" lazy />
+      <VcImage
+        :src="product.imgSrc"
+        :alt="product.name"
+        size-suffix="sm"
+        class="w-full h-full object-cover object-center"
+        lazy
+      />
     </router-link>
 
-    <div class="flex flex-col justify-evenly gap-2 overflow-hidden">
+    <div class="flex flex-col justify-start space-y-2 overflow-hidden">
       <!-- Product title -->
       <router-link
         :to="link"
-        class="text-[color:var(--color-link)] font-extrabold text-sm leading-tight line-clamp-2"
+        class="shrink-0 h-8 text-[color:var(--color-link)] font-extrabold text-sm leading-tight line-clamp-2"
         @click="$emit('link-click', $event)"
       >
         {{ product.name }}
@@ -18,13 +24,13 @@
       <!-- Product props -->
       <div class="text-xs overflow-hidden">
         <p class="truncate">
-          <span class="font-bold mr-1">Item</span>
+          <span class="font-bold mr-1">{{ $t("common.labels.item") }}</span>
           <span>{{ product.code }}</span>
         </p>
 
-        <p class="truncate">
-          <span class="font-bold mr-1">Price</span>
-          <span class="text-green-700 font-extrabold"><VcPriceDisplay :value="product.price?.actual" /></span> / each
+        <p class="truncate flex">
+          <span class="font-bold mr-1">{{ $t("common.labels.price") }}</span>
+          <VcItemPrice :value="product.price" />
         </p>
       </div>
     </div>
@@ -33,9 +39,10 @@
 
 <script setup lang="ts">
 import { computed, PropType } from "vue";
-import { VcImage, VcPriceDisplay } from "@/components";
+import { VcImage, VcItemPrice } from "@/components";
 import { Product as ProductType } from "@/core/api/graphql/types";
 import { RouteLocationRaw } from "vue-router";
+import { getProductRoute } from "@/shared/catalog";
 
 defineEmits(["link-click"]);
 
@@ -46,5 +53,5 @@ const props = defineProps({
   },
 });
 
-const link = computed<RouteLocationRaw>(() => ({ name: "Product", params: { productId: props.product.id } }));
+const link = computed<RouteLocationRaw>(() => getProductRoute(props.product));
 </script>

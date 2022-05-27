@@ -1,22 +1,88 @@
 <template>
   <template v-if="!showThankYou">
-    <!-- Empty cart view -->
-    <EmptyCart v-if="cart.items && cart.items?.length === 0 && !showThankYou"></EmptyCart>
-    <div v-else class="bg-gray-100 pt-7 pb-16 shadow-inner">
+    <VcEmptyPage
+      v-if="cart.items && cart.items?.length === 0 && !showThankYou && !creatingOrder"
+      :title="$t('shared.checkout.empty_cart.title')"
+      :description="$t('shared.checkout.empty_cart.description')"
+      image="/static/images/errors/emptyCart.webp"
+      mobile-image="/static/images/errors/emptyCartMobile.webp"
+      :breadcrumbs="breadcrumbs"
+    >
+      <template #actions>
+        <VcButton :to="{ name: 'Catalog' }" size="lg" class="w-48 uppercase font-bold">
+          {{ $t("shared.checkout.empty_cart.continue_shopping_button") }}
+        </VcButton>
+      </template>
+    </VcEmptyPage>
+
+    <div v-else class="bg-gray-100 pt-7 pb-8 shadow-inner">
+      <!-- Mobile sticky header -->
+      <div
+        v-if="isVisibleStickyMobileHeader"
+        class="fixed top-0 h-14 w-full z-40 px-5 md:px-12 flex justify-between items-center gap-x-3 bg-[color:var(--color-header-bottom-bg)]"
+      >
+        <div>
+          <h2 class="text-gray-800 font-extrabold uppercase leading-none mb-1.5" v-t="'pages.checkout.title'" />
+
+          <div class="font-bold leading-none">
+            <span>{{ $t("shared.checkout.order_summary.total_label") }}:</span>
+
+            <span class="ml-1 text-green-700">
+              <VcPriceDisplay :value="cart.total" />
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <VcButton
+            :is-disabled="!isValidCheckout"
+            :is-waiting="creatingOrder"
+            size="sm"
+            class="uppercase px-3"
+            @click="createOrder"
+          >
+            {{ $t("pages.checkout.order_summary_block.place_order_button") }}
+          </VcButton>
+        </div>
+      </div>
+
       <div class="max-w-screen-2xl md:px-12 mx-auto">
         <h2
           class="text-gray-800 px-5 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-7"
           v-t="'pages.checkout.title'"
-        ></h2>
+        />
+
         <div class="flex flex-col lg:flex-row lg:flex-nowrap lg:space-x-6">
           <!-- Main section -->
           <div class="lg:w-3/4 xl:w-4/5 flex-grow w-full">
             <!-- My products section -->
-            <VcSection
-              :title="$t('pages.checkout.products_section.title')"
-              icon-url="/static/images/checkout/products.svg"
-              class="shadow lg:pb-11"
-            >
+            <VcSection class="shadow lg:pb-11">
+              <template #title>
+                <div class="flex items-center px-5 lg:pr-0 py-7">
+                  <VcImage
+                    :src="'/static/images/checkout/products.svg'"
+                    :alt="$t('pages.checkout.products_section.title')"
+                    class="mr-5 lg:mr-8"
+                  />
+
+                  <div class="w-full flex justify-between xl:mr-11 lg:mr-6">
+                    <h3 class="text-gray-800 text-2xl lg:text-3xl font-bold uppercase">
+                      {{ $t("pages.checkout.products_section.title") }}
+                    </h3>
+
+                    <VcButton
+                      size="sm"
+                      kind="secondary"
+                      is-outline
+                      class="px-3 self-start uppercase font-bold"
+                      @click="openClearCartDialog"
+                    >
+                      {{ $t("pages.checkout.products_section.clear_cart_button") }}
+                    </VcButton>
+                  </div>
+                </div>
+              </template>
+
               <div class="xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6 lg:border lg:rounded">
                 <!-- Product card -->
                 <ProductCard
@@ -27,7 +93,7 @@
                   @update:quantity="updateItemQuantity"
                   @remove:item="removeCartItem"
                   :validation-error="getItemValidationError(item?.id)"
-                ></ProductCard>
+                />
 
                 <div class="py-8 lg:flex lg:items-center lg:px-5">
                   <VcPagination
@@ -36,7 +102,8 @@
                     :pages="pages"
                     class="mb-3 lg:mb-0"
                     @update:page="page = $event"
-                  ></VcPagination>
+                  />
+
                   <p class="text-center text-sm lg:ml-auto">
                     {{ $t("pages.checkout.products_section.update_all_link_label") }}
                     <span
@@ -63,7 +130,7 @@
                   class="border-b last:border-b-0 flex items-center justify-between px-7 py-6"
                 >
                   <VcCheckbox class="mr-7" :model-value="checkGift(gift)" @change="toggleGift($event, gift)" />
-                  <VcImage :src="gift.imageUrl" class="mr-4 border aspect-square w-16 h-16" />
+                  <VcImage :src="gift.imageUrl" class="mr-4 border aspect-square w-16 h-16" lazy />
                   <div class="flex-grow font-bold text-[color:var(--color-link)]">{{ gift.name }}</div>
                 </div>
               </div>
@@ -80,7 +147,7 @@
                   :label="$t('pages.checkout.shipping_details_section.shipping_address_block.title')"
                 >
                   <template v-if="shipment?.deliveryAddress">
-                    <div>
+                    <div class="truncate">
                       <span class="font-extrabold">
                         {{ shipment.deliveryAddress?.firstName }}
                         {{ shipment.deliveryAddress?.lastName }}
@@ -106,6 +173,7 @@
                         {{ shipment.deliveryAddress?.email }}
                       </p>
                     </div>
+
                     <div>
                       <VcButton
                         size="sm"
@@ -116,18 +184,21 @@
                             ? selectShippingAddressDialog()
                             : addOrUpdateAddressDialog(AddressType.Shipping, shipment?.deliveryAddress)
                         "
-                        v-t="'pages.checkout.shipping_details_section.shipping_address_block.change_button'"
                       >
+                        {{ $t("pages.checkout.shipping_details_section.shipping_address_block.change_button") }}
                       </VcButton>
                     </div>
                   </template>
+
                   <template v-else>
                     <div class="text-[color:var(--color-danger)] flex items-center space-x-4">
-                      <i class="fas fa-exclamation-triangle text-2xl"></i>
+                      <i class="fas fa-exclamation-triangle text-2xl" />
+
                       <span
                         v-if="isAuthenticated"
                         v-t="'pages.checkout.shipping_details_section.shipping_address_block.no_addresses_message'"
                       ></span>
+
                       <span
                         v-else
                         v-t="
@@ -146,38 +217,45 @@
                             ? selectShippingAddressDialog()
                             : addOrUpdateAddressDialog(AddressType.Shipping)
                         "
-                        v-t="'pages.checkout.shipping_details_section.shipping_address_block.add_address_button'"
                       >
+                        {{ $t("pages.checkout.shipping_details_section.shipping_address_block.add_address_button") }}
                       </VcButton>
                     </div>
                   </template>
                 </CheckoutLabeledBlock>
+
                 <CheckoutLabeledBlock
                   :label="$t('pages.checkout.shipping_details_section.shipping_method_block.title')"
                 >
                   <div class="flex flex-row items-center space-x-4">
                     <template v-if="shipment?.shipmentMethodCode">
-                      <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" />
+                      <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" lazy />
                       <span>
                         {{ shipment.shipmentMethodCode }} {{ shipment.shipmentMethodOption }} (<VcPriceDisplay
                           :value="shipment.price"
                         />)
                       </span>
                     </template>
+
                     <div
                       v-else
                       class="text-gray-600"
                       v-t="'pages.checkout.shipping_details_section.shipping_method_block.not_defined_message'"
                     ></div>
                   </div>
+
                   <div>
                     <VcButton
                       size="sm"
                       is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="showShipmentMethodDialog"
-                      v-t="'pages.checkout.shipping_details_section.shipping_method_block.change_button'"
                     >
+                      {{
+                        shipment?.shipmentMethodCode
+                          ? $t("pages.checkout.shipping_details_section.shipping_method_block.change_button")
+                          : $t("pages.checkout.shipping_details_section.shipping_method_block.select_button")
+                      }}
                     </VcButton>
                   </div>
                 </CheckoutLabeledBlock>
@@ -206,12 +284,14 @@
                     ></span>
                   </label>
                 </CheckoutLabeledBlock>
+
                 <div
                   v-if="!billingSameAsShipping && !payment?.billingAddress"
                   class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 mb-6 p-5 flex flex-col space-y-2 lg:space-y-0 lg:flex-row lg:items-center justify-between"
                 >
                   <div class="text-[color:var(--color-danger)] flex items-center space-x-4">
-                    <i class="fas fa-exclamation-triangle text-2xl"></i>
+                    <i class="fas fa-exclamation-triangle text-2xl" />
+
                     <span
                       v-if="isAuthenticated"
                       class="text-sm"
@@ -235,17 +315,17 @@
                       @click="
                         isAuthenticated ? selectBillingAddressDialog() : addOrUpdateAddressDialog(AddressType.Billing)
                       "
-                      v-t="'pages.checkout.payment_details_section.billing_address_block.add_address_button'"
                     >
+                      {{ $t("pages.checkout.payment_details_section.billing_address_block.add_address_button") }}
                     </VcButton>
                   </div>
                 </div>
 
                 <div
                   v-else-if="!billingSameAsShipping && payment?.billingAddress"
-                  class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 mb-6 p-5 flex justify-between items-center text-sm"
+                  class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 mb-6 p-5 flex justify-between space-x-3 items-center text-sm"
                 >
-                  <div>
+                  <div class="truncate">
                     <span class="font-extrabold">
                       {{ payment.billingAddress?.firstName }}
                       {{ payment.billingAddress?.lastName }}
@@ -271,6 +351,7 @@
                       >{{ payment.billingAddress?.email }}
                     </p>
                   </div>
+
                   <div>
                     <VcButton
                       size="sm"
@@ -281,31 +362,38 @@
                           ? selectBillingAddressDialog()
                           : addOrUpdateAddressDialog(AddressType.Billing, payment?.billingAddress)
                       "
-                      v-t="'pages.checkout.payment_details_section.billing_address_block.change_button'"
                     >
+                      {{ $t("pages.checkout.payment_details_section.billing_address_block.change_button") }}
                     </VcButton>
                   </div>
                 </div>
+
                 <CheckoutLabeledBlock :label="$t('pages.checkout.payment_details_section.payment_method_block.title')">
                   <div class="flex flex-row items-center space-x-4">
                     <template v-if="payment?.paymentGatewayCode">
-                      <VcImage src="/static/images/checkout/invoice.svg" class="h-12 w-12" />
+                      <VcImage src="/static/images/checkout/invoice.svg" class="h-12 w-12" lazy />
                       <span>{{ payment.paymentGatewayCode }}</span>
                     </template>
+
                     <div
                       v-else
                       class="text-gray-600"
                       v-t="'pages.checkout.payment_details_section.payment_method_block.not_defined_message'"
                     ></div>
                   </div>
+
                   <div>
                     <VcButton
                       size="sm"
                       is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="showPaymentMethodDialog"
-                      v-t="'pages.checkout.payment_details_section.payment_method_block.change_button'"
                     >
+                      {{
+                        payment?.paymentGatewayCode
+                          ? $t("pages.checkout.payment_details_section.payment_method_block.change_button")
+                          : $t("pages.checkout.payment_details_section.payment_method_block.select_button")
+                      }}
                     </VcButton>
                   </div>
                 </CheckoutLabeledBlock>
@@ -324,12 +412,13 @@
                 <VcTextArea v-model="cartComment" class="resize-none" :rows="4" :max-length="1000" counter />
               </div>
             </VcSection>
-            <div class="shadow-inner h-1 lg:hidden"></div>
+
+            <div class="shadow-inner h-2 lg:hidden"></div>
           </div>
 
           <!-- Sidebar -->
           <div
-            class="flex flex-col px-5 mb-7 order-first md:px-0 lg:mb-0 lg:order-1 lg:w-1/4 lg:h-5/6 lg:sticky lg:top-4"
+            class="flex flex-col px-5 mb-7 order-first md:px-0 lg:mb-6 lg:order-1 lg:w-1/4 lg:h-full lg:sticky lg:top-4"
           >
             <!-- Order summary -->
             <OrderSummary :cart="cart">
@@ -347,7 +436,7 @@
                   @click:apply="setPurchaseOrderNumber"
                   @click:deny="removePurchaseOrderNumber"
                   @update:model-value="couponValidationError = ''"
-                ></VcActionInput>
+                />
 
                 <!-- Promotion code -->
                 <VcActionInput
@@ -362,24 +451,32 @@
                   @click:apply="useCoupon"
                   @click:deny="removeCoupon"
                   @update:model-value="couponValidationError = ''"
-                ></VcActionInput>
+                />
               </template>
+
               <template #footer>
                 <p
                   class="mt-8 mb-3 text-xs font-normal text-gray-400"
                   v-t="'pages.checkout.order_summary_block.warning_message'"
                 ></p>
+
+                <div ref="stickyMobileHeaderAnchor" class="absolute -mt-2.5"></div>
+
                 <VcButton
                   class="uppercase w-full"
                   :is-disabled="!isValidCheckout"
                   :is-waiting="creatingOrder"
                   @click="createOrder"
-                  v-t="'pages.checkout.order_summary_block.place_order_button'"
                 >
+                  {{ $t("pages.checkout.order_summary_block.place_order_button") }}
                 </VcButton>
-                <div v-if="!isValidCheckout" class="flex space-x-2 bg-primary-100 rounded mt-3 p-3 text-xs">
-                  <i class="fas fa-exclamation-triangle text-xl text-primary-600"></i>
-                  <span v-t="'pages.checkout.invalid_checkout_message'"></span>
+
+                <div
+                  v-if="!isValidCheckout && !creatingOrder"
+                  class="flex items-center space-x-2 bg-primary-100 rounded mt-3 p-3 text-xs"
+                >
+                  <i class="fas fa-exclamation-triangle text-xl text-primary-600" />
+                  <span v-t="'pages.checkout.invalid_checkout_message'" />
                 </div>
               </template>
             </OrderSummary>
@@ -388,7 +485,8 @@
       </div>
     </div>
   </template>
-  <ThankYou v-else :order="completedOrder"></ThankYou>
+
+  <ThankYou v-else :order="completedOrder" />
 </template>
 
 <script setup lang="ts">
@@ -396,12 +494,12 @@ import {
   CheckoutLabeledBlock,
   OrderSummary,
   ProductCard,
-  EmptyCart,
   ThankYou,
   ShippingMethodDialog,
   PaymentMethodDialog,
   SelectAddressDialog,
   AddOrUpdateAddressDialog,
+  ClearCartDialog,
 } from "@/shared/checkout";
 import {
   VcTextArea,
@@ -412,10 +510,12 @@ import {
   VcActionInput,
   VcSection,
   VcCheckbox,
+  VcEmptyPage,
+  IBreadcrumbs,
 } from "@/components";
 import { useCart, useCheckout } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
-import { computed, onBeforeUpdate, onMounted, ref } from "vue";
+import { computed, onBeforeUpdate, onMounted, ref, shallowRef } from "vue";
 import _ from "lodash";
 import {
   CartAddressType,
@@ -432,7 +532,10 @@ import { useUser, useUserAddresses } from "@/shared/account";
 import { AddressType } from "@/core/types";
 import { addGiftItems, rejectGiftItems } from "@core/api/graphql/cart";
 import { useI18n } from "vue-i18n";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { useElementVisibility } from "@core/composables";
 
+const breakpoints = useBreakpoints(breakpointsTailwind);
 const { me: user, isAuthenticated } = useUser();
 const {
   loading,
@@ -449,6 +552,7 @@ const {
   updateShipment,
   updatePayment,
   updatePurchaseOrderNumber,
+  removeCart,
 } = useCart();
 
 const { t } = useI18n();
@@ -464,8 +568,8 @@ const {
 const { placeOrder } = useCheckout();
 const { openPopup, closePopup } = usePopup();
 
-//TODO: change 'any' for a normal type
-const productCardRefs = ref<any[]>([]);
+const isMobile = breakpoints.smaller("lg");
+const productCardRefs = ref<InstanceType<typeof ProductCard>[]>([]);
 const creatingOrder = ref(false);
 const completedOrder = ref({});
 const showThankYou = ref(false);
@@ -476,6 +580,10 @@ const cartCouponApplied = ref(false);
 const billingSameAsShipping = ref(true);
 const page = ref(1);
 const purchaseOrderNumber = ref("");
+
+const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
+const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
+const isVisibleStickyMobileHeader = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
 const purchaseOrderNumberApplied = computed(() => !!cart.value.purchaseOrderNumber);
 
@@ -501,6 +609,11 @@ const isValidPayment = computed(
   () => payment.value?.paymentGatewayCode && (billingSameAsShipping.value || payment.value?.billingAddress)
 );
 
+const breadcrumbs: IBreadcrumbs[] = [
+  { title: t("common.links.home"), route: { name: "Home" } },
+  { title: t("common.links.cart"), route: { name: "Cart" } },
+];
+
 //TODO: change 'any' for a normal type
 const setProductCardRef = (el: any) => {
   if (el) {
@@ -523,7 +636,7 @@ const removeCartItem = async (id: string) => {
 };
 
 const useCoupon = async () => {
-  const validationResult = await validateCartCoupon(cartCoupon.value);
+  const validationResult: boolean = await validateCartCoupon(cartCoupon.value);
 
   if (validationResult) {
     await addCartCoupon(cartCoupon.value).then(() => {
@@ -584,10 +697,10 @@ onBeforeUpdate(() => {
   productCardRefs.value = [];
 });
 
-onMounted(async () => {
+onMounted(() => {
   loadAddresses();
 
-  await loadMyCart().then(() => {
+  loadMyCart().then(() => {
     if (cart.value.coupons && cart.value.coupons.length > 0) {
       cartCoupon.value = cart.value.coupons[0]?.code || "";
       cartCouponApplied.value = true;
@@ -667,7 +780,7 @@ function selectShippingAddressDialog(): void {
   openPopup({
     component: SelectAddressDialog,
     props: {
-      addresses,
+      addresses: addresses.value,
       currentAddress: shipment.value?.deliveryAddress,
       async onResult(address?: InputAddressType) {
         if (!address) return;
@@ -690,7 +803,7 @@ function selectBillingAddressDialog(): void {
   openPopup({
     component: SelectAddressDialog,
     props: {
-      addresses,
+      addresses: addresses.value,
       currentAddress: payment.value?.billingAddress,
       async onResult(address?: InputAddressType) {
         if (!address) return;
@@ -733,6 +846,17 @@ function addOrUpdateAddressDialog(
             deliveryAddress: { ...convertedAddress },
           });
         }
+      },
+    },
+  });
+}
+
+function openClearCartDialog() {
+  openPopup({
+    component: ClearCartDialog,
+    props: {
+      onResult() {
+        removeCart(cart.value.id!);
       },
     },
   });

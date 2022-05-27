@@ -2,38 +2,53 @@
   <div class="border-b">
     <div class="p-5 flex flex-wrap overflow-hidden space-x-4 lg:space-x-6">
       <div class="border border-gray-100 w-16 h-16">
-        <VcImage :src="lineItem.imageUrl" :alt="lineItem.name" class="w-full h-full object-cover object-center" />
+        <VcImage
+          :src="lineItem.imageUrl"
+          :alt="lineItem.name"
+          size-suffix="sm"
+          class="w-full h-full object-cover object-center"
+          lazy
+        />
       </div>
 
       <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center flex-1">
         <div class="mb-3 lg:mb-0 text-sm xl:w-1/2">
-          <router-link
-            :to="`/${SeoUrl.Product}/${productId}`"
-            class="text-[color:var(--color-link)] font-extrabold line-clamp-3 overflow-hidden"
-          >
-            {{ lineItem.name }}
-          </router-link>
-          <div class="flex items-center space-x-1 py-1" v-if="validationError">
-            <i class="fas fa-exclamation-circle text-[color:var(--color-primary)]"></i>
-            <span class="text-xs text-gray-400"> {{ validationError.errorMessage }} </span>
+          <div class="mb-1">
+            <router-link :to="link" class="text-[color:var(--color-link)] font-extrabold line-clamp-3 overflow-hidden">
+              {{ lineItem.name }}
+            </router-link>
+            <div class="flex items-center space-x-1 py-1" v-if="validationError">
+              <i class="fas fa-exclamation-circle text-[color:var(--color-primary)]"></i>
+              <span class="text-xs text-gray-400"> {{ itemErrorMessage }} </span>
+            </div>
           </div>
-          <div class="flex">
-            <span class="font-medium text-gray-500 pr-1">{{ $t("shared.checkout.product_card.brand_label") }} </span>
-            <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
-            <span class="w-1/3 lg:w-auto font-bold">{{ lineItem.product?.brandName }}</span>
-          </div>
-          <div class="flex text-sm">
-            <span class="font-medium text-gray-500 pr-1">{{ $t("shared.checkout.product_card.price_label") }} </span>
-            <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
-            <p class="w-1/3 lg:w-auto font-bold">
-              <span class="text-green-700"><VcPriceDisplay :value="lineItem.listPrice || lineItem.placedPrice" /></span>
-              <span class="hidden lg:inline" v-t="'common.suffixes.per_item'"></span>
-            </p>
-          </div>
-          <div class="flex text-sm lg:hidden">
-            <span class="font-medium text-gray-500">{{ $t("shared.checkout.product_card.total_label") }} </span>
-            <span class="mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
-            <span class="w-1/3 text-green-700 font-bold"><VcPriceDisplay :value="lineItem.extendedPrice" /></span>
+          <div class="flex flex-col space-y-1 lg:space-y-0">
+            <div class="flex">
+              <span class="font-medium lg:font-extrabold text-gray-500 lg:text-black pr-1"
+                >{{ $t("shared.checkout.product_card.brand_label") }}
+              </span>
+              <span class="h-4 mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
+              <span class="w-1/3 lg:w-auto font-bold lg:font-medium">{{ lineItem.product?.brandName }}</span>
+            </div>
+            <div class="flex">
+              <span class="font-medium lg:font-extrabold text-gray-500 lg:text-black pr-1"
+                >{{ $t("shared.checkout.product_card.price_label") }}
+              </span>
+              <span class="h-4 mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
+              <p class="w-1/3 lg:w-auto">
+                <VcItemPrice
+                  :price-color-class="isMobile ? 'text-black' : undefined"
+                  :value="{ list: lineItem.listPrice || lineItem.placedPrice, sale: lineItem.salePrice }"
+                />
+              </p>
+            </div>
+            <div class="flex text-sm lg:hidden">
+              <span class="font-medium text-gray-500">{{ $t("shared.checkout.product_card.total_label") }} </span>
+              <span class="h-4 mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
+              <span class="w-1/3 text-green-700 font-extrabold"
+                ><VcPriceDisplay :value="lineItem.extendedPrice"
+              /></span>
+            </div>
           </div>
         </div>
 
@@ -76,17 +91,19 @@
               is-outline
               class="uppercase px-2 font-bold"
               @click="updateQuantity"
-              v-t="'shared.checkout.product_card.update_button'"
             >
+              {{ $t("shared.checkout.product_card.update_button") }}
             </VcButton>
+
             <VcButton
               size="sm"
               kind="secondary"
               is-outline
               class="uppercase px-2"
               @click="$emit('remove:item', lineItem.id)"
-              v-t="'shared.checkout.product_card.remove_button'"
-            ></VcButton>
+            >
+              {{ $t("shared.checkout.product_card.remove_button") }}
+            </VcButton>
           </div>
           <div
             v-if="!readOnly"
@@ -115,12 +132,20 @@
 </template>
 
 <script setup lang="ts">
-import { VcImage, VcPriceDisplay, VcButton } from "@/components";
+import { VcImage, VcPriceDisplay, VcItemPrice, VcButton } from "@/components";
 import { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import { computed, PropType } from "vue";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useField } from "vee-validate";
 import * as yup from "yup";
-import SeoUrl from "@core/seo-routes.enum";
+import { useI18n } from "vue-i18n";
+import { RouteLocationRaw } from "vue-router";
+import { getProductRoute } from "@/shared/catalog";
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const { t } = useI18n();
+
+const isMobile = breakpoints.smaller("lg");
 
 // Define max qty available to add
 const max = 999999;
@@ -149,7 +174,19 @@ const maxQty = computed(
   () => (variation.value ? variation.value?.maxQuantity : props.lineItem.product?.maxQuantity) || max
 );
 
-const productId = computed(() => props.lineItem.product?.masterVariation?.id || props.lineItem.productId);
+const link = computed<RouteLocationRaw>(() =>
+  getProductRoute(props.lineItem.product!.masterVariation || props.lineItem.product!)
+);
+
+const itemErrorMessage = computed(() => {
+  if (props.validationError?.errorCode === "PRODUCT_PRICE_CHANGED") {
+    return t("shared.checkout.product_card.errors.product_price_changed", [
+      Number(props.validationError.errorParameters?.find((error) => error.key === "new_price")?.value).toFixed(2),
+    ]);
+  } else {
+    return props.validationError?.errorMessage;
+  }
+});
 
 let rules = yup.number().integer().optional().moreThan(0);
 rules = rules.min(minQty.value);
@@ -166,7 +203,7 @@ const isInputDisabled = computed(() => props.lineItem.inStockQuantity === 0);
 
 const updateQuantity = () => {
   if (!isInputDisabled.value) {
-    emit("update:quantity", props.lineItem.id, value.value);
+    emit("update:quantity", props.lineItem.id, value.value || 0);
   }
 };
 

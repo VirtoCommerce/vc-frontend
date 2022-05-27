@@ -1,0 +1,3 @@
+query checkEmailUniqueness($email: String!) {
+  checkEmailUniqueness(email: $email)
+}

@@ -1,5 +1,5 @@
 <template>
-  <VcPopup :title="$t('shared.catalog.add_to_wishlists_dialog.title')" modal-width="max-w-xl">
+  <VcPopup :title="$t('shared.wishlists.add_to_wishlists_dialog.title')" modal-width="max-w-xl">
     <div class="max-h-[50vh] lg:max-h-64 overflow-y-auto border-b">
       <!-- Lists -->
       <ul v-if="extendedLists.length">
@@ -12,7 +12,7 @@
 
               <small class="flex flex-shrink-0 items-center leading-tight">
                 <i class="fas fa-check text-base text-[color:var(--color-primary)] mr-1.5" />
-                {{ $t("shared.catalog.add_to_wishlists_dialog.item_already_in_list") }}
+                {{ $t("shared.wishlists.add_to_wishlists_dialog.item_already_in_list") }}
               </small>
             </div>
           </div>
@@ -34,7 +34,7 @@
 
       <!-- Empty -->
       <p v-else class="bg-gray-50 text-center px-6 py-10">
-        {{ $t("shared.catalog.add_to_wishlists_dialog.empty_list") }}
+        {{ $t("shared.wishlists.add_to_wishlists_dialog.empty_list") }}
       </p>
     </div>
 
@@ -45,7 +45,7 @@
         is-outline
         @click="close"
       >
-        {{ $t("shared.catalog.add_to_wishlists_dialog.cancel_button") }}
+        {{ $t("shared.wishlists.add_to_wishlists_dialog.cancel_button") }}
       </VcButton>
 
       <VcButton
@@ -54,7 +54,7 @@
         class="uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-5"
         @click="addToWishlists"
       >
-        {{ $t("shared.catalog.add_to_wishlists_dialog.add_to_list_button") }}
+        {{ $t("shared.wishlists.add_to_wishlists_dialog.add_to_list_button") }}
       </VcButton>
     </template>
   </VcPopup>

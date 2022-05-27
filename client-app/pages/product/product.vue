@@ -1,16 +1,10 @@
 <template>
   <div v-if="product" class="bg-gray-100 pt-7 pb-8 shadow-inner">
+    <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
+
     <div class="max-w-screen-2xl px-5 md:px-12 mx-auto">
       <!-- Breadcrumbs -->
-      <Breadcrumbs class="hidden md:block mb-3" :items="breadcrumbs" />
-
-      <div class="md:hidden mb-5">
-        <!-- todo: use VcButton -->
-        <button class="border border-grey-200 rounded bg-white px-3 py-2 hover:bg-gray-100" @click="$router.back()">
-          <i class="fas fa-chevron-left text-[color:var(--color-primary)]"></i
-          ><span class="ml-2 text-[color:var(--color-link)]">{{ $t("pages.product.back_button") }}</span>
-        </button>
-      </div>
+      <Breadcrumbs class="hidden lg:block mb-3" :items="breadcrumbs" />
 
       <h1 class="text-2xl md:text-4xl font-bold uppercase">{{ product.name }}</h1>
 
@@ -23,7 +17,7 @@
           <ProductDetails :product="product" class="shadow-sm border rounded-none md:rounded" />
         </div>
 
-        <div class="lg:w-4/12 mt-6 lg:mt-0 xl:w-3/12">
+        <div class="lg:w-4/12 lg:h-full lg:sticky lg:top-4 mt-6 lg:mt-0 xl:w-3/12">
           <!-- Price & Delivery (with variations) -->
           <ProductPriceBlock v-if="productWithVariations" :product="product">
             <div class="flex items-baseline justify-between text-sm">
@@ -31,12 +25,14 @@
 
               <div class="font-extrabold">
                 <!-- todo: extract a component for price and use it here -->
-                <span class="text-green-700">{{ currency?.symbol }}{{ variationsCartTotal.toFixed(2) }}</span>
+                <span class="text-green-700">{{ currency?.symbol }}{{ variationsCartTotalAmount.toFixed(2) }}</span>
               </div>
             </div>
 
             <div class="mt-7 md:mt-5">
-              <VcButton to="/checkout" class="uppercase px-2 w-full" v-t="'pages.product.view_cart_button'"></VcButton>
+              <VcButton :to="{ name: 'Checkout' }" class="uppercase px-2 w-full">
+                {{ $t("pages.product.view_cart_button") }}
+              </VcButton>
             </div>
           </ProductPriceBlock>
 
@@ -46,8 +42,7 @@
               <div class="font-extrabold text-base" v-t="'pages.product.price_label'"></div>
 
               <div>
-                <VcPriceDisplay :value="product.price?.actual" class="font-extrabold text-green-700" />
-                <span class="font-semibold hidden lg:inline-block ml-1" v-t="'common.suffixes.per_item'"></span>
+                <VcItemPrice :value="product.price" />
               </div>
             </div>
 
@@ -90,9 +85,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, computed, watchEffect, defineAsyncComponent } from "vue";
-import { VcCarousel, VcSection, VcButton, VcPriceDisplay, CarouselOptions } from "@/components";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { ref, Ref, watchEffect, defineAsyncComponent } from "vue";
+import { VcCarousel, VcSection, VcButton, VcItemPrice, CarouselOptions } from "@/components";
+import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
 import { useCart, AddToCart } from "@/shared/cart";
 import {
   useProduct,
@@ -104,6 +99,7 @@ import {
   ProductPriceBlock,
   CarouselProductCard,
 } from "@/shared/catalog";
+import { BackButtonInHeader } from "@/shared/layout";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
@@ -142,16 +138,24 @@ const relatedProductsCarouselOptions: CarouselOptions = {
   },
 };
 
-const { currency } = useCart();
+const { currency, getItemsTotal } = useCart();
 const { buildBreadcrumbs } = useBreadcrumbs();
-const { product, loading, loadProduct, variationsCartTotal } = useProduct();
+const { product, loading, loadProduct } = useProduct();
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
 const isMobile = breakpoints.smaller("lg");
 const breadcrumbs: Ref<IBreadcrumbsItem[]> = ref([{ url: "/", title: t("common.links.home") }]);
 
-const productWithVariations = computed<boolean>(() => !!product.value?.variations?.length);
+const productWithVariations = eagerComputed<boolean>(() => !!product.value?.variations?.length);
+const variationsCartTotalAmount = eagerComputed<number>(() => {
+  if (!product.value) return 0;
+
+  const variationsIds = product.value.variations!.map((variation) => variation.id!);
+  variationsIds.push(product.value.id);
+
+  return getItemsTotal(variationsIds);
+});
 
 watchEffect(() => {
   const productId = props.productId;

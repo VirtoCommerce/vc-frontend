@@ -1,3 +1,7 @@
+export * from "./theme-context";
+export * from "./language";
+export * from "./currency";
+
 import { CartAddressType, MemberAddressType, OrderAddressType } from "@core/api/graphql/types";
 import { LocationQueryValue } from "vue-router";
 
@@ -73,6 +77,10 @@ export interface IThemeConfigPreset {
   show_prices_with_taxes?: boolean;
   default_delivery_method?: string;
 
+  wishlists_limit?: number;
+
+  search_min_chars?: number;
+
   checkout_comment_enabled?: boolean;
   checkout_purchase_order_enabled?: boolean;
   checkout_coupon_enabled?: boolean;
@@ -84,6 +92,7 @@ export interface IThemeConfigPreset {
   orders_search_enabled?: boolean;
   orders_filter_enabled?: boolean;
   orders_reorder_enabled?: boolean;
+  orders_statuses?: string[];
 
   logo_image?: string;
   logo_inverted_image?: string;
@@ -111,10 +120,14 @@ export interface IThemeConfigPreset {
   color_alert_warning_text?: string;
   color_alert_info_text?: string;
   color_danger?: string;
+  color_danger_hover?: string;
   color_success?: string;
+  color_success_hover?: string;
   color_warning?: string;
-  color_price_color?: string;
-  color_checkbox?: string;
+  color_warning_hover?: string;
+  color_price?: string;
+  color_mobile_menu_bg?: string;
+  color_mobile_menu_link?: string;
   color_header_top_bg?: string;
   color_header_top_text?: string;
   color_header_top_link?: string;
@@ -137,18 +150,4 @@ export interface IThemeConfigPreset {
   color_footer_bottom_text?: string;
   color_footer_bottom_link?: string;
   color_footer_bottom_link_hover?: string;
-}
-
-export interface IThemeContext {
-  baseUrl?: string;
-  storeId?: string;
-  storeName?: string;
-  language?: string;
-  availLanguages?: string[];
-  catalogId?: string;
-  currency?: string;
-  availCurrencies?: string[];
-  userId?: string;
-  userName?: string;
-  settings?: { key: string; value: unknown }[];
 }

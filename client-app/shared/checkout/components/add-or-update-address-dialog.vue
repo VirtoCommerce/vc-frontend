@@ -24,8 +24,8 @@
                 editableAddress = null;
                 close();
               "
-              v-t="'shared.checkout.add_or_update_address_dialog.cancel_button'"
             >
+              {{ $t("shared.checkout.add_or_update_address_dialog.cancel_button") }}
             </VcButton>
 
             <VcButton size="md" :is-disabled="!dirty" class="uppercase w-1/2 sm:px-5" is-submit>

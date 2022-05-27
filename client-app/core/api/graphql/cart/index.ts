@@ -4,6 +4,7 @@ export { default as addBulkItemsToCart } from "./mutations/addBulkItemsToCart";
 export { default as addOrUpdateCartPayment } from "./mutations/addOrUpdateCartPayment";
 export { default as addOrUpdateCartShipment } from "./mutations/addOrUpdateCartShipment";
 export { default as createOrderFromCart } from "./mutations/createOrderFromCart";
+export { default as mergeCart } from "./mutations/mergeCart";
 export { default as removeCart } from "./mutations/removeCart";
 export { default as changeCartItemQuantity } from "./mutations/changeCartItemQuantity";
 export { default as getAvailPaymentMethods } from "./queries/getAvailPaymentMethods";

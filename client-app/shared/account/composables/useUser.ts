@@ -1,8 +1,8 @@
-import { themeContext } from "@core/utilities/context/index";
-import { Ref, ref, computed } from "vue";
+import { Ref, ref, readonly, computed } from "vue";
+import { eagerComputed } from "@vueuse/core";
 import { getMe, updatePersonalData, createUser, createOrganization, createContact } from "@/core/api/graphql/account";
-import { UserType, IdentityResultType } from "@core/api/graphql/types";
-import { Logger } from "@core/utilities";
+import { UserType, IdentityResultType, Organization } from "@core/api/graphql/types";
+import { Logger, themeContext } from "@core/utilities";
 import {
   RegisterOrganization,
   SignMeUp,
@@ -14,36 +14,27 @@ import {
 } from "@/shared/account";
 import useFetch from "@/core/composables/useFetch";
 
-const me: Ref<UserType> = ref({
-  userName: "",
-  phoneNumberConfirmed: false,
-  twoFactorEnabled: false,
-  securityStamp: "",
-  passwordExpired: false,
-  id: "",
-  accessFailedCount: 0,
-  emailConfirmed: false,
-  isAdministrator: false,
-  lockoutEnabled: false,
-});
+const me: Ref<UserType | null> = ref(null);
 
 const loading: Ref<boolean> = ref(false);
 
+const isAuthenticated = eagerComputed<boolean>(() => !!me.value?.userName && me.value.userName !== "Anonymous");
+const organization = eagerComputed<Organization | null>(() => me.value?.contact?.organizations?.items?.[0] ?? null);
+
+export async function loadMe() {
+  try {
+    const user = await getMe();
+    me.value = user;
+  } catch (e) {
+    Logger.error("useUser.loadMe", e);
+    throw e;
+  } finally {
+    loading.value = false;
+  }
+}
+
 export default () => {
   const { innerFetch } = useFetch();
-
-  async function loadMe() {
-    loading.value = true;
-
-    try {
-      me.value = await getMe();
-    } catch (e) {
-      Logger.error("useUser.loadMe", e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-  }
 
   async function updateUser(personalData: UserPersonalData): Promise<IdentityResultType> {
     try {
@@ -67,10 +58,12 @@ export default () => {
       const response = await fetch("/storefrontapi/account/password", {
         method: "POST",
         body: JSON.stringify({ oldPassword, newPassword, newPasswordConfirm: newPassword }),
+        headers: {
+          Accept: "text/plain",
+          "Content-Type": "application/json-patch+json",
+        },
       });
-      const res = (await response.json()) as IdentityResultType;
-
-      return res;
+      return (await response.json()) as IdentityResultType;
     } catch (e) {
       Logger.error("useUser.changePassword", e);
       throw e;
@@ -83,11 +76,7 @@ export default () => {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/login";
-      const res = await innerFetch<SignMeIn, IdentityResultType>(url, "POST", payload);
-
-      if (res.succeeded) {
-        await loadMe();
-      }
+      const res = await innerFetch<IdentityResultType, SignMeIn>(url, "POST", payload);
 
       return res;
     } catch (e) {
@@ -107,7 +96,7 @@ export default () => {
         name: `${payload.firstName} ${payload.lastName}`,
         emails: [payload.email],
       });
-      const result = await createUser({
+      return await createUser({
         userName: payload.userName,
         password: payload.password,
         email: payload.email,
@@ -115,7 +104,6 @@ export default () => {
         userType: "Customer",
         storeId: themeContext.storeId as string,
       });
-      return result;
     } catch (e) {
       Logger.error("useUser.registerUser", e);
       throw e;
@@ -127,7 +115,7 @@ export default () => {
   async function registerOrganization(payload: RegisterOrganization): Promise<IdentityResultType> {
     try {
       loading.value = true;
-      const organization = await createOrganization({
+      const createdOrganization = await createOrganization({
         name: payload.organizationName,
       });
       const contact = await createContact({
@@ -135,9 +123,9 @@ export default () => {
         lastName: payload.lastName as string,
         name: `${payload.firstName} ${payload.lastName}`,
         emails: [payload.email],
-        organizations: [organization.id],
+        organizations: [createdOrganization.id],
       });
-      const result = await createUser({
+      return await createUser({
         userName: payload.userName,
         password: payload.password,
         email: payload.email,
@@ -145,7 +133,6 @@ export default () => {
         userType: "Customer",
         storeId: themeContext.storeId as string,
       });
-      return result;
     } catch (e) {
       Logger.error("useUser.registerOrganization", e);
       throw e;
@@ -158,10 +145,7 @@ export default () => {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/logout";
-
-      await innerFetch<null, null>(url, "GET");
-
-      await loadMe();
+      await innerFetch(url);
     } catch (e) {
       Logger.error("useUser.logout", e);
       throw e;
@@ -174,8 +158,7 @@ export default () => {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/forgotPassword";
-      const res = await innerFetch<ForgotPassword, IdentityResultType>(url, "POST", payload);
-      return res;
+      return await innerFetch<IdentityResultType, ForgotPassword>(url, "POST", payload);
     } catch (e) {
       Logger.error("useUser.forgotPassword", e);
       throw e;
@@ -188,8 +171,7 @@ export default () => {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/validateToken";
-      const res = await innerFetch<ValidateToken, IdentityResultType>(url, "POST", payload);
-      return res;
+      return await innerFetch<IdentityResultType, ValidateToken>(url, "POST", payload);
     } catch (e) {
       Logger.error("useUser.validateToken", e);
       throw e;
@@ -202,8 +184,7 @@ export default () => {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/resetPassword";
-      const res = await innerFetch<ResetPassword, IdentityResultType>(url, "POST", payload);
-      return res;
+      return await innerFetch<IdentityResultType, ResetPassword>(url, "POST", payload);
     } catch (e) {
       Logger.error("useUser.resetPassword", e);
       throw e;
@@ -213,16 +194,10 @@ export default () => {
   }
 
   return {
-    me: computed(() => me.value),
-    loading: computed(() => loading.value),
-    isAuthenticated: computed(() => me.value && me.value.userName && me.value.userName !== "Anonymous"),
-    organization: computed(() => {
-      const orgs = me.value?.contact?.organizations?.items;
-      return orgs && orgs.length ? orgs[0] : null;
-    }),
+    isAuthenticated,
+    organization,
     updateUser,
     changePassword,
-    loadMe,
     signMeIn,
     registerUser,
     registerOrganization,
@@ -230,5 +205,7 @@ export default () => {
     forgotPassword,
     validateToken,
     resetPassword,
+    loading: readonly(loading),
+    me: computed(() => me.value!),
   };
 };

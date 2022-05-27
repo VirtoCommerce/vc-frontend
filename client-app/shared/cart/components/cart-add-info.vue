@@ -1,19 +1,16 @@
 <template>
   <VcPopup :variant="variant" :title="title">
     <template #actions="{ close }">
-      <VcButton
-        is-outline
-        class="lg:px-4 uppercase flex-grow lg:flex-grow-0 inline-flex"
-        @click="close"
-        v-t="'shared.cart.cart_add_info_popup.continue_shopping_button'"
-      >
+      <VcButton is-outline class="lg:px-4 uppercase flex-grow lg:flex-grow-0 inline-flex" @click="close">
+        {{ $t("shared.cart.cart_add_info_popup.continue_shopping_button") }}
       </VcButton>
+
       <VcButton
-        to="/checkout"
+        :to="{ name: 'Checkout' }"
         class="uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-4"
         @click="close"
-        v-t="'shared.cart.cart_add_info_popup.view_cart_button'"
       >
+        {{ $t("shared.cart.cart_add_info_popup.view_cart_button") }}
       </VcButton>
     </template>
 
@@ -36,7 +33,14 @@
           <tr>
             <td class="px-5 py-3">
               <div class="flex items-center">
-                <VcImage class="border object-contain rounded-sm" :src="lineItem.imageUrl" width="72" height="72" />
+                <VcImage
+                  class="border object-contain rounded-sm"
+                  :src="lineItem.imageUrl"
+                  size-suffix="sm"
+                  width="72"
+                  height="72"
+                  lazy
+                />
                 <div class="ml-4 font-bold text-blue-700">{{ lineItem.name }}</div>
               </div>
             </td>
@@ -50,7 +54,14 @@
     </div>
     <div class="block lg:hidden">
       <div class="flex items-center border-b border-gray-200 p-5">
-        <VcImage class="border object-contain rounded-sm" :src="lineItem.imageUrl" width="72" height="72" />
+        <VcImage
+          class="border object-contain rounded-sm"
+          :src="lineItem.imageUrl"
+          size-suffix="sm"
+          width="72"
+          height="72"
+          lazy
+        />
         <div class="ml-4 font-bold text-blue-700">{{ lineItem.name }}</div>
       </div>
 
@@ -79,21 +90,16 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 
 const props = defineProps({
-  isOpen: {
-    type: Boolean,
-    default: false,
-  },
-
   lineItem: {
     type: Object as PropType<LineItemType>,
     required: true,
   },
 });
 
-const variant = computed(() => (props.lineItem.quantity === 0 ? "warn" : "success"));
+const variant = computed(() => (props.lineItem.quantity ? "success" : "warn"));
 const title = computed(() =>
-  props.lineItem.quantity === 0
-    ? t("shared.cart.cart_add_info_popup.title_removed")
-    : t("shared.cart.cart_add_info_popup.title_added")
+  props.lineItem.quantity
+    ? t("shared.cart.cart_add_info_popup.title_added")
+    : t("shared.cart.cart_add_info_popup.title_removed")
 );
 </script>

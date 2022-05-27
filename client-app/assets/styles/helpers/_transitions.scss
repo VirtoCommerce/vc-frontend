@@ -33,3 +33,21 @@ $slide-fade: (
     transform: translate#{map-get($data, coordinate)}(map-get($data, value));
   }
 }
+
+// list
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  transition: var(--list-transition, transform $duration ease);
+  will-change: var(--list-will-change, transform, opacity);
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: var(--list-transform);
+}
+
+.list-leave-active {
+  position: absolute !important;
+}

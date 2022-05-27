@@ -1,7 +1,8 @@
 import { ProductsFilter, ProductsFilterValue } from "@/shared/catalog";
 import { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@core/api/graphql/types";
-import { unref } from "vue";
+import { Ref, unref } from "vue";
 import { MaybeRef } from "@vueuse/core";
+import { inStockFilterExpression } from "@/core/constants";
 
 /**
  * Learn more about filter syntax:
@@ -20,7 +21,7 @@ function getFilterExpressionFromFacetRange(facetRange: FacetRangeType): string {
   return `${firstBracket}${fromStr}TO${toStr}${lastBracket}`;
 }
 
-export function toFilterExpression(filters: MaybeRef<ProductsFilter[]>) {
+export function toFilterExpression(filters: MaybeRef<ProductsFilter[]>, showInStockFilter: Ref<boolean>) {
   const result: string[] = [];
 
   for (const filter of unref(filters)) {
@@ -28,7 +29,9 @@ export function toFilterExpression(filters: MaybeRef<ProductsFilter[]>) {
       .filter((item) => item.selected) //
       .map((item) => item.value);
 
-    if (!selectedValues.length) continue;
+    if (!selectedValues.length) {
+      continue;
+    }
 
     const conditions =
       filter.type === "term"
@@ -36,6 +39,10 @@ export function toFilterExpression(filters: MaybeRef<ProductsFilter[]>) {
         : selectedValues.join(","); // Ranges
 
     result.push(`"${filter.paramName}":${conditions}`);
+  }
+
+  if (unref(showInStockFilter)) {
+    result.push(inStockFilterExpression);
   }
 
   return result.join(" ");

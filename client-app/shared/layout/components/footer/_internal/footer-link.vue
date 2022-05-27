@@ -8,9 +8,12 @@
 </template>
 
 <script setup lang="ts">
+import { PropType } from "vue";
+import { RouteLocationRaw } from "vue-router";
+
 defineProps({
   to: {
-    type: String,
+    type: [String, Object] as PropType<RouteLocationRaw>,
     required: true,
   },
 

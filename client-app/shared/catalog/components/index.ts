@@ -1,7 +1,6 @@
 export { default as Breadcrumbs } from "./breadcrumbs.vue";
 export { default as CarouselProductCard } from "./carousel-product-card.vue";
 export { default as DisplayProducts } from "./display-products.vue";
-export { default as FiltersBlock } from "./filters-block.vue";
 export { default as PageSize } from "./page-size.vue";
 export { default as ProductCardGrid } from "./product-card-grid.vue";
 export { default as ProductCardList } from "./product-card-list.vue";
@@ -14,4 +13,3 @@ export { default as ProductTitledBlock } from "./product-titled-block.vue";
 export { default as ProductVariationCard } from "./product-variation-card.vue";
 export { default as ProductDetails } from "./product-details.vue";
 export { default as ProductPriceBlock } from "./product-price-block.vue";
-export { default as EmptyComparison } from "./empty-comparison.vue";

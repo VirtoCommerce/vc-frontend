@@ -4,12 +4,17 @@
       <h1 class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8 lg:mt-5" v-t="'pages.sign_up.header'"></h1>
       <form @submit="onSubmit">
         <div class="mt-5 mb-5 flex flex-col space-y-5 md:space-y-0 md:flex-row md:space-x-7">
-          <VcRadioButton id="shipping" v-model="registrationKind" :value="RegistrationKind.personal" label="Personal" />
+          <VcRadioButton
+            id="shipping"
+            v-model="registrationKind"
+            :value="RegistrationKind.personal"
+            :label="$t('pages.sign_up.personal_registration_kind_label')"
+          />
           <VcRadioButton
             id="pickup"
             v-model="registrationKind"
             :value="RegistrationKind.organization"
-            label="Organization"
+            :label="$t('pages.sign_up.organization_registration_kind_label')"
           />
         </div>
 
@@ -41,8 +46,8 @@
           v-if="registrationKind == RegistrationKind.organization"
           v-model="organizationName"
           class="mb-4"
-          label="Organization name"
-          placeholder="Enter organization name"
+          :label="$t('pages.sign_up.organization_name_label')"
+          :placeholder="$t('pages.sign_up.organization_name_placeholder')"
           is-required
           :error-message="errors.organizationName"
         ></VcInput>
@@ -85,13 +90,14 @@
             size="lg"
             class="uppercase mt-6 lg:mt-3 w-full lg:w-48"
             :is-waiting="loading"
-            v-t="'pages.sign_up.register_button'"
-          ></VcButton>
+          >
+            {{ $t("pages.sign_up.register_button") }}
+          </VcButton>
         </div>
       </form>
     </template>
     <template #right>
-      <VcImage class="max-w-md" src="/static/images/sign-up/image.webp" />
+      <VcImage class="max-w-md" src="/static/images/sign-up/image.webp" lazy />
     </template>
   </TwoColumn>
 </template>
@@ -108,11 +114,15 @@ import { IdentityResultType } from "@/core/api/graphql/types";
 import { computed } from "@vue/reactivity";
 import { isObjectEmpty, trimString } from "@/core/utilities";
 import { useI18n } from "vue-i18n";
+import { checkEmailUniqueness, checkUsernameUniqueness } from "@/core/api/graphql/account";
+import _ from "lodash";
 
 const { t } = useI18n();
 
 const { registerUser, registerOrganization, loading } = useUser();
 const { openPopup } = usePopup();
+
+const ASYNC_VALIDATION_TIMEOUT_IN_MS = 3000;
 
 const schema = yup.object({
   registrationKind: yup.string().required(),
@@ -120,8 +130,27 @@ const schema = yup.object({
     is: RegistrationKind.organization,
     then: yup.string().label("Organization Name").required().max(64),
   }),
-  email: yup.string().label("Email").required().email("Enter correct email please (ex. john@gmail.com)").max(64),
-  userName: yup.string().label("Username").required().max(64),
+  email: yup
+    .string()
+    .label("Email")
+    .required()
+    .email()
+    .max(64)
+    .test(
+      "is-unique-email",
+      t("pages.sign_up.errors.email_not_unique"),
+      (value) => new Promise((resolve) => emailValidationDebounced(value!, resolve))
+    ),
+  userName: yup
+    .string()
+    .label("Username")
+    .required()
+    .max(64)
+    .test(
+      "is-unique-username",
+      t("pages.sign_up.errors.user_name_not_unique"),
+      (value) => new Promise((resolve) => usernameValidationDebounced(value!, resolve))
+    ),
   firstName: yup.string().label("First Name").required().max(64),
   lastName: yup.string().label("Last Name").required().max(64),
   password: yup.string().label("Password").required(),
@@ -129,7 +158,7 @@ const schema = yup.object({
     .string()
     .label("Confirm password")
     .required()
-    .oneOf([yup.ref("password"), null], "Passwords must match"),
+    .oneOf([yup.ref("password"), null], t("pages.sign_up.errors.passwords_must_match")),
 });
 
 const { errors, handleSubmit, setFieldError } = useForm({
@@ -232,4 +261,25 @@ const onSubmit = handleSubmit(async (data) => {
     }
   }
 });
+
+const validateUsernameUniqueness = async (value: string, resolve: (value: boolean) => void) => {
+  try {
+    const response = await checkUsernameUniqueness({ username: value });
+    resolve(response === true);
+  } catch (error) {
+    resolve(false);
+  }
+};
+
+const validateEmailUniqueness = async (value: string, resolve: (value: boolean) => void) => {
+  try {
+    const response = await checkEmailUniqueness({ email: value });
+    resolve(response === true);
+  } catch (error) {
+    resolve(false);
+  }
+};
+
+const usernameValidationDebounced = _.debounce(validateUsernameUniqueness, ASYNC_VALIDATION_TIMEOUT_IN_MS);
+const emailValidationDebounced = _.debounce(validateEmailUniqueness, ASYNC_VALIDATION_TIMEOUT_IN_MS);
 </script>

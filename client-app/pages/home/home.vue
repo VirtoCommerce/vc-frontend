@@ -2,7 +2,7 @@
   <!-- Banner -->
   <div class="banner flex items-center">
     <div class="container mx-auto flex flex-col lg:flex-row items-center space-y-10 lg:space-x-24 p-6 md:p-12">
-      <div v-if="!isAuthenticated" class="w-full lg:w-2/5 bg-white shadow-lg rounded p-6 md:p-10">
+      <div v-show="!isAuthenticated" class="w-full lg:w-2/5 bg-white shadow-lg rounded p-6 md:p-10">
         <h1
           class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8"
           v-t="'pages.home.sign_in_form_title'"
@@ -32,28 +32,28 @@
       <div class="font-bold text-3xl text-center px-6" v-t="'pages.home.feature_descriptions_block.title'"></div>
       <div class="flex flex-wrap justify-between mx-auto mt-24">
         <div class="w-full md:w-1/2 lg:w-1/4 md:mt-44 mb-24 md:mb-0">
-          <VcImage src="/static/images/home/hexa-1.webp" class="mx-auto w-full" />
+          <VcImage src="/static/images/home/hexa-1.webp" class="mx-auto w-full" lazy />
           <div
             class="px-8 font-bold text-2xl md:text-xl text-center mt-5"
             v-t="'pages.home.feature_descriptions_block.feature_1'"
           ></div>
         </div>
         <div class="w-full md:w-1/2 lg:w-1/4 mb-24 md:mb-0">
-          <VcImage src="/static/images/home/hexa-2.webp" class="mx-auto w-full" />
+          <VcImage src="/static/images/home/hexa-2.webp" class="mx-auto w-full" lazy />
           <div
             class="px-8 font-bold text-2xl md:text-xl text-center mt-5"
             v-t="'pages.home.feature_descriptions_block.feature_2'"
           ></div>
         </div>
         <div class="w-full md:w-1/2 lg:w-1/4 md:mt-44 mb-24 md:mb-0">
-          <VcImage src="/static/images/home/hexa-3.webp" class="mx-auto w-full" />
+          <VcImage src="/static/images/home/hexa-3.webp" class="mx-auto w-full" lazy />
           <div
             class="px-8 font-bold text-2xl md:text-xl text-center mt-5"
             v-t="'pages.home.feature_descriptions_block.feature_3'"
           ></div>
         </div>
         <div class="w-full md:w-1/2 lg:w-1/4 mb-24 md:mb-0">
-          <VcImage src="/static/images/home/hexa-4.webp" class="mx-auto w-full" />
+          <VcImage src="/static/images/home/hexa-4.webp" class="mx-auto w-full" lazy />
           <div
             class="px-8 font-bold text-2xl md:text-xl text-center mt-5"
             v-t="'pages.home.feature_descriptions_block.feature_4'"
@@ -95,7 +95,7 @@ import { useUser, SignInForm } from "@/shared/account";
 
 const { isAuthenticated } = useUser();
 
-async function onSignIn() {
+function onSignIn() {
   location.href = "/";
 }
 </script>

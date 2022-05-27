@@ -1,26 +1,31 @@
 <template>
   <VcPopup :title="$t('shared.checkout.select_address_dialog.title')" modal-width="max-w-5xl">
     <template #actions="{ close }">
-      <button
-        class="uppercase inline-flex items-center justify-center lg:mr-auto px-2 h-9 font-roboto-condensed text-sm font-bold border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary-hover)] hover:border-[color:var(--color-primary-hover)] hover:text-white rounded focus:outline-none"
+      <VcButton
+        class="uppercase lg:mr-auto px-2"
         :class="[isMobile && 'flex-grow w-1/2']"
         @click="
           $emit('addNewAddress');
           close();
         "
-        v-t="'shared.checkout.select_address_dialog.add_address_button'"
-      ></button>
+        is-outline
+      >
+        {{ $t("shared.checkout.select_address_dialog.add_address_button") }}
+      </VcButton>
 
-      <div class="flex justify-between space-x-3" :class="[isMobile ? 'flex-grow w-1/2' : 'w-1/5']">
-        <button
+      <div class="flex space-x-3" :class="[isMobile ? 'flex-grow w-1/2' : 'w-auto']">
+        <VcButton
           v-if="!isMobile"
-          class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-5 h-9 font-roboto-condensed text-sm font-bold border-2 border-black text-black hover:bg-black hover:text-white rounded focus:outline-none"
+          kind="secondary"
+          class="w-1/2 md:w-auto uppercase flex-grow md:flex-grow-0 md:px-5"
           @click="close"
-          v-t="'shared.checkout.select_address_dialog.cancel_button'"
-        ></button>
+          is-outline
+        >
+          {{ $t("shared.checkout.select_address_dialog.cancel_button") }}
+        </VcButton>
 
-        <button
-          class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-10 h-9 font-roboto-condensed text-sm font-bold border-2 border-[color:var(--color-primary)] bg-[color:var(--color-primary)] text-white hover:bg-[color:var(--color-primary-hover)] hover:border-[color:var(--color-primary-hover)] rounded focus:outline-none"
+        <VcButton
+          class="w-1/2 md:w-auto uppercase flex-grow md:flex-grow-0 md:px-10"
           @click="
             $emit('result', selectedAddress);
             close();
@@ -31,14 +36,14 @@
               ? $t("shared.checkout.select_address_dialog.save_button")
               : $t("shared.checkout.select_address_dialog.ok_button")
           }}
-        </button>
+        </VcButton>
       </div>
     </template>
 
     <VcTable :columns="columns" :items="paginatedAddresses" :pages="pages" :page="page" @pageChanged="onPageChange">
       <template #mobile-item="itemData">
         <div class="flex items-center space-x-3 p-6 border-b border-gray-200">
-          <div class="w-1/2 flex-grow">
+          <div class="w-1/2 flex-grow truncate">
             <span class="font-bold text-base">{{ itemData.item.firstName }} {{ itemData.item.lastName }}</span>
             <p class="text-sm">
               {{ itemData.item.countryCode }} {{ itemData.item.regionName }} {{ itemData.item.city }}
@@ -74,13 +79,13 @@
 
       <template #desktop-body>
         <tr v-for="(address, index) in paginatedAddresses" :key="address.id" :class="{ 'bg-gray-50': index % 2 }">
-          <td class="p-5">{{ address.firstName }} {{ address.lastName }}</td>
-          <td class="p-5">
+          <td class="p-5 truncate">{{ address.firstName }} {{ address.lastName }}</td>
+          <td class="p-5 truncate">
             {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
             {{ address.postalCode }}
           </td>
-          <td class="p-5">{{ address.phone }}</td>
-          <td class="p-5">{{ address.email }}</td>
+          <td class="p-5 truncate">{{ address.phone }}</td>
+          <td class="p-5 truncate">{{ address.email }}</td>
           <td v-if="address.id === selectedAddress?.id" class="p-5">
             <div class="flex items-center justify-center mx-auto rounded-full w-6 h-6 bg-green-600 text-white text-sm">
               <i class="fas fa-check"></i>
@@ -124,7 +129,7 @@
 </template>
 
 <script setup lang="ts">
-import { VcPopup, VcPagination, VcTable, ITableColumn } from "@/components";
+import { VcButton, VcPopup, VcPagination, VcTable, ITableColumn } from "@/components";
 import { MemberAddressType } from "@/core/api/graphql/types";
 import { computed, watchEffect, PropType, ref } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";

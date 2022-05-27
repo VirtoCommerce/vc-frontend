@@ -6,22 +6,23 @@
         kind="secondary"
         is-outline
         @click="close"
-        v-t="'shared.checkout.payment_method_dialog.cancel_button'"
       >
+        {{ $t("shared.checkout.payment_method_dialog.cancel_button") }}
       </VcButton>
+
       <VcButton
         class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-10"
         @click="
           $emit('result', selectedMethod);
           close();
         "
-        v-t="'shared.checkout.payment_method_dialog.ok_button'"
       >
+        {{ $t("shared.checkout.payment_method_dialog.ok_button") }}
       </VcButton>
     </template>
     <template v-for="method in availableMethods" :key="method.code">
       <div class="border-b border-gray-300 px-5 py-6 lg:py-4 flex justify-between items-center space-x-4">
-        <VcImage :src="method.logoUrl" class="h-10 w-10 object-center" />
+        <VcImage :src="method.logoUrl" class="h-10 w-10 object-center" lazy />
         <div class="flex-grow overflow-ellipsis overflow-hidden">
           {{ method.code }}
         </div>
@@ -32,13 +33,10 @@
           >
             <i class="fas fa-check"></i>
           </div>
-          <VcButton
-            v-else
-            is-outline
-            class="uppercase flex-grow px-3"
-            @click="setMethod(method)"
-            v-t="'shared.checkout.payment_method_dialog.select_button'"
-          ></VcButton>
+
+          <VcButton v-else is-outline class="uppercase flex-grow px-3" @click="setMethod(method)">
+            {{ $t("shared.checkout.payment_method_dialog.select_button") }}
+          </VcButton>
         </div>
       </div>
     </template>

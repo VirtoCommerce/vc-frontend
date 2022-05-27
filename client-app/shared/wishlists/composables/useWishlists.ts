@@ -1,13 +1,27 @@
-import { computed, readonly, ref, shallowRef } from "vue";
+import { computed, readonly, Ref, ref, shallowRef } from "vue";
 import { Logger } from "@core/utilities";
-import { InputAddWishlistItemType, InputRemoveWishlistItemType, WishlistType } from "@core/api/graphql/types";
-import { addWishlist, addWishlistItem, getWishlists, removeWishlistItem } from "@core/api/graphql/wishlists";
+import {
+  InputAddWishlistItemType,
+  InputRemoveWishlistItemType,
+  InputRenameWishlistType,
+  WishlistType,
+} from "@core/api/graphql/types";
+import {
+  addWishlist,
+  addWishlistItem,
+  getWishlists,
+  deleteWishlist,
+  deleteWishlistItem,
+  renameWishlist as _renameWishlist,
+  getWishList,
+} from "@core/api/graphql/account";
 import { sortAscending } from "@core/constants";
 
-export default function useWishlists() {
-  const loading = ref(true);
-  const lists = shallowRef<WishlistType[]>([]);
+const loading = ref(true);
+const lists = shallowRef<WishlistType[]>([]);
+const list: Ref<WishlistType | null> = ref(null);
 
+export default function useWishlists() {
   async function createWishlist(name: string) {
     loading.value = true;
 
@@ -41,6 +55,53 @@ export default function useWishlists() {
     }
   }
 
+  async function fetchWishList(listId: string) {
+    loading.value = true;
+
+    try {
+      list.value = await getWishList(listId);
+    } catch (e) {
+      Logger.error(`${useWishlists.name}.${fetchWishList.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function renameWishlist(payload: InputRenameWishlistType) {
+    loading.value = true;
+
+    try {
+      await _renameWishlist(payload);
+    } catch (e) {
+      Logger.error(`${useWishlists.name}.${renameWishlist.name}`, e);
+      throw e;
+    }
+
+    await fetchWishlists();
+
+    if (list.value) {
+      await fetchWishList(list.value.id!);
+    }
+  }
+
+  async function removeWishlist(listId: string): Promise<boolean> {
+    let result = false;
+
+    loading.value = true;
+
+    try {
+      result = await deleteWishlist(listId);
+    } catch (e) {
+      Logger.error(`${useWishlists.name}.${removeWishlist.name}`, e);
+      throw e;
+    }
+
+    await fetchWishlists();
+
+    return result;
+  }
+
   async function addItemsToWishlists(payloads: InputAddWishlistItemType[]) {
     loading.value = true;
 
@@ -63,22 +124,26 @@ export default function useWishlists() {
     // TODO: Use single query
     for (const payload of payloads) {
       try {
-        await removeWishlistItem(payload);
+        await deleteWishlistItem(payload);
       } catch (e) {
         Logger.error(`${useWishlists.name}.${removeItemsFromWishlists.name}`, e);
         throw e;
       }
     }
 
-    await fetchWishlists();
+    await fetchWishList(payloads[0].listId);
   }
 
   return {
     fetchWishlists,
+    fetchWishList,
     createWishlist,
+    renameWishlist,
+    removeWishlist,
     addItemsToWishlists,
     removeItemsFromWishlists,
     loading: readonly(loading),
     lists: computed(() => lists.value),
+    list: computed(() => list.value),
   };
 }

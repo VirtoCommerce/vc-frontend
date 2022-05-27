@@ -8,7 +8,13 @@
   background-image: url(/static/images/common/polygon.png);
   background-repeat: no-repeat;
   background-size: 46%;
-  background-position: right top;
+  background-position: var(--polygon-bg-position, right top);
+}
+
+.polygon-gray-bg {
+  background-image: url(/static/images/common/polygon-gray.png);
+  background-repeat: no-repeat;
+  background-position: right bottom -120px;
 }
 
 @media (max-width: 768px) {
@@ -63,4 +69,9 @@ input[type="search"]::-webkit-search-cancel-button {
   background-image: url(/static/images/common/delete-icon.svg);
   background-size: 10px 10px;
   cursor: pointer;
+}
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
 }

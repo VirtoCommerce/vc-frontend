@@ -4,7 +4,7 @@
     <div class="container mx-auto grid grid-cols-2 gap-4 lg:grid-cols-4 xl:grid-cols-5 p-12">
       <!-- Logo column -->
       <div class="hidden xl:block">
-        <VcImage :src="$cfg.logo_inverted_image" class="h-9" />
+        <VcImage :src="$cfg.logo_inverted_image" class="h-9" lazy />
       </div>
 
       <!-- Column 1 -->
@@ -57,11 +57,12 @@
           v-t="'shared.layout.footer.online_resources_ling_group'"
         ></div>
         <div class="flex flex-col space-y-1">
-          <FooterLink :to="`/${SeoUrl.Catalog}`" v-t="'shared.layout.footer.catalog_link'"></FooterLink>
+          <FooterLink :to="{ name: 'Catalog' }" v-t="'shared.layout.footer.catalog_link'" />
           <FooterLink to="/hot-buys" v-t="'shared.layout.footer.hot_buys_link'"></FooterLink>
           <FooterLink to="/rebates" v-t="'shared.layout.footer.rebates_link'"></FooterLink>
           <FooterLink to="/replacement-parts" v-t="'shared.layout.footer.replacement_parts_link'"></FooterLink>
-          <FooterLink to="/demo-landing" v-t="'shared.layout.footer.demo_landing_link'"></FooterLink>
+          <FooterLink :to="{ name: 'DemoLanding' }" v-t="'shared.layout.footer.demo_landing_link'" />
+          <FooterLink v-if="isDevelopment" :to="{ name: 'DevUIKit' }">Dev UI Kit</FooterLink>
         </div>
       </div>
     </div>
@@ -91,5 +92,5 @@
 import { VcImage } from "@/components";
 import { version } from "../../../../../package.json";
 import FooterLink from "./_internal/footer-link.vue";
-import SeoUrl from "@core/seo-routes.enum";
+import { isDevelopment } from "@core/constants";
 </script>
