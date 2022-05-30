@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 <template>
-  <div class="block" v-for="block in template.content" :key="block.id">
-    <component :is="block.type" :model="block" />
+  <div class="max-w-screen-2xl px-5 md:px-12 mx-auto">
+    <div class="block py-8" v-for="block in template.content" :key="block.id">
+      <component :is="block.type" :model="block" />
+    </div>
   </div>
 </template>
 
@@ -14,7 +16,8 @@ import { useTemplate } from "./useTemplate";
 // import Image from "./blocks/image.vue";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-
+// storefront.com/permalink
+//
 const { template } = useTemplate("/themes/pages/test.json");
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
