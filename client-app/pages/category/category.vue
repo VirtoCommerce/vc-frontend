@@ -9,10 +9,7 @@
         <div
           :class="{ hidden: !mobileSidebarVisible }"
           class="fixed z-50 inset-0 w-full h-screen lg:hidden bg-gray-800 opacity-95"
-          @click="
-            restoreFilters();
-            hideMobileSidebar();
-          "
+          @click="hideMobileSidebar()"
         />
 
         <!-- Sidebar -->
@@ -26,7 +23,7 @@
           ]"
         >
           <div v-if="isMobileSidebar" class="relative">
-            <button class="absolute -right-3 appearance-none px-3 py-1" @click="restoreFilters()">
+            <button class="absolute -right-3 appearance-none px-3 py-1" @click="hideMobileSidebar()">
               <span class="text-2xl fa fa-times text-[color:var(--color-primary)]"></span>
             </button>
           </div>
@@ -62,7 +59,15 @@
 
             <!-- Previously purchased -->
             <VcCard :title="$t('pages.catalog.instock_filter_card.title')">
-              <VcCheckbox v-model="showInStock" :disabled="loading" @change="onFilterChanged">
+              <VcCheckbox
+                v-if="isMobileSidebar"
+                v-model="mobileShowInStock"
+                :disabled="loading"
+                @change="onFilterChanged"
+              >
+                {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
+              </VcCheckbox>
+              <VcCheckbox v-else v-model="showInStock" :disabled="loading" @change="onFilterChanged">
                 {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
               </VcCheckbox>
             </VcCard>
@@ -92,7 +97,12 @@
 
             <!-- Facet Filters -->
             <template v-else>
-              <VcCard v-for="filter in filters" :key="filter.paramName" :title="filter.label" is-collapsible>
+              <VcCard
+                v-for="filter in isMobileSidebar ? mobileFilters : filters"
+                :key="filter.paramName"
+                :title="filter.label"
+                is-collapsible
+              >
                 <VcCheckbox
                   v-for="item in filter.values"
                   :key="item.value"
@@ -295,6 +305,7 @@ import {
   triggerRef,
   toRef,
   unref,
+  Ref,
 } from "vue";
 import { breakpointsTailwind, eagerComputed, useBreakpoints, whenever, useLocalStorage } from "@vueuse/core";
 import {
@@ -364,8 +375,8 @@ const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const keyword = ref("");
 const page = ref(1);
 const itemsPerPage = ref(defaultPageSize);
-let origFilters: ProductsFilter[];
-let origShowInStock: boolean;
+const mobileFilters: Ref<ProductsFilter[]> = shallowRef([]);
+const mobileShowInStock: Ref<boolean> = ref(false);
 
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
 
@@ -429,39 +440,25 @@ const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
 });
 
 function showMobileSidebar() {
-  origFilters = _.cloneDeep<ProductsFilter[]>(unref(filters));
-  origShowInStock = showInStock.value;
+  mobileFilters.value = _.cloneDeep<ProductsFilter[]>(unref(filters));
+  mobileShowInStock.value = unref(showInStock);
   mobileSidebarVisible.value = true;
 }
 
-function restoreFilters() {
-  const origText = JSON.stringify(origFilters);
-  const currentText = JSON.stringify(unref(filters));
-  if (origText !== currentText) {
-    filters.value = origFilters;
-    //filters.value.forEach((filter) => filter.values.forEach((filterItem) => (filterItem.selected.value = false)));
-    //restoreFiltersToSaved();
+function applyFiltersAndHideSidebar() {
+  const mobileFiltersJson = JSON.stringify(mobileFilters);
+  const filtersJson = JSON.stringify(unref(filters));
+  if (mobileFiltersJson !== filtersJson) {
+    filters.value = mobileFilters.value;
     triggerRef(filters);
   }
 
-  if (origShowInStock !== showInStock.value) {
-    showInStock.value = origShowInStock;
+  if (mobileShowInStock.value !== showInStock.value) {
+    showInStock.value = mobileShowInStock.value;
   }
-
   hideMobileSidebar();
+  applyFilters();
 }
-
-// function restoreFiltersToSaved() {
-//   filters.value.forEach((filter) => {
-//     const origFilter = origFilters.find((f) => f.paramName === filter.paramName);
-//     filter.values.forEach((valueItem) => {
-//       const origValue = origFilter?.values.find((origValueItem) => origValueItem.value === valueItem.value);
-//       if (valueItem.selected !== origValue?.selected) {
-//         valueItem.selected = origValue?.selected || false;
-//       }
-//     });
-//   });
-// }
 
 function hideMobileSidebar() {
   mobileSidebarVisible.value = false;
@@ -484,11 +481,6 @@ function onFilterChanged() {
   if (!isMobileSidebar.value) {
     applyFilters();
   }
-}
-
-function applyFiltersAndHideSidebar() {
-  hideMobileSidebar();
-  applyFilters();
 }
 
 function applyFilters() {
