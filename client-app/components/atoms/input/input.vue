@@ -19,6 +19,7 @@
         :max="maxValue"
         :maxlength="maxlength"
         :step="stepValue"
+        :autocomplete="autocomplete"
         @input="change"
       />
 
@@ -43,6 +44,7 @@ const emit = defineEmits(["update:modelValue"]);
 
 const props = defineProps({
   autofocus: Boolean,
+  autocomplete: String,
   isDisabled: Boolean,
   isRequired: Boolean,
   hidePasswordSwitcher: Boolean,

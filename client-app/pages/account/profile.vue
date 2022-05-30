@@ -62,6 +62,7 @@
         :is-disabled="isSubmitting"
         :error-message="errors.oldPassword"
         type="password"
+        autocomplete="new-password"
         name="oldPassword"
         class="mb-5"
       />
