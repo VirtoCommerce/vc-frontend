@@ -92,17 +92,11 @@
 
             <!-- Facet Filters -->
             <template v-else>
-              <VcCard
-                v-for="(filter, index) in filters"
-                :key="`${filter.paramName}_${index}`"
-                :title="filter.label"
-                is-collapsible
-              >
+              <VcCard v-for="filter in filters" :key="filter.paramName" :title="filter.label" is-collapsible>
                 <VcCheckbox
-                  v-for="(item, itemIndex) in filter.values"
-                  :key="`${item.value}_${index}_${itemIndex}`"
+                  v-for="item in filter.values"
+                  :key="item.value"
                   v-model="item.selected"
-                  :value="item.value"
                   :disabled="loading"
                   class="mt-3 first:mt-0"
                   @change="onFilterChanged"
@@ -300,6 +294,7 @@ import {
   WatchStopHandle,
   triggerRef,
   toRef,
+  unref,
 } from "vue";
 import { breakpointsTailwind, eagerComputed, useBreakpoints, whenever, useLocalStorage } from "@vueuse/core";
 import {
@@ -434,26 +429,18 @@ const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
 });
 
 function showMobileSidebar() {
-  origFilters = _.cloneDeep<ProductsFilter[]>(filters.value);
+  origFilters = _.cloneDeep<ProductsFilter[]>(unref(filters));
   origShowInStock = showInStock.value;
   mobileSidebarVisible.value = true;
 }
 
 function restoreFilters() {
   const origText = JSON.stringify(origFilters);
-  const currentText = JSON.stringify(filters.value);
+  const currentText = JSON.stringify(unref(filters));
   if (origText !== currentText) {
-    filters.value.forEach((filter) => {
-      const origFilter = origFilters.find((f) => f.paramName === filter.paramName);
-      filter.values.forEach((valueItem) => {
-        const origValue = origFilter?.values.find((origValueItem) => origValueItem.value === valueItem.value);
-        if (valueItem.selected !== origValue?.selected) {
-          valueItem.selected = origValue?.selected || false;
-        }
-      });
-    });
-    //filters.value = origFilters;
-
+    filters.value = origFilters;
+    //filters.value.forEach((filter) => filter.values.forEach((filterItem) => (filterItem.selected.value = false)));
+    //restoreFiltersToSaved();
     triggerRef(filters);
   }
 
@@ -463,6 +450,18 @@ function restoreFilters() {
 
   hideMobileSidebar();
 }
+
+// function restoreFiltersToSaved() {
+//   filters.value.forEach((filter) => {
+//     const origFilter = origFilters.find((f) => f.paramName === filter.paramName);
+//     filter.values.forEach((valueItem) => {
+//       const origValue = origFilter?.values.find((origValueItem) => origValueItem.value === valueItem.value);
+//       if (valueItem.selected !== origValue?.selected) {
+//         valueItem.selected = origValue?.selected || false;
+//       }
+//     });
+//   });
+// }
 
 function hideMobileSidebar() {
   mobileSidebarVisible.value = false;
