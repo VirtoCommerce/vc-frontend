@@ -5,6 +5,7 @@
       type="radio"
       :value="value"
       :checked="checked"
+      :aria-checked="checked"
       @change="$emit('update:modelValue', value)"
     />
     <slot v-bind="{ checked, value, label }">

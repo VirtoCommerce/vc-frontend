@@ -21,17 +21,17 @@ import { Head } from "@vueuse/head";
 import { Header, Footer, useSearchBar } from "./shared/layout";
 import { useUser } from "@/shared/account";
 import { useCart } from "@/shared/cart";
-import { themeContext } from "@/core/utilities";
 import { setCatalogId, setUserId, setLocale, setCurrencyCode } from "@/core/constants";
 import { PopupHost } from "@/shared/popup";
 import { NotificationsHost } from "@/shared/notification";
 import { RouteRecordName, useRouter } from "vue-router";
-import { useCurrency } from "@core/composables";
-import { i18n } from "./i18n";
+import { useCurrency, useLanguages, useThemeContext } from "@core/composables";
 
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { me, isAuthenticated } = useUser();
+const { currentLanguage } = useLanguages();
+const { themeContext } = useThemeContext();
+const { isAuthenticated } = useUser();
 const { loadMyCart } = useCart();
 const { currentCurrency } = useCurrency();
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
@@ -67,13 +67,10 @@ router.beforeEach(async (to) => {
 onMounted(async () => {
   // FIXME
   // temporary solution
-  setUserId(themeContext.userId || me.value.id);
-  setCatalogId(themeContext.catalogId!);
-  setLocale(
-    themeContext.availLanguages?.find((x) => x.twoLetterLanguageName === i18n?.global.locale.value)?.cultureName ||
-      "en-US"
-  );
-  setCurrencyCode(currentCurrency.value.code);
+  setUserId(themeContext.value!.userId);
+  setCatalogId(themeContext.value!.catalogId);
+  setLocale(currentLanguage.value!.cultureName);
+  setCurrencyCode(currentCurrency.value!.code);
 
   await loadMyCart();
   loaded.value = true;

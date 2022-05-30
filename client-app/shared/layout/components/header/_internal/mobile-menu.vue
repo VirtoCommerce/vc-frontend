@@ -8,7 +8,7 @@
       </router-link>
 
       <!-- Language block -->
-      <LanguageSelector v-if="$context.availLanguages && $context.availLanguages.length > 1" />
+      <LanguageSelector v-if="supportedLocales.length > 1" />
 
       <button class="appearance-none py-2 px-4 -mr-4" @click="$emit('close')">
         <i class="fas fa-times text-2xl text-[color:var(--color-primary)]" />
@@ -71,14 +71,16 @@
               </h2>
 
               <VcRadioButton
-                v-for="currencyItem in $context.availCurrencies"
-                :model-value="currentCurrency.code"
+                v-for="currencyItem in supportedCurrencies"
+                :model-value="currentCurrency?.code"
                 :key="currencyItem.code"
                 :value="currencyItem.code"
                 class="py-2.5"
-                @click="currentCurrency.code === currencyItem.code ? null : setCurrencyByCode(currencyItem.code)"
+                @click="
+                  currentCurrency?.code === currencyItem.code ? null : saveCurrencyCodeAndReload(currencyItem.code)
+                "
               >
-                <span :class="{ 'text-white': currentCurrency.code === currencyItem.code }" class="uppercase">
+                <span :class="{ 'text-white': currentCurrency?.code === currencyItem.code }" class="uppercase">
                   {{ currencyItem.code }}
                 </span>
               </VcRadioButton>
@@ -165,7 +167,7 @@
 
         <!-- Settings link -->
         <MobileMenuLink
-          v-if="$context.availCurrencies && $context.availCurrencies.length > 1"
+          v-if="supportedCurrencies.length > 1"
           class="uppercase text-xl font-bold"
           is-parent
           @select="selectMenuItem(settingsMenuLink)"
@@ -187,7 +189,7 @@ import { useCart } from "@/shared/cart";
 import { useUser } from "@/shared/account";
 import { LanguageSelector, MenuLink, useNavigations } from "@/shared/layout";
 import { useCompareProducts } from "@/shared/compare";
-import { useCurrency } from "@core/composables";
+import { useCurrency, useLanguages } from "@core/composables";
 import MobileMenuLink from "./mobile-menu-link.vue";
 
 defineEmits(["close"]);
@@ -196,7 +198,8 @@ const route = useRoute();
 const { t } = useI18n();
 const { cart } = useCart();
 const { productsIds } = useCompareProducts();
-const { currentCurrency, setCurrencyByCode } = useCurrency();
+const { supportedLocales } = useLanguages();
+const { currentCurrency, supportedCurrencies, saveCurrencyCodeAndReload } = useCurrency();
 const { me, isAuthenticated, signMeOut } = useUser();
 const { mainMenuLinks, openedItem, selectMenuItem, goBack, goMainMenu } = useNavigations();
 

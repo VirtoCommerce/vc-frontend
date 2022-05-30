@@ -15,7 +15,7 @@
 
       "logo_image": "/static/images/common/logo.svg",
       "logo_inverted_image": "/static/images/common/logo-white.svg",
-      "favicon_image": null,
+      "favicon_image": "",
 
       "orders_statuses": ["New", "Processing", "Pending", "Cancelled", "Completed"],
 
