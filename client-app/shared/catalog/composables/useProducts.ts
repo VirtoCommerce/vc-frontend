@@ -22,6 +22,7 @@ export default (
   const filters: Ref<ProductsFilter[]> = shallowRef([]);
   const total: Ref<number> = ref(0);
   const pages: Ref<number> = ref(1);
+  // todo: move this to a main filter data model with facets
   const showInStock: Ref<boolean> = ref(false);
 
   async function fetchProducts(searchParams: Partial<ProductsSearchParams>) {

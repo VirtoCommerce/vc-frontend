@@ -12,6 +12,7 @@
           @click="hideMobileSidebar()"
         />
 
+        <!-- TODO: Extract a component with products  filters. Separate mobile and desktop view. -->
         <!-- Sidebar -->
         <div
           ref="sidebarElement"
@@ -121,7 +122,15 @@
           </div>
           <div v-show="isMobileSidebar" class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
             <div class="flex space-x-4">
-              <VcButton class="flex-1 uppercase" size="lg" is-outline @click="resetFilters">
+              <VcButton
+                class="flex-1 uppercase"
+                size="lg"
+                is-outline
+                @click="
+                  resetFilters();
+                  hideMobileSidebar();
+                "
+              >
                 {{ $t("common.buttons.reset") }}
               </VcButton>
               <VcButton class="flex-1 uppercase" size="lg" @click="applyFiltersAndHideSidebar">
@@ -446,16 +455,14 @@ function showMobileSidebar() {
 }
 
 function applyFiltersAndHideSidebar() {
-  const mobileFiltersJson = JSON.stringify(mobileFilters);
-  const filtersJson = JSON.stringify(unref(filters));
-  if (mobileFiltersJson !== filtersJson) {
+  if (JSON.stringify(mobileFilters) !== JSON.stringify(unref(filters))) {
     filters.value = mobileFilters.value;
-    triggerRef(filters);
   }
 
   if (mobileShowInStock.value !== showInStock.value) {
     showInStock.value = mobileShowInStock.value;
   }
+
   hideMobileSidebar();
   applyFilters();
 }
@@ -501,6 +508,13 @@ function removeFilterItem(payload: Pick<ProductsFilter, "paramName"> & Pick<Prod
 function resetFilters() {
   filters.value.forEach((filter) => filter.values.forEach((filterItem) => (filterItem.selected = false)));
   showInStock.value = false;
+
+  if (isMobileSidebar.value) {
+    mobileFilters.value.forEach((filter) => filter.values.forEach((filterItem) => (filterItem.selected = false)));
+    mobileShowInStock.value = false;
+    triggerRef(mobileFilters);
+  }
+
   applyFilters();
 }
 
