@@ -17,6 +17,7 @@
       :is-disabled="loading || isAuthenticated"
       is-required
       :error-message="errors.userName"
+      autocomplete="userName"
     ></VcInput>
 
     <VcInput
@@ -28,6 +29,7 @@
       type="password"
       is-required
       :error-message="errors.password"
+      autocomplete="password"
     ></VcInput>
 
     <div class="mt-1">
