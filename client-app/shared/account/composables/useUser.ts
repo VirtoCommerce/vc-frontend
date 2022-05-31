@@ -75,7 +75,7 @@ export default () => {
       const res = await innerFetch<IdentityResultType, SignMeIn>(url, "POST", payload);
 
       if (res.succeeded) {
-        await loadMe();
+        await fetchUser();
       }
 
       return res;
