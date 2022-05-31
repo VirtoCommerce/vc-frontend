@@ -120,8 +120,8 @@
               </VcCard>
             </template>
           </div>
-          <div v-show="isMobileSidebar" class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
-            <div class="flex space-x-4">
+          <div v-show="isMobileSidebar" class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 pb-safe shadow-t-md bg-white">
+            <div class="flex space-x-4 py-5">
               <VcButton
                 class="flex-1 uppercase"
                 size="lg"
