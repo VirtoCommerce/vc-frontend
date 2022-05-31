@@ -11,7 +11,7 @@ import NotFound from "@/pages/404/404.vue";
 
 import { PropType, ref } from "vue";
 import { asyncComputed } from "@vueuse/core";
-import { useFetch, useLocalization } from "@/core/composables";
+import { useFetch, useLanguages } from "@/core/composables";
 
 type TSeoInfo = {
   id: string;
@@ -36,7 +36,7 @@ const props = defineProps({
 });
 
 const { innerFetch } = useFetch();
-const { currentLocale } = useLocalization();
+const { currentLanguage } = useLanguages();
 
 const loading = ref(true);
 
@@ -51,7 +51,7 @@ const seoInfo = asyncComputed<TSeoInfo | undefined>(
     const resultItems = await innerFetch<TSeoInfo[]>(`/storefrontapi/seoInfos/${slug}`);
 
     return resultItems.find(
-      (item) => item.isActive && item.language.twoLetterLanguageName === currentLocale.value && item.slug === slug
+      (item) => item.isActive && item.language.cultureName === currentLanguage.value!.cultureName && item.slug === slug
     );
   },
   undefined,

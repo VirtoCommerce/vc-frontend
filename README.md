@@ -41,9 +41,6 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 |   ├── components                // Atoms, Molecules, Organisms and their types, used within the whole application.
 |   |   └──...
 |   |
-|   ├── config                    // Theme config scripts.
-|   |   └──...
-|   |
 |   ├── core                      // Common utilities and shared logic that can be used by any pages and libraries.
 |   |   ├── api/graphql           // GraphQL Models aligned with the Virto Backoffice.
 |   |   |   └──...
@@ -63,10 +60,9 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 |   |   └──...
 |   |
 |   ├── public                    // Statically served files
-|   |   ├── static
-|   |   |   ├── icons             // Icons used for favicons, PWA, etc.
-|   |   |   └── images            // Static images used inside the application.
-|   |   └── config.json           // Theme config file FOR DEVELOPMENT.
+|   |   └── static
+|   |       ├── icons             // Icons used for favicons, PWA, etc.
+|   |       └── images            // Static images used inside the application.
 |   |
 |   ├── shared                    // A set of shared files grouped by their domain context.
 |   |   ├── catalog               // Grouping context (ex.: catalog browsing).
@@ -83,17 +79,18 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 |   |   └──...
 |   |
 |   ├── App.vue                   // Main Application component. Use it as a wrapper for routable pages.
-|   ├── env.d.ts                  // Definition file to provide IDE IntelliSense support for importing *.vue files.
+|   ├── env.d.ts                  // Definition file to provide IDE IntelliSense support.
 |   ├── main.ts                   // Application entry point. Main initialization script.
 |   ├── router.ts                 // SPA routing configuraion.
 |   ├── shims-graphql.d.ts        // Definition file to provide IDE IntelliSense support for importing *.graphql files.
-|   └── vue-shims.d.ts            // Definition file to provide IDE IntelliSense support for specific Vue features.
+|   └── shim-vue.d.ts             // Definition file to provide IDE IntelliSense support for importing *.vue files and specific Vue features.
 |
 ├── config                        // The Virto theme settings.
-|   └── settings_data.json        // Theme config file FOR PRODUCTION.
-|
+|   ├── menu.json                 // Theme menu settings file.
+|   └── settings_data.json        // Theme config file.
+|   
 ├── layout                        // Layout templates used to render theme within Storefront.
-|   └──theme.liquid               // Wrapper for SPA, providing HTML document structure.
+|   └── theme.liquid              // Wrapper for SPA, providing HTML document structure.
 |
 ├── locales                       // Locale files used to provide translated content for the theme.
 |   └──...

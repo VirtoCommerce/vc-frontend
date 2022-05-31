@@ -1,10 +1,46 @@
-import { computed, inject, shallowRef, triggerRef } from "vue";
-import { menuInjectionKey } from "@core/injection-keys";
+import { computed, shallowRef, triggerRef } from "vue";
 import { MenuLink } from "@/shared/layout";
-import menuSchema from "@/config/menu";
-import { useI18n } from "vue-i18n";
+import { getMenus } from "@core/api/graphql/common";
+import { MenuLinkType } from "@core/api/graphql/types";
+import { useGlobalVariables } from "@core/composables";
+
+const globals = useGlobalVariables();
+
+const menuLinkLists = shallowRef<Record<string, MenuLinkType[]>>();
+const menuSchema = shallowRef<Record<string, any>>();
 
 const openedMenuLinksStack = shallowRef<MenuLink[]>([]);
+
+const mainMenuLinks = computed<MenuLink[]>(() =>
+  (menuSchema.value?.header.main || []).map(
+    (item: Record<string, string>) =>
+      ({
+        id: item.id,
+        route: item.route,
+        title: globals.i18n!.global.t(item.title),
+        children: (menuLinkLists.value?.[item.id] || []).map((childrenItem) => ({
+          id: childrenItem.url?.split("/").pop(),
+          title: childrenItem.title,
+          route: childrenItem.url,
+        })),
+      } as MenuLink)
+  )
+);
+
+async function fetchMenus(cultureName: string) {
+  const results = await getMenus({ cultureName });
+
+  menuLinkLists.value = results.reduce<Record<string, MenuLinkType[]>>((result, menuLinkList) => {
+    result[menuLinkList.name!] = menuLinkList.items!;
+    return result;
+  }, {});
+
+  /**
+   * FIXME: Don't use import
+   * Fetch file (json) from Storefront to be able to edit file in Admin panel
+   */
+  menuSchema.value = await import("../../../../config/menu.json");
+}
 
 function goBack() {
   openedMenuLinksStack.value.pop();
@@ -25,25 +61,12 @@ function selectMenuItem(item: MenuLink) {
 }
 
 export default function useNavigations() {
-  const $menu = inject(menuInjectionKey);
-  const { t } = useI18n();
-
-  const mainMenuLinks: MenuLink[] = menuSchema.header.main.map<MenuLink>((item) => ({
-    id: item.id,
-    route: item.route,
-    title: t(item.title),
-    children: ($menu?.[item.id] || []).map((childrenItem) => ({
-      id: childrenItem.url?.split("/").pop(),
-      title: childrenItem.title,
-      route: childrenItem.url,
-    })),
-  }));
-
   return {
+    fetchMenus,
     goBack,
     goMainMenu,
     selectMenuItem,
-    mainMenuLinks: computed(() => mainMenuLinks),
+    mainMenuLinks,
     openedItem: computed<MenuLink | undefined>(() => openedMenuLinksStack.value[openedMenuLinksStack.value.length - 1]),
   };
 }

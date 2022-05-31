@@ -1,6 +1,5 @@
 import { InjectionKey } from "vue";
 import { IThemeConfigPreset, IThemeContext } from "@core/types";
-import { MenuLinkType } from "./api/graphql/types";
 
 /**
  * @example
@@ -11,4 +10,3 @@ import { MenuLinkType } from "./api/graphql/types";
 
 export const configInjectionKey = Symbol() as InjectionKey<IThemeConfigPreset>;
 export const contextInjectionKey = Symbol() as InjectionKey<IThemeContext>;
-export const menuInjectionKey = Symbol() as InjectionKey<Record<string, MenuLinkType[]>>;

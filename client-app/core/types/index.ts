@@ -30,7 +30,7 @@ export type UseRouteQueryParamOptions<T = LocationQueryValue | LocationQueryValu
 };
 
 export interface IThemeConfig {
-  current: string | IThemeConfigPreset;
+  current: string;
   presets: Record<string, IThemeConfigPreset>;
 }
 

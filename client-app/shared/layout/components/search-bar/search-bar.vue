@@ -110,8 +110,8 @@ export default {
 <script setup lang="ts">
 import { VcButton, VcImage } from "@/components";
 import { useSearchBar } from "@/shared/layout";
-import { cfg } from "@/core/utilities";
-import { computed, ref, watchEffect } from "vue";
+import { computed, inject, ref, watchEffect } from "vue";
+import { configInjectionKey } from "@core/injection-keys";
 import { useRouteQueryParam } from "@core/composables";
 import QueryParamName from "@core/query-param-name.enum";
 import { Category } from "@core/api/graphql/types";
@@ -123,6 +123,8 @@ import { useCategoriesRoutes } from "@/shared/catalog";
 const CATEGORIES_ITEMS_PER_COLUMN = 4;
 
 const SEARCH_BAR_DEBOUNCE_TIME = 500;
+
+const config = inject(configInjectionKey);
 
 const {
   total,
@@ -155,7 +157,7 @@ const categoriesColumns = computed<Array<Category[]>>(() => {
 
 async function search() {
   const MAX_LENGTH = 30;
-  const MIN_LENGTH = cfg.search_min_chars || 0;
+  const MIN_LENGTH = config?.search_min_chars || 0;
   const COLUMNS = 5;
 
   if (searchDropdownVisible.value) {

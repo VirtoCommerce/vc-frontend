@@ -9,7 +9,7 @@
       </span>
 
       <span>
-        {{ currentCurrency.code }}
+        {{ currentCurrency?.code }}
       </span>
 
       <span class="absolute inset-y-0 right-0 flex items-center pointer-events-none">
@@ -21,11 +21,11 @@
       <div v-show="open" class="absolute right-0 z-30 bg-white shadow-lg max-h-56 rounded border overflow-hidden">
         <ul ref="listElement" class="max-h-56 overflow-auto divide-y">
           <li
-            v-for="item in $context.availCurrencies"
+            v-for="item in supportedCurrencies"
             :key="item.code"
-            :class="[item.code === currentCurrency.code ? 'cursor-default' : 'cursor-pointer']"
+            :class="[item.code === currentCurrency?.code ? 'cursor-default' : 'cursor-pointer']"
             class="flex items-center p-2.5 pr-3 font-normal text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
-            @click="item.code === currentCurrency.code ? null : select(item.code)"
+            @click="item.code === currentCurrency?.code ? null : select(item.code)"
           >
             <span
               class="flex shrink-0 items-center justify-center w-6 h-6 rounded-[50%] bg-[color:var(--color-primary)] text-white text-base font-bold mr-2"
@@ -33,7 +33,7 @@
               {{ item.symbol }}
             </span>
 
-            <span :class="{ 'font-bold text-black': item.code === currentCurrency.code }">
+            <span :class="{ 'font-bold text-black': item.code === currentCurrency?.code }">
               {{ item.code }}
             </span>
           </li>
@@ -57,7 +57,7 @@ export default {
 import { ref, shallowRef } from "vue";
 import { useCurrency } from "@core/composables";
 
-const { currentCurrency, setCurrencyByCode } = useCurrency();
+const { currentCurrency, supportedCurrencies, saveCurrencyCodeAndReload } = useCurrency();
 
 const open = ref(false);
 const listElement = shallowRef<HTMLElement | null>(null);
@@ -82,7 +82,7 @@ function toggle() {
 }
 
 function select(code: string) {
-  setCurrencyByCode(code);
+  saveCurrencyCodeAndReload(code);
   hideList();
 }
 </script>

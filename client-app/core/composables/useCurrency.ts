@@ -1,23 +1,29 @@
-import { computed, inject } from "vue";
+import { computed } from "vue";
 import { useLocalStorage } from "@vueuse/core";
-import { contextInjectionKey } from "@core/injection-keys";
+import { useThemeContext } from "@core/composables";
 import { Currency } from "@core/types";
 
+const { themeContext } = useThemeContext();
+
+const savedCurrencyCode = useLocalStorage<string | null>("currency", "");
+
+const defaultCurrency = computed<Currency | undefined>(() => themeContext.value?.defaultCurrency);
+const supportedCurrencies = computed<Currency[]>(() => themeContext.value?.availCurrencies || []);
+const currentCurrency = computed<Currency | undefined>(
+  () => supportedCurrencies.value?.find((item) => item.code === savedCurrencyCode.value) || defaultCurrency.value
+);
+
+function saveCurrencyCodeAndReload(code: string) {
+  savedCurrencyCode.value = code;
+  location.reload();
+}
+
 export default function useCurrency() {
-  const context = inject(contextInjectionKey);
-  const currentCurrencyCode = useLocalStorage<string | null>("currency", context?.defaultCurrency?.code || null);
-
-  const currentCurrency = computed<Currency>(
-    () => context!.availCurrencies!.find((item) => item.code === currentCurrencyCode.value) || context!.defaultCurrency!
-  );
-
-  function setCurrencyByCode(code: string) {
-    currentCurrencyCode.value = code;
-    location.reload();
-  }
-
   return {
-    setCurrencyByCode,
+    savedCurrencyCode,
+    defaultCurrency,
+    supportedCurrencies,
     currentCurrency,
+    saveCurrencyCodeAndReload,
   };
 }

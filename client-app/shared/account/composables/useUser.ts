@@ -1,47 +1,46 @@
-import { Ref, ref, readonly, computed } from "vue";
+import { computed, readonly, ref } from "vue";
 import { eagerComputed } from "@vueuse/core";
-import { getMe, updatePersonalData, createUser, createOrganization, createContact } from "@/core/api/graphql/account";
-import { UserType, IdentityResultType, Organization } from "@core/api/graphql/types";
-import { Logger, themeContext } from "@core/utilities";
+import { createContact, createOrganization, createUser, getMe, updatePersonalData } from "@/core/api/graphql/account";
+import { IdentityResultType, Organization, UserType } from "@core/api/graphql/types";
+import { Logger } from "@core/utilities";
+import { useFetch } from "@core/composables";
+import { storeId } from "@core/constants";
 import {
-  RegisterOrganization,
-  SignMeUp,
-  SignMeIn,
   ForgotPassword,
-  ValidateToken,
+  RegisterOrganization,
   ResetPassword,
+  SignMeIn,
+  SignMeUp,
   UserPersonalData,
+  ValidateToken,
 } from "@/shared/account";
-import useFetch from "@/core/composables/useFetch";
 
-const me: Ref<UserType | null> = ref(null);
+const loading = ref(false);
+const user = ref<UserType | null>(null);
 
-const loading: Ref<boolean> = ref(false);
-
-const isAuthenticated = eagerComputed<boolean>(() => !!me.value?.userName && me.value.userName !== "Anonymous");
-const organization = eagerComputed<Organization | null>(() => me.value?.contact?.organizations?.items?.[0] ?? null);
-
-export async function loadMe() {
-  try {
-    const user = await getMe();
-    me.value = user;
-  } catch (e) {
-    Logger.error("useUser.loadMe", e);
-    throw e;
-  } finally {
-    loading.value = false;
-  }
-}
+const isAuthenticated = eagerComputed<boolean>(() => !!user.value?.userName && user.value.userName !== "Anonymous");
+const organization = eagerComputed<Organization | null>(() => user.value?.contact?.organizations?.items?.[0] ?? null);
 
 export default () => {
   const { innerFetch } = useFetch();
+
+  async function fetchUser() {
+    try {
+      user.value = await getMe();
+    } catch (e) {
+      Logger.error("useUser.loadMe", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
 
   async function updateUser(personalData: UserPersonalData): Promise<IdentityResultType> {
     try {
       loading.value = true;
       const result = await updatePersonalData(personalData);
       if (result.succeeded) {
-        await loadMe();
+        await fetchUser();
       }
       return result;
     } catch (e) {
@@ -55,15 +54,12 @@ export default () => {
   async function changePassword(oldPassword: string, newPassword: string): Promise<IdentityResultType> {
     try {
       loading.value = true;
-      const response = await fetch("/storefrontapi/account/password", {
-        method: "POST",
-        body: JSON.stringify({ oldPassword, newPassword, newPasswordConfirm: newPassword }),
-        headers: {
-          Accept: "text/plain",
-          "Content-Type": "application/json-patch+json",
-        },
+
+      return await innerFetch<IdentityResultType>("/storefrontapi/account/password", "POST", {
+        oldPassword,
+        newPassword,
+        newPasswordConfirm: newPassword,
       });
-      return (await response.json()) as IdentityResultType;
     } catch (e) {
       Logger.error("useUser.changePassword", e);
       throw e;
@@ -76,9 +72,7 @@ export default () => {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/login";
-      const res = await innerFetch<IdentityResultType, SignMeIn>(url, "POST", payload);
-
-      return res;
+      return await innerFetch<IdentityResultType, SignMeIn>(url, "POST", payload);
     } catch (e) {
       Logger.error("useUser.signMeIn", e);
       throw e;
@@ -102,7 +96,7 @@ export default () => {
         email: payload.email,
         memberId: contact.id,
         userType: "Customer",
-        storeId: themeContext.storeId as string,
+        storeId,
       });
     } catch (e) {
       Logger.error("useUser.registerUser", e);
@@ -131,7 +125,7 @@ export default () => {
         email: payload.email,
         memberId: contact.id,
         userType: "Customer",
-        storeId: themeContext.storeId as string,
+        storeId,
       });
     } catch (e) {
       Logger.error("useUser.registerOrganization", e);
@@ -196,6 +190,7 @@ export default () => {
   return {
     isAuthenticated,
     organization,
+    fetchUser,
     updateUser,
     changePassword,
     signMeIn,
@@ -206,6 +201,6 @@ export default () => {
     validateToken,
     resetPassword,
     loading: readonly(loading),
-    me: computed(() => me.value!),
+    me: computed(() => user.value!),
   };
 };

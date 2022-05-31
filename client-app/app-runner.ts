@@ -1,34 +1,38 @@
 import { createApp, Plugin } from "vue";
-import { createHead } from "@vueuse/head";
-import { initCfg, initContext, initMenu } from "@core/utilities";
-import { config, context, menu } from "@core/plugins";
-import App from "./App.vue";
-import blocks from "./builder-preview/pages/blocks";
 import * as yup from "yup";
-import { loadMe } from "./shared/account/composables/useUser";
+import { createHead } from "@vueuse/head";
+import { useGlobalVariables, useLanguages, useThemeContext } from "@core/composables";
+import { configPlugin, contextPlugin } from "@core/plugins";
+import { useUser } from "@/shared/account";
+import { useNavigations } from "@/shared/layout";
+import { createI18n } from "@/i18n";
+import { createRouter, getBaseUrl } from "@/router";
+import App from "./App.vue";
+import blocks from "@/builder-preview/pages/blocks";
 
 /**
  * Global Styles
  */
 import "@fortawesome/fontawesome-free/css/all.css";
 import "@/assets/styles/main.scss";
-import createI18nRouter, { currentCultureName, createI18nWithCurrentLocale } from "./i18n";
-import routes from "./router";
 
-/**
- * Async application init
- */
-export default async (getPlugins: ((options: any) => { plugin: Plugin; options: any }[]) | null = null) => {
-  // Load and prepare app config and context
-  const [cfg, themeContext] = await Promise.all([initCfg(), initContext(), loadMe()]);
+export default async (getPlugins: (options: any) => { plugin: Plugin; options: any }[] = () => []) => {
+  const globals = useGlobalVariables();
+  const { fetchUser } = useUser();
+  const { themeContext, fetchThemeContext } = useThemeContext();
+  const { currentLocale, currentLanguage, supportedLocales, setLocale } = useLanguages();
+  const { fetchMenus } = useNavigations();
 
-  const defaultLocale = themeContext.defaultLanguage?.twoLetterLanguageName || "en";
-  const supportedLocales = themeContext.availLanguages?.map((x) => x.twoLetterLanguageName) || [defaultLocale];
+  // Load app data
+  await Promise.all([fetchThemeContext(), fetchUser()]);
 
-  const i18n = await createI18nWithCurrentLocale({ defaultLocale, supportedLocales });
-  const router = createI18nRouter(routes);
+  const head = createHead();
+  const i18n = createI18n();
+  const router = createRouter({ base: getBaseUrl(supportedLocales.value) });
 
-  const menus = await initMenu(currentCultureName.value);
+  await setLocale(i18n, currentLocale.value!);
+
+  fetchMenus(currentLanguage.value!.cultureName);
 
   yup.setLocale({
     mixed: {
@@ -40,28 +44,23 @@ export default async (getPlugins: ((options: any) => { plugin: Plugin; options: 
     },
   });
 
+  // Setting global variables
+  globals.i18n = i18n;
+  globals.router = router;
+
   // Create and mount application
   const app = createApp(App);
-  const head = createHead();
 
   Object.keys(blocks).forEach((key) => app.component(key, blocks[key]));
 
-  app.use(config, cfg);
-  app.use(context, themeContext);
-  app.use(menu, menus);
+  app.use(head);
   app.use(i18n);
   app.use(router);
-  app.use(head);
+  app.use(contextPlugin, themeContext.value);
+  app.use(configPlugin, themeContext.value!.settings);
 
-  if (getPlugins) {
-    const plugins = getPlugins({
-      router,
-    });
-
-    for (const plugin of plugins) {
-      app.use(plugin.plugin, plugin.options);
-    }
-  }
+  const plugins = getPlugins({ router });
+  plugins.forEach(({ plugin, options }) => app.use(plugin, options));
 
   app.mount("#app");
 };

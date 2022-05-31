@@ -30,7 +30,7 @@
       >
         <ul ref="listElement" class="max-h-[260px] overflow-auto divide-y">
           <li
-            v-for="item in availableLanguages"
+            v-for="item in supportedLanguages"
             :key="item.twoLetterLanguageName"
             :class="[
               item.twoLetterLanguageName === currentLanguage?.twoLetterLanguageName
@@ -74,10 +74,10 @@ export default {
 <script setup lang="ts">
 import "flag-icons/css/flag-icons.css";
 import { ref, shallowRef } from "vue";
-import useLocalization from "@/core/composables/useLocalization";
+import { useLanguages } from "@/core/composables";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
-const { currentLanguage, availableLanguages, saveLocaleAndReload } = useLocalization();
+const { currentLanguage, supportedLanguages, saveLocaleAndReload } = useLanguages();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
 const isMobile = breakpoints.smaller("md");
