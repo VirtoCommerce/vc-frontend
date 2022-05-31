@@ -180,7 +180,7 @@
                         is-outline
                         class="px-3 self-start uppercase font-bold"
                         @click="
-                          isAuthenticated
+                          isAuthenticated && addresses.length > 0
                             ? selectShippingAddressDialog()
                             : addOrUpdateAddressDialog(AddressType.Shipping, shipment?.deliveryAddress)
                         "
@@ -213,7 +213,7 @@
                         is-outline
                         class="px-3 self-start uppercase font-bold"
                         @click="
-                          isAuthenticated
+                          isAuthenticated && addresses.length > 0
                             ? selectShippingAddressDialog()
                             : addOrUpdateAddressDialog(AddressType.Shipping)
                         "
@@ -313,7 +313,9 @@
                       is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="
-                        isAuthenticated ? selectBillingAddressDialog() : addOrUpdateAddressDialog(AddressType.Billing)
+                        isAuthenticated && addresses.length > 0
+                          ? selectBillingAddressDialog()
+                          : addOrUpdateAddressDialog(AddressType.Billing)
                       "
                     >
                       {{ $t("pages.checkout.payment_details_section.billing_address_block.add_address_button") }}
@@ -358,7 +360,7 @@
                       is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="
-                        isAuthenticated
+                        isAuthenticated && addresses.length > 0
                           ? selectBillingAddressDialog()
                           : addOrUpdateAddressDialog(AddressType.Billing, payment?.billingAddress)
                       "
