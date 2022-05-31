@@ -72,7 +72,13 @@ export default () => {
     try {
       loading.value = true;
       const url = "/storefrontapi/account/login";
-      return await innerFetch<IdentityResultType, SignMeIn>(url, "POST", payload);
+      const res = await innerFetch<IdentityResultType, SignMeIn>(url, "POST", payload);
+
+      if (res.succeeded) {
+        await loadMe();
+      }
+
+      return res;
     } catch (e) {
       Logger.error("useUser.signMeIn", e);
       throw e;
