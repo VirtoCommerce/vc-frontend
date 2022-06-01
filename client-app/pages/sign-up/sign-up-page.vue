@@ -66,6 +66,7 @@
             :label="$t('pages.sign_up.password_label')"
             :placeholder="$t('pages.sign_up.password_placeholder')"
             type="password"
+            autocomplete="new-password"
             is-required
             :error-message="errors.password"
           ></VcInput>
