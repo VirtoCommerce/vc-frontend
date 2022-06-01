@@ -46,3 +46,7 @@ export function dateToIsoDateString(date: Date | undefined) {
 export function nameOf<T>(key: keyof T, _instance?: T): keyof T {
   return key;
 }
+
+export function toggleBodyOverflowHidden() {
+  document.body.classList.toggle("overflow-hidden");
+}

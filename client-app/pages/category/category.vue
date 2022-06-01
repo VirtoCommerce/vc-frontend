@@ -19,7 +19,7 @@
           :class="[
             { hidden: !mobileSidebarVisible },
             isMobileSidebar
-              ? 'fixed z-50 inset-0 w-72 h-screen overflow-y-auto px-5 pt-12 bg-white'
+              ? 'fixed z-50 inset-0 w-72 h-screen overflow-y-auto px-5 pt-12 pb-safe bg-white'
               : 'lg:flex lg:w-1/4 xl:w-1/5 flex-shrink-0',
           ]"
         >
@@ -32,7 +32,7 @@
           <div v-if="isMobileSidebar" class="font-semibold text-2xl pt-1 mb-6">
             {{ $t("common.buttons.filters") }}
           </div>
-          <div class="flex flex-col gap-4 lg:gap-5 overflow-hidden">
+          <div class="flex flex-col gap-4 lg:gap-5">
             <!-- Search results -->
             <VcCard :title="$t('pages.catalog.search_card.title')">
               <p class="text-sm pb-2" v-t="'pages.catalog.search_card.search_label'"></p>
@@ -120,8 +120,8 @@
               </VcCard>
             </template>
           </div>
-          <div v-show="isMobileSidebar" class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 pb-safe shadow-t-md bg-white">
-            <div class="flex space-x-4 py-5">
+          <div v-show="isMobileSidebar" class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
+            <div class="flex space-x-4">
               <VcButton
                 class="flex-1 uppercase"
                 size="lg"
@@ -348,6 +348,7 @@ import { defaultPageSize, productSortingList } from "@core/constants";
 import QueryParamName from "@core/query-param-name.enum";
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
+import { toggleBodyOverflowHidden } from "@/core/utilities";
 
 const { t } = useI18n();
 
@@ -449,6 +450,7 @@ const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
 });
 
 function showMobileSidebar() {
+  toggleBodyOverflowHidden();
   mobileFilters.value = _.cloneDeep<ProductsFilter[]>(unref(filters));
   mobileShowInStock.value = unref(showInStock);
   mobileSidebarVisible.value = true;
@@ -468,6 +470,7 @@ function applyFiltersAndHideSidebar() {
 }
 
 function hideMobileSidebar() {
+  toggleBodyOverflowHidden();
   mobileSidebarVisible.value = false;
 
   if (sidebarElement.value) {
