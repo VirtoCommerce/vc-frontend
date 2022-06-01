@@ -2,7 +2,7 @@
   <TransitionRoot appear :show="isOpen" as="template">
     <Dialog as="div" :initialFocus="getActiveElement()" @close="() => {}">
       <div class="fixed inset-0 z-50 overflow-y-auto">
-        <div class="min-h-screen px-4 text-center">
+        <div class="min-h-screen-safe px-4 text-center">
           <TransitionChild
             as="template"
             enter="duration-300 ease-out"
@@ -15,7 +15,7 @@
             <DialogOverlay class="fixed inset-0 bg-gray-900 bg-opacity-30" />
           </TransitionChild>
 
-          <span class="inline-block h-screen align-middle" aria-hidden="true"> &#8203; </span>
+          <span class="inline-block h-screen-safe align-middle" aria-hidden="true"> &#8203; </span>
 
           <TransitionChild
             as="template"

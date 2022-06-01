@@ -2,8 +2,8 @@
   <Head>
     <link rel="icon" :href="$cfg.favicon_image" />
   </Head>
-  <div v-if="loaded" class="min-h-screen flex flex-col font-lato">
-    <VcHeader />
+  <div v-if="loaded" class="min-h-screen-safe flex flex-col font-lato">
+    <Header />
     <div class="flex-grow flex flex-col">
       <RouterView />
     </div>

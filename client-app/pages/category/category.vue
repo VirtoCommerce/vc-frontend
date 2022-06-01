@@ -8,7 +8,7 @@
         <!-- Mobile sidebar back cover -->
         <div
           :class="{ hidden: !mobileSidebarVisible }"
-          class="fixed z-50 inset-0 w-full h-screen lg:hidden bg-gray-800 opacity-95"
+          class="fixed z-50 inset-0 w-full h-screen-safe lg:hidden bg-gray-800 opacity-95"
           @click="hideMobileSidebar()"
         />
 
