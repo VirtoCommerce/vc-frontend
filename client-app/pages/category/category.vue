@@ -19,7 +19,7 @@
           :class="[
             { hidden: !mobileSidebarVisible },
             isMobileSidebar
-              ? 'fixed z-50 inset-0 w-72 h-screen overflow-y-auto px-5 pt-12 pb-safe bg-white'
+              ? 'fixed z-50 inset-0 w-72 h-screen-safe overflow-y-auto px-5 pt-12 bg-white'
               : 'lg:flex lg:w-1/4 xl:w-1/5 flex-shrink-0',
           ]"
         >
