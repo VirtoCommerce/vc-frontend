@@ -13,6 +13,7 @@
         <span v-t="'pages.account.profile.update_error_alert'" />
       </VcAlert>
 
+      <VcInput name="userName" class="hidden" autocomplete="userName" v-model="userName"></VcInput>
       <VcInput
         v-model="firstName"
         :label="$t('pages.account.profile.first_name_label')"
@@ -153,6 +154,7 @@ const validationSchema = yup.object({
 });
 
 const initialValues = computed(() => ({
+  userName: me.value.userName,
   firstName: me.value.contact?.firstName,
   lastName: me.value.contact?.lastName,
   email: me.value.email,
@@ -166,6 +168,7 @@ const { errors, isSubmitting, meta, handleSubmit, resetForm, setFieldError } = u
   initialValues,
 });
 
+const { value: userName } = useField<string>("userName");
 const { value: firstName } = useField<string>("firstName");
 const { value: lastName } = useField<string>("lastName");
 const { value: email } = useField<string>("email");
