@@ -1,4 +1,4 @@
-import { ProductsFilter, ProductsFilterValue } from "@/shared/catalog";
+import { ProductsFacet, ProductsFacetValue, ProductsFilters } from "@/shared/catalog";
 import { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@core/api/graphql/types";
 import { Ref, unref } from "vue";
 import { MaybeRef } from "@vueuse/core";
@@ -21,10 +21,10 @@ function getFilterExpressionFromFacetRange(facetRange: FacetRangeType): string {
   return `${firstBracket}${fromStr}TO${toStr}${lastBracket}`;
 }
 
-export function toFilterExpression(filters: MaybeRef<ProductsFilter[]>, showInStockFilter: Ref<boolean>) {
+export function toFilterExpression(filters: ProductsFilters) {
   const result: string[] = [];
 
-  for (const filter of unref(filters)) {
+  for (const filter of filters.facets) {
     const selectedValues: string[] = filter.values
       .filter((item) => item.selected) //
       .map((item) => item.value);
@@ -41,20 +41,20 @@ export function toFilterExpression(filters: MaybeRef<ProductsFilter[]>, showInSt
     result.push(`"${filter.paramName}":${conditions}`);
   }
 
-  if (unref(showInStockFilter)) {
+  if (unref(filters.inStock)) {
     result.push(inStockFilterExpression);
   }
 
   return result.join(" ");
 }
 
-export function termFacetToProductsFilter(termFacet: TermFacet): ProductsFilter {
+export function termFacetToProductsFilter(termFacet: TermFacet): ProductsFacet {
   return {
     type: "term",
     label: termFacet.label,
     paramName: termFacet.name,
     values: termFacet
-      .terms!.map<ProductsFilterValue>((facetTerm: FacetTermType) => ({
+      .terms!.map<ProductsFacetValue>((facetTerm: FacetTermType) => ({
         count: facetTerm.count,
         label: facetTerm.label,
         value: facetTerm.term!,
@@ -64,12 +64,12 @@ export function termFacetToProductsFilter(termFacet: TermFacet): ProductsFilter 
   };
 }
 
-export function rangeFacetToProductsFilter(rangeFacet: RangeFacet): ProductsFilter {
+export function rangeFacetToProductsFilter(rangeFacet: RangeFacet): ProductsFacet {
   return {
     type: "range",
     label: rangeFacet.label,
     paramName: rangeFacet.name,
-    values: rangeFacet.ranges!.map<ProductsFilterValue>((facetRange: FacetRangeType) => ({
+    values: rangeFacet.ranges!.map<ProductsFacetValue>((facetRange: FacetRangeType) => ({
       count: facetRange.count,
       label: facetRange.label!,
       value: getFilterExpressionFromFacetRange(facetRange),

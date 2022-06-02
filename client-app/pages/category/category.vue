@@ -62,13 +62,13 @@
             <VcCard :title="$t('pages.catalog.instock_filter_card.title')">
               <VcCheckbox
                 v-if="isMobileSidebar"
-                v-model="mobileShowInStock"
+                v-model="mobileFilters.inStock"
                 :disabled="loading"
                 @change="onFilterChanged"
               >
                 {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
               </VcCheckbox>
-              <VcCheckbox v-else v-model="showInStock" :disabled="loading" @change="onFilterChanged">
+              <VcCheckbox v-else v-model="filters.inStock" :disabled="loading" @change="onFilterChanged">
                 {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
               </VcCheckbox>
             </VcCard>
@@ -86,7 +86,7 @@
             </VcCard>
 
             <!-- Facet Filters Skeletons -->
-            <template v-if="loading && !filters.length">
+            <template v-if="loading && !filters.facets.length">
               <VcCardSkeleton is-collapsible v-for="i in 6" :key="i">
                 <!-- TODO: add checkbox skeleton -->
                 <div class="flex items-center mt-3 first:mt-0" v-for="i in 5" :key="i">
@@ -99,13 +99,13 @@
             <!-- Facet Filters -->
             <template v-else>
               <VcCard
-                v-for="filter in isMobileSidebar ? mobileFilters : filters"
-                :key="filter.paramName"
-                :title="filter.label"
+                v-for="facet in isMobileSidebar ? mobileFilters.facets : filters.facets"
+                :key="facet.paramName"
+                :title="facet.label"
                 is-collapsible
               >
                 <VcCheckbox
-                  v-for="item in filter.values"
+                  v-for="item in facet.values"
                   :key="item.value"
                   v-model="item.selected"
                   :disabled="loading"
@@ -183,7 +183,7 @@
           </div>
 
           <!-- Filters chips -->
-          <div v-if="isExistSelectedFilters || showInStock" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
+          <div v-if="isExistSelectedFilters || filters.inStock" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
             <VcChip
               class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
               size="sm"
@@ -196,17 +196,17 @@
               {{ $t("pages.catalog.reset_filters_button") }}
             </VcChip>
 
-            <template v-for="filter in filters">
-              <template v-for="filterItem in filter.values">
+            <template v-for="facet in filters.facets">
+              <template v-for="filterItem in facet.values">
                 <VcChip
                   v-if="filterItem.selected"
-                  :key="filter.paramName + filterItem.value"
+                  :key="facet.paramName + filterItem.value"
                   class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
                   size="sm"
                   closable
                   @close="
                     removeFilterItem({
-                      paramName: filter.paramName,
+                      paramName: facet.paramName,
                       value: filterItem.value,
                     })
                   "
@@ -216,13 +216,13 @@
               </template>
             </template>
 
-            <template v-if="showInStock">
+            <template v-if="filters.inStock">
               <VcChip
                 class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
                 size="sm"
                 closable
                 @close="
-                  showInStock = false;
+                  filters.inStock = false;
                   applyFilters();
                 "
               >
@@ -272,7 +272,7 @@
           <!-- Empty view -->
           <VcEmptyView
             :text="
-              isExistSelectedFilters || showInStock || keywordQueryParam !== ''
+              isExistSelectedFilters || filters.inStock || keywordQueryParam !== ''
                 ? $t('pages.catalog.no_products_filtered_message')
                 : $t('pages.catalog.no_products_message')
             "
@@ -287,7 +287,7 @@
                 class="px-6 uppercase"
                 size="lg"
                 @click="resetFiltersWithKeyword"
-                v-if="isExistSelectedFilters || showInStock || keywordQueryParam !== ''"
+                v-if="isExistSelectedFilters || filters.inStock || keywordQueryParam !== ''"
               >
                 <i class="fas fa-undo text-inherit -ml-0.5 mr-2.5"></i>
                 {{ $t("pages.catalog.no_products_button") }}
@@ -311,10 +311,8 @@ import {
   PropType,
   onBeforeUnmount,
   WatchStopHandle,
-  triggerRef,
   toRef,
-  unref,
-  Ref,
+  shallowReactive,
 } from "vue";
 import { breakpointsTailwind, eagerComputed, useBreakpoints, whenever, useLocalStorage } from "@vueuse/core";
 import {
@@ -326,9 +324,10 @@ import {
   useProducts,
   ViewMode,
   ProductsSearchParams,
-  ProductsFilterValue,
-  ProductsFilter,
+  ProductsFilters,
   useProductsRoutes,
+  ProductsFacet,
+  ProductsFacetValue,
 } from "@/shared/catalog";
 import {
   VcButton,
@@ -368,10 +367,9 @@ const props = defineProps({
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { selectedCategory, selectCategoryByKey, loadCategoriesTree } = useCategories();
-const { fetchProducts, fetchMoreProducts, loading, loadingMore, products, total, pages, filters, showInStock } =
-  useProducts({
-    withFilters: true,
-  });
+const { fetchProducts, fetchMoreProducts, loading, loadingMore, products, total, pages, filters } = useProducts({
+  withFilters: true,
+});
 
 const productsRoutes = useProductsRoutes(products);
 
@@ -385,8 +383,7 @@ const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const keyword = ref("");
 const page = ref(1);
 const itemsPerPage = ref(defaultPageSize);
-const mobileFilters: Ref<ProductsFilter[]> = shallowRef([]);
-const mobileShowInStock: Ref<boolean> = ref(false);
+const mobileFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: false });
 
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
 
@@ -425,7 +422,7 @@ const searchParams = computed<ProductsSearchParams>(() => ({
 
 const isAppliedKeyword = eagerComputed<boolean>(() => keyword.value === keywordQueryParam.value);
 const isExistSelectedFilters = eagerComputed<boolean>(() =>
-  filters.value.some((filter) => filter.values.some((value) => value.selected))
+  filters.facets.some((facet) => facet.values.some((value) => value.selected))
 );
 
 const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
@@ -451,18 +448,19 @@ const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
 
 function showMobileSidebar() {
   toggleBodyOverflowHidden();
-  mobileFilters.value = _.cloneDeep<ProductsFilter[]>(unref(filters));
-  mobileShowInStock.value = unref(showInStock);
+  mobileFilters.facets = _.cloneDeep<ProductsFacet[]>(filters.facets);
+  mobileFilters.inStock = filters.inStock;
+
   mobileSidebarVisible.value = true;
 }
 
 function applyFiltersAndHideSidebar() {
-  if (JSON.stringify(mobileFilters) !== JSON.stringify(unref(filters))) {
-    filters.value = mobileFilters.value;
+  if (JSON.stringify(mobileFilters.facets) !== JSON.stringify(filters.facets)) {
+    filters.facets = mobileFilters.facets;
   }
 
-  if (mobileShowInStock.value !== showInStock.value) {
-    showInStock.value = mobileShowInStock.value;
+  if (mobileFilters.inStock !== filters.inStock) {
+    filters.inStock = mobileFilters.inStock;
   }
 
   hideMobileSidebar();
@@ -494,12 +492,12 @@ function onFilterChanged() {
 }
 
 function applyFilters() {
-  filterQueryParam.value = toFilterExpression(filters, showInStock);
-  triggerRef(filters);
+  filterQueryParam.value = toFilterExpression(filters);
+  //triggerRef(filters);
 }
 
-function removeFilterItem(payload: Pick<ProductsFilter, "paramName"> & Pick<ProductsFilterValue, "value">) {
-  const filter = filters.value.find((item) => item.paramName === payload.paramName);
+function removeFilterItem(payload: Pick<ProductsFacet, "paramName"> & Pick<ProductsFacetValue, "value">) {
+  const filter = filters.facets.find((item) => item.paramName === payload.paramName);
   const filterItem = filter?.values.find((item) => item.value === payload.value);
 
   if (filterItem) {
@@ -509,13 +507,13 @@ function removeFilterItem(payload: Pick<ProductsFilter, "paramName"> & Pick<Prod
 }
 
 function resetFilters() {
-  filters.value.forEach((filter) => filter.values.forEach((filterItem) => (filterItem.selected = false)));
-  showInStock.value = false;
+  filters.facets.forEach((filter) => filter.values.forEach((filterItem) => (filterItem.selected = false)));
+  filters.inStock = false;
 
   if (isMobileSidebar.value) {
-    mobileFilters.value.forEach((filter) => filter.values.forEach((filterItem) => (filterItem.selected = false)));
-    mobileShowInStock.value = false;
-    triggerRef(mobileFilters);
+    mobileFilters.facets.forEach((filter) => filter.values.forEach((filterItem) => (filterItem.selected = false)));
+    filters.inStock = false;
+    //triggerRef(mobileFilters);
   }
 
   applyFilters();
