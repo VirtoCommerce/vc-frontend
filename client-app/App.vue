@@ -3,11 +3,11 @@
     <link rel="icon" :href="$cfg.favicon_image" />
   </Head>
   <div v-if="loaded" class="min-h-screen flex flex-col font-lato">
-    <Header />
+    <VcHeader />
     <div class="flex-grow flex flex-col">
       <RouterView />
     </div>
-    <Footer />
+    <VcFooter />
     <PopupHost />
     <NotificationsHost />
   </div>
@@ -18,7 +18,7 @@
 import { onMounted, ref } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { Head } from "@vueuse/head";
-import { Header, Footer, useSearchBar } from "./shared/layout";
+import { VcHeader, VcFooter, useSearchBar } from "./shared/layout";
 import { useUser } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { setCatalogId, setUserId, setLocale, setCurrencyCode } from "@/core/constants";
