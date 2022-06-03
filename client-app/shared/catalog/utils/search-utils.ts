@@ -1,7 +1,5 @@
 import { ProductsFacet, ProductsFacetValue, ProductsFilters } from "@/shared/catalog";
 import { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@core/api/graphql/types";
-import { Ref, unref } from "vue";
-import { MaybeRef } from "@vueuse/core";
 import { inStockFilterExpression } from "@/core/constants";
 
 /**

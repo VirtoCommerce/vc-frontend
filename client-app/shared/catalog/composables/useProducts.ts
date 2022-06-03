@@ -7,7 +7,6 @@ import { ProductsFacet, ProductsSearchParams } from "../types";
 import { rangeFacetToProductsFilter, termFacetToProductsFilter, toFilterExpression } from "@/shared/catalog";
 import { inStockFilterExpression } from "@/core/constants";
 import _ from "lodash";
-import { read } from "fs";
 
 const DEFAULT_ITEMS_PER_PAGE = 16;
 
@@ -47,7 +46,7 @@ export default (
         term_facets = [],
         range_facets = [],
         totalCount = 0,
-      } = await searchProducts(searchParams, { withFacets: withFacets });
+      } = await searchProducts(searchParams, { withFacets });
 
       products.value = items;
       total.value = totalCount;

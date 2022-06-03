@@ -1,3 +1,5 @@
+import { overflowHiddenClass } from "@/core/constants";
+
 export function sleep(ms: number, resolvedValue?: any): Promise<any> {
   return new Promise((resolve) => setTimeout(resolve, ms, resolvedValue));
 }
@@ -48,13 +50,13 @@ export function nameOf<T>(key: keyof T, _instance?: T): keyof T {
 }
 
 export function turnOnBodyOverflowHidden() {
-  if (!document.body.classList.contains("overflow-hidden")) {
-    document.body.classList.add("overflow-hidden");
+  if (!document.body.classList.contains(overflowHiddenClass)) {
+    document.body.classList.add(overflowHiddenClass);
   }
 }
 
 export function turnOffBodyOverflowHidden() {
-  if (document.body.classList.contains("overflow-hidden")) {
-    document.body.classList.remove("overflow-hidden");
+  if (document.body.classList.contains(overflowHiddenClass)) {
+    document.body.classList.remove(overflowHiddenClass);
   }
 }

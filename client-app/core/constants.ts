@@ -24,6 +24,9 @@ export function setCurrencyCode(code: string): void {
   currencyCode = code;
 }
 
+//CSS
+export const overflowHiddenClass = "overflow-hidden";
+
 // Search
 export const defaultPageSize = 16;
 export const defaultSearchPageSize = 20;
