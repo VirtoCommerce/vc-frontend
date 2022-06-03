@@ -35,7 +35,7 @@ const graphqlClient = new ApolloClient({
   defaultOptions: {
     watchQuery: { fetchPolicy },
     query: { fetchPolicy },
-    // mutate: { fetchPolicy },
+    mutate: { fetchPolicy },
   },
 });
 

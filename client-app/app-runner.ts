@@ -62,5 +62,7 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
   const plugins = getPlugins({ router });
   plugins.forEach(({ plugin, options }) => app.use(plugin, options));
 
+  await router.isReady();
+
   app.mount("#app");
 };

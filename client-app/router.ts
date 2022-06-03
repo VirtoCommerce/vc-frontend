@@ -1,5 +1,6 @@
 import { createRouter as _createRouter, createWebHistory, RouteRecordRaw, RouterView } from "vue-router";
 
+// Error pages
 import Error403 from "@/pages/403/403.vue";
 import Error404 from "@/pages/404/404.vue";
 import Error500 from "@/pages/500/500.vue";
@@ -25,6 +26,7 @@ const Profile = () => import("@/pages/account/profile.vue");
 const Addresses = () => import("@/pages/account/addresses.vue");
 const Orders = () => import("@/pages/account/orders.vue");
 const OrderDetails = () => import("@/pages/account/order-details.vue");
+const OrderPayment = () => import("@/pages/account/order-payment.vue");
 const Lists = () => import("@/pages/account/lists.vue");
 const ListDetails = () => import("@/pages/account/list-details.vue");
 const CheckoutDefaults = () => import("@/pages/account/checkout-defaults.vue");
@@ -45,10 +47,22 @@ export const accountRoutes: RouteRecordRaw[] = [
       { path: "", name: "Orders", component: Orders },
       {
         path: ":orderId",
-        name: "OrderDetails",
-        component: OrderDetails,
-        meta: { hideNavigation: true },
+        component: RouterView,
         props: true,
+        meta: { hideNavigation: true },
+        children: [
+          {
+            path: "",
+            name: "OrderDetails",
+            component: OrderDetails,
+          },
+          {
+            path: "payment",
+            name: "OrderPayment",
+            component: OrderPayment,
+            meta: { layout: "Payment" },
+          },
+        ],
       },
     ],
   },

@@ -1,0 +1,13 @@
+mutation InitializePayment($command: InputInitializePaymentType!) {
+  initializePayment(command: $command) {
+    isSuccess
+    errorMessage
+    actionHtmlForm
+    actionRedirectUrl
+    paymentActionType
+    publicParameters {
+      key
+      value
+    }
+  }
+}
