@@ -32,94 +32,13 @@
           <div v-if="isMobileSidebar" class="font-semibold text-2xl pt-1 mb-6">
             {{ $t("common.buttons.filters") }}
           </div>
-          <div class="flex flex-col gap-4 lg:gap-5">
-            <!-- Search results -->
-            <VcCard :title="$t('pages.catalog.search_card.title')">
-              <p class="text-sm pb-2" v-t="'pages.catalog.search_card.search_label'"></p>
-              <div class="flex gap-3">
-                <input
-                  v-model="keyword"
-                  class="border rounded text-sm leading-8 flex-1 w-full border-gray-300 h-8 px-2 outline-none focus:border-gray-400"
-                  type="text"
-                  maxlength="30"
-                  :disabled="loading"
-                  @keypress.enter="onSearchStart"
-                />
-
-                <VcButton
-                  :is-disabled="loading || isAppliedKeyword"
-                  class="px-5 uppercase"
-                  outline
-                  size="sm"
-                  @click="onSearchStart"
-                >
-                  {{ $t("pages.catalog.search_card.search_button") }}
-                </VcButton>
-              </div>
-            </VcCard>
-
-            <!-- Previously purchased -->
-            <VcCard :title="$t('pages.catalog.instock_filter_card.title')">
-              <VcCheckbox
-                v-if="isMobileSidebar"
-                v-model="mobileFilters.inStock"
-                :disabled="loading"
-                @change="onFilterChanged"
-              >
-                {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
-              </VcCheckbox>
-              <VcCheckbox v-else v-model="filters.inStock" :disabled="loading" @change="onFilterChanged">
-                {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
-              </VcCheckbox>
-            </VcCard>
-
-            <!-- Branch availability -->
-            <VcCard :title="$t('pages.catalog.branch_availability_filter_card.title')">
-              <p class="text-sm font-medium">
-                <span
-                  class="text-[color:var(--color-link)] font-semibold cursor-pointer hover:text-[color:var(--color-link-hover)]"
-                >
-                  {{ $t("pages.catalog.branch_availability_filter_card.select_branch_link") }}
-                </span>
-                {{ $t("pages.catalog.branch_availability_filter_card.select_branch_link_end") }}
-              </p>
-            </VcCard>
-
-            <!-- Facet Filters Skeletons -->
-            <template v-if="loading && !filters.facets.length">
-              <VcCardSkeleton is-collapsible v-for="i in 6" :key="i">
-                <!-- TODO: add checkbox skeleton -->
-                <div class="flex items-center mt-3 first:mt-0" v-for="i in 5" :key="i">
-                  <div class="w-5 h-5 bg-gray-100 inline-block"></div>
-                  <div class="ml-2 text-sm bg-gray-100 w-11/12">&nbsp;</div>
-                </div>
-              </VcCardSkeleton>
-            </template>
-
-            <!-- Facet Filters -->
-            <template v-else>
-              <VcCard
-                v-for="facet in isMobileSidebar ? mobileFilters.facets : filters.facets"
-                :key="facet.paramName"
-                :title="facet.label"
-                is-collapsible
-              >
-                <VcCheckbox
-                  v-for="item in facet.values"
-                  :key="item.value"
-                  v-model="item.selected"
-                  :disabled="loading"
-                  class="mt-3 first:mt-0"
-                  @change="onFilterChanged"
-                >
-                  <div class="flex">
-                    <span class="truncate">{{ item.label }}</span>
-                    <span class="ml-1">{{ $t("pages.catalog.facet_card.item_count_format", [item.count]) }}</span>
-                  </div>
-                </VcCheckbox>
-              </VcCard>
-            </template>
-          </div>
+          <ProductsFilterSidebar
+            :keyword="keyword"
+            :filters="filters"
+            :loading="loading"
+            @search="onSearchStart($event)"
+            @change="onFilterChanged($event)"
+          />
           <div v-show="isMobileSidebar" class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
             <div class="flex space-x-4">
               <VcButton
@@ -331,9 +250,6 @@ import {
 } from "@/shared/catalog";
 import {
   VcButton,
-  VcCard,
-  VcCardSkeleton,
-  VcCheckbox,
   VcChip,
   VcInfinityScrollLoader,
   VcSelect,
@@ -342,6 +258,7 @@ import {
   VcImage,
 } from "@/components";
 import { AddToCart } from "@/shared/cart";
+import ProductsFilterSidebar from "./_internal/products-filters.vue";
 import { useElementVisibility, useRouteQueryParam } from "@core/composables";
 import { defaultPageSize, productSortingList } from "@core/constants";
 import QueryParamName from "@core/query-param-name.enum";
@@ -420,7 +337,6 @@ const searchParams = computed<ProductsSearchParams>(() => ({
   filter: filterQueryParam.value,
 }));
 
-const isAppliedKeyword = eagerComputed<boolean>(() => keyword.value === keywordQueryParam.value);
 const isExistSelectedFilters = eagerComputed<boolean>(() =>
   filters.facets.some((facet) => facet.values.some((value) => value.selected))
 );
@@ -476,8 +392,8 @@ function hideMobileSidebar() {
   }
 }
 
-function onSearchStart() {
-  const searchText = keyword.value;
+function onSearchStart(newKeyword: string) {
+  const searchText = newKeyword;
 
   if (searchText !== keywordQueryParam.value && searchText.length <= 30) {
     hideMobileSidebar();
@@ -485,7 +401,9 @@ function onSearchStart() {
   }
 }
 
-function onFilterChanged() {
+function onFilterChanged(newFilters: ProductsFilters) {
+  filters.facets = _.cloneDeep(newFilters.facets);
+  filters.inStock = newFilters.inStock;
   if (!isMobileSidebar.value) {
     applyFilters();
   }
