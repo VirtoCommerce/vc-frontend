@@ -34,7 +34,10 @@
             :keyword="keywordQueryParam"
             :filters="mobileFilters"
             :loading="loading || facetsLoading"
-            @search="onSearchStart($event)"
+            @search="
+              onSearchStart($event);
+              hideMobileSidebar();
+            "
             @change="onMobileFilterChanged($event)"
           />
           <div v-show="isMobileSidebar" class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
@@ -43,6 +46,9 @@
                 class="flex-1 uppercase"
                 size="lg"
                 is-outline
+                :is-disabled="
+                  !(isExistSelectedFacets || filters.inStock || isExistSelectedMobileFacets || mobileFilters.inStock)
+                "
                 @click="
                   resetFilters();
                   hideMobileSidebar();
@@ -50,7 +56,12 @@
               >
                 {{ $t("common.buttons.reset") }}
               </VcButton>
-              <VcButton class="flex-1 uppercase" size="lg" @click="applyFiltersAndHideSidebar">
+              <VcButton
+                class="flex-1 uppercase"
+                size="lg"
+                :is-disabled="!isMobileFilterDirty"
+                @click="applyMobileFiltersAndHideSidebar"
+              >
                 {{ $t("common.buttons.apply") }}
               </VcButton>
             </div>
@@ -111,7 +122,7 @@
           </div>
 
           <!-- Filters chips -->
-          <div v-if="isExistSelectedFilters || filters.inStock" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
+          <div v-if="isExistSelectedFacets || filters.inStock" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
             <VcChip
               class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
               size="sm"
@@ -200,7 +211,7 @@
           <!-- Empty view -->
           <VcEmptyView
             :text="
-              isExistSelectedFilters || filters.inStock || keywordQueryParam !== ''
+              isExistSelectedFacets || filters.inStock || keywordQueryParam !== ''
                 ? $t('pages.catalog.no_products_filtered_message')
                 : $t('pages.catalog.no_products_message')
             "
@@ -215,7 +226,7 @@
                 class="px-6 uppercase"
                 size="lg"
                 @click="resetFiltersWithKeyword"
-                v-if="isExistSelectedFilters || filters.inStock || keywordQueryParam !== ''"
+                v-if="isExistSelectedFacets || filters.inStock || keywordQueryParam !== ''"
               >
                 <i class="fas fa-undo text-inherit -ml-0.5 mr-2.5"></i>
                 {{ $t("pages.catalog.no_products_button") }}
@@ -316,7 +327,6 @@ const isMobileSidebar = breakpoints.smaller("lg");
 const mobileSidebarVisible = ref(false);
 const sidebarElement = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
-// const keyword = ref("");
 const page = ref(1);
 const itemsPerPage = ref(defaultPageSize);
 const mobileFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: false });
@@ -356,7 +366,7 @@ const searchParams = computed<ProductsSearchParams>(() => ({
   filter: filterQueryParam.value,
 }));
 
-const isExistSelectedFilters = eagerComputed<boolean>(() =>
+const isExistSelectedFacets = eagerComputed<boolean>(() =>
   filters.facets.some((facet) => facet.values.some((value) => value.selected))
 );
 
@@ -381,63 +391,29 @@ const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
   return items;
 });
 
-function showMobileSidebar() {
-  turnOnBodyOverflowHidden();
-  mobileFilters.facets = _.cloneDeep<ProductsFacet[]>(filters.facets);
-  mobileFilters.inStock = filters.inStock;
-
-  mobileSidebarVisible.value = true;
-}
-
-function applyFiltersAndHideSidebar() {
-  if (JSON.stringify(mobileFilters.facets) !== JSON.stringify(filters.facets)) {
-    filters.facets = mobileFilters.facets;
-  }
-
-  if (mobileFilters.inStock !== filters.inStock) {
-    filters.inStock = mobileFilters.inStock;
-  }
-
-  hideMobileSidebar();
-  applyFilters();
-}
-
-function hideMobileSidebar() {
-  turnOffBodyOverflowHidden();
-  mobileSidebarVisible.value = false;
-
-  if (sidebarElement.value) {
-    sidebarElement.value.scrollTop = 0;
-  }
-}
-
 function onSearchStart(newKeyword: string) {
   const searchText = newKeyword;
 
   if (searchText !== keywordQueryParam.value && searchText.length <= 30) {
-    hideMobileSidebar();
     keywordQueryParam.value = searchText;
   }
 }
 
 function onFilterChanged(newFilters: ProductsFilters) {
-  filters.facets = _.cloneDeep(newFilters.facets);
-  filters.inStock = newFilters.inStock;
+  // checking for optimization
+  if (newFilters.inStock != filters.inStock) {
+    filters.inStock = newFilters.inStock;
+  } else {
+    filters.facets = _.cloneDeep(newFilters.facets);
+  }
+
   if (!isMobileSidebar.value) {
     applyFilters();
   }
 }
-async function onMobileFilterChanged(newFilters: ProductsFilters) {
-  const searchParamsForFacets = _.cloneDeep(searchParams.value);
-  searchParamsForFacets.filter = toFilterExpression(newFilters);
-  const newFacets = await getFacets(searchParamsForFacets);
-  mobileFilters.facets = newFacets;
-  mobileFilters.inStock = newFilters.inStock;
-}
 
 function applyFilters() {
   filterQueryParam.value = toFilterExpression(filters);
-  //triggerRef(filters);
 }
 
 function removeFilterItem(payload: Pick<ProductsFacet, "paramName"> & Pick<ProductsFacetValue, "value">) {
@@ -457,7 +433,6 @@ function resetFilters() {
   if (isMobileSidebar.value) {
     mobileFilters.facets.forEach((filter) => filter.values.forEach((filterItem) => (filterItem.selected = false)));
     filters.inStock = false;
-    //triggerRef(mobileFilters);
   }
 
   applyFilters();
@@ -529,6 +504,52 @@ onBeforeUnmount(() => {
   watchStopHandles.forEach((watchStopHandle) => watchStopHandle());
 });
 
-// watchEffect(() => (keyword.value = keywordQueryParam.value ?? ""));
+//#region Mobile filters logic
+
+const isExistSelectedMobileFacets = eagerComputed<boolean>(() =>
+  mobileFilters.facets.some((facet) => facet.values.some((value) => value.selected))
+);
+
+const isMobileFilterDirty = eagerComputed<boolean>(() => JSON.stringify(mobileFilters) !== JSON.stringify(filters));
+
+async function onMobileFilterChanged(newFilters: ProductsFilters) {
+  const searchParamsForFacets = _.cloneDeep(searchParams.value);
+  searchParamsForFacets.filter = toFilterExpression(newFilters);
+  const newFacets = await getFacets(searchParamsForFacets);
+  mobileFilters.facets = newFacets;
+  mobileFilters.inStock = newFilters.inStock;
+}
+
+function showMobileSidebar() {
+  turnOnBodyOverflowHidden();
+  mobileFilters.facets = _.cloneDeep<ProductsFacet[]>(filters.facets);
+  mobileFilters.inStock = filters.inStock;
+
+  mobileSidebarVisible.value = true;
+}
+
+function applyMobileFiltersAndHideSidebar() {
+  if (JSON.stringify(mobileFilters.facets) !== JSON.stringify(filters.facets)) {
+    filters.facets = mobileFilters.facets;
+  }
+
+  if (mobileFilters.inStock !== filters.inStock) {
+    filters.inStock = mobileFilters.inStock;
+  }
+
+  hideMobileSidebar();
+  applyFilters();
+}
+
+function hideMobileSidebar() {
+  turnOffBodyOverflowHidden();
+  mobileSidebarVisible.value = false;
+
+  if (sidebarElement.value) {
+    sidebarElement.value.scrollTop = 0;
+  }
+}
+
 whenever(() => !isMobileSidebar.value, hideMobileSidebar);
+//#endregion Mobile filters logic
 </script>
