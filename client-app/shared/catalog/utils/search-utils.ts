@@ -21,10 +21,10 @@ function getFilterExpressionFromFacetRange(facetRange: FacetRangeType): string {
   return `${firstBracket}${fromStr}TO${toStr}${lastBracket}`;
 }
 
-export function toFilterExpression(filters: MaybeRef<ProductsFilters>) {
+export function toFilterExpression(filters: ProductsFilters) {
   const result: string[] = [];
 
-  for (const filter of unref(filters).facets) {
+  for (const filter of filters.facets) {
     const selectedValues: string[] = filter.values
       .filter((item) => item.selected) //
       .map((item) => item.value);
@@ -41,7 +41,7 @@ export function toFilterExpression(filters: MaybeRef<ProductsFilters>) {
     result.push(`"${filter.paramName}":${conditions}`);
   }
 
-  if (unref(filters).inStock) {
+  if (filters.inStock) {
     result.push(inStockFilterExpression);
   }
 

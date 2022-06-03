@@ -32,10 +32,10 @@
           </div>
           <ProductsFilterSidebar
             :keyword="keywordQueryParam"
-            :filters="filters"
-            :loading="loading"
+            :filters="mobileFilters"
+            :loading="loading || facetsLoading"
             @search="onSearchStart($event)"
-            @change="onFilterChanged($event)"
+            @change="onMobileFilterChanged($event)"
           />
           <div v-show="isMobileSidebar" class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
             <div class="flex space-x-4">
@@ -292,8 +292,19 @@ const props = defineProps({
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { selectedCategory, selectCategoryByKey, loadCategoriesTree } = useCategories();
-const { fetchProducts, fetchMoreProducts, loading, loadingMore, products, total, pages, filters } = useProducts({
-  withFilters: true,
+const {
+  fetchProducts,
+  fetchMoreProducts,
+  getFacets,
+  loading,
+  loadingMore,
+  facetsLoading,
+  products,
+  total,
+  pages,
+  filters,
+} = useProducts({
+  withFacets: true,
 });
 
 const productsRoutes = useProductsRoutes(products);
@@ -415,6 +426,13 @@ function onFilterChanged(newFilters: ProductsFilters) {
   if (!isMobileSidebar.value) {
     applyFilters();
   }
+}
+async function onMobileFilterChanged(newFilters: ProductsFilters) {
+  const searchParamsForFacets = _.cloneDeep(searchParams.value);
+  searchParamsForFacets.filter = toFilterExpression(newFilters);
+  const newFacets = await getFacets(searchParamsForFacets);
+  mobileFilters.facets = newFacets;
+  mobileFilters.inStock = newFilters.inStock;
 }
 
 function applyFilters() {

@@ -6,19 +6,22 @@ import { Logger } from "@core/utilities";
 import { ProductsFacet, ProductsSearchParams } from "../types";
 import { rangeFacetToProductsFilter, termFacetToProductsFilter, toFilterExpression } from "@/shared/catalog";
 import { inStockFilterExpression } from "@/core/constants";
+import _ from "lodash";
+import { read } from "fs";
 
 const DEFAULT_ITEMS_PER_PAGE = 16;
 
 export default (
   options: {
     // @default false
-    withFilters?: boolean;
+    withFacets?: boolean;
   } = {}
 ) => {
-  const { withFilters = false } = options;
+  const { withFacets: withFacets = false } = options;
 
-  const loading: Ref<boolean> = ref(true);
-  const loadingMore: Ref<boolean> = ref(false);
+  const loading = ref(true);
+  const loadingMore = ref(false);
+  const facetsLoading = ref(false);
   const products: Ref<Product[]> = shallowRef([]);
   const filters = shallowReactive<ProductsFilters>({ facets: [], inStock: false });
   const total: Ref<number> = ref(0);
@@ -44,13 +47,13 @@ export default (
         term_facets = [],
         range_facets = [],
         totalCount = 0,
-      } = await searchProducts(searchParams, { withFacets: withFilters });
+      } = await searchProducts(searchParams, { withFacets: withFacets });
 
       products.value = items;
       total.value = totalCount;
       pages.value = Math.ceil(total.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE));
 
-      if (withFilters) {
+      if (withFacets) {
         term_facets.sort((a, b) => a.label.localeCompare(b.label));
         range_facets.sort((a, b) => a.label.localeCompare(b.label));
         filters.facets = Array<ProductsFacet>().concat(
@@ -83,14 +86,46 @@ export default (
     }
   }
 
+  async function getFacets(searchParams: Partial<ProductsSearchParams>): Promise<ProductsFacet[]> {
+    facetsLoading.value = true;
+
+    try {
+      const paramsClone = _.cloneDeep(searchParams);
+      paramsClone.page = 0;
+      paramsClone.itemsPerPage = 0;
+
+      const {
+        term_facets = [],
+        range_facets = [],
+        totalCount = 0,
+      } = await searchProducts(searchParams, { withFacets: true });
+
+      term_facets.sort((a, b) => a.label.localeCompare(b.label));
+      range_facets.sort((a, b) => a.label.localeCompare(b.label));
+      const facets = Array<ProductsFacet>().concat(
+        term_facets.map(termFacetToProductsFilter),
+        range_facets.map(rangeFacetToProductsFilter)
+      );
+
+      return facets;
+    } catch (e) {
+      Logger.error(`useProducts.${getFacets.name}`, e);
+      throw e;
+    } finally {
+      facetsLoading.value = false;
+    }
+  }
+
   return {
     filters,
     fetchProducts,
     fetchMoreProducts,
+    getFacets,
     total: readonly(total),
     pages: readonly(pages),
     loading: readonly(loading),
     loadingMore: readonly(loadingMore),
+    facetsLoading: readonly(facetsLoading),
     products: computed(() => products.value),
   };
 };
