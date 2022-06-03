@@ -18,6 +18,7 @@ const mainMenuLinks = computed<MenuLink[]>(() =>
         id: item.id,
         route: item.route,
         title: globals.i18n!.global.t(item.title),
+        icon: item.icon,
         children: (menuLinkLists.value?.[item.id] || []).map((childrenItem) => ({
           id: childrenItem.url?.split("/").pop(),
           title: childrenItem.title,
