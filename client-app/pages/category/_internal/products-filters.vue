@@ -45,7 +45,7 @@
     </VcCard>
 
     <!-- Facet Filters Skeletons -->
-    <template v-if="loading && !filters.facets.length">
+    <template v-if="loading && !_filters.facets.length">
       <VcCardSkeleton is-collapsible v-for="i in 6" :key="i">
         <!-- TODO: add checkbox skeleton -->
         <div class="flex items-center mt-3 first:mt-0" v-for="i in 5" :key="i">
@@ -57,7 +57,7 @@
 
     <!-- Facet Filters -->
     <template v-else>
-      <VcCard v-for="facet in filters.facets" :key="facet.paramName" :title="facet.label" is-collapsible>
+      <VcCard v-for="facet in _filters.facets" :key="facet.paramName" :title="facet.label" is-collapsible>
         <VcCheckbox
           v-for="item in facet.values"
           :key="item.value"
@@ -80,8 +80,8 @@
 import { VcButton, VcCard, VcCardSkeleton, VcCheckbox } from "@/components";
 import { ProductsFilters } from "@/shared/catalog";
 import { eagerComputed } from "@vueuse/core";
+import { watch, onMounted, PropType, ref, shallowReactive, toRefs } from "vue";
 import _ from "lodash";
-import { onMounted, PropType, ref, shallowReactive } from "vue";
 
 const _keyword = ref("");
 const _filters = shallowReactive<ProductsFilters>({ facets: [], inStock: false });
@@ -106,12 +106,31 @@ const emit = defineEmits<{
   (e: "change", value: ProductsFilters): void;
 }>();
 
+const { loading, keyword, filters } = toRefs(props);
+
 onMounted(() => {
-  _filters.facets = _.cloneDeep(props.filters.facets);
+  _keyword.value = keyword.value;
+  _filters.facets = _.cloneDeep(filters.value.facets);
   _filters.inStock = props.filters.inStock;
 });
 
-const isAppliedKeyword = eagerComputed<boolean>(() => _keyword.value == props.keyword);
+watch(
+  () => filters.value.facets,
+  (newFacets) => {
+    _filters.facets = _.cloneDeep(newFacets);
+  }
+);
+
+watch(
+  () => filters.value.inStock,
+  (newValue) => {
+    _filters.inStock = newValue;
+  }
+);
+
+watch(keyword, (newKeyword) => (_keyword.value = newKeyword ?? ""));
+
+const isAppliedKeyword = eagerComputed<boolean>(() => _keyword.value == keyword.value);
 
 function onFilterChanged() {
   emit("change", _filters);

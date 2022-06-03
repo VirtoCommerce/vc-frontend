@@ -5,23 +5,21 @@
       <Breadcrumbs class="mb-2 md:mb-8" :items="breadcrumbs" />
 
       <div class="flex items-start lg:gap-6">
+        <!-- todo: use sidebar component -->
         <!-- Mobile sidebar back cover -->
         <div
+          v-if="isMobileSidebar"
           :class="{ hidden: !mobileSidebarVisible }"
-          class="fixed z-50 inset-0 w-full h-screen-safe lg:hidden bg-gray-800 opacity-95"
+          class="fixed z-50 inset-0 w-full h-screen-safe bg-gray-800 opacity-95"
           @click="hideMobileSidebar()"
         />
 
-        <!-- TODO: Extract a component with products  filters. Separate mobile and desktop view. -->
-        <!-- Sidebar -->
+        <!-- Mobile sidebar filters -->
         <div
+          v-if="isMobileSidebar"
+          v-show="mobileSidebarVisible"
           ref="sidebarElement"
-          :class="[
-            { hidden: !mobileSidebarVisible },
-            isMobileSidebar
-              ? 'fixed z-50 inset-0 w-72 h-screen-safe overflow-y-auto px-5 pt-12 bg-white'
-              : 'lg:flex lg:w-1/4 xl:w-1/5 flex-shrink-0',
-          ]"
+          class="fixed z-50 inset-0 w-72 h-screen-safe overflow-y-auto px-5 pt-12 bg-white"
         >
           <div v-if="isMobileSidebar" class="relative">
             <button class="absolute -right-3 appearance-none px-3 py-1" @click="hideMobileSidebar()">
@@ -33,7 +31,7 @@
             {{ $t("common.buttons.filters") }}
           </div>
           <ProductsFilterSidebar
-            :keyword="keyword"
+            :keyword="keywordQueryParam"
             :filters="filters"
             :loading="loading"
             @search="onSearchStart($event)"
@@ -57,6 +55,17 @@
               </VcButton>
             </div>
           </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div v-if="!isMobileSidebar" ref="sidebarElement" class="lg:flex lg:w-1/4 xl:w-1/5 flex-shrink-0">
+          <ProductsFilterSidebar
+            :keyword="keywordQueryParam"
+            :filters="filters"
+            :loading="loading"
+            @search="onSearchStart($event)"
+            @change="onFilterChanged($event)"
+          />
         </div>
 
         <!-- Content -->
@@ -226,7 +235,6 @@ import {
   shallowRef,
   watch,
   onMounted,
-  watchEffect,
   PropType,
   onBeforeUnmount,
   WatchStopHandle,
@@ -264,7 +272,7 @@ import { defaultPageSize, productSortingList } from "@core/constants";
 import QueryParamName from "@core/query-param-name.enum";
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
-import { toggleBodyOverflowHidden } from "@/core/utilities";
+import { turnOnBodyOverflowHidden, turnOffBodyOverflowHidden } from "@/core/utilities";
 
 const { t } = useI18n();
 
@@ -297,7 +305,7 @@ const isMobileSidebar = breakpoints.smaller("lg");
 const mobileSidebarVisible = ref(false);
 const sidebarElement = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
-const keyword = ref("");
+// const keyword = ref("");
 const page = ref(1);
 const itemsPerPage = ref(defaultPageSize);
 const mobileFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: false });
@@ -363,7 +371,7 @@ const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
 });
 
 function showMobileSidebar() {
-  toggleBodyOverflowHidden();
+  turnOnBodyOverflowHidden();
   mobileFilters.facets = _.cloneDeep<ProductsFacet[]>(filters.facets);
   mobileFilters.inStock = filters.inStock;
 
@@ -384,7 +392,7 @@ function applyFiltersAndHideSidebar() {
 }
 
 function hideMobileSidebar() {
-  toggleBodyOverflowHidden();
+  turnOffBodyOverflowHidden();
   mobileSidebarVisible.value = false;
 
   if (sidebarElement.value) {
@@ -503,6 +511,6 @@ onBeforeUnmount(() => {
   watchStopHandles.forEach((watchStopHandle) => watchStopHandle());
 });
 
-watchEffect(() => (keyword.value = keywordQueryParam.value ?? ""));
+// watchEffect(() => (keyword.value = keywordQueryParam.value ?? ""));
 whenever(() => !isMobileSidebar.value, hideMobileSidebar);
 </script>

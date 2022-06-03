@@ -47,6 +47,14 @@ export function nameOf<T>(key: keyof T, _instance?: T): keyof T {
   return key;
 }
 
-export function toggleBodyOverflowHidden() {
-  document.body.classList.toggle("overflow-hidden");
+export function turnOnBodyOverflowHidden() {
+  if (!document.body.classList.contains("overflow-hidden")) {
+    document.body.classList.add("overflow-hidden");
+  }
+}
+
+export function turnOffBodyOverflowHidden() {
+  if (document.body.classList.contains("overflow-hidden")) {
+    document.body.classList.remove("overflow-hidden");
+  }
 }
