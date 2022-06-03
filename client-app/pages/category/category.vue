@@ -8,7 +8,7 @@
         <!-- Mobile sidebar back cover -->
         <VcPopupSidebar
           v-if="isMobileSidebar"
-          :visible="mobileSidebarVisible"
+          :is-visible="mobileSidebarVisible"
           class="w-72 px-5 pt-12"
           @hide="hideMobileSidebar()"
         >
@@ -89,7 +89,12 @@
           >
             <!-- Mobile filters toggler -->
             <div class="lg:hidden mr-3">
-              <VcButton class="px-4 font-extrabold" size="md" @click="showMobileSidebar">
+              <VcButton
+                class="px-4 font-extrabold"
+                size="md"
+                @click="showMobileSidebar"
+                :is-disabled="loading || loadingMore"
+              >
                 <i class="fas fa-filter mr-1"></i> {{ $t("pages.catalog.filters_button") }}
               </VcButton>
             </div>
@@ -275,7 +280,6 @@ import { defaultPageSize, productSortingList } from "@core/constants";
 import QueryParamName from "@core/query-param-name.enum";
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
-import { turnOnBodyOverflowHidden, turnOffBodyOverflowHidden } from "@/core/utilities";
 
 const { t } = useI18n();
 
@@ -513,7 +517,6 @@ async function onMobileFilterChanged(newFilters: ProductsFilters) {
 }
 
 function showMobileSidebar() {
-  turnOnBodyOverflowHidden();
   mobileFilters.facets = _.cloneDeep<ProductsFacet[]>(filters.facets);
   mobileFilters.inStock = filters.inStock;
 
@@ -534,7 +537,6 @@ function applyMobileFiltersAndHideSidebar() {
 }
 
 function hideMobileSidebar() {
-  turnOffBodyOverflowHidden();
   mobileSidebarVisible.value = false;
 
   if (sidebarElement.value) {

@@ -5,7 +5,7 @@
   </div>
 
   <!-- Mobile filters sidebar -->
-  <VcPopupSidebar class="px-7 py-12 w-60" :visible="isMobile && filtersVisible" @hide="hideFilters">
+  <VcPopupSidebar class="px-7 py-12 w-60" :is-visible="isMobile && filtersVisible" @hide="hideFilters">
     <div class="h-full flex flex-col">
       <div class="relative">
         <button class="absolute -right-3 appearance-none px-3 py-1" @click="hideFilters">
