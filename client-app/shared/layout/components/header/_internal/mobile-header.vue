@@ -10,22 +10,26 @@
         <!-- region Left slot -->
         <component v-if="customSlots.left" :is="customSlots.left" />
 
-        <router-link v-else to="/" class="px-6">
-          <VcImage src="/static/images/common/logo.svg" class="h-9" lazy />
-        </router-link>
+        <div v-else class="flex items-center h-full px-6">
+          <button class="h-full mr-6" @click="mobileMenuVisible = true">
+            <i class="fas fa-bars text-2xl text-[color:var(--color-primary)]" />
+          </button>
+          <router-link to="/">
+            <VcImage src="/static/images/common/logo.svg" class="h-8" lazy />
+          </router-link>
+        </div>
         <!-- endregion Left slot -->
 
         <!-- region Right slot -->
         <component v-if="customSlots.right" :is="customSlots.right" />
 
-        <div v-else class="flex items-center h-full pr-3">
-          <button v-show="!searchBarVisible" class="h-full px-3" @click="showSearchBar">
-            <i class="fas fa-search text-lg text-[color:var(--color-primary)]" />
+        <div v-else class="flex items-center h-full pr-8">
+          <button v-show="!searchBarVisible" class="h-full pr-4" @click="showSearchBar">
+            <i class="fas fa-search text-2xl text-[color:var(--color-primary)]" />
           </button>
-
-          <button class="h-full px-3" @click="mobileMenuVisible = true">
-            <i class="fas fa-bars text-2xl text-[color:var(--color-primary)]" />
-          </button>
+          <router-link to="/checkout">
+            <i class="fas fa-shopping-cart text-xl text-[color:var(--color-primary)]" />
+          </router-link>
         </div>
         <!-- endregion Right slot -->
       </div>
