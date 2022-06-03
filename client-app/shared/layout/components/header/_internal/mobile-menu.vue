@@ -11,7 +11,9 @@
       <LanguageSelector v-if="supportedLocales.length > 1" />
 
       <button class="appearance-none py-2 px-4 -mr-4" @click="$emit('close')">
-        <i class="fas fa-times text-2xl text-[color:var(--color-primary)]" />
+        <svg class="text-[color:var(--color-primary)]" height="20" width="20">
+          <use href="/static/images/close.svg#main" />
+        </svg>
       </button>
     </header>
 

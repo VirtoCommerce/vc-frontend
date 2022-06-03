@@ -7,7 +7,7 @@
       <span class="text-white mr-1.5" v-if="!isMobile" v-t="'shared.layout.language_selector.label'"></span>
 
       <span
-        class="fi fis rounded-full fa-2x -my-3"
+        class="fi fis rounded-full fa-2x -my-3 !w-[30px] h-[30px]"
         :class="`fi-${currentLanguage?.twoLetterRegionName.toLowerCase()}`"
       ></span>
       <span
@@ -17,8 +17,8 @@
         {{ currentLanguage?.twoLetterLanguageName }}
       </span>
 
-      <span class="absolute inset-y-0 right-0 flex items-center pointer-events-none">
-        <i class="text-[color:var(--color-primary)] fas fa-chevron-down text-[0.625rem]" />
+      <span class="absolute inset-y-0 -right-3.5 flex items-center pointer-events-none">
+        <i class="text-[color:var(--color-mobile-menu-link)] fas fa-chevron-down text-[1rem]" />
       </span>
     </button>
 
