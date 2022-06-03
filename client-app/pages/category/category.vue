@@ -5,29 +5,20 @@
       <Breadcrumbs class="mb-2 md:mb-8" :items="breadcrumbs" />
 
       <div class="flex items-start lg:gap-6">
-        <!-- todo: use sidebar component -->
         <!-- Mobile sidebar back cover -->
-        <div
+        <VcPopupSidebar
           v-if="isMobileSidebar"
-          :class="{ hidden: !mobileSidebarVisible }"
-          class="fixed z-50 inset-0 w-full h-screen-safe bg-gray-800 opacity-95"
-          @click="hideMobileSidebar()"
-        />
-
-        <!-- Mobile sidebar filters -->
-        <div
-          v-if="isMobileSidebar"
-          v-show="mobileSidebarVisible"
-          ref="sidebarElement"
-          class="fixed z-50 inset-0 w-72 h-screen-safe overflow-y-auto px-5 pt-12 bg-white"
+          :visible="mobileSidebarVisible"
+          class="w-72 px-5 pt-12"
+          @hide="hideMobileSidebar()"
         >
-          <div v-if="isMobileSidebar" class="relative">
+          <div class="relative">
             <button class="absolute -right-3 appearance-none px-3 py-1" @click="hideMobileSidebar()">
               <span class="text-2xl fa fa-times text-[color:var(--color-primary)]"></span>
             </button>
           </div>
 
-          <div v-if="isMobileSidebar" class="font-semibold text-2xl pt-1 mb-6">
+          <div class="font-semibold text-2xl pt-1 mb-6">
             {{ $t("common.buttons.filters") }}
           </div>
           <ProductsFilterSidebar
@@ -40,7 +31,7 @@
             "
             @change="onMobileFilterChanged($event)"
           />
-          <div v-show="isMobileSidebar" class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
+          <div class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
             <div class="flex space-x-4">
               <VcButton
                 class="flex-1 uppercase"
@@ -66,10 +57,10 @@
               </VcButton>
             </div>
           </div>
-        </div>
+        </VcPopupSidebar>
 
         <!-- Sidebar -->
-        <div v-if="!isMobileSidebar" ref="sidebarElement" class="lg:flex lg:w-1/4 xl:w-1/5 flex-shrink-0">
+        <div v-else ref="sidebarElement" class="lg:flex lg:w-1/4 xl:w-1/5 flex-shrink-0">
           <ProductsFilterSidebar
             :keyword="keywordQueryParam"
             :filters="filters"
@@ -275,6 +266,7 @@ import {
   VcScrollTopButton,
   VcEmptyView,
   VcImage,
+  VcPopupSidebar,
 } from "@/components";
 import { AddToCart } from "@/shared/cart";
 import ProductsFilterSidebar from "./_internal/products-filters.vue";
