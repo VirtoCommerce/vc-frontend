@@ -1,8 +1,8 @@
 <template>
   <div
-    class="h-12 px-12 flex items-center justify-between bg-[color:var(--color-header-top-bg)] font-bold text-sm text-[color:var(--color-header-top-text)]"
+    class="h-[39px] pl-12 pr-[55px] flex items-center justify-between bg-[color:var(--color-header-top-bg)] font-bold text-sm text-[color:var(--color-header-top-text)] text-[13px]"
   >
-    <div class="flex space-x-8 items-center">
+    <div class="flex space-x-6 items-center">
       <LanguageSelector v-if="$context.availLanguages && $context.availLanguages.length > 1" />
       <CurrencySelector v-if="$context.availCurrencies && $context.availCurrencies.length > 1" />
     </div>
@@ -10,17 +10,17 @@
     <!-- Authorized menu items -->
     <div v-if="isAuthenticated" class="flex items-center">
       <TopHeaderLink to="/account/dashboard" v-t="'shared.layout.header.top_header.link_dashboard'"></TopHeaderLink>
-      <div class="mx-3 h-1 w-1 bg-[color:var(--color-primary)] rounded"></div>
+      <div class="mx-2 h-1 w-1 bg-[color:var(--color-primary)] rounded"></div>
       <TopHeaderLink to="/account/orders" v-t="'shared.layout.header.top_header.link_order_history'"></TopHeaderLink>
-      <div class="mx-3 h-1 w-1 bg-[color:var(--color-primary)] rounded"></div>
+      <div class="mx-2 h-1 w-1 bg-[color:var(--color-primary)] rounded"></div>
       <TopHeaderLink :to="{ name: 'Lists' }" v-t="'shared.layout.header.top_header.link_lists'"></TopHeaderLink>
       <div class="w-px h-5 bg-[color:var(--color-primary)] mx-4 hidden lg:block"></div>
 
       <!-- Account menu -->
       <div ref="loginMenu" class="relative">
         <div class="flex items-center cursor-pointer" @click="loginMenuVisible = !loginMenuVisible">
-          <div>{{ me.contact?.fullName }}</div>
-          <i class="fas fa-chevron-down ml-3 text-[color:var(--color-primary)] align-baseline"></i>
+          <div>{{ me.contact?.fullName }} b2b admin</div>
+          <i class="fas fa-chevron-down ml-1 text-[color:var(--color-primary)] text-[0.625rem] align-baseline"></i>
         </div>
         <div
           v-if="loginMenuVisible"
