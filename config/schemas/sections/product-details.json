@@ -1,0 +1,6 @@
+{
+  "name": "Product details",
+  "icon": "image",
+  "displayNameProperty": "name",
+  "group": "Catalog"
+}

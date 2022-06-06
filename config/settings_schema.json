@@ -1,0 +1,411 @@
+[
+  {
+    "name": "General",
+    "icon": "general",
+    "settings": [
+      {
+        "type": "number",
+        "id": "search_min_chars",
+        "label": "Minimum characters to start search",
+        "default": 3
+      },
+      {
+        "type": "header",
+        "label": "Identica"
+      },
+      {
+        "type": "string",
+        "id": "logo_image",
+        "label": "Logo"
+      },
+      {
+        "type": "string",
+        "id": "logo_inverted_image",
+        "label": "Inverted logo"
+      },
+      {
+        "type": "string",
+        "id": "favicon_image",
+        "label": "Favicon"
+      }
+    ]
+  },
+  {
+    "name": "Colors",
+    "icon": "colors",
+    "settings": [
+      {
+        "type": "header",
+        "content": "General"
+      },
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primary color",
+        "default": "#F0AD4E"
+      },
+      {
+        "type": "color",
+        "id": "color_primary_hover",
+        "label": "Primary hover color",
+        "default": "#EC951A"
+      },
+      {
+        "type": "color",
+        "id": "color_secondary",
+        "label": "Secondary color",
+        "default": "#151B1E"
+      },
+      {
+        "type": "color",
+        "id": "color_secondary_hover",
+        "label": "Secondary hover color",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "color_link",
+        "label": "Link color",
+        "default": "#00739E"
+      },
+      {
+        "type": "color",
+        "id": "color_link_hover",
+        "label": "Link hover color",
+        "default": "#00678D"
+      },
+      {
+        "type": "color",
+        "id": "color_body_bg",
+        "label": "Body background color",
+        "default": "#F6F6F6"
+      },
+      {
+        "type": "color",
+        "id": "color_body_text",
+        "label": "Body text color",
+        "default": "#444343"
+      },
+      {
+        "type": "color",
+        "id": "color_danger",
+        "label": "Danger color",
+        "default": "#F34747"
+      },
+      {
+        "type": "color",
+        "id": "color_danger_hover",
+        "label": "Danger hover color",
+        "default": "#F01212"
+      },
+      {
+        "type": "color",
+        "id": "color_success",
+        "label": "Success color",
+        "default": "#5CB85C"
+      },
+      {
+        "type": "color",
+        "id": "color_success_hover",
+        "label": "Success hover color",
+        "default": "#439943"
+      },
+      {
+        "type": "color",
+        "id": "color_warning",
+        "label": "Warning color",
+        "default": "#FFBB0D"
+      },
+      {
+        "type": "color",
+        "id": "color_warning_hover",
+        "label": "Warning hover color",
+        "default": "#EEAA00"
+      },
+      {
+        "type": "color",
+        "id": "color_price",
+        "label": "Price color",
+        "default": "#3C763D"
+      },
+      {
+        "type": "color",
+        "id": "color_mobile_menu_bg",
+        "label": "Mobile menu background",
+        "default": "#22334D"
+      },
+      {
+        "type": "color",
+        "id": "color_mobile_menu_link",
+        "label": "Mobile menu link",
+        "default": "#C2C9E0"
+      },
+      {
+        "type": "header",
+        "content": "Popup colors"
+      },
+      {
+        "type": "color",
+        "id": "color_popup_danger_bg",
+        "label": "Danger popup background",
+        "default": "#F34747"
+      },
+      {
+        "type": "color",
+        "id": "color_popup_success_bg",
+        "label": "Success popup background",
+        "default": "#5CB85C"
+      },
+      {
+        "type": "color",
+        "id": "color_popup_warning_bg",
+        "label": "Warning popup background"
+      },
+      {
+        "type": "color",
+        "id": "color_popup_info_bg",
+        "label": "Info popup background",
+        "default": "#1F222C"
+      },
+      {
+        "type": "header",
+        "content": "Alert colors"
+      },
+      {
+        "type": "color",
+        "id": "color_alert_danger_bg",
+        "label": "Danger alert background",
+        "default": "#F66565"
+      },
+      {
+        "type": "color",
+        "id": "color_alert_success_bg",
+        "label": "Success alert background",
+        "default": "#87B563"
+      },
+      {
+        "type": "color",
+        "id": "color_alert_warning_bg",
+        "label": "Warning alert background",
+        "default": "#FFBB0D"
+      },
+      {
+        "type": "color",
+        "id": "color_alert_info_bg",
+        "label": "Info alert background"
+      },
+      {
+        "type": "color",
+        "id": "color_alert_danger_text",
+        "label": "Danger alert text",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_alert_success_text",
+        "label": "Success alert text",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_alert_warning_text",
+        "label": "Warning alert text",
+        "default": "#060606"
+      },
+      {
+        "type": "color",
+        "id": "color_alert_info_text",
+        "label": "Info alert text"
+      },
+      {
+        "type": "header",
+        "content": "Header colors"
+      },
+      {
+        "type": "color",
+        "id": "color_header_top_bg",
+        "label": "Header top background",
+        "default": "#292D3B"
+      },
+      {
+        "type": "color",
+        "id": "color_header_top_text",
+        "label": "Header top text",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_header_top_link",
+        "label": "Header top link color",
+        "default": "#66B9D8"
+      },
+      {
+        "type": "color",
+        "id": "color_header_top_link_hover",
+        "label": "Header top link hover color"
+      },
+      {
+        "type": "color",
+        "id": "color_header_bottom_bg",
+        "label": "Header bottom background",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_header_bottom_text",
+        "label": "Header bottom text color",
+        "default": "#292D3B"
+      },
+      {
+        "type": "color",
+        "id": "color_header_bottom_link",
+        "label": "Header bottom link color",
+        "default": "#827869"
+      },
+      {
+        "type": "color",
+        "id": "color_header_bottom_link_hover",
+        "label": "Header bottom link hover color"
+      },
+      {
+        "type": "color",
+        "id": "color_header_bottom_link_active",
+        "label": "Header bottom link active color",
+        "default": "#292D3B"
+      },
+      {
+        "type": "color",
+        "id": "color_header_bottom_dropdown_bg",
+        "label": "Header bottom dropdown background",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_header_bottom_dropdown_link",
+        "label": "Header bottom dropdown link color",
+        "default": "#645D54"
+      },
+      {
+        "type": "color",
+        "id": "color_header_bottom_dropdown_link_hover",
+        "label": "Header bottom dropdown link hover color"
+      },
+      {
+        "type": "color",
+        "id": "color_search_bar_bg",
+        "label": "Search bar background",
+        "default": "rgba(46, 41, 59, 0.9)"
+      },
+      {
+        "type": "header",
+        "content": "Footer colors"
+      },
+      {
+        "type": "color",
+        "id": "color_footer_top_bg",
+        "label": "Footer top background",
+        "default": "#292D3B"
+      },
+      {
+        "type": "color",
+        "id": "color_footer_top_text",
+        "label": "Footer top text color",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_footer_top_link",
+        "label": "Footer top link color",
+        "default": "#A0A0A0"
+      },
+      {
+        "type": "color",
+        "id": "color_footer_top_link_hover",
+        "label": "Footer top link hover color"
+      },
+      {
+        "type": "color",
+        "id": "color_footer_top_link_active",
+        "label": "Footer top link active color"
+      },
+      {
+        "type": "color",
+        "id": "color_footer_bottom_bg",
+        "label": "Footer bottom background",
+        "default": "#1F222C"
+      },
+      {
+        "type": "color",
+        "id": "color_footer_bottom_text",
+        "label": "Footer bottom text color",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_footer_bottom_link",
+        "label": "Footer bottom link color",
+        "default": "#66B9D8"
+      },
+      {
+        "type": "color",
+        "id": "color_footer_bottom_link_hover",
+        "label": "Footer bottom link hover color"
+      }
+    ]
+  },
+  {
+    "name": "Products",
+    "icon": "products",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "product_compare_enabled",
+        "label": "Enable product comparison",
+        "default": true
+      },
+      {
+        "type": "number",
+        "id": "product_compare_limit",
+        "label": "Maximum number of products to compare",
+        "default": 5
+      },
+      {
+        "type": "number",
+        "id": "wishlists_limit",
+        "label": "Maximum number of wishlists",
+        "default": 10
+      }
+    ]
+  },
+  {
+    "name": "Checkout",
+    "icon": "checkout",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "checkout_comment_enabled",
+        "label": "Allow comments",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "checkout_purchase_order_enabled",
+        "label": "checkout_purchase_order_enabled",
+        "info": "I couldn't understand what it property means :)",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "checkout_coupon_enabled",
+        "label": "Coupons",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "checkout_gifts_enabled",
+        "label": "Gifts",
+        "default": true
+      }
+    ]
+  }
+]
