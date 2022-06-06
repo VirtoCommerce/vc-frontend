@@ -10,7 +10,9 @@ export default function useThemeContext() {
     if (import.meta.env.MODE === "development") {
       // TODO: remove this when switching to SSR
       const settings: IThemeConfig = await import("../../../config/settings_data.json");
-      result.settings = settings.presets[settings.current];
+      if (typeof settings.current === "string") {
+        result.settings = settings.presets[settings.current];
+      }
     }
 
     themeContext.value = result;
