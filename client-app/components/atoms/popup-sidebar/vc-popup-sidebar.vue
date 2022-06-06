@@ -2,15 +2,11 @@
   <!-- sidebar back cover -->
   <div
     :class="{ hidden: !isVisible }"
-    class="fixed z-40 inset-0 w-full h-screen-safe bg-gray-800 opacity-95"
+    class="fixed z-40 inset-0 w-full h-full bg-gray-800 opacity-95"
     @click="onHide"
   />
   <!-- Sidebar content -->
-  <div
-    :class="{ hidden: !isVisible }"
-    v-bind="$attrs"
-    class="fixed z-50 inset-0 h-screen-safe overflow-y-auto bg-white"
-  >
+  <div :class="{ hidden: !isVisible }" v-bind="$attrs" class="fixed z-50 inset-0 h-full overflow-y-auto bg-white">
     <slot></slot>
   </div>
 </template>

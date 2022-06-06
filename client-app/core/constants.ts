@@ -25,7 +25,7 @@ export function setCurrencyCode(code: string): void {
 }
 
 //CSS
-export const overflowHiddenClass = "overflow-hidden";
+export const overflowHiddenClass = "touch-none";
 
 // Search
 export const defaultPageSize = 16;
