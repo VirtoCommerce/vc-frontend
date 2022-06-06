@@ -1,0 +1,9 @@
+{
+  "icon": "image",
+  "settings": [
+    {
+      "id": "image",
+      "type": "image"
+    }
+  ]
+}

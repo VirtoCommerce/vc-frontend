@@ -1,0 +1,13 @@
+{
+  "name": "Simple image",
+  "icon": "image",
+  "displayNameProperty": "name",
+  "group": "Content",
+  "groupIcon": "flight_takeoff",
+  "settings": [
+    {
+      "id": "image",
+      "type": "image"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Page",
+  "previewUrl": "/demo-page",
+  "path": "content/pages/page.json",
+  "sections": ["image", "text"]
+}
