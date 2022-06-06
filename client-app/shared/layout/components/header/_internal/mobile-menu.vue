@@ -8,7 +8,7 @@
       </router-link>
 
       <!-- Language block -->
-      <LanguageSelector v-if="supportedLocales.length > 1" />
+      <LanguageSelector v-if="supportedLocales.length > 1" class="sm:ml-auto sm:mr-6" />
 
       <button class="appearance-none py-2 px-4 -mr-4" @click="$emit('close')">
         <svg class="text-[color:var(--color-primary)]" height="20" width="20">

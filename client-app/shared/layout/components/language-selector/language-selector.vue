@@ -17,8 +17,8 @@
         {{ currentLanguage?.twoLetterLanguageName }}
       </span>
 
-      <span class="absolute inset-y-0 -right-3.5 flex items-center pointer-events-none">
-        <i class="text-[color:var(--color-mobile-menu-link)] fas fa-chevron-down text-[1rem]" />
+      <span class="absolute inset-y-0 -right-3.5 flex items-center pointer-events-none md:right-0">
+        <i class="text-[color:var(--color-mobile-menu-link)] fas fa-chevron-down text-[1rem] md:text-[color:var(--color-primary)] md:text-[0.625rem]" />
       </span>
     </button>
 
