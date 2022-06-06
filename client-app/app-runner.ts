@@ -59,8 +59,10 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value!.settings);
 
-  const plugins = getPlugins({ router });
-  plugins.forEach(({ plugin, options }) => app.use(plugin, options));
+  if (getPlugins) {
+    const plugins = getPlugins({ router });
+    plugins.forEach(({ plugin, options }) => app.use(plugin, options));
+  }
 
   app.mount("#app");
 };

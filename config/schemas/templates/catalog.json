@@ -1,5 +1,5 @@
 {
   "name": "Catalog",
   "previewUrl": "/catalog",
-  "path": "templates/catalog.json"
+  "path": "content/templates/catalog.json"
 }
