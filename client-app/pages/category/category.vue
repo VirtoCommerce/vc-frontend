@@ -21,7 +21,7 @@
           <div class="font-semibold text-2xl pt-1 mb-6">
             {{ $t("common.buttons.filters") }}
           </div>
-          <ProductsFilterSidebar
+          <ProductsFiltersSidebar
             :keyword="keywordQueryParam"
             :filters="mobileFilters"
             :loading="loading || facetsLoading"
@@ -61,7 +61,7 @@
 
         <!-- Sidebar -->
         <div v-else ref="sidebarElement" class="lg:flex lg:w-1/4 xl:w-1/5 flex-shrink-0">
-          <ProductsFilterSidebar
+          <ProductsFiltersSidebar
             :keyword="keywordQueryParam"
             :filters="filters"
             :loading="loading"
@@ -262,6 +262,7 @@ import {
   useProductsRoutes,
   ProductsFacet,
   ProductsFacetValue,
+  ProductsFiltersSidebar,
 } from "@/shared/catalog";
 import {
   VcButton,
@@ -274,7 +275,6 @@ import {
   VcPopupSidebar,
 } from "@/components";
 import { AddToCart } from "@/shared/cart";
-import ProductsFilterSidebar from "./_internal/products-filters.vue";
 import { useElementVisibility, useRouteQueryParam } from "@core/composables";
 import { defaultPageSize, productSortingList } from "@core/constants";
 import QueryParamName from "@core/query-param-name.enum";
