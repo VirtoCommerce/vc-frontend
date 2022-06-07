@@ -8,8 +8,7 @@
       <svg
         height="26"
         width="26"
-        class="mx-auto"
-        :class="['shrink-0', { 'text-[color:var(--color-primary)]': !isActive }]"
+        class="mx-auto shrink-0"
         name="icon"
       >
         <use :href="icon"></use>
