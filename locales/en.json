@@ -94,7 +94,7 @@
         "mobile": {
           "menu": {
             "home": "Dashboard",
-            "all_products": "Catalogue",
+            "all_products": "Catalog",
             "bulk": "Bulk order pad",
             "compare": "Compare products",
             "cart": "Cart",
