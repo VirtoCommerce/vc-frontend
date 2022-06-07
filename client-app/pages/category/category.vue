@@ -6,103 +6,68 @@
 
       <div class="flex items-start lg:gap-6">
         <!-- Mobile sidebar back cover -->
-        <div
-          :class="{ hidden: !mobileSidebarVisible }"
-          class="fixed z-50 inset-0 w-full h-screen lg:hidden bg-gray-800 opacity-95"
-          @click="hideMobileSidebar"
-        />
+        <VcPopupSidebar
+          v-if="isMobileSidebar"
+          :is-visible="mobileSidebarVisible"
+          class="w-72 px-5 pt-12"
+          @hide="hideMobileSidebar()"
+        >
+          <div class="relative">
+            <button class="absolute -right-3 appearance-none px-3 py-1" @click="hideMobileSidebar()">
+              <span class="text-2xl fa fa-times text-[color:var(--color-primary)]"></span>
+            </button>
+          </div>
+
+          <div class="font-semibold text-2xl pt-1 mb-6">
+            {{ $t("common.buttons.filters") }}
+          </div>
+          <ProductsFiltersSidebar
+            :keyword="keywordQueryParam"
+            :filters="mobileFilters"
+            :loading="loading || facetsLoading"
+            @search="
+              onSearchStart($event);
+              hideMobileSidebar();
+            "
+            @change="onMobileFilterChanged($event)"
+          />
+          <div class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
+            <div class="flex space-x-4">
+              <VcButton
+                class="flex-1 uppercase"
+                size="lg"
+                is-outline
+                :is-disabled="
+                  !(isExistSelectedFacets || filters.inStock || isExistSelectedMobileFacets || mobileFilters.inStock)
+                "
+                @click="
+                  resetFilters();
+                  hideMobileSidebar();
+                "
+              >
+                {{ $t("common.buttons.reset") }}
+              </VcButton>
+              <VcButton
+                class="flex-1 uppercase"
+                size="lg"
+                :is-disabled="!isMobileFilterDirty"
+                @click="applyMobileFiltersAndHideSidebar"
+              >
+                {{ $t("common.buttons.apply") }}
+              </VcButton>
+            </div>
+          </div>
+        </VcPopupSidebar>
 
         <!-- Sidebar -->
-        <div
-          ref="sidebarElement"
-          :class="[
-            { hidden: !mobileSidebarVisible },
-            isMobileSidebar
-              ? 'fixed z-50 inset-0 w-72 h-screen overflow-y-auto px-5 py-12 bg-white'
-              : 'lg:flex lg:w-1/4 xl:w-1/5 flex-shrink-0',
-          ]"
-        >
-          <div class="flex flex-col gap-4 lg:gap-5 overflow-hidden">
-            <!-- Search results -->
-            <VcCard :title="$t('pages.catalog.search_card.title')">
-              <p class="text-sm pb-2" v-t="'pages.catalog.search_card.search_label'"></p>
-              <div class="flex gap-3">
-                <input
-                  v-model="keyword"
-                  class="border rounded text-sm leading-8 flex-1 w-full border-gray-300 h-8 px-2 outline-none focus:border-gray-400"
-                  type="text"
-                  maxlength="30"
-                  :disabled="loading"
-                  @keypress.enter="onSearchStart"
-                />
-
-                <VcButton
-                  :is-disabled="loading || isAppliedKeyword"
-                  class="px-5 uppercase"
-                  outline
-                  size="sm"
-                  @click="onSearchStart"
-                >
-                  {{ $t("pages.catalog.search_card.search_button") }}
-                </VcButton>
-              </div>
-            </VcCard>
-
-            <!-- Previously purchased -->
-            <VcCard :title="$t('pages.catalog.instock_filter_card.title')">
-              <VcCheckbox v-model="showInStock" :disabled="loading" @change="applyFilters">
-                {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
-              </VcCheckbox>
-            </VcCard>
-
-            <!-- Branch availability -->
-            <VcCard :title="$t('pages.catalog.branch_availability_filter_card.title')">
-              <p class="text-sm font-medium">
-                <span
-                  class="text-[color:var(--color-link)] font-semibold cursor-pointer hover:text-[color:var(--color-link-hover)]"
-                >
-                  {{ $t("pages.catalog.branch_availability_filter_card.select_branch_link") }}
-                </span>
-                {{ $t("pages.catalog.branch_availability_filter_card.select_branch_link_end") }}
-              </p>
-            </VcCard>
-
-            <!-- Facet Filters Skeletons -->
-            <template v-if="loading && !filters.length">
-              <VcCardSkeleton is-collapsible v-for="i in 6" :key="i">
-                <!-- TODO: add checkbox skeleton -->
-                <div class="flex items-center mt-3 first:mt-0" v-for="i in 5" :key="i">
-                  <div class="w-5 h-5 bg-gray-100 inline-block"></div>
-                  <div class="ml-2 text-sm bg-gray-100 w-11/12">&nbsp;</div>
-                </div>
-              </VcCardSkeleton>
-            </template>
-
-            <!-- Facet Filters -->
-            <template v-else>
-              <VcCard
-                v-for="(filter, index) in filters"
-                :key="`${filter.paramName}_${index}`"
-                :title="filter.label"
-                is-collapsible
-              >
-                <VcCheckbox
-                  v-for="(item, itemIndex) in filter.values"
-                  :key="`${item.value}_${index}_${itemIndex}`"
-                  v-model="item.selected"
-                  :value="item.value"
-                  :disabled="loading"
-                  class="mt-3 first:mt-0"
-                  @change="applyFilters"
-                >
-                  <div class="flex">
-                    <span class="truncate">{{ item.label }}</span>
-                    <span class="ml-1">{{ $t("pages.catalog.facet_card.item_count_format", [item.count]) }}</span>
-                  </div>
-                </VcCheckbox>
-              </VcCard>
-            </template>
-          </div>
+        <div v-else ref="sidebarElement" class="lg:flex lg:w-1/4 xl:w-1/5 flex-shrink-0">
+          <ProductsFiltersSidebar
+            :keyword="keywordQueryParam"
+            :filters="filters"
+            :loading="loading"
+            @search="onSearchStart($event)"
+            @change="onFilterChanged($event)"
+          />
         </div>
 
         <!-- Content -->
@@ -124,7 +89,12 @@
           >
             <!-- Mobile filters toggler -->
             <div class="lg:hidden mr-3">
-              <VcButton class="px-4 font-extrabold" size="md" @click="mobileSidebarVisible = true">
+              <VcButton
+                class="px-4 font-extrabold"
+                size="md"
+                @click="showMobileSidebar"
+                :is-disabled="loading || loadingMore"
+              >
                 <i class="fas fa-filter mr-1"></i> {{ $t("pages.catalog.filters_button") }}
               </VcButton>
             </div>
@@ -148,7 +118,7 @@
           </div>
 
           <!-- Filters chips -->
-          <div v-if="isExistSelectedFilters || showInStock" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
+          <div v-if="isExistSelectedFacets || filters.inStock" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
             <VcChip
               class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
               size="sm"
@@ -161,17 +131,17 @@
               {{ $t("pages.catalog.reset_filters_button") }}
             </VcChip>
 
-            <template v-for="filter in filters">
-              <template v-for="filterItem in filter.values">
+            <template v-for="facet in filters.facets">
+              <template v-for="filterItem in facet.values">
                 <VcChip
                   v-if="filterItem.selected"
-                  :key="filter.paramName + filterItem.value"
+                  :key="facet.paramName + filterItem.value"
                   class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
                   size="sm"
                   closable
                   @close="
                     removeFilterItem({
-                      paramName: filter.paramName,
+                      paramName: facet.paramName,
                       value: filterItem.value,
                     })
                   "
@@ -181,13 +151,13 @@
               </template>
             </template>
 
-            <template v-if="showInStock">
+            <template v-if="filters.inStock">
               <VcChip
                 class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
                 size="sm"
                 closable
                 @close="
-                  showInStock = false;
+                  filters.inStock = false;
                   applyFilters();
                 "
               >
@@ -237,7 +207,7 @@
           <!-- Empty view -->
           <VcEmptyView
             :text="
-              isExistSelectedFilters || showInStock || keywordQueryParam !== ''
+              isExistSelectedFacets || filters.inStock || keywordQueryParam !== ''
                 ? $t('pages.catalog.no_products_filtered_message')
                 : $t('pages.catalog.no_products_message')
             "
@@ -252,7 +222,7 @@
                 class="px-6 uppercase"
                 size="lg"
                 @click="resetFiltersWithKeyword"
-                v-if="isExistSelectedFilters || showInStock || keywordQueryParam !== ''"
+                v-if="isExistSelectedFacets || filters.inStock || keywordQueryParam !== ''"
               >
                 <i class="fas fa-undo text-inherit -ml-0.5 mr-2.5"></i>
                 {{ $t("pages.catalog.no_products_button") }}
@@ -272,12 +242,11 @@ import {
   shallowRef,
   watch,
   onMounted,
-  watchEffect,
   PropType,
   onBeforeUnmount,
   WatchStopHandle,
-  triggerRef,
   toRef,
+  shallowReactive,
 } from "vue";
 import { breakpointsTailwind, eagerComputed, useBreakpoints, whenever, useLocalStorage } from "@vueuse/core";
 import {
@@ -289,27 +258,28 @@ import {
   useProducts,
   ViewMode,
   ProductsSearchParams,
-  ProductsFilterValue,
-  ProductsFilter,
+  ProductsFilters,
   useProductsRoutes,
+  ProductsFacet,
+  ProductsFacetValue,
+  ProductsFiltersSidebar,
 } from "@/shared/catalog";
 import {
   VcButton,
-  VcCard,
-  VcCardSkeleton,
-  VcCheckbox,
   VcChip,
   VcInfinityScrollLoader,
   VcSelect,
   VcScrollTopButton,
   VcEmptyView,
   VcImage,
+  VcPopupSidebar,
 } from "@/components";
 import { AddToCart } from "@/shared/cart";
 import { useElementVisibility, useRouteQueryParam } from "@core/composables";
 import { defaultPageSize, productSortingList } from "@core/constants";
 import QueryParamName from "@core/query-param-name.enum";
 import { useI18n } from "vue-i18n";
+import _ from "lodash";
 
 const { t } = useI18n();
 
@@ -329,10 +299,20 @@ const props = defineProps({
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { selectedCategory, selectCategoryByKey, loadCategoriesTree } = useCategories();
-const { fetchProducts, fetchMoreProducts, loading, loadingMore, products, total, pages, filters, showInStock } =
-  useProducts({
-    withFilters: true,
-  });
+const {
+  fetchProducts,
+  fetchMoreProducts,
+  getFacets,
+  loading,
+  loadingMore,
+  facetsLoading,
+  products,
+  total,
+  pages,
+  filters,
+} = useProducts({
+  withFacets: true,
+});
 
 const productsRoutes = useProductsRoutes(products);
 
@@ -343,9 +323,9 @@ const isMobileSidebar = breakpoints.smaller("lg");
 const mobileSidebarVisible = ref(false);
 const sidebarElement = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
-const keyword = ref("");
 const page = ref(1);
 const itemsPerPage = ref(defaultPageSize);
+const mobileFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: false });
 
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
 
@@ -382,9 +362,8 @@ const searchParams = computed<ProductsSearchParams>(() => ({
   filter: filterQueryParam.value,
 }));
 
-const isAppliedKeyword = eagerComputed<boolean>(() => keyword.value === keywordQueryParam.value);
-const isExistSelectedFilters = eagerComputed<boolean>(() =>
-  filters.value.some((filter) => filter.values.some((value) => value.selected))
+const isExistSelectedFacets = eagerComputed<boolean>(() =>
+  filters.facets.some((facet) => facet.values.some((value) => value.selected))
 );
 
 const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
@@ -408,31 +387,33 @@ const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
   return items;
 });
 
-function hideMobileSidebar() {
-  mobileSidebarVisible.value = false;
-
-  if (sidebarElement.value) {
-    sidebarElement.value.scrollTop = 0;
-  }
-}
-
-function onSearchStart() {
-  const searchText = keyword.value;
+function onSearchStart(newKeyword: string) {
+  const searchText = newKeyword;
 
   if (searchText !== keywordQueryParam.value && searchText.length <= 30) {
-    hideMobileSidebar();
     keywordQueryParam.value = searchText;
   }
 }
 
-function applyFilters() {
-  hideMobileSidebar();
-  filterQueryParam.value = toFilterExpression(filters, showInStock);
-  triggerRef(filters);
+function onFilterChanged(newFilters: ProductsFilters) {
+  // checking for optimization
+  if (newFilters.inStock != filters.inStock) {
+    filters.inStock = newFilters.inStock;
+  } else {
+    filters.facets = _.cloneDeep(newFilters.facets);
+  }
+
+  if (!isMobileSidebar.value) {
+    applyFilters();
+  }
 }
 
-function removeFilterItem(payload: Pick<ProductsFilter, "paramName"> & Pick<ProductsFilterValue, "value">) {
-  const filter = filters.value.find((item) => item.paramName === payload.paramName);
+function applyFilters() {
+  filterQueryParam.value = toFilterExpression(filters);
+}
+
+function removeFilterItem(payload: Pick<ProductsFacet, "paramName"> & Pick<ProductsFacetValue, "value">) {
+  const filter = filters.facets.find((item) => item.paramName === payload.paramName);
   const filterItem = filter?.values.find((item) => item.value === payload.value);
 
   if (filterItem) {
@@ -442,8 +423,14 @@ function removeFilterItem(payload: Pick<ProductsFilter, "paramName"> & Pick<Prod
 }
 
 function resetFilters() {
-  filters.value.forEach((filter) => filter.values.forEach((filterItem) => (filterItem.selected = false)));
-  showInStock.value = false;
+  filters.facets.forEach((filter) => filter.values.forEach((filterItem) => (filterItem.selected = false)));
+  filters.inStock = false;
+
+  if (isMobileSidebar.value) {
+    mobileFilters.facets.forEach((filter) => filter.values.forEach((filterItem) => (filterItem.selected = false)));
+    filters.inStock = false;
+  }
+
   applyFilters();
 }
 
@@ -513,6 +500,50 @@ onBeforeUnmount(() => {
   watchStopHandles.forEach((watchStopHandle) => watchStopHandle());
 });
 
-watchEffect(() => (keyword.value = keywordQueryParam.value ?? ""));
+//#region Mobile filters logic
+
+const isExistSelectedMobileFacets = eagerComputed<boolean>(() =>
+  mobileFilters.facets.some((facet) => facet.values.some((value) => value.selected))
+);
+
+const isMobileFilterDirty = eagerComputed<boolean>(() => JSON.stringify(mobileFilters) !== JSON.stringify(filters));
+
+async function onMobileFilterChanged(newFilters: ProductsFilters) {
+  const searchParamsForFacets = _.cloneDeep(searchParams.value);
+  searchParamsForFacets.filter = toFilterExpression(newFilters);
+  const newFacets = await getFacets(searchParamsForFacets);
+  mobileFilters.facets = newFacets;
+  mobileFilters.inStock = newFilters.inStock;
+}
+
+function showMobileSidebar() {
+  mobileFilters.facets = _.cloneDeep<ProductsFacet[]>(filters.facets);
+  mobileFilters.inStock = filters.inStock;
+
+  mobileSidebarVisible.value = true;
+}
+
+function applyMobileFiltersAndHideSidebar() {
+  if (JSON.stringify(mobileFilters.facets) !== JSON.stringify(filters.facets)) {
+    filters.facets = mobileFilters.facets;
+  }
+
+  if (mobileFilters.inStock !== filters.inStock) {
+    filters.inStock = mobileFilters.inStock;
+  }
+
+  hideMobileSidebar();
+  applyFilters();
+}
+
+function hideMobileSidebar() {
+  mobileSidebarVisible.value = false;
+
+  if (sidebarElement.value) {
+    sidebarElement.value.scrollTop = 0;
+  }
+}
+
 whenever(() => !isMobileSidebar.value, hideMobileSidebar);
+//#endregion Mobile filters logic
 </script>
