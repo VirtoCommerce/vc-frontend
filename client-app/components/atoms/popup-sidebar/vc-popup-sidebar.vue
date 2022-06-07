@@ -2,7 +2,7 @@
   <!-- sidebar back cover -->
   <div
     :class="{ hidden: !isVisible }"
-    class="fixed z-40 inset-0 w-full h-full bg-gray-800 opacity-95"
+    class="fixed z-50 inset-0 w-full h-full bg-gray-800 opacity-95"
     @click="onHide"
   />
   <!-- Sidebar content -->
