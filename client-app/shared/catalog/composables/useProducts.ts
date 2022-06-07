@@ -1,28 +1,30 @@
-import { Ref, ref, computed, readonly, shallowRef } from "vue";
+import { ProductsFilters } from "./../types/search";
+import { Ref, ref, computed, readonly, shallowRef, shallowReactive } from "vue";
 import { searchProducts } from "@core/api/graphql/catalog";
 import { Product } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
-import { ProductsFilter, ProductsSearchParams } from "../types";
+import { ProductsFacet, ProductsSearchParams } from "../types";
 import { rangeFacetToProductsFilter, termFacetToProductsFilter, toFilterExpression } from "@/shared/catalog";
 import { inStockFilterExpression } from "@/core/constants";
+import _ from "lodash";
 
 const DEFAULT_ITEMS_PER_PAGE = 16;
 
 export default (
   options: {
     // @default false
-    withFilters?: boolean;
+    withFacets?: boolean;
   } = {}
 ) => {
-  const { withFilters = false } = options;
+  const { withFacets: withFacets = false } = options;
 
-  const loading: Ref<boolean> = ref(true);
-  const loadingMore: Ref<boolean> = ref(false);
+  const loading = ref(true);
+  const loadingMore = ref(false);
+  const facetsLoading = ref(false);
   const products: Ref<Product[]> = shallowRef([]);
-  const filters: Ref<ProductsFilter[]> = shallowRef([]);
+  const filters = shallowReactive<ProductsFilters>({ facets: [], inStock: false });
   const total: Ref<number> = ref(0);
   const pages: Ref<number> = ref(1);
-  const showInStock: Ref<boolean> = ref(false);
 
   async function fetchProducts(searchParams: Partial<ProductsSearchParams>) {
     loading.value = true;
@@ -32,11 +34,11 @@ export default (
 
     try {
       if (searchParams.filter?.includes(inStockFilterExpression)) {
-        showInStock.value = true;
+        filters.inStock = true;
       }
 
-      if (!searchParams.filter?.includes(inStockFilterExpression) && showInStock.value === true) {
-        searchParams.filter = toFilterExpression(filters, showInStock);
+      if (!searchParams.filter?.includes(inStockFilterExpression) && filters.inStock === true) {
+        searchParams.filter = toFilterExpression(filters);
       }
 
       const {
@@ -44,16 +46,16 @@ export default (
         term_facets = [],
         range_facets = [],
         totalCount = 0,
-      } = await searchProducts(searchParams, { withFacets: withFilters });
+      } = await searchProducts(searchParams, { withFacets });
 
       products.value = items;
       total.value = totalCount;
       pages.value = Math.ceil(total.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE));
 
-      if (withFilters) {
+      if (withFacets) {
         term_facets.sort((a, b) => a.label.localeCompare(b.label));
         range_facets.sort((a, b) => a.label.localeCompare(b.label));
-        filters.value = Array<ProductsFilter>().concat(
+        filters.facets = Array<ProductsFacet>().concat(
           term_facets.map(termFacetToProductsFilter),
           range_facets.map(rangeFacetToProductsFilter)
         );
@@ -83,15 +85,46 @@ export default (
     }
   }
 
+  async function getFacets(searchParams: Partial<ProductsSearchParams>): Promise<ProductsFacet[]> {
+    facetsLoading.value = true;
+
+    try {
+      const paramsClone = _.cloneDeep(searchParams);
+      paramsClone.page = 0;
+      paramsClone.itemsPerPage = 0;
+
+      const {
+        term_facets = [],
+        range_facets = [],
+        totalCount = 0,
+      } = await searchProducts(searchParams, { withFacets: true });
+
+      term_facets.sort((a, b) => a.label.localeCompare(b.label));
+      range_facets.sort((a, b) => a.label.localeCompare(b.label));
+      const facets = Array<ProductsFacet>().concat(
+        term_facets.map(termFacetToProductsFilter),
+        range_facets.map(rangeFacetToProductsFilter)
+      );
+
+      return facets;
+    } catch (e) {
+      Logger.error(`useProducts.${getFacets.name}`, e);
+      throw e;
+    } finally {
+      facetsLoading.value = false;
+    }
+  }
+
   return {
     filters,
-    showInStock,
     fetchProducts,
     fetchMoreProducts,
+    getFacets,
     total: readonly(total),
     pages: readonly(pages),
     loading: readonly(loading),
     loadingMore: readonly(loadingMore),
+    facetsLoading: readonly(facetsLoading),
     products: computed(() => products.value),
   };
 };

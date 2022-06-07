@@ -6,3 +6,4 @@ export { default as useGlobalVariables } from "./useGlobalVariables";
 export { default as useLanguages } from "./useLanguages";
 export { default as useRouteQueryParam } from "./useRouteQueryParam";
 export { default as useThemeContext } from "./useThemeContext";
+export { default as useDomUtils } from "./useDomUtils";
