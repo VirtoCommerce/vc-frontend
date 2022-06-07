@@ -2,19 +2,17 @@
   <!-- Dropdown menu -->
   <div v-if="children?.length" ref="submenu" class="relative">
     <div
-      class="font-semibold text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)] flex items-center cursor-pointer tracking-wide"
+      class="uppercase font-bold text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)] flex items-center cursor-pointer tracking-wide"
       @click="submenuVisible = !submenuVisible"
     >
-      <svg
-        height="26"
-        width="26"
-        class="mx-auto"
-        :class="['shrink-0', { 'text-[color:var(--color-primary)]': !isActive }]"
-        name="icon"
-      >
-        <use :href="icon"></use>
-      </svg>
-      <slot>{{ title }}</slot>
+      <div>
+        <slot>{{ title }}</slot>
+      </div>
+
+      <i
+        class="fas ml-3 text-[color:var(--color-primary)] align-baseline"
+        :class="[submenuVisible ? 'fa-chevron-up' : 'fa-chevron-down']"
+      />
     </div>
 
     <div
@@ -36,28 +34,13 @@
   </div>
 
   <!-- Regular link -->
-  <router-link v-else-if="to" v-slot="{ isActive }" :to="to">
-    <component
-      class="font-semibold hover:text-[color:var(--color-header-bottom-link-hover)] tracking-wide relative"
-      :class="[
-        {
-          'text-[color:var(--color-header-bottom-link)]': !isActive,
-          'text-[color:var(--color-header-bottom-link-hover)]': isActive,
-        },
-      ]"
-    >
-      <svg
-        v-if="icon"
-        height="26"
-        width="26"
-        class="mx-auto mb-[0.35rem]"
-        :class="['shrink-0', { 'text-[color:var(--color-primary)]': !isActive }]"
-        name="icon"
-      >
-        <use :href="icon"></use>
-      </svg>
-      <slot>{{ title }}</slot>
-    </component>
+  <router-link
+    v-else-if="to"
+    :to="to"
+    class="uppercase font-bold text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)] tracking-wide"
+    :class="$attrs.class"
+  >
+    <slot>{{ title }}</slot>
   </router-link>
 </template>
 
@@ -78,11 +61,6 @@ defineProps({
     default: undefined,
   },
 
-  icon: {
-    type: String,
-    default: "",
-  },
-
   children: {
     type: Array as PropType<MenuLink[]>,
     default: null,
@@ -96,20 +74,3 @@ onClickOutside(submenu, () => {
   submenuVisible.value = false;
 });
 </script>
-
-<style>
-.menu-link.router-link-active {
-  position: relative;
-  color: var(--color-header-bottom-link-hover);
-}
-
-.menu-link.router-link-active:after {
-  content: "";
-  height: 3px;
-  background-color: var(--color-primary);
-  position: absolute;
-  width: 100%;
-  margin-top: 5px;
-  display: block;
-}
-</style>

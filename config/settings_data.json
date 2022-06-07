@@ -55,7 +55,7 @@
       "color_header_bottom_bg": "#FFFFFF",
       "color_header_bottom_text": "#292D3B",
       "color_header_bottom_link": "#827869",
-      "color_header_bottom_link_hover": "",
+      "color_header_bottom_link_hover": "rgba(31, 34, 44, 1)",
       "color_header_bottom_link_active": "#292D3B",
       "color_header_bottom_dropdown_bg": "#FFFFFF",
       "color_header_bottom_dropdown_link": "#645D54",
