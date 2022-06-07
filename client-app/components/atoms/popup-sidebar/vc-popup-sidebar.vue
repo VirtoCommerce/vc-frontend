@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { toRefs, watch } from "vue";
-import { turnOnBodyOverflowHidden, turnOffBodyOverflowHidden } from "@/core/utilities";
+import { turnOnBodyTouchNone, turnOffBodyTouchNone } from "@/core/utilities";
 
 const props = defineProps({
   isVisible: {
@@ -26,9 +26,9 @@ const { isVisible } = toRefs(props);
 
 watch(isVisible, (value) => {
   if (value) {
-    turnOnBodyOverflowHidden();
+    turnOnBodyTouchNone();
   } else {
-    turnOffBodyOverflowHidden();
+    turnOffBodyTouchNone();
   }
 });
 

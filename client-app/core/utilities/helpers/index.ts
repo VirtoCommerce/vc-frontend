@@ -1,4 +1,4 @@
-import { overflowHiddenClass } from "@/core/constants";
+import { touchNoneClass } from "@/core/constants";
 
 export function sleep(ms: number, resolvedValue?: any): Promise<any> {
   return new Promise((resolve) => setTimeout(resolve, ms, resolvedValue));
@@ -49,14 +49,14 @@ export function nameOf<T>(key: keyof T, _instance?: T): keyof T {
   return key;
 }
 
-export function turnOnBodyOverflowHidden() {
-  if (!document.body.classList.contains(overflowHiddenClass)) {
-    document.body.classList.add(overflowHiddenClass);
+export function turnOnBodyTouchNone() {
+  if (!document.body.classList.contains(touchNoneClass)) {
+    document.body.classList.add(touchNoneClass);
   }
 }
 
-export function turnOffBodyOverflowHidden() {
-  if (document.body.classList.contains(overflowHiddenClass)) {
-    document.body.classList.remove(overflowHiddenClass);
+export function turnOffBodyTouchNone() {
+  if (document.body.classList.contains(touchNoneClass)) {
+    document.body.classList.remove(touchNoneClass);
   }
 }
