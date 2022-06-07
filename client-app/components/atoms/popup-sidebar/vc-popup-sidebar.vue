@@ -13,7 +13,9 @@
 
 <script setup lang="ts">
 import { toRefs, watch } from "vue";
-import { turnOnBodyTouchNone, turnOffBodyTouchNone } from "@/core/utilities";
+import { useDomUtils } from "@core/composables";
+
+const { toggleBodyScrollable } = useDomUtils();
 
 const props = defineProps({
   isVisible: {
@@ -25,11 +27,7 @@ const props = defineProps({
 const { isVisible } = toRefs(props);
 
 watch(isVisible, (value) => {
-  if (value) {
-    turnOnBodyTouchNone();
-  } else {
-    turnOffBodyTouchNone();
-  }
+  toggleBodyScrollable(!value);
 });
 
 const emit = defineEmits(["hide"]);

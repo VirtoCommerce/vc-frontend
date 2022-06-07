@@ -1,5 +1,3 @@
-import { touchNoneClass } from "@/core/constants";
-
 export function sleep(ms: number, resolvedValue?: any): Promise<any> {
   return new Promise((resolve) => setTimeout(resolve, ms, resolvedValue));
 }
@@ -47,16 +45,4 @@ export function dateToIsoDateString(date: Date | undefined) {
 
 export function nameOf<T>(key: keyof T, _instance?: T): keyof T {
   return key;
-}
-
-export function turnOnBodyTouchNone() {
-  if (!document.body.classList.contains(touchNoneClass)) {
-    document.body.classList.add(touchNoneClass);
-  }
-}
-
-export function turnOffBodyTouchNone() {
-  if (document.body.classList.contains(touchNoneClass)) {
-    document.body.classList.remove(touchNoneClass);
-  }
 }

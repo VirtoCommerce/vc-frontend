@@ -1,6 +1,7 @@
 <template>
   <Head>
     <link rel="icon" :href="$cfg.favicon_image" />
+    <body class="font-lato" :class="{ 'touch-none': !isBodyScrollable, 'overflow-hidden': !isBodyScrollable }"></body>
   </Head>
   <div v-if="loaded" class="min-h-screen flex flex-col font-lato">
     <VcHeader />
@@ -25,7 +26,7 @@ import { setCatalogId, setUserId, setLocale, setCurrencyCode } from "@/core/cons
 import { PopupHost } from "@/shared/popup";
 import { NotificationsHost } from "@/shared/notification";
 import { RouteRecordName, useRouter } from "vue-router";
-import { useCurrency, useLanguages, useThemeContext } from "@core/composables";
+import { useCurrency, useLanguages, useThemeContext, useDomUtils } from "@core/composables";
 
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -35,6 +36,7 @@ const { isAuthenticated } = useUser();
 const { loadMyCart } = useCart();
 const { currentCurrency } = useCurrency();
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
+const { isBodyScrollable } = useDomUtils();
 
 const isMobile = breakpoints.smaller("lg");
 const loaded = ref(false);

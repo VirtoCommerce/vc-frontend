@@ -24,9 +24,6 @@ export function setCurrencyCode(code: string): void {
   currencyCode = code;
 }
 
-//CSS
-export const touchNoneClass = "touch-none";
-
 // Search
 export const defaultPageSize = 16;
 export const defaultSearchPageSize = 20;
