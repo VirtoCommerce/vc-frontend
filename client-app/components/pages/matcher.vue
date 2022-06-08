@@ -77,12 +77,12 @@ const seoInfo = asyncComputed<TResult | undefined>(
       const resultItems = await innerFetch<TEntityInfo[]>(`/storefrontapi/seoInfos/${slug}`);
 
       if (resultItems && resultItems.length) {
-        const item = resultItems.find(
+        const entity = resultItems.find(
           (item) => item.isActive && item.language.cultureName === currentLanguage.value!.cultureName && item.slug === slug
         );
-        if (item) {
+        if (entity) {
           return {
-            entity: item,
+            entity,
           }
         }
       }

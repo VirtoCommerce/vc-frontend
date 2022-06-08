@@ -8,9 +8,9 @@
 import { PropType } from "vue";
 
 type TPageContent = {
-  id: String;
-  name: String;
-  type: String;
+  id: string;
+  name: string;
+  type: string;
 }
 
 defineProps({
