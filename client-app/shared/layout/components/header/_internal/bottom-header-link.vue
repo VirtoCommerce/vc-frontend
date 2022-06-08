@@ -5,12 +5,7 @@
       class="font-semibold text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)] flex items-center cursor-pointer tracking-wide"
       @click="submenuVisible = !submenuVisible"
     >
-      <svg
-        height="26"
-        width="26"
-        class="mx-auto shrink-0"
-        name="icon"
-      >
+      <svg height="26" width="26" class="mx-auto shrink-0" name="icon">
         <use :href="icon"></use>
       </svg>
       <slot>{{ title }}</slot>

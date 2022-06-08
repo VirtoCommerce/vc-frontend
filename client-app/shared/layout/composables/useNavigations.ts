@@ -28,6 +28,22 @@ const mainMenuLinks = computed<MenuLink[]>(() =>
   )
 );
 
+const desktopCatalog = computed<MenuLink>(
+  () =>
+    ({
+      id: "all-products-menu",
+      route: {
+        name: "Catalog",
+      },
+      title: globals.i18n!.global.t("shared.layout.header.catalog"),
+      children: (menuLinkLists.value?.["all-products-menu"] || []).map((childrenItem) => ({
+        id: childrenItem.url?.split("/").pop(),
+        title: childrenItem.title,
+        route: childrenItem.url,
+      })),
+    } as MenuLink)
+);
+
 async function fetchMenus(cultureName: string) {
   const results = await getMenus({ cultureName });
 
@@ -68,6 +84,7 @@ export default function useNavigations() {
     goMainMenu,
     selectMenuItem,
     mainMenuLinks,
+    desktopCatalog,
     openedItem: computed<MenuLink | undefined>(() => openedMenuLinksStack.value[openedMenuLinksStack.value.length - 1]),
   };
 }

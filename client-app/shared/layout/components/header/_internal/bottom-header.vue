@@ -1,8 +1,8 @@
 <template>
   <div class="relative">
-    <div class="px-[3.2rem] py-3 min-h-[5.5rem] flex items-center bg-[color:var(--color-header-bottom-bg)]">
+    <div class="px-4 xl:px-[3.2rem] py-3 min-h-[5.5rem] flex items-center bg-[color:var(--color-header-bottom-bg)]">
       <router-link to="/">
-        <VcImage :src="$cfg.logo_image" class="h-[2.8rem]" lazy />
+        <VcImage :src="$cfg.logo_image" class="h-8 xl:h-[2.8rem]" lazy />
       </router-link>
 
       <template v-if="organization">
@@ -14,18 +14,18 @@
       </template>
 
       <Catalog
-        v-if="catalog"
-        class="ml-[1.85rem] px-[0.8rem] py-[0.55rem] border-2 border-primary rounded text-sm"
-        :title="catalog.title"
-        :to="catalog.route"
-        :key="catalog.title"
-        :children="catalog.children"
+        v-if="desktopCatalog"
+        class="ml-5 xl:ml-[1.85rem] px-[0.8rem] py-[0.55rem] border-2 border-primary rounded text-sm"
+        :title="desktopCatalog.title"
+        :to="desktopCatalog.route"
+        :key="desktopCatalog.title"
+        :children="desktopCatalog.children"
       >
       </Catalog>
 
       <SearchBar class="mx-5" />
 
-      <div class="flex items-center pt-1.5 pl-4 pr-5 space-x-9 text-[13px]">
+      <div class="flex items-center pt-1.5 xl:pl-4 pr-5 space-x-5 xl:space-x-9 text-[13px] text-center">
         <BottomHeaderLink
           v-for="item in desktopMenuLinks"
           :key="item.title"
@@ -39,7 +39,7 @@
             <transition name="slide-fade-right">
               <div
                 v-if="cart?.itemsQuantity"
-                class="flex items-center rounded-xl bg-white border border-[color:var(--color-primary)] px-1.5 font-bold text-xs h-5 absolute -top-[8px] left-5"
+                class="flex items-center rounded-xl bg-white border border-[color:var(--color-primary)] px-1.5 font-bold text-xs h-5 absolute -top-[8px] left-2"
               >
                 {{ cart.itemsQuantity }}
               </div>
@@ -80,15 +80,11 @@ const { t } = useI18n();
 
 const { organization } = useUser();
 const { cart } = useCart();
-const { mainMenuLinks } = useNavigations();
+const { desktopCatalog } = useNavigations();
 const { productsIds } = useCompareProducts();
 const { searchBarVisible, showSearchBar } = useSearchBar();
 
 const isAnimatedSearchBar = ref(false);
-
-const catalog = computed<MenuLink | undefined>(() =>
-  mainMenuLinks.value.find((item) => item.id === "all-products-menu")
-);
 
 const desktopMenuLinks = [
   {

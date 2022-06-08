@@ -4,8 +4,7 @@
       v-model.trim="searchPhrase"
       :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
       maxlength="30"
-      class="flex-grow px-4 h-[2.625rem] font-medium text-sm outline-none disabled:bg-gray-200 border rounded-l
-      text-[0.95rem]"
+      class="flex-grow px-4 h-[2.625rem] font-medium text-sm outline-none disabled:bg-gray-200 border rounded-l text-[0.95rem]"
       @keyup.enter="search"
       @keyup.esc="searchDropdownVisible && hideSearchDropdown()"
       @input="searchProductsDebounced"

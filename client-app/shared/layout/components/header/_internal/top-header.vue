@@ -1,6 +1,6 @@
 <template>
   <div
-    class="h-[39px] pl-12 pr-[55px] flex items-center justify-between bg-[color:var(--color-header-top-bg)] font-bold text-sm text-[color:var(--color-header-top-text)] text-[13px]"
+    class="h-[39px] px-5 xl:pl-12 xl:pr-[55px] flex items-center justify-between bg-[color:var(--color-header-top-bg)] font-bold text-sm text-[color:var(--color-header-top-text)] text-[13px]"
   >
     <div class="flex space-x-6 items-center">
       <LanguageSelector v-if="$context.availLanguages && $context.availLanguages.length > 1" />
