@@ -96,7 +96,7 @@
                 />
 
                 <div v-if="pages > 1" class="py-8 lg:flex lg:items-center lg:px-5">
-                  <VcPagination v-model:page="page" :pages="pages" class="mb-3 lg:mb-0" @update:page="page = $event" />
+                  <VcPagination v-model:page="page" :pages="pages" class="mb-3 lg:mb-0" />
                 </div>
               </div>
             </VcSection>
