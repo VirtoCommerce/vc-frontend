@@ -19,12 +19,12 @@ function resetSlots() {
   }
 }
 
-export default function useNestedMobileHeader({ writable = false } = {}) {
+export default function useNestedMobileHeader() {
   return {
     setSlots,
     resetSlots,
     isSlotsExist,
     customSlots: computed(() => customSlots.value),
-    isAnimated: writable ? isAnimated : readonly(isAnimated),
+    isAnimated,
   };
 }
