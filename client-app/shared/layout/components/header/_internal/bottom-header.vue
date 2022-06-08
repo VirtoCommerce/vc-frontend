@@ -73,7 +73,7 @@ import { VcImage } from "@/components";
 import Catalog from "./catalog.vue";
 import BottomHeaderLink from "./bottom-header-link.vue";
 import { useCart } from "@/shared/cart";
-import { useSearchBar, SearchBar, useNavigations, MenuLink } from "@/shared/layout";
+import { useSearchBar, SearchBar, useNavigations } from "@/shared/layout";
 import { useCompareProducts } from "@/shared/compare";
 import { useUser } from "@/shared/account";
 const { t } = useI18n();
