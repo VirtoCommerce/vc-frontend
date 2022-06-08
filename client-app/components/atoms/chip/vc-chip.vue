@@ -117,16 +117,10 @@ $colors: primary, secondary, success, warning, danger;
   }
 
   &--disabled {
-    @apply bg-gray-200 text-gray-400 #{!important};
-
-    --tw-bg-opacity: 0.7 !important;
-    --tw-text-opacity: 0.7 !important;
+    @apply bg-gray-200 text-gray-400 [--tw-bg-opacity:0.7] [--tw-text-opacity:0.7] #{!important};
 
     &#{$self}--outline {
-      @apply bg-transparent border-gray-300 #{!important};
-
-      --tw-text-opacity: 0.7 !important;
-      --tw-border-opacity: 0.8 !important;
+      @apply bg-transparent border-gray-300 [--tw-border-opacity:0.8] #{!important};
     }
   }
 
