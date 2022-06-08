@@ -177,6 +177,10 @@
             </p>
           </div>
         </VcCard>
+
+        <VcButton class="uppercase w-full" @click="printOrder">
+          {{ $t("shared.checkout.thank_you.print_order") }}
+        </VcButton>
       </div>
     </div>
   </div>
@@ -241,6 +245,10 @@ const breadcrumbs = computed<IBreadcrumbs[]>(() => [
   { title: t("common.links.orders"), route: { name: "Orders" } },
   { title: t("pages.account.order_details.title", [order.value?.number]) },
 ]);
+
+function printOrder() {
+  window.print();
+}
 
 async function openReorderPopup() {
   const orderItemsInfo = order.value?.items
