@@ -18,12 +18,11 @@ import { markRaw } from "vue";
 import { breakpointsTailwind, eagerComputed, invoke, useBreakpoints } from "@vueuse/core";
 import { Head as PageHead } from "@vueuse/head";
 import { MainLayout, PaymentLayout, useSearchBar } from "./shared/layout";
-import { useUser } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { setCatalogId, setUserId, setLocale, setCurrencyCode } from "@/core/constants";
 import { PopupHost } from "@/shared/popup";
 import { NotificationsHost } from "@/shared/notification";
-import { RouteRecordName, useRoute, useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useCurrency, useLanguages, useThemeContext, useDomUtils } from "@core/composables";
 
 const route = useRoute();
@@ -31,7 +30,6 @@ const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { currentLanguage } = useLanguages();
 const { themeContext } = useThemeContext();
-const { isAuthenticated } = useUser();
 const { loadMyCart } = useCart();
 const { currentCurrency } = useCurrency();
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
@@ -50,27 +48,11 @@ const layout = eagerComputed(() => {
 });
 
 router.beforeEach(async (to) => {
-  // Hiding the search bar or search results dropdown
+  // Animated hiding of the search bar or dropdown list of search results
   if (to.name !== "Search") {
     await hideSearchBar();
   } else if (!isMobile.value) {
     await hideSearchDropdown();
-  }
-
-  // Make Dashboard the default Home page for authorized users
-  if (Array<RouteRecordName>("Home", "SignIn", "SignUp").includes(to.name!) && isAuthenticated.value) {
-    return {
-      name: "Dashboard",
-    };
-  }
-
-  // Protect account routes
-  if (to.meta.requiresAuth && !isAuthenticated.value) {
-    return {
-      name: "SignIn",
-      // save the location we were at to come back later
-      query: { redirect: to.fullPath },
-    };
   }
 });
 

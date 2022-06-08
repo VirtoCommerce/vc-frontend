@@ -1,4 +1,5 @@
 import { createApp, Plugin } from "vue";
+import { RouteRecordName } from "vue-router";
 import * as yup from "yup";
 import { createHead } from "@vueuse/head";
 import { useGlobalVariables, useLanguages, useThemeContext } from "@core/composables";
@@ -18,7 +19,7 @@ import "@/assets/styles/main.scss";
 
 export default async (getPlugins: (options: any) => { plugin: Plugin; options: any }[] = () => []) => {
   const globals = useGlobalVariables();
-  const { fetchUser } = useUser();
+  const { isAuthenticated, fetchUser } = useUser();
   const { themeContext, fetchThemeContext } = useThemeContext();
   const { currentLocale, currentLanguage, supportedLocales, setLocale } = useLanguages();
   const { fetchMenus } = useNavigations();
@@ -42,6 +43,22 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
       email: i18n.global.t("common.messages.email_is_not_correct"),
       max: ({ max }) => i18n.global.t("common.messages.max_length", { max }),
     },
+  });
+
+  router.beforeEach(async (to) => {
+    // Protect account routes
+    if (!isAuthenticated.value && to.meta.requiresAuth) {
+      return {
+        name: "SignIn",
+        // save the location we were at to come back later
+        query: { redirect: to.fullPath },
+      };
+    }
+
+    // Make Dashboard the default Home page for authorized users
+    if (isAuthenticated.value && Array<RouteRecordName>("Home", "SignIn", "SignUp").includes(to.name!)) {
+      return { name: "Dashboard" };
+    }
   });
 
   // Setting global variables
