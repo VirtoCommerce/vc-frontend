@@ -45,20 +45,22 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
     },
   });
 
-  router.beforeEach(async (to) => {
+  router.beforeEach((to, from, next) => {
     // Protect account routes
     if (!isAuthenticated.value && to.meta.requiresAuth) {
-      return {
+      return next({
         name: "SignIn",
         // save the location we were at to come back later
         query: { redirect: to.fullPath },
-      };
+      });
     }
 
     // Make Dashboard the default Home page for authorized users
     if (isAuthenticated.value && Array<RouteRecordName>("Home", "SignIn", "SignUp").includes(to.name!)) {
-      return { name: "Dashboard" };
+      return next({ name: "Dashboard" });
     }
+
+    return next();
   });
 
   // Setting global variables
