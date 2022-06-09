@@ -1,4 +1,4 @@
-import { computed, readonly, ref, shallowRef, Slots, warn } from "vue";
+import { computed, ref, shallowRef, Slots, warn } from "vue";
 import { eagerComputed } from "@vueuse/core";
 
 const customSlots = shallowRef<Slots>({});
