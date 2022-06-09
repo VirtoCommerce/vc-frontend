@@ -95,23 +95,8 @@
                   :validation-error="getItemValidationError(item?.id)"
                 />
 
-                <div class="py-8 lg:flex lg:items-center lg:px-5">
-                  <VcPagination
-                    v-if="pages > 1"
-                    v-model:page="page"
-                    :pages="pages"
-                    class="mb-3 lg:mb-0"
-                    @update:page="page = $event"
-                  />
-
-                  <p class="text-center text-sm lg:ml-auto">
-                    {{ $t("pages.checkout.products_section.update_all_link_label") }}
-                    <span
-                      class="text-[color:var(--color-link)] font-extrabold cursor-pointer"
-                      @click="updateAllItems"
-                      v-t="'pages.checkout.products_section.update_all_link'"
-                    ></span>
-                  </p>
+                <div v-if="pages > 1" class="py-8 lg:flex lg:items-center lg:px-5">
+                  <VcPagination v-model:page="page" :pages="pages" class="mb-3 lg:mb-0" />
                 </div>
               </div>
             </VcSection>
@@ -621,12 +606,6 @@ const setProductCardRef = (el: any) => {
   if (el) {
     productCardRefs.value.push(el);
   }
-};
-
-const updateAllItems = () => {
-  _.each(productCardRefs.value, (productCard) => {
-    productCard.updateQuantity();
-  });
 };
 
 const updateItemQuantity = async (id: string, quantity: number) => {

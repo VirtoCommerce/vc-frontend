@@ -10,16 +10,21 @@ export type ProductsSearchParams = {
   productIds?: string[];
 };
 
-export type ProductsFilterValue = {
+export type ProductsFacetValue = {
   count: number;
   selected: boolean;
   label: string;
   value: string;
 };
 
-export type ProductsFilter = {
+export type ProductsFacet = {
   label: string;
   paramName: string;
   type: "term" | "range";
-  values: ProductsFilterValue[];
+  values: ProductsFacetValue[];
+};
+
+export type ProductsFilters = {
+  facets: ProductsFacet[];
+  inStock: boolean;
 };
