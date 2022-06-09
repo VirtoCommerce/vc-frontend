@@ -7,7 +7,7 @@
         :class="priceColorClass"
         :value="value?.sale"
       />
-      <VcPriceDisplay v-else class="text-green-700 font-extrabold" :value="value?.list" />
+      <VcPriceDisplay v-else class="text-green-700 font-bold" :value="value?.list" />
       <span class="hidden lg:inline" v-t="'common.suffixes.per_item'"></span>
     </div>
     <div class="leading-4">

@@ -18,7 +18,7 @@
     <transition name="slide-fade-top">
       <div
         v-if="searchDropdownVisible"
-        class="absolute top-14 z-20 w-full flex flex-col gap-3 rounded bg-white shadow-lg overflow-hidden"
+        class="absolute top-[3.7rem] z-20 w-full flex flex-col gap-3 rounded bg-white shadow-lg overflow-hidden w-[43rem] xl:w-[48rem] min-w-full"
       >
         <!-- Results -->
         <template v-if="categories.length || products.length">
@@ -28,8 +28,8 @@
               {{ $t("shared.layout.search_bar.categories_label") }}
             </header>
 
-            <div class="flex gap-5 px-5 py-3 text-sm">
-              <ul v-for="(column, index) in categoriesColumns" :key="index" class="w-1/5">
+            <div class="flex gap-5 px-5 pt-2.5 pb-3 text-sm">
+              <ul v-for="(column, index) in categoriesColumns" :key="index" class="">
                 <li v-for="category in column" :key="category.name">
                   <router-link
                     :to="categoriesRoutes[category.id]"
@@ -48,7 +48,7 @@
               {{ $t("shared.layout.search_bar.products_label") }}
             </header>
 
-            <div class="px-5 pt-5 pb-3 grid grid-cols-2 gap-5 xl:gap-7">
+            <div class="px-5 pt-[1.3rem] pb-3 grid grid-cols-2 gap-5 xl:gap-[1.9rem]">
               <SearchBarProductCard
                 v-for="product in products"
                 :key="product.id"
@@ -59,7 +59,7 @@
           </section>
 
           <!-- Actions -->
-          <section v-if="total" class="px-5 py-4 border-t border-gray-100">
+          <section v-if="total" class="px-5 py-3 border-t border-gray-100">
             <VcButton
               :to="{ name: 'Search', query: { [QueryParamName.SearchPhrase]: searchPhrase } }"
               class="uppercase px-4"
