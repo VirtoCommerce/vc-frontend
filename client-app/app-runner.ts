@@ -7,7 +7,8 @@ import { configPlugin, contextPlugin } from "@core/plugins";
 import { useUser } from "@/shared/account";
 import { useNavigations } from "@/shared/layout";
 import { createI18n } from "@/i18n";
-import { createRouter, getBaseUrl } from "@/router";
+import { createRouter } from "@/router";
+import { getBaseUrl } from "@core/utilities";
 import App from "./App.vue";
 import blocks from "@/builder-preview/pages/blocks";
 
