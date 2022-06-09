@@ -62,6 +62,7 @@
           <FooterLink to="/rebates" v-t="'shared.layout.footer.rebates_link'"></FooterLink>
           <FooterLink to="/replacement-parts" v-t="'shared.layout.footer.replacement_parts_link'"></FooterLink>
           <FooterLink :to="{ name: 'DemoLanding' }" v-t="'shared.layout.footer.demo_landing_link'" />
+          <FooterLink to="/demo-page" v-t="'shared.layout.footer.demo_page_link'" />
           <FooterLink v-if="isDevelopment" :to="{ name: 'DevUIKit' }">Dev UI Kit</FooterLink>
         </div>
       </div>

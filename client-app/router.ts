@@ -17,7 +17,7 @@ const CompareProducts = () => import("@/pages/compare-products/compare-products.
 const Checkout = () => import("@/pages/checkout/checkout.vue");
 const Category = () => import("@/pages/category/category.vue");
 const Product = () => import("@/pages/product/product.vue");
-const Matcher = () => import("@/shared/catalog/components/matcher.vue");
+const Matcher = () => import("@/components/pages/matcher.vue");
 
 // Account pages
 const Dashboard = () => import("@/pages/account/dashboard.vue");
