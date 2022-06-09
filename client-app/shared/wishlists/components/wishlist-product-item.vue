@@ -39,6 +39,7 @@
 
     <!-- Actions -->
     <div class="shrink-0 ml-auto">
+      <!-- todo: https://virtocommerce.atlassian.net/browse/ST-2256 -->
       <button
         type="button"
         class="h-7 w-7 shadow rounded text-[color:var(--color-danger)] bg-white hover:bg-gray-100"

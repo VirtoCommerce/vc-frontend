@@ -287,7 +287,10 @@ const props = defineProps({
   },
 });
 
+const categoryId = toRef(props, "categoryId");
+
 const breakpoints = useBreakpoints(breakpointsTailwind);
+
 const { selectedCategory, selectCategoryByKey, loadCategoriesTree } = useCategories();
 const {
   fetchProducts,
@@ -300,6 +303,7 @@ const {
   total,
   pages,
   filters,
+  clearFilters,
 } = useProducts({
   withFacets: true,
 });
@@ -413,13 +417,7 @@ function removeFilterItem(payload: Pick<ProductsFacet, "paramName"> & Pick<Produ
 }
 
 function resetFilters() {
-  filters.facets.forEach((filter) => filter.values.forEach((filterItem) => (filterItem.selected = false)));
-  filters.inStock = false;
-
-  if (isMobileSidebar.value) {
-    mobileFilters.facets.forEach((filter) => filter.values.forEach((filterItem) => (filterItem.selected = false)));
-    filters.inStock = false;
-  }
+  clearFilters();
 
   applyFilters();
 }
@@ -451,21 +449,25 @@ async function loadMoreProducts() {
   });
 }
 
-onMounted(async () => {
-  const categoryId = toRef(props, "categoryId");
+function onChangeCurrentCategory(key: string, value: string) {
+  clearFilters();
+  selectCategoryByKey(key, value);
+}
 
+onMounted(async () => {
   await loadCategoriesTree(""); // TODO: use active category key instead of id
 
   if (categoryId.value) {
     selectCategoryByKey("id", categoryId.value);
-    watch(categoryId, (value) => selectCategoryByKey("id", value));
+    watch(categoryId, (value) => onChangeCurrentCategory("id", value));
   } else {
     selectCategoryByKey("seoUrl", categorySeoUrl.value);
-    watch(categorySeoUrl, (value) => selectCategoryByKey("seoUrl", value));
+    watch(categorySeoUrl, (value) => onChangeCurrentCategory("seoUrl", value));
   }
 
   await loadProducts();
 
+  // Todo: Use in place products loading instead of trigger by watching a computed property searchParams https://virtocommerce.atlassian.net/browse/ST-2255
   // Start change tracking after initial data load
   watchStopHandles.push(
     /**

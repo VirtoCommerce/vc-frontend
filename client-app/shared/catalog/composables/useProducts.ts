@@ -30,6 +30,11 @@ export default (
   const total: Ref<number> = ref(0);
   const pages: Ref<number> = ref(1);
 
+  function clearFilters() {
+    filters.facets.forEach((filter) => filter.values.forEach((filterItem) => (filterItem.selected = false)));
+    filters.inStock = false;
+  }
+
   async function fetchProducts(searchParams: Partial<ProductsSearchParams>) {
     loading.value = true;
     products.value = [];
@@ -123,6 +128,7 @@ export default (
 
   return {
     filters,
+    clearFilters,
     fetchProducts,
     fetchMoreProducts,
     getFacets,
