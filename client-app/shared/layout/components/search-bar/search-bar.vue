@@ -4,11 +4,17 @@
       v-model.trim="searchPhrase"
       :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
       maxlength="30"
-      class="flex-grow px-4 h-[2.625rem] font-medium text-sm outline-none disabled:bg-gray-200 border rounded-l text-[0.95rem]"
+      class="flex-grow px-4 h-[2.625rem] font-medium text-sm outline-none disabled:bg-gray-200 border rounded-l text-[0.95rem] pr-8"
       @keyup.enter="search"
       @keyup.esc="searchDropdownVisible && hideSearchDropdown()"
       @input="searchProductsDebounced"
     />
+
+    <button v-if="searchDropdownVisible" class="absolute right-[3.75rem] top-[0.85rem]" @click="reset">
+      <svg class="text-[color:var(--color-header-bottom-link)]" height="14" width="14">
+        <use href="/static/images/close.svg#main" />
+      </svg>
+    </button>
 
     <VcButton class="!rounded-l-none !rounded-r w-[2.75rem] !h-[2.625rem]" @click="search">
       <i class="fas fa-search text-[color:var(--color-white)] cursor-pointer" />
@@ -171,6 +177,11 @@ async function search() {
   });
 
   await showSearchDropdown();
+}
+
+function reset() {
+  searchPhrase.value = "";
+  hideSearchDropdown();
 }
 
 const searchProductsDebounced = useDebounceFn(() => {
