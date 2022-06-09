@@ -6,6 +6,7 @@ export { default as VcCheckbox } from "./checkbox/vc-checkbox.vue";
 export { default as VcChip } from "./chip/vc-chip.vue";
 export { default as VcInput } from "./input/vc-input.vue";
 export { default as VcImage } from "./image/vc-image.vue";
+export { default as VcLoader } from "./loader/vc-loader.vue";
 export { default as VcInfinityScrollLoader } from "./infinity-scroll-loader/vc-infinity-scroll-loader.vue";
 export { default as VcMarkdownRender } from "./markdown-render/vc-markdown-render.vue";
 export { default as VcPagination } from "./pagination/vc-pagination.vue";

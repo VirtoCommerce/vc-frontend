@@ -1,4 +1,5 @@
 import { createApp, Plugin } from "vue";
+import { RouteRecordName } from "vue-router";
 import * as yup from "yup";
 import { createHead } from "@vueuse/head";
 import { useGlobalVariables, useLanguages, useThemeContext } from "@core/composables";
@@ -6,7 +7,8 @@ import { configPlugin, contextPlugin } from "@core/plugins";
 import { useUser } from "@/shared/account";
 import { useNavigations } from "@/shared/layout";
 import { createI18n } from "@/i18n";
-import { createRouter, getBaseUrl } from "@/router";
+import { createRouter } from "@/router";
+import { getBaseUrl } from "@core/utilities";
 import App from "./App.vue";
 import blocks from "@/builder-preview/pages/blocks";
 
@@ -18,7 +20,7 @@ import "@/assets/styles/main.scss";
 
 export default async (getPlugins: (options: any) => { plugin: Plugin; options: any }[] = () => []) => {
   const globals = useGlobalVariables();
-  const { fetchUser } = useUser();
+  const { isAuthenticated, fetchUser } = useUser();
   const { themeContext, fetchThemeContext } = useThemeContext();
   const { currentLocale, currentLanguage, supportedLocales, setLocale } = useLanguages();
   const { fetchMenus } = useNavigations();
@@ -44,6 +46,24 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
     },
   });
 
+  router.beforeEach((to, from, next) => {
+    // Protect account routes
+    if (!isAuthenticated.value && to.meta.requiresAuth) {
+      return next({
+        name: "SignIn",
+        // save the location we were at to come back later
+        query: { redirect: to.fullPath },
+      });
+    }
+
+    // Make Dashboard the default Home page for authorized users
+    if (isAuthenticated.value && Array<RouteRecordName>("Home", "SignIn", "SignUp").includes(to.name!)) {
+      return next({ name: "Dashboard" });
+    }
+
+    return next();
+  });
+
   // Setting global variables
   globals.i18n = i18n;
   globals.router = router;
@@ -61,6 +81,8 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
 
   const plugins = getPlugins({ router });
   plugins.forEach(({ plugin, options }) => app.use(plugin, options));
+
+  await router.isReady();
 
   app.mount("#app");
 };

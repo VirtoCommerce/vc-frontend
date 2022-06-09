@@ -13,10 +13,12 @@
         :type="inputType"
         :name="name"
         :placeholder="placeholder"
+        :readonly="isReadonly"
         :disabled="isDisabled"
         :autofocus="autofocus"
         :min="minValue"
         :max="maxValue"
+        :minlength="minlength"
         :maxlength="maxlength"
         :step="stepValue"
         :autocomplete="autocomplete"
@@ -45,6 +47,7 @@ const emit = defineEmits(["update:modelValue"]);
 const props = defineProps({
   autofocus: Boolean,
   autocomplete: String,
+  isReadonly: Boolean,
   isDisabled: Boolean,
   isRequired: Boolean,
   hidePasswordSwitcher: Boolean,
@@ -54,6 +57,7 @@ const props = defineProps({
   min: [String, Number],
   max: [String, Number],
   step: [String, Number],
+  minlength: [String, Number],
   maxlength: [String, Number],
   errorMessage: String,
 
