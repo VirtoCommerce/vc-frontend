@@ -34,7 +34,7 @@
     "core-js": "^3.22.8",
     "dompurify": "^2.3.8",
     "flag-icons": "^6.3.0",
-    "graphql": "^16.5.0",
+    "graphql": "^15.8.0",
     "graphql-tag": "^2.12.6",
     "lodash": "^4.17.21",
     "marked": "^4.0.16",
