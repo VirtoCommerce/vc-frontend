@@ -39,18 +39,16 @@
 
       <!-- Product props -->
       <div class="hidden md:block text-sm pb-2">
-        <div class="flex items-baseline">
-          <div class="w-1/2 font-bold text-xs" v-t="'shared.catalog.product_card.product_sku_label'"></div>
-          <span class="w-1/2 text-[color:var(--color-link)] truncate">{{ product.code }}</span>
+        <div class="flex items-baseline justify-between gap-x-2">
+          <div class="font-bold text-xs" v-t="'shared.catalog.product_card.product_sku_label'"></div>
+          <span class="text-[color:var(--color-link)] truncate">{{ product.code }}</span>
         </div>
       </div>
 
       <!-- Product price -->
-      <div class="flex h-10 md:h-8 flex-col md:flex-row items-baseline text-sm mb-4">
-        <div class="w-1/2 font-bold text-xs" v-t="'shared.catalog.product_card.price_label'"></div>
-        <div class="md:w-1/2">
-          <VcItemPrice :value="product.price"></VcItemPrice>
-        </div>
+      <div class="flex h-10 md:h-8 flex-col md:flex-row items-baseline justify-between text-sm mb-5 gap-x-2">
+        <div class="font-bold text-xs" v-t="'shared.catalog.product_card.price_label'"></div>
+        <VcItemPrice :value="product.price" />
       </div>
 
       <slot name="cart-handler"></slot>
