@@ -31,7 +31,7 @@
 
   <!-- Regular link -->
   <router-link v-else-if="to" v-slot="{ isActive }" :to="to">
-    <component
+    <div
       class="font-semibold hover:text-[color:var(--color-header-bottom-link-hover)] tracking-wide relative"
       :class="[
         {
@@ -51,7 +51,7 @@
         <use :href="icon"></use>
       </svg>
       <slot>{{ title }}</slot>
-    </component>
+    </div>
   </router-link>
 </template>
 
