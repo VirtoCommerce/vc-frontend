@@ -32,7 +32,11 @@
       autocomplete="password"
     ></VcInput>
 
-    <div class="mt-1">
+    <div class="flex justify-between">
+      <VcCheckbox v-model="rememberMe">
+        {{ $t("shared.account.sign_in_form.remember_me_label") }}
+      </VcCheckbox>
+
       <router-link
         to="/forgot-password"
         class="text-blue-700 hover:text-blue-500 text-sm font-semibold"
@@ -67,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { VcAlert, VcButton, VcInput } from "@/components";
+import { VcAlert, VcButton, VcInput, VcCheckbox } from "@/components";
 import { ref, reactive } from "vue";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
@@ -99,8 +103,9 @@ const { errors, handleSubmit } = useForm({
 
 const { value: userName } = useField<string>("userName");
 const { value: password } = useField<string>("password");
+const rememberMe = ref(true);
 
-const model = reactive({ userName, password });
+const model = reactive({ userName, password, rememberMe });
 
 const onSubmit = handleSubmit(async () => {
   loading.value = true;
