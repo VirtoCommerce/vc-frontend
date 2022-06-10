@@ -10,9 +10,9 @@
       @input="searchProductsDebounced"
     />
 
-    <button v-if="searchDropdownVisible" class="absolute right-[3.75rem] top-[0.85rem]" @click="reset">
+    <button v-if="searchDropdownVisible" class="absolute right-[3.8rem] top-[0.95rem]" @click="reset">
       <svg class="text-[color:var(--color-header-bottom-link)]" height="14" width="14">
-        <use href="/static/images/close.svg#main" />
+        <use href="/static/images/delete.svg#main" />
       </svg>
     </button>
 
@@ -24,7 +24,8 @@
     <transition name="slide-fade-top">
       <div
         v-if="searchDropdownVisible"
-        class="absolute top-[3.7rem] z-20 w-full flex flex-col gap-3 rounded bg-white shadow-lg overflow-hidden w-[43rem] xl:w-[48rem] min-w-full"
+        class="absolute top-[3.45rem] -left-[10rem] z-20 w-full flex flex-col gap-3 rounded bg-white shadow-lg overflow-hidden w-[48rem]"
+        style="min-width: calc(100% + 10rem)"
       >
         <!-- Results -->
         <template v-if="categories.length || products.length">
