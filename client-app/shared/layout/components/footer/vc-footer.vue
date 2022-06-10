@@ -1,6 +1,9 @@
 <template>
   <!-- Top footer -->
-  <div class="hidden md:block bg-[color:var(--color-footer-top-bg)] text-[color:var(--color-footer-top-text)]">
+  <div
+    v-if="!compact"
+    class="hidden md:block bg-[color:var(--color-footer-top-bg)] text-[color:var(--color-footer-top-text)]"
+  >
     <div class="container mx-auto grid grid-cols-2 gap-4 lg:grid-cols-4 xl:grid-cols-5 p-12">
       <!-- Logo column -->
       <div class="hidden xl:block">
@@ -62,6 +65,7 @@
           <FooterLink to="/rebates" v-t="'shared.layout.footer.rebates_link'"></FooterLink>
           <FooterLink to="/replacement-parts" v-t="'shared.layout.footer.replacement_parts_link'"></FooterLink>
           <FooterLink :to="{ name: 'DemoLanding' }" v-t="'shared.layout.footer.demo_landing_link'" />
+          <FooterLink to="/demo-page" v-t="'shared.layout.footer.demo_page_link'" />
           <FooterLink v-if="isDevelopment" :to="{ name: 'DevUIKit' }">Dev UI Kit</FooterLink>
         </div>
       </div>
@@ -93,4 +97,8 @@ import { VcImage } from "@/components";
 import { version } from "../../../../../package.json";
 import FooterLink from "./_internal/footer-link.vue";
 import { isDevelopment } from "@core/constants";
+
+defineProps({
+  compact: Boolean,
+});
 </script>

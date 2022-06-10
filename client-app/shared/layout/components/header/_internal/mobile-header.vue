@@ -15,7 +15,7 @@
             <i class="fas fa-bars text-2xl text-[color:var(--color-primary)]" />
           </button>
           <router-link to="/">
-            <VcImage src="/static/images/common/logo.svg" class="h-8" lazy />
+            <VcImage :src="$cfg.logo_image" class="h-8" lazy />
           </router-link>
         </div>
         <!-- endregion Left slot -->

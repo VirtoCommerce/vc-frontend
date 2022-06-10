@@ -29,6 +29,10 @@ export default () => {
     }
   }
 
+  function clearOrder() {
+    order.value = null;
+  }
+
   return {
     loading: computed(() => loading.value),
     pages: computed(() => pages.value),
@@ -37,5 +41,6 @@ export default () => {
     deliveryAddress: computed(() => order.value?.shipments?.[0]?.deliveryAddress),
     billingAddress: computed(() => order.value?.inPayments?.[0]?.billingAddress),
     loadOrder,
+    clearOrder,
   };
 };

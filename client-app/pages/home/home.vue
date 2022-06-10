@@ -91,9 +91,7 @@
 
 <script setup lang="ts">
 import { VcImage } from "@/components";
-import { useUser, SignInForm } from "@/shared/account";
-
-const { isAuthenticated } = useUser();
+import { SignInForm } from "@/shared/account";
 
 function onSignIn() {
   location.href = "/";

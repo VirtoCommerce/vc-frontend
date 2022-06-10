@@ -1,10 +1,11 @@
-import { createRouter as _createRouter, createWebHistory, RouteRecordRaw, RouterView } from "vue-router";
+import { RouteRecordRaw } from "vue-router";
+import { accountRoutes } from "@/router/routes";
 
+// Error pages
 import Error403 from "@/pages/403/403.vue";
 import Error404 from "@/pages/404/404.vue";
 import Error500 from "@/pages/500/500.vue";
 
-// Main pages
 const Home = () => import("@/pages/home/home.vue");
 const SingInPage = () => import("@/pages/sign-in/sign-in-page.vue");
 const SignUpPage = () => import("@/pages/sign-up/sign-up-page.vue");
@@ -17,56 +18,12 @@ const CompareProducts = () => import("@/pages/compare-products/compare-products.
 const Checkout = () => import("@/pages/checkout/checkout.vue");
 const Category = () => import("@/pages/category/category.vue");
 const Product = () => import("@/pages/product/product.vue");
-const Matcher = () => import("@/shared/catalog/components/matcher.vue");
-
-// Account pages
-const Dashboard = () => import("@/pages/account/dashboard.vue");
-const Profile = () => import("@/pages/account/profile.vue");
-const Addresses = () => import("@/pages/account/addresses.vue");
-const Orders = () => import("@/pages/account/orders.vue");
-const OrderDetails = () => import("@/pages/account/order-details.vue");
-const Lists = () => import("@/pages/account/lists.vue");
-const ListDetails = () => import("@/pages/account/list-details.vue");
-const CheckoutDefaults = () => import("@/pages/account/checkout-defaults.vue");
+const Matcher = () => import("@/components/pages/matcher.vue");
 
 // Private development pages
-const BuilderDemoPages = () => import("./builder-preview/pages/pages.vue");
+const BuilderDemoPages = () => import("@/builder-preview/pages/pages.vue");
 const DemoLanding = () => import("@/pages/demo-landing/demo-landing.vue");
 const DevUIKit = () => import("@/pages/_ui-kit/ui-kit.vue");
-
-export const accountRoutes: RouteRecordRaw[] = [
-  { path: "dashboard", name: "Dashboard", component: Dashboard },
-  { path: "profile", name: "Profile", component: Profile },
-  { path: "addresses", name: "Addresses", component: Addresses },
-  {
-    path: "orders",
-    component: RouterView,
-    children: [
-      { path: "", name: "Orders", component: Orders },
-      {
-        path: ":orderId",
-        name: "OrderDetails",
-        component: OrderDetails,
-        meta: { hideNavigation: true },
-        props: true,
-      },
-    ],
-  },
-  {
-    path: "lists",
-    component: RouterView,
-    children: [
-      { path: "", name: "Lists", component: Lists },
-      {
-        path: ":listId",
-        name: "ListDetails",
-        component: ListDetails,
-        props: true,
-      },
-    ],
-  },
-  { path: "checkout-defaults", name: "CheckoutDefaults", component: CheckoutDefaults },
-];
 
 export const mainRoutes: RouteRecordRaw[] = [
   { path: "/", name: "Home", component: Home },
@@ -102,22 +59,5 @@ if (import.meta.env.MODE === "development") {
     path: "/dev-ui-kit",
     name: "DevUIKit",
     component: DevUIKit,
-  });
-}
-
-export function getBaseUrl(supportedLocales: string[]): string {
-  const localeInPath = location.pathname.split("/")[1];
-  return supportedLocales.includes(localeInPath) ? `/${localeInPath}/` : "";
-}
-
-export function createRouter(options: { base: string }) {
-  const { base } = options;
-
-  return _createRouter({
-    routes: mainRoutes,
-    history: createWebHistory(base),
-    scrollBehavior(to, from, savedPosition) {
-      return savedPosition || { top: 0, behavior: "smooth" };
-    },
   });
 }
