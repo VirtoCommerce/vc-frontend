@@ -15,7 +15,7 @@ import {
   renameWishlist as _renameWishlist,
   getWishList,
 } from "@core/api/graphql/account";
-import { sortAscending } from "@core/constants";
+import { SORT_ASCENDING } from "@core/constants";
 
 const loading = ref(true);
 const lists = shallowRef<WishlistType[]>([]);
@@ -39,7 +39,7 @@ export default function useWishlists() {
     loading.value = true;
 
     try {
-      const { items = [] } = await getWishlists({ itemsPerPage: 9999, sort: `name:${sortAscending}` });
+      const { items = [] } = await getWishlists({ itemsPerPage: 9999, sort: `name:${SORT_ASCENDING}` });
 
       lists.value = items;
 

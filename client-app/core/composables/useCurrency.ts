@@ -7,9 +7,9 @@ const { themeContext } = useThemeContext();
 
 const savedCurrencyCode = useLocalStorage<string | null>("currency", "");
 
-const defaultCurrency = computed<Currency | undefined>(() => themeContext.value?.defaultCurrency);
-const supportedCurrencies = computed<Currency[]>(() => themeContext.value?.availCurrencies || []);
-const currentCurrency = computed<Currency | undefined>(
+const defaultCurrency = computed<Currency>(() => themeContext.value.defaultCurrency);
+const supportedCurrencies = computed<Currency[]>(() => themeContext.value.availCurrencies);
+const currentCurrency = computed<Currency>(
   () => supportedCurrencies.value?.find((item) => item.code === savedCurrencyCode.value) || defaultCurrency.value
 );
 

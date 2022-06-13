@@ -79,7 +79,7 @@ import { mergeCart } from "@core/api/graphql/cart";
 
 const { t } = useI18n();
 const { cart, loadMyCart } = useCart();
-const { signMeIn, me, isAuthenticated } = useUser();
+const { signMeIn, user, isAuthenticated } = useUser();
 
 const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButtons: false });
 
@@ -117,7 +117,7 @@ const onSubmit = handleSubmit(async () => {
     return;
   }
 
-  await mergeCart(me.value.id, cart.value.id!);
+  await mergeCart(user.value.id, cart.value.id!);
   emit("succeeded");
 });
 </script>

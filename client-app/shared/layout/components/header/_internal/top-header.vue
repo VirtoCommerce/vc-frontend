@@ -19,7 +19,7 @@
       <!-- Account menu -->
       <div ref="loginMenu" class="relative">
         <div class="flex items-center cursor-pointer" @click="loginMenuVisible = !loginMenuVisible">
-          <div>{{ me.contact?.fullName }}</div>
+          <div>{{ user.contact?.fullName }}</div>
           <i class="fas fa-chevron-down ml-3 text-[color:var(--color-primary)] align-baseline"></i>
         </div>
         <div
@@ -29,7 +29,7 @@
           <div class="flex items-center justify-between">
             <router-link to="/account/dashboard" class="flex items-center" @click="loginMenuVisible = false">
               <i class="fa fa-user-circle fa-2x fa-fw text-[color:var(--color-primary)]"></i>
-              <span class="ml-2">{{ me.contact?.fullName }}</span>
+              <span class="ml-2">{{ user.contact?.fullName }}</span>
             </router-link>
             <div class="flex-grow"></div>
             <button
@@ -60,7 +60,7 @@ import { useUser } from "@/shared/account";
 
 import TopHeaderLink from "./top-header-link.vue";
 
-const { isAuthenticated, me, signMeOut } = useUser();
+const { isAuthenticated, user, signMeOut } = useUser();
 const loginMenu = ref(null);
 const loginMenuVisible = ref(false);
 

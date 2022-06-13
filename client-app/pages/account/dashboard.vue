@@ -268,7 +268,7 @@
 <script setup lang="ts">
 import { ITableColumn, VcCard, VcImage, VcTable, TableStatusBadge, VcButton } from "@/components";
 import { CustomerOrderType } from "@/core/api/graphql/types";
-import { sortDescending } from "@/core/constants";
+import { SORT_DESCENDING } from "@/core/constants";
 import useUserOrders from "@/shared/account/composables/useUserOrders";
 import { onMounted, ref } from "vue";
 import moment from "moment";
@@ -320,7 +320,7 @@ const openOrderDetails = (item: CustomerOrderType) => {
 
 onMounted(async () => {
   sort.value.column = "createdDate";
-  sort.value.direction = sortDescending;
+  sort.value.direction = SORT_DESCENDING;
   itemsPerPage.value = 4;
   await loadOrders();
 });

@@ -1,11 +1,15 @@
-import { ProductsFilters } from "./../types/search";
 import { Ref, ref, computed, readonly, shallowRef, shallowReactive } from "vue";
 import { searchProducts } from "@core/api/graphql/catalog";
 import { Product } from "@core/api/graphql/types";
 import { Logger } from "@core/utilities";
 import { ProductsFacet, ProductsSearchParams } from "../types";
-import { rangeFacetToProductsFilter, termFacetToProductsFilter, toFilterExpression } from "@/shared/catalog";
-import { inStockFilterExpression } from "@/core/constants";
+import {
+  ProductsFilters,
+  rangeFacetToProductsFilter,
+  termFacetToProductsFilter,
+  toFilterExpression,
+} from "@/shared/catalog";
+import { IN_STOCK_FILTER_EXPRESSION } from "@/core/constants";
 import _ from "lodash";
 
 const DEFAULT_ITEMS_PER_PAGE = 16;
@@ -33,11 +37,13 @@ export default (
     pages.value = 1;
 
     try {
-      if (searchParams.filter?.includes(inStockFilterExpression)) {
+      if (searchParams.filter?.includes(IN_STOCK_FILTER_EXPRESSION)) {
+        // FIXME: don't use it here
         filters.inStock = true;
       }
 
-      if (!searchParams.filter?.includes(inStockFilterExpression) && filters.inStock === true) {
+      if (!searchParams.filter?.includes(IN_STOCK_FILTER_EXPRESSION) && filters.inStock) {
+        // FIXME: don't use it here
         searchParams.filter = toFilterExpression(filters);
       }
 
