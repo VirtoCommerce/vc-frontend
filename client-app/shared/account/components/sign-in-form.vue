@@ -103,7 +103,7 @@ const { errors, handleSubmit } = useForm({
 
 const { value: userName } = useField<string>("userName");
 const { value: password } = useField<string>("password");
-const rememberMe = ref(true);
+const rememberMe = ref(false);
 
 const model = reactive({ userName, password, rememberMe });
 
