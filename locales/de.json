@@ -183,6 +183,7 @@
         "user_name_placeholder": "@:common.labels.user_name",
         "password_label": "@:common.labels.password",
         "password_placeholder": "@:common.labels.password",
+        "remember_me_label": "Remember me",
         "forgot_password_link": "Haben Sie Ihr Passwort vergessen?",
         "login_button": "Einloggen",
         "registration_button": "Registrierung",
