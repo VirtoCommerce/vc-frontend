@@ -60,7 +60,7 @@
         </VcPopupSidebar>
 
         <!-- Sidebar -->
-        <div v-else ref="sidebarElement" class="lg:flex lg:w-1/4 xl:w-1/5 flex-shrink-0">
+        <div v-else ref="sidebarElement" class="flex flex-col lg:w-1/4 xl:w-1/5 flex-shrink-0">
           <ProductsFiltersSidebar
             :keyword="keywordQueryParam"
             :filters="filters"
@@ -111,7 +111,7 @@
                 text-field="name"
                 value-field="id"
                 :is-disabled="loading"
-                :items="productSortingList"
+                :items="PRODUCT_SORTING_LIST"
                 class="w-full md:w-52 lg:w-64"
               />
             </div>
@@ -276,7 +276,7 @@ import {
 } from "@/components";
 import { AddToCart } from "@/shared/cart";
 import { useElementVisibility, useRouteQueryParam } from "@core/composables";
-import { defaultPageSize, productSortingList } from "@core/constants";
+import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@core/constants";
 import QueryParamName from "@core/query-param-name.enum";
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
@@ -324,7 +324,7 @@ const mobileSidebarVisible = ref(false);
 const sidebarElement = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const page = ref(1);
-const itemsPerPage = ref(defaultPageSize);
+const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
 const mobileFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: false });
 
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
@@ -332,8 +332,8 @@ const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeade
 const viewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
-  defaultValue: productSortingList[0].id,
-  validator: (value) => productSortingList.some((item) => item.id === value),
+  defaultValue: PRODUCT_SORTING_LIST[0].id,
+  validator: (value) => PRODUCT_SORTING_LIST.some((item) => item.id === value),
 });
 
 const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {

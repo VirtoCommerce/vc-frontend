@@ -9,14 +9,14 @@ const { themeContext } = useThemeContext();
 
 const savedLocale = useLocalStorage<string>("locale", "");
 
-const defaultLanguage = computed<Language | undefined>(() => themeContext.value?.defaultLanguage);
-const defaultLocale = computed<string | undefined>(() => defaultLanguage.value?.twoLetterLanguageName);
-const supportedLanguages = computed<Language[]>(() => themeContext.value?.availLanguages || []);
+const defaultLanguage = computed<Language>(() => themeContext.value.defaultLanguage);
+const defaultLocale = computed<string>(() => defaultLanguage.value.twoLetterLanguageName);
+const supportedLanguages = computed<Language[]>(() => themeContext.value.availLanguages);
 const supportedLocales = computed<string[]>(() => supportedLanguages.value.map((item) => item.twoLetterLanguageName));
 
-const currentLocale = computed<string | undefined>(() => {
+const currentLocale = computed<string>(() => {
   const localeInPath = location.pathname.split("/")[1];
-  let locale = defaultLocale.value;
+  let locale: string = defaultLocale.value;
 
   if (supportedLocales.value.includes(localeInPath)) {
     locale = localeInPath;
@@ -27,8 +27,8 @@ const currentLocale = computed<string | undefined>(() => {
   return locale;
 });
 
-const currentLanguage = computed<Language | undefined>(() =>
-  supportedLanguages.value.find((x) => x.twoLetterLanguageName === currentLocale.value)
+const currentLanguage = computed<Language>(
+  () => supportedLanguages.value.find((x) => x.twoLetterLanguageName === currentLocale.value) || defaultLanguage.value
 );
 
 function fetchLocaleMessages(locale: string) {

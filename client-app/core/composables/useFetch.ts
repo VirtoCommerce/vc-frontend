@@ -1,5 +1,5 @@
 import { shallowRef, unref } from "vue";
-import { useGlobalVariables } from "@core/composables";
+import globals from "@core/globals";
 
 enum HTTP_ERRORS {
   NO_CONTENT = 204,
@@ -11,8 +11,6 @@ export default function useFetch() {
   const data = shallowRef<unknown | undefined>();
   const error = shallowRef<Error | undefined>();
   const statusCode = shallowRef<number | null>();
-
-  const globals = useGlobalVariables();
 
   function innerFetch<TResult, TBody = unknown>(url: string, method = "GET", body?: TBody): Promise<TResult> {
     const headers = new Headers();
@@ -42,11 +40,11 @@ export default function useFetch() {
 
           switch (statusCode.value) {
             case HTTP_ERRORS.SERVER_ERROR:
-              globals.router!.push({ name: "InternalError" });
+              globals.router.push({ name: "InternalError" });
               break;
 
             case HTTP_ERRORS.FORBIDDEN:
-              globals.router!.push({ name: "NoAccess" });
+              globals.router.push({ name: "NoAccess" });
               break;
 
             default:
