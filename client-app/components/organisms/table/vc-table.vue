@@ -35,8 +35,11 @@
         >
           {{ column.title }}
           <template v-if="column.sortable && sort">
-            <i class="fas fa-caret-down ml-2" v-if="sort.column === column.id && sort.direction === sortDescending"></i>
-            <i class="fas fa-caret-up ml-2" v-if="sort.column === column.id && sort.direction === sortAscending"></i>
+            <i
+              class="fas fa-caret-down ml-2"
+              v-if="sort.column === column.id && sort.direction === SORT_DESCENDING"
+            ></i>
+            <i class="fas fa-caret-up ml-2" v-if="sort.column === column.id && sort.direction === SORT_ASCENDING"></i>
           </template>
         </th>
       </tr>
@@ -73,7 +76,7 @@
 import { ITableColumn, ItemAction, VcPagination } from "@/components";
 import { ISortInfo } from "@/shared/account";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { sortAscending, sortDescending } from "@/core/constants";
+import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 import { PropType } from "vue";
 import TableMobileItem from "./_internal/table-mobile-item/table-mobile-item.vue";
 

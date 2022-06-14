@@ -1,4 +1,5 @@
 import { RouteRecordRaw } from "vue-router";
+import { DEVELOPMENT } from "@core/constants";
 import { accountRoutes } from "@/router/routes";
 
 // Error pages
@@ -54,7 +55,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/:pathMatch(.*)*", name: "Matcher", component: Matcher, props: true },
 ];
 
-if (import.meta.env.MODE === "development") {
+if (DEVELOPMENT) {
   mainRoutes.push({
     path: "/dev-ui-kit",
     name: "DevUIKit",

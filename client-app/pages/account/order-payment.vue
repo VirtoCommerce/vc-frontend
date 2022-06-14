@@ -161,7 +161,6 @@ async function initPayment() {
 
   if (!isSuccess) {
     initializationError.value = errorMessage;
-    initialized.value = true;
     return;
   }
 

@@ -553,7 +553,7 @@ import { useNotifications } from "@/shared/notification";
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const notifications = useNotifications();
 const router = useRouter();
-const { me: user, isAuthenticated } = useUser();
+const { user, isAuthenticated } = useUser();
 const {
   loading,
   cart,
