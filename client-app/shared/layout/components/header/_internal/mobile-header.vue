@@ -19,6 +19,10 @@
         <component v-if="customSlots.right" :is="customSlots.right" />
 
         <div v-else class="flex items-center h-full pr-3">
+          <a class="px-3" :href="`tel:${$cfg.support_phone_number}`" v-if="$cfg.support_phone_number">
+            <i class="fas fa-phone-alt text-lg text-[color:var(--color-primary)]"></i>
+          </a>
+
           <button v-show="!searchBarVisible" class="h-full px-3" @click="showSearchBar">
             <i class="fas fa-search text-lg text-[color:var(--color-primary)]" />
           </button>

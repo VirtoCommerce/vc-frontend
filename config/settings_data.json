@@ -8,6 +8,8 @@
 
       "search_min_chars": 3,
 
+      "support_phone_number": "+31 416 652 803",
+
       "checkout_comment_enabled": true,
       "checkout_purchase_order_enabled": true,
       "checkout_coupon_enabled": true,
