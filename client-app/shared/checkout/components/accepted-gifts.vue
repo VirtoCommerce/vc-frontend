@@ -32,7 +32,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcSection, VcImage } from "@/components";
 import { OrderLineItemType } from "@/core/api/graphql/types";
 import { PropType } from "vue";
 

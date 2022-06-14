@@ -73,7 +73,6 @@
 </template>
 
 <script setup lang="ts">
-import { ITableColumn, ItemAction, VcPagination } from "@/components";
 import { ISortInfo } from "@/shared/account";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";

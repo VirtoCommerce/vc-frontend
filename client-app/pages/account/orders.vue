@@ -237,16 +237,6 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ITableColumn,
-  TableStatusBadge,
-  VcTable,
-  VcButton,
-  VcPopupSidebar,
-  VcChip,
-  VcEmptyView,
-  VcImage,
-} from "@/components";
 import { OrdersFilter, useUserOrdersFilter, useUserOrders } from "@/shared/account";
 
 import { onMounted, ref, shallowRef, watch } from "vue";

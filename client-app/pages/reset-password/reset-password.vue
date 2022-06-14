@@ -42,7 +42,6 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { VcImage, VcButton } from "@/components";
 import { TwoColumn } from "@/shared/layout";
 import { ResetPasswordForm, useUser } from "@/shared/account";
 import { useRoute } from "vue-router";

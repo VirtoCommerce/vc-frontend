@@ -77,7 +77,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcButton, VcCard, VcCardSkeleton, VcCheckbox } from "@/components";
 import { ProductsFilters } from "@/shared/catalog";
 import { eagerComputed } from "@vueuse/core";
 import { watch, onMounted, PropType, ref, shallowReactive, toRefs } from "vue";

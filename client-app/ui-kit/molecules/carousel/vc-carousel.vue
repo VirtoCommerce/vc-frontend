@@ -36,7 +36,6 @@ import { computed, PropType } from "vue";
 import { Pagination, Navigation } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { NavigationOptions, PaginationOptions } from "swiper/types";
-import { CarouselOptions } from "@/components";
 import _ from "lodash";
 
 const props = defineProps({

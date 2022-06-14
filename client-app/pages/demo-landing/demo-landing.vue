@@ -165,7 +165,6 @@
 </template>
 
 <script setup lang="ts">
-import { IBreadcrumbs, VcBreadcrumbs, VcButton, VcImage, VcInput, VcCheckbox } from "@/components";
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { ProductCardGrid, useProducts, useProductsRoutes } from "@/shared/catalog";

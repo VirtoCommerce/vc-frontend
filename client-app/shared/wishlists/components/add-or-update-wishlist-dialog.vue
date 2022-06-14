@@ -47,7 +47,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcButton, VcInput, VcPopup } from "@/components";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import { useWishlists } from "@/shared/wishlists";

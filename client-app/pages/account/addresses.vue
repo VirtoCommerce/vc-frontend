@@ -223,7 +223,6 @@
 </template>
 
 <script setup lang="ts">
-import { ITableColumn, VcButton, VcTable, VcEmptyView, VcImage } from "@/components";
 import { AddressForm, useUser, useUserAddresses } from "@/shared/account";
 import { computed, ComputedRef, onMounted, Ref, ref } from "vue";
 import { clone } from "lodash";

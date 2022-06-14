@@ -59,7 +59,6 @@
 import { computed, PropType } from "vue";
 import { RouteLocationRaw } from "vue-router";
 import { getProductRoute } from "@/shared/catalog";
-import { VcImage, VcItemPrice } from "@/components";
 import { AddToCart } from "@/shared/cart";
 import { Product } from "@core/api/graphql/types";
 

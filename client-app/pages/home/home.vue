@@ -90,7 +90,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcImage } from "@/components";
 import { SignInForm } from "@/shared/account";
 
 function onSignIn() {

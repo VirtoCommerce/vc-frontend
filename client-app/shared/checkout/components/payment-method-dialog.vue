@@ -44,7 +44,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcPopup, VcImage, VcButton } from "@/components";
 import { PaymentMethodType } from "@/core/api/graphql/types";
 import { PropType, ref } from "vue";
 

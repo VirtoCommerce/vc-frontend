@@ -27,7 +27,6 @@
 
 <script setup lang="ts">
 import { PropType } from "vue";
-import { VcImage, IBreadcrumbs, VcBreadcrumbs } from "@/components";
 import { TwoColumn } from "@/shared/layout";
 
 defineProps({

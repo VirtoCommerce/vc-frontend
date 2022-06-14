@@ -62,7 +62,6 @@
 
 <script setup lang="ts">
 import { computed, PropType, ref } from "vue";
-import { VcButton, VcCheckbox, VcPopup } from "@/components";
 import { Product as ProductType } from "@/core/api/graphql/types";
 import { AddedToWishlistsDialog, useWishlists } from "@/shared/wishlists";
 import { usePopup } from "@/shared/popup";

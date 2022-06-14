@@ -59,7 +59,6 @@
 
 <script setup lang="ts">
 import { computed, PropType } from "vue";
-import { VcImage, VcItemPrice } from "@/components";
 import { AddToCompare } from "@/shared/compare";
 import { Product } from "@/core/api/graphql/types";
 import { RouteLocationRaw } from "vue-router";

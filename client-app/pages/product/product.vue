@@ -86,7 +86,6 @@
 
 <script setup lang="ts">
 import { ref, Ref, watchEffect, defineAsyncComponent } from "vue";
-import { VcCarousel, VcSection, VcButton, VcItemPrice, CarouselOptions } from "@/components";
 import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
 import { useCart, AddToCart } from "@/shared/cart";
 import {

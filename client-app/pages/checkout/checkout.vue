@@ -516,18 +516,6 @@ import {
   AddOrUpdateAddressDialog,
   ClearCartDialog,
 } from "@/shared/checkout";
-import {
-  VcTextArea,
-  VcImage,
-  VcPriceDisplay,
-  VcPagination,
-  VcButton,
-  VcActionInput,
-  VcSection,
-  VcCheckbox,
-  VcEmptyPage,
-  IBreadcrumbs,
-} from "@/components";
 import { useCart, useCheckout } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import {

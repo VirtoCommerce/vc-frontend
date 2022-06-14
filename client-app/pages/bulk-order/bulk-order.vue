@@ -65,7 +65,6 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { VcAlert, VcTabs } from "@/components";
 import { CopyAndPaste, Manually } from "@/shared/bulk-order";
 import { InputNewBulkItemType } from "@core/api/graphql/types";
 import { useCart } from "@/shared/cart";

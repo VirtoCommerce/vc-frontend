@@ -45,7 +45,6 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { VcButton, VcTextArea } from "@/components";
 import { InputNewBulkItemType } from "@core/api/graphql/types";
 import { validateQuantity } from "@/shared/bulk-order";
 

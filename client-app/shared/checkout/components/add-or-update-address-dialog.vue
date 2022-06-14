@@ -47,7 +47,6 @@ import { MemberAddressType } from "@/core/api/graphql/types";
 import { useCountries } from "@/core/composables";
 import { AddressForm } from "@/shared/account";
 import { onMounted, PropType, ref, Ref, watchEffect } from "vue";
-import { VcPopup, VcButton } from "@/components";
 import { clone } from "lodash";
 
 const props = defineProps({

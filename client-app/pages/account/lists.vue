@@ -57,7 +57,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcButton, VcBreadcrumbs, IBreadcrumbs, VcEmptyView, VcImage } from "@/components";
 import {
   WishlistCard,
   WishlistCardSkeleton,

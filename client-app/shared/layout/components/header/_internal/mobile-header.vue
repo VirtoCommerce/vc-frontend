@@ -70,7 +70,6 @@
 <script setup lang="ts">
 import { computed, ref, StyleValue, watchEffect } from "vue";
 import { RouteLocationRaw } from "vue-router";
-import { VcButton, VcImage } from "@/components";
 import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
 import MobileMenu from "./mobile-menu.vue";
 import { useRouteQueryParam } from "@core/composables";

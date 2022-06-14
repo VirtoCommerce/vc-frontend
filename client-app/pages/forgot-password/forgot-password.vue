@@ -28,7 +28,6 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { VcImage, VcButton } from "@/components";
 import { TwoColumn } from "@/shared/layout";
 import { ForgotPasswordForm } from "@/shared/account";
 

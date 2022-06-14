@@ -18,5 +18,4 @@
 
 <script setup lang="ts">
 import { TwoColumn } from "@/shared/layout";
-import { VcImage, VcButton } from "@/components";
 </script>

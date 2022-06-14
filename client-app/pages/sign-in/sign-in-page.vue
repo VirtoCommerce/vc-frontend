@@ -11,7 +11,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcImage } from "@/components";
 import { SignInForm } from "@/shared/account";
 import { useRoute } from "vue-router";
 import { TwoColumn } from "@/shared/layout";

@@ -25,7 +25,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcButton, VcPopup } from "@/components";
 import { useWishlists } from "@/shared/wishlists";
 import { PropType } from "vue";
 import { InputRemoveWishlistItemType, LineItemType } from "@core/api/graphql/types";

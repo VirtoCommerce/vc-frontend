@@ -19,7 +19,7 @@ const CompareProducts = () => import("@/pages/compare-products/compare-products.
 const Checkout = () => import("@/pages/checkout/checkout.vue");
 const Category = () => import("@/pages/category/category.vue");
 const Product = () => import("@/pages/product/product.vue");
-const Matcher = () => import("@/components/pages/matcher.vue");
+const Matcher = () => import("@/ui-kit/pages/matcher.vue");
 
 // Private development pages
 const BuilderDemoPages = () => import("@/builder-preview/pages/pages.vue");
