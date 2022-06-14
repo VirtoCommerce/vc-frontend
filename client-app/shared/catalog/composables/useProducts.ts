@@ -1,12 +1,13 @@
-import { ProductsFilters } from "./../types/search";
-import { Ref, ref, computed, readonly, shallowRef, shallowReactive } from "vue";
-import { searchProducts } from "@core/api/graphql/catalog";
-import { Product } from "@core/api/graphql/types";
-import { Logger } from "@core/utilities";
 import { ProductsFacet, ProductsSearchParams } from "../types";
+import { Ref, computed, readonly, ref, shallowReactive, shallowRef } from "vue";
 import { rangeFacetToProductsFilter, termFacetToProductsFilter, toFilterExpression } from "@/shared/catalog";
-import { inStockFilterExpression } from "@/core/constants";
+
+import { Logger } from "@core/utilities";
+import { Product } from "@core/api/graphql/types";
+import { ProductsFilters } from "./../types/search";
 import _ from "lodash";
+import { inStockFilterExpression } from "@/core/constants";
+import { searchProducts } from "@core/api/graphql/catalog";
 
 const DEFAULT_ITEMS_PER_PAGE = 16;
 
@@ -22,7 +23,7 @@ export default (
   const loadingMore = ref(false);
   const facetsLoading = ref(false);
   const products: Ref<Product[]> = shallowRef([]);
-  const filters = shallowReactive<ProductsFilters>({ facets: [], inStock: false });
+  const filters = shallowReactive<ProductsFilters>({ facets: [], inStock: true });
   const total: Ref<number> = ref(0);
   const pages: Ref<number> = ref(1);
 
