@@ -111,11 +111,11 @@ import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import { ref } from "vue";
 import { usePopup } from "@/shared/popup";
-import { IdentityResultType } from "@/core/api/graphql/types";
+import { IdentityResultType } from "@/xapi/graphql/types";
 import { computed } from "@vue/reactivity";
 import { isObjectEmpty, trimString } from "@/core/utilities";
 import { useI18n } from "vue-i18n";
-import { checkEmailUniqueness, checkUsernameUniqueness } from "@/core/api/graphql/account";
+import { checkEmailUniqueness, checkUsernameUniqueness } from "@/xapi/graphql/account";
 import _ from "lodash";
 
 const { t } = useI18n();

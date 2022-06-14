@@ -43,7 +43,7 @@
 
 <script setup lang="ts">
 import { VcImage } from "@/components";
-import { ImageType, Maybe } from "@/core/api/graphql/types";
+import { ImageType, Maybe } from "@/xapi/graphql/types";
 import { watchEffect, PropType, ref } from "vue";
 import { SwipeDirection, useSwipe } from "@vueuse/core";
 import _ from "lodash";

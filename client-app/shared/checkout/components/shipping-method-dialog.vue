@@ -51,7 +51,7 @@
 
 <script setup lang="ts">
 import { VcPopup, VcImage, VcPriceDisplay, VcButton } from "@/components";
-import { ShippingMethodType } from "@/core/api/graphql/types";
+import { ShippingMethodType } from "@/xapi/graphql/types";
 import { PropType, ref } from "vue";
 
 const props = defineProps({

@@ -1,7 +1,7 @@
 import { computed, unref } from "vue";
 import { MaybeRef } from "@vueuse/core";
 import { RouteLocationRaw } from "vue-router";
-import { Product } from "@core/api/graphql/types";
+import { Product } from "@/xapi/graphql/types";
 import { getProductRoute } from "@/shared/catalog";
 
 export default (products: MaybeRef<Product[]>) => {

@@ -1,6 +1,6 @@
 import { useI18n } from "vue-i18n";
 import { IBreadcrumbsItem } from "./../types/index";
-import { Breadcrumb } from "@core/api/graphql/types";
+import { Breadcrumb } from "@/xapi/graphql/types";
 
 // TODO: move this logic to core level into the separated helper. Use it everywhere can be needful
 export default () => {

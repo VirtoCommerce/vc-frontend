@@ -542,10 +542,10 @@ import {
   ShipmentType,
   ShippingMethodType,
   ValidationErrorType,
-} from "@/core/api/graphql/types";
+} from "@/xapi/graphql/types";
 import { useUser, useUserAddresses } from "@/shared/account";
 import { AddressType } from "@/core/types";
-import { addGiftItems, rejectGiftItems } from "@core/api/graphql/cart";
+import { addGiftItems, rejectGiftItems } from "@/xapi/graphql/cart";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useElementVisibility } from "@core/composables";
 import { useNotifications } from "@/shared/notification";

@@ -72,7 +72,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUpdate, onMounted, PropType, ref } from "vue";
-import { OrderLineItemType, Product } from "@/core/api/graphql/types";
+import { OrderLineItemType, Product } from "@/xapi/graphql/types";
 import { VcPopup, VcButton, VcPagination, VcCheckbox } from "@/components";
 import { ProductCardReorder } from "@/shared/account";
 import _ from "lodash";
