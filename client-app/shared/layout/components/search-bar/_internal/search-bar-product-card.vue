@@ -42,6 +42,7 @@ import { computed, PropType } from "vue";
 import { VcImage, VcItemPrice } from "@/components";
 import { Product as ProductType } from "@/core/api/graphql/types";
 import { RouteLocationRaw } from "vue-router";
+import { getProductRoute } from "@/shared/catalog";
 
 defineEmits(["link-click"]);
 
@@ -52,5 +53,5 @@ const props = defineProps({
   },
 });
 
-const link = computed<RouteLocationRaw>(() => ({ name: "Product", params: { productId: props.product.id } }));
+const link = computed<RouteLocationRaw>(() => getProductRoute(props.product));
 </script>

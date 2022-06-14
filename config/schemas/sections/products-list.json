@@ -1,0 +1,6 @@
+{
+  "name": "Products list",
+  "icon": "image",
+  "displayNameProperty": "name",
+  "group": "Integration"
+}

@@ -1,0 +1,13 @@
+{
+  "icon": "text_fields",
+  "settings": [
+    {
+      "id": "header",
+      "type": "string"
+    },
+    {
+      "id": "text",
+      "type": "text"
+    }
+  ]
+}

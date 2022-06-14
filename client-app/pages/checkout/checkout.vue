@@ -1,39 +1,54 @@
 <template>
-  <template v-if="!showThankYou">
-    <EmptyCart v-if="cart.items && cart.items?.length === 0 && !showThankYou && !creatingOrder" />
+  <ThankYou v-if="showThankYouStep" :order="placedOrder!" />
+
+  <template v-else>
+    <VcEmptyPage
+      v-if="!cart.items?.length && !creatingOrder"
+      :title="$t('shared.checkout.empty_cart.title')"
+      :description="$t('shared.checkout.empty_cart.description')"
+      image="/static/images/errors/emptyCart.webp"
+      mobile-image="/static/images/errors/emptyCartMobile.webp"
+      :breadcrumbs="breadcrumbs"
+    >
+      <template #actions>
+        <VcButton :to="{ name: 'Catalog' }" size="lg" class="w-48 uppercase font-bold">
+          {{ $t("shared.checkout.empty_cart.continue_shopping_button") }}
+        </VcButton>
+      </template>
+    </VcEmptyPage>
 
     <div v-else class="bg-gray-100 pt-7 pb-8 shadow-inner">
-      <!-- Mobile sticky header -->
-      <div
-        v-if="isVisibleStickyMobileHeader"
-        class="fixed top-0 h-14 w-full z-40 px-5 md:px-12 flex justify-between items-center gap-x-3 bg-[color:var(--color-header-bottom-bg)]"
-      >
-        <div>
-          <h2 class="text-gray-800 font-extrabold uppercase leading-none mb-1.5" v-t="'pages.checkout.title'" />
+      <div class="max-w-screen-2xl md:px-12 mx-auto">
+        <!-- Mobile sticky header -->
+        <div
+          v-if="isVisibleStickyMobileHeader"
+          class="fixed top-0 h-14 w-full z-40 px-5 md:px-12 flex justify-between items-center gap-x-3 bg-[color:var(--color-header-bottom-bg)]"
+        >
+          <div>
+            <h2 class="text-gray-800 font-extrabold uppercase leading-none mb-1.5" v-t="'pages.checkout.title'" />
 
-          <div class="font-bold leading-none">
-            <span>{{ $t("shared.checkout.order_summary.total_label") }}:</span>
+            <div class="font-bold leading-none">
+              <span>{{ $t("shared.checkout.order_summary.total_label") }}:</span>
 
-            <span class="ml-1 text-green-700">
-              <VcPriceDisplay :value="cart.total" />
-            </span>
+              <span class="ml-1 text-green-700">
+                <VcPriceDisplay :value="cart.total" />
+              </span>
+            </div>
+          </div>
+
+          <div>
+            <VcButton
+              :is-disabled="!isValidCheckout"
+              :is-waiting="creatingOrder"
+              size="sm"
+              class="uppercase px-3"
+              @click="placeOrder"
+            >
+              {{ $t("pages.checkout.order_summary_block.place_order_button") }}
+            </VcButton>
           </div>
         </div>
 
-        <div>
-          <VcButton
-            :is-disabled="!isValidCheckout"
-            :is-waiting="creatingOrder"
-            size="sm"
-            class="uppercase px-3"
-            @click="createOrder"
-          >
-            {{ $t("pages.checkout.order_summary_block.place_order_button") }}
-          </VcButton>
-        </div>
-      </div>
-
-      <div class="max-w-screen-2xl md:px-12 mx-auto">
         <h2
           class="text-gray-800 px-5 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-7"
           v-t="'pages.checkout.title'"
@@ -58,6 +73,7 @@
                     </h3>
 
                     <VcButton
+                      :is-disabled="creatingOrder"
                       size="sm"
                       kind="secondary"
                       is-outline
@@ -77,28 +93,14 @@
                   :key="item?.id"
                   :ref="setProductCardRef"
                   :line-item="item"
+                  :read-only="creatingOrder"
                   @update:quantity="updateItemQuantity"
                   @remove:item="removeCartItem"
                   :validation-error="getItemValidationError(item?.id)"
                 />
 
-                <div class="py-8 lg:flex lg:items-center lg:px-5">
-                  <VcPagination
-                    v-if="pages > 1"
-                    v-model:page="page"
-                    :pages="pages"
-                    class="mb-3 lg:mb-0"
-                    @update:page="page = $event"
-                  />
-
-                  <p class="text-center text-sm lg:ml-auto">
-                    {{ $t("pages.checkout.products_section.update_all_link_label") }}
-                    <span
-                      class="text-[color:var(--color-link)] font-extrabold cursor-pointer"
-                      @click="updateAllItems"
-                      v-t="'pages.checkout.products_section.update_all_link'"
-                    ></span>
-                  </p>
+                <div v-if="pages > 1" class="py-8 lg:flex lg:items-center lg:px-5">
+                  <VcPagination v-model:page="page" :pages="pages" class="mb-3 lg:mb-0" />
                 </div>
               </div>
             </VcSection>
@@ -116,9 +118,18 @@
                   :key="gift.id"
                   class="border-b last:border-b-0 flex items-center justify-between px-7 py-6"
                 >
-                  <VcCheckbox class="mr-7" :model-value="checkGift(gift)" @change="toggleGift($event, gift)" />
+                  <VcCheckbox
+                    class="mr-7"
+                    :model-value="checkGift(gift)"
+                    :disabled="creatingOrder"
+                    @change="toggleGift($event, gift)"
+                  />
+
                   <VcImage :src="gift.imageUrl" class="mr-4 border aspect-square w-16 h-16" lazy />
-                  <div class="flex-grow font-bold text-[color:var(--color-link)]">{{ gift.name }}</div>
+
+                  <div class="flex-grow font-bold text-[color:var(--color-link)]">
+                    {{ gift.name }}
+                  </div>
                 </div>
               </div>
             </VcSection>
@@ -134,7 +145,7 @@
                   :label="$t('pages.checkout.shipping_details_section.shipping_address_block.title')"
                 >
                   <template v-if="shipment?.deliveryAddress">
-                    <div>
+                    <div class="truncate">
                       <span class="font-extrabold">
                         {{ shipment.deliveryAddress?.firstName }}
                         {{ shipment.deliveryAddress?.lastName }}
@@ -163,11 +174,12 @@
 
                     <div>
                       <VcButton
+                        :is-disabled="creatingOrder"
                         size="sm"
                         is-outline
                         class="px-3 self-start uppercase font-bold"
                         @click="
-                          isAuthenticated
+                          isAuthenticated && addresses.length > 0
                             ? selectShippingAddressDialog()
                             : addOrUpdateAddressDialog(AddressType.Shipping, shipment?.deliveryAddress)
                         "
@@ -200,7 +212,7 @@
                         is-outline
                         class="px-3 self-start uppercase font-bold"
                         @click="
-                          isAuthenticated
+                          isAuthenticated && addresses.length > 0
                             ? selectShippingAddressDialog()
                             : addOrUpdateAddressDialog(AddressType.Shipping)
                         "
@@ -233,12 +245,17 @@
 
                   <div>
                     <VcButton
+                      :is-disabled="creatingOrder"
                       size="sm"
                       is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="showShipmentMethodDialog"
                     >
-                      {{ $t("pages.checkout.shipping_details_section.shipping_method_block.change_button") }}
+                      {{
+                        shipment?.shipmentMethodCode
+                          ? $t("pages.checkout.shipping_details_section.shipping_method_block.change_button")
+                          : $t("pages.checkout.shipping_details_section.shipping_method_block.select_button")
+                      }}
                     </VcButton>
                   </div>
                 </CheckoutLabeledBlock>
@@ -255,6 +272,7 @@
                 <CheckoutLabeledBlock :label="$t('pages.checkout.payment_details_section.billing_address_block.title')">
                   <label class="flex items-center text-sm cursor-pointer">
                     <input
+                      :disabled="creatingOrder"
                       v-model="billingSameAsShipping"
                       type="checkbox"
                       class="form-tick appearance-none w-5 h-5 border-2 border-gray-300 rounded-sm checked:bg-[color:var(--color-primary)] checked:border-transparent focus:outline-none cursor-pointer"
@@ -296,7 +314,9 @@
                       is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="
-                        isAuthenticated ? selectBillingAddressDialog() : addOrUpdateAddressDialog(AddressType.Billing)
+                        isAuthenticated && addresses.length > 0
+                          ? selectBillingAddressDialog()
+                          : addOrUpdateAddressDialog(AddressType.Billing)
                       "
                     >
                       {{ $t("pages.checkout.payment_details_section.billing_address_block.add_address_button") }}
@@ -306,9 +326,9 @@
 
                 <div
                   v-else-if="!billingSameAsShipping && payment?.billingAddress"
-                  class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 mb-6 p-5 flex justify-between items-center text-sm"
+                  class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 mb-6 p-5 flex justify-between space-x-3 items-center text-sm"
                 >
-                  <div>
+                  <div class="truncate">
                     <span class="font-extrabold">
                       {{ payment.billingAddress?.firstName }}
                       {{ payment.billingAddress?.lastName }}
@@ -337,11 +357,12 @@
 
                   <div>
                     <VcButton
+                      :is-disabled="creatingOrder"
                       size="sm"
                       is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="
-                        isAuthenticated
+                        isAuthenticated && addresses.length > 0
                           ? selectBillingAddressDialog()
                           : addOrUpdateAddressDialog(AddressType.Billing, payment?.billingAddress)
                       "
@@ -367,12 +388,17 @@
 
                   <div>
                     <VcButton
+                      :is-disabled="creatingOrder"
                       size="sm"
                       is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="showPaymentMethodDialog"
                     >
-                      {{ $t("pages.checkout.payment_details_section.payment_method_block.change_button") }}
+                      {{
+                        payment?.paymentGatewayCode
+                          ? $t("pages.checkout.payment_details_section.payment_method_block.change_button")
+                          : $t("pages.checkout.payment_details_section.payment_method_block.select_button")
+                      }}
                     </VcButton>
                   </div>
                 </CheckoutLabeledBlock>
@@ -387,8 +413,16 @@
               class="shadow-inner pb-8 lg:shadow"
             >
               <div class="mx-5 xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6">
-                <p class="font-extrabold text-base mb-1" v-t="'pages.checkout.extra_section.comment_label'"></p>
-                <VcTextArea v-model="cartComment" class="resize-none" :rows="4" :max-length="1000" counter />
+                <p class="font-extrabold text-base mb-1" v-t="'pages.checkout.extra_section.comment_label'" />
+
+                <VcTextArea
+                  v-model="cartComment"
+                  :is-disabled="creatingOrder"
+                  :max-length="1000"
+                  :rows="4"
+                  class="resize-none"
+                  counter
+                />
               </div>
             </VcSection>
 
@@ -410,7 +444,7 @@
                   :label="$t('pages.checkout.order_summary_block.purchase_order_label')"
                   :placeholder="$t('pages.checkout.order_summary_block.purchase_order_placeholder')"
                   :is-applied="purchaseOrderNumberApplied"
-                  :is-disabled="loading"
+                  :is-disabled="loading || creatingOrder"
                   :max-length="128"
                   @click:apply="setPurchaseOrderNumber"
                   @click:deny="removePurchaseOrderNumber"
@@ -426,7 +460,7 @@
                   :placeholder="$t('pages.checkout.order_summary_block.promotion_code_placeholder')"
                   :is-applied="cartCouponApplied"
                   :error-message="couponValidationError"
-                  :is-disabled="loading"
+                  :is-disabled="loading || creatingOrder"
                   @click:apply="useCoupon"
                   @click:deny="removeCoupon"
                   @update:model-value="couponValidationError = ''"
@@ -445,7 +479,7 @@
                   class="uppercase w-full"
                   :is-disabled="!isValidCheckout"
                   :is-waiting="creatingOrder"
-                  @click="createOrder"
+                  @click="placeOrder"
                 >
                   {{ $t("pages.checkout.order_summary_block.place_order_button") }}
                 </VcButton>
@@ -464,16 +498,17 @@
       </div>
     </div>
   </template>
-
-  <ThankYou v-else :order="completedOrder" />
 </template>
 
 <script setup lang="ts">
+import { computed, onBeforeUpdate, onMounted, ref, shallowRef } from "vue";
+import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
+import _ from "lodash";
 import {
   CheckoutLabeledBlock,
   OrderSummary,
   ProductCard,
-  EmptyCart,
   ThankYou,
   ShippingMethodDialog,
   PaymentMethodDialog,
@@ -490,15 +525,17 @@ import {
   VcActionInput,
   VcSection,
   VcCheckbox,
+  VcEmptyPage,
+  IBreadcrumbs,
 } from "@/components";
 import { useCart, useCheckout } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
-import { computed, onBeforeUpdate, onMounted, ref, shallowRef } from "vue";
-import _ from "lodash";
 import {
   CartAddressType,
+  CustomerOrderType,
   GiftItemType,
   InputAddressType,
+  InputPaymentType,
   MemberAddressType,
   PaymentMethodType,
   PaymentType,
@@ -509,12 +546,14 @@ import {
 import { useUser, useUserAddresses } from "@/shared/account";
 import { AddressType } from "@/core/types";
 import { addGiftItems, rejectGiftItems } from "@core/api/graphql/cart";
-import { useI18n } from "vue-i18n";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useElementVisibility } from "@core/composables";
+import { useNotifications } from "@/shared/notification";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { me: user, isAuthenticated } = useUser();
+const notifications = useNotifications();
+const router = useRouter();
+const { user, isAuthenticated } = useUser();
 const {
   loading,
   cart,
@@ -543,14 +582,14 @@ const {
   loading: loadingAddresses,
 } = useUserAddresses({ user });
 
-const { placeOrder } = useCheckout();
+const { createOrder } = useCheckout();
 const { openPopup, closePopup } = usePopup();
 
 const isMobile = breakpoints.smaller("lg");
 const productCardRefs = ref<InstanceType<typeof ProductCard>[]>([]);
+const placedOrder = shallowRef<CustomerOrderType | null>(null);
 const creatingOrder = ref(false);
-const completedOrder = ref({});
-const showThankYou = ref(false);
+const showThankYouStep = ref(false);
 const cartComment = ref("");
 const cartCoupon = ref("");
 const couponValidationError = ref("");
@@ -587,17 +626,16 @@ const isValidPayment = computed(
   () => payment.value?.paymentGatewayCode && (billingSameAsShipping.value || payment.value?.billingAddress)
 );
 
+const breadcrumbs: IBreadcrumbs[] = [
+  { title: t("common.links.home"), route: { name: "Home" } },
+  { title: t("common.links.cart"), route: { name: "Cart" } },
+];
+
 //TODO: change 'any' for a normal type
 const setProductCardRef = (el: any) => {
   if (el) {
     productCardRefs.value.push(el);
   }
-};
-
-const updateAllItems = () => {
-  _.each(productCardRefs.value, (productCard) => {
-    productCard.updateQuantity();
-  });
 };
 
 const updateItemQuantity = async (id: string, quantity: number) => {
@@ -637,34 +675,63 @@ const removePurchaseOrderNumber = async () => {
   await updatePurchaseOrderNumber("");
 };
 
-const createOrder = async () => {
-  creatingOrder.value = true;
+async function prepareOrderData() {
+  // Update payment with required properties
+  const filledPayment: InputPaymentType = {
+    id: payment.value!.id,
+    amount: cart.value.total!.amount, // required
+  };
 
-  if (cartComment.value) {
-    await changeComment(cartComment.value);
+  // Save shipping address as billing address
+  if (billingSameAsShipping.value) {
+    filledPayment.billingAddress = { ...shipment.value!.deliveryAddress };
   }
 
-  if (billingSameAsShipping.value) {
-    await updatePayment({
-      id: payment.value?.id,
-      billingAddress: { ...shipment.value?.deliveryAddress },
+  await updatePayment(filledPayment, false);
+
+  // Save order comment
+  if (cartComment.value) {
+    await changeComment(cartComment.value, false);
+  }
+
+  // Parallel saving of new addresses in account. Before cleaning shopping cart
+  if (isAuthenticated.value) {
+    saveNewAddressesInAccount({
+      shipmentAddress: shipment.value!.deliveryAddress,
+      billingAddress: payment.value!.billingAddress,
     });
   }
+}
 
-  const order = await placeOrder(cart.value.id!, false);
+async function placeOrder() {
+  creatingOrder.value = true;
 
-  if (!order) {
+  await prepareOrderData();
+
+  placedOrder.value = await createOrder(cart.value.id!, false);
+
+  if (!placedOrder.value) {
     creatingOrder.value = false;
+
+    notifications.error({
+      text: t("common.messages.creating_order_error"),
+      duration: 15000,
+      single: true,
+    });
+
     return;
   }
 
-  await saveNewAddressesInAccount();
-  await loadMyCart();
+  loadMyCart();
 
-  completedOrder.value = order;
-  showThankYou.value = true;
+  if (isAuthenticated.value) {
+    await router.push({ name: "OrderDetails", params: { orderId: placedOrder.value.id, new: "true" } });
+  } else {
+    showThankYouStep.value = true;
+  }
+
   creatingOrder.value = false;
-};
+}
 
 onBeforeUpdate(() => {
   productCardRefs.value = [];
@@ -688,12 +755,13 @@ function getItemValidationError(lineItemId: string): ValidationErrorType | undef
   return _.find(cart.value.validationErrors, (error) => error.objectId === lineItemId);
 }
 
-async function saveNewAddressesInAccount() {
+async function saveNewAddressesInAccount(payload: {
+  shipmentAddress?: CartAddressType;
+  billingAddress?: CartAddressType;
+}) {
   if (!isAuthenticated.value) return;
 
-  const shipmentAddress = shipment.value?.deliveryAddress;
-  const billingAddress = payment.value?.billingAddress;
-
+  const { shipmentAddress, billingAddress } = payload;
   const newAddresses: MemberAddressType[] = [];
 
   if (shipmentAddress && !isExistAddress(shipmentAddress)) {

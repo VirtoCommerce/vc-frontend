@@ -9,11 +9,11 @@
       "type" : "namespaced",
       "translationsDirectory" : "$PROJECT_DIR$/locales",
       "fileType" : "json",
-      "defaultLocale" : "en-US",
+      "defaultLocale" : "en",
       "namespaces" : [ "messages" ],
       "outputFilenameTemplate" : "%locale%.json",
       "nestingType" : "DOT",
-      "placeholderFormatterName" : "ICU"
+      "placeholderFormatterName" : "I18NEXT"
     },
     "sources" : [ {
       "id" : "ea57a1b2-8ca1-4f5f-802a-0db073293e30",

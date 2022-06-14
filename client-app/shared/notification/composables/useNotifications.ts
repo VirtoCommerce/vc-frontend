@@ -41,7 +41,9 @@ function open(options: INotificationExtended): CloseNotificationHandle {
 function close(id: string) {
   const index = stack.value.findIndex((item) => item.id === id);
 
-  if (index === -1) return;
+  if (index === -1) {
+    return;
+  }
 
   const { autoCloseTimeout } = stack.value[index];
 

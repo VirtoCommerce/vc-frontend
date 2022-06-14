@@ -1,12 +1,13 @@
 import client from "@core/api/graphql/graphql-client";
 import { ProductConnection, Query, QueryProductsArgs } from "@core/api/graphql/types";
-import { currencyCode, currentUserId, locale, storeId, catalogId, defaultPageSize } from "@core/constants";
+import { DEFAULT_PAGE_SIZE } from "@core/constants";
 import searchProductsQueryDocument from "./searchProductsQuery.graphql";
 import { ProductsSearchParams } from "@/shared/catalog";
+import globals from "@core/globals";
 
 export default async function searchProducts(
   {
-    itemsPerPage = defaultPageSize,
+    itemsPerPage = DEFAULT_PAGE_SIZE,
     page = 1,
     categoryId,
     filter,
@@ -21,6 +22,7 @@ export default async function searchProducts(
     withFacets?: boolean;
   } = {}
 ): Promise<ProductConnection> {
+  const { storeId, catalogId, userId, cultureName, currencyCode } = globals;
   const { withFacets = false } = options;
   const filterString = [`category.subtree:${catalogId}${categoryId ? "/" + categoryId : ""}`, filter]
     .filter(Boolean)
@@ -30,15 +32,15 @@ export default async function searchProducts(
     query: searchProductsQueryDocument,
     variables: {
       storeId,
+      userId,
+      cultureName,
+      currencyCode,
       sort,
       fuzzy,
       fuzzyLevel,
       withFacets,
       query: keyword,
-      userId: currentUserId,
-      currencyCode: currencyCode,
       filter: filterString,
-      cultureName: locale,
       first: itemsPerPage,
       after: String((page - 1) * itemsPerPage),
       productIds,

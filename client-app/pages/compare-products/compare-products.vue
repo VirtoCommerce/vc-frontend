@@ -1,8 +1,20 @@
 <template>
-  <div class="bg-gray-100 pt-7 pb-16 shadow-inner grow">
-    <EmptyComparison v-if="!productsIds.length"></EmptyComparison>
-
-    <div class="w-full md:max-w-screen-2xl md:px-12 mx-auto" v-else>
+  <div class="bg-gray-100 pb-16 shadow-inner grow">
+    <VcEmptyPage
+      v-if="!productsIds.length"
+      :breadcrumbs="breadcrumbs"
+      :title="$t('pages.compare.empty_list.title')"
+      :description="$t('pages.compare.empty_list.message')"
+      image="/static/images/errors/emptyCompareList.webp"
+      mobile-image="/static/images/errors/emptyCompareListMobile.webp"
+    >
+      <template #actions>
+        <VcButton :to="{ name: 'Catalog' }" size="lg" class="p-4 uppercase font-bold">
+          {{ $t("pages.compare.empty_list.button_text") }}
+        </VcButton>
+      </template>
+    </VcEmptyPage>
+    <div class="w-full md:max-w-screen-2xl md:px-12 mx-auto pt-7" v-else>
       <!-- Page header -->
       <VcBreadcrumbs :items="breadcrumbs" class="mb-3 px-5 md:px-0"></VcBreadcrumbs>
       <div class="flex flex-col lg:flex-row lg:space-x-12 px-5 md:px-0 lg:mb-5">
@@ -39,7 +51,7 @@
             class="w-32 flex-shrink-0 lg:flex-shrink md:w-48 md:pb-6 flex flex-col"
           >
             <!-- Product image -->
-            <router-link :to="{ name: 'Product', params: { productId: product.id } }" class="cursor-pointer mb-3">
+            <router-link :to="productsRoutes[product.id]" class="cursor-pointer mb-3">
               <div
                 class="flex flex-col justify-center items-center border border-gray-100 h-32 w-32 md:h-48 md:w-48 relative"
               >
@@ -62,7 +74,7 @@
 
             <!-- Product title -->
             <router-link
-              :to="{ name: 'Product', params: { productId: product.id } }"
+              :to="productsRoutes[product.id]"
               class="text-[color:var(--color-link)] font-extrabold text-sm mb-3 flex-grow line-clamp-3 overflow-hidden cursor-pointer"
             >
               {{ product.name }}
@@ -122,8 +134,9 @@ import {
   VcImage,
   VcItemPrice,
   IProductProperties,
+  VcEmptyPage,
 } from "@/components";
-import { EmptyComparison, useProducts } from "@/shared/catalog";
+import { useProducts, useProductsRoutes } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 import _ from "lodash";
 import { onMounted, ref, watch } from "vue";
@@ -131,14 +144,16 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useCompareProducts } from "@/shared/compare";
 import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 const { fetchProducts, products } = useProducts();
 const { clearCompareList, productsLimit, removeFromCompareList, productsIds } = useCompareProducts();
-const { t } = useI18n();
 
-const breadcrumbs = ref<IBreadcrumbs[]>([
+const productsRoutes = useProductsRoutes(products);
+
+const breadcrumbs: IBreadcrumbs[] = [
   { title: t("pages.compare.links.home"), route: "/" },
-  { title: t("pages.compare.links.compare_products"), route: "/compare-products" },
-]);
+  { title: t("pages.compare.links.compare_products") },
+];
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");

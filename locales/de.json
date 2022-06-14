@@ -55,7 +55,8 @@
       "product_out_of_stock": "Ausverkauft",
       "required_field": "Dieses Feld wird benötigt",
       "email_is_not_correct": "Geben Sie bitte die richtige E-Mail-Adresse ein (ex. john{'@'}gmail.com)",
-      "max_length": "Dieses Feld darf höchstens {max} Zeichen lang sein"
+      "max_length": "Dieses Feld darf höchstens {max} Zeichen lang sein",
+      "creating_order_error": "Fehler beim Anlegen eines Auftrags"
     },
     "placeholders": {
       "not_selected": "Nicht ausgewählt"
@@ -69,7 +70,8 @@
       "orders": "Aufträge",
       "your_lists": "Ihre Listen",
       "checkout_defaults": "Checkout-Standardwerte",
-      "list_details": "Details auflisten"
+      "list_details": "Details auflisten",
+      "cart": "Wagen"
     }
   },
   "shared": {
@@ -131,6 +133,7 @@
         "rebates_link": "Rebates",
         "replacement_parts_link": "Replacement Parts",
         "demo_landing_link": "Demo landing",
+        "demo_page_link": "Demo page",
         "all_rights_reserved": "All Rights Reserved.",
         "asp_net_e_commerce_platform": "ASP.NET e-commerce platform  {0}",
         "by_virto": "by Virto"
@@ -277,7 +280,6 @@
       },
       "product_card": {
         "product_sku_label": "@:common.labels.sku",
-        "manufacture_model_label": "Mfr. model #",
         "price_label": "@:common.labels.product_price"
       },
       "product_details": {
@@ -303,11 +305,15 @@
         "price_label": "@:common.labels.price{':'}",
         "total_label": "@:common.labels.total{':'}",
         "update_button": "@:common.buttons.update",
-        "remove_button": "@:common.buttons.remove"
+        "remove_button": "@:common.buttons.remove",
+        "errors": {
+          "product_price_changed": "The product price is changed the new price is {0}"
+        }
       },
       "empty_cart": {
-        "header": "Your cart is empty",
-        "continue_shopping_button": "@:common.buttons.continue_shopping_button"
+        "description": "Your cart is empty",
+        "continue_shopping_button": "@:common.buttons.continue_shopping_button",
+        "title": "Cart"
       },
       "accepted_gifts": {
         "gift_label": "Gift",
@@ -406,6 +412,42 @@
         "add_to_cart_button": "@:common.buttons.add_to_cart"
       }
     },
+    "payment": {
+      "bank_card_form": {
+        "number_label": "Card number",
+        "cardholder_name_label": "Cardholder name",
+        "month_label": "Expiry Month",
+        "month_placeholder": "MM",
+        "year_label": "Expiry Year",
+        "year_placeholder": "YY",
+        "security_code_label": "Security Code"
+      },
+      "authorize_net": {
+        "header": "Payment method",
+        "bank_card_title": "Credit Card",
+        "user_agreement_link": "User Agreement",
+        "privacy_policy_link": "Privacy Policy",
+        "accept_terms_text": "By placing an order, you accept the terms of",
+        "processing_personal_data_text": "and consent to the processing of personal data according to the",
+        "pay_now_button": "Pay Now",
+        "errors": {
+          "number": "Please provide valid credit card number",
+          "month": "Please provide valid expiration month",
+          "year": "Please provide valid expiration year",
+          "security_code": "Please provide valid security code",
+          "cardholder_name": "Please provide valid card holder name",
+          "try_again": "An error occurred during processing. Please try again"
+        }
+      },
+      "payment_success": {
+        "title": "Payment successful",
+        "text": "Thank you, we are checking your payment. The order will be shipped after we receive your payment."
+      },
+      "payment_failure": {
+        "title": "Payment failed",
+        "text": "There is a problem with your payment, try again please."
+      }
+    },
     "wishlists": {
       "list_card": {
         "quantity_label": "Products Qty",
@@ -416,7 +458,9 @@
       "list_details": {
         "add_all_to_cart_button": "Add all products to cart",
         "list_settings_button": "List settings",
-        "empty_list": "Your list is currently empty"
+        "empty_list": "Your list is currently empty",
+        "empty_list_button": "Continue browsing",
+        "list_icon": "List icon"
       },
       "add_to_wishlists_dialog": {
         "title": "Please select list",
@@ -560,6 +604,7 @@
         "phone_label": "@:common.labels.phone",
         "email_label": "@:common.labels.email",
         "no_addresses_message": "There are no addresses yet",
+        "addresses_icon": "Addresses icon",
         "new_address_title": "New address",
         "addresses_title": "Addresses",
         "actions_label": "@:common.labels.actions",
@@ -617,10 +662,13 @@
         "date_label": "@:common.labels.date",
         "total_label": "@:common.labels.total",
         "no_orders_img_alt": "No orders",
-        "no_orders_message": "There are no orders yet"
+        "no_orders_message": "There are no results found",
+        "no_orders_button": "Reset search",
+        "orders_icon": "Orders icon"
       },
       "order_details": {
         "title": "Order #{0}",
+        "created_title": "Order completed",
         "status_label": "@:common.labels.status{':'} ",
         "placed_on_label": "Placed on: ",
         "products_section": {
@@ -629,6 +677,7 @@
         "order_comment_section": {
           "title": "Order comment"
         },
+        "pay_now_button": "Pay Now",
         "reorder_all_button": "Reorder all",
         "shipping_address_card": {
           "title": "Shipping address",
@@ -650,13 +699,24 @@
           "email_label": "@:common.labels.email{':'}"
         }
       },
+      "order_payment": {
+        "title": "Payment information",
+        "breadcrumb_title": "Payment",
+        "processed_title": "@:pages.account.order_details.title",
+        "loading_text": "Loading...",
+        "back_to_order_button": "Back to Order",
+        "orders_list_button": "Orders List",
+        "try_again_button": "Try again"
+      },
       "your_lists": {
         "no_lists": "You don't have any lists created",
         "create_list_button": "Create list",
-        "create_list_button_mobile": "Create"
+        "create_list_button_mobile": "Create",
+        "lists_icon": "Lists icon"
       },
       "profile": {
         "title": "Profile",
+        "change_password_title": "Change Password",
         "update_error_alert": "There was an error during profile update",
         "first_name_label": "@:common.labels.first_name",
         "first_name_placeholder": "@:common.labels.first_name",
@@ -664,7 +724,18 @@
         "last_name_placeholder": "@:common.labels.last_name",
         "email_label": "@:common.labels.email",
         "email_placeholder": "@:common.labels.email",
-        "update_button": "@:common.buttons.update"
+        "old_password_label": "Old Password",
+        "old_password_placeholder": "Enter old password",
+        "new_password_label": "New Password",
+        "new_password_placeholder": "Enter new password",
+        "confirm_new_password_label": "Confirm New Password",
+        "confirm_new_password_placeholder": "Repeat new password",
+        "update_button": "@:common.buttons.update",
+        "errors": {
+          "password_mismatch": "Incorrect old password",
+          "passwords_do_not_match": "Passwords do not match",
+          "password_new_same_old": "Old password and new password should be different"
+        }
       }
     },
     "catalog": {
@@ -689,7 +760,12 @@
       "products_found_message2": "{0} displayed that include {1} products.",
       "filters_button": "@:common.buttons.filters",
       "sort_by_label": "@:common.labels.sort_by",
-      "choose_button": "@:common.buttons.choose"
+      "choose_button": "@:common.buttons.choose",
+      "reset_filters_button": "Reset filters",
+      "no_products_message": "There are no products in this category",
+      "no_products_filtered_message": "There are no results found",
+      "no_products_button": "Reset search",
+      "products_icon": "Products icon"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
@@ -727,7 +803,8 @@
         "shipping_method_block": {
           "title": "Shipping method",
           "not_defined_message": "Not defined",
-          "change_button": "Change"
+          "change_button": "@:common.buttons.change",
+          "select_button": "@:common.buttons.select"
         }
       },
       "payment_details_section": {
@@ -745,7 +822,8 @@
         "payment_method_block": {
           "title": "Payment method",
           "not_defined_message": "Not defined",
-          "change_button": "Change"
+          "change_button": "@:common.buttons.change",
+          "select_button": "@:common.buttons.select"
         }
       },
       "extra_section": {
@@ -763,7 +841,8 @@
         "warning_message": "Availability, shipping, tax & promotions are not final until you complete your order.",
         "place_order_button": "Place order"
       },
-      "invalid_coupon_message": "This code did not match any active coupon. Was it entered correctly?"
+      "invalid_coupon_message": "This code did not match any active coupon. Was it entered correctly?",
+      "go_to_payment_button": "Pay now"
     },
     "search": {
       "header": "Your search for \"<strong>{0}</strong>\" revealed the following",
@@ -833,7 +912,7 @@
     "compare": {
       "empty_list": {
         "title": "Compare products",
-        "message": "Your product compare list is currently empty",
+        "message": "Your product compare list is empty",
         "button_text": "Continue browsing here",
         "img_alt": "emptyCart",
         "img_alt_mobile": "emptyCartMobile"

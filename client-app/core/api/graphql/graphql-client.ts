@@ -1,11 +1,26 @@
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { ApolloClient } from "apollo-client";
 import { HttpLink } from "apollo-link-http";
+import { onError } from "apollo-link-error";
+import _ from "lodash";
+
 const fetchPolicy = "no-cache";
+
+const httpLink = new HttpLink({ uri: `/xapi/graphql` });
+
+const errorHandler = onError(({ graphQLErrors }) => {
+  if (graphQLErrors && graphQLErrors.length) {
+    const unauthorizedError = _.find(graphQLErrors, (x) => x.extensions?.code === "Unauthorized");
+    if (unauthorizedError) {
+      const { hash, pathname, search } = location;
+      location.href = `/sign-in?redirect=${pathname + search + hash}`;
+    }
+  }
+});
 
 const graphqlClient = new ApolloClient({
   // Provide required constructor fields
-  link: new HttpLink({ uri: `/xapi/graphql` }),
+  link: errorHandler.concat(httpLink),
   cache: new InMemoryCache({
     freezeResults: true,
     addTypename: false,
@@ -20,7 +35,7 @@ const graphqlClient = new ApolloClient({
   defaultOptions: {
     watchQuery: { fetchPolicy },
     query: { fetchPolicy },
-    // mutate: { fetchPolicy },
+    mutate: { fetchPolicy },
   },
 });
 

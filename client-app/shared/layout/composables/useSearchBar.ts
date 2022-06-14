@@ -17,6 +17,8 @@ const searchPhraseOfUploadedResults = ref("");
 const categories = shallowRef<Category[]>([]);
 const products = shallowRef<Product[]>([]);
 const total = ref(0);
+const DEFAULT_ANIM_DURATION = 300;
+const DEFAULT_DROPDOWN_DURATION = 200;
 
 export default (
   options: {
@@ -26,10 +28,12 @@ export default (
     dropdownAnimationDuration?: MaybeRef<number>;
   } = {}
 ) => {
-  const { animationDuration = 300, dropdownAnimationDuration = 200 } = options;
+  const { animationDuration = DEFAULT_ANIM_DURATION, dropdownAnimationDuration = DEFAULT_DROPDOWN_DURATION } = options;
 
   async function showSearchDropdown(): Promise<void> {
-    if (searchDropdownVisible.value) return;
+    if (searchDropdownVisible.value) {
+      return;
+    }
     searchDropdownVisible.value = true;
     await sleep(unref(dropdownAnimationDuration));
   }
@@ -42,7 +46,7 @@ export default (
     }
 
     if (!searchDropdownVisible.value) {
-      return;
+      return Promise.resolve();
     }
 
     searchDropdownVisible.value = false;
@@ -54,7 +58,9 @@ export default (
   }
 
   async function showSearchBar(): Promise<void> {
-    if (searchBarVisible.value) return;
+    if (searchBarVisible.value) {
+      return;
+    }
     searchBarVisible.value = true;
     await sleep(unref(animationDuration));
   }

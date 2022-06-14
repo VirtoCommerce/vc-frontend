@@ -55,17 +55,20 @@
   </div>
 </template>
 <script setup lang="ts">
+import { inject } from "vue";
 import { VcCheckbox, VcDateSelector, VcButton } from "@/components";
-import { cfg } from "@/core/utilities";
+import { configInjectionKey } from "@core/injection-keys";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useUserOrdersFilter } from "@/shared/account/";
+
+const config = inject(configInjectionKey);
 
 const { filterData, applyFilters, resetFilters, isFilterEmpty, isFilterDirty } = useUserOrdersFilter();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 
-const availableStatuses = cfg?.orders_statuses || [];
+const availableStatuses = config?.orders_statuses || [];
 
 function isSelectedStatus(status: string) {
   return filterData.value.statuses.indexOf(status) !== -1;

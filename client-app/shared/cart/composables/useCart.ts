@@ -22,10 +22,12 @@ import { useUserCheckoutDefaults } from "@/shared/account";
 import changePurchaseOrderNumber from "@/core/api/graphql/cart/mutations/changePurchaseOrderNumber";
 import { CartItemType } from "../types";
 
+const DEFAULT_ITEMS_PER_PAGE = 6;
+
 const loading: Ref<boolean> = ref(true);
 const cart: Ref<CartType> = ref({ name: "" });
 const pages: Ref<number> = ref(0);
-const itemsPerPage: Ref<number> = ref(6);
+const itemsPerPage: Ref<number> = ref(DEFAULT_ITEMS_PER_PAGE);
 
 export default () => {
   const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
@@ -116,7 +118,7 @@ export default () => {
 
     try {
       result = await addBulkItemsToCart(payload);
-    } catch (e: any) {
+    } catch (e) {
       Logger.error(`useCart.${addItemsToCart.name}`, e);
       throw e;
     } finally {
@@ -211,9 +213,9 @@ export default () => {
     await loadMyCart();
   }
 
-  async function changeComment(comment: string) {
+  async function changeComment(comment: string, reloadCart = true) {
     loading.value = true;
-    console.log(`change cart comment ${comment}`);
+
     try {
       await changeCartComment(comment);
     } catch (e) {
@@ -222,7 +224,10 @@ export default () => {
     } finally {
       loading.value = false;
     }
-    await loadMyCart();
+
+    if (reloadCart) {
+      await loadMyCart();
+    }
   }
 
   async function updateShipment(shipment: InputShipmentType) {
@@ -239,9 +244,9 @@ export default () => {
     await loadMyCart();
   }
 
-  async function updatePayment(payment: InputPaymentType) {
+  async function updatePayment(payment: InputPaymentType, reloadCart = true) {
     loading.value = true;
-    console.log(`change cart payment details`);
+
     try {
       await addOrUpdateCartPayment(payment);
     } catch (e) {
@@ -250,7 +255,10 @@ export default () => {
     } finally {
       loading.value = false;
     }
-    await loadMyCart();
+
+    if (reloadCart) {
+      await loadMyCart();
+    }
   }
 
   function itemInCart(productId: string): LineItemType | undefined {
@@ -268,9 +276,7 @@ export default () => {
       .map((x) => x as LineItemType)
       .value();
 
-    const result = _.sumBy(filteredItems, (x) => x.extendedPrice?.amount);
-
-    return result;
+    return _.sumBy(filteredItems, (x) => x.extendedPrice?.amount);
   }
 
   return {

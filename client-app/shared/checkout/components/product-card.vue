@@ -14,15 +14,12 @@
       <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center flex-1">
         <div class="mb-3 lg:mb-0 text-sm xl:w-1/2">
           <div class="mb-1">
-            <router-link
-              :to="`/${SeoUrl.Product}/${productId}`"
-              class="text-[color:var(--color-link)] font-extrabold line-clamp-3 overflow-hidden"
-            >
+            <router-link :to="link" class="text-[color:var(--color-link)] font-extrabold line-clamp-3 overflow-hidden">
               {{ lineItem.name }}
             </router-link>
             <div class="flex items-center space-x-1 py-1" v-if="validationError">
               <i class="fas fa-exclamation-circle text-[color:var(--color-primary)]"></i>
-              <span class="text-xs text-gray-400"> {{ validationError.errorMessage }} </span>
+              <span class="text-xs text-gray-400"> {{ itemErrorMessage }} </span>
             </div>
           </div>
           <div class="flex flex-col space-y-1 lg:space-y-0">
@@ -69,8 +66,10 @@
                 'border-[color:var(--color-danger)]': errorMessage,
               }"
               :disabled="isInputDisabled || readOnly"
+              @change="updateQuantity"
               @input="onInput"
               @keypress="onKeypress"
+              @keyup.enter="updateQuantity"
             />
             <div v-if="!readOnly">
               <div v-if="!isInputDisabled" class="flex items-center">
@@ -87,17 +86,7 @@
             </div>
           </div>
 
-          <div v-if="!readOnly" class="lg:hidden flex flex-row space-x-2">
-            <VcButton
-              v-if="!isInputDisabled"
-              size="sm"
-              is-outline
-              class="uppercase px-2 font-bold"
-              @click="updateQuantity"
-            >
-              {{ $t("shared.checkout.product_card.update_button") }}
-            </VcButton>
-
+          <div v-if="!readOnly" class="lg:hidden">
             <VcButton
               size="sm"
               kind="secondary"
@@ -110,19 +99,16 @@
           </div>
           <div
             v-if="!readOnly"
-            class="hidden lg:flex xl:w-1/4 flex-col space-y-1 text-xs font-semibold text-[color:var(--color-link)]"
+            class="hidden lg:flex flex-col justify-center h-10 xl:w-1/4 text-xs font-semibold text-[color:var(--color-link)]"
           >
-            <span
-              v-if="!isInputDisabled"
-              class="cursor-pointer"
-              @click="updateQuantity"
-              v-t="'shared.checkout.product_card.update_button'"
-            ></span>
-            <span
-              class="cursor-pointer"
+            <button
+              type="button"
+              :title="$t('shared.checkout.product_card.remove_button')"
+              class="h-7 w-7 shadow rounded text-[color:var(--color-danger)] hover:bg-gray-100"
               @click="$emit('remove:item', lineItem.id)"
-              v-t="'shared.checkout.product_card.remove_button'"
-            ></span>
+            >
+              <i class="fas fa-times" />
+            </button>
           </div>
           <div class="hidden lg:flex lg:w-28 lg:shrink-0 xl:w-2/4 lg:items-end flex-col text-sm font-extrabold pr-3">
             <span class="text-black self-end" v-t="'shared.checkout.product_card.total_label'"></span>
@@ -141,9 +127,12 @@ import { computed, PropType } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useField } from "vee-validate";
 import * as yup from "yup";
-import SeoUrl from "@core/seo-routes.enum";
+import { useI18n } from "vue-i18n";
+import { RouteLocationRaw } from "vue-router";
+import { getProductRoute } from "@/shared/catalog";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
+const { t } = useI18n();
 
 const isMobile = breakpoints.smaller("lg");
 
@@ -174,7 +163,19 @@ const maxQty = computed(
   () => (variation.value ? variation.value?.maxQuantity : props.lineItem.product?.maxQuantity) || max
 );
 
-const productId = computed(() => props.lineItem.product?.masterVariation?.id || props.lineItem.productId);
+const link = computed<RouteLocationRaw>(() =>
+  getProductRoute(props.lineItem.product!.masterVariation || props.lineItem.product!)
+);
+
+const itemErrorMessage = computed(() => {
+  if (props.validationError?.errorCode === "PRODUCT_PRICE_CHANGED") {
+    return t("shared.checkout.product_card.errors.product_price_changed", [
+      Number(props.validationError.errorParameters?.find((error) => error.key === "new_price")?.value).toFixed(2),
+    ]);
+  } else {
+    return props.validationError?.errorMessage;
+  }
+});
 
 let rules = yup.number().integer().optional().moreThan(0);
 rules = rules.min(minQty.value);
@@ -204,7 +205,7 @@ defineExpose({ updateQuantity });
  * Ignore non-numeric keys.
  */
 const onKeypress = (event: KeyboardEvent) => {
-  if (!/[0-9]/.test(event.key)) {
+  if (!/[0-9]/.test(event.key) && event.key !== "Enter") {
     event.preventDefault();
   }
 };

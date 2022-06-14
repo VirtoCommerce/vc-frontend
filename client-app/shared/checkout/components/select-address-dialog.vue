@@ -43,7 +43,7 @@
     <VcTable :columns="columns" :items="paginatedAddresses" :pages="pages" :page="page" @pageChanged="onPageChange">
       <template #mobile-item="itemData">
         <div class="flex items-center space-x-3 p-6 border-b border-gray-200">
-          <div class="w-1/2 flex-grow">
+          <div class="w-1/2 flex-grow truncate">
             <span class="font-bold text-base">{{ itemData.item.firstName }} {{ itemData.item.lastName }}</span>
             <p class="text-sm">
               {{ itemData.item.countryCode }} {{ itemData.item.regionName }} {{ itemData.item.city }}
@@ -79,13 +79,13 @@
 
       <template #desktop-body>
         <tr v-for="(address, index) in paginatedAddresses" :key="address.id" :class="{ 'bg-gray-50': index % 2 }">
-          <td class="p-5">{{ address.firstName }} {{ address.lastName }}</td>
-          <td class="p-5">
+          <td class="p-5 truncate">{{ address.firstName }} {{ address.lastName }}</td>
+          <td class="p-5 truncate">
             {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
             {{ address.postalCode }}
           </td>
-          <td class="p-5">{{ address.phone }}</td>
-          <td class="p-5">{{ address.email }}</td>
+          <td class="p-5 truncate">{{ address.phone }}</td>
+          <td class="p-5 truncate">{{ address.email }}</td>
           <td v-if="address.id === selectedAddress?.id" class="p-5">
             <div class="flex items-center justify-center mx-auto rounded-full w-6 h-6 bg-green-600 text-white text-sm">
               <i class="fas fa-check"></i>

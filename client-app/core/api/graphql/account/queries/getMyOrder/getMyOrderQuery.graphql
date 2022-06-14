@@ -58,11 +58,15 @@ query GetMyOrder($id: String, $number: String, $cultureName: String) {
       }
     }
     inPayments {
-      gatewayCode
+      id
       number
+      isApproved
+      gatewayCode
       paymentMethod {
         logoUrl
         typeName
+        paymentMethodType
+        paymentMethodGroupType
       }
       billingAddress {
         ...orderAddressFields

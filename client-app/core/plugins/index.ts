@@ -1,3 +1,2 @@
-export { default as config } from "./config";
-export { default as context } from "./context";
-export { default as menu } from "./menu";
+export { default as configPlugin } from "./configPlugin";
+export { default as contextPlugin } from "./contextPlugin";

@@ -16,16 +16,19 @@ query Categories(
   ) {
     items {
       id
-      parent {
-        id
-      }
       name
       code
       slug
-      path
       outline
+      parent {
+        id
+      }
       seoInfo {
         semanticUrl
+      }
+      breadcrumbs {
+        title
+        seoPath
       }
     }
     totalCount

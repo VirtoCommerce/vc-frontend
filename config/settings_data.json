@@ -6,6 +6,8 @@
       "product_compare_limit": 5,
       "wishlists_limit": 10,
 
+      "search_min_chars": 3,
+
       "checkout_comment_enabled": true,
       "checkout_purchase_order_enabled": true,
       "checkout_coupon_enabled": true,
@@ -13,7 +15,7 @@
 
       "logo_image": "/static/images/common/logo.svg",
       "logo_inverted_image": "/static/images/common/logo-white.svg",
-      "favicon_image": null,
+      "favicon_image": "/static/icons/favicon-16x16.png",
 
       "orders_statuses": ["New", "Processing", "Pending", "Cancelled", "Completed"],
 

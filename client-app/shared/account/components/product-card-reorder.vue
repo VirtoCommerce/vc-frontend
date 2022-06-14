@@ -14,7 +14,7 @@
         </div>
         <div class="text-sm">
           <router-link
-            :to="`/${SeoUrl.Product}/${productItem.id}`"
+            :to="link"
             class="text-[color:var(--color-link)] font-extrabold line-clamp-3 overflow-hidden"
             @click="$emit('close-popup')"
           >
@@ -120,7 +120,7 @@
       <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center flex-1">
         <div class="mb-3 lg:mb-0 text-sm xl:w-1/2">
           <router-link
-            :to="`/${SeoUrl.Product}/${productItem.id}`"
+            :to="link"
             class="text-[color:var(--color-link)] font-extrabold line-clamp-3 overflow-hidden"
             @click="$emit('close-popup')"
           >
@@ -217,10 +217,11 @@ import { VcImage } from "@/components";
 import { computed, PropType } from "vue";
 import { useField } from "vee-validate";
 import * as yup from "yup";
-import SeoUrl from "@core/seo-routes.enum";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useCart } from "@/shared/cart";
-import { Product as ProductType } from "@/core/api/graphql/types";
+import { Product } from "@/core/api/graphql/types";
+import { RouteLocationRaw } from "vue-router";
+import { getProductRoute } from "@/shared/catalog";
 
 // Define max qty available to add
 const max = 999999;
@@ -228,7 +229,7 @@ const max = 999999;
 const props = defineProps({
   productItem: {
     type: Object as PropType<
-      ProductType & {
+      Product & {
         quantity: number | undefined;
         lineItemId: string | undefined;
       }
@@ -247,6 +248,8 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
 const { currency } = useCart();
+
+const link = computed<RouteLocationRaw>(() => getProductRoute(props.productItem));
 
 const variation = computed(() => props.productItem.variations?.find((v) => v.id === props.productItem.id));
 const minQty = computed(() => (variation.value ? variation.value?.minQuantity : props.productItem.minQuantity) || 0);
@@ -306,5 +309,3 @@ const onInput = () => {
   }
 };
 </script>
-
-<style scoped></style>

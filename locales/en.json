@@ -1,8 +1,8 @@
 {
   "common": {
     "buttons": {
-      "home": "Home page",
-      "ok": "Ok",
+      "home": "Home Page",
+      "ok": "OK",
       "cancel": "Cancel",
       "close": "Close",
       "confirm": "Confirm",
@@ -27,7 +27,7 @@
       "actions": "Actions",
       "user_name": "Username",
       "password": "Password",
-      "confirm_password": "Confirm password",
+      "confirm_password": "Confirm Password",
       "first_name": "First Name",
       "last_name": "Last Name",
       "address": "Address",
@@ -48,14 +48,15 @@
       "item": "Item"
     },
     "suffixes": {
-      "per_item": " / each",
+      "per_item": " per item",
       "product_count_in_stock": "in stock"
     },
     "messages": {
       "product_out_of_stock": "Out of stock",
       "required_field": "This field is required",
-      "email_is_not_correct": "Enter correct email please (ex. john{'@'}gmail.com)",
-      "max_length": "This field must be at most {max} characters"
+      "email_is_not_correct": "Please enter valid email address, e.g. johndoe{'@'}gmail.com)",
+      "max_length": "This field must not contain over {max} characters",
+      "creating_order_error": "Error when creating an order"
     },
     "placeholders": {
       "not_selected": "Not selected"
@@ -69,7 +70,8 @@
       "orders": "Orders",
       "your_lists": "Your Lists",
       "checkout_defaults": "Checkout Defaults",
-      "list_details": "List Details"
+      "list_details": "List Details",
+      "cart": "Cart"
     }
   },
   "shared": {
@@ -80,9 +82,9 @@
           "link_order_history": "Order History",
           "link_lists": "Lists"
         },
-        "link_sign_in": "Sign In",
-        "link_register_now": "Register now",
-        "link_logout": "Logout",
+        "link_sign_in": "Sign in",
+        "link_register_now": "Sign up now",
+        "link_logout": "Log out",
         "menu": {
           "home": "@:common.links.home",
           "all_products": "Products",
@@ -104,42 +106,43 @@
           "settings": "Settings",
           "currency": "Currency",
           "search_bar": {
-            "input_placeholder": "Enter keyword, item, model or replacement part number"
+            "input_placeholder": "Enter keyword, item, model, or replacement part number"
           }
         }
       },
       "footer": {
-        "company_information_link_group": "Company information",
+        "company_information_link_group": "Company Details",
         "about_us_link": "About Us",
         "investor_relations_link": "Investor Relations",
         "supplier_overview_link": "Supplier Overview",
         "worldwide_link": "Worldwide",
-        "customer_support_link_group": "Customer support",
+        "customer_support_link_group": "Customer Support",
         "catalog_request_link": "Catalog Request",
         "contact_us_link": "Contact Us",
         "feedback_link": "Feedback",
-        "find_a_branch_link": "Find A Branch",
-        "order_support_link_group": "Order support",
+        "find_a_branch_link": "Find a Branch",
+        "order_support_link_group": "Order Support",
         "orders_link": "Orders",
-        "pick_up_link": "Pick-Up",
-        "auto_reorder_link": "Auto-Reorder",
+        "pick_up_link": "Pickup",
+        "auto_reorder_link": "Auto Reorder",
         "special_orders_link": "Special Orders",
-        "returns_cancellations_link": "Returns & Cancellations",
-        "online_resources_ling_group": "Online resources",
+        "returns_cancellations_link": "Returns and Cancellations",
+        "online_resources_ling_group": "Online Resources",
         "catalog_link": "Catalog",
         "hot_buys_link": "Hot Buys",
         "rebates_link": "Rebates",
         "replacement_parts_link": "Replacement Parts",
-        "demo_landing_link": "Demo landing",
+        "demo_landing_link": "Demo Landing",
+        "demo_page_link": "Demo Page",
         "all_rights_reserved": "All Rights Reserved.",
-        "asp_net_e_commerce_platform": "ASP.NET e-commerce platform  {0}",
+        "asp_net_e_commerce_platform": "ASP.NET ecommerce platform  {0}",
         "by_virto": "by Virto"
       },
       "search_bar": {
         "categories_label": "Categories",
         "products_label": "Products",
-        "no_results": "No results were found for your \"<strong>{searchPhrase}</strong>\" query",
-        "enter_keyword_placeholder": "Enter keyword, item, model or replacement part number",
+        "no_results": "Your <strong>{searchPhrase}</strong> query did not return any results",
+        "enter_keyword_placeholder": "Enter keyword, item, model, or replacement part number",
         "search_button": "Search",
         "view_all_results_button": "View all {total} results"
       },
@@ -166,16 +169,16 @@
       "address_form": {
         "first_name_label": "@:common.labels.first_name",
         "last_name_label": "@:common.labels.last_name",
-        "work_email_label": "Work email",
+        "work_email_label": "Corporate email address",
         "phone_label": "@:common.labels.phone",
         "country_label": "Country",
-        "zip_label": "Zip / Postal code",
-        "region_label": "Region",
-        "region_placeholder": "Select region",
+        "zip_label": "ZIP / Postal code",
+        "region_label": "State/Province",
+        "region_placeholder": "Select your state or province",
         "city_label": "City",
         "line1_label": "Address",
-        "line2_label": "Apt, suite, etc.",
-        "country_placeholder": "Select country"
+        "line2_label": "Apt., suite, building number, etc.",
+        "country_placeholder": "Select your country"
       },
       "sign_in_form": {
         "user_name_label": "@:common.labels.user_name",
@@ -183,10 +186,10 @@
         "password_label": "@:common.labels.password",
         "password_placeholder": "@:common.labels.password",
         "forgot_password_link": "Forgot your password?",
-        "login_button": "Login",
-        "registration_button": "Registration",
-        "user_or_password_incorrect_alert": "<strong>User</strong>&nbsp;or <strong>password</strong>&nbsp;is incorrect",
-        "user_and_password_are_required_alert": "<strong>User</strong>&nbsp;and <strong>password</strong>&nbsp; are required"
+        "login_button": "Log in",
+        "registration_button": "Sign up",
+        "user_or_password_incorrect_alert": "The <strong>username</strong>&nbsp;or <strong>password</strong>&nbsp;you provided are invalid",
+        "user_and_password_are_required_alert": "You have to provide both <strong>username</strong>&nbsp;and <strong>password</strong>&nbsp;"
       },
       "reset_password_form": {
         "password_label": "@:common.labels.password",
@@ -198,13 +201,13 @@
       },
       "forgot_password_form": {
         "email_label": "@:common.labels.email",
-        "email_placeholder": "Enter your e-mail",
+        "email_placeholder": "Enter your email",
         "submit_button": "@:common.buttons.submit",
-        "invalid_email_format_message": "Enter correct email please (ex. john{'@'}gmail.com)"
+        "invalid_email_format_message": "Please enter valid email address, e.g. johndoe{'@'}gmail.com)"
       },
       "checkout_default_success_dialog": {
         "title": "Checkout Defaults",
-        "message": "Checkout defaults successfully updated.",
+        "message": "Default checkout details successfully updated.",
         "ok_button": "@:common.buttons.ok"
       },
       "profile_update_success_dialog": {
@@ -214,7 +217,7 @@
       },
       "registration_success_dialog": {
         "title": "Registration",
-        "message": "Registration successfully completed!",
+        "message": "Registration successfully complete!",
         "ok_button": "@:common.buttons.home"
       },
       "reorder_info_popup": {
@@ -224,7 +227,7 @@
         "filter": {
           "title": "Filter products:",
           "reduced_quantity_checkbox": "Reduced quantity:",
-          "can_t_be_purchased_checkbox": "Can't be purchased",
+          "can_t_be_purchased_checkbox": "Cannot be purchased",
           "items_without_changes_checkbox": "Items without changes"
         },
         "product_card": {
@@ -233,13 +236,13 @@
           "in_stock_suffix": "@:common.suffixes.product_count_in_stock",
           "out_of_stock_message": "@:common.messages.product_out_of_stock",
           "reduced_message": "The number of items in the order was <span class=\"text-gray-500\">reduced from {0} to {1}</span> due to stock restrictions",
-          "item_can_t_be_purchased_message": " Item can't be purchased ",
-          "item_is_out_of_stock_message": " Item is out of stock "
+          "item_can_t_be_purchased_message": " This item cannot be purchased ",
+          "item_is_out_of_stock_message": " This item is out of stock "
         }
       },
       "orders-filter": {
         "status-label": "@:common.labels.status",
-        "created-date-label": "Created date",
+        "created-date-label": "Create date",
         "start-date-label": "Start date",
         "end-date-label": "End date",
         "apply-button": "@:common.buttons.apply",
@@ -250,8 +253,8 @@
       "add_to_cart": {
         "add_to_cart_button": "@:common.buttons.add_to_cart",
         "update_cart_button": "Update cart",
-        "already_in_cart_message": "{0} already in cart",
-        "enter_correct_number_message": "enter correct number"
+        "already_in_cart_message": "{0} has already been added to cart",
+        "enter_correct_number_message": "Please enter valid number"
       },
       "cart_add_info_popup": {
         "continue_shopping_button": "@:common.buttons.continue_shopping_button",
@@ -263,8 +266,8 @@
         },
         "quantity_label": "@:common.labels.quantity",
         "total_label": "@:common.labels.total",
-        "title_removed": "1 Product removed from cart",
-        "title_added": "1 Product added to cart"
+        "title_removed": "One product has been removed from cart",
+        "title_added": "One product has been added to cart"
       }
     },
     "catalog": {
@@ -277,17 +280,16 @@
       },
       "product_card": {
         "product_sku_label": "@:common.labels.sku",
-        "manufacture_model_label": "Mfr. model #",
         "price_label": "@:common.labels.product_price"
       },
       "product_details": {
-        "technical_specs_block_title": "technical specs",
+        "technical_specs_block_title": "Technical specs",
         "variations_block_title": "Customize your order",
         "description_block_title": "Description",
         "price_block": {
-          "title": "Price & Delivery",
+          "title": "Price and Delivery",
           "add_to_list_button": "Add to list",
-          "add_to_list_button_unauthorized_title": "Wishlists are available only for authorized users",
+          "add_to_list_button_unauthorized_title": "Wishlists are available only for authenticated users",
           "send_email_button": "@:common.labels.email",
           "print_button": "Print"
         },
@@ -303,11 +305,15 @@
         "price_label": "@:common.labels.price{':'}",
         "total_label": "@:common.labels.total{':'}",
         "update_button": "@:common.buttons.update",
-        "remove_button": "@:common.buttons.remove"
+        "remove_button": "@:common.buttons.remove",
+        "errors": {
+          "product_price_changed": "The product price has been changed to {0}"
+        }
       },
       "empty_cart": {
-        "header": "Your cart is empty",
-        "continue_shopping_button": "@:common.buttons.continue_shopping_button"
+        "description": "Your cart is empty",
+        "continue_shopping_button": "@:common.buttons.continue_shopping_button",
+        "title": "Cart"
       },
       "accepted_gifts": {
         "gift_label": "Gift",
@@ -332,7 +338,7 @@
         "cancel_button": "@:common.buttons.cancel",
         "ok_button": "@:common.buttons.ok",
         "select_button": "@:common.buttons.select",
-        "title": "Select Payment method"
+        "title": "Select payment method"
       },
       "select_address_dialog": {
         "cancel_button": "@:common.buttons.cancel",
@@ -342,10 +348,10 @@
         "add_address_button": "Add new address",
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
-        "no_addresses_message": "There are no addresses yet",
+        "no_addresses_message": "You do not have any addresses yet",
         "title": "Select address",
         "table_columns": {
-          "recipient": "Recipient's name",
+          "recipient": "Recipient name",
           "address": "Address",
           "phone": "Phone",
           "email": "Email",
@@ -360,8 +366,8 @@
         "title": "Select shipping method"
       },
       "thank_you": {
-        "header": "Order completed",
-        "success_order_message": "Order {0} has be successfully submitted. You will be notified via email when your order is ready for shipping",
+        "header": "Order complete",
+        "success_order_message": "Order {0} has been successfully submitted. You will be notified via email once your order is ready for shipping",
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "print_order": "Print order",
@@ -398,30 +404,68 @@
         "subtitle_message_end": "by entering item SKUs and quantities."
       },
       "copy_n_paste": {
-        "title": "Copy & Paste",
+        "title": "Copy and Paste",
         "subtitle_message": "Want to save time and order faster?",
-        "guide_message": "Simply copy and paste item records from your CSV file into the field below using the following format: <strong>SKU,Quantity</strong>. Each record should starts from a new line.",
-        "text_area_placeholder": "Formatting example:\n6AF8SM0VPFV6,10\n3RO1GEQI34E8,20",
+        "guide_message": "Simply copy and paste item records from your CSV file into the field below using the following format: <strong>SKU,Quantity</strong>. Each record should start with a new line.",
+        "text_area_placeholder": "Format example:\n6AF8SM0VPFV6,10\n3RO1GEQI34E8,20",
         "reset_button": "@:common.buttons.reset",
         "add_to_cart_button": "@:common.buttons.add_to_cart"
       }
     },
+    "payment": {
+      "bank_card_form": {
+        "number_label": "Card number",
+        "cardholder_name_label": "Cardholder name",
+        "month_label": "Expiry Month",
+        "month_placeholder": "MM",
+        "year_label": "Expiry Year",
+        "year_placeholder": "YY",
+        "security_code_label": "Security Code"
+      },
+      "authorize_net": {
+        "header": "Payment method",
+        "bank_card_title": "Credit Card",
+        "user_agreement_link": "User Agreement",
+        "privacy_policy_link": "Privacy Policy",
+        "accept_terms_text": "By placing an order, you accept the terms of",
+        "processing_personal_data_text": "and consent to the processing of personal data according to the",
+        "pay_now_button": "Pay Now",
+        "errors": {
+          "number": "Please provide valid credit card number",
+          "month": "Please provide valid expiration month",
+          "year": "Please provide valid expiration year",
+          "security_code": "Please provide valid security code",
+          "cardholder_name": "Please provide valid card holder name",
+          "try_again": "An error occurred during processing. Please try again"
+        }
+      },
+      "payment_success": {
+        "title": "Payment successful",
+        "text": "Thank you, we are checking your payment. The order will be shipped after we receive your payment."
+      },
+      "payment_failure": {
+        "title": "Payment failed",
+        "text": "There is a problem with your payment, try again please."
+      }
+    },
     "wishlists": {
       "list_card": {
-        "quantity_label": "Products Qty",
-        "add_all_to_cart_button": "Add all to cart",
+        "quantity_label": "Product Qty",
+        "add_all_to_cart_button": "Add to cart",
         "list_settings_button": "List settings",
         "remove_list_button": "Remove list"
       },
       "list_details": {
         "add_all_to_cart_button": "Add all products to cart",
         "list_settings_button": "List settings",
-        "empty_list": "Your list is currently empty"
+        "empty_list": "Your list is currently empty",
+        "empty_list_button": "Continue browsing",
+        "list_icon": "List icon"
       },
       "add_to_wishlists_dialog": {
         "title": "Please select list",
-        "empty_list": "You don't have wish lists",
-        "item_already_in_list": "Item already in the list",
+        "empty_list": "You do not have any wish lists",
+        "item_already_in_list": "This item is already in the list",
         "cancel_button": "@:common.buttons.cancel",
         "add_to_list_button": "Add to list"
       },
@@ -432,21 +476,21 @@
         "view_your_list_button": "View your list | View your lists"
       },
       "unsuccessful_create_wishlist_dialog": {
-        "message": "You’ve reached max number of lists. Please delete one, that you do not use, or reshuffle products to reuse the existing list.",
+        "message": "You have reached the maximum number of lists. Please delete one you do not use or reshuffle products to reuse an existing list.",
         "ok_button": "@:common.buttons.ok"
       },
       "add_or_update_wishlist_dialog": {
         "title": "New list",
         "edit_mode_title": "List settings",
         "list_name_label": "List name",
-        "list_name_placeholder": "Enter name",
+        "list_name_placeholder": "Please enter name",
         "create_button": "Create list",
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_dialog": {
         "title": "Delete warning",
-        "message": "Are you sure you want to remove “<span class=\"font-extrabold\">{listName}</span>” list?",
+        "message": "Are you sure you want to remove the “<span class=\"font-extrabold\">{listName}</span>” list?",
         "delete_button": "@:common.buttons.delete",
         "cancel_button": "@:common.buttons.cancel"
       },
@@ -462,57 +506,57 @@
     "403": {
       "error_code": "403",
       "error_text": "Access denied",
-      "message": "You don't have permission to access requested page.",
+      "message": "You do not have permissions to access the requested page.",
       "img_alt": "Access denied",
       "home_button": "@:common.buttons.home"
     },
     "404": {
       "error_code": "404",
       "error_text": "Page Not Found",
-      "message": "We suggest you back to home.",
-      "img_alt": "Page not found",
+      "message": "An error occurred. Should we take you back to home page?",
+      "img_alt": "Page Not Found",
       "home_button": "@:common.buttons.home"
     },
     "500": {
       "error_code": "500",
       "error_text": "Internal Server Error",
-      "message": "We suggest you back to home.",
+      "message": "An error occurred. Should we take you back to home page?",
       "img_alt": "Internal Server Error",
       "home_button": "@:common.buttons.home"
     },
     "home": {
       "sign_in_form_title": "Sign in",
       "main_banner_block": {
-        "message": "We can help you <br />to make the right<br />and wise decisions",
+        "message": "We can help you <br />make informed<br />and wise decisions",
         "key_feature_1": "Result oriented",
         "key_feature_2": "Trustworthy",
         "key_feature_3": "Reliable"
       },
       "feature_descriptions_block": {
-        "title": "Professional purchases have never been that easy",
+        "title": "Commercial management has never been that easy",
         "feature_1": "Corporate account management",
-        "feature_2": "Quote management price negotiation",
-        "feature_3": "Multiple stores, channels and regions",
-        "feature_4": "B2B personalization and price management"
+        "feature_2": "Quote management and price negotiation",
+        "feature_3": "Multiple stores, channels, and locations",
+        "feature_4": "B2B customization and price management"
       },
       "subscription_block": {
-        "subscribe_now": "subscribe now!",
-        "info_message": "Your&nbsp;connection&nbsp;to&nbsp;what's new&nbsp;at&nbsp;B2B-store.",
-        "email_placeholder": "Enter E-mail",
+        "subscribe_now": "Subscribe now!",
+        "info_message": "Stay&nbsp;connected&nbsp;to&nbsp;B2B&nbsp;store&nbsp;news!",
+        "email_placeholder": "Your email",
         "subscribe_button": "Subscribe"
       }
     },
     "forgot_password": {
       "header": "reset your password",
-      "email_will_be_sended_message": "We will send you an email to reset your password",
-      "reset_link_was_sent_message": "Reset link was sent to your email",
+      "email_will_be_sended_message": "We will send you an email with reset password instructions",
+      "reset_link_was_sent_message": "We sent you a reset password link to your email.",
       "home_button": "@:common.buttons.home"
     },
     "reset_password": {
       "header": "reset your password",
       "home_button": "@:common.buttons.home",
-      "enter_new_password_message": "Enter a new password",
-      "success_message": "Password was successfully changed",
+      "enter_new_password_message": "Enter your new password",
+      "success_message": "Your password has been reset successfully",
       "log_in_button": "Log in",
       "data_invalid_error_message": "User ID or token is invalid."
     },
@@ -521,29 +565,29 @@
     },
     "sign_up": {
       "header": "Registration",
-      "personal_registration_kind_label": "Personal",
-      "organization_registration_kind_label": "Organization",
-      "organization_name_label": "Organization name",
-      "organization_name_placeholder": "Enter organization name",
+      "personal_registration_kind_label": "Personal account",
+      "organization_registration_kind_label": "Company account",
+      "organization_name_label": "Company name",
+      "organization_name_placeholder": "Enter your company name",
       "first_name_label": "@:common.labels.first_name",
       "first_name_placeholder": "Enter your first name",
       "last_name_label": "@:common.labels.last_name",
       "last_name_placeholder": "Enter your last name",
       "email_label": "@:common.labels.email",
-      "email_placeholder": "Enter your e-mail address",
+      "email_placeholder": "Enter your email address",
       "username_label": "@:common.labels.user_name",
       "username_placeholder": "Enter your username",
       "password_label": "@:common.labels.password",
       "password_placeholder": "Enter your password",
       "confirm_password_label": "@:common.labels.confirm_password",
       "confirm_password_placeholder": "Confirm your password",
-      "register_button": "Register",
+      "register_button": "Sign up",
       "errors": {
-        "PasswordTooShort": "Passwords must be at least 8 characters.",
-        "InvalidEmail": "Enter correct email please (ex. john{'@'}gmail.com)",
+        "PasswordTooShort": "Your password must be at least 8 characters long.",
+        "InvalidEmail": "Please enter valid email address, e.g. johndoe{'@'}gmail.com)",
         "passwords_must_match": "Passwords must match",
         "user_name_not_unique": "This username is already taken",
-        "email_not_unique": "This email is already taken"
+        "email_not_unique": "This email is already registered with us"
       }
     },
     "account": {
@@ -553,18 +597,19 @@
         "cancel_button": "@:common.buttons.cancel",
         "save_button": "@:common.buttons.save",
         "create_button": "@:common.buttons.create",
-        "recipient_name_label": "Recipient's name",
+        "recipient_name_label": "Recipient name",
         "address_label": "@:common.labels.address",
         "phone_label": "@:common.labels.phone",
         "email_label": "@:common.labels.email",
-        "no_addresses_message": "There are no addresses yet",
+        "no_addresses_message": "You do not have any addresses yet",
+        "addresses_icon": "Address icon",
         "new_address_title": "New address",
         "addresses_title": "Addresses",
         "actions_label": "@:common.labels.actions",
         "edit_button": "@:common.buttons.edit",
         "delete_button": "@:common.buttons.delete",
-        "make_default_button": "Make default",
-        "confirm_delete_message": "Are you sure you want do delete this address?",
+        "make_default_button": "Set as default",
+        "confirm_delete_message": "Are you sure you want to delete this address?",
         "no_addresses_img_alt": "No addresses"
       },
       "checkout_defaults": {
@@ -575,15 +620,15 @@
         "not_selected_placeholder": "@:common.placeholders.not_selected",
         "update_button": "@:common.buttons.update",
         "payment_method_label": "Preferred Payment Method",
-        "payment_method_placeholder": "Please select preferred Payment Method",
+        "payment_method_placeholder": "Please select your preferred payment method",
         "shipping_method_label": "Preferred Shipping Method",
-        "shipping_method_placeholder": "Please select preferred Shipping Method"
+        "shipping_method_placeholder": "Please select your preferred shipping method"
       },
       "dashboard": {
         "title": "Dashboard",
         "last_orders_card": {
-          "title": "Last orders",
-          "all_orders_link": "All Orders",
+          "title": "Latest orders",
+          "all_orders_link": "All orders",
           "order_number_label": "Order number",
           "purchase_number_label": "Purchase order",
           "status_label": "@:common.labels.status",
@@ -596,8 +641,8 @@
         "monthly_report_card": {
           "title": "Monthly spend report",
           "budget_title": "Budget",
-          "total_spend_label": "Total spend",
-          "spend_chart_alt": "Spend chart"
+          "total_spend_label": "Totally spent",
+          "spend_chart_alt": "Spending chart"
         },
         "orders_status_card": {
           "title": "Orders status"
@@ -615,10 +660,13 @@
         "date_label": "@:common.labels.date",
         "total_label": "@:common.labels.total",
         "no_orders_img_alt": "No orders",
-        "no_orders_message": "There are no orders yet"
+        "no_orders_message": "No results found",
+        "no_orders_button": "Reset search",
+        "orders_icon": "Order icon"
       },
       "order_details": {
         "title": "Order #{0}",
+        "created_title": "Order complete",
         "status_label": "@:common.labels.status{':'} ",
         "placed_on_label": "Placed on: ",
         "products_section": {
@@ -627,6 +675,7 @@
         "order_comment_section": {
           "title": "Order comment"
         },
+        "pay_now_button": "Pay Now",
         "reorder_all_button": "Reorder all",
         "shipping_address_card": {
           "title": "Shipping address",
@@ -638,7 +687,7 @@
         },
         "payment_details_card": {
           "title": "Payment details",
-          "payment_number_label": "Payment #:",
+          "payment_number_label": "Payment ID:",
           "payment_type_label": "Payment type:",
           "view_invoice_button": "View invoice"
         },
@@ -648,13 +697,24 @@
           "email_label": "@:common.labels.email{':'}"
         }
       },
+      "order_payment": {
+        "title": "Payment information",
+        "breadcrumb_title": "Payment",
+        "processed_title": "@:pages.account.order_details.title",
+        "loading_text": "Loading...",
+        "back_to_order_button": "Back to Order",
+        "orders_list_button": "Orders List",
+        "try_again_button": "Try again"
+      },
       "your_lists": {
-        "no_lists": "You don't have any lists created",
+        "no_lists": "You have not created any lists yet",
         "create_list_button": "Create list",
-        "create_list_button_mobile": "Create"
+        "create_list_button_mobile": "Create",
+        "lists_icon": "List icon"
       },
       "profile": {
         "title": "Profile",
+        "change_password_title": "Change Password",
         "update_error_alert": "There was an error during profile update",
         "first_name_label": "@:common.labels.first_name",
         "first_name_placeholder": "@:common.labels.first_name",
@@ -662,7 +722,18 @@
         "last_name_placeholder": "@:common.labels.last_name",
         "email_label": "@:common.labels.email",
         "email_placeholder": "@:common.labels.email",
-        "update_button": "@:common.buttons.update"
+        "old_password_label": "Current Password",
+        "old_password_placeholder": "Enter your current password",
+        "new_password_label": "New Password",
+        "new_password_placeholder": "Enter your new password",
+        "confirm_new_password_label": "Confirm New Password",
+        "confirm_new_password_placeholder": "Repeat new password",
+        "update_button": "@:common.buttons.update",
+        "errors": {
+          "password_mismatch": "Incorrect current password",
+          "passwords_do_not_match": "Passwords do not match",
+          "password_new_same_old": "Your current password and new password must be different"
+        }
       }
     },
     "catalog": {
@@ -678,7 +749,7 @@
       "branch_availability_filter_card": {
         "title": "Branch availability",
         "select_branch_link": "Select a pickup branch",
-        "select_branch_link_end": "to see products in stock now."
+        "select_branch_link_end": "to see the products that are in stock now."
       },
       "facet_card": {
         "item_count_format": "({0})"
@@ -688,18 +759,22 @@
       "filters_button": "@:common.buttons.filters",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
-      "reset_filters_button": "Reset filters"
+      "reset_filters_button": "Reset filters",
+      "no_products_message": "There are no products in this category",
+      "no_products_filtered_message": "No results found",
+      "no_products_button": "Reset search",
+      "products_icon": "Product icon"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
       "variations_total_label": "Total in your cart:",
-      "view_cart_button": "view cart",
+      "view_cart_button": "View cart",
       "related_product_section_title": "Related products",
       "price_label": "@:common.labels.product_price{':'}"
     },
     "checkout": {
       "title": "Checkout",
-      "invalid_checkout_message": "There is something wrong in Cart. Please verify it to place order.",
+      "invalid_checkout_message": "Something went wrong in your cart. Please check whether everything is correct and try again.",
       "clear_cart_dialog": {
         "title": "Clear cart",
         "message": "Do you want to clear your cart?",
@@ -719,14 +794,15 @@
           "change_button": "@:common.buttons.change",
           "phone_label": "Phone:",
           "email_label": "Email:",
-          "no_addresses_message": "You do not have a shipping address. Please choose/create a new one.",
-          "unauthenticated_no_addresses_message": "You do not have a shipping address. Please create a new one.",
+          "no_addresses_message": "You do not yet have any shipping address. Please choose or specify one.",
+          "unauthenticated_no_addresses_message": "You do not yet have any shipping address. Please specify one.",
           "add_address_button": "New address"
         },
         "shipping_method_block": {
           "title": "Shipping method",
-          "not_defined_message": "Not defined",
-          "change_button": "Change"
+          "not_defined_message": "Undefined",
+          "change_button": "@:common.buttons.change",
+          "select_button": "@:common.buttons.select"
         }
       },
       "payment_details_section": {
@@ -734,8 +810,8 @@
         "billing_address_block": {
           "title": "Billing address",
           "same_as_shipping_checkbox_label": "Same as shipping address",
-          "no_addresses_message": "You do not have a billing address. Please choose/create a new one.",
-          "unauthenticated_no_addresses_message": "You do not have a billing address. Please create a new one.",
+          "no_addresses_message": "You do not yet have any billing address. Please choose or specify one.",
+          "unauthenticated_no_addresses_message": "You do not yet have any billing address. Please specify one.",
           "add_address_button": "New address",
           "phone_label": "Phone:",
           "email_label": "Email:",
@@ -743,8 +819,9 @@
         },
         "payment_method_block": {
           "title": "Payment method",
-          "not_defined_message": "Not defined",
-          "change_button": "Change"
+          "not_defined_message": "Undefined",
+          "change_button": "@:common.buttons.change",
+          "select_button": "@:common.buttons.select"
         }
       },
       "extra_section": {
@@ -759,72 +836,73 @@
         "purchase_order_placeholder": "Enter purchase order number",
         "promotion_code_label": "Promotion code",
         "promotion_code_placeholder": "Enter your code",
-        "warning_message": "Availability, shipping, tax & promotions are not final until you complete your order.",
+        "warning_message": "Availability, shipping, tax, and promotions are not final until you complete your order.",
         "place_order_button": "Place order"
       },
-      "invalid_coupon_message": "This code did not match any active coupon. Was it entered correctly?"
+      "invalid_coupon_message": "This code does not match any active coupons. Please check whether everything is correct and try again.",
+      "go_to_payment_button": "Pay now"
     },
     "search": {
-      "header": "Your search for \"<strong>{0}</strong>\" revealed the following",
+      "header": "Your search for <strong>{0}</strong> returned the following results:",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
-      "no_results_message": "No results were found for your \"<strong>{0}</strong>\" query",
+      "no_results_message": "Your <strong>{0}</strong> query did not return any results",
       "home_button": "@:common.buttons.home"
     },
     "bulk_order": {
       "title": "Bulk Order Pad",
-      "product_was_not_added_alert": "Products with following SKUs was not added to cart: {0}",
-      "data_is_invalid_alert": "The entered data is invalid",
+      "product_was_not_added_alert": "Products with following SKUs were not added to the cart: {0}",
+      "data_is_invalid_alert": "The details you provided are invalid.",
       "manually_tab": "Manually",
-      "copy_n_paste_tab": "Copy & Paste"
+      "copy_n_paste_tab": "Copy and Paste"
     },
     "demo_landing": {
       "header": "Gaming laptop market overview",
       "primary_block": {
-        "primary_text": "Professional purchases have never been that easy",
-        "secondary_text": "Anything you dream about is possible to realise just at the moment when you decide to win",
+        "primary_text": "Commercial management has never been that easy",
+        "secondary_text": "Anything you dream about may come true right at the moment you decide to win",
         "first_button": "Learn more",
         "second_button": "Get in touch"
       },
       "secondary_block": {
-        "primary_text": "Readability is primarily the concern of designer",
+        "primary_text": "Readability is a primary concern of a designer",
         "secondary_text": "In quo enim maxime consuevit iactare vestra se repellere, idque instituit docere sic: omne animal, simul atque insitam in liberos atque haec ratio late patet in quo quaerimus, non ero tibique, si ob rem aperiam eaque ipsa, quae sunt in gravissimo bello animadversionis metu contineret."
       },
       "features_block": {
         "primary_text": "Explore the features",
-        "secondary_text": "With a crystal-clear camera, real-time HD video display, and intuitive flight controls, what will you create?",
+        "secondary_text": "With a crystal-clear camera, real time HD video display, and intuitive flight controls, what will you create?",
         "feature_1": {
           "title": "Epic Aerial Video",
-          "text": "With the Phantom 3 Professional, you're shooting 4K video at up to 30 frames per second and capturing 12 megapixel photos."
+          "text": "With the Phantom 3 Professional, you can shoot 4K videos at up to 30 frames per second and capture 12MP photos."
         },
         "feature_2": {
           "title": "Live HD View",
-          "text": "Simply connect your phone or tablet, and a 720p HD view of everything your camera sees as you fly is displayed live."
+          "text": "Simply connect your phone or tablet and showcase 720p HD view of everything your camera sees."
         },
         "feature_3": {
           "title": "Complete Control",
-          "text": " Keep your Phantom 3 fully under your command while accessing the most-used features right on the included remote"
+          "text": " Keep your Phantom 3 fully under your command while accessing the most used features right on the included remote"
         }
       },
       "booking_block": {
-        "message": "Book a free e-commerce consulting",
+        "message": "Book a free ecommerce consulting session",
         "first_button": "Learn more",
         "second_button": "Get in touch"
       },
       "products_block": {
-        "title": "Game laptops",
-        "message": "With a crystal-clear camera, real-time HD video display, and intuitive flight controls, what will you create?",
+        "title": "Gaming laptops",
+        "message": "With a crystal-clear camera, real time HD video display, and intuitive flight controls, what will you create?",
         "choose_button": "Choose"
       },
       "after_products_block": {
-        "primary_text": "Readability is primarily the concern of designer",
+        "primary_text": "Readability is a primary concern of a designer",
         "secondary_text": "In quo enim maxime consuevit iactare vestra se repellere, idque instituit docere sic: omne animal, simul atque insitam in liberos atque haec ratio late patet in quo quaerimus, non ero tibique, si ob rem aperiam eaque ipsa, quae sunt in gravissimo bello animadversionis metu contineret."
       },
       "subscription_block": {
         "primary_text": "Subscribe to our promotions",
-        "secondary_text": "And be among the first to hear about upcoming events.",
+        "secondary_text": "Be among the first to hear about upcoming events",
         "input_placeholder": "tanya.hill{'@'}example.com",
-        "agreement_checkbox_label": "By clicking \"Submit\" I understand that I consent to opt-in to the",
+        "agreement_checkbox_label": "By clicking \"Submit\", I hereby agree to the",
         "terms_and_policy_link": "Terms and Policy",
         "submit_button": "@:common.buttons.submit"
       }
@@ -832,15 +910,15 @@
     "compare": {
       "empty_list": {
         "title": "Compare products",
-        "message": "Your product compare list is currently empty",
+        "message": "Your product compare list is empty",
         "button_text": "Continue browsing here",
         "img_alt": "emptyCart",
         "img_alt_mobile": "emptyCartMobile"
       },
       "header_block": {
         "title": "Compare products",
-        "counter_message": "Added <strong>{0}</strong> items out of <strong>{1}</strong>",
-        "differences_checkbox_label": "Show only differences",
+        "counter_message": "<strong>{0}</strong> items out of <strong>{1}</strong> added",
+        "differences_checkbox_label": "Show differences only",
         "clear_button_mobile": "Clear compare list",
         "clear_button_desktop": "Clear product compare list"
       },

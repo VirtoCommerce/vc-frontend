@@ -1,16 +1,18 @@
 import client from "@core/api/graphql/graphql-client";
 import { CartType, Query, QueryCartArgs } from "@core/api/graphql/types";
-import { currencyCode, currentUserId, locale, storeId } from "@core/constants";
 import getMyCartQueryDocument from "./getMyCartQuery.graphql";
+import globals from "@core/globals";
 
 export default async function getMyCart(): Promise<CartType> {
+  const { storeId, userId, cultureName, currencyCode } = globals;
+
   const { data } = await client.query<Required<Pick<Query, "cart">>, QueryCartArgs>({
     query: getMyCartQueryDocument,
     variables: {
-      storeId: storeId,
-      userId: currentUserId,
-      currencyCode: currencyCode,
-      cultureName: locale,
+      storeId,
+      userId,
+      cultureName,
+      currencyCode,
     },
   });
 

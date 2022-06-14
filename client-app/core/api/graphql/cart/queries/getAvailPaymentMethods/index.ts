@@ -1,16 +1,18 @@
 import client from "@core/api/graphql/graphql-client";
 import { PaymentMethodType, Query, QueryCartArgs } from "@core/api/graphql/types";
-import { currencyCode, currentUserId, locale, storeId } from "@core/constants";
 import getAvailPaymentMethodsDocument from "./getAvailPaymentMethodsQuery.graphql";
+import globals from "@core/globals";
 
 export default async function getAvailPaymentMethods(): Promise<PaymentMethodType[]> {
+  const { storeId, userId, cultureName, currencyCode } = globals;
+
   const { data } = await client.query<Required<Pick<Query, "cart">>, QueryCartArgs>({
     query: getAvailPaymentMethodsDocument,
     variables: {
-      storeId: storeId,
-      userId: currentUserId,
-      currencyCode: currencyCode,
-      cultureName: locale,
+      storeId,
+      userId,
+      cultureName,
+      currencyCode,
     },
   });
 

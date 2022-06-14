@@ -6,7 +6,9 @@ import { getMyOrder } from "@/core/api/graphql/account";
 const loading: Ref<boolean> = ref(false);
 const order: Ref<CustomerOrderType | null> = ref(null);
 
-const itemsPerPage: Ref<number> = ref(6);
+const DEFAULT_ITEMS_PER_PAGE = 6;
+
+const itemsPerPage: Ref<number> = ref(DEFAULT_ITEMS_PER_PAGE);
 const pages: Ref<number> = ref(0);
 
 export default () => {
@@ -27,6 +29,10 @@ export default () => {
     }
   }
 
+  function clearOrder() {
+    order.value = null;
+  }
+
   return {
     loading: computed(() => loading.value),
     pages: computed(() => pages.value),
@@ -35,5 +41,6 @@ export default () => {
     deliveryAddress: computed(() => order.value?.shipments?.[0]?.deliveryAddress),
     billingAddress: computed(() => order.value?.inPayments?.[0]?.billingAddress),
     loadOrder,
+    clearOrder,
   };
 };

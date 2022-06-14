@@ -4,22 +4,21 @@
     v-click-outside="() => searchDropdownVisible && hideSearchDropdown()"
   >
     <router-link to="/">
-      <VcImage :src="$cfg.logo_inverted_image" class="h-12 mr-8" lazy />
+      <VcImage :src="$cfg.logo_inverted_image" class="h-12 mr-8" />
     </router-link>
 
     <div class="flex flex-grow relative">
       <input
         v-model.trim="searchPhrase"
-        :disabled="loading"
         :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
         maxlength="30"
         class="flex-grow mr-4 rounded h-10 px-4 font-medium text-sm outline-none disabled:bg-gray-200"
         @keyup.enter="search"
         @keyup.esc="searchDropdownVisible && hideSearchDropdown()"
-        @input="searchDropdownVisible && hideSearchDropdown()"
+        @input="searchProductsDebounced"
       />
 
-      <VcButton class="uppercase px-4 h-10" @click="search">
+      <VcButton class="uppercase px-4 !h-10" @click="search">
         {{ $t("shared.layout.search_bar.search_button") }}
       </VcButton>
 
@@ -41,10 +40,7 @@
                 <ul v-for="(column, index) in categoriesColumns" :key="index" class="w-1/5">
                   <li v-for="category in column" :key="category.name">
                     <router-link
-                      :to="{
-                        name: 'Catalog',
-                        params: { categorySeoUrls: category.seoInfo?.semanticUrl },
-                      }"
+                      :to="categoriesRoutes[category.id]"
                       v-html="category.name"
                       class="py-1 block"
                       @click="hideSearchBar"
@@ -114,15 +110,21 @@ export default {
 <script setup lang="ts">
 import { VcButton, VcImage } from "@/components";
 import { useSearchBar } from "@/shared/layout";
-import { computed, ref, watchEffect } from "vue";
+import { computed, inject, ref, watchEffect } from "vue";
+import { configInjectionKey } from "@core/injection-keys";
 import { useRouteQueryParam } from "@core/composables";
 import QueryParamName from "@core/query-param-name.enum";
 import { Category } from "@core/api/graphql/types";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
-import { whenever } from "@vueuse/core";
+import { useDebounceFn, whenever } from "@vueuse/core";
+import { useCategoriesRoutes } from "@/shared/catalog";
 
 // Number of categories column items in dropdown list
 const CATEGORIES_ITEMS_PER_COLUMN = 4;
+
+const SEARCH_BAR_DEBOUNCE_TIME = 500;
+
+const config = inject(configInjectionKey);
 
 const {
   total,
@@ -137,8 +139,10 @@ const {
   searchResults,
 } = useSearchBar();
 
-const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
+const categoriesRoutes = useCategoriesRoutes(categories);
+
+const searchPhrase = ref("");
 
 const isApplied = computed<boolean>(() => searchPhraseInUrl.value === searchPhrase.value);
 
@@ -152,7 +156,20 @@ const categoriesColumns = computed<Array<Category[]>>(() => {
 });
 
 async function search() {
-  if (loading.value || !searchPhrase.value || searchPhrase.value.length > 30) {
+  const MAX_LENGTH = 30;
+  const MIN_LENGTH = config?.search_min_chars || 0;
+  const COLUMNS = 5;
+
+  if (searchDropdownVisible.value) {
+    await hideSearchDropdown();
+  }
+
+  if (
+    loading.value ||
+    searchPhrase.value === "" ||
+    searchPhrase.value.length > MAX_LENGTH ||
+    searchPhrase.value.length < MIN_LENGTH
+  ) {
     return;
   }
 
@@ -162,12 +179,16 @@ async function search() {
       itemsPerPage: 9,
     },
     categories: {
-      itemsPerPage: CATEGORIES_ITEMS_PER_COLUMN * 5, // five columns
+      itemsPerPage: CATEGORIES_ITEMS_PER_COLUMN * COLUMNS,
     },
   });
 
   await showSearchDropdown();
 }
+
+const searchProductsDebounced = useDebounceFn(() => {
+  search();
+}, SEARCH_BAR_DEBOUNCE_TIME);
 
 watchEffect(() => (searchPhrase.value = searchPhraseInUrl.value ?? ""));
 whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });

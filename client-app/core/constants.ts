@@ -1,62 +1,12 @@
-// @ts-nocheck
-// It is global variables initialized on the layout page
-//TODO: rework to use one object with propwrites
-export const storeName = window.STORE_NAME || "B2B-store";
-export const storeId = window.STORE_ID || "B2B-store";
-export const storeLanguages = window.STORE_LANGUAGES || "";
-export let currencyCode = window.CURRENCY_CODE || "USD";
-export let locale = window.LOCALE || "en-US";
-export let currentUserId = window.USER_ID || "";
-export let catalogId = window.CATALOG_ID || "";
-export const categoryId = window.CATEGORY_ID || "";
-export const productId = window.PRODUCT_ID || "";
-export const isDevelopment = import.meta.env.MODE === "development";
+export const DEVELOPMENT = import.meta.env.MODE === "development";
 
-export function setUserId(id: string): void {
-  currentUserId = id;
-}
+export const DEFAULT_PAGE_SIZE = 16;
+export const DEFAULT_SEARCH_PAGE_SIZE = 20;
+export const SORT_ASCENDING = "asc";
+export const SORT_DESCENDING = "desc";
+export const IN_STOCK_FILTER_EXPRESSION = "instock_quantity:(1 TO)";
 
-export function setCatalogId(id: string): void {
-  catalogId = id;
-}
-
-export function setLocale(id: string): void {
-  locale = id;
-}
-
-export function setCurrencyCode(code: string): void {
-  currencyCode = code;
-}
-
-//TODO: load from  storefront API
-export const mainMenu = window.MAIN_MENU;
-export const locales = window.LOCALES;
-
-// Need to trim store and language from base URL because they will be added later as parameters for each API call.
-export const baseUrl = window.BASE_URL?.replace(`/${storeName}`, "/").replace(`/${locale}`, "/").replace(/[/]+$/, "");
-
-export const fullBaseUrl = `${baseUrl}/${storeName}/${locale}/`;
-export const loginUrl = `${fullBaseUrl}account/login`;
-export const accessDeniedUrl = `${fullBaseUrl}error/AccessDenied`;
-
-// General variables
-export const isoDateFormat = "YYYY-MM-DD";
-
-// Search
-export const pageSizes = [16, 32, 48];
-export const defaultPageSize = 16;
-export const defaultSearchPageSize = 20;
-export const startPageNumber = 1;
-export const ordersStatuses = ["New", "Cancelled", "Processing", "Completed", "Pending"];
-export const invoicesStatuses = ["New", "Paid"];
-export const paymentsStatuses = ["Paid"];
-export const orderDraftType = "orderDraft";
-export const sortAscending = "asc";
-export const sortDescending = "desc";
-export const catalogOrderDraftsCount = 100;
-export const inStockFilterExpression = "instock_quantity:(1 TO)";
-
-export const productSortingList = [
+export const PRODUCT_SORTING_LIST = [
   { id: "priority-descending;name-ascending", name: "Featured" },
   { id: "name-ascending", name: "Alphabetically, A-Z" },
   { id: "name-descending", name: "Alphabetically, Z-A" },

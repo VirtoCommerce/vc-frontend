@@ -1,13 +1,18 @@
 import { shallowRef, unref } from "vue";
-import { useRouter } from "vue-router";
+import globals from "@core/globals";
+
+enum HTTP_ERRORS {
+  NO_CONTENT = 204,
+  FORBIDDEN = 403,
+  SERVER_ERROR = 500,
+}
 
 export default function useFetch() {
   const data = shallowRef<unknown | undefined>();
   const error = shallowRef<Error | undefined>();
   const statusCode = shallowRef<number | null>();
-  const router = useRouter();
 
-  function innerFetch<TBody, TResult>(url: string, method = "POST", body?: TBody): Promise<TResult> {
+  function innerFetch<TResult, TBody = unknown>(url: string, method = "GET", body?: TBody): Promise<TResult> {
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
 
@@ -20,7 +25,7 @@ export default function useFetch() {
         .then((result) => {
           statusCode.value = result.status;
 
-          if (result.status == 204) {
+          if (result.status === HTTP_ERRORS.NO_CONTENT) {
             return null;
           }
 
@@ -32,17 +37,16 @@ export default function useFetch() {
         })
         .catch((e) => {
           error.value = e;
+
           switch (statusCode.value) {
-            case 500:
-              router.push({
-                name: "InternalError",
-              });
+            case HTTP_ERRORS.SERVER_ERROR:
+              globals.router.push({ name: "InternalError" });
               break;
-            case 403:
-              router.push({
-                name: "NoAccess",
-              });
+
+            case HTTP_ERRORS.FORBIDDEN:
+              globals.router.push({ name: "NoAccess" });
               break;
+
             default:
               break;
           }

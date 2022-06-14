@@ -1,3 +1,8 @@
+export function getBaseUrl(supportedLocales: string[]): string {
+  const localeInPath = location.pathname.split("/")[1];
+  return supportedLocales.includes(localeInPath) ? `/${localeInPath}/` : "";
+}
+
 export function sleep(ms: number, resolvedValue?: any): Promise<any> {
   return new Promise((resolve) => setTimeout(resolve, ms, resolvedValue));
 }
@@ -7,7 +12,9 @@ export function truncate(str: string, length: number): string {
 }
 
 export function appendSuffixToFilename(filename: string, suffix: string, checkIfSuffixExists = false) {
-  if (!filename) return filename;
+  if (!filename) {
+    return filename;
+  }
 
   const dotIndex = filename.lastIndexOf(".");
 
@@ -24,7 +31,7 @@ export function appendSuffixToFilename(filename: string, suffix: string, checkIf
 
 // check if object is empty
 export function isObjectEmpty(object: Record<string, unknown>): boolean {
-  for (const property in object) {
+  for (const _property in object) {
     return false;
   }
 
@@ -41,6 +48,6 @@ export function dateToIsoDateString(date: Date | undefined) {
   return date?.toISOString().substring(0, lastDateSymbolIndex);
 }
 
-export function nameOf<T>(key: keyof T, instance?: T): keyof T {
+export function nameOf<T>(key: keyof T, _instance?: T): keyof T {
   return key;
 }

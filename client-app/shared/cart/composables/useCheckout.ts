@@ -55,10 +55,12 @@ const existPayment: Ref<PaymentType | null> = ref(null);
 export default () => {
   const { cart, loadMyCart } = useCart();
 
-  async function placeOrder(cartId: string, reloadCart = true): Promise<CustomerOrderType | null> {
+  async function createOrder(cartId: string, reloadCart = true): Promise<CustomerOrderType | null> {
     const order = await createOrderFromCart(cartId);
 
-    if (!order) return null;
+    if (!order) {
+      return null;
+    }
 
     await removeCart(cartId);
 
@@ -90,10 +92,10 @@ export default () => {
     }
   }
 
-  async function setDefaultDeliveryAddress(address: CartAddressType) {
+  async function setDefaultDeliveryAddress(_address: CartAddressType) {
     console.log("setDefaultDeliveryAddress");
   }
-  async function setDefaultBillingAddress(address: CartAddressType) {
+  async function setDefaultBillingAddress(_address: CartAddressType) {
     console.log("setDefaultBillingAddress");
   }
   async function setShippingMethod(shippingMethod: ShippingMethodType) {
@@ -131,7 +133,7 @@ export default () => {
   }
 
   return {
-    placeOrder,
+    createOrder,
     loadShipmentMethods,
     loadPaymentMethods,
     setDeliveryAddress,

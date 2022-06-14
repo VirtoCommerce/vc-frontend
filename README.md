@@ -24,7 +24,7 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 - **Development performance.** Really fast development using the most effective solution. Enroll starter theme in seconds and start to modify code with HMR features.
 - **Client performance.** We are supposed to reach and hold green metrics provided by Google PageSpeed Insights.
 - **Decoupled structure.** Presentation layer is decoupled from backend. Shared logic is decoupled from visual components. Developer can concentrate on single task without the need of massive code manipulations.
-- **Atomic Design Pattern.** Theme UI is based on Atoms, Molecules and Organisms, combined within Pages and shared Components. This provides a high level of code reusability.
+- **[Atomic Design Pattern.](https://virtocommerce.com/atomic-architecture)** Theme UI is based on Atoms, Molecules and Organisms, combined within Pages and shared Components. This provides a high level of code reusability.
 - **Simple styling and theme customization.** We use TailwindCSS to provide the easiest and convinient way of CSS usage. Write as less of code as possible, reuse existing highly-customizable framework features.
 - **Fully aligned with VirtoCommerce Storefront.** Thus theme is just a visual representation, we are fully aligned with VC Storefront to provide all common B2B and B2C scenarios processed by VC Platform.
 - **Fully responsive.** We made our theme working on a number of devices from Desktops to Mobile phones, concentrated both on UI and UX.
@@ -39,9 +39,6 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 |   |   └──...
 |   |
 |   ├── components                // Atoms, Molecules, Organisms and their types, used within the whole application.
-|   |   └──...
-|   |
-|   ├── config                    // Theme config scripts.
 |   |   └──...
 |   |
 |   ├── core                      // Common utilities and shared logic that can be used by any pages and libraries.
@@ -63,10 +60,12 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 |   |   └──...
 |   |
 |   ├── public                    // Statically served files
-|   |   ├── static
-|   |   |   ├── icons             // Icons used for favicons, PWA, etc.
-|   |   |   └── images            // Static images used inside the application.
-|   |   └── config.json           // Theme config file FOR DEVELOPMENT.
+|   |   └── static
+|   |       ├── icons             // Icons used for favicons, PWA, etc.
+|   |       └── images            // Static images used inside the application.
+|   |
+|   ├── router                    // SPA routing configuration.
+|   |   └──...
 |   |
 |   ├── shared                    // A set of shared files grouped by their domain context.
 |   |   ├── catalog               // Grouping context (ex.: catalog browsing).
@@ -83,17 +82,18 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 |   |   └──...
 |   |
 |   ├── App.vue                   // Main Application component. Use it as a wrapper for routable pages.
-|   ├── env.d.ts                  // Definition file to provide IDE IntelliSense support for importing *.vue files.
+|   ├── env.d.ts                  // Definition file to provide IDE IntelliSense support.
 |   ├── main.ts                   // Application entry point. Main initialization script.
-|   ├── router.ts                 // SPA routing configuraion.
+|   ├── shims-acceptjs.d.ts       // Definition file to provide IDE IntelliSense support for Accept.js (Authorize.net).
 |   ├── shims-graphql.d.ts        // Definition file to provide IDE IntelliSense support for importing *.graphql files.
-|   └── vue-shims.d.ts            // Definition file to provide IDE IntelliSense support for specific Vue features.
+|   └── shims-vue.d.ts            // Definition file to provide IDE IntelliSense support for importing *.vue files and specific Vue features.
 |
 ├── config                        // The Virto theme settings.
-|   └── settings_data.json        // Theme config file FOR PRODUCTION.
-|
+|   ├── menu.json                 // Theme menu settings file.
+|   └── settings_data.json        // Theme config file.
+|   
 ├── layout                        // Layout templates used to render theme within Storefront.
-|   └──theme.liquid               // Wrapper for SPA, providing HTML document structure.
+|   └── theme.liquid              // Wrapper for SPA, providing HTML document structure.
 |
 ├── locales                       // Locale files used to provide translated content for the theme.
 |   └──...
@@ -119,7 +119,7 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 ├── README.md                     // This file.
 ├── tailwind.config.js            // TailwindCSS configuration file.
 ├── tsconfig.json                 // TypeScript configuration file.
-├── vite.config.ts                // Vite configuration file.
+└── vite.config.ts                // Vite configuration file.
 ```
 
 ## Getting started

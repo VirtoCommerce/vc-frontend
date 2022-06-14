@@ -24,7 +24,9 @@ export default function usePopup() {
 
     const index = stack.value.findIndex((item) => item.id === id);
 
-    if (index === -1) return;
+    if (index === -1) {
+      return;
+    }
 
     stack.value.splice(index, 1);
     triggerRef(stack);

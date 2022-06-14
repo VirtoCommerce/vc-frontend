@@ -3,15 +3,17 @@ import { CustomerOrderType } from "@core/api/graphql/types";
 import { getMyOrders } from "@core/api/graphql/account";
 import { dateToIsoDateString, Logger } from "@core/utilities";
 import { getSortingExpression, ISortInfo, OrdersFilterData } from "@/shared/account";
-import { sortDescending } from "@core/constants";
+import { SORT_DESCENDING } from "@core/constants";
 import useUserOrdersFilter from "./useUserOrdersFilter";
+
+const DEFAULT_ITEMS_PER_PAGE = 10;
 
 export default () => {
   const { appliedFilterData } = useUserOrdersFilter();
 
   const orders: Ref<CustomerOrderType[]> = shallowRef<CustomerOrderType[]>([]);
   const loading: Ref<boolean> = ref(false);
-  const itemsPerPage: Ref<number> = ref(10);
+  const itemsPerPage: Ref<number> = ref(DEFAULT_ITEMS_PER_PAGE);
   const pages: Ref<number> = ref(0);
   const page: Ref<number> = ref(1);
   const keyword: Ref<string> = ref("");
@@ -19,7 +21,7 @@ export default () => {
   // TODO: refine the sorting logic
   const sort: Ref<ISortInfo> = ref({
     column: "createdDate",
-    direction: sortDescending,
+    direction: SORT_DESCENDING,
   });
 
   async function loadOrders() {
