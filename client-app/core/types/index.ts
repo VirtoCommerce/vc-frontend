@@ -1,4 +1,5 @@
 import { CartAddressType, MemberAddressType, OrderAddressType } from "@core/api/graphql/types";
+
 import { LocationQueryValue } from "vue-router";
 
 export * from "./currency";
@@ -94,6 +95,8 @@ export interface IThemeConfigPreset {
   orders_filter_enabled?: boolean;
   orders_reorder_enabled?: boolean;
   orders_statuses?: string[];
+
+  support_phone_number?: string;
 
   logo_image?: string;
   logo_inverted_image?: string;
