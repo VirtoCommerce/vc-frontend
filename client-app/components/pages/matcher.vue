@@ -6,10 +6,10 @@
 </template>
 
 <script setup lang="ts">
-import Category from "@/pages/category/category.vue";
-import Product from "@/pages/product/product.vue";
-import PageBuilder from "@/pages/builder/builder.vue";
-import NotFound from "@/pages/404/404.vue";
+import Category from "@/pages/category.vue";
+import Product from "@/pages/product.vue";
+import PageBuilder from "@/pages/builder.vue";
+import NotFound from "@/pages/404.vue";
 
 import { PropType, ref } from "vue";
 import { asyncComputed } from "@vueuse/core";
