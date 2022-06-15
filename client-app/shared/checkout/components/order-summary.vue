@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { CartType, CustomerOrderType, DiscountType, OrderDiscountType } from "@/core/api/graphql/types";
+import { CartType, CustomerOrderType, DiscountType, OrderDiscountType } from "@/xapi/graphql/types";
 import { PropType, ref } from "vue";
 
 defineProps({

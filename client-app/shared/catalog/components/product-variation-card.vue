@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { VariationType, Product } from "@core/api/graphql/types";
+import { VariationType, Product } from "@/xapi/graphql/types";
 import { VariationProperties } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 import { PropType } from "vue";

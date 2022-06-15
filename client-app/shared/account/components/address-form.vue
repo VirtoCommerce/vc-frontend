@@ -120,7 +120,7 @@
 import { computed, PropType, ref, Ref, watch } from "vue";
 import { clone } from "lodash";
 import { useForm, useField } from "vee-validate";
-import { CountryRegionType, CountryType, MemberAddressType } from "@core/api/graphql/types";
+import { CountryRegionType, CountryType, MemberAddressType } from "@/xapi/graphql/types";
 import { getAddressName, Logger } from "@core/utilities";
 import * as yup from "yup";
 
@@ -195,25 +195,33 @@ const slotsData = computed(() => ({
 
 const emailRules = computed(() => {
   let rules = yup.string().max(64).email().nullable();
-  if (props.requiredEmail) rules = rules.required();
+  if (props.requiredEmail) {
+    rules = rules.required();
+  }
   return rules;
 });
 
 const phoneRules = computed(() => {
   let rules = yup.string().max(64).nullable();
-  if (props.requiredPhone) rules = rules.required();
+  if (props.requiredPhone) {
+    rules = rules.required();
+  }
   return rules;
 });
 
 const cityRules = computed(() => {
   let rules = yup.string().max(128).nullable();
-  if (props.requiredCity) rules = rules.required();
+  if (props.requiredCity) {
+    rules = rules.required();
+  }
   return rules;
 });
 
 const regionRules = computed(() => {
   let rules = yup.string().nullable();
-  if (regions.value.length) rules = rules.required();
+  if (regions.value.length) {
+    rules = rules.required();
+  }
   return rules;
 });
 

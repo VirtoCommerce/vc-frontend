@@ -75,7 +75,7 @@
 <script setup lang="ts">
 import { computed, PropType, ref, watch, watchEffect } from "vue";
 import { clone } from "lodash";
-import { CustomerOrderType, KeyValueType } from "@core/api/graphql/types";
+import { CustomerOrderType, KeyValueType } from "@/xapi/graphql/types";
 import { BankCardType, BankCardForm, useAuthorizeNet, BankCardErrorsType } from "@/shared/payment";
 import { useNotifications } from "@/shared/notification";
 import { useI18n } from "vue-i18n";

@@ -1,5 +1,5 @@
 import { ProductsFacet, ProductsFacetValue, ProductsFilters } from "@/shared/catalog";
-import { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@core/api/graphql/types";
+import { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@/xapi/graphql/types";
 import { IN_STOCK_FILTER_EXPRESSION } from "@/core/constants";
 
 /**

@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { OrderLineItemType } from "@/core/api/graphql/types";
+import { OrderLineItemType } from "@/xapi/graphql/types";
 import { PropType } from "vue";
 
 defineProps({

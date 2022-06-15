@@ -1,6 +1,6 @@
 import { Ref, ref, computed, readonly, shallowRef, shallowReactive } from "vue";
-import { searchProducts } from "@core/api/graphql/catalog";
-import { Product } from "@core/api/graphql/types";
+import { searchProducts } from "@/xapi/graphql/catalog";
+import { Product } from "@/xapi/graphql/types";
 import { Logger } from "@core/utilities";
 import { ProductsFacet, ProductsSearchParams } from "../types";
 import {

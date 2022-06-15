@@ -83,7 +83,7 @@
 
 <script setup lang="ts">
 import { computed, PropType } from "vue";
-import { LineItemType } from "@/core/api/graphql/types";
+import { LineItemType } from "@/xapi/graphql/types";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();

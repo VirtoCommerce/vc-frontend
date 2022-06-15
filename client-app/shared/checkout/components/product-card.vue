@@ -121,7 +121,7 @@
 </template>
 
 <script setup lang="ts">
-import { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
+import { LineItemType, ValidationErrorType } from "@/xapi/graphql/types";
 import { computed, PropType } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useField } from "vee-validate";

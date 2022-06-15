@@ -27,7 +27,7 @@
 <script setup lang="ts">
 import { useWishlists } from "@/shared/wishlists";
 import { PropType } from "vue";
-import { InputRemoveWishlistItemType, LineItemType } from "@core/api/graphql/types";
+import { InputRemoveWishlistItemType, LineItemType } from "@/xapi/graphql/types";
 
 const props = defineProps({
   listItem: {

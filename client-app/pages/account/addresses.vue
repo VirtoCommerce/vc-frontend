@@ -226,7 +226,7 @@
 import { AddressForm, useUser, useUserAddresses } from "@/shared/account";
 import { computed, ComputedRef, onMounted, Ref, ref } from "vue";
 import { clone } from "lodash";
-import { MemberAddressType } from "@/core/api/graphql/types";
+import { MemberAddressType } from "@/xapi/graphql/types";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { BackButtonInHeader } from "@/shared/layout";
@@ -369,7 +369,9 @@ async function saveAddress(address: MemberAddressType): Promise<void> {
 }
 
 async function removeAddress(address: MemberAddressType): Promise<void> {
-  if (!window.confirm(t("pages.account.addresses.confirm_delete_message"))) return;
+  if (!window.confirm(t("pages.account.addresses.confirm_delete_message"))) {
+    return;
+  }
 
   await removeAddresses([address]);
 }

@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { MoneyType } from "@/core/api/graphql/types";
+import { MoneyType } from "@/xapi/graphql/types";
 import { PropType } from "vue";
 
 defineProps({

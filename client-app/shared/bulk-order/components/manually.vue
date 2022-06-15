@@ -81,7 +81,7 @@
 
 <script setup lang="ts">
 import { computed, ref, Ref } from "vue";
-import { InputNewBulkItemType } from "@core/api/graphql/types";
+import { InputNewBulkItemType } from "@/xapi/graphql/types";
 import { maxQuantity, validateQuantity } from "@/shared/bulk-order";
 
 type InputNewBulkItemExtendedType = { [prop in keyof InputNewBulkItemType]: string };

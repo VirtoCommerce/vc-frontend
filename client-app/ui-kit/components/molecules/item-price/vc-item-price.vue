@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { PropType } from "vue";
-import { MoneyType, PriceType } from "@/core/api/graphql/types";
+import { MoneyType, PriceType } from "@/xapi/graphql/types";
 
 defineProps({
   value: {
