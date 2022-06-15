@@ -2,7 +2,7 @@ import { createI18n as _createI18n } from "vue-i18n";
 
 export type I18n = ReturnType<typeof createI18n>;
 
-const datetimeFormats = {
+const datetimeFormats: any = {
   en: {
     short: {
       year: "numeric",
