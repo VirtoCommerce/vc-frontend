@@ -37,8 +37,6 @@
   <div v-else-if="countInCart" class="text-xs text-gray-400">
     {{ $t("shared.cart.add_to_cart.already_in_cart_message", [countInCart]) }}
   </div>
-
-  <div v-else class="mb-4"></div>
 </template>
 
 <script setup lang="ts">

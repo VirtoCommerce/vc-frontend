@@ -35,8 +35,14 @@
       </div>
       <!-- add to cart -->
       <div class="flex-1 xl:self-center flex flex-row items-center">
-        <div class="flex flex-col w-full mt-4">
+        <div class="w-full mt-4">
           <AddToCart :product="variation"></AddToCart>
+
+          <VcInStock
+            :isInStock="variation.availabilityData?.isInStock"
+            :quantity="variation.availabilityData?.availableQuantity"
+            class="inline-block mt-2.5"
+          ></VcInStock>
         </div>
       </div>
     </div>
@@ -44,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { VcImage, VcItemPrice } from "@/components";
+import { VcImage, VcItemPrice, VcInStock } from "@/components";
 import { VariationType, Product } from "@core/api/graphql/types";
 import { VariationProperties } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";

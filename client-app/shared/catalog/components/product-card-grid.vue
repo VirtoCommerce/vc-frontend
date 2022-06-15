@@ -13,20 +13,15 @@
       </div>
     </router-link>
 
-    <div class="flex flex-col flex-grow pt-3 xl:pt-4">
-      <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between mb-1.5 xl:mb-3">
-        <AddToCompare v-if="$cfg.product_compare_enabled" :product="product" class="mb-2 xl:mb-0" />
+    <div class="flex flex-col flex-grow pt-3 xl:pt-3">
+      <div class="mb-1.5 xl:inline-flex xl:flex-wrap xl:items-center xl:justify-between xl:mb-2">
+        <AddToCompare v-if="$cfg.product_compare_enabled" :product="product" class="mb-2 xl:my-0.5 xl:pr-0.5" />
 
-        <div v-if="product.availabilityData?.isInStock" class="flex items-center text-green-700 text-xs">
-          <div class="w-1.5 h-1.5 bg-green-700 rounded mr-1"></div>
-          {{ product.availabilityData.availableQuantity > 9999 ? "9999+" : product.availabilityData.availableQuantity }}
-          {{ $t("common.suffixes.product_count_in_stock") }}
-        </div>
-
-        <div v-else class="flex items-center text-[color:var(--color-danger)] text-xs">
-          <div class="w-1.5 h-1.5 bg-[color:var(--color-danger)] rounded mr-1"></div>
-          {{ $t("common.messages.product_out_of_stock") }}
-        </div>
+        <VcInStock
+          :isInStock="product.availabilityData?.isInStock"
+          :quantity="product.availabilityData.availableQuantity"
+          class="inline-block my-0.5"
+        ></VcInStock>
       </div>
 
       <!-- Product title -->
@@ -60,7 +55,7 @@
 
 <script setup lang="ts">
 import { computed, PropType } from "vue";
-import { VcImage, VcItemPrice } from "@/components";
+import { VcImage, VcItemPrice, VcInStock } from "@/components";
 import { AddToCompare } from "@/shared/compare";
 import { Product } from "@/core/api/graphql/types";
 import { RouteLocationRaw } from "vue-router";

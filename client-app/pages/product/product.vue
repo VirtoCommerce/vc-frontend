@@ -48,6 +48,12 @@
 
             <div class="mt-7 md:mt-5">
               <AddToCart :product="product" />
+
+              <VcInStock
+                :isInStock="product.availabilityData?.isInStock"
+                :quantity="product.availabilityData?.availableQuantity"
+                class="inline-block mt-2.5"
+              ></VcInStock>
             </div>
           </ProductPriceBlock>
         </div>
@@ -86,7 +92,7 @@
 
 <script setup lang="ts">
 import { ref, Ref, watchEffect, defineAsyncComponent } from "vue";
-import { VcCarousel, VcSection, VcButton, VcItemPrice, CarouselOptions } from "@/components";
+import { VcCarousel, VcSection, VcButton, VcItemPrice, CarouselOptions, VcInStock } from "@/components";
 import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
 import { useCart, AddToCart } from "@/shared/cart";
 import {
