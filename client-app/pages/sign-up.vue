@@ -192,7 +192,7 @@ const onSubmit = handleSubmit(async (data) => {
   commonErrors.value = [];
 
   let result: AccountCreationResultType;
-  if (registrationKind.value == RegistrationKind.personal) {
+  if (registrationKind.value === RegistrationKind.personal) {
     result = await registerUser({
       email: trimString(data.email),
       firstName: trimString(data.firstName),
@@ -218,7 +218,7 @@ const onSubmit = handleSubmit(async (data) => {
   } else {
     if (result.errors?.length) {
       const identityErrors = convertToIdentityError(result.errors);
-      for (let error of identityErrors) {
+      for (const error of identityErrors) {
         // TODO: Localize all messages on a front side
         // improve XAPI: pass error's parameters with error
         switch (error.code) {
