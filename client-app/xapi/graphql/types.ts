@@ -32,14 +32,6 @@ export type AccountCreationResultType = {
   succeeded: Scalars['Boolean'];
 };
 
-export type AccountType = {
-  createdBy?: Maybe<Scalars['String']>;
-  email: Scalars['String'];
-  id: Scalars['String'];
-  status?: Maybe<Scalars['String']>;
-  username: Scalars['String'];
-};
-
 export type Asset = {
   /** Culture name */
   cultureName?: Maybe<Scalars['String']>;
@@ -401,17 +393,6 @@ export type CategoryEdge = {
   cursor: Scalars['String'];
   /** The item at the end of the edge */
   node?: Maybe<Category>;
-};
-
-export type CompanyType = {
-  address: MemberAddressType;
-  createdBy?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
-  id: Scalars['String'];
-  name: Scalars['String'];
-  ownerId?: Maybe<Scalars['String']>;
-  status?: Maybe<Scalars['String']>;
 };
 
 /** A connection from an object to a list of objects of type `Contact`. */
@@ -886,12 +867,6 @@ export type InitializePaymentResultType = {
   storeId?: Maybe<Scalars['String']>;
 };
 
-export type InputAccountType = {
-  email: Scalars['String'];
-  password: Scalars['String'];
-  username: Scalars['String'];
-};
-
 export type InputAddBulkItemsType = {
   cartId?: InputMaybe<Scalars['String']>;
   /** Bulk cart items */
@@ -1185,22 +1160,6 @@ export type InputClearShipmentsType = {
   userId: Scalars['String'];
 };
 
-export type InputCompanyType = {
-  address: InputMemberAddressType;
-  description?: InputMaybe<Scalars['String']>;
-  dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
-  name: Scalars['String'];
-};
-
-export type InputContactType = {
-  birthdate?: InputMaybe<Scalars['Date']>;
-  dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
-  firstName: Scalars['String'];
-  lastName: Scalars['String'];
-  middleName?: InputMaybe<Scalars['String']>;
-  phoneNumber: Scalars['String'];
-};
-
 export type InputCreateApplicationUserType = {
   /** Username of the creator */
   createdBy?: InputMaybe<Scalars['String']>;
@@ -1463,6 +1422,12 @@ export type InputProcessOrderPaymentType = {
   paymentId: Scalars['String'];
 };
 
+export type InputRegisterAccountType = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+  username: Scalars['String'];
+};
+
 export type InputRegisterByInvitationType = {
   /** First name of person */
   firstName: Scalars['String'];
@@ -1480,15 +1445,20 @@ export type InputRegisterByInvitationType = {
   username: Scalars['String'];
 };
 
-export type InputRegisterCompanyType = {
-  /** Creating contact's account */
-  account: InputAccountType;
-  /** company type */
-  company?: InputMaybe<InputCompanyType>;
-  /** Creating contact */
-  contact: InputContactType;
-  /** Store ID */
-  storeId: Scalars['String'];
+export type InputRegisterContactType = {
+  birthdate?: InputMaybe<Scalars['Date']>;
+  dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  middleName?: InputMaybe<Scalars['String']>;
+  phoneNumber?: InputMaybe<Scalars['String']>;
+};
+
+export type InputRegisterOrganizationType = {
+  address?: InputMaybe<InputMemberAddressType>;
+  description?: InputMaybe<Scalars['String']>;
+  dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
+  name: Scalars['String'];
 };
 
 export type InputRejectGiftItemsType = {
@@ -1573,6 +1543,17 @@ export type InputRenameWishlistType = {
   listId: Scalars['String'];
   /** New List name */
   listName?: InputMaybe<Scalars['String']>;
+};
+
+export type InputRequestRegistrationType = {
+  /** Creating contact's account */
+  account: InputRegisterAccountType;
+  /** Creating contact */
+  contact: InputRegisterContactType;
+  /** company type */
+  organization?: InputMaybe<InputRegisterOrganizationType>;
+  /** Store ID */
+  storeId: Scalars['String'];
 };
 
 export type InputResetPasswordByTokenType = {
@@ -2105,7 +2086,6 @@ export type Mutations = {
   /** @deprecated Obsolete. Use 'initializePayment' mutation */
   processOrderPayment?: Maybe<ProcessPaymentRequestResultType>;
   registerByInvitation?: Maybe<CustomIdentityResultType>;
-  registrationRequest?: Maybe<RegisterCompanyType>;
   rejectGiftItems?: Maybe<CartType>;
   removeCart?: Maybe<Scalars['Boolean']>;
   removeCartAddress?: Maybe<CartType>;
@@ -2115,6 +2095,7 @@ export type Mutations = {
   removeWishlist?: Maybe<Scalars['Boolean']>;
   removeWishlistItem?: Maybe<WishlistType>;
   renameWishlist?: Maybe<WishlistType>;
+  requestRegistration?: Maybe<RequestRegistrationType>;
   resetPasswordByToken?: Maybe<CustomIdentityResultType>;
   sendVerifyEmail?: Maybe<Scalars['Boolean']>;
   updateCartDynamicProperties?: Maybe<CartType>;
@@ -2311,11 +2292,6 @@ export type MutationsRegisterByInvitationArgs = {
 };
 
 
-export type MutationsRegistrationRequestArgs = {
-  command: InputRegisterCompanyType;
-};
-
-
 export type MutationsRejectGiftItemsArgs = {
   command: InputRejectGiftItemsType;
 };
@@ -2358,6 +2334,11 @@ export type MutationsRemoveWishlistItemArgs = {
 
 export type MutationsRenameWishlistArgs = {
   command: InputRenameWishlistType;
+};
+
+
+export type MutationsRequestRegistrationArgs = {
+  command: InputRequestRegistrationType;
 };
 
 
@@ -2761,18 +2742,6 @@ export type OutlineItemType = {
 export type OutlineType = {
   /** Outline items */
   items?: Maybe<Array<Maybe<OutlineItemType>>>;
-};
-
-export type OwnerType = {
-  birthdate?: Maybe<Scalars['Date']>;
-  createdBy?: Maybe<Scalars['String']>;
-  dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
-  firstName: Scalars['String'];
-  id: Scalars['String'];
-  lastName: Scalars['String'];
-  middleName?: Maybe<Scalars['String']>;
-  phoneNumber: Scalars['String'];
-  status?: Maybe<Scalars['String']>;
 };
 
 /** Information about pagination in a connection. */
@@ -3517,13 +3486,44 @@ export type RangeFacet = Facet & {
   ranges?: Maybe<Array<Maybe<FacetRangeType>>>;
 };
 
-export type RegisterCompanyType = {
+export type RegisterAccountType = {
+  createdBy?: Maybe<Scalars['String']>;
+  email: Scalars['String'];
+  id: Scalars['String'];
+  status?: Maybe<Scalars['String']>;
+  username: Scalars['String'];
+};
+
+export type RegisterContactType = {
+  birthdate?: Maybe<Scalars['Date']>;
+  createdBy?: Maybe<Scalars['String']>;
+  dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
+  firstName: Scalars['String'];
+  id: Scalars['String'];
+  lastName: Scalars['String'];
+  middleName?: Maybe<Scalars['String']>;
+  phoneNumber?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
+};
+
+export type RegisterOrganizationType = {
+  address?: Maybe<MemberAddressType>;
+  createdBy?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
+  id: Scalars['String'];
+  name: Scalars['String'];
+  ownerId?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
+};
+
+export type RequestRegistrationType = {
   /** Contact's account */
-  account?: Maybe<AccountType>;
-  /** Created company */
-  company?: Maybe<CompanyType>;
+  account?: Maybe<RegisterAccountType>;
   /** Created contact */
-  contact?: Maybe<OwnerType>;
+  contact?: Maybe<RegisterContactType>;
+  /** Created company */
+  organization?: Maybe<RegisterOrganizationType>;
   /** Account creation result */
   result?: Maybe<AccountCreationResultType>;
 };
@@ -3883,6 +3883,13 @@ export type DeleteWishlistItemMutationVariables = Exact<{
 
 
 export type DeleteWishlistItemMutation = { removeWishlistItem?: { id?: string } };
+
+export type RequestRegistrationMutationVariables = Exact<{
+  command: InputRequestRegistrationType;
+}>;
+
+
+export type RequestRegistrationMutation = { requestRegistration?: { account?: { id: string }, organization?: { id: string }, contact?: { id: string }, result?: { succeeded: boolean, errors?: Array<string> } } };
 
 export type RenameWishlistMutationVariables = Exact<{
   command: InputRenameWishlistType;
