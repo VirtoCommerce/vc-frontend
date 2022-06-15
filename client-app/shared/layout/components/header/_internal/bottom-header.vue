@@ -5,7 +5,7 @@
         <VcImage :src="$cfg.logo_image" class="h-8 xl:h-[2.8rem]" lazy />
       </router-link>
 
-      <template v-if="organization && false">
+      <template v-if="organization">
         <div class="w-0.5 h-6 bg-[color:var(--color-primary)] mx-5 hidden xl:block"></div>
 
         <div class="italic leading-tight text-lg text-[color:var(--color-header-bottom-text)] hidden xl:block">
