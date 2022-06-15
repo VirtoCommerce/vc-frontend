@@ -1,16 +1,16 @@
-import client from "@core/api/graphql/graphql-client";
 import {
   InputRequestRegistrationType,
   RequestRegistrationType,
   Mutations,
   MutationsRequestRegistrationArgs,
-} from "@core/api/graphql/types";
+} from "@/xapi/graphql/types";
 import mutationDocument from "./requestRegistration.graphql";
 
 export default async function registerAccount(
   registrationData: InputRequestRegistrationType
 ): Promise<RequestRegistrationType> {
-  const { data } = await client.mutate<
+  const { $graphqlClient } = useNuxtApp();
+  const { data } = await $graphqlClient.mutate<
     Required<Pick<Mutations, "requestRegistration">>,
     MutationsRequestRegistrationArgs
   >({
