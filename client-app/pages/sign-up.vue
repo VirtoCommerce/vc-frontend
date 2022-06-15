@@ -253,8 +253,8 @@ const onSubmit = handleSubmit(async (data) => {
             break;
 
           default:
-            if (error) {
-              commonErrors.value.push(error.description as string);
+            if (error.description) {
+              commonErrors.value.push(error.description);
             }
         }
       }
