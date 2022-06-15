@@ -2,9 +2,7 @@ import { computed, shallowRef, triggerRef } from "vue";
 import { MenuLink } from "@/shared/layout";
 import { getMenus } from "@core/api/graphql/common";
 import { MenuLinkType } from "@core/api/graphql/types";
-import { useGlobalVariables } from "@core/composables";
-
-const globals = useGlobalVariables();
+import globals from "@core/globals";
 
 const menuLinkLists = shallowRef<Record<string, MenuLinkType[]>>();
 const menuSchema = shallowRef<Record<string, any>>();

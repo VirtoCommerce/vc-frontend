@@ -20,7 +20,7 @@
                     text-field="name"
                     value-field="id"
                     :is-disabled="loading"
-                    :items="productSortingList"
+                    :items="PRODUCT_SORTING_LIST"
                     class="w-full md:w-52 lg:w-64"
                   />
                 </div>
@@ -90,7 +90,7 @@ import { DisplayProducts, ProductsSearchParams, useProducts, useProductsRoutes, 
 import { VcButton, VcInfinityScrollLoader, VcSelect, VcScrollTopButton } from "@/components";
 import { AddToCart } from "@/shared/cart";
 import { useRouteQueryParam } from "@core/composables";
-import { defaultSearchPageSize, productSortingList } from "@core/constants";
+import { DEFAULT_SEARCH_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@core/constants";
 import QueryParamName from "@core/query-param-name.enum";
 
 const watchStopHandles: WatchStopHandle[] = [];
@@ -102,13 +102,13 @@ const productsRoutes = useProductsRoutes(products);
 
 const isMobile = breakpoints.smaller("md");
 const page = ref(1);
-const itemsPerPage = ref(defaultSearchPageSize);
+const itemsPerPage = ref(DEFAULT_SEARCH_PAGE_SIZE);
 
 const viewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
-  defaultValue: productSortingList[0].id,
-  validator: (value) => productSortingList.some((item) => item.id === value),
+  defaultValue: PRODUCT_SORTING_LIST[0].id,
+  validator: (value) => PRODUCT_SORTING_LIST.some((item) => item.id === value),
 });
 
 const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.SearchPhrase, {

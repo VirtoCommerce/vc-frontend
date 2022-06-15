@@ -27,7 +27,7 @@
           <div class="flex items-center justify-between">
             <router-link to="/account/dashboard" class="flex items-center" @click="loginMenuVisible = false">
               <i class="fa fa-user-circle fa-2x fa-fw text-[color:var(--color-primary)]"></i>
-              <span class="ml-2">{{ me.contact?.fullName }}</span>
+              <span class="ml-2">{{ user.contact?.fullName }}</span>
             </router-link>
             <div class="flex-grow"></div>
             <button
@@ -58,7 +58,7 @@ import { useUser } from "@/shared/account";
 
 import TopHeaderLink from "./top-header-link.vue";
 
-const { isAuthenticated, me, signMeOut } = useUser();
+const { isAuthenticated, user, signMeOut } = useUser();
 const loginMenu = ref(null);
 const loginMenuVisible = ref(false);
 

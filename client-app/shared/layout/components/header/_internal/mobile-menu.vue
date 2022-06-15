@@ -53,8 +53,8 @@
 
             <!-- Logout -->
             <div v-if="childrenItem.id === 'logout'" class="flex items-center">
-              <template v-if="me.contact?.fullName">
-                <span>{{ me.contact.fullName }}</span>
+              <template v-if="user.contact?.fullName">
+                <span>{{ user.contact.fullName }}</span>
                 <span class="font-normal text-base mx-2.5">•</span>
               </template>
 
@@ -205,7 +205,7 @@ const { cart } = useCart();
 const { productsIds } = useCompareProducts();
 const { supportedLocales } = useLanguages();
 const { currentCurrency, supportedCurrencies, saveCurrencyCodeAndReload } = useCurrency();
-const { me, isAuthenticated, signMeOut } = useUser();
+const { user, isAuthenticated, signMeOut } = useUser();
 const { mainMenuLinks, openedItem, selectMenuItem, goBack, goMainMenu } = useNavigations();
 
 const unauthorizedMenuLinks: MenuLink[] = [
