@@ -11,7 +11,7 @@ import { createRouter } from "@/router";
 import { getBaseUrl } from "@core/utilities";
 import App from "./App.vue";
 import PageBuilderBlocks from "@/builder-preview/pages/blocks";
-import * as components from "@/ui-kit";
+import * as components from "@/ui-kit/components";
 
 export default async (getPlugins: (options: any) => { plugin: Plugin; options: any }[] = () => []) => {
   const { isAuthenticated, fetchUser } = useUser();
@@ -93,6 +93,7 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
   const plugins = getPlugins({ router });
   plugins.forEach(({ plugin, options }) => app.use(plugin, options));
 
+  // Register UI Kit components globally
   Object.entries(components).forEach(([name, component]) => app.component(name, component));
 
   await router.isReady();
