@@ -108,20 +108,6 @@ export default () => {
       });
 
       return resultData.result!;
-      // const contact = await createContact({
-      //   firstName: payload.firstName as string,
-      //   lastName: payload.lastName as string,
-      //   name: `${payload.firstName} ${payload.lastName}`,
-      //   emails: [payload.email],
-      // });
-      // return await createUser({
-      //   userName: payload.userName,
-      //   password: payload.password,
-      //   email: payload.email,
-      //   memberId: contact.id,
-      //   userType: "Customer",
-      //   storeId,
-      // });
     } catch (e) {
       Logger.error("useUser.registerUser", e);
       throw e;
