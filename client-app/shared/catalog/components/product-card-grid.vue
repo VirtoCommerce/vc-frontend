@@ -19,7 +19,7 @@
 
         <VcInStock
           :isInStock="product.availabilityData?.isInStock"
-          :quantity="product.availabilityData.availableQuantity"
+          :quantity="product.availabilityData?.availableQuantity"
           class="inline-block my-0.5"
         ></VcInStock>
       </div>
