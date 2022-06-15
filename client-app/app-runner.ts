@@ -11,6 +11,14 @@ import { createRouter } from "@/router";
 import { getBaseUrl } from "@core/utilities";
 import App from "./App.vue";
 import PageBuilderBlocks from "@/builder-preview/pages/blocks";
+import client from "@/xapi/graphql/graphql-client";
+
+// Workaround before Nuxt3 migration, will be deleted later.
+window.useNuxtApp = () => {
+  return {
+    $graphqlClient: client,
+  };
+};
 
 export default async (getPlugins: (options: any) => { plugin: Plugin; options: any }[] = () => []) => {
   const { isAuthenticated, fetchUser } = useUser();
@@ -58,7 +66,7 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
     },
   });
 
-  router.beforeEach((to, from, next) => {
+  router.beforeEach((to, _from, next) => {
     // Protect account routes
     if (!isAuthenticated.value && to.meta.requiresAuth) {
       return next({

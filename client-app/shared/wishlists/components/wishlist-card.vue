@@ -46,7 +46,7 @@
 <script setup lang="ts">
 import { PropType } from "vue";
 import { VcButton } from "@/components";
-import { WishlistType } from "@core/api/graphql/types";
+import { WishlistType } from "@/xapi/graphql/types";
 
 defineEmits(["add-to-cart", "settings", "remove"]);
 

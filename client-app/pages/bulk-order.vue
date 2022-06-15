@@ -67,7 +67,7 @@
 import { ref } from "vue";
 import { VcAlert, VcTabs } from "@/components";
 import { CopyAndPaste, Manually } from "@/shared/bulk-order";
-import { InputNewBulkItemType } from "@core/api/graphql/types";
+import { InputNewBulkItemType } from "@/xapi/graphql/types";
 import { useCart } from "@/shared/cart";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
@@ -97,7 +97,9 @@ async function addItems(items: InputNewBulkItemType[]) {
   incorrectData.value = false;
   SKUsWithErrors.value = [];
 
-  if (!items.length || loadingCart.value) return;
+  if (!items.length || loadingCart.value) {
+    return;
+  }
 
   const { errors } = await addBulkMultipleItemsToCart({
     cartId: cart.value.id,

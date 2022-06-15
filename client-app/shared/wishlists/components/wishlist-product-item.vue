@@ -61,7 +61,7 @@ import { RouteLocationRaw } from "vue-router";
 import { getProductRoute } from "@/shared/catalog";
 import { VcImage, VcItemPrice } from "@/components";
 import { AddToCart } from "@/shared/cart";
-import { Product } from "@core/api/graphql/types";
+import { Product } from "@/xapi/graphql/types";
 
 defineEmits(["remove"]);
 

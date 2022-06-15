@@ -191,7 +191,9 @@ async function refreshProducts() {
 }
 
 function getProductProperties() {
-  if (_.isEmpty(products.value)) return;
+  if (_.isEmpty(products.value)) {
+    return;
+  }
 
   const grouped: IProductProperties = {};
   const properties = _.flatten(

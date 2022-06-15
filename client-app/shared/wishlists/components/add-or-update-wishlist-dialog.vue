@@ -52,7 +52,7 @@ import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import { useWishlists } from "@/shared/wishlists";
 import { PropType } from "vue";
-import { WishlistType } from "@core/api/graphql/types";
+import { WishlistType } from "@/xapi/graphql/types";
 import { eagerComputed } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
 
@@ -79,7 +79,9 @@ const {
 const isEditMode = eagerComputed(() => !!props.list);
 
 async function save(closingHandle: () => void) {
-  if (!listName.value || errors.value.length) return;
+  if (!listName.value || errors.value.length) {
+    return;
+  }
 
   if (isEditMode.value) {
     await renameWishlist({

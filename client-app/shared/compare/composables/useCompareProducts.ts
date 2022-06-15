@@ -1,7 +1,7 @@
 import { inject, computed } from "vue";
 import { useLocalStorage } from "@vueuse/core";
 import { useNotifications } from "@/shared/notification";
-import { Product } from "@core/api/graphql/types";
+import { Product } from "@/xapi/graphql/types";
 import { truncate } from "@core/utilities";
 import { configInjectionKey } from "@core/injection-keys";
 
