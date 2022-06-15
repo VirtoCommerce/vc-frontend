@@ -39,6 +39,7 @@ module.exports = {
     "@typescript-eslint/no-shadow": "error",
     "@typescript-eslint/no-non-null-assertion": "off",
     "vue/multi-word-component-names": "off",
+    "curly": "error",
   },
   overrides: [
     // Fix no-used-vars when importing ts types in .vue files

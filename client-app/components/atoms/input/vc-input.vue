@@ -113,7 +113,9 @@ watchEffect(() => {
 });
 
 watchEffect(() => {
-  if (!isNumberTypeSafari.value) return;
+  if (!isNumberTypeSafari.value) {
+    return;
+  }
 
   if (isNaN(props.modelValue as number)) {
     emit("update:modelValue");

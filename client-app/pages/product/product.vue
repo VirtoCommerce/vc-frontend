@@ -149,7 +149,9 @@ const breadcrumbs: Ref<IBreadcrumbsItem[]> = ref([{ url: "/", title: t("common.l
 
 const productWithVariations = eagerComputed<boolean>(() => !!product.value?.variations?.length);
 const variationsCartTotalAmount = eagerComputed<number>(() => {
-  if (!product.value) return 0;
+  if (!product.value) {
+    return 0;
+  }
 
   const variationsIds = product.value.variations!.map((variation) => variation.id!);
   variationsIds.push(product.value.id);

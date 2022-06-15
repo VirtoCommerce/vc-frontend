@@ -11,7 +11,7 @@ type TPageContent = {
   id: string;
   name: string;
   type: string;
-}
+};
 
 defineProps({
   settings: {

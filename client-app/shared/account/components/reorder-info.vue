@@ -72,7 +72,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUpdate, onMounted, PropType, ref } from "vue";
-import { OrderLineItemType, Product } from "@/core/api/graphql/types";
+import { OrderLineItemType, Product } from "@/xapi/graphql/types";
 import { VcPopup, VcButton, VcPagination, VcCheckbox } from "@/components";
 import { ProductCardReorder } from "@/shared/account";
 import _ from "lodash";
@@ -143,15 +143,15 @@ const applyFilters = () => {
   }
 
   if (reducedQuantityFilter.value) {
-    let filteredProducts = applyReducedQuantityFilter();
+    const filteredProducts = applyReducedQuantityFilter();
     filteredItems.value = [...filteredItems.value, ...filteredProducts];
   }
   if (cantBePurchasedFilter.value) {
-    let filteredProducts = applyCantBePurchasedFilter();
+    const filteredProducts = applyCantBePurchasedFilter();
     filteredItems.value = [...filteredItems.value, ...filteredProducts];
   }
   if (withoutChangesFilter.value) {
-    let filteredProducts = applyWithoutChangesFilter();
+    const filteredProducts = applyWithoutChangesFilter();
     filteredItems.value = [...filteredItems.value, ...filteredProducts];
   }
 };
@@ -205,7 +205,9 @@ function applyReducedQuantityFilter() {
     const oldQuantity = _.find(props.orderItemsInfo, (orderItem) => orderItem.productId === item.id)?.quantity;
     if (item.availabilityData?.isInStock) {
       return oldQuantity! > item.availabilityData?.availableQuantity;
-    } else return false;
+    } else {
+      return false;
+    }
   });
 }
 

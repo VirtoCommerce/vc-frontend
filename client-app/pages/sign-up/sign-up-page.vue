@@ -43,7 +43,7 @@
           :error-message="errors.email"
         ></VcInput>
         <VcInput
-          v-if="registrationKind == RegistrationKind.organization"
+          v-if="registrationKind === RegistrationKind.organization"
           v-model="organizationName"
           class="mb-4"
           :label="$t('pages.sign_up.organization_name_label')"
@@ -111,11 +111,11 @@ import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import { ref } from "vue";
 import { usePopup } from "@/shared/popup";
-import { IdentityResultType } from "@/core/api/graphql/types";
+import { IdentityResultType } from "@/xapi/graphql/types";
 import { computed } from "@vue/reactivity";
 import { isObjectEmpty, trimString } from "@/core/utilities";
 import { useI18n } from "vue-i18n";
-import { checkEmailUniqueness, checkUsernameUniqueness } from "@/core/api/graphql/account";
+import { checkEmailUniqueness, checkUsernameUniqueness } from "@/xapi/graphql/account";
 import _ from "lodash";
 
 const { t } = useI18n();
@@ -193,7 +193,7 @@ const onSubmit = handleSubmit(async (data) => {
   commonErrors.value = [];
 
   let result: IdentityResultType;
-  if (registrationKind.value == RegistrationKind.personal) {
+  if (registrationKind.value === RegistrationKind.personal) {
     result = await registerUser({
       email: trimString(data.email),
       firstName: trimString(data.firstName),
