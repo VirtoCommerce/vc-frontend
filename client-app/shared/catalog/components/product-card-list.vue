@@ -44,7 +44,7 @@
         <slot name="cart-handler"></slot>
 
         <VcInStock
-          :isInStock="product.availabilityData?.isInStock"
+          :is-in-stock="product.availabilityData?.isInStock"
           :quantity="product.availabilityData?.availableQuantity"
           class="inline-block mt-2.5"
         ></VcInStock>

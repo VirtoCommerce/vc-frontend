@@ -39,7 +39,7 @@
           <AddToCart :product="variation"></AddToCart>
 
           <VcInStock
-            :isInStock="variation.availabilityData?.isInStock"
+            :is-in-stock="variation.availabilityData?.isInStock"
             :quantity="variation.availabilityData?.availableQuantity"
             class="inline-block mt-2.5"
           ></VcInStock>

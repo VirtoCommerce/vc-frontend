@@ -18,7 +18,7 @@
         <AddToCompare v-if="$cfg.product_compare_enabled" :product="product" class="mb-2 xl:my-0.5 xl:pr-0.5" />
 
         <VcInStock
-          :isInStock="product.availabilityData?.isInStock"
+          :is-in-stock="product.availabilityData?.isInStock"
           :quantity="product.availabilityData?.availableQuantity"
           class="inline-block my-0.5"
         ></VcInStock>

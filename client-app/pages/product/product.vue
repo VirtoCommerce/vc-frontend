@@ -50,9 +50,9 @@
               <AddToCart :product="product" />
 
               <VcInStock
-                :isInStock="product.availabilityData?.isInStock"
+                :is-in-stock="product.availabilityData?.isInStock"
                 :quantity="product.availabilityData?.availableQuantity"
-                class="inline-block mt-2.5"
+                class="inline-block"
               ></VcInStock>
             </div>
           </ProductPriceBlock>

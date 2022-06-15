@@ -177,7 +177,7 @@
 
             <VcInStock
               v-if="!isInputDisabled || isOutOfStock"
-              :isInStock="!isInputDisabled && !isOutOfStock"
+              :is-in-stock="!isInputDisabled && !isOutOfStock"
               :quantity="productItem.availabilityData?.availableQuantity"
               class="inline-block mt-1.5"
             ></VcInStock>

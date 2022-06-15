@@ -75,7 +75,7 @@
             <div class="relative mt-1.5 pt-px h-6">
               <VcInStock
                 v-if="!readOnly"
-                :isInStock="!isInputDisabled"
+                :is-in-stock="!isInputDisabled"
                 :quantity="lineItem.inStockQuantity"
                 class="absolute lg:static"
               ></VcInStock>
