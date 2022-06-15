@@ -228,7 +228,7 @@ import { AddressForm, useUser, useUserAddresses } from "@/shared/account";
 import { computed, ComputedRef, onMounted, Ref, ref } from "vue";
 import { clone } from "lodash";
 import { MemberAddressType } from "@/core/api/graphql/types";
-import { sortAscending, sortDescending } from "@/core/constants";
+import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useCountries } from "@core/composables";
@@ -238,7 +238,7 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { me: user } = useUser();
+const { user } = useUser();
 const { countries, loadCountries } = useCountries();
 const {
   loading: addressesLoading,
@@ -352,10 +352,10 @@ function actionBuilder(address: MemberAddressType) {
 
 const applySorting = async (column: string): Promise<void> => {
   if (sort.value.column === column) {
-    sort.value.direction = sort.value.direction === sortDescending ? sortAscending : sortDescending;
+    sort.value.direction = sort.value.direction === SORT_DESCENDING ? SORT_ASCENDING : SORT_DESCENDING;
   } else {
     sort.value.column = column;
-    sort.value.direction = sortDescending;
+    sort.value.direction = SORT_DESCENDING;
   }
 
   page.value = 1;

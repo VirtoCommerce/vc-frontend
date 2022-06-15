@@ -250,7 +250,7 @@ import {
 import { OrdersFilter, useUserOrdersFilter, useUserOrders } from "@/shared/account";
 
 import { onMounted, ref, shallowRef, watch } from "vue";
-import { sortAscending, sortDescending } from "@/core/constants";
+import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 import { breakpointsTailwind, useBreakpoints, onClickOutside } from "@vueuse/core";
 
 import moment from "moment";
@@ -290,10 +290,10 @@ const onPageChange = async (newPage: number) => {
 
 const applySorting = async (column: string) => {
   if (sort.value.column === column) {
-    sort.value.direction = sort.value.direction === sortDescending ? sortAscending : sortDescending;
+    sort.value.direction = sort.value.direction === SORT_DESCENDING ? SORT_ASCENDING : SORT_DESCENDING;
   } else {
     sort.value.column = column;
-    sort.value.direction = sortDescending;
+    sort.value.direction = SORT_DESCENDING;
   }
 
   page.value = 1;

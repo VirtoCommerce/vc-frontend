@@ -40,4 +40,4 @@ export type BankCardType = {
   securityCode: string;
 };
 
-export type BankCardErrorsType = { [prop in keyof BankCardType]?: string };
+export type BankCardErrorsType = Partial<BankCardType>;
