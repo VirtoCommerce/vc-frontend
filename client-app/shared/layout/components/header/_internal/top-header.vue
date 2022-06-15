@@ -17,7 +17,7 @@
       <!-- Account menu -->
       <div ref="loginMenu" class="relative">
         <div class="flex items-center cursor-pointer" @click="loginMenuVisible = !loginMenuVisible">
-          <div>{{ me.contact?.fullName }}</div>
+          <div>{{ user.contact?.fullName }}</div>
           <i class="fas fa-chevron-down ml-1 text-[color:var(--color-primary)] text-[0.625rem] align-baseline"></i>
         </div>
         <div
