@@ -1,38 +1,52 @@
 import { createApp, Plugin } from "vue";
+import { RouteRecordName } from "vue-router";
 import * as yup from "yup";
 import { createHead } from "@vueuse/head";
-import { useGlobalVariables, useLanguages, useThemeContext } from "@core/composables";
+import { setGlobalVariables } from "@core/globals";
+import { useCurrency, useLanguages, useThemeContext } from "@core/composables";
 import { configPlugin, contextPlugin } from "@core/plugins";
 import { useUser } from "@/shared/account";
-import { useNavigations } from "@/shared/layout";
 import { createI18n } from "@/i18n";
-import { createRouter, getBaseUrl } from "@/router";
+import { createRouter } from "@/router";
+import { getBaseUrl } from "@core/utilities";
 import App from "./App.vue";
-import blocks from "@/builder-preview/pages/blocks";
-
-/**
- * Global Styles
- */
-import "@fortawesome/fontawesome-free/css/all.css";
-import "@/assets/styles/main.scss";
+import PageBuilderBlocks from "@/builder-preview/pages/blocks";
 
 export default async (getPlugins: (options: any) => { plugin: Plugin; options: any }[] = () => []) => {
-  const globals = useGlobalVariables();
-  const { fetchUser } = useUser();
+  const { isAuthenticated, fetchUser } = useUser();
   const { themeContext, fetchThemeContext } = useThemeContext();
   const { currentLocale, currentLanguage, supportedLocales, setLocale } = useLanguages();
-  const { fetchMenus } = useNavigations();
+  const { currentCurrency } = useCurrency();
 
-  // Load app data
+  /**
+   * Fetching required app data
+   */
   await Promise.all([fetchThemeContext(), fetchUser()]);
 
+  /**
+   * Creating plugin instances
+   */
   const head = createHead();
   const i18n = createI18n();
   const router = createRouter({ base: getBaseUrl(supportedLocales.value) });
 
-  await setLocale(i18n, currentLocale.value!);
+  /**
+   * Setting global variables
+   */
+  setGlobalVariables({
+    i18n,
+    router,
+    storeId: themeContext.value.storeId,
+    catalogId: themeContext.value.catalogId,
+    userId: themeContext.value.userId,
+    cultureName: currentLanguage.value.cultureName,
+    currencyCode: currentCurrency.value.code,
+  });
 
-  fetchMenus(currentLanguage.value!.cultureName);
+  /**
+   * Other settings
+   */
+  await setLocale(i18n, currentLocale.value);
 
   yup.setLocale({
     mixed: {
@@ -44,14 +58,30 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
     },
   });
 
-  // Setting global variables
-  globals.i18n = i18n;
-  globals.router = router;
+  router.beforeEach((to, from, next) => {
+    // Protect account routes
+    if (!isAuthenticated.value && to.meta.requiresAuth) {
+      return next({
+        name: "SignIn",
+        // save the location we were at to come back later
+        query: { redirect: to.fullPath },
+      });
+    }
 
-  // Create and mount application
+    // Make Dashboard the default Home page for authorized users
+    if (isAuthenticated.value && Array<RouteRecordName>("Home", "SignIn", "SignUp").includes(to.name!)) {
+      return next({ name: "Dashboard" });
+    }
+
+    return next();
+  });
+
+  /**
+   * Create and mount application
+   */
   const app = createApp(App);
 
-  Object.keys(blocks).forEach((key) => app.component(key, blocks[key]));
+  Object.keys(PageBuilderBlocks).forEach((name) => app.component(name, PageBuilderBlocks[name]));
 
   app.use(head);
   app.use(i18n);
@@ -61,6 +91,8 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
 
   const plugins = getPlugins({ router });
   plugins.forEach(({ plugin, options }) => app.use(plugin, options));
+
+  await router.isReady();
 
   app.mount("#app");
 };

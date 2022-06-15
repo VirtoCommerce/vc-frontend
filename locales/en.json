@@ -55,7 +55,8 @@
       "product_out_of_stock": "Out of stock",
       "required_field": "This field is required",
       "email_is_not_correct": "Please enter valid email address, e.g. johndoe{'@'}gmail.com)",
-      "max_length": "This field must not contain over {max} characters"
+      "max_length": "This field must not contain over {max} characters",
+      "creating_order_error": "Error when creating an order"
     },
     "placeholders": {
       "not_selected": "Not selected"
@@ -132,6 +133,7 @@
         "rebates_link": "Rebates",
         "replacement_parts_link": "Replacement Parts",
         "demo_landing_link": "Demo Landing",
+        "demo_page_link": "Demo Page",
         "all_rights_reserved": "All Rights Reserved.",
         "asp_net_e_commerce_platform": "ASP.NET ecommerce platform  {0}",
         "by_virto": "by Virto"
@@ -410,6 +412,42 @@
         "add_to_cart_button": "@:common.buttons.add_to_cart"
       }
     },
+    "payment": {
+      "bank_card_form": {
+        "number_label": "Card number",
+        "cardholder_name_label": "Cardholder name",
+        "month_label": "Expiry Month",
+        "month_placeholder": "MM",
+        "year_label": "Expiry Year",
+        "year_placeholder": "YY",
+        "security_code_label": "Security Code"
+      },
+      "authorize_net": {
+        "header": "Payment method",
+        "bank_card_title": "Credit Card",
+        "user_agreement_link": "User Agreement",
+        "privacy_policy_link": "Privacy Policy",
+        "accept_terms_text": "By placing an order, you accept the terms of",
+        "processing_personal_data_text": "and consent to the processing of personal data according to the",
+        "pay_now_button": "Pay Now",
+        "errors": {
+          "number": "Please provide valid credit card number",
+          "month": "Please provide valid expiration month",
+          "year": "Please provide valid expiration year",
+          "security_code": "Please provide valid security code",
+          "cardholder_name": "Please provide valid card holder name",
+          "try_again": "An error occurred during processing. Please try again"
+        }
+      },
+      "payment_success": {
+        "title": "Payment successful",
+        "text": "Thank you, we are checking your payment. The order will be shipped after we receive your payment."
+      },
+      "payment_failure": {
+        "title": "Payment failed",
+        "text": "There is a problem with your payment, try again please."
+      }
+    },
     "wishlists": {
       "list_card": {
         "quantity_label": "Product Qty",
@@ -628,6 +666,7 @@
       },
       "order_details": {
         "title": "Order #{0}",
+        "created_title": "Order complete",
         "status_label": "@:common.labels.status{':'} ",
         "purchase_order_label": "Purchase order",
         "placed_on_label": "Placed on: ",
@@ -637,6 +676,7 @@
         "order_comment_section": {
           "title": "Order comment"
         },
+        "pay_now_button": "Pay Now",
         "reorder_all_button": "Reorder all",
         "shipping_address_card": {
           "title": "Shipping address",
@@ -657,6 +697,15 @@
           "phone_label": "@:common.labels.phone{':'}",
           "email_label": "@:common.labels.email{':'}"
         }
+      },
+      "order_payment": {
+        "title": "Payment information",
+        "breadcrumb_title": "Payment",
+        "processed_title": "@:pages.account.order_details.title",
+        "loading_text": "Loading...",
+        "back_to_order_button": "Back to Order",
+        "orders_list_button": "Orders List",
+        "try_again_button": "Try again"
       },
       "your_lists": {
         "no_lists": "You have not created any lists yet",
@@ -791,7 +840,8 @@
         "warning_message": "Availability, shipping, tax, and promotions are not final until you complete your order.",
         "place_order_button": "Place order"
       },
-      "invalid_coupon_message": "This code does not match any active coupons. Please check whether everything is correct and try again."
+      "invalid_coupon_message": "This code does not match any active coupons. Please check whether everything is correct and try again.",
+      "go_to_payment_button": "Pay now"
     },
     "search": {
       "header": "Your search for <strong>{0}</strong> returned the following results:",

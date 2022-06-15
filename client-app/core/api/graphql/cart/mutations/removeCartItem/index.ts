@@ -1,18 +1,20 @@
 import client from "@core/api/graphql/graphql-client";
-import { currencyCode, currentUserId, locale, storeId } from "@core/constants";
 import mutationDocument from "./removeCartItemMutation.graphql";
 import { Mutations, MutationsRemoveCartItemArgs } from "@core/api/graphql/types";
+import globals from "@core/globals";
 
 export default async function removeCartItem(lineItemId: string): Promise<void> {
+  const { storeId, userId, cultureName, currencyCode } = globals;
+
   await client.mutate<Required<Pick<Mutations, "removeCartItem">>, MutationsRemoveCartItemArgs>({
     mutation: mutationDocument,
     variables: {
       command: {
-        lineItemId,
         storeId,
+        userId,
+        cultureName,
         currencyCode,
-        cultureName: locale,
-        userId: currentUserId,
+        lineItemId,
       },
     },
   });

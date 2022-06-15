@@ -1,4 +1,4 @@
-import { computed, readonly, ref, shallowRef, Slots, warn } from "vue";
+import { computed, ref, shallowRef, Slots, warn } from "vue";
 import { eagerComputed } from "@vueuse/core";
 
 const customSlots = shallowRef<Slots>({});
@@ -19,12 +19,12 @@ function resetSlots() {
   }
 }
 
-export default function useNestedMobileHeader({ writable = false } = {}) {
+export default function useNestedMobileHeader() {
   return {
     setSlots,
     resetSlots,
     isSlotsExist,
     customSlots: computed(() => customSlots.value),
-    isAnimated: writable ? isAnimated : readonly(isAnimated),
+    isAnimated,
   };
 }

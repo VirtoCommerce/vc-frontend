@@ -1,3 +1,8 @@
+export function getBaseUrl(supportedLocales: string[]): string {
+  const localeInPath = location.pathname.split("/")[1];
+  return supportedLocales.includes(localeInPath) ? `/${localeInPath}/` : "";
+}
+
 export function sleep(ms: number, resolvedValue?: any): Promise<any> {
   return new Promise((resolve) => setTimeout(resolve, ms, resolvedValue));
 }

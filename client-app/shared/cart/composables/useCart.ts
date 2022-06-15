@@ -213,9 +213,9 @@ export default () => {
     await loadMyCart();
   }
 
-  async function changeComment(comment: string) {
+  async function changeComment(comment: string, reloadCart = true) {
     loading.value = true;
-    console.log(`change cart comment ${comment}`);
+
     try {
       await changeCartComment(comment);
     } catch (e) {
@@ -224,7 +224,10 @@ export default () => {
     } finally {
       loading.value = false;
     }
-    await loadMyCart();
+
+    if (reloadCart) {
+      await loadMyCart();
+    }
   }
 
   async function updateShipment(shipment: InputShipmentType) {
@@ -241,9 +244,9 @@ export default () => {
     await loadMyCart();
   }
 
-  async function updatePayment(payment: InputPaymentType) {
+  async function updatePayment(payment: InputPaymentType, reloadCart = true) {
     loading.value = true;
-    console.log(`change cart payment details`);
+
     try {
       await addOrUpdateCartPayment(payment);
     } catch (e) {
@@ -252,7 +255,10 @@ export default () => {
     } finally {
       loading.value = false;
     }
-    await loadMyCart();
+
+    if (reloadCart) {
+      await loadMyCart();
+    }
   }
 
   function itemInCart(productId: string): LineItemType | undefined {

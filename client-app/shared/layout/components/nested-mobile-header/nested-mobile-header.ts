@@ -24,7 +24,7 @@ export default defineComponent({
 
   setup(props) {
     const slots = useSlots();
-    const { setSlots, resetSlots, isAnimated } = useNestedMobileHeader({ writable: true });
+    const { setSlots, resetSlots, isAnimated } = useNestedMobileHeader();
 
     onBeforeUnmount(() => {
       resetSlots();

@@ -55,6 +55,12 @@ module.exports = {
     defineEmits: "readonly",
     defineExpose: "readonly",
     withDefaults: "readonly",
+
+    /**
+     * Accept.js (Authorize.net)
+     * @link https://developer.authorize.net/api/reference/features/acceptjs.html
+     */
+    Accept: "readonly",
   },
   settings: {
     "import/parsers": {

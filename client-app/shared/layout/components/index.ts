@@ -5,4 +5,6 @@ export { default as SearchBar } from "./search-bar/search-bar.vue";
 export { default as CurrencySelector } from "./currency-selector/currency-selector.vue";
 export { default as TwoColumn } from "./two-column.vue";
 export { default as LanguageSelector } from "./language-selector/language-selector.vue";
+export { default as MainLayout } from "./main-layout/main-layout.vue";
 export { default as NestedMobileHeader } from "./nested-mobile-header/nested-mobile-header";
+export { default as PaymentLayout } from "./payment-layout/payment-layout.vue";

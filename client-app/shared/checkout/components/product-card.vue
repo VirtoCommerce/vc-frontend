@@ -66,8 +66,10 @@
                 'border-[color:var(--color-danger)]': errorMessage,
               }"
               :disabled="isInputDisabled || readOnly"
+              @change="updateQuantity"
               @input="onInput"
               @keypress="onKeypress"
+              @keyup.enter="updateQuantity"
             />
             <div v-if="!readOnly">
               <div v-if="!isInputDisabled" class="flex items-center">
@@ -84,17 +86,7 @@
             </div>
           </div>
 
-          <div v-if="!readOnly" class="lg:hidden flex flex-row space-x-2">
-            <VcButton
-              v-if="!isInputDisabled"
-              size="sm"
-              is-outline
-              class="uppercase px-2 font-bold"
-              @click="updateQuantity"
-            >
-              {{ $t("shared.checkout.product_card.update_button") }}
-            </VcButton>
-
+          <div v-if="!readOnly" class="lg:hidden">
             <VcButton
               size="sm"
               kind="secondary"
@@ -107,19 +99,16 @@
           </div>
           <div
             v-if="!readOnly"
-            class="hidden lg:flex xl:w-1/4 flex-col space-y-1 text-xs font-semibold text-[color:var(--color-link)]"
+            class="hidden lg:flex flex-col justify-center h-10 xl:w-1/4 text-xs font-semibold text-[color:var(--color-link)]"
           >
-            <span
-              v-if="!isInputDisabled"
-              class="cursor-pointer"
-              @click="updateQuantity"
-              v-t="'shared.checkout.product_card.update_button'"
-            ></span>
-            <span
-              class="cursor-pointer"
+            <button
+              type="button"
+              :title="$t('shared.checkout.product_card.remove_button')"
+              class="h-7 w-7 shadow rounded text-[color:var(--color-danger)] hover:bg-gray-100"
               @click="$emit('remove:item', lineItem.id)"
-              v-t="'shared.checkout.product_card.remove_button'"
-            ></span>
+            >
+              <i class="fas fa-times" />
+            </button>
           </div>
           <div class="hidden lg:flex lg:w-28 lg:shrink-0 xl:w-2/4 lg:items-end flex-col text-sm font-extrabold pr-3">
             <span class="text-black self-end" v-t="'shared.checkout.product_card.total_label'"></span>
@@ -216,7 +205,7 @@ defineExpose({ updateQuantity });
  * Ignore non-numeric keys.
  */
 const onKeypress = (event: KeyboardEvent) => {
-  if (!/[0-9]/.test(event.key)) {
+  if (!/[0-9]/.test(event.key) && event.key !== "Enter") {
     event.preventDefault();
   }
 };

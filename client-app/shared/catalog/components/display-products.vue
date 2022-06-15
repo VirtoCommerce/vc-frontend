@@ -18,14 +18,14 @@
 import { ProductCardGrid, ProductCardList, ProductSkeletonGrid, ProductSkeletonList } from "@/shared/catalog";
 import { computed, PropType } from "vue";
 import { Product as ProductType } from "@core/api/graphql/types";
-import { defaultPageSize } from "@core/constants";
+import { DEFAULT_PAGE_SIZE } from "@core/constants";
 
 const props = defineProps({
   loading: Boolean,
 
   itemsPerPage: {
     type: Number,
-    default: defaultPageSize,
+    default: DEFAULT_PAGE_SIZE,
   },
 
   products: {
