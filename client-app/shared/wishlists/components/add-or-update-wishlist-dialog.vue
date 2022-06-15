@@ -79,7 +79,9 @@ const {
 const isEditMode = eagerComputed(() => !!props.list);
 
 async function save(closingHandle: () => void) {
-  if (!listName.value || errors.value.length) return;
+  if (!listName.value || errors.value.length) {
+    return;
+  }
 
   if (isEditMode.value) {
     await renameWishlist({

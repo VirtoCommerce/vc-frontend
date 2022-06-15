@@ -196,25 +196,33 @@ const slotsData = computed(() => ({
 
 const emailRules = computed(() => {
   let rules = yup.string().max(64).email().nullable();
-  if (props.requiredEmail) rules = rules.required();
+  if (props.requiredEmail) {
+    rules = rules.required();
+  }
   return rules;
 });
 
 const phoneRules = computed(() => {
   let rules = yup.string().max(64).nullable();
-  if (props.requiredPhone) rules = rules.required();
+  if (props.requiredPhone) {
+    rules = rules.required();
+  }
   return rules;
 });
 
 const cityRules = computed(() => {
   let rules = yup.string().max(128).nullable();
-  if (props.requiredCity) rules = rules.required();
+  if (props.requiredCity) {
+    rules = rules.required();
+  }
   return rules;
 });
 
 const regionRules = computed(() => {
   let rules = yup.string().nullable();
-  if (regions.value.length) rules = rules.required();
+  if (regions.value.length) {
+    rules = rules.required();
+  }
   return rules;
 });
 

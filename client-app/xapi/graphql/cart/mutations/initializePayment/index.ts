@@ -11,7 +11,10 @@ export default async function initializePayment(
 ): Promise<InitializePaymentResultType> {
   const { $graphqlClient } = useNuxtApp();
 
-  const { data } = await $graphqlClient.mutate<Required<Pick<Mutations, "initializePayment">>, MutationsInitializePaymentArgs>({
+  const { data } = await $graphqlClient.mutate<
+    Required<Pick<Mutations, "initializePayment">>,
+    MutationsInitializePaymentArgs
+  >({
     mutation: mutationDocument,
     variables: {
       command: payload,

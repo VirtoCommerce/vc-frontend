@@ -66,7 +66,7 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
     },
   });
 
-  router.beforeEach((to, from, next) => {
+  router.beforeEach((to, _from, next) => {
     // Protect account routes
     if (!isAuthenticated.value && to.meta.requiresAuth) {
       return next({

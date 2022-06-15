@@ -4,5 +4,5 @@ import client from "./xapi/graphql/graphql-client";
 declare global {
   export function useNuxtApp(): {
     $graphqlClient: typeof client;
-  }
+  };
 }

@@ -90,7 +90,9 @@ const extendedLists = computed(() => {
 });
 
 async function addToWishlists() {
-  if (!selectedListsIds.value.length) return;
+  if (!selectedListsIds.value.length) {
+    return;
+  }
 
   const productId = props.product.id;
 

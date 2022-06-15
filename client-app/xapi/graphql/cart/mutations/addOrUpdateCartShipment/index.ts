@@ -6,7 +6,10 @@ export default async function addOrUpdateCartShipment(shipment: InputShipmentTyp
   const { storeId, userId, cultureName, currencyCode } = globals;
   const { $graphqlClient } = useNuxtApp();
 
-  await $graphqlClient.mutate<Required<Pick<Mutations, "addOrUpdateCartShipment">>, MutationsAddOrUpdateCartShipmentArgs>({
+  await $graphqlClient.mutate<
+    Required<Pick<Mutations, "addOrUpdateCartShipment">>,
+    MutationsAddOrUpdateCartShipmentArgs
+  >({
     mutation: mutationDocument,
     variables: {
       command: {

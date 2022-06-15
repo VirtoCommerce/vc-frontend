@@ -7,7 +7,10 @@ export default async function addBulkItemsToCart(payload: InputBulkItemsType): P
   const { storeId, userId, cultureName, currencyCode } = globals;
   const { $graphqlClient } = useNuxtApp();
 
-  const { data } = await $graphqlClient.mutate<Required<Pick<Mutations, "addBulkItemsCart">>, MutationsAddBulkItemsCartArgs>({
+  const { data } = await $graphqlClient.mutate<
+    Required<Pick<Mutations, "addBulkItemsCart">>,
+    MutationsAddBulkItemsCartArgs
+  >({
     mutation: mutationDocument,
     variables: {
       command: {

@@ -14,7 +14,10 @@ export default async function searchRelatedProducts({
   const { storeId, userId, cultureName, currencyCode } = globals;
   const { $graphqlClient } = useNuxtApp();
 
-  const { data } = await $graphqlClient.query<Required<Pick<Query, "product">>, QueryProductArgs & ProductAssociationsArgs>({
+  const { data } = await $graphqlClient.query<
+    Required<Pick<Query, "product">>,
+    QueryProductArgs & ProductAssociationsArgs
+  >({
     query: searchRelatedProductsQueryDocument,
     variables: {
       storeId,

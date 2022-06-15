@@ -43,7 +43,7 @@
 
 <script setup lang="ts">
 import { VcImage } from "@/components";
-import { ImageType, Maybe } from "@/xapi/graphql/types";
+import { ImageType } from "@/xapi/graphql/types";
 import { watchEffect, PropType, ref } from "vue";
 import { SwipeDirection, useSwipe } from "@vueuse/core";
 import _ from "lodash";
@@ -75,8 +75,8 @@ const props = defineProps({
     required: true,
   },
   images: {
-    type: Object as PropType<Array<Maybe<ImageType>>>,
-    default: () => new Array<Maybe<ImageType>>(),
+    type: Array as PropType<ImageType[]>,
+    default: () => [],
   },
   isMobile: {
     type: Boolean,

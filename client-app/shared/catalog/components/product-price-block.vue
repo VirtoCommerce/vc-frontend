@@ -70,7 +70,9 @@ const { isAuthenticated } = useUser();
 const { openPopup } = usePopup();
 
 function addToList() {
-  if (!isAuthenticated.value) return;
+  if (!isAuthenticated.value) {
+    return;
+  }
 
   openPopup({
     component: AddToWishlistsDialog,

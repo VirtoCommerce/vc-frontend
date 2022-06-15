@@ -370,7 +370,9 @@ async function saveAddress(address: MemberAddressType): Promise<void> {
 }
 
 async function removeAddress(address: MemberAddressType): Promise<void> {
-  if (!window.confirm(t("pages.account.addresses.confirm_delete_message"))) return;
+  if (!window.confirm(t("pages.account.addresses.confirm_delete_message"))) {
+    return;
+  }
 
   await removeAddresses([address]);
 }

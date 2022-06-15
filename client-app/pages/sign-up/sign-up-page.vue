@@ -43,7 +43,7 @@
           :error-message="errors.email"
         ></VcInput>
         <VcInput
-          v-if="registrationKind == RegistrationKind.organization"
+          v-if="registrationKind === RegistrationKind.organization"
           v-model="organizationName"
           class="mb-4"
           :label="$t('pages.sign_up.organization_name_label')"
@@ -193,7 +193,7 @@ const onSubmit = handleSubmit(async (data) => {
   commonErrors.value = [];
 
   let result: IdentityResultType;
-  if (registrationKind.value == RegistrationKind.personal) {
+  if (registrationKind.value === RegistrationKind.personal) {
     result = await registerUser({
       email: trimString(data.email),
       firstName: trimString(data.firstName),

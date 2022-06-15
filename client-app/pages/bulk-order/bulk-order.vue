@@ -97,7 +97,9 @@ async function addItems(items: InputNewBulkItemType[]) {
   incorrectData.value = false;
   SKUsWithErrors.value = [];
 
-  if (!items.length || loadingCart.value) return;
+  if (!items.length || loadingCart.value) {
+    return;
+  }
 
   const { errors } = await addBulkMultipleItemsToCart({
     cartId: cart.value.id,

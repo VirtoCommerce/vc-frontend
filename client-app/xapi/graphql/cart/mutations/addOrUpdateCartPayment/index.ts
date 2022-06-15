@@ -6,16 +6,18 @@ export default async function addOrUpdateCartPayment(payment: InputPaymentType):
   const { storeId, userId, cultureName, currencyCode } = globals;
   const { $graphqlClient } = useNuxtApp();
 
-  await $graphqlClient.mutate<Required<Pick<Mutations, "addOrUpdateCartPayment">>, MutationsAddOrUpdateCartPaymentArgs>({
-    mutation: mutationDocument,
-    variables: {
-      command: {
-        storeId,
-        userId,
-        cultureName,
-        currencyCode,
-        payment,
+  await $graphqlClient.mutate<Required<Pick<Mutations, "addOrUpdateCartPayment">>, MutationsAddOrUpdateCartPaymentArgs>(
+    {
+      mutation: mutationDocument,
+      variables: {
+        command: {
+          storeId,
+          userId,
+          cultureName,
+          currencyCode,
+          payment,
+        },
       },
-    },
-  });
+    }
+  );
 }

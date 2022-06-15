@@ -119,7 +119,9 @@ async function onChange() {
 
   const { valid } = await validate();
 
-  if (!valid || disabled.value) return;
+  if (!valid || disabled.value) {
+    return;
+  }
 
   loading.value = true;
 

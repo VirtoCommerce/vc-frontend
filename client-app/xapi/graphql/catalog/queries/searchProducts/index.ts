@@ -29,7 +29,10 @@ export default async function searchProducts(
     .filter(Boolean)
     .join(" ");
 
-  const { data } = await $graphqlClient.query<Required<Pick<Query, "products">>, QueryProductsArgs & { withFacets: boolean }>({
+  const { data } = await $graphqlClient.query<
+    Required<Pick<Query, "products">>,
+    QueryProductsArgs & { withFacets: boolean }
+  >({
     query: searchProductsQueryDocument,
     variables: {
       storeId,

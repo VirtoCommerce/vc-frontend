@@ -6,7 +6,10 @@ export default async function validateCoupon(coupon: string): Promise<boolean> {
   const { storeId, userId, cultureName, currencyCode } = globals;
   const { $graphqlClient } = useNuxtApp();
 
-  const { data } = await $graphqlClient.mutate<Required<Pick<Mutations, "validateCoupon">>, MutationsValidateCouponArgs>({
+  const { data } = await $graphqlClient.mutate<
+    Required<Pick<Mutations, "validateCoupon">>,
+    MutationsValidateCouponArgs
+  >({
     mutation: mutationDocument,
     variables: {
       command: {
