@@ -32,7 +32,7 @@ const props = defineProps({
   },
 });
 
-const checked = computed(() => props.modelValue == props.value);
+const checked = computed(() => props.modelValue === props.value);
 
 defineEmits(["update:modelValue"]);
 </script>
