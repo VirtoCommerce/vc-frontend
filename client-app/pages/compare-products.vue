@@ -126,16 +126,6 @@
 </template>
 
 <script setup lang="ts">
-import {
-  VcBreadcrumbs,
-  VcCheckbox,
-  VcButton,
-  IBreadcrumbs,
-  VcImage,
-  VcItemPrice,
-  IProductProperties,
-  VcEmptyPage,
-} from "@/components";
 import { useProducts, useProductsRoutes } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 import _ from "lodash";

@@ -264,16 +264,6 @@ import {
   ProductsFacetValue,
   ProductsFiltersSidebar,
 } from "@/shared/catalog";
-import {
-  VcButton,
-  VcChip,
-  VcInfinityScrollLoader,
-  VcSelect,
-  VcScrollTopButton,
-  VcEmptyView,
-  VcImage,
-  VcPopupSidebar,
-} from "@/components";
 import { AddToCart } from "@/shared/cart";
 import { useElementVisibility, useRouteQueryParam } from "@core/composables";
 import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@core/constants";

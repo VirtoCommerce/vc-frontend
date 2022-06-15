@@ -120,7 +120,6 @@
 import { computed, PropType, ref, Ref, watch } from "vue";
 import { clone } from "lodash";
 import { useForm, useField } from "vee-validate";
-import { VcInput, VcSelect } from "@/components";
 import { CountryRegionType, CountryType, MemberAddressType } from "@/xapi/graphql/types";
 import { getAddressName, Logger } from "@core/utilities";
 import * as yup from "yup";

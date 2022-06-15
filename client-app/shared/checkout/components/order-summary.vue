@@ -60,7 +60,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcPriceDisplay } from "@/components";
 import { CartType, CustomerOrderType, DiscountType, OrderDiscountType } from "@/xapi/graphql/types";
 import { PropType, ref } from "vue";
 

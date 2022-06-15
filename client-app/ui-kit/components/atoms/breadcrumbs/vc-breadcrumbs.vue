@@ -22,7 +22,6 @@
 
 <script setup lang="ts">
 import { PropType } from "vue";
-import { IBreadcrumbs } from "@/components";
 
 defineProps({
   items: {

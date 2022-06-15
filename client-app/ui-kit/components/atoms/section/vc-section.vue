@@ -11,8 +11,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcImage } from "@/components";
-
 defineProps({
   title: {
     type: String,

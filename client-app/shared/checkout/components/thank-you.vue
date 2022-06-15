@@ -136,7 +136,6 @@ import { OrderSummary, ProductCard, AcceptedGifts } from "@/shared/checkout";
 import { CustomerOrderType } from "@/xapi/graphql/types";
 import { useCart } from "@/shared/cart";
 import { computed, PropType, ref } from "vue";
-import { VcCard, VcImage, VcPagination, VcButton, VcSection } from "@/components";
 
 const { itemsPerPage } = useCart();
 

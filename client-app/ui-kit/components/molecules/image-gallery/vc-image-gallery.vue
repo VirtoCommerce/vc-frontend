@@ -42,7 +42,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcImage } from "@/components";
 import { ImageType } from "@/xapi/graphql/types";
 import { watchEffect, PropType, ref } from "vue";
 import { SwipeDirection, useSwipe } from "@vueuse/core";

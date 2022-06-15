@@ -5,8 +5,8 @@
     :style="`transform: translateX(${offsetX}px)`"
     @touchstart="touchStart"
     @touchmove="touchMove"
-    @touchend="touchEnd"
-    @touchcancel="touchCancel"
+    @touchend="handleTouchEnd"
+    @touchcancel="handleTouchEnd"
   >
     <!-- Item left actions -->
     <TableMobileActions
@@ -32,7 +32,6 @@
 <script setup lang="ts">
 import TableMobileActions from "../table-mobile-actions/table-mobile-actions.vue";
 import { computed, PropType, Ref, ref } from "vue";
-import { ItemAction } from "../../../../types";
 
 const props = defineProps({
   item: {
@@ -105,7 +104,7 @@ const touchMove = (e: TouchEvent): void => {
   }
 };
 
-const touchEnd = (): void => {
+function handleTouchEnd() {
   const absoluteOffsetX = Math.abs(offsetX.value);
   if (absoluteOffsetX < maxWidth) {
     offsetX.value = absoluteOffsetX < maxWidth / 2 ? 0 : -maxWidth;
@@ -114,18 +113,7 @@ const touchEnd = (): void => {
   }
 
   isMoving.value = false;
-};
-
-const touchCancel = (): void => {
-  const absoluteOffsetX = Math.abs(offsetX.value);
-  if (absoluteOffsetX < maxWidth) {
-    offsetX.value = absoluteOffsetX < maxWidth / 2 ? 0 : -maxWidth;
-  } else {
-    offsetX.value = absoluteOffsetX <= maxWidth * 2 - threshold * 2 ? -maxWidth : -maxWidth * 2;
-  }
-
-  isMoving.value = false;
-};
+}
 </script>
 
 <style lang="scss" scoped>

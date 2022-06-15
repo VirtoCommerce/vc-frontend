@@ -87,7 +87,6 @@
 import { computed, watch, onMounted, ref, onBeforeUnmount, WatchStopHandle } from "vue";
 import { breakpointsTailwind, useBreakpoints, useLocalStorage } from "@vueuse/core";
 import { DisplayProducts, ProductsSearchParams, useProducts, useProductsRoutes, ViewMode } from "@/shared/catalog";
-import { VcButton, VcInfinityScrollLoader, VcSelect, VcScrollTopButton } from "@/components";
 import { AddToCart } from "@/shared/cart";
 import { useRouteQueryParam } from "@core/composables";
 import { DEFAULT_SEARCH_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@core/constants";

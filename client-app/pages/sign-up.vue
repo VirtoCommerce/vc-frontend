@@ -104,7 +104,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcAlert, VcInput, VcImage, VcButton, VcRadioButton } from "@/components";
 import { useUser, RegistrationSuccessDialog, RegistrationKind } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 import { useForm, useField } from "vee-validate";

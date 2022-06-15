@@ -59,7 +59,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcRadioButton, VcButton, VcSelect } from "@/components";
 import { useUserCheckoutDefaults, CheckoutDefaults, CheckoutDefaultsSuccessDialog } from "@/shared/account";
 import { computed, onMounted, ref } from "vue";
 import { useCart } from "@/shared/cart";

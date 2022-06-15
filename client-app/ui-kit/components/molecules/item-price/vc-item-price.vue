@@ -22,7 +22,6 @@
 
 <script setup lang="ts">
 import { PropType } from "vue";
-import { VcPriceDisplay } from "@/components";
 import { MoneyType, PriceType } from "@/xapi/graphql/types";
 
 defineProps({

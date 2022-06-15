@@ -6,7 +6,6 @@
 
 <script setup lang="ts">
 import { nextTick, PropType, ref } from "vue";
-import { VcCheckbox } from "@/components";
 import { eagerComputed, useDebounceFn } from "@vueuse/core";
 import { useCompareProducts } from "@/shared/compare";
 import { Product } from "@/xapi/graphql/types";

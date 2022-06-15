@@ -11,7 +11,3 @@
     </div>
   </VcPopup>
 </template>
-
-<script setup lang="ts">
-import { VcPopup, VcButton } from "@/components";
-</script>

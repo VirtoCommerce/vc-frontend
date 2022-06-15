@@ -213,7 +213,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcImage } from "@/components";
 import { computed, PropType } from "vue";
 import { useField } from "vee-validate";
 import * as yup from "yup";

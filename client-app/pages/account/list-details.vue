@@ -106,7 +106,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcButton, VcBreadcrumbs, IBreadcrumbs, VcPagination, VcEmptyView, VcImage } from "@/components";
 import { AddToCart } from "@/shared/cart";
 import {
   WishlistProductItem,

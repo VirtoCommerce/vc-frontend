@@ -44,7 +44,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcImage, VcItemPrice } from "@/components";
 import { VariationType, Product } from "@/xapi/graphql/types";
 import { VariationProperties } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";

@@ -225,8 +225,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcButton, VcChip } from "@/components";
-
 function alert(message?: any) {
   window.alert(message);
 }

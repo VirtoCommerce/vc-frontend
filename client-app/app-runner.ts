@@ -11,6 +11,7 @@ import { createRouter } from "@/router";
 import { getBaseUrl } from "@core/utilities";
 import App from "./App.vue";
 import PageBuilderBlocks from "@/builder-preview/pages/blocks";
+import * as components from "@/ui-kit/components";
 import client from "@/xapi/graphql/graphql-client";
 
 // Workaround before Nuxt3 migration, will be deleted later.
@@ -99,6 +100,9 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
 
   const plugins = getPlugins({ router });
   plugins.forEach(({ plugin, options }) => app.use(plugin, options));
+
+  // Register UI Kit components globally
+  Object.entries(components).forEach(([name, component]) => app.component(name, component));
 
   await router.isReady();
 

@@ -39,7 +39,6 @@
 
 <script setup lang="ts">
 import { computed, PropType } from "vue";
-import { VcImage, VcItemPrice } from "@/components";
 import { Product as ProductType } from "@/xapi/graphql/types";
 import { RouteLocationRaw } from "vue-router";
 import { getProductRoute } from "@/shared/catalog";

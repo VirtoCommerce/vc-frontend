@@ -129,7 +129,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcButton, VcPopup, VcPagination, VcTable, ITableColumn } from "@/components";
 import { MemberAddressType } from "@/xapi/graphql/types";
 import { computed, watchEffect, PropType, ref } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";

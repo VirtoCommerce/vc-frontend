@@ -44,7 +44,6 @@
 <script setup lang="ts">
 import { Product } from "@/xapi/graphql/types";
 import { PropType } from "vue";
-import { VcMarkdownRender, VcImageGallery } from "@/components";
 import { ProductProperties, ProductTitledBlock, ProductVariationCard } from "@/shared/catalog";
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import { AddToCompare } from "@/shared/compare";

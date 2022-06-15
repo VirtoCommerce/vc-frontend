@@ -84,7 +84,6 @@
 <script setup lang="ts">
 import { computed, PropType } from "vue";
 import { LineItemType } from "@/xapi/graphql/types";
-import { VcPopup, VcImage, VcPriceDisplay, VcButton } from "@/components";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
