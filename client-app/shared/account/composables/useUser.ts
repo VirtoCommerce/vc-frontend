@@ -158,24 +158,6 @@ export default () => {
       });
 
       return resultData.result!;
-      // const createdOrganization = await createOrganization({
-      //   name: payload.organizationName,
-      // });
-      // const contact = await createContact({
-      //   firstName: payload.firstName as string,
-      //   lastName: payload.lastName as string,
-      //   name: `${payload.firstName} ${payload.lastName}`,
-      //   emails: [payload.email],
-      //   organizations: [createdOrganization.id],
-      // });
-      // return await createUser({
-      //   userName: payload.userName,
-      //   password: payload.password,
-      //   email: payload.email,
-      //   memberId: contact.id,
-      //   userType: "Customer",
-      //   storeId,
-      // });
     } catch (e) {
       Logger.error("useUser.registerOrganization", e);
       throw e;
