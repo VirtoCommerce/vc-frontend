@@ -3842,27 +3842,6 @@ export type AddWishlistItemMutationVariables = Exact<{
 
 export type AddWishlistItemMutation = { addWishlistItem?: { id?: string } };
 
-export type CreateContactMutationVariables = Exact<{
-  command: InputCreateContactType;
-}>;
-
-
-export type CreateContactMutation = { createContact?: { id: string } };
-
-export type CreateOrganizationMutationVariables = Exact<{
-  command: InputCreateOrganizationType;
-}>;
-
-
-export type CreateOrganizationMutation = { createOrganization?: { id: string } };
-
-export type CreateUserMutationVariables = Exact<{
-  command: InputCreateUserType;
-}>;
-
-
-export type CreateUserMutation = { createUser?: { succeeded: boolean, errors?: Array<{ code?: string, description?: string }> } };
-
 export type DeleteMemberAddressesMutationVariables = Exact<{
   command: InputDeleteMemberAddressType;
 }>;
