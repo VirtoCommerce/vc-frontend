@@ -104,7 +104,7 @@ import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
-const Error404 = defineAsyncComponent(() => import("@/pages/404/404.vue"));
+const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
 const props = defineProps({
   productId: {
