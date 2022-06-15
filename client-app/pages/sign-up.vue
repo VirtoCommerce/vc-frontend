@@ -43,7 +43,7 @@
           :error-message="errors.email"
         ></VcInput>
         <VcInput
-          v-if="registrationKind == RegistrationKind.organization"
+          v-if="registrationKind === RegistrationKind.organization"
           v-model="organizationName"
           class="mb-4"
           :label="$t('pages.sign_up.organization_name_label')"
