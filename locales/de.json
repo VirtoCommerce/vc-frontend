@@ -80,7 +80,8 @@
         "top_header": {
           "link_dashboard": "@:common.links.dashboard",
           "link_order_history": "Bestellverlauf",
-          "link_lists": "Listen"
+          "link_lists": "Listen",
+          "call_us": "Call us:"
         },
         "link_sign_in": "Einloggen",
         "link_register_now": "Register now",
