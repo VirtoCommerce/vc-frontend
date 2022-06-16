@@ -2,8 +2,6 @@
   <div>
     <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
-    <VcBreadcrumbs v-if="!isMobile" :items="breadcrumbs" class="mx-5 md:mx-0 lg:hidden" />
-
     <!-- Title block -->
     <div class="flex justify-between items-center mx-5 md:mx-0">
       <h2 class="text-gray-800 text-3xl font-bold uppercase truncate">
@@ -134,13 +132,6 @@ const props = defineProps({
     default: "",
   },
 });
-
-const breadcrumbs: IBreadcrumbs[] = [
-  { title: t("common.links.home"), route: { name: "Home" } },
-  { title: t("common.links.account"), route: { name: "Account" } },
-  { title: t("shared.account.navigation.links.your_lists"), route: { name: "Lists" } },
-  { title: t("shared.account.navigation.links.list_details") },
-];
 
 const itemsPerPage = ref(6);
 const page = ref(1);
