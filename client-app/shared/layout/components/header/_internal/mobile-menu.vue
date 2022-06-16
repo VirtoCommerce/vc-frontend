@@ -51,8 +51,8 @@
 
             <!-- Logout -->
             <div v-if="childrenItem.id === 'logout'" class="flex items-center">
-              <template v-if="me.contact?.fullName">
-                <span>{{ me.contact.fullName }}</span>
+              <template v-if="user.contact?.fullName">
+                <span>{{ user.contact.fullName }}</span>
                 <span class="font-normal text-base mx-2.5">•</span>
               </template>
 
@@ -184,7 +184,6 @@
 import { computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { VcImage, VcRadioButton } from "@/components";
 import { useCart } from "@/shared/cart";
 import { useUser } from "@/shared/account";
 import { LanguageSelector, MenuLink, useNavigations } from "@/shared/layout";
@@ -200,7 +199,7 @@ const { cart } = useCart();
 const { productsIds } = useCompareProducts();
 const { supportedLocales } = useLanguages();
 const { currentCurrency, supportedCurrencies, saveCurrencyCodeAndReload } = useCurrency();
-const { me, isAuthenticated, signMeOut } = useUser();
+const { user, isAuthenticated, signMeOut } = useUser();
 const { mainMenuLinks, openedItem, selectMenuItem, goBack, goMainMenu } = useNavigations();
 
 const unauthorizedMenuLinks: MenuLink[] = [

@@ -42,8 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { VcButton } from "@/components";
-import { LineItemType, Product, VariationType } from "@/core/api/graphql/types";
+import { LineItemType, Product, VariationType } from "@/xapi/graphql/types";
 import { useCart } from "@/shared/cart";
 import { useField } from "vee-validate";
 import { computed, PropType, ref, watchEffect } from "vue";
@@ -116,7 +115,9 @@ async function onChange() {
 
   const { valid } = await validate();
 
-  if (!valid || disabled.value) return;
+  if (!valid || disabled.value) {
+    return;
+  }
 
   loading.value = true;
 

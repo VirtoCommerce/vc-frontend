@@ -1,10 +1,8 @@
 import { computed, shallowRef, triggerRef } from "vue";
 import { MenuLink } from "@/shared/layout";
-import { getMenus } from "@core/api/graphql/common";
-import { MenuLinkType } from "@core/api/graphql/types";
-import { useGlobalVariables } from "@core/composables";
-
-const globals = useGlobalVariables();
+import { getMenus } from "@/xapi/graphql/common";
+import { MenuLinkType } from "@/xapi/graphql/types";
+import globals from "@core/globals";
 
 const menuLinkLists = shallowRef<Record<string, MenuLinkType[]>>();
 const menuSchema = shallowRef<Record<string, any>>();
@@ -17,7 +15,7 @@ const mainMenuLinks = computed<MenuLink[]>(() =>
       ({
         id: item.id,
         route: item.route,
-        title: globals.i18n!.global.t(item.title),
+        title: globals.i18n.global.t(item.title),
         children: (menuLinkLists.value?.[item.id] || []).map((childrenItem) => ({
           id: childrenItem.url?.split("/").pop(),
           title: childrenItem.title,

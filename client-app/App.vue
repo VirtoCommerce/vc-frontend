@@ -15,25 +15,23 @@
 <script setup lang="ts">
 import type { Component } from "vue";
 import { markRaw } from "vue";
-import { breakpointsTailwind, eagerComputed, invoke, useBreakpoints } from "@vueuse/core";
+import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
 import { Head as PageHead } from "@vueuse/head";
-import { MainLayout, PaymentLayout, useSearchBar } from "./shared/layout";
-import { useCart } from "@/shared/cart";
-import { setCatalogId, setUserId, setLocale, setCurrencyCode } from "@/core/constants";
+import { MainLayout, PaymentLayout, useNavigations, useSearchBar } from "./shared/layout";
 import { PopupHost } from "@/shared/popup";
 import { NotificationsHost } from "@/shared/notification";
 import { useRoute, useRouter } from "vue-router";
-import { useCurrency, useLanguages, useThemeContext, useDomUtils } from "@core/composables";
+import { useDomUtils, useLanguages } from "@core/composables";
+import { useCart } from "@/shared/cart";
 
 const route = useRoute();
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { currentLanguage } = useLanguages();
-const { themeContext } = useThemeContext();
-const { loadMyCart } = useCart();
-const { currentCurrency } = useCurrency();
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
 const { isBodyScrollable } = useDomUtils();
+const { currentLanguage } = useLanguages();
+const { fetchMenus } = useNavigations();
+const { loadMyCart } = useCart();
 
 const isMobile = breakpoints.smaller("lg");
 
@@ -42,10 +40,7 @@ const layouts: Record<NonNullable<typeof route.meta.layout>, Component> = {
   Payment: markRaw(PaymentLayout),
 };
 
-const layout = eagerComputed(() => {
-  const layoutName = route.meta?.layout;
-  return layoutName ? layouts[layoutName] : layouts.Main;
-});
+const layout = eagerComputed(() => layouts[route.meta?.layout ?? "Main"]);
 
 router.beforeEach(async (to) => {
   // Animated hiding of the search bar or dropdown list of search results
@@ -56,13 +51,11 @@ router.beforeEach(async (to) => {
   }
 });
 
-invoke(async () => {
-  // FIXME: temporary solution (ST-2072)
-  setUserId(themeContext.value!.userId);
-  setCatalogId(themeContext.value!.catalogId);
-  setLocale(currentLanguage.value!.cultureName);
-  setCurrencyCode(currentCurrency.value!.code);
-
-  await loadMyCart();
-});
+fetchMenus(currentLanguage.value.cultureName);
+loadMyCart();
 </script>
+
+<style lang="scss">
+@import "@fortawesome/fontawesome-free/css/all.css";
+@import "@/assets/styles/main.scss";
+</style>

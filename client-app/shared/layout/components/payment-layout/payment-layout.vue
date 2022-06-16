@@ -17,6 +17,5 @@
 </template>
 
 <script setup lang="ts">
-import { VcImage } from "@/components";
 import { VcFooter } from "@/shared/layout";
 </script>

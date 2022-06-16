@@ -114,7 +114,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcAlert, VcButton, VcInput } from "@/components";
 import { ProfileUpdateSuccessDialog, useUser } from "@/shared/account";
 import { computed, Ref, ref } from "vue";
 import { useForm, useField } from "vee-validate";
@@ -124,7 +123,7 @@ import { useI18n } from "vue-i18n";
 import { whenever } from "@vueuse/core";
 
 const { t } = useI18n();
-const { me, updateUser, changePassword } = useUser();
+const { user, updateUser, changePassword } = useUser();
 const { openPopup } = usePopup();
 
 const updateProfileError: Ref<boolean> = ref(false);
@@ -157,10 +156,10 @@ const validationSchema = yup.object({
 });
 
 const initialValues = computed(() => ({
-  userName: me.value.userName,
-  firstName: me.value.contact?.firstName,
-  lastName: me.value.contact?.lastName,
-  email: me.value.email,
+  userName: user.value.userName,
+  firstName: user.value.contact?.firstName,
+  lastName: user.value.contact?.lastName,
+  email: user.value.email,
   oldPassword: "",
   newPassword: "",
   confirmNewPassword: "",

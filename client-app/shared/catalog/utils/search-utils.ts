@@ -1,6 +1,6 @@
 import { ProductsFacet, ProductsFacetValue, ProductsFilters } from "@/shared/catalog";
-import { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@core/api/graphql/types";
-import { inStockFilterExpression } from "@/core/constants";
+import { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@/xapi/graphql/types";
+import { IN_STOCK_FILTER_EXPRESSION } from "@/core/constants";
 
 /**
  * Learn more about filter syntax:
@@ -40,7 +40,7 @@ export function toFilterExpression(filters: ProductsFilters) {
   }
 
   if (filters.inStock) {
-    result.push(inStockFilterExpression);
+    result.push(IN_STOCK_FILTER_EXPRESSION);
   }
 
   return result.join(" ");

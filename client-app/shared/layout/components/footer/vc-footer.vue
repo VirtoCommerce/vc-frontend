@@ -66,7 +66,7 @@
           <FooterLink to="/replacement-parts" v-t="'shared.layout.footer.replacement_parts_link'"></FooterLink>
           <FooterLink :to="{ name: 'DemoLanding' }" v-t="'shared.layout.footer.demo_landing_link'" />
           <FooterLink to="/demo-page" v-t="'shared.layout.footer.demo_page_link'" />
-          <FooterLink v-if="isDevelopment" :to="{ name: 'DevUIKit' }">Dev UI Kit</FooterLink>
+          <FooterLink v-if="DEVELOPMENT" :to="{ name: 'DevUIKit' }">Dev UI Kit</FooterLink>
         </div>
       </div>
     </div>
@@ -93,10 +93,9 @@
 </template>
 
 <script setup lang="ts">
-import { VcImage } from "@/components";
 import { version } from "../../../../../package.json";
 import FooterLink from "./_internal/footer-link.vue";
-import { isDevelopment } from "@core/constants";
+import { DEVELOPMENT } from "@core/constants";
 
 defineProps({
   compact: Boolean,
