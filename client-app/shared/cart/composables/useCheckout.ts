@@ -6,7 +6,7 @@ import {
   getAvailPaymentMethods,
   getAvailShippingMethods,
   removeCart,
-} from "@core/api/graphql/cart";
+} from "@/xapi/graphql/cart";
 import {
   InputShipmentType,
   InputPaymentType,
@@ -17,7 +17,7 @@ import {
   ShipmentType,
   PaymentType,
   CustomerOrderType,
-} from "@core/api/graphql/types";
+} from "@/xapi/graphql/types";
 import { useCart } from ".";
 
 const addresses: CartAddressType[] = [

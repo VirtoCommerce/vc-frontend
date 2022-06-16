@@ -68,7 +68,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcAlert, VcButton, VcInput } from "@/components";
 import { ref, reactive, watch } from "vue";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
@@ -76,7 +75,7 @@ import { isEmpty } from "lodash";
 import { useUser } from "@/shared/account";
 import { useI18n } from "vue-i18n";
 import { useCart } from "@/shared/cart";
-import { mergeCart } from "@core/api/graphql/cart";
+import { mergeCart } from "@/xapi/graphql/cart";
 import { eagerComputed } from "@vueuse/core";
 
 const { t } = useI18n();

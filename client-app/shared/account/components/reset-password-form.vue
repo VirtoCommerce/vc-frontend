@@ -31,7 +31,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcAlert, VcInput, VcButton } from "@/components";
 import { ref } from "vue";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";

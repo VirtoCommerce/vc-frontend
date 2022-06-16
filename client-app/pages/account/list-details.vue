@@ -106,7 +106,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcButton, VcBreadcrumbs, IBreadcrumbs, VcPagination, VcEmptyView, VcImage } from "@/components";
 import { AddToCart } from "@/shared/cart";
 import {
   WishlistProductItem,
@@ -115,7 +114,7 @@ import {
   AddOrUpdateWishlistDialog,
   DeleteWishlistProductDialog,
 } from "@/shared/wishlists";
-import { LineItemType } from "@core/api/graphql/types";
+import { LineItemType } from "@/xapi/graphql/types";
 import { ProductCardGrid, ProductSkeletonGrid } from "@/shared/catalog";
 import { useI18n } from "vue-i18n";
 import { usePopup } from "@/shared/popup";

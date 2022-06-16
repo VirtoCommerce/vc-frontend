@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { Product } from "@/core/api/graphql/types";
+import { Product } from "@/xapi/graphql/types";
 import { PropType } from "vue";
 import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
@@ -70,7 +70,9 @@ const { isAuthenticated } = useUser();
 const { openPopup } = usePopup();
 
 function addToList() {
-  if (!isAuthenticated.value) return;
+  if (!isAuthenticated.value) {
+    return;
+  }
 
   openPopup({
     component: AddToWishlistsDialog,

@@ -9,8 +9,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcImage } from "@/components";
-
 defineProps({
   imageSrc: { type: String, required: true },
   title: { type: String, required: true },
