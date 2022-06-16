@@ -58,7 +58,7 @@ query GetMyOrder($id: String, $number: String, $cultureName: String) {
         ...orderAddressFields
       }
     }
-    inPayments {
+    inPayments(first: 1, sort: "CreatedDate:desc") {
       id
       number
       isApproved
@@ -71,6 +71,13 @@ query GetMyOrder($id: String, $number: String, $cultureName: String) {
       }
       billingAddress {
         ...orderAddressFields
+      }
+    }
+    availablePaymentMethods {
+      code
+      logoUrl
+      price {
+        ...moneyFields
       }
     }
   }

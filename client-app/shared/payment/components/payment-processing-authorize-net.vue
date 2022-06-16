@@ -1,15 +1,7 @@
 <template>
   <div>
-    <h5 class="mb-3 font-extrabold" v-t="'shared.payment.authorize_net.header'" />
-
     <div class="rounded border overflow-hidden">
-      <div class="px-6 py-5 shadow-lg">
-        <svg width="43" height="37" class="inline-block text-gray-400 opacity-80 mr-5">
-          <use href="/static/images/payment/bank-card.svg#main" />
-        </svg>
-
-        <span>{{ $t("shared.payment.authorize_net.bank_card_title") }}</span>
-      </div>
+      <slot name="header" v-bind="{ loading, valid: isValidBankCard }" />
 
       <div class="p-7 pt-6">
         <div class="flex flex-col xl:flex-row">
@@ -22,7 +14,7 @@
           />
 
           <div class="flex flex-col order-first xl:order-none xl:w-1/3 mb-4 xl:mb-0 xl:pl-6 xl:pt-6">
-            <div class="flex flex-row flex-wrap gap-3 xl:gap-5">
+            <div class="flex flex-row flex-wrap gap-3 xl:gap-4">
               <svg width="71" height="48" class="flex shrink-0 border border-gray-300 rounded">
                 <use href="/static/images/payment/methods/visa.svg#main" />
               </svg>
@@ -44,31 +36,7 @@
       </div>
     </div>
 
-    <div class="flex flex-col md:flex-row items-center justify-between gap-5 mt-6">
-      <p class="text-sm text-gray-500">
-        {{ $t("shared.payment.authorize_net.accept_terms_text") }}
-
-        <router-link to="/agreement" class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]">
-          {{ $t("shared.payment.authorize_net.user_agreement_link") }}
-        </router-link>
-
-        {{ $t("shared.payment.authorize_net.processing_personal_data_text") }}
-
-        <router-link to="/policy" class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]">
-          {{ $t("shared.payment.authorize_net.privacy_policy_link") }}
-        </router-link>
-      </p>
-
-      <VcButton
-        :is-disabled="!isValidBankCard"
-        :is-waiting="loading"
-        @click="sendPaymentData"
-        size="lg"
-        class="shrink-0 uppercase w-48"
-      >
-        {{ $t("shared.payment.authorize_net.pay_now_button") }}
-      </VcButton>
-    </div>
+    <slot name="footer" v-bind="{ loading, valid: isValidBankCard, submit: sendPaymentData }" />
   </div>
 </template>
 

@@ -90,8 +90,6 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
    */
   const app = createApp(App);
 
-  Object.keys(PageBuilderBlocks).forEach((name) => app.component(name, PageBuilderBlocks[name]));
-
   app.use(head);
   app.use(i18n);
   app.use(router);
@@ -103,6 +101,9 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
 
   // Register UI Kit components globally
   Object.entries(components).forEach(([name, component]) => app.component(name, component));
+
+  // Register Page builder components globally
+  Object.entries(PageBuilderBlocks).forEach(([name, component]) => app.component(name, component));
 
   await router.isReady();
 

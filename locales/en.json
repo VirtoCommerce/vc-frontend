@@ -430,14 +430,16 @@
         "year_placeholder": "YY",
         "security_code_label": "Security Code"
       },
-      "authorize_net": {
+      "payment_method_section": {
         "header": "Payment method",
-        "bank_card_title": "Credit Card",
         "user_agreement_link": "User Agreement",
         "privacy_policy_link": "Privacy Policy",
         "accept_terms_text": "By placing an order, you accept the terms of",
         "processing_personal_data_text": "and consent to the processing of personal data according to the",
         "pay_now_button": "Pay Now",
+        "loading_text": "Loading..."
+      },
+      "authorize_net": {
         "errors": {
           "number": "Please provide valid credit card number",
           "month": "Please provide valid expiration month",
@@ -710,7 +712,11 @@
         "title": "Payment information",
         "breadcrumb_title": "Payment",
         "processed_title": "@:pages.account.order_details.title",
-        "loading_text": "Loading...",
+        "billing_address_label": "Billing address",
+        "phone_label": "@:pages.checkout.shipping_details_section.shipping_address_block.phone_label",
+        "email_label": "@:pages.checkout.shipping_details_section.shipping_address_block.email_label",
+        "edit_button": "Edit",
+        "bank_card_title": "Credit Card",
         "back_to_order_button": "Back to Order",
         "orders_list_button": "Orders List",
         "try_again_button": "Try again"
