@@ -1,7 +1,7 @@
 <template>
   <VcPopup :title="$t('shared.wishlists.added_to_wishlists_dialog.title', listIds.length)" variant="success">
     <div class="max-h-[50vh] lg:max-h-64 overflow-y-auto px-6 py-8 border-b">
-      <div class="flex flex-grow items-center">
+      <div class="flex grow items-center">
         <router-link :to="link">
           <div class="border border-gray-100 w-20 h-20 flex-shrink-0">
             <VcImage
@@ -14,8 +14,8 @@
           </div>
         </router-link>
 
-        <div class="ml-4">
-          <router-link :to="link" class="text-[color:var(--color-link)] font-extrabold text-sm flex-grow line-clamp-2">
+        <div class="grow ml-4">
+          <router-link :to="link" class="text-[color:var(--color-link)] font-extrabold text-sm line-clamp-2">
             {{ product.name }}
           </router-link>
 
@@ -33,13 +33,13 @@
     </div>
 
     <template #actions="{ close }">
-      <VcButton is-outline class="uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-5" @click="close">
+      <VcButton is-outline class="uppercase grow lg:grow-0 inline-flex lg:px-5" @click="close">
         {{ $t("shared.wishlists.added_to_wishlists_dialog.continue_shopping_button") }}
       </VcButton>
 
       <VcButton
         :to="listIds.length === 1 ? { name: 'ListDetails', params: { listId: listIds[0] } } : { name: 'Lists' }"
-        class="uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-5"
+        class="uppercase grow lg:grow-0 inline-flex lg:px-5"
         @click="close"
       >
         {{ $t("shared.wishlists.added_to_wishlists_dialog.view_your_list_button", listIds.length) }}
@@ -52,8 +52,7 @@
 import { computed, PropType } from "vue";
 import { RouteLocationRaw } from "vue-router";
 import { getProductRoute } from "@/shared/catalog";
-import { Product } from "@/core/api/graphql/types";
-import { VcPopup, VcButton, VcPriceDisplay, VcImage } from "@/components";
+import { Product } from "@/xapi/graphql/types";
 
 const props = defineProps({
   product: {

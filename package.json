@@ -16,7 +16,7 @@
     "prettier": "prettier --check client-app/**/*.{js,ts,vue,graphql,json}",
     "prettier:fix": "prettier --write client-app/**/*.{js,ts,vue,graphql,json}",
     "compress": "vue-tsc --noEmit && vite build && gulp compress",
-    "generate:graphql": "graphql-codegen -c graphql.codegen.yml -r dotenv/config && eolConverter crlf client-app/core/api/graphql/*",
+    "generate:graphql": "graphql-codegen -c graphql.codegen.yml -r dotenv/config && eolConverter crlf client-app/xapi/graphql/*",
     "i18n:report": "vue-cli-service i18n:report --src './client-app/**/*.?(js|vue)' --locales './client-app/locales/**/*.json'",
     "nswag": "nswag run"
   },

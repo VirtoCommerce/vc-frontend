@@ -42,17 +42,14 @@
 </template>
 
 <script setup lang="ts">
-import { VcButton } from "@/components";
-import { LineItemType, Product, VariationType } from "@/core/api/graphql/types";
+import { LineItemType, Product, VariationType } from "@/xapi/graphql/types";
 import { useCart } from "@/shared/cart";
-import { usePopup } from "@/shared/popup";
 import { useField } from "vee-validate";
 import { computed, PropType, ref, watchEffect } from "vue";
 import { eagerComputed } from "@vueuse/core";
 import { clone } from "lodash";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
-import { CartAddInfo } from ".";
 
 const emit = defineEmits(["update:lineitem"]);
 
@@ -67,7 +64,6 @@ const props = defineProps({
 const max = 999999;
 
 const { cart, addToCart, changeItemQuantity } = useCart();
-const { openPopup } = usePopup();
 const { t } = useI18n();
 
 const loading = ref(false);
@@ -119,7 +115,9 @@ async function onChange() {
 
   const { valid } = await validate();
 
-  if (!valid || disabled.value) return;
+  if (!valid || disabled.value) {
+    return;
+  }
 
   loading.value = true;
 
@@ -141,11 +139,6 @@ async function onChange() {
   }
 
   emit("update:lineitem", lineItem);
-
-  openPopup({
-    component: CartAddInfo,
-    props: { lineItem },
-  });
 
   loading.value = false;
 }

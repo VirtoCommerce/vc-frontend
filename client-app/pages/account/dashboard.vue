@@ -66,7 +66,7 @@
               <span class="text-gray-400" v-t="'pages.account.dashboard.last_orders_card.date_label'" />
 
               <span class="overflow-hidden overflow-ellipsis">
-                {{ moment(itemData.item?.createdDate).format("YYYY-MM-DD") }}
+                {{ $d(itemData.item?.createdDate) }}
               </span>
             </div>
 
@@ -153,7 +153,7 @@
             </td>
 
             <td class="p-5 overflow-hidden overflow-ellipsis">
-              {{ moment(order?.createdDate).format("YYYY-MM-DD") }}
+              {{ $d(order?.createdDate) }}
             </td>
 
             <td class="p-5 overflow-hidden overflow-ellipsis">
@@ -266,12 +266,10 @@
 </template>
 
 <script setup lang="ts">
-import { ITableColumn, VcCard, VcImage, VcTable, TableStatusBadge, VcButton } from "@/components";
-import { CustomerOrderType } from "@/core/api/graphql/types";
+import { CustomerOrderType } from "@/xapi/graphql/types";
 import { SORT_DESCENDING } from "@/core/constants";
 import useUserOrders from "@/shared/account/composables/useUserOrders";
 import { onMounted, ref } from "vue";
-import moment from "moment";
 import { useRouter } from "vue-router";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useI18n } from "vue-i18n";

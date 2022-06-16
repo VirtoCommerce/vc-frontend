@@ -10,6 +10,12 @@
           class="absolute top-0 w-full h-full object-cover object-center"
           lazy
         />
+        <div
+          v-if="sale"
+          class="absolute top-0 right-0 px-2 pt-1 pb-1.5 rounded-bl bg-[color:var(--color-sale-badge-bg)] text-white text-xs font-extrabold"
+        >
+          {{ sale }}
+        </div>
       </div>
     </router-link>
 
@@ -39,18 +45,16 @@
 
       <!-- Product props -->
       <div class="hidden md:block text-sm pb-2">
-        <div class="flex items-baseline">
-          <div class="w-1/2 font-bold text-xs" v-t="'shared.catalog.product_card.product_sku_label'"></div>
-          <span class="w-1/2 text-[color:var(--color-link)] truncate">{{ product.code }}</span>
+        <div class="flex items-baseline justify-between gap-x-2">
+          <div class="font-bold text-xs" v-t="'shared.catalog.product_card.product_sku_label'"></div>
+          <span class="text-[color:var(--color-link)] truncate">{{ product.code }}</span>
         </div>
       </div>
 
       <!-- Product price -->
-      <div class="flex h-10 md:h-8 flex-col md:flex-row items-baseline text-sm mb-4">
-        <div class="w-1/2 font-bold text-xs" v-t="'shared.catalog.product_card.price_label'"></div>
-        <div class="md:w-1/2">
-          <VcItemPrice :value="product.price"></VcItemPrice>
-        </div>
+      <div class="flex h-10 md:h-8 flex-col md:flex-row items-baseline justify-between text-sm mb-5 gap-x-2">
+        <div class="font-bold text-xs" v-t="'shared.catalog.product_card.price_label'"></div>
+        <VcItemPrice :value="product.price" />
       </div>
 
       <slot name="cart-handler"></slot>
@@ -60,9 +64,8 @@
 
 <script setup lang="ts">
 import { computed, PropType } from "vue";
-import { VcImage, VcItemPrice } from "@/components";
 import { AddToCompare } from "@/shared/compare";
-import { Product } from "@/core/api/graphql/types";
+import { Product } from "@/xapi/graphql/types";
 import { RouteLocationRaw } from "vue-router";
 import { getProductRoute } from "@/shared/catalog";
 
@@ -74,4 +77,18 @@ const props = defineProps({
 });
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product));
+
+const sale = computed(() => {
+  if (props.product.price?.list && props.product.price?.sale) {
+    const {
+      list: { amount: listPrice },
+      sale: { amount: salePrice },
+    } = props.product.price;
+
+    const amount = (listPrice - salePrice) / listPrice;
+    const isSaleEnabled = amount >= 0.05;
+
+    return isSaleEnabled ? `-${Math.round(amount * 100)}%` : null;
+  }
+});
 </script>

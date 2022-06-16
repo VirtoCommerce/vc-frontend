@@ -1,7 +1,7 @@
 import { computed, readonly, ref } from "vue";
 import { eagerComputed } from "@vueuse/core";
-import { createContact, createOrganization, createUser, getMe, updatePersonalData } from "@/core/api/graphql/account";
-import { IdentityResultType, Organization, UserType } from "@core/api/graphql/types";
+import { createContact, createOrganization, createUser, getMe, updatePersonalData } from "@/xapi/graphql/account";
+import { IdentityResultType, Organization, UserType } from "@/xapi/graphql/types";
 import { Logger } from "@core/utilities";
 import { useFetch } from "@core/composables";
 import {

@@ -1,7 +1,5 @@
 <template>
   <div>
-    <VcBreadcrumbs :items="breadcrumbs" class="mx-5 md:mx-0 lg:hidden" />
-
     <!-- Title block -->
     <div class="flex justify-between items-center mx-5 md:mx-0">
       <h2 class="text-gray-800 text-3xl font-bold uppercase">
@@ -57,7 +55,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcButton, VcBreadcrumbs, IBreadcrumbs, VcEmptyView, VcImage } from "@/components";
 import {
   WishlistCard,
   WishlistCardSkeleton,
@@ -66,7 +63,7 @@ import {
   DeleteWishlistsDialog,
   UnsuccessfulCreateWishlistDialog,
 } from "@/shared/wishlists";
-import { LineItemType, WishlistType } from "@core/api/graphql/types";
+import { LineItemType, WishlistType } from "@/xapi/graphql/types";
 import { useI18n } from "vue-i18n";
 import { usePopup } from "@/shared/popup";
 import { configInjectionKey } from "@/core/injection-keys";
@@ -76,12 +73,6 @@ import { computed } from "@vue/reactivity";
 const { t } = useI18n();
 const { openPopup } = usePopup();
 const { loading, lists, fetchWishlists } = useWishlists();
-
-const breadcrumbs: IBreadcrumbs[] = [
-  { title: t("common.links.home"), route: { name: "Home" } },
-  { title: t("common.links.account"), route: { name: "Account" } },
-  { title: t("shared.account.navigation.links.your_lists"), route: { name: "Lists" } },
-];
 
 const config = inject(configInjectionKey);
 const listsLimit = config?.wishlists_limit || 10;

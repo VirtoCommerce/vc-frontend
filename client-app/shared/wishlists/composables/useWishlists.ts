@@ -5,7 +5,7 @@ import {
   InputRemoveWishlistItemType,
   InputRenameWishlistType,
   WishlistType,
-} from "@core/api/graphql/types";
+} from "@/xapi/graphql/types";
 import {
   addWishlist,
   addWishlistItem,
@@ -14,7 +14,7 @@ import {
   deleteWishlistItem,
   renameWishlist as _renameWishlist,
   getWishList,
-} from "@core/api/graphql/account";
+} from "@/xapi/graphql/account";
 import { SORT_ASCENDING } from "@core/constants";
 
 const loading = ref(true);

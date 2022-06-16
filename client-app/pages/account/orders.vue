@@ -133,7 +133,7 @@
               <span class="text-sm text-gray-400" v-t="'pages.account.orders.date_label'" />
 
               <span class="overflow-hidden overflow-ellipsis">
-                {{ moment(itemData.item?.createdDate).format("YYYY-MM-DD") }}
+                {{ $d(itemData.item?.createdDate) }}
               </span>
             </div>
 
@@ -191,7 +191,7 @@
             </td>
 
             <td class="p-5 overflow-hidden overflow-ellipsis">
-              {{ moment(order?.createdDate).format("YYYY-MM-DD") }}
+              {{ $d(order?.createdDate) }}
             </td>
 
             <td class="p-5 overflow-hidden overflow-ellipsis">
@@ -237,25 +237,14 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ITableColumn,
-  TableStatusBadge,
-  VcTable,
-  VcButton,
-  VcPopupSidebar,
-  VcChip,
-  VcEmptyView,
-  VcImage,
-} from "@/components";
 import { OrdersFilter, useUserOrdersFilter, useUserOrders } from "@/shared/account";
 
 import { onMounted, ref, shallowRef, watch } from "vue";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 import { breakpointsTailwind, useBreakpoints, onClickOutside } from "@vueuse/core";
 
-import moment from "moment";
 import { useRouter } from "vue-router";
-import { CustomerOrderType } from "@/core/api/graphql/types";
+import { CustomerOrderType } from "@/xapi/graphql/types";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
