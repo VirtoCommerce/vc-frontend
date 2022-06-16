@@ -28,8 +28,7 @@
         <span class="font-bold">
           {{ $t("pages.account.order_details.placed_on_label") }}
         </span>
-
-        {{ moment(order?.createdDate).format("MMM DD, YYYY HH:mm:ss A") }}
+        {{ $d(order?.createdDate, "long") }}
       </div>
     </div>
 
@@ -192,7 +191,6 @@ import { computed, PropType, ref, watchEffect } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { BackButtonInHeader } from "@/shared/layout";
 import { ReorderInfo, useUserOrder } from "@/shared/account";
-import moment from "moment";
 import _ from "lodash";
 import { usePopup } from "@/shared/popup";
 import { useProducts } from "@/shared/catalog";
