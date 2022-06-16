@@ -2,7 +2,7 @@
   <div v-if="order">
     <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
-    <VcBreadcrumbs :items="breadcrumbs" class="mx-5 md:mx-0" />
+    <VcBreadcrumbs v-if="!isMobile" :items="breadcrumbs" class="mx-5 md:mx-0" />
 
     <!-- Title block -->
     <div class="flex justify-between items-center mx-5 md:mx-0 -mb-3">

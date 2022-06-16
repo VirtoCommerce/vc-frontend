@@ -372,7 +372,7 @@
         "email_label": "@:common.labels.email{':'}",
         "print_order": "Print order",
         "products_section": {
-          "title": "My purchased products"
+          "title": "Purchased products"
         },
         "comment_section": {
           "title": "Order comment"
@@ -782,7 +782,7 @@
         "no_button": "No"
       },
       "products_section": {
-        "title": "My products",
+        "title": "Products",
         "update_all_link_label": "If you changed multiple quantities,",
         "update_all_link": "Update All",
         "clear_cart_button": "Clear all"
