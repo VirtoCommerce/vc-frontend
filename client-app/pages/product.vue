@@ -49,11 +49,12 @@
             <div class="mt-7 md:mt-5">
               <AddToCart :product="product" />
 
-              <VcInStock
-                :is-in-stock="product.availabilityData?.isInStock"
-                :quantity="product.availabilityData?.availableQuantity"
-                class="inline-block"
-              ></VcInStock>
+              <div class="flex">
+                <VcInStock
+                  :is-in-stock="product.availabilityData?.isInStock"
+                  :quantity="product.availabilityData?.availableQuantity"
+                ></VcInStock>
+              </div>
             </div>
           </ProductPriceBlock>
         </div>

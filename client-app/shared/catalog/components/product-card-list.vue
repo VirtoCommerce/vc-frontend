@@ -43,11 +43,12 @@
       <div class="flex-shrink-0 w-48">
         <slot name="cart-handler"></slot>
 
-        <VcInStock
-          :is-in-stock="product.availabilityData?.isInStock"
-          :quantity="product.availabilityData?.availableQuantity"
-          class="inline-block mt-2.5"
-        ></VcInStock>
+        <div class="flex">
+          <VcInStock
+            :is-in-stock="product.availabilityData?.isInStock"
+            :quantity="product.availabilityData?.availableQuantity"
+          ></VcInStock>
+        </div>
       </div>
     </div>
   </div>
