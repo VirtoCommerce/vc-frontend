@@ -69,7 +69,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { VcImage } from "@/components";
 import Catalog from "./catalog.vue";
 import BottomHeaderLink from "./bottom-header-link.vue";
 import { useCart } from "@/shared/cart";

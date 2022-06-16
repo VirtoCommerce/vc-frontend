@@ -102,7 +102,6 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { VcButton } from "@/components";
 import { useSearchBar } from "@/shared/layout";
 import { computed, inject, ref, watchEffect } from "vue";
 import { configInjectionKey } from "@core/injection-keys";
