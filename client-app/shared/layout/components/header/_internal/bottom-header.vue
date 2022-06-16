@@ -15,7 +15,7 @@
 
       <Catalog
         v-if="desktopCatalog"
-        class="ml-5 xl:ml-[1.85rem] px-[0.8rem] py-[0.55rem] border-2 border-primary rounded text-sm"
+        class="ml-5 xl:ml-[1.85rem]"
         :title="desktopCatalog.title"
         :to="desktopCatalog.route"
         :key="desktopCatalog.title"

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="h-[39px] px-5 xl:pl-12 xl:pr-[55px] flex items-center justify-between bg-[color:var(--color-header-top-bg)] font-bold text-sm text-[color:var(--color-header-top-text)] text-[13px]"
+    class="flex items-center justify-between h-[39px] px-5 bg-[color:var(--color-header-top-bg)] font-bold text-sm text-[color:var(--color-header-top-text)] xl:pl-12 xl:pr-[55px]"
   >
     <div class="flex space-x-6 items-center">
       <LanguageSelector v-if="$context.availLanguages && $context.availLanguages.length > 1" />
@@ -8,7 +8,7 @@
     </div>
 
     <!-- Authorized menu items -->
-    <div v-if="isAuthenticated" class="flex items-center">
+    <div v-if="isAuthenticated" class="flex items-center text-[13px]">
       <TopHeaderLink to="/account/dashboard" v-t="'shared.layout.header.top_header.link_dashboard'"></TopHeaderLink>
       <div class="mx-2 h-1 w-1 bg-[color:var(--color-primary)] rounded"></div>
       <TopHeaderLink to="/contact" v-t="'shared.layout.header.top_header.contact_us'"></TopHeaderLink>

@@ -2,10 +2,10 @@
   <!-- Dropdown menu -->
   <div v-if="children?.length" ref="submenu" class="relative">
     <div
-      class="uppercase font-bold text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)] flex items-center cursor-pointer tracking-wide"
+      class="flex items-center cursor-pointer px-[0.8rem] py-[0.55rem] border-2 border-primary rounded text-sm"
       @click="submenuVisible = !submenuVisible"
     >
-      <div>
+      <div class="uppercase font-bold text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)] tracking-wide">
         <slot>{{ title }}</slot>
       </div>
 
