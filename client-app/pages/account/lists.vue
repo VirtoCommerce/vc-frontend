@@ -1,6 +1,6 @@
 <template>
   <div>
-    <VcBreadcrumbs :items="breadcrumbs" class="mx-5 md:mx-0 lg:hidden" />
+    <VcBreadcrumbs v-if="!isMobile" :items="breadcrumbs" class="mx-5 md:mx-0 lg:hidden" />
 
     <!-- Title block -->
     <div class="flex justify-between items-center mx-5 md:mx-0">
@@ -71,6 +71,10 @@ import { usePopup } from "@/shared/popup";
 import { configInjectionKey } from "@/core/injection-keys";
 import { inject } from "vue";
 import { computed } from "@vue/reactivity";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("lg");
 
 const { t } = useI18n();
 const { openPopup } = usePopup();

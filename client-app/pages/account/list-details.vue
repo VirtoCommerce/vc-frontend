@@ -1,6 +1,8 @@
 <template>
   <div>
-    <VcBreadcrumbs :items="breadcrumbs" class="mx-5 md:mx-0 lg:hidden" />
+    <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
+
+    <VcBreadcrumbs v-if="!isMobile" :items="breadcrumbs" class="mx-5 md:mx-0 lg:hidden" />
 
     <!-- Title block -->
     <div class="flex justify-between items-center mx-5 md:mx-0">
@@ -120,6 +122,7 @@ import { useI18n } from "vue-i18n";
 import { usePopup } from "@/shared/popup";
 import { computed, ref, watchEffect } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { BackButtonInHeader } from "@/shared/layout";
 
 const { t } = useI18n();
 const { openPopup } = usePopup();
