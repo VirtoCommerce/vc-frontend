@@ -184,7 +184,6 @@
 import { computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { VcImage, VcRadioButton } from "@/components";
 import { useCart } from "@/shared/cart";
 import { useUser } from "@/shared/account";
 import { LanguageSelector, MenuLink, useNavigations } from "@/shared/layout";

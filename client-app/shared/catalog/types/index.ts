@@ -1,4 +1,4 @@
-import { Breadcrumb } from "@core/api/graphql/types";
+import { Breadcrumb } from "@/xapi/graphql/types";
 
 export * from "./search";
 

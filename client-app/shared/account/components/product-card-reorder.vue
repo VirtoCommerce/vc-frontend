@@ -196,13 +196,12 @@
 </template>
 
 <script setup lang="ts">
-import { VcImage, VcInStock } from "@/components";
 import { computed, PropType } from "vue";
 import { useField } from "vee-validate";
 import * as yup from "yup";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useCart } from "@/shared/cart";
-import { Product } from "@/core/api/graphql/types";
+import { Product } from "@/xapi/graphql/types";
 import { RouteLocationRaw } from "vue-router";
 import { getProductRoute } from "@/shared/catalog";
 

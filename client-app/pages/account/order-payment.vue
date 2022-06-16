@@ -96,12 +96,11 @@
 
 <script setup lang="ts">
 import { computed, ref, shallowRef, watchEffect } from "vue";
-import { KeyValueType } from "@core/api/graphql/types";
-import { IBreadcrumbs, VcAlert, VcButton, VcBreadcrumbs, VcLoader } from "@/components";
+import { KeyValueType } from "@/xapi/graphql/types";
 import { OrderSummary } from "@/shared/checkout";
 import { AuthorizeNetPaymentProcessing, PaymentActionType, PaymentFailure, PaymentSuccess } from "@/shared/payment";
 import { useI18n } from "vue-i18n";
-import { initializePayment } from "@core/api/graphql/cart";
+import { initializePayment } from "@/xapi/graphql/cart";
 import { useUserOrder } from "@/shared/account";
 import { useRouter } from "vue-router";
 

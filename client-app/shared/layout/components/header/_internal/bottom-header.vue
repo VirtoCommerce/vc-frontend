@@ -79,7 +79,6 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { VcImage } from "@/components";
 import BottomHeaderLink from "./bottom-header-link.vue";
 import { useCart } from "@/shared/cart";
 import { useSearchBar, SearchBar, useNavigations } from "@/shared/layout";
