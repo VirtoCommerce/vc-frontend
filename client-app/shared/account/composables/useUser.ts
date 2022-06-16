@@ -102,8 +102,8 @@ export default () => {
           email: payload.email,
         },
         contact: {
-          firstName: payload.firstName as string,
-          lastName: payload.lastName as string,
+          firstName: payload.firstName,
+          lastName: payload.lastName,
         },
       });
 
