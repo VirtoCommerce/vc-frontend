@@ -15,8 +15,6 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
-
 defineProps({
   isInStock: {
     type: Boolean,
