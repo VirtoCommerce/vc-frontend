@@ -133,10 +133,9 @@
 
 <script setup lang="ts">
 import { OrderSummary, ProductCard, AcceptedGifts } from "@/shared/checkout";
-import { CustomerOrderType } from "@/core/api/graphql/types";
+import { CustomerOrderType } from "@/xapi/graphql/types";
 import { useCart } from "@/shared/cart";
 import { computed, PropType, ref } from "vue";
-import { VcCard, VcImage, VcPagination, VcButton, VcSection } from "@/components";
 
 const { itemsPerPage } = useCart();
 

@@ -114,7 +114,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcAlert, VcButton, VcInput } from "@/components";
 import { ProfileUpdateSuccessDialog, useUser } from "@/shared/account";
 import { computed, Ref, ref } from "vue";
 import { useForm, useField } from "vee-validate";

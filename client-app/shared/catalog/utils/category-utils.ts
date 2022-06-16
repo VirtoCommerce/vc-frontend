@@ -1,4 +1,4 @@
-import { Category } from "@core/api/graphql/types";
+import { Category } from "@/xapi/graphql/types";
 import { RouteLocationRaw } from "vue-router";
 
 export function getCategoryRoute(category: Category): RouteLocationRaw {

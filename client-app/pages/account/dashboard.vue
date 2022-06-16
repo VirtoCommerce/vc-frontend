@@ -266,8 +266,7 @@
 </template>
 
 <script setup lang="ts">
-import { ITableColumn, VcCard, VcImage, VcTable, TableStatusBadge, VcButton } from "@/components";
-import { CustomerOrderType } from "@/core/api/graphql/types";
+import { CustomerOrderType } from "@/xapi/graphql/types";
 import { SORT_DESCENDING } from "@/core/constants";
 import useUserOrders from "@/shared/account/composables/useUserOrders";
 import { onMounted, ref } from "vue";

@@ -237,16 +237,6 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ITableColumn,
-  TableStatusBadge,
-  VcTable,
-  VcButton,
-  VcPopupSidebar,
-  VcChip,
-  VcEmptyView,
-  VcImage,
-} from "@/components";
 import { OrdersFilter, useUserOrdersFilter, useUserOrders } from "@/shared/account";
 
 import { onMounted, ref, shallowRef, watch } from "vue";
@@ -255,7 +245,7 @@ import { breakpointsTailwind, useBreakpoints, onClickOutside } from "@vueuse/cor
 
 import moment from "moment";
 import { useRouter } from "vue-router";
-import { CustomerOrderType } from "@/core/api/graphql/types";
+import { CustomerOrderType } from "@/xapi/graphql/types";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
