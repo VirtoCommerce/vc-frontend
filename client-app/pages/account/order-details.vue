@@ -24,11 +24,10 @@
         {{ order?.status }}
       </div>
 
-      <div class="text-sm" v-if="order?.purchaseOrderNumber">
+      <div class="text-sm truncate" v-if="order?.purchaseOrderNumber">
         <span class="font-bold">
           {{ $t("pages.account.order_details.purchase_order_label") }}
         </span>
-
         {{ order?.purchaseOrderNumber }}
       </div>
 
