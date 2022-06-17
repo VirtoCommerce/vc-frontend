@@ -10,6 +10,12 @@
           class="absolute top-0 w-full h-full object-cover object-center"
           lazy
         />
+        <div
+          v-if="sale"
+          class="absolute top-0 right-0 px-2 pt-1 pb-1.5 rounded-bl bg-[color:var(--color-sale-badge-bg)] text-white text-xs font-extrabold"
+        >
+          {{ sale }}
+        </div>
       </div>
     </router-link>
 
@@ -71,4 +77,18 @@ const props = defineProps({
 });
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product));
+
+const sale = computed(() => {
+  if (props.product.price?.list && props.product.price?.sale) {
+    const {
+      list: { amount: listPrice },
+      sale: { amount: salePrice },
+    } = props.product.price;
+
+    const amount = (listPrice - salePrice) / listPrice;
+    const isSaleEnabled = amount >= 0.05;
+
+    return isSaleEnabled ? `-${Math.round(amount * 100)}%` : null;
+  }
+});
 </script>

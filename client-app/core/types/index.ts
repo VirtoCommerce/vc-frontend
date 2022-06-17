@@ -102,6 +102,7 @@ export interface IThemeConfigPreset {
   orders_statuses?: string[];
 
   social_sharing_services?: ISocialSharingService[];
+  support_phone_number?: string;
 
   logo_image?: string;
   logo_inverted_image?: string;

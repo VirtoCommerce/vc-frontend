@@ -8,6 +8,8 @@
 
       "search_min_chars": 3,
 
+      "support_phone_number": "+31 416 652 803",
+
       "checkout_comment_enabled": true,
       "checkout_purchase_order_enabled": true,
       "checkout_coupon_enabled": true,
@@ -69,6 +71,7 @@
       "color_warning": "#FFBB0D",
       "color_warning_hover": "#EEAA00",
       "color_price": "#3C763D",
+      "color_sale_badge_bg": "rgba(240, 60, 3, 1)",
       "color_mobile_menu_bg": "#22334D",
       "color_mobile_menu_link": "#C2C9E0",
       "color_header_top_bg": "#292D3B",
