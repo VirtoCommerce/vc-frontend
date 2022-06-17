@@ -329,7 +329,8 @@
         "title": "Accepted Gifts"
       },
       "add_or_update_address_dialog": {
-        "title": "New address",
+        "new_address_title": "New address",
+        "edit_address_title": "Edit address",
         "cancel_button": "@:common.buttons.cancel",
         "create_button": "@:common.buttons.create",
         "save_button": "@:common.buttons.save"

@@ -46,42 +46,65 @@
 
           <!-- Main content -->
           <template v-else>
-            <!-- Billing address section -->
-            <CheckoutLabeledBlock :label="$t('pages.account.order_payment.billing_address_label')">
-              <!-- TODO: create an atom component to display address -->
-              <div class="truncate">
-                <span class="font-extrabold">
-                  {{ payment?.billingAddress?.firstName }}
-                  {{ payment?.billingAddress?.lastName }}
-                </span>
+            <!-- region Billing address -->
+            <h5 class="mb-1 font-extrabold" v-t="'pages.account.order_payment.billing_address_label'" />
 
-                <p>
-                  {{ payment?.billingAddress?.countryCode }}
-                  {{ payment?.billingAddress?.regionName }}
-                  {{ payment?.billingAddress?.city }} {{ payment?.billingAddress?.line1 }}
-                  {{ payment?.billingAddress?.postalCode }}
-                </p>
+            <div class="rounded border mb-6">
+              <div class="p-4 md:p-5 flex flex-row justify-between space-x-3 text-sm">
+                <!-- TODO: create an atom component to display address -->
+                <div class="min-w-0">
+                  <span class="font-extrabold line-clamp-2">
+                    {{ payment?.billingAddress?.firstName }}
+                    {{ payment?.billingAddress?.lastName }}
+                  </span>
 
-                <p>
-                  <span class="font-extrabold" v-t="'pages.account.order_payment.phone_label'" />
-                  {{ payment?.billingAddress?.phone }}
-                </p>
+                  <p class="line-clamp-3">
+                    {{ payment?.billingAddress?.countryCode }}
+                    {{ payment?.billingAddress?.regionName }}
+                    {{ payment?.billingAddress?.city }}
+                    {{ payment?.billingAddress?.line1 }}
+                    {{ payment?.billingAddress?.line2 }}
+                    {{ payment?.billingAddress?.postalCode }}
+                  </p>
 
-                <p>
-                  <span class="font-extrabold" v-t="'pages.account.order_payment.email_label'" />
-                  {{ payment?.billingAddress?.email }}
-                </p>
+                  <p class="truncate">
+                    <span class="font-extrabold" v-t="'pages.account.order_payment.phone_label'" />
+                    {{ payment?.billingAddress?.phone }}
+                  </p>
+
+                  <p class="truncate">
+                    <span class="font-extrabold" v-t="'pages.account.order_payment.email_label'" />
+                    {{ payment?.billingAddress?.email }}
+                  </p>
+                </div>
+
+                <div class="self-start md:self-center">
+                  <VcButton
+                    :is-disabled="paymentMethodRef?.loading"
+                    :is-waiting="loading"
+                    size="sm"
+                    is-outline
+                    class="!hidden md:!inline-flex px-5 self-start uppercase font-bold"
+                    @click="editAddress"
+                  >
+                    {{ $t("pages.account.order_payment.edit_button") }}
+                  </VcButton>
+
+                  <!-- TODO: use VcButton -->
+                  <button
+                    :disabled="paymentMethodRef?.loading || loading"
+                    type="button"
+                    class="md:hidden h-8 w-8 shadow rounded text-[color:var(--color-primary)] hover:bg-gray-100"
+                    @click="paymentMethodRef?.loading || loading ? null : editAddress()"
+                  >
+                    <i class="fas fa-pencil-alt text-lg" />
+                  </button>
+                </div>
               </div>
+            </div>
+            <!-- endregion Billing address -->
 
-              <!--
-              <div>
-                <VcButton size="sm" is-outline class="px-5 self-start uppercase font-bold">
-                  {{ $t("pages.account.order_payment.edit_button") }}
-                </VcButton>
-              </div>
-              -->
-            </CheckoutLabeledBlock>
-
+            <!-- region Payment method -->
             <h5 class="mb-1 font-extrabold" v-t="'shared.payment.payment_method_section.header'" />
 
             <!-- Loader -->
@@ -117,14 +140,15 @@
 
             <PaymentProcessingAuthorizeNet
               v-else-if="isAuthorizeNetPaymentMethod"
+              ref="paymentMethodRef"
               :order="order"
               :parameters="parameters"
               @success="success = true"
               @fail="failure = true"
             >
               <template #header>
-                <div class="px-6 py-5 shadow-lg">
-                  <svg width="43" height="37" class="inline-block text-gray-400 opacity-80 mr-5">
+                <div class="p-4 md:px-6 md:py-5 shadow-lg">
+                  <svg width="43" height="37" class="inline-block text-gray-400 opacity-80 mr-3 md:mr-5">
                     <use href="/static/images/payment/bank-card.svg#main" />
                   </svg>
 
@@ -155,7 +179,7 @@
                   </p>
 
                   <VcButton
-                    :is-disabled="!slotData.valid"
+                    :is-disabled="!slotData.valid || loading"
                     :is-waiting="slotData.loading"
                     @click="slotData.submit"
                     size="lg"
@@ -166,6 +190,7 @@
                 </div>
               </template>
             </PaymentProcessingAuthorizeNet>
+            <!-- endregion Payment method -->
           </template>
         </div>
       </div>
@@ -180,13 +205,14 @@
 
 <script setup lang="ts">
 import { computed, ref, shallowRef, watchEffect } from "vue";
-import { KeyValueType, PaymentInType } from "@/xapi/graphql/types";
-import { CheckoutLabeledBlock, OrderSummary } from "@/shared/checkout";
+import { InputOrderAddressType, KeyValueType, PaymentInType } from "@/xapi/graphql/types";
+import { AddOrUpdateAddressDialog, OrderSummary } from "@/shared/checkout";
 import { PaymentProcessingAuthorizeNet, PaymentActionType, PaymentFailure, PaymentSuccess } from "@/shared/payment";
 import { useI18n } from "vue-i18n";
 import { initializePayment } from "@/xapi/graphql/cart";
 import { useUserOrder } from "@/shared/account";
 import { useRouter } from "vue-router";
+import { usePopup } from "@/shared/popup";
 
 const props = defineProps({
   orderId: {
@@ -200,9 +226,11 @@ const success = ref(false);
 const failure = ref(false);
 const parameters = shallowRef<KeyValueType[]>([]);
 const initializationError = ref("");
+const paymentMethodRef = ref<InstanceType<typeof PaymentProcessingAuthorizeNet> | null>(null);
 
 const { t } = useI18n();
-const { order, loadOrder } = useUserOrder();
+const { loading, order, loadOrder, updatePayment } = useUserOrder();
+const { openPopup, closePopup } = usePopup();
 const router = useRouter();
 
 const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments[0]);
@@ -224,6 +252,25 @@ const isAuthorizeNetPaymentMethod = computed<boolean>(() =>
 
 function tryAgain() {
   location.reload();
+}
+
+function editAddress() {
+  openPopup({
+    component: AddOrUpdateAddressDialog,
+    props: {
+      address: payment.value?.billingAddress,
+      onResult(address: InputOrderAddressType) {
+        closePopup();
+        updatePayment({
+          orderId: props.orderId,
+          payment: {
+            id: payment.value!.id,
+            billingAddress: address,
+          },
+        });
+      },
+    },
+  });
 }
 
 async function initPayment() {
@@ -260,10 +307,10 @@ async function initPayment() {
 }
 
 watchEffect(() => {
-  if (props.orderId === order.value?.id) {
-    initPayment();
-  } else {
+  if (props.orderId !== order.value?.id) {
     loadOrder({ id: props.orderId });
+  } else if (!initialized.value) {
+    initPayment();
   }
 });
 </script>

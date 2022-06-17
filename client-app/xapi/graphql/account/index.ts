@@ -11,8 +11,6 @@ export { default as renameWishlist } from "./mutations/renameWishlist";
 export { default as getMe } from "./queries/getMe";
 export { default as getMyAddresses } from "./queries/getMyAddresses";
 export { default as getDefaultShippingAddress } from "./queries/getDefaultShippingAddress";
-export { default as getMyOrders } from "./queries/getMyOrders";
-export { default as getMyOrder } from "./queries/getMyOrder";
 export { default as getWishlists } from "./queries/getWishlists";
 export { default as getWishList } from "./queries/getWishList";
 export { default as checkUsernameUniqueness } from "./queries/checkUsernameUniqueness";

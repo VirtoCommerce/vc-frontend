@@ -160,7 +160,7 @@ function sendPaymentData() {
 
   dispatchData({ authData, cardData }, async (response: Accept.Response) => {
     if (response.messages.resultCode === "Error") {
-      await showErrors(response.messages.message);
+      showErrors(response.messages.message);
     } else if (response.opaqueData) {
       await authorizePayment(response.opaqueData);
     }
@@ -168,6 +168,11 @@ function sendPaymentData() {
     loading.value = false;
   });
 }
+
+defineExpose({
+  loading,
+  isValidBankCard,
+});
 
 watch(bankCardData, () => (bankCardErrors.value = {}));
 

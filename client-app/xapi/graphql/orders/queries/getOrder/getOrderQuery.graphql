@@ -3,7 +3,7 @@
 #import "../../../fragments/orderLineItemFields.graphql"
 #import "../../../fragments/orderAddressFields.graphql"
 
-query GetMyOrder($id: String, $number: String, $cultureName: String) {
+query GetOrder($id: String, $number: String, $cultureName: String) {
   order(id: $id, number: $number, cultureName: $cultureName) {
     id
     number
