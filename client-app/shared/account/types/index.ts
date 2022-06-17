@@ -19,9 +19,8 @@ export type SignMeUp = {
   userName: string;
   email: string;
   password: string;
-  firstName?: string;
-  lastName?: string;
-  middleName?: string;
+  firstName: string;
+  lastName: string;
 };
 
 export type SignMeIn = {
