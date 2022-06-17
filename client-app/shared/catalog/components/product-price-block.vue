@@ -44,7 +44,7 @@
               <div class="flex justify-between items-center text-xl px-5 mb-3 h-16">
                 <a
                   class="w-14"
-                  :href="stringFormat(socialSharingService.url_template, pageUrl)"
+                  :href="getProductSocialShareUrl(socialSharingService.url_template, pageUrl)"
                   v-for="socialSharingService in $cfg.social_sharing_services"
                   :key="socialSharingService.name"
                 >
@@ -93,7 +93,7 @@ const props = defineProps({
 const { isAuthenticated } = useUser();
 const { openPopup } = usePopup();
 
-const pageUrl: string = window.location.href;
+const pageUrl: string = location.href;
 
 function addToList() {
   if (!isAuthenticated.value) {
@@ -106,6 +106,10 @@ function addToList() {
       product: props.product,
     },
   });
+}
+
+function getProductSocialShareUrl(urlTemplate: string, url: string): string {
+  return stringFormat(urlTemplate, url);
 }
 
 function print() {
