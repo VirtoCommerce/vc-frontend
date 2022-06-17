@@ -60,7 +60,36 @@
         </VcPopupSidebar>
 
         <!-- Sidebar -->
-        <div v-else ref="sidebarElement" class="flex flex-col lg:w-1/4 xl:w-1/5 flex-shrink-0">
+        <div v-else ref="sidebarElement" class="flex flex-col gap-4 lg:gap-5 lg:w-1/4 xl:w-1/5 flex-shrink-0">
+          <!-- category selector -->
+          <VcCard :title="selectedCategory?.parent?.label">
+            <template v-if="selectedCategory?.parent" #header>
+              <router-link :to="'/' + selectedCategory?.parent?.slug">{{
+                selectedCategory?.parent?.label
+              }}</router-link>
+            </template>
+            <div v-if="selectedCategory?.items?.length">
+              <div class="uppercase font-bold">{{ selectedCategory?.label }}</div>
+              <div class="pl-2">
+                <div class="v" v-for="category in selectedCategory?.items" :key="category.id">
+                  <router-link :to="'/' + category.slug">{{ category.label }}</router-link>
+                </div>
+              </div>
+            </div>
+            <div v-else-if="selectedCategory?.parent">
+              <div class="uppercase font-bold">{{ selectedCategory?.parent?.label }}</div>
+              <div class="pl-2">
+                <div class="v" v-for="category in selectedCategory?.parent?.items" :key="category.id">
+                  <router-link
+                    :class="{ 'font-bold': category.id === selectedCategory.id }"
+                    :to="'/' + category.slug"
+                    >{{ category.label }}</router-link
+                  >
+                </div>
+              </div>
+            </div>
+          </VcCard>
+
           <ProductsFiltersSidebar
             :keyword="keywordQueryParam"
             :filters="filters"

@@ -7,10 +7,11 @@ import { CategoryTree } from "../types";
 const categoryTree: Ref<CategoryTree> = ref({});
 const loading: Ref<boolean> = ref(true);
 
-const itemToTree = (category: Category, isCurrent: boolean): CategoryTree => {
+const itemToTreeItem = (parent: CategoryTree, category: Category, isCurrent: boolean): CategoryTree => {
   return {
     id: category.id,
-    parent: category.parent?.id ?? "",
+    parent: parent,
+    parentId: category.parent?.id ?? "",
     label: category.name ?? "",
     slug: category.slug ?? "",
     items: [],
@@ -23,10 +24,10 @@ const itemToTree = (category: Category, isCurrent: boolean): CategoryTree => {
 const buildCategoryTree = (parent: CategoryTree, allCats: Category[], activeCatId: string): CategoryTree => {
   //TODO: replace to loop instead of recursion
   parent.items = allCats
-    .filter((c) => c.id !== parent.id && c.parent?.id === parent.id)
+    .filter((categoryItem) => categoryItem.id !== parent.id && categoryItem.parent?.id === parent.id)
     // .sort((a, b) => (a.outline ?? "").localeCompare(b.outline ?? ""))
     .map((c) => {
-      return buildCategoryTree(itemToTree(c, activeCatId === c.id), allCats, activeCatId);
+      return buildCategoryTree(itemToTreeItem(parent, c, activeCatId === c.id), allCats, activeCatId);
     });
 
   return parent;

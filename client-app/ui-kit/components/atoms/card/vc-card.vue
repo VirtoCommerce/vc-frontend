@@ -1,16 +1,18 @@
 <template>
   <div class="bg-white rounded border shadow-sm">
-    <div class="px-6 py-3 border-b font-extrabold text-sm">
+    <div v-if="title || isCollapsible" class="px-6 py-3 border-b font-extrabold text-sm">
       <div class="flex items-center">
-        <div class="flex-grow text-xl font-extrabold uppercase">{{ title }}</div>
-        <div v-if="isCollapsible" class="ml-3">
-          <i
-            class="fas text-[color:var(--color-primary)] text-base cursor-pointer"
-            :class="[isCollapsed ? 'fa-chevron-up' : 'fa-chevron-down']"
-            @click="isCollapsed = !isCollapsed"
-          ></i>
-        </div>
-        <slot name="header-button"></slot>
+        <slot name="header">
+          <div class="flex-grow text-xl font-extrabold uppercase">{{ title }}</div>
+          <div v-if="isCollapsible" class="ml-3">
+            <i
+              class="fas text-[color:var(--color-primary)] text-base cursor-pointer"
+              :class="[isCollapsed ? 'fa-chevron-up' : 'fa-chevron-down']"
+              @click="isCollapsed = !isCollapsed"
+            ></i>
+          </div>
+          <slot name="header-button"></slot>
+        </slot>
       </div>
     </div>
     <div v-if="isCollapsed" :class="{ 'px-6 py-4': !fullWidthContent }">
@@ -27,7 +29,7 @@ import { ref } from "vue";
 defineProps({
   title: {
     type: String,
-    required: true,
+    default: undefined,
   },
 
   isCollapsible: {
