@@ -7,7 +7,6 @@
       <CurrencySelector v-if="$context.availCurrencies && $context.availCurrencies.length > 1" />
     </div>
 
-    <!-- Authorized menu items -->
     <div class="flex items-center text-[13px]">
       <!-- Call us block -->
       <div class="flex items-center" v-if="$cfg.support_phone_number">
@@ -22,6 +21,7 @@
         <div class="w-px h-5 bg-[color:var(--color-primary)] mx-4 hidden lg:block"></div>
       </div>
 
+      <!-- Authorized menu items -->
       <template v-if="isAuthenticated">
         <TopHeaderLink to="/account/dashboard" v-t="'shared.layout.header.top_header.link_dashboard'"></TopHeaderLink>
         <div class="mx-2 h-1 w-1 bg-[color:var(--color-primary)] rounded"></div>
