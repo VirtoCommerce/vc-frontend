@@ -22,4 +22,4 @@ export { default as VcDateSelector } from "./date-selector/vc-date-selector.vue"
 export { default as VcPopupSidebar } from "./popup-sidebar/vc-popup-sidebar.vue";
 export { default as VcTextArea } from "./text-area/vc-text-area.vue";
 export { default as VcEmptyView } from "./empty-view/vc-empty-view.vue";
-export { default as VcInStock } from "./in-stock/in-stock.vue";
+export { default as VcInStock } from "./in-stock/vc-in-stock.vue";
