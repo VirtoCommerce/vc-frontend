@@ -24,9 +24,14 @@
         <component v-if="customSlots.right" :is="customSlots.right" />
 
         <div v-else class="flex items-center h-full pr-8">
+          <a class="pr-4 pt-0.5" :href="`tel:${$cfg.support_phone_number}`" v-if="$cfg.support_phone_number">
+            <i class="fas fa-phone-alt text-xl text-[color:var(--color-primary)]"></i>
+          </a>
+
           <button v-show="!searchBarVisible" class="h-full pr-4" @click="showSearchBar">
             <i class="fas fa-search text-2xl text-[color:var(--color-primary)]" />
           </button>
+
           <router-link to="/checkout">
             <i class="fas fa-shopping-cart text-xl text-[color:var(--color-primary)]" />
           </router-link>

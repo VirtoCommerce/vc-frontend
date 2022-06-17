@@ -95,6 +95,8 @@ export interface IThemeConfigPreset {
   orders_reorder_enabled?: boolean;
   orders_statuses?: string[];
 
+  support_phone_number?: string;
+
   logo_image?: string;
   logo_inverted_image?: string;
   favicon_image?: string;
