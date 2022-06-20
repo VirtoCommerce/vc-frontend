@@ -3,8 +3,8 @@ import { computed, readonly, ref } from "vue";
 import { eagerComputed } from "@vueuse/core";
 import { getMe, registerAccount, updatePersonalData } from "@/xapi/graphql/account";
 
-import { Logger } from "@core/utilities";
-import { useFetch } from "@core/composables";
+import { Logger } from "@/core/utilities";
+import { useFetch } from "@/core/composables";
 import {
   ForgotPassword,
   RegisterOrganization,
@@ -14,7 +14,7 @@ import {
   UserPersonalData,
   ValidateToken,
 } from "@/shared/account";
-import globals from "@core/globals";
+import globals from "@/core/globals";
 
 const loading = ref(false);
 const user = ref<UserType>();

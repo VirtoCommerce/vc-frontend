@@ -1,4 +1,4 @@
-import { Logger } from "@core/utilities";
+import { Logger } from "@/core/utilities";
 import { computed, ref, Ref } from "vue";
 import { CustomerOrderType, QueryOrderArgs } from "@/xapi/graphql/types";
 import { getMyOrder } from "@/xapi/graphql/account";

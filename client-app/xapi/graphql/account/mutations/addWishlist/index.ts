@@ -1,6 +1,6 @@
 import mutationDocument from "./addWishlistMutation.graphql";
 import { Mutations, MutationsCreateWishlistArgs, WishlistType } from "@/xapi/graphql/types";
-import globals from "@core/globals";
+import globals from "@/core/globals";
 
 export default async function addWishlist(listName?: string): Promise<WishlistType> {
   const { storeId, userId, cultureName, currencyCode } = globals;

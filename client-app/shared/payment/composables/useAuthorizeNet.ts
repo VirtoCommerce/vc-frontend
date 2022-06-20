@@ -1,7 +1,7 @@
 import { readonly, ref } from "vue";
 import { MaybeRef, useScriptTag } from "@vueuse/core";
 import { authorizePayment } from "@/xapi/graphql/cart";
-import { Logger } from "@core/utilities";
+import { Logger } from "@/core/utilities";
 
 export default function useAuthorizeNet(options: { scriptURL: MaybeRef<string>; manualScriptLoading?: boolean }) {
   const { scriptURL, manualScriptLoading = false } = options;

@@ -230,8 +230,8 @@ import { MemberAddressType } from "@/xapi/graphql/types";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { BackButtonInHeader } from "@/shared/layout";
-import { useCountries } from "@core/composables";
-import { AddressType } from "@core/types";
+import { useCountries } from "@/core/composables";
+import { AddressType } from "@/core/types";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();

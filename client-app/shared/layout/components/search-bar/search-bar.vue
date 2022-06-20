@@ -98,7 +98,7 @@
 </template>
 
 <script lang="ts">
-import { clickOutside } from "@core/directives";
+import { clickOutside } from "@/core/directives";
 
 export default {
   directives: {
@@ -110,9 +110,9 @@ export default {
 <script setup lang="ts">
 import { useSearchBar } from "@/shared/layout";
 import { computed, inject, ref, watchEffect } from "vue";
-import { configInjectionKey } from "@core/injection-keys";
-import { useRouteQueryParam } from "@core/composables";
-import QueryParamName from "@core/query-param-name.enum";
+import { configInjectionKey } from "@/core/injection-keys";
+import { useRouteQueryParam } from "@/core/composables";
+import QueryParamName from "@/core/query-param-name.enum";
 import { Category } from "@/xapi/graphql/types";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 import { useDebounceFn, whenever } from "@vueuse/core";

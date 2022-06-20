@@ -1,6 +1,6 @@
 import { computed, ref, Ref } from "vue";
 import { OrdersFilterData, OrdersFilterChipsItem } from "@/shared/account";
-import { nameOf } from "@core/utilities";
+import { nameOf } from "@/core/utilities";
 import moment from "moment";
 
 const filterData: Ref<OrdersFilterData> = ref({ statuses: [] });

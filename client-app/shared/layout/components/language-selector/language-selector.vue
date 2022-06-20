@@ -62,7 +62,7 @@
 </template>
 
 <script lang="ts">
-import { clickOutside } from "@core/directives";
+import { clickOutside } from "@/core/directives";
 
 export default {
   directives: {

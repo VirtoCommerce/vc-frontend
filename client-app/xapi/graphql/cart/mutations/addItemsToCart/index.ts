@@ -1,7 +1,7 @@
 import { CartItemType } from "@/shared/cart";
 import mutationDocument from "./addItemsToCartMutation.graphql";
 import { Mutations, MutationsAddItemsCartArgs } from "@/xapi/graphql/types";
-import globals from "@core/globals";
+import globals from "@/core/globals";
 
 export default async function addItemsToCart(cartItems: CartItemType[]): Promise<void> {
   const { storeId, userId, cultureName, currencyCode } = globals;

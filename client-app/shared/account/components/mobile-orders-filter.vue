@@ -35,7 +35,7 @@
 </template>
 <script setup lang="ts">
 import { inject } from "vue";
-import { configInjectionKey } from "@core/injection-keys";
+import { configInjectionKey } from "@/core/injection-keys";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useUserOrdersFilter } from "@/shared/account/";
 

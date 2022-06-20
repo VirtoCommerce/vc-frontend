@@ -79,7 +79,7 @@ import { CustomerOrderType, KeyValueType } from "@/xapi/graphql/types";
 import { BankCardType, BankCardForm, useAuthorizeNet, BankCardErrorsType } from "@/shared/payment";
 import { useNotifications } from "@/shared/notification";
 import { useI18n } from "vue-i18n";
-import { Logger } from "@core/utilities";
+import { Logger } from "@/core/utilities";
 
 const emit = defineEmits<{
   (event: "success"): void;

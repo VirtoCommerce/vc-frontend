@@ -1,5 +1,5 @@
 import { computed, reactive, readonly, ref, shallowRef, toRef, unref } from "vue";
-import { Logger, sleep } from "@core/utilities";
+import { Logger, sleep } from "@/core/utilities";
 import { Category, Product } from "@/xapi/graphql/types";
 import { getSearchResults, SearchResultsParams } from "@/xapi/graphql/catalog";
 import { highlightSearchText, prepareSearchText } from "@/shared/layout";

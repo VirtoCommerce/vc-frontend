@@ -132,7 +132,7 @@
 import { MemberAddressType } from "@/xapi/graphql/types";
 import { computed, watchEffect, PropType, ref } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { isEqualAddresses } from "@core/utilities";
+import { isEqualAddresses } from "@/core/utilities";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();

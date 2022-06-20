@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { toRefs, watch } from "vue";
-import { useDomUtils } from "@core/composables";
+import { useDomUtils } from "@/core/composables";
 
 const { toggleBodyScrollable } = useDomUtils();
 

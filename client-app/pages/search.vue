@@ -88,9 +88,9 @@ import { computed, watch, onMounted, ref, onBeforeUnmount, WatchStopHandle } fro
 import { breakpointsTailwind, useBreakpoints, useLocalStorage } from "@vueuse/core";
 import { DisplayProducts, ProductsSearchParams, useProducts, useProductsRoutes, ViewMode } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
-import { useRouteQueryParam } from "@core/composables";
-import { DEFAULT_SEARCH_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@core/constants";
-import QueryParamName from "@core/query-param-name.enum";
+import { useRouteQueryParam } from "@/core/composables";
+import { DEFAULT_SEARCH_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
+import QueryParamName from "@/core/query-param-name.enum";
 
 const watchStopHandles: WatchStopHandle[] = [];
 

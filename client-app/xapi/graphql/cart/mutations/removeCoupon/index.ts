@@ -1,6 +1,6 @@
 import mutationDocument from "./removeCouponMutation.graphql";
 import { Mutations, MutationsRemoveCouponArgs } from "@/xapi/graphql/types";
-import globals from "@core/globals";
+import globals from "@/core/globals";
 
 export default async function removeCoupon(couponCode: string): Promise<void> {
   const { storeId, userId, cultureName, currencyCode } = globals;

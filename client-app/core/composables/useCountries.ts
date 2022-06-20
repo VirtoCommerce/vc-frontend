@@ -1,4 +1,4 @@
-import { Logger } from "@core/utilities";
+import { Logger } from "@/core/utilities";
 import { computed, readonly, ref, shallowRef } from "vue";
 import { CountryType } from "@/xapi/graphql/types";
 import { getCountries } from "@/xapi/graphql/common";

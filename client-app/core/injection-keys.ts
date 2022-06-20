@@ -1,5 +1,5 @@
 import { InjectionKey } from "vue";
-import { IThemeConfigPreset, IThemeContext } from "@core/types";
+import { IThemeConfigPreset, IThemeContext } from "@/core/types";
 
 /**
  * @example

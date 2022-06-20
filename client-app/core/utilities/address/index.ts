@@ -1,4 +1,4 @@
-import { AnyAddressType } from "@core/types";
+import { AnyAddressType } from "@/core/types";
 import { InputMemberAddressType, MemberAddressType } from "@/xapi/graphql/types";
 import _ from "lodash";
 

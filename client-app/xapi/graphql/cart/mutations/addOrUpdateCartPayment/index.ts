@@ -1,6 +1,6 @@
 import { InputPaymentType, Mutations, MutationsAddOrUpdateCartPaymentArgs } from "@/xapi/graphql/types";
 import mutationDocument from "./addOrUpdateCartPaymentMutation.graphql";
-import globals from "@core/globals";
+import globals from "@/core/globals";
 
 export default async function addOrUpdateCartPayment(payment: InputPaymentType): Promise<void> {
   const { storeId, userId, cultureName, currencyCode } = globals;

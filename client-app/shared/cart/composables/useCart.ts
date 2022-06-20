@@ -16,7 +16,7 @@ import {
   removeCart as _removeCart,
 } from "@/xapi/graphql/cart";
 import { BulkCartType, CartType, InputPaymentType, InputShipmentType, LineItemType } from "@/xapi/graphql/types";
-import { Logger } from "@core/utilities";
+import { Logger } from "@/core/utilities";
 import _ from "lodash";
 import { useUserCheckoutDefaults } from "@/shared/account";
 import changePurchaseOrderNumber from "@/xapi/graphql/cart/mutations/changePurchaseOrderNumber";
