@@ -29,15 +29,11 @@
     <div class="w-48 shrink-0 flex flex-col justify-center">
       <AddToCart :product="product" />
 
-      <div v-if="product.availabilityData?.isInStock" class="flex items-center text-green-700 text-xs">
-        <div class="w-1.5 h-1.5 bg-green-700 rounded mr-1"></div>
-        {{ product.availabilityData.availableQuantity > 9999 ? "9999+" : product.availabilityData.availableQuantity }}
-        {{ $t("common.suffixes.product_count_in_stock") }}
-      </div>
-
-      <div v-else class="flex items-center text-[color:var(--color-danger)] text-xs">
-        <div class="w-1.5 h-1.5 bg-[color:var(--color-danger)] rounded mr-1"></div>
-        {{ $t("common.messages.product_out_of_stock") }}
+      <div class="flex">
+        <VcInStock
+          :is-in-stock="product.availabilityData?.isInStock"
+          :quantity="product.availabilityData?.availableQuantity"
+        ></VcInStock>
       </div>
     </div>
 
