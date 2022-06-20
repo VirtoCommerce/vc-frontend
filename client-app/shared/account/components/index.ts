@@ -10,3 +10,4 @@ export { default as ProfileUpdateSuccessDialog } from "./profile-update-success-
 export { default as ReorderInfo } from "./reorder-info.vue";
 export { default as ProductCardReorder } from "./product-card-reorder.vue";
 export { default as OrdersFilter } from "./orders-filter.vue";
+export { default as MobileOrdersFilter } from "./mobile-orders-filter.vue";
