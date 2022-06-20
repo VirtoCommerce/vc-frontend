@@ -61,7 +61,7 @@
 
         <!-- Sidebar -->
         <div v-else ref="sidebarElement" class="flex flex-col gap-4 lg:gap-5 lg:w-1/4 xl:w-1/5 flex-shrink-0">
-          <CategorySelector :selected-category="selectedCategory"></CategorySelector>
+          <CategorySelector :selected-category="selectedCategory" :loading="loading"></CategorySelector>
 
           <ProductsFiltersSidebar
             :keyword="keywordQueryParam"

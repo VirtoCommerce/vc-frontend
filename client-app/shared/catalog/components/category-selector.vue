@@ -1,6 +1,6 @@
 <template>
   <!-- category selector -->
-  <VcCard :title="selectedCategory?.parent?.label">
+  <VcCard v-if="!loading || selectedCategory" :title="selectedCategory?.parent?.label">
     <template v-if="selectedCategory?.parent" #header>
       <router-link :to="'/' + selectedCategory?.parent?.slug" class="text-sm">
         <i class="fas fa-chevron-left text-[color:var(--color-primary)] cursor-pointer"></i>
@@ -37,6 +37,17 @@
       </div>
     </div>
   </VcCard>
+  <!-- skeleton -->
+  <template v-else>
+    <VcCardSkeleton>
+      <div class="text-sm">
+        <div class="uppercase font-extrabold mb-2 bg-gray-100">&nbsp;</div>
+        <div class="pl-4 flex flex-col">
+          <div class="bg-gray-100 pl-2 mt-1 h-3" v-for="i in 6" :key="i"></div>
+        </div>
+      </div>
+    </VcCardSkeleton>
+  </template>
 </template>
 
 <script setup lang="ts">
@@ -46,6 +57,10 @@ import { CategoryTree } from "../types";
 defineProps({
   selectedCategory: {
     type: Object as PropType<CategoryTree>,
+  },
+  loading: {
+    type: Boolean,
+    default: false,
   },
 });
 </script>
