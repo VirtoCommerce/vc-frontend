@@ -676,6 +676,7 @@
         "title": "Order #{0}",
         "created_title": "Order complete",
         "status_label": "@:common.labels.status{':'} ",
+        "purchase_order_label": "Purchase order: ",
         "placed_on_label": "Placed on: ",
         "products_section": {
           "title": "Purchased products"

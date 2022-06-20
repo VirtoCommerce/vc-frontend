@@ -10,6 +10,7 @@ query GetMyOrder($id: String, $number: String, $cultureName: String) {
     comment
     createdDate
     status
+    purchaseOrderNumber
     discounts {
       amount {
         amount
