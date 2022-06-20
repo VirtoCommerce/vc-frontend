@@ -1,14 +1,8 @@
 <template>
   <!-- Initialization Error -->
-  <div v-if="initializationError">
-    <p class="mb-6 font-bold text-center md:text-left text-[color:var(--color-danger)]">
-      {{ initializationError }}
-    </p>
-
-    <VcButton class="px-5 uppercase w-full md:w-32" @click="tryAgain">
-      {{ $t("pages.account.order_payment.try_again_button") }}
-    </VcButton>
-  </div>
+  <p v-if="initializationError" class="font-bold text-center md:text-left text-[color:var(--color-danger)]">
+    {{ initializationError }}
+  </p>
 
   <!-- Bank card form -->
   <div v-else-if="initialized">
@@ -38,27 +32,27 @@
 
     <div class="flex flex-col md:flex-row items-center mt-6 xl:mt-8 gap-x-6 gap-y-4">
       <p class="text-sm text-gray-500 text-center md:text-left">
-        {{ $t("shared.payment.payment_method_section.accept_terms_text") }}
+        {{ $t("shared.payment.authorize_net.accept_terms_text") }}
 
         <router-link to="/agreement" class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]">
-          {{ $t("shared.payment.payment_method_section.user_agreement_link") }}
+          {{ $t("shared.payment.authorize_net.user_agreement_link") }}
         </router-link>
 
-        {{ $t("shared.payment.payment_method_section.processing_personal_data_text") }}
+        {{ $t("shared.payment.authorize_net.processing_personal_data_text") }}
 
         <router-link to="/policy" class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]">
-          {{ $t("shared.payment.payment_method_section.privacy_policy_link") }}
+          {{ $t("shared.payment.authorize_net.privacy_policy_link") }}
         </router-link>
       </p>
 
       <VcButton
-        :is-disabled="!isValidBankCard"
+        :is-disabled="!isValidBankCard || disabled"
         :is-waiting="loading"
         @click="sendPaymentData"
         size="lg"
         class="shrink-0 uppercase w-full md:w-60 md:order-first"
       >
-        {{ $t("shared.payment.payment_method_section.pay_now_button") }}
+        {{ $t("shared.payment.authorize_net.pay_now_button") }}
       </VcButton>
     </div>
   </div>
@@ -68,7 +62,7 @@
     <VcLoader class="inline-block h-6 w-6 text-[color:var(--color-primary)]" />
 
     <span class="font-extrabold animate-pulse">
-      {{ $t("shared.payment.payment_method_section.loading_text") }}
+      {{ $t("shared.payment.authorize_net.loading_text") }}
     </span>
   </div>
 </template>
@@ -89,6 +83,8 @@ const emit = defineEmits<{
 }>();
 
 const props = defineProps({
+  disabled: Boolean,
+
   order: {
     type: Object as PropType<CustomerOrderType>,
     required: true,
@@ -131,7 +127,7 @@ async function initPayment() {
   });
 
   if (paymentActionType !== PaymentActionType.PreparedForm) {
-    initializationError.value = t("common.messages.incorrect_payment_method");
+    initializationError.value = t("shared.payment.authorize_net.errors.incorrect_payment_method");
     return;
   }
 
@@ -141,12 +137,6 @@ async function initPayment() {
   } else {
     initializationError.value = errorMessage;
   }
-}
-
-function tryAgain() {
-  initializationError.value = "";
-  initialized.value = false;
-  initPayment();
 }
 
 function showErrors(messages: Accept.Message[]) {

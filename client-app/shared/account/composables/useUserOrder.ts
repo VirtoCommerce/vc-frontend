@@ -33,13 +33,13 @@ export default () => {
     order.value = null;
   }
 
-  async function updatePayment(payload: InputAddOrUpdateOrderPaymentType, reloadOrder = true) {
+  async function addOrUpdatePayment(payload: InputAddOrUpdateOrderPaymentType, reloadOrder = true) {
     loading.value = true;
 
     try {
       await addOrUpdateOrderPayment(payload);
     } catch (e) {
-      Logger.error(`useUserOrder.${updatePayment.name}`, e);
+      Logger.error(`useUserOrder.${addOrUpdatePayment.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -59,6 +59,6 @@ export default () => {
     billingAddress: computed(() => order.value?.inPayments?.[0]?.billingAddress),
     loadOrder,
     clearOrder,
-    updatePayment,
+    addOrUpdatePayment,
   };
 };
