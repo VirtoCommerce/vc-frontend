@@ -107,89 +107,25 @@
             <!-- region Payment method -->
             <h5 class="mb-1 font-extrabold" v-t="'shared.payment.payment_method_section.header'" />
 
-            <!-- Loader -->
-            <div v-if="!initialized" class="flex items-center gap-2 rounded border px-6 py-5">
-              <VcLoader class="inline-block h-6 w-6 text-[color:var(--color-primary)]" />
+            <div class="rounded border overflow-hidden">
+              <div class="p-4 md:px-6 md:py-5 shadow-lg">
+                <svg width="43" height="37" class="inline-block text-gray-400 opacity-80 mr-3 md:mr-5">
+                  <use href="/static/images/payment/bank-card.svg#main" />
+                </svg>
 
-              <span class="font-extrabold animate-pulse">
-                {{ $t("shared.payment.payment_method_section.loading_text") }}
-              </span>
-            </div>
-
-            <!-- Initialization Error -->
-            <template v-else-if="initializationError">
-              <p class="mb-6 rounded border px-6 py-5 font-bold text-[color:var(--color-danger)]">
-                {{ initializationError }}
-              </p>
-
-              <div class="flex flex-col md:flex-row gap-x-5 gap-y-4">
-                <VcButton
-                  :to="{ name: 'OrderDetails', params: { orderId }, replace: true }"
-                  class="px-4 uppercase"
-                  is-outline
-                >
-                  <i class="fas fa-arrow-left -ml-1 mr-2.5" />
-                  {{ $t("pages.account.order_payment.back_to_order_button") }}
-                </VcButton>
-
-                <VcButton class="px-5 uppercase md:w-32" @click="tryAgain">
-                  {{ $t("pages.account.order_payment.try_again_button") }}
-                </VcButton>
+                <span>{{ $t("pages.account.order_payment.bank_card_title") }}</span>
               </div>
-            </template>
 
-            <PaymentProcessingAuthorizeNet
-              v-else-if="isAuthorizeNetPaymentMethod"
-              ref="paymentMethodRef"
-              :order="order"
-              :parameters="parameters"
-              @success="success = true"
-              @fail="failure = true"
-            >
-              <template #header>
-                <div class="p-4 md:px-6 md:py-5 shadow-lg">
-                  <svg width="43" height="37" class="inline-block text-gray-400 opacity-80 mr-3 md:mr-5">
-                    <use href="/static/images/payment/bank-card.svg#main" />
-                  </svg>
-
-                  <span>{{ $t("pages.account.order_payment.bank_card_title") }}</span>
-                </div>
-              </template>
-
-              <template #footer="slotData">
-                <div class="flex flex-col md:flex-row items-center justify-between gap-x-10 mt-6">
-                  <p class="text-sm text-gray-500">
-                    {{ $t("shared.payment.payment_method_section.accept_terms_text") }}
-
-                    <router-link
-                      to="/agreement"
-                      class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
-                    >
-                      {{ $t("shared.payment.payment_method_section.user_agreement_link") }}
-                    </router-link>
-
-                    {{ $t("shared.payment.payment_method_section.processing_personal_data_text") }}
-
-                    <router-link
-                      to="/policy"
-                      class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
-                    >
-                      {{ $t("shared.payment.payment_method_section.privacy_policy_link") }}
-                    </router-link>
-                  </p>
-
-                  <VcButton
-                    :is-disabled="!slotData.valid || loading"
-                    :is-waiting="slotData.loading"
-                    @click="slotData.submit"
-                    size="lg"
-                    class="shrink-0 uppercase w-48"
-                  >
-                    {{ $t("shared.payment.payment_method_section.pay_now_button") }}
-                  </VcButton>
-                </div>
-              </template>
-            </PaymentProcessingAuthorizeNet>
+              <div class="p-5 md:p-6">
+                <PaymentProcessingAuthorizeNet
+                  v-if="isAuthorizeNetPaymentMethod"
+                  ref="paymentMethodRef"
+                  :order="order"
+                  @success="success = true"
+                  @fail="failure = true"
+                />
+              </div>
+            </div>
             <!-- endregion Payment method -->
           </template>
         </div>
@@ -204,12 +140,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, shallowRef, watchEffect } from "vue";
-import { InputOrderAddressType, KeyValueType, PaymentInType } from "@/xapi/graphql/types";
+import { computed, ref, watchEffect } from "vue";
+import { InputOrderAddressType, PaymentInType } from "@/xapi/graphql/types";
 import { AddOrUpdateAddressDialog, OrderSummary } from "@/shared/checkout";
-import { PaymentProcessingAuthorizeNet, PaymentActionType, PaymentFailure, PaymentSuccess } from "@/shared/payment";
+import { PaymentProcessingAuthorizeNet, PaymentFailure, PaymentSuccess } from "@/shared/payment";
 import { useI18n } from "vue-i18n";
-import { initializePayment } from "@/xapi/graphql/cart";
 import { useUserOrder } from "@/shared/account";
 import { useRouter } from "vue-router";
 import { usePopup } from "@/shared/popup";
@@ -221,11 +156,8 @@ const props = defineProps({
   },
 });
 
-const initialized = ref(false);
 const success = ref(false);
 const failure = ref(false);
-const parameters = shallowRef<KeyValueType[]>([]);
-const initializationError = ref("");
 const paymentMethodRef = ref<InstanceType<typeof PaymentProcessingAuthorizeNet> | null>(null);
 
 const { t } = useI18n();
@@ -273,44 +205,12 @@ function editAddress() {
   });
 }
 
-async function initPayment() {
-  // If the order is paid
-  if (payment.value?.isApproved) {
-    await router.replace({ name: "OrderDetails", params: { orderId: props.orderId } });
-    return;
-  }
-
-  const {
-    isSuccess,
-    paymentActionType,
-    actionRedirectUrl,
-    publicParameters = [],
-    errorMessage = "",
-  } = await initializePayment({
-    orderId: order.value!.id,
-    paymentId: payment.value!.id,
-  });
-
-  if (!isSuccess) {
-    initializationError.value = errorMessage;
-    initialized.value = true;
-    return;
-  }
-
-  parameters.value = publicParameters;
-
-  if (paymentActionType === PaymentActionType.Redirection && actionRedirectUrl) {
-    location.href = actionRedirectUrl;
-  }
-
-  initialized.value = true;
-}
-
 watchEffect(() => {
   if (props.orderId !== order.value?.id) {
     loadOrder({ id: props.orderId });
-  } else if (!initialized.value) {
-    initPayment();
+  } else if (order.value?.inPayments[0]?.isApproved) {
+    // If the order is paid
+    router.replace({ name: "OrderDetails", params: { orderId: props.orderId } });
   }
 });
 </script>

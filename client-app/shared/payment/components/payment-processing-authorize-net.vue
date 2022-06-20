@@ -1,50 +1,84 @@
 <template>
-  <div>
-    <div class="rounded border overflow-hidden">
-      <slot name="header" v-bind="{ loading, valid: isValidBankCard }" />
+  <!-- Initialization Error -->
+  <div v-if="initializationError">
+    <p class="mb-6 font-bold text-center md:text-left text-[color:var(--color-danger)]">
+      {{ initializationError }}
+    </p>
 
-      <div class="p-7 pt-6">
-        <div class="flex flex-col xl:flex-row">
-          <BankCardForm
-            v-model="bankCardData"
-            v-model:valid="isValidBankCard"
-            :errors="bankCardErrors"
-            :is-disabled="loading"
-            class="xl:w-2/3"
-          />
+    <VcButton class="px-5 uppercase w-full md:w-32" @click="tryAgain">
+      {{ $t("pages.account.order_payment.try_again_button") }}
+    </VcButton>
+  </div>
 
-          <div class="flex flex-col order-first xl:order-none xl:w-1/3 mb-4 xl:mb-0 xl:pl-6 xl:pt-6">
-            <div class="flex flex-row flex-wrap gap-3 xl:gap-4">
-              <svg width="71" height="48" class="flex shrink-0 border border-gray-300 rounded">
-                <use href="/static/images/payment/methods/visa.svg#main" />
-              </svg>
+  <!-- Bank card form -->
+  <div v-else-if="initialized">
+    <div class="flex flex-col xl:flex-row">
+      <BankCardForm
+        v-model="bankCardData"
+        v-model:valid="isValidBankCard"
+        :errors="bankCardErrors"
+        :is-disabled="loading"
+        class="xl:w-2/3"
+      />
 
-              <svg width="71" height="48" class="flex shrink-0 border border-gray-300 rounded">
-                <use href="/static/images/payment/methods/mastercard.svg#main" />
-              </svg>
+      <div class="flex xl:w-1/3 mt-6 xl:ml-6 gap-3 xl:gap-4">
+        <svg width="70" height="45" class="flex shrink-0 border border-gray-200 rounded">
+          <use href="/static/images/payment/methods/visa.svg#main" />
+        </svg>
 
-              <svg width="71" height="48" class="flex shrink-0 border border-gray-300 rounded">
-                <use href="/static/images/payment/methods/maestro.svg#main" />
-              </svg>
-            </div>
-          </div>
-        </div>
+        <svg width="70" height="45" class="flex shrink-0 border border-gray-200 rounded">
+          <use href="/static/images/payment/methods/mastercard.svg#main" />
+        </svg>
 
-        <!--
-        <VcCheckbox class="mt-7">Save my details for future payments. It's safe.</VcCheckbox>
-        -->
+        <svg width="70" height="45" class="flex shrink-0 border border-gray-200 rounded">
+          <use href="/static/images/payment/methods/maestro.svg#main" />
+        </svg>
       </div>
     </div>
 
-    <slot name="footer" v-bind="{ loading, valid: isValidBankCard, submit: sendPaymentData }" />
+    <div class="flex flex-col md:flex-row items-center mt-6 xl:mt-8 gap-x-6 gap-y-4">
+      <p class="text-sm text-gray-500 text-center md:text-left">
+        {{ $t("shared.payment.payment_method_section.accept_terms_text") }}
+
+        <router-link to="/agreement" class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]">
+          {{ $t("shared.payment.payment_method_section.user_agreement_link") }}
+        </router-link>
+
+        {{ $t("shared.payment.payment_method_section.processing_personal_data_text") }}
+
+        <router-link to="/policy" class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]">
+          {{ $t("shared.payment.payment_method_section.privacy_policy_link") }}
+        </router-link>
+      </p>
+
+      <VcButton
+        :is-disabled="!isValidBankCard"
+        :is-waiting="loading"
+        @click="sendPaymentData"
+        size="lg"
+        class="shrink-0 uppercase w-full md:w-60 md:order-first"
+      >
+        {{ $t("shared.payment.payment_method_section.pay_now_button") }}
+      </VcButton>
+    </div>
+  </div>
+
+  <!-- Loader -->
+  <div v-else class="flex items-center gap-2">
+    <VcLoader class="inline-block h-6 w-6 text-[color:var(--color-primary)]" />
+
+    <span class="font-extrabold animate-pulse">
+      {{ $t("shared.payment.payment_method_section.loading_text") }}
+    </span>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, PropType, ref, watch, watchEffect } from "vue";
+import { computed, PropType, ref, shallowRef, watch, watchEffect } from "vue";
 import { clone } from "lodash";
+import { initializePayment } from "@/xapi/graphql/cart";
 import { CustomerOrderType, KeyValueType } from "@/xapi/graphql/types";
-import { BankCardType, BankCardForm, useAuthorizeNet, BankCardErrorsType } from "@/shared/payment";
+import { BankCardType, BankCardForm, useAuthorizeNet, BankCardErrorsType, PaymentActionType } from "@/shared/payment";
 import { useNotifications } from "@/shared/notification";
 import { useI18n } from "vue-i18n";
 import { Logger } from "@core/utilities";
@@ -59,12 +93,6 @@ const props = defineProps({
     type: Object as PropType<CustomerOrderType>,
     required: true,
   },
-
-  parameters: {
-    type: Array as PropType<KeyValueType[]>,
-    default: () => [],
-    required: true,
-  },
 });
 
 const emptyBankCardData: BankCardType = {
@@ -75,18 +103,51 @@ const emptyBankCardData: BankCardType = {
   securityCode: "",
 };
 
+const initialized = ref(false);
+const initializationError = ref("");
+const parameters = shallowRef<KeyValueType[]>([]);
 const loading = ref(false);
 const isValidBankCard = ref(false);
 const bankCardData = ref<BankCardType>(clone(emptyBankCardData));
 const bankCardErrors = ref<BankCardErrorsType>({});
 
-const scriptURL = computed<string>(() => props.parameters.find(({ key }) => key === "acceptJsPath")?.value ?? "");
-const apiLoginID = computed<string>(() => props.parameters.find(({ key }) => key === "apiLogin")?.value ?? "");
-const clientKey = computed<string>(() => props.parameters.find(({ key }) => key === "clientKey")?.value ?? "");
+const scriptURL = computed<string>(() => parameters.value.find(({ key }) => key === "acceptJsPath")?.value ?? "");
+const apiLoginID = computed<string>(() => parameters.value.find(({ key }) => key === "apiLogin")?.value ?? "");
+const clientKey = computed<string>(() => parameters.value.find(({ key }) => key === "clientKey")?.value ?? "");
 
 const { t } = useI18n();
 const notifications = useNotifications();
 const { loadAcceptJS, dispatchData, sendOpaqueData } = useAuthorizeNet({ scriptURL, manualScriptLoading: true });
+
+async function initPayment() {
+  const {
+    isSuccess,
+    paymentActionType,
+    publicParameters = [],
+    errorMessage = "",
+  } = await initializePayment({
+    orderId: props.order.id,
+    paymentId: props.order.inPayments[0]!.id,
+  });
+
+  if (paymentActionType !== PaymentActionType.PreparedForm) {
+    initializationError.value = t("common.messages.incorrect_payment_method");
+    return;
+  }
+
+  if (isSuccess) {
+    parameters.value = publicParameters;
+    initialized.value = true;
+  } else {
+    initializationError.value = errorMessage;
+  }
+}
+
+function tryAgain() {
+  initializationError.value = "";
+  initialized.value = false;
+  initPayment();
+}
 
 function showErrors(messages: Accept.Message[]) {
   messages.forEach(({ code, text }) => {
@@ -171,8 +232,11 @@ function sendPaymentData() {
 
 defineExpose({
   loading,
+  initialized,
   isValidBankCard,
 });
+
+initPayment();
 
 watch(bankCardData, () => (bankCardErrors.value = {}));
 
