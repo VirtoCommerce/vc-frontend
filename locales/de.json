@@ -45,7 +45,8 @@
       "date": "Datum",
       "sort_by": "Sortieren nach:",
       "sku": "Artikel #",
-      "item": "Artikel"
+      "item": "Artikel",
+      "catalog": "Katalog"
     },
     "suffixes": {
       "per_item": "/ jeder",

@@ -45,7 +45,8 @@
       "date": "Date",
       "sort_by": "Sort by:",
       "sku": "Item #",
-      "item": "Item"
+      "item": "Item",
+      "catalog": "Catalog"
     },
     "suffixes": {
       "per_item": " per item",

@@ -293,8 +293,7 @@ const props = defineProps({
 const categoryId = toRef(props, "categoryId");
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-
-const { selectedCategory, selectCategoryByKey, loadCategoriesTree } = useCategories();
+const { selectedCategory, selectCategoryByKey, loadCategoriesTree, selectRoot } = useCategories();
 const {
   fetchProducts,
   fetchMoreProducts,
@@ -458,9 +457,11 @@ function onChangeCurrentCategory(key: string, value: string) {
 }
 
 onMounted(async () => {
-  await loadCategoriesTree(""); // TODO: use active category key instead of id
-
-  if (categoryId.value) {
+  await loadCategoriesTree();
+  
+  if (!categoryId.value && !categorySeoUrl.value) {
+    selectRoot();
+  } else if (categoryId.value) {
     selectCategoryByKey("id", categoryId.value);
     watch(categoryId, (value) => onChangeCurrentCategory("id", value));
   } else {
