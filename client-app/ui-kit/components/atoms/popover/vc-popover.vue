@@ -3,8 +3,8 @@
     <slot name="trigger" />
   </div>
 
-  <div class="bg-white border shadow-lg rounded w-4/5" id="popover" ref="popoverNode" v-show="popoverShow">
-    <div class="border" id="arrow" data-popper-arrow></div>
+  <div class="bg-white border shadow-lg rounded" id="popover" ref="popoverNode" v-show="popoverShow">
+    <div class="border-t border-l" id="arrow" data-popper-arrow></div>
 
     <h3 class="flex justify-between font-bold items-center text-lg h-14 px-5" v-if="title || showCloseButton">
       <span class="flex flex-grow" v-if="title">
@@ -72,9 +72,13 @@ onClickOutside(popoverNode, () => togglePopover(false), { ignore: [triggerNode] 
 #arrow,
 #arrow::before {
   position: absolute;
+  top: -2px;
+  left: -3px;
   width: 16px;
   height: 16px;
   background: inherit;
+  border-top: inherit;
+  border-left: inherit;
 }
 
 #arrow {

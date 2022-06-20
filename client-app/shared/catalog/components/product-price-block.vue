@@ -41,14 +41,14 @@
               </div>
             </template>
             <template #content>
-              <div class="flex justify-between items-center text-xl px-5 mb-3 h-16">
+              <div class="flex justify-between items-center px-5 mt-1.5 mb-7 space-x-6">
                 <a
-                  class="w-14"
+                  class=""
                   :href="getProductSocialShareUrl(socialSharingService.url_template, pageUrl)"
                   v-for="socialSharingService in $cfg.social_sharing_services"
                   :key="socialSharingService.name"
                 >
-                  <img class="rounded-sm" :src="socialSharingService.icon" />
+                  <img class="rounded-sm" width="40" height="40" :src="socialSharingService.icon" />
                 </a>
               </div>
             </template>
