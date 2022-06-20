@@ -17,7 +17,6 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./client-app"),
-        "@core": path.resolve(__dirname, "./client-app/core"),
       },
     },
     base: mode === "production" ? "/themes/assets/" : "/",
