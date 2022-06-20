@@ -1,8 +1,8 @@
-import { createI18n as _createI18n } from "vue-i18n";
+import { createI18n as _createI18n, IntlDateTimeFormat } from "vue-i18n";
 
 export type I18n = ReturnType<typeof createI18n>;
 
-const datetimeFormats: any = {
+const datetimeFormats: Record<string, IntlDateTimeFormat> = {
   en: {
     short: {
       year: "numeric",
