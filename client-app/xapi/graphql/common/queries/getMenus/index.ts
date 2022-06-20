@@ -1,4 +1,4 @@
-import { MenuLinkListType, Query, QueryMenusArgs } from "@/xapi/graphql/types";
+import { MenuLinkListType, Query, QueryMenusArgs } from "@/xapi/types";
 import getMenusQueryDocument from "./getMenus.graphql";
 import globals from "@/core/globals";
 

@@ -1,6 +1,6 @@
 import { Logger } from "@/core/utilities";
 import { computed, ref, Ref } from "vue";
-import { CustomerOrderType, QueryOrderArgs } from "@/xapi/graphql/types";
+import { CustomerOrderType, QueryOrderArgs } from "@/xapi/types";
 import { getMyOrder } from "@/xapi/graphql/account";
 
 const loading: Ref<boolean> = ref(false);

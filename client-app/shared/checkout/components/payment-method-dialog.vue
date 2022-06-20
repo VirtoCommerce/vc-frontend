@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { PaymentMethodType } from "@/xapi/graphql/types";
+import { PaymentMethodType } from "@/xapi/types";
 import { PropType, ref } from "vue";
 
 const props = defineProps({

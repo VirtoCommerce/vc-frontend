@@ -1,6 +1,6 @@
 import { ref, computed, readonly, shallowRef } from "vue";
 import { searchRelatedProducts, RelatedProductsSearchParams } from "@/xapi/graphql/catalog";
-import { Product } from "@/xapi/graphql/types";
+import { Product } from "@/xapi/types";
 import { Logger } from "@/core/utilities";
 
 export default () => {

@@ -1,4 +1,4 @@
-import { InputShipmentType, Mutations, MutationsAddOrUpdateCartShipmentArgs } from "@/xapi/graphql/types";
+import { InputShipmentType, Mutations, MutationsAddOrUpdateCartShipmentArgs } from "@/xapi/types";
 import mutationDocument from "./addOrUpdateCartShipmentMutation.graphql";
 import globals from "@/core/globals";
 

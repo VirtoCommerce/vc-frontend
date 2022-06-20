@@ -1,4 +1,4 @@
-import { MemberAddressType, Query } from "@/xapi/graphql/types";
+import { MemberAddressType, Query } from "@/xapi/types";
 import getDefaultShippingAddressQueryDocument from "./getDefaultShippingAddressQuery.graphql";
 
 export default async function getDefaultShippingAddress(): Promise<MemberAddressType | undefined> {

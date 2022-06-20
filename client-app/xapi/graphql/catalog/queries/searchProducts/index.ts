@@ -1,4 +1,4 @@
-import { ProductConnection, Query, QueryProductsArgs } from "@/xapi/graphql/types";
+import { ProductConnection, Query, QueryProductsArgs } from "@/xapi/types";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import searchProductsQueryDocument from "./searchProductsQuery.graphql";
 import { ProductsSearchParams } from "@/shared/catalog";

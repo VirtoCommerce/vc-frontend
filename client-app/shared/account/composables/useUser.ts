@@ -1,4 +1,4 @@
-import { AccountCreationResultType, IdentityResultType, Organization, UserType } from "@/xapi/graphql/types";
+import { AccountCreationResultType, IdentityResultType, Organization, UserType } from "@/xapi/types";
 import { computed, readonly, ref } from "vue";
 import { eagerComputed } from "@vueuse/core";
 import { getMe, registerAccount, updatePersonalData } from "@/xapi/graphql/account";

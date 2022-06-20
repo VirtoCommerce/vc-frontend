@@ -1,4 +1,4 @@
-import { Product, Query, QueryProductArgs } from "@/xapi/graphql/types";
+import { Product, Query, QueryProductArgs } from "@/xapi/types";
 import getProductsQueryDocument from "./getProductQuery.graphql";
 import globals from "@/core/globals";
 

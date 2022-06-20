@@ -129,7 +129,7 @@
 </template>
 
 <script setup lang="ts">
-import { MemberAddressType } from "@/xapi/graphql/types";
+import { MemberAddressType } from "@/xapi/types";
 import { computed, watchEffect, PropType, ref } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { isEqualAddresses } from "@/core/utilities";

@@ -1,4 +1,4 @@
-import { ProductAssociation, ProductAssociationsArgs, Query, QueryProductArgs } from "@/xapi/graphql/types";
+import { ProductAssociation, ProductAssociationsArgs, Query, QueryProductArgs } from "@/xapi/types";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import searchRelatedProductsQueryDocument from "./searchRelatedProducts.graphql";
 import { RelatedProductsSearchParams } from "../../types";

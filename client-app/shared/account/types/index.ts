@@ -1,4 +1,4 @@
-import { PaymentMethodType, ShippingMethodType } from "@/xapi/graphql/types";
+import { PaymentMethodType, ShippingMethodType } from "@/xapi/types";
 
 export enum RegistrationKind {
   personal = "personal",

@@ -1,6 +1,6 @@
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import queryDocument from "./getWishlists.graphql";
-import { Query, QueryWishlistsArgs, WishlistConnection } from "@/xapi/graphql/types";
+import { Query, QueryWishlistsArgs, WishlistConnection } from "@/xapi/types";
 import { WishlistsSearchParams } from "@/xapi/graphql/account";
 import globals from "@/core/globals";
 

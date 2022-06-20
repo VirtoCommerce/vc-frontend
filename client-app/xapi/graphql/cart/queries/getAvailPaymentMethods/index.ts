@@ -1,4 +1,4 @@
-import { PaymentMethodType, Query, QueryCartArgs } from "@/xapi/graphql/types";
+import { PaymentMethodType, Query, QueryCartArgs } from "@/xapi/types";
 import getAvailPaymentMethodsDocument from "./getAvailPaymentMethodsQuery.graphql";
 import globals from "@/core/globals";
 

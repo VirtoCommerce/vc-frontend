@@ -1,4 +1,4 @@
-import { CartAddressType, MemberAddressType, OrderAddressType } from "@/xapi/graphql/types";
+import { CartAddressType, MemberAddressType, OrderAddressType } from "@/xapi/types";
 import { LocationQueryValue } from "vue-router";
 
 export * from "./currency";

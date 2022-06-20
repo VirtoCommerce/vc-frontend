@@ -1,5 +1,5 @@
 import mutationDocument from "./changeCartItemQuantityMutation.graphql";
-import { Mutations, MutationsChangeCartItemQuantityArgs } from "@/xapi/graphql/types";
+import { Mutations, MutationsChangeCartItemQuantityArgs } from "@/xapi/types";
 import globals from "@/core/globals";
 
 export default async function changeCartItemQuantity(lineItemId: string, quantity: number): Promise<void> {

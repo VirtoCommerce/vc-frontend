@@ -1,4 +1,4 @@
-import { InputPaymentType, Mutations, MutationsAddOrUpdateCartPaymentArgs } from "@/xapi/graphql/types";
+import { InputPaymentType, Mutations, MutationsAddOrUpdateCartPaymentArgs } from "@/xapi/types";
 import mutationDocument from "./addOrUpdateCartPaymentMutation.graphql";
 import globals from "@/core/globals";
 

@@ -1,4 +1,4 @@
-import { Mutations, MutationsChangePurchaseOrderNumberArgs } from "@/xapi/graphql/types";
+import { Mutations, MutationsChangePurchaseOrderNumberArgs } from "@/xapi/types";
 import mutationDocument from "./changePurchaseOrderNumber.graphql";
 import globals from "@/core/globals";
 

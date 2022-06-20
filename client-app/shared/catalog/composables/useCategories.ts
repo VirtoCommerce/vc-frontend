@@ -1,6 +1,6 @@
 import { computed, readonly, Ref, ref } from "vue";
 import { searchCategories } from "@/xapi/graphql/catalog";
-import { Category } from "@/xapi/graphql/types";
+import { Category } from "@/xapi/types";
 import { Logger } from "@/core/utilities";
 import { CategoryTree } from "../types";
 

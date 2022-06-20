@@ -1,4 +1,4 @@
-import { CustomerOrderConnection, Query, QueryOrdersArgs } from "@/xapi/graphql/types";
+import { CustomerOrderConnection, Query, QueryOrdersArgs } from "@/xapi/types";
 import getMyOrdersQueryDocument from "./getMyOrdersQuery.graphql";
 import globals from "@/core/globals";
 

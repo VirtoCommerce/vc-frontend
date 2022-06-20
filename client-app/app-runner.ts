@@ -12,7 +12,7 @@ import { getBaseUrl } from "@/core/utilities";
 import App from "./App.vue";
 import PageBuilderBlocks from "@/builder-preview/pages/blocks";
 import * as components from "@/ui-kit/components";
-import client from "@/xapi/graphql/graphql-client";
+import client from "@/xapi/graphql-client";
 
 // Workaround before Nuxt3 migration, will be deleted later.
 window.useNuxtApp = () => {

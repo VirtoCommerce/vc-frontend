@@ -1,4 +1,4 @@
-import { Query, QueryCartArgs, ShippingMethodType } from "@/xapi/graphql/types";
+import { Query, QueryCartArgs, ShippingMethodType } from "@/xapi/types";
 import getAvailShippingMethodsDocument from "./getAvailShippingMethodsQuery.graphql";
 import globals from "@/core/globals";
 

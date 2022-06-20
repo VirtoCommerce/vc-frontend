@@ -1,6 +1,6 @@
 import { Ref, ref, computed, readonly } from "vue";
 import { getProduct } from "@/xapi/graphql/catalog";
-import { Product } from "@/xapi/graphql/types";
+import { Product } from "@/xapi/types";
 import { Logger } from "@/core/utilities";
 
 export default () => {

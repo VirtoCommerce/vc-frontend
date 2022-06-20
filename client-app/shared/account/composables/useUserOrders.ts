@@ -1,5 +1,5 @@
 import { computed, readonly, ref, Ref, shallowRef } from "vue";
-import { CustomerOrderType } from "@/xapi/graphql/types";
+import { CustomerOrderType } from "@/xapi/types";
 import { getMyOrders } from "@/xapi/graphql/account";
 import { dateToIsoDateString, Logger } from "@/core/utilities";
 import { getSortingExpression, ISortInfo, OrdersFilterData } from "@/shared/account";

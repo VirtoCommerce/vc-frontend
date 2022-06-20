@@ -1,4 +1,4 @@
-import { CategoryConnection, Query, QueryCategoriesArgs } from "@/xapi/graphql/types";
+import { CategoryConnection, Query, QueryCategoriesArgs } from "@/xapi/types";
 import searchCategoriesQueryDocument from "./searchCategoriesQuery.graphql";
 import globals from "@/core/globals";
 

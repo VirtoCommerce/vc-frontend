@@ -1,5 +1,5 @@
 import mutationDocument from "./addCouponMutation.graphql";
-import { Mutations, MutationsAddCouponArgs } from "@/xapi/graphql/types";
+import { Mutations, MutationsAddCouponArgs } from "@/xapi/types";
 import globals from "@/core/globals";
 
 export default async function addCoupon(couponCode: string): Promise<void> {

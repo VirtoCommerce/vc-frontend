@@ -1,4 +1,4 @@
-import { Mutations, MutationsValidateCouponArgs } from "@/xapi/graphql/types";
+import { Mutations, MutationsValidateCouponArgs } from "@/xapi/types";
 import mutationDocument from "./validateCouponMutation.graphql";
 import globals from "@/core/globals";
 

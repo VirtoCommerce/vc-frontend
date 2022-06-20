@@ -1,5 +1,5 @@
 import { computed, readonly, ref, Ref, shallowRef, unref } from "vue";
-import { InputMemberAddressType, MemberAddressType, UserType } from "@/xapi/graphql/types";
+import { InputMemberAddressType, MemberAddressType, UserType } from "@/xapi/types";
 import { getMyAddresses, updateMemberAddresses, deleteMemberAddresses } from "@/xapi/graphql/account";
 import { isEqualAddresses, Logger, toInputAddress } from "@/core/utilities";
 import { getSortingExpression, ISortInfo } from "@/shared/account";

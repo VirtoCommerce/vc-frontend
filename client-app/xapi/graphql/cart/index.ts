@@ -9,6 +9,7 @@ export { default as initializePayment } from "./mutations/initializePayment";
 export { default as mergeCart } from "./mutations/mergeCart";
 export { default as removeCart } from "./mutations/removeCart";
 export { default as changeCartItemQuantity } from "./mutations/changeCartItemQuantity";
+export { default as changePurchaseOrderNumber } from "./mutations/changePurchaseOrderNumber";
 export { default as getAvailPaymentMethods } from "./queries/getAvailPaymentMethods";
 export { default as getAvailShippingMethods } from "./queries/getAvailShippingMethods";
 export { default as getMyCart } from "./queries/getMyCart";

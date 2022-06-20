@@ -1,5 +1,5 @@
 import mutationDocument from "./addBulkItemsToCartMutation.graphql";
-import { BulkCartType, Mutations, MutationsAddBulkItemsCartArgs } from "@/xapi/graphql/types";
+import { BulkCartType, Mutations, MutationsAddBulkItemsCartArgs } from "@/xapi/types";
 import { InputBulkItemsType } from "@/xapi/graphql/cart";
 import globals from "@/core/globals";
 

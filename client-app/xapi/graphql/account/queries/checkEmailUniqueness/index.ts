@@ -1,4 +1,4 @@
-import { Query, QueryCheckEmailUniquenessArgs } from "@/xapi/graphql/types";
+import { Query, QueryCheckEmailUniquenessArgs } from "@/xapi/types";
 import checkEmailUniquenessQueryDocument from "./checkEmailUniquenessQuery.graphql";
 
 export default async function checkUsernameUniqueness(payload: QueryCheckEmailUniquenessArgs): Promise<boolean> {

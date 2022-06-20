@@ -1,5 +1,5 @@
 import { AnyAddressType } from "@/core/types";
-import { InputMemberAddressType, MemberAddressType } from "@/xapi/graphql/types";
+import { InputMemberAddressType, MemberAddressType } from "@/xapi/types";
 import _ from "lodash";
 
 export function toInputAddress(address: AnyAddressType): InputMemberAddressType {

@@ -17,7 +17,7 @@ import {
   ShipmentType,
   PaymentType,
   CustomerOrderType,
-} from "@/xapi/graphql/types";
+} from "@/xapi/types";
 import { useCart } from ".";
 
 const addresses: CartAddressType[] = [

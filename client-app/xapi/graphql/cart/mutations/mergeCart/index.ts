@@ -1,4 +1,4 @@
-import { Mutations, MutationsMergeCartArgs } from "@/xapi/graphql/types";
+import { Mutations, MutationsMergeCartArgs } from "@/xapi/types";
 import mutationDocument from "./mergeCartMutation.graphql";
 import globals from "@/core/globals";
 

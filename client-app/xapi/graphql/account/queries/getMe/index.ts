@@ -1,4 +1,4 @@
-import { ContactTypeOrganizationsArgs, Query, UserType } from "@/xapi/graphql/types";
+import { ContactTypeOrganizationsArgs, Query, UserType } from "@/xapi/types";
 import getMeQueryDocument from "./getMeQuery.graphql";
 
 export default async function getMe(): Promise<UserType> {

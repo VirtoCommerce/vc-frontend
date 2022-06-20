@@ -114,15 +114,13 @@ import {
   AddOrUpdateWishlistDialog,
   DeleteWishlistProductDialog,
 } from "@/shared/wishlists";
-import { LineItemType } from "@/xapi/graphql/types";
+import { LineItemType } from "@/xapi/types";
 import { ProductCardGrid, ProductSkeletonGrid } from "@/shared/catalog";
-import { useI18n } from "vue-i18n";
 import { usePopup } from "@/shared/popup";
 import { computed, ref, watchEffect } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { BackButtonInHeader } from "@/shared/layout";
 
-const { t } = useI18n();
 const { openPopup } = usePopup();
 const { loading, list, fetchWishList } = useWishlists();
 

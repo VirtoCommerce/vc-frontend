@@ -5,7 +5,7 @@ import {
   InputRemoveWishlistItemType,
   InputRenameWishlistType,
   WishlistType,
-} from "@/xapi/graphql/types";
+} from "@/xapi/types";
 import {
   addWishlist,
   addWishlistItem,

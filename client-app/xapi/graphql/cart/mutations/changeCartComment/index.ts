@@ -1,5 +1,5 @@
 import mutationDocument from "./changeCartCommentMutation.graphql";
-import { Mutations, MutationsChangeCommentArgs } from "@/xapi/graphql/types";
+import { Mutations, MutationsChangeCommentArgs } from "@/xapi/types";
 import globals from "@/core/globals";
 
 export default async function changeCartComment(comment: string): Promise<void> {
