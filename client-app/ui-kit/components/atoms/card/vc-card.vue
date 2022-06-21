@@ -1,6 +1,6 @@
 <template>
   <div class="bg-white rounded border shadow-sm">
-    <div v-if="title || isCollapsible" class="px-6 py-3 border-b font-extrabold text-sm">
+    <div v-if="withHeader" class="px-6 py-3 border-b font-extrabold text-sm">
       <div class="flex items-center">
         <slot name="header">
           <div class="flex-grow text-xl font-extrabold uppercase">{{ title }}</div>
@@ -31,7 +31,10 @@ defineProps({
     type: String,
     default: undefined,
   },
-
+  withHeader: {
+    type: Boolean,
+    default: true,
+  },
   isCollapsible: {
     type: Boolean,
     default: false,
