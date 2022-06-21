@@ -4,40 +4,46 @@
       {
         "id": "home",
         "route": "/",
-        "title": "shared.layout.header.menu.home"
+        "title": "shared.layout.header.mobile.menu.home",
+        "icon": "/static/images/dashboard/icons/dashboard-main.svg#main"
       },
       {
         "id": "all-products-menu",
         "route": {
           "name": "Catalog"
         },
-        "title": "shared.layout.header.menu.all_products"
-      },
-      {
-        "id": "bulk-order",
-        "route": {
-          "name": "BulkOrder"
-        },
-        "title": "shared.layout.header.menu.bulk"
+        "title": "shared.layout.header.mobile.menu.all_products",
+        "icon": "/static/images/common/cube.svg#main"
       },
       {
         "id": "compare",
         "route": {
           "name": "CompareProducts"
         },
-        "title": "shared.layout.header.menu.compare"
+        "title": "shared.layout.header.mobile.menu.compare",
+        "icon": "/static/images/dashboard/icons/compare.svg#main"
+      },
+      {
+        "id": "bulk-order",
+        "route": {
+          "name": "BulkOrder"
+        },
+        "title": "shared.layout.header.mobile.menu.bulk",
+        "icon": "/static/images/dashboard/icons/bulk-order.svg#main"
       },
       {
         "id": "checkout",
         "route": {
           "name": "Checkout"
         },
-        "title": "shared.layout.header.menu.cart"
+        "title": "shared.layout.header.mobile.menu.cart",
+        "icon": "/static/images/checkout/cart.svg#main"
       },
       {
         "id": "contact",
         "route": "/contact",
-        "title": "shared.layout.header.menu.contact_us"
+        "title": "shared.layout.header.mobile.menu.contact_us",
+        "icon": "/static/images/dashboard/icons/contact.svg#main"
       }
     ]
   },

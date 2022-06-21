@@ -79,22 +79,29 @@
       "header": {
         "top_header": {
           "link_dashboard": "@:common.links.dashboard",
-          "link_order_history": "Bestellverlauf",
-          "link_lists": "Listen",
-          "call_us": "Call us:"
+          "link_contact_us": "Kontaktiere uns",
+          "call_us_label": "Call us: "
         },
         "link_sign_in": "Einloggen",
         "link_register_now": "Register now",
         "link_logout": "Ausloggen",
+        "catalog": "Catalogue",
         "menu": {
-          "home": "@:common.links.home",
-          "all_products": "Alle Produkte",
           "bulk": "Großauftragsblock",
           "compare": "Vergleichen",
           "cart": "Wagen",
-          "contact_us": "Kontaktiere uns"
+          "lists": "Listen",
+          "orders": "Bestellverlauf"
         },
         "mobile": {
+          "menu": {
+            "home": "Dashboard",
+            "all_products": "Catalog",
+            "bulk": "Bulk order pad",
+            "compare": "Compare products",
+            "cart": "Cart",
+            "contact_us": "Kontaktiere uns"
+          },
           "my_account": "Mein Konto",
           "account_menu": {
             "dashboard": "@:common.links.dashboard",
@@ -672,6 +679,7 @@
         "title": "Order #{0}",
         "created_title": "Order completed",
         "status_label": "@:common.labels.status{':'} ",
+        "purchase_order_label": "Purchase order: ",
         "placed_on_label": "Placed on: ",
         "products_section": {
           "title": "Purchased products"

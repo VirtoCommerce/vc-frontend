@@ -15,13 +15,20 @@
       </h2>
     </div>
 
-    <div class="flex mx-5 md:mx-0 gap-x-4">
+    <div class="md:flex mx-5 md:mx-0 gap-x-4">
       <div class="text-sm">
         <span class="font-bold">
           {{ $t("pages.account.order_details.status_label") }}
         </span>
 
         {{ order?.status }}
+      </div>
+
+      <div class="text-sm truncate" v-if="order?.purchaseOrderNumber">
+        <span class="font-bold">
+          {{ $t("pages.account.order_details.purchase_order_label") }}
+        </span>
+        {{ order?.purchaseOrderNumber }}
       </div>
 
       <div class="text-sm">

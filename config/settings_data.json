@@ -81,12 +81,13 @@
       "color_header_bottom_bg": "#FFFFFF",
       "color_header_bottom_text": "#292D3B",
       "color_header_bottom_link": "#827869",
-      "color_header_bottom_link_hover": "",
+      "color_header_bottom_link_hover": "rgba(31, 34, 44, 1)",
       "color_header_bottom_link_active": "#292D3B",
       "color_header_bottom_dropdown_bg": "#FFFFFF",
       "color_header_bottom_dropdown_link": "#645D54",
       "color_header_bottom_dropdown_link_hover": "",
       "color_search_bar_bg": "rgba(46, 41, 59, 0.9)",
+      "color_search_bar_reset_button": "rgb(192, 192, 192)",
       "color_footer_top_bg": "#292D3B",
       "color_footer_top_text": "#FFFFFF",
       "color_footer_top_link": "#A0A0A0",
@@ -95,7 +96,12 @@
       "color_footer_bottom_bg": "#1F222C",
       "color_footer_bottom_text": "#FFFFFF",
       "color_footer_bottom_link": "#66B9D8",
-      "color_footer_bottom_link_hover": ""
+      "color_footer_bottom_link_hover": "",
+      "color_in_stock_available": "#3C763D",
+      "color_in_stock_available_bg": "#E8FBE8",
+      "color_in_stock_out": "#F14E4E",
+      "color_in_stock_out_bg": "#FFEDED",
+      "color_in_stock_low_bg": "#FFF6E9"
     }
   }
 }

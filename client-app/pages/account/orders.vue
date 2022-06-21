@@ -6,19 +6,44 @@
     </div>
 
     <!-- Mobile filters sidebar -->
-    <VcPopupSidebar class="px-7 py-12 w-60" :is-visible="isMobile && filtersVisible" @hide="hideFilters">
-      <div class="h-full flex flex-col">
-        <div class="relative">
-          <button class="absolute -right-3 appearance-none px-3 py-1" @click="hideFilters">
-            <span class="text-2xl fa fa-times text-[color:var(--color-primary)]"></span>
-          </button>
-        </div>
+    <VcPopupSidebar class="px-5 pt-12 w-72" :is-visible="isMobile && filtersVisible" @hide="hideFilters">
+      <div class="relative">
+        <button class="absolute -right-3 appearance-none px-3 py-1" @click="hideFilters">
+          <span class="text-2xl fa fa-times text-[color:var(--color-primary)]"></span>
+        </button>
+      </div>
 
-        <div class="font-semibold text-2xl pt-1 mb-6">
-          {{ $t("common.buttons.filters") }}
-        </div>
+      <div class="font-semibold text-2xl pt-1 mb-6">
+        {{ $t("common.buttons.filters") }}
+      </div>
 
-        <OrdersFilter class="flex-grow" @change="filterChanged()" />
+      <MobileOrdersFilter />
+      <div class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
+        <div class="flex space-x-4">
+          <VcButton
+            class="flex-1 uppercase"
+            size="lg"
+            is-outline
+            :is-disabled="isFilterEmpty && !isFilterDirty"
+            @click="
+              resetFilters();
+              hideFilters();
+            "
+          >
+            {{ $t("common.buttons.reset") }}
+          </VcButton>
+          <VcButton
+            class="flex-1 uppercase"
+            size="lg"
+            :is-disabled="!isFilterDirty"
+            @click="
+              hideFilters();
+              applyFilters();
+            "
+          >
+            {{ $t("common.buttons.apply") }}
+          </VcButton>
+        </div>
       </div>
     </VcPopupSidebar>
 
@@ -237,7 +262,7 @@
 </template>
 
 <script setup lang="ts">
-import { OrdersFilter, useUserOrdersFilter, useUserOrders } from "@/shared/account";
+import { OrdersFilter, MobileOrdersFilter, useUserOrdersFilter, useUserOrders } from "@/shared/account";
 
 import { onMounted, ref, shallowRef, watch } from "vue";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
@@ -252,8 +277,16 @@ const { t } = useI18n();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { loading: ordersLoading, orders, loadOrders, sort, pages, itemsPerPage, page, keyword } = useUserOrders();
 
-const { appliedFilterData, isFilterEmpty, filterChipsItems, resetFilters, resetDataToApplied, removeFilterChipsItem } =
-  useUserOrdersFilter();
+const {
+  appliedFilterData,
+  isFilterEmpty,
+  isFilterDirty,
+  filterChipsItems,
+  applyFilters,
+  resetFilters,
+  resetDataToApplied,
+  removeFilterChipsItem,
+} = useUserOrdersFilter();
 
 const isMobile = breakpoints.smaller("lg");
 

@@ -79,22 +79,29 @@
       "header": {
         "top_header": {
           "link_dashboard": "@:common.links.dashboard",
-          "link_order_history": "Order History",
-          "link_lists": "Lists",
-          "call_us": "Call us:"
+          "link_contact_us": "Contacts",
+          "call_us_label": "Call us: "
         },
         "link_sign_in": "Sign in",
         "link_register_now": "Sign up now",
         "link_logout": "Log out",
+        "catalog": "Catalogue",
         "menu": {
-          "home": "@:common.links.home",
-          "all_products": "Products",
           "bulk": "Bulk order",
           "compare": "Compare",
           "cart": "Cart",
-          "contact_us": "Contact"
+          "lists": "Lists",
+          "orders": "Orders"
         },
         "mobile": {
+          "menu": {
+            "home": "Dashboard",
+            "all_products": "Catalog",
+            "bulk": "Bulk order pad",
+            "compare": "Compare products",
+            "cart": "Cart",
+            "contact_us": "Contact Us"
+          },
           "my_account": "@:common.links.account",
           "account_menu": {
             "dashboard": "@:common.links.dashboard",
@@ -143,7 +150,7 @@
         "categories_label": "Categories",
         "products_label": "Products",
         "no_results": "Your <strong>{searchPhrase}</strong> query did not return any results",
-        "enter_keyword_placeholder": "Enter keyword, item, model, or replacement part number",
+        "enter_keyword_placeholder": "Products search",
         "search_button": "Search",
         "view_all_results_button": "View all {total} results"
       },
@@ -670,6 +677,7 @@
         "title": "Order #{0}",
         "created_title": "Order complete",
         "status_label": "@:common.labels.status{':'} ",
+        "purchase_order_label": "Purchase order: ",
         "placed_on_label": "Placed on: ",
         "products_section": {
           "title": "Purchased products"

@@ -1,17 +1,17 @@
 <template>
   <div
-    class="h-12 px-12 flex items-center justify-between bg-[color:var(--color-header-top-bg)] font-bold text-sm text-[color:var(--color-header-top-text)]"
+    class="flex items-center justify-between h-[39px] px-5 bg-[color:var(--color-header-top-bg)] font-bold text-sm text-[color:var(--color-header-top-text)] xl:pl-12 xl:pr-[55px]"
   >
-    <div class="flex space-x-8 items-center">
+    <div class="flex space-x-6 items-center">
       <LanguageSelector v-if="$context.availLanguages && $context.availLanguages.length > 1" />
       <CurrencySelector v-if="$context.availCurrencies && $context.availCurrencies.length > 1" />
     </div>
 
-    <div class="flex items-center">
+    <div class="flex items-center text-[13px]">
       <!-- Call us block -->
       <div class="flex items-center" v-if="$cfg.support_phone_number">
-        <i class="fas fa-phone-alt text-[color:var(--color-primary)] mr-1"></i>
-        <div class="font-thin mr-1">{{ $t("shared.layout.header.top_header.call_us") }}</div>
+        <i class="fas fa-phone-alt text-[color:var(--color-primary)] mr-1.5 mt-0.5"></i>
+        <div class="font-thin mr-1">{{ $t("shared.layout.header.top_header.call_us_label") }}</div>
         <a
           class="font-semibold text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
           :href="`tel:${$cfg.support_phone_number}`"
@@ -22,19 +22,17 @@
       </div>
 
       <!-- Authorized menu items -->
-      <div class="flex items-center" v-if="isAuthenticated">
+      <template v-if="isAuthenticated">
         <TopHeaderLink to="/account/dashboard" v-t="'shared.layout.header.top_header.link_dashboard'"></TopHeaderLink>
-        <div class="mx-3 h-1 w-1 bg-[color:var(--color-primary)] rounded"></div>
-        <TopHeaderLink to="/account/orders" v-t="'shared.layout.header.top_header.link_order_history'"></TopHeaderLink>
-        <div class="mx-3 h-1 w-1 bg-[color:var(--color-primary)] rounded"></div>
-        <TopHeaderLink :to="{ name: 'Lists' }" v-t="'shared.layout.header.top_header.link_lists'"></TopHeaderLink>
+        <div class="mx-2 h-1 w-1 bg-[color:var(--color-primary)] rounded"></div>
+        <TopHeaderLink to="/contact" v-t="'shared.layout.header.top_header.link_contact_us'"></TopHeaderLink>
         <div class="w-px h-5 bg-[color:var(--color-primary)] mx-4 hidden lg:block"></div>
 
         <!-- Account menu -->
         <div ref="loginMenu" class="relative">
           <div class="flex items-center cursor-pointer" @click="loginMenuVisible = !loginMenuVisible">
             <div>{{ user.contact?.fullName }}</div>
-            <i class="fas fa-chevron-down ml-3 text-[color:var(--color-primary)] align-baseline"></i>
+            <i class="fas fa-chevron-down ml-1 text-[color:var(--color-primary)] text-[0.625rem] align-baseline"></i>
           </div>
           <div
             v-if="loginMenuVisible"
@@ -55,14 +53,14 @@
             </div>
           </div>
         </div>
-      </div>
+      </template>
 
       <!-- Unauthorized menu items -->
-      <div class="flex items-center" v-else>
+      <template v-else>
         <TopHeaderLink to="/sign-in" v-t="'shared.layout.header.link_sign_in'"></TopHeaderLink>
         <div class="mx-3 h-1 w-1 bg-[color:var(--color-primary)] rounded"></div>
         <TopHeaderLink to="/sign-up" v-t="'shared.layout.header.link_register_now'"></TopHeaderLink>
-      </div>
+      </template>
     </div>
   </div>
 </template>

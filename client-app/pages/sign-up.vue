@@ -110,7 +110,7 @@ import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import { ref } from "vue";
 import { usePopup } from "@/shared/popup";
-import { IdentityResultType } from "@/xapi/graphql/types";
+import { AccountCreationResultType, IdentityErrorType } from "@/xapi/graphql/types";
 import { computed } from "@vue/reactivity";
 import { isObjectEmpty, trimString } from "@/core/utilities";
 import { useI18n } from "vue-i18n";
@@ -191,7 +191,7 @@ const commonErrors = ref<string[]>([]);
 const onSubmit = handleSubmit(async (data) => {
   commonErrors.value = [];
 
-  let result: IdentityResultType;
+  let result: AccountCreationResultType;
   if (registrationKind.value === RegistrationKind.personal) {
     result = await registerUser({
       email: trimString(data.email),
@@ -217,11 +217,11 @@ const onSubmit = handleSubmit(async (data) => {
     });
   } else {
     if (result.errors?.length) {
-      for (let i = 0; i < result.errors?.length; i++) {
-        const error = result.errors[i];
+      const identityErrors = convertToIdentityError(result.errors);
+      for (const error of identityErrors) {
         // TODO: Localize all messages on a front side
         // improve XAPI: pass error's parameters with error
-        switch (error?.code) {
+        switch (error.code) {
           case "password-too-weak":
           case "PasswordTooShort":
           case "PasswordRequiresLower":
@@ -233,27 +233,27 @@ const onSubmit = handleSubmit(async (data) => {
           case "InvalidPasswordHasherCompatibilityMode":
           case "InvalidPasswordHasherIterationCount":
             // t() is the workaround for the empty description.
-            setFieldError("password", error?.description || t("pages.sign_up.errors." + error.code));
+            setFieldError("password", error.description || t("pages.sign_up.errors." + error.code));
             break;
 
           case "repeat-password":
           case "PasswordMismatch":
-            setFieldError("confirmPassword", error?.description);
+            setFieldError("confirmPassword", error.description);
             break;
 
           case "DuplicateUserName":
           case "InvalidUserName":
           case "LoginAlreadyAssociated":
-            setFieldError("userName", error?.description);
+            setFieldError("userName", error.description);
             break;
 
           case "DuplicateEmail":
           case "InvalidEmail":
-            setFieldError("email", error?.description || t("pages.sign_up.errors." + error.code));
+            setFieldError("email", error.description || t("pages.sign_up.errors." + error.code));
             break;
 
           default:
-            if (error?.description) {
+            if (error.description) {
               commonErrors.value.push(error.description);
             }
         }
@@ -261,6 +261,27 @@ const onSubmit = handleSubmit(async (data) => {
     }
   }
 });
+
+//todo: remove this workaround when xapi response will be improved to return IdentityErrorType
+function convertToIdentityError(textErrors: string[]): IdentityErrorType[] {
+  const result: IdentityErrorType[] = [];
+  const oneWordRegex = /^\w*$/g;
+  const codeDescriptionRegex = /(\w*): (.*)/gm;
+  textErrors.forEach((errorMessage) => {
+    if (oneWordRegex.test(errorMessage)) {
+      result.push({ code: errorMessage });
+    } else {
+      const matches = codeDescriptionRegex.exec(errorMessage);
+      if (matches && matches.length) {
+        result.push({ code: matches[0], description: matches[2] });
+      } else {
+        result.push({ description: errorMessage });
+      }
+    }
+  });
+
+  return result;
+}
 
 const validateUsernameUniqueness = async (value: string, resolve: (value: boolean) => void) => {
   try {
