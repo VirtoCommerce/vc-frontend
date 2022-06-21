@@ -2,17 +2,13 @@
   <!-- Dropdown menu -->
   <div v-if="children?.length" ref="submenu" class="relative">
     <div
-      class="uppercase font-extrabold text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)] flex items-center cursor-pointer tracking-wide"
+      class="font-semibold text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)] flex items-center cursor-pointer tracking-wide"
       @click="submenuVisible = !submenuVisible"
     >
-      <div>
-        <slot>{{ title }}</slot>
-      </div>
-
-      <i
-        class="fas ml-3 text-[color:var(--color-primary)] align-baseline"
-        :class="[submenuVisible ? 'fa-chevron-up' : 'fa-chevron-down']"
-      />
+      <svg height="26" width="26" class="mx-auto shrink-0" name="icon">
+        <use :href="icon"></use>
+      </svg>
+      <slot>{{ title }}</slot>
     </div>
 
     <div
@@ -34,13 +30,28 @@
   </div>
 
   <!-- Regular link -->
-  <router-link
-    v-else-if="to"
-    :to="to"
-    class="menu-link uppercase font-extrabold text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)] tracking-wide"
-    :class="$attrs.class"
-  >
-    <slot>{{ title }}</slot>
+  <router-link v-else-if="to" v-slot="{ isActive }" :to="to">
+    <div
+      class="font-semibold hover:text-[color:var(--color-header-bottom-link-hover)] tracking-wide relative"
+      :class="[
+        {
+          'text-[color:var(--color-header-bottom-link)]': !isActive,
+          'text-[color:var(--color-header-bottom-link-hover)]': isActive,
+        },
+      ]"
+    >
+      <svg
+        v-if="icon"
+        height="26"
+        width="26"
+        class="mx-auto mb-[0.35rem]"
+        :class="['shrink-0', { 'text-[color:var(--color-primary)]': !isActive }]"
+        name="icon"
+      >
+        <use :href="icon"></use>
+      </svg>
+      <slot>{{ title }}</slot>
+    </div>
   </router-link>
 </template>
 
@@ -59,6 +70,11 @@ defineProps({
   to: {
     type: [String, Object] as PropType<RouteLocationRaw>,
     default: undefined,
+  },
+
+  icon: {
+    type: String,
+    default: "",
   },
 
   children: {

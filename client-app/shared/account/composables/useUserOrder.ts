@@ -1,7 +1,7 @@
 import { Logger } from "@core/utilities";
 import { computed, ref, Ref } from "vue";
-import { CustomerOrderType, QueryOrderArgs } from "@/core/api/graphql/types";
-import { getMyOrder } from "@/core/api/graphql/account";
+import { CustomerOrderType, QueryOrderArgs } from "@/xapi/graphql/types";
+import { getMyOrder } from "@/xapi/graphql/account";
 
 const loading: Ref<boolean> = ref(false);
 const order: Ref<CustomerOrderType | null> = ref(null);
@@ -29,6 +29,10 @@ export default () => {
     }
   }
 
+  function clearOrder() {
+    order.value = null;
+  }
+
   return {
     loading: computed(() => loading.value),
     pages: computed(() => pages.value),
@@ -37,5 +41,6 @@ export default () => {
     deliveryAddress: computed(() => order.value?.shipments?.[0]?.deliveryAddress),
     billingAddress: computed(() => order.value?.inPayments?.[0]?.billingAddress),
     loadOrder,
+    clearOrder,
   };
 };

@@ -64,7 +64,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcCard } from "@/components";
 import { AccountNavigationLink } from ".";
 import { watchEffect } from "vue";
 import { useRoute } from "vue-router";

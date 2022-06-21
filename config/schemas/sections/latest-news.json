@@ -1,0 +1,6 @@
+{
+  "name": "Latest news",
+  "icon": "image",
+  "displayNameProperty": "name",
+  "group": "Integration"
+}

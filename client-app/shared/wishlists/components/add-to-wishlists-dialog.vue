@@ -62,8 +62,7 @@
 
 <script setup lang="ts">
 import { computed, PropType, ref } from "vue";
-import { VcButton, VcCheckbox, VcPopup } from "@/components";
-import { Product as ProductType } from "@/core/api/graphql/types";
+import { Product as ProductType } from "@/xapi/graphql/types";
 import { AddedToWishlistsDialog, useWishlists } from "@/shared/wishlists";
 import { usePopup } from "@/shared/popup";
 
@@ -90,7 +89,9 @@ const extendedLists = computed(() => {
 });
 
 async function addToWishlists() {
-  if (!selectedListsIds.value.length) return;
+  if (!selectedListsIds.value.length) {
+    return;
+  }
 
   const productId = props.product.id;
 

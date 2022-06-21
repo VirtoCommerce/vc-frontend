@@ -14,12 +14,12 @@ import {
   addOrUpdateCartPayment,
   InputBulkItemsType,
   removeCart as _removeCart,
-} from "@core/api/graphql/cart";
-import { BulkCartType, CartType, InputPaymentType, InputShipmentType, LineItemType } from "@core/api/graphql/types";
+} from "@/xapi/graphql/cart";
+import { BulkCartType, CartType, InputPaymentType, InputShipmentType, LineItemType } from "@/xapi/graphql/types";
 import { Logger } from "@core/utilities";
 import _ from "lodash";
 import { useUserCheckoutDefaults } from "@/shared/account";
-import changePurchaseOrderNumber from "@/core/api/graphql/cart/mutations/changePurchaseOrderNumber";
+import changePurchaseOrderNumber from "@/xapi/graphql/cart/mutations/changePurchaseOrderNumber";
 import { CartItemType } from "../types";
 
 const DEFAULT_ITEMS_PER_PAGE = 6;
@@ -213,9 +213,9 @@ export default () => {
     await loadMyCart();
   }
 
-  async function changeComment(comment: string) {
+  async function changeComment(comment: string, reloadCart = true) {
     loading.value = true;
-    console.log(`change cart comment ${comment}`);
+
     try {
       await changeCartComment(comment);
     } catch (e) {
@@ -224,7 +224,10 @@ export default () => {
     } finally {
       loading.value = false;
     }
-    await loadMyCart();
+
+    if (reloadCart) {
+      await loadMyCart();
+    }
   }
 
   async function updateShipment(shipment: InputShipmentType) {
@@ -241,9 +244,9 @@ export default () => {
     await loadMyCart();
   }
 
-  async function updatePayment(payment: InputPaymentType) {
+  async function updatePayment(payment: InputPaymentType, reloadCart = true) {
     loading.value = true;
-    console.log(`change cart payment details`);
+
     try {
       await addOrUpdateCartPayment(payment);
     } catch (e) {
@@ -252,7 +255,10 @@ export default () => {
     } finally {
       loading.value = false;
     }
-    await loadMyCart();
+
+    if (reloadCart) {
+      await loadMyCart();
+    }
   }
 
   function itemInCart(productId: string): LineItemType | undefined {

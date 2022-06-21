@@ -1,0 +1,65 @@
+{
+  "settings": {
+    "name": "Home page blocks and some other information about the site"
+  },
+  "content": [
+    {
+      "id": "1",
+      "type": "cover-with-image",
+      "name": "Main slide",
+      "inlineCalendar": "2022-05-14"
+    },
+    {
+      "id": "2",
+      "type": "cover-with-variations",
+      "name": "Cover with variations with very long name for it",
+      "title": "Headline title and some other info",
+      "content": "Section content",
+      "color": "#43ebaa",
+      "singleFile": "path/to/file/single-file-name.txt",
+      "multipleFiles": [
+        "different/urls/for/files/filename-1.ext",
+        "different/urls/for/files/filename-2.ext",
+        "different/urls/for/files/filename-3.ext",
+        "different/urls/for/files/filename-4.ext"
+      ]
+    },
+    {
+      "id": "3",
+      "type": "cover-with-variations",
+      "name": "Cover with variations"
+    },
+    {
+      "id": "4",
+      "type": "cover-with-variations",
+      "name": "Cover variations"
+    },
+    {
+      "id": "5",
+      "type": "product-info",
+      "name": "Product info",
+      "blocks": [
+        {
+          "id": "6",
+          "name": "Image",
+          "type": "image"
+        },
+        {
+          "id": "7",
+          "name": "text",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "type": "cover-with-variations",
+      "name": "Cover variations"
+    },
+    {
+      "id": "9",
+      "type": "cover-with-variations",
+      "name": "Cover variations"
+    }
+  ]
+}

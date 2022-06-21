@@ -1,4 +1,4 @@
-import { PaymentMethodType, ShippingMethodType } from "@core/api/graphql/types";
+import { PaymentMethodType, ShippingMethodType } from "@/xapi/graphql/types";
 
 export enum RegistrationKind {
   personal = "personal",
@@ -19,9 +19,8 @@ export type SignMeUp = {
   userName: string;
   email: string;
   password: string;
-  firstName?: string;
-  lastName?: string;
-  middleName?: string;
+  firstName: string;
+  lastName: string;
 };
 
 export type SignMeIn = {

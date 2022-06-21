@@ -1,9 +1,9 @@
 import { computed, readonly, ref, Ref, shallowRef, unref } from "vue";
-import { InputMemberAddressType, MemberAddressType, UserType } from "@core/api/graphql/types";
-import { getMyAddresses, updateMemberAddresses, deleteMemberAddresses } from "@core/api/graphql/account";
+import { InputMemberAddressType, MemberAddressType, UserType } from "@/xapi/graphql/types";
+import { getMyAddresses, updateMemberAddresses, deleteMemberAddresses } from "@/xapi/graphql/account";
 import { isEqualAddresses, Logger, toInputAddress } from "@core/utilities";
 import { getSortingExpression, ISortInfo } from "@/shared/account";
-import { sortAscending } from "@core/constants";
+import { SORT_ASCENDING } from "@core/constants";
 import { AnyAddressType } from "@core/types";
 import { MaybeRef } from "@vueuse/core";
 
@@ -18,7 +18,7 @@ export default (options: { user: MaybeRef<UserType> }) => {
   // TODO: refine the sorting logic
   const sort: Ref<ISortInfo> = ref({
     column: "lastName",
-    direction: sortAscending,
+    direction: SORT_ASCENDING,
   });
 
   function isExistAddress(address: AnyAddressType): boolean {

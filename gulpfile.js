@@ -11,7 +11,7 @@ function compress() {
   const pkg = getPackage();
 
   return src(
-    ["./assets/**", "./config/**", "./layout/**", "./locales/**", "./templates/**", "!./assets/index.html"],
+    ["./assets/**", "./config/**", "./layout/**", "./locales/**", "./templates/**", "!./assets/index.html", "./content/**"],
     { base: "./" }
   ).pipe(
     rename(function(path) {

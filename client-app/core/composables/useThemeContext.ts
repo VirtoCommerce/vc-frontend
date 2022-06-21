@@ -1,5 +1,6 @@
-import { IThemeConfig, IThemeContext } from "@core/types";
 import { computed, ref } from "vue";
+import { DEVELOPMENT } from "@core/constants";
+import { IThemeConfig, IThemeContext } from "@core/types";
 
 const themeContext = ref<IThemeContext>();
 
@@ -7,10 +8,12 @@ export default function useThemeContext() {
   async function fetchThemeContext() {
     const result: IThemeContext = await (await fetch("/storefrontapi/theme/context")).json();
 
-    if (import.meta.env.MODE === "development") {
+    if (DEVELOPMENT) {
       // TODO: remove this when switching to SSR
       const settings: IThemeConfig = await import("../../../config/settings_data.json");
-      result.settings = settings.presets[settings.current];
+      if (typeof settings.current === "string") {
+        result.settings = settings.presets[settings.current];
+      }
     }
 
     themeContext.value = result;
@@ -18,6 +21,18 @@ export default function useThemeContext() {
 
   return {
     fetchThemeContext,
-    themeContext: computed(() => themeContext.value),
+    themeContext: computed({
+      get() {
+        if (!themeContext.value) {
+          throw new Error("Theme context is missing.");
+        }
+
+        return themeContext.value!;
+      },
+
+      set() {
+        throw new Error("Theme context change is not available.");
+      },
+    }),
   };
 }

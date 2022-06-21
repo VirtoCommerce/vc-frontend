@@ -64,6 +64,9 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 |   |       ├── icons             // Icons used for favicons, PWA, etc.
 |   |       └── images            // Static images used inside the application.
 |   |
+|   ├── router                    // SPA routing configuration.
+|   |   └──...
+|   |
 |   ├── shared                    // A set of shared files grouped by their domain context.
 |   |   ├── catalog               // Grouping context (ex.: catalog browsing).
 |   |   |   ├── components        // The collection of components specific for this domain context.
@@ -81,9 +84,9 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 |   ├── App.vue                   // Main Application component. Use it as a wrapper for routable pages.
 |   ├── env.d.ts                  // Definition file to provide IDE IntelliSense support.
 |   ├── main.ts                   // Application entry point. Main initialization script.
-|   ├── router.ts                 // SPA routing configuraion.
+|   ├── shims-acceptjs.d.ts       // Definition file to provide IDE IntelliSense support for Accept.js (Authorize.net).
 |   ├── shims-graphql.d.ts        // Definition file to provide IDE IntelliSense support for importing *.graphql files.
-|   └── shim-vue.d.ts             // Definition file to provide IDE IntelliSense support for importing *.vue files and specific Vue features.
+|   └── shims-vue.d.ts            // Definition file to provide IDE IntelliSense support for importing *.vue files and specific Vue features.
 |
 ├── config                        // The Virto theme settings.
 |   ├── menu.json                 // Theme menu settings file.
@@ -116,7 +119,7 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 ├── README.md                     // This file.
 ├── tailwind.config.js            // TailwindCSS configuration file.
 ├── tsconfig.json                 // TypeScript configuration file.
-├── vite.config.ts                // Vite configuration file.
+└── vite.config.ts                // Vite configuration file.
 ```
 
 ## Getting started

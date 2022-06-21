@@ -1,9 +1,10 @@
-export * from "./theme-context";
-export * from "./language";
-export * from "./currency";
-
-import { CartAddressType, MemberAddressType, OrderAddressType } from "@core/api/graphql/types";
+import { CartAddressType, MemberAddressType, OrderAddressType } from "@/xapi/graphql/types";
 import { LocationQueryValue } from "vue-router";
+
+export * from "./currency";
+export * from "./global-variables";
+export * from "./language";
+export * from "./theme-context";
 
 export type Dictionary = { [key: string | symbol | number]: any };
 
@@ -30,7 +31,7 @@ export type UseRouteQueryParamOptions<T = LocationQueryValue | LocationQueryValu
 };
 
 export interface IThemeConfig {
-  current: string;
+  current: string | { [key: string]: any };
   presets: Record<string, IThemeConfigPreset>;
 }
 
@@ -93,6 +94,8 @@ export interface IThemeConfigPreset {
   orders_filter_enabled?: boolean;
   orders_reorder_enabled?: boolean;
   orders_statuses?: string[];
+
+  support_phone_number?: string;
 
   logo_image?: string;
   logo_inverted_image?: string;

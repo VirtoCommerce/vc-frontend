@@ -39,6 +39,7 @@ module.exports = {
     "@typescript-eslint/no-shadow": "error",
     "@typescript-eslint/no-non-null-assertion": "off",
     "vue/multi-word-component-names": "off",
+    "curly": "error",
   },
   overrides: [
     // Fix no-used-vars when importing ts types in .vue files
@@ -46,6 +47,7 @@ module.exports = {
       files: ["*.vue"],
       rules: {
         "no-unused-vars": "off",
+        "no-undef": "off",
         "@typescript-eslint/no-unused-vars": "error",
       },
     },
@@ -55,6 +57,12 @@ module.exports = {
     defineEmits: "readonly",
     defineExpose: "readonly",
     withDefaults: "readonly",
+
+    /**
+     * Accept.js (Authorize.net)
+     * @link https://developer.authorize.net/api/reference/features/acceptjs.html
+     */
+    Accept: "readonly",
   },
   settings: {
     "import/parsers": {

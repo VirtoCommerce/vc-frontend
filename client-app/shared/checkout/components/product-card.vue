@@ -53,48 +53,36 @@
         </div>
 
         <div class="flex items-start space-x-2 lg:space-x-4 xl:w-2/5 lg:justify-end">
-          <div class="flex flex-col items-center lg:w-24 lg:shrink-0 xl:w-1/4">
+          <div class="flex flex-col max-w-[5.75rem] lg:items-center lg:max-w-[4.75rem] lg:shrink-0">
             <input
               v-model="value"
               type="number"
               pattern="\d*"
               :max="maxQty"
               :min="minQty"
-              class="w-20 border rounded overflow-hidden h-8 lg:h-10 focus:ring ring-inset outline-none p-1 text-center"
+              class="w-[5.625rem] h-[32px] border rounded overflow-hidden focus:ring ring-inset outline-none p-1 text-center lg:w-[3.75rem] lg:h-10"
               :class="{
                 'text-[color:var(--color-danger)]': isInputDisabled,
                 'border-[color:var(--color-danger)]': errorMessage,
               }"
               :disabled="isInputDisabled || readOnly"
+              @change="updateQuantity"
               @input="onInput"
               @keypress="onKeypress"
+              @keyup.enter="updateQuantity"
             />
-            <div v-if="!readOnly">
-              <div v-if="!isInputDisabled" class="flex items-center">
-                <span class="text-green-700 text-xs pt-1 whitespace-nowrap"
-                  >{{ lineItem.inStockQuantity! > 9999 ? "9999+" : lineItem.inStockQuantity }}
-                  {{ $t("common.suffixes.product_count_in_stock") }}</span
-                >
-              </div>
-              <div v-else class="flex items-center">
-                <span class="text-[color:var(--color-danger)] text-xs pt-1 whitespace-nowrap">{{
-                  $t("common.messages.product_out_of_stock")
-                }}</span>
-              </div>
+
+            <div class="relative mt-1.5 pt-px h-6">
+              <VcInStock
+                v-if="!readOnly"
+                :is-in-stock="!isInputDisabled"
+                :quantity="lineItem.inStockQuantity"
+                class="absolute lg:static"
+              ></VcInStock>
             </div>
           </div>
 
-          <div v-if="!readOnly" class="lg:hidden flex flex-row space-x-2">
-            <VcButton
-              v-if="!isInputDisabled"
-              size="sm"
-              is-outline
-              class="uppercase px-2 font-bold"
-              @click="updateQuantity"
-            >
-              {{ $t("shared.checkout.product_card.update_button") }}
-            </VcButton>
-
+          <div v-if="!readOnly" class="lg:hidden">
             <VcButton
               size="sm"
               kind="secondary"
@@ -105,22 +93,22 @@
               {{ $t("shared.checkout.product_card.remove_button") }}
             </VcButton>
           </div>
+
           <div
             v-if="!readOnly"
-            class="hidden lg:flex xl:w-1/4 flex-col space-y-1 text-xs font-semibold text-[color:var(--color-link)]"
+            class="hidden lg:flex flex-col justify-center h-10 xl:w-1/4 text-xs font-semibold text-[color:var(--color-link)]"
           >
-            <span
-              v-if="!isInputDisabled"
-              class="cursor-pointer"
-              @click="updateQuantity"
-              v-t="'shared.checkout.product_card.update_button'"
-            ></span>
-            <span
-              class="cursor-pointer"
+            <!-- todo: https://virtocommerce.atlassian.net/browse/ST-2256 -->
+            <button
+              type="button"
+              :title="$t('shared.checkout.product_card.remove_button')"
+              class="h-7 w-7 shadow rounded text-[color:var(--color-danger)] hover:bg-gray-100"
               @click="$emit('remove:item', lineItem.id)"
-              v-t="'shared.checkout.product_card.remove_button'"
-            ></span>
+            >
+              <i class="fas fa-times" />
+            </button>
           </div>
+
           <div class="hidden lg:flex lg:w-28 lg:shrink-0 xl:w-2/4 lg:items-end flex-col text-sm font-extrabold pr-3">
             <span class="text-black self-end" v-t="'shared.checkout.product_card.total_label'"></span>
             <span class="text-green-700"><VcPriceDisplay :value="lineItem.extendedPrice" /></span>
@@ -132,8 +120,7 @@
 </template>
 
 <script setup lang="ts">
-import { VcImage, VcPriceDisplay, VcItemPrice, VcButton } from "@/components";
-import { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
+import { LineItemType, ValidationErrorType } from "@/xapi/graphql/types";
 import { computed, PropType } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useField } from "vee-validate";
@@ -216,7 +203,7 @@ defineExpose({ updateQuantity });
  * Ignore non-numeric keys.
  */
 const onKeypress = (event: KeyboardEvent) => {
-  if (!/[0-9]/.test(event.key)) {
+  if (!/[0-9]/.test(event.key) && event.key !== "Enter") {
     event.preventDefault();
   }
 };

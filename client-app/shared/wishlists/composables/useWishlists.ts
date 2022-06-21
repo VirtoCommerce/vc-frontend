@@ -5,7 +5,7 @@ import {
   InputRemoveWishlistItemType,
   InputRenameWishlistType,
   WishlistType,
-} from "@core/api/graphql/types";
+} from "@/xapi/graphql/types";
 import {
   addWishlist,
   addWishlistItem,
@@ -14,8 +14,8 @@ import {
   deleteWishlistItem,
   renameWishlist as _renameWishlist,
   getWishList,
-} from "@core/api/graphql/account";
-import { sortAscending } from "@core/constants";
+} from "@/xapi/graphql/account";
+import { SORT_ASCENDING } from "@core/constants";
 
 const loading = ref(true);
 const lists = shallowRef<WishlistType[]>([]);
@@ -39,7 +39,7 @@ export default function useWishlists() {
     loading.value = true;
 
     try {
-      const { items = [] } = await getWishlists({ itemsPerPage: 9999, sort: `name:${sortAscending}` });
+      const { items = [] } = await getWishlists({ itemsPerPage: 9999, sort: `name:${SORT_ASCENDING}` });
 
       lists.value = items;
 

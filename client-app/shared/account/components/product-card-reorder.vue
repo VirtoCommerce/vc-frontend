@@ -174,30 +174,13 @@
               @input="onInput"
               @keypress="onKeypress"
             />
-            <div>
-              <div v-if="!isInputDisabled" class="flex items-center">
-                <span
-                  class="text-xs pt-1 whitespace-nowrap"
-                  :class="
-                    productItem.quantity! > productItem.availabilityData?.availableQuantity
-                      ? 'text-[color:var(--color-primary)]'
-                      : 'text-green-700'
-                  "
-                  >{{
-                    productItem.availabilityData?.availableQuantity > 9999
-                      ? "9999+"
-                      : productItem.availabilityData?.availableQuantity
-                  }}
-                  {{ $t("shared.account.reorder_info_popup.product_card.in_stock_suffix") }}</span
-                >
-              </div>
-              <div v-else-if="isOutOfStock" class="flex items-center">
-                <span
-                  class="text-[color:var(--color-danger)] text-xs pt-1 whitespace-nowrap"
-                  v-t="'shared.account.reorder_info_popup.product_card.out_of_stock_message'"
-                ></span>
-              </div>
-            </div>
+
+            <VcInStock
+              v-if="!isInputDisabled || isOutOfStock"
+              :is-in-stock="!isInputDisabled && !isOutOfStock"
+              :quantity="productItem.availabilityData?.availableQuantity"
+              class="inline-block mt-1.5"
+            ></VcInStock>
           </div>
 
           <div class="hidden md:flex lg:w-28 lg:shrink-0 xl:w-2/4 md:items-end flex-col text-sm font-extrabold pr-3">
@@ -213,13 +196,12 @@
 </template>
 
 <script setup lang="ts">
-import { VcImage } from "@/components";
 import { computed, PropType } from "vue";
 import { useField } from "vee-validate";
 import * as yup from "yup";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useCart } from "@/shared/cart";
-import { Product } from "@/core/api/graphql/types";
+import { Product } from "@/xapi/graphql/types";
 import { RouteLocationRaw } from "vue-router";
 import { getProductRoute } from "@/shared/catalog";
 

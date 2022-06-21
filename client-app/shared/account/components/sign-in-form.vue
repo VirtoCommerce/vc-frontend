@@ -4,7 +4,8 @@
     <VcAlert v-if="authError" class="mb-2" icon type="error" text>
       <span v-html="$t('shared.account.sign_in_form.user_or_password_incorrect_alert')"></span>
     </VcAlert>
-    <VcAlert v-if="!_.isEmpty(errors)" class="mb-2" icon type="error" text>
+
+    <VcAlert v-if="!valid" class="mb-2" icon type="error" text>
       <span v-html="$t('shared.account.sign_in_form.user_and_password_are_required_alert')"></span>
     </VcAlert>
 
@@ -48,7 +49,7 @@
     <!-- Form actions -->
     <div class="flex mt-8 text-base font-roboto-condensed" :class="{ 'max-w-sm': !props.growButtons }">
       <VcButton
-        :is-disabled="loading || isAuthenticated"
+        :is-disabled="loading || isAuthenticated || !valid || authError"
         :is-waiting="loading"
         is-submit
         size="lg"
@@ -72,18 +73,19 @@
 
 <script setup lang="ts">
 import { VcAlert, VcButton, VcInput, VcCheckbox } from "@/components";
-import { ref, reactive } from "vue";
+import { ref, reactive, watch } from "vue";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
-import _ from "lodash";
+import { isEmpty } from "lodash";
 import { useUser } from "@/shared/account";
 import { useI18n } from "vue-i18n";
 import { useCart } from "@/shared/cart";
-import { mergeCart } from "@core/api/graphql/cart";
+import { mergeCart } from "@/xapi/graphql/cart";
+import { eagerComputed } from "@vueuse/core";
 
 const { t } = useI18n();
 const { cart, loadMyCart } = useCart();
-const { signMeIn, me, isAuthenticated } = useUser();
+const { signMeIn, user, isAuthenticated } = useUser();
 
 const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButtons: false });
 
@@ -97,7 +99,7 @@ const schema = yup.object({
   password: yup.string().label(t("shared.account.sign_in_form.password_label")).required(),
 });
 
-const { errors, handleSubmit } = useForm({
+const { errors, handleSubmit, values } = useForm({
   validationSchema: schema,
 });
 
@@ -106,6 +108,8 @@ const { value: password } = useField<string>("password");
 const rememberMe = ref(false);
 
 const model = reactive({ userName, password, rememberMe });
+
+const valid = eagerComputed<boolean>(() => isEmpty(errors.value));
 
 const onSubmit = handleSubmit(async () => {
   loading.value = true;
@@ -122,7 +126,9 @@ const onSubmit = handleSubmit(async () => {
     return;
   }
 
-  await mergeCart(me.value.id, cart.value.id!);
+  await mergeCart(user.value.id, cart.value.id!);
   emit("succeeded");
 });
+
+watch(values, () => (authError.value = false));
 </script>

@@ -6,7 +6,7 @@ import {
   getAvailPaymentMethods,
   getAvailShippingMethods,
   removeCart,
-} from "@core/api/graphql/cart";
+} from "@/xapi/graphql/cart";
 import {
   InputShipmentType,
   InputPaymentType,
@@ -17,7 +17,7 @@ import {
   ShipmentType,
   PaymentType,
   CustomerOrderType,
-} from "@core/api/graphql/types";
+} from "@/xapi/graphql/types";
 import { useCart } from ".";
 
 const addresses: CartAddressType[] = [
@@ -55,7 +55,7 @@ const existPayment: Ref<PaymentType | null> = ref(null);
 export default () => {
   const { cart, loadMyCart } = useCart();
 
-  async function placeOrder(cartId: string, reloadCart = true): Promise<CustomerOrderType | null> {
+  async function createOrder(cartId: string, reloadCart = true): Promise<CustomerOrderType | null> {
     const order = await createOrderFromCart(cartId);
 
     if (!order) {
@@ -133,7 +133,7 @@ export default () => {
   }
 
   return {
-    placeOrder,
+    createOrder,
     loadShipmentMethods,
     loadPaymentMethods,
     setDeliveryAddress,

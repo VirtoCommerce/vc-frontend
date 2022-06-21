@@ -55,7 +55,8 @@
       "product_out_of_stock": "Ausverkauft",
       "required_field": "Dieses Feld wird benötigt",
       "email_is_not_correct": "Geben Sie bitte die richtige E-Mail-Adresse ein (ex. john{'@'}gmail.com)",
-      "max_length": "Dieses Feld darf höchstens {max} Zeichen lang sein"
+      "max_length": "Dieses Feld darf höchstens {max} Zeichen lang sein",
+      "creating_order_error": "Fehler beim Anlegen eines Auftrags"
     },
     "placeholders": {
       "not_selected": "Nicht ausgewählt"
@@ -78,21 +79,29 @@
       "header": {
         "top_header": {
           "link_dashboard": "@:common.links.dashboard",
-          "link_order_history": "Bestellverlauf",
-          "link_lists": "Listen"
+          "link_contact_us": "Kontaktiere uns",
+          "call_us_label": "Call us: "
         },
         "link_sign_in": "Einloggen",
         "link_register_now": "Register now",
         "link_logout": "Ausloggen",
+        "catalog": "Catalogue",
         "menu": {
-          "home": "@:common.links.home",
-          "all_products": "Alle Produkte",
           "bulk": "Großauftragsblock",
           "compare": "Vergleichen",
           "cart": "Wagen",
-          "contact_us": "Kontaktiere uns"
+          "lists": "Listen",
+          "orders": "Bestellverlauf"
         },
         "mobile": {
+          "menu": {
+            "home": "Dashboard",
+            "all_products": "Catalog",
+            "bulk": "Bulk order pad",
+            "compare": "Compare products",
+            "cart": "Cart",
+            "contact_us": "Kontaktiere uns"
+          },
           "my_account": "Mein Konto",
           "account_menu": {
             "dashboard": "@:common.links.dashboard",
@@ -132,6 +141,7 @@
         "rebates_link": "Rebates",
         "replacement_parts_link": "Replacement Parts",
         "demo_landing_link": "Demo landing",
+        "demo_page_link": "Demo page",
         "all_rights_reserved": "All Rights Reserved.",
         "asp_net_e_commerce_platform": "ASP.NET e-commerce platform  {0}",
         "by_virto": "by Virto"
@@ -371,7 +381,7 @@
         "email_label": "@:common.labels.email{':'}",
         "print_order": "Print order",
         "products_section": {
-          "title": "My purchased products"
+          "title": "Purchased products"
         },
         "comment_section": {
           "title": "Order comment"
@@ -409,6 +419,42 @@
         "text_area_placeholder": "Formatting example:\n6AF8SM0VPFV6,10\n3RO1GEQI34E8,20",
         "reset_button": "@:common.buttons.reset",
         "add_to_cart_button": "@:common.buttons.add_to_cart"
+      }
+    },
+    "payment": {
+      "bank_card_form": {
+        "number_label": "Card number",
+        "cardholder_name_label": "Cardholder name",
+        "month_label": "Expiry Month",
+        "month_placeholder": "MM",
+        "year_label": "Expiry Year",
+        "year_placeholder": "YY",
+        "security_code_label": "Security Code"
+      },
+      "authorize_net": {
+        "header": "Payment method",
+        "bank_card_title": "Credit Card",
+        "user_agreement_link": "User Agreement",
+        "privacy_policy_link": "Privacy Policy",
+        "accept_terms_text": "By placing an order, you accept the terms of",
+        "processing_personal_data_text": "and consent to the processing of personal data according to the",
+        "pay_now_button": "Pay Now",
+        "errors": {
+          "number": "Please provide valid credit card number",
+          "month": "Please provide valid expiration month",
+          "year": "Please provide valid expiration year",
+          "security_code": "Please provide valid security code",
+          "cardholder_name": "Please provide valid card holder name",
+          "try_again": "An error occurred during processing. Please try again"
+        }
+      },
+      "payment_success": {
+        "title": "Payment successful",
+        "text": "Thank you, we are checking your payment. The order will be shipped after we receive your payment."
+      },
+      "payment_failure": {
+        "title": "Payment failed",
+        "text": "There is a problem with your payment, try again please."
       }
     },
     "wishlists": {
@@ -631,7 +677,9 @@
       },
       "order_details": {
         "title": "Order #{0}",
+        "created_title": "Order completed",
         "status_label": "@:common.labels.status{':'} ",
+        "purchase_order_label": "Purchase order: ",
         "placed_on_label": "Placed on: ",
         "products_section": {
           "title": "Purchased products"
@@ -639,6 +687,7 @@
         "order_comment_section": {
           "title": "Order comment"
         },
+        "pay_now_button": "Pay Now",
         "reorder_all_button": "Reorder all",
         "shipping_address_card": {
           "title": "Shipping address",
@@ -659,6 +708,15 @@
           "phone_label": "@:common.labels.phone{':'}",
           "email_label": "@:common.labels.email{':'}"
         }
+      },
+      "order_payment": {
+        "title": "Payment information",
+        "breadcrumb_title": "Payment",
+        "processed_title": "@:pages.account.order_details.title",
+        "loading_text": "Loading...",
+        "back_to_order_button": "Back to Order",
+        "orders_list_button": "Orders List",
+        "try_again_button": "Try again"
       },
       "your_lists": {
         "no_lists": "You don't have any lists created",
@@ -736,7 +794,7 @@
         "no_button": "No"
       },
       "products_section": {
-        "title": "My products",
+        "title": "Products",
         "update_all_link_label": "If you changed multiple quantities,",
         "update_all_link": "Update All",
         "clear_cart_button": "Clear all"
@@ -793,7 +851,8 @@
         "warning_message": "Availability, shipping, tax & promotions are not final until you complete your order.",
         "place_order_button": "Place order"
       },
-      "invalid_coupon_message": "This code did not match any active coupon. Was it entered correctly?"
+      "invalid_coupon_message": "This code did not match any active coupon. Was it entered correctly?",
+      "go_to_payment_button": "Pay now"
     },
     "search": {
       "header": "Your search for \"<strong>{0}</strong>\" revealed the following",
