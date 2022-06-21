@@ -53,6 +53,7 @@ export interface IThemeConfigPreset {
   header_menu_link_list?: string;
   products_menu_link_list?: string;
   footer_menu_link_list?: string;
+  image_tools_enabled?: boolean;
 
   registration_enabled?: boolean;
   social_auth_google?: boolean;

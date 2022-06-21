@@ -19,6 +19,8 @@
       "logo_inverted_image": "/static/images/common/logo-white.svg",
       "favicon_image": "/static/icons/favicon-16x16.png",
 
+      "image_tools_enabled": true,
+
       "orders_statuses": ["New", "Processing", "Pending", "Cancelled", "Completed"],
 
       "color_primary": "#F0AD4E",
