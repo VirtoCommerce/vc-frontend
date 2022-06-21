@@ -1,13 +1,13 @@
 <template>
-  <div v-click-outside="() => open && hideList()" class="relative select-none">
+  <div v-click-outside="() => open && hideList()" class="relative select-none text-[13px]">
     <button
       class="relative flex items-center space-x-1 py-3 pr-3.5 appearance-none leading-none text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
       @click="toggle"
     >
-      <span class="text-white mr-1.5" v-if="!isMobile" v-t="'shared.layout.language_selector.label'"></span>
+      <span class="text-white mr-1" v-if="!isMobile" v-t="'shared.layout.language_selector.label'"></span>
 
       <span
-        class="fi fis rounded-full fa-2x -my-3"
+        class="fi fis rounded-full fa-2x -my-3 !w-[30px] h-[30px] lg:!w-[14px] lg:h-[14px]"
         :class="`fi-${currentLanguage?.twoLetterRegionName.toLowerCase()}`"
       ></span>
       <span
@@ -17,8 +17,10 @@
         {{ currentLanguage?.twoLetterLanguageName }}
       </span>
 
-      <span class="absolute inset-y-0 right-0 flex items-center pointer-events-none">
-        <i class="text-[color:var(--color-primary)] fas fa-chevron-down text-[0.625rem]" />
+      <span class="absolute inset-y-0 -right-3.5 flex items-center pointer-events-none lg:right-0">
+        <i
+          class="text-[color:var(--color-mobile-menu-link)] fas fa-chevron-down text-[1rem] lg:text-[color:var(--color-primary)] lg:text-[0.625rem]"
+        />
       </span>
     </button>
 
@@ -80,7 +82,7 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 const { currentLanguage, supportedLanguages, saveLocaleAndReload } = useLanguages();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
-const isMobile = breakpoints.smaller("md");
+const isMobile = breakpoints.smaller("lg");
 const open = ref(false);
 const listElement = shallowRef<HTMLElement | null>(null);
 

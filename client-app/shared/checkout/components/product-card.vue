@@ -98,6 +98,7 @@
             v-if="!readOnly"
             class="hidden lg:flex flex-col justify-center h-10 xl:w-1/4 text-xs font-semibold text-[color:var(--color-link)]"
           >
+            <!-- todo: https://virtocommerce.atlassian.net/browse/ST-2256 -->
             <button
               type="button"
               :title="$t('shared.checkout.product_card.remove_button')"
