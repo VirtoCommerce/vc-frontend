@@ -72,7 +72,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcAlert, VcButton, VcInput, VcCheckbox } from "@/components";
 import { ref, reactive, watch } from "vue";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
