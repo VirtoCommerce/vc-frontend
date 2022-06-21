@@ -100,6 +100,7 @@ export interface IThemeConfigPreset {
   logo_image?: string;
   logo_inverted_image?: string;
   favicon_image?: string;
+  homepage_background_image?: string;
   primary_font_family?: string;
   secondary_font_family?: string;
   color_primary?: string;
