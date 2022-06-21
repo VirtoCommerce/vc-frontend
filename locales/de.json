@@ -933,6 +933,10 @@
         "home": "@:common.links.home",
         "compare_products": "Compare products"
       }
+    },
+    "branch": {
+      "address": "Address",
+      "phone": "Phone:"
     }
   }
 }
