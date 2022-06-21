@@ -458,7 +458,7 @@ function onChangeCurrentCategory(key: string, value: string) {
 
 onMounted(async () => {
   await loadCategoriesTree();
-  
+
   if (!categoryId.value && !categorySeoUrl.value) {
     selectRoot();
   } else if (categoryId.value) {
