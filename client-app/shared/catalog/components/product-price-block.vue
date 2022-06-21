@@ -32,12 +32,22 @@
 
       <div class="flex w-3/5">
         <div class="w-1/3">
-          <VcPopover :title="$t('shared.catalog.product_details.share_product_label')" :showCloseButton="true">
+          <VcPopover
+            :title="$t('shared.catalog.product_details.share_product_label')"
+            :showCloseButton="true"
+            @shown="handlePopoverShown"
+          >
             <template #trigger>
               <div
                 class="items-center justify-center select-none py-4 px-1 border-r space-x-2 cursor-pointer hover:bg-gray-100"
               >
-                <i class="fas fa-share-square fa-xl text-[color:var(--color-primary)]" />
+                <i
+                  class="fas fa-share-square fa-xl"
+                  :class="{
+                    'text-[color:var(--color-primary)]': !shareProductPopoverShown,
+                    'text-gray-400': shareProductPopoverShown,
+                  }"
+                />
               </div>
             </template>
             <template #content>
@@ -76,7 +86,7 @@
 
 <script setup lang="ts">
 import { Product } from "@/xapi/graphql/types";
-import { PropType } from "vue";
+import { PropType, ref } from "vue";
 import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddToWishlistsDialog } from "@/shared/wishlists";
@@ -94,6 +104,7 @@ const { isAuthenticated } = useUser();
 const { openPopup } = usePopup();
 
 const pageUrl: string = location.href;
+const shareProductPopoverShown = ref(false);
 
 function addToList() {
   if (!isAuthenticated.value) {
@@ -114,5 +125,10 @@ function getProductSocialShareUrl(urlTemplate: string, url: string): string {
 
 function print() {
   window.print();
+}
+
+function handlePopoverShown(state: boolean): void {
+  shareProductPopoverShown.value = state;
+  console.log(state);
 }
 </script>

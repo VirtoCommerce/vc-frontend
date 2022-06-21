@@ -22,6 +22,10 @@ import { ref, shallowRef, onUnmounted } from "vue";
 import { isDefined, onClickOutside } from "@vueuse/core";
 import { createPopper, Instance } from "@popperjs/core";
 
+const emit = defineEmits<{
+  (event: "shown", value: boolean): void;
+}>();
+
 defineProps({
   title: String,
   showCloseButton: Boolean,
@@ -59,6 +63,7 @@ function togglePopover(state?: boolean): void {
     createPopover();
     popoverInstance?.update();
   }
+  emit("shown", popoverShow.value);
 }
 
 onUnmounted(() => {
