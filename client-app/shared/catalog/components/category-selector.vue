@@ -11,10 +11,10 @@
     </template>
     <div class="text-sm">
       <div v-if="selectedCategory">
-        <div class="uppercase font-extrabold mb-2">{{ categoryLabel }}</div>
+        <div class="uppercase font-extrabold mb-1">{{ categoryLabel }}</div>
         <div class="pl-2 flex flex-col">
           <router-link
-            class="hover:bg-gray-100 pl-2"
+            class="hover:bg-gray-100 px-2 py-0.5 mt-0.5 transition-colors"
             v-for="category in categoryItems"
             :key="category.id"
             :class="{ 'font-bold': category.id === selectedCategory.id }"
@@ -29,9 +29,9 @@
   <template v-else>
     <VcCardSkeleton>
       <div class="text-sm">
-        <div class="uppercase font-extrabold mb-2 bg-gray-100">&nbsp;</div>
-        <div class="pl-4 flex flex-col">
-          <div class="bg-gray-100 pl-2 mt-1 h-3" v-for="i in 6" :key="i"></div>
+        <div class="uppercase font-extrabold mb-1 bg-gray-100">&nbsp;</div>
+        <div class="pl-2 flex flex-col">
+          <div class="bg-gray-100 px-2 mt-1" v-for="i in 6" :key="i">&nbsp;</div>
         </div>
       </div>
     </VcCardSkeleton>
