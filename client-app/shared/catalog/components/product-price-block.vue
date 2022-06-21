@@ -129,6 +129,5 @@ function print() {
 
 function handlePopoverShown(state: boolean): void {
   shareProductPopoverShown.value = state;
-  console.log(state);
 }
 </script>
