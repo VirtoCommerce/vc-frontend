@@ -53,7 +53,7 @@
             <template #content>
               <div class="flex justify-between items-center px-5 mt-1.5 mb-7 space-x-6">
                 <a
-                  class=""
+                  target="_blank"
                   :href="getProductSocialShareUrl(socialSharingService.url_template, pageUrl)"
                   v-for="socialSharingService in $cfg.social_sharing_services"
                   :key="socialSharingService.name"
