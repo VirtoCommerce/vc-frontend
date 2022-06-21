@@ -22,6 +22,7 @@
     </div>
 
     <div class="shrink-0 space-x-3 ml-auto">
+      <!-- todo: https://virtocommerce.atlassian.net/browse/ST-2256 -->
       <button
         type="button"
         class="h-7 w-7 shadow rounded text-gray-700 hover:bg-gray-100"

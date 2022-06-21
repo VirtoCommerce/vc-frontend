@@ -9,20 +9,37 @@ const menuSchema = shallowRef<Record<string, any>>();
 
 const openedMenuLinksStack = shallowRef<MenuLink[]>([]);
 
+function getChildrenItem(childrenItem: MenuLinkType) {
+  return {
+    id: childrenItem.url?.split("/").pop(),
+    title: childrenItem.title,
+    route: childrenItem.url,
+  };
+}
+
 const mainMenuLinks = computed<MenuLink[]>(() =>
   (menuSchema.value?.header.main || []).map(
     (item: Record<string, string>) =>
       ({
         id: item.id,
         route: item.route,
-        title: globals.i18n.global.t(item.title),
-        children: (menuLinkLists.value?.[item.id] || []).map((childrenItem) => ({
-          id: childrenItem.url?.split("/").pop(),
-          title: childrenItem.title,
-          route: childrenItem.url,
-        })),
+        title: globals.i18n!.global.t(item.title),
+        icon: item.icon,
+        children: (menuLinkLists.value?.[item.id] || []).map((childrenItem) => getChildrenItem(childrenItem)),
       } as MenuLink)
   )
+);
+
+const desktopCatalog = computed<MenuLink>(
+  () =>
+    ({
+      id: "all-products-menu",
+      route: {
+        name: "Catalog",
+      },
+      title: globals.i18n!.global.t("shared.layout.header.catalog"),
+      children: (menuLinkLists.value?.["all-products-menu"] || []).map((childrenItem) => getChildrenItem(childrenItem)),
+    } as MenuLink)
 );
 
 async function fetchMenus(cultureName: string) {
@@ -65,6 +82,7 @@ export default function useNavigations() {
     goMainMenu,
     selectMenuItem,
     mainMenuLinks,
+    desktopCatalog,
     openedItem: computed<MenuLink | undefined>(() => openedMenuLinksStack.value[openedMenuLinksStack.value.length - 1]),
   };
 }

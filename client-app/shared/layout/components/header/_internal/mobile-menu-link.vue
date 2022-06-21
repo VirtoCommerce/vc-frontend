@@ -3,16 +3,23 @@
     <component
       :is="isLink ? 'a' : 'div'"
       :href="isLink ? href : null"
-      :class="['flex items-center leading-none', { 'text-white': isLink && (isActive || isExactActive) }, $attrs.class]"
+      :class="[
+        'flex items-center leading-none',
+        {
+          'text-white font-extrabold': isLink && (isActive || isExactActive),
+          'font-semibold': !(isLink && (isActive || isExactActive)),
+        },
+        $attrs.class,
+      ]"
       @click.prevent="isLink ? navigate() && $emit('close') : $emit('select')"
     >
       <slot name="icon" v-bind="{ isActive, isExactActive }">
         <svg
           v-if="icon"
-          height="20"
-          width="20"
+          height="36"
+          width="36"
           :class="[
-            'shrink-0 scale-150 ml-0.5 mr-3.5',
+            'shrink-0 ml-0.5 mr-3.5',
             { 'text-[color:var(--color-primary)]': isLink && (isActive || isExactActive) },
           ]"
         >
