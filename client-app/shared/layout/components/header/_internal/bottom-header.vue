@@ -39,7 +39,7 @@
             <transition name="slide-fade-right">
               <div
                 v-if="cart?.itemsQuantity"
-                class="flex items-center rounded-xl bg-white border border-[color:var(--color-primary)] px-1.5 font-bold text-xs h-5 absolute -top-[8px] left-2"
+                class="absolute -top-[8px] left-[1.2rem] flex items-center h-5 rounded-xl bg-white border border-[color:var(--color-primary)] px-1.5 font-bold text-xs"
               >
                 {{ cart.itemsQuantity }}
               </div>
