@@ -170,7 +170,7 @@
             <td class="p-5 overflow-hidden overflow-ellipsis">
               {{ address.email }}
             </td>
-          <!-- todo: https://virtocommerce.atlassian.net/browse/ST-2256 -->
+            <!-- todo: https://virtocommerce.atlassian.net/browse/ST-2256 -->
             <td class="p-5 text-center">
               <div class="inline-block space-x-2">
                 <!-- todo: use VcButton -->

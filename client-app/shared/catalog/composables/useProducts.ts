@@ -104,11 +104,7 @@ export default (
       paramsClone.page = 0;
       paramsClone.itemsPerPage = 0;
 
-      const {
-        term_facets = [],
-        range_facets = [],
-        totalCount = 0,
-      } = await searchProducts(searchParams, { withFacets: true });
+      const { term_facets = [], range_facets = [] } = await searchProducts(searchParams, { withFacets: true });
 
       term_facets.sort((a, b) => a.label.localeCompare(b.label));
       range_facets.sort((a, b) => a.label.localeCompare(b.label));
