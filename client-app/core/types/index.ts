@@ -35,6 +35,12 @@ export interface IThemeConfig {
   presets: Record<string, IThemeConfigPreset>;
 }
 
+export interface ISocialSharingService {
+  name: string;
+  icon?: string;
+  url_template: string;
+}
+
 export interface IThemeConfigPreset {
   anonymous_access_enabled?: boolean;
   anonymous_price_enabled?: boolean;
@@ -96,6 +102,7 @@ export interface IThemeConfigPreset {
   orders_reorder_enabled?: boolean;
   orders_statuses?: string[];
 
+  social_sharing_services?: ISocialSharingService[];
   support_phone_number?: string;
 
   logo_image?: string;
