@@ -184,9 +184,12 @@
           </div>
         </VcCard>
 
-        <VcButton class="uppercase w-full" @click="printOrder">
-          {{ $t("shared.checkout.thank_you.print_order") }}
-        </VcButton>
+        <div class="flex justify-center">
+          <VcButton kind="secondary" class="!hidden lg:!inline-flex uppercase px-3" is-outline @click="printOrder">
+            <i class="fas fa-print mr-2" />
+            {{ $t("shared.checkout.thank_you.print_order") }}
+          </VcButton>
+        </div>
       </div>
     </div>
   </div>
@@ -202,7 +205,6 @@ import _ from "lodash";
 import { usePopup } from "@/shared/popup";
 import { useProducts } from "@/shared/catalog";
 import { useI18n } from "vue-i18n";
-import { PaymentMethodGroupType } from "@/shared/payment";
 
 const props = defineProps({
   orderId: {
@@ -227,13 +229,7 @@ const page = ref(1);
 
 const isNew = computed<boolean>(() => props.new === "true");
 
-const isManualPaymentMethod = computed<boolean>(
-  () => order.value?.inPayments[0]?.paymentMethod?.paymentMethodGroupType === PaymentMethodGroupType.Manual
-);
-
-const showPaymentButton = computed<boolean>(
-  () => !isManualPaymentMethod.value && !!order.value && !order.value.inPayments[0]?.isApproved
-);
+const showPaymentButton = computed<boolean>(() => !!order.value && !order.value.inPayments[0]?.isApproved);
 
 const giftItems = computed(() => order.value?.items?.filter((item) => item.isGift));
 

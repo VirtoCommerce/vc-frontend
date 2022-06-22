@@ -3,30 +3,30 @@ import { searchCategories } from "@/xapi/graphql/catalog";
 import { Category } from "@/xapi/types";
 import { Logger } from "@/core/utilities";
 import { CategoryTree } from "../types";
+import globals from "@/core/globals";
 
-const categoryTree: Ref<CategoryTree> = ref({});
+const categoryTree: Ref<CategoryTree | undefined> = ref();
 const loading: Ref<boolean> = ref(true);
 
-const itemToTree = (category: Category, isCurrent: boolean): CategoryTree => {
+const itemToTreeItem = (parent: CategoryTree, category: Category): CategoryTree => {
   return {
+    isRoot: false,
     id: category.id,
-    parent: category.parent?.id ?? "",
+    parent: parent,
+    parentId: category.parent?.id ?? "",
     label: category.name ?? "",
     slug: category.slug ?? "",
     items: [],
-    isCurrent,
     seoUrl: category.seoInfo?.semanticUrl ?? "",
     breadcrumbs: category.breadcrumbs,
   };
 };
 
-const buildCategoryTree = (parent: CategoryTree, allCats: Category[], activeCatId: string): CategoryTree => {
-  //TODO: replace to loop instead of recursion
+const buildCategoryTree = (parent: CategoryTree, allCats: Category[]): CategoryTree => {
   parent.items = allCats
-    .filter((c) => c.id !== parent.id && c.parent?.id === parent.id)
-    // .sort((a, b) => (a.outline ?? "").localeCompare(b.outline ?? ""))
+    .filter((categoryItem) => categoryItem.id !== parent.id && categoryItem.parent?.id === parent.id)
     .map((c) => {
-      return buildCategoryTree(itemToTree(c, activeCatId === c.id), allCats, activeCatId);
+      return buildCategoryTree(itemToTreeItem(parent, c), allCats);
     });
 
   return parent;
@@ -55,13 +55,21 @@ function searchCategoryByKey(
   return category;
 }
 
-async function loadCategoriesTree(activeCatId: string) {
+async function loadCategoriesTree() {
   const MAX_CATEGORIES = 100;
   loading.value = true;
 
+  const rootCategoryInitialValue: CategoryTree = {
+    isRoot: true,
+    label: globals.i18n.global.t("common.labels.catalog"),
+    items: [],
+    slug: "catalog",
+    breadcrumbs: [],
+  };
+
   try {
     const { items = [] } = await searchCategories(MAX_CATEGORIES, 1);
-    categoryTree.value = buildCategoryTree({}, items, activeCatId);
+    categoryTree.value = buildCategoryTree(rootCategoryInitialValue, items);
   } catch (e) {
     Logger.error("useCategories.loadCategoriesTree", e);
     throw e;
@@ -74,10 +82,15 @@ export default () => {
   const selectedCategory: Ref<CategoryTree | undefined> = ref();
 
   function selectCategoryByKey(key: keyof CategoryTree, value: any) {
-    selectedCategory.value = value ? searchCategoryByKey(categoryTree.value, key, value) : undefined;
+    selectedCategory.value = value ? searchCategoryByKey(categoryTree.value!, key, value) : undefined;
+  }
+
+  function selectRoot() {
+    selectedCategory.value = categoryTree.value;
   }
 
   return {
+    selectRoot,
     selectCategoryByKey,
     loadCategoriesTree,
     loading: readonly(loading),

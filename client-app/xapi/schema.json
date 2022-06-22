@@ -2871,6 +2871,21 @@
             "deprecationReason": null
           },
           {
+            "name": "availablePaymentMethods",
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "OrderPaymentMethodType",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "cancelReason",
             "args": [],
             "type": {
@@ -2900,8 +2915,8 @@
               "name": "String",
               "ofType": null
             },
-            "isDeprecated": false,
-            "deprecationReason": null
+            "isDeprecated": true,
+            "deprecationReason": "Use StoreId instead"
           },
           {
             "name": "comment",
@@ -3075,8 +3090,8 @@
               "name": "String",
               "ofType": null
             },
-            "isDeprecated": false,
-            "deprecationReason": null
+            "isDeprecated": true,
+            "deprecationReason": "Use CustomerId instead"
           },
           {
             "name": "employeeName",
@@ -3086,8 +3101,8 @@
               "name": "String",
               "ofType": null
             },
-            "isDeprecated": false,
-            "deprecationReason": null
+            "isDeprecated": true,
+            "deprecationReason": "Use CustomerName instead"
           },
           {
             "name": "fee",
@@ -3162,7 +3177,41 @@
           },
           {
             "name": "inPayments",
-            "args": [],
+            "args": [
+              {
+                "name": "after",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "first",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "sort",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -6294,6 +6343,46 @@
       },
       {
         "kind": "INPUT_OBJECT",
+        "name": "InputAddOrUpdateOrderPaymentType",
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "orderId",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "payment",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "INPUT_OBJECT",
+                "name": "InputOrderPaymentType",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
         "name": "InputAddWishlistBulkItemType",
         "fields": null,
         "inputFields": [
@@ -9270,6 +9359,236 @@
       },
       {
         "kind": "INPUT_OBJECT",
+        "name": "InputOrderAddressType",
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "addressType",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "city",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalString",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "countryCode",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalString",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "countryName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalString",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "email",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalString",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "firstName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalString",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "key",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalString",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "lastName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalString",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "line1",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalString",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "line2",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalString",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "middleName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalString",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "name",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalString",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "organization",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalString",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "outerId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalString",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "phone",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalString",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "postalCode",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalString",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "regionId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalString",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "regionName",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalString",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "zip",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalString",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
         "name": "InputOrderBankCardInfoType",
         "fields": null,
         "inputFields": [
@@ -9358,6 +9677,108 @@
                 "name": "String",
                 "ofType": null
               }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "InputOrderPaymentType",
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "amount",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalDecimal",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "billingAddress",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "InputOrderAddressType",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "currency",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalString",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "dynamicProperties",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "INPUT_OBJECT",
+                "name": "InputDynamicPropertyValueType",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalString",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "outerId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalString",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "paymentGatewayCode",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalString",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "price",
+            "type": {
+              "kind": "SCALAR",
+              "name": "OptionalDecimal",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -14242,6 +14663,33 @@
             "deprecationReason": null
           },
           {
+            "name": "addOrUpdateOrderPayment",
+            "args": [
+              {
+                "name": "command",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "InputAddOrUpdateOrderPaymentType",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "CustomerOrderType",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "addWishlistBulkItem",
             "args": [
               {
@@ -17160,6 +17608,17 @@
             "deprecationReason": null
           },
           {
+            "name": "deliveryDate",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "DateTime",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "discountAmount",
             "args": [],
             "type": {
@@ -17634,6 +18093,28 @@
             "type": {
               "kind": "OBJECT",
               "name": "MoneyType",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "trackingNumber",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "trackingUrl",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null
             },
             "isDeprecated": false,
