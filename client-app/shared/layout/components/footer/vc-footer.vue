@@ -93,7 +93,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcImage } from "@/components";
 import { version } from "../../../../../package.json";
 import FooterLink from "./_internal/footer-link.vue";
 import { DEVELOPMENT } from "@core/constants";

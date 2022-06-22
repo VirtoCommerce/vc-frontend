@@ -2,7 +2,7 @@
   <div v-if="order">
     <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
-    <VcBreadcrumbs :items="breadcrumbs" class="mx-5 md:mx-0" />
+    <VcBreadcrumbs v-if="!isMobile" :items="breadcrumbs" class="mx-5 md:mx-0" />
 
     <!-- Title block -->
     <div class="flex justify-between items-center mx-5 md:mx-0 -mb-3">
@@ -15,7 +15,7 @@
       </h2>
     </div>
 
-    <div class="flex mx-5 md:mx-0 gap-x-4">
+    <div class="md:flex mx-5 md:mx-0 gap-x-4">
       <div class="text-sm">
         <span class="font-bold">
           {{ $t("pages.account.order_details.status_label") }}
@@ -24,12 +24,18 @@
         {{ order?.status }}
       </div>
 
+      <div class="text-sm truncate" v-if="order?.purchaseOrderNumber">
+        <span class="font-bold">
+          {{ $t("pages.account.order_details.purchase_order_label") }}
+        </span>
+        {{ order?.purchaseOrderNumber }}
+      </div>
+
       <div class="text-sm">
         <span class="font-bold">
           {{ $t("pages.account.order_details.placed_on_label") }}
         </span>
-
-        {{ moment(order?.createdDate).format("MMM DD, YYYY HH:mm:ss A") }}
+        {{ $d(order?.createdDate, "long") }}
       </div>
     </div>
 
@@ -178,9 +184,12 @@
           </div>
         </VcCard>
 
-        <VcButton class="uppercase w-full" @click="printOrder">
-          {{ $t("shared.checkout.thank_you.print_order") }}
-        </VcButton>
+        <div class="flex justify-center">
+          <VcButton kind="secondary" class="!hidden lg:!inline-flex uppercase px-3" is-outline @click="printOrder">
+            <i class="fas fa-print mr-2" />
+            {{ $t("shared.checkout.thank_you.print_order") }}
+          </VcButton>
+        </div>
       </div>
     </div>
   </div>
@@ -189,16 +198,13 @@
 <script setup lang="ts">
 import { OrderSummary, ProductCard, AcceptedGifts } from "@/shared/checkout";
 import { computed, PropType, ref, watchEffect } from "vue";
-import { VcCard, VcImage, VcPagination, VcButton, VcSection, VcBreadcrumbs, IBreadcrumbs } from "@/components";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { BackButtonInHeader } from "@/shared/layout";
 import { ReorderInfo, useUserOrder } from "@/shared/account";
-import moment from "moment";
 import _ from "lodash";
 import { usePopup } from "@/shared/popup";
 import { useProducts } from "@/shared/catalog";
 import { useI18n } from "vue-i18n";
-import { PaymentMethodGroupType } from "@/shared/payment";
 
 const props = defineProps({
   orderId: {
@@ -223,13 +229,7 @@ const page = ref(1);
 
 const isNew = computed<boolean>(() => props.new === "true");
 
-const isManualPaymentMethod = computed<boolean>(
-  () => order.value?.inPayments[0]?.paymentMethod?.paymentMethodGroupType === PaymentMethodGroupType.Manual
-);
-
-const showPaymentButton = computed<boolean>(
-  () => !isManualPaymentMethod.value && !!order.value && !order.value.inPayments[0]?.isApproved
-);
+const showPaymentButton = computed<boolean>(() => !!order.value && !order.value.inPayments[0]?.isApproved);
 
 const giftItems = computed(() => order.value?.items?.filter((item) => item.isGift));
 

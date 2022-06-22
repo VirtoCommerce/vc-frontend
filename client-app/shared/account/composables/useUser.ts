@@ -1,7 +1,8 @@
+import { AccountCreationResultType, IdentityResultType, Organization, UserType } from "@/xapi/graphql/types";
 import { computed, readonly, ref } from "vue";
 import { eagerComputed } from "@vueuse/core";
-import { createContact, createOrganization, createUser, getMe, updatePersonalData } from "@/core/api/graphql/account";
-import { IdentityResultType, Organization, UserType } from "@core/api/graphql/types";
+import { getMe, registerAccount, updatePersonalData } from "@/xapi/graphql/account";
+
 import { Logger } from "@core/utilities";
 import { useFetch } from "@core/composables";
 import {
@@ -87,25 +88,26 @@ export default () => {
     }
   }
 
-  async function registerUser(payload: SignMeUp): Promise<IdentityResultType> {
+  async function registerUser(payload: SignMeUp): Promise<AccountCreationResultType> {
     const { storeId } = globals;
 
     try {
       loading.value = true;
-      const contact = await createContact({
-        firstName: payload.firstName as string,
-        lastName: payload.lastName as string,
-        name: `${payload.firstName} ${payload.lastName}`,
-        emails: [payload.email],
-      });
-      return await createUser({
-        userName: payload.userName,
-        password: payload.password,
-        email: payload.email,
-        memberId: contact.id,
-        userType: "Customer",
+
+      const resultData = await registerAccount({
         storeId,
+        account: {
+          username: payload.userName,
+          password: payload.password,
+          email: payload.email,
+        },
+        contact: {
+          firstName: payload.firstName,
+          lastName: payload.lastName,
+        },
       });
+
+      return resultData.result!;
     } catch (e) {
       Logger.error("useUser.registerUser", e);
       throw e;
@@ -114,29 +116,29 @@ export default () => {
     }
   }
 
-  async function registerOrganization(payload: RegisterOrganization): Promise<IdentityResultType> {
+  async function registerOrganization(payload: RegisterOrganization): Promise<AccountCreationResultType> {
     const { storeId } = globals;
 
     try {
       loading.value = true;
-      const createdOrganization = await createOrganization({
-        name: payload.organizationName,
-      });
-      const contact = await createContact({
-        firstName: payload.firstName as string,
-        lastName: payload.lastName as string,
-        name: `${payload.firstName} ${payload.lastName}`,
-        emails: [payload.email],
-        organizations: [createdOrganization.id],
-      });
-      return await createUser({
-        userName: payload.userName,
-        password: payload.password,
-        email: payload.email,
-        memberId: contact.id,
-        userType: "Customer",
+
+      const resultData = await registerAccount({
         storeId,
+        account: {
+          username: payload.userName,
+          password: payload.password,
+          email: payload.email,
+        },
+        contact: {
+          firstName: payload.firstName as string,
+          lastName: payload.lastName as string,
+        },
+        organization: {
+          name: payload.organizationName as string,
+        },
       });
+
+      return resultData.result!;
     } catch (e) {
       Logger.error("useUser.registerOrganization", e);
       throw e;

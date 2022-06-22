@@ -2,11 +2,11 @@ import { Ref, ref, computed } from "vue";
 import {
   addOrUpdateCartShipment,
   addOrUpdateCartPayment,
-  createOrderFromCart,
   getAvailPaymentMethods,
   getAvailShippingMethods,
   removeCart,
-} from "@core/api/graphql/cart";
+} from "@/xapi/graphql/cart";
+import { createOrderFromCart } from "@/xapi/graphql/orders";
 import {
   InputShipmentType,
   InputPaymentType,
@@ -17,7 +17,7 @@ import {
   ShipmentType,
   PaymentType,
   CustomerOrderType,
-} from "@core/api/graphql/types";
+} from "@/xapi/graphql/types";
 import { useCart } from ".";
 
 const addresses: CartAddressType[] = [

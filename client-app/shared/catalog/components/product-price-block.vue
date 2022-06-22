@@ -12,7 +12,7 @@
 
     <div class="flex text-center">
       <div
-        class="flex items-center justify-center flex-1 select-none py-4 px-1 border-r space-x-2"
+        class="flex items-center justify-center select-none py-4 px-1 border-r space-x-2 w-2/5"
         :class="{ 'cursor-pointer hover:bg-gray-100': isAuthenticated }"
         :title="
           !isAuthenticated
@@ -30,34 +30,68 @@
         </span>
       </div>
 
-      <div
-        class="flex items-center justify-center flex-1 select-none py-4 px-1 border-r space-x-2 cursor-pointer hover:bg-gray-100"
-      >
-        <i class="fas fa-envelope fa-xl text-[color:var(--color-primary)]" />
-        <span class="text-sm text-blue-800 font-bold">
-          {{ $t("shared.catalog.product_details.price_block.send_email_button") }}
-        </span>
-      </div>
+      <div class="flex w-3/5">
+        <div class="w-1/3">
+          <VcPopover
+            :title="$t('shared.catalog.product_details.share_product_label')"
+            :showCloseButton="true"
+            @shown="handlePopoverShown"
+          >
+            <template #trigger>
+              <div
+                class="items-center justify-center select-none py-4 px-1 border-r space-x-2 cursor-pointer hover:bg-gray-100"
+              >
+                <i
+                  class="fas fa-share-square fa-xl"
+                  :class="{
+                    'text-[color:var(--color-primary)]': !shareProductPopoverShown,
+                    'text-gray-400': shareProductPopoverShown,
+                  }"
+                />
+              </div>
+            </template>
+            <template #content>
+              <div class="flex justify-between items-center px-5 mt-1.5 mb-7 space-x-6">
+                <a
+                  target="_blank"
+                  :href="getProductSocialShareUrl(socialSharingService.url_template, pageUrl)"
+                  v-for="socialSharingService in $cfg.social_sharing_services"
+                  :key="socialSharingService.name"
+                >
+                  <img class="rounded-sm" width="40" height="40" :src="socialSharingService.icon" />
+                </a>
+              </div>
+            </template>
+          </VcPopover>
+        </div>
 
-      <div
-        class="flex items-center justify-center flex-1 select-none py-4 px-1 space-x-2 cursor-pointer hover:bg-gray-100"
-        @click="print()"
-      >
-        <i class="fas fa-print text-[color:var(--color-primary)]" />
-        <span class="text-sm text-blue-800 font-bold">
-          {{ $t("shared.catalog.product_details.price_block.print_button") }}
-        </span>
+        <div class="w-1/3">
+          <div class="items-center justify-center select-none py-4 px-1 border-r space-x-2 hover:bg-gray-100">
+            <i class="fas fa-envelope fa-xl text-gray-400" />
+          </div>
+        </div>
+
+        <div class="w-1/3">
+          <div
+            class="items-center justify-center flex-1 select-none py-4 px-1 space-x-2 cursor-pointer hover:bg-gray-100"
+            @click="print()"
+          >
+            <i class="fas fa-print text-[color:var(--color-primary)]" />
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Product } from "@/core/api/graphql/types";
-import { PropType } from "vue";
+import { Product } from "@/xapi/graphql/types";
+import { PropType, ref } from "vue";
 import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddToWishlistsDialog } from "@/shared/wishlists";
+import { VcPopover } from "@/ui-kit/components";
+import { stringFormat } from "@core/utilities";
 
 const props = defineProps({
   product: {
@@ -69,8 +103,13 @@ const props = defineProps({
 const { isAuthenticated } = useUser();
 const { openPopup } = usePopup();
 
+const pageUrl: string = location.href;
+const shareProductPopoverShown = ref(false);
+
 function addToList() {
-  if (!isAuthenticated.value) return;
+  if (!isAuthenticated.value) {
+    return;
+  }
 
   openPopup({
     component: AddToWishlistsDialog,
@@ -80,7 +119,15 @@ function addToList() {
   });
 }
 
+function getProductSocialShareUrl(urlTemplate: string, url: string): string {
+  return stringFormat(urlTemplate, url);
+}
+
 function print() {
   window.print();
+}
+
+function handlePopoverShown(state: boolean): void {
+  shareProductPopoverShown.value = state;
 }
 </script>

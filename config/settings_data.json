@@ -8,6 +8,8 @@
 
       "search_min_chars": 3,
 
+      "support_phone_number": "+31 416 652 803",
+
       "checkout_comment_enabled": true,
       "checkout_purchase_order_enabled": true,
       "checkout_coupon_enabled": true,
@@ -16,8 +18,34 @@
       "logo_image": "/static/images/common/logo.svg",
       "logo_inverted_image": "/static/images/common/logo-white.svg",
       "favicon_image": "/static/icons/favicon-16x16.png",
+      "homepage_background_image": "/static/images/home/main-banner.webp",
+
+      "image_tools_enabled": true,
 
       "orders_statuses": ["New", "Processing", "Pending", "Cancelled", "Completed"],
+
+      "social_sharing_services": [
+        {
+          "name": "Facebook",
+          "icon": "/static/icons/social/facebook-icon.svg",
+          "url_template": "https://www.facebook.com/sharer.php?u={0}"
+        },
+        {
+          "name": "Twitter",
+          "icon": "/static/icons/social/twitter-icon.svg",
+          "url_template": "https://twitter.com/share?url={0}"
+        },
+        {
+          "name": "Pinterest",
+          "icon": "/static/icons/social/pinterest-icon.svg",
+          "url_template": "https://pinterest.com/pin/create/bookmarklet/?url={0}"
+        },
+        {
+          "name": "Telegram",
+          "icon": "/static/icons/social/telegram-icon.svg",
+          "url_template": "https://t.me/share/url?url={0}"
+        }
+      ],
 
       "color_primary": "#F0AD4E",
       "color_primary_hover": "#EC951A",
@@ -46,6 +74,7 @@
       "color_warning": "#FFBB0D",
       "color_warning_hover": "#EEAA00",
       "color_price": "#3C763D",
+      "color_sale_badge_bg": "rgba(240, 60, 3, 1)",
       "color_mobile_menu_bg": "#22334D",
       "color_mobile_menu_link": "#C2C9E0",
       "color_header_top_bg": "#292D3B",
@@ -55,12 +84,13 @@
       "color_header_bottom_bg": "#FFFFFF",
       "color_header_bottom_text": "#292D3B",
       "color_header_bottom_link": "#827869",
-      "color_header_bottom_link_hover": "",
+      "color_header_bottom_link_hover": "rgba(31, 34, 44, 1)",
       "color_header_bottom_link_active": "#292D3B",
       "color_header_bottom_dropdown_bg": "#FFFFFF",
       "color_header_bottom_dropdown_link": "#645D54",
       "color_header_bottom_dropdown_link_hover": "",
       "color_search_bar_bg": "rgba(46, 41, 59, 0.9)",
+      "color_search_bar_reset_button": "rgb(192, 192, 192)",
       "color_footer_top_bg": "#292D3B",
       "color_footer_top_text": "#FFFFFF",
       "color_footer_top_link": "#A0A0A0",
@@ -69,7 +99,12 @@
       "color_footer_bottom_bg": "#1F222C",
       "color_footer_bottom_text": "#FFFFFF",
       "color_footer_bottom_link": "#66B9D8",
-      "color_footer_bottom_link_hover": ""
+      "color_footer_bottom_link_hover": "",
+      "color_in_stock_available": "#3C763D",
+      "color_in_stock_available_bg": "#E8FBE8",
+      "color_in_stock_out": "#F14E4E",
+      "color_in_stock_out_bg": "#FFEDED",
+      "color_in_stock_low_bg": "#FFF6E9"
     }
   }
 }

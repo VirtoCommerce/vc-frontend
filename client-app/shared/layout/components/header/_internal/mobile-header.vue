@@ -10,22 +10,31 @@
         <!-- region Left slot -->
         <component v-if="customSlots.left" :is="customSlots.left" />
 
-        <router-link v-else to="/" class="px-6">
-          <VcImage :src="$cfg.logo_image" class="h-9" lazy />
-        </router-link>
+        <div v-else class="flex items-center h-full px-6">
+          <button class="h-full mr-6" @click="mobileMenuVisible = true">
+            <i class="fas fa-bars text-2xl text-[color:var(--color-primary)]" />
+          </button>
+          <router-link to="/">
+            <VcImage :src="$cfg.logo_image" class="h-8" lazy />
+          </router-link>
+        </div>
         <!-- endregion Left slot -->
 
         <!-- region Right slot -->
         <component v-if="customSlots.right" :is="customSlots.right" />
 
-        <div v-else class="flex items-center h-full pr-3">
-          <button v-show="!searchBarVisible" class="h-full px-3" @click="showSearchBar">
-            <i class="fas fa-search text-lg text-[color:var(--color-primary)]" />
+        <div v-else class="flex items-center h-full pr-8">
+          <a class="pr-4 pt-0.5" :href="`tel:${$cfg.support_phone_number}`" v-if="$cfg.support_phone_number">
+            <i class="fas fa-phone-alt text-xl text-[color:var(--color-primary)]"></i>
+          </a>
+
+          <button v-show="!searchBarVisible" class="h-full pr-4" @click="showSearchBar">
+            <i class="fas fa-search text-2xl text-[color:var(--color-primary)]" />
           </button>
 
-          <button class="h-full px-3" @click="mobileMenuVisible = true">
-            <i class="fas fa-bars text-2xl text-[color:var(--color-primary)]" />
-          </button>
+          <router-link to="/checkout">
+            <i class="fas fa-shopping-cart text-xl text-[color:var(--color-primary)]" />
+          </router-link>
         </div>
         <!-- endregion Right slot -->
       </div>
@@ -70,7 +79,6 @@
 <script setup lang="ts">
 import { computed, ref, StyleValue, watchEffect } from "vue";
 import { RouteLocationRaw } from "vue-router";
-import { VcButton, VcImage } from "@/components";
 import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
 import MobileMenu from "./mobile-menu.vue";
 import { useRouteQueryParam } from "@core/composables";

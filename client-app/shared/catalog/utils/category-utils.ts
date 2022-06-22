@@ -1,6 +1,7 @@
-import { Category } from "@core/api/graphql/types";
+import { CategoryTree } from "@/shared/catalog";
+import { Category } from "@/xapi/graphql/types";
 import { RouteLocationRaw } from "vue-router";
 
-export function getCategoryRoute(category: Category): RouteLocationRaw {
+export function getCategoryRoute(category: Category | CategoryTree): RouteLocationRaw {
   return category.slug ? `/${category.slug}` : { name: "Category", params: { categoryId: category.id } };
 }

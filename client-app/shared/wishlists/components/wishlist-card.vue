@@ -22,6 +22,7 @@
     </div>
 
     <div class="shrink-0 space-x-3 ml-auto">
+      <!-- todo: https://virtocommerce.atlassian.net/browse/ST-2256 -->
       <button
         type="button"
         class="h-7 w-7 shadow rounded text-gray-700 hover:bg-gray-100"
@@ -45,8 +46,7 @@
 
 <script setup lang="ts">
 import { PropType } from "vue";
-import { VcButton } from "@/components";
-import { WishlistType } from "@core/api/graphql/types";
+import { WishlistType } from "@/xapi/graphql/types";
 
 defineEmits(["add-to-cart", "settings", "remove"]);
 

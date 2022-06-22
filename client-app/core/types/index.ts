@@ -1,4 +1,4 @@
-import { CartAddressType, MemberAddressType, OrderAddressType } from "@core/api/graphql/types";
+import { CartAddressType, MemberAddressType, OrderAddressType } from "@/xapi/graphql/types";
 import { LocationQueryValue } from "vue-router";
 
 export * from "./currency";
@@ -35,6 +35,12 @@ export interface IThemeConfig {
   presets: Record<string, IThemeConfigPreset>;
 }
 
+export interface ISocialSharingService {
+  name: string;
+  icon?: string;
+  url_template: string;
+}
+
 export interface IThemeConfigPreset {
   anonymous_access_enabled?: boolean;
   anonymous_price_enabled?: boolean;
@@ -53,6 +59,7 @@ export interface IThemeConfigPreset {
   header_menu_link_list?: string;
   products_menu_link_list?: string;
   footer_menu_link_list?: string;
+  image_tools_enabled?: boolean;
 
   registration_enabled?: boolean;
   social_auth_google?: boolean;
@@ -95,9 +102,13 @@ export interface IThemeConfigPreset {
   orders_reorder_enabled?: boolean;
   orders_statuses?: string[];
 
+  social_sharing_services?: ISocialSharingService[];
+  support_phone_number?: string;
+
   logo_image?: string;
   logo_inverted_image?: string;
   favicon_image?: string;
+  homepage_background_image?: string;
   primary_font_family?: string;
   secondary_font_family?: string;
   color_primary?: string;

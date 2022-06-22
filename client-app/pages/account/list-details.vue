@@ -1,6 +1,6 @@
 <template>
   <div>
-    <VcBreadcrumbs :items="breadcrumbs" class="mx-5 md:mx-0 lg:hidden" />
+    <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
     <!-- Title block -->
     <div class="flex justify-between items-center mx-5 md:mx-0">
@@ -106,7 +106,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcButton, VcBreadcrumbs, IBreadcrumbs, VcPagination, VcEmptyView, VcImage } from "@/components";
 import { AddToCart } from "@/shared/cart";
 import {
   WishlistProductItem,
@@ -115,14 +114,13 @@ import {
   AddOrUpdateWishlistDialog,
   DeleteWishlistProductDialog,
 } from "@/shared/wishlists";
-import { LineItemType } from "@core/api/graphql/types";
+import { LineItemType } from "@/xapi/graphql/types";
 import { ProductCardGrid, ProductSkeletonGrid } from "@/shared/catalog";
-import { useI18n } from "vue-i18n";
 import { usePopup } from "@/shared/popup";
 import { computed, ref, watchEffect } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { BackButtonInHeader } from "@/shared/layout";
 
-const { t } = useI18n();
 const { openPopup } = usePopup();
 const { loading, list, fetchWishList } = useWishlists();
 
@@ -132,13 +130,6 @@ const props = defineProps({
     default: "",
   },
 });
-
-const breadcrumbs: IBreadcrumbs[] = [
-  { title: t("common.links.home"), route: { name: "Home" } },
-  { title: t("common.links.account"), route: { name: "Account" } },
-  { title: t("shared.account.navigation.links.your_lists"), route: { name: "Lists" } },
-  { title: t("shared.account.navigation.links.list_details") },
-];
 
 const itemsPerPage = ref(6);
 const page = ref(1);

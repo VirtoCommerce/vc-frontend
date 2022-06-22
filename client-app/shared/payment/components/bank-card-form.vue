@@ -75,7 +75,6 @@ import { PropType, ref, watch } from "vue";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import { clone } from "lodash";
-import { VcInput } from "@/components";
 import { BankCardErrorsType, BankCardType } from "@/shared/payment";
 import { useI18n } from "vue-i18n";
 
@@ -135,7 +134,7 @@ watch(
 
 watch(
   () => meta.value.valid,
-  () => emit("update:valid", meta.value.valid),
+  (value) => emit("update:valid", value),
   { immediate: true }
 );
 </script>

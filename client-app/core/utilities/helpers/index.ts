@@ -51,3 +51,7 @@ export function dateToIsoDateString(date: Date | undefined) {
 export function nameOf<T>(key: keyof T, _instance?: T): keyof T {
   return key;
 }
+
+export function stringFormat(template: string, ...args: string[]): string {
+  return template.replace(/{(\d+)}/g, (match: string, num: number) => args[num] || match);
+}

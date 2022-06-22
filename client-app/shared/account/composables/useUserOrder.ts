@@ -1,7 +1,7 @@
 import { Logger } from "@core/utilities";
 import { computed, ref, Ref } from "vue";
-import { CustomerOrderType, QueryOrderArgs } from "@/core/api/graphql/types";
-import { getMyOrder } from "@/core/api/graphql/account";
+import { CustomerOrderType, InputAddOrUpdateOrderPaymentType, QueryOrderArgs } from "@/xapi/graphql/types";
+import { addOrUpdateOrderPayment, getOrder } from "@/xapi/graphql/orders";
 
 const loading: Ref<boolean> = ref(false);
 const order: Ref<CustomerOrderType | null> = ref(null);
@@ -16,7 +16,7 @@ export default () => {
     loading.value = true;
 
     try {
-      order.value = await getMyOrder(payload);
+      order.value = await getOrder(payload);
 
       if (order.value.items && order.value.items.length > 0) {
         pages.value = Math.ceil(order.value.items.length / itemsPerPage.value);
@@ -33,6 +33,23 @@ export default () => {
     order.value = null;
   }
 
+  async function addOrUpdatePayment(payload: InputAddOrUpdateOrderPaymentType, reloadOrder = true) {
+    loading.value = true;
+
+    try {
+      await addOrUpdateOrderPayment(payload);
+    } catch (e) {
+      Logger.error(`useUserOrder.${addOrUpdatePayment.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+
+    if (reloadOrder) {
+      await loadOrder({ id: payload.orderId });
+    }
+  }
+
   return {
     loading: computed(() => loading.value),
     pages: computed(() => pages.value),
@@ -42,5 +59,6 @@ export default () => {
     billingAddress: computed(() => order.value?.inPayments?.[0]?.billingAddress),
     loadOrder,
     clearOrder,
+    addOrUpdatePayment,
   };
 };

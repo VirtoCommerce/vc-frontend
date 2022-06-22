@@ -1,10 +1,10 @@
 <template>
-  <div v-click-outside="() => open && hideList()" class="relative select-none">
+  <div v-click-outside="() => open && hideList()" class="relative select-none text-[13px]">
     <button
       class="relative py-3 pr-3.5 appearance-none leading-none text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
       @click="toggle"
     >
-      <span class="text-white mr-1.5">
+      <span class="text-white mr-1">
         {{ $t("shared.layout.currency_selector.label") }}
       </span>
 

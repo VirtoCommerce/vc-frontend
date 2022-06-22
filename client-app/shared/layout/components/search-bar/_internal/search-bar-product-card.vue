@@ -1,7 +1,11 @@
 <template>
-  <div class="flex flex-row gap-2">
+  <div class="flex flex-row gap-x-2.5">
     <!-- Product image -->
-    <router-link :to="link" class="shrink-0 w-20 h-20 border border-gray-200" @click="$emit('link-click', $event)">
+    <router-link
+      :to="link"
+      class="shrink-0 w-[4.75rem] h-[4.75rem] border border-gray-200 p-1"
+      @click="$emit('link-click', $event)"
+    >
       <VcImage
         :src="product.imgSrc"
         :alt="product.name"
@@ -11,27 +15,23 @@
       />
     </router-link>
 
-    <div class="flex flex-col justify-start space-y-2 overflow-hidden">
+    <div class="flex flex-col justify-start space-y-[0.7rem] overflow-hidden">
       <!-- Product title -->
       <router-link
         :to="link"
-        class="shrink-0 h-8 text-[color:var(--color-link)] font-extrabold text-sm leading-tight line-clamp-2"
+        class="shrink-0 h-8 text-[color:var(--color-link)] font-extrabold text-[13px] leading-[1.05rem] line-clamp-2"
         @click="$emit('link-click', $event)"
       >
         {{ product.name }}
       </router-link>
 
       <!-- Product props -->
-      <div class="text-xs overflow-hidden">
-        <p class="truncate">
-          <span class="font-bold mr-1">{{ $t("common.labels.item") }}</span>
-          <span>{{ product.code }}</span>
-        </p>
+      <div class="text-xs overflow-hidden grid grid-cols-[auto_1fr] leading-[1.063rem]">
+        <span class="font-bold pr-3.5">{{ $t("common.labels.item") }}</span>
+        <span class="truncate">{{ product.code }}</span>
 
-        <p class="truncate flex">
-          <span class="font-bold mr-1">{{ $t("common.labels.price") }}</span>
-          <VcItemPrice :value="product.price" />
-        </p>
+        <span class="font-bold pr-3.5">{{ $t("common.labels.price") }}</span>
+        <VcItemPrice :value="product.price" />
       </div>
     </div>
   </div>
@@ -39,8 +39,7 @@
 
 <script setup lang="ts">
 import { computed, PropType } from "vue";
-import { VcImage, VcItemPrice } from "@/components";
-import { Product as ProductType } from "@/core/api/graphql/types";
+import { Product as ProductType } from "@/xapi/graphql/types";
 import { RouteLocationRaw } from "vue-router";
 import { getProductRoute } from "@/shared/catalog";
 

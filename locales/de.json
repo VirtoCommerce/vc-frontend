@@ -45,7 +45,8 @@
       "date": "Datum",
       "sort_by": "Sortieren nach:",
       "sku": "Artikel #",
-      "item": "Artikel"
+      "item": "Artikel",
+      "catalog": "Katalog"
     },
     "suffixes": {
       "per_item": "/ jeder",
@@ -79,21 +80,29 @@
       "header": {
         "top_header": {
           "link_dashboard": "@:common.links.dashboard",
-          "link_order_history": "Bestellverlauf",
-          "link_lists": "Listen"
+          "link_contact_us": "Kontaktiere uns",
+          "call_us_label": "Call us: "
         },
         "link_sign_in": "Einloggen",
         "link_register_now": "Register now",
         "link_logout": "Ausloggen",
+        "catalog": "Catalogue",
         "menu": {
-          "home": "@:common.links.home",
-          "all_products": "Alle Produkte",
           "bulk": "Großauftragsblock",
           "compare": "Vergleichen",
           "cart": "Wagen",
-          "contact_us": "Kontaktiere uns"
+          "lists": "Listen",
+          "orders": "Bestellverlauf"
         },
         "mobile": {
+          "menu": {
+            "home": "Dashboard",
+            "all_products": "Catalog",
+            "bulk": "Bulk order pad",
+            "compare": "Compare products",
+            "cart": "Cart",
+            "contact_us": "Kontaktiere uns"
+          },
           "my_account": "Mein Konto",
           "account_menu": {
             "dashboard": "@:common.links.dashboard",
@@ -185,6 +194,7 @@
         "user_name_placeholder": "@:common.labels.user_name",
         "password_label": "@:common.labels.password",
         "password_placeholder": "@:common.labels.password",
+        "remember_me_label": "Remember me",
         "forgot_password_link": "Haben Sie Ihr Passwort vergessen?",
         "login_button": "Einloggen",
         "registration_button": "Registrierung",
@@ -286,6 +296,7 @@
         "technical_specs_block_title": "technical specs",
         "variations_block_title": "Customize your order",
         "description_block_title": "Description",
+        "share_product_label": "Share product",
         "price_block": {
           "title": "Price & Delivery",
           "add_to_list_button": "Add to list",
@@ -372,7 +383,7 @@
         "email_label": "@:common.labels.email{':'}",
         "print_order": "Print order",
         "products_section": {
-          "title": "My purchased products"
+          "title": "Purchased products"
         },
         "comment_section": {
           "title": "Order comment"
@@ -670,6 +681,7 @@
         "title": "Order #{0}",
         "created_title": "Order completed",
         "status_label": "@:common.labels.status{':'} ",
+        "purchase_order_label": "Purchase order: ",
         "placed_on_label": "Placed on: ",
         "products_section": {
           "title": "Purchased products"
@@ -784,7 +796,7 @@
         "no_button": "No"
       },
       "products_section": {
-        "title": "My products",
+        "title": "Products",
         "update_all_link_label": "If you changed multiple quantities,",
         "update_all_link": "Update All",
         "clear_cart_button": "Clear all"
