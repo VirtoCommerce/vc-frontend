@@ -1,6 +1,6 @@
 <template>
   <div class="bg-white rounded border shadow-sm">
-    <div v-if="withHeader" class="px-6 py-3 border-b font-extrabold text-sm">
+    <div class="px-6 py-3 border-b font-extrabold text-sm" v-if="withHeader">
       <div class="flex items-center">
         <slot name="header">
           <div class="flex-grow text-xl font-extrabold uppercase">{{ title }}</div>
@@ -43,6 +43,11 @@ defineProps({
   fullWidthContent: {
     type: Boolean,
     default: false,
+  },
+
+  withHeader: {
+    type: Boolean,
+    default: true,
   },
 });
 

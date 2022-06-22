@@ -25,11 +25,13 @@
             :keyword="keywordQueryParam"
             :filters="mobileFilters"
             :loading="loading || facetsLoading"
+            :show-brunches-popup="showBranchesPopup"
             @search="
               onSearchStart($event);
               hideMobileSidebar();
             "
             @change="onMobileFilterChanged($event)"
+            @change-branch-checkbox="toggleBranchesPopup()"
           />
           <div class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
             <div class="flex space-x-4">
@@ -104,18 +106,31 @@
             <!-- View options -->
             <ViewMode v-model:mode="viewMode" class="hidden md:inline-flex mr-6" />
 
-            <!-- Sorting -->
-            <div class="flex items-center flex-grow md:flex-grow-0 z-10 ml-auto">
-              <span class="hidden lg:block shrink-0 mr-2" v-t="'pages.catalog.sort_by_label'"></span>
+            <div class="flex ml-auto space-x-10">
+              <VcCheckbox
+                v-model="showBranchesPopup"
+                :disabled="loading"
+                @change="toggleBranchesPopup"
+                v-if="!isMobile && $cfg.product_compare_enabled"
+              >
+                <span class="text-gray-500" :title="$t('pages.catalog.branches_message')">{{
+                  $t("pages.catalog.branches_label")
+                }}</span>
+              </VcCheckbox>
 
-              <VcSelect
-                v-model="sortQueryParam"
-                text-field="name"
-                value-field="id"
-                :is-disabled="loading"
-                :items="PRODUCT_SORTING_LIST"
-                class="w-full md:w-52 lg:w-64"
-              />
+              <!-- Sorting -->
+              <div class="flex items-center flex-grow md:flex-grow-0 z-10 ml-auto">
+                <span class="hidden lg:block shrink-0 mr-2" v-t="'pages.catalog.sort_by_label'"></span>
+
+                <VcSelect
+                  v-model="sortQueryParam"
+                  text-field="name"
+                  value-field="id"
+                  :is-disabled="loading"
+                  :items="PRODUCT_SORTING_LIST"
+                  class="w-full md:w-52 lg:w-64"
+                />
+              </div>
             </div>
           </div>
 
@@ -266,6 +281,7 @@ import {
   ProductsFacetValue,
   ProductsFiltersSidebar,
   CategorySelector,
+  SelectBrunchDialog,
 } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 import { useElementVisibility, useRouteQueryParam } from "@core/composables";
@@ -273,8 +289,11 @@ import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@core/constants";
 import QueryParamName from "@core/query-param-name.enum";
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
+import { usePopup } from "@/shared/popup";
 
 const { t } = useI18n();
+
+const { openPopup } = usePopup();
 
 const watchStopHandles: WatchStopHandle[] = [];
 
@@ -322,6 +341,7 @@ const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const page = ref(1);
 const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
 const mobileFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: false });
+const showBranchesPopup = ref(false);
 
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
 
@@ -538,6 +558,20 @@ function hideMobileSidebar() {
   if (sidebarElement.value) {
     sidebarElement.value.scrollTop = 0;
   }
+}
+
+function toggleBranchesPopup() {
+  openPopup({
+    component: SelectBrunchDialog,
+    props: {
+      onClose() {
+        showBranchesPopup.value = false;
+      },
+      onResult() {
+        showBranchesPopup.value = false;
+      },
+    },
+  });
 }
 
 whenever(() => !isMobileSidebar.value, hideMobileSidebar);

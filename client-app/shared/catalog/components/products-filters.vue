@@ -25,6 +25,15 @@
       </div>
     </VcCard>
 
+    <VcCard :with-header="false" v-if="isMobile && $cfg.product_compare_enabled">
+      <VcCheckbox class="!items-start" v-model="_branchFilter" @change="onBranchCheckboxChanged">
+        <div class="flex flex-col">
+          <span class="text-base text-gray-400">{{ $t("pages.catalog.branches_label") }}</span>
+          <span class="text-xs text-gray-400">{{ $t("pages.catalog.branches_message") }}</span>
+        </div>
+      </VcCheckbox>
+    </VcCard>
+
     <!-- Previously purchased -->
     <VcCard :title="$t('pages.catalog.instock_filter_card.title')">
       <VcCheckbox v-model="_filters.inStock" :disabled="loading" @change="onFilterChanged">
@@ -78,12 +87,13 @@
 
 <script setup lang="ts">
 import { ProductsFilters } from "@/shared/catalog";
-import { eagerComputed } from "@vueuse/core";
+import { eagerComputed, breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { watch, onMounted, PropType, ref, shallowReactive, toRefs } from "vue";
 import _ from "lodash";
 
 const _keyword = ref("");
 const _filters = shallowReactive<ProductsFilters>({ facets: [], inStock: false });
+const _branchFilter = ref(false);
 
 const props = defineProps({
   loading: {
@@ -98,11 +108,19 @@ const props = defineProps({
     type: Object as PropType<ProductsFilters>,
     required: true,
   },
+  showBrunchesPopup: {
+    type: Boolean,
+    default: false,
+  },
 });
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("md");
 
 const emit = defineEmits<{
   (e: "search", keyword: string): void;
   (e: "change", value: ProductsFilters): void;
+  (e: "changeBranchCheckbox"): void;
 }>();
 
 const { loading, keyword, filters } = toRefs(props);
@@ -111,6 +129,7 @@ onMounted(() => {
   _keyword.value = keyword.value;
   _filters.facets = _.cloneDeep(filters.value.facets);
   _filters.inStock = props.filters.inStock;
+  _branchFilter.value = props.showBrunchesPopup;
 });
 
 watch(
@@ -136,5 +155,9 @@ function onFilterChanged() {
 }
 function onSearchStart() {
   emit("search", _keyword.value);
+}
+
+function onBranchCheckboxChanged() {
+  emit("changeBranchCheckbox");
 }
 </script>

@@ -777,7 +777,18 @@
       "no_products_message": "There are no products in this category",
       "no_products_filtered_message": "There are no results found",
       "no_products_button": "Reset search",
-      "products_icon": "Products icon"
+      "products_icon": "Products icon",
+      "branches_label": "Available at branches",
+      "branches_message": "Select a pickup branch to see the products that are in stock now",
+      "branches_dialog": {
+        "title": "Select brunch",
+        "cancel_button": "@:common.buttons.cancel",
+        "confirm_button": "@:common.buttons.ok",
+        "all_branches": "All branches",
+        "selected_branches": "Selected branches",
+        "clear_selection": "Clear selection",
+        "search_placeholder": "Enter an address, city, country, ZIP, branch name"
+      }
     },
     "product": {
       "sku_label": "@:common.labels.sku",

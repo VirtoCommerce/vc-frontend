@@ -5,7 +5,7 @@
       <span v-if="isRequired" class="text-[color:var(--color-danger)]">*</span>
     </div>
 
-    <div class="relative h-11">
+    <div class="relative" :class="[`vc-input--${size}`]">
       <input
         class="appearance-none rounded h-full px-3 text-base leading-none box-border border border-gray-300 w-full outline-none focus:border-gray-400 min-w-0"
         :class="{ 'pr-12': isPasswordIconVisible }"
@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watchEffect } from "vue";
+import { computed, PropType, ref, watchEffect } from "vue";
 
 const emit = defineEmits(["update:modelValue"]);
 
@@ -69,6 +69,12 @@ const props = defineProps({
   type: {
     type: String,
     default: "text",
+  },
+
+  size: {
+    type: String as PropType<"sm" | "md">,
+    default: "md",
+    validator: (value: string) => ["sm", "md"].includes(value),
   },
 });
 
@@ -122,3 +128,22 @@ watchEffect(() => {
   }
 });
 </script>
+<style scoped lang="scss">
+.vc-input {
+  &--sm {
+    @apply h-7;
+
+    > input {
+      @apply text-sm;
+    }
+  }
+
+  &--md {
+    @apply h-11;
+
+    > input {
+      @apply text-base;
+    }
+  }
+}
+</style>

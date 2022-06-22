@@ -2,6 +2,7 @@
   "current": "Mercury",
   "presets": {
     "Mercury": {
+      "catalog_branches_enabled": false,
       "product_compare_enabled": true,
       "product_compare_limit": 5,
       "wishlists_limit": 10,
