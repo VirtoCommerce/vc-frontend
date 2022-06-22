@@ -3,8 +3,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, inject, ref, watch } from "vue";
 import { appendSuffixToFilename } from "@core/utilities";
+import { configInjectionKey } from "@/core/injection-keys";
 
 const props = defineProps({
   lazy: Boolean,
@@ -35,10 +36,12 @@ const props = defineProps({
   },
 });
 
+const cfg = inject(configInjectionKey);
+
 const additionalClass = ref("");
 
 const preparedSrc = computed<string>(() => {
-  const result = props.sizeSuffix ? appendSuffixToFilename(props.src, `_${props.sizeSuffix}`) : props.src;
+  const result = (cfg?.image_tools_enabled && props.sizeSuffix) ? appendSuffixToFilename(props.src, `_${props.sizeSuffix}`) : props.src;
   return result || props.fallbackSrc;
 });
 
