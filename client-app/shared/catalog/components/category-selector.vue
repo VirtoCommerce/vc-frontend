@@ -1,11 +1,11 @@
 <template>
   <!-- category selector -->
-  <VcCard v-if="!loading || selectedCategory" :withHeader="!!backLabel">
+  <VcCard v-if="!loading || selectedCategory" :withHeader="!!backCategory">
     <template #header>
-      <router-link :to="backTo" class="text-sm">
+      <router-link :to="getCategoryRoute(backCategory!)" class="text-sm">
         <i class="fas fa-chevron-left text-[color:var(--color-primary)] cursor-pointer"></i>
         <span class="font-bold ml-2">
-          {{ backLabel }}
+          {{ backCategory?.label }}
         </span>
       </router-link>
     </template>
@@ -18,7 +18,7 @@
             v-for="category in categoryItems"
             :key="category.id"
             :class="{ 'font-bold': category.id === selectedCategory.id }"
-            :to="'/' + category.slug"
+            :to="categoriesRoutes[category.id!]"
             >{{ category.label }}</router-link
           >
         </div>
@@ -41,7 +41,7 @@
 <script setup lang="ts">
 import { computed } from "@vue/reactivity";
 import { PropType, toRef } from "vue";
-import { CategoryTree } from "../types";
+import { CategoryTree, useCategoriesRoutes, getCategoryRoute } from "@/shared/catalog";
 
 const props = defineProps({
   selectedCategory: {
@@ -57,24 +57,16 @@ const props = defineProps({
 const selectedCategory = toRef(props, "selectedCategory");
 
 const categoryItems = computed(() =>
-  selectedCategory.value?.items?.length ? selectedCategory.value.items : selectedCategory.value?.parent?.items
+  selectedCategory.value?.items?.length ? selectedCategory.value.items : selectedCategory.value?.parent?.items || []
 );
+
+const categoriesRoutes = useCategoriesRoutes(categoryItems);
 
 const categoryLabel = computed(() =>
   selectedCategory.value?.items?.length ? selectedCategory.value?.label : selectedCategory.value?.parent!.label
 );
 
-const backLabel = computed(() =>
-  selectedCategory.value?.items?.length
-    ? selectedCategory.value.parent?.label
-    : selectedCategory.value?.parent?.parent?.label
+const backCategory = computed(() =>
+  selectedCategory.value?.items?.length ? selectedCategory.value.parent : selectedCategory.value?.parent?.parent
 );
-
-const backTo = computed(() => {
-  const backCategorySlug = selectedCategory.value?.items?.length
-    ? selectedCategory.value.parent?.slug
-    : selectedCategory.value?.parent?.parent!.slug;
-
-  return backCategorySlug ? `/${backCategorySlug}` : undefined;
-});
 </script>
