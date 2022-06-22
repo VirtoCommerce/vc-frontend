@@ -1,10 +1,10 @@
 import { InMemoryCache } from "apollo-cache-inmemory";
-import { ApolloClient } from "apollo-client";
+import { ApolloClient, FetchPolicy } from "apollo-client";
 import { HttpLink } from "apollo-link-http";
 import { onError } from "apollo-link-error";
 import _ from "lodash";
 
-const fetchPolicy = "no-cache";
+const fetchPolicy: FetchPolicy = "no-cache";
 
 const httpLink = new HttpLink({ uri: `/xapi/graphql` });
 

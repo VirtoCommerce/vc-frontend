@@ -134,7 +134,7 @@ watch(
 
 watch(
   () => meta.value.valid,
-  () => emit("update:valid", meta.value.valid),
+  (value) => emit("update:valid", value),
   { immediate: true }
 );
 </script>

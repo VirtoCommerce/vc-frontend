@@ -1,0 +1,5 @@
+mutation AddOrUpdateOrderPayment($command: InputAddOrUpdateOrderPaymentType!) {
+  addOrUpdateOrderPayment(command: $command) {
+    id
+  }
+}

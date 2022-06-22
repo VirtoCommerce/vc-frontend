@@ -2,11 +2,11 @@ import { Ref, ref, computed } from "vue";
 import {
   addOrUpdateCartShipment,
   addOrUpdateCartPayment,
-  createOrderFromCart,
   getAvailPaymentMethods,
   getAvailShippingMethods,
   removeCart,
 } from "@/xapi/graphql/cart";
+import { createOrderFromCart } from "@/xapi/graphql/orders";
 import {
   InputShipmentType,
   InputPaymentType,
