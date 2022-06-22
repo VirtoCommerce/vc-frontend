@@ -85,5 +85,6 @@ const sale = computed(() => {
 
     return isSaleEnabled ? `-${Math.round(amount * 100)}%` : null;
   }
+  return undefined;
 });
 </script>

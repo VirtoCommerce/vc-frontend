@@ -64,13 +64,11 @@ import {
   UnsuccessfulCreateWishlistDialog,
 } from "@/shared/wishlists";
 import { LineItemType, WishlistType } from "@/xapi/graphql/types";
-import { useI18n } from "vue-i18n";
 import { usePopup } from "@/shared/popup";
 import { configInjectionKey } from "@/core/injection-keys";
 import { inject } from "vue";
 import { computed } from "@vue/reactivity";
 
-const { t } = useI18n();
 const { openPopup } = usePopup();
 const { loading, lists, fetchWishlists } = useWishlists();
 

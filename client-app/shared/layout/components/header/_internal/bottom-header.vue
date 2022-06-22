@@ -67,12 +67,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import Catalog from "./catalog.vue";
 import BottomHeaderLink from "./bottom-header-link.vue";
 import { useCart } from "@/shared/cart";
-import { useSearchBar, SearchBar, useNavigations } from "@/shared/layout";
+import { SearchBar, useNavigations } from "@/shared/layout";
 import { useCompareProducts } from "@/shared/compare";
 import { useUser } from "@/shared/account";
 const { t } = useI18n();
@@ -81,9 +80,6 @@ const { organization } = useUser();
 const { cart } = useCart();
 const { desktopCatalog } = useNavigations();
 const { productsIds } = useCompareProducts();
-const { searchBarVisible, showSearchBar } = useSearchBar();
-
-const isAnimatedSearchBar = ref(false);
 
 const desktopMenuLinks = [
   {
