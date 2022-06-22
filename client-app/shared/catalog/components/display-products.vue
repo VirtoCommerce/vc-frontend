@@ -17,8 +17,8 @@
 <script setup lang="ts">
 import { ProductCardGrid, ProductCardList, ProductSkeletonGrid, ProductSkeletonList } from "@/shared/catalog";
 import { computed, PropType } from "vue";
-import { Product as ProductType } from "@/xapi/graphql/types";
-import { DEFAULT_PAGE_SIZE } from "@core/constants";
+import { Product as ProductType } from "@/xapi/types";
+import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 
 const props = defineProps({
   loading: Boolean,

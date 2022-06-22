@@ -1178,9 +1178,9 @@
     "fastq" "^1.6.0"
 
 "@popperjs/core@^2.11.5":
-  version "2.11.5"
-  resolved "https://registry.npmjs.org/@popperjs/core/-/core-2.11.5.tgz"
-  integrity sha512-9X2obfABZuDVLCgPK9aX0a/x4jaOEweTTWE2+9sr0Qqqevj2Uv5XorvusThmc9XGYpS9yI+fhh8RTafBtGposw==
+  "integrity" "sha512-9X2obfABZuDVLCgPK9aX0a/x4jaOEweTTWE2+9sr0Qqqevj2Uv5XorvusThmc9XGYpS9yI+fhh8RTafBtGposw=="
+  "resolved" "https://registry.npmjs.org/@popperjs/core/-/core-2.11.5.tgz"
+  "version" "2.11.5"
 
 "@rollup/plugin-graphql@^1.1.0":
   "integrity" "sha512-X+H6oFlprDlnO3D0UiEytdW97AMphPXO0C7KunS7i/rBXIGQRQVDU5WKTXnBu2tfyYbjCTtfhXMSGI0i885PNg=="

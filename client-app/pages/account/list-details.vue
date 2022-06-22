@@ -114,7 +114,7 @@ import {
   AddOrUpdateWishlistDialog,
   DeleteWishlistProductDialog,
 } from "@/shared/wishlists";
-import { LineItemType } from "@/xapi/graphql/types";
+import { LineItemType } from "@/xapi/types";
 import { ProductCardGrid, ProductSkeletonGrid } from "@/shared/catalog";
 import { usePopup } from "@/shared/popup";
 import { computed, ref, watchEffect } from "vue";

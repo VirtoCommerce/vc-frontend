@@ -3,7 +3,7 @@ import {
   RequestRegistrationType,
   Mutations,
   MutationsRequestRegistrationArgs,
-} from "@/xapi/graphql/types";
+} from "@/xapi/types";
 import mutationDocument from "./requestRegistration.graphql";
 
 export default async function registerAccount(

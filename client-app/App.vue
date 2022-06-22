@@ -21,7 +21,7 @@ import { MainLayout, PaymentLayout, useNavigations, useSearchBar } from "./share
 import { PopupHost } from "@/shared/popup";
 import { NotificationsHost } from "@/shared/notification";
 import { useRoute, useRouter } from "vue-router";
-import { useDomUtils, useLanguages } from "@core/composables";
+import { useDomUtils, useLanguages } from "@/core/composables";
 import { useCart } from "@/shared/cart";
 
 const route = useRoute();

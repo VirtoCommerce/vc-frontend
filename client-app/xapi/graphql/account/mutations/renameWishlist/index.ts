@@ -1,5 +1,5 @@
 import mutationDocument from "./renameWishlistMutation.graphql";
-import { InputRenameWishlistType, Mutations, MutationsRenameWishlistArgs, WishlistType } from "@/xapi/graphql/types";
+import { InputRenameWishlistType, Mutations, MutationsRenameWishlistArgs, WishlistType } from "@/xapi/types";
 
 export default async function renameWishlist(payload: InputRenameWishlistType): Promise<WishlistType> {
   const { $graphqlClient } = useNuxtApp();

@@ -1,7 +1,7 @@
 import { Ref, ref, computed, readonly, shallowRef, shallowReactive } from "vue";
 import { searchProducts } from "@/xapi/graphql/catalog";
-import { Product } from "@/xapi/graphql/types";
-import { Logger } from "@core/utilities";
+import { Product } from "@/xapi/types";
+import { Logger } from "@/core/utilities";
 import { ProductsFacet, ProductsSearchParams } from "../types";
 import {
   ProductsFilters,
@@ -104,11 +104,7 @@ export default (
       paramsClone.page = 0;
       paramsClone.itemsPerPage = 0;
 
-      const {
-        term_facets = [],
-        range_facets = [],
-        totalCount = 0,
-      } = await searchProducts(searchParams, { withFacets: true });
+      const { term_facets = [], range_facets = [] } = await searchProducts(searchParams, { withFacets: true });
 
       term_facets.sort((a, b) => a.label.localeCompare(b.label));
       range_facets.sort((a, b) => a.label.localeCompare(b.label));

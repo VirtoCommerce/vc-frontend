@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { LineItemType, Product, VariationType } from "@/xapi/graphql/types";
+import { LineItemType, Product, VariationType } from "@/xapi/types";
 import { useCart } from "@/shared/cart";
 import { useField } from "vee-validate";
 import { computed, PropType, ref, watchEffect } from "vue";

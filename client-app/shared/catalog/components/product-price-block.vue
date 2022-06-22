@@ -85,13 +85,12 @@
 </template>
 
 <script setup lang="ts">
-import { Product } from "@/xapi/graphql/types";
+import { Product } from "@/xapi/types";
 import { PropType, ref } from "vue";
 import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddToWishlistsDialog } from "@/shared/wishlists";
-import { VcPopover } from "@/ui-kit/components";
-import { stringFormat } from "@core/utilities";
+import { stringFormat } from "@/core/utilities";
 
 const props = defineProps({
   product: {

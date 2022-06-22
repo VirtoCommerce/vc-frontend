@@ -62,7 +62,7 @@
 
 <script setup lang="ts">
 import { computed, PropType, ref } from "vue";
-import { Product as ProductType } from "@/xapi/graphql/types";
+import { Product as ProductType } from "@/xapi/types";
 import { AddedToWishlistsDialog, useWishlists } from "@/shared/wishlists";
 import { usePopup } from "@/shared/popup";
 

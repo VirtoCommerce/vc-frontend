@@ -1,4 +1,4 @@
-import { CustomerOrderType, Mutations, MutationsCreateOrderFromCartArgs } from "@/xapi/graphql/types";
+import { CustomerOrderType, Mutations, MutationsCreateOrderFromCartArgs } from "@/xapi/types";
 import mutationDocument from "./createOrderFromCartMutation.graphql";
 
 export default async function createOrderFromCart(cartId?: string): Promise<CustomerOrderType> {

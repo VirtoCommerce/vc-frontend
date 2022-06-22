@@ -63,7 +63,7 @@ import {
   DeleteWishlistsDialog,
   UnsuccessfulCreateWishlistDialog,
 } from "@/shared/wishlists";
-import { LineItemType, WishlistType } from "@/xapi/graphql/types";
+import { LineItemType, WishlistType } from "@/xapi/types";
 import { usePopup } from "@/shared/popup";
 import { configInjectionKey } from "@/core/injection-keys";
 import { inject } from "vue";

@@ -1,4 +1,4 @@
-import { Product, VariationType } from "@/xapi/graphql/types";
+import { Product, VariationType } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";
 
 export function getProductRoute(product: Product | VariationType): RouteLocationRaw {

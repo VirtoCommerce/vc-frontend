@@ -1,6 +1,6 @@
 import { Language } from "./language";
 import { Currency } from "./currency";
-import { IThemeConfigPreset } from "@core/types";
+import { IThemeConfigPreset } from "@/core/types";
 
 export interface IThemeContext {
   baseUrl: string;

@@ -5,7 +5,9 @@
       class="flex items-center cursor-pointer px-[0.8rem] py-[0.55rem] border-2 border-primary rounded text-sm"
       @click="submenuVisible = !submenuVisible"
     >
-      <div class="uppercase font-bold text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)] tracking-wide">
+      <div
+        class="uppercase font-bold text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)] tracking-wide"
+      >
         <slot>{{ title }}</slot>
       </div>
 

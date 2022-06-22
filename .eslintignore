@@ -1,5 +1,5 @@
 **/*.js
-client-app/xapi/graphql/types.ts
+client-app/xapi/types.ts
 node_modules
 dist
 assets

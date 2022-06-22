@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import _ from "lodash";
 import { computed, PropType } from "vue";
-import { Property } from "@/xapi/graphql/types";
+import { Property } from "@/xapi/types";
 
 const props = defineProps({
   properties: {

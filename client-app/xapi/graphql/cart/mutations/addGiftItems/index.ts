@@ -1,6 +1,6 @@
 import mutationDocument from "./addGiftItemsMutation.graphql";
-import { Mutations, MutationsAddGiftItemsArgs } from "@/xapi/graphql/types";
-import globals from "@core/globals";
+import { Mutations, MutationsAddGiftItemsArgs } from "@/xapi/types";
+import globals from "@/core/globals";
 
 export default async function addGiftItems(giftIds: string[]): Promise<void> {
   const { storeId, userId, cultureName, currencyCode } = globals;

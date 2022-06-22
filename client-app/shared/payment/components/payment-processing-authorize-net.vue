@@ -71,11 +71,11 @@
 import { computed, PropType, ref, shallowRef, watch, watchEffect } from "vue";
 import { clone } from "lodash";
 import { initializePayment } from "@/xapi/graphql/cart";
-import { CustomerOrderType, KeyValueType } from "@/xapi/graphql/types";
+import { CustomerOrderType, KeyValueType } from "@/xapi/types";
 import { BankCardType, BankCardForm, useAuthorizeNet, BankCardErrorsType, PaymentActionType } from "@/shared/payment";
 import { useNotifications } from "@/shared/notification";
 import { useI18n } from "vue-i18n";
-import { Logger } from "@core/utilities";
+import { Logger } from "@/core/utilities";
 
 const emit = defineEmits<{
   (event: "success"): void;

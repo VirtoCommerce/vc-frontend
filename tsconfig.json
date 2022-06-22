@@ -16,8 +16,7 @@
     "isolatedModules": true,
     "lib": ["ESNext", "DOM"],
     "paths": {
-      "@/*": ["client-app/*"],
-      "@core/*": ["client-app/core/*"]
+      "@/*": ["client-app/*"]
     }
   },
   "include": [

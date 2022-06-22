@@ -81,8 +81,8 @@ import { computed, ref, StyleValue, watchEffect } from "vue";
 import { RouteLocationRaw } from "vue-router";
 import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
 import MobileMenu from "./mobile-menu.vue";
-import { useRouteQueryParam } from "@core/composables";
-import QueryParamName from "@core/query-param-name.enum";
+import { useRouteQueryParam } from "@/core/composables";
+import QueryParamName from "@/core/query-param-name.enum";
 import { useElementSize, whenever } from "@vueuse/core";
 
 const searchPhrase = ref("");

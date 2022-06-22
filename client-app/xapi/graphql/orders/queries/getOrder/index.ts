@@ -1,6 +1,6 @@
 import getOrderQueryDocument from "./getOrderQuery.graphql";
-import { CustomerOrderType, Query, QueryOrderArgs } from "@/xapi/graphql/types";
-import globals from "@core/globals";
+import { CustomerOrderType, Query, QueryOrderArgs } from "@/xapi/types";
+import globals from "@/core/globals";
 
 export default async function getOrder(payload: QueryOrderArgs): Promise<CustomerOrderType> {
   const { cultureName } = globals;

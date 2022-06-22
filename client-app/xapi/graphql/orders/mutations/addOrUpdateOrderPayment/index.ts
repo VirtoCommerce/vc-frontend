@@ -1,8 +1,4 @@
-import {
-  InputAddOrUpdateOrderPaymentType,
-  Mutations,
-  MutationsAddOrUpdateOrderPaymentArgs,
-} from "@/xapi/graphql/types";
+import { InputAddOrUpdateOrderPaymentType, Mutations, MutationsAddOrUpdateOrderPaymentArgs } from "@/xapi/types";
 import mutationDocument from "./addOrUpdateOrderPaymentMutation.graphql";
 
 export default async function addOrUpdateOrderPayment(payload: InputAddOrUpdateOrderPaymentType): Promise<void> {
