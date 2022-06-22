@@ -281,7 +281,7 @@ import {
   ProductsFacetValue,
   ProductsFiltersSidebar,
   CategorySelector,
-  SelectBrunchDialog,
+  SelectBranchDialog,
 } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 import { useElementVisibility, useRouteQueryParam } from "@core/composables";
@@ -562,7 +562,7 @@ function hideMobileSidebar() {
 
 function toggleBranchesPopup() {
   openPopup({
-    component: SelectBrunchDialog,
+    component: SelectBranchDialog,
     props: {
       onClose() {
         showBranchesPopup.value = false;

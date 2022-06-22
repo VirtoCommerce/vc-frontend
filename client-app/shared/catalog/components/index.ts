@@ -15,4 +15,4 @@ export { default as ProductDetails } from "./product-details.vue";
 export { default as ProductPriceBlock } from "./product-price-block.vue";
 export { default as ProductsFiltersSidebar } from "./products-filters.vue";
 export { default as CategorySelector } from "./category-selector.vue";
-export { default as SelectBrunchDialog } from "./select-brunch-dialog.vue";
+export { default as SelectBranchDialog } from "./select-branch-dialog.vue";
