@@ -31,10 +31,7 @@ defineProps({
     type: String,
     default: undefined,
   },
-  withHeader: {
-    type: Boolean,
-    default: true,
-  },
+
   isCollapsible: {
     type: Boolean,
     default: false,
