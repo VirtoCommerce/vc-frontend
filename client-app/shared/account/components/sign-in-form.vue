@@ -33,7 +33,11 @@
       autocomplete="password"
     ></VcInput>
 
-    <div class="mt-1">
+    <div class="flex justify-between">
+      <VcCheckbox v-model="rememberMe">
+        {{ $t("shared.account.sign_in_form.remember_me_label") }}
+      </VcCheckbox>
+
       <router-link
         to="/forgot-password"
         class="text-blue-700 hover:text-blue-500 text-sm font-semibold"
@@ -100,8 +104,9 @@ const { errors, handleSubmit, values } = useForm({
 
 const { value: userName } = useField<string>("userName");
 const { value: password } = useField<string>("password");
+const rememberMe = ref(false);
 
-const model = reactive({ userName, password });
+const model = reactive({ userName, password, rememberMe });
 
 const valid = eagerComputed<boolean>(() => isEmpty(errors.value));
 
