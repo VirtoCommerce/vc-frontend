@@ -60,7 +60,9 @@
         </VcPopupSidebar>
 
         <!-- Sidebar -->
-        <div v-else ref="sidebarElement" class="flex flex-col lg:w-1/4 xl:w-1/5 flex-shrink-0">
+        <div v-else ref="sidebarElement" class="flex flex-col gap-4 lg:gap-5 lg:w-1/4 xl:w-1/5 flex-shrink-0">
+          <CategorySelector :selected-category="selectedCategory" :loading="loading"></CategorySelector>
+
           <ProductsFiltersSidebar
             :keyword="keywordQueryParam"
             :filters="filters"
@@ -263,6 +265,7 @@ import {
   ProductsFacet,
   ProductsFacetValue,
   ProductsFiltersSidebar,
+  CategorySelector,
 } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 import { useElementVisibility, useRouteQueryParam } from "@core/composables";
@@ -290,8 +293,7 @@ const props = defineProps({
 const categoryId = toRef(props, "categoryId");
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-
-const { selectedCategory, selectCategoryByKey, loadCategoriesTree } = useCategories();
+const { selectedCategory, selectCategoryByKey, loadCategoriesTree, selectRoot } = useCategories();
 const {
   fetchProducts,
   fetchMoreProducts,
@@ -455,9 +457,11 @@ function onChangeCurrentCategory(key: string, value: string) {
 }
 
 onMounted(async () => {
-  await loadCategoriesTree(""); // TODO: use active category key instead of id
+  await loadCategoriesTree();
 
-  if (categoryId.value) {
+  if (!categoryId.value && !categorySeoUrl.value) {
+    selectRoot();
+  } else if (categoryId.value) {
     selectCategoryByKey("id", categoryId.value);
     watch(categoryId, (value) => onChangeCurrentCategory("id", value));
   } else {

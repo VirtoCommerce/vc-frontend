@@ -3,8 +3,10 @@ import { Breadcrumb } from "@/xapi/graphql/types";
 export * from "./search";
 
 export interface CategoryTree extends Record<string, any> {
+  isRoot: boolean;
   id?: string;
-  parent?: string;
+  parentId?: string;
+  parent?: CategoryTree;
   label?: string;
   slug?: string;
   items?: CategoryTree[];
