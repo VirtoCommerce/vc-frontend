@@ -474,6 +474,8 @@ onMounted(async () => {
     watch(categorySeoUrl, (value) => selectCategoryByKey("seoUrl", value));
   }
 
+  applyFilters();
+
   await loadProducts();
 
   // Start change tracking after initial data load

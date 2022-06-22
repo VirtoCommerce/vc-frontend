@@ -38,16 +38,6 @@ export default (
     pages.value = 1;
 
     try {
-      if (searchParams.filter?.includes(IN_STOCK_FILTER_EXPRESSION)) {
-        // FIXME: don't use it here
-        filters.inStock = true;
-      }
-
-      if (!searchParams.filter?.includes(IN_STOCK_FILTER_EXPRESSION) && filters.inStock) {
-        // FIXME: don't use it here
-        searchParams.filter = toFilterExpression(filters);
-      }
-
       const {
         items = [],
         term_facets = [],
