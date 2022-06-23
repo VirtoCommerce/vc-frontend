@@ -108,12 +108,12 @@ const data = {
     {
       title: "New York Branch",
       address: "790 7th Ave New York, New York, USA 10019",
-      phone: "(312) 222-3333",
+      phone: "(312) 222-3334",
     },
     {
       title: "Tennessee Branch",
       address: "420 Bridge St Franklin, TN, USA",
-      phone: "(312) 222-3333",
+      phone: "(312) 222-3335",
     },
   ],
 };
