@@ -943,7 +943,9 @@
     },
     "branch": {
       "address": "Address",
-      "phone": "Phone:"
+      "phone": "Phone:",
+      "branch_hours": "Branch hours",
+      "other_branches": "Other branches"
     }
   }
 }
