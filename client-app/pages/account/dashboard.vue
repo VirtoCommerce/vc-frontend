@@ -266,7 +266,7 @@
 </template>
 
 <script setup lang="ts">
-import { CustomerOrderType } from "@/xapi/graphql/types";
+import { CustomerOrderType } from "@/xapi/types";
 import { SORT_DESCENDING } from "@/core/constants";
 import useUserOrders from "@/shared/account/composables/useUserOrders";
 import { onMounted, ref } from "vue";

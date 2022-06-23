@@ -122,9 +122,12 @@
             </div>
           </VcCard>
 
-          <VcButton class="uppercase w-full" @click="printOrder">
-            {{ $t("shared.checkout.thank_you.print_order") }}
-          </VcButton>
+          <div class="flex justify-center">
+            <VcButton kind="secondary" class="!hidden lg:!inline-flex uppercase px-3" is-outline @click="printOrder">
+              <i class="fas fa-print mr-2" />
+              {{ $t("shared.checkout.thank_you.print_order") }}
+            </VcButton>
+          </div>
         </div>
       </div>
     </div>
@@ -133,7 +136,7 @@
 
 <script setup lang="ts">
 import { OrderSummary, ProductCard, AcceptedGifts } from "@/shared/checkout";
-import { CustomerOrderType } from "@/xapi/graphql/types";
+import { CustomerOrderType } from "@/xapi/types";
 import { useCart } from "@/shared/cart";
 import { computed, PropType, ref } from "vue";
 

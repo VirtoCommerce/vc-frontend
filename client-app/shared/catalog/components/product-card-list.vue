@@ -57,7 +57,7 @@
 <script setup lang="ts">
 import { computed, PropType } from "vue";
 import { AddToCompare } from "@/shared/compare";
-import { Product } from "@/xapi/graphql/types";
+import { Product } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";
 import { getProductRoute } from "@/shared/catalog";
 

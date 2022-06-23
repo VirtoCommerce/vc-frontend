@@ -72,7 +72,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUpdate, onMounted, PropType, ref } from "vue";
-import { OrderLineItemType, Product } from "@/xapi/graphql/types";
+import { OrderLineItemType, Product } from "@/xapi/types";
 import { ProductCardReorder } from "@/shared/account";
 import _ from "lodash";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";

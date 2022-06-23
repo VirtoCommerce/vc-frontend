@@ -46,7 +46,7 @@
 
 <script setup lang="ts">
 import { PropType } from "vue";
-import { WishlistType } from "@/xapi/graphql/types";
+import { WishlistType } from "@/xapi/types";
 
 defineEmits(["add-to-cart", "settings", "remove"]);
 

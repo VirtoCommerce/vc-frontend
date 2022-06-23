@@ -28,7 +28,7 @@
 <script setup lang="ts">
 import { useWishlists } from "@/shared/wishlists";
 import { PropType } from "vue";
-import { WishlistType } from "@/xapi/graphql/types";
+import { WishlistType } from "@/xapi/types";
 
 const props = defineProps({
   list: {

@@ -45,7 +45,8 @@
       "date": "Datum",
       "sort_by": "Sortieren nach:",
       "sku": "Artikel #",
-      "item": "Artikel"
+      "item": "Artikel",
+      "catalog": "Katalog"
     },
     "suffixes": {
       "per_item": "/ jeder",
@@ -193,6 +194,7 @@
         "user_name_placeholder": "@:common.labels.user_name",
         "password_label": "@:common.labels.password",
         "password_placeholder": "@:common.labels.password",
+        "remember_me_label": "Remember me",
         "forgot_password_link": "Haben Sie Ihr Passwort vergessen?",
         "login_button": "Einloggen",
         "registration_button": "Registrierung",
@@ -294,6 +296,7 @@
         "technical_specs_block_title": "technical specs",
         "variations_block_title": "Customize your order",
         "description_block_title": "Description",
+        "share_product_label": "Share product",
         "price_block": {
           "title": "Price & Delivery",
           "add_to_list_button": "Add to list",

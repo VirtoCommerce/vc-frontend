@@ -1,6 +1,6 @@
 import { computed, ref } from "vue";
-import { DEVELOPMENT } from "@core/constants";
-import { IThemeConfig, IThemeContext } from "@core/types";
+import { DEVELOPMENT } from "@/core/constants";
+import { IThemeConfig, IThemeContext } from "@/core/types";
 
 const themeContext = ref<IThemeContext>();
 

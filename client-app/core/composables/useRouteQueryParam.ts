@@ -1,6 +1,6 @@
 import { computed } from "vue";
 import { LocationQueryValue, useRouter } from "vue-router";
-import { Dictionary, UseRouteQueryParamOptions } from "@core/types";
+import { Dictionary, UseRouteQueryParamOptions } from "@/core/types";
 
 export default function useRouteQueryParam<T = LocationQueryValue | LocationQueryValue[]>(
   key: string,

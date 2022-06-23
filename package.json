@@ -23,6 +23,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.4",
     "@headlessui/vue": "^1.6.4",
+    "@popperjs/core": "^2.11.5",
     "@tailwindcss/aspect-ratio": "^0.4.0",
     "@tailwindcss/line-clamp": "^0.4.0",
     "@vueuse/core": "^8.6.0",

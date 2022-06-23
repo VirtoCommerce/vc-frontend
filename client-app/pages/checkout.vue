@@ -530,12 +530,12 @@ import {
   ShipmentType,
   ShippingMethodType,
   ValidationErrorType,
-} from "@/xapi/graphql/types";
+} from "@/xapi/types";
 import { useUser, useUserAddresses } from "@/shared/account";
 import { AddressType } from "@/core/types";
 import { addGiftItems, rejectGiftItems } from "@/xapi/graphql/cart";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { useElementVisibility } from "@core/composables";
+import { useElementVisibility } from "@/core/composables";
 import { useNotifications } from "@/shared/notification";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);

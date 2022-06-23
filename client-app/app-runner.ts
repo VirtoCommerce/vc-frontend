@@ -2,17 +2,17 @@ import { createApp, Plugin } from "vue";
 import { RouteRecordName } from "vue-router";
 import * as yup from "yup";
 import { createHead } from "@vueuse/head";
-import { setGlobalVariables } from "@core/globals";
-import { useCurrency, useLanguages, useThemeContext } from "@core/composables";
-import { configPlugin, contextPlugin } from "@core/plugins";
+import { setGlobalVariables } from "@/core/globals";
+import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";
+import { configPlugin, contextPlugin } from "@/core/plugins";
 import { useUser } from "@/shared/account";
 import { createI18n } from "@/i18n";
 import { createRouter } from "@/router";
-import { getBaseUrl } from "@core/utilities";
+import { getBaseUrl } from "@/core/utilities";
 import App from "./App.vue";
 import PageBuilderBlocks from "@/builder-preview/pages/blocks";
 import * as components from "@/ui-kit/components";
-import client from "@/xapi/graphql/graphql-client";
+import client from "@/xapi/graphql-client";
 
 // Workaround before Nuxt3 migration, will be deleted later.
 window.useNuxtApp = () => {
@@ -90,8 +90,6 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
    */
   const app = createApp(App);
 
-  Object.keys(PageBuilderBlocks).forEach((name) => app.component(name, PageBuilderBlocks[name]));
-
   app.use(head);
   app.use(i18n);
   app.use(router);
@@ -103,6 +101,9 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
 
   // Register UI Kit components globally
   Object.entries(components).forEach(([name, component]) => app.component(name, component));
+
+  // Register Page builder components globally
+  Object.entries(PageBuilderBlocks).forEach(([name, component]) => app.component(name, component));
 
   await router.isReady();
 

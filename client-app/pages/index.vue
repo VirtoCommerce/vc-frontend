@@ -1,6 +1,6 @@
 <template>
   <!-- Banner -->
-  <div class="banner flex items-center">
+  <div class="banner flex items-center" :style="{ backgroundImage: `url(${$cfg.homepage_background_image})` }">
     <div class="container mx-auto flex flex-col lg:flex-row items-center space-y-10 lg:space-x-24 p-6 md:p-12">
       <div class="w-full lg:w-2/5 bg-white shadow-lg rounded p-6 md:p-10">
         <h1
@@ -100,8 +100,9 @@ function onSignIn() {
 <style scoped>
 .banner {
   position: relative;
-  background: url(/static/images/home/main-banner.webp) center center no-repeat;
   background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
   min-height: 549px;
 }
 

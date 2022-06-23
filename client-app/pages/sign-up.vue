@@ -110,7 +110,7 @@ import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import { ref } from "vue";
 import { usePopup } from "@/shared/popup";
-import { AccountCreationResultType, IdentityErrorType } from "@/xapi/graphql/types";
+import { AccountCreationResultType, IdentityErrorType } from "@/xapi/types";
 import { computed } from "@vue/reactivity";
 import { isObjectEmpty, trimString } from "@/core/utilities";
 import { useI18n } from "vue-i18n";

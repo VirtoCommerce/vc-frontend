@@ -45,7 +45,8 @@
       "date": "Date",
       "sort_by": "Sort by:",
       "sku": "Item #",
-      "item": "Item"
+      "item": "Item",
+      "catalog": "Catalog"
     },
     "suffixes": {
       "per_item": " per item",
@@ -193,6 +194,7 @@
         "user_name_placeholder": "@:common.labels.user_name",
         "password_label": "@:common.labels.password",
         "password_placeholder": "@:common.labels.password",
+        "remember_me_label": "Remember me",
         "forgot_password_link": "Forgot your password?",
         "login_button": "Log in",
         "registration_button": "Sign up",
@@ -294,6 +296,7 @@
         "technical_specs_block_title": "Technical specs",
         "variations_block_title": "Customize your order",
         "description_block_title": "Description",
+        "share_product_label": "Share product",
         "price_block": {
           "title": "Price and Delivery",
           "add_to_list_button": "Add to list",
@@ -329,7 +332,8 @@
         "title": "Accepted Gifts"
       },
       "add_or_update_address_dialog": {
-        "title": "New address",
+        "new_address_title": "New address",
+        "edit_address_title": "Edit address",
         "cancel_button": "@:common.buttons.cancel",
         "create_button": "@:common.buttons.create",
         "save_button": "@:common.buttons.save"
@@ -431,29 +435,34 @@
         "security_code_label": "Security Code"
       },
       "authorize_net": {
-        "header": "Payment method",
-        "bank_card_title": "Credit Card",
         "user_agreement_link": "User Agreement",
         "privacy_policy_link": "Privacy Policy",
         "accept_terms_text": "By placing an order, you accept the terms of",
         "processing_personal_data_text": "and consent to the processing of personal data according to the",
         "pay_now_button": "Pay Now",
+        "loading_text": "Loading...",
         "errors": {
           "number": "Please provide valid credit card number",
           "month": "Please provide valid expiration month",
           "year": "Please provide valid expiration year",
           "security_code": "Please provide valid security code",
           "cardholder_name": "Please provide valid card holder name",
-          "try_again": "An error occurred during processing. Please try again"
+          "try_again": "An error occurred during processing. Please try again",
+          "incorrect_payment_method": "Incorrect payment method"
         }
       },
-      "payment_success": {
-        "title": "Payment successful",
-        "text": "Thank you, we are checking your payment. The order will be shipped after we receive your payment."
+      "manual": {
+        "text": "Current method doesn't support online payment. Please",
+        "link": "contact site administrator"
       },
-      "payment_failure": {
-        "title": "Payment failed",
-        "text": "There is a problem with your payment, try again please."
+      "redirection": {
+        "text": "After you click <strong>{0}</strong> you will be Redirected to 3rd party payment service",
+        "pay_now_button": "Pay Now",
+        "try_again_button": "Try Again",
+        "errors": {
+          "missing_link": "Redirect link is missing",
+          "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
+        }
       }
     },
     "wishlists": {
@@ -710,10 +719,26 @@
         "title": "Payment information",
         "breadcrumb_title": "Payment",
         "processed_title": "@:pages.account.order_details.title",
-        "loading_text": "Loading...",
+        "billing_address_label": "Billing address",
+        "payment_method_label": "Payment method",
+        "phone_label": "@:pages.checkout.shipping_details_section.shipping_address_block.phone_label",
+        "email_label": "@:pages.checkout.shipping_details_section.shipping_address_block.email_label",
+        "edit_button": "Edit",
+        "bank_card_title": "Credit Card",
         "back_to_order_button": "Back to Order",
         "orders_list_button": "Orders List",
-        "try_again_button": "Try again"
+        "try_again_button": "Try again",
+        "continue_shopping_button": "Continue Shopping",
+        "status_label": "@:common.labels.status{':'}",
+        "order_date": "Order date:",
+        "success": {
+          "title": "Payment successful",
+          "text": "Thank you, we are checking your payment. The order will be shipped after we receive your payment."
+        },
+        "failure": {
+          "title": "Payment failed",
+          "text": "There is a problem with your payment, try again please."
+        }
       },
       "your_lists": {
         "no_lists": "You have not created any lists yet",

@@ -3,7 +3,7 @@ import {
   InputAuthorizePaymentType,
   Mutations,
   MutationsAuthorizePaymentArgs,
-} from "@/xapi/graphql/types";
+} from "@/xapi/types";
 import mutationDocument from "./authorizePaymentMutation.graphql";
 
 export default async function authorizePayment(

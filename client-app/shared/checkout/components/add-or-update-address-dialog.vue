@@ -1,6 +1,10 @@
 <template>
   <VcPopup
-    :title="$t('shared.checkout.add_or_update_address_dialog.title')"
+    :title="
+      editableAddress
+        ? $t('shared.checkout.add_or_update_address_dialog.edit_address_title')
+        : $t('shared.checkout.add_or_update_address_dialog.new_address_title')
+    "
     modal-width="max-w-5xl"
     :hide-actions="true"
   >
@@ -15,16 +19,7 @@
       >
         <template #append="{ dirty }">
           <div class="flex space-x-4 pb-3 pt-7 sm:pb-4 sm:pt-4 sm:float-right">
-            <VcButton
-              kind="secondary"
-              size="md"
-              class="uppercase w-1/2 sm:px-5"
-              is-outline
-              @click="
-                editableAddress = null;
-                close();
-              "
-            >
+            <VcButton kind="secondary" size="md" class="uppercase w-1/2 sm:px-5" is-outline @click="close">
               {{ $t("shared.checkout.add_or_update_address_dialog.cancel_button") }}
             </VcButton>
 
@@ -43,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { MemberAddressType } from "@/xapi/graphql/types";
+import { MemberAddressType } from "@/xapi/types";
 import { useCountries } from "@/core/composables";
 import { AddressForm } from "@/shared/account";
 import { onMounted, PropType, ref, Ref, watchEffect } from "vue";

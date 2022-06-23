@@ -1,8 +1,8 @@
-import { GetSearchResultsQueryVariables, Query } from "@/xapi/graphql/types";
-import { DEFAULT_PAGE_SIZE } from "@core/constants";
+import { GetSearchResultsQueryVariables, Query } from "@/xapi/types";
+import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import searchQueryDocument from "./getSearchResultsQuery.graphql";
 import { SearchResultsParams } from "@/xapi/graphql/catalog";
-import globals from "@core/globals";
+import globals from "@/core/globals";
 
 type SearchResults = Required<Pick<Query, "categories" | "products">>;
 
