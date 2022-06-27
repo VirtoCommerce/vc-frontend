@@ -1,6 +1,6 @@
 {
   "name": "Video",
   "icon": "image",
-  "displayNameProperty": "name",
+  "displayField": "name",
   "group": "Content"
 }

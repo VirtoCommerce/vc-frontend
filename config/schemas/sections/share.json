@@ -1,6 +1,6 @@
 {
   "name": "Share icons",
   "icon": "image",
-  "displayNameProperty": "name",
+  "displayField": "name",
   "group": "Promo"
 }
