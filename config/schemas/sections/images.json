@@ -1,6 +1,6 @@
 {
   "name": "Images",
   "icon": "image",
-  "displayNameProperty": "name",
+  "displayField": "name",
   "group": "Content"
 }

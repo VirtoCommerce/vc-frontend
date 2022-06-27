@@ -101,6 +101,140 @@
       ]
     },
     {
+      "id": "multiSelectWithGroups",
+      "type": "select",
+      "label": "Multiple select with groups",
+      "multiple": true,
+      "placeholder": "Choose products",
+      "options": [
+        {
+          "value": 1,
+          "label": "apple",
+          "group": "Fruits"
+        },
+        {
+          "value": 2,
+          "label": "orange",
+          "group": "Fruits"
+        },
+        {
+          "value": 3,
+          "label": "pineapple",
+          "group": "Fruits"
+        },
+        {
+          "value": 4,
+          "label": "grape",
+          "group": "Fruits"
+        },
+        {
+          "value": 5,
+          "label": "banana",
+          "group": "Fruits"
+        },
+        {
+          "value": 6,
+          "label": "fig",
+          "group": "Fruits"
+        },
+        {
+          "value": 7,
+          "label": "kiwi",
+          "group": "Fruits"
+        },
+        {
+          "value": 8,
+          "label": "lime",
+          "group": "Fruits"
+        },
+        {
+          "value": 9,
+          "label": "melon",
+          "group": "Fruits"
+        },
+        {
+          "value": 11,
+          "label": "Onion",
+          "group": "Vegetables"
+        },
+        {
+          "value": 12,
+          "label": "Potato",
+          "group": "Vegetables"
+        },
+        {
+          "value": 13,
+          "label": "Tomato",
+          "group": "Vegetables"
+        },
+        {
+          "value": 14,
+          "label": "Cucumber",
+          "group": "Vegetables"
+        },
+        {
+          "value": 15,
+          "label": "Milk"
+        },
+        {
+          "value": 10,
+          "label": "peach",
+          "group": "Fruits"
+        }
+      ]
+    },
+    {
+      "id": "author",
+      "label": "Author",
+      "type": "select",
+      "equalKey": "id",
+      "request": {
+        "url": "api/members/search",
+        "method": "post",
+        "label": "name",
+        "body": {
+          "memberId": null,
+          "deepSearch": true,
+          "responseGroup": "Full",
+          "sort": "memberType:desc;name:asc",
+          "searchPhrase": "isAuthor:true"
+        },
+        "response": {
+          "result": "results",
+          "isArray": true,
+          "value": [
+            "id",
+            "firstName",
+            "name",
+            "lastName",
+            "photoUrl",
+            {
+              "key": "jobTitle",
+              "query": "$..dynamicProperties[?(@.name=='jobTitle')].values..value",
+              "isArray": false
+            },
+            {
+              "key": "biography",
+              "query": "$..dynamicProperties[?(@.name=='biography')].values..value",
+              "isArray": false
+            },
+            {
+              "key": "linkedinLink",
+              "query": "$..dynamicProperties[?(@.name=='linkedinLink')].values..value",
+              "isArray": false
+            }
+          ]
+        }
+      },
+      "options": [
+        {
+          "value": " ",
+          "label": " "
+        }
+      ],
+      "tab": "Content"
+    },
+    {
       "type": "header",
       "tab": "Text",
       "group": "Textboxes",
@@ -200,66 +334,53 @@
       "label": "Select date and time",
       "type": "calendar",
       "mode": "datetime",
-      "showSeconds": true,
-      "hideSpinners": false,
-      "showAmPm": true,
-      "minDate": "2022-01-01T00:00:00.000Z",
-      "maxDate": "2022-12-31T23:59:59.999Z",
-      "stepMinute": 10,
       "tab": "Text",
       "group": "Calendars",
       "info": "Date and time picker"
-    },
-    {
-      "id": "datetimeCalendarNoSpinners",
-      "label": "Select date and time (no spinners)",
-      "type": "calendar",
-      "mode": "datetime",
-      "showSeconds": false,
-      "hideSpinners": true,
-      "showAmPm": false,
-      "minDate": "2022-01-01T00:00:00.000Z",
-      "maxDate": "2022-12-31T23:59:59.999Z",
-      "stepMinute": 10,
-      "tab": "Text",
-      "group": "Calendars",
-      "info": "Date and time picker"
-    },
-    {
-      "id": "timeCalendarWithSeconds",
-      "label": "Choose time",
-      "type": "calendar",
-      "mode": "time",
-      "showSeconds": true,
-      "hideSpinners": true,
-      "showAmPm": false,
-      "stepMinute": 10,
-      "tab": "Text",
-      "group": "Calendars",
-      "info": "Time picker"
     },
     {
       "id": "timeCalendar",
       "label": "Choose time",
       "type": "calendar",
       "mode": "time",
-      "showSeconds": false,
-      "hideSpinners": false,
-      "showAmPm": true,
-      "stepMinute": 20,
       "tab": "Text",
       "group": "Calendars",
       "info": "Time picker with spinners"
     },
     {
       "id": "inlineCalendar",
-      "label": "Choose time",
+      "label": "Choose date and time",
       "type": "calendar",
       "mode": "datetime",
       "inline": true,
       "tab": "Text",
       "group": "Calendars",
       "info": "Inline picker (default)"
+    },
+    {
+      "id": "inlineTime",
+      "label": "Choose time",
+      "type": "calendar",
+      "mode": "time",
+      "inline": true,
+      "info": "Inline picker (default)"
+    },
+    {
+      "id": "withPresetsColor",
+      "label": "Colorpicker with presets",
+      "type": "color",
+      "tab": "Other",
+      "clearValue": null,
+      "presets": ["red", "green", "blue", "yellow", "cyan", "black", "white"]
+    },
+    {
+      "id": "presetsOnlyPopupColor",
+      "label": "Colorpicker with presets only",
+      "type": "color",
+      "tab": "Other",
+      "clearValue": null,
+      "colorMode": "presets",
+      "presets": ["red", "green", "blue", "yellow", "cyan", "black", "white"]
     },
     {
       "id": "checkbox",
@@ -288,14 +409,6 @@
       "label": "Colorpicker",
       "type": "color",
       "tab": "Other"
-    },
-    {
-      "id": "withPresetsColor",
-      "label": "Colorpicker with presets",
-      "type": "color",
-      "tab": "Other",
-      "clearValue": null,
-      "presets": ["red", "green", "blue", "yellow", "cyan", "black", "white"]
     },
     {
       "id": "presetOnlyColors",

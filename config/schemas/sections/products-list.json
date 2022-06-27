@@ -1,6 +1,6 @@
 {
   "name": "Products list",
   "icon": "image",
-  "displayNameProperty": "name",
+  "displayField": "name",
   "group": "Integration"
 }
