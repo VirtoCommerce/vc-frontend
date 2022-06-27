@@ -1,5 +1,6 @@
 import { createApp, Plugin } from "vue";
 import { RouteRecordName } from "vue-router";
+import maska from "maska";
 import * as yup from "yup";
 import { createHead } from "@vueuse/head";
 import { setGlobalVariables } from "@/core/globals";
@@ -93,6 +94,7 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
   app.use(head);
   app.use(i18n);
   app.use(router);
+  app.use(maska);
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value!.settings);
 

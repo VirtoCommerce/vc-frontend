@@ -428,9 +428,11 @@
       "bank_card_form": {
         "number_label": "Card number",
         "cardholder_name_label": "Cardholder name",
-        "month_label": "Expiry Month",
+        "expiration_date_label": "Expiration date",
+        "expiration_date_placeholder": "MM / YY",
+        "month_label": "Month",
         "month_placeholder": "MM",
-        "year_label": "Expiry Year",
+        "year_label": "Year",
         "year_placeholder": "YY",
         "security_code_label": "Security Code"
       },
@@ -445,9 +447,9 @@
           "number": "Please provide valid credit card number",
           "month": "Please provide valid expiration month",
           "year": "Please provide valid expiration year",
+          "expiration_date": "Expiration date must be in the future",
           "security_code": "Please provide valid security code",
           "cardholder_name": "Please provide valid card holder name",
-          "try_again": "An error occurred during processing. Please try again",
           "incorrect_payment_method": "Incorrect payment method"
         }
       },
