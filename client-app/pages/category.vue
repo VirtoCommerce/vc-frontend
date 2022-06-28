@@ -453,7 +453,11 @@ async function loadMoreProducts() {
 
 function onChangeCurrentCategory(key: string, value: string) {
   clearFilters();
-  selectCategoryByKey(key, value);
+  if (!value) {
+    selectRoot();
+  } else {
+    selectCategoryByKey(key, value);
+  }
 }
 
 onMounted(async () => {
@@ -463,11 +467,12 @@ onMounted(async () => {
     selectRoot();
   } else if (categoryId.value) {
     selectCategoryByKey("id", categoryId.value);
-    watch(categoryId, (value) => onChangeCurrentCategory("id", value));
   } else {
     selectCategoryByKey("seoUrl", categorySeoUrl.value);
-    watch(categorySeoUrl, (value) => onChangeCurrentCategory("seoUrl", value));
   }
+
+  watch(categoryId, (value) => onChangeCurrentCategory("id", value));
+  watch(categorySeoUrl, (value) => onChangeCurrentCategory("seoUrl", value));
 
   await loadProducts();
 
