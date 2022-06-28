@@ -595,8 +595,6 @@
       "last_name_placeholder": "Enter your last name",
       "email_label": "@:common.labels.email",
       "email_placeholder": "Enter your email address",
-      "username_label": "@:common.labels.user_name",
-      "username_placeholder": "Enter your username",
       "password_label": "@:common.labels.password",
       "password_placeholder": "Enter your password",
       "confirm_password_label": "@:common.labels.confirm_password",
@@ -606,8 +604,7 @@
         "PasswordTooShort": "Your password must be at least 8 characters long.",
         "InvalidEmail": "Please enter valid email address, e.g. johndoe{'@'}gmail.com)",
         "passwords_must_match": "Passwords must match",
-        "user_name_not_unique": "This username is already taken",
-        "email_not_unique": "This email is already registered with us"
+        "username_or_email_not_unique": "This email or username is already taken"
       }
     },
     "account": {
