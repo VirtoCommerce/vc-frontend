@@ -60,7 +60,8 @@
       "creating_order_error": "Error when creating an order"
     },
     "placeholders": {
-      "not_selected": "Not selected"
+      "not_selected": "Not selected",
+      "email": "email{'@'}example.com"
     },
     "links": {
       "home": "Home",
@@ -190,16 +191,16 @@
         "country_placeholder": "Select your country"
       },
       "sign_in_form": {
-        "user_name_label": "@:common.labels.user_name",
-        "user_name_placeholder": "@:common.labels.user_name",
+        "email_label": "@:common.labels.email",
+        "email_placeholder": "@:common.placeholders.email",
         "password_label": "@:common.labels.password",
         "password_placeholder": "@:common.labels.password",
         "remember_me_label": "Remember me",
         "forgot_password_link": "Forgot your password?",
         "login_button": "Log in",
         "registration_button": "Sign up",
-        "user_or_password_incorrect_alert": "The <strong>username</strong>&nbsp;or <strong>password</strong>&nbsp;you provided are invalid",
-        "user_and_password_are_required_alert": "You have to provide both <strong>username</strong>&nbsp;and <strong>password</strong>&nbsp;"
+        "email_or_password_incorrect_alert": "The <strong>email</strong>&nbsp;or <strong>password</strong>&nbsp;you provided are invalid",
+        "email_and_password_are_required_alert": "You have to provide both <strong>email</strong>&nbsp;and <strong>password</strong>&nbsp;"
       },
       "reset_password_form": {
         "password_label": "@:common.labels.password",
