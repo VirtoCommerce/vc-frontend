@@ -1,8 +1,8 @@
 <template>
   <TransitionRoot appear :show="isOpen" as="template">
     <Dialog as="div" :initialFocus="getActiveElement()" @close="() => {}">
-      <div class="fixed inset-0 z-50 overflow-y-auto">
-        <div class="min-h-screen px-4 text-center">
+      <div class="fixed inset-0 z-50" :class="{ 'overflow-y-auto': !isMobileFullscreen }">
+        <div class="text-center" :class="{ 'min-h-screen px-4': !isMobileFullscreen, 'sm:px-4': isMobileFullscreen }">
           <TransitionChild
             as="template"
             enter="duration-300 ease-out"
@@ -28,13 +28,18 @@
             @after-leave="$emit('close')"
           >
             <div
-              class="inline-block w-full my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-md"
-              :class="modalWidth"
+              class="w-full inline-block overflow-hidden text-left align-middle transition-all transform bg-white sm:shadow-xl sm:rounded-md"
+              :class="[
+                modalWidth,
+                isMobileFullscreen
+                  ? 'fixed inset-0 flex flex-col sm:static sm:inset-auto sm:inline-block'
+                  : 'my-8 shadow-xl rounded-md',
+              ]"
             >
               <!-- Title bar -->
               <DialogTitle
                 as="h3"
-                class="text-lg font-bold leading-6 text-white h-14 flex items-center px-5"
+                class="text-lg font-bold leading-6 text-white flex items-center px-6 py-4"
                 :class="headerStyle"
               >
                 <slot name="title">
@@ -45,12 +50,12 @@
               </DialogTitle>
 
               <!-- Dialog contents -->
-              <div>
+              <div :class="[isMobileFullscreen ? 'flex-grow overflow-y-auto sm:overflow-y-visible' : '']">
                 <slot :close="close" />
               </div>
 
               <!-- Dialog actions -->
-              <div v-if="!hideActions" class="px-6 py-4 flex items-center justify-between lg:justify-end space-x-4">
+              <div v-if="!hideActions" class="px-6 py-4 flex items-center justify-between sm:justify-end space-x-4">
                 <slot name="actions" :close="close">
                   <button
                     class="uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-4 h-9 font-roboto-condensed text-base font-bold border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white rounded focus:outline-none"
@@ -100,6 +105,11 @@ const props = defineProps({
   },
 
   hideActions: {
+    type: Boolean,
+    default: false,
+  },
+
+  isMobileFullscreen: {
     type: Boolean,
     default: false,
   },

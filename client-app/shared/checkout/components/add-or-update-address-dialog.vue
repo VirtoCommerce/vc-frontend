@@ -7,6 +7,7 @@
     "
     modal-width="max-w-5xl"
     :hide-actions="true"
+    :is-mobile-fullscreen="true"
   >
     <template #default="{ close }">
       <AddressForm

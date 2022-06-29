@@ -1,5 +1,9 @@
 <template>
-  <VcPopup :title="$t('shared.checkout.select_address_dialog.title')" modal-width="max-w-5xl">
+  <VcPopup
+    :title="$t('shared.checkout.select_address_dialog.title')"
+    modal-width="max-w-5xl"
+    :is-mobile-fullscreen="true"
+  >
     <template #actions="{ close }">
       <VcButton
         class="uppercase lg:mr-auto px-2"
