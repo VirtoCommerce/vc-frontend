@@ -17,9 +17,13 @@
             :to="link"
             class="text-[color:var(--color-link)] font-extrabold line-clamp-3 overflow-hidden"
             @click="$emit('close-popup')"
+            v-if="productItem.code !== 'deleted'"
           >
             {{ productItem.name }}
           </router-link>
+          <div class="font-extrabold line-clamp-3 overflow-hidden" v-if="isProductDeleted">
+            {{ productItem.name }}
+          </div>
           <div
             class="flex items-center space-x-1"
             v-if="(props.productItem.quantity! > props.productItem.availabilityData?.availableQuantity) && !isInputDisabled"
@@ -123,9 +127,13 @@
             :to="link"
             class="text-[color:var(--color-link)] font-extrabold line-clamp-3 overflow-hidden"
             @click="$emit('close-popup')"
+            v-if="productItem.code !== 'deleted'"
           >
             {{ productItem.name }}
           </router-link>
+          <div class="font-extrabold line-clamp-3 overflow-hidden" v-if="isProductDeleted">
+            {{ productItem.name }}
+          </div>
           <div
             class="flex items-center space-x-1"
             v-if="(props.productItem.quantity! > props.productItem.availabilityData?.availableQuantity) && !isInputDisabled"
@@ -146,7 +154,7 @@
             <i class="fas fa-exclamation-circle text-[color:var(--color-primary)] self-start mt-1"></i>
             <span
               class="text-xs text-gray-400"
-              v-if="!isOutOfStock"
+              v-if="!isOutOfStock || isProductDeleted"
               v-t="$t('shared.account.reorder_info_popup.product_card.item_can_t_be_purchased_message')"
             ></span>
             <span
@@ -167,16 +175,16 @@
               :min="minQty"
               class="w-20 border rounded overflow-hidden h-8 lg:h-10 focus:ring ring-inset outline-none p-1 text-center"
               :class="{
-                'text-[color:var(--color-danger)]': isInputDisabled,
+                'text-[color:var(--color-danger)]': isInputDisabled && !isProductDeleted,
                 'border-[color:var(--color-danger)]': errorMessage,
               }"
-              :disabled="isInputDisabled || readOnly"
+              :disabled="isInputDisabled || readOnly || isProductDeleted"
               @input="onInput"
               @keypress="onKeypress"
             />
 
             <VcInStock
-              v-if="!isInputDisabled || isOutOfStock"
+              v-if="!isProductDeleted && (!isInputDisabled || isOutOfStock)"
               :is-in-stock="!isInputDisabled && !isOutOfStock"
               :quantity="productItem.availabilityData?.availableQuantity"
               class="inline-block mt-1.5"
@@ -184,10 +192,10 @@
           </div>
 
           <div class="hidden md:flex lg:w-28 lg:shrink-0 xl:w-2/4 md:items-end flex-col text-sm font-extrabold pr-3">
-            <span class="text-black self-end">{{
-              $t("shared.account.reorder_info_popup.product_card.total_label")
-            }}</span>
-            <span class="text-green-700">{{ currency?.symbol }}{{ total }}</span>
+            <span class="text-black self-end" v-if="!isProductDeleted">
+              {{ $t("shared.account.reorder_info_popup.product_card.total_label") }}
+            </span>
+            <span class="text-green-700" v-if="!isProductDeleted">{{ currency?.symbol }}{{ total }}</span>
           </div>
         </div>
       </div>
@@ -237,7 +245,7 @@ const variation = computed(() => props.productItem.variations?.find((v) => v.id 
 const minQty = computed(() => (variation.value ? variation.value?.minQuantity : props.productItem.minQuantity) || 0);
 const maxQty = computed(() => (variation.value ? variation.value?.maxQuantity : props.productItem.maxQuantity) || max);
 
-const total = computed(() => (value.value * props.productItem.price?.actual?.amount).toFixed(2));
+const total = computed(() => (value.value! * props.productItem.price?.actual?.amount).toFixed(2));
 
 let rules = yup.number().integer().optional().moreThan(0);
 rules = rules.min(minQty.value);
@@ -252,12 +260,10 @@ const isInputDisabled = computed(
 
 const isOutOfStock = computed(() => !props.productItem.availabilityData?.isInStock);
 
+const isProductDeleted = computed(() => props.productItem.code === "deleted");
+
 const { value, validate, errorMessage } = useField("qty", rules, {
-  initialValue: isInputDisabled.value
-    ? 0
-    : props.productItem.quantity! > props.productItem.availabilityData?.availableQuantity
-    ? props.productItem.availabilityData?.availableQuantity
-    : props.productItem.quantity,
+  initialValue: props.productItem.quantity,
 });
 
 validate();

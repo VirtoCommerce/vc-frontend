@@ -31,26 +31,15 @@
       <div class="flex items-center p-5 space-x-4 shadow-lg">
         <span v-if="!isMobile" class="text-sm" v-t="'shared.account.reorder_info_popup.filter.title'"></span>
 
-        <VcCheckbox
-          v-model="reducedQuantityFilter"
-          :class="!reducedQuantityFilter && 'text-gray-300'"
-          @change="applyFilters"
+        <VcCheckbox v-model="reducedQuantityFilter" @change="applyFilters"
           >{{ $t("shared.account.reorder_info_popup.filter.reduced_quantity_checkbox") }}
         </VcCheckbox>
 
-        <VcCheckbox
-          v-model="cantBePurchasedFilter"
-          :class="!cantBePurchasedFilter && 'text-gray-300'"
-          @change="applyFilters"
-        >
+        <VcCheckbox v-model="cantBePurchasedFilter" @change="applyFilters">
           {{ $t("shared.account.reorder_info_popup.filter.can_t_be_purchased_checkbox") }}
         </VcCheckbox>
 
-        <VcCheckbox
-          v-model="withoutChangesFilter"
-          :class="!withoutChangesFilter && 'text-gray-300'"
-          @change="applyFilters"
-        >
+        <VcCheckbox v-model="withoutChangesFilter" @change="applyFilters">
           {{ $t("shared.account.reorder_info_popup.filter.items_without_changes_checkbox") }}
         </VcCheckbox>
       </div>
@@ -96,7 +85,7 @@ const props = defineProps({
   },
 
   orderItemsInfo: {
-    type: Array as PropType<Pick<OrderLineItemType, "productId" | "quantity" | "id">[]>,
+    type: Array as PropType<Pick<OrderLineItemType, "productId" | "quantity" | "id" | "sku" | "name" | "imageUrl">[]>,
     required: true,
   },
 });
@@ -188,9 +177,16 @@ const addToCart = async () => {
 };
 
 onMounted(() => {
-  extendedProducts.value = _.map(props.productItems, (product) => {
-    const orderItem = _.find(props.orderItemsInfo, (item) => item.productId === product.id);
-    return _.extend(product, { quantity: orderItem?.quantity, lineItemId: orderItem?.id });
+  extendedProducts.value = _.map(props.orderItemsInfo, (orderItem) => {
+    let product = _.find(props.productItems, (productItem) => productItem.id === orderItem.productId);
+    if (!product) {
+      product = {
+        id: orderItem.productId,
+        code: "deleted",
+        name: orderItem.name,
+      };
+    }
+    return _.extend(product, { quantity: orderItem.quantity, lineItemId: orderItem.id });
   });
   filteredItems.value = extendedProducts.value;
 });
