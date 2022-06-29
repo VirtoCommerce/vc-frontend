@@ -77,12 +77,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, StyleValue, watchEffect } from "vue";
+import { computed, ref, StyleValue, watchEffect, watch } from "vue";
 import { RouteLocationRaw } from "vue-router";
 import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
 import MobileMenu from "./mobile-menu.vue";
-import { useRouteQueryParam } from "@core/composables";
-import QueryParamName from "@core/query-param-name.enum";
+import { useDomUtils, useRouteQueryParam } from "@/core/composables";
+import QueryParamName from "@/core/query-param-name.enum";
 import { useElementSize, whenever } from "@vueuse/core";
 
 const searchPhrase = ref("");
@@ -92,6 +92,7 @@ const headerElement = ref<HTMLElement | null>(null);
 
 const { customSlots, isAnimated } = useNestedMobileHeader();
 const { searchBarVisible, showSearchBar, hideSearchBar } = useSearchBar();
+const { toggleBodyScrollable } = useDomUtils();
 const { height } = useElementSize(headerElement);
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
@@ -105,6 +106,9 @@ const searchPageLink = computed<RouteLocationRaw>(() => ({
   },
 }));
 
+watch(mobileMenuVisible, (value) => {
+  toggleBodyScrollable(!value);
+});
 watchEffect(() => (searchPhrase.value = searchPhraseInUrl.value ?? ""));
 whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });
 </script>

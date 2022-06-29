@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { ShippingMethodType } from "@/xapi/graphql/types";
+import { ShippingMethodType } from "@/xapi/types";
 import { PropType, ref } from "vue";
 
 const props = defineProps({

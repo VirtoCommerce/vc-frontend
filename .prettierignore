@@ -6,5 +6,5 @@
 node_modules
 dist
 assets
-client-app/xapi/graphql/types.ts
-client-app/xapi/graphql/schema.json
+client-app/xapi/types.ts
+client-app/xapi/schema.json

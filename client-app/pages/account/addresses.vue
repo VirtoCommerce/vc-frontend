@@ -226,12 +226,12 @@
 import { AddressForm, useUser, useUserAddresses } from "@/shared/account";
 import { computed, ComputedRef, onMounted, Ref, ref } from "vue";
 import { clone } from "lodash";
-import { MemberAddressType } from "@/xapi/graphql/types";
+import { MemberAddressType } from "@/xapi/types";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { BackButtonInHeader } from "@/shared/layout";
-import { useCountries } from "@core/composables";
-import { AddressType } from "@core/types";
+import { useCountries } from "@/core/composables";
+import { AddressType } from "@/core/types";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();

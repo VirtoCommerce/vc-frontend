@@ -1,4 +1,4 @@
-import { IThemeConfigPreset, IThemeContext } from "@core/types";
+import { IThemeConfigPreset, IThemeContext } from "@/core/types";
 
 declare module "*.vue" {
   import { DefineComponent } from "vue";

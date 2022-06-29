@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 import { PropType, ref } from "vue";
-import { CustomerOrderType } from "@/xapi/graphql/types";
+import { CustomerOrderType } from "@/xapi/types";
 import { initializePayment } from "@/xapi/graphql/cart";
 import { PaymentActionType } from "@/shared/payment";
 import { useI18n } from "vue-i18n";

@@ -268,9 +268,9 @@ import {
   CategorySelector,
 } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
-import { useElementVisibility, useRouteQueryParam } from "@core/composables";
-import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@core/constants";
-import QueryParamName from "@core/query-param-name.enum";
+import { useElementVisibility, useRouteQueryParam } from "@/core/composables";
+import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
+import QueryParamName from "@/core/query-param-name.enum";
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
 
@@ -453,7 +453,11 @@ async function loadMoreProducts() {
 
 function onChangeCurrentCategory(key: string, value: string) {
   clearFilters();
-  selectCategoryByKey(key, value);
+  if (!value) {
+    selectRoot();
+  } else {
+    selectCategoryByKey(key, value);
+  }
 }
 
 onMounted(async () => {
@@ -463,13 +467,14 @@ onMounted(async () => {
     selectRoot();
   } else if (categoryId.value) {
     selectCategoryByKey("id", categoryId.value);
-    watch(categoryId, (value) => onChangeCurrentCategory("id", value));
   } else {
     selectCategoryByKey("seoUrl", categorySeoUrl.value);
-    watch(categorySeoUrl, (value) => onChangeCurrentCategory("seoUrl", value));
   }
 
   applyFilters();
+
+  watch(categoryId, (value) => onChangeCurrentCategory("id", value));
+  watch(categorySeoUrl, (value) => onChangeCurrentCategory("seoUrl", value));
 
   await loadProducts();
 

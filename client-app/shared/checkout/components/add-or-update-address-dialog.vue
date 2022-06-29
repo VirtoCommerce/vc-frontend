@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { MemberAddressType } from "@/xapi/graphql/types";
+import { MemberAddressType } from "@/xapi/types";
 import { useCountries } from "@/core/composables";
 import { AddressForm } from "@/shared/account";
 import { onMounted, PropType, ref, Ref, watchEffect } from "vue";

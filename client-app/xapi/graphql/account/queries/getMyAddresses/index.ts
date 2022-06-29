@@ -1,4 +1,4 @@
-import { ContactTypeAddressesArgs, MemberAddressType, Query } from "@/xapi/graphql/types";
+import { ContactTypeAddressesArgs, MemberAddressType, Query } from "@/xapi/types";
 import getMyAddressesQueryDocument from "./getMyAddressesQuery.graphql";
 
 export default async function getMyAddresses(payload?: ContactTypeAddressesArgs): Promise<MemberAddressType[]> {

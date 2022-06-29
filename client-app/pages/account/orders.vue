@@ -269,7 +269,7 @@ import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 import { breakpointsTailwind, useBreakpoints, onClickOutside } from "@vueuse/core";
 
 import { useRouter } from "vue-router";
-import { CustomerOrderType } from "@/xapi/graphql/types";
+import { CustomerOrderType } from "@/xapi/types";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();

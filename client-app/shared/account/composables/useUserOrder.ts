@@ -1,6 +1,6 @@
-import { Logger } from "@core/utilities";
+import { Logger } from "@/core/utilities";
 import { computed, ref, Ref } from "vue";
-import { CustomerOrderType, InputAddOrUpdateOrderPaymentType, QueryOrderArgs } from "@/xapi/graphql/types";
+import { CustomerOrderType, InputAddOrUpdateOrderPaymentType, QueryOrderArgs } from "@/xapi/types";
 import { addOrUpdateOrderPayment, getOrder } from "@/xapi/graphql/orders";
 
 const loading: Ref<boolean> = ref(false);

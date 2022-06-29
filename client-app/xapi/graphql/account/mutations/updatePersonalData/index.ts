@@ -1,9 +1,4 @@
-import {
-  InputPersonalDataType,
-  IdentityResultType,
-  Mutations,
-  MutationsUpdatePersonalDataArgs,
-} from "@/xapi/graphql/types";
+import { InputPersonalDataType, IdentityResultType, Mutations, MutationsUpdatePersonalDataArgs } from "@/xapi/types";
 import mutationDocument from "./updatePersonalDataMutation.graphql";
 
 export default async function updatePersonalData(personalData: InputPersonalDataType): Promise<IdentityResultType> {

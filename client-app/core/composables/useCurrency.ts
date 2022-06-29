@@ -1,7 +1,7 @@
 import { computed } from "vue";
 import { useLocalStorage } from "@vueuse/core";
-import { useThemeContext } from "@core/composables";
-import { Currency } from "@core/types";
+import { useThemeContext } from "@/core/composables";
+import { Currency } from "@/core/types";
 
 const { themeContext } = useThemeContext();
 

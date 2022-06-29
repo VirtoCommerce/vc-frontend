@@ -1,5 +1,5 @@
 import { CategoryTree } from "@/shared/catalog";
-import { Category } from "@/xapi/graphql/types";
+import { Category } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";
 
 export function getCategoryRoute(category: Category | CategoryTree): RouteLocationRaw {

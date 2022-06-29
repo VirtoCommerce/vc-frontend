@@ -193,7 +193,7 @@ import { useCart } from "@/shared/cart";
 import { useUser } from "@/shared/account";
 import { LanguageSelector, MenuLink, useNavigations } from "@/shared/layout";
 import { useCompareProducts } from "@/shared/compare";
-import { useCurrency, useLanguages } from "@core/composables";
+import { useCurrency, useLanguages } from "@/core/composables";
 import MobileMenuLink from "./mobile-menu-link.vue";
 
 defineEmits(["close"]);

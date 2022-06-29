@@ -1,5 +1,5 @@
 import queryDocument from "./getWishlist.graphql";
-import { Query, QueryWishlistArgs, WishlistType } from "@/xapi/graphql/types";
+import { Query, QueryWishlistArgs, WishlistType } from "@/xapi/types";
 
 export default async function getWishList(listId: string): Promise<WishlistType> {
   const { $graphqlClient } = useNuxtApp();

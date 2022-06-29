@@ -237,7 +237,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watchEffect } from "vue";
-import { InputOrderAddressType, OrderPaymentMethodType, PaymentInType } from "@/xapi/graphql/types";
+import { InputOrderAddressType, OrderPaymentMethodType, PaymentInType } from "@/xapi/types";
 import { AddOrUpdateAddressDialog, OrderSummary, PaymentMethodDialog } from "@/shared/checkout";
 import {
   PaymentProcessingAuthorizeNet,

@@ -1,6 +1,6 @@
 import { useUser } from ".";
 import { CheckoutDefaults } from "./../types/index";
-import { Logger } from "@core/utilities";
+import { Logger } from "@/core/utilities";
 
 export default () => {
   const { user } = useUser();

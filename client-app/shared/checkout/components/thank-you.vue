@@ -136,7 +136,7 @@
 
 <script setup lang="ts">
 import { OrderSummary, ProductCard, AcceptedGifts } from "@/shared/checkout";
-import { CustomerOrderType } from "@/xapi/graphql/types";
+import { CustomerOrderType } from "@/xapi/types";
 import { useCart } from "@/shared/cart";
 import { computed, PropType, ref } from "vue";
 

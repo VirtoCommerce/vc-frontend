@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { clickOutside } from "@core/directives";
+import { clickOutside } from "@/core/directives";
 
 export default {
   directives: {
@@ -55,7 +55,7 @@ export default {
 
 <script setup lang="ts">
 import { ref, shallowRef } from "vue";
-import { useCurrency } from "@core/composables";
+import { useCurrency } from "@/core/composables";
 
 const { currentCurrency, supportedCurrencies, saveCurrencyCodeAndReload } = useCurrency();
 

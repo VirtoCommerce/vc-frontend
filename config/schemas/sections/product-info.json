@@ -1,6 +1,6 @@
 {
   "name": "Product",
   "icon": "smartphone",
-  "displayNameProperty": "name",
+  "displayField": "name",
   "blocks": ["image", "text"]
 }

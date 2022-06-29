@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { ImageType } from "@/xapi/graphql/types";
+import { ImageType } from "@/xapi/types";
 import { watchEffect, PropType, ref } from "vue";
 import { SwipeDirection, useSwipe } from "@vueuse/core";
 import _ from "lodash";

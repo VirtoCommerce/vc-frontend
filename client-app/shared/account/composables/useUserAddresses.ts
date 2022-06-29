@@ -1,10 +1,10 @@
 import { computed, readonly, ref, Ref, shallowRef, unref } from "vue";
-import { InputMemberAddressType, MemberAddressType, UserType } from "@/xapi/graphql/types";
+import { InputMemberAddressType, MemberAddressType, UserType } from "@/xapi/types";
 import { getMyAddresses, updateMemberAddresses, deleteMemberAddresses } from "@/xapi/graphql/account";
-import { isEqualAddresses, Logger, toInputAddress } from "@core/utilities";
+import { isEqualAddresses, Logger, toInputAddress } from "@/core/utilities";
 import { getSortingExpression, ISortInfo } from "@/shared/account";
-import { SORT_ASCENDING } from "@core/constants";
-import { AnyAddressType } from "@core/types";
+import { SORT_ASCENDING } from "@/core/constants";
+import { AnyAddressType } from "@/core/types";
 import { MaybeRef } from "@vueuse/core";
 
 export default (options: { user: MaybeRef<UserType> }) => {

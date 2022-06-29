@@ -1,6 +1,6 @@
-import { PaymentMethodType, Query, QueryCartArgs } from "@/xapi/graphql/types";
+import { PaymentMethodType, Query, QueryCartArgs } from "@/xapi/types";
 import getAvailPaymentMethodsDocument from "./getAvailPaymentMethodsQuery.graphql";
-import globals from "@core/globals";
+import globals from "@/core/globals";
 
 export default async function getAvailPaymentMethods(): Promise<PaymentMethodType[]> {
   const { storeId, userId, cultureName, currencyCode } = globals;

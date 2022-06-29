@@ -1,9 +1,9 @@
 import { computed, readonly, Ref, ref } from "vue";
 import { searchCategories } from "@/xapi/graphql/catalog";
-import { Category } from "@/xapi/graphql/types";
-import { Logger } from "@core/utilities";
+import { Category } from "@/xapi/types";
+import { Logger } from "@/core/utilities";
 import { CategoryTree } from "../types";
-import globals from "@core/globals";
+import globals from "@/core/globals";
 
 const categoryTree: Ref<CategoryTree | undefined> = ref();
 const loading: Ref<boolean> = ref(true);

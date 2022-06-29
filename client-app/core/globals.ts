@@ -1,4 +1,4 @@
-import { GlobalsType, NonNullableGlobalsType } from "@core/types";
+import { GlobalsType, NonNullableGlobalsType } from "@/core/types";
 
 const globals: GlobalsType = {
   storeId: "",

@@ -1,5 +1,5 @@
 import { RouteRecordRaw } from "vue-router";
-import { DEVELOPMENT } from "@core/constants";
+import { DEVELOPMENT } from "@/core/constants";
 import { accountRoutes } from "@/router/routes";
 
 // Error pages

@@ -1,7 +1,7 @@
 import mutationDocument from "./addBulkItemsToCartMutation.graphql";
-import { BulkCartType, Mutations, MutationsAddBulkItemsCartArgs } from "@/xapi/graphql/types";
+import { BulkCartType, Mutations, MutationsAddBulkItemsCartArgs } from "@/xapi/types";
 import { InputBulkItemsType } from "@/xapi/graphql/cart";
-import globals from "@core/globals";
+import globals from "@/core/globals";
 
 export default async function addBulkItemsToCart(payload: InputBulkItemsType): Promise<BulkCartType> {
   const { storeId, userId, cultureName, currencyCode } = globals;

@@ -95,7 +95,7 @@
 <script setup lang="ts">
 import { version } from "../../../../../package.json";
 import FooterLink from "./_internal/footer-link.vue";
-import { DEVELOPMENT } from "@core/constants";
+import { DEVELOPMENT } from "@/core/constants";
 
 defineProps({
   compact: Boolean,

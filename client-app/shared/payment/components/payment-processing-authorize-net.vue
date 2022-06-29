@@ -71,11 +71,10 @@
 import { computed, PropType, ref, shallowRef, watch, watchEffect } from "vue";
 import { clone } from "lodash";
 import { initializePayment } from "@/xapi/graphql/cart";
-import { CustomerOrderType, KeyValueType } from "@/xapi/graphql/types";
+import { CustomerOrderType, KeyValueType } from "@/xapi/types";
 import { BankCardType, BankCardForm, useAuthorizeNet, BankCardErrorsType, PaymentActionType } from "@/shared/payment";
-import { useNotifications } from "@/shared/notification";
 import { useI18n } from "vue-i18n";
-import { Logger } from "@core/utilities";
+import { Logger } from "@/core/utilities";
 
 const emit = defineEmits<{
   (event: "success"): void;
@@ -112,7 +111,6 @@ const apiLoginID = computed<string>(() => parameters.value.find(({ key }) => key
 const clientKey = computed<string>(() => parameters.value.find(({ key }) => key === "clientKey")?.value ?? "");
 
 const { t } = useI18n();
-const notifications = useNotifications();
 const { loadAcceptJS, dispatchData, sendOpaqueData } = useAuthorizeNet({ scriptURL, manualScriptLoading: true });
 
 async function initPayment() {
@@ -154,6 +152,10 @@ function showErrors(messages: Accept.Message[]) {
         bankCardErrors.value.year = t("shared.payment.authorize_net.errors.year");
         break;
 
+      case "E_WC_08":
+        bankCardErrors.value.year = t("shared.payment.authorize_net.errors.expiration_date");
+        break;
+
       case "E_WC_15":
         bankCardErrors.value.securityCode = t("shared.payment.authorize_net.errors.security_code");
         break;
@@ -162,16 +164,8 @@ function showErrors(messages: Accept.Message[]) {
         bankCardErrors.value.cardholderName = t("shared.payment.authorize_net.errors.cardholder_name");
         break;
 
-      case "E_WC_19":
-        notifications.error({
-          text: t(`shared.payment.authorize_net.errors.try_again`),
-          duration: 15000,
-          single: true,
-        });
-        break;
-
       default:
-        notifications.error({ text, duration: 15000, single: true });
+        emit("fail", text);
     }
 
     // https://developer.authorize.net/api/reference/features/acceptjs.html#Appendix_Error_Codes

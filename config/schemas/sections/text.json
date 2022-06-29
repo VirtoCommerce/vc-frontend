@@ -1,7 +1,7 @@
 {
   "name": "Text",
   "icon": "image",
-  "displayNameProperty": "name",
+  "displayField": "name",
   "group": "Content",
   "settings": [
     {

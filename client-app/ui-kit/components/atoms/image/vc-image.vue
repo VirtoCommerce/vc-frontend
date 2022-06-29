@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { computed, inject, ref, watch } from "vue";
-import { appendSuffixToFilename } from "@core/utilities";
+import { appendSuffixToFilename } from "@/core/utilities";
 import { configInjectionKey } from "@/core/injection-keys";
 
 const props = defineProps({

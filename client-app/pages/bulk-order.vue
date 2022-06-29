@@ -66,7 +66,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { CopyAndPaste, Manually } from "@/shared/bulk-order";
-import { InputNewBulkItemType } from "@/xapi/graphql/types";
+import { InputNewBulkItemType } from "@/xapi/types";
 import { useCart } from "@/shared/cart";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";

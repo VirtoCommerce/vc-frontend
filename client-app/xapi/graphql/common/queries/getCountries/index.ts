@@ -1,4 +1,4 @@
-import { CountryType, Query } from "@/xapi/graphql/types";
+import { CountryType, Query } from "@/xapi/types";
 import getCountriesQuery from "./getCountries.graphql";
 
 export default async function getCountries(): Promise<CountryType[]> {

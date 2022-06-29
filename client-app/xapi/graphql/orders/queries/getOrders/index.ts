@@ -1,6 +1,6 @@
-import { CustomerOrderConnection, Query, QueryOrdersArgs } from "@/xapi/graphql/types";
+import { CustomerOrderConnection, Query, QueryOrdersArgs } from "@/xapi/types";
 import getOrdersQueryDocument from "./getOrdersQuery.graphql";
-import globals from "@core/globals";
+import globals from "@/core/globals";
 
 export default async function getOrders(payload?: QueryOrdersArgs): Promise<CustomerOrderConnection> {
   const { userId, cultureName } = globals;
