@@ -8,7 +8,6 @@
     <VcInput
       v-model="email"
       name="email"
-      type="email"
       class="mb-4"
       :label="$t('shared.account.sign_in_form.email_label')"
       :placeholder="$t('shared.account.sign_in_form.email_placeholder')"
