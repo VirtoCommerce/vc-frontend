@@ -50,7 +50,7 @@
               </DialogTitle>
 
               <!-- Dialog contents -->
-              <div :class="[isMobileFullscreen ? 'flex-grow overflow-y-auto sm:overflow-y-visible' : '']">
+              <div :class="{ 'flex-grow overflow-y-auto sm:overflow-y-visible': isMobileFullscreen }">
                 <slot :close="close" />
               </div>
 

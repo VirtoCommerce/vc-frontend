@@ -1,9 +1,5 @@
 <template>
-  <VcPopup
-    :title="$t('shared.wishlists.add_to_wishlists_dialog.title')"
-    modal-width="max-w-xl"
-    :is-mobile-fullscreen="true"
-  >
+  <VcPopup :title="$t('shared.wishlists.add_to_wishlists_dialog.title')" modal-width="max-w-xl" is-mobile-fullscreen>
     <div class="sm:max-h-[50vh] lg:max-h-64 sm:overflow-y-auto border-b">
       <!-- Lists -->
       <ul v-if="extendedLists.length">
