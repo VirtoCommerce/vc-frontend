@@ -57,7 +57,13 @@
 
     <!-- Facet Filters -->
     <template v-else>
-      <VcCard v-for="facet in _filters.facets" :key="facet.paramName" :title="facet.label" is-collapsible>
+      <VcCard
+        is-collapsible
+        v-for="facet in _filters.facets"
+        :key="facet.paramName"
+        :title="facet.label"
+        :is-collapsed="!filterHasSelectedValues(facet)"
+      >
         <VcCheckbox
           v-for="item in facet.values"
           :key="item.value"
@@ -77,7 +83,7 @@
 </template>
 
 <script setup lang="ts">
-import { ProductsFilters } from "@/shared/catalog";
+import { ProductsFilters, ProductsFacet } from "@/shared/catalog";
 import { eagerComputed } from "@vueuse/core";
 import { watch, onMounted, PropType, ref, shallowReactive, toRefs } from "vue";
 import _ from "lodash";
@@ -130,6 +136,8 @@ watch(
 watch(keyword, (newKeyword) => (_keyword.value = newKeyword ?? ""));
 
 const isAppliedKeyword = eagerComputed<boolean>(() => _keyword.value == keyword.value);
+
+const filterHasSelectedValues = (facet: ProductsFacet) => _.some(facet.values, (value) => value.selected);
 
 function onFilterChanged() {
   emit("change", _filters);
