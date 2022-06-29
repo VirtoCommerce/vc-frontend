@@ -1,5 +1,5 @@
 <template>
-  <div class="relative">
+  <div class="flex flex-col space-y-1">
     <textarea
       v-model="text"
       :rows="rows"
@@ -9,7 +9,7 @@
       class="rounded w-full leading-tight p-3 border focus:border-gray-400 outline-none"
       :class="$attrs.class"
     />
-    <p v-if="counter" class="absolute text-xs text-gray-300 bottom-3.5 right-3">{{ symbolsCount }}</p>
+    <p v-if="counter" class="text-xs text-[color:var(--color-danger)] self-end">{{ symbolsCount }}</p>
   </div>
 </template>
 
