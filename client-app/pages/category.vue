@@ -458,6 +458,7 @@ function onChangeCurrentCategory(key: string, value: string) {
   } else {
     selectCategoryByKey(key, value);
   }
+  applyFilters();
 }
 
 onMounted(async () => {

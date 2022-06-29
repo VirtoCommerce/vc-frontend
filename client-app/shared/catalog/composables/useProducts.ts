@@ -26,7 +26,6 @@ export default (
 
   function clearFilters() {
     filters.facets.forEach((filter) => filter.values.forEach((filterItem) => (filterItem.selected = false)));
-    filters.inStock = false;
   }
 
   async function fetchProducts(searchParams: Partial<ProductsSearchParams>) {
