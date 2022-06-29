@@ -5,10 +5,6 @@
       <span v-html="$t('shared.account.sign_in_form.email_or_password_incorrect_alert')"></span>
     </VcAlert>
 
-    <VcAlert v-if="!valid" class="mb-2" icon type="error" text>
-      <span v-html="$t('shared.account.sign_in_form.email_and_password_are_required_alert')"></span>
-    </VcAlert>
-
     <VcInput
       v-model="email"
       name="email"

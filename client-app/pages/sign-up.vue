@@ -130,7 +130,7 @@ const schema = yup.object({
     .max(64)
     .test(
       "is-unique-email",
-      t("pages.sign_up.errors.username_or_email_not_unique"),
+      t("pages.sign_up.errors.email_not_unique"),
       (value) => new Promise((resolve) => emailValidationDebounced(value!, resolve))
     ),
   firstName: yup.string().label("First Name").required().max(64),
@@ -265,12 +265,12 @@ function convertToIdentityError(textErrors: string[]): IdentityErrorType[] {
 
 const validateEmailUniqueness = async (value: string, resolve: (value: boolean) => void) => {
   try {
-    let response = await checkEmailUniqueness({ email: value });
-    if (response === true) {
-      resolve(true);
-    }
-    response = await checkUsernameUniqueness({ username: value });
-    resolve(response === true);
+    const responses = await Promise.all([
+      checkEmailUniqueness({ email: value }),
+      checkUsernameUniqueness({ username: value }),
+    ]);
+
+    resolve(responses[0] && responses[1]);
   } catch (error) {
     resolve(false);
   }

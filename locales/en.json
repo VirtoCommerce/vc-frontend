@@ -61,7 +61,8 @@
     },
     "placeholders": {
       "not_selected": "Not selected",
-      "email": "email{'@'}example.com"
+      "email": "Enter your email address",
+      "password": "Enter your password"
     },
     "links": {
       "home": "Home",
@@ -194,13 +195,12 @@
         "email_label": "@:common.labels.email",
         "email_placeholder": "@:common.placeholders.email",
         "password_label": "@:common.labels.password",
-        "password_placeholder": "@:common.labels.password",
+        "password_placeholder": "@:common.placeholders.password",
         "remember_me_label": "Remember me",
         "forgot_password_link": "Forgot your password?",
         "login_button": "Log in",
         "registration_button": "Sign up",
-        "email_or_password_incorrect_alert": "The <strong>email</strong>&nbsp;or <strong>password</strong>&nbsp;you provided are invalid",
-        "email_and_password_are_required_alert": "You have to provide both <strong>email</strong>&nbsp;and <strong>password</strong>&nbsp;"
+        "email_or_password_incorrect_alert": "The <strong>email</strong>&nbsp;or <strong>password</strong>&nbsp;you provided are invalid"
       },
       "reset_password_form": {
         "password_label": "@:common.labels.password",
@@ -594,9 +594,9 @@
       "last_name_label": "@:common.labels.last_name",
       "last_name_placeholder": "Enter your last name",
       "email_label": "@:common.labels.email",
-      "email_placeholder": "Enter your email address",
+      "email_placeholder": "@:common.placeholders.email",
       "password_label": "@:common.labels.password",
-      "password_placeholder": "Enter your password",
+      "password_placeholder": "@:common.placeholders.password",
       "confirm_password_label": "@:common.labels.confirm_password",
       "confirm_password_placeholder": "Confirm your password",
       "register_button": "Sign up",
@@ -604,7 +604,7 @@
         "PasswordTooShort": "Your password must be at least 8 characters long.",
         "InvalidEmail": "Please enter valid email address, e.g. johndoe{'@'}gmail.com)",
         "passwords_must_match": "Passwords must match",
-        "username_or_email_not_unique": "This email or username is already taken"
+        "email_not_unique": "This email is already registered with us"
       }
     },
     "account": {
