@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-grow items-stretch relative">
+  <div class="flex flex-grow items-stretch relative" v-click-outside="reset">
     <input
       v-model.trim="searchPhrase"
       :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
@@ -42,8 +42,8 @@
                     :to="categoriesRoutes[category.id]"
                     v-html="category.name"
                     class="py-1 block"
-                    @click="hideSearchBar"
-                  />
+                    @click="hideSearchDropdown"
+                  ></router-link>
                 </li>
               </ul>
             </div>
@@ -60,7 +60,7 @@
                 v-for="product in products"
                 :key="product.id"
                 :product="product"
-                @link-click="hideSearchBar"
+                @link-click="hideSearchDropdown"
               />
             </div>
           </section>
@@ -126,7 +126,6 @@ const {
   categories,
   searchBarVisible,
   searchDropdownVisible,
-  hideSearchBar,
   hideSearchDropdown,
   showSearchDropdown,
   searchResults,
