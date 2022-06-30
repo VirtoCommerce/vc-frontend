@@ -9,13 +9,13 @@
       class="rounded w-full leading-tight p-3 border focus:border-gray-400 outline-none"
       :class="$attrs.class"
     />
-    <p
+    <div
       v-if="counter"
       class="text-xs float-right"
       :class="symbolsLeft >= 10 ? 'text-gray-300' : 'text-[color:var(--color-danger)]'"
     >
       {{ symbolsCount }}
-    </p>
+    </div>
   </div>
 </template>
 
