@@ -33,7 +33,7 @@
         <WishlistProductItem
           v-for="item in listItems"
           :key="item.id"
-          :product="item.product!"
+          :list-item="item"
           class="even:bg-gray-50"
           @remove="openDeleteProductDialog(item)"
         />
