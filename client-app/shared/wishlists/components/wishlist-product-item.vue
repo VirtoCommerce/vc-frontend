@@ -13,8 +13,13 @@
       >
         {{ listItem.product.name }}
       </router-link>
-      <div v-else class="text-sm break-words font-extrabold line-clamp-3 overflow-hidden">
-        {{ listItem.name }}
+      <div v-else>
+        <div class="text-sm break-words font-extrabold line-clamp-3 overflow-hidden">{{ listItem.name }}</div>
+        <i class="fas fa-exclamation-circle text-[color:var(--color-primary)] self-start mt-1"></i>
+        <span
+          class="text-xs text-gray-400"
+          v-t="$t('shared.account.reorder_info_popup.product_card.item_can_t_be_purchased_message')"
+        ></span>
       </div>
     </div>
 
