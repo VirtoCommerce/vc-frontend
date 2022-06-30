@@ -121,10 +121,15 @@ import * as yup from "yup";
 import { usePopup } from "@/shared/popup";
 import { useI18n } from "vue-i18n";
 import { whenever } from "@vueuse/core";
+import { usePageHead } from "@/core/composables";
 
 const { t } = useI18n();
 const { user, updateUser, changePassword } = useUser();
 const { openPopup } = usePopup();
+
+usePageHead({
+  title: computed(() => t("pages.account.profile.meta.title")),
+});
 
 const updateProfileError: Ref<boolean> = ref(false);
 

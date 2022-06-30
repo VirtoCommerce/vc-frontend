@@ -30,6 +30,14 @@
 import { ref } from "vue";
 import { TwoColumn } from "@/shared/layout";
 import { ForgotPasswordForm } from "@/shared/account";
+import { usePageHead } from "@/core/composables";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
+
+usePageHead({
+  title: t("pages.forgot_password.meta.title"),
+});
 
 const isSucceeded = ref(false);
 

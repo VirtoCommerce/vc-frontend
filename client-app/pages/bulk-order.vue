@@ -70,8 +70,17 @@ import { InputNewBulkItemType } from "@/xapi/types";
 import { useCart } from "@/shared/cart";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
+import { usePageHead } from "@/core/composables";
 
 const { t } = useI18n();
+
+usePageHead({
+  title: t("pages.bulk_order.meta.title"),
+  meta: {
+    keywords: t("pages.bulk_order.meta.keywords"),
+    description: t("pages.bulk_order.meta.description"),
+  },
+});
 
 const tabs = [
   { id: "manually", label: t("pages.bulk_order.manually_tab") },

@@ -108,11 +108,15 @@ import { isObjectEmpty, trimString } from "@/core/utilities";
 import { useI18n } from "vue-i18n";
 import { checkEmailUniqueness, checkUsernameUniqueness } from "@/xapi/graphql/account";
 import _ from "lodash";
+import { usePageHead } from "@/core/composables";
 
 const { t } = useI18n();
-
 const { registerUser, registerOrganization, loading } = useUser();
 const { openPopup } = usePopup();
+
+usePageHead({
+  title: t("pages.sign_up.meta.title"),
+});
 
 const ASYNC_VALIDATION_TIMEOUT_IN_MS = 3000;
 

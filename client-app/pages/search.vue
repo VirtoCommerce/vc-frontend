@@ -88,14 +88,16 @@ import { computed, watch, onMounted, ref, onBeforeUnmount, WatchStopHandle } fro
 import { breakpointsTailwind, useBreakpoints, useLocalStorage } from "@vueuse/core";
 import { DisplayProducts, ProductsSearchParams, useProducts, useProductsRoutes, ViewMode } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
-import { useRouteQueryParam } from "@/core/composables";
+import { usePageHead, useRouteQueryParam } from "@/core/composables";
 import { DEFAULT_SEARCH_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import QueryParamName from "@/core/query-param-name.enum";
+import { useI18n } from "vue-i18n";
 
 const watchStopHandles: WatchStopHandle[] = [];
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { fetchProducts, fetchMoreProducts, loading, loadingMore, products, pages } = useProducts();
+const { t } = useI18n();
 
 const productsRoutes = useProductsRoutes(products);
 
@@ -119,6 +121,10 @@ const searchParams = computed<ProductsSearchParams>(() => ({
   sort: sortQueryParam.value,
   keyword: keywordQueryParam.value,
 }));
+
+usePageHead({
+  title: computed(() => t("pages.search.meta.title", [searchParams.value.keyword])),
+});
 
 async function loadProducts() {
   page.value = 1;
