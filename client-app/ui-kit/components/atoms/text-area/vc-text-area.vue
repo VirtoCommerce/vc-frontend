@@ -11,7 +11,7 @@
     />
     <div
       v-if="counter"
-      class="text-xs float-right"
+      class="text-xs text-right"
       :class="symbolsLeft >= 10 ? 'text-gray-300' : 'text-[color:var(--color-danger)]'"
     >
       {{ symbolsCount }}
