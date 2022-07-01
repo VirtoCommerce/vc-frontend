@@ -9,7 +9,14 @@
       "name": "text",
       "type": "text",
       "header": "Header",
-      "text": "<p>Block content text</p>"
+      "text": "<p>Block content text</p>\n"
+    },
+    {
+      "id": "textWZoK",
+      "name": "text",
+      "type": "text",
+      "header": "Header 123",
+      "text": "<p>Block content text</p>\n"
     },
     {
       "id": "block-1",
