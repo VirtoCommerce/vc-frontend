@@ -74,7 +74,7 @@ const props = defineProps({
 });
 
 const { openPopup, closePopup } = usePopup();
-const { loading: loadingLists, lists, fetchWishlists, addItemsToWishlists } = useWishlists();
+const { loading: loadingLists, lists, fetchWishlists, addItemsToWishlists } = useWishlists({ autoRefetch: false });
 
 const loading = ref(false);
 const selectedListsIds = ref<string[]>([]);
