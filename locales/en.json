@@ -56,7 +56,9 @@
       "required_field": "This field is required",
       "email_is_not_correct": "Please enter valid email address, e.g. johndoe{'@'}gmail.com)",
       "max_length": "This field must not contain over {max} characters",
-      "creating_order_error": "Error when creating an order"
+      "creating_order_error": "Error when creating an order",
+      "item_can_t_be_purchased": "This item cannot be purchased",
+      "item_is_out_of_stock": "This item is out of stock"
     },
     "placeholders": {
       "not_selected": "Not selected",
@@ -244,8 +246,8 @@
           "in_stock_suffix": "@:common.suffixes.product_count_in_stock",
           "out_of_stock_message": "@:common.messages.product_out_of_stock",
           "reduced_message": "The number of items in the order was <span class=\"text-gray-500\">reduced from {0} to {1}</span> due to stock restrictions",
-          "item_can_t_be_purchased_message": " This item cannot be purchased ",
-          "item_is_out_of_stock_message": " This item is out of stock "
+          "item_can_t_be_purchased_message": "@:common.messages.item_can_t_be_purchased",
+          "item_is_out_of_stock_message": "@:common.messages.item_is_out_of_stock"
         }
       },
       "orders-filter": {

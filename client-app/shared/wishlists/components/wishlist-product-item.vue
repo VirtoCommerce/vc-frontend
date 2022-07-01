@@ -15,16 +15,16 @@
       </router-link>
       <div v-else>
         <div class="text-sm break-words font-extrabold line-clamp-3 overflow-hidden">{{ listItem.name }}</div>
-        <i class="fas fa-exclamation-circle text-[color:var(--color-primary)] self-start mt-1"></i>
-        <span
-          class="text-xs text-gray-400"
-          v-t="$t('shared.account.reorder_info_popup.product_card.item_can_t_be_purchased_message')"
-        ></span>
+        <!-- todo: extract small alert component https://virtocommerce.atlassian.net/browse/ST-2488 -->
+        <div class="flex items-center space-x-1 mt-1">
+          <i class="fas fa-exclamation-circle text-[color:var(--color-primary)] self-start"></i>
+          <span class="text-xs text-gray-400" v-t="'common.messages.item_can_t_be_purchased'"></span>
+        </div>
       </div>
     </div>
 
     <!-- Price -->
-    <div class="shrink-0 w-32 font-bold text-sm flex flex-col items-start">
+    <div class="shrink-0 w-32 text-sm flex flex-col items-start">
       <span class="font-bold">
         {{ $t("pages.compare.main_block.price_label") }}
       </span>

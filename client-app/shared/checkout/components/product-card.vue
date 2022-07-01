@@ -24,6 +24,7 @@
             <div class="font-extrabold line-clamp-3 overflow-hidden" v-else>
               {{ lineItem.name }}
             </div>
+            <!-- todo: extract small alert component https://virtocommerce.atlassian.net/browse/ST-2488 -->
             <div class="flex items-center space-x-1 py-1" v-if="validationError">
               <i class="fas fa-exclamation-circle text-[color:var(--color-primary)]"></i>
               <span class="text-xs text-gray-400"> {{ itemErrorMessage }} </span>
