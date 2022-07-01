@@ -55,7 +55,7 @@
     "messages": {
       "product_out_of_stock": "Ausverkauft",
       "required_field": "Dieses Feld wird benötigt",
-      "email_is_not_correct": "Geben Sie bitte die richtige E-Mail-Adresse ein (ex. john{'@'}gmail.com)",
+      "email_is_not_correct": "Geben Sie bitte die richtige E-Mail-Adresse ein, ex. johndoe{'@'}gmail.com",
       "max_length": "Dieses Feld darf höchstens {max} Zeichen lang sein",
       "creating_order_error": "Fehler beim Anlegen eines Auftrags",
       "item_can_t_be_purchased": "Dieser Artikel kann nicht gekauft werden",
@@ -214,7 +214,7 @@
         "email_label": "@:common.labels.email",
         "email_placeholder": "Geben sie ihre E-Mail Adresse ein",
         "submit_button": "@:common.buttons.submit",
-        "invalid_email_format_message": "Geben Sie bitte die richtige E-Mail-Adresse ein (z. B. john{'@'}gmail.com)"
+        "invalid_email_format_message": "Geben Sie bitte die richtige E-Mail-Adresse ein, ex. johndoe{'@'}gmail.com"
       },
       "checkout_default_success_dialog": {
         "title": "Checkout Defaults",
@@ -613,7 +613,7 @@
       "register_button": "Register",
       "errors": {
         "PasswordTooShort": "Passwords must be at least 8 characters.",
-        "InvalidEmail": "Enter correct email please (ex. john{'@'}gmail.com)",
+        "InvalidEmail": "Geben Sie bitte die richtige E-Mail-Adresse ein, ex. johndoe{'@'}gmail.com",
         "passwords_must_match": "Passwords must match",
         "email_not_unique": "This email is already registered with us"
       }
