@@ -120,7 +120,7 @@
           </div>
 
           <!-- Filters chips -->
-          <div v-if="isExistSelectedFacets || filters.inStock" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
+          <div v-if="isExistSelectedFacets" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
             <VcChip
               class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
               size="sm"
@@ -151,20 +151,6 @@
                   {{ filterItem.label }}
                 </VcChip>
               </template>
-            </template>
-
-            <template v-if="filters.inStock">
-              <VcChip
-                class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
-                size="sm"
-                closable
-                @close="
-                  filters.inStock = false;
-                  applyFilters();
-                "
-              >
-                {{ $t("pages.catalog.instock_filter_card.title") }}
-              </VcChip>
             </template>
           </div>
 
@@ -321,11 +307,12 @@ const sidebarElement = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const page = ref(1);
 const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
-const mobileFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: false });
+const mobileFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: true });
 
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
 
 const viewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
+const viewInStockProducts = useLocalStorage<boolean>("viewInStockProducts", true);
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: PRODUCT_SORTING_LIST[0].id,
@@ -399,13 +386,15 @@ function onFilterChanged(newFilters: ProductsFilters) {
     filters.facets = _.cloneDeep(newFilters.facets);
   }
 
+  viewInStockProducts.value = filters.inStock;
+
   if (!isMobileSidebar.value) {
     applyFilters();
   }
 }
 
 function applyFilters() {
-  filterQueryParam.value = toFilterExpression(filters);
+  filterQueryParam.value = toFilterExpression(filters, true);
 }
 
 function removeFilterItem(payload: Pick<ProductsFacet, "paramName"> & Pick<ProductsFacetValue, "value">) {
@@ -431,8 +420,14 @@ function resetFiltersWithKeyword() {
   }, FILTERS_RESET_TIMEOUT_IN_MS);
 }
 
+function applyInStockProductsFilter() {
+  filters.inStock = viewInStockProducts.value;
+  searchParams.value.filter = toFilterExpression(filters);
+}
+
 async function loadProducts() {
   page.value = 1;
+  applyInStockProductsFilter();
   await fetchProducts(searchParams.value);
 }
 
@@ -444,6 +439,8 @@ async function loadMoreProducts() {
   const nextPage = page.value + 1;
 
   page.value = nextPage;
+
+  applyInStockProductsFilter();
 
   await fetchMoreProducts({
     ...searchParams.value,
@@ -462,6 +459,8 @@ function onChangeCurrentCategory(key: string, value: string) {
 }
 
 onMounted(async () => {
+  viewInStockProducts.value = true;
+
   await loadCategoriesTree();
 
   if (!categoryId.value && !categorySeoUrl.value) {
@@ -471,8 +470,6 @@ onMounted(async () => {
   } else {
     selectCategoryByKey("seoUrl", categorySeoUrl.value);
   }
-
-  applyFilters();
 
   watch(categoryId, (value) => onChangeCurrentCategory("id", value));
   watch(categorySeoUrl, (value) => onChangeCurrentCategory("seoUrl", value));
@@ -490,13 +487,9 @@ onMounted(async () => {
      * Related links:
      * https://github.com/vuejs/core/issues/2291
      */
-    watch(
-      computed(() => JSON.stringify(searchParams.value)),
-      loadProducts,
-      {
-        flush: "post",
-      }
-    )
+    watch([computed(() => JSON.stringify(searchParams.value)), computed(() => filters.inStock)], loadProducts, {
+      flush: "post",
+    })
   );
 });
 
@@ -518,6 +511,7 @@ async function onMobileFilterChanged(newFilters: ProductsFilters) {
   const newFacets = await getFacets(searchParamsForFacets);
   mobileFilters.facets = newFacets;
   mobileFilters.inStock = newFilters.inStock;
+  viewInStockProducts.value = mobileFilters.inStock;
 }
 
 function showMobileSidebar() {

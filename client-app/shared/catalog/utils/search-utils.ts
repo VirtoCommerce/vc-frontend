@@ -19,7 +19,7 @@ function getFilterExpressionFromFacetRange(facetRange: FacetRangeType): string {
   return `${firstBracket}${fromStr}TO${toStr}${lastBracket}`;
 }
 
-export function toFilterExpression(filters: ProductsFilters) {
+export function toFilterExpression(filters: ProductsFilters, excludeInStock?: boolean) {
   const result: string[] = [];
 
   for (const filter of filters.facets) {
@@ -39,7 +39,7 @@ export function toFilterExpression(filters: ProductsFilters) {
     result.push(`"${filter.paramName}":${conditions}`);
   }
 
-  if (filters.inStock) {
+  if (filters.inStock && !excludeInStock) {
     result.push(IN_STOCK_FILTER_EXPRESSION);
   }
 
