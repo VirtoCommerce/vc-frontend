@@ -271,9 +271,10 @@ import { breakpointsTailwind, useBreakpoints, onClickOutside } from "@vueuse/cor
 import { useRouter } from "vue-router";
 import { CustomerOrderType } from "@/xapi/types";
 import { useI18n } from "vue-i18n";
+import { usePageHead } from "@/core/composables";
 
 const { t } = useI18n();
-
+const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { loading: ordersLoading, orders, loadOrders, sort, pages, itemsPerPage, page, keyword } = useUserOrders();
 
@@ -288,9 +289,11 @@ const {
   removeFilterChipsItem,
 } = useUserOrdersFilter();
 
-const isMobile = breakpoints.smaller("lg");
+usePageHead({
+  title: t("pages.account.orders.meta.title"),
+});
 
-const router = useRouter();
+const isMobile = breakpoints.smaller("lg");
 
 const openOrderDetails = (item: CustomerOrderType) => {
   router.push({ name: "OrderDetails", params: { orderId: item.id } });

@@ -17,5 +17,13 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from "vue-i18n";
+import { usePageHead } from "@/core/composables";
 import { TwoColumn } from "@/shared/layout";
+
+const { t } = useI18n();
+
+usePageHead({
+  title: `${t("pages.404.error_code")} ${t("pages.404.error_text")}`,
+});
 </script>

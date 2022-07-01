@@ -134,6 +134,10 @@ export default function useWishlists() {
     await fetchWishList(payloads[0].listId);
   }
 
+  function clearList() {
+    list.value = null;
+  }
+
   return {
     fetchWishlists,
     fetchWishList,
@@ -142,6 +146,7 @@ export default function useWishlists() {
     removeWishlist,
     addItemsToWishlists,
     removeItemsFromWishlists,
+    clearList,
     loading: readonly(loading),
     lists: computed(() => lists.value),
     list: computed(() => list.value),

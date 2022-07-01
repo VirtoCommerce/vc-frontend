@@ -45,8 +45,7 @@
       "date": "Date",
       "sort_by": "Sort by:",
       "sku": "Item #",
-      "item": "Item",
-      "catalog": "Catalog"
+      "item": "Item"
     },
     "suffixes": {
       "per_item": " per item",
@@ -545,6 +544,11 @@
       "home_button": "@:common.buttons.home"
     },
     "home": {
+      "meta": {
+        "title": "Home",
+        "keywords": "test, home, page, keywords",
+        "description": "Test home page description"
+      },
       "sign_in_form_title": "Sign in",
       "main_banner_block": {
         "message": "We can help you <br />make informed<br />and wise decisions",
@@ -567,12 +571,18 @@
       }
     },
     "forgot_password": {
+      "meta": {
+        "title": "Forgot password"
+      },
       "header": "reset your password",
       "email_will_be_sended_message": "We will send you an email with reset password instructions",
       "reset_link_was_sent_message": "We sent you a reset password link to your email.",
       "home_button": "@:common.buttons.home"
     },
     "reset_password": {
+      "meta": {
+        "title": "Reset password"
+      },
       "header": "reset your password",
       "home_button": "@:common.buttons.home",
       "enter_new_password_message": "Enter your new password",
@@ -581,9 +591,15 @@
       "data_invalid_error_message": "User ID or token is invalid."
     },
     "sign_in": {
+      "meta": {
+        "title": "@:pages.sign_in.header"
+      },
       "header": "Sign in"
     },
     "sign_up": {
+      "meta": {
+        "title": "@:pages.sign_up.header"
+      },
       "header": "Registration",
       "personal_registration_kind_label": "Personal account",
       "organization_registration_kind_label": "Company account",
@@ -609,6 +625,9 @@
     },
     "account": {
       "addresses": {
+        "meta": {
+          "title": "@:pages.account.addresses.addresses_title"
+        },
         "add_new_address_button_mobile": "Add new",
         "add_new_address_button": "Add new address",
         "cancel_button": "@:common.buttons.cancel",
@@ -630,6 +649,9 @@
         "no_addresses_img_alt": "No addresses"
       },
       "checkout_defaults": {
+        "meta": {
+          "title": "@:pages.account.checkout_defaults.title"
+        },
         "title": "Checkout Defaults",
         "select_delivery_method_label": "Preferred Delivery Method",
         "shipping_radio_label": "Shipping",
@@ -642,6 +664,9 @@
         "shipping_method_placeholder": "Please select your preferred shipping method"
       },
       "dashboard": {
+        "meta": {
+          "title": "@:pages.account.dashboard.title"
+        },
         "title": "Dashboard",
         "last_orders_card": {
           "title": "Latest orders",
@@ -669,6 +694,9 @@
         }
       },
       "orders": {
+        "meta": {
+          "title": "@:pages.account.orders.title"
+        },
         "title": "Orders",
         "order_number_label": "Order number",
         "purchase_number_label": "Purchase order",
@@ -682,6 +710,9 @@
         "orders_icon": "Order icon"
       },
       "order_details": {
+        "meta": {
+          "title": "@:pages.account.order_details.title"
+        },
         "title": "Order #{0}",
         "created_title": "Order complete",
         "status_label": "@:common.labels.status{':'} ",
@@ -716,6 +747,9 @@
         }
       },
       "order_payment": {
+        "meta": {
+          "title": "@:pages.account.order_payment.title"
+        },
         "title": "Payment information",
         "breadcrumb_title": "Payment",
         "processed_title": "@:pages.account.order_details.title",
@@ -740,13 +774,24 @@
           "text": "There is a problem with your payment, try again please."
         }
       },
-      "your_lists": {
+      "lists": {
+        "meta": {
+          "title": "@:shared.account.navigation.links.your_lists"
+        },
         "no_lists": "You have not created any lists yet",
         "create_list_button": "Create list",
         "create_list_button_mobile": "Create",
         "lists_icon": "List icon"
       },
+      "list_details": {
+        "meta": {
+          "title": "List: {0}"
+        }
+      },
       "profile": {
+        "meta": {
+          "title": "@:pages.account.profile.title"
+        },
         "title": "Profile",
         "change_password_title": "Change Password",
         "update_error_alert": "There was an error during profile update",
@@ -771,6 +816,12 @@
       }
     },
     "catalog": {
+      "meta": {
+        "title": "@:pages.catalog.title",
+        "keywords": "test, catalog, page, keywords",
+        "description": "Test catalog page description"
+      },
+      "title": "Catalog",
       "search_card": {
         "title": "Filter results by",
         "search_label": "Search within these results",
@@ -807,6 +858,9 @@
       "price_label": "@:common.labels.product_price{':'}"
     },
     "checkout": {
+      "meta": {
+        "title": "@:pages.checkout.title"
+      },
       "title": "Checkout",
       "invalid_checkout_message": "Something went wrong in your cart. Please check whether everything is correct and try again.",
       "clear_cart_dialog": {
@@ -877,6 +931,9 @@
       "go_to_payment_button": "Pay now"
     },
     "search": {
+      "meta": {
+        "title": "Search: {0}"
+      },
       "header": "Your search for <strong>{0}</strong> returned the following results:",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
@@ -884,6 +941,11 @@
       "home_button": "@:common.buttons.home"
     },
     "bulk_order": {
+      "meta": {
+        "title": "Bulk order",
+        "keywords": "test, balk, order, keywords",
+        "description": "Test balk order page description"
+      },
       "title": "Bulk Order Pad",
       "product_was_not_added_alert": "Products with following SKUs were not added to the cart: {0}",
       "data_is_invalid_alert": "The details you provided are invalid.",
@@ -891,6 +953,9 @@
       "copy_n_paste_tab": "Copy and Paste"
     },
     "demo_landing": {
+      "meta": {
+        "title": "Demo landing"
+      },
       "header": "Gaming laptop market overview",
       "primary_block": {
         "primary_text": "Commercial management has never been that easy",
@@ -942,6 +1007,11 @@
       }
     },
     "compare": {
+      "meta": {
+        "title": "Compare products",
+        "keywords": "test, compare, products, page, keywords",
+        "description": "Test compare products page description"
+      },
       "empty_list": {
         "title": "Compare products",
         "message": "Your product compare list is empty",

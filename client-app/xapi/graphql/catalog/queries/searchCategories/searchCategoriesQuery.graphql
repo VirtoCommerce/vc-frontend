@@ -24,6 +24,9 @@ query Categories(
         id
       }
       seoInfo {
+        pageTitle
+        metaKeywords
+        metaDescription
         semanticUrl
       }
       breadcrumbs {
