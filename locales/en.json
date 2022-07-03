@@ -165,7 +165,7 @@
     },
     "account": {
       "navigation": {
-        "title": "My account",
+        "title": "Account",
         "links": {
           "dashboard": "@:common.links.dashboard",
           "profile": "@:common.links.profile",
