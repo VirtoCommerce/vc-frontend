@@ -1,6 +1,6 @@
 <template>
   <div v-if="order">
-    <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
+    <BackButtonInHeader v-if="isMobile && !isNew" @click="$router.back()" />
 
     <VcBreadcrumbs v-if="!isMobile" :items="breadcrumbs" class="mx-5 md:mx-0" />
 
