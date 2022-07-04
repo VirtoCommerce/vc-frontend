@@ -66,12 +66,16 @@
     },
     "links": {
       "home": "Heimat",
+      "catalog": "Katalog",
+      "bulk_order": "Großauftragsblock",
+      "compare": "Vergleichen",
+      "contact_us": "Kontaktiere uns",
       "dashboard": "Armaturenbrett",
       "account": "Konto",
       "profile": "Profil",
       "addresses": "Adressen",
       "orders": "Aufträge",
-      "your_lists": "Ihre Listen",
+      "lists": "Listen",
       "checkout_defaults": "Checkout-Standardwerte",
       "list_details": "Details auflisten",
       "cart": "Wagen"
@@ -88,30 +92,24 @@
         "link_sign_in": "Einloggen",
         "link_register_now": "Register now",
         "link_logout": "Ausloggen",
-        "catalog": "Catalogue",
         "menu": {
-          "bulk": "Großauftragsblock",
-          "compare": "Vergleichen",
-          "cart": "Wagen",
-          "lists": "Listen",
-          "orders": "Bestellverlauf"
+          "home": "@:common.links.home",
+          "catalog": "@:common.links.catalog",
+          "bulk_order": "@:common.links.bulk_order",
+          "compare": "@:common.links.compare",
+          "cart": "@:common.links.cart",
+          "lists": "@:common.links.lists",
+          "orders": "@:common.links.orders",
+          "contact_us": "@:common.links.contact_us"
         },
         "mobile": {
-          "menu": {
-            "home": "Dashboard",
-            "all_products": "Catalog",
-            "bulk": "Bulk order pad",
-            "compare": "Compare products",
-            "cart": "Cart",
-            "contact_us": "Kontaktiere uns"
-          },
-          "my_account": "Mein Konto",
+          "my_account": "@:common.links.account",
           "account_menu": {
             "dashboard": "@:common.links.dashboard",
             "profile": "@:common.links.profile",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
-            "your_lists": "@:common.links.your_lists",
+            "lists": "@:common.links.lists",
             "checkout_defaults": "@:common.links.checkout_defaults"
           },
           "settings": "Details auflisten",
@@ -172,7 +170,7 @@
           "profile": "@:common.links.profile",
           "addresses": "@:common.links.addresses",
           "orders": "@:common.links.orders",
-          "your_lists": "@:common.links.your_lists",
+          "lists": "@:common.links.lists",
           "checkout_defaults": "@:common.links.checkout_defaults",
           "list_details": "@:common.links.list_details"
         }
@@ -755,7 +753,7 @@
       },
       "lists": {
         "meta": {
-          "title": "@:shared.account.navigation.links.your_lists"
+          "title": "@:shared.account.navigation.links.lists"
         },
         "no_lists": "You don't have any lists created",
         "create_list_button": "Create list",

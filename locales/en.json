@@ -65,12 +65,16 @@
     },
     "links": {
       "home": "Home",
+      "catalog": "Catalog",
+      "bulk_order": "Bulk order",
+      "compare": "Compare",
+      "contact_us": "Contact Us",
       "dashboard": "Dashboard",
       "account": "Account",
       "profile": "Profile",
       "addresses": "Addresses",
       "orders": "Orders",
-      "your_lists": "Your Lists",
+      "lists": "Lists",
       "checkout_defaults": "Checkout Defaults",
       "list_details": "List Details",
       "cart": "Cart"
@@ -87,30 +91,24 @@
         "link_sign_in": "Sign in",
         "link_register_now": "Sign up now",
         "link_logout": "Log out",
-        "catalog": "Catalogue",
         "menu": {
-          "bulk": "Bulk order",
-          "compare": "Compare",
-          "cart": "Cart",
-          "lists": "Lists",
-          "orders": "Orders"
+          "home": "@:common.links.home",
+          "catalog": "@:common.links.catalog",
+          "bulk_order": "@:common.links.bulk_order",
+          "compare": "@:common.links.compare",
+          "cart": "@:common.links.cart",
+          "lists": "@:common.links.lists",
+          "orders": "@:common.links.orders",
+          "contact_us": "@:common.links.contact_us"
         },
         "mobile": {
-          "menu": {
-            "home": "Dashboard",
-            "all_products": "Catalog",
-            "bulk": "Bulk order pad",
-            "compare": "Compare products",
-            "cart": "Cart",
-            "contact_us": "Contact Us"
-          },
           "my_account": "@:common.links.account",
           "account_menu": {
             "dashboard": "@:common.links.dashboard",
             "profile": "@:common.links.profile",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
-            "your_lists": "@:common.links.your_lists",
+            "lists": "@:common.links.lists",
             "checkout_defaults": "@:common.links.checkout_defaults"
           },
           "settings": "Settings",
@@ -171,7 +169,7 @@
           "profile": "@:common.links.profile",
           "addresses": "@:common.links.addresses",
           "orders": "@:common.links.orders",
-          "your_lists": "@:common.links.your_lists",
+          "lists": "@:common.links.lists",
           "checkout_defaults": "@:common.links.checkout_defaults",
           "list_details": "@:common.links.list_details"
         }
@@ -776,7 +774,7 @@
       },
       "lists": {
         "meta": {
-          "title": "@:shared.account.navigation.links.your_lists"
+          "title": "@:shared.account.navigation.links.lists"
         },
         "no_lists": "You have not created any lists yet",
         "create_list_button": "Create list",
