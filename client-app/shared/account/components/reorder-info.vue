@@ -1,5 +1,5 @@
 <template>
-  <VcPopup :title="$t('shared.account.reorder_info_popup.title')">
+  <VcPopup :title="$t('shared.account.reorder_info_popup.title')" is-mobile-fullscreen>
     <template #actions="{ close }">
       <div v-if="pages > 1 && !isMobile" class="lg:flex lg:flex-1">
         <VcPagination v-model:page="page" :pages="pages" @update:page="page = $event" />
