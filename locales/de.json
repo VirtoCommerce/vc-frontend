@@ -237,7 +237,7 @@
         "confirm_button": "@:common.buttons.confirm",
         "filter": {
           "title": "Filter products:",
-          "reduced_quantity_checkbox": "Reduced quantity:",
+          "reduced_quantity_checkbox": "Reduced quantity",
           "can_t_be_purchased_checkbox": "Can't be purchased",
           "items_without_changes_checkbox": "Items without changes"
         },

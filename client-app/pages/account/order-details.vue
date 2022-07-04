@@ -259,7 +259,7 @@ async function openReorderPopup() {
   const orderItemsInfo = order.value?.items
     .filter((item) => !item.isGift)
     .map((item) => {
-      return _.pick(item, "productId", "quantity", "id");
+      return _.pick(item, "productId", "quantity", "id", "sku", "name", "imageUrl");
     });
 
   const productIds = _.map(orderItemsInfo, (item) => {

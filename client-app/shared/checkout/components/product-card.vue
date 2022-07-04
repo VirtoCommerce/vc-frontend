@@ -14,9 +14,16 @@
       <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center flex-1">
         <div class="mb-3 lg:mb-0 text-sm xl:w-1/2">
           <div class="mb-1">
-            <router-link :to="link" class="text-[color:var(--color-link)] font-extrabold line-clamp-3 overflow-hidden">
+            <router-link
+              :to="link"
+              v-if="link"
+              class="text-[color:var(--color-link)] font-extrabold line-clamp-3 overflow-hidden"
+            >
               {{ lineItem.name }}
             </router-link>
+            <div class="font-extrabold line-clamp-3 overflow-hidden" v-else>
+              {{ lineItem.name }}
+            </div>
             <div class="flex items-center space-x-1 py-1" v-if="validationError">
               <i class="fas fa-exclamation-circle text-[color:var(--color-primary)]"></i>
               <span class="text-xs text-gray-400"> {{ itemErrorMessage }} </span>
@@ -161,9 +168,13 @@ const maxQty = computed(
   () => (variation.value ? variation.value?.maxQuantity : props.lineItem.product?.maxQuantity) || max
 );
 
-const link = computed<RouteLocationRaw>(() =>
-  getProductRoute(props.lineItem.product!.masterVariation || props.lineItem.product!)
-);
+const link = computed<RouteLocationRaw | undefined>(() => {
+  let productLink = undefined;
+  if (props.lineItem.product) {
+    productLink = getProductRoute(props.lineItem.product.masterVariation || props.lineItem.product);
+  }
+  return productLink;
+});
 
 const itemErrorMessage = computed(() => {
   if (props.validationError?.errorCode === "PRODUCT_PRICE_CHANGED") {
