@@ -165,7 +165,7 @@
             <div class="flex flex-col">
               <span class="text-sm text-gray-400" v-t="'pages.account.orders.total_label'" />
 
-              <span class="overflow-hidden overflow-ellipsis">
+              <span class="overflow-hidden overflow-ellipsis font-extrabold">
                 {{ itemData.item.total?.formattedAmount }}
               </span>
             </div>
