@@ -21,7 +21,7 @@ const loading = ref(true);
 const lists = shallowRef<WishlistType[]>([]);
 const list: Ref<WishlistType | null> = ref(null);
 
-export default function useWishlists() {
+export default function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: true }) {
   async function createWishlist(name: string) {
     loading.value = true;
 
@@ -78,7 +78,9 @@ export default function useWishlists() {
       throw e;
     }
 
-    await fetchWishlists();
+    if (options.autoRefetch) {
+      await fetchWishlists();
+    }
 
     if (list.value) {
       await fetchWishList(list.value.id!);
@@ -97,7 +99,9 @@ export default function useWishlists() {
       throw e;
     }
 
-    await fetchWishlists();
+    if (options.autoRefetch) {
+      await fetchWishlists();
+    }
 
     return result;
   }
@@ -115,7 +119,9 @@ export default function useWishlists() {
       }
     }
 
-    await fetchWishlists();
+    if (options.autoRefetch) {
+      await fetchWishlists();
+    }
   }
 
   async function removeItemsFromWishlists(payloads: InputRemoveWishlistItemType[]) {
@@ -131,7 +137,9 @@ export default function useWishlists() {
       }
     }
 
-    await fetchWishList(payloads[0].listId);
+    if (options.autoRefetch) {
+      await fetchWishlists();
+    }
   }
 
   function clearList() {

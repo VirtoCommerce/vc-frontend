@@ -42,16 +42,11 @@
           </div>
           <div v-else-if="!props.productItem.availabilityData?.isAvailable" class="flex items-center space-x-1">
             <i class="fas fa-exclamation-circle text-[color:var(--color-primary)] self-start mt-1"></i>
-            <span
-              v-if="!isOutOfStock || isProductDeleted"
-              v-t="$t('shared.account.reorder_info_popup.product_card.item_can_t_be_purchased_message')"
-              class="text-xs text-gray-400"
-            ></span>
-            <span
-              v-else
-              v-t="$t('shared.account.reorder_info_popup.product_card.item_is_out_of_stock_message')"
-              class="text-xs text-gray-400"
-            ></span>
+            <span class="text-xs text-gray-400">{{
+              !isOutOfStock || isProductDeleted
+                ? $t("shared.account.reorder_info_popup.product_card.item_can_t_be_purchased_message")
+                : $t("shared.account.reorder_info_popup.product_card.item_is_out_of_stock_message")
+            }}</span>
           </div>
         </div>
       </div>
@@ -158,18 +153,16 @@
             >
             </span>
           </div>
+          <!-- todo: extract small alert component https://virtocommerce.atlassian.net/browse/ST-2488 -->
           <div v-else-if="!props.productItem.availabilityData?.isAvailable" class="flex items-center space-x-1">
             <i class="fas fa-exclamation-circle text-[color:var(--color-primary)] self-start mt-1"></i>
-            <span
-              v-if="!isOutOfStock || isProductDeleted"
-              v-t="$t('shared.account.reorder_info_popup.product_card.item_can_t_be_purchased_message')"
-              class="text-xs text-gray-400"
-            ></span>
-            <span
-              v-else
-              v-t="$t('shared.account.reorder_info_popup.product_card.item_is_out_of_stock_message')"
-              class="text-xs text-gray-400"
-            ></span>
+            <span class="text-xs text-gray-400"
+              >{{
+                !isOutOfStock || isProductDeleted
+                  ? $t("shared.account.reorder_info_popup.product_card.item_can_t_be_purchased_message")
+                  : $t("shared.account.reorder_info_popup.product_card.item_is_out_of_stock_message")
+              }}
+            </span>
           </div>
         </div>
 
