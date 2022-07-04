@@ -3,7 +3,7 @@
     <!-- Title block -->
     <div class="flex justify-between items-center mx-5 md:mx-0">
       <h2 class="text-gray-800 text-3xl font-bold uppercase">
-        {{ $t("shared.account.navigation.links.your_lists") }}
+        {{ $t("shared.account.navigation.links.lists") }}
       </h2>
 
       <VcButton
