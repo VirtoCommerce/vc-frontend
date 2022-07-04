@@ -225,6 +225,12 @@
 </template>
 
 <script setup lang="ts">
+import { usePageHead } from "@/core/composables";
+
+usePageHead({
+  title: "Dev UI Kit",
+});
+
 function alert(message?: any) {
   window.alert(message);
 }

@@ -14,8 +14,15 @@
 import { SignInForm } from "@/shared/account";
 import { useRoute } from "vue-router";
 import { TwoColumn } from "@/shared/layout";
+import { useI18n } from "vue-i18n";
+import { usePageHead } from "@/core/composables";
 
 const { query } = useRoute();
+const { t } = useI18n();
+
+usePageHead({
+  title: t("pages.sign_in.meta.title"),
+});
 
 async function onSignIn() {
   location.href = (query.redirect as string) || "/";

@@ -12,11 +12,3 @@ declare module "@vue/runtime-core" {
     $context: IThemeContext;
   }
 }
-
-declare module "vue-router" {
-  interface RouteMeta {
-    layout?: "Main" | "Payment";
-    requiresAuth?: boolean;
-    hideNavigation?: boolean;
-  }
-}

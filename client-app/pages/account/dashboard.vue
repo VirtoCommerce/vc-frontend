@@ -273,13 +273,18 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
+import { usePageHead } from "@/core/composables";
 
 const { t } = useI18n();
-
+const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
 const { loading: ordersLoading, orders, loadOrders, sort, itemsPerPage } = useUserOrders();
+
+usePageHead({
+  title: t("pages.account.dashboard.meta.title"),
+});
 
 const columns = ref<ITableColumn[]>([
   {
@@ -309,8 +314,6 @@ const columns = ref<ITableColumn[]>([
     titlePosition: "text-right",
   },
 ]);
-
-const router = useRouter();
 
 const openOrderDetails = (item: CustomerOrderType) => {
   router.push({ name: "OrderDetails", params: { orderId: item.id } });

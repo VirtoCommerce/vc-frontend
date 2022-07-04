@@ -24,7 +24,7 @@ export type SignMeUp = {
 };
 
 export type SignMeIn = {
-  userName: string;
+  email: string;
   password: string;
   rememberMe?: boolean;
 };

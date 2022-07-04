@@ -205,6 +205,7 @@ import _ from "lodash";
 import { usePopup } from "@/shared/popup";
 import { useProducts } from "@/shared/catalog";
 import { useI18n } from "vue-i18n";
+import { usePageHead } from "@/core/composables";
 
 const props = defineProps({
   orderId: {
@@ -223,6 +224,10 @@ const { itemsPerPage, pages, order, deliveryAddress, billingAddress, loadOrder, 
 const { fetchProducts, products } = useProducts();
 const { openPopup } = usePopup();
 const { t } = useI18n();
+
+usePageHead({
+  title: computed(() => t("pages.account.order_details.meta.title", [order.value?.number])),
+});
 
 const isMobile = breakpoints.smaller("lg");
 const page = ref(1);
