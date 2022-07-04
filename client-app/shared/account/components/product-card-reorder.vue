@@ -2,7 +2,7 @@
   <!-- Mobile view -->
   <div v-if="isMobile" class="border-b">
     <div class="flex flex-col p-5">
-      <div class="flex overflow-hidden space-x-5 items-center justify-between mb-4">
+      <div class="flex overflow-hidden space-x-5 items-center mb-4">
         <div class="w-16 h-16 flex-shrink-0">
           <VcImage
             :src="productItem.imgSrc"
@@ -43,7 +43,7 @@
           <div v-else-if="!props.productItem.availabilityData?.isAvailable" class="flex items-center space-x-1">
             <i class="fas fa-exclamation-circle text-[color:var(--color-primary)] self-start mt-1"></i>
             <span
-              v-if="!isOutOfStock"
+              v-if="!isOutOfStock || isProductDeleted"
               v-t="$t('shared.account.reorder_info_popup.product_card.item_can_t_be_purchased_message')"
               class="text-xs text-gray-400"
             ></span>
@@ -66,17 +66,17 @@
               :max="maxQty"
               :min="minQty"
               :class="{
-                'text-[color:var(--color-danger)]': isInputDisabled,
+                'text-[color:var(--color-danger)]': isInputDisabled && !isProductDeleted,
                 'border-[color:var(--color-danger)]': errorMessage,
               }"
-              :disabled="isInputDisabled || readOnly"
+              :disabled="isInputDisabled || readOnly || isProductDeleted"
               class="w-20 border rounded overflow-hidden h-8 focus:ring ring-inset outline-none p-1 text-center"
               type="number"
               pattern="\d*"
               @input="onInput"
               @keypress="onKeypress"
             />
-            <div>
+            <div v-if="!isProductDeleted">
               <div v-if="!isInputDisabled" class="flex items-center">
                 <span
                   :class="
@@ -100,10 +100,13 @@
                   class="text-[color:var(--color-danger)] text-xs pt-1 whitespace-nowrap"
                 ></span>
               </div>
+              <div v-else-if="isProductDeleted" class="flex items-center">
+                <span class="text-xs pt-1 whitespace-nowrap"></span>
+              </div>
             </div>
           </div>
         </div>
-        <div class="flex text-sm items-start space-x-3">
+        <div v-if="!isProductDeleted" class="flex text-sm items-start space-x-3">
           <span class="mt-1">
             {{ $t("shared.account.reorder_info_popup.product_card.total_label") }}
           </span>
