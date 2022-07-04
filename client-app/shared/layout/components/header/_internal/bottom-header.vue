@@ -51,7 +51,7 @@
               <transition name="slide-fade-right">
                 <div
                   v-if="productsIds.length"
-                  class="flex items-center rounded-xl border border-[color:var(--color-primary)] px-2 font-bold text-xs h-5 ml-2"
+                  class="absolute -top-[8px] !-right-[0.4rem] flex items-center h-5 rounded-xl bg-white border border-[color:var(--color-primary)] px-1.5 font-bold text-xs"
                 >
                   {{ productsIds.length }}
                 </div>
