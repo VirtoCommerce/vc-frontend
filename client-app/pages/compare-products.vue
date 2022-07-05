@@ -169,7 +169,6 @@ function onShowOnlyDifferencesChange() {
         return value.value;
       });
       const uniqueValues = _.uniq(values);
-      console.log(uniqueValues);
 
       if (uniqueValues.length === 1) {
         delete computedProperties.value[key];
