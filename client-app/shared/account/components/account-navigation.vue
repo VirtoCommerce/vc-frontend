@@ -27,7 +27,7 @@
 
       <AccountNavigationLink
         :to="{ name: 'Lists' }"
-        :text="$t('shared.account.navigation.links.your_lists')"
+        :text="$t('shared.account.navigation.links.lists')"
         class="list-icon pb-2"
       />
 

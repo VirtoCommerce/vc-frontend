@@ -4,17 +4,20 @@
     :is="Category"
     :category-seo-urls="seoInfo?.entity?.slug"
   />
+
   <component
     v-else-if="seoInfo?.entity?.objectType === 'CatalogProduct'"
     :is="Product"
     :product-id="seoInfo?.entity?.objectId"
   />
+
   <component
     v-else-if="seoInfo?.page"
     :is="PageBuilder"
     :settings="seoInfo?.page?.settings"
     :content="seoInfo?.page?.content"
   />
+
   <NotFound v-else-if="!loading" />
 </template>
 
@@ -24,9 +27,10 @@ import Product from "@/pages/product.vue";
 import PageBuilder from "@/pages/builder.vue";
 import NotFound from "@/pages/404.vue";
 
-import { PropType, ref } from "vue";
+import { onBeforeUnmount, PropType, ref, watchEffect } from "vue";
 import { asyncComputed } from "@vueuse/core";
 import { useFetch, useLanguages } from "@/core/composables";
+import { useNavigations } from "@/shared/layout";
 
 type TEntityInfo = {
   id: string;
@@ -65,6 +69,7 @@ const props = defineProps({
 
 const { innerFetch } = useFetch();
 const { currentLanguage } = useLanguages();
+const { setMatchedRouteName } = useNavigations();
 
 const loading = ref(true);
 
@@ -73,7 +78,7 @@ const seoInfo = asyncComputed<TResult | undefined>(
     const slug = props.pathMatch[props.pathMatch?.length - 1];
 
     if (!slug) {
-      return;
+      return undefined;
     }
 
     try {
@@ -105,4 +110,23 @@ const seoInfo = asyncComputed<TResult | undefined>(
   undefined,
   loading
 );
+
+onBeforeUnmount(() => {
+  setMatchedRouteName("");
+});
+
+watchEffect(() => {
+  let matchedRouteName = "";
+
+  switch (seoInfo.value?.entity?.objectType) {
+    case "CatalogProduct":
+      matchedRouteName = "Product";
+      break;
+    case "Category":
+      matchedRouteName = "Category";
+      break;
+  }
+
+  setMatchedRouteName(matchedRouteName);
+});
 </script>

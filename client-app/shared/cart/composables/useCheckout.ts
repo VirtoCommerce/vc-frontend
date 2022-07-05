@@ -56,18 +56,23 @@ export default () => {
   const { cart, loadMyCart } = useCart();
 
   async function createOrder(cartId: string, reloadCart = true): Promise<CustomerOrderType | null> {
-    const order = await createOrderFromCart(cartId);
+    let order: CustomerOrderType | null = null;
 
-    if (!order) {
-      return null;
-    }
+    try {
+      order = await createOrderFromCart(cartId);
 
-    await removeCart(cartId);
+      if (!order) {
+        return null;
+      }
 
-    if (reloadCart) {
+      await removeCart(cartId);
+
+      if (reloadCart) {
+        await loadMyCart();
+      }
+    } catch (e) {
       await loadMyCart();
     }
-
     return order;
   }
 

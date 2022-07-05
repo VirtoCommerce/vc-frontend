@@ -63,8 +63,15 @@ import { useUserCheckoutDefaults, CheckoutDefaults, CheckoutDefaultsSuccessDialo
 import { computed, onMounted, ref } from "vue";
 import { useCart } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
+import { usePageHead } from "@/core/composables";
+import { useI18n } from "vue-i18n";
 
 const { cart, loading } = useCart();
+const { t } = useI18n();
+
+usePageHead({
+  title: t("pages.account.checkout_defaults.meta.title"),
+});
 
 const shippingMethods = computed(() => cart.value.availableShippingMethods);
 

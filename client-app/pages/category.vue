@@ -254,7 +254,7 @@ import {
   CategorySelector,
 } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
-import { useElementVisibility, useRouteQueryParam } from "@/core/composables";
+import { useElementVisibility, usePageHead, useRouteQueryParam } from "@/core/composables";
 import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import QueryParamName from "@/core/query-param-name.enum";
 import { useI18n } from "vue-i18n";
@@ -276,8 +276,6 @@ const props = defineProps({
   },
 });
 
-const categoryId = toRef(props, "categoryId");
-
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { selectedCategory, selectCategoryByKey, loadCategoriesTree, selectRoot } = useCategories();
 const {
@@ -296,10 +294,17 @@ const {
   withFacets: true,
 });
 
-const productsRoutes = useProductsRoutes(products);
+usePageHead({
+  title: computed(() => selectedCategory.value?.seoInfo?.pageTitle || selectedCategory.value?.label),
+  meta: {
+    keywords: computed(() => selectedCategory.value?.seoInfo?.metaKeywords),
+    description: computed(() => selectedCategory.value?.seoInfo?.metaDescription),
+  },
+});
 
 const FILTERS_RESET_TIMEOUT_IN_MS = 500;
 
+const categoryId = toRef(props, "categoryId");
 const isMobile = breakpoints.smaller("md");
 const isMobileSidebar = breakpoints.smaller("lg");
 const mobileSidebarVisible = ref(false);
@@ -308,6 +313,8 @@ const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const page = ref(1);
 const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
 const mobileFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: true });
+
+const productsRoutes = useProductsRoutes(products);
 
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
 
