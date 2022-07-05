@@ -349,7 +349,7 @@ const searchParams = computed<ProductsSearchParams>(() => ({
   itemsPerPage: itemsPerPage.value,
   sort: sortQueryParam.value,
   keyword: keywordQueryParam.value,
-  filter: filterQueryParam.value,
+  filter: toFilterExpression(filters),
 }));
 
 const isExistSelectedFacets = eagerComputed<boolean>(() =>
@@ -401,6 +401,7 @@ function onFilterChanged(newFilters: ProductsFilters) {
 }
 
 function applyFilters() {
+  filters.inStock = viewInStockProducts.value;
   filterQueryParam.value = toFilterExpression(filters, true);
 }
 
@@ -427,14 +428,8 @@ function resetFiltersWithKeyword() {
   }, FILTERS_RESET_TIMEOUT_IN_MS);
 }
 
-function applyInStockProductsFilter() {
-  filters.inStock = viewInStockProducts.value;
-  searchParams.value.filter = toFilterExpression(filters);
-}
-
 async function loadProducts() {
   page.value = 1;
-  applyInStockProductsFilter();
   await fetchProducts(searchParams.value);
 }
 
@@ -446,8 +441,6 @@ async function loadMoreProducts() {
   const nextPage = page.value + 1;
 
   page.value = nextPage;
-
-  applyInStockProductsFilter();
 
   await fetchMoreProducts({
     ...searchParams.value,
