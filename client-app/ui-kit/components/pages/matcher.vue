@@ -2,7 +2,7 @@
   <component
     v-if="seoInfo?.entity?.objectType === 'Category'"
     :is="Category"
-    :category-seo-urls="seoInfo?.entity?.slug"
+    :category-id="seoInfo?.entity?.objectId"
   />
 
   <component
@@ -28,7 +28,7 @@ import PageBuilder from "@/pages/builder.vue";
 import NotFound from "@/pages/404.vue";
 
 import { onBeforeUnmount, PropType, ref, watchEffect } from "vue";
-import { asyncComputed } from "@vueuse/core";
+import { asyncComputed, computedEager } from "@vueuse/core";
 import { useFetch, useLanguages } from "@/core/composables";
 import { useNavigations } from "@/shared/layout";
 
@@ -73,17 +73,18 @@ const { setMatchedRouteName } = useNavigations();
 
 const loading = ref(true);
 
+const seoUrl = computedEager(() => props.pathMatch[props.pathMatch?.length - 1]);
 const seoInfo = asyncComputed<TResult | undefined>(
   async () => {
-    const slug = props.pathMatch[props.pathMatch?.length - 1];
-
-    if (!slug) {
+    if (!seoUrl.value) {
       return undefined;
     }
 
     try {
       // Load page by slug
-      const page = await innerFetch<TPageInfo>(`/storefrontapi/content/pages`, "POST", { permalink: `/${slug}` });
+      const page = await innerFetch<TPageInfo>(`/storefrontapi/content/pages`, "POST", {
+        permalink: `/${seoUrl.value}`,
+      });
 
       if (page) {
         return {
@@ -92,12 +93,14 @@ const seoInfo = asyncComputed<TResult | undefined>(
       }
     } catch (err) {
       // If no page found load entity by slug
-      const resultItems = await innerFetch<TEntityInfo[]>(`/storefrontapi/seoInfos/${slug}`);
+      const resultItems = await innerFetch<TEntityInfo[]>(`/storefrontapi/seoInfos/${seoUrl.value}`);
 
       if (resultItems && resultItems.length) {
         const entity = resultItems.find(
           (item) =>
-            item.isActive && item.language.cultureName === currentLanguage.value!.cultureName && item.slug === slug
+            item.isActive &&
+            item.language.cultureName === currentLanguage.value!.cultureName &&
+            item.slug === seoUrl.value
         );
         if (entity) {
           return {
