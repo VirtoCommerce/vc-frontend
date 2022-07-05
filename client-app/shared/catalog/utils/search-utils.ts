@@ -19,6 +19,12 @@ function getFilterExpressionFromFacetRange(facetRange: FacetRangeType): string {
   return `${firstBracket}${fromStr}TO${toStr}${lastBracket}`;
 }
 
+/**
+ *
+ * @param filters
+ * @param excludeInStock Exclude in stock parameter from filters query to reduce query string
+ * @returns Stringified filters query
+ */
 export function toFilterExpression(filters: ProductsFilters, excludeInStock?: boolean) {
   const result: string[] = [];
 
