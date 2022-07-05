@@ -1,6 +1,7 @@
-import { ProductsFacet, ProductsFacetValue, ProductsFilters } from "@/shared/catalog";
+import { unref } from "vue";
+import { MaybeRef } from "@vueuse/core";
+import { ProductsFacet, ProductsFacetValue } from "@/shared/catalog";
 import { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@/xapi/types";
-import { IN_STOCK_FILTER_EXPRESSION } from "@/core/constants";
 
 /**
  * Learn more about filter syntax:
@@ -19,17 +20,11 @@ function getFilterExpressionFromFacetRange(facetRange: FacetRangeType): string {
   return `${firstBracket}${fromStr}TO${toStr}${lastBracket}`;
 }
 
-/**
- *
- * @param filters
- * @param excludeInStock Exclude in stock parameter from filters query to reduce query string
- * @returns Stringified filters query
- */
-export function toFilterExpression(filters: ProductsFilters, excludeInStock?: boolean) {
+export function getFilterExpressionFromFacets(facets: MaybeRef<ProductsFacet[]>): string {
   const result: string[] = [];
 
-  for (const filter of filters.facets) {
-    const selectedValues: string[] = filter.values
+  for (const facet of unref(facets)) {
+    const selectedValues: string[] = facet.values
       .filter((item) => item.selected) //
       .map((item) => item.value);
 
@@ -38,18 +33,18 @@ export function toFilterExpression(filters: ProductsFilters, excludeInStock?: bo
     }
 
     const conditions =
-      filter.type === "term"
+      facet.type === "term"
         ? `"${selectedValues.join('","')}"` // Terms
         : selectedValues.join(","); // Ranges
 
-    result.push(`"${filter.paramName}":${conditions}`);
-  }
-
-  if (filters.inStock && !excludeInStock) {
-    result.push(IN_STOCK_FILTER_EXPRESSION);
+    result.push(`"${facet.paramName}":${conditions}`);
   }
 
   return result.join(" ");
+}
+
+export function getFilterExpressionForInStock(value: MaybeRef<boolean>): string {
+  return unref(value) ? "instock_quantity:(0 TO)" : "";
 }
 
 export function termFacetToProductsFilter(termFacet: TermFacet): ProductsFacet {

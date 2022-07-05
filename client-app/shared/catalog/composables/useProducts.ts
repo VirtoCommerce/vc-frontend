@@ -1,10 +1,9 @@
-import { Ref, ref, computed, readonly, shallowRef, shallowReactive } from "vue";
+import { computed, readonly, ref, shallowRef } from "vue";
 import { searchProducts } from "@/xapi/graphql/catalog";
 import { Product } from "@/xapi/types";
 import { Logger } from "@/core/utilities";
 import { ProductsFacet, ProductsSearchParams } from "../types";
-import { ProductsFilters, rangeFacetToProductsFilter, termFacetToProductsFilter } from "@/shared/catalog";
-import _ from "lodash";
+import { rangeFacetToProductsFilter, termFacetToProductsFilter } from "@/shared/catalog";
 
 const DEFAULT_ITEMS_PER_PAGE = 16;
 
@@ -19,15 +18,10 @@ export default (
   const loading = ref(true);
   const loadingMore = ref(false);
   const facetsLoading = ref(false);
-  const products: Ref<Product[]> = shallowRef([]);
-  const filters = shallowReactive<ProductsFilters>({ facets: [], inStock: true });
-  const total: Ref<number> = ref(0);
-  const pages: Ref<number> = ref(1);
-
-  function clearFilters() {
-    filters.facets.forEach((filter) => filter.values.forEach((filterItem) => (filterItem.selected = false)));
-    filters.inStock = true;
-  }
+  const products = shallowRef<Product[]>([]);
+  const facets = shallowRef<ProductsFacet[]>([]);
+  const total = ref(0);
+  const pages = ref(1);
 
   async function fetchProducts(searchParams: Partial<ProductsSearchParams>) {
     loading.value = true;
@@ -50,13 +44,14 @@ export default (
       if (withFacets) {
         term_facets.sort((a, b) => a.label.localeCompare(b.label));
         range_facets.sort((a, b) => a.label.localeCompare(b.label));
-        filters.facets = Array<ProductsFacet>().concat(
+
+        facets.value = Array<ProductsFacet>().concat(
           term_facets.map(termFacetToProductsFilter),
           range_facets.map(rangeFacetToProductsFilter)
         );
       }
     } catch (e) {
-      Logger.error("useProducts.fetchProducts", e);
+      Logger.error(`useProducts.${fetchProducts.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -84,20 +79,15 @@ export default (
     facetsLoading.value = true;
 
     try {
-      const paramsClone = _.cloneDeep(searchParams);
-      paramsClone.page = 0;
-      paramsClone.itemsPerPage = 0;
-
       const { term_facets = [], range_facets = [] } = await searchProducts(searchParams, { withFacets: true });
 
       term_facets.sort((a, b) => a.label.localeCompare(b.label));
       range_facets.sort((a, b) => a.label.localeCompare(b.label));
-      const facets = Array<ProductsFacet>().concat(
+
+      return Array<ProductsFacet>().concat(
         term_facets.map(termFacetToProductsFilter),
         range_facets.map(rangeFacetToProductsFilter)
       );
-
-      return facets;
     } catch (e) {
       Logger.error(`useProducts.${getFacets.name}`, e);
       throw e;
@@ -107,8 +97,7 @@ export default (
   }
 
   return {
-    filters,
-    clearFilters,
+    facets,
     fetchProducts,
     fetchMoreProducts,
     getFacets,
