@@ -74,9 +74,7 @@
           class="shadow-inner pb-8 lg:shadow"
         >
           <div class="ml-24 mr-5 lg:ml-28 lg:mr-11">
-            <p class="break-words">
-              {{ order?.comment }}
-            </p>
+            <p class="break-words" v-for="line in order?.comment?.split('\n')" :key="line">{{ line }}</p>
           </div>
         </VcSection>
 
