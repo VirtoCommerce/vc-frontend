@@ -80,6 +80,7 @@
           type="search"
           class="flex-grow appearance-none bg-white rounded rounded-r-none h-11 px-4 font-medium outline-none text-sm border border-gray-300 focus:border-gray-400 disabled:bg-gray-200"
           @keypress.enter="applyKeyword"
+          :placeholder="$t('pages.account.orders.search_placeholder')"
         />
 
         <VcButton :is-disabled="ordersLoading" class="px-4 !rounded-l-none uppercase" size="lg" @click="applyKeyword">

@@ -698,6 +698,7 @@
         "meta": {
           "title": "@:pages.account.orders.title"
         },
+        "search_placeholder": "Enter keyword...",
         "title": "Orders",
         "order_number_label": "Order number",
         "purchase_number_label": "Purchase order",
