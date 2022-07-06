@@ -16,11 +16,12 @@
         <div class="flex items-center" v-else>
           <router-link
             :to="{ name: 'Orders' }"
-            class="text-xs text-blue-500 hover:text-blue-700 font-bold mr-3"
-            v-t="'pages.account.dashboard.last_orders_card.all_orders_link'"
-          />
+            class="text-xs text-blue-500 hover:text-blue-700 font-bold"
+          >
+            {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
 
-          <i class="fas fa-arrow-right text-[color:var(--color-primary)]" />
+            <i class="ml-3 fas fa-arrow-right text-[color:var(--color-primary)]" />
+          </router-link>
         </div>
       </template>
 
