@@ -110,11 +110,11 @@
               {{ deliveryAddress?.line1 }}
               {{ deliveryAddress?.postalCode }}
             </p>
-            <p>
+            <p v-if="deliveryAddress?.phone">
               <span class="font-extrabold" v-t="'pages.account.order_details.shipping_address_card.phone_label'" />
               {{ deliveryAddress?.phone }}
             </p>
-            <p>
+            <p v-if="deliveryAddress?.email">
               <span class="font-extrabold" v-t="'pages.account.order_details.shipping_address_card.email_label'" />
               {{ deliveryAddress?.email }}
             </p>
@@ -168,14 +168,14 @@
               {{ billingAddress?.postalCode }}
             </p>
 
-            <p>
+            <p v-if="billingAddress?.phone">
               <span class="font-extrabold">
                 {{ $t("pages.account.order_details.billing_address_card.phone_label") }}
               </span>
               {{ billingAddress?.phone }}
             </p>
 
-            <p>
+            <p v-if="billingAddress?.email">
               <span class="font-extrabold">
                 {{ $t("pages.account.order_details.billing_address_card.email_label") }}
               </span>
