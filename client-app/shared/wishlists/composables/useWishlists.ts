@@ -35,6 +35,21 @@ export default function useWishlists() {
     await fetchWishlists();
   }
 
+  async function createWishlistAndAddProduct(name: string, productId: string) {
+    loading.value = true;
+
+    try {
+      addWishlist(name).then((newList) => {
+        if (newList.id) {
+          addItemsToWishlists([{ listId: newList.id, productId }]);
+        }
+      });
+    } catch (e) {
+      Logger.error(`${useWishlists.name}.${createWishlist.name}`, e);
+      throw e;
+    }
+  }
+
   async function fetchWishlists() {
     loading.value = true;
 
@@ -138,6 +153,7 @@ export default function useWishlists() {
     fetchWishlists,
     fetchWishList,
     createWishlist,
+    createWishlistAndAddProduct,
     renameWishlist,
     removeWishlist,
     addItemsToWishlists,
