@@ -134,7 +134,7 @@
         </VcCard>
 
         <VcCard :title="$t('pages.account.order_details.payment_details_card.title')" class="mb-5" is-collapsible>
-          <div class="flex flex-col text-sm">
+          <div class="flex flex-col space-y-1.5 text-sm">
             <p>
               <span class="font-extrabold">{{
                 $t("pages.account.order_details.payment_details_card.payment_number_label")
@@ -148,12 +148,12 @@
               }}</span>
               {{ order?.inPayments?.[0]?.gatewayCode }}
             </p>
+          </div>
 
-            <div class="mt-3">
-              <VcButton class="px-2 py-1 uppercase !text-xs !h-auto" is-outline is-disabled>
-                {{ $t("pages.account.order_details.payment_details_card.view_invoice_button") }}
-              </VcButton>
-            </div>
+          <div class="mt-3">
+            <VcButton class="px-2 py-1 uppercase !text-xs !h-auto" is-outline is-disabled>
+              {{ $t("pages.account.order_details.payment_details_card.view_invoice_button") }}
+            </VcButton>
           </div>
         </VcCard>
 
