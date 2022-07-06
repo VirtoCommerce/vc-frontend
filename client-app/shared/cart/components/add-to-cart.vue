@@ -1,6 +1,7 @@
 <template>
   <div class="flex relative z-0">
     <input
+      ref="input"
       type="number"
       v-model.number="enteredQuantity"
       :disabled="disabled"
@@ -12,6 +13,7 @@
       class="appearance-none rounded-l rounded-r-none flex-1 w-full text-base lg:text-sm -mr-px border border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9 min-w-0"
       @input="onInput"
       @keypress="onKeypress"
+      @click="onClick"
     />
 
     <VcButton
@@ -52,6 +54,8 @@ import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 
 const emit = defineEmits(["update:lineitem"]);
+
+const input = ref<HTMLInputElement>();
 
 const props = defineProps({
   product: {
@@ -161,6 +165,13 @@ function onInput() {
   } else if (enteredQuantity.value > max) {
     enteredQuantity.value = max;
   }
+}
+
+/**
+ * Select input value.
+ */
+function onClick() {
+  (input.value as HTMLInputElement).select();
 }
 
 watchEffect(() => {
