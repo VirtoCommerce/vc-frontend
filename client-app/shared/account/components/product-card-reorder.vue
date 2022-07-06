@@ -65,7 +65,7 @@
                 'border-[color:var(--color-danger)]': errorMessage,
               }"
               :disabled="isInputDisabled || readOnly || isProductDeleted"
-              class="w-20 border rounded overflow-hidden h-8 focus:ring ring-inset outline-none p-1 text-center"
+              class="w-20 border border-gray-300 rounded overflow-hidden h-8 focus:border-gray-400 outline-none p-1 text-center"
               type="number"
               pattern="\d*"
               @input="onInput"
@@ -177,7 +177,7 @@
                 'border-[color:var(--color-danger)]': errorMessage,
               }"
               :disabled="isInputDisabled || readOnly || isProductDeleted"
-              class="w-20 border rounded overflow-hidden h-8 lg:h-10 focus:ring ring-inset outline-none p-1 text-center"
+              class="w-20 border border-gray-300 rounded overflow-hidden h-8 lg:h-10 focus:border-gray-400 outline-none p-1 text-center"
               type="number"
               pattern="\d*"
               @input="onInput"
