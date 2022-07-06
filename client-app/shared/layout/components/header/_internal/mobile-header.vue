@@ -28,7 +28,7 @@
             <i class="fas fa-phone-alt text-xl text-[color:var(--color-primary)]"></i>
           </a>
 
-          <button v-show="!searchBarVisible" class="h-full pr-4" @click="showSearchBar">
+          <button class="h-full pr-4" @click="showSearchBar">
             <i class="fas fa-search text-2xl text-[color:var(--color-primary)]" />
           </button>
 
