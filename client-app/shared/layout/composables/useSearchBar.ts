@@ -58,10 +58,7 @@ export default (
   }
 
   async function showSearchBar(): Promise<void> {
-    if (searchBarVisible.value) {
-      return;
-    }
-    searchBarVisible.value = true;
+    searchBarVisible.value = !searchBarVisible.value;
     await sleep(unref(animationDuration));
   }
 
