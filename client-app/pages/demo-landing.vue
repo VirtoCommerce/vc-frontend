@@ -169,11 +169,16 @@ import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { ProductCardGrid, useProducts, useProductsRoutes } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
+import { usePageHead } from "@/core/composables";
 
 const { t } = useI18n();
 const { products, fetchProducts } = useProducts();
 
 const productsRoutes = useProductsRoutes(products);
+
+usePageHead({
+  title: t("pages.demo_landing.meta.title"),
+});
 
 const breadcrumbs: IBreadcrumbs[] = [
   { route: "/", title: t("pages.compare.links.home") },

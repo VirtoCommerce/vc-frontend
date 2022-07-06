@@ -1,4 +1,4 @@
-import { Breadcrumb } from "@/xapi/types";
+import { Breadcrumb, SeoInfo } from "@/xapi/types";
 
 export * from "./search";
 
@@ -12,6 +12,7 @@ export interface CategoryTree extends Record<string, any> {
   items?: CategoryTree[];
   isCurrent?: boolean;
   seoUrl?: string;
+  seoInfo?: SeoInfo;
   breadcrumbs?: Breadcrumb[];
 }
 

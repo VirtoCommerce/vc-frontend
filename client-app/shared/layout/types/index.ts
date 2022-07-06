@@ -6,4 +6,5 @@ export type MenuLink = {
   icon?: string;
   route?: RouteLocationRaw;
   children?: MenuLink[];
+  priority?: number;
 };

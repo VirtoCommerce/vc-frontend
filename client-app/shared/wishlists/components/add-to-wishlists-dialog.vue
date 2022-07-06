@@ -1,6 +1,6 @@
 <template>
-  <VcPopup :title="$t('shared.wishlists.add_to_wishlists_dialog.title')" modal-width="max-w-xl">
-    <div class="max-h-[50vh] lg:max-h-64 overflow-y-auto border-b">
+  <VcPopup :title="$t('shared.wishlists.add_to_wishlists_dialog.title')" modal-width="max-w-xl" is-mobile-fullscreen>
+    <div class="sm:max-h-[50vh] lg:max-h-64 sm:overflow-y-auto border-b">
       <!-- Lists -->
       <template v-if="!loadingLists">
         <template v-if="listsContain.length">
@@ -96,7 +96,7 @@ const {
   addItemsToWishlists,
   createWishlistAndAddProduct,
   removeItemsFromWishlists,
-} = useWishlists();
+} = useWishlists({ autoRefetch: false });
 
 const loading = ref(false);
 const selectedListsOtherIds = ref<string[]>([]);

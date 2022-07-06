@@ -1,4 +1,4 @@
-import { defineComponent, onBeforeUnmount, warn, h, createCommentVNode, useSlots, watchEffect } from "vue";
+import { defineComponent, onBeforeUnmount, warn, h, createCommentVNode, useSlots, watchEffect, watch } from "vue";
 import { useNestedMobileHeader } from "@/shared/layout";
 
 export default defineComponent({
@@ -30,17 +30,21 @@ export default defineComponent({
       resetSlots();
     });
 
-    watchEffect(async () => {
-      if (props.show) {
-        setSlots(slots);
-      } else {
-        resetSlots();
-      }
+    watch(
+      () => props.show,
+      (show) => {
+        if (show) {
+          setSlots(slots);
+        } else {
+          resetSlots();
+        }
 
-      if (!Object.keys(slots).length) {
-        warn("Component content is empty.");
-      }
-    });
+        if (!Object.keys(slots).length) {
+          warn("Component content is empty.");
+        }
+      },
+      { immediate: true }
+    );
 
     watchEffect(async () => {
       isAnimated.value = props.animated;

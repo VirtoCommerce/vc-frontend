@@ -39,7 +39,7 @@
   <router-link
     v-else-if="to"
     :to="to"
-    class="uppercase font-bold text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)] tracking-wide"
+    class="flex items-center cursor-pointer px-[0.8rem] py-[0.55rem] border-2 border-primary rounded text-sm uppercase font-bold text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)] tracking-wide"
     :class="$attrs.class"
   >
     <slot>{{ title }}</slot>

@@ -3,9 +3,7 @@
     class="fixed z-50 w-full h-screen flex flex-col bg-[color:var(--color-mobile-menu-bg)] text-[color:var(--color-mobile-menu-link)]"
   >
     <header class="px-6 flex justify-between items-center h-14 flex-shrink-0">
-      <router-link to="/" @click="$emit('close')">
-        <VcImage src="/static/images/common/logo-white.svg" class="h-9" lazy />
-      </router-link>
+      <VcImage :src="$cfg.logo_inverted_image" class="h-9" lazy />
 
       <!-- Language block -->
       <LanguageSelector v-if="supportedLocales.length > 1" class="sm:ml-auto sm:mr-6" />
@@ -97,7 +95,7 @@
     <section v-else class="flex-grow overflow-y-auto pb-16 divide-y divide-white divide-opacity-20">
       <div class="flex flex-col space-y-5 mt-2 py-8 px-9">
         <MobileMenuLink
-          v-for="item in mainMenuLinks"
+          v-for="item in mobileHeaderMenuLinks"
           :key="item.title"
           :to="item.route"
           :icon="item.icon"
@@ -139,11 +137,12 @@
         <template v-if="isAuthenticated">
           <!-- My account link -->
           <MobileMenuLink
-            :title="accountMenuLink.title"
+            v-if="mobileAccountMenuLink"
+            :title="mobileAccountMenuLink.title"
             icon="/static/images/common/user-circle.svg#main"
             class="text-2xl"
             is-parent
-            @select="selectMenuItem(accountMenuLink)"
+            @select="selectMenuItem(mobileAccountMenuLink!)"
           />
 
           <!-- Corporate link -- >
@@ -186,8 +185,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCart } from "@/shared/cart";
 import { useUser } from "@/shared/account";
@@ -198,61 +196,26 @@ import MobileMenuLink from "./mobile-menu-link.vue";
 
 defineEmits(["close"]);
 
-const route = useRoute();
 const { t } = useI18n();
 const { cart } = useCart();
 const { productsIds } = useCompareProducts();
 const { supportedLocales } = useLanguages();
 const { currentCurrency, supportedCurrencies, saveCurrencyCodeAndReload } = useCurrency();
 const { user, isAuthenticated, signMeOut } = useUser();
-const { mainMenuLinks, openedItem, selectMenuItem, goBack, goMainMenu } = useNavigations();
+const {
+  mobileHeaderMenuLinks,
+  mobileAccountMenuLink,
+  mobilePreSelectedMenuLink,
+  openedItem,
+  selectMenuItem,
+  goBack,
+  goMainMenu,
+} = useNavigations();
 
 const unauthorizedMenuLinks: MenuLink[] = [
   { route: { name: "SignIn" }, title: t("shared.layout.header.link_sign_in") },
   { route: { name: "SignUp" }, title: t("shared.layout.header.link_register_now") },
 ];
-
-const accountMenuLink: MenuLink = {
-  id: "account",
-  route: { name: "Account" },
-  title: t("shared.layout.header.mobile.my_account"),
-  children: [
-    {
-      route: { name: "Dashboard" },
-      title: t("shared.layout.header.mobile.account_menu.dashboard"),
-      icon: "/static/images/dashboard/icons/dashboard.svg#main",
-    },
-    {
-      route: { name: "Profile" },
-      title: t("shared.layout.header.mobile.account_menu.profile"),
-      icon: "/static/images/dashboard/icons/profile.svg#main",
-    },
-    {
-      route: { name: "Addresses" },
-      title: t("shared.layout.header.mobile.account_menu.addresses"),
-      icon: "/static/images/dashboard/icons/building.svg#main",
-    },
-    {
-      route: { name: "Orders" },
-      title: t("shared.layout.header.mobile.account_menu.orders"),
-      icon: "/static/images/dashboard/icons/orders.svg#main",
-    },
-    {
-      route: { name: "Lists" },
-      title: t("shared.layout.header.mobile.account_menu.your_lists"),
-      icon: "/static/images/dashboard/icons/list.svg#main",
-    },
-    {
-      route: { name: "CheckoutDefaults" },
-      title: t("shared.layout.header.mobile.account_menu.checkout_defaults"),
-      icon: "/static/images/dashboard/icons/check-circle.svg#main",
-    },
-    {
-      id: "logout",
-      icon: "/static/images/common/user-circle.svg#main",
-    },
-  ],
-};
 
 /*
 const corporateMenuLink: MenuLink = {
@@ -278,29 +241,16 @@ const settingsMenuLink: MenuLink = {
   children: [{ id: "currency-setting" }], // see implementation in template
 };
 
-const allProductsMenuLink = computed<MenuLink | undefined>(() =>
-  mainMenuLinks.value.find((item) => item.id === "all-products-menu")
-);
-
 async function signOut() {
   await signMeOut();
   location.href = "/";
 }
 
 onMounted(() => {
-  const matchedRouteNames = route.matched.map((item) => item.name);
-  let preSelectedLink: MenuLink | undefined;
-
   goMainMenu();
 
-  if (["Catalog", "Product"].some((item) => matchedRouteNames.includes(item))) {
-    preSelectedLink = allProductsMenuLink.value;
-  } else if (matchedRouteNames.includes("Account") && !matchedRouteNames.includes("Dashboard")) {
-    preSelectedLink = accountMenuLink;
-  }
-
-  if (preSelectedLink) {
-    selectMenuItem(preSelectedLink);
+  if (mobilePreSelectedMenuLink.value) {
+    selectMenuItem(mobilePreSelectedMenuLink.value);
   }
 });
 </script>

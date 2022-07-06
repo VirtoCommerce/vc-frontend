@@ -67,8 +67,8 @@
 
   <!-- Mobile menu -->
   <transition
-    enter-from-class="translate-x-full"
-    leave-to-class="translate-x-full"
+    enter-from-class="-translate-x-full"
+    leave-to-class="-translate-x-full"
     enter-active-class="will-change-transform"
     leave-active-class="will-change-transform"
   >

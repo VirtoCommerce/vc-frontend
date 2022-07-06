@@ -1,7 +1,7 @@
 <template>
   <form class="flex flex-col gap-y-3" autocomplete="off">
     <VcInput
-      v-maska="'#### #### #### #### ###'"
+      v-mask="'#### #### #### #### ###'"
       :model-value="number.replace(/(.{4})/g, '$1 ')"
       @update:model-value="number = $event.replace(/\D/g, '')"
       :label="$t('shared.payment.bank_card_form.number_label')"
@@ -27,7 +27,7 @@
 
     <div class="flex flex-col sm:flex-row gap-x-6 gap-y-3">
       <VcInput
-        v-maska="'## / ##'"
+        v-mask="'## / ##'"
         v-model="expirationDate"
         :label="$t('shared.payment.bank_card_form.expiration_date_label')"
         :placeholder="$t('shared.payment.bank_card_form.expiration_date_placeholder')"
@@ -44,7 +44,7 @@
       />
 
       <VcInput
-        v-maska="'####'"
+        v-mask="'####'"
         v-model="securityCode"
         :label="$t('shared.payment.bank_card_form.security_code_label')"
         :error-message="formErrors.securityCode || errors.securityCode"

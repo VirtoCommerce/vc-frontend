@@ -1,6 +1,5 @@
 import { createApp, Plugin } from "vue";
-import { RouteRecordName } from "vue-router";
-import maska from "maska";
+import { maska } from "maska";
 import * as yup from "yup";
 import { createHead } from "@vueuse/head";
 import { setGlobalVariables } from "@/core/globals";
@@ -12,7 +11,7 @@ import { createRouter } from "@/router";
 import { getBaseUrl } from "@/core/utilities";
 import App from "./App.vue";
 import PageBuilderBlocks from "@/builder-preview/pages/blocks";
-import * as components from "@/ui-kit/components";
+import * as UIKitComponents from "@/ui-kit/components";
 import client from "@/xapi/graphql-client";
 
 // Workaround before Nuxt3 migration, will be deleted later.
@@ -23,7 +22,7 @@ window.useNuxtApp = () => {
 };
 
 export default async (getPlugins: (options: any) => { plugin: Plugin; options: any }[] = () => []) => {
-  const { isAuthenticated, fetchUser } = useUser();
+  const { fetchUser } = useUser();
   const { themeContext, fetchThemeContext } = useThemeContext();
   const { currentLocale, currentLanguage, supportedLocales, setLocale } = useLanguages();
   const { currentCurrency } = useCurrency();
@@ -68,41 +67,27 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
     },
   });
 
-  router.beforeEach((to, _from, next) => {
-    // Protect account routes
-    if (!isAuthenticated.value && to.meta.requiresAuth) {
-      return next({
-        name: "SignIn",
-        // save the location we were at to come back later
-        query: { redirect: to.fullPath },
-      });
-    }
-
-    // Make Dashboard the default Home page for authorized users
-    if (isAuthenticated.value && Array<RouteRecordName>("Home", "SignIn", "SignUp").includes(to.name!)) {
-      return next({ name: "Dashboard" });
-    }
-
-    return next();
-  });
-
   /**
    * Create and mount application
    */
   const app = createApp(App);
 
+  // Plugins
   app.use(head);
   app.use(i18n);
   app.use(router);
-  app.use(maska);
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value!.settings);
 
   const plugins = getPlugins({ router });
   plugins.forEach(({ plugin, options }) => app.use(plugin, options));
 
+  // Directives
+  app.directive("mask", maska);
+
+  // Components
   // Register UI Kit components globally
-  Object.entries(components).forEach(([name, component]) => app.component(name, component));
+  Object.entries(UIKitComponents).forEach(([name, component]) => app.component(name, component));
 
   // Register Page builder components globally
   Object.entries(PageBuilderBlocks).forEach(([name, component]) => app.component(name, component));
