@@ -16,8 +16,8 @@
           <router-link
             v-if="!isProductDeleted"
             :to="link"
+            target="_blank"
             class="text-[color:var(--color-link)] font-extrabold line-clamp-3 overflow-hidden"
-            @click="$emit('close-popup')"
           >
             {{ productItem.name }}
           </router-link>
@@ -57,6 +57,7 @@
           </span>
           <div class="flex flex-col items-center">
             <input
+              ref="mobileInput"
               v-model="value"
               :max="maxQty"
               :min="minQty"
@@ -70,6 +71,7 @@
               pattern="\d*"
               @input="onInput"
               @keypress="onKeypress"
+              @click="onMobileInputClick"
             />
             <div v-if="!isProductDeleted">
               <div v-if="!isInputDisabled" class="flex items-center">
@@ -129,8 +131,8 @@
           <router-link
             v-if="!isProductDeleted"
             :to="link"
+            target="_blank"
             class="text-[color:var(--color-link)] font-extrabold line-clamp-3 overflow-hidden"
-            @click="$emit('close-popup')"
           >
             {{ productItem.name }}
           </router-link>
@@ -169,6 +171,7 @@
         <div class="flex items-start space-x-2 lg:space-x-4 xl:w-2/5 justify-between lg:justify-end">
           <div class="flex flex-col items-center lg:w-24 lg:shrink-0 xl:w-1/4">
             <input
+              ref="input"
               v-model="value"
               :max="maxQty"
               :min="minQty"
@@ -182,6 +185,7 @@
               pattern="\d*"
               @input="onInput"
               @keypress="onKeypress"
+              @click="onInputClick"
             />
 
             <VcInStock
@@ -205,7 +209,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from "vue";
+import { computed, PropType, ref } from "vue";
 import { useField } from "vee-validate";
 import * as yup from "yup";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
@@ -216,6 +220,9 @@ import { getProductRoute } from "@/shared/catalog";
 
 // Define max qty available to add
 const max = 999999;
+
+const mobileInput = ref<HTMLInputElement>();
+const input = ref<HTMLInputElement>();
 
 const props = defineProps({
   productItem: {
@@ -297,4 +304,18 @@ const onInput = () => {
     value.value = undefined;
   }
 };
+
+/**
+ * Select input value.
+ */
+function onInputClick() {
+  (input.value as HTMLInputElement).select();
+}
+
+/**
+ * Select mobile input value.
+ */
+function onMobileInputClick() {
+  (mobileInput.value as HTMLInputElement).select();
+}
 </script>
