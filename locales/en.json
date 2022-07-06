@@ -632,6 +632,8 @@
         "meta": {
           "title": "@:pages.account.addresses.addresses_title"
         },
+        "edit_label": "Edit",
+        "delete_label": "Delete",
         "add_new_address_button_mobile": "Add new",
         "add_new_address_button": "Add new address",
         "cancel_button": "@:common.buttons.cancel",

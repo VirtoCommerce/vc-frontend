@@ -178,6 +178,7 @@
                   type="button"
                   class="h-7 w-7 shadow rounded text-[color:var(--color-primary)] hover:bg-gray-100"
                   @click="openEditMode(address)"
+                  :title="$t('pages.account.addresses.edit_label')"
                 >
                   <i class="fas fa-pencil-alt" />
                 </button>
@@ -186,6 +187,7 @@
                   type="button"
                   class="h-7 w-7 shadow rounded text-[color:var(--color-danger)] hover:bg-gray-100"
                   @click="removeAddress(address)"
+                  :title="$t('pages.account.addresses.delete_label')"
                 >
                   <i class="fas fa-times" />
                 </button>
