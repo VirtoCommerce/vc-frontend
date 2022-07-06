@@ -74,14 +74,21 @@
       </div>
 
       <div class="flex flex-grow mr-5 md:mx-0">
-        <input
-          v-model.trim="keyword"
-          :disabled="ordersLoading"
-          type="search"
-          class="flex-grow appearance-none bg-white rounded rounded-r-none h-11 px-4 font-medium outline-none text-sm border border-gray-300 focus:border-gray-400 disabled:bg-gray-200"
-          @keypress.enter="applyKeyword"
-          :placeholder="$t('pages.account.orders.search_placeholder')"
-        />
+        <div class="relative grow">
+          <input
+            v-model.trim="keyword"
+            :disabled="ordersLoading"
+            class="w-full appearance-none bg-white rounded rounded-r-none h-11 px-4 font-medium outline-none text-sm border border-gray-300 focus:border-gray-400 disabled:bg-gray-200"
+            @keypress.enter="applyKeyword"
+            :placeholder="$t('pages.account.orders.search_placeholder')"
+          />
+
+          <button v-if="keyword" class="absolute right-[14px] top-[14px]" @click="reset">
+            <svg class="text-[color:var(--color-primary)]" height="14" width="14">
+              <use href="/static/images/delete.svg#main" />
+            </svg>
+          </button>
+        </div>
 
         <VcButton :is-disabled="ordersLoading" class="px-4 !rounded-l-none uppercase" size="lg" @click="applyKeyword">
           <i class="fas fa-search text-lg" />
@@ -401,5 +408,9 @@ onClickOutside(
 
 function filterChanged() {
   hideFilters();
+}
+
+function reset() {
+  resetFiltersWithKeyword();
 }
 </script>
