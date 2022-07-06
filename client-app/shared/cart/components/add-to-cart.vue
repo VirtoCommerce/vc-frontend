@@ -71,7 +71,7 @@ const { cart, addToCart, changeItemQuantity } = useCart();
 const { t } = useI18n();
 
 const loading = ref(false);
-const initialValue = ref(1);
+const initialValue = ref();
 
 const lineItemInCart = computed<LineItemType | undefined>(() =>
   cart.value?.items?.find((item) => item.productId === props.product.id)
@@ -175,7 +175,9 @@ function onClick() {
 }
 
 watchEffect(() => {
-  initialValue.value = countInCart.value || minQty.value;
-  setValue(initialValue.value);
+  if (!disabled.value) {
+    initialValue.value = countInCart.value || minQty.value;
+    setValue(initialValue.value);
+  }
 });
 </script>
