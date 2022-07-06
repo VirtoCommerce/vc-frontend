@@ -1,14 +1,13 @@
 <template>
   <div class="bg-white rounded border shadow-sm">
-    <div v-if="withHeader" class="px-6 py-3 border-b font-extrabold text-sm">
+    <div v-if="withHeader" class="px-6 py-3 border-b font-extrabold text-sm" :class="{ 'cursor-pointer': isCollapsible }" @click="isCollapsible && (_isCollapsed = !_isCollapsed)">
       <div class="flex items-center">
         <slot name="header">
           <div class="flex-grow text-xl font-extrabold uppercase">{{ title }}</div>
           <div v-if="isCollapsible" class="ml-3">
             <i
-              class="fas text-[color:var(--color-primary)] text-base cursor-pointer"
+              class="fas text-[color:var(--color-primary)] text-base"
               :class="[!_isCollapsed ? 'fa-chevron-up' : 'fa-chevron-down']"
-              @click="_isCollapsed = !_isCollapsed"
             ></i>
           </div>
           <slot name="header-button"></slot>
