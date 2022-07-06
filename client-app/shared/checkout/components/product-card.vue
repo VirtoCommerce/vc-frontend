@@ -18,10 +18,11 @@
               :to="link"
               v-if="link"
               class="text-[color:var(--color-link)] font-extrabold line-clamp-3 overflow-hidden"
+              :title="lineItem.name"
             >
               {{ lineItem.name }}
             </router-link>
-            <div class="font-extrabold line-clamp-3 overflow-hidden" v-else>
+            <div class="font-extrabold line-clamp-3 overflow-hidden" :title="lineItem.name" v-else>
               {{ lineItem.name }}
             </div>
             <!-- todo: extract small alert component https://virtocommerce.atlassian.net/browse/ST-2488 -->
