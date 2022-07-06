@@ -51,7 +51,7 @@
         required-city
         @save="saveAddress"
       >
-        <template #append="{ dirty }">
+        <template #append="{ dirty, valid }">
           <div class="flex space-x-4 pb-3 pt-7 sm:pb-4 sm:pt-4 sm:float-right">
             <VcButton
               kind="secondary"
@@ -64,7 +64,7 @@
             </VcButton>
 
             <VcButton
-              :is-disabled="!dirty"
+              :is-disabled="!dirty || !valid"
               :is-waiting="saveAddressLoading"
               class="uppercase flex-grow sm:flex-none sm:px-16"
               is-submit
