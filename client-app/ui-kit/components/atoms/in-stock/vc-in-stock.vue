@@ -10,7 +10,7 @@
   </div>
   <div
     v-else
-    class="py-[1px] px-[0.625rem] bg-[color:var(--color-in-stock-out-bg)] text-[color:var(--color-in-stock-out)] whitespace-nowrap rounded-full text-[13px] leading-5"
+    class="py-[1px] px-[0.625rem] bg-[color:var(--color-in-stock-out-bg)] text-[color:var(--color-in-stock-out)] whitespace-nowrap rounded-full text-[13px] leading-5 lg:text-[11px]"
   >
     {{ $t("common.messages.product_out_of_stock") }}
   </div>
