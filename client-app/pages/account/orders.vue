@@ -318,6 +318,7 @@ watch(
 
 const onPageChange = async (newPage: number) => {
   page.value = newPage;
+  window.scroll({ top: 0, behavior: "smooth" });
   await loadOrders();
 };
 
