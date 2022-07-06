@@ -69,7 +69,7 @@
               pattern="\d*"
               :max="maxQty"
               :min="minQty"
-              class="w-[5.625rem] h-[32px] border rounded overflow-hidden focus:ring ring-inset outline-none p-1 text-center lg:w-[3.75rem] lg:h-10"
+              class="w-[5.625rem] h-[32px] border rounded overflow-hidden focus:border-gray-400 outline-none p-1 text-center lg:w-[3.75rem] lg:h-10"
               :class="{
                 'text-[color:var(--color-danger)]': isInputDisabled,
                 'border-[color:var(--color-danger)]': errorMessage,
