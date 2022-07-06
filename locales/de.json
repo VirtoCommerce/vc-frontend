@@ -46,7 +46,9 @@
       "sort_by": "Sortieren nach:",
       "sku": "Artikel #",
       "item": "Artikel",
-      "catalog": "Katalog"
+      "catalog": "Katalog",
+      "true_property": "Yes",
+      "false_property": "No"
     },
     "suffixes": {
       "per_item": "/ jeder",
