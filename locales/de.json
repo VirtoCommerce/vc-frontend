@@ -122,6 +122,8 @@
         }
       },
       "footer": {
+        "version": "Ver.",
+        "company_name": "VirtoCommerce",
         "company_information_link_group": "Company information",
         "about_us_link": "About Us",
         "investor_relations_link": "Investor Relations",
