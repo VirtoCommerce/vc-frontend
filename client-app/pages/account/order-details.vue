@@ -57,7 +57,7 @@
                 v-model:page="page"
                 :pages="pages"
                 class="mb-3 lg:mb-0"
-                @update:page="page = $event"
+                @update:page="onUpdatePage()"
               ></VcPagination>
             </div>
           </div>
@@ -281,4 +281,11 @@ watchEffect(() => {
   clearOrder();
   loadOrder({ id: props.orderId });
 });
+
+/**
+ * Scroll after page change.
+ */
+function onUpdatePage() {
+  window.scroll({ top: 0, behavior: "smooth" });
+}
 </script>
