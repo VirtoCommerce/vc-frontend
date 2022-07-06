@@ -262,7 +262,13 @@
 </template>
 
 <script setup lang="ts">
-import { OrdersFilter, MobileOrdersFilter, useUserOrdersFilter, useUserOrders } from "@/shared/account";
+import {
+  OrdersFilter,
+  MobileOrdersFilter,
+  useUserOrdersFilter,
+  useUserOrders,
+  OrdersFilterData,
+} from "@/shared/account";
 
 import { onMounted, ref, shallowRef, watch } from "vue";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
@@ -272,6 +278,8 @@ import { useRouter } from "vue-router";
 import { CustomerOrderType } from "@/xapi/types";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
+
+import _ from "lodash";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -301,9 +309,11 @@ const openOrderDetails = (item: CustomerOrderType) => {
 
 watch(
   appliedFilterData,
-  () => {
-    page.value = 1;
-    loadOrders();
+  (newValue: OrdersFilterData, oldValue: OrdersFilterData) => {
+    if (!_.isEqual(newValue, oldValue)) {
+      page.value = 1;
+      loadOrders();
+    }
   },
   { deep: true }
 );
