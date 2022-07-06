@@ -8,6 +8,7 @@
       type="password"
       is-required
       :error-message="errors.password"
+      autocomplete="new-password"
     ></VcInput>
     <VcInput
       v-model="confirmPassword"
@@ -17,6 +18,7 @@
       type="password"
       is-required
       :error-message="errors.confirmPassword"
+      autocomplete="off"
     ></VcInput>
     <div class="mt-8 md:mt-9">
       <VcAlert v-for="error in commonErrors" :key="error" type="error" class="mb-4 text-xs" icon text>

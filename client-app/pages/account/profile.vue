@@ -64,7 +64,7 @@
           :placeholder="$t('pages.account.profile.old_password_placeholder')"
           :is-disabled="isSubmitting"
           :error-message="errors.oldPassword"
-          autocomplete="new-password"
+          autocomplete="off"
           type="password"
           name="oldPassword"
           class="mb-5"
@@ -80,6 +80,7 @@
           type="password"
           name="newPassword"
           class="mb-5"
+          autocomplete="new-password"
           @update:model-value="oldPassword ? (newPassword = $event.trim()) : null"
         />
 
@@ -93,6 +94,7 @@
           type="password"
           name="confirmNewPassword"
           class="mb-5"
+          autocomplete="off"
           @update:model-value="oldPassword ? (confirmNewPassword = $event.trim()) : null"
         />
 
