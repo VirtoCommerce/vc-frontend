@@ -16,9 +16,7 @@
 import _ from "lodash";
 import { computed, PropType } from "vue";
 import { Property } from "@/xapi/types";
-import { useI18n } from "vue-i18n";
-
-const { t } = useI18n();
+import { prepareProperties } from "../utils";
 
 const props = defineProps({
   properties: {
@@ -32,17 +30,7 @@ const grouped = computed(() => {
   return _(props.properties)
     .filter((p) => !!p && p.type === "Product" && p.value !== undefined && p.value !== null && !p.hidden)
     .groupBy((p) => p.name)
-    .map((properties, propName) => {
-      return {
-        name: properties[0].label || propName,
-        values:
-          properties[0].valueType === "Boolean"
-            ? properties
-                .map((x) => (x.value ? t("common.labels.true_property") : t("common.labels.false_property")))
-                .join(", ")
-            : properties.map((x) => x.value).join(", "),
-      };
-    })
+    .map(prepareProperties)
     .value();
 });
 </script>
