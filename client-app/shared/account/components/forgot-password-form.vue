@@ -8,6 +8,7 @@
       type="email"
       is-required
       :error-message="errors.email"
+      :maxlength="64"
     ></VcInput>
     <div class="mt-8 md:mt-9">
       <VcAlert v-for="error in commonErrors" :key="error" type="error" class="mb-4 text-xs" icon text>

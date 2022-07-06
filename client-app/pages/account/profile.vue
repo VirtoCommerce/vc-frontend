@@ -25,6 +25,7 @@
           name="firstName"
           class="mb-5"
           is-required
+          :maxlength="64"
         />
 
         <VcInput
@@ -36,6 +37,7 @@
           name="lastName"
           class="mb-5"
           is-required
+          :maxlength="64"
         />
 
         <VcInput
@@ -68,6 +70,7 @@
           type="password"
           name="oldPassword"
           class="mb-5"
+          :maxlength="64"
         />
 
         <VcInput
@@ -81,6 +84,7 @@
           name="newPassword"
           class="mb-5"
           autocomplete="new-password"
+          :maxlength="64"
           @update:model-value="oldPassword ? (newPassword = $event.trim()) : null"
         />
 
@@ -95,6 +99,7 @@
           name="confirmNewPassword"
           class="mb-5"
           autocomplete="off"
+          :maxlength="64"
           @update:model-value="oldPassword ? (confirmNewPassword = $event.trim()) : null"
         />
 
