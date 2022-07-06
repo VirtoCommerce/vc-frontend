@@ -9,7 +9,7 @@
     <VcPopupSidebar class="px-5 pt-12 w-72" :is-visible="isMobile && filtersVisible" @hide="hideFilters">
       <div class="relative">
         <button class="absolute -right-3 appearance-none px-3 py-1" @click="hideFilters">
-          <span class="text-2xl fa fa-times text-[color:var(--color-primary)]"></span>
+          <span class="text-2xl fas fa-times text-red-400 hover:text-red-700"></span>
         </button>
       </div>
 
@@ -65,8 +65,8 @@
           v-if="filtersVisible && !isMobile"
           class="absolute right-0 z-10 bg-white shadow-lg pb-6 rounded border border-gray-300 overflow-hidden mt-2"
         >
-          <button class="absolute right-0 appearance-none px-4 py-2" @click="hideFilters">
-            <span class="fa fa-times text-[color:var(--color-primary)]"></span>
+          <button class="absolute right-0 appearance-none mr-4 mt-2" @click="hideFilters">
+            <span class="text-lg fa fa-times text-red-400 hover:text-red-700"></span>
           </button>
 
           <OrdersFilter ref="filtersElement" class="px-8 pt-9" @change="filterChanged()" />
