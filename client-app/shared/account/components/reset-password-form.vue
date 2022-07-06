@@ -27,7 +27,7 @@
         {{ error }}
       </VcAlert>
 
-      <VcButton is-submit class="mt-6 lg:mt-3 w-full lg:w-52 uppercase" :is-waiting="loading">
+      <VcButton is-submit class="mt-6 lg:mt-3 w-full lg:w-52 uppercase" :is-waiting="loading" :is-disabled="hasFormErrors">
         {{ $t("shared.account.reset_password_form.reset_password_button") }}
       </VcButton>
     </div>
@@ -35,11 +35,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import { useUser } from "@/shared/account";
 import { useI18n } from "vue-i18n";
+import { isObjectEmpty } from "@/core/utilities";
 
 const { resetPassword, loading } = useUser();
 
@@ -78,6 +79,8 @@ const { errors, handleSubmit } = useForm({
 
 const { value: password } = useField<string>("password");
 const { value: confirmPassword } = useField<string>("confirmPassword");
+
+const hasFormErrors = computed(() => !password.value || !confirmPassword.value || !isObjectEmpty(errors.value));
 
 const commonErrors = ref<string[]>([]);
 
