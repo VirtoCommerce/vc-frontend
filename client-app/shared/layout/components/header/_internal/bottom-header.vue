@@ -35,11 +35,7 @@
             <span>{{ item.title }}</span>
 
             <transition name="slide-fade-right">
-              <HeaderMenuBadge
-                v-if="cart?.itemsQuantity"
-                :count="cart.itemsQuantity"
-                position="-top-[8px] left-[1.2rem]"
-              ></HeaderMenuBadge>
+              <HeaderMenuBadge v-if="cart?.itemsQuantity" :count="cart.itemsQuantity"></HeaderMenuBadge>
             </transition>
           </template>
 
@@ -48,11 +44,7 @@
               <span>{{ item.title }}</span>
 
               <transition name="slide-fade-right">
-                <HeaderMenuBadge
-                  v-if="productsIds.length"
-                  :count="productsIds.length"
-                  position="-top-[8px] !-right-[0.4rem]"
-                ></HeaderMenuBadge>
+                <HeaderMenuBadge v-if="productsIds.length" :count="productsIds.length"></HeaderMenuBadge>
               </transition>
             </div>
           </template>
