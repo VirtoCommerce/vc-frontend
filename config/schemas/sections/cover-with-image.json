@@ -10,7 +10,64 @@
     {
       "type": "list",
       "id": "simpleList",
-      "label": "Simple List"
+      "label": "Simple List",
+      "addText": "Add new field",
+      "displayField": "label",
+      "info": "You can create and set up a form",
+      "element": [
+        {
+          "id": "label",
+          "type": "string",
+          "label": "Label"
+        },
+        {
+          "id": "controlType",
+          "type": "select",
+          "label": "Control type",
+          "options": [
+            {
+              "value": "text",
+              "label": "Text"
+            },
+            {
+              "value": "checkbox",
+              "label": "Checkbox"
+            },
+            {
+              "value": "radio",
+              "label": "Radio"
+            },
+            {
+              "value": "select",
+              "label": "Select"
+            },
+            {
+              "value": "textarea",
+              "label": "Textarea"
+            },
+            {
+              "value": "date",
+              "label": "Date"
+            },
+            {
+              "value": "hidden",
+              "label": "Hidden"
+            },
+            {
+              "value": "email",
+              "label": "Email"
+            }
+          ]
+        },
+        {
+          "id": "fieldName",
+          "type": "string"
+        },
+        {
+          "type": "paragraph",
+          "text": "add here conditional property"
+        }
+      ]
     },
     {
       "type": "object",
