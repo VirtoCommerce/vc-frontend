@@ -15,7 +15,11 @@
 
     <div class="md:text-center">
       <!-- Product title -->
-      <router-link :to="link" class="text-[color:var(--color-link)] font-extrabold text-sm line-clamp-3 mt-2" :title="product.name">
+      <router-link
+        :to="link"
+        class="text-[color:var(--color-link)] font-extrabold text-sm line-clamp-3 mt-2"
+        :title="product.name"
+      >
         {{ product.name }}
       </router-link>
 

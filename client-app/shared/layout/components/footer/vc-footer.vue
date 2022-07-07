@@ -77,7 +77,9 @@
     class="flex flex-col md:flex-row items-center justify-between h-16 text-xs px-4 md:px-12 py-3 bg-[color:var(--color-footer-bottom-bg)] text-[color:var(--color-footer-bottom-text)]"
   >
     <div class="font-medium">
-      {{ $t("shared.layout.footer.version") }} {{ version }}. © {{ new Date().getFullYear() }} <span class="font-bold">{{ $t("shared.layout.footer.company_name") }}</span>.
+      {{ $t("shared.layout.footer.version") }} {{ version }}. © {{ new Date().getFullYear() }}
+      <span class="font-bold">{{ $t("shared.layout.footer.company_name") }}</span
+      >.
       {{ $t("shared.layout.footer.all_rights_reserved") }}
     </div>
 

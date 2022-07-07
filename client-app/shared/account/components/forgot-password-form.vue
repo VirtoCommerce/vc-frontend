@@ -15,7 +15,12 @@
         {{ error }}
       </VcAlert>
 
-      <VcButton is-submit class="mt-6 lg:mt-3 w-full lg:w-48 uppercase" :is-waiting="loading" :is-disabled="hasFormErrors">
+      <VcButton
+        is-submit
+        class="mt-6 lg:mt-3 w-full lg:w-48 uppercase"
+        :is-waiting="loading"
+        :is-disabled="hasFormErrors"
+      >
         {{ $t("shared.account.forgot_password_form.submit_button") }}
       </VcButton>
     </div>

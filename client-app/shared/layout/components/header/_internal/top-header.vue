@@ -30,16 +30,26 @@
 
         <!-- Account menu -->
         <div ref="loginMenu" class="relative">
-          <div class="flex items-center cursor-pointer text-white hover:text-[color:var(--color-header-top-link)]" @click="loginMenuVisible = !loginMenuVisible">
+          <div
+            class="flex items-center cursor-pointer text-white hover:text-[color:var(--color-header-top-link)]"
+            @click="loginMenuVisible = !loginMenuVisible"
+          >
             <div>{{ user.contact?.fullName }}</div>
-            <i class="fas ml-1 text-[color:var(--color-primary)] text-[0.625rem] align-baseline" :class="[loginMenuVisible ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
+            <i
+              class="fas ml-1 text-[color:var(--color-primary)] text-[0.625rem] align-baseline"
+              :class="[loginMenuVisible ? 'fa-chevron-up' : 'fa-chevron-down']"
+            ></i>
           </div>
           <div
             v-if="loginMenuVisible"
             class="absolute z-10 bg-white rounded-md shadow-lg flex flex-col px-3 py-4 space-y-3 mt-2 right-0 text-black w-60"
           >
             <div class="flex items-center justify-between">
-              <router-link to="/account/dashboard" class="flex items-center hover:text-[color:var(--color-primary)]" @click="loginMenuVisible = false">
+              <router-link
+                to="/account/dashboard"
+                class="flex items-center hover:text-[color:var(--color-primary)]"
+                @click="loginMenuVisible = false"
+              >
                 <i class="fa fa-user-circle fa-2x fa-fw text-[color:var(--color-primary)]"></i>
                 <span class="ml-2">{{ user.contact?.fullName }}</span>
               </router-link>

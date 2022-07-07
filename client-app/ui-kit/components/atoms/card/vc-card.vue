@@ -1,6 +1,11 @@
 <template>
   <div class="bg-white rounded border shadow-sm">
-    <div v-if="withHeader" class="px-6 py-3 border-b font-extrabold text-sm" :class="{ 'cursor-pointer': isCollapsible }" @click="isCollapsible && (_isCollapsed = !_isCollapsed)">
+    <div
+      v-if="withHeader"
+      class="px-6 py-3 border-b font-extrabold text-sm"
+      :class="{ 'cursor-pointer': isCollapsible }"
+      @click="isCollapsible && (_isCollapsed = !_isCollapsed)"
+    >
       <div class="flex items-center">
         <slot name="header">
           <div class="flex-grow text-xl font-extrabold uppercase">{{ title }}</div>
