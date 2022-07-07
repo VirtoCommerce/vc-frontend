@@ -1,13 +1,317 @@
 {
   "icon": "superscript",
-  "displayPropertyName": "name",
+  "displayField": "name",
   "settings": [
+    {
+      "type": "string",
+      "id": "firstString",
+      "label": "First String"
+    },
+    {
+      "type": "list",
+      "id": "simpleList",
+      "label": "Simple List"
+    },
+    {
+      "type": "object",
+      "id": "simpleObject",
+      "label": "Simple inline object that expands panel by click on it",
+      "info": "The simplest object editor",
+      "element": [
+        {
+          "id": "url",
+          "label": "URL",
+          "type": "string"
+        },
+        {
+          "id": "text",
+          "label": "Text",
+          "type": "string"
+        },
+        {
+          "id": "nofollow",
+          "label": "Nofollow",
+          "type": "checkbox"
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "id": "simpleObject1",
+      "label": "Simple inline object that expands panel by click on it",
+      "info": "The simplest object editor",
+      "element": [
+        {
+          "id": "url",
+          "label": "URL",
+          "type": "string"
+        },
+        {
+          "id": "text",
+          "label": "Text",
+          "type": "string"
+        },
+        {
+          "id": "nofollow",
+          "label": "Nofollow",
+          "type": "checkbox"
+        }
+      ]
+    },
+    {
+      "id": "searchWithRequest",
+      "label": "Search fruits and authors from server",
+      "type": "select",
+      "multiple": true,
+      "searchable": true,
+      "tab": "Selects",
+      "equalKey": "id",
+      "displayField": "name",
+      "options": [
+        {
+          "value": 1,
+          "label": "apple",
+          "group": "Fruits"
+        },
+        {
+          "value": 2,
+          "label": "orange",
+          "group": "Fruits"
+        },
+        {
+          "value": 3,
+          "label": "pineapple",
+          "group": "Fruits"
+        },
+        {
+          "value": 4,
+          "label": "grape",
+          "group": "Fruits"
+        },
+        {
+          "value": 5,
+          "label": "banana",
+          "group": "Fruits"
+        },
+        {
+          "value": 6,
+          "label": "fig",
+          "group": "Fruits"
+        },
+        {
+          "value": 7,
+          "label": "kiwi",
+          "group": "Fruits"
+        },
+        {
+          "value": 8,
+          "label": "lime",
+          "group": "Fruits"
+        },
+        {
+          "value": 9,
+          "label": "melon",
+          "group": "Fruits"
+        },
+        {
+          "value": 11,
+          "label": "Onion",
+          "group": "Vegetables"
+        },
+        {
+          "value": 12,
+          "label": "Potato",
+          "group": "Vegetables"
+        },
+        {
+          "value": 13,
+          "label": "Tomato",
+          "group": "Vegetables"
+        },
+        {
+          "value": 14,
+          "label": "Cucumber",
+          "group": "Vegetables"
+        },
+        {
+          "value": 15,
+          "label": "Milk"
+        },
+        {
+          "value": 10,
+          "label": "peach",
+          "group": "Fruits"
+        }
+      ],
+      "request": {
+        "url": "/api/members/search",
+        "method": "post",
+        "label": "name",
+        "cacheable": true,
+        "body": {
+          "memberId": null,
+          "deepSearch": true,
+          "responseGroup": "Full",
+          "sort": "memberType:desc;name:asc",
+          "searchPhrase": null
+        },
+        "response": {
+          "result": "results",
+          "isArray": true,
+          "value": [
+            "id",
+            "firstName",
+            "name",
+            "lastName",
+            "photoUrl",
+            {
+              "key": "jobTitle",
+              "query": "$..dynamicProperties[?(@.name=='jobTitle')].values..value",
+              "isArray": false
+            },
+            {
+              "key": "biography",
+              "query": "$..dynamicProperties[?(@.name=='biography')].values..value",
+              "isArray": false
+            },
+            {
+              "key": "linkedinLink",
+              "query": "$..dynamicProperties[?(@.name=='linkedinLink')].values..value",
+              "isArray": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "selectWithRequest",
+      "label": "Fruits and authors from server",
+      "type": "select",
+      "multiple": true,
+      "searchable": false,
+      "tab": "Selects",
+      "options": [
+        {
+          "value": 1,
+          "label": "apple",
+          "group": "Fruits"
+        },
+        {
+          "value": 2,
+          "label": "orange",
+          "group": "Fruits"
+        },
+        {
+          "value": 3,
+          "label": "pineapple",
+          "group": "Fruits"
+        },
+        {
+          "value": 4,
+          "label": "grape",
+          "group": "Fruits"
+        },
+        {
+          "value": 5,
+          "label": "banana",
+          "group": "Fruits"
+        },
+        {
+          "value": 6,
+          "label": "fig",
+          "group": "Fruits"
+        },
+        {
+          "value": 7,
+          "label": "kiwi",
+          "group": "Fruits"
+        },
+        {
+          "value": 8,
+          "label": "lime",
+          "group": "Fruits"
+        },
+        {
+          "value": 9,
+          "label": "melon",
+          "group": "Fruits"
+        },
+        {
+          "value": 11,
+          "label": "Onion",
+          "group": "Vegetables"
+        },
+        {
+          "value": 12,
+          "label": "Potato",
+          "group": "Vegetables"
+        },
+        {
+          "value": 13,
+          "label": "Tomato",
+          "group": "Vegetables"
+        },
+        {
+          "value": 14,
+          "label": "Cucumber",
+          "group": "Vegetables"
+        },
+        {
+          "value": 15,
+          "label": "Milk"
+        },
+        {
+          "value": 10,
+          "label": "peach",
+          "group": "Fruits"
+        }
+      ],
+      "request": {
+        "url": "/api/members/search",
+        "method": "post",
+        "label": "name",
+        "body": {
+          "memberId": null,
+          "deepSearch": true,
+          "responseGroup": "Full",
+          "sort": "memberType:desc;name:asc",
+          "searchPhrase": null
+        },
+        "response": {
+          "result": "results",
+          "isArray": true,
+          "value": [
+            "id",
+            "firstName",
+            "name",
+            "lastName",
+            "photoUrl",
+            {
+              "key": "jobTitle",
+              "query": "$..dynamicProperties[?(@.name=='jobTitle')].values..value",
+              "isArray": false
+            },
+            {
+              "key": "biography",
+              "query": "$..dynamicProperties[?(@.name=='biography')].values..value",
+              "isArray": false
+            },
+            {
+              "key": "linkedinLink",
+              "query": "$..dynamicProperties[?(@.name=='linkedinLink')].values..value",
+              "isArray": false
+            }
+          ]
+        }
+      }
+    },
     {
       "id": "simpleSelect",
       "type": "select",
       "label": "Simple select",
       "multiple": false,
       "placeholder": "Choose fruit",
+      "tab": "Selects",
       "options": [
         {
           "value": 1,
@@ -55,6 +359,7 @@
       "id": "multiSelect",
       "type": "select",
       "label": "Multiple select",
+      "tab": "Selects",
       "multiple": true,
       "placeholder": "Choose fruits",
       "options": [
@@ -102,6 +407,7 @@
     },
     {
       "id": "multiSelectWithGroups",
+      "tab": "Selects",
       "type": "select",
       "label": "Multiple select with groups",
       "multiple": true,
@@ -184,55 +490,88 @@
       ]
     },
     {
-      "id": "author",
-      "label": "Author",
+      "id": "searchableFruits",
+      "tab": "Selects",
+      "label": "Searchable fruits",
       "type": "select",
-      "equalKey": "id",
-      "request": {
-        "url": "api/members/search",
-        "method": "post",
-        "label": "name",
-        "body": {
-          "memberId": null,
-          "deepSearch": true,
-          "responseGroup": "Full",
-          "sort": "memberType:desc;name:asc",
-          "searchPhrase": "isAuthor:true"
-        },
-        "response": {
-          "result": "results",
-          "isArray": true,
-          "value": [
-            "id",
-            "firstName",
-            "name",
-            "lastName",
-            "photoUrl",
-            {
-              "key": "jobTitle",
-              "query": "$..dynamicProperties[?(@.name=='jobTitle')].values..value",
-              "isArray": false
-            },
-            {
-              "key": "biography",
-              "query": "$..dynamicProperties[?(@.name=='biography')].values..value",
-              "isArray": false
-            },
-            {
-              "key": "linkedinLink",
-              "query": "$..dynamicProperties[?(@.name=='linkedinLink')].values..value",
-              "isArray": false
-            }
-          ]
-        }
-      },
+      "multiple": true,
+      "searchable": true,
       "options": [
         {
-          "value": " ",
-          "label": " "
+          "value": 1,
+          "label": "apple",
+          "group": "Fruits"
+        },
+        {
+          "value": 2,
+          "label": "orange",
+          "group": "Fruits"
+        },
+        {
+          "value": 3,
+          "label": "pineapple",
+          "group": "Fruits"
+        },
+        {
+          "value": 4,
+          "label": "grape",
+          "group": "Fruits"
+        },
+        {
+          "value": 5,
+          "label": "banana",
+          "group": "Fruits"
+        },
+        {
+          "value": 6,
+          "label": "fig",
+          "group": "Fruits"
+        },
+        {
+          "value": 7,
+          "label": "kiwi",
+          "group": "Fruits"
+        },
+        {
+          "value": 8,
+          "label": "lime",
+          "group": "Fruits"
+        },
+        {
+          "value": 9,
+          "label": "melon",
+          "group": "Fruits"
+        },
+        {
+          "value": 11,
+          "label": "Onion",
+          "group": "Vegetables"
+        },
+        {
+          "value": 12,
+          "label": "Potato",
+          "group": "Vegetables"
+        },
+        {
+          "value": 13,
+          "label": "Tomato",
+          "group": "Vegetables"
+        },
+        {
+          "value": 14,
+          "label": "Cucumber",
+          "group": "Vegetables"
+        },
+        {
+          "value": 15,
+          "label": "Milk"
+        },
+        {
+          "value": 10,
+          "label": "peach",
+          "group": "Fruits"
         }
-      ],
-      "tab": "Content"
+      ]
     },
     {
       "type": "header",
@@ -334,28 +673,37 @@
       "label": "Select date and time",
       "type": "calendar",
       "mode": "datetime",
-      "tab": "Text",
-      "group": "Calendars",
-      "info": "Date and time picker"
-    },
-    {
-      "id": "timeCalendar",
-      "label": "Choose time",
-      "type": "calendar",
-      "mode": "time",
-      "tab": "Text",
-      "group": "Calendars",
-      "info": "Time picker with spinners"
-    },
-    {
-      "id": "inlineCalendar",
-      "label": "Choose date and time",
-      "type": "calendar",
-      "mode": "datetime",
       "inline": true,
       "tab": "Text",
       "group": "Calendars",
       "info": "Inline picker (default)"
+    },
+    {
+      "id": "inlineTime",
+      "label": "Choose date and time",
+      "type": "calendar",
+      "mode": "time",
+      "inline": true,
+      "tab": "Text",
+      "group": "Calendars",
+      "info": "Inline time picker (default)"
+    },
+    {
+      "id": "withPresetsColor",
+      "label": "Colorpicker with presets",
+      "type": "color",
+      "tab": "Other",
+      "clearValue": null,
+      "presets": ["red", "green", "blue", "yellow", "cyan", "black", "white"]
+    },
+    {
+      "id": "presetsOnlyPopupColor",
+      "label": "Colorpicker with presets only",
+      "type": "color",
+      "tab": "Other",
+      "clearValue": null,
+      "colorMode": "presets",
+      "presets": ["red", "green", "blue", "yellow", "cyan", "black", "white"]
     },
     {
       "id": "inlineTime",

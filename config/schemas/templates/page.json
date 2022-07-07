@@ -1,6 +1,17 @@
 {
   "name": "Page",
   "previewUrl": "/demo-page",
+  "searchPath": [
+    {
+      "path": "content/pages",
+      "type": "themes"
+    },
+    {
+      "path": "",
+      "type": "pages",
+      "exculdes": ["blogs"]
+    }
+  ],
   "path": "content/pages/page.json",
   "sections": ["image", "text"]
 }

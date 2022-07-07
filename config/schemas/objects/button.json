@@ -1,0 +1,31 @@
+{
+  "settings": [
+    {
+      "id": "caption",
+      "type": "string",
+      "label": "Caption"
+    },
+    {
+      "id": "action",
+      "type": "select",
+      "label": "onClick action",
+      "default": "popup",
+      "options": [
+        {
+          "label": "Show popup",
+          "value": "popup"
+        },
+        {
+          "label": "Go to link",
+          "value": "url"
+        }
+      ]
+    },
+    {
+      "id": "url",
+      "type": "string",
+      "label": "Enter link",
+      "visibility": "!!this.item && this.item.action === 'url'"
+    }
+  ]
+}
