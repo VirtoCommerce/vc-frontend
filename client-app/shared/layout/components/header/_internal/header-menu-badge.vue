@@ -1,6 +1,6 @@
 <template>
   <div
-    class="absolute flex items-center h-5 rounded-xl bg-white border border-[color:var(--color-primary)] px-1.5 font-bold text-xs"
+    class="flex items-center h-5 rounded-xl bg-white border border-[color:var(--color-primary)] px-1.5 font-bold text-xs"
     :class="position"
   >
     {{ count }}
