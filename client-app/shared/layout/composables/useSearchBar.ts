@@ -57,7 +57,7 @@ export default (
     return activeAnimation.value;
   }
 
-  async function showSearchBar(): Promise<void> {
+  async function toggleSearchBar(): Promise<void> {
     searchBarVisible.value = !searchBarVisible.value;
     await sleep(unref(animationDuration));
   }
@@ -121,7 +121,7 @@ export default (
 
   return {
     searchResults,
-    showSearchBar,
+    toggleSearchBar,
     hideSearchBar,
     showSearchDropdown,
     hideSearchDropdown,
