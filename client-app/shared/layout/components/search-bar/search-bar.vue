@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-grow items-stretch relative">
+  <div class="flex flex-grow items-stretch relative" v-click-outside="reset">
     <input
       v-model.trim="searchPhrase"
       :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
@@ -42,15 +42,15 @@
                     :to="categoriesRoutes[category.id]"
                     v-html="category.name"
                     class="py-1 block"
-                    @click="hideSearchBar"
-                  />
+                    @click="hideSearchDropdown"
+                  ></router-link>
                 </li>
               </ul>
             </div>
           </section>
 
           <!-- Products -->
-          <section v-if="products.length">
+          <section v-if="products.length" class="pb-4">
             <header class="px-5 py-2 text-xs text-gray-500 bg-gray-100">
               {{ $t("shared.layout.search_bar.products_label") }}
             </header>
@@ -60,13 +60,13 @@
                 v-for="product in products"
                 :key="product.id"
                 :product="product"
-                @link-click="hideSearchBar"
+                @link-click="hideSearchDropdown"
               />
             </div>
           </section>
 
           <!-- Actions -->
-          <section v-if="total" class="px-5 py-3 border-t border-gray-100">
+          <section v-if="total" class="mt-0.5 px-5 py-3 border-t border-gray-100">
             <VcButton
               :to="{ name: 'Search', query: { [QueryParamName.SearchPhrase]: searchPhrase } }"
               class="uppercase px-4"
@@ -126,7 +126,6 @@ const {
   categories,
   searchBarVisible,
   searchDropdownVisible,
-  hideSearchBar,
   hideSearchDropdown,
   showSearchDropdown,
   searchResults,
@@ -169,7 +168,7 @@ async function search() {
   await searchResults({
     keyword: searchPhrase.value,
     products: {
-      itemsPerPage: 9,
+      itemsPerPage: 6,
     },
     categories: {
       itemsPerPage: CATEGORIES_ITEMS_PER_COLUMN * COLUMNS,

@@ -230,12 +230,11 @@ import { MemberAddressType } from "@/xapi/types";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { BackButtonInHeader } from "@/shared/layout";
-import { useCountries } from "@/core/composables";
+import { useCountries, usePageHead } from "@/core/composables";
 import { AddressType } from "@/core/types";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
-
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { user } = useUser();
 const { countries, loadCountries } = useCountries();
@@ -249,6 +248,10 @@ const {
   defaultShippingAddress,
   addOrUpdateAddresses,
 } = useUserAddresses({ user });
+
+usePageHead({
+  title: t("pages.account.addresses.meta.title"),
+});
 
 const isMobile = breakpoints.smaller("lg");
 const editingMode: Ref<boolean> = ref(false);

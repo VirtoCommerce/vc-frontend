@@ -5,7 +5,8 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
+import { computed, PropType } from "vue";
+import { usePageHead } from "@/core/composables";
 
 type TPageContent = {
   id: string;
@@ -13,15 +14,23 @@ type TPageContent = {
   type: string;
 };
 
-defineProps({
+const props = defineProps({
   settings: {
-    type: Object,
+    type: Object as PropType<Record<string, any>>,
     default: () => ({}),
   },
 
   content: {
     type: Array as PropType<TPageContent[]>,
-    default: () => [{}],
+    default: () => [],
+  },
+});
+
+usePageHead({
+  title: computed(() => props.settings?.seoInfo?.pageTitle || props.settings?.name),
+  meta: {
+    keywords: computed(() => props.settings?.seoInfo?.metaKeywords),
+    description: computed(() => props.settings?.seoInfo?.metaDescription),
   },
 });
 </script>

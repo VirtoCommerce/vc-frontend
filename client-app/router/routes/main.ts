@@ -7,7 +7,7 @@ import Error403 from "@/pages/403.vue";
 import Error404 from "@/pages/404.vue";
 import Error500 from "@/pages/500.vue";
 
-const Index = () => import("@/pages/index.vue");
+const Home = () => import("@/pages/index.vue");
 const SingInPage = () => import("@/pages/sign-in.vue");
 const SignUpPage = () => import("@/pages/sign-up.vue");
 const ForgotPassword = () => import("@/pages/forgot-password.vue");
@@ -27,7 +27,7 @@ const DemoLanding = () => import("@/pages/demo-landing.vue");
 const DevUIKit = () => import("@/pages/ui-kit.vue");
 
 export const mainRoutes: RouteRecordRaw[] = [
-  { path: "/", name: "Home", component: Index },
+  { path: "/", name: "Home", component: Home },
   { path: "/403", name: "NoAccess", component: Error403 },
   { path: "/404", name: "NotFound", component: Error404 },
   { path: "/500", name: "InternalError", component: Error500 },

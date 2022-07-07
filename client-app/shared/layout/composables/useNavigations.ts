@@ -1,52 +1,72 @@
-import { computed, shallowRef, triggerRef } from "vue";
-import { MenuLink } from "@/shared/layout";
+import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
+import { linkListsItemToMenuLink, MenuLink } from "@/shared/layout";
 import { getMenus } from "@/xapi/graphql/common";
-import { MenuLinkType } from "@/xapi/types";
 import globals from "@/core/globals";
 
-const menuLinkLists = shallowRef<Record<string, MenuLinkType[]>>();
+const menuLinkLists = shallowRef<Record<string, MenuLink[]>>();
 const menuSchema = shallowRef<Record<string, any>>();
-
 const openedMenuLinksStack = shallowRef<MenuLink[]>([]);
+const matchedRouteName = ref("");
 
-function getChildrenItem(childrenItem: MenuLinkType) {
-  return {
-    id: childrenItem.url?.split("/").pop(),
-    title: childrenItem.title,
-    route: childrenItem.url,
-  };
-}
-
-const mainMenuLinks = computed<MenuLink[]>(() =>
-  (menuSchema.value?.header.main || []).map(
-    (item: Record<string, string>) =>
-      ({
-        id: item.id,
-        route: item.route,
-        title: globals.i18n!.global.t(item.title),
-        icon: item.icon,
-        children: (menuLinkLists.value?.[item.id] || []).map((childrenItem) => getChildrenItem(childrenItem)),
-      } as MenuLink)
+const desktopHeaderMenuLinks = computed<MenuLink[]>(() =>
+  (menuSchema.value?.header.desktop || []).map(
+    (link: MenuLink): MenuLink => ({
+      ...link,
+      title: globals.i18n!.global.t(link.title!),
+    })
   )
 );
 
-const desktopCatalog = computed<MenuLink>(
-  () =>
-    ({
-      id: "all-products-menu",
-      route: {
-        name: "Catalog",
-      },
-      title: globals.i18n!.global.t("shared.layout.header.catalog"),
-      children: (menuLinkLists.value?.["all-products-menu"] || []).map((childrenItem) => getChildrenItem(childrenItem)),
-    } as MenuLink)
+const mobileHeaderMenuLinks = computed<MenuLink[]>(() =>
+  (menuSchema.value?.header.mobile.main || []).map(
+    (link: MenuLink): MenuLink => ({
+      ...link,
+      title: globals.i18n!.global.t(link.title!),
+      children: menuLinkLists.value?.[link.id!],
+    })
+  )
 );
+
+const mobileCatalogMenuLink = computed<MenuLink | undefined>(() =>
+  mobileHeaderMenuLinks.value.find((item) => item.id === "all-products-menu")
+);
+
+const mobileAccountMenuLink = computed<MenuLink | undefined>(() => {
+  const rawMenuLink: MenuLink | undefined = menuSchema.value?.header.mobile.account;
+  return rawMenuLink
+    ? {
+        ...rawMenuLink,
+        title: globals.i18n!.global.t(rawMenuLink.title!),
+        children: rawMenuLink.children?.map((item) => ({
+          ...item,
+          title: item.title ? globals.i18n!.global.t(item.title) : "",
+        })),
+      }
+    : undefined;
+});
+
+const mobilePreSelectedMenuLink = computed<MenuLink | undefined>(() => {
+  const matchedRouteNames = globals.router.currentRoute.value.matched
+    .map((item) => item.name)
+    .concat(matchedRouteName.value)
+    .filter(Boolean);
+
+  let preSelectedLink: MenuLink | undefined;
+
+  if (["Catalog", "Category", "Product"].some((item) => matchedRouteNames.includes(item))) {
+    preSelectedLink = mobileCatalogMenuLink.value;
+  } else if (matchedRouteNames.includes("Account") && !matchedRouteNames.includes("Dashboard")) {
+    preSelectedLink = mobileAccountMenuLink.value;
+  }
+
+  return preSelectedLink;
+});
 
 async function fetchMenus(cultureName: string) {
   const results = await getMenus({ cultureName });
 
-  menuLinkLists.value = results.reduce<Record<string, MenuLinkType[]>>((result, menuLinkList) => {
-    result[menuLinkList.name!] = menuLinkList.items!;
+  menuLinkLists.value = results.reduce<Record<string, MenuLink[]>>((result, menuLinkList) => {
+    result[menuLinkList.name!] = menuLinkList.items!.map((item) => linkListsItemToMenuLink(item));
     return result;
   }, {});
 
@@ -75,14 +95,23 @@ function selectMenuItem(item: MenuLink) {
   triggerRef(openedMenuLinksStack);
 }
 
+function setMatchedRouteName(value: string) {
+  matchedRouteName.value = value;
+}
+
 export default function useNavigations() {
   return {
     fetchMenus,
     goBack,
     goMainMenu,
     selectMenuItem,
-    mainMenuLinks,
-    desktopCatalog,
+    setMatchedRouteName,
+    desktopHeaderMenuLinks,
+    mobileHeaderMenuLinks,
+    mobileCatalogMenuLink,
+    mobileAccountMenuLink,
+    mobilePreSelectedMenuLink,
+    matchedRouteName: readonly(matchedRouteName),
     openedItem: computed<MenuLink | undefined>(() => openedMenuLinksStack.value[openedMenuLinksStack.value.length - 1]),
   };
 }

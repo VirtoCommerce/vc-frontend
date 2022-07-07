@@ -90,7 +90,19 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from "vue-i18n";
+import { usePageHead } from "@/core/composables";
 import { SignInForm } from "@/shared/account";
+
+const { t } = useI18n();
+
+usePageHead({
+  title: t("pages.home.meta.title"),
+  meta: {
+    keywords: t("pages.home.meta.keywords"),
+    description: t("pages.home.meta.description"),
+  },
+});
 
 function onSignIn() {
   location.href = "/";
