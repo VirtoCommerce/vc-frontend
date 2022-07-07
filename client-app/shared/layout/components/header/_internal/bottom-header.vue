@@ -35,12 +35,11 @@
             <span>{{ item.title }}</span>
 
             <transition name="slide-fade-right">
-              <div
+              <HeaderMenuBadge
                 v-if="cart?.itemsQuantity"
-                class="absolute -top-[8px] left-[1.2rem] flex items-center h-5 rounded-xl bg-white border border-[color:var(--color-primary)] px-1.5 font-bold text-xs"
-              >
-                {{ cart.itemsQuantity }}
-              </div>
+                :count="cart.itemsQuantity"
+                position="-top-[8px] left-[1.2rem]"
+              ></HeaderMenuBadge>
             </transition>
           </template>
 
@@ -49,12 +48,11 @@
               <span>{{ item.title }}</span>
 
               <transition name="slide-fade-right">
-                <div
+                <HeaderMenuBadge
                   v-if="productsIds.length"
-                  class="absolute -top-[8px] !-right-[0.4rem] flex items-center h-5 rounded-xl bg-white border border-[color:var(--color-primary)] px-1.5 font-bold text-xs"
-                >
-                  {{ productsIds.length }}
-                </div>
+                  :count="productsIds.length"
+                  position="-top-[8px] !-right-[0.4rem]"
+                ></HeaderMenuBadge>
               </transition>
             </div>
           </template>
@@ -67,6 +65,7 @@
 <script setup lang="ts">
 import CatalogDropdown from "./catalog-dropdown.vue";
 import BottomHeaderLink from "./bottom-header-link.vue";
+import HeaderMenuBadge from "./header-menu-badge.vue";
 import { useCart } from "@/shared/cart";
 import { SearchBar, useNavigations } from "@/shared/layout";
 import { useCompareProducts } from "@/shared/compare";
