@@ -98,7 +98,7 @@ const seoInfo = asyncComputed<TResult | undefined>(
       `/storefrontapi/slug/${slug}?culture=${currentLanguage.value!.cultureName}`
     );
 
-    if (result.contentItem && result.contentItem.type == "page") {
+    if (result.contentItem && result.contentItem.type === "page") {
       const page = JSON.parse(result.contentItem.content) as TPageInfo;
       return { page };
     }
