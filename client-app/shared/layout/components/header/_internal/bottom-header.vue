@@ -38,7 +38,7 @@
               <HeaderMenuBadge
                 v-if="cart?.itemsQuantity"
                 :count="cart.itemsQuantity"
-                position="absolute -top-[8px] left-[1.2rem]"
+                position="-top-[8px] left-[1.2rem]"
               ></HeaderMenuBadge>
             </transition>
           </template>
@@ -51,7 +51,7 @@
                 <HeaderMenuBadge
                   v-if="productsIds.length"
                   :count="productsIds.length"
-                  position="absolute -top-[8px] !-right-[0.4rem]"
+                  position="-top-[8px] !-right-[0.4rem]"
                 ></HeaderMenuBadge>
               </transition>
             </div>
