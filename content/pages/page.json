@@ -23,6 +23,18 @@
       "name": "Image",
       "type": "image",
       "image": "https://ik.imagekit.io/je8lpsqkoi/assets/pages/19_qRTyG7N7X6-2_j9uMkjajn9.png"
+    },
+    {
+      "header": "Header 2",
+      "text": "blablalba",
+      "type": "text",
+      "id": "textXKaF"
+    },
+    {
+      "header": null,
+      "text": "fasdffdasda",
+      "type": "text",
+      "id": "text5FU"
     }
   ]
 }

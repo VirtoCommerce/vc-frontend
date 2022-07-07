@@ -14,8 +14,8 @@
   <component
     v-else-if="seoInfo?.page"
     :is="PageBuilder"
-    :settings="seoInfo?.page?.settings"
-    :content="seoInfo?.page?.content"
+    :settings="seoInfo.page.settings"
+    :content="seoInfo.page.content"
   />
 
   <NotFound v-else-if="!loading" />
@@ -60,6 +60,18 @@ type TResult = {
   page?: TPageInfo;
 };
 
+type TContentItem = {
+  type: "page" | "blog" | "html";
+  name: string;
+  permalink: string;
+  content: string;
+};
+
+type TSlugInfoResult = {
+  contentItem: TContentItem;
+  entityInfo: TEntityInfo;
+};
+
 const props = defineProps({
   pathMatch: {
     type: Array as PropType<string[]>,
@@ -81,30 +93,20 @@ const seoInfo = asyncComputed<TResult | undefined>(
       return undefined;
     }
 
-    try {
-      // Load page by slug
-      const page = await innerFetch<TPageInfo>(`/storefrontapi/content/pages`, "POST", { permalink: `/${slug}` });
+    // If no page found load entity by slug
+    const result = await innerFetch<TSlugInfoResult>(
+      `/storefrontapi/slug/${slug}?culture=${currentLanguage.value!.cultureName}`
+    );
 
-      if (page) {
-        return {
-          page,
-        };
-      }
-    } catch (err) {
-      // If no page found load entity by slug
-      const resultItems = await innerFetch<TEntityInfo[]>(`/storefrontapi/seoInfos/${slug}`);
+    if (result.contentItem && result.contentItem.type == "page") {
+      const page = JSON.parse(result.contentItem.content) as TPageInfo;
+      return { page };
+    }
 
-      if (resultItems && resultItems.length) {
-        const entity = resultItems.find(
-          (item) =>
-            item.isActive && item.language.cultureName === currentLanguage.value!.cultureName && item.slug === slug
-        );
-        if (entity) {
-          return {
-            entity,
-          };
-        }
-      }
+    if (result.entityInfo) {
+      return {
+        entity: result.entityInfo,
+      };
     }
   },
   undefined,
