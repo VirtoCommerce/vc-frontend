@@ -1,28 +1,5 @@
 {
-  "blocks": {
-    "text": {
-      "icon": "text_fields",
-      "settings": [
-        {
-          "id": "header",
-          "type": "string"
-        },
-        {
-          "id": "text",
-          "type": "text"
-        }
-      ]
-    },
-    "image": {
-      "icon": "image",
-      "settings": [
-        {
-          "id": "image",
-          "type": "image"
-        }
-      ]
-    }
-  },
+  "blocks": ["text", "image"],
   "sections": {
     "carousel": {
       "icon": "thumb_up_off_alt"

@@ -8,6 +8,11 @@
       "label": "First String"
     },
     {
+      "type": "list",
+      "id": "simpleList",
+      "label": "Simple List"
+    },
+    {
       "type": "object",
       "id": "simpleObject",
       "label": "Simple inline object that expands panel by click on it",
