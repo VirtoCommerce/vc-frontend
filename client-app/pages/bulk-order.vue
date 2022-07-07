@@ -1,7 +1,7 @@
 <template>
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner grow">
     <div class="max-w-screen-2xl md:px-12 mx-auto">
-      <VcBreadcrumbs class="mb-3" :items="breadcrumbs"></VcBreadcrumbs>
+      <VcBreadcrumbs class="mb-3 hidden lg:block" :items="breadcrumbs"></VcBreadcrumbs>
       <h2
         class="text-gray-800 px-6 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-5"
         v-t="'pages.bulk_order.title'"
