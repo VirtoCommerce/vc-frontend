@@ -484,9 +484,12 @@
       "add_to_wishlists_dialog": {
         "title": "Please select list",
         "empty_list": "You do not have any wish lists",
-        "item_already_in_list": "This item is already in the list",
         "cancel_button": "@:common.buttons.cancel",
-        "add_to_list_button": "Add to list"
+        "already_in_the_lists": "Already in the lists",
+        "add_to_other_lists": "Add to other lists",
+        "add_to_list_button": "Add to list",
+        "add_new_list": "Add new list",
+        "save_button": "Save"
       },
       "added_to_wishlists_dialog": {
         "title": "Item added to list | Item added to lists",

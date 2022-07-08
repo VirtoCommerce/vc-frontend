@@ -6,4 +6,5 @@ export interface SelectedWishlistType extends WishlistType {
 
 export interface WishlistInputType {
   listName: string;
+  errorMessage?: string;
 }
