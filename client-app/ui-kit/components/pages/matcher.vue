@@ -68,8 +68,8 @@ type TContentItem = {
 };
 
 type TSlugInfoResult = {
-  contentItem: TContentItem;
-  entityInfo: TEntityInfo;
+  contentItem?: TContentItem;
+  entityInfo?: TEntityInfo;
 };
 
 const props = defineProps({
@@ -98,7 +98,7 @@ const seoInfo = asyncComputed<TResult | undefined>(
     );
 
     if (result.contentItem?.type === "page") {
-      const page = JSON.parse(result.contentItem.content) as TPageInfo;
+      const page: TPageInfo = JSON.parse(result.contentItem.content);
       return { page };
     }
 
