@@ -93,12 +93,11 @@ const seoInfo = asyncComputed<TResult | undefined>(
       return undefined;
     }
 
-    // If no page found load entity by slug
     const result = await innerFetch<TSlugInfoResult>(
       `/storefrontapi/slug/${slug}?culture=${currentLanguage.value!.cultureName}`
     );
 
-    if (result.contentItem && result.contentItem.type === "page") {
+    if (result.contentItem?.type === "page") {
       const page = JSON.parse(result.contentItem.content) as TPageInfo;
       return { page };
     }
