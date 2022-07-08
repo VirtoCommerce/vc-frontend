@@ -100,12 +100,12 @@ const seoInfo = asyncComputed<TResult | undefined>(
     if (result.contentItem?.type === "page") {
       const page: TPageInfo = JSON.parse(result.contentItem.content);
       return { page };
-    }
-
-    if (result.entityInfo) {
+    } else if (result.entityInfo) {
       return {
         entity: result.entityInfo,
       };
+    } else {
+      return undefined;
     }
   },
   undefined,
