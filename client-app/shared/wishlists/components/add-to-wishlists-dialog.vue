@@ -9,12 +9,13 @@
           </div>
 
           <ul>
-            <li v-for="list in listsContain" :key="list.id" class="">
+            <li v-for="(list, index) in listsContain" :key="list.id" class="">
               <VcCheckbox
-                v-model="list.checked"
+                model-value
                 :value="list.id"
                 :disabled="loading"
                 class="px-6 py-4 sm:py-3.5 last:sm:pb-6"
+                @update:modelValue="listsRemoveUpdate(list.id || '', $event)"
               >
                 <span class="text-base line-clamp-1 font-medium sm:text-15">
                   {{ list.name }}
@@ -24,13 +25,14 @@
           </ul>
         </template>
 
-        <div
-          class="flex justify-between py-2.5 px-6 bg-[color:var(--color-add-wishlist-dialog-subtitle-bg)] sm:py-2"
-        >
+        <div class="flex justify-between py-2.5 px-6 bg-[color:var(--color-add-wishlist-dialog-subtitle-bg)] sm:py-2">
           <div class="font-bold text-15">
             {{ $t("shared.wishlists.add_to_wishlists_dialog.add_to_other_lists") }}
           </div>
-          <div class="flex items-center text-sm font-bold cursor-pointer text-[color:var(--color-link)]" @click="addInput">
+          <div
+            class="flex items-center text-sm font-bold cursor-pointer text-[color:var(--color-link)]"
+            @click="addInput"
+          >
             <svg class="mr-2 w-3.5 h-3.5 text-[color:var(--color-primary)]">
               <use href="/static/images/plus.svg#main" />
             </svg>
@@ -94,6 +96,7 @@
 
         <VcButton
           :is-waiting="loading"
+          :is-disabled="!inputs.length && !selectedListsOtherIds.length && !listsRemove.length"
           class="uppercase basis-0 flex-grow sm:basis-auto sm:flex-grow-0 sm:px-5 sm:min-w-[9rem]"
           @click="save"
         >
@@ -109,7 +112,7 @@ import { computed, PropType, ref } from "vue";
 import { Product as ProductType } from "@/xapi/types";
 import { AddedToWishlistsDialog, useWishlists } from "@/shared/wishlists";
 import { InputRemoveWishlistItemType } from "@/xapi/types";
-import { SelectedWishlistType, WishlistInputType } from "@/shared/wishlists/types";
+import { WishlistInputType } from "@/shared/wishlists/types";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import moment from "moment";
@@ -134,19 +137,24 @@ const notifications = useNotifications();
 
 const loading = ref(false);
 const selectedListsOtherIds = ref<string[]>([]);
-const selectedListsContainIds = ref<string[]>([]);
+const listsRemove = ref<string[]>([]);
 const inputs = ref<WishlistInputType[]>([]);
 
 const productId = props.product.id;
 
 const listsContain = computed(() => {
-  return lists.value
-    .filter((list) => list.items!.some((item) => item.productId === productId))
-    .map((list: SelectedWishlistType) => {
-      list.checked = true;
-      return list;
-    });
+  return lists.value.filter((list) => list.items!.some((item) => item.productId === productId));
 });
+
+function listsRemoveUpdate(id: string, checked: boolean) {
+  const index = listsRemove.value.indexOf(id);
+
+  if (!checked && index === -1) {
+    listsRemove.value.push(id);
+  } else {
+    listsRemove.value.splice(index, 1);
+  }
+}
 
 const listsOther = computed(() => {
   return lists.value.filter((list) => !list.items!.some((item) => item.productId === productId));
@@ -155,18 +163,12 @@ const listsOther = computed(() => {
 function addInput() {
   inputs.value.push({
     listName: `New list ${moment().format("YYYY-MM-DD • hh:mm")}`,
-    errorMessage: "Error hjdkaslh dahjkdsa very long long long",
+    errorMessage: "",
   });
 }
 
 function removeInput(index: number) {
   inputs.value.splice(index, 1);
-}
-
-function validateInput(index: number) {
-  if (!inputs.value[index].listName.trim().length) {
-    inputs.value[index].errorMessage = "This field is required!";
-  }
 }
 
 async function addToWishlistsFromListOther() {
@@ -190,15 +192,14 @@ async function createListsAndAddProduct() {
 }
 
 async function removeProductFromWishlists() {
-  const payload = listsContain.value
-    .filter((list) => !list.checked)
-    .map((list) => {
-      const lineItemId = list.items?.find((item) => item.productId === productId)?.id || "";
-      return {
-        listId: list.id || "",
-        lineItemId,
-      };
-    });
+  const payload = listsRemove.value.map((listId) => {
+    const list = listsContain.value.find((list) => list.id === listId);
+    const lineItemId = list?.items?.find((item) => item.productId === productId)?.id || "";
+    return {
+      listId,
+      lineItemId,
+    };
+  });
 
   if (payload.length) {
     await removeItemsFromWishlists(payload);
@@ -206,10 +207,21 @@ async function removeProductFromWishlists() {
 }
 
 async function save() {
+  inputs.value.forEach((input) => {
+    if (!input.listName.trim().length) {
+      input.errorMessage = "This field is required";
+    } else {
+      input.errorMessage = "";
+    }
+  });
+  if (inputs.value.filter((input) => !!input.errorMessage?.length).length) {
+    return;
+  }
+
   loading.value = true;
 
-  await removeProductFromWishlists();
   await createListsAndAddProduct();
+  await removeProductFromWishlists();
   await addToWishlistsFromListOther();
 
   closePopup();
