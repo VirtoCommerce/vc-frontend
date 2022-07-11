@@ -121,9 +121,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType, ref } from "vue";
+import { computed, PropType, ref, inject } from "vue";
 import { Product as ProductType } from "@/xapi/types";
-import { AddedToWishlistsDialog, useWishlists } from "@/shared/wishlists";
+import { useWishlists } from "@/shared/wishlists";
 import { InputRemoveWishlistItemType } from "@/xapi/types";
 import { WishlistInputType } from "@/shared/wishlists/types";
 import { useNotifications } from "@/shared/notification";
@@ -131,7 +131,6 @@ import { usePopup } from "@/shared/popup";
 import moment from "moment";
 import { useI18n } from "vue-i18n";
 import { configInjectionKey } from "@/core/injection-keys";
-import { inject } from "vue";
 
 const props = defineProps({
   product: {
@@ -214,7 +213,7 @@ async function createListsAndAddProduct() {
 
 async function removeProductFromWishlists() {
   const payload = listsRemove.value.map((listId) => {
-    const list = listsContain.value.find((list) => list.id === listId);
+    const list = listsContain.value.find((list_) => list_.id === listId);
     const lineItemId = list?.items?.find((item) => item.productId === productId)?.id || "";
     return {
       listId,
