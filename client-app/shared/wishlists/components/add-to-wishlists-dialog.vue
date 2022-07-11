@@ -4,17 +4,17 @@
       <!-- Lists -->
       <template v-if="!loadingLists">
         <template v-if="listsContain.length">
-          <div class="py-2.5 px-6 font-bold text-15 leading-5 bg-[color:var(--color-add-wishlist-dialog-subtitle-bg)]">
+          <div class="py-3 px-6 font-bold text-15 leading-5 bg-[color:var(--color-add-wishlist-dialog-subtitle-bg)]
+          sm:py-2.5">
             {{ $t("shared.wishlists.add_to_wishlists_dialog.already_in_the_lists") }}
           </div>
 
           <ul>
-            <li v-for="(list, index) in listsContain" :key="list.id" class="">
+            <li v-for="(list, index) in listsContain" :key="list.id" class="px-6 py-4 sm:pt-4 sm:pb-3 last:sm:pb-7">
               <VcCheckbox
                 model-value
                 :value="list.id"
                 :disabled="loading"
-                class="px-6 py-4 sm:py-3.5 last:sm:pb-6"
                 @update:modelValue="listsRemoveUpdate(list.id || '', $event)"
               >
                 <span class="text-base line-clamp-1 font-medium sm:text-15">
@@ -25,7 +25,7 @@
           </ul>
         </template>
 
-        <div class="flex justify-between py-2.5 px-6 bg-[color:var(--color-add-wishlist-dialog-subtitle-bg)] sm:py-2">
+        <div class="flex justify-between py-3 px-6 bg-[color:var(--color-add-wishlist-dialog-subtitle-bg)] sm:py-2.5">
           <div class="font-bold text-15">
             {{ $t("shared.wishlists.add_to_wishlists_dialog.add_to_other_lists") }}
           </div>
@@ -45,11 +45,11 @@
           </button>
         </div>
 
-        <transition-group name="list-input" tag="ul" class="pt-5">
+        <transition-group name="list-input" tag="ul" class="pt-2 sm:pt-0.5">
           <li
             v-for="(input, index) in inputs"
             :key="index"
-            class="flex items-start px-6 list-input-item"
+            class="flex items-start px-6 list-input-item first:pt-3 first:sm:pt-4"
           >
             <button class="relative pt-3" @click="removeInput(index)">
               <VcCheckbox model-value class="relative" />
@@ -70,7 +70,7 @@
               </svg>
             </button>
           </li>
-          <li v-for="list in listsOther" :key="list.id" class="px-6 pt-4 sm:py-2 sm:pb-5">
+          <li v-for="list in listsOther" :key="list.id" class="px-6 pt-2 pb-5 sm:pt-3 sm:pb-4 last:pb-5">
             <VcCheckbox v-model="selectedListsOtherIds" :value="list.id" :disabled="loading">
               <span
                 class="text-base line-clamp-1 font-medium"
