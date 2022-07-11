@@ -45,15 +45,19 @@
           </button>
         </div>
 
-        <ul>
-          <li v-for="(input, index) in inputs" class="flex items-start px-6 pt-2 first:pt-5">
+        <transition-group name="list-input" tag="ul" class="pt-5">
+          <li
+            v-for="(input, index) in inputs"
+            :key="index"
+            class="flex items-start px-6 list-input-item"
+          >
             <button class="relative pt-3" @click="removeInput(index)">
               <VcCheckbox model-value class="relative" />
               <div class="absolute inset-0"></div>
             </button>
             <VcInput
               class="flex-grow ml-2.5 mr-3.5"
-              :class="{ 'mb-3': !input.errorMessage }"
+              :class="{ 'mb-4.5': !input.errorMessage }"
               v-model="input.listName"
               :is-disabled="loading"
               is-required
@@ -65,7 +69,7 @@
               </svg>
             </button>
           </li>
-          <li v-for="list in listsOther" :key="list.id" class="px-6 py-4 sm:py-3.5 last:sm:pb-5">
+          <li v-for="list in listsOther" :key="list.id" class="px-6 pt-4 sm:py-2 sm:pb-5">
             <VcCheckbox v-model="selectedListsOtherIds" :value="list.id" :disabled="loading">
               <span
                 class="text-base line-clamp-1 font-medium"
@@ -75,7 +79,7 @@
               </span>
             </VcCheckbox>
           </li>
-        </ul>
+        </transition-group>
       </template>
 
       <!-- Skeletons -->
@@ -252,3 +256,14 @@ async function save() {
 
 fetchWishlists();
 </script>
+
+<style lang="scss">
+.list-input-item {
+  transition: all 0.2s ease-in-out;
+}
+
+.list-input-enter-from,
+.list-input-leave-to {
+  opacity: 0;
+}
+</style>

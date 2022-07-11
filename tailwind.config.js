@@ -153,9 +153,12 @@ module.exports = {
         ],
       },
       maxHeight: {
-        'screen-60': '60vh',
-        'screen-75': '75vh',
-      }
+        "screen-60": "60vh",
+        "screen-75": "75vh",
+      },
+      margin: {
+        4.5: "1.125rem", //18px
+      },
     },
   },
 
