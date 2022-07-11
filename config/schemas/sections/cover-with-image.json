@@ -3,18 +3,79 @@
   "displayField": "name",
   "settings": [
     {
-      "type": "string",
-      "id": "firstString",
-      "label": "First String"
+      "type": "files",
+      "id": "singleFile",
+      "label": "Single File"
     },
     {
       "type": "list",
       "id": "simpleList",
-      "label": "Simple List"
+      "label": "Simple List",
+      "addText": "Add new field",
+      "tab": "Objects",
+      "displayField": "label",
+      "removeMessage": "remove item??",
+      "skipRemoveConfirmation": true,
+      "info": "You can create and set up a form",
+      "element": [
+        {
+          "id": "label",
+          "type": "string",
+          "label": "Label"
+        },
+        {
+          "id": "controlType",
+          "type": "select",
+          "label": "Control type",
+          "options": [
+            {
+              "value": "text",
+              "label": "Text"
+            },
+            {
+              "value": "checkbox",
+              "label": "Checkbox"
+            },
+            {
+              "value": "radio",
+              "label": "Radio"
+            },
+            {
+              "value": "select",
+              "label": "Select"
+            },
+            {
+              "value": "textarea",
+              "label": "Textarea"
+            },
+            {
+              "value": "date",
+              "label": "Date"
+            },
+            {
+              "value": "hidden",
+              "label": "Hidden"
+            },
+            {
+              "value": "email",
+              "label": "Email"
+            }
+          ]
+        },
+        {
+          "id": "fieldName",
+          "type": "string"
+        },
+        {
+          "type": "paragraph",
+          "content": "add here conditional property"
+        }
+      ]
     },
     {
       "type": "object",
       "id": "simpleObject",
+      "tab": "Objects",
       "label": "Simple inline object that expands panel by click on it",
       "info": "The simplest object editor",
       "element": [
@@ -39,6 +100,7 @@
       "type": "object",
       "id": "simpleObject1",
       "label": "Simple inline object that expands panel by click on it",
+      "tab": "Objects",
       "info": "The simplest object editor",
       "element": [
         {
@@ -709,6 +771,8 @@
       "id": "inlineTime",
       "label": "Choose time",
       "type": "calendar",
+      "tab": "Text",
+      "group": "Calendars",
       "mode": "time",
       "inline": true,
       "info": "Inline picker (default)"
