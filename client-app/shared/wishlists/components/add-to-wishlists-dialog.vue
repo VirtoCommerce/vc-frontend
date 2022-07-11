@@ -60,6 +60,7 @@
               :class="{ 'mb-4.5': !input.errorMessage }"
               v-model="input.listName"
               :is-disabled="loading"
+              :maxlength="25"
               is-required
               :error-message="input.errorMessage"
             ></VcInput>
