@@ -124,7 +124,6 @@
 import { computed, PropType, ref, inject } from "vue";
 import { Product as ProductType } from "@/xapi/types";
 import { useWishlists } from "@/shared/wishlists";
-import { InputRemoveWishlistItemType } from "@/xapi/types";
 import { WishlistInputType } from "@/shared/wishlists/types";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
@@ -213,7 +212,7 @@ async function createListsAndAddProduct() {
 
 async function removeProductFromWishlists() {
   const payload = listsRemove.value.map((listId) => {
-    const list = listsContain.value.find((list_) => list_.id === listId);
+    const list = listsContain.value.find((item) => item.id === listId);
     const lineItemId = list?.items?.find((item) => item.productId === productId)?.id || "";
     return {
       listId,
