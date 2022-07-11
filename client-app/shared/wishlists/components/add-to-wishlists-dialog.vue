@@ -116,6 +116,7 @@ import { WishlistInputType } from "@/shared/wishlists/types";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import moment from "moment";
+import { useI18n } from "vue-i18n";
 
 const props = defineProps({
   product: {
@@ -124,6 +125,7 @@ const props = defineProps({
   },
 });
 
+const { t } = useI18n();
 const { openPopup, closePopup } = usePopup();
 const {
   loading: loadingLists,
@@ -162,7 +164,7 @@ const listsOther = computed(() => {
 
 function addInput() {
   inputs.value.push({
-    listName: `New list ${moment().format("YYYY-MM-DD • hh:mm")}`,
+    listName: `${t("shared.wishlists.add_to_wishlists_dialog.new_list")} ${moment().format("YYYY-MM-DD • hh:mm")}`,
     errorMessage: "",
   });
 }
@@ -209,7 +211,7 @@ async function removeProductFromWishlists() {
 async function save() {
   inputs.value.forEach((input) => {
     if (!input.listName.trim().length) {
-      input.errorMessage = "This field is required";
+      input.errorMessage = t("shared.wishlists.add_to_wishlists_dialog.is_required_validation_error");
     } else {
       input.errorMessage = "";
     }
@@ -230,7 +232,7 @@ async function save() {
   notifications.success({
     duration: 15000,
     singleInGroup: true,
-    html: `Success`,
+    html: t("shared.wishlists.add_to_wishlists_dialog.notification_success"),
   });
 }
 
