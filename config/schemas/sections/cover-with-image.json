@@ -3,16 +3,19 @@
   "displayField": "name",
   "settings": [
     {
-      "type": "string",
-      "id": "firstString",
-      "label": "First String"
+      "type": "files",
+      "id": "singleFile",
+      "label": "Single File"
     },
     {
       "type": "list",
       "id": "simpleList",
       "label": "Simple List",
       "addText": "Add new field",
+      "tab": "Objects",
       "displayField": "label",
+      "removeMessage": "remove item??",
+      "skipRemoveConfirmation": true,
       "info": "You can create and set up a form",
       "element": [
         {
@@ -65,13 +68,14 @@
         },
         {
           "type": "paragraph",
-          "text": "add here conditional property"
+          "content": "add here conditional property"
         }
       ]
     },
     {
       "type": "object",
       "id": "simpleObject",
+      "tab": "Objects",
       "label": "Simple inline object that expands panel by click on it",
       "info": "The simplest object editor",
       "element": [
@@ -96,6 +100,7 @@
       "type": "object",
       "id": "simpleObject1",
       "label": "Simple inline object that expands panel by click on it",
+      "tab": "Objects",
       "info": "The simplest object editor",
       "element": [
         {
@@ -766,6 +771,8 @@
       "id": "inlineTime",
       "label": "Choose time",
       "type": "calendar",
+      "tab": "Text",
+      "group": "Calendars",
       "mode": "time",
       "inline": true,
       "info": "Inline picker (default)"
