@@ -29,20 +29,28 @@
           <div class="font-bold text-15">
             {{ $t("shared.wishlists.add_to_wishlists_dialog.add_to_other_lists") }}
           </div>
-          <div
+          <button
             class="flex items-center text-sm font-bold cursor-pointer text-[color:var(--color-link)]"
+            :class="{ 'text-gray-400 cursor-not-allowed': creationButtonDisabled }"
             @click="addInput"
+            :disabled="creationButtonDisabled"
           >
-            <svg class="mr-2 w-3.5 h-3.5 text-[color:var(--color-primary)]">
+            <svg
+              class="mr-2 w-3.5 h-3.5 text-[color:var(--color-primary)]"
+              :class="{ 'text-gray-400': creationButtonDisabled }"
+            >
               <use href="/static/images/plus.svg#main" />
             </svg>
             {{ $t("shared.wishlists.add_to_wishlists_dialog.add_new_list") }}
-          </div>
+          </button>
         </div>
 
         <ul>
           <li v-for="(input, index) in inputs" class="flex items-start px-6 pt-2 first:pt-5">
-            <VcCheckbox class="pt-3" model-value @click="removeInput(index)" />
+            <button class="relative pt-3" @click="removeInput(index)">
+              <VcCheckbox model-value class="relative" />
+              <div class="absolute inset-0"></div>
+            </button>
             <VcInput
               class="flex-grow ml-2.5 mr-3.5"
               :class="{ 'mb-3': !input.errorMessage }"
@@ -72,7 +80,7 @@
 
       <!-- Skeletons -->
       <ul v-if="loadingLists">
-        <li v-for="item in listsOther.length || 3" :key="item" class="flex px-6 py-4 h-14 even:bg-gray-50">
+        <li v-for="item in lists.length || 3" :key="item" class="flex px-6 py-4 h-14 even:bg-gray-50">
           <div class="w-full bg-gray-100"></div>
         </li>
       </ul>
@@ -117,6 +125,8 @@ import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import moment from "moment";
 import { useI18n } from "vue-i18n";
+import { configInjectionKey } from "@/core/injection-keys";
+import { inject } from "vue";
 
 const props = defineProps({
   product: {
@@ -143,6 +153,10 @@ const listsRemove = ref<string[]>([]);
 const inputs = ref<WishlistInputType[]>([]);
 
 const productId = props.product.id;
+const config = inject(configInjectionKey);
+const listsLimit = config?.wishlists_limit || 10;
+
+const creationButtonDisabled = computed(() => lists.value.length + inputs.value.length >= listsLimit);
 
 const listsContain = computed(() => {
   return lists.value.filter((list) => list.items!.some((item) => item.productId === productId));
