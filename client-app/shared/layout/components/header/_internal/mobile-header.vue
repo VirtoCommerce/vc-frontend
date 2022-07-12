@@ -51,7 +51,7 @@
         @keyup.enter="$router.push(searchPageLink)"
       />
 
-      <VcButton class="w-10 !h-10" :to="searchPageLink">
+      <VcButton class="w-10 !h-10" :to="searchPhrase ? searchPageLink : null">
         <i class="fas fa-search text-lg" />
       </VcButton>
 
