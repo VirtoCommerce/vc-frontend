@@ -51,7 +51,7 @@
             :key="index"
             class="flex items-start px-6 list-input-item first:pt-3 first:sm:pt-4"
           >
-            <button class="relative pt-3" @click="removeInput(index)">
+            <button class="relative mt-3" @click="removeInput(index)">
               <VcCheckbox model-value class="relative" />
               <div class="absolute inset-0"></div>
             </button>
@@ -64,7 +64,7 @@
               is-required
               :error-message="input.errorMessage"
             ></VcInput>
-            <button class="pt-3.5" @click="removeInput(index)">
+            <button class="mt-3.5" @click="removeInput(index)">
               <svg class="text-[color:var(--color-add-wishlist-dialog-delete-icon)]" width="16" height="16">
                 <use href="/static/images/delete.svg#main" />
               </svg>
