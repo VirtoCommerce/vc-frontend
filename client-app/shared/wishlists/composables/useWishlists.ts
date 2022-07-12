@@ -39,13 +39,14 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
     loading.value = true;
 
     try {
-      addWishlist(name).then((newList) => {
-        if (newList.id) {
-          addItemsToWishlists([{ listId: newList.id, productId }]);
-        }
-      });
+      const newList = await addWishlist(name);
+      if (!newList.id) {
+        console.error(`${useWishlists.name}.${createWishlistAndAddProduct.name}`, 'newList.id error');
+      } else {
+        await addItemsToWishlists([{ listId: newList.id, productId }]);
+      }
     } catch (e) {
-      Logger.error(`${useWishlists.name}.${createWishlist.name}`, e);
+      Logger.error(`${useWishlists.name}.${createWishlistAndAddProduct.name}`, e);
       throw e;
     }
   }
