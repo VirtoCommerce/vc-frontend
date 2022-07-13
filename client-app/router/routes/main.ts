@@ -22,7 +22,6 @@ const Product = () => import("@/pages/product.vue");
 const Matcher = () => import("@/ui-kit/components/pages/matcher.vue");
 
 // Private development pages
-const BuilderDemoPages = () => import("@/builder-preview/pages/pages.vue");
 const DemoLanding = () => import("@/pages/demo-landing.vue");
 const DevUIKit = () => import("@/pages/ui-kit.vue");
 
@@ -44,7 +43,6 @@ export const mainRoutes: RouteRecordRaw[] = [
     redirect: { name: accountRoutes[0].name },
   },
   { path: "/demo-landing", name: "DemoLanding", component: DemoLanding },
-  { path: "/demo-page", name: "BuilderDemoPages", component: BuilderDemoPages },
   { path: "/search", name: "Search", component: Search },
   { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },
   { path: "/compare", name: "CompareProducts", component: CompareProducts },
