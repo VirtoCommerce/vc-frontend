@@ -25,6 +25,7 @@
           name="firstName"
           class="mb-5"
           is-required
+          :maxlength="64"
         />
 
         <VcInput
@@ -36,6 +37,7 @@
           name="lastName"
           class="mb-5"
           is-required
+          :maxlength="64"
         />
 
         <VcInput
@@ -64,10 +66,11 @@
           :placeholder="$t('pages.account.profile.old_password_placeholder')"
           :is-disabled="isSubmitting"
           :error-message="errors.oldPassword"
-          autocomplete="new-password"
+          autocomplete="off"
           type="password"
           name="oldPassword"
           class="mb-5"
+          :maxlength="64"
         />
 
         <VcInput
@@ -80,6 +83,8 @@
           type="password"
           name="newPassword"
           class="mb-5"
+          autocomplete="new-password"
+          :maxlength="64"
           @update:model-value="oldPassword ? (newPassword = $event.trim()) : null"
         />
 
@@ -93,6 +98,8 @@
           type="password"
           name="confirmNewPassword"
           class="mb-5"
+          autocomplete="off"
+          :maxlength="64"
           @update:model-value="oldPassword ? (confirmNewPassword = $event.trim()) : null"
         />
 

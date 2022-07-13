@@ -46,7 +46,9 @@
       "sort_by": "Sortieren nach:",
       "sku": "Artikel #",
       "item": "Artikel",
-      "catalog": "Katalog"
+      "catalog": "Katalog",
+      "true_property": "Yes",
+      "false_property": "No"
     },
     "suffixes": {
       "per_item": "/ jeder",
@@ -122,6 +124,8 @@
         }
       },
       "footer": {
+        "version": "Ver.",
+        "company_name": "VirtoCommerce",
         "company_information_link_group": "Company information",
         "about_us_link": "About Us",
         "investor_relations_link": "Investor Relations",
@@ -470,7 +474,7 @@
       "list_details": {
         "add_all_to_cart_button": "Add all products to cart",
         "list_settings_button": "List settings",
-        "empty_list": "Your list is currently empty",
+        "empty_list": "Your list is empty",
         "empty_list_button": "Continue browsing",
         "list_icon": "List icon"
       },
@@ -623,6 +627,8 @@
         "meta": {
           "title": "@:pages.account.addresses.addresses_title"
         },
+        "edit_label": "Edit",
+        "delete_label": "Delete",
         "add_new_address_button_mobile": "Add new",
         "add_new_address_button": "Add new address",
         "cancel_button": "@:common.buttons.cancel",
@@ -692,6 +698,7 @@
         "meta": {
           "title": "@:pages.account.orders.title"
         },
+        "search_placeholder": "Enter keyword...",
         "title": "Orders",
         "order_number_label": "Order number",
         "purchase_number_label": "Purchase order",

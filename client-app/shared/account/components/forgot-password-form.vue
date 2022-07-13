@@ -8,13 +8,19 @@
       type="email"
       is-required
       :error-message="errors.email"
+      :maxlength="64"
     ></VcInput>
     <div class="mt-8 md:mt-9">
       <VcAlert v-for="error in commonErrors" :key="error" type="error" class="mb-4 text-xs" icon text>
         {{ error }}
       </VcAlert>
 
-      <VcButton is-submit class="mt-6 lg:mt-3 w-full lg:w-48 uppercase" :is-waiting="loading">
+      <VcButton
+        is-submit
+        class="mt-6 lg:mt-3 w-full lg:w-48 uppercase"
+        :is-waiting="loading"
+        :is-disabled="hasFormErrors"
+      >
         {{ $t("shared.account.forgot_password_form.submit_button") }}
       </VcButton>
     </div>
@@ -22,11 +28,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import { useUser } from "@/shared/account";
 import { useI18n } from "vue-i18n";
+import { isObjectEmpty } from "@/core/utilities";
 
 const { t } = useI18n();
 
@@ -52,6 +59,8 @@ const { errors, handleSubmit } = useForm({
 });
 
 const { value: email } = useField<string>("email");
+
+const hasFormErrors = computed(() => !email.value || !isObjectEmpty(errors.value));
 
 const commonErrors = ref<string[]>([]);
 

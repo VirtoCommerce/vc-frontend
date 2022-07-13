@@ -1,5 +1,5 @@
 <template>
-  <VcPopup :title="$t('shared.account.reorder_info_popup.title')" is-mobile-fullscreen>
+  <VcPopup :title="$t('shared.account.reorder_info_popup.title')" is-mobile-fullscreen @close="onPopupClose">
     <template #actions="{ close }">
       <div v-if="pages > 1 && !isMobile" class="lg:flex lg:flex-1">
         <VcPagination v-model:page="page" :pages="pages" @update:page="page = $event" />
@@ -87,6 +87,11 @@ const props = defineProps({
   orderItemsInfo: {
     type: Array as PropType<Pick<OrderLineItemType, "productId" | "quantity" | "id" | "sku" | "name" | "imageUrl">[]>,
     required: true,
+  },
+
+  onPopupClose: {
+    type: Function,
+    default: undefined,
   },
 });
 

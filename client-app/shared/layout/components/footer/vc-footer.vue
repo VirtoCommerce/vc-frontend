@@ -77,14 +77,17 @@
     class="flex flex-col md:flex-row items-center justify-between h-16 text-xs px-4 md:px-12 py-3 bg-[color:var(--color-footer-bottom-bg)] text-[color:var(--color-footer-bottom-text)]"
   >
     <div class="font-medium">
-      Ver. {{ version }}. © {{ new Date().getFullYear() }} <span class="font-bold">VirtoCommerce</span>.
+      {{ $t("shared.layout.footer.version") }} {{ version }}. © {{ new Date().getFullYear() }}
+      <span class="font-bold">{{ $t("shared.layout.footer.company_name") }}</span
+      >.
       {{ $t("shared.layout.footer.all_rights_reserved") }}
     </div>
 
     <i18n-t keypath="shared.layout.footer.asp_net_e_commerce_platform" tag="div" scope="global">
       <a
         class="font-bold text-[color:var(--color-footer-bottom-link)] hover:text-[color:var(--color-footer-bottom-link-hover)]"
-        href="#"
+        href="https://virtocommerce.com/"
+        target="_blank"
       >
         {{ $t("shared.layout.footer.by_virto") }}
       </a>

@@ -6,7 +6,7 @@
       </div>
       <div class="flex-1 border-b border-grey-100 border-dotted h-5"></div>
     </div>
-    <div class="font-bold w-1/2 flex flex-col text-left">
+    <div class="font-bold w-1/2 flex flex-col text-left line-clamp-3" :title="property.values">
       {{ property.values }}
     </div>
   </div>
@@ -16,6 +16,7 @@
 import _ from "lodash";
 import { computed, PropType } from "vue";
 import { Property } from "@/xapi/types";
+import { prepareProperties } from "../utils";
 
 const props = defineProps({
   properties: {
@@ -27,14 +28,9 @@ const props = defineProps({
 // todo: move this logic to the separated helper. For variations properties also
 const grouped = computed(() => {
   return _(props.properties)
-    .filter((p) => !!p && p.type === "Product")
+    .filter((p) => !!p && p.type === "Product" && p.value !== undefined && p.value !== null && !p.hidden)
     .groupBy((p) => p.name)
-    .map((properties, propName) => {
-      return {
-        name: propName,
-        values: properties.map((x) => x.value).join(", "),
-      };
-    })
+    .map(prepareProperties)
     .value();
 });
 </script>
