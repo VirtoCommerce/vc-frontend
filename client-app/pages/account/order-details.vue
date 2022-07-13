@@ -94,7 +94,12 @@
         <!-- Order summary -->
         <OrderSummary v-if="order" :cart="order" class="mb-5" />
 
-        <VcButton v-if="!isNew" class="uppercase w-full mb-5" @click="openReorderPopup">
+        <VcButton
+          v-if="!isNew"
+          :isDisabled="reorderAllButtonDisabled"
+          class="uppercase w-full mb-5"
+          @click="openReorderPopup"
+        >
           {{ $t("pages.account.order_details.reorder_all_button") }}
         </VcButton>
 
@@ -229,6 +234,7 @@ usePageHead({
 
 const isMobile = breakpoints.smaller("lg");
 const page = ref(1);
+const reorderAllButtonDisabled = ref(false);
 
 const isNew = computed<boolean>(() => props.new === "true");
 
@@ -254,6 +260,7 @@ function printOrder() {
 }
 
 async function openReorderPopup() {
+  reorderAllButtonDisabled.value = true;
   const orderItemsInfo = order.value?.items
     .filter((item) => !item.isGift)
     .map((item) => {
@@ -271,6 +278,9 @@ async function openReorderPopup() {
     props: {
       productItems: products.value,
       orderItemsInfo: orderItemsInfo,
+      onPopupClose() {
+        reorderAllButtonDisabled.value = false;
+      },
     },
   });
 }
