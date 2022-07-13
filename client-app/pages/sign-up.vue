@@ -25,6 +25,7 @@
           :placeholder="$t('pages.sign_up.first_name_placeholder')"
           is-required
           :error-message="errors.firstName"
+          :maxlength="64"
         ></VcInput>
         <VcInput
           v-model="lastName"
@@ -33,6 +34,7 @@
           :placeholder="$t('pages.sign_up.last_name_placeholder')"
           is-required
           :error-message="errors.lastName"
+          :maxlength="64"
         ></VcInput>
         <VcInput
           v-model="email"
@@ -41,6 +43,7 @@
           :placeholder="$t('pages.sign_up.email_placeholder')"
           is-required
           :error-message="errors.email"
+          :maxlength="64"
         ></VcInput>
         <VcInput
           v-if="registrationKind === RegistrationKind.organization"
@@ -50,6 +53,7 @@
           :placeholder="$t('pages.sign_up.organization_name_placeholder')"
           is-required
           :error-message="errors.organizationName"
+          :maxlength="64"
         ></VcInput>
         <div class="block lg:flex justify-between lg:space-x-6">
           <VcInput
@@ -61,6 +65,7 @@
             autocomplete="new-password"
             is-required
             :error-message="errors.password"
+            :maxlength="64"
           ></VcInput>
           <VcInput
             v-model="confirmPassword"
@@ -68,8 +73,10 @@
             :label="$t('pages.sign_up.confirm_password_label')"
             :placeholder="$t('pages.sign_up.confirm_password_placeholder')"
             type="password"
+            autocomplete="off"
             is-required
             :error-message="errors.confirmPassword"
+            :maxlength="64"
           ></VcInput>
         </div>
         <div class="mt-6 lg:mt-4">

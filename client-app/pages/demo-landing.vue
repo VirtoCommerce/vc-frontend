@@ -1,8 +1,8 @@
 <template>
   <div class="pt-7">
     <div class="w-full max-w-screen-2xl mx-auto pb-5 lg:pb-10 px-5 md:px-12">
-      <VcBreadcrumbs :items="breadcrumbs"></VcBreadcrumbs>
-      <h1 class="font-bold text-gray-900 text-3xl lg:text-4xl mt-5 uppercase" v-t="'pages.demo_landing.header'"></h1>
+      <VcBreadcrumbs class="mb-3" :items="breadcrumbs"></VcBreadcrumbs>
+      <h1 class="font-bold text-gray-900 text-3xl lg:text-4xl uppercase" v-t="'pages.demo_landing.header'"></h1>
     </div>
 
     <div class="bg-gray-100 pt-6 pb-16 lg:py-24">

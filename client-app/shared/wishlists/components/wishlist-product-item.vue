@@ -10,6 +10,7 @@
         v-if="listItem.product"
         :to="link"
         class="text-sm text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)] break-words font-extrabold line-clamp-3 overflow-hidden"
+        :title="listItem.product.name"
       >
         {{ listItem.product.name }}
       </router-link>

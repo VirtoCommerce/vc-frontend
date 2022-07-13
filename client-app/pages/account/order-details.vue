@@ -57,7 +57,7 @@
                 v-model:page="page"
                 :pages="pages"
                 class="mb-3 lg:mb-0"
-                @update:page="page = $event"
+                @update:page="onUpdatePage()"
               ></VcPagination>
             </div>
           </div>
@@ -74,9 +74,7 @@
           class="shadow-inner pb-8 lg:shadow"
         >
           <div class="ml-24 mr-5 lg:ml-28 lg:mr-11">
-            <p class="break-words">
-              {{ order?.comment }}
-            </p>
+            <p class="break-words" v-for="line in order?.comment?.split('\n')" :key="line">{{ line }}</p>
           </div>
         </VcSection>
 
@@ -110,11 +108,11 @@
               {{ deliveryAddress?.line1 }}
               {{ deliveryAddress?.postalCode }}
             </p>
-            <p>
+            <p v-if="deliveryAddress?.phone">
               <span class="font-extrabold" v-t="'pages.account.order_details.shipping_address_card.phone_label'" />
               {{ deliveryAddress?.phone }}
             </p>
-            <p>
+            <p v-if="deliveryAddress?.email">
               <span class="font-extrabold" v-t="'pages.account.order_details.shipping_address_card.email_label'" />
               {{ deliveryAddress?.email }}
             </p>
@@ -134,7 +132,7 @@
         </VcCard>
 
         <VcCard :title="$t('pages.account.order_details.payment_details_card.title')" class="mb-5" is-collapsible>
-          <div class="flex flex-col text-sm">
+          <div class="flex flex-col space-y-1.5 text-sm">
             <p>
               <span class="font-extrabold">{{
                 $t("pages.account.order_details.payment_details_card.payment_number_label")
@@ -148,12 +146,12 @@
               }}</span>
               {{ order?.inPayments?.[0]?.gatewayCode }}
             </p>
+          </div>
 
-            <div class="mt-3">
-              <VcButton class="px-2 py-1 uppercase !text-xs !h-auto" is-outline is-disabled>
-                {{ $t("pages.account.order_details.payment_details_card.view_invoice_button") }}
-              </VcButton>
-            </div>
+          <div class="mt-3">
+            <VcButton class="px-2 py-1 uppercase !text-xs !h-auto" is-outline is-disabled>
+              {{ $t("pages.account.order_details.payment_details_card.view_invoice_button") }}
+            </VcButton>
           </div>
         </VcCard>
 
@@ -168,14 +166,14 @@
               {{ billingAddress?.postalCode }}
             </p>
 
-            <p>
+            <p v-if="billingAddress?.phone">
               <span class="font-extrabold">
                 {{ $t("pages.account.order_details.billing_address_card.phone_label") }}
               </span>
               {{ billingAddress?.phone }}
             </p>
 
-            <p>
+            <p v-if="billingAddress?.email">
               <span class="font-extrabold">
                 {{ $t("pages.account.order_details.billing_address_card.email_label") }}
               </span>
@@ -281,4 +279,11 @@ watchEffect(() => {
   clearOrder();
   loadOrder({ id: props.orderId });
 });
+
+/**
+ * Scroll after page change.
+ */
+function onUpdatePage() {
+  window.scroll({ top: 0, behavior: "smooth" });
+}
 </script>
