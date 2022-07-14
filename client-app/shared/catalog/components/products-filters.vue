@@ -4,14 +4,22 @@
     <VcCard :title="$t('pages.catalog.search_card.title')">
       <p class="text-sm pb-2" v-t="'pages.catalog.search_card.search_label'"></p>
       <div class="flex gap-3">
-        <input
-          v-model="_keyword"
-          class="border rounded text-sm leading-8 flex-1 w-full border-gray-300 h-8 px-2 outline-none focus:border-gray-400"
-          type="text"
-          maxlength="30"
-          :disabled="loading"
-          @keypress.enter="onSearchStart"
-        />
+        <div class="relative">
+          <input
+            v-model="_keyword"
+            class="border rounded text-sm leading-8 flex-1 w-full border-gray-300 h-8 px-2 outline-none focus:border-gray-400"
+            type="text"
+            maxlength="30"
+            :disabled="loading"
+            @keypress.enter="onSearchStart"
+          />
+
+          <button v-if="_keyword" class="absolute right-[10px] top-[10px]" @click="reset">
+            <svg class="text-[color:var(--color-primary)]" height="12" width="12">
+              <use href="/static/images/delete.svg#main" />
+            </svg>
+          </button>
+        </div>
 
         <VcButton
           :is-disabled="loading || isAppliedKeyword"
@@ -144,5 +152,10 @@ function onFilterChanged() {
 }
 function onSearchStart() {
   emit("search", _keyword.value);
+}
+
+function reset() {
+  _keyword.value = "";
+  emit("search", "");
 }
 </script>

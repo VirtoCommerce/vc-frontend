@@ -9,7 +9,7 @@
     <VcPopupSidebar class="px-5 pt-12 w-72" :is-visible="isMobile && filtersVisible" @hide="hideFilters">
       <div class="relative">
         <button class="absolute -right-3 appearance-none px-3 py-1" @click="hideFilters">
-          <span class="text-2xl fa fa-times text-[color:var(--color-primary)]"></span>
+          <span class="text-2xl fas fa-times text-red-400 hover:text-red-700"></span>
         </button>
       </div>
 
@@ -65,8 +65,8 @@
           v-if="filtersVisible && !isMobile"
           class="absolute right-0 z-10 bg-white shadow-lg pb-6 rounded border border-gray-300 overflow-hidden mt-2"
         >
-          <button class="absolute right-0 appearance-none px-4 py-2" @click="hideFilters">
-            <span class="fa fa-times text-[color:var(--color-primary)]"></span>
+          <button class="absolute right-0 appearance-none mr-4 mt-2" @click="hideFilters">
+            <span class="text-lg fa fa-times text-red-400 hover:text-red-700"></span>
           </button>
 
           <OrdersFilter ref="filtersElement" class="px-8 pt-9" @change="filterChanged()" />
@@ -74,13 +74,21 @@
       </div>
 
       <div class="flex flex-grow mr-5 md:mx-0">
-        <input
-          v-model.trim="keyword"
-          :disabled="ordersLoading"
-          type="search"
-          class="flex-grow appearance-none bg-white rounded rounded-r-none h-11 px-4 font-medium outline-none text-sm border border-gray-300 focus:border-gray-400 disabled:bg-gray-200"
-          @keypress.enter="applyKeyword"
-        />
+        <div class="relative grow">
+          <input
+            v-model.trim="keyword"
+            :disabled="ordersLoading"
+            class="w-full appearance-none bg-white rounded rounded-r-none h-11 px-4 font-medium outline-none text-sm border border-gray-300 focus:border-gray-400 disabled:bg-gray-200"
+            @keypress.enter="applyKeyword"
+            :placeholder="$t('pages.account.orders.search_placeholder')"
+          />
+
+          <button v-if="keyword" class="absolute right-[14px] top-[14px]" @click="reset">
+            <svg class="text-[color:var(--color-primary)]" height="14" width="14">
+              <use href="/static/images/delete.svg#main" />
+            </svg>
+          </button>
+        </div>
 
         <VcButton :is-disabled="ordersLoading" class="px-4 !rounded-l-none uppercase" size="lg" @click="applyKeyword">
           <i class="fas fa-search text-lg" />
@@ -310,6 +318,7 @@ watch(
 
 const onPageChange = async (newPage: number) => {
   page.value = newPage;
+  window.scroll({ top: 0, behavior: "smooth" });
   await loadOrders();
 };
 
@@ -400,5 +409,9 @@ onClickOutside(
 
 function filterChanged() {
   hideFilters();
+}
+
+function reset() {
+  resetFiltersWithKeyword();
 }
 </script>
