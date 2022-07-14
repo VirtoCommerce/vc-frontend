@@ -23,32 +23,24 @@
 
       <SearchBar class="mx-5" />
 
-      <div class="flex items-center pt-1.5 xl:pl-4 pr-5 space-x-5 xl:space-x-9 text-[13px] text-center">
-        <BottomHeaderLink
-          v-for="item in desktopHeaderMenuLinks"
-          :key="item.title"
-          :to="item.route"
-          :title="item.title"
-          :icon="item.icon"
-        >
-          <template v-if="item.id === 'checkout'">
-            <span>{{ item.title }}</span>
-
-            <transition name="slide-fade-right">
-              <HeaderMenuBadge v-if="cart?.itemsQuantity" :count="cart.itemsQuantity"></HeaderMenuBadge>
-            </transition>
-          </template>
-
-          <template v-else-if="item.id === 'compare'">
-            <div class="flex items-center">
-              <span>{{ item.title }}</span>
-
-              <transition name="slide-fade-right">
-                <HeaderMenuBadge v-if="productsIds.length" :count="productsIds.length"></HeaderMenuBadge>
-              </transition>
-            </div>
-          </template>
-        </BottomHeaderLink>
+      <div class="flex items-center pt-1.5 xl:pl-4 pr-5 space-x-5 xl:space-x-9">
+        <template v-for="item in desktopHeaderMenuLinks">
+          <BottomHeaderLinkWithBadge
+            v-if="item.id === 'compare'"
+            :to="item.route"
+            :title="item.title"
+            :icon="item.icon"
+            :count="productsIds.length"
+          />
+          <BottomHeaderLinkWithBadge
+            v-else-if="item.id === 'checkout'"
+            :to="item.route"
+            :title="item.title"
+            :icon="item.icon"
+            :count="cart.itemsQuantity"
+          />
+          <BottomHeaderLinkWithBadge v-else :key="item.title" :to="item.route" :title="item.title" :icon="item.icon" />
+        </template>
       </div>
     </div>
   </div>
@@ -56,8 +48,7 @@
 
 <script setup lang="ts">
 import CatalogDropdown from "./catalog-dropdown.vue";
-import BottomHeaderLink from "./bottom-header-link.vue";
-import HeaderMenuBadge from "./header-menu-badge.vue";
+import BottomHeaderLinkWithBadge from "./bottom-header-link-with-badge.vue";
 import { useCart } from "@/shared/cart";
 import { SearchBar, useNavigations } from "@/shared/layout";
 import { useCompareProducts } from "@/shared/compare";

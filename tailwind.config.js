@@ -138,6 +138,14 @@ module.exports = {
         't-2xl': '0 -25px 50px -12px rgba(0, 0, 0, 0.25)',
         't-3xl': '0 -35px 60px -15px rgba(0, 0, 0, 0.3)',
       },
+      fontSize: {
+        '11': ['0.688rem', { //11px
+          lineHeight: '0.875rem' //14px
+        }],
+        '13': ['0.813rem', { //13px
+          lineHeight: '1.25rem' //20px
+        }]
+      }
     },
   },
 
