@@ -19,6 +19,7 @@
         <router-link
           :to="link"
           class="text-[color:var(--color-link)] font-extrabold text-sm mb-3 flex-grow line-clamp-2 overflow-hidden"
+          :title="product.name"
         >
           {{ product.name }}
         </router-link>

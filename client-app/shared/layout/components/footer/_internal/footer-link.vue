@@ -1,6 +1,6 @@
 <template>
   <router-link
-    class="font-medium text-xs text-[color:var(--color-footer-top-link)] hover:text-[color:var(--color-footer-top-link-hover)]"
+    class="footer-link font-medium text-xs text-[color:var(--color-footer-top-link)] hover:text-[color:var(--color-footer-top-link-hover)]"
     :to="to"
   >
     <slot>{{ title }}</slot>
@@ -23,3 +23,9 @@ defineProps({
   },
 });
 </script>
+
+<style>
+.footer-link.router-link-active {
+  color: var(--color-footer-link-hover);
+}
+</style>

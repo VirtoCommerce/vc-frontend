@@ -11,6 +11,7 @@
           :label="$t('shared.account.address_form.first_name_label')"
           class="mb-4"
           is-required
+          :maxlength="64"
         />
 
         <VcInput
@@ -20,6 +21,7 @@
           :label="$t('shared.account.address_form.last_name_label')"
           class="mb-4"
           is-required
+          :maxlength="64"
         />
 
         <VcInput
@@ -29,6 +31,7 @@
           :is-required="requiredEmail"
           :label="$t('shared.account.address_form.work_email_label')"
           class="mb-4"
+          :maxlength="64"
         />
 
         <VcInput
@@ -38,6 +41,7 @@
           :is-required="requiredPhone"
           :label="$t('shared.account.address_form.phone_label')"
           class="mb-4"
+          :maxlength="64"
         />
       </div>
 
@@ -68,6 +72,7 @@
             :label="$t('shared.account.address_form.zip_label')"
             class="mb-4 order-3 xl:order-none xl:ml-4 xl:w-4/12 xl:flex-grow"
             is-required
+            :maxlength="32"
           />
 
           <VcSelect
@@ -90,6 +95,7 @@
             :label="$t('shared.account.address_form.city_label')"
             class="mb-4 order-4 xl:order-none xl:ml-4 xl:flex-grow"
             :is-required="requiredCity"
+            :maxlength="128"
           />
         </div>
 
@@ -100,6 +106,7 @@
           :label="$t('shared.account.address_form.line1_label')"
           class="mb-4"
           is-required
+          :maxlength="128"
         />
 
         <VcInput
@@ -108,6 +115,7 @@
           :is-disabled="disabled"
           :label="$t('shared.account.address_form.line2_label')"
           class="mb-4"
+          :maxlength="128"
         />
       </div>
     </div>

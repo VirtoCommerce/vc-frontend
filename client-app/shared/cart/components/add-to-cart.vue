@@ -1,6 +1,7 @@
 <template>
   <div class="flex relative z-0">
     <input
+      ref="input"
       type="number"
       v-model.number="enteredQuantity"
       :disabled="disabled"
@@ -12,6 +13,7 @@
       class="appearance-none rounded-l rounded-r-none flex-1 w-full text-base lg:text-sm -mr-px border border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9 min-w-0"
       @input="onInput"
       @keypress="onKeypress"
+      @click="onClick"
     />
 
     <VcButton
@@ -53,6 +55,8 @@ import * as yup from "yup";
 
 const emit = defineEmits(["update:lineitem"]);
 
+const input = ref<HTMLInputElement>();
+
 const props = defineProps({
   product: {
     type: Object as PropType<Product | VariationType>,
@@ -67,7 +71,7 @@ const { cart, addToCart, changeItemQuantity } = useCart();
 const { t } = useI18n();
 
 const loading = ref(false);
-const initialValue = ref(1);
+const initialValue = ref();
 
 const lineItemInCart = computed<LineItemType | undefined>(() =>
   cart.value?.items?.find((item) => item.productId === props.product.id)
@@ -163,8 +167,17 @@ function onInput() {
   }
 }
 
+/**
+ * Select input value.
+ */
+function onClick() {
+  (input.value as HTMLInputElement).select();
+}
+
 watchEffect(() => {
-  initialValue.value = countInCart.value || minQty.value;
-  setValue(initialValue.value);
+  if (!disabled.value) {
+    initialValue.value = countInCart.value || minQty.value;
+    setValue(initialValue.value);
+  }
 });
 </script>
