@@ -25,21 +25,21 @@
 
       <div class="flex items-center pt-1.5 xl:pl-4 pr-5 space-x-5 xl:space-x-9">
         <template v-for="item in desktopHeaderMenuLinks">
-          <BottomHeaderLinkWithBadge
+          <BottomHeaderLink
             v-if="item.id === 'compare'"
             :to="item.route"
             :title="item.title"
             :icon="item.icon"
-            :count="productsIds.length"
+            :badge="String(productsIds.length)"
           />
-          <BottomHeaderLinkWithBadge
+          <BottomHeaderLink
             v-else-if="item.id === 'checkout'"
             :to="item.route"
             :title="item.title"
             :icon="item.icon"
-            :count="cart.itemsQuantity"
+            :badge="String(cart.itemsQuantity)"
           />
-          <BottomHeaderLinkWithBadge v-else :key="item.title" :to="item.route" :title="item.title" :icon="item.icon" />
+          <BottomHeaderLink v-else :key="item.title" :to="item.route" :title="item.title" :icon="item.icon" />
         </template>
       </div>
     </div>
@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import CatalogDropdown from "./catalog-dropdown.vue";
-import BottomHeaderLinkWithBadge from "./bottom-header-link-with-badge.vue";
+import BottomHeaderLink from "./bottom-header-link.vue";
 import { useCart } from "@/shared/cart";
 import { SearchBar, useNavigations } from "@/shared/layout";
 import { useCompareProducts } from "@/shared/compare";
