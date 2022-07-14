@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="to">
+  <router-link :to="to" v-slot="{ isActive }">
     <div
       class="flex flex-col items-center font-semibold hover:text-[color:var(--color-header-bottom-link-hover)] tracking-wide text-center text-13"
       :class="[
