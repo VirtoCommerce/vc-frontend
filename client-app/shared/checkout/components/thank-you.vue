@@ -138,7 +138,7 @@
 import { OrderSummary, ProductCard, AcceptedGifts } from "@/shared/checkout";
 import { CustomerOrderType } from "@/xapi/types";
 import { useCart } from "@/shared/cart";
-import { computed, PropType, ref } from "vue";
+import { computed, onMounted, PropType, ref } from "vue";
 
 const { itemsPerPage } = useCart();
 
@@ -162,4 +162,6 @@ const giftItems = computed(() => props.order.items?.filter((item) => item.isGift
 const printOrder = () => {
   window.print();
 };
+
+onMounted(() => window.scrollTo({ top: 0 }));
 </script>

@@ -28,7 +28,7 @@
             <i class="fas fa-phone-alt text-xl text-[color:var(--color-primary)]"></i>
           </a>
 
-          <button v-show="!searchBarVisible" class="h-full pr-4" @click="showSearchBar">
+          <button class="h-full pr-4" @click="toggleSearchBar">
             <i class="fas fa-search text-2xl text-[color:var(--color-primary)]" />
           </button>
 
@@ -51,7 +51,7 @@
         @keyup.enter="$router.push(searchPageLink)"
       />
 
-      <VcButton class="w-10 !h-10" :to="searchPageLink">
+      <VcButton class="w-10 !h-10" :to="searchPhrase ? searchPageLink : null">
         <i class="fas fa-search text-lg" />
       </VcButton>
 
@@ -91,7 +91,7 @@ const mobileMenuVisible = ref(false);
 const headerElement = ref<HTMLElement | null>(null);
 
 const { customSlots, isAnimated } = useNestedMobileHeader();
-const { searchBarVisible, showSearchBar, hideSearchBar } = useSearchBar();
+const { searchBarVisible, toggleSearchBar, hideSearchBar } = useSearchBar();
 const { toggleBodyScrollable } = useDomUtils();
 const { height } = useElementSize(headerElement);
 
