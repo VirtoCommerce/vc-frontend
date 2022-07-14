@@ -39,7 +39,7 @@
         />
 
         <div class="flex p-5" v-if="pages > 1">
-          <VcPagination v-model:page="page" :pages="pages" />
+          <VcPagination v-model:page="page" :pages="pages" @update:page="onUpdatePage()" />
         </div>
       </div>
 
@@ -89,7 +89,13 @@
 
     <!-- Mobile footer block -->
     <div v-if="isMobile" class="flex flex-col space-y-4 mx-5 md:mx-0">
-      <VcPagination v-if="pages > 1" v-model:page="page" :pages="pages" class="mb-3 lg:mb-0" />
+      <VcPagination
+        v-if="pages > 1"
+        v-model:page="page"
+        :pages="pages"
+        class="mb-3 lg:mb-0"
+        @update:page="onUpdatePage()"
+      />
 
       <VcButton
         v-if="listItems?.length"
@@ -182,4 +188,11 @@ watchEffect(() => {
   clearList();
   fetchWishList(props.listId);
 });
+
+/**
+ * Scroll after page change.
+ */
+function onUpdatePage() {
+  window.scroll({ top: 0, behavior: "smooth" });
+}
 </script>

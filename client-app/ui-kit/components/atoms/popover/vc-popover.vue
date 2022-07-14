@@ -10,7 +10,11 @@
       <span class="flex flex-grow" v-if="title">
         {{ title }}
       </span>
-      <i class="fas fa-times text-red-400 cursor-pointer" @click="togglePopover(false)" v-if="showCloseButton" />
+      <i
+        class="fas fa-times text-red-400 hover:text-red-700 cursor-pointer"
+        @click="togglePopover(false)"
+        v-if="showCloseButton"
+      />
     </h3>
 
     <slot name="content" />
