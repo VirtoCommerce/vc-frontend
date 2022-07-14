@@ -1,22 +1,26 @@
 <template>
-  <div role="group">
+  <div class="space-x-2" role="group">
     <button
       type="button"
-      class="rounded text-sm font-extrabold px-4 py-2"
-      :class="[mode === 'grid' ? 'bg-[color:var(--color-primary)] text-white' : 'bg-transparent']"
+      class="flex rounded p-2"
+      :class="[mode === 'grid' ? 'bg-white text-secondary cursor-not-allowed' : 'text-primary']"
       @click="$emit('update:mode', 'grid')"
     >
-      <i class="fas fa-th mr-1"></i>
-      {{ $t("shared.catalog.view_mode.grid_label") }}
+      <svg class="w-5 h-5">
+        <use href="/static/images/common/grid-view.svg#main"></use>
+      </svg>
+      <span class="hidden ml-1.5 text-15 font-semibold lg:block">{{ $t("shared.catalog.view_mode.grid_label") }}</span>
     </button>
     <button
       type="button"
-      class="rounded text-sm font-extrabold px-4 py-2"
-      :class="[mode === 'list' ? 'bg-[color:var(--color-primary)] text-white' : 'bg-transparent']"
+      class="flex rounded p-2"
+      :class="[mode === 'list' ? 'bg-white text-secondary cursor-not-allowed' : 'text-primary']"
       @click="$emit('update:mode', 'list')"
     >
-      <i class="fas fa-list mr-1"></i>
-      {{ $t("shared.catalog.view_mode.list_label") }}
+      <svg class="w-5 h-5">
+        <use href="/static/images/common/list-view.svg#main"></use>
+      </svg>
+      <span class="hidden ml-1.5 text-15 font-semibold lg:block">{{ $t("shared.catalog.view_mode.list_label") }}</span>
     </button>
   </div>
 </template>

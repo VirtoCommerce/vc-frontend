@@ -138,6 +138,22 @@ module.exports = {
         't-2xl': '0 -25px 50px -12px rgba(0, 0, 0, 0.25)',
         't-3xl': '0 -35px 60px -15px rgba(0, 0, 0, 0.3)',
       },
+      fontSize: {
+        '15': [ '0.938rem', { //15px
+          lineHeight: '1.25rem', //20px
+        }],
+        '21': [ '1.313rem', { //21px
+          lineHeight: '1.563rem', //25px
+          letterSpacing: '0.02em',
+        }],
+        '25': [ '1.563rem', { //25px
+          lineHeight: '1.875rem', //30px
+          letterSpacing: '0.02em',
+        }]
+      },
+      padding: {
+        '17': '4.25rem', //68px
+      }
     },
   },
 

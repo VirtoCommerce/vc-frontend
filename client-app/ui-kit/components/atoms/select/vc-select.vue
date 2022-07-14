@@ -22,7 +22,7 @@
         </slot>
 
         <span
-          class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"
+          class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
           :class="{ 'opacity-50': isDisabled }"
         >
           <i class="text-gray-700 fas fa-chevron-down"></i>

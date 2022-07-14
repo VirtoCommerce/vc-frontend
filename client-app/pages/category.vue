@@ -1,8 +1,11 @@
 <template>
-  <div class="bg-gray-100 pt-7 pb-16 shadow-inner grow" :class="{ 'polygon-gray-bg': !products.length && !loading }">
-    <div class="max-w-screen-2xl px-5 md:px-12 mx-auto">
+  <div
+    class="bg-gray-100 pt-4 pb-16 shadow-inner grow lg:pt-6"
+    :class="{ 'polygon-gray-bg': !products.length && !loading }"
+  >
+    <div class="max-w-screen-2xl px-5 xl:px-17 mx-auto">
       <!-- Breadcrumbs -->
-      <Breadcrumbs class="mb-2 md:mb-8" :items="breadcrumbs" />
+      <Breadcrumbs class="mb-2.5 md:mb-4" :items="breadcrumbs" />
 
       <div class="flex items-start lg:gap-6">
         <!-- Mobile sidebar back cover -->
@@ -60,7 +63,7 @@
         </VcPopupSidebar>
 
         <!-- Sidebar -->
-        <div v-else ref="sidebarElement" class="flex flex-col gap-4 lg:gap-5 lg:w-1/4 xl:w-1/5 flex-shrink-0">
+        <div v-else ref="sidebarElement" class="space-y-5 w-60 flex-shrink-0 pt-1.5">
           <CategorySelector :selected-category="selectedCategory" :loading="loading"></CategorySelector>
 
           <ProductsFiltersSidebar
@@ -73,39 +76,40 @@
         </div>
 
         <!-- Content -->
-        <div class="lg:w-3/4 xl:w-4/5 flex-grow">
-          <h2 class="text-gray-800 text-2xl lg:text-3xl font-bold uppercase">{{ selectedCategory?.label }}</h2>
+        <div class="flex-grow">
+          <div class="flex">
+            <h2 class="text-gray-800 text-21 font-bold uppercase lg:text-25">
+              {{ selectedCategory?.label }}
+            </h2>
+            <span
+              class="pt-px pl-2 text-sm text-[color:var(--color-category-page-results)] whitespace-nowrap lg:text-15 lg:pt-1"
+              v-html="$t('pages.catalog.products_found_message', [total])"
+            ></span>
+          </div>
 
-          <p class="py-3">
-            <span class="font-extrabold">{{ $t("pages.catalog.products_found_message", [total]) }}</span>
-          </p>
-
-          <div ref="stickyMobileHeaderAnchor" class="-mb-2"></div>
+          <div class="-mt-px" ref="stickyMobileHeaderAnchor"></div>
 
           <div
-            class="sticky lg:relative top-0 z-10 flex items-center h-14 mt-2 mb-3"
+            class="sticky lg:relative top-0 z-10 flex items-center h-14 my-1.5"
             :class="{
               'z-40 px-5 md:px-12 -mx-5 md:-mx-12 bg-[color:var(--color-header-bottom-bg)]':
                 isVisibleStickyMobileHeader,
             }"
           >
             <!-- Mobile filters toggler -->
-            <div class="lg:hidden mr-3">
+            <div class="lg:hidden mr-2.5">
               <VcButton
-                class="px-4 font-extrabold"
+                class="pl-2.5 pr-2 !text-15 font-bold !font-lato"
                 size="md"
                 @click="showMobileSidebar"
                 :is-disabled="loading || loadingMore"
               >
-                <i class="fas fa-filter mr-1"></i> {{ $t("pages.catalog.filters_button") }}
+                <i class="fas fa-filter mr-2"></i> {{ $t("pages.catalog.filters_button") }}
               </VcButton>
             </div>
 
-            <!-- View options -->
-            <ViewMode v-model:mode="viewMode" class="hidden md:inline-flex mr-6" />
-
             <!-- Sorting -->
-            <div class="flex items-center flex-grow md:flex-grow-0 z-10 ml-auto">
+            <div class="flex items-center flex-grow md:flex-grow-0 z-10 ml-auto lg:order-2">
               <span class="hidden lg:block shrink-0 mr-2" v-t="'pages.catalog.sort_by_label'"></span>
 
               <VcSelect
@@ -117,6 +121,9 @@
                 class="w-full md:w-52 lg:w-64"
               />
             </div>
+
+            <!-- View options -->
+            <ViewMode v-model:mode="viewMode" class="inline-flex ml-3 lg:order-1 lg:ml-0" />
           </div>
 
           <!-- Filters chips -->
@@ -172,7 +179,7 @@
           <template v-if="products.length || loading">
             <DisplayProducts
               :loading="loading"
-              :view-mode="isMobile ? 'grid' : viewMode"
+              :view-mode="viewMode"
               :items-per-page="itemsPerPage"
               :products="products"
               :class="
