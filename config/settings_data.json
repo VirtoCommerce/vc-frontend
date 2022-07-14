@@ -109,7 +109,8 @@
       "color_in_stock_out": "#F14E4E",
       "color_in_stock_out_bg": "#FFEDED",
       "color_in_stock_low_bg": "#FFF6E9",
-      "color_category_page_results": "#939393"
+      "color_category_page_results": "#939393",
+      "color_view_mode_hover": "#E78E11"
     }
   }
 }

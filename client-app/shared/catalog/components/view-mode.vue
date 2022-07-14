@@ -3,7 +3,11 @@
     <button
       type="button"
       class="flex rounded p-2"
-      :class="[mode === 'grid' ? 'bg-white text-secondary cursor-not-allowed' : 'text-primary']"
+      :class="[
+        mode === 'grid'
+          ? 'bg-white text-secondary cursor-auto hover:shadow-t-2sm'
+          : 'text-primary hover:text-[color:var(--color-view-mode-hover)]',
+      ]"
       @click="$emit('update:mode', 'grid')"
     >
       <svg class="w-5 h-5">
@@ -14,7 +18,11 @@
     <button
       type="button"
       class="flex rounded p-2"
-      :class="[mode === 'list' ? 'bg-white text-secondary cursor-not-allowed' : 'text-primary']"
+      :class="[
+        mode === 'list'
+          ? 'bg-white text-secondary cursor-auto hover:shadow-t-2sm'
+          : 'text-primary hover:text-[color:var(--color-view-mode-hover)]',
+      ]"
       @click="$emit('update:mode', 'list')"
     >
       <svg class="w-5 h-5">

@@ -3,7 +3,7 @@
     class="bg-gray-100 pt-4 pb-16 shadow-inner grow lg:pt-6"
     :class="{ 'polygon-gray-bg': !products.length && !loading }"
   >
-    <div class="max-w-screen-2xl px-5 xl:px-17 mx-auto">
+    <div class="max-w-screen-2xl px-5 xl:pl-17 xl:pr-19 mx-auto">
       <!-- Breadcrumbs -->
       <Breadcrumbs class="mb-2.5 md:mb-4" :items="breadcrumbs" />
 
@@ -80,17 +80,17 @@
           <div class="flex">
             <h2 class="text-gray-800 text-21 font-bold uppercase lg:text-25">
               {{ selectedCategory?.label }}
+              <sup
+                class="-top-1.5 pl-2 text-sm text-[color:var(--color-category-page-results)] normal-case font-normal whitespace-nowrap lg:text-15"
+                v-html="$t('pages.catalog.products_found_message', [total])"
+              ></sup>
             </h2>
-            <span
-              class="pt-px pl-2 text-sm text-[color:var(--color-category-page-results)] whitespace-nowrap lg:text-15 lg:pt-1"
-              v-html="$t('pages.catalog.products_found_message', [total])"
-            ></span>
           </div>
 
           <div class="-mt-px" ref="stickyMobileHeaderAnchor"></div>
 
           <div
-            class="sticky lg:relative top-0 z-10 flex items-center h-14 my-1.5"
+            class="sticky top-0 z-10 flex items-center h-14 my-1.5 lg:my-1 lg:relative"
             :class="{
               'z-40 px-5 md:px-12 -mx-5 md:-mx-12 bg-[color:var(--color-header-bottom-bg)]':
                 isVisibleStickyMobileHeader,

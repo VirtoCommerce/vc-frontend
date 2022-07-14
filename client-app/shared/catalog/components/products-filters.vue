@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-4 lg:gap-5">
     <!-- Search results -->
-    <VcCard :title="$t('pages.catalog.search_card.title')">
+    <VcFilterCard :title="$t('pages.catalog.search_card.title')">
       <p class="text-sm pb-2" v-t="'pages.catalog.search_card.search_label'"></p>
       <div class="flex gap-3">
         <div class="relative">
@@ -31,17 +31,17 @@
           {{ $t("pages.catalog.search_card.search_button") }}
         </VcButton>
       </div>
-    </VcCard>
+    </VcFilterCard>
 
     <!-- Previously purchased -->
-    <VcCard :title="$t('pages.catalog.instock_filter_card.title')">
+    <VcFilterCard :title="$t('pages.catalog.instock_filter_card.title')">
       <VcCheckbox v-model="_filters.inStock" :disabled="loading" @change="onFilterChanged">
         {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
       </VcCheckbox>
-    </VcCard>
+    </VcFilterCard>
 
     <!-- Branch availability -->
-    <VcCard :title="$t('pages.catalog.branch_availability_filter_card.title')">
+    <VcFilterCard :title="$t('pages.catalog.branch_availability_filter_card.title')">
       <p class="text-sm font-medium">
         <span
           class="text-[color:var(--color-link)] font-semibold cursor-pointer hover:text-[color:var(--color-link-hover)]"
@@ -50,22 +50,22 @@
         </span>
         {{ $t("pages.catalog.branch_availability_filter_card.select_branch_link_end") }}
       </p>
-    </VcCard>
+    </VcFilterCard>
 
     <!-- Facet Filters Skeletons -->
     <template v-if="loading && !_filters.facets.length">
-      <VcCardSkeleton is-collapsible v-for="i in 6" :key="i">
+      <VcFilterCardSkeleton is-collapsible v-for="i in 6" :key="i">
         <!-- TODO: add checkbox skeleton -->
         <div class="flex items-center mt-3 first:mt-0" v-for="i in 5" :key="i">
           <div class="w-5 h-5 bg-gray-100 inline-block"></div>
           <div class="ml-2 text-sm bg-gray-100 w-11/12">&nbsp;</div>
         </div>
-      </VcCardSkeleton>
+      </VcFilterCardSkeleton>
     </template>
 
     <!-- Facet Filters -->
     <template v-else>
-      <VcCard
+      <VcFilterCard
         is-collapsible
         v-for="facet in _filters.facets"
         :key="facet.paramName"
@@ -85,7 +85,7 @@
             <span class="ml-1">{{ $t("pages.catalog.facet_card.item_count_format", [item.count]) }}</span>
           </div>
         </VcCheckbox>
-      </VcCard>
+      </VcFilterCard>
     </template>
   </div>
 </template>

@@ -3,6 +3,7 @@ export { default as VcAlert } from "./alert/vc-alert.vue";
 export { default as VcBreadcrumbs } from "./breadcrumbs/vc-breadcrumbs.vue";
 export { default as VcButton } from "./button/vc-button.vue";
 export { default as VcCard } from "./card/vc-card.vue";
+export { default as VcFilterCard } from "./filter-card/vc-filter-card.vue";
 export { default as VcCardSkeleton } from "./card-skeleton/vc-card-skeleton.vue";
 export { default as VcCheckbox } from "./checkbox/vc-checkbox.vue";
 export { default as VcChip } from "./chip/vc-chip.vue";

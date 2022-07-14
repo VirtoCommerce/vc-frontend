@@ -131,6 +131,7 @@ module.exports = {
       },
       boxShadow: {
         't-sm': '0 -1px 2px 0 rgba(0, 0, 0, 0.05)',
+        't-2sm': '1px 2px 4px rgba(0, 0, 0, 0.15)',
         't': '0 -1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);',
         't-md': '0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
         't-lg': '0 -10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
@@ -139,8 +140,16 @@ module.exports = {
         't-3xl': '0 -35px 60px -15px rgba(0, 0, 0, 0.3)',
       },
       fontSize: {
+        '13': [ '0.813rem', { //13px
+          lineHeight: '1.25rem', //20px
+        }],
+        '13-title': [ '0.813rem', { //13px
+          lineHeight: '1.25rem', //20px
+          letterSpacing: '0.01em',
+        }],
         '15': [ '0.938rem', { //15px
           lineHeight: '1.25rem', //20px
+          letterSpacing: 0,
         }],
         '21': [ '1.313rem', { //21px
           lineHeight: '1.563rem', //25px
@@ -153,6 +162,7 @@ module.exports = {
       },
       padding: {
         '17': '4.25rem', //68px
+        '19': '4.75rem', //76px
       }
     },
   },
