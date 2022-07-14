@@ -2,7 +2,7 @@
   <component
     v-if="seoInfo?.entity?.objectType === 'Category'"
     :is="Category"
-    :category-seo-urls="seoInfo?.entity?.slug"
+    :category-id="seoInfo?.entity?.objectId"
   />
 
   <component
@@ -28,7 +28,7 @@ import PageBuilder from "@/pages/builder.vue";
 import NotFound from "@/pages/404.vue";
 
 import { onBeforeUnmount, PropType, ref, watchEffect } from "vue";
-import { asyncComputed } from "@vueuse/core";
+import { asyncComputed, computedEager } from "@vueuse/core";
 import { useFetch, useLanguages } from "@/core/composables";
 import { useNavigations } from "@/shared/layout";
 
@@ -85,16 +85,15 @@ const { setMatchedRouteName } = useNavigations();
 
 const loading = ref(true);
 
+const seoUrl = computedEager(() => props.pathMatch[props.pathMatch?.length - 1]);
 const seoInfo = asyncComputed<TResult | undefined>(
   async () => {
-    const slug = props.pathMatch[props.pathMatch?.length - 1];
-
-    if (!slug) {
+    if (!seoUrl.value) {
       return undefined;
     }
 
     const result = await innerFetch<TSlugInfoResult>(
-      `/storefrontapi/slug/${slug}?culture=${currentLanguage.value!.cultureName}`
+      `/storefrontapi/slug/${seoUrl.value}?culture=${currentLanguage.value!.cultureName}`
     );
 
     if (result.contentItem?.type === "page") {

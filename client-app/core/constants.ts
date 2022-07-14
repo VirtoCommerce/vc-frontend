@@ -4,7 +4,6 @@ export const DEFAULT_PAGE_SIZE = 16;
 export const DEFAULT_SEARCH_PAGE_SIZE = 20;
 export const SORT_ASCENDING = "asc";
 export const SORT_DESCENDING = "desc";
-export const IN_STOCK_FILTER_EXPRESSION = "instock_quantity:(1 TO)";
 
 export const PRODUCT_SORTING_LIST = [
   { id: "priority-descending;name-ascending", name: "Featured" },
