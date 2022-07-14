@@ -33,9 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, ref, shallowRef } from "vue";
-import { onClickOutside } from "@vueuse/core";
-import { MenuLink } from "@/shared/layout";
+import { PropType } from "vue";
 import { RouteLocationRaw } from "vue-router";
 
 defineProps({
