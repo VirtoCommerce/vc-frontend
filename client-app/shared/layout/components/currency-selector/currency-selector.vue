@@ -1,7 +1,7 @@
 <template>
   <div v-click-outside="() => open && hideList()" class="relative select-none text-[13px]">
     <button
-      class="relative py-3 pr-3.5 appearance-none leading-none text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
+      class="relative flex items-center space-x-1 py-3 pr-3.5 appearance-none leading-none text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
       @click="toggle"
     >
       <span class="text-white mr-1">
@@ -12,8 +12,11 @@
         {{ currentCurrency?.code }}
       </span>
 
-      <span class="absolute inset-y-0 right-0 flex items-center pointer-events-none">
-        <i class="text-[color:var(--color-primary)] fas fa-chevron-down text-[0.625rem]" />
+      <span class="absolute inset-y-0 -right-3.5 flex items-center pointer-events-none lg:right-0">
+        <i
+          class="text-[color:var(--color-mobile-menu-link)] fas text-[1rem] lg:text-[color:var(--color-primary)] lg:text-[0.625rem]"
+          :class="[open ? 'fa-chevron-up' : 'fa-chevron-down']"
+        />
       </span>
     </button>
 

@@ -34,6 +34,7 @@
       <router-link
         :to="link"
         class="text-[color:var(--color-link)] font-extrabold text-sm mb-3 flex-grow line-clamp-3 overflow-hidden cursor-pointer"
+        :title="product.name"
       >
         {{ product.name }}
       </router-link>

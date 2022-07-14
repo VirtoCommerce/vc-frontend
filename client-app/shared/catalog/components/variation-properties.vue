@@ -17,6 +17,7 @@
 import _ from "lodash";
 import { computed, PropType } from "vue";
 import { Property } from "@/xapi/types";
+import { prepareProperties } from "../utils";
 
 const props = defineProps({
   properties: {
@@ -28,14 +29,9 @@ const props = defineProps({
 // todo: move this logic to the separated helper. For product properties also
 const grouped = computed(() => {
   return _(props.properties)
-    .filter((p) => !!p && p.type === "Variation")
+    .filter((p) => !!p && p.type === "Variation" && p.value !== undefined && p.value !== null && !p.hidden)
     .groupBy((p) => p.name)
-    .map((properties, propName) => {
-      return {
-        name: propName,
-        values: properties.map((x) => x.value).join(", "),
-      };
-    })
+    .map(prepareProperties)
     .value();
 });
 </script>
