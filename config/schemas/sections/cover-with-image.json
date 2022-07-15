@@ -5,7 +5,57 @@
     {
       "type": "files",
       "id": "singleFile",
-      "label": "Single File"
+      "label": "Single File",
+      "info": "default upload from settings"
+    },
+    {
+      "type": "files",
+      "id": "multipleFiles",
+      "label": "Multiple Files",
+      "multiple": true,
+      "info": "named upload from settings",
+      "uploadAssetsRequest": "fullUploadAssetsRequest"
+    },
+    {
+      "type": "files",
+      "id": "sortableFiles",
+      "label": "Sortable Files",
+      "multiple": true,
+      "sortable": true,
+      "info": "save file inline",
+      "uploadAssetsRequest": "inline"
+    },
+    {
+      "type": "files",
+      "id": "extendedFiles",
+      "label": "Files with extra properties",
+      "info": "Custom upload options",
+      "multiple": true,
+      "sortable": true,
+      "uploadAssetsRequest": {
+        "url": "/api/content/pages/B2B-store?folderUrl=/assets/pages&name={{file.assetName}}",
+        "method": "POST",
+        "form": {
+          "name": "uploadedFile",
+          "fileName": "{{file.assetName}}"
+        },
+        "response": {
+          "result": "$[0].url",
+          "isArray": false
+        }
+      },
+      "element": [
+        {
+          "id": "info",
+          "type": "string",
+          "label": "Info"
+        },
+        {
+          "id": "size",
+          "type": "string",
+          "label": "size"
+        }
+      ]
     },
     {
       "type": "list",
