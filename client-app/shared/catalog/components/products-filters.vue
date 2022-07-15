@@ -1,9 +1,9 @@
 <template>
-  <div class="flex flex-col gap-4 lg:gap-5">
+  <div class="space-y-4 lg:space-y-5">
     <!-- Search results -->
     <VcFilterCard :title="$t('pages.catalog.search_card.title')">
-      <p class="text-sm pb-2" v-t="'pages.catalog.search_card.search_label'"></p>
-      <div class="flex gap-3">
+      <div class="text-sm pb-2" v-t="'pages.catalog.search_card.search_label'"></div>
+      <div class="flex gap-2.5">
         <div class="relative">
           <input
             v-model="_keyword"
@@ -23,9 +23,9 @@
 
         <VcButton
           :is-disabled="loading || isAppliedKeyword"
-          class="px-5 uppercase"
-          outline
+          class="px-3.5 uppercase"
           size="sm"
+          is-outline
           @click="onSearchStart"
         >
           {{ $t("pages.catalog.search_card.search_button") }}
@@ -42,14 +42,14 @@
 
     <!-- Branch availability -->
     <VcFilterCard :title="$t('pages.catalog.branch_availability_filter_card.title')">
-      <p class="text-sm font-medium">
+      <div class="text-sm font-medium">
         <span
           class="text-[color:var(--color-link)] font-semibold cursor-pointer hover:text-[color:var(--color-link-hover)]"
         >
           {{ $t("pages.catalog.branch_availability_filter_card.select_branch_link") }}
         </span>
         {{ $t("pages.catalog.branch_availability_filter_card.select_branch_link_end") }}
-      </p>
+      </div>
     </VcFilterCard>
 
     <!-- Facet Filters Skeletons -->

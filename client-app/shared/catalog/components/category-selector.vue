@@ -2,18 +2,18 @@
   <!-- category selector -->
   <VcFilterCard v-if="!loading || selectedCategory" :withHeader="!!backCategory">
     <template #header>
-      <router-link :to="getCategoryRoute(backCategory!)" class="mt-0.5 pl-0.5">
-        <i class="fas fa-chevron-left text-[color:var(--color-primary)] cursor-pointer"></i>
+      <router-link :to="getCategoryRoute(backCategory!)" class="mt-0.5 -mb-0.5 pl-0.5">
+        <i class="fas fa-chevron-left text-[color:var(--color-primary)]"></i>
         <span class="font-bold ml-1.5">
           {{ backCategory?.label }}
         </span>
       </router-link>
     </template>
-    <div v-if="selectedCategory" class="text-13-title">
-      <div class="uppercase font-extrabold mb-1">{{ categoryLabel }}</div>
-      <div class="pl-3 flex flex-col">
+    <template v-if="selectedCategory">
+      <div class="uppercase font-extrabold -mt-0.5 mb-1 text-13-title">{{ categoryLabel }}</div>
+      <div class="-mr-1.5 pl-5 pb-1.5 flex flex-col text-sm">
         <router-link
-          class="hover:bg-gray-100 px-2 py-0.5 mt-0.5 transition-colors"
+          class="hover:bg-gray-100 py-0.5 mt-0.5 transition-colors truncate"
           v-for="category in categoryItems"
           :key="category.id"
           :class="{ 'font-bold': category.id === selectedCategory.id }"
@@ -21,7 +21,7 @@
           >{{ category.label }}</router-link
         >
       </div>
-    </div>
+    </template>
   </VcFilterCard>
   <!-- skeleton -->
   <template v-else>
