@@ -4,8 +4,9 @@
       <!-- Lists -->
       <template v-if="!loadingLists">
         <template v-if="listsContain.length">
-          <div class="py-3 px-6 font-bold text-15 leading-5 bg-[color:var(--color-add-wishlist-dialog-subtitle-bg)]
-          sm:py-2.5">
+          <div
+            class="py-3 px-6 font-bold text-15 leading-5 bg-[color:var(--color-add-wishlist-dialog-subtitle-bg)] sm:py-2.5"
+          >
             {{ $t("shared.wishlists.add_to_wishlists_dialog.already_in_the_lists") }}
           </div>
 
@@ -130,6 +131,7 @@ import { usePopup } from "@/shared/popup";
 import moment from "moment";
 import { useI18n } from "vue-i18n";
 import { configInjectionKey } from "@/core/injection-keys";
+import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 
 const props = defineProps({
   product: {
@@ -157,7 +159,7 @@ const inputs = ref<WishlistInputType[]>([]);
 
 const productId = props.product.id;
 const config = inject(configInjectionKey);
-const listsLimit = config?.wishlists_limit || 10;
+const listsLimit = config?.wishlists_limit || DEFAULT_WISHLIST_LIMIT;
 
 const creationButtonDisabled = computed(() => lists.value.length + inputs.value.length >= listsLimit);
 
@@ -247,7 +249,7 @@ async function save() {
   loading.value = false;
 
   notifications.success({
-    duration: 15000,
+    duration: DEFAULT_NOTIFICATION_DURATION,
     singleInGroup: true,
     html: t("shared.wishlists.add_to_wishlists_dialog.notification_success"),
   });

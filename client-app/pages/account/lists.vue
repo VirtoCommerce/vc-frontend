@@ -74,13 +74,14 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 const { openPopup } = usePopup();
 const { loading, lists, fetchWishlists } = useWishlists();
+import { DEFAULT_WISHLIST_LIMIT } from "@/core/constants";
 
 usePageHead({
   title: t("pages.account.lists.meta.title"),
 });
 
 const config = inject(configInjectionKey);
-const listsLimit = config?.wishlists_limit || 10;
+const listsLimit = config?.wishlists_limit || DEFAULT_WISHLIST_LIMIT;
 
 const creationButtonDisabled = computed(() => lists.value.length >= listsLimit);
 
