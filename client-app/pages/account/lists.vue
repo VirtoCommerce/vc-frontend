@@ -63,6 +63,7 @@ import {
   DeleteWishlistsDialog,
   UnsuccessfulCreateWishlistDialog,
 } from "@/shared/wishlists";
+import { DEFAULT_WISHLIST_LIMIT } from "@/core/constants";
 import { LineItemType, WishlistType } from "@/xapi/types";
 import { usePopup } from "@/shared/popup";
 import { configInjectionKey } from "@/core/injection-keys";
@@ -74,7 +75,6 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 const { openPopup } = usePopup();
 const { loading, lists, fetchWishlists } = useWishlists();
-import { DEFAULT_WISHLIST_LIMIT } from "@/core/constants";
 
 usePageHead({
   title: t("pages.account.lists.meta.title"),
