@@ -3,35 +3,74 @@
   "displayField": "name",
   "settings": [
     {
+      "type": "images",
+      "id": "singleImage",
+      "multiple": false,
+      "label": "Single Image",
+      "info": "default upload from settings"
+    },
+    {
+      "type": "images",
+      "id": "gallery",
+      "label": "Gallery",
+      "multiple": true,
+      "info": "default upload from settings"
+    },
+    {
+      "type": "images",
+      "id": "galleryWithData",
+      "label": "Gallery with data",
+      "multiple": true,
+      "element": [
+        {
+          "type": "string",
+          "id": "altText",
+          "label": "Alt text"
+        },
+        {
+          "type": "string",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "Description"
+        }
+      ],
+      "info": "default upload from settings"
+    },
+    {
+      "tab": "Files",
       "type": "files",
       "id": "singleFile",
+      "multiple": false,
       "label": "Single File",
       "info": "default upload from settings"
     },
     {
+      "tab": "Files",
       "type": "files",
       "id": "multipleFiles",
       "label": "Multiple Files",
-      "multiple": true,
+      "sortable": false,
       "info": "named upload from settings",
       "uploadAssetsRequest": "fullUploadAssetsRequest"
     },
     {
+      "tab": "Files",
       "type": "files",
       "id": "sortableFiles",
       "label": "Sortable Files",
-      "multiple": true,
-      "sortable": true,
       "info": "save file inline",
       "uploadAssetsRequest": "inline"
     },
     {
+      "tab": "Files",
       "type": "files",
       "id": "extendedFiles",
       "label": "Files with extra properties",
       "info": "Custom upload options",
-      "multiple": true,
-      "sortable": true,
       "uploadAssetsRequest": {
         "url": "/api/content/pages/B2B-store?folderUrl=/assets/pages&name={{file.assetName}}",
         "method": "POST",
