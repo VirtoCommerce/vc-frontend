@@ -1,7 +1,7 @@
 <template>
   <component
     :is="isExternalLink ? 'a' : isLink ? 'router-link' : 'button'"
-    :href="isExternalLink ? to : null"
+    :href="isExternalLink && isEnabled ? to : null"
     :to="isEnabled ? to : ''"
     :type="isLink ? null : isSubmit ? 'submit' : 'button'"
     :disabled="!isEnabled"

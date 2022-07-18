@@ -89,12 +89,22 @@
               </div>
             </template>
             <template #content>
-              <div class="px-5 mt-1.5 mb-5 text-left">
-                <VcInput :label="$t('common.labels.email')" type="email" v-model="emailRecipient"></VcInput>
+              <div class="px-5 mt-1.5 mb-5 flex flex-col">
+                <VcInput
+                  :label="$t('common.labels.email')"
+                  type="email"
+                  v-model="recipientEmail"
+                  :errorMessage="recipientEmailErrorMessage"
+                ></VcInput>
                 <div class="mt-5 flex flex-col">
-                  <VcButton class="self-end px-8 uppercase" size="sm" :to="mailToLink" isExternalLink>{{
-                    $t("common.buttons.send")
-                  }}</VcButton>
+                  <VcButton
+                    class="self-end px-8 uppercase"
+                    size="sm"
+                    :to="mailToLink"
+                    isExternalLink
+                    :is-disabled="!recipientEmailMeta.dirty || !recipientEmailMeta.valid"
+                    >{{ $t("common.buttons.send") }}</VcButton
+                  >
                 </div>
               </div>
             </template>
@@ -117,6 +127,8 @@
 <script setup lang="ts">
 import { Product } from "@/xapi/types";
 import { PropType, ref } from "vue";
+import { useField } from "vee-validate";
+import * as yup from "yup";
 import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddToWishlistsDialog } from "@/shared/wishlists";
@@ -137,7 +149,12 @@ const { openPopup } = usePopup();
 const pageUrl: string = location.href;
 const shareProductPopoverShown = ref(false);
 const sendProductToEmailPopoverShown = ref(false);
-const emailRecipient = ref("");
+
+const {
+  value: recipientEmail,
+  errorMessage: recipientEmailErrorMessage,
+  meta: recipientEmailMeta,
+} = useField<string>("email", yup.string().required().email());
 
 function addToList() {
   if (!isAuthenticated.value) {
@@ -152,7 +169,7 @@ function addToList() {
   });
 }
 
-const mailToLink = computed(() => `mailto:${emailRecipient.value}?subject=${props.product?.name}&body=${pageUrl}`);
+const mailToLink = computed(() => `mailto:${recipientEmail.value}?subject=${props.product?.name}&body=${pageUrl}`);
 
 function getProductSocialShareUrl(urlTemplate: string, url: string): string {
   return stringFormat(urlTemplate, url);
