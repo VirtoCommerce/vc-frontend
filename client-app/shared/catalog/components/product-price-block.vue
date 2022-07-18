@@ -70,9 +70,13 @@
         </div>
 
         <div class="w-1/3">
-          <div class="items-center justify-center select-none py-4 px-1 border-r space-x-2 hover:bg-gray-100">
-            <i class="fas fa-envelope fa-xl text-gray-400" />
-          </div>
+          <a
+            :href="mailToLink"
+            target="_blank"
+            class="block items-center justify-center select-none py-4 px-1 border-r space-x-2 hover:bg-gray-100"
+          >
+            <i class="fas fa-envelope fa-xl text-[color:var(--color-primary)]" />
+          </a>
         </div>
 
         <div class="w-1/3">
@@ -95,6 +99,7 @@ import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddToWishlistsDialog } from "@/shared/wishlists";
 import { stringFormat } from "@/core/utilities";
+import { computed } from "@vue/reactivity";
 
 const props = defineProps({
   product: {
@@ -121,6 +126,8 @@ function addToList() {
     },
   });
 }
+
+const mailToLink = computed(() => `mailto:?subject=${props.product?.name}&body=${pageUrl}`);
 
 function getProductSocialShareUrl(urlTemplate: string, url: string): string {
   return stringFormat(urlTemplate, url);
