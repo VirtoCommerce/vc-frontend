@@ -1,6 +1,7 @@
 <template>
   <component
-    :is="isLink ? 'router-link' : 'button'"
+    :is="isExternalLink ? 'a' : isLink ? 'router-link' : 'button'"
+    :href="isExternalLink ? to : null"
     :to="isEnabled ? to : ''"
     :type="isLink ? null : isSubmit ? 'submit' : 'button'"
     :disabled="!isEnabled"
@@ -69,6 +70,10 @@ const props = defineProps({
   to: {
     type: [String, Object] as PropType<RouteLocationRaw>,
     default: null,
+  },
+  isExternalLink: {
+    type: Boolean,
+    default: false,
   },
 });
 

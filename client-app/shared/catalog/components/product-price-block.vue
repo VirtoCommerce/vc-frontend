@@ -39,7 +39,7 @@
           <VcPopover
             :title="$t('shared.catalog.product_details.share_product_label')"
             :showCloseButton="true"
-            @shown="handlePopoverShown"
+            @shown="handleShareProductPopoverShown"
           >
             <template #trigger>
               <div
@@ -70,13 +70,35 @@
         </div>
 
         <div class="w-1/3">
-          <a
-            :href="mailToLink"
-            target="_blank"
-            class="block items-center justify-center select-none py-4 px-1 border-r space-x-2 hover:bg-gray-100"
+          <VcPopover
+            :title="$t('shared.catalog.product_details.send_product_to_email_label')"
+            :showCloseButton="true"
+            @shown="handleSendProductToEmailPopoverShown"
           >
-            <i class="fas fa-envelope fa-xl text-[color:var(--color-primary)]" />
-          </a>
+            <template #trigger>
+              <div
+                class="items-center justify-center select-none py-4 px-1 border-r space-x-2 cursor-pointer hover:bg-gray-100"
+              >
+                <i
+                  class="fas fa-envelope fa-xl"
+                  :class="{
+                    'text-[color:var(--color-primary)]': !sendProductToEmailPopoverShown,
+                    'text-gray-400': sendProductToEmailPopoverShown,
+                  }"
+                />
+              </div>
+            </template>
+            <template #content>
+              <div class="px-5 mt-1.5 mb-5 text-left">
+                <VcInput :label="$t('common.labels.email')" type="email" v-model="emailRecipient"></VcInput>
+                <div class="mt-5 flex flex-col">
+                  <VcButton class="self-end px-8 uppercase" size="sm" :to="mailToLink" isExternalLink>{{
+                    $t("common.buttons.send")
+                  }}</VcButton>
+                </div>
+              </div>
+            </template>
+          </VcPopover>
         </div>
 
         <div class="w-1/3">
@@ -100,6 +122,7 @@ import { usePopup } from "@/shared/popup";
 import { AddToWishlistsDialog } from "@/shared/wishlists";
 import { stringFormat } from "@/core/utilities";
 import { computed } from "@vue/reactivity";
+import VcInput from "@/ui-kit/components/atoms/input/vc-input.vue";
 
 const props = defineProps({
   product: {
@@ -113,6 +136,8 @@ const { openPopup } = usePopup();
 
 const pageUrl: string = location.href;
 const shareProductPopoverShown = ref(false);
+const sendProductToEmailPopoverShown = ref(false);
+const emailRecipient = ref("");
 
 function addToList() {
   if (!isAuthenticated.value) {
@@ -127,7 +152,7 @@ function addToList() {
   });
 }
 
-const mailToLink = computed(() => `mailto:?subject=${props.product?.name}&body=${pageUrl}`);
+const mailToLink = computed(() => `mailto:${emailRecipient.value}?subject=${props.product?.name}&body=${pageUrl}`);
 
 function getProductSocialShareUrl(urlTemplate: string, url: string): string {
   return stringFormat(urlTemplate, url);
@@ -137,7 +162,11 @@ function print() {
   window.print();
 }
 
-function handlePopoverShown(state: boolean): void {
+function handleShareProductPopoverShown(state: boolean): void {
   shareProductPopoverShown.value = state;
+}
+
+function handleSendProductToEmailPopoverShown(state: boolean): void {
+  sendProductToEmailPopoverShown.value = state;
 }
 </script>

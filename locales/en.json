@@ -21,7 +21,8 @@
       "back": "Back",
       "reset": "Reset",
       "add_to_cart": "Add to cart",
-      "apply": "Apply"
+      "apply": "Apply",
+      "send": "Send"
     },
     "labels": {
       "actions": "Actions",
@@ -301,6 +302,7 @@
         "variations_block_title": "Customize your order",
         "description_block_title": "Description",
         "share_product_label": "Share product",
+        "send_product_to_email_label": "Send product to",
         "price_block": {
           "title": "Price and Delivery",
           "add_to_list_button": "Add to list",
