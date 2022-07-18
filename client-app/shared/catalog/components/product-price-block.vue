@@ -10,7 +10,7 @@
       <slot />
     </div>
 
-    <div class="flex text-center">
+    <div class="flex">
       <div
         class="flex items-center justify-center select-none py-4 px-1 border-r space-x-2 w-2/5"
         :class="{ 'cursor-pointer hover:bg-gray-100': isAuthenticated }"
@@ -43,10 +43,10 @@
           >
             <template #trigger>
               <div
-                class="items-center justify-center select-none py-4 px-1 border-r space-x-2 cursor-pointer hover:bg-gray-100"
+                class="flex items-center justify-center select-none py-4 px-1 border-r space-x-2 cursor-pointer hover:bg-gray-100"
               >
                 <i
-                  class="fas fa-share-square fa-xl"
+                  class="fas fa-share-square text-base"
                   :class="{
                     'text-[color:var(--color-primary)]': !shareProductPopoverShown,
                     'text-gray-400': shareProductPopoverShown,
@@ -77,10 +77,10 @@
           >
             <template #trigger>
               <div
-                class="items-center justify-center select-none py-4 px-1 border-r space-x-2 cursor-pointer hover:bg-gray-100"
+                class="flex items-center justify-center select-none py-4 px-1 border-r space-x-2 cursor-pointer hover:bg-gray-100"
               >
                 <i
-                  class="fas fa-envelope fa-xl"
+                  class="fas fa-envelope text-base"
                   :class="{
                     'text-[color:var(--color-primary)]': !sendProductToEmailPopoverShown,
                     'text-gray-400': sendProductToEmailPopoverShown,
@@ -89,13 +89,15 @@
               </div>
             </template>
             <template #content>
-              <div class="px-5 mt-1.5 mb-5 flex flex-col">
-                <VcInput
-                  :label="$t('common.labels.email')"
-                  type="email"
-                  v-model="recipientEmail"
-                  :errorMessage="recipientEmailErrorMessage"
-                ></VcInput>
+              <div class="px-5 mt-1.5 mb-5 flex flex-col items-stretch">
+                <div>
+                  <VcInput
+                    :label="$t('common.labels.email')"
+                    type="email"
+                    v-model="recipientEmail"
+                    :errorMessage="recipientEmailErrorMessage"
+                  ></VcInput>
+                </div>
                 <div class="mt-5 flex flex-col">
                   <VcButton
                     class="self-end px-8 uppercase"
@@ -113,10 +115,10 @@
 
         <div class="w-1/3">
           <div
-            class="items-center justify-center flex-1 select-none py-4 px-1 space-x-2 cursor-pointer hover:bg-gray-100"
+            class="flex items-center justify-center flex-1 select-none py-4 px-1 space-x-2 cursor-pointer hover:bg-gray-100"
             @click="print()"
           >
-            <i class="fas fa-print text-[color:var(--color-primary)]" />
+            <i class="fas fa-print text-base text-[color:var(--color-primary)]" />
           </div>
         </div>
       </div>
