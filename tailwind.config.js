@@ -203,6 +203,11 @@ module.exports = {
         "screen-60": "60vh",
         "screen-75": "75vh",
       },
+      fontSize: {
+        '15': [ '0.938rem', {
+          lineHeight: '1.25rem'
+        }]
+      }
     },
   },
 
