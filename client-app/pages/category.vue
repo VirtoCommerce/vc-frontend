@@ -87,9 +87,9 @@
           <div ref="stickyMobileHeaderAnchor" class="-mb-2"></div>
 
           <div
-            class="sticky lg:relative top-0 z-10 flex items-center h-14 mt-2 mb-3"
+            class="sticky lg:relative z-10 flex items-center h-14 mt-2 mb-3"
             :class="{
-              'z-40 px-5 md:px-12 -mx-5 md:-mx-12 bg-[color:var(--color-header-bottom-bg)]':
+              'z-40 px-5 md:px-12 -mx-5 md:-mx-12 top-14 bg-[color:var(--color-header-bottom-bg)] border-t-2 shadow-md':
                 isVisibleStickyMobileHeader,
             }"
           >
