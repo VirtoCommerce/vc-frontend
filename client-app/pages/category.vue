@@ -103,8 +103,15 @@
             <!-- View options -->
             <ViewMode v-model:mode="savedViewMode" class="hidden md:inline-flex mr-6" />
 
+            <div class="relative mr-6 ml-auto cursor-pointer" @click="openBranchesDialog">
+              <VcCheckbox model-value :disabled="loading" class="hidden md:flex">
+                Available at <span class="text-[color:var(--color-link)] font-bold">2 branches</span>
+              </VcCheckbox>
+              <div class="absolute inset-0"></div>
+            </div>
+
             <!-- Sorting -->
-            <div class="flex items-center flex-grow md:flex-grow-0 z-10 ml-auto">
+            <div class="flex items-center flex-grow md:flex-grow-0 z-10">
               <span class="hidden lg:block shrink-0 mr-2" v-t="'pages.catalog.sort_by_label'"></span>
 
               <VcSelect
@@ -260,6 +267,7 @@ import {
   useProducts,
   useProductsRoutes,
   ViewMode,
+  BranchesDialog,
 } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 import { useElementVisibility, usePageHead, useRouteQueryParam } from "@/core/composables";
@@ -267,6 +275,7 @@ import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import QueryParamName from "@/core/query-param-name.enum";
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
+import { usePopup } from "@/shared/popup";
 
 const FILTERS_RESET_TIMEOUT_IN_MS = 500;
 const watchStopHandles: WatchStopHandle[] = [];
@@ -278,6 +287,7 @@ const props = defineProps({
   },
 });
 
+const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { t } = useI18n();
 const { selectedCategory, selectCategoryByKey, loadCategoriesTree, selectRoot } = useCategories();
@@ -331,6 +341,7 @@ const page = ref(1);
 const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
 const mobileSidebarVisible = ref(false);
 const mobileFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: savedInStock.value });
+const showBranchesPopup = ref(false);
 
 // region Computed properties
 
@@ -474,6 +485,20 @@ function selectCategory(id?: string) {
   } else {
     selectRoot();
   }
+}
+
+function openBranchesDialog() {
+  openPopup({
+    component: BranchesDialog,
+    props: {
+      onClose() {
+        showBranchesPopup.value = false;
+      },
+      onResult() {
+        showBranchesPopup.value = false;
+      },
+    },
+  });
 }
 
 // endregion Methods

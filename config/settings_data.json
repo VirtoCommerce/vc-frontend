@@ -108,7 +108,10 @@
       "color_in_stock_available_bg": "#E8FBE8",
       "color_in_stock_out": "#F14E4E",
       "color_in_stock_out_bg": "#FFEDED",
-      "color_in_stock_low_bg": "#FFF6E9"
+      "color_in_stock_low_bg": "#FFF6E9",
+      "color_branch_dialog_bg": "#F3F3F3",
+      "color_branch_dialog_clock": "#99A2B9",
+      "color_branch_dialog_closed": "#EC6A5E"
     }
   }
 }
