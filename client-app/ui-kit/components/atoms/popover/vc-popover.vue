@@ -3,7 +3,7 @@
     <slot name="trigger" />
   </div>
 
-  <div class="bg-white border shadow-lg rounded" id="popover" ref="popoverNode" v-show="popoverShow">
+  <div class="bg-white border shadow-lg rounded" v-bind="$attrs" id="popover" ref="popoverNode" v-show="isShown">
     <div class="border-t border-l" id="arrow" data-popper-arrow></div>
 
     <h3 class="flex justify-between font-bold items-center text-lg h-14 px-5" v-if="title || showCloseButton">
@@ -16,58 +16,71 @@
         v-if="showCloseButton"
       />
     </h3>
-
     <slot name="content" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef, onUnmounted } from "vue";
+import { ref, shallowRef, onUnmounted, PropType } from "vue";
 import { isDefined, onClickOutside } from "@vueuse/core";
-import { createPopper, Instance } from "@popperjs/core";
+import { bottom, createPopper, Instance, Placement } from "@popperjs/core";
 
 const emit = defineEmits<{
-  (event: "shown", value: boolean): void;
+  (event: "toggle", value: boolean): void;
 }>();
 
-defineProps({
-  title: String,
-  showCloseButton: Boolean,
+const props = defineProps({
+  title: {
+    type: String,
+    default: undefined,
+  },
+  showCloseButton: {
+    type: Boolean,
+    default: true,
+  },
+  xOffset: {
+    type: Number,
+    default: 0,
+  },
+  placement: {
+    type: String as PropType<Placement>,
+    default: bottom,
+  },
 });
 
 const triggerNode = shallowRef<HTMLElement | null>(null);
 const popoverNode = shallowRef<HTMLElement | null>(null);
 
-const popoverShow = ref(false);
+const isShown = ref(false);
 let popoverInstance: Instance | undefined = undefined;
 
 function createPopover(): void {
   popoverInstance = createPopper(triggerNode.value!, popoverNode.value!, {
-    placement: "bottom",
+    placement: props.placement,
     modifiers: [
       {
         name: "offset",
         options: {
-          offset: [0, 20],
+          offset: [props.xOffset, 20],
         },
       },
       {
         name: "flip",
         options: {
-          fallbackPlacements: ["bottom"],
+          fallbackPlacements: [props.placement],
         },
       },
     ],
   });
 }
 
-function togglePopover(state?: boolean): void {
-  popoverShow.value = isDefined(state) ? state : !popoverShow.value;
-  if (popoverShow.value) {
+function togglePopover(show?: boolean): void {
+  isShown.value = isDefined(show) ? show : !isShown.value;
+  if (isShown.value) {
     createPopover();
     popoverInstance?.update();
   }
-  emit("shown", popoverShow.value);
+  emit("toggle", isShown.value);
 }
 
 onUnmounted(() => {
@@ -81,13 +94,9 @@ onClickOutside(popoverNode, () => togglePopover(false), { ignore: [triggerNode] 
 #arrow,
 #arrow::before {
   position: absolute;
-  top: -2px;
-  left: -3px;
   width: 16px;
   height: 16px;
   background: inherit;
-  border-top: inherit;
-  border-left: inherit;
 }
 
 #arrow {
@@ -100,7 +109,27 @@ onClickOutside(popoverNode, () => togglePopover(false), { ignore: [triggerNode] 
   transform: rotate(45deg);
 }
 
+#popover[data-popper-placement^="top"] > #arrow {
+  bottom: -8px;
+  border-right: inherit;
+  border-bottom: inherit;
+}
+
 #popover[data-popper-placement^="bottom"] > #arrow {
   top: -8px;
+  border-top: inherit;
+  border-left: inherit;
+}
+
+#popover[data-popper-placement^="left"] > #arrow {
+  right: -8px;
+  border-top: inherit;
+  border-right: inherit;
+}
+
+#popover[data-popper-placement^="right"] > #arrow {
+  left: -8px;
+  border-bottom: inherit;
+  border-left: inherit;
 }
 </style>

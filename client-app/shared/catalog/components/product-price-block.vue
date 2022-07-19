@@ -73,7 +73,9 @@
           <VcPopover
             :title="$t('shared.catalog.product_details.send_product_to_email_label')"
             :showCloseButton="true"
+            :xOffset="-60"
             @shown="handleSendProductToEmailPopoverShown"
+            class="w-[320px]"
           >
             <template #trigger>
               <div
@@ -100,7 +102,7 @@
                 </div>
                 <div class="mt-5 flex flex-col">
                   <VcButton
-                    class="self-end px-8 uppercase"
+                    class="self-end px-9 uppercase"
                     size="sm"
                     :to="mailToLink"
                     isExternalLink
@@ -124,6 +126,8 @@
       </div>
     </div>
   </div>
+  <!-- free area for popover on mobile -->
+  <div v-if="isMobile" class="h-40"></div>
 </template>
 
 <script setup lang="ts">
@@ -137,6 +141,9 @@ import { AddToWishlistsDialog } from "@/shared/wishlists";
 import { stringFormat } from "@/core/utilities";
 import { computed } from "@vue/reactivity";
 import VcInput from "@/ui-kit/components/atoms/input/vc-input.vue";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
 
 const props = defineProps({
   product: {
@@ -144,6 +151,8 @@ const props = defineProps({
     required: true,
   },
 });
+
+const isMobile = breakpoints.smaller("lg");
 
 const { isAuthenticated } = useUser();
 const { openPopup } = usePopup();
@@ -181,11 +190,11 @@ function print() {
   window.print();
 }
 
-function handleShareProductPopoverShown(state: boolean): void {
-  shareProductPopoverShown.value = state;
+function handleShareProductPopoverShown(isShown: boolean): void {
+  shareProductPopoverShown.value = isShown;
 }
 
-function handleSendProductToEmailPopoverShown(state: boolean): void {
-  sendProductToEmailPopoverShown.value = state;
+function handleSendProductToEmailPopoverShown(isShown: boolean): void {
+  sendProductToEmailPopoverShown.value = isShown;
 }
 </script>
