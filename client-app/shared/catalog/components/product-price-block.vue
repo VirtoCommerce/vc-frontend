@@ -39,7 +39,7 @@
           <VcPopover
             :title="$t('shared.catalog.product_details.share_product_label')"
             :showCloseButton="true"
-            @shown="handleShareProductPopoverShown"
+            @toggle="handleShareProductPopoverToggle"
           >
             <template #trigger>
               <div
@@ -74,7 +74,7 @@
             :title="$t('shared.catalog.product_details.send_product_to_email_label')"
             :showCloseButton="true"
             :xOffset="-60"
-            @shown="handleSendProductToEmailPopoverShown"
+            @toggle="handleSendProductToEmailPopoverToggle"
             class="w-[320px]"
           >
             <template #trigger>
@@ -190,11 +190,11 @@ function print() {
   window.print();
 }
 
-function handleShareProductPopoverShown(isShown: boolean): void {
+function handleShareProductPopoverToggle(isShown: boolean): void {
   shareProductPopoverShown.value = isShown;
 }
 
-function handleSendProductToEmailPopoverShown(isShown: boolean): void {
+function handleSendProductToEmailPopoverToggle(isShown: boolean): void {
   sendProductToEmailPopoverShown.value = isShown;
 }
 </script>
