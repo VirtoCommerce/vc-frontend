@@ -91,7 +91,7 @@
               </div>
             </template>
             <template #content>
-              <div class="px-5 mt-1.5 mb-5 flex flex-col items-stretch">
+              <div class="px-5 mb-5 flex flex-col items-stretch">
                 <div>
                   <VcInput
                     :label="$t('common.labels.email')"
@@ -102,7 +102,7 @@
                 </div>
                 <div class="mt-5 flex flex-col">
                   <VcButton
-                    class="self-end px-9 uppercase"
+                    class="self-end px-10 uppercase"
                     size="sm"
                     :to="mailToLink"
                     isExternalLink
@@ -127,7 +127,7 @@
     </div>
   </div>
   <!-- free area for popover on mobile -->
-  <div v-if="isMobile" class="h-40"></div>
+  <div v-if="isMobile" class="h-36"></div>
 </template>
 
 <script setup lang="ts">
