@@ -16,16 +16,7 @@
             {{ $t("shared.catalog.branches_dialog.all_branches") }}
           </div>
 
-          <div class="relative">
-          <input
-            class="flex-grow ml-6 mr-2 px-2 h-7 rounded border border-[color:var(--color-branch-dialog-input)] outline-none text-xs"
-            type="text"
-            :placeholder="$t('shared.catalog.branches_dialog.search_input_placeholder')"
-          />
-          </div>
-          <VcButton kind="white" class="w-7 !h-7 shadow-t-mds">
-            <i class="fas fa-search text-primary" />
-          </VcButton>
+          <BranchSearch class="flex-grow ml-6" />
         </div>
         <transition-group tag="div" name="branch" class="flex-grow h-[23.8rem] overflow-y-auto">
           <template v-for="(branch, index) in branches" :key="index">
@@ -85,6 +76,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import BranchItem from "./branch-item.vue";
+import BranchSearch from "./branch-search.vue";
 const showSelectedBranches = ref(false);
 const branches = ref([
   {
