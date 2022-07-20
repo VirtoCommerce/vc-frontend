@@ -146,5 +146,9 @@ function print() {
 
 function handleShareProductPopoverToggle(isShown: boolean): void {
   shareProductPopoverShown.value = isShown;
+
+  if (isMobile.value && isShown) {
+    window.scrollTo(0, document.body.scrollHeight);
+  }
 }
 </script>
