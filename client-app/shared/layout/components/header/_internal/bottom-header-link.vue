@@ -21,7 +21,7 @@
           <use :href="icon"></use>
         </svg>
         <div
-          v-if="badge"
+          v-if="badge && badge !== '0'"
           class="absolute -top-2 -right-[1.375rem] rounded-xl bg-white border border-[color:var(--color-primary)] px-1.5 pt-px pb-0.5 font-bold text-11"
         >
           {{ badge }}
