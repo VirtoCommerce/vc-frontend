@@ -481,9 +481,14 @@
       "add_to_wishlists_dialog": {
         "title": "Please select list",
         "empty_list": "You don't have wish lists",
-        "item_already_in_list": "Item already in the list",
         "cancel_button": "@:common.buttons.cancel",
-        "add_to_list_button": "Add to list"
+        "already_in_the_lists": "Already in the lists",
+        "add_to_other_lists": "Add to other lists",
+        "add_to_list_button": "Add to list",
+        "add_new_list": "Add new list",
+        "save_button": "Save",
+        "notification_success": "Your lists were successfully updated",
+        "is_required_validation_error": "The <b>List name</b> is required"
       },
       "added_to_wishlists_dialog": {
         "title": "Item added to list | Item added to lists",

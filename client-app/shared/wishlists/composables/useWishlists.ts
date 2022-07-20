@@ -35,6 +35,22 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
     await fetchWishlists();
   }
 
+  async function createWishlistAndAddProduct(name: string, productId: string) {
+    loading.value = true;
+
+    try {
+      const newList = await addWishlist(name);
+      if (!newList.id) {
+        console.error(`${useWishlists.name}.${createWishlistAndAddProduct.name}`, 'newList.id error');
+      } else {
+        await addItemsToWishlists([{ listId: newList.id, productId }]);
+      }
+    } catch (e) {
+      Logger.error(`${useWishlists.name}.${createWishlistAndAddProduct.name}`, e);
+      throw e;
+    }
+  }
+
   async function fetchWishlists() {
     loading.value = true;
 
@@ -150,6 +166,7 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
     fetchWishlists,
     fetchWishList,
     createWishlist,
+    createWishlistAndAddProduct,
     renameWishlist,
     removeWishlist,
     addItemsToWishlists,
