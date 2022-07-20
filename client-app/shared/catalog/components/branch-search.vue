@@ -14,8 +14,8 @@
         </svg>
       </button>
     </div>
-    <VcButton kind="white" class="w-7 !h-7 shadow-t-mds">
+    <button class="w-7 h-7 rounded shadow-t-mds bg-white hover:bg-slate-50">
       <i class="fas fa-search text-primary" />
-    </VcButton>
+    </button>
   </div>
 </template>
