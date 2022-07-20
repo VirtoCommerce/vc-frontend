@@ -18,6 +18,7 @@
       </div>
 
       <MobileOrdersFilter />
+
       <div class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
         <div class="flex space-x-4">
           <VcButton
@@ -48,17 +49,25 @@
     </VcPopupSidebar>
 
     <!-- search & filters -->
-    <div class="flex gap-3 lg:flex-row-reverse" v-if="!isMobile || orders.length">
+    <div ref="stickyMobileHeaderAnchor" class="-mb-2"></div>
+
+    <div
+      class="sticky lg:relative z-10 flex items-center h-14 mt-2 mb-3"
+      :class="{
+        'z-40 px-5 md:px-12 -mx-5 md:-mx-12 top-14 bg-[color:var(--color-header-bottom-bg)] border-t-2 shadow-md':
+          isVisibleStickyMobileHeader,
+      }"
+    >
       <div class="relative ml-5 md:mx-0">
         <VcButton
           ref="filterButtonElement"
           :is-disabled="ordersLoading"
           size="lg"
-          class="p-4 uppercase"
+          class="p-4 lg:hidden mr-3"
           @click="toggleFilters"
         >
           <span class="hidden lg:inline-block">{{ $t("common.buttons.filters") }}</span>
-          <span class="lg:hidden fa fa-filter"></span>
+          <span class="lg:hidden fas fa-filter"></span>
         </VcButton>
 
         <div
@@ -66,7 +75,7 @@
           class="absolute right-0 z-10 bg-white shadow-lg pb-6 rounded border border-gray-300 overflow-hidden mt-2"
         >
           <button class="absolute right-0 appearance-none mr-4 mt-2" @click="hideFilters">
-            <span class="text-lg fa fa-times text-red-400 hover:text-red-700"></span>
+            <span class="text-lg fas fa-times text-red-400 hover:text-red-700"></span>
           </button>
 
           <OrdersFilter ref="filtersElement" class="px-8 pt-9" @change="filterChanged()" />
@@ -270,16 +279,24 @@
 </template>
 
 <script setup lang="ts">
-import { OrdersFilter, MobileOrdersFilter, useUserOrdersFilter, useUserOrders } from "@/shared/account";
+import {
+  OrdersFilter,
+  MobileOrdersFilter,
+  useUserOrdersFilter,
+  useUserOrders,
+  OrdersFilterData,
+} from "@/shared/account";
 
-import { onMounted, ref, shallowRef, watch } from "vue";
+import { onMounted, ref, shallowRef, watch, computed } from "vue";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 import { breakpointsTailwind, useBreakpoints, onClickOutside } from "@vueuse/core";
 
 import { useRouter } from "vue-router";
 import { CustomerOrderType } from "@/xapi/types";
 import { useI18n } from "vue-i18n";
-import { usePageHead } from "@/core/composables";
+import { usePageHead, useElementVisibility } from "@/core/composables";
+
+import _ from "lodash";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -309,9 +326,11 @@ const openOrderDetails = (item: CustomerOrderType) => {
 
 watch(
   appliedFilterData,
-  () => {
-    page.value = 1;
-    loadOrders();
+  (newValue: OrdersFilterData, oldValue: OrdersFilterData) => {
+    if (!_.isEqual(newValue, oldValue)) {
+      page.value = 1;
+      loadOrders();
+    }
   },
   { deep: true }
 );
@@ -384,6 +403,15 @@ const columns = ref<ITableColumn[]>([
 ]);
 
 const filtersVisible = ref(false);
+
+const isMobileSidebar = breakpoints.smaller("lg");
+
+const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
+const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
+
+const isVisibleStickyMobileHeader = computed<boolean>(
+  () => !stickyMobileHeaderAnchorIsVisible.value && isMobileSidebar.value
+);
 
 function toggleFilters() {
   if (!filtersVisible.value) {

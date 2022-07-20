@@ -20,6 +20,7 @@ query GetWishlists(
       id
       name
       items {
+        id
         productId
       }
     }

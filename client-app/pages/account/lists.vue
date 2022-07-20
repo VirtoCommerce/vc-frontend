@@ -63,6 +63,7 @@ import {
   DeleteWishlistsDialog,
   UnsuccessfulCreateWishlistDialog,
 } from "@/shared/wishlists";
+import { DEFAULT_WISHLIST_LIMIT } from "@/core/constants";
 import { LineItemType, WishlistType } from "@/xapi/types";
 import { usePopup } from "@/shared/popup";
 import { configInjectionKey } from "@/core/injection-keys";
@@ -80,7 +81,7 @@ usePageHead({
 });
 
 const config = inject(configInjectionKey);
-const listsLimit = config?.wishlists_limit || 10;
+const listsLimit = config?.wishlists_limit || DEFAULT_WISHLIST_LIMIT;
 
 const creationButtonDisabled = computed(() => lists.value.length >= listsLimit);
 
