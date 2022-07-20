@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="to" class="flex items-center p-3 icon">
+  <router-link :to="to" class="flex items-center py-3 icon">
     <div class="h-5 w-5"></div>
     <span class="ml-3 text-gray-500 font-extrabold text-sm">{{ text }}</span>
   </router-link>
