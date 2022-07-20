@@ -30,9 +30,9 @@ import { eagerComputed } from "@vueuse/core";
 
 const props = defineProps({
   kind: {
-    type: String as PropType<"primary" | "secondary" | "success" | "warning" | "danger" | "white">,
+    type: String as PropType<"primary" | "secondary" | "success" | "warning" | "danger">,
     default: "primary",
-    validator: (value: string) => ["primary", "secondary", "success", "warning", "danger", "white"].includes(value),
+    validator: (value: string) => ["primary", "secondary", "success", "warning", "danger"].includes(value),
   },
 
   size: {
@@ -79,7 +79,7 @@ const isLink = eagerComputed<boolean>(() => !!props.to && isEnabled.value);
 </script>
 
 <style scoped lang="scss">
-$colors: primary, secondary, success, warning, danger, white;
+$colors: primary, secondary, success, warning, danger;
 
 .vc-button {
   $self: &;
