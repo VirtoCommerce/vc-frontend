@@ -134,7 +134,9 @@ function addToList() {
   });
 }
 
-const mailToLink = computed(() => `mailto:?subject=${props.product?.name}&body=${pageUrl}`);
+const mailToLink = computed(
+  () => `mailto:?subject=${encodeURIComponent(props.product?.name)}&body=${encodeURIComponent(pageUrl)}`
+);
 
 function getProductSocialShareUrl(urlTemplate: string, url: string): string {
   return stringFormat(urlTemplate, url);
