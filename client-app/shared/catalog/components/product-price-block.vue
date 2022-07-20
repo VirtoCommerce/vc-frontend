@@ -70,54 +70,18 @@
         </div>
 
         <div class="w-1/3">
-          <VcPopover
-            :title="$t('shared.catalog.product_details.send_product_to_email_label')"
-            :showCloseButton="true"
-            :xOffset="-60"
-            @toggle="handleSendProductToEmailPopoverToggle"
-            class="w-[320px]"
+          <a
+            :href="mailToLink"
+            target="_blank"
+            class="flex items-center justify-center select-none py-4 px-1 border-r cursor-pointer hover:bg-gray-100"
           >
-            <template #trigger>
-              <div
-                class="flex items-center justify-center select-none py-4 px-1 border-r space-x-2 cursor-pointer hover:bg-gray-100"
-              >
-                <i
-                  class="fas fa-envelope text-base"
-                  :class="{
-                    'text-[color:var(--color-primary)]': !sendProductToEmailPopoverShown,
-                    'text-gray-400': sendProductToEmailPopoverShown,
-                  }"
-                />
-              </div>
-            </template>
-            <template #content>
-              <div class="px-5 mb-5 flex flex-col items-stretch">
-                <div>
-                  <VcInput
-                    :label="$t('common.labels.email')"
-                    type="email"
-                    v-model="recipientEmail"
-                    :errorMessage="recipientEmailErrorMessage"
-                  ></VcInput>
-                </div>
-                <div class="mt-5 flex flex-col">
-                  <VcButton
-                    class="self-end px-10 uppercase"
-                    size="sm"
-                    :to="mailToLink"
-                    isExternalLink
-                    :is-disabled="!recipientEmailMeta.dirty || !recipientEmailMeta.valid"
-                    >{{ $t("common.buttons.send") }}</VcButton
-                  >
-                </div>
-              </div>
-            </template>
-          </VcPopover>
+            <i class="fas fa-envelope text-base text-[color:var(--color-primary)]" />
+          </a>
         </div>
 
         <div class="w-1/3">
           <div
-            class="flex items-center justify-center flex-1 select-none py-4 px-1 space-x-2 cursor-pointer hover:bg-gray-100"
+            class="flex items-center justify-center flex-1 select-none py-4 px-1 cursor-pointer hover:bg-gray-100"
             @click="print()"
           >
             <i class="fas fa-print text-base text-[color:var(--color-primary)]" />
@@ -127,20 +91,17 @@
     </div>
   </div>
   <!-- free area for popover on mobile -->
-  <div v-if="isMobile" class="h-36"></div>
+  <div v-if="isMobile" class="h-28"></div>
 </template>
 
 <script setup lang="ts">
 import { Product } from "@/xapi/types";
 import { PropType, ref } from "vue";
-import { useField } from "vee-validate";
-import * as yup from "yup";
 import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddToWishlistsDialog } from "@/shared/wishlists";
 import { stringFormat } from "@/core/utilities";
 import { computed } from "@vue/reactivity";
-import VcInput from "@/ui-kit/components/atoms/input/vc-input.vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -159,13 +120,6 @@ const { openPopup } = usePopup();
 
 const pageUrl: string = location.href;
 const shareProductPopoverShown = ref(false);
-const sendProductToEmailPopoverShown = ref(false);
-
-const {
-  value: recipientEmail,
-  errorMessage: recipientEmailErrorMessage,
-  meta: recipientEmailMeta,
-} = useField<string>("email", yup.string().required().email());
 
 function addToList() {
   if (!isAuthenticated.value) {
@@ -180,7 +134,7 @@ function addToList() {
   });
 }
 
-const mailToLink = computed(() => `mailto:${recipientEmail.value}?subject=${props.product?.name}&body=${pageUrl}`);
+const mailToLink = computed(() => `mailto:?subject=${props.product?.name}&body=${pageUrl}`);
 
 function getProductSocialShareUrl(urlTemplate: string, url: string): string {
   return stringFormat(urlTemplate, url);
@@ -192,9 +146,5 @@ function print() {
 
 function handleShareProductPopoverToggle(isShown: boolean): void {
   shareProductPopoverShown.value = isShown;
-}
-
-function handleSendProductToEmailPopoverToggle(isShown: boolean): void {
-  sendProductToEmailPopoverShown.value = isShown;
 }
 </script>
