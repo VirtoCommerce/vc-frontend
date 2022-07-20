@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="flex items-start -mt-0.5">
-      <svg class="mt-0.5 text-[color:var(--color-branch-dialog-clock)]" width="16" height="16">
+      <svg class="mt-px text-[color:var(--color-branch-dialog-clock)]" width="16" height="16">
         <use href="/static/images/clock.svg#main"></use>
       </svg>
       <div class="ml-1 text-xs branch-table">
