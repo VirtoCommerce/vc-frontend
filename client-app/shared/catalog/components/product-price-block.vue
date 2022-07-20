@@ -91,7 +91,7 @@
     </div>
   </div>
   <!-- free area for popover on mobile -->
-  <div v-if="isMobile" class="h-28"></div>
+  <div v-show="isMobile" class="h-28" ref="divUnderSharedPopover"></div>
 </template>
 
 <script setup lang="ts">
@@ -101,10 +101,12 @@ import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddToWishlistsDialog } from "@/shared/wishlists";
 import { stringFormat } from "@/core/utilities";
-import { computed } from "@vue/reactivity";
+import { computed, shallowRef } from "@vue/reactivity";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
+
+const divUnderSharedPopover = shallowRef<HTMLElement | null>(null);
 
 const props = defineProps({
   product: {
@@ -149,8 +151,8 @@ function print() {
 function handleShareProductPopoverToggle(isShown: boolean): void {
   shareProductPopoverShown.value = isShown;
 
-  if (isMobile.value && isShown) {
-    window.scrollTo(0, document.body.scrollHeight);
+  if (isMobile.value && isShown && divUnderSharedPopover.value) {
+    divUnderSharedPopover.value.scrollIntoView();
   }
 }
 </script>
