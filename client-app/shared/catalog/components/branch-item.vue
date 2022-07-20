@@ -1,22 +1,24 @@
 <template>
-  <div class="flex items-center pt-2.5 pb-2.5 px-4 last:border-b-transparent border-b">
+  <div class="flex items-center pt-3 pb-1.5 px-4 first:border-t-transparent border-t">
     <div class="flex-grow flex items-start">
       <div class="relative cursor-pointer" @click="$emit('check')">
         <VcCheckbox v-model="branch.checked"> </VcCheckbox>
         <div class="absolute inset-0"></div>
       </div>
-      <div class="relative flex-grow h-[3.75rem] ml-3 -mt-1">
-        <div class="absolute inset-0 pr-3">
-          <a href="#" class="inline-block mt-px text-base font-extrabold text-[color:var(--color-link)] cursor-pointer truncate max-w-full">
-            {{ branch.name }}
-          </a>
-          <div class="pt-px text-xs line-clamp-2">
+      <div class="relative flex-grow ml-3 -mt-1" :class="{ 'h-[3.75rem]': isTextTruncateEnabled }">
+        <div class="pr-3" :class="{ 'absolute inset-0': isTextTruncateEnabled }">
+          <div :class="{ 'truncate max-w-full': isTextTruncateEnabled }">
+            <a href="#" class="mt-px text-base font-extrabold text-[color:var(--color-link)]">
+              {{ branch.name }}
+            </a>
+          </div>
+          <div class="pt-px text-xs" :class="{ 'line-clamp-2': isTextTruncateEnabled }">
             {{ branch.address }}
           </div>
         </div>
       </div>
     </div>
-    <div class="flex items-start">
+    <div class="flex items-start -mt-0.5">
       <svg class="mt-0.5 text-[color:var(--color-branch-dialog-clock)]" width="16" height="16">
         <use href="/static/images/clock.svg#main"></use>
       </svg>
@@ -43,6 +45,10 @@ const props = defineProps({
     type: Object as PropType<any>,
     required: true,
   },
+  isTextTruncateEnabled: {
+    type: Boolean,
+    default: false,
+  },
 });
 defineEmits(["check"]);
 </script>
@@ -52,7 +58,7 @@ defineEmits(["check"]);
     @apply border-collapse;
   }
   td {
-    @apply px-0.5 py-0 whitespace-nowrap;
+    @apply px-px py-0 whitespace-nowrap;
 
     &:first-child {
       @apply text-right;
