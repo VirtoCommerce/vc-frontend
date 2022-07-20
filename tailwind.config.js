@@ -159,11 +159,6 @@ module.exports = {
       margin: {
         4.5: "1.125rem", //18px
       },
-      fontSize: {
-        '15': [ '0.938rem', {
-          lineHeight: '1.25rem'
-        }]
-      }
     },
   },
 
