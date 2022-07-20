@@ -35,7 +35,7 @@
       </button>
     </div>
 
-    <div v-if="errorMessage" class="text-xs text-[color:var(--color-danger)]">{{ errorMessage }}</div>
+    <div v-if="errorMessage" class="pt-0.5 text-xs text-[color:var(--color-danger)]" v-html="errorMessage"></div>
   </div>
 </template>
 

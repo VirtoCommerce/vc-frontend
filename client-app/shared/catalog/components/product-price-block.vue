@@ -21,11 +21,15 @@
         "
         @click="addToList"
       >
-        <i
+        <svg
+          height="16"
+          width="16"
+          name="icon"
           :class="isAuthenticated ? 'text-[color:var(--color-primary)]' : 'text-gray-400'"
-          class="fas fa-plus text-base"
-        />
-        <span :class="isAuthenticated ? 'text-blue-800' : 'text-gray-400'" class="text-sm font-bold">
+        >
+          <use href="/static/images/common/favorities.svg#main"></use>
+        </svg>
+        <span :class="isAuthenticated ? 'text-[color:var(--color-link)]' : 'text-gray-400'" class="text-sm font-bold">
           {{ $t("shared.catalog.product_details.price_block.add_to_list_button") }}
         </span>
       </div>

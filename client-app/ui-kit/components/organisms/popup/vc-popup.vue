@@ -39,7 +39,7 @@
               <!-- Title bar -->
               <DialogTitle
                 as="h3"
-                class="text-lg font-bold leading-6 text-white flex items-center px-6 py-4"
+                class="text-19 font-extrabold text-white flex items-center px-6 py-3"
                 :class="headerStyle"
               >
                 <slot name="title">
@@ -50,7 +50,7 @@
               </DialogTitle>
 
               <!-- Dialog contents -->
-              <div :class="{ 'flex-grow overflow-y-auto sm:overflow-y-visible': isMobileFullscreen }">
+              <div :class="{ 'flex-grow flex flex-col overflow-y-auto sm:overflow-y-visible': isMobileFullscreen }">
                 <slot :close="close" />
               </div>
 
@@ -58,7 +58,7 @@
               <div v-if="!hideActions" class="px-6 py-4 flex items-center justify-between sm:justify-end space-x-4">
                 <slot name="actions" :close="close">
                   <button
-                    class="uppercase flex-grow lg:flex-grow-0 inline-flex items-center justify-center lg:px-4 h-9 font-roboto-condensed text-base font-bold border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white rounded focus:outline-none"
+                    class="uppercase flex-grow sm:flex-grow-0 inline-flex items-center justify-center sm:px-4 h-9 font-roboto-condensed text-base font-bold border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white rounded focus:outline-none"
                     @click="close"
                   >
                     {{ $t("common.buttons.close") }}
