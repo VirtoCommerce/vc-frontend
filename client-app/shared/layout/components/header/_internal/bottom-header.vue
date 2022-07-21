@@ -23,42 +23,24 @@
 
       <SearchBar class="mx-5" />
 
-      <div class="flex items-center pt-1.5 xl:pl-4 pr-5 space-x-5 xl:space-x-9 text-[13px] text-center">
-        <BottomHeaderLink
-          v-for="item in desktopHeaderMenuLinks"
-          :key="item.title"
-          :to="item.route"
-          :title="item.title"
-          :icon="item.icon"
-        >
-          <template v-if="item.id === 'checkout'">
-            <span>{{ item.title }}</span>
-
-            <transition name="slide-fade-right">
-              <div
-                v-if="cart?.itemsQuantity"
-                class="absolute -top-[8px] left-[1.2rem] flex items-center h-5 rounded-xl bg-white border border-[color:var(--color-primary)] px-1.5 font-bold text-xs"
-              >
-                {{ cart.itemsQuantity }}
-              </div>
-            </transition>
-          </template>
-
-          <template v-else-if="item.id === 'compare'">
-            <div class="flex items-center">
-              <span>{{ item.title }}</span>
-
-              <transition name="slide-fade-right">
-                <div
-                  v-if="productsIds.length"
-                  class="flex items-center rounded-xl border border-[color:var(--color-primary)] px-2 font-bold text-xs h-5 ml-2"
-                >
-                  {{ productsIds.length }}
-                </div>
-              </transition>
-            </div>
-          </template>
-        </BottomHeaderLink>
+      <div class="flex items-center pt-1.5 xl:pl-4 pr-5 space-x-5 xl:space-x-9">
+        <template v-for="item in desktopHeaderMenuLinks">
+          <BottomHeaderLink
+            v-if="item.id === 'compare'"
+            :to="item.route"
+            :title="item.title"
+            :icon="item.icon"
+            :badge="String(productsIds.length)"
+          />
+          <BottomHeaderLink
+            v-else-if="item.id === 'checkout'"
+            :to="item.route"
+            :title="item.title"
+            :icon="item.icon"
+            :badge="String(cart.itemsQuantity)"
+          />
+          <BottomHeaderLink v-else :key="item.title" :to="item.route" :title="item.title" :icon="item.icon" />
+        </template>
       </div>
     </div>
   </div>
