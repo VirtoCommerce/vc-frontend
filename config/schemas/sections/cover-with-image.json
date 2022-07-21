@@ -125,7 +125,7 @@
     {
       "type": "object",
       "id": "simpleObject",
-      "tab": "Objects",
+      "tab": "Text",
       "label": "Simple inline object that expands panel by click on it",
       "info": "The simplest object editor",
       "element": [

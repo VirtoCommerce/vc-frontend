@@ -1,0 +1,19 @@
+{
+  "name": "Header settings",
+  "icon": "construction",
+  "displayField": "default",
+  "static": "top",
+  "settings": [
+    {
+      "id": "metaTitle",
+      "label": "Meta title",
+      "type": "string"
+    },
+    {
+      "id": "metaDescription",
+      "label": "Meta description",
+      "type": "string",
+      "multiline": true
+    }
+  ]
+}
