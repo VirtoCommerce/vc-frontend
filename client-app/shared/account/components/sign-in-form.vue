@@ -82,6 +82,8 @@ import { useCart } from "@/shared/cart";
 import { mergeCart } from "@/xapi/graphql/cart";
 import { eagerComputed } from "@vueuse/core";
 
+const USER_IS_LOCKED_OUT_ERROR_CODE = "user_is_locked_out";
+
 const { t } = useI18n();
 const { cart, loadMyCart } = useCart();
 const { signMeIn, user, isAuthenticated } = useUser();
@@ -121,7 +123,7 @@ const onSubmit = handleSubmit(async () => {
   const result = await signMeIn(model);
 
   if (!result.succeeded) {
-    if (result.errors?.find((e) => e.code === "user_is_locked_out")) {
+    if (result.errors?.find((e) => e.code === USER_IS_LOCKED_OUT_ERROR_CODE)) {
       userIsLockedError.value = true;
     } else {
       authError.value = true;
