@@ -87,7 +87,15 @@ onUnmounted(() => {
   popoverInstance?.destroy();
 });
 
-onClickOutside(popoverNode, () => togglePopover(false), { ignore: [triggerNode] });
+onClickOutside(
+  popoverNode,
+  () => {
+    if (isShown.value) {
+      togglePopover(false);
+    }
+  },
+  { ignore: [triggerNode] }
+);
 </script>
 
 <style scoped>

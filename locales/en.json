@@ -306,8 +306,7 @@
           "title": "Price and Delivery",
           "add_to_list_button": "Add to list",
           "add_to_list_button_unauthorized_title": "Wishlists are available only for authenticated users",
-          "send_email_button": "@:common.labels.email",
-          "print_button": "Print"
+          "product_email_title": "Please, have a look on the product: {0}"
         },
         "product_variation_card": {
           "variation_sku_label": "@:common.labels.sku",
