@@ -91,7 +91,7 @@
     </div>
   </div>
   <!-- free area for popover on mobile -->
-  <div v-show="isMobile" class="h-28" ref="divUnderSharedPopover"></div>
+  <div v-show="isMobile" class="h-10" ref="divUnderSharedPopover"></div>
 </template>
 
 <script setup lang="ts">
