@@ -56,7 +56,7 @@ const props = defineProps({
   },
   contentClass: {
     type: String,
-    default: "px-5 py-4",
+    default: "px-4 py-4",
   },
 });
 
