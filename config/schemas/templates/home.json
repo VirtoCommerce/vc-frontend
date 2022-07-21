@@ -5,7 +5,18 @@
   "path": "content/templates/home.json",
   "type": "themes",
   "isDefault": true,
-  "sections": ["products-list", "latest-news", "text", "video", "images", "share", "carousel", "cards", "promo"],
+  "sections": [
+    "products-list",
+    "latest-news",
+    "text",
+    "video",
+    "images",
+    "share",
+    "carousel",
+    "cards",
+    "promo",
+    "header-settings"
+  ],
   "settings": [
     {
       "id": "displayType",

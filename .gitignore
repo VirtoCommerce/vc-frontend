@@ -52,3 +52,4 @@ artifacts*
 
 dist-ssr
 *.local
+/content/pages
