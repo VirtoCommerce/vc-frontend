@@ -104,6 +104,9 @@ import { stringFormat } from "@/core/utilities";
 import { computed, shallowRef } from "@vue/reactivity";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { t } = useI18n();
@@ -122,7 +125,7 @@ const isMobile = breakpoints.smaller("lg");
 const { isAuthenticated } = useUser();
 const { openPopup } = usePopup();
 
-const pageUrl: string = location.href;
+const pageUrl = computed(() => location.origin + route.fullPath);
 const shareProductPopoverShown = ref(false);
 
 function addToList() {
@@ -142,7 +145,7 @@ const mailToLink = computed(
   () =>
     `mailto:?subject=${encodeURIComponent(
       t("shared.catalog.product_details.price_block.product_email_title", [props.product?.name])
-    )}&body=${encodeURIComponent(pageUrl)}`
+    )}&body=${encodeURIComponent(pageUrl.value)}`
 );
 
 function getProductSocialShareUrl(urlTemplate: string, url: string): string {
