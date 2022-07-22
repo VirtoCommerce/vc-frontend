@@ -305,9 +305,7 @@
         "price_block": {
           "title": "Price & Delivery",
           "add_to_list_button": "Add to list",
-          "add_to_list_button_unauthorized_title": "Wishlists are available only for authorized users",
-          "send_email_button": "@:common.labels.email",
-          "print_button": "Print"
+          "add_to_list_button_unauthorized_title": "Wishlists are available only for authorized users"
         },
         "product_variation_card": {
           "variation_sku_label": "@:common.labels.sku",

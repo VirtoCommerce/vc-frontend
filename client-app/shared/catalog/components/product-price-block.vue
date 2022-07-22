@@ -10,7 +10,7 @@
       <slot />
     </div>
 
-    <div class="flex text-center">
+    <div class="flex">
       <div
         class="flex items-center justify-center select-none py-4 px-1 border-r space-x-2 w-2/5"
         :class="{ 'cursor-pointer hover:bg-gray-100': isAuthenticated }"
@@ -39,14 +39,14 @@
           <VcPopover
             :title="$t('shared.catalog.product_details.share_product_label')"
             :showCloseButton="true"
-            @shown="handlePopoverShown"
+            @toggle="handleShareProductPopoverToggle"
           >
             <template #trigger>
               <div
-                class="items-center justify-center select-none py-4 px-1 border-r space-x-2 cursor-pointer hover:bg-gray-100"
+                class="flex items-center justify-center select-none py-4 px-1 border-r space-x-2 cursor-pointer hover:bg-gray-100"
               >
                 <i
-                  class="fas fa-share-square fa-xl"
+                  class="fas fa-share-square text-base"
                   :class="{
                     'text-[color:var(--color-primary)]': !shareProductPopoverShown,
                     'text-gray-400': shareProductPopoverShown,
@@ -70,22 +70,28 @@
         </div>
 
         <div class="w-1/3">
-          <div class="items-center justify-center select-none py-4 px-1 border-r space-x-2 hover:bg-gray-100">
-            <i class="fas fa-envelope fa-xl text-gray-400" />
-          </div>
+          <a
+            :href="mailToLink"
+            target="_blank"
+            class="flex items-center justify-center select-none py-4 px-1 border-r cursor-pointer hover:bg-gray-100"
+          >
+            <i class="fas fa-envelope text-base text-[color:var(--color-primary)]" />
+          </a>
         </div>
 
         <div class="w-1/3">
           <div
-            class="items-center justify-center flex-1 select-none py-4 px-1 space-x-2 cursor-pointer hover:bg-gray-100"
+            class="flex items-center justify-center flex-1 select-none py-4 px-1 cursor-pointer hover:bg-gray-100"
             @click="print()"
           >
-            <i class="fas fa-print text-[color:var(--color-primary)]" />
+            <i class="fas fa-print text-base text-[color:var(--color-primary)]" />
           </div>
         </div>
       </div>
     </div>
   </div>
+  <!-- free area for popover on mobile -->
+  <div v-show="isMobile" class="h-10" ref="divUnderSharedPopover"></div>
 </template>
 
 <script setup lang="ts">
@@ -95,6 +101,17 @@ import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddToWishlistsDialog } from "@/shared/wishlists";
 import { stringFormat } from "@/core/utilities";
+import { computed, shallowRef } from "@vue/reactivity";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const { t } = useI18n();
+
+const divUnderSharedPopover = shallowRef<HTMLElement | null>(null);
 
 const props = defineProps({
   product: {
@@ -103,10 +120,12 @@ const props = defineProps({
   },
 });
 
+const isMobile = breakpoints.smaller("lg");
+
 const { isAuthenticated } = useUser();
 const { openPopup } = usePopup();
 
-const pageUrl: string = location.href;
+const pageUrl = computed(() => location.origin + route.fullPath);
 const shareProductPopoverShown = ref(false);
 
 function addToList() {
@@ -122,6 +141,13 @@ function addToList() {
   });
 }
 
+const mailToLink = computed(
+  () =>
+    `mailto:?subject=${encodeURIComponent(
+      t("shared.catalog.product_details.price_block.product_email_title", [props.product?.name])
+    )}&body=${encodeURIComponent(pageUrl.value)}`
+);
+
 function getProductSocialShareUrl(urlTemplate: string, url: string): string {
   return stringFormat(urlTemplate, url);
 }
@@ -130,7 +156,11 @@ function print() {
   window.print();
 }
 
-function handlePopoverShown(state: boolean): void {
-  shareProductPopoverShown.value = state;
+function handleShareProductPopoverToggle(isShown: boolean): void {
+  shareProductPopoverShown.value = isShown;
+
+  if (isMobile.value && isShown && divUnderSharedPopover.value) {
+    divUnderSharedPopover.value.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
+  }
 }
 </script>
