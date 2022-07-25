@@ -46,7 +46,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   },
   { path: "/demo-landing", name: "DemoLanding", component: DemoLanding },
   { path: "/demo-page", name: "BuilderDemoPages", component: BuilderDemoPages },
-  { path: "/branch", name: "BranchPage", component: Branch },
+  { path: "/branch/:branchId", name: "BranchPage", component: Branch, props: true },
   { path: "/search", name: "Search", component: Search },
   { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },
   { path: "/compare", name: "CompareProducts", component: CompareProducts },

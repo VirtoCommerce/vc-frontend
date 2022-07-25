@@ -1,6 +1,9 @@
 <template>
-  <div class="flex-grow px-8 pt-5 pb-7 bg-[color:var(--color-body-bg)] shadow-inner xl:px-19 lg:pt-5 lg:pb-11">
-    <h1 class="-ml-0.5 text-28 uppercase font-bold lg:text-34" v-t="data.branch.title"></h1>
+  <div
+    class="flex-grow px-8 pt-5 pb-7 bg-[color:var(--color-body-bg)] shadow-inner xl:px-19 lg:pt-5 lg:pb-11"
+    v-if="fulfillmentCenter"
+  >
+    <h1 class="-ml-0.5 text-28 uppercase font-bold lg:text-34" v-t="fulfillmentCenter?.name"></h1>
 
     <div class="mt-4 lg:flex lg:items-start lg:mt-6">
       <div class="lg:flex-grow lg:rounded lg:border lg:drop-shadow-md-x lg:bg-white">
@@ -9,12 +12,12 @@
         >
           <div class="mt-0.5 mb-1 lg:mb-0.5">
             <div class="mb-1 mr-1 font-bold lg:mb-2">{{ $t("pages.branch.address") }}</div>
-            <div class="" v-t="data.branch.address"></div>
+            <div class="" v-t="fulfillmentCenter?.address"></div>
           </div>
 
           <div class="flex flex-wrap mb-1">
             <div class="mr-1 font-bold">{{ $t("pages.branch.phone") }}</div>
-            <div class="" v-t="data.branch.phone"></div>
+            <div class="" v-t="fulfillmentCenter?.phone"></div>
           </div>
         </div>
 
@@ -91,14 +94,20 @@
 
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
-const { t } = useI18n();
+import { useFulfillmentCenters } from "@/shared/fulfillmentCenters";
+
+const { loading, loadFulfillmentCenter, fulfillmentCenter } = useFulfillmentCenters();
+
+const props = defineProps({
+  branchId: {
+    type: String,
+    default: "",
+  },
+});
+
+loadFulfillmentCenter(props.branchId);
 
 const data = {
-  branch: {
-    title: "Chicago branch",
-    address: "Cooper Square New York, New York, USA 10003",
-    phone: "18004434555",
-  },
   otherBranches: [
     {
       title: "Los Angeles Branch",
