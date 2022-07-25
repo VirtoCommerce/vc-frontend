@@ -4,4 +4,5 @@ export interface IFulfillmentCenter {
   description?: string;
   shortDescription?: string;
   address?: string;
+  phone?: string;
 }

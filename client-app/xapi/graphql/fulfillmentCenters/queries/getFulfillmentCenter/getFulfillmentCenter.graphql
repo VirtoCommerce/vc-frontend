@@ -1,4 +1,4 @@
-query GetProduct($id: String!) {
+query GetFulfillmentCenter($id: String!) {
   fulfillmentCenter(id: $id) {
     id
     name
@@ -12,6 +12,7 @@ query GetProduct($id: String!) {
       line2
       postalCode
       zip
+      phone
     }
   }
 }
