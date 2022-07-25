@@ -1,38 +1,34 @@
 <template>
-  <VcPopup
-    :title="$t('shared.catalog.branches_dialog.title')"
-    modal-width="max-w-[59.625rem]"
-    hide-actions
-    is-mobile-full-screen
-  >
+  <VcPopup :title="$t('shared.catalog.branches_dialog.title')" modal-width="sm:max-w-[59.625rem]" is-mobile-fullscreen>
     <!-- DESKTOP content BEGIN -->
-    <div class="flex border-b">
+    <div class="hidden sm:flex border-b">
       <div
-        class="shrink-0 flex-grow flex flex-col transition-all delay-300"
-        :class="[branches.filter((item) => item.checked).length ? 'w-1/2' : 'w-full']"
+        class="shrink-0 flex-grow flex flex-col transition-all delay-100"
+        :class="[selectedBranchesIds.length ? 'w-1/2' : 'w-full']"
       >
         <div class="flex items-center py-2 pl-4 pr-3.5 h-11 bg-[color:var(--color-branch-dialog-bg)]">
           <div class="text-15">
             {{ $t("shared.catalog.branches_dialog.all_branches") }}
           </div>
 
-          <BranchSearch class="flex-grow ml-6" />
+          <BranchSearch class="flex-grow ml-1.5 md:ml-6" />
         </div>
-        <transition-group tag="div" name="branch" class="flex-grow h-[23.8rem] overflow-y-auto">
+        <transition-group tag="div" name="branch" class="flex-grow h-[23.8rem] max-h-screen-60 overflow-y-auto">
           <template v-for="(branch, index) in branches" :key="index">
             <BranchItem
-              v-if="!branch.checked"
+              v-if="!isBranchSelected(index)"
               :branch="branch"
-              @check="toggleBranchChecked(index, true)"
-              class="transition-opacity duration-300 ease-in-out"
-              :is-text-truncate-enabled="branches.filter((item) => item.checked).length"
-            ></BranchItem>
+              class="transition-opacity duration-300 delay-100 ease-in-out"
+              :is-text-truncate-enabled="!!selectedBranchesIds.length"
+            >
+              <VcCheckbox class="mr-3 cursor-pointer" v-model="selectedBranchesIds" :value="branch.id"> </VcCheckbox>
+            </BranchItem>
           </template>
         </transition-group>
       </div>
       <div
         class="shrink-0 flex flex-col overflow-hidden transition-all"
-        :class="[branches.filter((item) => item.checked).length ? 'w-1/2 border-l' : 'w-0']"
+        :class="[selectedBranchesIds.length ? 'w-1/2 border-l' : 'w-0']"
       >
         <div class="flex items-center justify-between py-2 pl-4 pr-3.5 h-11 bg-[color:var(--color-branch-dialog-bg)]">
           <div class="text-15">
@@ -47,106 +43,180 @@
             </div>
           </div>
         </div>
-        <transition-group tag="div" name="branch" class="flex-grow h-[23.8rem] overflow-y-auto">
+        <transition-group tag="div" name="branch" class="flex-grow h-[23.8rem] max-h-screen-60 overflow-y-auto">
           <template v-for="(branch, index) in branches" :key="index">
             <BranchItem
-              v-if="branch.checked"
+              v-if="isBranchSelected(index)"
               :branch="branch"
-              @check="toggleBranchChecked(index, false)"
-              class="transition-opacity duration-300 ease-in-out"
-              :is-text-truncate-enabled="branches.filter((item) => item.checked).length"
-            ></BranchItem>
+              class="transition-opacity duration-300 delay-100 ease-in-out"
+              :is-text-truncate-enabled="!!selectedBranchesIds.length"
+            >
+              <VcCheckbox class="mr-3 cursor-pointer" v-model="selectedBranchesIds" :value="branch.id"> </VcCheckbox>
+            </BranchItem>
           </template>
         </transition-group>
       </div>
     </div>
     <!-- DESKTOP content END -->
 
-    <div class="flex justify-between py-3.5 pl-6 pr-8">
-      <VcButton kind="secondary" class="uppercase px-4 !text-15" is-outline>
-        {{ $t("shared.catalog.branches_dialog.cancel_button") }}
-      </VcButton>
-      <VcButton class="uppercase px-5 min-w-[9.25rem] !text-15">
-        {{ $t("shared.catalog.branches_dialog.ok_button") }}
-      </VcButton>
+    <!-- MOBILE content BEGIN -->
+    <div class="flex-grow max-h-full sm:hidden">
+      <div class="flex items-stretch px-6 min-h-[2.75rem] text-15 bg-[color:var(--color-branch-dialog-bg)]">
+        <button
+          class="flex items-center mr-auto py-2 font-bold"
+          :class="{
+            'text-[color:var(--color-link)]': showSelectedBranchesMobile && selectedBranchesIds.length,
+          }"
+          :disabled="!(showSelectedBranchesMobile && selectedBranchesIds.length) || !selectedBranchesIds.length"
+          @click="toggleShowSelectedBranchesMobile(false)"
+        >
+          {{ $t("shared.catalog.branches_dialog.all_branches") }}
+        </button>
+
+        <template v-if="selectedBranchesIds.length">
+          <button
+            class="flex items-center py-2 font-bold"
+            :class="{ 'text-[color:var(--color-link)]': !showSelectedBranchesMobile }"
+            :disabled="showSelectedBranchesMobile"
+            @click="toggleShowSelectedBranchesMobile(true)"
+          >
+            {{ $t("shared.catalog.branches_dialog.selected_branches") }} ({{ selectedBranchesIds.length }})
+          </button>
+
+          <button
+            class="self-center flex items-center justify-center ml-2.5 w-7 h-7 rounded shadow-t-mds bg-white"
+            @click="clearSelection"
+          >
+            <svg class="text-primary" width="16" height="16">
+              <use href="/static/images/clear.svg#main"></use>
+            </svg>
+          </button>
+        </template>
+      </div>
+      <div class="px-6 py-3 border-b">
+        <BranchSearch />
+      </div>
+      <div v-for="(branch, index) in branches" class="border-b">
+        <BranchItem
+          v-if="showSelectedBranchesMobile && isBranchSelected(index) || !showSelectedBranchesMobile"
+          :branch="branch"
+          :is-text-truncate-enabled="false"
+        >
+          <VcCheckbox class="mr-3 cursor-pointer" v-model="selectedBranchesIds" :value="branch.id"> </VcCheckbox>
+        </BranchItem>
+      </div>
     </div>
+    <!-- MOBILE content END -->
+
+    <template #actions="{ close }">
+      <div
+        class="relative flex-grow flex items-center justify-between -mt-4 pt-4 -mx-6 px-10 gap-5 shadow-t-lgs bg-white sm:shadow-none sm:mt-0 sm:px-6 sm:pt-0 sm:gap-auto"
+      >
+        <VcButton kind="secondary" class="uppercase basis-0 flex-grow sm:basis-auto sm:flex-grow-0 sm:px-4" is-outline>
+          {{ $t("shared.catalog.branches_dialog.cancel_button") }}
+        </VcButton>
+
+        <VcButton class="uppercase basis-0 flex-grow sm:basis-auto sm:flex-grow-0 sm:px-5 sm:min-w-[9rem]">
+          {{ $t("shared.catalog.branches_dialog.ok_button") }}
+        </VcButton>
+      </div>
+    </template>
   </VcPopup>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import BranchItem from "./branch-item.vue";
 import BranchSearch from "./branch-search.vue";
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("sm");
 const showSelectedBranches = ref(false);
-const branches = ref([
+const showSelectedBranchesMobile = ref(false);
+const selectedBranchesIds = ref<string[]>([]);
+const branches = computed(() => [
   {
+    id: "1",
     name: "Chicago Branch",
     address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-    checked: false,
   },
   {
+    id: "2",
     name: "Los Angeles BranchLos Angeles BranchLos Angeles BranchLos Angeles BranchLos Angeles BranchLos Angeles",
     address:
       "5400 N. Lakewood Avenue Chicago, Illinois, USA 606405400 N. Lakewood Avenue Chicago, Illinois, USA 606405400 N. Lakewood Avenue Chicago, Illinois, USA 606405400 N. Lakewood Avenue Chicago, Illinois, USA 606405400 N. Lakewood Avenue Chicago, Illinois, USA 606405400 N. Lakewood Avenue Chicago, Illinois",
-    checked: false,
   },
   {
+    id: "3",
     name: "New York Branch",
     address: "5400 N. Lakewood Avenue Chicago",
-    checked: false,
   },
   {
+    id: "4",
     name: "Tennessee Branch",
     address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-    checked: false,
   },
   {
+    id: "5",
     name: "Atlanta Branch",
     address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-    checked: false,
   },
   {
+    id: "6",
     name: "LA Branch",
     address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-    checked: false,
   },
   {
+    id: "7",
     name: "Branch 2",
     address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-    checked: false,
   },
   {
+    id: "8",
     name: "Branch 3",
     address: "5400 N. Lakewood Avenue",
-    checked: false,
   },
   {
+    id: "9",
     name: "Branch 4",
     address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-    checked: false,
   },
   {
+    id: "10",
     name: "Branch 5",
     address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-    checked: false,
   },
   {
+    id: "11",
     name: "Branch 6",
     address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-    checked: false,
   },
 ]);
+
+function isBranchSelected(index: number): boolean {
+  return selectedBranchesIds.value.includes(branches.value[index]?.id);
+}
 
 function toggleBranchChecked(index: number, checked: boolean) {
   branches.value[index].checked = checked;
 }
 
 function clearSelection() {
-  branches.value = branches.value.map((branch) => {
-    branch.checked = false;
-    return branch;
-  });
+  console.log('clearSelection', selectedBranchesIds.value);
+  selectedBranchesIds.value = selectedBranchesIds.value.splice(0);
+  console.log('clearSelection', selectedBranchesIds.value);
 }
+
+function toggleShowSelectedBranchesMobile(show: boolean) {
+  showSelectedBranchesMobile.value = show;
+}
+
+watch(selectedBranchesIds, () => {
+  if (!selectedBranchesIds.value.length) {
+    showSelectedBranchesMobile.value = false;
+  }
+});
 </script>
 <style lang="scss">
 .branch-enter-from,
