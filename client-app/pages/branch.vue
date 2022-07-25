@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex-grow px-8 pt-5 pb-7 bg-[color:var(--color-body-bg)] shadow-inner xl:px-19 lg:pt-5 lg:pb-11 transition"
+    class="flex-grow px-7 pt-5 pb-7 bg-[color:var(--color-body-bg)] shadow-inner xl:px-19 lg:pt-5 lg:pb-11 transition"
     :class="{ 'opacity-50 pointer-events-none': loading }"
   >
     <h1 class="-ml-0.5 text-28 uppercase font-bold lg:text-34">{{ fulfillmentCenter?.name }}</h1>
@@ -89,7 +89,7 @@ watch(
 
 <style lang="scss">
 #description {
-  @apply pb-6 px-6 border-b lg:pt-3 lg:pb-9 lg:px-8 lg:border-b-0;
+  @apply pb-6 px-6 border-b lg:pb-9 lg:px-8 lg:border-b-0;
 
   h2,
   h3 {
