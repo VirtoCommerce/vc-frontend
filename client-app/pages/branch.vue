@@ -10,10 +10,10 @@
         <div
           class="py-5 px-[1.4rem] rounded border bg-white text-base drop-shadow-md-x lg:bg-transparent lg:drop-shadow-none lg:px-8 lg:pt-6 lg:pb-5 lg:rounded-none lg:border-0"
         >
-          <div v-if="fulfillmentCenter?.address.length" class="mt-0.5 mb-1 lg:mb-0.5">
+          <div v-if="fulfillmentCenter?.address?.length" class="mt-0.5 mb-1 lg:mb-0.5">
             <div class="mb-1 mr-1 font-bold lg:mb-2">{{ $t("pages.branch.address") }}</div>
             <div class="">
-              {{ $route.fulfillmentCenter?.address }}
+              {{ fulfillmentCenter?.address }}
             </div>
           </div>
 
@@ -62,10 +62,8 @@
 </template>
 
 <script setup lang="ts">
-import { watch, ref, computed } from "vue";
-import { useI18n } from "vue-i18n";
+import { watch, computed } from "vue";
 import { useFulfillmentCenters } from "@/shared/fulfillmentCenters";
-import { IFulfillmentCenter } from "@/shared/fulfillmentCenters/types";
 
 const { loading, loadFulfillmentCenter, fulfillmentCenter, loadFulfillmentCenters, fulfillmentCenters } =
   useFulfillmentCenters();
@@ -77,7 +75,7 @@ const props = defineProps({
   },
 });
 
-const otherBranches = computed(() => fulfillmentCenters.value.filter((item) => item.id != props.branchId));
+const otherBranches = computed(() => fulfillmentCenters.value.filter((item) => item.id !== props.branchId));
 loadFulfillmentCenter(props.branchId);
 loadFulfillmentCenters();
 
