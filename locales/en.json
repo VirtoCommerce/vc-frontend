@@ -204,7 +204,8 @@
         "forgot_password_link": "Forgot your password?",
         "login_button": "Log in",
         "registration_button": "Sign up",
-        "email_or_password_incorrect_alert": "The <strong>email</strong>&nbsp;or <strong>password</strong>&nbsp;you provided are invalid"
+        "email_or_password_incorrect_alert": "The <strong>email</strong>&nbsp;or <strong>password</strong>&nbsp;you provided are invalid",
+        "user_is_locked_out_alert": "Your account is locked. Please, contact site administrator"
       },
       "reset_password_form": {
         "password_label": "@:common.labels.password",
