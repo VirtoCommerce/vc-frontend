@@ -33,13 +33,13 @@
         <WishlistProductItem
           v-for="item in listItems"
           :key="item.id"
-          :product="item.product!"
+          :list-item="item"
           class="even:bg-gray-50"
           @remove="openDeleteProductDialog(item)"
         />
 
         <div class="flex p-5" v-if="pages > 1">
-          <VcPagination v-model:page="page" :pages="pages" />
+          <VcPagination v-model:page="page" :pages="pages" @update:page="onUpdatePage()" />
         </div>
       </div>
 
@@ -89,7 +89,13 @@
 
     <!-- Mobile footer block -->
     <div v-if="isMobile" class="flex flex-col space-y-4 mx-5 md:mx-0">
-      <VcPagination v-if="pages > 1" v-model:page="page" :pages="pages" class="mb-3 lg:mb-0" />
+      <VcPagination
+        v-if="pages > 1"
+        v-model:page="page"
+        :pages="pages"
+        class="mb-3 lg:mb-0"
+        @update:page="onUpdatePage()"
+      />
 
       <VcButton
         v-if="listItems?.length"
@@ -120,15 +126,22 @@ import { usePopup } from "@/shared/popup";
 import { computed, ref, watchEffect } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { BackButtonInHeader } from "@/shared/layout";
-
-const { openPopup } = usePopup();
-const { loading, list, fetchWishList } = useWishlists();
+import { usePageHead } from "@/core/composables";
+import { useI18n } from "vue-i18n";
 
 const props = defineProps({
   listId: {
     type: String,
     default: "",
   },
+});
+
+const { t } = useI18n();
+const { openPopup } = usePopup();
+const { loading, list, fetchWishList, clearList } = useWishlists();
+
+usePageHead({
+  title: computed(() => t("pages.account.list_details.meta.title", [list.value?.name])),
 });
 
 const itemsPerPage = ref(6);
@@ -172,6 +185,14 @@ function openListSettingsDialog() {
 }
 
 watchEffect(() => {
+  clearList();
   fetchWishList(props.listId);
 });
+
+/**
+ * Scroll after page change.
+ */
+function onUpdatePage() {
+  window.scroll({ top: 0, behavior: "smooth" });
+}
 </script>

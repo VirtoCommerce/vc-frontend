@@ -249,6 +249,7 @@ import { useI18n } from "vue-i18n";
 import { useUserOrder } from "@/shared/account";
 import { useRouter } from "vue-router";
 import { usePopup } from "@/shared/popup";
+import { usePageHead } from "@/core/composables";
 
 const props = defineProps({
   orderId: {
@@ -267,6 +268,13 @@ const { t } = useI18n();
 const { loading, order, loadOrder, addOrUpdatePayment } = useUserOrder();
 const { openPopup, closePopup } = usePopup();
 const router = useRouter();
+
+usePageHead({
+  title: computed(() => [
+    t("pages.account.order_details.meta.title", [order.value?.number]),
+    t("pages.account.order_payment.meta.title"),
+  ]),
+});
 
 const executed = computed<boolean>(() => success.value || failure.value);
 const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments[0]);

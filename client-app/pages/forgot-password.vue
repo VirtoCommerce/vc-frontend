@@ -2,7 +2,7 @@
   <TwoColumn class="max-w-screen-xl">
     <template #left>
       <h1
-        class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8 lg:mb-9 lg:mt-6"
+        class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8 lg:mt-5"
         v-t="'pages.forgot_password.header'"
       ></h1>
       <div v-if="!isSucceeded">
@@ -30,6 +30,14 @@
 import { ref } from "vue";
 import { TwoColumn } from "@/shared/layout";
 import { ForgotPasswordForm } from "@/shared/account";
+import { usePageHead } from "@/core/composables";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
+
+usePageHead({
+  title: t("pages.forgot_password.meta.title"),
+});
 
 const isSucceeded = ref(false);
 

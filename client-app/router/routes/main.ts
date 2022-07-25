@@ -7,7 +7,7 @@ import Error403 from "@/pages/403.vue";
 import Error404 from "@/pages/404.vue";
 import Error500 from "@/pages/500.vue";
 
-const Index = () => import("@/pages/index.vue");
+const Home = () => import("@/pages/index.vue");
 const SingInPage = () => import("@/pages/sign-in.vue");
 const SignUpPage = () => import("@/pages/sign-up.vue");
 const ForgotPassword = () => import("@/pages/forgot-password.vue");
@@ -23,12 +23,11 @@ const Branch = () => import("@/pages/branch.vue");
 const Matcher = () => import("@/ui-kit/components/pages/matcher.vue");
 
 // Private development pages
-const BuilderDemoPages = () => import("@/builder-preview/pages/pages.vue");
 const DemoLanding = () => import("@/pages/demo-landing.vue");
 const DevUIKit = () => import("@/pages/ui-kit.vue");
 
 export const mainRoutes: RouteRecordRaw[] = [
-  { path: "/", name: "Home", component: Index },
+  { path: "/", name: "Home", component: Home },
   { path: "/403", name: "NoAccess", component: Error403 },
   { path: "/404", name: "NotFound", component: Error404 },
   { path: "/500", name: "InternalError", component: Error500 },
@@ -45,7 +44,6 @@ export const mainRoutes: RouteRecordRaw[] = [
     redirect: { name: accountRoutes[0].name },
   },
   { path: "/demo-landing", name: "DemoLanding", component: DemoLanding },
-  { path: "/demo-page", name: "BuilderDemoPages", component: BuilderDemoPages },
   { path: "/branch/:branchId", name: "BranchPage", component: Branch, props: true },
   { path: "/search", name: "Search", component: Search },
   { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },

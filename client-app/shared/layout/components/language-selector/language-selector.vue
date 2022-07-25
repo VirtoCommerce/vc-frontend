@@ -10,16 +10,14 @@
         class="fi fis rounded-full fa-2x -my-3 !w-[30px] h-[30px] lg:!w-[14px] lg:h-[14px]"
         :class="`fi-${currentLanguage?.twoLetterRegionName.toLowerCase()}`"
       ></span>
-      <span
-        v-if="!isMobile"
-        class="uppercase text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
-      >
+      <span v-if="!isMobile" class="uppercase">
         {{ currentLanguage?.twoLetterLanguageName }}
       </span>
 
       <span class="absolute inset-y-0 -right-3.5 flex items-center pointer-events-none lg:right-0">
         <i
-          class="text-[color:var(--color-mobile-menu-link)] fas fa-chevron-down text-[1rem] lg:text-[color:var(--color-primary)] lg:text-[0.625rem]"
+          class="text-[color:var(--color-mobile-menu-link)] fas text-[1rem] lg:text-[color:var(--color-primary)] lg:text-[0.625rem]"
+          :class="[open ? 'fa-chevron-up' : 'fa-chevron-down']"
         />
       </span>
     </button>

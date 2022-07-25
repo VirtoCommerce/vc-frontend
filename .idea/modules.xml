@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/vue-starter-theme.iml" filepath="$PROJECT_DIR$/.idea/vue-starter-theme.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/vc-theme-b2b-vue.iml" filepath="$PROJECT_DIR$/.idea/vc-theme-b2b-vue.iml" />
     </modules>
   </component>
 </project>

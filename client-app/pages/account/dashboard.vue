@@ -14,13 +14,11 @@
         </div>
 
         <div class="flex items-center" v-else>
-          <router-link
-            :to="{ name: 'Orders' }"
-            class="text-xs text-blue-500 hover:text-blue-700 font-bold mr-3"
-            v-t="'pages.account.dashboard.last_orders_card.all_orders_link'"
-          />
+          <router-link :to="{ name: 'Orders' }" class="text-xs text-blue-500 hover:text-blue-700 font-bold">
+            {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
 
-          <i class="fas fa-arrow-right text-[color:var(--color-primary)]" />
+            <i class="ml-3 fas fa-arrow-right text-[color:var(--color-primary)]" />
+          </router-link>
         </div>
       </template>
 
@@ -273,13 +271,18 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
+import { usePageHead } from "@/core/composables";
 
 const { t } = useI18n();
-
+const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
 const { loading: ordersLoading, orders, loadOrders, sort, itemsPerPage } = useUserOrders();
+
+usePageHead({
+  title: t("pages.account.dashboard.meta.title"),
+});
 
 const columns = ref<ITableColumn[]>([
   {
@@ -309,8 +312,6 @@ const columns = ref<ITableColumn[]>([
     titlePosition: "text-right",
   },
 ]);
-
-const router = useRouter();
 
 const openOrderDetails = (item: CustomerOrderType) => {
   router.push({ name: "OrderDetails", params: { orderId: item.id } });

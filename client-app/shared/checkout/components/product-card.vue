@@ -14,9 +14,18 @@
       <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center flex-1">
         <div class="mb-3 lg:mb-0 text-sm xl:w-1/2">
           <div class="mb-1">
-            <router-link :to="link" class="text-[color:var(--color-link)] font-extrabold line-clamp-3 overflow-hidden">
+            <router-link
+              :to="link"
+              v-if="link"
+              class="text-[color:var(--color-link)] font-extrabold line-clamp-3 overflow-hidden"
+              :title="lineItem.name"
+            >
               {{ lineItem.name }}
             </router-link>
+            <div class="font-extrabold line-clamp-3 overflow-hidden" :title="lineItem.name" v-else>
+              {{ lineItem.name }}
+            </div>
+            <!-- todo: extract small alert component https://virtocommerce.atlassian.net/browse/ST-2488 -->
             <div class="flex items-center space-x-1 py-1" v-if="validationError">
               <i class="fas fa-exclamation-circle text-[color:var(--color-primary)]"></i>
               <span class="text-xs text-gray-400"> {{ itemErrorMessage }} </span>
@@ -55,12 +64,13 @@
         <div class="flex items-start space-x-2 lg:space-x-4 xl:w-2/5 lg:justify-end">
           <div class="flex flex-col max-w-[5.75rem] lg:items-center lg:max-w-[4.75rem] lg:shrink-0">
             <input
+              ref="input"
               v-model="value"
               type="number"
               pattern="\d*"
               :max="maxQty"
               :min="minQty"
-              class="w-[5.625rem] h-[32px] border rounded overflow-hidden focus:ring ring-inset outline-none p-1 text-center lg:w-[3.75rem] lg:h-10"
+              class="w-[5.625rem] h-[32px] border rounded overflow-hidden focus:border-gray-400 outline-none p-1 text-center lg:w-[3.75rem] lg:h-10"
               :class="{
                 'text-[color:var(--color-danger)]': isInputDisabled,
                 'border-[color:var(--color-danger)]': errorMessage,
@@ -70,6 +80,7 @@
               @input="onInput"
               @keypress="onKeypress"
               @keyup.enter="updateQuantity"
+              @click="onClick"
             />
 
             <div class="relative mt-1.5 pt-px h-6">
@@ -121,7 +132,7 @@
 
 <script setup lang="ts">
 import { LineItemType, ValidationErrorType } from "@/xapi/types";
-import { computed, PropType } from "vue";
+import { computed, PropType, ref } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useField } from "vee-validate";
 import * as yup from "yup";
@@ -136,6 +147,8 @@ const isMobile = breakpoints.smaller("lg");
 
 // Define max qty available to add
 const max = 999999;
+
+const input = ref<HTMLInputElement>();
 
 const props = defineProps({
   lineItem: {
@@ -161,9 +174,13 @@ const maxQty = computed(
   () => (variation.value ? variation.value?.maxQuantity : props.lineItem.product?.maxQuantity) || max
 );
 
-const link = computed<RouteLocationRaw>(() =>
-  getProductRoute(props.lineItem.product!.masterVariation || props.lineItem.product!)
-);
+const link = computed<RouteLocationRaw | undefined>(() => {
+  let productLink = undefined;
+  if (props.lineItem.product) {
+    productLink = getProductRoute(props.lineItem.product.masterVariation || props.lineItem.product);
+  }
+  return productLink;
+});
 
 const itemErrorMessage = computed(() => {
   if (props.validationError?.errorCode === "PRODUCT_PRICE_CHANGED") {
@@ -219,6 +236,13 @@ const onInput = () => {
     value.value = undefined;
   }
 };
+
+/**
+ * Select input value.
+ */
+function onClick() {
+  (input.value as HTMLInputElement).select();
+}
 </script>
 
 <style scoped></style>

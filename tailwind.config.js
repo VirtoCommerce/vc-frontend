@@ -132,16 +132,20 @@ module.exports = {
       boxShadow: {
         "t-sm": "0 -1px 2px 0 rgba(0, 0, 0, 0.05)",
         t: "0 -1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);",
+        "md-x": "1px 2px 8px rgba(0, 0, 0, 0.05)",
         "t-md": "0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
         "t-lg": "0 -10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
         "t-xl": "0 -20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
         "t-2xl": "0 -25px 50px -12px rgba(0, 0, 0, 0.25)",
         "t-3xl": "0 -35px 60px -15px rgba(0, 0, 0, 0.3)",
       },
-      dropShadow: {
-        "md-x": "1px 2px 8px rgba(0, 0, 0, 0.05)",
-      },
       fontSize: {
+        11: [
+          "0.688rem", //11px
+          {
+            lineHeight: "0.875rem", //14px
+          },
+        ],
         13: [
           "0.813rem", //13px
           {
@@ -189,8 +193,15 @@ module.exports = {
           },
         ],
       },
+      margin: {
+        4.5: "1.125rem", //18px
+      },
       padding: {
         19: "4.75rem", //76px
+      },
+      maxHeight: {
+        "screen-60": "60vh",
+        "screen-75": "75vh",
       },
     },
   },

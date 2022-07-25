@@ -1,9 +1,9 @@
 import { isRef, ref, unref, watchEffect } from "vue";
 import { MaybeRef } from "@vueuse/core";
 
-const template = ref({});
+const template = ref<Record<string, any>>({});
 
-export function useTemplate(url: MaybeRef<string>): any {
+export function useTemplate(url: MaybeRef<string>) {
   function load() {
     const $url = unref(url);
 

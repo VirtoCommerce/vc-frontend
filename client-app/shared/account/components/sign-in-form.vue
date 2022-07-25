@@ -2,22 +2,18 @@
   <form @submit="onSubmit">
     <!-- Errors block -->
     <VcAlert v-if="authError" class="mb-2" icon type="error" text>
-      <span v-html="$t('shared.account.sign_in_form.user_or_password_incorrect_alert')"></span>
-    </VcAlert>
-
-    <VcAlert v-if="!valid" class="mb-2" icon type="error" text>
-      <span v-html="$t('shared.account.sign_in_form.user_and_password_are_required_alert')"></span>
+      <span v-html="$t('shared.account.sign_in_form.email_or_password_incorrect_alert')"></span>
     </VcAlert>
 
     <VcInput
-      v-model="userName"
-      name="userName"
+      v-model="email"
+      name="email"
       class="mb-4"
-      :label="$t('shared.account.sign_in_form.user_name_label')"
-      :placeholder="$t('shared.account.sign_in_form.user_name_placeholder')"
+      :label="$t('shared.account.sign_in_form.email_label')"
+      :placeholder="$t('shared.account.sign_in_form.email_placeholder')"
       :is-disabled="loading || isAuthenticated"
       is-required
-      :error-message="errors.userName"
+      :error-message="errors.email"
       autocomplete="userName"
     ></VcInput>
 
@@ -94,7 +90,7 @@ const loading = ref(false);
 const authError = ref(false);
 
 const schema = yup.object({
-  userName: yup.string().label(t("shared.account.sign_in_form.user_name_label")).required(),
+  email: yup.string().label(t("shared.account.sign_in_form.email_label")).required().email(),
   password: yup.string().label(t("shared.account.sign_in_form.password_label")).required(),
 });
 
@@ -102,11 +98,11 @@ const { errors, handleSubmit, values } = useForm({
   validationSchema: schema,
 });
 
-const { value: userName } = useField<string>("userName");
+const { value: email } = useField<string>("email");
 const { value: password } = useField<string>("password");
 const rememberMe = ref(false);
 
-const model = reactive({ userName, password, rememberMe });
+const model = reactive({ email, password, rememberMe });
 
 const valid = eagerComputed<boolean>(() => isEmpty(errors.value));
 

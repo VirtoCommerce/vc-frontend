@@ -1,6 +1,7 @@
 <template>
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner grow">
     <div class="max-w-screen-2xl md:px-12 mx-auto">
+      <VcBreadcrumbs class="mb-3 hidden lg:block" :items="breadcrumbs"></VcBreadcrumbs>
       <h2
         class="text-gray-800 px-6 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-5"
         v-t="'pages.bulk_order.title'"
@@ -70,8 +71,22 @@ import { InputNewBulkItemType } from "@/xapi/types";
 import { useCart } from "@/shared/cart";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
+import { usePageHead } from "@/core/composables";
 
 const { t } = useI18n();
+
+usePageHead({
+  title: t("pages.bulk_order.meta.title"),
+  meta: {
+    keywords: t("pages.bulk_order.meta.keywords"),
+    description: t("pages.bulk_order.meta.description"),
+  },
+});
+
+const breadcrumbs: IBreadcrumbs[] = [
+  { route: "/", title: t("pages.compare.links.home") },
+  { title: t("pages.bulk_order.title") },
+];
 
 const tabs = [
   { id: "manually", label: t("pages.bulk_order.manually_tab") },

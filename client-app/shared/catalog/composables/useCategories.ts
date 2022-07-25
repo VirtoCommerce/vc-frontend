@@ -18,6 +18,7 @@ const itemToTreeItem = (parent: CategoryTree, category: Category): CategoryTree 
     slug: category.slug ?? "",
     items: [],
     seoUrl: category.seoInfo?.semanticUrl ?? "",
+    seoInfo: category.seoInfo,
     breadcrumbs: category.breadcrumbs,
   };
 };
@@ -61,10 +62,15 @@ async function loadCategoriesTree() {
 
   const rootCategoryInitialValue: CategoryTree = {
     isRoot: true,
-    label: globals.i18n.global.t("common.labels.catalog"),
+    label: globals.i18n.global.t("pages.catalog.title"),
     items: [],
     slug: "catalog",
     breadcrumbs: [],
+    seoInfo: {
+      pageTitle: globals.i18n.global.t("pages.catalog.meta.title"),
+      metaKeywords: globals.i18n.global.t("pages.catalog.meta.keywords"),
+      metaDescription: globals.i18n.global.t("pages.catalog.meta.description"),
+    },
   };
 
   try {

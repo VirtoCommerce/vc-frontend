@@ -1,6 +1,6 @@
 <template>
   <div v-if="order">
-    <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
+    <BackButtonInHeader v-if="isMobile && !isNew" @click="$router.back()" />
 
     <VcBreadcrumbs v-if="!isMobile" :items="breadcrumbs" class="mx-5 md:mx-0" />
 
@@ -57,7 +57,7 @@
                 v-model:page="page"
                 :pages="pages"
                 class="mb-3 lg:mb-0"
-                @update:page="page = $event"
+                @update:page="onUpdatePage()"
               ></VcPagination>
             </div>
           </div>
@@ -74,9 +74,7 @@
           class="shadow-inner pb-8 lg:shadow"
         >
           <div class="ml-24 mr-5 lg:ml-28 lg:mr-11">
-            <p class="break-words">
-              {{ order?.comment }}
-            </p>
+            <p class="break-words" v-for="line in order?.comment?.split('\n')" :key="line">{{ line }}</p>
           </div>
         </VcSection>
 
@@ -96,7 +94,12 @@
         <!-- Order summary -->
         <OrderSummary v-if="order" :cart="order" class="mb-5" />
 
-        <VcButton v-if="!isNew" class="uppercase w-full mb-5" @click="openReorderPopup">
+        <VcButton
+          v-if="!isNew"
+          :isDisabled="reorderAllButtonDisabled"
+          class="uppercase w-full mb-5"
+          @click="openReorderPopup"
+        >
           {{ $t("pages.account.order_details.reorder_all_button") }}
         </VcButton>
 
@@ -110,11 +113,11 @@
               {{ deliveryAddress?.line1 }}
               {{ deliveryAddress?.postalCode }}
             </p>
-            <p>
+            <p v-if="deliveryAddress?.phone">
               <span class="font-extrabold" v-t="'pages.account.order_details.shipping_address_card.phone_label'" />
               {{ deliveryAddress?.phone }}
             </p>
-            <p>
+            <p v-if="deliveryAddress?.email">
               <span class="font-extrabold" v-t="'pages.account.order_details.shipping_address_card.email_label'" />
               {{ deliveryAddress?.email }}
             </p>
@@ -134,7 +137,7 @@
         </VcCard>
 
         <VcCard :title="$t('pages.account.order_details.payment_details_card.title')" class="mb-5" is-collapsible>
-          <div class="flex flex-col text-sm">
+          <div class="flex flex-col space-y-1.5 text-sm">
             <p>
               <span class="font-extrabold">{{
                 $t("pages.account.order_details.payment_details_card.payment_number_label")
@@ -148,12 +151,12 @@
               }}</span>
               {{ order?.inPayments?.[0]?.gatewayCode }}
             </p>
+          </div>
 
-            <div class="mt-3">
-              <VcButton class="px-2 py-1 uppercase !text-xs !h-auto" is-outline is-disabled>
-                {{ $t("pages.account.order_details.payment_details_card.view_invoice_button") }}
-              </VcButton>
-            </div>
+          <div class="mt-3">
+            <VcButton class="px-2 py-1 uppercase !text-xs !h-auto" is-outline is-disabled>
+              {{ $t("pages.account.order_details.payment_details_card.view_invoice_button") }}
+            </VcButton>
           </div>
         </VcCard>
 
@@ -168,14 +171,14 @@
               {{ billingAddress?.postalCode }}
             </p>
 
-            <p>
+            <p v-if="billingAddress?.phone">
               <span class="font-extrabold">
                 {{ $t("pages.account.order_details.billing_address_card.phone_label") }}
               </span>
               {{ billingAddress?.phone }}
             </p>
 
-            <p>
+            <p v-if="billingAddress?.email">
               <span class="font-extrabold">
                 {{ $t("pages.account.order_details.billing_address_card.email_label") }}
               </span>
@@ -205,6 +208,7 @@ import _ from "lodash";
 import { usePopup } from "@/shared/popup";
 import { useProducts } from "@/shared/catalog";
 import { useI18n } from "vue-i18n";
+import { usePageHead } from "@/core/composables";
 
 const props = defineProps({
   orderId: {
@@ -224,8 +228,13 @@ const { fetchProducts, products } = useProducts();
 const { openPopup } = usePopup();
 const { t } = useI18n();
 
+usePageHead({
+  title: computed(() => t("pages.account.order_details.meta.title", [order.value?.number])),
+});
+
 const isMobile = breakpoints.smaller("lg");
 const page = ref(1);
+const reorderAllButtonDisabled = ref(false);
 
 const isNew = computed<boolean>(() => props.new === "true");
 
@@ -251,10 +260,11 @@ function printOrder() {
 }
 
 async function openReorderPopup() {
+  reorderAllButtonDisabled.value = true;
   const orderItemsInfo = order.value?.items
     .filter((item) => !item.isGift)
     .map((item) => {
-      return _.pick(item, "productId", "quantity", "id");
+      return _.pick(item, "productId", "quantity", "id", "sku", "name", "imageUrl");
     });
 
   const productIds = _.map(orderItemsInfo, (item) => {
@@ -268,6 +278,9 @@ async function openReorderPopup() {
     props: {
       productItems: products.value,
       orderItemsInfo: orderItemsInfo,
+      onPopupClose() {
+        reorderAllButtonDisabled.value = false;
+      },
     },
   });
 }
@@ -276,4 +289,11 @@ watchEffect(() => {
   clearOrder();
   loadOrder({ id: props.orderId });
 });
+
+/**
+ * Scroll after page change.
+ */
+function onUpdatePage() {
+  window.scroll({ top: 0, behavior: "smooth" });
+}
 </script>

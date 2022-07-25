@@ -535,7 +535,7 @@ import { useUser, useUserAddresses } from "@/shared/account";
 import { AddressType } from "@/core/types";
 import { addGiftItems, rejectGiftItems } from "@/xapi/graphql/cart";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { useElementVisibility } from "@/core/composables";
+import { useElementVisibility, usePageHead } from "@/core/composables";
 import { useNotifications } from "@/shared/notification";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -572,6 +572,10 @@ const {
 
 const { createOrder } = useCheckout();
 const { openPopup, closePopup } = usePopup();
+
+usePageHead({
+  title: t("pages.checkout.meta.title"),
+});
 
 const isMobile = breakpoints.smaller("lg");
 const productCardRefs = ref<InstanceType<typeof ProductCard>[]>([]);

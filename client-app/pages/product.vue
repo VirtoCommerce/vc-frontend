@@ -92,8 +92,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, watchEffect, defineAsyncComponent } from "vue";
+import { ref, Ref, watchEffect, defineAsyncComponent, computed } from "vue";
 import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
+import { usePageHead } from "@/core/composables";
 import { useCart, AddToCart } from "@/shared/cart";
 import {
   useProduct,
@@ -149,6 +150,14 @@ const { buildBreadcrumbs } = useBreadcrumbs();
 const { product, loading, loadProduct } = useProduct();
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const breakpoints = useBreakpoints(breakpointsTailwind);
+
+usePageHead({
+  title: computed(() => product.value?.seoInfo?.pageTitle || product.value?.name),
+  meta: {
+    keywords: computed(() => product.value?.seoInfo?.metaKeywords),
+    description: computed(() => product.value?.seoInfo?.metaDescription),
+  },
+});
 
 const isMobile = breakpoints.smaller("lg");
 const breadcrumbs: Ref<IBreadcrumbsItem[]> = ref([{ url: "/", title: t("common.links.home") }]);

@@ -1,28 +1,5 @@
 {
-  "blocks": {
-    "text": {
-      "icon": "text_fields",
-      "settings": [
-        {
-          "id": "header",
-          "type": "string"
-        },
-        {
-          "id": "text",
-          "type": "text"
-        }
-      ]
-    },
-    "image": {
-      "icon": "image",
-      "settings": [
-        {
-          "id": "image",
-          "type": "image"
-        }
-      ]
-    }
-  },
+  "blocks": ["text", "image"],
   "sections": {
     "carousel": {
       "icon": "thumb_up_off_alt"
@@ -35,7 +12,7 @@
     },
     "cover-with-image": {
       "icon": "superscript",
-      "displayPropertyName": "name",
+      "displayField": "name",
       "settings": [
         {
           "id": "simpleSelect",
@@ -286,13 +263,13 @@
     "product-details": {
       "name": "Product details",
       "icon": "image",
-      "displayNameProperty": "name",
+      "displayField": "name",
       "group": "Catalog"
     },
     "image": {
       "name": "Simple image",
       "icon": "image",
-      "displayNameProperty": "name",
+      "displayField": "name",
       "group": "Content",
       "groupIcon": "flight_takeoff",
       "settings": [
@@ -305,32 +282,32 @@
     "hero": {
       "name": "Hero block",
       "icon": "image",
-      "displayNameProperty": "name",
+      "displayField": "name",
       "group": "Promo",
       "groupIcon": "flight_takeoff"
     },
     "share": {
       "name": "Share icons",
       "icon": "image",
-      "displayNameProperty": "name",
+      "displayField": "name",
       "group": "Promo"
     },
     "images": {
       "name": "Images",
       "icon": "image",
-      "displayNameProperty": "name",
+      "displayField": "name",
       "group": "Content"
     },
     "video": {
       "name": "Video",
       "icon": "image",
-      "displayNameProperty": "name",
+      "displayField": "name",
       "group": "Content"
     },
     "text": {
       "name": "Text",
       "icon": "image",
-      "displayNameProperty": "name",
+      "displayField": "name",
       "group": "Content",
       "settings": [
         {
@@ -348,20 +325,20 @@
     "latest-news": {
       "name": "Latest news",
       "icon": "image",
-      "displayNameProperty": "name",
+      "displayField": "name",
       "group": "Integration"
     },
     "products-list": {
       "name": "Products list",
       "icon": "image",
-      "displayNameProperty": "name",
+      "displayField": "name",
       "group": "Integration"
     },
     "cover-with-variations": {
       "id": "cover-with-form",
       "name": "Cover with form",
       "icon": "image",
-      "displayNameProperty": "name",
+      "displayField": "name",
       "category": "Promo",
       "settings": [
         {
@@ -1276,7 +1253,7 @@
     "product-info": {
       "name": "Product",
       "icon": "smartphone",
-      "displayNameProperty": "name",
+      "displayField": "name",
       "blocks": ["image", "text"]
     }
   }

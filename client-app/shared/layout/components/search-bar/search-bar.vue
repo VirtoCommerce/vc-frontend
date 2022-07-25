@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-grow items-stretch relative">
+  <div class="flex flex-grow items-stretch relative" v-click-outside="reset">
     <input
       v-model.trim="searchPhrase"
       :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
@@ -7,10 +7,10 @@
       class="flex-grow px-4 h-[2.625rem] font-medium text-sm outline-none disabled:bg-gray-200 border rounded-l text-[0.95rem] pr-8"
       @keyup.enter="search"
       @keyup.esc="searchDropdownVisible && hideSearchDropdown()"
-      @input="searchProductsDebounced"
+      @input="onSearchPhraseChanged"
     />
 
-    <button v-if="searchDropdownVisible" class="absolute right-[3.8rem] top-[0.95rem]" @click="reset">
+    <button v-if="searchPhrase" class="absolute right-[3.8rem] top-[0.95rem]" @click="reset">
       <svg class="text-[color:var(--color-header-bottom-link)]" height="14" width="14">
         <use href="/static/images/delete.svg#main" />
       </svg>
@@ -24,7 +24,7 @@
     <transition name="slide-fade-top">
       <div
         v-if="searchDropdownVisible"
-        class="absolute top-[3.45rem] -left-[10rem] z-20 w-full flex flex-col gap-3 rounded bg-white shadow-lg overflow-hidden w-[48rem]"
+        class="absolute top-[3.45rem] -left-[10rem] z-20 w-full flex flex-col gap-3 rounded bg-white shadow-lg overflow-hidden"
         style="min-width: calc(100% + 10rem)"
       >
         <!-- Results -->
@@ -42,15 +42,15 @@
                     :to="categoriesRoutes[category.id]"
                     v-html="category.name"
                     class="py-1 block"
-                    @click="hideSearchBar"
-                  />
+                    @click="hideSearchDropdown"
+                  ></router-link>
                 </li>
               </ul>
             </div>
           </section>
 
           <!-- Products -->
-          <section v-if="products.length">
+          <section v-if="products.length" class="pb-4">
             <header class="px-5 py-2 text-xs text-gray-500 bg-gray-100">
               {{ $t("shared.layout.search_bar.products_label") }}
             </header>
@@ -60,13 +60,13 @@
                 v-for="product in products"
                 :key="product.id"
                 :product="product"
-                @link-click="hideSearchBar"
+                @link-click="hideSearchDropdown"
               />
             </div>
           </section>
 
           <!-- Actions -->
-          <section v-if="total" class="px-5 py-3 border-t border-gray-100">
+          <section v-if="total" class="mt-0.5 px-5 py-3 border-t border-gray-100">
             <VcButton
               :to="{ name: 'Search', query: { [QueryParamName.SearchPhrase]: searchPhrase } }"
               class="uppercase px-4"
@@ -108,9 +108,9 @@ import { configInjectionKey } from "@/core/injection-keys";
 import { useRouteQueryParam } from "@/core/composables";
 import QueryParamName from "@/core/query-param-name.enum";
 import { Category } from "@/xapi/types";
-import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 import { useDebounceFn, whenever } from "@vueuse/core";
 import { useCategoriesRoutes } from "@/shared/catalog";
+import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 
 // Number of categories column items in dropdown list
 const CATEGORIES_ITEMS_PER_COLUMN = 4;
@@ -126,7 +126,6 @@ const {
   categories,
   searchBarVisible,
   searchDropdownVisible,
-  hideSearchBar,
   hideSearchDropdown,
   showSearchDropdown,
   searchResults,
@@ -169,7 +168,7 @@ async function search() {
   await searchResults({
     keyword: searchPhrase.value,
     products: {
-      itemsPerPage: 9,
+      itemsPerPage: 6,
     },
     categories: {
       itemsPerPage: CATEGORIES_ITEMS_PER_COLUMN * COLUMNS,
@@ -184,9 +183,14 @@ function reset() {
   hideSearchDropdown();
 }
 
-const searchProductsDebounced = useDebounceFn(() => {
-  search();
+const searchProductsDebounced = useDebounceFn(async () => {
+  await search();
 }, SEARCH_BAR_DEBOUNCE_TIME);
+
+const onSearchPhraseChanged = () => {
+  hideSearchDropdown();
+  searchProductsDebounced();
+};
 
 watchEffect(() => (searchPhrase.value = searchPhraseInUrl.value ?? ""));
 whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });

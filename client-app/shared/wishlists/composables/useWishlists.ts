@@ -21,7 +21,7 @@ const loading = ref(true);
 const lists = shallowRef<WishlistType[]>([]);
 const list: Ref<WishlistType | null> = ref(null);
 
-export default function useWishlists() {
+export default function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: true }) {
   async function createWishlist(name: string) {
     loading.value = true;
 
@@ -33,6 +33,22 @@ export default function useWishlists() {
     }
 
     await fetchWishlists();
+  }
+
+  async function createWishlistAndAddProduct(name: string, productId: string) {
+    loading.value = true;
+
+    try {
+      const newList = await addWishlist(name);
+      if (!newList.id) {
+        console.error(`${useWishlists.name}.${createWishlistAndAddProduct.name}`, 'newList.id error');
+      } else {
+        await addItemsToWishlists([{ listId: newList.id, productId }]);
+      }
+    } catch (e) {
+      Logger.error(`${useWishlists.name}.${createWishlistAndAddProduct.name}`, e);
+      throw e;
+    }
   }
 
   async function fetchWishlists() {
@@ -78,7 +94,9 @@ export default function useWishlists() {
       throw e;
     }
 
-    await fetchWishlists();
+    if (options.autoRefetch) {
+      await fetchWishlists();
+    }
 
     if (list.value) {
       await fetchWishList(list.value.id!);
@@ -97,7 +115,9 @@ export default function useWishlists() {
       throw e;
     }
 
-    await fetchWishlists();
+    if (options.autoRefetch) {
+      await fetchWishlists();
+    }
 
     return result;
   }
@@ -115,7 +135,9 @@ export default function useWishlists() {
       }
     }
 
-    await fetchWishlists();
+    if (options.autoRefetch) {
+      await fetchWishlists();
+    }
   }
 
   async function removeItemsFromWishlists(payloads: InputRemoveWishlistItemType[]) {
@@ -131,17 +153,25 @@ export default function useWishlists() {
       }
     }
 
-    await fetchWishList(payloads[0].listId);
+    if (options.autoRefetch) {
+      await fetchWishlists();
+    }
+  }
+
+  function clearList() {
+    list.value = null;
   }
 
   return {
     fetchWishlists,
     fetchWishList,
     createWishlist,
+    createWishlistAndAddProduct,
     renameWishlist,
     removeWishlist,
     addItemsToWishlists,
     removeItemsFromWishlists,
+    clearList,
     loading: readonly(loading),
     lists: computed(() => lists.value),
     list: computed(() => list.value),

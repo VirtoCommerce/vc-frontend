@@ -5702,6 +5702,11 @@
   "resolved" "https://registry.npmjs.org/marked/-/marked-4.0.16.tgz"
   "version" "4.0.16"
 
+"maska@^1.5.0":
+  "integrity" "sha512-BwZXzs5gHeu6wtn3iWFqrKRtcsM3sTpkHvfAngVNVNlN7tl9ZyQUeHTz11s9Sy7Bq1MoQ+xyR/+IzghY8nR84Q=="
+  "resolved" "https://registry.npmjs.org/maska/-/maska-1.5.0.tgz"
+  "version" "1.5.0"
+
 "matchdep@^2.0.0":
   "integrity" "sha512-LFgVbaHIHMqCRuCZyfCtUOq9/Lnzhi7Z0KFUE2fhD54+JN2jLh3hC02RLkqauJ3U4soU6H1J3tfj/Byk7GoEjA=="
   "resolved" "https://registry.npmjs.org/matchdep/-/matchdep-2.0.0.tgz"

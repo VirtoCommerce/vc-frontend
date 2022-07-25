@@ -2,7 +2,7 @@
   <TwoColumn class="max-w-screen-xl">
     <template #left>
       <h1
-        class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8 lg:mb-9 lg:mt-6"
+        class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8 lg:mt-5"
         v-t="'pages.reset_password.header'"
       ></h1>
       <div v-if="isMounted">
@@ -45,9 +45,16 @@ import { onMounted, ref } from "vue";
 import { TwoColumn } from "@/shared/layout";
 import { ResetPasswordForm, useUser } from "@/shared/account";
 import { useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
+import { usePageHead } from "@/core/composables";
 
 const route = useRoute();
 const { validateToken } = useUser();
+const { t } = useI18n();
+
+usePageHead({
+  title: t("pages.reset_password.meta.title"),
+});
 
 const userId = route.query.userId?.valueOf() as string;
 const token = route.query.token?.valueOf() as string;

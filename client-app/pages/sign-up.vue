@@ -25,6 +25,7 @@
           :placeholder="$t('pages.sign_up.first_name_placeholder')"
           is-required
           :error-message="errors.firstName"
+          :maxlength="64"
         ></VcInput>
         <VcInput
           v-model="lastName"
@@ -33,6 +34,7 @@
           :placeholder="$t('pages.sign_up.last_name_placeholder')"
           is-required
           :error-message="errors.lastName"
+          :maxlength="64"
         ></VcInput>
         <VcInput
           v-model="email"
@@ -41,6 +43,7 @@
           :placeholder="$t('pages.sign_up.email_placeholder')"
           is-required
           :error-message="errors.email"
+          :maxlength="64"
         ></VcInput>
         <VcInput
           v-if="registrationKind === RegistrationKind.organization"
@@ -50,14 +53,7 @@
           :placeholder="$t('pages.sign_up.organization_name_placeholder')"
           is-required
           :error-message="errors.organizationName"
-        ></VcInput>
-        <VcInput
-          v-model="userName"
-          class="mb-4"
-          :label="$t('pages.sign_up.username_label')"
-          :placeholder="$t('pages.sign_up.username_placeholder')"
-          is-required
-          :error-message="errors.userName"
+          :maxlength="64"
         ></VcInput>
         <div class="block lg:flex justify-between lg:space-x-6">
           <VcInput
@@ -69,6 +65,7 @@
             autocomplete="new-password"
             is-required
             :error-message="errors.password"
+            :maxlength="64"
           ></VcInput>
           <VcInput
             v-model="confirmPassword"
@@ -76,8 +73,10 @@
             :label="$t('pages.sign_up.confirm_password_label')"
             :placeholder="$t('pages.sign_up.confirm_password_placeholder')"
             type="password"
+            autocomplete="off"
             is-required
             :error-message="errors.confirmPassword"
+            :maxlength="64"
           ></VcInput>
         </div>
         <div class="mt-6 lg:mt-4">
@@ -116,11 +115,15 @@ import { isObjectEmpty, trimString } from "@/core/utilities";
 import { useI18n } from "vue-i18n";
 import { checkEmailUniqueness, checkUsernameUniqueness } from "@/xapi/graphql/account";
 import _ from "lodash";
+import { usePageHead } from "@/core/composables";
 
 const { t } = useI18n();
-
 const { registerUser, registerOrganization, loading } = useUser();
 const { openPopup } = usePopup();
+
+usePageHead({
+  title: t("pages.sign_up.meta.title"),
+});
 
 const ASYNC_VALIDATION_TIMEOUT_IN_MS = 3000;
 
@@ -141,16 +144,6 @@ const schema = yup.object({
       t("pages.sign_up.errors.email_not_unique"),
       (value) => new Promise((resolve) => emailValidationDebounced(value!, resolve))
     ),
-  userName: yup
-    .string()
-    .label("Username")
-    .required()
-    .max(64)
-    .test(
-      "is-unique-username",
-      t("pages.sign_up.errors.user_name_not_unique"),
-      (value) => new Promise((resolve) => usernameValidationDebounced(value!, resolve))
-    ),
   firstName: yup.string().label("First Name").required().max(64),
   lastName: yup.string().label("Last Name").required().max(64),
   password: yup.string().label("Password").required(),
@@ -165,7 +158,6 @@ const { errors, handleSubmit, setFieldError } = useForm({
   validationSchema: schema,
   initialValues: {
     registrationKind: RegistrationKind.personal,
-    userName: "",
     email: "",
     organizationName: "",
     password: "",
@@ -179,7 +171,6 @@ const { errors, handleSubmit, setFieldError } = useForm({
 const { value: registrationKind } = useField<RegistrationKind>("registrationKind");
 const { value: firstName } = useField<string>("firstName");
 const { value: lastName } = useField<string>("lastName");
-const { value: userName } = useField<string>("userName");
 const { value: email } = useField<string>("email");
 const { value: organizationName } = useField<string>("organizationName");
 const { value: password } = useField<string>("password");
@@ -197,7 +188,7 @@ const onSubmit = handleSubmit(async (data) => {
       email: trimString(data.email),
       firstName: trimString(data.firstName),
       lastName: trimString(data.lastName),
-      userName: trimString(data.userName),
+      userName: trimString(data.email),
       password: trimString(data.password),
     });
   } else {
@@ -206,7 +197,7 @@ const onSubmit = handleSubmit(async (data) => {
       email: trimString(data.email),
       firstName: trimString(data.firstName),
       lastName: trimString(data.lastName),
-      userName: trimString(data.userName),
+      userName: trimString(data.email),
       password: trimString(data.password),
     });
   }
@@ -244,7 +235,7 @@ const onSubmit = handleSubmit(async (data) => {
           case "DuplicateUserName":
           case "InvalidUserName":
           case "LoginAlreadyAssociated":
-            setFieldError("userName", error.description);
+            setFieldError("email", error.description);
             break;
 
           case "DuplicateEmail":
@@ -283,24 +274,18 @@ function convertToIdentityError(textErrors: string[]): IdentityErrorType[] {
   return result;
 }
 
-const validateUsernameUniqueness = async (value: string, resolve: (value: boolean) => void) => {
-  try {
-    const response = await checkUsernameUniqueness({ username: value });
-    resolve(response === true);
-  } catch (error) {
-    resolve(false);
-  }
-};
-
 const validateEmailUniqueness = async (value: string, resolve: (value: boolean) => void) => {
   try {
-    const response = await checkEmailUniqueness({ email: value });
-    resolve(response === true);
+    const responses = await Promise.all([
+      checkEmailUniqueness({ email: value }),
+      checkUsernameUniqueness({ username: value }),
+    ]);
+
+    resolve(responses[0] && responses[1]);
   } catch (error) {
     resolve(false);
   }
 };
 
-const usernameValidationDebounced = _.debounce(validateUsernameUniqueness, ASYNC_VALIDATION_TIMEOUT_IN_MS);
 const emailValidationDebounced = _.debounce(validateEmailUniqueness, ASYNC_VALIDATION_TIMEOUT_IN_MS);
 </script>

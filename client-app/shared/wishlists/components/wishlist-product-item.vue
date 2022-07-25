@@ -3,36 +3,46 @@
     <!-- Name and image -->
     <div class="relative shrink-0 w-full flex-1 flex space-x-3 items-center">
       <div class="border border-gray-100 w-16 h-16 shrink-0">
-        <VcImage :src="product.imgSrc" :alt="product.name" class="w-full h-full object-cover object-center" />
+        <VcImage :src="listItem.imageUrl" :alt="listItem.name" class="w-full h-full object-cover object-center" />
       </div>
 
       <router-link
+        v-if="listItem.product"
         :to="link"
         class="text-sm text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)] break-words font-extrabold line-clamp-3 overflow-hidden"
+        :title="listItem.product.name"
       >
-        {{ product.name }}
+        {{ listItem.product.name }}
       </router-link>
+      <div v-else>
+        <div class="text-sm break-words font-extrabold line-clamp-3 overflow-hidden">{{ listItem.name }}</div>
+        <!-- todo: extract small alert component https://virtocommerce.atlassian.net/browse/ST-2488 -->
+        <div class="flex items-center space-x-1 mt-1">
+          <i class="fas fa-exclamation-circle text-[color:var(--color-primary)] self-start"></i>
+          <span class="text-xs text-gray-400" v-t="'common.messages.item_can_t_be_purchased'"></span>
+        </div>
+      </div>
     </div>
 
     <!-- Price -->
-    <div class="shrink-0 w-32 font-bold text-sm flex flex-col items-start">
+    <div class="shrink-0 w-32 text-sm flex flex-col items-start">
       <span class="font-bold">
         {{ $t("pages.compare.main_block.price_label") }}
       </span>
 
       <div>
-        <VcItemPrice :value="product.price" />
+        <VcItemPrice :value="listItem.product?.price || { list: listItem.listPrice, sale: listItem.salePrice }" />
       </div>
     </div>
 
     <!-- Add to cart -->
     <div class="w-48 shrink-0 flex flex-col justify-center">
-      <AddToCart :product="product" />
+      <AddToCart v-if="listItem.product" :product="listItem.product" />
 
       <div class="flex">
         <VcInStock
-          :is-in-stock="product.availabilityData?.isInStock"
-          :quantity="product.availabilityData?.availableQuantity"
+          :is-in-stock="listItem.product?.availabilityData?.isInStock || false"
+          :quantity="listItem.product ? listItem.product.availabilityData?.availableQuantity : undefined"
         ></VcInStock>
       </div>
     </div>
@@ -57,16 +67,18 @@ import { computed, PropType } from "vue";
 import { RouteLocationRaw } from "vue-router";
 import { getProductRoute } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
-import { Product } from "@/xapi/types";
+import { LineItemType } from "@/xapi/types";
 
 defineEmits(["remove"]);
 
 const props = defineProps({
-  product: {
-    type: Object as PropType<Product>,
+  listItem: {
+    type: Object as PropType<LineItemType>,
     required: true,
   },
 });
 
-const link = computed<RouteLocationRaw>(() => getProductRoute(props.product));
+const link = computed<RouteLocationRaw | undefined>(() =>
+  props.listItem.product ? getProductRoute(props.listItem.product) : undefined
+);
 </script>

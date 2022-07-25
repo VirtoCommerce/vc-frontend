@@ -133,12 +133,21 @@ import { onMounted, ref, watch } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useCompareProducts } from "@/shared/compare";
 import { useI18n } from "vue-i18n";
+import { usePageHead } from "@/core/composables";
 
 const { t } = useI18n();
 const { fetchProducts, products } = useProducts();
 const { clearCompareList, productsLimit, removeFromCompareList, productsIds } = useCompareProducts();
 
 const productsRoutes = useProductsRoutes(products);
+
+usePageHead({
+  title: t("pages.compare.meta.title"),
+  meta: {
+    keywords: t("pages.compare.meta.keywords"),
+    description: t("pages.compare.meta.description"),
+  },
+});
 
 const breadcrumbs: IBreadcrumbs[] = [
   { title: t("pages.compare.links.home"), route: "/" },
@@ -154,7 +163,7 @@ const originalProperties = ref<IProductProperties>({});
 const computedProperties = ref<IProductProperties>({});
 
 function onShowOnlyDifferencesChange() {
-  if (showOnlyDifferences.value) {
+  if (showOnlyDifferences.value && productsIds.value.length > 1) {
     _.each(_.keys(computedProperties.value), (key) => {
       const values = _.map(_.values(computedProperties.value[key]), (value) => {
         return value.value;
@@ -227,7 +236,6 @@ onMounted(() => {
 watch(
   () => productsIds.value,
   () => {
-    showOnlyDifferences.value = false;
     refreshProducts();
   }
 );

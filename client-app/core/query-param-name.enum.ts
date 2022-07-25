@@ -1,7 +1,7 @@
 enum QueryParamName {
   Page = "page",
   Sort = "sort",
-  Filter = "filter",
+  Facets = "facets",
   Keyword = "keyword",
   ItemsPerPage = "size",
   SearchPhrase = "q",

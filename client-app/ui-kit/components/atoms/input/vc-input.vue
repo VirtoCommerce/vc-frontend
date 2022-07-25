@@ -35,7 +35,7 @@
       </button>
     </div>
 
-    <div v-if="errorMessage" class="text-xs text-[color:var(--color-danger)]">{{ errorMessage }}</div>
+    <div v-if="errorMessage" class="pt-0.5 text-xs text-[color:var(--color-danger)]" v-html="errorMessage"></div>
   </div>
 </template>
 
@@ -92,7 +92,7 @@ function change(event: Event) {
   if (props.isDisabled) {
     return;
   }
-  const newValue: string = (event.target as HTMLInputElement).value;
+  const newValue: string = (event.target as HTMLInputElement).value.trim();
   emit("update:modelValue", props.type === "number" ? Number(newValue) : newValue);
 }
 
