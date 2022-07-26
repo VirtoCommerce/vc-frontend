@@ -7,7 +7,11 @@
         <div class="relative flex-grow -mt-0.5 md:-mt-1" :class="{ 'h-[3.75rem]': isTextTruncateEnabled }">
           <div class="pr-3" :class="{ 'absolute inset-0': isTextTruncateEnabled }">
             <div :class="{ 'truncate max-w-full': isTextTruncateEnabled }">
-              <a href="#" class="mt-px text-base font-extrabold text-[color:var(--color-link)]">
+              <a
+                :href="`/branch/${branch.id}`"
+                target="_blank"
+                class="mt-px text-base font-extrabold text-[color:var(--color-link)]"
+              >
                 {{ branch.name }}
               </a>
             </div>
