@@ -271,9 +271,8 @@ import {
   useProducts,
   useProductsRoutes,
   ViewMode,
-  BranchesDialog,
 } from "@/shared/catalog";
-import { BranchesDialog } from "@/shared/fulfillmentCenters/";
+import { BranchesDialog } from "@/shared/fulfillmentCenters";
 import { AddToCart } from "@/shared/cart";
 import { useElementVisibility, usePageHead, useRouteQueryParam } from "@/core/composables";
 import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
