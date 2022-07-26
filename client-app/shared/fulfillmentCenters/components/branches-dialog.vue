@@ -96,14 +96,16 @@
       <div class="px-6 py-3 border-b">
         <BranchSearch />
       </div>
-      <div v-for="(branch, index) in branches" class="border-b">
-        <BranchItem
-          v-if="showSelectedBranchesMobile && isBranchSelected(index) || !showSelectedBranchesMobile"
-          :branch="branch"
-          :is-text-truncate-enabled="false"
-        >
-          <VcCheckbox class="mr-3 cursor-pointer" v-model="selectedBranchesIds" :value="branch.id"> </VcCheckbox>
-        </BranchItem>
+      <div>
+        <template v-for="(branch, index) in branches">
+          <BranchItem
+            v-if="(showSelectedBranchesMobile && isBranchSelected(index)) || !showSelectedBranchesMobile"
+            :branch="branch"
+            :is-text-truncate-enabled="false"
+          >
+            <VcCheckbox class="mr-3 cursor-pointer" v-model="selectedBranchesIds" :value="branch.id"> </VcCheckbox>
+          </BranchItem>
+        </template>
       </div>
     </div>
     <!-- MOBILE content END -->
@@ -203,9 +205,7 @@ function toggleBranchChecked(index: number, checked: boolean) {
 }
 
 function clearSelection() {
-  console.log('clearSelection', selectedBranchesIds.value);
-  selectedBranchesIds.value = selectedBranchesIds.value.splice(0);
-  console.log('clearSelection', selectedBranchesIds.value);
+  selectedBranchesIds.value = [];
 }
 
 function toggleShowSelectedBranchesMobile(show: boolean) {
