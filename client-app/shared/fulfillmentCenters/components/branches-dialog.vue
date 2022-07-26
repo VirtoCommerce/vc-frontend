@@ -11,7 +11,7 @@
             {{ $t("shared.catalog.branches_dialog.all_branches") }}
           </div>
 
-          <BranchSearch class="flex-grow ml-1.5 md:ml-6" />
+          <BranchSearch class="flex-grow ml-1.5 md:ml-6" :model-value="searchInput" @update:input="search($event)" />
         </div>
         <transition-group tag="div" name="branch" class="flex-grow h-[23.8rem] max-h-screen-60 overflow-y-auto">
           <template v-for="(branch, index) in branches" :key="index">
@@ -94,7 +94,7 @@
         </template>
       </div>
       <div class="px-6 py-3 border-b">
-        <BranchSearch />
+        <BranchSearch :model-value="searchInput" @update:input="search($event)" />
       </div>
       <div>
         <template v-for="(branch, index) in branches">
@@ -137,64 +137,79 @@ const isMobile = breakpoints.smaller("sm");
 const showSelectedBranches = ref(false);
 const showSelectedBranchesMobile = ref(false);
 const selectedBranchesIds = ref<string[]>([]);
-const branches = computed(() => [
-  {
-    id: "1",
-    name: "Chicago Branch",
-    address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-  },
-  {
-    id: "2",
-    name: "Los Angeles BranchLos Angeles BranchLos Angeles BranchLos Angeles BranchLos Angeles BranchLos Angeles",
-    address:
-      "5400 N. Lakewood Avenue Chicago, Illinois, USA 606405400 N. Lakewood Avenue Chicago, Illinois, USA 606405400 N. Lakewood Avenue Chicago, Illinois, USA 606405400 N. Lakewood Avenue Chicago, Illinois, USA 606405400 N. Lakewood Avenue Chicago, Illinois, USA 606405400 N. Lakewood Avenue Chicago, Illinois",
-  },
-  {
-    id: "3",
-    name: "New York Branch",
-    address: "5400 N. Lakewood Avenue Chicago",
-  },
-  {
-    id: "4",
-    name: "Tennessee Branch",
-    address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-  },
-  {
-    id: "5",
-    name: "Atlanta Branch",
-    address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-  },
-  {
-    id: "6",
-    name: "LA Branch",
-    address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-  },
-  {
-    id: "7",
-    name: "Branch 2",
-    address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-  },
-  {
-    id: "8",
-    name: "Branch 3",
-    address: "5400 N. Lakewood Avenue",
-  },
-  {
-    id: "9",
-    name: "Branch 4",
-    address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-  },
-  {
-    id: "10",
-    name: "Branch 5",
-    address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-  },
-  {
-    id: "11",
-    name: "Branch 6",
-    address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-  },
-]);
+const searchInput = ref<string>("");
+const branches = computed(() =>
+  [
+    {
+      id: "1",
+      name: "Chicago Branch",
+      address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
+    },
+    {
+      id: "2",
+      name: "Los Angeles BranchLos Angeles BranchLos Angeles BranchLos Angeles BranchLos Angeles BranchLos Angeles",
+      address:
+        "5400 N. Lakewood Avenue Chicago, Illinois, USA 606405400 N. Lakewood Avenue Chicago, Illinois, USA 606405400 N. Lakewood Avenue Chicago, Illinois, USA 606405400 N. Lakewood Avenue Chicago, Illinois, USA 606405400 N. Lakewood Avenue Chicago, Illinois, USA 606405400 N. Lakewood Avenue Chicago, Illinois",
+    },
+    {
+      id: "3",
+      name: "New York Branch",
+      address: "5400 N. Lakewood Avenue Chicago",
+    },
+    {
+      id: "4",
+      name: "Tennessee Branch",
+      address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
+    },
+    {
+      id: "5",
+      name: "Atlanta Branch",
+      address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
+    },
+    {
+      id: "6",
+      name: "LA Branch",
+      address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
+    },
+    {
+      id: "7",
+      name: "Branch 2",
+      address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
+    },
+    {
+      id: "8",
+      name: "Branch 3",
+      address: "5400 N. Lakewood Avenue",
+    },
+    {
+      id: "9",
+      name: "Branch 4",
+      address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
+    },
+    {
+      id: "10",
+      name: "Branch 5",
+      address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
+    },
+    {
+      id: "11",
+      name: "Branch 6",
+      address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
+    },
+  ].filter((item) => searchFilter(item))
+);
+
+function searchFilter(item) {
+  const searchArr = searchInput.value.trim().split(" ");
+  const includeNumber = searchArr.filter((value) => {
+    return item.name.toLocaleLowerCase().includes(value) || item.address.toLocaleLowerCase().includes(value);
+  }).length;
+  return includeNumber === searchArr.length;
+}
+
+function search(value: string) {
+  searchInput.value = value.toLocaleLowerCase();
+}
 
 function isBranchSelected(index: number): boolean {
   return selectedBranchesIds.value.includes(branches.value[index]?.id);
