@@ -271,6 +271,7 @@ import {
   useProducts,
   useProductsRoutes,
   ViewMode,
+  BranchesDialog,
 } from "@/shared/catalog";
 import { BranchesDialog } from "@/shared/fulfillmentCenters/";
 import { AddToCart } from "@/shared/cart";
