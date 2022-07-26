@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { MenuLinkType } from "@/xapi/types";
 import { MenuLink } from "@/shared/layout";
+import { I18n } from "@/i18n";
 
 export function prepareSearchText(rawText: string): string {
   // add logic if necessary
@@ -24,4 +25,17 @@ export function linkListsItemToMenuLink(obj: MenuLinkType): MenuLink {
     route: obj.url,
     priority: obj.priority,
   };
+}
+
+export function getTranslatedMenuLink(i18n: I18n, menuLink?: MenuLink): MenuLink | undefined {
+  return menuLink
+    ? {
+        ...menuLink,
+        title: menuLink.title ? i18n.global.t(menuLink.title) : "",
+        children: menuLink.children?.map((item) => ({
+          ...item,
+          title: item.title ? i18n.global.t(item.title) : "",
+        })),
+      }
+    : undefined;
 }
