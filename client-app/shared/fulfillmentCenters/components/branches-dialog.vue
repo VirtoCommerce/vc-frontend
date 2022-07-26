@@ -131,7 +131,9 @@ import { computed, ref, watch } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import BranchItem from "./branch-item.vue";
 import BranchSearch from "./branch-search.vue";
+import { useFulfillmentCenters } from "@/shared/fulfillmentCenters";
 
+const { loading, loadFulfillmentCenters, fulfillmentCenters } = useFulfillmentCenters();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("sm");
 const showSelectedBranches = ref(false);
@@ -139,65 +141,10 @@ const showSelectedBranchesMobile = ref(false);
 const selectedBranchesIds = ref<string[]>([]);
 const searchInput = ref<string>("");
 const branches = computed(() =>
-  [
-    {
-      id: "1",
-      name: "Chicago Branch",
-      address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-    },
-    {
-      id: "2",
-      name: "Los Angeles BranchLos Angeles BranchLos Angeles BranchLos Angeles BranchLos Angeles BranchLos Angeles",
-      address:
-        "5400 N. Lakewood Avenue Chicago, Illinois, USA 606405400 N. Lakewood Avenue Chicago, Illinois, USA 606405400 N. Lakewood Avenue Chicago, Illinois, USA 606405400 N. Lakewood Avenue Chicago, Illinois, USA 606405400 N. Lakewood Avenue Chicago, Illinois, USA 606405400 N. Lakewood Avenue Chicago, Illinois",
-    },
-    {
-      id: "3",
-      name: "New York Branch",
-      address: "5400 N. Lakewood Avenue Chicago",
-    },
-    {
-      id: "4",
-      name: "Tennessee Branch",
-      address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-    },
-    {
-      id: "5",
-      name: "Atlanta Branch",
-      address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-    },
-    {
-      id: "6",
-      name: "LA Branch",
-      address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-    },
-    {
-      id: "7",
-      name: "Branch 2",
-      address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-    },
-    {
-      id: "8",
-      name: "Branch 3",
-      address: "5400 N. Lakewood Avenue",
-    },
-    {
-      id: "9",
-      name: "Branch 4",
-      address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-    },
-    {
-      id: "10",
-      name: "Branch 5",
-      address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-    },
-    {
-      id: "11",
-      name: "Branch 6",
-      address: "5400 N. Lakewood Avenue Chicago, Illinois, USA 60640",
-    },
-  ].filter((item) => searchFilter(item))
+  fulfillmentCenters.value.filter((item) => searchFilter(item))
 );
+
+loadFulfillmentCenters();
 
 function searchFilter(item) {
   const searchArr = searchInput.value.trim().split(" ");

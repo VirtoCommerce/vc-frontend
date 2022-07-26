@@ -21,14 +21,14 @@
           </div>
         </div>
 
-        <div class="flex items-start mt-2 md:-mt-0.5">
+        <div v-if="branch.shortDescription" class="flex items-start mt-2 md:-mt-0.5">
           <svg class="text-[color:var(--color-branch-dialog-clock)] md:mt-px" width="16" height="16">
             <use href="/static/images/clock.svg#main"></use>
           </svg>
-          <div class="flex space-x-3 ml-1.5 text-xs whitespace-nowrap md:block md:space-x-0">
-            <div><b>Mon-Fri:</b> 7:30 <sup>AM</sup>-5:00 <sup>PM</sup></div>
-            <div><b class="closed">Sat-Sun:</b> Closed</div>
-          </div>
+          <div
+            class="flex space-x-3 ml-1.5 text-xs whitespace-nowrap md:block md:space-x-0"
+            v-html="branch.shortDescription"
+          ></div>
         </div>
       </div>
     </div>
