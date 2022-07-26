@@ -104,8 +104,12 @@
             <ViewMode v-model:mode="savedViewMode" class="hidden md:inline-flex mr-6" />
 
             <div class="relative mr-6 ml-auto cursor-pointer" @click="openBranchesDialog">
-              <VcCheckbox model-value :disabled="loading" class="hidden md:flex">
-                Available at <span class="text-[color:var(--color-link)] font-bold">2 branches</span>
+              <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading" class="hidden md:flex">
+                Available at
+                <span v-if="savedBranches.length" class="text-[color:var(--color-link)] font-bold">
+                  {{ savedBranches.length }} branches
+                </span>
+                <template v-else>branches</template>
               </VcCheckbox>
               <div class="absolute inset-0"></div>
             </div>
@@ -317,6 +321,7 @@ usePageHead({
 const productsRoutes = useProductsRoutes(products);
 const savedViewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
 const savedInStock = useLocalStorage<boolean>("viewInStockProducts", true);
+const savedBranches = useLocalStorage<string[]>("viewFulfillmentCenters", []);
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: PRODUCT_SORTING_LIST[0].id,
@@ -493,9 +498,7 @@ function openBranchesDialog() {
     props: {
       onClose() {
         showBranchesPopup.value = false;
-      },
-      onResult() {
-        showBranchesPopup.value = false;
+        savedBranches.value = JSON.parse(localStorage.getItem("viewFulfillmentCenters"));
       },
     },
   });

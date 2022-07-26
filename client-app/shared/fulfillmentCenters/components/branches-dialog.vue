@@ -114,11 +114,19 @@
       <div
         class="relative flex-grow flex items-center justify-between -mt-4 pt-4 -mx-6 px-10 gap-5 shadow-t-lgs bg-white sm:shadow-none sm:mt-0 sm:px-6 sm:pt-0 sm:gap-auto"
       >
-        <VcButton kind="secondary" class="uppercase basis-0 flex-grow sm:basis-auto sm:flex-grow-0 sm:px-4" is-outline>
+        <VcButton
+          kind="secondary"
+          class="uppercase basis-0 flex-grow sm:basis-auto sm:flex-grow-0 sm:px-4"
+          is-outline
+          @click="close"
+        >
           {{ $t("shared.catalog.branches_dialog.cancel_button") }}
         </VcButton>
 
-        <VcButton class="uppercase basis-0 flex-grow sm:basis-auto sm:flex-grow-0 sm:px-5 sm:min-w-[9rem]">
+        <VcButton
+          class="uppercase basis-0 flex-grow sm:basis-auto sm:flex-grow-0 sm:px-5 sm:min-w-[9rem]"
+          @click="save(); close()"
+        >
           {{ $t("shared.catalog.branches_dialog.ok_button") }}
         </VcButton>
       </div>
@@ -140,11 +148,10 @@ const showSelectedBranches = ref(false);
 const showSelectedBranchesMobile = ref(false);
 const selectedBranchesIds = ref<string[]>([]);
 const searchInput = ref<string>("");
-const branches = computed(() =>
-  fulfillmentCenters.value.filter((item) => searchFilter(item))
-);
+const branches = computed(() => fulfillmentCenters.value.filter((item) => searchFilter(item)));
 
 loadFulfillmentCenters();
+selectedBranchesIds.value = JSON.parse(localStorage.getItem("viewFulfillmentCenters"));
 
 function searchFilter(item) {
   const searchArr = searchInput.value.trim().split(" ");
@@ -172,6 +179,10 @@ function clearSelection() {
 
 function toggleShowSelectedBranchesMobile(show: boolean) {
   showSelectedBranchesMobile.value = show;
+}
+
+function save() {
+  localStorage.setItem('viewFulfillmentCenters', JSON.stringify(selectedBranchesIds.value));
 }
 
 watch(selectedBranchesIds, () => {
