@@ -142,10 +142,6 @@ watch(
     &:last-child {
       @apply border-r;
     }
-
-    &.closed {
-      @apply font-semibold text-[color:var(--color-branch-closed)];
-    }
   }
 }
 </style>
