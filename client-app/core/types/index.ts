@@ -1,5 +1,5 @@
 import { MaybeRef } from "@vueuse/core";
-import { CartAddressType, MemberAddressType, OrderAddressType } from "@/xapi/types";
+import { CartAddressType, ContactType, MemberAddressType, OrderAddressType } from "@/xapi/types";
 import { LocationQueryValue } from "vue-router";
 
 export * from "./currency";
@@ -14,6 +14,8 @@ export enum AddressType {
   Shipping = 2,
   BillingAndShipping = 3,
 }
+
+export type OrganizationContactType = ContactType & { email?: string; role?: string };
 
 export type AnyAddressType = MemberAddressType | OrderAddressType | CartAddressType;
 

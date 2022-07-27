@@ -825,7 +825,17 @@
         "meta": {
           "title": "@:pages.company.members.title"
         },
-        "title": "Company Members"
+        "title": "Company Members",
+        "buttons": {
+          "invite_members": "Invite members",
+          "add_new_member": "Add new member"
+        },
+        "content_header": {
+          "name": "Name",
+          "role": "Role",
+          "email": "Email",
+          "active": "Active"
+        }
       }
     },
     "catalog": {
