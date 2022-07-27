@@ -10,16 +10,19 @@
         <div
           class="py-5 px-[1.4rem] rounded border bg-white text-base drop-shadow-md-x lg:bg-transparent lg:drop-shadow-none lg:px-8 lg:pt-6 lg:pb-5 lg:rounded-none lg:border-0"
         >
-          <div v-if="fulfillmentCenter?.address?.length" class="mt-0.5 mb-1 lg:mb-0.5">
+          <div class="mt-0.5 mb-1 lg:mb-0.5">
             <div class="mb-1 mr-1 font-bold lg:mb-2">{{ $t("pages.branch.address") }}</div>
             <div class="">
-              {{ fulfillmentCenter?.address }}
+              {{ fulfillmentCenter?.address ? fulfillmentCenter?.address : "&ndash;" }}
             </div>
           </div>
 
-          <div v-if="fulfillmentCenter?.phone" class="flex flex-wrap mb-1">
+          <div class="flex flex-wrap mb-1">
             <div class="mr-1 font-bold">{{ $t("pages.branch.phone") }}</div>
-            <div class="">{{ fulfillmentCenter?.phone }}</div>
+            <a :href="`tel:${fulfillmentCenter?.phone}`" v-if="fulfillmentCenter?.phone" class="hover:underline">
+              {{ fulfillmentCenter?.phone }}
+            </a>
+            <div v-else>&ndash;</div>
           </div>
         </div>
 
@@ -49,9 +52,10 @@
               <div class="text-[color:var(--color-body-text)] text-sm" v-if="branch.address">
                 {{ branch.address }}
               </div>
-              <div class="text-[color:var(--color-body-text)] text-sm" v-if="branch.phone">
+              <div class="text-[color:var(--color-body-text)] text-sm">
                 <b>{{ $t("pages.branch.phone") }}</b>
-                {{ branch.phone }}
+                <a v-if="branch.phone" :href="`tel:${branch.phone}`" class="hover:underline">{{ branch.phone }}</a>
+                <span v-else>&ndash;</span>
               </div>
             </li>
           </ul>

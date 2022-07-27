@@ -1049,8 +1049,7 @@
     },
     "branch": {
       "address": "Address",
-      "phone": "Phone:",
-      "branch_hours": "Branch hours",
+      "phone": "Phone: ",
       "other_branches": "Other branches"
     }
   }
