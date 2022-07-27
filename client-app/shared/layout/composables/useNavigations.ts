@@ -1,5 +1,5 @@
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
-import { linkListsItemToMenuLink, MenuLink } from "@/shared/layout";
+import { linkListsItemToMenuLink, MenuLink, getTranslatedMenuLink } from "@/shared/layout";
 import { getMenus } from "@/xapi/graphql/common";
 import globals from "@/core/globals";
 
@@ -31,19 +31,13 @@ const mobileCatalogMenuLink = computed<MenuLink | undefined>(() =>
   mobileHeaderMenuLinks.value.find((item) => item.id === "all-products-menu")
 );
 
-const mobileAccountMenuLink = computed<MenuLink | undefined>(() => {
-  const rawMenuLink: MenuLink | undefined = menuSchema.value?.header.mobile.account;
-  return rawMenuLink
-    ? {
-        ...rawMenuLink,
-        title: globals.i18n!.global.t(rawMenuLink.title!),
-        children: rawMenuLink.children?.map((item) => ({
-          ...item,
-          title: item.title ? globals.i18n!.global.t(item.title) : "",
-        })),
-      }
-    : undefined;
-});
+const mobileAccountMenuLink = computed<MenuLink | undefined>(() =>
+  getTranslatedMenuLink(globals.i18n!, menuSchema.value?.header.mobile.account)
+);
+
+const mobileCorporateMenuLink = computed<MenuLink | undefined>(() =>
+  getTranslatedMenuLink(globals.i18n!, menuSchema.value?.header.mobile.corporate)
+);
 
 const mobilePreSelectedMenuLink = computed<MenuLink | undefined>(() => {
   const matchedRouteNames = globals.router.currentRoute.value.matched
@@ -110,6 +104,7 @@ export default function useNavigations() {
     mobileHeaderMenuLinks,
     mobileCatalogMenuLink,
     mobileAccountMenuLink,
+    mobileCorporateMenuLink,
     mobilePreSelectedMenuLink,
     matchedRouteName: readonly(matchedRouteName),
     openedItem: computed<MenuLink | undefined>(() => openedMenuLinksStack.value[openedMenuLinksStack.value.length - 1]),

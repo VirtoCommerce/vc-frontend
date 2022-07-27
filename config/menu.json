@@ -95,6 +95,7 @@
           "name": "Account"
         },
         "title": "shared.layout.header.mobile.my_account",
+        "icon": "/static/images/common/user-circle.svg#main",
         "children": [
           {
             "route": {
@@ -141,6 +142,27 @@
           {
             "id": "logout",
             "icon": "/static/images/common/user-circle.svg#main"
+          }
+        ]
+      },
+      "corporate": {
+        "id": "corporate",
+        "title": "shared.layout.header.mobile.corporate",
+        "icon": "/static/images/dashboard/icons/company.svg#main",
+        "children": [
+          {
+            "route": {
+              "name": "CompanyInfo"
+            },
+            "title": "shared.layout.header.mobile.corporate_menu.company_info",
+            "icon": "/static/images/dashboard/icons/building.svg#main"
+          },
+          {
+            "route": {
+              "name": "CompanyMembers"
+            },
+            "title": "shared.layout.header.mobile.corporate_menu.company_members",
+            "icon": "/static/images/dashboard/icons/members.svg#main"
           }
         ]
       }

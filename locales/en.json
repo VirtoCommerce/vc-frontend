@@ -82,7 +82,9 @@
       "lists": "Lists",
       "checkout_defaults": "Checkout Defaults",
       "list_details": "List Details",
-      "cart": "Cart"
+      "cart": "Cart",
+      "company_info": "Company Info",
+      "company_members": "Company Members"
     }
   },
   "shared": {
@@ -115,6 +117,11 @@
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
             "checkout_defaults": "@:common.links.checkout_defaults"
+          },
+          "corporate": "@:shared.account.navigation.corporate_title",
+          "corporate_menu": {
+            "company_info": "@:common.links.company_info",
+            "company_members": "@:common.links.company_members"
           },
           "settings": "Settings",
           "currency": "Currency",
@@ -170,15 +177,18 @@
     },
     "account": {
       "navigation": {
-        "title": "Account",
+        "main_title": "Account",
+        "corporate_title": "Corporate",
         "links": {
           "dashboard": "@:common.links.dashboard",
           "profile": "@:common.links.profile",
           "addresses": "@:common.links.addresses",
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
+          "list_details": "@:common.links.list_details",
           "checkout_defaults": "@:common.links.checkout_defaults",
-          "list_details": "@:common.links.list_details"
+          "company_info": "@:common.links.company_info",
+          "company_members": "@:common.links.company_members"
         }
       },
       "address_form": {
@@ -838,6 +848,20 @@
         }
       }
     },
+    "company": {
+      "info": {
+        "meta": {
+          "title": "@:pages.company.info.title"
+        },
+        "title": "Company Info"
+      },
+      "members": {
+        "meta": {
+          "title": "@:pages.company.members.title"
+        },
+        "title": "Company Members"
+      }
+    },
     "catalog": {
       "meta": {
         "title": "@:pages.catalog.title",
@@ -1059,8 +1083,7 @@
     },
     "branch": {
       "address": "Address",
-      "phone": "Phone:",
-      "branch_hours": "Branch hours",
+      "phone": "Phone: ",
       "other_branches": "Other branches"
     }
   }
