@@ -33,23 +33,28 @@
       </div>
     </VcCard>
 
+    <!-- Branch availability -->
+    <VcCard :with-header="false">
+      <div class="relative cursor-pointer" @click="onOpenBranches">
+        <VcCheckbox :model-value="!!_filters.availableIn.length" :disabled="loading" class="hidden md:flex">
+          <div
+            v-html="
+              $t('pages.catalog.branch_availability_filter_card.available_in', { n: _filters.availableIn.length })
+            "
+          ></div>
+        </VcCheckbox>
+        <div class="absolute inset-0"></div>
+      </div>
+      <div class="mt-1 text-xs font-medium">
+        {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
+      </div>
+    </VcCard>
+
     <!-- Previously purchased -->
     <VcCard :title="$t('pages.catalog.instock_filter_card.title')">
       <VcCheckbox v-model="_filters.inStock" :disabled="loading" @change="onFilterChanged">
         {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
       </VcCheckbox>
-    </VcCard>
-
-    <!-- Branch availability -->
-    <VcCard :title="$t('pages.catalog.branch_availability_filter_card.title')">
-      <p class="text-sm font-medium">
-        <span
-          class="text-[color:var(--color-link)] font-semibold cursor-pointer hover:text-[color:var(--color-link-hover)]"
-        >
-          {{ $t("pages.catalog.branch_availability_filter_card.select_branch_link") }}
-        </span>
-        {{ $t("pages.catalog.branch_availability_filter_card.select_branch_link_end") }}
-      </p>
     </VcCard>
 
     <!-- Facet Filters Skeletons -->
@@ -95,9 +100,12 @@ import { ProductsFilters, ProductsFacet } from "@/shared/catalog";
 import { eagerComputed } from "@vueuse/core";
 import { watch, onMounted, PropType, ref, shallowReactive, toRefs } from "vue";
 import _ from "lodash";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("lg");
 const _keyword = ref("");
-const _filters = shallowReactive<ProductsFilters>({ facets: [], inStock: false });
+const _filters = shallowReactive<ProductsFilters>({ facets: [], inStock: false, availableIn: [] });
 
 const props = defineProps({
   loading: {
@@ -117,6 +125,7 @@ const props = defineProps({
 const emit = defineEmits<{
   (e: "search", keyword: string): void;
   (e: "change", value: ProductsFilters): void;
+  (e: "openBranches"): void;
 }>();
 
 const { loading, keyword, filters } = toRefs(props);
@@ -125,6 +134,7 @@ onMounted(() => {
   _keyword.value = keyword.value;
   _filters.facets = _.cloneDeep(filters.value.facets);
   _filters.inStock = props.filters.inStock;
+  _filters.availableIn = props.filters.availableIn;
 });
 
 watch(
@@ -141,6 +151,13 @@ watch(
   }
 );
 
+watch(
+  () => filters.value.availableIn,
+  (newValue) => {
+    _filters.availableIn = newValue;
+  }
+);
+
 watch(keyword, (newKeyword) => (_keyword.value = newKeyword ?? ""));
 
 const isAppliedKeyword = eagerComputed<boolean>(() => _keyword.value == keyword.value);
@@ -152,6 +169,10 @@ function onFilterChanged() {
 }
 function onSearchStart() {
   emit("search", _keyword.value);
+}
+
+function onOpenBranches() {
+  emit("openBranches");
 }
 
 function reset() {

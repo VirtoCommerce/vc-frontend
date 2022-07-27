@@ -31,6 +31,7 @@
               hideMobileSidebar();
             "
             @change="onMobileFilterChanged($event)"
+            @openBranches="onOpenBranchesDialog"
           />
 
           <div class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
@@ -103,13 +104,11 @@
             <!-- View options -->
             <ViewMode v-model:mode="savedViewMode" class="hidden md:inline-flex mr-6" />
 
-            <div class="relative mr-6 ml-auto cursor-pointer" @click="openBranchesDialog">
+            <div class="relative mr-6 ml-auto cursor-pointer" @click="onOpenBranchesDialog">
               <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading" class="hidden md:flex">
-                Available at
-                <span v-if="savedBranches.length" class="text-[color:var(--color-link)] font-bold">
-                  {{ savedBranches.length }} branches
-                </span>
-                <template v-else>branches</template>
+                <div
+                  v-html="$t('pages.catalog.branch_availability_filter_card.available_in', { n: savedBranches.length })"
+                ></div>
               </VcCheckbox>
               <div class="absolute inset-0"></div>
             </div>
@@ -261,6 +260,7 @@ import {
   DisplayProducts,
   getFilterExpressionForInStock,
   getFilterExpressionFromFacets,
+  getFilterExpressionForAvailableIn,
   IBreadcrumbsItem,
   ProductsFacet,
   ProductsFacetValue,
@@ -345,7 +345,11 @@ const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeade
 const page = ref(1);
 const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
 const mobileSidebarVisible = ref(false);
-const mobileFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: savedInStock.value });
+const mobileFilters = shallowReactive<ProductsFilters>({
+  facets: [],
+  inStock: savedInStock.value,
+  availableIn: savedBranches.value,
+});
 const showBranchesPopup = ref(false);
 
 // region Computed properties
@@ -359,7 +363,13 @@ const searchParams = computedEager<ProductsSearchParams>(() => ({
   itemsPerPage: itemsPerPage.value,
   sort: sortQueryParam.value,
   keyword: keywordQueryParam.value,
-  filter: [facetsQueryParam.value, getFilterExpressionForInStock(savedInStock)].filter(Boolean).join(" "),
+  filter: [
+    facetsQueryParam.value,
+    getFilterExpressionForInStock(savedInStock),
+    getFilterExpressionForAvailableIn(savedBranches),
+  ]
+    .filter(Boolean)
+    .join(" "),
 }));
 
 const isExistSelectedFacets = eagerComputed<boolean>(() =>
@@ -428,6 +438,7 @@ async function onMobileFilterChanged(newFilters: ProductsFilters) {
     filter: [
       getFilterExpressionFromFacets(newFilters.facets), //
       getFilterExpressionForInStock(newFilters.inStock),
+      getFilterExpressionForAvailableIn(savedBranches),
     ]
       .filter(Boolean)
       .join(" "),
@@ -492,13 +503,20 @@ function selectCategory(id?: string) {
   }
 }
 
-function openBranchesDialog() {
+function onOpenBranchesDialog() {
+  if (isMobileSidebar) {
+    hideMobileSidebar();
+  }
   openPopup({
     component: BranchesDialog,
     props: {
       onClose() {
         showBranchesPopup.value = false;
         savedBranches.value = JSON.parse(localStorage.getItem("viewFulfillmentCenters"));
+        if (isMobileSidebar) {
+          mobileFilters.availableIn = savedBranches.value;
+          showMobileSidebar();
+        }
       },
     },
   });

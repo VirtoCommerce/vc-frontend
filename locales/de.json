@@ -831,8 +831,8 @@
       },
       "branch_availability_filter_card": {
         "title": "Branch availability",
-        "select_branch_link": "Select a pickup branch",
-        "select_branch_link_end": "to see products in stock now."
+        "available_in": "Available at branches | Available at <b class=\"text-[color:var(--color-link)]\">{n} branch</b> | Available at <b class=\"text-[color:var(--color-link)]\">{n} branches</b>",
+        "select_branch_text": "Select a pickup branch to see the products that are in stock now"
       },
       "facet_card": {
         "item_count_format": "({0})"
