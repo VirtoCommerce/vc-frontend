@@ -125,6 +125,7 @@
 
         <VcButton
           class="uppercase basis-0 flex-grow sm:basis-auto sm:flex-grow-0 sm:px-5 sm:min-w-[9rem]"
+          :is-disabled="isSaveButtonDisabled"
           @click="
             save();
             close();
@@ -152,9 +153,10 @@ const showSelectedBranchesMobile = ref(false);
 const selectedBranchesIds = ref<string[]>([]);
 const searchInput = ref<string>("");
 const branches = computed(() => fulfillmentCenters.value.filter((item) => searchFilter(item)));
+const selectedBranchesIdsOld = JSON.parse(localStorage.getItem("viewFulfillmentCenters") || "[]");
 
 loadFulfillmentCenters();
-selectedBranchesIds.value = JSON.parse(localStorage.getItem("viewFulfillmentCenters") || "[]");
+selectedBranchesIds.value = selectedBranchesIdsOld;
 
 function searchFilter(item: IFulfillmentCenter) {
   const searchArr = searchInput.value.trim().split(" ");
@@ -179,6 +181,10 @@ function clearSelection() {
 function toggleShowSelectedBranchesMobile(show: boolean) {
   showSelectedBranchesMobile.value = show;
 }
+
+const isSaveButtonDisabled = computed(
+  () => JSON.stringify(selectedBranchesIdsOld) === JSON.stringify(selectedBranchesIds.value)
+);
 
 function save() {
   localStorage.setItem("viewFulfillmentCenters", JSON.stringify(selectedBranchesIds.value));
