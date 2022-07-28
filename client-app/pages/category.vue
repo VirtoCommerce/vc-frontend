@@ -512,7 +512,7 @@ function onOpenBranchesDialog() {
     props: {
       onClose() {
         showBranchesPopup.value = false;
-        savedBranches.value = JSON.parse(localStorage.getItem("viewFulfillmentCenters"));
+        savedBranches.value = JSON.parse(localStorage.getItem("viewFulfillmentCenters") || '[]');
         if (isMobileSidebar) {
           mobileFilters.availableIn = savedBranches.value;
           showMobileSidebar();

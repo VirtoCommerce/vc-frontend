@@ -36,10 +36,10 @@
     <!-- Branch availability TURNED OFF TEMP -->
     <VcCard v-if="false" :with-header="false">
       <div class="relative cursor-pointer" @click="onOpenBranches">
-        <VcCheckbox :model-value="!!_filters.availableIn.length" :disabled="loading" class="hidden md:flex">
+        <VcCheckbox :model-value="!!_filters.availableIn?.length" :disabled="loading" class="hidden md:flex">
           <div
             v-html="
-              $t('pages.catalog.branch_availability_filter_card.available_in', { n: _filters.availableIn.length })
+              $t('pages.catalog.branch_availability_filter_card.available_in', { n: _filters.availableIn?.length })
             "
           ></div>
         </VcCheckbox>

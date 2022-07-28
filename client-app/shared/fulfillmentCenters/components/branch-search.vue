@@ -8,7 +8,7 @@
         type="text"
         :placeholder="$t('shared.catalog.branches_dialog.search_input_placeholder')"
         :value="modelValue"
-        @input="emit('update:input', $event.target.value)"
+        @input="onInput($event)"
       />
       <button
         class="flex items-center justify-center w-5 h-5"
@@ -41,4 +41,9 @@ const props = defineProps({
     default: "",
   },
 });
+
+function onInput(event: Event) {
+  const target = event.target as HTMLInputElement;
+  emit("update:input", target.value);
+}
 </script>
