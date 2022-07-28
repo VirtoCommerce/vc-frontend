@@ -4,10 +4,10 @@
     <div class="flex justify-between items-center mx-5 md:mx-0">
       <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.company.members.title'" />
       <div v-if="!isMobile" class="space-x-4">
-        <VcButton :is-disabled="true" class="uppercase p-4" is-outline>
+        <VcButton :is-disabled="true" class="uppercase px-5" is-outline>
           {{ $t("pages.company.members.buttons.invite_members") }}
         </VcButton>
-        <VcButton class="uppercase p-4" is-outline @click="openAddNewMemberPopup">
+        <VcButton class="uppercase p-5" is-outline @click="openAddNewMemberPopup">
           {{ $t("pages.company.members.buttons.add_new_member") }}
         </VcButton>
       </div>
@@ -167,7 +167,7 @@ import { ref, onMounted } from "vue";
 import { useOrganizationContacts } from "@/shared/account";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 import { usePopup } from "@/shared/popup";
-import { AddNewCompanyMemberDialog } from "@/shared/company";
+import { AddNewCompanyMemberDialog, AddNewMember } from "@/shared/company";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
 const { t } = useI18n();
@@ -250,6 +250,12 @@ onMounted(async () => {
 function openAddNewMemberPopup() {
   openPopup({
     component: AddNewCompanyMemberDialog,
+    props: {
+      onResult: (newMember: AddNewMember) => {
+        console.log(newMember);
+        debugger;
+      },
+    },
   });
 }
 </script>

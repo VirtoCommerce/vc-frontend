@@ -278,6 +278,14 @@
     "company": {
       "add_new_member_dialog": {
         "title": "New member",
+        "role_label": "Role",
+        "role_placeholder": "Select role",
+        "first_name_label": "@:common.labels.first_name",
+        "first_name_placeholder": "Enter your first name",
+        "last_name_label": "@:common.labels.last_name",
+        "last_name_placeholder": "Enter your last name",
+        "email_label": "@:common.labels.email",
+        "email_placeholder": "@:common.placeholders.email",
         "cancel_button": "@:common.buttons.cancel",
         "add_button": "Add"
       }
