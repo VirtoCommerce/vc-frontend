@@ -125,7 +125,10 @@
 
         <VcButton
           class="uppercase basis-0 flex-grow sm:basis-auto sm:flex-grow-0 sm:px-5 sm:min-w-[9rem]"
-          @click="save(); close()"
+          @click="
+            save();
+            close();
+          "
         >
           {{ $t("shared.catalog.branches_dialog.ok_button") }}
         </VcButton>
@@ -139,8 +142,7 @@ import { computed, ref, watch } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import BranchItem from "./branch-item.vue";
 import BranchSearch from "./branch-search.vue";
-import { useFulfillmentCenters } from "@/shared/fulfillmentCenters";
-import { IFulfillmentCenter } from '@/shared/fulfillmentCenters';
+import { useFulfillmentCenters, IFulfillmentCenter } from "@/shared/fulfillmentCenters";
 
 const { loading, loadFulfillmentCenters, fulfillmentCenters } = useFulfillmentCenters();
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -152,7 +154,7 @@ const searchInput = ref<string>("");
 const branches = computed(() => fulfillmentCenters.value.filter((item) => searchFilter(item)));
 
 loadFulfillmentCenters();
-selectedBranchesIds.value = JSON.parse(localStorage.getItem("viewFulfillmentCenters") || '[]');
+selectedBranchesIds.value = JSON.parse(localStorage.getItem("viewFulfillmentCenters") || "[]");
 
 function searchFilter(item: IFulfillmentCenter) {
   const searchArr = searchInput.value.trim().split(" ");
@@ -167,7 +169,7 @@ function search(value: string) {
 }
 
 function isBranchSelected(index: number): boolean {
-  return selectedBranchesIds.value.includes(branches.value[index]?.id || '');
+  return selectedBranchesIds.value.includes(branches.value[index]?.id || "");
 }
 
 function clearSelection() {
@@ -179,7 +181,7 @@ function toggleShowSelectedBranchesMobile(show: boolean) {
 }
 
 function save() {
-  localStorage.setItem('viewFulfillmentCenters', JSON.stringify(selectedBranchesIds.value));
+  localStorage.setItem("viewFulfillmentCenters", JSON.stringify(selectedBranchesIds.value));
 }
 
 watch(selectedBranchesIds, () => {

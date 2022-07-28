@@ -31,7 +31,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 const input = ref<string>("");
 const emit = defineEmits(["update:input"]);
 

@@ -97,10 +97,9 @@
 
 <script setup lang="ts">
 import { ProductsFilters, ProductsFacet } from "@/shared/catalog";
-import { eagerComputed } from "@vueuse/core";
+import { eagerComputed, breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { watch, onMounted, PropType, ref, shallowReactive, toRefs } from "vue";
 import _ from "lodash";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
