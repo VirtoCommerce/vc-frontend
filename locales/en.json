@@ -851,11 +851,15 @@
           "title": "@:pages.company.members.title"
         },
         "title": "Company Members",
+        "search_placeholder": "User search",
+        "no_results_found_message": "No results found",
+        "invite_sent": "Invite Sent",
         "buttons": {
           "invite_members": "Invite members",
           "add_new_member": "Add new member",
           "invite": "Invite",
-          "add": "Add"
+          "new": "New",
+          "reset_search": "Reset search"
         },
         "content_header": {
           "name": "Name",
