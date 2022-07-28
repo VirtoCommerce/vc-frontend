@@ -1,7 +1,7 @@
 {
   "settings": {
     "name": "Home page blocks and some other information about the site",
-    "displayType": "table",
+    "displayType": "grid",
     "metaTitle": "Metatitle",
     "metaDescription": "meta description"
   },
@@ -39,23 +39,23 @@
       "inlineColorNoAlpha": null,
       "hexColor": null,
       "presetOnlyColors": null,
-      "singleFile": [
-        "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/butterfly-1127666_1920.jpg",
-        "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/dandelion-445228_1920.jpg",
-        "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/elephant-1822636_1920.jpg",
-        "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/fall-1072821_1920.jpg",
-        "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/bird-1045954_1920.jpg",
-        "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/flower-3140492_1920.jpg",
-        "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/green-1072828_1920.jpg",
-        "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/nature-3082832_1920.jpg",
-        "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/railroad-tracks-163518_1280.jpg",
-        "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/sunset-1373171_1920.jpg",
-        "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/the-road-815297_1920.jpg",
-        "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/tree-736885_1280.jpg"
+      "singleFile": "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/Томленая говядина.jpg",
+      "multipleFiles": [
+        "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/tree-736885_1280_Dk60xc2_XI.jpg",
+        "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/tree-736885_1280-tree-736885_1280-tree-736885_1280-tree-736885_1280-tree-736885_1280 - Copy_1eXDjJMHHS.jpg",
+        "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/Томленая говядина_WeGwKUPINq.jpg"
       ],
-      "multipleFiles": null,
       "sortableFiles": null,
-      "extendedFiles": null,
+      "extendedFiles": [
+        {
+          "filename": "tree-736885_1280-tree-736885_1280-tree-736885_1280-tree-736885_1280-tree-736885_1280 - Copy.jpg",
+          "url": "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/tree-736885_1280-tree-736885_1280-tree-736885_1280-tree-736885_1280-tree-736885_1280 - Copy.jpg"
+        },
+        {
+          "filename": "Томленая говядина.jpg",
+          "url": "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/Томленая говядина.jpg"
+        }
+      ],
       "simpleList": [
         {
           "label": "some long text must be cut and truncated in the line",
@@ -63,7 +63,39 @@
           "fieldName": null
         }
       ],
-      "simpleObject1": null
+      "simpleObject1": null,
+      "singleImage": null,
+      "multipleImages": [
+        "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/tree-736885_1280_TmJ91Ra6cC.jpg",
+        "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/the-road-815297_1920_hvtqUdd4am.jpg",
+        "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/tree-736885_1280-tree-736885_1280-tree-736885_1280-tree-736885_1280-tree-736885_1280 - Copy_h7W5hoKv6R.jpg",
+        "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/bird-1045954_1920_ah0IqhY1vn.jpg"
+      ],
+      "sortableImages": null,
+      "extendedImages": [
+        {
+          "filename": "elephant-1822636_1920.jpg",
+          "url": "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/elephant-1822636_1920.jpg"
+        },
+        {
+          "filename": "fall-1072821_1920.jpg",
+          "info": "4545",
+          "size": null,
+          "url": "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/fall-1072821_1920.jpg"
+        },
+        {
+          "filename": "flower-3140492_1920.jpg",
+          "url": "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/flower-3140492_1920.jpg"
+        },
+        {
+          "filename": "green-1072828_1920.jpg",
+          "url": "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/green-1072828_1920.jpg"
+        },
+        {
+          "filename": "nature-3082832_1920.jpg",
+          "url": "https://localhost:5001/cms-content//Pages/B2B-store/assets/pages/nature-3082832_1920.jpg"
+        }
+      ]
     },
     {
       "id": "2",

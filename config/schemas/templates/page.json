@@ -1,17 +1,16 @@
 {
-  "name": "Page",
-  "previewUrl": "/demo-page",
-  "searchPath": [
+  "name": "Pages",
+  "previewUrl": "",
+  "request": [
     {
-      "path": "content/pages",
-      "type": "themes"
-    },
-    {
-      "path": "",
-      "type": "pages",
-      "exculdes": ["blogs"]
+      "url": "/api/pagebuilder/search?storeId=B2B-store&type=themes&query=*.page",
+      "method": "get",
+      "response": {
+        "selector": "Object.keys(this.response).map(x => ({ ...this.item, ...this.response[x], request: undefined, path: this.response[x].path.substring('/default'.length) })).reduce((acc, x) => ({ ...acc, [x.name]: x }), {})",
+        "isArray": true
+      }
     }
   ],
-  "path": "content/pages/page.json",
+  "type": "themes",
   "sections": ["image", "text"]
 }
