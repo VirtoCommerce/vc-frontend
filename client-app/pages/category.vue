@@ -102,9 +102,9 @@
             </div>
 
             <!-- View options -->
-            <ViewMode v-model:mode="savedViewMode" class="hidden md:inline-flex mr-6" />
+            <ViewMode v-model:mode="savedViewMode" class="hidden md:inline-flex mr-auto" />
 
-            <div class="relative mr-6 ml-auto cursor-pointer" @click="onOpenBranchesDialog">
+            <div v-if="!isMobileSidebar" class="relative ml-6 ml-auto cursor-pointer" @click="onOpenBranchesDialog">
               <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading" class="hidden md:flex">
                 <div
                   v-html="$t('pages.catalog.branch_availability_filter_card.available_in', { n: savedBranches.length })"
@@ -114,7 +114,7 @@
             </div>
 
             <!-- Sorting -->
-            <div class="flex items-center flex-grow md:flex-grow-0 z-10">
+            <div class="flex items-center flex-grow ml-6 md:flex-grow-0 z-10">
               <span class="hidden lg:block shrink-0 mr-2" v-t="'pages.catalog.sort_by_label'"></span>
 
               <VcSelect
@@ -512,7 +512,7 @@ function onOpenBranchesDialog() {
     props: {
       onClose() {
         showBranchesPopup.value = false;
-        savedBranches.value = JSON.parse(localStorage.getItem("viewFulfillmentCenters") || '[]');
+        savedBranches.value = JSON.parse(localStorage.getItem("viewFulfillmentCenters") || "[]");
         if (isMobileSidebar) {
           mobileFilters.availableIn = savedBranches.value;
           showMobileSidebar();
