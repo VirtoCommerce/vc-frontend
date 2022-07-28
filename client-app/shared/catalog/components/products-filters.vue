@@ -33,8 +33,8 @@
       </div>
     </VcCard>
 
-    <!-- Branch availability -->
-    <VcCard :with-header="false">
+    <!-- Branch availability TURNED OFF TEMP -->
+    <VcCard v-if="false" :with-header="false">
       <div class="relative cursor-pointer" @click="onOpenBranches">
         <VcCheckbox :model-value="!!_filters.availableIn.length" :disabled="loading" class="hidden md:flex">
           <div
