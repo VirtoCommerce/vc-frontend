@@ -105,12 +105,13 @@
             <td class="p-5 w-24 overflow-hidden">
               {{ contact.status }}
             </td>
+            <!--
             <td class="p-5 w-px">
-              <!-- STUB -->
               <VcButton class="px-2 rounded" size="sm" is-outline>
                 <i class="fas fa-cog text-lg" />
               </VcButton>
             </td>
+            -->
           </tr>
         </template>
 
@@ -202,9 +203,9 @@ const columns = ref<ITableColumn[]>([
     title: t("pages.company.members.content_header.active"),
     sortable: true,
   },
-  {
+  /*{
     id: "actions",
-  },
+  },*/
 ]);
 
 const searchContacts = async () => {
