@@ -25,6 +25,7 @@
           <ProductsFiltersSidebar
             :keyword="keywordQueryParam"
             :filters="mobileFilters"
+            :available-in="availableInMobile"
             :loading="loading || facetsLoading"
             @search="
               onSearchStart($event);
@@ -272,7 +273,7 @@ import {
   useProductsRoutes,
   ViewMode,
 } from "@/shared/catalog";
-import { BranchesDialog } from "@/shared/fulfillmentCenters";
+import { BranchesDialog, FFC_LOCAL_STORAGE_NAME } from "@/shared/fulfillmentCenters";
 import { AddToCart } from "@/shared/cart";
 import { useElementVisibility, usePageHead, useRouteQueryParam } from "@/core/composables";
 import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
@@ -321,7 +322,8 @@ usePageHead({
 const productsRoutes = useProductsRoutes(products);
 const savedViewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
 const savedInStock = useLocalStorage<boolean>("viewInStockProducts", true);
-const savedBranches = useLocalStorage<string[]>("viewFulfillmentCenters", []);
+const savedBranches = useLocalStorage<string[]>(FFC_LOCAL_STORAGE_NAME, []);
+const availableInMobile = ref<string[]>([]);
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: PRODUCT_SORTING_LIST[0].id,
@@ -380,7 +382,9 @@ const isExistSelectedMobileFacets = eagerComputed<boolean>(() =>
 );
 
 const isMobileFilterDirty = eagerComputed<boolean>(
-  () => JSON.stringify(mobileFilters) !== JSON.stringify({ facets: facets.value, inStock: savedInStock.value })
+  () =>
+    JSON.stringify(mobileFilters) !== JSON.stringify({ facets: facets.value, inStock: savedInStock.value }) ||
+    JSON.stringify(savedBranches.value) !== JSON.stringify(availableInMobile.value)
 );
 
 const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
@@ -429,6 +433,7 @@ function onSearchStart(newKeyword: string) {
 function onFilterChanged(newFilters: ProductsFilters) {
   facetsQueryParam.value = getFilterExpressionFromFacets(newFilters.facets);
   savedInStock.value = newFilters.inStock;
+  savedBranches.value = availableInMobile.value;
 }
 
 async function onMobileFilterChanged(newFilters: ProductsFilters) {
@@ -511,10 +516,14 @@ function onOpenBranchesDialog() {
     props: {
       onClose() {
         showBranchesPopup.value = false;
-        savedBranches.value = JSON.parse(localStorage.getItem("viewFulfillmentCenters") || "[]");
-        if (isMobileSidebar) {
-          mobileFilters.availableIn = savedBranches.value;
+
+        const changedBranches = JSON.parse(localStorage.getItem(FFC_LOCAL_STORAGE_NAME) || "[]");
+        availableInMobile.value = changedBranches;
+
+        if (isMobileSidebar.value) {
           showMobileSidebar();
+        } else {
+          savedBranches.value = changedBranches;
         }
       },
     },
@@ -529,6 +538,7 @@ onMounted(async () => {
   await loadCategoriesTree();
   selectCategory(props.categoryId);
   await loadProducts();
+  availableInMobile.value = savedBranches.value;
 
   // Start change tracking after initial data load
   watchStopHandles.push(

@@ -33,14 +33,12 @@
       </div>
     </VcCard>
 
-    <!-- Branch availability TURNED OFF TEMP -->
-    <VcCard v-if="false" :with-header="false">
+    <!-- Branch availability -->
+    <VcCard v-if="isMobile" :with-header="false">
       <div class="relative cursor-pointer" @click="onOpenBranches">
-        <VcCheckbox :model-value="!!_filters.availableIn?.length" :disabled="loading" class="hidden md:flex">
+        <VcCheckbox :model-value="!!availableIn?.length" :disabled="loading" class="hidden md:flex">
           <div
-            v-html="
-              $t('pages.catalog.branch_availability_filter_card.available_in', { n: _filters.availableIn?.length })
-            "
+            v-html="$t('pages.catalog.branch_availability_filter_card.available_in', { n: availableIn?.length })"
           ></div>
         </VcCheckbox>
         <div class="absolute inset-0"></div>
@@ -104,7 +102,7 @@ import _ from "lodash";
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 const _keyword = ref("");
-const _filters = shallowReactive<ProductsFilters>({ facets: [], inStock: false, availableIn: [] });
+const _filters = shallowReactive<ProductsFilters>({ facets: [], inStock: false });
 
 const props = defineProps({
   loading: {
@@ -118,6 +116,10 @@ const props = defineProps({
   filters: {
     type: Object as PropType<ProductsFilters>,
     required: true,
+  },
+  availableIn: {
+    type: Array as PropType<string[]>,
+    default: []
   },
 });
 
@@ -133,7 +135,6 @@ onMounted(() => {
   _keyword.value = keyword.value;
   _filters.facets = _.cloneDeep(filters.value.facets);
   _filters.inStock = props.filters.inStock;
-  _filters.availableIn = props.filters.availableIn;
 });
 
 watch(
@@ -147,13 +148,6 @@ watch(
   () => filters.value.inStock,
   (newValue) => {
     _filters.inStock = newValue;
-  }
-);
-
-watch(
-  () => filters.value.availableIn,
-  (newValue) => {
-    _filters.availableIn = newValue;
   }
 );
 
