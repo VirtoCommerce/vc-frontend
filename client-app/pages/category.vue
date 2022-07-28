@@ -348,7 +348,6 @@ const mobileSidebarVisible = ref(false);
 const mobileFilters = shallowReactive<ProductsFilters>({
   facets: [],
   inStock: savedInStock.value,
-  availableIn: savedBranches.value,
 });
 const showBranchesPopup = ref(false);
 
