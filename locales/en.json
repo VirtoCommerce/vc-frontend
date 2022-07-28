@@ -275,6 +275,13 @@
         "reset-button": "@:common.buttons.reset"
       }
     },
+    "company": {
+      "add_new_member_dialog": {
+        "title": "New member",
+        "cancel_button": "@:common.buttons.cancel",
+        "add_button": "Add"
+      }
+    },
     "cart": {
       "add_to_cart": {
         "add_to_cart_button": "@:common.buttons.add_to_cart",

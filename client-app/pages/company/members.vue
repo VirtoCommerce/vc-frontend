@@ -7,7 +7,7 @@
         <VcButton :is-disabled="true" class="uppercase p-4" is-outline>
           {{ $t("pages.company.members.buttons.invite_members") }}
         </VcButton>
-        <VcButton :is-disabled="true" class="uppercase p-4" is-outline>
+        <VcButton class="uppercase p-4" is-outline @click="openAddNewMemberPopup">
           {{ $t("pages.company.members.buttons.add_new_member") }}
         </VcButton>
       </div>
@@ -166,11 +166,15 @@ import { usePageHead } from "@/core/composables";
 import { ref, onMounted } from "vue";
 import { useOrganizationContacts } from "@/shared/account";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
+import { usePopup } from "@/shared/popup";
+import { AddNewCompanyMemberDialog } from "@/shared/company";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
 const { t } = useI18n();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { loading, page, pages, itemsPerPage, sort, keyword, loadContacts, contacts } = useOrganizationContacts();
+
+const { openPopup } = usePopup();
 
 usePageHead({
   title: t("pages.company.members.meta.title"),
@@ -242,4 +246,10 @@ const changePage = async (newPage: number) => {
 onMounted(async () => {
   await loadContacts();
 });
+
+function openAddNewMemberPopup() {
+  openPopup({
+    component: AddNewCompanyMemberDialog,
+  });
+}
 </script>
