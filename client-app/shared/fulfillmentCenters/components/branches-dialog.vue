@@ -143,12 +143,7 @@ import { computed, ref, watch } from "vue";
 import { breakpointsTailwind, useBreakpoints, useLocalStorage } from "@vueuse/core";
 import BranchItem from "./branch-item.vue";
 import BranchSearch from "./branch-search.vue";
-import {
-  useFulfillmentCenters,
-  IFulfillmentCenter,
-  FFC_LOCAL_STORAGE_NAME,
-  FFC_TEMP_LOCAL_STORAGE_NAME,
-} from "@/shared/fulfillmentCenters";
+import { useFulfillmentCenters, IFulfillmentCenter, FFC_TEMP_LOCAL_STORAGE_NAME } from "@/shared/fulfillmentCenters";
 
 const { loading, loadFulfillmentCenters, fulfillmentCenters } = useFulfillmentCenters();
 const breakpoints = useBreakpoints(breakpointsTailwind);
