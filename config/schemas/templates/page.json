@@ -5,6 +5,7 @@
     {
       "url": "/api/pagebuilder/search?storeId=B2B-store&type=themes&query=*.page",
       "method": "get",
+      "cacheable": true,
       "response": {
         "selector": "Object.keys(this.response).map(x => ({ ...this.item, ...this.response[x], request: undefined, path: this.response[x].path.substring('/default'.length) })).reduce((acc, x) => ({ ...acc, [x.name]: x }), {})",
         "isArray": true
