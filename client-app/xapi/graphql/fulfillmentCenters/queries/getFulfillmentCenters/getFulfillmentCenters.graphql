@@ -1,0 +1,34 @@
+query GetFulfillmentCenters(
+  $after: String
+  $first: Int
+  $storeId: String
+  $query: String
+  $sort: String
+  $fulfillmentCenterIds: [String]
+) {
+  fulfillmentCenters(
+    after: $after
+    first: $first
+    storeId: $storeId
+    query: $query
+    sort: $sort
+    fulfillmentCenterIds: $fulfillmentCenterIds
+  ) {
+    items {
+      id
+      name
+      description
+      shortDescription
+      address {
+        city
+        countryCode
+        countryName
+        line1
+        line2
+        postalCode
+        zip
+        phone
+      }
+    }
+  }
+}

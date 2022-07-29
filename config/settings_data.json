@@ -109,8 +109,16 @@
       "color_in_stock_out": "#F14E4E",
       "color_in_stock_out_bg": "#FFEDED",
       "color_in_stock_low_bg": "#FFF6E9",
+      "color_branch_dialog_bg": "#F3F3F3",
+      "color_branch_dialog_clock": "#99A2B9",
+      "color_branch_dialog_closed": "#EC6A5E",
+      "color_branch_dialog_title": "#292D3B",
+      "color_branch_dialog_input_border": "#C2C9E0",
+      "color_branch_dialog_input_text": "#939DA4",
+      "color_branch_dialog_input_reset_icon": "#C0C0C0",
       "color_add_wishlist_dialog_subtitle_bg": "#F3F3F3",
-      "color_add_wishlist_dialog_delete_icon": "#EC6A5E"
+      "color_add_wishlist_dialog_delete_icon": "#EC6A5E",
+      "color_branch_closed": "#EC6A5E"
     }
   }
 }

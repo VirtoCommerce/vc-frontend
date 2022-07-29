@@ -20,6 +20,7 @@ const CompareProducts = () => import("@/pages/compare-products.vue");
 const Checkout = () => import("@/pages/checkout.vue");
 const Category = () => import("@/pages/category.vue");
 const Product = () => import("@/pages/product.vue");
+const Branch = () => import("@/pages/branch.vue");
 const Matcher = () => import("@/ui-kit/components/pages/matcher.vue");
 
 // Private development pages
@@ -52,6 +53,7 @@ export const mainRoutes: RouteRecordRaw[] = [
     redirect: { name: corporateRoutes[0].name },
   },
   { path: "/demo-landing", name: "DemoLanding", component: DemoLanding },
+  { path: "/branch/:branchId", name: "BranchPage", component: Branch, props: true },
   { path: "/search", name: "Search", component: Search },
   { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },
   { path: "/compare", name: "CompareProducts", component: CompareProducts },
