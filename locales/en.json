@@ -21,7 +21,8 @@
       "back": "Back",
       "reset": "Reset",
       "add_to_cart": "Add to cart",
-      "apply": "Apply"
+      "apply": "Apply",
+      "send": "Send"
     },
     "labels": {
       "actions": "Actions",
@@ -81,7 +82,9 @@
       "lists": "Lists",
       "checkout_defaults": "Checkout Defaults",
       "list_details": "List Details",
-      "cart": "Cart"
+      "cart": "Cart",
+      "company_info": "Company Info",
+      "company_members": "Company Members"
     }
   },
   "shared": {
@@ -114,6 +117,11 @@
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
             "checkout_defaults": "@:common.links.checkout_defaults"
+          },
+          "corporate": "@:shared.account.navigation.corporate_title",
+          "corporate_menu": {
+            "company_info": "@:common.links.company_info",
+            "company_members": "@:common.links.company_members"
           },
           "settings": "Settings",
           "currency": "Currency",
@@ -169,15 +177,18 @@
     },
     "account": {
       "navigation": {
-        "title": "Account",
+        "main_title": "Account",
+        "corporate_title": "Corporate",
         "links": {
           "dashboard": "@:common.links.dashboard",
           "profile": "@:common.links.profile",
           "addresses": "@:common.links.addresses",
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
+          "list_details": "@:common.links.list_details",
           "checkout_defaults": "@:common.links.checkout_defaults",
-          "list_details": "@:common.links.list_details"
+          "company_info": "@:common.links.company_info",
+          "company_members": "@:common.links.company_members"
         }
       },
       "address_form": {
@@ -203,7 +214,8 @@
         "forgot_password_link": "Forgot your password?",
         "login_button": "Log in",
         "registration_button": "Sign up",
-        "email_or_password_incorrect_alert": "The <strong>email</strong>&nbsp;or <strong>password</strong>&nbsp;you provided are invalid"
+        "email_or_password_incorrect_alert": "The <strong>email</strong>&nbsp;or <strong>password</strong>&nbsp;you provided are invalid",
+        "user_is_locked_out_alert": "Your account is locked. Please, contact site administrator"
       },
       "reset_password_form": {
         "password_label": "@:common.labels.password",
@@ -305,8 +317,7 @@
           "title": "Price and Delivery",
           "add_to_list_button": "Add to list",
           "add_to_list_button_unauthorized_title": "Wishlists are available only for authenticated users",
-          "send_email_button": "@:common.labels.email",
-          "print_button": "Print"
+          "product_email_title": "Please, have a look on the product: {0}"
         },
         "product_variation_card": {
           "variation_sku_label": "@:common.labels.sku",
@@ -488,9 +499,15 @@
       "add_to_wishlists_dialog": {
         "title": "Please select list",
         "empty_list": "You do not have any wish lists",
-        "item_already_in_list": "This item is already in the list",
         "cancel_button": "@:common.buttons.cancel",
-        "add_to_list_button": "Add to list"
+        "already_in_the_lists": "Already in the lists",
+        "add_to_other_lists": "Add to other lists",
+        "add_to_list_button": "Add to list",
+        "add_new_list": "Add new list",
+        "save_button": "Save",
+        "notification_success": "Your lists were successfully updated",
+        "is_required_validation_error": "The <b>List name</b> is required",
+        "new_list": "New list"
       },
       "added_to_wishlists_dialog": {
         "title": "Item added to list | Item added to lists",
@@ -822,6 +839,20 @@
         }
       }
     },
+    "company": {
+      "info": {
+        "meta": {
+          "title": "@:pages.company.info.title"
+        },
+        "title": "Company Info"
+      },
+      "members": {
+        "meta": {
+          "title": "@:pages.company.members.title"
+        },
+        "title": "Company Members"
+      }
+    },
     "catalog": {
       "meta": {
         "title": "@:pages.catalog.title",
@@ -1040,6 +1071,11 @@
         "home": "@:common.links.home",
         "compare_products": "Compare products"
       }
+    },
+    "branch": {
+      "address": "Address",
+      "phone": "Phone: ",
+      "other_branches": "Other branches"
     }
   }
 }

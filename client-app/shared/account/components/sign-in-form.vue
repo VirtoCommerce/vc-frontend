@@ -5,6 +5,10 @@
       <span v-html="$t('shared.account.sign_in_form.email_or_password_incorrect_alert')"></span>
     </VcAlert>
 
+    <VcAlert v-if="userIsLockedError" class="mb-2" icon type="error" text>
+      <span v-html="$t('shared.account.sign_in_form.user_is_locked_out_alert')"></span>
+    </VcAlert>
+
     <VcInput
       v-model="email"
       name="email"
@@ -78,6 +82,8 @@ import { useCart } from "@/shared/cart";
 import { mergeCart } from "@/xapi/graphql/cart";
 import { eagerComputed } from "@vueuse/core";
 
+const USER_IS_LOCKED_OUT_ERROR_CODE = "user_is_locked_out";
+
 const { t } = useI18n();
 const { cart, loadMyCart } = useCart();
 const { signMeIn, user, isAuthenticated } = useUser();
@@ -88,6 +94,7 @@ const emit = defineEmits(["succeeded"]);
 
 const loading = ref(false);
 const authError = ref(false);
+const userIsLockedError = ref(false);
 
 const schema = yup.object({
   email: yup.string().label(t("shared.account.sign_in_form.email_label")).required().email(),
@@ -116,7 +123,12 @@ const onSubmit = handleSubmit(async () => {
   const result = await signMeIn(model);
 
   if (!result.succeeded) {
-    authError.value = true;
+    if (result.errors?.find((e) => e.code === USER_IS_LOCKED_OUT_ERROR_CODE)) {
+      userIsLockedError.value = true;
+    } else {
+      authError.value = true;
+    }
+
     loading.value = false;
     return;
   }
@@ -125,5 +137,8 @@ const onSubmit = handleSubmit(async () => {
   emit("succeeded");
 });
 
-watch(values, () => (authError.value = false));
+watch(values, () => {
+  authError.value = false;
+  userIsLockedError.value = false;
+});
 </script>

@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from "vue-router";
 import { DEVELOPMENT } from "@/core/constants";
-import { accountRoutes } from "@/router/routes";
+import { accountRoutes, corporateRoutes } from "@/router/routes";
 
 // Error pages
 import Error403 from "@/pages/403.vue";
@@ -13,12 +13,14 @@ const SignUpPage = () => import("@/pages/sign-up.vue");
 const ForgotPassword = () => import("@/pages/forgot-password.vue");
 const ResetPassword = () => import("@/pages/reset-password.vue");
 const Account = () => import("@/pages/account/index.vue");
+const Company = () => import("@/pages/company/index.vue");
 const Search = () => import("@/pages/search.vue");
 const BulkOrder = () => import("@/pages/bulk-order.vue");
 const CompareProducts = () => import("@/pages/compare-products.vue");
 const Checkout = () => import("@/pages/checkout.vue");
 const Category = () => import("@/pages/category.vue");
 const Product = () => import("@/pages/product.vue");
+const Branch = () => import("@/pages/branch.vue");
 const Matcher = () => import("@/ui-kit/components/pages/matcher.vue");
 
 // Private development pages
@@ -42,7 +44,16 @@ export const mainRoutes: RouteRecordRaw[] = [
     meta: { requiresAuth: true },
     redirect: { name: accountRoutes[0].name },
   },
+  {
+    path: "/company",
+    name: "Company",
+    component: Company,
+    children: corporateRoutes,
+    meta: { requiresAuth: true },
+    redirect: { name: corporateRoutes[0].name },
+  },
   { path: "/demo-landing", name: "DemoLanding", component: DemoLanding },
+  { path: "/branch/:branchId", name: "BranchPage", component: Branch, props: true },
   { path: "/search", name: "Search", component: Search },
   { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },
   { path: "/compare", name: "CompareProducts", component: CompareProducts },

@@ -82,7 +82,9 @@
       "lists": "Listen",
       "checkout_defaults": "Checkout-Standardwerte",
       "list_details": "Details auflisten",
-      "cart": "Wagen"
+      "cart": "Wagen",
+      "company_info": "Infos zum Unternehmen",
+      "company_members": "Mitglieder des Unternehmens"
     }
   },
   "shared": {
@@ -115,6 +117,11 @@
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
             "checkout_defaults": "@:common.links.checkout_defaults"
+          },
+          "corporate": "@:shared.account.navigation.corporate_title",
+          "corporate_menu": {
+            "company_info": "@:common.links.company_info",
+            "company_members": "@:common.links.company_members"
           },
           "settings": "Details auflisten",
           "currency": "Währung",
@@ -170,15 +177,18 @@
     },
     "account": {
       "navigation": {
-        "title": "Mein Konto",
+        "main_title": "Mein Konto",
+        "corporate_title": "Korporativ",
         "links": {
           "dashboard": "@:common.links.dashboard",
           "profile": "@:common.links.profile",
           "addresses": "@:common.links.addresses",
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
+          "list_details": "@:common.links.list_details",
           "checkout_defaults": "@:common.links.checkout_defaults",
-          "list_details": "@:common.links.list_details"
+          "company_info": "@:common.links.company_info",
+          "company_members": "@:common.links.company_members"
         }
       },
       "address_form": {
@@ -305,9 +315,7 @@
         "price_block": {
           "title": "Price & Delivery",
           "add_to_list_button": "Add to list",
-          "add_to_list_button_unauthorized_title": "Wishlists are available only for authorized users",
-          "send_email_button": "@:common.labels.email",
-          "print_button": "Print"
+          "add_to_list_button_unauthorized_title": "Wishlists are available only for authorized users"
         },
         "product_variation_card": {
           "variation_sku_label": "@:common.labels.sku",
@@ -481,9 +489,14 @@
       "add_to_wishlists_dialog": {
         "title": "Please select list",
         "empty_list": "You don't have wish lists",
-        "item_already_in_list": "Item already in the list",
         "cancel_button": "@:common.buttons.cancel",
-        "add_to_list_button": "Add to list"
+        "already_in_the_lists": "Already in the lists",
+        "add_to_other_lists": "Add to other lists",
+        "add_to_list_button": "Add to list",
+        "add_new_list": "Add new list",
+        "save_button": "Save",
+        "notification_success": "Your lists were successfully updated",
+        "is_required_validation_error": "The <b>List name</b> is required"
       },
       "added_to_wishlists_dialog": {
         "title": "Item added to list | Item added to lists",
@@ -801,6 +814,20 @@
         }
       }
     },
+    "company": {
+      "info": {
+        "meta": {
+          "title": "@:pages.company.info.title"
+        },
+        "title": "Company Info"
+      },
+      "members": {
+        "meta": {
+          "title": "@:pages.company.members.title"
+        },
+        "title": "Company Members"
+      }
+    },
     "catalog": {
       "meta": {
         "title": "@:pages.catalog.title",
@@ -1019,6 +1046,11 @@
         "home": "@:common.links.home",
         "compare_products": "Compare products"
       }
+    },
+    "branch": {
+      "address": "Address",
+      "phone": "Phone: ",
+      "other_branches": "Other branches"
     }
   }
 }
