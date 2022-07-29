@@ -1509,15 +1509,10 @@
   resolved "https://registry.npmjs.org/@vue/devtools-api/-/devtools-api-6.1.4.tgz"
   integrity sha512-IiA0SvDrJEgXvVxjNkHPFfDx6SXw0b/TUkqMcDZWNg9fnCAHbTpoo59YfJ9QLFkwa3raau5vSlRVzMSLDnfdtQ==
 
-"@vue/devtools-api@^6.0.0-beta.7":
+"@vue/devtools-api@^6.0.0-beta.15", "@vue/devtools-api@^6.0.0-beta.7":
   version "6.0.0-beta.20.1"
   resolved "https://registry.npmjs.org/@vue/devtools-api/-/devtools-api-6.0.0-beta.20.1.tgz"
   integrity sha512-R2rfiRY+kZugzWh9ZyITaovx+jpU4vgivAEAiz80kvh3yviiTU3CBuGuyWpSwGz9/C7TkSWVM/FtQRGlZ16n8Q==
-
-"@vue/devtools-api@^6.1.4":
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/@vue/devtools-api/-/devtools-api-6.2.1.tgz#6f2948ff002ec46df01420dfeff91de16c5b4092"
-  integrity sha512-OEgAMeQXvCoJ+1x8WyQuVZzFo0wcyCmUR3baRVLmKBo1LmYZWMlRiXlux5jd0fqVJu6PfDbOrZItVqUEzLobeQ==
 
 "@vue/eslint-config-prettier@^7.0.0":
   version "7.0.0"
@@ -8079,12 +8074,12 @@ value-or-promise@1.0.11:
   resolved "https://registry.npmjs.org/value-or-promise/-/value-or-promise-1.0.11.tgz"
   integrity sha512-41BrgH+dIbCFXClcSapVs5M6GkENd3gQOJpEfPDNa71LsUGMXDL0jMWpI/Rh7WhX+Aalfz2TTS3Zt5pUsbnhLg==
 
-vee-validate@^4.6.2:
-  version "4.6.2"
-  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.6.2.tgz#b6e02f3d565bd09968b67fa87d485f880cb987e2"
-  integrity sha512-DOOQn3lLgDQXuLogEaiv0WfaW7lNydODdmtB/RjkodioaJ1hjlwoM0zdsIGzMW/t35p04GdZfWM4UCd0gfTiLg==
+vee-validate@^4.5.11:
+  version "4.5.11"
+  resolved "https://registry.npmjs.org/vee-validate/-/vee-validate-4.5.11.tgz"
+  integrity sha512-bNF2TtuRnLnPsw6+Q/P3bMx8c2iJbvQmyikTr9r65PLAdqtdhQxnsIS3ayYNIzNWZ50sysv01DteN9h3XT/gFg==
   dependencies:
-    "@vue/devtools-api" "^6.1.4"
+    "@vue/devtools-api" "^6.0.0-beta.15"
 
 vinyl-fs@^3.0.0:
   version "3.0.3"
