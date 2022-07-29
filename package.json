@@ -42,7 +42,7 @@
     "maska": "^1.5.0",
     "moment": "^2.29.1",
     "swiper": "^8.2.2",
-    "vee-validate": "^4.5.11",
+    "vee-validate": "^4.6.2",
     "vue": "^3.2.37",
     "vue-i18n": "^9.1.10",
     "vue-router": "^4.0.15",

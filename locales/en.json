@@ -285,7 +285,7 @@
         "last_name_label": "@:common.labels.last_name",
         "last_name_placeholder": "Enter your last name",
         "email_label": "@:common.labels.email",
-        "email_placeholder": "@:common.placeholders.email",
+        "email_placeholder": "example@gmail.com",
         "cancel_button": "@:common.buttons.cancel",
         "add_button": "Add"
       }
