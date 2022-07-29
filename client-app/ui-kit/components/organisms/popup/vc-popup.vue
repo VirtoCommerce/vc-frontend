@@ -151,6 +151,8 @@ function getActiveElement() {
 watchSyncEffect(() => {
   isOpen.value = props.show;
 });
+
+defineExpose({ close });
 </script>
 
 <script lang="ts">
