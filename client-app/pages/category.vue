@@ -25,14 +25,12 @@
           <ProductsFiltersSidebar
             :keyword="keywordQueryParam"
             :filters="mobileFilters"
-            :available-in="availableInMobile || []"
             :loading="loading || facetsLoading"
             @search="
               onSearchStart($event);
               hideMobileSidebar();
             "
             @change="onMobileFilterChanged($event)"
-            @openBranches="onOpenBranchesDialog"
           />
 
           <div class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
@@ -103,19 +101,10 @@
             </div>
 
             <!-- View options -->
-            <ViewMode v-model:mode="savedViewMode" class="hidden md:inline-flex mr-auto" />
-
-            <div v-if="!isMobileSidebar" class="relative ml-6 ml-auto cursor-pointer" @click="onOpenBranchesDialog">
-              <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading">
-                <div
-                  v-html="$t('pages.catalog.branch_availability_filter_card.available_in', { n: savedBranches.length })"
-                ></div>
-              </VcCheckbox>
-              <div class="absolute inset-0"></div>
-            </div>
+            <ViewMode v-model:mode="savedViewMode" class="hidden md:inline-flex mr-6" />
 
             <!-- Sorting -->
-            <div class="flex items-center flex-grow ml-6 md:flex-grow-0 z-10">
+            <div class="flex items-center flex-grow md:flex-grow-0 z-10 ml-auto">
               <span class="hidden lg:block shrink-0 mr-2" v-t="'pages.catalog.sort_by_label'"></span>
 
               <VcSelect
@@ -261,7 +250,6 @@ import {
   DisplayProducts,
   getFilterExpressionForInStock,
   getFilterExpressionFromFacets,
-  getFilterExpressionForAvailableIn,
   IBreadcrumbsItem,
   ProductsFacet,
   ProductsFacetValue,
@@ -273,14 +261,12 @@ import {
   useProductsRoutes,
   ViewMode,
 } from "@/shared/catalog";
-import { BranchesDialog, FFC_LOCAL_STORAGE_NAME, FFC_TEMP_LOCAL_STORAGE_NAME } from "@/shared/fulfillmentCenters";
 import { AddToCart } from "@/shared/cart";
 import { useElementVisibility, usePageHead, useRouteQueryParam } from "@/core/composables";
 import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import QueryParamName from "@/core/query-param-name.enum";
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
-import { usePopup } from "@/shared/popup";
 
 const FILTERS_RESET_TIMEOUT_IN_MS = 500;
 const watchStopHandles: WatchStopHandle[] = [];
@@ -292,7 +278,6 @@ const props = defineProps({
   },
 });
 
-const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { t } = useI18n();
 const { selectedCategory, selectCategoryByKey, loadCategoriesTree, selectRoot } = useCategories();
@@ -322,8 +307,6 @@ usePageHead({
 const productsRoutes = useProductsRoutes(products);
 const savedViewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
 const savedInStock = useLocalStorage<boolean>("viewInStockProducts", true);
-const savedBranches = useLocalStorage<string[]>(FFC_LOCAL_STORAGE_NAME, []);
-const availableInMobile = useLocalStorage<string[]>(FFC_TEMP_LOCAL_STORAGE_NAME, []);
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: PRODUCT_SORTING_LIST[0].id,
@@ -347,11 +330,7 @@ const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeade
 const page = ref(1);
 const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
 const mobileSidebarVisible = ref(false);
-const mobileFilters = shallowReactive<ProductsFilters>({
-  facets: [],
-  inStock: savedInStock.value,
-});
-const showBranchesPopup = ref(false);
+const mobileFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: savedInStock.value });
 
 // region Computed properties
 
@@ -364,13 +343,7 @@ const searchParams = computedEager<ProductsSearchParams>(() => ({
   itemsPerPage: itemsPerPage.value,
   sort: sortQueryParam.value,
   keyword: keywordQueryParam.value,
-  filter: [
-    facetsQueryParam.value,
-    getFilterExpressionForInStock(savedInStock),
-    getFilterExpressionForAvailableIn(savedBranches),
-  ]
-    .filter(Boolean)
-    .join(" "),
+  filter: [facetsQueryParam.value, getFilterExpressionForInStock(savedInStock)].filter(Boolean).join(" "),
 }));
 
 const isExistSelectedFacets = eagerComputed<boolean>(() =>
@@ -382,9 +355,7 @@ const isExistSelectedMobileFacets = eagerComputed<boolean>(() =>
 );
 
 const isMobileFilterDirty = eagerComputed<boolean>(
-  () =>
-    JSON.stringify(mobileFilters) !== JSON.stringify({ facets: facets.value, inStock: savedInStock.value }) ||
-    JSON.stringify(savedBranches.value) !== JSON.stringify(availableInMobile.value)
+  () => JSON.stringify(mobileFilters) !== JSON.stringify({ facets: facets.value, inStock: savedInStock.value })
 );
 
 const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
@@ -419,7 +390,6 @@ function showMobileSidebar() {
 }
 
 function hideMobileSidebar() {
-  availableInMobile.value = savedBranches.value;
   mobileSidebarVisible.value = false;
 }
 
@@ -434,7 +404,6 @@ function onSearchStart(newKeyword: string) {
 function onFilterChanged(newFilters: ProductsFilters) {
   facetsQueryParam.value = getFilterExpressionFromFacets(newFilters.facets);
   savedInStock.value = newFilters.inStock;
-  savedBranches.value = availableInMobile.value;
 }
 
 async function onMobileFilterChanged(newFilters: ProductsFilters) {
@@ -443,7 +412,6 @@ async function onMobileFilterChanged(newFilters: ProductsFilters) {
     filter: [
       getFilterExpressionFromFacets(newFilters.facets), //
       getFilterExpressionForInStock(newFilters.inStock),
-      getFilterExpressionForAvailableIn(savedBranches),
     ]
       .filter(Boolean)
       .join(" "),
@@ -508,27 +476,6 @@ function selectCategory(id?: string) {
   }
 }
 
-function onOpenBranchesDialog() {
-  if (isMobileSidebar) {
-    mobileSidebarVisible.value = false;
-  }
-  openPopup({
-    component: BranchesDialog,
-    props: {
-      onClose() {
-        showBranchesPopup.value = false;
-        availableInMobile.value = JSON.parse(localStorage.getItem(FFC_TEMP_LOCAL_STORAGE_NAME) || "[]");
-
-        if (isMobileSidebar.value) {
-          showMobileSidebar();
-        } else {
-          savedBranches.value = availableInMobile.value;
-        }
-      },
-    },
-  });
-}
-
 // endregion Methods
 
 // region Lifecycle Hooks
@@ -537,7 +484,6 @@ onMounted(async () => {
   await loadCategoriesTree();
   selectCategory(props.categoryId);
   await loadProducts();
-  availableInMobile.value = savedBranches.value;
 
   // Start change tracking after initial data load
   watchStopHandles.push(
