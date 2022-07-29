@@ -517,7 +517,7 @@ function onOpenBranchesDialog() {
     props: {
       onClose() {
         showBranchesPopup.value = false;
-        availableInMobile.value = JSON.parse(localStorage.getItem(FFC_TEMP_LOCAL_STORAGE_NAME));
+        availableInMobile.value = JSON.parse(localStorage.getItem(FFC_TEMP_LOCAL_STORAGE_NAME) || "[]");
 
         if (isMobileSidebar.value) {
           showMobileSidebar();
