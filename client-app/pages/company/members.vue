@@ -12,7 +12,7 @@
         </VcButton>
       </div>
       <div v-else class="flex flex-no-wrap space-x-2">
-        <VcButton :is-disabled="true" class="uppercase p-4" is-outline>
+        <VcButton class="uppercase p-4" is-outline @click="openAddNewMemberPopup">
           {{ $t("pages.company.members.buttons.new") }}
         </VcButton>
         <VcButton :is-disabled="true" class="uppercase p-4" is-outline>
@@ -167,7 +167,7 @@ import { ref, onMounted } from "vue";
 import { useOrganizationContacts } from "@/shared/account";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 import { usePopup } from "@/shared/popup";
-import { AddNewCompanyMemberDialog, AddNewMember } from "@/shared/company";
+import { AddNewCompanyMemberDialog } from "@/shared/company";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
 const { t } = useI18n();
@@ -251,9 +251,10 @@ function openAddNewMemberPopup() {
   openPopup({
     component: AddNewCompanyMemberDialog,
     props: {
-      onResult: (newMember: AddNewMember) => {
-        console.log(newMember);
-        debugger;
+      onResult: async (success: boolean) => {
+        if (success) {
+          await loadContacts();
+        }
       },
     },
   });

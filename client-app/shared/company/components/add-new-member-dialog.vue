@@ -7,8 +7,9 @@
   >
     <template #actions="{ close }">
       <VcButton
-        class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-5"
+        class="uppercase w-full sm:w-auto sm:px-10"
         kind="secondary"
+        :is-disabled="isSubmitting"
         is-outline
         @click="close"
       >
@@ -16,8 +17,9 @@
       </VcButton>
 
       <VcButton
-        class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-10"
+        class="uppercase w-full sm:w-auto sm:px-10"
         :is-disabled="!meta.dirty || !meta.valid"
+        :is-waiting="isSubmitting"
         @click="onSubmit"
       >
         {{ $t("shared.company.add_new_member_dialog.add_button") }}
@@ -75,12 +77,18 @@ import { usePageHead } from "@/core/composables";
 import { checkEmailUniqueness, checkUsernameUniqueness } from "@/xapi/graphql/account";
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
-import { AddNewMember } from "@/shared/company";
+// import { AddNewMember } from "@/shared/company";
 import { ROLES } from "@/core/securityConstants";
 import { shallowRef } from "vue";
 import { VcPopup } from "@/ui-kit/components";
+import { useOrganizationContacts } from "@/shared/account";
+import { useNotifications } from "@/shared/notification";
+import { Role } from "@/core/types/role";
 
 const { t } = useI18n();
+// const { organization } = useUser();
+const notifications = useNotifications();
+const { addNewContact } = useOrganizationContacts();
 
 const popupComponent = shallowRef<VcPopup | null>(null);
 const ASYNC_VALIDATION_TIMEOUT_IN_MS = 3000;
@@ -89,7 +97,7 @@ usePageHead({
   title: t("pages.sign_up.meta.title"),
 });
 
-const emit = defineEmits<{ (e: "result", newMember: AddNewMember): void }>();
+const emit = defineEmits<{ (e: "result", success: boolean): void }>();
 
 const schema = yup.object({
   role: yup.string().label(t("shared.company.add_new_member_dialog.role_label")).required(),
@@ -108,7 +116,7 @@ const schema = yup.object({
   lastName: yup.string().label(t("shared.company.add_new_member_dialog.last_name_label")).required().max(64),
 });
 
-const { errors, handleSubmit, meta } = useForm({
+const { errors, handleSubmit, meta, isSubmitting } = useForm({
   validationSchema: schema,
   initialValues: {
     role: undefined,
@@ -119,19 +127,37 @@ const { errors, handleSubmit, meta } = useForm({
   validateOnMount: false,
 });
 
-const { value: role } = useField<string>("role");
+const { value: role } = useField<Role>("role");
 const { value: firstName } = useField<string>("firstName");
 const { value: lastName } = useField<string>("lastName");
 const { value: email } = useField<string>("email");
 
-const onSubmit = handleSubmit((data) => {
-  emit("result", {
-    role: data.role as string,
+const onSubmit = handleSubmit(async (data) => {
+  const roleEntity = ROLES.find((x) => x.id == data.role);
+
+  const result = await addNewContact({
+    role: roleEntity!,
     email: data.email as string,
     firstName: data.firstName as string,
     lastName: data.lastName as string,
   });
-  popupComponent.value.close();
+
+  if (result.succeeded) {
+    notifications.success({
+      text: t("shared.company.add_new_member_dialog.successfully_text", [data.email]),
+      duration: 15000,
+      single: true,
+    });
+
+    emit("result", true);
+  } else if (result.errors?.length) {
+    // errorText.value = result.errors
+    //   .filter((error) => error.code !== "DuplicateUserName") // Because email is a `UserName` (login)
+    //   .map((error) => error.description)
+    //   .join(" ");
+  }
+
+  popupComponent.value?.close();
 });
 
 const validateEmailUniqueness = async (value: string, resolve: (value: boolean) => void) => {

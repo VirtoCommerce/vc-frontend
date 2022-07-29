@@ -287,7 +287,8 @@
         "email_label": "@:common.labels.email",
         "email_placeholder": "@:common.placeholders.email",
         "cancel_button": "@:common.buttons.cancel",
-        "add_button": "Add"
+        "add_button": "Add",
+        "successfully_text": "Member {0} was successfully added to the company"
       }
     },
     "cart": {
