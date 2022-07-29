@@ -12,7 +12,7 @@
         >
           <div class="mt-0.5 mb-1 lg:mb-0.5">
             <div class="mb-1 mr-1 font-bold lg:mb-2">{{ $t("pages.branch.address") }}</div>
-            <div class="">
+            <div class="break-words">
               {{ fulfillmentCenter?.address ? fulfillmentCenter?.address : "&ndash;" }}
             </div>
           </div>
@@ -32,11 +32,11 @@
         >
           <div class="hidden h-[18px] bg-gradient-to-b from-[#94949421] lg:block"></div>
 
-          <div id="description" v-html="fulfillmentCenter?.description"></div>
+          <div id="description" class="break-words" v-html="fulfillmentCenter?.description"></div>
         </div>
       </div>
 
-      <div class="mt-6 rounded border bg-white text-base drop-shadow-md-x lg:mt-0 lg:ml-8 lg:min-w-[21.125rem]">
+      <div class="mt-6 rounded border bg-white text-base drop-shadow-md-x lg:mt-0 lg:ml-8 lg:shrink-0 lg:w-[21.125rem]">
         <div class="py-4 px-6 border-b lg:pt-5 lg:pb-4">
           <h2 class="uppercase text-19 font-extrabold lg:text-21">{{ $t("pages.branch.other_branches") }}</h2>
         </div>
@@ -49,7 +49,7 @@
               >
                 {{ branch.name }}
               </router-link>
-              <div class="text-[color:var(--color-body-text)] text-sm" v-if="branch.address">
+              <div class="text-[color:var(--color-body-text)] text-sm break-words" v-if="branch.address">
                 {{ branch.address }}
               </div>
               <div class="text-[color:var(--color-body-text)] text-sm">
