@@ -273,7 +273,7 @@ import {
   useProductsRoutes,
   ViewMode,
 } from "@/shared/catalog";
-import { BranchesDialog, FFC_LOCAL_STORAGE_NAME } from "@/shared/fulfillmentCenters";
+import { BranchesDialog, FFC_LOCAL_STORAGE_NAME, FFC_TEMP_LOCAL_STORAGE_NAME } from "@/shared/fulfillmentCenters";
 import { AddToCart } from "@/shared/cart";
 import { useElementVisibility, usePageHead, useRouteQueryParam } from "@/core/composables";
 import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
@@ -323,7 +323,7 @@ const productsRoutes = useProductsRoutes(products);
 const savedViewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
 const savedInStock = useLocalStorage<boolean>("viewInStockProducts", true);
 const savedBranches = useLocalStorage<string[]>(FFC_LOCAL_STORAGE_NAME, []);
-const availableInMobile = ref<string[]>([]);
+const availableInMobile = useLocalStorage<string[]>(FFC_TEMP_LOCAL_STORAGE_NAME, []);
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: PRODUCT_SORTING_LIST[0].id,
@@ -419,6 +419,7 @@ function showMobileSidebar() {
 }
 
 function hideMobileSidebar() {
+  availableInMobile.value = savedBranches.value;
   mobileSidebarVisible.value = false;
 }
 
@@ -516,14 +517,12 @@ function onOpenBranchesDialog() {
     props: {
       onClose() {
         showBranchesPopup.value = false;
-
-        const changedBranches = JSON.parse(localStorage.getItem(FFC_LOCAL_STORAGE_NAME) || "[]");
-        availableInMobile.value = changedBranches;
+        availableInMobile.value = JSON.parse(localStorage.getItem(FFC_TEMP_LOCAL_STORAGE_NAME));
 
         if (isMobileSidebar.value) {
           showMobileSidebar();
         } else {
-          savedBranches.value = changedBranches;
+          savedBranches.value = availableInMobile.value;
         }
       },
     },

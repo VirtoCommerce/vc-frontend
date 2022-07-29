@@ -140,23 +140,31 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { breakpointsTailwind, useBreakpoints, useLocalStorage } from "@vueuse/core";
 import BranchItem from "./branch-item.vue";
 import BranchSearch from "./branch-search.vue";
-import { useFulfillmentCenters, IFulfillmentCenter, FFC_LOCAL_STORAGE_NAME } from "@/shared/fulfillmentCenters";
+import {
+  useFulfillmentCenters,
+  IFulfillmentCenter,
+  FFC_LOCAL_STORAGE_NAME,
+  FFC_TEMP_LOCAL_STORAGE_NAME,
+} from "@/shared/fulfillmentCenters";
 
 const { loading, loadFulfillmentCenters, fulfillmentCenters } = useFulfillmentCenters();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("sm");
+const isMobileSidebar = breakpoints.smaller("lg");
+
 const showSelectedBranches = ref(false);
 const showSelectedBranchesMobile = ref(false);
-const selectedBranchesIds = ref<string[]>([]);
 const searchInput = ref<string>("");
 const branches = computed(() => fulfillmentCenters.value.filter((item) => searchFilter(item)));
-const selectedBranchesIdsOld = JSON.parse(localStorage.getItem(FFC_LOCAL_STORAGE_NAME) || "[]");
+const selectedBranchesIds = ref<string[]>([]);
+const selectedBranchesIdsOld = useLocalStorage<string[]>(FFC_LOCAL_STORAGE_NAME, []);
+const selectedBranchesIdsTemp = useLocalStorage<string[]>(FFC_TEMP_LOCAL_STORAGE_NAME, []);
 
 loadFulfillmentCenters();
-selectedBranchesIds.value = selectedBranchesIdsOld;
+selectedBranchesIds.value = selectedBranchesIdsOld.value;
 
 function searchFilter(item: IFulfillmentCenter) {
   const searchArr = searchInput.value.trim().split(" ");
@@ -187,7 +195,7 @@ const isSaveButtonDisabled = computed(
 );
 
 function save() {
-  localStorage.setItem(FFC_LOCAL_STORAGE_NAME, JSON.stringify(selectedBranchesIds.value));
+  selectedBranchesIdsTemp.value = selectedBranchesIds.value;
 }
 
 watch(selectedBranchesIds, () => {
