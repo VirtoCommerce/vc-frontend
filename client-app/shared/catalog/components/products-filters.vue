@@ -32,6 +32,26 @@
       </div>
     </VcFilterCard>
 
+    <!-- Branch availability -->
+    <VcCard v-if="isMobile" :with-header="false">
+      <div class="relative cursor-pointer" @click="onOpenBranches">
+        <VcCheckbox :model-value="!!filters.availableIn?.length" :disabled="loading">
+          <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div">
+            <b v-if="filters.availableIn?.length" class="text-[color:var(--color-link)]">
+              {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: filters.availableIn?.length }) }}
+            </b>
+            <template v-else>
+              {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: filters.availableIn?.length }) }}
+            </template>
+          </i18n-t>
+        </VcCheckbox>
+        <div class="absolute inset-0"></div>
+      </div>
+      <div class="mt-1 ml-0.5 pl-6 text-xs font-medium">
+        {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
+      </div>
+    </VcCard>
+
     <!-- Previously purchased -->
     <VcFilterCard v-if="isMobile" :title="$t('pages.catalog.instock_filter_card.title')">
       <VcCheckbox v-model="_filters.inStock" :disabled="loading" @change="onFilterChanged">
@@ -118,6 +138,7 @@ const props = defineProps({
 const emit = defineEmits<{
   (e: "search", keyword: string): void;
   (e: "change", value: ProductsFilters): void;
+  (e: "openBranches"): void;
 }>();
 
 const { loading, keyword, filters } = toRefs(props);
@@ -126,6 +147,7 @@ onMounted(() => {
   _keyword.value = keyword.value;
   _filters.facets = _.cloneDeep(filters.value.facets);
   _filters.inStock = props.filters.inStock;
+  _filters.availableIn = _.cloneDeep(props.filters.availableIn);
 });
 
 watch(
@@ -142,6 +164,13 @@ watch(
   }
 );
 
+watch(
+  () => filters.value.availableIn,
+  (newValue) => {
+    _filters.availableIn = _.cloneDeep(newValue);
+  }
+);
+
 watch(keyword, (newKeyword) => (_keyword.value = newKeyword ?? ""));
 
 const isAppliedKeyword = eagerComputed<boolean>(() => _keyword.value == keyword.value);
@@ -153,6 +182,10 @@ function onFilterChanged() {
 }
 function onSearchStart() {
   emit("search", _keyword.value);
+}
+
+function onOpenBranches() {
+  emit("openBranches");
 }
 
 function reset() {

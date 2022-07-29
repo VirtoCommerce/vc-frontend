@@ -34,6 +34,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/500", name: "InternalError", component: Error500 },
   { path: "/sign-in", name: "SignIn", component: SingInPage },
   { path: "/sign-up", name: "SignUp", component: SignUpPage },
+  { path: "/confirm-invitation", name: "ConfirmInvitation", component: SignUpPage },
   { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword },
   { path: "/reset-password", name: "ResetPassword", component: ResetPassword },
   {
@@ -49,7 +50,10 @@ export const mainRoutes: RouteRecordRaw[] = [
     name: "Company",
     component: Company,
     children: corporateRoutes,
-    meta: { requiresAuth: true },
+    meta: {
+      requiresAuth: true,
+      requiresOrganization: true,
+    },
     redirect: { name: corporateRoutes[0].name },
   },
   { path: "/demo-landing", name: "DemoLanding", component: DemoLanding },

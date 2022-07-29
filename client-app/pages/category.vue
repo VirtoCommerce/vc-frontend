@@ -36,6 +36,7 @@
               hideMobileSidebar();
             "
             @change="onMobileFilterChanged($event)"
+            @openBranches="onOpenBranchesDialog"
           />
 
           <div class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
@@ -115,7 +116,6 @@
             <!-- Sorting -->
             <div class="flex items-center flex-grow z-10 ml-auto lg:ml-4 lg:flex-grow-0 lg:order-3 xl:ml-8">
               <span class="hidden lg:block shrink-0 mr-2 text-15 font-bold" v-t="'pages.catalog.sort_by_label'"></span>
-
               <VcSelect
                 v-model="sortQueryParam"
                 text-field="name"
@@ -128,6 +128,20 @@
 
             <!-- View options -->
             <ViewMode v-model:mode="savedViewMode" class="inline-flex ml-3 lg:order-1 lg:ml-0 lg:mr-auto" />
+
+            <div v-if="!isMobileSidebar" class="relative ml-6 cursor-pointer" @click="onOpenBranchesDialog">
+              <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading">
+                <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div">
+                  <b v-if="savedBranches.length" class="text-[color:var(--color-link)]">
+                    {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: savedBranches.length }) }}
+                  </b>
+                  <template v-else>
+                    {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: savedBranches.length }) }}
+                  </template>
+                </i18n-t>
+              </VcCheckbox>
+              <div class="absolute inset-0"></div>
+            </div>
 
             <VcCheckbox
               v-if="!isMobileSidebar"
@@ -278,6 +292,7 @@ import {
   DisplayProducts,
   getFilterExpressionForInStock,
   getFilterExpressionFromFacets,
+  getFilterExpressionForAvailableIn,
   IBreadcrumbsItem,
   ProductsFacet,
   ProductsFacetValue,
@@ -289,12 +304,14 @@ import {
   useProductsRoutes,
   ViewMode,
 } from "@/shared/catalog";
+import { BranchesDialog, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { AddToCart } from "@/shared/cart";
 import { useElementVisibility, usePageHead, useRouteQueryParam } from "@/core/composables";
 import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import QueryParamName from "@/core/query-param-name.enum";
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
+import { usePopup } from "@/shared/popup";
 
 const FILTERS_RESET_TIMEOUT_IN_MS = 500;
 const watchStopHandles: WatchStopHandle[] = [];
@@ -306,6 +323,7 @@ const props = defineProps({
   },
 });
 
+const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { t } = useI18n();
 const { selectedCategory, selectCategoryByKey, loadCategoriesTree, selectRoot } = useCategories();
@@ -335,6 +353,7 @@ usePageHead({
 const productsRoutes = useProductsRoutes(products);
 const savedViewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
 const savedInStock = useLocalStorage<boolean>("viewInStockProducts", true);
+const savedBranches = useLocalStorage<string[]>(FFC_LOCAL_STORAGE, []);
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: PRODUCT_SORTING_LIST[0].id,
@@ -358,7 +377,11 @@ const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeade
 const page = ref(1);
 const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
 const mobileSidebarVisible = ref(false);
-const mobileFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: savedInStock.value });
+const mobileFilters = shallowReactive<ProductsFilters>({
+  facets: [],
+  inStock: savedInStock.value,
+  availableIn: savedBranches.value,
+});
 
 // region Computed properties
 
@@ -371,7 +394,13 @@ const searchParams = computedEager<ProductsSearchParams>(() => ({
   itemsPerPage: itemsPerPage.value,
   sort: sortQueryParam.value,
   keyword: keywordQueryParam.value,
-  filter: [facetsQueryParam.value, getFilterExpressionForInStock(savedInStock)].filter(Boolean).join(" "),
+  filter: [
+    facetsQueryParam.value,
+    getFilterExpressionForInStock(savedInStock),
+    getFilterExpressionForAvailableIn(savedBranches),
+  ]
+    .filter(Boolean)
+    .join(" "),
 }));
 
 const isExistSelectedFacets = eagerComputed<boolean>(() =>
@@ -383,7 +412,9 @@ const isExistSelectedMobileFacets = eagerComputed<boolean>(() =>
 );
 
 const isMobileFilterDirty = eagerComputed<boolean>(
-  () => JSON.stringify(mobileFilters) !== JSON.stringify({ facets: facets.value, inStock: savedInStock.value })
+  () =>
+    JSON.stringify(mobileFilters) !==
+    JSON.stringify({ facets: facets.value, inStock: savedInStock.value, availableIn: savedBranches.value })
 );
 
 const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
@@ -414,6 +445,7 @@ const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
 function showMobileSidebar() {
   mobileFilters.facets = _.cloneDeep(facets.value);
   mobileFilters.inStock = savedInStock.value;
+  mobileFilters.availableIn = savedBranches.value;
   mobileSidebarVisible.value = true;
 }
 
@@ -434,6 +466,7 @@ function onFilterChanged(newFilters: ProductsFilters) {
 
   if (isMobileSidebar) {
     savedInStock.value = newFilters.inStock;
+    savedBranches.value = newFilters.availableIn;
   }
 }
 
@@ -450,6 +483,7 @@ async function onMobileFilterChanged(newFilters: ProductsFilters) {
 
   mobileFilters.facets = await getFacets(searchParamsForFacets);
   mobileFilters.inStock = newFilters.inStock;
+  mobileFilters.availableIn = newFilters.availableIn;
 }
 
 function removeFacetFilterItem(payload: Pick<ProductsFacet, "paramName"> & Pick<ProductsFacetValue, "value">) {
@@ -505,6 +539,36 @@ function selectCategory(id?: string) {
   } else {
     selectRoot();
   }
+}
+
+function onOpenBranchesDialog() {
+  if (isMobileSidebar.value) {
+    mobileSidebarVisible.value = false;
+  }
+  openPopup({
+    component: BranchesDialog,
+    props: {
+      selectedBranches: savedBranches.value,
+      onClose() {
+        if (isMobileSidebar.value) {
+          showMobileSidebar();
+        }
+      },
+      onSave(branches: string[]) {
+        if (isMobileSidebar.value) {
+          const _mobileFilters = {
+            facets: mobileFilters.facets,
+            inStock: mobileFilters.inStock,
+            availableIn: branches,
+          };
+          onMobileFilterChanged(_mobileFilters);
+          showMobileSidebar();
+        } else {
+          savedBranches.value = branches;
+        }
+      },
+    },
+  });
 }
 
 // endregion Methods
