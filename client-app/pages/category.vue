@@ -25,7 +25,7 @@
           <ProductsFiltersSidebar
             :keyword="keywordQueryParam"
             :filters="mobileFilters"
-            :available-in="availableInMobile"
+            :available-in="availableInMobile || []"
             :loading="loading || facetsLoading"
             @search="
               onSearchStart($event);
