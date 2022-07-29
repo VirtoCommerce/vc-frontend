@@ -22,15 +22,14 @@
     </div>
 
     <!-- Search & filters block -->
-    <div class="flex gap-x-5 lg:flex-row-reverse" :class="{ 'gap-x-2': isMobile, 'gap-x-5': !isMobile }">
+    <div class="flex gap-x-2 lg:gap-x-5 lg:flex-row-reverse">
       <div class="relative ml-5 md:mx-0">
         <VcButton
           ref="filterButtonElement"
           :is-disabled="true"
-          :class="{ 'w-11': isMobile }"
           is-outline
           size="lg"
-          class="p-4 uppercase"
+          class="p-4 w-11 lg:w-auto uppercase"
         >
           <span class="hidden lg:inline-block">{{ $t("common.buttons.filters") }}</span>
           <span class="lg:hidden fa fa-filter"></span>

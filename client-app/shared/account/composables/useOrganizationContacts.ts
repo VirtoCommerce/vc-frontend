@@ -47,7 +47,7 @@ export default () => {
         const contactFullName: string = getFullName(item);
         return {
           ...item,
-          fullName: contactFullName || t("pages.company.members.invite_sent"),
+          fullName: !item.status ? t("pages.company.members.invite_sent") : contactFullName,
           email: getEmailAddress(item),
           role: getRoleName(item),
           status: item.status || ContactStatus.New,
@@ -100,5 +100,5 @@ function getRoleName(contact: ContactType): string | undefined {
       roleName = securityAccount.roles[0].normalizedName;
     }
   }
-  return roleName || "Administrator"; // STUB
+  return roleName;
 }
