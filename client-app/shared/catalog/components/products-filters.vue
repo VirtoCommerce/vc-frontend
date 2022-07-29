@@ -36,7 +36,7 @@
     <!-- Branch availability -->
     <VcCard v-if="isMobile" :with-header="false">
       <div class="relative cursor-pointer" @click="onOpenBranches">
-        <VcCheckbox :model-value="!!availableIn?.length" :disabled="loading" class="hidden md:flex">
+        <VcCheckbox :model-value="!!availableIn?.length" :disabled="loading">
           <div
             v-html="$t('pages.catalog.branch_availability_filter_card.available_in', { n: availableIn?.length })"
           ></div>

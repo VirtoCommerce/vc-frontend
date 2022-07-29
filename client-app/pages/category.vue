@@ -106,7 +106,7 @@
             <ViewMode v-model:mode="savedViewMode" class="hidden md:inline-flex mr-auto" />
 
             <div v-if="!isMobileSidebar" class="relative ml-6 ml-auto cursor-pointer" @click="onOpenBranchesDialog">
-              <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading" class="hidden md:flex">
+              <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading">
                 <div
                   v-html="$t('pages.catalog.branch_availability_filter_card.available_in', { n: savedBranches.length })"
                 ></div>
