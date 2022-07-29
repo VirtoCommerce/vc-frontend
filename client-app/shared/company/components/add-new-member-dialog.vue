@@ -1,5 +1,10 @@
 <template>
-  <VcPopup :title="$t('shared.company.add_new_member_dialog.title')" modal-width="sm:max-w-md" is-mobile-fullscreen>
+  <VcPopup
+    ref="popupComponent"
+    :title="$t('shared.company.add_new_member_dialog.title')"
+    modal-width="sm:max-w-md"
+    is-mobile-fullscreen
+  >
     <template #actions="{ close }">
       <VcButton
         class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-5"
@@ -13,10 +18,7 @@
       <VcButton
         class="w-1/2 lg:w-auto uppercase flex-grow lg:flex-grow-0 inline-flex lg:px-10"
         :is-disabled="!meta.dirty || !meta.valid"
-        @click="
-          onSubmit();
-          close();
-        "
+        @click="onSubmit"
       >
         {{ $t("shared.company.add_new_member_dialog.add_button") }}
       </VcButton>
@@ -75,25 +77,18 @@ import { useI18n } from "vue-i18n";
 import _ from "lodash";
 import { AddNewMember } from "@/shared/company";
 import { ROLES } from "@/core/securityConstants";
+import { shallowRef } from "vue";
+import { VcPopup } from "@/ui-kit/components";
 
 const { t } = useI18n();
 
-//const roles = ["org-maintainer", "org-employee", "purchasing-agent"];
-
+const popupComponent = shallowRef<VcPopup | null>(null);
 const ASYNC_VALIDATION_TIMEOUT_IN_MS = 3000;
 
 usePageHead({
   title: t("pages.sign_up.meta.title"),
 });
 
-defineProps({
-  onResult: {
-    type: Function,
-    default: undefined,
-  },
-});
-
-//const emit = defineEmits(["result"]);
 const emit = defineEmits<{ (e: "result", newMember: AddNewMember): void }>();
 
 const schema = yup.object({
@@ -136,6 +131,7 @@ const onSubmit = handleSubmit((data) => {
     firstName: data.firstName as string,
     lastName: data.lastName as string,
   });
+  popupComponent.value.close();
 });
 
 const validateEmailUniqueness = async (value: string, resolve: (value: boolean) => void) => {
