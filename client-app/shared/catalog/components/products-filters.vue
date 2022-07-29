@@ -43,7 +43,7 @@
         </VcCheckbox>
         <div class="absolute inset-0"></div>
       </div>
-      <div class="mt-1 text-xs font-medium">
+      <div class="mt-1 ml-0.5 pl-6 text-xs font-medium">
         {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
       </div>
     </VcCard>
