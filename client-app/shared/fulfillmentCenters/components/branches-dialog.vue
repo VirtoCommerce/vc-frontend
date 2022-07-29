@@ -160,11 +160,10 @@ const showSelectedBranchesMobile = ref(false);
 const searchInput = ref<string>("");
 const branches = computed(() => fulfillmentCenters.value.filter((item) => searchFilter(item)));
 const selectedBranchesIds = ref<string[]>([]);
-const selectedBranchesIdsOld = useLocalStorage<string[]>(FFC_LOCAL_STORAGE_NAME, []);
 const selectedBranchesIdsTemp = useLocalStorage<string[]>(FFC_TEMP_LOCAL_STORAGE_NAME, []);
 
 loadFulfillmentCenters();
-selectedBranchesIds.value = selectedBranchesIdsOld.value;
+selectedBranchesIds.value = selectedBranchesIdsTemp.value;
 
 function searchFilter(item: IFulfillmentCenter) {
   const searchArr = searchInput.value.trim().split(" ");
@@ -191,7 +190,7 @@ function toggleShowSelectedBranchesMobile(show: boolean) {
 }
 
 const isSaveButtonDisabled = computed(
-  () => JSON.stringify(selectedBranchesIdsOld) === JSON.stringify(selectedBranchesIds.value)
+  () => JSON.stringify(selectedBranchesIdsTemp) === JSON.stringify(selectedBranchesIds.value)
 );
 
 function save() {

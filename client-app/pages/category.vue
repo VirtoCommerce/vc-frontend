@@ -510,7 +510,7 @@ function selectCategory(id?: string) {
 
 function onOpenBranchesDialog() {
   if (isMobileSidebar) {
-    hideMobileSidebar();
+    mobileSidebarVisible.value = false;
   }
   openPopup({
     component: BranchesDialog,
