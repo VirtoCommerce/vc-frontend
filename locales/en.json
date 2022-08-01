@@ -327,7 +327,7 @@
       "branches_dialog": {
         "title": "Select Branch",
         "all_branches": "All branches",
-        "search_input_placeholder": "Enter an address, branch name",
+        "search_input_placeholder": "Search by address and name",
         "selected_branches": "Selected branches",
         "clear_selection": "Clear selection",
         "cancel_button": "Cancel",
