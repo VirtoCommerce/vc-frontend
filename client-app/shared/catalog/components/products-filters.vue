@@ -136,7 +136,7 @@ onMounted(() => {
   _keyword.value = keyword.value;
   _filters.facets = _.cloneDeep(filters.value.facets);
   _filters.inStock = props.filters.inStock;
-  _filters.availableIn = props.filters.availableIn;
+  _filters.availableIn = _.cloneDeep(props.filters.availableIn);
 });
 
 watch(
@@ -156,7 +156,7 @@ watch(
 watch(
   () => filters.value.availableIn,
   (newValue) => {
-    _filters.availableIn = newValue;
+    _filters.availableIn = _.cloneDeep(newValue);
   }
 );
 

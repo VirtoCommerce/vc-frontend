@@ -512,7 +512,7 @@ function selectCategory(id?: string) {
 }
 
 function onOpenBranchesDialog() {
-  if (isMobileSidebar) {
+  if (isMobileSidebar.value) {
     mobileSidebarVisible.value = false;
   }
   openPopup({
@@ -520,7 +520,7 @@ function onOpenBranchesDialog() {
     props: {
       selectedBranches: savedBranches.value,
       onClose() {
-        if (isMobileSidebar) {
+        if (isMobileSidebar.value) {
           showMobileSidebar();
         }
       },
