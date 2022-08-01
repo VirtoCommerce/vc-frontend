@@ -67,7 +67,7 @@
         </VcPopupSidebar>
 
         <!-- Sidebar -->
-        <div v-else class="space-y-5 w-60 flex-shrink-0 pt-1.5">
+        <div v-else class="space-y-5 w-60 flex-shrink-0 pt-2">
           <CategorySelector :selected-category="selectedCategory" :loading="loading"></CategorySelector>
 
           <ProductsFiltersSidebar
@@ -82,7 +82,7 @@
         <!-- Content -->
         <div class="flex-grow">
           <div class="flex">
-            <h2 class="text-gray-800 text-21 font-bold uppercase lg:text-25">
+            <h2 class="mt-px text-gray-800 text-21 font-bold uppercase lg:text-25">
               {{ selectedCategory?.label }}
               <sup
                 class="-top-1.5 pl-2 text-sm text-[color:var(--color-category-page-results)] normal-case font-normal whitespace-nowrap lg:text-15"

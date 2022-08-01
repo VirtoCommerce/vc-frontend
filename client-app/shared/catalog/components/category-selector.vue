@@ -2,7 +2,7 @@
   <!-- category selector -->
   <VcFilterCard v-if="!loading || selectedCategory" :withHeader="!!backCategory">
     <template #header>
-      <router-link :to="getCategoryRoute(backCategory!)" class="mt-0.5 -mb-0.5 pl-0.5">
+      <router-link :to="getCategoryRoute(backCategory!)" class="pl-0.5">
         <i class="fas fa-chevron-left text-[color:var(--color-primary)]"></i>
         <span class="font-bold ml-1.5">
           {{ backCategory?.label }}
