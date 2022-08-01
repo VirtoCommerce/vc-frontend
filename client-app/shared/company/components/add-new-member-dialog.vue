@@ -136,7 +136,7 @@ const { value: lastName } = useField<string>("lastName");
 const { value: email } = useField<string>("email");
 
 const onSubmit = handleSubmit(async (data) => {
-  const roleEntity = ROLES.find((x) => x.id == data.role); //to pass role object with the api request payload. API requires the object but not just id.
+  const roleEntity = ROLES.find((x) => x.id === data.role); //to pass role object with the api request payload. API requires the object but not just id.
 
   const result = await addNewContact({
     role: roleEntity!,
