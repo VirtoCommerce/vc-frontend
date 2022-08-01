@@ -140,10 +140,10 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { breakpointsTailwind, useBreakpoints, useLocalStorage } from "@vueuse/core";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import BranchItem from "./branch-item.vue";
 import BranchSearch from "./branch-search.vue";
-import { useFulfillmentCenters, IFulfillmentCenter, FFC_TEMP_LOCAL_STORAGE_NAME } from "@/shared/fulfillmentCenters";
+import { useFulfillmentCenters, IFulfillmentCenter } from "@/shared/fulfillmentCenters";
 
 const { loading, loadFulfillmentCenters, fulfillmentCenters } = useFulfillmentCenters();
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -155,10 +155,18 @@ const showSelectedBranchesMobile = ref(false);
 const searchInput = ref<string>("");
 const branches = computed(() => fulfillmentCenters.value.filter((item) => searchFilter(item)));
 const selectedBranchesIds = ref<string[]>([]);
-const selectedBranchesIdsTemp = useLocalStorage<string[]>(FFC_TEMP_LOCAL_STORAGE_NAME, []);
+
+const props = defineProps({
+  selectedBranches: {
+    type: Array as PropType<string[]>,
+    default: [],
+  },
+});
+const emit = defineEmits(["save"]);
 
 loadFulfillmentCenters();
-selectedBranchesIds.value = selectedBranchesIdsTemp.value;
+
+selectedBranchesIds.value = props.selectedBranches;
 
 function searchFilter(item: IFulfillmentCenter) {
   const searchArr = searchInput.value.trim().split(" ");
@@ -185,11 +193,11 @@ function toggleShowSelectedBranchesMobile(show: boolean) {
 }
 
 const isSaveButtonDisabled = computed(
-  () => JSON.stringify(selectedBranchesIdsTemp) === JSON.stringify(selectedBranchesIds.value)
+  () => JSON.stringify(props.selectedBranches) === JSON.stringify(selectedBranchesIds.value)
 );
 
 function save() {
-  selectedBranchesIdsTemp.value = selectedBranchesIds.value;
+  emit("save", selectedBranchesIds.value);
 }
 
 watch(selectedBranchesIds, () => {
