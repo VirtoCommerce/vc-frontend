@@ -288,7 +288,7 @@
         "email_placeholder": "@:common.placeholders.email",
         "cancel_button": "@:common.buttons.cancel",
         "add_button": "Add",
-        "successfully_text": "Member {0} was successfully added to the company"
+        "successfully_text": "The user {0} has been successfully created"
       }
     },
     "cart": {
