@@ -36,10 +36,15 @@
     <!-- Branch availability -->
     <VcCard v-if="isMobile" :with-header="false">
       <div class="relative cursor-pointer" @click="onOpenBranches">
-        <VcCheckbox :model-value="!!availableIn?.length" :disabled="loading">
-          <div
-            v-html="$t('pages.catalog.branch_availability_filter_card.available_in', { n: availableIn?.length })"
-          ></div>
+        <VcCheckbox :model-value="!!filters.availableIn.length" :disabled="loading">
+          <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div">
+            <b v-if="filters.availableIn.length" class="text-[color:var(--color-link)]">
+              {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: filters.availableIn.length }) }}
+            </b>
+            <template v-else>
+              {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: filters.availableIn.length }) }}
+            </template>
+          </i18n-t>
         </VcCheckbox>
         <div class="absolute inset-0"></div>
       </div>
@@ -117,10 +122,6 @@ const props = defineProps({
     type: Object as PropType<ProductsFilters>,
     required: true,
   },
-  availableIn: {
-    type: Array as PropType<string[]>,
-    default: []
-  },
 });
 
 const emit = defineEmits<{
@@ -135,6 +136,7 @@ onMounted(() => {
   _keyword.value = keyword.value;
   _filters.facets = _.cloneDeep(filters.value.facets);
   _filters.inStock = props.filters.inStock;
+  _filters.availableIn = props.filters.availableIn;
 });
 
 watch(
@@ -148,6 +150,13 @@ watch(
   () => filters.value.inStock,
   (newValue) => {
     _filters.inStock = newValue;
+  }
+);
+
+watch(
+  () => filters.value.availableIn,
+  (newValue) => {
+    _filters.availableIn = newValue;
   }
 );
 

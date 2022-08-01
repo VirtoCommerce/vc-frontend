@@ -31,6 +31,7 @@
               hideMobileSidebar();
             "
             @change="onMobileFilterChanged($event)"
+            @openBranches="onOpenBranchesDialog"
           />
 
           <div class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
@@ -326,7 +327,6 @@ const productsRoutes = useProductsRoutes(products);
 const savedViewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
 const savedInStock = useLocalStorage<boolean>("viewInStockProducts", true);
 const savedBranches = useLocalStorage<boolean>(FFC_LOCAL_STORAGE, []);
-const branchesMobile = ref<string[]>([]);
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: PRODUCT_SORTING_LIST[0].id,
@@ -350,7 +350,11 @@ const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeade
 const page = ref(1);
 const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
 const mobileSidebarVisible = ref(false);
-const mobileFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: savedInStock.value });
+const mobileFilters = shallowReactive<ProductsFilters>({
+  facets: [],
+  inStock: savedInStock.value,
+  availableIn: savedBranches.value,
+});
 
 // region Computed properties
 
@@ -381,7 +385,9 @@ const isExistSelectedMobileFacets = eagerComputed<boolean>(() =>
 );
 
 const isMobileFilterDirty = eagerComputed<boolean>(
-  () => JSON.stringify(mobileFilters) !== JSON.stringify({ facets: facets.value, inStock: savedInStock.value })
+  () =>
+    JSON.stringify(mobileFilters) !==
+    JSON.stringify({ facets: facets.value, inStock: savedInStock.value, availableIn: savedBranches.value })
 );
 
 const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
@@ -412,6 +418,7 @@ const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
 function showMobileSidebar() {
   mobileFilters.facets = _.cloneDeep(facets.value);
   mobileFilters.inStock = savedInStock.value;
+  mobileFilters.availableIn = savedBranches.value;
   mobileSidebarVisible.value = true;
 }
 
@@ -430,6 +437,7 @@ function onSearchStart(newKeyword: string) {
 function onFilterChanged(newFilters: ProductsFilters) {
   facetsQueryParam.value = getFilterExpressionFromFacets(newFilters.facets);
   savedInStock.value = newFilters.inStock;
+  savedBranches.value = newFilters.availableIn;
 }
 
 async function onMobileFilterChanged(newFilters: ProductsFilters) {
@@ -445,6 +453,7 @@ async function onMobileFilterChanged(newFilters: ProductsFilters) {
 
   mobileFilters.facets = await getFacets(searchParamsForFacets);
   mobileFilters.inStock = newFilters.inStock;
+  mobileFilters.availableIn = newFilters.availableIn;
 }
 
 function removeFacetFilterItem(payload: Pick<ProductsFacet, "paramName"> & Pick<ProductsFacetValue, "value">) {
@@ -510,10 +519,19 @@ function onOpenBranchesDialog() {
     component: BranchesDialog,
     props: {
       selectedBranches: savedBranches.value,
+      onClose() {
+        if (isMobileSidebar) {
+          showMobileSidebar();
+        }
+      },
       onSave(branches) {
-        branchesMobile.value = branches;
-
         if (isMobileSidebar.value) {
+          const _mobileFilters = {
+            facets: mobileFilters.facets,
+            inStock: mobileFilters.inStock,
+            availableIn: branches,
+          };
+          onMobileFilterChanged(_mobileFilters);
           showMobileSidebar();
         } else {
           savedBranches.value = branches;
