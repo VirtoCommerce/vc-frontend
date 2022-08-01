@@ -861,8 +861,7 @@
       },
       "title": "Catalog",
       "search_card": {
-        "title": "Filter results by",
-        "search_label": "Search within these results",
+        "title": "Search within these results",
         "search_button": "Go"
       },
       "instock_filter_card": {

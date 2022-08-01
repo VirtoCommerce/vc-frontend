@@ -11,9 +11,9 @@
           <div class="flex-grow uppercase">{{ title }}</div>
           <div v-if="isCollapsible" class="ml-3">
             <svg width="12" height="12" class="text-[color:var(--color-primary)]"
-              :class="[collapsed ? 'rotate-90' : '']"
+              :class="[collapsed ? '' : 'rotate-180']"
             >
-              <user href="/static/images/common/arrow-down.svg#main"></user>
+              <use href="/static/images/common/arrow-down.svg#main"></use>
             </svg>
           </div>
           <slot name="header-button"></slot>
@@ -22,7 +22,7 @@
     </div>
     <div
       v-if="!isCollapsible || (isCollapsible && !collapsed)"
-      class="bg-white rounded-b border-l border-r border-b"
+      class="bg-white rounded-b border-l border-r border-b text-13"
       :class="{ 'px-4 py-3.5': !fullWidthContent }"
     >
       <slot></slot>

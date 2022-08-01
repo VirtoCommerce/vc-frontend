@@ -82,7 +82,7 @@
         <!-- Content -->
         <div class="flex-grow">
           <div class="flex">
-            <h2 class="mt-px text-gray-800 text-21 font-bold uppercase lg:text-25">
+            <h2 class="text-gray-800 text-21 font-bold uppercase lg:my-px lg:text-25">
               {{ selectedCategory?.label }}
               <sup
                 class="-top-1.5 pl-2 text-sm text-[color:var(--color-category-page-results)] normal-case font-normal whitespace-nowrap lg:text-15"
@@ -94,7 +94,7 @@
           <div class="-mt-px" ref="stickyMobileHeaderAnchor"></div>
 
           <div
-            class="sticky top-0 z-10 flex items-center h-14 my-1.5 lg:my-1 lg:relative"
+            class="sticky top-0 z-10 flex items-center h-14 my-1.5 lg:mb-1 lg:mt-0.5 lg:relative"
             :class="{
               'z-40 px-5 md:px-12 -mx-5 md:-mx-12 bg-[color:var(--color-header-bottom-bg)]':
                 isVisibleStickyMobileHeader,
@@ -109,7 +109,7 @@
 
             <!-- Sorting -->
             <div class="flex items-center flex-grow md:flex-grow-0 z-10 ml-auto lg:order-2">
-              <span class="hidden lg:block shrink-0 mr-2" v-t="'pages.catalog.sort_by_label'"></span>
+              <span class="hidden lg:block shrink-0 mr-2 text-15" v-t="'pages.catalog.sort_by_label'"></span>
 
               <VcSelect
                 v-model="sortQueryParam"
@@ -117,7 +117,7 @@
                 value-field="id"
                 :is-disabled="loading"
                 :items="PRODUCT_SORTING_LIST"
-                class="w-full md:w-52 lg:w-64"
+                class="w-full md:w-48"
               />
             </div>
 

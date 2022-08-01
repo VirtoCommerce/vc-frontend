@@ -2,7 +2,6 @@
   <div class="space-y-4 lg:space-y-5">
     <!-- Search results -->
     <VcFilterCard :title="$t('pages.catalog.search_card.title')">
-      <div class="text-sm pb-2" v-t="'pages.catalog.search_card.search_label'"></div>
       <div class="flex gap-2.5">
         <div class="relative">
           <input
@@ -77,10 +76,10 @@
           :key="item.value"
           v-model="item.selected"
           :disabled="loading"
-          class="mt-3 first:mt-0"
+          class="mt-3 first:mt-1 last:mb-2"
           @change="onFilterChanged"
         >
-          <div class="flex">
+          <div class="text-13">
             <span class="truncate">{{ item.label }}</span>
             <span class="ml-1">{{ $t("pages.catalog.facet_card.item_count_format", [item.count]) }}</span>
           </div>
