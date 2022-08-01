@@ -326,7 +326,7 @@ usePageHead({
 const productsRoutes = useProductsRoutes(products);
 const savedViewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
 const savedInStock = useLocalStorage<boolean>("viewInStockProducts", true);
-const savedBranches = useLocalStorage<boolean>(FFC_LOCAL_STORAGE, []);
+const savedBranches = useLocalStorage<string[]>(FFC_LOCAL_STORAGE, []);
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: PRODUCT_SORTING_LIST[0].id,
@@ -524,7 +524,7 @@ function onOpenBranchesDialog() {
           showMobileSidebar();
         }
       },
-      onSave(branches) {
+      onSave(branches: string[]) {
         if (isMobileSidebar.value) {
           const _mobileFilters = {
             facets: mobileFilters.facets,

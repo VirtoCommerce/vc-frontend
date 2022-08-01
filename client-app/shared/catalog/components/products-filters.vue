@@ -36,13 +36,13 @@
     <!-- Branch availability -->
     <VcCard v-if="isMobile" :with-header="false">
       <div class="relative cursor-pointer" @click="onOpenBranches">
-        <VcCheckbox :model-value="!!filters.availableIn.length" :disabled="loading">
+        <VcCheckbox :model-value="!!filters.availableIn?.length" :disabled="loading">
           <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div">
-            <b v-if="filters.availableIn.length" class="text-[color:var(--color-link)]">
-              {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: filters.availableIn.length }) }}
+            <b v-if="filters.availableIn?.length" class="text-[color:var(--color-link)]">
+              {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: filters.availableIn?.length }) }}
             </b>
             <template v-else>
-              {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: filters.availableIn.length }) }}
+              {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: filters.availableIn?.length }) }}
             </template>
           </i18n-t>
         </VcCheckbox>
