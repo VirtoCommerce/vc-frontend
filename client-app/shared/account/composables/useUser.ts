@@ -1,7 +1,7 @@
 import { AccountCreationResultType, IdentityResultType, Organization, UserType } from "@/xapi/types";
 import { computed, readonly, ref } from "vue";
 import { eagerComputed } from "@vueuse/core";
-import { getMe, registerAccount, updatePersonalData } from "@/xapi/graphql/account";
+import { getMe, registerAccount, resetPasswordByToken, updatePersonalData } from "@/xapi/graphql/account";
 
 import { Logger } from "@/core/utilities";
 import { useFetch } from "@/core/composables";
@@ -15,6 +15,7 @@ import {
   ValidateToken,
 } from "@/shared/account";
 import globals from "@/core/globals";
+import requestPasswordReset from "@/xapi/graphql/account/queries/requestPasswordReset";
 
 const loading = ref(false);
 const user = ref<UserType>();
@@ -160,26 +161,18 @@ export default () => {
     }
   }
 
-  async function forgotPassword(payload: ForgotPassword): Promise<IdentityResultType> {
+  async function forgotPassword(payload: ForgotPassword): Promise<boolean> {
     try {
       loading.value = true;
-      const url = "/storefrontapi/account/forgotPassword";
-      return await innerFetch<IdentityResultType, ForgotPassword>(url, "POST", payload);
-    } catch (e) {
-      Logger.error("useUser.forgotPassword", e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-  }
 
-  async function validateToken(payload: ValidateToken): Promise<IdentityResultType> {
-    try {
-      loading.value = true;
-      const url = "/storefrontapi/account/validateToken";
-      return await innerFetch<IdentityResultType, ValidateToken>(url, "POST", payload);
+      const success = await requestPasswordReset({
+        loginOrEmail: payload.email,
+        urlSuffix: payload.resetPasswordUrl,
+      });
+
+      return success;
     } catch (e) {
-      Logger.error("useUser.validateToken", e);
+      Logger.error("useUser.registerUser", e);
       throw e;
     } finally {
       loading.value = false;
@@ -189,8 +182,14 @@ export default () => {
   async function resetPassword(payload: ResetPassword): Promise<IdentityResultType> {
     try {
       loading.value = true;
-      const url = "/storefrontapi/account/resetPassword";
-      return await innerFetch<IdentityResultType, ResetPassword>(url, "POST", payload);
+
+      const result = await resetPasswordByToken({
+        userId: payload.userId,
+        token: payload.token,
+        newPassword: payload.password,
+      });
+
+      return result;
     } catch (e) {
       Logger.error("useUser.resetPassword", e);
       throw e;
@@ -210,7 +209,6 @@ export default () => {
     registerOrganization,
     signMeOut,
     forgotPassword,
-    validateToken,
     resetPassword,
     loading: readonly(loading),
     user: computed({

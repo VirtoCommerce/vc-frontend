@@ -9,6 +9,7 @@ export { default as updateMemberAddresses } from "./mutations/updateMemberAddres
 export { default as updatePersonalData } from "./mutations/updatePersonalData";
 export { default as createUser } from "./mutations/createUser";
 export { default as createContact } from "./mutations/createContact";
+export { default as resetPasswordByToken } from "./mutations/resetPasswordByToken";
 
 export { default as checkEmailUniqueness } from "./queries/checkEmailUniqueness";
 export { default as checkUsernameUniqueness } from "./queries/checkUsernameUniqueness";

@@ -43,13 +43,12 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { TwoColumn } from "@/shared/layout";
-import { ResetPasswordForm, useUser } from "@/shared/account";
+import { ResetPasswordForm } from "@/shared/account";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 
 const route = useRoute();
-const { validateToken } = useUser();
 const { t } = useI18n();
 
 usePageHead({
@@ -66,11 +65,6 @@ const tokenDataIsValid = ref(true);
 onMounted(async () => {
   if (!userId || !token) {
     tokenDataIsValid.value = false;
-  } else {
-    const validateTokenResult = await validateToken({ userId: userId, token: token });
-    if (!validateTokenResult.succeeded) {
-      tokenDataIsValid.value = false;
-    }
   }
 
   isMounted.value = true;
