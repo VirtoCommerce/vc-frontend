@@ -13,6 +13,8 @@ import { AddNewMember } from "@/shared/company";
 import globals from "@/core/globals";
 import { endRegistrationRoute } from "@/router/routes";
 
+const TEMP_PASSWORD = "TempPassword#1";
+
 export default () => {
   const loading: Ref<boolean> = ref(false);
   const itemsPerPage: Ref<number> = ref(DEFAULT_PAGE_SIZE);
@@ -79,7 +81,7 @@ export default () => {
       const identityResult = await createUser({
         roles: [{ id: payload.role.id, name: payload.role.name, permissions: [] }],
         userName: payload.email,
-        password: "TempPassword#1",
+        password: TEMP_PASSWORD,
         email: payload.email,
         memberId: contact.id,
         userType: "Customer",
