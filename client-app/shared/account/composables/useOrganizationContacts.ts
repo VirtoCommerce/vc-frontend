@@ -11,7 +11,7 @@ import { OrganizationContactType } from "@/core/types";
 import { useI18n } from "vue-i18n";
 import { AddNewMember } from "@/shared/company";
 import globals from "@/core/globals";
-import { ROLES } from "@/core/securityConstants";
+import { endRegistrationRoute } from "@/router/routes";
 
 export default () => {
   const loading: Ref<boolean> = ref(false);
@@ -89,7 +89,7 @@ export default () => {
       if (identityResult.succeeded) {
         await requestPasswordReset({
           loginOrEmail: payload.email,
-          urlSuffix: "/end-registration",
+          urlSuffix: endRegistrationRoute.path,
         });
       }
 
