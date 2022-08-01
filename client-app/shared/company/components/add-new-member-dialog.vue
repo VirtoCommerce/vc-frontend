@@ -5,32 +5,11 @@
     modal-width="sm:max-w-md"
     is-mobile-fullscreen
   >
-    <template #actions="{ close }">
-      <VcButton
-        class="uppercase w-full sm:w-auto sm:px-10"
-        kind="secondary"
-        :is-disabled="isSubmitting"
-        is-outline
-        @click="close"
-      >
-        {{ $t("shared.company.add_new_member_dialog.cancel_button") }}
-      </VcButton>
-
-      <VcButton
-        class="uppercase w-full sm:w-auto sm:px-10"
-        :is-disabled="!meta.dirty || !meta.valid"
-        :is-waiting="isSubmitting"
-        @click="onSubmit"
-      >
-        {{ $t("shared.company.add_new_member_dialog.add_button") }}
-      </VcButton>
-    </template>
-
     <VcAlert v-if="errorText" type="error" class="mx-6 mt-5 sm:mx-5">
       {{ errorText }}
     </VcAlert>
 
-    <form class="px-5 py-4">
+    <form class="px-6 py-7 sm:pt-6 sm:pb-4 sm:border-b">
       <VcSelect
         v-model="role"
         class="mb-4"
@@ -71,6 +50,27 @@
         :maxlength="64"
       ></VcInput>
     </form>
+
+    <template #actions="{ close }">
+      <VcButton
+        class="uppercase w-full sm:w-auto sm:px-10"
+        kind="secondary"
+        :is-disabled="isSubmitting"
+        is-outline
+        @click="close"
+      >
+        {{ $t("shared.company.add_new_member_dialog.cancel_button") }}
+      </VcButton>
+
+      <VcButton
+        class="uppercase w-full sm:w-auto sm:px-10"
+        :is-disabled="!meta.dirty || !meta.valid"
+        :is-waiting="isSubmitting"
+        @click="onSubmit"
+      >
+        {{ $t("shared.company.add_new_member_dialog.add_button") }}
+      </VcButton>
+    </template>
   </VcPopup>
 </template>
 
