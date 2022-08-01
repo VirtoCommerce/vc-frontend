@@ -102,7 +102,11 @@
               {{ contact.email }}
             </td>
             <td class="p-5 w-24 overflow-hidden">
-              {{ contact.status }}
+              <VcTooltip :content="$t(contact.displayStatus.localeLabel)">
+                <template #trigger>
+                  <img width="20" height="20" :src="contact.displayStatus.iconUrl" />
+                </template>
+              </VcTooltip>
             </td>
             <!--
             <td class="p-5 w-px">
@@ -139,7 +143,9 @@
             </td>
 
             <td class="py-6 pr-6 w-px">
-              {{ contacts.item.status }}
+              <div class="px-2.5 py-0.5 w-20 text-center rounded-sm" :class="contacts.item.displayStatus.cssStyles">
+                {{ $t(contacts.item.displayStatus.localeLabel) }}
+              </div>
             </td>
           </tr>
         </template>
@@ -200,7 +206,7 @@ const columns = ref<ITableColumn[]>([
   {
     id: "status",
     title: t("pages.company.members.content_header.active"),
-    sortable: true,
+    sortable: false,
   },
   /*{
     id: "actions",

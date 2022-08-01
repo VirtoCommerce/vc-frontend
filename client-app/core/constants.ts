@@ -18,7 +18,7 @@ export const PRODUCT_SORTING_LIST = [
   { id: "createddate-ascending", name: "Date, old to new" },
 ];
 
-export enum ContactStatus {
+export enum XapiContactStatus {
   New = "New",
   Approved = "Approved",
   Rejected = "Rejected",

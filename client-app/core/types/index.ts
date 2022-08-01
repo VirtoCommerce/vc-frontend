@@ -15,7 +15,17 @@ export enum AddressType {
   BillingAndShipping = 3,
 }
 
-export type OrganizationContactType = ContactType & { email?: string; role?: string };
+export type OrganizationContactType = ContactType & {
+  email?: string;
+  role?: string;
+  displayStatus: OrganizationContactDisplayStatusType;
+};
+
+export type OrganizationContactDisplayStatusType = {
+  localeLabel: string;
+  iconUrl?: string;
+  cssStyles?: string;
+};
 
 export type AnyAddressType = MemberAddressType | OrderAddressType | CartAddressType;
 

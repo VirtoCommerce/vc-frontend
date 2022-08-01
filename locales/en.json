@@ -866,6 +866,11 @@
           "role": "Role",
           "email": "Email",
           "active": "Active"
+        },
+        "statuses": {
+          "active": "Active",
+          "inactive": "Inactive",
+          "blocked": "Blocked"
         }
       }
     },

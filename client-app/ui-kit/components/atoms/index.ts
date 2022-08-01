@@ -24,3 +24,4 @@ export { default as VcSection } from "./section/vc-section.vue";
 export { default as VcSelect } from "./select/vc-select.vue";
 export { default as VcTabs } from "./tabs/vc-tabs.vue";
 export { default as VcTextArea } from "./text-area/vc-text-area.vue";
+export { default as VcTooltip } from "./tooltip/vc-tooltip.vue";

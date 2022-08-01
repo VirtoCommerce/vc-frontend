@@ -3,11 +3,11 @@ import { ContactType, UserType } from "@/xapi/types";
 import { ref, shallowRef, Ref, readonly, computed } from "vue";
 import { Logger } from "@/core/utilities";
 import { ISortInfo } from "../types";
-import { ContactStatus, DEFAULT_PAGE_SIZE, SORT_ASCENDING } from "@/core/constants";
+import { XapiContactStatus, DEFAULT_PAGE_SIZE, SORT_ASCENDING } from "@/core/constants";
 import { getSortingExpression } from "../utils";
 import useUser from "./useUser";
 import _ from "lodash";
-import { OrganizationContactType } from "@/core/types";
+import { OrganizationContactDisplayStatusType, OrganizationContactType } from "@/core/types";
 import { useI18n } from "vue-i18n";
 
 export default () => {
@@ -50,7 +50,7 @@ export default () => {
           fullName: !item.status ? t("pages.company.members.invite_sent") : contactFullName,
           email: getEmailAddress(item),
           role: getRoleName(item),
-          status: item.status || ContactStatus.New,
+          displayStatus: getDisplayContactStatus(item.status),
         };
       });
     } catch (e) {
@@ -101,4 +101,27 @@ function getRoleName(contact: ContactType): string | undefined {
     }
   }
   return roleName;
+}
+
+function getDisplayContactStatus(xapiStatus?: string): OrganizationContactDisplayStatusType {
+  switch (xapiStatus) {
+    case XapiContactStatus.Approved:
+      return {
+        localeLabel: "pages.company.members.statuses.active",
+        iconUrl: "/static/icons/contact-active.svg",
+        cssStyles: "bg-success-500 text-white",
+      };
+    case XapiContactStatus.Rejected:
+      return {
+        localeLabel: "pages.company.members.statuses.blocked",
+        iconUrl: "/static/icons/contact-blocked.svg",
+        cssStyles: "bg-error-600 text-white",
+      };
+    default:
+      return {
+        localeLabel: "pages.company.members.statuses.inactive",
+        iconUrl: "/static/icons/contact-inactive.svg",
+        cssStyles: "text-gray-500 border border-solid border-gray-500",
+      };
+  }
 }
