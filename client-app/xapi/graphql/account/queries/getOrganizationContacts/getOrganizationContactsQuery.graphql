@@ -1,0 +1,33 @@
+query GetOrganizationContacts(
+  $id: String!
+  $userId: String!
+  $first: Int
+  $after: String
+  $sort: String
+  $searchPhrase: String
+) {
+  organization(id: $id, userId: $userId) {
+    contacts(first: $first, after: $after, sort: $sort, searchPhrase: $searchPhrase) {
+      items {
+        id
+        name
+        firstName
+        lastName
+        fullName
+        emails
+        status
+        securityAccounts {
+          email
+          roles {
+            id
+            name
+            normalizedName
+            description
+            permissions
+          }
+        }
+      }
+      totalCount
+    }
+  }
+}
