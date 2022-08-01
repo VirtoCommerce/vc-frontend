@@ -93,7 +93,7 @@ const notifications = useNotifications();
 const { addNewContact } = useOrganizationContacts();
 
 const errorText = ref("");
-const popupComponent = shallowRef<VcPopup | null>(null);
+const popupComponent = shallowRef<any>(null);
 const ASYNC_VALIDATION_TIMEOUT_IN_MS = 3000;
 
 usePageHead({
