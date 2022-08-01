@@ -79,7 +79,8 @@ export default (
     facetsLoading.value = true;
 
     try {
-      const { term_facets = [], range_facets = [] } = await searchProducts(searchParams, { withFacets: true });
+      const _searchParams = { ...searchParams, page: 0, itemsPerPage: 0 };
+      const { term_facets = [], range_facets = [] } = await searchProducts(_searchParams, { withFacets: true });
 
       term_facets.sort((a, b) => a.label.localeCompare(b.label));
       range_facets.sort((a, b) => a.label.localeCompare(b.label));
