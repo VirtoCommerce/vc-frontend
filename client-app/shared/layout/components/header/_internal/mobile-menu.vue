@@ -147,7 +147,7 @@
 
           <!-- Corporate link -->
           <MobileMenuLink
-            v-if="mobileCorporateMenuLink"
+            v-if="mobileCorporateMenuLink && organization"
             :title="mobileCorporateMenuLink.title"
             :icon="mobileCorporateMenuLink.icon"
             class="text-2xl"
@@ -200,7 +200,7 @@ const { cart } = useCart();
 const { productsIds } = useCompareProducts();
 const { supportedLocales } = useLanguages();
 const { currentCurrency, supportedCurrencies, saveCurrencyCodeAndReload } = useCurrency();
-const { user, isAuthenticated, signMeOut } = useUser();
+const { user, isAuthenticated, organization, signMeOut } = useUser();
 const {
   mobileHeaderMenuLinks,
   mobileAccountMenuLink,

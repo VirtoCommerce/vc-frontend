@@ -3,7 +3,7 @@ import { mainRoutes } from "@/router/routes";
 import { useUser } from "@/shared/account";
 
 export function createRouter(options: { base: string }) {
-  const { isAuthenticated } = useUser();
+  const { isAuthenticated, organization } = useUser();
   const { base } = options;
 
   const router = _createRouter({
@@ -16,12 +16,17 @@ export function createRouter(options: { base: string }) {
 
   router.beforeEach((to, _from, next) => {
     // Protect account routes
-    if (!isAuthenticated.value && to.meta.requiresAuth) {
+    if (to.meta.requiresAuth && !isAuthenticated.value) {
       return next({
         name: "SignIn",
         // save the location we were at to come back later
         query: { redirect: to.fullPath },
       });
+    }
+
+    // Protect company routes
+    if (to.meta.requiresOrganization && !organization.value) {
+      return next({ name: "Account" });
     }
 
     // Make Dashboard the default Home page for authorized users
