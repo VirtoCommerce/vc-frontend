@@ -1,4 +1,4 @@
-import { getOrganizationContacts, createContact, createUser } from "@/xapi/graphql/account";
+import { getOrganizationContacts, createContact, createUser, requestPasswordReset } from "@/xapi/graphql/account";
 import { ContactType, IdentityResultType, UserType } from "@/xapi/types";
 import { ref, shallowRef, Ref, readonly, computed } from "vue";
 import { Logger } from "@/core/utilities";
@@ -85,6 +85,13 @@ export default () => {
         userType: "Customer",
         storeId,
       });
+
+      if (identityResult.succeeded) {
+        await requestPasswordReset({
+          loginOrEmail: payload.email,
+          urlSuffix: "/end-registration",
+        });
+      }
 
       return identityResult;
     } catch (e) {

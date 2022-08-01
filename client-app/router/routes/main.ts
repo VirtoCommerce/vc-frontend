@@ -36,6 +36,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/sign-up", name: "SignUp", component: SignUpPage },
   { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword },
   { path: "/reset-password", name: "ResetPassword", component: ResetPassword },
+  { path: "/end-registration", name: "EndRegistration", component: ResetPassword },
   {
     path: "/account",
     name: "Account",

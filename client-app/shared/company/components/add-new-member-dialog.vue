@@ -26,6 +26,10 @@
       </VcButton>
     </template>
 
+    <VcAlert v-if="errorText" type="error" class="mx-6 mt-5 sm:mx-5">
+      {{ errorText }}
+    </VcAlert>
+
     <form class="px-5 py-4">
       <VcSelect
         v-model="role"
@@ -77,19 +81,18 @@ import { usePageHead } from "@/core/composables";
 import { checkEmailUniqueness, checkUsernameUniqueness } from "@/xapi/graphql/account";
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
-// import { AddNewMember } from "@/shared/company";
 import { ROLES } from "@/core/securityConstants";
-import { shallowRef } from "vue";
+import { ref, shallowRef } from "vue";
 import { VcPopup } from "@/ui-kit/components";
 import { useOrganizationContacts } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 import { Role } from "@/core/types/role";
 
 const { t } = useI18n();
-// const { organization } = useUser();
 const notifications = useNotifications();
 const { addNewContact } = useOrganizationContacts();
 
+const errorText = ref("");
 const popupComponent = shallowRef<VcPopup | null>(null);
 const ASYNC_VALIDATION_TIMEOUT_IN_MS = 3000;
 
@@ -133,7 +136,7 @@ const { value: lastName } = useField<string>("lastName");
 const { value: email } = useField<string>("email");
 
 const onSubmit = handleSubmit(async (data) => {
-  const roleEntity = ROLES.find((x) => x.id == data.role);
+  const roleEntity = ROLES.find((x) => x.id == data.role); //to pass role object with the api request payload. API requires the object but not just id.
 
   const result = await addNewContact({
     role: roleEntity!,
@@ -150,14 +153,13 @@ const onSubmit = handleSubmit(async (data) => {
     });
 
     emit("result", true);
+    popupComponent.value?.close();
   } else if (result.errors?.length) {
-    // errorText.value = result.errors
-    //   .filter((error) => error.code !== "DuplicateUserName") // Because email is a `UserName` (login)
-    //   .map((error) => error.description)
-    //   .join(" ");
+    errorText.value = result.errors
+      .filter((error) => error.code !== "DuplicateUserName") // Because email is a `UserName` (login)
+      .map((error) => error.description)
+      .join(" ");
   }
-
-  popupComponent.value?.close();
 });
 
 const validateEmailUniqueness = async (value: string, resolve: (value: boolean) => void) => {
