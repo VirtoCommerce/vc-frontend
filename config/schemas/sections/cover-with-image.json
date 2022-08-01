@@ -21,8 +21,7 @@
       "type": "images",
       "id": "sortableImages",
       "label": "Sortable Images",
-      "info": "save file inline",
-      "uploadAssetsRequest": "inline"
+      "info": "Can be sorted"
     },
     {
       "type": "images",
@@ -75,9 +74,7 @@
       "type": "files",
       "id": "sortableFiles",
       "label": "Sortable Files",
-      "tab": "Files",
-      "info": "save file inline",
-      "uploadAssetsRequest": "inline"
+      "tab": "Files"
     },
     {
       "type": "files",
