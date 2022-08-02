@@ -12,17 +12,19 @@
         <VcPopupSidebar
           v-if="isMobileSidebar"
           :is-visible="mobileSidebarVisible"
-          class="w-72 px-5 pt-12"
+          class="w-70 px-5 pt-5"
           @hide="hideMobileSidebar()"
         >
-          <div class="relative">
-            <button class="absolute -right-3 appearance-none px-3 py-1" @click="hideMobileSidebar()">
-              <span class="text-2xl fa fa-times text-[color:var(--color-primary)]"></span>
-            </button>
-          </div>
+          <div class="flex justify-between items-center mt-0.5 mb-6">
+            <div class="font-semibold text-26 pt-1 break-words">
+              {{ $t("common.buttons.filters") }}
+            </div>
 
-          <div class="font-semibold text-2xl pt-1 mb-6">
-            {{ $t("common.buttons.filters") }}
+            <button class="appearance-none" @click="hideMobileSidebar()">
+              <svg class="w-5 h-5 text-[color:var(--color-primary)]">
+                <use href="/static/images/delete.svg#main"></use>
+              </svg>
+            </button>
           </div>
 
           <ProductsFiltersSidebar

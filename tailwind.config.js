@@ -193,6 +193,12 @@ module.exports = {
             letterSpacing: "0.02em",
           },
         ],
+        26: [
+          "1.625rem", //26px
+          {
+            lineHeight: "1.875rem", //30px
+          },
+        ],
         28: [
           "1.75rem", //28px
           {
@@ -214,6 +220,9 @@ module.exports = {
       padding: {
         17: "4.25rem", //68px
         19: "4.75rem", //76px
+      },
+      width: {
+        70: '17.5rem' //280px
       },
       maxHeight: {
         "screen-60": "60vh",
