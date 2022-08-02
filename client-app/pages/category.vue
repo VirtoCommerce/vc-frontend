@@ -437,7 +437,10 @@ function onSearchStart(newKeyword: string) {
 function onFilterChanged(newFilters: ProductsFilters) {
   facetsQueryParam.value = getFilterExpressionFromFacets(newFilters.facets);
   savedInStock.value = newFilters.inStock;
-  savedBranches.value = newFilters.availableIn;
+
+  if (isMobileSidebar.value) {
+    savedBranches.value = newFilters.availableIn;
+  }
 }
 
 async function onMobileFilterChanged(newFilters: ProductsFilters) {
