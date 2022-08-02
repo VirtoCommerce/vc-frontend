@@ -13,7 +13,13 @@
 
           <BranchSearch class="flex-grow ml-1.5 md:ml-6" :model-value="searchInput" @update:input="search($event)" />
         </div>
-        <transition-group tag="div" name="branch" class="flex-grow h-[23.8rem] max-h-screen-60 overflow-y-auto">
+
+        <transition-group
+          v-if="branches.length"
+          tag="div"
+          name="branch"
+          class="flex-grow h-[23.8rem] max-h-screen-60 overflow-y-auto"
+        >
           <template v-for="(branch, index) in branches" :key="index">
             <BranchItem
               v-if="!isBranchSelected(index)"
@@ -25,8 +31,21 @@
             </BranchItem>
           </template>
         </transition-group>
+
+        <!-- NO RESULTS content BEGIN -->
+        <div v-else class="flex grow flex-col items-center justify-center space-y-3 h-[23.8rem] max-h-screen-60">
+          <img src="/static/images/common/stock.svg" alt="Product icon" class="w-20" />
+          <div class="text-17">{{ $t("shared.catalog.branches_dialog.no_results") }}</div>
+          <VcButton v-if="searchInput.length" size="md" class="px-3 uppercase" @click="searchInput = ''">
+            <i class="fas fa-undo text-inherit -ml-0.5 mr-2.5"></i>
+            {{ $t("shared.catalog.branches_dialog.reset_search_button") }}
+          </VcButton>
+        </div>
+        <!-- NO RESULTS content END -->
       </div>
+
       <div
+        v-if="branches.length"
         class="shrink-0 flex flex-col overflow-hidden transition-all"
         :class="[selectedBranchesIds.length ? 'w-1/2 border-l' : 'w-0']"
       >
@@ -43,6 +62,7 @@
             </div>
           </div>
         </div>
+
         <transition-group tag="div" name="branch" class="flex-grow h-[23.8rem] max-h-screen-60 overflow-y-auto">
           <template v-for="(branch, index) in branches" :key="index">
             <BranchItem
@@ -60,7 +80,7 @@
     <!-- DESKTOP content END -->
 
     <!-- MOBILE content BEGIN -->
-    <div class="flex-grow max-h-full sm:hidden">
+    <div class="flex-grow flex flex-col max-h-full sm:hidden">
       <div class="flex items-stretch px-6 min-h-[2.75rem] text-15 bg-[color:var(--color-branch-dialog-bg)]">
         <button
           class="flex items-center mr-auto py-2 font-bold"
@@ -93,10 +113,12 @@
           </button>
         </template>
       </div>
+
       <div class="px-6 py-3 border-b">
         <BranchSearch :model-value="searchInput" @update:input="search($event)" />
       </div>
-      <div>
+
+      <div v-if="branches.length">
         <template v-for="(branch, index) in branches">
           <BranchItem
             v-if="(showSelectedBranchesMobile && isBranchSelected(index)) || !showSelectedBranchesMobile"
@@ -107,6 +129,17 @@
           </BranchItem>
         </template>
       </div>
+
+      <!-- NO RESULTS content BEGIN -->
+      <div v-else class="flex grow flex-col items-center justify-center space-y-3 pb-16">
+        <img src="/static/images/common/stock.svg" alt="Product icon" class="w-20" />
+        <div class="text-17">{{ $t("shared.catalog.branches_dialog.no_results") }}</div>
+        <VcButton v-if="searchInput.length" size="md" class="px-3 uppercase" @click="searchInput = ''">
+          <i class="fas fa-undo text-inherit -ml-0.5 mr-2.5"></i>
+          {{ $t("shared.catalog.branches_dialog.reset_search_button") }}
+        </VcButton>
+      </div>
+      <!-- NO RESULTS content END -->
     </div>
     <!-- MOBILE content END -->
 

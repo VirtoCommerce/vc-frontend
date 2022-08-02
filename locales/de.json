@@ -329,7 +329,9 @@
         "selected_branches": "Selected branches",
         "clear_selection": "Clear selection",
         "cancel_button": "Cancel",
-        "ok_button": "Ok"
+        "ok_button": "Ok",
+        "no_results": "No results found",
+        "reset_search_button": "Reset search"
       }
     },
     "checkout": {
