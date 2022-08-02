@@ -164,7 +164,7 @@
         "categories_label": "Categories",
         "products_label": "Products",
         "no_results": "Your <strong>{searchPhrase}</strong> query did not return any results",
-        "enter_keyword_placeholder": "Products search",
+        "enter_keyword_placeholder": "Search for products here",
         "search_button": "Search",
         "view_all_results_button": "View all {total} results"
       },
@@ -454,8 +454,8 @@
       "authorize_net": {
         "user_agreement_link": "User Agreement",
         "privacy_policy_link": "Privacy Policy",
-        "accept_terms_text": "By placing an order, you accept the terms of",
-        "processing_personal_data_text": "and consent to the processing of personal data according to the",
+        "accept_terms_text": "By placing an order, you accept the terms of our",
+        "processing_personal_data_text": "and agree that we may process your personal data as per our",
         "pay_now_button": "Pay Now",
         "loading_text": "Loading...",
         "errors": {
@@ -469,11 +469,11 @@
         }
       },
       "manual": {
-        "text": "Current method doesn't support online payment. Please",
-        "link": "contact site administrator"
+        "text": "The payment method you selected does not support paying online. Please choose another method or",
+        "link": "contact the website administrator"
       },
       "redirection": {
-        "text": "After you click <strong>{0}</strong> you will be Redirected to 3rd party payment service",
+        "text": "After you click <strong>{0}</strong>, you will be redirected to the third party payment service",
         "pay_now_button": "Pay Now",
         "try_again_button": "Try Again",
         "errors": {
@@ -520,8 +520,8 @@
         "ok_button": "@:common.buttons.ok"
       },
       "add_or_update_wishlist_dialog": {
-        "title": "New list",
-        "edit_mode_title": "List settings",
+        "title": "New List",
+        "edit_mode_title": "List Settings",
         "list_name_label": "List name",
         "list_name_placeholder": "Please enter name",
         "create_button": "Create list",
@@ -529,13 +529,13 @@
         "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_dialog": {
-        "title": "Delete warning",
+        "title": "Confirm Delete",
         "message": "Are you sure you want to remove the “<span class=\"font-extrabold\">{listName}</span>” list?",
         "delete_button": "@:common.buttons.delete",
         "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_product_dialog": {
-        "title": "Delete warning",
+        "title": "Confirm Delete",
         "message": "Are you sure you want to remove “<span class=\"font-extrabold\">{productName}</span>” from the list?",
         "delete_button": "@:common.buttons.delete",
         "cancel_button": "@:common.buttons.cancel"
@@ -916,7 +916,7 @@
         "title": "@:pages.checkout.title"
       },
       "title": "Checkout",
-      "invalid_checkout_message": "Something went wrong in your cart. Please check whether everything is correct and try again.",
+      "invalid_checkout_message": "Whoops! Something went wrong. Please check whether everything is correct and try again.",
       "clear_cart_dialog": {
         "title": "Clear cart",
         "message": "Do you want to clear your cart?",
@@ -967,7 +967,7 @@
         }
       },
       "extra_section": {
-        "title": "Extra",
+        "title": "Additional Details",
         "comment_label": "Order comments"
       },
       "gifts_section": {
@@ -1003,7 +1003,7 @@
       "title": "Bulk Order Pad",
       "product_was_not_added_alert": "Products with following SKUs were not added to the cart: {0}",
       "data_is_invalid_alert": "The details you provided are invalid.",
-      "manually_tab": "Manually",
+      "manually_tab": "Enter Manually",
       "copy_n_paste_tab": "Copy and Paste"
     },
     "demo_landing": {
