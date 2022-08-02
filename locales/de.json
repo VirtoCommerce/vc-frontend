@@ -274,6 +274,22 @@
         "reset-button": "@:common.buttons.reset"
       }
     },
+    "company": {
+      "add_new_member_dialog": {
+        "title": "Neues Mitglied",
+        "role_label": "Rolle",
+        "role_placeholder": "Rolle auswählen",
+        "first_name_label": "@:common.labels.first_name",
+        "first_name_placeholder": "Enter your first name",
+        "last_name_label": "@:common.labels.last_name",
+        "last_name_placeholder": "Enter your last name",
+        "email_label": "@:common.labels.email",
+        "email_placeholder": "@:common.placeholders.email",
+        "cancel_button": "@:common.buttons.cancel",
+        "add_button": "Hinzufügen",
+        "successfully_text": "Der Benutzer {0} wurde erfolgreich erstellt"
+      }
+    },
     "cart": {
       "add_to_cart": {
         "add_to_cart_button": "@:common.buttons.add_to_cart",

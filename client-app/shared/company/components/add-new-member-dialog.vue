@@ -78,7 +78,6 @@
 <script setup lang="ts">
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
-import { usePageHead } from "@/core/composables";
 import { checkEmailUniqueness, checkUsernameUniqueness } from "@/xapi/graphql/account";
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
@@ -97,10 +96,6 @@ const { addNewContact } = useOrganizationContacts();
 const errorText = ref("");
 const popupComponent = shallowRef<any>(null);
 const ASYNC_VALIDATION_TIMEOUT_IN_MS = 3000;
-
-usePageHead({
-  title: t("pages.sign_up.meta.title"),
-});
 
 const emit = defineEmits<{ (e: "result", success: boolean): void }>();
 
