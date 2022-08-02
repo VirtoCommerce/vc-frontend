@@ -8,19 +8,27 @@
     <slot name="trigger" />
   </div>
 
-  <div class="bg-white border shadow-lg py-1.5 px-3.5" id="popover" ref="tooltipNode" v-show="isShown">
-    {{ content }}
+  <div id="popover" ref="tooltipNode" v-show="isShown">
+    <slot name="content" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { shallowRef, ref, onUnmounted } from "vue";
-import { createPopper, Instance } from "@popperjs/core";
+import { shallowRef, ref, onUnmounted, PropType } from "vue";
+import { bottom, createPopper, Instance, Placement } from "@popperjs/core";
 
-defineProps({
-  content: {
-    type: String,
-    required: true,
+const props = defineProps({
+  placement: {
+    type: String as PropType<Placement>,
+    default: bottom,
+  },
+  xOffset: {
+    type: Number,
+    default: 0,
+  },
+  yOffset: {
+    type: Number,
+    default: 6,
   },
 });
 
@@ -32,12 +40,12 @@ let tooltipInstance: Instance | undefined = undefined;
 
 function createTooltip(): void {
   tooltipInstance = createPopper(triggerNode.value!, tooltipNode.value!, {
-    placement: "bottom",
+    placement: props.placement,
     modifiers: [
       {
         name: "offset",
         options: {
-          offset: [-15, 6],
+          offset: [props.xOffset, props.yOffset],
         },
       },
     ],
@@ -49,6 +57,8 @@ function toggleTooltip(show: boolean): void {
   if (isShown.value) {
     createTooltip();
     tooltipInstance?.update();
+  } else {
+    tooltipInstance?.destroy();
   }
 }
 

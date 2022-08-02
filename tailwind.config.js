@@ -107,6 +107,10 @@ module.exports = {
           hover: "#00678d",
         },
 
+        tooltip: {
+          DEFAULT: "#4D4D4D",
+        },
+
         /**
          * Custom colors
          */
@@ -138,6 +142,7 @@ module.exports = {
         "t-xl": "0 -20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
         "t-2xl": "0 -25px 50px -12px rgba(0, 0, 0, 0.25)",
         "t-3xl": "0 -35px 60px -15px rgba(0, 0, 0, 0.3)",
+        "sm-x-y": "1px 2px 9px rgba(0, 0, 0, 0.1)",
       },
       fontSize: {
         11: [
@@ -197,6 +202,7 @@ module.exports = {
         4.5: "1.125rem", //18px
       },
       padding: {
+        4.5: "1.125rem", //18px
         19: "4.75rem", //76px
       },
       maxHeight: {

@@ -88,25 +88,32 @@
       >
         <template #desktop-body>
           <tr v-for="contact in contacts" :key="contact.id" class="even:bg-gray-50">
-            <td class="p-5 w-px">
+            <td class="pl-4 pr-0 py-2.5 w-px">
               <!-- STUB -->
               <div class="rounded-full bg-gray-500 h-9 w-9">&nbsp;</div>
             </td>
-            <td class="p-5 overflow-hidden overflow-ellipsis">
+            <td class="pl-5 pr-1 py-2.5">
               {{ contact.fullName }}
             </td>
-            <td class="p-5 overflow-hidden overflow-ellipsis">
+            <td class="pl-5 pr-1 py-2.5">
               {{ contact.role }}
             </td>
-            <td class="p-5 overflow-hidden overflow-ellipsis">
+            <td class="pl-5 pr-1 py-2.5">
               {{ contact.email }}
             </td>
-            <td class="p-5 w-24 overflow-hidden">
-              <VcTooltip :content="$t(contact.displayStatus.localeLabel)">
-                <template #trigger>
-                  <img width="20" height="20" :src="contact.displayStatus.iconUrl" />
-                </template>
-              </VcTooltip>
+            <td class="px-5 py-2.5 w-24 overflow-hidden">
+              <div class="flex justify-start">
+                <VcTooltip>
+                  <template #trigger>
+                    <img width="20" height="20" :src="contact.displayStatus.iconUrl" />
+                  </template>
+                  <template #content>
+                    <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5">
+                      {{ $t(contact.displayStatus.localeLabel) }}
+                    </div>
+                  </template>
+                </VcTooltip>
+              </div>
             </td>
             <!--
             <td class="p-5 w-px">
@@ -127,27 +134,27 @@
         </template>
 
         <template #mobile-item="contacts">
-          <tr>
-            <td class="py-6 pl-6 w-px">
+          <div class="flex items-center border-b">
+            <div class="py-4.5 pl-6">
               <!-- STUB -->
               <div class="rounded-full bg-gray-500 h-9 w-9">&nbsp;</div>
-            </td>
+            </div>
 
-            <td class="py-6 pl-4 w-full">
+            <div class="flex-grow py-4.5 pl-4">
               <div>
                 <b>{{ contacts.item.fullName }}</b>
               </div>
-              <div>
+              <div v-if="contacts.item.role">
                 {{ contacts.item.role }}
               </div>
-            </td>
+            </div>
 
-            <td class="py-6 pr-6 w-px">
+            <div class="py-4.5 pr-6">
               <div class="px-2.5 py-0.5 w-20 text-center rounded-sm" :class="contacts.item.displayStatus.cssStyles">
                 {{ $t(contacts.item.displayStatus.localeLabel) }}
               </div>
-            </td>
-          </tr>
+            </div>
+          </div>
         </template>
 
         <template #mobile-skeleton>
