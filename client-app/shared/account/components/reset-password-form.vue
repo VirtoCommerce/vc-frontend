@@ -71,7 +71,7 @@ const props = defineProps({
   },
 });
 
-const localizationFormTerm = computed(() => (props.kind == "set" ? "set_password_form" : "reset_password_form"));
+const localizationFormTerm = computed(() => (props.kind === "set" ? "set_password_form" : "reset_password_form"));
 
 const schema = yup.object({
   password: yup.string().label(t("shared.account.reset_password_form.password_label")).required(),

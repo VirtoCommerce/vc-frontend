@@ -67,7 +67,7 @@ usePageHead({
 const userId = route.query.userId?.valueOf() as string;
 const token = route.query.token?.valueOf() as string;
 
-const isResetRoute = route.name == "ResetPassword";
+const isResetRoute = route.name === "ResetPassword";
 const localizationPageTerm = computed(() => (isResetRoute ? "reset_password" : "set_password"));
 
 const isSucceeded = ref(false);
