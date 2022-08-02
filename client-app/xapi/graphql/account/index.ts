@@ -3,6 +3,7 @@ export { default as addWishlistItem } from "./mutations/addWishlistItem";
 export { default as deleteMemberAddresses } from "./mutations/deleteMemberAddresses";
 export { default as deleteWishlist } from "./mutations/deleteWishlist";
 export { default as deleteWishlistItem } from "./mutations/deleteWishlistItem";
+export { default as inviteUser } from "./mutations/inviteUser";
 export { default as registerAccount } from "./mutations/registerAccount";
 export { default as renameWishlist } from "./mutations/renameWishlist";
 export { default as updateMemberAddresses } from "./mutations/updateMemberAddresses";

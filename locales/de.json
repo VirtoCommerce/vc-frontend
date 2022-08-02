@@ -61,7 +61,8 @@
       "max_length": "Dieses Feld darf höchstens {max} Zeichen lang sein",
       "creating_order_error": "Fehler beim Anlegen eines Auftrags",
       "item_can_t_be_purchased": "Dieser Artikel kann nicht gekauft werden",
-      "item_is_out_of_stock": "Dieser Artikel ist nicht mehr vorrätig"
+      "item_is_out_of_stock": "Dieser Artikel ist nicht mehr vorrätig",
+      "invalid_value": "Ungültiger Wert"
     },
     "placeholders": {
       "not_selected": "Nicht ausgewählt",
@@ -234,6 +235,18 @@
         "title": "Checkout Defaults",
         "message": "Checkout defaults successfully updated.",
         "ok_button": "@:common.buttons.ok"
+      },
+      "invite_member_dialog": {
+        "title": "Invite member",
+        "role_label": "Role",
+        "role_placeholder": "Select role",
+        "emails_label": "Enter email addresses of the persons you wish to invite",
+        "emails_placeholder": "Use commas, semicolons or carriage returns to separate multiple entries",
+        "message_label": "Message",
+        "message_placeholder": "Please enter value",
+        "cancel_button": "@:common.buttons.cancel",
+        "send_button": "@:common.buttons.send",
+        "invite_successfully_text": "The invite has been successfully sent"
       },
       "profile_update_success_dialog": {
         "title": "Profile update",

@@ -4,7 +4,7 @@
     <div class="flex justify-between items-center mx-5 md:mx-0">
       <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.company.members.title'" />
       <div v-if="!isMobile" class="space-x-4">
-        <VcButton :is-disabled="true" class="uppercase p-4" is-outline>
+        <VcButton class="uppercase p-4" is-outline @click="openInviteMemberDialog">
           {{ $t("pages.company.members.buttons.invite_members") }}
         </VcButton>
         <VcButton :is-disabled="true" class="uppercase p-4" is-outline>
@@ -15,28 +15,22 @@
         <VcButton :is-disabled="true" class="uppercase p-4" is-outline>
           {{ $t("pages.company.members.buttons.new") }}
         </VcButton>
-        <VcButton :is-disabled="true" class="uppercase p-4" is-outline>
+        <VcButton class="uppercase p-4" is-outline @click="openInviteMemberDialog">
           {{ $t("pages.company.members.buttons.invite") }}
         </VcButton>
       </div>
     </div>
 
     <!-- Search & filters block -->
-    <div class="flex gap-x-2 lg:gap-x-5 lg:flex-row-reverse">
-      <div class="relative ml-5 md:mx-0">
-        <VcButton
-          ref="filterButtonElement"
-          :is-disabled="true"
-          is-outline
-          size="lg"
-          class="p-4 w-11 lg:w-auto uppercase"
-        >
-          <span class="hidden lg:inline-block">{{ $t("common.buttons.filters") }}</span>
-          <span class="lg:hidden fa fa-filter"></span>
-        </VcButton>
-      </div>
+    <div class="flex gap-x-2 lg:gap-x-5 lg:flex-row-reverse mx-5 md:mx-0">
+      <!--
+      <VcButton ref="filterButtonElement" :is-disabled="true" is-outline size="lg" class="p-4 w-11 lg:w-auto uppercase">
+        <span class="hidden lg:inline-block">{{ $t("common.buttons.filters") }}</span>
+        <span class="lg:hidden fa fa-filter"></span>
+      </VcButton>
+      -->
 
-      <div class="flex flex-grow mr-5 md:mx-0">
+      <div class="flex flex-grow">
         <div class="relative grow">
           <input
             v-model.trim="keyword"
@@ -164,11 +158,13 @@
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { ref, onMounted } from "vue";
-import { useOrganizationContacts } from "@/shared/account";
+import { usePopup } from "@/shared/popup";
+import { InviteMemberDialog, useOrganizationContacts } from "@/shared/account";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
 const { t } = useI18n();
+const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { loading, page, pages, itemsPerPage, sort, keyword, loadContacts, contacts } = useOrganizationContacts();
 
@@ -206,6 +202,19 @@ const columns = ref<ITableColumn[]>([
     id: "actions",
   },*/
 ]);
+
+function openInviteMemberDialog() {
+  openPopup({
+    component: InviteMemberDialog,
+    props: {
+      onResult(succeed: boolean) {
+        if (succeed) {
+          loadContacts();
+        }
+      },
+    },
+  });
+}
 
 const searchContacts = async () => {
   if (!keyword.value) {
