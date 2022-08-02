@@ -52,15 +52,15 @@ export function getDisplayContactStatus(xapiStatus?: string): OrganizationContac
 }
 
 export function convertToOrganizationContact(
-  xapiContact: ContactType,
-  t: (key: string) => string
+  contact: ContactType,
+  contactFullNameFallback: string
 ): OrganizationContactType {
-  const contactFullName: string = getFullName(xapiContact);
+  const contactFullName: string = getFullName(contact);
   return {
-    ...xapiContact,
-    fullName: !xapiContact.status ? t("pages.company.members.invite_sent") : contactFullName,
-    email: getEmailAddress(xapiContact),
-    role: getRoleName(xapiContact),
-    displayStatus: getDisplayContactStatus(xapiContact.status),
+    ...contact,
+    fullName: contact.status ? contactFullName : contactFullNameFallback,
+    email: getEmailAddress(contact),
+    role: getRoleName(contact),
+    displayStatus: getDisplayContactStatus(contact.status),
   };
 }

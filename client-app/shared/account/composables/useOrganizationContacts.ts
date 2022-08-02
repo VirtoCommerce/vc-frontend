@@ -43,7 +43,10 @@ export default () => {
         searchPhrase: getSearchPhrase(keyword.value),
       });
       pages.value = Math.ceil((response.totalCount ?? 0) / itemsPerPage.value);
-      contacts.value = _.map(response.items, (item: ContactType) => convertToOrganizationContact(item, t));
+      const contactFullNameFallback: string = t("pages.company.members.invite_sent");
+      contacts.value = _.map(response.items, (item: ContactType) =>
+        convertToOrganizationContact(item, contactFullNameFallback)
+      );
     } catch (e) {
       Logger.error("useOrganizationContacts.loadContacts", e);
       throw e;
