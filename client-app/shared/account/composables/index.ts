@@ -4,3 +4,4 @@ export { default as useUserCheckoutDefaults } from "./useUserCheckoutDefaults";
 export { default as useUserOrder } from "./useUserOrder";
 export { default as useUserOrders } from "./useUserOrders";
 export { default as useUserOrdersFilter } from "./useUserOrdersFilter";
+export { default as useOrganizationContacts } from "./useOrganizationContacts";

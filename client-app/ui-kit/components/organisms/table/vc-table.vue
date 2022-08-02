@@ -23,7 +23,7 @@
   </template>
 
   <!-- Desktop table view -->
-  <table v-else class="table-fixed text-sm text-left w-full">
+  <table v-else :class="[layout, 'text-sm text-left w-full']">
     <thead v-if="columns" class="border-b border-gray-200">
       <tr>
         <th
@@ -118,6 +118,11 @@ defineProps({
   footer: {
     type: Boolean,
     default: true,
+  },
+
+  layout: {
+    type: String,
+    default: "table-fixed",
   },
 });
 
