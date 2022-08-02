@@ -49,7 +49,10 @@ export const mainRoutes: RouteRecordRaw[] = [
     name: "Company",
     component: Company,
     children: corporateRoutes,
-    meta: { requiresAuth: true },
+    meta: {
+      requiresAuth: true,
+      requiresOrganization: true,
+    },
     redirect: { name: corporateRoutes[0].name },
   },
   { path: "/demo-landing", name: "DemoLanding", component: DemoLanding },

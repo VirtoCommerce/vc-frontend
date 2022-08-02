@@ -53,7 +53,7 @@
     </div>
   </VcCard>
 
-  <VcCard :title="$t('shared.account.navigation.corporate_title')">
+  <VcCard v-if="organization" :title="$t('shared.account.navigation.corporate_title')">
     <div class="flex flex-col">
       <AccountNavigationLink
         :to="{ name: 'CompanyInfo' }"
@@ -76,8 +76,10 @@ import { watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { eagerComputed } from "@vueuse/core";
 import { useWishlists } from "@/shared/wishlists";
+import { useUser } from "@/shared/account";
 
 const route = useRoute();
+const { organization } = useUser();
 const { lists, fetchWishlists } = useWishlists();
 
 const isListDetails = eagerComputed(() => route.name === "ListDetails");
