@@ -627,6 +627,17 @@
       "log_in_button": "Log in",
       "data_invalid_error_message": "User ID or token is invalid."
     },
+    "set_password": {
+      "meta": {
+        "title": "Registration"
+      },
+      "header": "Registration",
+      "home_button": "@:common.buttons.home",
+      "enter_new_password_message": "An account has been created for you, please set a password to login.",
+      "success_message": "Registration was successfully completed",
+      "log_in_button": "Continue",
+      "data_invalid_error_message": "User ID or token is invalid."
+    },
     "sign_in": {
       "meta": {
         "title": "@:pages.sign_in.header"
