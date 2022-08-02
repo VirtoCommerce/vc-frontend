@@ -1,7 +1,10 @@
 <template>
   <TwoColumn class="max-w-screen-xl">
     <template #left>
-      <h1 class="uppercase text-3xl font-bold mb-5 lg:mt-5" v-t="`pages.${localizationPageTerm}.header`"></h1>
+      <h1
+        class="uppercase text-3xl lg:text-4xl font-bold mb-5 lg:mt-5"
+        v-t="`pages.${localizationPageTerm}.header`"
+      ></h1>
       <div v-if="isMounted">
         <div v-if="tokenDataIsValid">
           <div v-if="!isSucceeded">
