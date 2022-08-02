@@ -1,18 +1,20 @@
 <template>
   <TwoColumn class="max-w-screen-xl">
     <template #left>
-      <h1
-        class="uppercase text-3xl lg:text-4xl font-bold mb-8 lg:mt-5"
-        v-t="`pages.${localizationPageTerm}.header`"
-      ></h1>
+      <h1 class="uppercase text-3xl font-bold mb-5 lg:mt-5" v-t="`pages.${localizationPageTerm}.header`"></h1>
       <div v-if="isMounted">
         <div v-if="tokenDataIsValid">
           <div v-if="!isSucceeded">
             <div
-              class="text-lg md:text-base mb-4"
+              class="text-lg md:text-base mb-5 lg:mb-4"
               v-t="`pages.${localizationPageTerm}.enter_new_password_message`"
             ></div>
-            <ResetPasswordForm :user-id="userId" :token="token" @succeeded="onSucceeded()"></ResetPasswordForm>
+            <ResetPasswordForm
+              :user-id="userId"
+              :token="token"
+              :kind="isResetRoute ? 'reset' : 'set'"
+              @succeeded="onSucceeded()"
+            ></ResetPasswordForm>
           </div>
           <div v-else class="flex flex-col items-center space-y-10 lg:space-y-12 lg:items-start lg:mt-12">
             <div class="flex flex-col items-center lg:flex-row space-x-0 space-y-10 lg:space-x-3 lg:space-y-0">
@@ -40,11 +42,7 @@
     <template #right>
       <VcImage
         class="max-w-md"
-        :src="
-          isResetRoute
-            ? '/static/images/sign-in/sign-in-page-image.webp'
-            : '/static/images/end-registration/end-registration.webp'
-        "
+        :src="isResetRoute ? '/static/images/sign-in/sign-in-page-image.webp' : '/static/images/sign-up/image.webp'"
         lazy
       />
     </template>

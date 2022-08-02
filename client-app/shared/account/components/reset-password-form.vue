@@ -3,44 +3,47 @@
     <VcInput
       v-model="password"
       class="mb-4 w-full"
-      :label="$t('shared.account.reset_password_form.password_label')"
-      :placeholder="$t('shared.account.reset_password_form.password_placeholder')"
+      :label="$t(`shared.account.${localizationTerm}.password_label`)"
+      :placeholder="$t(`shared.account.${localizationTerm}.password_placeholder`)"
       type="password"
       is-required
       :error-message="errors.password"
       autocomplete="new-password"
       :maxlength="64"
-    ></VcInput>
+    />
+
     <VcInput
       v-model="confirmPassword"
       class="mb-4 w-full"
-      :label="$t('shared.account.reset_password_form.confirm_password_label')"
-      :placeholder="$t('shared.account.reset_password_form.confirm_password_placeholder')"
+      :label="$t(`shared.account.${localizationTerm}.confirm_password_label`)"
+      :placeholder="$t(`shared.account.${localizationTerm}.confirm_password_placeholder`)"
       type="password"
       is-required
       :error-message="errors.confirmPassword"
       autocomplete="off"
       :maxlength="64"
-    ></VcInput>
-    <div class="mt-8 md:mt-9">
+    />
+
+    <div>
       <VcAlert v-for="error in commonErrors" :key="error" type="error" class="mb-4 text-xs" icon text>
         {{ error }}
       </VcAlert>
 
       <VcButton
+        size="lg"
         is-submit
-        class="mt-6 lg:mt-3 w-full lg:w-52 uppercase"
+        class="mt-6 w-full lg:w-52 uppercase"
         :is-waiting="loading"
         :is-disabled="hasFormErrors"
       >
-        {{ $t("shared.account.reset_password_form.reset_password_button") }}
+        {{ $t(`shared.account.${localizationTerm}.reset_password_button`) }}
       </VcButton>
     </div>
   </form>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, PropType, ref } from "vue";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import { useUser } from "@/shared/account";
@@ -54,6 +57,10 @@ const { t } = useI18n();
 const emit = defineEmits(["succeeded"]);
 
 const props = defineProps({
+  kind: {
+    type: String as PropType<"set" | "reset">,
+    default: "reset",
+  },
   userId: {
     type: String,
     required: true,
@@ -63,6 +70,8 @@ const props = defineProps({
     required: true,
   },
 });
+
+const localizationTerm = computed(() => (props.kind == "set" ? "set_password_form" : "reset_password_form"));
 
 const schema = yup.object({
   password: yup.string().label(t("shared.account.reset_password_form.password_label")).required(),

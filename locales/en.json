@@ -28,7 +28,7 @@
       "actions": "Actions",
       "user_name": "Username",
       "password": "Password",
-      "confirm_password": "Confirm Password",
+      "confirm_password": "Confirm password",
       "first_name": "First Name",
       "last_name": "Last Name",
       "address": "Address",
@@ -223,6 +223,14 @@
         "confirm_password_label": "@:common.labels.confirm_password",
         "confirm_password_placeholder": "Confirm your password",
         "reset_password_button": "Reset password",
+        "password_must_match_message": "Passwords must match"
+      },
+      "set_password_form": {
+        "password_label": "@:common.labels.password",
+        "password_placeholder": "Enter your password",
+        "confirm_password_label": "@:common.labels.confirm_password",
+        "confirm_password_placeholder": "Confirm your password",
+        "reset_password_button": "@:common.buttons.save",
         "password_must_match_message": "Passwords must match"
       },
       "forgot_password_form": {
