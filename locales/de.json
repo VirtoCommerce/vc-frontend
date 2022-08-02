@@ -218,10 +218,18 @@
       },
       "reset_password_form": {
         "password_label": "@:common.labels.password",
-        "password_placeholder": "Enter your password",
+        "password_placeholder": "Geben Sie Ihr Passwort ein",
         "confirm_password_label": "@:common.labels.confirm_password",
         "confirm_password_placeholder": "Bestätigen Sie Ihr Passwort",
         "reset_password_button": "Passwort zurücksetzen",
+        "password_must_match_message": "Passwörter müssen übereinstimmen"
+      },
+      "set_password_form": {
+        "password_label": "@:common.labels.password",
+        "password_placeholder": "Geben Sie Ihr Passwort ein",
+        "confirm_password_label": "@:common.labels.confirm_password",
+        "confirm_password_placeholder": "Bestätigen Sie Ihr Passwort",
+        "reset_password_button": "@:common.buttons.save",
         "password_must_match_message": "Passwörter müssen übereinstimmen"
       },
       "forgot_password_form": {
@@ -616,6 +624,17 @@
       "enter_new_password_message": "Enter a new password",
       "success_message": "Password was successfully changed",
       "log_in_button": "Log in",
+      "data_invalid_error_message": "User ID or token is invalid."
+    },
+    "set_password": {
+      "meta": {
+        "title": "Registration"
+      },
+      "header": "Registration",
+      "home_button": "@:common.buttons.home",
+      "enter_new_password_message": "An account has been created for you, please set a password to login.",
+      "success_message": "Registration was successfully completed",
+      "log_in_button": "Continue",
       "data_invalid_error_message": "User ID or token is invalid."
     },
     "sign_in": {
