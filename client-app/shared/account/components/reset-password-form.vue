@@ -3,8 +3,8 @@
     <VcInput
       v-model="password"
       class="mb-4 w-full"
-      :label="$t(`shared.account.${localizationTerm}.password_label`)"
-      :placeholder="$t(`shared.account.${localizationTerm}.password_placeholder`)"
+      :label="$t(`shared.account.${localizationFormTerm}.password_label`)"
+      :placeholder="$t(`shared.account.${localizationFormTerm}.password_placeholder`)"
       type="password"
       is-required
       :error-message="errors.password"
@@ -15,8 +15,8 @@
     <VcInput
       v-model="confirmPassword"
       class="mb-4 w-full"
-      :label="$t(`shared.account.${localizationTerm}.confirm_password_label`)"
-      :placeholder="$t(`shared.account.${localizationTerm}.confirm_password_placeholder`)"
+      :label="$t(`shared.account.${localizationFormTerm}.confirm_password_label`)"
+      :placeholder="$t(`shared.account.${localizationFormTerm}.confirm_password_placeholder`)"
       type="password"
       is-required
       :error-message="errors.confirmPassword"
@@ -36,7 +36,7 @@
         :is-waiting="loading"
         :is-disabled="hasFormErrors"
       >
-        {{ $t(`shared.account.${localizationTerm}.reset_password_button`) }}
+        {{ $t(`shared.account.${localizationFormTerm}.reset_password_button`) }}
       </VcButton>
     </div>
   </form>
@@ -71,7 +71,7 @@ const props = defineProps({
   },
 });
 
-const localizationTerm = computed(() => (props.kind == "set" ? "set_password_form" : "reset_password_form"));
+const localizationFormTerm = computed(() => (props.kind == "set" ? "set_password_form" : "reset_password_form"));
 
 const schema = yup.object({
   password: yup.string().label(t("shared.account.reset_password_form.password_label")).required(),
