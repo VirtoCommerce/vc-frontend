@@ -27,12 +27,6 @@ const Matcher = () => import("@/ui-kit/components/pages/matcher.vue");
 const DemoLanding = () => import("@/pages/demo-landing.vue");
 const DevUIKit = () => import("@/pages/ui-kit.vue");
 
-export const endRegistrationRoute: RouteRecordRaw = {
-  path: "/end-registration",
-  name: "EndRegistration",
-  component: ResetPassword,
-};
-
 export const mainRoutes: RouteRecordRaw[] = [
   { path: "/", name: "Home", component: Home },
   { path: "/403", name: "NoAccess", component: Error403 },
@@ -42,7 +36,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/sign-up", name: "SignUp", component: SignUpPage },
   { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword },
   { path: "/reset-password", name: "ResetPassword", component: ResetPassword },
-  endRegistrationRoute,
+  { path: "/set-password", name: "SetPassword", component: ResetPassword },
   {
     path: "/account",
     name: "Account",

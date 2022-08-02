@@ -11,7 +11,7 @@ import { OrganizationContactType } from "@/core/types";
 import { useI18n } from "vue-i18n";
 import { AddNewMember } from "@/shared/company";
 import globals from "@/core/globals";
-import { endRegistrationRoute } from "@/router/routes";
+import { useRouter } from "vue-router";
 
 const TEMP_PASSWORD = "TempPassword#1";
 
@@ -27,6 +27,7 @@ export default () => {
     direction: SORT_ASCENDING,
   });
 
+  const router = useRouter();
   const { t } = useI18n();
   const { organization } = useUser();
 
@@ -91,7 +92,7 @@ export default () => {
       if (identityResult.succeeded) {
         await requestPasswordReset({
           loginOrEmail: payload.email,
-          urlSuffix: endRegistrationRoute.path,
+          urlSuffix: router.resolve({ name: "SetPassword" }).path,
         });
       }
 

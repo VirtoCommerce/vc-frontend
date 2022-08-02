@@ -30,7 +30,8 @@
         is-required
         :error-message="errors.firstName"
         :maxlength="64"
-      ></VcInput>
+      />
+
       <VcInput
         v-model="lastName"
         class="mb-4"
@@ -39,7 +40,7 @@
         is-required
         :error-message="errors.lastName"
         :maxlength="64"
-      ></VcInput>
+      />
       <VcInput
         v-model="email"
         class="mb-4"
@@ -48,7 +49,7 @@
         is-required
         :error-message="errors.email"
         :maxlength="64"
-      ></VcInput>
+      />
     </form>
 
     <template #actions="{ close }">
@@ -86,6 +87,7 @@ import { ref, shallowRef } from "vue";
 import { VcPopup } from "@/ui-kit/components";
 import { useOrganizationContacts } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
+
 import { Role } from "@/core/types/role";
 
 const { t } = useI18n();
