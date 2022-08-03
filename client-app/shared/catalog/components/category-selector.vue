@@ -25,12 +25,10 @@
   </VcFilterCard>
   <!-- skeleton -->
   <template v-else>
-    <VcCardSkeleton>
-      <div class="uppercase font-extrabold mb-1 bg-gray-100">&nbsp;</div>
-      <div class="pl-2 flex flex-col">
-        <div class="bg-gray-100 px-2 mt-1" v-for="i in 6" :key="i">&nbsp;</div>
-      </div>
-    </VcCardSkeleton>
+    <VcFilterCardSkeleton>
+      <div class="h-5 mb-1.5 bg-gray-100">&nbsp;</div>
+      <div class="ml-6 mb-1.5 h-4 bg-gray-100" v-for="i in 6" :key="i">&nbsp;</div>
+    </VcFilterCardSkeleton>
   </template>
 </template>
 

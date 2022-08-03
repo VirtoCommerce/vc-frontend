@@ -60,7 +60,7 @@
     </VcFilterCard>
 
     <!-- Facet Filters Skeletons -->
-    <template v-if="loading && !_filters.facets.length || true">
+    <template v-if="loading && !_filters.facets.length">
       <VcFilterCardSkeleton is-collapsible v-for="i in 6" :key="i" />
     </template>
 
