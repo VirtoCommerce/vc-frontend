@@ -34,11 +34,6 @@ export type ForgotPassword = {
   resetPasswordUrl: string;
 };
 
-export type ValidateToken = {
-  userId: string;
-  token: string;
-};
-
 export type ResetPassword = {
   userId: string;
   token: string;
