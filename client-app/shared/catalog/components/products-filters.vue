@@ -60,14 +60,8 @@
     </VcFilterCard>
 
     <!-- Facet Filters Skeletons -->
-    <template v-if="loading && !_filters.facets.length">
-      <VcFilterCardSkeleton is-collapsible v-for="i in 6" :key="i">
-        <!-- TODO: add checkbox skeleton -->
-        <div class="flex items-center mt-3 first:mt-0" v-for="i in 5" :key="i">
-          <div class="w-5 h-5 bg-gray-100 inline-block"></div>
-          <div class="ml-2 text-sm bg-gray-100 w-11/12">&nbsp;</div>
-        </div>
-      </VcFilterCardSkeleton>
+    <template v-if="loading && !_filters.facets.length || true">
+      <VcFilterCardSkeleton is-collapsible v-for="i in 6" :key="i" />
     </template>
 
     <!-- Facet Filters -->
