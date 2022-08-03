@@ -62,7 +62,8 @@
       "creating_order_error": "Error when creating an order",
       "item_can_t_be_purchased": "This item cannot be purchased",
       "item_is_out_of_stock": "This item is out of stock",
-      "invalid_value": "Invalid value"
+      "invalid_value": "Invalid value",
+      "passwords_must_match": "Passwords must match"
     },
     "placeholders": {
       "not_selected": "Not selected",
@@ -664,9 +665,25 @@
       "errors": {
         "PasswordTooShort": "Your password must be at least 8 characters long.",
         "InvalidEmail": "Please enter valid email address, e.g. johndoe{'@'}gmail.com",
-        "passwords_must_match": "Passwords must match",
         "email_not_unique": "This email is already registered with us"
       }
+    },
+    "confirm_invitation": {
+      "meta": {
+        "title": "@:pages.confirm_invitation.header"
+      },
+      "header": "Registration",
+      "text": "You received the invite to join your company.<br />Please complete the registration",
+      "first_name_label": "@:common.labels.first_name",
+      "first_name_placeholder": "Enter your first name",
+      "last_name_label": "@:common.labels.last_name",
+      "last_name_placeholder": "Enter your last name",
+      "email_label": "@:common.labels.email",
+      "password_label": "@:common.labels.password",
+      "password_placeholder": "@:common.placeholders.password",
+      "confirm_password_label": "@:common.labels.confirm_password",
+      "confirm_password_placeholder": "Confirm your password",
+      "register_button": "Register"
     },
     "account": {
       "addresses": {
