@@ -34,6 +34,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/500", name: "InternalError", component: Error500 },
   { path: "/sign-in", name: "SignIn", component: SingInPage },
   { path: "/sign-up", name: "SignUp", component: SignUpPage },
+  { path: "/confirm-invitation", name: "ConfirmInvitation", component: SignUpPage },
   { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword },
   { path: "/reset-password", name: "ResetPassword", component: ResetPassword },
   { path: "/set-password", name: "SetPassword", component: ResetPassword },

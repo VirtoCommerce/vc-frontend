@@ -47,6 +47,10 @@ export function getFilterExpressionForInStock(value: MaybeRef<boolean>): string 
   return unref(value) ? "instock_quantity:(0 TO)" : "";
 }
 
+export function getFilterExpressionForAvailableIn(value: MaybeRef<string[]>): string {
+  return unref(value) ? `available_in:${unref(value).join(",")}` : "";
+}
+
 export function termFacetToProductsFilter(termFacet: TermFacet): ProductsFacet {
   return {
     type: "term",

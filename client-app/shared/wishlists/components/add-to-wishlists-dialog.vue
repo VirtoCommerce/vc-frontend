@@ -11,7 +11,7 @@
           </div>
 
           <ul>
-            <li v-for="(list, index) in listsContain" :key="list.id" class="px-6 py-4 sm:pt-4 sm:pb-3 last:sm:pb-7">
+            <li v-for="list in listsContain" :key="list.id" class="px-6 py-4 sm:pt-4 sm:pb-3 last:sm:pb-7">
               <VcCheckbox
                 model-value
                 :value="list.id"
@@ -122,7 +122,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType, ref, inject } from "vue";
+import { computed, PropType, ref, inject, toRef } from "vue";
 import { Product as ProductType } from "@/xapi/types";
 import { useWishlists } from "@/shared/wishlists";
 import { WishlistInputType } from "@/shared/wishlists/types";
@@ -141,7 +141,7 @@ const props = defineProps({
 });
 
 const { t } = useI18n();
-const { openPopup, closePopup } = usePopup();
+const { closePopup } = usePopup();
 const {
   loading: loadingLists,
   lists,
@@ -157,14 +157,14 @@ const selectedListsOtherIds = ref<string[]>([]);
 const listsRemove = ref<string[]>([]);
 const inputs = ref<WishlistInputType[]>([]);
 
-const productId = props.product.id;
+const product = toRef(props, "product");
 const config = inject(configInjectionKey);
 const listsLimit = config?.wishlists_limit || DEFAULT_WISHLIST_LIMIT;
 
 const creationButtonDisabled = computed(() => lists.value.length + inputs.value.length >= listsLimit);
 
 const listsContain = computed(() => {
-  return lists.value.filter((list) => list.items!.some((item) => item.productId === productId));
+  return lists.value.filter((list) => list.items!.some((item) => item.productId === product.value.id));
 });
 
 function listsRemoveUpdate(id: string, checked: boolean) {
@@ -178,7 +178,7 @@ function listsRemoveUpdate(id: string, checked: boolean) {
 }
 
 const listsOther = computed(() => {
-  return lists.value.filter((list) => !list.items!.some((item) => item.productId === productId));
+  return lists.value.filter((list) => !list.items!.some((item) => item.productId === product.value.id));
 });
 
 function addInput() {
@@ -197,7 +197,7 @@ async function addToWishlistsFromListOther() {
     return;
   }
 
-  await addItemsToWishlists(selectedListsOtherIds.value.map((listId) => ({ listId, productId })));
+  await addItemsToWishlists(selectedListsOtherIds.value.map((listId) => ({ listId, productId: product.value.id })));
 }
 
 async function createListsAndAddProduct() {
@@ -206,7 +206,7 @@ async function createListsAndAddProduct() {
   }
 
   inputs.value.forEach(async (input) => {
-    await createWishlistAndAddProduct(input.listName, productId);
+    await createWishlistAndAddProduct(input.listName, product.value.id);
   });
 
   inputs.value.splice(0);
@@ -215,7 +215,7 @@ async function createListsAndAddProduct() {
 async function removeProductFromWishlists() {
   const payload = listsRemove.value.map((listId) => {
     const list = listsContain.value.find((item) => item.id === listId);
-    const lineItemId = list?.items?.find((item) => item.productId === productId)?.id || "";
+    const lineItemId = list?.items?.find((item) => item.productId === product.value.id)?.id || "";
     return {
       listId,
       lineItemId,

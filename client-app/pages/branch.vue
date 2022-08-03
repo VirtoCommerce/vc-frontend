@@ -42,7 +42,7 @@
         </div>
         <div class="pt-5 pb-7 px-11 lg:pt-3.5 lg:px-12 lg:pb-9">
           <ul class="list-disc space-y-7">
-            <li class="text-primary marker:text-xl" v-for="branch in otherBranches">
+            <li class="text-primary marker:text-xl" v-for="(branch, index) in otherBranches" :key="index">
               <router-link
                 :to="`/branch/${branch.id}`"
                 class="mb-1 text-link text-[1.063rem] font-extrabold lg:text-base"

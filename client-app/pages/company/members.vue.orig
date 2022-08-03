@@ -4,7 +4,11 @@
     <div class="flex justify-between items-center mx-5 md:mx-0">
       <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.company.members.title'" />
       <div v-if="!isMobile" class="space-x-4">
+<<<<<<< HEAD
+        <VcButton :is-disabled="true" class="uppercase px-5" is-outline>
+=======
         <VcButton class="uppercase p-4" is-outline @click="openInviteMemberDialog">
+>>>>>>> dev
           {{ $t("pages.company.members.buttons.invite_members") }}
         </VcButton>
         <VcButton class="uppercase px-5" is-outline @click="openAddNewMemberPopup">
@@ -174,6 +178,7 @@ import { ref, onMounted } from "vue";
 import { usePopup } from "@/shared/popup";
 import { InviteMemberDialog, useOrganizationContacts } from "@/shared/account";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
+import { usePopup } from "@/shared/popup";
 import { AddNewCompanyMemberDialog } from "@/shared/company";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
@@ -181,6 +186,8 @@ const { t } = useI18n();
 const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { loading, page, pages, itemsPerPage, sort, keyword, loadContacts, contacts } = useOrganizationContacts();
+
+const { openPopup } = usePopup();
 
 usePageHead({
   title: t("pages.company.members.meta.title"),
