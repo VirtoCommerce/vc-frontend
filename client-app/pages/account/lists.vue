@@ -27,7 +27,6 @@
         v-for="list in lists"
         :key="list.id"
         :list="list"
-        @add-to-cart="addAllToCart(list.items!)"
         @settings="openListSettingsDialog(list)"
         @remove="openDeleteListDialog(list)"
       />
@@ -64,7 +63,7 @@ import {
   UnsuccessfulCreateWishlistDialog,
 } from "@/shared/wishlists";
 import { DEFAULT_WISHLIST_LIMIT } from "@/core/constants";
-import { LineItemType, WishlistType } from "@/xapi/types";
+import { WishlistType } from "@/xapi/types";
 import { usePopup } from "@/shared/popup";
 import { configInjectionKey } from "@/core/injection-keys";
 import { inject } from "vue";
@@ -84,11 +83,6 @@ const config = inject(configInjectionKey);
 const listsLimit = config?.wishlists_limit || DEFAULT_WISHLIST_LIMIT;
 
 const creationButtonDisabled = computed(() => lists.value.length >= listsLimit);
-
-function addAllToCart(items: LineItemType[]) {
-  // TODO: implement in another user story
-  console.log(items);
-}
 
 function openCreateListDialog() {
   if (creationButtonDisabled.value) {
