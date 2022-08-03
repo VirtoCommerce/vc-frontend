@@ -59,18 +59,6 @@
       </VcCheckbox>
     </VcFilterCard>
 
-    <!-- Branch availability -->
-    <VcFilterCard :title="$t('pages.catalog.branch_availability_filter_card.title')">
-      <div class="text-sm font-medium">
-        <span
-          class="text-[color:var(--color-link)] font-semibold cursor-pointer hover:text-[color:var(--color-link-hover)]"
-        >
-          {{ $t("pages.catalog.branch_availability_filter_card.select_branch_link") }}
-        </span>
-        {{ $t("pages.catalog.branch_availability_filter_card.select_branch_link_end") }}
-      </div>
-    </VcFilterCard>
-
     <!-- Facet Filters Skeletons -->
     <template v-if="loading && !_filters.facets.length">
       <VcFilterCardSkeleton is-collapsible v-for="i in 6" :key="i">

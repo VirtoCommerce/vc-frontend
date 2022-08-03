@@ -92,7 +92,7 @@
                 tag="sup"
                 keypath="pages.catalog.products_found_message"
               >
-              <span class="font-extrabold">{{ total }}</span>
+                <span class="font-extrabold">{{ total }}</span>
               </i18n-t>
             </h2>
           </div>
@@ -114,7 +114,7 @@
             </div>
 
             <!-- Sorting -->
-            <div class="flex items-center flex-grow z-10 ml-auto lg:ml-4 lg:flex-grow-0 lg:order-3 xl:ml-8">
+            <div class="flex items-center flex-grow z-10 ml-auto lg:ml-4 lg:flex-grow-0 lg:order-4 xl:ml-8">
               <span class="hidden lg:block shrink-0 mr-2 text-15 font-bold" v-t="'pages.catalog.sort_by_label'"></span>
               <VcSelect
                 v-model="sortQueryParam"
@@ -129,26 +129,34 @@
             <!-- View options -->
             <ViewMode v-model:mode="savedViewMode" class="inline-flex ml-3 lg:order-1 lg:ml-0 lg:mr-auto" />
 
-            <div v-if="!isMobileSidebar" class="relative ml-6 cursor-pointer" @click="onOpenBranchesDialog">
+            <!-- Branch availability -->
+            <div
+              v-if="!isMobileSidebar"
+              class="order-3 relative ml-4 cursor-pointer xl:ml-6"
+              @click="onOpenBranchesDialog"
+            >
               <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading">
-                <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div">
+                <i18n-t
+                  keypath="pages.catalog.branch_availability_filter_card.available_in"
+                  tag="div"
+                  class="text-15"
+                  :class="{
+                    'text-[color:var(--color-category-page-checkbox-label)]': !savedBranches.length,
+                  }"
+                >
                   <b v-if="savedBranches.length" class="text-[color:var(--color-link)]">
                     {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: savedBranches.length }) }}
                   </b>
-                  <template v-else>
+                  <span v-else>
                     {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: savedBranches.length }) }}
-                  </template>
+                  </span>
                 </i18n-t>
               </VcCheckbox>
               <div class="absolute inset-0"></div>
             </div>
 
-            <VcCheckbox
-              v-if="!isMobileSidebar"
-              class="order-2 lg:ml-4 xl:ml-8"
-              v-model="savedInStock"
-              :disabled="loading"
-            >
+            <!-- inStock -->
+            <VcCheckbox v-if="!isMobileSidebar" class="order-2 ml-4 xl:ml-8" v-model="savedInStock" :disabled="loading">
               <span
                 class="text-15 whitespace-nowrap"
                 :class="{
@@ -464,7 +472,9 @@ function onSearchStart(newKeyword: string) {
 function onFilterChanged(newFilters: ProductsFilters) {
   facetsQueryParam.value = getFilterExpressionFromFacets(newFilters.facets);
 
-  if (isMobileSidebar) {
+  console.log("onFilterChanged", newFilters);
+
+  if (isMobileSidebar.value) {
     savedInStock.value = newFilters.inStock;
     savedBranches.value = newFilters.availableIn;
   }
