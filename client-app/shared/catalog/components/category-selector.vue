@@ -2,7 +2,7 @@
   <!-- category selector -->
   <VcFilterCard v-if="!loading || selectedCategory" :withHeader="!!backCategory">
     <template #header>
-      <router-link :to="getCategoryRoute(backCategory!)" class="pl-0.5">
+      <router-link :to="getCategoryRoute(backCategory!)" class="pl-0.5 text-[color:var(--color-filter-card-header)]">
         <i class="fas fa-chevron-left text-[color:var(--color-primary)]"></i>
         <span class="font-bold ml-1.5">
           {{ backCategory?.label }}
@@ -10,13 +10,18 @@
       </router-link>
     </template>
     <template v-if="selectedCategory">
-      <div class="uppercase font-extrabold -mt-0.5 mb-1 text-13-title">{{ categoryLabel }}</div>
+      <div class="uppercase font-extrabold -mt-0.5 mb-1 text-13-title text-[color:var(--color-filter-card-header)]">
+        {{ categoryLabel }}
+      </div>
       <div class="-mr-1.5 pl-5 pb-1.5 flex flex-col text-sm">
         <router-link
           class="hover:bg-gray-100 py-0.5 mt-0.5 transition-colors truncate"
           v-for="category in categoryItems"
           :key="category.id"
-          :class="{ 'font-bold': category.id === selectedCategory.id }"
+          :class="{
+            'font-bold text-[color:var(--color-filter-card-header)]': category.id === selectedCategory.id,
+            'text-[color:var(--color-category-selector-link)]': category.id !== selectedCategory.id,
+          }"
           :to="categoriesRoutes[category.id!]"
           >{{ category.label }}</router-link
         >

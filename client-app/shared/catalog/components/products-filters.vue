@@ -34,7 +34,7 @@
     </VcFilterCard>
 
     <!-- Branch availability -->
-    <VcCard v-if="isMobile" :with-header="false">
+    <VcFilterCard v-if="isMobile" :with-header="false">
       <div class="relative cursor-pointer" @click="onOpenBranches">
         <VcCheckbox :model-value="!!filters.availableIn?.length" :disabled="loading">
           <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div">
@@ -51,7 +51,7 @@
       <div class="mt-1 ml-0.5 pl-6 text-xs font-medium">
         {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
       </div>
-    </VcCard>
+    </VcFilterCard>
 
     <!-- Previously purchased -->
     <VcFilterCard v-if="isMobile" :title="$t('pages.catalog.instock_filter_card.title')">

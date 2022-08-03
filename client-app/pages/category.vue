@@ -115,7 +115,10 @@
 
             <!-- Sorting -->
             <div class="flex items-center flex-grow z-10 ml-auto lg:ml-4 lg:flex-grow-0 lg:order-4 xl:ml-8">
-              <span class="hidden lg:block shrink-0 mr-2 text-15 font-bold" v-t="'pages.catalog.sort_by_label'"></span>
+              <span
+                class="hidden lg:block shrink-0 mr-2 text-15 font-bold text-[color:var(--color-category-page-label)]"
+                v-t="'pages.catalog.sort_by_label'"
+              ></span>
               <VcSelect
                 v-model="sortQueryParam"
                 text-field="name"

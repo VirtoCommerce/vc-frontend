@@ -8,9 +8,12 @@
     >
       <div class="flex items-center pb-px">
         <slot name="header">
-          <div class="flex-grow uppercase">{{ title }}</div>
+          <div class="flex-grow uppercase text-[color:var(--color-filter-card-header)]">{{ title }}</div>
           <div v-if="isCollapsible" class="ml-3">
-            <svg width="12" height="12" class="text-[color:var(--color-primary)]"
+            <svg
+              width="12"
+              height="12"
+              class="text-[color:var(--color-primary)]"
               :class="[collapsed ? '' : 'rotate-180']"
             >
               <use href="/static/images/common/arrow-down.svg#main"></use>
@@ -22,8 +25,8 @@
     </div>
     <div
       v-if="!isCollapsible || (isCollapsible && !collapsed)"
-      class="bg-white rounded-b border-l border-r border-b text-13"
-      :class="{ 'px-4 py-3.5': !fullWidthContent }"
+      class="bg-white rounded-b border-l border-r border-b text-13 text-[color:var(--color-filter-card-content)]"
+      :class="{ 'px-4 py-3.5': !fullWidthContent, 'border-t rounded-t': !withHeader }"
     >
       <slot></slot>
     </div>
