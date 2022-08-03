@@ -1,5 +1,5 @@
 import { getOrganizationContacts, createContact, createUser, requestPasswordReset } from "@/xapi/graphql/account";
-import { ContactType, IdentityResultType, UserType } from "@/xapi/types";
+import { ContactType, IdentityResultType } from "@/xapi/types";
 import { ref, shallowRef, Ref, readonly, computed } from "vue";
 import { Logger } from "@/core/utilities";
 import { ISortInfo } from "../types";

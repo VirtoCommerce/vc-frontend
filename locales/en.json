@@ -238,7 +238,8 @@
         "email_label": "@:common.labels.email",
         "email_placeholder": "Enter your email",
         "submit_button": "@:common.buttons.submit",
-        "invalid_email_format_message": "Please enter valid email address, e.g. johndoe{'@'}gmail.com"
+        "invalid_email_format_message": "Please enter valid email address, e.g. johndoe{'@'}gmail.com",
+        "error_alert": "Invalid result of reset password request. Please contact to administrator if it is repeating."
       },
       "checkout_default_success_dialog": {
         "title": "Checkout Defaults",

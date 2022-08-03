@@ -171,7 +171,7 @@ export default () => {
 
       const success = await requestPasswordReset({
         loginOrEmail: payload.email,
-        urlSuffix: payload.resetPasswordUrl,
+        urlSuffix: payload.resetPasswordUrlPath,
       });
 
       return success;

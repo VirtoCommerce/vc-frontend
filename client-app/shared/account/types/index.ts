@@ -31,7 +31,7 @@ export type SignMeIn = {
 
 export type ForgotPassword = {
   email: string;
-  resetPasswordUrl: string;
+  resetPasswordUrlPath: string;
 };
 
 export type ResetPassword = {
