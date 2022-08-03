@@ -1,5 +1,5 @@
 <template>
-  <VcCard :title="$t('shared.account.navigation.title')">
+  <VcCard :title="$t('shared.account.navigation.main_title')">
     <div class="flex flex-col">
       <AccountNavigationLink
         :to="{ name: 'Dashboard' }"
@@ -53,14 +53,21 @@
     </div>
   </VcCard>
 
-  <!-- Commented due to accetpance criteria, will be used in future
-  <VcCard title="Corporate">
+  <VcCard v-if="organization" :title="$t('shared.account.navigation.corporate_title')">
     <div class="flex flex-col">
-      <AccountNavigationLink to="/companyInfo" text="Company info" class="company-icon"/>
-      <AccountNavigationLink to="/companyMembers" text="Company members" class="company-members-icon" />
+      <AccountNavigationLink
+        :to="{ name: 'CompanyInfo' }"
+        :text="$t('shared.account.navigation.links.company_info')"
+        class="company-icon"
+      />
+
+      <AccountNavigationLink
+        :to="{ name: 'CompanyMembers' }"
+        :text="$t('shared.account.navigation.links.company_members')"
+        class="company-members-icon"
+      />
     </div>
   </VcCard>
-  -->
 </template>
 
 <script setup lang="ts">
@@ -69,8 +76,10 @@ import { watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { eagerComputed } from "@vueuse/core";
 import { useWishlists } from "@/shared/wishlists";
+import { useUser } from "@/shared/account";
 
 const route = useRoute();
+const { organization } = useUser();
 const { lists, fetchWishlists } = useWishlists();
 
 const isListDetails = eagerComputed(() => route.name === "ListDetails");

@@ -107,6 +107,10 @@ module.exports = {
           hover: "#00678d",
         },
 
+        tooltip: {
+          DEFAULT: "#4D4D4D",
+        },
+
         /**
          * Custom colors
          */
@@ -132,11 +136,15 @@ module.exports = {
       boxShadow: {
         "t-sm": "0 -1px 2px 0 rgba(0, 0, 0, 0.05)",
         t: "0 -1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);",
+        "md-x": "1px 2px 8px rgba(0, 0, 0, 0.05)",
+        "t-mds": "1px 1px 3px rgba(0, 0, 0, 0.25)",
         "t-md": "0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "t-lgs": "0px -8px 15px rgba(0, 0, 0, 0.1)",
         "t-lg": "0 -10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
         "t-xl": "0 -20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
         "t-2xl": "0 -25px 50px -12px rgba(0, 0, 0, 0.25)",
         "t-3xl": "0 -35px 60px -15px rgba(0, 0, 0, 0.3)",
+        "sm-x-y": "1px 2px 9px rgba(0, 0, 0, 0.1)",
       },
       fontSize: {
         11: [
@@ -154,22 +162,54 @@ module.exports = {
         15: [
           "0.938rem", //15px
           {
-            lineHeight: "1.25rem",
+            lineHeight: "1.25rem", //20px
+          },
+        ],
+        17: [
+          "1.063rem", //17px
+          {
+            lineHeight: "1.25rem", //20px
           },
         ],
         19: [
           "1.188rem", //19px
           {
-            lineHeight: "1.5rem",
+            letterSpacing: "0.01em",
+            lineHeight: "1.438rem", //23px
           },
         ],
+        21: [
+          "1.313rem", //21px
+          {
+            letterSpacing: "0.01em",
+            lineHeight: "1.563rem", //25px
+          },
+        ],
+        28: [
+          "1.75rem", //28px
+          {
+            letterSpacing: "0.02em",
+            lineHeight: "2.125rem", //34px
+          },
+        ],
+        34: [
+          "2.125rem", //34px
+          {
+            letterSpacing: "0.02em",
+            lineHeight: "2.563rem", //41px
+          },
+        ],
+      },
+      margin: {
+        4.5: "1.125rem", //18px
+      },
+      padding: {
+        4.5: "1.125rem", //18px
+        19: "4.75rem", //76px
       },
       maxHeight: {
         "screen-60": "60vh",
         "screen-75": "75vh",
-      },
-      margin: {
-        4.5: "1.125rem", //18px
       },
     },
   },

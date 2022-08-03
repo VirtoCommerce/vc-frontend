@@ -128,6 +128,12 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 
 - Install `vc-platform` 3.x the latest version. [Deploy on Windows](https://github.com/VirtoCommerce/vc-platform/blob/master/docs/getting-started/deploy-from-precompiled-binaries-windows.md) or [Deploy on Linux](https://github.com/VirtoCommerce/vc-platform/blob/master/docs/getting-started/deploy-from-precompiled-binaries-linux.md)
 - Install `vc-module-experience-api` module. [Getting started](https://github.com/VirtoCommerce/vc-module-experience-api/blob/dev/docs/getting-started.md)
+- Install [vc-module-profile-experience-api](https://github.com/VirtoCommerce/vc-module-profile-experience-api) module.
+- Install [Node](https://nodejs.org/en/download/) v.16.X
+- Install [yarn](https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable) package manager
+  ```
+  npm install --global yarn
+  ```
 
 ### Install the `vc-storefront`
 
@@ -148,9 +154,9 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 
 ```bash
 # Clone repo into the folder where storefront is installed
-git clone https://github.com/VirtoCommerce/vue-starter-theme.git "C:\vc-storefront\wwwroot\cms-content\themes\{store-name}\default"
+git clone https://github.com/VirtoCommerce/vue-starter-theme.git "C:\vc-storefront\VirtoCommerce.Storefront\wwwroot\cms-content\themes\{store-name}\default"
 # Change the current directory
-cd C:\vc-storefront\wwwroot\cms-content\themes\{store-name}\default
+cd C:\vc-storefront\VirtoCommerce.Storefront\VirtoCommerce.Storefront\wwwroot\cms-content\themes\{store-name}\default
 # install dependencies
 yarn
 # Start theme in development mode with HMR support
@@ -163,9 +169,11 @@ yarn compress
 
 ```bash
 # change the current directory
-cd C:\vc-storefront
+cd C:\vc-storefront\VirtoCommerce.Storefront
 # build and run storefront application
 dotnet run
+# In future, if you don't need to rebuild you can use that
+dotnet run --no-build
 ```
 
 ## License

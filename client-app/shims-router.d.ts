@@ -9,6 +9,7 @@ declare module "vue-router" {
   interface RouteMeta {
     layout?: "Main" | "Payment";
     requiresAuth?: boolean;
+    requiresOrganization?: boolean;
     hideNavigation?: boolean;
   }
 }

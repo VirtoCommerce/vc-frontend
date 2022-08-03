@@ -1,0 +1,18 @@
+query GetFulfillmentCenter($id: String!) {
+  fulfillmentCenter(id: $id) {
+    id
+    name
+    description
+    shortDescription
+    address {
+      city
+      countryCode
+      countryName
+      line1
+      line2
+      postalCode
+      zip
+      phone
+    }
+  }
+}

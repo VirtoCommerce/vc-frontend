@@ -61,7 +61,8 @@
       "max_length": "Dieses Feld darf höchstens {max} Zeichen lang sein",
       "creating_order_error": "Fehler beim Anlegen eines Auftrags",
       "item_can_t_be_purchased": "Dieser Artikel kann nicht gekauft werden",
-      "item_is_out_of_stock": "Dieser Artikel ist nicht mehr vorrätig"
+      "item_is_out_of_stock": "Dieser Artikel ist nicht mehr vorrätig",
+      "invalid_value": "Ungültiger Wert"
     },
     "placeholders": {
       "not_selected": "Nicht ausgewählt",
@@ -82,7 +83,9 @@
       "lists": "Listen",
       "checkout_defaults": "Checkout-Standardwerte",
       "list_details": "Details auflisten",
-      "cart": "Wagen"
+      "cart": "Wagen",
+      "company_info": "Infos zum Unternehmen",
+      "company_members": "Mitglieder des Unternehmens"
     }
   },
   "shared": {
@@ -115,6 +118,11 @@
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
             "checkout_defaults": "@:common.links.checkout_defaults"
+          },
+          "corporate": "@:shared.account.navigation.corporate_title",
+          "corporate_menu": {
+            "company_info": "@:common.links.company_info",
+            "company_members": "@:common.links.company_members"
           },
           "settings": "Details auflisten",
           "currency": "Währung",
@@ -170,15 +178,18 @@
     },
     "account": {
       "navigation": {
-        "title": "Mein Konto",
+        "main_title": "Mein Konto",
+        "corporate_title": "Korporativ",
         "links": {
           "dashboard": "@:common.links.dashboard",
           "profile": "@:common.links.profile",
           "addresses": "@:common.links.addresses",
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
+          "list_details": "@:common.links.list_details",
           "checkout_defaults": "@:common.links.checkout_defaults",
-          "list_details": "@:common.links.list_details"
+          "company_info": "@:common.links.company_info",
+          "company_members": "@:common.links.company_members"
         }
       },
       "address_form": {
@@ -224,6 +235,18 @@
         "title": "Checkout Defaults",
         "message": "Checkout defaults successfully updated.",
         "ok_button": "@:common.buttons.ok"
+      },
+      "invite_member_dialog": {
+        "title": "Invite member",
+        "role_label": "Role",
+        "role_placeholder": "Select role",
+        "emails_label": "Enter email addresses of the persons you wish to invite",
+        "emails_placeholder": "Use commas, semicolons or carriage returns to separate multiple entries",
+        "message_label": "Message",
+        "message_placeholder": "Please enter value",
+        "cancel_button": "@:common.buttons.cancel",
+        "send_button": "@:common.buttons.send",
+        "invite_successfully_text": "The invite has been successfully sent"
       },
       "profile_update_success_dialog": {
         "title": "Profile update",
@@ -305,14 +328,23 @@
         "price_block": {
           "title": "Price & Delivery",
           "add_to_list_button": "Add to list",
-          "add_to_list_button_unauthorized_title": "Wishlists are available only for authorized users",
-          "send_email_button": "@:common.labels.email",
-          "print_button": "Print"
+          "add_to_list_button_unauthorized_title": "Wishlists are available only for authorized users"
         },
         "product_variation_card": {
           "variation_sku_label": "@:common.labels.sku",
           "price_label": "@:common.labels.product_price"
         }
+      },
+      "branches_dialog": {
+        "title": "Select Branch",
+        "all_branches": "All branches",
+        "search_input_placeholder": "Search by address and name",
+        "selected_branches": "Selected branches",
+        "clear_selection": "Clear selection",
+        "cancel_button": "Cancel",
+        "ok_button": "Ok",
+        "no_results": "No results found",
+        "reset_search_button": "Reset search"
       }
     },
     "checkout": {
@@ -806,6 +838,41 @@
         }
       }
     },
+    "company": {
+      "info": {
+        "meta": {
+          "title": "@:pages.company.info.title"
+        },
+        "title": "Company Info"
+      },
+      "members": {
+        "meta": {
+          "title": "@:pages.company.members.title"
+        },
+        "title": "Company Members",
+        "search_placeholder": "User search",
+        "no_results_found_message": "No results found",
+        "invite_sent": "Invite Sent",
+        "buttons": {
+          "invite_members": "Invite members",
+          "add_new_member": "Add new member",
+          "invite": "Invite",
+          "new": "New",
+          "reset_search": "Reset search"
+        },
+        "content_header": {
+          "name": "Name",
+          "role": "Role",
+          "email": "Email",
+          "active": "Active"
+        },
+        "statuses": {
+          "active": "Active",
+          "inactive": "Inactive",
+          "blocked": "Blocked"
+        }
+      }
+    },
     "catalog": {
       "meta": {
         "title": "@:pages.catalog.title",
@@ -824,8 +891,9 @@
       },
       "branch_availability_filter_card": {
         "title": "Branch availability",
-        "select_branch_link": "Select a pickup branch",
-        "select_branch_link_end": "to see products in stock now."
+        "available_in": "Available at {0}",
+        "branches": "branches | {n} branch | {n} branches",
+        "select_branch_text": "Select a pickup branch to see the products that are in stock now"
       },
       "facet_card": {
         "item_count_format": "({0})"
@@ -1024,6 +1092,11 @@
         "home": "@:common.links.home",
         "compare_products": "Compare products"
       }
+    },
+    "branch": {
+      "address": "Address",
+      "phone": "Phone: ",
+      "other_branches": "Other branches"
     }
   }
 }

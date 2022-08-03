@@ -135,26 +135,25 @@
 
       <div class="flex flex-col space-y-5 py-8 px-9">
         <template v-if="isAuthenticated">
-          <!-- My account link -->
+          <!-- Account link -->
           <MobileMenuLink
             v-if="mobileAccountMenuLink"
             :title="mobileAccountMenuLink.title"
-            icon="/static/images/common/user-circle.svg#main"
+            :icon="mobileAccountMenuLink.icon"
             class="text-2xl"
             is-parent
             @select="selectMenuItem(mobileAccountMenuLink!)"
           />
 
-          <!-- Corporate link -- >
-          TODO: Will be used in future. Commented due to acceptance criteria
+          <!-- Corporate link -->
           <MobileMenuLink
-            :title="corporateMenuLink.title"
-            icon="/static/images/dashboard/icons/contact.svg#main"
-            class="uppercase text-xl font-bold"
+            v-if="mobileCorporateMenuLink && organization"
+            :title="mobileCorporateMenuLink.title"
+            :icon="mobileCorporateMenuLink.icon"
+            class="text-2xl"
             is-parent
-            @select="selectMenuItem(corporateMenuLink)"
+            @select="selectMenuItem(mobileCorporateMenuLink!)"
           />
-          -->
         </template>
 
         <!-- Unauthorized links -->
@@ -171,8 +170,8 @@
         <!-- Settings link -->
         <MobileMenuLink
           v-if="supportedCurrencies.length > 1"
+          :icon="settingsMenuLink.icon"
           class="text-2xl"
-          icon="/static/images/common/settings.svg#main"
           is-parent
           @select="selectMenuItem(settingsMenuLink)"
         >
@@ -201,10 +200,11 @@ const { cart } = useCart();
 const { productsIds } = useCompareProducts();
 const { supportedLocales } = useLanguages();
 const { currentCurrency, supportedCurrencies, saveCurrencyCodeAndReload } = useCurrency();
-const { user, isAuthenticated, signMeOut } = useUser();
+const { user, isAuthenticated, organization, signMeOut } = useUser();
 const {
   mobileHeaderMenuLinks,
   mobileAccountMenuLink,
+  mobileCorporateMenuLink,
   mobilePreSelectedMenuLink,
   openedItem,
   selectMenuItem,
@@ -217,27 +217,9 @@ const unauthorizedMenuLinks: MenuLink[] = [
   { route: { name: "SignUp" }, title: t("shared.layout.header.link_register_now") },
 ];
 
-/*
-const corporateMenuLink: MenuLink = {
-  id: "corporate",
-  title: "Corporate",
-  children: [
-    {
-      route: { name: "Company" },
-      title: "Profile",
-      icon: "/static/images/dashboard/icons/company.svg#main",
-    },
-    {
-      route: { name: "CompanyMembers" },
-      title: "Members",
-      icon: "/static/images/dashboard/icons/members.svg#main",
-    },
-  ],
-};
-*/
-
 const settingsMenuLink: MenuLink = {
   id: "settings",
+  icon: "/static/images/common/settings.svg#main",
   children: [{ id: "currency-setting" }], // see implementation in template
 };
 
