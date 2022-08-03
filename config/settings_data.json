@@ -55,6 +55,7 @@
       "color_primary_hover": "#EC951A",
       "color_secondary": "#151B1E",
       "color_secondary_hover": "#000000",
+      "color-white": "#FFFFFF",
       "color_link": "#00739E",
       "color_link_hover": "#00678D",
       "color_body_bg": "#F6F6F6",
@@ -116,6 +117,7 @@
       "color_branch_dialog_input_border": "#C2C9E0",
       "color_branch_dialog_input_text": "#939DA4",
       "color_branch_dialog_input_reset_icon": "#C0C0C0",
+      "color_branch_dialog_input": "#C2C9E0",
       "color_add_wishlist_dialog_subtitle_bg": "#F3F3F3",
       "color_add_wishlist_dialog_delete_icon": "#EC6A5E",
       "color_branch_closed": "#EC6A5E"

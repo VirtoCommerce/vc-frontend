@@ -336,6 +336,17 @@
           "variation_sku_label": "@:common.labels.sku",
           "price_label": "@:common.labels.product_price"
         }
+      },
+      "branches_dialog": {
+        "title": "Select Branch",
+        "all_branches": "All branches",
+        "search_input_placeholder": "Search by address and name",
+        "selected_branches": "Selected branches",
+        "clear_selection": "Clear selection",
+        "cancel_button": "Cancel",
+        "ok_button": "Ok",
+        "no_results": "No results found",
+        "reset_search_button": "Reset search"
       }
     },
     "checkout": {
@@ -900,8 +911,9 @@
       },
       "branch_availability_filter_card": {
         "title": "Branch availability",
-        "select_branch_link": "Select a pickup branch",
-        "select_branch_link_end": "to see the products that are in stock now."
+        "available_in": "Available at {0}",
+        "branches": "branches | {n} branch | {n} branches",
+        "select_branch_text": "Select a pickup branch to see the products that are in stock now"
       },
       "facet_card": {
         "item_count_format": "({0})"

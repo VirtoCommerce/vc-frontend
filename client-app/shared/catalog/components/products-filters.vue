@@ -33,23 +33,31 @@
       </div>
     </VcCard>
 
+    <!-- Branch availability -->
+    <VcCard v-if="isMobile" :with-header="false">
+      <div class="relative cursor-pointer" @click="onOpenBranches">
+        <VcCheckbox :model-value="!!filters.availableIn?.length" :disabled="loading">
+          <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div">
+            <b v-if="filters.availableIn?.length" class="text-[color:var(--color-link)]">
+              {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: filters.availableIn?.length }) }}
+            </b>
+            <template v-else>
+              {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: filters.availableIn?.length }) }}
+            </template>
+          </i18n-t>
+        </VcCheckbox>
+        <div class="absolute inset-0"></div>
+      </div>
+      <div class="mt-1 ml-0.5 pl-6 text-xs font-medium">
+        {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
+      </div>
+    </VcCard>
+
     <!-- Previously purchased -->
     <VcCard :title="$t('pages.catalog.instock_filter_card.title')">
       <VcCheckbox v-model="_filters.inStock" :disabled="loading" @change="onFilterChanged">
         {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
       </VcCheckbox>
-    </VcCard>
-
-    <!-- Branch availability -->
-    <VcCard :title="$t('pages.catalog.branch_availability_filter_card.title')">
-      <p class="text-sm font-medium">
-        <span
-          class="text-[color:var(--color-link)] font-semibold cursor-pointer hover:text-[color:var(--color-link-hover)]"
-        >
-          {{ $t("pages.catalog.branch_availability_filter_card.select_branch_link") }}
-        </span>
-        {{ $t("pages.catalog.branch_availability_filter_card.select_branch_link_end") }}
-      </p>
     </VcCard>
 
     <!-- Facet Filters Skeletons -->
@@ -92,10 +100,12 @@
 
 <script setup lang="ts">
 import { ProductsFilters, ProductsFacet } from "@/shared/catalog";
-import { eagerComputed } from "@vueuse/core";
+import { eagerComputed, breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { watch, onMounted, PropType, ref, shallowReactive, toRefs } from "vue";
 import _ from "lodash";
 
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("lg");
 const _keyword = ref("");
 const _filters = shallowReactive<ProductsFilters>({ facets: [], inStock: false });
 
@@ -117,6 +127,7 @@ const props = defineProps({
 const emit = defineEmits<{
   (e: "search", keyword: string): void;
   (e: "change", value: ProductsFilters): void;
+  (e: "openBranches"): void;
 }>();
 
 const { loading, keyword, filters } = toRefs(props);
@@ -125,6 +136,7 @@ onMounted(() => {
   _keyword.value = keyword.value;
   _filters.facets = _.cloneDeep(filters.value.facets);
   _filters.inStock = props.filters.inStock;
+  _filters.availableIn = _.cloneDeep(props.filters.availableIn);
 });
 
 watch(
@@ -141,6 +153,13 @@ watch(
   }
 );
 
+watch(
+  () => filters.value.availableIn,
+  (newValue) => {
+    _filters.availableIn = _.cloneDeep(newValue);
+  }
+);
+
 watch(keyword, (newKeyword) => (_keyword.value = newKeyword ?? ""));
 
 const isAppliedKeyword = eagerComputed<boolean>(() => _keyword.value == keyword.value);
@@ -152,6 +171,10 @@ function onFilterChanged() {
 }
 function onSearchStart() {
   emit("search", _keyword.value);
+}
+
+function onOpenBranches() {
+  emit("openBranches");
 }
 
 function reset() {
