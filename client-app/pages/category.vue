@@ -15,12 +15,12 @@
           class="w-70 px-5 pt-5"
           @hide="hideMobileSidebar()"
         >
-          <div class="flex justify-between items-center mt-0.5 mb-6">
+          <div class="relative mt-0.5 mb-6 pr-6">
             <div class="font-semibold text-26 pt-1 break-words">
               {{ $t("common.buttons.filters") }}
             </div>
 
-            <button class="appearance-none" @click="hideMobileSidebar()">
+            <button class="absolute top-2.5 right-1" @click="hideMobileSidebar()">
               <svg class="w-5 h-5 text-[color:var(--color-primary)]">
                 <use href="/static/images/delete.svg#main"></use>
               </svg>
@@ -74,7 +74,7 @@
 
           <ProductsFiltersSidebar
             :keyword="keywordQueryParam"
-            :filters="{ facets, inStock: savedInStock }"
+            :filters="{ facets }"
             :loading="loading"
             @search="onSearchStart($event)"
             @change="onFilterChanged($event)"
@@ -85,18 +85,21 @@
         <div class="flex-grow">
           <div class="flex">
             <h2 class="text-gray-800 text-21 font-bold uppercase lg:my-px lg:text-25">
-              {{ selectedCategory?.label }}
-              <sup
+              <span>{{ selectedCategory?.label }}</span>
+              <i18n-t
                 class="-top-1.5 pl-2 text-sm text-[color:var(--color-category-page-results)] normal-case font-normal whitespace-nowrap lg:text-15"
-                v-html="$t('pages.catalog.products_found_message', [total])"
-              ></sup>
+                tag="sup"
+                keypath="pages.catalog.products_found_message"
+              >
+              <span class="font-extrabold">{{ total }}</span>
+              </i18n-t>
             </h2>
           </div>
 
           <div class="-mt-px" ref="stickyMobileHeaderAnchor"></div>
 
           <div
-            class="sticky top-0 z-10 flex items-center h-14 my-1.5 lg:mb-1 lg:mt-0.5 lg:relative"
+            class="sticky top-0 z-10 flex items-center h-14 my-1.5 lg:relative lg:justify-end lg:flex-wrap lg:mb-3.5 lg:mt-3 lg:h-auto"
             :class="{
               'z-40 px-5 md:px-12 -mx-5 md:-mx-12 bg-[color:var(--color-header-bottom-bg)]':
                 isVisibleStickyMobileHeader,
@@ -110,8 +113,8 @@
             </div>
 
             <!-- Sorting -->
-            <div class="flex items-center flex-grow md:flex-grow-0 z-10 ml-auto lg:order-2">
-              <span class="hidden lg:block shrink-0 mr-2 text-15" v-t="'pages.catalog.sort_by_label'"></span>
+            <div class="flex items-center flex-grow z-10 ml-auto lg:ml-4 lg:flex-grow-0 lg:order-3 xl:ml-8">
+              <span class="hidden lg:block shrink-0 mr-2 text-15 font-bold" v-t="'pages.catalog.sort_by_label'"></span>
 
               <VcSelect
                 v-model="sortQueryParam"
@@ -119,12 +122,28 @@
                 value-field="id"
                 :is-disabled="loading"
                 :items="PRODUCT_SORTING_LIST"
-                class="w-full md:w-48"
+                class="w-full lg:w-48"
               />
             </div>
 
             <!-- View options -->
-            <ViewMode v-model:mode="savedViewMode" class="inline-flex ml-3 lg:order-1 lg:ml-0" />
+            <ViewMode v-model:mode="savedViewMode" class="inline-flex ml-3 lg:order-1 lg:ml-0 lg:mr-auto" />
+
+            <VcCheckbox
+              v-if="!isMobileSidebar"
+              class="order-2 lg:ml-4 xl:ml-8"
+              v-model="savedInStock"
+              :disabled="loading"
+            >
+              <span
+                class="text-15 whitespace-nowrap"
+                :class="{
+                  'text-[color:var(--color-category-page-checkbox-label)]': !savedInStock,
+                }"
+              >
+                {{ $t("pages.catalog.instock_filter_card.checkbox_label_desktop") }}
+              </span>
+            </VcCheckbox>
           </div>
 
           <!-- Filters chips -->
@@ -412,7 +431,10 @@ function onSearchStart(newKeyword: string) {
 
 function onFilterChanged(newFilters: ProductsFilters) {
   facetsQueryParam.value = getFilterExpressionFromFacets(newFilters.facets);
-  savedInStock.value = newFilters.inStock;
+
+  if (isMobileSidebar) {
+    savedInStock.value = newFilters.inStock;
+  }
 }
 
 async function onMobileFilterChanged(newFilters: ProductsFilters) {

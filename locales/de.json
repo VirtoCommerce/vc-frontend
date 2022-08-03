@@ -841,7 +841,8 @@
       },
       "instock_filter_card": {
         "title": "In stock",
-        "checkbox_label": "View in stock products"
+        "checkbox_label": "View in stock products",
+        "checkbox_label_desktop": "Show in stock"
       },
       "branch_availability_filter_card": {
         "title": "Branch availability",

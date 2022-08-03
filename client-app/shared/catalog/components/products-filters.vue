@@ -33,7 +33,7 @@
     </VcFilterCard>
 
     <!-- Previously purchased -->
-    <VcFilterCard :title="$t('pages.catalog.instock_filter_card.title')">
+    <VcFilterCard v-if="isMobile" :title="$t('pages.catalog.instock_filter_card.title')">
       <VcCheckbox v-model="_filters.inStock" :disabled="loading" @change="onFilterChanged">
         {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
       </VcCheckbox>
@@ -91,10 +91,12 @@
 
 <script setup lang="ts">
 import { ProductsFilters, ProductsFacet } from "@/shared/catalog";
-import { eagerComputed } from "@vueuse/core";
+import { eagerComputed, useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import { watch, onMounted, PropType, ref, shallowReactive, toRefs } from "vue";
 import _ from "lodash";
 
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("lg");
 const _keyword = ref("");
 const _filters = shallowReactive<ProductsFilters>({ facets: [], inStock: false });
 
