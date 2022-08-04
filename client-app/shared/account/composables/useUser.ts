@@ -11,8 +11,10 @@ import { computed, readonly, ref } from "vue";
 import { eagerComputed } from "@vueuse/core";
 import {
   getMe,
-  inviteUser as _inviteUser,
   registerAccount,
+  requestPasswordReset,
+  resetPasswordByToken,
+  inviteUser as _inviteUser,
   registerByInvitation,
   updatePersonalData,
 } from "@/xapi/graphql/account";
@@ -25,7 +27,6 @@ import {
   SignMeIn,
   SignMeUp,
   UserPersonalData,
-  ValidateToken,
 } from "@/shared/account";
 import globals from "@/core/globals";
 
@@ -42,7 +43,7 @@ export default () => {
     try {
       user.value = await getMe();
     } catch (e) {
-      Logger.error("useUser.loadMe", e);
+      Logger.error(`useUser.${fetchUser.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -58,7 +59,7 @@ export default () => {
       }
       return result;
     } catch (e) {
-      Logger.error("useUser.updatePersonalData", e);
+      Logger.error(`useUser.${updatePersonalData.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -75,7 +76,7 @@ export default () => {
         newPasswordConfirm: newPassword,
       });
     } catch (e) {
-      Logger.error("useUser.changePassword", e);
+      Logger.error(`useUser.${changePassword.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -94,7 +95,7 @@ export default () => {
 
       return res;
     } catch (e) {
-      Logger.error("useUser.signMeIn", e);
+      Logger.error(`useUser.${signMeIn.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -122,7 +123,7 @@ export default () => {
 
       return resultData.result!;
     } catch (e) {
-      Logger.error("useUser.registerUser", e);
+      Logger.error(`useUser.${registerUser.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -153,7 +154,7 @@ export default () => {
 
       return resultData.result!;
     } catch (e) {
-      Logger.error("useUser.registerOrganization", e);
+      Logger.error(`useUser.${registerOrganization.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -166,33 +167,25 @@ export default () => {
       const url = "/storefrontapi/account/logout";
       await innerFetch(url);
     } catch (e) {
-      Logger.error("useUser.logout", e);
+      Logger.error(`useUser.${signMeOut.name}`, e);
       throw e;
     } finally {
       loading.value = false;
     }
   }
 
-  async function forgotPassword(payload: ForgotPassword): Promise<IdentityResultType> {
+  async function forgotPassword(payload: ForgotPassword): Promise<boolean> {
     try {
       loading.value = true;
-      const url = "/storefrontapi/account/forgotPassword";
-      return await innerFetch<IdentityResultType, ForgotPassword>(url, "POST", payload);
-    } catch (e) {
-      Logger.error("useUser.forgotPassword", e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-  }
 
-  async function validateToken(payload: ValidateToken): Promise<IdentityResultType> {
-    try {
-      loading.value = true;
-      const url = "/storefrontapi/account/validateToken";
-      return await innerFetch<IdentityResultType, ValidateToken>(url, "POST", payload);
+      const success = await requestPasswordReset({
+        loginOrEmail: payload.email,
+        urlSuffix: payload.resetPasswordUrlPath,
+      });
+
+      return success;
     } catch (e) {
-      Logger.error("useUser.validateToken", e);
+      Logger.error(`useUser.${forgotPassword.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -202,10 +195,16 @@ export default () => {
   async function resetPassword(payload: ResetPassword): Promise<IdentityResultType> {
     try {
       loading.value = true;
-      const url = "/storefrontapi/account/resetPassword";
-      return await innerFetch<IdentityResultType, ResetPassword>(url, "POST", payload);
+
+      const result = await resetPasswordByToken({
+        userId: payload.userId,
+        token: payload.token,
+        newPassword: payload.password,
+      });
+
+      return result;
     } catch (e) {
-      Logger.error("useUser.resetPassword", e);
+      Logger.error(`useUser.${resetPassword.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -245,7 +244,6 @@ export default () => {
     registerOrganization,
     signMeOut,
     forgotPassword,
-    validateToken,
     resetPassword,
     inviteUser,
     registerByInvite,

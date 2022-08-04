@@ -2,7 +2,7 @@ import { FulfillmentCenterConnection, Query, QueryFulfillmentCentersArgs } from 
 import fillmentCentersQueryDocument from "./getFulfillmentCenters.graphql";
 import globals from "@/core/globals";
 
-export default async function getFulfillmentCenters(sort: string = "name"): Promise<FulfillmentCenterConnection> {
+export default async function getFulfillmentCenters(sort = "name"): Promise<FulfillmentCenterConnection> {
   const { storeId } = globals;
   const { $graphqlClient } = useNuxtApp();
 

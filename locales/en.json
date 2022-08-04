@@ -28,7 +28,7 @@
       "actions": "Actions",
       "user_name": "Username",
       "password": "Password",
-      "confirm_password": "Confirm Password",
+      "confirm_password": "Confirm password",
       "first_name": "First Name",
       "last_name": "Last Name",
       "address": "Address",
@@ -227,11 +227,20 @@
         "reset_password_button": "Reset password",
         "password_must_match_message": "Passwords must match"
       },
+      "set_password_form": {
+        "password_label": "@:common.labels.password",
+        "password_placeholder": "Enter your password",
+        "confirm_password_label": "@:common.labels.confirm_password",
+        "confirm_password_placeholder": "Confirm your password",
+        "reset_password_button": "@:common.buttons.save",
+        "password_must_match_message": "Passwords must match"
+      },
       "forgot_password_form": {
         "email_label": "@:common.labels.email",
         "email_placeholder": "Enter your email",
         "submit_button": "@:common.buttons.submit",
-        "invalid_email_format_message": "Please enter valid email address, e.g. johndoe{'@'}gmail.com"
+        "invalid_email_format_message": "Please enter valid email address, e.g. johndoe{'@'}gmail.com",
+        "error_alert": "Invalid result of reset password request. Please contact to administrator if it is repeating."
       },
       "checkout_default_success_dialog": {
         "title": "Checkout Defaults",
@@ -287,6 +296,22 @@
         "end-date-label": "End date",
         "apply-button": "@:common.buttons.apply",
         "reset-button": "@:common.buttons.reset"
+      }
+    },
+    "company": {
+      "add_new_member_dialog": {
+        "title": "New member",
+        "role_label": "Role",
+        "role_placeholder": "Select role",
+        "first_name_label": "@:common.labels.first_name",
+        "first_name_placeholder": "Enter your first name",
+        "last_name_label": "@:common.labels.last_name",
+        "last_name_placeholder": "Enter your last name",
+        "email_label": "@:common.labels.email",
+        "email_placeholder": "@:common.placeholders.email",
+        "cancel_button": "@:common.buttons.cancel",
+        "add_button": "Add",
+        "successfully_text": "The user {0} has been successfully created"
       }
     },
     "cart": {
@@ -634,6 +659,17 @@
       "enter_new_password_message": "Enter your new password",
       "success_message": "Your password has been reset successfully",
       "log_in_button": "Log in",
+      "data_invalid_error_message": "User ID or token is invalid."
+    },
+    "set_password": {
+      "meta": {
+        "title": "Registration"
+      },
+      "header": "Registration",
+      "home_button": "@:common.buttons.home",
+      "enter_new_password_message": "An account has been created for you, please set a password to login.",
+      "success_message": "Registration was successfully completed",
+      "log_in_button": "Continue",
       "data_invalid_error_message": "User ID or token is invalid."
     },
     "sign_in": {
