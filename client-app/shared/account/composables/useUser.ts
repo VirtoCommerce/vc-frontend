@@ -1,4 +1,12 @@
-import { AccountCreationResultType, IdentityResultType, Organization, UserType } from "@/xapi/types";
+import {
+  AccountCreationResultType,
+  CustomIdentityResultType,
+  IdentityResultType,
+  InputInviteUserType,
+  InputRegisterByInvitationType,
+  Organization,
+  UserType,
+} from "@/xapi/types";
 import { computed, readonly, ref } from "vue";
 import { eagerComputed } from "@vueuse/core";
 import {
@@ -6,9 +14,10 @@ import {
   registerAccount,
   requestPasswordReset,
   resetPasswordByToken,
+  inviteUser as _inviteUser,
+  registerByInvitation,
   updatePersonalData,
 } from "@/xapi/graphql/account";
-
 import { Logger } from "@/core/utilities";
 import { useFetch } from "@/core/composables";
 import {
@@ -202,6 +211,28 @@ export default () => {
     }
   }
 
+  async function inviteUser(payload: InputInviteUserType): Promise<CustomIdentityResultType> {
+    try {
+      return await _inviteUser(payload);
+    } catch (e) {
+      Logger.error(`useUser.${inviteUser.name}`, e);
+      throw e;
+    }
+  }
+
+  async function registerByInvite(payload: InputRegisterByInvitationType): Promise<CustomIdentityResultType> {
+    loading.value = true;
+
+    try {
+      return await registerByInvitation(payload);
+    } catch (e) {
+      Logger.error(`useUser.${registerByInvite.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     isAuthenticated,
     organization,
@@ -214,6 +245,8 @@ export default () => {
     signMeOut,
     forgotPassword,
     resetPassword,
+    inviteUser,
+    registerByInvite,
     loading: readonly(loading),
     user: computed({
       get() {

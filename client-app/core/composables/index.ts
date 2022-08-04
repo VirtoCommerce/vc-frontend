@@ -7,3 +7,4 @@ export { default as usePageHead } from "./usePageHead";
 export { default as useRouteQueryParam } from "./useRouteQueryParam";
 export { default as useThemeContext } from "./useThemeContext";
 export { default as useDomUtils } from "./useDomUtils";
+export { default as useStaticPage } from "./useStaticPage";

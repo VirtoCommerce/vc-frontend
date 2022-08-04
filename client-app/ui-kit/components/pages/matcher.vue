@@ -11,12 +11,7 @@
     :product-id="seoInfo?.entity?.objectId"
   />
 
-  <component
-    v-else-if="seoInfo?.page"
-    :is="PageBuilder"
-    :settings="seoInfo.page.settings"
-    :content="seoInfo.page.content"
-  />
+  <component v-else-if="seoInfo?.page" :is="StaticPage" />
 
   <NotFound v-else-if="!loading" />
 </template>
@@ -24,12 +19,12 @@
 <script setup lang="ts">
 import Category from "@/pages/category.vue";
 import Product from "@/pages/product.vue";
-import PageBuilder from "@/pages/builder.vue";
+import StaticPage from "@/pages/static-page.vue";
 import NotFound from "@/pages/404.vue";
 
 import { onBeforeUnmount, PropType, ref, watchEffect } from "vue";
 import { asyncComputed, computedEager } from "@vueuse/core";
-import { useFetch, useLanguages } from "@/core/composables";
+import { useFetch, useLanguages, useStaticPage } from "@/core/composables";
 import { useNavigations } from "@/shared/layout";
 
 type TEntityInfo = {
@@ -98,6 +93,7 @@ const seoInfo = asyncComputed<TResult | undefined>(
 
     if (result.contentItem?.type === "page") {
       const page: TPageInfo = JSON.parse(result.contentItem.content);
+      useStaticPage(page);
       return { page };
     } else if (result.entityInfo) {
       return {

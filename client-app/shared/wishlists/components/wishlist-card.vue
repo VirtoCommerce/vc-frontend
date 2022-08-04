@@ -14,13 +14,6 @@
       <span class="ml-1 font-extrabold">{{ list.items!.length }}</span>
     </div>
 
-    <div class="shrink-0">
-      <VcButton class="px-3 uppercase" size="sm" :is-disabled="!list.items!.length" @click="$emit('add-to-cart')">
-        <i class="fa fa-shopping-cart text-inherit text-xs mr-2" />
-        {{ $t("shared.wishlists.list_card.add_all_to_cart_button") }}
-      </VcButton>
-    </div>
-
     <div class="shrink-0 space-x-3 ml-auto">
       <!-- todo: https://virtocommerce.atlassian.net/browse/ST-2256 -->
       <button
@@ -48,7 +41,7 @@
 import { PropType } from "vue";
 import { WishlistType } from "@/xapi/types";
 
-defineEmits(["add-to-cart", "settings", "remove"]);
+defineEmits(["settings", "remove"]);
 
 defineProps({
   list: {

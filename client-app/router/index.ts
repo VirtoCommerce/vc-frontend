@@ -30,7 +30,17 @@ export function createRouter(options: { base: string }) {
     }
 
     // Make Dashboard the default Home page for authorized users
-    if (isAuthenticated.value && Array<RouteRecordName>("Home", "SignIn", "SignUp").includes(to.name!)) {
+    if (
+      isAuthenticated.value &&
+      Array<RouteRecordName>(
+        "Home",
+        "SignIn",
+        "SignUp",
+        "ForgotPassword",
+        "ResetPassword",
+        "ConfirmInvitation"
+      ).includes(to.name!)
+    ) {
       return next({ name: "Dashboard" });
     }
 
