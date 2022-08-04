@@ -173,7 +173,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, PropType, toRef } from "vue";
+import { computed, ref, watch, PropType, onMounted } from "vue";
 import BranchItem from "./branch-item.vue";
 import BranchSearch from "./branch-search.vue";
 import { useFulfillmentCenters, IFulfillmentCenter } from "@/shared/fulfillmentCenters";
@@ -183,7 +183,7 @@ const { loadFulfillmentCenters, fulfillmentCenters } = useFulfillmentCenters();
 const showSelectedBranchesMobile = ref(false);
 const searchInput = ref<string>("");
 const branches = computed(() => fulfillmentCenters.value.filter((item) => searchFilter(item)));
-//const selectedBranchesIds = ref<string[]>([]);
+const selectedBranchesIds = ref<string[]>([]);
 
 const props = defineProps({
   selectedBranches: {
@@ -195,7 +195,9 @@ const emit = defineEmits(["save"]);
 
 loadFulfillmentCenters();
 
-const selectedBranchesIds = toRef(props, "selectedBranches");
+onMounted(() => {
+  selectedBranchesIds.value = [...props.selectedBranches];
+});
 
 function searchFilter(item: IFulfillmentCenter) {
   const searchArr = searchInput.value.trim().split(" ");
