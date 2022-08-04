@@ -134,7 +134,11 @@
             </div>
 
             <!-- View options -->
-            <ViewMode v-model:mode="savedViewMode" class="inline-flex ml-3 lg:order-1 lg:ml-0 lg:mr-auto" />
+            <ViewMode
+              v-if="!isMobileSidebar"
+              v-model:mode="savedViewMode"
+              class="inline-flex ml-3 lg:order-1 lg:ml-0 lg:mr-auto"
+            />
 
             <!-- Branch availability -->
             <button v-if="!isMobileSidebar" class="order-3 ml-4 xl:ml-6" @click.prevent="openBranchesDialog(false)">
@@ -207,7 +211,7 @@
           <template v-if="products.length || loading">
             <DisplayProducts
               :loading="loading"
-              :view-mode="savedViewMode"
+              :view-mode="isMobile ? 'grid' : savedViewMode"
               :items-per-page="itemsPerPage"
               :products="products"
               :class="
