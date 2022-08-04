@@ -11,8 +11,8 @@
       :maxlength="64"
     ></VcInput>
     <div class="mt-8 md:mt-9">
-      <VcAlert v-for="error in commonErrors" :key="error" type="error" class="mb-4 text-xs" icon text>
-        {{ error }}
+      <VcAlert v-if="isError" type="error" class="mb-4 text-xs" icon text>
+        <span v-html="$t('shared.account.forgot_password_form.error_alert')"></span>
       </VcAlert>
 
       <VcButton
@@ -28,18 +28,22 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import { useUser } from "@/shared/account";
 import { useI18n } from "vue-i18n";
 import { isObjectEmpty } from "@/core/utilities";
+import { useRouter } from "vue-router";
 
 const { t } = useI18n();
+const router = useRouter();
 
 const { forgotPassword, loading } = useUser();
 
 const emit = defineEmits(["succeeded"]);
+
+const isError = ref(false);
 
 const schema = yup.object({
   email: yup
@@ -67,19 +71,21 @@ const commonErrors = ref<string[]>([]);
 const onSubmit = handleSubmit(async (data) => {
   commonErrors.value = [];
 
-  const resetPasswordUrl = location.origin + "/reset-password";
+  const resetPasswordUrlPath = router.resolve({ name: "ResetPassword" }).path;
 
   const result = await forgotPassword({
     email: `${data.email}`,
-    resetPasswordUrl,
+    resetPasswordUrlPath,
   });
 
-  if (result.succeeded) {
+  if (result) {
     emit("succeeded");
   } else {
-    if (result.errors?.length) {
-      commonErrors.value = result.errors.map((x) => x?.description as string);
-    }
+    isError.value = true;
   }
+});
+
+watch(email, () => {
+  isError.value = false;
 });
 </script>

@@ -7,12 +7,12 @@
         <VcButton class="uppercase p-4" is-outline @click="openInviteMemberDialog">
           {{ $t("pages.company.members.buttons.invite_members") }}
         </VcButton>
-        <VcButton :is-disabled="true" class="uppercase p-4" is-outline>
+        <VcButton class="uppercase p-4" is-outline @click="openAddNewMemberPopup">
           {{ $t("pages.company.members.buttons.add_new_member") }}
         </VcButton>
       </div>
       <div v-else class="flex flex-no-wrap space-x-2">
-        <VcButton :is-disabled="true" class="uppercase p-4" is-outline>
+        <VcButton class="uppercase p-4" is-outline @click="openAddNewMemberPopup">
           {{ $t("pages.company.members.buttons.new") }}
         </VcButton>
         <VcButton class="uppercase p-4" is-outline @click="openInviteMemberDialog">
@@ -174,6 +174,7 @@ import { ref, onMounted } from "vue";
 import { usePopup } from "@/shared/popup";
 import { InviteMemberDialog, useOrganizationContacts } from "@/shared/account";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
+import { AddNewCompanyMemberDialog } from "@/shared/company";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
 const { t } = useI18n();
@@ -264,4 +265,17 @@ const changePage = async (newPage: number) => {
 onMounted(async () => {
   await loadContacts();
 });
+
+function openAddNewMemberPopup() {
+  openPopup({
+    component: AddNewCompanyMemberDialog,
+    props: {
+      onResult: async (success: boolean) => {
+        if (success) {
+          await loadContacts();
+        }
+      },
+    },
+  });
+}
 </script>

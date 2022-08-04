@@ -28,11 +28,9 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
-const input = ref<string>("");
 const emit = defineEmits(["update:input"]);
 
-const props = defineProps({
+defineProps({
   modelValue: {
     type: String,
     default: "",

@@ -124,6 +124,7 @@
             v-if="(showSelectedBranchesMobile && isBranchSelected(index)) || !showSelectedBranchesMobile"
             :branch="branch"
             :is-text-truncate-enabled="false"
+            :key="branch.id"
           >
             <VcCheckbox class="mr-3 cursor-pointer" v-model="selectedBranchesIds" :value="branch.id"> </VcCheckbox>
           </BranchItem>
@@ -172,18 +173,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, PropType } from "vue";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { computed, ref, watch, PropType, onMounted } from "vue";
 import BranchItem from "./branch-item.vue";
 import BranchSearch from "./branch-search.vue";
 import { useFulfillmentCenters, IFulfillmentCenter } from "@/shared/fulfillmentCenters";
 
-const { loading, loadFulfillmentCenters, fulfillmentCenters } = useFulfillmentCenters();
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("sm");
-const isMobileSidebar = breakpoints.smaller("lg");
+const { loadFulfillmentCenters, fulfillmentCenters } = useFulfillmentCenters();
 
-const showSelectedBranches = ref(false);
 const showSelectedBranchesMobile = ref(false);
 const searchInput = ref<string>("");
 const branches = computed(() => fulfillmentCenters.value.filter((item) => searchFilter(item)));
@@ -192,14 +188,16 @@ const selectedBranchesIds = ref<string[]>([]);
 const props = defineProps({
   selectedBranches: {
     type: Array as PropType<string[]>,
-    default: [],
+    default: () => [],
   },
 });
 const emit = defineEmits(["save"]);
 
 loadFulfillmentCenters();
 
-selectedBranchesIds.value = props.selectedBranches;
+onMounted(() => {
+  selectedBranchesIds.value = [...props.selectedBranches];
+});
 
 function searchFilter(item: IFulfillmentCenter) {
   const searchArr = searchInput.value.trim().split(" ");

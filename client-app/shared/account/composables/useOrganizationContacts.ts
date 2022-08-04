@@ -1,5 +1,5 @@
-import getOrganizationContacts from "@/xapi/graphql/account/queries/getOrganizationContacts";
-import { ContactType } from "@/xapi/types";
+import { getOrganizationContacts, createContact, createUser, requestPasswordReset } from "@/xapi/graphql/account";
+import { ContactType, IdentityResultType } from "@/xapi/types";
 import { ref, shallowRef, Ref, readonly, computed } from "vue";
 import { Logger } from "@/core/utilities";
 import { ISortInfo } from "../types";
@@ -9,6 +9,11 @@ import useUser from "./useUser";
 import _ from "lodash";
 import { OrganizationContactType } from "@/core/types";
 import { useI18n } from "vue-i18n";
+import { AddNewMember } from "@/shared/company";
+import globals from "@/core/globals";
+import { useRouter } from "vue-router";
+
+const TEMP_PASSWORD = "TempPassword#1";
 
 export default () => {
   const loading: Ref<boolean> = ref(false);
@@ -22,14 +27,15 @@ export default () => {
     direction: SORT_ASCENDING,
   });
 
+  const router = useRouter();
   const { t } = useI18n();
-  const { user } = useUser();
+  const { organization } = useUser();
 
   async function loadContacts() {
     loading.value = true;
 
     const sortingExpression: string = getSortingExpression(sort.value);
-    const organizationId: string | undefined = user.value.contact!.organizationId;
+    const organizationId: string | undefined = organization.value!.id;
 
     if (!organizationId) {
       return;
@@ -55,6 +61,44 @@ export default () => {
     }
   }
 
+  async function addNewContact(payload: AddNewMember): Promise<IdentityResultType> {
+    try {
+      const { storeId } = globals;
+
+      const contact = await createContact({
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+        name: `${payload.firstName} ${payload.lastName}`,
+        emails: [payload.email],
+        organizations: [organization.value!.id],
+      });
+
+      const identityResult = await createUser({
+        roles: [{ id: payload.role.id, name: payload.role.name, permissions: [] }],
+        userName: payload.email,
+        password: TEMP_PASSWORD,
+        email: payload.email,
+        memberId: contact.id,
+        userType: "Customer",
+        storeId,
+      });
+
+      if (identityResult.succeeded) {
+        await requestPasswordReset({
+          loginOrEmail: payload.email,
+          urlSuffix: router.resolve({ name: "SetPassword" }).path,
+        });
+      }
+
+      return identityResult;
+    } catch (e) {
+      Logger.error(`useOrganizationContacts.${addNewContact.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     sort,
     itemsPerPage,
@@ -64,6 +108,7 @@ export default () => {
     loading: readonly(loading),
     contacts: computed(() => contacts.value),
     loadContacts,
+    addNewContact,
   };
 };
 

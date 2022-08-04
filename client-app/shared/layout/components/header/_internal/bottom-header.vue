@@ -24,7 +24,7 @@
       <SearchBar class="mx-5" />
 
       <div class="flex items-center pt-1.5 xl:pl-4 pr-5 space-x-5 xl:space-x-9">
-        <template v-for="item in desktopHeaderMenuLinks">
+        <template v-for="item in desktopHeaderMenuLinks" :key="item.id">
           <BottomHeaderLink
             v-if="item.id === 'compare'"
             :to="item.route"

@@ -41,7 +41,7 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
     try {
       const newList = await addWishlist(name);
       if (!newList.id) {
-        console.error(`${useWishlists.name}.${createWishlistAndAddProduct.name}`, 'newList.id error');
+        console.error(`${useWishlists.name}.${createWishlistAndAddProduct.name}`, "newList.id error");
       } else {
         await addItemsToWishlists([{ listId: newList.id, productId }]);
       }

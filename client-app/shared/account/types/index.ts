@@ -31,12 +31,7 @@ export type SignMeIn = {
 
 export type ForgotPassword = {
   email: string;
-  resetPasswordUrl: string;
-};
-
-export type ValidateToken = {
-  userId: string;
-  token: string;
+  resetPasswordUrlPath: string;
 };
 
 export type ResetPassword = {

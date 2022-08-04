@@ -33,7 +33,6 @@
         v-model.trim="emails"
         :placeholder="$t('shared.account.invite_member_dialog.emails_placeholder')"
         :is-disabled="loading"
-        :error-message="errors.emails"
         class="max-h-36 block"
         rows="2"
       />
@@ -51,6 +50,8 @@
         rows="3"
         class="max-h-48 block"
       />
+
+      <div class="text-xs text-[color:var(--color-danger)]">{{ errors.message }}</div>
     </form>
 
     <template #actions="{ close }">
@@ -76,7 +77,6 @@ import { useRouter } from "vue-router";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import globals from "@/core/globals";
-import { inviteUser } from "@/xapi/graphql/account";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 import { useI18n } from "vue-i18n";
@@ -94,7 +94,7 @@ const loading = ref(false);
 const errorText = ref("");
 
 const { t } = useI18n();
-const { organization } = useUser();
+const { organization, inviteUser } = useUser();
 const router = useRouter();
 const notifications = useNotifications();
 

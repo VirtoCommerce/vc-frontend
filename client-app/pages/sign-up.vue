@@ -151,7 +151,7 @@ const schema = yup.object({
     .string()
     .label("Confirm password")
     .required()
-    .oneOf([yup.ref("password"), null], t("pages.sign_up.errors.passwords_must_match")),
+    .oneOf([yup.ref("password"), null], t("common.messages.passwords_must_match")),
 });
 
 const { errors, handleSubmit, setFieldError } = useForm({

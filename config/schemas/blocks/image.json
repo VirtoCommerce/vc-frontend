@@ -3,7 +3,8 @@
   "settings": [
     {
       "id": "image",
-      "type": "image"
+      "type": "images",
+      "multiple": false
     }
   ]
 }

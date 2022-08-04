@@ -38,7 +38,7 @@
 import { PropType } from "vue";
 import { IFulfillmentCenter } from "@/shared/fulfillmentCenters";
 
-const props = defineProps({
+defineProps({
   branch: {
     type: Object as PropType<IFulfillmentCenter>,
     required: true,

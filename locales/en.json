@@ -28,7 +28,7 @@
       "actions": "Actions",
       "user_name": "Username",
       "password": "Password",
-      "confirm_password": "Confirm Password",
+      "confirm_password": "Confirm password",
       "first_name": "First Name",
       "last_name": "Last Name",
       "address": "Address",
@@ -62,7 +62,8 @@
       "creating_order_error": "Error when creating an order",
       "item_can_t_be_purchased": "This item cannot be purchased",
       "item_is_out_of_stock": "This item is out of stock",
-      "invalid_value": "Invalid value"
+      "invalid_value": "Invalid value",
+      "passwords_must_match": "Passwords must match"
     },
     "placeholders": {
       "not_selected": "Not selected",
@@ -165,7 +166,7 @@
         "categories_label": "Categories",
         "products_label": "Products",
         "no_results": "Your <strong>{searchPhrase}</strong> query did not return any results",
-        "enter_keyword_placeholder": "Products search",
+        "enter_keyword_placeholder": "Search for products here",
         "search_button": "Search",
         "view_all_results_button": "View all {total} results"
       },
@@ -226,11 +227,20 @@
         "reset_password_button": "Reset password",
         "password_must_match_message": "Passwords must match"
       },
+      "set_password_form": {
+        "password_label": "@:common.labels.password",
+        "password_placeholder": "Enter your password",
+        "confirm_password_label": "@:common.labels.confirm_password",
+        "confirm_password_placeholder": "Confirm your password",
+        "reset_password_button": "@:common.buttons.save",
+        "password_must_match_message": "Passwords must match"
+      },
       "forgot_password_form": {
         "email_label": "@:common.labels.email",
         "email_placeholder": "Enter your email",
         "submit_button": "@:common.buttons.submit",
-        "invalid_email_format_message": "Please enter valid email address, e.g. johndoe{'@'}gmail.com"
+        "invalid_email_format_message": "Please enter valid email address, e.g. johndoe{'@'}gmail.com",
+        "error_alert": "Invalid result of reset password request. Please contact to administrator if it is repeating."
       },
       "checkout_default_success_dialog": {
         "title": "Checkout Defaults",
@@ -286,6 +296,22 @@
         "end-date-label": "End date",
         "apply-button": "@:common.buttons.apply",
         "reset-button": "@:common.buttons.reset"
+      }
+    },
+    "company": {
+      "add_new_member_dialog": {
+        "title": "New member",
+        "role_label": "Role",
+        "role_placeholder": "Select role",
+        "first_name_label": "@:common.labels.first_name",
+        "first_name_placeholder": "Enter your first name",
+        "last_name_label": "@:common.labels.last_name",
+        "last_name_placeholder": "Enter your last name",
+        "email_label": "@:common.labels.email",
+        "email_placeholder": "@:common.placeholders.email",
+        "cancel_button": "@:common.buttons.cancel",
+        "add_button": "Add",
+        "successfully_text": "The user {0} has been successfully created"
       }
     },
     "cart": {
@@ -478,8 +504,8 @@
       "authorize_net": {
         "user_agreement_link": "User Agreement",
         "privacy_policy_link": "Privacy Policy",
-        "accept_terms_text": "By placing an order, you accept the terms of",
-        "processing_personal_data_text": "and consent to the processing of personal data according to the",
+        "accept_terms_text": "By placing an order, you accept the terms of our",
+        "processing_personal_data_text": "and agree that we may process your personal data as per our",
         "pay_now_button": "Pay Now",
         "loading_text": "Loading...",
         "errors": {
@@ -493,11 +519,11 @@
         }
       },
       "manual": {
-        "text": "Current method doesn't support online payment. Please",
-        "link": "contact site administrator"
+        "text": "The payment method you selected does not support paying online. Please choose another method or",
+        "link": "contact the website administrator"
       },
       "redirection": {
-        "text": "After you click <strong>{0}</strong> you will be Redirected to 3rd party payment service",
+        "text": "After you click <strong>{0}</strong>, you will be redirected to the third party payment service",
         "pay_now_button": "Pay Now",
         "try_again_button": "Try Again",
         "errors": {
@@ -544,8 +570,8 @@
         "ok_button": "@:common.buttons.ok"
       },
       "add_or_update_wishlist_dialog": {
-        "title": "New list",
-        "edit_mode_title": "List settings",
+        "title": "New List",
+        "edit_mode_title": "List Settings",
         "list_name_label": "List name",
         "list_name_placeholder": "Please enter name",
         "create_button": "Create list",
@@ -553,13 +579,13 @@
         "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_dialog": {
-        "title": "Delete warning",
+        "title": "Confirm Delete",
         "message": "Are you sure you want to remove the “<span class=\"font-extrabold\">{listName}</span>” list?",
         "delete_button": "@:common.buttons.delete",
         "cancel_button": "@:common.buttons.cancel"
       },
       "delete_wishlist_product_dialog": {
-        "title": "Delete warning",
+        "title": "Confirm Delete",
         "message": "Are you sure you want to remove “<span class=\"font-extrabold\">{productName}</span>” from the list?",
         "delete_button": "@:common.buttons.delete",
         "cancel_button": "@:common.buttons.cancel"
@@ -635,6 +661,17 @@
       "log_in_button": "Log in",
       "data_invalid_error_message": "User ID or token is invalid."
     },
+    "set_password": {
+      "meta": {
+        "title": "Registration"
+      },
+      "header": "Registration",
+      "home_button": "@:common.buttons.home",
+      "enter_new_password_message": "An account has been created for you, please set a password to login.",
+      "success_message": "Registration was successfully completed",
+      "log_in_button": "Continue",
+      "data_invalid_error_message": "User ID or token is invalid."
+    },
     "sign_in": {
       "meta": {
         "title": "@:pages.sign_in.header"
@@ -664,9 +701,25 @@
       "errors": {
         "PasswordTooShort": "Your password must be at least 8 characters long.",
         "InvalidEmail": "Please enter valid email address, e.g. johndoe{'@'}gmail.com",
-        "passwords_must_match": "Passwords must match",
         "email_not_unique": "This email is already registered with us"
       }
+    },
+    "confirm_invitation": {
+      "meta": {
+        "title": "@:pages.confirm_invitation.header"
+      },
+      "header": "Registration",
+      "text": "You received the invite to join your company.<br />Please complete the registration",
+      "first_name_label": "@:common.labels.first_name",
+      "first_name_placeholder": "Enter your first name",
+      "last_name_label": "@:common.labels.last_name",
+      "last_name_placeholder": "Enter your last name",
+      "email_label": "@:common.labels.email",
+      "password_label": "@:common.labels.password",
+      "password_placeholder": "@:common.placeholders.password",
+      "confirm_password_label": "@:common.labels.confirm_password",
+      "confirm_password_placeholder": "Confirm your password",
+      "register_button": "Register"
     },
     "account": {
       "addresses": {
@@ -946,7 +999,7 @@
         "title": "@:pages.checkout.title"
       },
       "title": "Checkout",
-      "invalid_checkout_message": "Something went wrong in your cart. Please check whether everything is correct and try again.",
+      "invalid_checkout_message": "Whoops! Something went wrong. Please check whether everything is correct and try again.",
       "clear_cart_dialog": {
         "title": "Clear cart",
         "message": "Do you want to clear your cart?",
@@ -997,7 +1050,7 @@
         }
       },
       "extra_section": {
-        "title": "Extra",
+        "title": "Additional Details",
         "comment_label": "Order comments"
       },
       "gifts_section": {
@@ -1033,7 +1086,7 @@
       "title": "Bulk Order Pad",
       "product_was_not_added_alert": "Products with following SKUs were not added to the cart: {0}",
       "data_is_invalid_alert": "The details you provided are invalid.",
-      "manually_tab": "Manually",
+      "manually_tab": "Enter Manually",
       "copy_n_paste_tab": "Copy and Paste"
     },
     "demo_landing": {

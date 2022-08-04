@@ -5,29 +5,21 @@
       "page_title_with_store_name": true,
       "page_title_store_name_align": "start",
       "page_title_divider": " · ",
-
       "product_compare_enabled": true,
       "product_compare_limit": 5,
       "wishlists_limit": 10,
-
       "search_min_chars": 3,
-
       "support_phone_number": "+31 416 652 803",
-
       "checkout_comment_enabled": true,
       "checkout_purchase_order_enabled": true,
       "checkout_coupon_enabled": true,
       "checkout_gifts_enabled": true,
-
       "logo_image": "/static/images/common/logo.svg",
       "logo_inverted_image": "/static/images/common/logo-white.svg",
       "favicon_image": "/static/icons/favicon-16x16.png",
       "homepage_background_image": "/static/images/home/main-banner.webp",
-
       "image_tools_enabled": true,
-
       "orders_statuses": ["New", "Processing", "Pending", "Cancelled", "Completed"],
-
       "social_sharing_services": [
         {
           "name": "Facebook",
@@ -50,7 +42,6 @@
           "url_template": "https://t.me/share/url?url={0}"
         }
       ],
-
       "color_primary": "#F0AD4E",
       "color_primary_hover": "#EC951A",
       "color_secondary": "#151B1E",

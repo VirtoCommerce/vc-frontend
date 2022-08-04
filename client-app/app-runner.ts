@@ -10,7 +10,7 @@ import { createI18n } from "@/i18n";
 import { createRouter } from "@/router";
 import { getBaseUrl } from "@/core/utilities";
 import App from "./App.vue";
-import PageBuilderBlocks from "@/builder-preview/pages/blocks";
+import PageBuilderBlocks from "@/pages/blocks";
 import * as UIKitComponents from "@/ui-kit/components";
 import client from "@/xapi/graphql-client";
 

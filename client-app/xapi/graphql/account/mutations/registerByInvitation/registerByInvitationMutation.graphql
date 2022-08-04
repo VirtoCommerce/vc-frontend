@@ -1,0 +1,9 @@
+mutation RegisterByInvitation($command: InputRegisterByInvitationType!) {
+  registerByInvitation(command: $command) {
+    succeeded
+    errors {
+      code
+      description
+    }
+  }
+}
