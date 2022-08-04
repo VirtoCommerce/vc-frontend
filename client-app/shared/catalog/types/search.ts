@@ -26,6 +26,6 @@ export type ProductsFacet = {
 
 export type ProductsFilters = {
   facets: ProductsFacet[];
-  inStock?: boolean;
-  availableIn?: string[];
+  inStock: boolean;
+  branches: string[];
 };

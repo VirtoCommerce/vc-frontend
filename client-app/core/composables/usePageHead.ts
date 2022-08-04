@@ -14,7 +14,7 @@ export default function usePageHead(data: UsePageSeoData) {
 
   const headObject: HeadObject = { meta: [] };
 
-  if (Object.hasOwn(data, "title")) {
+  if (Object.prototype.hasOwnProperty.call(data, "title")) {
     headObject.title = eagerComputed(() => {
       const textOrChunks = unref(data.title);
       const titleChunks: string[] = [];
