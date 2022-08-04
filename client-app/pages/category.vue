@@ -12,7 +12,7 @@
         <VcPopupSidebar
           v-if="isMobileSidebar"
           :is-visible="mobileSidebarVisible"
-          class="w-70 px-5 pt-5"
+          class="flex flex-col w-70 px-5 pt-5"
           @hide="hideMobileSidebar()"
         >
           <div class="relative mt-0.5 mb-6 pr-6">
@@ -28,6 +28,7 @@
           </div>
 
           <ProductsFiltersSidebar
+            class="grow"
             :keyword="keywordQueryParam"
             :filters="mobileFilters"
             :loading="loading || facetsLoading"
@@ -560,10 +561,10 @@ function onOpenBranchesDialog() {
   openPopup({
     component: BranchesDialog,
     props: {
-      selectedBranches: savedBranches.value,
+      selectedBranches: isMobileSidebar.value ? mobileFilters.availableIn : savedBranches.value,
       onClose() {
         if (isMobileSidebar.value) {
-          showMobileSidebar();
+          mobileSidebarVisible.value = true;
         }
       },
       onSave(branches: string[]) {
