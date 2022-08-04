@@ -7,7 +7,7 @@
         <VcButton class="uppercase p-4" is-outline @click="openInviteMemberDialog">
           {{ $t("pages.company.members.buttons.invite_members") }}
         </VcButton>
-        <VcButton class="uppercase px-5" is-outline @click="openAddNewMemberPopup">
+        <VcButton class="uppercase p-4" is-outline @click="openAddNewMemberPopup">
           {{ $t("pages.company.members.buttons.add_new_member") }}
         </VcButton>
       </div>

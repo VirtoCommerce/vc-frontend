@@ -87,5 +87,6 @@ onMounted(async () => {
 
 function onSucceeded() {
   isSucceeded.value = true;
+  window.scroll(0, 0);
 }
 </script>
