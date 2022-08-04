@@ -38,6 +38,7 @@ export function createRouter(options: { base: string }) {
         "SignUp",
         "ForgotPassword",
         "ResetPassword",
+        "SetPassword",
         "ConfirmInvitation"
       ).includes(to.name!)
     ) {
