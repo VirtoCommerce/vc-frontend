@@ -475,8 +475,6 @@ function onSearchStart(newKeyword: string) {
 function onFilterChanged(newFilters: ProductsFilters) {
   facetsQueryParam.value = getFilterExpressionFromFacets(newFilters.facets);
 
-  console.log("onFilterChanged", newFilters);
-
   if (isMobileSidebar.value) {
     savedInStock.value = newFilters.inStock;
     savedBranches.value = newFilters.availableIn;
@@ -488,7 +486,8 @@ async function onMobileFilterChanged(newFilters: ProductsFilters) {
     ...searchParams.value,
     filter: [
       getFilterExpressionFromFacets(newFilters.facets), //
-      getFilterExpressionForInStock(newFilters.inStock),
+      getFilterExpressionForInStock(newFilters.inStock || false),
+      getFilterExpressionForAvailableIn(newFilters.availableIn || []),
     ]
       .filter(Boolean)
       .join(" "),
