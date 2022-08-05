@@ -1,78 +1,453 @@
 <template>
-  <!-- Dropdown menu -->
-  <div v-if="children?.length" ref="submenu" class="relative">
+  <div class="w-full bg-white columns-4 xl:columns-5 px-10">
     <div
-      class="flex items-center cursor-pointer px-[0.8rem] py-[0.55rem] border-2 border-primary rounded text-sm"
-      @click="submenuVisible = !submenuVisible"
+      v-for="(category, index) in categories"
+      :key="index"
+      class="w-full min-h-[13rem] break-inside-avoid p-5"
+      :class="[(index + 1) % maxRowsNumber === 0 ? 'break-after-column' : 'break-after-avoid']"
     >
-      <div
-        class="uppercase font-bold text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)] tracking-wide"
-      >
-        <slot>{{ title }}</slot>
-      </div>
+      <a href="#" class="font-bold">{{ category.name }}</a>
 
-      <i
-        class="fas ml-3 text-[color:var(--color-primary)] align-baseline"
-        :class="[submenuVisible ? 'fa-chevron-up' : 'fa-chevron-down']"
-      />
-    </div>
-
-    <div
-      v-if="submenuVisible"
-      class="absolute z-10 bg-[color:var(--color-header-bottom-dropdown-bg)] rounded-md shadow-lg w-60 flex flex-col px-5 py-4 space-y-3 mt-2"
-    >
-      <template v-for="item in children" :key="item.title">
-        <slot name="item" v-bind="{ item }">
-          <router-link
-            :to="item.route"
-            class="font-bold text-[color:var(--color-header-bottom-dropdown-link)] hover:text-[color:var(--color-header-bottom-dropdown-link-hover)] text-sm"
-            @click="submenuVisible = false"
-          >
-            {{ item.title }}
-          </router-link>
-        </slot>
+      <template v-for="(sub, key) in category.sub" :key="key">
+        <div v-if="(showMoreIndex !== index && key < 5) || showMoreIndex === index">
+          <a href="#">{{ sub.name }}</a>
+        </div>
       </template>
+
+      <div
+        v-if="category.sub.length > 5"
+        @click="showMoreIndex = index"
+        class="underline cursor-pointer text-[color:var(--color-link)]"
+      >
+        Show more
+      </div>
     </div>
   </div>
-
-  <!-- Regular link -->
-  <router-link
-    v-else-if="to"
-    :to="to"
-    class="flex items-center cursor-pointer px-[0.8rem] py-[0.55rem] border-2 border-primary rounded text-sm uppercase font-bold text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)] tracking-wide"
-    :class="$attrs.class"
-  >
-    <slot>{{ title }}</slot>
-  </router-link>
 </template>
 
 <script setup lang="ts">
-import { PropType, ref, shallowRef } from "vue";
-import { onClickOutside } from "@vueuse/core";
-import { MenuLink } from "@/shared/layout";
-import { RouteLocationRaw } from "vue-router";
+import { ref, computed } from "vue";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
-defineProps({
-  title: {
-    type: String,
-    default: "",
-  },
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isXL = breakpoints.smaller("xl");
+const showMoreIndex = ref<number>(null);
 
-  to: {
-    type: [String, Object] as PropType<RouteLocationRaw>,
-    default: undefined,
-  },
-
-  children: {
-    type: Array as PropType<MenuLink[]>,
-    default: null,
-  },
+const columnsCount = computed(() => {
+  return isXL.value ? 4 : 5;
 });
 
-const submenu = shallowRef<HTMLElement | null>(null);
-const submenuVisible = ref(false);
+const categories = ref([
+  {
+    name: "Category 1",
+    sub: [
+      {
+        name: "Subcategory 1",
+      },
+      {
+        name: "Subcategory 2",
+      },
+      {
+        name: "Subcategory 3",
+      },
+      {
+        name: "Subcategory 4",
+      },
+      {
+        name: "Subcategory 5",
+      },
+      {
+        name: "Subcategory 6",
+      },
+      {
+        name: "Subcategory 3",
+      },
+      {
+        name: "Subcategory 4",
+      },
+      {
+        name: "Subcategory 5",
+      },
+      {
+        name: "Subcategory 6",
+      },
+      {
+        name: "Subcategory 6",
+      },
+      {
+        name: "Subcategory 3",
+      },
+      {
+        name: "Subcategory 4",
+      },
+      {
+        name: "Subcategory 5",
+      },
+      {
+        name: "Subcategory 6",
+      },
+    ],
+  },
+  {
+    name: "Category 2",
+    sub: [
+      {
+        name: "Subcategory 1",
+      },
+      {
+        name: "Subcategory 2",
+      },
+      {
+        name: "Subcategory 3",
+      },
+      {
+        name: "Subcategory 4",
+      },
+      {
+        name: "Subcategory 5",
+      },
+      {
+        name: "Subcategory 6",
+      },
+    ],
+  },
+  {
+    name: "Category 3",
+    sub: [
+      {
+        name: "Subcategory 1",
+      },
+      {
+        name: "Subcategory 2",
+      },
+      {
+        name: "Subcategory 3",
+      },
+      {
+        name: "Subcategory 4",
+      },
+      {
+        name: "Subcategory 5",
+      },
+      {
+        name: "Subcategory 6",
+      },
+    ],
+  },
+  {
+    name: "Category 4",
+    sub: [
+      {
+        name: "Subcategory 1",
+      },
+      {
+        name: "Subcategory 2",
+      },
+      {
+        name: "Subcategory 3",
+      },
+    ],
+  },
+  {
+    name: "Category 5",
+    sub: [
+      {
+        name: "Subcategory 1",
+      },
+      {
+        name: "Subcategory 6",
+      },
+      {
+        name: "Subcategory 3",
+      },
+      {
+        name: "Subcategory 4",
+      },
+      {
+        name: "Subcategory 5",
+      },
+      {
+        name: "Subcategory 6",
+      },
+      {
+        name: "Subcategory 2",
+      },
+      {
+        name: "Subcategory 3",
+      },
+      {
+        name: "Subcategory 4",
+      },
+      {
+        name: "Subcategory 6",
+      },
+      {
+        name: "Subcategory 3",
+      },
+      {
+        name: "Subcategory 4",
+      },
+      {
+        name: "Subcategory 5",
+      },
+      {
+        name: "Subcategory 6",
+      },
+      {
+        name: "Subcategory 5",
+      },
+      {
+        name: "Subcategory 6",
+      },
+      {
+        name: "Subcategory 1",
+      },
+      {
+        name: "Subcategory 6",
+      },
+      {
+        name: "Subcategory 3",
+      },
+      {
+        name: "Subcategory 4",
+      },
+      {
+        name: "Subcategory 5",
+      },
+      {
+        name: "Subcategory 6",
+      },
+      {
+        name: "Subcategory 2",
+      },
+      {
+        name: "Subcategory 3",
+      },
+      {
+        name: "Subcategory 4",
+      },
+      {
+        name: "Subcategory 6",
+      },
+      {
+        name: "Subcategory 3",
+      },
+      {
+        name: "Subcategory 4",
+      },
+      {
+        name: "Subcategory 5",
+      },
+      {
+        name: "Subcategory 6",
+      },
+      {
+        name: "Subcategory 5",
+      },
+      {
+        name: "Subcategory 6",
+      },
+    ],
+  },
+  {
+    name: "Category 6",
+    sub: [
+      {
+        name: "Subcategory 1",
+      },
+      {
+        name: "Subcategory 2",
+      },
+      {
+        name: "Subcategory 3",
+      },
+      {
+        name: "Subcategory 4",
+      },
+      {
+        name: "Subcategory 5",
+      },
+      {
+        name: "Subcategory 6",
+      },
+    ],
+  },
+  {
+    name: "Category 7",
+    sub: [
+      {
+        name: "Subcategory 1",
+      },
+      {
+        name: "Subcategory 2",
+      },
+      {
+        name: "Subcategory 3",
+      },
+      {
+        name: "Subcategory 4",
+      },
+      {
+        name: "Subcategory 5",
+      },
+      {
+        name: "Subcategory 6",
+      },
+    ],
+  },
+  {
+    name: "Category 8",
+    sub: [
+      {
+        name: "Subcategory 1",
+      },
+      {
+        name: "Subcategory 2",
+      },
+      {
+        name: "Subcategory 3",
+      },
+      {
+        name: "Subcategory 4",
+      },
+    ],
+  },
+  {
+    name: "Category 9",
+    sub: [
+      {
+        name: "Subcategory 1",
+      },
+      {
+        name: "Subcategory 2",
+      },
+      {
+        name: "Subcategory 3",
+      },
+      {
+        name: "Subcategory 4",
+      },
+      {
+        name: "Subcategory 5",
+      },
+      {
+        name: "Subcategory 6",
+      },
+    ],
+  },
+  {
+    name: "Category 10",
+    sub: [
+      {
+        name: "Subcategory 1",
+      },
+      {
+        name: "Subcategory 2",
+      },
+      {
+        name: "Subcategory 3",
+      },
+      {
+        name: "Subcategory 4",
+      },
+      {
+        name: "Subcategory 5",
+      },
+      {
+        name: "Subcategory 6",
+      },
+      {
+        name: "Subcategory 1",
+      },
+      {
+        name: "Subcategory 2",
+      },
+      {
+        name: "Subcategory 3",
+      },
+      {
+        name: "Subcategory 4",
+      },
+      {
+        name: "Subcategory 5",
+      },
+      {
+        name: "Subcategory 6",
+      },
+      {
+        name: "Subcategory 1",
+      },
+      {
+        name: "Subcategory 2",
+      },
+      {
+        name: "Subcategory 3",
+      },
+      {
+        name: "Subcategory 4",
+      },
+      {
+        name: "Subcategory 5",
+      },
+      {
+        name: "Subcategory 6",
+      },
+    ],
+  },
+  {
+    name: "Category 11",
+    sub: [
+      {
+        name: "Subcategory 1",
+      },
+      {
+        name: "Subcategory 2",
+      },
+      {
+        name: "Subcategory 3",
+      },
+      {
+        name: "Subcategory 4",
+      },
+      {
+        name: "Subcategory 5",
+      },
+      {
+        name: "Subcategory 6",
+      },
+    ],
+  },
+  {
+    name: "Category 12",
+    sub: [
+      {
+        name: "Subcategory 1",
+      },
+      {
+        name: "Subcategory 2",
+      },
+    ],
+  },
+  {
+    name: "Category 13",
+    sub: [
+      {
+        name: "Subcategory 1",
+      },
+      {
+        name: "Subcategory 2",
+      },
+      {
+        name: "Subcategory 3",
+      },
+      {
+        name: "Subcategory 4",
+      },
+    ],
+  },
+]);
 
-onClickOutside(submenu, () => {
-  submenuVisible.value = false;
+const maxRowsNumber = computed(() => {
+  return Math.ceil(categories.value.length / columnsCount.value);
 });
 </script>

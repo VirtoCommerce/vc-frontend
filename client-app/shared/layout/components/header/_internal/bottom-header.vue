@@ -1,6 +1,8 @@
 <template>
   <div class="relative">
-    <div class="px-4 xl:px-[3.2rem] py-3 min-h-[5.5rem] flex items-center bg-[color:var(--color-header-bottom-bg)]">
+    <div
+      class="z-[2] relative px-4 xl:px-[3.2rem] py-3 min-h-[5.5rem] flex items-center bg-[color:var(--color-header-bottom-bg)]"
+    >
       <router-link to="/">
         <VcImage :src="$cfg.logo_image" class="h-8 xl:h-[2.8rem]" lazy />
       </router-link>
@@ -13,13 +15,18 @@
         </div>
       </template>
 
-      <CatalogDropdown
-        v-if="catalogMenuLink"
-        class="ml-5 xl:ml-[1.85rem]"
-        :title="catalogMenuLink.title"
-        :to="catalogMenuLink.route"
-        :children="catalogMenuLink.children"
-      />
+      <!-- Catalog button -->
+      <button
+        class="flex items-center ml-5 cursor-pointer select-none px-[0.8rem] py-[0.55rem] border-2 border-primary rounded text-sm text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)]"
+        @click="catalogVisible = !catalogVisible"
+      >
+        <div class="uppercase font-bold tracking-wide">Catalog</div>
+
+        <i
+          class="fas ml-3 text-[color:var(--color-primary)] align-baseline"
+          :class="[catalogVisible ? 'fa-chevron-up' : 'fa-chevron-down']"
+        />
+      </button>
 
       <SearchBar class="mx-5" />
 
@@ -39,14 +46,26 @@
             :icon="item.icon"
             :badge="String(cart.itemsQuantity)"
           />
-          <BottomHeaderLink v-else :key="item.title" :to="item.route" :title="item.title" :icon="item.icon" />
+          <BottomHeaderLink v-else :to="item.route" :title="item.title" :icon="item.icon" />
         </template>
       </div>
     </div>
+
+    <!-- Catalog dropdown -->
+
+    <transition
+      enter-from-class="-translate-y-full"
+      leave-to-class="-translate-y-full"
+      enter-active-class="will-change-transform"
+      leave-active-class="will-change-transform"
+    >
+      <CatalogDropdown v-if="catalogVisible" class="absolute transition-transform duration-200" />
+    </transition>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import CatalogDropdown from "./catalog-dropdown.vue";
 import BottomHeaderLink from "./bottom-header-link.vue";
 import { useCart } from "@/shared/cart";
@@ -56,6 +75,8 @@ import { useUser } from "@/shared/account";
 
 const { organization } = useUser();
 const { cart } = useCart();
-const { mobileCatalogMenuLink: catalogMenuLink, desktopHeaderMenuLinks } = useNavigations();
+const { desktopHeaderMenuLinks } = useNavigations();
 const { productsIds } = useCompareProducts();
+
+const catalogVisible = ref(false);
 </script>
