@@ -3,34 +3,27 @@ import { useStaticPage } from "@/core/composables";
 
 export default {
   install: (_app: App, options: any) => {
-    console.log("install buidler preview plugin");
     const bodyEl = document.getElementsByTagName("body").item(0);
     if (bodyEl) {
       bodyEl.style.visibility = "hidden";
     }
-
     window.addEventListener("message", (event: MessageEvent) => {
-      if (event.origin !== document.location.origin) {
+      if (event.origin !== document.location.origin || event.data.source !== "builder") {
         // note: it can be cause of some problems. investigate it.
         return;
       }
-      if (event.data.source === "builder") {
-        if (bodyEl) {
-          bodyEl.style.visibility = "visible";
-        }
-        if (event.data.type === "changed") {
+      if (bodyEl) {
+        bodyEl.style.visibility = "visible";
+      }
+      switch (event.data.type) {
+        case "changed":
           useStaticPage(event.data.model.template);
-        } else if (event.data.type === "navigate") {
-          if (event.data.url !== options.router.currentRoute.fullPath) {
-            console.log("navigate to", event.data.url);
-            options.router.push(event.data.url);
-          }
-        }
+          break;
+        case "navigate":
+          options.router.push(event.data.url);
+          break;
       }
     });
-
     window.parent.postMessage({ source: "preview", type: "loaded" }, window.location.origin);
-
-    // todo: add ability to send messages when something occurs in storefront, for example react to navigate event
   },
 };
