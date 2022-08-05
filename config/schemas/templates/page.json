@@ -13,5 +13,5 @@
     }
   ],
   "type": "pages",
-  "sections": ["image", "text"]
+  "sections": ["image", "text", "header-settings"]
 }
