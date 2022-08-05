@@ -112,7 +112,6 @@ const props = defineProps({
   keyword: {
     type: String,
     default: "",
-    required: true,
   },
 
   filters: {
