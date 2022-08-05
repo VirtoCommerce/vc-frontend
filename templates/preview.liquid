@@ -28,7 +28,7 @@
         script.type = "text/javascript";
         script.src = platformUrl + relativeUrl;
         script.onload = function() {
-          window['designerPreviewApp'](frame);
+          window['designerPreviewApp'](frame, platformUrl);
         };
         document.body.appendChild(script);
     })();

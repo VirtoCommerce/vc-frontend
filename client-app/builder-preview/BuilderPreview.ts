@@ -3,10 +3,6 @@ import { useStaticPage } from "@/core/composables";
 
 export default {
   install: (app: App, options: any) => {
-    console.log("install buidler preview plugin");
-    console.log(app);
-    options.router.push("/");
-
     window.addEventListener("message", (event: MessageEvent) => {
       if (event.origin !== document.location.origin) {
         // note: it can be cause of some problems. investigate it.
@@ -16,10 +12,13 @@ export default {
         if (event.data.type === "changed") {
           useStaticPage(event.data.model.template);
         } else if (event.data.type === "navigate") {
-          console.log("navigate to", event.data.url);
-          options.router.push(event.data.url);
+          if (event.data.url !== options.router.currentRoute.fullPath) {
+            options.router.push(event.data.url);
+          }
         }
       }
     });
+
+    window.parent.postMessage({ source: "preview", type: "loaded" }, window.location.origin);
   },
 };

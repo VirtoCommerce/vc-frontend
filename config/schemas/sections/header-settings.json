@@ -5,15 +5,27 @@
   "static": "top",
   "settings": [
     {
-      "id": "metaTitle",
-      "label": "Meta title",
-      "type": "string"
-    },
-    {
-      "id": "metaDescription",
-      "label": "Meta description",
-      "type": "string",
-      "multiline": true
+      "id": "seoInfo",
+      "type": "object",
+      "title": "SEO info",
+      "element": [
+        {
+          "id": "pageTitle",
+          "label": "Page title",
+          "type": "string"
+        },
+        {
+          "id": "metaKeywords",
+          "label": "Meta keywords",
+          "type": "string"
+        },
+        {
+          "id": "metaDescription",
+          "label": "Meta description",
+          "type": "string",
+          "multiline": true
+        }
+      ]
     }
   ]
 }
