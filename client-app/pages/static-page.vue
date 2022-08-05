@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container mx-auto pt-5 pb-52 px-7 max-w-screen-lg">
     <component v-for="item in template.content" :key="item.id" :is="item.type" :model="item" />
   </div>
 </template>
