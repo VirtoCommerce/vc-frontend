@@ -84,9 +84,8 @@ import _ from "lodash";
 import { ROLES } from "@/core/securityConstants";
 import { ref, shallowRef } from "vue";
 import { VcPopup } from "@/ui-kit/components";
-import { useOrganizationContacts } from "@/shared/account";
+import { useOrganizationContacts } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
-
 import { Role } from "@/core/types/role";
 
 const { t } = useI18n();
