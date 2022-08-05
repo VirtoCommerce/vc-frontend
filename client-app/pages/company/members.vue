@@ -172,9 +172,8 @@ import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { ref, onMounted } from "vue";
 import { usePopup } from "@/shared/popup";
-import { InviteMemberDialog, useOrganizationContacts } from "@/shared/account";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
-import { AddNewCompanyMemberDialog } from "@/shared/company";
+import { AddNewCompanyMemberDialog, InviteMemberDialog, useOrganizationContacts } from "@/shared/company";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
 const { t } = useI18n();

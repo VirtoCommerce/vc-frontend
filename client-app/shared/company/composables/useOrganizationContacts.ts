@@ -1,20 +1,13 @@
-<<<<<<< HEAD
 import { getOrganizationContacts, createContact, createUser, requestPasswordReset } from "@/xapi/graphql/account";
-import { ContactType, IdentityResultType, UserType } from "@/xapi/types";
-=======
-import getOrganizationContacts from "@/xapi/graphql/account/queries/getOrganizationContacts";
-import { ContactType } from "@/xapi/types";
->>>>>>> dev
+import { ContactType, IdentityResultType } from "@/xapi/types";
 import { ref, shallowRef, Ref, readonly, computed } from "vue";
 import { Logger } from "@/core/utilities";
-import { ISortInfo } from "../types";
+import { getSortingExpression, ISortInfo, useUser } from "@/shared/account";
 import { DEFAULT_PAGE_SIZE, SORT_ASCENDING } from "@/core/constants";
-import { convertToOrganizationContact, getSortingExpression } from "../utils";
-import useUser from "./useUser";
 import _ from "lodash";
 import { OrganizationContactType } from "@/core/types";
 import { useI18n } from "vue-i18n";
-import { AddNewMember } from "@/shared/company";
+import { AddNewMember, convertToOrganizationContact } from "@/shared/company";
 import globals from "@/core/globals";
 import { useRouter } from "vue-router";
 
