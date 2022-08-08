@@ -1,40 +1,39 @@
 <template>
   <!-- category selector -->
-  <VcCard v-if="!loading || selectedCategory" :withHeader="!!backCategory">
+  <VcFilterCard v-if="!loading || selectedCategory" :withHeader="!!backCategory">
     <template #header>
-      <router-link :to="getCategoryRoute(backCategory!)" class="text-sm">
-        <i class="fas fa-chevron-left text-[color:var(--color-primary)] cursor-pointer"></i>
-        <span class="font-bold ml-2">
+      <router-link :to="getCategoryRoute(backCategory!)" class="pl-0.5 text-[color:var(--color-filter-card-header)]">
+        <i class="fas fa-chevron-left text-[color:var(--color-primary)]"></i>
+        <span class="font-bold ml-1.5">
           {{ backCategory?.label }}
         </span>
       </router-link>
     </template>
-    <div class="text-sm">
-      <div v-if="selectedCategory">
-        <div class="uppercase font-extrabold mb-1">{{ categoryLabel }}</div>
-        <div class="pl-2 flex flex-col">
-          <router-link
-            class="hover:bg-gray-100 px-2 py-0.5 mt-0.5 transition-colors"
-            v-for="category in categoryItems"
-            :key="category.id"
-            :class="{ 'font-bold': category.id === selectedCategory.id }"
-            :to="categoriesRoutes[category.id!]"
-            >{{ category.label }}</router-link
-          >
-        </div>
+    <template v-if="selectedCategory">
+      <div class="uppercase font-extrabold -mt-0.5 mb-1 text-13-title text-[color:var(--color-filter-card-header)]">
+        {{ categoryLabel }}
       </div>
-    </div>
-  </VcCard>
+      <div class="-mr-1.5 pl-5 pb-1.5 flex flex-col text-sm">
+        <router-link
+          class="hover:bg-gray-100 py-0.5 mt-0.5 transition-colors truncate"
+          v-for="category in categoryItems"
+          :key="category.id"
+          :class="{
+            'font-bold text-[color:var(--color-filter-card-header)]': category.id === selectedCategory.id,
+            'text-[color:var(--color-category-selector-link)]': category.id !== selectedCategory.id,
+          }"
+          :to="categoriesRoutes[category.id!]"
+          >{{ category.label }}</router-link
+        >
+      </div>
+    </template>
+  </VcFilterCard>
   <!-- skeleton -->
   <template v-else>
-    <VcCardSkeleton>
-      <div class="text-sm">
-        <div class="uppercase font-extrabold mb-1 bg-gray-100">&nbsp;</div>
-        <div class="pl-2 flex flex-col">
-          <div class="bg-gray-100 px-2 mt-1" v-for="i in 6" :key="i">&nbsp;</div>
-        </div>
-      </div>
-    </VcCardSkeleton>
+    <VcFilterCardSkeleton>
+      <div class="h-5 mb-1.5 bg-gray-100">&nbsp;</div>
+      <div class="ml-6 mb-1.5 h-4 bg-gray-100" v-for="i in 6" :key="i">&nbsp;</div>
+    </VcFilterCardSkeleton>
   </template>
 </template>
 

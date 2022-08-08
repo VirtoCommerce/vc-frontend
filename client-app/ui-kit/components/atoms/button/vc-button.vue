@@ -30,9 +30,9 @@ import { eagerComputed } from "@vueuse/core";
 
 const props = defineProps({
   kind: {
-    type: String as PropType<"primary" | "secondary" | "success" | "warning" | "danger">,
+    type: String as PropType<"primary" | "secondary" | "success" | "warning" | "danger" | "custom">,
     default: "primary",
-    validator: (value: string) => ["primary", "secondary", "success", "warning", "danger"].includes(value),
+    validator: (value: string) => ["primary", "secondary", "success", "warning", "danger", "custom"].includes(value),
   },
 
   size: {

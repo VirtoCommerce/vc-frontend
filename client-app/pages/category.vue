@@ -1,28 +1,34 @@
 <template>
-  <div class="bg-gray-100 pt-7 pb-16 shadow-inner grow" :class="{ 'polygon-gray-bg': !products.length && !loading }">
-    <div class="max-w-screen-2xl px-5 md:px-12 mx-auto">
+  <div
+    class="bg-gray-100 pt-4 pb-16 shadow-inner grow lg:pt-6"
+    :class="{ 'polygon-gray-bg': !products.length && !loading }"
+  >
+    <div class="max-w-screen-2xl px-5 xl:pl-17 xl:pr-19 mx-auto">
       <!-- Breadcrumbs -->
-      <Breadcrumbs class="mb-2 md:mb-8" :items="breadcrumbs" />
+      <Breadcrumbs class="mb-2.5 md:mb-4" :items="breadcrumbs" />
 
       <div class="flex items-start lg:gap-6">
         <!-- Mobile sidebar back cover -->
         <VcPopupSidebar
           v-if="isMobileSidebar"
           :is-visible="mobileSidebarVisible"
-          class="w-72 px-5 pt-12"
+          class="flex flex-col w-70 px-5 pt-5"
           @hide="hideMobileSidebar()"
         >
-          <div class="relative">
-            <button class="absolute -right-3 appearance-none px-3 py-1" @click="hideMobileSidebar()">
-              <span class="text-2xl fa fa-times text-[color:var(--color-primary)]"></span>
+          <div class="relative mt-0.5 mb-6 pr-6">
+            <div class="font-semibold text-26 pt-1 break-words">
+              {{ $t("common.buttons.filters") }}
+            </div>
+
+            <button class="absolute top-2.5 right-1" @click="hideMobileSidebar()">
+              <svg class="w-5 h-5 text-[color:var(--color-primary)]">
+                <use href="/static/images/delete.svg#main" />
+              </svg>
             </button>
           </div>
 
-          <div class="font-semibold text-2xl pt-1 mb-6">
-            {{ $t("common.buttons.filters") }}
-          </div>
-
           <ProductsFiltersSidebar
+            class="grow"
             :keyword="keywordQueryParam"
             :filters="mobileFilters"
             :loading="loading || facetsLoading"
@@ -30,8 +36,8 @@
               onSearchStart($event);
               hideMobileSidebar();
             "
-            @change="onMobileFilterChanged($event)"
-            @openBranches="onOpenBranchesDialog"
+            @change="updateMobileFilters($event)"
+            @openBranches="openBranchesDialog(true)"
           />
 
           <div class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
@@ -54,7 +60,7 @@
                 size="lg"
                 :is-disabled="!isMobileFilterDirty"
                 @click="
-                  onFilterChanged(mobileFilters);
+                  applyFilters(mobileFilters);
                   hideMobileSidebar();
                 "
               >
@@ -65,62 +71,55 @@
         </VcPopupSidebar>
 
         <!-- Sidebar -->
-        <div v-else class="flex flex-col gap-4 lg:gap-5 lg:w-1/4 xl:w-1/5 flex-shrink-0">
-          <CategorySelector :selected-category="selectedCategory" :loading="loading"></CategorySelector>
+        <div v-else class="space-y-5 w-60 flex-shrink-0 pt-2">
+          <CategorySelector :selected-category="selectedCategory" :loading="loading" />
 
           <ProductsFiltersSidebar
             :keyword="keywordQueryParam"
-            :filters="{ facets, inStock: savedInStock }"
+            :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
             :loading="loading"
             @search="onSearchStart($event)"
-            @change="onFilterChanged($event)"
+            @change="applyFilters($event)"
           />
         </div>
 
         <!-- Content -->
-        <div class="lg:w-3/4 xl:w-4/5 flex-grow">
-          <h2 class="text-gray-800 text-2xl lg:text-3xl font-bold uppercase">{{ selectedCategory?.label }}</h2>
+        <div class="flex-grow">
+          <div class="flex">
+            <h2 class="text-gray-800 text-21 font-bold uppercase lg:my-px lg:text-25">
+              <span>{{ selectedCategory?.label }}</span>
 
-          <p class="py-3">
-            <span class="font-extrabold">{{ $t("pages.catalog.products_found_message", [total]) }}</span>
-          </p>
+              <sup
+                class="ml-2 normal-case font-normal whitespace-nowrap text-sm lg:text-15 -top-1 lg:-top-[0.5em] text-[color:var(--color-category-page-results)]"
+              >
+                <b class="font-extrabold">{{ total }}</b>
+                {{ $t("pages.catalog.products_found_message", total) }}
+              </sup>
+            </h2>
+          </div>
 
-          <div ref="stickyMobileHeaderAnchor" class="-mb-2"></div>
+          <div class="-mt-px" ref="stickyMobileHeaderAnchor"></div>
 
           <div
-            class="sticky lg:relative top-0 z-10 flex items-center h-14 mt-2 mb-3"
+            class="sticky top-0 z-10 flex items-center h-14 my-1.5 lg:relative lg:justify-end lg:flex-wrap lg:mb-3.5 lg:mt-3 lg:h-auto"
             :class="{
               'z-40 px-5 md:px-12 -mx-5 md:-mx-12 bg-[color:var(--color-header-bottom-bg)]':
                 isVisibleStickyMobileHeader,
             }"
           >
             <!-- Mobile filters toggler -->
-            <div class="lg:hidden mr-3">
-              <VcButton class="px-4 font-extrabold" size="md" @click="showMobileSidebar">
-                <i class="fas fa-filter mr-1"></i> {{ $t("pages.catalog.filters_button") }}
+            <div class="lg:hidden mr-2.5">
+              <VcButton class="pl-2.5 pr-2 !text-15 font-bold !font-lato" size="md" @click="showMobileSidebar">
+                <i class="fas fa-filter mr-2"></i> {{ $t("pages.catalog.filters_button") }}
               </VcButton>
             </div>
 
-            <!-- View options -->
-            <ViewMode v-model:mode="savedViewMode" class="hidden md:inline-flex mr-auto" />
-
-            <div v-if="!isMobileSidebar" class="relative ml-6 cursor-pointer" @click="onOpenBranchesDialog">
-              <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading">
-                <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div">
-                  <b v-if="savedBranches.length" class="text-[color:var(--color-link)]">
-                    {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: savedBranches.length }) }}
-                  </b>
-                  <template v-else>
-                    {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: savedBranches.length }) }}
-                  </template>
-                </i18n-t>
-              </VcCheckbox>
-              <div class="absolute inset-0"></div>
-            </div>
-
             <!-- Sorting -->
-            <div class="flex items-center flex-grow md:flex-grow-0 z-10 ml-6">
-              <span class="hidden lg:block shrink-0 mr-2" v-t="'pages.catalog.sort_by_label'"></span>
+            <div class="flex items-center flex-grow z-10 ml-auto lg:ml-4 lg:flex-grow-0 lg:order-4 xl:ml-8">
+              <span
+                class="hidden lg:block shrink-0 mr-2 text-15 font-bold text-[color:var(--color-category-page-label)]"
+                v-t="'pages.catalog.sort_by_label'"
+              />
 
               <VcSelect
                 v-model="sortQueryParam"
@@ -128,9 +127,47 @@
                 value-field="id"
                 :is-disabled="loading"
                 :items="PRODUCT_SORTING_LIST"
-                class="w-full md:w-52 lg:w-64"
+                class="w-full lg:w-48"
               />
             </div>
+
+            <!-- View options -->
+            <ViewMode
+              v-if="!isMobileSidebar"
+              v-model:mode="savedViewMode"
+              class="inline-flex ml-3 lg:order-1 lg:ml-0 lg:mr-auto"
+            />
+
+            <!-- Branch availability -->
+            <button v-if="!isMobileSidebar" class="order-3 ml-4 xl:ml-6" @click.prevent="openBranchesDialog(false)">
+              <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading">
+                <i18n-t
+                  keypath="pages.catalog.branch_availability_filter_card.available_in"
+                  tag="div"
+                  class="text-15"
+                  :class="{
+                    'text-[color:var(--color-category-page-checkbox-label)]': !savedBranches.length,
+                  }"
+                  scope="global"
+                >
+                  <span :class="{ 'font-bold text-[color:var(--color-link)]': savedBranches.length }">
+                    {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: savedBranches.length }) }}
+                  </span>
+                </i18n-t>
+              </VcCheckbox>
+            </button>
+
+            <!-- In Stock -->
+            <VcCheckbox v-if="!isMobileSidebar" class="order-2 ml-4 xl:ml-8" v-model="savedInStock" :disabled="loading">
+              <span
+                class="text-15 whitespace-nowrap"
+                :class="{
+                  'text-[color:var(--color-category-page-checkbox-label)]': !savedInStock,
+                }"
+              >
+                {{ $t("pages.catalog.instock_filter_card.checkbox_label_desktop") }}
+              </span>
+            </VcCheckbox>
           </div>
 
           <!-- Filters chips -->
@@ -209,7 +246,7 @@
           <!-- Empty view -->
           <VcEmptyView
             :text="
-              isExistSelectedFacets || savedInStock || keywordQueryParam
+              isExistSelectedFacets || savedInStock || savedBranches.length || keywordQueryParam
                 ? $t('pages.catalog.no_products_filtered_message')
                 : $t('pages.catalog.no_products_message')
             "
@@ -349,11 +386,12 @@ const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeade
 
 const page = ref(1);
 const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
+
 const mobileSidebarVisible = ref(false);
 const mobileFilters = shallowReactive<ProductsFilters>({
   facets: [],
   inStock: savedInStock.value,
-  availableIn: savedBranches.value,
+  branches: savedBranches.value,
 });
 
 // region Computed properties
@@ -387,7 +425,11 @@ const isExistSelectedMobileFacets = eagerComputed<boolean>(() =>
 const isMobileFilterDirty = eagerComputed<boolean>(
   () =>
     JSON.stringify(mobileFilters) !==
-    JSON.stringify({ facets: facets.value, inStock: savedInStock.value, availableIn: savedBranches.value })
+    JSON.stringify({
+      facets: facets.value,
+      inStock: savedInStock.value,
+      branches: savedBranches.value,
+    } as ProductsFilters)
 );
 
 const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
@@ -418,7 +460,7 @@ const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
 function showMobileSidebar() {
   mobileFilters.facets = _.cloneDeep(facets.value);
   mobileFilters.inStock = savedInStock.value;
-  mobileFilters.availableIn = savedBranches.value;
+  mobileFilters.branches = savedBranches.value.slice();
   mobileSidebarVisible.value = true;
 }
 
@@ -434,29 +476,37 @@ function onSearchStart(newKeyword: string) {
   }
 }
 
-function onFilterChanged(newFilters: ProductsFilters) {
-  facetsQueryParam.value = getFilterExpressionFromFacets(newFilters.facets);
-  savedInStock.value = newFilters.inStock;
+function applyFilters(newFilters: ProductsFilters) {
+  const facetsFilterExpression: string = getFilterExpressionFromFacets(newFilters.facets);
 
-  if (isMobileSidebar.value) {
-    savedBranches.value = newFilters.availableIn;
+  if (facetsQueryParam.value !== facetsFilterExpression) {
+    facetsQueryParam.value = facetsFilterExpression;
+  }
+
+  if (savedInStock.value !== newFilters.inStock) {
+    savedInStock.value = newFilters.inStock;
+  }
+
+  if (!_.isEqual(savedBranches.value, newFilters.branches)) {
+    savedBranches.value = newFilters.branches;
   }
 }
 
-async function onMobileFilterChanged(newFilters: ProductsFilters) {
+async function updateMobileFilters(newFilters: ProductsFilters) {
   const searchParamsForFacets: ProductsSearchParams = {
     ...searchParams.value,
     filter: [
-      getFilterExpressionFromFacets(newFilters.facets), //
+      getFilterExpressionFromFacets(newFilters.facets),
       getFilterExpressionForInStock(newFilters.inStock),
+      getFilterExpressionForAvailableIn(newFilters.branches),
     ]
       .filter(Boolean)
       .join(" "),
   };
 
-  mobileFilters.facets = await getFacets(searchParamsForFacets);
   mobileFilters.inStock = newFilters.inStock;
-  mobileFilters.availableIn = newFilters.availableIn;
+  mobileFilters.branches = newFilters.branches;
+  mobileFilters.facets = await getFacets(searchParamsForFacets);
 }
 
 function removeFacetFilterItem(payload: Pick<ProductsFacet, "paramName"> & Pick<ProductsFacetValue, "value">) {
@@ -514,28 +564,20 @@ function selectCategory(id?: string) {
   }
 }
 
-function onOpenBranchesDialog() {
-  if (isMobileSidebar.value) {
-    mobileSidebarVisible.value = false;
-  }
+function openBranchesDialog(fromMobileFilter: boolean) {
   openPopup({
     component: BranchesDialog,
     props: {
-      selectedBranches: savedBranches.value,
-      onClose() {
-        if (isMobileSidebar.value) {
-          showMobileSidebar();
-        }
-      },
+      selectedBranches: fromMobileFilter ? mobileFilters.branches : savedBranches.value,
       onSave(branches: string[]) {
-        if (isMobileSidebar.value) {
-          const _mobileFilters = {
+        if (fromMobileFilter) {
+          const newFilters: ProductsFilters = {
+            branches,
             facets: mobileFilters.facets,
             inStock: mobileFilters.inStock,
-            availableIn: branches,
           };
-          onMobileFilterChanged(_mobileFilters);
-          showMobileSidebar();
+
+          updateMobileFilters(newFilters);
         } else {
           savedBranches.value = branches;
         }
