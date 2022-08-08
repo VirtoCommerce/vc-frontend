@@ -89,14 +89,12 @@
             <h2 class="text-gray-800 text-21 font-bold uppercase lg:my-px lg:text-25">
               <span>{{ selectedCategory?.label }}</span>
 
-              <i18n-t
-                class="-top-1.5 pl-2 text-sm text-[color:var(--color-category-page-results)] normal-case font-normal whitespace-nowrap lg:text-15"
-                tag="sup"
-                keypath="pages.catalog.products_found_message"
-                scope="global"
+              <sup
+                class="ml-2 normal-case font-normal whitespace-nowrap text-sm lg:text-15 -top-1 lg:-top-[0.5em] text-[color:var(--color-category-page-results)]"
               >
-                <span class="font-extrabold">{{ total }}</span>
-              </i18n-t>
+                <b class="font-extrabold">{{ total }}</b>
+                {{ $t("pages.catalog.products_found_message", total) }}
+              </sup>
             </h2>
           </div>
 

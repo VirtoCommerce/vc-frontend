@@ -951,8 +951,7 @@
       "facet_card": {
         "item_count_format": "({0})"
       },
-      "products_found_message": "{0} results",
-      "products_found_message2": "{0} displayed that include {1} products.",
+      "products_found_message": "result | results",
       "filters_button": "@:common.buttons.filters",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
