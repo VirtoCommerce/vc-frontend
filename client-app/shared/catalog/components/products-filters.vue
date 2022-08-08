@@ -14,7 +14,7 @@
           />
 
           <button v-if="localKeyword" class="absolute right-[10px] top-[10px]" @click="reset">
-            <svg class="text-[color:var(--color-products-filter-button)]" height="12" width="12">
+            <svg class="text-[color:var(--color-primary)]" height="12" width="12">
               <use href="/static/images/delete.svg#main" />
             </svg>
           </button>
@@ -22,9 +22,9 @@
 
         <VcButton
           :is-disabled="loading || isAppliedKeyword"
-          kind="custom"
-          class="px-3.5 uppercase !border-current text-[color:var(--color-products-filter-button)] hover:text-primary !text-15"
+          kind="primary"
           size="sm"
+          class="px-3.5 uppercase !text-15"
           is-outline
           @click="onSearchStart"
         >
