@@ -1,37 +1,27 @@
 <template>
   <div class="w-full bg-white columns-4 xl:columns-5 px-10">
-    <div
+    <CatalogMenuCategoryBlock
       v-for="(category, index) in categories"
       :key="index"
       class="w-full min-h-[13rem] break-inside-avoid p-5"
       :class="[(index + 1) % maxRowsNumber === 0 ? 'break-after-column' : 'break-after-avoid']"
-    >
-      <a href="#" class="font-bold">{{ category.name }}</a>
-
-      <template v-for="(sub, key) in category.sub" :key="key">
-        <div v-if="(showMoreIndex !== index && key < 5) || showMoreIndex === index">
-          <a href="#">{{ sub.name }}</a>
-        </div>
-      </template>
-
-      <div
-        v-if="category.sub.length > 5"
-        @click="showMoreIndex = index"
-        class="underline cursor-pointer text-[color:var(--color-link)]"
-      >
-        Show more
-      </div>
-    </div>
+      :category="category"
+      :index="index"
+      :show-more-index="showMoreIndex"
+      @show-more="showMoreIndex = index"
+      @hide-more="showMoreIndex = undefined"
+    ></CatalogMenuCategoryBlock>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import CatalogMenuCategoryBlock from "./catalog-menu-category-block.vue";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isXL = breakpoints.smaller("xl");
-const showMoreIndex = ref<number>(null);
+const showMoreIndex = ref<number | undefined>(undefined);
 
 const columnsCount = computed(() => {
   return isXL.value ? 4 : 5;
