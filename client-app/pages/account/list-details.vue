@@ -14,16 +14,18 @@
           {{ $t("shared.wishlists.list_card.list_settings_button") }}
         </VcButton>
 
+        <!--
         <VcButton
           v-if="listItems?.length"
           class="px-3 uppercase w-56"
           size="sm"
           :is-disabled="!listItems.length"
-          @click="$emit('add-to-cart')"
+          @click="addAllToCart"
         >
           <i class="fa fa-shopping-cart text-inherit text-xs mr-2" />
           {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
         </VcButton>
+        -->
       </div>
     </div>
 
@@ -97,6 +99,7 @@
         @update:page="onUpdatePage()"
       />
 
+      <!--
       <VcButton
         v-if="listItems?.length"
         class="px-3 uppercase w-full"
@@ -107,6 +110,7 @@
         <i class="fa fa-shopping-cart text-inherit text-xs mr-2" />
         {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
       </VcButton>
+      -->
     </div>
   </div>
 </template>
@@ -155,10 +159,11 @@ const listItems = computed(() =>
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 
-function addAllToCart(items: LineItemType[]) {
+/*
+function addAllToCart() {
   // TODO: implement in another user story
-  console.log(items);
 }
+*/
 
 function openDeleteProductDialog(item: LineItemType) {
   openPopup({
