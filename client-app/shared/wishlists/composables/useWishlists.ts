@@ -135,9 +135,7 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
       }
     }
 
-    if (options.autoRefetch) {
-      await fetchWishlists();
-    }
+    loading.value = false;
   }
 
   async function removeItemsFromWishlists(payloads: InputRemoveWishlistItemType[]) {
@@ -153,9 +151,7 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
       }
     }
 
-    if (options.autoRefetch) {
-      await fetchWishlists();
-    }
+    loading.value = false;
   }
 
   function clearList() {

@@ -16,7 +16,7 @@
 
         <!--
         <VcButton
-          v-if="listItems?.length"
+          v-if="listItems.length"
           class="px-3 uppercase w-56"
           size="sm"
           :is-disabled="!listItems.length"
@@ -29,8 +29,19 @@
       </div>
     </div>
 
+    <!-- Skeletons -->
+    <template v-if="loading">
+      <div v-if="isMobile" class="grid grid-cols-2 gap-x-4 gap-y-6 mx-5 md:mx-0">
+        <ProductSkeletonGrid v-for="i in listItems.length || itemsPerPage" :key="i" />
+      </div>
+
+      <div v-else class="flex flex-col bg-white rounded border shadow-sm">
+        <WishlistProductItemSkeleton v-for="i in listItems.length || itemsPerPage" :key="i" class="even:bg-gray-50" />
+      </div>
+    </template>
+
     <!-- List details -->
-    <template v-if="listItems?.length">
+    <template v-else-if="listItems.length">
       <div v-if="!isMobile" class="flex flex-col bg-white rounded border shadow-sm">
         <WishlistProductItem
           v-for="item in listItems"
@@ -65,17 +76,6 @@
       </div>
     </template>
 
-    <!-- Skeletons -->
-    <template v-else-if="loading">
-      <div v-if="!isMobile" class="flex flex-col md:space-y-3 divide-y md:divide-none">
-        <WishlistCardSkeleton v-for="i in itemsPerPage" :key="i" />
-      </div>
-
-      <div v-else class="grid grid-cols-2 gap-x-4 gap-y-6 mx-5 md:mx-0">
-        <ProductSkeletonGrid v-for="i in itemsPerPage" :key="i" />
-      </div>
-    </template>
-
     <!-- Empty -->
     <VcEmptyView v-else :text="$t('shared.wishlists.list_details.empty_list')">
       <template #icon>
@@ -101,7 +101,7 @@
 
       <!--
       <VcButton
-        v-if="listItems?.length"
+        v-if="listItems.length"
         class="px-3 uppercase w-full"
         size="md"
         :is-disabled="!listItems.length"
@@ -119,7 +119,7 @@
 import { AddToCart } from "@/shared/cart";
 import {
   WishlistProductItem,
-  WishlistCardSkeleton,
+  WishlistProductItemSkeleton,
   useWishlists,
   AddOrUpdateWishlistDialog,
   DeleteWishlistProductDialog,
@@ -150,10 +150,10 @@ usePageHead({
 
 const itemsPerPage = ref(6);
 const page = ref(1);
-const pages = computed(() => Math.ceil((list.value?.itemsCount ?? 0) / itemsPerPage.value));
 
-const listItems = computed(() =>
-  list.value?.items?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
+const pages = computed<number>(() => Math.ceil((list.value?.items?.length ?? 0) / itemsPerPage.value));
+const listItems = computed<LineItemType[]>(() =>
+  (list.value?.items || []).slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
 );
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -171,9 +171,17 @@ function openDeleteProductDialog(item: LineItemType) {
     props: {
       listItem: item,
       listId: list.value?.id,
-      onResult() {
-        if (pages.value === 1) {
-          page.value = 1;
+      async onResult() {
+        const previousPagesCount = pages.value;
+
+        await fetchWishList(props.listId);
+
+        /**
+         * If you were on the last page, and after deleting the product
+         * the number of pages has decreased, go to the previous page
+         */
+        if (previousPagesCount === page.value && previousPagesCount > pages.value) {
+          page.value -= 1;
         }
       },
     },
