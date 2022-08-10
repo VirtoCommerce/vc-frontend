@@ -1,9 +1,9 @@
 <template>
-  <div class="w-full bg-white columns-4 xl:columns-5 px-10">
+  <div class="w-full bg-white columns-4 xl:columns-5 pt-3 px-10">
     <CatalogMenuCategoryBlock
       v-for="(category, index) in categories"
       :key="index"
-      class="w-full min-h-[13rem] break-inside-avoid p-5"
+      class="w-full min-h-[17rem] break-inside-avoid p-5"
       :class="[(index + 1) % maxRowsNumber === 0 ? 'break-after-column' : 'break-after-avoid']"
       :category="category"
       :index="index"
@@ -35,7 +35,7 @@ const categories = ref([
         name: "Subcategory 1",
       },
       {
-        name: "Subcategory 2",
+        name: "Subcategory Subcategory Subcategory Subcategory 2",
       },
       {
         name: "Subcategory 3",
