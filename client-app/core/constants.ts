@@ -8,7 +8,7 @@ export const DEFAULT_WISHLIST_LIMIT = 10;
 export const DEFAULT_NOTIFICATION_DURATION = 15000;
 
 export const PRODUCT_SORTING_LIST = [
-  { id: "priority-descending;name-ascending", name: "Featured" },
+  { id: "", name: "Featured" },
   { id: "name-ascending", name: "Alphabetically, A-Z" },
   { id: "name-descending", name: "Alphabetically, Z-A" },
   { id: "price-ascending", name: "Price, low to high" },
