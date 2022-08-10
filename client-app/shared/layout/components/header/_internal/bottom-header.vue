@@ -59,7 +59,11 @@
       enter-active-class="will-change-transform"
       leave-active-class="will-change-transform"
     >
-      <CatalogDropdown v-if="catalogVisible" class="absolute transition-transform duration-200 shadow-md -mt-[1px]" />
+      <CatalogDropdown
+        v-if="catalogVisible"
+        class="absolute transition-transform duration-200 shadow-md -mt-[1px]"
+        @click-category="catalogVisible = false"
+      />
     </transition>
   </div>
 </template>
