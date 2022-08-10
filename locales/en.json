@@ -586,7 +586,7 @@
       },
       "delete_wishlist_product_dialog": {
         "title": "Confirm Delete",
-        "message": "Are you sure you want to remove “<span class=\"font-extrabold\">{productName}</span>” from the list?",
+        "message": "Are you sure you want to remove “{productName}” from the list?",
         "delete_button": "@:common.buttons.delete",
         "cancel_button": "@:common.buttons.cancel"
       }
