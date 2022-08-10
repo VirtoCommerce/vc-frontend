@@ -17,14 +17,15 @@
 
       <!-- Catalog button -->
       <button
+        ref="showCatalogMenuButton"
         class="flex items-center ml-5 cursor-pointer select-none px-[0.8rem] py-[0.55rem] border-2 border-primary rounded text-sm text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)]"
-        @click="catalogVisible = !catalogVisible"
+        @click="catalogMenuVisible = !catalogMenuVisible"
       >
         <div class="uppercase font-bold tracking-wide">Catalog</div>
 
         <i
           class="fas ml-3 text-[color:var(--color-primary)] align-baseline"
-          :class="[catalogVisible ? 'fa-chevron-up' : 'fa-chevron-down']"
+          :class="[catalogMenuVisible ? 'fa-chevron-up' : 'fa-chevron-down']"
         />
       </button>
 
@@ -60,27 +61,39 @@
       leave-active-class="will-change-transform"
     >
       <CatalogDropdown
-        v-if="catalogVisible"
+        ref="catalogMenuElement"
+        v-if="catalogMenuVisible"
         class="absolute transition-transform duration-200 shadow-md -mt-[1px]"
-        @click-category="catalogVisible = false"
+        @click-category="catalogMenuVisible = false"
       />
     </transition>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, shallowRef } from "vue";
 import CatalogDropdown from "./catalog-dropdown.vue";
 import BottomHeaderLink from "./bottom-header-link.vue";
 import { useCart } from "@/shared/cart";
 import { SearchBar, useNavigations } from "@/shared/layout";
 import { useCompareProducts } from "@/shared/compare";
 import { useUser } from "@/shared/account";
+import { onClickOutside } from "@vueuse/core";
 
 const { organization } = useUser();
 const { cart } = useCart();
 const { desktopHeaderMenuLinks } = useNavigations();
 const { productsIds } = useCompareProducts();
 
-const catalogVisible = ref(false);
+const catalogMenuElement = shallowRef<HTMLElement | null>(null);
+const showCatalogMenuButton = shallowRef<HTMLElement | null>(null);
+const catalogMenuVisible = ref(false);
+
+onClickOutside(
+  catalogMenuElement,
+  () => {
+    catalogMenuVisible.value = false;
+  },
+  { ignore: [showCatalogMenuButton] }
+);
 </script>
