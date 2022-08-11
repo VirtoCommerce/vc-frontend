@@ -3,7 +3,7 @@
     <CatalogMenuCategoryBlock
       v-for="(category, index) in categories"
       :key="index"
-      class="w-full min-h-[17rem] break-inside-avoid p-5"
+      class="w-full min-h-[15rem] break-inside-avoid p-5"
       :class="[(index + 1) % maxRowsNumber === 0 ? 'break-after-column' : 'break-after-avoid']"
       :category="category"
       :index="index"

@@ -1,7 +1,7 @@
 <template>
   <div>
     <router-link
-      class="block px-2 py-0.5 mb-3 text-md font-bold hover:bg-gray-100"
+      class="block px-2 py-1 mb-2 text-base font-bold hover:bg-gray-100"
       :to="categoriesRoutes[category.id!]"
       :title="category.label"
       @click="clickCategory"
@@ -12,7 +12,7 @@
       <template v-for="(subcategory, key) in category.items" :key="key">
         <router-link
           v-if="(showMoreIndex !== index && key < 5) || showMoreIndex === index"
-          class="block px-2 py-0.5 mb-2 text-sm text-gray-500 truncate hover:bg-gray-100"
+          class="block px-2 py-1 mb-1 text-sm !leading-4 text-gray-500 truncate hover:bg-gray-100"
           :to="categoriesRoutes[subcategory.id!]"
           :title="subcategory.label"
           @click="clickCategory"
@@ -24,7 +24,7 @@
       <div
         v-if="category.items.length > 5 && showMoreIndex !== index"
         @click="clickShowMore"
-        class="px-2 py-0.5 text-sm cursor-pointer flex items-baseline"
+        class="px-2 py-1 text-sm cursor-pointer flex items-baseline"
       >
         <span class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"> Show more </span>
         <i class="ml-[5px] fas fa-chevron-down text-[color:var(--color-primary)]"></i>
@@ -32,7 +32,7 @@
       <div
         v-if="category.items.length > 5 && showMoreIndex === index"
         @click="clickHideMore"
-        class="px-2 py-0.5 text-sm cursor-pointer flex items-baseline"
+        class="px-2 py-1 text-sm cursor-pointer flex items-baseline"
       >
         <span class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"> Hide </span>
         <i class="ml-[5px] fas fa-chevron-up text-[color:var(--color-primary)]"></i>
