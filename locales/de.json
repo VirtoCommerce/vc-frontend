@@ -98,6 +98,13 @@
           "link_contact_us": "Kontaktiere uns",
           "call_us_label": "Call us: "
         },
+        "bottom_header": {
+          "catalog_menu_button": "Catalog",
+          "catalog_menu": {
+            "show_more": "Show more",
+            "hide_more": "Hide"
+          }
+        },
         "link_sign_in": "Einloggen",
         "link_register_now": "Register now",
         "link_logout": "Ausloggen",

@@ -97,6 +97,13 @@
           "link_contact_us": "Contacts",
           "call_us_label": "Call us: "
         },
+        "bottom_header": {
+          "catalog_menu_button": "Catalog",
+          "catalog_menu": {
+            "show_more": "Show more",
+            "hide_more": "Hide"
+          }
+        },
         "link_sign_in": "Sign in",
         "link_register_now": "Sign up now",
         "link_logout": "Log out",

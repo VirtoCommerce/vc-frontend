@@ -21,7 +21,10 @@
         class="flex items-center ml-5 cursor-pointer select-none px-[0.8rem] py-[0.55rem] border-2 border-primary rounded text-sm text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)]"
         @click="catalogMenuVisible = !catalogMenuVisible"
       >
-        <div class="uppercase font-bold tracking-wide">Catalog</div>
+        <div
+          class="uppercase font-bold tracking-wide"
+          v-t="'shared.layout.header.bottom_header.catalog_menu_button'"
+        ></div>
 
         <i
           class="fas ml-3 text-[color:var(--color-primary)] align-baseline"

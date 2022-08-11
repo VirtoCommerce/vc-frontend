@@ -26,7 +26,10 @@
         @click="clickShowMore"
         class="px-2 py-1 text-sm cursor-pointer flex items-baseline"
       >
-        <span class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"> Show more </span>
+        <span
+          class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
+          v-t="'shared.layout.header.bottom_header.catalog_menu.show_more'"
+        ></span>
         <i class="ml-[5px] fas fa-chevron-down text-[color:var(--color-primary)]"></i>
       </div>
       <div
@@ -34,7 +37,10 @@
         @click="clickHideMore"
         class="px-2 py-1 text-sm cursor-pointer flex items-baseline"
       >
-        <span class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"> Hide </span>
+        <span
+          class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
+          v-t="'shared.layout.header.bottom_header.catalog_menu.hide_more'"
+        ></span>
         <i class="ml-[5px] fas fa-chevron-up text-[color:var(--color-primary)]"></i>
       </div>
     </div>
