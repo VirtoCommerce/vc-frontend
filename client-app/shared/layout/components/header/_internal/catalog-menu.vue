@@ -11,7 +11,7 @@
       @show-more="showMoreIndex = index"
       @hide-more="showMoreIndex = undefined"
       @click-category="$emit('clickCategory')"
-    ></CatalogMenuCategoryBlock>
+    />
   </div>
 </template>
 

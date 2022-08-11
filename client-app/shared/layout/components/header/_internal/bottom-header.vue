@@ -60,7 +60,7 @@
       enter-active-class="will-change-transform"
       leave-active-class="will-change-transform"
     >
-      <CatalogDropdown
+      <CatalogMenu
         ref="catalogMenuElement"
         v-if="catalogMenuVisible"
         class="absolute transition-transform duration-200 shadow-md -mt-[1px]"
@@ -72,7 +72,7 @@
 
 <script setup lang="ts">
 import { ref, shallowRef } from "vue";
-import CatalogDropdown from "./catalog-dropdown.vue";
+import CatalogMenu from "./catalog-menu.vue";
 import BottomHeaderLink from "./bottom-header-link.vue";
 import { useCart } from "@/shared/cart";
 import { SearchBar, useNavigations } from "@/shared/layout";
