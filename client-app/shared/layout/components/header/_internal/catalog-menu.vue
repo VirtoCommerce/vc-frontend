@@ -6,24 +6,19 @@
       class="w-full min-h-[15rem] break-inside-avoid p-5"
       :class="[(index + 1) % maxRowsNumber === 0 ? 'break-after-column' : 'break-after-avoid']"
       :category="category"
-      :index="index"
-      :show-more-index="showMoreIndex"
-      @show-more="showMoreIndex = index"
-      @hide-more="showMoreIndex = undefined"
-      @click-category="$emit('clickCategory')"
+      @select="$emit('select')"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import CatalogMenuCategoryBlock from "./catalog-menu-category-block.vue";
 import { useCategories } from "@/shared/catalog";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isXL = breakpoints.smaller("xl");
-const showMoreIndex = ref<number | undefined>(undefined);
 
 const { categoryTree } = useCategories();
 
@@ -37,5 +32,5 @@ const maxRowsNumber = computed(() => {
   return Math.ceil(categories.value.length / columnsCount.value);
 });
 
-defineEmits<{ (event: "clickCategory"): void }>();
+defineEmits<{ (event: "select"): void }>();
 </script>

@@ -67,7 +67,7 @@
         ref="catalogMenuElement"
         v-if="catalogMenuVisible"
         class="absolute transition-transform duration-200 shadow-md -mt-[1px]"
-        @click-category="catalogMenuVisible = false"
+        @select="catalogMenuVisible = false"
       />
     </transition>
   </div>
