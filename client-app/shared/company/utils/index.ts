@@ -1,6 +1,15 @@
 import { XapiContactStatus } from "@/core/constants";
 import { OrganizationContactDisplayStatusType, OrganizationContactType } from "@/core/types";
-import { ContactType, UserType } from "@/xapi/types";
+import {
+  ContactType,
+  DynamicPropertyValueType,
+  InputDynamicPropertyValueType,
+  InputMemberAddressType,
+  InputUpdateContactType,
+  MemberAddressType,
+  UserType,
+} from "@/xapi/types";
+import _ from "lodash";
 
 export function getEmailAddress(contact: ContactType): string | undefined {
   let email: string | undefined;
@@ -62,5 +71,17 @@ export function convertToOrganizationContact(
     email: getEmailAddress(contact),
     role: getRoleName(contact),
     displayStatus: getDisplayContactStatus(contact.status),
+  };
+}
+
+export function convertToInputUpdateContact(contact: OrganizationContactType): InputUpdateContactType {
+  return {
+    ...contact,
+    addresses: _.map(contact.addresses?.items, (address: MemberAddressType) => address as InputMemberAddressType),
+    dynamicProperties: _.map(
+      contact.dynamicProperties,
+      (dp: DynamicPropertyValueType) => dp as InputDynamicPropertyValueType
+    ),
+    organizations: contact.organizationsIds,
   };
 }

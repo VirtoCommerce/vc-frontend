@@ -76,6 +76,7 @@
         :sort="sort"
         :pages="pages"
         :page="page"
+        :item-action-builder="actionBuilder"
         layout="table-auto"
         @headerClick="applySorting"
         @pageChanged="changePage"
@@ -86,36 +87,35 @@
               <!-- STUB -->
               <div class="rounded-full bg-gray-500 h-9 w-9">&nbsp;</div>
             </td>
+
             <td class="pl-5 pr-1 py-2.5">
               {{ contact.fullName }}
             </td>
+
             <td class="pl-5 pr-1 py-2.5">
               {{ contact.role }}
             </td>
+
             <td class="pl-5 pr-1 py-2.5">
               {{ contact.email }}
             </td>
-            <td class="px-5 py-2.5 w-24 overflow-hidden">
-              <div class="flex justify-start">
-                <VcTooltip>
-                  <template #trigger>
-                    <img width="20" height="20" :src="contact.displayStatus.iconUrl" />
-                  </template>
-                  <template #content>
-                    <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5">
-                      {{ $t(contact.displayStatus.localeLabel) }}
-                    </div>
-                  </template>
-                </VcTooltip>
-              </div>
+
+            <td class="px-5 py-2.5 w-24">
+              <VcTooltip class="flex justify-center">
+                <template #trigger>
+                  <img width="20" height="20" :src="contact.displayStatus.iconUrl" />
+                </template>
+                <template #content>
+                  <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5">
+                    {{ $t(contact.displayStatus.localeLabel) }}
+                  </div>
+                </template>
+              </VcTooltip>
             </td>
-            <!--
-            <td class="p-5 w-px">
-              <VcButton class="px-2 rounded" size="sm" is-outline>
-                <i class="fas fa-cog text-lg" />
-              </VcButton>
+
+            <td class="px-5 w-24">
+              <MemberActionsMenu :contact="contact" @deleteContact="openDeleteMemberDialog(contact)" />
             </td>
-            -->
           </tr>
         </template>
 
@@ -173,13 +173,21 @@ import { usePageHead } from "@/core/composables";
 import { ref, onMounted } from "vue";
 import { usePopup } from "@/shared/popup";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
-import { AddNewCompanyMemberDialog, InviteMemberDialog, useOrganizationContacts } from "@/shared/company";
+import {
+  AddNewCompanyMemberDialog,
+  InviteMemberDialog,
+  useOrganizationContacts,
+  MemberActionsMenu,
+  DeleteMemberDialog,
+} from "@/shared/company";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { OrganizationContactType } from "@/core/types";
 
 const { t } = useI18n();
-const { openPopup } = usePopup();
+const { openPopup, closePopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { loading, page, pages, itemsPerPage, sort, keyword, loadContacts, contacts } = useOrganizationContacts();
+const { loading, page, pages, itemsPerPage, sort, keyword, loadContacts, contacts, updateMember } =
+  useOrganizationContacts();
 
 usePageHead({
   title: t("pages.company.members.meta.title"),
@@ -199,21 +207,19 @@ const columns = ref<ITableColumn[]>([
   {
     id: "role",
     title: t("pages.company.members.content_header.role"),
-    sortable: true,
   },
   {
     id: "email",
     title: t("pages.company.members.content_header.email"),
-    sortable: true,
   },
   {
     id: "status",
     title: t("pages.company.members.content_header.active"),
-    sortable: false,
+    titlePosition: "text-center",
   },
-  /*{
+  {
     id: "actions",
-  },*/
+  },
 ]);
 
 function openInviteMemberDialog() {
@@ -261,6 +267,14 @@ const changePage = async (newPage: number) => {
   await loadContacts();
 };
 
+const deleteContactFromOrganization = async (contact: OrganizationContactType) => {
+  await updateMember({
+    ...contact,
+    organizationsIds: [],
+  });
+  await loadContacts();
+};
+
 onMounted(async () => {
   await loadContacts();
 });
@@ -276,5 +290,34 @@ function openAddNewMemberPopup() {
       },
     },
   });
+}
+
+function openDeleteMemberDialog(contact: OrganizationContactType): void {
+  openPopup({
+    component: DeleteMemberDialog,
+    props: {
+      contact: contact,
+      onConfirm(): void {
+        closePopup();
+        deleteContactFromOrganization(contact);
+      },
+    },
+  });
+}
+
+function actionBuilder(contact: OrganizationContactType) {
+  const result = [
+    {
+      icon: "fas fa-trash-alt",
+      title: t("pages.company.members.buttons.delete"),
+      leftActions: true,
+      bgColor: "bg-[color:var(--color-danger)]",
+      clickHandler() {
+        openDeleteMemberDialog(contact);
+      },
+    },
+  ];
+
+  return result;
 }
 </script>

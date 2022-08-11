@@ -146,6 +146,7 @@ module.exports = {
         "t-2xl": "0 -25px 50px -12px rgba(0, 0, 0, 0.25)",
         "t-3xl": "0 -35px 60px -15px rgba(0, 0, 0, 0.3)",
         "sm-x-y": "1px 2px 9px rgba(0, 0, 0, 0.1)",
+        "sm-x-y-button": "1px 1px 5px rgba(0, 0, 0, 0.15)",
       },
       fontSize: {
         11: [
@@ -230,7 +231,7 @@ module.exports = {
         19: "4.75rem", //76px
       },
       width: {
-        70: '17.5rem' //280px
+        70: "17.5rem", //280px
       },
       maxHeight: {
         "screen-60": "60vh",

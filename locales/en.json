@@ -312,6 +312,12 @@
         "cancel_button": "@:common.buttons.cancel",
         "add_button": "Add",
         "successfully_text": "The user {0} has been successfully created"
+      },
+      "delete_member_dialog": {
+        "title": "Delete member",
+        "text": "Are you sure you want to delete the user {name} from the company members list?",
+        "ok_button": "Ok",
+        "cancel_button": "Cancel"
       }
     },
     "cart": {
@@ -936,7 +942,10 @@
           "add_new_member": "Add new member",
           "invite": "Invite",
           "new": "New",
-          "reset_search": "Reset search"
+          "reset_search": "Reset search",
+          "edit_role": "Edit role",
+          "block_user": "Block user",
+          "delete": "Delete"
         },
         "content_header": {
           "name": "Name",
