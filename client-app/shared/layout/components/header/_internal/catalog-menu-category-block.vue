@@ -20,22 +20,24 @@
         </router-link>
       </template>
 
-      <template v-if="subCategories.length > SHORT_VIEW_ITEMS_COUNT">
-        <div v-show="!showAll" @click="clickShowMore" class="px-2 py-1 text-sm cursor-pointer flex items-baseline">
-          <span
-            class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
-            v-t="'shared.layout.header.bottom_header.catalog_menu.show_more'"
-          ></span>
-          <i class="ml-[5px] fas fa-chevron-down text-[color:var(--color-primary)]"></i>
-        </div>
-        <div v-show="showAll" @click="clickHideMore" class="px-2 py-1 text-sm cursor-pointer flex items-baseline">
-          <span
-            class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
-            v-t="'shared.layout.header.bottom_header.catalog_menu.hide_more'"
-          ></span>
-          <i class="ml-[5px] fas fa-chevron-up text-[color:var(--color-primary)]"></i>
-        </div>
-      </template>
+      <button
+        v-if="subCategories.length > SHORT_VIEW_ITEMS_COUNT"
+        @click="toggleShowAll"
+        class="px-2 py-1 text-sm cursor-pointer flex items-baseline"
+      >
+        <span
+          class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
+          v-t="
+            showAll
+              ? 'shared.layout.header.bottom_header.catalog_menu.hide_more'
+              : 'shared.layout.header.bottom_header.catalog_menu.show_more'
+          "
+        />
+        <i
+          class="ml-[5px] fas text-[color:var(--color-primary)]"
+          :class="[showAll ? 'fa-chevron-up' : 'fa-chevron-down']"
+        />
+      </button>
     </div>
   </div>
 </template>
@@ -64,16 +66,12 @@ const displayedCategories = computed(() =>
   showAll.value ? subCategories.value : subCategories.value.slice(0, SHORT_VIEW_ITEMS_COUNT)
 );
 
-const categoryWithSubcategories = computed(() => [props.category, ...(props.category.items || [])]);
+const categoryWithSubcategories = computed(() => [props.category, ...subCategories.value]);
 
 const categoriesRoutes = useCategoriesRoutes(categoryWithSubcategories);
 
-function clickShowMore() {
-  showAll.value = true;
-}
-
-function clickHideMore() {
-  showAll.value = false;
+function toggleShowAll() {
+  showAll.value = !showAll.value;
 }
 
 function clickCategory() {
