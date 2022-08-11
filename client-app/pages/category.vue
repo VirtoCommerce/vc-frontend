@@ -336,7 +336,7 @@ const props = defineProps({
 const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { t } = useI18n();
-const { selectedCategory, selectCategoryByKey, loadCategoriesTree, selectRoot } = useCategories();
+const { selectedCategory, selectCategoryByKey, selectRoot } = useCategories();
 const {
   fetchProducts,
   fetchMoreProducts,
@@ -591,7 +591,6 @@ function openBranchesDialog(fromMobileFilter: boolean) {
 // region Lifecycle Hooks
 
 onMounted(async () => {
-  await loadCategoriesTree();
   selectCategory(props.categoryId);
   await loadProducts();
 

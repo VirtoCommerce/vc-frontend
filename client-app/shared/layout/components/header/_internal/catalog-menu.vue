@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import CatalogMenuCategoryBlock from "./catalog-menu-category-block.vue";
 import { useCategories } from "@/shared/catalog";
@@ -25,7 +25,7 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const isXL = breakpoints.smaller("xl");
 const showMoreIndex = ref<number | undefined>(undefined);
 
-const { categoryTree, loadCategoriesTree } = useCategories();
+const { categoryTree } = useCategories();
 
 const columnsCount = computed(() => {
   return isXL.value ? 4 : 5;
@@ -38,8 +38,4 @@ const maxRowsNumber = computed(() => {
 });
 
 defineEmits<{ (event: "clickCategory"): void }>();
-
-onMounted(async () => {
-  await loadCategoriesTree();
-});
 </script>
