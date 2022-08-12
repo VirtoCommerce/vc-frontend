@@ -18,13 +18,13 @@ export default function useOrganizationAddresses() {
     direction: SORT_DESCENDING,
   });
 
-  async function fetchAddresses(id: string) {
+  async function fetchAddresses(organizationId: string) {
     try {
       loading.value = true;
 
       const sortingExpression = getSortingExpression(sort.value);
 
-      const { items = [], totalCount = 0 } = await getOrganizationAddresses(id, {
+      const { items = [], totalCount = 0 } = await getOrganizationAddresses(organizationId, {
         sort: sortingExpression,
         first: itemsPerPage.value,
         after: String((page.value - 1) * itemsPerPage.value),

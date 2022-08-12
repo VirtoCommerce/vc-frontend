@@ -1,6 +1,6 @@
 import { App, DirectiveBinding } from "vue";
 import _ from "lodash";
-import StorefrontPermissions from "@/core/permissions.enum";
+import { StorefrontPermissions } from "@/core/constants";
 import { useUser } from "@/shared/account";
 
 export default {

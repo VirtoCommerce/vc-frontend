@@ -1,4 +1,4 @@
-enum StorefrontPermissions {
+export enum StorefrontPermissions {
   CanSeeOrganizationDetail = "storefront:organization:view",
   CanEditOrganization = "storefront:organization:edit",
   CanInviteUsers = "storefront:user:invite",
@@ -9,5 +9,3 @@ enum StorefrontPermissions {
   CanViewOrders = "storefront:order:view",
   CanChangeOrderStatus = "storefront:order:changestatus",
 }
-
-export default StorefrontPermissions;

@@ -1,5 +1,5 @@
-import { Role } from "./types/role";
-import StorefrontPermissions from "@/core/permissions.enum";
+import { Role } from "@/core/types";
+import { StorefrontPermissions } from "@/core/constants";
 
 export const ORGANIZATION_MAINTAINER: Role = {
   id: "org-maintainer",

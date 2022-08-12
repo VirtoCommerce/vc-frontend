@@ -1,4 +1,4 @@
-import StorefrontPermissions from "@/core/permissions.enum";
+import { StorefrontPermissions } from "@/core/constants";
 
 export type Role = {
   id: string;

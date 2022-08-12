@@ -130,8 +130,7 @@ import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import moment from "moment";
 import { useI18n } from "vue-i18n";
-import { configInjectionKey } from "@/core/injection-keys";
-import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
+import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION, configInjectionKey } from "@/core/constants";
 
 const props = defineProps({
   product: {

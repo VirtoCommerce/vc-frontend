@@ -1,4 +1,6 @@
 import { ISortInfo } from "@/core/types";
+import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
+import _ from "lodash";
 
 export function getBaseUrl(supportedLocales: string[]): string {
   const localeInPath = location.pathname.split("/")[1];
@@ -33,6 +35,23 @@ export function appendSuffixToFilename(filename: string, suffix: string, checkIf
 
 export function getSortingExpression(sort: ISortInfo): string {
   return `${sort.column}:${sort.direction}`;
+}
+
+export function getNewSorting(
+  currentSortObj: ISortInfo,
+  sortingColumn: string,
+  defaultDirection = SORT_DESCENDING
+): ISortInfo {
+  const newSortObj: ISortInfo = _.clone(currentSortObj);
+
+  if (newSortObj.column === sortingColumn) {
+    newSortObj.direction = newSortObj.direction === SORT_ASCENDING ? SORT_DESCENDING : SORT_ASCENDING;
+  } else {
+    newSortObj.column = sortingColumn;
+    newSortObj.direction = defaultDirection;
+  }
+
+  return newSortObj;
 }
 
 // check if object is empty

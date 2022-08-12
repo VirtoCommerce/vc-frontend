@@ -1,4 +1,4 @@
-enum QueryParamName {
+export enum QueryParamName {
   Page = "page",
   Sort = "sort",
   Facets = "facets",
@@ -6,5 +6,3 @@ enum QueryParamName {
   ItemsPerPage = "size",
   SearchPhrase = "q",
 }
-
-export default QueryParamName;

@@ -1,5 +1,5 @@
 import { IThemeConfigPreset, IThemeContext } from "@/core/types";
-import StorefrontPermissions from "@/core/permissions.enum";
+import { StorefrontPermissions } from "@/core/constants";
 
 declare module "*.vue" {
   import { DefineComponent } from "vue";

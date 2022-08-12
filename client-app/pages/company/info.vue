@@ -5,13 +5,14 @@
       <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.company.info.title'" />
     </div>
 
-    <div class="flex flex-col bg-white shadow-sm md:rounded md:border">
+    <div class="flex flex-col bg-white shadow-sm md:rounded md:border overflow-x-hidden">
       <!-- Company name block -->
-      <div class="flex flex-row p-5 gap-3 shadow-lg">
+      <div class="flex flex-row p-5 gap-3 shadow [--tw-shadow:0_10px_15px_0_rgb(0_0_0_/_0.06)]">
+        <!-- TODO: :is-disabled="!isOrganizationMaintainer || loadingOrganization || loadingUser" -->
         <VcInput
           v-model.trim="organizationName"
           :label="$t('pages.company.info.labels.company_name')"
-          :is-disabled="!isOrganizationMaintainer || loadingOrganization || loadingUser"
+          is-disabled
           :error-message="errors[0]"
           name="organization-name"
           autocomplete="off"
@@ -19,6 +20,7 @@
           class="w-full"
         />
 
+        <!--
         <div class="pt-6" v-if="isOrganizationMaintainer">
           <VcButton
             :is-waiting="loadingOrganization || loadingUser"
@@ -31,6 +33,7 @@
             <span class="hidden md:inline mx-12">{{ $t("common.buttons.save") }}</span>
           </VcButton>
         </div>
+        -->
       </div>
 
       <!-- Content block -->
@@ -68,12 +71,14 @@
             />
           </template>
 
+          <!--
           <template #button v-if="isOrganizationMaintainer">
             <VcButton class="px-4 uppercase" size="lg" @click="addOrUpdateAddressDialog()">
               <i class="fa fa-plus -ml-px mr-3" />
               {{ $t("pages.company.info.buttons.add_new_address") }}
             </VcButton>
           </template>
+          -->
         </VcEmptyView>
 
         <div v-else class="flex flex-col md:rounded md:border">
@@ -99,11 +104,11 @@
                 <div class="flex flex-col col-span-2">
                   <span class="text-gray-400" v-t="'pages.company.info.labels.address'" />
 
-                  <b class="leading-tight overflow-hidden overflow-ellipsis">
+                  <span class="leading-tight font-bold overflow-hidden overflow-ellipsis">
                     <span>{{ item.line1 }}</span>
                     <template v-if="item.city">, {{ item.city }}</template>
                     <template v-if="item.regionName">, {{ item.regionName }}</template>
-                  </b>
+                  </span>
                 </div>
 
                 <div class="flex flex-col">
@@ -211,6 +216,7 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable @typescript-eslint/no-unused-vars */ // TODO: remove
 import { computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { computedEager } from "@vueuse/core";
@@ -219,8 +225,8 @@ import * as yup from "yup";
 import { usePageHead } from "@/core/composables";
 import { useUser } from "@/shared/account";
 import { useOrganization, useOrganizationAddresses } from "@/shared/company";
-import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
-import { ORGANIZATION_MAINTAINER } from "@/core/security-constants";
+import { ORGANIZATION_MAINTAINER } from "@/core/constants";
+import { getNewSorting } from "@/core/utilities";
 
 const { t } = useI18n();
 
@@ -305,14 +311,7 @@ async function onPageChange(newPage: number) {
 }
 
 async function applySorting(column: string) {
-  // TODO: move this logic to utility function
-  if (sort.value.column === column) {
-    sort.value.direction = sort.value.direction === SORT_DESCENDING ? SORT_ASCENDING : SORT_DESCENDING;
-  } else {
-    sort.value.column = column;
-    sort.value.direction = SORT_DESCENDING;
-  }
-
+  sort.value = getNewSorting(sort.value, column);
   page.value = 1;
   await fetchAddresses(organizationId.value);
 }

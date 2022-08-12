@@ -82,7 +82,7 @@ import { RouteLocationRaw } from "vue-router";
 import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
 import MobileMenu from "./mobile-menu.vue";
 import { useDomUtils, useRouteQueryParam } from "@/core/composables";
-import QueryParamName from "@/core/query-param-name.enum";
+import { QueryParamName } from "@/core/constants";
 import { useElementSize, whenever } from "@vueuse/core";
 
 const searchPhrase = ref("");
