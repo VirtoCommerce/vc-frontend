@@ -113,9 +113,9 @@
               </VcTooltip>
             </td>
 
-            <td class="px-5 w-24">
+            <!--<td class="px-5 w-24">
               <MemberActionsMenu :contact="contact" @deleteContact="openDeleteMemberDialog(contact)" />
-            </td>
+            </td>-->
           </tr>
         </template>
 
@@ -177,7 +177,7 @@ import {
   AddNewCompanyMemberDialog,
   InviteMemberDialog,
   useOrganizationContacts,
-  MemberActionsMenu,
+  //MemberActionsMenu,
   DeleteMemberDialog,
 } from "@/shared/company";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
@@ -217,9 +217,9 @@ const columns = ref<ITableColumn[]>([
     title: t("pages.company.members.content_header.active"),
     titlePosition: "text-center",
   },
-  {
+  /*{
     id: "actions",
-  },
+  },*/
 ]);
 
 function openInviteMemberDialog() {
