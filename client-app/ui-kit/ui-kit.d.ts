@@ -41,6 +41,7 @@ declare global {
     title?: string;
     sortable?: boolean;
     titlePosition?: "text-center" | "text-right" | "text-left";
+    classes?: string;
   }
 
   interface IProductProperties {

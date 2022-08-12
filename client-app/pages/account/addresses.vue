@@ -32,9 +32,8 @@
       </template>
 
       <template #button>
-        <VcButton class="px-6 uppercase" size="lg" @click="openEditMode">
-          <i class="fa fa-plus text-inherit -ml-0.5 mr-2.5" />
-
+        <VcButton class="px-4 uppercase" size="lg" @click="openEditMode">
+          <i class="fa fa-plus -ml-px mr-3" />
           {{ $t("pages.account.addresses.add_new_address_button") }}
         </VcButton>
       </template>

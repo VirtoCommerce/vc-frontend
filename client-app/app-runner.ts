@@ -4,7 +4,7 @@ import * as yup from "yup";
 import { createHead } from "@vueuse/head";
 import { setGlobalVariables } from "@/core/globals";
 import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";
-import { configPlugin, contextPlugin } from "@/core/plugins";
+import { configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
 import { useUser } from "@/shared/account";
 import { createI18n } from "@/i18n";
 import { createRouter } from "@/router";
@@ -81,6 +81,7 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
   app.use(head);
   app.use(i18n);
   app.use(router);
+  app.use(permissionsPlugin);
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value!.settings);
 

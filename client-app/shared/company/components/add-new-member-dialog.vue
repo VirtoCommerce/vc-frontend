@@ -81,7 +81,7 @@ import * as yup from "yup";
 import { checkEmailUniqueness, checkUsernameUniqueness } from "@/xapi/graphql/account";
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
-import { ROLES } from "@/core/securityConstants";
+import { ROLES } from "@/core/security-constants";
 import { ref, shallowRef } from "vue";
 import { VcPopup } from "@/ui-kit/components";
 import { useOrganizationContacts } from "@/shared/company";

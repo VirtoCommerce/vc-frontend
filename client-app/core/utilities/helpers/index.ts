@@ -1,3 +1,5 @@
+import { ISortInfo } from "@/core/types";
+
 export function getBaseUrl(supportedLocales: string[]): string {
   const localeInPath = location.pathname.split("/")[1];
   return supportedLocales.includes(localeInPath) ? `/${localeInPath}/` : "";
@@ -27,6 +29,10 @@ export function appendSuffixToFilename(filename: string, suffix: string, checkIf
   return checkIfSuffixExists && fileNameWithoutExtension.endsWith(suffix)
     ? filename
     : fileNameWithoutExtension + suffix + filename.substring(dotIndex);
+}
+
+export function getSortingExpression(sort: ISortInfo): string {
+  return `${sort.column}:${sort.direction}`;
 }
 
 // check if object is empty

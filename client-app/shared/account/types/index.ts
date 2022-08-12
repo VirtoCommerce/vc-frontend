@@ -40,11 +40,6 @@ export type ResetPassword = {
   password: string;
 };
 
-export interface ISortInfo {
-  column: string;
-  direction: string;
-}
-
 export type CheckoutDefaults = {
   deliveryMethod?: string;
   shippingMethod?: ShippingMethodType;

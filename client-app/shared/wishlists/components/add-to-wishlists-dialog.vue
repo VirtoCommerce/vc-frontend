@@ -149,7 +149,7 @@ const {
   addItemsToWishlists,
   createWishlistAndAddProduct,
   removeItemsFromWishlists,
-} = useWishlists({ autoRefetch: false });
+} = useWishlists();
 const notifications = useNotifications();
 
 const loading = ref(false);

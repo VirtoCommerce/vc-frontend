@@ -53,6 +53,11 @@ export type UseRouteQueryParamOptions<T = LocationQueryValue | LocationQueryValu
   removeDefaultValue?: boolean;
 };
 
+export interface ISortInfo {
+  column: string;
+  direction: string;
+}
+
 export interface IThemeConfig {
   current: string | { [key: string]: any };
   presets: Record<string, IThemeConfigPreset>;
