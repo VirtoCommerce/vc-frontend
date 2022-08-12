@@ -299,7 +299,7 @@ const columns = ref<ITableColumn[]>([
   {
     id: "actions",
     title: t("pages.account.addresses.actions_label"),
-    titlePosition: "text-center",
+    align: "center",
   },
 ]);
 

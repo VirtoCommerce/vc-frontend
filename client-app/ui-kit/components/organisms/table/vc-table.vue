@@ -30,7 +30,7 @@
           v-for="column in columns"
           :key="column.id"
           class="py-3 px-5 font-extrabold"
-          :class="[column.sortable && 'cursor-pointer', column.titlePosition, column.classes]"
+          :class="[{ 'cursor-pointer': column.sortable }, `text-${column.align || 'left'}`, column.classes]"
           @click="column.sortable ? $emit('headerClick', column.id) : null"
         >
           {{ column.title }}

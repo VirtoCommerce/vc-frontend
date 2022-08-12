@@ -372,13 +372,13 @@ const columns = ref<ITableColumn[]>([
     id: "status",
     title: t("pages.account.orders.status_label"),
     sortable: true,
-    titlePosition: "text-center",
+    align: "center",
   },
   {
     id: "total",
     title: t("pages.account.orders.total_label"),
     sortable: true,
-    titlePosition: "text-right",
+    align: "right",
   },
 ]);
 
