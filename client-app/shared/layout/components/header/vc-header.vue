@@ -4,8 +4,8 @@
 
   <!-- Desktop header -->
   <div v-else class="z-20 shadow-md">
-    <TopHeader />
-    <BottomHeader />
+    <TopHeader class="z-[2] relative" />
+    <BottomHeader class="z-[1]" />
   </div>
 </template>
 
