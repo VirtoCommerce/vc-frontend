@@ -1,6 +1,6 @@
 import { createContact, createUser, requestPasswordReset } from "@/xapi/graphql/account";
 import { getOrganizationContacts } from "@/xapi/graphql/organization";
-import { ContactType, IdentityResultType } from "@/xapi/types";
+import { ContactType, IdentityResultType, InputUpdateContactType } from "@/xapi/types";
 import { ref, shallowRef, Ref, readonly, computed } from "vue";
 import { getSortingExpression, Logger } from "@/core/utilities";
 import { useUser } from "@/shared/account";
@@ -11,6 +11,7 @@ import { useI18n } from "vue-i18n";
 import { AddNewMember, convertToOrganizationContact, convertToInputUpdateContact } from "@/shared/company";
 import globals from "@/core/globals";
 import { useRouter } from "vue-router";
+import updateContact from "@/xapi/graphql/account/mutations/updateContact";
 
 const TEMP_PASSWORD = "TempPassword#1";
 
