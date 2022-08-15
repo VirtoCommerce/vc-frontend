@@ -215,7 +215,7 @@ const columns = ref<ITableColumn[]>([
   {
     id: "status",
     title: t("pages.company.members.content_header.active"),
-    titlePosition: "text-center",
+    align: "center",
   },
   /*{
     id: "actions",
