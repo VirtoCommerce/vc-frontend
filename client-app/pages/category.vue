@@ -317,8 +317,7 @@ import {
 import { BranchesDialog, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { AddToCart } from "@/shared/cart";
 import { useElementVisibility, usePageHead, useRouteQueryParam } from "@/core/composables";
-import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
-import QueryParamName from "@/core/query-param-name.enum";
+import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST, QueryParamName } from "@/core/constants";
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
 import { usePopup } from "@/shared/popup";

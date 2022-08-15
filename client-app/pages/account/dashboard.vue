@@ -304,12 +304,12 @@ const columns = ref<ITableColumn[]>([
   {
     id: "status",
     title: t("pages.account.dashboard.last_orders_card.status_label"),
-    titlePosition: "text-center",
+    align: "center",
   },
   {
     id: "total",
     title: t("pages.account.dashboard.last_orders_card.total_label"),
-    titlePosition: "text-right",
+    align: "right",
   },
 ]);
 

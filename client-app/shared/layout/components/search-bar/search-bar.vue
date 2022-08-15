@@ -104,9 +104,8 @@ export default {
 <script setup lang="ts">
 import { useSearchBar } from "@/shared/layout";
 import { computed, inject, ref, watchEffect } from "vue";
-import { configInjectionKey } from "@/core/injection-keys";
+import { configInjectionKey, QueryParamName } from "@/core/constants";
 import { useRouteQueryParam } from "@/core/composables";
-import QueryParamName from "@/core/query-param-name.enum";
 import { Category } from "@/xapi/types";
 import { useDebounceFn, whenever } from "@vueuse/core";
 import { useCategoriesRoutes } from "@/shared/catalog";

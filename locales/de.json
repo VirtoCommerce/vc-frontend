@@ -903,7 +903,21 @@
         "meta": {
           "title": "@:pages.company.info.title"
         },
-        "title": "Company Info"
+        "title": "Company Info",
+        "content_header": "Addresses",
+        "no_addresses_message": "There are no addresses yet",
+        "labels": {
+          "company_name": "Company Name",
+          "address": "Address",
+          "description": "Description",
+          "zip": "Zip code",
+          "country": "Country",
+          "default": "Default"
+        },
+        "buttons": {
+          "add_new_address": "Add new address",
+          "add_new_address_mobile": "Add new"
+        }
       },
       "members": {
         "meta": {

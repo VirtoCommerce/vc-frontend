@@ -1,0 +1,12 @@
+#import "../../../fragments/memberAddressFields.graphql"
+
+query GetOrganizationAddresses($id: String!, $userId: String, $after: String, $first: Int, $sort: String) {
+  organization(id: $id, userId: $userId) {
+    addresses(after: $after, first: $first, sort: $sort) {
+      totalCount
+      items {
+        ...memberAddressFields
+      }
+    }
+  }
+}

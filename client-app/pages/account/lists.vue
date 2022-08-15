@@ -62,10 +62,9 @@ import {
   DeleteWishlistsDialog,
   UnsuccessfulCreateWishlistDialog,
 } from "@/shared/wishlists";
-import { DEFAULT_WISHLIST_LIMIT } from "@/core/constants";
+import { configInjectionKey, DEFAULT_WISHLIST_LIMIT } from "@/core/constants";
 import { WishlistType } from "@/xapi/types";
 import { usePopup } from "@/shared/popup";
-import { configInjectionKey } from "@/core/injection-keys";
 import { inject } from "vue";
 import { computed } from "@vue/reactivity";
 import { usePageHead } from "@/core/composables";

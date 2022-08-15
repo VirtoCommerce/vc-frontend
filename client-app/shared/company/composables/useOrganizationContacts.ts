@@ -1,11 +1,12 @@
-import { getOrganizationContacts, createContact, createUser, requestPasswordReset } from "@/xapi/graphql/account";
+import { createContact, createUser, requestPasswordReset } from "@/xapi/graphql/account";
+import { getOrganizationContacts } from "@/xapi/graphql/organization";
 import { ContactType, IdentityResultType } from "@/xapi/types";
 import { ref, shallowRef, Ref, readonly, computed } from "vue";
-import { Logger } from "@/core/utilities";
-import { getSortingExpression, ISortInfo, useUser } from "@/shared/account";
+import { getSortingExpression, Logger } from "@/core/utilities";
+import { useUser } from "@/shared/account";
 import { DEFAULT_PAGE_SIZE, SORT_ASCENDING } from "@/core/constants";
 import _ from "lodash";
-import { OrganizationContactType } from "@/core/types";
+import { ISortInfo, OrganizationContactType } from "@/core/types";
 import { useI18n } from "vue-i18n";
 import { AddNewMember, convertToOrganizationContact } from "@/shared/company";
 import globals from "@/core/globals";
