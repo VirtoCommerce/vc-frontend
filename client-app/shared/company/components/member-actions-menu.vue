@@ -2,27 +2,36 @@
   <div class="flex justify-right">
     <VcTooltip placement="bottom-end" trigger="click" :y-offset="0" :x-offset="0">
       <template #trigger>
-        <div class="flex justify-center w-7 p-2 rounded shadow-sm-x-y-button cursor-pointer">
-          <img width="14" height="14" src="/static/icons/contact-actions.svg" />
-        </div>
+        <VcButton
+          class="flex justify-center w-7 p-2 rounded shadow-sm-x-y-button bg-white text-gray-500"
+          kind="custom"
+          size="sm"
+        >
+          <i class="fas fa-cog" />
+        </VcButton>
       </template>
 
       <template #content>
-        <div class="flex justify-start space-x-6 p-3.5 bg-white rounded shadow-sm-x-y-button">
-          <div class="flex justify-start space-x-2 cursor-pointer">
-            <img width="15" height="15" src="/static/icons/contact-edit-role.svg" />
+        <div class="flex justify-start space-x-6 px-3.5 py-1.5 bg-white rounded shadow-sm-x-y-button">
+          <VcButton class="flex justify-start bg-white" kind="custom" size="sm">
+            <i class="fas fa-pencil-alt pr-2 text-yellow-500" />
             <div>{{ $t("pages.company.members.buttons.edit_role") }}</div>
-          </div>
+          </VcButton>
 
-          <div class="flex justify-start space-x-2 cursor-pointer">
-            <img width="15" height="15" src="/static/icons/contact-block.svg" />
-            <div>{{ $t("pages.company.members.buttons.block_user") }}</div>
-          </div>
+          <VcButton class="flex justify-start bg-white" kind="custom" size="sm">
+            <i class="fas fa-ban pr-2 text-black" />
+            <div>{{ $t("pages.company.members.buttons.edit_role") }}</div>
+          </VcButton>
 
-          <div class="flex justify-start space-x-2 cursor-pointer" @click="$emit('deleteContact', contact)">
-            <img width="15" height="15" src="/static/icons/contact-delete.svg" />
-            <div>{{ $t("pages.company.members.buttons.delete") }}</div>
-          </div>
+          <VcButton
+            class="flex justify-start bg-white"
+            kind="custom"
+            size="sm"
+            @click="$emit('deleteContact', contact)"
+          >
+            <i class="fas fa-times pr-2 text-red-500" />
+            <div>{{ $t("pages.company.members.buttons.edit_role") }}</div>
+          </VcButton>
         </div>
       </template>
     </VcTooltip>

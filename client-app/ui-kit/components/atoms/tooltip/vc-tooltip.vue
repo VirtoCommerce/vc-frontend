@@ -10,7 +10,7 @@
       <slot name="trigger" />
     </div>
 
-    <div id="popover" ref="tooltipNode" v-show="isShown">
+    <div class="z-50" id="popover" ref="tooltipNode" v-show="isShown">
       <slot name="content" />
     </div>
   </div>
@@ -35,7 +35,7 @@ const props = defineProps({
     default: 6,
   },
   trigger: {
-    type: String,
+    type: String as PropType<"hover" | "click">,
     default: "hover",
   },
 });
