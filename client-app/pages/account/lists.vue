@@ -21,8 +21,13 @@
       </VcButton>
     </div>
 
+    <!-- Skeletons -->
+    <div v-if="loading" class="flex flex-col md:space-y-3 divide-y md:divide-none">
+      <WishlistCardSkeleton v-for="item in 5" :key="item" />
+    </div>
+
     <!-- Lists -->
-    <div v-if="lists.length" class="flex flex-col md:space-y-3 divide-y md:divide-none">
+    <div v-else-if="lists.length" class="flex flex-col md:space-y-3 divide-y md:divide-none">
       <WishlistCard
         v-for="list in lists"
         :key="list.id"
@@ -30,11 +35,6 @@
         @settings="openListSettingsDialog(list)"
         @remove="openDeleteListDialog(list)"
       />
-    </div>
-
-    <!-- Skeletons -->
-    <div v-else-if="loading" class="flex flex-col md:space-y-3 divide-y md:divide-none">
-      <WishlistCardSkeleton v-for="item in 5" :key="item" />
     </div>
 
     <!-- Empty -->
@@ -62,10 +62,9 @@ import {
   DeleteWishlistsDialog,
   UnsuccessfulCreateWishlistDialog,
 } from "@/shared/wishlists";
-import { DEFAULT_WISHLIST_LIMIT } from "@/core/constants";
+import { configInjectionKey, DEFAULT_WISHLIST_LIMIT } from "@/core/constants";
 import { WishlistType } from "@/xapi/types";
 import { usePopup } from "@/shared/popup";
-import { configInjectionKey } from "@/core/injection-keys";
 import { inject } from "vue";
 import { computed } from "@vue/reactivity";
 import { usePageHead } from "@/core/composables";

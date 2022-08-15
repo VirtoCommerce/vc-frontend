@@ -1,4 +1,4 @@
-import { Role } from "@/core/types/role";
+import { Role } from "@/core/types";
 
 export type AddNewMember = {
   role: Role;

@@ -3,7 +3,7 @@ import { useLocalStorage } from "@vueuse/core";
 import { useNotifications } from "@/shared/notification";
 import { Product } from "@/xapi/types";
 import { truncate } from "@/core/utilities";
-import { configInjectionKey } from "@/core/injection-keys";
+import { configInjectionKey } from "@/core/constants";
 
 const NOTIFICATIONS_GROUP = "compare-pruducts";
 const DEFAULT_MAX_PRODUCTS = 5;

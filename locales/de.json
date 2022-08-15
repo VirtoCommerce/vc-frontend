@@ -98,6 +98,13 @@
           "link_contact_us": "Kontaktiere uns",
           "call_us_label": "Call us: "
         },
+        "bottom_header": {
+          "catalog_menu_button": "Catalog",
+          "catalog_menu": {
+            "show_more": "Show more",
+            "hide_more": "Hide"
+          }
+        },
         "link_sign_in": "Einloggen",
         "link_register_now": "Register now",
         "link_logout": "Ausloggen",
@@ -583,7 +590,7 @@
       },
       "delete_wishlist_product_dialog": {
         "title": "Delete warning",
-        "message": "Are you sure you want to remove “<span class=\"font-extrabold\">{productName}</span>” from the list?",
+        "message": "Are you sure you want to remove “{productName}” from the list?",
         "delete_button": "@:common.buttons.delete",
         "cancel_button": "@:common.buttons.cancel"
       }
@@ -902,7 +909,21 @@
         "meta": {
           "title": "@:pages.company.info.title"
         },
-        "title": "Company Info"
+        "title": "Company Info",
+        "content_header": "Addresses",
+        "no_addresses_message": "There are no addresses yet",
+        "labels": {
+          "company_name": "Company Name",
+          "address": "Address",
+          "description": "Description",
+          "zip": "Zip code",
+          "country": "Country",
+          "default": "Default"
+        },
+        "buttons": {
+          "add_new_address": "Add new address",
+          "add_new_address_mobile": "Add new"
+        }
       },
       "members": {
         "meta": {

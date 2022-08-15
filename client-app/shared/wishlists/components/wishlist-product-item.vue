@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center gap-x-8 pt-3 pb-5 py-3 px-6">
+  <div class="flex items-center gap-x-8 pb-5 py-3 px-6">
     <!-- Name and image -->
     <div class="relative shrink-0 w-full flex-1 flex space-x-3 items-center">
       <div class="border border-gray-100 w-16 h-16 shrink-0">

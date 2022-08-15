@@ -5,6 +5,7 @@ query Categories(
   $cultureName: String
   $after: String
   $first: Int
+  $filter: String
 ) {
   categories(
     storeId: $storeId
@@ -13,6 +14,7 @@ query Categories(
     first: $first
     currencyCode: $currencyCode
     cultureName: $cultureName
+    filter: $filter
   ) {
     items {
       id

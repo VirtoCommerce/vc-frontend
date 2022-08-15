@@ -5,8 +5,9 @@ import { LocationQueryValue } from "vue-router";
 export * from "./currency";
 export * from "./global-variables";
 export * from "./language";
-export * from "./theme-context";
 export * from "./page-content";
+export * from "./role";
+export * from "./theme-context";
 
 export type Dictionary = { [key: string | symbol | number]: any };
 
@@ -52,6 +53,11 @@ export type UseRouteQueryParamOptions<T = LocationQueryValue | LocationQueryValu
   // @default true
   removeDefaultValue?: boolean;
 };
+
+export interface ISortInfo {
+  column: string;
+  direction: string;
+}
 
 export interface IThemeConfig {
   current: string | { [key: string]: any };

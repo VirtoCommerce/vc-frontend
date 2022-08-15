@@ -317,8 +317,7 @@ import {
 import { BranchesDialog, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { AddToCart } from "@/shared/cart";
 import { useElementVisibility, usePageHead, useRouteQueryParam } from "@/core/composables";
-import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
-import QueryParamName from "@/core/query-param-name.enum";
+import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST, QueryParamName } from "@/core/constants";
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
 import { usePopup } from "@/shared/popup";
@@ -336,7 +335,7 @@ const props = defineProps({
 const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { t } = useI18n();
-const { selectedCategory, selectCategoryByKey, loadCategoriesTree, selectRoot } = useCategories();
+const { selectedCategory, selectCategoryByKey, selectRoot } = useCategories();
 const {
   fetchProducts,
   fetchMoreProducts,
@@ -591,7 +590,6 @@ function openBranchesDialog(fromMobileFilter: boolean) {
 // region Lifecycle Hooks
 
 onMounted(async () => {
-  await loadCategoriesTree();
   selectCategory(props.categoryId);
   await loadProducts();
 

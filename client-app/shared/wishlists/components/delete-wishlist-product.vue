@@ -1,16 +1,22 @@
 <template>
   <VcPopup :title="$t('shared.wishlists.delete_wishlist_product_dialog.title')" modal-width="max-w-lg" variant="danger">
-    <p
+    <i18n-t
+      keypath="shared.wishlists.delete_wishlist_product_dialog.message"
+      scope="global"
+      tag="p"
       class="py-6 md:py-10 px-6 border-b"
-      v-html="$t('shared.wishlists.delete_wishlist_product_dialog.message', { productName: listItem.name })"
-    />
+    >
+      <template #productName>
+        <b class="font-extrabold">{{ listItem.name }}</b>
+      </template>
+    </i18n-t>
 
     <template #actions="{ close }">
       <div class="flex grow justify-between space-x-4">
-        <!-- TODO: add color options (success, warning, danger) to VcButton -->
         <VcButton
           :is-waiting="loading"
-          class="uppercase flex-grow lg:flex-grow-0 lg:px-12 hover:!bg-[color:var(--color-danger-hover)] !bg-[color:var(--color-danger)]"
+          kind="danger"
+          class="uppercase flex-grow lg:flex-grow-0 lg:px-12"
           @click="remove(close)"
         >
           {{ $t("shared.wishlists.delete_wishlist_product_dialog.delete_button") }}
@@ -49,9 +55,10 @@ async function remove(closingHandle: () => void) {
     lineItemId: props.listItem.id,
     listId: props.listId,
   };
+
   await removeItemsFromWishlists([payload]);
 
-  closingHandle();
   emit("result");
+  closingHandle();
 }
 </script>

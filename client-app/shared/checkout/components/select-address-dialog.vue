@@ -188,7 +188,7 @@ const columns = ref<ITableColumn[]>([
   {
     id: "activeAddress",
     title: t("shared.checkout.select_address_dialog.table_columns.active_address"),
-    titlePosition: "text-center",
+    align: "center",
   },
 ]);
 

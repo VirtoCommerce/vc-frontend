@@ -271,11 +271,9 @@
 
 <script setup lang="ts">
 import { OrdersFilter, MobileOrdersFilter, useUserOrdersFilter, useUserOrders } from "@/shared/account";
-
 import { onMounted, ref, shallowRef, watch } from "vue";
-import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 import { breakpointsTailwind, useBreakpoints, onClickOutside } from "@vueuse/core";
-
+import { getNewSorting } from "@/core/utilities";
 import { useRouter } from "vue-router";
 import { CustomerOrderType } from "@/xapi/types";
 import { useI18n } from "vue-i18n";
@@ -323,13 +321,7 @@ const onPageChange = async (newPage: number) => {
 };
 
 const applySorting = async (column: string) => {
-  if (sort.value.column === column) {
-    sort.value.direction = sort.value.direction === SORT_DESCENDING ? SORT_ASCENDING : SORT_DESCENDING;
-  } else {
-    sort.value.column = column;
-    sort.value.direction = SORT_DESCENDING;
-  }
-
+  sort.value = getNewSorting(sort.value, column);
   page.value = 1;
   await loadOrders();
 };
@@ -372,13 +364,13 @@ const columns = ref<ITableColumn[]>([
     id: "status",
     title: t("pages.account.orders.status_label"),
     sortable: true,
-    titlePosition: "text-center",
+    align: "center",
   },
   {
     id: "total",
     title: t("pages.account.orders.total_label"),
     sortable: true,
-    titlePosition: "text-right",
+    align: "right",
   },
 ]);
 

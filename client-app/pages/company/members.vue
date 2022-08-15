@@ -172,7 +172,7 @@ import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { ref, onMounted } from "vue";
 import { usePopup } from "@/shared/popup";
-import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
+import { getNewSorting } from "@/core/utilities";
 import {
   AddNewCompanyMemberDialog,
   InviteMemberDialog,
@@ -250,13 +250,7 @@ const resetKeyword = async () => {
 };
 
 const applySorting = async (column: string) => {
-  if (sort.value.column === column) {
-    sort.value.direction = sort.value.direction === SORT_DESCENDING ? SORT_ASCENDING : SORT_DESCENDING;
-  } else {
-    sort.value.column = column;
-    sort.value.direction = SORT_DESCENDING;
-  }
-
+  sort.value = getNewSorting(sort.value, column);
   page.value = 1;
   await loadContacts();
 };

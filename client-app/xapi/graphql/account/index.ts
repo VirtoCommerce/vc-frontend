@@ -21,7 +21,6 @@ export { default as getMe } from "./queries/getMe";
 export { default as getMyAddresses } from "./queries/getMyAddresses";
 export { default as getWishList } from "./queries/getWishList";
 export { default as getWishlists } from "./queries/getWishlists";
-export { default as getOrganizationContacts } from "./queries/getOrganizationContacts";
 export { default as requestPasswordReset } from "./queries/requestPasswordReset";
 
 export * from "./types";

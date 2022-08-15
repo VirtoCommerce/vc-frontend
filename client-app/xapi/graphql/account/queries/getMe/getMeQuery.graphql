@@ -8,6 +8,7 @@ query GetMe($after: String, $first: Int, $sort: String) {
     photoUrl
     phoneNumber
     permissions
+    isAdministrator
     contact {
       firstName
       lastName

@@ -32,9 +32,8 @@
       </template>
 
       <template #button>
-        <VcButton class="px-6 uppercase" size="lg" @click="openEditMode">
-          <i class="fa fa-plus text-inherit -ml-0.5 mr-2.5" />
-
+        <VcButton class="px-4 uppercase" size="lg" @click="openEditMode">
+          <i class="fa fa-plus -ml-px mr-3" />
           {{ $t("pages.account.addresses.add_new_address_button") }}
         </VcButton>
       </template>
@@ -229,7 +228,7 @@ import { AddressForm, useUser, useUserAddresses } from "@/shared/account";
 import { computed, ComputedRef, onMounted, Ref, ref } from "vue";
 import { clone } from "lodash";
 import { MemberAddressType } from "@/xapi/types";
-import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
+import { getNewSorting } from "@/core/utilities";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useCountries, usePageHead } from "@/core/composables";
@@ -300,7 +299,7 @@ const columns = ref<ITableColumn[]>([
   {
     id: "actions",
     title: t("pages.account.addresses.actions_label"),
-    titlePosition: "text-center",
+    align: "center",
   },
 ]);
 
@@ -355,13 +354,7 @@ function actionBuilder(address: MemberAddressType) {
 }
 
 const applySorting = async (column: string): Promise<void> => {
-  if (sort.value.column === column) {
-    sort.value.direction = sort.value.direction === SORT_DESCENDING ? SORT_ASCENDING : SORT_DESCENDING;
-  } else {
-    sort.value.column = column;
-    sort.value.direction = SORT_DESCENDING;
-  }
-
+  sort.value = getNewSorting(sort.value, column);
   page.value = 1;
   await loadAddresses();
 };

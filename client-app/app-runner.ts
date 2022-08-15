@@ -4,7 +4,7 @@ import * as yup from "yup";
 import { createHead } from "@vueuse/head";
 import { setGlobalVariables } from "@/core/globals";
 import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";
-import { configPlugin, contextPlugin } from "@/core/plugins";
+import { configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
 import { useUser } from "@/shared/account";
 import { createI18n } from "@/i18n";
 import { createRouter } from "@/router";
@@ -13,6 +13,7 @@ import App from "./App.vue";
 import PageBuilderBlocks from "@/pages/blocks";
 import * as UIKitComponents from "@/ui-kit/components";
 import client from "@/xapi/graphql-client";
+import { useCategories } from "./shared/catalog";
 
 // Workaround before Nuxt3 migration, will be deleted later.
 window.useNuxtApp = () => {
@@ -26,6 +27,7 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
   const { themeContext, fetchThemeContext } = useThemeContext();
   const { currentLocale, currentLanguage, supportedLocales, setLocale } = useLanguages();
   const { currentCurrency } = useCurrency();
+  const { loadCategoriesTree } = useCategories();
 
   /**
    * Fetching required app data
@@ -67,6 +69,9 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
     },
   });
 
+  // Categories loading. It should be doing after i18n is initiated.
+  await loadCategoriesTree();
+
   /**
    * Create and mount application
    */
@@ -76,6 +81,7 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
   app.use(head);
   app.use(i18n);
   app.use(router);
+  app.use(permissionsPlugin);
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value!.settings);
 
