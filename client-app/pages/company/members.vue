@@ -115,25 +115,22 @@
             </td>
 
             <!--<td class="px-5 text-right">
-              <VcDropDownActionMenu>
-                <button class="flex items-center p-3 text-15 whitespace-nowrap">
-                  <i class="fas fa-pencil-alt pr-2 text-[color:var(--color-warning)]" />
-                  <span class="break-words">{{ $t("pages.company.members.buttons.edit_role") }}</span>
+              <VcActionDropdownMenu>
+                <button class="flex items-center p-3 whitespace-nowrap">
+                  <i class="fas fa-pencil-alt mr-2 leading-none text-base text-[color:var(--color-warning)]" />
+                  <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.edit_role") }}</span>
                 </button>
 
-                <button class="flex items-center p-3 text-15 whitespace-nowrap">
-                  <i class="fas fa-ban pr-2 text-black" />
-                  <span>{{ $t("pages.company.members.buttons.edit_role") }}</span>
+                <button class="flex items-center p-3 whitespace-nowrap">
+                  <i class="fas fa-ban mr-2 leading-none text-base text-black" />
+                  <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.edit_role") }}</span>
                 </button>
 
-                <button
-                  class="flex items-center p-3 text-15 whitespace-nowrap"
-                  @click="openDeleteMemberDialog(contact)"
-                >
-                  <i class="fas fa-times pr-2 text-[color:var(--color-danger)]" />
-                  <span>{{ $t("pages.company.members.buttons.edit_role") }}</span>
+                <button class="flex items-center p-3 whitespace-nowrap" @click="openDeleteMemberDialog(contact)">
+                  <i class="fas fa-times mr-2 leading-none text-xl text-[color:var(--color-danger)]" />
+                  <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.edit_role") }}</span>
                 </button>
-              </VcDropDownActionMenu>
+              </VcActionDropdownMenu>
             </td>-->
           </tr>
         </template>
@@ -200,7 +197,7 @@ import {
   AddNewCompanyMemberDialog,
   InviteMemberDialog,
   useOrganizationContacts,
-  DeleteMemberDialog,
+  DeleteCompanyMemberDialog,
 } from "@/shared/company";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { OrganizationContactType } from "@/core/types";
@@ -313,7 +310,7 @@ function openAddNewMemberPopup() {
 
 function openDeleteMemberDialog(contact: OrganizationContactType): void {
   openPopup({
-    component: DeleteMemberDialog,
+    component: DeleteCompanyMemberDialog,
     props: {
       contact,
       onConfirm() {

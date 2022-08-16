@@ -1,15 +1,18 @@
-import { computed, shallowRef, triggerRef } from "vue";
+import { computed, markRaw, ref } from "vue";
 import { ClosePopupHandle, IPopup } from "..";
 import _ from "lodash";
 
-const stack = shallowRef<IPopup[]>([]);
+const stack = ref<IPopup[]>([]);
 
 export default function usePopup() {
   function openPopup(options: IPopup): ClosePopupHandle {
     const id = options.id || _.uniqueId();
 
-    stack.value.push({ id, ...options });
-    triggerRef(stack);
+    stack.value.push({
+      id,
+      props: options.props,
+      component: markRaw(options.component),
+    });
 
     return () => closePopup(id);
   }
@@ -18,7 +21,6 @@ export default function usePopup() {
     if (!id) {
       // Close last popup window
       stack.value.pop();
-      triggerRef(stack);
       return;
     }
 
@@ -29,7 +31,6 @@ export default function usePopup() {
     }
 
     stack.value.splice(index, 1);
-    triggerRef(stack);
   }
 
   return {
