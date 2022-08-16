@@ -146,55 +146,56 @@ module.exports = {
         "t-2xl": "0 -25px 50px -12px rgba(0, 0, 0, 0.25)",
         "t-3xl": "0 -35px 60px -15px rgba(0, 0, 0, 0.3)",
         "sm-x-y": "1px 2px 9px rgba(0, 0, 0, 0.1)",
+        "sm-x-y-button": "1px 1px 5px rgba(0, 0, 0, 0.15)",
       },
       fontSize: {
         11: [
-          "0.688rem", //11px
+          "0.6875rem", //11px
           {
             lineHeight: "0.875rem", //14px
           },
         ],
         13: [
-          "0.813rem", //13px
+          "0.8125rem", //13px
           {
             lineHeight: "1.25rem", //20px
           },
         ],
         "13-title": [
-          "0.813rem", //13px
+          "0.8125rem", //13px
           {
             lineHeight: "1.25rem", //20px
             letterSpacing: "0.01em",
           },
         ],
         15: [
-          "0.938rem", //15px
+          "0.9375rem", //15px
           {
             lineHeight: "1.25rem", //20px
           },
         ],
         17: [
-          "1.063rem", //17px
+          "1.0625rem", //17px
           {
             lineHeight: "1.25rem", //20px
           },
         ],
         19: [
-          "1.188rem", //19px
+          "1.1875rem", //19px
           {
             letterSpacing: "0.01em",
             lineHeight: "1.438rem", //23px
           },
         ],
         21: [
-          "1.313rem", //21px
+          "1.3125rem", //21px
           {
             letterSpacing: "0.01em",
             lineHeight: "1.563rem", //25px
           },
         ],
         25: [
-          "1.563rem", //25px
+          "1.5625rem", //25px
           {
             lineHeight: "1.875rem", //30px
             letterSpacing: "0.02em",
@@ -230,7 +231,7 @@ module.exports = {
         19: "4.75rem", //76px
       },
       width: {
-        70: '17.5rem' //280px
+        70: "17.5rem", //280px
       },
       maxHeight: {
         "screen-60": "60vh",

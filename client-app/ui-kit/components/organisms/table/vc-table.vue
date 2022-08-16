@@ -45,11 +45,11 @@
       </tr>
     </thead>
     <!-- Desktop table body -->
-    <tbody v-if="items.length">
+    <tbody v-if="!loading && items.length">
       <slot name="desktop-body"></slot>
     </tbody>
     <!-- Desktop empty view -->
-    <tbody v-else-if="!loading">
+    <tbody v-else-if="!loading && !items.length">
       <slot name="desktop-empty"></slot>
     </tbody>
     <!-- Desktop table skeleton -->

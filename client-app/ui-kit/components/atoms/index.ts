@@ -9,6 +9,7 @@ export { default as VcFilterCardSkeleton } from "./filter-card-skeleton/vc-filte
 export { default as VcCheckbox } from "./checkbox/vc-checkbox.vue";
 export { default as VcChip } from "./chip/vc-chip.vue";
 export { default as VcDateSelector } from "./date-selector/vc-date-selector.vue";
+export { default as VcDropDownActionMenu } from "./drop-down-action-menu/vc-drop-down-action-menu.vue";
 export { default as VcEmptyView } from "./empty-view/vc-empty-view.vue";
 export { default as VcImage } from "./image/vc-image.vue";
 export { default as VcInStock } from "./in-stock/vc-in-stock.vue";
