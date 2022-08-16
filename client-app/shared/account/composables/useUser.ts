@@ -39,8 +39,19 @@ const organization = eagerComputed<Organization | null>(() => user.value?.contac
 export default () => {
   const { innerFetch } = useFetch();
 
+  function checkPermissions(...permissions: string[]): boolean {
+    let access = !!user.value?.isAdministrator;
+
+    if (!access) {
+      access = permissions.every((permission) => user.value?.permissions?.includes(permission));
+    }
+
+    return access;
+  }
+
   async function fetchUser() {
     try {
+      loading.value = true;
       user.value = await getMe();
     } catch (e) {
       Logger.error(`useUser.${fetchUser.name}`, e);
@@ -236,6 +247,7 @@ export default () => {
   return {
     isAuthenticated,
     organization,
+    checkPermissions,
     fetchUser,
     updateUser,
     changePassword,

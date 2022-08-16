@@ -1,6 +1,6 @@
 import { App } from "vue";
 import { IThemeConfigPreset } from "../types";
-import { configInjectionKey } from "@/core/injection-keys";
+import { configInjectionKey } from "@/core/constants";
 
 export default {
   install: (app: App, options: IThemeConfigPreset) => {

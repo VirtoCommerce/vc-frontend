@@ -1,3 +1,4 @@
+export { default as VcActionDropdownMenu } from "./action-dropdown-menu/vc-action-dropdown-menu.vue";
 export { default as VcActionInput } from "./action-input/vc-action-input.vue";
 export { default as VcAlert } from "./alert/vc-alert.vue";
 export { default as VcBreadcrumbs } from "./breadcrumbs/vc-breadcrumbs.vue";

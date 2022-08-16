@@ -1,15 +1,17 @@
-import { getOrganizationContacts, createContact, createUser, requestPasswordReset } from "@/xapi/graphql/account";
-import { ContactType, IdentityResultType } from "@/xapi/types";
+import { createContact, createUser, requestPasswordReset } from "@/xapi/graphql/account";
+import { getOrganizationContacts } from "@/xapi/graphql/organization";
+import { ContactType, IdentityResultType, InputUpdateContactType } from "@/xapi/types";
 import { ref, shallowRef, Ref, readonly, computed } from "vue";
-import { Logger } from "@/core/utilities";
-import { getSortingExpression, ISortInfo, useUser } from "@/shared/account";
+import { getSortingExpression, Logger } from "@/core/utilities";
+import { useUser } from "@/shared/account";
 import { DEFAULT_PAGE_SIZE, SORT_ASCENDING } from "@/core/constants";
 import _ from "lodash";
-import { OrganizationContactType } from "@/core/types";
+import { ISortInfo, OrganizationContactType } from "@/core/types";
 import { useI18n } from "vue-i18n";
-import { AddNewMember, convertToOrganizationContact } from "@/shared/company";
+import { AddNewMember, convertToOrganizationContact, convertToInputUpdateContact } from "@/shared/company";
 import globals from "@/core/globals";
 import { useRouter } from "vue-router";
+import updateContact from "@/xapi/graphql/account/mutations/updateContact";
 
 const TEMP_PASSWORD = "TempPassword#1";
 
@@ -97,6 +99,20 @@ export default () => {
     }
   }
 
+  async function updateMember(contact: OrganizationContactType): Promise<void> {
+    loading.value = true;
+
+    try {
+      const payload: InputUpdateContactType = convertToInputUpdateContact(contact);
+      await updateContact(payload);
+    } catch (e) {
+      Logger.error(`useOrganizationContacts.${updateMember.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     sort,
     itemsPerPage,
@@ -107,6 +123,7 @@ export default () => {
     contacts: computed(() => contacts.value),
     loadContacts,
     addNewContact,
+    updateMember,
   };
 };
 

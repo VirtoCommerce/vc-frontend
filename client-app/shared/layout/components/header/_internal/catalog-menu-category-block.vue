@@ -1,0 +1,80 @@
+<template>
+  <div>
+    <router-link
+      class="block px-2 py-1 mb-2 text-base font-bold hover:bg-gray-100"
+      :to="categoriesRoutes[category.id!]"
+      :title="category.label"
+      @click="clickCategory"
+    >
+      {{ category.label }}
+    </router-link>
+    <div>
+      <template v-for="(subcategory, key) in displayedCategories" :key="key">
+        <router-link
+          class="block px-2 py-1 mb-1 text-sm !leading-4 text-gray-500 truncate hover:bg-gray-100"
+          :to="categoriesRoutes[subcategory.id!]"
+          :title="subcategory.label"
+          @click="clickCategory"
+        >
+          {{ subcategory.label }}
+        </router-link>
+      </template>
+
+      <button
+        v-if="subCategories.length > SHORT_VIEW_ITEMS_COUNT"
+        @click="toggleShowAll"
+        class="px-2 py-1 text-sm cursor-pointer flex items-baseline"
+      >
+        <span
+          class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
+          v-t="
+            showAll
+              ? 'shared.layout.header.bottom_header.catalog_menu.hide_more'
+              : 'shared.layout.header.bottom_header.catalog_menu.show_more'
+          "
+        />
+        <i
+          class="ml-[5px] fas text-[color:var(--color-primary)]"
+          :class="[showAll ? 'fa-chevron-up' : 'fa-chevron-down']"
+        />
+      </button>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { CategoryTree, useCategoriesRoutes } from "@/shared/catalog";
+import { computed, PropType, ref } from "vue";
+
+const SHORT_VIEW_ITEMS_COUNT = 5;
+const showAll = ref(false);
+
+const props = defineProps({
+  category: {
+    type: Object as PropType<CategoryTree>,
+    required: true,
+  },
+});
+
+const emit = defineEmits<{
+  (event: "select"): void;
+}>();
+
+const subCategories = computed(() => props.category.items || []);
+
+const displayedCategories = computed(() =>
+  showAll.value ? subCategories.value : subCategories.value.slice(0, SHORT_VIEW_ITEMS_COUNT)
+);
+
+const categoryWithSubcategories = computed(() => [props.category, ...subCategories.value]);
+
+const categoriesRoutes = useCategoriesRoutes(categoryWithSubcategories);
+
+function toggleShowAll() {
+  showAll.value = !showAll.value;
+}
+
+function clickCategory() {
+  emit("select");
+}
+</script>

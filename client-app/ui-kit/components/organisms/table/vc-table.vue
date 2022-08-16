@@ -24,14 +24,14 @@
 
   <!-- Desktop table view -->
   <table v-else :class="[layout, 'text-sm text-left w-full']">
-    <thead v-if="columns" class="border-b border-gray-200">
+    <thead v-if="columns.length" class="border-b border-gray-200">
       <tr>
         <th
           v-for="column in columns"
           :key="column.id"
           class="py-3 px-5 font-extrabold"
-          :class="[column.sortable && 'cursor-pointer', column.titlePosition]"
-          @click="$emit('headerClick', column.id)"
+          :class="[{ 'cursor-pointer': column.sortable }, `text-${column.align || 'left'}`, column.classes]"
+          @click="column.sortable ? $emit('headerClick', column.id) : null"
         >
           {{ column.title }}
           <template v-if="column.sortable && sort">
@@ -45,11 +45,11 @@
       </tr>
     </thead>
     <!-- Desktop table body -->
-    <tbody v-if="items.length">
+    <tbody v-if="!loading && items.length">
       <slot name="desktop-body"></slot>
     </tbody>
     <!-- Desktop empty view -->
-    <tbody v-else-if="!loading">
+    <tbody v-else-if="!loading && !items.length">
       <slot name="desktop-empty"></slot>
     </tbody>
     <!-- Desktop table skeleton -->
@@ -73,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { ISortInfo } from "@/shared/account";
+import { ISortInfo } from "@/core/types";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 import { PropType } from "vue";

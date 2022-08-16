@@ -76,53 +76,73 @@
         :sort="sort"
         :pages="pages"
         :page="page"
+        :item-action-builder="actionBuilder"
         layout="table-auto"
         @headerClick="applySorting"
         @pageChanged="changePage"
       >
         <template #desktop-body>
           <tr v-for="contact in contacts" :key="contact.id" class="even:bg-gray-50">
-            <td class="pl-4 pr-0 py-2.5 w-px">
+            <td class="pl-4 pr-0 py-2.5">
               <!-- STUB -->
               <div class="rounded-full bg-gray-500 h-9 w-9">&nbsp;</div>
             </td>
-            <td class="pl-5 pr-1 py-2.5">
+
+            <td class="px-4 py-2.5">
               {{ contact.fullName }}
             </td>
-            <td class="pl-5 pr-1 py-2.5">
+
+            <td class="px-4 py-2.5">
               {{ contact.role }}
             </td>
-            <td class="pl-5 pr-1 py-2.5">
+
+            <td class="px-4 py-2.5">
               {{ contact.email }}
             </td>
-            <td class="px-5 py-2.5 w-24 overflow-hidden">
-              <div class="flex justify-start">
-                <VcTooltip>
-                  <template #trigger>
-                    <img width="20" height="20" :src="contact.displayStatus.iconUrl" />
-                  </template>
-                  <template #content>
-                    <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5">
-                      {{ $t(contact.displayStatus.localeLabel) }}
-                    </div>
-                  </template>
-                </VcTooltip>
-              </div>
+
+            <td class="px-4 py-3 text-center">
+              <VcTooltip>
+                <template #trigger>
+                  <img width="20" height="20" :src="contact.displayStatus.iconUrl" />
+                </template>
+
+                <template #content>
+                  <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5">
+                    {{ $t(contact.displayStatus.localeLabel) }}
+                  </div>
+                </template>
+              </VcTooltip>
             </td>
-            <!--
-            <td class="p-5 w-px">
-              <VcButton class="px-2 rounded" size="sm" is-outline>
-                <i class="fas fa-cog text-lg" />
-              </VcButton>
-            </td>
-            -->
+
+            <!--<td class="px-5 text-right">
+              <VcActionDropdownMenu>
+                <button class="flex items-center p-3 whitespace-nowrap">
+                  <i class="fas fa-pencil-alt mr-2 leading-none text-base text-[color:var(--color-warning)]" />
+                  <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.edit_role") }}</span>
+                </button>
+
+                <button class="flex items-center p-3 whitespace-nowrap">
+                  <i class="fas fa-ban mr-2 leading-none text-base text-black" />
+                  <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.edit_role") }}</span>
+                </button>
+
+                <button class="flex items-center p-3 whitespace-nowrap" @click="openDeleteMemberDialog(contact)">
+                  <i class="fas fa-times mr-2 leading-none text-xl text-[color:var(--color-danger)]" />
+                  <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.edit_role") }}</span>
+                </button>
+              </VcActionDropdownMenu>
+            </td>-->
           </tr>
         </template>
 
         <template #desktop-skeleton>
-          <tr v-for="row of itemsPerPage" :key="row" class="even:bg-gray-50">
-            <td v-for="column of columns" :key="column.id" class="p-5">
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+          <tr v-for="row in itemsPerPage" :key="row" class="even:bg-gray-50">
+            <td class="pl-4 pr-0 py-2.5">
+              <div class="rounded-full bg-gray-200 animate-pulse h-9 w-9"></div>
+            </td>
+
+            <td v-for="column in columns.length - 1" :key="column" class="px-4 py-3">
+              <div class="h-5 bg-gray-200 animate-pulse"></div>
             </td>
           </tr>
         </template>
@@ -172,14 +192,21 @@ import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { ref, onMounted } from "vue";
 import { usePopup } from "@/shared/popup";
-import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
-import { AddNewCompanyMemberDialog, InviteMemberDialog, useOrganizationContacts } from "@/shared/company";
+import { getNewSorting } from "@/core/utilities";
+import {
+  AddNewCompanyMemberDialog,
+  InviteMemberDialog,
+  useOrganizationContacts,
+  DeleteCompanyMemberDialog,
+} from "@/shared/company";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { OrganizationContactType } from "@/core/types";
 
 const { t } = useI18n();
-const { openPopup } = usePopup();
+const { openPopup, closePopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { loading, page, pages, itemsPerPage, sort, keyword, loadContacts, contacts } = useOrganizationContacts();
+const { loading, page, pages, itemsPerPage, sort, keyword, loadContacts, contacts, updateMember } =
+  useOrganizationContacts();
 
 usePageHead({
   title: t("pages.company.members.meta.title"),
@@ -190,6 +217,7 @@ const isMobile = breakpoints.smaller("lg");
 const columns = ref<ITableColumn[]>([
   {
     id: "roleIcon",
+    classes: "w-14",
   },
   {
     id: "name",
@@ -199,20 +227,20 @@ const columns = ref<ITableColumn[]>([
   {
     id: "role",
     title: t("pages.company.members.content_header.role"),
-    sortable: true,
   },
   {
     id: "email",
     title: t("pages.company.members.content_header.email"),
-    sortable: true,
   },
   {
     id: "status",
     title: t("pages.company.members.content_header.active"),
-    sortable: false,
+    align: "center",
+    classes: "w-24",
   },
   /*{
     id: "actions",
+    classes: "w-16",
   },*/
 ]);
 
@@ -244,13 +272,7 @@ const resetKeyword = async () => {
 };
 
 const applySorting = async (column: string) => {
-  if (sort.value.column === column) {
-    sort.value.direction = sort.value.direction === SORT_DESCENDING ? SORT_ASCENDING : SORT_DESCENDING;
-  } else {
-    sort.value.column = column;
-    sort.value.direction = SORT_DESCENDING;
-  }
-
+  sort.value = getNewSorting(sort.value, column);
   page.value = 1;
   await loadContacts();
 };
@@ -258,6 +280,14 @@ const applySorting = async (column: string) => {
 const changePage = async (newPage: number) => {
   page.value = newPage;
   window.scroll({ top: 0, behavior: "smooth" });
+  await loadContacts();
+};
+
+const deleteContactFromOrganization = async (contact: OrganizationContactType) => {
+  await updateMember({
+    ...contact,
+    organizationsIds: [],
+  });
   await loadContacts();
 };
 
@@ -276,5 +306,34 @@ function openAddNewMemberPopup() {
       },
     },
   });
+}
+
+function openDeleteMemberDialog(contact: OrganizationContactType): void {
+  openPopup({
+    component: DeleteCompanyMemberDialog,
+    props: {
+      contact,
+      onConfirm() {
+        closePopup();
+        deleteContactFromOrganization(contact);
+      },
+    },
+  });
+}
+
+function actionBuilder(contact: OrganizationContactType) {
+  const result: ItemAction[] = [
+    {
+      icon: "fas fa-trash-alt",
+      title: t("pages.company.members.buttons.delete"),
+      leftActions: true,
+      bgColor: "bg-[color:var(--color-danger)]",
+      clickHandler() {
+        openDeleteMemberDialog(contact);
+      },
+    },
+  ];
+
+  return result;
 }
 </script>

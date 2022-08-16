@@ -15,5 +15,6 @@ fragment memberAddressFields on MemberAddressType {
   isDefault
   phone
   email
+  description
   addressType
 }

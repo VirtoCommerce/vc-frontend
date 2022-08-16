@@ -81,12 +81,12 @@ import * as yup from "yup";
 import { checkEmailUniqueness, checkUsernameUniqueness } from "@/xapi/graphql/account";
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
-import { ROLES } from "@/core/securityConstants";
+import { ROLES } from "@/core/constants";
 import { ref, shallowRef } from "vue";
 import { VcPopup } from "@/ui-kit/components";
 import { useOrganizationContacts } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
-import { Role } from "@/core/types/role";
+import { Role } from "@/core/types";
 
 const { t } = useI18n();
 const notifications = useNotifications();

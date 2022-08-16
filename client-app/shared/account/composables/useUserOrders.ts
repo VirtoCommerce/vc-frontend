@@ -1,8 +1,9 @@
 import { computed, readonly, ref, Ref, shallowRef } from "vue";
 import { CustomerOrderType } from "@/xapi/types";
 import { getOrders } from "@/xapi/graphql/orders";
-import { dateToIsoDateString, Logger } from "@/core/utilities";
-import { getSortingExpression, ISortInfo, OrdersFilterData } from "@/shared/account";
+import { dateToIsoDateString, getSortingExpression, Logger } from "@/core/utilities";
+import { ISortInfo } from "@/core/types";
+import { OrdersFilterData } from "@/shared/account";
 import { SORT_DESCENDING } from "@/core/constants";
 import useUserOrdersFilter from "./useUserOrdersFilter";
 

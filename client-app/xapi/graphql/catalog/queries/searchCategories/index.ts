@@ -15,6 +15,7 @@ export default async function searchCategories(itemsPerPage: number, page: numbe
       currencyCode,
       first: itemsPerPage,
       after: String((page - 1) * itemsPerPage),
+      filter: "status:visible",
     },
   });
 
