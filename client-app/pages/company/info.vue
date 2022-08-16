@@ -20,6 +20,4 @@ const { t } = useI18n();
 usePageHead({
   title: t("pages.company.info.meta.title"),
 });
-
-// openSaveCompanyAddressDialog(address?: AddressType): void
 </script>

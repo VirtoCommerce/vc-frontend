@@ -39,7 +39,7 @@
             :maxlength="32"
             :error-message="errors.postalCode"
             :label="$t('shared.company.add_or_update_address_dialog.postal_code_field_label')"
-            class="flex-1"
+            class="flex-1 mt-5 md:mt-0"
             is-required
           />
         </div>
@@ -62,7 +62,7 @@
             :maxlength="128"
             :error-message="errors.city"
             :label="$t('shared.company.add_or_update_address_dialog.city_field_label')"
-            class="flex-1"
+            class="flex-1 mt-5 md:mt-0"
             is-required
           />
         </div>
@@ -87,12 +87,12 @@
     </template>
 
     <template #actions="{ close }">
-      <VcButton class="uppercase w-32 sm:flex-grow" kind="secondary" is-outline @click="close">
-        {{ $t("shared.company.add_or_update_address_dialog.cancel_button_label") }}
+      <VcButton class="uppercase w-32" kind="secondary" is-outline @click="close">
+        {{ $t("common.buttons.cancel") }}
       </VcButton>
 
-      <VcButton class="uppercase w-32 sm:flex-grow" :is-disabled="!meta.dirty || !meta.valid">
-        {{ $t("shared.company.add_or_update_address_dialog.save_button_label") }}
+      <VcButton class="uppercase w-32" :is-disabled="!meta.dirty || !meta.valid">
+        {{ $t("common.buttons.save") }}
       </VcButton>
     </template>
   </VcPopup>
