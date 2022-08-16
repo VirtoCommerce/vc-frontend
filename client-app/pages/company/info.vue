@@ -44,7 +44,6 @@
         >
           <h2 class="text-gray-800 text-xl font-extrabold uppercase py-0.5" v-t="'pages.company.info.content_header'" />
 
-          <!--
           <VcButton
             v-if="isOrganizationMaintainer"
             class="px-3 uppercase"
@@ -55,7 +54,6 @@
             <span class="sm:hidden">{{ $t("pages.company.info.buttons.add_new_address_mobile") }}</span>
             <span class="hidden sm:inline">{{ $t("pages.company.info.buttons.add_new_address") }}</span>
           </VcButton>
-          -->
         </div>
 
         <VcEmptyView
@@ -71,14 +69,12 @@
             />
           </template>
 
-          <!--
           <template #button v-if="isOrganizationMaintainer">
             <VcButton class="px-4 uppercase" size="lg" @click="addOrUpdateAddressDialog()">
               <i class="fa fa-plus -ml-px mr-3" />
               {{ $t("pages.company.info.buttons.add_new_address") }}
             </VcButton>
           </template>
-          -->
         </VcEmptyView>
 
         <div v-else class="flex flex-col md:rounded md:border">
