@@ -5,7 +5,7 @@
       <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.company.info.title'" />
     </div>
 
-    <div class="flex flex-col bg-white shadow-sm md:rounded md:border overflow-x-hidden">
+    <div class="flex flex-col bg-white shadow-sm md:rounded md:border">
       <!-- Company name block -->
       <div class="flex flex-row p-5 gap-3 shadow [--tw-shadow:0_10px_15px_0_rgb(0_0_0_/_0.06)]">
         <!-- TODO: :is-disabled="!isOrganizationMaintainer || loadingOrganization || loadingUser" -->
@@ -84,11 +84,13 @@
         <div v-else class="flex flex-col md:rounded md:border">
           <VcTable
             :loading="loadingAddresses"
+            :item-action-builder="actionBuilder"
             :columns="columns"
             :items="addresses"
             :sort="sort"
             :pages="pages"
             :page="page"
+            layout="table-auto"
             @headerClick="applySorting"
             @pageChanged="onPageChange"
           >
@@ -195,8 +197,29 @@
                   </div>
                 </td>
 
-                <td v-if="isOrganizationMaintainer" class="px-5 py-3 text-right">
-                  <!-- TODO: actions -->
+                <td v-if="isOrganizationMaintainer" class="px-5 py-3 text-right relative">
+                  <VcActionDropdownMenu>
+                    <!--
+                    <button class="flex items-center p-3 whitespace-nowrap" @click=addOrUpdateAddressDialog(address)>
+                      <i class="fas fa-pencil-alt mr-2 leading-none text-base text-[color:var(--color-warning)]" />
+                      <span class="text-15 font-medium">{{ $t("common.buttons.edit") }}</span>
+                    </button>
+                    -->
+
+                    <button
+                      :disabled="address.isDefault"
+                      :class="{ 'text-gray-400': address.isDefault }"
+                      :title="address.isDefault ? $t('pages.company.info.address_not_delete_message') : undefined"
+                      class="flex items-center p-3 whitespace-nowrap"
+                      @click="openDeleteAddressDialog(address)"
+                    >
+                      <i
+                        :class="{ 'text-[color:var(--color-danger)]': !address.isDefault }"
+                        class="fas fa-times mr-2 leading-none text-xl"
+                      />
+                      <span class="text-15 font-medium">{{ $t("common.buttons.delete") }}</span>
+                    </button>
+                  </VcActionDropdownMenu>
                 </td>
               </tr>
             </template>
@@ -217,16 +240,21 @@
 
 <script setup lang="ts">
 /* eslint-disable @typescript-eslint/no-unused-vars */ // TODO: remove
-import { computed, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { computedEager } from "@vueuse/core";
 import { useField } from "vee-validate";
 import * as yup from "yup";
 import { usePageHead } from "@/core/composables";
 import { useUser } from "@/shared/account";
-import { useOrganization, useOrganizationAddresses } from "@/shared/company";
+import { usePopup } from "@/shared/popup";
+import { DeleteCompanyAddressDialog, useOrganization, useOrganizationAddresses } from "@/shared/company";
 import { ORGANIZATION_MAINTAINER } from "@/core/constants";
-import { getNewSorting } from "@/core/utilities";
+import { getAddressName, getNewSorting } from "@/core/utilities";
+import { MemberAddressType } from "@/xapi/types";
+import { useNotifications } from "@/shared/notification";
+
+const loadingDeleting = ref(false);
 
 const { t } = useI18n();
 
@@ -234,6 +262,10 @@ usePageHead({
   title: t("pages.company.info.meta.title"),
 });
 
+/**
+ * This page is accessible only to members of the organization,
+ * so the organization must exist.
+ */
 const { loading: loadingUser, organization, checkPermissions } = useUser();
 const { loading: loadingOrganization, updateOrganization } = useOrganization();
 const {
@@ -243,19 +275,18 @@ const {
   sort,
   itemsPerPage,
   fetchAddresses,
+  removeAddresses,
   loading: loadingAddresses,
-} = useOrganizationAddresses();
+} = useOrganizationAddresses(organization.value!.id);
 const {
   meta,
   errors,
   value: organizationName,
   resetField: resetOrganizationField,
 } = useField<string>("organizationName", yup.string().max(64).required());
+const { openPopup } = usePopup();
+const notifications = useNotifications();
 
-/**
- * This page is accessible only to members of the organization,
- * so the organization ID must exist.
- */
 const organizationId = computed<string>(() => organization.value!.id);
 const isOrganizationMaintainer = computedEager<boolean>(() => checkPermissions(...ORGANIZATION_MAINTAINER.permissions));
 
@@ -304,16 +335,54 @@ async function saveOrganizationName() {
   });
 }
 
+async function openDeleteAddressDialog(address: MemberAddressType) {
+  if (address.isDefault) {
+    return;
+  }
+
+  const closeDeleteAddressDialog = openPopup({
+    component: DeleteCompanyAddressDialog,
+    props: {
+      loading: loadingDeleting,
+      async onConfirm() {
+        const previousPagesCount = pages.value;
+
+        loadingDeleting.value = true;
+
+        await removeAddresses([address]);
+
+        notifications.success({
+          text: t("pages.company.info.address_deletion_successful_message", { addressName: getAddressName(address) }),
+          duration: 10000,
+          single: true,
+        });
+
+        /**
+         * If you were on the last page, and after deleting the product
+         * the number of pages has decreased, go to the previous page
+         */
+        if (previousPagesCount === page.value && previousPagesCount > pages.value) {
+          page.value -= 1;
+        }
+
+        closeDeleteAddressDialog();
+
+        loadingDeleting.value = false;
+      },
+    },
+  });
+}
+
 async function onPageChange(newPage: number) {
   window.scroll({ top: 0, behavior: "smooth" });
   page.value = newPage;
-  await fetchAddresses(organizationId.value);
+  await fetchAddresses();
 }
 
 async function applySorting(column: string) {
   sort.value = getNewSorting(sort.value, column);
   page.value = 1;
-  await fetchAddresses(organizationId.value);
+  await fetchAddresses();
 }
 
 function addOrUpdateAddressDialog() {
@@ -321,7 +390,31 @@ function addOrUpdateAddressDialog() {
   // see a similar function in `client-app/pages/checkout.vue`
 }
 
-fetchAddresses(organizationId.value);
+function actionBuilder(address: MemberAddressType) {
+  const result: ItemAction[] = [
+    {
+      icon: "fas fa-trash-alt",
+      title: t("common.buttons.delete"),
+      leftActions: true,
+      bgColor: address.isDefault ? "bg-gray-200" : "bg-[color:var(--color-danger)]",
+      clickHandler() {
+        openDeleteAddressDialog(address);
+      },
+    },
+    /*{
+      icon: "fas fa-pencil-alt",
+      title: t("common.buttons.edit"),
+      bgColor: "bg-gray-300",
+      clickHandler() {
+        addOrUpdateAddressDialog(address);
+      },
+    },*/
+  ];
+
+  return result;
+}
+
+fetchAddresses();
 
 watch(
   () => organization.value!.name!,
