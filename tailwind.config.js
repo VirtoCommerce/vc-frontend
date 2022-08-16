@@ -132,10 +132,6 @@ module.exports = {
           500: "#5294AD",
           700: "#00739E",
         },
-
-        gray: {
-          500: "#99A2B9",
-        },
       },
       boxShadow: {
         "t-sm": "0 -1px 2px 0 rgba(0, 0, 0, 0.05)",
@@ -154,52 +150,52 @@ module.exports = {
       },
       fontSize: {
         11: [
-          "0.688rem", //11px
+          "0.6875rem", //11px
           {
             lineHeight: "0.875rem", //14px
           },
         ],
         13: [
-          "0.813rem", //13px
+          "0.8125rem", //13px
           {
             lineHeight: "1.25rem", //20px
           },
         ],
         "13-title": [
-          "0.813rem", //13px
+          "0.8125rem", //13px
           {
             lineHeight: "1.25rem", //20px
             letterSpacing: "0.01em",
           },
         ],
         15: [
-          "0.938rem", //15px
+          "0.9375rem", //15px
           {
             lineHeight: "1.25rem", //20px
           },
         ],
         17: [
-          "1.063rem", //17px
+          "1.0625rem", //17px
           {
             lineHeight: "1.25rem", //20px
           },
         ],
         19: [
-          "1.188rem", //19px
+          "1.1875rem", //19px
           {
             letterSpacing: "0.01em",
             lineHeight: "1.438rem", //23px
           },
         ],
         21: [
-          "1.313rem", //21px
+          "1.3125rem", //21px
           {
             letterSpacing: "0.01em",
             lineHeight: "1.563rem", //25px
           },
         ],
         25: [
-          "1.563rem", //25px
+          "1.5625rem", //25px
           {
             lineHeight: "1.875rem", //30px
             letterSpacing: "0.02em",

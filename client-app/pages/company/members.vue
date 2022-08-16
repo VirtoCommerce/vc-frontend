@@ -83,28 +83,29 @@
       >
         <template #desktop-body>
           <tr v-for="contact in contacts" :key="contact.id" class="even:bg-gray-50">
-            <td class="pl-4 pr-0 py-2.5 w-px">
+            <td class="pl-4 pr-0 py-2.5">
               <!-- STUB -->
               <div class="rounded-full bg-gray-500 h-9 w-9">&nbsp;</div>
             </td>
 
-            <td class="pl-5 pr-1 py-2.5">
+            <td class="px-4 py-2.5">
               {{ contact.fullName }}
             </td>
 
-            <td class="pl-5 pr-1 py-2.5">
+            <td class="px-4 py-2.5">
               {{ contact.role }}
             </td>
 
-            <td class="pl-5 pr-1 py-2.5">
+            <td class="px-4 py-2.5">
               {{ contact.email }}
             </td>
 
-            <td class="px-5 py-2.5 w-24">
-              <VcTooltip class="flex justify-center">
+            <td class="px-4 py-3 text-center">
+              <VcTooltip>
                 <template #trigger>
                   <img width="20" height="20" :src="contact.displayStatus.iconUrl" />
                 </template>
+
                 <template #content>
                   <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5">
                     {{ $t(contact.displayStatus.localeLabel) }}
@@ -113,16 +114,38 @@
               </VcTooltip>
             </td>
 
-            <!--<td class="px-5 w-24">
-              <MemberActionsMenu :contact="contact" @deleteContact="openDeleteMemberDialog(contact)" />
+            <!--<td class="px-5 text-right">
+              <VcDropDownActionMenu>
+                <button class="flex items-center p-3 text-15 whitespace-nowrap">
+                  <i class="fas fa-pencil-alt pr-2 text-[color:var(--color-warning)]" />
+                  <span class="break-words">{{ $t("pages.company.members.buttons.edit_role") }}</span>
+                </button>
+
+                <button class="flex items-center p-3 text-15 whitespace-nowrap">
+                  <i class="fas fa-ban pr-2 text-black" />
+                  <span>{{ $t("pages.company.members.buttons.edit_role") }}</span>
+                </button>
+
+                <button
+                  class="flex items-center p-3 text-15 whitespace-nowrap"
+                  @click="openDeleteMemberDialog(contact)"
+                >
+                  <i class="fas fa-times pr-2 text-[color:var(--color-danger)]" />
+                  <span>{{ $t("pages.company.members.buttons.edit_role") }}</span>
+                </button>
+              </VcDropDownActionMenu>
             </td>-->
           </tr>
         </template>
 
         <template #desktop-skeleton>
-          <tr v-for="row of itemsPerPage" :key="row" class="even:bg-gray-50">
-            <td v-for="column of columns" :key="column.id" class="p-5">
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+          <tr v-for="row in itemsPerPage" :key="row" class="even:bg-gray-50">
+            <td class="pl-4 pr-0 py-2.5">
+              <div class="rounded-full bg-gray-200 animate-pulse h-9 w-9"></div>
+            </td>
+
+            <td v-for="column in columns.length - 1" :key="column" class="px-4 py-3">
+              <div class="h-5 bg-gray-200 animate-pulse"></div>
             </td>
           </tr>
         </template>
@@ -177,7 +200,6 @@ import {
   AddNewCompanyMemberDialog,
   InviteMemberDialog,
   useOrganizationContacts,
-  //MemberActionsMenu,
   DeleteMemberDialog,
 } from "@/shared/company";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
@@ -198,6 +220,7 @@ const isMobile = breakpoints.smaller("lg");
 const columns = ref<ITableColumn[]>([
   {
     id: "roleIcon",
+    classes: "w-14",
   },
   {
     id: "name",
@@ -216,9 +239,11 @@ const columns = ref<ITableColumn[]>([
     id: "status",
     title: t("pages.company.members.content_header.active"),
     align: "center",
+    classes: "w-24",
   },
   /*{
     id: "actions",
+    classes: "w-16",
   },*/
 ]);
 
@@ -290,8 +315,8 @@ function openDeleteMemberDialog(contact: OrganizationContactType): void {
   openPopup({
     component: DeleteMemberDialog,
     props: {
-      contact: contact,
-      onConfirm(): void {
+      contact,
+      onConfirm() {
         closePopup();
         deleteContactFromOrganization(contact);
       },
@@ -300,7 +325,7 @@ function openDeleteMemberDialog(contact: OrganizationContactType): void {
 }
 
 function actionBuilder(contact: OrganizationContactType) {
-  const result = [
+  const result: ItemAction[] = [
     {
       icon: "fas fa-trash-alt",
       title: t("pages.company.members.buttons.delete"),

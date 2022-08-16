@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="inline-flex relative">
     <div
-      aria-describedby="popover"
+      :aria-describedby="`popover-${$.uid}`"
       ref="triggerNode"
       @mouseenter="trigger === 'hover' && toggleTooltip(true)"
       @mouseleave="trigger === 'hover' && toggleTooltip(false)"
@@ -10,7 +10,7 @@
       <slot name="trigger" />
     </div>
 
-    <div class="z-50" id="popover" ref="tooltipNode" v-show="isShown">
+    <div class="z-50" :id="`popover-${$.uid}`" ref="tooltipNode" v-show="isShown">
       <slot name="content" />
     </div>
   </div>
@@ -44,7 +44,7 @@ const triggerNode = shallowRef<HTMLElement | null>(null);
 const tooltipNode = shallowRef<HTMLElement | null>(null);
 
 const isShown = ref(false);
-let tooltipInstance: Instance | undefined = undefined;
+let tooltipInstance: Instance | null = null;
 
 function createTooltip(): void {
   tooltipInstance = createPopper(triggerNode.value!, tooltipNode.value!, {
@@ -62,11 +62,12 @@ function createTooltip(): void {
 
 function toggleTooltip(show: boolean): void {
   isShown.value = show;
+
   if (isShown.value) {
     createTooltip();
-    tooltipInstance?.update();
   } else {
     tooltipInstance?.destroy();
+    tooltipInstance = null;
   }
 }
 
