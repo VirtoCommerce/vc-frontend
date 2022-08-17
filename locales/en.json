@@ -322,9 +322,11 @@
       },
       "delete_member_dialog": {
         "title": "Delete member",
-        "text": "Are you sure you want to delete the user {name} from the company members list?",
-        "ok_button": "Ok",
-        "cancel_button": "Cancel"
+        "text": "Are you sure you want to delete the user {name} from the company members list?"
+      },
+      "delete_address_dialog": {
+        "title": "Delete address",
+        "text": "Are you sure you want to delete address from the list?"
       }
     },
     "cart": {
@@ -937,6 +939,8 @@
         "title": "Company Info",
         "content_header": "Addresses",
         "no_addresses_message": "There are no addresses yet",
+        "address_not_delete_message": "The default address cannot be deleted",
+        "address_deletion_successful_message": "Address ”{addressName}” has been successfully deleted",
         "labels": {
           "company_name": "Company Name",
           "address": "Address",
