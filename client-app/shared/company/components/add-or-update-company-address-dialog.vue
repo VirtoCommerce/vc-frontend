@@ -136,7 +136,6 @@ const _emptyAddress: Readonly<MemberAddressType> = {
   line1: "",
   line2: "",
   description: "",
-  // FIXME: The values may be NULL. Incorrect behavior of the "dirty" variable
 };
 
 const emit = defineEmits<{
