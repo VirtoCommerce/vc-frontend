@@ -304,6 +304,7 @@ const columns = ref<ITableColumn[]>([
 ]);
 
 const onPageChange = async (newPage: number) => {
+  window.scroll({ top: 0, behavior: "smooth" });
   page.value = newPage;
 };
 
@@ -371,7 +372,17 @@ async function removeAddress(address: MemberAddressType): Promise<void> {
     return;
   }
 
+  const previousPagesCount = pages.value;
+
   await removeAddresses([address]);
+
+  /**
+   * If you were on the last page, and after deleting the product
+   * the number of pages has decreased, go to the previous page
+   */
+  if (previousPagesCount === page.value && previousPagesCount > pages.value) {
+    page.value -= 1;
+  }
 }
 
 onMounted(async () => {

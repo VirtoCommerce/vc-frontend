@@ -4136,6 +4136,13 @@ export type ResetPasswordByTokenMutationVariables = Exact<{
 
 export type ResetPasswordByTokenMutation = { resetPasswordByToken?: { succeeded: boolean, errors?: Array<{ code: string, description?: string }> } };
 
+export type UpdateContactMutationVariables = Exact<{
+  command: InputUpdateContactType;
+}>;
+
+
+export type UpdateContactMutation = { updateContact?: { id: string } };
+
 export type UpdateMemberAddressesMutationVariables = Exact<{
   command: InputUpdateMemberAddressType;
 }>;
@@ -4410,6 +4417,7 @@ export type CategoriesQueryVariables = Exact<{
   cultureName?: InputMaybe<Scalars['String']>;
   after?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
+  filter?: InputMaybe<Scalars['String']>;
 }>;
 
 

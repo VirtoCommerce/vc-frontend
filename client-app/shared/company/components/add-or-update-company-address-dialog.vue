@@ -7,6 +7,7 @@
           : 'shared.company.add_or_update_address_dialog.edit_title'
       )
     "
+    is-mobile-fullscreen
   >
     <template #default>
       <form class="px-6 py-5 space-y-4">
@@ -86,11 +87,16 @@
     </template>
 
     <template #actions="{ close }">
-      <VcButton class="uppercase w-32" kind="secondary" is-outline @click="close">
+      <VcButton class="uppercase flex-grow md:w-32 md:flex-grow-0" kind="secondary" is-outline @click="close">
         {{ $t("common.buttons.cancel") }}
       </VcButton>
 
-      <VcButton class="uppercase w-32" :is-disabled="!meta.valid" @click="save">
+      <VcButton
+        :is-waiting="loading"
+        class="uppercase flex-grow md:w-32 md:flex-grow-0"
+        :is-disabled="!meta.valid"
+        @click="save"
+      >
         {{ $t("common.buttons.save") }}
       </VcButton>
     </template>
@@ -110,6 +116,9 @@ const props = defineProps({
   address: {
     type: Object as PropType<MemberAddressType | null>,
     default: null,
+  },
+  loading: {
+    type: Boolean,
   },
 });
 

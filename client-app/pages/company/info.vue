@@ -49,7 +49,7 @@
             class="px-3 uppercase"
             size="sm"
             is-outline
-            @click="addOrUpdateAddressDialog()"
+            @click="openAddOrUpdateCompanyAddressDialog()"
           >
             <span class="sm:hidden">{{ $t("pages.company.info.buttons.add_new_address_mobile") }}</span>
             <span class="hidden sm:inline">{{ $t("pages.company.info.buttons.add_new_address") }}</span>
@@ -70,7 +70,7 @@
           </template>
 
           <template #button v-if="isOrganizationMaintainer">
-            <VcButton class="px-4 uppercase" size="lg" @click="addOrUpdateAddressDialog()">
+            <VcButton class="px-4 uppercase" size="lg" @click="openAddOrUpdateCompanyAddressDialog()">
               <i class="fa fa-plus -ml-px mr-3" />
               {{ $t("pages.company.info.buttons.add_new_address") }}
             </VcButton>
@@ -82,7 +82,7 @@
             :loading="loadingAddresses"
             :item-action-builder="actionBuilder"
             :columns="columns"
-            :items="addresses"
+            :items="paginatedAddresses"
             :sort="sort"
             :pages="pages"
             :page="page"
@@ -164,7 +164,7 @@
             </template>
 
             <template #desktop-body>
-              <tr v-for="address in addresses" :key="address.id" class="even:bg-gray-50">
+              <tr v-for="address in paginatedAddresses" :key="address.id" class="even:bg-gray-50">
                 <td class="px-5 py-3 overflow-hidden overflow-ellipsis">
                   <span>{{ address.line1 }}</span>
                   <template v-if="address.city">, {{ address.city }}</template>
@@ -195,7 +195,10 @@
 
                 <td v-if="isOrganizationMaintainer" class="px-5 py-3 text-right relative">
                   <VcActionDropdownMenu>
-                    <button class="flex items-center p-3 whitespace-nowrap" @click="addOrUpdateAddressDialog(address)">
+                    <button
+                      class="flex items-center p-3 whitespace-nowrap"
+                      @click="openAddOrUpdateCompanyAddressDialog(address)"
+                    >
                       <i class="fas fa-pencil-alt mr-2 leading-none text-base text-[color:var(--color-warning)]" />
                       <span class="text-15 font-medium">{{ $t("common.buttons.edit") }}</span>
                     </button>
@@ -220,7 +223,7 @@
 
             <template #desktop-skeleton>
               <tr v-for="i in itemsPerPage" :key="i" class="even:bg-gray-50">
-                <td v-for="column in columns" class="px-5 py-3" :key="column.id">
+                <td v-for="column in columns" class="px-5 py-4" :key="column.id">
                   <div class="h-5 bg-gray-200 animate-pulse" />
                 </td>
               </tr>
@@ -243,18 +246,20 @@ import { usePageHead } from "@/core/composables";
 import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import {
-  AddOrUpdateCompanyAddressDialog,
   DeleteCompanyAddressDialog,
   useOrganization,
   useOrganizationAddresses,
+  AddOrUpdateCompanyAddressDialog,
 } from "@/shared/company";
 import { ORGANIZATION_MAINTAINER } from "@/core/constants";
 import { getAddressName, getNewSorting } from "@/core/utilities";
 import { MemberAddressType } from "@/xapi/types";
 import { useNotifications } from "@/shared/notification";
-import { useUserAddresses } from "@/shared/account/composables";
 
 const loadingDeleting = ref(false);
+const loadingSaving = ref(false);
+const page = ref(1);
+const itemsPerPage = ref(10);
 
 const { t } = useI18n();
 
@@ -266,17 +271,14 @@ usePageHead({
  * This page is accessible only to members of the organization,
  * so the organization must exist.
  */
-const { loading: loadingUser, organization, checkPermissions, user } = useUser();
+const { loading: loadingUser, organization, checkPermissions } = useUser();
 const { loading: loadingOrganization, updateOrganization } = useOrganization();
-const { updateAddresses } = useUserAddresses({ user });
 const {
   addresses,
-  pages,
-  page,
   sort,
-  itemsPerPage,
   fetchAddresses,
   removeAddresses,
+  addOrUpdateAddresses,
   loading: loadingAddresses,
 } = useOrganizationAddresses(organization.value!.id);
 const {
@@ -290,6 +292,11 @@ const notifications = useNotifications();
 
 const organizationId = computed<string>(() => organization.value!.id);
 const isOrganizationMaintainer = computedEager<boolean>(() => checkPermissions(...ORGANIZATION_MAINTAINER.permissions));
+
+const pages = computed<number>(() => Math.ceil(addresses.value.length / itemsPerPage.value));
+const paginatedAddresses = computed<MemberAddressType[]>(() =>
+  addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
+);
 
 const columns = computed<ITableColumn[]>(() => {
   const result: ITableColumn[] = [
@@ -328,6 +335,17 @@ const columns = computed<ITableColumn[]>(() => {
 
   return result;
 });
+
+async function onPageChange(newPage: number) {
+  window.scroll({ top: 0, behavior: "smooth" });
+  page.value = newPage;
+}
+
+async function applySorting(column: string) {
+  sort.value = getNewSorting(sort.value, column);
+  page.value = 1;
+  await fetchAddresses();
+}
 
 async function saveOrganizationName() {
   await updateOrganization({
@@ -374,27 +392,19 @@ async function openDeleteAddressDialog(address: MemberAddressType) {
   });
 }
 
-async function onPageChange(newPage: number) {
-  window.scroll({ top: 0, behavior: "smooth" });
-  page.value = newPage;
-  await fetchAddresses();
-}
-
-async function applySorting(column: string) {
-  sort.value = getNewSorting(sort.value, column);
-  page.value = 1;
-  await fetchAddresses();
-}
-
-function addOrUpdateAddressDialog(address: MemberAddressType): void {
-  openPopup({
+async function openAddOrUpdateCompanyAddressDialog(address?: MemberAddressType): Promise<void> {
+  const closeAddOrUpdateAddressDialog = openPopup({
     component: AddOrUpdateCompanyAddressDialog,
     props: {
       address,
+      loading: loadingSaving,
       async onSave(updatedAddress: MemberAddressType): Promise<void> {
-        closePopup();
-        await updateAddresses([updatedAddress], organizationId.value);
-        await fetchAddresses();
+        loadingSaving.value = true;
+
+        await addOrUpdateAddresses([updatedAddress]);
+        closeAddOrUpdateAddressDialog();
+
+        loadingSaving.value = false;
       },
     },
   });
@@ -411,14 +421,14 @@ function actionBuilder(address: MemberAddressType) {
         openDeleteAddressDialog(address);
       },
     },
-    /*{
+    {
       icon: "fas fa-pencil-alt",
       title: t("common.buttons.edit"),
       bgColor: "bg-gray-300",
       clickHandler() {
-        addOrUpdateAddressDialog(address);
+        openAddOrUpdateCompanyAddressDialog(address);
       },
-    },*/
+    },
   ];
 
   return result;
