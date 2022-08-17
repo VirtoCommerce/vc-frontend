@@ -3,7 +3,7 @@ import { getSortingExpression, Logger, toInputAddress } from "@/core/utilities";
 import { ISortInfo } from "@/core/types";
 import { InputMemberAddressType, MemberAddressType } from "@/xapi/types";
 import { getOrganizationAddresses } from "@/xapi/graphql/organization";
-import { deleteMemberAddresses } from "@/xapi/graphql/account";
+import { deleteMemberAddresses, updateMemberAddresses } from "@/xapi/graphql/account";
 import { SORT_DESCENDING } from "@/core/constants";
 import { MaybeRef } from "@vueuse/core";
 

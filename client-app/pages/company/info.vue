@@ -195,12 +195,10 @@
 
                 <td v-if="isOrganizationMaintainer" class="px-5 py-3 text-right relative">
                   <VcActionDropdownMenu>
-                    <!--
-                    <button class="flex items-center p-3 whitespace-nowrap" @click=addOrUpdateAddressDialog(address)>
+                    <button class="flex items-center p-3 whitespace-nowrap" @click="addOrUpdateAddressDialog(address)">
                       <i class="fas fa-pencil-alt mr-2 leading-none text-base text-[color:var(--color-warning)]" />
                       <span class="text-15 font-medium">{{ $t("common.buttons.edit") }}</span>
                     </button>
-                    -->
 
                     <button
                       :disabled="address.isDefault"
@@ -244,11 +242,17 @@ import * as yup from "yup";
 import { usePageHead } from "@/core/composables";
 import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
-import { DeleteCompanyAddressDialog, useOrganization, useOrganizationAddresses } from "@/shared/company";
+import {
+  AddOrUpdateCompanyAddressDialog,
+  DeleteCompanyAddressDialog,
+  useOrganization,
+  useOrganizationAddresses,
+} from "@/shared/company";
 import { ORGANIZATION_MAINTAINER } from "@/core/constants";
 import { getAddressName, getNewSorting } from "@/core/utilities";
 import { MemberAddressType } from "@/xapi/types";
 import { useNotifications } from "@/shared/notification";
+import { useUserAddresses } from "@/shared/account/composables";
 
 const loadingDeleting = ref(false);
 
@@ -262,8 +266,9 @@ usePageHead({
  * This page is accessible only to members of the organization,
  * so the organization must exist.
  */
-const { loading: loadingUser, organization, checkPermissions } = useUser();
+const { loading: loadingUser, organization, checkPermissions, user } = useUser();
 const { loading: loadingOrganization, updateOrganization } = useOrganization();
+const { updateAddresses } = useUserAddresses({ user });
 const {
   addresses,
   pages,
@@ -280,7 +285,7 @@ const {
   value: organizationName,
   resetField: resetOrganizationField,
 } = useField<string>("organizationName", yup.string().max(64).required());
-const { openPopup } = usePopup();
+const { openPopup, closePopup } = usePopup();
 const notifications = useNotifications();
 
 const organizationId = computed<string>(() => organization.value!.id);
@@ -381,9 +386,18 @@ async function applySorting(column: string) {
   await fetchAddresses();
 }
 
-function addOrUpdateAddressDialog() {
-  // TODO: implement in another user story
-  // see a similar function in `client-app/pages/checkout.vue`
+function addOrUpdateAddressDialog(address: MemberAddressType): void {
+  openPopup({
+    component: AddOrUpdateCompanyAddressDialog,
+    props: {
+      address,
+      async onSave(updatedAddress: MemberAddressType): Promise<void> {
+        closePopup();
+        await updateAddresses([updatedAddress], organizationId.value);
+        await fetchAddresses();
+      },
+    },
+  });
 }
 
 function actionBuilder(address: MemberAddressType) {

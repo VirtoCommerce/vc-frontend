@@ -329,7 +329,7 @@
       },
       "add_or_update_address_dialog": {
         "create_title": "Create new company address",
-        "update_title": "Edit company address",
+        "edit_title": "Edit company address",
         "content_title": "Address info",
         "description_field_label": "Description",
         "country_field_label": "Country",
@@ -338,9 +338,7 @@
         "city_field_label": "City",
         "line_1_field_label": "Address",
         "line_2_field_label": "Apt, suite, etc.",
-        "set_as_default_label": "Set as default",
-        "save_button_label": "Save",
-        "cancel_button_label": "Cancel"
+        "set_as_default_label": "Set as default"
       }
     },
     "cart": {

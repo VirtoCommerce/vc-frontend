@@ -8,8 +8,8 @@
       )
     "
   >
-    <template #default="{ close }">
-      <form class="px-6 py-5 space-y-4" @submit.prevent="save">
+    <template #default>
+      <form class="px-6 py-5 space-y-4">
         <h3 class="text-xl font-extrabold uppercase">
           {{ $t("shared.company.add_or_update_address_dialog.content_title") }}
         </h3>
@@ -73,7 +73,6 @@
           :error-message="errors.line1"
           :label="$t('shared.company.add_or_update_address_dialog.line_1_field_label')"
           class="flex-1"
-          @click="close"
         />
 
         <VcInput
@@ -91,7 +90,7 @@
         {{ $t("common.buttons.cancel") }}
       </VcButton>
 
-      <VcButton class="uppercase w-32" :is-disabled="!meta.dirty || !meta.valid">
+      <VcButton class="uppercase w-32" :is-disabled="!meta.valid" @click="save">
         {{ $t("common.buttons.save") }}
       </VcButton>
     </template>
@@ -117,6 +116,7 @@ const props = defineProps({
 const { countries, loadCountries } = useCountries();
 
 const _emptyAddress: Readonly<MemberAddressType> = {
+  addressType: 3,
   isDefault: false,
   postalCode: "",
   countryCode: "",
@@ -131,7 +131,6 @@ const _emptyAddress: Readonly<MemberAddressType> = {
 };
 
 const emit = defineEmits<{
-  (event: "update:modelValue", address: MemberAddressType): void;
   (event: "save", address: MemberAddressType): void;
 }>();
 
@@ -194,7 +193,6 @@ watch(
 
 const save = handleSubmit((address) => {
   const newAddress: MemberAddressType = { ...address, name: getAddressName(address) };
-  emit("update:modelValue", newAddress);
   emit("save", newAddress);
 }, Logger.debug);
 </script>
