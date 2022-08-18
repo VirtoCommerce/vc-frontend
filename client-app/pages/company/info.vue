@@ -261,6 +261,8 @@ const loadingDeleting = ref(false);
 const loadingSaving = ref(false);
 const page = ref(1);
 const itemsPerPage = ref(10);
+
+// FIXME: Workaround to force rerender table to fix consiquent table item edit on mobile devices
 const tableRefreshKey = ref(0);
 
 const { t } = useI18n();
