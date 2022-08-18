@@ -150,12 +150,14 @@
                         {{ shipment.deliveryAddress?.firstName }}
                         {{ shipment.deliveryAddress?.lastName }}
                       </span>
+
                       <p>
                         {{ shipment.deliveryAddress?.countryCode }}
                         {{ shipment.deliveryAddress?.regionName }}
                         {{ shipment.deliveryAddress?.city }} {{ shipment.deliveryAddress?.line1 }}
                         {{ shipment.deliveryAddress?.postalCode }}
                       </p>
+
                       <p>
                         <span
                           class="font-extrabold"
@@ -163,6 +165,7 @@
                         ></span>
                         {{ shipment.deliveryAddress?.phone }}
                       </p>
+
                       <p>
                         <span
                           class="font-extrabold"
@@ -288,7 +291,7 @@
 
                 <div
                   v-if="!billingSameAsShipping && !payment?.billingAddress"
-                  class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 mb-6 p-5 flex flex-col space-y-2 lg:space-y-0 lg:flex-row lg:items-center justify-between"
+                  class="border border-t-0 rounded-b -mt-6 mb-6 p-5 flex flex-col space-y-2 lg:space-y-0 lg:flex-row lg:items-center justify-between"
                 >
                   <div class="text-[color:var(--color-danger)] flex items-center space-x-4">
                     <i class="fas fa-exclamation-triangle text-2xl" />
@@ -326,32 +329,35 @@
 
                 <div
                   v-else-if="!billingSameAsShipping && payment?.billingAddress"
-                  class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 mb-6 p-5 flex justify-between space-x-3 items-center text-sm"
+                  class="border border-t-0 rounded-b -mt-6 mb-6 p-5 flex flex-col space-y-2 lg:space-y-0 text-sm lg:flex-row lg:justify-between lg:space-x-3 lg:items-center"
                 >
                   <div class="truncate">
                     <span class="font-extrabold">
                       {{ payment.billingAddress?.firstName }}
                       {{ payment.billingAddress?.lastName }}
                     </span>
+
                     <p>
                       {{ payment.billingAddress?.countryCode }}
                       {{ payment.billingAddress?.regionName }}
                       {{ payment.billingAddress?.city }} {{ payment.billingAddress?.line1 }}
                       {{ payment.billingAddress?.postalCode }}
                     </p>
+
                     <p>
                       <span
                         class="font-extrabold"
                         v-t="'pages.checkout.payment_details_section.billing_address_block.phone_label'"
-                      ></span
-                      >{{ payment.billingAddress?.phone }}
+                      ></span>
+                      {{ payment.billingAddress?.phone }}
                     </p>
+
                     <p>
                       <span
                         class="font-extrabold"
                         v-t="'pages.checkout.payment_details_section.billing_address_block.email_label'"
-                      ></span
-                      >{{ payment.billingAddress?.email }}
+                      ></span>
+                      {{ payment.billingAddress?.email }}
                     </p>
                   </div>
 
