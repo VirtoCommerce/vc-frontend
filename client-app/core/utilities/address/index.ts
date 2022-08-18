@@ -18,8 +18,19 @@ export function getAddressName(address: AnyAddressType): string {
   return [countryCode, regionName, city, line1].filter(Boolean).join(", ");
 }
 
-export function isEqualAddresses(address1: AnyAddressType, address2: AnyAddressType): boolean {
-  const first = _.omit(address1, ["id", "zip", "isDefault"]);
-  const second = _.omit(address2, ["id", "zip", "isDefault"]);
+export function isEqualAddresses(
+  address1: AnyAddressType,
+  address2: AnyAddressType,
+  options: { skipDescription?: boolean } = {}
+): boolean {
+  const { skipDescription = false } = options;
+  const skipFields = ["id", "zip", "isDefault"];
+
+  if (skipDescription) {
+    skipFields.push("description");
+  }
+
+  const first = _.omit(address1, skipFields);
+  const second = _.omit(address2, skipFields);
   return _.isEqual(first, second);
 }
