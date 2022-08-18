@@ -10,6 +10,7 @@ export default {
     window.addEventListener("message", (event: MessageEvent) => {
       if (event.origin !== document.location.origin || event.data.source !== "builder") {
         // note: it can be cause of some problems. investigate it.
+        console.log("cancel message");
         return;
       }
       if (bodyEl) {
@@ -23,7 +24,6 @@ export default {
           options.router.push(event.data.url);
           break;
         case "settings": {
-          // console.log(app.config.globalProperties.$cfg, event.data);
           const keys = Object.entries(event.data.settings);
           keys.forEach(([key, value]) => {
             app.config.globalProperties.$cfg[key] = value;
