@@ -2,7 +2,7 @@ import { App } from "vue";
 import { useStaticPage } from "@/core/composables";
 
 export default {
-  install: (_app: App, options: any) => {
+  install: (app: App, options: any) => {
     const bodyEl = document.getElementsByTagName("body").item(0);
     if (bodyEl) {
       bodyEl.style.visibility = "hidden";
@@ -22,6 +22,19 @@ export default {
         case "navigate":
           options.router.push(event.data.url);
           break;
+        case "settings": {
+          // console.log(app.config.globalProperties.$cfg, event.data);
+          const keys = Object.entries(event.data.settings);
+          keys.forEach(([key, value]) => {
+            app.config.globalProperties.$cfg[key] = value;
+          });
+          keys
+            .filter(([key]) => /^color/.test(key))
+            .forEach(([key, value]) => {
+              document.documentElement.style.setProperty(`--${key.replace(/_/g, "-")}`, value as string);
+            });
+          break;
+        }
       }
     });
     window.parent.postMessage({ source: "preview", type: "loaded" }, window.location.origin);
