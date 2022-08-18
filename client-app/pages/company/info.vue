@@ -86,6 +86,7 @@
             :sort="sort"
             :pages="pages"
             :page="page"
+            :key="tableRefreshKey"
             layout="table-auto"
             @headerClick="applySorting"
             @pageChanged="onPageChange"
@@ -260,6 +261,7 @@ const loadingDeleting = ref(false);
 const loadingSaving = ref(false);
 const page = ref(1);
 const itemsPerPage = ref(10);
+const tableRefreshKey = ref(0);
 
 const { t } = useI18n();
 
@@ -403,6 +405,7 @@ async function openAddOrUpdateCompanyAddressDialog(address?: MemberAddressType):
 
         await addOrUpdateAddresses([updatedAddress]);
         closeAddOrUpdateAddressDialog();
+        tableRefreshKey.value++;
 
         loadingSaving.value = false;
       },
