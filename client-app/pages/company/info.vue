@@ -287,7 +287,7 @@ const {
   value: organizationName,
   resetField: resetOrganizationField,
 } = useField<string>("organizationName", yup.string().max(64).required());
-const { openPopup, closePopup } = usePopup();
+const { openPopup } = usePopup();
 const notifications = useNotifications();
 
 const organizationId = computed<string>(() => organization.value!.id);
@@ -398,7 +398,7 @@ async function openAddOrUpdateCompanyAddressDialog(address?: MemberAddressType):
     props: {
       address,
       loading: loadingSaving,
-      async onSave(updatedAddress: MemberAddressType): Promise<void> {
+      async onResult(updatedAddress: MemberAddressType): Promise<void> {
         loadingSaving.value = true;
 
         await addOrUpdateAddresses([updatedAddress]);

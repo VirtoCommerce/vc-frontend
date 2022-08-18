@@ -3,7 +3,7 @@
     <slot name="prepend" v-bind="slotsData" />
 
     <div class="md:flex">
-      <div class="md:w-1/2">
+      <div class="md:w-1/2" v-if="!excludePersonalInfo">
         <VcInput
           v-model="firstName"
           :error-message="errors.firstName"
@@ -48,9 +48,20 @@
       <!-- Divider -->
       <div
         class="border-t md:border-l border-[color:var(--color-primary)] mt-8 mb-6 md:mt-6 md:mb-4 -mx-96 md:mx-9"
+        v-if="!excludePersonalInfo"
       ></div>
 
-      <div class="md:w-1/2">
+      <div :class="{ 'md:w-1/2': !excludePersonalInfo }">
+        <VcInput
+          v-model="description"
+          :error-message="errors.description"
+          :is-disabled="disabled"
+          :label="$t('shared.account.address_form.description_label')"
+          class="mb-4"
+          :maxlength="128"
+          v-if="withDescriptionField"
+        />
+
         <div class="flex flex-col xl:flex-row xl:flex-wrap">
           <VcSelect
             v-model="country"
@@ -137,6 +148,8 @@ const props = defineProps({
   requiredEmail: Boolean,
   requiredPhone: Boolean,
   requiredCity: Boolean,
+  withDescriptionField: Boolean,
+  excludePersonalInfo: Boolean,
 
   modelValue: {
     type: Object as PropType<MemberAddressType | null>,
@@ -157,6 +170,7 @@ const emit = defineEmits<{
 
 const _emptyAddress: Readonly<MemberAddressType> = {
   isDefault: false,
+  addressType: 3,
   firstName: "",
   lastName: "",
   email: "",
@@ -203,7 +217,7 @@ const slotsData = computed(() => ({
 
 const emailRules = computed(() => {
   let rules = yup.string().max(64).email().nullable();
-  if (props.requiredEmail) {
+  if (!props.excludePersonalInfo && props.requiredEmail) {
     rules = rules.required();
   }
   return rules;
@@ -211,7 +225,7 @@ const emailRules = computed(() => {
 
 const phoneRules = computed(() => {
   let rules = yup.string().max(64).nullable();
-  if (props.requiredPhone) {
+  if (!props.excludePersonalInfo && props.requiredPhone) {
     rules = rules.required();
   }
   return rules;
@@ -228,6 +242,22 @@ const cityRules = computed(() => {
 const regionRules = computed(() => {
   let rules = yup.string().nullable();
   if (regions.value.length) {
+    rules = rules.required();
+  }
+  return rules;
+});
+
+const firstNameRules = computed(() => {
+  let rules = yup.string().nullable();
+  if (!props.excludePersonalInfo) {
+    rules = rules.required();
+  }
+  return rules;
+});
+
+const lastNameRules = computed(() => {
+  let rules = yup.string().nullable();
+  if (!props.excludePersonalInfo) {
     rules = rules.required();
   }
   return rules;
@@ -254,8 +284,8 @@ const region = computed<CountryRegionType | undefined>({
 const { value: email } = useField<string>("email", emailRules);
 const { value: city } = useField<string>("city", cityRules);
 const { value: phone } = useField<string>("phone", phoneRules);
-const { value: firstName } = useField<string>("firstName", yup.string().max(64).required().nullable());
-const { value: lastName } = useField<string>("lastName", yup.string().max(64).required().nullable());
+const { value: firstName } = useField<string>("firstName", firstNameRules);
+const { value: lastName } = useField<string>("lastName", lastNameRules);
 const { value: postalCode } = useField<string>("postalCode", yup.string().max(32).required().nullable());
 const { value: countryCode } = useField<string>("countryCode", yup.string().required().nullable());
 const { value: countryName } = useField<string>("countryName", yup.string().max(128).nullable());
@@ -263,6 +293,7 @@ const { value: regionName } = useField<string>("regionName", yup.string().max(12
 const { value: regionId } = useField<string>("regionId", regionRules);
 const { value: line1 } = useField<string>("line1", yup.string().max(128).required().nullable());
 const { value: line2 } = useField<string>("line2", yup.string().max(128).nullable());
+const { value: description } = useField<string>("description", yup.string().max(128).nullable());
 
 const save = handleSubmit((address) => {
   const newAddress: MemberAddressType = { ...address, name: getAddressName(address) };

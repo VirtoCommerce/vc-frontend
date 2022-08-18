@@ -10,7 +10,7 @@
     is-mobile-fullscreen
   >
     <template #default="{ close }">
-      <AddressForm
+      <VcAddressForm
         :model-value="editableAddress"
         :countries="countries"
         class="px-6 py-4"
@@ -33,7 +33,7 @@
             </VcButton>
           </div>
         </template>
-      </AddressForm>
+      </VcAddressForm>
     </template>
   </VcPopup>
 </template>
@@ -41,7 +41,6 @@
 <script setup lang="ts">
 import { MemberAddressType } from "@/xapi/types";
 import { useCountries } from "@/core/composables";
-import { AddressForm } from "@/shared/account";
 import { onMounted, PropType, ref, Ref, watchEffect } from "vue";
 import { clone } from "lodash";
 

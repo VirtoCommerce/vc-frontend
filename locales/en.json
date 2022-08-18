@@ -212,7 +212,9 @@
         "city_label": "City",
         "line1_label": "Address",
         "line2_label": "Apt., suite, building number, etc.",
-        "country_placeholder": "Select your country"
+        "country_placeholder": "Select your country",
+        "description_label": "Description",
+        "address_title": "Address Info"
       },
       "sign_in_form": {
         "email_label": "@:common.labels.email",
@@ -330,16 +332,7 @@
       },
       "add_or_update_address_dialog": {
         "create_title": "Create new company address",
-        "edit_title": "Edit company address",
-        "content_title": "Address info",
-        "description_field_label": "Description",
-        "country_field_label": "Country",
-        "postal_code_field_label": "Zip / Postal Code",
-        "region_field_label": "Region",
-        "city_field_label": "City",
-        "line_1_field_label": "Address",
-        "line_2_field_label": "Apt, suite, etc.",
-        "set_as_default_label": "Set as default"
+        "edit_title": "Edit company address"
       }
     },
     "cart": {
@@ -768,6 +761,7 @@
         "no_addresses_message": "You do not have any addresses yet",
         "addresses_icon": "Address icon",
         "new_address_title": "New address",
+        "edit_address_title": "Edit address",
         "addresses_title": "Addresses",
         "actions_label": "@:common.labels.actions",
         "edit_button": "@:common.buttons.edit",
