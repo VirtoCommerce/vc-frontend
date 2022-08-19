@@ -18,7 +18,7 @@
       <VcAddressForm
         :model-value="address"
         :countries="countries"
-        :loading="loading"
+        :disabled="loading"
         exclude-personal-info
         class="px-6 py-4"
         with-description-field
