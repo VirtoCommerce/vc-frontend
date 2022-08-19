@@ -12,12 +12,13 @@
   >
     <template #default="{ close }">
       <h3 class="mt-5 mx-6 text-2xl font-extrabold uppercase">
-        {{ $t("shared.account.address_form.address_title") }}
+        {{ $t("shared.company.add_or_update_address_dialog.address_title") }}
       </h3>
 
       <VcAddressForm
         :model-value="address"
         :countries="countries"
+        :loading="loading"
         exclude-personal-info
         class="px-6 py-4"
         with-description-field

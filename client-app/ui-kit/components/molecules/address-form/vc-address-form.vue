@@ -7,7 +7,7 @@
         <VcInput
           v-model="firstName"
           :error-message="errors.firstName"
-          :is-disabled="disabled"
+          :is-disabled="fieldDisabled"
           :label="$t('shared.account.address_form.first_name_label')"
           class="mb-4"
           is-required
@@ -17,7 +17,7 @@
         <VcInput
           v-model="lastName"
           :error-message="errors.lastName"
-          :is-disabled="disabled"
+          :is-disabled="fieldDisabled"
           :label="$t('shared.account.address_form.last_name_label')"
           class="mb-4"
           is-required
@@ -27,7 +27,7 @@
         <VcInput
           v-model="email"
           :error-message="errors.email"
-          :is-disabled="disabled"
+          :is-disabled="fieldDisabled"
           :is-required="requiredEmail"
           :label="$t('shared.account.address_form.work_email_label')"
           class="mb-4"
@@ -37,7 +37,7 @@
         <VcInput
           v-model="phone"
           :error-message="errors.phone"
-          :is-disabled="disabled"
+          :is-disabled="fieldDisabled"
           :is-required="requiredPhone"
           :label="$t('shared.account.address_form.phone_label')"
           class="mb-4"
@@ -55,7 +55,7 @@
         <VcInput
           v-model="description"
           :error-message="errors.description"
-          :is-disabled="disabled"
+          :is-disabled="fieldDisabled"
           :label="$t('shared.account.address_form.description_label')"
           class="mb-4"
           :maxlength="128"
@@ -67,7 +67,7 @@
             v-model="country"
             text-field="name"
             :error-message="errors.countryCode"
-            :is-disabled="disabled"
+            :is-disabled="fieldDisabled"
             :items="countries"
             :label="$t('shared.account.address_form.country_label')"
             :placeholder="$t('shared.account.address_form.country_placeholder')"
@@ -79,7 +79,7 @@
           <VcInput
             v-model="postalCode"
             :error-message="errors.postalCode"
-            :is-disabled="disabled"
+            :is-disabled="fieldDisabled"
             :label="$t('shared.account.address_form.zip_label')"
             class="mb-4 order-3 xl:order-none xl:ml-4 xl:w-4/12 xl:flex-grow"
             is-required
@@ -92,7 +92,7 @@
             :items="regions"
             :error-message="errors.regionId"
             :is-required="!!regions.length"
-            :is-disabled="disabled || !regions.length"
+            :is-disabled="fieldDisabled || !regions.length"
             :label="$t('shared.account.address_form.region_label')"
             :placeholder="$t('shared.account.address_form.region_placeholder')"
             class="mb-4 order-2 xl:order-none xl:w-5/12"
@@ -102,7 +102,7 @@
           <VcInput
             v-model="city"
             :error-message="errors.city"
-            :is-disabled="disabled"
+            :is-disabled="fieldDisabled"
             :label="$t('shared.account.address_form.city_label')"
             class="mb-4 order-4 xl:order-none xl:ml-4 xl:flex-grow"
             :is-required="requiredCity"
@@ -113,7 +113,7 @@
         <VcInput
           v-model="line1"
           :error-message="errors.line1"
-          :is-disabled="disabled"
+          :is-disabled="fieldDisabled"
           :label="$t('shared.account.address_form.line1_label')"
           class="mb-4"
           is-required
@@ -123,7 +123,7 @@
         <VcInput
           v-model="line2"
           :error-message="errors.line2"
-          :is-disabled="disabled"
+          :is-disabled="fieldDisabled"
           :label="$t('shared.account.address_form.line2_label')"
           class="mb-4"
           :maxlength="128"
@@ -150,6 +150,7 @@ const props = defineProps({
   requiredCity: Boolean,
   withDescriptionField: Boolean,
   excludePersonalInfo: Boolean,
+  loading: Boolean,
 
   modelValue: {
     type: Object as PropType<MemberAddressType | null>,
@@ -215,6 +216,8 @@ const slotsData = computed(() => ({
   touched: meta.value.touched,
 }));
 
+const fieldDisabled = computed(() => props.disabled || props.loading);
+
 const emailRules = computed(() => {
   let rules = yup.string().max(64).email().nullable();
   if (!props.excludePersonalInfo && props.requiredEmail) {
@@ -248,7 +251,7 @@ const regionRules = computed(() => {
 });
 
 const firstNameRules = computed(() => {
-  let rules = yup.string().nullable();
+  let rules = yup.string().max(64).nullable();
   if (!props.excludePersonalInfo) {
     rules = rules.required();
   }
@@ -256,7 +259,7 @@ const firstNameRules = computed(() => {
 });
 
 const lastNameRules = computed(() => {
-  let rules = yup.string().nullable();
+  let rules = yup.string().max(64).nullable();
   if (!props.excludePersonalInfo) {
     rules = rules.required();
   }
