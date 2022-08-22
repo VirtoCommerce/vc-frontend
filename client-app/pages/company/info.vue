@@ -256,6 +256,7 @@ import { ORGANIZATION_MAINTAINER } from "@/core/constants";
 import { getAddressName, getNewSorting } from "@/core/utilities";
 import { MemberAddressType } from "@/xapi/types";
 import { useNotifications } from "@/shared/notification";
+import { AddressType } from "@/core/types";
 
 const loadingDeleting = ref(false);
 const loadingSaving = ref(false);
@@ -404,6 +405,8 @@ async function openAddOrUpdateCompanyAddressDialog(address?: MemberAddressType):
       loading: loadingSaving,
       async onResult(updatedAddress: MemberAddressType): Promise<void> {
         loadingSaving.value = true;
+
+        updatedAddress.addressType = AddressType.BillingAndShipping;
 
         await addOrUpdateAddresses([updatedAddress]);
         closeAddOrUpdateAddressDialog();

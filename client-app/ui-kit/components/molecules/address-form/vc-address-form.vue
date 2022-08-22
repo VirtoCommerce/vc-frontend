@@ -170,7 +170,6 @@ const emit = defineEmits<{
 
 const _emptyAddress: Readonly<MemberAddressType> = {
   isDefault: false,
-  addressType: 3,
   firstName: "",
   lastName: "",
   email: "",
