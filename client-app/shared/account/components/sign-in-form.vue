@@ -18,7 +18,7 @@
       :is-disabled="loading || isAuthenticated"
       is-required
       :error-message="errors.email"
-      autocomplete="userName"
+      autocomplete="email"
     ></VcInput>
 
     <VcInput
