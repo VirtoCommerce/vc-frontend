@@ -441,7 +441,7 @@ function actionBuilder(address: MemberAddressType) {
     {
       icon: "fas fa-pencil-alt",
       title: t("common.buttons.edit"),
-      bgColor: "bg-gray-500",
+      bgColor: "bg-gray-550",
       clickHandler() {
         openAddOrUpdateCompanyAddressDialog(address);
       },

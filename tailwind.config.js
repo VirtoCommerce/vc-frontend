@@ -134,7 +134,7 @@ module.exports = {
         },
 
         gray: {
-          500: "#A3AFCD",
+          550: "#A3AFCD",
         },
       },
       boxShadow: {
