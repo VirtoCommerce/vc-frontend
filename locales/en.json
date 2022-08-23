@@ -212,7 +212,8 @@
         "city_label": "City",
         "line1_label": "Address",
         "line2_label": "Apt., suite, building number, etc.",
-        "country_placeholder": "Select your country"
+        "country_placeholder": "Select your country",
+        "description_label": "Description"
       },
       "sign_in_form": {
         "email_label": "@:common.labels.email",
@@ -327,6 +328,11 @@
       "delete_address_dialog": {
         "title": "Delete address",
         "text": "Are you sure you want to delete address from the list?"
+      },
+      "add_or_update_address_dialog": {
+        "address_title": "Address Info",
+        "create_title": "Create new company address",
+        "edit_title": "Edit company address"
       }
     },
     "cart": {
@@ -755,6 +761,7 @@
         "no_addresses_message": "You do not have any addresses yet",
         "addresses_icon": "Address icon",
         "new_address_title": "New address",
+        "edit_address_title": "Edit address",
         "addresses_title": "Addresses",
         "actions_label": "@:common.labels.actions",
         "edit_button": "@:common.buttons.edit",
@@ -941,6 +948,7 @@
         "no_addresses_message": "There are no addresses yet",
         "address_not_delete_message": "The default address cannot be deleted",
         "address_deletion_successful_message": "Address ”{addressName}” has been successfully deleted",
+        "address_saved_successful_message": "Address ”{addressName}” has been successfully saved",
         "labels": {
           "company_name": "Company Name",
           "address": "Address",

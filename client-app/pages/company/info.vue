@@ -44,18 +44,16 @@
         >
           <h2 class="text-gray-800 text-xl font-extrabold uppercase py-0.5" v-t="'pages.company.info.content_header'" />
 
-          <!--
           <VcButton
             v-if="isOrganizationMaintainer"
             class="px-3 uppercase"
             size="sm"
             is-outline
-            @click="addOrUpdateAddressDialog()"
+            @click="openAddOrUpdateCompanyAddressDialog()"
           >
             <span class="sm:hidden">{{ $t("pages.company.info.buttons.add_new_address_mobile") }}</span>
             <span class="hidden sm:inline">{{ $t("pages.company.info.buttons.add_new_address") }}</span>
           </VcButton>
-          -->
         </div>
 
         <VcEmptyView
@@ -71,14 +69,12 @@
             />
           </template>
 
-          <!--
           <template #button v-if="isOrganizationMaintainer">
-            <VcButton class="px-4 uppercase" size="lg" @click="addOrUpdateAddressDialog()">
+            <VcButton class="px-4 uppercase" size="lg" @click="openAddOrUpdateCompanyAddressDialog()">
               <i class="fa fa-plus -ml-px mr-3" />
               {{ $t("pages.company.info.buttons.add_new_address") }}
             </VcButton>
           </template>
-          -->
         </VcEmptyView>
 
         <div v-else class="flex flex-col md:rounded md:border">
@@ -90,6 +86,7 @@
             :sort="sort"
             :pages="pages"
             :page="page"
+            :key="tableRefreshKey"
             layout="table-auto"
             @headerClick="applySorting"
             @pageChanged="onPageChange"
@@ -199,12 +196,13 @@
 
                 <td v-if="isOrganizationMaintainer" class="px-5 py-3 text-right relative">
                   <VcActionDropdownMenu>
-                    <!--
-                    <button class="flex items-center p-3 whitespace-nowrap" @click=addOrUpdateAddressDialog(address)>
+                    <button
+                      class="flex items-center p-3 whitespace-nowrap"
+                      @click="openAddOrUpdateCompanyAddressDialog(address)"
+                    >
                       <i class="fas fa-pencil-alt mr-2 leading-none text-base text-[color:var(--color-warning)]" />
                       <span class="text-15 font-medium">{{ $t("common.buttons.edit") }}</span>
                     </button>
-                    -->
 
                     <button
                       :disabled="address.isDefault"
@@ -248,15 +246,25 @@ import * as yup from "yup";
 import { usePageHead } from "@/core/composables";
 import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
-import { DeleteCompanyAddressDialog, useOrganization, useOrganizationAddresses } from "@/shared/company";
+import {
+  DeleteCompanyAddressDialog,
+  useOrganization,
+  useOrganizationAddresses,
+  AddOrUpdateCompanyAddressDialog,
+} from "@/shared/company";
 import { ORGANIZATION_MAINTAINER } from "@/core/constants";
 import { getAddressName, getNewSorting } from "@/core/utilities";
 import { MemberAddressType } from "@/xapi/types";
 import { useNotifications } from "@/shared/notification";
+import { AddressType } from "@/core/types";
 
 const loadingDeleting = ref(false);
+const loadingSaving = ref(false);
 const page = ref(1);
 const itemsPerPage = ref(10);
+
+// FIXME: Workaround to force rerender table to fix consiquent table item edit on mobile devices
+const tableRefreshKey = ref(0);
 
 const { t } = useI18n();
 
@@ -275,6 +283,7 @@ const {
   sort,
   fetchAddresses,
   removeAddresses,
+  addOrUpdateAddresses,
   loading: loadingAddresses,
 } = useOrganizationAddresses(organization.value!.id);
 const {
@@ -388,9 +397,34 @@ async function openDeleteAddressDialog(address: MemberAddressType) {
   });
 }
 
-function addOrUpdateAddressDialog() {
-  // TODO: implement in another user story
-  // see a similar function in `client-app/pages/checkout.vue`
+async function openAddOrUpdateCompanyAddressDialog(address?: MemberAddressType): Promise<void> {
+  const closeAddOrUpdateAddressDialog = openPopup({
+    component: AddOrUpdateCompanyAddressDialog,
+    props: {
+      address,
+      loading: loadingSaving,
+      async onResult(updatedAddress: MemberAddressType): Promise<void> {
+        loadingSaving.value = true;
+
+        updatedAddress.addressType = AddressType.BillingAndShipping;
+
+        await addOrUpdateAddresses([updatedAddress]);
+
+        notifications.success({
+          text: t("pages.company.info.address_saved_successful_message", {
+            addressName: getAddressName(updatedAddress),
+          }),
+          duration: 10000,
+          single: true,
+        });
+
+        closeAddOrUpdateAddressDialog();
+        tableRefreshKey.value++;
+
+        loadingSaving.value = false;
+      },
+    },
+  });
 }
 
 function actionBuilder(address: MemberAddressType) {
@@ -404,14 +438,14 @@ function actionBuilder(address: MemberAddressType) {
         openDeleteAddressDialog(address);
       },
     },
-    /*{
+    {
       icon: "fas fa-pencil-alt",
       title: t("common.buttons.edit"),
-      bgColor: "bg-gray-300",
+      bgColor: "bg-gray-550",
       clickHandler() {
-        addOrUpdateAddressDialog(address);
+        openAddOrUpdateCompanyAddressDialog(address);
       },
-    },*/
+    },
   ];
 
   return result;

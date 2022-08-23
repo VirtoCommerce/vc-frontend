@@ -40,7 +40,7 @@
     </VcEmptyView>
 
     <div v-else class="flex flex-col bg-white shadow-sm md:rounded md:border">
-      <AddressForm
+      <VcAddressForm
         v-if="editingMode"
         :model-value="editableAddress"
         :countries="countries"
@@ -76,7 +76,7 @@
             </VcButton>
           </div>
         </template>
-      </AddressForm>
+      </VcAddressForm>
 
       <!-- View Table -->
       <VcTable
@@ -224,7 +224,7 @@
 </template>
 
 <script setup lang="ts">
-import { AddressForm, useUser, useUserAddresses } from "@/shared/account";
+import { useUser, useUserAddresses } from "@/shared/account";
 import { computed, ComputedRef, onMounted, Ref, ref } from "vue";
 import { clone } from "lodash";
 import { MemberAddressType } from "@/xapi/types";
@@ -268,7 +268,7 @@ const paginatedAddresses: ComputedRef<MemberAddressType[]> = computed(() =>
 const title: ComputedRef<string> = computed(() => {
   if (editingMode.value) {
     return editableAddress.value
-      ? `${editableAddress.value.firstName} ${editableAddress.value.lastName}`
+      ? t("pages.account.addresses.edit_address_title")
       : t("pages.account.addresses.new_address_title");
   } else {
     return t("pages.account.addresses.addresses_title");

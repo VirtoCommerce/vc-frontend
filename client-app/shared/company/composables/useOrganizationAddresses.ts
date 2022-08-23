@@ -3,7 +3,7 @@ import { getSortingExpression, Logger, toInputAddress } from "@/core/utilities";
 import { ISortInfo } from "@/core/types";
 import { InputMemberAddressType, MemberAddressType } from "@/xapi/types";
 import { getOrganizationAddresses } from "@/xapi/graphql/organization";
-import { deleteMemberAddresses } from "@/xapi/graphql/account";
+import { deleteMemberAddresses, updateMemberAddresses } from "@/xapi/graphql/account";
 import { SORT_DESCENDING } from "@/core/constants";
 import { MaybeRef } from "@vueuse/core";
 
@@ -51,10 +51,48 @@ export default function useOrganizationAddresses(organizationId: MaybeRef<string
     await fetchAddresses();
   }
 
+  async function updateAddresses(items: MemberAddressType[]): Promise<void> {
+    loading.value = true;
+
+    const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
+
+    try {
+      await updateMemberAddresses(unref(organizationId), inputAddresses);
+    } catch (e) {
+      Logger.error("useUserAddresses.updateAddresses", e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+
+    await fetchAddresses();
+  }
+
+  async function addOrUpdateAddresses(items: MemberAddressType[]): Promise<void> {
+    if (!items.length) {
+      return;
+    }
+
+    const updatedAddresses: MemberAddressType[] = addresses.value.slice();
+
+    items.forEach((newAddress: MemberAddressType) => {
+      const index = updatedAddresses.findIndex((oldAddress) => oldAddress.id === newAddress.id);
+
+      if (index === -1) {
+        updatedAddresses.push(newAddress);
+      } else {
+        updatedAddresses.splice(index, 1, newAddress);
+      }
+    });
+
+    await updateAddresses(updatedAddresses);
+  }
+
   return {
     sort,
     fetchAddresses,
     removeAddresses,
+    addOrUpdateAddresses,
     loading: readonly(loading),
     addresses: computed(() => addresses.value),
   };

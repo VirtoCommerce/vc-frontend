@@ -132,6 +132,10 @@ module.exports = {
           500: "#5294AD",
           700: "#00739E",
         },
+
+        gray: {
+          550: "#A3AFCD",
+        },
       },
       boxShadow: {
         "t-sm": "0 -1px 2px 0 rgba(0, 0, 0, 0.05)",
