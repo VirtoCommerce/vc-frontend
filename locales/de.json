@@ -264,7 +264,9 @@
         "message_placeholder": "Please enter value",
         "cancel_button": "@:common.buttons.cancel",
         "send_button": "@:common.buttons.send",
-        "invite_successfully_text": "The invite has been successfully sent"
+        "invite_successfully_text": "The invite has been successfully sent",
+        "emails_quantity_exceeded": "You can invite {maxValue} customers at a time",
+        "email_length_exceeded": "Maximum length of email address is {maxValue} symbols"
       },
       "profile_update_success_dialog": {
         "title": "Profile update",
