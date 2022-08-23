@@ -20,12 +20,12 @@ declare global {
     regex?: RegExp;
   }
 
-  interface ItemAction {
+  interface SlidingActionsItem {
     icon: string;
     title: string;
-    bgColor: string;
-    leftActions?: boolean;
-    clickHandler(item: any): any;
+    classes?: string;
+    left?: boolean;
+    clickHandler(inputObject: any): any;
   }
 
   interface IBreadcrumbs {

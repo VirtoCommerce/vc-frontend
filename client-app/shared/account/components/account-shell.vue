@@ -8,7 +8,7 @@
         </div>
 
         <!-- Second column-->
-        <router-view class="flex flex-col w-full gap-y-5" />
+        <router-view class="flex flex-col w-full min-w-0 gap-y-5" />
       </div>
     </div>
   </div>

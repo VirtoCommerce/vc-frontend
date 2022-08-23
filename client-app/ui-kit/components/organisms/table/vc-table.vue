@@ -2,15 +2,15 @@
   <!-- Mobile table view -->
   <template v-if="isMobile && $slots['mobile-item']">
     <div v-if="items.length" class="overflow-x-hidden">
-      <TableMobileItem
+      <VcSlidingActions
         v-for="item in items"
         :key="item.id"
-        :item="item"
-        :actionBuilder="itemActionBuilder"
+        :input-object="item"
+        :actions-builder="itemActionsBuilder"
         @click="$emit('itemClick', item)"
       >
         <slot name="mobile-item" :item="item"></slot>
-      </TableMobileItem>
+      </VcSlidingActions>
     </div>
     <!-- Mobile empty view -->
     <div v-else-if="!loading">
@@ -77,7 +77,6 @@ import { ISortInfo } from "@/core/types";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 import { PropType } from "vue";
-import TableMobileItem from "./_internal/table-mobile-item/table-mobile-item.vue";
 
 defineProps({
   columns: {
@@ -90,8 +89,8 @@ defineProps({
     default: () => [],
   },
 
-  itemActionBuilder: {
-    type: Function as PropType<(obj: any) => ItemAction[]>,
+  itemActionsBuilder: {
+    type: Function as PropType<(inputObject: any) => SlidingActionsItem[]>,
     default: undefined,
   },
 

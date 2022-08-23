@@ -12,6 +12,7 @@
       "remove": "Remove",
       "save": "Save",
       "edit": "Edit",
+      "settings": "Settings",
       "change": "Change",
       "delete": "Delete",
       "continue_shopping_button": "Continue shopping",
@@ -22,7 +23,8 @@
       "reset": "Reset",
       "add_to_cart": "Add to cart",
       "apply": "Apply",
-      "send": "Send"
+      "send": "Send",
+      "more": "More"
     },
     "labels": {
       "actions": "Actions",
@@ -88,6 +90,9 @@
       "cart": "Cart",
       "company_info": "Company Info",
       "company_members": "Company Members"
+    },
+    "titles": {
+      "all_actions": "All actions"
     }
   },
   "shared": {

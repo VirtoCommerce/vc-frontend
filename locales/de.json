@@ -12,6 +12,7 @@
       "remove": "Entfernen",
       "save": "Speichern",
       "edit": "Bearbeiten",
+      "settings": "Einstellungen",
       "change": "Ändern",
       "delete": "Löschen",
       "continue_shopping_button": "Mit dem Einkaufen fortfahren",
@@ -22,7 +23,8 @@
       "reset": "Zurücksetzen",
       "add_to_cart": "In den Warenkorb legen",
       "apply": "Anwenden",
-      "send": "Send"
+      "send": "Send",
+      "more": "More"
     },
     "labels": {
       "actions": "Aktionen",
@@ -89,6 +91,9 @@
       "cart": "Wagen",
       "company_info": "Infos zum Unternehmen",
       "company_members": "Mitglieder des Unternehmens"
+    },
+    "titles": {
+      "all_actions": "All actions"
     }
   },
   "shared": {

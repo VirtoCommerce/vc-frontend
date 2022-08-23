@@ -76,7 +76,7 @@
         :sort="sort"
         :pages="pages"
         :page="page"
-        :item-action-builder="actionBuilder"
+        :item-actions-builder="itemActionsBuilder"
         layout="table-auto"
         @headerClick="applySorting"
         @pageChanged="changePage"
@@ -188,6 +188,7 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable @typescript-eslint/no-unused-vars */ // TODO: remove
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { ref, onMounted } from "vue";
@@ -321,19 +322,21 @@ function openDeleteMemberDialog(contact: OrganizationContactType): void {
   });
 }
 
-function actionBuilder(contact: OrganizationContactType) {
-  const result: ItemAction[] = [
+function itemActionsBuilder() {
+  const actions: SlidingActionsItem[] = [
+    /*
     {
       icon: "fas fa-trash-alt",
       title: t("pages.company.members.buttons.delete"),
-      leftActions: true,
-      bgColor: "bg-[color:var(--color-danger)]",
-      clickHandler() {
+      left: true,
+      classes: "bg-[color:var(--color-danger)]",
+      clickHandler(contact: OrganizationContactType) {
         openDeleteMemberDialog(contact);
       },
     },
+    */
   ];
 
-  return result;
+  return actions;
 }
 </script>
