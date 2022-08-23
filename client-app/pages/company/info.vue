@@ -409,6 +409,15 @@ async function openAddOrUpdateCompanyAddressDialog(address?: MemberAddressType):
         updatedAddress.addressType = AddressType.BillingAndShipping;
 
         await addOrUpdateAddresses([updatedAddress]);
+
+        notifications.success({
+          text: t("pages.company.info.address_update_successful_message", {
+            addressName: getAddressName(updatedAddress),
+          }),
+          duration: 10000,
+          single: true,
+        });
+
         closeAddOrUpdateAddressDialog();
         tableRefreshKey.value++;
 

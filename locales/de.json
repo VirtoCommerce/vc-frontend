@@ -923,6 +923,7 @@
         "no_addresses_message": "There are no addresses yet",
         "address_not_delete_message": "The default address cannot be deleted",
         "address_deletion_successful_message": "Address ”{addressName}” has been successfully deleted",
+        "address_update_successful_message": "Address ”{addressName}” has been successfully updated",
         "labels": {
           "company_name": "Company Name",
           "address": "Address",
