@@ -139,35 +139,57 @@
             />
 
             <!-- Branch availability -->
-            <button v-if="!isMobileSidebar" class="order-3 ml-4 xl:ml-6" @click.prevent="openBranchesDialog(false)">
-              <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading">
-                <i18n-t
-                  keypath="pages.catalog.branch_availability_filter_card.available_in"
-                  tag="div"
-                  class="text-15"
-                  :class="{
-                    'text-[color:var(--color-category-page-checkbox-label)]': !savedBranches.length,
-                  }"
-                  scope="global"
-                >
-                  <span :class="{ 'font-bold text-[color:var(--color-link)]': savedBranches.length }">
-                    {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: savedBranches.length }) }}
-                  </span>
-                </i18n-t>
-              </VcCheckbox>
-            </button>
+            <div v-if="!isMobileSidebar" class="order-3 ml-4 xl:ml-6" @click.prevent="openBranchesDialog(false)">
+              <VcTooltip :xOffset="28" placement="bottom-start" strategy="fixed">
+                <template #trigger>
+                  <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading">
+                    <i18n-t
+                      keypath="pages.catalog.branch_availability_filter_card.available_in"
+                      tag="div"
+                      class="text-15"
+                      :class="{
+                        'text-[color:var(--color-category-page-checkbox-label)]': !savedBranches.length,
+                      }"
+                      scope="global"
+                    >
+                      <span :class="{ 'font-bold text-[color:var(--color-link)]': savedBranches.length }">
+                        {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: savedBranches.length }) }}
+                      </span>
+                    </i18n-t>
+                  </VcCheckbox>
+                </template>
+
+                <template #content>
+                  <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5 w-52">
+                    {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
+                  </div>
+                </template>
+              </VcTooltip>
+            </div>
 
             <!-- In Stock -->
-            <VcCheckbox v-if="!isMobileSidebar" class="order-2 ml-4 xl:ml-8" v-model="savedInStock" :disabled="loading">
-              <span
-                class="text-15 whitespace-nowrap"
-                :class="{
-                  'text-[color:var(--color-category-page-checkbox-label)]': !savedInStock,
-                }"
-              >
-                {{ $t("pages.catalog.instock_filter_card.checkbox_label_desktop") }}
-              </span>
-            </VcCheckbox>
+            <div v-if="!isMobileSidebar" class="order-2 ml-4 xl:ml-8">
+              <VcTooltip :xOffset="28" placement="bottom-start" strategy="fixed">
+                <template #trigger>
+                  <VcCheckbox v-model="savedInStock" :disabled="loading">
+                    <span
+                      class="text-15 whitespace-nowrap"
+                      :class="{
+                        'text-[color:var(--color-category-page-checkbox-label)]': !savedInStock,
+                      }"
+                    >
+                      {{ $t("pages.catalog.instock_filter_card.checkbox_label_desktop") }}
+                    </span>
+                  </VcCheckbox>
+                </template>
+
+                <template #content>
+                  <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5 w-52">
+                    {{ $t("pages.catalog.instock_filter_card.tooltip_text") }}
+                  </div>
+                </template>
+              </VcTooltip>
+            </div>
           </div>
 
           <!-- Filters chips -->

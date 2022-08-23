@@ -18,13 +18,17 @@
 
 <script setup lang="ts">
 import { shallowRef, ref, onUnmounted, PropType, watch } from "vue";
-import { bottom, createPopper, Instance, Placement } from "@popperjs/core";
+import { bottom, createPopper, Instance, Placement, PositioningStrategy } from "@popperjs/core";
 import { onClickOutside } from "@vueuse/core";
 
 const props = defineProps({
   placement: {
     type: String as PropType<Placement>,
     default: bottom,
+  },
+  strategy: {
+    type: String as PropType<PositioningStrategy>,
+    default: "absolute",
   },
   xOffset: {
     type: Number,
@@ -49,6 +53,7 @@ let tooltipInstance: Instance | null = null;
 function createTooltip(): void {
   tooltipInstance = createPopper(triggerNode.value!, tooltipNode.value!, {
     placement: props.placement,
+    strategy: props.strategy,
     modifiers: [
       {
         name: "offset",
