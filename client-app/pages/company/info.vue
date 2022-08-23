@@ -411,7 +411,7 @@ async function openAddOrUpdateCompanyAddressDialog(address?: MemberAddressType):
         await addOrUpdateAddresses([updatedAddress]);
 
         notifications.success({
-          text: t("pages.company.info.address_update_successful_message", {
+          text: t("pages.company.info.address_saved_successful_message", {
             addressName: getAddressName(updatedAddress),
           }),
           duration: 10000,
