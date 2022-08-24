@@ -33,6 +33,7 @@
         v-model.trim="emails"
         :placeholder="$t('shared.account.invite_member_dialog.emails_placeholder')"
         :is-disabled="loading"
+        :error-message="errors.emails"
         class="max-h-36 block"
         rows="2"
       />
@@ -47,6 +48,8 @@
         v-model.trim="message"
         :placeholder="$t('shared.account.invite_member_dialog.message_placeholder')"
         :is-disabled="loading"
+        :max-length="1000"
+        :error-message="errors.message"
         rows="3"
         class="max-h-48 block"
       />
@@ -80,6 +83,7 @@ import globals from "@/core/globals";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 import { useI18n } from "vue-i18n";
+import _ from "lodash";
 
 const roles = ["Organization maintainer", "Organization employee", "Purchasing agent"];
 const emailsValidationPattern =
@@ -92,6 +96,8 @@ const emit = defineEmits<{
 const popupComponent = shallowRef<any>(null);
 const loading = ref(false);
 const errorText = ref("");
+const maxContactsValue = ref(1000);
+const maxEmailLength = ref(254);
 
 const { t } = useI18n();
 const { organization, inviteUser } = useUser();
@@ -106,11 +112,34 @@ const { errors, meta, handleSubmit } = useForm({
   },
 });
 
+function getEmailAddresses(value: string | undefined): string[] {
+  return value?.split(/[,;]|\r|\r\n|\n/g) || [];
+}
+
 // const { value: role } = useField<string>("role", yup.string().required());
-const { value: message } = useField<string>("message", yup.string());
+const { value: message } = useField<string>("message", yup.string().max(1000));
 const { value: emails } = useField<string>(
   "emails",
-  yup.string().matches(emailsValidationPattern, t("common.messages.invalid_value")).required()
+  yup
+    .string()
+    .test(
+      "emails-quantity",
+      t("shared.account.invite_member_dialog.emails_quantity_exceeded", { maxValue: maxContactsValue.value }),
+      (value: string | undefined) => {
+        const emailAddresses: string[] = getEmailAddresses(value);
+        return emailAddresses.length <= maxContactsValue.value;
+      }
+    )
+    .test(
+      "email-length",
+      t("shared.account.invite_member_dialog.email_length_exceeded", { maxValue: maxEmailLength.value }),
+      (value: string | undefined) => {
+        const emailAddresses: string[] = getEmailAddresses(value);
+        return _.every(emailAddresses, (emailAddress: string) => emailAddress.length <= maxEmailLength.value);
+      }
+    )
+    .matches(emailsValidationPattern, t("common.messages.invalid_value"))
+    .required()
 );
 
 const send = handleSubmit(async (data) => {
@@ -123,7 +152,7 @@ const send = handleSubmit(async (data) => {
     storeId,
     urlSuffix: router.resolve({ name: "ConfirmInvitation" }).path,
     organizationId: organization.value!.id,
-    emails: data.emails.split(/[,;]|\r|\r\n|\n/g),
+    emails: getEmailAddresses(data.emails),
     message: data.message,
   });
 
