@@ -36,8 +36,8 @@
                   <span class="text-sm">{{ discount.description }}</span>
                   <VcTotalDisplay
                     :amount="-getDiscountAmmount(discount)"
-                    :currency-code="globals.currencyCode"
-                    :culture-name="globals.cultureName"
+                    :currency-code="currentCurrency.code"
+                    :culture-name="currentLanguage.cultureName"
                   />
                 </div>
               </li>
@@ -46,8 +46,8 @@
                   <span class="text-sm">{{ $t("common.labels.line_items") }}</span>
                   <VcTotalDisplay
                     :amount="-lineItemsDiscountTotal"
-                    :currency-code="globals.currencyCode"
-                    :culture-name="globals.cultureName"
+                    :currency-code="currentCurrency.code"
+                    :culture-name="currentLanguage.cultureName"
                   />
                 </div>
               </li>
@@ -84,7 +84,7 @@ import {
 } from "@/xapi/types";
 import { computed, PropType, ref } from "vue";
 import _ from "lodash";
-import globals from "@/core/globals";
+import { useCurrency, useLanguages } from "@/core/composables";
 
 const props = defineProps({
   cart: {
@@ -92,6 +92,9 @@ const props = defineProps({
     required: true,
   },
 });
+
+const { currentLanguage } = useLanguages();
+const { currentCurrency } = useCurrency();
 
 const discountsCollapsed = ref(false);
 

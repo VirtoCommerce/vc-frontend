@@ -109,8 +109,8 @@
           </span>
           <VcTotalDisplay
             :amount="total"
-            :currency-code="globals.currencyCode"
-            :culture-name="globals.cultureName"
+            :currency-code="currentCurrency.code"
+            :culture-name="currentLanguage.cultureName"
             class="text-green-700 font-extrabold mt-1"
           />
         </div>
@@ -210,8 +210,8 @@
             </span>
             <VcTotalDisplay
               :amount="total"
-              :currency-code="globals.currencyCode"
-              :culture-name="globals.cultureName"
+              :currency-code="currentCurrency.code"
+              :culture-name="currentLanguage.cultureName"
               class="text-green-700"
             />
           </div>
@@ -229,8 +229,7 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { Product } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";
 import { getProductRoute } from "@/shared/catalog";
-import VcTotalDisplay from "@/ui-kit/components/atoms/total-display/vc-total-display.vue";
-import globals from "@/core/globals";
+import { useCurrency, useLanguages } from "@/core/composables";
 
 // Define max qty available to add
 const max = 999999;
@@ -255,6 +254,9 @@ const props = defineProps({
 });
 
 defineEmits(["close-popup"]);
+
+const { currentLanguage } = useLanguages();
+const { currentCurrency } = useCurrency();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
