@@ -26,4 +26,7 @@ fragment orderLineItemFields on OrderLineItemType {
   taxTotal {
     ...moneyFields
   }
+  discountTotal {
+    ...moneyFields
+  }
 }

@@ -107,7 +107,12 @@
           <span class="mt-1">
             {{ $t("shared.account.reorder_info_popup.product_card.total_label") }}
           </span>
-          <span class="text-green-700 font-extrabold mt-1">{{ currency?.symbol }}{{ total }}</span>
+          <VcTotalDisplay
+            :amount="total"
+            :currency-code="globals.currencyCode"
+            :culture-name="globals.cultureName"
+            class="text-green-700 font-extrabold mt-1"
+          />
         </div>
       </div>
     </div>
@@ -196,11 +201,19 @@
             ></VcInStock>
           </div>
 
-          <div class="hidden md:flex lg:w-28 lg:shrink-0 xl:w-2/4 md:items-end flex-col text-sm font-extrabold pr-3">
-            <span v-if="!isProductDeleted" class="text-black self-end">
+          <div
+            class="hidden md:flex lg:w-28 lg:shrink-0 xl:w-2/4 md:items-end flex-col text-sm font-extrabold pr-3"
+            v-if="!isProductDeleted"
+          >
+            <span class="text-black self-end">
               {{ $t("shared.account.reorder_info_popup.product_card.total_label") }}
             </span>
-            <span v-if="!isProductDeleted" class="text-green-700">{{ currency?.symbol }}{{ total }}</span>
+            <VcTotalDisplay
+              :amount="total"
+              :currency-code="globals.currencyCode"
+              :culture-name="globals.cultureName"
+              class="text-green-700"
+            />
           </div>
         </div>
       </div>
@@ -213,10 +226,11 @@ import { computed, PropType, ref } from "vue";
 import { useField } from "vee-validate";
 import * as yup from "yup";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { useCart } from "@/shared/cart";
 import { Product } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";
 import { getProductRoute } from "@/shared/catalog";
+import VcTotalDisplay from "@/ui-kit/components/atoms/total-display/vc-total-display.vue";
+import globals from "@/core/globals";
 
 // Define max qty available to add
 const max = 999999;
@@ -245,15 +259,13 @@ defineEmits(["close-popup"]);
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
-const { currency } = useCart();
-
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.productItem));
 
 const variation = computed(() => props.productItem.variations?.find((v) => v.id === props.productItem.id));
 const minQty = computed(() => (variation.value ? variation.value?.minQuantity : props.productItem.minQuantity) || 0);
 const maxQty = computed(() => (variation.value ? variation.value?.maxQuantity : props.productItem.maxQuantity) || max);
 
-const total = computed(() => (value.value! * props.productItem.price?.actual?.amount).toFixed(2));
+const total = computed(() => value.value! * props.productItem.price?.actual?.amount);
 
 let rules = yup.number().integer().optional().moreThan(0);
 rules = rules.min(minQty.value);
