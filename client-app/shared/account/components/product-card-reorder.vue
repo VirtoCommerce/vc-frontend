@@ -112,7 +112,6 @@
             :currency-code="globals.currencyCode"
             :culture-name="globals.cultureName"
             class="text-green-700 font-extrabold mt-1"
-            v-if="!isProductDeleted"
           />
         </div>
       </div>
@@ -214,7 +213,6 @@
               :currency-code="globals.currencyCode"
               :culture-name="globals.cultureName"
               class="text-green-700"
-              v-if="!isProductDeleted"
             />
           </div>
         </div>
