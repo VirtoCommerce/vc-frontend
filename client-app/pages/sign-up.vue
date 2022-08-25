@@ -10,6 +10,7 @@
             :value="RegistrationKind.personal"
             :label="$t('pages.sign_up.personal_registration_kind_label')"
           />
+
           <VcRadioButton
             id="pickup"
             v-model="registrationKind"
@@ -26,7 +27,10 @@
           is-required
           :error-message="errors.firstName"
           :maxlength="64"
-        ></VcInput>
+          name="firstName"
+          autocomplete="given-name"
+        />
+
         <VcInput
           v-model="lastName"
           class="mb-4"
@@ -35,7 +39,10 @@
           is-required
           :error-message="errors.lastName"
           :maxlength="64"
-        ></VcInput>
+          name="lastName"
+          autocomplete="family-name"
+        />
+
         <VcInput
           v-model="email"
           class="mb-4"
@@ -44,7 +51,10 @@
           is-required
           :error-message="errors.email"
           :maxlength="64"
-        ></VcInput>
+          name="email"
+          autocomplete="email"
+        />
+
         <VcInput
           v-if="registrationKind === RegistrationKind.organization"
           v-model="organizationName"
@@ -54,7 +64,10 @@
           is-required
           :error-message="errors.organizationName"
           :maxlength="64"
-        ></VcInput>
+          name="organizationName"
+          autocomplete="off"
+        />
+
         <div class="block lg:flex justify-between lg:space-x-6">
           <VcInput
             v-model="password"
@@ -66,7 +79,8 @@
             is-required
             :error-message="errors.password"
             :maxlength="64"
-          ></VcInput>
+          />
+
           <VcInput
             v-model="confirmPassword"
             class="mb-4 w-full lg:w-1/2"
@@ -77,8 +91,9 @@
             is-required
             :error-message="errors.confirmPassword"
             :maxlength="64"
-          ></VcInput>
+          />
         </div>
+
         <div class="mt-6 lg:mt-4">
           <VcAlert v-for="error in commonErrors" :key="error" type="error" class="mb-4 text-xs" icon text>
             {{ error }}
@@ -96,6 +111,7 @@
         </div>
       </form>
     </template>
+
     <template #right>
       <VcImage class="max-w-md" src="/static/images/sign-up/image.webp" lazy />
     </template>

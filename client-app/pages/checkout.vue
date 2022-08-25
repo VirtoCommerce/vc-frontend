@@ -150,12 +150,14 @@
                         {{ shipment.deliveryAddress?.firstName }}
                         {{ shipment.deliveryAddress?.lastName }}
                       </span>
+
                       <p>
                         {{ shipment.deliveryAddress?.countryCode }}
                         {{ shipment.deliveryAddress?.regionName }}
                         {{ shipment.deliveryAddress?.city }} {{ shipment.deliveryAddress?.line1 }}
                         {{ shipment.deliveryAddress?.postalCode }}
                       </p>
+
                       <p>
                         <span
                           class="font-extrabold"
@@ -163,6 +165,7 @@
                         ></span>
                         {{ shipment.deliveryAddress?.phone }}
                       </p>
+
                       <p>
                         <span
                           class="font-extrabold"
@@ -179,9 +182,9 @@
                         is-outline
                         class="px-3 self-start uppercase font-bold"
                         @click="
-                          isAuthenticated && addresses.length > 0
-                            ? selectShippingAddressDialog()
-                            : addOrUpdateAddressDialog(AddressType.Shipping, shipment?.deliveryAddress)
+                          addresses.length
+                            ? openAddressSelectionDialog(AddressType.Shipping)
+                            : openAddOrUpdateAddressDialog(AddressType.Shipping, shipment?.deliveryAddress)
                         "
                       >
                         {{ $t("pages.checkout.shipping_details_section.shipping_address_block.change_button") }}
@@ -212,9 +215,9 @@
                         is-outline
                         class="px-3 self-start uppercase font-bold"
                         @click="
-                          isAuthenticated && addresses.length > 0
-                            ? selectShippingAddressDialog()
-                            : addOrUpdateAddressDialog(AddressType.Shipping)
+                          addresses.length
+                            ? openAddressSelectionDialog(AddressType.Shipping)
+                            : openAddOrUpdateAddressDialog(AddressType.Shipping)
                         "
                       >
                         {{ $t("pages.checkout.shipping_details_section.shipping_address_block.add_address_button") }}
@@ -288,7 +291,7 @@
 
                 <div
                   v-if="!billingSameAsShipping && !payment?.billingAddress"
-                  class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 mb-6 p-5 flex flex-col space-y-2 lg:space-y-0 lg:flex-row lg:items-center justify-between"
+                  class="border border-t-0 rounded-b -mt-6 mb-6 p-5 flex flex-col space-y-2 lg:space-y-0 lg:flex-row lg:items-center justify-between"
                 >
                   <div class="text-[color:var(--color-danger)] flex items-center space-x-4">
                     <i class="fas fa-exclamation-triangle text-2xl" />
@@ -314,9 +317,9 @@
                       is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="
-                        isAuthenticated && addresses.length > 0
-                          ? selectBillingAddressDialog()
-                          : addOrUpdateAddressDialog(AddressType.Billing)
+                        addresses.length
+                          ? openAddressSelectionDialog(AddressType.Billing)
+                          : openAddOrUpdateAddressDialog(AddressType.Billing)
                       "
                     >
                       {{ $t("pages.checkout.payment_details_section.billing_address_block.add_address_button") }}
@@ -326,32 +329,35 @@
 
                 <div
                   v-else-if="!billingSameAsShipping && payment?.billingAddress"
-                  class="border-b border-r border-l rounded-l-none rounded-r-none rounded -mt-6 mb-6 p-5 flex justify-between space-x-3 items-center text-sm"
+                  class="border border-t-0 rounded-b -mt-6 mb-6 p-5 flex flex-col space-y-2 lg:space-y-0 text-sm lg:flex-row lg:justify-between lg:space-x-3 lg:items-center"
                 >
                   <div class="truncate">
                     <span class="font-extrabold">
                       {{ payment.billingAddress?.firstName }}
                       {{ payment.billingAddress?.lastName }}
                     </span>
+
                     <p>
                       {{ payment.billingAddress?.countryCode }}
                       {{ payment.billingAddress?.regionName }}
                       {{ payment.billingAddress?.city }} {{ payment.billingAddress?.line1 }}
                       {{ payment.billingAddress?.postalCode }}
                     </p>
+
                     <p>
                       <span
                         class="font-extrabold"
                         v-t="'pages.checkout.payment_details_section.billing_address_block.phone_label'"
-                      ></span
-                      >{{ payment.billingAddress?.phone }}
+                      ></span>
+                      {{ payment.billingAddress?.phone }}
                     </p>
+
                     <p>
                       <span
                         class="font-extrabold"
                         v-t="'pages.checkout.payment_details_section.billing_address_block.email_label'"
-                      ></span
-                      >{{ payment.billingAddress?.email }}
+                      ></span>
+                      {{ payment.billingAddress?.email }}
                     </p>
                   </div>
 
@@ -362,9 +368,9 @@
                       is-outline
                       class="px-3 self-start uppercase font-bold"
                       @click="
-                        isAuthenticated && addresses.length > 0
-                          ? selectBillingAddressDialog()
-                          : addOrUpdateAddressDialog(AddressType.Billing, payment?.billingAddress)
+                        addresses.length
+                          ? openAddressSelectionDialog(AddressType.Billing)
+                          : openAddOrUpdateAddressDialog(AddressType.Billing, payment?.billingAddress)
                       "
                     >
                       {{ $t("pages.checkout.payment_details_section.billing_address_block.change_button") }}
@@ -811,80 +817,69 @@ function showPaymentMethodDialog(): void {
   });
 }
 
-function selectShippingAddressDialog(): void {
-  openPopup({
-    component: SelectAddressDialog,
-    props: {
-      addresses: addresses.value,
-      currentAddress: shipment.value?.deliveryAddress,
-      async onResult(address?: InputAddressType) {
-        if (!address) {
-          return;
-        }
-        const convertedAddress = _.omit(address, ["isDefault"]);
-        await updateShipment({
-          id: shipment.value?.id,
-          deliveryAddress: { ...convertedAddress },
-        });
-      },
-      onAddNewAddress() {
-        setTimeout(() => {
-          addOrUpdateAddressDialog(AddressType.Shipping);
-        }, 500);
-      },
-    },
-  });
+async function updateBillingOrDeliveryAddress(
+  addressType: AddressType.Billing | AddressType.Shipping,
+  inputAddress: InputAddressType
+) {
+  if (addressType === AddressType.Billing) {
+    await updatePayment({
+      id: payment.value?.id,
+      billingAddress: inputAddress,
+    });
+  } else {
+    await updateShipment({
+      id: shipment.value?.id,
+      deliveryAddress: inputAddress,
+    });
+  }
 }
 
-function selectBillingAddressDialog(): void {
-  openPopup({
-    component: SelectAddressDialog,
-    props: {
-      addresses: addresses.value,
-      currentAddress: payment.value?.billingAddress,
-      async onResult(address?: InputAddressType) {
-        if (!address) {
-          return;
-        }
-        const convertedAddress = _.omit(address, ["isDefault"]);
-        await updatePayment({
-          id: payment.value?.id,
-          billingAddress: { ...convertedAddress },
-        });
-      },
-      onAddNewAddress() {
-        setTimeout(() => {
-          addOrUpdateAddressDialog(AddressType.Billing);
-        }, 500);
-      },
-    },
-  });
-}
-
-function addOrUpdateAddressDialog(
+function openAddOrUpdateAddressDialog(
   addressType: AddressType.Billing | AddressType.Shipping,
   editableAddress?: MemberAddressType | CartAddressType
-): void {
+) {
   openPopup({
     component: AddOrUpdateAddressDialog,
     props: {
       address: editableAddress,
+
       async onResult(address: MemberAddressType) {
         closePopup();
-        const newAddress = { ...address, addressType: AddressType.BillingAndShipping };
-        const convertedAddress = _.omit(newAddress, ["isDefault"]);
 
-        if (addressType.valueOf() === AddressType.Billing) {
-          updatePayment({
-            id: payment.value?.id,
-            billingAddress: { ...convertedAddress },
-          });
-        } else {
-          updateShipment({
-            id: shipment.value?.id,
-            deliveryAddress: { ...convertedAddress },
-          });
+        const inputAddress: InputAddressType = {
+          ..._.omit(address, ["isDefault", "description"]),
+          addressType: AddressType.BillingAndShipping,
+        };
+
+        await updateBillingOrDeliveryAddress(addressType, inputAddress);
+      },
+    },
+  });
+}
+
+function openAddressSelectionDialog(addressType: AddressType.Billing | AddressType.Shipping): void {
+  openPopup({
+    component: SelectAddressDialog,
+
+    props: {
+      addresses: addresses.value,
+      currentAddress:
+        addressType === AddressType.Billing ? payment.value?.billingAddress : shipment.value?.deliveryAddress,
+
+      async onResult(address?: MemberAddressType) {
+        if (!address) {
+          return;
         }
+
+        const inputAddress: InputAddressType = _.omit(address, ["isDefault", "description"]);
+
+        await updateBillingOrDeliveryAddress(addressType, inputAddress);
+      },
+
+      onAddNewAddress() {
+        setTimeout(() => {
+          openAddOrUpdateAddressDialog(addressType);
+        }, 500);
       },
     },
   });
