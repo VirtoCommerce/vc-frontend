@@ -1,17 +1,11 @@
 <template>
-  <div>
-    <span class="text-sm" v-if="label">{{ label }}</span>
-    <span>{{ formattedAmount }}</span>
-  </div>
+  <span>{{ formattedAmount }}</span>
 </template>
 
 <script lang="ts" setup>
 import { computed } from "vue";
 
 const props = defineProps({
-  label: {
-    type: String,
-  },
   amount: {
     type: Number,
     required: true,

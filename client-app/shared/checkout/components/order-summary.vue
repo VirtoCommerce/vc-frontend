@@ -32,22 +32,24 @@
           <div v-if="hasDiscounts && discountsCollapsed">
             <ul class="list-disc pl-5 text-gray-400">
               <li v-for="(discount, index) in cart.discounts" :key="index">
-                <VcTotalDisplay
-                  :label="discount.description"
-                  :amount="-getDiscountAmmount(discount)"
-                  :currency-code="globals.currencyCode"
-                  :culture-name="globals.cultureName"
-                  class="flex justify-between items-center"
-                />
+                <div class="flex justify-between items-center">
+                  <span class="text-sm">{{ discount.description }}</span>
+                  <VcTotalDisplay
+                    :amount="-getDiscountAmmount(discount)"
+                    :currency-code="globals.currencyCode"
+                    :culture-name="globals.cultureName"
+                  />
+                </div>
               </li>
               <li v-if="lineItemsDiscountTotal > 0">
-                <VcTotalDisplay
-                  :label="$t('common.labels.line_items')"
-                  :amount="-lineItemsDiscountTotal"
-                  :currency-code="globals.currencyCode"
-                  :culture-name="globals.cultureName"
-                  class="flex justify-between items-center"
-                />
+                <div class="flex justify-between items-center">
+                  <span class="text-sm">{{ $t("common.labels.line_items") }}</span>
+                  <VcTotalDisplay
+                    :amount="-lineItemsDiscountTotal"
+                    :currency-code="globals.currencyCode"
+                    :culture-name="globals.cultureName"
+                  />
+                </div>
               </li>
             </ul>
           </div>
