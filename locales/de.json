@@ -41,6 +41,7 @@
       "product_price": "Dein Preis",
       "subtotal": "Zwischensumme",
       "discount": "Rabatt",
+      "line_items": "Line items",
       "tax": "Steuer",
       "status": "Status",
       "date": "Datum",
