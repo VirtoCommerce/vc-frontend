@@ -267,7 +267,7 @@ const variation = computed(() => props.productItem.variations?.find((v) => v.id 
 const minQty = computed(() => (variation.value ? variation.value?.minQuantity : props.productItem.minQuantity) || 0);
 const maxQty = computed(() => (variation.value ? variation.value?.maxQuantity : props.productItem.maxQuantity) || max);
 
-const total = computed(() => value.value! * props.productItem.price?.actual?.amount);
+const total = computed(() => (value.value || 0) * props.productItem.price?.actual?.amount);
 
 let rules = yup.number().integer().optional().moreThan(0);
 rules = rules.min(minQty.value);
