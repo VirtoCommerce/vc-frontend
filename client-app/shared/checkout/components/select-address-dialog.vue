@@ -87,7 +87,9 @@
           <td class="p-5 truncate">{{ address.phone }}</td>
           <td class="p-5 truncate">{{ address.email }}</td>
           <td v-if="address.id === selectedAddress?.id" class="p-5">
-            <div class="flex items-center justify-center mx-auto rounded-full w-6 h-6 bg-green-600 text-white text-sm">
+            <div
+              class="flex items-center justify-center mx-auto rounded-full w-6 h-6 bg-green-600 text-white text-sm my-1.5"
+            >
               <i class="fas fa-check"></i>
             </div>
           </td>
@@ -129,7 +131,7 @@
 </template>
 
 <script setup lang="ts">
-import { MemberAddressType } from "@/xapi/types";
+import { AnyAddressType } from "@/core/types";
 import { computed, watchEffect, PropType, ref } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { isEqualAddresses } from "@/core/utilities";
@@ -139,12 +141,12 @@ const { t } = useI18n();
 
 const props = defineProps({
   currentAddress: {
-    type: Object as PropType<MemberAddressType>,
+    type: Object as PropType<AnyAddressType>,
     default: undefined,
   },
 
   addresses: {
-    type: Array as PropType<MemberAddressType[]>,
+    type: Array as PropType<AnyAddressType[]>,
     default: () => [],
   },
 
@@ -159,7 +161,7 @@ defineEmits(["result", "addNewAddress"]);
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
-const selectedAddress = ref<MemberAddressType>();
+const selectedAddress = ref<AnyAddressType>();
 const page = ref(1);
 const itemsPerPage = ref(4);
 
@@ -196,11 +198,13 @@ const onPageChange = async (newPage: number) => {
   page.value = newPage;
 };
 
-function setAddress(address: MemberAddressType): void {
+function setAddress(address: AnyAddressType): void {
   selectedAddress.value = address;
 }
 
 watchEffect(() => {
-  selectedAddress.value = props.addresses.find((item) => isEqualAddresses(item, props.currentAddress!));
+  selectedAddress.value = props.addresses.find((item) =>
+    isEqualAddresses(item, props.currentAddress!, { skipDescription: true })
+  );
 });
 </script>
