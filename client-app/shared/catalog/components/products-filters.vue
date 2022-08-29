@@ -34,6 +34,13 @@
     </VcFilterCard>
 
     <template v-if="isMobile">
+      <!-- In Stock -->
+      <VcFilterCard :with-header="false">
+        <VcCheckbox v-model="localFilters.inStock" :disabled="loading" @change="onFilterChanged">
+          {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
+        </VcCheckbox>
+      </VcFilterCard>
+
       <!-- Branch availability -->
       <VcFilterCard :with-header="false">
         <button @click.prevent="onOpenBranches">
@@ -49,13 +56,6 @@
         <div class="mt-1 ml-0.5 pl-6 text-xs font-medium">
           {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
         </div>
-      </VcFilterCard>
-
-      <!-- In Stock -->
-      <VcFilterCard :title="$t('pages.catalog.instock_filter_card.title')">
-        <VcCheckbox v-model="localFilters.inStock" :disabled="loading" @change="onFilterChanged">
-          {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
-        </VcCheckbox>
       </VcFilterCard>
     </template>
 
@@ -81,7 +81,7 @@
           class="mt-3 first:mt-1 last:mb-2"
           @change="onFilterChanged"
         >
-          <div class="text-13">
+          <div class="text-13" :class="[item.selected ? 'font-semibold' : 'text-gray-500 font-medium']">
             <span class="truncate">{{ item.label }}</span>
             <span class="ml-1">{{ $t("pages.catalog.facet_card.item_count_format", [item.count]) }}</span>
           </div>
