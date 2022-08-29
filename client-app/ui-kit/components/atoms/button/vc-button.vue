@@ -119,7 +119,7 @@ $colors: primary, secondary, success, warning, danger;
     }
 
     &::after {
-      @apply border-[3px] rounded-[50%] animate-spin border-gray-400 border-r-gray-300;
+      @apply border-[3px] rounded-full animate-spin border-gray-400 border-r-gray-300;
 
       --tw-border-opacity: 0.7 !important;
 

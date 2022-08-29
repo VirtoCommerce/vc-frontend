@@ -18,6 +18,7 @@
       </div>
 
       <MobileOrdersFilter />
+
       <div class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
         <div class="flex space-x-4">
           <VcButton
@@ -48,13 +49,13 @@
     </VcPopupSidebar>
 
     <!-- search & filters -->
-    <div class="flex gap-3 lg:flex-row-reverse" v-if="!isMobile || orders.length">
+    <div class="flex gap-3 lg:flex-row-reverse">
       <div class="relative ml-5 md:mx-0">
         <VcButton
           ref="filterButtonElement"
           :is-disabled="ordersLoading"
           size="lg"
-          class="p-4 uppercase"
+          class="w-11 lg:w-auto px-3.5 uppercase"
           @click="toggleFilters"
         >
           <span class="hidden lg:inline-block">{{ $t("common.buttons.filters") }}</span>
@@ -65,32 +66,32 @@
           v-if="filtersVisible && !isMobile"
           class="absolute right-0 z-10 bg-white shadow-lg pb-6 rounded border border-gray-300 overflow-hidden mt-2"
         >
-          <button class="absolute right-0 appearance-none mr-4 mt-2" @click="hideFilters">
+          <button class="absolute right-0 appearance-none px-4 py-2" @click="hideFilters">
             <span class="text-lg fa fa-times text-red-400 hover:text-red-700"></span>
           </button>
 
-          <OrdersFilter ref="filtersElement" class="px-8 pt-9" @change="filterChanged()" />
+          <OrdersFilter ref="filtersElement" class="px-8 pt-9" @change="hideFilters" />
         </div>
       </div>
 
       <div class="flex flex-grow mr-5 md:mx-0">
         <div class="relative grow">
           <input
-            v-model.trim="keyword"
+            v-model.trim="localKeyword"
             :disabled="ordersLoading"
-            class="w-full appearance-none bg-white rounded rounded-r-none h-11 px-4 font-medium outline-none text-sm border border-gray-300 focus:border-gray-400 disabled:bg-gray-200"
+            class="w-full appearance-none bg-white rounded rounded-r-none h-11 pl-4 pr-11 font-medium outline-none text-sm border border-gray-300 focus:border-gray-400 disabled:bg-gray-200"
             @keypress.enter="applyKeyword"
             :placeholder="$t('pages.account.orders.search_placeholder')"
           />
 
-          <button v-if="keyword" class="absolute right-[14px] top-[14px]" @click="resetKeyword">
+          <button v-if="localKeyword" class="absolute right-0 top-0 h-11 px-4" @click="resetKeyword">
             <svg class="text-[color:var(--color-primary)]" height="14" width="14">
               <use href="/static/images/delete.svg#main" />
             </svg>
           </button>
         </div>
 
-        <VcButton :is-disabled="ordersLoading" class="px-4 !rounded-l-none uppercase" size="lg" @click="applyKeyword">
+        <VcButton :is-disabled="ordersLoading" class="w-11 !rounded-l-none uppercase" size="lg" @click="applyKeyword">
           <i class="fas fa-search text-lg" />
         </VcButton>
       </div>
@@ -123,15 +124,26 @@
     </div>
 
     <!-- Empty view -->
-    <VcEmptyView v-if="!orders.length && !ordersLoading" :text="$t('pages.account.orders.no_orders_message')">
-      <template #icon v-if="isMobile">
-        <VcImage src="/static/images/common/order.svg" :alt="$t('pages.account.orders.orders_icon')" />
+    <VcEmptyView
+      v-if="!orders.length && !ordersLoading"
+      :text="
+        isFilterEmpty && !keyword
+          ? $t('pages.account.orders.no_orders_message')
+          : $t('pages.account.orders.no_results_message')
+      "
+    >
+      <template #icon>
+        <VcImage src="/static/images/common/order.svg" :alt="$t('pages.account.orders.no_orders_img_alt')" />
       </template>
 
       <template #button>
-        <VcButton class="px-6 uppercase" size="lg" @click="resetFiltersWithKeyword">
+        <VcButton v-if="isFilterEmpty && !keyword" :to="{ name: 'Catalog' }" class="px-6 uppercase" size="lg">
+          {{ $t("pages.account.orders.buttons.no_orders") }}
+        </VcButton>
+
+        <VcButton v-else class="px-6 uppercase" size="lg" @click="resetFiltersWithKeyword">
           <i class="fas fa-undo text-inherit -ml-0.5 mr-2.5" />
-          {{ $t("pages.account.orders.no_orders_button") }}
+          {{ $t("pages.account.orders.buttons.reset_search") }}
         </VcButton>
       </template>
     </VcEmptyView>
@@ -144,9 +156,9 @@
         :sort="sort"
         :pages="pages"
         :page="page"
-        @itemClick="openOrderDetails"
+        @itemClick="goToOrderDetails"
         @headerClick="applySorting"
-        @pageChanged="onPageChange"
+        @pageChanged="changePage"
       >
         <template #mobile-item="itemData">
           <div class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200 cursor-pointer">
@@ -209,7 +221,7 @@
             v-for="order in orders"
             :key="order.id"
             class="even:bg-gray-50 hover:bg-gray-200 cursor-pointer"
-            @click="openOrderDetails(order)"
+            @click="goToOrderDetails(order)"
           >
             <td class="p-5 overflow-hidden overflow-ellipsis">
               {{ order.number }}
@@ -300,46 +312,10 @@ usePageHead({
 });
 
 const isMobile = breakpoints.smaller("lg");
-
-const openOrderDetails = (item: CustomerOrderType) => {
-  router.push({ name: "OrderDetails", params: { orderId: item.id } });
-};
-
-watch(
-  appliedFilterData,
-  () => {
-    page.value = 1;
-    loadOrders();
-  },
-  { deep: true }
-);
-
-const onPageChange = async (newPage: number) => {
-  page.value = newPage;
-  window.scroll({ top: 0, behavior: "smooth" });
-  await loadOrders();
-};
-
-const applySorting = async (column: string) => {
-  sort.value = getNewSorting(sort.value, column);
-  page.value = 1;
-  await loadOrders();
-};
-
-const applyKeyword = async () => {
-  page.value = 1;
-  await loadOrders();
-};
-
-const resetFiltersWithKeyword = async () => {
-  keyword.value = "";
-  page.value = 1;
-  resetFilters();
-};
-
-onMounted(async () => {
-  resetFilters();
-});
+const localKeyword = ref("");
+const filtersVisible = ref(false);
+const filtersElement = shallowRef<HTMLElement | null>(null);
+const filterButtonElement = shallowRef<HTMLElement | null>(null);
 
 const columns = ref<ITableColumn[]>([
   {
@@ -374,7 +350,38 @@ const columns = ref<ITableColumn[]>([
   },
 ]);
 
-const filtersVisible = ref(false);
+async function changePage(newPage: number) {
+  page.value = newPage;
+  window.scroll({ top: 0, behavior: "smooth" });
+  await loadOrders();
+}
+
+async function applySorting(column: string) {
+  sort.value = getNewSorting(sort.value, column);
+  page.value = 1;
+  await loadOrders();
+}
+
+async function applyKeyword() {
+  keyword.value = localKeyword.value;
+  page.value = 1;
+  await loadOrders();
+}
+
+async function resetKeyword() {
+  localKeyword.value = "";
+
+  if (keyword.value) {
+    await applyKeyword();
+  }
+}
+
+async function resetFiltersWithKeyword() {
+  localKeyword.value = "";
+  keyword.value = "";
+  page.value = 1;
+  resetFilters();
+}
 
 function toggleFilters() {
   if (!filtersVisible.value) {
@@ -387,8 +394,9 @@ function hideFilters() {
   filtersVisible.value = false;
 }
 
-const filtersElement = shallowRef<HTMLElement | null>(null);
-const filterButtonElement = shallowRef<HTMLElement | null>(null);
+function goToOrderDetails(order: CustomerOrderType) {
+  router.push({ name: "OrderDetails", params: { orderId: order.id } });
+}
 
 onClickOutside(
   filtersElement,
@@ -398,12 +406,16 @@ onClickOutside(
   { ignore: [filterButtonElement] }
 );
 
-function filterChanged() {
-  hideFilters();
-}
+onMounted(() => {
+  resetFilters();
+});
 
-async function resetKeyword() {
-  keyword.value = "";
-  await applyKeyword();
-}
+watch(
+  appliedFilterData,
+  () => {
+    page.value = 1;
+    loadOrders();
+  },
+  { deep: true }
+);
 </script>

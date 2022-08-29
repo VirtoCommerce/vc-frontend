@@ -24,7 +24,7 @@
     <!-- Search & filters block -->
     <div class="flex gap-x-2 lg:gap-x-5 lg:flex-row-reverse mx-5 md:mx-0">
       <!--
-      <VcButton ref="filterButtonElement" :is-disabled="true" is-outline size="lg" class="p-4 w-11 lg:w-auto uppercase">
+      <VcButton ref="filterButtonElement" :is-disabled="true" is-outline size="lg" class="w-11 lg:w-auto px-3.5 uppercase">
         <span class="hidden lg:inline-block">{{ $t("common.buttons.filters") }}</span>
         <span class="lg:hidden fa fa-filter"></span>
       </VcButton>
@@ -33,34 +33,41 @@
       <div class="flex flex-grow">
         <div class="relative grow">
           <input
-            v-model.trim="keyword"
+            v-model.trim="localKeyword"
             :disabled="loading"
             :placeholder="$t('pages.company.members.search_placeholder')"
-            class="appearance-none bg-white rounded rounded-r-none h-11 px-4 font-medium outline-none text-sm border w-full border-gray-300 focus:border-gray-400 disabled:bg-gray-200"
-            @keypress.enter="searchContacts"
+            class="appearance-none bg-white rounded rounded-r-none h-11 pl-4 pr-11 font-medium outline-none text-sm border w-full border-gray-300 focus:border-gray-400 disabled:bg-gray-200"
+            @keypress.enter="applyKeyword"
           />
 
-          <button v-if="keyword" class="absolute right-[14px] top-[14px]" @click="resetKeyword">
+          <button v-if="localKeyword" class="absolute right-0 top-0 h-11 px-4" @click="resetKeyword">
             <svg class="text-[color:var(--color-primary)]" height="14" width="14">
               <use href="/static/images/delete.svg#main" />
             </svg>
           </button>
         </div>
 
-        <VcButton :is-disabled="loading" class="px-4 uppercase !rounded-l-none" size="lg" @click="searchContacts">
+        <VcButton :is-disabled="loading" class="w-11 uppercase !rounded-l-none" size="lg" @click="applyKeyword">
           <i class="fas fa-search text-lg" />
         </VcButton>
       </div>
     </div>
 
     <!-- Empty view -->
-    <VcEmptyView v-if="!contacts.length && !loading" :text="$t('pages.company.members.no_results_found_message')">
-      <template #icon v-if="isMobile">
-        <VcImage src="/static/images/common/order.svg" :alt="$t('pages.orders.orders_icon')" />
+    <VcEmptyView
+      v-if="!contacts.length && !loading"
+      :text="keyword ? $t('pages.company.members.no_results_message') : $t('pages.company.members.no_members_message')"
+    >
+      <template #icon>
+        <VcImage src="/static/images/common/order.svg" :alt="$t('pages.company.members.no_members_img_alt')" />
       </template>
 
       <template #button>
-        <VcButton class="px-6 uppercase" size="lg" @click="resetKeyword">
+        <VcButton v-if="!keyword" :to="{ name: 'Catalog' }" class="px-6 uppercase" size="lg">
+          {{ $t("pages.company.members.buttons.no_members") }}
+        </VcButton>
+
+        <VcButton v-else class="px-6 uppercase" size="lg" @click="resetKeyword">
           <i class="fas fa-undo text-inherit -ml-0.5 mr-2.5" />
           {{ $t("pages.company.members.buttons.reset_search") }}
         </VcButton>
@@ -214,6 +221,7 @@ usePageHead({
 });
 
 const isMobile = breakpoints.smaller("lg");
+const localKeyword = ref("");
 
 const columns = ref<ITableColumn[]>([
   {
@@ -245,56 +253,39 @@ const columns = ref<ITableColumn[]>([
   },*/
 ]);
 
-function openInviteMemberDialog() {
-  openPopup({
-    component: InviteMemberDialog,
-    props: {
-      onResult(succeed: boolean) {
-        if (succeed) {
-          loadContacts();
-        }
-      },
-    },
-  });
-}
-
-const searchContacts = async () => {
-  if (!keyword.value) {
-    return;
-  }
-  page.value = 1;
-  await loadContacts();
-};
-
-const resetKeyword = async () => {
-  keyword.value = "";
-  page.value = 1;
-  await loadContacts();
-};
-
-const applySorting = async (column: string) => {
-  sort.value = getNewSorting(sort.value, column);
-  page.value = 1;
-  await loadContacts();
-};
-
-const changePage = async (newPage: number) => {
+async function changePage(newPage: number) {
   page.value = newPage;
   window.scroll({ top: 0, behavior: "smooth" });
   await loadContacts();
-};
+}
 
-const deleteContactFromOrganization = async (contact: OrganizationContactType) => {
+async function applySorting(column: string) {
+  sort.value = getNewSorting(sort.value, column);
+  page.value = 1;
+  await loadContacts();
+}
+
+async function applyKeyword() {
+  keyword.value = localKeyword.value;
+  page.value = 1;
+  await loadContacts();
+}
+
+async function resetKeyword() {
+  localKeyword.value = "";
+
+  if (keyword.value) {
+    await applyKeyword();
+  }
+}
+
+async function deleteContactFromOrganization(contact: OrganizationContactType) {
   await updateMember({
     ...contact,
     organizationsIds: [],
   });
   await loadContacts();
-};
-
-onMounted(async () => {
-  await loadContacts();
-});
+}
 
 function openAddNewMemberPopup() {
   openPopup({
@@ -303,6 +294,19 @@ function openAddNewMemberPopup() {
       onResult: async (success: boolean) => {
         if (success) {
           await loadContacts();
+        }
+      },
+    },
+  });
+}
+
+function openInviteMemberDialog() {
+  openPopup({
+    component: InviteMemberDialog,
+    props: {
+      onResult(succeed: boolean) {
+        if (succeed) {
+          loadContacts();
         }
       },
     },
@@ -339,4 +343,8 @@ function itemActionsBuilder() {
 
   return actions;
 }
+
+onMounted(() => {
+  loadContacts();
+});
 </script>
