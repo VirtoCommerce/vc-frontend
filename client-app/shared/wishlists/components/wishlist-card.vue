@@ -10,7 +10,7 @@
     </router-link>
 
     <div class="shrink-0 mt-1.5 md:mt-0 px-6 text-13 md:text-base font-bold">
-      {{ $t("shared.wishlists.list_card.quantity_label") }}:
+      {{ $t("shared.wishlists.list_card.product_count_label") }}:
       <span class="ml-1 text-sm font-extrabold">{{ list.items!.length }}</span>
     </div>
 
