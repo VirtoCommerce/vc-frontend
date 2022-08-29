@@ -178,7 +178,7 @@
                         'text-[color:var(--color-category-page-checkbox-label)]': !savedInStock,
                       }"
                     >
-                      {{ $t("pages.catalog.instock_filter_card.checkbox_label_desktop") }}
+                      {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
                     </span>
                   </VcCheckbox>
                 </template>
