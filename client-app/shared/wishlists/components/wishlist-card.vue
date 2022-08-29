@@ -1,20 +1,20 @@
 <template>
   <div
-    class="flex flex-row flex-wrap md:flex-nowrap items-center gap-x-8 md:gap-x-10 bg-white pt-3 pb-5 md:py-0 px-6 shadow-sm md:rounded md:border"
+    class="relative flex flex-col md:flex-row md:items-center bg-white pt-4.5 pb-4 md:py-0 shadow-sm md:rounded border-y md:border-x"
   >
     <router-link
       :to="{ name: 'ListDetails', params: { listId: list.id } }"
-      class="relative shrink-0 w-full md:flex-1 font-extrabold pt-0.5 pb-1 md:py-6 text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)] break-words line-clamp-6"
+      class="grow md:py-5 px-6 text-17 md:text-base font-extrabold truncate text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)] before:absolute before:inset-0 md:before:hidden"
     >
       {{ list.name }}
     </router-link>
 
-    <div class="shrink-0 w-full md:w-auto font-bold text-sm md:text-base mb-4 md:mb-0 xl:pr-5">
+    <div class="shrink-0 mt-1.5 md:mt-0 px-6 text-13 md:text-base font-bold">
       {{ $t("shared.wishlists.list_card.quantity_label") }}:
-      <span class="ml-1 font-extrabold">{{ list.items!.length }}</span>
+      <span class="ml-1 text-sm font-extrabold">{{ list.items!.length }}</span>
     </div>
 
-    <div class="shrink-0 space-x-3 ml-auto">
+    <div class="hidden md:flex shrink-0 px-6 gap-x-3">
       <!-- todo: https://virtocommerce.atlassian.net/browse/ST-2256 -->
       <button
         type="button"

@@ -82,7 +82,7 @@
       <VcTable
         v-else
         :loading="addressesLoading"
-        :item-action-builder="actionBuilder"
+        :item-actions-builder="itemActionsBuilder"
         :columns="columns"
         :items="paginatedAddresses"
         :sort="sort"
@@ -319,39 +319,39 @@ function closeEditMode() {
   editingMode.value = false;
 }
 
-function actionBuilder(address: MemberAddressType) {
-  const result = [
+function itemActionsBuilder(inputObject: MemberAddressType) {
+  const actions: SlidingActionsItem[] = [
     {
       icon: "fas fa-pencil-alt",
       title: t("pages.account.addresses.edit_button"),
-      bgColor: "bg-gray-300",
-      clickHandler() {
+      classes: "bg-gray-550",
+      clickHandler(address: MemberAddressType) {
         openEditMode(address);
       },
     },
     {
       icon: "fas fa-trash-alt",
       title: t("pages.account.addresses.delete_button"),
-      leftActions: true,
-      bgColor: "bg-[color:var(--color-danger)]",
-      clickHandler() {
+      left: true,
+      classes: "bg-[color:var(--color-danger)]",
+      clickHandler(address: MemberAddressType) {
         removeAddress(address);
       },
     },
   ];
 
-  if (defaultShippingAddress.value && address.id !== defaultShippingAddress.value.id) {
-    result.push({
+  if (defaultShippingAddress.value && inputObject.id !== defaultShippingAddress.value.id) {
+    actions.push({
       icon: "fas fa-check",
       title: t("pages.account.addresses.make_default_button"),
-      bgColor: "bg-[color:var(--color-primary)]",
-      clickHandler() {
+      classes: "bg-[color:var(--color-primary)]",
+      clickHandler(address: MemberAddressType) {
         setDefaultAddress(address);
       },
     });
   }
 
-  return result;
+  return actions;
 }
 
 const applySorting = async (column: string): Promise<void> => {

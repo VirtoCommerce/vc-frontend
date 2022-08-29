@@ -80,7 +80,7 @@
         <div v-else class="flex flex-col md:rounded md:border">
           <VcTable
             :loading="loadingAddresses"
-            :item-action-builder="actionBuilder"
+            :item-actions-builder="itemActionsBuilder"
             :columns="columns"
             :items="paginatedAddresses"
             :sort="sort"
@@ -427,28 +427,28 @@ async function openAddOrUpdateCompanyAddressDialog(address?: MemberAddressType):
   });
 }
 
-function actionBuilder(address: MemberAddressType) {
-  const result: ItemAction[] = [
+function itemActionsBuilder(inputObject: MemberAddressType) {
+  const actions: SlidingActionsItem[] = [
     {
       icon: "fas fa-trash-alt",
       title: t("common.buttons.delete"),
-      leftActions: true,
-      bgColor: address.isDefault ? "bg-gray-200" : "bg-[color:var(--color-danger)]",
-      clickHandler() {
+      left: true,
+      classes: inputObject.isDefault ? "bg-gray-200" : "bg-[color:var(--color-danger)]",
+      clickHandler(address: MemberAddressType) {
         openDeleteAddressDialog(address);
       },
     },
     {
       icon: "fas fa-pencil-alt",
       title: t("common.buttons.edit"),
-      bgColor: "bg-gray-550",
-      clickHandler() {
+      classes: "bg-gray-550",
+      clickHandler(address: MemberAddressType) {
         openAddOrUpdateCompanyAddressDialog(address);
       },
     },
   ];
 
-  return result;
+  return actions;
 }
 
 fetchAddresses();

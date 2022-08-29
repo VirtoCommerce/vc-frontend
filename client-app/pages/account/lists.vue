@@ -27,14 +27,27 @@
     </div>
 
     <!-- Lists -->
-    <div v-else-if="lists.length" class="flex flex-col md:space-y-3 divide-y md:divide-none">
-      <WishlistCard
-        v-for="list in lists"
-        :key="list.id"
-        :list="list"
-        @settings="openListSettingsDialog(list)"
-        @remove="openDeleteListDialog(list)"
-      />
+    <div v-else-if="lists.length" class="flex flex-col md:gap-y-3 overflow-x-hidden md:overflow-x-visible">
+      <template v-if="isMobile">
+        <VcSlidingActions
+          v-for="list in lists"
+          :key="list.id"
+          :input-object="list"
+          :actions-builder="itemActionsBuilder"
+        >
+          <WishlistCard :list="list" />
+        </VcSlidingActions>
+      </template>
+
+      <template v-else>
+        <WishlistCard
+          v-for="list in lists"
+          :key="list.id"
+          :list="list"
+          @settings="openListSettingsDialog(list)"
+          @remove="openDeleteListDialog(list)"
+        />
+      </template>
     </div>
 
     <!-- Empty -->
@@ -69,10 +82,13 @@ import { inject } from "vue";
 import { computed } from "@vue/reactivity";
 import { usePageHead } from "@/core/composables";
 import { useI18n } from "vue-i18n";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
 const { t } = useI18n();
 const { openPopup } = usePopup();
 const { loading, lists, fetchWishlists } = useWishlists();
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("md");
 
 usePageHead({
   title: t("pages.account.lists.meta.title"),
@@ -111,6 +127,30 @@ function openDeleteListDialog(list: WishlistType) {
       list,
     },
   });
+}
+
+function itemActionsBuilder() {
+  const actions: SlidingActionsItem[] = [
+    {
+      icon: "fas fa-trash-alt",
+      title: t("common.buttons.delete"),
+      left: true,
+      classes: "bg-[color:var(--color-danger)]",
+      clickHandler(list: WishlistType) {
+        openDeleteListDialog(list);
+      },
+    },
+    {
+      icon: "fas fa-cog",
+      title: t("common.buttons.settings"),
+      classes: "bg-gray-550",
+      clickHandler(list: WishlistType) {
+        openListSettingsDialog(list);
+      },
+    },
+  ];
+
+  return actions;
 }
 
 fetchWishlists();
