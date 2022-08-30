@@ -76,10 +76,11 @@
 
       <div class="flex flex-grow mr-5 md:mx-0">
         <div class="relative grow">
-          <input
-            v-model.trim="localKeyword"
-            :disabled="ordersLoading"
-            class="w-full appearance-none bg-white rounded rounded-r-none h-11 pl-4 pr-11 font-medium outline-none text-sm border border-gray-300 focus:border-gray-400 disabled:bg-gray-200"
+          <VcInput
+            v-model="localKeyword"
+            class="w-full"
+            input-class="font-medium rounded-r-none !text-sm disabled:bg-gray-200 !pr-11"
+            :is-disabled="ordersLoading"
             @keypress.enter="applyKeyword"
             :placeholder="$t('pages.account.orders.search_placeholder')"
           />
