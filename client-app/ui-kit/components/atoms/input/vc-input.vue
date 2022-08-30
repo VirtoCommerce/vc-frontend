@@ -92,8 +92,13 @@ function change(event: Event) {
   if (props.isDisabled) {
     return;
   }
-  const newValue: string = (event.target as HTMLInputElement).value.trim();
-  emit("update:modelValue", props.type === "number" ? Number(newValue) : newValue);
+  let value: string = (event.target as HTMLInputElement).value;
+
+  if (props.type !== "password") {
+    value = value.trim();
+  }
+
+  emit("update:modelValue", props.type === "number" ? Number(value) : value);
 }
 
 watchEffect(() => {
