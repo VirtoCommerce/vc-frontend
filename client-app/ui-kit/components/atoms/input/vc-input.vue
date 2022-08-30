@@ -7,8 +7,8 @@
 
     <div class="relative h-11">
       <input
-        class="appearance-none rounded h-full px-3 text-base leading-none box-border border border-gray-300 w-full outline-none focus:border-gray-400 min-w-0"
-        :class="{ 'pr-12': isPasswordIconVisible }"
+        class="appearance-none rounded h-full px-3 text-base leading-none box-border w-full outline-none min-w-0"
+        :class="{ 'pr-12': isPasswordIconVisible, 'border border-gray-300 focus:border-gray-400': isBordered }"
         :value="modelValue"
         :type="inputType"
         :name="name"
@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watchEffect } from "vue";
+import { computed, PropType, ref, watchEffect } from "vue";
 
 const emit = defineEmits(["update:modelValue"]);
 
@@ -50,6 +50,7 @@ const props = defineProps({
   isReadonly: Boolean,
   isDisabled: Boolean,
   isRequired: Boolean,
+  isBordered: { type: Boolean, default: true },
   hidePasswordSwitcher: Boolean,
   label: String,
   name: String,
@@ -67,7 +68,7 @@ const props = defineProps({
   },
 
   type: {
-    type: String,
+    type: String as PropType<"text" | "password" | "number">,
     default: "text",
   },
 });
