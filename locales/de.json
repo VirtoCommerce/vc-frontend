@@ -553,8 +553,7 @@
     },
     "wishlists": {
       "list_card": {
-        "quantity_label": "Products Qty",
-        "add_all_to_cart_button": "Add all to cart",
+        "product_count_label": "Product count",
         "list_settings_button": "List settings",
         "remove_list_button": "Remove list"
       },
