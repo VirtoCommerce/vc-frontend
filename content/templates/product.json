@@ -1,0 +1,33 @@
+{
+  "settings": {
+    "name": "Product template"
+  },
+  "content": [
+    {
+      "id": "section2",
+      "type": "text",
+      "header": "additional information title",
+      "text": "<p>Lorem ipsum dolor sit amet erer</p>\n"
+    },
+    {
+      "id": "section1",
+      "type": "product-info",
+      "blocks": [
+        {
+          "id": "block1",
+          "type": "product-properties",
+          "title": "Properties",
+          "hidden": false
+        },
+        {
+          "type": "product-description",
+          "id": "productdescriptionw4OT"
+        }
+      ]
+    },
+    {
+      "id": "section3",
+      "type": "related-products"
+    }
+  ]
+}
