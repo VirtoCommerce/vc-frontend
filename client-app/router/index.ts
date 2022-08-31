@@ -10,7 +10,11 @@ export function createRouter(options: { base: string }) {
     routes: mainRoutes,
     history: createWebHistory(base),
     scrollBehavior(to, from, savedPosition) {
-      return savedPosition || { top: 0, behavior: "smooth" };
+      if (to.path !== from.path) {
+        return savedPosition || { top: 0, behavior: "smooth" };
+      } else {
+        return undefined;
+      }
     },
   });
 
