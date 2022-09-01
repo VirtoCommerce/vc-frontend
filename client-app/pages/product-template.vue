@@ -74,7 +74,7 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
-let template = useTemplate("product");
+const template = useTemplate("product");
 
 const props = defineProps({
   productId: {
