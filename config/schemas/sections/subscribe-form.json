@@ -1,0 +1,35 @@
+{
+  "name": "Subscribe form",
+  "icon": "email",
+  "displayField": "name",
+  "settings": [
+    {
+      "id": "title",
+      "label": "Title",
+      "type": "string"
+    },
+    {
+      "id": "subtitle",
+      "label": "Subtitle",
+      "type": "string"
+    },
+    {
+      "id": "placeholder",
+      "label": "Input placeholder",
+      "type": "string",
+      "default": "customer@example.com"
+    },
+    {
+      "id": "checkboxText",
+      "label": "Checkbox label",
+      "type": "text",
+      "default": "By clicking &quot;Submit&quot;, I hereby agree to the <a href='/terms'>Terms and Policy</a>."
+    },
+    {
+      "id": "buttonText",
+      "label": "Button text",
+      "type": "string",
+      "default": "Submit"
+    }
+  ]
+}

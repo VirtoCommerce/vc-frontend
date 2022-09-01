@@ -1,0 +1,27 @@
+{
+  "settings": {
+    "name": "Product template"
+  },
+  "content": [
+    {
+      "id": "section1",
+      "type": "product-info",
+      "blocks": [
+        {
+          "type": "product-description",
+          "id": "productdescriptionw4OT"
+        },
+        {
+          "id": "block1",
+          "type": "product-properties",
+          "title": "Properties",
+          "hidden": false
+        }
+      ]
+    },
+    {
+      "id": "section3",
+      "type": "related-products"
+    }
+  ]
+}
