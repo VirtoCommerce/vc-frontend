@@ -77,7 +77,7 @@
       <div class="flex flex-grow w-full space-x-6">
         <VcInput
           class="flex-grow"
-          :is-bordered="false"
+          :without-border="true"
           :placeholder="$t('pages.home.subscription_block.email_placeholder')"
         />
         <!-- todo: use VcButton -->

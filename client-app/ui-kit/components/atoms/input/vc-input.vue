@@ -10,7 +10,7 @@
         class="appearance-none rounded h-full px-3 text-base leading-none box-border w-full outline-none min-w-0"
         :class="[
           inputClass,
-          { 'pr-12': isPasswordIconVisible, 'border border-gray-300 focus:border-gray-400': isBordered },
+          { 'pr-12': isPasswordIconVisible, 'border border-gray-300 focus:border-gray-400': !withoutBorder },
         ]"
         :value="modelValue"
         :type="inputType"
@@ -53,7 +53,7 @@ const props = defineProps({
   isReadonly: Boolean,
   isDisabled: Boolean,
   isRequired: Boolean,
-  isBordered: { type: Boolean, default: true },
+  withoutBorder: { type: Boolean, default: false },
   hidePasswordSwitcher: Boolean,
   label: String,
   name: String,

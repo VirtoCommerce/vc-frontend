@@ -49,7 +49,7 @@
         :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
         class="flex-grow mr-4 h-10"
         input-class="!h-10 !px-4 font-medium text-sm"
-        :is-bordered="false"
+        :without-border="true"
         @keyup.enter="$router.push(searchPageLink)"
       />
 
