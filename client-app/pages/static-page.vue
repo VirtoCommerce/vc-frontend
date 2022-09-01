@@ -18,9 +18,16 @@
 
 <script setup lang="ts">
 import { computed, unref } from "vue";
+import { useI18n } from "vue-i18n";
 import { usePageHead, useStaticPage } from "@/core/composables";
+const { t } = useI18n();
 
 const template = useStaticPage();
+
+const breadcrumbs: IBreadcrumbs[] = [
+  { route: "/", title: t("pages.compare.links.home") },
+  { title: t("shared.layout.footer.demo_landing_link") },
+];
 
 usePageHead({
   title: computed(() => unref(template)?.settings?.seoInfo?.pageTitle || unref(template)?.settings?.name),
