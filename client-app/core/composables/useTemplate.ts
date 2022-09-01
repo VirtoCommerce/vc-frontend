@@ -3,25 +3,23 @@ import { useFetch } from "@/core/composables";
 import { PageTemplate } from "@/core/types";
 
 const { innerFetch } = useFetch();
-const template: { [template: string]: Ref<PageTemplate> } = {};
+const template: { [template: string]: Ref<PageTemplate | null> } = {};
 
-export default async function useTemplate(
+export default function useTemplate(
   templateName: string,
   pageContent: PageTemplate | null = null
-): Promise<Ref<PageTemplate>> {
-  if (!pageContent) {
-    if (!template[templateName]) {
-      const result = await innerFetch<PageTemplate>("/storefrontapi/content/templates", "POST", {
-        template: templateName,
-      });
-      template[templateName] = ref(result);
-    }
-  } else {
-    if (!template[templateName]) {
-      template[templateName] = ref(pageContent);
-    } else {
-      template[templateName].value = pageContent;
-    }
+): Ref<PageTemplate | null> {
+  if (!template[templateName]) {
+    template[templateName] = ref(null);
+  }
+  if (pageContent) {
+    template[templateName].value = pageContent;
+  } else if (!template[templateName].value) {
+    innerFetch<PageTemplate>("/storefrontapi/content/templates", "POST", {
+      template: templateName,
+    }).then((x) => {
+      template[templateName].value = x;
+    });
   }
   return template[templateName];
 }

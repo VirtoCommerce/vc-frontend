@@ -1,5 +1,4 @@
 <template>
-  <div v-if="!product">product ia null</div>
   <div v-if="product" class="flex flex-col lg:flex-row lg:space-x-8 mt-5" :class="{ 'mb-6': !relatedProducts.length }">
     <div class="-mx-5 md:mx-0 lg:w-8/12 xl:w-9/12">
       <ProductDetailsTemplate :product="product" :section="model" class="shadow-sm border rounded-none md:rounded" />

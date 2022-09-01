@@ -52,14 +52,13 @@
     </div>
   </div>
 
-  <Error404 v-else-if="!loading" />
+  <Error404 v-else-if="!loading && template" />
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, watchEffect, defineAsyncComponent, computed, onMounted } from "vue";
+import { ref, Ref, watchEffect, defineAsyncComponent, computed } from "vue";
 import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
 import { usePageHead, useTemplate } from "@/core/composables";
-import { PageTemplate } from "@/core/types";
 import { useCart } from "@/shared/cart";
 import {
   useProduct,
@@ -75,7 +74,7 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
-let template: Ref<PageTemplate | null>;
+let template = useTemplate("product");
 
 const props = defineProps({
   productId: {
@@ -147,9 +146,5 @@ watchEffect(() => {
 
 watchEffect(() => {
   breadcrumbs.value = buildBreadcrumbs(product.value?.breadcrumbs ?? []);
-});
-
-onMounted(async () => {
-  template = await useTemplate("product");
 });
 </script>
