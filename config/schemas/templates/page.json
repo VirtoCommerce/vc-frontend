@@ -13,5 +13,22 @@
     }
   ],
   "type": "pages",
-  "sections": ["image", "text", "header-settings"]
+  "sections": [
+    "image",
+    "text",
+    "seo-settings",
+    "side-image",
+    "promo-text",
+    "column-images",
+    "dark-promo-text",
+    "subscribe-form",
+    "products"
+  ],
+  "settings": [
+    {
+      "id": "header",
+      "label": "Page header",
+      "type": "string"
+    }
+  ]
 }

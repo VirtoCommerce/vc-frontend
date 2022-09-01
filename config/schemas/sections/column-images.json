@@ -1,0 +1,46 @@
+{
+  "icon": "superscript",
+  "name": "Images in row",
+  "displayField": "name",
+  "settings": [
+    {
+      "id": "title",
+      "label": "Title",
+      "type": "string",
+      "tab": "Content"
+    },
+    {
+      "id": "subtitle",
+      "label": "Subtitle",
+      "type": "string",
+      "multiline": true,
+      "tab": "Content"
+    },
+    {
+      "id": "columns",
+      "type": "list",
+      "label": "Columns",
+      "tab": "Content",
+      "element": [
+        {
+          "id": "title",
+          "label": "Title",
+          "type": "string"
+        },
+        {
+          "id": "text",
+          "label": "Text",
+          "type": "string",
+          "multiline": true
+        },
+        {
+          "id": "image",
+          "label": "Image",
+          "type": "images",
+          "multiple": false,
+          "uploadAssetsRequest": "inline"
+        }
+      ]
+    }
+  ]
+}

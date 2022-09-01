@@ -1,0 +1,22 @@
+{
+  "settings": [
+    {
+      "id": "buttons",
+      "type": "list",
+      "label": "Buttons",
+      "element": [
+        {
+          "id": "label",
+          "label": "Label",
+          "type": "string"
+        },
+        {
+          "id": "link",
+          "label": "URL",
+          "type": "string"
+        }
+      ],
+      "tab": "Content"
+    }
+  ]
+}
