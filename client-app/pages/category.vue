@@ -5,7 +5,7 @@
   >
     <div class="max-w-screen-2xl px-5 xl:pl-17 xl:pr-19 mx-auto">
       <!-- Breadcrumbs -->
-      <Breadcrumbs class="mb-2.5 md:mb-4" :items="breadcrumbs" />
+      <Breadcrumbs class="mb-2.5 md:mb-4" :items="breadcrumbs" v-if="!isSearchQuery" />
 
       <div class="flex items-start lg:gap-6">
         <!-- Mobile sidebar back cover -->
@@ -32,6 +32,7 @@
             :keyword="keywordQueryParam"
             :filters="mobileFilters"
             :loading="loading || facetsLoading"
+            :withLocalSearch="!isSearchQuery"
             @search="
               onSearchStart($event);
               hideMobileSidebar();
@@ -72,12 +73,13 @@
 
         <!-- Sidebar -->
         <div v-else class="space-y-5 w-60 flex-shrink-0 pt-2">
-          <CategorySelector :selected-category="selectedCategory" :loading="loading" />
+          <CategorySelector :selected-category="selectedCategory" :loading="loading" v-if="!isSearchQuery" />
 
           <ProductsFiltersSidebar
             :keyword="keywordQueryParam"
             :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
             :loading="loading"
+            :withLocalSearch="!isSearchQuery"
             @search="onSearchStart($event)"
             @change="applyFilters($event)"
           />
@@ -87,14 +89,17 @@
         <div class="flex-grow">
           <div class="flex">
             <h2 class="text-gray-800 text-21 font-bold uppercase lg:my-px lg:text-25">
-              <span>{{ selectedCategory?.label }}</span>
+              <span v-html="$t('pages.search.header', [searchParams.keyword])" v-if="isSearchQuery"> </span>
+              <span v-else>
+                <span>{{ selectedCategory?.label }}</span>
 
-              <sup
-                class="ml-2 normal-case font-normal whitespace-nowrap text-sm lg:text-15 -top-1 lg:-top-[0.5em] text-[color:var(--color-category-page-results)]"
-              >
-                <b class="font-extrabold">{{ total }}</b>
-                {{ $t("pages.catalog.products_found_message", total) }}
-              </sup>
+                <sup
+                  class="ml-2 normal-case font-normal whitespace-nowrap text-sm lg:text-15 -top-1 lg:-top-[0.5em] text-[color:var(--color-category-page-results)]"
+                >
+                  <b class="font-extrabold">{{ total }}</b>
+                  {{ $t("pages.catalog.products_found_message", total) }}
+                </sup>
+              </span>
             </h2>
           </div>
 
@@ -343,6 +348,7 @@ import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST, QueryParamName } from "@/core/
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
 import { usePopup } from "@/shared/popup";
+import { useRoute } from "vue-router";
 
 const FILTERS_RESET_TIMEOUT_IN_MS = 500;
 const watchStopHandles: WatchStopHandle[] = [];
@@ -381,6 +387,7 @@ usePageHead({
   },
 });
 
+const route = useRoute();
 const productsRoutes = useProductsRoutes(products);
 const savedViewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
 const savedInStock = useLocalStorage<boolean>("viewInStockProducts", true);
@@ -391,7 +398,7 @@ const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   validator: (value) => PRODUCT_SORTING_LIST.some((item) => item.id === value),
 });
 
-const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
+const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.SearchPhrase || QueryParamName.Keyword, {
   defaultValue: "",
 });
 
@@ -416,6 +423,7 @@ const mobileFilters = shallowReactive<ProductsFilters>({
 });
 
 // region Computed properties
+const isSearchQuery = computed(() => route.path === "/search");
 
 const isVisibleStickyMobileHeader = computed<boolean>(
   () => !stickyMobileHeaderAnchorIsVisible.value && isMobileSidebar.value

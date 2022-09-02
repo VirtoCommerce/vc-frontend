@@ -15,7 +15,7 @@ const ForgotPassword = () => import("@/pages/forgot-password.vue");
 const ResetPassword = () => import("@/pages/reset-password.vue");
 const Account = () => import("@/pages/account/index.vue");
 const Company = () => import("@/pages/company/index.vue");
-const Search = () => import("@/pages/search.vue");
+const Search = () => import("@/pages/category.vue");
 const BulkOrder = () => import("@/pages/bulk-order.vue");
 const CompareProducts = () => import("@/pages/compare-products.vue");
 const Checkout = () => import("@/pages/checkout.vue");

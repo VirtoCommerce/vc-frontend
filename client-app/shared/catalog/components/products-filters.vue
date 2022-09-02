@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-4 lg:space-y-5">
     <!-- Search results -->
-    <VcFilterCard :title="$t('pages.catalog.search_card.title')">
+    <VcFilterCard :title="$t('pages.catalog.search_card.title')" v-if="withLocalSearch">
       <div class="flex gap-2.5">
         <div class="relative">
           <input
@@ -117,6 +117,11 @@ const props = defineProps({
   filters: {
     type: Object as PropType<ProductsFilters>,
     required: true,
+  },
+
+  withLocalSearch: {
+    type: Boolean,
+    default: true,
   },
 });
 
