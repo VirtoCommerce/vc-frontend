@@ -1,14 +1,33 @@
 <template>
-  <div v-if="template" class="container mx-auto pt-5 pb-52 px-7 max-w-screen-lg">
-    <component v-for="item in template.content" :key="item.id" :is="item.type" :model="item" />
+  <div v-if="template" class="pt-7">
+    <div class="w-full max-w-screen-2xl mx-auto pb-5 lg:pb-10 px-5 md:px-12">
+      <VcBreadcrumbs v-if="!template.settings?.hideBreadcrumbs" class="mb-3" :items="breadcrumbs"></VcBreadcrumbs>
+      <h1 v-if="template.settings?.header" class="font-bold text-gray-900 text-3xl lg:text-4xl uppercase">
+        {{ template.settings.header }}
+      </h1>
+    </div>
+    <component
+      v-for="item in template.content"
+      :key="item.id"
+      :is="item.type"
+      :model="item"
+      :settings="template.settings"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, unref } from "vue";
+import { useI18n } from "vue-i18n";
 import { usePageHead, useStaticPage } from "@/core/composables";
+const { t } = useI18n();
 
 const template = useStaticPage();
+
+const breadcrumbs: IBreadcrumbs[] = [
+  { route: "/", title: t("pages.compare.links.home") },
+  { title: t("shared.layout.footer.demo_landing_link") },
+];
 
 usePageHead({
   title: computed(() => unref(template)?.settings?.seoInfo?.pageTitle || unref(template)?.settings?.name),
