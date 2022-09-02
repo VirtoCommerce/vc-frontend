@@ -11,6 +11,7 @@ import { createRouter } from "@/router";
 import { getBaseUrl } from "@/core/utilities";
 import App from "./App.vue";
 import PageBuilderBlocks from "@/pages/blocks";
+import ProductBlocks from "@/shared/catalog/components/product";
 import * as UIKitComponents from "@/ui-kit/components";
 import client from "@/xapi/graphql-client";
 import { useCategories } from "./shared/catalog";
@@ -97,6 +98,8 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
 
   // Register Page builder components globally
   Object.entries(PageBuilderBlocks).forEach(([name, component]) => app.component(name, component));
+  // Register Page builder product components globally
+  Object.entries(ProductBlocks).forEach(([name, component]) => app.component(name, component));
 
   await router.isReady();
 

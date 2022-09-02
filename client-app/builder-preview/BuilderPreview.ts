@@ -1,8 +1,9 @@
 import { App } from "vue";
-import { useStaticPage } from "@/core/composables";
+import { Router } from "vue-router";
+import { useStaticPage, useTemplate } from "@/core/composables";
 
 export default {
-  install: (app: App, options: any) => {
+  install: (app: App, options: { router: Router }) => {
     const bodyEl = document.getElementsByTagName("body").item(0);
     if (bodyEl) {
       bodyEl.style.visibility = "hidden";
@@ -18,7 +19,11 @@ export default {
       }
       switch (event.data.type) {
         case "changed":
-          useStaticPage(event.data.model.template);
+          if (!event.data.model.templateKey) {
+            useStaticPage(event.data.model.template);
+          } else {
+            useTemplate(event.data.model.templateKey, event.data.model.template);
+          }
           break;
         case "navigate":
           options.router.push(event.data.url);

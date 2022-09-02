@@ -1,0 +1,15 @@
+{
+  "icon": "title",
+  "name": "Dark promo text",
+  "displayField": "name",
+  "includeShared": ["buttons"],
+  "excludeShared": ["background"],
+  "settings": [
+    {
+      "id": "title",
+      "label": "Title",
+      "type": "string",
+      "tab": "Content"
+    }
+  ]
+}

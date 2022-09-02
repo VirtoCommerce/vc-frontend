@@ -8,3 +8,4 @@ export { default as useRouteQueryParam } from "./useRouteQueryParam";
 export { default as useThemeContext } from "./useThemeContext";
 export { default as useDomUtils } from "./useDomUtils";
 export { default as useStaticPage } from "./useStaticPage";
+export { default as useTemplate } from "./useTemplate";

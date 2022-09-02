@@ -1,0 +1,10 @@
+{
+  "icon": "text_fields",
+  "settings": [
+    {
+      "id": "title",
+      "label": "Title",
+      "type": "string"
+    }
+  ]
+}

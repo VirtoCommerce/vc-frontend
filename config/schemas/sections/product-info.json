@@ -2,5 +2,6 @@
   "name": "Product",
   "icon": "smartphone",
   "displayField": "name",
-  "blocks": ["image", "text"]
+  "blocks": ["image", "text", "product-properties", "product-description"],
+  "settings": []
 }

@@ -1,0 +1,33 @@
+{
+  "icon": "inventory",
+  "name": "Products",
+  "displayField": "name",
+  "settings": [
+    {
+      "id": "title",
+      "label": "Title",
+      "type": "string",
+      "tab": "Content"
+    },
+    {
+      "id": "subtitle",
+      "label": "Subtitle",
+      "type": "string",
+      "multiline": true,
+      "tab": "Content"
+    },
+    {
+      "id": "filter",
+      "label": "Filter",
+      "type": "string",
+      "multiline": true,
+      "tab": "Content"
+    },
+    {
+      "id": "count",
+      "label": "Count",
+      "type": "number",
+      "tab": "Content"
+    }
+  ]
+}

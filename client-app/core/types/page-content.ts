@@ -7,4 +7,5 @@ export interface PageContent {
   id: string;
   name: string;
   type: string;
+  [propertyName: string]: any;
 }
