@@ -1125,7 +1125,7 @@
       "meta": {
         "title": "Search: {0}"
       },
-      "header": "Your search for {keyword} returned the following results:",
+      "header": "Your search for {keyword} returned the following",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Your <strong>{0}</strong> query did not return any results",

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-gray-100 pt-4 pb-16 shadow-inner grow lg:pt-6"
+    class="bg-gray-100 pt-4 pb-16 shadow-inner grow lg:pt-12"
     :class="{ 'polygon-gray-bg': !products.length && !loading }"
   >
     <div class="max-w-screen-2xl px-5 xl:pl-17 xl:pr-19 mx-auto">
@@ -96,13 +96,13 @@
               </i18n-t>
               <span v-else>
                 <span>{{ selectedCategory?.label }}</span>
-                <sup
-                  class="ml-2 normal-case font-normal whitespace-nowrap text-sm lg:text-15 -top-1 lg:-top-[0.5em] text-[color:var(--color-category-page-results)]"
-                >
-                  <b class="font-extrabold">{{ total }}</b>
-                  {{ $t("pages.catalog.products_found_message", total) }}
-                </sup>
               </span>
+              <sup
+                class="ml-2 normal-case font-normal whitespace-nowrap text-sm lg:text-15 -top-1 lg:-top-[0.5em] text-[color:var(--color-category-page-results)]"
+              >
+                <b class="font-extrabold">{{ total }}</b>
+                {{ $t("pages.catalog.products_found_message", total) }}
+              </sup>
             </h2>
           </div>
 
