@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import Category from "@/pages/category.vue";
+import Category from "@/pages/catalog.vue";
 import Product from "@/pages/product-template.vue";
 import StaticPage from "@/pages/static-page.vue";
 import NotFound from "@/pages/404.vue";
