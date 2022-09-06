@@ -25,6 +25,7 @@
             <div class="font-extrabold line-clamp-3 overflow-hidden" :title="lineItem.name" v-else>
               {{ lineItem.name }}
             </div>
+            <Vendor :vendor="lineItem.product?.vendor"></Vendor>
             <!-- todo: extract small alert component https://virtocommerce.atlassian.net/browse/ST-2488 -->
             <div class="flex items-center space-x-1 py-1" v-if="validationError">
               <i class="fas fa-exclamation-circle text-[color:var(--color-primary)]"></i>
@@ -138,7 +139,7 @@ import { useField } from "vee-validate";
 import * as yup from "yup";
 import { useI18n } from "vue-i18n";
 import { RouteLocationRaw } from "vue-router";
-import { getProductRoute } from "@/shared/catalog";
+import { getProductRoute, Vendor } from "@/shared/catalog";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { t } = useI18n();

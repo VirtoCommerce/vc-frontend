@@ -72,6 +72,9 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
           formattedAmount
         }
       }
+      vendor {
+        name
+      }
     }
     availabilityData {
       isActive

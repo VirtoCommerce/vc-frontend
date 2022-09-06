@@ -15,34 +15,39 @@
         />
       </div>
     </div>
-    <div class="flex-1 flex flex-col xl:flex-row xl:space-x-3">
-      <!-- variations description -->
-      <div class="flex-1 flex flex-col">
-        <div class="text-base font-bold uppercase mb-2">
+    <div class="flex-1 flex flex-col">
+      <div class="mb-2">
+        <div class="text-base font-bold uppercase">
           {{ $t("shared.catalog.product_details.product_variation_card.variation_sku_label") }}{{ variation?.code }}
         </div>
-        <VariationProperties :properties="variation?.properties || []"></VariationProperties>
-        <div class="flex flex-row items-start space-x-3 text-xs">
-          <div
-            class="w-1/2 text-gray-500"
-            v-t="'shared.catalog.product_details.product_variation_card.price_label'"
-          ></div>
-          <div class="w-1/2">
-            <!-- todo: extract a component for price and use it here -->
-            <VcItemPrice :value="variation?.price" />
+        <Vendor :vendor="variation?.vendor"></Vendor>
+      </div>
+      <div class="flex-1 flex flex-col xl:flex-row xl:space-x-3">
+        <!-- variations description -->
+        <div class="flex-1 flex flex-col">
+          <VariationProperties :properties="variation?.properties || []"></VariationProperties>
+          <div class="flex flex-row items-start space-x-3 text-xs">
+            <div
+              class="w-1/2 text-gray-500"
+              v-t="'shared.catalog.product_details.product_variation_card.price_label'"
+            ></div>
+            <div class="w-1/2">
+              <!-- todo: extract a component for price and use it here -->
+              <VcItemPrice :value="variation?.price" />
+            </div>
           </div>
         </div>
-      </div>
-      <!-- add to cart -->
-      <div class="flex-1 xl:self-center flex flex-row items-center">
-        <div class="w-full mt-4">
-          <AddToCart :product="variation"></AddToCart>
+        <!-- add to cart -->
+        <div class="flex-1 xl:self-center flex flex-row items-center">
+          <div class="w-full">
+            <AddToCart :product="variation"></AddToCart>
 
-          <VcInStock
-            :is-in-stock="variation.availabilityData?.isInStock"
-            :quantity="variation.availabilityData?.availableQuantity"
-            class="inline-block mt-2.5"
-          ></VcInStock>
+            <VcInStock
+              :is-in-stock="variation.availabilityData?.isInStock"
+              :quantity="variation.availabilityData?.availableQuantity"
+              class="inline-block mt-2.5"
+            ></VcInStock>
+          </div>
         </div>
       </div>
     </div>
@@ -51,7 +56,7 @@
 
 <script setup lang="ts">
 import { VariationType, Product } from "@/xapi/types";
-import { VariationProperties } from "@/shared/catalog";
+import { VariationProperties, Vendor } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 import { PropType } from "vue";
 
