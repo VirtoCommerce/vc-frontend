@@ -271,7 +271,7 @@
         "cancel_button": "@:common.buttons.cancel",
         "send_button": "@:common.buttons.send",
         "invite_successfully_text": "The invite has been successfully sent",
-        "emails_quantity_exceeded": "You can invite {maxValue} customers at a time",
+        "emails_quantity_exceeded": "You can invite up to {maxValue} users at once",
         "email_length_exceeded": "Maximum length of email address is {maxValue} symbols"
       },
       "profile_update_success_dialog": {
