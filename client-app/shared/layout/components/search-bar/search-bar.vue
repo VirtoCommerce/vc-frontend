@@ -84,7 +84,11 @@
             <use href="/static/images/search-not-found.svg#search-not-found" />
           </svg>
 
-          <p class="inline-block" v-html="$t('shared.layout.search_bar.no_results', { searchPhrase })" />
+          <i18n-t class="inline-block" keypath="shared.layout.search_bar.no_results" tag="p">
+            <template v-slot:keyword>
+              <strong>{{ searchPhrase }}</strong>
+            </template>
+          </i18n-t>
         </div>
       </div>
     </transition>

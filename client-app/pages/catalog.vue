@@ -89,10 +89,13 @@
         <div class="flex-grow">
           <div class="flex">
             <h2 class="text-gray-800 text-21 font-bold uppercase lg:my-px lg:text-25">
-              <span v-html="$t('pages.search.header', [searchParams.keyword])" v-if="isSearchQuery"> </span>
+              <i18n-t keypath="pages.search.header" tag="span" v-if="isSearchQuery">
+                <template v-slot:keyword>
+                  <strong>{{ searchParams.keyword }}</strong>
+                </template>
+              </i18n-t>
               <span v-else>
                 <span>{{ selectedCategory?.label }}</span>
-
                 <sup
                   class="ml-2 normal-case font-normal whitespace-nowrap text-sm lg:text-15 -top-1 lg:-top-[0.5em] text-[color:var(--color-category-page-results)]"
                 >
@@ -398,7 +401,11 @@ const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   validator: (value) => PRODUCT_SORTING_LIST.some((item) => item.id === value),
 });
 
-const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.SearchPhrase || QueryParamName.Keyword, {
+const searchQueryParam = useRouteQueryParam<string>(QueryParamName.SearchPhrase, {
+  defaultValue: "",
+});
+
+const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
   defaultValue: "",
 });
 
@@ -433,7 +440,7 @@ const searchParams = computedEager<ProductsSearchParams>(() => ({
   categoryId: props.categoryId,
   itemsPerPage: itemsPerPage.value,
   sort: sortQueryParam.value,
-  keyword: keywordQueryParam.value,
+  keyword: searchQueryParam.value || keywordQueryParam.value,
   filter: [
     facetsQueryParam.value,
     getFilterExpressionForInStock(savedInStock),
