@@ -167,7 +167,7 @@
               <div>
                 <b>{{ contacts.item.fullName }}</b>
               </div>
-              <div v-if="contacts.item.role">
+              <div v-if="contacts.item.role" class="text-sm">
                 {{ contacts.item.role }}
               </div>
             </div>

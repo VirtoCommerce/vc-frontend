@@ -31,7 +31,7 @@ export function getRoleName(contact: ContactType): string | undefined {
   if (contact.securityAccounts && contact.securityAccounts.length) {
     const securityAccount: UserType = contact.securityAccounts[0];
     if (securityAccount.roles && securityAccount.roles.length) {
-      roleName = securityAccount.roles[0].normalizedName;
+      roleName = securityAccount.roles[0].name;
     }
   }
   return roleName;
