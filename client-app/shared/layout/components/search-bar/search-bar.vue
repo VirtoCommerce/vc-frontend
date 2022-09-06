@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-grow items-stretch relative" v-click-outside="reset">
+  <div class="flex flex-grow items-stretch relative" v-click-outside="resetOnClickOutside">
     <input
       v-model.trim="searchPhrase"
       :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
@@ -135,6 +135,9 @@ const {
 } = useSearchBar();
 
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
+const searchQueryParam = useRouteQueryParam<string>(QueryParamName.SearchPhrase, {
+  defaultValue: "",
+});
 const categoriesRoutes = useCategoriesRoutes(categories);
 
 const searchPhrase = ref("");
@@ -184,6 +187,12 @@ async function search() {
 function reset() {
   searchPhrase.value = "";
   hideSearchDropdown();
+}
+
+function resetOnClickOutside() {
+  if (!searchQueryParam.value) {
+    reset();
+  }
 }
 
 const searchProductsDebounced = useDebounceFn(async () => {
