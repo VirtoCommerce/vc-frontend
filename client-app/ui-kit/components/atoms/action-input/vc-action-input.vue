@@ -3,7 +3,7 @@
     <p v-if="label" class="text-base pb-2 font-extrabold">{{ label }}</p>
     <div class="flex space-x-3">
       <input
-        v-model="value"
+        v-model.trim="value"
         class="border rounded text-base leading-8 flex-1 border-gray-300 h-8 px-2 outline-none focus:border-gray-400 min-w-0"
         type="text"
         :placeholder="placeholder"
