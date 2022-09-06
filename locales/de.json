@@ -179,7 +179,7 @@
       "search_bar": {
         "categories_label": "Categories",
         "products_label": "Products",
-        "no_results": "No results were found for your \"<strong>{searchPhrase}</strong>\" query",
+        "no_results": "No results were found for your {keyword} query",
         "enter_keyword_placeholder": "Enter keyword, item, model or replacement part number",
         "search_button": "Search",
         "view_all_results_button": "View all {total} results"
@@ -1100,7 +1100,7 @@
       "meta": {
         "title": "Search: {0}"
       },
-      "header": "Your search for \"<strong>{0}</strong>\" revealed the following",
+      "header": "Your search for {keyword} revealed the following",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "No results were found for your \"<strong>{0}</strong>\" query",
