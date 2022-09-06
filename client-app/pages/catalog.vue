@@ -430,7 +430,7 @@ const mobileFilters = shallowReactive<ProductsFilters>({
 });
 
 // region Computed properties
-const isSearchQuery = computed(() => route.path === "/search");
+const isSearchQuery = computedEager<boolean>(() => route.name === "Search");
 
 const isVisibleStickyMobileHeader = computed<boolean>(
   () => !stickyMobileHeaderAnchorIsVisible.value && isMobileSidebar.value
@@ -440,7 +440,7 @@ const searchParams = computedEager<ProductsSearchParams>(() => ({
   categoryId: props.categoryId,
   itemsPerPage: itemsPerPage.value,
   sort: sortQueryParam.value,
-  keyword: searchQueryParam.value || keywordQueryParam.value,
+  keyword: isSearchQuery.value ? searchQueryParam.value : keywordQueryParam.value,
   filter: [
     facetsQueryParam.value,
     getFilterExpressionForInStock(savedInStock),
