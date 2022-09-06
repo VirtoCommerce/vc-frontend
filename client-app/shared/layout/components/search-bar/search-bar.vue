@@ -135,9 +135,6 @@ const {
 } = useSearchBar();
 
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
-const searchQueryParam = useRouteQueryParam<string>(QueryParamName.SearchPhrase, {
-  defaultValue: "",
-});
 const categoriesRoutes = useCategoriesRoutes(categories);
 
 const searchPhrase = ref("");
@@ -190,7 +187,7 @@ function reset() {
 }
 
 function resetOnClickOutside() {
-  if (!searchQueryParam.value) {
+  if (!searchPhraseInUrl.value) {
     reset();
   }
 }
