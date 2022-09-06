@@ -1,6 +1,6 @@
 <template>
-  <div class="vc-carousel">
-    <div class="vc-carousel__wrapper" :class="{ 'px-12': navigation }">
+  <div :id="componentId" :class="['vc-carousel', { 'vc-carousel--navigation': navigation }]">
+    <div class="vc-carousel__wrapper">
       <Swiper
         :modules="modules"
         :navigation="navigationParams"
@@ -17,7 +17,7 @@
       </Swiper>
 
       <!-- Navigation buttons-->
-      <div class="vc-carousel__navigation" v-show="navigation">
+      <div class="vc-carousel__navigation" v-if="navigation">
         <div class="vc-carousel__btn vc-carousel__btn--prev">
           <i class="fas fa-chevron-left -ml-px text-xl" />
         </div>
@@ -31,10 +31,9 @@
 </template>
 
 <script setup lang="ts">
-/* eslint-disable import/no-unresolved */
-import { computed, PropType } from "vue";
+import { computed, getCurrentInstance, PropType } from "vue";
 import { Pagination, Navigation } from "swiper";
-import { Swiper, SwiperSlide } from "swiper/vue";
+import { Swiper, SwiperSlide } from "swiper/vue"; // eslint-disable-line import/no-unresolved
 import { NavigationOptions, PaginationOptions } from "swiper/types";
 import _ from "lodash";
 
@@ -60,11 +59,12 @@ const props = defineProps({
   },
 });
 
+const componentId = `vc-carousel_${getCurrentInstance()!.uid}`;
 const modules = [Pagination, Navigation];
 
 const listeners = computed(() => props.options.on ?? {});
 
-const attrs = computed(() => {
+const attrs = computed<Omit<CarouselOptions, "on">>(() => {
   const options = _.clone(props.options);
   delete options.on;
   return options;
@@ -73,8 +73,8 @@ const attrs = computed(() => {
 const navigationParams = computed<NavigationOptions | boolean>(() =>
   props.navigation
     ? {
-        prevEl: ".vc-carousel__btn--prev",
-        nextEl: ".vc-carousel__btn--next",
+        prevEl: `#${componentId} .vc-carousel__btn--prev`,
+        nextEl: `#${componentId} .vc-carousel__btn--next`,
         lockClass: "vc-carousel__btn--lock",
         hiddenClass: "vc-carousel__btn--hidden",
         disabledClass: "vc-carousel__btn--disabled",
@@ -92,42 +92,44 @@ const paginationParams = computed<PaginationOptions | boolean>(() =>
 </script>
 
 <style lang="scss">
-@import "swiper/scss";
-@import "swiper/scss/pagination";
-
 .vc-carousel {
+  $self: &;
+
   --navigation-size: 36px;
   --navigation-offset: 0px;
   --pagination-offset: -5px;
 
-  --swiper-theme-color: theme("colors.primary.DEFAULT");
   --swiper-pagination-bullet-size: 13px;
   --swiper-pagination-bullet-inactive-color: transparent;
   --swiper-pagination-bullet-inactive-opacity: 1;
 
   &__wrapper {
-    @apply relative w-full grid grid-cols-1;
+    @apply relative w-full;
+  }
+
+  &--navigation {
+    #{$self}__wrapper {
+      @apply px-12;
+    }
   }
 
   &__navigation {
-    @apply absolute w-full h-full;
+    @apply absolute w-full h-full top-0 -mx-12;
   }
 
   &__btn {
-    @apply absolute flex items-center justify-center text-primary rounded border-2 border-primary cursor-pointer;
+    @apply absolute top-1/2 z-10 w-[var(--navigation-size)] h-[var(--navigation-size)]
+    flex items-center justify-center text-[color:var(--color-primary)] rounded
+    border-2 border-[color:var(--color-primary)] cursor-pointer;
 
-    top: 50%;
-    z-index: 10;
-    width: var(--navigation-size);
-    height: var(--navigation-size);
     margin-top: calc(0px - (var(--navigation-size) / 2) - var(--navigation-offset));
 
     &--prev {
-      left: 0;
+      @apply left-0;
     }
 
     &--next {
-      right: 0;
+      @apply right-0;
     }
 
     &--disabled {
@@ -135,7 +137,7 @@ const paginationParams = computed<PaginationOptions | boolean>(() =>
     }
 
     &--lock {
-      display: none;
+      @apply hidden;
     }
   }
 
@@ -143,11 +145,11 @@ const paginationParams = computed<PaginationOptions | boolean>(() =>
   .swiper-pagination-custom,
   .swiper-horizontal > .swiper-pagination-bullets,
   .swiper-pagination-bullets.swiper-pagination-horizontal {
-    bottom: var(--pagination-offset);
+    bottom: var(--pagination-offset, 0);
   }
 
   .swiper-pagination-bullet {
-    @apply border-2 border-primary;
+    @apply border-2 border-[color:var(--color-primary)];
   }
 }
 </style>

@@ -10,8 +10,9 @@ query SearchProducts(
   $query: String
   $fuzzy: Boolean
   $fuzzyLevel: Int
-  $withFacets: Boolean!
   $productIds: [String]
+  $withFacets: Boolean!
+  $withImages: Boolean!
 ) {
   products(
     storeId: $storeId
@@ -38,7 +39,7 @@ query SearchProducts(
       slug
       outline
       imgSrc
-      images {
+      images @include(if: $withImages) {
         url
       }
       description(type: "QuickReview") {
