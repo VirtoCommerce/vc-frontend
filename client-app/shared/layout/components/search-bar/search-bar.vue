@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-grow items-stretch relative" v-click-outside="resetOnClickOutside">
+  <div class="flex flex-grow items-stretch relative" v-click-outside="reset">
     <input
       v-model.trim="searchPhrase"
       :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
@@ -184,12 +184,6 @@ async function search() {
 function reset() {
   searchPhrase.value = "";
   hideSearchDropdown();
-}
-
-function resetOnClickOutside() {
-  if (!searchPhraseInUrl.value) {
-    reset();
-  }
 }
 
 const searchProductsDebounced = useDebounceFn(async () => {
