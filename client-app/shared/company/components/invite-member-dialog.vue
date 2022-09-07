@@ -97,7 +97,7 @@ const popupComponent = shallowRef<any>(null);
 const loading = ref(false);
 const errorText = ref("");
 const maxContactsValue = ref(200);
-const maxEmailLength = ref(254);
+const maxEmailLength = ref(120);
 
 const { t } = useI18n();
 const { organization, inviteUser } = useUser();
