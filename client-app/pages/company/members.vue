@@ -32,12 +32,14 @@
 
       <div class="flex flex-grow">
         <div class="relative grow">
-          <input
-            v-model.trim="localKeyword"
-            :disabled="loading"
-            :placeholder="$t('pages.company.members.search_placeholder')"
-            class="appearance-none bg-white rounded rounded-r-none h-11 pl-4 pr-11 font-medium outline-none text-sm border w-full border-gray-300 focus:border-gray-400 disabled:bg-gray-200"
+          <VcInput
+            v-model="localKeyword"
+            maxlength="64"
+            class="w-full"
+            input-class="font-medium rounded-r-none !text-sm disabled:bg-gray-200 !pl-4 !pr-11"
+            :is-disabled="loading"
             @keypress.enter="applyKeyword"
+            :placeholder="$t('pages.company.members.search_placeholder')"
           />
 
           <button v-if="localKeyword" class="absolute right-0 top-0 h-11 px-4" @click="resetKeyword">

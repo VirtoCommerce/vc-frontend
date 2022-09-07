@@ -43,11 +43,13 @@
 
     <!-- region Mobile Search Bar -->
     <div v-show="searchBarVisible" class="flex p-4 bg-[color:var(--color-search-bar-bg)] select-none">
-      <input
-        v-model.trim="searchPhrase"
-        maxlength="30"
+      <VcInput
+        v-model="searchPhrase"
+        maxlength="64"
         :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
-        class="flex-grow mr-4 rounded h-10 px-4 font-medium text-sm outline-none disabled:bg-gray-200"
+        class="flex-grow mr-4 h-10"
+        input-class="!h-10 !px-4 font-medium text-sm"
+        :without-border="true"
         @keyup.enter="$router.push(searchPageLink)"
       />
 

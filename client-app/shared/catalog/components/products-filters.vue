@@ -4,12 +4,12 @@
     <VcFilterCard :title="$t('pages.catalog.search_card.title')" v-if="withLocalSearch">
       <div class="flex gap-2.5">
         <div class="relative">
-          <input
+          <VcInput
             v-model="localKeyword"
-            class="border rounded text-sm leading-8 flex-1 w-full border-gray-300 h-8 px-2 outline-none focus:border-gray-400"
-            type="text"
+            class="flex-1 w-full h-8"
+            input-class="leading-8 !h-8 !pl-2 !pr-6"
             maxlength="30"
-            :disabled="loading"
+            :is-disabled="loading"
             @keypress.enter="onSearchStart"
           />
 

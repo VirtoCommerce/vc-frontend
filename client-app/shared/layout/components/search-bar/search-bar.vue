@@ -1,13 +1,14 @@
 <template>
-  <div class="flex flex-grow items-stretch relative" v-click-outside="reset">
-    <input
-      v-model.trim="searchPhrase"
-      :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
+  <div class="flex flex-grow items-stretch relative" v-click-outside="hideSearchDropdown">
+    <VcInput
+      v-model="searchPhrase"
       maxlength="30"
-      class="flex-grow px-4 h-[2.625rem] font-medium text-sm outline-none disabled:bg-gray-200 border rounded-l text-[0.95rem] pr-8"
-      @keyup.enter="search"
+      class="flex-grow text-sm"
+      input-class="!pl-4 !pr-8 font-medium disabled:bg-gray-200 !rounded-r-none text-[0.95rem]"
+      :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
+      @keyup.enter="goToSearchResultsPage"
       @keyup.esc="searchDropdownVisible && hideSearchDropdown()"
-      @input="onSearchPhraseChanged"
+      @input="onSearchPhraseChanged()"
     />
 
     <button v-if="searchPhrase" class="absolute right-[3.8rem] top-[0.95rem]" @click="reset">
@@ -16,7 +17,7 @@
       </svg>
     </button>
 
-    <VcButton class="!rounded-l-none !rounded-r w-[2.75rem] !h-[2.625rem]" @click="search">
+    <VcButton class="!rounded-l-none !rounded-r w-[2.75rem]" size="lg" @click="searchAndShowDropdownResults">
       <i class="fas fa-search text-[color:var(--color-white)] cursor-pointer" />
     </VcButton>
 
@@ -71,7 +72,7 @@
               :to="{ name: 'Search', query: { [QueryParamName.SearchPhrase]: searchPhrase } }"
               class="uppercase px-4"
               size="sm"
-              @click="isApplied && hideSearchDropdown()"
+              @click="hideSearchDropdown()"
             >
               {{ $t("shared.layout.search_bar.view_all_results_button", { total }) }}
             </VcButton>
@@ -106,6 +107,7 @@ export default {
 </script>
 
 <script setup lang="ts">
+import { useRouter } from "vue-router";
 import { useSearchBar } from "@/shared/layout";
 import { computed, inject, ref, watchEffect } from "vue";
 import { configInjectionKey, QueryParamName } from "@/core/constants";
@@ -114,6 +116,7 @@ import { Category } from "@/xapi/types";
 import { useDebounceFn, whenever } from "@vueuse/core";
 import { useCategoriesRoutes } from "@/shared/catalog";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
+import VcInput from "@/ui-kit/components/atoms/input/vc-input.vue";
 
 // Number of categories column items in dropdown list
 const CATEGORIES_ITEMS_PER_COLUMN = 4;
@@ -134,6 +137,8 @@ const {
   searchResults,
 } = useSearchBar();
 
+const router = useRouter();
+
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const categoriesRoutes = useCategoriesRoutes(categories);
 
@@ -150,7 +155,7 @@ const categoriesColumns = computed<Array<Category[]>>(() => {
   });
 });
 
-async function search() {
+async function searchAndShowDropdownResults() {
   const MAX_LENGTH = 30;
   const MIN_LENGTH = config?.search_min_chars || 0;
   const COLUMNS = 5;
@@ -178,16 +183,30 @@ async function search() {
     },
   });
 
-  await showSearchDropdown();
+  if (!isApplied.value) {
+    await showSearchDropdown();
+  }
 }
 
-function reset() {
+async function goToSearchResultsPage() {
+  await hideSearchDropdown();
+  router.push({
+    name: "Search",
+    query: {
+      [QueryParamName.SearchPhrase]: searchPhrase.value,
+    },
+  });
+}
+
+async function reset() {
   searchPhrase.value = "";
-  hideSearchDropdown();
+  await hideSearchDropdown();
 }
 
 const searchProductsDebounced = useDebounceFn(async () => {
-  await search();
+  if (!isApplied.value) {
+    await searchAndShowDropdownResults();
+  }
 }, SEARCH_BAR_DEBOUNCE_TIME);
 
 const onSearchPhraseChanged = () => {
