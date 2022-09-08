@@ -74,19 +74,9 @@ const props = defineProps({
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product));
 
-const sale = computed(() => {
-  if (props.product.price?.list && props.product.price?.sale) {
-    const {
-      list: { amount: listPrice },
-      sale: { amount: salePrice },
-    } = props.product.price;
-
-    const amount = (listPrice - salePrice) / listPrice;
-    const isSaleEnabled = amount >= 0.05;
-
-    return isSaleEnabled ? `-${Math.round(amount * 100)}%` : null;
-  } else {
-    return null;
-  }
-});
+const sale = computed(() =>
+  props.product.price && props.product.price.discountPercent >= 0.05
+    ? `-${props.product.price.discountPercent * 100}%`
+    : null
+);
 </script>
