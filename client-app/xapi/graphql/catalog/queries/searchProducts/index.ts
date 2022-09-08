@@ -19,19 +19,20 @@ export default async function searchProducts(
   options: {
     // @default false
     withFacets?: boolean;
+    // @default false
+    withImages?: boolean;
   } = {}
 ): Promise<ProductConnection> {
   const { storeId, catalogId, userId, cultureName, currencyCode } = globals;
   const { $graphqlClient } = useNuxtApp();
-
-  const { withFacets = false } = options;
+  const { withFacets = false, withImages = true } = options;
   const filterString = [`category.subtree:${catalogId}${categoryId ? "/" + categoryId : ""}`, filter]
     .filter(Boolean)
     .join(" ");
 
   const { data } = await $graphqlClient.query<
     Required<Pick<Query, "products">>,
-    QueryProductsArgs & { withFacets: boolean }
+    QueryProductsArgs & { withFacets: boolean; withImages: boolean }
   >({
     query: searchProductsQueryDocument,
     variables: {
@@ -43,6 +44,7 @@ export default async function searchProducts(
       fuzzy,
       fuzzyLevel,
       withFacets,
+      withImages,
       query: keyword,
       filter: filterString,
       first: itemsPerPage,

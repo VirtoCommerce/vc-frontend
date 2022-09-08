@@ -1,4 +1,5 @@
-import { computed, readonly, ref, shallowRef } from "vue";
+import { computed, inject, readonly, ref, shallowRef } from "vue";
+import { configInjectionKey } from "@/core/constants";
 import { searchProducts } from "@/xapi/graphql/catalog";
 import { Product } from "@/xapi/types";
 import { Logger } from "@/core/utilities";
@@ -11,9 +12,12 @@ export default (
   options: {
     // @default false
     withFacets?: boolean;
+    // @default false
+    withImages?: boolean;
   } = {}
 ) => {
-  const { withFacets: withFacets = false } = options;
+  const config = inject(configInjectionKey);
+  const { withFacets = false, withImages = config?.image_carousel_in_product_card_enabled } = options;
 
   const loading = ref(true);
   const loadingMore = ref(false);
@@ -35,7 +39,7 @@ export default (
         term_facets = [],
         range_facets = [],
         totalCount = 0,
-      } = await searchProducts(searchParams, { withFacets });
+      } = await searchProducts(searchParams, { withFacets, withImages });
 
       products.value = items;
       total.value = totalCount;
@@ -62,7 +66,7 @@ export default (
     loadingMore.value = true;
 
     try {
-      const { items = [], totalCount = 0 } = await searchProducts(searchParams);
+      const { items = [], totalCount = 0 } = await searchProducts(searchParams, { withImages });
 
       products.value = products.value.concat(items);
       total.value = totalCount;
