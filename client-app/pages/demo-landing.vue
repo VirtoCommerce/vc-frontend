@@ -87,7 +87,7 @@
               {{ $t("pages.demo_landing.booking_block.first_button") }}
             </VcButton>
 
-            <VcButton class="w-1/2 md:w-auto uppercase px-2 md:px-8 bg-gray-50 text-yellow-500">
+            <VcButton class="w-1/2 md:w-auto uppercase px-2 md:px-8 bg-gray-50 text-[color:var(--color-primary)]">
               {{ $t("pages.demo_landing.booking_block.second_button") }}
             </VcButton>
           </div>

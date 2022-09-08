@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @import "helpers";
+@import "vendors";
 
 .polygon-bg {
   background-image: url(/static/images/common/polygon.png);

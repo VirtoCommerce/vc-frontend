@@ -12,14 +12,9 @@ module.exports = {
 
     extend: {
       colors: {
-        yellow: {
-          // TODO: delete when switching all components to the "primary" and "secondary" colors
-          500: "#F0AD4E",
-        },
-
         // Generated with https://www.tailwindshades.com/
         primary: {
-          DEFAULT: "#F0AD4E",
+          DEFAULT: "var(--color-primary, #F0AD4E)",
           50: "#FEFBF7",
           100: "#FDF3E4",
           200: "#FAE1BF",
@@ -33,7 +28,7 @@ module.exports = {
         },
 
         secondary: {
-          DEFAULT: "#151B1E",
+          DEFAULT: "var(--color-secondary, #151B1E)",
           50: "#617C8A",
           100: "#58717E",
           200: "#475C66",
@@ -103,8 +98,8 @@ module.exports = {
         },
 
         link: {
-          DEFAULT: "#00739E",
-          hover: "#00678d",
+          DEFAULT: "var(--color-link, #00739E)",
+          hover: "var(--color-link-hover, #00678D)",
         },
 
         tooltip: {
@@ -127,16 +122,11 @@ module.exports = {
           900: "#690000",
         },
 
-        cyan: {
-          // TODO: delete when switching all links elements to the "link" color
-          500: "#5294AD",
-          700: "#00739E",
-        },
-
         gray: {
           550: "#A3AFCD",
         },
       },
+
       boxShadow: {
         "t-sm": "0 -1px 2px 0 rgba(0, 0, 0, 0.05)",
         "t-2sm": "1px 2px 4px rgba(0, 0, 0, 0.15)",
@@ -152,6 +142,7 @@ module.exports = {
         "sm-x-y": "1px 2px 9px rgba(0, 0, 0, 0.1)",
         "sm-x-y-button": "1px 1px 5px rgba(0, 0, 0, 0.15)",
       },
+
       fontSize: {
         11: [
           "0.6875rem", //11px
@@ -226,17 +217,21 @@ module.exports = {
           },
         ],
       },
+
       margin: {
         4.5: "1.125rem", //18px
       },
+
       padding: {
         4.5: "1.125rem", //18px
         17: "4.25rem", //68px
         19: "4.75rem", //76px
       },
+
       width: {
         70: "17.5rem", //280px
       },
+
       maxHeight: {
         "screen-60": "60vh",
         "screen-75": "75vh",
