@@ -14,7 +14,11 @@
         </div>
 
         <p class="lg:font-semibold lg:text-lg leading-snug">
-          {{ $t("shared.company.delete_member_dialog.text", { name: `${contact.fullName} (${contact.email})` }) }}
+          {{
+            $t("shared.company.delete_member_dialog.text", {
+              name: `${contact.fullName} (${contact.extended.emails[0]})`,
+            })
+          }}
         </p>
       </div>
 
@@ -33,7 +37,7 @@
 
 <script setup lang="ts">
 import { PropType } from "vue";
-import { OrganizationContactType } from "@/core/types";
+import { ExtendedContactType } from "@/shared/company";
 
 defineEmits(["confirm"]);
 
@@ -44,7 +48,7 @@ defineProps({
   },
 
   contact: {
-    type: Object as PropType<OrganizationContactType>,
+    type: Object as PropType<ExtendedContactType>,
     required: true,
   },
 });
