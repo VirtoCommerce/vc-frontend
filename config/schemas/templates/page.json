@@ -3,7 +3,7 @@
   "previewUrl": "",
   "request": [
     {
-      "url": "/api/pagebuilder/search?storeId=B2B-store&type=pages&query=*.page",
+      "url": "/api/pagebuilder/search?storeId=B2B-store&theme={{config.themeName}}&type=pages&query=*.page",
       "method": "get",
       "cacheable": true,
       "response": {
