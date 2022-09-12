@@ -21,9 +21,6 @@ query GetOrganizationContacts(
           roles {
             id
             name
-            normalizedName
-            description
-            permissions
           }
         }
       }

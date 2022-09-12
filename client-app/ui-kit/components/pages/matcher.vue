@@ -17,12 +17,13 @@
 </template>
 
 <script setup lang="ts">
-import Category from "@/pages/category.vue";
-import Product from "@/pages/product.vue";
+import Category from "@/pages/catalog.vue";
+import Product from "@/pages/product-template.vue";
 import StaticPage from "@/pages/static-page.vue";
 import NotFound from "@/pages/404.vue";
 
 import { onBeforeUnmount, PropType, ref, watchEffect } from "vue";
+import { PageTemplate } from "@/core/types";
 import { asyncComputed, computedEager } from "@vueuse/core";
 import { useFetch, useLanguages, useStaticPage } from "@/core/composables";
 import { useNavigations } from "@/shared/layout";
@@ -42,17 +43,9 @@ type TEntityInfo = {
   };
 };
 
-type TPageInfo = {
-  settings: {
-    name: string;
-    permalink: string;
-  };
-  content: any[];
-};
-
 type TResult = {
   entity?: TEntityInfo;
-  page?: TPageInfo;
+  page?: PageTemplate;
 };
 
 type TContentItem = {
@@ -92,7 +85,7 @@ const seoInfo = asyncComputed<TResult | undefined>(
     );
 
     if (result.contentItem?.type === "page") {
-      const page: TPageInfo = JSON.parse(result.contentItem.content);
+      const page: PageTemplate = JSON.parse(result.contentItem.content);
       useStaticPage(page);
       return { page };
     } else if (result.entityInfo) {

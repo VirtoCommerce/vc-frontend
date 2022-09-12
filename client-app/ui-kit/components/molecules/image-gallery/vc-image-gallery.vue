@@ -24,7 +24,7 @@
   <div v-if="!isMobile && images && images.length > 1" class="mt-6 grid grid-cols-3 gap-5">
     <div v-for="(image, i) in images" :key="image?.url || i" @click="setActiveImage(image?.url)">
       <div
-        class="square relative flex flex-col justify-center items-center cursor-pointer border border-gray-100 rounded-sm hover:ring hover:ring-yellow-200"
+        class="square relative flex flex-col justify-center items-center cursor-pointer border border-gray-100 rounded-sm hover:ring hover:ring-[color:var(--color-primary-hover)]"
         :class="{
           'ring ring-[color:var(--color-primary)]': image?.url == activeSrc,
         }"

@@ -1,11 +1,11 @@
 <template>
   <div
-    class="bg-gray-100 pt-4 pb-16 shadow-inner grow lg:pt-6"
+    class="bg-gray-100 pt-4 pb-16 shadow-inner grow lg:pt-12"
     :class="{ 'polygon-gray-bg': !products.length && !loading }"
   >
     <div class="max-w-screen-2xl px-5 xl:pl-17 xl:pr-19 mx-auto">
       <!-- Breadcrumbs -->
-      <Breadcrumbs class="mb-2.5 md:mb-4" :items="breadcrumbs" />
+      <Breadcrumbs class="mb-2.5 md:mb-4" :items="breadcrumbs" v-if="!isSearchQuery" />
 
       <div class="flex items-start lg:gap-6">
         <!-- Mobile sidebar back cover -->
@@ -32,6 +32,7 @@
             :keyword="keywordQueryParam"
             :filters="mobileFilters"
             :loading="loading || facetsLoading"
+            :withLocalSearch="!isSearchQuery"
             @search="
               onSearchStart($event);
               hideMobileSidebar();
@@ -72,12 +73,13 @@
 
         <!-- Sidebar -->
         <div v-else class="space-y-5 w-60 flex-shrink-0 pt-2">
-          <CategorySelector :selected-category="selectedCategory" :loading="loading" />
+          <CategorySelector :selected-category="selectedCategory" :loading="loading" v-if="!isSearchQuery" />
 
           <ProductsFiltersSidebar
             :keyword="keywordQueryParam"
             :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
             :loading="loading"
+            :withLocalSearch="!isSearchQuery"
             @search="onSearchStart($event)"
             @change="applyFilters($event)"
           />
@@ -87,8 +89,14 @@
         <div class="flex-grow">
           <div class="flex">
             <h2 class="text-gray-800 text-21 font-bold uppercase lg:my-px lg:text-25">
-              <span>{{ selectedCategory?.label }}</span>
-
+              <i18n-t keypath="pages.search.header" tag="span" v-if="isSearchQuery">
+                <template v-slot:keyword>
+                  <strong>{{ searchParams.keyword }}</strong>
+                </template>
+              </i18n-t>
+              <span v-else>
+                <span>{{ selectedCategory?.label }}</span>
+              </span>
               <sup
                 class="ml-2 normal-case font-normal whitespace-nowrap text-sm lg:text-15 -top-1 lg:-top-[0.5em] text-[color:var(--color-category-page-results)]"
               >
@@ -343,6 +351,7 @@ import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST, QueryParamName } from "@/core/
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
 import { usePopup } from "@/shared/popup";
+import { useRoute } from "vue-router";
 
 const FILTERS_RESET_TIMEOUT_IN_MS = 500;
 const watchStopHandles: WatchStopHandle[] = [];
@@ -381,6 +390,7 @@ usePageHead({
   },
 });
 
+const route = useRoute();
 const productsRoutes = useProductsRoutes(products);
 const savedViewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
 const savedInStock = useLocalStorage<boolean>("viewInStockProducts", true);
@@ -389,6 +399,10 @@ const savedBranches = useLocalStorage<string[]>(FFC_LOCAL_STORAGE, []);
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: PRODUCT_SORTING_LIST[0].id,
   validator: (value) => PRODUCT_SORTING_LIST.some((item) => item.id === value),
+});
+
+const searchQueryParam = useRouteQueryParam<string>(QueryParamName.SearchPhrase, {
+  defaultValue: "",
 });
 
 const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
@@ -416,6 +430,7 @@ const mobileFilters = shallowReactive<ProductsFilters>({
 });
 
 // region Computed properties
+const isSearchQuery = computedEager<boolean>(() => route.name === "Search");
 
 const isVisibleStickyMobileHeader = computed<boolean>(
   () => !stickyMobileHeaderAnchorIsVisible.value && isMobileSidebar.value
@@ -425,7 +440,7 @@ const searchParams = computedEager<ProductsSearchParams>(() => ({
   categoryId: props.categoryId,
   itemsPerPage: itemsPerPage.value,
   sort: sortQueryParam.value,
-  keyword: keywordQueryParam.value,
+  keyword: isSearchQuery.value ? searchQueryParam.value : keywordQueryParam.value,
   filter: [
     facetsQueryParam.value,
     getFilterExpressionForInStock(savedInStock),

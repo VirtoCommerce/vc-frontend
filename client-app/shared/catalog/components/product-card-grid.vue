@@ -1,23 +1,94 @@
 <template>
   <div class="flex flex-col bg-white rounded border p-4 shadow-sm hover:shadow-lg overflow-hidden">
     <!-- Product image -->
-    <router-link :to="link" class="cursor-pointer">
-      <div class="square relative flex flex-col justify-center items-center border border-gray-100">
+    <div class="relative flex flex-col justify-center items-center pb-[100%]">
+      <div class="absolute top-0 w-full h-full border border-gray-100 rounded overflow-hidden">
+        <template v-if="$cfg.image_carousel_in_product_card_enabled && product.images?.length">
+          <Swiper
+            :modules="[Pagination, Navigation, Lazy]"
+            :navigation="{
+              nextEl: '.carousel-button-next',
+              prevEl: '.carousel-button-prev',
+              lockClass: '!hidden',
+            }"
+            class="w-full h-full"
+            rewind
+            lazy
+            @swiper="swiperInstance = $event"
+            @slideChange="slideChanged"
+          >
+            <SwiperSlide v-for="(image, index) in product.images" :key="index" class="">
+              <VcImage
+                :src="image.url"
+                :alt="product.name"
+                size-suffix="md"
+                :class="{ 'cursor-pointer': swiperInstance?.allowSlideNext }"
+                class="w-full h-full object-cover object-center select-none"
+                lazy
+                @click="swiperInstance?.slideNext()"
+              />
+            </SwiperSlide>
+
+            <template v-slot:container-end>
+              <!-- Prev button -->
+              <div
+                class="carousel-button-prev group absolute top-0 left-0 z-[2] h-full hidden md:flex items-center pl-1 pr-5 cursor-pointer"
+              >
+                <span
+                  class="group-hover:opacity-100 opacity-0 transition-opacity flex items-center justify-center w-6 h-6 bg-white rounded-full"
+                >
+                  <i class="fas fa-chevron-left text-sm text-gray-400 -ml-0.5" />
+                </span>
+              </div>
+
+              <!-- Next button -->
+              <div
+                class="carousel-button-next group absolute top-0 right-0 z-[2] h-full hidden md:flex items-center pl-5 pr-1 cursor-pointer"
+              >
+                <span
+                  class="group-hover:opacity-100 opacity-0 transition-opacity flex items-center justify-center w-6 h-6 bg-white rounded-full"
+                >
+                  <i class="fas fa-chevron-right text-sm text-gray-400 -mr-0.5" />
+                </span>
+              </div>
+
+              <!-- Bullets -->
+              <div
+                v-if="product.images.length > 1"
+                class="absolute bottom-0 left-0 z-[1] flex gap-1 w-full justify-center py-2"
+              >
+                <template v-for="(state, index) in swiperBulletsState" :key="index">
+                  <span
+                    v-if="index !== 1 || product.images.length !== 2"
+                    :class="[
+                      'inline-block w-2 h-2 rounded-full border',
+                      state ? 'bg-gray-400 border-white box-content -m-px' : 'bg-white border-gray-400 box-border',
+                    ]"
+                  />
+                </template>
+              </div>
+            </template>
+          </Swiper>
+        </template>
+
         <VcImage
+          v-else
           :src="product.imgSrc"
           :alt="product.name"
           size-suffix="md"
-          class="absolute top-0 w-full h-full object-cover object-center"
+          class="w-full h-full object-cover object-center"
           lazy
         />
+
+        <!-- Discount badge -->
         <div
-          v-if="sale"
-          class="absolute top-0 right-0 px-2 pt-1 pb-1.5 rounded-bl bg-[color:var(--color-sale-badge-bg)] text-white text-xs font-extrabold"
+          v-if="discount"
+          class="absolute z-10 top-0 right-0 px-2 pt-1 pb-1.5 rounded-bl bg-[color:var(--color-sale-badge-bg)] text-white text-xs font-extrabold"
         >
-          {{ sale }}
+          {{ discount }}
         </div>
       </div>
-    </router-link>
+    </div>
 
     <div class="flex flex-col flex-grow pt-3 xl:pt-3">
       <div class="mb-1.5 xl:inline-flex xl:flex-wrap xl:items-center xl:justify-between xl:mb-2">
@@ -27,7 +98,7 @@
           :is-in-stock="product.availabilityData?.isInStock"
           :quantity="product.availabilityData?.availableQuantity"
           class="inline-block my-0.5"
-        ></VcInStock>
+        />
       </div>
 
       <!-- Product title -->
@@ -59,7 +130,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from "vue";
+import { computed, PropType, ref } from "vue";
+import { computedEager } from "@vueuse/core";
+import { Pagination, Navigation, Lazy } from "swiper";
+import { Swiper, SwiperSlide } from "swiper/vue"; // eslint-disable-line import/no-unresolved
+import { Swiper as SwiperInstance } from "swiper/types";
 import { AddToCompare } from "@/shared/compare";
 import { Product } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";
@@ -72,21 +147,40 @@ const props = defineProps({
   },
 });
 
+const swiperInstance = ref<SwiperInstance>();
+const swiperBulletsState = ref<boolean[]>([true, false, false]);
+
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product));
 
-const sale = computed(() => {
-  if (props.product.price?.list && props.product.price?.sale) {
-    const {
-      list: { amount: listPrice },
-      sale: { amount: salePrice },
-    } = props.product.price;
-
-    const amount = (listPrice - salePrice) / listPrice;
-    const isSaleEnabled = amount >= 0.05;
-
-    return isSaleEnabled ? `-${Math.round(amount * 100)}%` : null;
-  } else {
+const discount = computedEager<string | null>(() => {
+  if (!props.product.price?.list || !props.product.price?.sale) {
     return null;
   }
+
+  const {
+    list: { amount: listPrice },
+    sale: { amount: salePrice },
+  } = props.product.price;
+
+  const amount = (listPrice - salePrice) / listPrice;
+  const isSaleEnabled = amount >= 0.05;
+
+  return isSaleEnabled ? `-${Math.round(amount * 100)}%` : null;
 });
+
+function slideChanged(swiper: SwiperInstance) {
+  const activeIndex: number = swiper.activeIndex;
+  const lastIndex: number = props.product.images?.length ? props.product.images.length - 1 : 0;
+
+  if (!activeIndex) {
+    // first bullet active
+    swiperBulletsState.value = [true, false, false];
+  } else if (activeIndex === lastIndex) {
+    // last bullet active
+    swiperBulletsState.value = [false, false, true];
+  } else {
+    // middle bullet active
+    swiperBulletsState.value = [false, true, false];
+  }
+}
 </script>

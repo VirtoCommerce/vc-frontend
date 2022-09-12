@@ -1,0 +1,18 @@
+{
+  "icon": "title",
+  "name": "Promo text",
+  "displayField": "name",
+  "settings": [
+    {
+      "id": "title",
+      "label": "Title",
+      "type": "string"
+    },
+    {
+      "id": "subtitle",
+      "label": "Subtitle",
+      "type": "string",
+      "multiline": true
+    }
+  ]
+}

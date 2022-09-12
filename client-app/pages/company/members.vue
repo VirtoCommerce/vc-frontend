@@ -32,12 +32,14 @@
 
       <div class="flex flex-grow">
         <div class="relative grow">
-          <input
-            v-model.trim="localKeyword"
-            :disabled="loading"
-            :placeholder="$t('pages.company.members.search_placeholder')"
-            class="appearance-none bg-white rounded rounded-r-none h-11 pl-4 pr-11 font-medium outline-none text-sm border w-full border-gray-300 focus:border-gray-400 disabled:bg-gray-200"
+          <VcInput
+            v-model="localKeyword"
+            maxlength="64"
+            class="w-full"
+            input-class="font-medium rounded-r-none !text-sm disabled:bg-gray-200 !pl-4 !pr-11"
+            :is-disabled="loading"
             @keypress.enter="applyKeyword"
+            :placeholder="$t('pages.company.members.search_placeholder')"
           />
 
           <button v-if="localKeyword" class="absolute right-0 top-0 h-11 px-4" @click="resetKeyword">
@@ -91,8 +93,7 @@
         <template #desktop-body>
           <tr v-for="contact in contacts" :key="contact.id" class="even:bg-gray-50">
             <td class="pl-4 pr-0 py-2.5">
-              <!-- STUB -->
-              <div class="rounded-full bg-gray-500 h-9 w-9">&nbsp;</div>
+              <RoleIcon :role-id="contact.extended.roles[0]?.id" />
             </td>
 
             <td class="px-4 py-2.5">
@@ -100,22 +101,22 @@
             </td>
 
             <td class="px-4 py-2.5">
-              {{ contact.role }}
+              {{ contact.extended.roles[0]?.name }}
             </td>
 
             <td class="px-4 py-2.5">
-              {{ contact.email }}
+              {{ contact.extended.emails[0] }}
             </td>
 
             <td class="px-4 py-3 text-center">
               <VcTooltip>
                 <template #trigger>
-                  <img width="20" height="20" :src="contact.displayStatus.iconUrl" />
+                  <img width="20" height="20" :src="contact.extended.displayStatus.iconUrl" />
                 </template>
 
                 <template #content>
                   <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5">
-                    {{ $t(contact.displayStatus.localeLabel) }}
+                    {{ $t(contact.extended.displayStatus.localeLabel) }}
                   </div>
                 </template>
               </VcTooltip>
@@ -154,25 +155,25 @@
           </tr>
         </template>
 
-        <template #mobile-item="contacts">
+        <template #mobile-item="{ item }">
           <div class="flex items-center border-b">
             <div class="py-4.5 pl-6">
-              <!-- STUB -->
-              <div class="rounded-full bg-gray-500 h-9 w-9">&nbsp;</div>
+              <RoleIcon :role-id="item.extended.roles[0]?.id" />
             </div>
 
             <div class="flex-grow py-4.5 pl-4">
               <div>
-                <b>{{ contacts.item.fullName }}</b>
+                <b>{{ item.fullName }}</b>
               </div>
-              <div v-if="contacts.item.role">
-                {{ contacts.item.role }}
+
+              <div class="text-sm">
+                {{ item.extended.roles[0]?.name }}
               </div>
             </div>
 
             <div class="py-4.5 pr-6">
-              <div class="px-2.5 py-0.5 w-20 text-center rounded-sm" :class="contacts.item.displayStatus.cssStyles">
-                {{ $t(contacts.item.displayStatus.localeLabel) }}
+              <div class="px-2.5 py-0.5 w-20 text-center rounded-sm" :class="item.extended.displayStatus.cssStyles">
+                {{ $t(item.extended.displayStatus.localeLabel) }}
               </div>
             </div>
           </div>
@@ -206,9 +207,10 @@ import {
   InviteMemberDialog,
   useOrganizationContacts,
   DeleteCompanyMemberDialog,
+  RoleIcon,
+  ExtendedContactType,
 } from "@/shared/company";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { OrganizationContactType } from "@/core/types";
 
 const { t } = useI18n();
 const { openPopup, closePopup } = usePopup();
@@ -279,7 +281,7 @@ async function resetKeyword() {
   }
 }
 
-async function deleteContactFromOrganization(contact: OrganizationContactType) {
+async function deleteContactFromOrganization(contact: ExtendedContactType) {
   await updateMember({
     ...contact,
     organizationsIds: [],
@@ -313,7 +315,7 @@ function openInviteMemberDialog() {
   });
 }
 
-function openDeleteMemberDialog(contact: OrganizationContactType): void {
+function openDeleteMemberDialog(contact: ExtendedContactType): void {
   openPopup({
     component: DeleteCompanyMemberDialog,
     props: {
@@ -334,7 +336,7 @@ function itemActionsBuilder() {
       title: t("pages.company.members.buttons.delete"),
       left: true,
       classes: "bg-[color:var(--color-danger)]",
-      clickHandler(contact: OrganizationContactType) {
+      clickHandler(contact: ExtendedContactType) {
         openDeleteMemberDialog(contact);
       },
     },

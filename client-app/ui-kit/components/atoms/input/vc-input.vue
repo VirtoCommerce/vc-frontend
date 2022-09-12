@@ -7,8 +7,11 @@
 
     <div class="relative h-11">
       <input
-        class="appearance-none rounded h-full px-3 text-base leading-none box-border border border-gray-300 w-full outline-none focus:border-gray-400 min-w-0"
-        :class="{ 'pr-12': isPasswordIconVisible }"
+        class="appearance-none rounded h-full px-3 text-base leading-none box-border w-full outline-none min-w-0"
+        :class="[
+          inputClass,
+          { 'pr-12': isPasswordIconVisible, 'border border-gray-300 focus:border-gray-400': !withoutBorder },
+        ]"
         :value="modelValue"
         :type="inputType"
         :name="name"
@@ -40,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watchEffect } from "vue";
+import { computed, PropType, ref, watchEffect } from "vue";
 
 const emit = defineEmits(["update:modelValue"]);
 
@@ -50,6 +53,7 @@ const props = defineProps({
   isReadonly: Boolean,
   isDisabled: Boolean,
   isRequired: Boolean,
+  withoutBorder: { type: Boolean, default: false },
   hidePasswordSwitcher: Boolean,
   label: String,
   name: String,
@@ -60,6 +64,7 @@ const props = defineProps({
   minlength: [String, Number],
   maxlength: [String, Number],
   errorMessage: String,
+  inputClass: String,
 
   modelValue: {
     type: [String, Number],
@@ -67,7 +72,7 @@ const props = defineProps({
   },
 
   type: {
-    type: String,
+    type: String as PropType<"text" | "password" | "number">,
     default: "text",
   },
 });
@@ -92,8 +97,13 @@ function change(event: Event) {
   if (props.isDisabled) {
     return;
   }
-  const newValue: string = (event.target as HTMLInputElement).value.trim();
-  emit("update:modelValue", props.type === "number" ? Number(newValue) : newValue);
+  let value: string = (event.target as HTMLInputElement).value;
+
+  if (props.type !== "password") {
+    value = value.trim();
+  }
+
+  emit("update:modelValue", props.type === "number" ? Number(value) : value);
 }
 
 watchEffect(() => {

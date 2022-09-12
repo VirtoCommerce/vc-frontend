@@ -1,0 +1,44 @@
+{
+  "icon": "superscript",
+  "name": "Side Image",
+  "displayField": "name",
+  "includeShared": ["buttons"],
+  "settings": [
+    {
+      "id": "title",
+      "label": "Title",
+      "type": "string",
+      "tab": "Content"
+    },
+    {
+      "id": "subtitle",
+      "label": "Subtitle",
+      "type": "string",
+      "multiline": true,
+      "tab": "Content"
+    },
+    {
+      "id": "image",
+      "type": "images",
+      "label": "Image",
+      "multiple": false,
+      "tab": "Content"
+    },
+    {
+      "id": "imagePosition",
+      "type": "select",
+      "label": "Image Position",
+      "options": [
+        {
+          "value": "right",
+          "label": "Right (top)"
+        },
+        {
+          "value": "left",
+          "label": "Left (bottom)"
+        }
+      ],
+      "tab": "Settings"
+    }
+  ]
+}

@@ -75,8 +75,9 @@
         v-html="$t('pages.home.subscription_block.info_message')"
       ></div>
       <div class="flex flex-grow w-full space-x-6">
-        <input
-          class="bg-white rounded h-11 flex-grow shadow-inner px-4 min-w-0 outline-none"
+        <VcInput
+          class="flex-grow"
+          :without-border="true"
           :placeholder="$t('pages.home.subscription_block.email_placeholder')"
         />
         <!-- todo: use VcButton -->

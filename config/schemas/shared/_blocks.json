@@ -1,0 +1,11 @@
+{
+  "settings": [
+    {
+      "id": "name",
+      "label": "Block name",
+      "type": "string",
+      "default": null,
+      "tab": "Settings"
+    }
+  ]
+}
