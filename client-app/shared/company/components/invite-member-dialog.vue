@@ -116,6 +116,10 @@ function getEmailAddresses(value: string | undefined): string[] {
   return value?.split(/[,;]|\r|\r\n|\n/g) || [];
 }
 
+function normalizeEmails(emails: string[]): string[] {
+  return [...new Set(_.map(emails, (email: string) => email.toLowerCase()))];
+}
+
 // const { value: role } = useField<string>("role", yup.string().required());
 const { value: message } = useField<string>("message", yup.string().max(1000));
 const { value: emails } = useField<string>(
@@ -152,7 +156,7 @@ const send = handleSubmit(async (data) => {
     storeId,
     urlSuffix: router.resolve({ name: "ConfirmInvitation" }).path,
     organizationId: organization.value!.id,
-    emails: getEmailAddresses(data.emails),
+    emails: normalizeEmails(getEmailAddresses(data.emails)),
     message: data.message,
   });
 
