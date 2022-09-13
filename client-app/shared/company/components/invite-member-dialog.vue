@@ -116,8 +116,8 @@ function getEmailAddresses(value: string | undefined): string[] {
   return value?.split(/[,;]|\r|\r\n|\n/g) || [];
 }
 
-function normalizeEmails(emails: string[]): string[] {
-  return [...new Set(_.map(emails, (email: string) => email.toLowerCase()))];
+function normalizeEmails(emailAddresses: string[]): string[] {
+  return [...new Set(_.map(emailAddresses, (email: string) => email.toLowerCase()))];
 }
 
 // const { value: role } = useField<string>("role", yup.string().required());
