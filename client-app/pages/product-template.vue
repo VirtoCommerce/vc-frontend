@@ -12,17 +12,19 @@
         {{ $t("pages.product.sku_label") }} <span class="font-extrabold">{{ product.code }}</span>
       </div>
 
-      <component
-        v-for="item in template.content"
-        :key="item.id"
-        :is="item.type"
-        :product="product"
-        :relatedProducts="relatedProducts"
-        :model="item"
-        :isMobile="isMobile"
-        :productWithVariations="productWithVariations"
-        :variationsCartTotalAmount="variationsCartTotalAmount"
-      />
+      <template v-for="item in template.content">
+        <component
+          v-if="!item.hidden"
+          :key="item.id"
+          :is="item.type"
+          :product="product"
+          :relatedProducts="relatedProducts"
+          :model="item"
+          :isMobile="isMobile"
+          :productWithVariations="productWithVariations"
+          :variationsCartTotalAmount="variationsCartTotalAmount"
+        />
+      </template>
 
       <!-- Related products section -->
       <div v-show="relatedProducts.length" class="flex flex-col lg:flex-row lg:space-x-8 mt-10 lg:mt-6">

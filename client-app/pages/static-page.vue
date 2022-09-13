@@ -6,13 +6,9 @@
         {{ template.settings.header }}
       </h1>
     </div>
-    <component
-      v-for="item in template.content"
-      :key="item.id"
-      :is="item.type"
-      :model="item"
-      :settings="template.settings"
-    />
+    <template v-for="item in template.content">
+      <component v-if="!item.hidden" :key="item.id" :is="item.type" :model="item" :settings="template.settings" />
+    </template>
   </div>
 </template>
 
