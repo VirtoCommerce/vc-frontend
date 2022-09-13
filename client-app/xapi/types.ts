@@ -4123,7 +4123,7 @@ export type RequestRegistrationMutationVariables = Exact<{
 }>;
 
 
-export type RequestRegistrationMutation = { requestRegistration?: { account?: { id: string }, organization?: { id: string }, contact?: { id: string }, result?: { succeeded: boolean, errors?: Array<{ code?: string, description?: string }> } } };
+export type RequestRegistrationMutation = { requestRegistration?: { account?: { id: string }, organization?: { id: string }, contact?: { id: string }, result?: { succeeded: boolean, errors?: Array<{ code?: string, description?: string, parameter?: string }> } } };
 
 export type RegisterByInvitationMutationVariables = Exact<{
   command: InputRegisterByInvitationType;
@@ -4445,8 +4445,9 @@ export type SearchProductsQueryVariables = Exact<{
   query?: InputMaybe<Scalars['String']>;
   fuzzy?: InputMaybe<Scalars['Boolean']>;
   fuzzyLevel?: InputMaybe<Scalars['Int']>;
-  withFacets: Scalars['Boolean'];
   productIds?: InputMaybe<Array<InputMaybe<Scalars['String']>> | InputMaybe<Scalars['String']>>;
+  withFacets: Scalars['Boolean'];
+  withImages: Scalars['Boolean'];
 }>;
 
 

@@ -34,7 +34,7 @@
     ></VcInput>
 
     <div class="flex justify-between">
-      <VcCheckbox v-model="rememberMe">
+      <VcCheckbox v-model="rememberMe" :disabled="loading || isAuthenticated">
         {{ $t("shared.account.sign_in_form.remember_me_label") }}
       </VcCheckbox>
 

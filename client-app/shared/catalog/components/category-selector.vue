@@ -23,8 +23,9 @@
             'text-[color:var(--color-category-selector-link)]': category.id !== selectedCategory.id,
           }"
           :to="categoriesRoutes[category.id!]"
-          >{{ category.label }}</router-link
         >
+          {{ category.label }}
+        </router-link>
       </div>
     </template>
   </VcFilterCard>

@@ -20,12 +20,13 @@ import updateContact from "@/xapi/graphql/account/mutations/updateContact";
 
 const TEMP_PASSWORD = "TempPassword#1";
 
-export default () => {
+export default function useOrganizationContacts() {
   const loading = ref(false);
   const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
   const pages = ref(0);
   const page = ref(1);
   const keyword = ref("");
+  const filter = ref("");
   const contacts = shallowRef<ExtendedContactType[]>([]);
   const sort = ref<ISortInfo>({
     column: "name",
@@ -39,27 +40,31 @@ export default () => {
   async function loadContacts() {
     loading.value = true;
 
-    const sortingExpression: string = getSortingExpression(sort.value);
     const organizationId: string | undefined = organization.value!.id;
 
     if (!organizationId) {
       return;
     }
 
+    const sortingExpression: string = getSortingExpression(sort.value);
+    const filterExpression: string = [keyword.value, filter.value].filter(Boolean).join(" ");
+
     try {
       const response = await getOrganizationContacts(organizationId, {
         first: itemsPerPage.value,
         after: String((page.value - 1) * itemsPerPage.value),
         sort: sortingExpression,
-        searchPhrase: getSearchPhrase(keyword.value),
+        searchPhrase: filterExpression,
       });
-      pages.value = Math.ceil((response.totalCount ?? 0) / itemsPerPage.value);
+
       const contactFullNameFallback: string = t("pages.company.members.invite_sent");
+
       contacts.value = _.map(response.items, (item: ContactType) =>
         convertToExtendedContact(item, contactFullNameFallback)
       );
+      pages.value = Math.ceil((response.totalCount ?? 0) / itemsPerPage.value);
     } catch (e) {
-      Logger.error("useOrganizationContacts.loadContacts", e);
+      Logger.error(`${useOrganizationContacts.name}.${loadContacts.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -97,7 +102,7 @@ export default () => {
 
       return identityResult;
     } catch (e) {
-      Logger.error(`useOrganizationContacts.${addNewContact.name}`, e);
+      Logger.error(`${useOrganizationContacts.name}.${addNewContact.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -111,7 +116,7 @@ export default () => {
       const payload: InputUpdateContactType = convertToInputUpdateContact(contact);
       await updateContact(payload);
     } catch (e) {
-      Logger.error(`useOrganizationContacts.${updateMember.name}`, e);
+      Logger.error(`${useOrganizationContacts.name}.${updateMember.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -124,14 +129,11 @@ export default () => {
     pages: readonly(pages),
     page,
     keyword,
+    filter,
     loading: readonly(loading),
     contacts: computed(() => contacts.value),
     loadContacts,
     addNewContact,
     updateMember,
   };
-};
-
-function getSearchPhrase(keyword: string): string {
-  return keyword ? `"${keyword}"` : "";
 }

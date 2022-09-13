@@ -1,7 +1,18 @@
 <template>
   <!-- Mobile table view -->
   <template v-if="isMobile && $slots['mobile-item']">
-    <div v-if="items.length" class="overflow-x-hidden">
+    <!-- Mobile skeleton view -->
+    <div v-if="loading">
+      <slot name="mobile-skeleton" />
+    </div>
+
+    <!-- Mobile empty view -->
+    <div v-else-if="!items.length">
+      <slot name="mobile-empty" />
+    </div>
+
+    <!-- Mobile item view -->
+    <div v-else class="overflow-x-hidden">
       <VcSlidingActions
         v-for="item in items"
         :key="item.id"
@@ -9,16 +20,8 @@
         :actions-builder="itemActionsBuilder"
         @click="$emit('itemClick', item)"
       >
-        <slot name="mobile-item" :item="item"></slot>
+        <slot name="mobile-item" :item="item" />
       </VcSlidingActions>
-    </div>
-    <!-- Mobile empty view -->
-    <div v-else-if="!loading">
-      <slot name="mobile-empty"></slot>
-    </div>
-    <!-- Mobile skeleton view -->
-    <div v-else>
-      <slot name="mobile-skeleton"></slot>
     </div>
   </template>
 
@@ -44,17 +47,20 @@
         </th>
       </tr>
     </thead>
-    <!-- Desktop table body -->
-    <tbody v-if="!loading && items.length">
-      <slot name="desktop-body"></slot>
+
+    <!-- Desktop skeleton view -->
+    <tbody v-if="loading">
+      <slot name="desktop-skeleton" />
     </tbody>
+
     <!-- Desktop empty view -->
-    <tbody v-else-if="!loading && !items.length">
-      <slot name="desktop-empty"></slot>
+    <tbody v-else-if="!items.length">
+      <slot name="desktop-empty" />
     </tbody>
-    <!-- Desktop table skeleton -->
+
+    <!-- Desktop table view -->
     <tbody v-else>
-      <slot name="desktop-skeleton"></slot>
+      <slot name="desktop-body" />
     </tbody>
   </table>
 

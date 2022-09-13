@@ -211,7 +211,7 @@
               @click="resetFacetFilters"
               @close="resetFacetFilters"
             >
-              {{ $t("pages.catalog.reset_filters_button") }}
+              {{ $t("common.buttons.reset_filters") }}
             </VcChip>
 
             <template v-for="facet in facets">
@@ -331,11 +331,8 @@ import {
   CategorySelector,
   DisplayProducts,
   getFilterExpressionForInStock,
-  getFilterExpressionFromFacets,
   getFilterExpressionForAvailableIn,
   IBreadcrumbsItem,
-  ProductsFacet,
-  ProductsFacetValue,
   ProductsFilters,
   ProductsFiltersSidebar,
   ProductsSearchParams,
@@ -348,6 +345,8 @@ import { BranchesDialog, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { AddToCart } from "@/shared/cart";
 import { useElementVisibility, usePageHead, useRouteQueryParam } from "@/core/composables";
 import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST, QueryParamName } from "@/core/constants";
+import { FacetItem, FacetValueItem } from "@/core/types";
+import { getFilterExpressionFromFacets } from "@/core/utilities";
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
 import { usePopup } from "@/shared/popup";
@@ -545,7 +544,7 @@ async function updateMobileFilters(newFilters: ProductsFilters) {
   mobileFilters.facets = await getFacets(searchParamsForFacets);
 }
 
-function removeFacetFilterItem(payload: Pick<ProductsFacet, "paramName"> & Pick<ProductsFacetValue, "value">) {
+function removeFacetFilterItem(payload: Pick<FacetItem, "paramName"> & Pick<FacetValueItem, "value">) {
   const facet = facets.value.find((item) => item.paramName === payload.paramName);
   const facetValue = facet?.values.find((item) => item.value === payload.value);
 
