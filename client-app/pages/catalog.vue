@@ -292,7 +292,7 @@
                 class="px-6 uppercase"
                 size="lg"
                 @click="resetFacetFiltersWithKeyword"
-                v-if="isExistSelectedFacets || keywordQueryParam"
+                v-if="!savedBranches.length && !isSearchQuery"
               >
                 <i class="fas fa-undo text-inherit -ml-0.5 mr-2.5"></i>
                 {{ $t("pages.catalog.no_products_button") }}
