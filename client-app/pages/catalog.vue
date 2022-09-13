@@ -288,12 +288,7 @@
             </template>
 
             <template #button>
-              <VcButton
-                class="px-6 uppercase"
-                size="lg"
-                @click="resetFacetFiltersWithKeyword"
-                v-if="!savedBranches.length && !isSearchQuery"
-              >
+              <VcButton class="px-6 uppercase" size="lg" @click="resetFilters" v-if="!isSearchQuery">
                 <i class="fas fa-undo text-inherit -ml-0.5 mr-2.5"></i>
                 {{ $t("pages.catalog.no_products_button") }}
               </VcButton>
@@ -566,8 +561,9 @@ function resetFacetFilters() {
   triggerRef(facets);
 }
 
-function resetFacetFiltersWithKeyword() {
+function resetFilters() {
   keywordQueryParam.value = "";
+  savedBranches.value = [];
   // FIXME: `setTimeout` is a hack to apply the value of `useRouteQueryParam` in parallel
   setTimeout(resetFacetFilters, FILTERS_RESET_TIMEOUT_IN_MS);
 }
