@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      [master, dev]
+      [master, dev, demo]
     paths-ignore:
       - '.github/**'
       - 'docs/**'
