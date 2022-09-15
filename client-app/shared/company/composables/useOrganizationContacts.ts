@@ -1,14 +1,19 @@
 import { createContact, createUser, requestPasswordReset } from "@/xapi/graphql/account";
 import { getOrganizationContacts } from "@/xapi/graphql/organization";
 import { ContactType, IdentityResultType, InputUpdateContactType } from "@/xapi/types";
-import { ref, shallowRef, Ref, readonly, computed } from "vue";
+import { ref, shallowRef, readonly, computed } from "vue";
 import { getSortingExpression, Logger } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import { DEFAULT_PAGE_SIZE, SORT_ASCENDING } from "@/core/constants";
 import _ from "lodash";
-import { ISortInfo, OrganizationContactType } from "@/core/types";
+import { ISortInfo } from "@/core/types";
 import { useI18n } from "vue-i18n";
-import { AddNewMember, convertToOrganizationContact, convertToInputUpdateContact } from "@/shared/company";
+import {
+  AddNewMember,
+  convertToExtendedContact,
+  convertToInputUpdateContact,
+  ExtendedContactType,
+} from "@/shared/company";
 import globals from "@/core/globals";
 import { useRouter } from "vue-router";
 import updateContact from "@/xapi/graphql/account/mutations/updateContact";
@@ -16,13 +21,13 @@ import updateContact from "@/xapi/graphql/account/mutations/updateContact";
 const TEMP_PASSWORD = "TempPassword#1";
 
 export default () => {
-  const loading: Ref<boolean> = ref(false);
-  const itemsPerPage: Ref<number> = ref(DEFAULT_PAGE_SIZE);
-  const pages: Ref<number> = ref(0);
-  const page: Ref<number> = ref(1);
-  const keyword: Ref<string> = ref("");
-  const contacts: Ref<OrganizationContactType[]> = shallowRef<OrganizationContactType[]>([]);
-  const sort: Ref<ISortInfo> = ref({
+  const loading = ref(false);
+  const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
+  const pages = ref(0);
+  const page = ref(1);
+  const keyword = ref("");
+  const contacts = shallowRef<ExtendedContactType[]>([]);
+  const sort = ref<ISortInfo>({
     column: "name",
     direction: SORT_ASCENDING,
   });
@@ -51,7 +56,7 @@ export default () => {
       pages.value = Math.ceil((response.totalCount ?? 0) / itemsPerPage.value);
       const contactFullNameFallback: string = t("pages.company.members.invite_sent");
       contacts.value = _.map(response.items, (item: ContactType) =>
-        convertToOrganizationContact(item, contactFullNameFallback)
+        convertToExtendedContact(item, contactFullNameFallback)
       );
     } catch (e) {
       Logger.error("useOrganizationContacts.loadContacts", e);
@@ -99,7 +104,7 @@ export default () => {
     }
   }
 
-  async function updateMember(contact: OrganizationContactType): Promise<void> {
+  async function updateMember(contact: ExtendedContactType): Promise<void> {
     loading.value = true;
 
     try {

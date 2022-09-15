@@ -11,7 +11,11 @@ mutation requestRegistration($command: InputRequestRegistrationType!) {
     }
     result {
       succeeded
-      errors
+      errors {
+        code
+        description
+        parameter
+      }
     }
   }
 }

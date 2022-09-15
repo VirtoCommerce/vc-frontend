@@ -17,7 +17,7 @@
       </svg>
     </button>
 
-    <VcButton class="!rounded-l-none !rounded-r w-[2.75rem]" size="lg" @click="searchAndShowDropdownResults">
+    <VcButton class="!rounded-l-none !rounded-r w-[2.75rem]" size="lg" @click="goToSearchResultsPage">
       <i class="fas fa-search text-[color:var(--color-white)] cursor-pointer" />
     </VcButton>
 

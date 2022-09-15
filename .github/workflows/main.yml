@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      [master, dev]
+      [master, dev, demo]
     paths-ignore:
       - '.github/**'
       - 'docs/**'
@@ -14,7 +14,7 @@ on:
       - '**/argoDeploy.json'
   pull_request:
     branches:
-      [master, dev]
+      [master, dev, demo]
     paths-ignore:
       - '.github/**'
       - 'docs/**'
@@ -169,7 +169,7 @@ jobs:
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
 
   deploy:
-    if: ${{ (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master') && github.event_name == 'push' }}
+    if: ${{ (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/master') && github.event_name == 'push' }}
     needs: ci
     runs-on: ubuntu-latest
     env:
@@ -179,7 +179,7 @@ jobs:
       - name: Set deployment environment
         id: deployEnv
         run: |
-          if [ '${{ github.ref }}' = 'refs/heads/master' ]; then
+          if [ '${{ github.ref }}' = 'refs/heads/demo' || '${{ github.ref }}' == 'refs/heads/master' ]; then
             echo ::set-output name=NAME::prod
           else
             echo ::set-output name=NAME::dev

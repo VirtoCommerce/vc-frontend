@@ -1,10 +1,11 @@
 import { MaybeRef } from "@vueuse/core";
-import { CartAddressType, ContactType, MemberAddressType, OrderAddressType } from "@/xapi/types";
+import { CartAddressType, MemberAddressType, OrderAddressType } from "@/xapi/types";
 import { LocationQueryValue } from "vue-router";
 
 export * from "./currency";
 export * from "./global-variables";
 export * from "./language";
+export * from "./modify";
 export * from "./page-content";
 export * from "./role";
 export * from "./theme-context";
@@ -16,18 +17,6 @@ export enum AddressType {
   Shipping = 2,
   BillingAndShipping = 3,
 }
-
-export type OrganizationContactType = ContactType & {
-  email?: string;
-  role?: string;
-  displayStatus: OrganizationContactDisplayStatusType;
-};
-
-export type OrganizationContactDisplayStatusType = {
-  localeLabel: string;
-  iconUrl?: string;
-  cssStyles?: string;
-};
 
 export type AnyAddressType = MemberAddressType | OrderAddressType | CartAddressType;
 

@@ -125,7 +125,7 @@ import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import { ref } from "vue";
 import { usePopup } from "@/shared/popup";
-import { AccountCreationResultType, IdentityErrorType } from "@/xapi/types";
+import { AccountCreationResultType } from "@/xapi/types";
 import { computed } from "@vue/reactivity";
 import { isObjectEmpty, trimString } from "@/core/utilities";
 import { useI18n } from "vue-i18n";
@@ -222,73 +222,49 @@ const onSubmit = handleSubmit(async (data) => {
     openPopup({
       component: RegistrationSuccessDialog,
     });
-  } else {
-    if (result.errors?.length) {
-      const identityErrors = convertToIdentityError(result.errors);
-      for (const error of identityErrors) {
-        // TODO: Localize all messages on a front side
-        // improve XAPI: pass error's parameters with error
-        switch (error.code) {
-          case "password-too-weak":
-          case "PasswordTooShort":
-          case "PasswordRequiresLower":
-          case "PasswordRequiresUpper":
-          case "PasswordRequiresUniqueChars":
-          case "PasswordRequiresDigit":
-          case "PasswordRequiresNonAlphanumeric":
-          case "RecentPasswordUsed":
-          case "InvalidPasswordHasherCompatibilityMode":
-          case "InvalidPasswordHasherIterationCount":
-            // t() is the workaround for the empty description.
-            setFieldError("password", error.description || t("pages.sign_up.errors." + error.code));
-            break;
+  } else if (result.errors?.length) {
+    for (const error of result.errors) {
+      // TODO: Localize all messages on a front side
+      // improve XAPI: pass error's parameters with error
+      switch (error.code) {
+        case "password-too-weak":
+        case "PasswordTooShort":
+        case "PasswordRequiresLower":
+        case "PasswordRequiresUpper":
+        case "PasswordRequiresUniqueChars":
+        case "PasswordRequiresDigit":
+        case "PasswordRequiresNonAlphanumeric":
+        case "RecentPasswordUsed":
+        case "InvalidPasswordHasherCompatibilityMode":
+        case "InvalidPasswordHasherIterationCount":
+          // t() is the workaround for the empty description.
+          setFieldError("password", error.description || t("pages.sign_up.errors." + error.code));
+          break;
 
-          case "repeat-password":
-          case "PasswordMismatch":
-            setFieldError("confirmPassword", error.description);
-            break;
+        case "repeat-password":
+        case "PasswordMismatch":
+          setFieldError("confirmPassword", error.description);
+          break;
 
-          case "DuplicateUserName":
-          case "InvalidUserName":
-          case "LoginAlreadyAssociated":
-            setFieldError("email", error.description);
-            break;
+        case "DuplicateUserName":
+        case "InvalidUserName":
+        case "LoginAlreadyAssociated":
+          setFieldError("email", error.description);
+          break;
 
-          case "DuplicateEmail":
-          case "InvalidEmail":
-            setFieldError("email", error.description || t("pages.sign_up.errors." + error.code));
-            break;
+        case "DuplicateEmail":
+        case "InvalidEmail":
+          setFieldError("email", error.description || t("pages.sign_up.errors." + error.code));
+          break;
 
-          default:
-            if (error.description) {
-              commonErrors.value.push(error.description);
-            }
-        }
+        default:
+          if (error.description) {
+            commonErrors.value.push(error.description);
+          }
       }
     }
   }
 });
-
-//todo: remove this workaround when xapi response will be improved to return IdentityErrorType
-function convertToIdentityError(textErrors: string[]): IdentityErrorType[] {
-  const result: IdentityErrorType[] = [];
-  const oneWordRegex = /^\w*$/g;
-  const codeDescriptionRegex = /(\w*): (.*)/gm;
-  textErrors.forEach((errorMessage) => {
-    if (oneWordRegex.test(errorMessage)) {
-      result.push({ code: errorMessage });
-    } else {
-      const matches = codeDescriptionRegex.exec(errorMessage);
-      if (matches && matches.length) {
-        result.push({ code: matches[0], description: matches[2] });
-      } else {
-        result.push({ description: errorMessage });
-      }
-    }
-  });
-
-  return result;
-}
 
 const validateEmailUniqueness = async (value: string, resolve: (value: boolean) => void) => {
   try {
