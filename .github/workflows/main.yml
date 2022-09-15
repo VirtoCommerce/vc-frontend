@@ -14,7 +14,7 @@ on:
       - '**/argoDeploy.json'
   pull_request:
     branches:
-      [master, dev]
+      [master, dev, demo]
     paths-ignore:
       - '.github/**'
       - 'docs/**'
