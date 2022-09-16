@@ -13,6 +13,31 @@
       "id": "text",
       "label": "Content",
       "type": "text"
+    },
+    {
+      "id": "list",
+      "label": "List of objects",
+      "type": "list",
+      "displayField": "product.name",
+      "element": [
+        {
+          "id": "product",
+          "label": "Product",
+          "type": "object",
+          "element": [
+            {
+              "id": "name",
+              "label": "Name",
+              "type": "string"
+            },
+            {
+              "id": "price",
+              "label": "Price",
+              "type": "number"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
