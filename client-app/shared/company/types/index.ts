@@ -1,4 +1,3 @@
-import { Role } from "@/core/types";
 import { ContactType, RoleType } from "@/xapi/types";
 
 export enum ContactStatus {
@@ -20,11 +19,4 @@ export type ExtendedContactType = ContactType & {
     roles: RoleType[];
     displayStatus: ContactDisplayStatusType;
   };
-};
-
-export type AddNewMember = {
-  role: Role;
-  email: string;
-  firstName: string;
-  lastName: string;
 };

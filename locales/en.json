@@ -994,9 +994,7 @@
         },
         "buttons": {
           "invite_members": "Invite members",
-          "add_new_member": "Add new member",
           "invite": "Invite",
-          "new": "New",
           "reset_search": "Reset search",
           "edit_role": "Edit role",
           "block_user": "Block user",

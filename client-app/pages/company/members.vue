@@ -3,20 +3,11 @@
     <!-- Title block -->
     <div class="flex justify-between items-center mx-5 md:mx-0">
       <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.company.members.title'" />
-      <div v-if="!isMobile" class="space-x-4">
+
+      <div class="flex flex-no-wrap space-x-2 md:space-x-4">
         <VcButton class="uppercase p-4" is-outline @click="openInviteMemberDialog">
-          {{ $t("pages.company.members.buttons.invite_members") }}
-        </VcButton>
-        <VcButton class="uppercase p-4" is-outline @click="openAddNewMemberPopup">
-          {{ $t("pages.company.members.buttons.add_new_member") }}
-        </VcButton>
-      </div>
-      <div v-else class="flex flex-no-wrap space-x-2">
-        <VcButton class="uppercase p-4" is-outline @click="openAddNewMemberPopup">
-          {{ $t("pages.company.members.buttons.new") }}
-        </VcButton>
-        <VcButton class="uppercase p-4" is-outline @click="openInviteMemberDialog">
-          {{ $t("pages.company.members.buttons.invite") }}
+          <span class="md:hidden">{{ $t("pages.company.members.buttons.invite") }}</span>
+          <span class="hidden md:inline">{{ $t("pages.company.members.buttons.invite_members") }}</span>
         </VcButton>
       </div>
     </div>
@@ -348,7 +339,6 @@ import { FacetItem, FacetValueItem } from "@/core/types";
 import { getFilterExpressionFromFacets, getNewSorting } from "@/core/utilities";
 import { usePopup } from "@/shared/popup";
 import {
-  AddNewCompanyMemberDialog,
   InviteMemberDialog,
   useOrganizationContacts,
   DeleteCompanyMemberDialog,
@@ -490,19 +480,6 @@ async function deleteContactFromOrganization(contact: ExtendedContactType) {
     organizationsIds: [],
   });
   await loadContacts();
-}
-
-function openAddNewMemberPopup() {
-  openPopup({
-    component: AddNewCompanyMemberDialog,
-    props: {
-      onResult: async (success: boolean) => {
-        if (success) {
-          await loadContacts();
-        }
-      },
-    },
-  });
 }
 
 function openInviteMemberDialog() {
