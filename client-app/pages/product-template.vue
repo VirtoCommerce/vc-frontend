@@ -26,8 +26,6 @@
         />
       </template>
 
-      {{ productWithVariations }}
-
       <!-- Related products section -->
       <div v-show="relatedProducts.length" class="flex flex-col lg:flex-row lg:space-x-8 mt-10 lg:mt-6">
         <div class="flex flex-col -mx-5 md:mx-0 lg:w-8/12 xl:w-9/12">
