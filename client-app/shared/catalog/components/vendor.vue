@@ -10,8 +10,7 @@ import { PropType } from "vue";
 
 defineProps({
   vendor: {
-    type: Object as PropType<Vendor | undefined>,
-    required: true,
+    type: Object as PropType<Vendor>,
   },
 });
 </script>
