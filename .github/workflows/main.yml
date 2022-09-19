@@ -178,7 +178,7 @@ jobs:
       - name: Set deployment environment
         id: deployEnv
         run: |
-          if [ '${{ github.ref }}' == 'refs/heads/demo' || '${{ github.ref }}' == 'refs/heads/master' ]; then
+          if [ '${{ github.ref }}' = 'refs/heads/demo' ] || [ '${{ github.ref }}' = 'refs/heads/master' ]; then
             echo ::set-output name=NAME::prod
           else
             echo ::set-output name=NAME::dev
