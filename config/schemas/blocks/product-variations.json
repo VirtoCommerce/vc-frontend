@@ -1,0 +1,12 @@
+{
+  "name": "Product variations",
+  "icon": "smartphone",
+  "displayField": "name",
+  "settings": [
+    {
+      "id": "title",
+      "label": "Title",
+      "type": "string"
+    }
+  ]
+}

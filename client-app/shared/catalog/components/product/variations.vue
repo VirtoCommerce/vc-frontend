@@ -3,7 +3,7 @@
     v-if="product.variations?.length"
     class="mt-5"
     image-src="/static/images/variations_customize.svg"
-    :title="$t('shared.catalog.product_details.variations_block_title')"
+    :title="model.title || $t('shared.catalog.product_details.variations_block_title')"
   >
     <ProductVariationCard class="mb-5" :variation="product" />
 
@@ -23,7 +23,7 @@ defineProps({
     type: Object as PropType<Product>,
     required: true,
   },
-  settings: {
+  model: {
     type: Object,
     required: true,
   },

@@ -16,6 +16,10 @@
           "type": "product-properties",
           "title": "Properties",
           "hidden": false
+        },
+        {
+          "type": "product-variations",
+          "id": "productvariationsgIL5"
         }
       ]
     },

@@ -86,7 +86,7 @@ jobs:
           versionSuffix:  ${{ env.VERSION_SUFFIX }}
 
       - name: Publish
-        if: ${{ github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
+        if: ${{ github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
         id: publish
         uses: VirtoCommerce/vc-github-actions/publish-theme@master
         with:
