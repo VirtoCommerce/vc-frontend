@@ -152,21 +152,11 @@ const swiperBulletsState = ref<boolean[]>([true, false, false]);
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product));
 
-const discount = computedEager<string | null>(() => {
-  if (!props.product.price?.list || !props.product.price?.sale) {
-    return null;
-  }
-
-  const {
-    list: { amount: listPrice },
-    sale: { amount: salePrice },
-  } = props.product.price;
-
-  const amount = (listPrice - salePrice) / listPrice;
-  const isSaleEnabled = amount >= 0.05;
-
-  return isSaleEnabled ? `-${Math.round(amount * 100)}%` : null;
-});
+const discount = computedEager<string | null>(() =>
+  props.product.price && props.product.price.discountPercent >= 0.05
+    ? `-${Math.round(props.product.price.discountPercent * 100)}%`
+    : null
+);
 
 function slideChanged(swiper: SwiperInstance) {
   const activeIndex: number = swiper.activeIndex;
