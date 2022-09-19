@@ -3,6 +3,7 @@ import { CartAddressType, MemberAddressType, OrderAddressType } from "@/xapi/typ
 import { LocationQueryValue } from "vue-router";
 
 export * from "./currency";
+export * from "./facet";
 export * from "./global-variables";
 export * from "./language";
 export * from "./modify";

@@ -74,7 +74,7 @@
     enter-active-class="will-change-transform"
     leave-active-class="will-change-transform"
   >
-    <MobileMenu v-if="mobileMenuVisible" @close="mobileMenuVisible = false" class="transition-transform duration-150" />
+    <MobileMenu v-if="mobileMenuVisible" @close="mobileMenuVisible = false" class="transition-transform" />
   </transition>
 </template>
 

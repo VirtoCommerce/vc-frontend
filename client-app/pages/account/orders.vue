@@ -6,7 +6,7 @@
     </div>
 
     <!-- Mobile filters sidebar -->
-    <VcPopupSidebar class="px-5 pt-12 w-72" :is-visible="isMobile && filtersVisible" @hide="hideFilters">
+    <VcPopupSidebar class="px-5 pt-6 w-72" :is-visible="isMobile && filtersVisible" @hide="hideFilters">
       <div class="relative">
         <button class="absolute -right-3 appearance-none px-3 py-1" @click="hideFilters">
           <span class="text-2xl fas fa-times text-red-400 hover:text-red-700"></span>
@@ -17,10 +17,10 @@
         {{ $t("common.buttons.filters") }}
       </div>
 
-      <MobileOrdersFilter />
+      <MobileOrdersFilter class="grow" />
 
-      <div class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
-        <div class="flex space-x-4">
+      <div class="sticky z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
+        <div class="flex gap-x-4">
           <VcButton
             class="flex-1 uppercase"
             size="lg"
@@ -33,13 +33,14 @@
           >
             {{ $t("common.buttons.reset") }}
           </VcButton>
+
           <VcButton
             class="flex-1 uppercase"
             size="lg"
             :is-disabled="!isFilterDirty"
             @click="
-              hideFilters();
               applyFilters();
+              hideFilters();
             "
           >
             {{ $t("common.buttons.apply") }}
@@ -48,12 +49,13 @@
       </div>
     </VcPopupSidebar>
 
-    <!-- search & filters -->
-    <div class="flex gap-3 lg:flex-row-reverse">
-      <div class="relative ml-5 md:mx-0">
+    <!-- Search & filters block -->
+    <div class="flex gap-x-2 lg:gap-x-5 lg:flex-row-reverse mx-5 md:mx-0">
+      <div class="relative">
         <VcButton
-          ref="filterButtonElement"
+          ref="filtersButtonElement"
           :is-disabled="ordersLoading"
+          :is-outline="!filtersVisible && !isMobile"
           size="lg"
           class="w-11 lg:w-auto px-3.5 uppercase"
           @click="toggleFilters"
@@ -62,19 +64,21 @@
           <span class="lg:hidden fa fa-filter"></span>
         </VcButton>
 
+        <!-- Desktop filters dropdown -->
         <div
           v-if="filtersVisible && !isMobile"
-          class="absolute right-0 z-10 bg-white shadow-lg pb-6 rounded border border-gray-300 overflow-hidden mt-2"
+          ref="filtersDropdownElement"
+          class="absolute right-0 z-[1] bg-white shadow-lg rounded border mt-2 p-6"
         >
-          <button class="absolute right-0 appearance-none px-4 py-2" @click="hideFilters">
+          <button class="absolute top-0 right-0 appearance-none px-4 py-2" @click="hideFilters">
             <span class="text-lg fa fa-times text-red-400 hover:text-red-700"></span>
           </button>
 
-          <OrdersFilter ref="filtersElement" class="px-8 pt-9" @change="hideFilters" />
+          <OrdersFilter @change="hideFilters" />
         </div>
       </div>
 
-      <div class="flex flex-grow mr-5 md:mx-0">
+      <div class="flex grow">
         <div class="relative grow">
           <VcInput
             v-model="localKeyword"
@@ -100,17 +104,16 @@
     </div>
 
     <!-- Filters chips -->
-    <div v-if="!isMobile && !isFilterEmpty" class="flex flex-wrap gap-x-3 gap-y-2 mb-2">
+    <div v-if="!isFilterEmpty" class="hidden lg:flex flex-wrap gap-x-3 gap-y-2">
       <VcChip
         class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
         size="sm"
         is-outline
         clickable
-        closable
         @click="resetFilters"
         @close="resetFilters"
       >
-        {{ $t("pages.catalog.reset_filters_button") }}
+        {{ $t("common.buttons.reset_filters") }}
       </VcChip>
 
       <template v-for="item in filterChipsItems" :key="item.value">
@@ -129,9 +132,9 @@
     <VcEmptyView
       v-if="!orders.length && !ordersLoading"
       :text="
-        isFilterEmpty && !keyword
-          ? $t('pages.account.orders.no_orders_message')
-          : $t('pages.account.orders.no_results_message')
+        keyword || !isFilterEmpty
+          ? $t('pages.account.orders.no_results_message')
+          : $t('pages.account.orders.no_orders_message')
       "
     >
       <template #icon>
@@ -139,17 +142,18 @@
       </template>
 
       <template #button>
-        <VcButton v-if="isFilterEmpty && !keyword" :to="{ name: 'Catalog' }" class="px-6 uppercase" size="lg">
-          {{ $t("pages.account.orders.buttons.no_orders") }}
-        </VcButton>
-
-        <VcButton v-else class="px-6 uppercase" size="lg" @click="resetFiltersWithKeyword">
+        <VcButton v-if="keyword || !isFilterEmpty" class="px-6 uppercase" size="lg" @click="resetFiltersWithKeyword">
           <i class="fas fa-undo text-inherit -ml-0.5 mr-2.5" />
           {{ $t("pages.account.orders.buttons.reset_search") }}
+        </VcButton>
+
+        <VcButton v-else :to="{ name: 'Catalog' }" class="px-6 uppercase" size="lg">
+          {{ $t("pages.account.orders.buttons.no_orders") }}
         </VcButton>
       </template>
     </VcEmptyView>
 
+    <!-- Content block -->
     <div v-else class="flex flex-col bg-white shadow-sm md:rounded md:border">
       <VcTable
         :loading="ordersLoading"
@@ -195,7 +199,7 @@
         </template>
 
         <template #mobile-skeleton>
-          <div v-for="i of itemsPerPage" :key="i" class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200">
+          <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200">
             <div class="flex flex-col">
               <span class="text-sm text-gray-400" v-t="'pages.account.orders.order_number_label'"></span>
               <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
@@ -252,7 +256,7 @@
         </template>
 
         <template #desktop-skeleton>
-          <tr v-for="i of itemsPerPage" :key="i" class="even:bg-gray-50">
+          <tr v-for="i in itemsPerPage" :key="i" class="even:bg-gray-50">
             <td class="p-5">
               <div class="h-6 bg-gray-200 animate-pulse"></div>
             </td>
@@ -316,8 +320,8 @@ usePageHead({
 const isMobile = breakpoints.smaller("lg");
 const localKeyword = ref("");
 const filtersVisible = ref(false);
-const filtersElement = shallowRef<HTMLElement | null>(null);
-const filterButtonElement = shallowRef<HTMLElement | null>(null);
+const filtersButtonElement = shallowRef<HTMLElement | null>(null);
+const filtersDropdownElement = shallowRef<HTMLElement | null>(null);
 
 const columns = ref<ITableColumn[]>([
   {
@@ -378,7 +382,7 @@ async function resetKeyword() {
   }
 }
 
-async function resetFiltersWithKeyword() {
+function resetFiltersWithKeyword() {
   localKeyword.value = "";
   keyword.value = "";
   page.value = 1;
@@ -401,11 +405,11 @@ function goToOrderDetails(order: CustomerOrderType) {
 }
 
 onClickOutside(
-  filtersElement,
+  filtersDropdownElement,
   () => {
     hideFilters();
   },
-  { ignore: [filterButtonElement] }
+  { ignore: [filtersButtonElement] }
 );
 
 onMounted(() => {

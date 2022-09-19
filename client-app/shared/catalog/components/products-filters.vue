@@ -92,7 +92,8 @@
 </template>
 
 <script setup lang="ts">
-import { ProductsFilters, ProductsFacet } from "@/shared/catalog";
+import { FacetItem } from "@/core/types";
+import { ProductsFilters } from "@/shared/catalog";
 import { eagerComputed, useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import { watch, PropType, ref, shallowReactive } from "vue";
 import _ from "lodash";
@@ -157,7 +158,7 @@ watch(
 
 const isAppliedKeyword = eagerComputed<boolean>(() => localKeyword.value === props.keyword);
 
-const filterHasSelectedValues = (facet: ProductsFacet) => _.some(facet.values, (value) => value.selected);
+const filterHasSelectedValues = (facet: FacetItem) => _.some(facet.values, (value) => value.selected);
 
 function onFilterChanged() {
   emit("change", localFilters);
