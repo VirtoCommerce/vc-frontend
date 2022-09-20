@@ -3,7 +3,7 @@ import { StorefrontPermissions } from "@/core/constants";
 
 declare module "*.vue" {
   import { DefineComponent } from "vue";
-  const component: DefineComponent<{}, {}, any>; // eslint-disable-line
+  const component: DefineComponent<Record<string, unknown>, Record<string, unknown>, unknown>;
   export default component;
 }
 

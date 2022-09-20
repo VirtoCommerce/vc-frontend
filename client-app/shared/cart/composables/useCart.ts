@@ -234,7 +234,7 @@ export default () => {
     loading.value = true;
     console.log(`change cart shipment details`);
     try {
-      await addOrUpdateCartShipment(shipment);
+      await addOrUpdateCartShipment(shipment, cart.value.id);
     } catch (e) {
       Logger.error("useCart.updateShipment", e);
       throw e;
@@ -248,7 +248,7 @@ export default () => {
     loading.value = true;
 
     try {
-      await addOrUpdateCartPayment(payment);
+      await addOrUpdateCartPayment(payment, cart.value.id);
     } catch (e) {
       Logger.error("useCart.updatePayment", e);
       throw e;
