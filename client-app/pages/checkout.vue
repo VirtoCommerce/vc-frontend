@@ -3,7 +3,7 @@
 
   <template v-else>
     <VcEmptyPage
-      v-if="!cart.items?.length && !creatingOrder"
+      v-if="!cart.items?.length && !creatingOrder && !loading"
       :title="$t('shared.checkout.empty_cart.title')"
       :description="$t('shared.checkout.empty_cart.description')"
       image="/static/images/errors/emptyCart.webp"
@@ -91,11 +91,10 @@
                 <ProductCard
                   v-for="item in cartItems"
                   :key="item?.id"
-                  :ref="setProductCardRef"
                   :line-item="item"
                   :read-only="creatingOrder"
-                  @update:quantity="updateItemQuantity"
-                  @remove:item="removeCartItem"
+                  @update:quantity="changeItemQuantity"
+                  @remove:item="removeItem"
                   :validation-error="getItemValidationError(item?.id)"
                 />
 
@@ -507,7 +506,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUpdate, onMounted, ref, shallowRef } from "vue";
+import { computed, onMounted, ref, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
@@ -540,7 +539,7 @@ import {
 import { useUser, useUserAddresses } from "@/shared/account";
 import { AddressType } from "@/core/types";
 import { addGiftItems, rejectGiftItems } from "@/xapi/graphql/cart";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { breakpointsTailwind, computedEager, useBreakpoints } from "@vueuse/core";
 import { useElementVisibility, usePageHead } from "@/core/composables";
 import { useNotifications } from "@/shared/notification";
 
@@ -584,30 +583,32 @@ usePageHead({
 });
 
 const isMobile = breakpoints.smaller("lg");
-const productCardRefs = ref<InstanceType<typeof ProductCard>[]>([]);
 const placedOrder = shallowRef<CustomerOrderType | null>(null);
 const creatingOrder = ref(false);
 const showThankYouStep = ref(false);
 const cartComment = ref("");
 const cartCoupon = ref("");
 const couponValidationError = ref("");
-const cartCouponApplied = ref(false);
 const billingSameAsShipping = ref(true);
 const page = ref(1);
 const purchaseOrderNumber = ref("");
 
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
-const isVisibleStickyMobileHeader = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
-const purchaseOrderNumberApplied = computed(() => !!cart.value.purchaseOrderNumber);
+const isVisibleStickyMobileHeader = computedEager<boolean>(
+  () => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value
+);
+
+const purchaseOrderNumberApplied = computedEager<boolean>(() => !!cart.value.purchaseOrderNumber);
+const cartCouponApplied = computedEager<boolean>(() => !!cart.value.coupons?.[0]?.code);
+
+const shipment = computed<ShipmentType | undefined>(() => cart.value.shipments?.[0]);
+const payment = computed<PaymentType | undefined>(() => cart.value.payments?.[0]);
 
 const cartItems = computed(() =>
   cart.value.items?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
 );
-
-const shipment = computed<ShipmentType | undefined>(() => cart.value.shipments?.[0]);
-const payment = computed<PaymentType | undefined>(() => cart.value.payments?.[0]);
 
 const isValidCheckout = computed(
   () =>
@@ -619,7 +620,6 @@ const isValidCheckout = computed(
 );
 
 const isValidShipment = computed(() => shipment.value?.shipmentMethodCode && shipment.value?.deliveryAddress);
-
 const isValidPayment = computed(
   () => payment.value?.paymentGatewayCode && (billingSameAsShipping.value || payment.value?.billingAddress)
 );
@@ -629,49 +629,29 @@ const breadcrumbs: IBreadcrumbs[] = [
   { title: t("common.links.cart"), route: { name: "Cart" } },
 ];
 
-//TODO: change 'any' for a normal type
-const setProductCardRef = (el: any) => {
-  if (el) {
-    productCardRefs.value.push(el);
-  }
-};
-
-const updateItemQuantity = async (id: string, quantity: number) => {
-  await changeItemQuantity(id, quantity);
-};
-
-const removeCartItem = async (id: string) => {
-  await removeItem(id);
-};
-
-const useCoupon = async () => {
+async function useCoupon() {
   const validationResult: boolean = await validateCartCoupon(cartCoupon.value);
 
   if (validationResult) {
-    await addCartCoupon(cartCoupon.value).then(() => {
-      couponValidationError.value = "";
-      cartCouponApplied.value = true;
-    });
+    await addCartCoupon(cartCoupon.value);
+    couponValidationError.value = "";
   } else {
     couponValidationError.value = t("pages.checkout.invalid_coupon_message");
   }
-};
+}
 
-const removeCoupon = async () => {
-  await removeCartCoupon(cartCoupon.value).then(() => {
-    cartCoupon.value = "";
-    cartCouponApplied.value = false;
-  });
-};
+async function removeCoupon() {
+  await removeCartCoupon(cartCoupon.value);
+}
 
-const setPurchaseOrderNumber = async () => {
+async function setPurchaseOrderNumber() {
   await updatePurchaseOrderNumber(purchaseOrderNumber.value);
-};
+}
 
-const removePurchaseOrderNumber = async () => {
+async function removePurchaseOrderNumber() {
   purchaseOrderNumber.value = "";
   await updatePurchaseOrderNumber("");
-};
+}
 
 async function prepareOrderData() {
   // Update payment with required properties
@@ -730,24 +710,6 @@ async function placeOrder() {
 
   creatingOrder.value = false;
 }
-
-onBeforeUpdate(() => {
-  productCardRefs.value = [];
-});
-
-onMounted(() => {
-  loadAddresses();
-
-  loadMyCart().then(() => {
-    if (cart.value.coupons && cart.value.coupons.length > 0) {
-      cartCoupon.value = cart.value.coupons[0]?.code || "";
-      cartCouponApplied.value = true;
-    }
-    cartComment.value = cart.value.comment || "";
-
-    purchaseOrderNumber.value = cart.value.purchaseOrderNumber || "";
-  });
-});
 
 function getItemValidationError(lineItemId: string): ValidationErrorType | undefined {
   return _.find(cart.value.validationErrors, (error) => error.objectId === lineItemId);
@@ -900,7 +862,7 @@ function checkGift(gift: GiftItemType): boolean {
   return !!cart.value.gifts?.find((giftData) => giftData.lineItemId === gift.lineItemId);
 }
 
-async function toggleGift(state: boolean | any[], gift: GiftItemType) {
+async function toggleGift(state: boolean, gift: GiftItemType) {
   if (state) {
     await addGiftItems([gift.id]);
   } else {
@@ -910,4 +872,14 @@ async function toggleGift(state: boolean | any[], gift: GiftItemType) {
   }
   await loadMyCart();
 }
+
+onMounted(async () => {
+  await loadMyCart();
+
+  purchaseOrderNumber.value = cart.value.purchaseOrderNumber ?? "";
+  cartCoupon.value = cart.value.coupons?.[0]?.code ?? "";
+  cartComment.value = cart.value.comment ?? "";
+});
+
+loadAddresses();
 </script>

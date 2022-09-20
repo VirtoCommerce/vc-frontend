@@ -9,6 +9,7 @@
         :placeholder="placeholder"
         :disabled="isApplied || isDisabled"
         :maxlength="maxLength"
+        @keyup.enter="$emit('click:apply')"
       />
       <!-- todo: use VcButton -->
       <button
