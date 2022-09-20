@@ -754,9 +754,10 @@ function showShipmentMethodDialog(): void {
       availableMethods: cart.value.availableShippingMethods,
       async onResult(method: ShippingMethodType) {
         await updateShipment({
+          id: shipment.value?.id,
+          price: method.price?.amount,
           shipmentMethodCode: method.code,
           shipmentMethodOption: method.optionName,
-          id: shipment.value?.id,
         });
       },
     },

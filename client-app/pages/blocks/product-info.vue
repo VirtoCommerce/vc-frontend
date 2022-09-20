@@ -65,7 +65,7 @@ defineProps({
     required: true,
   },
   productWithVariations: {
-    type: Object,
+    type: Boolean,
   },
   variationsCartTotalAmount: {
     type: Number,
