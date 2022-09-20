@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      [master, dev]
+      [master, dev, demo]
     paths-ignore:
       - '.github/**'
       - 'docs/**'
@@ -14,7 +14,7 @@ on:
       - '**/argoDeploy.json'
   pull_request:
     branches:
-      [master, dev]
+      [master, dev, demo]
     paths-ignore:
       - '.github/**'
       - 'docs/**'
@@ -79,14 +79,13 @@ jobs:
         uses: VirtoCommerce/vc-github-actions/changelog-generator@master
 
       - name: Build
-        if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request' }}
         id: build
         uses: VirtoCommerce/vc-github-actions/build-vue-theme@master
         with:
           versionSuffix:  ${{ env.VERSION_SUFFIX }}
 
       - name: Publish
-        if: ${{ github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
+        if: ${{ github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
         id: publish
         uses: VirtoCommerce/vc-github-actions/publish-theme@master
         with:
@@ -169,7 +168,7 @@ jobs:
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
 
   deploy:
-    if: ${{ (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master') && github.event_name == 'push' }}
+    if: ${{ (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/master') && github.event_name == 'push' }}
     needs: ci
     runs-on: ubuntu-latest
     env:
@@ -179,7 +178,7 @@ jobs:
       - name: Set deployment environment
         id: deployEnv
         run: |
-          if [ '${{ github.ref }}' = 'refs/heads/master' ]; then
+          if [ '${{ github.ref }}' = 'refs/heads/demo' ] || [ '${{ github.ref }}' = 'refs/heads/master' ]; then
             echo ::set-output name=NAME::prod
           else
             echo ::set-output name=NAME::dev

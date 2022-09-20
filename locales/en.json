@@ -21,6 +21,7 @@
       "filters": "Filters",
       "back": "Back",
       "reset": "Reset",
+      "reset_filters": "Reset filters",
       "add_to_cart": "Add to cart",
       "apply": "Apply",
       "send": "Send",
@@ -93,6 +94,11 @@
     },
     "titles": {
       "all_actions": "All actions"
+    },
+    "roles": {
+      "org-maintainer": "Organization maintainer",
+      "org-employee": "Organization employee",
+      "purchasing-agent": "Purchasing agent"
     }
   },
   "shared": {
@@ -982,11 +988,13 @@
         "no_members_message": "There are no members yet",
         "no_results_message": "No results found",
         "invite_sent": "Invite Sent",
+        "labels": {
+          "role": "Role",
+          "status": "Status"
+        },
         "buttons": {
           "invite_members": "Invite members",
-          "add_new_member": "Add new member",
           "invite": "Invite",
-          "new": "New",
           "reset_search": "Reset search",
           "edit_role": "Edit role",
           "block_user": "Block user",
@@ -1035,7 +1043,6 @@
       "filters_button": "@:common.buttons.filters",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
-      "reset_filters_button": "Reset filters",
       "no_products_message": "There are no products in this category",
       "no_products_filtered_message": "No results found",
       "no_products_button": "Reset search",

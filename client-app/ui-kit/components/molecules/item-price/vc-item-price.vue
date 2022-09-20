@@ -2,10 +2,10 @@
   <div class="flex flex-col">
     <div class="flex space-x-1">
       <VcPriceDisplay
-        v-if="value?.list?.amount > value?.sale?.amount"
+        v-if="value?.list?.amount > value?.actual?.amount"
         class="font-extrabold"
         :class="priceColorClass"
-        :value="value?.sale"
+        :value="value?.actual"
       />
       <VcPriceDisplay v-else class="text-green-700 font-bold" :value="value?.list" />
       <span class="hidden sm:inline md:hidden xl:inline" v-t="'common.suffixes.per_item'"></span>
@@ -13,7 +13,7 @@
     <div class="leading-4">
       <VcPriceDisplay
         class="text-gray-400 text-xs font-semibold line-through"
-        v-if="value?.list?.amount > value?.sale?.amount"
+        v-if="value?.list?.amount > value?.actual?.amount"
         :value="value?.list"
       />
     </div>
@@ -26,7 +26,7 @@ import { MoneyType, PriceType } from "@/xapi/types";
 
 defineProps({
   value: {
-    type: Object as PropType<PriceType | { list: MoneyType; sale: MoneyType }>,
+    type: Object as PropType<PriceType | { list: MoneyType; actual: MoneyType }>,
     default: undefined,
   },
   priceColorClass: {

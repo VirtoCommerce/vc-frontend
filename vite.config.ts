@@ -1,10 +1,10 @@
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig, loadEnv, UserConfig } from "vite";
 import path from "path";
 import vue from "@vitejs/plugin-vue";
-import graphqlPlugin from "@rollup/plugin-graphql";
+import graphql from "@rollup/plugin-graphql";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode }): UserConfig => {
   // https://stackoverflow.com/a/66389044
   process.env = {
     ...process.env,
@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     envPrefix: "APP_",
-    plugins: [vue(), graphqlPlugin()],
+    plugins: [vue(), graphql()],
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./client-app"),
@@ -41,6 +41,7 @@ export default defineConfig(({ mode }) => {
     },
     publicDir: "./client-app/public",
     server: {
+      port: 3000,
       proxy: {
         "/storefrontapi": `${process.env.APP_BACKEND_URL}`,
         "/xapi": `${process.env.APP_BACKEND_URL}`,

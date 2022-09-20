@@ -1,3 +1,5 @@
+import { FacetItem } from "@/core/types";
+
 export type ProductsSearchParams = {
   page?: number;
   itemsPerPage?: number;
@@ -10,22 +12,8 @@ export type ProductsSearchParams = {
   productIds?: string[];
 };
 
-export type ProductsFacetValue = {
-  count: number;
-  selected: boolean;
-  label: string;
-  value: string;
-};
-
-export type ProductsFacet = {
-  label: string;
-  paramName: string;
-  type: "term" | "range";
-  values: ProductsFacetValue[];
-};
-
 export type ProductsFilters = {
-  facets: ProductsFacet[];
+  facets: FacetItem[];
   inStock: boolean;
   branches: string[];
 };

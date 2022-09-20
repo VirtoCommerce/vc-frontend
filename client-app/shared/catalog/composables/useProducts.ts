@@ -1,10 +1,10 @@
 import { computed, inject, readonly, ref, shallowRef } from "vue";
 import { configInjectionKey } from "@/core/constants";
+import { FacetItem } from "@/core/types";
 import { searchProducts } from "@/xapi/graphql/catalog";
 import { Product } from "@/xapi/types";
-import { Logger } from "@/core/utilities";
-import { ProductsFacet, ProductsSearchParams } from "../types";
-import { rangeFacetToProductsFilter, termFacetToProductsFilter } from "@/shared/catalog";
+import { Logger, rangeFacetToCommonFacet, termFacetToCommonFacet } from "@/core/utilities";
+import { ProductsSearchParams } from "../types";
 
 const DEFAULT_ITEMS_PER_PAGE = 16;
 
@@ -23,7 +23,7 @@ export default (
   const loadingMore = ref(false);
   const facetsLoading = ref(false);
   const products = shallowRef<Product[]>([]);
-  const facets = shallowRef<ProductsFacet[]>([]);
+  const facets = shallowRef<FacetItem[]>([]);
   const total = ref(0);
   const pages = ref(1);
 
@@ -49,9 +49,9 @@ export default (
         term_facets.sort((a, b) => a.label.localeCompare(b.label));
         range_facets.sort((a, b) => a.label.localeCompare(b.label));
 
-        facets.value = Array<ProductsFacet>().concat(
-          term_facets.map(termFacetToProductsFilter),
-          range_facets.map(rangeFacetToProductsFilter)
+        facets.value = Array<FacetItem>().concat(
+          term_facets.map(termFacetToCommonFacet),
+          range_facets.map(rangeFacetToCommonFacet)
         );
       }
     } catch (e) {
@@ -79,7 +79,7 @@ export default (
     }
   }
 
-  async function getFacets(searchParams: Partial<ProductsSearchParams>): Promise<ProductsFacet[]> {
+  async function getFacets(searchParams: Partial<ProductsSearchParams>): Promise<FacetItem[]> {
     facetsLoading.value = true;
 
     try {
@@ -89,9 +89,9 @@ export default (
       term_facets.sort((a, b) => a.label.localeCompare(b.label));
       range_facets.sort((a, b) => a.label.localeCompare(b.label));
 
-      return Array<ProductsFacet>().concat(
-        term_facets.map(termFacetToProductsFilter),
-        range_facets.map(rangeFacetToProductsFilter)
+      return Array<FacetItem>().concat(
+        term_facets.map(termFacetToCommonFacet),
+        range_facets.map(rangeFacetToCommonFacet)
       );
     } catch (e) {
       Logger.error(`useProducts.${getFacets.name}`, e);

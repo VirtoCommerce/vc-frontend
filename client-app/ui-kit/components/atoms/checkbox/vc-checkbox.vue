@@ -60,6 +60,10 @@ const checked = computed<boolean>(() =>
 );
 
 function change() {
+  if (props.disabled) {
+    return;
+  }
+
   if (typeof props.modelValue === "boolean") {
     const newValue = !props.modelValue;
     emit("update:modelValue", newValue);
