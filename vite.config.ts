@@ -2,6 +2,7 @@ import { defineConfig, loadEnv, UserConfig } from "vite";
 import path from "path";
 import vue from "@vitejs/plugin-vue";
 import graphql from "@rollup/plugin-graphql";
+import checker from "vite-plugin-checker";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }): UserConfig => {
@@ -13,7 +14,13 @@ export default defineConfig(({ mode }): UserConfig => {
 
   return {
     envPrefix: "APP_",
-    plugins: [vue(), graphql()],
+    plugins: [
+      vue(),
+      graphql(),
+      checker({
+        vueTsc: true,
+      }),
+    ],
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./client-app"),
