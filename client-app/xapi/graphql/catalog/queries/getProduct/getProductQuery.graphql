@@ -97,6 +97,7 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
         amount
         formattedAmount
       }
+      discountPercent
     }
     seoInfo {
       pageTitle

@@ -138,7 +138,7 @@ import { Swiper as SwiperInstance } from "swiper/types";
 import { AddToCompare } from "@/shared/compare";
 import { Product } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";
-import { getProductRoute } from "@/shared/catalog";
+import { getProductRoute, getProductDiscountLabel } from "@/shared/catalog";
 
 const props = defineProps({
   product: {
@@ -152,11 +152,7 @@ const swiperBulletsState = ref<boolean[]>([true, false, false]);
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product));
 
-const discount = computedEager<string | null>(() =>
-  props.product.price && props.product.price.discountPercent >= 0.05
-    ? `-${Math.round(props.product.price.discountPercent * 100)}%`
-    : null
-);
+const discount = computedEager<string | null>(() => getProductDiscountLabel(props.product.price!));
 
 function slideChanged(swiper: SwiperInstance) {
   const activeIndex: number = swiper.activeIndex;

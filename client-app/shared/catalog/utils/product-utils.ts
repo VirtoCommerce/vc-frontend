@@ -1,4 +1,4 @@
-import { Product, Property, VariationType } from "@/xapi/types";
+import { PriceType, Product, Property, VariationType } from "@/xapi/types";
 import { useI18n } from "vue-i18n";
 import { RouteLocationRaw } from "vue-router";
 
@@ -25,4 +25,8 @@ export function prepareProperties(properties: Property[], propName: string) {
     name: properties[0].label || propName,
     values: propValue,
   };
+}
+
+export function getProductDiscountLabel(price: PriceType): string | null {
+  return price.discountPercent >= 0.05 ? `-${Math.round(price.discountPercent * 100)}%` : null;
 }
