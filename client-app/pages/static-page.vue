@@ -22,7 +22,7 @@ const template = useStaticPage();
 
 const breadcrumbs: IBreadcrumbs[] = [
   { route: "/", title: t("pages.compare.links.home") },
-  { title: t("shared.layout.footer.demo_landing_link") },
+  { title: computed(() => unref(template)?.settings?.name || unref(template)?.settings?.header || "") },
 ];
 
 usePageHead({

@@ -2,6 +2,8 @@ import { App } from "vue";
 import { Router } from "vue-router";
 import { useStaticPage, useTemplate } from "@/core/composables";
 
+(window as any)["__postfix__"] = "&preview_mode=true";
+
 export default {
   install: (app: App, options: { router: Router }) => {
     const bodyEl = document.getElementsByTagName("body").item(0);
