@@ -80,13 +80,7 @@
           lazy
         />
 
-        <!-- Discount badge -->
-        <div
-          v-if="discount"
-          class="absolute z-10 top-0 right-0 px-2 pt-1 pb-1.5 rounded-bl bg-[color:var(--color-sale-badge-bg)] text-white text-xs font-extrabold"
-        >
-          {{ discount }}
-        </div>
+        <DiscountBadge :price="product.price!" />
       </div>
     </div>
 
@@ -131,14 +125,13 @@
 
 <script setup lang="ts">
 import { computed, PropType, ref } from "vue";
-import { computedEager } from "@vueuse/core";
 import { Pagination, Navigation, Lazy } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/vue"; // eslint-disable-line import/no-unresolved
 import { Swiper as SwiperInstance } from "swiper/types";
 import { AddToCompare } from "@/shared/compare";
 import { Product } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";
-import { getProductRoute } from "@/shared/catalog";
+import { getProductRoute, DiscountBadge } from "@/shared/catalog";
 
 const props = defineProps({
   product: {
@@ -151,12 +144,6 @@ const swiperInstance = ref<SwiperInstance>();
 const swiperBulletsState = ref<boolean[]>([true, false, false]);
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product));
-
-const discount = computedEager<string | null>(() =>
-  props.product.price && props.product.price.discountPercent >= 0.05
-    ? `-${Math.round(props.product.price.discountPercent * 100)}%`
-    : null
-);
 
 function slideChanged(swiper: SwiperInstance) {
   const activeIndex: number = swiper.activeIndex;
