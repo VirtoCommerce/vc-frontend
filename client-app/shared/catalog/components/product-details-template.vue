@@ -3,12 +3,7 @@
     <div class="relative lg:w-1/3 mb-4 lg:mb-0">
       <VcImageGallery :src="product.imgSrc ?? ''" :images="product.images ?? []" :is-mobile="isMobile" />
 
-      <div
-        v-if="discount"
-        class="absolute z-10 top-0 right-0 px-2 pt-1 pb-1.5 rounded-bl bg-[color:var(--color-sale-badge-bg)] text-white text-xs font-extrabold"
-      >
-        {{ discount }}
-      </div>
+      <DiscountBadge :price="product.price!" />
 
       <AddToCompare v-if="$cfg.product_compare_enabled" :product="product" class="mt-8 inline-flex" />
     </div>
@@ -23,14 +18,14 @@
 import { Product } from "@/xapi/types";
 import { PageContent } from "@/core/types";
 import { PropType } from "vue";
-import { useBreakpoints, breakpointsTailwind, computedEager } from "@vueuse/core";
+import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import { AddToCompare } from "@/shared/compare";
-import { getProductDiscountLabel } from "../utils";
+import { DiscountBadge } from "@/shared/catalog";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 
-const props = defineProps({
+defineProps({
   product: {
     type: Object as PropType<Product>,
     required: true,
@@ -40,6 +35,4 @@ const props = defineProps({
     required: true,
   },
 });
-
-const discount = computedEager<string | null>(() => getProductDiscountLabel(props.product.price!));
 </script>

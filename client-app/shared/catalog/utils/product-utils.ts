@@ -26,7 +26,3 @@ export function prepareProperties(properties: Property[], propName: string) {
     values: propValue,
   };
 }
-
-export function getProductDiscountLabel(price: PriceType): string | null {
-  return price.discountPercent >= 0.05 ? `-${Math.round(price.discountPercent * 100)}%` : null;
-}
