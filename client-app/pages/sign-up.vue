@@ -101,7 +101,7 @@
 
           <VcButton
             is-submit
-            :is-disabled="hasFormErrors"
+            :is-disabled="!meta.valid || meta.pending"
             size="lg"
             class="uppercase mt-6 lg:mt-3 w-full lg:w-48"
             :is-waiting="loading"
@@ -119,29 +119,28 @@
 </template>
 
 <script setup lang="ts">
-import { useUser, RegistrationSuccessDialog, RegistrationKind } from "@/shared/account";
+import { RegistrationKind, RegistrationSuccessDialog, useUser } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
-import { useForm, useField } from "vee-validate";
+import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import { ref } from "vue";
 import { usePopup } from "@/shared/popup";
 import { AccountCreationResultType } from "@/xapi/types";
-import { computed } from "@vue/reactivity";
-import { isObjectEmpty, trimString } from "@/core/utilities";
 import { useI18n } from "vue-i18n";
-import { checkEmailUniqueness, checkUsernameUniqueness } from "@/xapi/graphql/account";
+import { checkEmailUniqueness } from "@/xapi/graphql/account";
 import _ from "lodash";
-import { usePageHead } from "@/core/composables";
+import { useIdentityErrorTranslator, usePageHead } from "@/core/composables";
+
+const ASYNC_VALIDATION_TIMEOUT_IN_MS = 500;
 
 const { t } = useI18n();
-const { registerUser, registerOrganization, loading } = useUser();
 const { openPopup } = usePopup();
+const { registerUser, registerOrganization, loading } = useUser();
+const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
 usePageHead({
   title: t("pages.sign_up.meta.title"),
 });
-
-const ASYNC_VALIDATION_TIMEOUT_IN_MS = 3000;
 
 const schema = yup.object({
   registrationKind: yup.string().required(),
@@ -157,8 +156,8 @@ const schema = yup.object({
     .max(64)
     .test(
       "is-unique-email",
-      t("pages.sign_up.errors.email_not_unique"),
-      (value) => new Promise((resolve) => emailValidationDebounced(value!, resolve))
+      t("common.messages.email_not_unique"),
+      (value) => new Promise((resolve) => (value ? emailValidationDebounced(value, resolve) : resolve(true)))
     ),
   firstName: yup.string().label("First Name").required().max(64),
   lastName: yup.string().label("Last Name").required().max(64),
@@ -167,10 +166,10 @@ const schema = yup.object({
     .string()
     .label("Confirm password")
     .required()
-    .oneOf([yup.ref("password"), null], t("common.messages.passwords_must_match")),
+    .oneOf([yup.ref("password"), null], t("identity_error.PasswordMismatch")),
 });
 
-const { errors, handleSubmit, setFieldError } = useForm({
+const { errors, meta, handleSubmit, setFieldError } = useForm({
   validationSchema: schema,
   initialValues: {
     registrationKind: RegistrationKind.personal,
@@ -192,7 +191,6 @@ const { value: organizationName } = useField<string>("organizationName");
 const { value: password } = useField<string>("password");
 const { value: confirmPassword } = useField<string>("confirmPassword");
 
-const hasFormErrors = computed(() => !isObjectEmpty(errors.value));
 const commonErrors = ref<string[]>([]);
 
 const onSubmit = handleSubmit(async (data) => {
@@ -201,20 +199,20 @@ const onSubmit = handleSubmit(async (data) => {
   let result: AccountCreationResultType;
   if (registrationKind.value === RegistrationKind.personal) {
     result = await registerUser({
-      email: trimString(data.email),
-      firstName: trimString(data.firstName),
-      lastName: trimString(data.lastName),
-      userName: trimString(data.email),
-      password: trimString(data.password),
+      email: data.email!,
+      firstName: data.firstName!,
+      lastName: data.lastName!,
+      userName: data.email!,
+      password: data.password!,
     });
   } else {
     result = await registerOrganization({
-      organizationName: trimString(data.organizationName),
-      email: trimString(data.email),
-      firstName: trimString(data.firstName),
-      lastName: trimString(data.lastName),
-      userName: trimString(data.email),
-      password: trimString(data.password),
+      organizationName: data.organizationName,
+      email: data.email!,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      userName: data.email!,
+      password: data.password!,
     });
   }
 
@@ -223,11 +221,10 @@ const onSubmit = handleSubmit(async (data) => {
       component: RegistrationSuccessDialog,
     });
   } else if (result.errors?.length) {
-    for (const error of result.errors) {
-      // TODO: Localize all messages on a front side
-      // improve XAPI: pass error's parameters with error
+    result.errors.forEach((error) => {
+      const errorDescription = getIdentityErrorTranslation(error);
+
       switch (error.code) {
-        case "password-too-weak":
         case "PasswordTooShort":
         case "PasswordRequiresLower":
         case "PasswordRequiresUpper":
@@ -237,46 +234,26 @@ const onSubmit = handleSubmit(async (data) => {
         case "RecentPasswordUsed":
         case "InvalidPasswordHasherCompatibilityMode":
         case "InvalidPasswordHasherIterationCount":
-          // t() is the workaround for the empty description.
-          setFieldError("password", error.description || t("pages.sign_up.errors." + error.code));
-          break;
-
-        case "repeat-password":
-        case "PasswordMismatch":
-          setFieldError("confirmPassword", error.description);
-          break;
-
-        case "DuplicateUserName":
-        case "InvalidUserName":
-        case "LoginAlreadyAssociated":
-          setFieldError("email", error.description);
+          setFieldError("password", errorDescription);
           break;
 
         case "DuplicateEmail":
         case "InvalidEmail":
-          setFieldError("email", error.description || t("pages.sign_up.errors." + error.code));
+          setFieldError("email", errorDescription);
           break;
 
         default:
-          if (error.description) {
-            commonErrors.value.push(error.description);
+          if (errorDescription) {
+            commonErrors.value.push(errorDescription);
           }
       }
-    }
+    });
   }
 });
 
 const validateEmailUniqueness = async (value: string, resolve: (value: boolean) => void) => {
-  try {
-    const responses = await Promise.all([
-      checkEmailUniqueness({ email: value }),
-      checkUsernameUniqueness({ username: value }),
-    ]);
-
-    resolve(responses[0] && responses[1]);
-  } catch (error) {
-    resolve(false);
-  }
+  const unique = await checkEmailUniqueness({ email: value });
+  resolve(unique);
 };
 
 const emailValidationDebounced = _.debounce(validateEmailUniqueness, ASYNC_VALIDATION_TIMEOUT_IN_MS);

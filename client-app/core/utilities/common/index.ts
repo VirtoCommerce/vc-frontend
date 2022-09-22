@@ -1,6 +1,6 @@
+import _ from "lodash";
 import { ISortInfo } from "@/core/types";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
-import _ from "lodash";
 
 export function getBaseUrl(supportedLocales: string[]): string {
   const localeInPath = location.pathname.split("/")[1];
@@ -54,27 +54,10 @@ export function getNewSorting(
   return newSortObj;
 }
 
-// check if object is empty
-export function isObjectEmpty(object: Record<string, unknown>): boolean {
-  for (const _property in object) {
-    return false;
-  }
-
-  return true;
-}
-
-export function trimString(str: string | null | undefined): string {
-  return str?.trim() || "";
-}
-
 // convert Date value to string with format 'yyyy-MM-dd'
 export function dateToIsoDateString(date: Date | undefined) {
   const lastDateSymbolIndex = 10;
   return date?.toISOString().substring(0, lastDateSymbolIndex);
-}
-
-export function nameOf<T>(key: keyof T, _instance?: T): keyof T {
-  return key;
 }
 
 export function stringFormat(template: string, ...args: string[]): string {

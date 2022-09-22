@@ -97,7 +97,7 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
-import { usePageHead, useRouteQueryParam } from "@/core/composables";
+import { useIdentityErrorTranslator, usePageHead, useRouteQueryParam } from "@/core/composables";
 import { RegistrationSuccessDialog, useUser } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
@@ -112,6 +112,7 @@ usePageHead({
 
 const { openPopup } = usePopup();
 const { loading, registerByInvite } = useUser();
+const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
 const userId = useRouteQueryParam<string>("userId");
 const email = useRouteQueryParam<string>("email");
@@ -125,7 +126,7 @@ const schema = yup.object({
   confirmPassword: yup
     .string()
     .required()
-    .oneOf([yup.ref("password"), null], t("common.messages.passwords_must_match")),
+    .oneOf([yup.ref("password"), null], t("identity_error.PasswordMismatch")),
 });
 
 const { errors, meta, handleSubmit, setFieldError } = useForm({
@@ -162,9 +163,9 @@ const onSubmit = handleSubmit(async (data) => {
     });
   } else if (result.errors?.length) {
     result.errors.forEach((error) => {
-      // TODO: Localize all messages and refactor (ST-1589)
+      const errorDescription = getIdentityErrorTranslation(error);
+
       switch (error.code) {
-        case "password-too-weak":
         case "PasswordTooShort":
         case "PasswordRequiresLower":
         case "PasswordRequiresUpper":
@@ -174,18 +175,12 @@ const onSubmit = handleSubmit(async (data) => {
         case "RecentPasswordUsed":
         case "InvalidPasswordHasherCompatibilityMode":
         case "InvalidPasswordHasherIterationCount":
-          // t() is the workaround for the empty description.
-          setFieldError("password", error.description || t("pages.sign_up.errors." + error.code));
-          break;
-
-        case "repeat-password":
-        case "PasswordMismatch":
-          setFieldError("confirmPassword", error.description);
+          setFieldError("password", errorDescription);
           break;
 
         default:
-          if (error.description) {
-            commonErrors.value.push(error.description);
+          if (errorDescription) {
+            commonErrors.value.push(errorDescription);
           }
       }
     });
