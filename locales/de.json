@@ -63,12 +63,12 @@
       "product_out_of_stock": "Ausverkauft",
       "required_field": "Dieses Feld wird benötigt",
       "email_is_not_correct": "Geben Sie bitte die richtige E-Mail-Adresse ein, ex. johndoe{'@'}gmail.com",
+      "email_not_unique": "Diese E-Mail ist bereits bei uns registriert",
       "max_length": "Dieses Feld darf höchstens {max} Zeichen lang sein",
       "creating_order_error": "Fehler beim Anlegen eines Auftrags",
       "item_can_t_be_purchased": "Dieser Artikel kann nicht gekauft werden",
       "item_is_out_of_stock": "Dieser Artikel ist nicht mehr vorrätig",
-      "invalid_value": "Ungültiger Wert",
-      "passwords_must_match": "Passwörter müssen übereinstimmen"
+      "invalid_value": "Ungültiger Wert"
     },
     "placeholders": {
       "not_selected": "Nicht ausgewählt",
@@ -244,16 +244,14 @@
         "password_placeholder": "Geben Sie Ihr Passwort ein",
         "confirm_password_label": "@:common.labels.confirm_password",
         "confirm_password_placeholder": "Bestätigen Sie Ihr Passwort",
-        "reset_password_button": "Passwort zurücksetzen",
-        "password_must_match_message": "Passwörter müssen übereinstimmen"
+        "reset_password_button": "Passwort zurücksetzen"
       },
       "set_password_form": {
         "password_label": "@:common.labels.password",
         "password_placeholder": "Geben Sie Ihr Passwort ein",
         "confirm_password_label": "@:common.labels.confirm_password",
         "confirm_password_placeholder": "Bestätigen Sie Ihr Passwort",
-        "reset_password_button": "@:common.buttons.save",
-        "password_must_match_message": "Passwörter müssen übereinstimmen"
+        "reset_password_button": "@:common.buttons.save"
       },
       "forgot_password_form": {
         "email_label": "@:common.labels.email",
@@ -722,12 +720,7 @@
       "password_placeholder": "@:common.placeholders.password",
       "confirm_password_label": "@:common.labels.confirm_password",
       "confirm_password_placeholder": "Confirm your password",
-      "register_button": "Register",
-      "errors": {
-        "PasswordTooShort": "Passwords must be at least 8 characters.",
-        "InvalidEmail": "Geben Sie bitte die richtige E-Mail-Adresse ein, ex. johndoe{'@'}gmail.com",
-        "email_not_unique": "This email is already registered with us"
-      }
+      "register_button": "Register"
     },
     "confirm_invitation": {
       "meta": {
@@ -1212,5 +1205,23 @@
       "phone": "Phone: ",
       "other_branches": "Other branches"
     }
+  },
+  "identity_error": {
+    "DuplicateEmail": "Email {0} is already taken",
+    "DuplicateUserName": "User name {0} is already taken",
+    "InvalidEmail": "Please enter valid email address, e.g. johndoe@gmail.com",
+    "InvalidPasswordHasherCompatibilityMode": "The provided PasswordHasherCompatibilityMode is invalid",
+    "InvalidPasswordHasherIterationCount": "The iteration count must be a positive integer",
+    "InvalidToken": "Invalid token",
+    "InvalidUserName": "User name is invalid, can only contain letters or digits",
+    "LoginAlreadyAssociated": "A user with this login already exists",
+    "PasswordMismatch": "Passwords must match",
+    "PasswordTooShort": "Your password must be at least {0} characters long",
+    "PasswordRequiresDigit": "Passwords must have at least one digit ('0'-'9')",
+    "PasswordRequiresLower": "Passwords must have at least one lowercase ('a'-'z')",
+    "PasswordRequiresNonAlphanumeric": "Passwords must have at least one non alphanumeric character",
+    "PasswordRequiresUpper": "Passwords must have at least one uppercase ('A'-'Z')",
+    "PasswordRequiresUniqueChars": "Passwords must use different characters",
+    "RecentPasswordUsed": "You have used this password in the past. Choose another one."
   }
 }

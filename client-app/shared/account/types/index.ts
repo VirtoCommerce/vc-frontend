@@ -58,7 +58,7 @@ export type OrdersFilterData = {
 };
 
 export type OrdersFilterChipsItem = {
-  fieldName: string;
+  fieldName: keyof OrdersFilterData;
   value: string | Date;
   label: string;
 };
