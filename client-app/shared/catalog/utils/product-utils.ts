@@ -1,4 +1,4 @@
-import { PriceType, Product, Property, VariationType } from "@/xapi/types";
+import { Product, Property, VariationType } from "@/xapi/types";
 import { useI18n } from "vue-i18n";
 import { RouteLocationRaw } from "vue-router";
 
