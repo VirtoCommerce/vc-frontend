@@ -34,7 +34,7 @@
         is-submit
         class="mt-6 w-full lg:w-52 uppercase"
         :is-waiting="loading"
-        :is-disabled="hasFormErrors"
+        :is-disabled="!meta.valid || meta.pending"
       >
         {{ $t(`shared.account.${localizationFormTerm}.reset_password_button`) }}
       </VcButton>
@@ -48,11 +48,6 @@ import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import { useUser } from "@/shared/account";
 import { useI18n } from "vue-i18n";
-import { isObjectEmpty } from "@/core/utilities";
-
-const { resetPassword, loading } = useUser();
-
-const { t } = useI18n();
 
 const emit = defineEmits(["succeeded"]);
 
@@ -71,7 +66,8 @@ const props = defineProps({
   },
 });
 
-const localizationFormTerm = computed(() => (props.kind === "set" ? "set_password_form" : "reset_password_form"));
+const { t } = useI18n();
+const { resetPassword, loading } = useUser();
 
 const schema = yup.object({
   password: yup.string().label(t("shared.account.reset_password_form.password_label")).required(),
@@ -79,10 +75,10 @@ const schema = yup.object({
     .string()
     .label(t("shared.account.reset_password_form.confirm_password_label"))
     .required()
-    .oneOf([yup.ref("password"), null], t("shared.account.reset_password_form.password_must_match_message")),
+    .oneOf([yup.ref("password"), null], t("identity_error.PasswordMismatch")),
 });
 
-const { errors, handleSubmit } = useForm({
+const { errors, meta, handleSubmit } = useForm({
   validationSchema: schema,
   initialValues: {
     password: "",
@@ -94,9 +90,9 @@ const { errors, handleSubmit } = useForm({
 const { value: password } = useField<string>("password");
 const { value: confirmPassword } = useField<string>("confirmPassword");
 
-const hasFormErrors = computed(() => !password.value || !confirmPassword.value || !isObjectEmpty(errors.value));
-
 const commonErrors = ref<string[]>([]);
+
+const localizationFormTerm = computed(() => (props.kind === "set" ? "set_password_form" : "reset_password_form"));
 
 const onSubmit = handleSubmit(async (data) => {
   commonErrors.value = [];
@@ -109,10 +105,8 @@ const onSubmit = handleSubmit(async (data) => {
 
   if (result.succeeded) {
     emit("succeeded");
-  } else {
-    if (result.errors?.length) {
-      commonErrors.value = result.errors.map((x) => x?.description as string);
-    }
+  } else if (result.errors?.length) {
+    commonErrors.value = result.errors.map((error) => error.description!); // TODO: Use `useIdentityErrorTranslator` (ST-3324)
   }
 });
 </script>

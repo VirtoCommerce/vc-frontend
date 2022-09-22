@@ -4,6 +4,7 @@ mutation RegisterByInvitation($command: InputRegisterByInvitationType!) {
     errors {
       code
       description
+      errorParameter
     }
   }
 }

@@ -1,6 +1,5 @@
 import { computed, ref, Ref } from "vue";
 import { OrdersFilterData, OrdersFilterChipsItem } from "@/shared/account";
-import { nameOf } from "@/core/utilities";
 import moment from "moment";
 
 const filterData: Ref<OrdersFilterData> = ref({ statuses: [] });
@@ -21,13 +20,13 @@ export default () => {
 
     if (appliedFilterData.value.statuses.length) {
       for (const status of appliedFilterData.value.statuses) {
-        items.push({ fieldName: nameOf<OrdersFilterData>("statuses"), value: status, label: status });
+        items.push({ fieldName: "statuses", value: status, label: status });
       }
     }
     if (appliedFilterData.value.startDate) {
       const formattedDate = moment(appliedFilterData.value.startDate).format("YYYY-MM-DD");
       items.push({
-        fieldName: nameOf<OrdersFilterData>("startDate"),
+        fieldName: "startDate",
         value: appliedFilterData.value.startDate,
         label: `Start: ${formattedDate}`,
       });
@@ -35,7 +34,7 @@ export default () => {
     if (appliedFilterData.value.endDate) {
       const formattedDate = moment(appliedFilterData.value.endDate).format("YYYY-MM-DD");
       items.push({
-        fieldName: nameOf<OrdersFilterData>("endDate"),
+        fieldName: "endDate",
         value: appliedFilterData.value.endDate,
         label: `End: ${formattedDate}`,
       });
@@ -60,15 +59,15 @@ export default () => {
   }
 
   function removeFilterChipsItem(item: OrdersFilterChipsItem) {
-    if (item.fieldName === nameOf<OrdersFilterData>("statuses")) {
+    if (item.fieldName === "statuses") {
       appliedFilterData.value.statuses.splice(appliedFilterData.value.statuses.indexOf(item.value as string), 1);
     }
 
-    if (item.fieldName === nameOf<OrdersFilterData>("startDate")) {
+    if (item.fieldName === "startDate") {
       appliedFilterData.value.startDate = undefined;
     }
 
-    if (item.fieldName === nameOf<OrdersFilterData>("endDate")) {
+    if (item.fieldName === "endDate") {
       appliedFilterData.value.endDate = undefined;
     }
 

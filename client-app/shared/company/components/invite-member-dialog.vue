@@ -175,7 +175,7 @@ const send = handleSubmit(async (data) => {
   } else if (result.errors?.length) {
     errorText.value = result.errors
       .filter((error) => error.code !== "DuplicateUserName") // Because email is a `UserName` (login)
-      .map((error) => error.description)
+      .map((error) => error.description) // TODO: Use `useIdentityErrorTranslator` (ST-3324)
       .join(" ");
   }
 });
