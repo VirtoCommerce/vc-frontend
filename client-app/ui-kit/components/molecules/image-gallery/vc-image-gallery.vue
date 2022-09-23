@@ -1,7 +1,7 @@
 <template>
   <div
-    ref="mainImageDiv"
-    class="square relative flex flex-col justify-center items-center border border-gray-100 rounded-sm"
+    ref="mainImageElement"
+    class="square relative flex flex-col justify-center items-center border border-gray-100 rounded-sm overflow-hidden"
   >
     <VcImage
       :src="activeSrc"
@@ -9,29 +9,31 @@
       class="absolute top-0 w-full h-full object-cover object-center rounded-sm"
       lazy
     />
+
+    <slot name="badges" />
   </div>
-  <div v-if="isMobile && images && images.length > 1" class="mt-4 flex flex-row justify-center space-x-2.5">
+
+  <div v-if="isMobile && images.length > 1" class="mt-4 flex flex-row justify-center space-x-2.5">
     <div
       v-for="(image, i) in images"
-      :key="image?.url || i"
+      :key="image.url || i"
       class="border border-[color:var(--color-primary)] w-4 h-4 rounded-full cursor-pointer"
-      :class="{
-        'bg-[color:var(--color-primary)]': image?.url == activeSrc,
-      }"
-      @click="setActiveImage(image?.url)"
-    ></div>
+      :class="{ 'bg-[color:var(--color-primary)]': image.url === activeSrc }"
+      @click="setActiveImage(image.url)"
+    />
   </div>
-  <div v-if="!isMobile && images && images.length > 1" class="mt-6 grid grid-cols-3 gap-5">
-    <div v-for="(image, i) in images" :key="image?.url || i" @click="setActiveImage(image?.url)">
+
+  <div v-if="!isMobile && images.length > 1" class="mt-6 grid grid-cols-3 gap-5">
+    <div v-for="(image, i) in images" :key="image.url || i" @click="setActiveImage(image.url)">
       <div
         class="square relative flex flex-col justify-center items-center cursor-pointer border border-gray-100 rounded-sm hover:ring hover:ring-[color:var(--color-primary-hover)]"
         :class="{
-          'ring ring-[color:var(--color-primary)]': image?.url == activeSrc,
+          'ring ring-[color:var(--color-primary)]': image.url === activeSrc,
         }"
       >
         <VcImage
-          :src="image?.url"
-          :alt="image?.name"
+          :src="image.url"
+          :alt="image.name"
           size-suffix="sm"
           class="absolute top-0 w-full h-full object-cover object-center rounded-sm"
           lazy
@@ -42,54 +44,51 @@
 </template>
 
 <script setup lang="ts">
-import { ImageType } from "@/xapi/types";
-import { watchEffect, PropType, ref } from "vue";
-import { SwipeDirection, useSwipe } from "@vueuse/core";
+import { ImageType, Product } from "@/xapi/types";
+import { watchEffect, PropType, ref, computed } from "vue";
+import { breakpointsTailwind, SwipeDirection, useBreakpoints, useSwipe } from "@vueuse/core";
 import _ from "lodash";
 
-const mainImageDiv = ref(null);
+const props = defineProps({
+  product: {
+    type: Object as PropType<Product>,
+    required: true,
+  },
+});
 
-useSwipe(mainImageDiv, {
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("lg");
+
+const mainImageElement = ref<HTMLElement | null>(null);
+const activeSrc = ref("");
+
+const images = computed<ImageType[]>(() => props.product.images ?? []);
+
+function setActiveImage(url?: string) {
+  activeSrc.value = url || "";
+}
+
+useSwipe(mainImageElement, {
   onSwipeEnd: (e, direction) => {
-    if (direction !== SwipeDirection.LEFT && direction !== SwipeDirection.RIGHT && props.images.length < 2) {
+    if (direction !== SwipeDirection.LEFT && direction !== SwipeDirection.RIGHT && images.value.length < 2) {
       return;
     }
-    const activeImageIndex = _.findIndex(props.images, (x) => x?.url === activeSrc.value);
 
-    if (direction === SwipeDirection.LEFT && activeImageIndex < props.images.length - 1) {
+    const activeImageIndex = _.findIndex(images.value, (x) => x?.url === activeSrc.value);
+
+    if (direction === SwipeDirection.LEFT && activeImageIndex < images.value.length - 1) {
       const newActiveImageIndex = activeImageIndex + 1;
-      activeSrc.value = props.images[newActiveImageIndex]?.url ?? "";
+      activeSrc.value = images.value[newActiveImageIndex]?.url ?? "";
     }
 
     if (direction === SwipeDirection.RIGHT && activeImageIndex > 0) {
       const newActiveImageIndex = activeImageIndex - 1;
-      activeSrc.value = props.images[newActiveImageIndex]?.url ?? "";
+      activeSrc.value = images.value[newActiveImageIndex]?.url ?? "";
     }
   },
 });
 
-const props = defineProps({
-  src: {
-    type: String,
-    required: true,
-  },
-  images: {
-    type: Array as PropType<ImageType[]>,
-    default: () => [],
-  },
-  isMobile: {
-    type: Boolean,
-    default: false,
-  },
-});
-
-const activeSrc = ref("");
-
 watchEffect(() => {
-  activeSrc.value = props.src;
+  activeSrc.value = props.product.imgSrc ?? "";
 });
-
-function setActiveImage(url?: string | null) {
-  activeSrc.value = url || "";
-}
 </script>
