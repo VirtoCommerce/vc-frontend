@@ -351,8 +351,12 @@
       "add_to_cart": {
         "add_to_cart_button": "@:common.buttons.add_to_cart",
         "update_cart_button": "Update cart",
-        "already_in_cart_message": "{0} has already been added to cart",
-        "enter_correct_number_message": "Please enter valid number"
+        "errors": {
+          "already_in_cart_message": "{0} has already been added to cart",
+          "enter_correct_number_message": "Please enter valid number",
+          "min": "Min qty is {0} product(s)",
+          "max": "Max qty is {0} product(s)"
+        }
       },
       "cart_add_info_popup": {
         "continue_shopping_button": "@:common.buttons.continue_shopping_button",
