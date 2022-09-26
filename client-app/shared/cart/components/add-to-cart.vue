@@ -37,7 +37,7 @@
   </div>
 
   <div v-else-if="countInCart" class="text-xs text-gray-400">
-    {{ $t("shared.cart.add_to_cart.already_in_cart_message", [countInCart]) }}
+    {{ $t("shared.cart.add_to_cart.errors.already_in_cart_message", [countInCart]) }}
   </div>
 
   <div v-else class="mb-4"></div>
@@ -65,7 +65,7 @@ const props = defineProps({
 });
 
 // Define max qty available to add
-const max = 999999;
+const MAX_VALUE = 999999;
 
 const { cart, addToCart, changeItemQuantity } = useCart();
 const { t } = useI18n();
@@ -79,7 +79,7 @@ const lineItemInCart = computed<LineItemType | undefined>(() =>
 const countInCart = eagerComputed<number>(() => lineItemInCart.value?.quantity || 0);
 const minQty = eagerComputed<number>(() => props.product.minQuantity || 1);
 const maxQty = eagerComputed<number>(() =>
-  Math.min(props.product.availabilityData?.availableQuantity, props.product.maxQuantity || max)
+  Math.min(props.product.availabilityData?.availableQuantity, props.product.maxQuantity || MAX_VALUE)
 );
 
 const disabled = eagerComputed<boolean>(
@@ -100,11 +100,11 @@ const buttonText = computed<string>(() =>
 const rules = computed(() =>
   yup
     .number()
-    .typeError(t("shared.cart.add_to_cart.enter_correct_number_message"))
+    .typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message"))
     .integer()
     .positive()
-    .min(minQty.value)
-    .max(maxQty.value)
+    .min(minQty.value, ({ min }) => t("shared.cart.add_to_cart.errors.min", [min]))
+    .max(maxQty.value, ({ max }) => t("shared.cart.add_to_cart.errors.max", [max]))
 );
 
 const { value: enteredQuantity, validate, errorMessage, setValue } = useField("qty", rules, { initialValue });
@@ -162,8 +162,8 @@ function onKeypress(event: KeyboardEvent) {
 function onInput() {
   if (!enteredQuantity.value) {
     enteredQuantity.value = undefined;
-  } else if (enteredQuantity.value > max) {
-    enteredQuantity.value = max;
+  } else if (enteredQuantity.value > MAX_VALUE) {
+    enteredQuantity.value = MAX_VALUE;
   }
 }
 
