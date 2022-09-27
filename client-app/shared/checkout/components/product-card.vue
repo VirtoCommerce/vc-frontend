@@ -40,14 +40,16 @@
               <span class="w-1/3 lg:w-auto font-bold lg:font-medium">{{ lineItem.product?.brandName }}</span>
             </div>
             <div class="flex">
-              <span class="font-medium lg:font-extrabold text-gray-500 lg:text-black pr-1"
-                >{{ $t("shared.checkout.product_card.price_label") }}
+              <span class="font-medium lg:font-extrabold text-gray-500 lg:text-black pr-1">
+                {{ $t("shared.checkout.product_card.price_label") }}
               </span>
+
               <span class="h-4 mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
+
               <p class="w-1/3 lg:w-auto">
                 <VcItemPrice
                   :price-color-class="isMobile ? 'text-black' : undefined"
-                  :value="{ list: lineItem.listPrice || lineItem.placedPrice, sale: lineItem.salePrice }"
+                  :value="{ list: lineItem.listPrice, actual: lineItem.placedPrice }"
                 />
               </p>
             </div>
@@ -122,7 +124,9 @@
 
           <div class="hidden lg:flex lg:w-28 lg:shrink-0 xl:w-2/4 lg:items-end flex-col text-sm font-extrabold pr-3">
             <span class="text-black self-end" v-t="'shared.checkout.product_card.total_label'"></span>
-            <span class="text-green-700"><VcPriceDisplay :value="lineItem.extendedPrice" /></span>
+            <span class="text-green-700">
+              <VcPriceDisplay :value="lineItem.extendedPrice" />
+            </span>
           </div>
         </div>
       </div>
