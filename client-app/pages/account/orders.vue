@@ -49,8 +49,14 @@
       </div>
     </VcPopupSidebar>
 
-    <!-- Search & filters block -->
-    <div class="flex gap-x-2 lg:gap-x-5 lg:flex-row-reverse mx-5 md:mx-0">
+    <div class="-mt-5" ref="stickyMobileHeaderAnchor"></div>
+
+    <!-- Page Toolbar -->
+    <PageToolbarBlock
+      :stick="isVisibleStickyMobileHeader"
+      class="flex flex-row lg:flex-row-reverse items-center py-3.5 -my-3.5 gap-x-2 lg:gap-x-5"
+      shadow
+    >
       <div class="relative">
         <VcButton
           ref="filtersButtonElement"
@@ -101,7 +107,7 @@
           <i class="fas fa-search text-lg" />
         </VcButton>
       </div>
-    </div>
+    </PageToolbarBlock>
 
     <!-- Filters chips -->
     <div v-if="!isFilterEmpty" class="hidden lg:flex flex-wrap gap-x-3 gap-y-2">
@@ -288,14 +294,20 @@
 </template>
 
 <script setup lang="ts">
-import { OrdersFilter, MobileOrdersFilter, useUserOrdersFilter, useUserOrders } from "@/shared/account";
-import { onMounted, ref, shallowRef, watch } from "vue";
+import {
+  OrdersFilter,
+  MobileOrdersFilter,
+  useUserOrdersFilter,
+  useUserOrders,
+  PageToolbarBlock,
+} from "@/shared/account";
+import { computed, onMounted, ref, shallowRef, watch } from "vue";
 import { breakpointsTailwind, useBreakpoints, onClickOutside } from "@vueuse/core";
 import { getNewSorting } from "@/core/utilities";
 import { useRouter } from "vue-router";
 import { CustomerOrderType } from "@/xapi/types";
 import { useI18n } from "vue-i18n";
-import { usePageHead } from "@/core/composables";
+import { useElementVisibility, usePageHead } from "@/core/composables";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -322,6 +334,9 @@ const localKeyword = ref("");
 const filtersVisible = ref(false);
 const filtersButtonElement = shallowRef<HTMLElement | null>(null);
 const filtersDropdownElement = shallowRef<HTMLElement | null>(null);
+
+const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
+const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
 
 const columns = ref<ITableColumn[]>([
   {
@@ -355,6 +370,8 @@ const columns = ref<ITableColumn[]>([
     align: "right",
   },
 ]);
+
+const isVisibleStickyMobileHeader = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
 async function changePage(newPage: number) {
   page.value = newPage;
