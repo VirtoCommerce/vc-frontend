@@ -3218,6 +3218,8 @@ export type Product = {
   /** Request related slug for product */
   slug?: Maybe<Scalars['String']>;
   variations?: Maybe<Array<Maybe<VariationType>>>;
+  /** Product vendor */
+  vendor?: Maybe<Vendor>;
   videos?: Maybe<VideoConnection>;
 };
 
@@ -3976,6 +3978,15 @@ export type VariationType = {
   properties?: Maybe<Array<Maybe<Property>>>;
   /** Request related slug for product */
   slug?: Maybe<Scalars['String']>;
+  /** Product vendor */
+  vendor?: Maybe<Vendor>;
+};
+
+export type Vendor = {
+  /** Vendor ID */
+  id: Scalars['String'];
+  /** Vendor Name */
+  name: Scalars['String'];
 };
 
 /** A connection from an object to a list of objects of type `Video`. */
@@ -4130,7 +4141,7 @@ export type RegisterByInvitationMutationVariables = Exact<{
 }>;
 
 
-export type RegisterByInvitationMutation = { registerByInvitation?: { succeeded: boolean, errors?: Array<{ code: string, description?: string }> } };
+export type RegisterByInvitationMutation = { registerByInvitation?: { succeeded: boolean, errors?: Array<{ code: string, description?: string, errorParameter?: number }> } };
 
 export type RenameWishlistMutationVariables = Exact<{
   command: InputRenameWishlistType;
@@ -4396,7 +4407,18 @@ export type GetProductQueryVariables = Exact<{
 }>;
 
 
-export type GetProductQuery = { product?: { name: string, id: string, code: string, slug?: string, outline?: string, minQuantity?: number, maxQuantity?: number, imgSrc?: string, images?: Array<{ url?: string }>, breadcrumbs?: Array<{ itemId: string, typeName?: string, title: string, seoPath?: string }>, description?: { content?: string, id?: string }, descriptions?: Array<{ content?: string, id?: string }>, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, variations?: Array<{ id?: string, name?: string, minQuantity?: number, maxQuantity?: number, code?: string, images?: Array<{ url?: string }>, properties?: Array<{ name: string, value?: any, type?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any }, price?: { actual?: { amount: any, formattedAmount: string }, discountAmount?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string } } }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any }, price?: { actual?: { amount: any, formattedAmount: string }, discountAmount?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string } }, seoInfo?: { pageTitle?: string, metaKeywords?: string, metaDescription?: string } } };
+export type GetProductQuery = { product?: { name: string, id: string, code: string, slug?: string, outline?: string, minQuantity?: number, maxQuantity?: number, imgSrc?: string, images?: Array<{ url?: string }>, breadcrumbs?: Array<{ itemId: string, typeName?: string, title: string, seoPath?: string }>, description?: { content?: string, id?: string }, descriptions?: Array<{ content?: string, id?: string }>, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, variations?: Array<{ id?: string, name?: string, minQuantity?: number, maxQuantity?: number, code?: string, images?: Array<{ url?: string }>, properties?: Array<{ name: string, value?: any, type?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any }, price?: { actual?: { amount: any, formattedAmount: string }, discountAmount?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string } } }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any }, price?: { discountPercent?: any, actual?: { amount: any, formattedAmount: string }, discountAmount?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string } }, seoInfo?: { pageTitle?: string, metaKeywords?: string, metaDescription?: string } } };
+
+export type GetProductsQueryVariables = Exact<{
+  storeId: Scalars['String'];
+  currencyCode: Scalars['String'];
+  cultureName: Scalars['String'];
+  productIds: Array<InputMaybe<Scalars['String']>> | InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type GetProductsQuery = { products?: { totalCount?: number, items?: Array<{ id: string, name: string, code: string }> } };
 
 export type GetSearchResultsQueryVariables = Exact<{
   storeId: Scalars['String'];
@@ -4451,7 +4473,7 @@ export type SearchProductsQueryVariables = Exact<{
 }>;
 
 
-export type SearchProductsQuery = { products?: { totalCount?: number, items?: Array<{ name: string, id: string, code: string, minQuantity?: number, maxQuantity?: number, hasVariations?: boolean, slug?: string, outline?: string, imgSrc?: string, images?: Array<{ url?: string }>, description?: { content?: string, id?: string }, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any }, price?: { actual?: { amount: any, formattedAmount: string }, discountAmount?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string } }, properties?: Array<{ name: string, value?: any, id?: string }> }>, term_facets?: Array<{ name: string, label: string, terms?: Array<{ label: string, term?: string, count?: any, isSelected?: boolean }> }>, range_facets?: Array<{ name: string, label: string, ranges?: Array<{ label?: string, count?: any, from?: any, to?: any, includeFrom: boolean, includeTo: boolean, isSelected?: boolean }> }> } };
+export type SearchProductsQuery = { products?: { totalCount?: number, items?: Array<{ name: string, id: string, code: string, minQuantity?: number, maxQuantity?: number, hasVariations?: boolean, slug?: string, outline?: string, imgSrc?: string, images?: Array<{ url?: string }>, description?: { content?: string, id?: string }, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any }, price?: { discountPercent?: any, actual?: { amount: any, formattedAmount: string }, discountAmount?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string } }, properties?: Array<{ name: string, value?: any, id?: string }> }>, term_facets?: Array<{ name: string, label: string, terms?: Array<{ label: string, term?: string, count?: any, isSelected?: boolean }> }>, range_facets?: Array<{ name: string, label: string, ranges?: Array<{ label?: string, count?: any, from?: any, to?: any, includeFrom: boolean, includeTo: boolean, isSelected?: boolean }> }> } };
 
 export type SearchRelatedProductsQueryVariables = Exact<{
   storeId: Scalars['String'];

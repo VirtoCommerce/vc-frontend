@@ -27,13 +27,16 @@
                 class="fas fa-caret-up ml-1 text-[color:var(--color-primary)]"
               ></i>
             </span>
-            <span>{{ cart.discountTotal?.amount > 0 ? "-" : "" }}<VcPriceDisplay :value="cart.discountTotal" /></span>
+            <span>
+              {{ cart.discountTotal?.amount > 0 ? "-" : "" }}
+              <VcPriceDisplay :value="cart.discountTotal" />
+            </span>
           </div>
           <div v-if="hasDiscounts && discountsCollapsed">
             <ul class="list-disc pl-5 text-gray-400">
               <li v-for="(discount, index) in cart.discounts" :key="index">
                 <div class="flex justify-between items-center">
-                  <span class="text-sm">{{ discount.description }}</span>
+                  <span class="text-sm">{{ discount.description || discount.coupon }}</span>
                   <VcTotalDisplay
                     :amount="-getDiscountAmmount(discount)"
                     :currency-code="currentCurrency.code"
