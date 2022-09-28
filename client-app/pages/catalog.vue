@@ -3,7 +3,7 @@
     class="bg-gray-100 pt-4 pb-16 shadow-inner grow lg:pt-12"
     :class="{ 'polygon-gray-bg': !products.length && !loading }"
   >
-    <div class="max-w-screen-2xl px-5 xl:pl-17 xl:pr-19 mx-auto">
+    <div class="max-w-screen-2xl px-5 md:px-12 mx-auto">
       <!-- Breadcrumbs -->
       <Breadcrumbs class="mb-2.5 md:mb-4" :items="breadcrumbs" v-if="!isSearchQuery" />
 

@@ -58,8 +58,14 @@
       </div>
     </VcPopupSidebar>
 
-    <!-- Search & filters block -->
-    <div class="flex gap-x-2 lg:gap-x-5 lg:flex-row-reverse mx-5 md:mx-0">
+    <div class="-mt-5" ref="stickyMobileHeaderAnchor"></div>
+
+    <!-- Page Toolbar -->
+    <PageToolbarBlock
+      :stick="isVisibleStickyMobileHeader"
+      class="flex flex-row lg:flex-row-reverse items-center py-3.5 -my-3.5 gap-x-2 lg:gap-x-5"
+      shadow
+    >
       <div class="relative">
         <VcButton
           ref="filtersButtonElement"
@@ -154,7 +160,7 @@
           <i class="fas fa-search text-lg" />
         </VcButton>
       </div>
-    </div>
+    </PageToolbarBlock>
 
     <!-- Filters chips -->
     <div v-if="numberOfFacetsApplied" class="hidden lg:flex flex-wrap gap-x-3 gap-y-2">
@@ -331,10 +337,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, shallowRef } from "vue";
+import { ref, onMounted, shallowRef, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { breakpointsTailwind, onClickOutside, useBreakpoints } from "@vueuse/core";
-import { usePageHead } from "@/core/composables";
+import { useElementVisibility, usePageHead } from "@/core/composables";
 import { FacetItem, FacetValueItem } from "@/core/types";
 import { getFilterExpressionFromFacets, getNewSorting } from "@/core/utilities";
 import { usePopup } from "@/shared/popup";
@@ -347,6 +353,7 @@ import {
   useOrganizationContactsFilterFacets,
   FilterFacet,
 } from "@/shared/company";
+import { PageToolbarBlock } from "@/shared/account";
 
 const { t } = useI18n();
 const { openPopup, closePopup } = usePopup();
@@ -386,6 +393,9 @@ const filtersVisible = ref(false);
 const filtersButtonElement = shallowRef<HTMLElement | null>(null);
 const filtersDropdownElement = shallowRef<HTMLElement | null>(null);
 
+const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
+const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
+
 const columns = ref<ITableColumn[]>([
   {
     id: "roleIcon",
@@ -415,6 +425,8 @@ const columns = ref<ITableColumn[]>([
     classes: "w-16",
   },*/
 ]);
+
+const isVisibleStickyMobileHeader = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
 async function changePage(newPage: number) {
   page.value = newPage;

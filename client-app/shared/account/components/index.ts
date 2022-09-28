@@ -11,3 +11,4 @@ export { default as ReorderInfo } from "./reorder-info.vue";
 export { default as ProductCardReorder } from "./product-card-reorder.vue";
 export { default as OrdersFilter } from "./orders-filter.vue";
 export { default as MobileOrdersFilter } from "./mobile-orders-filter.vue";
+export { default as PageToolbarBlock } from "./page-toolbar-block.vue";
