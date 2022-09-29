@@ -49,7 +49,7 @@
               <p class="w-1/3 lg:w-auto">
                 <VcItemPrice
                   :price-color-class="isMobile ? 'text-black' : undefined"
-                  :value="{ list: lineItem.listPrice, actual: lineItem.placedPrice }"
+                  :value="{ list: lineItem.listPrice || lineItem.placedPrice, actual: lineItem.placedPrice }"
                 />
               </p>
             </div>
