@@ -68,7 +68,8 @@
       "creating_order_error": "Fehler beim Anlegen eines Auftrags",
       "item_can_t_be_purchased": "Dieser Artikel kann nicht gekauft werden",
       "item_is_out_of_stock": "Dieser Artikel ist nicht mehr vorrätig",
-      "invalid_value": "Ungültiger Wert"
+      "invalid_value": "Ungültiger Wert",
+      "product_no_longer_available": "No longer available"
     },
     "placeholders": {
       "not_selected": "Nicht ausgewählt",

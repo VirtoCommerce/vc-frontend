@@ -67,7 +67,8 @@
       "creating_order_error": "Error when creating an order",
       "item_can_t_be_purchased": "This item cannot be purchased",
       "item_is_out_of_stock": "This item is out of stock",
-      "invalid_value": "Invalid value"
+      "invalid_value": "Invalid value",
+      "product_no_longer_available": "No longer available"
     },
     "placeholders": {
       "not_selected": "Not selected",

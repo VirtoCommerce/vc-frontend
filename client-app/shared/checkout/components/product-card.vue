@@ -1,7 +1,7 @@
 <template>
   <div class="border-b">
     <div class="p-5 flex flex-wrap overflow-hidden space-x-4 lg:space-x-6">
-      <div class="border border-gray-100 w-16 h-16">
+      <div :class="{ 'opacity-25': !productAvailable }" class="border border-gray-100 w-16 h-16">
         <VcImage
           :src="lineItem.imageUrl"
           :alt="lineItem.name"
@@ -12,7 +12,7 @@
       </div>
 
       <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center flex-1">
-        <div class="mb-3 lg:mb-0 text-sm xl:w-1/2">
+        <div :class="{ 'opacity-25': !productAvailable }" class="mb-3 lg:mb-0 text-sm xl:w-1/2">
           <div class="mb-1">
             <router-link
               :to="link"
@@ -26,13 +26,13 @@
               {{ lineItem.name }}
             </div>
             <!-- todo: extract small alert component https://virtocommerce.atlassian.net/browse/ST-2488 -->
-            <div class="flex items-center space-x-1 py-1" v-if="validationError">
+            <div class="flex items-center space-x-1 py-1" v-if="productAvailable && validationError">
               <i class="fas fa-exclamation-circle text-[color:var(--color-primary)]"></i>
               <span class="text-xs text-gray-400"> {{ itemErrorMessage }} </span>
             </div>
           </div>
           <div class="flex flex-col space-y-1 lg:space-y-0">
-            <div class="flex">
+            <div class="flex" v-if="lineItem.product?.brandName">
               <span class="font-medium lg:font-extrabold text-gray-500 lg:text-black pr-1"
                 >{{ $t("shared.checkout.product_card.brand_label") }}
               </span>
@@ -49,21 +49,24 @@
               <p class="w-1/3 lg:w-auto">
                 <VcItemPrice
                   :price-color-class="isMobile ? 'text-black' : undefined"
-                  :value="{ list: lineItem.listPrice, actual: lineItem.placedPrice }"
+                  :value="{ list: lineItem.listPrice || lineItem.placedPrice, actual: lineItem.placedPrice }"
                 />
               </p>
             </div>
-            <div class="flex text-sm lg:hidden">
+            <div class="flex text-sm lg:hidden" v-if="productAvailable">
               <span class="font-medium text-gray-500">{{ $t("shared.checkout.product_card.total_label") }} </span>
               <span class="h-4 mx-2 border-b-2 flex-1 border-gray-100 border-dotted lg:hidden"></span>
-              <span class="w-1/3 text-green-700 font-extrabold"
-                ><VcPriceDisplay :value="lineItem.extendedPrice"
+              <span class="w-1/3 text-green-700 font-extrabold">
+                <VcPriceDisplay :value="lineItem.extendedPrice"
               /></span>
             </div>
           </div>
         </div>
 
-        <div class="flex items-start space-x-2 lg:space-x-4 xl:w-2/5 lg:justify-end">
+        <div
+          :class="{ 'lg:justify-end': readOnly || productAvailable }"
+          class="flex items-start space-x-2 lg:space-x-4 xl:w-2/5 lg:justify-start"
+        >
           <div class="flex flex-col max-w-[5.75rem] lg:items-center lg:max-w-[4.75rem] lg:shrink-0">
             <input
               ref="input"
@@ -75,7 +78,7 @@
               class="w-[5.625rem] h-[32px] border rounded overflow-hidden focus:border-gray-400 outline-none p-1 text-center lg:w-[3.75rem] lg:h-10"
               :class="{
                 'text-[color:var(--color-danger)]': isInputDisabled,
-                'border-[color:var(--color-danger)]': errorMessage,
+                'border-[color:var(--color-danger)]': productAvailable && errorMessage,
               }"
               :disabled="isInputDisabled || readOnly"
               @change="updateQuantity"
@@ -87,8 +90,9 @@
 
             <div class="relative mt-1.5 pt-px h-6">
               <VcInStock
-                v-if="!readOnly"
-                :is-in-stock="!isInputDisabled"
+                v-if="!readOnly || !productAvailable"
+                :is-in-stock="productAvailable && !isInputDisabled"
+                :is-available="productAvailable"
                 :quantity="lineItem.inStockQuantity"
                 class="absolute lg:static"
               ></VcInStock>
@@ -122,7 +126,10 @@
             </button>
           </div>
 
-          <div class="hidden lg:flex lg:w-28 lg:shrink-0 xl:w-2/4 lg:items-end flex-col text-sm font-extrabold pr-3">
+          <div
+            class="hidden lg:flex lg:w-28 lg:shrink-0 xl:w-2/4 lg:items-end flex-col text-sm font-extrabold pr-3"
+            v-if="productAvailable || readOnly"
+          >
             <span class="text-black self-end" v-t="'shared.checkout.product_card.total_label'"></span>
             <span class="text-green-700">
               <VcPriceDisplay :value="lineItem.extendedPrice" />
@@ -137,7 +144,7 @@
 <script setup lang="ts">
 import { LineItemType, ValidationErrorType } from "@/xapi/types";
 import { computed, PropType, ref } from "vue";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { breakpointsTailwind, computedEager, useBreakpoints } from "@vueuse/core";
 import { useField } from "vee-validate";
 import * as yup from "yup";
 import { useI18n } from "vue-i18n";
@@ -196,6 +203,9 @@ const itemErrorMessage = computed(() => {
   }
 });
 
+const productAvailable = computedEager(() => !!props.lineItem.product);
+const isInputDisabled = computedEager(() => props.lineItem.inStockQuantity === 0);
+
 let rules = yup.number().integer().optional().moreThan(0);
 rules = rules.min(minQty.value);
 
@@ -204,10 +214,8 @@ if (props.lineItem.inStockQuantity) {
 }
 
 const { value, validate, errorMessage } = useField("qty", rules, {
-  initialValue: props.lineItem.inStockQuantity === 0 ? 0 : count,
+  initialValue: productAvailable.value || props.readOnly ? (props.lineItem.inStockQuantity === 0 ? 0 : count) : null,
 });
-
-const isInputDisabled = computed(() => props.lineItem.inStockQuantity === 0);
 
 const updateQuantity = () => {
   if (!isInputDisabled.value) {
