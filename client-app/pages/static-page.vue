@@ -15,7 +15,8 @@
 <script setup lang="ts">
 import { computed, unref } from "vue";
 import { useI18n } from "vue-i18n";
-import { usePageHead, useStaticPage } from "@/core/composables";
+import { usePageHead } from "@/core/composables";
+import { useStaticPage } from "@/shared/static-content";
 const { t } = useI18n();
 
 const template = useStaticPage();

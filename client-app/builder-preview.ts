@@ -1,4 +1,4 @@
-import builderPreview from "./builder-preview/BuilderPreview";
-import runner from "./app-runner";
+import builderPreviewPlugin from "@/builder-preview/builder-preview.plugin";
+import runner from "@/app-runner";
 
-runner((options) => [{ plugin: builderPreview, options }]);
+runner((options) => [{ plugin: builderPreviewPlugin, options }]);
