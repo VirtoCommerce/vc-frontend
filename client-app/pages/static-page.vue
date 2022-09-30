@@ -19,11 +19,9 @@ import { usePageHead, useStaticPage } from "@/core/composables";
 const { t } = useI18n();
 
 const template = useStaticPage();
+const templateName = computed(() => unref(template)?.settings?.name || unref(template)?.settings?.header || "");
 
-const breadcrumbs: IBreadcrumbs[] = [
-  { route: "/", title: t("pages.compare.links.home") },
-  { title: computed(() => unref(template)?.settings?.name || unref(template)?.settings?.header || "") },
-];
+const breadcrumbs: IBreadcrumbs[] = [{ route: "/", title: t("pages.compare.links.home") }, { title: templateName }];
 
 usePageHead({
   title: computed(() => unref(template)?.settings?.seoInfo?.pageTitle || unref(template)?.settings?.name),
