@@ -180,7 +180,7 @@ function openDeleteProductDialog(item: LineItemType) {
          * If you were on the last page, and after deleting the product
          * the number of pages has decreased, go to the previous page
          */
-        if (previousPagesCount === page.value && previousPagesCount > pages.value) {
+        if (previousPagesCount > 1 && previousPagesCount === page.value && previousPagesCount > pages.value) {
           page.value -= 1;
         }
       },
