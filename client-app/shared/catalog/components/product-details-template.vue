@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import { Product } from "@/xapi/types";
-import { PageContent } from "@/core/types";
+import { PageContent } from "@/shared/static-content";
 import { PropType } from "vue";
 import { AddToCompare } from "@/shared/compare";
 import { DiscountBadge } from "@/shared/catalog";

@@ -53,7 +53,7 @@ import { PropType } from "vue";
 import { Product } from "@/xapi/types";
 import { useCart, AddToCart } from "@/shared/cart";
 import { ProductDetailsTemplate, ProductPriceBlock } from "@/shared/catalog";
-import { PageContent } from "@/core/types";
+import { PageContent } from "@/shared/static-content";
 
 defineProps({
   product: {

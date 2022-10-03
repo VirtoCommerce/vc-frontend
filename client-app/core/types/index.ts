@@ -7,7 +7,6 @@ export * from "./facet";
 export * from "./global-variables";
 export * from "./language";
 export * from "./modify";
-export * from "./page-content";
 export * from "./role";
 export * from "./theme-context";
 

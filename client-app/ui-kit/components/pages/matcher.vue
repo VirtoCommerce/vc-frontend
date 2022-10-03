@@ -18,14 +18,14 @@
 
 <script setup lang="ts">
 import Category from "@/pages/catalog.vue";
-import Product from "@/pages/product-template.vue";
+import Product from "@/pages/product.vue";
 import StaticPage from "@/pages/static-page.vue";
 import NotFound from "@/pages/404.vue";
 
 import { onBeforeUnmount, PropType, ref, watchEffect } from "vue";
-import { PageTemplate } from "@/core/types";
+import { PageTemplate, useStaticPage } from "@/shared/static-content";
 import { asyncComputed, computedEager } from "@vueuse/core";
-import { useFetch, useLanguages, useStaticPage } from "@/core/composables";
+import { useFetch, useLanguages } from "@/core/composables";
 import { useNavigations } from "@/shared/layout";
 
 type TEntityInfo = {
