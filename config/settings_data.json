@@ -18,7 +18,13 @@
       "logo_inverted_image": "/static/images/common/logo-white.svg",
       "favicon_image": "/static/icons/favicon-16x16.png",
       "homepage_background_image": "/static/images/home/main-banner.webp",
-      "image_tools_enabled": true,
+      "image_thumbnails_enabled": true,
+      "image_thumbnails_original_fallback_enabled": true,
+      "image_thumbnails_suffixes": {
+        "sm": "sm",
+        "md": "md",
+        "lg": "lg"
+      },
       "image_carousel_in_product_card_enabled": true,
       "orders_statuses": ["New", "Processing", "Pending", "Cancelled", "Completed"],
       "social_sharing_services": [
@@ -138,7 +144,13 @@
       "logo_inverted_image": "/static/images/common/logo-white.svg",
       "favicon_image": "/static/icons/favicon-16x16.png",
       "homepage_background_image": "/static/images/home/main-banner.webp",
-      "image_tools_enabled": true,
+      "image_thumbnails_enabled": true,
+      "image_thumbnails_original_fallback_enabled": true,
+      "image_thumbnails_suffixes": {
+        "sm": "sm",
+        "md": "md",
+        "lg": "lg"
+      },
       "image_carousel_in_product_card_enabled": true,
       "orders_statuses": ["New", "Processing", "Pending", "Cancelled", "Completed"],
       "social_sharing_services": [
