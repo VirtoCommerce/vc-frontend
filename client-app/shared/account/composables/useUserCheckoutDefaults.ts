@@ -2,7 +2,7 @@ import { useUser } from ".";
 import { CheckoutDefaults } from "./../types/index";
 import { Logger } from "@/core/utilities";
 
-export default () => {
+export default function useUserCheckoutDefaults() {
   const { user } = useUser();
   const keyPrefix = "checkout_defaults_";
 
@@ -17,9 +17,9 @@ export default () => {
 
     if (value) {
       try {
-        result = JSON.parse(value) as CheckoutDefaults;
+        result = JSON.parse(value);
       } catch (e) {
-        Logger.error("useUserCheckoutDefaults.getUserCheckoutDefaults", e);
+        Logger.error(`${useUserCheckoutDefaults.name}.${getUserCheckoutDefaults.name}`, e);
       }
     }
 
@@ -30,4 +30,4 @@ export default () => {
     setUserCheckoutDefaults,
     getUserCheckoutDefaults,
   };
-};
+}

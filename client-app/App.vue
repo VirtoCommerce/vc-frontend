@@ -31,7 +31,7 @@ const { hideSearchBar, hideSearchDropdown } = useSearchBar();
 const { isBodyScrollable } = useDomUtils();
 const { currentLanguage } = useLanguages();
 const { fetchMenus } = useNavigations();
-const { loadMyCart } = useCart();
+const { fetchCart } = useCart();
 
 const isMobile = breakpoints.smaller("lg");
 
@@ -52,7 +52,7 @@ router.beforeEach(async (to) => {
 });
 
 fetchMenus(currentLanguage.value.cultureName);
-loadMyCart();
+fetchCart();
 </script>
 
 <style lang="scss">
