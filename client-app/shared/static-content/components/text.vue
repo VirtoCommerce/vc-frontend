@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-6 pb-16 lg:py-24">
+  <div class="pt-6 pb-16 lg:py-24 text-block">
     <div class="w-full max-w-screen-2xl mx-auto px-5 md:px-12">
       <h1 class="text-2xl">{{ model.header }}</h1>
       <hr />
@@ -18,15 +18,17 @@ defineProps({
 </script>
 
 <style lang="scss">
-.text-2xl {
-  margin-bottom: 2rem;
-}
-.text-lg {
-  p {
-    margin-bottom: 1.5rem;
+.text-block {
+  .text-2xl {
+    margin-bottom: 2rem;
   }
-  ul {
-    list-style: disc inside;
+  .text-lg {
+    p {
+      margin-bottom: 1.5rem;
+    }
+    ul {
+      list-style: disc inside;
+    }
   }
 }
 </style>
