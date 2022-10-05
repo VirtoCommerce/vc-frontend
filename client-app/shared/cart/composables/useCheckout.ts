@@ -20,22 +20,7 @@ import {
 } from "@/xapi/types";
 import { useCart } from ".";
 
-const addresses: CartAddressType[] = [
-  {
-    id: "1",
-    email: "john@gmail.com",
-    firstName: "John",
-    lastName: "Doe",
-    line1: "Warsawska",
-    line2: "24/193A",
-    city: "Phoenix",
-    postalCode: "26-620",
-    zip: "26-620",
-    countryCode: "US",
-    countryName: "USA",
-    phone: "560123456",
-  },
-];
+const addresses: CartAddressType[] = [];
 
 const loading: Ref<boolean> = ref(false);
 
@@ -53,7 +38,7 @@ const existShipment: Ref<ShipmentType | null> = ref(null);
 const existPayment: Ref<PaymentType | null> = ref(null);
 
 export default () => {
-  const { cart, loadMyCart } = useCart();
+  const { cart, fetchCart } = useCart();
 
   async function createOrder(cartId: string, reloadCart = true): Promise<CustomerOrderType | null> {
     let order: CustomerOrderType | null = null;
@@ -68,10 +53,10 @@ export default () => {
       await removeCart(cartId);
 
       if (reloadCart) {
-        await loadMyCart();
+        await fetchCart();
       }
     } catch (e) {
-      await loadMyCart();
+      await fetchCart();
     }
     return order;
   }
@@ -79,7 +64,7 @@ export default () => {
   async function loadPaymentMethods() {
     paymentMethods.value = await getAvailPaymentMethods();
 
-    await loadMyCart();
+    await fetchCart();
 
     if (cart.value.payments && cart.value.payments.length > 0) {
       existPayment.value = cart.value.payments[0];
@@ -89,7 +74,7 @@ export default () => {
   async function loadShipmentMethods() {
     shippingMethods.value = await getAvailShippingMethods();
 
-    await loadMyCart();
+    await fetchCart();
 
     if (cart.value.shipments && cart.value.shipments.length > 0) {
       existShipment.value = cart.value.shipments[0];
@@ -103,15 +88,19 @@ export default () => {
   async function setDefaultBillingAddress(_address: CartAddressType) {
     console.log("setDefaultBillingAddress");
   }
+
   async function setShippingMethod(shippingMethod: ShippingMethodType) {
     chosenShippingMethod.value = { ...shippingMethod };
   }
+
   async function setPaymentMethod(paymentMethod: PaymentMethodType) {
     chosenPaymentMethod.value = { ...paymentMethod };
   }
+
   async function setBillingAddress(address: CartAddressType) {
     billingAddress.value = { ...billingAddress.value, ...address };
   }
+
   async function setDeliveryAddress(address: CartAddressType) {
     deliveryAddress.value = { ...deliveryAddress.value, ...address };
     //Delivery address type
@@ -134,6 +123,7 @@ export default () => {
       shipmentMethodOption: chosenShippingMethod.value.optionName,
       deliveryAddress: { ...deliveryAddress.value },
     };
+
     await addOrUpdateCartShipment(shipping);
   }
 

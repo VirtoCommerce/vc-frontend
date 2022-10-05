@@ -3,7 +3,9 @@
     :src="preparedSrc"
     :alt="alt"
     :loading="lazy ? 'lazy' : null"
-    :class="{ 'object-scale-down object-center': fallbackEnabled }"
+    :data-src="fallbackEnabled ? src : null"
+    :data-size-suffix="fallbackEnabled || originalEnabled ? sizeSuffix : null"
+    :class="{ 'object-scale-down object-center': preparedSrc === fallbackSrc }"
     @error="setFallback"
   />
 </template>
