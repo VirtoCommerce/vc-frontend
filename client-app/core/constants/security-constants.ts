@@ -27,4 +27,38 @@ export const PURCHASING_AGENT: Role = {
   permissions: [StorefrontPermissions.CanSeeOrganizationDetail, StorefrontPermissions.CanViewUsers],
 };
 
-export const ROLES: Role[] = [ORGANIZATION_MAINTAINER, ORGANIZATION_EMPLOYEE, PURCHASING_AGENT];
+export const STORE_ADMINISTRATOR: Role = {
+  id: "store-admin",
+  name: "Store administrator",
+  permissions: [
+    StorefrontPermissions.CanSeeOrganizationDetail,
+    StorefrontPermissions.CanEditOrganization,
+    StorefrontPermissions.CanViewUsers,
+    StorefrontPermissions.CanCreateUsers,
+    StorefrontPermissions.CanEditUsers,
+    StorefrontPermissions.CanDeleteUsers,
+    StorefrontPermissions.CanInviteUsers,
+    StorefrontPermissions.CanViewOrders,
+    StorefrontPermissions.CanChangeOrderStatus,
+  ],
+};
+
+export const STORE_MANAGER: Role = {
+  id: "store-manager",
+  name: "Store manager",
+  permissions: [
+    StorefrontPermissions.CanSeeOrganizationDetail,
+    StorefrontPermissions.CanViewOrders,
+    StorefrontPermissions.CanChangeOrderStatus,
+  ],
+};
+
+export const B2B_ROLES: Role[] = [ORGANIZATION_MAINTAINER, ORGANIZATION_EMPLOYEE, PURCHASING_AGENT];
+
+export const ALL_ROLES: Role[] = [
+  ORGANIZATION_MAINTAINER,
+  ORGANIZATION_EMPLOYEE,
+  PURCHASING_AGENT,
+  STORE_ADMINISTRATOR,
+  STORE_MANAGER,
+];

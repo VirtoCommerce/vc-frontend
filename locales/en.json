@@ -99,7 +99,9 @@
     "roles": {
       "org-maintainer": "Organization maintainer",
       "org-employee": "Organization employee",
-      "purchasing-agent": "Purchasing agent"
+      "purchasing-agent": "Purchasing agent",
+      "store-admin": "Store administrator",
+      "store-manager": "Store manager"
     }
   },
   "shared": {

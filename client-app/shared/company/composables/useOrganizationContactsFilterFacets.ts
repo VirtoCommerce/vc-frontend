@@ -2,7 +2,13 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
 import { computedEager } from "@vueuse/core";
-import { ORGANIZATION_EMPLOYEE, ORGANIZATION_MAINTAINER, PURCHASING_AGENT } from "@/core/constants";
+import {
+  ORGANIZATION_EMPLOYEE,
+  ORGANIZATION_MAINTAINER,
+  PURCHASING_AGENT,
+  STORE_ADMINISTRATOR,
+  STORE_MANAGER,
+} from "@/core/constants";
 import { FacetItem, FacetValueItem } from "@/core/types";
 import { ContactStatus } from "@/shared/company";
 
@@ -18,6 +24,8 @@ export default function useOrganizationContactsFilterFacets() {
         { label: t("common.roles." + ORGANIZATION_MAINTAINER.id), value: ORGANIZATION_MAINTAINER.id, selected: false },
         { label: t("common.roles." + ORGANIZATION_EMPLOYEE.id), value: ORGANIZATION_EMPLOYEE.id, selected: false },
         { label: t("common.roles." + PURCHASING_AGENT.id), value: PURCHASING_AGENT.id, selected: false },
+        { label: t("common.roles." + STORE_ADMINISTRATOR.id), value: STORE_ADMINISTRATOR.id, selected: false },
+        { label: t("common.roles." + STORE_MANAGER.id), value: STORE_MANAGER.id, selected: false },
       ],
     },
     {
