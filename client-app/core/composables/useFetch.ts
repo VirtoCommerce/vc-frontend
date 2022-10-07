@@ -7,6 +7,8 @@ enum HTTP_ERRORS {
   SERVER_ERROR = 500,
 }
 
+let innerRequestEnricher: (x: Headers) => Headers = (x) => x;
+
 export default function useFetch() {
   const data = shallowRef<unknown | undefined>();
   const error = shallowRef<Error | undefined>();
@@ -16,8 +18,9 @@ export default function useFetch() {
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
 
-    const reqInit: RequestInit = { headers, method, body: body ? JSON.stringify(body) : null };
+    innerRequestEnricher(headers);
 
+    const reqInit: RequestInit = { headers, method, body: body ? JSON.stringify(body) : null };
     const request = new Request(unref(url), reqInit);
 
     return new Promise((resolve, reject) => {
@@ -55,10 +58,15 @@ export default function useFetch() {
     });
   }
 
+  function enrichRequest(requestEnricher: (x: Headers) => Headers) {
+    innerRequestEnricher = requestEnricher;
+  }
+
   return {
     data,
     error,
     statusCode,
     innerFetch,
+    enrichRequest,
   };
 }

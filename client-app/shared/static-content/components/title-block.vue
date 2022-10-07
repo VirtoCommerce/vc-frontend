@@ -6,7 +6,7 @@
       <h4 v-if="model.heading == 'h4'" class="text-2xl">{{ model.title }}</h4>
       <h5 v-if="model.heading == 'h5'" class="text-2xl">{{ model.title }}</h5>
       <h6 v-if="model.heading == 'h6'" class="text-2xl">{{ model.title }}</h6>
-      <div class="text-lg" v-html="model.text"></div>
+      <p>{{ model.subtitle }}</p>
     </div>
   </div>
 </template>

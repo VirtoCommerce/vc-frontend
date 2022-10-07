@@ -2,12 +2,8 @@
   "name": "Text",
   "icon": "text_snippet",
   "displayField": "name",
+  "includeShared": ["title"],
   "settings": [
-    {
-      "id": "header",
-      "label": "Header",
-      "type": "string"
-    },
     {
       "id": "text",
       "label": "Content",
