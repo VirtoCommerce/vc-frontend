@@ -8,7 +8,7 @@
     <div class="flex flex-col bg-white shadow-sm md:rounded md:border">
       <!-- Company name block -->
       <div class="flex flex-row p-5 gap-3 shadow [--tw-shadow:0_10px_15px_0_rgb(0_0_0_/_0.06)]">
-        <!-- TODO: :is-disabled="!isOrganizationMaintainer || loadingOrganization || loadingUser" -->
+        <!-- TODO: :is-disabled="!userCanEditOrganization || loadingOrganization || loadingUser" -->
         <VcInput
           v-model.trim="organizationName"
           :label="$t('pages.company.info.labels.company_name')"
@@ -21,7 +21,7 @@
         />
 
         <!--
-        <div class="pt-6" v-if="isOrganizationMaintainer">
+        <div class="pt-6" v-if="userCanEditOrganization">
           <VcButton
             :is-waiting="loadingOrganization || loadingUser"
             :is-disabled="!meta.valid || !meta.dirty"
@@ -45,7 +45,7 @@
           <h2 class="text-gray-800 text-xl font-extrabold uppercase py-0.5" v-t="'pages.company.info.content_header'" />
 
           <VcButton
-            v-if="isOrganizationMaintainer"
+            v-if="userCanEditOrganization"
             class="px-3 uppercase"
             size="sm"
             is-outline
@@ -69,7 +69,7 @@
             />
           </template>
 
-          <template #button v-if="isOrganizationMaintainer">
+          <template #button v-if="userCanEditOrganization">
             <VcButton class="px-4 uppercase" size="lg" @click="openAddOrUpdateCompanyAddressDialog()">
               <i class="fa fa-plus -ml-px mr-3" />
               {{ $t("pages.company.info.buttons.add_new_address") }}
@@ -185,7 +185,7 @@
                 </td>
 
                 <td
-                  :class="{ 'text-right': !isOrganizationMaintainer }"
+                  :class="{ 'text-right': !userCanEditOrganization }"
                   class="px-5 py-3 overflow-hidden overflow-ellipsis"
                 >
                   <div v-if="address.isDefault" class="inline-flex flex-row items-center">
@@ -194,7 +194,7 @@
                   </div>
                 </td>
 
-                <td v-if="isOrganizationMaintainer" class="px-5 py-3 text-right relative">
+                <td v-if="userCanEditOrganization" class="px-5 py-3 text-right relative">
                   <VcActionDropdownMenu>
                     <button
                       class="flex items-center p-3 whitespace-nowrap"
@@ -252,7 +252,7 @@ import {
   useOrganizationAddresses,
   AddOrUpdateCompanyAddressDialog,
 } from "@/shared/company";
-import { ORGANIZATION_MAINTAINER } from "@/core/constants";
+import { ORGANIZATION_MAINTAINER, StorefrontPermissions } from "@/core/constants";
 import { getAddressName, getNewSorting } from "@/core/utilities";
 import { MemberAddressType } from "@/xapi/types";
 import { useNotifications } from "@/shared/notification";
@@ -296,7 +296,9 @@ const { openPopup } = usePopup();
 const notifications = useNotifications();
 
 const organizationId = computed<string>(() => organization.value!.id);
-const isOrganizationMaintainer = computedEager<boolean>(() => checkPermissions(...ORGANIZATION_MAINTAINER.permissions));
+const userCanEditOrganization = computedEager<boolean>(() =>
+  checkPermissions(StorefrontPermissions.CanEditOrganization)
+);
 
 const pages = computed<number>(() => Math.ceil(addresses.value.length / itemsPerPage.value));
 const paginatedAddresses = computed<MemberAddressType[]>(() =>
@@ -330,7 +332,7 @@ const columns = computed<ITableColumn[]>(() => {
     },
   ];
 
-  if (isOrganizationMaintainer.value) {
+  if (userCanEditOrganization.value) {
     // Add action column
     result.push({
       id: "id",
