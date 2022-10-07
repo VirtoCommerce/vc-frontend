@@ -7,7 +7,13 @@
       </h1>
     </div>
     <template v-for="item in template.content">
-      <component v-if="!item.hidden" :key="item.id" :is="item.type" :model="item" :settings="template.settings" />
+      <component
+        v-if="!item.hidden"
+        :key="item.id"
+        :is="getBlockType(item.type)"
+        :model="item"
+        :settings="template.settings"
+      />
     </template>
   </div>
 </template>
@@ -31,4 +37,15 @@ usePageHead({
     description: computed(() => unref(template)?.settings?.seoInfo?.metaDescription),
   },
 });
+
+function getBlockType(type: string): string {
+  switch (type) {
+    case "text":
+      return "text-block";
+    case "image":
+      return "image-block";
+    default:
+      return type;
+  }
+}
 </script>

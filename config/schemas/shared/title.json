@@ -3,12 +3,15 @@
     {
       "id": "title",
       "label": "Title",
-      "type": "string"
+      "type": "string",
+      "sort": 10
     },
     {
       "id": "heading",
       "label": "Heading",
       "type": "select",
+      "default": "h2",
+      "sort": 20,
       "options": [
         {
           "value": "h2",
