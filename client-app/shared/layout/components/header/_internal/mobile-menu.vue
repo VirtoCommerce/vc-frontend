@@ -2,13 +2,19 @@
   <div
     class="fixed z-50 w-full h-screen flex flex-col bg-[color:var(--color-mobile-menu-bg)] text-[color:var(--color-mobile-menu-link)]"
   >
-    <header class="px-6 flex justify-between items-center h-14 flex-shrink-0">
-      <VcImage :src="$cfg.logo_inverted_image" class="h-9" lazy />
+    <header class="px-6 flex items-center shrink-0 h-16 gap-x-3">
+      <div class="grow pr-6">
+        <span v-if="organization" class="line-clamp-2 text-white text-xl leading-[22px] font-medium italic">
+          {{ organization?.name }}
+        </span>
+
+        <VcImage v-else :src="$cfg.logo_inverted_image" class="max-h-9" lazy />
+      </div>
 
       <!-- Language block -->
-      <LanguageSelector v-if="supportedLocales.length > 1" class="sm:ml-auto sm:mr-6" />
+      <LanguageSelector v-if="supportedLocales.length > 1" />
 
-      <button class="appearance-none py-2 px-4 -mr-4" @click="$emit('close')">
+      <button class="appearance-none p-4 -mr-4" @click="$emit('close')">
         <svg class="text-[color:var(--color-primary)]" height="20" width="20">
           <use href="/static/images/close.svg#main" />
         </svg>
@@ -111,7 +117,7 @@
 
               <div
                 v-if="cart?.itemsQuantity"
-                class="flex items-center rounded-2xl border border-[color:var(--color-primary)] px-2 font-bold text-sm h-6 ml-3"
+                class="flex items-center rounded-full border border-[color:var(--color-primary)] px-2 font-bold text-sm h-6 ml-3"
               >
                 {{ cart.itemsQuantity }}
               </div>
@@ -124,7 +130,7 @@
 
               <div
                 v-if="productsIds.length"
-                class="flex items-center rounded-2xl border border-[color:var(--color-primary)] px-2 font-bold text-sm h-6 ml-3"
+                class="flex items-center rounded-full border border-[color:var(--color-primary)] px-2 font-bold text-sm h-6 ml-3"
               >
                 {{ productsIds.length }}
               </div>

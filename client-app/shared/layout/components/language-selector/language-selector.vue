@@ -1,32 +1,30 @@
 <template>
   <div v-click-outside="() => open && hideList()" class="relative select-none text-[13px]">
     <button
-      class="relative flex items-center space-x-1 py-3 pr-3.5 appearance-none leading-none text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
+      class="relative flex items-center gap-x-1.5 py-3 appearance-none leading-none text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
       @click="toggle"
     >
-      <span class="text-white mr-1" v-if="!isMobile" v-t="'shared.layout.language_selector.label'"></span>
+      <span class="hidden lg:inline text-white" v-t="'shared.layout.language_selector.label'"></span>
 
       <span
         class="fi fis rounded-full fa-2x -my-3 !w-[30px] h-[30px] lg:!w-[14px] lg:h-[14px]"
         :class="`fi-${currentLanguage?.twoLetterRegionName.toLowerCase()}`"
       ></span>
-      <span v-if="!isMobile" class="uppercase">
+
+      <span class="hidden lg:inline uppercase">
         {{ currentLanguage?.twoLetterLanguageName }}
       </span>
 
-      <span class="absolute inset-y-0 -right-3.5 flex items-center pointer-events-none lg:right-0">
-        <i
-          class="text-[color:var(--color-mobile-menu-link)] fas text-[1rem] lg:text-[color:var(--color-primary)] lg:text-[0.625rem]"
-          :class="[open ? 'fa-chevron-up' : 'fa-chevron-down']"
-        />
-      </span>
+      <i
+        class="text-[color:var(--color-mobile-menu-link)] fas text-[1rem] lg:text-[color:var(--color-primary)] lg:text-[0.625rem]"
+        :class="[open ? 'fa-chevron-up' : 'fa-chevron-down']"
+      />
     </button>
 
     <transition name="slide-fade-top">
       <div
         v-show="open"
-        class="absolute right-0 z-30 bg-white shadow-lg max-h-[260px] rounded border overflow-hidden"
-        :class="{ 'mt-2': isMobile }"
+        class="absolute right-0 z-30 mt-2 lg:mt-0 bg-white shadow-lg max-h-[260px] rounded border overflow-hidden"
       >
         <ul ref="listElement" class="max-h-[260px] overflow-auto divide-y">
           <li
@@ -75,12 +73,9 @@ export default {
 import "flag-icons/css/flag-icons.css";
 import { ref, shallowRef } from "vue";
 import { useLanguages } from "@/core/composables";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
 const { currentLanguage, supportedLanguages, saveLocaleAndReload } = useLanguages();
-const breakpoints = useBreakpoints(breakpointsTailwind);
 
-const isMobile = breakpoints.smaller("lg");
 const open = ref(false);
 const listElement = shallowRef<HTMLElement | null>(null);
 
