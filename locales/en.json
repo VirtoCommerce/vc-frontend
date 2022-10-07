@@ -59,6 +59,7 @@
       "product_count_in_stock": "in stock"
     },
     "messages": {
+      "loading_text": "Loading...",
       "product_out_of_stock": "Out of stock",
       "required_field": "This field is required",
       "email_is_not_correct": "Please enter valid email address, e.g. johndoe{'@'}gmail.com",
@@ -98,7 +99,9 @@
     "roles": {
       "org-maintainer": "Organization maintainer",
       "org-employee": "Organization employee",
-      "purchasing-agent": "Purchasing agent"
+      "purchasing-agent": "Purchasing agent",
+      "store-admin": "Store administrator",
+      "store-manager": "Store manager"
     }
   },
   "shared": {
@@ -544,7 +547,6 @@
         "accept_terms_text": "By placing an order, you accept the terms of our",
         "processing_personal_data_text": "and agree that we may process your personal data as per our",
         "pay_now_button": "Pay Now",
-        "loading_text": "Loading...",
         "errors": {
           "number": "Please provide valid credit card number",
           "month": "Please provide valid expiration month",

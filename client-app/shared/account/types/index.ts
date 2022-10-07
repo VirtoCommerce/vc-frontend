@@ -1,5 +1,3 @@
-import { PaymentMethodType, ShippingMethodType } from "@/xapi/types";
-
 export enum RegistrationKind {
   personal = "personal",
   organization = "organization",
@@ -42,8 +40,8 @@ export type ResetPassword = {
 
 export type CheckoutDefaults = {
   deliveryMethod?: string;
-  shippingMethod?: ShippingMethodType;
-  paymentMethod?: PaymentMethodType;
+  shippingMethodId?: string;
+  paymentMethodCode?: string;
 };
 
 export type UserPersonalData = {

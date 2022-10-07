@@ -58,13 +58,7 @@
   </div>
 
   <!-- Loader -->
-  <div v-else class="flex items-center gap-2">
-    <VcLoader class="inline-block h-6 w-6 text-[color:var(--color-primary)]" />
-
-    <span class="font-extrabold animate-pulse">
-      {{ $t("shared.payment.authorize_net.loading_text") }}
-    </span>
-  </div>
+  <VcMainLoader v-else />
 </template>
 
 <script setup lang="ts">

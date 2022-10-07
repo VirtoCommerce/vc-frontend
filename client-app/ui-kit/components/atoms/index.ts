@@ -16,6 +16,7 @@ export { default as VcInStock } from "./in-stock/vc-in-stock.vue";
 export { default as VcInfinityScrollLoader } from "./infinity-scroll-loader/vc-infinity-scroll-loader.vue";
 export { default as VcInput } from "./input/vc-input.vue";
 export { default as VcLoader } from "./loader/vc-loader.vue";
+export { default as VcMainLoader } from "./main-loader/vc-main-loader.vue";
 export { default as VcMarkdownRender } from "./markdown-render/vc-markdown-render.vue";
 export { default as VcPagination } from "./pagination/vc-pagination.vue";
 export { default as VcPopover } from "./popover/vc-popover.vue";
