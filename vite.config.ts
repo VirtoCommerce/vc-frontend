@@ -1,5 +1,6 @@
-import { defineConfig, loadEnv, UserConfig } from "vite";
 import path from "path";
+import { defineConfig, loadEnv, UserConfig } from "vite";
+import basicSsl from "@vitejs/plugin-basic-ssl";
 import vue from "@vitejs/plugin-vue";
 import graphql from "@rollup/plugin-graphql";
 import checker from "vite-plugin-checker";
@@ -15,6 +16,7 @@ export default defineConfig(({ mode }): UserConfig => {
   return {
     envPrefix: "APP_",
     plugins: [
+      basicSsl(),
       vue(),
       graphql(),
       checker({
@@ -49,9 +51,17 @@ export default defineConfig(({ mode }): UserConfig => {
     publicDir: "./client-app/public",
     server: {
       port: 3000,
+      https: true,
       proxy: {
-        "/storefrontapi": `${process.env.APP_BACKEND_URL}`,
         "/xapi": `${process.env.APP_BACKEND_URL}`,
+        "/storefrontapi": `${process.env.APP_BACKEND_URL}`,
+
+        // For login on behalf
+        "^/account/impersonate/.+": {
+          target: `${process.env.APP_BACKEND_URL}`,
+          changeOrigin: true,
+          autoRewrite: true,
+        },
       },
     },
   };
