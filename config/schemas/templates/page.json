@@ -14,20 +14,20 @@
   ],
   "type": "pages",
   "sections": [
+    "call-to-action",
+    "call-to-action-with-image",
+    "features",
     "image",
+    "page-header",
+    "products",
     "text",
-    "seo-settings",
-    "side-image",
-    "promo-text",
-    "column-images",
-    "dark-promo-text",
-    "subscribe-form",
-    "products"
+    "title"
+
   ],
   "settings": [
     {
       "id": "header",
-      "label": "Page header",
+      "label": "Page Header / H1",
       "type": "string"
     }
   ]

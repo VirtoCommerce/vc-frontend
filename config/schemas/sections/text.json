@@ -1,8 +1,7 @@
 {
   "name": "Text",
-  "icon": "image",
+  "icon": "text_snippet",
   "displayField": "name",
-  "group": "Content",
   "settings": [
     {
       "id": "header",
