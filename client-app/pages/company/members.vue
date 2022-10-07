@@ -5,7 +5,12 @@
       <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.company.members.title'" />
 
       <div class="flex flex-no-wrap space-x-2 md:space-x-4">
-        <VcButton class="uppercase p-4" is-outline @click="openInviteMemberDialog">
+        <VcButton
+          v-if="$can($permissions.CanInviteUsers)"
+          class="uppercase p-4"
+          is-outline
+          @click="openInviteMemberDialog"
+        >
           <span class="md:hidden">{{ $t("pages.company.members.buttons.invite") }}</span>
           <span class="hidden md:inline">{{ $t("pages.company.members.buttons.invite_members") }}</span>
         </VcButton>
