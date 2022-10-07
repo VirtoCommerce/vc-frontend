@@ -17,7 +17,14 @@
       "tab": "Content"
     },
     {
+      "id": "query",
+      "label": "Query",
+      "type": "string",
+      "tab": "Content"
+    },
+    {
       "id": "filter",
+      "hidden": true,
       "label": "Filter",
       "type": "string",
       "multiline": true,
