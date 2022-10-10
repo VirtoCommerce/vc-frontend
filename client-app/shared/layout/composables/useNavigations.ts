@@ -51,6 +51,8 @@ const mobilePreSelectedMenuLink = computed<MenuLink | undefined>(() => {
     preSelectedLink = mobileCatalogMenuLink.value;
   } else if (matchedRouteNames.includes("Account") && !matchedRouteNames.includes("Dashboard")) {
     preSelectedLink = mobileAccountMenuLink.value;
+  } else if (matchedRouteNames.includes("Company")) {
+    preSelectedLink = mobileCorporateMenuLink.value;
   }
 
   return preSelectedLink;

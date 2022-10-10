@@ -14,7 +14,6 @@ import { templateBlocks } from "@/shared/static-content";
 import ProductBlocks from "@/shared/catalog/components/product";
 import * as UIKitComponents from "@/ui-kit/components";
 import client from "@/xapi/graphql-client";
-import { useCategories } from "./shared/catalog";
 
 // Workaround before Nuxt3 migration, will be deleted later.
 window.useNuxtApp = () => {
@@ -28,7 +27,6 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
   const { themeContext, fetchThemeContext } = useThemeContext();
   const { currentLocale, currentLanguage, supportedLocales, setLocale } = useLanguages();
   const { currentCurrency } = useCurrency();
-  const { loadCategoriesTree } = useCategories();
 
   /**
    * Fetching required app data
@@ -69,9 +67,6 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
       max: ({ max }) => i18n.global.t("common.messages.max_length", { max }),
     },
   });
-
-  // Categories loading. It should be doing after i18n is initiated.
-  await loadCategoriesTree();
 
   /**
    * Create and mount application

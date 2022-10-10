@@ -56,7 +56,7 @@ function searchCategoryByKey(
   return category;
 }
 
-async function loadCategoriesTree() {
+async function fetchCategoriesTree() {
   const MAX_CATEGORIES = 100;
   loading.value = true;
 
@@ -98,7 +98,7 @@ export default () => {
   return {
     selectRoot,
     selectCategoryByKey,
-    loadCategoriesTree,
+    fetchCategoriesTree,
     loading: readonly(loading),
     categoryTree: computed(() => categoryTree.value),
     selectedCategory: computed(() => selectedCategory.value),
