@@ -203,8 +203,6 @@ function setAddress(address: AnyAddressType): void {
 }
 
 watchEffect(() => {
-  selectedAddress.value = props.addresses.find((item) =>
-    isEqualAddresses(item, props.currentAddress!, { skipDescription: true })
-  );
+  selectedAddress.value = props.addresses.find((item) => isEqualAddresses(item, props.currentAddress!));
 });
 </script>

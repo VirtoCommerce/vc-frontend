@@ -1,9 +1,9 @@
 import { AnyAddressType } from "@/core/types";
 import { InputMemberAddressType, MemberAddressType } from "@/xapi/types";
-import _ from "lodash";
+import { clone, isEqual, pick } from "lodash";
 
 export function toInputAddress(address: AnyAddressType): InputMemberAddressType {
-  const newAddress = _.clone(address) as Record<keyof MemberAddressType, any>;
+  const newAddress = clone(address) as Record<keyof MemberAddressType, any>;
 
   newAddress.key = newAddress.id;
 
@@ -23,14 +23,26 @@ export function isEqualAddresses(
   address2: AnyAddressType,
   options: { skipDescription?: boolean } = {}
 ): boolean {
-  const { skipDescription = false } = options;
-  const skipFields = ["id", "zip", "isDefault"];
+  const { skipDescription = true } = options;
+  const verifiableProperties: Array<keyof MemberAddressType> = [
+    "firstName",
+    "lastName",
+    "city",
+    "line1",
+    "line2",
+    "countryCode",
+    "regionId",
+    "postalCode",
+    "phone",
+    "email",
+  ];
 
-  if (skipDescription) {
-    skipFields.push("description");
+  if (!skipDescription) {
+    verifiableProperties.push("description");
   }
 
-  const first = _.omit(address1, skipFields);
-  const second = _.omit(address2, skipFields);
-  return _.isEqual(first, second);
+  const first = pick(address1, verifiableProperties);
+  const second = pick(address2, verifiableProperties);
+
+  return isEqual(first, second);
 }
