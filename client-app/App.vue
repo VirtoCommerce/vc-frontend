@@ -23,11 +23,13 @@ import { NotificationsHost } from "@/shared/notification";
 import { useRoute, useRouter } from "vue-router";
 import { useDomUtils, useLanguages } from "@/core/composables";
 import { useCart } from "@/shared/cart";
+import { useCategories } from "@/shared/catalog";
 
 const route = useRoute();
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
+const { fetchCategoriesTree } = useCategories();
 const { isBodyScrollable } = useDomUtils();
 const { currentLanguage } = useLanguages();
 const { fetchMenus } = useNavigations();
@@ -52,6 +54,7 @@ router.beforeEach(async (to) => {
 });
 
 fetchMenus(currentLanguage.value.cultureName);
+fetchCategoriesTree();
 fetchCart();
 </script>
 

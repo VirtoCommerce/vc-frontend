@@ -60,7 +60,7 @@
 
       <VcButton
         :to="{ name: 'SignUp' }"
-        :is-disabled="isAuthenticated"
+        :is-disabled="loading || isAuthenticated"
         size="lg"
         is-outline
         class="flex-1 ml-4 px-2 uppercase"
