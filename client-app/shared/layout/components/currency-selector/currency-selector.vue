@@ -1,23 +1,21 @@
 <template>
   <div v-click-outside="() => open && hideList()" class="relative select-none text-[13px]">
     <button
-      class="relative flex items-center space-x-1 py-3 pr-3.5 appearance-none leading-none text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
+      class="relative flex items-center gap-x-1.5 py-3 appearance-none leading-none text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
       @click="toggle"
     >
-      <span class="text-white mr-1">
+      <span class="text-white">
         {{ $t("shared.layout.currency_selector.label") }}
       </span>
 
-      <span>
+      <span class="uppercase">
         {{ currentCurrency?.code }}
       </span>
 
-      <span class="absolute inset-y-0 -right-3.5 flex items-center pointer-events-none lg:right-0">
-        <i
-          class="text-[color:var(--color-mobile-menu-link)] fas text-[1rem] lg:text-[color:var(--color-primary)] lg:text-[0.625rem]"
-          :class="[open ? 'fa-chevron-up' : 'fa-chevron-down']"
-        />
-      </span>
+      <i
+        class="text-[color:var(--color-mobile-menu-link)] fas text-[1rem] lg:text-[color:var(--color-primary)] lg:text-[0.625rem]"
+        :class="[open ? 'fa-chevron-up' : 'fa-chevron-down']"
+      />
     </button>
 
     <transition name="slide-fade-top">
