@@ -509,7 +509,7 @@
 import { computed, onMounted, ref, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import _ from "lodash";
+import { omit } from "lodash";
 import {
   CheckoutLabeledBlock,
   OrderSummary,
@@ -716,7 +716,7 @@ async function placeOrder() {
 }
 
 function getItemValidationError(lineItemId: string): ValidationErrorType | undefined {
-  return _.find(cart.value.validationErrors, (error) => error.objectId === lineItemId);
+  return cart.value.validationErrors?.find((error) => error.objectId === lineItemId);
 }
 
 async function saveNewAddressesInAccount(payload: {
@@ -776,8 +776,8 @@ function showPaymentMethodDialog(): void {
       availableMethods: paymentMethods.value,
       async onResult(method: PaymentMethodType) {
         await updatePayment({
-          paymentGatewayCode: method.code,
           id: payment.value?.id,
+          paymentGatewayCode: method.code,
         });
       },
     },
@@ -814,7 +814,7 @@ function openAddOrUpdateAddressDialog(
         closePopup();
 
         const inputAddress: InputAddressType = {
-          ..._.omit(address, ["isDefault", "description"]),
+          ...omit(address, ["isDefault", "description"]),
           addressType: AddressType.BillingAndShipping,
         };
 
@@ -838,7 +838,7 @@ function openAddressSelectionDialog(addressType: AddressType.Billing | AddressTy
           return;
         }
 
-        const inputAddress: InputAddressType = _.omit(address, ["isDefault", "description"]);
+        const inputAddress: InputAddressType = omit(address, ["isDefault", "description"]);
 
         await updateBillingOrDeliveryAddress(addressType, inputAddress);
       },
@@ -890,9 +890,15 @@ onMounted(async () => {
   const defaultPaymentMethod = paymentMethods.value.find((item) => item.code === paymentMethodCode);
   let reloadCart = false;
 
-  if (!shipment.value && shippingMethodId && defaultShippingMethod) {
+  if (
+    !shipment.value?.shipmentMethodCode &&
+    !shipment.value?.shipmentMethodOption &&
+    shippingMethodId &&
+    defaultShippingMethod
+  ) {
     await updateShipment(
       {
+        id: shipment.value?.id,
         price: defaultShippingMethod.price?.amount,
         shipmentMethodCode: defaultShippingMethod.code,
         shipmentMethodOption: defaultShippingMethod.optionName,
@@ -902,8 +908,14 @@ onMounted(async () => {
     reloadCart = true;
   }
 
-  if (!payment.value && paymentMethodCode && defaultPaymentMethod) {
-    await updatePayment({ paymentGatewayCode: defaultPaymentMethod.code }, false);
+  if (!payment.value?.paymentGatewayCode && paymentMethodCode && defaultPaymentMethod) {
+    await updatePayment(
+      {
+        id: payment.value?.id,
+        paymentGatewayCode: defaultPaymentMethod.code,
+      },
+      false
+    );
     reloadCart = true;
   }
 
