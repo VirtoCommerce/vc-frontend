@@ -16,6 +16,7 @@ export default async function searchCategories(itemsPerPage: number, page: numbe
       first: itemsPerPage,
       after: String((page - 1) * itemsPerPage),
       filter: "status:visible",
+      sort: "name:asc",
     },
   });
 
