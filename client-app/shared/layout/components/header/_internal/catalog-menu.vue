@@ -3,7 +3,7 @@
     <CatalogMenuCategoryBlock
       v-for="(category, index) in categories"
       :key="index"
-      class="w-full min-h-[15rem] break-inside-avoid p-5"
+      class="w-full min-h-[15.5rem] break-inside-avoid p-5"
       :class="[(index + 1) % maxRowsNumber === 0 ? 'break-after-column' : 'break-after-avoid']"
       :category="category"
       @select="$emit('select')"
@@ -16,6 +16,8 @@ import { computed } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import CatalogMenuCategoryBlock from "./catalog-menu-category-block.vue";
 import { useCategories } from "@/shared/catalog";
+
+defineEmits<{ (event: "select"): void }>();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isXL = breakpoints.smaller("xl");
@@ -31,6 +33,4 @@ const categories = computed(() => categoryTree.value?.items || []);
 const maxRowsNumber = computed(() => {
   return Math.ceil(categories.value.length / columnsCount.value);
 });
-
-defineEmits<{ (event: "select"): void }>();
 </script>

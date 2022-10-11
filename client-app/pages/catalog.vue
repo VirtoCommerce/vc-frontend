@@ -73,7 +73,7 @@
 
         <!-- Sidebar -->
         <div v-else class="space-y-5 w-60 flex-shrink-0 pt-2">
-          <CategorySelector :selected-category="selectedCategory" :loading="loading" v-if="!isSearchQuery" />
+          <CategorySelector :selected-category="selectedCategory" :loading="loadingCategories" v-if="!isSearchQuery" />
 
           <ProductsFiltersSidebar
             :keyword="keywordQueryParam"
@@ -314,7 +314,6 @@ import {
   shallowReactive,
   shallowRef,
   triggerRef,
-  watch,
   WatchStopHandle,
 } from "vue";
 import {
@@ -340,6 +339,7 @@ import {
   useProducts,
   useProductsRoutes,
   ViewMode,
+  searchCategoryByKey,
 } from "@/shared/catalog";
 import { BranchesDialog, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { AddToCart } from "@/shared/cart";
@@ -365,7 +365,7 @@ const props = defineProps({
 const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { t } = useI18n();
-const { selectedCategory, selectCategoryByKey, selectRoot } = useCategories();
+const { loading: loadingCategories, categoryTree, fetchCategoriesTree } = useCategories();
 const {
   fetchProducts,
   fetchMoreProducts,
@@ -380,6 +380,12 @@ const {
 } = useProducts({
   withFacets: true,
 });
+
+const selectedCategory = computed(() =>
+  props.categoryId && categoryTree.value
+    ? searchCategoryByKey(categoryTree.value, "id", props.categoryId)
+    : categoryTree.value
+);
 
 usePageHead({
   title: computed(() => selectedCategory.value?.seoInfo?.pageTitle || selectedCategory.value?.label),
@@ -591,14 +597,6 @@ async function loadMoreProducts() {
   });
 }
 
-function selectCategory(id?: string) {
-  if (id) {
-    selectCategoryByKey("id", id);
-  } else {
-    selectRoot();
-  }
-}
-
 function openBranchesDialog(fromMobileFilter: boolean) {
   openPopup({
     component: BranchesDialog,
@@ -626,7 +624,10 @@ function openBranchesDialog(fromMobileFilter: boolean) {
 // region Lifecycle Hooks
 
 onMounted(async () => {
-  selectCategory(props.categoryId);
+  if (!loadingCategories.value) {
+    fetchCategoriesTree();
+  }
+
   await loadProducts();
 
   // Start change tracking after initial data load
@@ -647,10 +648,6 @@ onMounted(async () => {
         flush: "post",
         debounce: 20,
       }
-    ),
-    watch(
-      () => props.categoryId,
-      (value) => selectCategory(value)
     )
   );
 });
