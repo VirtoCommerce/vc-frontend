@@ -51,7 +51,7 @@
             {{ item.title }}
           </BottomHeaderLink>
 
-          <BottomHeaderLink v-else :to="item.route" :icon="item.icon" class="dfd">
+          <BottomHeaderLink v-else :to="item.route" :icon="item.icon">
             {{ item.title }}
           </BottomHeaderLink>
         </template>

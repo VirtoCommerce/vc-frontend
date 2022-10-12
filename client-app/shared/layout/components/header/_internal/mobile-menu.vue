@@ -115,12 +115,19 @@
             <div class="flex items-center">
               <span>{{ item.title }}</span>
 
-              <div
-                v-if="cart?.itemsQuantity"
-                class="flex items-center rounded-full border border-[color:var(--color-primary)] px-2 font-bold text-sm h-6 ml-3"
+              <transition
+                enter-from-class="scale-0"
+                leave-to-class="scale-0"
+                enter-active-class="will-change-transform"
+                leave-active-class="will-change-transform"
               >
-                {{ cart.itemsQuantity }}
-              </div>
+                <span
+                  v-if="cart?.itemsQuantity"
+                  class="flex items-center transition-transform rounded-full border border-[color:var(--color-primary)] px-2 font-bold text-sm h-6 ml-3"
+                >
+                  {{ preparedCartItemsQuantity }}
+                </span>
+              </transition>
             </div>
           </template>
 
@@ -128,12 +135,19 @@
             <div class="flex items-center">
               <span>{{ item.title }}</span>
 
-              <div
-                v-if="productsIds.length"
-                class="flex items-center rounded-full border border-[color:var(--color-primary)] px-2 font-bold text-sm h-6 ml-3"
+              <transition
+                enter-from-class="scale-0"
+                leave-to-class="scale-0"
+                enter-active-class="will-change-transform"
+                leave-active-class="will-change-transform"
               >
-                {{ productsIds.length }}
-              </div>
+                <span
+                  v-if="productsIds.length"
+                  class="flex items-center transition-transform rounded-full border border-[color:var(--color-primary)] px-2 font-bold text-sm h-6 ml-3"
+                >
+                  {{ productsIds.length }}
+                </span>
+              </transition>
             </div>
           </template>
         </MobileMenuLink>
@@ -190,7 +204,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCart } from "@/shared/cart";
 import { useUser } from "@/shared/account";
@@ -198,6 +212,7 @@ import { LanguageSelector, MenuLink, useNavigations } from "@/shared/layout";
 import { useCompareProducts } from "@/shared/compare";
 import { useCurrency, useLanguages } from "@/core/composables";
 import MobileMenuLink from "./mobile-menu-link.vue";
+import { numberToShortString } from "@/core/utilities";
 
 defineEmits(["close"]);
 
@@ -217,6 +232,8 @@ const {
   goBack,
   goMainMenu,
 } = useNavigations();
+
+const preparedCartItemsQuantity = computed<string>(() => numberToShortString(cart.value?.itemsQuantity ?? 0));
 
 const unauthorizedMenuLinks: MenuLink[] = [
   { route: { name: "SignIn" }, title: t("shared.layout.header.link_sign_in") },

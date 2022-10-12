@@ -49,7 +49,7 @@ export interface ISortInfo {
 }
 
 export interface IThemeConfig {
-  current: string | { [key: string]: any };
+  current: string | IThemeConfigPreset;
   presets: Record<string, IThemeConfigPreset>;
 }
 

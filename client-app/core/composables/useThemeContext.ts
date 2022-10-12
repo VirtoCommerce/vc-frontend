@@ -11,9 +11,8 @@ export default function useThemeContext() {
     if (DEVELOPMENT) {
       // TODO: remove this when switching to SSR
       const settings: IThemeConfig = await import("../../../config/settings_data.json");
-      if (typeof settings.current === "string") {
-        result.settings = settings.presets[settings.current];
-      }
+
+      result.settings = typeof settings.current === "string" ? settings.presets[settings.current] : settings.current;
     }
 
     themeContext.value = result;
