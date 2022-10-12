@@ -38,14 +38,17 @@ export default {
 
         case "settings": {
           const keys = Object.entries(event.data.settings);
+
           keys.forEach(([key, value]) => {
             app.config.globalProperties.$cfg[key] = value;
           });
+
           keys
             .filter(([key]) => /^color/.test(key))
             .forEach(([key, value]) => {
               document.documentElement.style.setProperty(`--${key.replace(/_/g, "-")}`, value as string);
             });
+
           break;
         }
       }

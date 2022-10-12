@@ -14,12 +14,19 @@
           <use :href="icon" />
         </svg>
 
-        <span
-          v-if="count"
-          class="absolute -top-2 -right-3 bg-white rounded-full border border-[color:var(--color-primary)] px-1.5 py-0.5 font-extrabold text-[10px] leading-3 text-[color:var(--color-header-bottom-link)]"
+        <transition
+          enter-from-class="scale-0"
+          leave-to-class="scale-0"
+          enter-active-class="will-change-transform"
+          leave-active-class="will-change-transform"
         >
-          {{ count }}
-        </span>
+          <span
+            v-if="count"
+            class="absolute -top-2 -right-3 transition-transform bg-white rounded-full border border-[color:var(--color-primary)] px-1.5 py-0.5 font-extrabold text-11 leading-3 text-[color:var(--color-header-bottom-link)]"
+          >
+            {{ preparedCount }}
+          </span>
+        </transition>
       </span>
 
       <span>
@@ -36,10 +43,11 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { PropType } from "vue";
+import { computed, PropType } from "vue";
 import { RouteLocationRaw } from "vue-router";
+import { numberToShortString } from "@/core/utilities";
 
-defineProps({
+const props = defineProps({
   to: {
     type: [String, Object] as PropType<RouteLocationRaw>,
     default: undefined,
@@ -55,4 +63,6 @@ defineProps({
     default: 0,
   },
 });
+
+const preparedCount = computed<string>(() => numberToShortString(props.count));
 </script>
