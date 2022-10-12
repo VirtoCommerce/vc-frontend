@@ -1,14 +1,6 @@
 {
   "settings": [
     {
-      "id": "name",
-      "label": "Block name",
-      "type": "string",
-      "default": null,
-      "tab": "Settings",
-      "visibility": "true || this.model.background !== 'bg-white'"
-    },
-    {
       "id": "background",
       "label": "Background",
       "type": "select",

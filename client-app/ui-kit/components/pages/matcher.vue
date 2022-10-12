@@ -79,11 +79,8 @@ const seoInfo = asyncComputed<TResult | undefined>(
     if (!seoUrl.value) {
       return undefined;
     }
-
-    const postfix = (window as any)["__postfix__"] || "";
-
     const result = await innerFetch<TSlugInfoResult>(
-      `/storefrontapi/slug/${seoUrl.value}?culture=${currentLanguage.value!.cultureName}${postfix}`
+      `/storefrontapi/slug/${seoUrl.value}?culture=${currentLanguage.value!.cultureName}`
     );
 
     if (result.contentItem?.type === "page") {

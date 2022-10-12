@@ -1,14 +1,19 @@
 {
-  "name": "Simple image",
+  "name": "Image",
   "icon": "image",
   "displayField": "name",
-  "group": "Content",
-  "groupIcon": "flight_takeoff",
   "settings": [
     {
       "id": "image",
       "type": "images",
-      "multiple": false
+      "multiple": false,
+      "tab": "Content"
+    },
+    {
+      "id": "alttext",
+      "label": "Alternative Text",
+      "type": "string",
+      "tab": "Content"
     }
   ]
 }

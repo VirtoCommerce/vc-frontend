@@ -1,7 +1,7 @@
 <template>
   <div class="pt-6 pb-16 text-block">
     <div class="w-full max-w-screen-2xl mx-auto px-5 md:px-12">
-      <h1 class="text-2xl mb-8">{{ model.header }}</h1>
+      <component :is="model.heading" class="text-2xl">{{ model.title }}</component>
       <div class="text-lg block-content" v-html="model.text"></div>
     </div>
   </div>

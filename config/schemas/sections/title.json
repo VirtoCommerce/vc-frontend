@@ -1,17 +1,14 @@
 {
-  "icon": "title",
-  "name": "Promo text",
+  "name": "Title",
+  "icon": "article",
   "displayField": "name",
+  "includeShared": ["title"],
   "settings": [
-    {
-      "id": "title",
-      "label": "Title",
-      "type": "string"
-    },
     {
       "id": "subtitle",
       "label": "Subtitle",
       "type": "string",
+      "sort": 30,
       "multiline": true
     }
   ]

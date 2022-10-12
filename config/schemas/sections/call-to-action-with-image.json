@@ -1,8 +1,8 @@
 {
-  "icon": "superscript",
-  "name": "Side Image",
+  "name": "Call to Action with Image",
+  "icon": "article",
   "displayField": "name",
-  "includeShared": ["buttons"],
+  "includeShared": [ "buttons" ],
   "settings": [
     {
       "id": "title",
@@ -38,7 +38,7 @@
           "label": "Left (bottom)"
         }
       ],
-      "tab": "Settings"
+      "tab": "Content"
     }
   ]
 }

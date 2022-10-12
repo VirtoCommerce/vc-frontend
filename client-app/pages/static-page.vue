@@ -44,6 +44,8 @@ function getBlockType(type: string): string {
       return "text-block";
     case "image":
       return "image-block";
+    case "title":
+      return "title-block";
     default:
       return type;
   }

@@ -1,6 +1,6 @@
 {
-  "icon": "superscript",
-  "name": "Images in row",
+  "name": "Features",
+  "icon": "image",
   "displayField": "name",
   "settings": [
     {

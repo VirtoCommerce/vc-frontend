@@ -1,5 +1,5 @@
 {
-  "icon": "inventory",
+  "icon": "local_mall",
   "name": "Products",
   "displayField": "name",
   "settings": [
@@ -20,14 +20,6 @@
       "id": "query",
       "label": "Query",
       "type": "string",
-      "tab": "Content"
-    },
-    {
-      "id": "filter",
-      "hidden": true,
-      "label": "Filter",
-      "type": "string",
-      "multiline": true,
       "tab": "Content"
     },
     {

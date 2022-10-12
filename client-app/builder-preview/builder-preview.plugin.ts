@@ -1,8 +1,14 @@
 import { App } from "vue";
 import { Router } from "vue-router";
 import { useStaticPage, useTemplate } from "@/shared/static-content";
+import { useFetch } from "@/core/composables";
 
-(window as any)["__postfix__"] = "&preview_mode=true";
+const { enrichRequest } = useFetch();
+
+enrichRequest((headers: Headers) => {
+  headers.append("x-template-builder", "preview-mode");
+  return headers;
+});
 
 export default {
   install: (app: App, options: { router: Router }) => {
@@ -10,6 +16,14 @@ export default {
 
     if (bodyEl) {
       bodyEl.style.visibility = "hidden";
+      bodyEl.style.position = "relative";
+      const interactiveBlocker = document.createElement("div");
+      interactiveBlocker.style.position = "absolute";
+      interactiveBlocker.style.top = "0";
+      interactiveBlocker.style.left = "0";
+      interactiveBlocker.style.bottom = "0";
+      interactiveBlocker.style.right = "0";
+      bodyEl.appendChild(interactiveBlocker);
     }
 
     window.addEventListener("message", (event: MessageEvent) => {
