@@ -20,7 +20,7 @@ const templateBlocks: { [key: string]: Component } = {
   "call-to-action": CallToAction,
   "subscribe-form": SubscribeForm,
   products: ProductsBlock,
-  title: TitleBlock,
+  "title-block": TitleBlock,
 };
 
 export default templateBlocks;
