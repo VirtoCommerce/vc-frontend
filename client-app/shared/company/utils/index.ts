@@ -37,14 +37,14 @@ export function getDisplayContactStatus(status?: string): ContactDisplayStatusTy
       return {
         localeLabel: "pages.company.members.statuses.active",
         iconUrl: "/static/icons/contact-active.svg",
-        cssStyles: "bg-success-500 text-white",
+        cssStyles: "bg-[color:var(--color-success)] text-white",
       };
 
-    case ContactStatus.Rejected:
+    case ContactStatus.Locked:
       return {
         localeLabel: "pages.company.members.statuses.blocked",
         iconUrl: "/static/icons/contact-blocked.svg",
-        cssStyles: "bg-error-600 text-white",
+        cssStyles: "bg-[color:var(--color-danger)] text-white",
       };
 
     default:

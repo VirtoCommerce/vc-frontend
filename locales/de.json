@@ -321,24 +321,6 @@
       }
     },
     "company": {
-      "add_new_member_dialog": {
-        "title": "Neues Mitglied",
-        "role_label": "Rolle",
-        "role_placeholder": "Rolle auswählen",
-        "first_name_label": "@:common.labels.first_name",
-        "first_name_placeholder": "Enter your first name",
-        "last_name_label": "@:common.labels.last_name",
-        "last_name_placeholder": "Enter your last name",
-        "email_label": "@:common.labels.email",
-        "email_placeholder": "@:common.placeholders.email",
-        "cancel_button": "@:common.buttons.cancel",
-        "add_button": "Hinzufügen",
-        "successfully_text": "Der Benutzer {0} wurde erfolgreich erstellt"
-      },
-      "delete_member_dialog": {
-        "title": "Delete member",
-        "text": "Are you sure you want to delete the user {name} from the company members list?"
-      },
       "delete_address_dialog": {
         "title": "Delete address",
         "text": "Are you sure you want to delete address from the list?"
@@ -347,6 +329,18 @@
         "create_title": "Create new company address",
         "edit_title": "Edit company address",
         "address_title": "Address Info"
+      },
+      "block_member_dialog": {
+        "title": "Block user",
+        "text": "Are you sure you want to block access of the user?"
+      },
+      "unblock_member_dialog": {
+        "title": "Unblock user",
+        "text": "Are you sure you want to unblock access of the user?"
+      },
+      "delete_member_dialog": {
+        "title": "Delete member",
+        "text": "Are you sure you want to delete the user {name} from the company members list?"
       }
     },
     "cart": {
@@ -995,6 +989,7 @@
           "reset_search": "Reset search",
           "edit_role": "Edit role",
           "block_user": "Block user",
+          "unblock_user": "Unblock user",
           "delete": "Delete",
           "no_members": "Continue browsing"
         },

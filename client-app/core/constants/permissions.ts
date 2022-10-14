@@ -9,3 +9,7 @@ export enum StorefrontPermissions {
   CanViewOrders = "storefront:order:view",
   CanChangeOrderStatus = "storefront:order:changestatus",
 }
+
+export enum XApiPermissions {
+  CanEditOrganization = "xapi:my_organization:edit",
+}

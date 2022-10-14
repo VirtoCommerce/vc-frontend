@@ -126,13 +126,13 @@ function close() {
 const headerStyle = computed(() => {
   switch (props.variant) {
     case "warn":
-      return "bg-[color:var(--color-primary)]";
+      return "bg-[color:var(--color-warning)]";
 
     case "danger":
       return "bg-[color:var(--color-danger)]";
 
     case "success":
-      return "bg-green-500";
+      return "bg-[color:var(--color-success)]";
 
     case "info":
     default:

@@ -1,5 +1,5 @@
 import { App } from "vue";
-import { StorefrontPermissions } from "@/core/constants";
+import { StorefrontPermissions, XApiPermissions } from "@/core/constants";
 import { useUser } from "@/shared/account";
 
 export default {
@@ -16,8 +16,11 @@ export default {
     /**
      * Inject storefront permissions to App instance
      * @example:
-     *  <button :disabled="!$can($permissions.CanCreateUsers, $permissions.CanEditUsers)">Add user</button>
+     *  <button :disabled="!$can($permissions.storefront.CanCreateUsers, $permissions.xApi.CanEditUsers)">Add user</button>
      */
-    app.config.globalProperties.$permissions = StorefrontPermissions;
+    app.config.globalProperties.$permissions = {
+      xApi: XApiPermissions,
+      storefront: StorefrontPermissions,
+    };
   },
 };

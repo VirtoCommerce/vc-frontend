@@ -3,7 +3,11 @@ import { ContactType, RoleType } from "@/xapi/types";
 export enum ContactStatus {
   New = "New",
   Approved = "Approved",
+  /**
+   * @deprecated
+   */
   Rejected = "Rejected",
+  Locked = "Locked",
   Deleted = "Deleted",
 }
 

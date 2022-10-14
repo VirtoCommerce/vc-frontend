@@ -4,6 +4,7 @@ mutation InviteUser($command: InputInviteUserType!) {
     errors {
       code
       description
+      parameter
     }
   }
 }
