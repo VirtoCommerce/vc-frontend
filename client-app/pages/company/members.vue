@@ -269,7 +269,7 @@
             </td>
 
             <td v-if="actionButtonIsAvailable" class="px-5 text-right">
-              <VcActionDropdownMenu>
+              <VcActionDropdownMenu v-if="contact.id !== user.memberId">
                 <!--<button v-if="$can($permissions.storefront.CanEditUsers)" class="flex items-center p-3 whitespace-nowrap">
                   <i class="fas fa-pencil-alt mr-2 leading-none text-base text-[color:var(--color-warning)]" />
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.edit_role") }}</span>
@@ -383,7 +383,7 @@ import { XApiPermissions } from "@/core/constants";
 const { t } = useI18n();
 const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { checkPermissions } = useUser();
+const { user, checkPermissions } = useUser();
 const {
   loading: contactsLoading,
   page,
