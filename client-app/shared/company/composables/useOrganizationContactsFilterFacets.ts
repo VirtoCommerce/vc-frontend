@@ -35,7 +35,7 @@ export default function useOrganizationContactsFilterFacets() {
       values: [
         { label: t("pages.company.members.statuses.active"), value: ContactStatus.Approved, selected: false },
         { label: t("pages.company.members.statuses.inactive"), value: ContactStatus.New, selected: false },
-        { label: t("pages.company.members.statuses.blocked"), value: ContactStatus.Rejected, selected: false },
+        { label: t("pages.company.members.statuses.blocked"), value: ContactStatus.Locked, selected: false },
       ],
     },
   ];

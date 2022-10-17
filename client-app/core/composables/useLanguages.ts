@@ -31,12 +31,19 @@ const currentLanguage = computed<Language>(
   () => supportedLanguages.value.find((x) => x.twoLetterLanguageName === currentLocale.value) || defaultLanguage.value
 );
 
-function fetchLocaleMessages(locale: string) {
+function fetchLocaleMessages(locale: string): Promise<any> {
   /**
    * FIXME: Don't use import
    * Fetch localization files (json) from Storefront to be able to edit localization files in Admin panel
    */
-  return import(`../../../locales/${locale}.json`);
+  const locales = import.meta.glob("../../../locales/*.json");
+  const path = `../../../locales/${locale}.json`;
+
+  if (locales[path]) {
+    return locales[path]();
+  }
+
+  return import("../../../locales/en.json");
 }
 
 async function setLocale(i18n: I18n, locale: string): Promise<void> {

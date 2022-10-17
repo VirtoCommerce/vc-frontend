@@ -1,4 +1,8 @@
-import { getOrganizationContacts } from "@/xapi/graphql/organization";
+import {
+  getOrganizationContacts,
+  lockOrganizationContact,
+  unlockOrganizationContact,
+} from "@/xapi/graphql/organization";
 import { ContactType, InputUpdateContactType } from "@/xapi/types";
 import { ref, shallowRef, readonly, computed } from "vue";
 import { getSortingExpression, Logger } from "@/core/utilities";
@@ -9,6 +13,7 @@ import { ISortInfo } from "@/core/types";
 import { useI18n } from "vue-i18n";
 import { convertToExtendedContact, convertToInputUpdateContact, ExtendedContactType } from "@/shared/company";
 import updateContact from "@/xapi/graphql/account/mutations/updateContact";
+import { useNotifications } from "@/shared/notification";
 
 export default function useOrganizationContacts() {
   const loading = ref(false);
@@ -25,11 +30,12 @@ export default function useOrganizationContacts() {
 
   const { t } = useI18n();
   const { organization } = useUser();
+  const notifications = useNotifications();
 
-  async function loadContacts() {
+  async function fetchContacts() {
     loading.value = true;
 
-    const organizationId: string | undefined = organization.value!.id;
+    const organizationId: string | undefined = organization.value?.id;
 
     if (!organizationId) {
       return;
@@ -53,7 +59,7 @@ export default function useOrganizationContacts() {
       );
       pages.value = Math.ceil((response.totalCount ?? 0) / itemsPerPage.value);
     } catch (e) {
-      Logger.error(`${useOrganizationContacts.name}.${loadContacts.name}`, e);
+      Logger.error(`${useOrganizationContacts.name}.${fetchContacts.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -74,16 +80,60 @@ export default function useOrganizationContacts() {
     }
   }
 
+  async function lockContact(contact: ExtendedContactType): Promise<void> {
+    loading.value = true;
+
+    try {
+      await lockOrganizationContact(contact.id);
+    } catch (e) {
+      Logger.error(`${useOrganizationContacts.name}.${lockContact.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+
+    await fetchContacts();
+
+    notifications.success({
+      text: t("shared.company.notifications.user_blocked"),
+      duration: 10000,
+      single: true,
+    });
+  }
+
+  async function unlockContact(contact: ExtendedContactType): Promise<void> {
+    loading.value = true;
+
+    try {
+      await unlockOrganizationContact(contact.id);
+    } catch (e) {
+      Logger.error(`${useOrganizationContacts.name}.${unlockContact.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+
+    await fetchContacts();
+
+    notifications.success({
+      text: t("shared.company.notifications.user_unblocked"),
+      duration: 10000,
+      single: true,
+    });
+  }
+
   return {
     sort,
     itemsPerPage,
-    pages: readonly(pages),
     page,
     keyword,
     filter,
+    fetchContacts,
+    updateMember,
+    lockContact,
+    unlockContact,
+    pages: readonly(pages),
     loading: readonly(loading),
     contacts: computed(() => contacts.value),
-    loadContacts,
-    updateMember,
   };
 }

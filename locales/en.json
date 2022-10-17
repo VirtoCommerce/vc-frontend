@@ -322,24 +322,6 @@
       }
     },
     "company": {
-      "add_new_member_dialog": {
-        "title": "New member",
-        "role_label": "Role",
-        "role_placeholder": "Select role",
-        "first_name_label": "@:common.labels.first_name",
-        "first_name_placeholder": "Enter your first name",
-        "last_name_label": "@:common.labels.last_name",
-        "last_name_placeholder": "Enter your last name",
-        "email_label": "@:common.labels.email",
-        "email_placeholder": "@:common.placeholders.email",
-        "cancel_button": "@:common.buttons.cancel",
-        "add_button": "Add",
-        "successfully_text": "The user {0} has been successfully created"
-      },
-      "delete_member_dialog": {
-        "title": "Delete member",
-        "text": "Are you sure you want to delete the user {name} from the company members list?"
-      },
       "delete_address_dialog": {
         "title": "Delete address",
         "text": "Are you sure you want to delete address from the list?"
@@ -348,6 +330,22 @@
         "address_title": "Address Info",
         "create_title": "Create new company address",
         "edit_title": "Edit company address"
+      },
+      "block_member_dialog": {
+        "title": "Block user",
+        "text": "Are you sure you want to block access of the user?"
+      },
+      "unblock_member_dialog": {
+        "title": "Unblock user",
+        "text": "Are you sure you want to unblock access of the user?"
+      },
+      "delete_member_dialog": {
+        "title": "Delete member",
+        "text": "Are you sure you want to delete the user {name} from the company members list?"
+      },
+      "notifications": {
+        "user_blocked": "The user has been successfully blocked",
+        "user_unblocked": "The user has been successfully unblocked"
       }
     },
     "cart": {
@@ -997,6 +995,7 @@
           "reset_search": "Reset search",
           "edit_role": "Edit role",
           "block_user": "Block user",
+          "unblock_user": "Unblock user",
           "delete": "Delete",
           "no_members": "Continue browsing"
         },

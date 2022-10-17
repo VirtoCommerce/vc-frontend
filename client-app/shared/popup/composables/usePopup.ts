@@ -11,7 +11,7 @@ export default function usePopup() {
     stack.value.push({
       id,
       props: options.props,
-      component: markRaw(options.component),
+      component: typeof options.component === "string" ? options.component : markRaw(options.component),
     });
 
     return () => closePopup(id);

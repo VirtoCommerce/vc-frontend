@@ -1,5 +1,5 @@
 import { Role } from "@/core/types";
-import { StorefrontPermissions } from "@/core/constants";
+import { StorefrontPermissions, XApiPermissions } from "@/core/constants";
 
 export const ORGANIZATION_MAINTAINER: Role = {
   id: "org-maintainer",
@@ -12,6 +12,7 @@ export const ORGANIZATION_MAINTAINER: Role = {
     StorefrontPermissions.CanEditUsers,
     StorefrontPermissions.CanDeleteUsers,
     StorefrontPermissions.CanInviteUsers,
+    XApiPermissions.CanEditOrganization,
   ],
 };
 

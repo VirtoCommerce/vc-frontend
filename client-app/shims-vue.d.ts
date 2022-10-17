@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IThemeConfigPreset, IThemeContext } from "@/core/types";
-import { StorefrontPermissions } from "@/core/constants";
+import { StorefrontPermissions, XApiPermissions } from "@/core/constants";
 
 declare module "*.vue" {
   import { DefineComponent } from "vue";
@@ -12,7 +12,7 @@ declare module "@vue/runtime-core" {
   interface ComponentCustomProperties {
     $cfg: IThemeConfigPreset;
     $context: IThemeContext;
-    $permissions: typeof StorefrontPermissions;
+    $permissions: { xApi: typeof XApiPermissions; storefront: typeof StorefrontPermissions };
     $can: (...permissions: string[]) => boolean;
   }
 }
