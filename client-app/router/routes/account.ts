@@ -1,4 +1,5 @@
 import { RouteRecordRaw, RouterView } from "vue-router";
+import { useThemeContext } from "@/core/composables";
 
 const Dashboard = () => import("@/pages/account/dashboard.vue");
 const Profile = () => import("@/pages/account/profile.vue");
@@ -54,4 +55,26 @@ export const accountRoutes: RouteRecordRaw[] = [
     ],
   },
   { path: "checkout-defaults", name: "CheckoutDefaults", component: CheckoutDefaults },
+  {
+    path: "quotes",
+    component: RouterView,
+    children: [
+      // { path: "", name: "Quotes", component: Quotes },
+      // {
+      //   path: ":quoteId",
+      //   name: "QuoteDetails",
+      //   component: QuoteDetails,
+      //   props: true,
+      // },
+    ],
+    beforeEnter(_to, _from, next) {
+      const { themeContext } = useThemeContext();
+
+      if (themeContext.value.settings.quotes_enabled) {
+        next();
+      } else {
+        next({ name: "Dashboard" });
+      }
+    },
+  },
 ];

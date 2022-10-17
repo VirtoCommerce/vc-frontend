@@ -68,6 +68,8 @@ export interface IThemeConfigPreset {
   anonymous_price_enabled?: boolean;
   anonymous_checkout?: boolean;
 
+  quotes_enabled?: boolean;
+
   bulk_order_enabled?: boolean;
   product_compare_enabled?: boolean;
   product_compare_limit?: number;
