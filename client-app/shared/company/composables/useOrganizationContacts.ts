@@ -13,6 +13,7 @@ import { ISortInfo } from "@/core/types";
 import { useI18n } from "vue-i18n";
 import { convertToExtendedContact, convertToInputUpdateContact, ExtendedContactType } from "@/shared/company";
 import updateContact from "@/xapi/graphql/account/mutations/updateContact";
+import { useNotifications } from "@/shared/notification";
 
 export default function useOrganizationContacts() {
   const loading = ref(false);
@@ -29,6 +30,7 @@ export default function useOrganizationContacts() {
 
   const { t } = useI18n();
   const { organization } = useUser();
+  const notifications = useNotifications();
 
   async function fetchContacts() {
     loading.value = true;
@@ -91,6 +93,12 @@ export default function useOrganizationContacts() {
     }
 
     await fetchContacts();
+
+    notifications.success({
+      text: t("shared.company.notifications.user_blocked"),
+      duration: 10000,
+      single: true,
+    });
   }
 
   async function unlockContact(contact: ExtendedContactType): Promise<void> {
@@ -106,6 +114,12 @@ export default function useOrganizationContacts() {
     }
 
     await fetchContacts();
+
+    notifications.success({
+      text: t("shared.company.notifications.user_unblocked"),
+      duration: 10000,
+      single: true,
+    });
   }
 
   return {

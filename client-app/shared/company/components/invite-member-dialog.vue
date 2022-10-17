@@ -58,7 +58,13 @@
     </form>
 
     <template #actions="{ close }">
-      <VcButton class="uppercase w-full sm:w-auto sm:px-10" kind="secondary" is-outline @click="close">
+      <VcButton
+        :is-disabled="loading"
+        class="uppercase w-full sm:w-auto sm:px-10"
+        kind="secondary"
+        is-outline
+        @click="close"
+      >
         {{ $t("shared.account.invite_member_dialog.cancel_button") }}
       </VcButton>
 

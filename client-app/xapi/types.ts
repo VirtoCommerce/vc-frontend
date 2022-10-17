@@ -4760,6 +4760,20 @@ export type GetOrdersQueryVariables = Exact<{
 
 export type GetOrdersQuery = { orders?: { totalCount?: number, items?: Array<{ id: string, createdDate: any, status?: string, number: string, customerId: string, purchaseOrderNumber?: string, currency?: { code: string }, total?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } }, inPayments: Array<{ number: string }> }> } };
 
+export type LockOrganizationContactMutationVariables = Exact<{
+  command: InputLockUnlockOrganizationContactType;
+}>;
+
+
+export type LockOrganizationContactMutation = { lockOrganizationContact?: { id: string } };
+
+export type UnlockOrganizationContactMutationVariables = Exact<{
+  command: InputLockUnlockOrganizationContactType;
+}>;
+
+
+export type UnlockOrganizationContactMutation = { unlockOrganizationContact?: { id: string } };
+
 export type UpdateOrganizationMutationVariables = Exact<{
   command: InputUpdateOrganizationType;
 }>;

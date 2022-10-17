@@ -342,6 +342,10 @@
       "delete_member_dialog": {
         "title": "Delete member",
         "text": "Are you sure you want to delete the user {name} from the company members list?"
+      },
+      "notifications": {
+        "user_blocked": "The user has been successfully blocked",
+        "user_unblocked": "The user has been successfully unblocked"
       }
     },
     "cart": {
