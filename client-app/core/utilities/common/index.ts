@@ -33,6 +33,31 @@ export function appendSuffixToFilename(filename: string, suffix: string, checkIf
     : fileNameWithoutExtension + suffix + filename.substring(dotIndex);
 }
 
+export function numberToShortString(num: number): string {
+  if (num < 1000) {
+    return num.toString();
+  }
+
+  const sizes = [
+    { value: 1e3, suffix: "K" },
+    { value: 1e6, suffix: "M" },
+    { value: 1e9, suffix: "B" },
+    { value: 1e12, suffix: "T" },
+    { value: 1e15, suffix: "P" },
+    { value: 1e18, suffix: "E" },
+  ];
+
+  let index;
+
+  for (index = sizes.length - 1; index > 0; index -= 1) {
+    if (num >= sizes[index].value) {
+      break;
+    }
+  }
+
+  return (num / sizes[index].value).toFixed(2).replace(/\.0+$|(\.[0-9]*[1-9])0+$/, "$1") + sizes[index].suffix;
+}
+
 export function getSortingExpression(sort: ISortInfo): string {
   return `${sort.column}:${sort.direction}`;
 }

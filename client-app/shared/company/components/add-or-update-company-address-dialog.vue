@@ -27,7 +27,13 @@
       >
         <template #append="{ dirty, valid }">
           <div class="flex space-x-4 pb-3 pt-7 sm:pb-4 sm:pt-4 sm:float-right">
-            <VcButton class="uppercase flex-grow md:w-32 md:flex-grow-0" kind="secondary" is-outline @click="close">
+            <VcButton
+              :is-disabled="loading"
+              class="uppercase flex-grow md:w-32 md:flex-grow-0"
+              kind="secondary"
+              is-outline
+              @click="close"
+            >
               {{ $t("common.buttons.cancel") }}
             </VcButton>
 

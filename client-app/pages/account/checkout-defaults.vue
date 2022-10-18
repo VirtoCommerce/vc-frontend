@@ -6,31 +6,34 @@
     </div>
 
     <div class="bg-white shadow-sm md:rounded border px-7 py-7 md:px-9 md:py-8">
-      <div v-if="!loading" class="flex flex-col lg:w-1/2">
+      <VcMainLoader v-if="loading" />
+
+      <div v-else class="flex flex-col lg:w-1/2">
         <div class="font-bold" v-t="'pages.account.checkout_defaults.select_delivery_method_label'"></div>
 
         <div class="mt-3 md:mt-1 flex flex-col space-y-5 md:space-y-0 md:flex-row md:space-x-7">
           <VcRadioButton
             id="shipping"
-            v-model="checkoutDefaults.deliveryMethod"
+            v-model="localCheckoutDefaults.deliveryMethod"
             value="shipping"
             :label="$t('pages.account.checkout_defaults.shipping_radio_label')"
           />
 
           <VcRadioButton
             id="pickup"
-            v-model="checkoutDefaults.deliveryMethod"
+            v-model="localCheckoutDefaults.deliveryMethod"
             value="pickup"
             :label="$t('pages.account.checkout_defaults.pickup_radio_label')"
           />
         </div>
 
         <VcSelect
-          v-model="checkoutDefaults.paymentMethod"
-          text-field="code"
+          v-model="localCheckoutDefaults.paymentMethodCode"
           :items="paymentMethods"
           :label="$t('pages.account.checkout_defaults.payment_method_label')"
           :placeholder="$t('pages.account.checkout_defaults.payment_method_placeholder')"
+          text-field="code"
+          value-field="code"
           class="mt-8 w-full"
           size="lg"
         >
@@ -38,10 +41,11 @@
         </VcSelect>
 
         <VcSelect
-          v-model="checkoutDefaults.shippingMethod"
+          v-model="localCheckoutDefaults.shippingMethodId"
           :items="shippingMethods"
           :label="$t('pages.account.checkout_defaults.shipping_method_label')"
           :placeholder="$t('pages.account.checkout_defaults.shipping_method_placeholder')"
+          value-field="id"
           class="mt-8 w-full"
           size="lg"
         >
@@ -50,7 +54,11 @@
           <template #item="{ item }"> {{ item?.code }} {{ item?.optionName }}</template>
         </VcSelect>
 
-        <VcButton class="uppercase mt-8 px-12 self-center lg:self-start" @click="saveDefaults()">
+        <VcButton
+          :is-disabled="!isDirty"
+          class="uppercase mt-8 px-12 self-center lg:self-start"
+          @click="saveDefaults()"
+        >
           {{ $t("pages.account.checkout_defaults.update_button") }}
         </VcButton>
       </div>
@@ -59,41 +67,41 @@
 </template>
 
 <script setup lang="ts">
-import { useUserCheckoutDefaults, CheckoutDefaults, CheckoutDefaultsSuccessDialog } from "@/shared/account";
-import { computed, onMounted, ref } from "vue";
-import { useCart } from "@/shared/cart";
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { clone, isEqual } from "lodash";
+import { PaymentMethodType, ShippingMethodType } from "@/xapi/types";
 import { usePopup } from "@/shared/popup";
 import { usePageHead } from "@/core/composables";
-import { useI18n } from "vue-i18n";
+import { useCart } from "@/shared/cart";
+import { useUserCheckoutDefaults, CheckoutDefaults, CheckoutDefaultsSuccessDialog } from "@/shared/account";
 
-const { cart, loading } = useCart();
 const { t } = useI18n();
+const { openPopup } = usePopup();
+const { cart, loading, fetchCart } = useCart();
+const { getUserCheckoutDefaults, setUserCheckoutDefaults } = useUserCheckoutDefaults();
 
 usePageHead({
   title: t("pages.account.checkout_defaults.meta.title"),
 });
 
-const shippingMethods = computed(() => cart.value.availableShippingMethods);
+const savedCheckoutDefaults = ref<CheckoutDefaults>(getUserCheckoutDefaults() ?? {});
+const localCheckoutDefaults = ref<CheckoutDefaults>(clone(savedCheckoutDefaults.value));
 
-const paymentMethods = computed(() => cart.value.availablePaymentMethods);
+const shippingMethods = computed<ShippingMethodType[]>(() => cart.value.availableShippingMethods ?? []);
+const paymentMethods = computed<PaymentMethodType[]>(() => cart.value.availablePaymentMethods ?? []);
 
-const { getUserCheckoutDefaults, setUserCheckoutDefaults } = useUserCheckoutDefaults();
-const { openPopup } = usePopup();
-
-const checkoutDefaults = ref<CheckoutDefaults>({});
-
-onMounted(() => {
-  const savedDefaults = getUserCheckoutDefaults();
-
-  if (savedDefaults) {
-    checkoutDefaults.value = savedDefaults;
-  }
-});
+const isDirty = computed<boolean>(() => !isEqual(savedCheckoutDefaults.value, localCheckoutDefaults.value));
 
 function saveDefaults() {
-  setUserCheckoutDefaults(checkoutDefaults.value);
+  setUserCheckoutDefaults(localCheckoutDefaults.value);
+
+  savedCheckoutDefaults.value = clone(localCheckoutDefaults.value);
+
   openPopup({
     component: CheckoutDefaultsSuccessDialog,
   });
 }
+
+fetchCart();
 </script>

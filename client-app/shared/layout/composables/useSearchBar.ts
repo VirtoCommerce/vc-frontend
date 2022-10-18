@@ -5,6 +5,9 @@ import { getSearchResults, SearchResultsParams } from "@/xapi/graphql/catalog";
 import { highlightSearchText, prepareSearchText } from "@/shared/layout";
 import { MaybeRef } from "@vueuse/core";
 
+const DEFAULT_DURATION = 0; // No animation at the moment
+const DEFAULT_DROPDOWN_DURATION = 200;
+
 const activeAnimations = reactive<Record<"bar" | "dropdown", Promise<void> | null>>({
   bar: null,
   dropdown: null,
@@ -17,8 +20,6 @@ const searchPhraseOfUploadedResults = ref("");
 const categories = shallowRef<Category[]>([]);
 const products = shallowRef<Product[]>([]);
 const total = ref(0);
-const DEFAULT_ANIM_DURATION = 300;
-const DEFAULT_DROPDOWN_DURATION = 200;
 
 export default (
   options: {
@@ -28,7 +29,7 @@ export default (
     dropdownAnimationDuration?: MaybeRef<number>;
   } = {}
 ) => {
-  const { animationDuration = DEFAULT_ANIM_DURATION, dropdownAnimationDuration = DEFAULT_DROPDOWN_DURATION } = options;
+  const { animationDuration = DEFAULT_DURATION, dropdownAnimationDuration = DEFAULT_DROPDOWN_DURATION } = options;
 
   async function showSearchDropdown(): Promise<void> {
     if (searchDropdownVisible.value) {

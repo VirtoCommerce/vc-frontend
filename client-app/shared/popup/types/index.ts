@@ -4,6 +4,6 @@ export type ClosePopupHandle = () => void;
 
 export interface IPopup {
   id?: string;
-  component: Component;
-  props?: Record<string, unknown>;
+  component: Component | "VcConfirmationDialog";
+  props?: Record<string, any>;
 }

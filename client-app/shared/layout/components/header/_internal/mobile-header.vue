@@ -6,14 +6,15 @@
         <component :is="customSlots.default" />
       </div>
 
-      <div v-else class="relative w-full z-10 h-14 flex justify-between items-center">
+      <div v-else class="relative w-full z-10 h-14 flex justify-between items-center gap-x-6">
         <!-- region Left slot -->
         <component v-if="customSlots.left" :is="customSlots.left" />
 
-        <div v-else class="flex items-center h-full px-6">
-          <button class="h-full mr-6" @click="mobileMenuVisible = true">
+        <div v-else class="flex items-center h-full">
+          <button class="h-full px-6" @click="mobileMenuVisible = true">
             <i class="fas fa-bars text-2xl text-[color:var(--color-primary)]" />
           </button>
+
           <router-link to="/">
             <VcImage :src="$cfg.logo_image" class="h-8" lazy />
           </router-link>
@@ -23,17 +24,33 @@
         <!-- region Right slot -->
         <component v-if="customSlots.right" :is="customSlots.right" />
 
-        <div v-else class="flex items-center h-full pr-8">
-          <a class="pr-4 pt-0.5" :href="`tel:${$cfg.support_phone_number}`" v-if="$cfg.support_phone_number">
+        <div v-else class="flex flex-row items-center h-full pr-4">
+          <a class="p-2.5" :href="`tel:${$cfg.support_phone_number}`" v-if="$cfg.support_phone_number">
             <i class="fas fa-phone-alt text-xl text-[color:var(--color-primary)]"></i>
           </a>
 
-          <button class="h-full pr-4" @click="toggleSearchBar">
+          <button class="p-2.5" @click="toggleSearchBar">
             <i class="fas fa-search text-2xl text-[color:var(--color-primary)]" />
           </button>
 
-          <router-link to="/checkout">
-            <i class="fas fa-shopping-cart text-xl text-[color:var(--color-primary)]" />
+          <router-link :to="{ name: 'Checkout' }" class="p-2.5">
+            <span class="relative">
+              <i class="fas fa-shopping-cart text-xl text-[color:var(--color-primary)]" />
+
+              <transition
+                enter-from-class="scale-0"
+                leave-to-class="scale-0"
+                enter-active-class="will-change-transform"
+                leave-active-class="will-change-transform"
+              >
+                <span
+                  v-if="cart?.itemsQuantity"
+                  class="absolute -top-2.5 -right-3 transition-transform bg-white rounded-full border border-[color:var(--color-primary)] px-1.5 py-0.5 font-extrabold text-11 leading-3 text-[color:var(--color-header-bottom-link)]"
+                >
+                  {{ preparedCartItemsQuantity }}
+                </span>
+              </transition>
+            </span>
           </router-link>
         </div>
         <!-- endregion Right slot -->
@@ -86,6 +103,8 @@ import MobileMenu from "./mobile-menu.vue";
 import { useDomUtils, useRouteQueryParam } from "@/core/composables";
 import { QueryParamName } from "@/core/constants";
 import { useElementSize, whenever } from "@vueuse/core";
+import { useCart } from "@/shared/cart";
+import { numberToShortString } from "@/core/utilities";
 
 const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
@@ -96,10 +115,13 @@ const { customSlots, isAnimated } = useNestedMobileHeader();
 const { searchBarVisible, toggleSearchBar, hideSearchBar } = useSearchBar();
 const { toggleBodyScrollable } = useDomUtils();
 const { height } = useElementSize(headerElement);
+const { cart } = useCart();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined
 );
+
+const preparedCartItemsQuantity = computed<string>(() => numberToShortString(cart.value?.itemsQuantity ?? 0));
 
 const searchPageLink = computed<RouteLocationRaw>(() => ({
   name: "Search",

@@ -10,11 +10,10 @@ import { createI18n } from "@/i18n";
 import { createRouter } from "@/router";
 import { getBaseUrl } from "@/core/utilities";
 import App from "./App.vue";
-import PageBuilderBlocks from "@/pages/blocks";
+import { templateBlocks } from "@/shared/static-content";
 import ProductBlocks from "@/shared/catalog/components/product";
 import * as UIKitComponents from "@/ui-kit/components";
 import client from "@/xapi/graphql-client";
-import { useCategories } from "./shared/catalog";
 
 // Workaround before Nuxt3 migration, will be deleted later.
 window.useNuxtApp = () => {
@@ -28,7 +27,6 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
   const { themeContext, fetchThemeContext } = useThemeContext();
   const { currentLocale, currentLanguage, supportedLocales, setLocale } = useLanguages();
   const { currentCurrency } = useCurrency();
-  const { loadCategoriesTree } = useCategories();
 
   /**
    * Fetching required app data
@@ -70,9 +68,6 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
     },
   });
 
-  // Categories loading. It should be doing after i18n is initiated.
-  await loadCategoriesTree();
-
   /**
    * Create and mount application
    */
@@ -97,7 +92,8 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
   Object.entries(UIKitComponents).forEach(([name, component]) => app.component(name, component));
 
   // Register Page builder components globally
-  Object.entries(PageBuilderBlocks).forEach(([name, component]) => app.component(name, component));
+  Object.entries(templateBlocks).forEach(([name, component]) => app.component(name, component));
+
   // Register Page builder product components globally
   Object.entries(ProductBlocks).forEach(([name, component]) => app.component(name, component));
 

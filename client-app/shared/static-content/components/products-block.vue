@@ -41,14 +41,14 @@ const props = defineProps({
 watchEffect(async () => {
   await fetchProducts({
     itemsPerPage: props.model.count || 4,
-    filter: props.model.filter,
+    keyword: props.model.query,
   });
 });
 
 onMounted(async () => {
   await fetchProducts({
     itemsPerPage: props.model.count || 4,
-    filter: props.model.filter,
+    keyword: props.model.query,
   });
 });
 </script>

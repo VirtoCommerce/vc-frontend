@@ -60,6 +60,7 @@
       "product_count_in_stock": "auf Lager"
     },
     "messages": {
+      "loading_text": "Loading...",
       "product_out_of_stock": "Ausverkauft",
       "required_field": "Dieses Feld wird benötigt",
       "email_is_not_correct": "Geben Sie bitte die richtige E-Mail-Adresse ein, ex. johndoe{'@'}gmail.com",
@@ -100,7 +101,9 @@
     "roles": {
       "org-maintainer": "Organization maintainer",
       "org-employee": "Organization employee",
-      "purchasing-agent": "Purchasing agent"
+      "purchasing-agent": "Purchasing agent",
+      "store-admin": "Store administrator",
+      "store-manager": "Store manager"
     }
   },
   "shared": {
@@ -319,24 +322,6 @@
       }
     },
     "company": {
-      "add_new_member_dialog": {
-        "title": "Neues Mitglied",
-        "role_label": "Rolle",
-        "role_placeholder": "Rolle auswählen",
-        "first_name_label": "@:common.labels.first_name",
-        "first_name_placeholder": "Enter your first name",
-        "last_name_label": "@:common.labels.last_name",
-        "last_name_placeholder": "Enter your last name",
-        "email_label": "@:common.labels.email",
-        "email_placeholder": "@:common.placeholders.email",
-        "cancel_button": "@:common.buttons.cancel",
-        "add_button": "Hinzufügen",
-        "successfully_text": "Der Benutzer {0} wurde erfolgreich erstellt"
-      },
-      "delete_member_dialog": {
-        "title": "Delete member",
-        "text": "Are you sure you want to delete the user {name} from the company members list?"
-      },
       "delete_address_dialog": {
         "title": "Delete address",
         "text": "Are you sure you want to delete address from the list?"
@@ -345,6 +330,22 @@
         "create_title": "Create new company address",
         "edit_title": "Edit company address",
         "address_title": "Address Info"
+      },
+      "block_member_dialog": {
+        "title": "Block user",
+        "text": "Are you sure you want to block access of the user?"
+      },
+      "unblock_member_dialog": {
+        "title": "Unblock user",
+        "text": "Are you sure you want to unblock access of the user?"
+      },
+      "delete_member_dialog": {
+        "title": "Delete member",
+        "text": "Are you sure you want to delete the user {name} from the company members list?"
+      },
+      "notifications": {
+        "user_blocked": "The user has been successfully blocked",
+        "user_unblocked": "The user has been successfully unblocked"
       }
     },
     "cart": {
@@ -528,36 +529,42 @@
       "bank_card_form": {
         "number_label": "Card number",
         "cardholder_name_label": "Cardholder name",
-        "month_label": "Expiry Month",
+        "expiration_date_label": "Expiration date",
+        "expiration_date_placeholder": "MM / YY",
+        "month_label": "Month",
         "month_placeholder": "MM",
-        "year_label": "Expiry Year",
+        "year_label": "Year",
         "year_placeholder": "YY",
         "security_code_label": "Security Code"
       },
       "authorize_net": {
-        "header": "Payment method",
-        "bank_card_title": "Credit Card",
         "user_agreement_link": "User Agreement",
         "privacy_policy_link": "Privacy Policy",
-        "accept_terms_text": "By placing an order, you accept the terms of",
-        "processing_personal_data_text": "and consent to the processing of personal data according to the",
+        "accept_terms_text": "By placing an order, you accept the terms of our",
+        "processing_personal_data_text": "and agree that we may process your personal data as per our",
         "pay_now_button": "Pay Now",
         "errors": {
           "number": "Please provide valid credit card number",
           "month": "Please provide valid expiration month",
           "year": "Please provide valid expiration year",
+          "expiration_date": "Expiration date must be in the future",
           "security_code": "Please provide valid security code",
           "cardholder_name": "Please provide valid card holder name",
-          "try_again": "An error occurred during processing. Please try again"
+          "incorrect_payment_method": "Incorrect payment method"
         }
       },
-      "payment_success": {
-        "title": "Payment successful",
-        "text": "Thank you, we are checking your payment. The order will be shipped after we receive your payment."
+      "manual": {
+        "text": "The payment method you selected does not support paying online. Please choose another method or",
+        "link": "contact the website administrator"
       },
-      "payment_failure": {
-        "title": "Payment failed",
-        "text": "There is a problem with your payment, try again please."
+      "redirection": {
+        "text": "After you click <strong>{0}</strong>, you will be redirected to the third party payment service",
+        "pay_now_button": "Pay Now",
+        "try_again_button": "Try Again",
+        "errors": {
+          "missing_link": "Redirect link is missing",
+          "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
+        }
       }
     },
     "wishlists": {
@@ -881,10 +888,26 @@
         "title": "Payment information",
         "breadcrumb_title": "Payment",
         "processed_title": "@:pages.account.order_details.title",
-        "loading_text": "Loading...",
+        "billing_address_label": "Billing address",
+        "payment_method_label": "Payment method",
+        "phone_label": "@:pages.checkout.shipping_details_section.shipping_address_block.phone_label",
+        "email_label": "@:pages.checkout.shipping_details_section.shipping_address_block.email_label",
+        "edit_button": "Edit",
+        "bank_card_title": "Credit Card",
         "back_to_order_button": "Back to Order",
         "orders_list_button": "Orders List",
-        "try_again_button": "Try again"
+        "try_again_button": "Try again",
+        "continue_shopping_button": "Continue Shopping",
+        "status_label": "@:common.labels.status{':'}",
+        "order_date": "Order date:",
+        "success": {
+          "title": "Payment successful",
+          "text": "Thank you, we are checking your payment. The order will be shipped after we receive your payment."
+        },
+        "failure": {
+          "title": "Payment failed",
+          "text": "There is a problem with your payment, try again please."
+        }
       },
       "lists": {
         "meta": {
@@ -971,6 +994,7 @@
           "reset_search": "Reset search",
           "edit_role": "Edit role",
           "block_user": "Block user",
+          "unblock_user": "Unblock user",
           "delete": "Delete",
           "no_members": "Continue browsing"
         },

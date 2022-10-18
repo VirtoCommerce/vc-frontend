@@ -1,5 +1,5 @@
 {
-  "name": "Header settings",
+  "name": "Page Header",
   "icon": "construction",
   "displayField": "default",
   "static": "top",
@@ -7,21 +7,21 @@
     {
       "id": "seoInfo",
       "type": "object",
-      "title": "SEO info",
+      "title": "SEO Information",
       "element": [
         {
           "id": "pageTitle",
-          "label": "Page title",
+          "label": "Page Title",
           "type": "string"
         },
         {
           "id": "metaKeywords",
-          "label": "Meta keywords",
+          "label": "Meta Keywords",
           "type": "string"
         },
         {
           "id": "metaDescription",
-          "label": "Meta description",
+          "label": "Meta Description",
           "type": "string",
           "multiline": true
         }

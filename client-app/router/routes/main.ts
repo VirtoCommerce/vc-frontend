@@ -20,7 +20,7 @@ const BulkOrder = () => import("@/pages/bulk-order.vue");
 const CompareProducts = () => import("@/pages/compare-products.vue");
 const Checkout = () => import("@/pages/checkout.vue");
 const Category = () => import("@/pages/catalog.vue");
-const Product = () => import("@/pages/product-template.vue");
+const Product = () => import("@/pages/product.vue");
 const Branch = () => import("@/pages/branch.vue");
 const Matcher = () => import("@/ui-kit/components/pages/matcher.vue");
 

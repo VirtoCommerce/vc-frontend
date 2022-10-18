@@ -7,7 +7,13 @@
       </h1>
     </div>
     <template v-for="item in template.content">
-      <component v-if="!item.hidden" :key="item.id" :is="item.type" :model="item" :settings="template.settings" />
+      <component
+        v-if="!item.hidden"
+        :key="item.id"
+        :is="getBlockType(item.type)"
+        :model="item"
+        :settings="template.settings"
+      />
     </template>
   </div>
 </template>
@@ -15,15 +21,14 @@
 <script setup lang="ts">
 import { computed, unref } from "vue";
 import { useI18n } from "vue-i18n";
-import { usePageHead, useStaticPage } from "@/core/composables";
+import { usePageHead } from "@/core/composables";
+import { useStaticPage } from "@/shared/static-content";
 const { t } = useI18n();
 
 const template = useStaticPage();
+const templateName = computed(() => unref(template)?.settings?.name || unref(template)?.settings?.header || "");
 
-const breadcrumbs: IBreadcrumbs[] = [
-  { route: "/", title: t("pages.compare.links.home") },
-  { title: computed(() => unref(template)?.settings?.name || unref(template)?.settings?.header || "") },
-];
+const breadcrumbs: IBreadcrumbs[] = [{ route: "/", title: t("pages.compare.links.home") }, { title: templateName }];
 
 usePageHead({
   title: computed(() => unref(template)?.settings?.seoInfo?.pageTitle || unref(template)?.settings?.name),
@@ -32,4 +37,17 @@ usePageHead({
     description: computed(() => unref(template)?.settings?.seoInfo?.metaDescription),
   },
 });
+
+function getBlockType(type: string): string {
+  switch (type) {
+    case "text":
+      return "text-block";
+    case "image":
+      return "image-block";
+    case "title":
+      return "title-block";
+    default:
+      return type;
+  }
+}
 </script>

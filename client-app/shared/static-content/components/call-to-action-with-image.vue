@@ -9,7 +9,7 @@
             <VcButton
               v-for="(item, index) in model.buttons"
               :key="index"
-              :to="item.url"
+              :to="item.link"
               class="w-1/2 lg:w-auto uppercase px-8"
             >
               {{ item.label }}

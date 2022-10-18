@@ -7,7 +7,6 @@ export * from "./facet";
 export * from "./global-variables";
 export * from "./language";
 export * from "./modify";
-export * from "./page-content";
 export * from "./role";
 export * from "./theme-context";
 
@@ -50,7 +49,7 @@ export interface ISortInfo {
 }
 
 export interface IThemeConfig {
-  current: string | { [key: string]: any };
+  current: string | IThemeConfigPreset;
   presets: Record<string, IThemeConfigPreset>;
 }
 
@@ -69,6 +68,8 @@ export interface IThemeConfigPreset {
   anonymous_price_enabled?: boolean;
   anonymous_checkout?: boolean;
 
+  quotes_enabled?: boolean;
+
   bulk_order_enabled?: boolean;
   product_compare_enabled?: boolean;
   product_compare_limit?: number;
@@ -82,7 +83,9 @@ export interface IThemeConfigPreset {
   header_menu_link_list?: string;
   products_menu_link_list?: string;
   footer_menu_link_list?: string;
-  image_tools_enabled?: boolean;
+  image_thumbnails_enabled?: boolean;
+  image_thumbnails_original_fallback_enabled?: boolean;
+  image_thumbnails_suffixes?: { sm: string; md: string; lg: string };
   image_carousel_in_product_card_enabled?: boolean;
 
   registration_enabled?: boolean;

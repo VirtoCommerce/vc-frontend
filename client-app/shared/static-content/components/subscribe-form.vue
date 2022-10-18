@@ -1,5 +1,5 @@
 <template>
-  <div class="py-10 lg:py-24" :class="model.background">
+  <div class="block-subscribe-form py-10 lg:py-24" :class="model.background">
     <div class="w-full max-w-screen-xl mx-auto px-14 lg:px-32">
       <div class="font-bold text-2xl lg:text-4xl mb-4 text-center">{{ model.title }}</div>
       <div class="font-bold text-lg mb-8 text-center">{{ model.subtitle }}</div>
@@ -7,7 +7,7 @@
       <div class="text-center">
         <div class="mt-4">
           <VcCheckbox class="inline-flex">
-            <span v-html="model.checkboxText"></span>
+            <span class="checkbox-label" v-html="model.checkboxText"></span>
           </VcCheckbox>
         </div>
 
@@ -31,3 +31,9 @@ defineProps({
   },
 });
 </script>
+
+<style lang="scss">
+.block-subscribe-form .checkbox-label a {
+  @apply text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)];
+}
+</style>

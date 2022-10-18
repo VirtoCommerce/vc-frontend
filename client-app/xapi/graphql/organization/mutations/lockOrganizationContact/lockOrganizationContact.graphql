@@ -1,0 +1,5 @@
+mutation LockOrganizationContact($command: InputLockUnlockOrganizationContactType!) {
+  lockOrganizationContact(command: $command) {
+    id
+  }
+}

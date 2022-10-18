@@ -1,9 +1,17 @@
 <template>
-  <img :src="preparedSrc" :alt="alt" :loading="lazy ? 'lazy' : null" :class="additionalClass" @error="setFallbackSrc" />
+  <img
+    :src="preparedSrc"
+    :alt="alt"
+    :loading="lazy ? 'lazy' : null"
+    :data-src="fallbackEnabled ? src : null"
+    :data-size-suffix="fallbackEnabled || originalEnabled ? sizeSuffix : null"
+    :class="{ 'object-scale-down object-center': preparedSrc === fallbackSrc }"
+    @error="setFallback"
+  />
 </template>
 
 <script setup lang="ts">
-import { computed, inject, ref, watch } from "vue";
+import { computed, inject, PropType, ref, watch } from "vue";
 import { appendSuffixToFilename } from "@/core/utilities";
 import { configInjectionKey } from "@/core/constants";
 
@@ -27,35 +35,56 @@ const props = defineProps({
 
   /**
    * First you need to generate thumbnails in admin panel, section "Thumbnails" (vc-module-image-tools).
-   * You can also set up suffixes there.
+   * You can also set suffixes there.
    * @see https://github.com/VirtoCommerce/vc-module-image-tools
    */
   sizeSuffix: {
-    type: String,
+    type: String as PropType<"sm" | "md" | "lg">,
     validator: (value: string) => ["sm", "md", "lg"].includes(value),
   },
 });
 
 const cfg = inject(configInjectionKey);
 
-const additionalClass = ref("");
+const fallbackEnabled = ref(false);
+const originalEnabled = ref(false);
 
 const preparedSrc = computed<string>(() => {
-  const result =
-    cfg?.image_tools_enabled && props.sizeSuffix
-      ? appendSuffixToFilename(props.src, `_${props.sizeSuffix}`)
-      : props.src;
-  return result || props.fallbackSrc;
+  if (fallbackEnabled.value || !props.src) {
+    return props.fallbackSrc;
+  }
+
+  const sizeSuffix = props.sizeSuffix ? cfg?.image_thumbnails_suffixes?.[props.sizeSuffix] : "";
+
+  if (originalEnabled.value || !cfg?.image_thumbnails_enabled || !sizeSuffix) {
+    return props.src;
+  }
+
+  return appendSuffixToFilename(props.src, `_${sizeSuffix}`);
 });
 
 /**
- * Set fallback source when image loading error occures.
- * @param event Generic event
+ * Set fallback source when image loading error occurs.
  */
-function setFallbackSrc(event: Event): void {
-  (event.target as HTMLImageElement).src = props.fallbackSrc;
-  additionalClass.value = "object-scale-down object-center";
+function setFallback(): void {
+  if (
+    !originalEnabled.value &&
+    props.sizeSuffix &&
+    cfg?.image_thumbnails_enabled &&
+    cfg?.image_thumbnails_original_fallback_enabled
+  ) {
+    originalEnabled.value = true;
+  } else if (!fallbackEnabled.value) {
+    fallbackEnabled.value = true;
+    originalEnabled.value = false;
+  }
 }
 
-watch(preparedSrc, () => (additionalClass.value = ""));
+watch(
+  () => props.src + props.sizeSuffix + props.fallbackSrc,
+  () => {
+    fallbackEnabled.value = false;
+    originalEnabled.value = false;
+  }
+);
 </script>

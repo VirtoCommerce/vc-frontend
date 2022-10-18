@@ -1,5 +1,5 @@
 <template>
-  <div v-if="product" class="bg-gray-100 pt-7 pb-8 shadow-inner">
+  <div v-if="product && template" class="bg-gray-100 pt-7 pb-8 shadow-inner">
     <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
     <div class="max-w-screen-2xl px-5 md:px-12 mx-auto">
@@ -12,53 +12,19 @@
         {{ $t("pages.product.sku_label") }} <span class="font-extrabold">{{ product.code }}</span>
       </div>
 
-      <div class="flex flex-col lg:flex-row lg:space-x-8 mt-5" :class="{ 'mb-6': !relatedProducts.length }">
-        <div class="-mx-5 md:mx-0 lg:w-8/12 xl:w-9/12">
-          <ProductDetails :product="product" class="shadow-sm border rounded-none md:rounded" />
-        </div>
-
-        <div class="lg:w-4/12 lg:h-full lg:sticky lg:top-4 mt-6 lg:mt-0 xl:w-3/12">
-          <!-- Price & Delivery (with variations) -->
-          <ProductPriceBlock v-if="productWithVariations" :product="product">
-            <div class="flex items-baseline justify-between text-sm">
-              <div class="font-extrabold text-base" v-t="'pages.product.variations_total_label'"></div>
-
-              <div class="font-extrabold">
-                <!-- todo: extract a component for price and use it here -->
-                <span class="text-green-700">{{ currency?.symbol }}{{ variationsCartTotalAmount.toFixed(2) }}</span>
-              </div>
-            </div>
-
-            <div class="mt-7 md:mt-5">
-              <VcButton :to="{ name: 'Checkout' }" class="uppercase px-2 w-full">
-                {{ $t("pages.product.view_cart_button") }}
-              </VcButton>
-            </div>
-          </ProductPriceBlock>
-
-          <!-- Price & Delivery (without variations) -->
-          <ProductPriceBlock v-else :product="product">
-            <div class="flex items-baseline justify-between text-sm">
-              <div class="font-extrabold text-base" v-t="'pages.product.price_label'"></div>
-
-              <div>
-                <VcItemPrice :value="product.price" />
-              </div>
-            </div>
-
-            <div class="mt-7 md:mt-5">
-              <AddToCart :product="product" />
-
-              <div class="flex">
-                <VcInStock
-                  :is-in-stock="product.availabilityData?.isInStock"
-                  :quantity="product.availabilityData?.availableQuantity"
-                ></VcInStock>
-              </div>
-            </div>
-          </ProductPriceBlock>
-        </div>
-      </div>
+      <template v-for="item in template.content">
+        <component
+          v-if="!item.hidden"
+          :key="item.id"
+          :is="item.type"
+          :product="product"
+          :relatedProducts="relatedProducts"
+          :model="item"
+          :isMobile="isMobile"
+          :productWithVariations="productWithVariations"
+          :variationsCartTotalAmount="variationsCartTotalAmount"
+        />
+      </template>
 
       <!-- Related products section -->
       <div v-show="relatedProducts.length" class="flex flex-col lg:flex-row lg:space-x-8 mt-10 lg:mt-6">
@@ -88,22 +54,21 @@
     </div>
   </div>
 
-  <Error404 v-else-if="!loading" />
+  <Error404 v-else-if="!loading && template" />
 </template>
 
 <script setup lang="ts">
 import { ref, Ref, watchEffect, defineAsyncComponent, computed } from "vue";
 import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
 import { usePageHead } from "@/core/composables";
-import { useCart, AddToCart } from "@/shared/cart";
+import { useTemplate } from "@/shared/static-content";
+import { useCart } from "@/shared/cart";
 import {
   useProduct,
   useBreadcrumbs,
   useRelatedProducts,
   Breadcrumbs,
   IBreadcrumbsItem,
-  ProductDetails,
-  ProductPriceBlock,
   CarouselProductCard,
 } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
@@ -112,6 +77,7 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
+const template = useTemplate("product");
 
 const props = defineProps({
   productId: {
@@ -145,7 +111,7 @@ const relatedProductsCarouselOptions: CarouselOptions = {
   },
 };
 
-const { currency, getItemsTotal } = useCart();
+const { getItemsTotal } = useCart();
 const { buildBreadcrumbs } = useBreadcrumbs();
 const { product, loading, loadProduct } = useProduct();
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
@@ -163,6 +129,7 @@ const isMobile = breakpoints.smaller("lg");
 const breadcrumbs: Ref<IBreadcrumbsItem[]> = ref([{ url: "/", title: t("common.links.home") }]);
 
 const productWithVariations = eagerComputed<boolean>(() => !!product.value?.variations?.length);
+
 const variationsCartTotalAmount = eagerComputed<number>(() => {
   if (!product.value) {
     return 0;

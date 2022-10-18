@@ -5,7 +5,12 @@
       <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.company.members.title'" />
 
       <div class="flex flex-no-wrap space-x-2 md:space-x-4">
-        <VcButton class="uppercase p-4" is-outline @click="openInviteMemberDialog">
+        <VcButton
+          v-if="$can($permissions.storefront.CanInviteUsers)"
+          class="uppercase p-4"
+          is-outline
+          @click="openInviteDialog"
+        >
           <span class="md:hidden">{{ $t("pages.company.members.buttons.invite") }}</span>
           <span class="hidden md:inline">{{ $t("pages.company.members.buttons.invite_members") }}</span>
         </VcButton>
@@ -263,24 +268,43 @@
               </VcTooltip>
             </td>
 
-            <!--<td class="px-5 text-right">
-              <VcActionDropdownMenu>
-                <button class="flex items-center p-3 whitespace-nowrap">
+            <td v-if="actionButtonIsAvailable" class="px-5 text-right">
+              <VcActionDropdownMenu v-if="contact.id !== user.memberId">
+                <!--<button v-if="$can($permissions.storefront.CanEditUsers)" class="flex items-center p-3 whitespace-nowrap">
                   <i class="fas fa-pencil-alt mr-2 leading-none text-base text-[color:var(--color-warning)]" />
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.edit_role") }}</span>
-                </button>
+                </button>-->
 
-                <button class="flex items-center p-3 whitespace-nowrap">
-                  <i class="fas fa-ban mr-2 leading-none text-base text-black" />
-                  <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.edit_role") }}</span>
-                </button>
+                <template v-if="$can($permissions.xApi.CanEditOrganization)">
+                  <button
+                    v-if="contact.status === ContactStatus.Locked"
+                    class="flex items-center p-3 whitespace-nowrap"
+                    @click="openLockOrUnlockDialog(contact, true)"
+                  >
+                    <i class="fas fa-check mr-2 leading-none text-base text-[color:var(--color-success)]" />
+                    <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.unblock_user") }}</span>
+                  </button>
 
-                <button class="flex items-center p-3 whitespace-nowrap" @click="openDeleteMemberDialog(contact)">
+                  <button
+                    v-else
+                    class="flex items-center p-3 whitespace-nowrap"
+                    @click="openLockOrUnlockDialog(contact)"
+                  >
+                    <i class="fas fa-ban mr-2 leading-none text-base text-black" />
+                    <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.block_user") }}</span>
+                  </button>
+                </template>
+
+                <!--<button
+                  v-if="$can($permissions.storefront.CanDeleteUsers)"
+                  class="flex items-center p-3 whitespace-nowrap"
+                  @click="openDeleteDialog(contact)"
+                >
                   <i class="fas fa-times mr-2 leading-none text-xl text-[color:var(--color-danger)]" />
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.edit_role") }}</span>
-                </button>
+                </button>-->
               </VcActionDropdownMenu>
-            </td>-->
+            </td>
           </tr>
         </template>
 
@@ -339,7 +363,7 @@
 <script setup lang="ts">
 import { ref, onMounted, shallowRef, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { breakpointsTailwind, onClickOutside, useBreakpoints } from "@vueuse/core";
+import { breakpointsTailwind, computedEager, onClickOutside, useBreakpoints } from "@vueuse/core";
 import { useElementVisibility, usePageHead } from "@/core/composables";
 import { FacetItem, FacetValueItem } from "@/core/types";
 import { getFilterExpressionFromFacets, getNewSorting } from "@/core/utilities";
@@ -347,18 +371,19 @@ import { usePopup } from "@/shared/popup";
 import {
   InviteMemberDialog,
   useOrganizationContacts,
-  DeleteCompanyMemberDialog,
   RoleIcon,
   ExtendedContactType,
   useOrganizationContactsFilterFacets,
   FilterFacet,
+  ContactStatus,
 } from "@/shared/company";
-import { PageToolbarBlock } from "@/shared/account";
+import { PageToolbarBlock, useUser } from "@/shared/account";
+import { XApiPermissions } from "@/core/constants";
 
 const { t } = useI18n();
-const { openPopup, closePopup } = usePopup();
+const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);
-
+const { user, checkPermissions } = useUser();
 const {
   loading: contactsLoading,
   page,
@@ -367,11 +392,12 @@ const {
   sort,
   keyword,
   filter,
-  loadContacts,
   contacts,
+  fetchContacts,
   updateMember,
+  lockContact,
+  unlockContact,
 } = useOrganizationContacts();
-
 const {
   selectableFacets,
   appliedFacets,
@@ -396,54 +422,64 @@ const filtersDropdownElement = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
 
-const columns = ref<ITableColumn[]>([
-  {
-    id: "roleIcon",
-    classes: "w-14",
-  },
-  {
-    id: "name",
-    title: t("pages.company.members.content_header.name"),
-    sortable: true,
-  },
-  {
-    id: "role",
-    title: t("pages.company.members.content_header.role"),
-  },
-  {
-    id: "email",
-    title: t("pages.company.members.content_header.email"),
-  },
-  {
-    id: "status",
-    title: t("pages.company.members.content_header.active"),
-    align: "center",
-    classes: "w-24",
-  },
-  /*{
-    id: "actions",
-    classes: "w-16",
-  },*/
-]);
+const actionButtonIsAvailable = computedEager<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
+
+const columns = computed<ITableColumn[]>(() => {
+  const result: ITableColumn[] = [
+    {
+      id: "roleIcon",
+      classes: "w-14",
+    },
+    {
+      id: "name",
+      title: t("pages.company.members.content_header.name"),
+      sortable: true,
+    },
+    {
+      id: "role",
+      title: t("pages.company.members.content_header.role"),
+    },
+    {
+      id: "email",
+      title: t("pages.company.members.content_header.email"),
+    },
+    {
+      id: "status",
+      title: t("pages.company.members.content_header.active"),
+      align: "center",
+      classes: "w-24",
+    },
+  ];
+
+  if (actionButtonIsAvailable.value) {
+    // Add action column
+    result.push({
+      id: "actions",
+      classes: "w-20",
+    });
+  }
+
+  return result;
+});
 
 const isVisibleStickyMobileHeader = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
 async function changePage(newPage: number) {
   page.value = newPage;
   window.scroll({ top: 0, behavior: "smooth" });
-  await loadContacts();
+  await fetchContacts();
 }
 
 async function applySorting(column: string) {
   sort.value = getNewSorting(sort.value, column);
   page.value = 1;
-  await loadContacts();
+  await fetchContacts();
 }
 
 async function applyKeyword() {
   keyword.value = localKeyword.value;
   page.value = 1;
-  await loadContacts();
+  await fetchContacts();
 }
 
 async function resetKeyword() {
@@ -458,21 +494,21 @@ async function applyFilters() {
   applyFacets();
   filter.value = getFilterExpressionFromFacets(appliedFacets);
   page.value = 1;
-  await loadContacts();
+  await fetchContacts();
 }
 
 async function resetFilterItem(facet: FacetItem, facetValue: FacetValueItem) {
   resetFacetItem({ paramName: facet.paramName, value: facetValue.value });
   filter.value = getFilterExpressionFromFacets(appliedFacets);
   page.value = 1;
-  await loadContacts();
+  await fetchContacts();
 }
 
 async function resetFilters() {
   resetFacets();
   filter.value = "";
   page.value = 1;
-  await loadContacts();
+  await fetchContacts();
 }
 
 function resetFiltersWithKeyword() {
@@ -491,50 +527,112 @@ async function deleteContactFromOrganization(contact: ExtendedContactType) {
     ...contact,
     organizationsIds: [],
   });
-  await loadContacts();
+  await fetchContacts();
 }
 
-function openInviteMemberDialog() {
+function openInviteDialog() {
   openPopup({
     component: InviteMemberDialog,
     props: {
       onResult(succeed: boolean) {
         if (succeed) {
-          loadContacts();
+          fetchContacts();
         }
       },
     },
   });
 }
 
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars */ // TODO: remove comment
-function openDeleteMemberDialog(contact: ExtendedContactType): void {
-  openPopup({
-    component: DeleteCompanyMemberDialog,
+function openLockOrUnlockDialog(contact: ExtendedContactType, isUnlock?: boolean): void {
+  const closeLockOrUnlockDialog = openPopup({
+    component: "VcConfirmationDialog",
     props: {
-      contact,
-      onConfirm() {
-        closePopup();
-        deleteContactFromOrganization(contact);
+      variant: "info",
+      iconVariant: "warning",
+      loading: contactsLoading,
+      title: isUnlock ? t("shared.company.unblock_member_dialog.title") : t("shared.company.block_member_dialog.title"),
+      text: isUnlock ? t("shared.company.unblock_member_dialog.text") : t("shared.company.block_member_dialog.text"),
+      async onConfirm() {
+        if (isUnlock) {
+          await unlockContact(contact);
+        } else {
+          await lockContact(contact);
+        }
+        closeLockOrUnlockDialog();
       },
     },
   });
 }
 
-function itemActionsBuilder() {
-  const actions: SlidingActionsItem[] = [
-    /*
-    {
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */ // TODO: remove comment
+function openDeleteDialog(contact: ExtendedContactType): void {
+  const closeDeleteDialog = openPopup({
+    component: "VcConfirmationDialog",
+    props: {
+      variant: "danger",
+      iconVariant: "danger",
+      loading: contactsLoading,
+      title: t("shared.company.delete_member_dialog.title"),
+      text: t("shared.company.delete_member_dialog.text", {
+        name: `${contact.fullName} (${contact.extended.emails[0]})`,
+      }),
+      async onConfirm() {
+        await deleteContactFromOrganization(contact);
+        closeDeleteDialog();
+      },
+    },
+  });
+}
+
+function itemActionsBuilder(item: ExtendedContactType) {
+  const actions: SlidingActionsItem[] = [];
+
+  if (checkPermissions(XApiPermissions.CanEditOrganization)) {
+    actions.push(
+      item.status === ContactStatus.Locked
+        ? {
+            icon: "fas fa-check",
+            title: t("pages.company.members.buttons.unblock_user"),
+            classes: "bg-[color:var(--color-success)]",
+            clickHandler(contact: ExtendedContactType) {
+              openLockOrUnlockDialog(contact, true);
+            },
+          }
+        : {
+            icon: "fas fa-ban",
+            title: t("pages.company.members.buttons.block_user"),
+            classes: "bg-[color:#292D3B]",
+            clickHandler(contact: ExtendedContactType) {
+              openLockOrUnlockDialog(contact);
+            },
+          }
+    );
+  }
+
+  /*
+  if (checkPermissions(StorefrontPermissions.CanEditUsers)) {
+    actions.push({
+      icon: "fas fa-pencil-alt",
+      title: t("pages.company.members.buttons.edit_role"),
+      classes: "bg-gray-550",
+      clickHandler(contact: ExtendedContactType) {
+        console.log(contact);
+      },
+    });
+  }
+
+  if (checkPermissions(StorefrontPermissions.CanDeleteUsers)) {
+    actions.push({
       icon: "fas fa-trash-alt",
       title: t("pages.company.members.buttons.delete"),
       left: true,
       classes: "bg-[color:var(--color-danger)]",
       clickHandler(contact: ExtendedContactType) {
-        openDeleteMemberDialog(contact);
+        openDeleteDialog(contact);
       },
-    },
-    */
-  ];
+    });
+  }
+  */
 
   return actions;
 }
@@ -548,6 +646,6 @@ onClickOutside(
 );
 
 onMounted(() => {
-  loadContacts();
+  fetchContacts();
 });
 </script>

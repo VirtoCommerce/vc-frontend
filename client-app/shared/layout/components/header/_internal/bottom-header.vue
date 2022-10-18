@@ -1,16 +1,18 @@
 <template>
   <div class="relative">
     <div
-      class="z-[2] relative px-4 xl:px-[3.2rem] py-3 min-h-[5.5rem] flex items-center bg-[color:var(--color-header-bottom-bg)]"
+      class="z-[2] relative px-4 xl:px-[3.2rem] py-3 min-h-[5.5rem] flex items-center gap-x-5 bg-[color:var(--color-header-bottom-bg)]"
     >
       <router-link to="/">
         <VcImage :src="$cfg.logo_image" class="h-8 xl:h-[2.8rem]" lazy />
       </router-link>
 
       <template v-if="organization">
-        <div class="w-0.5 h-6 bg-[color:var(--color-primary)] mx-5 hidden xl:block"></div>
+        <div class="w-0.5 h-6 bg-[color:var(--color-primary)] hidden xl:block"></div>
 
-        <div class="italic leading-tight text-lg text-[color:var(--color-header-bottom-text)] hidden xl:block">
+        <div
+          class="hidden xl:line-clamp-2 max-w-[9rem] text-base leading-[18px] font-medium italic text-[color:var(--color-header-bottom-text)]"
+        >
           {{ organization?.name }}
         </div>
       </template>
@@ -18,13 +20,13 @@
       <!-- Catalog button -->
       <button
         ref="showCatalogMenuButton"
-        class="flex items-center ml-5 cursor-pointer select-none px-[0.8rem] py-[0.55rem] border-2 border-primary rounded text-sm text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)]"
+        class="flex items-center cursor-pointer select-none px-[0.8rem] py-[0.55rem] border-2 border-primary rounded text-sm text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)]"
         @click="catalogMenuVisible = !catalogMenuVisible"
       >
-        <div
+        <span
           class="uppercase font-bold tracking-wide"
           v-t="'shared.layout.header.bottom_header.catalog_menu_button'"
-        ></div>
+        />
 
         <i
           class="fas ml-3 text-[color:var(--color-primary)] align-baseline"
@@ -32,31 +34,31 @@
         />
       </button>
 
-      <SearchBar class="mx-5" />
+      <SearchBar />
 
-      <div class="flex items-center pt-1.5 xl:pl-4 pr-5 space-x-5 xl:space-x-9">
+      <div class="flex items-center -mx-2">
         <template v-for="item in desktopHeaderMenuLinks" :key="item.id">
-          <BottomHeaderLink
-            v-if="item.id === 'compare'"
-            :to="item.route"
-            :title="item.title"
-            :icon="item.icon"
-            :badge="String(productsIds.length)"
-          />
+          <BottomHeaderLink v-if="item.id === 'compare'" :to="item.route" :icon="item.icon" :count="productsIds.length">
+            {{ item.title }}
+          </BottomHeaderLink>
+
           <BottomHeaderLink
             v-else-if="item.id === 'checkout'"
             :to="item.route"
-            :title="item.title"
             :icon="item.icon"
-            :badge="String(cart.itemsQuantity)"
-          />
-          <BottomHeaderLink v-else :to="item.route" :title="item.title" :icon="item.icon" />
+            :count="cart.itemsQuantity"
+          >
+            {{ item.title }}
+          </BottomHeaderLink>
+
+          <BottomHeaderLink v-else :to="item.route" :icon="item.icon">
+            {{ item.title }}
+          </BottomHeaderLink>
         </template>
       </div>
     </div>
 
     <!-- Catalog dropdown -->
-
     <transition
       enter-from-class="-translate-y-full"
       leave-to-class="-translate-y-full"

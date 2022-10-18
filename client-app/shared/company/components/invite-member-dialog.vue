@@ -10,19 +10,19 @@
     </VcAlert>
 
     <form class="p-6 py-5 sm:p-5 sm:border-b h-full">
-      <!--
       <VcSelect
-        v-model="role"
+        v-model="roleId"
         :items="roles"
         :label="$t('shared.account.invite_member_dialog.role_label')"
         :placeholder="$t('shared.account.invite_member_dialog.role_placeholder')"
         :is-disabled="loading"
-        :error-message="errors.role"
+        :error-message="errors.roleId"
+        text-field="normalizedName"
+        value-field="id"
         size="lg"
         class="mb-4"
         is-required
       />
-      -->
 
       <p>
         <span class="font-bold text-gray-900">{{ $t("shared.account.invite_member_dialog.emails_label") }}</span>
@@ -58,7 +58,13 @@
     </form>
 
     <template #actions="{ close }">
-      <VcButton class="uppercase w-full sm:w-auto sm:px-10" kind="secondary" is-outline @click="close">
+      <VcButton
+        :is-disabled="loading"
+        class="uppercase w-full sm:w-auto sm:px-10"
+        kind="secondary"
+        is-outline
+        @click="close"
+      >
         {{ $t("shared.account.invite_member_dialog.cancel_button") }}
       </VcButton>
 
@@ -76,16 +82,15 @@
 
 <script setup lang="ts">
 import { ref, shallowRef } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import globals from "@/core/globals";
+import { B2B_ROLES } from "@/core/constants";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
-import { useI18n } from "vue-i18n";
-import _ from "lodash";
 
-const roles = ["Organization maintainer", "Organization employee", "Purchasing agent"];
 const emailsValidationPattern =
   /^([a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]{2,})+([,;]|\r|\r\n|\n))*([a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]{2,})+)$/;
 
@@ -104,9 +109,14 @@ const { organization, inviteUser } = useUser();
 const router = useRouter();
 const notifications = useNotifications();
 
+const roles = B2B_ROLES.map((role) => {
+  role.normalizedName = t("common.roles." + role.id);
+  return role;
+});
+
 const { errors, meta, handleSubmit } = useForm({
   initialValues: {
-    role: roles[1],
+    roleId: roles[0].id,
     message: "",
     emails: "",
   },
@@ -117,10 +127,10 @@ function getEmailAddresses(value: string | undefined): string[] {
 }
 
 function normalizeEmails(emailAddresses: string[]): string[] {
-  return [...new Set(_.map(emailAddresses, (email: string) => email.toLowerCase()))];
+  return [...new Set(emailAddresses.map((email: string) => email.toLowerCase()))];
 }
 
-// const { value: role } = useField<string>("role", yup.string().required());
+const { value: roleId } = useField<string>("roleId", yup.string().required());
 const { value: message } = useField<string>("message", yup.string().max(1000));
 const { value: emails } = useField<string>(
   "emails",
@@ -139,7 +149,7 @@ const { value: emails } = useField<string>(
       t("shared.account.invite_member_dialog.email_length_exceeded", { maxValue: maxEmailLength.value }),
       (value: string | undefined) => {
         const emailAddresses: string[] = getEmailAddresses(value);
-        return _.every(emailAddresses, (emailAddress: string) => emailAddress.length <= maxEmailLength.value);
+        return emailAddresses.every((emailAddress: string) => emailAddress.length <= maxEmailLength.value);
       }
     )
     .matches(emailsValidationPattern, t("common.messages.invalid_value"))
@@ -156,6 +166,7 @@ const send = handleSubmit(async (data) => {
     storeId,
     urlSuffix: router.resolve({ name: "ConfirmInvitation" }).path,
     organizationId: organization.value!.id,
+    roleIds: [data.roleId],
     emails: normalizeEmails(getEmailAddresses(data.emails)),
     message: data.message,
   });

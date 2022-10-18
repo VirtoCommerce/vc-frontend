@@ -1,12 +1,12 @@
-import { computed, readonly, Ref, ref } from "vue";
+import { computed, readonly, ref } from "vue";
 import { searchCategories } from "@/xapi/graphql/catalog";
 import { Category } from "@/xapi/types";
 import { Logger } from "@/core/utilities";
 import { CategoryTree } from "../types";
 import globals from "@/core/globals";
 
-const categoryTree: Ref<CategoryTree | undefined> = ref();
-const loading: Ref<boolean> = ref(true);
+const loading = ref(true);
+const categoryTree = ref<CategoryTree>();
 
 const itemToTreeItem = (parent: CategoryTree, category: Category): CategoryTree => {
   return {
@@ -33,30 +33,7 @@ const buildCategoryTree = (parent: CategoryTree, allCats: Category[]): CategoryT
   return parent;
 };
 
-function searchCategoryByKey(
-  categoryTreeItem: CategoryTree,
-  key: keyof CategoryTree,
-  value: any
-): CategoryTree | undefined {
-  const items = categoryTreeItem.items ?? [];
-  let category = items.find((item) => item[key] === value);
-
-  if (category) {
-    return category;
-  }
-
-  for (const item of items) {
-    category = searchCategoryByKey(item, key, value);
-
-    if (category) {
-      break;
-    }
-  }
-
-  return category;
-}
-
-async function loadCategoriesTree() {
+async function fetchCategoriesTree() {
   const MAX_CATEGORIES = 100;
   loading.value = true;
 
@@ -85,22 +62,9 @@ async function loadCategoriesTree() {
 }
 
 export default () => {
-  const selectedCategory: Ref<CategoryTree | undefined> = ref();
-
-  function selectCategoryByKey(key: keyof CategoryTree, value: any) {
-    selectedCategory.value = value ? searchCategoryByKey(categoryTree.value!, key, value) : undefined;
-  }
-
-  function selectRoot() {
-    selectedCategory.value = categoryTree.value;
-  }
-
   return {
-    selectRoot,
-    selectCategoryByKey,
-    loadCategoriesTree,
+    fetchCategoriesTree,
     loading: readonly(loading),
     categoryTree: computed(() => categoryTree.value),
-    selectedCategory: computed(() => selectedCategory.value),
   };
 };

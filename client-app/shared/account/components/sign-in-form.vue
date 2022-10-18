@@ -60,7 +60,7 @@
 
       <VcButton
         :to="{ name: 'SignUp' }"
-        :is-disabled="isAuthenticated"
+        :is-disabled="loading || isAuthenticated"
         size="lg"
         is-outline
         class="flex-1 ml-4 px-2 uppercase"
@@ -85,7 +85,7 @@ import { eagerComputed } from "@vueuse/core";
 const USER_IS_LOCKED_OUT_ERROR_CODE = "user_is_locked_out";
 
 const { t } = useI18n();
-const { cart, loadMyCart } = useCart();
+const { cart, fetchCart } = useCart();
 const { signMeIn, user, isAuthenticated } = useUser();
 
 const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButtons: false });
@@ -117,7 +117,7 @@ const onSubmit = handleSubmit(async () => {
   loading.value = true;
 
   if (!cart.value.id) {
-    await loadMyCart();
+    await fetchCart();
   }
 
   const result = await signMeIn(model);

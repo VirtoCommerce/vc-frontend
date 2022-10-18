@@ -232,9 +232,9 @@
                     <template v-if="shipment?.shipmentMethodCode">
                       <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" lazy />
                       <span>
-                        {{ shipment.shipmentMethodCode }} {{ shipment.shipmentMethodOption }} (<VcPriceDisplay
-                          :value="shipment.price"
-                        />)
+                        {{ shipment.shipmentMethodCode }}
+                        {{ shipment.shipmentMethodOption }}
+                        (<VcPriceDisplay :value="shipment.price" />)
                       </span>
                     </template>
 
@@ -509,7 +509,7 @@
 import { computed, onMounted, ref, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import _ from "lodash";
+import { omit } from "lodash";
 import {
   CheckoutLabeledBlock,
   OrderSummary,
@@ -536,7 +536,7 @@ import {
   ShippingMethodType,
   ValidationErrorType,
 } from "@/xapi/types";
-import { useUser, useUserAddresses } from "@/shared/account";
+import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
 import { AddressType } from "@/core/types";
 import { addGiftItems, rejectGiftItems } from "@/xapi/graphql/cart";
 import { breakpointsTailwind, computedEager, useBreakpoints } from "@vueuse/core";
@@ -552,7 +552,7 @@ const {
   cart,
   pages,
   itemsPerPage,
-  loadMyCart,
+  fetchCart,
   changeItemQuantity,
   removeItem,
   validateCartCoupon,
@@ -576,6 +576,7 @@ const {
 } = useUserAddresses({ user });
 
 const { createOrder } = useCheckout();
+const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
 const { openPopup, closePopup } = usePopup();
 
 usePageHead({
@@ -605,6 +606,9 @@ const cartCouponApplied = computedEager<boolean>(() => !!cart.value.coupons?.[0]
 
 const shipment = computed<ShipmentType | undefined>(() => cart.value.shipments?.[0]);
 const payment = computed<PaymentType | undefined>(() => cart.value.payments?.[0]);
+
+const shippingMethods = computed<ShippingMethodType[]>(() => cart.value.availableShippingMethods ?? []);
+const paymentMethods = computed<PaymentMethodType[]>(() => cart.value.availablePaymentMethods ?? []);
 
 const cartItems = computed(() =>
   cart.value.items?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
@@ -700,7 +704,7 @@ async function placeOrder() {
     return;
   }
 
-  loadMyCart();
+  fetchCart();
 
   if (isAuthenticated.value) {
     await router.push({ name: "OrderDetails", params: { orderId: placedOrder.value.id, new: "true" } });
@@ -712,7 +716,7 @@ async function placeOrder() {
 }
 
 function getItemValidationError(lineItemId: string): ValidationErrorType | undefined {
-  return _.find(cart.value.validationErrors, (error) => error.objectId === lineItemId);
+  return cart.value.validationErrors?.find((error) => error.objectId === lineItemId);
 }
 
 async function saveNewAddressesInAccount(payload: {
@@ -751,7 +755,7 @@ function showShipmentMethodDialog(): void {
     props: {
       currentMethodCode: shipment.value?.shipmentMethodCode,
       currentMethodOption: shipment.value?.shipmentMethodOption,
-      availableMethods: cart.value.availableShippingMethods,
+      availableMethods: shippingMethods.value,
       async onResult(method: ShippingMethodType) {
         await updateShipment({
           id: shipment.value?.id,
@@ -769,11 +773,11 @@ function showPaymentMethodDialog(): void {
     component: PaymentMethodDialog,
     props: {
       currentMethodCode: payment.value?.paymentGatewayCode,
-      availableMethods: cart.value.availablePaymentMethods,
+      availableMethods: paymentMethods.value,
       async onResult(method: PaymentMethodType) {
         await updatePayment({
-          paymentGatewayCode: method.code,
           id: payment.value?.id,
+          paymentGatewayCode: method.code,
         });
       },
     },
@@ -810,7 +814,7 @@ function openAddOrUpdateAddressDialog(
         closePopup();
 
         const inputAddress: InputAddressType = {
-          ..._.omit(address, ["isDefault", "description"]),
+          ...omit(address, ["isDefault", "description"]),
           addressType: AddressType.BillingAndShipping,
         };
 
@@ -834,7 +838,7 @@ function openAddressSelectionDialog(addressType: AddressType.Billing | AddressTy
           return;
         }
 
-        const inputAddress: InputAddressType = _.omit(address, ["isDefault", "description"]);
+        const inputAddress: InputAddressType = omit(address, ["isDefault", "description"]);
 
         await updateBillingOrDeliveryAddress(addressType, inputAddress);
       },
@@ -866,20 +870,58 @@ function checkGift(gift: GiftItemType): boolean {
 async function toggleGift(state: boolean, gift: GiftItemType) {
   if (state) {
     await addGiftItems([gift.id]);
-  } else {
-    if (gift.lineItemId) {
-      await rejectGiftItems([gift.lineItemId]);
-    }
+  } else if (gift.lineItemId) {
+    await rejectGiftItems([gift.lineItemId]);
   }
-  await loadMyCart();
+
+  await fetchCart();
 }
 
 onMounted(async () => {
-  await loadMyCart();
+  await fetchCart();
 
   purchaseOrderNumber.value = cart.value.purchaseOrderNumber ?? "";
   cartCoupon.value = cart.value.coupons?.[0]?.code ?? "";
   cartComment.value = cart.value.comment ?? "";
+
+  // Set checkout defaults
+  const { shippingMethodId, paymentMethodCode } = getUserCheckoutDefaults() ?? {};
+  const defaultShippingMethod = shippingMethods.value.find((item) => item.id === shippingMethodId);
+  const defaultPaymentMethod = paymentMethods.value.find((item) => item.code === paymentMethodCode);
+  let reloadCart = false;
+
+  if (
+    !shipment.value?.shipmentMethodCode &&
+    !shipment.value?.shipmentMethodOption &&
+    shippingMethodId &&
+    defaultShippingMethod
+  ) {
+    await updateShipment(
+      {
+        id: shipment.value?.id,
+        price: defaultShippingMethod.price?.amount,
+        shipmentMethodCode: defaultShippingMethod.code,
+        shipmentMethodOption: defaultShippingMethod.optionName,
+      },
+      false
+    );
+    reloadCart = true;
+  }
+
+  if (!payment.value?.paymentGatewayCode && paymentMethodCode && defaultPaymentMethod) {
+    await updatePayment(
+      {
+        id: payment.value?.id,
+        paymentGatewayCode: defaultPaymentMethod.code,
+      },
+      false
+    );
+    reloadCart = true;
+  }
+
+  if (reloadCart) {
+    await fetchCart();
+  }
 });
 
 loadAddresses();
