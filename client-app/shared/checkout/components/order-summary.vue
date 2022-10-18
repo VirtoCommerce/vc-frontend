@@ -5,7 +5,7 @@
         <div class="flex-grow text-xl font-extrabold" v-t="'shared.checkout.order_summary.title'"></div>
       </div>
     </div>
-    <div class="px-6 py-4">
+    <div class="px-6 pt-4 pb-5">
       <slot name="header"></slot>
 
       <!-- Totals block -->

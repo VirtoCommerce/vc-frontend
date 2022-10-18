@@ -66,6 +66,7 @@
       "email_not_unique": "This email is already registered with us",
       "max_length": "This field must not contain over {max} characters",
       "creating_order_error": "Error when creating an order",
+      "creating_quote_error": "Error when creating an quote",
       "item_can_t_be_purchased": "This item cannot be purchased",
       "item_is_out_of_stock": "This item is out of stock",
       "invalid_value": "Invalid value",
@@ -449,6 +450,13 @@
         "tax_label": "@:common.labels.tax",
         "shipping_label": "Shipping cost",
         "total_label": "@:common.labels.total"
+      },
+      "quote": {
+        "title": "Quote request",
+        "text": "You can request items in your cart through a special service",
+        "buttons": {
+          "add_items_to_quote": "Add cart items to quote"
+        }
       },
       "payment_method_dialog": {
         "cancel_button": "@:common.buttons.cancel",

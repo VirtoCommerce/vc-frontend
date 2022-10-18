@@ -17,8 +17,6 @@ export { default as removeCartItem } from "./mutations/removeCartItem";
 export { default as removeCoupon } from "./mutations/removeCoupon";
 export { default as validateCoupon } from "./mutations/validateCoupon";
 
-export { default as getAvailPaymentMethods } from "./queries/getAvailPaymentMethods";
-export { default as getAvailShippingMethods } from "./queries/getAvailShippingMethods";
 export { default as getMyCart } from "./queries/getMyCart";
 
 export * from "./types";

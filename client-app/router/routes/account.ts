@@ -10,6 +10,7 @@ const OrderPayment = () => import("@/pages/account/order-payment.vue");
 const Lists = () => import("@/pages/account/lists.vue");
 const ListDetails = () => import("@/pages/account/list-details.vue");
 const CheckoutDefaults = () => import("@/pages/account/checkout-defaults.vue");
+const QuoteDetails = () => import("@/pages/account/quote-details.vue");
 
 export const accountRoutes: RouteRecordRaw[] = [
   { path: "dashboard", name: "Dashboard", component: Dashboard },
@@ -60,12 +61,12 @@ export const accountRoutes: RouteRecordRaw[] = [
     component: RouterView,
     children: [
       // { path: "", name: "Quotes", component: Quotes },
-      // {
-      //   path: ":quoteId",
-      //   name: "QuoteDetails",
-      //   component: QuoteDetails,
-      //   props: true,
-      // },
+      {
+        path: ":quoteId",
+        name: "QuoteDetails",
+        component: QuoteDetails,
+        props: true,
+      },
     ],
     beforeEnter(_to, _from, next) {
       const { themeContext } = useThemeContext();
