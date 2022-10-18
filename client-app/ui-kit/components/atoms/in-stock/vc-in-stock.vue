@@ -9,6 +9,12 @@
     {{ $t("common.suffixes.product_count_in_stock") }}
   </div>
   <div
+    v-else-if="!isAvailable"
+    class="py-[1px] px-[0.625rem] bg-[color:var(--color-in-stock-out-bg)] text-[color:var(--color-in-stock-out)] whitespace-nowrap rounded-full text-[13px] leading-5 lg:text-[11px]"
+  >
+    {{ $t("common.messages.product_no_longer_available") }}
+  </div>
+  <div
     v-else
     class="py-[1px] px-[0.625rem] bg-[color:var(--color-in-stock-out-bg)] text-[color:var(--color-in-stock-out)] whitespace-nowrap rounded-full text-[13px] leading-5 lg:text-[11px]"
   >
@@ -25,6 +31,10 @@ defineProps({
   quantity: {
     type: Number,
     default: null,
+  },
+  isAvailable: {
+    type: Boolean,
+    default: true,
   },
 });
 </script>
