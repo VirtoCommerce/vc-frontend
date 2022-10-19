@@ -32,11 +32,11 @@ jobs:
       ARGO_SERVER: argo.govirto.com
 
     steps:
-    
-    - name: Install vc-build 
+
+    - name: Install vc-build
       run: |
         dotnet tool install --global VirtoCommerce.GlobalTool
-    
+
     - name: Set Output
       id: app-name
       run: |
@@ -46,8 +46,11 @@ jobs:
           elif [ ${{ github.ref }} == 'refs/heads/dev' ]; then
             echo "IS dev branch"
             echo "::set-output name=APP::vcst-dev"
+          elif [ ${{ github.ref }} == 'refs/heads/demo' ]; then
+            echo "IS demo branch"
+            echo "::set-output name=APP::vcst-demo"
           fi
-  
+
     - name: Read deployment config
       uses: VirtoCommerce/vc-github-actions/get-deploy-param@master
       id: deployConfig
