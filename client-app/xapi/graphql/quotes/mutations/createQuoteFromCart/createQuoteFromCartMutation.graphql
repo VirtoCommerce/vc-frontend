@@ -1,0 +1,5 @@
+mutation CreateQuoteFromCart($command: CreateQuoteFromCartCommandType!) {
+  createQuoteFromCart(command: $command) {
+    id
+  }
+}

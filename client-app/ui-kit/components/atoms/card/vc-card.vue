@@ -2,7 +2,7 @@
   <div class="bg-white rounded border shadow-sm">
     <div
       v-if="withHeader"
-      :class="[headerClass, { 'cursor-pointer': isCollapsible }]"
+      :class="['border-b font-extrabold text-sm', headerClasses, { 'cursor-pointer': isCollapsible }]"
       @click="isCollapsible && (_isCollapsed = !_isCollapsed)"
     >
       <div class="flex items-center">
@@ -18,7 +18,7 @@
         </slot>
       </div>
     </div>
-    <div v-if="!isCollapsible || (isCollapsible && !_isCollapsed)" :class="!fullWidthContent ? contentClass : ''">
+    <div v-if="!isCollapsible || (isCollapsible && !_isCollapsed)" :class="!fullWidthContent ? contentClasses : ''">
       <div class="overflow-hidden">
         <slot></slot>
       </div>
@@ -50,13 +50,13 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  headerClass: {
+  headerClasses: {
     type: String,
-    default: "px-4 py-3 border-b font-extrabold text-sm",
+    default: "px-4 py-3",
   },
-  contentClass: {
+  contentClasses: {
     type: String,
-    default: "px-4 py-4",
+    default: "p-4",
   },
 });
 

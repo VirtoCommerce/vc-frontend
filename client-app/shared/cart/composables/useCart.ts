@@ -1,25 +1,35 @@
 import { computed, Ref, ref } from "vue";
+import _ from "lodash";
+import { Logger } from "@/core/utilities";
 import {
-  getMyCart,
-  addItemToCart,
-  addItemsToCart,
+  BulkCartType,
+  CartType,
+  CustomerOrderType,
+  InputPaymentType,
+  InputShipmentType,
+  LineItemType,
+  QuoteType,
+} from "@/xapi/types";
+import {
   addBulkItemsToCart,
+  addCoupon,
+  addItemsToCart,
+  addItemToCart,
+  addOrUpdateCartPayment,
+  addOrUpdateCartShipment,
+  changeCartComment,
   changeCartItemQuantity,
+  changePurchaseOrderNumber,
+  getMyCart,
+  InputBulkItemsType,
+  removeCart as _removeCart,
   removeCartItem,
   removeCoupon,
   validateCoupon,
-  addCoupon,
-  changeCartComment,
-  addOrUpdateCartShipment,
-  addOrUpdateCartPayment,
-  InputBulkItemsType,
-  removeCart as _removeCart,
-  changePurchaseOrderNumber,
 } from "@/xapi/graphql/cart";
-import { BulkCartType, CartType, InputPaymentType, InputShipmentType, LineItemType } from "@/xapi/types";
-import { Logger } from "@/core/utilities";
-import _ from "lodash";
-import { CartItemType } from "../types";
+import { createOrderFromCart as _createOrderFromCart } from "@/xapi/graphql/orders";
+import { createQuoteFromCart as _createQuoteFromCart } from "@/xapi/graphql/quotes";
+import { CartItemType } from "@/shared/cart";
 
 const DEFAULT_ITEMS_PER_PAGE = 6;
 
@@ -248,6 +258,40 @@ export default function useCart() {
     }
   }
 
+  async function createOrderFromCart(cartId: string): Promise<CustomerOrderType | null> {
+    loading.value = true;
+
+    try {
+      const order = await _createOrderFromCart(cartId);
+
+      if (!order) {
+        return null;
+      }
+
+      await _removeCart(cartId);
+
+      return order;
+    } catch (e) {
+      Logger.error(`${useCart.name}.${createOrderFromCart.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function createQuoteFromCart(cartId: string, comment = ""): Promise<QuoteType | null> {
+    loading.value = true;
+
+    try {
+      return await _createQuoteFromCart(cartId, comment);
+    } catch (e) {
+      Logger.error(`${useCart.name}.${createQuoteFromCart.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   // calculate total price of items in the cart for some set of products
   function getItemsTotal(productIds: string[]): number {
     if (!cart.value?.items?.length) {
@@ -283,5 +327,7 @@ export default function useCart() {
     updatePurchaseOrderNumber,
     addMultipleItemsToCart,
     removeCart,
+    createOrderFromCart,
+    createQuoteFromCart,
   };
 }

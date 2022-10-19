@@ -67,6 +67,7 @@
       "email_not_unique": "Diese E-Mail ist bereits bei uns registriert",
       "max_length": "Dieses Feld darf höchstens {max} Zeichen lang sein",
       "creating_order_error": "Fehler beim Anlegen eines Auftrags",
+      "creating_quote_error": "Error when creating an quote",
       "item_can_t_be_purchased": "Dieser Artikel kann nicht gekauft werden",
       "item_is_out_of_stock": "Dieser Artikel ist nicht mehr vorrätig",
       "invalid_value": "Ungültiger Wert",
@@ -446,6 +447,13 @@
         "tax_label": "@:common.labels.tax",
         "shipping_label": "Shipping cost",
         "total_label": "@:common.labels.total"
+      },
+      "quote": {
+        "title": "Quote request",
+        "text": "You can request items in your cart through a special service",
+        "buttons": {
+          "add_items_to_quote": "Add cart items to quote"
+        }
       },
       "payment_method_dialog": {
         "cancel_button": "@:common.buttons.cancel",
