@@ -739,7 +739,8 @@ async function createQuote() {
     return;
   }
 
-  await router.push({ name: "QuoteDetails", params: { quoteId: quote?.id } });
+  // await router.push({ name: "QuoteDetails", params: { quoteId: quote?.id } });
+  await router.push({ name: "Quotes" });
   await fetchCart();
 
   creatingQuote.value = false;

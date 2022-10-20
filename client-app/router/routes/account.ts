@@ -10,6 +10,7 @@ const OrderPayment = () => import("@/pages/account/order-payment.vue");
 const Lists = () => import("@/pages/account/lists.vue");
 const ListDetails = () => import("@/pages/account/list-details.vue");
 const CheckoutDefaults = () => import("@/pages/account/checkout-defaults.vue");
+const Quotes = () => import("@/pages/account/quotes.vue");
 const QuoteDetails = () => import("@/pages/account/quote-details.vue");
 
 export const accountRoutes: RouteRecordRaw[] = [
@@ -60,7 +61,7 @@ export const accountRoutes: RouteRecordRaw[] = [
     path: "quotes",
     component: RouterView,
     children: [
-      // { path: "", name: "Quotes", component: Quotes },
+      { path: "", name: "Quotes", component: Quotes },
       {
         path: ":quoteId",
         name: "QuoteDetails",
