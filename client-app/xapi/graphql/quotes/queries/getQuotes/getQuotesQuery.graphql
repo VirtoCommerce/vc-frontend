@@ -1,0 +1,19 @@
+#import "../../../fragments/moneyFields.graphql"
+
+query GetQuotes($customerId: String, $sort: String, $keyword: String, $first: Int, $after: String) {
+  quotes(customerId: $customerId, sort: $sort, keyword: $keyword, first: $first, after: $after) {
+    totalCount
+    items {
+      id
+      createdDate
+      customerId
+      number
+      status
+      totals {
+        grandTotalInclTax {
+          ...moneyFields
+        }
+      }
+    }
+  }
+}

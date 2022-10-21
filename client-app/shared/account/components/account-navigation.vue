@@ -50,6 +50,13 @@
         :text="$t('shared.account.navigation.links.checkout_defaults')"
         class="checkout-icon"
       />
+
+      <AccountNavigationLink
+        :to="{ name: 'Quotes' }"
+        :text="$t('shared.account.navigation.links.quote_requests')"
+        class="quotes-icon"
+        v-if="$cfg.quotes_enabled"
+      />
     </div>
   </VcCard>
 
