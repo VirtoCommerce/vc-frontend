@@ -33,65 +33,66 @@
         </h2>
 
         <div class="space-y-8 mt-8">
-          <MobileMenuLink
-            v-for="childrenItem in openedItem?.children"
-            :key="childrenItem.title"
-            :to="childrenItem.route"
-            :icon="childrenItem.icon"
-            :title="childrenItem.title"
-            :is-parent="!!childrenItem.children?.length"
-            class="text-xl font-bold"
-            @close="$emit('close')"
-            @select="selectMenuItem(childrenItem)"
-          >
-            <!-- Icon for categories -->
-            <template #icon="{ isActive }" v-if="openedItem?.id === 'all-products-menu'">
-              <svg
-                :class="['shrink-0 scale-150 ml-0.5 mr-3.5', { 'text-[color:var(--color-primary)]': isActive }]"
-                height="36"
-                width="36"
-              >
-                <use href="/static/images/common/cube.svg#main" />
-              </svg>
-            </template>
-
-            <!-- Logout -->
-            <div v-if="childrenItem.id === 'logout'" class="flex items-center">
-              <template v-if="user.contact?.fullName">
-                <span>{{ user.contact.fullName }}</span>
-                <span class="font-normal text-base mx-2.5">•</span>
+          <div v-for="childrenItem in openedItem?.children" :key="childrenItem.title">
+            <MobileMenuLink
+              :to="childrenItem.route"
+              :icon="childrenItem.icon"
+              :title="childrenItem.title"
+              :is-parent="!!childrenItem.children?.length"
+              class="text-xl font-bold"
+              @close="$emit('close')"
+              @select="selectMenuItem(childrenItem)"
+              v-if="childrenItem.id !== 'quotes' || (childrenItem.id === 'quotes' && $cfg.quotes_enabled)"
+            >
+              <!-- Icon for categories -->
+              <template #icon="{ isActive }" v-if="openedItem?.id === 'all-products-menu'">
+                <svg
+                  :class="['shrink-0 scale-150 ml-0.5 mr-3.5', { 'text-[color:var(--color-primary)]': isActive }]"
+                  height="36"
+                  width="36"
+                >
+                  <use href="/static/images/common/cube.svg#main" />
+                </svg>
               </template>
 
-              <a
-                href="#"
-                @click.prevent="signOut"
-                class="text-[color:var(--color-primary)]"
-                v-t="'shared.layout.header.link_logout'"
-              />
-            </div>
+              <!-- Logout -->
+              <div v-if="childrenItem.id === 'logout'" class="flex items-center">
+                <template v-if="user.contact?.fullName">
+                  <span>{{ user.contact.fullName }}</span>
+                  <span class="font-normal text-base mx-2.5">•</span>
+                </template>
 
-            <!-- Currency setting -->
-            <div v-else-if="childrenItem.id === 'currency-setting'" class="flex flex-col grow font-normal space-y-1">
-              <h2 class="uppercase text-white text-2xl mb-1">
-                {{ $t("shared.layout.header.mobile.currency") }}
-              </h2>
+                <a
+                  href="#"
+                  @click.prevent="signOut"
+                  class="text-[color:var(--color-primary)]"
+                  v-t="'shared.layout.header.link_logout'"
+                />
+              </div>
 
-              <VcRadioButton
-                v-for="currencyItem in supportedCurrencies"
-                :model-value="currentCurrency?.code"
-                :key="currencyItem.code"
-                :value="currencyItem.code"
-                class="py-2.5"
-                @click="
-                  currentCurrency?.code === currencyItem.code ? null : saveCurrencyCodeAndReload(currencyItem.code)
-                "
-              >
-                <span :class="{ 'text-white': currentCurrency?.code === currencyItem.code }" class="uppercase">
-                  {{ currencyItem.code }}
-                </span>
-              </VcRadioButton>
-            </div>
-          </MobileMenuLink>
+              <!-- Currency setting -->
+              <div v-else-if="childrenItem.id === 'currency-setting'" class="flex flex-col grow font-normal space-y-1">
+                <h2 class="uppercase text-white text-2xl mb-1">
+                  {{ $t("shared.layout.header.mobile.currency") }}
+                </h2>
+
+                <VcRadioButton
+                  v-for="currencyItem in supportedCurrencies"
+                  :model-value="currentCurrency?.code"
+                  :key="currencyItem.code"
+                  :value="currencyItem.code"
+                  class="py-2.5"
+                  @click="
+                    currentCurrency?.code === currencyItem.code ? null : saveCurrencyCodeAndReload(currencyItem.code)
+                  "
+                >
+                  <span :class="{ 'text-white': currentCurrency?.code === currencyItem.code }" class="uppercase">
+                    {{ currencyItem.code }}
+                  </span>
+                </VcRadioButton>
+              </div>
+            </MobileMenuLink>
+          </div>
         </div>
       </div>
     </section>

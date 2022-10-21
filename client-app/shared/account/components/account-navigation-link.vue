@@ -53,6 +53,10 @@ defineProps({
   mask: url(/static/images/dashboard/icons/members.svg) no-repeat center / contain;
 }
 
+.quotes-icon > div {
+  mask: url(/static/images/dashboard/icons/quotes.svg) no-repeat center / contain;
+}
+
 /* Active/hover state styles */
 .router-link-active > div,
 .icon:hover > div {
