@@ -167,6 +167,7 @@ export interface IThemeConfigPreset {
   color_price?: string;
   color_mobile_menu_bg?: string;
   color_mobile_menu_link?: string;
+  color_mobile_menu_icon?: string;
   color_header_top_bg?: string;
   color_header_top_text?: string;
   color_header_top_link?: string;

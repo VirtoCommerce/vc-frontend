@@ -25,14 +25,14 @@
     <section v-if="openedItem" class="grow overflow-y-auto pb-16 divide-y divide-white divide-opacity-20">
       <div class="flex flex-col py-6 px-10">
         <button class="appearance-none self-start" @click="goBack">
-          <i class="fas fa-arrow-circle-left text-[2.5rem]" />
+          <i class="fas fa-arrow-circle-left text-[2.5rem] text-[color:var(--color-mobile-menu-icon)]" />
         </button>
 
         <h2 v-if="openedItem?.title" class="uppercase text-white text-2xl mt-7">
           {{ openedItem?.title }}
         </h2>
 
-        <div class="space-y-8 mt-8">
+        <div class="flex flex-col gap-y-5 mt-8">
           <div v-for="childrenItem in openedItem?.children" :key="childrenItem.title">
             <MobileMenuLink
               :to="childrenItem.route"
@@ -45,9 +45,14 @@
               v-if="childrenItem.id !== 'quotes' || (childrenItem.id === 'quotes' && $cfg.quotes_enabled)"
             >
               <!-- Icon for categories -->
-              <template #icon="{ isActive }" v-if="openedItem?.id === 'all-products-menu'">
+              <template #icon="{ isActive, isExactActive }" v-if="openedItem?.id === 'all-products-menu'">
                 <svg
-                  :class="['shrink-0 scale-150 ml-0.5 mr-3.5', { 'text-[color:var(--color-primary)]': isActive }]"
+                  :class="[
+                    'shrink-0 ml-0.5 mr-3.5',
+                    isActive || isExactActive
+                      ? 'text-[color:var(--color-primary)]'
+                      : 'text-[color:var(--color-mobile-menu-icon)]',
+                  ]"
                   height="36"
                   width="36"
                 >
@@ -55,23 +60,8 @@
                 </svg>
               </template>
 
-              <!-- Logout -->
-              <div v-if="childrenItem.id === 'logout'" class="flex items-center">
-                <template v-if="user.contact?.fullName">
-                  <span>{{ user.contact.fullName }}</span>
-                  <span class="font-normal text-base mx-2.5">•</span>
-                </template>
-
-                <a
-                  href="#"
-                  @click.prevent="signOut"
-                  class="text-[color:var(--color-primary)]"
-                  v-t="'shared.layout.header.link_logout'"
-                />
-              </div>
-
               <!-- Currency setting -->
-              <div v-else-if="childrenItem.id === 'currency-setting'" class="flex flex-col grow font-normal space-y-1">
+              <div v-if="childrenItem.id === 'currency-setting'" class="flex flex-col grow font-normal space-y-1">
                 <h2 class="uppercase text-white text-2xl mb-1">
                   {{ $t("shared.layout.header.mobile.currency") }}
                 </h2>
@@ -100,7 +90,7 @@
 
     <!-- region Main menu section -->
     <section v-else class="flex-grow overflow-y-auto pb-16 divide-y divide-white divide-opacity-20">
-      <div class="flex flex-col space-y-5 mt-2 py-8 px-9">
+      <div class="flex flex-col gap-y-5 py-8 px-9">
         <MobileMenuLink
           v-for="item in mobileHeaderMenuLinks"
           :key="item.title"
@@ -154,8 +144,45 @@
         </MobileMenuLink>
       </div>
 
-      <div class="flex flex-col space-y-5 py-8 px-9">
+      <div class="flex flex-col gap-y-5 py-8 px-9">
         <template v-if="isAuthenticated">
+          <!-- Account -->
+          <div class="flex flex-row gap-4 text-xl mb-2">
+            <div
+              class="flex shrink-0 items-center justify-center h-12 w-12 overflow-hidden rounded-full bg-[color:var(--color-mobile-menu-icon)] ring-2 ring-[color:var(--color-mobile-menu-link)]"
+            >
+              <VcImage v-if="user.photoUrl" :src="user.photoUrl" :alt="user.contact?.fullName" class="h-12 w-12" lazy />
+              <i v-else class="fa fa-user-alt text-2xl" />
+            </div>
+
+            <div class="flex flex-col leading-tight">
+              <div class="flex flex-wrap items-center gap-x-1 text-[color:var(--color-mobile-menu-link)]">
+                <template v-if="operator">
+                  <span class="inline-block font-bold">
+                    {{ operator.contact?.fullName || operator.userName }}
+                  </span>
+
+                  <span
+                    class="inline-block text-[color:var(--color-mobile-menu-icon)]"
+                    v-t="'shared.layout.header.top_header.logged_in_as'"
+                  />
+                </template>
+
+                <span class="inline-block font-bold">
+                  {{ user.contact?.fullName || user.userName }}
+                </span>
+              </div>
+
+              <div>
+                <button
+                  @click="signOut"
+                  class="font-bold text-[color:var(--color-primary)]"
+                  v-t="'shared.layout.header.link_logout'"
+                />
+              </div>
+            </div>
+          </div>
+
           <!-- Account link -->
           <MobileMenuLink
             v-if="mobileAccountMenuLink"
@@ -222,7 +249,7 @@ const { cart } = useCart();
 const { productsIds } = useCompareProducts();
 const { supportedLocales } = useLanguages();
 const { currentCurrency, supportedCurrencies, saveCurrencyCodeAndReload } = useCurrency();
-const { user, isAuthenticated, organization, signMeOut } = useUser();
+const { user, operator, isAuthenticated, organization, signMeOut } = useUser();
 const {
   mobileHeaderMenuLinks,
   mobileAccountMenuLink,

@@ -18,6 +18,11 @@ const errorHandler = onError(({ graphQLErrors = [] }) => {
       location.href = `/sign-in?redirect=${pathname + search + hash}`;
       return;
     }
+
+    if (code === "Forbidden") {
+      // TODO: Use notification
+      alert("User doesn't have the required permission.");
+    }
   }
 });
 
