@@ -393,15 +393,18 @@
         "technical_specs_block_title": "technical specs",
         "variations_block_title": "Customize your order",
         "description_block_title": "Description",
+        "vendor_label": "Vendor",
         "share_product_label": "Share product",
         "price_block": {
-          "title": "Price & Delivery",
+          "title": "Price and Delivery",
           "add_to_list_button": "Add to list",
-          "add_to_list_button_unauthorized_title": "Wishlists are available only for authorized users"
+          "add_to_list_button_unauthorized_title": "Wishlists are available only for authenticated users",
+          "product_email_title": "Please, have a look on the product: {0}"
         },
         "product_variation_card": {
           "variation_sku_label": "@:common.labels.sku",
-          "price_label": "@:common.labels.product_price"
+          "price_label": "@:common.labels.product_price",
+          "vendor_label": "@:shared.catalog.product_details.vendor_label"
         }
       },
       "branches_dialog": {

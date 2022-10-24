@@ -5,6 +5,7 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
     code
     slug
     outline
+    hasVariations
     minQuantity
     maxQuantity
     imgSrc
@@ -47,6 +48,10 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
         value
         type
       }
+      vendor {
+        id
+        name
+      }
       availabilityData {
         isActive
         isAvailable
@@ -72,6 +77,10 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
           formattedAmount
         }
       }
+    }
+    vendor {
+      id
+      name
     }
     availabilityData {
       isActive

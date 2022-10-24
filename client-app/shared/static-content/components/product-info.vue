@@ -1,7 +1,7 @@
 <template>
   <div v-if="product" class="flex flex-col lg:flex-row lg:space-x-8 mt-5" :class="{ 'mb-6': !relatedProducts.length }">
     <div class="-mx-5 md:mx-0 lg:w-8/12 xl:w-9/12">
-      <ProductDetailsTemplate :product="product" :section="model" class="shadow-sm border rounded-none md:rounded" />
+      <ProductDetails :product="product" :section="model" class="shadow-sm border rounded-none md:rounded" />
     </div>
 
     <div class="lg:w-4/12 lg:h-full lg:sticky lg:top-4 mt-6 lg:mt-0 xl:w-3/12">
@@ -52,7 +52,7 @@
 import { PropType } from "vue";
 import { Product } from "@/xapi/types";
 import { useCart, AddToCart } from "@/shared/cart";
-import { ProductDetailsTemplate, ProductPriceBlock } from "@/shared/catalog";
+import { ProductDetails, ProductPriceBlock } from "@/shared/catalog";
 import { PageContent } from "@/shared/static-content";
 
 defineProps({
