@@ -5,10 +5,10 @@
     image-src="/static/images/variations_customize.svg"
     :title="model.title || $t('shared.catalog.product_details.variations_block_title')"
   >
-    <ProductVariationCard class="mb-5" :variation="product" />
+    <ProductVariationCard :variation="product" class="mb-5" />
 
-    <div v-for="(variation, i) in product.variations" :key="variation?.id ?? i">
-      <ProductVariationCard v-if="variation" class="mb-5" :variation="variation" :product="product" />
+    <div v-for="variation in product.variations" :key="variation.code">
+      <ProductVariationCard :variation="variation" class="mb-5" />
     </div>
   </ProductTitledBlock>
 </template>

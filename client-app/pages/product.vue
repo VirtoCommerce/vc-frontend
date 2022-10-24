@@ -8,7 +8,7 @@
 
       <h1 class="text-2xl md:text-4xl font-bold uppercase">{{ product.name }}</h1>
 
-      <div v-if="!productWithVariations && !isMobile" class="text-sm mt-1">
+      <div v-if="!product.hasVariations && !isMobile" class="text-sm mt-1">
         {{ $t("pages.product.sku_label") }} <span class="font-extrabold">{{ product.code }}</span>
       </div>
 
@@ -21,7 +21,7 @@
           :relatedProducts="relatedProducts"
           :model="item"
           :isMobile="isMobile"
-          :productWithVariations="productWithVariations"
+          :productWithVariations="!!product.hasVariations"
           :variationsCartTotalAmount="variationsCartTotalAmount"
         />
       </template>
@@ -127,8 +127,6 @@ usePageHead({
 
 const isMobile = breakpoints.smaller("lg");
 const breadcrumbs: Ref<IBreadcrumbsItem[]> = ref([{ url: "/", title: t("common.links.home") }]);
-
-const productWithVariations = eagerComputed<boolean>(() => !!product.value?.variations?.length);
 
 const variationsCartTotalAmount = eagerComputed<number>(() => {
   if (!product.value) {
