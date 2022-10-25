@@ -21,5 +21,11 @@ query GetMe($after: String, $first: Int, $sort: String) {
         }
       }
     }
+    operator {
+      userName
+      contact {
+        fullName
+      }
+    }
   }
 }

@@ -1,9 +1,9 @@
 <template>
   <router-link
-    class="text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
+    class="py-1 font-bold text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
     :to="to"
   >
-    <slot>{{ title }}</slot>
+    <slot />
   </router-link>
 </template>
 
@@ -15,11 +15,6 @@ defineProps({
   to: {
     type: [String, Object] as PropType<RouteLocationRaw>,
     required: true,
-  },
-
-  title: {
-    type: String,
-    default: undefined,
   },
 });
 </script>

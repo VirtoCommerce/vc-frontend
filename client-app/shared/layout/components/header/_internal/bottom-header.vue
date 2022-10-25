@@ -1,7 +1,7 @@
 <template>
   <div class="relative">
     <div
-      class="z-[2] relative px-4 xl:px-[3.2rem] py-3 min-h-[5.5rem] flex items-center gap-x-5 bg-[color:var(--color-header-bottom-bg)]"
+      class="z-[2] relative px-5 xl:px-12 py-3 min-h-[5.5rem] flex items-center gap-x-5 bg-[color:var(--color-header-bottom-bg)]"
     >
       <router-link to="/">
         <VcImage :src="$cfg.logo_image" class="h-8 xl:h-[2.8rem]" lazy />

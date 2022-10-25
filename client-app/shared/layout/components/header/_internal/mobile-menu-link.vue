@@ -1,14 +1,11 @@
 <template>
   <router-link :to="to" custom v-slot="{ href, navigate, isActive, isExactActive }">
     <component
-      :is="isLink ? 'a' : 'div'"
+      :is="isLink ? 'a' : 'button'"
       :href="isLink ? href : null"
       :class="[
         'flex items-center leading-none',
-        {
-          'text-white font-extrabold': isLink && (isActive || isExactActive),
-          'font-semibold': !(isLink && (isActive || isExactActive)),
-        },
+        isLink && (isActive || isExactActive) ? 'text-white font-extrabold' : 'font-semibold',
         $attrs.class,
       ]"
       @click.prevent="isLink ? navigate() && $emit('close') : $emit('select')"
@@ -20,7 +17,9 @@
           width="36"
           :class="[
             'shrink-0 ml-0.5 mr-3.5',
-            { 'text-[color:var(--color-primary)]': isLink && (isActive || isExactActive) },
+            isLink && (isActive || isExactActive)
+              ? 'text-[color:var(--color-primary)]'
+              : 'text-[color:var(--color-mobile-menu-icon)]',
           ]"
         >
           <use :href="icon" />
