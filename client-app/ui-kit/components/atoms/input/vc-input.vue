@@ -30,6 +30,7 @@
 
       <button
         v-if="isPasswordIconVisible"
+        tabindex="-1"
         type="button"
         class="appearance-none absolute top-0 right-0 h-full w-12 flex items-center justify-center cursor-pointer text-[color:var(--color-primary)]"
         @click="togglePasswordVisibility"
