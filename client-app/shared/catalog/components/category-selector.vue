@@ -1,6 +1,6 @@
 <template>
   <!-- category selector -->
-  <VcFilterCard is-header-link v-if="!loading || selectedCategory" :with-header="!!backCategory">
+  <VcFilterCard v-if="!loading || selectedCategory" :with-header="!!backCategory">
     <template #header>
       <router-link
         :to="backCategoryLink"
