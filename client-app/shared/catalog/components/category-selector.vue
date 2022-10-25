@@ -1,8 +1,11 @@
 <template>
   <!-- category selector -->
-  <VcFilterCard v-if="!loading || selectedCategory" :with-header="!!backCategory">
+  <VcFilterCard is-header-link v-if="!loading || selectedCategory" :with-header="!!backCategory">
     <template #header>
-      <router-link :to="backCategoryLink" class="pl-0.5 text-[color:var(--color-filter-card-header)]">
+      <router-link
+        :to="backCategoryLink"
+        class="flex-grow pl-0.5 text-[color:var(--color-filter-card-header)] hover:bg-gray-100"
+      >
         <i class="fas fa-chevron-left text-[color:var(--color-primary)]"></i>
         <span class="font-bold ml-1.5">
           {{ backCategory?.label }}
