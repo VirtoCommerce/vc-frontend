@@ -44,10 +44,11 @@
 
 <script setup lang="ts">
 import { computed, PropType, ref } from "vue";
-import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
-import { useUser } from "@/shared/account";
+import { useField, useForm } from "vee-validate";
 import { useI18n } from "vue-i18n";
+import { useIdentityErrorTranslator } from "@/core/composables";
+import { useUser } from "@/shared/account";
 
 const emit = defineEmits(["succeeded"]);
 
@@ -68,6 +69,7 @@ const props = defineProps({
 
 const { t } = useI18n();
 const { resetPassword, loading } = useUser();
+const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
 const schema = yup.object({
   password: yup.string().label(t("shared.account.reset_password_form.password_label")).required(),
@@ -106,7 +108,13 @@ const onSubmit = handleSubmit(async (data) => {
   if (result.succeeded) {
     emit("succeeded");
   } else if (result.errors?.length) {
-    commonErrors.value = result.errors.map((error) => error.description!); // TODO: Use `useIdentityErrorTranslator` (ST-3324)
+    result.errors.forEach((error) => {
+      const errorDescription = getIdentityErrorTranslation(error);
+
+      if (errorDescription) {
+        commonErrors.value.push(errorDescription);
+      }
+    });
   }
 });
 </script>
