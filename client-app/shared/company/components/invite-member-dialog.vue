@@ -5,8 +5,8 @@
     ref="popupComponent"
     is-mobile-fullscreen
   >
-    <VcAlert v-if="errorText" type="error" class="mx-6 mt-5 sm:mx-5">
-      {{ errorText }}
+    <VcAlert v-if="commonErrors.length" type="error" class="mx-6 mt-5 sm:mx-5">
+      <p v-for="error in commonErrors" :key="error">{{ error }}</p>
     </VcAlert>
 
     <form class="p-6 py-5 sm:p-5 sm:border-b h-full">
@@ -88,6 +88,7 @@ import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import globals from "@/core/globals";
 import { B2B_ROLES } from "@/core/constants";
+import { useIdentityErrorTranslator } from "@/core/composables";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 
@@ -100,7 +101,7 @@ const emit = defineEmits<{
 
 const popupComponent = shallowRef<any>(null);
 const loading = ref(false);
-const errorText = ref("");
+const commonErrors = ref<string[]>([]);
 const maxContactsValue = ref(200);
 const maxEmailLength = ref(120);
 
@@ -108,6 +109,7 @@ const { t } = useI18n();
 const { organization, inviteUser } = useUser();
 const router = useRouter();
 const notifications = useNotifications();
+const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
 const roles = B2B_ROLES.map((role) => {
   role.normalizedName = t("common.roles." + role.id);
@@ -159,7 +161,7 @@ const { value: emails } = useField<string>(
 const send = handleSubmit(async (data) => {
   const { storeId } = globals;
 
-  errorText.value = "";
+  commonErrors.value = [];
   loading.value = true;
 
   const result = await inviteUser({
@@ -184,10 +186,18 @@ const send = handleSubmit(async (data) => {
       single: true,
     });
   } else if (result.errors?.length) {
-    errorText.value = result.errors
-      .filter((error) => error.code !== "DuplicateUserName") // Because email is a `UserName` (login)
-      .map((error) => error.description) // TODO: Use `useIdentityErrorTranslator` (ST-3324)
-      .join(" ");
+    result.errors.forEach((error) => {
+      // Excluding some types of errors. Example: because email is a `UserName` (login)
+      if (error.code === "DuplicateUserName") {
+        return;
+      }
+
+      const errorDescription = getIdentityErrorTranslation(error);
+
+      if (errorDescription) {
+        commonErrors.value.push(errorDescription);
+      }
+    });
   }
 });
 </script>
