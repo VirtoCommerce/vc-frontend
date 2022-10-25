@@ -39,13 +39,27 @@ export default {
 
       switch (event.data.type) {
         case "changed":
-          if (!event.data.model.templateKey) {
-            useStaticPage(event.data.model.template);
+        case "page":
+        case "preview": {
+          const template = event.data.template;
+          if (event.data.model) {
+            template.content.push(event.data.model);
+          }
+          if (!event.data.templateKey) {
+            useStaticPage(template);
           } else {
-            useTemplate(event.data.model.templateKey, event.data.model.template);
+            useTemplate(event.data.templateKey, template);
           }
           break;
+        }
 
+        case "select": {
+          const section = event.data.section;
+          if (section) {
+            console.log("scroll to section", section);
+          }
+          break;
+        }
         case "navigate":
           options.router.push(event.data.url);
           break;
