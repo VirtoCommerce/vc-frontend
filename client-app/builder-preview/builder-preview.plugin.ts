@@ -10,6 +10,34 @@ enrichRequest((headers: Headers) => {
   return headers;
 });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function updatePreview(data: any) {
+  const template = data.template;
+  if (data.model) {
+    template.content.push(data.model);
+  }
+  if (!data.templateKey) {
+    useStaticPage(template);
+  } else {
+    useTemplate(data.templateKey, template);
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function updateSettings(app: App, settings: any) {
+  const keys = Object.entries(settings);
+
+  keys.forEach(([key, value]) => {
+    app.config.globalProperties.$cfg[key] = value;
+  });
+
+  keys
+    .filter(([key]) => /^color/.test(key))
+    .forEach(([key, value]) => {
+      document.documentElement.style.setProperty(`--${key.replace(/_/g, "-")}`, value as string);
+    });
+}
+
 export default {
   install: (app: App, options: { router: Router }) => {
     const bodyEl = document.getElementsByTagName("body").item(0);
@@ -39,32 +67,25 @@ export default {
 
       switch (event.data.type) {
         case "changed":
-          if (!event.data.model.templateKey) {
-            useStaticPage(event.data.model.template);
-          } else {
-            useTemplate(event.data.model.templateKey, event.data.model.template);
-          }
+        case "page":
+        case "preview":
+          updatePreview(event.data);
           break;
 
+        case "select": {
+          const section = event.data.section;
+          if (section) {
+            console.log("scroll to section", section);
+          }
+          break;
+        }
         case "navigate":
           options.router.push(event.data.url);
           break;
 
-        case "settings": {
-          const keys = Object.entries(event.data.settings);
-
-          keys.forEach(([key, value]) => {
-            app.config.globalProperties.$cfg[key] = value;
-          });
-
-          keys
-            .filter(([key]) => /^color/.test(key))
-            .forEach(([key, value]) => {
-              document.documentElement.style.setProperty(`--${key.replace(/_/g, "-")}`, value as string);
-            });
-
+        case "settings":
+          updateSettings(app, event.data.settings);
           break;
-        }
       }
     });
 

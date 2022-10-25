@@ -11,6 +11,7 @@
       "label": "Heading",
       "type": "select",
       "default": "h2",
+      "required": true,
       "sort": 20,
       "options": [
         {
