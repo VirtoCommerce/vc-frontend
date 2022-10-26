@@ -7,8 +7,42 @@
 
     <div class="-mt-5" ref="stickyMobileHeaderAnchor"></div>
 
+    <!-- Page toolbar -->
+    <PageToolbarBlock
+      :stick="isVisibleStickyMobileHeader"
+      class="flex flex-row lg:flex-row-reverse items-center py-3.5 -my-3.5 gap-x-2 lg:gap-x-5"
+      shadow
+    >
+      <div class="flex grow">
+        <div class="relative grow">
+          <VcInput
+            v-model="keyword"
+            :is-disabled="fetching"
+            :placeholder="$t('pages.account.quotes.search_placeholder')"
+            maxlength="64"
+            class="w-full"
+            input-class="font-medium rounded-r-none !text-sm disabled:bg-gray-200 !pl-4 !pr-11"
+            @keypress.enter="applyKeyword"
+          />
+
+          <button v-if="keyword" class="absolute right-0 top-0 h-11 px-4" @click="resetKeyword">
+            <svg class="text-[color:var(--color-primary)]" height="14" width="14">
+              <use href="/static/images/delete.svg#main" />
+            </svg>
+          </button>
+        </div>
+
+        <VcButton :is-disabled="fetching" class="w-11 !rounded-l-none uppercase" size="lg" @click="applyKeyword">
+          <i class="fas fa-search text-lg" />
+        </VcButton>
+      </div>
+    </PageToolbarBlock>
+
     <!-- Empty view -->
-    <VcEmptyView v-if="!fetching && !quotes.length" :text="$t('pages.account.quotes.no_quotes_message')">
+    <VcEmptyView
+      v-if="!fetching && !quotes.length"
+      :text="$t(!!keyword ? 'pages.account.quotes.no_results_message' : 'pages.account.quotes.no_quotes_message')"
+    >
       <template #icon>
         <VcImage src="/static/images/common/order.svg" :alt="$t('pages.account.orders.no_orders_img_alt')" />
       </template>
@@ -119,16 +153,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { useUserQuotes } from "@/shared/account";
+import { PageToolbarBlock, useUserQuotes } from "@/shared/account";
 import { QuoteType } from "@/xapi/types";
+import { computedEager, useBreakpoints, breakpointsTailwind } from "@vueuse/core";
+import { useElementVisibility } from "@/core/composables";
 
 const { t } = useI18n();
 const router = useRouter();
 
-const { quotes, fetching, itemsPerPage, pages, page, fetchQuotes } = useUserQuotes();
+const { quotes, fetching, itemsPerPage, pages, page, keyword, fetchQuotes } = useUserQuotes();
+
+const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
+
+const isMobile = breakpoints.smaller("lg");
+
+const isVisibleStickyMobileHeader = computedEager<boolean>(
+  () => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value
+);
 
 const columns = ref<ITableColumn[]>([
   {
@@ -159,6 +205,17 @@ async function changePage(newPage: number) {
 
 function navigateQuoteDetails(quote: QuoteType) {
   router.push({ name: "QuoteDetails", params: { quoteId: quote.id } });
+}
+
+async function applyKeyword() {
+  page.value = 1;
+  await fetchQuotes();
+}
+
+async function resetKeyword() {
+  keyword.value = "";
+  page.value = 1;
+  await applyKeyword();
 }
 
 fetchQuotes();

@@ -11,6 +11,7 @@ export default () => {
   const itemsPerPage: Ref<number> = ref(DEFAULT_ITEMS_PER_PAGE);
   const pages: Ref<number> = ref(0);
   const page: Ref<number> = ref(1);
+  const keyword: Ref<string> = ref("");
 
   async function fetchQuotes(): Promise<void> {
     fetching.value = true;
@@ -19,6 +20,7 @@ export default () => {
       const response = await getQuotes({
         first: itemsPerPage.value,
         after: String((page.value - 1) * itemsPerPage.value),
+        keyword: keyword.value,
       });
 
       quotes.value = response.items ?? [];
@@ -37,6 +39,7 @@ export default () => {
     itemsPerPage,
     pages,
     page,
+    keyword,
     fetchQuotes,
   };
 };
