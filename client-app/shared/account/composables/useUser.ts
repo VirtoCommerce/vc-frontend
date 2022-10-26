@@ -35,6 +35,7 @@ const user = ref<UserType>();
 
 const isAuthenticated = eagerComputed<boolean>(() => !!user.value?.userName && user.value.userName !== "Anonymous");
 const organization = eagerComputed<Organization | null>(() => user.value?.contact?.organizations?.items?.[0] ?? null);
+const operator = computed<UserType | null>(() => user.value?.operator ?? null);
 
 export default () => {
   const { innerFetch } = useFetch();
@@ -247,6 +248,7 @@ export default () => {
   return {
     isAuthenticated,
     organization,
+    operator,
     checkPermissions,
     fetchUser,
     updateUser,

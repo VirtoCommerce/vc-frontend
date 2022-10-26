@@ -146,10 +146,6 @@
             },
             "title": "shared.layout.header.mobile.account_menu.quote_requests",
             "icon": "/static/images/dashboard/icons/quotes.svg#main"
-          },
-          {
-            "id": "logout",
-            "icon": "/static/images/common/user-circle.svg#main"
           }
         ]
       },
