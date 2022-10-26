@@ -32,10 +32,10 @@
             :key="item.twoLetterLanguageName"
             :class="[
               item.twoLetterLanguageName === currentLanguage?.twoLetterLanguageName
-                ? 'cursor-default'
+                ? 'cursor-default bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]'
                 : 'cursor-pointer',
             ]"
-            class="flex items-center space-x-2 p-2.5 pr-3 font-normal text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
+            class="flex items-center space-x-2 p-2.5 pr-3 font-normal text-black hover:bg-gray-100"
             @click="
               item.twoLetterLanguageName === currentLanguage?.twoLetterLanguageName
                 ? null

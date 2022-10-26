@@ -24,8 +24,12 @@
           <li
             v-for="item in supportedCurrencies"
             :key="item.code"
-            :class="[item.code === currentCurrency?.code ? 'cursor-default' : 'cursor-pointer']"
-            class="flex items-center p-2.5 pr-3 font-normal text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
+            :class="[
+              item.code === currentCurrency?.code
+                ? 'cursor-default bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]'
+                : 'cursor-pointer',
+            ]"
+            class="flex items-center p-2.5 pr-3 font-normal text-black hover:bg-gray-100"
             @click="item.code === currentCurrency?.code ? null : select(item.code)"
           >
             <span
