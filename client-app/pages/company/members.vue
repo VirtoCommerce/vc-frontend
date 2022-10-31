@@ -587,7 +587,7 @@ function openDeleteDialog(contact: ExtendedContactType): void {
 function itemActionsBuilder(item: ExtendedContactType) {
   const actions: SlidingActionsItem[] = [];
 
-  if (checkPermissions(XApiPermissions.CanEditOrganization)) {
+  if (checkPermissions(XApiPermissions.CanEditOrganization) && item.id !== user.value.memberId) {
     actions.push(
       item.status === ContactStatus.Locked
         ? {
