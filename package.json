@@ -1,6 +1,6 @@
 {
   "name": "vc-theme-b2b-vue",
-  "version": "1.11.0",
+  "version": "1.12.0",
   "private": true,
   "scripts": {
     "postinstall": "husky install",
