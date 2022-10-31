@@ -69,7 +69,8 @@ jobs:
 
     - name: Update environment
       run: |
-        vc-build SetHelmParameter -ArgoServer https://argo.virtocommerce.cloud -ArgoAppName ${{ steps.app-name.outputs.APP }} -ArgoToken ${{ secrets.VCST_TOKEN }} -HelmParameters themes.B2B-store=${{ github.event.inputs.artifactUrl }}
+        export ARTIFACT=$(echo "${{ github.event.inputs.artifactUrl }}" | xargs)
+        vc-build SetHelmParameter -ArgoServer https://argo.virtocommerce.cloud -ArgoAppName ${{ steps.app-name.outputs.APP }} -ArgoToken ${{ secrets.VCST_TOKEN }} -HelmParameters themes.B2B-store=$ARTIFACT
 
     - name: DEPLOY_STATE::successful
       if: success()
