@@ -6,6 +6,7 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "strict": true,
+    "composite": true,
     "jsx": "preserve",
     "allowJs": true,
     "sourceMap": true,
@@ -14,18 +15,12 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "isolatedModules": true,
-    "lib": ["ESNext", "DOM"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "paths": {
       "@/*": ["client-app/*"]
-    }
+    },
+    "types": []
   },
-  "include": [
-    "client-app/**/*.ts",
-    "client-app/**/*.json",
-    "client-app/**/*.d.ts",
-    "client-app/**/*.tsx",
-    "client-app/**/*.vue",
-    "client-app/**/*.graphql"
-  ],
-  "exclude": ["node_modules", "assets", "**/*.js"]
+  "include": ["client-app/**/*.ts", "client-app/**/*.json", "client-app/**/*.vue", "**/*.json"],
+  "exclude": ["node_modules", "artifacts", "assets", "content", "layout", "templates", "**/.*/", "**/.*", "**/*.js"]
 }

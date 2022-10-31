@@ -4642,7 +4642,7 @@ export type CategoriesQueryVariables = Exact<{
 }>;
 
 
-export type CategoriesQuery = { categories?: { totalCount?: number, items?: Array<{ id: string, name: string, code: string, slug?: string, outline?: string, parent?: { id: string }, seoInfo?: { pageTitle?: string, metaKeywords?: string, metaDescription?: string, semanticUrl?: string }, breadcrumbs?: Array<{ title: string, seoPath?: string }> }> } };
+export type CategoriesQuery = { categories?: { totalCount?: number, items?: Array<{ id: string, name: string, slug?: string, parent?: { id: string }, seoInfo?: { pageTitle?: string, metaKeywords?: string, metaDescription?: string }, breadcrumbs?: Array<{ title: string, seoPath?: string }> }> } };
 
 export type SearchProductsQueryVariables = Exact<{
   storeId: Scalars['String'];

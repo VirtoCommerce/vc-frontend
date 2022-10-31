@@ -94,9 +94,11 @@
                   <strong>{{ searchParams.keyword }}</strong>
                 </template>
               </i18n-t>
+
               <span v-else>
-                <span>{{ selectedCategory?.label }}</span>
+                <span>{{ selectedCategory?.name }}</span>
               </span>
+
               <sup
                 class="ml-2 normal-case font-normal whitespace-nowrap text-sm lg:text-15 -top-1 lg:-top-[0.5em] text-[color:var(--color-category-page-results)]"
               >
@@ -316,6 +318,9 @@ import {
   triggerRef,
   WatchStopHandle,
 } from "vue";
+import _ from "lodash";
+import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 import {
   breakpointsTailwind,
   computedEager,
@@ -326,46 +331,47 @@ import {
   whenever,
 } from "@vueuse/core";
 import {
+  DEFAULT_PAGE_SIZE,
+  FacetItem,
+  FacetValueItem,
+  getFilterExpressionFromFacets,
+  PRODUCT_SORTING_LIST,
+  QueryParamName,
+  searchCategoryTreeItemByKey,
+  useCategories,
+  useElementVisibility,
+  usePageHead,
+  useRouteQueryParam,
+} from "@/core";
+import {
   Breadcrumbs,
   CategorySelector,
   DisplayProducts,
-  getFilterExpressionForInStock,
   getFilterExpressionForAvailableIn,
+  getFilterExpressionForInStock,
   IBreadcrumbsItem,
   ProductsFilters,
   ProductsFiltersSidebar,
   ProductsSearchParams,
-  useCategories,
   useProducts,
   useProductsRoutes,
   ViewMode,
-  searchCategoryByKey,
 } from "@/shared/catalog";
 import { BranchesDialog, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { AddToCart } from "@/shared/cart";
-import { useElementVisibility, usePageHead, useRouteQueryParam } from "@/core/composables";
-import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST, QueryParamName } from "@/core/constants";
-import { FacetItem, FacetValueItem } from "@/core/types";
-import { getFilterExpressionFromFacets } from "@/core/utilities";
-import { useI18n } from "vue-i18n";
-import _ from "lodash";
 import { usePopup } from "@/shared/popup";
-import { useRoute } from "vue-router";
 
 const FILTERS_RESET_TIMEOUT_IN_MS = 500;
 const watchStopHandles: WatchStopHandle[] = [];
 
 const props = defineProps({
-  categoryId: {
-    type: String,
-    default: "",
-  },
+  categoryId: String,
 });
 
 const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { t } = useI18n();
-const { loading: loadingCategories, categoryTree, fetchCategoriesTree } = useCategories();
+const { loading: loadingCategories, categoryTree } = useCategories();
 const {
   fetchProducts,
   fetchMoreProducts,
@@ -383,12 +389,12 @@ const {
 
 const selectedCategory = computed(() =>
   props.categoryId && categoryTree.value
-    ? searchCategoryByKey(categoryTree.value, "id", props.categoryId)
+    ? searchCategoryTreeItemByKey(categoryTree.value, "id", props.categoryId)
     : categoryTree.value
 );
 
 usePageHead({
-  title: computed(() => selectedCategory.value?.seoInfo?.pageTitle || selectedCategory.value?.label),
+  title: computed(() => selectedCategory.value?.seoInfo?.pageTitle || selectedCategory.value?.name),
   meta: {
     keywords: computed(() => selectedCategory.value?.seoInfo?.metaKeywords),
     description: computed(() => selectedCategory.value?.seoInfo?.metaDescription),
@@ -480,15 +486,15 @@ const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
     return items;
   }
 
-  if (selectedCategory.value.breadcrumbs!.length) {
-    selectedCategory.value.breadcrumbs!.forEach((breadcrumb) => {
+  if (selectedCategory.value.breadcrumbs?.length) {
+    selectedCategory.value.breadcrumbs.forEach((breadcrumb) => {
       items.push({
         title: breadcrumb.title,
         url: `/${breadcrumb.seoPath}`,
       });
     });
   } else {
-    items.push({ title: selectedCategory.value.label! });
+    items.push({ title: selectedCategory.value.name });
   }
 
   return items;
@@ -624,10 +630,6 @@ function openBranchesDialog(fromMobileFilter: boolean) {
 // region Lifecycle Hooks
 
 onMounted(async () => {
-  if (!loadingCategories.value) {
-    fetchCategoriesTree();
-  }
-
   await loadProducts();
 
   // Start change tracking after initial data load

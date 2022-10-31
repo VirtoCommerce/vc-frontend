@@ -25,8 +25,7 @@ import NotFound from "@/pages/404.vue";
 import { onBeforeUnmount, PropType, ref, watchEffect } from "vue";
 import { PageTemplate, useStaticPage } from "@/shared/static-content";
 import { asyncComputed, computedEager } from "@vueuse/core";
-import { useFetch, useLanguages } from "@/core/composables";
-import { useNavigations } from "@/shared/layout";
+import { useFetch, useLanguages, useNavigations } from "@/core/composables";
 
 type TEntityInfo = {
   id: string;

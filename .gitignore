@@ -1,4 +1,6 @@
 # compiled output
+artifacts
+assets
 dist
 tmp
 out-tsc
@@ -33,6 +35,7 @@ speed-measure-plugin.json
 
 # misc
 .sass-cache
+*.tsbuildinfo
 connect.lock
 coverage
 libpeerconnection.log
@@ -45,11 +48,9 @@ testem.log
 Thumbs.db
 
 # Custom
-/assets/*
 config/draft
 config/drafts
-artifacts*
+content/pages
 
 dist-ssr
 *.local
-/content/pages

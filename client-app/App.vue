@@ -17,21 +17,19 @@ import type { Component } from "vue";
 import { markRaw } from "vue";
 import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
 import { Head as PageHead } from "@vueuse/head";
-import { MainLayout, PaymentLayout, useNavigations, useSearchBar } from "./shared/layout";
+import { MainLayout, PaymentLayout, useSearchBar } from "./shared/layout";
 import { PopupHost } from "@/shared/popup";
 import { NotificationsHost } from "@/shared/notification";
 import { useRoute, useRouter } from "vue-router";
-import { useDomUtils, useLanguages } from "@/core/composables";
+import { useCategories, useDomUtils, useNavigations } from "@/core/composables";
 import { useCart } from "@/shared/cart";
-import { useCategories } from "@/shared/catalog";
 
 const route = useRoute();
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
-const { fetchCategoriesTree } = useCategories();
+const { fetchCategories } = useCategories();
 const { isBodyScrollable } = useDomUtils();
-const { currentLanguage } = useLanguages();
 const { fetchMenus } = useNavigations();
 const { fetchCart } = useCart();
 
@@ -53,8 +51,8 @@ router.beforeEach(async (to) => {
   }
 });
 
-fetchMenus(currentLanguage.value.cultureName);
-fetchCategoriesTree();
+fetchMenus();
+fetchCategories();
 fetchCart();
 </script>
 

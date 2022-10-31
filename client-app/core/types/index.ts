@@ -2,10 +2,12 @@ import { MaybeRef } from "@vueuse/core";
 import { CartAddressType, MemberAddressType, OrderAddressType } from "@/xapi/types";
 import { LocationQueryValue } from "vue-router";
 
+export * from "./category-tree";
 export * from "./currency";
 export * from "./facet";
 export * from "./global-variables";
 export * from "./language";
+export * from "./menu";
 export * from "./modify";
 export * from "./role";
 export * from "./theme-context";

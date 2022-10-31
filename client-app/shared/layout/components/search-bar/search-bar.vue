@@ -111,10 +111,9 @@ import { useRouter } from "vue-router";
 import { useSearchBar } from "@/shared/layout";
 import { computed, inject, ref, watchEffect } from "vue";
 import { configInjectionKey, QueryParamName } from "@/core/constants";
-import { useRouteQueryParam } from "@/core/composables";
+import { useCategoriesRoutes, useRouteQueryParam } from "@/core/composables";
 import { Category } from "@/xapi/types";
 import { useDebounceFn, whenever } from "@vueuse/core";
-import { useCategoriesRoutes } from "@/shared/catalog";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 import VcInput from "@/ui-kit/components/atoms/input/vc-input.vue";
 

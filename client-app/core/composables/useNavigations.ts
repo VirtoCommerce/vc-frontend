@@ -1,51 +1,48 @@
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
-import { linkListsItemToMenuLink, MenuLink, getTranslatedMenuLink } from "@/shared/layout";
-import { getMenus } from "@/xapi/graphql/common";
+import { categoryTreeItemToMenuLink, getTranslatedMenuLink, MenuLink, useCategories } from "@/core";
 import globals from "@/core/globals";
 
-const menuLinkLists = shallowRef<Record<string, MenuLink[]>>();
-const menuSchema = shallowRef<Record<string, any>>();
+const menuSchema = shallowRef<typeof import("../../../config/menu.json")>();
 const openedMenuLinksStack = shallowRef<MenuLink[]>([]);
 const matchedRouteName = ref("");
 
+const { categoryTree } = useCategories();
+
 const desktopHeaderMenuLinks = computed<MenuLink[]>(() =>
-  (menuSchema.value?.header.desktop || []).map(
-    (link: MenuLink): MenuLink => ({
-      ...link,
-      title: globals.i18n!.global.t(link.title!),
-    })
-  )
+  (menuSchema.value?.header.desktop || []).map((item: MenuLink) => getTranslatedMenuLink(item, globals.i18n))
 );
 
-const mobileHeaderMenuLinks = computed<MenuLink[]>(() =>
-  (menuSchema.value?.header.mobile.main || []).map(
-    (link: MenuLink): MenuLink => ({
-      ...link,
-      title: globals.i18n!.global.t(link.title!),
-      children: menuLinkLists.value?.[link.id!],
-    })
-  )
+const mobileMainMenuLinks = computed<MenuLink[]>(() =>
+  (menuSchema.value?.header.mobile.main || []).map((item: MenuLink) => {
+    const menuLink: MenuLink = getTranslatedMenuLink(item, globals.i18n);
+
+    if (menuLink.id === "catalog") {
+      menuLink.children = categoryTree.value?.children.map(categoryTreeItemToMenuLink);
+    }
+
+    return menuLink;
+  })
 );
 
-const mobileCatalogMenuLink = computed<MenuLink | undefined>(() =>
-  mobileHeaderMenuLinks.value.find((item) => item.id === "all-products-menu")
+const mobileCatalogMenuLink = computed<MenuLink | null>(
+  () => mobileMainMenuLinks.value.find((item) => item.id === "catalog") || null
 );
 
-const mobileAccountMenuLink = computed<MenuLink | undefined>(() =>
-  getTranslatedMenuLink(globals.i18n!, menuSchema.value?.header.mobile.account)
+const mobileAccountMenuLink = computed<MenuLink | null>(() =>
+  menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.account, globals.i18n) : null
 );
 
-const mobileCorporateMenuLink = computed<MenuLink | undefined>(() =>
-  getTranslatedMenuLink(globals.i18n!, menuSchema.value?.header.mobile.corporate)
+const mobileCorporateMenuLink = computed<MenuLink | null>(() =>
+  menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.corporate, globals.i18n) : null
 );
 
-const mobilePreSelectedMenuLink = computed<MenuLink | undefined>(() => {
+const mobilePreSelectedMenuLink = computed<MenuLink | null>(() => {
   const matchedRouteNames = globals.router.currentRoute.value.matched
     .map((item) => item.name)
     .concat(matchedRouteName.value)
     .filter(Boolean);
 
-  let preSelectedLink: MenuLink | undefined;
+  let preSelectedLink: MenuLink | null = null;
 
   if (["Catalog", "Category", "Product"].some((item) => matchedRouteNames.includes(item))) {
     preSelectedLink = mobileCatalogMenuLink.value;
@@ -58,19 +55,12 @@ const mobilePreSelectedMenuLink = computed<MenuLink | undefined>(() => {
   return preSelectedLink;
 });
 
-async function fetchMenus(cultureName: string) {
-  const results = await getMenus({ cultureName });
-
-  menuLinkLists.value = results.reduce<Record<string, MenuLink[]>>((result, menuLinkList) => {
-    result[menuLinkList.name!] = menuLinkList.items!.map((item) => linkListsItemToMenuLink(item));
-    return result;
-  }, {});
-
+async function fetchMenus() {
   /**
    * FIXME: Don't use import
    * Fetch file (json) from Storefront to be able to edit file in Admin panel
    */
-  menuSchema.value = await import("../../../../config/menu.json");
+  menuSchema.value = await import("../../../config/menu.json");
 }
 
 function goBack() {
@@ -103,7 +93,7 @@ export default function useNavigations() {
     selectMenuItem,
     setMatchedRouteName,
     desktopHeaderMenuLinks,
-    mobileHeaderMenuLinks,
+    mobileMainMenuLinks,
     mobileCatalogMenuLink,
     mobileAccountMenuLink,
     mobileCorporateMenuLink,
