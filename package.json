@@ -16,7 +16,9 @@
     "lint:markup": "vue-tsc --noEmit",
     "prettier": "prettier --check \"client-app/**/*.{js,ts,vue,graphql,json}\"",
     "prettier:fix": "prettier --write \"client-app/**/*.{js,ts,vue,graphql,json}\"",
-    "generate:graphql": "graphql-codegen -c graphql.codegen.yml -r dotenv/config && eolConverter crlf \"client-app/xapi/*\""
+    "generate:graphql:schema": "graphql-codegen -c \"codegen.schema.ts\" -r dotenv/config && eolConverter crlf \"client-app/xapi/schema.json\"",
+    "generate:graphql:types": "graphql-codegen -c \"codegen.types.ts\" -r dotenv/config && eolConverter crlf \"client-app/xapi/types.json\"",
+    "generate:graphql": "yarn run generate:graphql:schema && yarn run generate:graphql:types"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.4",
@@ -49,11 +51,11 @@
   "devDependencies": {
     "@commitlint/cli": "^17.0.2",
     "@commitlint/config-conventional": "^17.0.2",
-    "@graphql-codegen/add": "^3.1.1",
-    "@graphql-codegen/cli": "^2.6.2",
-    "@graphql-codegen/introspection": "^2.1.1",
-    "@graphql-codegen/typescript": "^2.5.0",
-    "@graphql-codegen/typescript-operations": "^2.4.1",
+    "@graphql-codegen/add": "^3.2.1",
+    "@graphql-codegen/cli": "2.13.8",
+    "@graphql-codegen/introspection": "2.2.1",
+    "@graphql-codegen/typescript": "^2.8.0",
+    "@graphql-codegen/typescript-operations": "^2.5.5",
     "@rollup/plugin-graphql": "^1.1.0",
     "@types/dompurify": "^2.3.3",
     "@types/lodash": "^4.14.185",
