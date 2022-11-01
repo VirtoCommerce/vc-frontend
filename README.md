@@ -108,10 +108,11 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 ├── .eslintignore                 // Ignore some files from ESlint.
 ├── .eslintrc                     // ESlint configuration file.
 ├── .gitignore                    // Ignore some files from GIT.
-├── .graphqlconfig                // Config file for GraphQL.
+├── .graphqlconfig                // Config file for JS GraphQL IntelliJ Plugin (https://plugins.jetbrains.com/plugin/8097-graphql).
 ├── .prettierignore               // Ignore some files from Prettier.
 ├── .prettierrc                   // Config for Prettier.
-├── graphql.codegen.yml           // GraphQL configuration file to generate types for schemas from your Virto Backoffice url.
+├── codegen.schema.ts             // GraphQL configuration file to generate schema from your Virto Backoffice url.
+├── codegen.types.ts              // GraphQL configuration file to generate types from your Virto Backoffice url.
 ├── gulpfile.js                   // Artifact build script to product zip-file installable by VC Storefront.
 ├── index.html                    // Vite Development entry point.
 ├── package.json                  // NPM Package description.

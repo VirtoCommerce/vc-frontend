@@ -1,4 +1,5 @@
-// This file was generated based on "graphql.codegen.yml". Do not edit manually.
+// This file was generated based on "codegen.types.ts". Do not edit manually.
+
 /* eslint-disable */
 
 export type Maybe<T> = T;
@@ -13,9 +14,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** The `Date` scalar type represents a year, month and day in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard. */
   Date: any;
-  /** The `DateTime` scalar type represents a date and time. `DateTime` expects timestamps to be formatted in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard. */
   DateTime: any;
   Decimal: any;
   DynamicPropertyValue: any;
@@ -3700,16 +3699,23 @@ export type QueryPropertyArgs = {
 
 
 export type QueryQuoteArgs = {
-  id: Scalars['String'];
+  cultureName?: InputMaybe<Scalars['String']>;
+  currencyCode?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
+  storeId?: InputMaybe<Scalars['String']>;
+  userId?: InputMaybe<Scalars['String']>;
 };
 
 
 export type QueryQuotesArgs = {
   after?: InputMaybe<Scalars['String']>;
-  customerId?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']>;
+  currencyCode?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   keyword?: InputMaybe<Scalars['String']>;
   sort?: InputMaybe<Scalars['String']>;
+  storeId?: InputMaybe<Scalars['String']>;
+  userId?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -4806,7 +4812,10 @@ export type CreateQuoteFromCartMutationVariables = Exact<{
 export type CreateQuoteFromCartMutation = { createQuoteFromCart?: { id: string } };
 
 export type GetQuotesQueryVariables = Exact<{
-  customerId?: InputMaybe<Scalars['String']>;
+  storeId?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']>;
+  currencyCode?: InputMaybe<Scalars['String']>;
+  userId?: InputMaybe<Scalars['String']>;
   sort?: InputMaybe<Scalars['String']>;
   keyword?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
