@@ -15,12 +15,31 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "isolatedModules": true,
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "paths": {
       "@/*": ["client-app/*"]
     },
     "types": []
   },
-  "include": ["client-app/**/*.ts", "client-app/**/*.json", "client-app/**/*.vue", "**/*.json"],
-  "exclude": ["node_modules", "artifacts", "assets", "content", "layout", "templates", "**/.*/", "**/.*", "**/*.js"]
+  "include": [
+    "client-app/**/*.ts",
+    "client-app/**/*.json",
+    "client-app/**/*.vue",
+    "**/*.json"
+  ],
+  "exclude": [
+    "node_modules",
+    "artifacts",
+    "assets",
+    "content",
+    "layout",
+    "templates",
+    "**/.*/",
+    "**/.*",
+    "**/*.js"
+  ]
 }
