@@ -13,12 +13,12 @@ import App from "./App.vue";
 import { templateBlocks } from "@/shared/static-content";
 import ProductBlocks from "@/shared/catalog/components/product";
 import * as UIKitComponents from "@/ui-kit/components";
-import client from "@/xapi/graphql-client";
+import { graphqlClient } from "@/xapi";
 
 // Workaround before Nuxt3 migration, will be deleted later.
 window.useNuxtApp = () => {
   return {
-    $graphqlClient: client,
+    $graphqlClient: graphqlClient,
   };
 };
 

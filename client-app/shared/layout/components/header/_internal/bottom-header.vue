@@ -38,20 +38,15 @@
 
       <div class="flex items-center -mx-2">
         <template v-for="item in desktopHeaderMenuLinks" :key="item.id">
-          <BottomHeaderLink v-if="item.id === 'compare'" :to="item.route" :icon="item.icon" :count="productsIds.length">
+          <BottomHeaderLink v-if="item.id === 'compare'" :link="item" :count="productsIds.length">
             {{ item.title }}
           </BottomHeaderLink>
 
-          <BottomHeaderLink
-            v-else-if="item.id === 'checkout'"
-            :to="item.route"
-            :icon="item.icon"
-            :count="cart.itemsQuantity"
-          >
+          <BottomHeaderLink v-else-if="item.id === 'checkout'" :link="item" :count="cart.itemsQuantity">
             {{ item.title }}
           </BottomHeaderLink>
 
-          <BottomHeaderLink v-else :to="item.route" :icon="item.icon">
+          <BottomHeaderLink v-else :link="item">
             {{ item.title }}
           </BottomHeaderLink>
         </template>
@@ -77,13 +72,14 @@
 
 <script setup lang="ts">
 import { ref, shallowRef } from "vue";
-import CatalogMenu from "./catalog-menu.vue";
-import BottomHeaderLink from "./bottom-header-link.vue";
+import { onClickOutside } from "@vueuse/core";
+import { useNavigations } from "@/core";
 import { useCart } from "@/shared/cart";
-import { SearchBar, useNavigations } from "@/shared/layout";
+import { SearchBar } from "@/shared/layout";
 import { useCompareProducts } from "@/shared/compare";
 import { useUser } from "@/shared/account";
-import { onClickOutside } from "@vueuse/core";
+import CatalogMenu from "./catalog-menu.vue";
+import BottomHeaderLink from "./bottom-header-link.vue";
 
 const { organization } = useUser();
 const { cart } = useCart();

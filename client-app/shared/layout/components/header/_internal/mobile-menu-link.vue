@@ -1,10 +1,10 @@
 <template>
-  <router-link :to="to" custom v-slot="{ href, navigate, isActive, isExactActive }">
+  <router-link :to="link.route ?? ''" custom v-slot="{ href, navigate, isActive, isExactActive }">
     <component
       :is="isLink ? 'a' : 'button'"
       :href="isLink ? href : null"
       :class="[
-        'flex items-center leading-none',
+        'flex items-center gap-x-3.5 text-left leading-tight min-h-[2.25rem]',
         isLink && (isActive || isExactActive) ? 'text-white font-extrabold' : 'font-semibold',
         $attrs.class,
       ]"
@@ -12,57 +12,58 @@
     >
       <slot name="icon" v-bind="{ isActive, isExactActive }">
         <svg
-          v-if="icon"
+          v-if="link.icon"
           height="36"
           width="36"
           :class="[
-            'shrink-0 ml-0.5 mr-3.5',
+            'shrink-0',
             isLink && (isActive || isExactActive)
               ? 'text-[color:var(--color-primary)]'
               : 'text-[color:var(--color-mobile-menu-icon)]',
           ]"
         >
-          <use :href="icon" />
+          <use :href="link.icon" />
         </svg>
       </slot>
 
-      <slot v-bind="{ isActive, isExactActive }">
-        <span>{{ title }}</span>
-      </slot>
+      <span v-bind="{ isActive, isExactActive }">
+        <slot />
+      </span>
 
-      <i v-if="isParent" class="fas fa-chevron-right ml-3 -mb-px text-[color:var(--color-primary)]" />
+      <!-- Badge -->
+      <VcTransitionScale mode="out-in">
+        <span
+          v-if="count"
+          class="flex items-center transition-transform rounded-full border border-[color:var(--color-primary)] px-2 font-bold text-sm text-white h-6"
+        >
+          {{ preparedCount }}
+        </span>
+      </VcTransitionScale>
+
+      <i v-if="isParent" class="ml-auto fas fa-chevron-right text-[color:var(--color-primary)]" />
     </component>
   </router-link>
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
-import { RouteLocationRaw } from "vue-router";
-import { eagerComputed } from "@vueuse/core";
+import { computed, PropType } from "vue";
+import { MenuLink, numberToShortString } from "@/core";
 
 defineEmits(["select", "close"]);
 
 const props = defineProps({
-  isParent: {
-    type: Boolean,
-    default: false,
+  link: {
+    type: Object as PropType<MenuLink>,
+    required: true,
   },
 
-  title: {
-    type: String,
-    default: "",
-  },
-
-  icon: {
-    type: String,
-    default: "",
-  },
-
-  to: {
-    type: [String, Object] as PropType<RouteLocationRaw>,
-    default: "",
+  count: {
+    type: Number,
+    default: 0,
   },
 });
 
-const isLink = eagerComputed<boolean>(() => !!props.to && !props.isParent);
+const isParent = computed<boolean>(() => !!props.link.children?.length);
+const isLink = computed<boolean>(() => !!props.link.route && !isParent.value);
+const preparedCount = computed<string>(() => numberToShortString(props.count));
 </script>

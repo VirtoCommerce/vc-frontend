@@ -21,9 +21,7 @@ query Categories(
     items {
       id
       name
-      code
       slug
-      outline
       parent {
         id
       }
@@ -31,7 +29,6 @@ query Categories(
         pageTitle
         metaKeywords
         metaDescription
-        semanticUrl
       }
       breadcrumbs {
         title

@@ -4,7 +4,8 @@
 .vscode
 .idea
 node_modules
-dist
 assets
+package.json
+tsconfig.json
 client-app/xapi/types.ts
 client-app/xapi/schema.json

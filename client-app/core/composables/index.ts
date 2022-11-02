@@ -1,9 +1,12 @@
+export { default as useCategories } from "./useCategories";
+export { default as useCategoriesRoutes } from "./useCategoriesRoutes";
 export { default as useCountries } from "./useCountries";
 export { default as useCurrency } from "./useCurrency";
 export { default as useElementVisibility } from "./useElementVisibility";
 export { default as useFetch } from "./useFetch";
 export { default as useIdentityErrorTranslator } from "./useIdentityErrorTranslator";
 export { default as useLanguages } from "./useLanguages";
+export { default as useNavigations } from "./useNavigations";
 export { default as usePageHead } from "./usePageHead";
 export { default as useRouteQueryParam } from "./useRouteQueryParam";
 export { default as useThemeContext } from "./useThemeContext";

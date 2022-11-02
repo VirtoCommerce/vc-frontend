@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full bg-white columns-4 xl:columns-5 pt-3 px-10">
+  <div class="w-full columns-4 xl:columns-5 pt-3 px-10 bg-[color:var(--color-header-bottom-bg)]">
     <CatalogMenuCategoryBlock
       v-for="(category, index) in categories"
       :key="index"
@@ -15,7 +15,7 @@
 import { computed } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import CatalogMenuCategoryBlock from "./catalog-menu-category-block.vue";
-import { useCategories } from "@/shared/catalog";
+import { useCategories } from "@/core";
 
 defineEmits<{ (event: "select"): void }>();
 
@@ -28,7 +28,7 @@ const columnsCount = computed(() => {
   return isXL.value ? 4 : 5;
 });
 
-const categories = computed(() => categoryTree.value?.items || []);
+const categories = computed(() => categoryTree.value?.children || []);
 
 const maxRowsNumber = computed(() => {
   return Math.ceil(categories.value.length / columnsCount.value);

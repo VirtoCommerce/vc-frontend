@@ -2,26 +2,26 @@
   <div>
     <router-link
       class="block px-2 py-1 mb-2 text-base font-bold hover:bg-gray-100"
-      :to="categoriesRoutes[category.id!]"
-      :title="category.label"
+      :to="categoriesRoutes[category.id]"
+      :title="category.name"
       @click="clickCategory"
     >
-      {{ category.label }}
+      {{ category.name }}
     </router-link>
     <div>
       <template v-for="(subcategory, key) in displayedCategories" :key="key">
         <router-link
           class="block px-2 py-1 mb-1 text-sm !leading-4 text-gray-500 truncate hover:bg-gray-100"
-          :to="categoriesRoutes[subcategory.id!]"
-          :title="subcategory.label"
+          :to="categoriesRoutes[subcategory.id]"
+          :title="subcategory.name"
           @click="clickCategory"
         >
-          {{ subcategory.label }}
+          {{ subcategory.name }}
         </router-link>
       </template>
 
       <button
-        v-if="subCategories.length > SHORT_VIEW_ITEMS_COUNT"
+        v-if="subcategories.length > SHORT_VIEW_ITEMS_COUNT"
         @click="toggleShowAll"
         class="px-2 py-1 text-sm cursor-pointer flex items-baseline"
       >
@@ -43,15 +43,15 @@
 </template>
 
 <script setup lang="ts">
-import { CategoryTree, useCategoriesRoutes } from "@/shared/catalog";
 import { computed, PropType, ref } from "vue";
+import { CategoryTreeItem, useCategoriesRoutes } from "@/core";
 
 const SHORT_VIEW_ITEMS_COUNT = 5;
 const showAll = ref(false);
 
 const props = defineProps({
   category: {
-    type: Object as PropType<CategoryTree>,
+    type: Object as PropType<CategoryTreeItem>,
     required: true,
   },
 });
@@ -60,15 +60,12 @@ const emit = defineEmits<{
   (event: "select"): void;
 }>();
 
-const subCategories = computed(() => props.category.items || []);
-
-const displayedCategories = computed(() =>
-  showAll.value ? subCategories.value : subCategories.value.slice(0, SHORT_VIEW_ITEMS_COUNT)
+const subcategories = computed<CategoryTreeItem[]>(() => props.category.children || []);
+const displayedCategories = computed<CategoryTreeItem[]>(() =>
+  showAll.value ? subcategories.value : subcategories.value.slice(0, SHORT_VIEW_ITEMS_COUNT)
 );
 
-const categoryWithSubcategories = computed(() => [props.category, ...subCategories.value]);
-
-const categoriesRoutes = useCategoriesRoutes(categoryWithSubcategories);
+const categoriesRoutes = useCategoriesRoutes(computed(() => [props.category].concat(subcategories.value)));
 
 function toggleShowAll() {
   showAll.value = !showAll.value;

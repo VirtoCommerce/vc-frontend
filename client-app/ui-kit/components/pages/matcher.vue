@@ -25,8 +25,7 @@ import NotFound from "@/pages/404.vue";
 import { onBeforeUnmount, PropType, ref, watchEffect } from "vue";
 import { PageTemplate, useStaticPage } from "@/shared/static-content";
 import { asyncComputed, computedEager } from "@vueuse/core";
-import { useFetch, useLanguages } from "@/core/composables";
-import { useNavigations } from "@/shared/layout";
+import { useFetch, useLanguages, useNavigations } from "@/core";
 
 type TEntityInfo = {
   id: string;
@@ -73,7 +72,14 @@ const { setMatchedRouteName } = useNavigations();
 
 const loading = ref(true);
 
-const seoUrl = computedEager(() => props.pathMatch[props.pathMatch?.length - 1]);
+const seoUrl = computedEager(() => {
+  /**
+   * NOTE: Because URL `/printers/` is an array of paths ["printers", ""], empty paths must be removed.
+   */
+  const paths = props.pathMatch.filter(Boolean);
+  return paths[paths.length - 1];
+});
+
 const seoInfo = asyncComputed<TResult | undefined>(
   async () => {
     if (!seoUrl.value) {

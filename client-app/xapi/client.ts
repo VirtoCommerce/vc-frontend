@@ -26,7 +26,7 @@ const errorHandler = onError(({ graphQLErrors = [] }) => {
   }
 });
 
-const graphqlClient = new ApolloClient({
+export const graphqlClient = new ApolloClient({
   // Provide required constructor fields
   link: errorHandler.concat(httpLink),
   cache: new InMemoryCache({
@@ -46,5 +46,3 @@ const graphqlClient = new ApolloClient({
     mutate: { fetchPolicy },
   },
 });
-
-export default graphqlClient;

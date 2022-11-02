@@ -37,19 +37,14 @@
             <span class="relative">
               <i class="fas fa-shopping-cart text-xl text-[color:var(--color-primary)]" />
 
-              <transition
-                enter-from-class="scale-0"
-                leave-to-class="scale-0"
-                enter-active-class="will-change-transform"
-                leave-active-class="will-change-transform"
-              >
+              <VcTransitionScale mode="out-in">
                 <span
                   v-if="cart?.itemsQuantity"
                   class="absolute -top-2.5 -right-3 transition-transform bg-white rounded-full border border-[color:var(--color-primary)] px-1.5 py-0.5 font-extrabold text-11 leading-3 text-[color:var(--color-header-bottom-link)]"
                 >
                   {{ preparedCartItemsQuantity }}
                 </span>
-              </transition>
+              </VcTransitionScale>
             </span>
           </router-link>
         </div>
