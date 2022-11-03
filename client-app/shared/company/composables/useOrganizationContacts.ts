@@ -1,21 +1,20 @@
-import {
-  getOrganizationContacts,
-  lockOrganizationContact,
-  unlockOrganizationContact,
-} from "@/xapi/graphql/organization";
-import { ContactType, InputUpdateContactType } from "@/xapi/types";
-import { ref, shallowRef, readonly, computed } from "vue";
-import { getSortingExpression, Logger } from "@/core/utilities";
-import { useUser } from "@/shared/account";
-import { DEFAULT_PAGE_SIZE, SORT_ASCENDING } from "@/core/constants";
+import { computed, readonly, ref, shallowRef, unref } from "vue";
 import _ from "lodash";
-import { ISortInfo } from "@/core/types";
 import { useI18n } from "vue-i18n";
-import { convertToExtendedContact, convertToInputUpdateContact, ExtendedContactType } from "@/shared/company";
-import updateContact from "@/xapi/graphql/account/mutations/updateContact";
+import { MaybeRef } from "@vueuse/core";
+import {
+  ContactType,
+  getOrganizationContacts,
+  InputRemoveMemberFromOrganizationType,
+  lockOrganizationContact,
+  removeMemberFromOrganization as _removeMemberFromOrganization,
+  unlockOrganizationContact,
+} from "@/xapi";
+import { DEFAULT_PAGE_SIZE, getSortingExpression, ISortInfo, Logger, SORT_ASCENDING } from "@/core";
+import { convertToExtendedContact, ExtendedContactType } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 
-export default function useOrganizationContacts() {
+export default function useOrganizationContacts(organizationId: MaybeRef<string>) {
   const loading = ref(false);
   const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
   const pages = ref(0);
@@ -29,23 +28,16 @@ export default function useOrganizationContacts() {
   });
 
   const { t } = useI18n();
-  const { organization } = useUser();
   const notifications = useNotifications();
 
   async function fetchContacts() {
     loading.value = true;
 
-    const organizationId: string | undefined = organization.value?.id;
-
-    if (!organizationId) {
-      return;
-    }
-
     const sortingExpression: string = getSortingExpression(sort.value);
     const filterExpression: string = [keyword.value, filter.value].filter(Boolean).join(" ");
 
     try {
-      const response = await getOrganizationContacts(organizationId, {
+      const response = await getOrganizationContacts(unref(organizationId), {
         first: itemsPerPage.value,
         after: String((page.value - 1) * itemsPerPage.value),
         sort: sortingExpression,
@@ -60,20 +52,6 @@ export default function useOrganizationContacts() {
       pages.value = Math.ceil((response.totalCount ?? 0) / itemsPerPage.value);
     } catch (e) {
       Logger.error(`${useOrganizationContacts.name}.${fetchContacts.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-  }
-
-  async function updateMember(contact: ExtendedContactType): Promise<void> {
-    loading.value = true;
-
-    try {
-      const payload: InputUpdateContactType = convertToInputUpdateContact(contact);
-      await updateContact(payload);
-    } catch (e) {
-      Logger.error(`${useOrganizationContacts.name}.${updateMember.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -122,6 +100,22 @@ export default function useOrganizationContacts() {
     });
   }
 
+  async function removeMemberFromOrganization(payload: InputRemoveMemberFromOrganizationType): Promise<void> {
+    loading.value = true;
+
+    try {
+      await _removeMemberFromOrganization(payload);
+    } catch (e) {
+      Logger.error(`${useOrganizationContacts.name}.${removeMemberFromOrganization.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+
+    page.value = 1;
+    await fetchContacts();
+  }
+
   return {
     sort,
     itemsPerPage,
@@ -129,9 +123,9 @@ export default function useOrganizationContacts() {
     keyword,
     filter,
     fetchContacts,
-    updateMember,
     lockContact,
     unlockContact,
+    removeMemberFromOrganization,
     pages: readonly(pages),
     loading: readonly(loading),
     contacts: computed(() => contacts.value),

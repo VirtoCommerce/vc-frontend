@@ -4767,6 +4767,13 @@ export type LockOrganizationContactMutationVariables = Exact<{
 
 export type LockOrganizationContactMutation = { lockOrganizationContact?: { id: string } };
 
+export type RemoveMemberFromOrganizationMutationVariables = Exact<{
+  command: InputRemoveMemberFromOrganizationType;
+}>;
+
+
+export type RemoveMemberFromOrganizationMutation = { removeMemberFromOrganization?: { id: string } };
+
 export type UnlockOrganizationContactMutationVariables = Exact<{
   command: InputLockUnlockOrganizationContactType;
 }>;

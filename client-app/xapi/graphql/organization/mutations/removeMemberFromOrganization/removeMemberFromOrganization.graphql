@@ -1,0 +1,5 @@
+mutation RemoveMemberFromOrganization($command: InputRemoveMemberFromOrganizationType!) {
+  removeMemberFromOrganization(command: $command) {
+    id
+  }
+}

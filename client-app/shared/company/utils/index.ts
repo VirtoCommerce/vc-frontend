@@ -1,14 +1,5 @@
-import { ContactDisplayStatusType, ExtendedContactType, ContactStatus } from "@/shared/company";
-import {
-  ContactType,
-  DynamicPropertyValueType,
-  InputDynamicPropertyValueType,
-  InputMemberAddressType,
-  InputUpdateContactType,
-  MemberAddressType,
-  RoleType,
-} from "@/xapi/types";
-import _ from "lodash";
+import { ContactType, RoleType } from "@/xapi";
+import { ContactDisplayStatusType, ContactStatus, ExtendedContactType } from "@/shared/company";
 
 export function getContactEmailAddresses(contact: ContactType): string[] {
   let emails: string[] = [];
@@ -67,17 +58,5 @@ export function convertToExtendedContact(contact: ContactType, fullNameFallback:
       emails: getContactEmailAddresses(contact),
       displayStatus: getDisplayContactStatus(contact.status),
     },
-  };
-}
-
-export function convertToInputUpdateContact(contact: ExtendedContactType): InputUpdateContactType {
-  return {
-    ...contact,
-    addresses: _.map(contact.addresses?.items, (address: MemberAddressType) => address as InputMemberAddressType),
-    dynamicProperties: _.map(
-      contact.dynamicProperties,
-      (dp: DynamicPropertyValueType) => dp as InputDynamicPropertyValueType
-    ),
-    organizations: contact.organizationsIds,
   };
 }

@@ -268,41 +268,31 @@
               </VcTooltip>
             </td>
 
-            <td v-if="actionButtonIsAvailable" class="px-5 text-right">
+            <td v-if="userCanEditOrganization" class="px-5 text-right">
               <VcActionDropdownMenu v-if="contact.id !== user.memberId">
-                <!--<button v-if="$can($permissions.storefront.CanEditUsers)" class="flex items-center p-3 whitespace-nowrap">
+                <!--<button class="flex items-center p-3 whitespace-nowrap">
                   <i class="fas fa-pencil-alt mr-2 leading-none text-base text-[color:var(--color-warning)]" />
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.edit_role") }}</span>
                 </button>-->
 
-                <template v-if="$can($permissions.xApi.CanEditOrganization)">
-                  <button
-                    v-if="contact.status === ContactStatus.Locked"
-                    class="flex items-center p-3 whitespace-nowrap"
-                    @click="openLockOrUnlockDialog(contact, true)"
-                  >
-                    <i class="fas fa-check mr-2 leading-none text-base text-[color:var(--color-success)]" />
-                    <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.unblock_user") }}</span>
-                  </button>
-
-                  <button
-                    v-else
-                    class="flex items-center p-3 whitespace-nowrap"
-                    @click="openLockOrUnlockDialog(contact)"
-                  >
-                    <i class="fas fa-ban mr-2 leading-none text-base text-black" />
-                    <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.block_user") }}</span>
-                  </button>
-                </template>
-
-                <!--<button
-                  v-if="$can($permissions.storefront.CanDeleteUsers)"
+                <button
+                  v-if="contact.status === ContactStatus.Locked"
                   class="flex items-center p-3 whitespace-nowrap"
-                  @click="openDeleteDialog(contact)"
+                  @click="openLockOrUnlockDialog(contact, true)"
                 >
+                  <i class="fas fa-check mr-2 leading-none text-base text-[color:var(--color-success)]" />
+                  <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.unblock_user") }}</span>
+                </button>
+
+                <button v-else class="flex items-center p-3 whitespace-nowrap" @click="openLockOrUnlockDialog(contact)">
+                  <i class="fas fa-ban mr-2 leading-none text-base text-black" />
+                  <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.block_user") }}</span>
+                </button>
+
+                <button class="flex items-center p-3 whitespace-nowrap" @click="openDeleteDialog(contact)">
                   <i class="fas fa-times mr-2 leading-none text-xl text-[color:var(--color-danger)]" />
-                  <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.edit_role") }}</span>
-                </button>-->
+                  <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.delete") }}</span>
+                </button>
               </VcActionDropdownMenu>
             </td>
           </tr>
@@ -381,9 +371,16 @@ import { PageToolbarBlock, useUser } from "@/shared/account";
 import { XApiPermissions } from "@/core/constants";
 
 const { t } = useI18n();
-const { openPopup } = usePopup();
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const { user, checkPermissions } = useUser();
+
+usePageHead({
+  title: t("pages.company.members.meta.title"),
+});
+
+/**
+ * This page is accessible only to members of the organization,
+ * so the organization must exist.
+ */
+const { user, checkPermissions, organization } = useUser();
 const {
   loading: contactsLoading,
   page,
@@ -394,10 +391,10 @@ const {
   filter,
   contacts,
   fetchContacts,
-  updateMember,
   lockContact,
   unlockContact,
-} = useOrganizationContacts();
+  removeMemberFromOrganization,
+} = useOrganizationContacts(organization.value!.id);
 const {
   selectableFacets,
   appliedFacets,
@@ -408,10 +405,8 @@ const {
   resetFacets,
   resetFacetItem,
 } = useOrganizationContactsFilterFacets();
-
-usePageHead({
-  title: t("pages.company.members.meta.title"),
-});
+const { openPopup } = usePopup();
+const breakpoints = useBreakpoints(breakpointsTailwind);
 
 const isMobile = breakpoints.smaller("lg");
 const localKeyword = ref("");
@@ -422,7 +417,7 @@ const filtersDropdownElement = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
 
-const actionButtonIsAvailable = computedEager<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
+const userCanEditOrganization = computedEager<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
 
 const columns = computed<ITableColumn[]>(() => {
   const result: ITableColumn[] = [
@@ -451,7 +446,7 @@ const columns = computed<ITableColumn[]>(() => {
     },
   ];
 
-  if (actionButtonIsAvailable.value) {
+  if (userCanEditOrganization.value) {
     // Add action column
     result.push({
       id: "actions",
@@ -522,14 +517,6 @@ function hideFilters() {
   resetSelectableToAppliedFacets();
 }
 
-async function deleteContactFromOrganization(contact: ExtendedContactType) {
-  await updateMember({
-    ...contact,
-    organizationsIds: [],
-  });
-  await fetchContacts();
-}
-
 function openInviteDialog() {
   openPopup({
     component: InviteMemberDialog,
@@ -564,7 +551,6 @@ function openLockOrUnlockDialog(contact: ExtendedContactType, isUnlock?: boolean
   });
 }
 
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars */ // TODO: remove comment
 function openDeleteDialog(contact: ExtendedContactType): void {
   const closeDeleteDialog = openPopup({
     component: "VcConfirmationDialog",
@@ -577,7 +563,10 @@ function openDeleteDialog(contact: ExtendedContactType): void {
         name: `${contact.fullName} (${contact.extended.emails[0]})`,
       }),
       async onConfirm() {
-        await deleteContactFromOrganization(contact);
+        await removeMemberFromOrganization({
+          contactId: contact.id,
+          organizationId: organization.value!.id,
+        });
         closeDeleteDialog();
       },
     },
@@ -605,34 +594,28 @@ function itemActionsBuilder(item: ExtendedContactType) {
             clickHandler(contact: ExtendedContactType) {
               openLockOrUnlockDialog(contact);
             },
-          }
+          },
+      /*
+      {
+        icon: "fas fa-pencil-alt",
+        title: t("pages.company.members.buttons.edit_role"),
+        classes: "bg-gray-550",
+        clickHandler(contact: ExtendedContactType) {
+          console.log(contact);
+        },
+      },
+      */
+      {
+        icon: "fas fa-trash-alt",
+        title: t("pages.company.members.buttons.delete"),
+        left: true,
+        classes: "bg-[color:var(--color-danger)]",
+        clickHandler(contact: ExtendedContactType) {
+          openDeleteDialog(contact);
+        },
+      }
     );
   }
-
-  /*
-  if (checkPermissions(StorefrontPermissions.CanEditUsers)) {
-    actions.push({
-      icon: "fas fa-pencil-alt",
-      title: t("pages.company.members.buttons.edit_role"),
-      classes: "bg-gray-550",
-      clickHandler(contact: ExtendedContactType) {
-        console.log(contact);
-      },
-    });
-  }
-
-  if (checkPermissions(StorefrontPermissions.CanDeleteUsers)) {
-    actions.push({
-      icon: "fas fa-trash-alt",
-      title: t("pages.company.members.buttons.delete"),
-      left: true,
-      classes: "bg-[color:var(--color-danger)]",
-      clickHandler(contact: ExtendedContactType) {
-        openDeleteDialog(contact);
-      },
-    });
-  }
-  */
 
   return actions;
 }

@@ -23,7 +23,9 @@
     "paths": {
       "@/*": ["client-app/*"]
     },
-    "types": []
+    "types": [
+      "node"
+    ]
   },
   "include": [
     "client-app/**/*.ts",
