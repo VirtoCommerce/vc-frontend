@@ -26,8 +26,8 @@
         </svg>
       </slot>
 
-      <span v-bind="{ isActive, isExactActive }">
-        <slot />
+      <span class="line-clamp-3">
+        <slot v-bind="{ isActive, isExactActive }" />
       </span>
 
       <!-- Badge -->
