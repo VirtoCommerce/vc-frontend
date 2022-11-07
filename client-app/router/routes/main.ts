@@ -70,7 +70,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/:pathMatch(.*)*", name: "Matcher", component: Matcher, props: true },
 ];
 
-if (DEVELOPMENT || location.host.includes(".dev.govirto.")) {
+if (DEVELOPMENT || location.host.includes("dev-storefront.paas.govirto.")) {
   mainRoutes.push({
     path: "/ui-kit",
     name: "DevUIKit",
