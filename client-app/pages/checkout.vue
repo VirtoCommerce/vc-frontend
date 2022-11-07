@@ -2,8 +2,10 @@
   <ThankYou v-if="showThankYouStep" :order="placedOrder!" />
 
   <template v-else>
+    <VcLoaderOverlay v-if="!preparedData" no-bg />
+
     <VcEmptyPage
-      v-if="!cart.items?.length && !creatingOrder && !loading"
+      v-else-if="!cart.items?.length"
       :title="$t('shared.checkout.empty_cart.title')"
       :description="$t('shared.checkout.empty_cart.description')"
       image="/static/images/errors/emptyCart.webp"
@@ -526,9 +528,26 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, shallowRef } from "vue";
+import { breakpointsTailwind, computedEager, useBreakpoints } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { omit } from "lodash";
+import {
+  addGiftItems,
+  CartAddressType,
+  CustomerOrderType,
+  GiftItemType,
+  InputAddressType,
+  InputPaymentType,
+  MemberAddressType,
+  PaymentMethodType,
+  PaymentType,
+  rejectGiftItems,
+  ShipmentType,
+  ShippingMethodType,
+  ValidationErrorType,
+} from "@/xapi";
+import { AddressType, useElementVisibility, usePageHead } from "@/core";
 import {
   AddOrUpdateAddressDialog,
   CheckoutLabeledBlock,
@@ -542,24 +561,7 @@ import {
 } from "@/shared/checkout";
 import { useCart } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
-import {
-  CartAddressType,
-  CustomerOrderType,
-  GiftItemType,
-  InputAddressType,
-  InputPaymentType,
-  MemberAddressType,
-  PaymentMethodType,
-  PaymentType,
-  ShipmentType,
-  ShippingMethodType,
-  ValidationErrorType,
-} from "@/xapi/types";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
-import { AddressType } from "@/core/types";
-import { addGiftItems, rejectGiftItems } from "@/xapi/graphql/cart";
-import { breakpointsTailwind, computedEager, useBreakpoints } from "@vueuse/core";
-import { useElementVisibility, usePageHead } from "@/core/composables";
 import { useNotifications } from "@/shared/notification";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -601,6 +603,7 @@ const breadcrumbs: IBreadcrumbs[] = [
 
 const isMobile = breakpoints.smaller("lg");
 const placedOrder = shallowRef<CustomerOrderType | null>(null);
+const preparedData = ref(false);
 const creatingOrder = ref(false);
 const creatingQuote = ref(false);
 const showThankYouStep = ref(false);
@@ -911,6 +914,15 @@ async function toggleGift(state: boolean, gift: GiftItemType) {
 onMounted(async () => {
   await fetchCart();
 
+  if (!cart.value.items?.length) {
+    preparedData.value = true;
+    return;
+  }
+
+  if (isAuthenticated.value) {
+    loadAddresses();
+  }
+
   purchaseOrderNumber.value = cart.value.purchaseOrderNumber ?? "";
   cartCoupon.value = cart.value.coupons?.[0]?.code ?? "";
   cartComment.value = cart.value.comment ?? "";
@@ -953,7 +965,7 @@ onMounted(async () => {
   if (reloadCart) {
     await fetchCart();
   }
-});
 
-loadAddresses();
+  preparedData.value = true;
+});
 </script>

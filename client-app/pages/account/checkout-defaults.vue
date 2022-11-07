@@ -6,7 +6,7 @@
     </div>
 
     <div class="bg-white shadow-sm md:rounded border px-7 py-7 md:px-9 md:py-8">
-      <VcMainLoader v-if="loading" />
+      <VcLoaderWithText v-if="loading" />
 
       <div v-else class="flex flex-col lg:w-1/2">
         <div class="font-bold" v-t="'pages.account.checkout_defaults.select_delivery_method_label'"></div>

@@ -8,7 +8,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="flex-grow flex flex-col">
+    <div class="relative flex flex-col grow">
       <slot />
     </div>
 

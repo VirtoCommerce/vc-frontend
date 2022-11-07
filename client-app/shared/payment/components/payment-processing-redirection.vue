@@ -21,7 +21,7 @@
   </div>
 
   <!-- Loader -->
-  <VcMainLoader v-else />
+  <VcLoaderWithText v-else />
 </template>
 
 <script setup lang="ts">
