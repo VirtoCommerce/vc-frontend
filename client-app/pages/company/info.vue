@@ -8,11 +8,10 @@
     <div class="flex flex-col bg-white shadow-sm md:rounded md:border">
       <!-- Company name block -->
       <div class="flex flex-row p-5 gap-3 shadow [--tw-shadow:0_10px_15px_0_rgb(0_0_0_/_0.06)]">
-        <!-- TODO: :is-disabled="!userCanEditOrganization || loadingOrganization || loadingUser" -->
         <VcInput
           v-model.trim="organizationName"
           :label="$t('pages.company.info.labels.company_name')"
-          is-disabled
+          :is-disabled="!userCanEditOrganization || loadingOrganization || loadingUser"
           :error-message="errors[0]"
           name="organization-name"
           autocomplete="off"
@@ -20,20 +19,18 @@
           class="w-full"
         />
 
-        <!--
         <div class="pt-6" v-if="userCanEditOrganization">
           <VcButton
             :is-waiting="loadingOrganization || loadingUser"
             :is-disabled="!meta.valid || !meta.dirty"
             size="lg"
             class="uppercase my-0.5 !h-10"
-            @click="meta.valid && meta.dirty ? saveOrganizationName() : null"
+            @click="saveOrganizationName"
           >
             <i class="md:hidden px-2 fas fa-save text-2xl" />
             <span class="hidden md:inline mx-12">{{ $t("common.buttons.save") }}</span>
           </VcButton>
         </div>
-        -->
       </div>
 
       <!-- Content block -->
@@ -236,21 +233,17 @@
 </template>
 
 <script setup lang="ts">
-/* eslint-disable @typescript-eslint/no-unused-vars */ // TODO: remove
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { computedEager } from "@vueuse/core";
 import { useField } from "vee-validate";
 import * as yup from "yup";
-import { usePageHead } from "@/core/composables";
+import { MemberAddressType } from "@/xapi";
+import { AddressType, getAddressName, getNewSorting, usePageHead, XApiPermissions } from "@/core";
 import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
-import { useOrganization, useOrganizationAddresses, AddOrUpdateCompanyAddressDialog } from "@/shared/company";
-import { XApiPermissions } from "@/core/constants";
-import { getAddressName, getNewSorting } from "@/core/utilities";
-import { MemberAddressType } from "@/xapi/types";
+import { AddOrUpdateCompanyAddressDialog, useOrganization, useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
-import { AddressType } from "@/core/types";
 
 const page = ref(1);
 const itemsPerPage = ref(10);
