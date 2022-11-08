@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="max-w-screen-2xl px-5 md:px-12 pt-7">
-      <VcBreadcrumbs :items="breadcrumbs" class="mb-3" />
+      <VcBreadcrumbs v-if="breadcrumbs.length" :items="breadcrumbs" class="mb-3" />
 
       <slot name="title">
-        <h1 class="text-black-800 text-2xl md:text-4xl font-bold mb-8 uppercase">
+        <h1 v-if="title" class="text-black-800 text-2xl md:text-4xl font-bold mb-8 uppercase">
           {{ title }}
         </h1>
       </slot>

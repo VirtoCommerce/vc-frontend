@@ -15,7 +15,7 @@
       "settings": "Settings",
       "change": "Change",
       "delete": "Delete",
-      "continue_shopping_button": "Continue shopping",
+      "continue_shopping": "Continue shopping",
       "select": "Select",
       "choose": "Choose",
       "filters": "Filters",
@@ -366,7 +366,7 @@
         }
       },
       "cart_add_info_popup": {
-        "continue_shopping_button": "@:common.buttons.continue_shopping_button",
+        "continue_shopping_button": "@:common.buttons.continue_shopping",
         "view_cart_button": "View cart",
         "table": {
           "product_column": "Product",
@@ -434,7 +434,7 @@
       },
       "empty_cart": {
         "description": "Your cart is empty",
-        "continue_shopping_button": "@:common.buttons.continue_shopping_button",
+        "continue_shopping_button": "@:common.buttons.continue_shopping",
         "title": "Cart"
       },
       "accepted_gifts": {
@@ -613,7 +613,7 @@
       "added_to_wishlists_dialog": {
         "title": "Item added to list | Item added to lists",
         "sku_label": "SKU",
-        "continue_shopping_button": "@:common.buttons.continue_shopping_button",
+        "continue_shopping_button": "@:common.buttons.continue_shopping",
         "view_your_list_button": "View your list | View your lists"
       },
       "unsuccessful_create_wishlist_dialog": {
@@ -749,6 +749,16 @@
       "confirm_password_label": "@:common.labels.confirm_password",
       "confirm_password_placeholder": "Confirm your password",
       "register_button": "Sign up"
+    },
+    "confirm_email": {
+      "meta": {
+        "title": "@:pages.confirm_email.header"
+      },
+      "header": "Email confirmation",
+      "subtitle": "Thank you for verifying your email.",
+      "text": "Please use your username and password to login to your account.",
+      "continue_button": "@:shared.layout.header.link_sign_in",
+      "continue_shopping_button": "@:common.buttons.continue_shopping"
     },
     "confirm_invitation": {
       "meta": {
@@ -1267,7 +1277,7 @@
     "InvalidEmail": "Please enter valid email address, e.g. johndoe@gmail.com",
     "InvalidPasswordHasherCompatibilityMode": "The provided PasswordHasherCompatibilityMode is invalid",
     "InvalidPasswordHasherIterationCount": "The iteration count must be a positive integer",
-    "InvalidToken": "Invalid token",
+    "InvalidToken": "Token is invalid or expired",
     "InvalidUserName": "User name is invalid, can only contain letters or digits",
     "LoginAlreadyAssociated": "A user with this login already exists",
     "PasswordMismatch": "Passwords must match",

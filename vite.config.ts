@@ -33,6 +33,7 @@ export default defineConfig(({ mode }): UserConfig => {
       outDir: "assets",
       assetsDir: "./",
       emptyOutDir: true,
+      sourcemap: "hidden",
       watch: mode === "development" ? {} : null,
       rollupOptions: {
         input: {
@@ -42,6 +43,11 @@ export default defineConfig(({ mode }): UserConfig => {
         output: {
           entryFileNames: "[name].js",
           assetFileNames: "[name][extname]",
+        },
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            return "vendor";
+          }
         },
       },
     },
@@ -53,8 +59,11 @@ export default defineConfig(({ mode }): UserConfig => {
       port: 3000,
       https: true,
       proxy: {
-        "/xapi": `${process.env.APP_BACKEND_URL}`,
-        "/storefrontapi": `${process.env.APP_BACKEND_URL}`,
+        "^/(xapi|storefrontapi)": {
+          target: `${process.env.APP_BACKEND_URL}`,
+          changeOrigin: true,
+          secure: false,
+        },
 
         // For login on behalf
         "^/account/impersonate/.+": {
