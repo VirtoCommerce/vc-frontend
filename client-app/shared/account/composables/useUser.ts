@@ -37,7 +37,7 @@ const isAuthenticated = eagerComputed<boolean>(() => !!user.value?.userName && u
 const organization = eagerComputed<Organization | null>(() => user.value?.contact?.organizations?.items?.[0] ?? null);
 const operator = computed<UserType | null>(() => user.value?.operator ?? null);
 
-export default () => {
+export default function useUser() {
   const { innerFetch } = useFetch();
 
   function checkPermissions(...permissions: string[]): boolean {
@@ -55,7 +55,7 @@ export default () => {
       loading.value = true;
       user.value = await getMe();
     } catch (e) {
-      Logger.error(`useUser.${fetchUser.name}`, e);
+      Logger.error(`${useUser.name}.${fetchUser.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -71,7 +71,7 @@ export default () => {
       }
       return result;
     } catch (e) {
-      Logger.error(`useUser.${updatePersonalData.name}`, e);
+      Logger.error(`${useUser.name}.${updatePersonalData.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -88,7 +88,19 @@ export default () => {
         newPasswordConfirm: newPassword,
       });
     } catch (e) {
-      Logger.error(`useUser.${changePassword.name}`, e);
+      Logger.error(`${useUser.name}.${changePassword.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function confirmEmail(payload: { userId: string; token: string }): Promise<IdentityResultType> {
+    try {
+      loading.value = true;
+      return await innerFetch<IdentityResultType>("/storefrontapi/account/confirmemail", "POST", payload);
+    } catch (e) {
+      Logger.error(`${useUser.name}.${confirmEmail.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -107,7 +119,7 @@ export default () => {
 
       return res;
     } catch (e) {
-      Logger.error(`useUser.${signMeIn.name}`, e);
+      Logger.error(`${useUser.name}.${signMeIn.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -135,7 +147,7 @@ export default () => {
 
       return resultData.result!;
     } catch (e) {
-      Logger.error(`useUser.${registerUser.name}`, e);
+      Logger.error(`${useUser.name}.${registerUser.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -166,7 +178,7 @@ export default () => {
 
       return resultData.result!;
     } catch (e) {
-      Logger.error(`useUser.${registerOrganization.name}`, e);
+      Logger.error(`${useUser.name}.${registerOrganization.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -179,7 +191,7 @@ export default () => {
       const url = "/storefrontapi/account/logout";
       await innerFetch(url);
     } catch (e) {
-      Logger.error(`useUser.${signMeOut.name}`, e);
+      Logger.error(`${useUser.name}.${signMeOut.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -197,7 +209,7 @@ export default () => {
 
       return success;
     } catch (e) {
-      Logger.error(`useUser.${forgotPassword.name}`, e);
+      Logger.error(`${useUser.name}.${forgotPassword.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -216,7 +228,7 @@ export default () => {
 
       return result;
     } catch (e) {
-      Logger.error(`useUser.${resetPassword.name}`, e);
+      Logger.error(`${useUser.name}.${resetPassword.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -227,7 +239,7 @@ export default () => {
     try {
       return await _inviteUser(payload);
     } catch (e) {
-      Logger.error(`useUser.${inviteUser.name}`, e);
+      Logger.error(`${useUser.name}.${inviteUser.name}`, e);
       throw e;
     }
   }
@@ -238,7 +250,7 @@ export default () => {
     try {
       return await registerByInvitation(payload);
     } catch (e) {
-      Logger.error(`useUser.${registerByInvite.name}`, e);
+      Logger.error(`${useUser.name}.${registerByInvite.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -253,6 +265,7 @@ export default () => {
     fetchUser,
     updateUser,
     changePassword,
+    confirmEmail,
     signMeIn,
     registerUser,
     registerOrganization,
@@ -276,4 +289,4 @@ export default () => {
       },
     }),
   };
-};
+}

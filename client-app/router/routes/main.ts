@@ -10,6 +10,7 @@ import Error500 from "@/pages/500.vue";
 const Home = () => import("@/pages/index.vue");
 const SingInPage = () => import("@/pages/sign-in.vue");
 const SignUpPage = () => import("@/pages/sign-up.vue");
+const ConfirmEmail = () => import("@/pages/confirm-email.vue");
 const ConfirmInvitation = () => import("@/pages/confirm-invitation.vue");
 const ForgotPassword = () => import("@/pages/forgot-password.vue");
 const ResetPassword = () => import("@/pages/reset-password.vue");
@@ -39,6 +40,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword },
   { path: "/reset-password", name: "ResetPassword", component: ResetPassword },
   { path: "/set-password", name: "SetPassword", component: ResetPassword },
+  { path: "/account/confirmemail", name: "ConfirmEmail", component: ConfirmEmail },
   {
     path: "/account",
     name: "Account",
