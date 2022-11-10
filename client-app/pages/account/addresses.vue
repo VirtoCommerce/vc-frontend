@@ -46,12 +46,13 @@
         :countries="countries"
         :disabled="saveAddressLoading"
         class="px-6 py-4"
+        with-personal-info
         required-email
         required-city
         @save="saveAddress"
       >
         <template #append="{ dirty, valid }">
-          <div class="flex space-x-4 pb-3 pt-7 sm:pb-4 sm:pt-4 sm:float-right">
+          <div class="flex flex-row space-x-4 pb-3 pt-7 sm:py-4 sm:float-right">
             <VcButton
               kind="secondary"
               :is-disabled="saveAddressLoading"

@@ -2,8 +2,8 @@
   <form class="overflow-x-hidden" @submit.prevent="save">
     <slot name="prepend" v-bind="slotsData" />
 
-    <div class="md:flex">
-      <div class="md:w-1/2" v-if="!excludePersonalInfo">
+    <div :class="{ 'md:flex md:flex-row': withPersonalInfo }">
+      <div class="md:w-1/2" v-if="withPersonalInfo">
         <VcInput
           v-model="firstName"
           :error-message="errors.firstName"
@@ -48,10 +48,10 @@
       <!-- Divider -->
       <div
         class="border-t md:border-l border-[color:var(--color-primary)] mt-8 mb-6 md:mt-6 md:mb-4 -mx-96 md:mx-9"
-        v-if="!excludePersonalInfo"
+        v-if="withPersonalInfo"
       ></div>
 
-      <div :class="{ 'md:w-1/2': !excludePersonalInfo }">
+      <div :class="{ 'md:w-1/2': withPersonalInfo }">
         <VcInput
           v-model="description"
           :error-message="errors.description"
@@ -149,7 +149,7 @@ const props = defineProps({
   requiredPhone: Boolean,
   requiredCity: Boolean,
   withDescriptionField: Boolean,
-  excludePersonalInfo: Boolean,
+  withPersonalInfo: Boolean,
 
   modelValue: {
     type: Object as PropType<MemberAddressType | null>,
@@ -216,7 +216,7 @@ const slotsData = computed(() => ({
 
 const emailRules = computed(() => {
   let rules = yup.string().max(64).email().nullable();
-  if (!props.excludePersonalInfo && props.requiredEmail) {
+  if (props.withPersonalInfo && props.requiredEmail) {
     rules = rules.required();
   }
   return rules;
@@ -224,7 +224,7 @@ const emailRules = computed(() => {
 
 const phoneRules = computed(() => {
   let rules = yup.string().max(64).nullable();
-  if (!props.excludePersonalInfo && props.requiredPhone) {
+  if (props.withPersonalInfo && props.requiredPhone) {
     rules = rules.required();
   }
   return rules;
@@ -248,7 +248,7 @@ const regionRules = computed(() => {
 
 const firstNameRules = computed(() => {
   let rules = yup.string().max(64).nullable();
-  if (!props.excludePersonalInfo) {
+  if (props.withPersonalInfo) {
     rules = rules.required();
   }
   return rules;
@@ -256,7 +256,7 @@ const firstNameRules = computed(() => {
 
 const lastNameRules = computed(() => {
   let rules = yup.string().max(64).nullable();
-  if (!props.excludePersonalInfo) {
+  if (props.withPersonalInfo) {
     rules = rules.required();
   }
   return rules;
