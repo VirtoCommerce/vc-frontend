@@ -15,6 +15,7 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "isolatedModules": true,
+    "noEmit": true,
     "lib": [
       "ESNext",
       "DOM",

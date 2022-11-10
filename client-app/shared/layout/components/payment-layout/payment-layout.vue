@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="flex items-center h-14 lg:h-auto lg:px-12 lg:py-5 bg-[color:var(--color-header-bottom-bg)]">
       <router-link to="/" class="px-6 lg:px-0" replace>
-        <VcImage :src="$cfg.logo_image" class="h-9 lg:h-12" lazy />
+        <VcImage :src="$cfg.logo_image" :alt="$context.storeName" class="h-9 lg:h-12" lazy />
       </router-link>
     </div>
 
