@@ -228,11 +228,10 @@ import { useUser, useUserAddresses } from "@/shared/account";
 import { computed, ComputedRef, onMounted, Ref, ref } from "vue";
 import { clone } from "lodash";
 import { MemberAddressType } from "@/xapi/types";
-import { getNewSorting } from "@/core/utilities";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useCountries, usePageHead } from "@/core/composables";
-import { AddressType } from "@/core/types";
+import { AddressType, ISortInfo } from "@/core/types";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
@@ -354,8 +353,8 @@ function itemActionsBuilder(inputObject: MemberAddressType) {
   return actions;
 }
 
-const applySorting = async (column: string): Promise<void> => {
-  sort.value = getNewSorting(sort.value, column);
+const applySorting = async (sortInfo: ISortInfo): Promise<void> => {
+  sort.value = sortInfo;
   page.value = 1;
   await loadAddresses();
 };

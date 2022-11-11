@@ -162,8 +162,7 @@ import { PageToolbarBlock, useUserQuotes } from "@/shared/account";
 import { QuoteType } from "@/xapi/types";
 import { computedEager, useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import { useElementVisibility, useRouteQueryParam } from "@/core/composables";
-import { getNewSorting } from "@/core/utilities";
-import { getSortingExpression, QueryParamName } from "@/core";
+import { getSortingExpression, QueryParamName, ISortInfo, setSortInfo } from "@/core";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -229,13 +228,13 @@ async function resetKeyword(): Promise<void> {
   await applyKeyword();
 }
 
-async function applySorting(column: string): Promise<void> {
-  const newSorting = getNewSorting(sort.value, column);
-  sortQueryParam.value = getSortingExpression(newSorting);
-  sort.value = newSorting;
+async function applySorting(sortInfo: ISortInfo): Promise<void> {
+  sort.value = sortInfo;
+  sortQueryParam.value = getSortingExpression(sortInfo);
   page.value = 1;
   await fetchQuotes();
 }
 
+sort.value = setSortInfo(sortQueryParam.value);
 fetchQuotes();
 </script>
