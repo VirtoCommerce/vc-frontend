@@ -79,6 +79,19 @@ export function getNewSorting(
   return newSortObj;
 }
 
+export function setSortingExpression(sortValue?: string): ISortInfo {
+  const value: ISortInfo = {
+    column: "createdDate",
+    direction: SORT_DESCENDING,
+  };
+  const splitted: string[] | undefined = sortValue?.split(":");
+  if (splitted && splitted.length > 1) {
+    value.column = splitted[0];
+    value.direction = splitted[1];
+  }
+  return value;
+}
+
 // convert Date value to string with format 'yyyy-MM-dd'
 export function dateToIsoDateString(date: Date | undefined) {
   const lastDateSymbolIndex = 10;
