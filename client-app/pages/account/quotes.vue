@@ -161,17 +161,13 @@ import { useI18n } from "vue-i18n";
 import { PageToolbarBlock, useUserQuotes } from "@/shared/account";
 import { QuoteType } from "@/xapi/types";
 import { computedEager, useBreakpoints, breakpointsTailwind } from "@vueuse/core";
-import { useElementVisibility, useRouteQueryParam } from "@/core/composables";
-import { getSortingExpression, QueryParamName, ISortInfo, setSortInfo } from "@/core";
+import { useElementVisibility } from "@/core/composables";
+import { ISortInfo } from "@/core";
 
 const { t } = useI18n();
 const router = useRouter();
 
 const { quotes, fetching, itemsPerPage, pages, page, keyword, sort, fetchQuotes } = useUserQuotes();
-
-const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
-  defaultValue: "createdDate:desc",
-});
 
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -230,11 +226,9 @@ async function resetKeyword(): Promise<void> {
 
 async function applySorting(sortInfo: ISortInfo): Promise<void> {
   sort.value = sortInfo;
-  sortQueryParam.value = getSortingExpression(sortInfo);
   page.value = 1;
   await fetchQuotes();
 }
 
-sort.value = setSortInfo(sortQueryParam.value);
 fetchQuotes();
 </script>
