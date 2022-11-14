@@ -114,6 +114,8 @@ export interface IThemeConfigPreset {
   show_prices_with_taxes?: boolean;
   default_delivery_method?: string;
 
+  categories_limit?: number;
+
   wishlists_limit?: number;
 
   search_min_chars?: number;
