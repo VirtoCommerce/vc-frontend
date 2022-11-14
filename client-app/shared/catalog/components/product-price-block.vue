@@ -96,12 +96,11 @@
 
 <script setup lang="ts">
 import { Product } from "@/xapi/types";
-import { PropType, ref } from "vue";
+import { PropType, ref, computed, shallowRef } from "vue";
 import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddToWishlistsDialog } from "@/shared/wishlists";
 import { stringFormat } from "@/core/utilities";
-import { computed, shallowRef } from "@vue/reactivity";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";

@@ -28,7 +28,7 @@ function updateSettings(app: App, settings: any) {
   const keys = Object.entries(settings);
 
   keys.forEach(([key, value]) => {
-    app.config.globalProperties.$cfg[key] = value;
+    (app.config.globalProperties.$cfg as Record<string, any>)[key] = value;
   });
 
   keys
