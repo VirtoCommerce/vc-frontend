@@ -237,8 +237,7 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
 watch(
   () => sortQueryParam.value,
   async (value: string) => {
-    sort.value = setSortInfo(value);
-    await fetchQuotes();
+    await applySorting(setSortInfo(value));
   }
 );
 
