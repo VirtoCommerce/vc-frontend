@@ -239,6 +239,9 @@ watch(
   () => sortQueryParam.value,
   async (value: string) => {
     await applySorting(setSortInfo(value));
+  },
+  {
+    immediate: true,
   }
 );
 
