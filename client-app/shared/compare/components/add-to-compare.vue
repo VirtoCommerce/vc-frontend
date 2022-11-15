@@ -1,7 +1,26 @@
 <template>
-  <VcCheckbox v-if="workaround" :model-value="isInCompareList" @change="toggle">
-    {{ $t("common.labels.compare") }}
-  </VcCheckbox>
+  <VcTooltip placement="left" strategy="fixed">
+    <template #trigger>
+      <div>
+        <label v-if="workaround" class="cursor-pointer">
+          <svg
+            class="w-6 h-6 lg:w-4 lg:h-4"
+            :class="{
+              'text-[color:var(--color-product-add-to-icon)]': !isInCompareList,
+              'text-[color:var(--color-product-add-to-icon-active)]': isInCompareList,
+            }"
+          >
+            <use href="/static/images/compare.svg#main"></use>
+          </svg>
+          <input type="checkbox" class="hidden" :model-value="isInCompareList" @change="toggle" />
+        </label>
+      </div>
+    </template>
+
+    <template #content>
+      <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5">Add to compare</div>
+    </template>
+  </VcTooltip>
 </template>
 
 <script setup lang="ts">
