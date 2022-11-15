@@ -239,7 +239,7 @@ import { computedEager } from "@vueuse/core";
 import { useField } from "vee-validate";
 import * as yup from "yup";
 import { MemberAddressType } from "@/xapi";
-import { AddressType, getAddressName, getNewSorting, usePageHead, XApiPermissions } from "@/core";
+import { AddressType, getAddressName, ISortInfo, usePageHead, XApiPermissions } from "@/core";
 import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddOrUpdateCompanyAddressDialog, useOrganization, useOrganizationAddresses } from "@/shared/company";
@@ -328,8 +328,8 @@ async function onPageChange(newPage: number) {
   page.value = newPage;
 }
 
-async function applySorting(column: string) {
-  sort.value = getNewSorting(sort.value, column);
+async function applySorting(sortInfo: ISortInfo) {
+  sort.value = sortInfo;
   page.value = 1;
   await fetchAddresses();
 }

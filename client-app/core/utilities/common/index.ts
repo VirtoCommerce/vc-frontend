@@ -1,6 +1,10 @@
-import _ from "lodash";
 import { ISortInfo } from "@/core/types";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
+
+export const defaultSortInfo: ISortInfo = {
+  column: "createdDate",
+  direction: SORT_DESCENDING,
+};
 
 export function getBaseUrl(supportedLocales: string[]): string {
   const localeInPath = location.pathname.split("/")[1];
@@ -62,21 +66,18 @@ export function getSortingExpression(sort: ISortInfo): string {
   return `${sort.column}:${sort.direction}`;
 }
 
-export function getNewSorting(
-  currentSortObj: ISortInfo,
-  sortingColumn: string,
-  defaultDirection = SORT_DESCENDING
-): ISortInfo {
-  const newSortObj: ISortInfo = _.clone(currentSortObj);
+export function getSortInfoFromStringExpression(sortInfo: string): ISortInfo {
+  const splitted: string[] = sortInfo.split(":");
+  return splitted.length > 1
+    ? {
+        column: splitted[0],
+        direction: splitted[1],
+      }
+    : defaultSortInfo;
+}
 
-  if (newSortObj.column === sortingColumn) {
-    newSortObj.direction = newSortObj.direction === SORT_ASCENDING ? SORT_DESCENDING : SORT_ASCENDING;
-  } else {
-    newSortObj.column = sortingColumn;
-    newSortObj.direction = defaultDirection;
-  }
-
-  return newSortObj;
+export function toggleSortDirection(currentDirection: string): string {
+  return currentDirection === SORT_ASCENDING ? SORT_DESCENDING : SORT_ASCENDING;
 }
 
 // convert Date value to string with format 'yyyy-MM-dd'
