@@ -8,7 +8,7 @@
           {{ organization?.name }}
         </span>
 
-        <VcImage v-else :src="$cfg.logo_inverted_image" class="max-h-9" lazy />
+        <VcImage v-else :src="$cfg.logo_inverted_image" :alt="$context.storeName" class="max-h-9" lazy />
       </div>
 
       <!-- Language block -->

@@ -1,5 +1,4 @@
-import { Component } from "vue";
-import { ComponentObjectPropsOptions } from "@vue/runtime-core";
+import { Component, ComponentObjectPropsOptions } from "vue";
 import { RouteLocationRaw } from "vue-router";
 
 export type CloseNotificationHandle = () => void;
