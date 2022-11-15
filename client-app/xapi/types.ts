@@ -99,6 +99,11 @@ export type BulkWishlistType = {
   wishlists?: Maybe<Array<Maybe<WishlistType>>>;
 };
 
+export type CancelQuoteCommandType = {
+  comment: Scalars['String'];
+  quoteId: Scalars['String'];
+};
+
 export type CartAddressType = {
   /** Address type */
   addressType?: Maybe<Scalars['Int']>;
@@ -398,6 +403,17 @@ export type CategoryEdge = {
   cursor: Scalars['String'];
   /** The item at the end of the edge */
   node?: Maybe<Category>;
+};
+
+export type ChangeQuoteCommentCommandType = {
+  comment: Scalars['String'];
+  quoteId: Scalars['String'];
+};
+
+export type ChangeQuoteItemQuantityCommandType = {
+  lineItemId: Scalars['String'];
+  quantity: Scalars['Int'];
+  quoteId: Scalars['String'];
 };
 
 /** A connection from an object to a list of objects of type `Contact`. */
@@ -1091,6 +1107,8 @@ export type InputAddWishlistBulkItemType = {
   listIds: Array<InputMaybe<Scalars['String']>>;
   /** Product id to add */
   productId: Scalars['String'];
+  /** Product quantity to add */
+  quantity?: InputMaybe<Scalars['Int']>;
 };
 
 export type InputAddWishlistItemType = {
@@ -1098,6 +1116,8 @@ export type InputAddWishlistItemType = {
   listId: Scalars['String'];
   /** Product id to add */
   productId: Scalars['String'];
+  /** Product quantity to add */
+  quantity?: InputMaybe<Scalars['Int']>;
 };
 
 export type InputAddressType = {
@@ -1611,6 +1631,27 @@ export type InputProcessOrderPaymentType = {
   paymentId: Scalars['String'];
 };
 
+export type InputQuoteAddressType = {
+  addressType?: InputMaybe<Scalars['Int']>;
+  city: Scalars['String'];
+  countryCode?: InputMaybe<Scalars['String']>;
+  countryName: Scalars['String'];
+  email?: InputMaybe<Scalars['String']>;
+  firstName: Scalars['String'];
+  key?: InputMaybe<Scalars['String']>;
+  lastName: Scalars['String'];
+  line1?: InputMaybe<Scalars['String']>;
+  line2?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  /** Company name */
+  organization?: InputMaybe<Scalars['String']>;
+  outerId?: InputMaybe<Scalars['String']>;
+  phone?: InputMaybe<Scalars['String']>;
+  postalCode?: InputMaybe<Scalars['String']>;
+  regionId?: InputMaybe<Scalars['String']>;
+  regionName?: InputMaybe<Scalars['String']>;
+};
+
 export type InputRegisterAccountType = {
   email: Scalars['String'];
   password: Scalars['String'];
@@ -1981,6 +2022,20 @@ export type InputUpdateUserType = {
   applicationUser: InputUpdateApplicationUserType;
 };
 
+export type InputUpdateWishlistItemsType = {
+  /** Bulk wishlist items */
+  items: Array<InputMaybe<InputUpdateWishlistLineItemType>>;
+  /** Wish list id */
+  listId: Scalars['String'];
+};
+
+export type InputUpdateWishlistLineItemType = {
+  /** Line Item Id to update */
+  lineItemId: Scalars['String'];
+  /** Product quantity to add */
+  quantity: Scalars['Int'];
+};
+
 export type InputValidateCouponType = {
   cartId?: InputMaybe<Scalars['String']>;
   cartName?: InputMaybe<Scalars['String']>;
@@ -2264,6 +2319,7 @@ export type Mutations = {
   addWishlistBulkItem?: Maybe<BulkWishlistType>;
   addWishlistItem?: Maybe<WishlistType>;
   authorizePayment?: Maybe<AuthorizePaymentResultType>;
+  cancelQuoteRequest?: Maybe<QuoteType>;
   changeCartItemComment?: Maybe<CartType>;
   changeCartItemPrice?: Maybe<CartType>;
   changeCartItemQuantity?: Maybe<CartType>;
@@ -2271,6 +2327,8 @@ export type Mutations = {
   changeOrderStatus?: Maybe<Scalars['Boolean']>;
   changeOrganizationContactRole?: Maybe<CustomIdentityResultType>;
   changePurchaseOrderNumber?: Maybe<CartType>;
+  changeQuoteComment?: Maybe<QuoteType>;
+  changeQuoteItemQuantity?: Maybe<QuoteType>;
   clearCart?: Maybe<CartType>;
   clearPayments?: Maybe<CartType>;
   clearShipments?: Maybe<CartType>;
@@ -2297,6 +2355,7 @@ export type Mutations = {
   removeCartItem?: Maybe<CartType>;
   removeCoupon?: Maybe<CartType>;
   removeMemberFromOrganization?: Maybe<ContactType>;
+  removeQuoteItem?: Maybe<QuoteType>;
   removeShipment?: Maybe<CartType>;
   removeWishlist?: Maybe<Scalars['Boolean']>;
   removeWishlistItem?: Maybe<WishlistType>;
@@ -2304,6 +2363,7 @@ export type Mutations = {
   requestRegistration?: Maybe<RequestRegistrationType>;
   resetPasswordByToken?: Maybe<CustomIdentityResultType>;
   sendVerifyEmail?: Maybe<Scalars['Boolean']>;
+  submitQuoteRequest?: Maybe<QuoteType>;
   unlockOrganizationContact?: Maybe<ContactType>;
   updateCartDynamicProperties?: Maybe<CartType>;
   updateCartItemDynamicProperties?: Maybe<CartType>;
@@ -2318,8 +2378,10 @@ export type Mutations = {
   updateOrderShipmentDynamicProperties?: Maybe<CustomerOrderType>;
   updateOrganization?: Maybe<Organization>;
   updatePersonalData?: Maybe<IdentityResultType>;
+  updateQuoteAddresses?: Maybe<QuoteType>;
   updateRole?: Maybe<IdentityResultType>;
   updateUser?: Maybe<IdentityResultType>;
+  updateWishListItems?: Maybe<WishlistType>;
   validateCoupon?: Maybe<Scalars['Boolean']>;
 };
 
@@ -2389,6 +2451,11 @@ export type MutationsAuthorizePaymentArgs = {
 };
 
 
+export type MutationsCancelQuoteRequestArgs = {
+  command: CancelQuoteCommandType;
+};
+
+
 export type MutationsChangeCartItemCommentArgs = {
   command?: InputMaybe<InputChangeCartItemCommentType>;
 };
@@ -2421,6 +2488,16 @@ export type MutationsChangeOrganizationContactRoleArgs = {
 
 export type MutationsChangePurchaseOrderNumberArgs = {
   command?: InputMaybe<InputChangePurchaseOrderNumber>;
+};
+
+
+export type MutationsChangeQuoteCommentArgs = {
+  command: ChangeQuoteCommentCommandType;
+};
+
+
+export type MutationsChangeQuoteItemQuantityArgs = {
+  command: ChangeQuoteItemQuantityCommandType;
 };
 
 
@@ -2549,6 +2626,11 @@ export type MutationsRemoveMemberFromOrganizationArgs = {
 };
 
 
+export type MutationsRemoveQuoteItemArgs = {
+  command: RemoveQuoteItemCommandType;
+};
+
+
 export type MutationsRemoveShipmentArgs = {
   command: InputRemoveShipmentType;
 };
@@ -2581,6 +2663,11 @@ export type MutationsResetPasswordByTokenArgs = {
 
 export type MutationsSendVerifyEmailArgs = {
   command?: InputMaybe<InputSendVerifyEmailType>;
+};
+
+
+export type MutationsSubmitQuoteRequestArgs = {
+  command: SubmitQuoteCommandType;
 };
 
 
@@ -2654,6 +2741,11 @@ export type MutationsUpdatePersonalDataArgs = {
 };
 
 
+export type MutationsUpdateQuoteAddressesArgs = {
+  command: UpdateQuoteAddressesCommandType;
+};
+
+
 export type MutationsUpdateRoleArgs = {
   command: InputUpdateRoleType;
 };
@@ -2661,6 +2753,11 @@ export type MutationsUpdateRoleArgs = {
 
 export type MutationsUpdateUserArgs = {
   command: InputUpdateUserType;
+};
+
+
+export type MutationsUpdateWishListItemsArgs = {
+  command: InputUpdateWishlistItemsType;
 };
 
 
@@ -3711,6 +3808,7 @@ export type QueryQuotesArgs = {
   after?: InputMaybe<Scalars['String']>;
   cultureName?: InputMaybe<Scalars['String']>;
   currencyCode?: InputMaybe<Scalars['String']>;
+  filter?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   keyword?: InputMaybe<Scalars['String']>;
   sort?: InputMaybe<Scalars['String']>;
@@ -3771,7 +3869,6 @@ export type QuoteAddressType = {
   countryName: Scalars['String'];
   email?: Maybe<Scalars['String']>;
   firstName: Scalars['String'];
-  id: Scalars['String'];
   key?: Maybe<Scalars['String']>;
   lastName: Scalars['String'];
   line1?: Maybe<Scalars['String']>;
@@ -3817,6 +3914,7 @@ export type QuoteItemType = {
   catalogId: Scalars['String'];
   categoryId?: Maybe<Scalars['String']>;
   comment?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
   imageUrl?: Maybe<Scalars['String']>;
   listPrice?: Maybe<MoneyType>;
   name: Scalars['String'];
@@ -3971,6 +4069,11 @@ export type RegistrationErrorType = {
   parameter?: Maybe<Scalars['String']>;
 };
 
+export type RemoveQuoteItemCommandType = {
+  lineItemId: Scalars['String'];
+  quoteId: Scalars['String'];
+};
+
 export type RequestRegistrationType = {
   /** Contact's account */
   account?: Maybe<RegisterAccountType>;
@@ -4094,6 +4197,11 @@ export type ShippingMethodType = {
   totalWithTax?: Maybe<MoneyType>;
 };
 
+export type SubmitQuoteCommandType = {
+  comment: Scalars['String'];
+  quoteId: Scalars['String'];
+};
+
 export type TaxDetailType = {
   /** Amount */
   amount?: Maybe<MoneyType>;
@@ -4123,6 +4231,11 @@ export type TierPriceType = {
   priceWithTax?: Maybe<MoneyType>;
   /** Quantity */
   quantity?: Maybe<Scalars['Long']>;
+};
+
+export type UpdateQuoteAddressesCommandType = {
+  addresses: Array<InputMaybe<InputQuoteAddressType>>;
+  quoteId: Scalars['String'];
 };
 
 export type UserType = {

@@ -16,7 +16,7 @@
           </button>
 
           <router-link to="/">
-            <VcImage :src="$cfg.logo_image" class="h-8" lazy />
+            <VcImage :src="$cfg.logo_image" :alt="$context.storeName" class="h-8" lazy />
           </router-link>
         </div>
         <!-- endregion Left slot -->
@@ -104,7 +104,7 @@ import { numberToShortString } from "@/core/utilities";
 const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const mobileMenuVisible = ref(false);
-const headerElement = ref<HTMLElement | null>(null);
+const headerElement = ref(null);
 
 const { customSlots, isAnimated } = useNestedMobileHeader();
 const { searchBarVisible, toggleSearchBar, hideSearchBar } = useSearchBar();

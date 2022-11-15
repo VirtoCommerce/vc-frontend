@@ -39,12 +39,9 @@
             <div class="flex gap-5 px-5 pt-2.5 pb-3 text-sm">
               <ul v-for="(column, index) in categoriesColumns" :key="index" class="">
                 <li v-for="category in column" :key="category.name">
-                  <router-link
-                    :to="categoriesRoutes[category.id]"
-                    v-html="category.name"
-                    class="py-1 block"
-                    @click="hideSearchDropdown"
-                  ></router-link>
+                  <router-link :to="categoriesRoutes[category.id]" class="py-1 block" @click="hideSearchDropdown">
+                    <span v-html="category.name" />
+                  </router-link>
                 </li>
               </ul>
             </div>

@@ -67,22 +67,20 @@
 </template>
 
 <script setup lang="ts">
+import { computed, inject } from "vue";
+import { useI18n } from "vue-i18n";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import {
-  WishlistCard,
-  WishlistCardSkeleton,
-  useWishlists,
   AddOrUpdateWishlistDialog,
   DeleteWishlistsDialog,
   UnsuccessfulCreateWishlistDialog,
+  useWishlists,
+  WishlistCard,
+  WishlistCardSkeleton,
 } from "@/shared/wishlists";
-import { configInjectionKey, DEFAULT_WISHLIST_LIMIT } from "@/core/constants";
-import { WishlistType } from "@/xapi/types";
+import { WishlistType } from "@/xapi";
+import { configInjectionKey, DEFAULT_WISHLIST_LIMIT, usePageHead } from "@/core";
 import { usePopup } from "@/shared/popup";
-import { inject } from "vue";
-import { computed } from "@vue/reactivity";
-import { usePageHead } from "@/core/composables";
-import { useI18n } from "vue-i18n";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
 const { t } = useI18n();
 const { openPopup } = usePopup();
