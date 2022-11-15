@@ -66,7 +66,7 @@ export function getSortingExpression(sort: ISortInfo): string {
   return `${sort.column}:${sort.direction}`;
 }
 
-export function setSortInfo(sortInfo: string): ISortInfo {
+export function getSortInfoFromStringExpression(sortInfo: string): ISortInfo {
   const splitted: string[] = sortInfo.split(":");
   return splitted.length > 1
     ? {

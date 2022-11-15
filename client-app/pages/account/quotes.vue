@@ -162,7 +162,7 @@ import { PageToolbarBlock, useUserQuotes } from "@/shared/account";
 import { QuoteType } from "@/xapi/types";
 import { computedEager, useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import { useElementVisibility, useRouteQueryParam } from "@/core/composables";
-import { getSortingExpression, ISortInfo, QueryParamName, setSortInfo } from "@/core";
+import { getSortingExpression, ISortInfo, QueryParamName, getSortInfoFromStringExpression } from "@/core";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -238,7 +238,7 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
 watch(
   () => sortQueryParam.value,
   async (value: string) => {
-    await applySorting(setSortInfo(value));
+    await applySorting(getSortInfoFromStringExpression(value));
   },
   {
     immediate: true,
