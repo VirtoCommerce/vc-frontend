@@ -155,14 +155,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef } from "vue";
+import { ref, shallowRef, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { PageToolbarBlock, useUserQuotes } from "@/shared/account";
 import { QuoteType } from "@/xapi/types";
 import { computedEager, useBreakpoints, breakpointsTailwind } from "@vueuse/core";
-import { useElementVisibility } from "@/core/composables";
-import { ISortInfo } from "@/core";
+import { useElementVisibility, useRouteQueryParam } from "@/core/composables";
+import { ISortInfo, QueryParamName, setSortInfo } from "@/core";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -178,6 +178,10 @@ const isMobile = breakpoints.smaller("lg");
 const isVisibleStickyMobileHeader = computedEager<boolean>(
   () => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value
 );
+
+const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
+  defaultValue: "createdDate:desc",
+});
 
 const columns = ref<ITableColumn[]>([
   {
@@ -229,6 +233,14 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
   page.value = 1;
   await fetchQuotes();
 }
+
+watch(
+  () => sortQueryParam.value,
+  async (value: string) => {
+    sort.value = setSortInfo(value);
+    await fetchQuotes();
+  }
+);
 
 fetchQuotes();
 </script>
