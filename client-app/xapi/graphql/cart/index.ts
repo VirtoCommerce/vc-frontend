@@ -1,7 +1,7 @@
-export { default as addBulkItemsToCart } from "./mutations/addBulkItemsToCart";
+export { default as addBulkItemsCart } from "./mutations/addBulkItemsCart";
 export { default as addCoupon } from "./mutations/addCoupon";
 export { default as addGiftItems } from "./mutations/addGiftItems";
-export { default as addItemsToCart } from "./mutations/addItemsToCart";
+export { default as addItemsCart } from "./mutations/addItemsCart";
 export { default as addItemToCart } from "./mutations/addItemToCart";
 export { default as addOrUpdateCartPayment } from "./mutations/addOrUpdateCartPayment";
 export { default as addOrUpdateCartShipment } from "./mutations/addOrUpdateCartShipment";

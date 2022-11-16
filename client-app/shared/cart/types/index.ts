@@ -1,4 +1,6 @@
-export type CartItemType = {
-  productId: string;
-  quantity: number;
+import { ValidationErrorType } from "@/xapi";
+
+export type OutputBulkItemType = {
+  productSku: string;
+  errors?: ValidationErrorType[];
 };

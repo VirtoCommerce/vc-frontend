@@ -61,11 +61,11 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUpdate, onMounted, PropType, ref } from "vue";
-import { OrderLineItemType, Product } from "@/xapi/types";
+import { InputNewCartItemType, OrderLineItemType, Product } from "@/xapi/types";
 import { ProductCardReorder } from "@/shared/account";
 import _ from "lodash";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { CartItemType, useCart } from "@/shared/cart";
+import { useCart } from "@/shared/cart";
 import { useRouter } from "vue-router";
 
 const itemsPerPage = 4;
@@ -95,7 +95,7 @@ const props = defineProps({
   },
 });
 
-const { addMultipleItemsToCart } = useCart();
+const { addItemsToCart } = useCart();
 
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -157,7 +157,8 @@ const setProductCardRef = (el: any) => {
 };
 
 const addToCart = async () => {
-  let modifiedCartLineItems: CartItemType[] = [];
+  let modifiedCartLineItems: InputNewCartItemType[] = [];
+
   _.each(productCardRefs.value, (productCard) => modifiedCartLineItems.push(productCard.updateQuantity()));
   modifiedCartLineItems = _.uniq(modifiedCartLineItems);
   modifiedCartLineItems = _.filter(modifiedCartLineItems, (item) => item !== undefined && item.quantity !== 0);
@@ -171,12 +172,13 @@ const addToCart = async () => {
 
   _.each(modifiedCartLineItems, (reorderItem) => {
     const itemToReplace = _.find(originalCartLineItems, (lineItem) => lineItem.productId === reorderItem.productId);
+
     if (itemToReplace) {
-      itemToReplace.quantity = reorderItem.quantity;
+      itemToReplace.quantity = reorderItem.quantity!;
     }
   });
 
-  await addMultipleItemsToCart(originalCartLineItems).then(() => {
+  await addItemsToCart(originalCartLineItems).then(() => {
     router.push({ name: "Checkout" });
   });
 };
