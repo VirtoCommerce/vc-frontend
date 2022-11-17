@@ -283,16 +283,16 @@
                     {{ $t("pages.catalog.variations_button", [item.variations?.length]) }}
                   </VcButton>
 
-                  <a
+                  <router-link
                     class="flex items-center gap-1 mt-5 py-1 text-14 text-[color:var(--color-link)] lg:text-11"
                     target="_blank"
-                    :href="`${productsRoutes[item.id]}`"
+                    :to="productsRoutes[item.id]"
                   >
                     <svg class="shrink-0 w-3 h-3 text-primary lg:w-2.5 lg:h-2.5">
                       <use href="/static/images/link.svg#main"></use>
                     </svg>
                     <span class="truncate" v-t="'pages.catalog.show_on_a_separate_page'"></span>
-                  </a>
+                  </router-link>
                 </div>
 
                 <template v-else>
