@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from "vue";
+import { computed } from "vue";
 import { eagerComputed } from "@vueuse/core";
 import { LineItemType } from "@/xapi/types";
 import { useCart } from "@/shared/cart";
