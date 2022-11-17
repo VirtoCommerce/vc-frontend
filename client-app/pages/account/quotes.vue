@@ -53,10 +53,12 @@
       <VcTable
         :loading="fetching"
         :columns="columns"
+        :sort="sort"
         :items="quotes"
         :pages="pages"
         :page="page"
         @itemClick="navigateQuoteDetails"
+        @headerClick="applySorting"
         @pageChanged="changePage"
       >
         <template #mobile-item="itemData">
@@ -153,18 +155,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef } from "vue";
+import { ref, shallowRef, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { PageToolbarBlock, useUserQuotes } from "@/shared/account";
 import { QuoteType } from "@/xapi/types";
 import { computedEager, useBreakpoints, breakpointsTailwind } from "@vueuse/core";
-import { useElementVisibility } from "@/core/composables";
+import { useElementVisibility, useRouteQueryParam } from "@/core/composables";
+import { getSortingExpression, ISortInfo, QueryParamName, getSortInfoFromStringExpression } from "@/core";
 
 const { t } = useI18n();
 const router = useRouter();
 
-const { quotes, fetching, itemsPerPage, pages, page, keyword, fetchQuotes } = useUserQuotes();
+const { quotes, fetching, itemsPerPage, pages, page, keyword, sort, fetchQuotes } = useUserQuotes();
 
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -176,18 +179,25 @@ const isVisibleStickyMobileHeader = computedEager<boolean>(
   () => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value
 );
 
+const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
+  defaultValue: "createdDate:desc",
+});
+
 const columns = ref<ITableColumn[]>([
   {
     id: "number",
     title: t("pages.account.quotes.quote_number_label"),
+    sortable: true,
   },
   {
     id: "createdDate",
     title: t("pages.account.quotes.date_label"),
+    sortable: true,
   },
   {
     id: "status",
     title: t("pages.account.quotes.status_label"),
+    sortable: true,
     align: "center",
   },
   {
@@ -197,26 +207,43 @@ const columns = ref<ITableColumn[]>([
   },
 ]);
 
-async function changePage(newPage: number) {
+async function changePage(newPage: number): Promise<void> {
   page.value = newPage;
   window.scroll({ top: 0, behavior: "smooth" });
   await fetchQuotes();
 }
 
-function navigateQuoteDetails(quote: QuoteType) {
+function navigateQuoteDetails(quote: QuoteType): void {
   router.push({ name: "QuoteDetails", params: { quoteId: quote.id } });
 }
 
-async function applyKeyword() {
+async function applyKeyword(): Promise<void> {
   page.value = 1;
   await fetchQuotes();
 }
 
-async function resetKeyword() {
+async function resetKeyword(): Promise<void> {
   keyword.value = "";
   page.value = 1;
   await applyKeyword();
 }
+
+async function applySorting(sortInfo: ISortInfo): Promise<void> {
+  sortQueryParam.value = getSortingExpression(sortInfo);
+  sort.value = sortInfo;
+  page.value = 1;
+  await fetchQuotes();
+}
+
+watch(
+  () => sortQueryParam.value,
+  async (value: string) => {
+    await applySorting(getSortInfoFromStringExpression(value));
+  },
+  {
+    immediate: true,
+  }
+);
 
 fetchQuotes();
 </script>

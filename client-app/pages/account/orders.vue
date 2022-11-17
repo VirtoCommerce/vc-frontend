@@ -303,11 +303,11 @@ import {
 } from "@/shared/account";
 import { computed, onMounted, ref, shallowRef, watch } from "vue";
 import { breakpointsTailwind, useBreakpoints, onClickOutside } from "@vueuse/core";
-import { getNewSorting } from "@/core/utilities";
 import { useRouter } from "vue-router";
 import { CustomerOrderType } from "@/xapi/types";
 import { useI18n } from "vue-i18n";
 import { useElementVisibility, usePageHead } from "@/core/composables";
+import { ISortInfo } from "@/core";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -379,8 +379,8 @@ async function changePage(newPage: number) {
   await loadOrders();
 }
 
-async function applySorting(column: string) {
-  sort.value = getNewSorting(sort.value, column);
+async function applySorting(sortInfo: ISortInfo): Promise<void> {
+  sort.value = sortInfo;
   page.value = 1;
   await loadOrders();
 }

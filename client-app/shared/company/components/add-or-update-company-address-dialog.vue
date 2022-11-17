@@ -7,7 +7,7 @@
           : 'shared.company.add_or_update_address_dialog.edit_title'
       )
     "
-    :hide-actions="true"
+    hide-actions
     is-mobile-fullscreen
   >
     <template #default="{ close }">
@@ -19,30 +19,18 @@
         :model-value="address"
         :countries="countries"
         :disabled="loading"
-        exclude-personal-info
         class="px-6 py-4"
         with-description-field
         required-city
         @save="saveAddress"
       >
         <template #append="{ dirty, valid }">
-          <div class="flex space-x-4 pb-3 pt-7 sm:pb-4 sm:pt-4 sm:float-right">
-            <VcButton
-              :is-disabled="loading"
-              class="uppercase flex-grow md:w-32 md:flex-grow-0"
-              kind="secondary"
-              is-outline
-              @click="close"
-            >
+          <div class="flex flex-row space-x-4 pb-3 pt-7 sm:py-4 sm:float-right">
+            <VcButton :is-disabled="loading" class="uppercase w-1/2 sm:px-5" kind="secondary" is-outline @click="close">
               {{ $t("common.buttons.cancel") }}
             </VcButton>
 
-            <VcButton
-              :is-disabled="!valid || !dirty"
-              :is-waiting="loading"
-              is-submit
-              class="uppercase flex-grow md:w-32 md:flex-grow-0"
-            >
+            <VcButton :is-disabled="!valid || !dirty" :is-waiting="loading" is-submit class="uppercase w-1/2 sm:px-5">
               {{ $t("common.buttons.save") }}
             </VcButton>
           </div>

@@ -34,7 +34,11 @@
           :key="column.id"
           class="py-3 px-5 font-extrabold"
           :class="[{ 'cursor-pointer': column.sortable }, `text-${column.align || 'left'}`, column.classes]"
-          @click="column.sortable ? $emit('headerClick', column.id) : null"
+          @click="
+            column.sortable
+              ? $emit('headerClick', { column: column.id, direction: toggleSortDirection(sort!.direction) })
+              : null
+          "
         >
           {{ column.title }}
           <template v-if="column.sortable && sort">
@@ -79,6 +83,7 @@
 </template>
 
 <script setup lang="ts">
+import { toggleSortDirection } from "@/core";
 import { ISortInfo } from "@/core/types";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";

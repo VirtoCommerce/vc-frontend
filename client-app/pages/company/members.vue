@@ -355,8 +355,8 @@ import { ref, onMounted, shallowRef, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { breakpointsTailwind, computedEager, onClickOutside, useBreakpoints } from "@vueuse/core";
 import { useElementVisibility, usePageHead } from "@/core/composables";
-import { FacetItem, FacetValueItem } from "@/core/types";
-import { getFilterExpressionFromFacets, getNewSorting } from "@/core/utilities";
+import { FacetItem, FacetValueItem, ISortInfo } from "@/core/types";
+import { getFilterExpressionFromFacets } from "@/core/utilities";
 import { usePopup } from "@/shared/popup";
 import {
   InviteMemberDialog,
@@ -465,8 +465,8 @@ async function changePage(newPage: number) {
   await fetchContacts();
 }
 
-async function applySorting(column: string) {
-  sort.value = getNewSorting(sort.value, column);
+async function applySorting(sortInfo: ISortInfo): Promise<void> {
+  sort.value = sortInfo;
   page.value = 1;
   await fetchContacts();
 }
