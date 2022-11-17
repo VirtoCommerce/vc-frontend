@@ -123,18 +123,20 @@
         </template>
 
         <!-- Raiting -->
-        <div class="pt-0.5 pb-px font-bold capitalize">
-          {{ $t("shared.catalog.product_card.product_rating") }}
-        </div>
-        <div class="flex items-center gap-1 pt-0.5 pb-px pl-1">
-          <svg
-            class="shrink-0 w-3 h-3"
-            :class="{ 'text-status-success': true, 'text-status-warning': false, 'text-status-error': false }"
-          >
-            <use href="/static/images/cup.svg#main"></use>
-          </svg>
-          <div class="font-bold">4,3/5</div>
-        </div>
+        <template v-if="false">
+          <div class="pt-0.5 pb-px font-bold capitalize">
+            {{ $t("shared.catalog.product_card.product_rating") }}
+          </div>
+          <div class="flex items-center gap-1 pt-0.5 pb-px pl-1">
+            <svg
+              class="shrink-0 w-3 h-3"
+              :class="{ 'text-status-success': true, 'text-status-warning': false, 'text-status-error': false }"
+            >
+              <use href="/static/images/cup.svg#main"></use>
+            </svg>
+            <div class="font-bold">4,3/5</div>
+          </div>
+        </template>
 
         <!-- Vendor -->
         <template v-if="product.vendor">
