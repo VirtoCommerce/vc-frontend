@@ -43,22 +43,7 @@
     </template>
   </VcTooltip>
 
-  <div v-else class="h-2.5 lg:h-4"></div>
-
-  <div class="flex items-center gap-1 mt-1">
-    <VcInStock
-      :is-in-stock="product.availabilityData?.isInStock"
-      :quantity="product.availabilityData?.availableQuantity"
-    />
-
-    <div
-      v-if="countInCart > 0"
-      class="py-0.5 px-[0.677rem] bg-[color:var(--color-add-to-cart-in-cart-bg)] text-[color:var(--color-add-to-cart-in-cart)] whitespace-nowrap rounded-full text-[13px] leading-5 lg:py-px lg:px-[0.53rem] lg:text-[11px]"
-    >
-      <span class="inline-block font-bold text-center">{{ countInCart }}</span>
-      {{ $t("shared.cart.add_to_cart.errors.in_cart") }}
-    </div>
-  </div>
+  <div v-else-if="reservedSpace" class="h-2.5 lg:h-4"></div>
 </template>
 
 <script setup lang="ts">
@@ -79,6 +64,10 @@ const props = defineProps({
   product: {
     type: Object as PropType<Product | VariationType>,
     required: true,
+  },
+  reservedSpace: {
+    type: Boolean,
+    default: false,
   },
 });
 

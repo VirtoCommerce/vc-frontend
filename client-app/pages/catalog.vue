@@ -295,7 +295,18 @@
                   </a>
                 </div>
 
-                <AddToCart v-else :product="item" />
+                <template v-else>
+                  <AddToCart :product="item" :reservedSpace="true" />
+
+                  <div class="flex items-center gap-1 mt-1">
+                    <VcInStock
+                      :is-in-stock="item.availabilityData?.isInStock"
+                      :quantity="item.availabilityData?.availableQuantity"
+                    />
+
+                    <VcCountInCart :productId="item.id" />
+                  </div>
+                </template>
               </template>
             </DisplayProducts>
 
