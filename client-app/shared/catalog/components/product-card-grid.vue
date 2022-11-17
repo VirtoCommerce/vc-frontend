@@ -1,8 +1,10 @@
 <template>
-  <div class="flex flex-col bg-white rounded border p-4 shadow-sm hover:shadow-lg overflow-hidden">
+  <div
+    class="flex flex-col w-full bg-white rounded outline outline-offset-0 outline-1 outline-[color:var(--color-product-outline)] p-6 shadow-t-3sm hover:shadow-lg lg:px-5 lg:pt-5 lg:pb-3.5"
+  >
     <!-- Product image -->
-    <div class="relative flex flex-col justify-center items-center pb-[100%]">
-      <div class="absolute top-0 w-full h-full border border-gray-100 rounded overflow-hidden">
+    <div class="relative flex flex-col justify-center items-center pb-[87%]">
+      <div class="absolute top-0 w-full h-full rounded">
         <template v-if="$cfg.image_carousel_in_product_card_enabled && product.images?.length">
           <Swiper
             :modules="[Pagination, Navigation, Lazy]"
@@ -17,13 +19,13 @@
             @swiper="swiperInstance = $event"
             @slideChange="slideChanged"
           >
-            <SwiperSlide v-for="(image, index) in product.images" :key="index" class="">
+            <SwiperSlide v-for="(image, index) in product.images" :key="index" class="rounded">
               <VcImage
                 :src="image.url"
                 :alt="product.name"
                 size-suffix="md"
                 :class="{ 'cursor-pointer': swiperInstance?.allowSlideNext }"
-                class="w-full h-full object-cover object-center select-none"
+                class="w-full h-full rounded object-cover object-center select-none"
                 lazy
                 @click="swiperInstance?.slideNext()"
               />
@@ -32,7 +34,7 @@
             <template v-slot:container-end>
               <!-- Prev button -->
               <div
-                class="carousel-button-prev group absolute top-0 left-0 z-[2] h-full hidden md:flex items-center pl-1 pr-5 cursor-pointer"
+                class="hidden carousel-button-prev group absolute top-0 left-0 z-[2] h-full md:flex items-center pl-1 pr-5 cursor-pointer"
               >
                 <span
                   class="group-hover:opacity-100 opacity-0 transition-opacity flex items-center justify-center w-6 h-6 bg-white rounded-full"
@@ -43,7 +45,7 @@
 
               <!-- Next button -->
               <div
-                class="carousel-button-next group absolute top-0 right-0 z-[2] h-full hidden md:flex items-center pl-5 pr-1 cursor-pointer"
+                class="hidden carousel-button-next group absolute top-0 right-0 z-[2] h-full md:flex items-center pl-5 pr-1 cursor-pointer"
               >
                 <span
                   class="group-hover:opacity-100 opacity-0 transition-opacity flex items-center justify-center w-6 h-6 bg-white rounded-full"
@@ -62,7 +64,9 @@
                     v-if="index !== 1 || product.images.length !== 2"
                     :class="[
                       'inline-block w-2 h-2 rounded-full border',
-                      state ? 'bg-gray-400 border-white box-content -m-px' : 'bg-white border-gray-400 box-border',
+                      state
+                        ? 'bg-gray-400 border-gray-400 outline outline-[1px] outline-white'
+                        : 'bg-white border-gray-400 box-border',
                     ]"
                   />
                 </template>
@@ -76,50 +80,84 @@
           :src="product.imgSrc"
           :alt="product.name"
           size-suffix="md"
-          class="w-full h-full object-cover object-center"
+          class="w-full h-full rounded object-cover object-center"
           lazy
         />
+      </div>
 
-        <DiscountBadge :price="product.price!" />
+      <DiscountBadge :price="product.price!" />
+
+      <div
+        class="z-[2] absolute -top-4 -right-4 px-2 py-3.5 flex flex-col gap-2 rounded-3xl bg-white lg:-right-3 lg:py-2 lg-px-1.5 empty:hidden"
+      >
+        <slot name="add-to-list-handler"></slot>
+        <AddToCompare class="relative" v-if="$cfg.product_compare_enabled" :product="product" />
       </div>
     </div>
 
-    <div class="flex flex-col flex-grow pt-3 xl:pt-3">
-      <div class="mb-1.5 xl:inline-flex xl:flex-wrap xl:items-center xl:justify-between xl:mb-2">
-        <AddToCompare v-if="$cfg.product_compare_enabled" :product="product" class="mb-2 xl:my-0.5 xl:pr-0.5" />
-
-        <VcInStock
-          :is-in-stock="product.availabilityData?.isInStock"
-          :quantity="product.availabilityData?.availableQuantity"
-          class="inline-block my-0.5"
-        />
-      </div>
-
+    <div class="flex flex-col flex-grow pt-3 lg:pt-2.5">
       <!-- Product title -->
       <router-link
         :to="link"
-        class="text-[color:var(--color-link)] font-extrabold text-sm mb-3 flex-grow line-clamp-3 overflow-hidden cursor-pointer"
+        class="my-px h-12 text-18 text-[color:var(--color-link)] font-extrabold line-clamp-2 cursor-pointer lg:h-10 lg:text-14"
         :title="product.name"
       >
         {{ product.name }}
       </router-link>
 
-      <!-- Product props -->
-      <div class="hidden md:block text-sm pb-2">
-        <div class="flex items-baseline justify-between gap-x-2">
-          <div class="font-bold text-xs" v-t="'shared.catalog.product_card.product_sku_label'"></div>
-          <span class="text-[color:var(--color-link)] truncate">{{ product.code }}</span>
+      <div
+        class="grid grid-cols-2 gap-x-1.5 mt-2 w-full text-tooltip text-14 leading-4 lg:grid-cols-[max-content_1fr] lg:mt-0.5 lg:text-11 empty:hidden"
+      >
+        <!-- Product props -->
+        <template v-if="product.properties">
+          <template v-for="prop in product.properties.slice(0, 3)" :key="prop.id">
+            <div class="pt-0.5 pb-px font-bold capitalize">{{ prop.name.toLowerCase() }}:</div>
+            <div class="relative">
+              <div class="absolute inset-0 flex items-end pt-0.5 pb-px pl-1">
+                <div class="truncate">
+                  {{ prop.value }}
+                </div>
+              </div>
+            </div>
+          </template>
+        </template>
+
+        <!-- Raiting -->
+        <div class="pt-0.5 pb-px font-bold capitalize">
+          {{ $t("shared.catalog.product_card.product_rating") }}
         </div>
-      </div>
+        <div class="flex items-center gap-1 pt-0.5 pb-px pl-1">
+          <svg
+            class="shrink-0 w-3 h-3"
+            :class="{ 'text-status-success': true, 'text-status-warning': false, 'text-status-error': false }"
+          >
+            <use href="/static/images/cup.svg#main"></use>
+          </svg>
+          <div class="font-bold">4,3/5</div>
+        </div>
 
-      <!-- Product price -->
-      <div class="flex h-10 md:h-8 flex-col md:flex-row items-baseline justify-between text-sm mb-5 gap-x-2">
-        <div class="font-bold text-xs" v-t="'shared.catalog.product_card.price_label'"></div>
-        <VcItemPrice :value="product.price" />
+        <!-- Vendor -->
+        <template v-if="product.vendor">
+          <div class="pt-0.5 pb-px font-bold capitalize">
+            {{ $t("shared.catalog.product_card.product_vendor") }}
+          </div>
+          <div class="relative">
+            <div class="absolute inset-0 flex items-end pt-0.5 pb-px pl-1">
+              <div class="truncate text-link">{{ product.vendor.name }}</div>
+            </div>
+          </div>
+        </template>
       </div>
-
-      <slot name="cart-handler"></slot>
     </div>
+
+    <div class="grow"></div>
+
+    <!-- Product price -->
+    <div class="my-4 lg:my-3">
+      <VcItemPrice :variations="product.variations" :value="product.price" />
+    </div>
+
+    <slot name="cart-handler"></slot>
   </div>
 </template>
 

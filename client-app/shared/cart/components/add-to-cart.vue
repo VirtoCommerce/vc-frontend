@@ -10,37 +10,55 @@
       :class="{
         'border-[color:var(--color-danger)] focus:border-[color:var(--color-danger-hover)] z-10': !!errorMessage,
       }"
-      class="appearance-none rounded-l rounded-r-none flex-1 w-full text-base lg:text-sm -mr-px border border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9 min-w-0"
+      class="appearance-none rounded-l rounded-r-none flex-1 w-full text-base lg:text-sm -mr-px border border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9 min-w-0 text-center"
       @input="onInput"
       @keypress="onKeypress"
       @click="onClick"
     />
 
     <VcButton
-      class="!rounded-l-none !border uppercase px-3 !text-sm"
+      class="!rounded-l-none !border uppercase px-3 !text-13 min-w-[52%]"
       :is-outline="!countInCart"
       :is-waiting="loading"
       :is-disabled="disabled || !!errorMessage"
       :title="buttonText"
       @click="onChange"
     >
-      <span class="hidden xl:inline">
-        {{ buttonText }}
-      </span>
-      <i class="inline xl:hidden fas fa-shopping-cart" />
+      {{ buttonText }}
     </VcButton>
   </div>
 
   <!-- Info hint -->
-  <div v-if="errorMessage" class="text-xs text-[color:var(--color-danger)]">
-    {{ errorMessage }}
-  </div>
+  <VcTooltip v-if="errorMessage" :xOffset="28" placement="bottom-start" strategy="fixed">
+    <template #trigger>
+      <div class="pt-0.5 text-11 text-[color:var(--color-danger)] xs:line-clamp-1">
+        {{ errorMessage }}
+      </div>
+    </template>
 
-  <div v-else-if="countInCart" class="text-xs text-gray-400">
-    {{ $t("shared.cart.add_to_cart.errors.already_in_cart_message", [countInCart]) }}
-  </div>
+    <template #content>
+      <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5 w-52">
+        {{ errorMessage }}
+      </div>
+    </template>
+  </VcTooltip>
 
-  <div v-else class="mb-4"></div>
+  <div v-else class="h-2.5 lg:h-4"></div>
+
+  <div class="flex items-center gap-1 mt-1">
+    <VcInStock
+      :is-in-stock="product.availabilityData?.isInStock"
+      :quantity="product.availabilityData?.availableQuantity"
+    />
+
+    <div
+      v-if="countInCart > 0"
+      class="py-0.5 px-[0.677rem] bg-[color:var(--color-add-to-cart-in-cart-bg)] text-[color:var(--color-add-to-cart-in-cart)] whitespace-nowrap rounded-full text-[13px] leading-5 lg:py-px lg:px-[0.53rem] lg:text-[11px]"
+    >
+      <span class="inline-block font-bold text-center">{{ countInCart }}</span>
+      {{ $t("shared.cart.add_to_cart.errors.in_cart") }}
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">

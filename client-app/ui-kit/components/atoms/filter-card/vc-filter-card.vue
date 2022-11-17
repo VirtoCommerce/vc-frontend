@@ -2,11 +2,11 @@
   <div class="rounded shadow-sm">
     <div
       v-if="withHeader"
-      class="px-3.5 pt-2 pb-1.5 border font-extrabold text-13-title rounded-t bg-white"
+      class="px-3.5 pt-1.5 pb-1 border font-extrabold text-13-title rounded-t bg-white"
       :class="{ 'cursor-pointer': isCollapsible, 'rounded-b': collapsed }"
       @click="isCollapsible && (collapsed = !collapsed)"
     >
-      <div class="flex items-center pb-px">
+      <div class="flex items-center">
         <slot name="header">
           <div class="flex-grow uppercase text-[color:var(--color-filter-card-header)]">{{ title }}</div>
           <div v-if="isCollapsible" class="ml-3">

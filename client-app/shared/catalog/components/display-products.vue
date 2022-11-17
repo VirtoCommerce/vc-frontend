@@ -6,6 +6,9 @@
 
     <template v-else>
       <component :is="cardComponent" v-for="(item, index) in products" :key="item.id + index" :product="item">
+        <template #add-to-list-handler>
+          <slot name="add-to-list-handler" v-bind="{ item }" />
+        </template>
         <template #cart-handler>
           <slot name="cart-handler" v-bind="{ item }" />
         </template>

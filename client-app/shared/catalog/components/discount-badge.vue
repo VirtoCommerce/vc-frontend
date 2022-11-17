@@ -1,9 +1,19 @@
 <template>
   <div
     v-if="discount"
-    class="absolute z-[1] top-0 right-0 px-2 pt-1 pb-1.5 rounded-bl bg-[color:var(--color-sale-badge-bg)] text-white text-xs font-extrabold"
+    class="z-[1] absolute top-0 left-0 flex items-center py-1 px-2 rounded-tl rounded-br bg-[color:var(--color-sale-badge-bg)] text-white space-x-1.5 lg:px-1.5"
   >
-    {{ discount }}
+    <svg class="w-2.5 h-3" v-if="isHot">
+      <use href="/static/images/fire-solid.svg#main" />
+    </svg>
+    <span
+      class="text-13 font-extrabold lg:text-11"
+      :class="{
+        'hidden lg:block': isHot && viewMode === 'list',
+      }"
+    >
+      {{ discount }} {{ $t("shared.catalog.discount_badge.off") }}
+    </span>
   </div>
 </template>
 
@@ -17,9 +27,17 @@ const props = defineProps({
     type: Object as PropType<PriceType>,
     required: true,
   },
+  isHot: {
+    type: Boolean,
+    default: true,
+  },
+  viewMode: {
+    type: String,
+    default: "grid",
+  },
 });
 
 const discount = computedEager<string | null>(() =>
-  props.price.discountPercent >= 0.05 ? `-${Math.round(props.price.discountPercent * 100)}%` : null
+  props.price.discountPercent >= 0.05 ? `${Math.round(props.price.discountPercent * 100)}%` : null
 );
 </script>

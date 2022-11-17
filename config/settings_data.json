@@ -133,7 +133,9 @@
       "color_add_to_cart_in_cart": "#757575",
       "color_product_add_to_icon": "#D9D5CE",
       "color_product_add_to_icon_active": "#F0AD4E",
-      "color_product_outline": "#EDEDED"
+      "color_product_outline": "#EDEDED",
+      "color_price_current": "#1F222C",
+      "color_price_old": "#9D9991"
     },
     "Watermelon": {
       "page_title_with_store_name": true,
@@ -212,7 +214,6 @@
       "color_success_hover": "#439943",
       "color_warning": "#44d079",
       "color_warning_hover": "#EEAA00",
-      "color_price": "#3C763D",
       "color_sale_badge_bg": "rgba(240, 60, 3, 1)",
       "color_mobile_menu_bg": "#0f5f1b",
       "color_mobile_menu_link": "#198411",
