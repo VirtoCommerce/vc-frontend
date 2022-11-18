@@ -284,7 +284,7 @@
                   </VcButton>
 
                   <router-link
-                    class="flex items-center gap-1 mt-5 py-1 text-14 text-[color:var(--color-link)] lg:text-11"
+                    class="flex items-center gap-1 mt-2 py-1 text-14 text-[color:var(--color-link)] lg:mt-5 lg:text-11"
                     target="_blank"
                     :to="productsRoutes[item.id]"
                   >
