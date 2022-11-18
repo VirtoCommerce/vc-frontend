@@ -156,7 +156,7 @@
 
     <!-- Product price -->
     <div class="my-4 lg:my-3">
-      <VcItemPrice :variations="product.variations" :value="product.price" />
+      <VcItemPriceCatalog :variations="product.variations" :value="product.price" />
     </div>
 
     <slot name="cart-handler"></slot>

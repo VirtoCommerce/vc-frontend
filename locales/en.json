@@ -55,6 +55,7 @@
       "false_property": "No"
     },
     "suffixes": {
+      "from": "From",
       "per_item": " per item",
       "product_count_in_stock": "in stock"
     },

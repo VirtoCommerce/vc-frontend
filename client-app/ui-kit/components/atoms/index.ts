@@ -21,6 +21,7 @@ export { default as VcPagination } from "./pagination/vc-pagination.vue";
 export { default as VcPopover } from "./popover/vc-popover.vue";
 export { default as VcPopupSidebar } from "./popup-sidebar/vc-popup-sidebar.vue";
 export { default as VcPriceDisplay } from "./price-display/vc-price-display.vue";
+export { default as VcPriceDisplayCatalog } from "./price-display-catalog/vc-price-display-catalog.vue";
 export { default as VcRadioButton } from "./radio-button/vc-radio-button.vue";
 export { default as VcScrollTopButton } from "./scroll-top-button/vc-scroll-top-button.vue";
 export { default as VcSection } from "./section/vc-section.vue";
