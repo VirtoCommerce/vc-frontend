@@ -7,7 +7,7 @@
     {
       "id": "text",
       "label": "Content",
-      "type": "text"
+      "type": "markdown"
     }
   ]
 }
