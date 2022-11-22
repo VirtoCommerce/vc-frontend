@@ -169,7 +169,7 @@
     </div>
 
     <div class="flex flex-col" v-if="product.hasVariations">
-      <VcButton :to="productsRoutes[product.id]" :isOutline="true" class="w-full uppercase !text-13 !border">
+      <VcButton :to="productsRoutes[product.id]" :is-outline="true" class="w-full uppercase !text-13 !border">
         {{ $t("pages.catalog.variations_button", [product.variations?.length]) }}
       </VcButton>
 
