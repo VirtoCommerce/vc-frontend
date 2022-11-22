@@ -8,3 +8,4 @@ export { default as WishlistProductItem } from "./wishlist-product-item.vue";
 export { default as WishlistProductItemSkeleton } from "./wishlist-product-item-skeleton.vue";
 export { default as DeleteWishlistProductDialog } from "./delete-wishlist-product.vue";
 export { default as UnsuccessfulCreateWishlistDialog } from "./unsuccessful-create-list-dialog.vue";
+export { default as AddToList } from "./add-to-list.vue";
