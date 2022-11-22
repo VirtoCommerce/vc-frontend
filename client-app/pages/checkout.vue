@@ -506,6 +506,7 @@
               :title="$t('shared.checkout.quote.title')"
               header-classes="px-6 py-3"
               content-classes="px-6 pt-4 pb-5"
+              shadow
             >
               <p class="mb-5 text-xs font-normal text-gray-400" v-t="'shared.checkout.quote.text'" />
 

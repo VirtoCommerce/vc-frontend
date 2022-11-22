@@ -126,14 +126,14 @@
 </template>
 
 <script setup lang="ts">
-import { useProducts, useProductsRoutes } from "@/shared/catalog";
-import { AddToCart } from "@/shared/cart";
-import _ from "lodash";
 import { onMounted, ref, watch } from "vue";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { useCompareProducts } from "@/shared/compare";
 import { useI18n } from "vue-i18n";
-import { usePageHead } from "@/core/composables";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import _ from "lodash";
+import { usePageHead, useProductsRoutes } from "@/core";
+import { useProducts } from "@/shared/catalog";
+import { AddToCart } from "@/shared/cart";
+import { useCompareProducts } from "@/shared/compare";
 
 const { t } = useI18n();
 const { fetchProducts, products } = useProducts();

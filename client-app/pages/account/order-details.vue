@@ -2,7 +2,7 @@
   <div v-if="order">
     <BackButtonInHeader v-if="isMobile && !isNew" @click="$router.back()" />
 
-    <VcBreadcrumbs v-if="!isMobile" :items="breadcrumbs" class="mx-5 md:mx-0" />
+    <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block mx-5 md:mx-0" />
 
     <!-- Title block -->
     <div class="flex justify-between items-center mx-5 md:mx-0 -mb-3">
@@ -94,16 +94,16 @@
         <!-- Order summary -->
         <OrderSummary v-if="order" :cart="order" class="mb-5" />
 
-        <VcButton
-          v-if="!isNew"
-          :isDisabled="reorderAllButtonDisabled"
-          class="uppercase w-full mb-5"
-          @click="openReorderPopup"
-        >
+        <VcButton v-if="!isNew" :is-waiting="loadingAddItemsToCart" class="uppercase w-full mb-5" @click="reorderItems">
           {{ $t("pages.account.order_details.reorder_all_button") }}
         </VcButton>
 
-        <VcCard :title="$t('pages.account.order_details.shipping_address_card.title')" class="mb-5" is-collapsible>
+        <VcCard
+          :title="$t('pages.account.order_details.shipping_address_card.title')"
+          class="mb-5"
+          is-collapsible
+          shadow
+        >
           <div class="flex flex-col space-y-1.5 text-sm">
             <span class="font-extrabold">{{ deliveryAddress?.firstName }} {{ deliveryAddress?.lastName }}</span>
             <p>
@@ -124,7 +124,12 @@
           </div>
         </VcCard>
 
-        <VcCard :title="$t('pages.account.order_details.shipping_method_card.title')" class="mb-5" is-collapsible>
+        <VcCard
+          :title="$t('pages.account.order_details.shipping_method_card.title')"
+          class="mb-5"
+          is-collapsible
+          shadow
+        >
           <div class="flex items-center space-x-4 text-sm">
             <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" lazy />
 
@@ -136,7 +141,12 @@
           </div>
         </VcCard>
 
-        <VcCard :title="$t('pages.account.order_details.payment_details_card.title')" class="mb-5" is-collapsible>
+        <VcCard
+          :title="$t('pages.account.order_details.payment_details_card.title')"
+          class="mb-5"
+          is-collapsible
+          shadow
+        >
           <div class="flex flex-col space-y-1.5 text-sm">
             <p>
               <span class="font-extrabold">{{
@@ -160,7 +170,12 @@
           </div>
         </VcCard>
 
-        <VcCard :title="$t('pages.account.order_details.billing_address_card.title')" class="mb-5" is-collapsible>
+        <VcCard
+          :title="$t('pages.account.order_details.billing_address_card.title')"
+          class="mb-5"
+          is-collapsible
+          shadow
+        >
           <div class="flex flex-col space-y-1.5 text-sm">
             <span class="font-extrabold">{{ billingAddress?.firstName }} {{ billingAddress?.lastName }}</span>
             <p>
@@ -196,19 +211,21 @@
       </div>
     </div>
   </div>
+
+  <VcLoaderOverlay v-else no-bg />
 </template>
 
 <script setup lang="ts">
-import { OrderSummary, ProductCard, AcceptedGifts } from "@/shared/checkout";
 import { computed, PropType, ref, watchEffect } from "vue";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { BackButtonInHeader } from "@/shared/layout";
-import { ReorderInfo, useUserOrder } from "@/shared/account";
-import _ from "lodash";
-import { usePopup } from "@/shared/popup";
-import { useProducts } from "@/shared/catalog";
 import { useI18n } from "vue-i18n";
-import { usePageHead } from "@/core/composables";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { usePageHead } from "@/core";
+import { InputNewBulkItemType } from "@/xapi";
+import { AcceptedGifts, OrderSummary, ProductCard } from "@/shared/checkout";
+import { BackButtonInHeader } from "@/shared/layout";
+import { useUserOrder } from "@/shared/account";
+import { usePopup } from "@/shared/popup";
+import { AddBulkItemsToCartResultsPopup, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
 
 const props = defineProps({
   orderId: {
@@ -223,8 +240,8 @@ const props = defineProps({
 });
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { itemsPerPage, pages, order, deliveryAddress, billingAddress, loadOrder, clearOrder } = useUserOrder();
-const { fetchProducts, products } = useProducts();
+const { itemsPerPage, pages, order, deliveryAddress, billingAddress, fetchOrder, clearOrder } = useUserOrder();
+const { addBulkItemsToCart } = useCart();
 const { openPopup } = usePopup();
 const { t } = useI18n();
 
@@ -234,7 +251,7 @@ usePageHead({
 
 const isMobile = breakpoints.smaller("lg");
 const page = ref(1);
-const reorderAllButtonDisabled = ref(false);
+const loadingAddItemsToCart = ref(false);
 
 const isNew = computed<boolean>(() => props.new === "true");
 
@@ -259,35 +276,27 @@ function printOrder() {
   window.print();
 }
 
-async function openReorderPopup() {
-  reorderAllButtonDisabled.value = true;
-  const orderItemsInfo = order.value?.items
-    .filter((item) => !item.isGift)
-    .map((item) => {
-      return _.pick(item, "productId", "quantity", "id", "sku", "name", "imageUrl");
-    });
+async function reorderItems() {
+  const items = order.value!.items!.filter((item) => !item.isGift);
+  const inputBulkItems = items.map<InputNewBulkItemType>((item) => ({ productSku: item.sku, quantity: item.quantity }));
 
-  const productIds = _.map(orderItemsInfo, (item) => {
-    return item.productId;
-  });
+  loadingAddItemsToCart.value = true;
 
-  await fetchProducts({ itemsPerPage: 6, productIds: productIds });
+  const resultItems = await addBulkItemsToCart(inputBulkItems);
 
   openPopup({
-    component: ReorderInfo,
+    component: AddBulkItemsToCartResultsPopup,
     props: {
-      productItems: products.value,
-      orderItemsInfo: orderItemsInfo,
-      onPopupClose() {
-        reorderAllButtonDisabled.value = false;
-      },
+      items: getItemsForAddBulkItemsToCartResultsPopup(items, resultItems),
     },
   });
+
+  loadingAddItemsToCart.value = false;
 }
 
 watchEffect(() => {
   clearOrder();
-  loadOrder({ id: props.orderId });
+  fetchOrder({ id: props.orderId });
 });
 
 /**

@@ -56,7 +56,12 @@
           <!-- Order summary -->
           <OrderSummary :cart="order" class="mb-5"></OrderSummary>
 
-          <VcCard :title="$t('shared.checkout.thank_you.shipping_address_card.title')" is-collapsible class="mb-5">
+          <VcCard
+            :title="$t('shared.checkout.thank_you.shipping_address_card.title')"
+            class="mb-5"
+            is-collapsible
+            shadow
+          >
             <div class="flex flex-col space-y-1.5 text-sm">
               <span class="font-extrabold"
                 >{{ order.shipments?.[0]?.deliveryAddress?.firstName }}
@@ -80,7 +85,12 @@
             </div>
           </VcCard>
 
-          <VcCard :title="$t('shared.checkout.thank_you.shipping_method_card.title')" is-collapsible class="mb-5">
+          <VcCard
+            :title="$t('shared.checkout.thank_you.shipping_method_card.title')"
+            class="mb-5"
+            is-collapsible
+            shadow
+          >
             <div class="flex items-center space-x-4 text-sm">
               <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" lazy />
               <span
@@ -91,14 +101,19 @@
             </div>
           </VcCard>
 
-          <VcCard :title="$t('shared.checkout.thank_you.payment_method_card.title')" is-collapsible class="mb-5">
+          <VcCard :title="$t('shared.checkout.thank_you.payment_method_card.title')" class="mb-5" is-collapsible shadow>
             <div class="flex items-center space-x-4 text-sm">
               <VcImage src="/static/images/checkout/invoice.svg" class="h-12 w-12" lazy />
               <span class="overflow-x-hidden break-words">{{ order.inPayments?.[0]?.gatewayCode }}</span>
             </div>
           </VcCard>
 
-          <VcCard :title="$t('shared.checkout.thank_you.billing_address_card.title')" is-collapsible class="mb-5">
+          <VcCard
+            :title="$t('shared.checkout.thank_you.billing_address_card.title')"
+            class="mb-5"
+            is-collapsible
+            shadow
+          >
             <div class="flex flex-col space-y-1.5 text-sm">
               <span class="font-extrabold"
                 >{{ order.inPayments?.[0]?.billingAddress?.firstName }}

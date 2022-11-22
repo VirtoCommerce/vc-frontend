@@ -46,7 +46,9 @@
                   <span class="flex-grow">{{ title }}</span>
                 </slot>
 
-                <i v-if="!isPersistent" class="fas fa-times text-2xl cursor-pointer" @click="close"></i>
+                <button v-if="!isPersistent" class="py-2 px-4 -my-3 -mr-4" @click="close">
+                  <i class="fas fa-times text-2xl" />
+                </button>
               </DialogTitle>
 
               <!-- Dialog contents -->
