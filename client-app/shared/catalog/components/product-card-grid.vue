@@ -102,7 +102,6 @@
           <router-link
             :to="link"
             class="my-px h-12 text-18 text-[color:var(--color-link)] font-extrabold line-clamp-2 cursor-pointer lg:h-10 lg:text-14"
-            :title="product.name"
           >
             {{ product.name }}
           </router-link>
