@@ -1,59 +1,146 @@
 <template>
-  <div class="flex items-center justify-between bg-white rounded border p-4 shadow-sm hover:shadow-lg space-x-6">
-    <div class="flex flex-grow items-center">
+  <div
+    class="vc-product-card-list grid gap-x-3.5 px-4 pt-4 pb-5 bg-white lg:outline lg:outline-offset-0 lg:outline-1 lg:outline-[color:var(--color-product-outline)] lg:py-3.5 lg:rounded lg:place-items-center lg:shadow-t-3sm lg:hover:shadow-lg"
+  >
+    <div class="vc-product-card-list__mobile-left sm:contents">
       <!-- Product image -->
-      <router-link :to="link" class="cursor-pointer">
-        <div class="border border-gray-100 w-20 h-20 flex-shrink-0 mr-4">
-          <VcImage
-            :src="product.imgSrc"
-            :alt="product.name"
-            size-suffix="md"
-            class="w-full h-full object-cover object-center"
-            lazy
-          />
-        </div>
+      <router-link
+        :to="link"
+        class="vc-product-card-list__img relative block w-[72px] h-[72px] xl:w-[86px] xl:h-[86px]"
+      >
+        <VcImage
+          :src="product.imgSrc"
+          :alt="product.name"
+          size-suffix="md"
+          class="w-full h-full rounded object-cover object-center"
+          lazy
+        />
+        <DiscountBadge :price="product.price!" size="sm" />
       </router-link>
 
-      <div>
-        <!-- Product title -->
+      <div
+        class="vc-product-card-list__buttons flex justify-center gap-3.5 mt-3 w-full sm:justify-start sm:place-self-end lg:mt-2 lg:gap-3"
+      >
+        <AddToList customClass="w-5 h-5 lg:w-4 lg:h-4" :product="product" tooltip-placement="bottom" />
+        <AddToCompare
+          customClass="w-5 h-5 lg:w-4 lg:h-4"
+          v-if="$cfg.product_compare_enabled"
+          :product="product"
+          tooltip-placement="bottom"
+        />
+      </div>
+    </div>
+
+    <!-- Product title -->
+    <VcTooltip class="w-full" placement="bottom" strategy="fixed">
+      <template #trigger>
         <router-link
           :to="link"
-          class="text-[color:var(--color-link)] font-extrabold text-sm mb-3 flex-grow line-clamp-2 overflow-hidden"
-          :title="product.name"
+          class="vc-product-card-list__name w-full text-[color:var(--color-link)] font-extrabold text-sm flex-grow sm:line-clamp-3 sm:overflow-hidden lg:h-[60px] lg:mt-1 2xl:pr-2"
         >
           {{ product.name }}
         </router-link>
+      </template>
 
-        <AddToCompare v-if="$cfg.product_compare_enabled" :product="product" class="inline-flex" />
-      </div>
-    </div>
-    <div class="flex items-start flex-shrink-0 space-x-6">
+      <template #content>
+        <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5">
+          {{ product.name }}
+        </div>
+      </template>
+    </VcTooltip>
+
+    <div
+      class="vc-product-card-list__properties grid grid-cols-[max-content_1fr] gap-x-1.5 mt-2 w-full text-tooltip text-14 leading-4 lg:mt-0.5 lg:text-xs empty:mt-0"
+    >
       <!-- Product props -->
-      <div class="hidden xl:block text-sm flex-shrink-0 w-20">
-        <div class="font-bold text-xs" v-t="'shared.catalog.product_card.product_sku_label'"></div>
-        <div class="text-[color:var(--color-link)] truncate">{{ product.code }}</div>
-      </div>
+      <template v-if="product.properties && !isSmallScreen">
+        <template v-for="prop in product.properties.slice(0, 3)" :key="prop.id">
+          <div class="font-bold capitalize">{{ prop.name.toLowerCase() }}:</div>
+          <div class="relative">
+            <div class="absolute inset-0 flex items-end pb-px pl-1">
+              <div class="truncate">
+                {{ prop.value }}
+              </div>
+            </div>
+          </div>
+        </template>
+      </template>
 
-      <!-- Product price -->
-      <div class="text-sm flex-shrink-0 w-28">
-        <div class="font-bold text-xs" v-t="'shared.catalog.product_card.price_label'"></div>
-        <VcItemPrice :value="product.price"></VcItemPrice>
-      </div>
+      <!-- Raiting -->
+      <template v-if="false">
+        <div class="font-bold capitalize">
+          {{ $t("shared.catalog.product_card.product_rating") }}
+        </div>
+        <div class="flex items-center gap-1 pl-1">
+          <svg
+            class="shrink-0 w-3 h-3"
+            :class="{ 'text-status-success': true, 'text-status-warning': false, 'text-status-error': false }"
+          >
+            <use href="/static/images/cup.svg#main"></use>
+          </svg>
+          <div class="font-bold">4,3/5</div>
+        </div>
+      </template>
 
-      <!-- VcCard widget -->
-      <div class="flex-shrink-0 w-48">
+      <!-- Vendor -->
+      <template v-if="product.vendor">
+        <div class="font-bold capitalize">
+          {{ $t("shared.catalog.product_card.product_vendor") }}
+        </div>
+        <div class="grow relative">
+          <div class="absolute inset-0 flex pl-1">
+            <div class="truncate text-link">{{ product.vendor.name }}</div>
+          </div>
+        </div>
+      </template>
+    </div>
+
+    <div class="vc-product-card-list__price mt-2 w-full sm:mt-0 2xl:pr-2">
+      <VcItemPriceCatalog class="lg:flex-col lg:gap-0" :variations="product.variations" :value="product.price" />
+    </div>
+
+    <div class="vc-product-card-list__add-to-cart flex flex-col gap-2 mt-3 w-full sm:mt-0">
+      <template v-if="product.hasVariations">
+        <VcButton :to="productsRoutes[product.id]" :is-outline="true" class="w-full uppercase !text-13 !border">
+          {{ $t("pages.catalog.variations_button", [product.variations?.length]) }}
+        </VcButton>
+
+        <router-link
+          class="flex items-center gap-1 text-14 text-[color:var(--color-link)] lg:mt-1 lg:text-11"
+          target="_blank"
+          :to="productsRoutes[product.id]"
+        >
+          <svg class="shrink-0 w-3 h-3 text-primary lg:w-2.5 lg:h-2.5">
+            <use href="/static/images/link.svg#main"></use>
+          </svg>
+          <span class="truncate" v-t="'pages.catalog.show_on_a_separate_page'"></span>
+        </router-link>
+      </template>
+
+      <template v-else>
         <slot name="cart-handler"></slot>
-      </div>
+
+        <div class="flex items-center gap-1 lg:mt-0.5">
+          <VcInStock
+            :is-in-stock="product.availabilityData?.isInStock"
+            :quantity="product.availabilityData?.availableQuantity"
+          />
+
+          <VcCountInCart :productId="product.id" />
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, PropType } from "vue";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { AddToCompare } from "@/shared/compare";
+import { AddToList } from "@/shared/wishlists";
 import { Product } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";
-import { getProductRoute } from "@/shared/catalog";
+import { getProductRoute, DiscountBadge, useProductsRoutes } from "@/shared/catalog";
 
 const props = defineProps({
   product: {
@@ -62,5 +149,83 @@ const props = defineProps({
   },
 });
 
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const productsRoutes = useProductsRoutes([props.product]);
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product));
+
+const isSmallScreen = breakpoints.smaller("xl");
 </script>
+
+<style scoped lang="scss">
+.vc-product-card-list {
+  grid-template-columns: 72px 1fr;
+  grid-template-areas:
+    "mobile-left name"
+    "mobile-left properties"
+    "mobile-left price"
+    "mobile-left add-to-cart"
+    "mobile-left .";
+
+  @media (screen and min-width: 640px) {
+    grid-template-columns: 72px 1fr 40%;
+    grid-template-areas:
+      "img name price"
+      "img properties add-to-cart"
+      "img buttons add-to-cart";
+  }
+
+  @media (screen and min-width: 991px) {
+    grid-template-columns: 86px 1fr 126px 207px;
+    grid-template-areas:
+      "img name price add-to-cart"
+      "img properties price add-to-cart"
+      "img buttons price add-to-cart"
+      "img . price add-to-cart";
+  }
+
+  @media (screen and min-width: 1024px) {
+    grid-template-columns: 72px 1fr 126px 207px;
+    grid-template-areas:
+      "img name price add-to-cart"
+      "img properties price add-to-cart"
+      "img buttons price add-to-cart"
+      "img . price add-to-cart";
+  }
+
+  @media (screen and min-width: 1280px) {
+    grid-template-columns: 86px 1fr 31.5% 140px 207px;
+    grid-template-areas:
+      "img name properties price add-to-cart"
+      "img buttons properties price add-to-cart"
+      "img . properties price add-to-cart";
+  }
+
+  &__mobile-left {
+    grid-area: mobile-left;
+  }
+
+  &__img {
+    grid-area: img;
+  }
+
+  &__buttons {
+    grid-area: buttons;
+  }
+
+  &__name {
+    grid-area: name;
+  }
+
+  &__properties {
+    grid-area: properties;
+  }
+
+  &__price {
+    grid-area: price;
+  }
+
+  &__add-to-cart {
+    grid-area: add-to-cart;
+  }
+}
+</style>

@@ -1,20 +1,19 @@
 <template>
-  <VcTooltip placement="left" strategy="fixed">
+  <VcTooltip :placement="tooltipPlacement" strategy="fixed">
     <template #trigger>
-      <div>
-        <label v-if="workaround" class="cursor-pointer">
-          <svg
-            class="w-6 h-6 lg:w-4 lg:h-4"
-            :class="{
-              'text-[color:var(--color-product-add-to-icon)]': !isInCompareList,
-              'text-[color:var(--color-product-add-to-icon-active)]': isInCompareList,
-            }"
-          >
-            <use href="/static/images/compare.svg#main"></use>
-          </svg>
-          <input type="checkbox" class="hidden" :model-value="isInCompareList" @change="toggle" />
-        </label>
-      </div>
+      <label v-if="workaround" class="cursor-pointer">
+        <svg
+          :class="[
+            customClass,
+            isInCompareList
+              ? 'text-[color:var(--color-product-icon-active)]'
+              : 'text-[color:var(--color-product-icon)]',
+          ]"
+        >
+          <use href="/static/images/compare.svg#main"></use>
+        </svg>
+        <input type="checkbox" class="hidden" :model-value="isInCompareList" @change="toggle" />
+      </label>
     </template>
 
     <template #content>
@@ -33,6 +32,14 @@ const props = defineProps({
   product: {
     type: Object as PropType<Product>,
     required: true,
+  },
+  customClass: {
+    type: String,
+    default: "w-6 h-6 lg:w-4 lg:h-4",
+  },
+  tooltipPlacement: {
+    type: String,
+    default: "left",
   },
 });
 

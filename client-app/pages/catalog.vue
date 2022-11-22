@@ -142,11 +142,7 @@
             </div>
 
             <!-- View options -->
-            <ViewMode
-              v-if="!isMobileSidebar"
-              v-model:mode="savedViewMode"
-              class="inline-flex ml-3 lg:order-1 lg:ml-0 lg:mr-auto"
-            />
+            <ViewMode v-model:mode="savedViewMode" class="inline-flex ml-3 lg:order-1 lg:ml-0 lg:mr-auto" />
 
             <!-- Branch availability -->
             <div
@@ -245,68 +241,17 @@
           <template v-if="products.length || loading">
             <DisplayProducts
               :loading="loading"
-              :view-mode="isMobile ? 'grid' : savedViewMode"
+              :view-mode="savedViewMode"
               :items-per-page="itemsPerPage"
               :products="products"
               :class="
-                savedViewMode === 'list' && !isMobile
-                  ? 'space-y-5'
+                savedViewMode === 'list'
+                  ? '-mx-5 divide-y lg:divide-y-0 lg:mx-0 lg:space-y-3.5'
                   : 'grid gap-6 xs:grid-cols-2 md:grid-cols-3 lg:gap-5 xl:grid-cols-4'
               "
             >
-              <template #add-to-list-handler="{ item }">
-                <VcTooltip placement="left" strategy="fixed">
-                  <template #trigger>
-                    <button class="block disabled:opacity-40" :disabled="!isAuthenticated" @click="addToList(item)">
-                      <svg
-                        class="w-6 h-6 lg:w-4 lg:h-4"
-                        :class="{
-                          'text-[color:var(--color-product-add-to-icon)]': true,
-                          'text-[color:var(--color-product-add-to-icon-active)]': false,
-                        }"
-                      >
-                        <use href="/static/images/star.svg#main"></use>
-                      </svg>
-                    </button>
-                  </template>
-
-                  <template #content>
-                    <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5">
-                      {{ $t("pages.catalog.wishlist_tooltip") }}
-                    </div>
-                  </template>
-                </VcTooltip>
-              </template>
               <template #cart-handler="{ item }">
-                <div class="flex flex-col" v-if="item.hasVariations">
-                  <VcButton :to="productsRoutes[item.id]" :isOutline="true" class="w-full uppercase !text-13 !border">
-                    {{ $t("pages.catalog.variations_button", [item.variations?.length]) }}
-                  </VcButton>
-
-                  <router-link
-                    class="flex items-center gap-1 mt-2 py-1 text-14 text-[color:var(--color-link)] lg:mt-5 lg:text-11"
-                    target="_blank"
-                    :to="productsRoutes[item.id]"
-                  >
-                    <svg class="shrink-0 w-3 h-3 text-primary lg:w-2.5 lg:h-2.5">
-                      <use href="/static/images/link.svg#main"></use>
-                    </svg>
-                    <span class="truncate" v-t="'pages.catalog.show_on_a_separate_page'"></span>
-                  </router-link>
-                </div>
-
-                <template v-else>
-                  <AddToCart :product="item" :reservedSpace="true" />
-
-                  <div class="flex items-center gap-1 mt-1">
-                    <VcInStock
-                      :is-in-stock="item.availabilityData?.isInStock"
-                      :quantity="item.availabilityData?.availableQuantity"
-                    />
-
-                    <VcCountInCart :productId="item.id" />
-                  </div>
-                </template>
+                <AddToCart :product="item" :reserved-space="savedViewMode === 'grid'" />
               </template>
             </DisplayProducts>
 
@@ -406,8 +351,6 @@ import {
 import { BranchesDialog, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { AddToCart } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
-import { AddToWishlistsDialog } from "@/shared/wishlists";
-import { useUser } from "@/shared/account";
 import { Product } from "@/xapi/types";
 
 const FILTERS_RESET_TIMEOUT_IN_MS = 500;
@@ -418,7 +361,6 @@ const props = defineProps({
 });
 
 const { openPopup } = usePopup();
-const { isAuthenticated } = useUser();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { t } = useI18n();
 const { loading: loadingCategories, categoryTree } = useCategories();
@@ -671,19 +613,6 @@ function openBranchesDialog(fromMobileFilter: boolean) {
           savedBranches.value = branches;
         }
       },
-    },
-  });
-}
-
-function addToList(product: Product) {
-  if (!isAuthenticated.value) {
-    return;
-  }
-
-  openPopup({
-    component: AddToWishlistsDialog,
-    props: {
-      product: product,
     },
   });
 }

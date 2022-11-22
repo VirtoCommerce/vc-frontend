@@ -88,22 +88,32 @@
       <DiscountBadge :price="product.price!" />
 
       <div
-        class="z-[2] absolute -top-4 -right-4 px-2 py-3.5 flex flex-col gap-2 rounded-3xl bg-white lg:-right-3 lg:py-2 lg-px-1.5 empty:hidden"
+        class="z-[2] absolute -top-4 -right-4 px-2 py-3.5 flex flex-col gap-2 rounded-3xl bg-white lg:-right-3 lg:py-2 lg:px-1.5 empty:hidden"
       >
-        <slot name="add-to-list-handler"></slot>
+        <AddToList :product="product" />
         <AddToCompare class="relative" v-if="$cfg.product_compare_enabled" :product="product" />
       </div>
     </div>
 
     <div class="flex flex-col flex-grow pt-3 lg:pt-2.5">
       <!-- Product title -->
-      <router-link
-        :to="link"
-        class="my-px h-12 text-18 text-[color:var(--color-link)] font-extrabold line-clamp-2 cursor-pointer lg:h-10 lg:text-14"
-        :title="product.name"
-      >
-        {{ product.name }}
-      </router-link>
+      <VcTooltip placement="bottom" strategy="fixed">
+        <template #trigger>
+          <router-link
+            :to="link"
+            class="my-px h-12 text-18 text-[color:var(--color-link)] font-extrabold line-clamp-2 cursor-pointer lg:h-10 lg:text-14"
+            :title="product.name"
+          >
+            {{ product.name }}
+          </router-link>
+        </template>
+
+        <template #content>
+          <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5">
+            {{ product.name }}
+          </div>
+        </template>
+      </VcTooltip>
 
       <div
         class="grid grid-cols-2 gap-x-1.5 mt-2 w-full text-tooltip text-14 leading-4 lg:grid-cols-[max-content_1fr] lg:mt-0.5 lg:text-11 empty:hidden"
@@ -159,7 +169,35 @@
       <VcItemPriceCatalog :variations="product.variations" :value="product.price" />
     </div>
 
-    <slot name="cart-handler"></slot>
+    <div class="flex flex-col" v-if="product.hasVariations">
+      <VcButton :to="productsRoutes[product.id]" :isOutline="true" class="w-full uppercase !text-13 !border">
+        {{ $t("pages.catalog.variations_button", [product.variations?.length]) }}
+      </VcButton>
+
+      <router-link
+        class="flex items-center gap-1 mt-2 py-1 text-14 text-[color:var(--color-link)] lg:mt-5 lg:text-11"
+        target="_blank"
+        :to="productsRoutes[product.id]"
+      >
+        <svg class="shrink-0 w-3 h-3 text-primary lg:w-2.5 lg:h-2.5">
+          <use href="/static/images/link.svg#main"></use>
+        </svg>
+        <span class="truncate" v-t="'pages.catalog.show_on_a_separate_page'"></span>
+      </router-link>
+    </div>
+
+    <template v-else>
+      <slot name="cart-handler"></slot>
+
+      <div class="flex items-center gap-1 mt-1">
+        <VcInStock
+          :is-in-stock="product.availabilityData?.isInStock"
+          :quantity="product.availabilityData?.availableQuantity"
+        />
+
+        <VcCountInCart :productId="product.id" />
+      </div>
+    </template>
   </div>
 </template>
 
@@ -169,9 +207,10 @@ import { Pagination, Navigation, Lazy } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/vue"; // eslint-disable-line import/no-unresolved
 import { Swiper as SwiperInstance } from "swiper/types";
 import { AddToCompare } from "@/shared/compare";
+import { AddToList } from "@/shared/wishlists";
 import { Product } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";
-import { getProductRoute, DiscountBadge } from "@/shared/catalog";
+import { getProductRoute, DiscountBadge, useProductsRoutes } from "@/shared/catalog";
 
 const props = defineProps({
   product: {
@@ -180,6 +219,7 @@ const props = defineProps({
   },
 });
 
+const productsRoutes = useProductsRoutes([props.product]);
 const swiperInstance = ref<SwiperInstance>();
 const swiperBulletsState = ref<boolean[]>([true, false, false]);
 
