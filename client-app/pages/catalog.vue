@@ -345,13 +345,11 @@ import {
   ProductsFiltersSidebar,
   ProductsSearchParams,
   useProducts,
-  useProductsRoutes,
   ViewMode,
 } from "@/shared/catalog";
 import { BranchesDialog, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { AddToCart } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
-import { Product } from "@/xapi/types";
 
 const FILTERS_RESET_TIMEOUT_IN_MS = 500;
 const watchStopHandles: WatchStopHandle[] = [];
@@ -394,7 +392,6 @@ usePageHead({
 });
 
 const route = useRoute();
-const productsRoutes = useProductsRoutes(products);
 const savedViewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
 const savedInStock = useLocalStorage<boolean>("viewInStockProducts", true);
 const savedBranches = useLocalStorage<string[]>(FFC_LOCAL_STORAGE, []);
@@ -416,7 +413,6 @@ const facetsQueryParam = useRouteQueryParam<string>(QueryParamName.Facets, {
   defaultValue: "",
 });
 
-const isMobile = breakpoints.smaller("md");
 const isMobileSidebar = breakpoints.smaller("lg");
 
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
