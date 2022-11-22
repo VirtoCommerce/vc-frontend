@@ -1,6 +1,7 @@
-import { ValidationErrorType } from "@/xapi";
+import { OrderLineItemType, ValidationErrorType } from "@/xapi";
+import { ItemForAddBulkItemsToCartResultsPopup, OutputBulkItemType } from "@/shared/cart";
 
-export function getCartLineItemValidationErrorsGroupBySKU(
+export function getLineItemValidationErrorsGroupedBySKU(
   errors: ValidationErrorType[] = []
 ): Record<string, ValidationErrorType[]> {
   const result: Record<string, ValidationErrorType[]> = {};
@@ -13,4 +14,24 @@ export function getCartLineItemValidationErrorsGroupBySKU(
   });
 
   return result;
+}
+
+export function getItemsForAddBulkItemsToCartResultsPopup(
+  inputItems: OrderLineItemType[],
+  resultItems: OutputBulkItemType[]
+): ItemForAddBulkItemsToCartResultsPopup[] {
+  const dictionaryOfErrorsGroupedBySKU: Record<string, ValidationErrorType[] | undefined> = {};
+
+  resultItems.forEach((item) => {
+    dictionaryOfErrorsGroupedBySKU[item.productSku] = item.errors;
+  });
+
+  return inputItems.map<ItemForAddBulkItemsToCartResultsPopup>((item) => ({
+    productId: item.productId!,
+    name: item.name!,
+    sku: item.sku!,
+    quantity: item.quantity!,
+    slug: item.product!.slug,
+    errors: dictionaryOfErrorsGroupedBySKU[item.sku!],
+  }));
 }

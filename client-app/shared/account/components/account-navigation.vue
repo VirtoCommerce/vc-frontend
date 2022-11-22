@@ -1,5 +1,5 @@
 <template>
-  <VcCard :title="$t('shared.account.navigation.main_title')">
+  <VcCard :title="$t('shared.account.navigation.main_title')" shadow>
     <div class="flex flex-col">
       <AccountNavigationLink
         :to="{ name: 'Dashboard' }"
@@ -60,7 +60,7 @@
     </div>
   </VcCard>
 
-  <VcCard v-if="organization" :title="$t('shared.account.navigation.corporate_title')">
+  <VcCard v-if="organization" :title="$t('shared.account.navigation.corporate_title')" shadow>
     <div class="flex flex-col">
       <AccountNavigationLink
         :to="{ name: 'CompanyInfo' }"

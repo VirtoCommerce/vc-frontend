@@ -341,6 +341,7 @@ import {
   useCategories,
   useElementVisibility,
   usePageHead,
+  useProductsRoutes,
   useRouteQueryParam,
 } from "@/core";
 import {
@@ -354,7 +355,6 @@ import {
   ProductsFiltersSidebar,
   ProductsSearchParams,
   useProducts,
-  useProductsRoutes,
   ViewMode,
 } from "@/shared/catalog";
 import { BranchesDialog, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";

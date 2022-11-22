@@ -126,12 +126,13 @@
 <script setup lang="ts">
 import { computed, PropType, ref } from "vue";
 import { Pagination, Navigation, Lazy } from "swiper";
-import { Swiper, SwiperSlide } from "swiper/vue"; // eslint-disable-line import/no-unresolved
+import { Swiper, SwiperSlide } from "swiper/vue";
 import { Swiper as SwiperInstance } from "swiper/types";
 import { AddToCompare } from "@/shared/compare";
 import { Product } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";
-import { getProductRoute, DiscountBadge } from "@/shared/catalog";
+import { DiscountBadge } from "@/shared/catalog";
+import { getProductRoute } from "@/core";
 
 const props = defineProps({
   product: {
@@ -143,7 +144,7 @@ const props = defineProps({
 const swiperInstance = ref<SwiperInstance>();
 const swiperBulletsState = ref<boolean[]>([true, false, false]);
 
-const link = computed<RouteLocationRaw>(() => getProductRoute(props.product));
+const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
 
 function slideChanged(swiper: SwiperInstance) {
   const activeIndex: number = swiper.activeIndex;

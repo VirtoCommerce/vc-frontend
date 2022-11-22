@@ -41,7 +41,7 @@
 import { computed, PropType } from "vue";
 import { Product as ProductType } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";
-import { getProductRoute } from "@/shared/catalog";
+import { getProductRoute } from "@/core";
 
 defineEmits(["link-click"]);
 
@@ -52,5 +52,5 @@ const props = defineProps({
   },
 });
 
-const link = computed<RouteLocationRaw>(() => getProductRoute(props.product));
+const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
 </script>

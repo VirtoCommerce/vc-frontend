@@ -86,7 +86,7 @@ import {
   OrderLineItemType,
 } from "@/xapi/types";
 import { computed, PropType, ref } from "vue";
-import _ from "lodash";
+import { sumBy } from "lodash";
 import { useCurrency, useLanguages } from "@/core/composables";
 
 const props = defineProps({
@@ -106,7 +106,7 @@ const getDiscountAmmount = (discount: DiscountType | OrderDiscountType) => {
 };
 
 const lineItemsDiscountTotal = computed(() =>
-  _.sumBy(props.cart.items, (item: LineItemType | OrderLineItemType) => item.discountTotal?.amount || 0)
+  sumBy<LineItemType | OrderLineItemType>(props.cart.items, (item) => item.discountTotal?.amount || 0)
 );
 
 const hasDiscounts = computed(() => props.cart.discounts?.length || lineItemsDiscountTotal.value > 0);

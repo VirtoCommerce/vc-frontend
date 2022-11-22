@@ -1,19 +1,26 @@
 import { createApp, Plugin } from "vue";
-import { maska } from "maska";
-import * as yup from "yup";
 import { createHead } from "@vueuse/head";
-import { setGlobalVariables } from "@/core/globals";
-import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";
-import { configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
-import { useUser } from "@/shared/account";
+import { setLocale as setLocaleForYup } from "yup";
+import { maska } from "maska";
 import { createI18n } from "@/i18n";
 import { createRouter } from "@/router";
-import { getBaseUrl } from "@/core/utilities";
+import { graphqlClient } from "@/xapi";
+import {
+  configPlugin,
+  contextPlugin,
+  getBaseUrl,
+  Logger,
+  permissionsPlugin,
+  useCurrency,
+  useLanguages,
+  useThemeContext,
+} from "@/core";
+import { setGlobalVariables } from "@/core/globals";
+import { useUser } from "@/shared/account";
 import App from "./App.vue";
+import * as UIKitComponents from "@/ui-kit/components";
 import { templateBlocks } from "@/shared/static-content";
 import ProductBlocks from "@/shared/catalog/components/product";
-import * as UIKitComponents from "@/ui-kit/components";
-import { graphqlClient } from "@/xapi";
 
 // Workaround before Nuxt3 migration, will be deleted later.
 window.useNuxtApp = () => {
@@ -23,6 +30,13 @@ window.useNuxtApp = () => {
 };
 
 export default async (getPlugins: (options: any) => { plugin: Plugin; options: any }[] = () => []) => {
+  const appSelector = "#app";
+  const appElement = document.querySelector<HTMLElement | SVGElement>(appSelector);
+
+  if (!appElement) {
+    return Logger.debug(`The element with the selector "${appSelector}" was not found.`);
+  }
+
   const { fetchUser } = useUser();
   const { themeContext, fetchThemeContext } = useThemeContext();
   const { currentLocale, currentLanguage, supportedLocales, setLocale } = useLanguages();
@@ -58,7 +72,7 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
    */
   await setLocale(i18n, currentLocale.value);
 
-  yup.setLocale({
+  setLocaleForYup({
     mixed: {
       required: i18n.global.t("common.messages.required_field"),
     },
@@ -71,7 +85,12 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
   /**
    * Create and mount application
    */
-  const app = createApp(App);
+  const app = createApp(App, {
+    /**
+     * Passing data-* attributes to the application props
+     */
+    ...appElement.dataset,
+  });
 
   // Plugins
   app.use(head);
@@ -99,5 +118,5 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
 
   await router.isReady();
 
-  app.mount("#app");
+  app.mount(appElement);
 };

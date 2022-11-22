@@ -265,7 +265,7 @@ const changeMethodLoading = ref(false);
 const paymentMethodComponent = ref<InstanceType<typeof PaymentProcessingAuthorizeNet> | null>(null);
 
 const { t } = useI18n();
-const { loading, order, loadOrder, addOrUpdatePayment } = useUserOrder();
+const { loading, order, fetchOrder, addOrUpdatePayment } = useUserOrder();
 const { openPopup, closePopup } = usePopup();
 const router = useRouter();
 
@@ -347,7 +347,7 @@ function showChangePaymentMethodDialog(): void {
 
 watchEffect(() => {
   if (props.orderId !== order.value?.id) {
-    loadOrder({ id: props.orderId });
+    fetchOrder({ id: props.orderId });
   } else if (order.value?.inPayments[0]?.isApproved) {
     // If the order is paid
     router.replace({ name: "OrderDetails", params: { orderId: props.orderId } });

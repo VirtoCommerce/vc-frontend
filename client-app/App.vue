@@ -21,8 +21,20 @@ import { MainLayout, PaymentLayout, useSearchBar } from "./shared/layout";
 import { PopupHost } from "@/shared/popup";
 import { NotificationsHost } from "@/shared/notification";
 import { useRoute, useRouter } from "vue-router";
-import { useCategories, useDomUtils, useNavigations } from "@/core/composables";
+import { useCategories, useDomUtils, useNavigations } from "@/core";
 import { useCart } from "@/shared/cart";
+
+const props = defineProps({
+  settings: {
+    type: String,
+    default: null,
+  },
+});
+
+/**
+ * NOTE: As an example, here is the code for getting the settings from Liquid work context.
+ */
+const settings = JSON.parse(props.settings); // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const route = useRoute();
 const router = useRouter();

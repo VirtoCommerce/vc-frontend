@@ -27,7 +27,7 @@ import {
   removeCoupon,
   validateCoupon,
 } from "@/xapi";
-import { getCartLineItemValidationErrorsGroupBySKU, OutputBulkItemType } from "@/shared/cart";
+import { getLineItemValidationErrorsGroupedBySKU, OutputBulkItemType } from "@/shared/cart";
 
 const DEFAULT_ITEMS_PER_PAGE = 6;
 
@@ -105,10 +105,11 @@ export default function useCart() {
 
     try {
       const { errors } = await addBulkItemsCart(items);
-      const errorsGroupBySKU = getCartLineItemValidationErrorsGroupBySKU(errors);
+      const errorsGroupBySKU = getLineItemValidationErrorsGroupedBySKU(errors);
 
-      result = items.map<OutputBulkItemType>(({ productSku }) => ({
+      result = items.map<OutputBulkItemType>(({ productSku, quantity }) => ({
         productSku,
+        quantity,
         errors: errorsGroupBySKU[productSku],
       }));
     } catch (e) {
