@@ -16,13 +16,15 @@
     </template>
 
     <template #content>
-      <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5">Add to compare</div>
+      <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5">
+        {{ $t("pages.catalog.add_to_compare_tooltip") }}
+      </div>
     </template>
   </VcTooltip>
 </template>
 
 <script setup lang="ts">
-import { nextTick, PropType, ref } from "vue";
+import { PropType } from "vue";
 import { eagerComputed } from "@vueuse/core";
 import { useCompareProducts } from "@/shared/compare";
 import { Product } from "@/xapi/types";

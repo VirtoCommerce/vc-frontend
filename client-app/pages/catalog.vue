@@ -332,7 +332,6 @@ import {
   useCategories,
   useElementVisibility,
   usePageHead,
-  useProductsRoutes,
   useRouteQueryParam,
 } from "@/core";
 import {
