@@ -134,12 +134,6 @@ module.exports = {
         gray: {
           550: "#A3AFCD",
         },
-
-        status: {
-          success: "#57AB57",
-          warning: "#F0AD4E",
-          error: "#F34747",
-        },
       },
 
       boxShadow: {

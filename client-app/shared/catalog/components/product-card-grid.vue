@@ -139,7 +139,11 @@
           <div class="flex items-center gap-1 pt-0.5 pb-px pl-1">
             <svg
               class="shrink-0 w-3 h-3"
-              :class="{ 'text-status-success': true, 'text-status-warning': false, 'text-status-error': false }"
+              :class="{
+                'text-[color:var(--color-success)]': true,
+                'text-[color:var(--color-warning)]': false,
+                'text-[color:var(--color-danger)]': false,
+              }"
             >
               <use href="/static/images/cup.svg#main"></use>
             </svg>

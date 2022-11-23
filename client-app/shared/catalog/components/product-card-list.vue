@@ -74,7 +74,11 @@
         <div class="flex items-center gap-1 pl-1">
           <svg
             class="shrink-0 w-3 h-3"
-            :class="{ 'text-status-success': true, 'text-status-warning': false, 'text-status-error': false }"
+            :class="{
+              'text-[color:var(--color-success)]': true,
+              'text-[color:var(--color-warning)]': false,
+              'text-[color:var(--color-danger)]': false,
+            }"
           >
             <use href="/static/images/cup.svg#main"></use>
           </svg>
@@ -165,7 +169,7 @@ const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, 
     "mobile-left add-to-cart"
     "mobile-left .";
 
-  @media (screen and min-width: 640px) {
+  @media (min-width: theme("screens.sm")) {
     grid-template-columns: 72px 1fr 40%;
     grid-template-areas:
       "img name price"
@@ -173,16 +177,7 @@ const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, 
       "img buttons add-to-cart";
   }
 
-  @media (screen and min-width: 991px) {
-    grid-template-columns: 86px 1fr 126px 207px;
-    grid-template-areas:
-      "img name price add-to-cart"
-      "img properties price add-to-cart"
-      "img buttons price add-to-cart"
-      "img . price add-to-cart";
-  }
-
-  @media (screen and min-width: 1024px) {
+  @media (min-width: theme("screens.lg")) {
     grid-template-columns: 72px 1fr 126px 207px;
     grid-template-areas:
       "img name price add-to-cart"
@@ -191,7 +186,7 @@ const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, 
       "img . price add-to-cart";
   }
 
-  @media (screen and min-width: 1280px) {
+  @media (min-width: theme("screens.xl")) {
     grid-template-columns: 86px 1fr 31.5% 140px 207px;
     grid-template-areas:
       "img name properties price add-to-cart"
