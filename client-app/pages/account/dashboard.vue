@@ -5,7 +5,12 @@
       <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.account.dashboard.title'" />
     </div>
 
-    <VcCard :title="$t('pages.account.dashboard.last_orders_card.title')" class="mx-5 md:mx-0" full-width-content>
+    <VcCard
+      :title="$t('pages.account.dashboard.last_orders_card.title')"
+      class="mx-5 md:mx-0"
+      full-width-content
+      shadow
+    >
       <template #header-button>
         <div v-if="isMobile">
           <VcButton :to="{ name: 'Orders' }" :is-outline="true" class="px-2 uppercase text-sm">
@@ -222,7 +227,7 @@
     </VcCard>
 
     <div class="flex flex-col lg:flex-row mx-5 md:mx-0 gap-y-5 lg:gap-y-0 lg:gap-x-5">
-      <VcCard :title="$t('pages.account.dashboard.monthly_report_card.title')" class="lg:w-1/2">
+      <VcCard :title="$t('pages.account.dashboard.monthly_report_card.title')" class="lg:w-1/2" shadow>
         <div class="flex content-center space-x-9 lg:space-x-4">
           <VcImage
             src="/static/images/dashboard/spend-chart.svg"
@@ -255,11 +260,15 @@
         </div>
       </VcCard>
 
-      <VcCard :title="$t('pages.account.dashboard.orders_status_card.title')" class="h-52 lg:h-auto lg:w-1/2"></VcCard>
+      <VcCard
+        :title="$t('pages.account.dashboard.orders_status_card.title')"
+        class="h-52 lg:h-auto lg:w-1/2"
+        shadow
+      ></VcCard>
     </div>
 
     <!-- Commented due to acceptance criteria, will be used in future
-    <VcCard title="Users" class="h-52 mx-5 md:mx-0"></VcCard> -->
+    <VcCard title="Users" class="h-52 mx-5 md:mx-0" shadow></VcCard> -->
   </div>
 </template>
 

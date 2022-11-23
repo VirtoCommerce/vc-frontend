@@ -1,71 +1,69 @@
 <template>
-  <div class="bg-white rounded border shadow-sm">
-    <div
-      v-if="withHeader"
-      :class="['border-b font-extrabold text-sm', headerClasses, { 'cursor-pointer': isCollapsible }]"
-      @click="isCollapsible && (_isCollapsed = !_isCollapsed)"
-    >
+  <div :class="['bg-white rounded border', { 'shadow-sm': shadow }]">
+    <div v-if="withHeader" :class="['relative font-extrabold text-sm', headerClasses]">
       <div class="flex items-center">
-        <slot name="header">
-          <div class="flex-grow text-xl font-extrabold uppercase">{{ title }}</div>
-          <div v-if="isCollapsible" class="ml-3">
-            <i
-              class="fas text-[color:var(--color-primary)] text-base"
-              :class="[!_isCollapsed ? 'fa-chevron-up' : 'fa-chevron-down']"
-            ></i>
-          </div>
-          <slot name="header-button"></slot>
+        <slot name="header" v-bind="{ isCollapsible, isCollapsed: _isCollapsed, toggleCollapse }">
+          <slot name="header-content">
+            <span class="flex-grow text-xl font-extrabold uppercase">
+              {{ title }}
+            </span>
+          </slot>
+
+          <slot name="header-button" v-bind="{ isCollapsible, isCollapsed: _isCollapsed, toggleCollapse }">
+            <button
+              v-if="isCollapsible"
+              class="px-3 py-2 ml-2 -mr-3 -my-2 appearance-none before:absolute before:inset-0"
+              @click="isCollapsible && toggleCollapse()"
+            >
+              <i
+                class="fas text-[color:var(--color-primary)] text-base"
+                :class="!_isCollapsed ? 'fa-chevron-up' : 'fa-chevron-down'"
+              />
+            </button>
+          </slot>
         </slot>
       </div>
     </div>
-    <div v-if="!isCollapsible || (isCollapsible && !_isCollapsed)" :class="!fullWidthContent ? contentClasses : ''">
-      <div class="overflow-hidden">
-        <slot></slot>
+
+    <div v-if="!isCollapsible || !_isCollapsed" class="overflow-hidden">
+      <div :class="['border-t rounded-b', { [contentClasses]: !fullWidthContent }]">
+        <slot />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { toRefs, ref, watch, onMounted } from "vue";
+import { ref, watchEffect } from "vue";
 
 const props = defineProps({
-  title: {
-    type: String,
-    default: undefined,
-  },
+  title: String,
+  isCollapsible: Boolean,
+  isCollapsed: Boolean,
+  shadow: Boolean,
+  fullWidthContent: Boolean,
+
   withHeader: {
     type: Boolean,
     default: true,
   },
-  isCollapsible: {
-    type: Boolean,
-    default: false,
-  },
-  isCollapsed: {
-    type: Boolean,
-    default: false,
-  },
-  fullWidthContent: {
-    type: Boolean,
-    default: false,
-  },
+
   headerClasses: {
     type: String,
     default: "px-4 py-3",
   },
+
   contentClasses: {
     type: String,
     default: "p-4",
   },
 });
 
-const { isCollapsed } = toRefs(props);
 const _isCollapsed = ref(false);
 
-watch(isCollapsed, (value: boolean) => (_isCollapsed.value = value));
+function toggleCollapse() {
+  _isCollapsed.value = !_isCollapsed.value;
+}
 
-onMounted(() => {
-  _isCollapsed.value = isCollapsed.value;
-});
+watchEffect(() => (_isCollapsed.value = props.isCollapsed));
 </script>

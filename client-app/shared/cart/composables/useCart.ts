@@ -1,35 +1,33 @@
 import { computed, Ref, ref } from "vue";
 import _ from "lodash";
-import { Logger } from "@/core/utilities";
+import { Logger } from "@/core";
 import {
-  BulkCartType,
+  addBulkItemsCart,
+  addCoupon,
+  addItemsCart,
+  addItemToCart,
+  addOrUpdateCartPayment,
+  addOrUpdateCartShipment,
   CartType,
+  changeCartComment,
+  changeCartItemQuantity,
+  changePurchaseOrderNumber,
+  createOrderFromCart as _createOrderFromCart,
+  createQuoteFromCart as _createQuoteFromCart,
   CustomerOrderType,
+  getMyCart,
+  InputNewBulkItemType,
+  InputNewCartItemType,
   InputPaymentType,
   InputShipmentType,
   LineItemType,
   QuoteType,
-} from "@/xapi/types";
-import {
-  addBulkItemsToCart,
-  addCoupon,
-  addItemsToCart,
-  addItemToCart,
-  addOrUpdateCartPayment,
-  addOrUpdateCartShipment,
-  changeCartComment,
-  changeCartItemQuantity,
-  changePurchaseOrderNumber,
-  getMyCart,
-  InputBulkItemsType,
   removeCart as _removeCart,
   removeCartItem,
   removeCoupon,
   validateCoupon,
-} from "@/xapi/graphql/cart";
-import { createOrderFromCart as _createOrderFromCart } from "@/xapi/graphql/orders";
-import { createQuoteFromCart as _createQuoteFromCart } from "@/xapi/graphql/quotes";
-import { CartItemType } from "@/shared/cart";
+} from "@/xapi";
+import { getLineItemValidationErrorsGroupedBySKU, OutputBulkItemType } from "@/shared/cart";
 
 const DEFAULT_ITEMS_PER_PAGE = 6;
 
@@ -85,13 +83,13 @@ export default function useCart() {
     await fetchCart();
   }
 
-  async function addMultipleItemsToCart(cartItems: CartItemType[]) {
+  async function addItemsToCart(items: InputNewCartItemType[]): Promise<void> {
     loading.value = true;
 
     try {
-      await addItemsToCart(cartItems);
+      await addItemsCart(items);
     } catch (e) {
-      Logger.error(`${useCart.name}.${addMultipleItemsToCart.name}`, e);
+      Logger.error(`${useCart.name}.${addItemsToCart.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -100,15 +98,22 @@ export default function useCart() {
     await fetchCart();
   }
 
-  async function addBulkMultipleItemsToCart(payload: InputBulkItemsType): Promise<BulkCartType> {
-    let result: BulkCartType = {};
+  async function addBulkItemsToCart(items: InputNewBulkItemType[]): Promise<OutputBulkItemType[]> {
+    let result: OutputBulkItemType[] = [];
 
     loading.value = true;
 
     try {
-      result = await addBulkItemsToCart(payload);
+      const { errors } = await addBulkItemsCart(items);
+      const errorsGroupBySKU = getLineItemValidationErrorsGroupedBySKU(errors);
+
+      result = items.map<OutputBulkItemType>(({ productSku, quantity }) => ({
+        productSku,
+        quantity,
+        errors: errorsGroupBySKU[productSku],
+      }));
     } catch (e) {
-      Logger.error(`${useCart.name}.${addItemsToCart.name}`, e);
+      Logger.error(`${useCart.name}.${addBulkItemsToCart.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -315,7 +320,8 @@ export default function useCart() {
     getItemsTotal,
     fetchCart,
     addToCart,
-    addBulkMultipleItemsToCart,
+    addItemsToCart,
+    addBulkItemsToCart,
     changeItemQuantity,
     removeItem,
     validateCartCoupon,
@@ -325,7 +331,6 @@ export default function useCart() {
     updateShipment,
     updatePayment,
     updatePurchaseOrderNumber,
-    addMultipleItemsToCart,
     removeCart,
     createOrderFromCart,
     createQuoteFromCart,

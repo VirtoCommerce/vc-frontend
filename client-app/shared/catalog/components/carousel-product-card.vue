@@ -35,7 +35,7 @@
 import { computed, PropType } from "vue";
 import { Product } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";
-import { getProductRoute } from "@/shared/catalog";
+import { getProductRoute } from "@/core";
 
 const props = defineProps({
   product: {
@@ -44,5 +44,5 @@ const props = defineProps({
   },
 });
 
-const link = computed<RouteLocationRaw>(() => getProductRoute(props.product));
+const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
 </script>

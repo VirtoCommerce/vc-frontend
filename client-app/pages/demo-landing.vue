@@ -167,9 +167,9 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { ProductCardGrid, useProducts, useProductsRoutes } from "@/shared/catalog";
+import { usePageHead, useProductsRoutes } from "@/core";
+import { ProductCardGrid, useProducts } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
-import { usePageHead } from "@/core/composables";
 
 const { t } = useI18n();
 const { products, fetchProducts } = useProducts();

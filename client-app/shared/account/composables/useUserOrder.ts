@@ -1,18 +1,20 @@
-import { Logger } from "@/core/utilities";
-import { computed, ref, Ref } from "vue";
-import { CustomerOrderType, InputAddOrUpdateOrderPaymentType, QueryOrderArgs } from "@/xapi/types";
-import { addOrUpdateOrderPayment, getOrder } from "@/xapi/graphql/orders";
+import { computed, ref, shallowRef } from "vue";
+import { Logger } from "@/core";
+import {
+  addOrUpdateOrderPayment,
+  CustomerOrderType,
+  getOrder,
+  InputAddOrUpdateOrderPaymentType,
+  QueryOrderArgs,
+} from "@/xapi";
 
-const loading: Ref<boolean> = ref(false);
-const order: Ref<CustomerOrderType | null> = ref(null);
+const loading = ref(false);
+const order = shallowRef<CustomerOrderType | null>(null);
+const itemsPerPage = ref(6);
+const pages = ref(0);
 
-const DEFAULT_ITEMS_PER_PAGE = 6;
-
-const itemsPerPage: Ref<number> = ref(DEFAULT_ITEMS_PER_PAGE);
-const pages: Ref<number> = ref(0);
-
-export default () => {
-  async function loadOrder(payload: QueryOrderArgs) {
+export default function useUserOrder() {
+  async function fetchOrder(payload: QueryOrderArgs) {
     loading.value = true;
 
     try {
@@ -22,7 +24,7 @@ export default () => {
         pages.value = Math.ceil(order.value.items.length / itemsPerPage.value);
       }
     } catch (e) {
-      Logger.error("useUserOrder.loadOrder", e);
+      Logger.error(`${useUserOrder.name}.${fetchOrder.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -39,14 +41,14 @@ export default () => {
     try {
       await addOrUpdateOrderPayment(payload);
     } catch (e) {
-      Logger.error(`useUserOrder.${addOrUpdatePayment.name}`, e);
+      Logger.error(`${useUserOrder.name}.${addOrUpdatePayment.name}`, e);
       throw e;
     } finally {
       loading.value = false;
     }
 
     if (reloadOrder) {
-      await loadOrder({ id: payload.orderId });
+      await fetchOrder({ id: payload.orderId });
     }
   }
 
@@ -57,8 +59,8 @@ export default () => {
     order: computed(() => order.value),
     deliveryAddress: computed(() => order.value?.shipments?.[0]?.deliveryAddress),
     billingAddress: computed(() => order.value?.inPayments?.[0]?.billingAddress),
-    loadOrder,
+    fetchOrder,
     clearOrder,
     addOrUpdatePayment,
   };
-};
+}

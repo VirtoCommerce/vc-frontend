@@ -1,7 +1,12 @@
 <template>
   <!-- Mobile filters -->
   <div class="flex flex-col gap-4 lg:gap-5" v-if="isMobile">
-    <VcCard :title="$t('shared.account.orders-filter.status-label')" is-collapsible v-if="availableStatuses.length">
+    <VcCard
+      v-if="availableStatuses.length"
+      :title="$t('shared.account.orders-filter.status-label')"
+      is-collapsible
+      shadow
+    >
       <div class="flex flex-col space-y-4">
         <VcCheckbox
           :class="{ 'font-bold': isSelectedStatus(status), 'text-gray-500': !isSelectedStatus(status) }"
@@ -15,7 +20,7 @@
       </div>
     </VcCard>
 
-    <VcCard :title="$t('shared.account.orders-filter.created-date-label')">
+    <VcCard :title="$t('shared.account.orders-filter.created-date-label')" shadow>
       <div class="flex flex-col space-y-3">
         <div>
           <VcDateSelector

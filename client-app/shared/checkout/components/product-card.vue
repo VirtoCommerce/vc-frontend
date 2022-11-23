@@ -149,7 +149,7 @@ import { useField } from "vee-validate";
 import * as yup from "yup";
 import { useI18n } from "vue-i18n";
 import { RouteLocationRaw } from "vue-router";
-import { getProductRoute } from "@/shared/catalog";
+import { getProductRoute } from "@/core";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { t } = useI18n();
@@ -186,11 +186,13 @@ const maxQty = computed(
 );
 
 const link = computed<RouteLocationRaw | undefined>(() => {
-  let productLink = undefined;
-  if (props.lineItem.product) {
-    productLink = getProductRoute(props.lineItem.product.masterVariation || props.lineItem.product);
+  const { id, slug } = props.lineItem.product?.masterVariation || props.lineItem.product || {};
+
+  if (!id && !slug) {
+    return undefined;
   }
-  return productLink;
+
+  return getProductRoute(id!, slug);
 });
 
 const itemErrorMessage = computed(() => {
