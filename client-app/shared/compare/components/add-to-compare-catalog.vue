@@ -1,7 +1,7 @@
 <template>
   <VcTooltip :placement="tooltipPlacement" strategy="fixed">
     <template #trigger>
-      <label v-if="workaround" class="cursor-pointer">
+      <div class="cursor-pointer" @click="toggle">
         <svg
           :class="[
             customClass,
@@ -12,8 +12,7 @@
         >
           <use href="/static/images/compare.svg#main"></use>
         </svg>
-        <input type="checkbox" class="hidden" :model-value="isInCompareList" @change="toggle" />
-      </label>
+      </div>
     </template>
 
     <template #content>
@@ -24,7 +23,7 @@
 
 <script setup lang="ts">
 import { nextTick, PropType, ref } from "vue";
-import { eagerComputed, useDebounceFn } from "@vueuse/core";
+import { eagerComputed } from "@vueuse/core";
 import { useCompareProducts } from "@/shared/compare";
 import { Product } from "@/xapi/types";
 
@@ -45,19 +44,13 @@ const props = defineProps({
 
 const { productsIds, addToCompareList, removeFromCompareList } = useCompareProducts();
 
-const workaround = ref(true); // See lines 34-36
-
 const isInCompareList = eagerComputed<boolean>(() => productsIds.value.includes(props.product.id));
 
-const toggle = useDebounceFn(() => {
+const toggle = () => {
   if (isInCompareList.value) {
     removeFromCompareList(props.product);
   } else {
     addToCompareList(props.product);
   }
-
-  // FIXME: Workaround to update VcCheckbox component state after compare products limit exceeded
-  workaround.value = false;
-  nextTick(() => (workaround.value = true));
-}, 400);
+};
 </script>
