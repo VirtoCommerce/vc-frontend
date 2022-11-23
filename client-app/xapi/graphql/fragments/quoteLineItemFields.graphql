@@ -1,0 +1,18 @@
+#import "./moneyFields.graphql"
+
+fragment quoteLineItemFields on QuoteItemType {
+  id
+  sku
+  productId
+  name
+  imageUrl
+  listPrice {
+    ...moneyFields
+  }
+  selectedTierPrice {
+    quantity
+    price {
+      ...moneyFields
+    }
+  }
+}

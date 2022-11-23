@@ -8,6 +8,7 @@ const DEFAULT_ITEMS_PER_PAGE = 10;
 
 export default () => {
   const quotes: Ref<QuoteType[]> = shallowRef<QuoteType[]>([]);
+  const quote: Ref<QuoteType | null> = ref(null);
   const fetching: Ref<boolean> = ref(false);
   const itemsPerPage: Ref<number> = ref(DEFAULT_ITEMS_PER_PAGE);
   const pages: Ref<number> = ref(0);
@@ -40,6 +41,7 @@ export default () => {
 
   return {
     quotes,
+    quote,
     fetching,
     itemsPerPage,
     pages,

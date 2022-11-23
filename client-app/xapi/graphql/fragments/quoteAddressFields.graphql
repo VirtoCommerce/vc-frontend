@@ -1,0 +1,15 @@
+fragment quoteAddressFields on QuoteAddressType {
+  firstName
+  lastName
+  line1
+  line2
+  city
+  countryCode
+  countryName
+  regionId
+  regionName
+  postalCode
+  phone
+  email
+  addressType
+}
