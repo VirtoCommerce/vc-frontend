@@ -1,49 +1,51 @@
 <template>
-  <div class="flex relative z-0">
-    <input
-      ref="input"
-      type="number"
-      v-model.number="enteredQuantity"
-      :disabled="disabled"
-      :max="maxQty"
-      :min="minQty"
-      :class="{
-        'border-[color:var(--color-danger)] focus:border-[color:var(--color-danger-hover)] z-10': !!errorMessage,
-      }"
-      class="appearance-none rounded-l rounded-r-none flex-1 w-full text-base lg:text-sm -mr-px border border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9 min-w-0 text-center"
-      @input="onInput"
-      @keypress="onKeypress"
-      @click="onClick"
-    />
+  <div>
+    <div class="flex relative z-0">
+      <input
+        ref="input"
+        type="number"
+        v-model.number="enteredQuantity"
+        :disabled="disabled"
+        :max="maxQty"
+        :min="minQty"
+        :class="{
+          'border-[color:var(--color-danger)] focus:border-[color:var(--color-danger-hover)] z-10': !!errorMessage,
+        }"
+        class="appearance-none rounded-l rounded-r-none flex-1 w-full text-base lg:text-sm -mr-px border border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9 min-w-0 text-center"
+        @input="onInput"
+        @keypress="onKeypress"
+        @click="onClick"
+      />
 
-    <VcButton
-      class="!rounded-l-none !border uppercase px-3 !text-13 min-w-[52%]"
-      :is-outline="!countInCart"
-      :is-waiting="loading"
-      :is-disabled="disabled || !!errorMessage"
-      :title="buttonText"
-      @click="onChange"
-    >
-      {{ buttonText }}
-    </VcButton>
+      <VcButton
+        class="!rounded-l-none !border uppercase px-3 !text-13 min-w-[52%]"
+        :is-outline="!countInCart"
+        :is-waiting="loading"
+        :is-disabled="disabled || !!errorMessage"
+        :title="buttonText"
+        @click="onChange"
+      >
+        {{ buttonText }}
+      </VcButton>
+    </div>
+
+    <!-- Info hint -->
+    <VcTooltip class="!block" v-if="errorMessage" :xOffset="28" placement="bottom-start" strategy="fixed">
+      <template #trigger>
+        <div class="pt-0.5 text-11 text-[color:var(--color-danger)] xs:line-clamp-1">
+          {{ errorMessage }}
+        </div>
+      </template>
+
+      <template #content>
+        <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5 w-52">
+          {{ errorMessage }}
+        </div>
+      </template>
+    </VcTooltip>
+
+    <div v-else-if="reservedSpace" class="h-2.5 lg:h-4"></div>
   </div>
-
-  <!-- Info hint -->
-  <VcTooltip v-if="errorMessage" :xOffset="28" placement="bottom-start" strategy="fixed">
-    <template #trigger>
-      <div class="pt-0.5 text-11 text-[color:var(--color-danger)] xs:line-clamp-1">
-        {{ errorMessage }}
-      </div>
-    </template>
-
-    <template #content>
-      <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5 w-52">
-        {{ errorMessage }}
-      </div>
-    </template>
-  </VcTooltip>
-
-  <div v-else-if="reservedSpace" class="h-2.5 lg:h-4"></div>
 </template>
 
 <script setup lang="ts">
