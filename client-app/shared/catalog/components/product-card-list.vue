@@ -22,7 +22,7 @@
         class="vc-product-card-list__buttons flex justify-center gap-3.5 mt-3 w-full sm:justify-start sm:place-self-end lg:mt-2 lg:gap-3"
       >
         <AddToList customClass="w-5 h-5 lg:w-4 lg:h-4" :product="product" tooltip-placement="bottom" />
-        <AddToCompare
+        <AddToCompareCatalog
           customClass="w-5 h-5 lg:w-4 lg:h-4"
           v-if="$cfg.product_compare_enabled"
           :product="product"
@@ -136,7 +136,7 @@
 <script setup lang="ts">
 import { computed, PropType } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { AddToCompare } from "@/shared/compare";
+import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import { Product } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";

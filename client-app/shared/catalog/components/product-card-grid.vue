@@ -91,7 +91,7 @@
         class="z-[2] absolute -top-4 -right-4 px-2 py-3.5 flex flex-col gap-2 rounded-3xl bg-white lg:-right-3 lg:py-2 lg:px-1.5 empty:hidden"
       >
         <AddToList :product="product" />
-        <AddToCompare class="relative" v-if="$cfg.product_compare_enabled" :product="product" />
+        <AddToCompareCatalog class="relative" v-if="$cfg.product_compare_enabled" :product="product" />
       </div>
     </div>
 
@@ -205,7 +205,7 @@ import { computed, PropType, ref } from "vue";
 import { Pagination, Navigation, Lazy } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/vue"; // eslint-disable-line import/no-unresolved
 import { Swiper as SwiperInstance } from "swiper/types";
-import { AddToCompare } from "@/shared/compare";
+import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import { Product } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";

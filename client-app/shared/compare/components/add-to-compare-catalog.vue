@@ -1,7 +1,25 @@
 <template>
-  <VcCheckbox v-if="workaround" :model-value="isInCompareList" @change="toggle">
-    {{ $t("common.labels.compare") }}
-  </VcCheckbox>
+  <VcTooltip :placement="tooltipPlacement" strategy="fixed">
+    <template #trigger>
+      <label v-if="workaround" class="cursor-pointer">
+        <svg
+          :class="[
+            customClass,
+            isInCompareList
+              ? 'text-[color:var(--color-product-icon-active)]'
+              : 'text-[color:var(--color-product-icon)]',
+          ]"
+        >
+          <use href="/static/images/compare.svg#main"></use>
+        </svg>
+        <input type="checkbox" class="hidden" :model-value="isInCompareList" @change="toggle" />
+      </label>
+    </template>
+
+    <template #content>
+      <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5">Add to compare</div>
+    </template>
+  </VcTooltip>
 </template>
 
 <script setup lang="ts">
@@ -14,6 +32,14 @@ const props = defineProps({
   product: {
     type: Object as PropType<Product>,
     required: true,
+  },
+  customClass: {
+    type: String,
+    default: "w-6 h-6 lg:w-4 lg:h-4",
+  },
+  tooltipPlacement: {
+    type: String,
+    default: "left",
   },
 });
 
