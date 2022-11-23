@@ -42,7 +42,7 @@
     <div class="w-48 shrink-0 flex flex-col justify-center">
       <AddToCart v-if="listItem.product" :product="listItem.product" />
 
-      <div class="flex">
+      <div class="flex mt-2">
         <VcInStock
           :is-in-stock="listItem.product?.availabilityData?.isInStock || false"
           :is-available="productAvailable"

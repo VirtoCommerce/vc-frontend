@@ -36,7 +36,7 @@
         <div class="mt-7 md:mt-5">
           <AddToCart :product="product" />
 
-          <div class="flex">
+          <div class="flex mt-2">
             <VcInStock
               :is-in-stock="product.availabilityData?.isInStock"
               :quantity="product.availabilityData?.availableQuantity"
