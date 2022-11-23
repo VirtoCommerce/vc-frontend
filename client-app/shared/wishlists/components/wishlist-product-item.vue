@@ -69,10 +69,10 @@
 <script setup lang="ts">
 import { computed, PropType } from "vue";
 import { RouteLocationRaw } from "vue-router";
-import { getProductRoute } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 import { LineItemType } from "@/xapi/types";
 import { computedEager } from "@vueuse/shared";
+import { getProductRoute } from "@/core";
 
 defineEmits(["remove"]);
 
@@ -84,7 +84,7 @@ const props = defineProps({
 });
 
 const link = computed<RouteLocationRaw | undefined>(() =>
-  props.listItem.product ? getProductRoute(props.listItem.product) : undefined
+  props.listItem.product ? getProductRoute(props.listItem.product.id, props.listItem.product.slug) : undefined
 );
 
 const productAvailable = computedEager(() => !!props.listItem.product);

@@ -1,10 +1,5 @@
-import { Product, Property, VariationType } from "@/xapi/types";
 import { useI18n } from "vue-i18n";
-import { RouteLocationRaw } from "vue-router";
-
-export function getProductRoute(product: Product | VariationType): RouteLocationRaw {
-  return product.slug ? `/${product.slug}` : { name: "Product", params: { productId: product.id } };
-}
+import { Property } from "@/xapi";
 
 export function prepareProperties(properties: Property[], propName: string) {
   const { t, d } = useI18n();

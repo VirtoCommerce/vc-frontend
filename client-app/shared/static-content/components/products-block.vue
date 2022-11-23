@@ -21,7 +21,8 @@
 
 <script setup lang="ts">
 import { onMounted, watchEffect } from "vue";
-import { ProductCardGrid, useProducts, useProductsRoutes } from "@/shared/catalog";
+import { useProductsRoutes } from "@/core";
+import { ProductCardGrid, useProducts } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 
 const { products, fetchProducts } = useProducts();

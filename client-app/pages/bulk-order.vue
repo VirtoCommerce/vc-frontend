@@ -1,11 +1,12 @@
 <template>
   <div class="bg-gray-100 pt-7 pb-16 shadow-inner grow">
     <div class="max-w-screen-2xl md:px-12 mx-auto">
-      <VcBreadcrumbs class="mb-3 hidden lg:block" :items="breadcrumbs"></VcBreadcrumbs>
+      <VcBreadcrumbs class="mb-3 hidden lg:block" :items="breadcrumbs" />
+
       <h2
         class="text-gray-800 px-6 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-5"
         v-t="'pages.bulk_order.title'"
-      ></h2>
+      />
 
       <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-y-5 lg:gap-5">
         <!-- Error section -->
@@ -94,7 +95,7 @@ const tabs = [
 ];
 
 const router = useRouter();
-const { loading: loadingCart, cart, addBulkMultipleItemsToCart } = useCart();
+const { loading: loadingCart, addBulkItemsToCart } = useCart();
 
 const loadingManually = ref(false);
 const loadingCSV = ref(false);
@@ -115,14 +116,11 @@ async function addItems(items: InputNewBulkItemType[]) {
     return;
   }
 
-  const { errors } = await addBulkMultipleItemsToCart({
-    cartId: cart.value.id,
-    cartItems: items,
-  });
+  const resultItems = await addBulkItemsToCart(items);
 
-  if (errors?.length) {
-    SKUsWithErrors.value = errors.map((error) => error.objectId!);
+  SKUsWithErrors.value = resultItems.filter((item) => item.errors?.length).map((item) => item.productSku);
 
+  if (SKUsWithErrors.value.length) {
     window.scrollTo({
       top: 0,
       behavior: "smooth",

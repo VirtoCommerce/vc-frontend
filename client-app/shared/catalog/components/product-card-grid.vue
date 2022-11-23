@@ -169,14 +169,14 @@
     </div>
 
     <div class="flex flex-col" v-if="product.hasVariations">
-      <VcButton :to="productsRoutes[product.id]" :is-outline="true" class="w-full uppercase !text-13 !border">
+      <VcButton :to="link" :is-outline="true" class="w-full uppercase !text-13 !border">
         {{ $t("pages.catalog.variations_button", [product.variations?.length]) }}
       </VcButton>
 
       <router-link
         class="flex items-center gap-1 mt-2 py-1 text-14 text-[color:var(--color-link)] lg:mt-5 lg:text-11"
         target="_blank"
-        :to="productsRoutes[product.id]"
+        :to="link"
       >
         <svg class="shrink-0 w-3 h-3 text-primary lg:w-2.5 lg:h-2.5">
           <use href="/static/images/link.svg#main"></use>
@@ -203,13 +203,14 @@
 <script setup lang="ts">
 import { computed, PropType, ref } from "vue";
 import { Pagination, Navigation, Lazy } from "swiper";
-import { Swiper, SwiperSlide } from "swiper/vue"; // eslint-disable-line import/no-unresolved
+import { Swiper, SwiperSlide } from "swiper/vue";
 import { Swiper as SwiperInstance } from "swiper/types";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import { Product } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";
-import { getProductRoute, DiscountBadge, useProductsRoutes } from "@/shared/catalog";
+import { DiscountBadge } from "@/shared/catalog";
+import { getProductRoute } from "@/core";
 
 const props = defineProps({
   product: {
@@ -218,11 +219,10 @@ const props = defineProps({
   },
 });
 
-const productsRoutes = useProductsRoutes([props.product]);
 const swiperInstance = ref<SwiperInstance>();
 const swiperBulletsState = ref<boolean[]>([true, false, false]);
 
-const link = computed<RouteLocationRaw>(() => getProductRoute(props.product));
+const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
 
 function slideChanged(swiper: SwiperInstance) {
   const activeIndex: number = swiper.activeIndex;

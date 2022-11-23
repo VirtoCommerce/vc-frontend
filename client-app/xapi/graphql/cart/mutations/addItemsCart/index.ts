@@ -1,9 +1,8 @@
-import { CartItemType } from "@/shared/cart";
-import mutationDocument from "./addItemsToCartMutation.graphql";
-import { Mutations, MutationsAddItemsCartArgs } from "@/xapi/types";
+import mutationDocument from "./addItemsCartMutation.graphql";
+import { InputNewCartItemType, Mutations, MutationsAddItemsCartArgs } from "@/xapi";
 import globals from "@/core/globals";
 
-export default async function addItemsToCart(cartItems: CartItemType[]): Promise<void> {
+export default async function addItemsCart(items: InputNewCartItemType[]): Promise<void> {
   const { storeId, userId, cultureName, currencyCode } = globals;
   const { $graphqlClient } = useNuxtApp();
 
@@ -15,7 +14,7 @@ export default async function addItemsToCart(cartItems: CartItemType[]): Promise
         userId,
         cultureName,
         currencyCode,
-        cartItems,
+        cartItems: items,
       },
     },
   });

@@ -367,18 +367,17 @@
           "max": "Max qty is {0} product(s)"
         }
       },
-      "cart_add_info_popup": {
-        "continue_shopping_button": "@:common.buttons.continue_shopping",
-        "view_cart_button": "View cart",
-        "table": {
-          "product_column": "Product",
-          "quantity_column": "@:common.labels.quantity{':'}",
-          "total_column": "@:common.labels.total{':'}"
+      "add_bulk_items_to_cart_results_popup": {
+        "title": "Adding products to cart result",
+        "groups": {
+          "added": "Successfully added",
+          "not_added": "Not added"
         },
-        "quantity_label": "@:common.labels.quantity",
-        "total_label": "@:common.labels.total",
-        "title_removed": "One product has been removed from cart",
-        "title_added": "One product has been added to cart"
+        "labels": {
+          "sku": "SKU",
+          "product_name": "Product name",
+          "quantity": "Quantity"
+        }
       }
     },
     "catalog": {

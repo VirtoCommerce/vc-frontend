@@ -101,14 +101,14 @@
 
     <div class="vc-product-card-list__add-to-cart flex flex-col gap-2 mt-3 w-full sm:mt-0">
       <template v-if="product.hasVariations">
-        <VcButton :to="productsRoutes[product.id]" :is-outline="true" class="w-full uppercase !text-13 !border">
+        <VcButton :to="link" :is-outline="true" class="w-full uppercase !text-13 !border">
           {{ $t("pages.catalog.variations_button", [product.variations?.length]) }}
         </VcButton>
 
         <router-link
           class="flex items-center gap-1 text-14 text-[color:var(--color-link)] lg:mt-1 lg:text-11"
           target="_blank"
-          :to="productsRoutes[product.id]"
+          :to="link"
         >
           <svg class="shrink-0 w-3 h-3 text-primary lg:w-2.5 lg:h-2.5">
             <use href="/static/images/link.svg#main"></use>
@@ -140,7 +140,8 @@ import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import { Product } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";
-import { getProductRoute, DiscountBadge, useProductsRoutes } from "@/shared/catalog";
+import { DiscountBadge } from "@/shared/catalog";
+import { getProductRoute } from "@/core";
 
 const props = defineProps({
   product: {
@@ -150,10 +151,8 @@ const props = defineProps({
 });
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const productsRoutes = useProductsRoutes([props.product]);
-const link = computed<RouteLocationRaw>(() => getProductRoute(props.product));
-
 const isSmallScreen = breakpoints.smaller("xl");
+const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
 </script>
 
 <style scoped lang="scss">

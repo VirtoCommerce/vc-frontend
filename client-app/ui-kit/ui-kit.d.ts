@@ -1,3 +1,4 @@
+import { Ref } from "vue";
 import { SwiperOptions } from "swiper";
 import { RouteLocationRaw } from "vue-router";
 
@@ -47,4 +48,9 @@ declare global {
   interface IProductProperties {
     [key: string]: { value: string }[];
   }
+
+  type TProvidedObjectOfExpansionPanels = {
+    panels: Ref<Record<string, boolean>>;
+    toggle: (panelId: string) => void;
+  };
 }
