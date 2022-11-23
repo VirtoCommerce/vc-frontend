@@ -174,7 +174,7 @@
 
     <div class="flex flex-col" v-if="product.hasVariations">
       <VcButton :to="link" :is-outline="true" class="w-full uppercase !text-13 !border">
-        {{ $t("pages.catalog.variations_button", [product.variations?.length]) }}
+        {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
       </VcButton>
 
       <router-link

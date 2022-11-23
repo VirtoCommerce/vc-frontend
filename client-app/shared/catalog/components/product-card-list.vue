@@ -106,7 +106,7 @@
     <div class="vc-product-card-list__add-to-cart flex flex-col gap-2 mt-3 w-full sm:mt-0">
       <template v-if="product.hasVariations">
         <VcButton :to="link" :is-outline="true" class="w-full uppercase !text-13 !border">
-          {{ $t("pages.catalog.variations_button", [product.variations?.length]) }}
+          {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
         </VcButton>
 
         <router-link
