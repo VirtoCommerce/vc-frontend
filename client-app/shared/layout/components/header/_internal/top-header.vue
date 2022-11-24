@@ -10,7 +10,7 @@
     <div class="flex items-center text-13">
       <!-- Call us block -->
       <div class="flex items-center" v-if="$cfg.support_phone_number">
-        <i class="fas fa-phone-alt text-[color:var(--color-primary)] mr-1.5 mt-0.5" />
+        <i class="fas fa-phone text-[color:var(--color-primary)] mr-1.5 mt-0.5" />
 
         <span class="font-thin mr-1" v-t="'shared.layout.header.top_header.call_us_label'" />
 
