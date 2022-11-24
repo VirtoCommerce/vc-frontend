@@ -6,3 +6,4 @@ export { default as VcImageGallery } from "./image-gallery/vc-image-gallery.vue"
 export { default as VcItemPrice } from "./item-price/vc-item-price.vue";
 export { default as VcLoaderOverlay } from "./loader-overlay/vc-loader-overlay.vue";
 export { default as VcLoaderWithText } from "./loader-with-text/vc-loader-with-text.vue";
+export { default as VcLineItem } from "./line-item/vc-line-item.vue";

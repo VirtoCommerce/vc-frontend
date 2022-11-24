@@ -15,4 +15,9 @@ fragment quoteLineItemFields on QuoteItemType {
       ...moneyFields
     }
   }
+  product {
+    id
+    slug
+    brandName
+  }
 }
