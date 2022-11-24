@@ -10,14 +10,20 @@ const DEFAULT_ITEMS_PER_PAGE = 16;
 
 export default (
   options: {
-    // @default false
+    /** @default false */
     withFacets?: boolean;
-    // @default false
+    /** @default config.image_carousel_in_product_card_enabled */
     withImages?: boolean;
+    /** @default config.zero_price_product_enabled */
+    withZeroPrice?: boolean;
   } = {}
 ) => {
   const config = inject(configInjectionKey);
-  const { withFacets = false, withImages = config?.image_carousel_in_product_card_enabled } = options;
+  const {
+    withFacets = false,
+    withImages = config?.image_carousel_in_product_card_enabled,
+    withZeroPrice = config?.zero_price_product_enabled,
+  } = options;
 
   const loading = ref(true);
   const loadingMore = ref(false);
@@ -39,7 +45,7 @@ export default (
         term_facets = [],
         range_facets = [],
         totalCount = 0,
-      } = await searchProducts(searchParams, { withFacets, withImages });
+      } = await searchProducts(searchParams, { withFacets, withImages, withZeroPrice });
 
       products.value = items;
       total.value = totalCount;
@@ -66,7 +72,7 @@ export default (
     loadingMore.value = true;
 
     try {
-      const { items = [], totalCount = 0 } = await searchProducts(searchParams, { withImages });
+      const { items = [], totalCount = 0 } = await searchProducts(searchParams, { withImages, withZeroPrice });
 
       products.value = products.value.concat(items);
       total.value = totalCount;
@@ -84,7 +90,10 @@ export default (
 
     try {
       const _searchParams = { ...searchParams, page: 0, itemsPerPage: 0 };
-      const { term_facets = [], range_facets = [] } = await searchProducts(_searchParams, { withFacets: true });
+      const { term_facets = [], range_facets = [] } = await searchProducts(_searchParams, {
+        withZeroPrice,
+        withFacets: true,
+      });
 
       term_facets.sort((a, b) => a.label.localeCompare(b.label));
       range_facets.sort((a, b) => a.label.localeCompare(b.label));
