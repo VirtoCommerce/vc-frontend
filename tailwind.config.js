@@ -166,7 +166,7 @@ module.exports = {
         12: [
           "0.75rem", //12px
           {
-            lineHeight: "0.875rem", //14px
+            lineHeight: "1rem", //16px
           }
         ],
         13: [

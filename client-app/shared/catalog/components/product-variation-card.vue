@@ -17,50 +17,43 @@
     </div>
 
     <!-- Description -->
-    <div class="flex-1 flex flex-col xl:flex-row xl:space-x-3">
-      <div class="flex-1 flex flex-col">
-        <!-- Name -->
-        <div class="text-base font-bold uppercase mb-2">
-          {{ $t("shared.catalog.product_details.product_variation_card.variation_sku_label") }}{{ variation.code }}
+    <div class="flex-1 flex flex-col">
+      <!-- Name -->
+      <div class="text-base font-bold uppercase mb-2">
+        {{ $t("shared.catalog.product_details.product_variation_card.variation_sku_label") }}{{ variation.code }}
+      </div>
+      <div class="flex-1 flex flex-col xl:flex-row xl:space-x-3">
+        <div class="flex-1 flex flex-col gap-y-3 md:gap-y-1 max-xl:mb-2">
+          <!-- Properties -->
+          <VariationProperty v-for="property in groupedProperties" :key="property.name" :label="property.name">
+            {{ property.values }}
+          </VariationProperty>
+
+          <!-- Price -->
+          <VariationProperty :label="$t('shared.catalog.product_details.product_variation_card.price_label')">
+            <VcItemPrice :value="variation.price" />
+          </VariationProperty>
+
+          <!-- Vendor -->
+          <VariationProperty
+            v-if="$cfg.product_vendor_enabled && variation.vendor"
+            :label="$t('shared.catalog.product_details.product_variation_card.vendor_label')"
+          >
+            <Vendor :vendor="variation.vendor"></Vendor>
+          </VariationProperty>
         </div>
 
-        <!-- Properties -->
-        <VariationProperty
-          v-for="property in groupedProperties"
-          :key="property.name"
-          :label="property.name"
-          class="mb-3 md:mb-1"
-        >
-          {{ property.values }}
-        </VariationProperty>
+        <!-- Add to cart -->
+        <div class="flex-1 xl:self-start flex flex-row">
+          <div class="w-full">
+            <AddToCart :product="variation" />
 
-        <!-- Price -->
-        <VariationProperty
-          :label="$t('shared.catalog.product_details.product_variation_card.price_label')"
-          :class="{ 'mb-3 md:mb-1': variation.vendor }"
-        >
-          <VcItemPrice :value="variation.price" />
-        </VariationProperty>
-
-        <!-- Vendor -->
-        <VariationProperty
-          v-if="$cfg.product_vendor_enabled && variation.vendor"
-          :label="$t('shared.catalog.product_details.product_variation_card.vendor_label')"
-        >
-          <Vendor :vendor="variation.vendor"></Vendor>
-        </VariationProperty>
-      </div>
-
-      <!-- Add to cart -->
-      <div class="flex-1 xl:self-center flex flex-row items-center">
-        <div class="w-full mt-4">
-          <AddToCart :product="variation" />
-
-          <VcInStock
-            :is-in-stock="variation.availabilityData?.isInStock"
-            :quantity="variation.availabilityData?.availableQuantity"
-            class="inline-block mt-2.5"
-          />
+            <VcInStock
+              :is-in-stock="variation.availabilityData?.isInStock"
+              :quantity="variation.availabilityData?.availableQuantity"
+              class="inline-block mt-2.5"
+            />
+          </div>
         </div>
       </div>
     </div>

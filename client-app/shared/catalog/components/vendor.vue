@@ -1,8 +1,8 @@
 <template>
   <div class="font-bold">
-    <div class="text-[color:var(--color-link)]">{{ vendor.name }}</div>
-    <div class="text-12">
-      <i class="fas fa-star text-[color:var(--color-primary)] mr-0.5" />
+    <div class="text-link">{{ vendor.name }}</div>
+    <div v-if="displayRating" class="text-12">
+      <i class="fas fa-star text-primary mr-0.5" />
       <span class="font-extrabold">{{ vendor.rating?.value }}</span
       >/5&nbsp;({{ vendor.rating?.reviewCount }})
     </div>
@@ -10,12 +10,19 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
 import { Vendor } from "@/xapi/types";
-defineProps({
-  vendor: {
-    type: Object as PropType<Vendor>,
-    required: true,
-  },
+import { computed } from "vue";
+
+export interface Props {
+  displayRating?: boolean;
+  vendor: Vendor;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  displayRating: true,
 });
+
+const displayRating = computed(
+  () => props.displayRating && props.vendor.rating?.reviewCount !== undefined && props.vendor.rating?.reviewCount > 0
+);
 </script>
