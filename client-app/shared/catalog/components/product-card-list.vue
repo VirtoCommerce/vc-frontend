@@ -93,7 +93,7 @@
         </div>
         <div class="grow relative">
           <div class="absolute inset-0 flex pl-1">
-            <Vendor :vendor="product.vendor" :display-rating="false"></Vendor>
+            <Vendor :vendor="product.vendor" />
           </div>
         </div>
       </template>

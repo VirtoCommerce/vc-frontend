@@ -16,7 +16,7 @@
       :label="$t('shared.catalog.product_details.vendor_label')"
       class="mb-4"
     >
-      <Vendor :vendor="product.vendor"></Vendor>
+      <Vendor :vendor="product.vendor" withRating />
     </ProductProperty>
   </ProductTitledBlock>
 </template>

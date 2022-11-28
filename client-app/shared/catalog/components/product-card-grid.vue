@@ -158,7 +158,7 @@
           </div>
           <div class="relative">
             <div class="absolute inset-0 flex items-end pt-0.5 pb-px pl-1">
-              <Vendor :vendor="product.vendor" :display-rating="false"></Vendor>
+              <Vendor :vendor="product.vendor" />
             </div>
           </div>
         </template>

@@ -14,15 +14,15 @@ import { Vendor } from "@/xapi/types";
 import { computed } from "vue";
 
 export interface Props {
-  displayRating?: boolean;
+  withRating?: boolean;
   vendor: Vendor;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  displayRating: true,
+  withRating: false,
 });
 
 const displayRating = computed(
-  () => props.displayRating && props.vendor.rating?.reviewCount !== undefined && props.vendor.rating?.reviewCount > 0
+  () => props.withRating && props.vendor.rating?.reviewCount !== undefined && props.vendor.rating?.reviewCount > 0
 );
 </script>
