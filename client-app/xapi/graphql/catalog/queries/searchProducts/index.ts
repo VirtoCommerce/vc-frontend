@@ -17,16 +17,23 @@ export default async function searchProducts(
     productIds,
   }: Partial<ProductsSearchParams>,
   options: {
-    // @default false
+    /** @default false */
     withFacets?: boolean;
-    // @default false
+    /** @default true */
     withImages?: boolean;
+    /** @default false */
+    withZeroPrice?: boolean;
   } = {}
 ): Promise<ProductConnection> {
   const { storeId, catalogId, userId, cultureName, currencyCode } = globals;
   const { $graphqlClient } = useNuxtApp();
-  const { withFacets = false, withImages = true } = options;
-  const filterString = [`category.subtree:${catalogId}${categoryId ? "/" + categoryId : ""}`, filter]
+  const { withFacets = false, withImages = true, withZeroPrice = false } = options;
+
+  const filterString = [
+    `category.subtree:${catalogId}${categoryId ? "/" + categoryId : ""}`,
+    withZeroPrice ? "" : "price:(0 TO)",
+    filter,
+  ]
     .filter(Boolean)
     .join(" ");
 

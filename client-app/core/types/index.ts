@@ -100,6 +100,7 @@ export interface IThemeConfigPreset {
   catalog_items_selector?: number[];
   infinite_scrolling_enabled?: boolean;
   in_stock_count_enabled?: boolean;
+  zero_price_product_enabled?: boolean;
   sort_by_price_enabled?: boolean;
   sort_by_name_enabled?: boolean;
   sort_by_featured_enabled?: boolean;
