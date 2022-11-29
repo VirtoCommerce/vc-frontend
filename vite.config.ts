@@ -1,19 +1,20 @@
 import path from "path";
-import { defineConfig, loadEnv, UserConfig } from "vite";
+import { defineConfig, loadEnv, ProxyOptions, UserConfig } from "vite";
+import mkcert from "vite-plugin-mkcert";
 import vue from "@vitejs/plugin-vue";
 import graphql from "@rollup/plugin-graphql";
 import checker from "vite-plugin-checker";
-import mkcert from "vite-plugin-mkcert";
 
-const getProxy = (target, options = {}) => {
+function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "target"> = {}): ProxyOptions {
   const dontTrustSelfSignedCertificate = false;
+
   return {
     target,
     changeOrigin: true,
     secure: dontTrustSelfSignedCertificate,
     ...options,
   };
-};
+}
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }): UserConfig => {
@@ -26,7 +27,7 @@ export default defineConfig(({ mode }): UserConfig => {
   return {
     envPrefix: "APP_",
     plugins: [
-      mkcert({ hosts: ["localhost", "127.0.0.1"] }),
+      mkcert(),
       vue(),
       graphql(),
       checker({
@@ -74,9 +75,9 @@ export default defineConfig(({ mode }): UserConfig => {
       port: 3000,
       https: true,
       proxy: {
-        "^/(xapi|storefrontapi)": getProxy(`${process.env.APP_BACKEND_URL}`),
+        "^/(xapi|storefrontapi)": getProxy(process.env.APP_BACKEND_URL),
         // For login on behalf
-        "^/account/impersonate/.+": getProxy(`${process.env.APP_BACKEND_URL}`, {
+        "^/account/impersonate/.+": getProxy(process.env.APP_BACKEND_URL, {
           autoRewrite: true,
         }),
       },
