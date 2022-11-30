@@ -31,3 +31,4 @@ export { default as VcTextArea } from "./text-area/vc-text-area.vue";
 export { default as VcTooltip } from "./tooltip/vc-tooltip.vue";
 export { default as VcTotalDisplay } from "./total-display/vc-total-display.vue";
 export { default as VcTransitionScale } from "./transition-scale/vc-transition-scale.vue";
+export { default as VcLineItems } from "./line-items/vc-line-items.vue";

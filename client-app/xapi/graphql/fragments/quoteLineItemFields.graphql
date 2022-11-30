@@ -19,5 +19,13 @@ fragment quoteLineItemFields on QuoteItemType {
     id
     slug
     brandName
+    properties {
+      name
+      value
+    }
+    availabilityData {
+      availableQuantity
+      isInStock
+    }
   }
 }

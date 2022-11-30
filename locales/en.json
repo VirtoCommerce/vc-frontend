@@ -25,7 +25,8 @@
       "add_to_cart": "Add to cart",
       "apply": "Apply",
       "send": "Send",
-      "more": "More"
+      "more": "More",
+      "save_changes": "Save Changes"
     },
     "labels": {
       "actions": "Actions",
@@ -639,6 +640,15 @@
         "message": "Are you sure you want to remove “{productName}” from the list?",
         "delete_button": "@:common.buttons.delete",
         "cancel_button": "@:common.buttons.cancel"
+      }
+    },
+    "line_items": {
+      "header": {
+        "product": "Product",
+        "properties": "Properties",
+        "price_per_item": "Price per item",
+        "quantity": "Quantity",
+        "total": "Total"
       }
     }
   },
