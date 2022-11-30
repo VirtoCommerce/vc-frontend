@@ -1,0 +1,10 @@
+{%- if google_analytics_enable %}
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ google_analytics_measurement_id }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '{{ google_analytics_measurement_id }}'{% if is_development %}, { 'debug_mode': true }{% endif %});
+  </script>
+{% endif -%}
