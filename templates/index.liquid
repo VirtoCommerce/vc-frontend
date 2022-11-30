@@ -2,6 +2,3 @@
   NOTE: As an example, here is the code for passing settings to a Vue application.
 {% endcomment -%}
 <div id="app" data-settings='{ "exampleProperty": "example value" }'></div>
-
-{{ 'app-runner.css' | asset_url | append_version | stylesheet_tag }}
-<script src="{{ 'index.js' | asset_url | append_version }}" type="module"></script>
