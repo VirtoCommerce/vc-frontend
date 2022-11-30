@@ -152,7 +152,7 @@
         </template>
 
         <!-- Vendor -->
-        <template v-if="$cfg.product_vendor_enabled && product.vendor">
+        <template v-if="$cfg.vendor_enabled && product.vendor">
           <div class="pt-0.5 pb-px font-bold capitalize">
             {{ $t("shared.catalog.product_card.product_vendor") }}
           </div>

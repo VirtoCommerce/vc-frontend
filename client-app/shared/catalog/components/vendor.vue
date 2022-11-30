@@ -1,7 +1,7 @@
 <template>
   <div class="font-bold">
     <div class="text-link">{{ vendor.name }}</div>
-    <div v-if="displayRating" class="text-12">
+    <div v-if="$cfg.rating_enabled && displayRating" class="text-12">
       <i class="fas fa-star text-primary mr-0.5" />
       <span class="font-extrabold">{{ vendor.rating?.value }}</span
       >/5&nbsp;({{ vendor.rating?.reviewCount }})

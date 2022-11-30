@@ -12,7 +12,7 @@
 
     <!-- Vendor -->
     <ProductProperty
-      v-if="$cfg.product_vendor_enabled && !product.hasVariations && product.vendor"
+      v-if="$cfg.vendor_enabled && !product.hasVariations && product.vendor"
       :label="$t('shared.catalog.product_details.vendor_label')"
       class="mb-4"
     >
