@@ -1,46 +1,51 @@
 <template>
-  <div class="flex relative z-0">
-    <input
-      ref="input"
-      type="number"
-      v-model.number="enteredQuantity"
-      :disabled="disabled"
-      :max="maxQty"
-      :min="minQty"
-      :class="{
-        'border-[color:var(--color-danger)] focus:border-[color:var(--color-danger-hover)] z-10': !!errorMessage,
-      }"
-      class="appearance-none rounded-l rounded-r-none flex-1 w-full text-base lg:text-sm -mr-px border border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9 min-w-0"
-      @input="onInput"
-      @keypress="onKeypress"
-      @click="onClick"
-    />
+  <div>
+    <div class="flex relative z-0">
+      <input
+        ref="input"
+        type="number"
+        v-model.number="enteredQuantity"
+        :disabled="disabled"
+        :max="maxQty"
+        :min="minQty"
+        :class="{
+          'border-[color:var(--color-danger)] focus:border-[color:var(--color-danger-hover)] z-10': !!errorMessage,
+        }"
+        class="appearance-none rounded-l rounded-r-none flex-1 w-full text-base lg:text-sm -mr-px border border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9 min-w-0 text-center"
+        @input="onInput"
+        @keypress="onKeypress"
+        @click="onClick"
+      />
 
-    <VcButton
-      class="!rounded-l-none !border uppercase px-3 !text-sm"
-      :is-outline="!countInCart"
-      :is-waiting="loading"
-      :is-disabled="disabled || !!errorMessage"
-      :title="buttonText"
-      @click="onChange"
-    >
-      <span class="hidden xl:inline">
+      <VcButton
+        class="!rounded-l-none !border uppercase px-3 !text-13 min-w-[52%]"
+        :is-outline="!countInCart"
+        :is-waiting="loading"
+        :is-disabled="disabled || !!errorMessage"
+        :title="buttonText"
+        @click="onChange"
+      >
         {{ buttonText }}
-      </span>
-      <i class="inline xl:hidden fas fa-shopping-cart" />
-    </VcButton>
-  </div>
+      </VcButton>
+    </div>
 
-  <!-- Info hint -->
-  <div v-if="errorMessage" class="text-xs text-[color:var(--color-danger)]">
-    {{ errorMessage }}
-  </div>
+    <!-- Info hint -->
+    <VcTooltip class="!block" v-if="errorMessage" :xOffset="28" placement="bottom-start" strategy="fixed">
+      <template #trigger>
+        <div class="pt-0.5 text-11 text-[color:var(--color-danger)] xs:line-clamp-1">
+          {{ errorMessage }}
+        </div>
+      </template>
 
-  <div v-else-if="countInCart" class="text-xs text-gray-400">
-    {{ $t("shared.cart.add_to_cart.errors.already_in_cart_message", [countInCart]) }}
-  </div>
+      <template #content>
+        <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5 w-52">
+          {{ errorMessage }}
+        </div>
+      </template>
+    </VcTooltip>
 
-  <div v-else class="mb-4"></div>
+    <div v-else-if="reservedSpace" class="h-2.5 lg:h-4"></div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -61,6 +66,10 @@ const props = defineProps({
   product: {
     type: Object as PropType<Product | VariationType>,
     required: true,
+  },
+  reservedSpace: {
+    type: Boolean,
+    default: false,
   },
 });
 

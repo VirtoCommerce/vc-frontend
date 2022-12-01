@@ -5,6 +5,14 @@ module.exports = {
   content: ["./index.html", "./client-app/**/*.{vue,js,ts,jsx,tsx}"],
 
   theme: {
+    screens: {
+      xs: "480px",
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1500px",
+    },
     fontFamily: {
       lato: ["Lato", "sans-serif"],
       roboto: ["Roboto", "sans-serif"],
@@ -131,6 +139,7 @@ module.exports = {
       boxShadow: {
         "t-sm": "0 -1px 2px 0 rgba(0, 0, 0, 0.05)",
         "t-2sm": "1px 2px 4px rgba(0, 0, 0, 0.15)",
+        "t-3sm": "1px 2px 4px rgba(0, 0, 0, 0.05)",
         t: "0 -1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);",
         "md-x": "1px 2px 8px rgba(0, 0, 0, 0.05)",
         "t-mds": "1px 1px 3px rgba(0, 0, 0, 0.25)",
@@ -145,6 +154,9 @@ module.exports = {
       },
 
       fontSize: {
+        10: [
+          "0.625rem", //10px
+        ],
         11: [
           "0.6875rem", //11px
           {
@@ -164,6 +176,12 @@ module.exports = {
             letterSpacing: "0.01em",
           },
         ],
+        14: [
+          "0.875rem", //14px
+          {
+            lineHeight: "1.25rem", //20px
+          },
+        ],
         15: [
           "0.9375rem", //15px
           {
@@ -174,6 +192,12 @@ module.exports = {
           "1.0625rem", //17px
           {
             lineHeight: "1.25rem", //20px
+          },
+        ],
+        18: [
+          "1.125rem", //18px
+          {
+            lineHeight: "1.5rem", //24px
           },
         ],
         19: [
@@ -226,6 +250,7 @@ module.exports = {
       padding: {
         4.5: "1.125rem", //18px
         17: "4.25rem", //68px
+        18: "4.5rem", //72px
         19: "4.75rem", //76px
       },
 

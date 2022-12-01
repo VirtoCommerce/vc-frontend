@@ -1,9 +1,9 @@
 <template>
   <div
-    class="bg-gray-100 pt-4 pb-16 shadow-inner grow lg:pt-12"
+    class="bg-gray-100 pt-4 pb-16 shadow-inner grow lg:pt-6"
     :class="{ 'polygon-gray-bg': !products.length && !loading }"
   >
-    <div class="max-w-screen-2xl px-5 md:px-12 mx-auto">
+    <div class="px-5 mx-auto max-w-screen-2xl 2xl:px-18">
       <!-- Breadcrumbs -->
       <Breadcrumbs class="mb-2.5 md:mb-4" :items="breadcrumbs" v-if="!isSearchQuery" />
 
@@ -142,14 +142,14 @@
             </div>
 
             <!-- View options -->
-            <ViewMode
-              v-if="!isMobileSidebar"
-              v-model:mode="savedViewMode"
-              class="inline-flex ml-3 lg:order-1 lg:ml-0 lg:mr-auto"
-            />
+            <ViewMode v-model:mode="savedViewMode" class="inline-flex ml-3 lg:order-1 lg:ml-0 lg:mr-auto" />
 
             <!-- Branch availability -->
-            <div v-if="!isMobileSidebar" class="order-3 ml-4 xl:ml-6" @click.prevent="openBranchesDialog(false)">
+            <div
+              v-if="!isMobileSidebar"
+              class="order-3 flex items-center ml-4 xl:ml-6"
+              @click.prevent="openBranchesDialog(false)"
+            >
               <VcTooltip :xOffset="28" placement="bottom-start" strategy="fixed">
                 <template #trigger>
                   <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading">
@@ -178,7 +178,7 @@
             </div>
 
             <!-- In Stock -->
-            <div v-if="!isMobileSidebar" class="order-2 ml-4 xl:ml-8">
+            <div v-if="!isMobileSidebar" class="order-2 flex items-center ml-4 xl:ml-8">
               <VcTooltip :xOffset="28" placement="bottom-start" strategy="fixed">
                 <template #trigger>
                   <VcCheckbox v-model="savedInStock" :disabled="loading">
@@ -241,26 +241,17 @@
           <template v-if="products.length || loading">
             <DisplayProducts
               :loading="loading"
-              :view-mode="isMobile ? 'grid' : savedViewMode"
+              :view-mode="savedViewMode"
               :items-per-page="itemsPerPage"
               :products="products"
               :class="
-                savedViewMode === 'list' && !isMobile
-                  ? 'space-y-5'
-                  : 'grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-6 xl:gap-x-6 xl:gap-y-8'
+                savedViewMode === 'list'
+                  ? '-mx-5 divide-y lg:divide-y-0 lg:mx-0 lg:space-y-3.5'
+                  : 'grid gap-6 xs:grid-cols-2 md:grid-cols-3 lg:gap-5 xl:grid-cols-4'
               "
             >
               <template #cart-handler="{ item }">
-                <VcButton
-                  v-if="item.hasVariations"
-                  :to="productsRoutes[item.id]"
-                  :class="{ 'w-full': savedViewMode === 'list' }"
-                  class="uppercase mb-4"
-                >
-                  {{ $t("pages.catalog.choose_button") }}
-                </VcButton>
-
-                <AddToCart v-else :product="item" />
+                <AddToCart :product="item" :reserved-space="savedViewMode === 'grid'" />
               </template>
             </DisplayProducts>
 
@@ -341,7 +332,6 @@ import {
   useCategories,
   useElementVisibility,
   usePageHead,
-  useProductsRoutes,
   useRouteQueryParam,
 } from "@/core";
 import {
@@ -402,7 +392,6 @@ usePageHead({
 });
 
 const route = useRoute();
-const productsRoutes = useProductsRoutes(products);
 const savedViewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
 const savedInStock = useLocalStorage<boolean>("viewInStockProducts", true);
 const savedBranches = useLocalStorage<string[]>(FFC_LOCAL_STORAGE, []);
@@ -424,7 +413,6 @@ const facetsQueryParam = useRouteQueryParam<string>(QueryParamName.Facets, {
   defaultValue: "",
 });
 
-const isMobile = breakpoints.smaller("md");
 const isMobileSidebar = breakpoints.smaller("lg");
 
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);

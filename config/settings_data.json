@@ -12,6 +12,7 @@
       "wishlists_limit": 10,
       "search_min_chars": 3,
       "support_phone_number": "+31 416 652 803",
+      "zero_price_product_enabled": false,
       "checkout_comment_enabled": true,
       "checkout_purchase_order_enabled": true,
       "checkout_coupon_enabled": true,
@@ -128,7 +129,15 @@
       "color_branch_dialog_input": "#C2C9E0",
       "color_add_wishlist_dialog_subtitle_bg": "#F3F3F3",
       "color_add_wishlist_dialog_delete_icon": "#EC6A5E",
-      "color_branch_closed": "#EC6A5E"
+      "color_branch_closed": "#EC6A5E",
+      "color_add_to_cart_in_cart_bg": "#F3F3F3",
+      "color_add_to_cart_in_cart": "#757575",
+      "color_product_icon": "#D9D5CE",
+      "color_product_icon_active": "#F0AD4E",
+      "color_product_outline": "#EDEDED",
+      "color_price_current": "#1F222C",
+      "color_price_old": "#9D9991",
+      "color_price_from": "#9D9991"
     },
     "Watermelon": {
       "page_title_with_store_name": true,
@@ -141,6 +150,7 @@
       "wishlists_limit": 10,
       "search_min_chars": 3,
       "support_phone_number": "+31 416 652 803",
+      "zero_price_product_enabled": false,
       "checkout_comment_enabled": true,
       "checkout_purchase_order_enabled": true,
       "checkout_coupon_enabled": true,
@@ -207,7 +217,6 @@
       "color_success_hover": "#439943",
       "color_warning": "#44d079",
       "color_warning_hover": "#EEAA00",
-      "color_price": "#3C763D",
       "color_sale_badge_bg": "rgba(240, 60, 3, 1)",
       "color_mobile_menu_bg": "#0f5f1b",
       "color_mobile_menu_link": "#198411",
@@ -257,7 +266,15 @@
       "color_branch_dialog_input": "#C2C9E0",
       "color_add_wishlist_dialog_subtitle_bg": "#F3F3F3",
       "color_add_wishlist_dialog_delete_icon": "#EC6A5E",
-      "color_branch_closed": "#EC6A5E"
+      "color_branch_closed": "#EC6A5E",
+      "color_add_to_cart_in_cart_bg": "#F3F3F3",
+      "color_add_to_cart_in_cart": "#757575",
+      "color_product_icon": "#D9D5CE",
+      "color_product_icon_active": "#F0AD4E",
+      "color_product_outline": "#EDEDED",
+      "color_price_current": "#1F222C",
+      "color_price_old": "#9D9991",
+      "color_price_from": "#9D9991"
     }
   }
 }

@@ -26,7 +26,7 @@
 
         <div v-else class="flex flex-row items-center h-full pr-4">
           <a class="p-2.5" :href="`tel:${$cfg.support_phone_number}`" v-if="$cfg.support_phone_number">
-            <i class="fas fa-phone-alt text-xl text-[color:var(--color-primary)]"></i>
+            <i class="fas fa-phone text-xl text-[color:var(--color-primary)]"></i>
           </a>
 
           <button class="p-2.5" @click="toggleSearchBar">

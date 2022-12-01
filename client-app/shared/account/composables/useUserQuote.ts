@@ -27,12 +27,12 @@ export default () => {
     try {
       quote.value = await getQuote(paylod);
 
-      const quoteShippingAddress = getAddress(quote.value, AddressType.Shipping);
+      const quoteShippingAddress = getAddress(quote.value!, AddressType.Shipping);
       if (quoteShippingAddress) {
         shippingAddress.value = quoteShippingAddress;
       }
 
-      const quoteBillingAddress = getAddress(quote.value, AddressType.Billing);
+      const quoteBillingAddress = getAddress(quote.value!, AddressType.Billing);
       if (quoteBillingAddress) {
         billingAddress.value = quoteBillingAddress;
       }

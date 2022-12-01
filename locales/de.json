@@ -57,6 +57,7 @@
       "false_property": "No"
     },
     "suffixes": {
+      "from": "From",
       "per_item": "/ jeder",
       "product_count_in_stock": "auf Lager"
     },
@@ -359,6 +360,7 @@
         "add_to_cart_button": "@:common.buttons.add_to_cart",
         "update_cart_button": "Update cart",
         "errors": {
+          "in_cart": "in Cart",
           "already_in_cart_message": "{0} has already been added to cart",
           "enter_correct_number_message": "Please enter valid number",
           "min": "Min qty is {0} product(s)",
@@ -388,7 +390,9 @@
       },
       "product_card": {
         "product_sku_label": "@:common.labels.sku",
-        "price_label": "@:common.labels.product_price"
+        "price_label": "@:common.labels.product_price",
+        "product_rating": "Raiting:",
+        "product_vendor": "Vendor:"
       },
       "product_details": {
         "technical_specs_block_title": "technical specs",
@@ -407,6 +411,9 @@
           "price_label": "@:common.labels.product_price",
           "vendor_label": "@:shared.catalog.product_details.vendor_label"
         }
+      },
+      "discount_badge": {
+        "off": "off"
       },
       "branches_dialog": {
         "title": "Select Branch",
@@ -1096,6 +1103,10 @@
       "filters_button": "@:common.buttons.filters",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
+      "wishlist_tooltip": "Add to list",
+      "add_to_compare_tooltip": "Add to compare",
+      "variations_button": "{0} variations",
+      "show_on_a_separate_page": "Show on a separate page",
       "no_products_message": "There are no products in this category",
       "no_products_filtered_message": "There are no results found",
       "no_products_button": "Reset search",

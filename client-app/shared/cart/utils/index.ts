@@ -20,10 +20,10 @@ export function getItemsForAddBulkItemsToCartResultsPopup(
   inputItems: OrderLineItemType[],
   resultItems: OutputBulkItemType[]
 ): ItemForAddBulkItemsToCartResultsPopup[] {
-  const dictionaryOfErrorsGroupedBySKU: Record<string, ValidationErrorType[] | undefined> = {};
+  const errorsGroupedBySKU: Record<string, ValidationErrorType[] | undefined> = {};
 
   resultItems.forEach((item) => {
-    dictionaryOfErrorsGroupedBySKU[item.productSku] = item.errors;
+    errorsGroupedBySKU[item.productSku] = item.errors;
   });
 
   return inputItems.map<ItemForAddBulkItemsToCartResultsPopup>((item) => ({
@@ -31,7 +31,7 @@ export function getItemsForAddBulkItemsToCartResultsPopup(
     name: item.name!,
     sku: item.sku!,
     quantity: item.quantity!,
-    slug: item.product!.slug,
-    errors: dictionaryOfErrorsGroupedBySKU[item.sku!],
+    slug: item.product?.slug,
+    errors: errorsGroupedBySKU[item.sku!],
   }));
 }
