@@ -1,22 +1,24 @@
 import { computed, ref, Ref } from "vue";
 import { AddressType, Logger } from "@/core";
 import {
-  changeQuoteCommentMutation,
-  changeQuoteItemQuantityMutation,
-  removeQuoteItemMutation,
-  updateQuoteAddressesMutation,
   getQuote,
+  changeQuoteComment,
+  changeQuoteItemQuantity,
+  removeQuoteItem,
+  updateQuoteAddresses,
+  submitQuoteRequest,
   QueryQuoteArgs,
   QuoteAddressType,
   QuoteType,
   InputQuoteAddressType,
 } from "@/xapi";
-import { find } from "lodash";
+import { find, isEqual } from "lodash";
 
 const fetching: Ref<boolean> = ref(false);
 const quote: Ref<QuoteType | undefined> = ref();
 const shippingAddress: Ref<QuoteAddressType | undefined> = ref();
 const billingAddress: Ref<QuoteAddressType | undefined> = ref();
+const billingAndShippingAddressesAreEqual: Ref<boolean> = ref(false);
 
 export default () => {
   async function fetchQuote(paylod: QueryQuoteArgs): Promise<void> {
@@ -25,16 +27,17 @@ export default () => {
     try {
       quote.value = await getQuote(paylod);
 
-      shippingAddress.value = find(
-        quote.value?.addresses,
-        (address: QuoteAddressType) =>
-          address.addressType === AddressType.Shipping || address.addressType === AddressType.BillingAndShipping
-      );
-      billingAddress.value = find(
-        quote.value?.addresses,
-        (address: QuoteAddressType) =>
-          address.addressType === AddressType.Billing || address.addressType === AddressType.BillingAndShipping
-      );
+      const quoteShippingAddress = getAddress(quote.value, AddressType.Shipping);
+      if (quoteShippingAddress) {
+        shippingAddress.value = quoteShippingAddress;
+      }
+
+      const quoteBillingAddress = getAddress(quote.value, AddressType.Billing);
+      if (quoteBillingAddress) {
+        billingAddress.value = quoteBillingAddress;
+      }
+
+      billingAndShippingAddressesAreEqual.value = isEqual(shippingAddress.value, billingAddress.value);
     } catch (e) {
       Logger.error("useUserQuote.fetchQuote", e);
       throw e;
@@ -43,52 +46,65 @@ export default () => {
     }
   }
 
-  async function updateQuoteComment(quoteId: string, comment: string): Promise<void> {
+  async function changeComment(quoteId: string, comment: string): Promise<void> {
     fetching.value = true;
 
     try {
-      await changeQuoteCommentMutation({ command: { quoteId, comment } });
+      await changeQuoteComment({ command: { quoteId, comment } });
     } catch (e) {
-      Logger.error("useUserQuote.updateQuoteComment", e);
+      Logger.error("useUserQuote.changeComment", e);
       throw e;
     } finally {
       fetching.value = false;
     }
   }
 
-  async function updateQuoteItemQuantity(quoteId: string, lineItemId: string, quantity: number): Promise<void> {
+  async function changeItemQuantity(quoteId: string, lineItemId: string, quantity: number): Promise<void> {
     fetching.value = true;
 
     try {
-      await changeQuoteItemQuantityMutation({ command: { quoteId, lineItemId, quantity } });
+      await changeQuoteItemQuantity({ command: { quoteId, lineItemId, quantity } });
     } catch (e) {
-      Logger.error("useUserQuote.changeQuoteItemQuantity", e);
+      Logger.error("useUserQuote.changeItemQuantity", e);
       throw e;
     } finally {
       fetching.value = false;
     }
   }
 
-  async function removeQuoteItem(quoteId: string, lineItemId: string): Promise<void> {
+  async function removeItem(quoteId: string, lineItemId: string): Promise<void> {
     fetching.value = true;
 
     try {
-      await removeQuoteItemMutation({ command: { quoteId, lineItemId } });
+      await removeQuoteItem({ command: { quoteId, lineItemId } });
     } catch (e) {
-      Logger.error("useUserQuote.removeQuoteItem", e);
+      Logger.error("useUserQuote.removeItem", e);
       throw e;
     } finally {
       fetching.value = false;
     }
   }
 
-  async function updateQuoteAddresses(quoteId: string, addresses: InputQuoteAddressType[]): Promise<void> {
+  async function updateAddresses(quoteId: string, addresses: InputQuoteAddressType[]): Promise<void> {
     fetching.value = true;
 
     try {
-      await updateQuoteAddressesMutation({ command: { quoteId, addresses } });
+      await updateQuoteAddresses({ command: { quoteId, addresses } });
     } catch (e) {
-      Logger.error("useUserQuote.updateQuoteAddresses", e);
+      Logger.error("useUserQuote.updateAddresses", e);
+      throw e;
+    } finally {
+      fetching.value = false;
+    }
+  }
+
+  async function submitQuote(quoteId: string, comment: string): Promise<void> {
+    fetching.value = true;
+
+    try {
+      await submitQuoteRequest({ command: { quoteId, comment } });
+    } catch (e) {
+      Logger.error("useUserQuote.submit", e);
       throw e;
     } finally {
       fetching.value = false;
@@ -100,10 +116,19 @@ export default () => {
     quote: computed(() => quote.value),
     shippingAddress,
     billingAddress,
+    billingAndShippingAddressesAreEqual,
     fetchQuote,
-    updateQuoteComment,
-    updateQuoteItemQuantity,
-    removeQuoteItem,
-    updateQuoteAddresses,
+    changeComment,
+    changeItemQuantity,
+    removeItem,
+    updateAddresses,
+    submitQuote,
   };
 };
+
+function getAddress(
+  quoteRequest: QuoteType,
+  type: AddressType.Shipping | AddressType.Billing
+): QuoteAddressType | undefined {
+  return find(quoteRequest.addresses, (address: QuoteAddressType) => address.addressType === type);
+}

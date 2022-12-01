@@ -35,6 +35,22 @@ export function createI18n() {
         },
       },
     },
+    numberFormats: {
+      en: {
+        currency: {
+          style: "currency",
+          currency: "USD",
+          notation: "standard",
+        },
+      },
+      de: {
+        currency: {
+          style: "currency",
+          currency: "EUR",
+          notation: "standard",
+        },
+      },
+    },
   });
 }
 
