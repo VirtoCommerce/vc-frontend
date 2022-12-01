@@ -254,6 +254,11 @@ function setQuoteAddress(address: QuoteAddressType): void {
   if (address.addressType === AddressType.Shipping) {
     shippingAddress.value = address;
   }
+
+  if (billingAndShippingAddressesAreEqual.value && shippingAddress.value) {
+    billingAddress.value = cloneDeep(shippingAddress.value);
+    billingAddress.value!.addressType = AddressType.Billing;
+  }
 }
 
 function setInitialState(): void {
