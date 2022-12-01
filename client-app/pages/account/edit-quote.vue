@@ -28,7 +28,14 @@
         <strong>
           {{ $t("pages.account.quote_details.remarks_field_label") }}
         </strong>
-        <VcTextArea v-model="quote.comment" :max-length="1000" :rows="4" class="resize-none" counter />
+        <VcTextArea
+          v-model="quote.comment"
+          :isDisabled="fetching"
+          :max-length="1000"
+          :rows="4"
+          class="resize-none"
+          counter
+        />
       </div>
     </VcSection>
 
@@ -84,12 +91,13 @@
             <div class="lg:flex-col w-full lg:w-1/2 mt-2.5 lg:mt-0">
               <div class="flex justify-end">
                 <button
+                  :disabled="fetching"
                   type="button"
                   class="h-7 w-7 shadow rounded text-[color:var(--color-primary)] hover:bg-gray-100"
                   @click="
-                    openAddOrUpdateAddressDialog(
-                      shippingAddress || { ...newAddress, addressType: AddressType.Shipping }
-                    )
+                    userHasAddresses
+                      ? openAddressSelectionDialog(AddressType.Shipping)
+                      : openAddOrUpdateAddressDialog(AddressType.Shipping, shippingAddress)
                   "
                   :title="$t('pages.account.addresses.edit_label')"
                 >
@@ -124,7 +132,11 @@
         </h4>
         <div class="border rounded mt-2.5 p-5">
           <div>
-            <VcCheckbox :model-value="billingAndShippingAddressesAreEqual" @change="toggleBillingAddressEqualShipping">
+            <VcCheckbox
+              :model-value="billingAndShippingAddressesAreEqual"
+              :disabled="fetching"
+              @change="toggleBillingAddressEqualShipping"
+            >
               {{ $t("pages.account.quote_details.same_as_shipping_address") }}
             </VcCheckbox>
           </div>
@@ -143,10 +155,13 @@
             <div class="lg:flex-col w-full lg:w-1/2 mt-2.5 lg:mt-0">
               <div class="flex justify-end">
                 <button
+                  :disabled="fetching"
                   type="button"
                   class="h-7 w-7 shadow rounded text-[color:var(--color-primary)] hover:bg-gray-100"
                   @click="
-                    openAddOrUpdateAddressDialog(billingAddress || { ...newAddress, addressType: AddressType.Billing })
+                    userHasAddresses
+                      ? openAddressSelectionDialog(AddressType.Billing)
+                      : openAddOrUpdateAddressDialog(AddressType.Billing, billingAddress)
                   "
                   :title="$t('pages.account.addresses.edit_label')"
                 >
@@ -159,41 +174,63 @@
       </div>
 
       <div class="flex w-full gap-x-5 px-7 py-5 justify-center lg:justify-end">
-        <VcButton size="lg" class="w-48 uppercase font-bold" is-outline>
+        <VcButton
+          :isDisabled="!quoteChanged || fetching"
+          size="lg"
+          class="w-48 uppercase font-bold"
+          is-outline
+          @click="saveChanges"
+        >
           {{ $t("pages.account.quote_details.save_changes") }}
         </VcButton>
-        <VcButton size="lg" class="w-48 uppercase font-bold">
+        <VcButton :is-disabled="!quoteValid || fetching" size="lg" class="w-48 uppercase font-bold" @click="submit">
           {{ $t("pages.account.quote_details.submit") }}
         </VcButton>
       </div>
     </VcSection>
   </div>
+
+  <VcLoaderOverlay v-else no-bg />
 </template>
 
 <script setup lang="ts">
-import { computed, ref, Ref, watchEffect } from "vue";
+import { computed, onMounted, ref } from "vue";
+import { computedEager } from "@vueuse/core";
+import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { QuoteAddressType } from "@/xapi";
+import { cloneDeep, isEqual } from "lodash";
+import { QuoteAddressType, QuoteType } from "@/xapi";
 import { AddressType } from "@/core";
-import { useUserQuote } from "@/shared/account";
+import { useUser, useUserAddresses, useUserQuote } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
-import { AddOrUpdateAddressDialog } from "@/shared/checkout";
+import { AddOrUpdateAddressDialog, SelectAddressDialog } from "@/shared/checkout";
 
 const props = defineProps({
   quoteId: String,
 });
 
+const router = useRouter();
 const { t } = useI18n();
-const { quote, shippingAddress, billingAddress, billingAndShippingAddressesAreEqual, fetchQuote } = useUserQuote();
+const { user } = useUser();
+const { addresses, fetchAddresses } = useUserAddresses({ user });
+const { quote, billingAddress, shippingAddress, fetching, fetchQuote, changeComment, updateAddresses, submitQuote } =
+  useUserQuote();
 const { openPopup, closePopup } = usePopup();
 
-const newAddress: Ref<QuoteAddressType> = ref({
-  firstName: "",
-  lastName: "",
-  countryName: "",
-  city: "",
-});
+const billingAndShippingAddressesAreEqual = ref<boolean>(true);
+const originalQuote = ref<QuoteType>();
+const originalBillingAddress = ref<QuoteAddressType>();
+const originalShippingAddress = ref<QuoteAddressType>();
 
+const userHasAddresses = computedEager<boolean>(() => !!addresses.value.length);
+
+const commentChanged = computed<boolean>(() => !isEqual(quote.value?.comment, originalQuote.value?.comment));
+const billingAddressChanged = computed<boolean>(() => !isEqual(billingAddress.value, originalBillingAddress.value));
+const shippingAddressChanged = computed<boolean>(() => !isEqual(shippingAddress.value, originalShippingAddress.value));
+const quoteChanged = computed<boolean>(
+  () => commentChanged.value || billingAddressChanged.value || shippingAddressChanged.value
+);
+const quoteValid = computed<boolean>(() => !!shippingAddress.value && !!billingAddress.value);
 const breadcrumbs = computed<IBreadcrumbs[]>(() => [
   { title: t("common.links.home"), route: { name: "Home" } },
   { title: t("common.links.account"), route: { name: "Account" } },
@@ -204,37 +241,115 @@ const breadcrumbs = computed<IBreadcrumbs[]>(() => [
 function toggleBillingAddressEqualShipping(): void {
   billingAndShippingAddressesAreEqual.value = !billingAndShippingAddressesAreEqual.value;
   if (billingAndShippingAddressesAreEqual.value && shippingAddress.value) {
-    copyBillingAddressFromShippingAddress();
+    billingAddress.value = cloneDeep(shippingAddress.value);
+    billingAddress.value!.addressType = AddressType.Billing;
+    setQuoteAddress(billingAddress.value);
   }
 }
 
-function openAddOrUpdateAddressDialog(address: QuoteAddressType): void {
+function setQuoteAddress(address: QuoteAddressType): void {
+  if (address.addressType === AddressType.Billing) {
+    billingAddress.value = address;
+  }
+  if (address.addressType === AddressType.Shipping) {
+    shippingAddress.value = address;
+  }
+}
+
+function setInitialState(): void {
+  originalQuote.value = cloneDeep(quote.value);
+  originalBillingAddress.value = cloneDeep(billingAddress.value);
+  originalShippingAddress.value = cloneDeep(shippingAddress.value);
+  billingAndShippingAddressesAreEqual.value = isEqual(billingAddress.value, shippingAddress.value);
+}
+
+function openAddressSelectionDialog(addressType: AddressType.Billing | AddressType.Shipping): void {
   openPopup({
-    component: AddOrUpdateAddressDialog,
+    component: SelectAddressDialog,
     props: {
-      address,
-      async onResult(updatedAddress: QuoteAddressType) {
+      addresses: addresses.value,
+      currentAddress: addressType === AddressType.Shipping ? shippingAddress.value : billingAddress.value,
+
+      onResult(selectedAddress: QuoteAddressType) {
+        const newAddress = cloneDeep(selectedAddress);
+        newAddress.addressType = addressType;
+        setQuoteAddress(newAddress);
         closePopup();
-        if (updatedAddress.addressType == AddressType.Shipping) {
-          shippingAddress.value = updatedAddress;
-        }
-        if (updatedAddress.addressType == AddressType.Billing) {
-          billingAddress.value = updatedAddress;
-        }
-        if (billingAndShippingAddressesAreEqual.value) {
-          copyBillingAddressFromShippingAddress();
-        }
+      },
+
+      onAddNewAddress() {
+        setTimeout(() => {
+          openAddOrUpdateAddressDialog(addressType);
+        }, 500);
       },
     },
   });
 }
 
-function copyBillingAddressFromShippingAddress(): void {
-  billingAddress.value = shippingAddress.value;
-  billingAddress.value!.addressType = AddressType.Billing;
+function openAddOrUpdateAddressDialog(
+  addressType: AddressType.Billing | AddressType.Shipping,
+  address?: QuoteAddressType
+): void {
+  const emptyAddress: QuoteAddressType = {
+    city: "",
+    countryName: "",
+    firstName: "",
+    lastName: "",
+    addressType,
+  };
+
+  openPopup({
+    component: AddOrUpdateAddressDialog,
+    props: {
+      address: address || emptyAddress,
+
+      onResult(updatedAddress: QuoteAddressType) {
+        const newAddress = cloneDeep(updatedAddress);
+        newAddress.addressType = addressType;
+        setQuoteAddress(updatedAddress);
+        closePopup();
+      },
+    },
+  });
 }
 
-watchEffect(() => {
-  fetchQuote({ id: props.quoteId });
+async function saveChanges(): Promise<void> {
+  let funcArray: Promise<void>[] = [];
+  const addressesArray: QuoteAddressType[] = [];
+
+  if (quote.value!.comment && commentChanged.value) {
+    funcArray.push(changeComment(quote.value!.id, quote.value!.comment));
+  }
+
+  if (billingAddress.value) {
+    addressesArray.push(billingAddress.value);
+  }
+  if (shippingAddress.value) {
+    addressesArray.push(shippingAddress.value);
+  }
+  if (addressesArray.length) {
+    funcArray = funcArray.concat(updateAddresses(quote.value!.id, addressesArray));
+  }
+
+  await Promise.all(funcArray);
+  await fetchQuote({ id: props.quoteId });
+
+  setInitialState();
+}
+
+async function submit(): Promise<void> {
+  if (quoteValid.value) {
+    await saveChanges();
+    await submitQuote(quote.value!.id, quote.value!.comment || "");
+
+    router.push({ name: "Quotes" });
+  }
+}
+
+onMounted(async () => {
+  await fetchAddresses();
+  await fetchQuote({ id: props.quoteId });
+
+  setInitialState();
 });
 </script>

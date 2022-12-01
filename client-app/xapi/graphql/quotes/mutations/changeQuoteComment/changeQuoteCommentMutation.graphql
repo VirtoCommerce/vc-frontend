@@ -1,4 +1,4 @@
-mutation ChangeQuoteComment($command: ChangeQuoteCommentCommandType) {
+mutation ChangeQuoteComment($command: ChangeQuoteCommentCommandType!) {
   changeQuoteComment(command: $command) {
     id
   }

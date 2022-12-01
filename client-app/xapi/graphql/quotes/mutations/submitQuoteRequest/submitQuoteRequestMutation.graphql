@@ -1,4 +1,4 @@
-mutation SubmitQuoteRequest($command: SubmitQuoteCommandType) {
+mutation SubmitQuoteRequest($command: SubmitQuoteCommandType!) {
   submitQuoteRequest(command: $command) {
     id
   }

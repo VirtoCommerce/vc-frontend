@@ -11,7 +11,7 @@ const Lists = () => import("@/pages/account/lists.vue");
 const ListDetails = () => import("@/pages/account/list-details.vue");
 const CheckoutDefaults = () => import("@/pages/account/checkout-defaults.vue");
 const Quotes = () => import("@/pages/account/quotes.vue");
-const QuoteDetails = () => import("@/pages/account/quote-details.vue");
+const EditQuote = () => import("@/pages/account/edit-quote.vue");
 
 export const accountRoutes: RouteRecordRaw[] = [
   { path: "dashboard", name: "Dashboard", component: Dashboard },
@@ -65,7 +65,7 @@ export const accountRoutes: RouteRecordRaw[] = [
       {
         path: ":quoteId",
         name: "QuoteDetails",
-        component: QuoteDetails,
+        component: EditQuote,
         props: true,
       },
     ],

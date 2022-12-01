@@ -1,4 +1,4 @@
-mutation UpdateQuoteAddresses($command: UpdateQuoteAddressesCommandType) {
+mutation UpdateQuoteAddresses($command: UpdateQuoteAddressesCommandType!) {
   updateQuoteAddresses(command: $command) {
     id
   }

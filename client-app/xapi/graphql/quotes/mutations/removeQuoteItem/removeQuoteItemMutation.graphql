@@ -1,4 +1,4 @@
-mutation RemoveQuoteItem($command: RemoveQuoteItemCommandType) {
+mutation RemoveQuoteItem($command: RemoveQuoteItemCommandType!) {
   removeQuoteItem(command: $command) {
     id
   }

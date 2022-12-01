@@ -1,4 +1,5 @@
-import { computed, ref, Ref } from "vue";
+import { computed, ref } from "vue";
+import { find, omit } from "lodash";
 import { AddressType, Logger } from "@/core";
 import {
   getQuote,
@@ -8,17 +9,15 @@ import {
   updateQuoteAddresses,
   submitQuoteRequest,
   QueryQuoteArgs,
-  QuoteAddressType,
   QuoteType,
+  QuoteAddressType,
   InputQuoteAddressType,
 } from "@/xapi";
-import { find, isEqual } from "lodash";
 
-const fetching: Ref<boolean> = ref(false);
-const quote: Ref<QuoteType | undefined> = ref();
-const shippingAddress: Ref<QuoteAddressType | undefined> = ref();
-const billingAddress: Ref<QuoteAddressType | undefined> = ref();
-const billingAndShippingAddressesAreEqual: Ref<boolean> = ref(false);
+const fetching = ref<boolean>(false);
+const quote = ref<QuoteType>();
+const shippingAddress = ref<QuoteAddressType>();
+const billingAddress = ref<QuoteAddressType>();
 
 export default () => {
   async function fetchQuote(paylod: QueryQuoteArgs): Promise<void> {
@@ -26,18 +25,14 @@ export default () => {
 
     try {
       quote.value = await getQuote(paylod);
-
-      const quoteShippingAddress = getAddress(quote.value!, AddressType.Shipping);
-      if (quoteShippingAddress) {
-        shippingAddress.value = quoteShippingAddress;
-      }
-
-      const quoteBillingAddress = getAddress(quote.value!, AddressType.Billing);
-      if (quoteBillingAddress) {
-        billingAddress.value = quoteBillingAddress;
-      }
-
-      billingAndShippingAddressesAreEqual.value = isEqual(shippingAddress.value, billingAddress.value);
+      billingAddress.value = find(
+        quote.value!.addresses,
+        (address: QuoteAddressType) => address.addressType === AddressType.Billing
+      );
+      shippingAddress.value = find(
+        quote.value!.addresses,
+        (address: QuoteAddressType) => address.addressType === AddressType.Shipping
+      );
     } catch (e) {
       Logger.error("useUserQuote.fetchQuote", e);
       throw e;
@@ -85,11 +80,15 @@ export default () => {
     }
   }
 
-  async function updateAddresses(quoteId: string, addresses: InputQuoteAddressType[]): Promise<void> {
+  async function updateAddresses(quoteId: string, addresses: QuoteAddressType[]): Promise<void> {
     fetching.value = true;
 
     try {
-      await updateQuoteAddresses({ command: { quoteId, addresses } });
+      const inputAddresses: InputQuoteAddressType[] = addresses.map(
+        (address: QuoteAddressType) => omit(address, ["id", "isDefault", "description"]) as InputQuoteAddressType
+      );
+
+      await updateQuoteAddresses({ command: { quoteId, addresses: inputAddresses } });
     } catch (e) {
       Logger.error("useUserQuote.updateAddresses", e);
       throw e;
@@ -104,7 +103,7 @@ export default () => {
     try {
       await submitQuoteRequest({ command: { quoteId, comment } });
     } catch (e) {
-      Logger.error("useUserQuote.submit", e);
+      Logger.error("useUserQuote.submitQuote", e);
       throw e;
     } finally {
       fetching.value = false;
@@ -112,11 +111,11 @@ export default () => {
   }
 
   return {
-    loading: computed(() => fetching.value),
+    fetching: computed(() => fetching.value),
     quote: computed(() => quote.value),
-    shippingAddress,
+    //comment,
     billingAddress,
-    billingAndShippingAddressesAreEqual,
+    shippingAddress,
     fetchQuote,
     changeComment,
     changeItemQuantity,
@@ -125,10 +124,3 @@ export default () => {
     submitQuote,
   };
 };
-
-function getAddress(
-  quoteRequest: QuoteType,
-  type: AddressType.Shipping | AddressType.Billing
-): QuoteAddressType | undefined {
-  return find(quoteRequest.addresses, (address: QuoteAddressType) => address.addressType === type);
-}

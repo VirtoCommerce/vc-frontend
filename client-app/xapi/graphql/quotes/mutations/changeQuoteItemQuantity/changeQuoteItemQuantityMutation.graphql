@@ -1,4 +1,4 @@
-mutation ChangeQuoteItemQuantity($command: ChangeQuoteItemQuantityCommandType) {
+mutation ChangeQuoteItemQuantity($command: ChangeQuoteItemQuantityCommandType!) {
   changeQuoteItemQuantity(command: $command) {
     id
   }

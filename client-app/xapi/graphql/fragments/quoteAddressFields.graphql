@@ -12,4 +12,5 @@ fragment quoteAddressFields on QuoteAddressType {
   phone
   email
   addressType
+  key
 }
