@@ -14,7 +14,7 @@
     </div>
 
     <!-- line-item grid -->
-    <div class="vc-line-item__grid">
+    <div class="vc-line-item__grid lg:grid lg:gap-3" :class="`vc-line-item__grid--${placement}`">
       <!-- NAME -->
       <div
         class="vc-line-item__name text-sm font-extrabold lg:text-13 lg:leading-4 lg:font-bold"
@@ -71,7 +71,7 @@
       </div>
 
       <!-- REMOVE BUTTON -->
-      <div class="vc-line-item__remove-button absolute -top-3 -right-3" v-if="!readOnly">
+      <div class="vc-line-item__remove-button absolute -top-3 -right-3 lg:static" v-if="!readOnly">
         <button
           type="button"
           class="h-[26px] w-[26px] rounded-full border border-[color:var(--color-line-item-border)] bg-white text-[color:var(--color-danger)] hover:bg-gray-100"
@@ -128,21 +128,26 @@ const props = defineProps({
 
   withPricePerItem: {
     type: Boolean,
-    default: false,
+    default: true,
   },
 
   withTotal: {
     type: Boolean,
-    default: false,
+    default: true,
   },
 
   withAddToCart: {
     type: Boolean,
     default: false,
   },
+
+  placement: {
+    type: String,
+    default: "quote",
+  },
 });
 
-defineEmits(["removeItem"]);
+defineEmits(["remove"]);
 
 const productExists = computedEager<boolean>(() => !!props.item.product);
 
@@ -153,21 +158,11 @@ const properties = computed<Property[] | undefined>(() => props.item!.product?.p
 <style scoped lang="scss">
 .vc-line-item {
   &__grid {
-    @media (min-width: theme("screens.lg")) {
-      grid-template-columns: 72px 1fr 126px 207px;
-      grid-template-areas:
-        "img name price add-to-cart"
-        "img properties price add-to-cart"
-        "img buttons price add-to-cart"
-        "img . price add-to-cart";
-    }
-
-    @media (min-width: theme("screens.xl")) {
-      grid-template-columns: 86px 1fr 31.5% 140px 207px;
-      grid-template-areas:
-        "img name properties price add-to-cart"
-        "img buttons properties price add-to-cart"
-        "img . properties price add-to-cart";
+    &--quote {
+      @media (min-width: theme("screens.lg")) {
+        grid-template-columns: 17% 31.25% 15.5% 8.5% 10.2% 2.7%;
+        grid-template-areas: "name properties price quantity total remove-button";
+      }
     }
   }
 

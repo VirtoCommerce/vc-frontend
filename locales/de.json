@@ -26,7 +26,10 @@
       "apply": "Anwenden",
       "send": "Send",
       "more": "More",
-      "save_changed": "Save Changes"
+      "save_changed": "Save Changes",
+      "product": "Product",
+      "properties": "Properties",
+      "price_per_item": "Price per item"
     },
     "labels": {
       "actions": "Aktionen",
@@ -647,15 +650,6 @@
         "delete_button": "@:common.buttons.delete",
         "cancel_button": "@:common.buttons.cancel"
       }
-    },
-    "line_items": {
-      "header": {
-        "product": "Product",
-        "properties": "Properties",
-        "price_per_item": "Price per item",
-        "quantity": "Quantity",
-        "total": "Total"
-      }
     }
   },
   "pages": {
@@ -1010,7 +1004,15 @@
         "save_changes": "@:common.buttons.save_changes",
         "submit": "@:common.buttons.submit",
         "no_address_message": "You do not set an address. Please specify one.",
-        "same_as_shipping_address": "Same as shipping address"
+        "same_as_shipping_address": "Same as shipping address",
+        "line_items": {
+          "product": "@:common.labels.product",
+          "properties": "@:common.labels.properties",
+          "price_per_item": "@:common.labels.price_per_item",
+          "quantity": "@:common.labels.quantity",
+          "total": "@:common.labels.total",
+          "subtotal": "@:common.labels.subtotal"
+        }
       }
     },
     "company": {

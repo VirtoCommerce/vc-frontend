@@ -1,82 +1,42 @@
 <template>
-  <div class="!gap-y-4" v-if="quote">
-    <div class="space-y-3 px-6 md:px-0">
+  <div class="!gap-y-4 lg:!gap-y-6" v-if="quote">
+    <div class="flex flex-col gap-3 px-6 md:px-0">
       <VcBreadcrumbs :items="breadcrumbs" class="lg:hidden" />
 
-      <h2 class="text-26 tracking-wide font-bold uppercase">
+      <h2 class="text-26 tracking-wide font-bold uppercase lg:text-3xl lg:leading-8">
         {{ $t("pages.account.quote_details.title", [quote?.number]) }}
       </h2>
     </div>
 
     <div class="">
       <!-- Quote comment -->
-      <VcSection>
-        <template #title>
-          <div class="flex items-center gap-3 px-6 pt-6 pb-4">
-            <VcImage
-              :alt="$t('pages.account.quote_details.remarks')"
-              src="/static/images/remarks.svg"
-              class="w-11 h-11 -ml-0.5"
-              lazy
-            />
-            <h3 class="text-gray-800 text-xl font-bold uppercase">
-              {{ $t("pages.account.quote_details.remarks") }}
-            </h3>
-          </div>
-        </template>
-
-        <div class="mx-6 pb-1">
-          <div class="text-base leading-5 font-bold">
+      <VcSectionWidget :title="$t('pages.account.quote_details.remarks')" iconUrl="/static/images/remarks.svg">
+        <div class="px-6 pb-1 lg:pl-7 lg:pr-5 lg:pb-2">
+          <div class="text-base leading-5 font-bold lg:text-15">
             {{ $t("pages.account.quote_details.remarks_field_label") }}
           </div>
           <VcTextArea
             v-model="quote.comment"
             :isDisabled="fetching"
             :max-length="1000"
-            :rows="7"
-            class="mt-2 py-2 px-3 text-15 leading-5 font-medium resize-none"
+            :rows="4"
+            class="mt-2 py-2 px-3 text-15 leading-5 font-medium resize-none lg:mt-1"
             counter
           />
         </div>
-      </VcSection>
+      </VcSectionWidget>
 
       <!-- Quote products -->
-      <VcSection>
-        <template #title>
-          <div class="flex items-center gap-3 px-6 pt-6 pb-4">
-            <VcImage
-              :alt="$t('pages.account.quote_details.products')"
-              src="/static/images/products.svg"
-              class="w-11 h-11 -ml-0.5"
-              lazy
-            />
-            <h3 class="text-gray-800 text-xl font-bold uppercase">
-              {{ $t("pages.account.quote_details.products") }}
-            </h3>
-          </div>
-        </template>
-        <div class="flex flex-col gap-6 px-6">
-          <VcLineItem v-for="item in quote.items" :item="item" />
-        </div>
-      </VcSection>
+      <VcSectionWidget :title="$t('pages.account.quote_details.products')" iconUrl="/static/images/products.svg">
+        <QuoteLineItems :items="quote.items!" @removeItem="removeItem" />
+      </VcSectionWidget>
 
       <!-- Quote shipping address -->
-      <VcSection>
-        <template #title>
-          <div class="flex items-center gap-3 px-6 pt-6 pb-4">
-            <VcImage
-              :alt="$t('pages.account.quote_details.shipping_address')"
-              src="/static/images/shipping-address.svg"
-              class="w-11 h-11 -ml-0.5"
-              lazy
-            />
-            <h3 class="text-gray-800 text-xl font-bold uppercase">
-              {{ $t("pages.account.quote_details.shipping_address") }}
-            </h3>
-          </div>
-        </template>
-
-        <div class="mx-7">
+      <VcSectionWidget
+        :title="$t('pages.account.quote_details.shipping_address')"
+        iconUrl="/static/images/shipping-address.svg"
+      >
+        <div class="px-7">
           <h4 class="text-gray-800 text-md font-bold">
             {{ $t("pages.account.quote_details.shipping_address") }}
           </h4>
@@ -112,24 +72,13 @@
             </div>
           </div>
         </div>
-      </VcSection>
+      </VcSectionWidget>
 
       <!-- Quote billing address -->
-      <VcSection>
-        <template #title>
-          <div class="flex items-center gap-3 px-6 pt-6 pb-4">
-            <VcImage
-              :alt="$t('pages.account.quote_details.billing_address')"
-              src="/static/images/billing-address.svg"
-              class="w-11 h-11 -ml-0.5"
-              lazy
-            />
-            <h3 class="text-gray-800 text-xl font-bold uppercase">
-              {{ $t("pages.account.quote_details.billing_address") }}
-            </h3>
-          </div>
-        </template>
-
+      <VcSectionWidget
+        :title="$t('pages.account.quote_details.billing_address')"
+        iconUrl="/static/images/billing-address.svg"
+      >
         <div class="mx-7 mb-5">
           <h4 class="text-gray-800 text-md font-bold">
             {{ $t("pages.account.quote_details.billing_address") }}
@@ -191,7 +140,7 @@
             {{ $t("pages.account.quote_details.submit") }}
           </VcButton>
         </div>
-      </VcSection>
+      </VcSectionWidget>
     </div>
   </div>
 
@@ -204,9 +153,9 @@ import { computedEager } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { cloneDeep, isEqual } from "lodash";
-import { QuoteAddressType, QuoteType } from "@/xapi";
+import { QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi";
 import { AddressType } from "@/core";
-import { useUser, useUserAddresses, useUserQuote } from "@/shared/account";
+import { useUser, useUserAddresses, useUserQuote, QuoteLineItems } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddOrUpdateAddressDialog, SelectAddressDialog } from "@/shared/checkout";
 
@@ -321,6 +270,10 @@ function openAddOrUpdateAddressDialog(
       },
     },
   });
+}
+
+async function removeItem(item: QuoteItemType): Promise<void> {
+  console.log(item);
 }
 
 async function saveChanges(): Promise<void> {
