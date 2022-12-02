@@ -35,9 +35,7 @@
         <span class="font-bold lg:font-medium">{{ property.value }}</span>
       </div>
       <div class="flex space-y-1 lg:space-y-0 lg:hidden" v-if="withPricePerItem">
-        <span class="pr-1 w-auto lg:w-1/2 font-medium lg:font-bold">
-          {{ $t("shared.line_items.header.price_per_item") }}:
-        </span>
+        <span class="pr-1 w-auto lg:w-1/2 font-medium lg:font-bold">{{ $t("common.labels.price_per_item") }}:</span>
         <span class="flex-1 w-auto mx-2 h-4 border-b-2 border-gray-200 border-dotted lg:hidden" />
         <span class="font-bold lg:font-medium">
           <slot name="pricePerItem" />
@@ -61,7 +59,7 @@
       <button
         type="button"
         class="h-7 w-7 shadow rounded text-[color:var(--color-danger)] hover:bg-gray-100"
-        @click="$emit('removeItem', item)"
+        @click="$emit('remove', item)"
       >
         <i class="fas fa-times" />
       </button>
@@ -97,7 +95,7 @@ const props = defineProps({
   },
 });
 
-defineEmits(["removeItem"]);
+defineEmits(["remove"]);
 
 const productExists = computedEager<boolean>(() => !!props.item.product);
 

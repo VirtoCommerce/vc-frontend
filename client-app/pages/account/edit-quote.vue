@@ -54,6 +54,10 @@
           </h3>
         </div>
       </template>
+
+      <div class="mx-7 mb-5">
+        <QuoteLineItems :items="quote.items!" @removeItem="removeItem" />
+      </div>
     </VcSection>
 
     <!-- Quote shipping address -->
@@ -199,9 +203,9 @@ import { computedEager } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { cloneDeep, isEqual } from "lodash";
-import { QuoteAddressType, QuoteType } from "@/xapi";
+import { QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi";
 import { AddressType } from "@/core";
-import { useUser, useUserAddresses, useUserQuote } from "@/shared/account";
+import { useUser, useUserAddresses, useUserQuote, QuoteLineItems } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddOrUpdateAddressDialog, SelectAddressDialog } from "@/shared/checkout";
 
@@ -316,6 +320,10 @@ function openAddOrUpdateAddressDialog(
       },
     },
   });
+}
+
+async function removeItem(item: QuoteItemType): Promise<void> {
+  console.log(item);
 }
 
 async function saveChanges(): Promise<void> {
