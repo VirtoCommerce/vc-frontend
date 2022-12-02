@@ -203,7 +203,7 @@ import { computedEager } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { cloneDeep, isEqual } from "lodash";
-import { QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi";
+import { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi";
 import { AddressType } from "@/core";
 import { useUser, useUserAddresses, useUserQuote, QuoteLineItems } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
@@ -216,7 +216,7 @@ const props = defineProps({
 const router = useRouter();
 const { t } = useI18n();
 const { user } = useUser();
-const { addresses, fetchAddresses } = useUserAddresses({ user });
+const { addresses, fetchAddresses, addOrUpdateAddresses } = useUserAddresses({ user });
 const { quote, billingAddress, shippingAddress, fetching, fetchQuote, changeComment, updateAddresses, submitQuote } =
   useUserQuote();
 const { openPopup, closePopup } = usePopup();
@@ -312,10 +312,13 @@ function openAddOrUpdateAddressDialog(
     props: {
       address: address || emptyAddress,
 
-      onResult(updatedAddress: QuoteAddressType) {
+      async onResult(updatedAddress: QuoteAddressType) {
         const newAddress = cloneDeep(updatedAddress);
         newAddress.addressType = addressType;
         setQuoteAddress(updatedAddress);
+
+        await addOrUpdateAddresses([newAddress as MemberAddressType], user.value.memberId);
+
         closePopup();
       },
     },
