@@ -1,14 +1,14 @@
 {%- for item in current_store.settings -%}
   {%- if item.name == 'GoogleAnalytics4.EnableTracking' -%}
-    {% assign google_analytics_enable = item.value == 'true' %}
+    {% assign google_analytics_enabled = item.value == 'true' %}
   {%- elsif item.name == 'GoogleAnalytics4.MeasurementId' -%}
-    {% assign google_analytics_measurement_id = item.value %}
+    {% assign google_tag_id = item.value %}
   {%- endif -%}
 {%- endfor -%}
 
 {%- comment %}
-  Disable Google Analytics when viewed in the Page Builder or when there is no measurement ID
+  NOTE: Disable Google Analytics when viewed in the Page Builder or when there is no measurement ID.
 {% endcomment -%}
-{%- if template == 'preview' or google_analytics_measurement_id == '' or google_analytics_measurement_id == nil -%}
-  {% google_analytics_enable = false %}
+{%- if template == 'preview' or google_tag_id == '' or google_tag_id == nil -%}
+  {% google_analytics_enabled = false %}
 {%- endif -%}
