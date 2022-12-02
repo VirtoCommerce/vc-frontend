@@ -60,7 +60,7 @@
 <script setup lang="ts">
 import { ref, Ref, watchEffect, defineAsyncComponent, computed } from "vue";
 import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
-import { usePageHead } from "@/core/composables";
+import { useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { useTemplate } from "@/shared/static-content";
 import { useCart } from "@/shared/cart";
 import {
@@ -116,6 +116,7 @@ const { buildBreadcrumbs } = useBreadcrumbs();
 const { product, loading, loadProduct } = useProduct();
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const breakpoints = useBreakpoints(breakpointsTailwind);
+const ga = useGoogleAnalytics();
 
 usePageHead({
   title: computed(() => product.value?.seoInfo?.pageTitle || product.value?.name),
@@ -147,5 +148,17 @@ watchEffect(() => {
 
 watchEffect(() => {
   breadcrumbs.value = buildBreadcrumbs(product.value?.breadcrumbs ?? []);
+});
+
+/**
+ * Send Google Analytics event for related products.
+ */
+watchEffect(() => {
+  if (relatedProducts.value.length) {
+    ga.viewItemList(relatedProducts.value, {
+      item_list_id: "related_products",
+      item_list_name: t("pages.product.related_product_section_title"),
+    });
+  }
 });
 </script>
