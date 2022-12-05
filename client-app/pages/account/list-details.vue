@@ -130,7 +130,7 @@ import { usePopup } from "@/shared/popup";
 import { computed, ref, watchEffect } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { BackButtonInHeader } from "@/shared/layout";
-import { usePageHead } from "@/core/composables";
+import { useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { useI18n } from "vue-i18n";
 
 const props = defineProps({
@@ -143,6 +143,7 @@ const props = defineProps({
 const { t } = useI18n();
 const { openPopup } = usePopup();
 const { loading, list, fetchWishList, clearList } = useWishlists();
+const ga = useGoogleAnalytics();
 
 usePageHead({
   title: computed(() => t("pages.account.list_details.meta.title", [list.value?.name])),
@@ -197,15 +198,31 @@ function openListSettingsDialog() {
   });
 }
 
-watchEffect(() => {
-  clearList();
-  fetchWishList(props.listId);
-});
-
 /**
  * Scroll after page change.
  */
 function onUpdatePage() {
   window.scroll({ top: 0, behavior: "smooth" });
 }
+
+watchEffect(() => {
+  clearList();
+  fetchWishList(props.listId);
+});
+
+/**
+ * Send Google Analytics event for related products.
+ */
+watchEffect(() => {
+  const items = list.value?.items
+    ?.map((item) => item.product!)
+    // filtering of deleted products
+    .filter(Boolean);
+
+  if (items?.length) {
+    ga.viewItemList(items, {
+      item_list_name: `Wishlist "${list.value?.name}"`,
+    });
+  }
+});
 </script>
