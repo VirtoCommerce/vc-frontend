@@ -36,6 +36,13 @@ query GetSearchResults(
       code
       slug
       imgSrc
+      vendor {
+        id
+        name
+      }
+      availabilityData {
+        availableQuantity
+      }
       price {
         actual {
           amount
@@ -46,6 +53,10 @@ query GetSearchResults(
           formattedAmount
         }
         sale {
+          amount
+          formattedAmount
+        }
+        discountAmount {
           amount
           formattedAmount
         }

@@ -51,7 +51,7 @@
             class="w-32 flex-shrink-0 lg:flex-shrink md:w-48 md:pb-6 flex flex-col"
           >
             <!-- Product image -->
-            <router-link :to="productsRoutes[product.id]" class="cursor-pointer mb-3">
+            <router-link :to="productsRoutes[product.id]" class="cursor-pointer mb-3" @click="ga.selectItem(product)">
               <div
                 class="flex flex-col justify-center items-center border border-gray-100 h-32 w-32 md:h-48 md:w-48 relative"
               >
@@ -76,6 +76,7 @@
             <router-link
               :to="productsRoutes[product.id]"
               class="text-[color:var(--color-link)] font-extrabold text-sm mb-3 flex-grow line-clamp-3 overflow-hidden cursor-pointer"
+              @click="ga.selectItem(product)"
             >
               {{ product.name }}
             </router-link>

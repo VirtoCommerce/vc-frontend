@@ -58,7 +58,10 @@
                 v-for="product in products"
                 :key="product.id"
                 :product="product"
-                @link-click="hideSearchDropdown"
+                @link-click="
+                  hideSearchDropdown();
+                  ga.selectItem(product);
+                "
               />
             </div>
           </section>

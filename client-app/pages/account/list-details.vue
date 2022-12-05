@@ -48,6 +48,7 @@
           :key="item.id"
           :list-item="item"
           class="even:bg-gray-50"
+          @link-click="ga.selectItem(item.product!)"
           @remove="openDeleteProductDialog(item)"
         />
 
@@ -66,7 +67,7 @@
               <i class="fas fa-times text-red-500" />
             </div>
 
-            <ProductCardGrid :product="item.product!" class="h-full">
+            <ProductCardGrid :product="item.product!" class="h-full" @link-click="ga.selectItem(item.product!)">
               <template #cart-handler>
                 <AddToCart :product="item.product!" />
               </template>

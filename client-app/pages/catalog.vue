@@ -249,6 +249,7 @@
                   ? '-mx-5 divide-y lg:divide-y-0 lg:mx-0 lg:space-y-3.5'
                   : 'grid gap-6 xs:grid-cols-2 md:grid-cols-3 lg:gap-5 xl:grid-cols-4'
               "
+              @item-link-click="sendGASelectItemEvent"
             >
               <template #cart-handler="{ item }">
                 <AddToCart :product="item" :reserved-space="savedViewMode === 'grid'" />
@@ -351,6 +352,7 @@ import {
 import { BranchesDialog, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { AddToCart } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
+import { Product } from "@/xapi";
 
 const FILTERS_RESET_TIMEOUT_IN_MS = 500;
 const watchStopHandles: WatchStopHandle[] = [];
@@ -493,6 +495,10 @@ const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
 // endregion Computed properties
 
 // region Methods
+
+function sendGASelectItemEvent(product: Product) {
+  ga.selectItem(product);
+}
 
 function showMobileSidebar() {
   mobileFilters.facets = _.cloneDeep(facets.value);

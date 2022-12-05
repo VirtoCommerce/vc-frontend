@@ -42,8 +42,8 @@
               class="px-6 mb-8 lg:mb-2"
               style="--navigation-offset: 3rem"
             >
-              <template #slide="{ slide }">
-                <CarouselProductCard :product="slide" class="mb-6" />
+              <template #slide="{ slide: product }">
+                <CarouselProductCard :product="product" class="mb-6" @link-click="ga.selectItem(product)" />
               </template>
             </VcCarousel>
           </VcSection>
@@ -74,10 +74,7 @@ import {
 import { BackButtonInHeader } from "@/shared/layout";
 import { useI18n } from "vue-i18n";
 
-const { t } = useI18n();
-
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
-const template = useTemplate("product");
 
 const props = defineProps({
   productId: {
@@ -111,11 +108,13 @@ const relatedProductsCarouselOptions: CarouselOptions = {
   },
 };
 
+const { t } = useI18n();
 const { getItemsTotal } = useCart();
 const { buildBreadcrumbs } = useBreadcrumbs();
 const { product, loading, loadProduct } = useProduct();
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const breakpoints = useBreakpoints(breakpointsTailwind);
+const template = useTemplate("product");
 const ga = useGoogleAnalytics();
 
 usePageHead({
