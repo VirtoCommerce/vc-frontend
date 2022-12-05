@@ -15,7 +15,7 @@
         'vc-button--loading': isWaiting,
       },
     ]"
-    @click="isEnabled ? $emit('click') : null"
+    @click="isEnabled ? $emit('click', $event) : null"
   >
     <span class="vc-button__content">
       <slot />
