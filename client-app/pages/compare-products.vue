@@ -126,20 +126,16 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import _ from "lodash";
-import { usePageHead, useProductsRoutes } from "@/core";
+import { useGoogleAnalytics, usePageHead, useProductsRoutes } from "@/core";
 import { useProducts } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
 
 const { t } = useI18n();
-const { fetchProducts, products } = useProducts();
-const { clearCompareList, productsLimit, removeFromCompareList, productsIds } = useCompareProducts();
-
-const productsRoutes = useProductsRoutes(products);
 
 usePageHead({
   title: t("pages.compare.meta.title"),
@@ -149,13 +145,17 @@ usePageHead({
   },
 });
 
+const ga = useGoogleAnalytics();
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("lg");
+const { fetchProducts, products } = useProducts();
+const { clearCompareList, productsLimit, removeFromCompareList, productsIds } = useCompareProducts();
+const productsRoutes = useProductsRoutes(products);
+
 const breadcrumbs: IBreadcrumbs[] = [
   { title: t("pages.compare.links.home"), route: "/" },
   { title: t("pages.compare.links.compare_products") },
 ];
-
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("lg");
 
 const showOnlyDifferences = ref(false);
 
@@ -229,14 +229,23 @@ function getProductProperties() {
   originalProperties.value = { ...grouped };
 }
 
-onMounted(() => {
-  refreshProducts();
-});
-
 watch(
   () => productsIds.value,
   () => {
     refreshProducts();
-  }
+  },
+  { immediate: true }
 );
+
+/**
+ * Send Google Analytics event for related products.
+ */
+watchEffect(() => {
+  if (products.value.length) {
+    ga.viewItemList(products.value, {
+      item_list_id: "compare_products",
+      item_list_name: t("pages.compare.header_block.title"),
+    });
+  }
+});
 </script>
