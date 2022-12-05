@@ -1,5 +1,6 @@
 import { useAppContext } from "@/core";
 import { Product } from "@/xapi";
+import globals from "@/core/globals";
 
 type TEventParams = Gtag.ControlParams | Gtag.EventParams | Gtag.CustomParams;
 type TEventParamsForList = TEventParams | { item_list_id?: string; item_list_name?: string };
@@ -9,6 +10,18 @@ const { storeSettings } = useAppContext();
 const isAvailableGtag: Readonly<boolean> = Boolean(storeSettings.googleAnalyticsEnabled && window.gtag);
 
 function productToGtagItem(product: Product, index?: number): Gtag.Item {
+  const categories: Record<string, string> = {};
+
+  if (product.breadcrumbs?.length) {
+    product.breadcrumbs
+      .filter((breadcrumb) => breadcrumb.typeName !== "CatalogProduct")
+      .slice(0, 5) // first five, according to the documentation
+      .forEach((breadcrumb, i) => {
+        const number = i + 1;
+        categories[`item_category${number > 1 ? number : ""}`] = breadcrumb.title;
+      });
+  }
+
   return {
     index,
     item_id: product.code,
@@ -17,6 +30,7 @@ function productToGtagItem(product: Product, index?: number): Gtag.Item {
     price: product.price?.list?.amount,
     discount: product.price?.discountAmount?.amount,
     quantity: product.availabilityData?.availableQuantity,
+    ...categories,
   };
 }
 
@@ -40,9 +54,19 @@ function selectItem(product: Product, params?: TEventParamsForList): void {
   });
 }
 
+function viewItem(product: Product, params?: TEventParamsForList): void {
+  sendEvent("view_item", {
+    ...params,
+    currency: globals.currencyCode,
+    value: product.price?.list?.amount,
+    items: [productToGtagItem(product)],
+  });
+}
+
 export default () => ({
   isAvailableGtag,
   sendEvent,
   viewItemList,
   selectItem,
+  viewItem,
 });

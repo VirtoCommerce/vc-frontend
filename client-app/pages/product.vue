@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, watchEffect, defineAsyncComponent, computed } from "vue";
+import { watchEffect, defineAsyncComponent, computed } from "vue";
 import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
 import { useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { useTemplate } from "@/shared/static-content";
@@ -126,7 +126,8 @@ usePageHead({
 });
 
 const isMobile = breakpoints.smaller("lg");
-const breadcrumbs: Ref<IBreadcrumbsItem[]> = ref([{ url: "/", title: t("common.links.home") }]);
+
+const breadcrumbs = computed<IBreadcrumbsItem[]>(() => buildBreadcrumbs(product.value?.breadcrumbs ?? []));
 
 const variationsCartTotalAmount = eagerComputed<number>(() => {
   if (!product.value) {
@@ -145,8 +146,13 @@ watchEffect(() => {
   fetchRelatedProducts({ productId, itemsPerPage: 30 });
 });
 
+/**
+ * Send Google Analytics event for product.
+ */
 watchEffect(() => {
-  breadcrumbs.value = buildBreadcrumbs(product.value?.breadcrumbs ?? []);
+  if (product.value) {
+    ga.viewItem(product.value);
+  }
 });
 
 /**
