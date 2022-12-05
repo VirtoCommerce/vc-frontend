@@ -3,11 +3,11 @@
   "version": "1.16.0",
   "private": true,
   "scripts": {
-    "postinstall": "husky install",
     "dev": "vite",
     "dev-expose": "vite --host",
     "build": "yarn run type-check && vite build",
-    "builder": "vite build --mode=development",
+    "build:dev": "vite build --mode=development",
+    "build:watch": "vite build --mode=development --watch",
     "compress": "yarn run build && gulp compress",
     "type-check": "vue-tsc --noEmit --extendedDiagnostics -p tsconfig.json --composite false",
     "lint-staged": "lint-staged",
@@ -17,7 +17,8 @@
     "prettier:fix": "prettier --write \"client-app/**/*.{js,ts,vue,graphql,json}\"",
     "generate:graphql:schema": "graphql-codegen -c \"codegen.schema.ts\" -r dotenv/config && eolConverter crlf \"client-app/xapi/schema.json\"",
     "generate:graphql:types": "graphql-codegen -c \"codegen.types.ts\" -r dotenv/config && eolConverter crlf \"client-app/xapi/types.ts\"",
-    "generate:graphql": "yarn run generate:graphql:schema && yarn run generate:graphql:types"
+    "generate:graphql": "yarn run generate:graphql:schema && yarn run generate:graphql:types",
+    "postinstall": "husky install"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.2.0",
@@ -58,6 +59,7 @@
     "@graphql-codegen/typescript-operations": "^2.5.6",
     "@rollup/plugin-graphql": "^2.0.2",
     "@types/dompurify": "^2.3.4",
+    "@types/gtag.js": "^0.0.12",
     "@types/lodash": "^4.14.188",
     "@types/marked": "^4.0.7",
     "@types/node": "^17.0.45",

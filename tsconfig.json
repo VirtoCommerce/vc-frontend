@@ -25,7 +25,8 @@
       "@/*": ["client-app/*"]
     },
     "types": [
-      "node"
+      "node",
+      "@types/gtag.js"
     ]
   },
   "include": [

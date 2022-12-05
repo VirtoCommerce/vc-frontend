@@ -26,6 +26,10 @@ query GetWishlist($listId: String!) {
         images {
           url
         }
+        vendor {
+          id
+          name
+        }
         availabilityData {
           isActive
           isAvailable

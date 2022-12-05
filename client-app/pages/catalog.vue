@@ -331,6 +331,7 @@ import {
   searchCategoryTreeItemByKey,
   useCategories,
   useElementVisibility,
+  useGoogleAnalytics,
   usePageHead,
   useRouteQueryParam,
 } from "@/core";
@@ -360,6 +361,7 @@ const props = defineProps({
 
 const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);
+const ga = useGoogleAnalytics();
 const { t } = useI18n();
 const { loading: loadingCategories, categoryTree } = useCategories();
 const {
@@ -573,7 +575,16 @@ function resetFacetFiltersWithKeyword() {
 
 async function loadProducts() {
   page.value = 1;
+
   await fetchProducts(searchParams.value);
+
+  /**
+   * Send Google Analytics event for products.
+   */
+  ga.viewItemList(products.value, {
+    item_list_id: selectedCategory.value?.slug,
+    item_list_name: selectedCategory.value?.name,
+  });
 }
 
 async function loadMoreProducts() {
@@ -588,6 +599,14 @@ async function loadMoreProducts() {
   await fetchMoreProducts({
     ...searchParams.value,
     page: nextPage,
+  });
+
+  /**
+   * Send Google Analytics event for products on next page.
+   */
+  ga.viewItemList(products.value, {
+    item_list_id: `${selectedCategory.value?.slug}_page_${nextPage}`,
+    item_list_name: `${selectedCategory.value?.name} (page ${nextPage})`,
   });
 }
 

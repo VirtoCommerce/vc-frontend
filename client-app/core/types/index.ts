@@ -2,6 +2,7 @@ import { MaybeRef } from "@vueuse/core";
 import { CartAddressType, MemberAddressType, OrderAddressType } from "@/xapi/types";
 import { LocationQueryValue } from "vue-router";
 
+export * from "./app-context";
 export * from "./category-tree";
 export * from "./currency";
 export * from "./facet";
