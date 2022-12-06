@@ -8,10 +8,10 @@
       </h2>
     </div>
 
-    <div class="bg-white rounded border shadow-mdx lg:shadow-md">
+    <div class="bg-white shadow-mdx lg:border lg:rounded lg:shadow-md">
       <!-- Quote comment -->
       <VcSectionWidget :title="$t('pages.account.quote_details.remarks')" icon-url="/static/images/remarks.svg">
-        <div class="px-6 pb-1 lg:px-7  lg:pb-2">
+        <div class="px-6 pb-1 lg:px-7 lg:pb-2">
           <div class="text-base leading-5 font-bold lg:text-15">
             {{ $t("pages.account.quote_details.remarks_field_label") }}
           </div>

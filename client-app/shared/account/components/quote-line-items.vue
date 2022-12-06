@@ -11,10 +11,10 @@
         <div class="vc-quote-line-items__price hidden xl:block pr-4 text-right">
           {{ $t("pages.account.quote_details.line_items.price_per_item") }}
         </div>
-        <div class="vc-quote-line-items__quantity text-right">
+        <div class="vc-quote-line-items__quantity hidden xl:block text-right">
           {{ $t("pages.account.quote_details.line_items.quantity") }}
         </div>
-        <div class="vc-quote-line-items__total text-right">
+        <div class="vc-quote-line-items__total hidden xl:block text-right">
           {{ $t("pages.account.quote_details.line_items.total") }}
         </div>
         <div class="vc-quote-line-items__remove-button"></div>
@@ -30,14 +30,13 @@
 
         <template #quantity>
           <input
-            class="w-20 h-8 border rounded text-center text-sm disabled:bg-[color:var(--color-line-item-light)]/75 md:w-full disabled:text-[color:var(--color-line-item-table-border)]"
+            class="w-20 h-8 border rounded text-center text-sm disabled:bg-[color:var(--color-line-item-light)]/75 xl:w-full disabled:text-[color:var(--color-line-item-table-border)]"
             v-model="item.selectedTierPrice!.quantity"
-            disabled
           />
         </template>
 
         <template #total>
-          <div class="flex items-center gap-1">
+          <div class="flex flex-wrap items-center justify-end gap-x-1">
             <div class="text-14 font-bold text-[color:var(--color-price-from)]">
               {{ $t("pages.account.quote_details.line_items.total") }}:
             </div>
@@ -86,8 +85,8 @@ function removeItem(item: QuoteItemType): void {
 .vc-quote-line-items {
   &__grid {
     @media (min-width: theme("screens.md")) {
-      grid-template-columns: 200px 1fr 88px 100px 40px;
-      grid-template-areas: "name properties quantity total remove-button";
+      grid-template-columns: 200px 1fr 150px 40px;
+      grid-template-areas: "name properties remove-button";
     }
 
     @media (min-width: theme("screens.xl")) {

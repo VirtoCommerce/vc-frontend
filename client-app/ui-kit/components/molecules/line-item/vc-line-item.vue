@@ -78,7 +78,7 @@
       </div>
 
       <!-- QUANTITY -->
-      <div class="vc-line-item__quantity mt-3 md:mt-0 md:w-full">
+      <div class="vc-line-item__quantity mt-3 md:mt-0 md:place-self-end xl:w-full xl:place-self-center">
         <slot name="quantity" />
       </div>
 
@@ -167,11 +167,13 @@ const properties = computed<Property[] | undefined>(() => props.item!.product?.p
         "img props props"
         "img quantity total";
 
-      grid-template-columns: 60px 1fr 1fr;
+      grid-template-columns: 64px auto 1fr;
 
       @media (min-width: theme("screens.md")) {
-        grid-template-areas: "product props quantity total remove-button";
-        grid-template-columns: 200px 1fr 88px 100px 40px;
+        grid-template-areas:
+          "product props quantity remove-button"
+          "product props total remove-button";
+        grid-template-columns: 200px 1fr 150px 40px;
       }
 
       @media (min-width: theme("screens.xl")) {
