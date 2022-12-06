@@ -1,6 +1,6 @@
 <template>
   <div class="!gap-y-4 lg:!gap-y-6" v-if="quote">
-    <div class="flex flex-col gap-3 px-6 md:px-0">
+    <div class="flex flex-col gap-3 px-6 lg:px-7">
       <VcBreadcrumbs :items="breadcrumbs" class="lg:hidden" />
 
       <h2 class="text-26 tracking-wide font-bold uppercase lg:text-3xl lg:leading-8">
@@ -8,16 +8,16 @@
       </h2>
     </div>
 
-    <div class="">
+    <div class="bg-white rounded border shadow-mdx lg:shadow-md">
       <!-- Quote comment -->
-      <VcSectionWidget :title="$t('pages.account.quote_details.remarks')" iconUrl="/static/images/remarks.svg">
-        <div class="px-6 pb-1 lg:pl-7 lg:pr-5 lg:pb-2">
+      <VcSectionWidget :title="$t('pages.account.quote_details.remarks')" icon-url="/static/images/remarks.svg">
+        <div class="px-6 pb-1 lg:px-7  lg:pb-2">
           <div class="text-base leading-5 font-bold lg:text-15">
             {{ $t("pages.account.quote_details.remarks_field_label") }}
           </div>
           <VcTextArea
             v-model="quote.comment"
-            :isDisabled="fetching"
+            :is-disabled="fetching"
             :max-length="1000"
             :rows="4"
             class="mt-2 py-2 px-3 text-15 leading-5 font-medium resize-none lg:mt-1"
@@ -27,48 +27,43 @@
       </VcSectionWidget>
 
       <!-- Quote products -->
-      <VcSectionWidget :title="$t('pages.account.quote_details.products')" iconUrl="/static/images/products.svg">
+      <VcSectionWidget :title="$t('pages.account.quote_details.products')" icon-url="/static/images/products.svg">
         <QuoteLineItems :items="quote.items!" @removeItem="removeItem" />
       </VcSectionWidget>
 
       <!-- Quote shipping address -->
       <VcSectionWidget
         :title="$t('pages.account.quote_details.shipping_address')"
-        iconUrl="/static/images/shipping-address.svg"
+        icon-url="/static/images/shipping-address.svg"
       >
-        <div class="px-7">
-          <h4 class="text-gray-800 text-md font-bold">
+        <div class="px-6 pb-6 lg-px-7 lg:pb-7">
+          <h4 class="text-md leading-5 font-bold">
             {{ $t("pages.account.quote_details.shipping_address") }}
           </h4>
-          <div class="border rounded mt-2.5 p-5">
-            <div class="flex flex-wrap">
-              <div class="lg:flex-col lg:w-1/2">
-                <div v-if="shippingAddress">
-                  <VcAddressInfo :address="shippingAddress" />
-                </div>
-                <div v-else>
-                  <VcAlert type="warning" icon="fas fa-exclamation-triangle text-2xl">
-                    {{ $t("pages.account.quote_details.no_address_message") }}
-                  </VcAlert>
-                </div>
-              </div>
-              <div class="lg:flex-col w-full lg:w-1/2 mt-2.5 lg:mt-0">
-                <div class="flex justify-end">
-                  <button
-                    :disabled="fetching"
-                    type="button"
-                    class="h-7 w-7 shadow rounded text-[color:var(--color-primary)] hover:bg-gray-100"
-                    @click="
-                      userHasAddresses
-                        ? openAddressSelectionDialog(AddressType.Shipping)
-                        : openAddOrUpdateAddressDialog(AddressType.Shipping, shippingAddress)
-                    "
-                    :title="$t('pages.account.addresses.edit_label')"
-                  >
-                    <i class="fas fa-pencil-alt" />
-                  </button>
-                </div>
-              </div>
+          <div class="flex flex-col gap-3 border rounded mt-2 p-5 md:flex-row md:items-center empty:hidden">
+            <div class="grow text-15" v-if="shippingAddress">
+              <VcAddressInfo :address="shippingAddress" />
+            </div>
+            <div class="grow" v-else>
+              <VcAlert type="warning" icon="fas fa-exclamation-triangle text-2xl">
+                {{ $t("pages.account.quote_details.no_address_message") }}
+              </VcAlert>
+            </div>
+
+            <div class="flex justify-end">
+              <button
+                :disabled="fetching"
+                type="button"
+                class="shronk-0 flex items-center justify-center h-9 w-9 rounded border-2 border-current text-[color:var(--color-primary)] hover:bg-gray-100"
+                @click="
+                  userHasAddresses
+                    ? openAddressSelectionDialog(AddressType.Shipping)
+                    : openAddOrUpdateAddressDialog(AddressType.Shipping, shippingAddress)
+                "
+                :title="$t('pages.account.addresses.edit_label')"
+              >
+                <i class="fas fa-pencil-alt text-18" />
+              </button>
             </div>
           </div>
         </div>
@@ -77,70 +72,73 @@
       <!-- Quote billing address -->
       <VcSectionWidget
         :title="$t('pages.account.quote_details.billing_address')"
-        iconUrl="/static/images/billing-address.svg"
+        icon-url="/static/images/billing-address.svg"
       >
-        <div class="mx-7 mb-5">
-          <h4 class="text-gray-800 text-md font-bold">
+        <div class="px-6 pb-6 lg:px-7 lg:pb-7">
+          <h4 class="text-md font-bold leading-5">
             {{ $t("pages.account.quote_details.billing_address") }}
           </h4>
           <div class="border rounded mt-2.5 p-5">
-            <div>
-              <VcCheckbox
-                :model-value="billingAndShippingAddressesAreEqual"
-                :disabled="fetching"
-                @change="toggleBillingAddressEqualShipping"
-              >
-                {{ $t("pages.account.quote_details.same_as_shipping_address") }}
-              </VcCheckbox>
-            </div>
+            <VcCheckbox
+              :model-value="billingAndShippingAddressesAreEqual"
+              :disabled="fetching"
+              @change="toggleBillingAddressEqualShipping"
+            >
+              {{ $t("pages.account.quote_details.same_as_shipping_address") }}
+            </VcCheckbox>
 
-            <div class="flex flex-wrap mt-5" v-if="!billingAndShippingAddressesAreEqual">
-              <div class="lg:flex-col lg:w-1/2">
-                <div v-if="billingAddress">
-                  <VcAddressInfo :address="billingAddress" />
-                </div>
-                <div v-else>
-                  <VcAlert type="warning" icon="fas fa-exclamation-triangle text-2xl">
-                    {{ $t("pages.account.quote_details.no_address_message") }}
-                  </VcAlert>
-                </div>
+            <div
+              class="flex flex-col gap-3 mt-4 md:flex-row md:items-center empty:hidden"
+              v-if="!billingAndShippingAddressesAreEqual"
+            >
+              <div class="grow text-15" v-if="billingAddress">
+                <VcAddressInfo :address="billingAddress" />
               </div>
-              <div class="lg:flex-col w-full lg:w-1/2 mt-2.5 lg:mt-0">
-                <div class="flex justify-end">
-                  <button
-                    :disabled="fetching"
-                    type="button"
-                    class="h-7 w-7 shadow rounded text-[color:var(--color-primary)] hover:bg-gray-100"
-                    @click="
-                      userHasAddresses
-                        ? openAddressSelectionDialog(AddressType.Billing)
-                        : openAddOrUpdateAddressDialog(AddressType.Billing, billingAddress)
-                    "
-                    :title="$t('pages.account.addresses.edit_label')"
-                  >
-                    <i class="fas fa-pencil-alt" />
-                  </button>
-                </div>
+              <div class="grow" v-else>
+                <VcAlert type="warning" icon="fas fa-exclamation-triangle text-2xl">
+                  {{ $t("pages.account.quote_details.no_address_message") }}
+                </VcAlert>
+              </div>
+
+              <div class="flex justify-end">
+                <button
+                  :disabled="fetching"
+                  type="button"
+                  class="shrink-0 flex items-center justify-center h-9 w-9 rounded border-2 border-current text-[color:var(--color-primary)] hover:bg-gray-100"
+                  @click="
+                    userHasAddresses
+                      ? openAddressSelectionDialog(AddressType.Billing)
+                      : openAddOrUpdateAddressDialog(AddressType.Billing, billingAddress)
+                  "
+                  :title="$t('pages.account.addresses.edit_label')"
+                >
+                  <i class="fas fa-pencil-alt text-18" />
+                </button>
               </div>
             </div>
           </div>
         </div>
-
-        <div class="flex w-full gap-x-5 px-7 py-5 justify-center lg:justify-end">
-          <VcButton
-            :isDisabled="!quoteChanged || fetching"
-            size="lg"
-            class="w-48 uppercase font-bold"
-            is-outline
-            @click="saveChanges"
-          >
-            {{ $t("pages.account.quote_details.save_changes") }}
-          </VcButton>
-          <VcButton :is-disabled="!quoteValid || fetching" size="lg" class="w-48 uppercase font-bold" @click="submit">
-            {{ $t("pages.account.quote_details.submit") }}
-          </VcButton>
-        </div>
       </VcSectionWidget>
+
+      <div class="flex flex-wrap gap-5 py-5 px-6 lg:justify-end lg:px-7 lg:border-t">
+        <VcButton
+          :is-disabled="!quoteChanged || fetching"
+          size="lg"
+          class="flex-1 p-2 uppercase font-bold lg:flex-none lg:min-w-[208px]"
+          is-outline
+          @click="saveChanges"
+        >
+          {{ $t("pages.account.quote_details.save_changes") }}
+        </VcButton>
+        <VcButton
+          :is-disabled="!quoteValid || fetching"
+          size="lg"
+          class="flex-1 p-2 uppercase font-bold lg:flex-none lg:min-w-[208px]"
+          @click="submit"
+        >
+          {{ $t("pages.account.quote_details.submit") }}
+        </VcButton>
+      </div>
     </div>
   </div>
 

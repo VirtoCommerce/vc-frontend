@@ -26,6 +26,7 @@ export { default as VcPriceDisplayCatalog } from "./price-display-catalog/vc-pri
 export { default as VcRadioButton } from "./radio-button/vc-radio-button.vue";
 export { default as VcScrollTopButton } from "./scroll-top-button/vc-scroll-top-button.vue";
 export { default as VcSection } from "./section/vc-section.vue";
+export { default as VcSectionWidget } from "./section-widget/vc-section-widget.vue";
 export { default as VcSelect } from "./select/vc-select.vue";
 export { default as VcTabs } from "./tabs/vc-tabs.vue";
 export { default as VcTextArea } from "./text-area/vc-text-area.vue";

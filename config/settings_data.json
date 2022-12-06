@@ -137,7 +137,10 @@
       "color_product_outline": "#EDEDED",
       "color_price_current": "#1F222C",
       "color_price_old": "#9D9991",
-      "color_price_from": "#9D9991"
+      "color_price_from": "#9D9991",
+      "color_line_item_border": "#EDEDED",
+      "color_line_item_table_border": "#CCCCCC",
+      "color_line_item_light": "#757575"
     },
     "Watermelon": {
       "page_title_with_store_name": true,

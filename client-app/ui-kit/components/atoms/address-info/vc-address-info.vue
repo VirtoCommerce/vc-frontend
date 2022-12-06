@@ -1,23 +1,26 @@
 <template>
-  <div>
-    <div class="font-bold">
-      <span>{{ address.firstName }} {{ address.lastName }}</span>
-    </div>
+  <div class="space-y-2">
     <div>
-      <span>{{ address.line1 }},&nbsp;</span>
-      <span v-if="address.line2">{{ address.line2 }}&nbsp;</span>
-      <span>{{ address.city }},&nbsp;</span>
-      <span>{{ address.countryName }},&nbsp;</span>
-      <span v-if="address.regionName">{{ address.regionName }},&nbsp;</span>
-      <span>{{ address.postalCode }}</span>
+      <div class="font-bold">{{ address.firstName }} {{ address.lastName }}</div>
+      <div>
+        {{ address.line1 }},&nbsp;
+        <template v-if="address.line2">{{ address.line2 }}&nbsp;</template>
+        {{ address.city }},&nbsp; {{ address.countryName }},&nbsp;
+        <template v-if="address.regionName">{{ address.regionName }},&nbsp;</template>
+        {{ address.postalCode }}
+      </div>
     </div>
-    <div v-if="address.phone">
-      <span class="font-bold mr-1">{{ $t("common.labels.phone") }}:</span>
-      <span>{{ address.phone }}</span>
-    </div>
-    <div v-if="address.email">
-      <span class="font-bold mr-1">{{ $t("common.labels.email") }}:</span>
-      <span>{{ address.email }}</span>
+
+    <div>
+      <template v-if="address.phone">
+        <span class="font-bold mr-1">{{ $t("common.labels.phone") }}:</span>
+        {{ address.phone }}
+        <br />
+      </template>
+      <div v-if="address.email">
+        <span class="font-bold mr-1">{{ $t("common.labels.email") }}:</span>
+        {{ address.email }}
+      </div>
     </div>
   </div>
 </template>
