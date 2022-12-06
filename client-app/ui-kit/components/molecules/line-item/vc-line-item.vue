@@ -1,31 +1,45 @@
 <template>
   <div
-    class="vc-line-item relative flex gap-2.5 pt-3 pl-3 pr-3.5 pb-4 border border-[color:var(--color-line-item-border)] rounded shadow-t-3sm md:gap-3.5 md:py-4 md:pr-4 md:rounded-none md:shadow-none md:border-0"
+    class="vc-line-item relative pt-3 pl-3 pr-3.5 pb-4 border border-[color:var(--color-line-item-border)] rounded shadow-t-3sm md:p-4 md:rounded-none md:shadow-none md:border-0"
   >
-    <!--  IMAGE -->
-    <div class="vc-line-item__img shrink-0 w-16 h-16 lg:w-[60px] lg:h-[60px]" :class="{ 'opacity-25': !productExists }">
-      <VcImage
-        :src="item.imageUrl"
-        :alt="item.name"
-        size-suffix="sm"
-        class="w-full h-full object-cover object-center"
-        lazy
-      />
-    </div>
-
     <!-- line-item grid -->
-    <div class="vc-line-item__grid grow md:grid md:gap-3 md:place-items-center" :class="`vc-line-item__grid--${modifier}`">
-      <!-- NAME -->
-      <div
-        class="vc-line-item__name text-sm font-extrabold md:w-full lg:text-13 lg:leading-4 lg:font-bold"
-        :class="{ 'opacity-25': !productExists }"
-      >
-        <router-link v-if="link" :to="link" :title="item.name" class="text-[color:var(--color-link)]">
-          {{ item.name }}
-        </router-link>
-        <template v-else>
-          {{ item.name }}
-        </template>
+    <div
+      class="vc-line-item__grid grid gap-x-2.5 md:gap-3 md:place-items-center"
+      :class="`vc-line-item__grid--${modifier}`"
+    >
+      <!--  md:PRODUCT -->
+      <div class="contents vc-line-item__product md:flex md:gap-3 md:w-full">
+        <!--  IMAGE -->
+        <div
+          class="vc-line-item__img shrink-0 w-16 h-16 md:w-10 md:h-10 xl:w-[60px] xl:h-[60px]"
+          :class="{ 'opacity-25': !productExists }"
+        >
+          <VcImage
+            :src="item.imageUrl"
+            :alt="item.name"
+            size-suffix="sm"
+            class="w-full h-full object-cover object-center"
+            lazy
+          />
+        </div>
+
+        <!-- NAME -->
+        <div
+          class="vc-line-item__name text-sm font-extrabold md:grow lg:text-13 lg:leading-4 lg:font-bold"
+          :class="{ 'opacity-25': !productExists }"
+        >
+          <router-link
+            v-if="link"
+            :to="link"
+            :title="item.name"
+            class="text-[color:var(--color-link)] [word-break:break-word]"
+          >
+            {{ item.name }}
+          </router-link>
+          <div class="[word-break:break-word]" v-else>
+            {{ item.name }}
+          </div>
+        </div>
       </div>
 
       <!-- PROPERTIES -->
@@ -34,18 +48,18 @@
           <div class="font-medium capitalize text-[color:var(--color-line-item-light)]">
             {{ property.name.toLowerCase() }}:
           </div>
-          <div class="grow mb-1 border-b-2 border-gray-200 border-dotted md:hidden" />
+          <div class="grow mb-1 border-b-2 border-gray-200 border-dotted md:hidden"></div>
           <div class="relative font-semibold">
             <div class="truncate">
               {{ property.value }}
             </div>
           </div>
         </div>
-        <div class="flex items-stretch gap-1.5 md:hidden" v-if="withPricePerItem">
+        <div class="flex items-stretch gap-1.5 xl:hidden" v-if="withPricePerItem">
           <div class="font-medium capitalize text-[color:var(--color-line-item-light)]">
             {{ $t("pages.account.quote_details.line_items.price_per_item") }}:
           </div>
-          <div class="grow mb-1 border-b-2 border-gray-200 border-dotted md:hidden" />
+          <div class="grow mb-1 border-b-2 border-gray-200 border-dotted md:hidden"></div>
           <div class="relative font-semibold">
             <slot name="pricePerItem" />
           </div>
@@ -53,8 +67,10 @@
       </div>
 
       <!-- PRICE -->
-      <div class="vc-line-item__price hidden md:block md:w-full pr-4 text-right" v-if="withPricePerItem">
-        <slot name="pricePerItem" />
+      <div class="vc-line-item__price hidden xl:block md:w-full pr-4 text-right" v-if="withPricePerItem">
+        <div class="text-13 font-medium">
+          <slot name="pricePerItem" />
+        </div>
       </div>
 
       <div class="flex items-start justify-between mt-3 md:contents">
@@ -88,32 +104,10 @@
         </button>
       </div>
     </div>
-
-    <!-- Error message -->
-    <div v-if="false"></div>
   </div>
 
-  <div class="border-b md:table-row" v-if="false">
-    <div class="md:table-cell md:border-b px-4 py-2.5 align-middle">
-      <div class="flex">
-        <div :class="{ 'opacity-25': !productExists }" class="flex-col w-16 h-16 border border-gray-100 mr-4"></div>
-
-        <div :class="{ 'opacity-25': !productExists }" class="flex-col flex-1">
-          <router-link
-            :to="link"
-            :title="item.name"
-            class="text-[color:var(--color-link)] font-extrabold line-clamp-3"
-            v-if="link"
-          >
-            {{ item.name }}
-          </router-link>
-          <div class="font-extrabold line-clamp-3" v-else>
-            {{ item.name }}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- Error message -->
+  <div class="" v-if="false"></div>
 </template>
 
 <script setup lang="ts">
@@ -166,14 +160,32 @@ const properties = computed<Property[] | undefined>(() => props.item!.product?.p
 .vc-line-item {
   &__grid {
     &--quote {
+      grid-template-areas:
+        "img name"
+        "img properties"
+        "img quantity"
+        "img total";
+
+      grid-template-columns: 60px 1fr;
+
       @media (min-width: theme("screens.md")) {
-        grid-template-areas: "name properties price quantity total remove-button";
+        grid-template-areas: "product properties quantity total remove-button";
+        grid-template-columns: 200px 1fr 88px 100px 40px;
       }
 
-      @media (min-width: theme("screens.lg")) {
-        grid-template-columns: 184px 1fr 150px 88px 100px 40px;
+      @media (min-width: theme("screens.xl")) {
+        grid-template-areas: "product properties price quantity total remove-button";
+        grid-template-columns: 254px 1fr 150px 88px 100px 40px;
       }
     }
+  }
+
+  &__product {
+    grid-area: product;
+  }
+
+  &__img {
+    grid-area: img;
   }
 
   &__name {
@@ -193,7 +205,9 @@ const properties = computed<Property[] | undefined>(() => props.item!.product?.p
   }
 
   &__price {
-    grid-area: price;
+    @media (min-width: theme("screens.xl")) {
+      grid-area: price;
+    }
   }
 
   &__add-to-cart {
@@ -201,7 +215,13 @@ const properties = computed<Property[] | undefined>(() => props.item!.product?.p
   }
 
   &__remove-button {
-    grid-area: remove-button;
+    @media (min-width: theme("screens.md")) {
+      grid-area: remove-button;
+    }
+  }
+
+  &__message {
+    grid-area: message;
   }
 }
 </style>

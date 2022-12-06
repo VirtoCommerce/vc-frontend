@@ -8,7 +8,7 @@
         <div class="vc-quote-line-items__properties">
           {{ $t("pages.account.quote_details.line_items.properties") }}
         </div>
-        <div class="vc-quote-line-items__price pr-4 text-right">
+        <div class="vc-quote-line-items__price hidden xl:block pr-4 text-right">
           {{ $t("pages.account.quote_details.line_items.price_per_item") }}
         </div>
         <div class="vc-quote-line-items__quantity text-right">
@@ -85,9 +85,14 @@ function removeItem(item: QuoteItemType): void {
 .vc-quote-line-items {
   &__grid {
     @media (min-width: theme("screens.md")) {
-      grid-template-columns: 254px 1fr 150px 88px 100px 40px;
-      grid-template-areas: "name properties price quantity total remove-button";
+      grid-template-columns: 200px 1fr 88px 100px 40px;
+      grid-template-areas: "name properties quantity total remove-button";
     }
+
+      @media (min-width: theme("screens.xl")) {
+        grid-template-columns: 254px 1fr 150px 88px 100px 40px;
+        grid-template-areas: "name properties price quantity total remove-button";
+      }
   }
 
   &__name {
