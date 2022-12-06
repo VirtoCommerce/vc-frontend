@@ -19,7 +19,7 @@ const quote = ref<QuoteType>();
 const shippingAddress = ref<QuoteAddressType>();
 const billingAddress = ref<QuoteAddressType>();
 
-export default () => {
+export default function useUserQuote() {
   async function fetchQuote(paylod: QueryQuoteArgs): Promise<void> {
     fetching.value = true;
 
@@ -34,7 +34,7 @@ export default () => {
         (address: QuoteAddressType) => address.addressType === AddressType.Shipping
       );
     } catch (e) {
-      Logger.error("useUserQuote.fetchQuote", e);
+      Logger.error(`${useUserQuote.name}.${fetchQuote.name}`, e);
       throw e;
     } finally {
       fetching.value = false;
@@ -47,7 +47,7 @@ export default () => {
     try {
       await changeQuoteComment({ command: { quoteId, comment } });
     } catch (e) {
-      Logger.error("useUserQuote.changeComment", e);
+      Logger.error(`${useUserQuote.name}.${changeComment.name}`, e);
       throw e;
     } finally {
       fetching.value = false;
@@ -60,7 +60,7 @@ export default () => {
     try {
       await changeQuoteItemQuantity({ command: { quoteId, lineItemId, quantity } });
     } catch (e) {
-      Logger.error("useUserQuote.changeItemQuantity", e);
+      Logger.error(`${useUserQuote.name}.${changeItemQuantity.name}`, e);
       throw e;
     } finally {
       fetching.value = false;
@@ -73,7 +73,7 @@ export default () => {
     try {
       await removeQuoteItem({ command: { quoteId, lineItemId } });
     } catch (e) {
-      Logger.error("useUserQuote.removeItem", e);
+      Logger.error(`${useUserQuote.name}.${removeItem.name}`, e);
       throw e;
     } finally {
       fetching.value = false;
@@ -90,7 +90,7 @@ export default () => {
 
       await updateQuoteAddresses({ command: { quoteId, addresses: inputAddresses } });
     } catch (e) {
-      Logger.error("useUserQuote.updateAddresses", e);
+      Logger.error(`${useUserQuote.name}.${updateAddresses}`, e);
       throw e;
     } finally {
       fetching.value = false;
@@ -103,7 +103,7 @@ export default () => {
     try {
       await submitQuoteRequest({ command: { quoteId, comment } });
     } catch (e) {
-      Logger.error("useUserQuote.submitQuote", e);
+      Logger.error(`${useUserQuote.name}.${submitQuote.name}`, e);
       throw e;
     } finally {
       fetching.value = false;
@@ -113,7 +113,6 @@ export default () => {
   return {
     fetching: computed(() => fetching.value),
     quote: computed(() => quote.value),
-    //comment,
     billingAddress,
     shippingAddress,
     fetchQuote,
@@ -123,4 +122,4 @@ export default () => {
     updateAddresses,
     submitQuote,
   };
-};
+}
