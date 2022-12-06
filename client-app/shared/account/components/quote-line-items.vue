@@ -24,7 +24,8 @@
     <div class="flex flex-col gap-6 md:gap-0 md:border-x md:divide-y">
       <VcLineItem v-for="item in items" :key="item.id" :item="item" @remove="removeItem">
         <template #pricePerItem>
-          <VcPriceDisplay :value="item.selectedTierPrice!.price" />
+          <VcPriceDisplay class="text-13 font-semibold xl:font-medium" :value="item.selectedTierPrice!.price" />
+          <div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]">OLD PRICE</div>
         </template>
 
         <template #quantity>
@@ -89,10 +90,10 @@ function removeItem(item: QuoteItemType): void {
       grid-template-areas: "name properties quantity total remove-button";
     }
 
-      @media (min-width: theme("screens.xl")) {
-        grid-template-columns: 254px 1fr 150px 88px 100px 40px;
-        grid-template-areas: "name properties price quantity total remove-button";
-      }
+    @media (min-width: theme("screens.xl")) {
+      grid-template-columns: 254px 1fr 150px 88px 100px 40px;
+      grid-template-areas: "name properties price quantity total remove-button";
+    }
   }
 
   &__name {

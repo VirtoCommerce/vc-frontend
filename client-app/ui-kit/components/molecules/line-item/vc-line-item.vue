@@ -4,7 +4,7 @@
   >
     <!-- line-item grid -->
     <div
-      class="vc-line-item__grid grid gap-x-2.5 md:gap-3 md:place-items-center"
+      class="vc-line-item__grid grid gap-x-2.5 md:gap-x-3 md:place-items-center"
       :class="`vc-line-item__grid--${modifier}`"
     >
       <!--  md:PRODUCT -->
@@ -42,50 +42,52 @@
         </div>
       </div>
 
-      <!-- PROPERTIES -->
-      <div class="vc-line-item__properties text-13 md:w-full lg:text-xs">
-        <div class="flex items-stretch gap-1.5" v-for="property in properties" :key="property.id">
-          <div class="font-medium capitalize text-[color:var(--color-line-item-light)]">
-            {{ property.name.toLowerCase() }}:
-          </div>
-          <div class="grow mb-1 border-b-2 border-gray-200 border-dotted md:hidden"></div>
-          <div class="relative font-semibold">
-            <div class="truncate">
-              {{ property.value }}
+      <div class="vc-line-item__props w-full xl:contents">
+        <!-- PROPERTIES -->
+        <div class="vc-line-item__properties w-full">
+          <div
+            class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[45%_1fr] xl:grid-cols-[35%_1fr] lg:text-xs"
+            v-for="property in properties"
+            :key="property.id"
+          >
+            <div class="font-medium capitalize text-[color:var(--color-line-item-light)]">
+              {{ property.name.toLowerCase() }}:
+            </div>
+            <div class="grow mb-1 h-4 border-b-2 border-gray-200 border-dotted md:hidden"></div>
+            <div class="relative font-semibold">
+              <div class="truncate">
+                {{ property.value }}
+              </div>
             </div>
           </div>
         </div>
-        <div class="flex items-stretch gap-1.5 xl:hidden" v-if="withPricePerItem">
-          <div class="font-medium capitalize text-[color:var(--color-line-item-light)]">
+
+        <!-- PRICE -->
+        <div
+          class="vc-line-item__price grid grid-cols-[auto_1fr_auto] gap-1.5 w-full md:grid-cols-[45%_1fr] xl:grid-cols-[35%_1fr] xl:contents"
+          v-if="withPricePerItem"
+        >
+          <div class="font-medium capitalize text-13 lg:text-xs text-[color:var(--color-line-item-light)] xl:hidden">
             {{ $t("pages.account.quote_details.line_items.price_per_item") }}:
           </div>
-          <div class="grow mb-1 border-b-2 border-gray-200 border-dotted md:hidden"></div>
-          <div class="relative font-semibold">
+          <div class="grow mb-1 h-4 border-b-2 border-gray-200 border-dotted md:hidden"></div>
+          <div class="flex flex-col items-end md:items-start xl:items-end xl:w-full xl:pr-4">
             <slot name="pricePerItem" />
           </div>
         </div>
       </div>
 
-      <!-- PRICE -->
-      <div class="vc-line-item__price hidden xl:block md:w-full pr-4 text-right" v-if="withPricePerItem">
-        <div class="text-13 font-medium">
-          <slot name="pricePerItem" />
-        </div>
+      <!-- QUANTITY -->
+      <div class="vc-line-item__quantity mt-3 md:mt-0 md:w-full">
+        <slot name="quantity" />
       </div>
 
-      <div class="flex items-start justify-between mt-3 md:contents">
-        <!-- QUANTITY -->
-        <div class="vc-line-item__quantity md:w-full">
-          <slot name="quantity" />
-        </div>
-
-        <!-- TOTAL -->
-        <div
-          class="vc-line-item__total flex flex-col justify-center items-end min-h-[32px] md:min-h-auto md:w-full"
-          v-if="withTotal"
-        >
-          <slot name="total" />
-        </div>
+      <!-- TOTAL -->
+      <div
+        class="vc-line-item__total flex flex-col justify-center items-end min-h-[32px] mt-3 md:mt-0 md:min-h-auto md:w-full"
+        v-if="withTotal"
+      >
+        <slot name="total" />
       </div>
 
       <!-- ADD TO CART -->
@@ -161,15 +163,14 @@ const properties = computed<Property[] | undefined>(() => props.item!.product?.p
   &__grid {
     &--quote {
       grid-template-areas:
-        "img name"
-        "img properties"
-        "img quantity"
-        "img total";
+        "img name name"
+        "img props props"
+        "img quantity total";
 
-      grid-template-columns: 60px 1fr;
+      grid-template-columns: 60px 1fr 1fr;
 
       @media (min-width: theme("screens.md")) {
-        grid-template-areas: "product properties quantity total remove-button";
+        grid-template-areas: "product props quantity total remove-button";
         grid-template-columns: 200px 1fr 88px 100px 40px;
       }
 
@@ -192,8 +193,14 @@ const properties = computed<Property[] | undefined>(() => props.item!.product?.p
     grid-area: name;
   }
 
+  &__props {
+    grid-area: props;
+  }
+
   &__properties {
-    grid-area: properties;
+    @media (min-width: theme("screens.xl")) {
+      grid-area: properties;
+    }
   }
 
   &__total {
