@@ -4,7 +4,9 @@
   >
     <div class="vc-product-skeleton-list__mobile-left sm:contents">
       <!-- Product image -->
-      <div class="vc-product-skeleton-list__img relative block w-[72px] h-[72px] xl:w-[86px] xl:h-[86px] bg-gray-100"></div>
+      <div
+        class="vc-product-skeleton-list__img relative block w-[72px] h-[72px] xl:w-[86px] xl:h-[86px] bg-gray-100"
+      ></div>
 
       <div
         class="vc-product-skeleton-list__buttons flex justify-center gap-3.5 mt-3 w-full sm:justify-start sm:place-self-end lg:mt-3 lg:gap-3"
@@ -22,9 +24,7 @@
     </div>
 
     <!-- Product props -->
-    <div
-      class="vc-product-skeleton-list__properties grid-cols-[40%_1fr] gap-x-1.5 w-full hidden xl:grid"
-    >
+    <div class="vc-product-skeleton-list__properties grid-cols-[40%_1fr] gap-x-1.5 w-full hidden xl:grid">
       <div class="pt-0.5 pb-px">
         <div class="w-1/3 h-2.5 bg-gray-100"></div>
       </div>

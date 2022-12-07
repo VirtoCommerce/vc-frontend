@@ -89,13 +89,13 @@
       </template>
 
       <!-- Vendor -->
-      <template v-if="product.vendor">
+      <template v-if="$cfg.vendor_enabled && product.vendor">
         <div class="font-bold capitalize">
           {{ $t("shared.catalog.product_card.product_vendor") }}
         </div>
         <div class="grow relative">
           <div class="absolute inset-0 flex pl-1">
-            <div class="truncate text-link">{{ product.vendor.name }}</div>
+            <Vendor :vendor="product.vendor" />
           </div>
         </div>
       </template>
@@ -146,7 +146,7 @@ import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import { Product } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";
-import { DiscountBadge } from "@/shared/catalog";
+import { DiscountBadge, Vendor } from "@/shared/catalog";
 import { getProductRoute } from "@/core";
 
 const props = defineProps({
