@@ -1,6 +1,8 @@
 <template>
-  <div class="vc-alert" :class="[type && `vc-alert--${type}`, text && 'vc-alert--text']">
-    <i v-if="icon" :class="iconClasses" class="vc-alert__icon" aria-hidden="true" />
+  <div class="vc-alert" :class="[type && `vc-alert--${type}`]">
+    <svg v-if="icon" class="vc-alert__icon">
+      <use :href="iconSrc"></use>
+    </svg>
     <div class="vc-alert__content">
       <slot />
     </div>
@@ -25,7 +27,7 @@ const props = defineProps({
   },
 });
 
-const iconClasses = computed<string>(() => {
+const iconSrc = computed<string>(() => {
   const { icon } = props;
 
   if (icon && typeof icon === "string") {
@@ -34,51 +36,49 @@ const iconClasses = computed<string>(() => {
 
   switch (props.type) {
     case "error":
-      return "fa fa-times-circle";
+      return "/static/images/x-circle.svg#main";
 
     case "warning":
-      return "fa fa-exclamation-triangle";
+      return "/static/images/exclamation-circle.svg#main";
 
     case "success":
-      return "fa fa-check-circle";
+      return "/static/images/check-circle.svg#main";
 
     case "info":
-      return "fa fa-info-circle";
+      return "/static/images/information-circle.svg#main";
 
     default:
-      return "fa fa-info mx-1";
+      return "/static/images/information-circle.svg#main";
   }
 });
 </script>
 
 <style lang="scss">
-$status-colors: info, success, warning, error;
-
 .vc-alert {
-  $self: &;
+  @apply flex items-stretch space-x-2 pr-3 pl-2.5 py-1.5 rounded;
 
-  @apply flex items-center space-x-2 px-3 py-3 rounded-sm bg-white;
+  &--info {
+    @apply text-[color:var(--color-link)] bg-[color:var(--color-link-light)];
+  }
+
+  &--success {
+    @apply text-[color:var(--color-success)] bg-[color:var(--color-success-light)];
+  }
+
+  &--warning {
+    @apply text-[color:var(--color-warning)] bg-[color:var(--color-warning-light)];
+  }
+
+  &--error {
+    @apply text-[color:var(--color-danger)] bg-[color:var(--color-danger-light)];
+  }
 
   &__icon {
-    @apply text-lg;
+    @apply shrink-0 w-5 h-5;
   }
 
   &__content {
-    @apply text-sm;
-  }
-
-  @each $status in $status-colors {
-    &--#{$status} {
-      @apply bg-#{$status}-500 text-white;
-
-      &#{$self}--text {
-        @apply bg-#{$status}-200 text-black;
-
-        #{$self}__icon {
-          @apply text-#{$status}-600;
-        }
-      }
-    }
+    @apply grow flex items-center text-11 text-[color:var(--color-secondary)];
   }
 }
 </style>
