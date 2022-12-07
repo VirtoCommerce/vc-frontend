@@ -366,6 +366,10 @@ onMounted(async () => {
   await fetchAddresses();
   await fetchQuote({ id: props.quoteId });
 
+  if (quote.value!.status !== "Draft") {
+    router.push({ name: "ViewQuote", params: { quoteId: quote.value!.id } });
+  }
+
   setInitialState();
 });
 </script>
