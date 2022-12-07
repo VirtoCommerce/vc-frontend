@@ -44,11 +44,9 @@
             <div class="grow text-15" v-if="shippingAddress">
               <VcAddressInfo :address="shippingAddress" />
             </div>
-            <div class="grow" v-else>
-              <VcAlert type="warning" icon>
-                {{ $t("pages.account.quote_details.no_address_message") }}
-              </VcAlert>
-            </div>
+            <VcAlert v-else class="grow" type="warning" icon>
+              {{ $t("pages.account.quote_details.no_address_message") }}
+            </VcAlert>
 
             <div class="flex justify-end">
               <button
@@ -94,11 +92,9 @@
               <div class="grow text-15" v-if="billingAddress">
                 <VcAddressInfo :address="billingAddress" />
               </div>
-              <div class="grow" v-else>
-                <VcAlert type="warning" icon>
-                  {{ $t("pages.account.quote_details.no_address_message") }}
-                </VcAlert>
-              </div>
+              <VcAlert v-else class="grow" type="warning" icon>
+                {{ $t("pages.account.quote_details.no_address_message") }}
+              </VcAlert>
 
               <div class="flex justify-end">
                 <button
