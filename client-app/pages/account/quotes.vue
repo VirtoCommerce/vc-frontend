@@ -214,7 +214,8 @@ async function changePage(newPage: number): Promise<void> {
 }
 
 function navigateQuoteDetails(quote: QuoteType): void {
-  router.push({ name: "QuoteDetails", params: { quoteId: quote.id } });
+  const pathName: string = quote.status === "Draft" ? "EditQuote" : "ViewQuote";
+  router.push({ name: pathName, params: { quoteId: quote.id } });
 }
 
 async function applyKeyword(): Promise<void> {
