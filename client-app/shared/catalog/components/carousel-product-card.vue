@@ -1,7 +1,7 @@
 <template>
   <div class="bg-white rounded border border-transparent lg:hover:border-gray-100 lg:hover:shadow-lg lg:p-2">
     <!-- Product image -->
-    <router-link :to="link">
+    <router-link :to="link" @click="$emit('link-click', $event)">
       <div class="square relative border border-gray-200">
         <VcImage
           :src="product.imgSrc"
@@ -17,8 +17,9 @@
       <!-- Product title -->
       <router-link
         :to="link"
-        class="text-[color:var(--color-link)] font-extrabold text-sm line-clamp-3 mt-2"
         :title="product.name"
+        class="text-[color:var(--color-link)] font-extrabold text-sm line-clamp-3 mt-2"
+        @click="$emit('link-click', $event)"
       >
         {{ product.name }}
       </router-link>
@@ -43,6 +44,8 @@ const props = defineProps({
     required: true,
   },
 });
+
+defineEmits<{ (eventName: "link-click", globalEvent: PointerEvent): void }>();
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
 </script>

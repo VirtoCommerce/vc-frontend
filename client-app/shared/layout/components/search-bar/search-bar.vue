@@ -58,7 +58,10 @@
                 v-for="product in products"
                 :key="product.id"
                 :product="product"
-                @link-click="hideSearchDropdown"
+                @link-click="
+                  hideSearchDropdown();
+                  ga.selectItem(product);
+                "
               />
             </div>
           </section>
@@ -108,7 +111,7 @@ import { useRouter } from "vue-router";
 import { useSearchBar } from "@/shared/layout";
 import { computed, inject, ref, watchEffect } from "vue";
 import { configInjectionKey, QueryParamName } from "@/core/constants";
-import { useCategoriesRoutes, useRouteQueryParam } from "@/core/composables";
+import { useCategoriesRoutes, useGoogleAnalytics, useRouteQueryParam } from "@/core/composables";
 import { Category } from "@/xapi/types";
 import { useDebounceFn, whenever } from "@vueuse/core";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
@@ -133,6 +136,7 @@ const {
   searchResults,
 } = useSearchBar();
 
+const ga = useGoogleAnalytics();
 const router = useRouter();
 
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
@@ -181,6 +185,15 @@ async function searchAndShowDropdownResults() {
 
   if (!isApplied.value) {
     await showSearchDropdown();
+  }
+
+  /**
+   * Send Google Analytics event for products.
+   */
+  if (products.value.length) {
+    ga.viewItemList(products.value, {
+      item_list_name: `Search phrase "${searchPhrase.value}"`,
+    });
   }
 }
 

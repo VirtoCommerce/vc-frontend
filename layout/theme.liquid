@@ -1,29 +1,9 @@
+{%- include 'global-liquid-variables' -%}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_language.two_letter_language_name }}">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-
-    <meta name="robots" content="index, follow">
-    <meta name="googlebot" content="index, follow">
-    <meta name="google" content="notranslate">
-    <meta name="format-detection" content="telephone=no">
-
-    <meta name="theme-color" content="#ffffff">
-    <meta name="msapplication-TileColor" content="#ffffff">
-
-    <title>{{ current_store.name }}</title>
-
-    <link rel="apple-touch-icon" sizes="180x180" href="{{'apple-touch-icon.png' | static_asset_url }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{'favicon-32x32.png' | static_asset_url }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{'favicon-16x16.png' | static_asset_url }}">
-    <link rel="manifest" href="{{'site.webmanifest' | static_asset_url }}">
-    <link rel="mask-icon" href="{{'safari-pinned-tab.svg' | static_asset_url }}" color="#5bbad5">
-
-    <!-- Google fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;0,900;1,400&family=Roboto+Condensed:wght@700&display=swap">
+    {%- include 'google-tag' -%}
+    {%- include 'head-content' -%}
   </head>
 
   <body class="font-lato">

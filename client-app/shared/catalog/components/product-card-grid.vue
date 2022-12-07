@@ -102,6 +102,7 @@
           <router-link
             :to="link"
             class="my-px h-12 text-18 text-[color:var(--color-link)] font-extrabold line-clamp-2 cursor-pointer lg:h-10 lg:text-14"
+            @click="$emit('link-click', $event)"
           >
             {{ product.name }}
           </router-link>
@@ -173,7 +174,7 @@
     </div>
 
     <div class="flex flex-col" v-if="product.hasVariations">
-      <VcButton :to="link" :is-outline="true" class="w-full uppercase !text-13 !border">
+      <VcButton :to="link" class="w-full uppercase !text-13 !border" is-outline @click="$emit('link-click', $event)">
         {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
       </VcButton>
 
@@ -222,6 +223,8 @@ const props = defineProps({
     required: true,
   },
 });
+
+defineEmits<{ (eventName: "link-click", globalEvent: PointerEvent): void }>();
 
 const swiperInstance = ref<SwiperInstance>();
 const swiperBulletsState = ref<boolean[]>([true, false, false]);

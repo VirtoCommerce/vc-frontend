@@ -498,31 +498,6 @@
         "select_button": "@:common.buttons.select",
         "price_label": "@:common.labels.price{':'}",
         "title": "Select shipping method"
-      },
-      "thank_you": {
-        "header": "Order completed",
-        "success_order_message": "Order {0} has be successfully submitted. You will be notified via email when your order is ready for shipping",
-        "phone_label": "@:common.labels.phone{':'}",
-        "email_label": "@:common.labels.email{':'}",
-        "print_order": "Print order",
-        "products_section": {
-          "title": "Purchased products"
-        },
-        "comment_section": {
-          "title": "Order comment"
-        },
-        "shipping_address_card": {
-          "title": "Shipping address"
-        },
-        "shipping_method_card": {
-          "title": "Shipping method"
-        },
-        "payment_method_card": {
-          "title": "Payment method"
-        },
-        "billing_address_card": {
-          "title": "Billing address"
-        }
       }
     },
     "bulk_order": {
@@ -892,6 +867,7 @@
         },
         "pay_now_button": "Pay Now",
         "reorder_all_button": "Reorder all",
+        "print_order_button": "Print order",
         "shipping_address_card": {
           "title": "Shipping address",
           "phone_label": "@:common.labels.phone{':'}",
@@ -1169,6 +1145,18 @@
       },
       "invalid_coupon_message": "This code did not match any active coupon. Was it entered correctly?",
       "go_to_payment_button": "Pay now"
+    },
+    "checkout_complete": {
+      "meta": {
+        "title": "@:pages.checkout_complete.title"
+      },
+      "title": "Order completed",
+      "subtitle": "Order {0} has been successfully submitted.",
+      "text": "You will be notified via email about the order status change.",
+      "buttons": {
+        "show_order": "Show order",
+        "home": "Home page"
+      }
     },
     "search": {
       "meta": {

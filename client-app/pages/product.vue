@@ -42,8 +42,8 @@
               class="px-6 mb-8 lg:mb-2"
               style="--navigation-offset: 3rem"
             >
-              <template #slide="{ slide }">
-                <CarouselProductCard :product="slide" class="mb-6" />
+              <template #slide="{ slide: product }">
+                <CarouselProductCard :product="product" class="mb-6" @link-click="ga.selectItem(product)" />
               </template>
             </VcCarousel>
           </VcSection>
@@ -58,9 +58,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, watchEffect, defineAsyncComponent, computed } from "vue";
+import { watchEffect, defineAsyncComponent, computed } from "vue";
 import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
-import { usePageHead } from "@/core/composables";
+import { useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { useTemplate } from "@/shared/static-content";
 import { useCart } from "@/shared/cart";
 import {
@@ -74,10 +74,7 @@ import {
 import { BackButtonInHeader } from "@/shared/layout";
 import { useI18n } from "vue-i18n";
 
-const { t } = useI18n();
-
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
-const template = useTemplate("product");
 
 const props = defineProps({
   productId: {
@@ -111,11 +108,14 @@ const relatedProductsCarouselOptions: CarouselOptions = {
   },
 };
 
+const { t } = useI18n();
 const { getItemsTotal } = useCart();
 const { buildBreadcrumbs } = useBreadcrumbs();
 const { product, loading, loadProduct } = useProduct();
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const breakpoints = useBreakpoints(breakpointsTailwind);
+const template = useTemplate("product");
+const ga = useGoogleAnalytics();
 
 usePageHead({
   title: computed(() => product.value?.seoInfo?.pageTitle || product.value?.name),
@@ -126,7 +126,8 @@ usePageHead({
 });
 
 const isMobile = breakpoints.smaller("lg");
-const breadcrumbs: Ref<IBreadcrumbsItem[]> = ref([{ url: "/", title: t("common.links.home") }]);
+
+const breadcrumbs = computed<IBreadcrumbsItem[]>(() => buildBreadcrumbs(product.value?.breadcrumbs ?? []));
 
 const variationsCartTotalAmount = eagerComputed<number>(() => {
   if (!product.value) {
@@ -145,7 +146,24 @@ watchEffect(() => {
   fetchRelatedProducts({ productId, itemsPerPage: 30 });
 });
 
+/**
+ * Send Google Analytics event for product.
+ */
 watchEffect(() => {
-  breadcrumbs.value = buildBreadcrumbs(product.value?.breadcrumbs ?? []);
+  if (product.value) {
+    ga.viewItem(product.value);
+  }
+});
+
+/**
+ * Send Google Analytics event for related products.
+ */
+watchEffect(() => {
+  if (relatedProducts.value.length) {
+    ga.viewItemList(relatedProducts.value, {
+      item_list_id: "related_products",
+      item_list_name: t("pages.product.related_product_section_title"),
+    });
+  }
 });
 </script>
