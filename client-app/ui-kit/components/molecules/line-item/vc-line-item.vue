@@ -49,12 +49,14 @@
             v-for="property in properties"
             :key="property.id"
           >
-            <div class="min-w-0 font-medium capitalize text-[color:var(--color-line-item-light)]">
+            <div
+              class="min-w-0 font-medium capitalize text-[color:var(--color-line-item-light)] md:font-bold md:text-[color:var(--color-secondary)]"
+            >
               <div class="truncate">{{ property.name.toLowerCase() }}:</div>
             </div>
             <div class="grow mb-1 h-4 border-b-2 border-gray-200 border-dotted md:hidden"></div>
             <div class="min-w-0">
-              <div class="truncate font-semibold">
+              <div class="truncate font-semibold md:font-normal">
                 {{ property.value }}
               </div>
             </div>
@@ -67,7 +69,7 @@
           v-if="withPricePerItem"
         >
           <div
-            class="min-w-0 font-medium capitalize text-13 lg:text-xs text-[color:var(--color-line-item-light)] xl:hidden"
+            class="min-w-0 font-medium capitalize text-13 lg:text-xs text-[color:var(--color-line-item-light)] md:font-bold md:text-[color:var(--color-secondary)] xl:hidden"
           >
             <div class="truncate">{{ $t("pages.account.quote_details.line_items.price_per_item") }}:</div>
           </div>

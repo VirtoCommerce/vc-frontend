@@ -25,7 +25,10 @@
       <VcLineItem v-for="item in items" :key="item.id" :item="item" @remove="removeItem">
         <template #pricePerItem>
           <!-- Price per item -->
-          <VcPriceDisplay class="text-13 font-semibold xl:font-medium" :value="item.selectedTierPrice!.price" />
+          <VcPriceDisplay
+            class="text-13 font-semibold md:font-normal xl:font-medium"
+            :value="item.selectedTierPrice!.price"
+          />
 
           <!-- Price without discount -->
           <div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]" v-if="false">OLD PRICE</div>
