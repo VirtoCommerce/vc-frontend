@@ -205,7 +205,7 @@
         <div class="flex justify-center">
           <VcButton kind="secondary" class="!hidden lg:!inline-flex uppercase px-3" is-outline @click="printOrder">
             <i class="fas fa-print mr-2" />
-            {{ $t("shared.checkout.thank_you.print_order") }}
+            {{ $t("pages.account.order_details.print_order_button") }}
           </VcButton>
         </div>
       </div>
