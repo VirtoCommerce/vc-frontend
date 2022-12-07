@@ -701,16 +701,15 @@ async function createOrder() {
     return;
   }
 
-  await Promise.all([
-    router.push({
-      name: "CheckoutComplete",
-      params: {
-        orderId: order.id,
-        orderNumber: order.number,
-      },
-    }),
-    fetchCart(),
-  ]);
+  await router.push({
+    name: "CheckoutComplete",
+    params: {
+      orderId: order.id,
+      orderNumber: order.number,
+    },
+  });
+
+  await fetchCart();
 }
 
 async function createQuote() {
