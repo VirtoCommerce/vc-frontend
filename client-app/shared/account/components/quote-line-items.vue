@@ -14,7 +14,7 @@
         <div class="vc-quote-line-items__quantity hidden xl:block text-right">
           {{ $t("pages.account.quote_details.line_items.quantity") }}
         </div>
-        <div class="vc-quote-line-items__total hidden xl:block text-right">
+        <div class="vc-quote-line-items__total text-right">
           {{ $t("pages.account.quote_details.line_items.total") }}
         </div>
         <div class="vc-quote-line-items__remove-button"></div>
@@ -24,8 +24,11 @@
     <div class="flex flex-col gap-6 md:gap-0 md:border-x md:divide-y">
       <VcLineItem v-for="item in items" :key="item.id" :item="item" @remove="removeItem">
         <template #pricePerItem>
+          <!-- Price per item -->
           <VcPriceDisplay class="text-13 font-semibold xl:font-medium" :value="item.selectedTierPrice!.price" />
-          <div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]">OLD PRICE</div>
+
+          <!-- Price without discount -->
+          <div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]" v-if="false">OLD PRICE</div>
         </template>
 
         <template #quantity>
@@ -36,15 +39,18 @@
         </template>
 
         <template #total>
-          <div class="flex flex-wrap items-center justify-end gap-x-1">
-            <div class="text-14 font-bold text-[color:var(--color-price-from)]">
+          <!-- Total -->
+          <div class="flex flex-wrap items-center justify-end text-right gap-x-1">
+            <div class="text-14 font-bold text-[color:var(--color-price-from)] md:hidden">
               {{ $t("pages.account.quote_details.line_items.total") }}:
             </div>
-            <div class="text-15 font-bold">
+            <div class="text-15 font-bold [word-break:break-word]">
               {{ $n(item.selectedTierPrice!.price!.amount * item.selectedTierPrice!.quantity, "currency") }}
             </div>
           </div>
-          <div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]">OLD PRICE</div>
+
+          <!-- Total without discount -->
+          <div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]" v-if="false">OLD PRICE</div>
         </template>
       </VcLineItem>
     </div>
@@ -85,12 +91,12 @@ function removeItem(item: QuoteItemType): void {
 .vc-quote-line-items {
   &__grid {
     @media (min-width: theme("screens.md")) {
-      grid-template-columns: 200px 1fr 150px 40px;
-      grid-template-areas: "name properties remove-button";
+      grid-template-columns: 250px 1fr 100px 32px;
+      grid-template-areas: "name properties total remove-button";
     }
 
     @media (min-width: theme("screens.xl")) {
-      grid-template-columns: 254px 1fr 150px 88px 100px 40px;
+      grid-template-columns: 250px 1fr 120px 88px 100px 32px;
       grid-template-areas: "name properties price quantity total remove-button";
     }
   }

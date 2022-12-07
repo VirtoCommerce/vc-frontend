@@ -45,7 +45,7 @@
               <VcAddressInfo :address="shippingAddress" />
             </div>
             <div class="grow" v-else>
-              <VcAlert type="warning" icon="fas fa-exclamation-triangle text-2xl">
+              <VcAlert type="warning" icon>
                 {{ $t("pages.account.quote_details.no_address_message") }}
               </VcAlert>
             </div>
@@ -54,7 +54,7 @@
               <button
                 :disabled="fetching"
                 type="button"
-                class="shronk-0 flex items-center justify-center h-9 w-9 rounded border-2 border-current text-[color:var(--color-primary)] hover:bg-gray-100"
+                class="shrink-0 flex items-center justify-center h-9 w-9 rounded border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white"
                 @click="
                   userHasAddresses
                     ? openAddressSelectionDialog(AddressType.Shipping)
@@ -95,7 +95,7 @@
                 <VcAddressInfo :address="billingAddress" />
               </div>
               <div class="grow" v-else>
-                <VcAlert type="warning" icon="fas fa-exclamation-triangle text-2xl">
+                <VcAlert type="warning" icon>
                   {{ $t("pages.account.quote_details.no_address_message") }}
                 </VcAlert>
               </div>
@@ -104,7 +104,7 @@
                 <button
                   :disabled="fetching"
                   type="button"
-                  class="shrink-0 flex items-center justify-center h-9 w-9 rounded border-2 border-current text-[color:var(--color-primary)] hover:bg-gray-100"
+                  class="shrink-0 flex items-center justify-center h-9 w-9 rounded border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white"
                   @click="
                     userHasAddresses
                       ? openAddressSelectionDialog(AddressType.Billing)
