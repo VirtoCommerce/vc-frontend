@@ -8,7 +8,7 @@
       </h2>
     </div>
 
-    <div class="bg-white lg:bg-transparent lg:space-y-6">
+    <div class="bg-white shadow-md-x border-y lg:shadow-none lg:border-0 lg:bg-transparent lg:space-y-6">
       <!-- Quote comment -->
       <VcSectionWidget
         :title="$t('pages.account.quote_details.remarks')"
