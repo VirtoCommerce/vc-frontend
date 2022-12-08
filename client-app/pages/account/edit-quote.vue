@@ -29,7 +29,11 @@
       </VcSectionWidget>
 
       <!-- Quote products -->
-      <VcSectionWidget :title="$t('pages.account.quote_details.products')" icon-url="/static/images/products.svg">
+      <VcSectionWidget
+        :title="$t('pages.account.quote_details.products')"
+        icon-url="/static/images/products.svg"
+        content-classes="px-6 pt-6 pb-0 md:p-7"
+      >
         <QuoteLineItems :items="quote.items!" @remove:item="onRemoveItem" />
       </VcSectionWidget>
 
