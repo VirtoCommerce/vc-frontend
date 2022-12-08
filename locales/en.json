@@ -1010,7 +1010,7 @@
         "quote_summary": "Quote Summary",
         "quote_data": "Quote Data",
         "total": "@:common.labels.total",
-        "created": "@:commmon.labels.created",
+        "created": "@:common.labels.created",
         "status": "@:common.labels.status",
         "line_items": {
           "product": "@:common.labels.product",

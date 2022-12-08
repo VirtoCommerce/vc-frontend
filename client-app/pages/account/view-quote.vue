@@ -65,12 +65,12 @@
           </div>
         </VcCard>
 
-        <VcCard :title="$t('pages.account.quote_details.shipping_address')" class="mb-5" shadow>
-          <VcAddressInfo :address="shippingAddress!" />
+        <VcCard :title="$t('pages.account.quote_details.shipping_address')" class="mb-5" shadow v-if="shippingAddress">
+          <VcAddressInfo :address="shippingAddress" />
         </VcCard>
 
-        <VcCard :title="$t('pages.account.quote_details.billing_address')" class="mb-5" shadow>
-          <VcAddressInfo :address="billingAddress!" />
+        <VcCard :title="$t('pages.account.quote_details.billing_address')" class="mb-5" shadow v-if="billingAddress">
+          <VcAddressInfo :address="billingAddress" />
         </VcCard>
       </div>
     </div>
@@ -82,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { computed, onMounted, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useUserQuote, QuoteLineItems } from "@/shared/account";
 import { VcAddressInfo } from "@/ui-kit/components";
@@ -95,7 +95,7 @@ const props = defineProps({
 });
 
 const { t } = useI18n();
-const { quote, billingAddress, shippingAddress, fetchQuote } = useUserQuote();
+const { quote, billingAddress, shippingAddress, clearQuote, fetchQuote } = useUserQuote();
 
 const breadcrumbs = computed<IBreadcrumbs[]>(() => [
   { title: t("common.links.home"), route: { name: "Home" } },
@@ -105,6 +105,11 @@ const breadcrumbs = computed<IBreadcrumbs[]>(() => [
 ]);
 
 onMounted(async () => {
+  await fetchQuote({ id: props.quoteId });
+});
+
+watchEffect(async () => {
+  clearQuote();
   await fetchQuote({ id: props.quoteId });
 });
 </script>

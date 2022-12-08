@@ -1,5 +1,5 @@
 import { computed, ref } from "vue";
-import { find, omit } from "lodash";
+import { find, omit, remove } from "lodash";
 import { AddressType, Logger } from "@/core";
 import {
   getQuote,
@@ -15,24 +15,38 @@ import {
 } from "@/xapi";
 
 const fetching = ref<boolean>(false);
-const quote = ref<QuoteType>();
-const shippingAddress = ref<QuoteAddressType>();
-const billingAddress = ref<QuoteAddressType>();
+const quote = ref<QuoteType | undefined>();
+const billingAddress = ref<QuoteAddressType | undefined>();
+const shippingAddress = ref<QuoteAddressType | undefined>();
 
 export default function useUserQuote() {
+  function clearQuote(): void {
+    quote.value = undefined;
+  }
+
+  function innerUpdateAddresses(): void {
+    billingAddress.value = find(
+      quote.value?.addresses,
+      (address: QuoteAddressType) => address.addressType === AddressType.Billing
+    );
+    shippingAddress.value = find(
+      quote.value?.addresses,
+      (address: QuoteAddressType) => address.addressType === AddressType.Shipping
+    );
+  }
+
+  function setQuoteAddress(newAddress: QuoteAddressType): void {
+    remove(quote.value!.addresses!, (address: QuoteAddressType) => address.addressType === newAddress.addressType);
+    quote.value!.addresses!.push(newAddress);
+    innerUpdateAddresses();
+  }
+
   async function fetchQuote(paylod: QueryQuoteArgs): Promise<void> {
     fetching.value = true;
 
     try {
       quote.value = await getQuote(paylod);
-      billingAddress.value = find(
-        quote.value!.addresses,
-        (address: QuoteAddressType) => address.addressType === AddressType.Billing
-      );
-      shippingAddress.value = find(
-        quote.value!.addresses,
-        (address: QuoteAddressType) => address.addressType === AddressType.Shipping
-      );
+      innerUpdateAddresses();
     } catch (e) {
       Logger.error(`${useUserQuote.name}.${fetchQuote.name}`, e);
       throw e;
@@ -113,8 +127,10 @@ export default function useUserQuote() {
   return {
     fetching: computed(() => fetching.value),
     quote: computed(() => quote.value),
-    billingAddress,
-    shippingAddress,
+    billingAddress: computed(() => billingAddress.value),
+    shippingAddress: computed(() => shippingAddress.value),
+    clearQuote,
+    setQuoteAddress,
     fetchQuote,
     changeComment,
     changeItemQuantity,
