@@ -139,8 +139,7 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 ### Install the `vc-storefront`
 
 - Clone [https://github.com/VirtoCommerce/vc-storefront](https://github.com/VirtoCommerce/vc-storefront) in to a local folder
-
-- Open the **appsettings.json** file in a text editor.
+- Open the **appsettings.json** file in a text editor
 - In the **Endpoint** section change **Url**, **UserName**, **Password** with correct path and credentials for Virto Commerce Platform:
 
 ```json
@@ -149,21 +148,6 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
      "Url": "https://localhost:5001",
      "UserName": "admin",
      "Password": "store",
-```
-
-### Setup `B2B Mercury theme`
-
-```bash
-# Clone repo into the folder where storefront is installed
-git clone https://github.com/VirtoCommerce/vue-starter-theme.git "C:\vc-storefront\VirtoCommerce.Storefront\wwwroot\cms-content\themes\{store-name}\default"
-# Change the current directory
-cd C:\vc-storefront\VirtoCommerce.Storefront\VirtoCommerce.Storefront\wwwroot\cms-content\themes\{store-name}\default
-# install dependencies
-yarn
-# Start theme in development mode with HMR support
-yarn dev
-# or build theme to get installable artifact
-yarn compress
 ```
 
 ### Run `vc-storefront` application
@@ -175,6 +159,54 @@ cd C:\vc-storefront\VirtoCommerce.Storefront
 dotnet run
 # In future, if you don't need to rebuild you can use that
 dotnet run --no-build
+```
+
+### Setup `B2B Mercury theme`
+
+```bash
+# Clone repo into the folder where storefront is installed
+git clone https://github.com/VirtoCommerce/vue-starter-theme.git "C:\vc-storefront\VirtoCommerce.Storefront\wwwroot\cms-content\themes\{store-name}\default"
+# Change the current directory
+cd C:\vc-storefront\VirtoCommerce.Storefront\VirtoCommerce.Storefront\wwwroot\cms-content\themes\{store-name}\default
+# install dependencies
+yarn install
+```
+
+#### Compile and Hot-Reload for Development
+
+- Open the **.env** file in a text editor
+- Change **APP_BACKEND_URL** to the correct endpoint to `vc-storefront`:
+
+```dotenv
+# .env file
+APP_BACKEND_URL=https://localhost:2083
+```
+
+- Run command: `yarn dev` or `yarn dev-expose`
+- Follow the link in the terminal
+
+#### Type-Check, Compile and Minify for Production
+
+```bash
+yarn build
+```
+
+#### Compile and Minify in Development mode
+
+```bash
+yarn build:dev
+```
+
+#### Compile and Minify in Development mode with change tracking
+
+```bash
+yarn build:watch
+```
+
+#### Compile to get the artifact to install.
+
+```bash
+yarn compress
 ```
 
 ## License

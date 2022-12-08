@@ -5,10 +5,10 @@
   "scripts": {
     "dev": "vite",
     "dev-expose": "vite --host",
-    "build": "yarn run type-check && vite build",
+    "build": "yarn type-check && vite build",
     "build:dev": "vite build --mode=development",
     "build:watch": "vite build --mode=development --watch",
-    "compress": "yarn run build && gulp compress",
+    "compress": "yarn build && gulp compress",
     "type-check": "vue-tsc --noEmit --extendedDiagnostics -p tsconfig.json --composite false",
     "lint-staged": "lint-staged",
     "lint": "eslint \"client-app/**/*.{js,ts,vue}\"",
@@ -17,7 +17,7 @@
     "prettier:fix": "prettier --write \"client-app/**/*.{js,ts,vue,graphql,json}\"",
     "generate:graphql:schema": "graphql-codegen -c \"codegen.schema.ts\" -r dotenv/config && eolConverter crlf \"client-app/xapi/schema.json\"",
     "generate:graphql:types": "graphql-codegen -c \"codegen.types.ts\" -r dotenv/config && eolConverter crlf \"client-app/xapi/types.ts\"",
-    "generate:graphql": "yarn run generate:graphql:schema && yarn run generate:graphql:types",
+    "generate:graphql": "yarn generate:graphql:schema && yarn generate:graphql:types",
     "postinstall": "husky install"
   },
   "dependencies": {
