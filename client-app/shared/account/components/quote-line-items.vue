@@ -1,5 +1,5 @@
 <template>
-  <div class="vc-quote-line-items px-6 md:px-7 md:pb-7">
+  <div class="vc-quote-line-items">
     <div class="hidden md:block">
       <div class="vc-quote-line-items__grid grid gap-x-3 px-4 py-3 border rounded-t text-sm font-bold">
         <div class="vc-quote-line-items__name">
