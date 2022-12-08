@@ -2,23 +2,26 @@
   <div class="relative shadow-light-lg lg:bg-white lg:border lg:rounded lg:shadow-md-x">
     <slot name="title" v-if="withTitle">
       <div
-        class="flex items-center gap-3 px-6 pt-6"
-        :class="{ 'hidden lg:block': hideMobileTitle, 'lg:hidden': hideMobileTitle }"
+        class="flex items-center gap-3 px-6 pt-6 lg:px-5 lg:py-3.5 lg:border-b"
+        :class="{ 'hidden lg:block': hideMobileTitle, 'lg:hidden': hideDesktopTitle }"
       >
-        <VcImage :alt="title" :src="iconUrl" class="w-11 h-11 -ml-0.5 lg:w-14 lg:h-14 lg:ml-0.5" lazy />
-        <h3 class="text-xl font-bold uppercase">
+        <VcImage :alt="title" :src="iconUrl" class="w-11 h-11 -ml-0.5 lg:hidden" lazy />
+        <h3 class="text-xl font-bold uppercase lg:text-19">
           {{ title }}
         </h3>
       </div>
     </slot>
+
     <div :class="contentClasses">
-      <slot></slot>
+      <slot />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps({
+import { ref, watchEffect } from "vue";
+
+const props = defineProps({
   title: {
     type: String,
     default: "",
@@ -46,7 +49,7 @@ defineProps({
 
   contentClasses: {
     type: String,
-    default: "px-6 pt-4 pb-6 lg:px-7 lg:pb-7",
+    default: "p-6 lg:p-5",
   },
 });
 </script>

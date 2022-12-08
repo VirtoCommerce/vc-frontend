@@ -13,7 +13,7 @@
       <VcSectionWidget
         :title="$t('pages.account.quote_details.remarks')"
         icon-url="/static/images/remarks.svg"
-        contentClasses="px-6 pb-1 lg:px-7 lg:pb-2"
+        content-classes="px-6 pb-1 pt-4 lg:px-7 lg:pb-2"
       >
         <div class="text-base leading-5 font-bold lg:text-15">
           {{ $t("pages.account.quote_details.remarks_field_label") }}
