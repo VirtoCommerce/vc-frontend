@@ -109,52 +109,6 @@
         </div>
       </VcSectionWidget>
 
-      <VcSectionWidget
-        :title="$t('pages.account.quote_details.billing_address')"
-        icon-url="/static/images/billing-address.svg"
-      >
-        <div class="px-6 pb-6 lg:px-7 lg:pb-7">
-          <h4 class="text-md font-bold leading-5">
-            {{ $t("pages.account.quote_details.billing_address") }}
-          </h4>
-          <div class="border rounded mt-2.5 p-5">
-            <VcCheckbox
-              :model-value="billingAddressEqualsShippingAddress"
-              :disabled="fetching"
-              @change="toggleBillingAddressEqualsShippingAddress"
-            >
-              {{ $t("pages.account.quote_details.same_as_shipping_address") }}
-            </VcCheckbox>
-
-            <div
-              class="flex flex-col gap-3 mt-4 md:flex-row md:items-center empty:hidden"
-              v-if="!billingAddressEqualsShippingAddress"
-            >
-              <div class="grow text-15" v-if="billingAddress">
-                <VcAddressInfo :address="billingAddress" />
-              </div>
-              <VcAlert class="grow" type="warning" icon v-else>
-                {{ $t("pages.account.quote_details.no_address_message") }}
-              </VcAlert>
-
-              <div class="flex justify-end">
-                <button
-                  :disabled="fetching"
-                  type="button"
-                  class="shrink-0 flex items-center justify-center h-9 w-9 rounded border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white"
-                  @click="
-                    changeAddressButtonHandler(billingAddress || { ...newAddress, addressType: AddressType.Billing })
-                  "
-                  :title="$t('pages.account.addresses.edit_label')"
-                >
-                  <i class="fas fa-pencil-alt text-18" />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </VcSectionWidget>
-
       <div class="flex flex-wrap gap-5 px-6 py-7 lg:justify-end lg:p-0">
         <VcButton
           :is-disabled="!quoteChanged"
