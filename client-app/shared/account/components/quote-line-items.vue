@@ -11,7 +11,7 @@
         <div class="vc-quote-line-items__price hidden xl:block pr-4 text-right">
           {{ $t("pages.account.quote_details.line_items.price_per_item") }}
         </div>
-        <div class="vc-quote-line-items__quantity hidden xl:block text-right">
+        <div class="vc-quote-line-items__quantity hidden xl:block text-center">
           {{ $t("pages.account.quote_details.line_items.quantity") }}
         </div>
         <div class="vc-quote-line-items__total text-right">
@@ -22,7 +22,7 @@
     </div>
 
     <div class="flex flex-col gap-6 md:gap-0 md:border-x md:divide-y">
-      <VcLineItem v-for="item in items" :key="item.id" :item="item" @remove="removeItem">
+      <VcLineItem v-for="item in items" :key="item.id" :item="item" @remove="$emit('remove:item', item)">
         <template #pricePerItem>
           <!-- Price per item -->
           <VcPriceDisplay
@@ -37,6 +37,11 @@
         <template #quantity>
           <input
             class="w-20 h-8 border rounded text-center text-sm disabled:bg-[color:var(--color-line-item-light)]/75 xl:w-full disabled:text-[color:var(--color-line-item-table-border)]"
+            type="number"
+            pattern="\d"
+            min="1"
+            required
+            @change="$emit('update:item', item)"
             v-model="item.selectedTierPrice!.quantity"
           />
         </template>
@@ -79,15 +84,11 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["removeItem"]);
+defineEmits(["remove:item", "update:item"]);
 
 const subtotal = computed<number>(() =>
   sumBy(props.items, (item: QuoteItemType) => item.selectedTierPrice!.price!.amount * item.selectedTierPrice!.quantity)
 );
-
-function removeItem(item: QuoteItemType): void {
-  emit("removeItem", item);
-}
 </script>
 
 <style scoped lang="scss">

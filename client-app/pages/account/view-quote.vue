@@ -28,7 +28,10 @@
       </div>
 
       <div class="contents lg:block lg:shrink-0 lg:space-y-6 lg:w-1/4 2xl:w-[285px]">
-        <VcCardWidget :title="$t('pages.account.quote_details.quote_summary')">
+        <VcCardWidget
+          :title="$t('pages.account.quote_details.quote_summary')"
+          icon-url="/static/images/billing-address.svg"
+        >
           <div class="flex justify-between text-base">
             <span class="font-bold" v-t="'pages.account.quote_details.total'" />
             <span class="text-[color:var(--color-price)] text-18 font-extrabold">
@@ -58,6 +61,7 @@
         </VcCardWidget>
 
         <VcCardWidget
+          v-if="shippingAddress"
           :title="$t('pages.account.quote_details.shipping_address')"
           icon-url="/static/images/shipping-address.svg"
         >
@@ -67,6 +71,7 @@
         </VcCardWidget>
 
         <VcCardWidget
+          v-if="billingAddress"
           :title="$t('pages.account.quote_details.billing_address')"
           icon-url="/static/images/billing-address.svg"
         >
@@ -82,7 +87,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { computed, onMounted, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useUserQuote, QuoteLineItems } from "@/shared/account";
 import { VcAddressInfo } from "@/ui-kit/components";
@@ -95,7 +100,7 @@ const props = defineProps({
 });
 
 const { t } = useI18n();
-const { quote, billingAddress, shippingAddress, fetchQuote } = useUserQuote();
+const { quote, billingAddress, shippingAddress, clearQuote, fetchQuote } = useUserQuote();
 
 const breadcrumbs = computed<IBreadcrumbs[]>(() => [
   { title: t("common.links.home"), route: { name: "Home" } },
@@ -105,6 +110,11 @@ const breadcrumbs = computed<IBreadcrumbs[]>(() => [
 ]);
 
 onMounted(async () => {
+  await fetchQuote({ id: props.quoteId });
+});
+
+watchEffect(async () => {
+  clearQuote();
   await fetchQuote({ id: props.quoteId });
 });
 </script>
