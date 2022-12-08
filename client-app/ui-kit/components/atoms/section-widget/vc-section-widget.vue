@@ -3,7 +3,7 @@
     <slot name="title" v-if="withTitle">
       <div
         class="flex items-center gap-3 px-6 pt-6"
-        :class="{ 'hidden lg:block': hideMobileTitle, 'lg:hidden': hideMobileTitle }"
+        :class="{ 'hidden lg:block': hideMobileTitle, 'lg:hidden': hideDesktopTitle }"
       >
         <VcImage :alt="title" :src="iconUrl" class="w-11 h-11 -ml-0.5 lg:w-14 lg:h-14 lg:ml-0.5" lazy />
         <h3 class="text-xl font-bold uppercase">

@@ -11,7 +11,12 @@
     <div class="flex flex-col bg-white lg:bg-transparent lg:flex-row lg:items-start lg:gap-x-6">
       <div class="contents lg:grow lg:block lg:space-y-6">
         <!-- Quote products -->
-        <VcSectionWidget :with-title="false" content-classes="px-6 pt-6 pb-0 md:p-7">
+        <VcSectionWidget
+          :title="$t('pages.account.quote_details.products')"
+          icon-url="/static/images/products.svg"
+          hide-desktop-title
+          content-classes="px-6 pt-6 pb-0 md:p-7"
+        >
           <QuoteLineItems :items="quote.items!" />
         </VcSectionWidget>
 
