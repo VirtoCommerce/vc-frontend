@@ -21,7 +21,8 @@
     "page-header",
     "products",
     "text",
-    "title"
+    "title",
+    "demo-product-list"
   ],
   "settings": [
     {
