@@ -17,7 +17,7 @@
           hide-desktop-title
           content-classes="px-6 pt-6 pb-0 md:p-7"
         >
-          <QuoteLineItems :items="quote.items!" />
+          <CartLineItems :items="quote.items!" />
         </VcSectionWidget>
 
         <!-- Quote comment -->
