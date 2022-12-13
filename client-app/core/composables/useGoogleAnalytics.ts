@@ -1,7 +1,6 @@
 import { useAppContext } from "@/core";
-import { Product, CartType, LineItemType } from "@/xapi";
+import { Product, CartType, LineItemType, Breadcrumb } from "@/xapi";
 import globals from "@/core/globals";
-import { map } from "lodash";
 
 type TEventParams = Gtag.ControlParams | Gtag.EventParams | Gtag.CustomParams;
 type TEventParamsForList = TEventParams | { item_list_id?: string; item_list_name?: string };
@@ -10,11 +9,11 @@ const { storeSettings } = useAppContext();
 
 const isAvailableGtag: Readonly<boolean> = Boolean(storeSettings.googleAnalyticsEnabled && window.gtag);
 
-function getProductCategories(product: Product): Record<string, string> {
+function getCategories(breadcrumbs?: Breadcrumb[]): Record<string, string> {
   const categories: Record<string, string> = {};
 
-  if (product.breadcrumbs?.length) {
-    product.breadcrumbs
+  if (breadcrumbs && breadcrumbs.length) {
+    breadcrumbs
       .filter((breadcrumb) => breadcrumb.typeName !== "CatalogProduct")
       .slice(0, 5) // first five, according to the documentation
       .forEach((breadcrumb, i) => {
@@ -30,12 +29,12 @@ function getCartEventParams(cart: CartType): TEventParams {
   return {
     currency: globals.currencyCode,
     value: cart.total?.amount,
-    items: map(cart.items, (item: LineItemType) => lineItemToGtagItem(item)),
+    items: cart.items!.map(lineItemToGtagItem),
   };
 }
 
 function productToGtagItem(product: Product, index?: number): Gtag.Item {
-  const categories: Record<string, string> = getProductCategories(product);
+  const categories: Record<string, string> = getCategories(product.breadcrumbs);
 
   return {
     index,
@@ -50,10 +49,7 @@ function productToGtagItem(product: Product, index?: number): Gtag.Item {
 }
 
 function lineItemToGtagItem(item: LineItemType, index?: number): Gtag.Item {
-  let categories: Record<string, string> | undefined;
-  if (item.product) {
-    categories = getProductCategories(item.product);
-  }
+  const categories: Record<string, string> = getCategories(item.product?.breadcrumbs);
 
   return {
     index,
