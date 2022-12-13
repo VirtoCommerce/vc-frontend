@@ -1,5 +1,5 @@
 import { useAppContext } from "@/core";
-import { Product } from "@/xapi";
+import { Product, CartType, LineItemType, Breadcrumb } from "@/xapi";
 import globals from "@/core/globals";
 
 type TEventParams = Gtag.ControlParams | Gtag.EventParams | Gtag.CustomParams;
@@ -9,11 +9,11 @@ const { storeSettings } = useAppContext();
 
 const isAvailableGtag: Readonly<boolean> = Boolean(storeSettings.googleAnalyticsEnabled && window.gtag);
 
-function productToGtagItem(product: Product, index?: number): Gtag.Item {
+function getCategories(breadcrumbs?: Breadcrumb[]): Record<string, string> {
   const categories: Record<string, string> = {};
 
-  if (product.breadcrumbs?.length) {
-    product.breadcrumbs
+  if (breadcrumbs && breadcrumbs.length) {
+    breadcrumbs
       .filter((breadcrumb) => breadcrumb.typeName !== "CatalogProduct")
       .slice(0, 5) // first five, according to the documentation
       .forEach((breadcrumb, i) => {
@@ -21,6 +21,20 @@ function productToGtagItem(product: Product, index?: number): Gtag.Item {
         categories[`item_category${number > 1 ? number : ""}`] = breadcrumb.title;
       });
   }
+
+  return categories;
+}
+
+function getCartEventParams(cart: CartType): TEventParams {
+  return {
+    currency: globals.currencyCode,
+    value: cart.total?.amount,
+    items: cart.items!.map(lineItemToGtagItem),
+  };
+}
+
+function productToGtagItem(product: Product, index?: number): Gtag.Item {
+  const categories: Record<string, string> = getCategories(product.breadcrumbs);
 
   return {
     index,
@@ -30,6 +44,22 @@ function productToGtagItem(product: Product, index?: number): Gtag.Item {
     price: product.price?.list?.amount,
     discount: product.price?.discountAmount?.amount,
     quantity: product.availabilityData?.availableQuantity,
+    ...categories,
+  };
+}
+
+function lineItemToGtagItem(item: LineItemType, index?: number): Gtag.Item {
+  const categories: Record<string, string> = getCategories(item.product?.breadcrumbs);
+
+  return {
+    index,
+    item_id: item.sku,
+    item_name: item.name,
+    affiliation: item.product?.vendor?.name,
+    currency: globals.currencyCode,
+    discount: item.discountAmount?.amount,
+    price: item.listPrice?.amount,
+    quantity: item.quantity,
     ...categories,
   };
 }
@@ -63,10 +93,29 @@ function viewItem(product: Product, params?: TEventParamsForList): void {
   });
 }
 
+function viewCart(cart: CartType, params?: TEventParamsForList): void {
+  const cartEventParams: TEventParams = getCartEventParams(cart);
+  sendEvent("view_cart", {
+    ...params,
+    ...cartEventParams,
+  });
+}
+
+function beginCheckout(cart: CartType, params?: TEventParamsForList): void {
+  const cartEventParams: TEventParams = getCartEventParams(cart);
+  sendEvent("begin_checkout", {
+    ...params,
+    ...cartEventParams,
+    coupon: cart.coupons?.[0],
+  });
+}
+
 export default () => ({
   isAvailableGtag,
   sendEvent,
   viewItemList,
   selectItem,
   viewItem,
+  viewCart,
+  beginCheckout,
 });
