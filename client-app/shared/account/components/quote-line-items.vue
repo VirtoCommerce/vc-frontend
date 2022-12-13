@@ -35,7 +35,7 @@
             <!--  IMAGE -->
             <div
               class="vc-cart-line-items__img shrink-0 w-16 h-16 md:w-[60px] md:h-[60px]"
-              :class="{ 'opacity-25': !productExists }"
+              :class="{ 'opacity-25': !isProductExists(item) }"
             >
               <VcImage
                 :src="item.imageUrl"
@@ -49,11 +49,11 @@
             <!-- NAME -->
             <div
               class="vc-cart-line-items__name text-sm font-extrabold md:grow lg:text-13 lg:leading-4 lg:font-bold"
-              :class="{ 'opacity-25': !productExists }"
+              :class="{ 'opacity-25': !isProductExists(item) }"
             >
               <router-link
-                v-if="link"
-                :to="link"
+                v-if="getProductLink(item)"
+                :to="getProductLink(item)"
                 :title="item.name"
                 class="text-[color:var(--color-link)] [word-break:break-word]"
               >
@@ -70,7 +70,7 @@
             <div class="vc-cart-line-items__properties w-full">
               <div
                 class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[33%_1fr] lg:text-xs"
-                v-for="property in properties"
+                v-for="property in getProductProperties(item)"
                 :key="property.id"
               >
                 <div
@@ -90,7 +90,6 @@
             <!-- PRICE -->
             <div
               class="vc-cart-line-items__price grid grid-cols-[auto_1fr_auto] gap-1.5 w-full md:grid-cols-[33%_1fr] xl:contents"
-              v-if="withPricePerItem"
             >
               <div
                 class="min-w-0 font-medium capitalize text-13 lg:text-xs text-[color:var(--color-line-item-light)] md:font-bold md:text-[color:var(--color-secondary)] xl:hidden"
@@ -129,13 +128,12 @@
           <!-- TOTAL -->
           <div
             class="vc-cart-line-items__total flex flex-col justify-center items-end min-h-[32px] mt-3 md:mt-0 md:min-h-auto md:w-full"
-            v-if="withTotal"
           >
             <slot name="total" />
           </div>
 
           <!-- ADD TO CART -->
-          <div class="vc-cart-line-items__add-to-cart" v-if="withAddToCart">
+          <div class="vc-cart-line-items__add-to-cart">
             <!-- Total -->
             <div class="flex flex-wrap items-center justify-end text-right gap-x-1">
               <div class="text-14 font-bold text-[color:var(--color-price-from)] md:hidden">
@@ -186,14 +184,20 @@
 
 <script setup lang="ts">
 import { computed, PropType } from "vue";
+import { RouteLocationRaw } from "vue-router";
 import { sumBy } from "lodash";
-import { QuoteItemType } from "@/xapi";
+import { Property, QuoteItemType } from "@/xapi";
 import { VcPriceDisplay } from "@/ui-kit/components";
+import { getProductRoute } from "@/core";
 
 const props = defineProps({
   items: {
     type: Array as PropType<QuoteItemType[]>,
     required: true,
+  },
+
+  readOnly: {
+    type: Boolean,
   },
 });
 
@@ -202,6 +206,18 @@ defineEmits(["remove:item", "update:item"]);
 const subtotal = computed<number>(() =>
   sumBy(props.items, (item: QuoteItemType) => item.selectedTierPrice!.price!.amount * item.selectedTierPrice!.quantity)
 );
+
+function isProductExists(item: QuoteItemType): boolean {
+  return !!item.product;
+}
+
+function getProductLink(item: QuoteItemType): RouteLocationRaw | undefined {
+  return getProductRoute(item.productId!, item.product!.slug);
+}
+
+function getProductProperties(item: QuoteItemType): Property[] | undefined {
+  return item.product?.properties?.slice(0, 3);
+}
 </script>
 
 <style scoped lang="scss">

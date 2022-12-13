@@ -34,7 +34,7 @@
         icon-url="/static/images/products.svg"
         content-classes="px-6 pt-6 pb-0 md:p-7"
       >
-        <CartLineItems :items="quote.items!" @remove:item="onRemoveItem" />
+        <QuoteLineItems :items="quote.items!" @remove:item="onRemoveItem" />
       </VcSectionWidget>
 
       <VcSectionWidget
