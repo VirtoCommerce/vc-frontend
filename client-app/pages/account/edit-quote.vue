@@ -115,7 +115,7 @@
 
       <div class="flex flex-wrap gap-5 px-6 py-7 lg:justify-end lg:p-0">
         <VcButton
-          :is-disabled="!quoteChanged"
+          :is-disabled="!quoteChanged || !quoteItemsValid"
           size="lg"
           class="flex-1 p-2 uppercase font-bold lg:flex-none lg:min-w-[208px]"
           is-outline
@@ -143,7 +143,7 @@ import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { computedEager } from "@vueuse/core";
-import { cloneDeep, isEqual, remove, find, each } from "lodash";
+import { cloneDeep, isEqual, remove, find, each, every } from "lodash";
 import { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi";
 import { AddressType } from "@/core";
 import { useUser, useUserAddresses, useUserQuote, QuoteLineItems } from "@/shared/account";
@@ -193,9 +193,17 @@ const breadcrumbs = computed<IBreadcrumbs[]>(() => [
 ]);
 const commentChanged = computed<boolean>(() => !isEqual(originalQuote.value?.comment, quote.value?.comment));
 const quoteChanged = computed<boolean>(() => !isEqual(originalQuote.value, quote.value));
+const quoteItemsValid = computed<boolean>(() =>
+  every(
+    quote.value!.items,
+    (item: QuoteItemType) => item.selectedTierPrice?.quantity && item.selectedTierPrice?.quantity > 0
+  )
+);
 
 const userHasAddresses = computedEager<boolean>(() => !!addresses.value.length);
-const quoteValid = computedEager<boolean>(() => !!shippingAddress.value && !!billingAddress.value);
+const quoteValid = computedEager<boolean>(
+  () => !!shippingAddress.value && !!billingAddress.value && quoteItemsValid.value
+);
 
 function onRemoveItem(item: QuoteItemType): void {
   remove(quote.value!.items!, (i: QuoteItemType) => i.id === item.id);
