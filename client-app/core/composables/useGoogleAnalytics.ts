@@ -1,6 +1,7 @@
 import { useAppContext } from "@/core";
-import { Product } from "@/xapi";
+import { Product, CartType, LineItemType } from "@/xapi";
 import globals from "@/core/globals";
+import { map } from "lodash";
 
 type TEventParams = Gtag.ControlParams | Gtag.EventParams | Gtag.CustomParams;
 type TEventParamsForList = TEventParams | { item_list_id?: string; item_list_name?: string };
@@ -9,7 +10,7 @@ const { storeSettings } = useAppContext();
 
 const isAvailableGtag: Readonly<boolean> = Boolean(storeSettings.googleAnalyticsEnabled && window.gtag);
 
-function productToGtagItem(product: Product, index?: number): Gtag.Item {
+function getProductCategories(product: Product): Record<string, string> {
   const categories: Record<string, string> = {};
 
   if (product.breadcrumbs?.length) {
@@ -22,6 +23,20 @@ function productToGtagItem(product: Product, index?: number): Gtag.Item {
       });
   }
 
+  return categories;
+}
+
+function getCartEventParams(cart: CartType): TEventParams {
+  return {
+    currency: globals.currencyCode,
+    value: cart.total?.amount,
+    items: map(cart.items, (item: LineItemType) => lineItemToGtagItem(item)),
+  };
+}
+
+function productToGtagItem(product: Product, index?: number): Gtag.Item {
+  const categories: Record<string, string> = getProductCategories(product);
+
   return {
     index,
     item_id: product.code,
@@ -30,6 +45,25 @@ function productToGtagItem(product: Product, index?: number): Gtag.Item {
     price: product.price?.list?.amount,
     discount: product.price?.discountAmount?.amount,
     quantity: product.availabilityData?.availableQuantity,
+    ...categories,
+  };
+}
+
+function lineItemToGtagItem(item: LineItemType, index?: number): Gtag.Item {
+  let categories: Record<string, string> | undefined;
+  if (item.product) {
+    categories = getProductCategories(item.product);
+  }
+
+  return {
+    index,
+    item_id: item.sku,
+    item_name: item.name,
+    affiliation: item.product?.vendor?.name,
+    currency: globals.currencyCode,
+    discount: item.discountAmount?.amount,
+    price: item.listPrice?.amount,
+    quantity: item.quantity,
     ...categories,
   };
 }
@@ -63,10 +97,29 @@ function viewItem(product: Product, params?: TEventParamsForList): void {
   });
 }
 
+function viewCart(cart: CartType, params?: TEventParamsForList): void {
+  const cartEventParams: TEventParams = getCartEventParams(cart);
+  sendEvent("view_cart", {
+    ...params,
+    ...cartEventParams,
+  });
+}
+
+function beginCheckout(cart: CartType, params?: TEventParamsForList): void {
+  const cartEventParams: TEventParams = getCartEventParams(cart);
+  sendEvent("begin_checkout", {
+    ...params,
+    ...cartEventParams,
+    coupon: cart.coupons?.[0],
+  });
+}
+
 export default () => ({
   isAvailableGtag,
   sendEvent,
   viewItemList,
   selectItem,
   viewItem,
+  viewCart,
+  beginCheckout,
 });
