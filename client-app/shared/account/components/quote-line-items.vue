@@ -1,23 +1,23 @@
 <template>
-  <div class="vc-cart-line-items">
+  <div class="vc-quote-line-items">
     <!-- table header -->
-    <div class="vc-cart-line-items__header grid gap-x-3 px-4 py-3 border rounded-t text-sm font-bold hidden md:block">
-      <div class="vc-cart-line-items__product">
+    <div class="vc-quote-line-items__header gap-x-3 px-4 py-3 border rounded-t text-sm font-bold hidden md:grid">
+      <div class="vc-quote-line-items__product">
         {{ $t("pages.account.quote_details.line_items.product") }}
       </div>
-      <div class="vc-cart-line-items__properties">
+      <div class="vc-quote-line-items__properties">
         {{ $t("pages.account.quote_details.line_items.properties") }}
       </div>
-      <div class="vc-cart-line-items__price hidden xl:block pr-4 text-right">
+      <div class="vc-quote-line-items__price hidden xl:block pr-4 text-right">
         {{ $t("pages.account.quote_details.line_items.price_per_item") }}
       </div>
-      <div class="vc-cart-line-items__quantity hidden xl:block text-center">
+      <div class="vc-quote-line-items__quantity hidden xl:block text-center">
         {{ $t("pages.account.quote_details.line_items.quantity") }}
       </div>
-      <div class="vc-cart-line-items__total text-right">
+      <div class="vc-quote-line-items__total text-right">
         {{ $t("pages.account.quote_details.line_items.total") }}
       </div>
-      <div class="vc-cart-line-items__remove-button" v-if="!readOnly"></div>
+      <div class="vc-quote-line-items__remove-button" v-if="!readOnly"></div>
     </div>
 
     <!-- table body -->
@@ -29,12 +29,12 @@
         class="relative border border-[color:var(--color-line-item-border)] rounded shadow-t-3sm md:rounded-none md:shadow-none md:border-0"
       >
         <div
-          class="vc-cart-line-items__line-item grid gap-x-2.5 pt-3 pl-3 pr-3.5 pb-4 md:p-4 md:gap-x-3 md:place-items-center"
+          class="vc-quote-line-items__line-item grid gap-x-2.5 pt-3 pl-3 pr-3.5 pb-4 md:p-4 md:gap-x-3 md:place-items-center"
         >
-          <div class="contents vc-cart-line-items__product md:flex md:gap-3 md:w-full">
+          <div class="contents vc-quote-line-items__product md:flex md:gap-3 md:w-full">
             <!--  IMAGE -->
             <div
-              class="vc-cart-line-items__img shrink-0 w-16 h-16 md:w-[60px] md:h-[60px]"
+              class="vc-quote-line-items__img shrink-0 w-16 h-16 md:w-[60px] md:h-[60px]"
               :class="{ 'opacity-25': !isProductExists(item) }"
             >
               <VcImage
@@ -48,7 +48,7 @@
 
             <!-- NAME -->
             <div
-              class="vc-cart-line-items__name text-sm font-extrabold md:grow lg:text-13 lg:leading-4 lg:font-bold"
+              class="vc-quote-line-items__name text-sm font-extrabold md:grow lg:text-13 lg:leading-4 lg:font-bold"
               :class="{ 'opacity-25': !isProductExists(item) }"
             >
               <router-link
@@ -65,9 +65,9 @@
             </div>
           </div>
 
-          <div class="vc-cart-line-items__props w-full xl:contents">
+          <div class="vc-quote-line-items__props w-full xl:contents">
             <!-- PROPERTIES -->
-            <div class="vc-cart-line-items__properties w-full">
+            <div class="vc-quote-line-items__properties w-full">
               <div
                 class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[33%_1fr] lg:text-xs"
                 v-for="property in getProductProperties(item)"
@@ -89,7 +89,7 @@
 
             <!-- PRICE -->
             <div
-              class="vc-cart-line-items__price grid grid-cols-[auto_1fr_auto] gap-1.5 w-full md:grid-cols-[33%_1fr] xl:contents"
+              class="vc-quote-line-items__price grid grid-cols-[auto_1fr_auto] gap-1.5 w-full md:grid-cols-[33%_1fr] xl:contents"
             >
               <div
                 class="min-w-0 font-medium capitalize text-13 lg:text-xs text-[color:var(--color-line-item-light)] md:font-bold md:text-[color:var(--color-secondary)] xl:hidden"
@@ -97,12 +97,11 @@
                 <div class="truncate">{{ $t("pages.account.quote_details.line_items.price_per_item") }}:</div>
               </div>
               <div class="grow mb-1 h-4 border-b-2 border-gray-200 border-dotted md:hidden"></div>
-              <div class="flex flex-col items-end md:items-start xl:items-end xl:w-full xl:pr-4">
-                <!-- Price per item -->
-                <VcPriceDisplay
-                  class="text-13 font-semibold md:font-normal xl:font-medium"
-                  :value="item.selectedTierPrice!.price"
-                />
+              <div class="xl:w-full xl:pr-4 xl:text-right">
+                <div class="text-13 font-semibold md:font-normal lg:text-xs xl:font-medium">
+                  <!-- Price per item -->
+                  <VcPriceDisplay :value="item.selectedTierPrice!.price" />
+                </div>
 
                 <!-- Price without discount -->
                 <div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]" v-if="false">
@@ -113,7 +112,7 @@
           </div>
 
           <!-- QUANTITY -->
-          <div class="vc-cart-line-items__quantity mt-3 md:place-self-end md:mt-0 xl:w-full xl:place-self-center">
+          <div class="vc-quote-line-items__quantity mt-3 md:place-self-end md:mt-0 xl:w-full xl:place-self-center">
             <input
               class="w-20 h-8 border rounded text-center text-sm disabled:bg-[color:var(--color-line-item-light)]/75 xl:w-full disabled:text-[color:var(--color-line-item-table-border)]"
               type="number"
@@ -127,13 +126,8 @@
 
           <!-- TOTAL -->
           <div
-            class="vc-cart-line-items__total flex flex-col justify-center items-end min-h-[32px] mt-3 md:mt-0 md:min-h-auto md:w-full"
+            class="vc-quote-line-items__total flex flex-col justify-center items-end min-h-[32px] mt-3 md:mt-0 md:min-h-auto md:w-full"
           >
-            <slot name="total" />
-          </div>
-
-          <!-- ADD TO CART -->
-          <div class="vc-cart-line-items__add-to-cart">
             <!-- Total -->
             <div class="flex flex-wrap items-center justify-end text-right gap-x-1">
               <div class="text-14 font-bold text-[color:var(--color-price-from)] md:hidden">
@@ -150,7 +144,7 @@
 
           <!-- REMOVE BUTTON -->
           <div
-            class="vc-cart-line-items__remove-button absolute -top-3 -right-3 md:static md:flex md:justify-end md:w-full"
+            class="vc-quote-line-items__remove-button absolute -top-3 -right-3 md:static md:flex md:justify-end md:w-full"
             v-if="!readOnly"
           >
             <button
@@ -221,7 +215,7 @@ function getProductProperties(item: QuoteItemType): Property[] | undefined {
 </script>
 
 <style scoped lang="scss">
-.vc-cart-line-items {
+.vc-quote-line-items {
   &__header {
     @media (min-width: theme("screens.md")) {
       grid-template-columns: 250px 1fr 100px 32px;
