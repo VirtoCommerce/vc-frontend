@@ -139,7 +139,9 @@
       "color_product_outline": "#EDEDED",
       "color_price_current": "#1F222C",
       "color_price_old": "#9D9991",
-      "color_price_from": "#9D9991"
+      "color_price_from": "#9D9991",
+      "color_markdown_dark": "#aaa",
+      "color_markdown_light": "#f4f4f4"
     },
     "Watermelon": {
       "page_title_with_store_name": true,
@@ -278,7 +280,9 @@
       "color_product_outline": "#EDEDED",
       "color_price_current": "#1F222C",
       "color_price_old": "#9D9991",
-      "color_price_from": "#9D9991"
+      "color_price_from": "#9D9991",
+      "color_markdown_dark": "#aaa",
+      "color_markdown_light": "#f4f4f4"
     }
   }
 }
