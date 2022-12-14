@@ -95,7 +95,6 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src), { USE_PROF
     font-size: 1.375rem;
     font-weight: 700;
     line-height: 1.675rem;
-    font-weight: 700;
     letter-spacing: 0.02em;
     text-transform: uppercase;
 
@@ -171,7 +170,6 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src), { USE_PROF
 
   code {
     background-color: theme("colors.gray.100");
-    color: var(--color-secondary);
     border-radius: 3px;
     font-family: monospace;
     padding: 0 3px;
@@ -192,7 +190,6 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src), { USE_PROF
     th {
       padding: 8px 12px;
       background: theme("colors.gray.100");
-      color: var(--color-secondary);
       font-weight: 700;
       text-align: left;
     }

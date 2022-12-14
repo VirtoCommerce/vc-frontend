@@ -5,7 +5,7 @@
     image-src="/static/images/description.svg"
     :title="model.title || $t('shared.catalog.product_details.description_block_title')"
   >
-    <VcMarkdownRender :src="product.description?.content" class="text-gray-500"></VcMarkdownRender>
+    <VcMarkdownRender :src="product.description?.content"></VcMarkdownRender>
   </ProductTitledBlock>
 </template>
 
