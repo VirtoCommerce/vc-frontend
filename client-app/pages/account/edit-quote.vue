@@ -143,9 +143,9 @@ import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { computedEager } from "@vueuse/core";
-import { cloneDeep, isEqual, remove, find, each, every } from "lodash";
+import { cloneDeep, isEqual, remove, every } from "lodash";
 import { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi";
-import { AddressType } from "@/core";
+import { AddressType, isEqualAddresses } from "@/core";
 import { useUser, useUserAddresses, useUserQuote, QuoteLineItems } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddOrUpdateAddressDialog, SelectAddressDialog } from "@/shared/checkout";
@@ -191,19 +191,13 @@ const breadcrumbs = computed<IBreadcrumbs[]>(() => [
   { title: t("common.links.quote_requests"), route: { name: "Quotes" } },
   { title: t("pages.account.quote_details.title", [quote?.value?.number]) },
 ]);
-const commentChanged = computed<boolean>(() => !isEqual(originalQuote.value?.comment, quote.value?.comment));
 const quoteChanged = computed<boolean>(() => !isEqual(originalQuote.value, quote.value));
 const quoteItemsValid = computed<boolean>(() =>
-  every(
-    quote.value?.items,
-    (item: QuoteItemType) => item.selectedTierPrice?.quantity && item.selectedTierPrice?.quantity > 0
-  )
+  every(quote.value?.items, (item: QuoteItemType) => item.selectedTierPrice?.quantity > 0)
 );
+const quoteValid = computed<boolean>(() => !!shippingAddress.value && !!billingAddress.value && quoteItemsValid.value);
 
 const userHasAddresses = computedEager<boolean>(() => !!addresses.value.length);
-const quoteValid = computedEager<boolean>(
-  () => !!shippingAddress.value && !!billingAddress.value && quoteItemsValid.value
-);
 
 function onRemoveItem(item: QuoteItemType): void {
   remove(quote.value!.items!, (i: QuoteItemType) => i.id === item.id);
@@ -228,13 +222,11 @@ function setBillingAddressEqualsShippingAddress(address: QuoteAddressType): void
 }
 
 function openAddressSelectionDialog(currentAddress: QuoteAddressType): void {
-  const memberAddress = currentAddress as MemberAddressType;
-
   openPopup({
     component: SelectAddressDialog,
     props: {
       addresses: addresses.value,
-      currentAddress: memberAddress,
+      currentAddress: currentAddress as MemberAddressType,
 
       onResult(selectedAddress: MemberAddressType): void {
         const quoteAddress = selectedAddress as QuoteAddressType;
@@ -278,13 +270,12 @@ function openAddOrUpdateAddressDialog(currentAddress: QuoteAddressType): void {
 async function saveChanges(): Promise<void> {
   const funcArray: Promise<void>[] = [];
 
-  if (commentChanged.value) {
+  if (originalQuote.value?.comment !== quote.value?.comment) {
     funcArray.push(changeComment(quote.value!.id, quote.value!.comment!));
   }
 
-  each(originalQuote.value!.items, (originalItem: QuoteItemType) => {
-    const quoteItem: QuoteItemType | undefined = find(
-      quote.value!.items,
+  originalQuote.value!.items?.forEach((originalItem: QuoteItemType) => {
+    const quoteItem: QuoteItemType | undefined = quote.value!.items?.find(
       (item: QuoteItemType) => item.id === originalItem.id
     );
     if (quoteItem) {
@@ -325,5 +316,9 @@ watchEffect(async () => {
   }
 
   originalQuote.value = cloneDeep(quote.value);
+
+  if (billingAddress.value && shippingAddress.value) {
+    billingAddressEqualsShippingAddress.value = isEqualAddresses(billingAddress.value, shippingAddress.value);
+  }
 });
 </script>

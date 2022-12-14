@@ -11,13 +11,13 @@
       <div class="vc-quote-line-items__price hidden xl:block pr-4 text-right">
         {{ $t("pages.account.quote_details.line_items.price_per_item") }}
       </div>
-      <div class="vc-quote-line-items__quantity hidden xl:block text-right">
+      <div class="vc-quote-line-items__quantity hidden xl:block text-center">
         {{ $t("pages.account.quote_details.line_items.quantity") }}
       </div>
       <div class="vc-quote-line-items__total text-right">
         {{ $t("pages.account.quote_details.line_items.total") }}
       </div>
-      <div class="vc-quote-line-items__remove-button w-8" v-if="!readOnly"></div>
+      <div class="vc-quote-line-items__remove-button w-8" v-if="!readonly"></div>
     </div>
 
     <!-- table body -->
@@ -34,7 +34,7 @@
             <!--  IMAGE -->
             <div
               class="vc-quote-line-items__img shrink-0 w-16 h-16 md:w-[60px] md:h-[60px]"
-              :class="{ 'opacity-25': !isProductExists(item) }"
+              :class="{ 'opacity-25': !extendedItems[item.id].isProductExists }"
             >
               <VcImage
                 :src="item.imageUrl"
@@ -48,11 +48,11 @@
             <!-- NAME -->
             <div
               class="vc-quote-line-items__name text-sm font-extrabold md:grow lg:text-13 lg:leading-4 lg:font-bold"
-              :class="{ 'opacity-25': !isProductExists(item) }"
+              :class="{ 'opacity-25': !extendedItems[item.id].isProductExists }"
             >
               <router-link
-                v-if="getProductLink(item)"
-                :to="getProductLink(item)"
+                v-if="extendedItems[item.id].route"
+                :to="extendedItems[item.id].route"
                 :title="item.name"
                 class="text-[color:var(--color-link)] [word-break:break-word]"
               >
@@ -69,11 +69,11 @@
             <div class="vc-quote-line-items__properties w-full">
               <div
                 class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[33%_1fr] lg:text-xs"
-                v-for="property in getProductProperties(item)"
+                v-for="property in extendedItems[item.id].properties"
                 :key="property.id"
               >
                 <div class="min-w-0 font-medium capitalize text-gray-600 md:font-bold md:text-gray-800">
-                  <div class="truncate">{{ property.name.toLowerCase() }}:</div>
+                  <div class="truncate">{{ property.label }}:</div>
                 </div>
                 <div class="grow mb-1 h-4 border-b-2 border-gray-200 border-dotted md:hidden"></div>
                 <div class="min-w-0">
@@ -111,13 +111,14 @@
           <!-- QUANTITY -->
           <div class="vc-quote-line-items__quantity mt-3 md:place-self-end md:mt-0 xl:w-full xl:place-self-center">
             <input
+              v-model="item.selectedTierPrice!.quantity"
+              :disabled="readonly"
               class="w-20 h-8 border rounded text-center text-sm disabled:bg-gray-100 xl:w-full disabled:text-gray-400"
               type="number"
               pattern="\d"
               min="1"
               required
               @change="$emit('update:item', item)"
-              v-model="item.selectedTierPrice!.quantity"
             />
           </div>
 
@@ -142,7 +143,7 @@
           <!-- REMOVE BUTTON -->
           <div
             class="vc-quote-line-items__remove-button absolute -top-3 -right-3 md:static md:flex md:justify-end md:w-8"
-            v-if="!readOnly"
+            v-if="!readonly"
           >
             <button
               type="button"
@@ -193,28 +194,31 @@ const props = defineProps({
     required: true,
   },
 
-  readOnly: {
+  readonly: {
     type: Boolean,
   },
 });
 
 defineEmits(["remove:item", "update:item"]);
 
+const extendedItems = computed<
+  Record<string, { isProductExists: boolean; route: RouteLocationRaw; properties: Property[] }>
+>(() =>
+  props.items.reduce(
+    (result, item: QuoteItemType) =>
+      Object.assign(result, {
+        [item.id]: {
+          isProductExists: !!item.product,
+          route: getProductRoute(item.productId, item.product?.slug),
+          properties: item.product?.properties?.slice(0, 3),
+        },
+      }),
+    {}
+  )
+);
 const subtotal = computed<number>(() =>
   sumBy(props.items, (item: QuoteItemType) => item.selectedTierPrice!.price!.amount * item.selectedTierPrice!.quantity)
 );
-
-function isProductExists(item: QuoteItemType): boolean {
-  return !!item.product;
-}
-
-function getProductLink(item: QuoteItemType): RouteLocationRaw | undefined {
-  return getProductRoute(item.productId!, item.product!.slug);
-}
-
-function getProductProperties(item: QuoteItemType): Property[] | undefined {
-  return item.product?.properties?.slice(0, 3);
-}
 </script>
 
 <style scoped lang="scss">

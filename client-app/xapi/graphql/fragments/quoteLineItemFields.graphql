@@ -21,6 +21,7 @@ fragment quoteLineItemFields on QuoteItemType {
     brandName
     properties {
       name
+      label
       value
     }
     availabilityData {
