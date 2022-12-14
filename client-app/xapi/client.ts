@@ -15,7 +15,7 @@ const errorHandler = onError(({ graphQLErrors = [] }) => {
 
     if (code === "Unauthorized") {
       const { hash, pathname, search } = location;
-      location.href = `/sign-in?redirect=${pathname + search + hash}`;
+      location.href = `/sign-in?returnUrl=${pathname + search + hash}`;
       return;
     }
 

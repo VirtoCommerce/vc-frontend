@@ -25,6 +25,7 @@ usePageHead({
 });
 
 async function onSignIn() {
-  location.href = (query.redirect as string) || "/";
+  // FIXME: The `ReturnUrl` parameter is hardcoded in vc-storefront
+  location.href = (query.returnUrl as string) || (query.ReturnUrl as string) || "/";
 }
 </script>
