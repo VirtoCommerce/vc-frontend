@@ -69,6 +69,7 @@ fetchCart();
 </script>
 
 <style lang="scss">
-@import "@fortawesome/fontawesome-free/css/all.css";
+@import "@fortawesome/fontawesome-free/css/fontawesome.min.css";
+@import "@fortawesome/fontawesome-free/css/solid.min.css";
 @import "@/assets/styles/main.scss";
 </style>

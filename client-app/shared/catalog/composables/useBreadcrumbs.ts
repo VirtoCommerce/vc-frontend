@@ -12,7 +12,7 @@ export default () => {
     breadcrumbs.forEach((breadcrumb) =>
       result.push({
         title: breadcrumb.title,
-        url: `/${breadcrumb.seoPath}`,
+        url: breadcrumb.seoPath,
       })
     );
 

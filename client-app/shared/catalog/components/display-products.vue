@@ -5,7 +5,13 @@
     </template>
 
     <template v-else>
-      <component :is="cardComponent" v-for="(item, index) in products" :key="item.id + index" :product="item">
+      <component
+        v-for="(item, index) in products"
+        :is="cardComponent"
+        :key="item.id + index"
+        :product="item"
+        @link-click="$emit('item-link-click', item, $event)"
+      >
         <template #add-to-list-handler>
           <slot name="add-to-list-handler" v-bind="{ item }" />
         </template>
@@ -20,7 +26,7 @@
 <script setup lang="ts">
 import { ProductCardGrid, ProductCardList, ProductSkeletonGrid, ProductSkeletonList } from "@/shared/catalog";
 import { computed, PropType } from "vue";
-import { Product as ProductType } from "@/xapi/types";
+import { Product } from "@/xapi/types";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 
 const props = defineProps({
@@ -32,7 +38,7 @@ const props = defineProps({
   },
 
   products: {
-    type: Array as PropType<ProductType[]>,
+    type: Array as PropType<Product[]>,
     default: () => [],
   },
 
@@ -41,6 +47,8 @@ const props = defineProps({
     default: "grid",
   },
 });
+
+defineEmits<{ (eventName: "item-link-click", product: Product, globalEvent: PointerEvent): void }>();
 
 const cardComponent = computed(() => (props.viewMode === "list" ? ProductCardList : ProductCardGrid));
 const skeletonComponent = computed(() => (props.viewMode === "list" ? ProductSkeletonList : ProductSkeletonGrid));

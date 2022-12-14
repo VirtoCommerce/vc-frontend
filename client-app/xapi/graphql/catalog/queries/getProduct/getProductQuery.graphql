@@ -51,6 +51,10 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
       vendor {
         id
         name
+        rating {
+          value
+          reviewCount
+        }
       }
       availabilityData {
         isActive
@@ -81,6 +85,10 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
     vendor {
       id
       name
+      rating {
+        value
+        reviewCount
+      }
     }
     availabilityData {
       isActive

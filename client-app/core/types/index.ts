@@ -2,6 +2,7 @@ import { MaybeRef } from "@vueuse/core";
 import { CartAddressType, MemberAddressType, OrderAddressType } from "@/xapi/types";
 import { LocationQueryValue } from "vue-router";
 
+export * from "./app-context";
 export * from "./category-tree";
 export * from "./currency";
 export * from "./facet";
@@ -110,7 +111,6 @@ export interface IThemeConfigPreset {
   related_products_group_name?: string;
   related_products_limit?: number;
   product_image_zoom_enabled?: boolean;
-  product_vendor_enabled?: boolean;
   product_share_enabled?: boolean;
   show_prices_with_taxes?: boolean;
   default_delivery_method?: string;
@@ -120,6 +120,9 @@ export interface IThemeConfigPreset {
   wishlists_limit?: number;
 
   search_min_chars?: number;
+
+  vendor_enabled?: boolean;
+  rating_enabled?: boolean;
 
   checkout_comment_enabled?: boolean;
   checkout_purchase_order_enabled?: boolean;

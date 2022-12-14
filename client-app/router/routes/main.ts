@@ -16,11 +16,11 @@ const ForgotPassword = () => import("@/pages/forgot-password.vue");
 const ResetPassword = () => import("@/pages/reset-password.vue");
 const Account = () => import("@/pages/account/index.vue");
 const Company = () => import("@/pages/company/index.vue");
-const Search = () => import("@/pages/catalog.vue");
 const BulkOrder = () => import("@/pages/bulk-order.vue");
 const CompareProducts = () => import("@/pages/compare-products.vue");
 const Checkout = () => import("@/pages/checkout.vue");
-const Category = () => import("@/pages/catalog.vue");
+const CheckoutComplete = () => import("@/pages/checkout-complete.vue");
+const Catalog = () => import("@/pages/catalog.vue");
 const Product = () => import("@/pages/product.vue");
 const Branch = () => import("@/pages/branch.vue");
 const Matcher = () => import("@/ui-kit/components/pages/matcher.vue");
@@ -62,12 +62,19 @@ export const mainRoutes: RouteRecordRaw[] = [
   },
   { path: "/demo-landing", name: "DemoLanding", component: DemoLanding },
   { path: "/branch/:branchId", name: "BranchPage", component: Branch, props: true },
-  { path: "/search", name: "Search", component: Search },
+  { path: "/search", name: "Search", component: Catalog },
   { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },
   { path: "/compare", name: "CompareProducts", component: CompareProducts },
   { path: "/checkout", name: "Checkout", component: Checkout },
-  { path: "/catalog", name: "Catalog", component: Category, props: true },
-  { path: "/category/:categoryId", name: "Category", component: Category, props: true },
+  {
+    path: "/checkout/completed",
+    name: "CheckoutComplete",
+    component: CheckoutComplete,
+    beforeEnter: (to) => !!to.params.orderId || { name: "Checkout", replace: true },
+    props: true,
+  },
+  { path: "/catalog", name: "Catalog", component: Catalog, props: true },
+  { path: "/category/:categoryId", name: "Category", component: Catalog, props: true },
   { path: "/product/:productId", name: "Product", component: Product, props: true },
   { path: "/:pathMatch(.*)*", name: "Matcher", component: Matcher, props: true },
 ];

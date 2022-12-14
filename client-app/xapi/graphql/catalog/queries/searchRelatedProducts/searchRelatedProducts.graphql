@@ -14,8 +14,16 @@ query SearchRelatedProducts(
         product {
           name
           id
+          code
           slug
           imgSrc
+          vendor {
+            id
+            name
+          }
+          availabilityData {
+            availableQuantity
+          }
           price {
             actual {
               amount
@@ -26,6 +34,10 @@ query SearchRelatedProducts(
               formattedAmount
             }
             sale {
+              amount
+              formattedAmount
+            }
+            discountAmount {
               amount
               formattedAmount
             }

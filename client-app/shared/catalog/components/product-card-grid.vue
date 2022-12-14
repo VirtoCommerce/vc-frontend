@@ -102,6 +102,7 @@
           <router-link
             :to="link"
             class="my-px h-12 text-18 text-[color:var(--color-link)] font-extrabold line-clamp-2 cursor-pointer lg:h-10 lg:text-14"
+            @click="$emit('link-click', $event)"
           >
             {{ product.name }}
           </router-link>
@@ -152,13 +153,13 @@
         </template>
 
         <!-- Vendor -->
-        <template v-if="product.vendor">
+        <template v-if="$cfg.vendor_enabled && product.vendor">
           <div class="pt-0.5 pb-px font-bold capitalize">
             {{ $t("shared.catalog.product_card.product_vendor") }}
           </div>
           <div class="relative">
             <div class="absolute inset-0 flex items-end pt-0.5 pb-px pl-1">
-              <div class="truncate text-link">{{ product.vendor.name }}</div>
+              <Vendor :vendor="product.vendor" />
             </div>
           </div>
         </template>
@@ -173,7 +174,7 @@
     </div>
 
     <div class="flex flex-col" v-if="product.hasVariations">
-      <VcButton :to="link" :is-outline="true" class="w-full uppercase !text-13 !border">
+      <VcButton :to="link" class="w-full uppercase !text-13 !border" is-outline @click="$emit('link-click', $event)">
         {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
       </VcButton>
 
@@ -213,7 +214,7 @@ import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import { Product } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";
-import { DiscountBadge } from "@/shared/catalog";
+import { DiscountBadge, Vendor } from "@/shared/catalog";
 import { getProductRoute } from "@/core";
 
 const props = defineProps({
@@ -222,6 +223,8 @@ const props = defineProps({
     required: true,
   },
 });
+
+defineEmits<{ (eventName: "link-click", globalEvent: PointerEvent): void }>();
 
 const swiperInstance = ref<SwiperInstance>();
 const swiperBulletsState = ref<boolean[]>([true, false, false]);

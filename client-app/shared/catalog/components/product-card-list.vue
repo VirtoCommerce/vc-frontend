@@ -7,6 +7,7 @@
       <router-link
         :to="link"
         class="vc-product-card-list__img relative block w-[72px] h-[72px] xl:w-[86px] xl:h-[86px]"
+        @click="$emit('link-click', $event)"
       >
         <VcImage
           :src="product.imgSrc"
@@ -37,6 +38,7 @@
         <router-link
           :to="link"
           class="vc-product-card-list__name w-full text-[color:var(--color-link)] font-extrabold text-sm flex-grow sm:line-clamp-3 sm:overflow-hidden lg:h-[60px] lg:mt-1 2xl:pr-2"
+          @click="$emit('link-click', $event)"
         >
           {{ product.name }}
         </router-link>
@@ -87,13 +89,13 @@
       </template>
 
       <!-- Vendor -->
-      <template v-if="product.vendor">
+      <template v-if="$cfg.vendor_enabled && product.vendor">
         <div class="font-bold capitalize">
           {{ $t("shared.catalog.product_card.product_vendor") }}
         </div>
         <div class="grow relative">
           <div class="absolute inset-0 flex pl-1">
-            <div class="truncate text-link">{{ product.vendor.name }}</div>
+            <Vendor :vendor="product.vendor" />
           </div>
         </div>
       </template>
@@ -105,7 +107,7 @@
 
     <div class="vc-product-card-list__add-to-cart flex flex-col gap-2 mt-3 w-full sm:mt-0">
       <template v-if="product.hasVariations">
-        <VcButton :to="link" :is-outline="true" class="w-full uppercase !text-13 !border">
+        <VcButton :to="link" class="w-full uppercase !text-13 !border" is-outline @click="$emit('link-click', $event)">
           {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
         </VcButton>
 
@@ -144,7 +146,7 @@ import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import { Product } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";
-import { DiscountBadge } from "@/shared/catalog";
+import { DiscountBadge, Vendor } from "@/shared/catalog";
 import { getProductRoute } from "@/core";
 
 const props = defineProps({
@@ -153,6 +155,8 @@ const props = defineProps({
     required: true,
   },
 });
+
+defineEmits<{ (eventName: "link-click", globalEvent: PointerEvent): void }>();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isSmallScreen = breakpoints.smaller("xl");

@@ -12,11 +12,11 @@
 
     <!-- Vendor -->
     <ProductProperty
-      v-if="product.vendor && !product.hasVariations"
+      v-if="$cfg.vendor_enabled && !product.hasVariations && product.vendor"
       :label="$t('shared.catalog.product_details.vendor_label')"
       class="mb-4"
     >
-      <span class="text-[color:var(--color-link)]">{{ product.vendor.name }}</span>
+      <Vendor :vendor="product.vendor" withRating />
     </ProductProperty>
   </ProductTitledBlock>
 </template>
@@ -25,7 +25,7 @@
 import { computed, PropType } from "vue";
 import _ from "lodash";
 import { Product } from "@/xapi/types";
-import { prepareProperties, ProductProperty, ProductTitledBlock } from "@/shared/catalog";
+import { prepareProperties, ProductProperty, ProductTitledBlock, Vendor } from "@/shared/catalog";
 
 const props = defineProps({
   product: {
