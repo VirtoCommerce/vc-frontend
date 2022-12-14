@@ -22,10 +22,10 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src), { USE_PROF
   font-size: 1rem;
   line-height: 1.5rem;
 
-  *:not(a, li, dt) {
+  * {
     margin-bottom: 20px;
 
-    &:first-child {
+    &:last-child {
       margin-bottom: 0;
     }
   }
@@ -143,23 +143,9 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src), { USE_PROF
 
   blockquote {
     padding: 12px 24px;
-    border-left: 4px solid var(--color-markdown-dark);
+    border-left: 4px solid theme("colors.gray.400");
     border-radius: 0 4px 4px 0;
-    background-color: var(--color-markdown-light);
-
-    *::before {
-      content: "\201C";
-      color: var(--color-markdown-dark);
-      font-size: 150%;
-      font-weight: 700;
-    }
-
-    *::after {
-      content: "\201D";
-      color: var(--color-markdown-dark);
-      font-size: 150%;
-      font-weight: 700;
-    }
+    background-color: theme("colors.gray.100");
   }
 
   pre {
@@ -167,12 +153,12 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src), { USE_PROF
     padding: 16px;
     font-size: 85%;
     line-height: 1.45;
-    background-color: var(--color-markdown-light);
+    background-color: theme("colors.gray.100");
     border-radius: 4px;
   }
 
   code {
-    background-color: var(--color-markdown-light);
+    background-color: theme("colors.gray.100");
     color: var(--color-secondary);
     border-radius: 3px;
     font-family: monospace;
@@ -193,7 +179,7 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src), { USE_PROF
 
     th {
       padding: 8px 12px;
-      background: var(--color-markdown-light);
+      background: theme("colors.gray.100");
       color: var(--color-secondary);
       font-weight: 700;
       text-align: left;
@@ -202,7 +188,7 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src), { USE_PROF
     td {
       width: 50%;
       padding: 8px 12px;
-      border-bottom: 1px solid var(--color-markdown-light);
+      border-bottom: 1px solid theme("colors.gray.100");
       vertical-align: top;
 
       &:first-child {
@@ -210,7 +196,7 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src), { USE_PROF
       }
 
       &:not(:first-child) {
-        border-left: 1px solid var(--color-markdown-light);
+        border-left: 1px solid theme("colors.gray.100");
       }
     }
   }
