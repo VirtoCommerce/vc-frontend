@@ -152,7 +152,7 @@
             >
               <button
                 type="button"
-                class="flex items-center justify-center h-[26px] w-[26px] rounded-full border border-[color:var(--color-line-item-border)] bg-white text-[color:var(--color-danger)] md:border-2 md:w-7 md:h-7 md:rounded hover:bg-gray-100"
+                class="flex items-center justify-center h-[26px] w-[26px] rounded-full border bg-white text-[color:var(--color-danger)] md:border-2 md:w-7 md:h-7 md:rounded hover:bg-gray-100"
                 @click="$emit('remove:item', item)"
               >
                 <svg class="w-3.5 h-3.5">
