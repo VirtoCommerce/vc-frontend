@@ -57,6 +57,7 @@ import { eagerComputed } from "@vueuse/core";
 import { clone } from "lodash";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
+import { useGoogleAnalytics } from "@/core";
 
 const emit = defineEmits(["update:lineitem"]);
 
@@ -78,6 +79,7 @@ const MAX_VALUE = 999999;
 
 const { cart, addToCart, changeItemQuantity } = useCart();
 const { t } = useI18n();
+const ga = useGoogleAnalytics();
 
 const loading = ref(false);
 const initialValue = ref();
@@ -140,7 +142,14 @@ async function onChange() {
   if (lineItem) {
     await changeItemQuantity(lineItem.id, enteredQuantity.value || 0);
   } else {
-    await addToCart(props.product.id!, enteredQuantity.value || minQty.value);
+    const inputQuantity = enteredQuantity.value || minQty.value;
+
+    await addToCart(props.product.id!, inputQuantity);
+
+    /**
+     * Send Google Analytics event for an item added to cart.
+     */
+    ga.addItemToCart(props.product, inputQuantity);
   }
 
   if (isRemoving) {
