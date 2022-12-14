@@ -1012,6 +1012,7 @@
         "total": "@:common.labels.total",
         "created": "@:common.labels.created",
         "status": "@:common.labels.status",
+        "no_items_message": "Quote request has not items",
         "line_items": {
           "product": "@:common.labels.product",
           "properties": "@:common.labels.properties",

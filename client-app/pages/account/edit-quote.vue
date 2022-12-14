@@ -195,7 +195,7 @@ const commentChanged = computed<boolean>(() => !isEqual(originalQuote.value?.com
 const quoteChanged = computed<boolean>(() => !isEqual(originalQuote.value, quote.value));
 const quoteItemsValid = computed<boolean>(() =>
   every(
-    quote.value!.items,
+    quote.value?.items,
     (item: QuoteItemType) => item.selectedTierPrice?.quantity && item.selectedTierPrice?.quantity > 0
   )
 );

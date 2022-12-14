@@ -23,141 +23,150 @@
     <!-- table body -->
     <div class="flex flex-col gap-6 md:gap-0 md:border-x md:divide-y">
       <!-- line-item -->
-      <div
-        v-for="item in items"
-        :key="item.id"
-        class="relative border border-[color:var(--color-line-item-border)] rounded shadow-t-3sm md:rounded-none md:shadow-none md:border-0"
-      >
+      <div v-if="items.length">
         <div
-          class="vc-quote-line-items__line-item grid gap-x-2.5 pt-3 pl-3 pr-3.5 pb-4 md:p-4 md:gap-x-3 md:place-items-center"
+          v-for="item in items"
+          :key="item.id"
+          class="relative border border-[color:var(--color-line-item-border)] rounded shadow-t-3sm md:rounded-none md:shadow-none md:border-0"
         >
-          <div class="contents vc-quote-line-items__product md:flex md:gap-3 md:w-full">
-            <!--  IMAGE -->
-            <div
-              class="vc-quote-line-items__img shrink-0 w-16 h-16 md:w-[60px] md:h-[60px]"
-              :class="{ 'opacity-25': !isProductExists(item) }"
-            >
-              <VcImage
-                :src="item.imageUrl"
-                :alt="item.name"
-                size-suffix="sm"
-                class="w-full h-full object-cover object-center"
-                lazy
-              />
-            </div>
-
-            <!-- NAME -->
-            <div
-              class="vc-quote-line-items__name text-sm font-extrabold md:grow lg:text-13 lg:leading-4 lg:font-bold"
-              :class="{ 'opacity-25': !isProductExists(item) }"
-            >
-              <router-link
-                v-if="getProductLink(item)"
-                :to="getProductLink(item)"
-                :title="item.name"
-                class="text-[color:var(--color-link)] [word-break:break-word]"
+          <div
+            class="vc-quote-line-items__line-item grid gap-x-2.5 pt-3 pl-3 pr-3.5 pb-4 md:p-4 md:gap-x-3 md:place-items-center"
+          >
+            <div class="contents vc-quote-line-items__product md:flex md:gap-3 md:w-full">
+              <!--  IMAGE -->
+              <div
+                class="vc-quote-line-items__img shrink-0 w-16 h-16 md:w-[60px] md:h-[60px]"
+                :class="{ 'opacity-25': !isProductExists(item) }"
               >
-                {{ item.name }}
-              </router-link>
-              <div class="[word-break:break-word]" v-else>
-                {{ item.name }}
+                <VcImage
+                  :src="item.imageUrl"
+                  :alt="item.name"
+                  size-suffix="sm"
+                  class="w-full h-full object-cover object-center"
+                  lazy
+                />
+              </div>
+
+              <!-- NAME -->
+              <div
+                class="vc-quote-line-items__name text-sm font-extrabold md:grow lg:text-13 lg:leading-4 lg:font-bold"
+                :class="{ 'opacity-25': !isProductExists(item) }"
+              >
+                <router-link
+                  v-if="getProductLink(item)"
+                  :to="getProductLink(item)"
+                  :title="item.name"
+                  class="text-[color:var(--color-link)] [word-break:break-word]"
+                >
+                  {{ item.name }}
+                </router-link>
+                <div class="[word-break:break-word]" v-else>
+                  {{ item.name }}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="vc-quote-line-items__props w-full xl:contents">
-            <!-- PROPERTIES -->
-            <div class="vc-quote-line-items__properties w-full">
+            <div class="vc-quote-line-items__props w-full xl:contents">
+              <!-- PROPERTIES -->
+              <div class="vc-quote-line-items__properties w-full">
+                <div
+                  class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[33%_1fr] lg:text-xs"
+                  v-for="property in getProductProperties(item)"
+                  :key="property.id"
+                >
+                  <div
+                    class="min-w-0 font-medium capitalize text-[color:var(--color-line-item-light)] md:font-bold md:text-[color:var(--color-secondary)]"
+                  >
+                    <div class="truncate">{{ property.name.toLowerCase() }}:</div>
+                  </div>
+                  <div class="grow mb-1 h-4 border-b-2 border-gray-200 border-dotted md:hidden"></div>
+                  <div class="min-w-0">
+                    <div class="truncate font-semibold md:font-normal">
+                      {{ property.value }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- PRICE -->
               <div
-                class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[33%_1fr] lg:text-xs"
-                v-for="property in getProductProperties(item)"
-                :key="property.id"
+                class="vc-quote-line-items__price grid grid-cols-[auto_1fr_auto] gap-1.5 w-full md:grid-cols-[33%_1fr] xl:contents"
               >
                 <div
-                  class="min-w-0 font-medium capitalize text-[color:var(--color-line-item-light)] md:font-bold md:text-[color:var(--color-secondary)]"
+                  class="min-w-0 font-medium capitalize text-13 lg:text-xs text-[color:var(--color-line-item-light)] md:font-bold md:text-[color:var(--color-secondary)] xl:hidden"
                 >
-                  <div class="truncate">{{ property.name.toLowerCase() }}:</div>
+                  <div class="truncate">{{ $t("pages.account.quote_details.line_items.price_per_item") }}:</div>
                 </div>
                 <div class="grow mb-1 h-4 border-b-2 border-gray-200 border-dotted md:hidden"></div>
-                <div class="min-w-0">
-                  <div class="truncate font-semibold md:font-normal">
-                    {{ property.value }}
+                <div class="xl:w-full xl:pr-4 xl:text-right">
+                  <div class="text-13 font-semibold md:font-normal lg:text-xs xl:font-medium">
+                    <!-- Price per item -->
+                    <VcPriceDisplay :value="item.selectedTierPrice!.price" />
+                  </div>
+
+                  <!-- Price without discount -->
+                  <div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]" v-if="false">
+                    OLD PRICE
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- PRICE -->
+            <!-- QUANTITY -->
+            <div class="vc-quote-line-items__quantity mt-3 md:place-self-end md:mt-0 xl:w-full xl:place-self-center">
+              <input
+                class="w-20 h-8 border rounded text-center text-sm disabled:bg-[color:var(--color-line-item-light)]/75 xl:w-full disabled:text-[color:var(--color-line-item-table-border)]"
+                type="number"
+                pattern="\d"
+                min="1"
+                required
+                @change="$emit('update:item', item)"
+                v-model="item.selectedTierPrice!.quantity"
+              />
+            </div>
+
+            <!-- TOTAL -->
             <div
-              class="vc-quote-line-items__price grid grid-cols-[auto_1fr_auto] gap-1.5 w-full md:grid-cols-[33%_1fr] xl:contents"
+              class="vc-quote-line-items__total flex flex-col justify-center items-end min-h-[32px] mt-3 md:mt-0 md:min-h-auto md:w-full"
             >
-              <div
-                class="min-w-0 font-medium capitalize text-13 lg:text-xs text-[color:var(--color-line-item-light)] md:font-bold md:text-[color:var(--color-secondary)] xl:hidden"
+              <!-- Total -->
+              <div class="flex flex-wrap items-center justify-end text-right gap-x-1">
+                <div class="text-14 font-bold text-[color:var(--color-price-from)] md:hidden">
+                  {{ $t("pages.account.quote_details.line_items.total") }}:
+                </div>
+                <div class="text-15 font-bold [word-break:break-word]">
+                  {{ $n(item.selectedTierPrice!.price!.amount * item.selectedTierPrice!.quantity, "currency") }}
+                </div>
+              </div>
+
+              <!-- Total without discount -->
+              <div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]" v-if="false">
+                OLD PRICE
+              </div>
+            </div>
+
+            <!-- REMOVE BUTTON -->
+            <div
+              class="vc-quote-line-items__remove-button absolute -top-3 -right-3 md:static md:flex md:justify-end md:w-full"
+              v-if="!readOnly"
+            >
+              <button
+                type="button"
+                class="flex items-center justify-center h-[26px] w-[26px] rounded-full border border-[color:var(--color-line-item-border)] bg-white text-[color:var(--color-danger)] md:border-2 md:w-7 md:h-7 md:rounded hover:bg-gray-100"
+                @click="$emit('remove:item', item)"
               >
-                <div class="truncate">{{ $t("pages.account.quote_details.line_items.price_per_item") }}:</div>
-              </div>
-              <div class="grow mb-1 h-4 border-b-2 border-gray-200 border-dotted md:hidden"></div>
-              <div class="xl:w-full xl:pr-4 xl:text-right">
-                <div class="text-13 font-semibold md:font-normal lg:text-xs xl:font-medium">
-                  <!-- Price per item -->
-                  <VcPriceDisplay :value="item.selectedTierPrice!.price" />
-                </div>
-
-                <!-- Price without discount -->
-                <div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]" v-if="false">
-                  OLD PRICE
-                </div>
-              </div>
+                <svg class="w-3.5 h-3.5">
+                  <use href="/static/images/delete.svg#main"></use>
+                </svg>
+              </button>
             </div>
-          </div>
-
-          <!-- QUANTITY -->
-          <div class="vc-quote-line-items__quantity mt-3 md:place-self-end md:mt-0 xl:w-full xl:place-self-center">
-            <input
-              class="w-20 h-8 border rounded text-center text-sm disabled:bg-[color:var(--color-line-item-light)]/75 xl:w-full disabled:text-[color:var(--color-line-item-table-border)]"
-              type="number"
-              pattern="\d"
-              min="1"
-              required
-              @change="$emit('update:item', item)"
-              v-model="item.selectedTierPrice!.quantity"
-            />
-          </div>
-
-          <!-- TOTAL -->
-          <div
-            class="vc-quote-line-items__total flex flex-col justify-center items-end min-h-[32px] mt-3 md:mt-0 md:min-h-auto md:w-full"
-          >
-            <!-- Total -->
-            <div class="flex flex-wrap items-center justify-end text-right gap-x-1">
-              <div class="text-14 font-bold text-[color:var(--color-price-from)] md:hidden">
-                {{ $t("pages.account.quote_details.line_items.total") }}:
-              </div>
-              <div class="text-15 font-bold [word-break:break-word]">
-                {{ $n(item.selectedTierPrice!.price!.amount * item.selectedTierPrice!.quantity, "currency") }}
-              </div>
-            </div>
-
-            <!-- Total without discount -->
-            <div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]" v-if="false">OLD PRICE</div>
-          </div>
-
-          <!-- REMOVE BUTTON -->
-          <div
-            class="vc-quote-line-items__remove-button absolute -top-3 -right-3 md:static md:flex md:justify-end md:w-full"
-            v-if="!readOnly"
-          >
-            <button
-              type="button"
-              class="flex items-center justify-center h-[26px] w-[26px] rounded-full border border-[color:var(--color-line-item-border)] bg-white text-[color:var(--color-danger)] md:border-2 md:w-7 md:h-7 md:rounded hover:bg-gray-100"
-              @click="$emit('remove', item)"
-            >
-              <svg class="w-3.5 h-3.5">
-                <use href="/static/images/delete.svg#main"></use>
-              </svg>
-            </button>
           </div>
         </div>
+      </div>
+      <div v-else>
+        <VcAlert class="grow" type="warning" icon>
+          {{ $t("pages.account.quote_details.no_items_message") }}
+        </VcAlert>
       </div>
 
       <!-- Error message -->
