@@ -537,7 +537,7 @@ import {
   ShippingMethodType,
   ValidationErrorType,
 } from "@/xapi";
-import { AddressType, useElementVisibility, usePageHead } from "@/core";
+import { AddressType, useElementVisibility, usePageHead, useGoogleAnalytics } from "@/core";
 import {
   AddOrUpdateAddressDialog,
   CheckoutLabeledBlock,
@@ -580,6 +580,7 @@ const {
 const { addresses, isExistAddress, loadAddresses, addOrUpdateAddresses } = useUserAddresses({ user });
 const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
 const { openPopup, closePopup } = usePopup();
+const ga = useGoogleAnalytics();
 
 usePageHead({
   title: t("pages.checkout.meta.title"),
@@ -900,6 +901,8 @@ async function toggleGift(state: boolean, gift: GiftItemType) {
 
 onMounted(async () => {
   await fetchCart();
+
+  ga.viewCart(cart.value);
 
   if (!cart.value.items?.length) {
     preparedData.value = true;
