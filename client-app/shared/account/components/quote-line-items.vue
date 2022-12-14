@@ -11,13 +11,13 @@
       <div class="vc-quote-line-items__price hidden xl:block pr-4 text-right">
         {{ $t("pages.account.quote_details.line_items.price_per_item") }}
       </div>
-      <div class="vc-quote-line-items__quantity hidden xl:block text-center">
+      <div class="vc-quote-line-items__quantity hidden xl:block text-right">
         {{ $t("pages.account.quote_details.line_items.quantity") }}
       </div>
       <div class="vc-quote-line-items__total text-right">
         {{ $t("pages.account.quote_details.line_items.total") }}
       </div>
-      <div class="vc-quote-line-items__remove-button" v-if="!readOnly"></div>
+      <div class="vc-quote-line-items__remove-button w-8" v-if="!readOnly"></div>
     </div>
 
     <!-- table body -->
@@ -147,7 +147,7 @@
 
             <!-- REMOVE BUTTON -->
             <div
-              class="vc-quote-line-items__remove-button absolute -top-3 -right-3 md:static md:flex md:justify-end md:w-full"
+              class="vc-quote-line-items__remove-button absolute -top-3 -right-3 md:static md:flex md:justify-end md:w-8"
               v-if="!readOnly"
             >
               <button
@@ -227,12 +227,12 @@ function getProductProperties(item: QuoteItemType): Property[] | undefined {
 .vc-quote-line-items {
   &__header {
     @media (min-width: theme("screens.md")) {
-      grid-template-columns: 250px 1fr 100px 32px;
+      grid-template-columns: 250px 1fr 100px min-content;
       grid-template-areas: "product properties total remove-button";
     }
 
     @media (min-width: theme("screens.xl")) {
-      grid-template-columns: 250px 1fr 120px 88px 100px 32px;
+      grid-template-columns: 250px 1fr 120px 88px 100px min-content;
       grid-template-areas: "product properties price quantity total remove-button";
     }
   }
@@ -248,12 +248,12 @@ function getProductProperties(item: QuoteItemType): Property[] | undefined {
       grid-template-areas:
         "product props quantity remove-button"
         "product props total remove-button";
-      grid-template-columns: 250px 1fr 100px 32px;
+      grid-template-columns: 250px 1fr 100px min-content;
     }
 
     @media (min-width: theme("screens.xl")) {
       grid-template-areas: "product properties price quantity total remove-button";
-      grid-template-columns: 250px 1fr 120px 88px 100px 32px;
+      grid-template-columns: 250px 1fr 120px 88px 100px min-content;
     }
   }
 
