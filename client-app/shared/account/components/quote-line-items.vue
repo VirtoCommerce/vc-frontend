@@ -11,7 +11,7 @@
       <div class="vc-quote-line-items__price hidden xl:block pr-4 text-right">
         {{ $t("pages.account.quote_details.line_items.price_per_item") }}
       </div>
-      <div class="vc-quote-line-items__quantity hidden xl:block text-center">
+      <div class="vc-quote-line-items__quantity hidden xl:block text-right">
         {{ $t("pages.account.quote_details.line_items.quantity") }}
       </div>
       <div class="vc-quote-line-items__total text-right">
