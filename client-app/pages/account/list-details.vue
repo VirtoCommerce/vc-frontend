@@ -42,38 +42,9 @@
 
     <!-- List details -->
     <template v-else-if="listItems.length">
-      <div v-if="!isMobile" class="flex flex-col bg-white rounded border shadow-sm">
-        <WishlistProductItem
-          v-for="item in listItems"
-          :key="item.id"
-          :list-item="item"
-          class="even:bg-gray-50"
-          @link-click="ga.selectItem(item.product!)"
-          @remove="openDeleteProductDialog(item)"
-        />
-
-        <div class="flex p-5" v-if="pages > 1">
-          <VcPagination v-model:page="page" :pages="pages" @update:page="onUpdatePage()" />
-        </div>
-      </div>
-
-      <div v-else class="grid grid-cols-2 gap-x-4 gap-y-6 mx-5 md:mx-0">
-        <template v-for="item in listItems" :key="item.id">
-          <div class="relative">
-            <div
-              class="h-6 w-6 rounded-full border border-gray-200 flex items-center justify-center absolute -top-3 -right-3 z-10 bg-white hover:bg-gray-100 cursor-pointer"
-              @click="openDeleteProductDialog(item)"
-            >
-              <i class="fas fa-times text-red-500" />
-            </div>
-
-            <ProductCardGrid :product="item.product!" class="h-full" @link-click="ga.selectItem(item.product!)">
-              <template #cart-handler>
-                <AddToCart :product="item.product!" />
-              </template>
-            </ProductCardGrid>
-          </div>
-        </template>
+      <div class="flex flex-col gap-6 p-5 bg-white md:rounded md:border md:shadow-t-3sm">
+        <WishlistLineItems :items="listItems" @remove:item="openDeleteProductDialog" />
+        <VcPagination class="self-start" v-model:page="page" :pages="pages" @update:page="onUpdatePage()" />
       </div>
     </template>
 
@@ -89,30 +60,6 @@
         </VcButton>
       </template>
     </VcEmptyView>
-
-    <!-- Mobile footer block -->
-    <div v-if="isMobile" class="flex flex-col space-y-4 mx-5 md:mx-0">
-      <VcPagination
-        v-if="pages > 1"
-        v-model:page="page"
-        :pages="pages"
-        class="mb-3 lg:mb-0"
-        @update:page="onUpdatePage()"
-      />
-
-      <!--
-      <VcButton
-        v-if="listItems.length"
-        class="px-3 uppercase w-full"
-        size="md"
-        :is-disabled="!listItems.length"
-        @click="addAllToCart"
-      >
-        <i class="fa fa-shopping-cart text-inherit text-xs mr-2" />
-        {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
-      </VcButton>
-      -->
-    </div>
   </div>
 </template>
 
@@ -121,6 +68,7 @@ import { AddToCart } from "@/shared/cart";
 import {
   WishlistProductItem,
   WishlistProductItemSkeleton,
+  WishlistLineItems,
   useWishlists,
   AddOrUpdateWishlistDialog,
   DeleteWishlistProductDialog,
