@@ -287,10 +287,6 @@ const subtotal = computed<number>(() =>
     grid-area: price;
   }
 
-  &__add-to-cart {
-    grid-area: add-to-cart;
-  }
-
   &__remove-button {
     grid-area: remove-button;
   }
