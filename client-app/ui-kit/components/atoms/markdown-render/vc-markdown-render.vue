@@ -32,7 +32,6 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src), { USE_PROF
   img,
   blockquote,
   pre,
-  table,
   ul,
   ol,
   dl,
@@ -42,12 +41,16 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src), { USE_PROF
     }
   }
 
-  li, dt, dd {
+  li,
+  dt,
+  dd {
     &:not(:last-child) {
       margin-bottom: 8px;
     }
 
-    & > ul, & > ol, & > dl {
+    & > ul,
+    & > ol,
+    & > dl {
       margin-top: 8px;
     }
   }
