@@ -1,36 +1,36 @@
 <template>
-  <div class="vc-wishlist-line-items">
+  <div class="vc-cart-line-items">
     <!-- table header -->
-    <div class="vc-wishlist-line-items__header gap-x-3 px-4 py-3 border rounded-t text-sm font-bold hidden md:grid">
-      <div class="vc-wishlist-line-items__product">
-        {{ $t("shared.wishlists.wishlist_line_items.product") }}
+    <div class="vc-cart-line-items__header gap-x-3 px-4 py-3 border rounded-t text-sm font-bold hidden md:grid">
+      <div class="vc-cart-line-items__product">
+        {{ $t("shared.checkout.cart_line_items.product") }}
       </div>
-      <div class="vc-wishlist-line-items__properties">
-        {{ $t("shared.wishlists.wishlist_line_items.properties") }}
+      <div class="vc-cart-line-items__properties">
+        {{ $t("shared.checkout.cart_line_items.properties") }}
       </div>
-      <div class="vc-wishlist-line-items__price hidden xl:block pr-4 text-right">
-        {{ $t("shared.wishlists.wishlist_line_items.price_per_item") }}
+      <div class="vc-cart-line-items__price hidden xl:block pr-4 text-right">
+        {{ $t("shared.checkout.cart_line_items.price_per_item") }}
       </div>
-      <div class="vc-wishlist-line-items__quantity hidden md:block pl-4 text-left">
-        {{ $t("shared.wishlists.wishlist_line_items.quantity") }}
+      <div class="vc-cart-line-items__quantity hidden md:block pl-4 text-left">
+        {{ $t("shared.checkout.cart_line_items.quantity") }}
       </div>
-      <div class="vc-wishlist-line-items__remove-button w-8"></div>
+      <div class="vc-cart-line-items__remove-button w-8"></div>
     </div>
 
     <!-- table body -->
-    <div class="flex flex-col gap-6 md:gap-0 md:border-x md:border-b md:rounded-b md:divide-y" v-if="items.length">
+    <div class="flex flex-col gap-6 md:gap-0 md:border-x md:border-b md:rounded-b md:divide-y">
       <div
         v-for="item in items"
         :key="item.id"
         class="relative border bg-white rounded shadow-t-3sm md:rounded-none md:shadow-none md:border-0"
       >
         <div
-          class="vc-wishlist-line-items__line-item grid gap-x-2.5 pt-3 pl-3 pr-3.5 pb-4 md:p-4 md:gap-x-3 md:place-items-center"
+          class="vc-cart-line-items__line-item grid gap-x-2.5 pt-3 pl-3 pr-3.5 pb-4 md:p-4 md:gap-x-3 md:place-items-center"
         >
-          <div class="contents vc-wishlist-line-items__product md:flex md:gap-3 md:w-full">
+          <div class="contents vc-cart-line-items__product md:flex md:gap-3 md:w-full">
             <!--  IMAGE -->
             <div
-              class="vc-wishlist-line-items__img shrink-0 w-16 h-16 md:w-[60px] md:h-[60px]"
+              class="vc-cart-line-items__img shrink-0 w-16 h-16 md:w-[60px] md:h-[60px]"
               :class="{ 'opacity-25': !extendedItems[item.id].isProductExists }"
             >
               <VcImage
@@ -44,7 +44,7 @@
 
             <!-- NAME -->
             <div
-              class="vc-wishlist-line-items__name text-sm font-extrabold md:grow lg:text-13 lg:leading-4 lg:font-bold"
+              class="vc-cart-line-items__name text-sm font-extrabold md:grow lg:text-13 lg:leading-4 lg:font-bold"
               :class="{ 'opacity-25': !extendedItems[item.id].isProductExists }"
             >
               <router-link
@@ -61,9 +61,9 @@
             </div>
           </div>
 
-          <div class="vc-wishlist-line-items__props w-full xl:contents">
+          <div class="vc-cart-line-items__props w-full xl:contents">
             <!-- PROPERTIES -->
-            <div class="vc-wishlist-line-items__properties w-full">
+            <div class="vc-cart-line-items__properties w-full">
               <div
                 class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[45%_1fr] lg:text-xs"
                 v-for="property in extendedItems[item.id].properties"
@@ -83,12 +83,12 @@
 
             <!-- PRICE -->
             <div
-              class="vc-wishlist-line-items__price grid grid-cols-[auto_1fr_auto] gap-1.5 w-full md:grid-cols-[45%_1fr] xl:contents"
+              class="vc-cart-line-items__price grid grid-cols-[auto_1fr_auto] gap-1.5 w-full md:grid-cols-[45%_1fr] xl:contents"
             >
               <div
                 class="min-w-0 font-medium capitalize text-13 lg:text-xs text-gray-600 md:font-bold md:text-gray-800 xl:hidden"
               >
-                <div class="truncate">{{ $t("shared.wishlists.wishlist_line_items.price_per_item") }}:</div>
+                <div class="truncate">{{ $t("shared.checkout.cart_line_items.price_per_item") }}:</div>
               </div>
               <div class="grow mb-1 h-4 border-b-2 border-gray-200 border-dotted md:hidden"></div>
               <div class="xl:w-full xl:pr-4 xl:text-right">
@@ -104,7 +104,7 @@
           </div>
 
           <!-- ADD-TO-CART -->
-          <div class="vc-wishlist-line-items__quantity mt-3 md:mt-0 md:w-full">
+          <div class="vc-cart-line-items__quantity mt-3 md:mt-0 md:w-full">
             <AddToCart v-if="item.product" :product="item.product" />
 
             <div class="flex flex-wrap justify-start gap-1 mt-1.5">
@@ -119,7 +119,7 @@
 
           <!-- REMOVE BUTTON -->
           <div
-            class="vc-wishlist-line-items__remove-button absolute -top-3 -right-3 md:static md:flex md:justify-end md:w-8"
+            class="vc-cart-line-items__remove-button absolute -top-3 -right-3 md:static md:flex md:justify-end md:w-8"
           >
             <button
               type="button"
@@ -135,15 +135,9 @@
 
         <!-- Line item validation error -->
         <div class="-mt-0.5 mb-3 mx-3 md:-mt-2 md:mb-2.5 md:mx-4" v-if="false">
-          <VcAlert icon type="error" text v-if="true"> Error message example </VcAlert>
+          <VcAlert icon type="error" text> Error message example </VcAlert>
         </div>
       </div>
-    </div>
-
-    <div class="p-3 border-x md:rounded-b" v-else>
-      <VcAlert type="warning" icon>
-        {{ $t("shared.wishlists.wishlist_line_items.no_items_message") }}
-      </VcAlert>
     </div>
   </div>
 </template>
@@ -184,7 +178,7 @@ const extendedItems = computed<
 </script>
 
 <style scoped lang="scss">
-.vc-wishlist-line-items {
+.vc-cart-line-items {
   &__header {
     @media (min-width: theme("screens.md")) {
       grid-template-columns: 200px 1fr 170px min-content;

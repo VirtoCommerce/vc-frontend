@@ -498,6 +498,12 @@
         "select_button": "@:common.buttons.select",
         "price_label": "@:common.labels.price{':'}",
         "title": "Select shipping method"
+      },
+      "cart_line_items": {
+        "product": "Product",
+        "properties": "Properties",
+        "price_per_item": "Price per item",
+        "quantity": "Quantity"
       }
     },
     "bulk_order": {
