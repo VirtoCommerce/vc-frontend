@@ -1,7 +1,9 @@
 <template>
   <div class="vc-cart-line-items">
     <!-- table header -->
-    <div class="vc-cart-line-items__header gap-x-3 px-4 py-3 border rounded-t text-sm font-bold hidden md:grid">
+    <div
+      class="vc-cart-line-items__header gap-x-3 px-4 py-3 border rounded-t text-sm font-bold hidden md:grid md:bg-white"
+    >
       <div class="vc-cart-line-items__product">
         {{ $t("shared.checkout.cart_line_items.product") }}
       </div>
@@ -18,11 +20,11 @@
     </div>
 
     <!-- table body -->
-    <div class="flex flex-col gap-6 md:gap-0 md:border-x md:border-b md:rounded-b md:divide-y">
+    <div class="flex flex-col gap-6 md:gap-0 md:border-x md:border-b md:rounded-b md:divide-y md:bg-white">
       <div
         v-for="item in items"
         :key="item.id"
-        class="relative border bg-white rounded shadow-t-3sm md:rounded-none md:shadow-none md:border-0"
+        class="relative border bg-white rounded shadow-t-3sm md:bg-transparent md:rounded-none md:shadow-none md:border-0"
       >
         <div
           class="vc-cart-line-items__line-item grid gap-x-2.5 pt-3 pl-3 pr-3.5 pb-4 md:p-4 md:gap-x-3 md:place-items-center"
