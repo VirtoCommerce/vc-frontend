@@ -58,6 +58,7 @@
               >
                 {{ item.name }}
               </router-link>
+
               <div class="[word-break:break-word]" v-else>
                 {{ item.name }}
               </div>
@@ -75,7 +76,9 @@
                 <div class="min-w-0 font-medium capitalize text-gray-600 md:font-bold md:text-gray-800">
                   <div class="truncate">{{ property.label }}:</div>
                 </div>
+
                 <div class="grow mb-1 h-4 border-b-2 border-gray-200 border-dotted md:hidden"></div>
+
                 <div class="min-w-0">
                   <div class="truncate font-semibold md:font-normal">
                     {{ property.value }}
@@ -93,7 +96,9 @@
               >
                 <div class="truncate">{{ $t("pages.account.quote_details.line_items.price_per_item") }}:</div>
               </div>
+
               <div class="grow mb-1 h-4 border-b-2 border-gray-200 border-dotted md:hidden"></div>
+
               <div class="xl:w-full xl:pr-4 xl:text-right">
                 <div class="text-13 font-semibold md:font-normal lg:text-xs xl:font-medium">
                   <!-- Price per item -->
@@ -101,9 +106,11 @@
                 </div>
 
                 <!-- Price without discount -->
-                <!--<div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]" v-if="false">
+                <!--
+                <div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]">
                   OLD PRICE
-                </div>-->
+                </div>
+                 -->
               </div>
             </div>
           </div>
@@ -131,15 +138,16 @@
               <div class="text-14 font-bold text-[color:var(--color-price-from)] md:hidden">
                 {{ $t("pages.account.quote_details.line_items.total") }}:
               </div>
+
               <div class="text-15 font-bold [word-break:break-word]">
                 {{ $n(item.selectedTierPrice!.price!.amount * item.selectedTierPrice!.quantity, "currency") }}
               </div>
             </div>
 
             <!-- Total without discount -->
-            <!--<div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]" v-if="false">
-              OLD PRICE
-            </div>-->
+            <!--
+            <div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]">OLD PRICE</div>
+            -->
           </div>
 
           <!-- REMOVE BUTTON -->
@@ -160,9 +168,9 @@
         </div>
 
         <!-- Error message -->
-        <!--<div class="-mt-0.5 mb-3 mx-3 md:-mt-2 md:mb-2.5 md:mx-4" v-if="false">
-          <VcAlert icon type="error" text v-if="true"> Error message example </VcAlert>
-        </div>-->
+        <!--<VcAlert class="-mt-0.5 mb-3 mx-3 md:-mt-2 md:mb-2.5 md:mx-4" icon type="error" text>
+          Error message example
+        </VcAlert>-->
       </div>
     </div>
 
@@ -177,6 +185,7 @@
       class="flex items-center justify-end py-2.5 gap-2 text-[color:var(--color-price)] md:px-4 md:py-2.5 md:border md:rounded-b"
     >
       <div class="text-13 font-bold">{{ $t("pages.account.quote_details.line_items.subtotal") }}:</div>
+
       <div class="text-17 font-extrabold">{{ $n(subtotal, "currency") }}</div>
     </div>
   </div>
