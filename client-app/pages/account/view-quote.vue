@@ -1,6 +1,6 @@
 <template>
   <div class="lg:!gap-y-7" v-if="quote">
-    <div class="flex flex-col gap-3 px-5 lg:px-0">
+    <div class="flex flex-col gap-3">
       <VcBreadcrumbs :items="breadcrumbs" />
 
       <h2 class="text-3xl font-bold uppercase lg:text-28">
@@ -8,7 +8,7 @@
       </h2>
     </div>
 
-    <div class="flex flex-col bg-white lg:bg-transparent lg:flex-row lg:items-start lg:gap-x-6">
+    <div class="flex flex-col bg-white -mx-5 lg:mx-0 lg:bg-transparent lg:flex-row lg:items-start lg:gap-x-6">
       <div class="contents lg:grow lg:block lg:space-y-6">
         <!-- Quote products -->
         <VcSectionWidget
@@ -39,6 +39,7 @@
         >
           <div class="flex justify-between text-base">
             <span class="font-bold" v-t="'pages.account.quote_details.total'" />
+
             <span class="text-[color:var(--color-price)] text-18 font-extrabold">
               <VcPriceDisplay :value="quote!.totals!.grandTotalInclTax" />
             </span>
@@ -53,11 +54,13 @@
           <div class="-mt-1 mb-1 space-y-1">
             <div class="flex text-base">
               <span class="font-bold mr-2">{{ $t("pages.account.quote_details.created") }}:</span>
+
               <span>{{ $d(quote!.createdDate, "long") }}</span>
             </div>
 
             <div class="flex text-base">
               <span class="font-bold mr-2">{{ $t("pages.account.quote_details.status") }}:</span>
+
               <span>
                 <TableStatusBadge :status="quote!.status" />
               </span>
@@ -70,9 +73,7 @@
           :title="$t('pages.account.quote_details.shipping_address')"
           icon-url="/static/images/shipping-address.svg"
         >
-          <div class="-mt-1">
-            <VcAddressInfo :address="shippingAddress!" />
-          </div>
+          <VcAddressInfo class="-mt-1" :address="shippingAddress!" />
         </VcCardWidget>
 
         <VcCardWidget
@@ -80,9 +81,7 @@
           :title="$t('pages.account.quote_details.billing_address')"
           icon-url="/static/images/billing-address.svg"
         >
-          <div class="-mt-1">
-            <VcAddressInfo :address="billingAddress!" />
-          </div>
+          <VcAddressInfo class="-mt-1" :address="billingAddress!" />
         </VcCardWidget>
       </div>
     </div>

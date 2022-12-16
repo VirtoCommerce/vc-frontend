@@ -1,6 +1,6 @@
 <template>
   <div class="!gap-y-4 lg:!gap-y-6" v-if="quote">
-    <div class="flex flex-col gap-3 px-6 lg:px-0">
+    <div class="flex flex-col gap-3">
       <VcBreadcrumbs :items="breadcrumbs" class="lg:hidden" />
 
       <h2 class="text-26 tracking-wide font-bold uppercase lg:text-3xl lg:leading-8">
@@ -8,7 +8,7 @@
       </h2>
     </div>
 
-    <div class="bg-white shadow-md-x border-y lg:shadow-none lg:border-0 lg:bg-transparent lg:space-y-6">
+    <div class="-mx-5 bg-white shadow-md-x border-y lg:mx-0 lg:shadow-none lg:border-0 lg:bg-transparent lg:space-y-6">
       <!-- Quote comment -->
       <VcSectionWidget
         :title="$t('pages.account.quote_details.remarks')"
@@ -18,6 +18,7 @@
         <div class="text-base leading-5 font-bold lg:text-15">
           {{ $t("pages.account.quote_details.remarks_field_label") }}
         </div>
+
         <VcTextArea
           v-model="quote.comment"
           :is-disabled="fetching"
@@ -44,10 +45,10 @@
         <h4 class="text-md leading-5 font-bold">
           {{ $t("pages.account.quote_details.shipping_address") }}
         </h4>
+
         <div class="flex flex-col gap-3 border rounded mt-2 p-5 md:flex-row md:items-center empty:hidden">
-          <div class="grow text-15" v-if="shippingAddress">
-            <VcAddressInfo :address="shippingAddress" />
-          </div>
+          <VcAddressInfo class="grow text-15" v-if="shippingAddress" :address="shippingAddress" />
+
           <VcAlert v-else class="grow" type="warning" icon>
             {{ $t("pages.account.quote_details.no_address_message") }}
           </VcAlert>
@@ -76,6 +77,7 @@
         <h4 class="text-md font-bold leading-5">
           {{ $t("pages.account.quote_details.billing_address") }}
         </h4>
+
         <div class="border rounded mt-2.5 p-5">
           <VcCheckbox
             :model-value="billingAddressEqualsShippingAddress"
@@ -89,9 +91,8 @@
             class="flex flex-col gap-3 mt-4 md:flex-row md:items-center empty:hidden"
             v-if="!billingAddressEqualsShippingAddress"
           >
-            <div class="grow text-15" v-if="billingAddress">
-              <VcAddressInfo :address="billingAddress" />
-            </div>
+            <VcAddressInfo class="grow text-15" v-if="billingAddress" :address="billingAddress" />
+
             <VcAlert class="grow" type="warning" icon v-else>
               {{ $t("pages.account.quote_details.no_address_message") }}
             </VcAlert>
@@ -123,6 +124,7 @@
         >
           {{ $t("pages.account.quote_details.save_changes") }}
         </VcButton>
+
         <VcButton
           :is-disabled="!quoteValid"
           size="lg"
