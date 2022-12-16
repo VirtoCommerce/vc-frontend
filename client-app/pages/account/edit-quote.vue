@@ -1,7 +1,7 @@
 <template>
   <div class="!gap-y-4 lg:!gap-y-6" v-if="quote">
     <div class="flex flex-col gap-3 px-6 lg:px-0">
-      <VcBreadcrumbs :items="breadcrumbs" class="lg:hidden" />
+      <VcBreadcrumbs :items="breadcrumbs" />
 
       <h2 class="text-26 tracking-wide font-bold uppercase lg:text-3xl lg:leading-8">
         {{ $t("pages.account.quote_details.title", [quote!.number]) }}
@@ -139,16 +139,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref, watchEffect, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { computedEager } from "@vueuse/core";
 import { cloneDeep, isEqual, remove, every } from "lodash";
 import { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi";
-import { AddressType, isEqualAddresses } from "@/core";
+import { AddressType, isEqualAddresses, convertAddressType } from "@/core";
 import { useUser, useUserAddresses, useUserQuote, QuoteLineItems } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddOrUpdateAddressDialog, SelectAddressDialog } from "@/shared/checkout";
+import { usePageHead } from "@/core/composables";
+import { asyncForEach } from "@/core/utilities";
 
 const props = defineProps({
   quoteId: {
@@ -175,6 +177,10 @@ const {
   removeItem,
   submitQuote,
 } = useUserQuote();
+
+usePageHead({
+  title: t("pages.account.quote_details.title", [quote!.value?.number]),
+});
 
 const originalQuote = ref<QuoteType | undefined>();
 const billingAddressEqualsShippingAddress = ref<boolean>(true);
@@ -226,10 +232,10 @@ function openAddressSelectionDialog(currentAddress: QuoteAddressType): void {
     component: SelectAddressDialog,
     props: {
       addresses: addresses.value,
-      currentAddress: currentAddress as MemberAddressType,
+      currentAddress: convertAddressType<QuoteAddressType, MemberAddressType>(currentAddress),
 
       onResult(selectedAddress: MemberAddressType): void {
-        const quoteAddress = selectedAddress as QuoteAddressType;
+        const quoteAddress = convertAddressType<MemberAddressType, QuoteAddressType>(selectedAddress);
         quoteAddress.addressType = currentAddress.addressType;
         setQuoteAddress(quoteAddress);
         if (currentAddress.addressType === AddressType.Shipping && billingAddressEqualsShippingAddress.value) {
@@ -254,9 +260,9 @@ function openAddOrUpdateAddressDialog(currentAddress: QuoteAddressType): void {
       address: currentAddress,
 
       async onResult(updatedAddress: MemberAddressType): Promise<void> {
-        const quoteAddress = updatedAddress as QuoteAddressType;
+        const quoteAddress = convertAddressType<MemberAddressType, QuoteAddressType>(updatedAddress);
         quoteAddress.addressType = currentAddress.addressType;
-        setQuoteAddress(updatedAddress as QuoteAddressType);
+        setQuoteAddress(quoteAddress);
         await addOrUpdateAddresses([updatedAddress], user.value!.memberId);
         if (currentAddress.addressType === AddressType.Shipping && billingAddressEqualsShippingAddress.value) {
           setBillingAddressEqualsShippingAddress(quoteAddress);
@@ -267,31 +273,29 @@ function openAddOrUpdateAddressDialog(currentAddress: QuoteAddressType): void {
   });
 }
 
+// Due API concurrency errors each query will be sended consecutively
 async function saveChanges(): Promise<void> {
-  const funcArray: Promise<void>[] = [];
-
   if (originalQuote.value?.comment !== quote.value?.comment) {
-    funcArray.push(changeComment(quote.value!.id, quote.value!.comment!));
+    await changeComment(quote.value!.id, quote.value!.comment!);
   }
 
-  originalQuote.value!.items?.forEach((originalItem: QuoteItemType) => {
+  await asyncForEach(originalQuote.value!.items!, async (originalItem: QuoteItemType) => {
     const quoteItem: QuoteItemType | undefined = quote.value!.items?.find(
       (item: QuoteItemType) => item.id === originalItem.id
     );
     if (quoteItem) {
       if (quoteItem.selectedTierPrice!.quantity !== originalItem.selectedTierPrice!.quantity) {
-        funcArray.push(changeItemQuantity(quote.value!.id, quoteItem.id, quoteItem.selectedTierPrice!.quantity));
+        await changeItemQuantity(quote.value!.id, quoteItem.id, quoteItem.selectedTierPrice!.quantity);
       }
     } else {
-      funcArray.push(removeItem(quote.value!.id, originalItem.id));
+      await removeItem(quote.value!.id, originalItem.id);
     }
   });
 
   if (quote.value!.addresses?.length && !isEqual(quote.value!.addresses, originalQuote.value!.addresses)) {
-    funcArray.push(updateAddresses(quote.value!.id, quote.value!.addresses));
+    await updateAddresses(quote.value!.id, quote.value!.addresses);
   }
 
-  await Promise.all(funcArray);
   await fetchQuote({ id: props.quoteId });
 
   originalQuote.value = cloneDeep(quote.value);
@@ -305,20 +309,22 @@ async function submit(): Promise<void> {
   await submitQuote(quote.value!.id, quote.value!.comment || "");
 }
 
+onMounted(() => {
+  if (quote.value && quote.value.status !== "Draft") {
+    router.replace({ name: "ViewQuote", params: { quoteId: quote.value.id } });
+  }
+
+  if (billingAddress.value && shippingAddress.value) {
+    billingAddressEqualsShippingAddress.value = isEqualAddresses(billingAddress.value, shippingAddress.value);
+  }
+
+  originalQuote.value = cloneDeep(quote.value);
+});
+
 watchEffect(async () => {
   clearQuote();
 
   await fetchAddresses();
   await fetchQuote({ id: props.quoteId });
-
-  if (quote.value!.status !== "Draft") {
-    router.push({ name: "ViewQuote", params: { quoteId: quote.value!.id } });
-  }
-
-  originalQuote.value = cloneDeep(quote.value);
-
-  if (billingAddress.value && shippingAddress.value) {
-    billingAddressEqualsShippingAddress.value = isEqualAddresses(billingAddress.value, shippingAddress.value);
-  }
 });
 </script>

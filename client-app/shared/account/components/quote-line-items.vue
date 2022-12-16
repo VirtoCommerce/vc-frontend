@@ -101,9 +101,9 @@
                 </div>
 
                 <!-- Price without discount -->
-                <div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]" v-if="false">
+                <!--<div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]" v-if="false">
                   OLD PRICE
-                </div>
+                </div>-->
               </div>
             </div>
           </div>
@@ -137,7 +137,9 @@
             </div>
 
             <!-- Total without discount -->
-            <div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]" v-if="false">OLD PRICE</div>
+            <!--<div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]" v-if="false">
+              OLD PRICE
+            </div>-->
           </div>
 
           <!-- REMOVE BUTTON -->
@@ -158,9 +160,9 @@
         </div>
 
         <!-- Error message -->
-        <div class="-mt-0.5 mb-3 mx-3 md:-mt-2 md:mb-2.5 md:mx-4" v-if="false">
+        <!--<div class="-mt-0.5 mb-3 mx-3 md:-mt-2 md:mb-2.5 md:mx-4" v-if="false">
           <VcAlert icon type="error" text v-if="true"> Error message example </VcAlert>
-        </div>
+        </div>-->
       </div>
     </div>
 

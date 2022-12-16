@@ -89,3 +89,12 @@ export function dateToIsoDateString(date: Date | undefined) {
 export function stringFormat(template: string, ...args: string[]): string {
   return template.replace(/{(\d+)}/g, (match: string, num: number) => args[num] || match);
 }
+
+export async function asyncForEach<T>(
+  array: T[],
+  callbackfn: (value: T, index: number, arr: T[]) => Promise<void>
+): Promise<void> {
+  for (let i = 0; i < array.length; i++) {
+    await callbackfn(array[i], i, array);
+  }
+}

@@ -1,6 +1,6 @@
 import { computed, ref } from "vue";
-import { find, omit, remove } from "lodash";
-import { AddressType, Logger } from "@/core";
+import { omit, remove } from "lodash";
+import { AddressType, convertAddressType, Logger } from "@/core";
 import {
   getQuote,
   changeQuoteComment,
@@ -16,29 +16,21 @@ import {
 
 const fetching = ref<boolean>(false);
 const quote = ref<QuoteType | undefined>();
-const billingAddress = ref<QuoteAddressType | undefined>();
-const shippingAddress = ref<QuoteAddressType | undefined>();
+const billingAddress = computed<QuoteAddressType | undefined>(() =>
+  quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Billing)
+);
+const shippingAddress = computed<QuoteAddressType | undefined>(() =>
+  quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Shipping)
+);
 
 export default function useUserQuote() {
   function clearQuote(): void {
     quote.value = undefined;
   }
 
-  function innerUpdateAddresses(): void {
-    billingAddress.value = find(
-      quote.value?.addresses,
-      (address: QuoteAddressType) => address.addressType === AddressType.Billing
-    );
-    shippingAddress.value = find(
-      quote.value?.addresses,
-      (address: QuoteAddressType) => address.addressType === AddressType.Shipping
-    );
-  }
-
   function setQuoteAddress(newAddress: QuoteAddressType): void {
     remove(quote.value!.addresses!, (address: QuoteAddressType) => address.addressType === newAddress.addressType);
     quote.value!.addresses!.push(newAddress);
-    innerUpdateAddresses();
   }
 
   async function fetchQuote(paylod: QueryQuoteArgs): Promise<void> {
@@ -46,7 +38,6 @@ export default function useUserQuote() {
 
     try {
       quote.value = await getQuote(paylod);
-      innerUpdateAddresses();
     } catch (e) {
       Logger.error(`${useUserQuote.name}.${fetchQuote.name}`, e);
       throw e;
@@ -98,8 +89,11 @@ export default function useUserQuote() {
     fetching.value = true;
 
     try {
-      const inputAddresses: InputQuoteAddressType[] = addresses.map(
-        (address: QuoteAddressType) => omit(address, ["id", "isDefault", "description"]) as InputQuoteAddressType
+      const inputAddresses: InputQuoteAddressType[] = addresses.map<InputQuoteAddressType>(
+        (address: QuoteAddressType) =>
+          convertAddressType<Partial<QuoteAddressType>, InputQuoteAddressType>(
+            omit(address, ["id", "isDefault", "description"])
+          )
       );
 
       await updateQuoteAddresses({ command: { quoteId, addresses: inputAddresses } });
@@ -127,8 +121,8 @@ export default function useUserQuote() {
   return {
     fetching: computed(() => fetching.value),
     quote: computed(() => quote.value),
-    billingAddress: computed(() => billingAddress.value),
-    shippingAddress: computed(() => shippingAddress.value),
+    billingAddress,
+    shippingAddress,
     clearQuote,
     setQuoteAddress,
     fetchQuote,
