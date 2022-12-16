@@ -1,7 +1,9 @@
 <template>
   <div class="vc-wishlist-line-items">
     <!-- table header -->
-    <div class="vc-wishlist-line-items__header gap-x-3 px-4 py-3 border rounded-t text-sm font-bold hidden md:grid">
+    <div
+      class="vc-wishlist-line-items__header gap-x-3 px-4 py-3 border rounded-t text-sm font-bold hidden md:grid md:bg-white"
+    >
       <div class="vc-wishlist-line-items__product">
         {{ $t("shared.wishlists.wishlist_line_items.product") }}
       </div>
@@ -18,7 +20,10 @@
     </div>
 
     <!-- table body -->
-    <div class="flex flex-col gap-6 md:gap-0 md:border-x md:border-b md:rounded-b md:divide-y" v-if="items.length">
+    <div
+      class="flex flex-col gap-6 md:gap-0 md:border-x md:border-b md:rounded-b md:divide-y md:bg-white"
+      v-if="items.length"
+    >
       <div
         v-for="item in items"
         :key="item.id"
@@ -140,7 +145,7 @@
       </div>
     </div>
 
-    <div class="p-3 border-x md:rounded-b" v-else>
+    <div class="p-3 border-x md:rounded-b md:bg-white" v-else>
       <VcAlert type="warning" icon>
         {{ $t("shared.wishlists.wishlist_line_items.no_items_message") }}
       </VcAlert>
