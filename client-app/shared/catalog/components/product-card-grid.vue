@@ -116,17 +116,17 @@
       </VcTooltip>
 
       <div
-        class="grid grid-cols-2 gap-x-1.5 mt-2 w-full text-tooltip text-14 leading-4 lg:grid-cols-[max-content_1fr] lg:mt-0.5 lg:text-11 empty:hidden"
+        class="grid grid-cols-2 gap-x-1.5 gap-y-0.5 mt-2 w-full text-tooltip text-14 leading-4 lg:mt-0.5 lg:text-11 empty:hidden"
       >
         <!-- Product props -->
         <template v-if="product.properties">
           <template v-for="prop in product.properties.slice(0, 3)" :key="prop.id">
-            <div class="pt-0.5 pb-px font-bold capitalize">{{ prop.name.toLowerCase() }}:</div>
-            <div class="relative">
-              <div class="absolute inset-0 flex items-end pt-0.5 pb-px pl-1">
-                <div class="truncate">
-                  {{ prop.value }}
-                </div>
+            <div class="min-w-0">
+              <div class="truncate font-bold">{{ prop.label }}:</div>
+            </div>
+            <div class="min-w-0">
+              <div class="truncate">
+                {{ prop.value }}
               </div>
             </div>
           </template>

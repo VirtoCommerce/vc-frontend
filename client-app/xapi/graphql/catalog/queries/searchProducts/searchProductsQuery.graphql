@@ -109,6 +109,7 @@ query SearchProducts(
         name
         value
         id
+        label
       }
     }
     term_facets @include(if: $withFacets) {
