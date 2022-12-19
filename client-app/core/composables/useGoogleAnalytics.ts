@@ -104,6 +104,19 @@ function addItemToCart(item: Product | VariationType, quantity = 1, params?: TEv
   });
 }
 
+function removeItemFromCart(item: Product | VariationType, quantity = 1, params?: TEventParamsForList): void {
+  const inputItem = productToGtagItem(item);
+
+  inputItem.quantity = quantity;
+
+  sendEvent("remove_from_cart", {
+    ...params,
+    currency: globals.currencyCode,
+    value: item.price?.list?.amount * quantity,
+    items: [inputItem],
+  });
+}
+
 function viewCart(cart: CartType, params?: TEventParamsForList): void {
   const cartEventParams: TEventParams = getCartEventParams(cart);
 
@@ -130,6 +143,7 @@ export default () => ({
   selectItem,
   viewItem,
   addItemToCart,
+  removeItemFromCart,
   viewCart,
   beginCheckout,
 });
