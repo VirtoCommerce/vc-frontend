@@ -1,0 +1,5 @@
+mutation UpdateQuoteAddresses($command: UpdateQuoteAddressesCommandType!) {
+  updateQuoteAddresses(command: $command) {
+    id
+  }
+}
