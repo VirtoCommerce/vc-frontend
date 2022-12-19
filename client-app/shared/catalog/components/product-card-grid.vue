@@ -133,6 +133,7 @@
         </template>
 
         <!-- Raiting -->
+        <!--
         <template v-if="true">
           <div class="min-w-0">
             <div class="truncate font-bold">
@@ -153,6 +154,7 @@
             <div class="font-bold">4,3/5</div>
           </div>
         </template>
+        -->
 
         <!-- Vendor -->
         <template v-if="$cfg.vendor_enabled && product.vendor">
