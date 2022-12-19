@@ -70,10 +70,12 @@
 
       <!-- Raiting -->
       <template v-if="false">
-        <div class="font-bold capitalize">
-          {{ $t("shared.catalog.product_card.product_rating") }}
+        <div class="min-w-0">
+          <div class="truncate font-bold">
+            {{ $t("shared.catalog.product_card.product_rating") }}
+          </div>
         </div>
-        <div class="flex items-center gap-1 pl-1">
+        <div class="flex items-center gap-1">
           <svg
             class="shrink-0 w-3 h-3"
             :class="{
@@ -90,11 +92,13 @@
 
       <!-- Vendor -->
       <template v-if="$cfg.vendor_enabled && product.vendor">
-        <div class="font-bold capitalize">
-          {{ $t("shared.catalog.product_card.product_vendor") }}
+        <div class="min-w-0">
+          <div class="truncate font-bold">
+            {{ $t("shared.catalog.product_card.product_vendor") }}
+          </div>
         </div>
-        <div class="grow relative">
-          <div class="absolute inset-0 flex pl-1">
+        <div class="min-w-0">
+          <div class="truncate">
             <Vendor :vendor="product.vendor" />
           </div>
         </div>
