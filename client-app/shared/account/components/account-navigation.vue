@@ -63,7 +63,7 @@
     </div>
   </div>
 
-  <div class="bg-white border rounded shadow-md-s">
+  <div v-if="organization" class="bg-white border rounded shadow-md-s">
     <div class="px-4 py-2.5 border-b text-base font-bold uppercase">
       {{ $t("shared.account.navigation.corporate_title") }}
     </div>

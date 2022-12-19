@@ -147,7 +147,7 @@ import { useRouter } from "vue-router";
 import { computedEager } from "@vueuse/core";
 import { cloneDeep, isEqual, remove, every } from "lodash";
 import { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi";
-import { AddressType, isEqualAddresses, convertAddressType } from "@/core";
+import { AddressType, isEqualAddresses, convertToType } from "@/core";
 import { useUser, useUserAddresses, useUserQuote, QuoteLineItems } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddOrUpdateAddressDialog, SelectAddressDialog } from "@/shared/checkout";
@@ -234,10 +234,10 @@ function openAddressSelectionDialog(currentAddress: QuoteAddressType): void {
     component: SelectAddressDialog,
     props: {
       addresses: addresses.value,
-      currentAddress: convertAddressType<QuoteAddressType, MemberAddressType>(currentAddress),
+      currentAddress: convertToType<MemberAddressType>(currentAddress),
 
       onResult(selectedAddress: MemberAddressType): void {
-        const quoteAddress = convertAddressType<MemberAddressType, QuoteAddressType>(selectedAddress);
+        const quoteAddress = convertToType<QuoteAddressType>(selectedAddress);
         quoteAddress.addressType = currentAddress.addressType;
         setQuoteAddress(quoteAddress);
         if (currentAddress.addressType === AddressType.Shipping && billingAddressEqualsShippingAddress.value) {
@@ -262,7 +262,7 @@ function openAddOrUpdateAddressDialog(currentAddress: QuoteAddressType): void {
       address: currentAddress,
 
       async onResult(updatedAddress: MemberAddressType): Promise<void> {
-        const quoteAddress = convertAddressType<MemberAddressType, QuoteAddressType>(updatedAddress);
+        const quoteAddress = convertToType<QuoteAddressType>(updatedAddress);
         quoteAddress.addressType = currentAddress.addressType;
         setQuoteAddress(quoteAddress);
         await addOrUpdateAddresses([updatedAddress], user.value!.memberId);

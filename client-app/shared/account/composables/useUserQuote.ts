@@ -1,6 +1,6 @@
 import { computed, ref } from "vue";
 import { omit, remove } from "lodash";
-import { AddressType, convertAddressType, Logger } from "@/core";
+import { AddressType, convertToType, Logger } from "@/core";
 import {
   getQuote,
   changeQuoteComment,
@@ -91,9 +91,7 @@ export default function useUserQuote() {
     try {
       const inputAddresses: InputQuoteAddressType[] = addresses.map<InputQuoteAddressType>(
         (address: QuoteAddressType) =>
-          convertAddressType<Partial<QuoteAddressType>, InputQuoteAddressType>(
-            omit(address, ["id", "isDefault", "description"])
-          )
+          convertToType<InputQuoteAddressType>(omit(address, ["id", "isDefault", "description"]))
       );
 
       await updateQuoteAddresses({ command: { quoteId, addresses: inputAddresses } });

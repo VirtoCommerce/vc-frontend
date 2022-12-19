@@ -46,8 +46,3 @@ export function isEqualAddresses(
 
   return isEqual(first, second);
 }
-
-export function convertAddressType<TAddressTypeFrom, TAddressTypeTo>(address: TAddressTypeFrom): TAddressTypeTo {
-  const result: TAddressTypeTo = JSON.parse(JSON.stringify(address));
-  return result;
-}
