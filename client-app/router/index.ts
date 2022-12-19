@@ -24,7 +24,7 @@ export function createRouter(options: { base: string }) {
       return next({
         name: "SignIn",
         // save the location we were at to come back later
-        query: { redirect: to.fullPath },
+        query: { returnUrl: to.fullPath },
       });
     }
 

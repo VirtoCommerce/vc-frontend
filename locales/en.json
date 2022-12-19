@@ -25,7 +25,8 @@
       "add_to_cart": "Add to cart",
       "apply": "Apply",
       "send": "Send",
-      "more": "More"
+      "more": "More",
+      "save_changes": "Save Changes"
     },
     "labels": {
       "actions": "Actions",
@@ -52,7 +53,11 @@
       "sku": "Item #",
       "item": "Item",
       "true_property": "Yes",
-      "false_property": "No"
+      "false_property": "No",
+      "product": "Product",
+      "properties": "Properties",
+      "price_per_item": "Price per item",
+      "created": "Created"
     },
     "suffixes": {
       "from": "From",
@@ -973,6 +978,32 @@
         "total_label": "@:common.labels.total",
         "search_placeholder": "Enter keyword...",
         "no_results_message": "No results found"
+      },
+      "quote_details": {
+        "title": "Quote Request #{0}",
+        "remarks": "Remarks",
+        "remarks_field_label": "Do you have a general remark for this Quote Request?",
+        "products": "Products",
+        "shipping_address": "Shipping Address",
+        "billing_address": "Billing Address",
+        "save_changes": "@:common.buttons.save_changes",
+        "submit": "@:common.buttons.submit",
+        "no_address_message": "You do not set an address. Please specify one.",
+        "same_as_shipping_address": "Same as shipping address",
+        "quote_summary": "Quote Summary",
+        "quote_data": "Quote Data",
+        "total": "@:common.labels.total",
+        "created": "@:common.labels.created",
+        "status": "@:common.labels.status",
+        "no_items_message": "Quote request has not items",
+        "line_items": {
+          "product": "@:common.labels.product",
+          "properties": "@:common.labels.properties",
+          "price_per_item": "@:common.labels.price_per_item",
+          "quantity": "@:common.labels.quantity",
+          "total": "@:common.labels.total",
+          "subtotal": "@:common.labels.subtotal"
+        }
       }
     },
     "company": {
