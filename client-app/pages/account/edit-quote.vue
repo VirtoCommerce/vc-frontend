@@ -147,7 +147,7 @@ import { useRouter } from "vue-router";
 import { computedEager } from "@vueuse/core";
 import { cloneDeep, isEqual, remove, every } from "lodash";
 import { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi";
-import { AddressType, isEqualAddresses, convertToType } from "@/core";
+import { AddressType, convertToType } from "@/core";
 import { useUser, useUserAddresses, useUserQuote, QuoteLineItems } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddOrUpdateAddressDialog, SelectAddressDialog } from "@/shared/checkout";
@@ -309,15 +309,13 @@ async function submit(): Promise<void> {
   }
 
   await submitQuote(quote.value!.id, quote.value!.comment || "");
+
+  router.replace({ name: "Quotes" });
 }
 
 onMounted(() => {
   if (quote.value && quote.value.status !== "Draft") {
     router.replace({ name: "ViewQuote", params: { quoteId: quote.value.id } });
-  }
-
-  if (billingAddress.value && shippingAddress.value) {
-    billingAddressEqualsShippingAddress.value = isEqualAddresses(billingAddress.value, shippingAddress.value);
   }
 });
 
@@ -328,5 +326,9 @@ watchEffect(async () => {
   await fetchQuote({ id: props.quoteId });
 
   originalQuote.value = cloneDeep(quote.value);
+});
+
+watchEffect(() => {
+  billingAddressEqualsShippingAddress.value = !billingAddress.value;
 });
 </script>
