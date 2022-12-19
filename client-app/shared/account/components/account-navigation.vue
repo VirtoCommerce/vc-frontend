@@ -1,6 +1,9 @@
 <template>
-  <VcCard :title="$t('shared.account.navigation.main_title')" shadow>
-    <div class="flex flex-col">
+  <div class="bg-white border rounded shadow-md-s">
+    <div class="px-4 py-2.5 border-b text-base font-bold uppercase">
+      {{ $t("shared.account.navigation.main_title") }}
+    </div>
+    <div class="flex flex-col gap-0.5 px-4 py-3">
       <AccountNavigationLink
         :to="{ name: 'Dashboard' }"
         :text="$t('shared.account.navigation.links.dashboard')"
@@ -58,10 +61,13 @@
         v-if="$cfg.quotes_enabled"
       />
     </div>
-  </VcCard>
+  </div>
 
-  <VcCard v-if="organization" :title="$t('shared.account.navigation.corporate_title')" shadow>
-    <div class="flex flex-col">
+  <div v-if="organization" class="bg-white border rounded shadow-md-s">
+    <div class="px-4 py-2.5 border-b text-base font-bold uppercase">
+      {{ $t("shared.account.navigation.corporate_title") }}
+    </div>
+    <div class="flex flex-col gap-0.5 px-4 py-3">
       <AccountNavigationLink
         :to="{ name: 'CompanyInfo' }"
         :text="$t('shared.account.navigation.links.company_info')"
@@ -74,7 +80,7 @@
         class="company-members-icon"
       />
     </div>
-  </VcCard>
+  </div>
 </template>
 
 <script setup lang="ts">

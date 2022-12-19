@@ -161,11 +161,15 @@ import { useI18n } from "vue-i18n";
 import { PageToolbarBlock, useUserQuotes } from "@/shared/account";
 import { QuoteType } from "@/xapi/types";
 import { computedEager, useBreakpoints, breakpointsTailwind } from "@vueuse/core";
-import { useElementVisibility, useRouteQueryParam } from "@/core/composables";
+import { useElementVisibility, useRouteQueryParam, usePageHead } from "@/core/composables";
 import { getSortingExpression, ISortInfo, QueryParamName, getSortInfoFromStringExpression } from "@/core";
 
 const { t } = useI18n();
 const router = useRouter();
+
+usePageHead({
+  title: t("pages.account.quotes.title"),
+});
 
 const { quotes, fetching, itemsPerPage, pages, page, keyword, sort, fetchQuotes } = useUserQuotes();
 
@@ -214,7 +218,8 @@ async function changePage(newPage: number): Promise<void> {
 }
 
 function navigateQuoteDetails(quote: QuoteType): void {
-  router.push({ name: "QuoteDetails", params: { quoteId: quote.id } });
+  const pathName: string = quote.status === "Draft" ? "EditQuote" : "ViewQuote";
+  router.push({ name: pathName, params: { quoteId: quote.id } });
 }
 
 async function applyKeyword(): Promise<void> {

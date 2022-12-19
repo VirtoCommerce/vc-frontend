@@ -1,6 +1,9 @@
 <template>
   <div class="flex items-end gap-1.5" v-if="variationsMinPrice">
-    <div class="pb-0.5 text-14 text-tooltip text-[color:var(--color-price-from)] lg:text-xs" v-t="'common.suffixes.from'"></div>
+    <div
+      class="pb-0.5 text-14 text-tooltip text-[color:var(--color-price-from)] lg:text-xs"
+      v-t="'common.suffixes.from'"
+    ></div>
     <VcPriceDisplayCatalog class="text-xl font-bold" :value="variationsMinPrice" />
   </div>
   <div v-else-if="value?.list?.amount > value?.actual?.amount" class="flex items-end flex-wrap gap-1.5">

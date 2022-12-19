@@ -5,9 +5,7 @@
         <svg
           :class="[
             customClass,
-            true
-              ? 'text-[color:var(--color-product-icon)]'
-              : 'text-[color:var(--color-product-icon-active)]',
+            true ? 'text-[color:var(--color-product-icon)]' : 'text-[color:var(--color-product-icon-active)]',
           ]"
         >
           <use href="/static/images/star.svg#main"></use>

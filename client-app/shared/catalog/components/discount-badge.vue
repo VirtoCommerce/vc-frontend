@@ -15,7 +15,7 @@
       :class="{
         'hidden lg:block': isHot && size === 'sm',
         'text-10': !isHot && size === 'sm',
-        'text-13': size === 'md'
+        'text-13': size === 'md',
       }"
     >
       {{ discount }} {{ $t("shared.catalog.discount_badge.off") }}
