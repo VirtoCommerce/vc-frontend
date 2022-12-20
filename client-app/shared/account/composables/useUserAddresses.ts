@@ -24,7 +24,7 @@ export default (options: { user: MaybeRef<UserType> }) => {
     return addresses.value.some((item) => isEqualAddresses(item, address));
   }
 
-  async function loadAddresses() {
+  async function fetchAddresses() {
     loading.value = true;
 
     const sortingExpression = getSortingExpression(sort.value);
@@ -32,7 +32,7 @@ export default (options: { user: MaybeRef<UserType> }) => {
     try {
       addresses.value = await getMyAddresses({ sort: sortingExpression });
     } catch (e) {
-      Logger.error("useUserAddresses.loadAddresses", e);
+      Logger.error("useUserAddresses.fetchAddresses", e);
       throw e;
     } finally {
       loading.value = false;
@@ -57,7 +57,7 @@ export default (options: { user: MaybeRef<UserType> }) => {
       loading.value = false;
     }
 
-    await loadAddresses();
+    await fetchAddresses();
   }
 
   async function addOrUpdateAddresses(items: MemberAddressType[], memberId?: string): Promise<void> {
@@ -100,13 +100,13 @@ export default (options: { user: MaybeRef<UserType> }) => {
       loading.value = false;
     }
 
-    await loadAddresses();
+    await fetchAddresses();
   }
 
   return {
     sort,
     isExistAddress,
-    loadAddresses,
+    fetchAddresses,
     setDefaultAddress,
     updateAddresses,
     addOrUpdateAddresses,

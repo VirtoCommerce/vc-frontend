@@ -578,7 +578,7 @@ const {
   createOrderFromCart,
   createQuoteFromCart,
 } = useCart();
-const { addresses, isExistAddress, loadAddresses, addOrUpdateAddresses } = useUserAddresses({ user });
+const { addresses, isExistAddress, fetchAddresses, addOrUpdateAddresses } = useUserAddresses({ user });
 const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
 const { openPopup, closePopup } = usePopup();
 const ga = useGoogleAnalytics();
@@ -740,8 +740,7 @@ async function createQuote() {
     return;
   }
 
-  // await router.push({ name: "QuoteDetails", params: { quoteId: quote?.id } });
-  await router.push({ name: "Quotes" });
+  await router.push({ name: "EditQuote", params: { quoteId: quote?.id } });
   await fetchCart();
 
   creatingQuote.value = false;
@@ -920,7 +919,7 @@ onMounted(async () => {
   }
 
   if (isAuthenticated.value) {
-    loadAddresses();
+    fetchAddresses();
   }
 
   purchaseOrderNumber.value = cart.value.purchaseOrderNumber ?? "";
