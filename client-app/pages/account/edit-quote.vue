@@ -59,7 +59,9 @@
               type="button"
               class="shrink-0 flex items-center justify-center h-9 w-9 rounded border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white"
               @click="
-                changeAddressButtonHandler(shippingAddress || { ...newAddress, addressType: AddressType.Shipping })
+                userHasAddresses
+                  ? openAddressSelectionDialog(AddressType.Shipping)
+                  : openAddOrUpdateAddressDialog(AddressType.Shipping, shippingAddress)
               "
               :title="$t('pages.account.addresses.edit_label')"
             >
@@ -103,7 +105,9 @@
                 type="button"
                 class="shrink-0 flex items-center justify-center h-9 w-9 rounded border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white"
                 @click="
-                  changeAddressButtonHandler(billingAddress || { ...newAddress, addressType: AddressType.Billing })
+                  userHasAddresses
+                    ? openAddressSelectionDialog(AddressType.Billing)
+                    : openAddOrUpdateAddressDialog(AddressType.Billing, billingAddress)
                 "
                 :title="$t('pages.account.addresses.edit_label')"
               >
@@ -116,7 +120,7 @@
 
       <div class="flex flex-wrap gap-5 px-6 py-7 lg:justify-end lg:p-0">
         <VcButton
-          :is-disabled="!quoteChanged || !quoteItemsValid"
+          :is-disabled="!quoteChanged || !quoteItemsValid || fetching"
           size="lg"
           class="flex-1 p-2 uppercase font-bold lg:flex-none lg:min-w-[208px]"
           is-outline
@@ -126,7 +130,7 @@
         </VcButton>
 
         <VcButton
-          :is-disabled="!quoteValid"
+          :is-disabled="!quoteValid || fetching"
           size="lg"
           class="flex-1 p-2 uppercase font-bold lg:flex-none lg:min-w-[208px]"
           @click="submit"
@@ -147,7 +151,7 @@ import { useRouter } from "vue-router";
 import { computedEager } from "@vueuse/core";
 import { cloneDeep, isEqual, remove, every } from "lodash";
 import { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi";
-import { AddressType, isEqualAddresses, convertToType } from "@/core";
+import { AddressType, convertToType } from "@/core";
 import { useUser, useUserAddresses, useUserQuote, QuoteLineItems } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddOrUpdateAddressDialog, SelectAddressDialog } from "@/shared/checkout";
@@ -186,12 +190,6 @@ usePageHead({
 
 const originalQuote = ref<QuoteType | undefined>();
 const billingAddressEqualsShippingAddress = ref<boolean>(true);
-const newAddress = ref<QuoteAddressType>({
-  city: "",
-  countryName: "",
-  firstName: "",
-  lastName: "",
-});
 
 const breadcrumbs = computed<IBreadcrumbs[]>(() => [
   { title: t("common.links.home"), route: { name: "Home" } },
@@ -215,47 +213,42 @@ function toggleBillingAddressEqualsShippingAddress(): void {
   billingAddressEqualsShippingAddress.value = !billingAddressEqualsShippingAddress.value;
 }
 
-function changeAddressButtonHandler(currentAddress: QuoteAddressType): void {
-  if (userHasAddresses.value) {
-    openAddressSelectionDialog(currentAddress);
-  } else {
-    openAddOrUpdateAddressDialog(currentAddress);
-  }
-}
-
-function setBillingAddressEqualsShippingAddress(address: QuoteAddressType): void {
-  const newBillingAddress = cloneDeep(address);
+function setBillingAddressEqualsShippingAddress(): void {
+  const newBillingAddress = cloneDeep(shippingAddress.value!);
+  newBillingAddress.key = undefined;
   newBillingAddress.addressType = AddressType.Billing;
   setQuoteAddress(newBillingAddress);
 }
 
-function openAddressSelectionDialog(currentAddress: QuoteAddressType): void {
+function openAddressSelectionDialog(addressType: AddressType.Billing | AddressType.Shipping): void {
   openPopup({
     component: SelectAddressDialog,
     props: {
       addresses: addresses.value,
-      currentAddress: convertToType<MemberAddressType>(currentAddress),
+      currentAddress: convertToType<MemberAddressType>(
+        addressType === AddressType.Billing ? billingAddress.value : shippingAddress.value
+      ),
 
       onResult(selectedAddress: MemberAddressType): void {
         const quoteAddress = convertToType<QuoteAddressType>(selectedAddress);
-        quoteAddress.addressType = currentAddress.addressType;
+        quoteAddress.addressType = addressType;
         setQuoteAddress(quoteAddress);
-        if (currentAddress.addressType === AddressType.Shipping && billingAddressEqualsShippingAddress.value) {
-          setBillingAddressEqualsShippingAddress(quoteAddress);
-        }
         closePopup();
       },
 
       onAddNewAddress() {
         setTimeout(() => {
-          openAddOrUpdateAddressDialog(currentAddress);
+          openAddOrUpdateAddressDialog(addressType);
         }, 500);
       },
     },
   });
 }
 
-function openAddOrUpdateAddressDialog(currentAddress: QuoteAddressType): void {
+function openAddOrUpdateAddressDialog(
+  addressType: AddressType.Billing | AddressType.Shipping,
+  currentAddress?: QuoteAddressType
+): void {
   openPopup({
     component: AddOrUpdateAddressDialog,
     props: {
@@ -263,12 +256,9 @@ function openAddOrUpdateAddressDialog(currentAddress: QuoteAddressType): void {
 
       async onResult(updatedAddress: MemberAddressType): Promise<void> {
         const quoteAddress = convertToType<QuoteAddressType>(updatedAddress);
-        quoteAddress.addressType = currentAddress.addressType;
+        quoteAddress.addressType = addressType;
         setQuoteAddress(quoteAddress);
         await addOrUpdateAddresses([updatedAddress], user.value!.memberId);
-        if (currentAddress.addressType === AddressType.Shipping && billingAddressEqualsShippingAddress.value) {
-          setBillingAddressEqualsShippingAddress(quoteAddress);
-        }
         closePopup();
       },
     },
@@ -295,6 +285,9 @@ async function saveChanges(): Promise<void> {
   });
 
   if (quote.value!.addresses?.length && !isEqual(quote.value!.addresses, originalQuote.value!.addresses)) {
+    if (billingAddressEqualsShippingAddress.value) {
+      setBillingAddressEqualsShippingAddress();
+    }
     await updateAddresses(quote.value!.id, quote.value!.addresses);
   }
 
@@ -309,15 +302,13 @@ async function submit(): Promise<void> {
   }
 
   await submitQuote(quote.value!.id, quote.value!.comment || "");
+
+  router.replace({ name: "Quotes" });
 }
 
 onMounted(() => {
   if (quote.value && quote.value.status !== "Draft") {
     router.replace({ name: "ViewQuote", params: { quoteId: quote.value.id } });
-  }
-
-  if (billingAddress.value && shippingAddress.value) {
-    billingAddressEqualsShippingAddress.value = isEqualAddresses(billingAddress.value, shippingAddress.value);
   }
 });
 

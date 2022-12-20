@@ -90,8 +90,8 @@ export function stringFormat(template: string, ...args: string[]): string {
   return template.replace(/{(\d+)}/g, (match: string, num: number) => args[num] || match);
 }
 
-export function convertToType<To, From = Record<any, any>>(address: From): To {
-  return address as unknown as To;
+export function convertToType<To, From = Record<any, any>>(value?: From): To {
+  return value as unknown as To;
 }
 
 export async function asyncForEach<T>(

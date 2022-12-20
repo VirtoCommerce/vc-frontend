@@ -730,8 +730,7 @@ async function createQuote() {
     return;
   }
 
-  // await router.push({ name: "QuoteDetails", params: { quoteId: quote?.id } });
-  await router.push({ name: "Quotes" });
+  await router.push({ name: "EditQuote", params: { quoteId: quote?.id } });
   await fetchCart();
 
   creatingQuote.value = false;
