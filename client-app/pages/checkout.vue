@@ -794,6 +794,8 @@ function showShipmentMethodDialog(): void {
           shipmentMethodCode: method.code,
           shipmentMethodOption: method.optionName,
         });
+
+        ga.addShippingInfo(cart.value);
       },
     },
   });
