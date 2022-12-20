@@ -638,9 +638,7 @@ async function removeItemButtonClick(lineItem: LineItemType) {
   /**
    * Send Google Analytics event for an item was removed from cart.
    */
-  if (lineItem.product) {
-    ga.removeItemFromCart(lineItem.product, lineItem.quantity);
-  }
+  ga.removeItemFromCart(lineItem);
 }
 
 async function useCoupon() {
