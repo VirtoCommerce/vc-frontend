@@ -674,7 +674,10 @@ async function prepareOrderData() {
 
   // Save shipping address as billing address
   if (billingSameAsShipping.value) {
-    filledPayment.billingAddress = { ...shipment.value!.deliveryAddress };
+    filledPayment.billingAddress = {
+      ...shipment.value!.deliveryAddress,
+      addressType: AddressType.Billing,
+    };
   }
 
   await updatePayment(filledPayment, false);
@@ -846,7 +849,7 @@ function openAddOrUpdateAddressDialog(
 
         const inputAddress: InputAddressType = {
           ...omit(address, ["isDefault", "description"]),
-          addressType: AddressType.BillingAndShipping,
+          addressType,
         };
 
         await updateBillingOrDeliveryAddress(addressType, inputAddress);
@@ -869,7 +872,10 @@ function openAddressSelectionDialog(addressType: AddressType.Billing | AddressTy
           return;
         }
 
-        const inputAddress: InputAddressType = omit(address, ["isDefault", "description"]);
+        const inputAddress: InputAddressType = {
+          ...omit(address, ["isDefault", "description"]),
+          addressType,
+        };
 
         await updateBillingOrDeliveryAddress(addressType, inputAddress);
       },
