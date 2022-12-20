@@ -93,7 +93,7 @@
                 :line-item="item"
                 :read-only="creatingOrder || creatingQuote"
                 @update:quantity="changeItemQuantity"
-                @remove:item="removeItem"
+                @remove:item="removeItemButtonClick"
                 :validation-error="getItemValidationError(item?.id)"
               />
 
@@ -536,6 +536,7 @@ import {
   ShipmentType,
   ShippingMethodType,
   ValidationErrorType,
+  LineItemType,
 } from "@/xapi";
 import { AddressType, useElementVisibility, usePageHead, useGoogleAnalytics } from "@/core";
 import {
@@ -630,6 +631,15 @@ const isValidPayment = computed(
 const isValidCheckout = computed(
   () => !cart.value.validationErrors?.length && isValidShipment.value && isValidPayment.value
 );
+
+async function removeItemButtonClick(lineItem: LineItemType) {
+  await removeItem(lineItem.id);
+
+  /**
+   * Send Google Analytics event for an item was removed from cart.
+   */
+  ga.removeItemFromCart(lineItem);
+}
 
 async function useCoupon() {
   const validationResult: boolean = await validateCartCoupon(cartCoupon.value);
