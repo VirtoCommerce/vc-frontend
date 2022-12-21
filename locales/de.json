@@ -1010,8 +1010,8 @@
         "content_header": "Addresses",
         "no_addresses_message": "There are no addresses yet",
         "address_not_delete_message": "The default address cannot be deleted",
-        "address_deletion_successful_message": "Address ”{addressName}” has been successfully deleted",
-        "address_saved_successful_message": "Address ”{addressName}” has been successfully saved",
+        "address_deletion_successful_message": "Address has been successfully deleted",
+        "address_saved_successful_message": "Address has been successfully saved",
         "labels": {
           "company_name": "Company Name",
           "address": "Address",
