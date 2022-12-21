@@ -1,6 +1,6 @@
 import { createI18n as _createI18n } from "vue-i18n";
 
-export function createI18n() {
+export function createI18n(locale: string, currency: string) {
   return _createI18n({
     legacy: false,
     datetimeFormats: {
@@ -32,6 +32,15 @@ export function createI18n() {
           hour: "numeric",
           minute: "numeric",
           second: "numeric",
+        },
+      },
+    },
+    numberFormats: {
+      [locale]: {
+        currency: {
+          style: "currency",
+          notation: "standard",
+          currency,
         },
       },
     },

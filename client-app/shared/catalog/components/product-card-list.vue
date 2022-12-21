@@ -52,17 +52,17 @@
     </VcTooltip>
 
     <div
-      class="vc-product-card-list__properties grid grid-cols-[max-content_1fr] gap-x-1.5 mt-2 w-full text-tooltip text-14 leading-4 lg:mt-0.5 lg:text-xs empty:mt-0"
+      class="vc-product-card-list__properties grid grid-cols-[40%_1fr] gap-x-1.5 gap-y-0.5 mt-2 w-full text-tooltip text-14 leading-4 lg:mt-0.5 lg:text-xs empty:mt-0"
     >
       <!-- Product props -->
       <template v-if="product.properties && !isSmallScreen">
         <template v-for="prop in product.properties.slice(0, 3)" :key="prop.id">
-          <div class="font-bold capitalize">{{ prop.name.toLowerCase() }}:</div>
-          <div class="relative">
-            <div class="absolute inset-0 flex items-end pb-px pl-1">
-              <div class="truncate">
-                {{ prop.value }}
-              </div>
+          <div class="min-w-0">
+            <div class="truncate font-bold">{{ prop.label }}:</div>
+          </div>
+          <div class="min-w-0">
+            <div class="truncate">
+              {{ prop.value }}
             </div>
           </div>
         </template>
@@ -70,10 +70,12 @@
 
       <!-- Raiting -->
       <template v-if="false">
-        <div class="font-bold capitalize">
-          {{ $t("shared.catalog.product_card.product_rating") }}
+        <div class="min-w-0">
+          <div class="truncate font-bold">
+            {{ $t("shared.catalog.product_card.product_rating") }}
+          </div>
         </div>
-        <div class="flex items-center gap-1 pl-1">
+        <div class="flex items-center gap-1">
           <svg
             class="shrink-0 w-3 h-3"
             :class="{
@@ -90,11 +92,13 @@
 
       <!-- Vendor -->
       <template v-if="$cfg.vendor_enabled && product.vendor">
-        <div class="font-bold capitalize">
-          {{ $t("shared.catalog.product_card.product_vendor") }}
+        <div class="min-w-0">
+          <div class="truncate font-bold">
+            {{ $t("shared.catalog.product_card.product_vendor") }}
+          </div>
         </div>
-        <div class="grow relative">
-          <div class="absolute inset-0 flex pl-1">
+        <div class="min-w-0">
+          <div class="truncate">
             <Vendor :vendor="product.vendor" />
           </div>
         </div>
@@ -174,7 +178,7 @@ const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, 
     "mobile-left .";
 
   @media (min-width: theme("screens.sm")) {
-    grid-template-columns: 72px 1fr 40%;
+    grid-template-columns: 72px 1fr 30%;
     grid-template-areas:
       "img name price"
       "img properties add-to-cart"

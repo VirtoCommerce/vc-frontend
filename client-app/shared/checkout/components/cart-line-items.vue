@@ -96,26 +96,30 @@
               <div class="xl:w-full xl:pr-4 xl:text-right">
                 <div class="text-13 font-semibold md:font-normal lg:text-xs xl:font-medium">
                   <!-- Price per item -->
-                  Actual Price
+                  <VcPriceDisplay :value="item.placedPrice" />
                 </div>
 
                 <!-- Price without discount -->
-                <div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]">Old Price</div>
+                <div
+                  class="text-11 leading-3 line-through text-[color:var(--color-price-old)]"
+                  v-if="item.listPrice?.amount !== item.placedPrice?.amount"
+                >
+                  <VcPriceDisplay :value="item.listPrice" />
+                </div>
               </div>
             </div>
           </div>
 
           <!-- ADD-TO-CART -->
           <div class="vc-cart-line-items__quantity mt-3 md:mt-0 md:w-full">
-            <AddToCart v-if="item.product" :product="item.product" />
+            <AddToCart :product="item.product" v-if="item.product" />
 
             <div class="flex flex-wrap justify-start gap-1 mt-1.5">
               <VcInStock
                 :is-in-stock="item.product?.availabilityData?.isInStock || false"
                 :is-available="!!item.product"
                 :quantity="item.product ? item.product.availabilityData?.availableQuantity : undefined"
-              ></VcInStock>
-              <VcCountInCart :productId="item.product?.id" />
+              />
             </div>
           </div>
 
@@ -147,11 +151,10 @@
 <script setup lang="ts">
 import { computed, PropType } from "vue";
 import { RouteLocationRaw } from "vue-router";
-import { sumBy } from "lodash";
 import { Property, LineItemType } from "@/xapi";
 import { VcPriceDisplay } from "@/ui-kit/components";
 import { AddToCart } from "@/shared/cart";
-import { getProductRoute } from "@/core";
+import { prepareExtendedLineItems } from "@/shared/checkout";
 
 const props = defineProps({
   items: {
@@ -164,19 +167,7 @@ defineEmits(["remove:item", "update:item"]);
 
 const extendedItems = computed<
   Record<string, { isProductExists: boolean; route: RouteLocationRaw; properties: Property[] }>
->(() =>
-  props.items.reduce(
-    (result, item: LineItemType) =>
-      Object.assign(result, {
-        [item.id]: {
-          isProductExists: !!item.product,
-          route: getProductRoute(item.product?.id ?? "", item.product?.slug),
-          properties: item.product?.properties?.slice(0, 3),
-        },
-      }),
-    {}
-  )
-);
+>(() => prepareExtendedLineItems(props.items));
 </script>
 
 <style scoped lang="scss">

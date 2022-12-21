@@ -51,7 +51,7 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
    * Creating plugin instances
    */
   const head = createHead();
-  const i18n = createI18n();
+  const i18n = createI18n(currentLanguage.value.twoLetterLanguageName, currentCurrency.value.code);
   const router = createRouter({ base: getBaseUrl(supportedLocales.value) });
 
   /**

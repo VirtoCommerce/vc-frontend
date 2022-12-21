@@ -105,7 +105,7 @@
               kind="secondary"
               is-outline
               class="uppercase px-2"
-              @click="$emit('remove:item', lineItem.id)"
+              @click="$emit('remove:item', lineItem)"
             >
               {{ $t("shared.checkout.product_card.remove_button") }}
             </VcButton>
@@ -120,7 +120,7 @@
               type="button"
               :title="$t('shared.checkout.product_card.remove_button')"
               class="h-7 w-7 shadow rounded text-[color:var(--color-danger)] hover:bg-gray-100"
-              @click="$emit('remove:item', lineItem.id)"
+              @click="$emit('remove:item', lineItem)"
             >
               <i class="fas fa-times" />
             </button>

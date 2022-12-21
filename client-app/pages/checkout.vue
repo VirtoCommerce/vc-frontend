@@ -89,7 +89,7 @@
                 :items="cartItems ?? []"
                 :read-only="creatingOrder || creatingQuote"
                 @update:quantity="changeItemQuantity"
-                @remove:item="removeItem"
+                @remove:item="removeItemButtonClick"
               />
 
               <div v-if="pages > 1" class="pt-6 md:flex">
@@ -530,7 +530,7 @@ import {
   rejectGiftItems,
   ShipmentType,
   ShippingMethodType,
-  ValidationErrorType,
+  LineItemType,
 } from "@/xapi";
 import { AddressType, useElementVisibility, usePageHead, useGoogleAnalytics } from "@/core";
 import {
@@ -539,7 +539,6 @@ import {
   ClearCartDialog,
   OrderSummary,
   PaymentMethodDialog,
-  ProductCard,
   CartLineItems,
   SelectAddressDialog,
   ShippingMethodDialog,
@@ -573,7 +572,7 @@ const {
   createOrderFromCart,
   createQuoteFromCart,
 } = useCart();
-const { addresses, isExistAddress, loadAddresses, addOrUpdateAddresses } = useUserAddresses({ user });
+const { addresses, isExistAddress, fetchAddresses, addOrUpdateAddresses } = useUserAddresses({ user });
 const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
 const { openPopup, closePopup } = usePopup();
 const ga = useGoogleAnalytics();
@@ -626,6 +625,15 @@ const isValidPayment = computed(
 const isValidCheckout = computed(
   () => !cart.value.validationErrors?.length && isValidShipment.value && isValidPayment.value
 );
+
+async function removeItemButtonClick(lineItem: LineItemType) {
+  await removeItem(lineItem.id);
+
+  /**
+   * Send Google Analytics event for an item was removed from cart.
+   */
+  ga.removeItemFromCart(lineItem);
+}
 
 async function useCoupon() {
   const validationResult: boolean = await validateCartCoupon(cartCoupon.value);
@@ -726,15 +734,10 @@ async function createQuote() {
     return;
   }
 
-  // await router.push({ name: "QuoteDetails", params: { quoteId: quote?.id } });
-  await router.push({ name: "Quotes" });
+  await router.push({ name: "EditQuote", params: { quoteId: quote?.id } });
   await fetchCart();
 
   creatingQuote.value = false;
-}
-
-function getItemValidationError(lineItemId: string): ValidationErrorType | undefined {
-  return cart.value.validationErrors?.find((error) => error.objectId === lineItemId);
 }
 
 async function saveNewAddressesInAccount(payload: {
@@ -906,7 +909,7 @@ onMounted(async () => {
   }
 
   if (isAuthenticated.value) {
-    loadAddresses();
+    fetchAddresses();
   }
 
   purchaseOrderNumber.value = cart.value.purchaseOrderNumber ?? "";

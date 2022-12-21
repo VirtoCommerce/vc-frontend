@@ -5,3 +5,4 @@ export { default as useUserOrder } from "./useUserOrder";
 export { default as useUserOrders } from "./useUserOrders";
 export { default as useUserOrdersFilter } from "./useUserOrdersFilter";
 export { default as useUserQuotes } from "./useUserQuotes";
+export { default as useUserQuote } from "./useUserQuote";
