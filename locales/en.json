@@ -510,7 +510,8 @@
         "product": "Product",
         "properties": "Properties",
         "price_per_item": "Price per item",
-        "quantity": "Quantity"
+        "quantity": "Quantity",
+        "total": "Total"
       }
     },
     "bulk_order": {

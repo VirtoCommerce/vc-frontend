@@ -1,9 +1,7 @@
 <template>
   <div class="vc-cart-line-items">
     <!-- table header -->
-    <div
-      class="vc-cart-line-items__header gap-x-3 px-4 py-3 border rounded-t text-sm font-bold hidden md:grid md:bg-white"
-    >
+    <div class="vc-cart-line-items__header gap-x-3 px-4 py-3 border rounded-t text-sm font-bold hidden md:grid">
       <div class="vc-cart-line-items__product">
         {{ $t("shared.checkout.cart_line_items.product") }}
       </div>
@@ -13,18 +11,21 @@
       <div class="vc-cart-line-items__price hidden xl:block pr-4 text-right">
         {{ $t("shared.checkout.cart_line_items.price_per_item") }}
       </div>
-      <div class="vc-cart-line-items__quantity hidden md:block pl-4 text-left">
+      <div class="vc-cart-line-items__quantity hidden xl:block text-right">
         {{ $t("shared.checkout.cart_line_items.quantity") }}
       </div>
-      <div class="vc-cart-line-items__remove-button w-8"></div>
+      <div class="vc-cart-line-items__total text-right">
+        {{ $t("shared.checkout.cart_line_items.total") }}
+      </div>
+      <div class="vc-quote-line-items__remove-button w-8"></div>
     </div>
 
     <!-- table body -->
-    <div class="flex flex-col gap-6 md:gap-0 md:border-x md:border-b md:rounded-b md:divide-y md:bg-white">
+    <div class="flex flex-col gap-6 md:gap-0 md:border-x md:border-b md:rounded-b md:divide-y" v-if="items.length">
       <div
         v-for="item in items"
         :key="item.id"
-        class="relative border bg-white rounded shadow-t-3sm md:bg-transparent md:rounded-none md:shadow-none md:border-0"
+        class="relative border rounded shadow-t-3sm md:rounded-none md:shadow-none md:border-0"
       >
         <div
           class="vc-cart-line-items__line-item grid gap-x-2.5 pt-3 pl-3 pr-3.5 pb-4 md:p-4 md:gap-x-3 md:place-items-center"
@@ -57,6 +58,7 @@
               >
                 {{ item.name }}
               </router-link>
+
               <div class="[word-break:break-word]" v-else>
                 {{ item.name }}
               </div>
@@ -74,7 +76,9 @@
                 <div class="min-w-0 font-medium capitalize text-gray-600 md:font-bold md:text-gray-800">
                   <div class="truncate">{{ property.label }}:</div>
                 </div>
+
                 <div class="grow mb-1 h-4 border-b-2 border-gray-200 border-dotted md:hidden"></div>
+
                 <div class="min-w-0">
                   <div class="truncate font-semibold md:font-normal">
                     {{ property.value }}
@@ -85,14 +89,16 @@
 
             <!-- PRICE -->
             <div
-              class="vc-cart-line-items__price grid grid-cols-[auto_1fr_auto] gap-1.5 w-full md:grid-cols-[45%_1fr] xl:contents"
+              class="vc-cart-line-items__price grid grid grid-cols-[auto_1fr_auto] gap-1.5 w-full md:grid-cols-[45%_1fr] xl:contents"
             >
               <div
                 class="min-w-0 font-medium capitalize text-13 lg:text-xs text-gray-600 md:font-bold md:text-gray-800 xl:hidden"
               >
                 <div class="truncate">{{ $t("shared.checkout.cart_line_items.price_per_item") }}:</div>
               </div>
+
               <div class="grow mb-1 h-4 border-b-2 border-gray-200 border-dotted md:hidden"></div>
+
               <div class="xl:w-full xl:pr-4 xl:text-right">
                 <div class="text-13 font-semibold md:font-normal lg:text-xs xl:font-medium">
                   <!-- Price per item -->
@@ -110,17 +116,35 @@
             </div>
           </div>
 
-          <!-- ADD-TO-CART -->
-          <div class="vc-cart-line-items__quantity mt-3 md:mt-0 md:w-full">
-            <AddToCart :product="item.product" v-if="item.product" />
+          <!-- QUANTITY -->
+          <div class="vc-quote-line-items__quantity mt-3 md:place-self-end md:mt-0 xl:w-full xl:place-self-center">
+            <input
+              class="w-20 h-8 border rounded text-center text-sm disabled:bg-gray-100 xl:w-full disabled:text-gray-400"
+              type="number"
+              pattern="\d"
+              min="1"
+              required
+              @change="$emit('update:item', item)"
+            />
+          </div>
 
-            <div class="flex flex-wrap justify-start gap-1 mt-1.5">
-              <VcInStock
-                :is-in-stock="item.product?.availabilityData?.isInStock || false"
-                :is-available="!!item.product"
-                :quantity="item.product ? item.product.availabilityData?.availableQuantity : undefined"
-              />
+          <!-- TOTAL -->
+          <div
+            class="vc-quote-line-items__total flex flex-col justify-center items-end min-h-[32px] mt-3 md:mt-0 md:min-h-auto md:w-full"
+          >
+            <!-- Total -->
+            <div class="flex flex-wrap items-center justify-end text-right gap-x-1">
+              <div class="text-14 font-bold text-[color:var(--color-price-from)] md:hidden">
+                {{ $t("shared.checkout.cart_line_items.total") }}:
+              </div>
+
+              <div class="text-15 font-bold [word-break:break-word]">$TOTAL</div>
             </div>
+
+            <!-- Total without discount -->
+            <!--
+            <div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]">OLD PRICE</div>
+            -->
           </div>
 
           <!-- REMOVE BUTTON -->
@@ -140,9 +164,9 @@
         </div>
 
         <!-- Line item validation error -->
-        <div class="-mt-0.5 mb-3 mx-3 md:-mt-2 md:mb-2.5 md:mx-4" v-if="false">
-          <VcAlert icon type="error" text> Error message example </VcAlert>
-        </div>
+        <VcAlert class="-mt-0.5 mb-3 mx-3 md:-mt-2 md:mb-2.5 md:mx-4" icon type="error" text>
+          Error message example
+        </VcAlert>
       </div>
     </div>
   </div>
@@ -174,31 +198,33 @@ const extendedItems = computed<
 .vc-cart-line-items {
   &__header {
     @media (min-width: theme("screens.md")) {
-      grid-template-columns: 200px 1fr 170px min-content;
-      grid-template-areas: "product properties quantity remove-button";
+      grid-template-columns: 250px 1fr 100px min-content;
+      grid-template-areas: "product properties total remove-button";
     }
 
     @media (min-width: theme("screens.xl")) {
-      grid-template-columns: 250px 1fr 120px 207px min-content;
-      grid-template-areas: "product properties price quantity remove-button";
+      grid-template-columns: 250px 1fr 120px 88px 100px min-content;
+      grid-template-areas: "product properties price quantity total remove-button";
     }
   }
 
   &__line-item {
     grid-template-areas:
-      "img name"
-      "img props"
-      "img quantity";
-    grid-template-columns: 64px 1fr;
+      "img name name"
+      "img props props"
+      "img quantity total";
+    grid-template-columns: 64px auto 1fr;
 
     @media (min-width: theme("screens.md")) {
-      grid-template-areas: "product props quantity remove-button";
-      grid-template-columns: 200px 1fr 170px min-content;
+      grid-template-areas:
+        "product props quantity remove-button"
+        "product props total remove-button";
+      grid-template-columns: 250px 1fr 100px min-content;
     }
 
     @media (min-width: theme("screens.xl")) {
-      grid-template-areas: "product properties price quantity remove-button";
-      grid-template-columns: 250px 1fr 120px 207px min-content;
+      grid-template-areas: "product properties price quantity total remove-button";
+      grid-template-columns: 250px 1fr 120px 88px 100px min-content;
     }
   }
 
@@ -222,8 +248,20 @@ const extendedItems = computed<
     grid-area: properties;
   }
 
+  &__total {
+    grid-area: total;
+  }
+
   &__quantity {
     grid-area: quantity;
+  }
+
+  &__price {
+    grid-area: price;
+  }
+
+  &__remove-button {
+    grid-area: remove-button;
   }
 }
 </style>
