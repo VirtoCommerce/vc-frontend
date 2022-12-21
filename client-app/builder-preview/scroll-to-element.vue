@@ -11,7 +11,7 @@ defineProps({
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .empty-block-for-scroll-to {
   margin: 0 !important;
   padding: 0 !important;
