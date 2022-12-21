@@ -239,7 +239,7 @@ import { computedEager } from "@vueuse/core";
 import { useField } from "vee-validate";
 import * as yup from "yup";
 import { MemberAddressType } from "@/xapi";
-import { AddressType, getAddressName, ISortInfo, usePageHead, XApiPermissions } from "@/core";
+import { AddressType, ISortInfo, usePageHead, XApiPermissions } from "@/core";
 import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddOrUpdateCompanyAddressDialog, useOrganization, useOrganizationAddresses } from "@/shared/company";
@@ -360,7 +360,7 @@ async function openDeleteAddressDialog(address: MemberAddressType) {
         await removeAddresses([address]);
 
         notifications.success({
-          text: t("pages.company.info.address_deletion_successful_message", { addressName: getAddressName(address) }),
+          text: t("pages.company.info.address_deletion_successful_message"),
           duration: 10000,
           single: true,
         });
@@ -391,9 +391,7 @@ async function openAddOrUpdateCompanyAddressDialog(address?: MemberAddressType):
         await addOrUpdateAddresses([updatedAddress]);
 
         notifications.success({
-          text: t("pages.company.info.address_saved_successful_message", {
-            addressName: getAddressName(updatedAddress),
-          }),
+          text: t("pages.company.info.address_saved_successful_message"),
           duration: 10000,
           single: true,
         });
