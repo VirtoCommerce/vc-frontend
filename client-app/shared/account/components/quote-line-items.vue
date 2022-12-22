@@ -196,7 +196,7 @@ import { computed, PropType } from "vue";
 import { sumBy } from "lodash";
 import { Property, QuoteItemType } from "@/xapi";
 import { VcPriceDisplay } from "@/ui-kit/components";
-import { prepareExtendedLineItems } from "@/shared/account";
+import { getExtendedQuoteItem } from "@/shared/account";
 import { RouteLocationRaw } from "vue-router";
 
 const props = defineProps({
@@ -214,7 +214,7 @@ defineEmits(["remove:item", "update:item"]);
 
 const extendedItems = computed<
   Record<string, { isProductExists: boolean; route: RouteLocationRaw; properties: Property[] }>
->(() => prepareExtendedLineItems(props.items));
+>(() => props.items.reduce((result, item: QuoteItemType) => Object.assign(result, getExtendedQuoteItem(item)), {}));
 
 const subtotal = computed<number>(() =>
   sumBy(props.items, (item: QuoteItemType) => item.selectedTierPrice!.price!.amount * item.selectedTierPrice!.quantity)

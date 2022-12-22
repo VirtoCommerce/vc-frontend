@@ -89,7 +89,7 @@
 
             <!-- PRICE -->
             <div
-              class="vc-cart-line-items__price grid grid grid-cols-[auto_1fr_auto] gap-1.5 w-full md:grid-cols-[45%_1fr] xl:contents"
+              class="vc-cart-line-items__price grid grid-cols-[auto_1fr_auto] gap-1.5 w-full md:grid-cols-[45%_1fr] xl:contents"
             >
               <div
                 class="min-w-0 font-medium capitalize text-13 lg:text-xs text-gray-600 md:font-bold md:text-gray-800 xl:hidden"
@@ -118,14 +118,27 @@
 
           <!-- QUANTITY -->
           <div class="vc-quote-line-items__quantity mt-3 md:place-self-end md:mt-0 xl:w-full xl:place-self-center">
+            <!-- Is product exists - is not only about catalog persistance -->
             <input
+              v-model="item.quantity"
+              :disabled="!extendedItems[item.id].isProductExists"
+              :min="item.product?.minQuantity || 1"
+              :max="item.product?.maxQuantity || item.inStockQuantity || 99999"
               class="w-20 h-8 border rounded text-center text-sm disabled:bg-gray-100 xl:w-full disabled:text-gray-400"
               type="number"
               pattern="\d"
-              min="1"
               required
-              @change="$emit('update:item', item)"
+              @keyup.enter="$emit('update:item', item.id, item.quantity)"
+              @blur="$emit('update:item', item.id, item.quantity)"
             />
+
+            <div class="flex flex-wrap justify-center gap-1 mt-1.5">
+              <VcInStock
+                :is-in-stock="(item.inStockQuantity && item.inStockQuantity >= item.quantity!) || true"
+                :is-available="extendedItems[item.id].isProductExists"
+                :quantity="item.inStockQuantity"
+              />
+            </div>
           </div>
 
           <!-- TOTAL -->
@@ -138,13 +151,10 @@
                 {{ $t("shared.checkout.cart_line_items.total") }}:
               </div>
 
-              <div class="text-15 font-bold [word-break:break-word]">$TOTAL</div>
+              <div class="text-15 font-bold [word-break:break-word]">
+                <VcPriceDisplay :value="item.extendedPrice" />
+              </div>
             </div>
-
-            <!-- Total without discount -->
-            <!--
-            <div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]">OLD PRICE</div>
-            -->
           </div>
 
           <!-- REMOVE BUTTON -->
@@ -177,8 +187,7 @@ import { computed, PropType } from "vue";
 import { RouteLocationRaw } from "vue-router";
 import { Property, LineItemType } from "@/xapi";
 import { VcPriceDisplay } from "@/ui-kit/components";
-import { AddToCart } from "@/shared/cart";
-import { prepareExtendedLineItems } from "@/shared/checkout";
+import { getExtendedCartItem } from "@/shared/checkout";
 
 const props = defineProps({
   items: {
@@ -191,7 +200,7 @@ defineEmits(["remove:item", "update:item"]);
 
 const extendedItems = computed<
   Record<string, { isProductExists: boolean; route: RouteLocationRaw; properties: Property[] }>
->(() => prepareExtendedLineItems(props.items));
+>(() => props.items.reduce((result, item: LineItemType) => Object.assign(result, getExtendedCartItem(item)), {}));
 </script>
 
 <style scoped lang="scss">

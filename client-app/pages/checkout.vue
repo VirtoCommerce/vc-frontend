@@ -88,7 +88,7 @@
               <CartLineItems
                 :items="cartItems ?? []"
                 :read-only="creatingOrder || creatingQuote"
-                @update:quantity="changeItemQuantity"
+                @update:item="changeItemQuantity"
                 @remove:item="removeItemButtonClick"
               />
 
