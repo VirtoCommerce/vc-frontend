@@ -14,6 +14,22 @@ fragment orderLineItemFields on OrderLineItemType {
       id
       slug
     }
+    properties {
+      name
+      value
+      type
+      hidden
+      valueType
+      label
+    }
+    vendor {
+      id
+      name
+      rating {
+        value
+        reviewCount
+      }
+    }
   }
   quantity
   sku
@@ -29,4 +45,5 @@ fragment orderLineItemFields on OrderLineItemType {
   discountTotal {
     ...moneyFields
   }
+  outerId
 }

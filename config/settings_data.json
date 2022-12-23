@@ -32,6 +32,7 @@
       },
       "image_carousel_in_product_card_enabled": true,
       "orders_statuses": ["New", "Processing", "Pending", "Cancelled", "Completed"],
+      "orders_split_by_vendors": true,
       "social_sharing_services": [
         {
           "name": "Facebook",
@@ -176,6 +177,7 @@
       },
       "image_carousel_in_product_card_enabled": true,
       "orders_statuses": ["New", "Processing", "Pending", "Cancelled", "Completed"],
+      "orders_split_by_vendors": false,
       "social_sharing_services": [
         {
           "name": "Facebook",

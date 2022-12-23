@@ -136,6 +136,7 @@ export interface IThemeConfigPreset {
   orders_filter_enabled?: boolean;
   orders_reorder_enabled?: boolean;
   orders_statuses?: string[];
+  orders_split_by_vendors?: boolean;
 
   social_sharing_services?: ISocialSharingService[];
   support_phone_number?: string;

@@ -894,7 +894,17 @@
           "title": "Billing address",
           "phone_label": "@:common.labels.phone{':'}",
           "email_label": "@:common.labels.email{':'}"
-        }
+        },
+        "line_items": {
+          "product": "@:common.labels.product",
+          "properties": "@:common.labels.properties",
+          "price_per_item": "@:common.labels.price_per_item",
+          "quantity": "@:common.labels.quantity",
+          "total": "@:common.labels.total",
+          "subtotal": "@:common.labels.subtotal"
+        },
+        "vendor_label": "@:shared.catalog.product_details.vendor_label",
+        "empty_vendor_label": "N/A"
       },
       "order_payment": {
         "meta": {

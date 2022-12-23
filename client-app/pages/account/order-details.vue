@@ -15,7 +15,8 @@
       </h2>
     </div>
 
-    <div class="md:flex mx-5 md:mx-0 gap-x-4">
+    <!-- Order details -->
+    <!-- <div class="md:flex mx-5 md:mx-0 gap-x-4">
       <div class="text-sm">
         <span class="font-bold">
           {{ $t("pages.account.order_details.status_label") }}
@@ -37,45 +38,53 @@
         </span>
         {{ $d(order?.createdDate, "long") }}
       </div>
-    </div>
+    </div> -->
 
     <div class="flex flex-col lg:flex-row lg:flex-nowrap lg:space-x-6">
       <!-- Main section -->
       <div class="lg:w-3/4 xl:w-4/5 flex-grow w-full">
-        <!-- My products section -->
+        <!-- Multi Orders -->
         <VcSection
-          :title="$t('pages.account.order_details.products_section.title')"
-          icon-url="/static/images/checkout/products.svg"
-          class="shadow lg:pb-11"
+          v-if="$cfg.orders_split_by_vendors"
+          class="-mx-5 md:mx-0 lg:shadow-md-x lg:pt-5 lg:px-7"
+          :withTitle="false"
         >
-          <div class="lg:ml-28 lg:mr-11 lg:border lg:rounded">
-            <!-- Product card -->
-            <ProductCard v-for="item in orderItems" :key="item?.id" :line-item="item" :read-only="true"></ProductCard>
-
-            <div v-if="pages > 1" class="py-8 lg:flex lg:items-center lg:px-5">
-              <VcPagination
-                v-model:page="page"
-                :pages="pages"
-                class="mb-3 lg:mb-0"
-                @update:page="onUpdatePage()"
-              ></VcPagination>
+          <!-- Orders -->
+          <div
+            v-for="order in splitOrders"
+            :key="order.vendorId"
+            class="bg-white shadow-light-lg mb-4 px-7 pt-4 lg:mb-0 lg:pb-5 lg:px-0 lg:pt-0 lg:rounded lg:shadow-none"
+          >
+            <!-- Vendor -->
+            <div class="pb-3 font-extrabold text-15">
+              <span>{{ $t("pages.account.order_details.vendor_label") }}: </span>
+              <span :class="{ 'text-[color:var(--color-link)]': order.vendorExist }">{{ order.vendor!.name }}</span>
+            </div>
+            <!-- Order products -->
+            <div class="lg:rounded">
+              <OrderLineItems :items="order.linItems" />
             </div>
           </div>
         </VcSection>
+
+        <!-- Single Order -->
+        <VcSection v-else class="-mx-5 md:mx-0 lg:shadow-md-x lg:pt-5 lg:px-7" :withTitle="false">
+          <div class="bg-white shadow-light-lg mb-4 p-7 lg:mb-0 lg:pb-5 lg:px-0 lg:pt-0 lg:rounded lg:shadow-none">
+            <!-- Order products -->
+            <div class="lg:rounded"><OrderLineItems :items="orderItems!" /></div></div
+        ></VcSection>
 
         <!-- Gifts section -->
         <AcceptedGifts :items="giftItems" />
 
         <!-- Order comment section -->
-        <VcSection
-          v-if="order?.comment"
-          :title="$t('pages.account.order_details.order_comment_section.title')"
-          icon-url="/static/images/checkout/extra.svg"
-          class="shadow-inner pb-8 lg:shadow"
-        >
-          <div class="ml-24 mr-5 lg:ml-28 lg:mr-11">
-            <p class="break-words" v-for="line in order?.comment?.split('\n')" :key="line">{{ line }}</p>
-          </div>
+        <VcSection v-if="order?.comment" class="shadow-inner mt-5 p-6 lg:shadow" content-classes="pt-4">
+          <template #title>
+            <h3 class="text-24 font-bold uppercase mb-4">
+              {{ $t("pages.account.order_details.order_comment_section.title") }}
+            </h3>
+          </template>
+          <p class="break-words text-15" v-for="line in order?.comment?.split('\n')" :key="line">{{ line }}</p>
         </VcSection>
 
         <div class="shadow-inner h-1 lg:hidden"></div>
@@ -216,14 +225,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType, ref, watchEffect } from "vue";
+import { computed, inject, PropType, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { usePageHead } from "@/core";
-import { InputNewBulkItemType } from "@/xapi";
-import { AcceptedGifts, OrderSummary, ProductCard } from "@/shared/checkout";
+import { configInjectionKey, usePageHead } from "@/core";
+import { InputNewBulkItemType, OrderLineItemType, Vendor } from "@/xapi";
+import { AcceptedGifts, OrderSummary } from "@/shared/checkout";
 import { BackButtonInHeader } from "@/shared/layout";
-import { useUserOrder } from "@/shared/account";
+import { useUserOrder, OrderLineItems } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddBulkItemsToCartResultsPopup, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
 
@@ -240,7 +249,7 @@ const props = defineProps({
 });
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { itemsPerPage, pages, order, deliveryAddress, billingAddress, fetchOrder, clearOrder } = useUserOrder();
+const { order, deliveryAddress, billingAddress, fetchOrder, clearOrder } = useUserOrder();
 const { addBulkItemsToCart } = useCart();
 const { openPopup } = usePopup();
 const { t } = useI18n();
@@ -250,7 +259,6 @@ usePageHead({
 });
 
 const isMobile = breakpoints.smaller("lg");
-const page = ref(1);
 const loadingAddItemsToCart = ref(false);
 
 const isNew = computed<boolean>(() => props.new === "true");
@@ -259,11 +267,36 @@ const showPaymentButton = computed<boolean>(() => !!order.value && !order.value.
 
 const giftItems = computed(() => order.value?.items?.filter((item) => item.isGift));
 
-const orderItems = computed(() =>
-  order.value?.items
-    ?.filter((item) => !item.isGift)
-    ?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
-);
+const config = inject(configInjectionKey);
+const splitOrder = config?.orders_split_by_vendors || false;
+const emptyVendorName = t("pages.account.order_details.empty_vendor_label");
+const orderItems = computed(() => (splitOrder ? [] : order.value?.items?.filter((item) => !item.isGift)));
+const splitOrders = computed(() => {
+  if (splitOrder) {
+    const vendors: Array<{
+      vendorId: string;
+      vendorExist: boolean;
+      vendor: Vendor | undefined;
+      linItems: OrderLineItemType[];
+    }> = [];
+
+    order.value?.items.forEach((lineItem: OrderLineItemType) => {
+      const vendorId = lineItem.product?.vendor?.id || emptyVendorName;
+      const index = vendors.findIndex((item) => item.vendorId === vendorId);
+      index === -1
+        ? vendors.push({
+            vendorId: vendorId,
+            vendorExist: !!lineItem.product?.vendor,
+            vendor: lineItem.product?.vendor || ({ name: emptyVendorName } as Vendor),
+            linItems: [lineItem],
+          })
+        : vendors[index].linItems.push(lineItem);
+    });
+    return vendors;
+  } else {
+    return [];
+  }
+});
 
 const breadcrumbs = computed<IBreadcrumbs[]>(() => [
   { title: t("common.links.home"), route: { name: "Home" } },
@@ -298,11 +331,4 @@ watchEffect(() => {
   clearOrder();
   fetchOrder({ id: props.orderId });
 });
-
-/**
- * Scroll after page change.
- */
-function onUpdatePage() {
-  window.scroll({ top: 0, behavior: "smooth" });
-}
 </script>
