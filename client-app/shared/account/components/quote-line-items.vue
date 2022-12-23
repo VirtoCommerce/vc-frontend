@@ -23,7 +23,7 @@
     <!-- table body -->
     <div class="flex flex-col gap-6 md:gap-0 md:border-x md:divide-y" v-if="items.length">
       <div
-        v-for="item in items"
+        v-for="item in extendedItems"
         :key="item.id"
         class="relative border rounded shadow-t-3sm md:rounded-none md:shadow-none md:border-0"
       >
@@ -34,7 +34,7 @@
             <!--  IMAGE -->
             <div
               class="vc-quote-line-items__img shrink-0 w-16 h-16 md:w-[60px] md:h-[60px]"
-              :class="{ 'opacity-25': !extendedItems[item.id].isProductExists }"
+              :class="{ 'opacity-25': !item.isProductExists }"
             >
               <VcImage
                 :src="item.imageUrl"
@@ -48,11 +48,11 @@
             <!-- NAME -->
             <div
               class="vc-quote-line-items__name text-sm font-extrabold md:grow lg:text-13 lg:leading-4 lg:font-bold"
-              :class="{ 'opacity-25': !extendedItems[item.id].isProductExists }"
+              :class="{ 'opacity-25': !item.isProductExists }"
             >
               <router-link
-                v-if="extendedItems[item.id].route"
-                :to="extendedItems[item.id].route"
+                v-if="item.route"
+                :to="item.route"
                 :title="item.name"
                 class="text-[color:var(--color-link)] [word-break:break-word]"
               >
@@ -70,7 +70,7 @@
             <div class="vc-quote-line-items__properties w-full">
               <div
                 class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[33%_1fr] lg:text-xs"
-                v-for="property in extendedItems[item.id].properties"
+                v-for="property in item.displayProperties"
                 :key="property.id"
               >
                 <div class="min-w-0 font-medium capitalize text-gray-600 md:font-bold md:text-gray-800">
@@ -89,7 +89,7 @@
 
             <!-- PRICE -->
             <div
-              class="vc-quote-line-items__price grid grid-cols-[auto_1fr_auto] gap-1.5 w-full md:grid-cols-[33%_1fr] xl:contents"
+              class="vc-quote-line-items__price grid grid-cols-[auto_1fr_auto] gap-1.5 w-full md:grid-cols-[45%_1fr] xl:contents"
             >
               <div
                 class="min-w-0 font-medium capitalize text-13 lg:text-xs text-gray-600 md:font-bold md:text-gray-800 xl:hidden"
@@ -193,11 +193,10 @@
 
 <script setup lang="ts">
 import { computed, PropType } from "vue";
-import { RouteLocationRaw } from "vue-router";
 import { sumBy } from "lodash";
-import { Property, QuoteItemType } from "@/xapi";
+import { QuoteItemType } from "@/xapi";
 import { VcPriceDisplay } from "@/ui-kit/components";
-import { getProductRoute } from "@/core";
+import { extendQuoteItem } from "@/shared/account";
 
 const props = defineProps({
   items: {
@@ -212,21 +211,8 @@ const props = defineProps({
 
 defineEmits(["remove:item", "update:item"]);
 
-const extendedItems = computed<
-  Record<string, { isProductExists: boolean; route: RouteLocationRaw; properties: Property[] }>
->(() =>
-  props.items.reduce(
-    (result, item: QuoteItemType) =>
-      Object.assign(result, {
-        [item.id]: {
-          isProductExists: !!item.product,
-          route: getProductRoute(item.productId, item.product?.slug),
-          properties: item.product?.properties?.slice(0, 3),
-        },
-      }),
-    {}
-  )
-);
+const extendedItems = computed(() => props.items.map((item: QuoteItemType) => extendQuoteItem(item)));
+
 const subtotal = computed<number>(() =>
   sumBy(props.items, (item: QuoteItemType) => item.selectedTierPrice!.price!.amount * item.selectedTierPrice!.quantity)
 );

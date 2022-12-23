@@ -26,6 +26,7 @@
     "@popperjs/core": "^2.11.6",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/line-clamp": "^0.4.2",
+    "@vee-validate/rules": "^4.7.3",
     "@vueuse/components": "^9.5.0",
     "@vueuse/core": "^9.5.0",
     "@vueuse/head": "^0.9.8",

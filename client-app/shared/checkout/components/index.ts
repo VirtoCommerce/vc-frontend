@@ -7,3 +7,4 @@ export { default as SelectAddressDialog } from "./select-address-dialog.vue";
 export { default as AddOrUpdateAddressDialog } from "./add-or-update-address-dialog.vue";
 export { default as AcceptedGifts } from "./accepted-gifts.vue";
 export { default as ClearCartDialog } from "./clear-cart-dialog.vue";
+export { default as CartLineItems } from "./cart-line-items.vue";
