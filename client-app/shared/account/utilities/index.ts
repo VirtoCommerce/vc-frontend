@@ -1,5 +1,5 @@
 import { getProductRoute } from "@/core";
-import { QuoteItemType } from "@/xapi";
+import { OrderLineItemType, QuoteItemType } from "@/xapi";
 
 export function extendQuoteItem(item: QuoteItemType) {
   return {
@@ -7,5 +7,14 @@ export function extendQuoteItem(item: QuoteItemType) {
     isProductExists: !!item.product,
     route: getProductRoute(item.product?.id ?? "", item.product?.slug),
     displayProperties: item.product?.properties?.slice(0, 3) || [],
+  };
+}
+
+export function extendOrderItem(item: OrderLineItemType) {
+  return {
+    ...item,
+    isProductExists: !!item.product,
+    route: getProductRoute(item.productId, item.product?.slug),
+    displayProperties: item.product?.properties?.slice(0, 3),
   };
 }

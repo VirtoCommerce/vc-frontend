@@ -51,7 +51,7 @@
         >
           <!-- Orders -->
           <div
-            v-for="order in splitOrders"
+            v-for="order in splitOrder"
             :key="order.vendorId"
             class="bg-white shadow-light-lg mb-4 px-7 pt-4 lg:mb-0 lg:pb-5 lg:px-0 lg:pt-0 lg:rounded lg:shadow-none"
           >
@@ -268,11 +268,11 @@ const showPaymentButton = computed<boolean>(() => !!order.value && !order.value.
 const giftItems = computed(() => order.value?.items?.filter((item) => item.isGift));
 
 const config = inject(configInjectionKey);
-const splitOrder = config?.orders_split_by_vendors || false;
+const splitOrderByVendor = config?.orders_split_by_vendors || false;
 const emptyVendorName = t("pages.account.order_details.empty_vendor_label");
-const orderItems = computed(() => (splitOrder ? [] : order.value?.items?.filter((item) => !item.isGift)));
-const splitOrders = computed(() => {
-  if (splitOrder) {
+const orderItems = computed(() => (splitOrderByVendor ? [] : order.value?.items?.filter((item) => !item.isGift)));
+const splitOrder = computed(() => {
+  if (splitOrderByVendor) {
     const vendors: Array<{
       vendorId: string;
       vendorExist: boolean;
