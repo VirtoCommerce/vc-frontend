@@ -23,160 +23,181 @@
     <!-- table body -->
     <div class="flex flex-col gap-6 md:gap-0 md:border-x md:border-b md:rounded-b md:divide-y" v-if="items.length">
       <div
-        v-for="item in items"
+        v-for="item in extendedItems"
         :key="item.id"
         class="relative border rounded shadow-t-3sm md:rounded-none md:shadow-none md:border-0"
       >
-        <div
-          class="vc-cart-line-items__line-item grid gap-x-2.5 pt-3 pl-3 pr-3.5 pb-4 md:p-4 md:gap-x-3 md:place-items-center"
-        >
-          <div class="contents vc-cart-line-items__product md:flex md:gap-3 md:w-full">
-            <!--  IMAGE -->
-            <div
-              class="vc-cart-line-items__img shrink-0 w-16 h-16 md:w-[60px] md:h-[60px]"
-              :class="{ 'opacity-25': !extendedItems[item.id].isProductExists }"
-            >
-              <VcImage
-                :src="item.imageUrl"
-                :alt="item.name"
-                size-suffix="sm"
-                class="w-full h-full object-cover object-center"
-                lazy
-              />
-            </div>
-
-            <!-- NAME -->
-            <div
-              class="vc-cart-line-items__name text-sm font-extrabold md:grow lg:text-13 lg:leading-4 lg:font-bold"
-              :class="{ 'opacity-25': !extendedItems[item.id].isProductExists }"
-            >
-              <router-link
-                v-if="extendedItems[item.id].route"
-                :to="extendedItems[item.id].route"
-                :title="item.name"
-                class="text-[color:var(--color-link)] [word-break:break-word]"
+        <Form v-slot="{ meta }">
+          <div
+            class="vc-cart-line-items__line-item grid gap-x-2.5 pt-3 pl-3 pr-3.5 pb-4 md:p-4 md:gap-x-3 md:place-items-center"
+          >
+            <div class="contents vc-cart-line-items__product md:flex md:gap-3 md:w-full">
+              <!--  IMAGE -->
+              <div
+                class="vc-cart-line-items__img shrink-0 w-16 h-16 md:w-[60px] md:h-[60px]"
+                :class="{ 'opacity-25': !item.isProductExists }"
               >
-                {{ item.name }}
-              </router-link>
+                <VcImage
+                  :src="item.imageUrl"
+                  :alt="item.name"
+                  size-suffix="sm"
+                  class="w-full h-full object-cover object-center"
+                  lazy
+                />
+              </div>
 
-              <div class="[word-break:break-word]" v-else>
-                {{ item.name }}
+              <!-- NAME -->
+              <div
+                class="vc-cart-line-items__name text-sm font-extrabold md:grow lg:text-13 lg:leading-4 lg:font-bold"
+                :class="{ 'opacity-25': !item.isProductExists }"
+              >
+                <router-link
+                  v-if="item.route"
+                  :to="item.route"
+                  :title="item.name"
+                  class="text-[color:var(--color-link)] [word-break:break-word] hover:text-[color:var(--color-link-hover)]"
+                >
+                  {{ item.name }}
+                </router-link>
+
+                <div class="[word-break:break-word]" v-else>
+                  {{ item.name }}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="vc-cart-line-items__props w-full xl:contents">
-            <!-- PROPERTIES -->
-            <div class="vc-cart-line-items__properties w-full">
+            <div class="vc-cart-line-items__props w-full xl:contents">
+              <!-- PROPERTIES -->
+              <div class="vc-cart-line-items__properties w-full">
+                <div
+                  class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[45%_1fr] lg:text-xs"
+                  v-for="property in item.displayProperties"
+                  :key="property.id"
+                >
+                  <div class="min-w-0 font-medium capitalize text-gray-600 md:font-bold md:text-gray-800">
+                    <div class="truncate">{{ property.label }}:</div>
+                  </div>
+
+                  <div class="grow mb-1 h-4 border-b-2 border-gray-200 border-dotted md:hidden"></div>
+
+                  <div class="min-w-0">
+                    <div class="truncate font-semibold md:font-normal">
+                      {{ property.value }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- PRICE -->
               <div
-                class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[45%_1fr] lg:text-xs"
-                v-for="property in extendedItems[item.id].properties"
-                :key="property.id"
+                class="vc-cart-line-items__price grid grid-cols-[auto_1fr_auto] gap-1.5 w-full md:grid-cols-[45%_1fr] xl:contents"
               >
-                <div class="min-w-0 font-medium capitalize text-gray-600 md:font-bold md:text-gray-800">
-                  <div class="truncate">{{ property.label }}:</div>
+                <div
+                  class="min-w-0 font-medium capitalize text-13 lg:text-xs text-gray-600 md:font-bold md:text-gray-800 xl:hidden"
+                >
+                  <div class="truncate">{{ $t("shared.checkout.cart_line_items.price_per_item") }}:</div>
                 </div>
 
                 <div class="grow mb-1 h-4 border-b-2 border-gray-200 border-dotted md:hidden"></div>
 
-                <div class="min-w-0">
-                  <div class="truncate font-semibold md:font-normal">
-                    {{ property.value }}
+                <div class="xl:w-full xl:pr-4 xl:text-right">
+                  <div class="text-13 font-semibold md:font-normal lg:text-xs xl:font-medium">
+                    <!-- Price per item -->
+                    <VcPriceDisplay :value="item.placedPrice" />
+                  </div>
+
+                  <!-- Price without discount -->
+                  <div
+                    class="text-11 leading-3 line-through text-[color:var(--color-price-old)]"
+                    v-if="item.listPrice?.amount !== item.placedPrice?.amount"
+                  >
+                    <VcPriceDisplay :value="item.listPrice" />
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- PRICE -->
-            <div
-              class="vc-cart-line-items__price grid grid-cols-[auto_1fr_auto] gap-1.5 w-full md:grid-cols-[45%_1fr] xl:contents"
-            >
-              <div
-                class="min-w-0 font-medium capitalize text-13 lg:text-xs text-gray-600 md:font-bold md:text-gray-800 xl:hidden"
-              >
-                <div class="truncate">{{ $t("shared.checkout.cart_line_items.price_per_item") }}:</div>
-              </div>
-
-              <div class="grow mb-1 h-4 border-b-2 border-gray-200 border-dotted md:hidden"></div>
-
-              <div class="xl:w-full xl:pr-4 xl:text-right">
-                <div class="text-13 font-semibold md:font-normal lg:text-xs xl:font-medium">
-                  <!-- Price per item -->
-                  <VcPriceDisplay :value="item.placedPrice" />
-                </div>
-
-                <!-- Price without discount -->
-                <div
-                  class="text-11 leading-3 line-through text-[color:var(--color-price-old)]"
-                  v-if="item.listPrice?.amount !== item.placedPrice?.amount"
-                >
-                  <VcPriceDisplay :value="item.listPrice" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- QUANTITY -->
-          <div class="vc-quote-line-items__quantity mt-3 md:place-self-end md:mt-0 xl:w-full xl:place-self-center">
-            <!-- Is product exists - is not only about catalog persistance -->
-            <input
-              v-model="item.quantity"
-              :disabled="!extendedItems[item.id].isProductExists"
-              :min="item.product?.minQuantity || 1"
-              :max="item.product?.maxQuantity || item.inStockQuantity || 99999"
-              class="w-20 h-8 border rounded text-center text-sm disabled:bg-gray-100 xl:w-full disabled:text-gray-400"
-              type="number"
-              pattern="\d"
-              required
-              @keyup.enter="$emit('update:item', item.id, item.quantity)"
-              @blur="$emit('update:item', item.id, item.quantity)"
-            />
-
-            <div class="flex flex-wrap justify-center gap-1 mt-1.5">
-              <VcInStock
-                :is-in-stock="(item.inStockQuantity && item.inStockQuantity >= item.quantity!) || true"
-                :is-available="extendedItems[item.id].isProductExists"
-                :quantity="item.inStockQuantity"
+            <!-- QUANTITY -->
+            <div class="vc-quote-line-items__quantity mt-3 md:place-self-end md:mt-0 xl:w-full xl:place-self-center">
+              <!-- Is product exists - is not only about catalog persistance -->
+              <Field
+                v-model="item.quantity"
+                :name="item.id"
+                :disabled="!item.isProductExists || !item.isInStock || readOnly"
+                :class="{
+                  'border-[color:var(--color-danger)]': !meta.valid,
+                }"
+                :rules="{
+                  required: true,
+                  numeric: true,
+                  min_value: item.minQuantity,
+                  max_value: item.maxQuantity,
+                }"
+                validate-on-input
+                class="w-20 h-8 border rounded text-center text-sm disabled:bg-gray-100 xl:w-full disabled:text-gray-400"
+                type="number"
+                pattern="\d"
+                @keyup.enter="handleUpdate(meta.valid, item)"
+                @blur="handleUpdate(meta.valid, item)"
               />
-            </div>
-          </div>
 
-          <!-- TOTAL -->
-          <div
-            class="vc-quote-line-items__total flex flex-col justify-center items-end min-h-[32px] mt-3 md:mt-0 md:min-h-auto md:w-full"
-          >
-            <!-- Total -->
-            <div class="flex flex-wrap items-center justify-end text-right gap-x-1">
-              <div class="text-14 font-bold text-[color:var(--color-price-from)] md:hidden">
-                {{ $t("shared.checkout.cart_line_items.total") }}:
-              </div>
-
-              <div class="text-15 font-bold [word-break:break-word]">
-                <VcPriceDisplay :value="item.extendedPrice" />
+              <div class="flex flex-wrap justify-center gap-1 mt-1.5">
+                <VcInStock
+                  :is-in-stock="item.isInStock"
+                  :is-available="item.isProductExists"
+                  :quantity="item.inStockQuantity"
+                />
               </div>
             </div>
-          </div>
 
-          <!-- REMOVE BUTTON -->
-          <div
-            class="vc-cart-line-items__remove-button absolute -top-3 -right-3 md:static md:flex md:justify-end md:w-8"
-          >
-            <button
-              type="button"
-              class="flex items-center justify-center h-[26px] w-[26px] rounded-full border bg-white text-[color:var(--color-danger)] md:border-2 md:w-7 md:h-7 md:rounded hover:bg-gray-100"
-              @click="$emit('remove:item', item)"
+            <!-- TOTAL -->
+            <div
+              class="vc-quote-line-items__total flex flex-col justify-center items-end min-h-[32px] mt-3 md:mt-0 md:min-h-auto md:w-full"
             >
-              <svg class="w-3.5 h-3.5">
-                <use href="/static/images/delete.svg#main"></use>
-              </svg>
-            </button>
-          </div>
-        </div>
+              <!-- Total -->
+              <div class="flex flex-wrap items-center justify-end text-right gap-x-1">
+                <div class="text-14 font-bold text-[color:var(--color-price-from)] md:hidden">
+                  {{ $t("shared.checkout.cart_line_items.total") }}:
+                </div>
 
-        <!-- Line item validation error -->
-        <VcAlert class="-mt-0.5 mb-3 mx-3 md:-mt-2 md:mb-2.5 md:mx-4" icon type="error" text>
-          Error message example
-        </VcAlert>
+                <div class="text-15 font-bold [word-break:break-word]">
+                  <VcPriceDisplay :value="item.extendedPrice" />
+                </div>
+              </div>
+            </div>
+
+            <!-- REMOVE BUTTON -->
+            <div
+              class="vc-cart-line-items__remove-button absolute -top-3 -right-3 md:static md:flex md:justify-end md:w-8"
+            >
+              <button
+                type="button"
+                class="flex items-center justify-center h-[26px] w-[26px] rounded-full border bg-white text-[color:var(--color-danger)] md:border-2 md:w-7 md:h-7 md:rounded hover:bg-gray-100"
+                @click="$emit('remove:item', item)"
+              >
+                <svg class="w-3.5 h-3.5">
+                  <use href="/static/images/delete.svg#main"></use>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Line item validation error -->
+          <ErrorMessage :name="item.id" v-slot="{ message }">
+            <VcAlert class="-mt-0.5 mb-3 mx-3 md:-mt-2 md:mb-2.5 md:mx-4" type="error" icon text v-if="message">
+              {{ message }}
+            </VcAlert>
+          </ErrorMessage>
+          <VcAlert
+            class="-mt-0.5 mb-3 mx-3 md:-mt-2 md:mb-2.5 md:mx-4"
+            icon
+            text
+            type="error"
+            v-if="!item.isProductExists"
+          >
+            {{ $t("common.messages.product_no_longer_available") }}
+          </VcAlert>
+        </Form>
       </div>
     </div>
   </div>
@@ -184,23 +205,55 @@
 
 <script setup lang="ts">
 import { computed, PropType } from "vue";
-import { RouteLocationRaw } from "vue-router";
-import { Property, LineItemType } from "@/xapi";
+import { LineItemType } from "@/xapi";
 import { VcPriceDisplay } from "@/ui-kit/components";
-import { getExtendedCartItem } from "@/shared/checkout";
+import { extendCartItem } from "@/shared/checkout";
+import { configure, defineRule, ErrorMessage, Field, Form } from "vee-validate";
+import { required, numeric, min_value, max_value } from "@vee-validate/rules";
+import { useI18n } from "vue-i18n";
 
 const props = defineProps({
   items: {
     type: Array as PropType<LineItemType[]>,
     required: true,
   },
+  readOnly: {
+    type: Boolean,
+  },
 });
 
-defineEmits(["remove:item", "update:item"]);
+const emit = defineEmits(["remove:item", "update:item"]);
 
-const extendedItems = computed<
-  Record<string, { isProductExists: boolean; route: RouteLocationRaw; properties: Property[] }>
->(() => props.items.reduce((result, item: LineItemType) => Object.assign(result, getExtendedCartItem(item)), {}));
+defineRule("required", required);
+defineRule("numeric", numeric);
+defineRule("min_value", min_value);
+defineRule("max_value", max_value);
+
+const { t } = useI18n();
+
+configure({
+  generateMessage: (context: any) => {
+    const messageParam = context.rule?.params[0];
+    switch (context.rule?.name) {
+      case "required":
+        return t("common.messages.item_quantity_required_field");
+      case "min_value":
+        return t("common.messages.min_value", { value: messageParam });
+      case "max_value":
+        return t("common.messages.max_value", { value: messageParam });
+      default:
+        return t("common.messages.invalid_value");
+    }
+  },
+});
+
+const extendedItems = computed(() => props.items.map((item: LineItemType) => extendCartItem(item)));
+
+function handleUpdate(isValid: boolean, item: LineItemType): void {
+  if (isValid) {
+    emit("update:item", item.id, Number(item.quantity));
+  }
+}
 </script>
 
 <style scoped lang="scss">

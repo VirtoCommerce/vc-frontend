@@ -76,7 +76,10 @@
       "item_can_t_be_purchased": "This item cannot be purchased",
       "item_is_out_of_stock": "This item is out of stock",
       "invalid_value": "Invalid value",
-      "product_no_longer_available": "No longer available"
+      "product_no_longer_available": "No longer available",
+      "item_quantity_required_field": "Item quantity value cannot be null",
+      "max_value": "Maximum value is {value}",
+      "min_value": "Minimum value is {value}"
     },
     "placeholders": {
       "not_selected": "Not selected",

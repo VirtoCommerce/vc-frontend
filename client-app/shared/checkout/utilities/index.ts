@@ -1,15 +1,14 @@
 import { getProductRoute } from "@/core";
-import { Property, LineItemType } from "@/xapi";
-import { RouteLocationRaw } from "vue-router";
+import { LineItemType } from "@/xapi";
 
-export function getExtendedCartItem(
-  item: LineItemType
-): Record<string, { isProductExists: boolean; route: RouteLocationRaw; properties: Property[] }> {
+export function extendCartItem(item: LineItemType) {
   return {
-    [item.id]: {
-      isProductExists: !!item.product,
-      route: getProductRoute(item.product?.id ?? "", item.product?.slug),
-      properties: item.product?.properties?.slice(0, 3) || [],
-    },
+    ...item,
+    isProductExists: !!item.product,
+    route: getProductRoute(item.product?.id ?? "", item.product?.slug),
+    displayProperties: item.product?.properties?.slice(0, 3) || [],
+    isInStock: item.inStockQuantity && item.inStockQuantity >= item.quantity!,
+    minQuantity: item.product?.minQuantity || 1,
+    maxQuantity: item.inStockQuantity || item.product?.maxQuantity || 999999,
   };
 }

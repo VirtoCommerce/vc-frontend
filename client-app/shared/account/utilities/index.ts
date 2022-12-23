@@ -1,15 +1,11 @@
 import { getProductRoute } from "@/core";
-import { Property, QuoteItemType } from "@/xapi";
-import { RouteLocationRaw } from "vue-router";
+import { QuoteItemType } from "@/xapi";
 
-export function getExtendedQuoteItem(
-  item: QuoteItemType
-): Record<string, { isProductExists: boolean; route: RouteLocationRaw; properties: Property[] }> {
+export function extendQuoteItem(item: QuoteItemType) {
   return {
-    [item.id]: {
-      isProductExists: !!item.product,
-      route: getProductRoute(item.product?.id ?? "", item.product?.slug),
-      properties: item.product?.properties?.slice(0, 3) || [],
-    },
+    ...item,
+    isProductExists: !!item.product,
+    route: getProductRoute(item.product?.id ?? "", item.product?.slug),
+    displayProperties: item.product?.properties?.slice(0, 3) || [],
   };
 }
