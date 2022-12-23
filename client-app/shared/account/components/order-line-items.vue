@@ -201,13 +201,13 @@ const subtotal = computed<number>(() => sumBy(props.items, (item: OrderLineItemT
 .vc-order-line-items {
   &__header {
     @media (min-width: theme("screens.md")) {
-      grid-template-columns: 250px 1fr 100px min-content;
-      grid-template-areas: "product properties total remove-button";
+      grid-template-columns: 250px 1fr 100px;
+      grid-template-areas: "product properties total";
     }
 
     @media (min-width: theme("screens.xl")) {
-      grid-template-columns: 250px 1fr 120px 88px 100px min-content;
-      grid-template-areas: "product properties price quantity total remove-button";
+      grid-template-columns: 250px 1fr 120px 88px 100px;
+      grid-template-areas: "product properties price quantity total";
     }
   }
 
@@ -220,14 +220,14 @@ const subtotal = computed<number>(() => sumBy(props.items, (item: OrderLineItemT
 
     @media (min-width: theme("screens.md")) {
       grid-template-areas:
-        "product props quantity remove-button"
-        "product props total remove-button";
-      grid-template-columns: 250px 1fr 100px min-content;
+        "product props quantity"
+        "product props total";
+      grid-template-columns: 250px 1fr 100px;
     }
 
     @media (min-width: theme("screens.xl")) {
-      grid-template-areas: "product properties price quantity total remove-button";
-      grid-template-columns: 250px 1fr 120px 88px 100px min-content;
+      grid-template-areas: "product properties price quantity total";
+      grid-template-columns: 250px 1fr 120px 88px 100px;
     }
   }
 
@@ -261,10 +261,6 @@ const subtotal = computed<number>(() => sumBy(props.items, (item: OrderLineItemT
 
   &__price {
     grid-area: price;
-  }
-
-  &__remove-button {
-    grid-area: remove-button;
   }
 }
 </style>
