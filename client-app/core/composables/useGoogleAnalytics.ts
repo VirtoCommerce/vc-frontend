@@ -134,6 +134,17 @@ function beginCheckout(cart: CartType, params?: TEventParamsForList): void {
   });
 }
 
+function addShippingInfo(cart: CartType, params?: TEventParamsForList): void {
+  sendEvent("add_shipping_info", {
+    ...params,
+    currency: cart.total?.currency?.code,
+    value: cart.total?.amount,
+    shipping_tier: cart.shipments?.[0].shipmentMethodOption,
+    coupon: cart.coupons?.[0],
+    items: cart.items!.map(lineItemToGtagItem),
+  });
+}
+
 export default () => ({
   isAvailableGtag,
   sendEvent,
@@ -144,4 +155,5 @@ export default () => ({
   removeItemFromCart,
   viewCart,
   beginCheckout,
+  addShippingInfo,
 });
