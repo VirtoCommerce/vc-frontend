@@ -45,24 +45,26 @@
       <div class="lg:w-3/4 xl:w-4/5 flex-grow w-full">
         <!-- Multi Orders -->
         <VcSection
-          v-if="$cfg.orders_split_by_vendors"
+          v-if="$cfg.line_items_group_by_vendor_enabled"
           class="-mx-5 md:mx-0 lg:shadow-md-x lg:pt-5 lg:px-7"
           :withTitle="false"
         >
           <!-- Orders -->
           <div
-            v-for="order in splitOrder"
-            :key="order.vendorId"
+            v-for="vendor in vendors"
+            :key="vendor.vendorId"
             class="bg-white shadow-light-lg mb-4 px-7 pt-4 lg:mb-0 lg:pb-5 lg:px-0 lg:pt-0 lg:rounded lg:shadow-none"
           >
             <!-- Vendor -->
             <div class="pb-3 font-extrabold text-15">
               <span>{{ $t("pages.account.order_details.vendor_label") }}: </span>
-              <span :class="{ 'text-[color:var(--color-link)]': order.vendorExist }">{{ order.vendor!.name }}</span>
+              <span v-if="vendor.vendorData" :class="{ 'text-[color:var(--color-link)]': vendor.vendorExist }">{{
+                vendor.vendorData.name
+              }}</span>
             </div>
             <!-- Order products -->
             <div class="lg:rounded">
-              <OrderLineItems :items="order.linItems" />
+              <OrderLineItems :items="vendor.linItems" />
             </div>
           </div>
         </VcSection>
@@ -71,7 +73,7 @@
         <VcSection v-else class="-mx-5 md:mx-0 lg:shadow-md-x lg:pt-5 lg:px-7" :withTitle="false">
           <div class="bg-white shadow-light-lg mb-4 p-7 lg:mb-0 lg:pb-5 lg:px-0 lg:pt-0 lg:rounded lg:shadow-none">
             <!-- Order products -->
-            <div class="lg:rounded"><OrderLineItems :items="orderItems!" /></div></div
+            <div v-if="orderItems" class="lg:rounded"><OrderLineItems :items="orderItems" /></div></div
         ></VcSection>
 
         <!-- Gifts section -->
@@ -281,31 +283,31 @@ const showReorderButton = computed<boolean>(() => !!order.value && order.value.s
 const giftItems = computed(() => order.value?.items?.filter((item) => item.isGift));
 
 const config = inject(configInjectionKey);
-const splitOrderByVendor = config?.orders_split_by_vendors || false;
+const groupItemsByVendor = config?.line_items_group_by_vendor_enabled || false;
 const emptyVendorName = t("pages.account.order_details.empty_vendor_label");
-const orderItems = computed(() => (splitOrderByVendor ? [] : order.value?.items?.filter((item) => !item.isGift)));
-const splitOrder = computed(() => {
-  if (splitOrderByVendor) {
-    const vendors: Array<{
+const orderItems = computed(() => (groupItemsByVendor ? [] : order.value?.items?.filter((item) => !item.isGift)));
+const vendors = computed(() => {
+  if (groupItemsByVendor) {
+    const vendorsArray: Array<{
       vendorId: string;
       vendorExist: boolean;
-      vendor: Vendor | undefined;
+      vendorData: Vendor | undefined;
       linItems: OrderLineItemType[];
     }> = [];
 
     order.value?.items.forEach((lineItem: OrderLineItemType) => {
       const vendorId = lineItem.product?.vendor?.id || emptyVendorName;
-      const index = vendors.findIndex((item) => item.vendorId === vendorId);
+      const index = vendorsArray.findIndex((item) => item.vendorId === vendorId);
       index === -1
-        ? vendors.push({
+        ? vendorsArray.push({
             vendorId: vendorId,
             vendorExist: !!lineItem.product?.vendor,
-            vendor: lineItem.product?.vendor || ({ name: emptyVendorName } as Vendor),
+            vendorData: lineItem.product?.vendor || ({ name: emptyVendorName } as Vendor),
             linItems: [lineItem],
           })
-        : vendors[index].linItems.push(lineItem);
+        : vendorsArray[index].linItems.push(lineItem);
     });
-    return vendors;
+    return vendorsArray;
   } else {
     return [];
   }
