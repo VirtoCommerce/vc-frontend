@@ -218,7 +218,7 @@
 
         <!-- US-3534 -->
         <!-- <div class="flex justify-center">
-          <VcButton kind="secondary" class="!hidden lg:!inline-flex uppercase px-3" is-outline @click="printOrder">
+          <VcButton kind="secondary" class="!hidden lg:!inline-flex uppercase px-3" is-outline @click="window.print()">
             <i class="fas fa-print mr-2" />
             {{ $t("pages.account.order_details.print_order_button") }}
           </VcButton>
@@ -317,10 +317,6 @@ const breadcrumbs = computed<IBreadcrumbs[]>(() => [
   { title: t("common.links.orders"), route: { name: "Orders" } },
   { title: t("pages.account.order_details.title", [order.value?.number]) },
 ]);
-
-// function printOrder() {
-//   window.print();
-// }
 
 async function reorderItems() {
   const items = order.value!.items!.filter((item) => !item.isGift);
