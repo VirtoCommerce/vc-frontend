@@ -4,9 +4,12 @@ import { OrderLineItemType, QuoteItemType } from "@/xapi";
 export function extendQuoteItem(item: QuoteItemType) {
   return {
     ...item,
-    isProductExists: !!item.product,
-    route: getProductRoute(item.product?.id ?? "", item.product?.slug),
-    displayProperties: item.product?.properties?.slice(0, 3) || [],
+
+    extended: {
+      isProductExists: !!item.product,
+      route: getProductRoute(item.product?.id ?? "", item.product?.slug),
+      displayProperties: item.product?.properties?.slice(0, 3) || [],
+    },
   };
 }
 
