@@ -174,18 +174,24 @@
 
         <!-- Line item validation error -->
         <VcAlert
-          v-if="!item.isProductExists || item.validationError"
+          v-if="!item.isProductExists"
           class="-mt-0.5 mb-3 mx-3 md:-mt-2 md:mb-2.5 md:mx-4"
           icon
           text
           type="error"
         >
-          <span v-if="!item.isProductExists">
-            {{ $t("common.messages.product_no_longer_available") }}
-          </span>
-          <span v-if="item.validationError">
-            {{ item.validationError.errorMessage }}
-          </span>
+          {{ $t("common.messages.product_no_longer_available") }}
+        </VcAlert>
+
+        <VcAlert
+          v-for="(validationError, index) in item.validationErrors"
+          :key="index"
+          class="-mt-0.5 mb-3 mx-3 md:-mt-2 md:mb-2.5 md:mx-4"
+          icon
+          text
+          type="error"
+        >
+          {{ validationError.errorMessage }}
         </VcAlert>
       </div>
     </div>
@@ -208,13 +214,14 @@ const props = defineProps({
   },
   validationErrors: {
     type: Array as PropType<ValidationErrorType[]>,
+    default: () => [],
   },
 });
 
 const emit = defineEmits(["remove:item", "update:item"]);
 
 const extendedItems = computed(() =>
-  props.items.map((item: LineItemType) => extendCartItem(item, getItemValidationError(item.id)))
+  props.items.map((item: LineItemType) => extendCartItem(item, getItemValidationErrors(item.id)))
 );
 
 function handleUpdate(item: LineItemType): void {
@@ -223,8 +230,8 @@ function handleUpdate(item: LineItemType): void {
   }
 }
 
-function getItemValidationError(itemId: string): ValidationErrorType | undefined {
-  return props.validationErrors?.find((error: ValidationErrorType) => error.objectId === itemId);
+function getItemValidationErrors(itemId: string): ValidationErrorType[] {
+  return props.validationErrors.filter((error: ValidationErrorType) => error.objectId === itemId);
 }
 </script>
 

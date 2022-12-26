@@ -1,7 +1,9 @@
 import { getProductRoute } from "@/core";
 import { LineItemType, ValidationErrorType } from "@/xapi";
 
-export function extendCartItem(item: LineItemType, validationError?: ValidationErrorType) {
+// TODO: Temporary workaround - copy cart validation errors to line item level
+
+export function extendCartItem(item: LineItemType, errors: ValidationErrorType[]) {
   return {
     ...item,
     isProductExists: !!item.product,
@@ -10,6 +12,6 @@ export function extendCartItem(item: LineItemType, validationError?: ValidationE
     isInStock: item.inStockQuantity && item.inStockQuantity >= item.quantity!,
     minQuantity: item.product?.minQuantity || 1,
     maxQuantity: item.inStockQuantity || item.product?.maxQuantity || 999999,
-    validationError,
+    validationErrors: [...(item.validationErrors || []), ...errors],
   };
 }
