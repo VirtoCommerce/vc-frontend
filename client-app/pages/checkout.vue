@@ -88,6 +88,7 @@
               <CartLineItems
                 :items="cartItems ?? []"
                 :read-only="creatingOrder || creatingQuote"
+                :validationErrors="cart.validationErrors"
                 @update:item="changeItemQuantity"
                 @remove:item="removeItemButtonClick"
               />
