@@ -103,7 +103,12 @@
         <!-- Order summary -->
         <OrderSummary v-if="order" :cart="order" class="mb-5" />
 
-        <VcButton v-if="!isNew" :is-waiting="loadingAddItemsToCart" class="uppercase w-full mb-5" @click="reorderItems">
+        <VcButton
+          v-if="showReorderButton"
+          :is-waiting="loadingAddItemsToCart"
+          class="uppercase w-full mb-5"
+          @click="reorderItems"
+        >
           {{ $t("pages.account.order_details.reorder_all_button") }}
         </VcButton>
 
@@ -211,12 +216,13 @@
           </div>
         </VcCard>
 
-        <div class="flex justify-center">
+        <!-- US-3534 -->
+        <!-- <div class="flex justify-center">
           <VcButton kind="secondary" class="!hidden lg:!inline-flex uppercase px-3" is-outline @click="printOrder">
             <i class="fas fa-print mr-2" />
             {{ $t("pages.account.order_details.print_order_button") }}
           </VcButton>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -235,6 +241,7 @@ import { BackButtonInHeader } from "@/shared/layout";
 import { useUserOrder, OrderLineItems } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddBulkItemsToCartResultsPopup, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
+import { PaymentMethodGroupType } from "@/shared/payment";
 
 const props = defineProps({
   orderId: {
@@ -263,7 +270,13 @@ const loadingAddItemsToCart = ref(false);
 
 const isNew = computed<boolean>(() => props.new === "true");
 
-const showPaymentButton = computed<boolean>(() => !!order.value && !order.value.inPayments[0]?.isApproved);
+const showPaymentButton = computed<boolean>(
+  () =>
+    !!order.value &&
+    order.value.status === "New" &&
+    order.value.inPayments[0]?.paymentMethod?.paymentMethodType === PaymentMethodGroupType.BankCard
+);
+const showReorderButton = computed<boolean>(() => !!order.value && order.value.status === "Completed");
 
 const giftItems = computed(() => order.value?.items?.filter((item) => item.isGift));
 
@@ -305,9 +318,9 @@ const breadcrumbs = computed<IBreadcrumbs[]>(() => [
   { title: t("pages.account.order_details.title", [order.value?.number]) },
 ]);
 
-function printOrder() {
-  window.print();
-}
+// function printOrder() {
+//   window.print();
+// }
 
 async function reorderItems() {
   const items = order.value!.items!.filter((item) => !item.isGift);
