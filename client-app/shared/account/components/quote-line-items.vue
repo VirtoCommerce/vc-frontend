@@ -34,7 +34,7 @@
             <!--  IMAGE -->
             <div
               class="vc-quote-line-items__img shrink-0 w-16 h-16 md:w-[60px] md:h-[60px]"
-              :class="{ 'opacity-25': !item.isProductExists }"
+              :class="{ 'opacity-25': !item.extended.isProductExists }"
             >
               <VcImage
                 :src="item.imageUrl"
@@ -48,11 +48,11 @@
             <!-- NAME -->
             <div
               class="vc-quote-line-items__name text-sm font-extrabold md:grow lg:text-13 lg:leading-4 lg:font-bold"
-              :class="{ 'opacity-25': !item.isProductExists }"
+              :class="{ 'opacity-25': !item.extended.isProductExists }"
             >
               <router-link
-                v-if="item.route"
-                :to="item.route"
+                v-if="item.extended.route"
+                :to="item.extended.route"
                 :title="item.name"
                 class="text-[color:var(--color-link)] [word-break:break-word]"
               >
@@ -70,7 +70,7 @@
             <div class="vc-quote-line-items__properties w-full">
               <div
                 class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[33%_1fr] lg:text-xs"
-                v-for="property in item.displayProperties"
+                v-for="property in item.extended.displayProperties"
                 :key="property.id"
               >
                 <div class="min-w-0 font-medium capitalize text-gray-600 md:font-bold md:text-gray-800">

@@ -34,7 +34,7 @@
             <!--  IMAGE -->
             <div
               class="vc-cart-line-items__img shrink-0 w-16 h-16 md:w-[60px] md:h-[60px]"
-              :class="{ 'opacity-25': !item.isProductExists }"
+              :class="{ 'opacity-25': !item.extended.isProductExists }"
             >
               <VcImage
                 :src="item.imageUrl"
@@ -48,11 +48,11 @@
             <!-- NAME -->
             <div
               class="vc-cart-line-items__name text-sm font-extrabold md:grow lg:text-13 lg:leading-4 lg:font-bold"
-              :class="{ 'opacity-25': !item.isProductExists }"
+              :class="{ 'opacity-25': !item.extended.isProductExists }"
             >
               <router-link
-                v-if="item.route"
-                :to="item.route"
+                v-if="item.extended.route"
+                :to="item.extended.route"
                 :title="item.name"
                 class="text-[color:var(--color-link)] [word-break:break-word] hover:text-[color:var(--color-link-hover)]"
               >
@@ -70,7 +70,7 @@
             <div class="vc-cart-line-items__properties w-full">
               <div
                 class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[45%_1fr] lg:text-xs"
-                v-for="property in item.displayProperties"
+                v-for="property in item.extended.displayProperties"
                 :key="property.id"
               >
                 <div class="min-w-0 font-medium capitalize text-gray-600 md:font-bold md:text-gray-800">
@@ -122,7 +122,7 @@
             <input
               v-model="item.quantity"
               :name="item.id"
-              :disabled="!item.isProductExists || readOnly"
+              :disabled="!item.extended.isProductExists || readOnly"
               class="w-20 h-8 border rounded text-center text-sm disabled:bg-gray-100 xl:w-full disabled:text-gray-400"
               required
               type="number"
@@ -133,8 +133,8 @@
 
             <div class="flex flex-wrap justify-center gap-1 mt-1.5">
               <VcInStock
-                :is-in-stock="item.isInStock"
-                :is-available="item.isProductExists"
+                :is-in-stock="item.extended.isInStock"
+                :is-available="item.extended.isProductExists"
                 :quantity="item.inStockQuantity"
               />
             </div>
@@ -174,7 +174,7 @@
 
         <!-- Line item validation error -->
         <VcAlert
-          v-if="!item.isProductExists"
+          v-if="!item.extended.isProductExists"
           class="-mt-0.5 mb-3 mx-3 md:-mt-2 md:mb-2.5 md:mx-4"
           icon
           text
