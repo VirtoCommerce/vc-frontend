@@ -33,7 +33,7 @@
             <i class="fas fa-search text-2xl text-[color:var(--color-primary)]" />
           </button>
 
-          <router-link :to="{ name: 'Checkout' }" class="p-2.5">
+          <router-link :to="{ name: 'Cart' }" class="p-2.5">
             <span class="relative">
               <i class="fas fa-shopping-cart text-xl text-[color:var(--color-primary)]" />
 
