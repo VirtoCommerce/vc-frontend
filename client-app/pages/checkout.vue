@@ -57,7 +57,7 @@
         <!-- Main section -->
         <div class="lg:w-3/4 xl:w-4/5 flex-grow w-full">
           <!-- My products section -->
-          <VcSection class="shadow lg:pb-11">
+          <VcSection class="shadow">
             <template #title>
               <div class="flex items-center px-5 lg:pr-0 py-7">
                 <VcImage
@@ -84,21 +84,17 @@
                 </div>
               </div>
             </template>
-
-            <div class="xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6 lg:border lg:rounded">
-              <!-- Product card -->
-              <ProductCard
-                v-for="item in cartItems"
-                :key="item?.id"
-                :line-item="item"
+            <div class="px-5 pb-5">
+              <CartLineItems
+                :items="cartItems"
                 :read-only="creatingOrder || creatingQuote"
-                @update:quantity="changeItemQuantity"
+                :validationErrors="cart.validationErrors"
+                @update:item="changeItemQuantity"
                 @remove:item="removeItemButtonClick"
-                :validation-error="getItemValidationError(item?.id)"
               />
 
-              <div v-if="pages > 1" class="py-8 lg:flex lg:items-center lg:px-5">
-                <VcPagination v-model:page="page" :pages="pages" class="mb-3 lg:mb-0" />
+              <div v-if="pages > 1" class="pt-6 md:flex">
+                <VcPagination v-model:page="page" :pages="pages" />
               </div>
             </div>
           </VcSection>
@@ -535,7 +531,6 @@ import {
   rejectGiftItems,
   ShipmentType,
   ShippingMethodType,
-  ValidationErrorType,
   LineItemType,
 } from "@/xapi";
 import { AddressType, useElementVisibility, usePageHead, useGoogleAnalytics } from "@/core";
@@ -545,7 +540,7 @@ import {
   ClearCartDialog,
   OrderSummary,
   PaymentMethodDialog,
-  ProductCard,
+  CartLineItems,
   SelectAddressDialog,
   ShippingMethodDialog,
 } from "@/shared/checkout";
@@ -613,8 +608,8 @@ const isVisibleStickyMobileHeader = computedEager<boolean>(
 const purchaseOrderNumberApplied = computedEager<boolean>(() => !!cart.value.purchaseOrderNumber);
 const cartCouponApplied = computedEager<boolean>(() => !!cart.value.coupons?.[0]?.code);
 
-const cartItems = computed(() =>
-  cart.value.items?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
+const cartItems = computed(
+  () => cart.value.items?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value) || []
 );
 
 const shipment = computed<ShipmentType | undefined>(() => cart.value.shipments?.[0]);
@@ -747,10 +742,6 @@ async function createQuote() {
   await fetchCart();
 
   creatingQuote.value = false;
-}
-
-function getItemValidationError(lineItemId: string): ValidationErrorType | undefined {
-  return cart.value.validationErrors?.find((error) => error.objectId === lineItemId);
 }
 
 async function saveNewAddressesInAccount(payload: {

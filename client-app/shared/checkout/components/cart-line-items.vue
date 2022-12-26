@@ -1,39 +1,39 @@
 <template>
-  <div class="vc-quote-line-items">
+  <div class="vc-cart-line-items">
     <!-- table header -->
-    <div class="vc-quote-line-items__header gap-x-3 px-4 py-3 border rounded-t text-sm font-bold hidden md:grid">
-      <div class="vc-quote-line-items__product">
-        {{ $t("pages.account.quote_details.line_items.product") }}
+    <div class="vc-cart-line-items__header gap-x-3 px-4 py-3 border rounded-t text-sm font-bold hidden md:grid">
+      <div class="vc-cart-line-items__product">
+        {{ $t("shared.checkout.cart_line_items.product") }}
       </div>
-      <div class="vc-quote-line-items__properties">
-        {{ $t("pages.account.quote_details.line_items.properties") }}
+      <div class="vc-cart-line-items__properties">
+        {{ $t("shared.checkout.cart_line_items.properties") }}
       </div>
-      <div class="vc-quote-line-items__price hidden xl:block pr-4 text-right">
-        {{ $t("pages.account.quote_details.line_items.price_per_item") }}
+      <div class="vc-cart-line-items__price hidden xl:block pr-4 text-right">
+        {{ $t("shared.checkout.cart_line_items.price_per_item") }}
       </div>
-      <div class="vc-quote-line-items__quantity hidden xl:block text-right">
-        {{ $t("pages.account.quote_details.line_items.quantity") }}
+      <div class="vc-cart-line-items__quantity hidden xl:block text-right">
+        {{ $t("shared.checkout.cart_line_items.quantity") }}
       </div>
-      <div class="vc-quote-line-items__total text-right">
-        {{ $t("pages.account.quote_details.line_items.total") }}
+      <div class="vc-cart-line-items__total text-right">
+        {{ $t("shared.checkout.cart_line_items.total") }}
       </div>
-      <div class="vc-quote-line-items__remove-button w-8" v-if="!readonly"></div>
+      <div class="vc-quote-line-items__remove-button w-8"></div>
     </div>
 
     <!-- table body -->
-    <div class="flex flex-col gap-6 md:gap-0 md:border-x md:divide-y" v-if="items.length">
+    <div v-if="items.length" class="flex flex-col gap-6 md:gap-0 md:border-x md:border-b md:rounded-b md:divide-y">
       <div
         v-for="item in extendedItems"
         :key="item.id"
         class="relative border rounded shadow-t-3sm md:rounded-none md:shadow-none md:border-0"
       >
         <div
-          class="vc-quote-line-items__line-item grid gap-x-2.5 pt-3 pl-3 pr-3.5 pb-4 md:p-4 md:gap-x-3 md:place-items-center"
+          class="vc-cart-line-items__line-item grid gap-x-2.5 pt-3 pl-3 pr-3.5 pb-4 md:p-4 md:gap-x-3 md:place-items-center"
         >
-          <div class="contents vc-quote-line-items__product md:flex md:gap-3 md:w-full">
+          <div class="contents vc-cart-line-items__product md:flex md:gap-3 md:w-full">
             <!--  IMAGE -->
             <div
-              class="vc-quote-line-items__img shrink-0 w-16 h-16 md:w-[60px] md:h-[60px]"
+              class="vc-cart-line-items__img shrink-0 w-16 h-16 md:w-[60px] md:h-[60px]"
               :class="{ 'opacity-25': !item.extended.isProductExists }"
             >
               <VcImage
@@ -47,14 +47,14 @@
 
             <!-- NAME -->
             <div
-              class="vc-quote-line-items__name text-sm font-extrabold md:grow lg:text-13 lg:leading-4 lg:font-bold"
+              class="vc-cart-line-items__name text-sm font-extrabold md:grow lg:text-13 lg:leading-4 lg:font-bold"
               :class="{ 'opacity-25': !item.extended.isProductExists }"
             >
               <router-link
                 v-if="item.extended.route"
                 :to="item.extended.route"
                 :title="item.name"
-                class="text-[color:var(--color-link)] [word-break:break-word]"
+                class="text-[color:var(--color-link)] [word-break:break-word] hover:text-[color:var(--color-link-hover)]"
               >
                 {{ item.name }}
               </router-link>
@@ -65,11 +65,11 @@
             </div>
           </div>
 
-          <div class="vc-quote-line-items__props w-full xl:contents">
+          <div class="vc-cart-line-items__props w-full xl:contents">
             <!-- PROPERTIES -->
-            <div class="vc-quote-line-items__properties w-full">
+            <div class="vc-cart-line-items__properties w-full">
               <div
-                class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[33%_1fr] lg:text-xs"
+                class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[45%_1fr] lg:text-xs"
                 v-for="property in item.extended.displayProperties"
                 :key="property.id"
               >
@@ -89,12 +89,12 @@
 
             <!-- PRICE -->
             <div
-              class="vc-quote-line-items__price grid grid-cols-[auto_1fr_auto] gap-1.5 w-full md:grid-cols-[45%_1fr] xl:contents"
+              class="vc-cart-line-items__price grid grid-cols-[auto_1fr_auto] gap-1.5 w-full md:grid-cols-[45%_1fr] xl:contents"
             >
               <div
                 class="min-w-0 font-medium capitalize text-13 lg:text-xs text-gray-600 md:font-bold md:text-gray-800 xl:hidden"
               >
-                <div class="truncate">{{ $t("pages.account.quote_details.line_items.price_per_item") }}:</div>
+                <div class="truncate">{{ $t("shared.checkout.cart_line_items.price_per_item") }}:</div>
               </div>
 
               <div class="grow mb-1 h-4 border-b-2 border-gray-200 border-dotted md:hidden"></div>
@@ -102,31 +102,42 @@
               <div class="xl:w-full xl:pr-4 xl:text-right">
                 <div class="text-13 font-semibold md:font-normal lg:text-xs xl:font-medium">
                   <!-- Price per item -->
-                  <VcPriceDisplay :value="item.selectedTierPrice!.price" />
+                  <VcPriceDisplay :value="item.placedPrice" />
                 </div>
 
                 <!-- Price without discount -->
-                <!--
-                <div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]">
-                  OLD PRICE
+                <div
+                  class="text-11 leading-3 line-through text-[color:var(--color-price-old)]"
+                  v-if="item.listPrice?.amount !== item.placedPrice?.amount"
+                >
+                  <VcPriceDisplay :value="item.listPrice" />
                 </div>
-                 -->
               </div>
             </div>
           </div>
 
           <!-- QUANTITY -->
           <div class="vc-quote-line-items__quantity mt-3 md:place-self-end md:mt-0 xl:w-full xl:place-self-center">
+            <!-- Is product exists - is not only about catalog persistance -->
             <input
-              v-model="item.selectedTierPrice!.quantity"
-              :disabled="readonly"
+              v-model="item.quantity"
+              :name="item.id"
+              :disabled="!item.extended.isProductExists || readOnly"
               class="w-20 h-8 border rounded text-center text-sm disabled:bg-gray-100 xl:w-full disabled:text-gray-400"
-              type="number"
-              pattern="\d"
-              min="1"
               required
-              @change="$emit('update:item', item)"
+              type="number"
+              pattern="\d*"
+              @keyup.enter="handleUpdate(item)"
+              @blur="handleUpdate(item)"
             />
+
+            <div class="flex flex-wrap justify-center gap-1 mt-1.5">
+              <VcInStock
+                :is-in-stock="item.extended.isInStock"
+                :is-available="item.extended.isProductExists"
+                :quantity="item.inStockQuantity"
+              />
+            </div>
           </div>
 
           <!-- TOTAL -->
@@ -136,24 +147,18 @@
             <!-- Total -->
             <div class="flex flex-wrap items-center justify-end text-right gap-x-1">
               <div class="text-14 font-bold text-[color:var(--color-price-from)] md:hidden">
-                {{ $t("pages.account.quote_details.line_items.total") }}:
+                {{ $t("shared.checkout.cart_line_items.total") }}:
               </div>
 
               <div class="text-15 font-bold [word-break:break-word]">
-                {{ $n(item.selectedTierPrice!.price!.amount * item.selectedTierPrice!.quantity, "currency") }}
+                <VcPriceDisplay :value="item.extendedPrice" />
               </div>
             </div>
-
-            <!-- Total without discount -->
-            <!--
-            <div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]">OLD PRICE</div>
-            -->
           </div>
 
           <!-- REMOVE BUTTON -->
           <div
-            class="vc-quote-line-items__remove-button absolute -top-3 -right-3 md:static md:flex md:justify-end md:w-8"
-            v-if="!readonly"
+            class="vc-cart-line-items__remove-button absolute -top-3 -right-3 md:static md:flex md:justify-end md:w-8"
           >
             <button
               type="button"
@@ -167,59 +172,71 @@
           </div>
         </div>
 
-        <!-- Error message -->
-        <!--<VcAlert class="-mt-0.5 mb-3 mx-3 md:-mt-2 md:mb-2.5 md:mx-4" icon type="error" text>
-          Error message example
-        </VcAlert>-->
+        <!-- Line item validation error -->
+        <VcAlert
+          v-if="!item.extended.isProductExists"
+          class="-mt-0.5 mb-3 mx-3 md:-mt-2 md:mb-2.5 md:mx-4"
+          icon
+          text
+          type="error"
+        >
+          {{ $t("common.messages.product_no_longer_available") }}
+        </VcAlert>
+
+        <VcAlert
+          v-for="(validationError, index) in item.validationErrors"
+          :key="index"
+          class="-mt-0.5 mb-3 mx-3 md:-mt-2 md:mb-2.5 md:mx-4"
+          icon
+          text
+          type="error"
+        >
+          {{ validationError.errorMessage }}
+        </VcAlert>
       </div>
-    </div>
-
-    <div class="p-3 border-x" v-else>
-      <VcAlert type="warning" icon>
-        {{ $t("pages.account.quote_details.no_items_message") }}
-      </VcAlert>
-    </div>
-
-    <!-- table footer -->
-    <div
-      class="flex items-center justify-end py-2.5 gap-2 text-[color:var(--color-price)] md:px-4 md:py-2.5 md:border md:rounded-b"
-    >
-      <div class="text-13 font-bold">{{ $t("pages.account.quote_details.line_items.subtotal") }}:</div>
-
-      <div class="text-17 font-extrabold">{{ $n(subtotal, "currency") }}</div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, PropType } from "vue";
-import { sumBy } from "lodash";
-import { QuoteItemType } from "@/xapi";
+import { LineItemType, ValidationErrorType } from "@/xapi";
 import { VcPriceDisplay } from "@/ui-kit/components";
-import { extendQuoteItem } from "@/shared/account";
+import { extendCartItem } from "@/shared/checkout";
 
 const props = defineProps({
   items: {
-    type: Array as PropType<QuoteItemType[]>,
+    type: Array as PropType<LineItemType[]>,
     required: true,
   },
-
-  readonly: {
+  readOnly: {
     type: Boolean,
+  },
+  validationErrors: {
+    type: Array as PropType<ValidationErrorType[]>,
+    default: () => [],
   },
 });
 
-defineEmits(["remove:item", "update:item"]);
+const emit = defineEmits(["remove:item", "update:item"]);
 
-const extendedItems = computed(() => props.items.map((item: QuoteItemType) => extendQuoteItem(item)));
-
-const subtotal = computed<number>(() =>
-  sumBy(props.items, (item: QuoteItemType) => item.selectedTierPrice!.price!.amount * item.selectedTierPrice!.quantity)
+const extendedItems = computed(() =>
+  props.items.map((item: LineItemType) => extendCartItem(item, getItemValidationErrors(item.id)))
 );
+
+function handleUpdate(item: LineItemType): void {
+  if (item.quantity) {
+    emit("update:item", item.id, item.quantity);
+  }
+}
+
+function getItemValidationErrors(itemId: string): ValidationErrorType[] {
+  return props.validationErrors.filter((error: ValidationErrorType) => error.objectId === itemId);
+}
 </script>
 
 <style scoped lang="scss">
-.vc-quote-line-items {
+.vc-cart-line-items {
   &__header {
     @media (min-width: theme("screens.md")) {
       grid-template-columns: 250px 1fr 100px min-content;
