@@ -26,8 +26,8 @@
         "icon": "/static/images/dashboard/icons/orders-desktop.svg#main"
       },
       {
-        "id": "checkout",
-        "route": { "name": "Checkout" },
+        "id": "cart",
+        "route": { "name": "Cart" },
         "title": "shared.layout.header.menu.cart",
         "icon": "/static/images/checkout/cart-desktop.svg#main"
       }
@@ -53,8 +53,8 @@
           "icon": "/static/images/dashboard/icons/bulk-order.svg#main"
         },
         {
-          "id": "checkout",
-          "route": { "name": "Checkout" },
+          "id": "cart",
+          "route": { "name": "Cart" },
           "title": "shared.layout.header.menu.cart",
           "icon": "/static/images/checkout/cart.svg#main"
         },
@@ -67,7 +67,7 @@
       ],
       "account": {
         "id": "account",
-        "route": {"name": "Account" },
+        "route": { "name": "Account" },
         "title": "shared.layout.header.mobile.my_account",
         "icon": "/static/images/common/user-circle.svg#main",
         "children": [

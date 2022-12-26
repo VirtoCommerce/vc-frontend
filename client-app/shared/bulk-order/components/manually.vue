@@ -9,7 +9,7 @@
       <p class="text-sm">
         {{ $t("shared.bulk_order.manually.subtitle_message_start") }}
         <router-link
-          :to="{ name: 'Checkout' }"
+          :to="{ name: 'Cart' }"
           class="text-[color:var(--color-link)]"
           v-t="'shared.bulk_order.manually.cart_link'"
         ></router-link>
