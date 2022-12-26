@@ -86,8 +86,9 @@
             </template>
             <div class="px-5 pb-5">
               <CartLineItems
-                :items="cartItems ?? []"
+                :items="cartItems"
                 :read-only="creatingOrder || creatingQuote"
+                :validationErrors="cart.validationErrors"
                 @update:item="changeItemQuantity"
                 @remove:item="removeItemButtonClick"
               />
@@ -607,8 +608,8 @@ const isVisibleStickyMobileHeader = computedEager<boolean>(
 const purchaseOrderNumberApplied = computedEager<boolean>(() => !!cart.value.purchaseOrderNumber);
 const cartCouponApplied = computedEager<boolean>(() => !!cart.value.coupons?.[0]?.code);
 
-const cartItems = computed(() =>
-  cart.value.items?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
+const cartItems = computed(
+  () => cart.value.items?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value) || []
 );
 
 const shipment = computed<ShipmentType | undefined>(() => cart.value.shipments?.[0]);
