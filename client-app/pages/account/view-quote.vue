@@ -8,8 +8,8 @@
       </h2>
     </div>
 
-    <div class="flex flex-col bg-white -mx-5 lg:mx-0 lg:bg-transparent lg:flex-row lg:items-start lg:gap-x-6">
-      <div class="contents lg:grow lg:block lg:space-y-6">
+    <VcLayoutWithRightSidebar>
+      <template #main>
         <!-- Quote products -->
         <VcSectionWidget
           :title="$t('pages.account.quote_details.products')"
@@ -30,9 +30,9 @@
             {{ quote.comment }}
           </div>
         </VcSectionWidget>
-      </div>
+      </template>
 
-      <div class="contents lg:block lg:shrink-0 lg:space-y-6 lg:w-1/4 2xl:w-[285px]">
+      <template #sidebar>
         <VcCardWidget
           :title="$t('pages.account.quote_details.quote_summary')"
           icon-url="/static/images/billing-address.svg"
@@ -83,8 +83,8 @@
         >
           <VcAddressInfo class="-mt-1" :address="billingAddress!" />
         </VcCardWidget>
-      </div>
-    </div>
+      </template>
+    </VcLayoutWithRightSidebar>
   </div>
 
   <VcLoaderOverlay v-else no-bg />
