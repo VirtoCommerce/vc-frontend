@@ -220,7 +220,7 @@ const props = defineProps({
 
 const emit = defineEmits(["remove:item", "update:item"]);
 
-const extendedItems = computed(() =>
+const extendedItems = computed<ReturnType<typeof extendCartItem>[]>(() =>
   props.items.map((item: LineItemType) => extendCartItem(item, getItemValidationErrors(item.id)))
 );
 

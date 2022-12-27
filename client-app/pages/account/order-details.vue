@@ -1,17 +1,13 @@
 <template>
   <div v-if="order">
-    <BackButtonInHeader v-if="isMobile && !isNew" @click="$router.back()" />
+    <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
     <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block mx-5 md:mx-0" />
 
     <!-- Title block -->
     <div class="flex justify-between items-center mx-5 md:mx-0 -mb-3">
       <h2 class="text-gray-800 text-3xl font-bold uppercase">
-        {{
-          isNew
-            ? $t("pages.account.order_details.created_title")
-            : $t("pages.account.order_details.title", [order?.number])
-        }}
+        {{ $t("pages.account.order_details.title", [order?.number]) }}
       </h2>
     </div>
 
@@ -43,38 +39,33 @@
     <div class="flex flex-col lg:flex-row lg:flex-nowrap lg:space-x-6">
       <!-- Main section -->
       <div class="lg:w-3/4 xl:w-4/5 flex-grow w-full">
-        <!-- Multi Orders -->
-        <VcSection
+        <!-- Items grouped by Vendor -->
+        <div
           v-if="$cfg.line_items_group_by_vendor_enabled"
-          class="-mx-5 md:mx-0 lg:shadow-md-x lg:pt-5 lg:px-7"
-          :withTitle="false"
+          class="bg-white lg:mb-6 lg:rounded -mx-5 md:mx-0 lg:shadow-md-x lg:pt-5 lg:px-7"
         >
-          <!-- Orders -->
           <div
-            v-for="vendor in vendors"
-            :key="vendor.vendorId"
+            v-for="(item, vendorId) in groupedOrderItems"
+            :key="vendorId"
             class="bg-white shadow-light-lg mb-4 px-7 pt-4 lg:mb-0 lg:pb-5 lg:px-0 lg:pt-0 lg:rounded lg:shadow-none"
           >
             <!-- Vendor -->
-            <div class="pb-3 font-extrabold text-15">
-              <span>{{ $t("pages.account.order_details.vendor_label") }}: </span>
-              <span v-if="vendor.vendorData" :class="{ 'text-[color:var(--color-link)]': vendor.vendorExist }">{{
-                vendor.vendorData.name
-              }}</span>
+            <div class="pb-3 font-bold text-15">
+              <span class="mr-1">{{ $t("pages.account.order_details.vendor_label") }}:</span>
+              <Vendor v-if="item.vendor" :vendor="item.vendor" class="inline-flex flex-row items-end gap-x-3" />
+              <span v-else class="text-gray-400" v-t="`pages.account.order_details.empty_vendor_label`" />
             </div>
-            <!-- Order products -->
-            <div class="lg:rounded">
-              <OrderLineItems :items="vendor.linItems" />
-            </div>
-          </div>
-        </VcSection>
 
-        <!-- Single Order -->
-        <VcSection v-else class="-mx-5 md:mx-0 lg:shadow-md-x lg:pt-5 lg:px-7" :withTitle="false">
+            <OrderLineItems :items="item.items" class="lg:rounded" />
+          </div>
+        </div>
+
+        <!-- Items not grouped by Vendor -->
+        <div v-else class="bg-white lg:mb-6 lg:rounded -mx-5 md:mx-0 lg:shadow-md-x lg:pt-5 lg:px-7">
           <div class="bg-white shadow-light-lg mb-4 p-7 lg:mb-0 lg:pb-5 lg:px-0 lg:pt-0 lg:rounded lg:shadow-none">
-            <!-- Order products -->
-            <div v-if="orderItems" class="lg:rounded"><OrderLineItems :items="orderItems" /></div></div
-        ></VcSection>
+            <OrderLineItems :items="orderItems" class="lg:rounded" />
+          </div>
+        </div>
 
         <!-- Gifts section -->
         <AcceptedGifts :items="giftItems" />
@@ -233,28 +224,29 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, PropType, ref, watchEffect } from "vue";
+import { computed, inject, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { configInjectionKey, usePageHead } from "@/core";
-import { InputNewBulkItemType, OrderLineItemType, Vendor } from "@/xapi";
+import { InputNewBulkItemType, OrderLineItemType, Vendor as VendorType } from "@/xapi";
 import { AcceptedGifts, OrderSummary } from "@/shared/checkout";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useUserOrder, OrderLineItems } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddBulkItemsToCartResultsPopup, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
+import { Vendor } from "@/shared/catalog";
+
+type TGroupItem = { items: OrderLineItemType[]; vendor?: VendorType };
+type TGroupedItems = Record<string, TGroupItem>;
 
 const props = defineProps({
   orderId: {
     type: String,
     default: "",
   },
-
-  new: {
-    type: String as PropType<"true">, // Specifics of router.push params (pass as string "true")
-    default: "",
-  },
 });
+
+const config = inject(configInjectionKey);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { order, deliveryAddress, billingAddress, fetchOrder, clearOrder } = useUserOrder();
@@ -266,46 +258,11 @@ usePageHead({
   title: computed(() => t("pages.account.order_details.meta.title", [order.value?.number])),
 });
 
+const groupIdWithoutVendor = "none";
+const groupItemsByVendor = !!config?.line_items_group_by_vendor_enabled;
+
 const isMobile = breakpoints.smaller("lg");
 const loadingAddItemsToCart = ref(false);
-
-const isNew = computed<boolean>(() => props.new === "true");
-
-const showPaymentButton = computed<boolean>(() => !!order.value && order.value.status === "New");
-const showReorderButton = computed<boolean>(() => !!order.value && order.value.status === "Completed");
-
-const giftItems = computed(() => order.value?.items?.filter((item) => item.isGift));
-
-const config = inject(configInjectionKey);
-const groupItemsByVendor = config?.line_items_group_by_vendor_enabled || false;
-const emptyVendorName = t("pages.account.order_details.empty_vendor_label");
-const orderItems = computed(() => (groupItemsByVendor ? [] : order.value?.items?.filter((item) => !item.isGift)));
-const vendors = computed(() => {
-  if (groupItemsByVendor) {
-    const vendorsArray: Array<{
-      vendorId: string;
-      vendorExist: boolean;
-      vendorData: Vendor | undefined;
-      linItems: OrderLineItemType[];
-    }> = [];
-
-    order.value?.items.forEach((lineItem: OrderLineItemType) => {
-      const vendorId = lineItem.product?.vendor?.id || emptyVendorName;
-      const index = vendorsArray.findIndex((item) => item.vendorId === vendorId);
-      index === -1
-        ? vendorsArray.push({
-            vendorId: vendorId,
-            vendorExist: !!lineItem.product?.vendor,
-            vendorData: lineItem.product?.vendor || ({ name: emptyVendorName } as Vendor),
-            linItems: [lineItem],
-          })
-        : vendorsArray[index].linItems.push(lineItem);
-    });
-    return vendorsArray;
-  } else {
-    return [];
-  }
-});
 
 const breadcrumbs = computed<IBreadcrumbs[]>(() => [
   { title: t("common.links.home"), route: { name: "Home" } },
@@ -313,6 +270,47 @@ const breadcrumbs = computed<IBreadcrumbs[]>(() => [
   { title: t("common.links.orders"), route: { name: "Orders" } },
   { title: t("pages.account.order_details.title", [order.value?.number]) },
 ]);
+
+const showPaymentButton = computed<boolean>(() => !!order.value && order.value.status === "New");
+const showReorderButton = computed<boolean>(() => !!order.value && order.value.status === "Completed");
+
+const giftItems = computed(() => order.value?.items?.filter((item) => item.isGift));
+
+const orderItems = computed<OrderLineItemType[]>(() => {
+  if (groupItemsByVendor || !order.value) {
+    return [];
+  }
+
+  return order.value.items.filter((item) => !item.isGift);
+});
+
+const groupedOrderItems = computed<TGroupedItems>(() => {
+  // NOTE: The group without a vendor should be last to be displayed.
+  const groupWithoutVendor: TGroupItem = { items: [] };
+  const map: TGroupedItems = {};
+
+  if (!groupItemsByVendor) {
+    return map;
+  }
+
+  order.value?.items.forEach((item) => {
+    const vendor = item.product!.vendor;
+
+    if (vendor) {
+      const vendorId = vendor.id;
+
+      map[vendorId] = map[vendorId] || { vendor, items: [] };
+      map[vendorId].items.push(item);
+    } else {
+      groupWithoutVendor.items.push(item);
+    }
+  });
+
+  // Add a group without a vendor to the end of the iteration object.
+  map[groupIdWithoutVendor] = groupWithoutVendor;
+
+  return map;
+});
 
 async function reorderItems() {
   const items = order.value!.items!.filter((item) => !item.isGift);

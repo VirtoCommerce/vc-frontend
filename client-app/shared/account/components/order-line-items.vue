@@ -20,7 +20,7 @@
     </div>
 
     <!-- table body -->
-    <div class="flex flex-col gap-6 md:gap-0 md:border-x md:divide-y" v-if="items.length">
+    <div class="flex flex-col gap-6 md:gap-0 md:border-x md:divide-y">
       <div
         v-for="item in extendedItems"
         :key="item.id"
@@ -34,7 +34,7 @@
             <!--  IMAGE -->
             <div
               class="vc-order-line-items__img shrink-0 w-16 h-16 md:w-[60px] md:h-[60px]"
-              :class="{ 'opacity-25': !item.isProductExists }"
+              :class="{ 'opacity-25': !item.extended.isProductExists }"
             >
               <VcImage
                 :src="item.imageUrl"
@@ -48,11 +48,11 @@
             <!-- NAME -->
             <div
               class="vc-order-line-items__name text-sm font-extrabold md:grow lg:text-13 lg:leading-4 lg:font-bold"
-              :class="{ 'opacity-25': !item.isProductExists }"
+              :class="{ 'opacity-25': !item.extended.isProductExists }"
             >
               <router-link
-                v-if="item.route"
-                :to="item.route"
+                v-if="item.extended.route"
+                :to="item.extended.route"
                 :title="item.name"
                 class="text-[color:var(--color-link)] [word-break:break-word]"
               >
@@ -71,7 +71,7 @@
             <div class="vc-order-line-items__properties w-full">
               <div
                 class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[33%_1fr] lg:text-xs"
-                v-for="property in item.displayProperties"
+                v-for="property in item.extended.displayProperties"
                 :key="property.id"
               >
                 <div class="min-w-0 font-medium capitalize text-gray-600 md:font-bold md:text-gray-800">
@@ -141,12 +141,6 @@
       </div>
     </div>
 
-    <div class="p-3 border-x" v-else>
-      <VcAlert type="warning" icon>
-        {{ $t("pages.account.order_details.no_items_message") }}
-      </VcAlert>
-    </div>
-
     <!-- table footer -->
     <div
       class="flex items-center justify-end py-2.5 gap-2 text-[color:var(--color-price)] md:px-4 md:py-2.5 md:border md:rounded-b"
@@ -166,19 +160,20 @@ import { VcPriceDisplay } from "@/ui-kit/components";
 import { extendOrderItem } from "..";
 
 const props = defineProps({
+  readonly: Boolean,
+
   items: {
     type: Array as PropType<OrderLineItemType[]>,
+    default: () => [],
     required: true,
-  },
-
-  readonly: {
-    type: Boolean,
   },
 });
 
 defineEmits(["remove:item", "update:item"]);
 
-const extendedItems = computed(() => props.items.map((item: OrderLineItemType) => extendOrderItem(item)));
+const extendedItems = computed<ReturnType<typeof extendOrderItem>[]>(() =>
+  props.items.map((item: OrderLineItemType) => extendOrderItem(item))
+);
 
 const subtotal = computed<number>(() => sumBy(props.items, (item: OrderLineItemType) => item.extendedPrice!.amount));
 </script>
