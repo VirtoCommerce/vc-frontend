@@ -243,7 +243,6 @@ import { BackButtonInHeader } from "@/shared/layout";
 import { useUserOrder, OrderLineItems } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddBulkItemsToCartResultsPopup, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
-import { PaymentMethodGroupType } from "@/shared/payment";
 
 const props = defineProps({
   orderId: {
@@ -272,12 +271,7 @@ const loadingAddItemsToCart = ref(false);
 
 const isNew = computed<boolean>(() => props.new === "true");
 
-const showPaymentButton = computed<boolean>(
-  () =>
-    !!order.value &&
-    order.value.status === "New" &&
-    order.value.inPayments[0]?.paymentMethod?.paymentMethodType === PaymentMethodGroupType.BankCard
-);
+const showPaymentButton = computed<boolean>(() => !!order.value && order.value.status === "New");
 const showReorderButton = computed<boolean>(() => !!order.value && order.value.status === "Completed");
 
 const giftItems = computed(() => order.value?.items?.filter((item) => item.isGift));
