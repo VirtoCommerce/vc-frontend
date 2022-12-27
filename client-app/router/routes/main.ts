@@ -78,7 +78,7 @@ export const mainRoutes: RouteRecordRaw[] = [
     path: "/checkout/completed",
     name: "CheckoutComplete",
     component: CheckoutComplete,
-    beforeEnter: (to) => !!to.params.orderId || { name: "Checkout", replace: true },
+    beforeEnter: (to) => !!to.params.orderId || { name: "Cart", replace: true },
     props: true,
   },
   { path: "/catalog", name: "Catalog", component: Catalog, props: true },
