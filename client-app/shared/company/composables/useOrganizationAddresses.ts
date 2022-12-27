@@ -1,4 +1,4 @@
-import { computed, readonly, ref, shallowRef, unref } from "vue";
+import { computed, readonly, Ref, ref, shallowRef, unref } from "vue";
 import { getSortingExpression, Logger, toInputAddress } from "@/core/utilities";
 import { ISortInfo } from "@/core/types";
 import { InputMemberAddressType, MemberAddressType } from "@/xapi/types";
@@ -7,9 +7,14 @@ import { deleteMemberAddresses, updateMemberAddresses } from "@/xapi/graphql/acc
 import { SORT_DESCENDING } from "@/core/constants";
 import { MaybeRef } from "@vueuse/core";
 
+const DEFAULT_ITEMS_PER_PAGE = 10;
+
 export default function useOrganizationAddresses(organizationId: MaybeRef<string>) {
   const loading = ref(false);
   const addresses = shallowRef<MemberAddressType[]>([]);
+  const itemsPerPage: Ref<number> = ref(DEFAULT_ITEMS_PER_PAGE);
+  const page: Ref<number> = ref(1);
+  const pages: Ref<number> = ref(0);
   const sort = ref<ISortInfo>({
     column: "createdDate",
     direction: SORT_DESCENDING,
@@ -21,11 +26,14 @@ export default function useOrganizationAddresses(organizationId: MaybeRef<string
 
       const sortingExpression = getSortingExpression(sort.value);
 
-      const { items = [] } = await getOrganizationAddresses(unref(organizationId), {
+      const response = await getOrganizationAddresses(unref(organizationId), {
         sort: sortingExpression,
+        first: itemsPerPage.value,
+        after: String((page.value - 1) * itemsPerPage.value),
       });
 
-      addresses.value = items;
+      addresses.value = response.items ?? [];
+      pages.value = Math.ceil((response.totalCount ?? 0) / itemsPerPage.value);
     } catch (e) {
       Logger.error(`${useOrganizationAddresses.name}.${fetchAddresses.name}`, e);
       throw e;
@@ -90,6 +98,9 @@ export default function useOrganizationAddresses(organizationId: MaybeRef<string
 
   return {
     sort,
+    itemsPerPage,
+    page,
+    pages,
     fetchAddresses,
     removeAddresses,
     addOrUpdateAddresses,

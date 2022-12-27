@@ -79,7 +79,7 @@
             :loading="loadingAddresses"
             :item-actions-builder="itemActionsBuilder"
             :columns="columns"
-            :items="paginatedAddresses"
+            :items="addresses"
             :sort="sort"
             :pages="pages"
             :page="page"
@@ -161,7 +161,7 @@
             </template>
 
             <template #desktop-body>
-              <tr v-for="address in paginatedAddresses" :key="address.id" class="even:bg-gray-50">
+              <tr v-for="address in addresses" :key="address.id" class="even:bg-gray-50">
                 <td class="px-5 py-3 overflow-hidden overflow-ellipsis">
                   <span>{{ address.line1 }}</span>
                   <template v-if="address.city">, {{ address.city }}</template>
@@ -233,7 +233,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { computedEager } from "@vueuse/core";
 import { useField } from "vee-validate";
@@ -244,9 +244,6 @@ import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddOrUpdateCompanyAddressDialog, useOrganization, useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
-
-const page = ref(1);
-const itemsPerPage = ref(10);
 
 const { t } = useI18n();
 
@@ -262,6 +259,9 @@ const { loading: loadingUser, organization, checkPermissions } = useUser();
 const { loading: loadingOrganization, updateOrganization } = useOrganization();
 const {
   addresses,
+  itemsPerPage,
+  page,
+  pages,
   sort,
   fetchAddresses,
   removeAddresses,
@@ -279,11 +279,6 @@ const notifications = useNotifications();
 
 const organizationId = computed<string>(() => organization.value!.id);
 const userCanEditOrganization = computedEager<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
-
-const pages = computed<number>(() => Math.ceil(addresses.value.length / itemsPerPage.value));
-const paginatedAddresses = computed<MemberAddressType[]>(() =>
-  addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
-);
 
 const columns = computed<ITableColumn[]>(() => {
   const result: ITableColumn[] = [
@@ -326,6 +321,7 @@ const columns = computed<ITableColumn[]>(() => {
 async function onPageChange(newPage: number) {
   window.scroll({ top: 0, behavior: "smooth" });
   page.value = newPage;
+  await fetchAddresses();
 }
 
 async function applySorting(sortInfo: ISortInfo) {
