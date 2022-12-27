@@ -1,3 +1,4 @@
+import { sumBy } from "lodash";
 import { useAppContext } from "@/core";
 import { Product, CartType, LineItemType, Breadcrumb, VariationType } from "@/xapi";
 import globals from "@/core/globals";
@@ -99,7 +100,7 @@ function addItemToCart(item: Product | VariationType, quantity = 1, params?: TEv
   sendEvent("add_to_cart", {
     ...params,
     currency: globals.currencyCode,
-    value: item.price?.list?.amount * quantity,
+    value: item.price?.actual?.amount * quantity,
     items: [inputItem],
   });
 }
@@ -110,7 +111,7 @@ function removeItemFromCart(item: LineItemType, params?: TEventParamsForList): v
   sendEvent("remove_from_cart", {
     ...params,
     currency: globals.currencyCode,
-    value: item.listPrice?.amount * (inputItem.quantity ?? 1),
+    value: item.extendedPrice?.amount,
     items: [inputItem],
   });
 }
@@ -145,6 +146,15 @@ function addShippingInfo(cart: CartType, params?: TEventParamsForList): void {
   });
 }
 
+function addToWishList(products: Product[], params?: TEventParamsForList): void {
+  sendEvent("add_to_wishlist", {
+    ...params,
+    currency: globals.currencyCode,
+    value: sumBy(products, (product: Product) => product.price?.actual?.amount),
+    items: products.map(productToGtagItem),
+  });
+}
+
 export default () => ({
   isAvailableGtag,
   sendEvent,
@@ -156,4 +166,5 @@ export default () => ({
   viewCart,
   beginCheckout,
   addShippingInfo,
+  addToWishList,
 });

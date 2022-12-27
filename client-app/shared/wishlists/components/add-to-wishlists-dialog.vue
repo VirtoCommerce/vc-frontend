@@ -131,6 +131,7 @@ import { usePopup } from "@/shared/popup";
 import moment from "moment";
 import { useI18n } from "vue-i18n";
 import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION, configInjectionKey } from "@/core/constants";
+import { useGoogleAnalytics } from "@/core/composables";
 
 const props = defineProps({
   product: {
@@ -150,6 +151,7 @@ const {
   removeItemsFromWishlists,
 } = useWishlists();
 const notifications = useNotifications();
+const ga = useGoogleAnalytics();
 
 const loading = ref(false);
 const selectedListsOtherIds = ref<string[]>([]);
@@ -197,6 +199,8 @@ async function addToWishlistsFromListOther() {
   }
 
   await addItemsToWishlists(selectedListsOtherIds.value.map((listId) => ({ listId, productId: product.value.id })));
+
+  ga.addToWishList([product.value]);
 }
 
 async function createListsAndAddProduct() {
@@ -206,6 +210,8 @@ async function createListsAndAddProduct() {
 
   inputs.value.forEach(async (input) => {
     await createWishlistAndAddProduct(input.listName, product.value.id);
+
+    ga.addToWishList([product.value]);
   });
 
   inputs.value.splice(0);
