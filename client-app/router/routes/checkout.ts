@@ -6,7 +6,7 @@ const Billing = () => import("@/pages/checkout/billing.vue");
 /** Guard * /
 const beforeEnter = (to: RouteLocationNormalized): RouteLocationRaw | boolean =>
   !!to.params.continuity || {
-    name: "Checkout",
+    name: "Cart",
     replace: true,
   };
 */
@@ -16,6 +16,7 @@ export const checkoutRoutes: RouteRecordRaw[] = [
     path: "shipping",
     name: "CheckoutShipping",
     component: Shipping,
+    //beforeEnter,
   },
   {
     path: "billing",
