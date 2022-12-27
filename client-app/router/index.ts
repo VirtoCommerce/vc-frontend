@@ -11,7 +11,7 @@ export function createRouter(options: { base: string }) {
     history: createWebHistory(base),
     scrollBehavior(to, from, savedPosition) {
       if (to.path !== from.path) {
-        return savedPosition || { top: 0, behavior: "smooth" };
+        return savedPosition || { top: 0 };
       } else {
         return undefined;
       }
