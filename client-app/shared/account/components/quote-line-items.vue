@@ -211,7 +211,9 @@ const props = defineProps({
 
 defineEmits(["remove:item", "update:item"]);
 
-const extendedItems = computed(() => props.items.map((item: QuoteItemType) => extendQuoteItem(item)));
+const extendedItems = computed<ReturnType<typeof extendQuoteItem>[]>(() =>
+  props.items.map((item: QuoteItemType) => extendQuoteItem(item))
+);
 
 const subtotal = computed<number>(() =>
   sumBy(props.items, (item: QuoteItemType) => item.selectedTierPrice!.price!.amount * item.selectedTierPrice!.quantity)
