@@ -11,3 +11,4 @@ export { default as OrdersFilter } from "./orders-filter.vue";
 export { default as MobileOrdersFilter } from "./mobile-orders-filter.vue";
 export { default as PageToolbarBlock } from "./page-toolbar-block.vue";
 export { default as QuoteLineItems } from "./quote-line-items.vue";
+export { default as OrderLineItems } from "./order-line-items.vue";
