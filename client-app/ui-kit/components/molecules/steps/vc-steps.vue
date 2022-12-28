@@ -7,7 +7,7 @@
       <div class="text-14 font-semibold text-[var(--color-success)]">Back to Cart</div>
     </router-link>
 
-    <div class="flex items-center gap-1.5" v-for="(step, index) in steps">
+    <div class="flex items-center gap-1.5" v-for="(step, index) in steps" :key="index">
       <svg v-if="step.completed" class="w-5 h-5 text-[var(--color-success)]">
         <use href="/static/images/check-circle.svg#main"></use>
       </svg>

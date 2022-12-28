@@ -12,8 +12,6 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
-
 defineProps({
   tagName: {
     type: String,
