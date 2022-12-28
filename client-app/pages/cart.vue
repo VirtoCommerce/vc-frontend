@@ -3,15 +3,15 @@
 
   <VcEmptyPage
     v-else-if="!cart.items?.length"
-    :title="$t('shared.checkout.empty_cart.title')"
-    :description="$t('shared.checkout.empty_cart.description')"
+    :title="$t('shared.cart.empty_cart.title')"
+    :description="$t('shared.cart.empty_cart.description')"
     image="/static/images/errors/emptyCart.webp"
     mobile-image="/static/images/errors/emptyCartMobile.webp"
     :breadcrumbs="breadcrumbs"
   >
     <template #actions>
       <VcButton :to="{ name: 'Catalog' }" size="lg" class="w-48 uppercase font-bold">
-        {{ $t("shared.checkout.empty_cart.continue_shopping_button") }}
+        {{ $t("shared.cart.empty_cart.continue_shopping_button") }}
       </VcButton>
     </template>
   </VcEmptyPage>
@@ -21,7 +21,7 @@
       <!-- Mobile sticky header -->
       <div
         v-if="isVisibleStickyMobileHeader"
-        class="fixed top-0 h-14 w-full z-40 px-5 md:px-12 flex justify-between items-center gap-x-3 bg-[color:var(--color-header-bottom-bg)]"
+        class="fixed left-0 top-0 h-14 w-full z-40 px-5 md:px-12 flex justify-between items-center gap-x-3 bg-[color:var(--color-header-bottom-bg)]"
       >
         <div>
           <h2 class="text-gray-800 font-extrabold uppercase leading-none mb-1.5" v-t="'pages.cart.title'" />
@@ -43,12 +43,10 @@
             class="uppercase px-3"
             @click="createOrder"
           >
-            {{ $t("pages.checkout.order_summary_block.place_order_button") }}
+            {{ $t("pages.cart.order_summary_block.create_order_button") }}
           </VcButton>
         </div>
       </div>
-
-      <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
       <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block mx-5 md:mx-0" />
 
@@ -64,13 +62,13 @@
             <div class="flex items-center px-5 lg:hidden lg:pr-0 py-6">
               <VcImage
                 :src="'/static/images/checkout/shipping.svg'"
-                :alt="$t('pages.checkout.products_section.title')"
+                :alt="$t('pages.cart.products_section.title')"
                 class="mr-5 lg:mr-8"
               />
 
               <div class="w-full flex justify-between xl:mr-11 lg:mr-6">
                 <h3 class="text-gray-800 text-2xl lg:text-3xl font-bold uppercase">
-                  {{ $t("pages.cart.content_title") }}
+                  {{ $t("pages.cart.products_section.title") }}
                 </h3>
               </div>
             </div>
@@ -84,9 +82,9 @@
                 >
                   <!-- Vendor -->
                   <div class="pb-3 font-bold text-15">
-                    <span class="mr-1">{{ $t("pages.cart.vendor_label") }}:</span>
+                    <span class="mr-1">{{ $t("pages.cart.products_section.vendor_label") }}:</span>
                     <Vendor v-if="item.vendor" :vendor="item.vendor" class="inline-flex flex-row items-end gap-x-3" />
-                    <span v-else class="text-gray-400" v-t="`pages.cart.empty_vendor_label`" />
+                    <span v-else class="text-gray-400" v-t="`pages.cart.products_section.empty_vendor_label`" />
                   </div>
 
                   <CartLineItems
@@ -95,22 +93,24 @@
                     :validationErrors="cart.validationErrors"
                     @update:item="changeItemQuantity"
                     @remove:item="removeItemButtonClick"
-                  /></div
-              ></template>
+                  />
+                </div>
+              </template>
             </template>
 
             <!-- Items not grouped by Vendor -->
-            <template v-else>
-              <div class="bg-white shadow-light-lg mb-4 p-7 lg:mb-0 lg:pb-5 lg:px-0 lg:pt-0 lg:rounded lg:shadow-none">
-                <CartLineItems
-                  :items="cartItems"
-                  :read-only="creatingOrder || creatingQuote"
-                  :validationErrors="cart.validationErrors"
-                  @update:item="changeItemQuantity"
-                  @remove:item="removeItemButtonClick"
-                />
-              </div>
-            </template>
+            <div
+              v-else
+              class="bg-white shadow-light-lg mb-4 p-7 lg:mb-0 lg:pb-5 lg:px-0 lg:pt-0 lg:rounded lg:shadow-none"
+            >
+              <CartLineItems
+                :items="cartItems"
+                :read-only="creatingOrder || creatingQuote"
+                :validationErrors="cart.validationErrors"
+                @update:item="changeItemQuantity"
+                @remove:item="removeItemButtonClick"
+              />
+            </div>
 
             <div class="hidden md:flex justify-end pb-5 px-7 lg:px-0">
               <VcButton
@@ -121,7 +121,7 @@
                 class="px-3 self-start uppercase font-bold"
                 @click="openClearCartDialog"
               >
-                {{ $t("pages.cart.clear_cart_button") }}
+                {{ $t("pages.cart.products_section.clear_cart_button") }}
               </VcButton>
             </div>
           </div>
