@@ -1,5 +1,5 @@
 import { useAppContext } from "@/core";
-import { Product, CartType, LineItemType, Breadcrumb, VariationType } from "@/xapi";
+import { Product, CartType, LineItemType, Breadcrumb, VariationType, PaymentMethodType } from "@/xapi";
 import globals from "@/core/globals";
 
 type TEventParams = Gtag.ControlParams | Gtag.EventParams | Gtag.CustomParams;
@@ -152,6 +152,19 @@ function addShippingInfo(cart: CartType, params?: TEventParamsForList): void {
   });
 }
 
+function addPaymentInfo(cart: CartType, params?: TEventParamsForList): void {
+  sendEvent("add_payment_info", {
+    ...params,
+    currency: cart.currency?.code,
+    value: cart.total?.amount,
+    coupon: cart.coupons?.[0],
+    payment_type: cart.availablePaymentMethods?.find(
+      (paymentMethod: PaymentMethodType) => paymentMethod.code === cart.payments?.[0].paymentGatewayCode
+    )?.paymentMethodGroupType,
+    items: cart.items!.map(lineItemToGtagItem),
+  });
+}
+
 export default () => ({
   isAvailableGtag,
   sendEvent,
@@ -164,4 +177,5 @@ export default () => ({
   viewCart,
   beginCheckout,
   addShippingInfo,
+  addPaymentInfo,
 });
