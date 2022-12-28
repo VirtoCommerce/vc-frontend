@@ -87,6 +87,7 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
       name
       description
       logoUrl
+      paymentMethodGroupType
     }
 
     availableShippingMethods {

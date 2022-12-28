@@ -696,6 +696,8 @@ async function createOrder() {
 
   await prepareOrderData();
 
+  ga.addPaymentInfo(cart.value);
+
   const order = await createOrderFromCart(cart.value.id!);
 
   if (!order) {
