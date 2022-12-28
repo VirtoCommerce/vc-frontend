@@ -8,18 +8,16 @@
       </template>
 
       <template #sidebar>
-        <VcCardWidget :title="'Order summary'" icon-url="/static/images/shipping-address.svg">
-          <OrderSummary :cart="cart">
-            <template #footer>
-              <VcButton class="uppercase w-full mt-4" is-disabled>{Dynamic next step}</VcButton>
+        <OrderSummary :cart="cart">
+          <template #footer>
+            <VcButton class="uppercase w-full mt-4" is-disabled>{Dynamic next step}</VcButton>
 
-              <p
-                class="mt-4 text-xs font-normal text-gray-400"
-                v-t="'pages.checkout.order_summary_block.warning_message'"
-              />
-            </template>
-          </OrderSummary>
-        </VcCardWidget>
+            <p
+              class="mt-4 text-xs font-normal text-gray-400"
+              v-t="'pages.checkout.order_summary_block.warning_message'"
+            />
+          </template>
+        </OrderSummary>
       </template>
     </VcLayoutWithRightSidebar>
   </VcContainer>
