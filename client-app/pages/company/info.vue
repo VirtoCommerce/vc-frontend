@@ -367,6 +367,7 @@ async function openDeleteAddressDialog(address: MemberAddressType) {
          */
         if (previousPagesCount > 1 && previousPagesCount === page.value && previousPagesCount > pages.value) {
           page.value -= 1;
+          fetchAddresses();
         }
 
         closeDeleteAddressDialog();
