@@ -4,7 +4,7 @@
     <template #description>
       <h1 class="text-center lg:text-left text-3xl uppercase font-bold mb-8" v-t="'pages.confirm_email.header'" />
 
-      <div class="flex flex-col lg:flex-row gap-5 mb-10">
+      <div class="flex flex-col items-center lg:flex-row gap-5 mb-10">
         <span
           class="flex items-center justify-center shrink-0 h-12 w-12 rounded-full text-white bg-[color:var(--color-success)]"
         >
