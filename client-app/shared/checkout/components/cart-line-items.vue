@@ -21,7 +21,7 @@
     </div>
 
     <!-- table body -->
-    <div v-if="items.length" class="flex flex-col gap-6 md:gap-0 md:border-x md:border-b md:rounded-b md:divide-y">
+    <div v-if="items.length" class="flex flex-col gap-[1.875rem] md:gap-0 md:border-x md:divide-y">
       <div
         v-for="item in extendedItems"
         :key="item.id"
@@ -195,6 +195,15 @@
         </VcAlert>
       </div>
     </div>
+
+    <!-- table footer -->
+    <div
+      class="flex items-center justify-end py-2.5 gap-2 text-[color:var(--color-price)] md:px-4 md:py-2.5 md:border md:rounded-b"
+    >
+      <div class="text-13 font-bold">{{ $t("pages.account.quote_details.line_items.subtotal") }}:</div>
+
+      <div class="text-17 font-extrabold">{{ $n(subtotal, "currency") }}</div>
+    </div>
   </div>
 </template>
 
@@ -203,6 +212,7 @@ import { computed, PropType } from "vue";
 import { LineItemType, ValidationErrorType } from "@/xapi";
 import { VcPriceDisplay } from "@/ui-kit/components";
 import { extendCartItem } from "@/shared/checkout";
+import { sumBy } from "lodash";
 
 const props = defineProps({
   items: {
@@ -223,6 +233,8 @@ const emit = defineEmits(["remove:item", "update:item"]);
 const extendedItems = computed<ReturnType<typeof extendCartItem>[]>(() =>
   props.items.map((item: LineItemType) => extendCartItem(item, getItemValidationErrors(item.id)))
 );
+
+const subtotal = computed<number>(() => sumBy(props.items, (item: LineItemType) => item.extendedPrice?.amount));
 
 function handleUpdate(item: LineItemType): void {
   if (item.quantity) {
