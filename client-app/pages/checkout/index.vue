@@ -1,6 +1,8 @@
 <template>
   <VcContainer>
-    <h2 class="text-gray-800 px-5 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-7">{Dynamic step title}</h2>
+    <h2 class="text-3xl font-bold uppercase mb-5">{Dynamic step title}</h2>
+
+    <VcSteps class="mb-5" :steps="steps" />
 
     <VcLayoutWithRightSidebar is-sidebar-sticky>
       <template #main>
@@ -10,7 +12,7 @@
       <template #sidebar>
         <OrderSummary :cart="cart">
           <template #footer>
-            <VcButton class="uppercase w-full mt-4" is-disabled>{Dynamic next step}</VcButton>
+            <VcButton class="uppercase w-full mt-4" is-disabled> {Dynamic next step} </VcButton>
 
             <p
               class="mt-4 text-xs font-normal text-gray-400"
@@ -31,6 +33,23 @@ import { OrderSummary } from "@/shared/checkout";
 
 const { t } = useI18n();
 const { cart } = useCart();
+
+const steps = [
+  {
+    name: "Shipping",
+    completed: true,
+  },
+  {
+    name: "Billing",
+    active: true,
+  },
+  {
+    name: "Order created",
+  },
+  {
+    name: "Completed",
+  },
+];
 
 usePageHead({
   title: [t("pages.checkout.meta.title"), "{Dynamic step title}"],
