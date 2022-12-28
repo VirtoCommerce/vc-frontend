@@ -1,5 +1,7 @@
 <template>
-  <div class="relative shadow-light-lg lg:bg-white lg:border lg:rounded lg:shadow-md-x">
+  <div
+    class="relative bg-white lg:border lg:rounded lg:shadow-md-x after:z-[1] after:absolute after:top-full after:w-full after:h-3 after:bg-gradient-to-b after:from-[#f1f1f1] after:lg:hidden"
+  >
     <slot name="title" v-if="withTitle">
       <div
         class="flex items-center gap-3 px-6 pt-6"
@@ -11,6 +13,7 @@
         </h3>
       </div>
     </slot>
+
     <div :class="contentClasses">
       <slot></slot>
     </div>

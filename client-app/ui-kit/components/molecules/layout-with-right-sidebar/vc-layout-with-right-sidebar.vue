@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col bg-white -mx-5 lg:mx-0 lg:bg-transparent lg:flex-row lg:items-start lg:gap-x-6">
+  <div class="flex flex-col -mx-5 lg:mx-0 lg:flex-row lg:items-start lg:gap-x-6">
     <!-- Main section -->
     <div class="contents lg:grow lg:block lg:space-y-6">
       <slot name="main"></slot>
