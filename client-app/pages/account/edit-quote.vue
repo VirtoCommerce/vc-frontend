@@ -230,7 +230,7 @@ function openAddressSelectionDialog(addressType: AddressType.Billing | AddressTy
       ),
 
       onResult(selectedAddress: MemberAddressType): void {
-        const quoteAddress = cloneDeep(convertToType<QuoteAddressType>(selectedAddress));
+        const quoteAddress = convertToType<QuoteAddressType>(selectedAddress);
         quoteAddress.addressType = addressType;
         setQuoteAddress(quoteAddress);
         closePopup();

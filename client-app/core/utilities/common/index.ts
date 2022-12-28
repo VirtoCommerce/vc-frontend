@@ -1,3 +1,4 @@
+import { cloneDeep } from "lodash";
 import { ISortInfo } from "@/core/types";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 
@@ -91,7 +92,7 @@ export function stringFormat(template: string, ...args: string[]): string {
 }
 
 export function convertToType<To, From = Record<any, any>>(value?: From): To {
-  return value as unknown as To;
+  return cloneDeep<To>(value as any);
 }
 
 export async function asyncForEach<T>(
