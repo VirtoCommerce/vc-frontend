@@ -86,7 +86,16 @@ function viewItem(item: Product, params?: TEventParamsForList): void {
   sendEvent("view_item", {
     ...params,
     currency: globals.currencyCode,
-    value: item.price?.list?.amount,
+    value: item.price?.actual?.amount,
+    items: [productToGtagItem(item)],
+  });
+}
+
+function addItemToWishList(item: Product, params?: TEventParamsForList): void {
+  sendEvent("add_to_wishlist", {
+    ...params,
+    currency: globals.currencyCode,
+    value: item.price?.actual?.amount,
     items: [productToGtagItem(item)],
   });
 }
@@ -99,19 +108,17 @@ function addItemToCart(item: Product | VariationType, quantity = 1, params?: TEv
   sendEvent("add_to_cart", {
     ...params,
     currency: globals.currencyCode,
-    value: item.price?.list?.amount * quantity,
+    value: item.price?.actual?.amount * quantity,
     items: [inputItem],
   });
 }
 
 function removeItemFromCart(item: LineItemType, params?: TEventParamsForList): void {
-  const inputItem = lineItemToGtagItem(item);
-
   sendEvent("remove_from_cart", {
     ...params,
     currency: globals.currencyCode,
-    value: item.listPrice?.amount * (inputItem.quantity ?? 1),
-    items: [inputItem],
+    value: item.placedPrice?.amount * (item.quantity ?? 1),
+    items: [lineItemToGtagItem(item)],
   });
 }
 
@@ -151,6 +158,7 @@ export default () => ({
   viewItemList,
   selectItem,
   viewItem,
+  addItemToWishList,
   addItemToCart,
   removeItemFromCart,
   viewCart,
