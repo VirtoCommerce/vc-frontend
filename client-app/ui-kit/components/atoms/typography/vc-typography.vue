@@ -43,7 +43,7 @@ defineProps({
 .typography {
   @apply font-lato text-base;
 
-  color:var(--color-typography-text, var(--color-body-text));
+  color: var(--vc-typography-color, var(--color-body-text));
 
   &--size-h1 {
     @apply text-3xl uppercase tracking-wide;

@@ -1,38 +1,36 @@
 <template>
-  <div class="flex flex-wrap gap-x-5 gap-y-2.5">
-    <router-link class="flex items-center gap-1.5 text-[var(--color-success)]" to="/cart">
-      <svg class="w-5 h-5">
-        <use href="/static/images/arrow-left-circle.svg#main"></use>
-      </svg>
-      <div class="text-14 font-semibold text-[var(--color-success)]">Back to Cart</div>
+  <div class="vc-steps">
+    <router-link class="vc-steps__step" to="/cart">
+      <VcIcon url="/static/images/arrow-left-circle.svg#main" size="sm" class="vc-steps__icon" />
+      <VcTypography class="vc-steps__name vc-steps__name--completed" tag-name="div" font-size="medium">
+        Back to Cart
+      </VcTypography>
     </router-link>
 
-    <div class="flex items-center gap-1.5" v-for="(step, index) in steps" :key="index">
-      <svg v-if="step.completed" class="w-5 h-5 text-[var(--color-success)]">
-        <use href="/static/images/check-circle.svg#main"></use>
-      </svg>
+    <div class="vc-steps__step" v-for="(step, index) in steps" :key="index">
+      <VcIcon v-if="step.completed" url="/static/images/check-circle.svg#main" size="sm" class="vc-steps__icon" />
 
       <div
         v-else
-        class="flex items-center justify-center w-5 h-5 rounded-full text-sm font-extrabold text-white"
+        class="vc-steps__number"
         :class="{
-          'bg-[var(--color-primary)]': step.active,
-          'bg-gray-400': !step.active,
+          'vc-steps__number--active': step.active,
         }"
       >
         {{ index + 2 }}
       </div>
 
-      <div
-        class="text-14"
+      <VcTypography
+        class="vc-steps__name"
         :class="{
-          'font-bold': step.active,
-          'font-semibold text-gray-600': !step.active,
-          'font-semibold text-[var(--color-success)]': step.completed,
+          'vc-steps__name--active': step.active,
+          'vc-steps__name--completed': step.completed,
         }"
+        tag-name="div"
+        font-size="medium"
       >
         {{ step.name }}
-      </div>
+      </VcTypography>
     </div>
   </div>
 </template>
@@ -47,3 +45,44 @@ defineProps({
   },
 });
 </script>
+
+<style lang="scss">
+.vc-steps {
+  @apply flex flex-wrap gap-x-5 gap-y-2.5;
+
+  &__step {
+    @apply flex items-center gap-1.5;
+  }
+
+  &__icon {
+    --vc-icon-color: var(--vc-steps-icon-color, var(--color-success));
+  }
+
+  &__number {
+    @apply flex items-center justify-center w-5 h-5 rounded-full text-sm font-extrabold text-white;
+
+    color: var(--vc-steps-number-color, var(--color-white));
+    background-color: var(--vc-steps-number-bg, theme("colors.gray.400"));
+
+    &--active {
+      background-color: var(--vc-steps-number-bg-active, var(--color-primary));
+    }
+  }
+
+  &__name {
+    @apply text-14 font-semibold;
+
+    --vc-typography-color: var(--vc-steps-name-color, theme("colors.gray.600"));
+
+    &--completed {
+      --vc-typography-color: var(--vc-steps-name-color-completed, var(--color-success));
+    }
+
+    &--active {
+      @apply font-bold;
+
+      --vc-typography-color: var(--vc-steps-name-color-active, var(--color-body-text));
+    }
+  }
+}
+</style>
