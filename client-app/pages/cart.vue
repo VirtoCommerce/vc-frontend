@@ -611,7 +611,7 @@ const { openPopup, closePopup } = usePopup();
 const ga = useGoogleAnalytics();
 
 usePageHead({
-  title: t("pages.checkout.meta.title"),
+  title: t("pages.cart.meta.title"),
 });
 
 const breadcrumbs: IBreadcrumbs[] = [
