@@ -127,16 +127,13 @@
               required
               type="number"
               pattern="\d*"
+              @focus="handleFocus(item)"
               @keyup.enter="handleUpdate(item)"
               @blur="handleUpdate(item)"
             />
 
             <div class="flex flex-wrap justify-center gap-1 mt-1.5">
-              <VcInStock
-                :is-in-stock="item.extended.isInStock"
-                :is-available="item.extended.isProductExists"
-                :quantity="item.inStockQuantity"
-              />
+              <VcInStock :quantity="item.inStockQuantity" is-in-stock />
             </div>
           </div>
 
@@ -174,16 +171,6 @@
 
         <!-- Line item validation error -->
         <VcAlert
-          v-if="!item.extended.isProductExists"
-          class="-mt-0.5 mb-3 mx-3 md:-mt-2 md:mb-2.5 md:mx-4"
-          icon
-          text
-          type="error"
-        >
-          {{ $t("common.messages.product_no_longer_available") }}
-        </VcAlert>
-
-        <VcAlert
           v-for="(validationError, index) in item.validationErrors"
           :key="index"
           class="-mt-0.5 mb-3 mx-3 md:-mt-2 md:mb-2.5 md:mx-4"
@@ -199,7 +186,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from "vue";
+import { computed, ref, PropType } from "vue";
+import { clone } from "lodash";
 import { LineItemType, ValidationErrorType } from "@/xapi";
 import { VcPriceDisplay } from "@/ui-kit/components";
 import { extendCartItem } from "@/shared/checkout";
@@ -220,12 +208,22 @@ const props = defineProps({
 
 const emit = defineEmits(["remove:item", "update:item"]);
 
+const originalSelectedItem = ref<LineItemType | undefined>();
+
 const extendedItems = computed<ReturnType<typeof extendCartItem>[]>(() =>
   props.items.map((item: LineItemType) => extendCartItem(item, getItemValidationErrors(item.id)))
 );
 
+function handleFocus(item: LineItemType): void {
+  originalSelectedItem.value = clone(item);
+}
+
 function handleUpdate(item: LineItemType): void {
-  if (item.quantity) {
+  if (
+    item.id === originalSelectedItem.value!.id &&
+    item.quantity &&
+    item.quantity !== originalSelectedItem.value?.quantity
+  ) {
     emit("update:item", item.id, item.quantity);
   }
 }
