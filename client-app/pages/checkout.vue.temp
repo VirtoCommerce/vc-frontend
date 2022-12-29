@@ -3,15 +3,15 @@
 
   <VcEmptyPage
     v-else-if="!cart.items?.length"
-    :title="$t('shared.checkout.empty_cart.title')"
-    :description="$t('shared.checkout.empty_cart.description')"
+    :title="$t('shared.cart.empty_cart.title')"
+    :description="$t('shared.cart.empty_cart.description')"
     image="/static/images/errors/emptyCart.webp"
     mobile-image="/static/images/errors/emptyCartMobile.webp"
     :breadcrumbs="breadcrumbs"
   >
     <template #actions>
       <VcButton :to="{ name: 'Catalog' }" size="lg" class="w-48 uppercase font-bold">
-        {{ $t("shared.checkout.empty_cart.continue_shopping_button") }}
+        {{ $t("shared.cart.empty_cart.continue_shopping_button") }}
       </VcButton>
     </template>
   </VcEmptyPage>
