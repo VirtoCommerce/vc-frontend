@@ -222,6 +222,7 @@ const originalSelectedItem = ref<LineItemType | undefined>();
 const extendedItems = computed<ReturnType<typeof extendCartItem>[]>(() =>
   props.items.map((item: LineItemType) => extendCartItem(item, getItemValidationErrors(item.id)))
 );
+
 const subtotal = computed<number>(() => sumBy(props.items, (item: LineItemType) => item.extendedPrice?.amount));
 
 function handleFocus(item: LineItemType): void {

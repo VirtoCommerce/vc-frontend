@@ -565,14 +565,12 @@ import { AddressType, useElementVisibility, usePageHead, useGoogleAnalytics, con
 import {
   AddOrUpdateAddressDialog,
   CheckoutLabeledBlock,
-  ClearCartDialog,
   OrderSummary,
   PaymentMethodDialog,
-  CartLineItems,
   SelectAddressDialog,
   ShippingMethodDialog,
 } from "@/shared/checkout";
-import { useCart } from "@/shared/cart";
+import { CartLineItems, ClearCartDialog, useCart } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
