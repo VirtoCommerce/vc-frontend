@@ -201,7 +201,12 @@ const quoteChanged = computed<boolean>(() => !isEqual(originalQuote.value, quote
 const quoteItemsValid = computed<boolean>(() =>
   every(quote.value?.items, (item: QuoteItemType) => item.selectedTierPrice?.quantity > 0)
 );
-const quoteValid = computed<boolean>(() => !!shippingAddress.value && !!billingAddress.value && quoteItemsValid.value);
+const quoteValid = computed<boolean>(
+  () =>
+    !!shippingAddress.value &&
+    (!!billingAddress.value || billingAddressEqualsShippingAddress.value) &&
+    quoteItemsValid.value
+);
 
 const userHasAddresses = computedEager<boolean>(() => !!addresses.value.length);
 
