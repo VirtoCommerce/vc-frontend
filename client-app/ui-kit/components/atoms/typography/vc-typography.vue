@@ -17,7 +17,7 @@ defineProps({
     type: String,
     default: "p",
     validator(value: string) {
-      return ["h1", "h2", "h3", "h4", "h5", "h6", "div", "p"].includes(value);
+      return ["h1", "h2", "h3", "h4", "h5", "h6", "div", "p", "span"].includes(value);
     },
   },
 
