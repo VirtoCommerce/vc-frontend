@@ -127,6 +127,7 @@
               required
               type="number"
               pattern="\d*"
+              @focus="handleFocus(item)"
               @keyup.enter="handleUpdate(item)"
               @blur="handleUpdate(item)"
             />
@@ -194,11 +195,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from "vue";
+import { computed, ref, PropType } from "vue";
 import { LineItemType, ValidationErrorType } from "@/xapi";
 import { VcPriceDisplay } from "@/ui-kit/components";
 import { extendCartItem } from "@/shared/checkout";
-import { sumBy } from "lodash";
+import { clone, sumBy } from "lodash";
 
 const props = defineProps({
   items: {
@@ -216,14 +217,24 @@ const props = defineProps({
 
 const emit = defineEmits(["remove:item", "update:item"]);
 
+const originalSelectedItem = ref<LineItemType | undefined>();
+
 const extendedItems = computed<ReturnType<typeof extendCartItem>[]>(() =>
   props.items.map((item: LineItemType) => extendCartItem(item, getItemValidationErrors(item.id)))
 );
 
 const subtotal = computed<number>(() => sumBy(props.items, (item: LineItemType) => item.extendedPrice?.amount));
 
+function handleFocus(item: LineItemType): void {
+  originalSelectedItem.value = clone(item);
+}
+
 function handleUpdate(item: LineItemType): void {
-  if (item.quantity) {
+  if (
+    originalSelectedItem.value?.id === item.id &&
+    item.quantity &&
+    originalSelectedItem.value?.quantity !== item.quantity
+  ) {
     emit("update:item", item.id, item.quantity);
   }
 }
