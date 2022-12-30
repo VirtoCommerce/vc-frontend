@@ -132,11 +132,7 @@
             />
 
             <div class="flex flex-wrap justify-center gap-1 mt-1.5">
-              <VcInStock
-                :is-in-stock="item.extended.isInStock"
-                :is-available="item.extended.isProductExists"
-                :quantity="item.inStockQuantity"
-              />
+              <VcInStock :quantity="item.inStockQuantity" is-in-stock />
             </div>
           </div>
 
@@ -173,16 +169,6 @@
         </div>
 
         <!-- Line item validation error -->
-        <VcAlert
-          v-if="!item.extended.isProductExists"
-          class="-mt-0.5 mb-3 mx-3 md:-mt-2 md:mb-2.5 md:mx-4"
-          icon
-          text
-          type="error"
-        >
-          {{ $t("common.messages.product_no_longer_available") }}
-        </VcAlert>
-
         <VcAlert
           v-for="(validationError, index) in item.validationErrors"
           :key="index"
