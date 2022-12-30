@@ -36,6 +36,14 @@ fragment lineItemFields on LineItemType {
       valueType
       label
     }
+    vendor {
+      id
+      name
+      rating {
+        value
+        reviewCount
+      }
+    }
   }
   quantity
   sku

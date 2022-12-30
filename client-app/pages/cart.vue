@@ -3,28 +3,28 @@
 
   <VcEmptyPage
     v-else-if="!cart.items?.length"
-    :title="$t('shared.checkout.empty_cart.title')"
-    :description="$t('shared.checkout.empty_cart.description')"
+    :title="$t('shared.cart.empty_cart.title')"
+    :description="$t('shared.cart.empty_cart.description')"
     image="/static/images/errors/emptyCart.webp"
     mobile-image="/static/images/errors/emptyCartMobile.webp"
     :breadcrumbs="breadcrumbs"
   >
     <template #actions>
       <VcButton :to="{ name: 'Catalog' }" size="lg" class="w-48 uppercase font-bold">
-        {{ $t("shared.checkout.empty_cart.continue_shopping_button") }}
+        {{ $t("shared.cart.empty_cart.continue_shopping_button") }}
       </VcButton>
     </template>
   </VcEmptyPage>
 
-  <div v-else class="bg-gray-100 pt-7 pb-8 shadow-inner">
-    <div class="max-w-screen-2xl md:px-12 mx-auto">
+  <div v-else class="bg-gray-100 pt-6 pb-8 shadow-inner">
+    <div class="px-5 mx-auto max-w-screen-2xl 2xl:px-18">
       <!-- Mobile sticky header -->
       <div
         v-if="isVisibleStickyMobileHeader"
-        class="fixed top-0 h-14 w-full z-40 px-5 md:px-12 flex justify-between items-center gap-x-3 bg-[color:var(--color-header-bottom-bg)]"
+        class="fixed left-0 top-0 h-14 w-full z-40 px-5 md:px-12 flex justify-between items-center gap-x-3 bg-[color:var(--color-header-bottom-bg)]"
       >
         <div>
-          <h2 class="text-gray-800 font-extrabold uppercase leading-none mb-1.5" v-t="'pages.checkout.title'" />
+          <h2 class="text-gray-800 font-extrabold uppercase leading-none mb-1.5" v-t="'pages.cart.title'" />
 
           <div class="font-bold leading-none">
             <span>{{ $t("shared.checkout.order_summary.total_label") }}:</span>
@@ -43,48 +43,66 @@
             class="uppercase px-3"
             @click="createOrder"
           >
-            {{ $t("pages.checkout.order_summary_block.place_order_button") }}
+            {{ $t("pages.cart.order_summary_block.create_order_button") }}
           </VcButton>
         </div>
       </div>
 
-      <h2
-        class="text-gray-800 px-5 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-7"
-        v-t="'pages.checkout.title'"
-      />
+      <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block mx-5 md:mx-0" />
+
+      <!-- Title block -->
+      <div class="flex justify-between items-center py-5">
+        <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.cart.title'" />
+      </div>
 
       <div class="flex flex-col lg:flex-row lg:flex-nowrap lg:space-x-6">
         <!-- Main section -->
         <div class="lg:w-3/4 xl:w-4/5 flex-grow w-full">
-          <!-- My products section -->
-          <VcSection class="shadow">
-            <template #title>
-              <div class="flex items-center px-5 lg:pr-0 py-7">
-                <VcImage
-                  :src="'/static/images/checkout/products.svg'"
-                  :alt="$t('pages.checkout.products_section.title')"
-                  class="mr-5 lg:mr-8"
-                />
+          <div class="bg-white lg:mb-6 lg:rounded -mx-5 md:mx-0 lg:shadow-md-x lg:pt-5 lg:px-7">
+            <div class="flex items-center px-5 lg:hidden lg:pr-0 py-6">
+              <VcImage
+                :src="'/static/images/checkout/shipping.svg'"
+                :alt="$t('pages.cart.products_section.title')"
+                class="mr-5 lg:mr-8"
+              />
 
-                <div class="w-full flex justify-between xl:mr-11 lg:mr-6">
-                  <h3 class="text-gray-800 text-2xl lg:text-3xl font-bold uppercase">
-                    {{ $t("pages.checkout.products_section.title") }}
-                  </h3>
-
-                  <VcButton
-                    :is-disabled="creatingOrder || creatingQuote"
-                    size="sm"
-                    kind="secondary"
-                    is-outline
-                    class="px-3 self-start uppercase font-bold"
-                    @click="openClearCartDialog"
-                  >
-                    {{ $t("pages.checkout.products_section.clear_cart_button") }}
-                  </VcButton>
-                </div>
+              <div class="w-full flex justify-between xl:mr-11 lg:mr-6">
+                <h3 class="text-gray-800 text-2xl lg:text-3xl font-bold uppercase">
+                  {{ $t("pages.cart.products_section.title") }}
+                </h3>
               </div>
+            </div>
+
+            <!-- Items grouped by Vendor -->
+            <template v-if="$cfg.line_items_group_by_vendor_enabled">
+              <template v-for="(item, vendorId) in groupedCartItems" :key="vendorId">
+                <div
+                  v-if="item.items.length"
+                  class="bg-white shadow-light-lg mb-4 px-7 pt-0 md:shadow-none lg:mb-0 lg:pb-5 lg:px-0 lg:pt-0 lg:rounded"
+                >
+                  <!-- Vendor -->
+                  <div class="pb-3 font-bold text-15">
+                    <span class="mr-1">{{ $t("pages.cart.products_section.vendor_label") }}:</span>
+                    <Vendor v-if="item.vendor" :vendor="item.vendor" class="inline-flex flex-row items-end gap-x-3" />
+                    <span v-else class="text-gray-400" v-t="`pages.cart.products_section.empty_vendor_label`" />
+                  </div>
+
+                  <CartLineItems
+                    :items="item.items"
+                    :read-only="creatingOrder || creatingQuote"
+                    :validationErrors="cart.validationErrors"
+                    @update:item="changeItemQuantity"
+                    @remove:item="removeItemButtonClick"
+                  />
+                </div>
+              </template>
             </template>
-            <div class="px-5 pb-5">
+
+            <!-- Items not grouped by Vendor -->
+            <div
+              v-else
+              class="bg-white shadow-light-lg mb-4 p-7 lg:mb-0 lg:pb-5 lg:px-0 lg:pt-0 lg:rounded lg:shadow-none"
+            >
               <CartLineItems
                 :items="cartItems"
                 :read-only="creatingOrder || creatingQuote"
@@ -92,12 +110,21 @@
                 @update:item="changeItemQuantity"
                 @remove:item="removeItemButtonClick"
               />
-
-              <div v-if="pages > 1" class="pt-6 md:flex">
-                <VcPagination v-model:page="page" :pages="pages" />
-              </div>
             </div>
-          </VcSection>
+
+            <div class="hidden md:flex justify-end pb-5 px-7 lg:px-0">
+              <VcButton
+                :is-disabled="creatingOrder || creatingQuote"
+                size="sm"
+                kind="secondary"
+                is-outline
+                class="px-3 self-start uppercase font-bold"
+                @click="openClearCartDialog"
+              >
+                {{ $t("pages.cart.products_section.clear_cart_button") }}
+              </VcButton>
+            </div>
+          </div>
 
           <!-- Gifts section -->
           <VcSection
@@ -514,7 +541,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, shallowRef } from "vue";
+import { computed, inject, onMounted, ref, shallowRef } from "vue";
 import { breakpointsTailwind, computedEager, useBreakpoints } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
@@ -532,8 +559,9 @@ import {
   ShipmentType,
   ShippingMethodType,
   LineItemType,
+  Vendor as VendorType,
 } from "@/xapi";
-import { AddressType, useElementVisibility, usePageHead, useGoogleAnalytics } from "@/core";
+import { AddressType, useElementVisibility, usePageHead, useGoogleAnalytics, configInjectionKey } from "@/core";
 import {
   AddOrUpdateAddressDialog,
   CheckoutLabeledBlock,
@@ -548,6 +576,12 @@ import { useCart } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
+import { Vendor } from "@/shared/catalog";
+
+type TGroupItem = { items: LineItemType[]; vendor?: VendorType };
+type TGroupedItems = Record<string, TGroupItem>;
+
+const config = inject(configInjectionKey);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const notifications = useNotifications();
@@ -557,8 +591,6 @@ const { user, isAuthenticated } = useUser();
 const {
   loading,
   cart,
-  pages,
-  itemsPerPage,
   fetchCart,
   changeItemQuantity,
   removeItem,
@@ -579,13 +611,16 @@ const { openPopup, closePopup } = usePopup();
 const ga = useGoogleAnalytics();
 
 usePageHead({
-  title: t("pages.checkout.meta.title"),
+  title: t("pages.cart.meta.title"),
 });
 
 const breadcrumbs: IBreadcrumbs[] = [
   { title: t("common.links.home"), route: { name: "Home" } },
   { title: t("common.links.cart"), route: { name: "Cart" } },
 ];
+
+const groupIdWithoutVendor = "none";
+const groupItemsByVendor = !!config?.line_items_group_by_vendor_enabled;
 
 const isMobile = breakpoints.smaller("lg");
 const preparedData = ref(false);
@@ -595,7 +630,6 @@ const cartComment = ref("");
 const cartCoupon = ref("");
 const couponValidationError = ref("");
 const billingSameAsShipping = ref(true);
-const page = ref(1);
 const purchaseOrderNumber = ref("");
 
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
@@ -608,9 +642,41 @@ const isVisibleStickyMobileHeader = computedEager<boolean>(
 const purchaseOrderNumberApplied = computedEager<boolean>(() => !!cart.value.purchaseOrderNumber);
 const cartCouponApplied = computedEager<boolean>(() => !!cart.value.coupons?.[0]?.code);
 
-const cartItems = computed(
-  () => cart.value.items?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value) || []
-);
+const cartItems = computed<LineItemType[]>(() => {
+  if (groupItemsByVendor || !cart.value.items) {
+    return [];
+  }
+
+  return cart.value.items;
+});
+
+const groupedCartItems = computed<TGroupedItems>(() => {
+  // NOTE: The group without a vendor should be last to be displayed.
+  const groupWithoutVendor: TGroupItem = { items: [] };
+  const map: TGroupedItems = {};
+
+  if (!groupItemsByVendor) {
+    return map;
+  }
+
+  cart.value.items?.forEach((item) => {
+    const vendor = item.product!.vendor;
+
+    if (vendor) {
+      const vendorId = vendor.id;
+
+      map[vendorId] = map[vendorId] || { vendor, items: [] };
+      map[vendorId].items.push(item);
+    } else {
+      groupWithoutVendor.items.push(item);
+    }
+  });
+
+  // Add a group without a vendor to the end of the iteration object.
+  map[groupIdWithoutVendor] = groupWithoutVendor;
+
+  return map;
+});
 
 const shipment = computed<ShipmentType | undefined>(() => cart.value.shipments?.[0]);
 const payment = computed<PaymentType | undefined>(() => cart.value.payments?.[0]);
@@ -695,6 +761,8 @@ async function createOrder() {
   creatingOrder.value = true;
 
   await prepareOrderData();
+
+  ga.addPaymentInfo(cart.value);
 
   const order = await createOrderFromCart(cart.value.id!);
 

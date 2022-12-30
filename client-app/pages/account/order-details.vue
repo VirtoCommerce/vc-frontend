@@ -44,20 +44,21 @@
           v-if="$cfg.line_items_group_by_vendor_enabled"
           class="bg-white lg:mb-6 lg:rounded -mx-5 md:mx-0 lg:shadow-md-x lg:pt-5 lg:px-7"
         >
-          <div
-            v-for="(item, vendorId) in groupedOrderItems"
-            :key="vendorId"
-            class="bg-white shadow-light-lg mb-4 px-7 pt-4 lg:mb-0 lg:pb-5 lg:px-0 lg:pt-0 lg:rounded lg:shadow-none"
-          >
-            <!-- Vendor -->
-            <div class="pb-3 font-bold text-15">
-              <span class="mr-1">{{ $t("pages.account.order_details.vendor_label") }}:</span>
-              <Vendor v-if="item.vendor" :vendor="item.vendor" class="inline-flex flex-row items-end gap-x-3" />
-              <span v-else class="text-gray-400" v-t="`pages.account.order_details.empty_vendor_label`" />
-            </div>
+          <template v-for="(item, vendorId) in groupedOrderItems" :key="vendorId">
+            <div
+              v-if="item.items.length"
+              class="bg-white shadow-light-lg mb-4 px-7 pt-4 lg:mb-0 lg:pb-5 lg:px-0 lg:pt-0 lg:rounded lg:shadow-none"
+            >
+              <!-- Vendor -->
+              <div class="pb-3 font-bold text-15">
+                <span class="mr-1">{{ $t("pages.account.order_details.vendor_label") }}:</span>
+                <Vendor v-if="item.vendor" :vendor="item.vendor" class="inline-flex flex-row items-end gap-x-3" />
+                <span v-else class="text-gray-400" v-t="`pages.account.order_details.empty_vendor_label`" />
+              </div>
 
-            <OrderLineItems :items="item.items" class="lg:rounded" />
-          </div>
+              <OrderLineItems :items="item.items" class="lg:rounded" />
+            </div>
+          </template>
         </div>
 
         <!-- Items not grouped by Vendor -->
