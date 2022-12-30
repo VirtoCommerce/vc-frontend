@@ -20,7 +20,9 @@ defineProps({
 
 <style lang="scss">
 .vc-icon {
-  color: var(--vc-icon-color, currentColor);
+  --vc-icon-color: var(--color-icon-color, currentColor);
+
+  @apply text-[color:var(--vc-icon-color)];
 
   &--size-xs {
     @apply w-4 h-4;

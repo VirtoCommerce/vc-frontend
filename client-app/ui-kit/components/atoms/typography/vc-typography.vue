@@ -41,9 +41,10 @@ defineProps({
 
 <style lang="scss">
 .typography {
-  @apply font-lato text-base;
+  --vc-typography-color: var(--color-typography-color, var(--color-body-text));
 
-  color: var(--vc-typography-color, var(--color-body-text));
+  @apply font-lato text-base
+  text-[color:var(--vc-typography-color)];
 
   &--size-h1 {
     @apply text-3xl uppercase tracking-wide;
