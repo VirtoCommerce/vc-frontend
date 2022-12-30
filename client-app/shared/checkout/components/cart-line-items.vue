@@ -21,7 +21,7 @@
     </div>
 
     <!-- table body -->
-    <div v-if="items.length" class="flex flex-col gap-6 md:gap-0 md:border-x md:border-b md:rounded-b md:divide-y">
+    <div v-if="items.length" class="flex flex-col gap-[1.875rem] md:gap-0 md:border-x md:divide-y">
       <div
         v-for="item in extendedItems"
         :key="item.id"
@@ -182,12 +182,21 @@
         </VcAlert>
       </div>
     </div>
+
+    <!-- table footer -->
+    <div
+      class="flex items-center justify-end py-2.5 gap-2 text-[color:var(--color-price)] md:px-4 md:py-2.5 md:border md:rounded-b"
+    >
+      <div class="text-13 font-bold">{{ $t("pages.account.quote_details.line_items.subtotal") }}:</div>
+
+      <div class="text-17 font-extrabold">{{ $n(subtotal, "currency") }}</div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, PropType } from "vue";
-import { clone } from "lodash";
+import { clone, sumBy } from "lodash";
 import { LineItemType, ValidationErrorType } from "@/xapi";
 import { VcPriceDisplay } from "@/ui-kit/components";
 import { extendCartItem } from "@/shared/checkout";
@@ -213,6 +222,7 @@ const originalSelectedItem = ref<LineItemType | undefined>();
 const extendedItems = computed<ReturnType<typeof extendCartItem>[]>(() =>
   props.items.map((item: LineItemType) => extendCartItem(item, getItemValidationErrors(item.id)))
 );
+const subtotal = computed<number>(() => sumBy(props.items, (item: LineItemType) => item.extendedPrice?.amount));
 
 function handleFocus(item: LineItemType): void {
   originalSelectedItem.value = clone(item);
