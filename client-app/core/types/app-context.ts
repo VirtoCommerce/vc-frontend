@@ -12,6 +12,7 @@ export interface IAppContext {
   readonly themeSettings: Readonly<IThemeConfigPreset>;
   */
   readonly storeSettings: {
+    readonly anonymousAccessEnabled: boolean;
     readonly googleAnalyticsEnabled: boolean;
   };
 }
