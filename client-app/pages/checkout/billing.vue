@@ -48,7 +48,7 @@
             <div class="flex flex-row items-center space-x-4">
               <template v-if="payment?.paymentGatewayCode">
                 <VcImage src="/static/images/checkout/invoice.svg" class="h-12 w-12" lazy />
-                <span>{{}}</span>
+                <span>{{ payment.paymentGatewayCode }}</span>
               </template>
 
               <div
