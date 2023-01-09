@@ -26,7 +26,7 @@
       "apply": "Anwenden",
       "send": "Send",
       "more": "More",
-      "save_changed": "Save Changes",
+      "save_changes": "Save Changes",
       "product": "Product",
       "properties": "Properties",
       "price_per_item": "Price per item"
@@ -366,6 +366,11 @@
       }
     },
     "cart": {
+      "empty_cart": {
+        "description": "Your cart is empty",
+        "continue_shopping_button": "@:common.buttons.continue_shopping",
+        "title": "Cart"
+      },
       "add_to_cart": {
         "add_to_cart_button": "@:common.buttons.add_to_cart",
         "update_cart_button": "Update cart",
@@ -1082,6 +1087,21 @@
         }
       }
     },
+    "cart": {
+      "meta": {
+        "title": "Cart"
+      },
+      "title": "Cart",
+      "products_section": {
+        "title": "My products",
+        "vendor_label": "@:shared.catalog.product_details.vendor_label",
+        "empty_vendor_label": "N/A",
+        "clear_cart_button": "Clear cart"
+      },
+      "order_summary_block": {
+        "create_order_button": "Create order"
+      }
+    },
     "catalog": {
       "meta": {
         "title": "@:pages.catalog.title",
@@ -1143,7 +1163,7 @@
         "title": "Products",
         "update_all_link_label": "If you changed multiple quantities,",
         "update_all_link": "Update All",
-        "clear_cart_button": "Clear all"
+        "clear_cart_button": "Clear cart"
       },
       "shipping_details_section": {
         "title": "Shipping details",
