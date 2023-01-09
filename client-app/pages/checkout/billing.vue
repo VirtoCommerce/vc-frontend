@@ -8,38 +8,40 @@
       >
         <div class="mx-5">
           <CheckoutLabeledBlock :label="$t('pages.checkout.payment_details_section.billing_address_block.title')">
-            <VcCheckbox
-              :model-value="billingAddressEqualsShippingAddress"
-              @change="toggleBillingAddressEqualsShippingAddress"
-            >
-              {{ $t("pages.checkout.payment_details_section.billing_address_block.same_as_shipping_checkbox_label") }}
-            </VcCheckbox>
-
-            <div
-              v-if="!billingAddressEqualsShippingAddress"
-              class="flex gap-3 mt-4 md:flex-row md:items-center empty:hidden"
-            >
-              <VcAddressInfo v-if="payment?.billingAddress" :address="payment.billingAddress" class="grow text-15" />
-
-              <VcAlert v-else class="grow" type="warning" icon>
-                {{ $t("pages.account.quote_details.no_address_message") }}
-              </VcAlert>
-
-              <div class="flex justify-end">
-                <button
-                  type="button"
-                  class="shrink-0 flex items-center justify-center h-9 w-9 rounded border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white"
-                  @click="
-                    userHasAddresses
-                      ? openAddressSelectionDialog()
-                      : openAddOrUpdateAddressDialog(payment?.billingAddress)
-                  "
-                  :title="$t('pages.account.addresses.edit_label')"
-                >
-                  <i class="fas fa-pencil-alt text-18" />
-                </button>
+            <template v-if="payment?.billingAddress">
+              <div class="truncate">
+                <VcAddressInfo v-if="payment?.billingAddress" :address="payment.billingAddress" class="grow text-15" />
               </div>
-            </div>
+            </template>
+
+            <template v-else>
+              <div class="text-[color:var(--color-danger)] flex items-center space-x-4">
+                <i class="fas fa-exclamation-triangle text-2xl" />
+
+                <span
+                  v-if="isAuthenticated"
+                  v-t="'pages.checkout.payment_details_section.billing_address_block.no_addresses_message'"
+                ></span>
+
+                <span
+                  v-else
+                  v-t="
+                    'pages.checkout.payment_details_section.billing_address_block.unauthenticated_no_addresses_message'
+                  "
+                ></span>
+              </div>
+
+              <div>
+                <VcButton
+                  size="sm"
+                  is-outline
+                  class="px-3 self-start uppercase font-bold"
+                  @click="addresses.length ? openAddressSelectionDialog() : openAddOrUpdateAddressDialog()"
+                >
+                  {{ $t("pages.checkout.shipping_details_section.shipping_address_block.add_address_button") }}
+                </VcButton>
+              </div>
+            </template>
           </CheckoutLabeledBlock>
 
           <CheckoutLabeledBlock :label="$t('pages.checkout.payment_details_section.payment_method_block.title')">
@@ -78,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted } from "vue";
 import { omit } from "lodash";
 import {
   AddOrUpdateAddressDialog,
@@ -97,7 +99,6 @@ import {
   PaymentMethodType,
   PaymentType,
 } from "@/xapi";
-import { computedEager } from "@vueuse/shared";
 import { AddressType, convertToType /*useGoogleAnalytics*/ } from "@/core";
 //import { useNotifications } from "@/shared/notification";
 //import { useRouter } from "vue-router";
@@ -105,23 +106,15 @@ import { AddressType, convertToType /*useGoogleAnalytics*/ } from "@/core";
 
 //const { t } = useI18n();
 //const router = useRouter();
-const { user } = useUser();
+const { user, isAuthenticated } = useUser();
 const { cart, fetchCart, updatePayment } = useCart();
 const { addresses, fetchAddresses } = useUserAddresses({ user });
 const { openPopup, closePopup } = usePopup();
 //const ga = useGoogleAnalytics();
 //const notifications = useNotifications();
 
-const userHasAddresses = computedEager<boolean>(() => !!addresses.value.length);
-
 const availablePaymentMethods = computed<PaymentMethodType[]>(() => cart.value.availablePaymentMethods ?? []);
 const payment = computed<PaymentType | undefined>(() => cart.value.payments?.[0]);
-
-const billingAddressEqualsShippingAddress = ref(true);
-
-function toggleBillingAddressEqualsShippingAddress(): void {
-  billingAddressEqualsShippingAddress.value = !billingAddressEqualsShippingAddress.value;
-}
 
 function openAddressSelectionDialog(): void {
   openPopup({
