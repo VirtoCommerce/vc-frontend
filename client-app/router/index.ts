@@ -1,8 +1,10 @@
 import { createRouter as _createRouter, createWebHistory, RouteRecordName } from "vue-router";
 import { mainRoutes } from "@/router/routes";
 import { useUser } from "@/shared/account";
+import { useAppContext } from "@/core";
 
 export function createRouter(options: { base: string }) {
+  const { storeSettings } = useAppContext();
   const { isAuthenticated, organization } = useUser();
   const { base } = options;
 
@@ -19,8 +21,12 @@ export function createRouter(options: { base: string }) {
   });
 
   router.beforeEach((to, _from, next) => {
-    // Protect account routes
-    if (to.meta.requiresAuth && !isAuthenticated.value) {
+    // Protecting routes
+    if (
+      (to.meta.requiresAuth || !storeSettings.anonymousAccessEnabled) &&
+      !isAuthenticated.value &&
+      to.name !== "SignIn"
+    ) {
       return next({
         name: "SignIn",
         // save the location we were at to come back later
@@ -28,7 +34,7 @@ export function createRouter(options: { base: string }) {
       });
     }
 
-    // Protect company routes
+    // Protecting company routes
     if (to.meta.requiresOrganization && !organization.value) {
       return next({ name: "Account" });
     }
