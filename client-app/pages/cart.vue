@@ -89,9 +89,9 @@
 
                   <CartLineItems
                     :items="item.items"
-                    :read-only="creatingOrder || creatingQuote"
+                    :disabled="loading || creatingOrder || creatingQuote"
                     :validationErrors="cart.validationErrors"
-                    @update:item="changeItemQuantity"
+                    @change-quantity:item="changeItemQuantity"
                     @remove:item="removeItemButtonClick"
                   />
                 </div>
@@ -105,16 +105,16 @@
             >
               <CartLineItems
                 :items="cartItems"
-                :read-only="creatingOrder || creatingQuote"
+                :disabled="loading || creatingOrder || creatingQuote"
                 :validationErrors="cart.validationErrors"
-                @update:item="changeItemQuantity"
+                @change-quantity:item="changeItemQuantity"
                 @remove:item="removeItemButtonClick"
               />
             </div>
 
             <div class="hidden md:flex justify-end pb-5 px-7 lg:px-0">
               <VcButton
-                :is-disabled="creatingOrder || creatingQuote"
+                :is-disabled="loading || creatingOrder || creatingQuote"
                 size="sm"
                 kind="secondary"
                 is-outline
@@ -142,7 +142,7 @@
                 <VcCheckbox
                   class="mr-7"
                   :model-value="checkGift(gift)"
-                  :disabled="creatingOrder || creatingQuote"
+                  :disabled="loading || creatingOrder || creatingQuote"
                   @change="toggleGift($event, gift)"
                 />
 
@@ -196,7 +196,7 @@
 
                   <div>
                     <VcButton
-                      :is-disabled="creatingOrder || creatingQuote"
+                      :is-disabled="loading || creatingOrder || creatingQuote"
                       size="sm"
                       is-outline
                       class="px-3 self-start uppercase font-bold"
@@ -230,6 +230,7 @@
 
                   <div>
                     <VcButton
+                      :is-disabled="loading || creatingOrder || creatingQuote"
                       size="sm"
                       is-outline
                       class="px-3 self-start uppercase font-bold"
@@ -265,7 +266,7 @@
 
                 <div>
                   <VcButton
-                    :is-disabled="creatingOrder || creatingQuote"
+                    :is-disabled="loading || creatingOrder || creatingQuote"
                     size="sm"
                     is-outline
                     class="px-3 self-start uppercase font-bold"
@@ -292,7 +293,7 @@
               <CheckoutLabeledBlock :label="$t('pages.checkout.payment_details_section.billing_address_block.title')">
                 <label class="flex items-center text-sm cursor-pointer">
                   <input
-                    :disabled="creatingOrder || creatingQuote"
+                    :disabled="loading || creatingOrder || creatingQuote"
                     v-model="billingSameAsShipping"
                     type="checkbox"
                     class="form-tick appearance-none w-5 h-5 border-2 border-gray-300 rounded-sm checked:bg-[color:var(--color-primary)] checked:border-transparent focus:outline-none cursor-pointer"
@@ -328,6 +329,7 @@
 
                 <div>
                   <VcButton
+                    :is-disabled="loading || creatingOrder || creatingQuote"
                     size="sm"
                     is-outline
                     class="px-3 self-start uppercase font-bold"
@@ -378,7 +380,7 @@
 
                 <div>
                   <VcButton
-                    :is-disabled="creatingOrder || creatingQuote"
+                    :is-disabled="loading || creatingOrder || creatingQuote"
                     size="sm"
                     is-outline
                     class="px-3 self-start uppercase font-bold"
@@ -409,7 +411,7 @@
 
                 <div>
                   <VcButton
-                    :is-disabled="creatingOrder || creatingQuote"
+                    :is-disabled="loading || creatingOrder || creatingQuote"
                     size="sm"
                     is-outline
                     class="px-3 self-start uppercase font-bold"
@@ -438,7 +440,7 @@
 
               <VcTextArea
                 v-model="cartComment"
-                :is-disabled="creatingOrder || creatingQuote"
+                :is-disabled="loading || creatingOrder || creatingQuote"
                 :max-length="1000"
                 :rows="4"
                 class="resize-none"
@@ -465,7 +467,7 @@
                 :label="$t('pages.checkout.order_summary_block.purchase_order_label')"
                 :placeholder="$t('pages.checkout.order_summary_block.purchase_order_placeholder')"
                 :is-applied="purchaseOrderNumberApplied"
-                :is-disabled="creatingOrder || creatingQuote"
+                :is-disabled="loading || creatingOrder || creatingQuote"
                 :max-length="128"
                 @click:apply="setPurchaseOrderNumber"
                 @click:deny="removePurchaseOrderNumber"
@@ -481,7 +483,7 @@
                 :placeholder="$t('pages.checkout.order_summary_block.promotion_code_placeholder')"
                 :is-applied="cartCouponApplied"
                 :error-message="couponValidationError"
-                :is-disabled="creatingOrder || creatingQuote"
+                :is-disabled="loading || creatingOrder || creatingQuote"
                 @click:apply="useCoupon"
                 @click:deny="removeCoupon"
                 @update:model-value="couponValidationError = ''"
@@ -497,9 +499,9 @@
               <div ref="stickyMobileHeaderAnchor" class="absolute -mt-2.5"></div>
 
               <VcButton
-                class="uppercase w-full"
                 :is-disabled="!isValidCheckout || loading || creatingQuote"
                 :is-waiting="creatingOrder"
+                class="uppercase w-full"
                 @click="createOrder"
               >
                 {{ $t("pages.checkout.order_summary_block.place_order_button") }}
@@ -565,14 +567,12 @@ import { AddressType, useElementVisibility, usePageHead, useGoogleAnalytics, con
 import {
   AddOrUpdateAddressDialog,
   CheckoutLabeledBlock,
-  ClearCartDialog,
   OrderSummary,
   PaymentMethodDialog,
-  CartLineItems,
   SelectAddressDialog,
   ShippingMethodDialog,
 } from "@/shared/checkout";
-import { useCart } from "@/shared/cart";
+import { CartLineItems, ClearCartDialog, useCart } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
