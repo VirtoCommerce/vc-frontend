@@ -12,6 +12,19 @@
               <div class="truncate">
                 <VcAddressInfo v-if="payment?.billingAddress" :address="payment.billingAddress" class="grow text-15" />
               </div>
+
+              <VcButton
+                size="sm"
+                is-outline
+                class="px-3 self-start uppercase font-bold"
+                @click="
+                  addresses.length
+                    ? openAddressSelectionDialog()
+                    : openAddOrUpdateAddressDialog(payment?.billingAddress)
+                "
+              >
+                {{ $t("pages.checkout.shipping_details_section.shipping_address_block.change_button") }}
+              </VcButton>
             </template>
 
             <template v-else>
@@ -38,7 +51,7 @@
                   class="px-3 self-start uppercase font-bold"
                   @click="addresses.length ? openAddressSelectionDialog() : openAddOrUpdateAddressDialog()"
                 >
-                  {{ $t("pages.checkout.shipping_details_section.shipping_address_block.add_address_button") }}
+                  {{ $t("pages.checkout.payment_details_section.billing_address_block.add_address_button") }}
                 </VcButton>
               </div>
             </template>
@@ -90,30 +103,22 @@ import {
 } from "@/shared/checkout";
 import { usePopup } from "@/shared/popup";
 import { useCart } from "@/shared/cart";
-import { useUser, useUserAddresses } from "@/shared/account";
-import {
-  CartAddressType,
-  //createOrderFromCart,
-  InputAddressType,
-  MemberAddressType,
-  PaymentMethodType,
-  PaymentType,
-} from "@/xapi";
-import { AddressType, convertToType /*useGoogleAnalytics*/ } from "@/core";
-//import { useNotifications } from "@/shared/notification";
-//import { useRouter } from "vue-router";
-//import { useI18n } from "vue-i18n";
+import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
+import { CartAddressType, InputAddressType, MemberAddressType, PaymentMethodType, PaymentType } from "@/xapi";
+import { AddressType, convertToType } from "@/core";
 
-//const { t } = useI18n();
-//const router = useRouter();
 const { user, isAuthenticated } = useUser();
 const { cart, fetchCart, updatePayment } = useCart();
-const { addresses, fetchAddresses } = useUserAddresses({ user });
+const { addresses } = useUserAddresses({ user });
 const { openPopup, closePopup } = usePopup();
-//const ga = useGoogleAnalytics();
-//const notifications = useNotifications();
+const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
+
+const { paymentMethodCode } = getUserCheckoutDefaults() ?? {};
 
 const availablePaymentMethods = computed<PaymentMethodType[]>(() => cart.value.availablePaymentMethods ?? []);
+const defaultPaymentMethod = availablePaymentMethods.value.find(
+  (item: PaymentMethodType) => item.code === paymentMethodCode
+);
 const payment = computed<PaymentType | undefined>(() => cart.value.payments?.[0]);
 
 function openAddressSelectionDialog(): void {
@@ -175,44 +180,17 @@ function showPaymentMethodDialog(): void {
   });
 }
 
-/*async function createOrder(): Promise<void> {
-  if (billingAddressEqualsShippingAddress.value) {
-    await updatePayment({
-      id: payment.value?.id,
-      billingAddress: convertToType<InputAddressType>(
-        omit(cart.value!.shipments?.[0].deliveryAddress, ["isDefault", "description"])
-      ),
-      amount: cart.value!.total!.amount,
-    });
-  }
-
-  ga.addPaymentInfo(cart.value);
-
-  const order = await createOrderFromCart(cart.value.id!);
-
-  if (!order) {
-    notifications.error({
-      text: t("common.messages.creating_order_error"),
-      duration: 15000,
-      single: true,
-    });
-
-    return;
-  }
-
-  await router.push({
-    name: "CheckoutComplete",
-    params: {
-      orderId: order.id,
-      orderNumber: order.number,
-    },
-  });
-
-  await fetchCart();
-}*/
-
 onMounted(async () => {
-  await fetchCart();
-  await fetchAddresses();
+  if (!payment.value?.paymentGatewayCode && paymentMethodCode && defaultPaymentMethod) {
+    await updatePayment(
+      {
+        id: payment.value?.id,
+        paymentGatewayCode: defaultPaymentMethod.code,
+      },
+      false
+    );
+
+    await fetchCart();
+  }
 });
 </script>
