@@ -1,6 +1,6 @@
 <template>
   <VcContainer>
-    <VcTypography tag-name="h1" font-size="h2" font-weight="bold" class="mb-5"> {Dynamic step title} </VcTypography>
+    <VcTypography tag="h1" size="h2" weight="bold" class="mb-5"> {Dynamic step title} </VcTypography>
 
     <VcSteps class="mb-5" :steps="steps" />
 
