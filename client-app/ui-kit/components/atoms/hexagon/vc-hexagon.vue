@@ -5,14 +5,8 @@
 </template>
 
 <style lang="scss">
-$VcHexagonBg: var(--vc-hexagon-bg, theme("colors.gray.300"));
-$VcHexagonIconColor: var(--vc-hexagon-icon-color, var(--color-white));
-
 .vc-hexagon {
-  @apply flex items-center justify-center w-10 h-10;
-
-  background-color: $VcHexagonBg;
-  --vc-icon-color: #{$VcHexagonIconColor};
+  @apply flex items-center justify-center w-10 h-10 bg-gray-300 text-[color:var(--color-white)];
 
   clip-path: polygon(
     45% 1.33975%,

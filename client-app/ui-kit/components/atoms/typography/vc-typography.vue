@@ -5,6 +5,8 @@
 </template>
 
 <script setup lang="ts">
+import { PropType } from "vue";
+
 defineProps({
   tag: {
     type: String,
@@ -12,30 +14,23 @@ defineProps({
   },
 
   size: {
-    type: String,
+    type: String as PropType<"h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "large" | "base" | "medium" | "small">,
     default: "base",
-    validator(value: string) {
-      return ["h1", "h2", "h3", "h4", "h5", "h6", "large", "base", "medium", "small"].includes(value);
-    },
+    validator: (value: string) =>
+      ["h1", "h2", "h3", "h4", "h5", "h6", "large", "base", "medium", "small"].includes(value),
   },
 
   weight: {
-    type: String,
+    type: String as PropType<"normal" | "semibold" | "bold" | "extrabold">,
     default: "normal",
-    validator(value: string) {
-      return ["normal", "semibold", "bold", "extrabold"].includes(value);
-    },
+    validator: (value: string) => ["normal", "semibold", "bold", "extrabold"].includes(value),
   },
 });
 </script>
 
 <style lang="scss">
-$VcTypographyColor: var(--vc-typography-color, var(--color-body-text));
-
 .vc-typography {
-  @apply font-lato;
-
-  color: $VcTypographyColor;
+  @apply text-inherit;
 
   &--size-h1 {
     @apply text-3xl uppercase tracking-wide;

@@ -2,7 +2,7 @@
   <VcContainer>
     <VcTypography tag="h1" size="h2" weight="bold" class="mb-5"> {Dynamic step title} </VcTypography>
 
-    <VcSteps class="mb-5" :steps="steps" :current-step="3" />
+    <VcSteps class="mb-5" :steps="steps" :start-step="0" :current-step="3" />
 
     <VcLayoutWithRightSidebar is-sidebar-sticky>
       <template #main>
@@ -38,19 +38,19 @@ const { user } = useUser();
 const { fetchAddresses } = useUserAddresses({ user });
 const { cart, fetchCart } = useCart();
 
-const steps = [
+const steps: IStepsItem[] = [
   {
-    icon: "chevron-left",
-    to: { name: "Cart" },
     text: "Back to Cart",
+    icon: "chevron-left",
+    route: { name: "Cart" },
   },
   {
-    icon: "apply",
-    to: { name: "CheckoutShipping" },
     text: "Shipping",
+    route: { name: "CheckoutShipping" },
   },
   {
     text: "Billing",
+    route: { name: "CheckoutBilling" },
   },
   {
     text: "Order created",

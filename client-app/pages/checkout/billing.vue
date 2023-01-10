@@ -2,9 +2,7 @@
   <VcSectionWidget :title="$t('pages.checkout.payment_details_section.title')" icon="cash">
     <CheckoutLabeledBlock :label="$t('pages.checkout.payment_details_section.billing_address_block.title')">
       <template v-if="payment?.billingAddress">
-        <div class="truncate">
-          <VcAddressInfo v-if="payment?.billingAddress" :address="payment.billingAddress" class="grow text-15" />
-        </div>
+        <VcAddressInfo :address="payment.billingAddress" class="grow text-15" />
 
         <VcButton
           size="sm"
@@ -25,12 +23,12 @@
           <span
             v-if="isAuthenticated"
             v-t="'pages.checkout.payment_details_section.billing_address_block.no_addresses_message'"
-          ></span>
+          />
 
           <span
             v-else
             v-t="'pages.checkout.payment_details_section.billing_address_block.unauthenticated_no_addresses_message'"
-          ></span>
+          />
         </div>
 
         <div>
@@ -53,11 +51,11 @@
           <span>{{ payment.paymentGatewayCode }}</span>
         </template>
 
-        <div
+        <span
           v-else
           class="text-gray-600"
           v-t="'pages.checkout.payment_details_section.payment_method_block.not_defined_message'"
-        ></div>
+        />
       </div>
 
       <div>

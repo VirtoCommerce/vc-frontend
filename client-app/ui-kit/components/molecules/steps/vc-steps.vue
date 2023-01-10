@@ -1,33 +1,33 @@
 <template>
   <ul class="vc-steps">
-    <li v-for="(step, index) in steps" :key="index">
-      <component class="vc-steps__step" :is="step.to ? 'router-link' : 'span'" :to="step.to ? step.to : ''">
-        <span
-          class="vc-steps__number"
-          :class="{
-            'vc-steps__number--active': index + startFrom === currentStep,
-            'vc-steps__number--completed': index + startFrom < currentStep,
-          }"
-        >
-          <VcIcon :name="step.icon" size="xxs" v-if="step.icon" />
+    <li
+      v-for="(step, index) in steps"
+      :key="index"
+      :class="[
+        'vc-steps__item',
+        {
+          'vc-steps__item--active': index + startStep === currentStep,
+          'vc-steps__item--completed': index + startStep < currentStep,
+        },
+      ]"
+    >
+      <component
+        :is="step.route && index + startStep < currentStep ? 'router-link' : 'span'"
+        :to="step.route"
+        class="vc-steps__step"
+      >
+        <span class="vc-steps__icon">
+          <!-- Custom icon -->
+          <VcIcon v-if="step.icon" :name="step.icon" size="xxs" />
 
-          <template v-else>
-            {{ index + startFrom }}
-          </template>
+          <!-- Completed icon -->
+          <VcIcon v-else-if="index + startStep < currentStep" name="apply" size="xxs" />
+
+          <!-- Step number -->
+          <template v-else>{{ index + startStep }}</template>
         </span>
 
-        <VcTypography
-          class="vc-steps__name"
-          :class="{
-            'vc-steps__name--active': index + startFrom === currentStep,
-            'vc-steps__name--completed': index + startFrom < currentStep,
-          }"
-          tag="span"
-          size="medium"
-          weight="semibold"
-        >
-          {{ step.text }}
-        </VcTypography>
+        <span class="vc-steps__text">{{ step.text }}</span>
       </component>
     </li>
   </ul>
@@ -37,16 +37,20 @@
 import { PropType } from "vue";
 
 defineProps({
-  startFrom: {
+  startStep: {
     type: Number,
-    default: 0,
+    default: 1,
   },
+
   currentStep: {
     type: Number,
-    default: 0,
+    default: -1,
+    required: true,
   },
+
   steps: {
-    type: Array as PropType<any[]>,
+    type: Array as PropType<IStepsItem[]>,
+    default: () => [],
     required: true,
   },
 });
@@ -54,38 +58,43 @@ defineProps({
 
 <style lang="scss">
 .vc-steps {
+  $self: &;
+
   @apply flex flex-wrap gap-x-5 gap-y-2.5;
+
+  &__item {
+    &--active {
+      #{$self}__icon {
+        @apply bg-[color:var(--color-primary)];
+      }
+
+      #{$self}__text {
+        @apply text-[color:var(--color-body-text)];
+      }
+    }
+
+    &--completed {
+      #{$self}__icon {
+        @apply bg-[color:var(--color-success)];
+      }
+
+      #{$self}__text {
+        @apply text-[color:var(--color-success)];
+      }
+    }
+  }
 
   &__step {
     @apply flex items-center gap-1.5;
   }
 
-  &__number {
-    @apply shrink-0 flex items-center justify-center w-5 h-5 rounded-full text-sm font-extrabold
-    text-[color:var(--color-white)]
-    bg-gray-400;
-
-    --vc-icon-color: var(--color-white);
-
-    &--active {
-      @apply bg-[color:var(--color-primary)];
-    }
-
-    &--completed {
-      @apply bg-[color:var(--color-success)];
-    }
+  &__icon {
+    @apply flex shrink-0 items-center justify-center w-5 h-5 rounded-full
+    text-sm font-extrabold text-white bg-gray-400;
   }
 
-  &__name {
-    --vc-typography-color: theme("colors.gray.600");
-
-    &--completed {
-      --vc-typography-color: var(--color-success);
-    }
-
-    &--active {
-      --vc-typography-color: var(--color-body-text);
-    }
+  &__text {
+    @apply text-sm font-semibold text-gray-600;
   }
 }
 </style>

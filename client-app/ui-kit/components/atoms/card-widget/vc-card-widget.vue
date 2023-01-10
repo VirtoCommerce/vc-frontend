@@ -58,19 +58,15 @@ defineProps({
 <style lang="scss">
 .vc-card-widget {
   @apply relative bg-[color:var(--color-white)]
-
   lg:border lg:rounded lg:shadow-md-x;
 
   &:after {
-    @apply content-[''] z-[1] absolute top-full w-full h-3 bg-gradient-to-b from-[#f1f1f1]
-
-    lg:content-none;
+    @apply content-[''] z-[1] absolute top-full w-full h-3
+    bg-gradient-to-b from-[#f1f1f1] lg:content-none;
   }
 
   &__title {
-    @apply flex items-center gap-3 px-7 pt-6 pb-3
-
-    lg:px-6 lg:py-3;
+    @apply flex items-center gap-3 px-7 pt-6 pb-3 lg:px-6 lg:py-3;
 
     &--hide-mobile {
       @apply hidden lg:block;
@@ -82,15 +78,11 @@ defineProps({
   }
 
   &__icon {
-    --vc-icon-color: var(--color-white);
-
     @apply lg:hidden;
   }
 
   &__content {
-    @apply px-7 pt-3 pb-7
-
-    lg:px-6 lg:pb-5 lg:border-t;
+    @apply px-7 pt-3 pb-7 lg:px-6 lg:pb-5 lg:border-t;
   }
 }
 </style>

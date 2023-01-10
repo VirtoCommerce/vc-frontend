@@ -21,10 +21,8 @@ defineProps({
 </script>
 
 <style lang="scss">
-$VcIconColor: var(--vc-icon-color, var(--color-body-text));
-
 .vc-icon {
-  color: $VcIconColor;
+  @apply text-inherit;
 
   &--size-xxs {
     @apply w-2.5 h-2.5;
