@@ -1,19 +1,21 @@
 <template>
   <svg :class="[`vc-icon`, `vc-icon--size-${size}`]">
-    <use :href="url"></use>
+    <use :href="`/static/icons/basic/${name}.svg#icon`"></use>
   </svg>
 </template>
 
 <script setup lang="ts">
+import { PropType } from "vue";
+
 defineProps({
-  url: {
+  name: {
     type: String,
-    default: "/static/images/information-circle.svg#main",
+    default: "document-text",
   },
   size: {
-    type: String,
+    type: String as PropType<"xs" | "sm" | "md">,
     default: "md",
-    validator: (value: string) => !value || ["xs", "sm", "md", "lg", "xl"].includes(value),
+    validator: (value: string) => !value || ["xs", "sm", "md"].includes(value),
   },
 });
 </script>
@@ -25,7 +27,7 @@ defineProps({
   @apply text-[color:var(--vc-icon-color)];
 
   &--size-xs {
-    @apply w-4 h-4;
+    @apply w-3.5 h-3.5;
   }
 
   &--size-sm {
@@ -34,12 +36,6 @@ defineProps({
 
   &--size-md {
     @apply w-6 h-6;
-  }
-
-  &--size-lg {
-  }
-
-  &--size-xl {
   }
 }
 </style>
