@@ -7,6 +7,8 @@ import { deleteMemberAddresses, updateMemberAddresses } from "@/xapi/graphql/acc
 import { SORT_DESCENDING } from "@/core/constants";
 import { MaybeRef } from "@vueuse/core";
 
+const requestedAddressesQuantity = 9999;
+
 export default function useOrganizationAddresses(organizationId: MaybeRef<string>) {
   const loading = ref(false);
   const addresses = shallowRef<MemberAddressType[]>([]);
@@ -23,6 +25,7 @@ export default function useOrganizationAddresses(organizationId: MaybeRef<string
 
       const { items = [] } = await getOrganizationAddresses(unref(organizationId), {
         sort: sortingExpression,
+        first: requestedAddressesQuantity,
       });
 
       addresses.value = items;

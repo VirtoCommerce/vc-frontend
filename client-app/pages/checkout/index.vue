@@ -30,9 +30,13 @@ import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core";
 import { useCart } from "@/shared/cart";
 import { OrderSummary } from "@/shared/checkout";
+import { onMounted } from "vue";
+import { useUser, useUserAddresses } from "@/shared/account";
 
 const { t } = useI18n();
-const { cart } = useCart();
+const { user } = useUser();
+const { fetchAddresses } = useUserAddresses({ user });
+const { cart, fetchCart } = useCart();
 
 const steps = {
   startFrom: 1,
@@ -62,5 +66,10 @@ const steps = {
 
 usePageHead({
   title: [t("pages.checkout.meta.title"), "{Dynamic step title}"],
+});
+
+onMounted(async () => {
+  await fetchCart();
+  await fetchAddresses();
 });
 </script>

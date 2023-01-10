@@ -67,7 +67,6 @@ export interface IThemeConfigPreset {
   page_title_store_name_align?: string | "start" | "end";
   page_title_divider?: string;
 
-  anonymous_access_enabled?: boolean;
   anonymous_price_enabled?: boolean;
   anonymous_checkout?: boolean;
 
