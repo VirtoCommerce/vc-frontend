@@ -13,9 +13,9 @@ defineProps({
     default: "document-text",
   },
   size: {
-    type: String as PropType<"xs" | "sm" | "md">,
+    type: String as PropType<"xxs" | "xs" | "sm" | "md">,
     default: "md",
-    validator: (value: string) => !value || ["xs", "sm", "md"].includes(value),
+    validator: (value: string) => !value || ["xxs", "xs", "sm", "md"].includes(value),
   },
 });
 </script>
@@ -25,6 +25,10 @@ defineProps({
   --vc-icon-color: var(--color-icon-color, currentColor);
 
   @apply text-[color:var(--vc-icon-color)];
+
+  &--size-xxs {
+    @apply w-2.5 h-2.5;
+  }
 
   &--size-xs {
     @apply w-3.5 h-3.5;

@@ -1,38 +1,35 @@
 <template>
-  <div class="vc-steps">
-    <router-link class="vc-steps__step" to="/cart">
-      <VcIcon url="/static/images/arrow-left-circle.svg#main" size="sm" class="vc-steps__icon" />
-      <VcTypography class="vc-steps__name vc-steps__name--completed" tag-name="div" font-size="medium">
-        Back to Cart
-      </VcTypography>
-    </router-link>
+  <ul class="vc-steps">
+    <li v-for="(step, index) in steps.items">
+      <component class="vc-steps__step" :is="step.to ? 'router-link' : 'span'" :to="step.to ? step.to : ''">
+        <span
+          class="vc-steps__number"
+          :class="{
+            'vc-steps__number--active': index + steps.startFrom === steps.currentStep,
+            'vc-steps__number--completed': index + steps.startFrom < steps.currentStep,
+          }"
+        >
+          <VcIcon :name="step.icon" size="xxs" v-if="step.icon" />
 
-    <div class="vc-steps__step" v-for="(step, index) in steps" :key="index">
-      <VcIcon v-if="step.completed" url="/static/images/check-circle.svg#main" size="sm" class="vc-steps__icon" />
+          <template v-else>
+            {{ index + steps.startFrom }}
+          </template>
+        </span>
 
-      <div
-        v-else
-        class="vc-steps__number"
-        :class="{
-          'vc-steps__number--active': step.active,
-        }"
-      >
-        {{ index + 2 }}
-      </div>
-
-      <VcTypography
-        class="vc-steps__name"
-        :class="{
-          'vc-steps__name--active': step.active,
-          'vc-steps__name--completed': step.completed,
-        }"
-        tag-name="div"
-        font-size="medium"
-      >
-        {{ step.name }}
-      </VcTypography>
-    </div>
-  </div>
+        <VcTypography
+          class="vc-steps__name"
+          :class="{
+            'vc-steps__name--active': index + steps.startFrom === steps.currentStep,
+            'vc-steps__name--completed': index + steps.startFrom < steps.currentStep,
+          }"
+          tag="span"
+          size="medium"
+        >
+          {{ step.text }}
+        </VcTypography>
+      </component>
+    </li>
+  </ul>
 </template>
 
 <script setup lang="ts">
@@ -40,7 +37,7 @@ import { PropType } from "vue";
 
 defineProps({
   steps: {
-    type: Array as PropType<any[]>,
+    type: Object,
     default: () => [],
   },
 });
@@ -48,22 +45,21 @@ defineProps({
 
 <style lang="scss">
 .vc-steps {
-  --vc-steps-icon-color: var(--color-steps-icon-color, var(--color-success));
   --vc-steps-number-color: var(--color-steps-number-color, var(--color-white));
+  --vc-steps-number-color-active: var(--color-steps-number-color-active, var(--color-white));
+  --vc-steps-number-color-completed: var(--color-steps-number-color-completed, var(--color-white));
   --vc-steps-number-bg: var(--color-steps-number-bg, theme("colors.gray.400"));
   --vc-steps-number-bg-active: var(--color-steps-number-bg-active, var(--color-primary));
+  --vc-steps-number-bg-completed: var(--color-steps-number-bg-completed, var(--color-success));
+
   --vc-steps-name-color: var(--color-steps-name-color, theme("colors.gray.600"));
-  --vc-steps-name-color-completed: var(--color-steps-name-color-completed, var(--color-success));
   --vc-steps-name-color-active: var(--color-steps-name-color-active, var(--color-body-text));
+  --vc-steps-name-color-completed: var(--color-steps-name-color-completed, var(--color-success));
 
   @apply flex flex-wrap gap-x-5 gap-y-2.5;
 
   &__step {
     @apply flex items-center gap-1.5;
-  }
-
-  &__icon {
-    --vc-icon-color: var(--vc-steps-icon-color);
   }
 
   &__number {
@@ -72,7 +68,13 @@ defineProps({
     bg-[color:var(--vc-steps-number-bg)];
 
     &--active {
-      @apply bg-[color:var(--vc-steps-number-bg-active)];
+      @apply bg-[color:var(--vc-steps-number-bg-active)]
+      text-[color:var(--vc-steps-number-color-active)];
+    }
+
+    &--completed {
+      @apply bg-[color:var(--vc-steps-number-bg-completed)]
+      text-[color:var(--vc-steps-number-color-completed)];
     }
   }
 

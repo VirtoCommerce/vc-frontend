@@ -34,22 +34,31 @@ import { OrderSummary } from "@/shared/checkout";
 const { t } = useI18n();
 const { cart } = useCart();
 
-const steps = [
-  {
-    name: "Shipping",
-    completed: true,
-  },
-  {
-    name: "Billing",
-    active: true,
-  },
-  {
-    name: "Order created",
-  },
-  {
-    name: "Completed",
-  },
-];
+const steps = {
+  startFrom: 1,
+  currentStep: 4,
+  items: [
+    {
+      icon: "chevron-left",
+      to: "/cart",
+      text: "Back to Cart",
+    },
+    {
+      icon: "apply",
+      to: "/shipping",
+      text: "Shipping",
+    },
+    {
+      text: "Billing",
+    },
+    {
+      text: "Order created",
+    },
+    {
+      text: "Completed",
+    },
+  ],
+};
 
 usePageHead({
   title: [t("pages.checkout.meta.title"), "{Dynamic step title}"],
