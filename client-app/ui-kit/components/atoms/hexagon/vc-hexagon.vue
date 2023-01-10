@@ -5,13 +5,14 @@
 </template>
 
 <style lang="scss">
-.vc-hexagon {
-  --vc-hexagon-bg: var(--color-hexagon-bg, theme("colors.gray.300"));
-  --vc-hexagon-icon-color: var(--color-hexagon-icon-color, var(--color-white));
+$VcHexagonBg: var(--vc-hexagon-bg, theme("colors.gray.300"));
+$VcHexagonIconColor: var(--vc-hexagon-icon-color, var(--color-white));
 
-  @apply flex items-center justify-center w-10 h-10 
-  bg-[color:var(--vc-hexagon-bg)] 
-  text-[color:var(--vc-hexagon-icon-color)];
+.vc-hexagon {
+  @apply flex items-center justify-center w-10 h-10;
+
+  background-color: $VcHexagonBg;
+  --vc-icon-color: #{$VcHexagonIconColor};
 
   clip-path: polygon(
     45% 1.33975%,

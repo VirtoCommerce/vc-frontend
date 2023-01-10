@@ -2,7 +2,7 @@
   <VcContainer>
     <VcTypography tag="h1" size="h2" weight="bold" class="mb-5"> {Dynamic step title} </VcTypography>
 
-    <VcSteps class="mb-5" :steps="steps" />
+    <VcSteps class="mb-5" :steps="steps" :current-step="4" />
 
     <VcLayoutWithRightSidebar is-sidebar-sticky>
       <template #main>
@@ -38,31 +38,27 @@ const { user } = useUser();
 const { fetchAddresses } = useUserAddresses({ user });
 const { cart, fetchCart } = useCart();
 
-const steps = {
-  startFrom: 1,
-  currentStep: 4,
-  items: [
-    {
-      icon: "chevron-left",
-      to: { name: "Cart" },
-      text: "Back to Cart",
-    },
-    {
-      icon: "apply",
-      to: { name: "CheckoutShipping" },
-      text: "Shipping",
-    },
-    {
-      text: "Billing",
-    },
-    {
-      text: "Order created",
-    },
-    {
-      text: "Completed",
-    },
-  ],
-};
+const steps = [
+  {
+    icon: "chevron-left",
+    to: { name: "Cart" },
+    text: "Back to Cart",
+  },
+  {
+    icon: "apply",
+    to: { name: "CheckoutShipping" },
+    text: "Shipping",
+  },
+  {
+    text: "Billing",
+  },
+  {
+    text: "Order created",
+  },
+  {
+    text: "Completed",
+  },
+];
 
 usePageHead({
   title: [t("pages.checkout.meta.title"), "{Dynamic step title}"],

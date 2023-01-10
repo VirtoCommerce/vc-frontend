@@ -1,5 +1,5 @@
 <template>
-  <component :is="tag" :class="['typography', `typography--size-${size}`, `typography--weight-${weight}`]">
+  <component :is="tag" :class="['vc-typography', `vc-typography--size-${size}`, `vc-typography--weight-${weight}`]">
     <slot />
   </component>
 </template>
@@ -30,11 +30,12 @@ defineProps({
 </script>
 
 <style lang="scss">
-.typography {
-  --vc-typography-color: var(--color-typography-color, var(--color-body-text));
+$VcTypographyColor: var(--vc-typography-color, var(--color-body-text));
 
-  @apply font-lato
-  text-[color:var(--vc-typography-color)];
+.vc-typography {
+  @apply font-lato;
+
+  color: $VcTypographyColor;
 
   &--size-h1 {
     @apply text-3xl uppercase tracking-wide;

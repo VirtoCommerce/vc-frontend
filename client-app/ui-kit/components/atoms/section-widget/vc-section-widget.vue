@@ -55,12 +55,12 @@ defineProps({
 
 <style lang="scss">
 .vc-section-widget {
-  @apply relative bg-white
+  @apply relative bg-[color:var(--color-white)]
 
   lg:border lg:rounded lg:shadow-md-x;
 
   &:after {
-    @apply content-[''] z-[1] absolute top-full w-full h-3 bg-gradient-to-b from-[#f1f1f1];
+    @apply content-[''] z-[1] absolute top-full w-full h-3 bg-gradient-to-b from-[#f1f1f1]
 
     lg:content-none;
   }

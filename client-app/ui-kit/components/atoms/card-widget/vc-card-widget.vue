@@ -57,7 +57,7 @@ defineProps({
 
 <style lang="scss">
 .vc-card-widget {
-  @apply relative bg-white
+  @apply relative bg-[color:var(--color-white)]
 
   lg:border lg:rounded lg:shadow-md-x;
 
@@ -82,6 +82,8 @@ defineProps({
   }
 
   &__icon {
+    --vc-icon-color: var(--color-white);
+
     @apply lg:hidden;
   }
 
