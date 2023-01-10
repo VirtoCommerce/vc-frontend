@@ -1,6 +1,6 @@
 <template>
   <ul class="vc-steps">
-    <li v-for="(step, index) in steps.items">
+    <li v-for="(step, index) in steps.items" :key="index">
       <component class="vc-steps__step" :is="step.to ? 'router-link' : 'span'" :to="step.to ? step.to : ''">
         <span
           class="vc-steps__number"
@@ -33,12 +33,10 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
-
 defineProps({
   steps: {
     type: Object,
-    default: () => [],
+    required: true,
   },
 });
 </script>
