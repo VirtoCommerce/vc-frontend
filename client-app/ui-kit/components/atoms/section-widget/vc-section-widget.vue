@@ -1,20 +1,24 @@
 <template>
-  <div
-    class="relative bg-white lg:border lg:rounded lg:shadow-md-x after:z-[1] after:absolute after:top-full after:w-full after:h-3 after:bg-gradient-to-b after:from-[#f1f1f1] after:lg:hidden"
-  >
-    <slot name="title" v-if="withTitle">
+  <div class="vc-section-widget">
+    <slot name="title" v-if="title">
       <div
-        class="flex items-center gap-3 px-6 pt-6"
-        :class="{ 'hidden lg:block': hideMobileTitle, 'lg:hidden': hideDesktopTitle }"
+        :class="{
+          'vc-section-widget__title': true,
+          'vc-section-widget__title--hide-mobile': hideMobileTitle,
+          'vc-section-widget__title--hide-desktop': hideDesktopTitle,
+        }"
       >
-        <VcImage :alt="title" :src="iconUrl" class="w-11 h-11 -ml-0.5 lg:w-14 lg:h-14 lg:ml-0.5" lazy />
-        <h3 class="text-xl font-bold uppercase">
+        <VcHexagon>
+          <VcIcon :name="icon" />
+        </VcHexagon>
+
+        <VcTypography size="h3" weight="extrabold">
           {{ title }}
-        </h3>
+        </VcTypography>
       </div>
     </slot>
 
-    <div :class="contentClasses">
+    <div :class="contentClasses ?? 'vc-section-widget__content'">
       <slot></slot>
     </div>
   </div>
@@ -24,17 +28,12 @@
 defineProps({
   title: {
     type: String,
-    default: "",
+    default: null,
   },
 
-  iconUrl: {
+  icon: {
     type: String,
-    default: "",
-  },
-
-  withTitle: {
-    type: Boolean,
-    default: true,
+    default: null,
   },
 
   hideMobileTitle: {
@@ -49,7 +48,39 @@ defineProps({
 
   contentClasses: {
     type: String,
-    default: "px-6 pt-4 pb-6 lg:px-7 lg:pb-7",
+    default: null,
   },
 });
 </script>
+
+<style lang="scss">
+.vc-section-widget {
+  @apply relative bg-white
+
+  lg:border lg:rounded lg:shadow-md-x;
+
+  &:after {
+    @apply content-[''] z-[1] absolute top-full w-full h-3 bg-gradient-to-b from-[#f1f1f1];
+
+    lg:content-none;
+  }
+
+  &__title {
+    @apply flex items-center gap-3 px-7 pt-6 pb-3;
+
+    &--hide-mobile {
+      @apply hidden lg:block;
+    }
+
+    &--hide-desktop {
+      @apply lg:hidden;
+    }
+  }
+
+  &__content {
+    @apply px-7 pt-3 pb-7
+
+    lg:pb-6;
+  }
+}
+</style>
