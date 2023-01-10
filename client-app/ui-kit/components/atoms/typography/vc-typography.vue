@@ -1,37 +1,27 @@
 <template>
-  <component
-    :is="tagName"
-    :class="[
-      `typography`,
-      !!fontSize ? `typography--size-${fontSize}` : '',
-      !!fontWeight ? `typography--weight-${fontWeight}` : '',
-    ]"
-  >
+  <component :is="tag" :class="['typography', `typography--size-${size}`, `typography--weight-${weight}`]">
     <slot />
   </component>
 </template>
 
 <script setup lang="ts">
 defineProps({
-  tagName: {
+  tag: {
     type: String,
     default: "p",
-    validator(value: string) {
-      return ["h1", "h2", "h3", "h4", "h5", "h6", "div", "p", "span"].includes(value);
-    },
   },
 
-  fontSize: {
+  size: {
     type: String,
-    default: null,
+    default: "base",
     validator(value: string) {
       return ["h1", "h2", "h3", "h4", "h5", "h6", "large", "base", "medium", "small"].includes(value);
     },
   },
 
-  fontWeight: {
+  weight: {
     type: String,
-    default: null,
+    default: "normal",
     validator(value: string) {
       return ["normal", "semibold", "bold", "extrabold"].includes(value);
     },
@@ -43,7 +33,7 @@ defineProps({
 .typography {
   --vc-typography-color: var(--color-typography-color, var(--color-body-text));
 
-  @apply font-lato text-base
+  @apply font-lato
   text-[color:var(--vc-typography-color)];
 
   &--size-h1 {
@@ -59,6 +49,7 @@ defineProps({
   }
 
   &--size-h3 {
+    @apply text-xl uppercase tracking-wide;
   }
 
   &--size-h4 {
@@ -79,6 +70,7 @@ defineProps({
   }
 
   &--size-base {
+    @apply text-base;
   }
 
   &--size-medium {
