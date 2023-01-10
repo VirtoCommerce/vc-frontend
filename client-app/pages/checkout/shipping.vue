@@ -1,12 +1,12 @@
 <template>
-  <VcSectionWidget :title="'Specify shipping details'" icon-url="/static/images/shipping-address.svg">
+  <VcSectionWidget :title="'Specify shipping details'" icon="truck">
     <div>Shipping</div>
   </VcSectionWidget>
 
   <!-- Comment -->
   <VcSectionWidget
     :title="'Order comment'"
-    icon-url="/static/images/remarks.svg"
+    icon="document-text"
     content-classes="px-6 pb-1 pt-4 lg:px-7 lg:pb-2"
   >
     <div class="text-base leading-5 font-bold lg:text-15">

@@ -1,5 +1,5 @@
 <template>
-  <VcSectionWidget :title="'Specify billing details'" icon-url="/static/images/shipping-address.svg">
+  <VcSectionWidget :title="'Specify billing details'" icon="truck">
     <div>Billing</div>
   </VcSectionWidget>
 </template>

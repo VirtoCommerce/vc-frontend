@@ -1,5 +1,5 @@
 <template>
-  <VcCardWidget :title="$t('shared.checkout.order_summary.title')" icon-url="/static/images/shipping-address.svg">
+  <VcCardWidget :title="$t('shared.checkout.order_summary.title')" icon="truck">
     <slot name="header"></slot>
 
     <!-- Totals block -->

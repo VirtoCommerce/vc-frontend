@@ -13,19 +13,15 @@
         <!-- Quote products -->
         <VcSectionWidget
           :title="$t('pages.account.quote_details.products')"
-          icon-url="/static/images/products.svg"
+          icon="cube"
           hide-desktop-title
-          content-classes="px-6 pt-6 pb-0 md:p-7"
+          content-classes="px-6 pt-3 pb-0 md:p-7"
         >
           <QuoteLineItems :items="quote.items!" readonly />
         </VcSectionWidget>
 
         <!-- Quote comment -->
-        <VcSectionWidget
-          :title="$t('pages.account.quote_details.remarks')"
-          icon-url="/static/images/remarks.svg"
-          v-if="quote.comment"
-        >
+        <VcSectionWidget :title="$t('pages.account.quote_details.remarks')" icon="document-text" v-if="quote.comment">
           <div class="text-15 font-medium">
             {{ quote.comment }}
           </div>
@@ -33,10 +29,7 @@
       </template>
 
       <template #sidebar>
-        <VcCardWidget
-          :title="$t('pages.account.quote_details.quote_summary')"
-          icon-url="/static/images/billing-address.svg"
-        >
+        <VcCardWidget :title="$t('pages.account.quote_details.quote_summary')" icon="cash">
           <div class="flex justify-between text-base">
             <span class="font-bold" v-t="'pages.account.quote_details.total'" />
 
@@ -68,18 +61,14 @@
           </div>
         </VcCardWidget>
 
-        <VcCardWidget
-          v-if="shippingAddress"
-          :title="$t('pages.account.quote_details.shipping_address')"
-          icon-url="/static/images/shipping-address.svg"
-        >
+        <VcCardWidget v-if="shippingAddress" :title="$t('pages.account.quote_details.shipping_address')" icon="cube">
           <VcAddressInfo class="-mt-1" :address="shippingAddress!" />
         </VcCardWidget>
 
         <VcCardWidget
           v-if="billingAddress"
           :title="$t('pages.account.quote_details.billing_address')"
-          icon-url="/static/images/billing-address.svg"
+          icon="cash"
         >
           <VcAddressInfo class="-mt-1" :address="billingAddress!" />
         </VcCardWidget>
