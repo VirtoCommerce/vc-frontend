@@ -24,6 +24,7 @@
           }"
           tag="span"
           size="medium"
+          weight="semibold"
         >
           {{ step.text }}
         </VcTypography>
@@ -60,7 +61,7 @@ defineProps({
   }
 
   &__number {
-    @apply flex items-center justify-center w-5 h-5 rounded-full text-sm font-extrabold
+    @apply shrink-0 flex items-center justify-center w-5 h-5 rounded-full text-sm font-extrabold
     text-[color:var(--color-white)]
     bg-gray-400;
 
@@ -76,15 +77,14 @@ defineProps({
   }
 
   &__name {
-    @apply text-14 font-semibold
-    text-[color:theme("colors.gray.600")];
+    --vc-typography-color: theme("colors.gray.600");
 
     &--completed {
-      @apply text-[color:var(--color-success)];
+      --vc-typography-color: var(--color-success);
     }
 
     &--active {
-      @apply font-bold text-[color:var(--color-body-text)];
+      --vc-typography-color: var(--color-body-text);
     }
   }
 }

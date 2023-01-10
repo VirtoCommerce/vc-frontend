@@ -2,7 +2,7 @@
   <VcContainer>
     <VcTypography tag="h1" size="h2" weight="bold" class="mb-5"> {Dynamic step title} </VcTypography>
 
-    <VcSteps class="mb-5" :steps="steps" :current-step="4" />
+    <VcSteps class="mb-5" :steps="steps" :current-step="3" />
 
     <VcLayoutWithRightSidebar is-sidebar-sticky>
       <template #main>
