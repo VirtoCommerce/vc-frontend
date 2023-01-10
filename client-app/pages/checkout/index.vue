@@ -44,12 +44,12 @@ const steps = {
   items: [
     {
       icon: "chevron-left",
-      to: "/cart",
+      to: { name: "Cart" },
       text: "Back to Cart",
     },
     {
       icon: "apply",
-      to: "/shipping",
+      to: { name: "CheckoutShipping" },
       text: "Shipping",
     },
     {
