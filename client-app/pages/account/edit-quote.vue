@@ -154,7 +154,7 @@ import { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@
 import { AddressType, convertToType } from "@/core";
 import { useUser, useUserAddresses, useUserQuote, QuoteLineItems } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
-import { AddOrUpdateAddressDialog, SelectAddressDialog } from "@/shared/checkout";
+import { AddOrUpdateAddressModal, SelectAddressModal } from "@/shared/checkout";
 import { usePageHead } from "@/core/composables";
 import { asyncForEach } from "@/core/utilities";
 
@@ -227,7 +227,7 @@ function setBillingAddressEqualsShippingAddress(): void {
 
 function openAddressSelectionDialog(addressType: AddressType.Billing | AddressType.Shipping): void {
   openPopup({
-    component: SelectAddressDialog,
+    component: SelectAddressModal,
     props: {
       addresses: addresses.value,
       currentAddress: convertToType<MemberAddressType>(
@@ -255,7 +255,7 @@ function openAddOrUpdateAddressDialog(
   currentAddress?: QuoteAddressType
 ): void {
   openPopup({
-    component: AddOrUpdateAddressDialog,
+    component: AddOrUpdateAddressModal,
     props: {
       address: currentAddress,
 

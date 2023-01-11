@@ -41,7 +41,7 @@
             :is-waiting="creatingOrder"
             size="sm"
             class="uppercase px-3"
-            @click="createOrder"
+            @click="createOrderFromCart"
           >
             {{ $t("pages.cart.order_summary_block.create_order_button") }}
           </VcButton>
@@ -202,8 +202,8 @@
                       class="px-3 self-start uppercase font-bold"
                       @click="
                         addresses.length
-                          ? openAddressSelectionDialog(AddressType.Shipping)
-                          : openAddOrUpdateAddressDialog(AddressType.Shipping, shipment?.deliveryAddress)
+                          ? openSelectAddressModal(AddressType.Shipping)
+                          : openAddOrUpdateAddressModal(AddressType.Shipping, shipment?.deliveryAddress)
                       "
                     >
                       {{ $t("pages.checkout.shipping_details_section.shipping_address_block.change_button") }}
@@ -236,8 +236,8 @@
                       class="px-3 self-start uppercase font-bold"
                       @click="
                         addresses.length
-                          ? openAddressSelectionDialog(AddressType.Shipping)
-                          : openAddOrUpdateAddressDialog(AddressType.Shipping)
+                          ? openSelectAddressModal(AddressType.Shipping)
+                          : openAddOrUpdateAddressModal(AddressType.Shipping)
                       "
                     >
                       {{ $t("pages.checkout.shipping_details_section.shipping_address_block.add_address_button") }}
@@ -270,7 +270,7 @@
                     size="sm"
                     is-outline
                     class="px-3 self-start uppercase font-bold"
-                    @click="showShipmentMethodDialog"
+                    @click="openSelectShipmentMethodModal"
                   >
                     {{
                       shipment?.shipmentMethodCode
@@ -294,7 +294,7 @@
                 <label class="flex items-center text-sm cursor-pointer">
                   <input
                     :disabled="loading || creatingOrder || creatingQuote"
-                    v-model="billingSameAsShipping"
+                    v-model="billingAddressEqualsShippingAddress"
                     type="checkbox"
                     class="form-tick appearance-none w-5 h-5 border-2 border-gray-300 rounded-sm checked:bg-[color:var(--color-primary)] checked:border-transparent focus:outline-none cursor-pointer"
                   />
@@ -306,7 +306,7 @@
               </CheckoutLabeledBlock>
 
               <div
-                v-if="!billingSameAsShipping && !payment?.billingAddress"
+                v-if="!billingAddressEqualsShippingAddress && !payment?.billingAddress"
                 class="border border-t-0 rounded-b -mt-6 mb-6 p-5 flex flex-col space-y-2 lg:space-y-0 lg:flex-row lg:items-center justify-between"
               >
                 <div class="text-[color:var(--color-danger)] flex items-center space-x-4">
@@ -335,8 +335,8 @@
                     class="px-3 self-start uppercase font-bold"
                     @click="
                       addresses.length
-                        ? openAddressSelectionDialog(AddressType.Billing)
-                        : openAddOrUpdateAddressDialog(AddressType.Billing)
+                        ? openSelectAddressModal(AddressType.Billing)
+                        : openAddOrUpdateAddressModal(AddressType.Billing)
                     "
                   >
                     {{ $t("pages.checkout.payment_details_section.billing_address_block.add_address_button") }}
@@ -345,7 +345,7 @@
               </div>
 
               <div
-                v-else-if="!billingSameAsShipping && payment?.billingAddress"
+                v-else-if="!billingAddressEqualsShippingAddress && payment?.billingAddress"
                 class="border border-t-0 rounded-b -mt-6 mb-6 p-5 flex flex-col space-y-2 lg:space-y-0 text-sm lg:flex-row lg:justify-between lg:space-x-3 lg:items-center"
               >
                 <div class="truncate">
@@ -386,8 +386,8 @@
                     class="px-3 self-start uppercase font-bold"
                     @click="
                       addresses.length
-                        ? openAddressSelectionDialog(AddressType.Billing)
-                        : openAddOrUpdateAddressDialog(AddressType.Billing, payment?.billingAddress)
+                        ? openSelectAddressModal(AddressType.Billing)
+                        : openAddOrUpdateAddressModal(AddressType.Billing, payment?.billingAddress)
                     "
                   >
                     {{ $t("pages.checkout.payment_details_section.billing_address_block.change_button") }}
@@ -415,7 +415,7 @@
                     size="sm"
                     is-outline
                     class="px-3 self-start uppercase font-bold"
-                    @click="showPaymentMethodDialog"
+                    @click="openSelectPaymentMethodModal"
                   >
                     {{
                       payment?.paymentGatewayCode
@@ -439,7 +439,7 @@
               <p class="font-extrabold text-base mb-1" v-t="'pages.checkout.extra_section.comment_label'" />
 
               <VcTextArea
-                v-model="cartComment"
+                v-model="comment"
                 :is-disabled="loading || creatingOrder || creatingQuote"
                 :max-length="1000"
                 :rows="4"
@@ -484,7 +484,7 @@
                 :is-applied="cartCouponApplied"
                 :error-message="couponValidationError"
                 :is-disabled="loading || creatingOrder || creatingQuote"
-                @click:apply="useCoupon"
+                @click:apply="applyCoupon"
                 @click:deny="removeCoupon"
                 @update:model-value="couponValidationError = ''"
               />
@@ -502,7 +502,7 @@
                 :is-disabled="!isValidCheckout || loading || creatingQuote"
                 :is-waiting="creatingOrder"
                 class="uppercase w-full"
-                @click="createOrder"
+                @click="createOrderFromCart"
               >
                 {{ $t("pages.checkout.order_summary_block.place_order_button") }}
               </VcButton>
@@ -547,34 +547,12 @@ import { computed, inject, onMounted, ref, shallowRef } from "vue";
 import { breakpointsTailwind, computedEager, useBreakpoints } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { omit } from "lodash";
-import {
-  addGiftItems,
-  CartAddressType,
-  GiftItemType,
-  InputAddressType,
-  InputPaymentType,
-  MemberAddressType,
-  PaymentMethodType,
-  PaymentType,
-  rejectGiftItems,
-  ShipmentType,
-  ShippingMethodType,
-  LineItemType,
-  Vendor as VendorType,
-} from "@/xapi";
+import { addGiftItems, GiftItemType, rejectGiftItems, LineItemType, Vendor as VendorType } from "@/xapi";
 import { AddressType, useElementVisibility, usePageHead, useGoogleAnalytics, configInjectionKey } from "@/core";
-import {
-  AddOrUpdateAddressDialog,
-  CheckoutLabeledBlock,
-  OrderSummary,
-  PaymentMethodDialog,
-  SelectAddressDialog,
-  ShippingMethodDialog,
-} from "@/shared/checkout";
+import { useCheckout, CheckoutLabeledBlock, OrderSummary } from "@/shared/checkout";
 import { CartLineItems, ClearCartDialog, useCart } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
-import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
+import { useUser, useUserAddresses } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 import { Vendor } from "@/shared/catalog";
 
@@ -597,18 +575,30 @@ const {
   validateCartCoupon,
   addCartCoupon,
   removeCartCoupon,
-  changeComment,
-  updateShipment,
-  updatePayment,
-  updatePurchaseOrderNumber,
   removeCart,
-  createOrderFromCart,
   createQuoteFromCart,
 } = useCart();
-const { addresses, isExistAddress, fetchAddresses, addOrUpdateAddresses } = useUserAddresses({ user });
-const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
-const { openPopup, closePopup } = usePopup();
+const { addresses } = useUserAddresses({ user });
+const { openPopup } = usePopup();
 const ga = useGoogleAnalytics();
+const {
+  purchaseOrderNumber,
+  comment,
+  billingAddressEqualsShippingAddress,
+  creatingOrder,
+  shipment,
+  payment,
+  isValidCheckout,
+  purchaseOrderNumberApplied,
+  initCheckout,
+  openSelectShipmentMethodModal,
+  openSelectPaymentMethodModal,
+  openAddOrUpdateAddressModal,
+  openSelectAddressModal,
+  setPurchaseOrderNumber,
+  removePurchaseOrderNumber,
+  createOrder,
+} = useCheckout();
 
 usePageHead({
   title: t("pages.cart.meta.title"),
@@ -624,13 +614,9 @@ const groupItemsByVendor = !!config?.line_items_group_by_vendor_enabled;
 
 const isMobile = breakpoints.smaller("lg");
 const preparedData = ref(false);
-const creatingOrder = ref(false);
 const creatingQuote = ref(false);
-const cartComment = ref("");
 const cartCoupon = ref("");
 const couponValidationError = ref("");
-const billingSameAsShipping = ref(true);
-const purchaseOrderNumber = ref("");
 
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
@@ -639,7 +625,6 @@ const isVisibleStickyMobileHeader = computedEager<boolean>(
   () => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value
 );
 
-const purchaseOrderNumberApplied = computedEager<boolean>(() => !!cart.value.purchaseOrderNumber);
 const cartCouponApplied = computedEager<boolean>(() => !!cart.value.coupons?.[0]?.code);
 
 const cartItems = computed<LineItemType[]>(() => {
@@ -678,21 +663,6 @@ const groupedCartItems = computed<TGroupedItems>(() => {
   return map;
 });
 
-const shipment = computed<ShipmentType | undefined>(() => cart.value.shipments?.[0]);
-const payment = computed<PaymentType | undefined>(() => cart.value.payments?.[0]);
-
-const shippingMethods = computed<ShippingMethodType[]>(() => cart.value.availableShippingMethods ?? []);
-const paymentMethods = computed<PaymentMethodType[]>(() => cart.value.availablePaymentMethods ?? []);
-
-const isValidShipment = computed(() => shipment.value?.shipmentMethodCode && shipment.value?.deliveryAddress);
-const isValidPayment = computed(
-  () => payment.value?.paymentGatewayCode && (billingSameAsShipping.value || payment.value?.billingAddress)
-);
-
-const isValidCheckout = computed(
-  () => !cart.value.validationErrors?.length && isValidShipment.value && isValidPayment.value
-);
-
 async function removeItemButtonClick(lineItem: LineItemType) {
   await removeItem(lineItem.id);
 
@@ -702,7 +672,7 @@ async function removeItemButtonClick(lineItem: LineItemType) {
   ga.removeItemFromCart(lineItem);
 }
 
-async function useCoupon() {
+async function applyCoupon() {
   const validationResult: boolean = await validateCartCoupon(cartCoupon.value);
 
   if (validationResult) {
@@ -715,78 +685,6 @@ async function useCoupon() {
 
 async function removeCoupon() {
   await removeCartCoupon(cartCoupon.value);
-}
-
-async function setPurchaseOrderNumber() {
-  await updatePurchaseOrderNumber(purchaseOrderNumber.value);
-}
-
-async function removePurchaseOrderNumber() {
-  purchaseOrderNumber.value = "";
-  await updatePurchaseOrderNumber("");
-}
-
-async function prepareOrderData() {
-  // Update payment with required properties
-  const filledPayment: InputPaymentType = {
-    id: payment.value!.id,
-    amount: cart.value.total!.amount, // required
-  };
-
-  // Save shipping address as billing address
-  if (billingSameAsShipping.value) {
-    filledPayment.billingAddress = {
-      ...shipment.value!.deliveryAddress,
-      addressType: AddressType.Billing,
-    };
-  }
-
-  await updatePayment(filledPayment, false);
-
-  // Save order comment
-  if (cartComment.value) {
-    await changeComment(cartComment.value, false);
-  }
-
-  // Parallel saving of new addresses in account. Before cleaning shopping cart
-  if (isAuthenticated.value) {
-    saveNewAddressesInAccount({
-      shipmentAddress: shipment.value!.deliveryAddress,
-      billingAddress: payment.value!.billingAddress,
-    });
-  }
-}
-
-async function createOrder() {
-  creatingOrder.value = true;
-
-  await prepareOrderData();
-
-  ga.addPaymentInfo(cart.value);
-
-  const order = await createOrderFromCart(cart.value.id!);
-
-  if (!order) {
-    creatingOrder.value = false;
-
-    notifications.error({
-      text: t("common.messages.creating_order_error"),
-      duration: 15000,
-      single: true,
-    });
-
-    return;
-  }
-
-  await router.push({
-    name: "CheckoutComplete",
-    params: {
-      orderId: order.id,
-      orderNumber: order.number,
-    },
-  });
-
-  await fetchCart();
 }
 
 async function createQuote() {
@@ -810,144 +708,6 @@ async function createQuote() {
   await fetchCart();
 
   creatingQuote.value = false;
-}
-
-async function saveNewAddressesInAccount(payload: {
-  shipmentAddress?: CartAddressType;
-  billingAddress?: CartAddressType;
-}) {
-  if (!isAuthenticated.value) {
-    return;
-  }
-
-  const { shipmentAddress, billingAddress } = payload;
-  const newAddresses: MemberAddressType[] = [];
-
-  if (shipmentAddress && !isExistAddress(shipmentAddress)) {
-    newAddresses.push({
-      ...shipmentAddress,
-      isDefault: false,
-      addressType: AddressType.BillingAndShipping,
-    });
-  }
-
-  if (billingAddress && !billingSameAsShipping.value && !isExistAddress(billingAddress)) {
-    newAddresses.push({
-      ...billingAddress,
-      isDefault: false,
-      addressType: AddressType.BillingAndShipping,
-    });
-  }
-
-  await addOrUpdateAddresses(newAddresses);
-}
-
-function showShipmentMethodDialog(): void {
-  openPopup({
-    component: ShippingMethodDialog,
-    props: {
-      currentMethodCode: shipment.value?.shipmentMethodCode,
-      currentMethodOption: shipment.value?.shipmentMethodOption,
-      availableMethods: shippingMethods.value,
-      async onResult(method: ShippingMethodType) {
-        await updateShipment({
-          id: shipment.value?.id,
-          price: method.price?.amount,
-          shipmentMethodCode: method.code,
-          shipmentMethodOption: method.optionName,
-        });
-
-        ga.addShippingInfo(cart.value);
-      },
-    },
-  });
-}
-
-function showPaymentMethodDialog(): void {
-  openPopup({
-    component: PaymentMethodDialog,
-    props: {
-      currentMethodCode: payment.value?.paymentGatewayCode,
-      availableMethods: paymentMethods.value,
-      async onResult(method: PaymentMethodType) {
-        await updatePayment({
-          id: payment.value?.id,
-          paymentGatewayCode: method.code,
-        });
-      },
-    },
-  });
-}
-
-async function updateBillingOrDeliveryAddress(
-  addressType: AddressType.Billing | AddressType.Shipping,
-  inputAddress: InputAddressType
-) {
-  if (addressType === AddressType.Billing) {
-    await updatePayment({
-      id: payment.value?.id,
-      billingAddress: inputAddress,
-    });
-  } else {
-    await updateShipment({
-      id: shipment.value?.id,
-      deliveryAddress: inputAddress,
-    });
-  }
-}
-
-function openAddOrUpdateAddressDialog(
-  addressType: AddressType.Billing | AddressType.Shipping,
-  editableAddress?: MemberAddressType | CartAddressType
-) {
-  openPopup({
-    component: AddOrUpdateAddressDialog,
-    props: {
-      address: editableAddress,
-
-      async onResult(address: MemberAddressType) {
-        closePopup();
-
-        const inputAddress: InputAddressType = {
-          ...omit(address, ["isDefault", "description"]),
-          addressType,
-        };
-
-        await updateBillingOrDeliveryAddress(addressType, inputAddress);
-      },
-    },
-  });
-}
-
-function openAddressSelectionDialog(addressType: AddressType.Billing | AddressType.Shipping): void {
-  openPopup({
-    component: SelectAddressDialog,
-
-    props: {
-      addresses: addresses.value,
-      currentAddress:
-        addressType === AddressType.Billing ? payment.value?.billingAddress : shipment.value?.deliveryAddress,
-
-      async onResult(address?: MemberAddressType) {
-        if (!address) {
-          return;
-        }
-
-        const inputAddress: InputAddressType = {
-          ...omit(address, ["isDefault", "description"]),
-          addressType,
-        };
-
-        await updateBillingOrDeliveryAddress(addressType, inputAddress);
-      },
-
-      onAddNewAddress() {
-        setTimeout(() => {
-          openAddOrUpdateAddressDialog(addressType);
-        }, 500);
-      },
-    },
-  });
 }
 
 function openClearCartDialog() {
@@ -975,62 +735,28 @@ async function toggleGift(state: boolean, gift: GiftItemType) {
   await fetchCart();
 }
 
-onMounted(async () => {
-  await fetchCart();
+async function createOrderFromCart(): Promise<void> {
+  const order = await createOrder();
 
-  ga.viewCart(cart.value);
-
-  if (!cart.value.items?.length) {
-    preparedData.value = true;
-    return;
-  }
-
-  if (isAuthenticated.value) {
-    fetchAddresses();
-  }
-
-  purchaseOrderNumber.value = cart.value.purchaseOrderNumber ?? "";
-  cartCoupon.value = cart.value.coupons?.[0]?.code ?? "";
-  cartComment.value = cart.value.comment ?? "";
-
-  // Set checkout defaults
-  const { shippingMethodId, paymentMethodCode } = getUserCheckoutDefaults() ?? {};
-  const defaultShippingMethod = shippingMethods.value.find((item) => item.id === shippingMethodId);
-  const defaultPaymentMethod = paymentMethods.value.find((item) => item.code === paymentMethodCode);
-  let reloadCart = false;
-
-  if (
-    !shipment.value?.shipmentMethodCode &&
-    !shipment.value?.shipmentMethodOption &&
-    shippingMethodId &&
-    defaultShippingMethod
-  ) {
-    await updateShipment(
-      {
-        id: shipment.value?.id,
-        price: defaultShippingMethod.price?.amount,
-        shipmentMethodCode: defaultShippingMethod.code,
-        shipmentMethodOption: defaultShippingMethod.optionName,
+  if (order) {
+    await router.push({
+      name: "CheckoutComplete",
+      params: {
+        orderId: order.id,
+        orderNumber: order.number,
       },
-      false
-    );
-    reloadCart = true;
-  }
+    });
 
-  if (!payment.value?.paymentGatewayCode && paymentMethodCode && defaultPaymentMethod) {
-    await updatePayment(
-      {
-        id: payment.value?.id,
-        paymentGatewayCode: defaultPaymentMethod.code,
-      },
-      false
-    );
-    reloadCart = true;
-  }
-
-  if (reloadCart) {
     await fetchCart();
   }
+}
+
+onMounted(async () => {
+  await initCheckout();
+
+  cartCoupon.value = cart.value.coupons?.[0]?.code ?? "";
+
+  ga.viewCart(cart.value);
 
   preparedData.value = true;
 });
