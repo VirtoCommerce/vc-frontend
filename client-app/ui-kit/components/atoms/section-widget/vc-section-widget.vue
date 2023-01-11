@@ -8,9 +8,7 @@
           'vc-section-widget__title--hide-desktop': hideDesktopTitle,
         }"
       >
-        <VcHexagon>
-          <VcIcon :name="icon" />
-        </VcHexagon>
+        <VcHexagon :icon="icon" />
 
         <VcTypography size="h3" weight="extrabold">
           {{ title }}

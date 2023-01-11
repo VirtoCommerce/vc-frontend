@@ -9,9 +9,7 @@
         }"
       >
         <div class="vc-card-widget__icon">
-          <VcHexagon>
-            <VcIcon :name="icon" />
-          </VcHexagon>
+          <VcHexagon :icon="icon" />
         </div>
 
         <VcTypography size="h3" weight="extrabold">

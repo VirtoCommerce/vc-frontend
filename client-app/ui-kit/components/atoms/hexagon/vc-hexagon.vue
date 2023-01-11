@@ -1,8 +1,17 @@
 <template>
   <div class="vc-hexagon">
-    <slot />
+    <VcIcon :name="icon" />
   </div>
 </template>
+
+<script setup lang="ts">
+defineProps({
+  icon: {
+    type: String,
+    default: null,
+  },
+});
+</script>
 
 <style lang="scss">
 .vc-hexagon {
