@@ -58,29 +58,18 @@ defineProps({
 
 <style lang="scss">
 .vc-steps {
-  $self: &;
+  $itemActive: '';
+  $itemCompleted: '';
 
   @apply flex flex-wrap gap-x-5 gap-y-2.5;
 
   &__item {
     &--active {
-      #{$self}__icon {
-        @apply bg-[color:var(--color-primary)];
-      }
-
-      #{$self}__text {
-        @apply text-[color:var(--color-body-text)];
-      }
+      $itemActive: &;
     }
 
     &--completed {
-      #{$self}__icon {
-        @apply bg-[color:var(--color-success)];
-      }
-
-      #{$self}__text {
-        @apply text-[color:var(--color-success)];
-      }
+      $itemCompleted: &;
     }
   }
 
@@ -91,10 +80,26 @@ defineProps({
   &__icon {
     @apply flex shrink-0 items-center justify-center w-5 h-5 rounded-full
     text-sm font-extrabold text-white bg-gray-400;
+
+    #{$itemActive} & {
+      @apply bg-[color:var(--color-primary)];
+    }
+
+    #{$itemCompleted} & {
+      @apply bg-[color:var(--color-success)];
+    }
   }
 
   &__text {
     @apply text-sm font-semibold text-gray-600;
+
+    #{$itemActive} & {
+      @apply text-[color:var(--color-body-text)];
+    }
+
+    #{$itemCompleted} & {
+      @apply text-[color:var(--color-success)];
+    }
   }
 }
 </style>
