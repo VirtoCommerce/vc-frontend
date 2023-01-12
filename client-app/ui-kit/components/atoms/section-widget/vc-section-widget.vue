@@ -2,15 +2,17 @@
   <div class="vc-section-widget">
     <slot name="title" v-if="title">
       <div
-        :class="{
-          'vc-section-widget__title': true,
-          'vc-section-widget__title--hide-mobile': hideMobileTitle,
-          'vc-section-widget__title--hide-desktop': hideDesktopTitle,
-        }"
+        :class="[
+          'vc-section-widget__title',
+          {
+            'vc-section-widget__title--hide-mobile': hideMobileTitle,
+            'vc-section-widget__title--hide-desktop': hideDesktopTitle,
+          },
+        ]"
       >
-        <VcHexagon :icon="icon" />
+        <VcHexagonIcon :icon="icon" />
 
-        <VcTypography size="h3" weight="extrabold">
+        <VcTypography variant="h3" weight="extrabold">
           {{ title }}
         </VcTypography>
       </div>
@@ -24,24 +26,17 @@
 
 <script setup lang="ts">
 defineProps({
+  hideMobileTitle: Boolean,
+  hideDesktopTitle: Boolean,
+
   title: {
     type: String,
-    default: null,
+    default: "",
   },
 
   icon: {
     type: String,
-    default: null,
-  },
-
-  hideMobileTitle: {
-    type: Boolean,
-    default: false,
-  },
-
-  hideDesktopTitle: {
-    type: Boolean,
-    default: false,
+    default: "",
   },
 
   contentClasses: {
@@ -53,12 +48,19 @@ defineProps({
 
 <style lang="scss">
 .vc-section-widget {
-  @apply relative bg-[color:var(--color-white)]
-  lg:border lg:rounded lg:shadow-md-x;
+  @apply relative bg-[color:var(--color-white)];
+
+  @media (min-width: theme("screens.lg")) {
+    @apply border rounded shadow-md-x;
+  }
 
   &:after {
     @apply content-[''] z-[1] absolute top-full w-full h-3
-    bg-gradient-to-b from-[#f1f1f1] lg:content-none;
+    bg-gradient-to-b from-[#f1f1f1];
+
+    @media (min-width: theme("screens.lg")) {
+      @apply content-none;
+    }
   }
 
   &__title {
@@ -74,7 +76,11 @@ defineProps({
   }
 
   &__content {
-    @apply px-7 pt-3 pb-7 lg:pb-6;
+    @apply px-7 pt-3 pb-7;
+
+    @media (min-width: theme("screens.lg")) {
+      @apply pb-6;
+    }
   }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <component :is="tag" :class="['vc-typography', `vc-typography--size-${size}`, `vc-typography--weight-${weight}`]">
+  <component :is="tag" :class="['vc-typography', `vc-typography--size-${variant}`, `vc-typography--weight-${weight}`]">
     <slot />
   </component>
 </template>
@@ -13,7 +13,7 @@ defineProps({
     default: "p",
   },
 
-  size: {
+  variant: {
     type: String as PropType<"h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "large" | "base" | "medium" | "small">,
     default: "base",
     validator: (value: string) =>

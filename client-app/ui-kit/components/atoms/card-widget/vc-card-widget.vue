@@ -2,17 +2,19 @@
   <div class="vc-card-widget">
     <slot name="title" v-if="title">
       <div
-        :class="{
-          'vc-card-widget__title': true,
-          'vc-section-widget__title--hide-mobile': hideMobileTitle,
-          'vc-section-widget__title--hide-desktop': hideDesktopTitle,
-        }"
+        :class="[
+          'vc-card-widget__title',
+          {
+            'vc-section-widget__title--hide-mobile': hideMobileTitle,
+            'vc-section-widget__title--hide-desktop': hideDesktopTitle,
+          },
+        ]"
       >
         <div class="vc-card-widget__icon">
-          <VcHexagon :icon="icon" />
+          <VcHexagonIcon :icon="icon" />
         </div>
 
-        <VcTypography size="h3" weight="extrabold">
+        <VcTypography variant="h3" weight="extrabold">
           {{ title }}
         </VcTypography>
       </div>
@@ -26,24 +28,17 @@
 
 <script setup lang="ts">
 defineProps({
+  hideMobileTitle: Boolean,
+  hideDesktopTitle: Boolean,
+
   title: {
     type: String,
-    default: null,
+    default: "",
   },
 
   icon: {
     type: String,
-    default: null,
-  },
-
-  hideMobileTitle: {
-    type: Boolean,
-    default: false,
-  },
-
-  hideDesktopTitle: {
-    type: Boolean,
-    default: false,
+    default: "",
   },
 
   contentClasses: {
@@ -55,16 +50,26 @@ defineProps({
 
 <style lang="scss">
 .vc-card-widget {
-  @apply relative bg-[color:var(--color-white)]
-  lg:border lg:rounded lg:shadow-md-x;
+  @apply relative bg-[color:var(--color-white)];
+
+  @media (min-width: theme("screens.lg")) {
+    @apply border rounded shadow-md-x;
+  }
 
   &:after {
-    @apply content-[''] z-[1] absolute top-full w-full h-3
-    bg-gradient-to-b from-[#f1f1f1] lg:content-none;
+    @apply content-[''] z-[1] absolute top-full w-full h-3 bg-gradient-to-b from-[#f1f1f1];
+
+    @media (min-width: theme("screens.lg")) {
+      @apply content-none;
+    }
   }
 
   &__title {
-    @apply flex items-center gap-3 px-7 pt-6 pb-3 lg:px-6 lg:py-3;
+    @apply flex items-center gap-3 px-7 pt-6 pb-3;
+
+    @media (min-width: theme("screens.lg")) {
+      @apply px-6 py-3;
+    }
 
     &--hide-mobile {
       @apply hidden lg:block;
@@ -80,7 +85,11 @@ defineProps({
   }
 
   &__content {
-    @apply px-7 pt-3 pb-7 lg:px-6 lg:pb-5 lg:border-t;
+    @apply px-7 pt-3 pb-7;
+
+    @media (min-width: theme("screens.lg")) {
+      @apply px-6 pb-5 border-t;
+    }
   }
 }
 </style>
