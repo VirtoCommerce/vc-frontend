@@ -12,8 +12,8 @@
       <!-- Quote comment -->
       <VcSectionWidget
         :title="$t('pages.account.quote_details.remarks')"
-        icon-url="/static/images/remarks.svg"
-        content-classes="px-6 pb-1 pt-4 lg:px-7 lg:pb-2"
+        icon="document-text"
+        content-classes="px-6 pb-1 pt-2 lg:px-7 lg:pb-2"
       >
         <div class="text-base leading-5 font-bold lg:text-15">
           {{ $t("pages.account.quote_details.remarks_field_label") }}
@@ -32,16 +32,13 @@
       <!-- Quote products -->
       <VcSectionWidget
         :title="$t('pages.account.quote_details.products')"
-        icon-url="/static/images/products.svg"
-        content-classes="px-6 pt-6 pb-0 md:p-7"
+        icon="cube"
+        content-classes="px-6 pt-3 pb-0 md:pb-7 md:px-7"
       >
         <QuoteLineItems :items="quote.items!" @remove:item="onRemoveItem" />
       </VcSectionWidget>
 
-      <VcSectionWidget
-        :title="$t('pages.account.quote_details.shipping_address')"
-        icon-url="/static/images/shipping-address.svg"
-      >
+      <VcSectionWidget :title="$t('pages.account.quote_details.shipping_address')" icon="truck">
         <h4 class="text-md leading-5 font-bold">
           {{ $t("pages.account.quote_details.shipping_address") }}
         </h4>
@@ -72,10 +69,7 @@
       </VcSectionWidget>
 
       <!-- Quote billing address -->
-      <VcSectionWidget
-        :title="$t('pages.account.quote_details.billing_address')"
-        icon-url="/static/images/billing-address.svg"
-      >
+      <VcSectionWidget :title="$t('pages.account.quote_details.billing_address')" icon="cash">
         <h4 class="text-md font-bold leading-5">
           {{ $t("pages.account.quote_details.billing_address") }}
         </h4>

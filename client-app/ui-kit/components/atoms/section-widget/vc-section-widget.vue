@@ -1,17 +1,24 @@
 <template>
-  <div class="relative shadow-light-lg lg:bg-white lg:border lg:rounded lg:shadow-md-x">
-    <slot name="title" v-if="withTitle">
+  <div class="vc-section-widget">
+    <slot name="title" v-if="title">
       <div
-        class="flex items-center gap-3 px-6 pt-6"
-        :class="{ 'hidden lg:block': hideMobileTitle, 'lg:hidden': hideDesktopTitle }"
+        :class="[
+          'vc-section-widget__title',
+          {
+            'vc-section-widget__title--hide-mobile': hideMobileTitle,
+            'vc-section-widget__title--hide-desktop': hideDesktopTitle,
+          },
+        ]"
       >
-        <VcImage :alt="title" :src="iconUrl" class="w-11 h-11 -ml-0.5 lg:w-14 lg:h-14 lg:ml-0.5" lazy />
-        <h3 class="text-xl font-bold uppercase">
+        <VcHexagonIcon :icon="icon" />
+
+        <VcTypography variant="h3" weight="extrabold">
           {{ title }}
-        </h3>
+        </VcTypography>
       </div>
     </slot>
-    <div :class="contentClasses">
+
+    <div :class="contentClasses ?? 'vc-section-widget__content'">
       <slot></slot>
     </div>
   </div>
@@ -19,34 +26,61 @@
 
 <script setup lang="ts">
 defineProps({
+  hideMobileTitle: Boolean,
+  hideDesktopTitle: Boolean,
+
   title: {
     type: String,
     default: "",
   },
 
-  iconUrl: {
+  icon: {
     type: String,
     default: "",
   },
 
-  withTitle: {
-    type: Boolean,
-    default: true,
-  },
-
-  hideMobileTitle: {
-    type: Boolean,
-    default: false,
-  },
-
-  hideDesktopTitle: {
-    type: Boolean,
-    default: false,
-  },
-
   contentClasses: {
     type: String,
-    default: "px-6 pt-4 pb-6 lg:px-7 lg:pb-7",
+    default: null,
   },
 });
 </script>
+
+<style lang="scss">
+.vc-section-widget {
+  @apply relative bg-[color:var(--color-white)];
+
+  @media (min-width: theme("screens.lg")) {
+    @apply border rounded shadow-md-x;
+  }
+
+  &:after {
+    @apply content-[''] z-[1] absolute top-full w-full h-3
+    bg-gradient-to-b from-[#f1f1f1];
+
+    @media (min-width: theme("screens.lg")) {
+      @apply content-none;
+    }
+  }
+
+  &__title {
+    @apply flex items-center gap-3 px-7 pt-6 pb-3;
+
+    &--hide-mobile {
+      @apply hidden lg:block;
+    }
+
+    &--hide-desktop {
+      @apply lg:hidden;
+    }
+  }
+
+  &__content {
+    @apply px-7 pt-3 pb-7;
+
+    @media (min-width: theme("screens.lg")) {
+      @apply pb-6;
+    }
+  }
+}
+</style>

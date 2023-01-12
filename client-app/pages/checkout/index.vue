@@ -1,30 +1,28 @@
 <template>
-  <div class="bg-gray-100 pt-7 pb-8 shadow-inner">
-    <div class="max-w-screen-2xl md:px-12 mx-auto">
-      <h2 class="text-gray-800 px-5 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-7">{Dynamic step title}</h2>
+  <VcContainer>
+    <VcTypography tag="h1" variant="h2" weight="bold" class="mb-5"> {Dynamic step title} </VcTypography>
 
-      <div class="flex flex-col lg:flex-row lg:flex-nowrap lg:space-x-6">
-        <!-- Main section -->
-        <div class="lg:w-3/4 xl:w-4/5 flex-grow w-full">
-          <router-view />
-        </div>
+    <VcSteps class="mb-5" :steps="steps" :start-step="0" :current-step="3" />
 
-        <!-- Sidebar -->
-        <div class="flex flex-col gap-y-6 px-5 order-first md:px-0 lg:order-1 lg:w-1/4 lg:h-full lg:sticky lg:top-4">
-          <OrderSummary :cart="cart">
-            <template #footer>
-              <VcButton class="uppercase w-full mt-4" is-disabled>{Dynamic next step}</VcButton>
+    <VcLayoutWithRightSidebar is-sidebar-sticky>
+      <template #main>
+        <router-view />
+      </template>
 
-              <p
-                class="mt-4 text-xs font-normal text-gray-400"
-                v-t="'pages.checkout.order_summary_block.warning_message'"
-              />
-            </template>
-          </OrderSummary>
-        </div>
-      </div>
-    </div>
-  </div>
+      <template #sidebar>
+        <OrderSummary :cart="cart">
+          <template #footer>
+            <VcButton class="uppercase w-full mt-4" is-disabled> {Dynamic next step} </VcButton>
+
+            <p
+              class="mt-4 text-xs font-normal text-gray-400"
+              v-t="'pages.checkout.order_summary_block.warning_message'"
+            />
+          </template>
+        </OrderSummary>
+      </template>
+    </VcLayoutWithRightSidebar>
+  </VcContainer>
 </template>
 
 <script setup lang="ts">
@@ -39,6 +37,28 @@ const { t } = useI18n();
 const { user } = useUser();
 const { fetchAddresses } = useUserAddresses({ user });
 const { cart, fetchCart } = useCart();
+
+const steps: IStepsItem[] = [
+  {
+    text: "Back to Cart",
+    icon: "chevron-left",
+    route: { name: "Cart" },
+  },
+  {
+    text: "Shipping",
+    route: { name: "CheckoutShipping" },
+  },
+  {
+    text: "Billing",
+    route: { name: "CheckoutBilling" },
+  },
+  {
+    text: "Order created",
+  },
+  {
+    text: "Completed",
+  },
+];
 
 usePageHead({
   title: [t("pages.checkout.meta.title"), "{Dynamic step title}"],
