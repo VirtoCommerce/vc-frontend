@@ -1,5 +1,5 @@
 <template>
-  <VcLoaderOverlay v-if="!preparedData" no-bg />
+  <VcLoaderOverlay v-if="!initialized" no-bg />
 
   <VcEmptyPage
     v-else-if="!cart.items?.length"
@@ -20,7 +20,7 @@
     <div class="px-5 mx-auto max-w-screen-2xl 2xl:px-18">
       <!-- Mobile sticky header -->
       <div
-        v-if="isVisibleStickyMobileHeader"
+        v-if="stickyMobileHeaderIsVisible"
         class="fixed left-0 top-0 h-14 w-full z-40 px-5 md:px-12 flex justify-between items-center gap-x-3 bg-[color:var(--color-header-bottom-bg)]"
       >
         <div>
@@ -41,7 +41,7 @@
             :is-waiting="creatingOrder"
             size="sm"
             class="uppercase px-3"
-            @click="createOrderFromCart"
+            @click="createOrder"
           >
             {{ $t("pages.cart.order_summary_block.create_order_button") }}
           </VcButton>
@@ -75,24 +75,24 @@
 
             <!-- Items grouped by Vendor -->
             <template v-if="$cfg.line_items_group_by_vendor_enabled">
-              <template v-for="(item, vendorId) in groupedCartItems" :key="vendorId">
+              <template v-for="(group, vendorId) in lineItemsGroupedByVendor" :key="vendorId">
                 <div
-                  v-if="item.items.length"
+                  v-if="group.items.length"
                   class="bg-white shadow-light-lg mb-4 px-7 pt-0 md:shadow-none lg:mb-0 lg:pb-5 lg:px-0 lg:pt-0 lg:rounded"
                 >
                   <!-- Vendor -->
                   <div class="pb-3 font-bold text-15">
                     <span class="mr-1">{{ $t("pages.cart.products_section.vendor_label") }}:</span>
-                    <Vendor v-if="item.vendor" :vendor="item.vendor" class="inline-flex flex-row items-end gap-x-3" />
+                    <Vendor v-if="group.vendor" :vendor="group.vendor" class="inline-flex flex-row items-end gap-x-3" />
                     <span v-else class="text-gray-400" v-t="`pages.cart.products_section.empty_vendor_label`" />
                   </div>
 
                   <CartLineItems
-                    :items="item.items"
+                    :items="group.items"
                     :disabled="loading || creatingOrder || creatingQuote"
                     :validationErrors="cart.validationErrors"
                     @change-quantity:item="changeItemQuantity"
-                    @remove:item="removeItemButtonClick"
+                    @remove:item="handleRemoveItem"
                   />
                 </div>
               </template>
@@ -104,11 +104,11 @@
               class="bg-white shadow-light-lg mb-4 p-7 lg:mb-0 lg:pb-5 lg:px-0 lg:pt-0 lg:rounded lg:shadow-none"
             >
               <CartLineItems
-                :items="cartItems"
+                :items="cart.items"
                 :disabled="loading || creatingOrder || creatingQuote"
                 :validationErrors="cart.validationErrors"
                 @change-quantity:item="changeItemQuantity"
-                @remove:item="removeItemButtonClick"
+                @remove:item="handleRemoveItem"
               />
             </div>
 
@@ -119,7 +119,7 @@
                 kind="secondary"
                 is-outline
                 class="px-3 self-start uppercase font-bold"
-                @click="openClearCartDialog"
+                @click="openClearCartModal"
               >
                 {{ $t("pages.cart.products_section.clear_cart_button") }}
               </VcButton>
@@ -135,15 +135,15 @@
           >
             <div class="xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6 lg:border lg:rounded">
               <div
-                v-for="gift in cart.availableGifts"
+                v-for="gift in availableExtendedGifts"
                 :key="gift.id"
                 class="border-b last:border-b-0 flex items-center justify-between px-7 py-6"
               >
                 <VcCheckbox
                   class="mr-7"
-                  :model-value="checkGift(gift)"
+                  :model-value="gift.isAddedInCart"
                   :disabled="loading || creatingOrder || creatingQuote"
-                  @change="toggleGift($event, gift)"
+                  @change="toggleGift(gift)"
                 />
 
                 <VcImage :src="gift.imageUrl" class="mr-4 border aspect-square w-16 h-16" lazy />
@@ -466,27 +466,26 @@
                 class="mb-5"
                 :label="$t('pages.checkout.order_summary_block.purchase_order_label')"
                 :placeholder="$t('pages.checkout.order_summary_block.purchase_order_placeholder')"
-                :is-applied="purchaseOrderNumberApplied"
+                :is-applied="purchaseOrderNumberIsApplied"
                 :is-disabled="loading || creatingOrder || creatingQuote"
                 :max-length="128"
                 @click:apply="setPurchaseOrderNumber"
                 @click:deny="removePurchaseOrderNumber"
-                @update:model-value="couponValidationError = ''"
               />
 
               <!-- Promotion code -->
               <VcActionInput
                 v-if="$cfg.checkout_coupon_enabled"
-                v-model="cartCoupon"
+                v-model="couponCode"
                 :class="[couponValidationError ? 'mb-0' : 'mb-8']"
                 :label="$t('pages.checkout.order_summary_block.promotion_code_label')"
                 :placeholder="$t('pages.checkout.order_summary_block.promotion_code_placeholder')"
-                :is-applied="cartCouponApplied"
+                :is-applied="couponIsApplied"
                 :error-message="couponValidationError"
                 :is-disabled="loading || creatingOrder || creatingQuote"
                 @click:apply="applyCoupon"
                 @click:deny="removeCoupon"
-                @update:model-value="couponValidationError = ''"
+                @update:model-value="clearCouponValidationError"
               />
             </template>
 
@@ -502,7 +501,7 @@
                 :is-disabled="!isValidCheckout || loading || creatingQuote"
                 :is-waiting="creatingOrder"
                 class="uppercase w-full"
-                @click="createOrderFromCart"
+                @click="createOrder"
               >
                 {{ $t("pages.checkout.order_summary_block.place_order_button") }}
               </VcButton>
@@ -543,62 +542,59 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onMounted, ref, shallowRef } from "vue";
-import { breakpointsTailwind, computedEager, useBreakpoints } from "@vueuse/core";
+import { computed, shallowRef } from "vue";
+import { breakpointsTailwind, invoke, useBreakpoints } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { addGiftItems, GiftItemType, rejectGiftItems, LineItemType, Vendor as VendorType } from "@/xapi";
-import { AddressType, useElementVisibility, usePageHead, useGoogleAnalytics, configInjectionKey } from "@/core";
-import { useCheckout, CheckoutLabeledBlock, OrderSummary } from "@/shared/checkout";
-import { CartLineItems, ClearCartDialog, useCart } from "@/shared/cart";
-import { usePopup } from "@/shared/popup";
-import { useUser, useUserAddresses } from "@/shared/account";
-import { useNotifications } from "@/shared/notification";
+import { LineItemType } from "@/xapi";
+import { AddressType, useElementVisibility, useGoogleAnalytics, usePageHead } from "@/core";
+import { CheckoutLabeledBlock, OrderSummary, useCheckout } from "@/shared/checkout";
+import { CartLineItems, useCart, useCoupon, usePurchaseOrderNumber } from "@/shared/cart";
+import { useUser } from "@/shared/account";
 import { Vendor } from "@/shared/catalog";
 
-type TGroupItem = { items: LineItemType[]; vendor?: VendorType };
-type TGroupedItems = Record<string, TGroupItem>;
-
-const config = inject(configInjectionKey);
-
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const notifications = useNotifications();
 const router = useRouter();
+const ga = useGoogleAnalytics();
 const { t } = useI18n();
-const { user, isAuthenticated } = useUser();
+const { isAuthenticated } = useUser();
+
 const {
   loading,
+  creatingQuote,
   cart,
+  lineItemsGroupedByVendor,
+  availableExtendedGifts,
   fetchCart,
   changeItemQuantity,
   removeItem,
-  validateCartCoupon,
-  addCartCoupon,
-  removeCartCoupon,
-  removeCart,
   createQuoteFromCart,
+  toggleGift,
+  openClearCartModal,
 } = useCart();
-const { addresses } = useUserAddresses({ user });
-const { openPopup } = usePopup();
-const ga = useGoogleAnalytics();
+
 const {
-  purchaseOrderNumber,
   comment,
   billingAddressEqualsShippingAddress,
+  initialized,
   creatingOrder,
+  addresses,
   shipment,
   payment,
   isValidCheckout,
-  purchaseOrderNumberApplied,
-  initCheckout,
+  initialize,
   openSelectShipmentMethodModal,
   openSelectPaymentMethodModal,
   openAddOrUpdateAddressModal,
   openSelectAddressModal,
-  setPurchaseOrderNumber,
-  removePurchaseOrderNumber,
-  createOrder,
+  createOrderFromCart,
 } = useCheckout();
+
+const { purchaseOrderNumber, purchaseOrderNumberIsApplied, setPurchaseOrderNumber, removePurchaseOrderNumber } =
+  usePurchaseOrderNumber();
+
+const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
+  useCoupon();
 
 usePageHead({
   title: t("pages.cart.meta.title"),
@@ -609,61 +605,13 @@ const breadcrumbs: IBreadcrumbs[] = [
   { title: t("common.links.cart"), route: { name: "Cart" } },
 ];
 
-const groupIdWithoutVendor = "none";
-const groupItemsByVendor = !!config?.line_items_group_by_vendor_enabled;
-
 const isMobile = breakpoints.smaller("lg");
-const preparedData = ref(false);
-const creatingQuote = ref(false);
-const cartCoupon = ref("");
-const couponValidationError = ref("");
 
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
+const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
-const isVisibleStickyMobileHeader = computedEager<boolean>(
-  () => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value
-);
-
-const cartCouponApplied = computedEager<boolean>(() => !!cart.value.coupons?.[0]?.code);
-
-const cartItems = computed<LineItemType[]>(() => {
-  if (groupItemsByVendor || !cart.value.items) {
-    return [];
-  }
-
-  return cart.value.items;
-});
-
-const groupedCartItems = computed<TGroupedItems>(() => {
-  // NOTE: The group without a vendor should be last to be displayed.
-  const groupWithoutVendor: TGroupItem = { items: [] };
-  const map: TGroupedItems = {};
-
-  if (!groupItemsByVendor) {
-    return map;
-  }
-
-  cart.value.items?.forEach((item) => {
-    const vendor = item.product!.vendor;
-
-    if (vendor) {
-      const vendorId = vendor.id;
-
-      map[vendorId] = map[vendorId] || { vendor, items: [] };
-      map[vendorId].items.push(item);
-    } else {
-      groupWithoutVendor.items.push(item);
-    }
-  });
-
-  // Add a group without a vendor to the end of the iteration object.
-  map[groupIdWithoutVendor] = groupWithoutVendor;
-
-  return map;
-});
-
-async function removeItemButtonClick(lineItem: LineItemType) {
+async function handleRemoveItem(lineItem: LineItemType) {
   await removeItem(lineItem.id);
 
   /**
@@ -672,71 +620,8 @@ async function removeItemButtonClick(lineItem: LineItemType) {
   ga.removeItemFromCart(lineItem);
 }
 
-async function applyCoupon() {
-  const validationResult: boolean = await validateCartCoupon(cartCoupon.value);
-
-  if (validationResult) {
-    await addCartCoupon(cartCoupon.value);
-    couponValidationError.value = "";
-  } else {
-    couponValidationError.value = t("pages.checkout.invalid_coupon_message");
-  }
-}
-
-async function removeCoupon() {
-  await removeCartCoupon(cartCoupon.value);
-}
-
-async function createQuote() {
-  creatingQuote.value = true;
-
-  const quote = await createQuoteFromCart(cart.value.id!);
-
-  if (!quote) {
-    creatingQuote.value = false;
-
-    notifications.error({
-      text: t("common.messages.creating_quote_error"),
-      duration: 15000,
-      single: true,
-    });
-
-    return;
-  }
-
-  await router.push({ name: "EditQuote", params: { quoteId: quote?.id } });
-  await fetchCart();
-
-  creatingQuote.value = false;
-}
-
-function openClearCartDialog() {
-  openPopup({
-    component: ClearCartDialog,
-    props: {
-      onResult() {
-        removeCart(cart.value.id!);
-      },
-    },
-  });
-}
-
-function checkGift(gift: GiftItemType): boolean {
-  return !!cart.value.gifts?.find((giftData) => giftData.lineItemId === gift.lineItemId);
-}
-
-async function toggleGift(state: boolean, gift: GiftItemType) {
-  if (state) {
-    await addGiftItems([gift.id]);
-  } else if (gift.lineItemId) {
-    await rejectGiftItems([gift.lineItemId]);
-  }
-
-  await fetchCart();
-}
-
-async function createOrderFromCart(): Promise<void> {
-  const order = await createOrder();
+async function createOrder(): Promise<void> {
+  const order = await createOrderFromCart();
 
   if (order) {
     await router.push({
@@ -746,18 +631,30 @@ async function createOrderFromCart(): Promise<void> {
         orderNumber: order.number,
       },
     });
-
-    await fetchCart();
   }
+
+  await fetchCart();
 }
 
-onMounted(async () => {
-  await initCheckout();
+async function createQuote() {
+  const quote = await createQuoteFromCart();
 
-  cartCoupon.value = cart.value.coupons?.[0]?.code ?? "";
+  if (quote) {
+    await router.push({
+      name: "EditQuote",
+      params: { quoteId: quote.id },
+    });
+  }
 
+  await fetchCart();
+}
+
+invoke(async () => {
+  await initialize();
+
+  /**
+   * Send a Google Analytics shopping cart view event.
+   */
   ga.viewCart(cart.value);
-
-  preparedData.value = true;
 });
 </script>

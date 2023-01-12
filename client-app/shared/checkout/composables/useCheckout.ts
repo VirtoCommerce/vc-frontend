@@ -1,14 +1,16 @@
-import { computed, ref } from "vue";
+import { computed, readonly, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { omit } from "lodash";
 import {
   CartAddressType,
+  createOrderFromCart as _createOrderFromCart,
   CustomerOrderType,
   InputAddressType,
   InputPaymentType,
   MemberAddressType,
   PaymentMethodType,
   PaymentType,
+  removeCart,
   ShipmentType,
   ShippingMethodType,
 } from "@/xapi";
@@ -16,39 +18,29 @@ import { useCart } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import {
   AddOrUpdateAddressModal,
+  SelectAddressModal,
   SelectPaymentMethodModal,
   SelectShippingMethodModal,
-  SelectAddressModal,
 } from "@/shared/checkout";
-import { AddressType, useGoogleAnalytics } from "@/core";
+import { AddressType, Logger, useGoogleAnalytics } from "@/core";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
-import { computedEager } from "@vueuse/core";
 import { useNotifications } from "@/shared/notification";
 
+const comment = ref("");
+const billingAddressEqualsShippingAddress = ref(true);
+
 export default function useCheckout() {
+  const ga = useGoogleAnalytics();
+  const notifications = useNotifications();
   const { t } = useI18n();
-  const { user, isAuthenticated } = useUser();
-  const { addresses, fetchAddresses, isExistAddress, addOrUpdateAddresses } = useUserAddresses({ user });
-  const {
-    cart,
-    fetchCart,
-    updateShipment,
-    updatePayment,
-    updatePurchaseOrderNumber,
-    changeComment,
-    createOrderFromCart,
-  } = useCart();
+  const { isAuthenticated } = useUser();
+  const { addresses, fetchAddresses, isExistAddress, addOrUpdateAddresses } = useUserAddresses();
+  const { cart, fetchCart, updateShipment, updatePayment, changeComment } = useCart();
   const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
   const { openPopup, closePopup } = usePopup();
-  const notifications = useNotifications();
-  const ga = useGoogleAnalytics();
 
-  const billingAddressEqualsShippingAddress = ref(true);
-  const purchaseOrderNumber = ref("");
-  const comment = ref("");
+  const initialized = ref(false);
   const creatingOrder = ref(false);
-
-  const purchaseOrderNumberApplied = computedEager<boolean>(() => !!cart.value.purchaseOrderNumber);
 
   const shipment = computed<ShipmentType | undefined>(() => cart.value.shipments?.[0]);
   const payment = computed<PaymentType | undefined>(() => cart.value.payments?.[0]);
@@ -65,26 +57,10 @@ export default function useCheckout() {
     () => !cart.value.validationErrors?.length && isValidShipment.value && isValidPayment.value
   );
 
-  async function initCheckout(): Promise<void> {
-    await fetchCart();
-
-    // TODO: Add ga.beginCheckout
-
-    if (isAuthenticated.value) {
-      fetchAddresses();
-    }
-
-    purchaseOrderNumber.value = cart.value.purchaseOrderNumber ?? "";
-    comment.value = cart.value.comment ?? "";
-
-    // Set checkout defaults
-    const { shippingMethodId, paymentMethodCode } = getUserCheckoutDefaults() ?? {};
-    const defaultShippingMethod = availableShippingMethods.value.find(
-      (item: ShippingMethodType) => item.id === shippingMethodId
-    );
-    const defaultPaymentMethod = availablePaymentMethods.value.find(
-      (item: PaymentMethodType) => item.code === paymentMethodCode
-    );
+  async function setCheckoutDefaults() {
+    const { shippingMethodId, paymentMethodCode } = getUserCheckoutDefaults();
+    const defaultShippingMethod = availableShippingMethods.value.find((item) => item.id === shippingMethodId);
+    const defaultPaymentMethod = availablePaymentMethods.value.find((item) => item.code === paymentMethodCode);
     let reloadCart = false;
 
     if (
@@ -119,6 +95,25 @@ export default function useCheckout() {
     if (reloadCart) {
       await fetchCart();
     }
+  }
+
+  async function initialize(): Promise<void> {
+    await fetchCart();
+
+    if (!cart.value.items?.length) {
+      initialized.value = true;
+      return;
+    }
+
+    if (isAuthenticated.value) {
+      fetchAddresses();
+    }
+
+    await setCheckoutDefaults();
+
+    // TODO: Add ga.beginCheckout
+
+    initialized.value = true;
   }
 
   function openSelectShipmentMethodModal(): void {
@@ -229,15 +224,6 @@ export default function useCheckout() {
     });
   }
 
-  async function setPurchaseOrderNumber() {
-    await updatePurchaseOrderNumber(purchaseOrderNumber.value);
-  }
-
-  async function removePurchaseOrderNumber() {
-    purchaseOrderNumber.value = "";
-    await updatePurchaseOrderNumber("");
-  }
-
   async function saveNewAddressesInAccount(payload: {
     shipmentAddress?: CartAddressType;
     billingAddress?: CartAddressType;
@@ -283,7 +269,12 @@ export default function useCheckout() {
       };
     }
 
-    await updatePayment(filledPayment, false);
+    await updatePayment(filledPayment);
+
+    /**
+     * Send a Google Analytics event about adding payment information.
+     */
+    ga.addPaymentInfo(cart.value);
 
     // Save order comment
     if (comment.value) {
@@ -299,33 +290,43 @@ export default function useCheckout() {
     }
   }
 
-  async function createOrder(): Promise<CustomerOrderType | undefined> {
+  async function createOrderFromCart(): Promise<CustomerOrderType | null> {
+    const cartId = cart.value.id!;
+    let order: CustomerOrderType | null = null;
+
     creatingOrder.value = true;
 
     await prepareOrderData();
 
-    ga.addPaymentInfo(cart.value);
-
-    const order = await createOrderFromCart(cart.value.id!);
-
-    if (order) {
-      return order;
+    try {
+      order = await _createOrderFromCart(cartId);
+    } catch (e) {
+      Logger.error(`${useCheckout.name}.${createOrderFromCart.name}`, e);
     }
 
-    creatingOrder.value = false;
+    if (order) {
+      await removeCart(cartId);
+    } else {
+      creatingOrder.value = false;
 
-    notifications.error({
-      text: t("common.messages.creating_order_error"),
-      duration: 15000,
-      single: true,
-    });
+      notifications.error({
+        text: t("common.messages.creating_order_error"),
+        duration: 15000,
+        single: true,
+      });
+    }
+
+    return order;
   }
 
+  watchEffect(() => {
+    comment.value = cart.value.comment ?? "";
+  });
+
   return {
-    purchaseOrderNumber,
     comment,
     billingAddressEqualsShippingAddress,
-    creatingOrder,
+    addresses,
     shipment,
     payment,
     availableShippingMethods,
@@ -333,14 +334,13 @@ export default function useCheckout() {
     isValidShipment,
     isValidPayment,
     isValidCheckout,
-    purchaseOrderNumberApplied,
-    initCheckout,
+    initialize,
     openSelectShipmentMethodModal,
     openSelectPaymentMethodModal,
     openAddOrUpdateAddressModal,
     openSelectAddressModal,
-    setPurchaseOrderNumber,
-    removePurchaseOrderNumber,
-    createOrder,
+    createOrderFromCart,
+    initialized: readonly(initialized),
+    creatingOrder: readonly(creatingOrder),
   };
 }

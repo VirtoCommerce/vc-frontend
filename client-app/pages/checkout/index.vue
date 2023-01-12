@@ -1,6 +1,6 @@
 <template>
-  <VcContainer>
-    <VcTypography tag="h1" variant="h2" weight="bold" class="mb-5"> {Dynamic step title} </VcTypography>
+  <VcContainer v-if="initialized">
+    <VcTypography tag="h1" variant="h2" weight="bold" class="mb-5"> {Dynamic step title}</VcTypography>
 
     <VcSteps class="mb-5" :steps="steps" :start-step="0" :current-step="3" />
 
@@ -23,20 +23,24 @@
       </template>
     </VcLayoutWithRightSidebar>
   </VcContainer>
+
+  <VcLoaderOverlay v-else no-bg />
 </template>
 
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
+import { invoke } from "@vueuse/core";
 import { usePageHead } from "@/core";
 import { useCart } from "@/shared/cart";
-import { OrderSummary } from "@/shared/checkout";
-import { onMounted } from "vue";
-import { useUser, useUserAddresses } from "@/shared/account";
+import { OrderSummary, useCheckout } from "@/shared/checkout";
 
 const { t } = useI18n();
-const { user } = useUser();
-const { fetchAddresses } = useUserAddresses({ user });
-const { cart, fetchCart } = useCart();
+const { cart } = useCart();
+const { initialized, initialize } = useCheckout();
+
+usePageHead({
+  title: [t("pages.checkout.meta.title"), "{Dynamic step title}"],
+});
 
 const steps: IStepsItem[] = [
   {
@@ -60,12 +64,7 @@ const steps: IStepsItem[] = [
   },
 ];
 
-usePageHead({
-  title: [t("pages.checkout.meta.title"), "{Dynamic step title}"],
-});
-
-onMounted(async () => {
-  await fetchCart();
-  await fetchAddresses();
+invoke(async () => {
+  await initialize();
 });
 </script>

@@ -1,24 +1,20 @@
-import { computed, readonly, ref, Ref, shallowRef, unref } from "vue";
-import { InputMemberAddressType, MemberAddressType, UserType } from "@/xapi/types";
-import { getMyAddresses, updateMemberAddresses, deleteMemberAddresses } from "@/xapi/graphql/account";
+import { computed, readonly, ref, shallowRef } from "vue";
+import { InputMemberAddressType, MemberAddressType } from "@/xapi/types";
+import { deleteMemberAddresses, getMyAddresses, updateMemberAddresses } from "@/xapi/graphql/account";
 import { getSortingExpression, isEqualAddresses, Logger, toInputAddress } from "@/core/utilities";
 import { SORT_ASCENDING } from "@/core/constants";
 import { AnyAddressType, ISortInfo } from "@/core/types";
-import { MaybeRef } from "@vueuse/core";
+import { useUser } from "@/shared/account";
 
-export default (options: { user: MaybeRef<UserType> }) => {
-  const { user } = options;
+const loading = ref(false);
+const addresses = shallowRef<MemberAddressType[]>([]);
+const sort = ref<ISortInfo>({
+  column: "lastName",
+  direction: SORT_ASCENDING,
+});
 
-  const loading: Ref<boolean> = ref(false);
-  const addresses: Ref<MemberAddressType[]> = shallowRef<MemberAddressType[]>([]);
-  const defaultShippingAddress: Ref<MemberAddressType | undefined> = ref();
-  const defaultBillingAddress: Ref<MemberAddressType | undefined> = ref();
-
-  // TODO: refine the sorting logic
-  const sort: Ref<ISortInfo> = ref({
-    column: "lastName",
-    direction: SORT_ASCENDING,
-  });
+export default function useUserAddresses() {
+  const { user } = useUser();
 
   function isExistAddress(address: AnyAddressType): boolean {
     return addresses.value.some((item) => isEqualAddresses(item, address));
@@ -32,26 +28,22 @@ export default (options: { user: MaybeRef<UserType> }) => {
     try {
       addresses.value = await getMyAddresses({ sort: sortingExpression });
     } catch (e) {
-      Logger.error("useUserAddresses.fetchAddresses", e);
+      Logger.error(`${useUserAddresses.name}.${fetchAddresses.name}`, e);
       throw e;
     } finally {
       loading.value = false;
     }
   }
 
-  async function setDefaultAddress(_address: MemberAddressType): Promise<void> {
-    //TODO: will be implemented in the separate story
-  }
-
-  async function updateAddresses(items: MemberAddressType[], memberId = unref(user).memberId!): Promise<void> {
+  async function updateAddresses(items: MemberAddressType[]): Promise<void> {
     loading.value = true;
 
     const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
 
     try {
-      await updateMemberAddresses(memberId, inputAddresses);
+      await updateMemberAddresses(user.value.memberId!, inputAddresses);
     } catch (e) {
-      Logger.error("useUserAddresses.updateAddresses", e);
+      Logger.error(`${useUserAddresses.name}.${updateAddresses.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -60,7 +52,7 @@ export default (options: { user: MaybeRef<UserType> }) => {
     await fetchAddresses();
   }
 
-  async function addOrUpdateAddresses(items: MemberAddressType[], memberId?: string): Promise<void> {
+  async function addOrUpdateAddresses(items: MemberAddressType[]): Promise<void> {
     if (!items.length) {
       return;
     }
@@ -79,10 +71,10 @@ export default (options: { user: MaybeRef<UserType> }) => {
       }
     });
 
-    await updateAddresses(updatedAddresses, memberId);
+    await updateAddresses(updatedAddresses);
   }
 
-  async function removeAddresses(items: MemberAddressType[], memberId = unref(user).memberId!): Promise<void> {
+  async function removeAddresses(items: MemberAddressType[]): Promise<void> {
     if (!items.length) {
       return;
     }
@@ -92,9 +84,9 @@ export default (options: { user: MaybeRef<UserType> }) => {
     const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
 
     try {
-      await deleteMemberAddresses(inputAddresses, memberId);
+      await deleteMemberAddresses(inputAddresses, user.value.memberId!);
     } catch (e) {
-      Logger.error(`useUserAddresses.${removeAddresses.name}`, e);
+      Logger.error(`${useUserAddresses.name}.${removeAddresses.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -107,13 +99,10 @@ export default (options: { user: MaybeRef<UserType> }) => {
     sort,
     isExistAddress,
     fetchAddresses,
-    setDefaultAddress,
     updateAddresses,
     addOrUpdateAddresses,
     removeAddresses,
     loading: readonly(loading),
     addresses: computed(() => addresses.value),
-    defaultShippingAddress: computed(() => defaultShippingAddress.value),
-    defaultBillingAddress: computed(() => defaultBillingAddress.value),
   };
-};
+}

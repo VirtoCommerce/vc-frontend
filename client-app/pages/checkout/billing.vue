@@ -84,10 +84,10 @@
 
 <script setup lang="ts">
 import { AddressType } from "@/core";
-import { useUser, useUserAddresses } from "@/shared/account";
+import { useUser } from "@/shared/account";
 import { CheckoutLabeledBlock, useCheckout } from "@/shared/checkout";
 
-const { user, isAuthenticated } = useUser();
-const { addresses } = useUserAddresses({ user });
-const { payment, openSelectAddressModal, openAddOrUpdateAddressModal, openSelectPaymentMethodModal } = useCheckout();
+const { isAuthenticated } = useUser();
+const { addresses, payment, openSelectAddressModal, openAddOrUpdateAddressModal, openSelectPaymentMethodModal } =
+  useCheckout();
 </script>

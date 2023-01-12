@@ -146,7 +146,7 @@ import { computedEager } from "@vueuse/core";
 import { cloneDeep, isEqual, remove, every } from "lodash";
 import { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi";
 import { AddressType, convertToType } from "@/core";
-import { useUser, useUserAddresses, useUserQuote, QuoteLineItems } from "@/shared/account";
+import { useUserAddresses, useUserQuote, QuoteLineItems } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddOrUpdateAddressModal, SelectAddressModal } from "@/shared/checkout";
 import { usePageHead } from "@/core/composables";
@@ -160,9 +160,8 @@ const props = defineProps({
 
 const router = useRouter();
 const { t } = useI18n();
-const { user } = useUser();
 const { openPopup, closePopup } = usePopup();
-const { addresses, fetchAddresses, addOrUpdateAddresses } = useUserAddresses({ user });
+const { addresses, fetchAddresses, addOrUpdateAddresses } = useUserAddresses();
 const {
   fetching,
   quote,
@@ -229,8 +228,8 @@ function openAddressSelectionDialog(addressType: AddressType.Billing | AddressTy
       ),
 
       onResult(selectedAddress: MemberAddressType): void {
-        const quoteAddress = convertToType<QuoteAddressType>(selectedAddress);
-        quoteAddress.addressType = addressType;
+        const quoteAddress = convertToType<QuoteAddressType>({ ...selectedAddress, addressType });
+
         setQuoteAddress(quoteAddress);
         closePopup();
       },
@@ -254,11 +253,13 @@ function openAddOrUpdateAddressDialog(
       address: currentAddress,
 
       async onResult(updatedAddress: MemberAddressType): Promise<void> {
-        const quoteAddress = convertToType<QuoteAddressType>(updatedAddress);
-        quoteAddress.addressType = addressType;
+        const quoteAddress = convertToType<QuoteAddressType>({ ...updatedAddress, addressType });
+
         setQuoteAddress(quoteAddress);
-        await addOrUpdateAddresses([updatedAddress], user.value!.memberId);
         closePopup();
+
+        // Save address in account
+        await addOrUpdateAddresses([{ ...updatedAddress, addressType: AddressType.BillingAndShipping }]);
       },
     },
   });
