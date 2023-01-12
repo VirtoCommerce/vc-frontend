@@ -37,6 +37,12 @@ declare global {
     route?: RouteLocationRaw;
   }
 
+  interface IStepsItem {
+    text: string;
+    icon?: string;
+    route?: RouteLocationRaw;
+  }
+
   interface ITableColumn {
     id: string;
     title?: string;
