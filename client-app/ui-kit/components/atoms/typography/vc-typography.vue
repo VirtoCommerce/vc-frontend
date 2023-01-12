@@ -1,5 +1,8 @@
 <template>
-  <component :is="tag" :class="['vc-typography', `vc-typography--size-${variant}`, `vc-typography--weight-${weight}`]">
+  <component
+    :is="tag"
+    :class="['vc-typography', `vc-typography--variant-${variant}`, `vc-typography--weight-${weight}`]"
+  >
     <slot />
   </component>
 </template>
@@ -32,65 +35,69 @@ defineProps({
 .vc-typography {
   @apply text-inherit;
 
-  &--size-h1 {
-    @apply text-3xl uppercase tracking-wide;
+  &--variant {
+    &-h1 {
+      @apply text-3xl uppercase tracking-wide;
 
-    @media (min-width: theme("screens.lg")) {
-      @apply text-4xl;
+      @media (min-width: theme("screens.lg")) {
+        @apply text-4xl;
+      }
+    }
+
+    &-h2 {
+      @apply text-3xl uppercase tracking-wide;
+    }
+
+    &-h3 {
+      @apply text-xl uppercase tracking-wide;
+    }
+
+    &-h4 {
+    }
+
+    &-h5 {
+    }
+
+    &-h6 {
+    }
+
+    &-large {
+      @apply text-lg;
+
+      @media (min-width: theme("screens.lg")) {
+        @apply text-xl;
+      }
+    }
+
+    &-base {
+      @apply text-base;
+    }
+
+    &-medium {
+      @apply text-sm;
+    }
+
+    &-small {
+      @apply text-xs;
     }
   }
 
-  &--size-h2 {
-    @apply text-3xl uppercase tracking-wide;
-  }
-
-  &--size-h3 {
-    @apply text-xl uppercase tracking-wide;
-  }
-
-  &--size-h4 {
-  }
-
-  &--size-h5 {
-  }
-
-  &--size-h6 {
-  }
-
-  &--size-large {
-    @apply text-lg;
-
-    @media (min-width: theme("screens.lg")) {
-      @apply text-xl;
+  &--weight {
+    &-normal {
+      @apply font-normal;
     }
-  }
 
-  &--size-base {
-    @apply text-base;
-  }
+    &-semibold {
+      @apply font-semibold;
+    }
 
-  &--size-medium {
-    @apply text-sm;
-  }
+    &-bold {
+      @apply font-bold;
+    }
 
-  &--size-small {
-    @apply text-xs;
-  }
-
-  &--weight-normal {
-    @apply font-normal;
-  }
-
-  &--weight-semibold {
-    @apply font-semibold;
-  }
-
-  &--weight-bold {
-    @apply font-bold;
-  }
-
-  &--weight-extrabold {
-    @apply font-extrabold;
+    &-extrabold {
+      @apply font-extrabold;
+    }
   }
 }
 </style>
