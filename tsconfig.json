@@ -26,6 +26,7 @@
     },
     "types": [
       "node",
+      "@types/antlr4",
       "@types/gtag.js"
     ]
   },

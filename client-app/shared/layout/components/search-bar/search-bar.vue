@@ -139,7 +139,7 @@ const {
 const ga = useGoogleAnalytics();
 const router = useRouter();
 
-const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
+const { queryParam: searchPhraseInUrl } = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const categoriesRoutes = useCategoriesRoutes(categories);
 
 const searchPhrase = ref("");

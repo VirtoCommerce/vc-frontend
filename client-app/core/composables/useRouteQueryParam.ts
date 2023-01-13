@@ -1,15 +1,32 @@
 import { computed } from "vue";
-import { LocationQueryValue, useRouter } from "vue-router";
-import { Dictionary, UseRouteQueryParamOptions } from "@/core/types";
+import {
+  LocationAsRelativeRaw,
+  LocationQueryValue,
+  LocationQueryValueRaw,
+  RouteQueryAndHash,
+  useRouter,
+} from "vue-router";
 
-export default function useRouteQueryParam<T = LocationQueryValue | LocationQueryValue[]>(
+export interface UseRouteQueryParamOptions<T = LocationQueryValue | LocationQueryValue[]> {
+  defaultValue?: T;
+  validator?(queryValue: NonNullable<T>): boolean;
+  // @default push
+  updateMethod?: "push" | "replace";
+  // @default true
+  removeFalsyValue?: boolean;
+  // @default true
+  removeNullishValue?: boolean;
+  // @default true
+  removeDefaultValue?: boolean;
+}
+
+export function useRouteQueryParam<T = NonNullable<LocationQueryValue> | NonNullable<LocationQueryValue>[]>(
   key: string,
   options: UseRouteQueryParamOptions<T> = {}
 ) {
   const {
-    onChange,
     validator,
-    defaultValue,
+    defaultValue = "" as T,
     updateMethod = "push",
     removeFalsyValue = true,
     removeNullishValue = true,
@@ -18,48 +35,45 @@ export default function useRouteQueryParam<T = LocationQueryValue | LocationQuer
 
   const router = useRouter();
 
-  return computed<T>({
-    get() {
-      const queryValue = router.currentRoute.value.query[key];
-      let value = queryValue || defaultValue;
+  return {
+    queryParam: computed<T>({
+      get() {
+        const queryValue = router.currentRoute.value.query[key] as T | null;
+        let value = queryValue ?? defaultValue;
 
-      if (validator) {
-        value = validator(queryValue) ? queryValue : defaultValue;
-      }
+        if (queryValue && validator) {
+          value = validator(queryValue) ? queryValue : defaultValue;
+        }
 
-      return value as T;
-    },
+        return value;
+      },
 
-    async set(value) {
-      const { hash, params, query } = router.currentRoute.value;
-      const newLocation: Dictionary = {
-        hash,
-        params,
-        query: {
-          ...query,
-        },
-      };
+      async set(value) {
+        const { hash, params, query } = router.currentRoute.value;
+        const newLocation: Required<RouteQueryAndHash & Pick<LocationAsRelativeRaw, "params">> = {
+          hash,
+          params,
+          query: {
+            ...query,
+          },
+        };
 
-      if (
-        (removeFalsyValue && !value) ||
-        (removeNullishValue && value === null) ||
-        (removeDefaultValue && value === defaultValue)
-      ) {
-        delete newLocation.query[key];
-      } else {
-        newLocation.query[key] = value;
-      }
+        if (
+          (removeFalsyValue && !value) ||
+          (removeNullishValue && value === null) ||
+          (removeDefaultValue && value === defaultValue)
+        ) {
+          delete newLocation.query[key];
+        } else {
+          newLocation.query[key] = value as LocationQueryValueRaw | LocationQueryValueRaw[];
+        }
 
-      const mustBeDone = router.currentRoute.value.fullPath !== router.resolve(newLocation).fullPath;
-      let navigationFailure;
+        const mustBeDone = router.currentRoute.value.fullPath !== router.resolve(newLocation).fullPath;
 
-      if (mustBeDone) {
-        navigationFailure = await router[updateMethod](newLocation);
-      }
-
-      if (onChange) {
-        await onChange(value, mustBeDone && !navigationFailure);
-      }
-    },
-  });
+        if (mustBeDone) {
+          await router[updateMethod](newLocation);
+        }
+      },
+    }),
+  };
 }

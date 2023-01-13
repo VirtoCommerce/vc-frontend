@@ -444,24 +444,33 @@ export type ContactType = {
   defaultBillingAddress?: Maybe<MemberAddressType>;
   /** Default shipping address */
   defaultShippingAddress?: Maybe<MemberAddressType>;
-  /** Contact's dynamic property values */
+  /** Dynamic property values */
   dynamicProperties: Array<Maybe<DynamicPropertyValueType>>;
-  /** List of contact`s emails */
-  emails?: Maybe<Array<Maybe<Scalars['String']>>>;
+  /** Emails */
+  emails: Array<Maybe<Scalars['String']>>;
   firstName: Scalars['String'];
   fullName: Scalars['String'];
+  groups: Array<Maybe<Scalars['String']>>;
   id: Scalars['String'];
   lastName: Scalars['String'];
+  /** Member type */
   memberType: Scalars['String'];
   middleName?: Maybe<Scalars['String']>;
+  /** Name */
   name?: Maybe<Scalars['String']>;
   organizationId?: Maybe<Scalars['String']>;
   organizations?: Maybe<OrganizationConnection>;
   organizationsIds: Array<Maybe<Scalars['String']>>;
+  /** Outer ID */
   outerId?: Maybe<Scalars['String']>;
+  /** Phones */
   phones: Array<Maybe<Scalars['String']>>;
   securityAccounts?: Maybe<Array<Maybe<UserType>>>;
-  /** Contact status */
+  /** Request related SEO info */
+  seoInfo?: Maybe<SeoInfo>;
+  /** SEO object type */
+  seoObjectType: Scalars['String'];
+  /** Status */
   status?: Maybe<Scalars['String']>;
 };
 
@@ -485,6 +494,12 @@ export type ContactTypeOrganizationsArgs = {
   sort?: InputMaybe<Scalars['String']>;
 };
 
+
+export type ContactTypeSeoInfoArgs = {
+  cultureName: Scalars['String'];
+  storeId: Scalars['String'];
+};
+
 export type CountryRegionType = {
   /** Code of country region. For example 'AL'. */
   id: Scalars['String'];
@@ -505,6 +520,18 @@ export type CouponType = {
   code?: Maybe<Scalars['String']>;
   /** Is coupon was applied successfully */
   isAppliedSuccessfully?: Maybe<Scalars['Boolean']>;
+};
+
+export type CreateCustomerReviewCommandType = {
+  entityId: Scalars['String'];
+  entityName: Scalars['String'];
+  entityType: Scalars['String'];
+  rating: Scalars['Int'];
+  review: Scalars['String'];
+  storeId: Scalars['String'];
+  title: Scalars['String'];
+  userId: Scalars['String'];
+  userName: Scalars['String'];
 };
 
 export type CreateQuoteFromCartCommandType = {
@@ -639,6 +666,48 @@ export type CustomerOrderTypeInPaymentsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   sort?: InputMaybe<Scalars['String']>;
 };
+
+export type CustomerReview = {
+  createdDate: Scalars['DateTime'];
+  entityId: Scalars['String'];
+  entityName: Scalars['String'];
+  entityType: Scalars['String'];
+  id: Scalars['String'];
+  modifiedDate?: Maybe<Scalars['DateTime']>;
+  rating: Scalars['Int'];
+  review: Scalars['String'];
+  reviewStatus?: Maybe<CustomerReviewStatus>;
+  storeId: Scalars['String'];
+  title: Scalars['String'];
+  userId: Scalars['String'];
+  userName: Scalars['String'];
+};
+
+/** A connection from an object to a list of objects of type `CustomerReview`. */
+export type CustomerReviewConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<CustomerReviewEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<CustomerReview>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+/** An edge in a connection from an object to another object of type `CustomerReview`. */
+export type CustomerReviewEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge */
+  node?: Maybe<CustomerReview>;
+};
+
+export enum CustomerReviewStatus {
+  Approved = 'APPROVED',
+  New = 'NEW',
+  Rejected = 'REJECTED'
+}
 
 export type DescriptionType = {
   /** Description text. */
@@ -2249,19 +2318,49 @@ export type MemberAddressType = {
 };
 
 export type MemberType = {
-  addresses?: Maybe<Array<Maybe<MemberAddressType>>>;
-  /** Contact's dynamic property values */
+  addresses?: Maybe<MemberAddressConnection>;
+  /** Default billing address */
+  defaultBillingAddress?: Maybe<MemberAddressType>;
+  /** Default shipping address */
+  defaultShippingAddress?: Maybe<MemberAddressType>;
+  /** Dynamic property values */
   dynamicProperties: Array<Maybe<DynamicPropertyValueType>>;
+  /** Emails */
+  emails: Array<Maybe<Scalars['String']>>;
+  groups: Array<Maybe<Scalars['String']>>;
   id: Scalars['String'];
+  /** Member type */
   memberType: Scalars['String'];
+  /** Name */
   name?: Maybe<Scalars['String']>;
+  /** Outer ID */
   outerId?: Maybe<Scalars['String']>;
+  /** Phones */
   phones: Array<Maybe<Scalars['String']>>;
+  /** Request related SEO info */
+  seoInfo?: Maybe<SeoInfo>;
+  /** SEO object type */
+  seoObjectType: Scalars['String'];
+  /** Status */
+  status?: Maybe<Scalars['String']>;
+};
+
+
+export type MemberTypeAddressesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  sort?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MemberTypeDynamicPropertiesArgs = {
   cultureName?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MemberTypeSeoInfoArgs = {
+  cultureName: Scalars['String'];
+  storeId: Scalars['String'];
 };
 
 export type MenuLinkListType = {
@@ -2334,6 +2433,7 @@ export type Mutations = {
   clearPayments?: Maybe<CartType>;
   clearShipments?: Maybe<CartType>;
   createContact?: Maybe<ContactType>;
+  createCustomerReview?: Maybe<CustomerReview>;
   createOrderFromCart?: Maybe<CustomerOrderType>;
   createOrganization?: Maybe<Organization>;
   createQuoteFromCart?: Maybe<QuoteType>;
@@ -2519,6 +2619,11 @@ export type MutationsClearShipmentsArgs = {
 
 export type MutationsCreateContactArgs = {
   command: InputCreateContactType;
+};
+
+
+export type MutationsCreateCustomerReviewArgs = {
+  command: CreateCustomerReviewCommandType;
 };
 
 
@@ -3004,25 +3109,29 @@ export type Organization = {
   defaultShippingAddress?: Maybe<MemberAddressType>;
   /** Description */
   description?: Maybe<Scalars['String']>;
-  /** Organization's dynamic property values */
+  /** Dynamic property values */
   dynamicProperties: Array<Maybe<DynamicPropertyValueType>>;
-  emails?: Maybe<Array<Maybe<Scalars['String']>>>;
-  groups?: Maybe<Array<Maybe<Scalars['String']>>>;
+  /** Emails */
+  emails: Array<Maybe<Scalars['String']>>;
+  groups: Array<Maybe<Scalars['String']>>;
   id: Scalars['String'];
   /** Member type */
   memberType: Scalars['String'];
   /** Name */
   name?: Maybe<Scalars['String']>;
-  /** Outer id */
+  /** Outer ID */
   outerId?: Maybe<Scalars['String']>;
   /** Owner id */
   ownerId?: Maybe<Scalars['String']>;
   /** Parent id */
   parentId?: Maybe<Scalars['String']>;
-  phones?: Maybe<Array<Maybe<Scalars['String']>>>;
+  /** Phones */
+  phones: Array<Maybe<Scalars['String']>>;
+  /** Request related SEO info */
+  seoInfo?: Maybe<SeoInfo>;
   /** SEO object type */
   seoObjectType: Scalars['String'];
-  /** Organization status */
+  /** Status */
   status?: Maybe<Scalars['String']>;
 };
 
@@ -3047,6 +3156,13 @@ export type OrganizationContactsArgs = {
 /** Organization info */
 export type OrganizationDynamicPropertiesArgs = {
   cultureName?: InputMaybe<Scalars['String']>;
+};
+
+
+/** Organization info */
+export type OrganizationSeoInfoArgs = {
+  cultureName: Scalars['String'];
+  storeId: Scalars['String'];
 };
 
 /** A connection from an object to a list of objects of type `Organization`. */
@@ -3367,7 +3483,7 @@ export type Product = {
   slug?: Maybe<Scalars['String']>;
   variations?: Maybe<Array<Maybe<VariationType>>>;
   /** Product vendor */
-  vendor?: Maybe<Vendor>;
+  vendor?: Maybe<ProductVendor>;
   videos?: Maybe<VideoConnection>;
 };
 
@@ -3466,6 +3582,15 @@ export type ProductEdge = {
   cursor: Scalars['String'];
   /** The item at the end of the edge */
   node?: Maybe<Product>;
+};
+
+export type ProductVendor = {
+  /** Vendor ID */
+  id: Scalars['String'];
+  /** Vendor name */
+  name: Scalars['String'];
+  /** Vendor rating */
+  rating?: Maybe<Rating>;
 };
 
 /** Represents promotion object */
@@ -3574,6 +3699,7 @@ export type Query = {
   contact?: Maybe<ContactType>;
   contacts?: Maybe<ContactConnection>;
   countries?: Maybe<Array<Maybe<CountryType>>>;
+  customerReviews?: Maybe<CustomerReviewConnection>;
   dynamicProperties?: Maybe<DynamicPropertyConnection>;
   dynamicProperty?: Maybe<DynamicPropertyType>;
   fulfillmentCenter?: Maybe<FulfillmentCenterType>;
@@ -3596,6 +3722,7 @@ export type Query = {
   role?: Maybe<RoleType>;
   user?: Maybe<UserType>;
   validatePassword?: Maybe<CustomIdentityResultType>;
+  vendor?: Maybe<Vendor>;
   wishlist?: Maybe<WishlistType>;
   wishlists?: Maybe<WishlistConnection>;
 };
@@ -3671,6 +3798,18 @@ export type QueryContactsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   searchPhrase?: InputMaybe<Scalars['String']>;
   sort?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryCustomerReviewsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  entityId: Scalars['String'];
+  entityType: Scalars['String'];
+  filter?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  keyword?: InputMaybe<Scalars['String']>;
+  sort?: InputMaybe<Scalars['String']>;
+  storeId: Scalars['String'];
 };
 
 
@@ -3845,6 +3984,12 @@ export type QueryUserArgs = {
 
 export type QueryValidatePasswordArgs = {
   password: Scalars['String'];
+};
+
+
+export type QueryVendorArgs = {
+  id: Scalars['String'];
+  userId?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -4321,16 +4466,73 @@ export type VariationType = {
   /** Request related slug for product */
   slug?: Maybe<Scalars['String']>;
   /** Product vendor */
-  vendor?: Maybe<Vendor>;
+  vendor?: Maybe<ProductVendor>;
 };
 
+/** Vendor Info */
 export type Vendor = {
-  /** Vendor ID */
+  /** About vendor */
+  about?: Maybe<Scalars['String']>;
+  /** Address */
+  address?: Maybe<MemberAddressType>;
+  addresses?: Maybe<MemberAddressConnection>;
+  /** Default billing address */
+  defaultBillingAddress?: Maybe<MemberAddressType>;
+  /** Default shipping address */
+  defaultShippingAddress?: Maybe<MemberAddressType>;
+  /** Dynamic property values */
+  dynamicProperties: Array<Maybe<DynamicPropertyValueType>>;
+  /** Emails */
+  emails: Array<Maybe<Scalars['String']>>;
+  groups: Array<Maybe<Scalars['String']>>;
+  /** Icon URL */
+  iconUrl?: Maybe<Scalars['String']>;
   id: Scalars['String'];
-  /** Vendor name */
-  name: Scalars['String'];
+  /** Member type */
+  memberType: Scalars['String'];
+  /** Name */
+  name?: Maybe<Scalars['String']>;
+  /** Outer ID */
+  outerId?: Maybe<Scalars['String']>;
+  /** Phones */
+  phones: Array<Maybe<Scalars['String']>>;
   /** Vendor rating */
   rating?: Maybe<Rating>;
+  /** Request related SEO info */
+  seoInfo?: Maybe<SeoInfo>;
+  /** SEO object type */
+  seoObjectType: Scalars['String'];
+  /** Site URL */
+  siteUrl?: Maybe<Scalars['String']>;
+  /** Status */
+  status?: Maybe<Scalars['String']>;
+};
+
+
+/** Vendor Info */
+export type VendorAddressesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  sort?: InputMaybe<Scalars['String']>;
+};
+
+
+/** Vendor Info */
+export type VendorDynamicPropertiesArgs = {
+  cultureName?: InputMaybe<Scalars['String']>;
+};
+
+
+/** Vendor Info */
+export type VendorRatingArgs = {
+  storeId?: InputMaybe<Scalars['String']>;
+};
+
+
+/** Vendor Info */
+export type VendorSeoInfoArgs = {
+  cultureName: Scalars['String'];
+  storeId: Scalars['String'];
 };
 
 /** A connection from an object to a list of objects of type `Video`. */
@@ -4787,7 +4989,7 @@ export type SearchProductsQueryVariables = Exact<{
 }>;
 
 
-export type SearchProductsQuery = { products?: { totalCount?: number, items?: Array<{ name: string, id: string, code: string, minQuantity?: number, maxQuantity?: number, hasVariations?: boolean, slug?: string, outline?: string, imgSrc?: string, vendor?: { id: string, name: string }, variations?: Array<{ id?: string, price?: { list?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { symbol?: string } }, actual?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { symbol?: string } } } }>, images?: Array<{ url?: string }>, description?: { content?: string, id?: string }, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any }, price?: { discountPercent?: any, actual?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { symbol?: string } }, discountAmount?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { symbol?: string } } }, properties?: Array<{ name: string, value?: any, id?: string }> }>, term_facets?: Array<{ name: string, label: string, terms?: Array<{ label: string, term?: string, count?: any, isSelected?: boolean }> }>, range_facets?: Array<{ name: string, label: string, ranges?: Array<{ label?: string, count?: any, from?: any, to?: any, includeFrom: boolean, includeTo: boolean, isSelected?: boolean }> }> } };
+export type SearchProductsQuery = { products?: { totalCount?: number, items?: Array<{ name: string, id: string, code: string, minQuantity?: number, maxQuantity?: number, hasVariations?: boolean, slug?: string, outline?: string, imgSrc?: string, vendor?: { id: string, name: string }, variations?: Array<{ id?: string, price?: { list?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { symbol?: string } }, actual?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { symbol?: string } } } }>, images?: Array<{ url?: string }>, description?: { content?: string, id?: string }, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any }, price?: { discountPercent?: any, actual?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { symbol?: string } }, discountAmount?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { symbol?: string } } }, properties?: Array<{ name: string, value?: any, id?: string, label?: string }> }>, term_facets?: Array<{ name: string, label: string, terms?: Array<{ label: string, term?: string, count?: any, isSelected?: boolean }> }>, range_facets?: Array<{ name: string, label: string, ranges?: Array<{ label?: string, count?: any, from?: any, to?: any, includeFrom: boolean, includeTo: boolean, isSelected?: boolean }> }> } };
 
 export type SearchRelatedProductsQueryVariables = Exact<{
   storeId: Scalars['String'];
@@ -4938,7 +5140,7 @@ export type GetOrganizationContactsQueryVariables = Exact<{
 }>;
 
 
-export type GetOrganizationContactsQuery = { organization?: { contacts?: { totalCount?: number, items?: Array<{ id: string, name?: string, firstName: string, lastName: string, fullName: string, emails?: Array<string>, status?: string, securityAccounts?: Array<{ email?: string, roles?: Array<{ id: string, name: string }> }> }> } } };
+export type GetOrganizationContactsQuery = { organization?: { contacts?: { totalCount?: number, items?: Array<{ id: string, name?: string, firstName: string, lastName: string, fullName: string, emails: Array<string>, status?: string, securityAccounts?: Array<{ email?: string, roles?: Array<{ id: string, name: string }> }> }> } } };
 
 export type ChangeQuoteCommentMutationVariables = Exact<{
   command: ChangeQuoteCommentCommandType;
@@ -5006,3 +5208,26 @@ export type GetQuotesQueryVariables = Exact<{
 
 
 export type GetQuotesQuery = { quotes?: { totalCount?: number, items?: Array<{ id: string, createdDate: any, customerId?: string, number: string, status?: string, totals?: { grandTotalInclTax?: { amount: any, decimalDigits: number, formattedAmount: string, formattedAmountWithoutCurrency: string, formattedAmountWithoutPoint: string, formattedAmountWithoutPointAndCurrency: string, currency?: { code: string, customFormatting?: string, exchangeRate?: any, symbol?: string } } } }> } };
+
+export type GetVendorQueryVariables = Exact<{
+  storeId: Scalars['String'];
+  cultureName: Scalars['String'];
+  id: Scalars['String'];
+}>;
+
+
+export type GetVendorQuery = { vendor?: { iconUrl?: string, name?: string, about?: string, siteUrl?: string, phones: Array<string>, emails: Array<string>, addresses?: { items?: Array<{ postalCode: string, countryName?: string, regionName?: string, city?: string, line1?: string, line2?: string }> }, rating?: { value: any, reviewCount: number }, seoInfo?: { pageTitle?: string, metaKeywords?: string, metaDescription?: string } } };
+
+export type SearchCustomerReviewsQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  sort?: InputMaybe<Scalars['String']>;
+  keyword?: InputMaybe<Scalars['String']>;
+  filter?: InputMaybe<Scalars['String']>;
+  storeId: Scalars['String'];
+  entityId: Scalars['String'];
+  entityType: Scalars['String'];
+}>;
+
+
+export type SearchCustomerReviewsQuery = { customerReviews?: { items?: Array<{ id: string, modifiedDate?: any, userName: string, title: string, review: string, rating: number }> } };

@@ -1544,6 +1544,11 @@
   resolved "https://registry.npmjs.org/@tsconfig/node16/-/node16-1.0.2.tgz"
   integrity sha512-eZxlbI8GZscaGS7kkc/trHTT5xgrjH3/1n2JDwusC9iahPKWMRvRjJSAN5mCXviuTGQ/lHnhvv8Q1YTpnfz9gA==
 
+"@types/antlr4@~4.11.0":
+  version "4.11.2"
+  resolved "https://registry.yarnpkg.com/@types/antlr4/-/antlr4-4.11.2.tgz#46b70713b38eecb2d1a8e2ffd14544367067b41e"
+  integrity sha512-WVDiUppozGAKAL76KbXX63A4U4a0HfHM/5X7+GWzen7OaS/7eJEMdd61B+Hhl52Kedcmr80/jNeeWrM3Z/icig==
+
 "@types/dompurify@^2.3.4":
   version "2.3.4"
   resolved "https://registry.npmjs.org/@types/dompurify/-/dompurify-2.3.4.tgz"
@@ -2143,6 +2148,11 @@ ansi-wrap@0.1.0, ansi-wrap@^0.1.0:
   version "0.1.0"
   resolved "https://registry.npmjs.org/ansi-wrap/-/ansi-wrap-0.1.0.tgz"
   integrity sha512-ZyznvL8k/FZeQHr2T6LzcJ/+vBApDnMNZvfVFy3At0knswWd6rJ3/0Hhmpu8oqa6C92npmozs890sX9Dl6q+Qw==
+
+antlr4@~4.11.0:
+  version "4.11.0"
+  resolved "https://registry.yarnpkg.com/antlr4/-/antlr4-4.11.0.tgz#d7466f5044fa6e333c0ec821b30c6157f6b004ae"
+  integrity sha512-GUGlpE2JUjAN+G8G5vY+nOoeyNhHsXoIJwP1XF1oRw89vifA1K46T6SEkwLwr7drihN7I/lf0DIjKc4OZvBX8w==
 
 anymatch@^2.0.0:
   version "2.0.0"

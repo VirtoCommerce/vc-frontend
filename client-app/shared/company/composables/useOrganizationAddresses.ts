@@ -1,18 +1,16 @@
-import { computed, readonly, ref, shallowRef, unref } from "vue";
-import { getSortingExpression, Logger, toInputAddress } from "@/core/utilities";
-import { ISortInfo } from "@/core/types";
-import { InputMemberAddressType, MemberAddressType } from "@/xapi/types";
-import { getOrganizationAddresses } from "@/xapi/graphql/organization";
+import { getSortingExpression, ISortInfo, Logger, SortDirection, toInputAddress } from "@/core";
 import { deleteMemberAddresses, updateMemberAddresses } from "@/xapi/graphql/account";
-import { SORT_DESCENDING } from "@/core/constants";
+import { getOrganizationAddresses } from "@/xapi/graphql/organization";
+import { InputMemberAddressType, MemberAddressType } from "@/xapi/types";
 import { MaybeRef } from "@vueuse/core";
+import { computed, readonly, ref, shallowRef, unref } from "vue";
 
 export default function useOrganizationAddresses(organizationId: MaybeRef<string>) {
   const loading = ref(false);
   const addresses = shallowRef<MemberAddressType[]>([]);
   const sort = ref<ISortInfo>({
-    column: "createdDate",
-    direction: SORT_DESCENDING,
+    fieldName: "createdDate",
+    direction: SortDirection.Descending,
   });
 
   async function fetchAddresses() {

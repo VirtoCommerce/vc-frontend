@@ -3,10 +3,10 @@
   <MobileHeader v-if="isMobile" />
 
   <!-- Desktop header -->
-  <div v-else class="z-20 shadow-md">
+  <header v-else class="z-20 shadow-md">
     <TopHeader class="z-[2] relative" />
     <BottomHeader class="z-[1]" />
-  </div>
+  </header>
 </template>
 
 <script setup lang="ts">

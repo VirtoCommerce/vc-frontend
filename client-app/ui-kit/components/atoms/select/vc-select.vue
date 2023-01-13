@@ -18,7 +18,7 @@
         </slot>
 
         <slot v-if="selected" name="selected" v-bind="{ item: selected }">
-          {{ textField && selected ? selected[textField] : selected }}
+          {{ getValue(selected, textField) }}
         </slot>
 
         <span
@@ -37,7 +37,7 @@
           <ul ref="listElement" class="max-h-52 overflow-auto">
             <li
               v-if="$slots.first"
-              :class="`px-3 py-2 text-gray-400 hover:text-white hover:bg-${color} cursor-pointer`"
+              :class="`px-3 py-2 text-gray-400 hover:text-white hover:bg-[color:var(--color-primary)] cursor-pointer`"
               @click="select()"
             >
               <slot name="first" />
@@ -47,13 +47,13 @@
               v-for="(item, index) in items"
               :key="index"
               :class="[
-                `px-3 py-2 hover:text-white hover:bg-${color} last:border-b-2 border-transparent`,
-                isActiveItem(item) ? `cursor-default text-${color}` : 'cursor-pointer',
+                `px-3 py-2 hover:text-white hover:bg-[color:var(--color-primary)] last:border-b-2 border-transparent`,
+                isActiveItem(item) ? `cursor-default text-[color:var(--color-primary)]` : 'cursor-pointer',
               ]"
               @click="select(item)"
             >
               <slot name="item" v-bind="{ item, index, selected }">
-                {{ textField && item ? item[textField] : item }}
+                {{ getValue(item, textField) }}
               </slot>
             </li>
           </ul>
@@ -76,96 +76,42 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { computed, PropType, ref, shallowRef } from "vue";
+import { computed, ref, shallowRef } from "vue";
 
-const props = defineProps({
-  label: {
-    type: String,
-  },
+export interface Props {
+  label?: string;
+  placeholder?: string;
+  isRequired?: boolean;
+  isDisabled?: boolean;
+  modelValue: string | undefined;
+  items: unknown[] | undefined;
+  keyField?: string;
+  textField?: string;
+  valueField?: string;
+  size?: "sm" | "md" | "lg";
+  errorMessage?: string;
+}
 
-  isRequired: {
-    type: Boolean,
-    default: false,
-  },
+export interface Emits {
+  (event: "update:modelValue", value: string): void;
+  (event: "change", value: string): void;
+}
 
-  isDisabled: {
-    type: Boolean,
-    default: false,
-  },
-
-  modelValue: {
-    type: [Object, String],
-    default: undefined,
-  },
-
-  items: {
-    type: Array as PropType<any[]>,
-    default: () => [],
-  },
-
-  /**
-   * The property of the object that will be displayed in the "selected" and "item" slots.
-   * (Optional) Only for objects array of modelValue.
-   */
-  textField: {
-    type: String,
-    default: undefined,
-  },
-
-  /**
-   * An object property passed as a new value for the "modelValue" or "change" events
-   * (Optional) Only for objects array of modelValue.
-   */
-  valueField: {
-    type: String,
-    default: undefined,
-  },
-
-  placeholder: {
-    type: String,
-    default: "",
-  },
-
-  color: {
-    type: String,
-    default: "[color:var(--color-primary)]",
-  },
-
-  size: {
-    type: String as PropType<"sm" | "md" | "lg">,
-    default: "md",
-    validator(value: string) {
-      return ["sm", "md", "lg"].includes(value);
-    },
-  },
-
-  errorMessage: {
-    type: String,
-    default: undefined,
-  },
-
-  // TODO: add size prop and etc...
+const props = withDefaults(defineProps<Props>(), {
+  placeholder: "",
+  isRequired: false,
+  isDisabled: false,
+  size: "md",
 });
 
-const emit = defineEmits<{
-  (event: "update:modelValue", value: any): void;
-  (event: "change", value: any): void;
-}>();
+const emit = defineEmits<Emits>();
 
 const transitionDuration = 100;
 
 const open = ref(false);
 const listElement = shallowRef<HTMLElement | null>(null);
 
-const selected = computed(() => {
-  const returnValueKey: string | undefined = props.valueField;
-
-  if (returnValueKey) {
-    return props.items.find((item) => item[returnValueKey] === props.modelValue);
-  }
-
-  return props.modelValue;
-});
+const selected = computed(() => props.items?.find((item) => getValue(item, props.valueField) === props.modelValue));
 
 const buttonClasses = computed<string>(() => {
   switch (props.size) {
@@ -181,9 +127,10 @@ const buttonClasses = computed<string>(() => {
   }
 });
 
-function isActiveItem(item: any): boolean {
-  const itemValue = props.valueField && item ? item[props.valueField] : item;
-  return itemValue === props.modelValue;
+function isActiveItem(item: unknown): boolean {
+  const value = getValue(item, props.valueField);
+  const result = value === props.modelValue;
+  return result;
 }
 
 function hideList() {
@@ -208,18 +155,25 @@ function toggle() {
   }
 }
 
-function select(item?: any) {
+function select(item?: unknown) {
   if (props.isDisabled) {
     return;
   }
 
-  const newValue = props.valueField && item ? item[props.valueField] : item;
+  const value = getValue(item, props.valueField);
 
-  if (newValue !== props.modelValue) {
-    emit("update:modelValue", newValue);
-    emit("change", newValue);
+  if (value !== props.modelValue) {
+    emit("update:modelValue", value);
+    emit("change", value);
   }
 
   hideList();
+}
+
+function getValue(item: unknown, field: string | undefined): string {
+  if (field && item) {
+    return (item as Record<string, string>)[field];
+  }
+  return item as string;
 }
 </script>

@@ -274,8 +274,8 @@
 
 <script setup lang="ts">
 import { CustomerOrderType } from "@/xapi/types";
-import { SORT_DESCENDING } from "@/core/constants";
-import useUserOrders from "@/shared/account/composables/useUserOrders";
+import { SortDirection } from "@/core";
+import { useUserOrders } from "@/shared/account";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
@@ -327,8 +327,8 @@ const openOrderDetails = (item: CustomerOrderType) => {
 };
 
 onMounted(async () => {
-  sort.value.column = "createdDate";
-  sort.value.direction = SORT_DESCENDING;
+  sort.value.fieldName = "createdDate";
+  sort.value.direction = SortDirection.Descending;
   itemsPerPage.value = 4;
   await loadOrders();
 });

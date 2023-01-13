@@ -24,52 +24,28 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
 import { RouteLocationRaw } from "vue-router";
 import { eagerComputed } from "@vueuse/core";
 
-const props = defineProps({
-  kind: {
-    type: String as PropType<"primary" | "secondary" | "success" | "warning" | "danger" | "custom">,
-    default: "primary",
-    validator: (value: string) => ["primary", "secondary", "success", "warning", "danger", "custom"].includes(value),
-  },
+export interface Props {
+  kind?: "primary" | "secondary" | "success" | "warning" | "danger" | "custom";
+  size?: "xs" | "sm" | "md" | "lg";
+  autofocus?: boolean;
+  isSubmit?: boolean;
+  isOutline?: boolean;
+  isDisabled?: boolean;
+  isWaiting?: boolean;
+  to?: RouteLocationRaw;
+}
 
-  size: {
-    type: String as PropType<"sm" | "md" | "lg">,
-    default: "md",
-    validator: (value: string) => ["sm", "md", "lg"].includes(value),
-  },
-
-  autofocus: {
-    type: Boolean,
-    default: false,
-  },
-
-  isSubmit: {
-    type: Boolean,
-    default: false,
-  },
-
-  isOutline: {
-    type: Boolean,
-    default: false,
-  },
-
-  isDisabled: {
-    type: Boolean,
-    default: false,
-  },
-
-  isWaiting: {
-    type: Boolean,
-    default: false,
-  },
-
-  to: {
-    type: [String, Object] as PropType<RouteLocationRaw>,
-    default: null,
-  },
+const props = withDefaults(defineProps<Props>(), {
+  kind: "primary",
+  size: "md",
+  autofocus: false,
+  isSubmit: false,
+  isOutline: false,
+  isDisabled: false,
+  isWaiting: false,
 });
 
 defineEmits(["click"]);
@@ -90,6 +66,10 @@ $colors: primary, secondary, success, warning, danger;
 
   &__content {
     @apply flex justify-center items-center;
+  }
+
+  &--xs {
+    @apply h-7 text-xs;
   }
 
   &--sm {

@@ -10,7 +10,7 @@ import {
   removeMemberFromOrganization as _removeMemberFromOrganization,
   unlockOrganizationContact,
 } from "@/xapi";
-import { DEFAULT_PAGE_SIZE, getSortingExpression, ISortInfo, Logger, SORT_ASCENDING } from "@/core";
+import { DEFAULT_PAGE_SIZE, getSortingExpression, ISortInfo, Logger, SortDirection } from "@/core";
 import { convertToExtendedContact, ExtendedContactType } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 
@@ -23,8 +23,8 @@ export default function useOrganizationContacts(organizationId: MaybeRef<string>
   const filter = ref("");
   const contacts = shallowRef<ExtendedContactType[]>([]);
   const sort = ref<ISortInfo>({
-    column: "name",
-    direction: SORT_ASCENDING,
+    fieldName: "name",
+    direction: SortDirection.Ascending,
   });
 
   const { t } = useI18n();

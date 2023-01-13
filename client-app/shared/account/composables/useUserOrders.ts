@@ -1,10 +1,9 @@
-import { computed, readonly, ref, Ref, shallowRef } from "vue";
-import { CustomerOrderType } from "@/xapi/types";
-import { getOrders } from "@/xapi/graphql/orders";
+import { ISortInfo, SortDirection } from "@/core";
 import { dateToIsoDateString, getSortingExpression, Logger } from "@/core/utilities";
-import { ISortInfo } from "@/core/types";
 import { OrdersFilterData } from "@/shared/account";
-import { SORT_DESCENDING } from "@/core/constants";
+import { getOrders } from "@/xapi/graphql/orders";
+import { CustomerOrderType } from "@/xapi/types";
+import { computed, readonly, ref, Ref, shallowRef } from "vue";
 import useUserOrdersFilter from "./useUserOrdersFilter";
 
 const DEFAULT_ITEMS_PER_PAGE = 10;
@@ -21,8 +20,8 @@ export default () => {
 
   // TODO: refine the sorting logic
   const sort: Ref<ISortInfo> = ref({
-    column: "createdDate",
-    direction: SORT_DESCENDING,
+    fieldName: "createdDate",
+    direction: SortDirection.Descending,
   });
 
   async function loadOrders() {

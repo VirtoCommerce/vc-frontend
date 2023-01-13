@@ -1,0 +1,30 @@
+query SearchCustomerReviews(
+  $first: Int
+  $after: String
+  $sort: String
+  $keyword: String
+  $filter: String
+  $storeId: String!
+  $entityId: String!
+  $entityType: String!
+) {
+  customerReviews(
+    first: $first
+    after: $after
+    sort: $sort
+    keyword: $keyword
+    filter: $filter
+    storeId: $storeId
+    entityId: $entityId
+    entityType: $entityType
+  ) {
+    items {
+      id
+      modifiedDate
+      userName
+      title
+      review
+      rating
+    }
+  }
+}

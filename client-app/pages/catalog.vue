@@ -5,7 +5,7 @@
   >
     <div class="px-5 mx-auto max-w-screen-2xl 2xl:px-18">
       <!-- Breadcrumbs -->
-      <Breadcrumbs class="mb-2.5 md:mb-4" :items="breadcrumbs" v-if="!isSearchQuery" />
+      <VcBreadcrumbs class="mb-2.5 md:mb-4" :items="breadcrumbs" v-if="!isSearchQuery" />
 
       <div class="flex items-start lg:gap-6">
         <!-- Mobile sidebar back cover -->
@@ -311,7 +311,6 @@ import {
   WatchStopHandle,
 } from "vue";
 import _ from "lodash";
-import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import {
   breakpointsTailwind,
@@ -330,6 +329,7 @@ import {
   PRODUCT_SORTING_LIST,
   QueryParamName,
   searchCategoryTreeItemByKey,
+  useBreadcrumbs,
   useCategories,
   useElementVisibility,
   useGoogleAnalytics,
@@ -337,12 +337,10 @@ import {
   useRouteQueryParam,
 } from "@/core";
 import {
-  Breadcrumbs,
   CategorySelector,
   DisplayProducts,
   getFilterExpressionForAvailableIn,
   getFilterExpressionForInStock,
-  IBreadcrumbsItem,
   ProductsFilters,
   ProductsFiltersSidebar,
   ProductsSearchParams,
@@ -364,7 +362,6 @@ const props = defineProps({
 const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const ga = useGoogleAnalytics();
-const { t } = useI18n();
 const { loading: loadingCategories, categoryTree } = useCategories();
 const {
   fetchProducts,
@@ -400,20 +397,20 @@ const savedViewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
 const savedInStock = useLocalStorage<boolean>("viewInStockProducts", true);
 const savedBranches = useLocalStorage<string[]>(FFC_LOCAL_STORAGE, []);
 
-const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
+const { queryParam: sortQueryParam } = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: PRODUCT_SORTING_LIST[0].id,
   validator: (value) => PRODUCT_SORTING_LIST.some((item) => item.id === value),
 });
 
-const searchQueryParam = useRouteQueryParam<string>(QueryParamName.SearchPhrase, {
+const { queryParam: searchQueryParam } = useRouteQueryParam<string>(QueryParamName.SearchPhrase, {
   defaultValue: "",
 });
 
-const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
+const { queryParam: keywordQueryParam } = useRouteQueryParam<string>(QueryParamName.Keyword, {
   defaultValue: "",
 });
 
-const facetsQueryParam = useRouteQueryParam<string>(QueryParamName.Facets, {
+const { queryParam: facetsQueryParam } = useRouteQueryParam<string>(QueryParamName.Facets, {
   defaultValue: "",
 });
 
@@ -471,26 +468,10 @@ const isMobileFilterDirty = eagerComputed<boolean>(
     } as ProductsFilters)
 );
 
-const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
-  const items: IBreadcrumbsItem[] = [{ url: "/", title: t("common.links.home") }];
-
-  if (!selectedCategory.value) {
-    return items;
-  }
-
-  if (selectedCategory.value.breadcrumbs?.length) {
-    selectedCategory.value.breadcrumbs.forEach((breadcrumb) => {
-      items.push({
-        title: breadcrumb.title,
-        url: `/${breadcrumb.seoPath}`,
-      });
-    });
-  } else {
-    items.push({ title: selectedCategory.value.name });
-  }
-
-  return items;
-});
+const { breadcrumbs } = useBreadcrumbs(
+  computed(() => [{ title: selectedCategory.value?.name }]),
+  computed(() => selectedCategory.value?.breadcrumbs)
+);
 
 // endregion Computed properties
 

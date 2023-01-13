@@ -95,7 +95,7 @@ import { computed, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useUserQuote, QuoteLineItems } from "@/shared/account";
 import { VcAddressInfo } from "@/ui-kit/components";
-import { usePageHead } from "@/core/composables";
+import { usePageHead, useBreadcrumbs } from "@/core/composables";
 
 const props = defineProps({
   quoteId: {
@@ -111,12 +111,14 @@ usePageHead({
   title: t("pages.account.quote_details.title", [quote!.value?.number]),
 });
 
-const breadcrumbs = computed<IBreadcrumbs[]>(() => [
-  { title: t("common.links.home"), route: { name: "Home" } },
-  { title: t("common.links.account"), route: { name: "Account" } },
-  { title: t("common.links.quote_requests"), route: { name: "Quotes" } },
-  { title: t("pages.account.quote_details.title", [quote?.value?.number]) },
-]);
+const breadcrumbs = useBreadcrumbs(
+  computed(() => [
+    { title: t("common.links.home"), route: { name: "Home" } },
+    { title: t("common.links.account"), route: { name: "Account" } },
+    { title: t("common.links.quote_requests"), route: { name: "Quotes" } },
+    { title: t("pages.account.quote_details.title", [quote?.value?.number]) },
+  ])
+);
 
 watchEffect(async () => {
   clearQuote();

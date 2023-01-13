@@ -3,9 +3,9 @@
     <VcHeader />
 
     <!-- Main Content -->
-    <div class="relative flex flex-col grow">
+    <main class="relative flex flex-col grow">
       <slot />
-    </div>
+    </main>
 
     <VcFooter />
   </div>

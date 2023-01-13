@@ -5,3 +5,4 @@ export * from "./facets";
 export * from "./logger";
 export * from "./menu";
 export * from "./product";
+export * from "./search";

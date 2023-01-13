@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white lg:mb-6 lg:rounded">
+  <section class="bg-white lg:mb-6 lg:rounded">
     <slot name="title">
       <div class="flex items-center px-5 py-7">
         <VcImage :src="iconUrl" :alt="title" class="mr-5 lg:mr-8" lazy />
@@ -7,7 +7,7 @@
       </div>
     </slot>
     <slot></slot>
-  </div>
+  </section>
 </template>
 
 <script setup lang="ts">

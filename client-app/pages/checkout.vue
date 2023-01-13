@@ -538,7 +538,7 @@ import {
   ValidationErrorType,
   LineItemType,
 } from "@/xapi";
-import { AddressType, useElementVisibility, usePageHead, useGoogleAnalytics } from "@/core";
+import { AddressType, useElementVisibility, usePageHead, useBreadcrumbs, useGoogleAnalytics } from "@/core";
 import {
   AddOrUpdateAddressDialog,
   CheckoutLabeledBlock,
@@ -587,10 +587,7 @@ usePageHead({
   title: t("pages.checkout.meta.title"),
 });
 
-const breadcrumbs: IBreadcrumbs[] = [
-  { title: t("common.links.home"), route: { name: "Home" } },
-  { title: t("common.links.cart"), route: { name: "Cart" } },
-];
+const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: "Cart" } }]);
 
 const isMobile = breakpoints.smaller("lg");
 const preparedData = ref(false);

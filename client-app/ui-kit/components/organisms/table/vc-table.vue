@@ -27,30 +27,35 @@
 
   <!-- Desktop table view -->
   <table v-else :class="[layout, 'text-sm text-left w-full']">
-    <thead v-if="columns.length" class="border-b border-gray-200">
-      <tr>
-        <th
-          v-for="column in columns"
-          :key="column.id"
-          class="py-3 px-5 font-extrabold"
-          :class="[{ 'cursor-pointer': column.sortable }, `text-${column.align || 'left'}`, column.classes]"
-          @click="
-            column.sortable
-              ? $emit('headerClick', { column: column.id, direction: toggleSortDirection(sort!.direction) })
-              : null
-          "
-        >
-          {{ column.title }}
-          <template v-if="column.sortable && sort">
-            <i
-              class="fas fa-caret-down ml-2"
-              v-if="sort.column === column.id && sort.direction === SORT_DESCENDING"
-            ></i>
-            <i class="fas fa-caret-up ml-2" v-if="sort.column === column.id && sort.direction === SORT_ASCENDING"></i>
-          </template>
-        </th>
-      </tr>
-    </thead>
+    <slot name="header">
+      <thead v-if="columns.length" class="border-b border-gray-200">
+        <tr>
+          <th
+            v-for="column in columns"
+            :key="column.id"
+            class="py-3 px-5 font-extrabold"
+            :class="[{ 'cursor-pointer': column.sortable }, `text-${column.align || 'left'}`, column.classes]"
+            @click="
+              column.sortable
+                ? $emit('headerClick', { column: column.id, direction: toggleSortDirection(sort!.direction) })
+                : null
+            "
+          >
+            {{ column.title }}
+            <template v-if="column.sortable && sort">
+              <i
+                class="fas fa-caret-down ml-2"
+                v-if="sort.fieldName === column.id && sort.direction === SortDirection.Descending"
+              ></i>
+              <i
+                class="fas fa-caret-up ml-2"
+                v-if="sort.fieldName === column.id && sort.direction === SortDirection.Ascending"
+              ></i>
+            </template>
+          </th>
+        </tr>
+      </thead>
+    </slot>
 
     <!-- Desktop skeleton view -->
     <tbody v-if="loading">
@@ -83,57 +88,30 @@
 </template>
 
 <script setup lang="ts">
-import { toggleSortDirection } from "@/core";
-import { ISortInfo } from "@/core/types";
+import { toggleSortDirection, ISortInfo, SortDirection } from "@/core";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
-import { PropType } from "vue";
+import { readonly } from "vue";
 
-defineProps({
-  columns: {
-    type: Array as PropType<ITableColumn[]>,
-    default: () => [],
-  },
+export interface Props {
+  columns?: ITableColumn[];
+  items?: Readonly<{ id: string }[]>;
+  itemActionsBuilder?: (inputObject: unknown) => SlidingActionsItem[];
+  sort?: ISortInfo;
+  pages?: number;
+  page?: number;
+  loading?: boolean;
+  footer?: boolean;
+  layout?: string;
+}
 
-  items: {
-    type: Array as PropType<any[]>,
-    default: () => [],
-  },
-
-  itemActionsBuilder: {
-    type: Function as PropType<(inputObject: any) => SlidingActionsItem[]>,
-    default: undefined,
-  },
-
-  sort: {
-    type: Object as PropType<ISortInfo>,
-    default: undefined,
-  },
-
-  pages: {
-    type: Number,
-    default: 0,
-  },
-
-  page: {
-    type: Number,
-    default: 0,
-  },
-
-  loading: {
-    type: Boolean,
-    default: false,
-  },
-
-  footer: {
-    type: Boolean,
-    default: true,
-  },
-
-  layout: {
-    type: String,
-    default: "table-fixed",
-  },
+withDefaults(defineProps<Props>(), {
+  columns: () => [],
+  items: () => readonly([]),
+  pages: 0,
+  page: 0,
+  loading: false,
+  footer: true,
+  layout: "table-fixed",
 });
 
 const emit = defineEmits(["itemClick", "headerClick", "pageChanged"]);

@@ -1,28 +1,21 @@
 <template>
-  <div class="font-bold">
-    <div class="text-link">{{ vendor.name }}</div>
-    <div v-if="$cfg.rating_enabled && displayRating" class="text-12">
-      <i class="fas fa-star text-primary mr-0.5" />
-      <span class="font-extrabold">{{ vendor.rating?.value }}</span
-      >/5&nbsp;({{ vendor.rating?.reviewCount }})
-    </div>
-  </div>
+  <router-link :to="link" class="font-bold text-link cursor-pointer">
+    {{ vendor.name }}
+  </router-link>
 </template>
 
 <script setup lang="ts">
-import { Vendor } from "@/xapi/types";
 import { computed } from "vue";
+import { RouteLocationRaw } from "vue-router";
 
 export interface Props {
-  withRating?: boolean;
-  vendor: Vendor;
+  vendor: {
+    id: string;
+    name: string;
+  };
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  withRating: false,
-});
+const props = defineProps<Props>();
 
-const displayRating = computed(
-  () => props.withRating && props.vendor.rating?.reviewCount !== undefined && props.vendor.rating?.reviewCount > 0
-);
+const link = computed<RouteLocationRaw>(() => ({ name: "Vendor", params: { vendorId: props.vendor.id } }));
 </script>

@@ -1,0 +1,29 @@
+query GetVendor($storeId: String!, $cultureName: String!, $id: String!) {
+  vendor(id: $id) {
+    iconUrl
+    name
+    about
+    siteUrl
+    phones
+    emails
+    addresses {
+      items {
+        postalCode
+        countryName
+        regionName
+        city
+        line1
+        line2
+      }
+    }
+    rating(storeId: $storeId) {
+      value
+      reviewCount
+    }
+    seoInfo(storeId: $storeId, cultureName: $cultureName) {
+      pageTitle
+      metaKeywords
+      metaDescription
+    }
+  }
+}

@@ -21,12 +21,11 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, unref } from "vue";
+import { unref } from "vue";
 
-defineProps({
-  items: {
-    type: Array as PropType<IBreadcrumbs[]>,
-    required: true,
-  },
-});
+export interface Props {
+  items: ReadonlyArray<Readonly<IBreadcrumb>>;
+}
+
+defineProps<Props>();
 </script>

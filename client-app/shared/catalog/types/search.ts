@@ -1,8 +1,8 @@
-import { FacetItem } from "@/core/types";
+import { FacetItem } from "@/core";
 
-export type ProductsSearchParams = {
-  page?: number;
+export interface ProductsSearchParams {
   itemsPerPage?: number;
+  page?: number;
   keyword?: string;
   sort?: string;
   filter?: string;
@@ -10,10 +10,10 @@ export type ProductsSearchParams = {
   fuzzyLevel?: number;
   categoryId?: string;
   productIds?: string[];
-};
+}
 
-export type ProductsFilters = {
+export interface ProductsFilters {
   facets: FacetItem[];
   inStock: boolean;
   branches: string[];
-};
+}

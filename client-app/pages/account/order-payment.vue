@@ -249,7 +249,7 @@ import { useI18n } from "vue-i18n";
 import { useUserOrder } from "@/shared/account";
 import { useRouter } from "vue-router";
 import { usePopup } from "@/shared/popup";
-import { usePageHead } from "@/core/composables";
+import { useBreadcrumbs, usePageHead } from "@/core/composables";
 
 const props = defineProps({
   orderId: {
@@ -280,8 +280,7 @@ const executed = computed<boolean>(() => success.value || failure.value);
 const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments[0]);
 const paymentMethodType = computed<PaymentMethod | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);
 
-const breadcrumbs = computed<IBreadcrumbs[]>(() => [
-  { title: t("common.links.home"), route: { name: "Home" } },
+const breadcrumbs = useBreadcrumbs([
   { title: t("common.links.account"), route: { name: "Account" } },
   { title: t("common.links.orders"), route: { name: "Orders" } },
   {

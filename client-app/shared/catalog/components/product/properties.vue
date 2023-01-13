@@ -16,7 +16,8 @@
       :label="$t('shared.catalog.product_details.vendor_label')"
       class="mb-4"
     >
-      <Vendor :vendor="product.vendor" withRating />
+      <Vendor :vendor="product.vendor" />
+      <Rating :rating="product.vendor?.rating" class="text-xs" />
     </ProductProperty>
   </ProductTitledBlock>
 </template>
@@ -26,6 +27,7 @@ import { computed, PropType } from "vue";
 import _ from "lodash";
 import { Product } from "@/xapi/types";
 import { prepareProperties, ProductProperty, ProductTitledBlock, Vendor } from "@/shared/catalog";
+import { Rating } from "@/shared/vendor";
 
 const props = defineProps({
   product: {

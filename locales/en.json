@@ -49,7 +49,7 @@
       "tax": "Tax",
       "status": "Status",
       "date": "Date",
-      "sort_by": "Sort by:",
+      "sort_by": "Sort by",
       "sku": "Item #",
       "item": "Item",
       "true_property": "Yes",
@@ -1087,7 +1087,7 @@
       },
       "products_found_message": "result | results",
       "filters_button": "@:common.buttons.filters",
-      "sort_by_label": "@:common.labels.sort_by",
+      "sort_by_label": "@:common.labels.sort_by :",
       "choose_button": "@:common.buttons.choose",
       "wishlist_tooltip": "Add to list",
       "add_to_compare_tooltip": "Add to compare",
@@ -1195,7 +1195,7 @@
         "title": "Search: {0}"
       },
       "header": "Your search for {keyword} returned the following",
-      "sort_by_label": "@:common.labels.sort_by",
+      "sort_by_label": "@:common.labels.sort_by :",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Your <strong>{0}</strong> query did not return any results",
       "home_button": "@:common.buttons.home"
@@ -1298,6 +1298,37 @@
       "address": "Address",
       "phone": "Phone: ",
       "other_branches": "Other branches"
+    },
+    "vendor": {
+      "header_block": {
+        "logo_alt": "Logo",
+        "rating_label": "Rating",
+        "leave_feedback": "Leave feeback"
+      },
+      "main_block": {
+        "title": "Feedback",
+        "filter_by_rating": {
+          "label": "Filter by rating",
+          "options": {
+            "only-positive": "Only positive",
+            "only-negative": "Only negative"
+          }
+        },
+        "sort_by_date": {
+          "label": "@:common.labels.sort_by date",
+          "options": {
+            "modifiedDate:asc": "Ascending",
+            "modifiedDate:desc": "Descending"
+          }
+        }
+      },
+      "contacts_card": {
+        "title": "Contacts",
+        "website": "Website",
+        "address": "Address",
+        "phone": "Phone",
+        "email": "Email"
+      }
     }
   },
   "identity_error": {

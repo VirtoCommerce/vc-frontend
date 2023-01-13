@@ -39,7 +39,8 @@
             v-if="$cfg.vendor_enabled && variation.vendor"
             :label="$t('shared.catalog.product_details.product_variation_card.vendor_label')"
           >
-            <Vendor :vendor="variation.vendor" withRating />
+            <Vendor :vendor="variation.vendor" />
+            <Rating :rating="variation.vendor?.rating" class="text-xs" />
           </VariationProperty>
         </div>
 
@@ -65,6 +66,7 @@ import { computed, PropType } from "vue";
 import _ from "lodash";
 import { Product, VariationType } from "@/xapi/types";
 import { prepareProperties, VariationProperty, Vendor } from "@/shared/catalog";
+import { Rating } from "@/shared/vendor";
 import { AddToCart } from "@/shared/cart";
 
 const props = defineProps({

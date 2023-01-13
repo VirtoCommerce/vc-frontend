@@ -1,21 +1,20 @@
-import { computed, readonly, Ref, ref, shallowRef } from "vue";
-import { Logger } from "@/core/utilities";
+import { Logger, SortDirection } from "@/core";
+import {
+  addWishlist,
+  addWishlistItem,
+  deleteWishlist,
+  deleteWishlistItem,
+  getWishList,
+  getWishlists,
+  renameWishlist as _renameWishlist,
+} from "@/xapi/graphql/account";
 import {
   InputAddWishlistItemType,
   InputRemoveWishlistItemType,
   InputRenameWishlistType,
   WishlistType,
 } from "@/xapi/types";
-import {
-  addWishlist,
-  addWishlistItem,
-  getWishlists,
-  deleteWishlist,
-  deleteWishlistItem,
-  renameWishlist as _renameWishlist,
-  getWishList,
-} from "@/xapi/graphql/account";
-import { SORT_ASCENDING } from "@/core/constants";
+import { computed, readonly, Ref, ref, shallowRef } from "vue";
 
 const loading = ref(true);
 const lists = shallowRef<WishlistType[]>([]);
@@ -55,7 +54,7 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
     loading.value = true;
 
     try {
-      const { items = [] } = await getWishlists({ itemsPerPage: 9999, sort: `name:${SORT_ASCENDING}` });
+      const { items = [] } = await getWishlists({ itemsPerPage: 9999, sort: `name:${SortDirection.Ascending}` });
 
       lists.value = items;
 

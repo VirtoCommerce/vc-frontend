@@ -183,7 +183,7 @@ const isVisibleStickyMobileHeader = computedEager<boolean>(
   () => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value
 );
 
-const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
+const { queryParam: sortQueryParam } = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: "createdDate:desc",
 });
 
