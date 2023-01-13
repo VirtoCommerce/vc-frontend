@@ -9,7 +9,7 @@
       <p v-for="error in commonErrors" :key="error">{{ error }}</p>
     </VcAlert>
 
-    <form class="p-6 py-5 sm:p-5 sm:border-b h-full">
+    <form class="space-y-4 p-6 py-5 sm:p-5 sm:border-b h-full">
       <VcSelect
         v-model="roleId"
         :items="roles"
@@ -20,41 +20,30 @@
         text-field="normalizedName"
         value-field="id"
         size="lg"
-        class="mb-4"
         is-required
       />
 
-      <p>
-        <span class="font-bold text-gray-900">{{ $t("shared.account.invite_member_dialog.emails_label") }}</span>
-        <span class="text-[color:var(--color-danger)]">*</span>
-      </p>
-
       <VcTextArea
         v-model.trim="emails"
+        :label="$t('shared.account.invite_member_dialog.emails_label')"
         :placeholder="$t('shared.account.invite_member_dialog.emails_placeholder')"
-        :is-disabled="loading"
-        :error-message="errors.emails"
-        class="max-h-36 block"
-        rows="2"
+        :disabled="loading"
+        :message="errors.emails"
+        :error="!!errors.emails"
+        :rows="2"
+        required
       />
-
-      <div class="mb-4 text-xs text-[color:var(--color-danger)]">{{ errors.emails }}</div>
-
-      <p>
-        <span class="font-bold text-gray-900">{{ $t("shared.account.invite_member_dialog.message_label") }}</span>
-      </p>
 
       <VcTextArea
         v-model.trim="message"
+        :label="$t('shared.account.invite_member_dialog.message_label')"
         :placeholder="$t('shared.account.invite_member_dialog.message_placeholder')"
-        :is-disabled="loading"
+        :disabled="loading"
         :max-length="1000"
-        :error-message="errors.message"
+        :message="errors.message"
+        :error="!!errors.message"
         rows="3"
-        class="max-h-48 block"
       />
-
-      <div class="text-xs text-[color:var(--color-danger)]">{{ errors.message }}</div>
     </form>
 
     <template #actions="{ close }">
