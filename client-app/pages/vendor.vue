@@ -11,12 +11,9 @@
         <template #title>
           <div class="flex items-center gap-5 lg:gap-8 p-7">
             <VcImage :src="vendor.iconUrl" :alt="$t('pages.vendor.header_block.logo_alt')" class="h-20" lazy />
-            {{ vendor.about }}
-            <div class="flex flex-wrap self-stretch content-between">
-              <div>
-                <div class="font-bold">{{ $t("pages.vendor.header_block.rating_label") }}</div>
-                <Rating :rating="vendor.rating" />
-              </div>
+            <div class="mx-auto">{{ vendor.about }}</div>
+            <div class="flex flex-col self-stretch justify-between">
+              <Rating :label="$t('pages.vendor.header_block.rating_label')" :rating="vendor.rating" />
               <VcButton size="xs" is-outline class="uppercase whitespace-nowrap px-3">
                 {{ $t("pages.vendor.header_block.leave_feedback") }}
               </VcButton>
@@ -24,11 +21,10 @@
           </div>
         </template>
         <div class="hidden h-[18px] bg-gradient-to-b from-[#94949421] lg:block"></div>
-
         <CustomerReviews :vendor-id="vendorId"></CustomerReviews>
       </VcSection>
     </template>
-    <template v-slot:sidebar>
+    <template v-slot:sidebar v-if="vendor.addresses?.items?.length || vendor.phones.length || vendor.emails.length">
       <VcCard
         :title="$t('pages.vendor.contacts_card.title')"
         header-classes="px-6 py-3"

@@ -7,7 +7,7 @@
         <VcSelect
           :modelValue="filters?.[0].id"
           value-field="id"
-          :is-disabled="loading"
+          :is-disabled="loading || customerReviews.length === 0"
           :items="searchOptions.filters"
           class="w-full lg:w-48"
           @update:modelValue="applyFilters"
@@ -22,7 +22,7 @@
         <VcSelect
           :modelValue="sort.id"
           value-field="id"
-          :is-disabled="loading"
+          :is-disabled="loading || customerReviews.length === 0"
           :items="searchOptions.sort"
           class="w-full lg:w-48"
           @update:modelValue="applySort"
@@ -36,6 +36,7 @@
   </div>
   <div class="flex flex-col bg-white shadow-sm md:rounded md:border m-8">
     <VcTable
+      v-if="customerReviews.length"
       layout="table-auto"
       :loading="loading"
       :columns="columns"
@@ -64,6 +65,17 @@
         </tr>
       </template>
     </VcTable>
+    <VcEmptyView v-else :text="$t('pages.vendor.main_block.no-feedback')" class="p-20">
+      <template #icon>
+        <VcImage src="/static/icons/empty-icons/feedback.svg"></VcImage>
+      </template>
+      <template #button>
+        <VcButton size="lg" class="uppercase whitespace-nowrap px-5">
+          <i class="far fa-comment mr-3" />
+          {{ $t("pages.vendor.header_block.leave_feedback") }}
+        </VcButton>
+      </template>
+    </VcEmptyView>
   </div>
 </template>
 
@@ -74,7 +86,7 @@ import {
   DEFAULT_CUSTOMER_REVIEWS_SORT,
   useCustomerReviews,
 } from "@/shared/vendor";
-import { VcRating, VcSelect, VcTable } from "@/ui-kit/components";
+import { VcEmptyView, VcRating, VcSelect, VcTable } from "@/ui-kit/components";
 import { CustomerReview } from "@/xapi";
 import { computed, ref, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
