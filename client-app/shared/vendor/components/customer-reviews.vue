@@ -1,7 +1,7 @@
 <template>
-  <div class="flex items-center mx-8 justify-self-stretch">
-    <h3 class="text-xl font-extrabold uppercase mr-2" v-t="'pages.vendor.main_block.title'"></h3>
-    <div class="flex justify-self-end">
+  <div class="flex items-center mx-8 mt-2 justify-self-stretch">
+    <h3 class="text-xl font-extrabold uppercase mr-auto" v-t="'pages.vendor.main_block.title'"></h3>
+    <div class="flex">
       <div class="flex items-center ml-8">
         <span class="mr-2 font-bold" v-t="'pages.vendor.main_block.filter_by_rating.label'" />
         <VcSelect

@@ -7,7 +7,7 @@
       <h1 class="font-bold uppercase text-2xl lg:text-3xl text-gray-800 px-5 mb-7 md:px-0">{{ vendor.name }}</h1>
     </template>
     <template v-slot>
-      <VcSection class="shadow lg:pb-11">
+      <VcSection class="shadow pb-4">
         <template #title>
           <div class="flex items-center gap-5 lg:gap-8 p-7">
             <VcImage :src="vendor.iconUrl" :alt="$t('pages.vendor.header_block.logo_alt')" class="h-20" lazy />
