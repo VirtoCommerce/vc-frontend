@@ -1,6 +1,6 @@
 <template>
   <div v-if="displayRating">
-    <div class="font-bold">{{ label }}</div>
+    <div v-if="label" class="font-bold">{{ label }}</div>
     <VcRating :rating="rating?.value">
       <template #details>({{ rating?.reviewCount }})</template>
     </VcRating>
@@ -11,7 +11,7 @@
 import { computed } from "vue";
 
 export interface Props {
-  label: string;
+  label?: string;
   rating?: {
     value: number;
     reviewCount?: number;
