@@ -15,16 +15,13 @@
         icon="document-text"
         content-classes="px-6 pb-1 pt-2 lg:px-7 lg:pb-2"
       >
-        <div class="text-base leading-5 font-bold lg:text-15">
-          {{ $t("pages.account.quote_details.remarks_field_label") }}
-        </div>
-
         <VcTextArea
+          :label="$t('pages.account.quote_details.remarks_field_label')"
           v-model="quote.comment"
-          :is-disabled="fetching"
+          :disabled="fetching"
           :max-length="1000"
           :rows="4"
-          class="mt-2 py-2 px-3 text-15 leading-5 font-medium resize-none lg:mt-1"
+          no-resize
           counter
         />
       </VcSectionWidget>
@@ -38,10 +35,7 @@
         <QuoteLineItems :items="quote.items!" @remove:item="onRemoveItem" />
       </VcSectionWidget>
 
-      <VcSectionWidget
-        :title="$t('pages.account.quote_details.shipping_address')"
-        icon="truck"
-      >
+      <VcSectionWidget :title="$t('pages.account.quote_details.shipping_address')" icon="truck">
         <h4 class="text-md leading-5 font-bold">
           {{ $t("pages.account.quote_details.shipping_address") }}
         </h4>
@@ -72,10 +66,7 @@
       </VcSectionWidget>
 
       <!-- Quote billing address -->
-      <VcSectionWidget
-        :title="$t('pages.account.quote_details.billing_address')"
-        icon="cash"
-      >
+      <VcSectionWidget :title="$t('pages.account.quote_details.billing_address')" icon="cash">
         <h4 class="text-md font-bold leading-5">
           {{ $t("pages.account.quote_details.billing_address") }}
         </h4>

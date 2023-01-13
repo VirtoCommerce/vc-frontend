@@ -1,26 +1,24 @@
 <template>
   <div class="vc-card-widget">
-    <slot name="title" v-if="title">
-      <div
-        :class="[
-          'vc-card-widget__title',
-          {
-            'vc-section-widget__title--hide-mobile': hideMobileTitle,
-            'vc-section-widget__title--hide-desktop': hideDesktopTitle,
-          },
-        ]"
-      >
-        <div class="vc-card-widget__icon">
-          <VcHexagonIcon :icon="icon" />
-        </div>
-
-        <VcTypography variant="h3" weight="extrabold">
-          {{ title }}
-        </VcTypography>
+    <div
+      :class="[
+        'vc-card-widget__title',
+        {
+          'vc-card-widget__title--hide-mobile': hideMobileTitle || !title,
+          'vc-card-widget__title--hide-desktop': hideDesktopTitle || !title,
+        },
+      ]"
+    >
+      <div v-if="icon" class="vc-card-widget__icon">
+        <VcHexagonIcon :icon="icon" />
       </div>
-    </slot>
 
-    <div :class="contentClasses ?? 'vc-card-widget__content'">
+      <VcTypography variant="h3" weight="extrabold">
+        {{ title }}
+      </VcTypography>
+    </div>
+
+    <div class="vc-card-widget__content">
       <slot />
     </div>
   </div>
@@ -40,16 +38,13 @@ defineProps({
     type: String,
     default: "",
   },
-
-  contentClasses: {
-    type: String,
-    default: null,
-  },
 });
 </script>
 
 <style lang="scss">
 .vc-card-widget {
+  $hideMobileTitle: "";
+
   @apply relative bg-[color:var(--color-white)];
 
   @media (min-width: theme("screens.lg")) {
@@ -68,11 +63,13 @@ defineProps({
     @apply flex items-center gap-3 px-7 pt-6 pb-3;
 
     @media (min-width: theme("screens.lg")) {
-      @apply px-6 py-3;
+      @apply px-5 py-3 border-b;
     }
 
     &--hide-mobile {
-      @apply hidden lg:block;
+      $hideMobileTitle: &;
+
+      @apply hidden lg:flex;
     }
 
     &--hide-desktop {
@@ -88,7 +85,11 @@ defineProps({
     @apply px-7 pt-3 pb-7;
 
     @media (min-width: theme("screens.lg")) {
-      @apply px-6 pb-5 border-t;
+      @apply p-5;
+    }
+
+    #{$hideMobileTitle} ~ & {
+      @apply pt-7 lg:pt-5;
     }
   }
 }

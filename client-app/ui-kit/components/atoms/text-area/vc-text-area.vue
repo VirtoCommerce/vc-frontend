@@ -7,7 +7,12 @@
     </div>
 
     <textarea
-      class="vc-textarea__input"
+      :class="[
+        'vc-textarea__input',
+        {
+          'vc-textarea__input--no-resize': noResize,
+        },
+      ]"
       v-model="text"
       :rows="rows"
       :maxlength="maxLength"
@@ -58,6 +63,7 @@ const props = defineProps({
   disabled: Boolean,
   required: Boolean,
   error: Boolean,
+  noResize: Boolean,
   showEmptyDetails: Boolean,
 
   rows: {
@@ -126,6 +132,10 @@ const symbolsLeft = computed(() => props.maxLength - text.value.length);
 
   &__input {
     @apply p-3 w-full rounded border text-15 font-medium bg-white;
+
+    &--no-resize {
+      @apply resize-none;
+    }
 
     &:focus {
       @apply outline outline-offset-0 outline-2 outline-[color:var(--color-primary-light)];
