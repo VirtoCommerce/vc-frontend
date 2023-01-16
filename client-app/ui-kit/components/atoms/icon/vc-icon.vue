@@ -1,5 +1,5 @@
 <template>
-  <svg :class="[`vc-icon`, `vc-icon--size-${size}`]">
+  <svg :class="[`vc-icon`, `vc-icon--size--${size}`]">
     <use :href="`/static/icons/basic/${name}.svg#icon`"></use>
   </svg>
 </template>
@@ -24,20 +24,22 @@ defineProps({
 .vc-icon {
   @apply text-inherit;
 
-  &--size-xxs {
-    @apply w-2.5 h-2.5;
-  }
+  &--size {
+    &--xxs {
+      @apply w-2.5 h-2.5;
+    }
 
-  &--size-xs {
-    @apply w-3.5 h-3.5;
-  }
+    &--xs {
+      @apply w-3.5 h-3.5;
+    }
 
-  &--size-sm {
-    @apply w-5 h-5;
-  }
+    &--sm {
+      @apply w-5 h-5;
+    }
 
-  &--size-md {
-    @apply w-6 h-6;
+    &--md {
+      @apply w-6 h-6;
+    }
   }
 }
 </style>

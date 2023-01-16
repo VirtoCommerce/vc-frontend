@@ -1,7 +1,7 @@
 <template>
   <component
     :is="tag"
-    :class="['vc-typography', `vc-typography--variant-${variant}`, `vc-typography--weight-${weight}`]"
+    :class="['vc-typography', `vc-typography--variant--${variant}`, `vc-typography--weight--${weight}`]"
   >
     <slot />
   </component>
@@ -36,7 +36,7 @@ defineProps({
   @apply text-inherit;
 
   &--variant {
-    &-h1 {
+    &--h1 {
       @apply text-3xl uppercase tracking-wide;
 
       @media (min-width: theme("screens.lg")) {
@@ -44,24 +44,24 @@ defineProps({
       }
     }
 
-    &-h2 {
+    &--h2 {
       @apply text-3xl uppercase tracking-wide;
     }
 
-    &-h3 {
+    &--h3 {
       @apply text-xl uppercase tracking-wide;
     }
 
-    &-h4 {
+    &--h4 {
     }
 
-    &-h5 {
+    &--h5 {
     }
 
-    &-h6 {
+    &--h6 {
     }
 
-    &-large {
+    &--large {
       @apply text-lg;
 
       @media (min-width: theme("screens.lg")) {
@@ -69,33 +69,33 @@ defineProps({
       }
     }
 
-    &-base {
+    &--base {
       @apply text-base;
     }
 
-    &-medium {
+    &--medium {
       @apply text-sm;
     }
 
-    &-small {
+    &--small {
       @apply text-xs;
     }
   }
 
   &--weight {
-    &-normal {
+    &--normal {
       @apply font-normal;
     }
 
-    &-semibold {
+    &--semibold {
       @apply font-semibold;
     }
 
-    &-bold {
+    &--bold {
       @apply font-bold;
     }
 
-    &-extrabold {
+    &--extrabold {
       @apply font-extrabold;
     }
   }
