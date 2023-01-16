@@ -85,7 +85,7 @@ usePageHead({
   title: t("pages.account.checkout_defaults.meta.title"),
 });
 
-const savedCheckoutDefaults = ref<CheckoutDefaults>(getUserCheckoutDefaults() ?? {});
+const savedCheckoutDefaults = ref<CheckoutDefaults>(getUserCheckoutDefaults());
 const localCheckoutDefaults = ref<CheckoutDefaults>(clone(savedCheckoutDefaults.value));
 
 const shippingMethods = computed<ShippingMethodType[]>(() => cart.value.availableShippingMethods ?? []);

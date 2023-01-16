@@ -8,7 +8,7 @@
 defineProps({
   icon: {
     type: String,
-    default: '',
+    default: "",
     required: true,
   },
 });

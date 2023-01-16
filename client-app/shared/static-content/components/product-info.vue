@@ -12,7 +12,7 @@
 
           <div class="font-extrabold">
             <!-- todo: extract a component for price and use it here -->
-            <span class="text-green-700">{{ currency?.symbol }}{{ variationsCartTotalAmount.toFixed(2) }}</span>
+            <span class="text-green-700">{{ currentCurrency.symbol }}{{ variationsCartTotalAmount.toFixed(2) }}</span>
           </div>
         </div>
 
@@ -50,8 +50,9 @@
 
 <script setup lang="ts">
 import { PropType } from "vue";
-import { Product } from "@/xapi/types";
-import { useCart, AddToCart } from "@/shared/cart";
+import { Product } from "@/xapi";
+import { useCurrency } from "@/core";
+import { AddToCart } from "@/shared/cart";
 import { ProductDetails, ProductPriceBlock } from "@/shared/catalog";
 import { PageContent } from "@/shared/static-content";
 
@@ -77,5 +78,5 @@ defineProps({
   },
 });
 
-const { currency } = useCart();
+const { currentCurrency } = useCurrency();
 </script>
