@@ -21,7 +21,7 @@
         <div class="w-1/3 xl:w-1/4 max-w-[164px] font-bold" v-t="'shared.bulk_order.manually.quantity_label'"></div>
       </div>
 
-      <div class="flex flex-col gap-y-5">
+      <div class="flex flex-col gap-y-4">
         <div v-for="(item, index) in items" :key="index" class="flex flex-row gap-x-5">
           <div class="w-full">
             <VcInput v-model.trim="item.productSku" :is-disabled="loading" placeholder="SKU" />
@@ -53,7 +53,7 @@
         </button>
       </div>
 
-      <div class="flex flex-row flex-wrap md:flex-nowrap justify-between gap-3 mt-5 mb-2 md:mb-0">
+      <div class="flex flex-row flex-wrap md:flex-nowrap justify-between gap-3 mt-6 mb-2 md:mb-0">
         <VcButton
           :is-disabled="!dirty || loading"
           @click="resetItems"

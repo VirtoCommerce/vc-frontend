@@ -11,12 +11,7 @@
     <VcLayoutWithRightSidebar>
       <template #main>
         <!-- Quote products -->
-        <VcSectionWidget
-          :title="$t('pages.account.quote_details.products')"
-          icon="cube"
-          hide-desktop-title
-          content-classes="px-6 pt-3 pb-0 md:p-7"
-        >
+        <VcSectionWidget :title="$t('pages.account.quote_details.products')" icon="cube" hide-desktop-title>
           <QuoteLineItems :items="quote.items!" readonly />
         </VcSectionWidget>
 
@@ -41,10 +36,10 @@
 
         <VcCardWidget
           :title="$t('pages.account.quote_details.quote_data')"
-          hide-mobile-title
           class="-order-1 lg:order-none"
+          hide-mobile-title
         >
-          <div class="-mt-1 mb-1 space-y-1">
+          <div class="space-y-1">
             <div class="flex text-base">
               <span class="font-bold mr-2">{{ $t("pages.account.quote_details.created") }}:</span>
 
@@ -62,11 +57,11 @@
         </VcCardWidget>
 
         <VcCardWidget v-if="shippingAddress" :title="$t('pages.account.quote_details.shipping_address')" icon="cube">
-          <VcAddressInfo class="-mt-1" :address="shippingAddress!" />
+          <VcAddressInfo :address="shippingAddress!" />
         </VcCardWidget>
 
         <VcCardWidget v-if="billingAddress" :title="$t('pages.account.quote_details.billing_address')" icon="cash">
-          <VcAddressInfo class="-mt-1" :address="billingAddress!" />
+          <VcAddressInfo :address="billingAddress!" />
         </VcCardWidget>
       </template>
     </VcLayoutWithRightSidebar>

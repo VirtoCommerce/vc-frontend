@@ -56,6 +56,7 @@
         }
       ],
       "color_primary": "#F0AD4E",
+      "color_primary_light": "#FFE9C1",
       "color_primary_hover": "#EC951A",
       "color_secondary": "#151B1E",
       "color_secondary_hover": "#000000",

@@ -436,14 +436,13 @@
             class="shadow-inner pb-8 lg:shadow"
           >
             <div class="mx-5 xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6">
-              <p class="font-extrabold text-base mb-1" v-t="'pages.checkout.extra_section.comment_label'" />
-
-              <VcTextArea
+              <VcTextarea
                 v-model="comment"
-                :is-disabled="loading || creatingOrder || creatingQuote"
+                :label="$t('pages.checkout.extra_section.comment_label')"
+                :disabled="loading || creatingOrder || creatingQuote"
                 :max-length="1000"
                 :rows="4"
-                class="resize-none"
+                no-resize
                 counter
               />
             </div>

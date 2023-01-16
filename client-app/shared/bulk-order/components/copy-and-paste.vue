@@ -10,11 +10,11 @@
 
       <p class="mb-2 text-sm text-gray-500" v-html="$t('shared.bulk_order.copy_n_paste.guide_message')"></p>
 
-      <VcTextArea
+      <VcTextarea
         v-model.trim="text"
-        :is-disabled="loading"
+        :disabled="loading"
         :placeholder="$t('shared.bulk_order.copy_n_paste.text_area_placeholder')"
-        class="resize-none min-h-[292px] xl:min-h-[312px]"
+        :rows="14"
       />
 
       <div class="flex flex-wrap justify-between gap-3 mt-5 mb-2 md:mt-2 md:mb-0">

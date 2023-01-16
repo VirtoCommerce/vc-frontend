@@ -33,7 +33,7 @@ export { default as VcSection } from "./section/vc-section.vue";
 export { default as VcSectionWidget } from "./section-widget/vc-section-widget.vue";
 export { default as VcSelect } from "./select/vc-select.vue";
 export { default as VcTabs } from "./tabs/vc-tabs.vue";
-export { default as VcTextArea } from "./text-area/vc-text-area.vue";
+export { default as VcTextarea } from "./textarea/vc-textarea.vue";
 export { default as VcTooltip } from "./tooltip/vc-tooltip.vue";
 export { default as VcTotalDisplay } from "./total-display/vc-total-display.vue";
 export { default as VcTransitionScale } from "./transition-scale/vc-transition-scale.vue";
