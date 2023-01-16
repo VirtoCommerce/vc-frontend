@@ -437,8 +437,8 @@
           >
             <div class="mx-5 xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6">
               <VcTextarea
-                :label="$t('pages.checkout.extra_section.comment_label')"
                 v-model="comment"
+                :label="$t('pages.checkout.extra_section.comment_label')"
                 :disabled="loading || creatingOrder || creatingQuote"
                 :max-length="1000"
                 :rows="4"

@@ -3,10 +3,12 @@
     :class="[
       'vc-textarea',
       {
-        'vc-textarea--error': error,
+        'vc-textarea--disabled': disabled,
         'vc-textarea--no-resize': noResize,
         'vc-textarea--hide-empty-details': !showEmptyDetails,
+        'vc-textarea--error': error,
       },
+      $attrs.class,
     ]"
   >
     <label v-if="label" :for="componentId" class="vc-textarea__label">
@@ -16,14 +18,17 @@
     </label>
 
     <textarea
-      class="vc-textarea__input"
       v-model="text"
       :id="componentId"
-      :rows="rows"
-      :maxlength="maxLength"
+      :name="name"
       :placeholder="placeholder"
+      :readonly="readonly"
       :disabled="disabled"
       :required="required"
+      :autofocus="autofocus"
+      :maxlength="maxLength"
+      :rows="rows"
+      class="vc-textarea__input"
     />
 
     <!-- Details -->
@@ -32,7 +37,9 @@
       <div v-if="message" class="vc-textarea__message" v-html="message"></div>
 
       <!-- Counter -->
-      <div v-if="counter" class="vc-textarea__counter">{{ text.length }}/{{ maxLength }}</div>
+      <div v-if="counter" class="vc-textarea__counter">
+        {{ text.length }}<template v-if="maxLength"> / {{ maxLength }}</template>
+      </div>
     </div>
   </div>
 </template>
@@ -47,48 +54,35 @@ export default {
 import { computed } from "vue";
 import { useComponentId } from "@/core/composables";
 
-const componentId = useComponentId("textarea-");
-
 const props = defineProps({
-  counter: Boolean,
+  readonly: Boolean,
   disabled: Boolean,
   required: Boolean,
+  autofocus: Boolean,
+  name: String,
+  label: String,
+  placeholder: String,
+  message: String,
   error: Boolean,
+  counter: Boolean,
+  maxLength: [Number, String],
   noResize: Boolean,
   showEmptyDetails: Boolean,
-
-  rows: {
-    type: [Number, String],
-    default: 2,
-  },
-
-  maxLength: {
-    type: Number,
-    default: 999999,
-  },
 
   modelValue: {
     type: String,
     default: "",
   },
 
-  placeholder: {
-    type: String,
-    default: "",
-  },
-
-  label: {
-    type: String,
-    default: "",
-  },
-
-  message: {
-    type: String,
-    default: "",
+  rows: {
+    type: [Number, String],
+    default: 2,
   },
 });
 
 const emit = defineEmits(["update:modelValue"]);
+
+const componentId = useComponentId("textarea-");
 
 const text = computed<string>({
   get: () => props.modelValue,
@@ -98,22 +92,27 @@ const text = computed<string>({
 
 <style lang="scss">
 .vc-textarea {
-  $error: "";
-  $hideEmptyDetails: "";
+  $disabled: "";
   $noResize: "";
+  $hideEmptyDetails: "";
+  $error: "";
 
   @apply flex flex-col gap-1 text-[color:var(--color-body-text)];
 
-  &--error {
-    $error: &;
+  &--disabled {
+    $disabled: &;
+  }
+
+  &--no-resize {
+    $noResize: &;
   }
 
   &--hide-empty-details {
     $hideEmptyDetails: &;
   }
 
-  &--no-resize {
-    $noResize: &;
+  &--error {
+    $error: &;
   }
 
   &__label {
@@ -139,8 +138,9 @@ const text = computed<string>({
       @apply outline outline-offset-0 outline-2 outline-[color:var(--color-primary-light)];
     }
 
-    &[disabled] {
-      @apply bg-gray-100;
+    &[disabled],
+    #{$disabled} & {
+      @apply bg-gray-100 cursor-not-allowed;
     }
 
     #{$error} & {
