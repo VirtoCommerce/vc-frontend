@@ -1,19 +1,24 @@
 <template>
-  <div :class="['vc-textarea', { 'vc-textarea--error': error }]">
-    <div v-if="label" class="vc-textarea__label">
+  <div
+    :class="[
+      'vc-textarea',
+      {
+        'vc-textarea--error': error,
+        'vc-textarea--no-resize': noResize,
+        'vc-textarea--hide-empty-details': !showEmptyDetails,
+      },
+    ]"
+  >
+    <label v-if="label" :for="componentId" class="vc-textarea__label">
       {{ label }}
 
       <span v-if="required" class="vc-textarea__asterisk">*</span>
-    </div>
+    </label>
 
     <textarea
-      :class="[
-        'vc-textarea__input',
-        {
-          'vc-textarea__input--no-resize': noResize,
-        },
-      ]"
+      class="vc-textarea__input"
       v-model="text"
+      :id="componentId"
       :rows="rows"
       :maxlength="maxLength"
       :placeholder="placeholder"
@@ -22,29 +27,12 @@
     />
 
     <!-- Details -->
-    <div
-      :class="[
-        'vc-textarea__details',
-        {
-          'vc-textarea__details--hide-empty': !showEmptyDetails,
-        },
-      ]"
-    >
+    <div class="vc-textarea__details">
       <!-- Message -->
       <div v-if="message" class="vc-textarea__message" v-html="message"></div>
 
       <!-- Counter -->
-      <div
-        v-if="counter"
-        :class="[
-          'vc-textarea__counter',
-          {
-            'vc-textarea__counter--warning': symbolsLeft < 10,
-          },
-        ]"
-      >
-        {{ symbolsCount }}
-      </div>
+      <div v-if="counter" class="vc-textarea__counter">{{ text.length }}/{{ maxLength }}</div>
     </div>
   </div>
 </template>
@@ -57,6 +45,9 @@ export default {
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useComponentId } from "@/core/composables";
+
+const componentId = useComponentId("textarea-");
 
 const props = defineProps({
   counter: Boolean,
@@ -103,19 +94,26 @@ const text = computed<string>({
   get: () => props.modelValue,
   set: (newValue) => emit("update:modelValue", newValue),
 });
-
-const symbolsCount = computed(() => `${text.value.length}/${props.maxLength}`);
-const symbolsLeft = computed(() => props.maxLength - text.value.length);
 </script>
 
 <style lang="scss">
 .vc-textarea {
   $error: "";
+  $hideEmptyDetails: "";
+  $noResize: "";
 
   @apply flex flex-col gap-1 text-[color:var(--color-body-text)];
 
   &--error {
     $error: &;
+  }
+
+  &--hide-empty-details {
+    $hideEmptyDetails: &;
+  }
+
+  &--no-resize {
+    $noResize: &;
   }
 
   &__label {
@@ -133,7 +131,7 @@ const symbolsLeft = computed(() => props.maxLength - text.value.length);
   &__input {
     @apply p-3 w-full rounded border text-15 font-medium bg-white;
 
-    &--no-resize {
+    #{$noResize} & {
       @apply resize-none;
     }
 
@@ -151,15 +149,15 @@ const symbolsLeft = computed(() => props.maxLength - text.value.length);
   }
 
   &__details {
-    @apply flex justify-end gap-2 min-h-[14px];
+    @apply flex justify-end gap-2 min-h-[0.875rem] text-11;
 
-    &--hide-empty {
+    #{$hideEmptyDetails} & {
       @apply empty:hidden;
     }
   }
 
   &__message {
-    @apply grow text-11 text-gray-400;
+    @apply grow text-gray-400;
 
     #{$error} & {
       @apply text-[color:var(--color-danger)];
@@ -167,11 +165,7 @@ const symbolsLeft = computed(() => props.maxLength - text.value.length);
   }
 
   &__counter {
-    @apply text-11 font-medium text-right;
-
-    &--warning {
-      @apply text-[color:var(--color-danger)];
-    }
+    @apply font-medium text-right;
   }
 }
 </style>
