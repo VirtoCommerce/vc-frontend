@@ -10,7 +10,7 @@
 
       <p class="mb-2 text-sm text-gray-500" v-html="$t('shared.bulk_order.copy_n_paste.guide_message')"></p>
 
-      <VcTextArea
+      <VcTextarea
         v-model.trim="text"
         :disabled="loading"
         :placeholder="$t('shared.bulk_order.copy_n_paste.text_area_placeholder')"

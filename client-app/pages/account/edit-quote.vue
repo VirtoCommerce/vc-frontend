@@ -15,7 +15,7 @@
         icon="document-text"
         content-classes="px-6 pb-1 pt-2 lg:px-7 lg:pb-2"
       >
-        <VcTextArea
+        <VcTextarea
           :label="$t('pages.account.quote_details.remarks_field_label')"
           v-model="quote.comment"
           :disabled="fetching"

@@ -436,7 +436,7 @@
             class="shadow-inner pb-8 lg:shadow"
           >
             <div class="mx-5 xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6">
-              <VcTextArea
+              <VcTextarea
                 :label="$t('pages.checkout.extra_section.comment_label')"
                 v-model="cartComment"
                 :disabled="loading || creatingOrder || creatingQuote"

@@ -23,7 +23,7 @@
         is-required
       />
 
-      <VcTextArea
+      <VcTextarea
         v-model.trim="emails"
         :label="$t('shared.account.invite_member_dialog.emails_label')"
         :placeholder="$t('shared.account.invite_member_dialog.emails_placeholder')"
@@ -34,7 +34,7 @@
         required
       />
 
-      <VcTextArea
+      <VcTextarea
         v-model.trim="message"
         :label="$t('shared.account.invite_member_dialog.message_label')"
         :placeholder="$t('shared.account.invite_member_dialog.message_placeholder')"
