@@ -44,19 +44,19 @@
           v-if="$cfg.line_items_group_by_vendor_enabled"
           class="bg-white lg:mb-6 lg:rounded -mx-5 md:mx-0 lg:shadow-md-x lg:pt-5 lg:px-7"
         >
-          <template v-for="(item, vendorId) in groupedOrderItems" :key="vendorId">
+          <template v-for="(group, vendorId) in orderItemsGroupedByVendor" :key="vendorId">
             <div
-              v-if="item.items.length"
+              v-if="group.items.length"
               class="bg-white shadow-light-lg mb-4 px-7 pt-4 lg:mb-0 lg:pb-5 lg:px-0 lg:pt-0 lg:rounded lg:shadow-none"
             >
               <!-- Vendor -->
               <div class="pb-3 font-bold text-15">
                 <span class="mr-1">{{ $t("pages.account.order_details.vendor_label") }}:</span>
-                <Vendor v-if="item.vendor" :vendor="item.vendor" class="inline-flex flex-row items-end gap-x-3" />
+                <Vendor v-if="group.vendor" :vendor="group.vendor" class="inline-flex flex-row items-end gap-x-3" />
                 <span v-else class="text-gray-400" v-t="`pages.account.order_details.empty_vendor_label`" />
               </div>
 
-              <OrderLineItems :items="item.items" class="lg:rounded" />
+              <OrderLineItems :items="group.items" class="lg:rounded" />
             </div>
           </template>
         </div>
@@ -225,16 +225,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, ref, watchEffect } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { configInjectionKey, usePageHead } from "@/core";
+import { usePageHead } from "@/core";
 import { InputNewBulkItemType, OrderLineItemType, Vendor as VendorType } from "@/xapi";
 import { AcceptedGifts, OrderSummary } from "@/shared/checkout";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useUserOrder, OrderLineItems } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
-import { AddBulkItemsToCartResultsPopup, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
+import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
 import { Vendor } from "@/shared/catalog";
 
 type TGroupItem = { items: OrderLineItemType[]; vendor?: VendorType };
@@ -247,8 +247,6 @@ const props = defineProps({
   },
 });
 
-const config = inject(configInjectionKey);
-
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { order, deliveryAddress, billingAddress, fetchOrder, clearOrder } = useUserOrder();
 const { addBulkItemsToCart } = useCart();
@@ -258,9 +256,6 @@ const { t } = useI18n();
 usePageHead({
   title: computed(() => t("pages.account.order_details.meta.title", [order.value?.number])),
 });
-
-const groupIdWithoutVendor = "none";
-const groupItemsByVendor = !!config?.line_items_group_by_vendor_enabled;
 
 const isMobile = breakpoints.smaller("lg");
 const loadingAddItemsToCart = ref(false);
@@ -275,27 +270,16 @@ const breadcrumbs = computed<IBreadcrumbs[]>(() => [
 const showPaymentButton = computed<boolean>(() => !!order.value && order.value.status === "New");
 const showReorderButton = computed<boolean>(() => !!order.value && order.value.status === "Completed");
 
-const giftItems = computed(() => order.value?.items?.filter((item) => item.isGift));
+const giftItems = computed<OrderLineItemType[]>(() => (order.value?.items || []).filter((item) => item.isGift));
+const orderItems = computed<OrderLineItemType[]>(() => (order.value?.items || []).filter((item) => !item.isGift));
 
-const orderItems = computed<OrderLineItemType[]>(() => {
-  if (groupItemsByVendor || !order.value) {
-    return [];
-  }
-
-  return order.value.items.filter((item) => !item.isGift);
-});
-
-const groupedOrderItems = computed<TGroupedItems>(() => {
-  // NOTE: The group without a vendor should be last to be displayed.
+const orderItemsGroupedByVendor = computed<TGroupItem[]>(() => {
+  // NOTE: The group without the vendor should be displayed last.
   const groupWithoutVendor: TGroupItem = { items: [] };
   const map: TGroupedItems = {};
 
-  if (!groupItemsByVendor) {
-    return map;
-  }
-
-  order.value?.items.forEach((item) => {
-    const vendor = item.product!.vendor;
+  orderItems.value.forEach((item) => {
+    const vendor = item.product?.vendor;
 
     if (vendor) {
       const vendorId = vendor.id;
@@ -307,10 +291,14 @@ const groupedOrderItems = computed<TGroupedItems>(() => {
     }
   });
 
-  // Add a group without a vendor to the end of the iteration object.
-  map[groupIdWithoutVendor] = groupWithoutVendor;
+  const result = Object.values(map)
+    // Sort by Vendor
+    .sort((a, b) => a.vendor!.name.localeCompare(b.vendor!.name));
 
-  return map;
+  // Add the group without the vendor to the end.
+  result.push(groupWithoutVendor);
+
+  return result;
 });
 
 async function reorderItems() {
@@ -322,7 +310,7 @@ async function reorderItems() {
   const resultItems = await addBulkItemsToCart(inputBulkItems);
 
   openPopup({
-    component: AddBulkItemsToCartResultsPopup,
+    component: AddBulkItemsToCartResultsModal,
     props: {
       items: getItemsForAddBulkItemsToCartResultsPopup(items, resultItems),
     },

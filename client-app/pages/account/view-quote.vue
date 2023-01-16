@@ -65,11 +65,7 @@
           <VcAddressInfo class="-mt-1" :address="shippingAddress!" />
         </VcCardWidget>
 
-        <VcCardWidget
-          v-if="billingAddress"
-          :title="$t('pages.account.quote_details.billing_address')"
-          icon="cash"
-        >
+        <VcCardWidget v-if="billingAddress" :title="$t('pages.account.quote_details.billing_address')" icon="cash">
           <VcAddressInfo class="-mt-1" :address="billingAddress!" />
         </VcCardWidget>
       </template>
