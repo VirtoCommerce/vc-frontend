@@ -1,0 +1,28 @@
+#import "../../../fragments/moneyFields.graphql"
+#import "../../../fragments/quoteLineItemFields.graphql"
+#import "../../../fragments/quoteAddressFields.graphql"
+#import "../../../fragments/moneyFields.graphql"
+
+query GetQuote($id: String, $storeId: String, $userId: String, $currencyCode: String, $cultureName: String) {
+  quote(id: $id, storeId: $storeId, userId: $userId, currencyCode: $currencyCode, cultureName: $cultureName) {
+    id
+    number
+    createdDate
+    cancelledDate
+    cancelReason
+    comment
+    isCancelled
+    status
+    items {
+      ...quoteLineItemFields
+    }
+    addresses {
+      ...quoteAddressFields
+    }
+    totals {
+      grandTotalInclTax {
+        ...moneyFields
+      }
+    }
+  }
+}

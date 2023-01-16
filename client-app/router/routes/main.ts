@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from "vue-router";
 import { DEVELOPMENT } from "@/core/constants";
-import { accountRoutes, corporateRoutes } from "@/router/routes";
+import { accountRoutes, checkoutRoutes, corporateRoutes } from "@/router/routes";
 
 // Error pages
 import Error403 from "@/pages/403.vue";
@@ -18,7 +18,8 @@ const Account = () => import("@/pages/account/index.vue");
 const Company = () => import("@/pages/company/index.vue");
 const BulkOrder = () => import("@/pages/bulk-order.vue");
 const CompareProducts = () => import("@/pages/compare-products.vue");
-const Checkout = () => import("@/pages/checkout.vue");
+const Cart = () => import("@/pages/cart.vue");
+const Checkout = () => import("@/pages/checkout/index.vue");
 const CheckoutComplete = () => import("@/pages/checkout-complete.vue");
 const Catalog = () => import("@/pages/catalog.vue");
 const Product = () => import("@/pages/product.vue");
@@ -65,12 +66,19 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/search", name: "Search", component: Catalog },
   { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },
   { path: "/compare", name: "CompareProducts", component: CompareProducts },
-  { path: "/checkout", name: "Checkout", component: Checkout },
+  { path: "/cart", name: "Cart", component: Cart },
+  {
+    path: "/checkout",
+    name: "Checkout",
+    component: Checkout,
+    children: checkoutRoutes,
+    redirect: { name: checkoutRoutes[0].name },
+  },
   {
     path: "/checkout/completed",
     name: "CheckoutComplete",
     component: CheckoutComplete,
-    beforeEnter: (to) => !!to.params.orderId || { name: "Checkout", replace: true },
+    beforeEnter: (to) => !!to.params.orderId || { name: "Cart", replace: true },
     props: true,
   },
   { path: "/catalog", name: "Catalog", component: Catalog, props: true },

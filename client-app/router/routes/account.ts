@@ -11,7 +11,8 @@ const Lists = () => import("@/pages/account/lists.vue");
 const ListDetails = () => import("@/pages/account/list-details.vue");
 const CheckoutDefaults = () => import("@/pages/account/checkout-defaults.vue");
 const Quotes = () => import("@/pages/account/quotes.vue");
-const QuoteDetails = () => import("@/pages/account/quote-details.vue");
+const EditQuote = () => import("@/pages/account/edit-quote.vue");
+const ViewQuote = () => import("@/pages/account/view-quote.vue");
 
 export const accountRoutes: RouteRecordRaw[] = [
   { path: "dashboard", name: "Dashboard", component: Dashboard },
@@ -64,9 +65,23 @@ export const accountRoutes: RouteRecordRaw[] = [
       { path: "", name: "Quotes", component: Quotes },
       {
         path: ":quoteId",
-        name: "QuoteDetails",
-        component: QuoteDetails,
+        component: RouterView,
         props: true,
+        children: [
+          {
+            path: "",
+            name: "ViewQuote",
+            component: ViewQuote,
+            meta: { hideNavigation: true },
+            props: true,
+          },
+          {
+            path: "edit",
+            name: "EditQuote",
+            component: EditQuote,
+            props: true,
+          },
+        ],
       },
     ],
     beforeEnter(_to, _from, next) {

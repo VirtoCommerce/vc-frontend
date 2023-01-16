@@ -25,7 +25,8 @@
       "add_to_cart": "Add to cart",
       "apply": "Apply",
       "send": "Send",
-      "more": "More"
+      "more": "More",
+      "save_changes": "Save Changes"
     },
     "labels": {
       "actions": "Actions",
@@ -52,7 +53,11 @@
       "sku": "Item #",
       "item": "Item",
       "true_property": "Yes",
-      "false_property": "No"
+      "false_property": "No",
+      "product": "Product",
+      "properties": "Properties",
+      "price_per_item": "Price per item",
+      "created": "Created"
     },
     "suffixes": {
       "from": "From",
@@ -71,7 +76,10 @@
       "item_can_t_be_purchased": "This item cannot be purchased",
       "item_is_out_of_stock": "This item is out of stock",
       "invalid_value": "Invalid value",
-      "product_no_longer_available": "No longer available"
+      "product_no_longer_available": "No longer available",
+      "item_quantity_required_field": "Item quantity value cannot be null",
+      "max_value": "Maximum value is {value}",
+      "min_value": "Minimum value is {value}"
     },
     "placeholders": {
       "not_selected": "Not selected",
@@ -356,6 +364,11 @@
       }
     },
     "cart": {
+      "empty_cart": {
+        "description": "Your cart is empty",
+        "continue_shopping_button": "@:common.buttons.continue_shopping",
+        "title": "Cart"
+      },
       "add_to_cart": {
         "add_to_cart_button": "@:common.buttons.add_to_cart",
         "update_cart_button": "Update cart",
@@ -438,11 +451,6 @@
           "product_price_changed": "The product price has been changed to {0}"
         }
       },
-      "empty_cart": {
-        "description": "Your cart is empty",
-        "continue_shopping_button": "@:common.buttons.continue_shopping",
-        "title": "Cart"
-      },
       "accepted_gifts": {
         "gift_label": "Gift",
         "quantity_label": "@:common.labels.quantity",
@@ -500,6 +508,13 @@
         "select_button": "@:common.buttons.select",
         "price_label": "@:common.labels.price{':'}",
         "title": "Select shipping method"
+      },
+      "cart_line_items": {
+        "product": "Product",
+        "properties": "Properties",
+        "price_per_item": "Price per item",
+        "quantity": "Quantity",
+        "total": "Total"
       }
     },
     "bulk_order": {
@@ -894,7 +909,17 @@
           "title": "Billing address",
           "phone_label": "@:common.labels.phone{':'}",
           "email_label": "@:common.labels.email{':'}"
-        }
+        },
+        "line_items": {
+          "product": "@:common.labels.product",
+          "properties": "@:common.labels.properties",
+          "price_per_item": "@:common.labels.price_per_item",
+          "quantity": "@:common.labels.quantity",
+          "total": "@:common.labels.total",
+          "subtotal": "@:common.labels.subtotal"
+        },
+        "vendor_label": "@:shared.catalog.product_details.vendor_label",
+        "empty_vendor_label": "N/A"
       },
       "order_payment": {
         "meta": {
@@ -973,6 +998,32 @@
         "total_label": "@:common.labels.total",
         "search_placeholder": "Enter keyword...",
         "no_results_message": "No results found"
+      },
+      "quote_details": {
+        "title": "Quote Request #{0}",
+        "remarks": "Remarks",
+        "remarks_field_label": "Do you have a general remark for this Quote Request?",
+        "products": "Products",
+        "shipping_address": "Shipping Address",
+        "billing_address": "Billing Address",
+        "save_changes": "@:common.buttons.save_changes",
+        "submit": "@:common.buttons.submit",
+        "no_address_message": "You do not set an address. Please specify one.",
+        "same_as_shipping_address": "Same as shipping address",
+        "quote_summary": "Quote Summary",
+        "quote_data": "Quote Data",
+        "total": "@:common.labels.total",
+        "created": "@:common.labels.created",
+        "status": "@:common.labels.status",
+        "no_items_message": "Quote request has not items",
+        "line_items": {
+          "product": "@:common.labels.product",
+          "properties": "@:common.labels.properties",
+          "price_per_item": "@:common.labels.price_per_item",
+          "quantity": "@:common.labels.quantity",
+          "total": "@:common.labels.total",
+          "subtotal": "@:common.labels.subtotal"
+        }
       }
     },
     "company": {
@@ -984,8 +1035,8 @@
         "content_header": "Addresses",
         "no_addresses_message": "There are no addresses yet",
         "address_not_delete_message": "The default address cannot be deleted",
-        "address_deletion_successful_message": "Address ”{addressName}” has been successfully deleted",
-        "address_saved_successful_message": "Address ”{addressName}” has been successfully saved",
+        "address_deletion_successful_message": "Address has been successfully deleted",
+        "address_saved_successful_message": "Address has been successfully saved",
         "labels": {
           "company_name": "Company Name",
           "address": "Address",
@@ -1034,6 +1085,21 @@
           "inactive": "Inactive",
           "blocked": "Blocked"
         }
+      }
+    },
+    "cart": {
+      "meta": {
+        "title": "Cart"
+      },
+      "title": "Cart",
+      "products_section": {
+        "title": "My products",
+        "vendor_label": "@:shared.catalog.product_details.vendor_label",
+        "empty_vendor_label": "N/A",
+        "clear_cart_button": "Clear cart"
+      },
+      "order_summary_block": {
+        "create_order_button": "Create order"
       }
     },
     "catalog": {
@@ -1097,7 +1163,7 @@
         "title": "Products",
         "update_all_link_label": "If you changed multiple quantities,",
         "update_all_link": "Update All",
-        "clear_cart_button": "Clear all"
+        "clear_cart_button": "Clear cart"
       },
       "shipping_details_section": {
         "title": "Shipping details",

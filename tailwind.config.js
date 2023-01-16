@@ -141,6 +141,8 @@ module.exports = {
         "t-2sm": "1px 2px 4px rgba(0, 0, 0, 0.15)",
         "t-3sm": "1px 2px 4px rgba(0, 0, 0, 0.05)",
         t: "0 -1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);",
+        "md": "2px 3px 6px rgba(0, 0, 0, 0.08)",
+        "md-s": "2px 3px 6px rgba(0, 0, 0, 0.08)",
         "md-x": "1px 2px 8px rgba(0, 0, 0, 0.05)",
         "t-mds": "1px 1px 3px rgba(0, 0, 0, 0.25)",
         "t-md": "0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
@@ -151,6 +153,7 @@ module.exports = {
         "t-3xl": "0 -35px 60px -15px rgba(0, 0, 0, 0.3)",
         "sm-x-y": "1px 2px 9px rgba(0, 0, 0, 0.1)",
         "sm-x-y-button": "1px 1px 5px rgba(0, 0, 0, 0.15)",
+        "light-lg": "0px 8px 10px rgba(237, 237, 237, 0.8)",
       },
 
       fontSize: {
@@ -220,6 +223,9 @@ module.exports = {
             lineHeight: "1.563rem", //25px
           },
         ],
+        24: [
+          "1.5rem", //24px
+        ],
         25: [
           "1.5625rem", //25px
           {
@@ -230,7 +236,7 @@ module.exports = {
         26: [
           "1.625rem", //26px
           {
-            lineHeight: "1.875rem", //30px
+            lineHeight: "2.063rem", //33px
           },
         ],
         28: [

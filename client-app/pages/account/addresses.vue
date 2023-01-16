@@ -243,7 +243,7 @@ const {
   loading: addressesLoading,
   addresses,
   sort,
-  loadAddresses,
+  fetchAddresses,
   setDefaultAddress,
   removeAddresses,
   defaultShippingAddress,
@@ -357,7 +357,7 @@ function itemActionsBuilder(inputObject: MemberAddressType) {
 const applySorting = async (sortInfo: ISortInfo): Promise<void> => {
   sort.value = sortInfo;
   page.value = 1;
-  await loadAddresses();
+  await fetchAddresses();
 };
 
 async function saveAddress(address: MemberAddressType): Promise<void> {
@@ -386,7 +386,7 @@ async function removeAddress(address: MemberAddressType): Promise<void> {
 }
 
 onMounted(async () => {
-  await loadAddresses();
+  await fetchAddresses();
 
   if (!countries.value.length) {
     await loadCountries();

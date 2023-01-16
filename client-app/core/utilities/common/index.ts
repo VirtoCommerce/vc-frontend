@@ -1,3 +1,4 @@
+import { cloneDeep } from "lodash";
 import { ISortInfo } from "@/core/types";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 
@@ -88,4 +89,17 @@ export function dateToIsoDateString(date: Date | undefined) {
 
 export function stringFormat(template: string, ...args: string[]): string {
   return template.replace(/{(\d+)}/g, (match: string, num: number) => args[num] || match);
+}
+
+export function convertToType<To, From = Record<any, any>>(value?: From): To {
+  return cloneDeep<To>(value as any);
+}
+
+export async function asyncForEach<T>(
+  array: T[],
+  callbackFn: (value: T, index: number, arr: T[]) => Promise<void>
+): Promise<void> {
+  for (let i = 0, l = array.length; i < l; i++) {
+    await callbackFn(array[i], i, array);
+  }
 }

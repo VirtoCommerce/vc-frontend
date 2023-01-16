@@ -1,5 +1,5 @@
 import { computed, Ref, ref } from "vue";
-import _ from "lodash";
+import { sumBy } from "lodash";
 import { Logger } from "@/core";
 import {
   addBulkItemsCart,
@@ -20,7 +20,6 @@ import {
   InputNewCartItemType,
   InputPaymentType,
   InputShipmentType,
-  LineItemType,
   QuoteType,
   removeCart as _removeCart,
   removeCartItem,
@@ -303,12 +302,9 @@ export default function useCart() {
       return 0;
     }
 
-    const filteredItems = _(cart.value.items)
-      .filter((x) => !!x?.productId && productIds.includes(x?.productId as string))
-      .map((x) => x as LineItemType)
-      .value();
+    const filteredItems = cart.value.items.filter((item) => !!item.productId && productIds.includes(item.productId));
 
-    return _.sumBy(filteredItems, (x) => x.extendedPrice?.amount);
+    return sumBy(filteredItems, (x) => x.extendedPrice?.amount);
   }
 
   return {

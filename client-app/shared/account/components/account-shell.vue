@@ -1,17 +1,15 @@
 <template>
-  <div class="bg-gray-100 grow pt-6 pb-16 shadow-inner">
-    <div class="max-w-screen-2xl md:px-12 mx-auto">
-      <div class="flex gap-x-5">
-        <!-- First column-->
-        <div v-if="!$route.meta?.hideNavigation" class="hidden lg:flex flex-col w-2/6 xl:w-1/5 gap-y-6">
-          <AccountNavigation />
-        </div>
-
-        <!-- Second column-->
-        <router-view class="flex flex-col w-full min-w-0 gap-y-5" />
+  <VcContainer :class="{ 'lg:pt-8': !$route.meta?.hideNavigation }">
+    <div class="flex gap-x-6">
+      <!-- First column-->
+      <div v-if="!$route.meta?.hideNavigation" class="hidden shrink-0 lg:flex flex-col w-2/6 max-w-[236px] gap-y-6">
+        <AccountNavigation />
       </div>
+
+      <!-- Second column-->
+      <router-view class="flex flex-col w-full min-w-0 gap-y-5" />
     </div>
-  </div>
+  </VcContainer>
 </template>
 
 <script setup lang="ts">

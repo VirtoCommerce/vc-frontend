@@ -42,7 +42,7 @@
             {{ item.title }}
           </BottomHeaderLink>
 
-          <BottomHeaderLink v-else-if="item.id === 'checkout'" :link="item" :count="cart.itemsQuantity">
+          <BottomHeaderLink v-else-if="item.id === 'cart'" :link="item" :count="cart.itemsQuantity">
             {{ item.title }}
           </BottomHeaderLink>
 

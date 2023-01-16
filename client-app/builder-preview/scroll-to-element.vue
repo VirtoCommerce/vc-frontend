@@ -1,0 +1,22 @@
+<template>
+  <div class="empty-block-for-scroll-to" :id="model.id"></div>
+</template>
+
+<script setup lang="ts">
+defineProps({
+  model: {
+    type: Object,
+    required: true,
+  },
+});
+</script>
+
+<style lang="scss" scoped>
+.empty-block-for-scroll-to {
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 0 !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+}
+</style>
