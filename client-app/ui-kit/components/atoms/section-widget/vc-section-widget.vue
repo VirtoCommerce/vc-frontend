@@ -1,24 +1,22 @@
 <template>
   <div class="vc-section-widget">
-    <slot name="title" v-if="title">
-      <div
-        :class="[
-          'vc-section-widget__title',
-          {
-            'vc-section-widget__title--hide-mobile': hideMobileTitle,
-            'vc-section-widget__title--hide-desktop': hideDesktopTitle,
-          },
-        ]"
-      >
-        <VcHexagonIcon :icon="icon" />
+    <div
+      :class="[
+        'vc-section-widget__title',
+        {
+          'vc-section-widget__title--hide-mobile': hideMobileTitle || !title,
+          'vc-section-widget__title--hide-desktop': hideDesktopTitle || !title,
+        },
+      ]"
+    >
+      <VcHexagonIcon :icon="icon" />
 
-        <VcTypography variant="h3" weight="extrabold">
-          {{ title }}
-        </VcTypography>
-      </div>
-    </slot>
+      <VcTypography variant="h3" weight="extrabold">
+        {{ title }}
+      </VcTypography>
+    </div>
 
-    <div :class="contentClasses ?? 'vc-section-widget__content'">
+    <div class="vc-section-widget__content">
       <slot></slot>
     </div>
   </div>
@@ -38,16 +36,14 @@ defineProps({
     type: String,
     default: "",
   },
-
-  contentClasses: {
-    type: String,
-    default: null,
-  },
 });
 </script>
 
 <style lang="scss">
 .vc-section-widget {
+  $hideMobileTitle: "";
+  $hideDesktopTitle: "";
+
   @apply relative bg-[color:var(--color-white)];
 
   @media (min-width: theme("screens.lg")) {
@@ -67,10 +63,14 @@ defineProps({
     @apply flex items-center gap-3 px-7 pt-6 pb-3;
 
     &--hide-mobile {
-      @apply hidden lg:block;
+      $hideMobileTitle: &;
+
+      @apply hidden lg:flex;
     }
 
     &--hide-desktop {
+      $hideDesktopTitle: &;
+
       @apply lg:hidden;
     }
   }
@@ -80,6 +80,16 @@ defineProps({
 
     @media (min-width: theme("screens.lg")) {
       @apply pb-6;
+    }
+
+    #{$hideMobileTitle} ~ & {
+      @apply pt-7 lg:pt-3;
+    }
+
+    #{$hideDesktopTitle} ~ & {
+      @media (min-width: theme("screens.lg")) {
+        @apply pt-6;
+      }
     }
   }
 }

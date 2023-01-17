@@ -14,3 +14,4 @@ export { default as usePageHead } from "./usePageHead";
 export { default as useProductsRoutes } from "./useProductsRoutes";
 export { default as useRouteQueryParam } from "./useRouteQueryParam";
 export { default as useThemeContext } from "./useThemeContext";
+export { default as useComponentId } from "./useComponentId";

@@ -53,7 +53,7 @@
 
     <!-- Page Toolbar -->
     <PageToolbarBlock
-      :stick="isVisibleStickyMobileHeader"
+      :stick="stickyMobileHeaderIsVisible"
       class="flex flex-row lg:flex-row-reverse items-center py-3.5 -my-3.5 gap-x-2 lg:gap-x-5"
       shadow
     >
@@ -330,13 +330,11 @@ usePageHead({
 });
 
 const isMobile = breakpoints.smaller("lg");
+
 const localKeyword = ref("");
 const filtersVisible = ref(false);
 const filtersButtonElement = shallowRef<HTMLElement | null>(null);
 const filtersDropdownElement = shallowRef<HTMLElement | null>(null);
-
-const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
-const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
 
 const columns = ref<ITableColumn[]>([
   {
@@ -371,7 +369,9 @@ const columns = ref<ITableColumn[]>([
   },
 ]);
 
-const isVisibleStickyMobileHeader = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
+const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
+const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
+const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
 async function changePage(newPage: number) {
   page.value = newPage;

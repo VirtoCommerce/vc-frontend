@@ -225,7 +225,7 @@
 </template>
 
 <script setup lang="ts">
-import { useUser, useUserAddresses } from "@/shared/account";
+import { useUserAddresses } from "@/shared/account";
 import { computed, ComputedRef, onMounted, Ref, ref } from "vue";
 import { clone } from "lodash";
 import { MemberAddressType } from "@/xapi/types";
@@ -237,18 +237,15 @@ import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { user } = useUser();
 const { countries, loadCountries } = useCountries();
 const {
   loading: addressesLoading,
   addresses,
   sort,
   fetchAddresses,
-  setDefaultAddress,
   removeAddresses,
-  defaultShippingAddress,
   addOrUpdateAddresses,
-} = useUserAddresses({ user });
+} = useUserAddresses();
 
 usePageHead({
   title: t("pages.account.addresses.meta.title"),
@@ -319,7 +316,7 @@ function closeEditMode() {
   editingMode.value = false;
 }
 
-function itemActionsBuilder(inputObject: MemberAddressType) {
+function itemActionsBuilder() {
   const actions: SlidingActionsItem[] = [
     {
       icon: "fas fa-pencil-alt",
@@ -339,17 +336,6 @@ function itemActionsBuilder(inputObject: MemberAddressType) {
       },
     },
   ];
-
-  if (defaultShippingAddress.value && inputObject.id !== defaultShippingAddress.value.id) {
-    actions.push({
-      icon: "fas fa-check",
-      title: t("pages.account.addresses.make_default_button"),
-      classes: "bg-[color:var(--color-primary)]",
-      clickHandler(address: MemberAddressType) {
-        setDefaultAddress(address);
-      },
-    });
-  }
 
   return actions;
 }

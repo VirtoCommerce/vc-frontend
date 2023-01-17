@@ -28,7 +28,7 @@
           <strong class="block mb-4" v-t="{ path: 'pages.checkout_complete.subtitle', args: [orderNumber] }" />
           <span v-t="'pages.checkout_complete.text'" />
           <div class="flex flex-col md:flex-row items-center justify-center lg:justify-start gap-6 mt-10">
-            <VcButton :to="{ name: 'OrderDetails', params: { orderId, new: 'true' } }" class="uppercase w-40">
+            <VcButton :to="{ name: 'OrderDetails', params: { orderId } }" class="uppercase w-40">
               <i class="fas fa-file-lines mr-3" />
               {{ $t("pages.checkout_complete.buttons.show_order") }}
             </VcButton>
