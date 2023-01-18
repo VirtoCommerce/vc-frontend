@@ -124,6 +124,7 @@
 <script setup lang="ts">
 import { computed, PropType, ref, inject, toRef } from "vue";
 import { Product as ProductType } from "@/xapi/types";
+import { asyncForEach } from "@/core";
 import { useWishlists } from "@/shared/wishlists";
 import { WishlistInputType } from "@/shared/wishlists/types";
 import { useNotifications } from "@/shared/notification";
@@ -131,6 +132,7 @@ import { usePopup } from "@/shared/popup";
 import moment from "moment";
 import { useI18n } from "vue-i18n";
 import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION, configInjectionKey } from "@/core/constants";
+import { useGoogleAnalytics } from "@/core/composables";
 
 const props = defineProps({
   product: {
@@ -150,6 +152,7 @@ const {
   removeItemsFromWishlists,
 } = useWishlists();
 const notifications = useNotifications();
+const ga = useGoogleAnalytics();
 
 const loading = ref(false);
 const selectedListsOtherIds = ref<string[]>([]);
@@ -197,6 +200,11 @@ async function addToWishlistsFromListOther() {
   }
 
   await addItemsToWishlists(selectedListsOtherIds.value.map((listId) => ({ listId, productId: product.value.id })));
+
+  /**
+   * Send Google Analytics event for an item added to wish list.
+   */
+  ga.addItemToWishList(product.value);
 }
 
 async function createListsAndAddProduct() {
@@ -204,11 +212,16 @@ async function createListsAndAddProduct() {
     return;
   }
 
-  inputs.value.forEach(async (input) => {
+  await asyncForEach(inputs.value, async (input) => {
     await createWishlistAndAddProduct(input.listName, product.value.id);
   });
 
-  inputs.value.splice(0);
+  inputs.value = [];
+
+  /**
+   * Send Google Analytics event for an item added to wish list.
+   */
+  ga.addItemToWishList(product.value);
 }
 
 async function removeProductFromWishlists() {

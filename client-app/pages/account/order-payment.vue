@@ -238,7 +238,7 @@
 <script setup lang="ts">
 import { computed, ref, watchEffect } from "vue";
 import { InputOrderAddressType, OrderPaymentMethodType, PaymentInType } from "@/xapi/types";
-import { AddOrUpdateAddressDialog, OrderSummary, PaymentMethodDialog } from "@/shared/checkout";
+import { AddOrUpdateAddressModal, OrderSummary, SelectPaymentMethodModal } from "@/shared/checkout";
 import {
   PaymentProcessingAuthorizeNet,
   PaymentMethod,
@@ -297,7 +297,7 @@ function tryAgain() {
 
 function showEditAddressDialog() {
   openPopup({
-    component: AddOrUpdateAddressDialog,
+    component: AddOrUpdateAddressModal,
     props: {
       address: payment.value?.billingAddress,
       async onResult(address: InputOrderAddressType) {
@@ -320,7 +320,7 @@ function showEditAddressDialog() {
 
 function showChangePaymentMethodDialog(): void {
   openPopup({
-    component: PaymentMethodDialog,
+    component: SelectPaymentMethodModal,
     props: {
       currentMethodCode: payment.value?.gatewayCode,
       availableMethods: order.value?.availablePaymentMethods,

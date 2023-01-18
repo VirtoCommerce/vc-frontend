@@ -51,6 +51,7 @@
     "userIsAuthorized": {{ current_user.is_registered_user }},
     {% endcomment %}
     "storeSettings": {
+      "anonymousAccessEnabled": {{ current_store.anonymous_users_allowed }},
       "googleAnalyticsEnabled": {{ google_analytics_enabled }}
     }
     {%- comment %}"themeSettings": {{ settings | json }}{% endcomment -%}

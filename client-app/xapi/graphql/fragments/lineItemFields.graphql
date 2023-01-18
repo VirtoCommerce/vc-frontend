@@ -28,6 +28,22 @@ fragment lineItemFields on LineItemType {
       minQuantity
       maxQuantity
     }
+    properties {
+      name
+      value
+      type
+      hidden
+      valueType
+      label
+    }
+    vendor {
+      id
+      name
+      rating {
+        value
+        reviewCount
+      }
+    }
   }
   quantity
   sku

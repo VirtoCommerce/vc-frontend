@@ -12,19 +12,16 @@
       <!-- Quote comment -->
       <VcSectionWidget
         :title="$t('pages.account.quote_details.remarks')"
-        icon-url="/static/images/remarks.svg"
-        content-classes="px-6 pb-1 pt-4 lg:px-7 lg:pb-2"
+        icon="document-text"
+        content-classes="px-6 pb-1 pt-2 lg:px-7 lg:pb-2"
       >
-        <div class="text-base leading-5 font-bold lg:text-15">
-          {{ $t("pages.account.quote_details.remarks_field_label") }}
-        </div>
-
-        <VcTextArea
+        <VcTextarea
+          :label="$t('pages.account.quote_details.remarks_field_label')"
           v-model="quote.comment"
-          :is-disabled="fetching"
+          :disabled="fetching"
           :max-length="1000"
           :rows="4"
-          class="mt-2 py-2 px-3 text-15 leading-5 font-medium resize-none lg:mt-1"
+          no-resize
           counter
         />
       </VcSectionWidget>
@@ -32,16 +29,13 @@
       <!-- Quote products -->
       <VcSectionWidget
         :title="$t('pages.account.quote_details.products')"
-        icon-url="/static/images/products.svg"
-        content-classes="px-6 pt-6 pb-0 md:p-7"
+        icon="cube"
+        content-classes="px-6 pt-3 pb-0 md:pb-7 md:px-7"
       >
         <QuoteLineItems :items="quote.items!" @remove:item="onRemoveItem" />
       </VcSectionWidget>
 
-      <VcSectionWidget
-        :title="$t('pages.account.quote_details.shipping_address')"
-        icon-url="/static/images/shipping-address.svg"
-      >
+      <VcSectionWidget :title="$t('pages.account.quote_details.shipping_address')" icon="truck">
         <h4 class="text-md leading-5 font-bold">
           {{ $t("pages.account.quote_details.shipping_address") }}
         </h4>
@@ -59,7 +53,9 @@
               type="button"
               class="shrink-0 flex items-center justify-center h-9 w-9 rounded border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white"
               @click="
-                changeAddressButtonHandler(shippingAddress || { ...newAddress, addressType: AddressType.Shipping })
+                userHasAddresses
+                  ? openAddressSelectionDialog(AddressType.Shipping)
+                  : openAddOrUpdateAddressDialog(AddressType.Shipping, shippingAddress)
               "
               :title="$t('pages.account.addresses.edit_label')"
             >
@@ -70,10 +66,7 @@
       </VcSectionWidget>
 
       <!-- Quote billing address -->
-      <VcSectionWidget
-        :title="$t('pages.account.quote_details.billing_address')"
-        icon-url="/static/images/billing-address.svg"
-      >
+      <VcSectionWidget :title="$t('pages.account.quote_details.billing_address')" icon="cash">
         <h4 class="text-md font-bold leading-5">
           {{ $t("pages.account.quote_details.billing_address") }}
         </h4>
@@ -103,7 +96,9 @@
                 type="button"
                 class="shrink-0 flex items-center justify-center h-9 w-9 rounded border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white"
                 @click="
-                  changeAddressButtonHandler(billingAddress || { ...newAddress, addressType: AddressType.Billing })
+                  userHasAddresses
+                    ? openAddressSelectionDialog(AddressType.Billing)
+                    : openAddOrUpdateAddressDialog(AddressType.Billing, billingAddress)
                 "
                 :title="$t('pages.account.addresses.edit_label')"
               >
@@ -116,7 +111,7 @@
 
       <div class="flex flex-wrap gap-5 px-6 py-7 lg:justify-end lg:p-0">
         <VcButton
-          :is-disabled="!quoteChanged || !quoteItemsValid"
+          :is-disabled="!quoteChanged || !quoteItemsValid || fetching"
           size="lg"
           class="flex-1 p-2 uppercase font-bold lg:flex-none lg:min-w-[208px]"
           is-outline
@@ -126,7 +121,7 @@
         </VcButton>
 
         <VcButton
-          :is-disabled="!quoteValid"
+          :is-disabled="!quoteValid || fetching"
           size="lg"
           class="flex-1 p-2 uppercase font-bold lg:flex-none lg:min-w-[208px]"
           @click="submit"
@@ -147,10 +142,10 @@ import { useRouter } from "vue-router";
 import { computedEager } from "@vueuse/core";
 import { cloneDeep, isEqual, remove, every } from "lodash";
 import { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi";
-import { AddressType, isEqualAddresses, convertToType } from "@/core";
-import { useUser, useUserAddresses, useUserQuote, QuoteLineItems } from "@/shared/account";
+import { AddressType, convertToType } from "@/core";
+import { useUserAddresses, useUserQuote, QuoteLineItems } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
-import { AddOrUpdateAddressDialog, SelectAddressDialog } from "@/shared/checkout";
+import { AddOrUpdateAddressModal, SelectAddressModal } from "@/shared/checkout";
 import { usePageHead } from "@/core/composables";
 import { asyncForEach } from "@/core/utilities";
 
@@ -162,9 +157,8 @@ const props = defineProps({
 
 const router = useRouter();
 const { t } = useI18n();
-const { user } = useUser();
 const { openPopup, closePopup } = usePopup();
-const { addresses, fetchAddresses, addOrUpdateAddresses } = useUserAddresses({ user });
+const { addresses, fetchAddresses, addOrUpdateAddresses } = useUserAddresses();
 const {
   fetching,
   quote,
@@ -186,12 +180,6 @@ usePageHead({
 
 const originalQuote = ref<QuoteType | undefined>();
 const billingAddressEqualsShippingAddress = ref<boolean>(true);
-const newAddress = ref<QuoteAddressType>({
-  city: "",
-  countryName: "",
-  firstName: "",
-  lastName: "",
-});
 
 const breadcrumbs = computed<IBreadcrumbs[]>(() => [
   { title: t("common.links.home"), route: { name: "Home" } },
@@ -203,7 +191,12 @@ const quoteChanged = computed<boolean>(() => !isEqual(originalQuote.value, quote
 const quoteItemsValid = computed<boolean>(() =>
   every(quote.value?.items, (item: QuoteItemType) => item.selectedTierPrice?.quantity > 0)
 );
-const quoteValid = computed<boolean>(() => !!shippingAddress.value && !!billingAddress.value && quoteItemsValid.value);
+const quoteValid = computed<boolean>(
+  () =>
+    !!shippingAddress.value &&
+    (!!billingAddress.value || billingAddressEqualsShippingAddress.value) &&
+    quoteItemsValid.value
+);
 
 const userHasAddresses = computedEager<boolean>(() => !!addresses.value.length);
 
@@ -215,61 +208,55 @@ function toggleBillingAddressEqualsShippingAddress(): void {
   billingAddressEqualsShippingAddress.value = !billingAddressEqualsShippingAddress.value;
 }
 
-function changeAddressButtonHandler(currentAddress: QuoteAddressType): void {
-  if (userHasAddresses.value) {
-    openAddressSelectionDialog(currentAddress);
-  } else {
-    openAddOrUpdateAddressDialog(currentAddress);
-  }
-}
-
-function setBillingAddressEqualsShippingAddress(address: QuoteAddressType): void {
-  const newBillingAddress = cloneDeep(address);
+function setBillingAddressEqualsShippingAddress(): void {
+  const newBillingAddress = cloneDeep(shippingAddress.value!);
+  newBillingAddress.key = undefined;
   newBillingAddress.addressType = AddressType.Billing;
   setQuoteAddress(newBillingAddress);
 }
 
-function openAddressSelectionDialog(currentAddress: QuoteAddressType): void {
+function openAddressSelectionDialog(addressType: AddressType.Billing | AddressType.Shipping): void {
   openPopup({
-    component: SelectAddressDialog,
+    component: SelectAddressModal,
     props: {
       addresses: addresses.value,
-      currentAddress: convertToType<MemberAddressType>(currentAddress),
+      currentAddress: convertToType<MemberAddressType>(
+        addressType === AddressType.Billing ? billingAddress.value : shippingAddress.value
+      ),
 
       onResult(selectedAddress: MemberAddressType): void {
-        const quoteAddress = convertToType<QuoteAddressType>(selectedAddress);
-        quoteAddress.addressType = currentAddress.addressType;
+        const quoteAddress = convertToType<QuoteAddressType>({ ...selectedAddress, addressType });
+
         setQuoteAddress(quoteAddress);
-        if (currentAddress.addressType === AddressType.Shipping && billingAddressEqualsShippingAddress.value) {
-          setBillingAddressEqualsShippingAddress(quoteAddress);
-        }
         closePopup();
       },
 
       onAddNewAddress() {
         setTimeout(() => {
-          openAddOrUpdateAddressDialog(currentAddress);
+          openAddOrUpdateAddressDialog(addressType);
         }, 500);
       },
     },
   });
 }
 
-function openAddOrUpdateAddressDialog(currentAddress: QuoteAddressType): void {
+function openAddOrUpdateAddressDialog(
+  addressType: AddressType.Billing | AddressType.Shipping,
+  currentAddress?: QuoteAddressType
+): void {
   openPopup({
-    component: AddOrUpdateAddressDialog,
+    component: AddOrUpdateAddressModal,
     props: {
       address: currentAddress,
 
       async onResult(updatedAddress: MemberAddressType): Promise<void> {
-        const quoteAddress = convertToType<QuoteAddressType>(updatedAddress);
-        quoteAddress.addressType = currentAddress.addressType;
+        const quoteAddress = convertToType<QuoteAddressType>({ ...updatedAddress, addressType });
+
         setQuoteAddress(quoteAddress);
-        await addOrUpdateAddresses([updatedAddress], user.value!.memberId);
-        if (currentAddress.addressType === AddressType.Shipping && billingAddressEqualsShippingAddress.value) {
-          setBillingAddressEqualsShippingAddress(quoteAddress);
-        }
         closePopup();
+
+        // Save address in account
+        await addOrUpdateAddresses([{ ...updatedAddress, addressType: AddressType.BillingAndShipping }]);
       },
     },
   });
@@ -295,6 +282,9 @@ async function saveChanges(): Promise<void> {
   });
 
   if (quote.value!.addresses?.length && !isEqual(quote.value!.addresses, originalQuote.value!.addresses)) {
+    if (billingAddressEqualsShippingAddress.value) {
+      setBillingAddressEqualsShippingAddress();
+    }
     await updateAddresses(quote.value!.id, quote.value!.addresses);
   }
 
@@ -309,15 +299,13 @@ async function submit(): Promise<void> {
   }
 
   await submitQuote(quote.value!.id, quote.value!.comment || "");
+
+  router.replace({ name: "Quotes" });
 }
 
 onMounted(() => {
   if (quote.value && quote.value.status !== "Draft") {
     router.replace({ name: "ViewQuote", params: { quoteId: quote.value.id } });
-  }
-
-  if (billingAddress.value && shippingAddress.value) {
-    billingAddressEqualsShippingAddress.value = isEqualAddresses(billingAddress.value, shippingAddress.value);
   }
 });
 

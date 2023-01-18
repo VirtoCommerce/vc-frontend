@@ -1,53 +1,96 @@
 <template>
-  <div class="relative shadow-light-lg lg:bg-white lg:border lg:rounded lg:shadow-md-x">
-    <slot name="title" v-if="withTitle">
-      <div
-        class="flex items-center gap-3 px-6 pt-6 lg:px-5 lg:py-3.5 lg:border-b"
-        :class="{ 'hidden lg:block': hideMobileTitle, 'lg:hidden': hideDesktopTitle }"
-      >
-        <VcImage :alt="title" :src="iconUrl" class="w-11 h-11 -ml-0.5 lg:hidden" lazy />
-        <h3 class="text-xl font-bold uppercase lg:text-19">
-          {{ title }}
-        </h3>
+  <div class="vc-card-widget">
+    <div
+      :class="[
+        'vc-card-widget__title',
+        {
+          'vc-card-widget__title--hide-mobile': hideMobileTitle || !title,
+          'vc-card-widget__title--hide-desktop': hideDesktopTitle || !title,
+        },
+      ]"
+    >
+      <div v-if="icon" class="vc-card-widget__icon">
+        <VcHexagonIcon :icon="icon" />
       </div>
-    </slot>
 
-    <div :class="contentClasses">
+      <VcTypography variant="h3" weight="extrabold">
+        {{ title }}
+      </VcTypography>
+    </div>
+
+    <div class="vc-card-widget__content">
       <slot />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
+defineProps({
+  hideMobileTitle: Boolean,
+  hideDesktopTitle: Boolean,
+
   title: {
     type: String,
     default: "",
   },
 
-  iconUrl: {
+  icon: {
     type: String,
     default: "",
   },
-
-  withTitle: {
-    type: Boolean,
-    default: true,
-  },
-
-  hideMobileTitle: {
-    type: Boolean,
-    default: false,
-  },
-
-  hideDesktopTitle: {
-    type: Boolean,
-    default: false,
-  },
-
-  contentClasses: {
-    type: String,
-    default: "p-6 lg:p-5",
-  },
 });
 </script>
+
+<style lang="scss">
+.vc-card-widget {
+  $hideMobileTitle: "";
+
+  @apply relative bg-[color:var(--color-white)];
+
+  @media (min-width: theme("screens.lg")) {
+    @apply border rounded shadow-md-x;
+  }
+
+  &:after {
+    @apply content-[''] z-[1] absolute top-full w-full h-3 bg-gradient-to-b from-[#f1f1f1];
+
+    @media (min-width: theme("screens.lg")) {
+      @apply content-none;
+    }
+  }
+
+  &__title {
+    @apply flex items-center gap-3 px-7 pt-6 pb-3;
+
+    @media (min-width: theme("screens.lg")) {
+      @apply px-5 py-3 border-b;
+    }
+
+    &--hide-mobile {
+      $hideMobileTitle: &;
+
+      @apply hidden lg:flex;
+    }
+
+    &--hide-desktop {
+      @apply lg:hidden;
+    }
+  }
+
+  &__icon {
+    @apply lg:hidden;
+  }
+
+  &__content {
+    @apply px-7 pt-3 pb-7;
+
+    @media (min-width: theme("screens.lg")) {
+      @apply p-5;
+    }
+
+    #{$hideMobileTitle} ~ & {
+      @apply pt-7 lg:pt-5;
+    }
+  }
+}
+</style>

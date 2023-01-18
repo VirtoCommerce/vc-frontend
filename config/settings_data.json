@@ -32,6 +32,7 @@
       },
       "image_carousel_in_product_card_enabled": true,
       "orders_statuses": ["New", "Processing", "Pending", "Cancelled", "Completed"],
+      "line_items_group_by_vendor_enabled": true,
       "social_sharing_services": [
         {
           "name": "Facebook",
@@ -55,6 +56,7 @@
         }
       ],
       "color_primary": "#F0AD4E",
+      "color_primary_light": "#FFE9C1",
       "color_primary_hover": "#EC951A",
       "color_secondary": "#151B1E",
       "color_secondary_hover": "#000000",
@@ -176,6 +178,7 @@
       },
       "image_carousel_in_product_card_enabled": true,
       "orders_statuses": ["New", "Processing", "Pending", "Cancelled", "Completed"],
+      "line_items_group_by_vendor_enabled": false,
       "social_sharing_services": [
         {
           "name": "Facebook",

@@ -11,6 +11,7 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
     purchaseOrderNumber
     coupons {
       code
+      isAppliedSuccessfully
     }
     itemsCount
     itemsQuantity
@@ -87,6 +88,7 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
       name
       description
       logoUrl
+      paymentMethodGroupType
     }
 
     availableShippingMethods {

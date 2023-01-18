@@ -1,3 +1,4 @@
+import { cloneDeep } from "lodash";
 import { ISortInfo } from "@/core/types";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 
@@ -90,8 +91,8 @@ export function stringFormat(template: string, ...args: string[]): string {
   return template.replace(/{(\d+)}/g, (match: string, num: number) => args[num] || match);
 }
 
-export function convertToType<To, From = Record<any, any>>(address: From): To {
-  return address as unknown as To;
+export function convertToType<To, From = Record<any, any>>(value?: From): To {
+  return cloneDeep<To>(value as any);
 }
 
 export async function asyncForEach<T>(

@@ -64,9 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { AddToCart } from "@/shared/cart";
 import {
-  WishlistProductItem,
   WishlistProductItemSkeleton,
   WishlistLineItems,
   useWishlists,
@@ -74,7 +72,7 @@ import {
   DeleteWishlistProductDialog,
 } from "@/shared/wishlists";
 import { LineItemType } from "@/xapi/types";
-import { ProductCardGrid, ProductSkeletonGrid } from "@/shared/catalog";
+import { ProductSkeletonGrid } from "@/shared/catalog";
 import { usePopup } from "@/shared/popup";
 import { computed, ref, watchEffect } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
