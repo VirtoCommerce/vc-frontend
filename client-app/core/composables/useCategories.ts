@@ -9,7 +9,7 @@ const categoryTree = shallowRef<CategoryTreeItem>();
 export default function useCategories() {
   const { themeContext } = useThemeContext();
 
-  async function fetchCategories() {
+  async function fetchCategories(): Promise<void> {
     try {
       loading.value = true;
 
