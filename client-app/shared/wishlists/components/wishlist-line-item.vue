@@ -106,7 +106,7 @@ defineEmits(["remove"]);
   @apply relative border bg-white rounded shadow-t-3sm;
 
   @media (min-width: theme("screens.md")) {
-    @apply rounded-none shadow-none border-0;
+    @apply rounded-none shadow-none border-0 bg-transparent;
   }
 
   &--not-exists {

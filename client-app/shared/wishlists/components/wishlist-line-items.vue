@@ -47,11 +47,15 @@ defineEmits(["remove:item"]);
 
 <style scoped lang="scss">
 .vc-wishlist-line-items {
+  @media (min-width: theme("screens.md")) {
+    @apply border rounded bg-white divide-y;
+  }
+
   &__header {
     @apply hidden;
 
     @media (min-width: theme("screens.md")) {
-      @apply grid gap-x-3 px-4 py-3 border rounded-t text-sm font-bold bg-white;
+      @apply grid gap-x-3 px-4 py-3 text-sm font-bold;
 
       grid-template-columns: 200px 1fr 170px min-content;
       grid-template-areas: "product properties quantity remove-button";
@@ -101,16 +105,12 @@ defineEmits(["remove:item"]);
     @apply flex flex-col gap-6;
 
     @media (min-width: theme("screens.md")) {
-      @apply gap-0 border-x border-b rounded-b divide-y bg-white;
+      @apply gap-0 divide-y;
     }
   }
 
   &__empty {
-    @apply p-3 border-x;
-
-    @media (min-width: theme("screens.md")) {
-      @apply rounded-b bg-white;
-    }
+    @apply p-3;
   }
 }
 </style>
