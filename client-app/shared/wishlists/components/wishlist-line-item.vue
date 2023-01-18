@@ -68,7 +68,7 @@
 
       <!-- REMOVE BUTTON -->
       <div class="vc-wishlist-line-item__button-container">
-        <button type="button" class="vc-wishlist-line-item__button" @click="$emit('remove:item', item)">
+        <button type="button" class="vc-wishlist-line-item__button" @click="$emit('remove')">
           <VcIcon size="xs" name="delete-2" />
         </button>
       </div>
@@ -96,7 +96,7 @@ const props = defineProps({
 
 const route = computed<RouteLocationRaw>(() => getProductRoute(props.item.product?.id ?? "", props.item.product?.slug));
 
-defineEmits(["remove:item"]);
+defineEmits(["remove"]);
 </script>
 
 <style scoped lang="scss">
