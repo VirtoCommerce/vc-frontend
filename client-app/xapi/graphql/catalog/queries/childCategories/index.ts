@@ -4,8 +4,8 @@ import globals from "@/core/globals";
 import { Query, QueryChildCategoriesArgs } from "@/xapi/types";
 
 function getQueryResponseTree(level: number): string {
-  while (level >= 0) {
-    level--;
+  const newLevel = level - 1;
+  if (newLevel >= 0) {
     return `
       childCategories {
         id
@@ -24,7 +24,7 @@ function getQueryResponseTree(level: number): string {
           title
           seoPath
         }
-        ${getQueryResponseTree(level)}
+        ${getQueryResponseTree(newLevel)}
       }
     `;
   }
