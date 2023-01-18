@@ -3,595 +3,192 @@
 
   <VcEmptyPage
     v-else-if="!cart.items?.length"
-    :title="$t('shared.cart.empty_cart.title')"
-    :description="$t('shared.cart.empty_cart.description')"
+    :title="$t('pages.cart.title')"
+    :description="$t('pages.cart.empty_cart_description')"
     image="/static/images/errors/emptyCart.webp"
     mobile-image="/static/images/errors/emptyCartMobile.webp"
     :breadcrumbs="breadcrumbs"
   >
     <template #actions>
       <VcButton :to="{ name: 'Catalog' }" size="lg" class="w-48 uppercase font-bold">
-        {{ $t("shared.cart.empty_cart.continue_shopping_button") }}
+        {{ $t("common.buttons.continue_shopping") }}
       </VcButton>
     </template>
   </VcEmptyPage>
 
-  <div v-else class="bg-gray-100 pt-6 pb-8 shadow-inner">
-    <div class="px-5 mx-auto max-w-screen-2xl 2xl:px-18">
-      <!-- Mobile sticky header -->
-      <div
-        v-if="stickyMobileHeaderIsVisible"
-        class="fixed left-0 top-0 h-14 w-full z-40 px-5 md:px-12 flex justify-between items-center gap-x-3 bg-[color:var(--color-header-bottom-bg)]"
-      >
-        <div>
-          <h2 class="text-gray-800 font-extrabold uppercase leading-none mb-1.5" v-t="'pages.cart.title'" />
+  <VcContainer v-else>
+    <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block mx-5 md:mx-0" />
 
-          <div class="font-bold leading-none">
-            <span>{{ $t("shared.checkout.order_summary.total_label") }}:</span>
+    <!-- Page title -->
+    <VcTypography tag="h1" variant="h2" weight="bold" class="mb-5">
+      {{ $t("pages.cart.title") }}
+    </VcTypography>
 
-            <span class="ml-1 text-green-700">
-              <VcPriceDisplay :value="cart.total" />
-            </span>
-          </div>
-        </div>
+    <VcLayoutWithRightSidebar is-sidebar-sticky>
+      <template #main>
+        <ProductsSection
+          :grouped="!!$cfg.line_items_group_by_vendor_enabled"
+          :items="cart.items"
+          :items-grouped-by-vendor="lineItemsGroupedByVendor"
+          :disabled="loading"
+          :validation-errors="cart.validationErrors"
+          @change:item:quantity="changeItemQuantity($event.item.id, $event.quantity)"
+          @remove:item="handleRemoveItem"
+          @clear:cart="openClearCartModal"
+        />
 
-        <div>
-          <VcButton
-            :is-disabled="!isValidCheckout || loading || creatingQuote"
-            :is-waiting="creatingOrder"
-            size="sm"
-            class="uppercase px-3"
-            @click="createOrder"
-          >
-            {{ $t("pages.cart.order_summary_block.create_order_button") }}
-          </VcButton>
-        </div>
-      </div>
+        <GiftsSection
+          v-if="$cfg.checkout_gifts_enabled && availableExtendedGifts.length"
+          :gifts="availableExtendedGifts"
+          :disabled="loading"
+          @toggle:gift="toggleGift"
+        />
 
-      <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block mx-5 md:mx-0" />
+        <ShippingDetailsSection
+          :shipment="shipment"
+          :disabled="loading"
+          @change:address="onDeliveryAddressChange"
+          @change:method="openSelectShipmentMethodModal"
+        />
 
-      <!-- Title block -->
-      <div class="flex justify-between items-center py-5">
-        <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.cart.title'" />
-      </div>
+        <BillingDetailsSection
+          v-model:address-equals-shipping-address="billingAddressEqualsShippingAddress"
+          :payment="payment"
+          :disabled="loading"
+          @change:address="onBillingAddressChange"
+          @change:method="openSelectPaymentMethodModal"
+        />
 
-      <div class="flex flex-col lg:flex-row lg:flex-nowrap lg:space-x-6">
-        <!-- Main section -->
-        <div class="lg:w-3/4 xl:w-4/5 flex-grow w-full">
-          <div class="bg-white lg:mb-6 lg:rounded -mx-5 md:mx-0 lg:shadow-md-x lg:pt-5 lg:px-7">
-            <div class="flex items-center px-5 lg:hidden lg:pr-0 py-6">
-              <VcImage
-                :src="'/static/images/checkout/shipping.svg'"
-                :alt="$t('pages.cart.products_section.title')"
-                class="mr-5 lg:mr-8"
-              />
+        <OrderCommentSection v-model:comment="comment" :disabled="loading" />
+      </template>
 
-              <div class="w-full flex justify-between xl:mr-11 lg:mr-6">
-                <h3 class="text-gray-800 text-2xl lg:text-3xl font-bold uppercase">
-                  {{ $t("pages.cart.products_section.title") }}
-                </h3>
-              </div>
-            </div>
+      <template #sidebar>
+        <OrderSummary :cart="cart">
+          <template #header>
+            <!-- Purchase order number -->
+            <VcActionInput
+              v-if="$cfg.checkout_purchase_order_enabled"
+              v-model="purchaseOrderNumber"
+              :label="$t('common.labels.purchase_order_number')"
+              :placeholder="$t('common.placeholders.purchase_order_number')"
+              :is-applied="purchaseOrderNumberIsApplied"
+              :is-disabled="loading"
+              :max-length="128"
+              class="mb-5"
+              @click:apply="setPurchaseOrderNumber"
+              @click:deny="removePurchaseOrderNumber"
+            />
 
-            <!-- Items grouped by Vendor -->
-            <template v-if="$cfg.line_items_group_by_vendor_enabled">
-              <template v-for="(group, vendorId) in lineItemsGroupedByVendor" :key="vendorId">
-                <div
-                  v-if="group.items.length"
-                  class="bg-white shadow-light-lg mb-4 px-7 pt-0 md:shadow-none lg:mb-0 lg:pb-5 lg:px-0 lg:pt-0 lg:rounded"
-                >
-                  <!-- Vendor -->
-                  <div class="pb-3 font-bold text-15">
-                    <span class="mr-1">{{ $t("pages.cart.products_section.vendor_label") }}:</span>
-                    <Vendor v-if="group.vendor" :vendor="group.vendor" class="inline-flex flex-row items-end gap-x-3" />
-                    <span v-else class="text-gray-400" v-t="`pages.cart.products_section.empty_vendor_label`" />
-                  </div>
+            <!-- Promotion code -->
+            <VcActionInput
+              v-if="$cfg.checkout_coupon_enabled"
+              v-model="couponCode"
+              :label="$t('common.labels.promotion_code')"
+              :placeholder="$t('common.placeholders.promotion_code')"
+              :is-applied="couponIsApplied"
+              :error-message="couponValidationError"
+              :is-disabled="loading"
+              class="mb-5"
+              @click:apply="applyCoupon"
+              @click:deny="removeCoupon"
+              @update:model-value="clearCouponValidationError"
+            />
+          </template>
 
-                  <CartLineItems
-                    :items="group.items"
-                    :disabled="loading || creatingOrder || creatingQuote"
-                    :validationErrors="cart.validationErrors"
-                    @change-quantity:item="changeItemQuantity"
-                    @remove:item="handleRemoveItem"
-                  />
-                </div>
-              </template>
-            </template>
-
-            <!-- Items not grouped by Vendor -->
-            <div
-              v-else
-              class="bg-white shadow-light-lg mb-4 p-7 lg:mb-0 lg:pb-5 lg:px-0 lg:pt-0 lg:rounded lg:shadow-none"
-            >
-              <CartLineItems
-                :items="cart.items"
-                :disabled="loading || creatingOrder || creatingQuote"
-                :validationErrors="cart.validationErrors"
-                @change-quantity:item="changeItemQuantity"
-                @remove:item="handleRemoveItem"
-              />
-            </div>
-
-            <div class="hidden md:flex justify-end pb-5 px-7 lg:px-0">
-              <VcButton
-                :is-disabled="loading || creatingOrder || creatingQuote"
-                size="sm"
-                kind="secondary"
-                is-outline
-                class="px-3 self-start uppercase font-bold"
-                @click="openClearCartModal"
-              >
-                {{ $t("pages.cart.products_section.clear_cart_button") }}
-              </VcButton>
-            </div>
-          </div>
-
-          <!-- Gifts section -->
-          <VcSection
-            v-if="$cfg.checkout_gifts_enabled && cart.availableGifts?.length"
-            :title="$t('pages.checkout.gifts_section.title')"
-            icon-url="/static/images/checkout/gifts.svg"
-            class="shadow-inner pb-8 lg:shadow"
-          >
-            <div class="xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6 lg:border lg:rounded">
-              <div
-                v-for="gift in availableExtendedGifts"
-                :key="gift.id"
-                class="border-b last:border-b-0 flex items-center justify-between px-7 py-6"
-              >
-                <VcCheckbox
-                  class="mr-7"
-                  :model-value="gift.isAddedInCart"
-                  :disabled="loading || creatingOrder || creatingQuote"
-                  @change="toggleGift(gift)"
-                />
-
-                <VcImage :src="gift.imageUrl" class="mr-4 border aspect-square w-16 h-16" lazy />
-
-                <div class="flex-grow font-bold text-[color:var(--color-link)]">
-                  {{ gift.name }}
-                </div>
-              </div>
-            </div>
-          </VcSection>
-
-          <!-- Shipping details section -->
-          <VcSection
-            :title="$t('pages.checkout.shipping_details_section.title')"
-            icon-url="/static/images/checkout/shipping.svg"
-            class="shadow-inner pb-8 lg:shadow"
-          >
-            <div class="mx-5 xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6">
-              <CheckoutLabeledBlock :label="$t('pages.checkout.shipping_details_section.shipping_address_block.title')">
-                <template v-if="shipment?.deliveryAddress">
-                  <div class="truncate">
-                    <span class="font-extrabold">
-                      {{ shipment.deliveryAddress?.firstName }}
-                      {{ shipment.deliveryAddress?.lastName }}
-                    </span>
-
-                    <p>
-                      {{ shipment.deliveryAddress?.countryCode }}
-                      {{ shipment.deliveryAddress?.regionName }}
-                      {{ shipment.deliveryAddress?.city }} {{ shipment.deliveryAddress?.line1 }}
-                      {{ shipment.deliveryAddress?.postalCode }}
-                    </p>
-
-                    <p>
-                      <span
-                        class="font-extrabold"
-                        v-t="'pages.checkout.shipping_details_section.shipping_address_block.phone_label'"
-                      ></span>
-                      {{ shipment.deliveryAddress?.phone }}
-                    </p>
-
-                    <p>
-                      <span
-                        class="font-extrabold"
-                        v-t="'pages.checkout.shipping_details_section.shipping_address_block.email_label'"
-                      ></span>
-                      {{ shipment.deliveryAddress?.email }}
-                    </p>
-                  </div>
-
-                  <div>
-                    <VcButton
-                      :is-disabled="loading || creatingOrder || creatingQuote"
-                      size="sm"
-                      is-outline
-                      class="px-3 self-start uppercase font-bold"
-                      @click="
-                        addresses.length
-                          ? openSelectAddressModal(AddressType.Shipping)
-                          : openAddOrUpdateAddressModal(AddressType.Shipping, shipment?.deliveryAddress)
-                      "
-                    >
-                      {{ $t("pages.checkout.shipping_details_section.shipping_address_block.change_button") }}
-                    </VcButton>
-                  </div>
-                </template>
-
-                <template v-else>
-                  <div class="text-[color:var(--color-danger)] flex items-center space-x-4">
-                    <i class="fas fa-exclamation-triangle text-2xl" />
-
-                    <span
-                      v-if="isAuthenticated"
-                      v-t="'pages.checkout.shipping_details_section.shipping_address_block.no_addresses_message'"
-                    ></span>
-
-                    <span
-                      v-else
-                      v-t="
-                        'pages.checkout.shipping_details_section.shipping_address_block.unauthenticated_no_addresses_message'
-                      "
-                    ></span>
-                  </div>
-
-                  <div>
-                    <VcButton
-                      :is-disabled="loading || creatingOrder || creatingQuote"
-                      size="sm"
-                      is-outline
-                      class="px-3 self-start uppercase font-bold"
-                      @click="
-                        addresses.length
-                          ? openSelectAddressModal(AddressType.Shipping)
-                          : openAddOrUpdateAddressModal(AddressType.Shipping)
-                      "
-                    >
-                      {{ $t("pages.checkout.shipping_details_section.shipping_address_block.add_address_button") }}
-                    </VcButton>
-                  </div>
-                </template>
-              </CheckoutLabeledBlock>
-
-              <CheckoutLabeledBlock :label="$t('pages.checkout.shipping_details_section.shipping_method_block.title')">
-                <div class="flex flex-row items-center space-x-4">
-                  <template v-if="shipment?.shipmentMethodCode">
-                    <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" lazy />
-                    <span>
-                      {{ shipment.shipmentMethodCode }}
-                      {{ shipment.shipmentMethodOption }}
-                      (<VcPriceDisplay :value="shipment.price" />)
-                    </span>
-                  </template>
-
-                  <div
-                    v-else
-                    class="text-gray-600"
-                    v-t="'pages.checkout.shipping_details_section.shipping_method_block.not_defined_message'"
-                  ></div>
-                </div>
-
-                <div>
-                  <VcButton
-                    :is-disabled="loading || creatingOrder || creatingQuote"
-                    size="sm"
-                    is-outline
-                    class="px-3 self-start uppercase font-bold"
-                    @click="openSelectShipmentMethodModal"
-                  >
-                    {{
-                      shipment?.shipmentMethodCode
-                        ? $t("pages.checkout.shipping_details_section.shipping_method_block.change_button")
-                        : $t("pages.checkout.shipping_details_section.shipping_method_block.select_button")
-                    }}
-                  </VcButton>
-                </div>
-              </CheckoutLabeledBlock>
-            </div>
-          </VcSection>
-
-          <!-- Payment details section -->
-          <VcSection
-            :title="$t('pages.checkout.payment_details_section.title')"
-            icon-url="/static/images/checkout/payment.svg"
-            class="shadow-inner pb-8 lg:shadow"
-          >
-            <div class="mx-5 xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6">
-              <CheckoutLabeledBlock :label="$t('pages.checkout.payment_details_section.billing_address_block.title')">
-                <label class="flex items-center text-sm cursor-pointer">
-                  <input
-                    :disabled="loading || creatingOrder || creatingQuote"
-                    v-model="billingAddressEqualsShippingAddress"
-                    type="checkbox"
-                    class="form-tick appearance-none w-5 h-5 border-2 border-gray-300 rounded-sm checked:bg-[color:var(--color-primary)] checked:border-transparent focus:outline-none cursor-pointer"
-                  />
-                  <span
-                    class="ml-2 font-medium"
-                    v-t="'pages.checkout.payment_details_section.billing_address_block.same_as_shipping_checkbox_label'"
-                  ></span>
-                </label>
-              </CheckoutLabeledBlock>
-
-              <div
-                v-if="!billingAddressEqualsShippingAddress && !payment?.billingAddress"
-                class="border border-t-0 rounded-b -mt-6 mb-6 p-5 flex flex-col space-y-2 lg:space-y-0 lg:flex-row lg:items-center justify-between"
-              >
-                <div class="text-[color:var(--color-danger)] flex items-center space-x-4">
-                  <i class="fas fa-exclamation-triangle text-2xl" />
-
-                  <span
-                    v-if="isAuthenticated"
-                    class="text-sm"
-                    v-t="'pages.checkout.payment_details_section.billing_address_block.no_addresses_message'"
-                  ></span>
-
-                  <span
-                    v-else
-                    class="text-sm"
-                    v-t="
-                      'pages.checkout.payment_details_section.billing_address_block.unauthenticated_no_addresses_message'
-                    "
-                  ></span>
-                </div>
-
-                <div>
-                  <VcButton
-                    :is-disabled="loading || creatingOrder || creatingQuote"
-                    size="sm"
-                    is-outline
-                    class="px-3 self-start uppercase font-bold"
-                    @click="
-                      addresses.length
-                        ? openSelectAddressModal(AddressType.Billing)
-                        : openAddOrUpdateAddressModal(AddressType.Billing)
-                    "
-                  >
-                    {{ $t("pages.checkout.payment_details_section.billing_address_block.add_address_button") }}
-                  </VcButton>
-                </div>
-              </div>
-
-              <div
-                v-else-if="!billingAddressEqualsShippingAddress && payment?.billingAddress"
-                class="border border-t-0 rounded-b -mt-6 mb-6 p-5 flex flex-col space-y-2 lg:space-y-0 text-sm lg:flex-row lg:justify-between lg:space-x-3 lg:items-center"
-              >
-                <div class="truncate">
-                  <span class="font-extrabold">
-                    {{ payment.billingAddress?.firstName }}
-                    {{ payment.billingAddress?.lastName }}
-                  </span>
-
-                  <p>
-                    {{ payment.billingAddress?.countryCode }}
-                    {{ payment.billingAddress?.regionName }}
-                    {{ payment.billingAddress?.city }} {{ payment.billingAddress?.line1 }}
-                    {{ payment.billingAddress?.postalCode }}
-                  </p>
-
-                  <p>
-                    <span
-                      class="font-extrabold"
-                      v-t="'pages.checkout.payment_details_section.billing_address_block.phone_label'"
-                    ></span>
-                    {{ payment.billingAddress?.phone }}
-                  </p>
-
-                  <p>
-                    <span
-                      class="font-extrabold"
-                      v-t="'pages.checkout.payment_details_section.billing_address_block.email_label'"
-                    ></span>
-                    {{ payment.billingAddress?.email }}
-                  </p>
-                </div>
-
-                <div>
-                  <VcButton
-                    :is-disabled="loading || creatingOrder || creatingQuote"
-                    size="sm"
-                    is-outline
-                    class="px-3 self-start uppercase font-bold"
-                    @click="
-                      addresses.length
-                        ? openSelectAddressModal(AddressType.Billing)
-                        : openAddOrUpdateAddressModal(AddressType.Billing, payment?.billingAddress)
-                    "
-                  >
-                    {{ $t("pages.checkout.payment_details_section.billing_address_block.change_button") }}
-                  </VcButton>
-                </div>
-              </div>
-
-              <CheckoutLabeledBlock :label="$t('pages.checkout.payment_details_section.payment_method_block.title')">
-                <div class="flex flex-row items-center space-x-4">
-                  <template v-if="payment?.paymentGatewayCode">
-                    <VcImage src="/static/images/checkout/invoice.svg" class="h-12 w-12" lazy />
-                    <span>{{ payment.paymentGatewayCode }}</span>
-                  </template>
-
-                  <div
-                    v-else
-                    class="text-gray-600"
-                    v-t="'pages.checkout.payment_details_section.payment_method_block.not_defined_message'"
-                  ></div>
-                </div>
-
-                <div>
-                  <VcButton
-                    :is-disabled="loading || creatingOrder || creatingQuote"
-                    size="sm"
-                    is-outline
-                    class="px-3 self-start uppercase font-bold"
-                    @click="openSelectPaymentMethodModal"
-                  >
-                    {{
-                      payment?.paymentGatewayCode
-                        ? $t("pages.checkout.payment_details_section.payment_method_block.change_button")
-                        : $t("pages.checkout.payment_details_section.payment_method_block.select_button")
-                    }}
-                  </VcButton>
-                </div>
-              </CheckoutLabeledBlock>
-            </div>
-          </VcSection>
-
-          <!-- Extra section -->
-          <VcSection
-            v-if="$cfg.checkout_comment_enabled"
-            :title="$t('pages.checkout.extra_section.title')"
-            icon-url="/static/images/checkout/extra.svg"
-            class="shadow-inner pb-8 lg:shadow"
-          >
-            <div class="mx-5 xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6">
-              <VcTextarea
-                v-model="comment"
-                :label="$t('pages.checkout.extra_section.comment_label')"
-                :disabled="loading || creatingOrder || creatingQuote"
-                :max-length="1000"
-                :rows="4"
-                no-resize
-                counter
-              />
-            </div>
-          </VcSection>
-
-          <div class="shadow-inner h-2 lg:hidden"></div>
-        </div>
-
-        <!-- Sidebar -->
-        <div
-          class="flex flex-col gap-y-6 px-5 mb-7 order-first md:px-0 lg:mb-6 lg:order-1 lg:w-1/4 lg:h-full lg:sticky lg:top-4"
-        >
-          <!-- Order summary -->
-          <OrderSummary :cart="cart">
-            <template #header>
-              <!-- Purchase order -->
-              <VcActionInput
-                v-if="$cfg.checkout_purchase_order_enabled"
-                v-model="purchaseOrderNumber"
-                class="mb-5"
-                :label="$t('pages.checkout.order_summary_block.purchase_order_label')"
-                :placeholder="$t('pages.checkout.order_summary_block.purchase_order_placeholder')"
-                :is-applied="purchaseOrderNumberIsApplied"
-                :is-disabled="loading || creatingOrder || creatingQuote"
-                :max-length="128"
-                @click:apply="setPurchaseOrderNumber"
-                @click:deny="removePurchaseOrderNumber"
-              />
-
-              <!-- Promotion code -->
-              <VcActionInput
-                v-if="$cfg.checkout_coupon_enabled"
-                v-model="couponCode"
-                :class="[couponValidationError ? 'mb-0' : 'mb-8']"
-                :label="$t('pages.checkout.order_summary_block.promotion_code_label')"
-                :placeholder="$t('pages.checkout.order_summary_block.promotion_code_placeholder')"
-                :is-applied="couponIsApplied"
-                :error-message="couponValidationError"
-                :is-disabled="loading || creatingOrder || creatingQuote"
-                @click:apply="applyCoupon"
-                @click:deny="removeCoupon"
-                @update:model-value="clearCouponValidationError"
-              />
-            </template>
-
-            <template #footer>
-              <p
-                class="mt-8 mb-5 text-xs font-normal text-gray-400"
-                v-t="'pages.checkout.order_summary_block.warning_message'"
-              ></p>
-
-              <div ref="stickyMobileHeaderAnchor" class="absolute -mt-2.5"></div>
-
-              <VcButton
-                :is-disabled="!isValidCheckout || loading || creatingQuote"
-                :is-waiting="creatingOrder"
-                class="uppercase w-full"
-                @click="createOrder"
-              >
-                {{ $t("pages.checkout.order_summary_block.place_order_button") }}
-              </VcButton>
-
-              <div
-                v-if="!isValidCheckout && !creatingOrder"
-                class="flex items-center space-x-2 bg-primary-100 rounded mt-3 p-3 text-xs"
-              >
-                <i class="fas fa-exclamation-triangle text-xl text-primary-600" />
-                <span v-t="'pages.checkout.invalid_checkout_message'" />
-              </div>
-            </template>
-          </OrderSummary>
-
-          <VcCard
-            v-if="$cfg.quotes_enabled && isAuthenticated"
-            :title="$t('shared.checkout.quote.title')"
-            header-classes="px-6 py-3"
-            content-classes="px-6 pt-4 pb-5"
-            shadow
-          >
-            <p class="mb-5 text-xs font-normal text-gray-400" v-t="'shared.checkout.quote.text'" />
+          <template #footer>
+            <p class="mt-6 mb-5 text-xs font-normal text-gray-400">
+              {{ $t("common.messages.checkout_pricing_warning") }}
+            </p>
 
             <VcButton
-              :is-disabled="loading || creatingOrder"
-              :is-waiting="creatingQuote"
-              class="w-full uppercase"
-              is-outline
-              @click="createQuote"
+              :is-disabled="orderCreationDisabled"
+              :is-waiting="creatingOrder"
+              class="uppercase w-full"
+              @click="createOrder"
             >
-              {{ $t("shared.checkout.quote.buttons.add_items_to_quote") }}
+              {{ $t("common.buttons.place_order") }}
             </VcButton>
-          </VcCard>
-        </div>
-      </div>
-    </div>
-  </div>
+
+            <div
+              v-if="!isValidCheckout && !creatingOrder"
+              class="flex items-center space-x-2 bg-primary-100 rounded mt-3 p-3 text-xs"
+            >
+              <i class="fas fa-exclamation-triangle text-xl text-primary-600" />
+              <span>{{ $t("common.messages.something_went_wrong") }}</span>
+            </div>
+          </template>
+        </OrderSummary>
+
+        <!-- Create quote widget -->
+        <VcCardWidget v-if="$cfg.quotes_enabled && isAuthenticated" :title="$t('common.titles.quote_request')">
+          <p class="mb-5 text-xs font-normal text-gray-400">
+            {{ $t("common.messages.quote_request") }}
+          </p>
+
+          <VcButton
+            :is-disabled="loading"
+            :is-waiting="creatingQuote"
+            class="w-full uppercase"
+            is-outline
+            @click="createQuote"
+          >
+            {{ $t("common.buttons.create_quote") }}
+          </VcButton>
+        </VcCardWidget>
+      </template>
+    </VcLayoutWithRightSidebar>
+  </VcContainer>
 </template>
 
 <script setup lang="ts">
-import { computed, shallowRef } from "vue";
-import { breakpointsTailwind, invoke, useBreakpoints } from "@vueuse/core";
+import { computed, ref } from "vue";
+import { invoke } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { LineItemType } from "@/xapi";
-import { AddressType, useElementVisibility, useGoogleAnalytics, usePageHead } from "@/core";
-import { CheckoutLabeledBlock, OrderSummary, useCheckout } from "@/shared/checkout";
-import { CartLineItems, useCart, useCoupon, usePurchaseOrderNumber } from "@/shared/cart";
+import { useGoogleAnalytics, usePageHead } from "@/core";
 import { useUser } from "@/shared/account";
-import { Vendor } from "@/shared/catalog";
+import { GiftsSection, ProductsSection, useCart, useCoupon, usePurchaseOrderNumber } from "@/shared/cart";
+import {
+  BillingDetailsSection,
+  OrderCommentSection,
+  OrderSummary,
+  ShippingDetailsSection,
+  useCheckout,
+} from "@/shared/checkout";
 
-const breakpoints = useBreakpoints(breakpointsTailwind);
 const router = useRouter();
 const ga = useGoogleAnalytics();
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
-
 const {
-  loading,
-  creatingQuote,
   cart,
   lineItemsGroupedByVendor,
   availableExtendedGifts,
   fetchCart,
   changeItemQuantity,
   removeItem,
-  createQuoteFromCart,
   toggleGift,
   openClearCartModal,
+  createQuoteFromCart,
 } = useCart();
-
 const {
   comment,
   billingAddressEqualsShippingAddress,
-  initialized,
-  creatingOrder,
-  addresses,
+  loading: loadingCheckout,
   shipment,
   payment,
+  initialized,
   isValidCheckout,
   initialize,
   openSelectShipmentMethodModal,
   openSelectPaymentMethodModal,
-  openAddOrUpdateAddressModal,
-  openSelectAddressModal,
+  onDeliveryAddressChange,
+  onBillingAddressChange,
   createOrderFromCart,
 } = useCheckout();
-
 const { purchaseOrderNumber, purchaseOrderNumberIsApplied, setPurchaseOrderNumber, removePurchaseOrderNumber } =
   usePurchaseOrderNumber();
-
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
   useCoupon();
 
@@ -604,13 +201,13 @@ const breadcrumbs: IBreadcrumbs[] = [
   { title: t("common.links.cart"), route: { name: "Cart" } },
 ];
 
-const isMobile = breakpoints.smaller("lg");
+const creatingOrder = ref(false);
+const creatingQuote = ref(false);
 
-const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
-const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
-const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
+const loading = computed<boolean>(() => creatingOrder.value || creatingQuote.value || loadingCheckout.value);
+const orderCreationDisabled = computed<boolean>(() => loading.value || !isValidCheckout.value);
 
-async function handleRemoveItem(lineItem: LineItemType) {
+async function handleRemoveItem(lineItem: LineItemType): Promise<void> {
   await removeItem(lineItem.id);
 
   /**
@@ -620,6 +217,8 @@ async function handleRemoveItem(lineItem: LineItemType) {
 }
 
 async function createOrder(): Promise<void> {
+  creatingOrder.value = true;
+
   const order = await createOrderFromCart();
 
   if (order) {
@@ -633,9 +232,13 @@ async function createOrder(): Promise<void> {
   }
 
   await fetchCart();
+
+  creatingOrder.value = false;
 }
 
-async function createQuote() {
+async function createQuote(): Promise<void> {
+  creatingQuote.value = true;
+
   const quote = await createQuoteFromCart();
 
   if (quote) {
@@ -646,6 +249,8 @@ async function createQuote() {
   }
 
   await fetchCart();
+
+  creatingQuote.value = false;
 }
 
 invoke(async () => {

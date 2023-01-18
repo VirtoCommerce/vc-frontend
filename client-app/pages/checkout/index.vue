@@ -12,12 +12,11 @@
       <template #sidebar>
         <OrderSummary :cart="cart">
           <template #footer>
-            <VcButton class="uppercase w-full mt-4" is-disabled> {Dynamic next step} </VcButton>
+            <p class="mt-6 mb-5 text-xs font-normal text-gray-400">
+              {{ $t("common.messages.checkout_pricing_warning") }}
+            </p>
 
-            <p
-              class="mt-4 text-xs font-normal text-gray-400"
-              v-t="'pages.checkout.order_summary_block.warning_message'"
-            />
+            <VcButton class="uppercase w-full" is-disabled> {Dynamic next step}</VcButton>
           </template>
         </OrderSummary>
       </template>

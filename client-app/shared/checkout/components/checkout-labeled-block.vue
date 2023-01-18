@@ -4,7 +4,7 @@
     <div
       class="p-5 flex flex-col space-y-2 lg:space-y-0 text-sm lg:flex-row lg:justify-between lg:space-x-3 lg:items-center"
     >
-      <slot></slot>
+      <slot />
     </div>
   </div>
 </template>
@@ -17,5 +17,3 @@ defineProps({
   },
 });
 </script>
-
-<style scoped></style>

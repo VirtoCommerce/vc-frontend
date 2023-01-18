@@ -20,11 +20,15 @@ import {
   InputNewCartItemType,
   InputPaymentType,
   InputShipmentType,
+  PaymentMethodType,
+  PaymentType,
   QuoteType,
   rejectGiftItems,
   removeCart as _removeCart,
   removeCartItem,
   removeCoupon,
+  ShipmentType,
+  ShippingMethodType,
   validateCoupon,
 } from "@/xapi";
 import { usePopup } from "@/shared/popup";
@@ -40,6 +44,12 @@ import {
 
 const loading = ref(false);
 const cart = shallowRef<CartType>({ name: "" });
+
+const shipment = computed<ShipmentType | undefined>(() => cart.value.shipments?.[0]);
+const payment = computed<PaymentType | undefined>(() => cart.value.payments?.[0]);
+
+const availableShippingMethods = computed<ShippingMethodType[]>(() => cart.value.availableShippingMethods ?? []);
+const availablePaymentMethods = computed<PaymentMethodType[]>(() => cart.value.availablePaymentMethods ?? []);
 
 const lineItemsGroupedByVendor = computed<TGroupItem[]>(() => {
   // NOTE: The group without the vendor should be displayed last.
@@ -79,8 +89,6 @@ export default function useCart() {
   const notifications = useNotifications();
   const { t } = useI18n();
   const { openPopup } = usePopup();
-
-  const creatingQuote = ref(false);
 
   async function fetchCart(): Promise<CartType> {
     loading.value = true;
@@ -273,11 +281,11 @@ export default function useCart() {
     }
   }
 
-  async function updateShipment(shipment: InputShipmentType, reloadCart = true) {
+  async function updateShipment(newShipment: InputShipmentType, reloadCart = true) {
     loading.value = true;
 
     try {
-      await addOrUpdateCartShipment(shipment, cart.value.id);
+      await addOrUpdateCartShipment(newShipment, cart.value.id);
     } catch (e) {
       Logger.error(`${useCart.name}.${updateShipment.name}`, e);
       throw e;
@@ -290,11 +298,11 @@ export default function useCart() {
     }
   }
 
-  async function updatePayment(payment: InputPaymentType, reloadCart = true) {
+  async function updatePayment(newPayment: InputPaymentType, reloadCart = true) {
     loading.value = true;
 
     try {
-      await addOrUpdateCartPayment(payment, cart.value.id);
+      await addOrUpdateCartPayment(newPayment, cart.value.id);
     } catch (e) {
       Logger.error(`${useCart.name}.${updatePayment.name}`, e);
       throw e;
@@ -310,7 +318,7 @@ export default function useCart() {
   async function createQuoteFromCart(comment = ""): Promise<QuoteType | null> {
     let quote: QuoteType | null = null;
 
-    creatingQuote.value = true;
+    loading.value = true;
 
     try {
       quote = await _createQuoteFromCart(cart.value.id!, comment);
@@ -326,7 +334,7 @@ export default function useCart() {
       });
     }
 
-    creatingQuote.value = false;
+    loading.value = false;
 
     return quote;
   }
@@ -392,6 +400,10 @@ export default function useCart() {
   }
 
   return {
+    shipment,
+    payment,
+    availableShippingMethods,
+    availablePaymentMethods,
     lineItemsGroupedByVendor,
     addedGiftsByIds,
     availableExtendedGifts,
@@ -416,7 +428,6 @@ export default function useCart() {
     toggleGift,
     openClearCartModal,
     loading: readonly(loading),
-    creatingQuote: readonly(creatingQuote),
     cart: computed(() => cart.value),
   };
 }

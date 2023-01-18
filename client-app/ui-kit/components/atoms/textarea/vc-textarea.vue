@@ -51,43 +51,40 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { useVModel } from "@vueuse/core";
 import { useComponentId } from "@/core/composables";
 
-const props = defineProps({
-  readonly: Boolean,
-  disabled: Boolean,
-  required: Boolean,
-  autofocus: Boolean,
-  name: String,
-  label: String,
-  placeholder: String,
-  message: String,
-  error: Boolean,
-  counter: Boolean,
-  maxLength: [Number, String],
-  noResize: Boolean,
-  showEmptyDetails: Boolean,
+interface Props {
+  modelValue: string;
+  readonly?: boolean;
+  disabled?: boolean;
+  required?: boolean;
+  autofocus?: boolean;
+  name?: string;
+  label?: string;
+  placeholder?: string;
+  message?: string;
+  error?: boolean;
+  counter?: boolean;
+  noResize?: boolean;
+  showEmptyDetails?: boolean;
+  maxLength?: number | string;
+  rows?: number | string;
+}
 
-  modelValue: {
-    type: String,
-    default: "",
-  },
+interface Emits {
+  (event: "update:modelValue", value: string): void;
+}
 
-  rows: {
-    type: [Number, String],
-    default: 2,
-  },
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: "",
+  rows: 2,
 });
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits<Emits>();
 
 const componentId = useComponentId("textarea-");
-
-const text = computed<string>({
-  get: () => props.modelValue,
-  set: (newValue) => emit("update:modelValue", newValue),
-});
+const text = useVModel(props, "modelValue", emit);
 </script>
 
 <style lang="scss">

@@ -10,7 +10,7 @@ export default function useCoupon() {
   const { t } = useI18n();
   const { cart, validateCartCoupon, addCartCoupon, removeCartCoupon } = useCart();
 
-  const INVALID_COUPON_MESSAGE = t("pages.checkout.invalid_coupon_message");
+  const INVALID_COUPON_MESSAGE = t("common.messages.invalid_coupon");
 
   const firstCouponInCart = computed<CouponType | undefined>(() => cart.value.coupons?.[0]);
   const isApplied = computed<boolean>(() => Boolean(firstCouponInCart.value?.isAppliedSuccessfully));

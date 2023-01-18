@@ -67,7 +67,7 @@
           <div
             class="min-w-0 font-medium capitalize text-13 lg:text-xs text-gray-600 md:font-bold md:text-gray-800 xl:hidden"
           >
-            <div class="truncate">{{ $t("shared.checkout.cart_line_items.price_per_item") }}:</div>
+            <div class="truncate">{{ $t("common.labels.price_per_item") }}:</div>
           </div>
 
           <div class="grow mb-1 h-4 border-b-2 border-gray-200 border-dotted md:hidden"></div>
@@ -102,7 +102,6 @@
           type="number"
           pattern="\d*"
           @keyup.enter="changeQuantity"
-          @blur="changeQuantity"
           @input="onQuantityChanged"
         />
 
@@ -118,7 +117,7 @@
         <!-- Total -->
         <div class="flex flex-wrap items-center justify-end text-right gap-x-1">
           <div class="text-14 font-bold text-[color:var(--color-price-from)] md:hidden">
-            {{ $t("shared.checkout.cart_line_items.total") }}:
+            {{ $t("common.labels.total") }}:
           </div>
 
           <div class="text-15 font-bold [word-break:break-word]">
@@ -147,21 +146,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, PropType, computed, watchEffect } from "vue";
+import { ref, computed, watchEffect } from "vue";
 import { LineItemType } from "@/xapi";
 import { extendCartItem } from "@/shared/checkout";
 
-const props = defineProps({
-  disabled: Boolean,
-  readonly: Boolean,
+interface Props {
+  disabled?: boolean;
+  readonly?: boolean;
+  item: LineItemType;
+}
 
-  item: {
-    type: Object as PropType<LineItemType>,
-    required: true,
-  },
-});
+interface Emits {
+  (event: "change:quantity", quantity: number): void;
+  (event: "remove"): void;
+}
 
-const emit = defineEmits(["remove", "change-quantity"]);
+const props = defineProps<Props>();
+const emit = defineEmits<Emits>();
 
 let timeoutIdOfQuantityChange: number;
 
@@ -183,7 +184,7 @@ function changeQuantity() {
     return;
   }
 
-  emit("change-quantity", newQuantity);
+  emit("change:quantity", newQuantity);
 }
 
 function onQuantityChanged(): void {
