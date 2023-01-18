@@ -58,8 +58,8 @@ defineProps({
 
 <style lang="scss">
 .vc-steps {
-  $itemActive: '';
-  $itemCompleted: '';
+  $itemActive: "";
+  $itemCompleted: "";
 
   @apply flex flex-wrap gap-x-5 gap-y-2.5;
 

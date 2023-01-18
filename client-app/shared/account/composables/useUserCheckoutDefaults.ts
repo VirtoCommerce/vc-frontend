@@ -1,7 +1,6 @@
 import { useUser } from ".";
-import { CheckoutDefaults } from "./../types/index";
 import { Logger } from "@/core/utilities";
-import { PaymentMethodType, ShippingMethodType } from "@/xapi/types";
+import { CheckoutDefaults } from "@/shared/account";
 
 export default function useUserCheckoutDefaults() {
   const { user } = useUser();
@@ -11,37 +10,7 @@ export default function useUserCheckoutDefaults() {
     localStorage.setItem(`${keyPrefix}${user.value.id}`, JSON.stringify(defaults));
   }
 
-  /**
-   * Migration to another data type
-   * @deprecated
-   * @todo Remove in the first quarter of 2023
-   */
-  function migration(
-    defaults:
-      | (CheckoutDefaults & /* deprecated type */ {
-          shippingMethod?: ShippingMethodType;
-          paymentMethod?: PaymentMethodType;
-        })
-      | null
-  ): CheckoutDefaults | null {
-    const { shippingMethod, paymentMethod, deliveryMethod } = defaults || {};
-
-    if (!shippingMethod && !paymentMethod) {
-      return defaults;
-    }
-
-    const newDefaults: CheckoutDefaults = {
-      deliveryMethod,
-      shippingMethodId: shippingMethod?.id,
-      paymentMethodCode: paymentMethod?.code,
-    };
-
-    setUserCheckoutDefaults(newDefaults);
-
-    return newDefaults;
-  }
-
-  function getUserCheckoutDefaults(): CheckoutDefaults | null {
+  function getUserCheckoutDefaults(): CheckoutDefaults {
     let result: CheckoutDefaults | null = null;
 
     const value = localStorage.getItem(`${keyPrefix}${user.value.id}`);
@@ -54,7 +23,7 @@ export default function useUserCheckoutDefaults() {
       }
     }
 
-    return migration(result);
+    return result ?? {};
   }
 
   return {
