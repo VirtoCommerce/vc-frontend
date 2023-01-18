@@ -3,7 +3,7 @@
     :class="[
       'vc-wishlist-line-item',
       {
-        'vc-wishlist-line-item--not-exists': !item.product,
+        'vc-wishlist-line-item--not-exists': !extendedItem.extended.isProductExists,
       },
     ]"
   >
@@ -14,26 +14,32 @@
     <div class="vc-wishlist-line-item__grid">
       <div class="vc-wishlist-line-item__product">
         <!--  IMAGE -->
-        <VcImage :src="item.imageUrl" :alt="item.name" size-suffix="sm" class="vc-wishlist-line-item__img" lazy />
+        <VcImage
+          :src="extendedItem.imageUrl"
+          :alt="extendedItem.name"
+          size-suffix="sm"
+          class="vc-wishlist-line-item__img"
+          lazy
+        />
 
         <!-- NAME -->
         <router-link
-          v-if="route"
-          :to="route"
-          :title="item.name"
+          v-if="extendedItem.extended.route"
+          :to="extendedItem.extended.route"
+          :title="extendedItem.name"
           class="vc-wishlist-line-item__name vc-wishlist-line-item__name--link"
         >
-          {{ item.name }}
+          {{ extendedItem.name }}
         </router-link>
-        <div class="vc-wishlist-line-item__name" v-else>
-          {{ item.name }}
+        <div v-else class="vc-wishlist-line-item__name">
+          {{ extendedItem.name }}
         </div>
       </div>
 
       <!-- PROPERTIES -->
       <div class="vc-wishlist-line-item__properties">
         <VcLineItemProperty
-          v-for="property in item.product?.properties?.slice(0, 3)"
+          v-for="property in extendedItem.extended.displayProperties"
           :key="property.id"
           :label="property.label"
         >
@@ -42,27 +48,27 @@
 
         <div class="xl:hidden">
           <VcLineItemProperty :label="$t('shared.wishlists.wishlist_line_items.price_per_item')">
-            <VcLineItemPrice :value="{ list: item.listPrice, actual: item.salePrice }" />
+            <VcLineItemPrice :value="{ list: extendedItem.listPrice, actual: extendedItem.salePrice }" />
           </VcLineItemProperty>
         </div>
       </div>
 
       <!-- PRICE -->
       <div class="vc-wishlist-line-item__price">
-        <VcLineItemPrice :value="{ list: item.listPrice, actual: item.salePrice }" />
+        <VcLineItemPrice :value="{ list: extendedItem.listPrice, actual: extendedItem.salePrice }" />
       </div>
 
       <!-- ADD-TO-CART -->
       <div class="vc-wishlist-line-item__quantity">
-        <AddToCart v-if="item.product" :product="item.product" />
+        <AddToCart v-if="extendedItem.extended.isProductExists" :product="extendedItem.product!" />
 
         <div class="vc-wishlist-line-item__quantity-badges">
           <VcInStock
-            :is-in-stock="item.product?.availabilityData?.isInStock || false"
-            :is-available="!!item.product"
-            :quantity="item.product ? item.product.availabilityData?.availableQuantity : undefined"
-          ></VcInStock>
-          <VcCountInCart :productId="item.product?.id" />
+            :is-in-stock="extendedItem.product?.availabilityData?.isInStock || false"
+            :is-available="extendedItem.extended.isProductExists"
+            :quantity="extendedItem.product?.availabilityData?.availableQuantity"
+          />
+          <VcCountInCart :productId="extendedItem.product?.id" />
         </div>
       </div>
 
@@ -82,10 +88,9 @@
 
 <script setup lang="ts">
 import { computed, PropType } from "vue";
-import { RouteLocationRaw } from "vue-router";
 import { LineItemType } from "@/xapi";
 import { AddToCart } from "@/shared/cart";
-import { getProductRoute } from "@/core";
+import { extendWishListItem } from "@/shared/wishlists";
 
 const props = defineProps({
   item: {
@@ -94,9 +99,9 @@ const props = defineProps({
   },
 });
 
-const route = computed<RouteLocationRaw>(() => getProductRoute(props.item.product?.id ?? "", props.item.product?.slug));
-
 defineEmits(["remove"]);
+
+const extendedItem = computed(() => extendWishListItem(props.item));
 </script>
 
 <style scoped lang="scss">

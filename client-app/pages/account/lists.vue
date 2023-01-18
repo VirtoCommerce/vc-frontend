@@ -12,7 +12,7 @@
         class="px-3 uppercase"
         size="sm"
         is-outline
-        @click="openCreateListDialog"
+        @click="openCreateListModal"
       >
         <i class="fa fa-plus text-inherit -ml-0.5 mr-2" />
 
@@ -44,8 +44,8 @@
           v-for="list in lists"
           :key="list.id"
           :list="list"
-          @settings="openListSettingsDialog(list)"
-          @remove="openDeleteListDialog(list)"
+          @settings="openListSettingsModal(list)"
+          @remove="openDeleteListModal(list)"
         />
       </template>
     </div>
@@ -57,7 +57,7 @@
       </template>
 
       <template #button>
-        <VcButton class="px-6 uppercase" size="lg" @click="openCreateListDialog">
+        <VcButton class="px-6 uppercase" size="lg" @click="openCreateListModal">
           <i class="fa fa-plus text-inherit -ml-0.5 mr-2.5" />
           {{ $t("pages.account.lists.create_list_button") }}
         </VcButton>
@@ -71,9 +71,9 @@ import { computed, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import {
-  AddOrUpdateWishlistDialog,
-  DeleteWishlistsDialog,
-  UnsuccessfulCreateWishlistDialog,
+  AddOrUpdateWishlistModal,
+  DeleteWishlistsModal,
+  UnsuccessfulCreateWishlistModal,
   useWishlists,
   WishlistCard,
   WishlistCardSkeleton,
@@ -97,30 +97,30 @@ const listsLimit = config?.wishlists_limit || DEFAULT_WISHLIST_LIMIT;
 
 const creationButtonDisabled = computed(() => lists.value.length >= listsLimit);
 
-function openCreateListDialog() {
+function openCreateListModal() {
   if (creationButtonDisabled.value) {
     openPopup({
-      component: UnsuccessfulCreateWishlistDialog,
+      component: UnsuccessfulCreateWishlistModal,
     });
   } else {
     openPopup({
-      component: AddOrUpdateWishlistDialog,
+      component: AddOrUpdateWishlistModal,
     });
   }
 }
 
-function openListSettingsDialog(list: WishlistType) {
+function openListSettingsModal(list: WishlistType) {
   openPopup({
-    component: AddOrUpdateWishlistDialog,
+    component: AddOrUpdateWishlistModal,
     props: {
       list,
     },
   });
 }
 
-function openDeleteListDialog(list: WishlistType) {
+function openDeleteListModal(list: WishlistType) {
   openPopup({
-    component: DeleteWishlistsDialog,
+    component: DeleteWishlistsModal,
     props: {
       list,
     },
@@ -135,7 +135,7 @@ function itemActionsBuilder() {
       left: true,
       classes: "bg-[color:var(--color-danger)]",
       clickHandler(list: WishlistType) {
-        openDeleteListDialog(list);
+        openDeleteListModal(list);
       },
     },
     {
@@ -143,7 +143,7 @@ function itemActionsBuilder() {
       title: t("common.buttons.settings"),
       classes: "bg-gray-550",
       clickHandler(list: WishlistType) {
-        openListSettingsDialog(list);
+        openListSettingsModal(list);
       },
     },
   ];

@@ -19,7 +19,7 @@
             ? $t('shared.catalog.product_details.price_block.add_to_list_button_unauthorized_title')
             : undefined
         "
-        @click="addToList"
+        @click="openAddToListModal"
       >
         <svg
           height="16"
@@ -99,7 +99,7 @@ import { Product } from "@/xapi/types";
 import { PropType, ref, computed, shallowRef } from "vue";
 import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
-import { AddToWishlistsDialog } from "@/shared/wishlists";
+import { AddToWishlistsModal } from "@/shared/wishlists";
 import { stringFormat } from "@/core/utilities";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
@@ -127,13 +127,13 @@ const { openPopup } = usePopup();
 const pageUrl = computed(() => location.origin + route.fullPath);
 const shareProductPopoverShown = ref(false);
 
-function addToList() {
+function openAddToListModal() {
   if (!isAuthenticated.value) {
     return;
   }
 
   openPopup({
-    component: AddToWishlistsDialog,
+    component: AddToWishlistsModal,
     props: {
       product: props.product,
     },

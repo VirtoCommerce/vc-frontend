@@ -18,11 +18,11 @@
     </div>
 
     <!-- table body -->
-    <div class="vc-wishlist-line-items__body" v-if="items.length">
-      <WishlistLineItem v-for="item in items" :key="item.id" :item="item" @remove="$emit('remove:item', item)" />
+    <div v-if="items.length" class="vc-wishlist-line-items__body">
+      <WishlistLineItem v-for="item in items" :key="item.id" :item="item" @remove="$emit('item:remove', item)" />
     </div>
 
-    <div class="vc-wishlist-line-items__empty" v-else>
+    <div v-else class="vc-wishlist-line-items__empty">
       <VcAlert type="warning" icon>
         {{ $t("shared.wishlists.wishlist_line_items.no_items_message") }}
       </VcAlert>
@@ -33,7 +33,7 @@
 <script setup lang="ts">
 import { PropType } from "vue";
 import { LineItemType } from "@/xapi";
-import WishlistLineItem from "./wishlist-line-item.vue";
+import { WishlistLineItem } from "@/shared/wishlists";
 
 defineProps({
   items: {
@@ -42,7 +42,7 @@ defineProps({
   },
 });
 
-defineEmits(["remove:item"]);
+defineEmits(["item:remove"]);
 </script>
 
 <style scoped lang="scss">

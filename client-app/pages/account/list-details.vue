@@ -9,7 +9,7 @@
       </h2>
 
       <div v-if="!isMobile" class="flex gap-x-3">
-        <VcButton class="px-3 uppercase w-36" size="sm" is-outline @click="openListSettingsDialog">
+        <VcButton class="px-3 uppercase w-36" size="sm" is-outline @click="openListSettingsModal">
           <i class="fas fa-cog text-inherit -ml-0.5 mr-2" />
           {{ $t("shared.wishlists.list_card.list_settings_button") }}
         </VcButton>
@@ -43,15 +43,15 @@
     <!-- List details -->
     <template v-else-if="listItems.length">
       <div class="flex flex-col gap-6 p-5 bg-white md:rounded md:border md:shadow-t-3sm">
-        <WishlistLineItems :items="listItems" @remove:item="openDeleteProductDialog" />
-        <VcPagination class="self-start" v-model:page="page" :pages="pages" @update:page="onUpdatePage()" />
+        <WishlistLineItems :items="listItems" @item:remove="openDeleteProductModal" />
+        <VcPagination v-model:page="page" :pages="pages" class="self-start" @update:page="onUpdatePage()" />
       </div>
     </template>
 
     <!-- Empty -->
     <VcEmptyView v-else :text="$t('shared.wishlists.list_details.empty_list')">
       <template #icon>
-        <VcImage src="/static/images/common/list.svg" :alt="$t('shared.wishlists.list_details.list_icon')" />
+        <VcImage :alt="$t('shared.wishlists.list_details.list_icon')" src="/static/images/common/list.svg" />
       </template>
 
       <template #button>
@@ -68,8 +68,8 @@ import {
   WishlistProductItemSkeleton,
   WishlistLineItems,
   useWishlists,
-  AddOrUpdateWishlistDialog,
-  DeleteWishlistProductDialog,
+  AddOrUpdateWishlistModal,
+  DeleteWishlistProductModal,
 } from "@/shared/wishlists";
 import { LineItemType } from "@/xapi/types";
 import { ProductSkeletonGrid } from "@/shared/catalog";
@@ -113,9 +113,9 @@ function addAllToCart() {
 }
 */
 
-function openDeleteProductDialog(item: LineItemType) {
+function openDeleteProductModal(item: LineItemType) {
   openPopup({
-    component: DeleteWishlistProductDialog,
+    component: DeleteWishlistProductModal,
     props: {
       listItem: item,
       listId: list.value?.id,
@@ -136,9 +136,9 @@ function openDeleteProductDialog(item: LineItemType) {
   });
 }
 
-function openListSettingsDialog() {
+function openListSettingsModal() {
   openPopup({
-    component: AddOrUpdateWishlistDialog,
+    component: AddOrUpdateWishlistModal,
     props: {
       list: list.value,
     },
