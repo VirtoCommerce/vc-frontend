@@ -1,18 +1,18 @@
 import { computed, readonly, ref, shallowRef } from "vue";
-import { childCategories, ChildCategoriesQueryResponseType } from "@/xapi";
+import { getChildCategories, QueryChildCategoriesArgs, Category } from "@/xapi";
 import { Logger } from "@/core";
 
 const loading = ref(true);
-const catalogMenu = shallowRef<ChildCategoriesQueryResponseType>();
+const catalogMenuItems = shallowRef<Category[]>([]);
 
 export default function useCatalogMenu() {
-  async function fetchCatalogMenu(maxLevel: number, onlyActive: boolean, categoryId?: string): Promise<void> {
+  async function fetchCatalogMenuItems(payload: QueryChildCategoriesArgs): Promise<void> {
     loading.value = true;
 
     try {
-      catalogMenu.value = await childCategories(maxLevel, onlyActive, categoryId);
+      catalogMenuItems.value = await getChildCategories(payload);
     } catch (e) {
-      Logger.error(`${useCatalogMenu.name}.${fetchCatalogMenu.name}`, e);
+      Logger.error(`${useCatalogMenu.name}.${fetchCatalogMenuItems.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -21,7 +21,7 @@ export default function useCatalogMenu() {
 
   return {
     loading: readonly(loading),
-    catalogMenu: computed(() => catalogMenu.value),
-    fetchCatalogMenu,
+    catalogMenuItems: computed(() => catalogMenuItems.value),
+    fetchCatalogMenuItems,
   };
 }

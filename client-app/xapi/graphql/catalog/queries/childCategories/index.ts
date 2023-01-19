@@ -1,10 +1,11 @@
 import { DocumentNode } from "graphql";
 import { gql } from "graphql-tag";
 import globals from "@/core/globals";
-import { Query, QueryChildCategoriesArgs } from "@/xapi/types";
+import { Category, Query, QueryChildCategoriesArgs } from "@/xapi/types";
 
 function getQueryResponseTree(level: number): string {
   const newLevel = level - 1;
+
   if (newLevel >= 0) {
     return `
       childCategories {
@@ -32,22 +33,21 @@ function getQueryResponseTree(level: number): string {
   return "";
 }
 
-function getResponseTreeDocumentNode(maxLevel: number): DocumentNode {
-  let tree = "";
-  tree += getQueryResponseTree(maxLevel);
+function getChildCategoriesFragment(maxLevel: number): DocumentNode {
+  const tree: string = getQueryResponseTree(maxLevel);
 
   return gql`
-    fragment childCategories on ChildCategoriesQueryResponseType {
+    fragment childCategoriesFields on ChildCategoriesQueryResponseType {
       ${tree}
     }
   `;
 }
 
 function getQueryDocument(maxLevel: number): DocumentNode {
-  const responseTree = getResponseTreeDocumentNode(maxLevel);
+  const childCategorisFragment = getChildCategoriesFragment(maxLevel);
 
   const query: DocumentNode = gql`
-    ${responseTree}
+    ${childCategorisFragment}
     query ChildCategories(
       $storeId: String
       $userId: String
@@ -66,7 +66,7 @@ function getQueryDocument(maxLevel: number): DocumentNode {
         maxLevel: $maxLevel
         onlyActive: $onlyActive
       ) {
-        ...childCategories
+        ...childCategoriesFields
       }
     }
   `;
@@ -74,22 +74,20 @@ function getQueryDocument(maxLevel: number): DocumentNode {
   return query;
 }
 
-export default async function childCategories(maxLevel: number, onlyActive: boolean, categoryId?: string) {
+export default async function getChildCategories(payload: QueryChildCategoriesArgs): Promise<Category[]> {
   const { storeId, userId, cultureName, currencyCode } = globals;
   const { $graphqlClient } = useNuxtApp();
 
   const { data } = await $graphqlClient.query<Required<Pick<Query, "childCategories">>, QueryChildCategoriesArgs>({
-    query: getQueryDocument(maxLevel),
+    query: getQueryDocument(payload.maxLevel!),
     variables: {
       storeId,
       userId,
       cultureName,
       currencyCode,
-      categoryId,
-      maxLevel,
-      onlyActive,
+      ...payload,
     },
   });
 
-  return data.childCategories;
+  return data.childCategories.childCategories ?? [];
 }

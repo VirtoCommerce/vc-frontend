@@ -41,7 +41,7 @@ const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
 const { fetchCategories } = useCategories();
-const { fetchCatalogMenu } = useCatalogMenu();
+const { fetchCatalogMenuItems } = useCatalogMenu();
 const { isBodyScrollable } = useDomUtils();
 const { fetchMenus } = useNavigations();
 const { fetchCart } = useCart();
@@ -65,7 +65,10 @@ router.beforeEach(async (to) => {
 });
 
 fetchMenus();
-fetchCatalogMenu(2, true);
+fetchCatalogMenuItems({
+  maxLevel: 2,
+  onlyActive: true,
+});
 fetchCategories();
 fetchCart();
 </script>
