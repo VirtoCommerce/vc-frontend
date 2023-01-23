@@ -10,7 +10,7 @@
       :class="[
         disabled
           ? `border-gray-200 ${checked ? 'bg-gray-300' : 'bg-gray-50'}`
-          : `border-gray-300 bg-white checked:bg-${color}`,
+          : `border-gray-300 bg-white checked:bg-[color:var(--color-primary)]`,
       ]"
       class="form-tick appearance-none flex-shrink-0 w-5 h-5 border-2 rounded cursor-pointer disabled:cursor-not-allowed checked:border-transparent"
       @change="change"
@@ -36,11 +36,6 @@ const props = defineProps({
   name: {
     type: String,
     default: null,
-  },
-
-  color: {
-    type: String,
-    default: "[color:var(--color-primary)]",
   },
 
   // only for array of model value

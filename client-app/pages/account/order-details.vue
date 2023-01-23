@@ -11,31 +11,6 @@
       </h2>
     </div>
 
-    <!-- Order details -->
-    <!-- <div class="md:flex mx-5 md:mx-0 gap-x-4">
-      <div class="text-sm">
-        <span class="font-bold">
-          {{ $t("pages.account.order_details.status_label") }}
-        </span>
-
-        {{ order?.status }}
-      </div>
-
-      <div class="text-sm truncate" v-if="order?.purchaseOrderNumber">
-        <span class="font-bold">
-          {{ $t("pages.account.order_details.purchase_order_label") }}
-        </span>
-        {{ order?.purchaseOrderNumber }}
-      </div>
-
-      <div class="text-sm">
-        <span class="font-bold">
-          {{ $t("pages.account.order_details.placed_on_label") }}
-        </span>
-        {{ $d(order?.createdDate, "long") }}
-      </div>
-    </div> -->
-
     <div class="flex flex-col lg:flex-row lg:flex-nowrap lg:space-x-6">
       <!-- Main section -->
       <div class="lg:w-3/4 xl:w-4/5 flex-grow w-full">

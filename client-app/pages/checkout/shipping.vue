@@ -1,9 +1,16 @@
 <template>
-  <VcSectionWidget :title="'Specify shipping details'" icon="truck"></VcSectionWidget>
+  <ShippingDetailsSection
+    :shipment="shipment"
+    :disabled="loading"
+    @change:address="onDeliveryAddressChange"
+    @change:method="openSelectShipmentMethodModal"
+  />
 
-  <VcSectionWidget :title="'Order comment'" icon="document-text">
-    <VcTextarea label="Normal input" placeholder="Please enter value" :max-length="1000" :rows="4" counter />
-  </VcSectionWidget>
+  <OrderCommentSection v-model:comment="comment" />
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { OrderCommentSection, ShippingDetailsSection, useCheckout } from "@/shared/checkout";
+
+const { comment, loading, shipment, openSelectShipmentMethodModal, onDeliveryAddressChange } = useCheckout();
+</script>

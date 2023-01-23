@@ -37,7 +37,7 @@
       <VcTextarea
         v-model.trim="message"
         :label="$t('shared.account.invite_member_dialog.message_label')"
-        :placeholder="$t('shared.account.invite_member_dialog.message_placeholder')"
+        :placeholder="$t('common.placeholders.enter_value')"
         :disabled="loading"
         :max-length="1000"
         :message="errors.message"
