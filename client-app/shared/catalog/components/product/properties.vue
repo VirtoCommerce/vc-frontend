@@ -17,7 +17,7 @@
       class="mb-4"
     >
       <Vendor :vendor="product.vendor" />
-      <VcRating :rating="product.vendor?.rating" class="text-xs" />
+      <Rating :rating="product.vendor?.rating" class="text-xs" />
     </ProductProperty>
   </ProductTitledBlock>
 </template>
