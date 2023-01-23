@@ -28,9 +28,11 @@
           :to="extendedItem.extended.route"
           :title="extendedItem.name"
           class="vc-wishlist-line-item__name vc-wishlist-line-item__name--link"
+          @click="sendGASelectItemEvent"
         >
           {{ extendedItem.name }}
         </router-link>
+
         <div v-else class="vc-wishlist-line-item__name">
           {{ extendedItem.name }}
         </div>
@@ -89,6 +91,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { LineItemType } from "@/xapi";
+import { useGoogleAnalytics } from "@/core";
 import { AddToCart } from "@/shared/cart";
 import { extendWishListItem } from "@/shared/wishlists";
 
@@ -103,7 +106,15 @@ interface Emits {
 const props = defineProps<Prop>();
 defineEmits<Emits>();
 
+const ga = useGoogleAnalytics();
+
 const extendedItem = computed(() => extendWishListItem(props.item));
+
+function sendGASelectItemEvent() {
+  if (props.item.product) {
+    ga.selectItem(props.item.product);
+  }
+}
 </script>
 
 <style scoped lang="scss">
