@@ -129,8 +129,7 @@ const buttonClasses = computed<string>(() => {
 
 function isActiveItem(item: unknown): boolean {
   const value = getValue(item, props.valueField);
-  const result = value === props.modelValue;
-  return result;
+  return value === props.modelValue;
 }
 
 function hideList() {

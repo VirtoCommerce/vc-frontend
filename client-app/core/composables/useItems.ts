@@ -125,12 +125,12 @@ export function useItems<CustomSearchParams, Item>(
   }
 
   async function applyFilters(param: string | Filters | undefined): Promise<void> {
-    const filters =
-      param !== undefined
-        ? Array.isArray(param)
-          ? param
-          : SearchPhraseParser.INSTANCE.parse(param).filters
-        : undefined;
+    let filters: Filters | undefined;
+    if (param === undefined) {
+      filters = undefined;
+    } else {
+      filters = Array.isArray(param) ? param : SearchPhraseParser.INSTANCE.parse(param).filters;
+    }
     await changePage(1, { filters });
   }
 
