@@ -7,7 +7,6 @@ import {
   DEFAULT_PAGES,
   DEFAULT_PAGE_SIZE,
   DEFAULT_SORT,
-  Filter,
   Filters,
   Load,
   PageSize,
@@ -31,7 +30,7 @@ export interface UseItems<Item> extends UseLoading<Partial<SearchParams>> {
   page: Readonly<Ref<number>>;
   keyword: Readonly<Ref<string>>;
   sort: Readonly<Ref<Sort>>;
-  filters: Readonly<Ref<Filters | undefined>>;
+  filters?: Ref<DeepReadonly<Filters> | undefined>;
   items: Ref<DeepReadonly<Item[]>>;
   changePage: (page: number, params: Partial<Omit<SearchParams, "page">>) => Promise<void>;
   applySort: (param: string | Sort) => Promise<void>;
@@ -121,14 +120,17 @@ export function useItems<CustomSearchParams, Item>(
   }
 
   async function applySort(param: string | Sort): Promise<void> {
-    const sort = param instanceof Sort ? (param as Sort) : Sort.fromString(param as string);
+    const sort = param instanceof Sort ? param : Sort.fromString(param);
     await changePage(1, { sort });
   }
 
   async function applyFilters(param: string | Filters | undefined): Promise<void> {
-    const filters = Array.isArray(param)
-      ? (param as Filters)
-      : SearchPhraseParser.INSTANCE.parse(param as string).filters;
+    const filters =
+      param !== undefined
+        ? Array.isArray(param)
+          ? param
+          : SearchPhraseParser.INSTANCE.parse(param).filters
+        : undefined;
     await changePage(1, { filters });
   }
 
@@ -142,7 +144,7 @@ export function useItems<CustomSearchParams, Item>(
     page,
     keyword,
     sort,
-    filters: filters as Ref<Filter[] | undefined>,
+    filters,
     items: readonly(items),
     changePage,
     applySort,
