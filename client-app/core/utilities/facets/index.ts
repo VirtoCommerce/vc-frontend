@@ -32,14 +32,6 @@ export function getFilterExpressionFromFacets(facets: MaybeRef<FacetItem[]>): st
   return result.join(" ");
 }
 
-/**
- * @deprecated Use Range<T> instead
- */
-export function getFilterExpressionFromFacetRange(facetRange: FacetRangeType): string {
-  const rangeValue = RangeFilterValue.fromFacetRange(facetRange);
-  return rangeValue.toString();
-}
-
 export function termFacetToCommonFacet(termFacet: TermFacet): FacetItem {
   return {
     type: "terms",
@@ -64,7 +56,7 @@ export function rangeFacetToCommonFacet(rangeFacet: RangeFacet): FacetItem {
     values: rangeFacet.ranges!.map<FacetValueItem>((facetRange: FacetRangeType) => ({
       count: facetRange.count,
       label: facetRange.label!,
-      value: getFilterExpressionFromFacetRange(facetRange),
+      value: RangeFilterValue.fromFacetRange(facetRange).toString(),
       selected: facetRange.isSelected!,
     })),
   };
