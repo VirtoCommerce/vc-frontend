@@ -37,6 +37,10 @@ query GetWishlist($listId: String!) {
           isInStock
           availableQuantity
         }
+        properties {
+          value
+          label
+        }
         price {
           actual {
             amount

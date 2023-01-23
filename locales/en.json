@@ -91,6 +91,7 @@
       "item_quantity_required_field": "Item quantity value cannot be null",
       "max_value": "Maximum value is {value}",
       "min_value": "Minimum value is {value}",
+      "empty_wish_list": "There are no items in the list",
       "not_defined": "Undefined",
       "something_went_wrong": "Whoops! Something went wrong. Please check whether everything is correct and try again.",
       "invalid_coupon": "This code does not match any active coupons. Please check whether everything is correct and try again.",
@@ -646,7 +647,7 @@
       },
       "delete_wishlist_dialog": {
         "title": "Confirm Delete",
-        "message": "Are you sure you want to remove the “<span class=\"font-extrabold\">{listName}</span>” list?",
+        "message": "Are you sure you want to remove the “{listName}” list?",
         "delete_button": "@:common.buttons.delete",
         "cancel_button": "@:common.buttons.cancel"
       },

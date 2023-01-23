@@ -40,3 +40,4 @@ export { default as VcTransitionScale } from "./transition-scale/vc-transition-s
 export { default as VcTypography } from "./typography/vc-typography.vue";
 export { default as VcAddressInfo } from "./address-info/vc-address-info.vue";
 export { default as VcCountInCart } from "./count-in-cart/vc-count-in-cart.vue";
+export { default as VcLineItemProperty } from "./line-item-property/vc-line-item-property.vue";

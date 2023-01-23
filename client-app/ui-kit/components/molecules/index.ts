@@ -5,6 +5,7 @@ export { default as VcExpansionPanel } from "./expansion-panel/vc-expansion-pane
 export { default as VcImageGallery } from "./image-gallery/vc-image-gallery.vue";
 export { default as VcItemPrice } from "./item-price/vc-item-price.vue";
 export { default as VcItemPriceCatalog } from "./item-price-catalog/vc-item-price-catalog.vue";
+export { default as VcLineItemPrice } from "./line-item-price/vc-line-item-price.vue";
 export { default as VcLoaderOverlay } from "./loader-overlay/vc-loader-overlay.vue";
 export { default as VcLoaderWithText } from "./loader-with-text/vc-loader-with-text.vue";
 export { default as VcLayoutWithRightSidebar } from "./layout-with-right-sidebar/vc-layout-with-right-sidebar.vue";

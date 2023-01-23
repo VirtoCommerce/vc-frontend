@@ -1,7 +1,7 @@
 <template>
   <VcTooltip :placement="tooltipPlacement" strategy="fixed">
     <template #trigger>
-      <button class="block disabled:opacity-40" :disabled="!isAuthenticated" @click="addToList">
+      <button class="block disabled:opacity-40" :disabled="!isAuthenticated" @click="openAddToListModal">
         <svg
           :class="[
             customClass,
@@ -26,7 +26,7 @@ import { PropType } from "vue";
 import { Product } from "@/xapi/types";
 import { usePopup } from "@/shared/popup";
 import { useUser } from "@/shared/account";
-import { AddToWishlistsDialog } from "@/shared/wishlists";
+import { AddToWishlistsModal } from "@/shared/wishlists";
 
 const props = defineProps({
   product: {
@@ -46,13 +46,13 @@ const props = defineProps({
 const { openPopup } = usePopup();
 const { isAuthenticated } = useUser();
 
-function addToList() {
+function openAddToListModal() {
   if (!isAuthenticated.value) {
     return;
   }
 
   openPopup({
-    component: AddToWishlistsDialog,
+    component: AddToWishlistsModal,
     props: {
       product: props.product,
     },
