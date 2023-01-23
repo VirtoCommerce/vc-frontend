@@ -6,7 +6,6 @@ export abstract class NamedFilter<Value> extends Filter<Value> {
   }
 
   toString(): string {
-    const result = `${this.fieldName}:${this.value}`;
-    return result;
+    return `${this.fieldName}:${this.value}`;
   }
 }

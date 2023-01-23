@@ -22,8 +22,7 @@ export function useLoading<Param, Payload = void, Result = void>(
     loading.value = true;
 
     try {
-      const result = await innerLoad(payload);
-      return result;
+      return await innerLoad(payload);
     } catch (e) {
       Logger.error(`${useLoading.name}.${load.name}`, e);
       throw e;

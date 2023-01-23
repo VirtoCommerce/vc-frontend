@@ -5,12 +5,10 @@ export type Filters = Filter[];
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Filters {
   export function toStrings(filters: Filters | undefined): string[] | undefined {
-    const result = filters?.map((filter) => filter.toString());
-    return result;
+    return filters?.map((filter) => filter.toString());
   }
 
   export function toString(filters: Filters | undefined): string | undefined {
-    const result = toStrings(filters)?.join(" ");
-    return result;
+    return toStrings(filters)?.join(" ");
   }
 }

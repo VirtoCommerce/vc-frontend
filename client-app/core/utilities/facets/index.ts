@@ -37,8 +37,7 @@ export function getFilterExpressionFromFacets(facets: MaybeRef<FacetItem[]>): st
  */
 export function getFilterExpressionFromFacetRange(facetRange: FacetRangeType): string {
   const rangeValue = RangeFilterValue.fromFacetRange(facetRange);
-  const result = rangeValue.toString();
-  return result;
+  return rangeValue.toString();
 }
 
 export function termFacetToCommonFacet(termFacet: TermFacet): FacetItem {

@@ -6,8 +6,7 @@ export class Sort extends Entity {
   }
 
   override toString(): string {
-    const result = `${this.fieldName}:${this.direction}`;
-    return result;
+    return `${this.fieldName}:${this.direction}`;
   }
 
   static fromString(str: string): Sort {

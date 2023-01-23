@@ -16,8 +16,6 @@ export class SearchPhraseParser {
 
     antlr4.tree.ParseTreeWalker.DEFAULT.walk(listener, parser.searchPhrase());
 
-    const result = new SearchPhraseParseResult(listener.keywords.join(" "), listener.filters);
-
-    return result;
+    return new SearchPhraseParseResult(listener.keywords.join(" "), listener.filters);
   }
 }

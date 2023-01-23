@@ -64,8 +64,7 @@ export function useItems<CustomSearchParams, Item>(
     defaultValue: defaults.sort.toString(),
     validator: (sortValue: NonNullable<LocationQueryValue>) => {
       const sort = Sort.fromString(sortValue);
-      const result = options.sort.some((sortOption) => _.isEqual(sortOption, sort)) ?? false;
-      return result;
+      return options.sort.some((sortOption) => _.isEqual(sortOption, sort)) ?? false;
     },
   });
 
@@ -73,9 +72,9 @@ export function useItems<CustomSearchParams, Item>(
     defaultValue: Filters.toString(defaults.filters),
     validator: (filtersValue: NonNullable<LocationQueryValue>) => {
       const filters = SearchPhraseParser.INSTANCE.parse(filtersValue).filters;
-      const result =
-        filters?.every((filter) => options.filters?.some((filterOption) => _.isEqual(filterOption, filter))) ?? false;
-      return result;
+      return (
+        filters?.every((filter) => options.filters?.some((filterOption) => _.isEqual(filterOption, filter))) ?? false
+      );
     },
   });
 

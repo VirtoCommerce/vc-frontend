@@ -107,7 +107,7 @@ export class SearchPhraseListener extends SearchPhraseListenerBase {
   private unescape(value: string): string {
     if (value) {
       return value
-        .replace(/^"|"$/, "")
+        .replace(/(?:^")|(?:"$)/, "")
         .replace("\\r", "\r")
         .replace("\\n", "\n")
         .replace("\\t", "\t")

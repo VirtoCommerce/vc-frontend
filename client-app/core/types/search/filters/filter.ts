@@ -6,7 +6,6 @@ export abstract class Filter<Value = unknown> extends Entity {
   }
 
   toString(): string {
-    const result = `${this.value}`;
-    return result;
+    return `${this.value}`;
   }
 }

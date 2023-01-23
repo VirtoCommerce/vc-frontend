@@ -18,14 +18,12 @@ export class RangeFilterValue<Value = unknown> {
     const fromStr = this.from?.value ? `${this.from?.value} ` : "";
     const toStr = this.to?.value ? ` ${this.to?.value}` : "";
 
-    const result = `${firstBracket}${fromStr}TO${toStr}${lastBracket}`;
-    return result;
+    return `${firstBracket}${fromStr}TO${toStr}${lastBracket}`;
   }
 
   static fromFacetRange(facetRange: FacetRangeType): RangeFilterValue<number> {
     const from = new RangeBound<number>(facetRange.includeFrom, facetRange.from);
     const to = new RangeBound<number>(facetRange.includeTo, facetRange.to);
-    const result = new RangeFilterValue<number>(from, to);
-    return result;
+    return new RangeFilterValue<number>(from, to);
   }
 }
