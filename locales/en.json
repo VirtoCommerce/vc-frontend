@@ -26,7 +26,13 @@
       "apply": "Apply",
       "send": "Send",
       "more": "More",
-      "save_changes": "Save Changes"
+      "yes": "Yes",
+      "no": "No",
+      "clear_cart": "Clear cart",
+      "save_changes": "Save Changes",
+      "new_address": "New address",
+      "place_order": "Place order",
+      "create_quote": "Add cart items to quote"
     },
     "labels": {
       "actions": "Actions",
@@ -47,6 +53,7 @@
       "discount": "Discount",
       "line_items": "Line items",
       "tax": "Tax",
+      "shipping_cost": "Shipping cost",
       "status": "Status",
       "date": "Date",
       "sort_by": "Sort by:",
@@ -57,7 +64,11 @@
       "product": "Product",
       "properties": "Properties",
       "price_per_item": "Price per item",
-      "created": "Created"
+      "created": "Created",
+      "not_available": "N/A",
+      "purchase_order_number": "Purchase order",
+      "promotion_code": "Promotion code",
+      "vendor": "Vendor"
     },
     "suffixes": {
       "from": "From",
@@ -79,12 +90,20 @@
       "product_no_longer_available": "No longer available",
       "item_quantity_required_field": "Item quantity value cannot be null",
       "max_value": "Maximum value is {value}",
-      "min_value": "Minimum value is {value}"
+      "min_value": "Minimum value is {value}",
+      "not_defined": "Undefined",
+      "something_went_wrong": "Whoops! Something went wrong. Please check whether everything is correct and try again.",
+      "invalid_coupon": "This code does not match any active coupons. Please check whether everything is correct and try again.",
+      "checkout_pricing_warning": "Availability, shipping, tax, and promotions are not final until you complete your order.",
+      "quote_request": "You can request items in your cart through a special service"
     },
     "placeholders": {
+      "enter_value": "Please enter value",
       "not_selected": "Not selected",
       "email": "Enter your email address",
-      "password": "Enter your password"
+      "password": "Enter your password",
+      "purchase_order_number": "Enter purchase order number",
+      "promotion_code": "Enter your code"
     },
     "links": {
       "home": "Home",
@@ -106,7 +125,9 @@
       "quote_requests": "Quote Requests"
     },
     "titles": {
-      "all_actions": "All actions"
+      "all_actions": "All actions",
+      "order_summary": "Order summary",
+      "quote_request": "Quote request"
     },
     "roles": {
       "org-maintainer": "Organization maintainer",
@@ -290,7 +311,6 @@
         "emails_label": "Enter email addresses of the persons you wish to invite",
         "emails_placeholder": "Use commas, semicolons or carriage returns to separate multiple entries",
         "message_label": "Message",
-        "message_placeholder": "Please enter value",
         "cancel_button": "@:common.buttons.cancel",
         "send_button": "@:common.buttons.send",
         "invite_successfully_text": "The invite has been successfully sent",
@@ -364,11 +384,6 @@
       }
     },
     "cart": {
-      "empty_cart": {
-        "description": "Your cart is empty",
-        "continue_shopping_button": "@:common.buttons.continue_shopping",
-        "title": "Cart"
-      },
       "add_to_cart": {
         "add_to_cart_button": "@:common.buttons.add_to_cart",
         "update_cart_button": "Update cart",
@@ -379,6 +394,12 @@
           "min": "Min qty is {0} product(s)",
           "max": "Max qty is {0} product(s)"
         }
+      },
+      "products_section": {
+        "title": "Products"
+      },
+      "gifts_section": {
+        "title": "+ Add a Gift"
       },
       "add_bulk_items_to_cart_results_popup": {
         "title": "Adding products to cart result",
@@ -391,6 +412,10 @@
           "product_name": "Product name",
           "quantity": "Quantity"
         }
+      },
+      "clear_cart_modal": {
+        "title": "Clear cart",
+        "message": "Do you want to clear your cart?"
       }
     },
     "catalog": {
@@ -441,20 +466,36 @@
       }
     },
     "checkout": {
-      "product_card": {
-        "brand_label": "Brand:",
-        "price_label": "@:common.labels.price{':'}",
-        "total_label": "@:common.labels.total{':'}",
-        "update_button": "@:common.buttons.update",
-        "remove_button": "@:common.buttons.remove",
-        "errors": {
-          "product_price_changed": "The product price has been changed to {0}"
-        }
-      },
       "accepted_gifts": {
         "gift_label": "Gift",
         "quantity_label": "@:common.labels.quantity",
         "title": "Accepted Gifts"
+      },
+      "shipping_details_section": {
+        "title": "Shipping details",
+        "labels": {
+          "shipping_address": "Shipping address",
+          "shipping_method": "Shipping method"
+        },
+        "messages": {
+          "no_addresses_message": "You do not yet have any shipping address. Please choose or specify one.",
+          "unauthenticated_no_addresses_message": "You do not yet have any shipping address. Please specify one."
+        }
+      },
+      "billing_details_section": {
+        "title": "Payment details",
+        "labels": {
+          "shipping_address": "Billing address",
+          "shipping_method": "Payment method",
+          "same_as_shipping_address": "Same as shipping address"
+        },
+        "messages": {
+          "no_addresses": "You do not yet have any billing address. Please choose or specify one.",
+          "unauthenticated_no_addresses": "You do not yet have any billing address. Please specify one."
+        }
+      },
+      "order_comment_section": {
+        "title": "Order comment"
       },
       "add_or_update_address_dialog": {
         "new_address_title": "New address",
@@ -462,21 +503,6 @@
         "cancel_button": "@:common.buttons.cancel",
         "create_button": "@:common.buttons.create",
         "save_button": "@:common.buttons.save"
-      },
-      "order_summary": {
-        "title": "Order summary",
-        "subtotal_label": "@:common.labels.subtotal",
-        "discount_label": "@:common.labels.discount",
-        "tax_label": "@:common.labels.tax",
-        "shipping_label": "Shipping cost",
-        "total_label": "@:common.labels.total"
-      },
-      "quote": {
-        "title": "Quote request",
-        "text": "You can request items in your cart through a special service",
-        "buttons": {
-          "add_items_to_quote": "Add cart items to quote"
-        }
       },
       "payment_method_dialog": {
         "cancel_button": "@:common.buttons.cancel",
@@ -508,13 +534,6 @@
         "select_button": "@:common.buttons.select",
         "price_label": "@:common.labels.price{':'}",
         "title": "Select shipping method"
-      },
-      "cart_line_items": {
-        "product": "Product",
-        "properties": "Properties",
-        "price_per_item": "Price per item",
-        "quantity": "Quantity",
-        "total": "Total"
       }
     },
     "bulk_order": {
@@ -1082,18 +1101,16 @@
     },
     "cart": {
       "meta": {
-        "title": "Cart"
+        "title": "@:pages.cart.title"
       },
       "title": "Cart",
-      "products_section": {
-        "title": "My products",
-        "vendor_label": "@:shared.catalog.product_details.vendor_label",
-        "empty_vendor_label": "N/A",
-        "clear_cart_button": "Clear cart"
+      "empty_cart_description": "Your cart is empty"
+    },
+    "checkout": {
+      "meta": {
+        "title": "@:pages.checkout.title"
       },
-      "order_summary_block": {
-        "create_order_button": "Create order"
-      }
+      "title": "Checkout"
     },
     "catalog": {
       "meta": {
@@ -1139,79 +1156,6 @@
       "view_cart_button": "View cart",
       "related_product_section_title": "Related products",
       "price_label": "@:common.labels.product_price{':'}"
-    },
-    "checkout": {
-      "meta": {
-        "title": "@:pages.checkout.title"
-      },
-      "title": "Checkout",
-      "invalid_checkout_message": "Whoops! Something went wrong. Please check whether everything is correct and try again.",
-      "clear_cart_dialog": {
-        "title": "Clear cart",
-        "message": "Do you want to clear your cart?",
-        "yes_button": "Yes",
-        "no_button": "No"
-      },
-      "products_section": {
-        "title": "Products",
-        "update_all_link_label": "If you changed multiple quantities,",
-        "update_all_link": "Update All",
-        "clear_cart_button": "Clear cart"
-      },
-      "shipping_details_section": {
-        "title": "Shipping details",
-        "shipping_address_block": {
-          "title": "Shipping address",
-          "change_button": "@:common.buttons.change",
-          "phone_label": "Phone:",
-          "email_label": "Email:",
-          "no_addresses_message": "You do not yet have any shipping address. Please choose or specify one.",
-          "unauthenticated_no_addresses_message": "You do not yet have any shipping address. Please specify one.",
-          "add_address_button": "New address"
-        },
-        "shipping_method_block": {
-          "title": "Shipping method",
-          "not_defined_message": "Undefined",
-          "change_button": "@:common.buttons.change",
-          "select_button": "@:common.buttons.select"
-        }
-      },
-      "payment_details_section": {
-        "title": "Payment details",
-        "billing_address_block": {
-          "title": "Billing address",
-          "same_as_shipping_checkbox_label": "Same as shipping address",
-          "no_addresses_message": "You do not yet have any billing address. Please choose or specify one.",
-          "unauthenticated_no_addresses_message": "You do not yet have any billing address. Please specify one.",
-          "add_address_button": "New address",
-          "phone_label": "Phone:",
-          "email_label": "Email:",
-          "change_button": "Change"
-        },
-        "payment_method_block": {
-          "title": "Payment method",
-          "not_defined_message": "Undefined",
-          "change_button": "@:common.buttons.change",
-          "select_button": "@:common.buttons.select"
-        }
-      },
-      "extra_section": {
-        "title": "Additional Details",
-        "comment_label": "Order comments"
-      },
-      "gifts_section": {
-        "title": "+ Add a Gift"
-      },
-      "order_summary_block": {
-        "purchase_order_label": "Purchase order",
-        "purchase_order_placeholder": "Enter purchase order number",
-        "promotion_code_label": "Promotion code",
-        "promotion_code_placeholder": "Enter your code",
-        "warning_message": "Availability, shipping, tax, and promotions are not final until you complete your order.",
-        "place_order_button": "Place order"
-      },
-      "invalid_coupon_message": "This code does not match any active coupons. Please check whether everything is correct and try again.",
-      "go_to_payment_button": "Pay now"
     },
     "checkout_complete": {
       "meta": {

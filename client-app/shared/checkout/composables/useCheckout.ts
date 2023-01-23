@@ -1,4 +1,4 @@
-import { computed, readonly, ref, watchEffect } from "vue";
+import { computed, readonly, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { omit } from "lodash";
 import {
@@ -9,9 +9,7 @@ import {
   InputPaymentType,
   MemberAddressType,
   PaymentMethodType,
-  PaymentType,
   removeCart,
-  ShipmentType,
   ShippingMethodType,
 } from "@/xapi";
 import { useCart } from "@/shared/cart";
@@ -32,21 +30,26 @@ const billingAddressEqualsShippingAddress = ref(true);
 export default function useCheckout() {
   const ga = useGoogleAnalytics();
   const notifications = useNotifications();
+  const { openPopup, closePopup } = usePopup();
   const { t } = useI18n();
   const { isAuthenticated } = useUser();
-  const { addresses, fetchAddresses, isExistAddress, addOrUpdateAddresses } = useUserAddresses();
-  const { cart, fetchCart, updateShipment, updatePayment, changeComment } = useCart();
   const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
-  const { openPopup, closePopup } = usePopup();
+  const { addresses, fetchAddresses, isExistAddress, addOrUpdateAddresses } = useUserAddresses();
+  const {
+    loading: loadingCart,
+    cart,
+    shipment,
+    payment,
+    availableShippingMethods,
+    availablePaymentMethods,
+    fetchCart,
+    updateShipment,
+    updatePayment,
+    changeComment,
+  } = useCart();
 
   const initialized = ref(false);
-  const creatingOrder = ref(false);
-
-  const shipment = computed<ShipmentType | undefined>(() => cart.value.shipments?.[0]);
-  const payment = computed<PaymentType | undefined>(() => cart.value.payments?.[0]);
-
-  const availableShippingMethods = computed<ShippingMethodType[]>(() => cart.value.availableShippingMethods ?? []);
-  const availablePaymentMethods = computed<PaymentMethodType[]>(() => cart.value.availablePaymentMethods ?? []);
+  const loading = ref(false);
 
   const isValidShipment = computed(() => shipment.value?.shipmentMethodCode && shipment.value?.deliveryAddress);
   const isValidPayment = computed(
@@ -224,6 +227,18 @@ export default function useCheckout() {
     });
   }
 
+  function onDeliveryAddressChange() {
+    addresses.value.length
+      ? openSelectAddressModal(AddressType.Shipping)
+      : openAddOrUpdateAddressModal(AddressType.Shipping, shipment.value?.deliveryAddress);
+  }
+
+  function onBillingAddressChange() {
+    addresses.value.length
+      ? openSelectAddressModal(AddressType.Billing)
+      : openAddOrUpdateAddressModal(AddressType.Billing, payment.value?.billingAddress);
+  }
+
   async function saveNewAddressesInAccount(payload: {
     shipmentAddress?: CartAddressType;
     billingAddress?: CartAddressType;
@@ -290,11 +305,16 @@ export default function useCheckout() {
     }
   }
 
+  function resetVariables() {
+    comment.value = "";
+    billingAddressEqualsShippingAddress.value = true;
+  }
+
   async function createOrderFromCart(): Promise<CustomerOrderType | null> {
     const cartId = cart.value.id!;
     let order: CustomerOrderType | null = null;
 
-    creatingOrder.value = true;
+    loading.value = true;
 
     await prepareOrderData();
 
@@ -306,9 +326,8 @@ export default function useCheckout() {
 
     if (order) {
       await removeCart(cartId);
+      resetVariables();
     } else {
-      creatingOrder.value = false;
-
       notifications.error({
         text: t("common.messages.creating_order_error"),
         duration: 15000,
@@ -316,31 +335,26 @@ export default function useCheckout() {
       });
     }
 
+    loading.value = false;
+
     return order;
   }
-
-  watchEffect(() => {
-    comment.value = cart.value.comment ?? "";
-  });
 
   return {
     comment,
     billingAddressEqualsShippingAddress,
-    addresses,
     shipment,
     payment,
-    availableShippingMethods,
-    availablePaymentMethods,
     isValidShipment,
     isValidPayment,
     isValidCheckout,
     initialize,
+    onDeliveryAddressChange,
+    onBillingAddressChange,
     openSelectShipmentMethodModal,
     openSelectPaymentMethodModal,
-    openAddOrUpdateAddressModal,
-    openSelectAddressModal,
     createOrderFromCart,
     initialized: readonly(initialized),
-    creatingOrder: readonly(creatingOrder),
+    loading: computed(() => loading.value || loadingCart.value),
   };
 }

@@ -17,7 +17,7 @@
     </div>
 
     <div class="vc-section-widget__content">
-      <slot></slot>
+      <slot />
     </div>
   </div>
 </template>

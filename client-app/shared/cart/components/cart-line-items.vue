@@ -3,19 +3,19 @@
     <!-- table header -->
     <div class="vc-cart-line-items__header gap-x-3 px-4 py-3 border rounded-t text-sm font-bold hidden md:grid">
       <div class="vc-cart-line-items__product">
-        {{ $t("shared.checkout.cart_line_items.product") }}
+        {{ $t("common.labels.product") }}
       </div>
       <div class="vc-cart-line-items__properties">
-        {{ $t("shared.checkout.cart_line_items.properties") }}
+        {{ $t("common.labels.properties") }}
       </div>
       <div class="vc-cart-line-items__price hidden xl:block pr-4 text-right">
-        {{ $t("shared.checkout.cart_line_items.price_per_item") }}
+        {{ $t("common.labels.price_per_item") }}
       </div>
       <div class="vc-cart-line-items__quantity hidden xl:block text-right">
-        {{ $t("shared.checkout.cart_line_items.quantity") }}
+        {{ $t("common.labels.quantity") }}
       </div>
       <div class="vc-cart-line-items__total text-right">
-        {{ $t("shared.checkout.cart_line_items.total") }}
+        {{ $t("common.labels.total") }}
       </div>
       <div class="vc-quote-line-items__remove-button w-8"></div>
     </div>
@@ -29,7 +29,7 @@
         :readonly="readonly"
         :disabled="disabled"
         class="relative border rounded shadow-t-3sm md:rounded-none md:shadow-none md:border-0"
-        @change-quantity="$emit('change-quantity:item', item.id, $event)"
+        @change:quantity="$emit('change:item:quantity', { item, quantity: $event })"
         @remove="$emit('remove:item', item)"
       >
         <template #before>
@@ -52,36 +52,37 @@
     <div
       class="flex items-center justify-end py-2.5 gap-2 text-[color:var(--color-price)] md:px-4 md:py-2.5 md:border md:rounded-b"
     >
-      <span class="text-13 font-bold"> {{ $t("pages.account.quote_details.line_items.subtotal") }}: </span>
+      <span class="text-13 font-bold">{{ $t("common.labels.subtotal") }}:</span>
       <span class="text-17 font-extrabold">{{ $n(subtotal, "currency") }}</span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from "vue";
+import { computed } from "vue";
 import { groupBy, sumBy } from "lodash";
 import { LineItemType, ValidationErrorType } from "@/xapi";
 import CartLineItem from "./cart-line-item.vue";
 
-const props = defineProps({
-  disabled: Boolean,
-  readonly: Boolean,
+interface Props {
+  disabled?: boolean;
+  readonly?: boolean;
+  items: LineItemType[];
+  /** @deprecated */
+  validationErrors: ValidationErrorType[];
+}
 
-  items: {
-    type: Array as PropType<LineItemType[]>,
-    default: () => [],
-    required: true,
-  },
+interface Emits {
+  (event: "change:item:quantity", value: { item: LineItemType; quantity: number }): void;
+  (event: "remove:item", value: LineItemType): void;
+}
 
-  /** TODO: remove */
-  validationErrors: {
-    type: Array as PropType<ValidationErrorType[]>,
-    default: () => [],
-  },
+const props = withDefaults(defineProps<Props>(), {
+  items: () => [],
+  validationErrors: () => [],
 });
 
-defineEmits(["remove:item", "change-quantity:item"]);
+defineEmits<Emits>();
 
 const subtotal = computed<number>(() => sumBy(props.items, (item: LineItemType) => item.extendedPrice?.amount));
 

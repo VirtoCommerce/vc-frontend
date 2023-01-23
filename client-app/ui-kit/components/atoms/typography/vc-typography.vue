@@ -8,26 +8,16 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
+interface Props {
+  tag?: string;
+  variant?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "large" | "base" | "medium" | "small";
+  weight?: "normal" | "semibold" | "bold" | "extrabold";
+}
 
-defineProps({
-  tag: {
-    type: String,
-    default: "p",
-  },
-
-  variant: {
-    type: String as PropType<"h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "large" | "base" | "medium" | "small">,
-    default: "base",
-    validator: (value: string) =>
-      ["h1", "h2", "h3", "h4", "h5", "h6", "large", "base", "medium", "small"].includes(value),
-  },
-
-  weight: {
-    type: String as PropType<"normal" | "semibold" | "bold" | "extrabold">,
-    default: "normal",
-    validator: (value: string) => ["normal", "semibold", "bold", "extrabold"].includes(value),
-  },
+withDefaults(defineProps<Props>(), {
+  tag: "p",
+  variant: "base",
+  weight: "normal",
 });
 </script>
 
