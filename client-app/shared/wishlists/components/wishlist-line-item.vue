@@ -47,7 +47,7 @@
         </VcLineItemProperty>
 
         <div class="xl:hidden">
-          <VcLineItemProperty :label="$t('shared.wishlists.wishlist_line_items.price_per_item')">
+          <VcLineItemProperty :label="$t('common.labels.price_per_item')">
             <VcLineItemPrice :value="{ list: extendedItem.listPrice, actual: extendedItem.salePrice }" />
           </VcLineItemProperty>
         </div>
@@ -55,7 +55,7 @@
 
       <!-- PRICE -->
       <div class="vc-wishlist-line-item__price">
-        <VcLineItemPrice :value="{ list: extendedItem.listPrice, actual: extendedItem.salePrice }" />
+        <VcLineItemPrice :list-price="extendedItem.listPrice" :actual-price="extendedItem.salePrice" />
       </div>
 
       <!-- ADD-TO-CART -->
@@ -87,19 +87,21 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from "vue";
+import { computed } from "vue";
 import { LineItemType } from "@/xapi";
 import { AddToCart } from "@/shared/cart";
 import { extendWishListItem } from "@/shared/wishlists";
 
-const props = defineProps({
-  item: {
-    type: Object as PropType<LineItemType>,
-    required: true,
-  },
-});
+interface Prop {
+  item: LineItemType;
+}
 
-defineEmits(["remove"]);
+interface Emits {
+  (event: "remove"): void;
+}
+
+const props = defineProps<Prop>();
+defineEmits<Emits>();
 
 const extendedItem = computed(() => extendWishListItem(props.item));
 </script>

@@ -3,46 +3,47 @@
     <!-- table header -->
     <div class="vc-wishlist-line-items__header">
       <div class="vc-wishlist-line-items__product">
-        {{ $t("shared.wishlists.wishlist_line_items.product") }}
+        {{ $t("common.labels.product") }}
       </div>
       <div class="vc-wishlist-line-items__properties">
-        {{ $t("shared.wishlists.wishlist_line_items.properties") }}
+        {{ $t("common.labels.properties") }}
       </div>
       <div class="vc-wishlist-line-items__price">
-        {{ $t("shared.wishlists.wishlist_line_items.price_per_item") }}
+        {{ $t("common.labels.price_per_item") }}
       </div>
       <div class="vc-wishlist-line-items__quantity">
-        {{ $t("shared.wishlists.wishlist_line_items.quantity") }}
+        {{ $t("common.labels.quantity") }}
       </div>
       <div class="vc-wishlist-line-items__remove-button"></div>
     </div>
 
     <!-- table body -->
     <div v-if="items.length" class="vc-wishlist-line-items__body">
-      <WishlistLineItem v-for="item in items" :key="item.id" :item="item" @remove="$emit('item:remove', item)" />
+      <WishlistLineItem v-for="item in items" :key="item.id" :item="item" @remove="$emit('remove:item', item)" />
     </div>
 
     <div v-else class="vc-wishlist-line-items__empty">
       <VcAlert type="warning" icon>
-        {{ $t("shared.wishlists.wishlist_line_items.no_items_message") }}
+        {{ $t("common.messages.empty_wish_list") }}
       </VcAlert>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
 import { LineItemType } from "@/xapi";
 import { WishlistLineItem } from "@/shared/wishlists";
 
-defineProps({
-  items: {
-    type: Array as PropType<LineItemType[]>,
-    required: true,
-  },
-});
+interface Prop {
+  items: LineItemType[];
+}
 
-defineEmits(["item:remove"]);
+interface Emits {
+  (event: "remove:item", value: LineItemType): void;
+}
+
+defineProps<Prop>();
+defineEmits<Emits>();
 </script>
 
 <style scoped lang="scss">

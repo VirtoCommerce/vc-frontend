@@ -38,11 +38,7 @@ query GetWishlist($listId: String!) {
           availableQuantity
         }
         properties {
-          name
           value
-          type
-          hidden
-          valueType
           label
         }
         price {

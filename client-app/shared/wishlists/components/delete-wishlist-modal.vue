@@ -1,9 +1,15 @@
 <template>
   <VcPopup :title="$t('shared.wishlists.delete_wishlist_dialog.title')" modal-width="max-w-lg" variant="danger">
-    <p
+    <i18n-t
       class="py-6 md:py-10 px-6 border-b"
-      v-html="$t('shared.wishlists.delete_wishlist_dialog.message', { listName: list.name })"
-    />
+      keypath="shared.wishlists.delete_wishlist_dialog.message"
+      tag="p"
+      scope="global"
+    >
+      <template v-slot:listName>
+        <span class="font-extrabold">{{ list.name }}</span>
+      </template>
+    </i18n-t>
 
     <template #actions="{ close }">
       <div class="flex grow justify-between space-x-4">

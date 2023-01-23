@@ -83,7 +83,8 @@
       "product_no_longer_available": "No longer available",
       "item_quantity_required_field": "Item quantity value cannot be null",
       "max_value": "Maximum value is {value}",
-      "min_value": "Minimum value is {value}"
+      "min_value": "Minimum value is {value}",
+      "empty_wish_list": "There are no items in the list"
     },
     "placeholders": {
       "not_selected": "Nicht ausgewählt",
@@ -634,7 +635,7 @@
       },
       "delete_wishlist_dialog": {
         "title": "Delete warning",
-        "message": "Are you sure you want to remove “<span class=\"font-extrabold\">{listName}</span>” list?",
+        "message": "Are you sure you want to remove “{listName}” list?",
         "delete_button": "@:common.buttons.delete",
         "cancel_button": "@:common.buttons.cancel"
       },
@@ -643,13 +644,6 @@
         "message": "Are you sure you want to remove “{productName}” from the list?",
         "delete_button": "@:common.buttons.delete",
         "cancel_button": "@:common.buttons.cancel"
-      },
-      "wishlist_line_items": {
-        "product": "Product",
-        "properties": "Properties",
-        "price_per_item": "Price per item",
-        "quantity": "Quantity",
-        "no_items_message": "There are no items in the list"
       }
     }
   },

@@ -9,11 +9,12 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
-  label: {
-    type: String,
-    default: "",
-  },
+interface Prop {
+  label: string;
+}
+
+withDefaults(defineProps<Prop>(), {
+  label: () => "",
 });
 </script>
 

@@ -10,18 +10,14 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, computed } from "vue";
-import { MoneyType, PriceType } from "@/xapi/types";
+import { MoneyType } from "@/xapi/types";
 
-const props = defineProps({
-  value: {
-    type: Object as PropType<PriceType | { list: MoneyType; actual: MoneyType }>,
-    default: undefined,
-  },
-});
+interface Props {
+  listPrice?: MoneyType;
+  actualPrice?: MoneyType;
+}
 
-const actualPrice = computed(() => props.value?.actual);
-const listPrice = computed(() => props.value?.list);
+defineProps<Props>();
 </script>
 
 <style lang="scss">

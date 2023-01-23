@@ -43,7 +43,7 @@
     <!-- List details -->
     <template v-else-if="listItems.length">
       <div class="flex flex-col gap-6 p-5 bg-white md:rounded md:border md:shadow-t-3sm">
-        <WishlistLineItems :items="listItems" @item:remove="openDeleteProductModal" />
+        <WishlistLineItems :items="listItems" @remove:item="openDeleteProductModal" />
         <VcPagination v-model:page="page" :pages="pages" class="self-start" @update:page="onUpdatePage()" />
       </div>
     </template>
