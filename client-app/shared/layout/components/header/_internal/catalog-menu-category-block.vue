@@ -44,14 +44,15 @@
 
 <script setup lang="ts">
 import { computed, PropType, ref } from "vue";
-import { CategoryTreeItem, useCategoriesRoutes } from "@/core";
+import { useCategoriesRoutes } from "@/core";
+import { Category } from "@/xapi";
 
 const SHORT_VIEW_ITEMS_COUNT = 5;
 const showAll = ref(false);
 
 const props = defineProps({
   category: {
-    type: Object as PropType<CategoryTreeItem>,
+    type: Object as PropType<Category>,
     required: true,
   },
 });
@@ -60,8 +61,8 @@ const emit = defineEmits<{
   (event: "select"): void;
 }>();
 
-const subcategories = computed<CategoryTreeItem[]>(() => props.category.children || []);
-const displayedCategories = computed<CategoryTreeItem[]>(() =>
+const subcategories = computed<Category[]>(() => props.category.childCategories || []);
+const displayedCategories = computed<Category[]>(() =>
   showAll.value ? subcategories.value : subcategories.value.slice(0, SHORT_VIEW_ITEMS_COUNT)
 );
 
