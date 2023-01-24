@@ -1,8 +1,9 @@
 <template>
   <div class="vc-alert" :class="[type && `vc-alert--${type}`]">
     <svg v-if="icon" class="vc-alert__icon">
-      <use :href="iconSrc"></use>
+      <use :href="iconSrc" />
     </svg>
+
     <div class="vc-alert__content">
       <slot />
     </div>
@@ -55,7 +56,7 @@ const iconSrc = computed<string>(() => {
 
 <style lang="scss">
 .vc-alert {
-  @apply flex items-stretch space-x-2 pr-3 pl-2.5 py-1.5 rounded;
+  @apply flex items-center space-x-2 pr-3 pl-2.5 py-1.5 rounded;
 
   &--info {
     @apply text-[color:var(--color-link)] bg-[color:var(--color-link-light)];
