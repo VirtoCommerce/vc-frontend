@@ -1,3 +1,4 @@
+export { default as VcAddress } from "./address/vc-address.vue";
 export { default as VcAddressForm } from "./address-form/vc-address-form.vue";
 export { default as VcCarousel } from "./carousel/vc-carousel.vue";
 export { default as VcEmptyPage } from "./empty-page/vc-empty-page.vue";

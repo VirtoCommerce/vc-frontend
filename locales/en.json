@@ -479,8 +479,8 @@
           "shipping_method": "Shipping method"
         },
         "messages": {
-          "no_addresses_message": "You do not yet have any shipping address. Please choose or specify one.",
-          "unauthenticated_no_addresses_message": "You do not yet have any shipping address. Please specify one."
+          "no_addresses_message": "Please {linkedText}",
+          "linked_text": "select a shipping address"
         }
       },
       "billing_details_section": {

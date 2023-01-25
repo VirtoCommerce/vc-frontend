@@ -20,6 +20,7 @@ export { default as VcImage } from "./image/vc-image.vue";
 export { default as VcInStock } from "./in-stock/vc-in-stock.vue";
 export { default as VcInfinityScrollLoader } from "./infinity-scroll-loader/vc-infinity-scroll-loader.vue";
 export { default as VcInput } from "./input/vc-input.vue";
+export { default as VcLabel } from "./label/vc-label.vue";
 export { default as VcLoader } from "./loader/vc-loader.vue";
 export { default as VcMarkdownRender } from "./markdown-render/vc-markdown-render.vue";
 export { default as VcPagination } from "./pagination/vc-pagination.vue";
@@ -39,5 +40,6 @@ export { default as VcTotalDisplay } from "./total-display/vc-total-display.vue"
 export { default as VcTransitionScale } from "./transition-scale/vc-transition-scale.vue";
 export { default as VcTypography } from "./typography/vc-typography.vue";
 export { default as VcAddressInfo } from "./address-info/vc-address-info.vue";
+export { default as VcAddressLine } from "./address-line/vc-address-line.vue";
 export { default as VcCountInCart } from "./count-in-cart/vc-count-in-cart.vue";
 export { default as VcLineItemProperty } from "./line-item-property/vc-line-item-property.vue";
