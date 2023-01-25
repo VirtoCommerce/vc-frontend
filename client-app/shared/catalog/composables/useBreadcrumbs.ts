@@ -1,22 +1,22 @@
 import { useI18n } from "vue-i18n";
-import { IBreadcrumbsItem } from "./../types/index";
-import { Breadcrumb } from "@/xapi/types";
+import { Breadcrumb } from "@/xapi";
+import { IBreadcrumbsItem } from "@/shared/catalog";
 
 // TODO: move this logic to core level into the separated helper. Use it everywhere can be needful
 export default () => {
   const { t } = useI18n();
 
-  function buildBreadcrumbs(breadcrumbs: Breadcrumb[]) {
-    const result: IBreadcrumbsItem[] = [{ url: "/", title: t("common.links.home") }];
+  function buildBreadcrumbs(items: Breadcrumb[]): IBreadcrumbsItem[] {
+    const homepage: IBreadcrumbsItem = {
+      title: t("common.links.home"),
+      url: "/",
+    };
+    const breadcrumbs = items.map(({ title, seoPath }) => ({
+      title,
+      url: seoPath?.startsWith("/") ? seoPath : "/" + seoPath,
+    }));
 
-    breadcrumbs.forEach((breadcrumb) =>
-      result.push({
-        title: breadcrumb.title,
-        url: breadcrumb.seoPath,
-      })
-    );
-
-    return result;
+    return [homepage].concat(breadcrumbs);
   }
 
   return {
