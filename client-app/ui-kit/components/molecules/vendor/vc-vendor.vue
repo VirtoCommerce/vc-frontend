@@ -24,7 +24,7 @@ defineProps<Props>();
   }
 
   &__title {
-    @apply ml-1.5 font-bold uppercase text-base truncate;
+    @apply gap-x-1.5 font-bold uppercase text-base truncate;
   }
 }
 </style>
