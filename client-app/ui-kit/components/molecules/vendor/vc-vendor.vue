@@ -1,6 +1,6 @@
 <template>
   <div class="vc-vendor">
-    <VcIcon name="vendor" size="sm" />
+    <VcIcon name="vendor" size="sm" class="flex-none" />
     <span class="vc-vendor__title"> {{ $t("common.labels.vendor") }}: {{ vendor?.name }} </span>
   </div>
 </template>
@@ -22,7 +22,7 @@ withDefaults(defineProps<Props>(), {
   @apply flex items-center text-primary;
 
   &__title {
-    @apply ml-1.5 font-bold uppercase text-base;
+    @apply ml-1.5 font-bold uppercase text-base truncate;
   }
 }
 </style>
