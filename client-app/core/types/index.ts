@@ -1,6 +1,5 @@
 import { MaybeRef } from "@vueuse/core";
 import { CartAddressType, MemberAddressType, OrderAddressType, QuoteAddressType } from "@/xapi/types";
-import { LocationQueryValue } from "vue-router";
 
 export * from "./app-context";
 export * from "./category-tree";
