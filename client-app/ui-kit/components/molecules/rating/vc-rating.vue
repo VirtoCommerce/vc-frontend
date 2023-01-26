@@ -20,7 +20,7 @@ defineProps<Props>();
 
 <style lang="scss">
 .vc-rating {
-  @apply flex flex-row items-center gap-0.5;
+  @apply flex items-center gap-0.5;
 
   &__icon {
     @apply text-[color:var(--color-primary)];
