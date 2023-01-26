@@ -146,7 +146,7 @@ import { AddressType, convertToType } from "@/core";
 import { useUserAddresses, useUserQuote, QuoteLineItems } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddOrUpdateAddressModal, SelectAddressModal } from "@/shared/checkout";
-import { usePageHead } from "@/core/composables";
+import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { asyncForEach } from "@/core/utilities";
 
 const props = defineProps({
@@ -181,12 +181,13 @@ usePageHead({
 const originalQuote = ref<QuoteType | undefined>();
 const billingAddressEqualsShippingAddress = ref<boolean>(true);
 
-const breadcrumbs = computed<IBreadcrumbs[]>(() => [
-  { title: t("common.links.home"), route: { name: "Home" } },
-  { title: t("common.links.account"), route: { name: "Account" } },
-  { title: t("common.links.quote_requests"), route: { name: "Quotes" } },
-  { title: t("pages.account.quote_details.title", [quote?.value?.number]) },
-]);
+const breadcrumbs = useBreadcrumbs(
+  computed(() => [
+    { title: t("common.links.account"), route: { name: "Account" } },
+    { title: t("common.links.quote_requests"), route: { name: "Quotes" } },
+    { title: t("pages.account.quote_details.title", [quote?.value?.number]) },
+  ])
+);
 const quoteChanged = computed<boolean>(() => !isEqual(originalQuote.value, quote.value));
 const quoteItemsValid = computed<boolean>(() =>
   every(quote.value?.items, (item: QuoteItemType) => item.selectedTierPrice?.quantity > 0)

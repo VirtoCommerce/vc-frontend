@@ -1,4 +1,3 @@
-export { default as Breadcrumbs } from "./breadcrumbs.vue";
 export { default as CarouselProductCard } from "./carousel-product-card.vue";
 export { default as DisplayProducts } from "./display-products.vue";
 export { default as ProductCardGrid } from "./product-card-grid.vue";

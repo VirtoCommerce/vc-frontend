@@ -29,7 +29,7 @@ declare global {
     clickHandler(inputObject: any): any;
   }
 
-  interface IBreadcrumbs {
+  interface IBreadcrumb {
     title: MaybeRef<string>;
     /**
      * Not needed for last element

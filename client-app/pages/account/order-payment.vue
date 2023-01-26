@@ -249,7 +249,7 @@ import { useI18n } from "vue-i18n";
 import { useUserOrder } from "@/shared/account";
 import { useRouter } from "vue-router";
 import { usePopup } from "@/shared/popup";
-import { usePageHead } from "@/core/composables";
+import { useBreadcrumbs, usePageHead } from "@/core/composables";
 
 const props = defineProps({
   orderId: {
@@ -280,16 +280,17 @@ const executed = computed<boolean>(() => success.value || failure.value);
 const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments[0]);
 const paymentMethodType = computed<PaymentMethod | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);
 
-const breadcrumbs = computed<IBreadcrumbs[]>(() => [
-  { title: t("common.links.home"), route: { name: "Home" } },
-  { title: t("common.links.account"), route: { name: "Account" } },
-  { title: t("common.links.orders"), route: { name: "Orders" } },
-  {
-    title: t("pages.account.order_payment.processed_title", [order.value?.number]),
-    route: { name: "OrderDetails", params: { orderId: props.orderId } },
-  },
-  { title: t("pages.account.order_payment.breadcrumb_title") },
-]);
+const breadcrumbs = useBreadcrumbs(
+  computed(() => [
+    { title: t("common.links.account"), route: { name: "Account" } },
+    { title: t("common.links.orders"), route: { name: "Orders" } },
+    {
+      title: t("pages.account.order_payment.processed_title", [order.value?.number]),
+      route: { name: "OrderDetails", params: { orderId: props.orderId } },
+    },
+    { title: t("pages.account.order_payment.breadcrumb_title") },
+  ])
+);
 
 function tryAgain() {
   location.reload();

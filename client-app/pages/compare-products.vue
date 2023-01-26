@@ -131,7 +131,7 @@ import { ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import _ from "lodash";
-import { useGoogleAnalytics, usePageHead, useProductsRoutes } from "@/core";
+import { useBreadcrumbs, useGoogleAnalytics, usePageHead, useProductsRoutes } from "@/core";
 import { useProducts } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
@@ -152,11 +152,7 @@ const isMobile = breakpoints.smaller("lg");
 const { fetchProducts, products } = useProducts();
 const { clearCompareList, productsLimit, removeFromCompareList, productsIds } = useCompareProducts();
 const productsRoutes = useProductsRoutes(products);
-
-const breadcrumbs: IBreadcrumbs[] = [
-  { title: t("pages.compare.links.home"), route: "/" },
-  { title: t("pages.compare.links.compare_products") },
-];
+const breadcrumbs = useBreadcrumbs([{ title: t("pages.compare.links.compare_products") }]);
 
 const showOnlyDifferences = ref(false);
 
