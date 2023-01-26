@@ -11,7 +11,7 @@
 <script setup lang="ts">
 import { Rating } from "@/xapi/types";
 
-export interface Props {
+interface Props {
   rating?: Rating;
 }
 
@@ -23,7 +23,7 @@ defineProps<Props>();
   @apply flex flex-row items-center gap-0.5;
 
   &__icon {
-    @apply text-primary;
+    @apply text-[color:var(--color-primary)];
   }
 
   &__text {
