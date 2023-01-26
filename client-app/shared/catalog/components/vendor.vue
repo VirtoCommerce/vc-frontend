@@ -13,7 +13,7 @@
 import { Vendor } from "@/xapi/types";
 import { computed } from "vue";
 
-export interface Props {
+interface Props {
   withRating?: boolean;
   vendor: Vendor;
 }

@@ -55,6 +55,7 @@
                 :to="item.extended.route"
                 :title="item.name"
                 class="text-[color:var(--color-link)] [word-break:break-word]"
+                target="_blank"
               >
                 {{ item.name }}
               </router-link>

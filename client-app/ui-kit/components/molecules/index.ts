@@ -11,3 +11,4 @@ export { default as VcLoaderWithText } from "./loader-with-text/vc-loader-with-t
 export { default as VcLayoutWithRightSidebar } from "./layout-with-right-sidebar/vc-layout-with-right-sidebar.vue";
 export { default as VcSteps } from "./steps/vc-steps.vue";
 export { default as VcRating } from "./rating/vc-rating.vue";
+export { default as VcVendor } from "./vendor/vc-vendor.vue";
