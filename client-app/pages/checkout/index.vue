@@ -44,7 +44,7 @@ usePageHead({
 const steps: IStepsItem[] = [
   {
     text: "Back to Cart",
-    icon: "chevron-left",
+    icon: "arrow-bold",
     route: { name: "Cart" },
   },
   {

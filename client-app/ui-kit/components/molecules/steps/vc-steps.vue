@@ -21,7 +21,7 @@
           <VcIcon v-if="step.icon" :name="step.icon" size="xxs" />
 
           <!-- Completed icon -->
-          <VcIcon v-else-if="index + startStep < currentStep" name="apply" size="xxs" />
+          <VcIcon v-else-if="index + startStep < currentStep" name="check-bold" size="xxs" />
 
           <!-- Step number -->
           <template v-else>{{ index + startStep }}</template>
