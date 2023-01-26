@@ -27,7 +27,7 @@ defineProps<Props>();
   }
 
   &__text {
-    @apply text-13 font-semibold;
+    @apply text-13 text-gray-800 font-semibold;
   }
 
   &__current-rating {
