@@ -17,14 +17,14 @@ defineProps<Props>();
 
 <style lang="scss">
 .vc-vendor {
-  @apply flex items-center text-[color:var(--color-primary)];
+  @apply flex gap-x-1.5 items-center text-[color:var(--color-primary)];
 
   &__icon {
     @apply flex-none;
   }
 
   &__title {
-    @apply gap-x-1.5 font-bold uppercase text-base truncate;
+    @apply font-bold uppercase text-base truncate;
   }
 }
 </style>
