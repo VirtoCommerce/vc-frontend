@@ -9,7 +9,7 @@
 
     <!-- Page toolbar -->
     <PageToolbarBlock
-      :stick="isVisibleStickyMobileHeader"
+      :stick="stickyMobileHeaderIsVisible"
       class="flex flex-row lg:flex-row-reverse items-center py-3.5 -my-3.5 gap-x-2 lg:gap-x-5"
       shadow
     >
@@ -155,17 +155,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef, watch } from "vue";
+import { computed, ref, shallowRef, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { PageToolbarBlock, useUserQuotes } from "@/shared/account";
 import { QuoteType } from "@/xapi/types";
-import { computedEager, useBreakpoints, breakpointsTailwind } from "@vueuse/core";
+import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import { useElementVisibility, useRouteQueryParam, usePageHead } from "@/core/composables";
 import { getSortingExpression, ISortInfo, QueryParamName, getSortInfoFromStringExpression } from "@/core";
 
 const { t } = useI18n();
 const router = useRouter();
+const breakpoints = useBreakpoints(breakpointsTailwind);
 
 usePageHead({
   title: t("pages.account.quotes.title"),
@@ -173,15 +174,11 @@ usePageHead({
 
 const { quotes, fetching, itemsPerPage, pages, page, keyword, sort, fetchQuotes } = useUserQuotes();
 
-const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
-
 const isMobile = breakpoints.smaller("lg");
 
-const isVisibleStickyMobileHeader = computedEager<boolean>(
-  () => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value
-);
+const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
+const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
+const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
 const { queryParam: sortQueryParam } = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: "createdDate:desc",

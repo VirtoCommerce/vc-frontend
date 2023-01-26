@@ -1,9 +1,11 @@
-import { computed, Ref, ref } from "vue";
-import { sumBy } from "lodash";
+import { computed, readonly, ref, shallowRef } from "vue";
+import { useI18n } from "vue-i18n";
+import { keyBy, sumBy } from "lodash";
 import { Logger } from "@/core";
 import {
   addBulkItemsCart,
   addCoupon,
+  addGiftItems,
   addItemsCart,
   addItemToCart,
   addOrUpdateCartPayment,
@@ -12,36 +14,87 @@ import {
   changeCartComment,
   changeCartItemQuantity,
   changePurchaseOrderNumber,
-  createOrderFromCart as _createOrderFromCart,
   createQuoteFromCart as _createQuoteFromCart,
-  CustomerOrderType,
   getMyCart,
   InputNewBulkItemType,
   InputNewCartItemType,
   InputPaymentType,
   InputShipmentType,
+  PaymentMethodType,
+  PaymentType,
   QuoteType,
+  rejectGiftItems,
   removeCart as _removeCart,
   removeCartItem,
   removeCoupon,
+  ShipmentType,
+  ShippingMethodType,
   validateCoupon,
 } from "@/xapi";
-import { getLineItemValidationErrorsGroupedBySKU, OutputBulkItemType } from "@/shared/cart";
+import { usePopup } from "@/shared/popup";
+import { useNotifications } from "@/shared/notification";
+import {
+  ClearCartModal,
+  ExtendedGiftItemType,
+  getLineItemValidationErrorsGroupedBySKU,
+  OutputBulkItemType,
+  TGroupedItems,
+  TGroupItem,
+} from "@/shared/cart";
 
-const DEFAULT_ITEMS_PER_PAGE = 6;
+const loading = ref(false);
+const cart = shallowRef<CartType>({ name: "" });
 
-const loading: Ref<boolean> = ref(true);
-const cart: Ref<CartType> = ref({ name: "" });
-const pages: Ref<number> = ref(0);
-const itemsPerPage: Ref<number> = ref(DEFAULT_ITEMS_PER_PAGE);
+const shipment = computed<ShipmentType | undefined>(() => cart.value.shipments?.[0]);
+const payment = computed<PaymentType | undefined>(() => cart.value.payments?.[0]);
+
+const availableShippingMethods = computed<ShippingMethodType[]>(() => cart.value.availableShippingMethods ?? []);
+const availablePaymentMethods = computed<PaymentMethodType[]>(() => cart.value.availablePaymentMethods ?? []);
+
+const lineItemsGroupedByVendor = computed<TGroupItem[]>(() => {
+  // NOTE: The group without the vendor should be displayed last.
+  const groupWithoutVendor: TGroupItem = { items: [] };
+  const map: TGroupedItems = {};
+
+  cart.value.items?.forEach((item) => {
+    const vendor = item.product?.vendor;
+
+    if (vendor) {
+      const vendorId = vendor.id;
+
+      map[vendorId] = map[vendorId] || { vendor, items: [] };
+      map[vendorId].items.push(item);
+    } else {
+      groupWithoutVendor.items.push(item);
+    }
+  });
+
+  const result = Object.values(map)
+    // Sort by Vendor
+    .sort((a, b) => a.vendor!.name.localeCompare(b.vendor!.name));
+
+  // Add the group without the vendor to the end.
+  result.push(groupWithoutVendor);
+
+  return result;
+});
+
+const addedGiftsByIds = computed(() => keyBy(cart.value.gifts, "id"));
+
+const availableExtendedGifts = computed<ExtendedGiftItemType[]>(() =>
+  (cart.value.availableGifts || []).map((gift) => ({ ...gift, isAddedInCart: !!addedGiftsByIds.value[gift.id] }))
+);
 
 export default function useCart() {
+  const notifications = useNotifications();
+  const { t } = useI18n();
+  const { openPopup } = usePopup();
+
   async function fetchCart(): Promise<CartType> {
     loading.value = true;
 
     try {
       cart.value = await getMyCart();
-      pages.value = Math.ceil((cart.value.items?.length ?? 0) / itemsPerPage.value);
     } catch (e) {
       Logger.error(`${useCart.name}.${fetchCart.name}`, e);
       throw e;
@@ -228,11 +281,11 @@ export default function useCart() {
     }
   }
 
-  async function updateShipment(shipment: InputShipmentType, reloadCart = true) {
+  async function updateShipment(newShipment: InputShipmentType, reloadCart = true) {
     loading.value = true;
 
     try {
-      await addOrUpdateCartShipment(shipment, cart.value.id);
+      await addOrUpdateCartShipment(newShipment, cart.value.id);
     } catch (e) {
       Logger.error(`${useCart.name}.${updateShipment.name}`, e);
       throw e;
@@ -245,11 +298,11 @@ export default function useCart() {
     }
   }
 
-  async function updatePayment(payment: InputPaymentType, reloadCart = true) {
+  async function updatePayment(newPayment: InputPaymentType, reloadCart = true) {
     loading.value = true;
 
     try {
-      await addOrUpdateCartPayment(payment, cart.value.id);
+      await addOrUpdateCartPayment(newPayment, cart.value.id);
     } catch (e) {
       Logger.error(`${useCart.name}.${updatePayment.name}`, e);
       throw e;
@@ -262,38 +315,77 @@ export default function useCart() {
     }
   }
 
-  async function createOrderFromCart(cartId: string): Promise<CustomerOrderType | null> {
+  async function createQuoteFromCart(comment = ""): Promise<QuoteType | null> {
+    let quote: QuoteType | null = null;
+
     loading.value = true;
 
     try {
-      const order = await _createOrderFromCart(cartId);
-
-      if (!order) {
-        return null;
-      }
-
-      await _removeCart(cartId);
-
-      return order;
+      quote = await _createQuoteFromCart(cart.value.id!, comment);
     } catch (e) {
-      Logger.error(`${useCart.name}.${createOrderFromCart.name}`, e);
+      Logger.error(`${useCart.name}.${createQuoteFromCart.name}`, e);
+    }
+
+    if (!quote) {
+      notifications.error({
+        text: t("common.messages.creating_quote_error"),
+        duration: 15000,
+        single: true,
+      });
+    }
+
+    loading.value = false;
+
+    return quote;
+  }
+
+  async function addGiftsToCart(giftIds: string[]) {
+    loading.value = true;
+
+    try {
+      await addGiftItems(giftIds);
+    } catch (e) {
+      Logger.error(`${useCart.name}.${addGiftsToCart.name}`, e);
       throw e;
     } finally {
       loading.value = false;
+    }
+
+    await fetchCart();
+  }
+
+  async function removeGiftsFromCart(giftLineItemIds: string[]) {
+    loading.value = true;
+
+    try {
+      await rejectGiftItems(giftLineItemIds);
+    } catch (e) {
+      Logger.error(`${useCart.name}.${removeGiftsFromCart.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+
+    await fetchCart();
+  }
+
+  async function toggleGift(gift: ExtendedGiftItemType) {
+    if (gift.isAddedInCart) {
+      await removeGiftsFromCart([gift.lineItemId!]);
+    } else {
+      await addGiftsToCart([gift.id]);
     }
   }
 
-  async function createQuoteFromCart(cartId: string, comment = ""): Promise<QuoteType | null> {
-    loading.value = true;
-
-    try {
-      return await _createQuoteFromCart(cartId, comment);
-    } catch (e) {
-      Logger.error(`${useCart.name}.${createQuoteFromCart.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
+  function openClearCartModal() {
+    openPopup({
+      component: ClearCartModal,
+      props: {
+        async onResult() {
+          await removeCart(cart.value.id!);
+        },
+      },
+    });
   }
 
   // calculate total price of items in the cart for some set of products
@@ -308,11 +400,13 @@ export default function useCart() {
   }
 
   return {
-    cart: computed(() => cart.value),
-    pages: computed(() => pages.value),
-    itemsPerPage: computed(() => itemsPerPage.value),
-    loading: computed(() => loading.value),
-    currency: computed(() => cart.value.currency!),
+    shipment,
+    payment,
+    availableShippingMethods,
+    availablePaymentMethods,
+    lineItemsGroupedByVendor,
+    addedGiftsByIds,
+    availableExtendedGifts,
     getItemsTotal,
     fetchCart,
     addToCart,
@@ -328,7 +422,12 @@ export default function useCart() {
     updatePayment,
     updatePurchaseOrderNumber,
     removeCart,
-    createOrderFromCart,
     createQuoteFromCart,
+    addGiftsToCart,
+    removeGiftsFromCart,
+    toggleGift,
+    openClearCartModal,
+    loading: readonly(loading),
+    cart: computed(() => cart.value),
   };
 }

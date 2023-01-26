@@ -223,6 +223,9 @@ module.exports = {
             lineHeight: "1.563rem", //25px
           },
         ],
+        24: [
+          "1.5rem", //24px
+        ],
         25: [
           "1.5625rem", //25px
           {

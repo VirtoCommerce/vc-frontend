@@ -1,3 +1,5 @@
+import { cloneDeep } from "lodash";
+
 export function getBaseUrl(supportedLocales: string[]): string {
   const localeInPath = location.pathname.split("/")[1];
   return supportedLocales.includes(localeInPath) ? `/${localeInPath}/` : "";
@@ -65,7 +67,7 @@ export function stringFormat(template: string, ...args: string[]): string {
 }
 
 export function convertToType<To, From = Record<any, any>>(value?: From): To {
-  return value as unknown as To;
+  return cloneDeep<To>(value as any);
 }
 
 export async function asyncForEach<T>(

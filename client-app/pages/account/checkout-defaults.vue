@@ -29,7 +29,7 @@
 
         <VcSelect
           v-model="localCheckoutDefaults.paymentMethodCode"
-          :items="paymentMethods"
+          :items="availablePaymentMethods"
           :label="$t('pages.account.checkout_defaults.payment_method_label')"
           :placeholder="$t('pages.account.checkout_defaults.payment_method_placeholder')"
           text-field="code"
@@ -42,7 +42,7 @@
 
         <VcSelect
           v-model="localCheckoutDefaults.shippingMethodId"
-          :items="shippingMethods"
+          :items="availableShippingMethods"
           :label="$t('pages.account.checkout_defaults.shipping_method_label')"
           :placeholder="$t('pages.account.checkout_defaults.shipping_method_placeholder')"
           value-field="id"
@@ -70,7 +70,6 @@
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { clone, isEqual } from "lodash";
-import { PaymentMethodType, ShippingMethodType } from "@/xapi/types";
 import { usePopup } from "@/shared/popup";
 import { usePageHead } from "@/core/composables";
 import { useCart } from "@/shared/cart";
@@ -78,18 +77,15 @@ import { useUserCheckoutDefaults, CheckoutDefaults, CheckoutDefaultsSuccessDialo
 
 const { t } = useI18n();
 const { openPopup } = usePopup();
-const { cart, loading, fetchCart } = useCart();
+const { loading, availableShippingMethods, availablePaymentMethods, fetchCart } = useCart();
 const { getUserCheckoutDefaults, setUserCheckoutDefaults } = useUserCheckoutDefaults();
 
 usePageHead({
   title: t("pages.account.checkout_defaults.meta.title"),
 });
 
-const savedCheckoutDefaults = ref<CheckoutDefaults>(getUserCheckoutDefaults() ?? {});
+const savedCheckoutDefaults = ref<CheckoutDefaults>(getUserCheckoutDefaults());
 const localCheckoutDefaults = ref<CheckoutDefaults>(clone(savedCheckoutDefaults.value));
-
-const shippingMethods = computed<ShippingMethodType[]>(() => cart.value.availableShippingMethods ?? []);
-const paymentMethods = computed<PaymentMethodType[]>(() => cart.value.availablePaymentMethods ?? []);
 
 const isDirty = computed<boolean>(() => !isEqual(savedCheckoutDefaults.value, localCheckoutDefaults.value));
 

@@ -18,3 +18,5 @@ export * from "./usePageHead";
 export { default as useProductsRoutes } from "./useProductsRoutes";
 export * from "./useRouteQueryParam";
 export { default as useThemeContext } from "./useThemeContext";
+export { default as useCatalogMenu } from "./useCatalogMenu";
+export { default as useComponentId } from "./useComponentId";

@@ -123,7 +123,7 @@ async function addItems(items: InputNewBulkItemType[]) {
       behavior: "smooth",
     });
   } else {
-    await router.push({ name: "Checkout" });
+    await router.push({ name: "Cart" });
   }
 }
 

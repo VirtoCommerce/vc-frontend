@@ -5,12 +5,12 @@
   >
     <div class="px-5 mx-auto max-w-screen-2xl 2xl:px-18">
       <!-- Breadcrumbs -->
-      <VcBreadcrumbs class="mb-2.5 md:mb-4" :items="breadcrumbs" v-if="!isSearchQuery" />
+      <VcBreadcrumbs class="mb-2.5 md:mb-4" :items="breadcrumbs" v-if="!isSearchPage" />
 
       <div class="flex items-start lg:gap-6">
         <!-- Mobile sidebar back cover -->
         <VcPopupSidebar
-          v-if="isMobileSidebar"
+          v-if="isMobile"
           :is-visible="mobileSidebarVisible"
           class="flex flex-col w-70 px-5 pt-5"
           @hide="hideMobileSidebar()"
@@ -32,7 +32,7 @@
             :keyword="keywordQueryParam"
             :filters="mobileFilters"
             :loading="loading || facetsLoading"
-            :withLocalSearch="!isSearchQuery"
+            :withLocalSearch="!isSearchPage"
             @search="
               onSearchStart($event);
               hideMobileSidebar();
@@ -73,13 +73,13 @@
 
         <!-- Sidebar -->
         <div v-else class="space-y-5 w-60 flex-shrink-0 pt-2">
-          <CategorySelector :selected-category="selectedCategory" :loading="loadingCategories" v-if="!isSearchQuery" />
+          <CategorySelector :selected-category="selectedCategory" :loading="loadingCategories" v-if="!isSearchPage" />
 
           <ProductsFiltersSidebar
             :keyword="keywordQueryParam"
             :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
             :loading="loading"
-            :withLocalSearch="!isSearchQuery"
+            :withLocalSearch="!isSearchPage"
             @search="onSearchStart($event)"
             @change="applyFilters($event)"
           />
@@ -89,7 +89,7 @@
         <div class="flex-grow">
           <div class="flex">
             <h2 class="text-gray-800 text-21 font-bold uppercase lg:my-px lg:text-25">
-              <i18n-t keypath="pages.search.header" tag="span" v-if="isSearchQuery">
+              <i18n-t keypath="pages.search.header" tag="span" v-if="isSearchPage">
                 <template v-slot:keyword>
                   <strong>{{ searchParams.keyword }}</strong>
                 </template>
@@ -114,7 +114,7 @@
             class="sticky top-0 z-10 flex items-center h-14 my-1.5 lg:relative lg:justify-end lg:flex-wrap lg:mb-3.5 lg:mt-3 lg:h-auto"
             :class="{
               'z-40 px-5 md:px-12 -mx-5 md:-mx-12 bg-[color:var(--color-header-bottom-bg)]':
-                isVisibleStickyMobileHeader,
+                stickyMobileHeaderIsVisible,
             }"
           >
             <!-- Mobile filters toggler -->
@@ -146,7 +146,7 @@
 
             <!-- Branch availability -->
             <div
-              v-if="!isMobileSidebar"
+              v-if="!isMobile"
               class="order-3 flex items-center ml-4 xl:ml-6"
               @click.prevent="openBranchesDialog(false)"
             >
@@ -178,7 +178,7 @@
             </div>
 
             <!-- In Stock -->
-            <div v-if="!isMobileSidebar" class="order-2 flex items-center ml-4 xl:ml-8">
+            <div v-if="!isMobile" class="order-2 flex items-center ml-4 xl:ml-8">
               <VcTooltip :xOffset="28" placement="bottom-start" strategy="fixed">
                 <template #trigger>
                   <VcCheckbox v-model="savedInStock" :disabled="loading">
@@ -414,10 +414,7 @@ const { queryParam: facetsQueryParam } = useRouteQueryParam<string>(QueryParamNa
   defaultValue: "",
 });
 
-const isMobileSidebar = breakpoints.smaller("lg");
-
-const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
-const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
+const isMobile = breakpoints.smaller("lg");
 
 const page = ref(1);
 const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
@@ -429,18 +426,17 @@ const mobileFilters = shallowReactive<ProductsFilters>({
   branches: savedBranches.value,
 });
 
-// region Computed properties
-const isSearchQuery = computedEager<boolean>(() => route.name === "Search");
+const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
+const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
+const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
-const isVisibleStickyMobileHeader = computed<boolean>(
-  () => !stickyMobileHeaderAnchorIsVisible.value && isMobileSidebar.value
-);
+const isSearchPage = computedEager<boolean>(() => route.name === "Search");
 
 const searchParams = computedEager<ProductsSearchParams>(() => ({
   categoryId: props.categoryId,
   itemsPerPage: itemsPerPage.value,
   sort: sortQueryParam.value,
-  keyword: isSearchQuery.value ? searchQueryParam.value : keywordQueryParam.value,
+  keyword: isSearchPage.value ? searchQueryParam.value : keywordQueryParam.value,
   filter: [
     facetsQueryParam.value,
     getFilterExpressionForInStock(savedInStock),
@@ -472,10 +468,6 @@ const { breadcrumbs } = useBreadcrumbs(
   computed(() => [{ title: selectedCategory.value?.name }]),
   computed(() => selectedCategory.value?.breadcrumbs)
 );
-
-// endregion Computed properties
-
-// region Methods
 
 function sendGASelectItemEvent(product: Product) {
   ga.selectItem(product);
@@ -619,10 +611,6 @@ function openBranchesDialog(fromMobileFilter: boolean) {
   });
 }
 
-// endregion Methods
-
-// region Lifecycle Hooks
-
 onMounted(async () => {
   await loadProducts();
 
@@ -652,7 +640,5 @@ onBeforeUnmount(() => {
   watchStopHandles.forEach((watchStopHandle) => watchStopHandle());
 });
 
-// endregion Lifecycle Hooks
-
-whenever(() => !isMobileSidebar.value, hideMobileSidebar);
+whenever(() => !isMobile.value, hideMobileSidebar);
 </script>

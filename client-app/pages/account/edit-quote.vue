@@ -12,19 +12,16 @@
       <!-- Quote comment -->
       <VcSectionWidget
         :title="$t('pages.account.quote_details.remarks')"
-        icon-url="/static/images/remarks.svg"
-        content-classes="px-6 pb-1 pt-4 lg:px-7 lg:pb-2"
+        icon="document-text"
+        content-classes="px-6 pb-1 pt-2 lg:px-7 lg:pb-2"
       >
-        <div class="text-base leading-5 font-bold lg:text-15">
-          {{ $t("pages.account.quote_details.remarks_field_label") }}
-        </div>
-
-        <VcTextArea
+        <VcTextarea
+          :label="$t('pages.account.quote_details.remarks_field_label')"
           v-model="quote.comment"
-          :is-disabled="fetching"
+          :disabled="fetching"
           :max-length="1000"
           :rows="4"
-          class="mt-2 py-2 px-3 text-15 leading-5 font-medium resize-none lg:mt-1"
+          no-resize
           counter
         />
       </VcSectionWidget>
@@ -32,16 +29,13 @@
       <!-- Quote products -->
       <VcSectionWidget
         :title="$t('pages.account.quote_details.products')"
-        icon-url="/static/images/products.svg"
-        content-classes="px-6 pt-6 pb-0 md:p-7"
+        icon="cube"
+        content-classes="px-6 pt-3 pb-0 md:pb-7 md:px-7"
       >
         <QuoteLineItems :items="quote.items!" @remove:item="onRemoveItem" />
       </VcSectionWidget>
 
-      <VcSectionWidget
-        :title="$t('pages.account.quote_details.shipping_address')"
-        icon-url="/static/images/shipping-address.svg"
-      >
+      <VcSectionWidget :title="$t('pages.account.quote_details.shipping_address')" icon="truck">
         <h4 class="text-md leading-5 font-bold">
           {{ $t("pages.account.quote_details.shipping_address") }}
         </h4>
@@ -72,10 +66,7 @@
       </VcSectionWidget>
 
       <!-- Quote billing address -->
-      <VcSectionWidget
-        :title="$t('pages.account.quote_details.billing_address')"
-        icon-url="/static/images/billing-address.svg"
-      >
+      <VcSectionWidget :title="$t('pages.account.quote_details.billing_address')" icon="cash">
         <h4 class="text-md font-bold leading-5">
           {{ $t("pages.account.quote_details.billing_address") }}
         </h4>
@@ -152,9 +143,9 @@ import { computedEager } from "@vueuse/core";
 import { cloneDeep, isEqual, remove, every } from "lodash";
 import { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi";
 import { AddressType, convertToType } from "@/core";
-import { useUser, useUserAddresses, useUserQuote, QuoteLineItems } from "@/shared/account";
+import { useUserAddresses, useUserQuote, QuoteLineItems } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
-import { AddOrUpdateAddressDialog, SelectAddressDialog } from "@/shared/checkout";
+import { AddOrUpdateAddressModal, SelectAddressModal } from "@/shared/checkout";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { asyncForEach } from "@/core/utilities";
 
@@ -166,9 +157,8 @@ const props = defineProps({
 
 const router = useRouter();
 const { t } = useI18n();
-const { user } = useUser();
 const { openPopup, closePopup } = usePopup();
-const { addresses, fetchAddresses, addOrUpdateAddresses } = useUserAddresses({ user });
+const { addresses, fetchAddresses, addOrUpdateAddresses } = useUserAddresses();
 const {
   fetching,
   quote,
@@ -202,7 +192,12 @@ const quoteChanged = computed<boolean>(() => !isEqual(originalQuote.value, quote
 const quoteItemsValid = computed<boolean>(() =>
   every(quote.value?.items, (item: QuoteItemType) => item.selectedTierPrice?.quantity > 0)
 );
-const quoteValid = computed<boolean>(() => !!shippingAddress.value && !!billingAddress.value && quoteItemsValid.value);
+const quoteValid = computed<boolean>(
+  () =>
+    !!shippingAddress.value &&
+    (!!billingAddress.value || billingAddressEqualsShippingAddress.value) &&
+    quoteItemsValid.value
+);
 
 const userHasAddresses = computedEager<boolean>(() => !!addresses.value.length);
 
@@ -223,7 +218,7 @@ function setBillingAddressEqualsShippingAddress(): void {
 
 function openAddressSelectionDialog(addressType: AddressType.Billing | AddressType.Shipping): void {
   openPopup({
-    component: SelectAddressDialog,
+    component: SelectAddressModal,
     props: {
       addresses: addresses.value,
       currentAddress: convertToType<MemberAddressType>(
@@ -231,8 +226,8 @@ function openAddressSelectionDialog(addressType: AddressType.Billing | AddressTy
       ),
 
       onResult(selectedAddress: MemberAddressType): void {
-        const quoteAddress = convertToType<QuoteAddressType>(selectedAddress);
-        quoteAddress.addressType = addressType;
+        const quoteAddress = convertToType<QuoteAddressType>({ ...selectedAddress, addressType });
+
         setQuoteAddress(quoteAddress);
         closePopup();
       },
@@ -251,16 +246,18 @@ function openAddOrUpdateAddressDialog(
   currentAddress?: QuoteAddressType
 ): void {
   openPopup({
-    component: AddOrUpdateAddressDialog,
+    component: AddOrUpdateAddressModal,
     props: {
       address: currentAddress,
 
       async onResult(updatedAddress: MemberAddressType): Promise<void> {
-        const quoteAddress = convertToType<QuoteAddressType>(updatedAddress);
-        quoteAddress.addressType = addressType;
+        const quoteAddress = convertToType<QuoteAddressType>({ ...updatedAddress, addressType });
+
         setQuoteAddress(quoteAddress);
-        await addOrUpdateAddresses([updatedAddress], user.value!.memberId);
         closePopup();
+
+        // Save address in account
+        await addOrUpdateAddresses([{ ...updatedAddress, addressType: AddressType.BillingAndShipping }]);
       },
     },
   });

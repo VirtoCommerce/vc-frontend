@@ -12,7 +12,7 @@
     />
 
     <button v-if="searchPhrase" class="absolute right-[3.8rem] top-[0.95rem]" @click="reset">
-      <svg class="text-[color:var(--color-header-bottom-link)]" height="14" width="14">
+      <svg class="text-[color:var(--color-primary)]" height="14" width="14">
         <use href="/static/images/delete.svg#main" />
       </svg>
     </button>

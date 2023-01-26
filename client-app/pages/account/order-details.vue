@@ -1,81 +1,59 @@
 <template>
   <div v-if="order">
-    <BackButtonInHeader v-if="isMobile && !isNew" @click="$router.back()" />
+    <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
     <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block mx-5 md:mx-0" />
 
     <!-- Title block -->
     <div class="flex justify-between items-center mx-5 md:mx-0 -mb-3">
       <h2 class="text-gray-800 text-3xl font-bold uppercase">
-        {{
-          isNew
-            ? $t("pages.account.order_details.created_title")
-            : $t("pages.account.order_details.title", [order?.number])
-        }}
+        {{ $t("pages.account.order_details.title", [order?.number]) }}
       </h2>
-    </div>
-
-    <div class="md:flex mx-5 md:mx-0 gap-x-4">
-      <div class="text-sm">
-        <span class="font-bold">
-          {{ $t("pages.account.order_details.status_label") }}
-        </span>
-
-        {{ order?.status }}
-      </div>
-
-      <div class="text-sm truncate" v-if="order?.purchaseOrderNumber">
-        <span class="font-bold">
-          {{ $t("pages.account.order_details.purchase_order_label") }}
-        </span>
-        {{ order?.purchaseOrderNumber }}
-      </div>
-
-      <div class="text-sm">
-        <span class="font-bold">
-          {{ $t("pages.account.order_details.placed_on_label") }}
-        </span>
-        {{ $d(order?.createdDate, "long") }}
-      </div>
     </div>
 
     <div class="flex flex-col lg:flex-row lg:flex-nowrap lg:space-x-6">
       <!-- Main section -->
       <div class="lg:w-3/4 xl:w-4/5 flex-grow w-full">
-        <!-- My products section -->
-        <VcSection
-          :title="$t('pages.account.order_details.products_section.title')"
-          icon-url="/static/images/checkout/products.svg"
-          class="shadow lg:pb-11"
+        <!-- Items grouped by Vendor -->
+        <div
+          v-if="$cfg.line_items_group_by_vendor_enabled"
+          class="bg-white lg:mb-6 lg:rounded -mx-5 md:mx-0 lg:shadow-md-x lg:pt-5 lg:px-7"
         >
-          <div class="lg:ml-28 lg:mr-11 lg:border lg:rounded">
-            <!-- Product card -->
-            <ProductCard v-for="item in orderItems" :key="item?.id" :line-item="item" :read-only="true"></ProductCard>
+          <template v-for="(group, vendorId) in orderItemsGroupedByVendor" :key="vendorId">
+            <div
+              v-if="group.items.length"
+              class="bg-white shadow-light-lg mb-4 px-7 pt-4 lg:mb-0 lg:pb-5 lg:px-0 lg:pt-0 lg:rounded lg:shadow-none"
+            >
+              <!-- Vendor -->
+              <div class="pb-3 font-bold text-15">
+                <span class="mr-1">{{ $t("pages.account.order_details.vendor_label") }}:</span>
+                <Vendor v-if="group.vendor" :vendor="group.vendor" class="inline-flex flex-row items-end gap-x-3" />
+                <span v-else class="text-gray-400" v-t="`pages.account.order_details.empty_vendor_label`" />
+              </div>
 
-            <div v-if="pages > 1" class="py-8 lg:flex lg:items-center lg:px-5">
-              <VcPagination
-                v-model:page="page"
-                :pages="pages"
-                class="mb-3 lg:mb-0"
-                @update:page="onUpdatePage()"
-              ></VcPagination>
+              <OrderLineItems :items="group.items" class="lg:rounded" />
             </div>
+          </template>
+        </div>
+
+        <!-- Items not grouped by Vendor -->
+        <div v-else class="bg-white lg:mb-6 lg:rounded -mx-5 md:mx-0 lg:shadow-md-x lg:pt-5 lg:px-7">
+          <div class="bg-white shadow-light-lg mb-4 p-7 lg:mb-0 lg:pb-5 lg:px-0 lg:pt-0 lg:rounded lg:shadow-none">
+            <OrderLineItems :items="orderItems" class="lg:rounded" />
           </div>
-        </VcSection>
+        </div>
 
         <!-- Gifts section -->
         <AcceptedGifts :items="giftItems" />
 
         <!-- Order comment section -->
-        <VcSection
-          v-if="order?.comment"
-          :title="$t('pages.account.order_details.order_comment_section.title')"
-          icon-url="/static/images/checkout/extra.svg"
-          class="shadow-inner pb-8 lg:shadow"
-        >
-          <div class="ml-24 mr-5 lg:ml-28 lg:mr-11">
-            <p class="break-words" v-for="line in order?.comment?.split('\n')" :key="line">{{ line }}</p>
-          </div>
+        <VcSection v-if="order?.comment" class="shadow-inner mt-5 p-6 lg:shadow" content-classes="pt-4">
+          <template #title>
+            <h3 class="text-24 font-bold uppercase mb-4">
+              {{ $t("pages.account.order_details.order_comment_section.title") }}
+            </h3>
+          </template>
+          <p class="break-words text-15" v-for="line in order?.comment?.split('\n')" :key="line">{{ line }}</p>
         </VcSection>
 
         <div class="shadow-inner h-1 lg:hidden"></div>
@@ -94,7 +72,12 @@
         <!-- Order summary -->
         <OrderSummary v-if="order" :cart="order" class="mb-5" />
 
-        <VcButton v-if="!isNew" :is-waiting="loadingAddItemsToCart" class="uppercase w-full mb-5" @click="reorderItems">
+        <VcButton
+          v-if="showReorderButton"
+          :is-waiting="loadingAddItemsToCart"
+          class="uppercase w-full mb-5"
+          @click="reorderItems"
+        >
           {{ $t("pages.account.order_details.reorder_all_button") }}
         </VcButton>
 
@@ -202,12 +185,13 @@
           </div>
         </VcCard>
 
-        <div class="flex justify-center">
-          <VcButton kind="secondary" class="!hidden lg:!inline-flex uppercase px-3" is-outline @click="printOrder">
+        <!-- US-3534 -->
+        <!-- <div class="flex justify-center">
+          <VcButton kind="secondary" class="!hidden lg:!inline-flex uppercase px-3" is-outline @click="window.print()">
             <i class="fas fa-print mr-2" />
             {{ $t("pages.account.order_details.print_order_button") }}
           </VcButton>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -216,31 +200,30 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType, ref, watchEffect } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useBreadcrumbs, usePageHead } from "@/core";
-import { InputNewBulkItemType } from "@/xapi";
-import { AcceptedGifts, OrderSummary, ProductCard } from "@/shared/checkout";
+import { InputNewBulkItemType, OrderLineItemType, Vendor as VendorType } from "@/xapi";
+import { AcceptedGifts, OrderSummary } from "@/shared/checkout";
 import { BackButtonInHeader } from "@/shared/layout";
-import { useUserOrder } from "@/shared/account";
+import { useUserOrder, OrderLineItems } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
-import { AddBulkItemsToCartResultsPopup, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
+import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
+import { Vendor } from "@/shared/catalog";
+
+type TGroupItem = { items: OrderLineItemType[]; vendor?: VendorType };
+type TGroupedItems = Record<string, TGroupItem>;
 
 const props = defineProps({
   orderId: {
     type: String,
     default: "",
   },
-
-  new: {
-    type: String as PropType<"true">, // Specifics of router.push params (pass as string "true")
-    default: "",
-  },
 });
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { itemsPerPage, pages, order, deliveryAddress, billingAddress, fetchOrder, clearOrder } = useUserOrder();
+const { order, deliveryAddress, billingAddress, fetchOrder, clearOrder } = useUserOrder();
 const { addBulkItemsToCart } = useCart();
 const { openPopup } = usePopup();
 const { t } = useI18n();
@@ -250,20 +233,7 @@ usePageHead({
 });
 
 const isMobile = breakpoints.smaller("lg");
-const page = ref(1);
 const loadingAddItemsToCart = ref(false);
-
-const isNew = computed<boolean>(() => props.new === "true");
-
-const showPaymentButton = computed<boolean>(() => !!order.value && !order.value.inPayments[0]?.isApproved);
-
-const giftItems = computed(() => order.value?.items?.filter((item) => item.isGift));
-
-const orderItems = computed(() =>
-  order.value?.items
-    ?.filter((item) => !item.isGift)
-    ?.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
-);
 
 const breadcrumbs = useBreadcrumbs([
   { title: t("common.links.account"), route: { name: "Account" } },
@@ -271,9 +241,39 @@ const breadcrumbs = useBreadcrumbs([
   { title: t("pages.account.order_details.title", [order.value?.number]) },
 ]);
 
-function printOrder() {
-  window.print();
-}
+const showPaymentButton = computed<boolean>(() => !!order.value && order.value.status === "New");
+const showReorderButton = computed<boolean>(() => !!order.value && order.value.status === "Completed");
+
+const giftItems = computed<OrderLineItemType[]>(() => (order.value?.items || []).filter((item) => item.isGift));
+const orderItems = computed<OrderLineItemType[]>(() => (order.value?.items || []).filter((item) => !item.isGift));
+
+const orderItemsGroupedByVendor = computed<TGroupItem[]>(() => {
+  // NOTE: The group without the vendor should be displayed last.
+  const groupWithoutVendor: TGroupItem = { items: [] };
+  const map: TGroupedItems = {};
+
+  orderItems.value.forEach((item) => {
+    const vendor = item.product?.vendor;
+
+    if (vendor) {
+      const vendorId = vendor.id;
+
+      map[vendorId] = map[vendorId] || { vendor, items: [] };
+      map[vendorId].items.push(item);
+    } else {
+      groupWithoutVendor.items.push(item);
+    }
+  });
+
+  const result = Object.values(map)
+    // Sort by Vendor
+    .sort((a, b) => a.vendor!.name.localeCompare(b.vendor!.name));
+
+  // Add the group without the vendor to the end.
+  result.push(groupWithoutVendor);
+
+  return result;
+});
 
 async function reorderItems() {
   const items = order.value!.items!.filter((item) => !item.isGift);
@@ -284,7 +284,7 @@ async function reorderItems() {
   const resultItems = await addBulkItemsToCart(inputBulkItems);
 
   openPopup({
-    component: AddBulkItemsToCartResultsPopup,
+    component: AddBulkItemsToCartResultsModal,
     props: {
       items: getItemsForAddBulkItemsToCartResultsPopup(items, resultItems),
     },
@@ -297,11 +297,4 @@ watchEffect(() => {
   clearOrder();
   fetchOrder({ id: props.orderId });
 });
-
-/**
- * Scroll after page change.
- */
-function onUpdatePage() {
-  window.scroll({ top: 0, behavior: "smooth" });
-}
 </script>

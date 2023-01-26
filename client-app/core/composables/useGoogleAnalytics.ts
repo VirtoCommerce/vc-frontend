@@ -1,5 +1,5 @@
 import { useAppContext } from "@/core";
-import { Product, CartType, LineItemType, Breadcrumb, VariationType } from "@/xapi";
+import { Product, CartType, LineItemType, Breadcrumb, VariationType, PaymentMethodType } from "@/xapi";
 import globals from "@/core/globals";
 
 type TEventParams = Gtag.ControlParams | Gtag.EventParams | Gtag.CustomParams;
@@ -86,7 +86,16 @@ function viewItem(item: Product, params?: TEventParamsForList): void {
   sendEvent("view_item", {
     ...params,
     currency: globals.currencyCode,
-    value: item.price?.list?.amount,
+    value: item.price?.actual?.amount,
+    items: [productToGtagItem(item)],
+  });
+}
+
+function addItemToWishList(item: Product, params?: TEventParamsForList): void {
+  sendEvent("add_to_wishlist", {
+    ...params,
+    currency: globals.currencyCode,
+    value: item.price?.actual?.amount,
     items: [productToGtagItem(item)],
   });
 }
@@ -99,19 +108,17 @@ function addItemToCart(item: Product | VariationType, quantity = 1, params?: TEv
   sendEvent("add_to_cart", {
     ...params,
     currency: globals.currencyCode,
-    value: item.price?.list?.amount * quantity,
+    value: item.price?.actual?.amount * quantity,
     items: [inputItem],
   });
 }
 
 function removeItemFromCart(item: LineItemType, params?: TEventParamsForList): void {
-  const inputItem = lineItemToGtagItem(item);
-
   sendEvent("remove_from_cart", {
     ...params,
     currency: globals.currencyCode,
-    value: item.listPrice?.amount * (inputItem.quantity ?? 1),
-    items: [inputItem],
+    value: item.placedPrice?.amount * (item.quantity ?? 1),
+    items: [lineItemToGtagItem(item)],
   });
 }
 
@@ -145,15 +152,30 @@ function addShippingInfo(cart: CartType, params?: TEventParamsForList): void {
   });
 }
 
+function addPaymentInfo(cart: CartType, params?: TEventParamsForList): void {
+  sendEvent("add_payment_info", {
+    ...params,
+    currency: cart.currency?.code,
+    value: cart.total?.amount,
+    coupon: cart.coupons?.[0],
+    payment_type: cart.availablePaymentMethods?.find(
+      (paymentMethod: PaymentMethodType) => paymentMethod.code === cart.payments?.[0].paymentGatewayCode
+    )?.paymentMethodGroupType,
+    items: cart.items!.map(lineItemToGtagItem),
+  });
+}
+
 export default () => ({
   isAvailableGtag,
   sendEvent,
   viewItemList,
   selectItem,
   viewItem,
+  addItemToWishList,
   addItemToCart,
   removeItemFromCart,
   viewCart,
   beginCheckout,
   addShippingInfo,
+  addPaymentInfo,
 });

@@ -82,7 +82,7 @@
 
         <template v-for="item in mobileMainMenuLinks" :key="item.title">
           <MobileMenuLink
-            v-if="item.id === 'checkout'"
+            v-if="item.id === 'cart'"
             :link="item"
             :count="cart?.itemsQuantity"
             class="text-2xl py-1"

@@ -5,6 +5,8 @@ import { InputMemberAddressType, MemberAddressType } from "@/xapi/types";
 import { MaybeRef } from "@vueuse/core";
 import { computed, readonly, ref, shallowRef, unref } from "vue";
 
+const requestedAddressesQuantity = 9999;
+
 export default function useOrganizationAddresses(organizationId: MaybeRef<string>) {
   const loading = ref(false);
   const addresses = shallowRef<MemberAddressType[]>([]);
@@ -21,6 +23,7 @@ export default function useOrganizationAddresses(organizationId: MaybeRef<string
 
       const { items = [] } = await getOrganizationAddresses(unref(organizationId), {
         sort: sortingExpression,
+        first: requestedAddressesQuantity,
       });
 
       addresses.value = items;

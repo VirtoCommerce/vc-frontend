@@ -8,35 +8,23 @@
       </h2>
     </div>
 
-    <div class="flex flex-col bg-white -mx-5 lg:mx-0 lg:bg-transparent lg:flex-row lg:items-start lg:gap-x-6">
-      <div class="contents lg:grow lg:block lg:space-y-6">
+    <VcLayoutWithRightSidebar>
+      <template #main>
         <!-- Quote products -->
-        <VcSectionWidget
-          :title="$t('pages.account.quote_details.products')"
-          icon-url="/static/images/products.svg"
-          hide-desktop-title
-          content-classes="px-6 pt-6 pb-0 md:p-7"
-        >
+        <VcSectionWidget :title="$t('pages.account.quote_details.products')" icon="cube" hide-desktop-title>
           <QuoteLineItems :items="quote.items!" readonly />
         </VcSectionWidget>
 
         <!-- Quote comment -->
-        <VcSectionWidget
-          :title="$t('pages.account.quote_details.remarks')"
-          icon-url="/static/images/remarks.svg"
-          v-if="quote.comment"
-        >
+        <VcSectionWidget :title="$t('pages.account.quote_details.remarks')" icon="document-text" v-if="quote.comment">
           <div class="text-15 font-medium">
             {{ quote.comment }}
           </div>
         </VcSectionWidget>
-      </div>
+      </template>
 
-      <div class="contents lg:block lg:shrink-0 lg:space-y-6 lg:w-1/4 2xl:w-[285px]">
-        <VcCardWidget
-          :title="$t('pages.account.quote_details.quote_summary')"
-          icon-url="/static/images/billing-address.svg"
-        >
+      <template #sidebar>
+        <VcCardWidget :title="$t('pages.account.quote_details.quote_summary')" icon="cash">
           <div class="flex justify-between text-base">
             <span class="font-bold" v-t="'pages.account.quote_details.total'" />
 
@@ -48,10 +36,10 @@
 
         <VcCardWidget
           :title="$t('pages.account.quote_details.quote_data')"
-          hide-mobile-title
           class="-order-1 lg:order-none"
+          hide-mobile-title
         >
-          <div class="-mt-1 mb-1 space-y-1">
+          <div class="space-y-1">
             <div class="flex text-base">
               <span class="font-bold mr-2">{{ $t("pages.account.quote_details.created") }}:</span>
 
@@ -68,23 +56,15 @@
           </div>
         </VcCardWidget>
 
-        <VcCardWidget
-          v-if="shippingAddress"
-          :title="$t('pages.account.quote_details.shipping_address')"
-          icon-url="/static/images/shipping-address.svg"
-        >
-          <VcAddressInfo class="-mt-1" :address="shippingAddress!" />
+        <VcCardWidget v-if="shippingAddress" :title="$t('pages.account.quote_details.shipping_address')" icon="cube">
+          <VcAddressInfo :address="shippingAddress!" />
         </VcCardWidget>
 
-        <VcCardWidget
-          v-if="billingAddress"
-          :title="$t('pages.account.quote_details.billing_address')"
-          icon-url="/static/images/billing-address.svg"
-        >
-          <VcAddressInfo class="-mt-1" :address="billingAddress!" />
+        <VcCardWidget v-if="billingAddress" :title="$t('pages.account.quote_details.billing_address')" icon="cash">
+          <VcAddressInfo :address="billingAddress!" />
         </VcCardWidget>
-      </div>
-    </div>
+      </template>
+    </VcLayoutWithRightSidebar>
   </div>
 
   <VcLoaderOverlay v-else no-bg />
