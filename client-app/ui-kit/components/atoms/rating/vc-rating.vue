@@ -4,8 +4,8 @@
       <use href="/static/images/star.svg#main"></use>
     </svg>
     <div class="text-13 leading-[0.875rem] font-semibold">
-      <span class="font-extrabold">{{ value?.value }}</span
-      >/5&nbsp;({{ value?.reviewCount }})
+      <span class="font-extrabold">{{ value?.value }}</span>
+      /5&nbsp;({{ value?.reviewCount }})
     </div>
   </div>
 </template>
