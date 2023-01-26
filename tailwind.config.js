@@ -115,10 +115,6 @@ module.exports = {
           DEFAULT: "#4D4D4D",
         },
 
-        vendor: {
-          DEFAULT: "#E4982B",
-        },
-
         /**
          * Custom colors
          */
@@ -199,12 +195,6 @@ module.exports = {
           "0.9375rem", //15px
           {
             lineHeight: "1.25rem", //20px
-          },
-        ],
-        16: [
-          "1rem", //16px
-          {
-            lineHeight: "1rem", //16px
           },
         ],
         17: [
