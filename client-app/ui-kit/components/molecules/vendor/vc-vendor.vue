@@ -12,9 +12,7 @@ export interface Props {
   vendor?: Vendor;
 }
 
-withDefaults(defineProps<Props>(), {
-  vendor: undefined,
-});
+defineProps<Props>();
 </script>
 
 <style lang="scss">
