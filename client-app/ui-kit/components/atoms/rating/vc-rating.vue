@@ -5,7 +5,7 @@
     </svg>
     <div class="text-13 leading-[0.875rem] font-semibold">
       <span class="font-extrabold">{{ value?.value }}</span>
-      /5&nbsp;({{ value?.reviewCount }})
+      /5 ({{ value?.reviewCount }})
     </div>
   </div>
 </template>
