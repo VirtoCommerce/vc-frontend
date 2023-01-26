@@ -180,7 +180,7 @@ const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
 const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
-const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
+const { queryParam: sortQueryParam } = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: "createdDate:desc",
 });
 

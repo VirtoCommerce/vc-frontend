@@ -400,20 +400,20 @@ const savedViewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
 const savedInStock = useLocalStorage<boolean>("viewInStockProducts", true);
 const savedBranches = useLocalStorage<string[]>(FFC_LOCAL_STORAGE, []);
 
-const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
+const { queryParam: sortQueryParam } = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: PRODUCT_SORTING_LIST[0].id,
   validator: (value) => PRODUCT_SORTING_LIST.some((item) => item.id === value),
 });
 
-const searchQueryParam = useRouteQueryParam<string>(QueryParamName.SearchPhrase, {
+const { queryParam: searchQueryParam } = useRouteQueryParam<string>(QueryParamName.SearchPhrase, {
   defaultValue: "",
 });
 
-const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
+const { queryParam: keywordQueryParam } = useRouteQueryParam<string>(QueryParamName.Keyword, {
   defaultValue: "",
 });
 
-const facetsQueryParam = useRouteQueryParam<string>(QueryParamName.Facets, {
+const { queryParam: facetsQueryParam } = useRouteQueryParam<string>(QueryParamName.Facets, {
   defaultValue: "",
 });
 

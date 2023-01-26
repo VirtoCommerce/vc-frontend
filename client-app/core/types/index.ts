@@ -32,20 +32,6 @@ export type UsePageSeoData = {
   meta?: Record<string, MaybeRef<string | undefined>>;
 };
 
-export type UseRouteQueryParamOptions<T = LocationQueryValue | LocationQueryValue[]> = {
-  defaultValue?: T | null;
-  validator?(queryValue: any): boolean;
-  onChange?(value: T, isChanged: boolean): void | Promise<void>;
-  // @default push
-  updateMethod?: "push" | "replace";
-  // @default true
-  removeFalsyValue?: boolean;
-  // @default true
-  removeNullishValue?: boolean;
-  // @default true
-  removeDefaultValue?: boolean;
-};
-
 export interface ISortInfo {
   column: string;
   direction: string;
