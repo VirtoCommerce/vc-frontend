@@ -14,7 +14,6 @@ export interface IThemeConfigPreset {
   page_title_store_name_align?: string | "start" | "end";
   page_title_divider?: string;
 
-  anonymous_access_enabled?: boolean;
   anonymous_price_enabled?: boolean;
   anonymous_checkout?: boolean;
 
@@ -83,6 +82,7 @@ export interface IThemeConfigPreset {
   orders_filter_enabled?: boolean;
   orders_reorder_enabled?: boolean;
   orders_statuses?: string[];
+  line_items_group_by_vendor_enabled?: boolean;
 
   social_sharing_services?: ISocialSharingService[];
   support_phone_number?: string;

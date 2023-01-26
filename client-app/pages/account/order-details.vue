@@ -204,7 +204,7 @@ import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useBreadcrumbs, usePageHead } from "@/core";
-import { InputNewBulkItemType, OrderLineItemType, Vendor as VendorType } from "@/xapi";
+import { InputNewBulkItemType, OrderLineItemType, CommonVendor } from "@/xapi";
 import { AcceptedGifts, OrderSummary } from "@/shared/checkout";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useUserOrder, OrderLineItems } from "@/shared/account";
@@ -212,7 +212,7 @@ import { usePopup } from "@/shared/popup";
 import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
 import { Vendor } from "@/shared/catalog";
 
-type TGroupItem = { items: OrderLineItemType[]; vendor?: VendorType };
+type TGroupItem = { items: OrderLineItemType[]; vendor?: CommonVendor };
 type TGroupedItems = Record<string, TGroupItem>;
 
 const props = defineProps({

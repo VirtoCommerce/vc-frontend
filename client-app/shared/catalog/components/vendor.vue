@@ -11,7 +11,7 @@ import { RouteLocationRaw } from "vue-router";
 export interface Props {
   vendor: {
     id: string;
-    name: string;
+    name?: string;
   };
 }
 

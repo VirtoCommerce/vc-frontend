@@ -4540,43 +4540,43 @@ export type VariationType = {
 };
 
 /** Vendor Info */
-export type Vendor = {
-  /** About vendor */
-  about?: Maybe<Scalars['String']>;
-  /** Address */
-  address?: Maybe<MemberAddressType>;
-  addresses?: Maybe<MemberAddressConnection>;
-  /** Default billing address */
-  defaultBillingAddress?: Maybe<MemberAddressType>;
-  /** Default shipping address */
-  defaultShippingAddress?: Maybe<MemberAddressType>;
-  /** Dynamic property values */
-  dynamicProperties: Array<Maybe<DynamicPropertyValueType>>;
-  /** Emails */
-  emails: Array<Maybe<Scalars['String']>>;
-  groups: Array<Maybe<Scalars['String']>>;
-  /** Icon URL */
-  iconUrl?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
-  /** Member type */
-  memberType: Scalars['String'];
-  /** Name */
-  name?: Maybe<Scalars['String']>;
-  /** Outer ID */
-  outerId?: Maybe<Scalars['String']>;
-  /** Phones */
-  phones: Array<Maybe<Scalars['String']>>;
-  /** Vendor rating */
-  rating?: Maybe<Rating>;
-  /** Request related SEO info */
-  seoInfo?: Maybe<SeoInfo>;
-  /** SEO object type */
-  seoObjectType: Scalars['String'];
-  /** Site URL */
-  siteUrl?: Maybe<Scalars['String']>;
-  /** Status */
-  status?: Maybe<Scalars['String']>;
-};
+// export type Vendor = {
+//   /** About vendor */
+//   about?: Maybe<Scalars['String']>;
+//   /** Address */
+//   address?: Maybe<MemberAddressType>;
+//   addresses?: Maybe<MemberAddressConnection>;
+//   /** Default billing address */
+//   defaultBillingAddress?: Maybe<MemberAddressType>;
+//   /** Default shipping address */
+//   defaultShippingAddress?: Maybe<MemberAddressType>;
+//   /** Dynamic property values */
+//   dynamicProperties: Array<Maybe<DynamicPropertyValueType>>;
+//   /** Emails */
+//   emails: Array<Maybe<Scalars['String']>>;
+//   groups: Array<Maybe<Scalars['String']>>;
+//   /** Icon URL */
+//   iconUrl?: Maybe<Scalars['String']>;
+//   id: Scalars['String'];
+//   /** Member type */
+//   memberType: Scalars['String'];
+//   /** Name */
+//   name?: Maybe<Scalars['String']>;
+//   /** Outer ID */
+//   outerId?: Maybe<Scalars['String']>;
+//   /** Phones */
+//   phones: Array<Maybe<Scalars['String']>>;
+//   /** Vendor rating */
+//   rating?: Maybe<Rating>;
+//   /** Request related SEO info */
+//   seoInfo?: Maybe<SeoInfo>;
+//   /** SEO object type */
+//   seoObjectType: Scalars['String'];
+//   /** Site URL */
+//   siteUrl?: Maybe<Scalars['String']>;
+//   /** Status */
+//   status?: Maybe<Scalars['String']>;
+// };
 
 
 /** Vendor Info */
