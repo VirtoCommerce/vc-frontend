@@ -50,7 +50,7 @@
 
         <div class="xl:hidden">
           <VcLineItemProperty :label="$t('common.labels.price_per_item')">
-            <VcLineItemPrice :value="{ list: extendedItem.listPrice, actual: extendedItem.salePrice }" />
+            <VcLineItemPrice :list-price="extendedItem.listPrice" :actual-price="extendedItem.salePrice" />
           </VcLineItemProperty>
         </div>
       </div>
