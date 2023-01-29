@@ -7,6 +7,7 @@
   >
     <VcMarkdownRender :src="product.description?.content"></VcMarkdownRender>
   </ProductTitledBlock>
+  {{ product.description }}
 </template>
 
 <script setup lang="ts">

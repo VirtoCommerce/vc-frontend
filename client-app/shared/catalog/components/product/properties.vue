@@ -6,10 +6,17 @@
     :title="model.title || $t('shared.catalog.product_details.technical_specs_block_title')"
   >
     <!-- Properties -->
-    <ProductProperty v-for="property in groupedProperties" :key="property.name" :label="property.name" class="mb-4">
+    <ProductProperty v-for="property in propertiesToShow" :key="property.name" :label="property.name" class="mb-4">
       {{ property.values }}
     </ProductProperty>
-
+    <a
+      v-if="product.properties && product.properties.length >= MAX_DISPLAY_ITEMS"
+      class="my-0.5 !h-10 text-blue-600 dark:text-blue-500 underline hover:cursor-pointer decoration-dashed"
+      @click="showAll = !showAll"
+    >
+      <i class="md:hidden px-2 fas fa-save text-2xl" />
+      <div class="hidden md:inline">{{ showAll == true ? "See less" : "See more" }}</div>
+    </a>
     <!-- Vendor -->
     <ProductProperty
       v-if="$cfg.vendor_enabled && !product.hasVariations && product.vendor"
@@ -22,11 +29,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from "vue";
+import { computed, PropType, ref } from "vue";
 import _ from "lodash";
 import { Product } from "@/xapi/types";
 import { prepareProperties, ProductProperty, ProductTitledBlock, Vendor } from "@/shared/catalog";
 
+const MAX_DISPLAY_ITEMS = 1;
+const showAll = ref(false);
 const props = defineProps({
   product: {
     type: Object as PropType<Product>,
@@ -47,4 +56,8 @@ const groupedProperties = computed(() => {
     .map(prepareProperties)
     .value();
 });
+
+const propertiesToShow = computed(() =>
+  !showAll.value ? groupedProperties.value.slice(0, MAX_DISPLAY_ITEMS) : groupedProperties.value
+);
 </script>
