@@ -1,45 +1,40 @@
 <template>
-  <div>
-    <div v-if="label">
-      <span class="font-bold text-gray-900">{{ label }}</span>
-      <span v-if="isRequired" class="text-[color:var(--color-danger)]">*</span>
-    </div>
+  <div
+    :class="[
+      'vc-select',
+      `vc-select--size--${size}`,
+      `vc-select--kind--${kind}`,
+      {
+        'vc-select--disabled': disabled,
+        'vc-select--opened': open,
+      },
+    ]"
+  >
+    <VcLabel v-if="label" :text="label" :required="required" />
 
-    <div v-click-outside="() => open && hideList()" class="relative select-none">
-      <button
-        type="button"
-        :disabled="isDisabled"
-        :class="buttonClasses"
-        class="relative truncate text-left w-full appearance-none rounded pl-3 pr-7 leading-none border border-gray-300 outline-none bg-white disabled:bg-gray-50 disabled:cursor-not-allowed focus:border-gray-400"
-        @click="toggle"
-      >
-        <slot v-if="placeholder && !selected" name="placeholder">
-          <span class="text-gray-400">{{ placeholder }}</span>
-        </slot>
+    <div v-click-outside="() => open && hideList()" class="vc-select__container">
+      <button type="button" :disabled="disabled" class="vc-select__button" @click="toggle">
+        <span class="grow">
+          <slot v-if="placeholder && !selected" name="placeholder">
+            <span class="vc-select__placeholder-default">
+              {{ placeholder }}
+            </span>
+          </slot>
 
-        <slot v-if="selected" name="selected" v-bind="{ item: selected }">
-          {{ textField && selected ? selected[textField] : selected }}
-        </slot>
-
-        <span
-          class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
-          :class="{ 'opacity-50': isDisabled }"
-        >
-          <i class="text-gray-700 fas fa-chevron-down"></i>
+          <slot v-if="selected" name="selected" v-bind="{ item: selected }">
+            <span class="vc-select__selected-default">
+              {{ textField && selected ? selected[textField] : selected }}
+            </span>
+          </slot>
         </span>
+
+        <VcIcon class="vc-select__icon" name="chevron-down" size="sm" />
       </button>
 
       <transition :leave-active-class="`transition duration-${transitionDuration} ease-in`" leave-to-class="opacity-0">
-        <div
-          v-show="open"
-          class="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-52 rounded border border-gray-300 overflow-hidden"
-        >
-          <ul ref="listElement" class="max-h-52 overflow-auto">
-            <li
-              v-if="$slots.first"
-              :class="`px-3 py-2 text-gray-400 hover:text-white hover:bg-${color} cursor-pointer`"
-              @click="select()"
-            >
+        <div v-show="open" class="vc-select__dropdown">
+          <ul ref="listElement" class="vc-select__list">
+            <li v-if="$slots.first" class="vc-select__item" @click="select()">
               <slot name="first" />
             </li>
 
@@ -47,13 +42,17 @@
               v-for="(item, index) in items"
               :key="index"
               :class="[
-                `px-3 py-2 hover:text-white hover:bg-${color} last:border-b-2 border-transparent`,
-                isActiveItem(item) ? `cursor-default text-${color}` : 'cursor-pointer',
+                'vc-select__item',
+                {
+                  'vc-select__item--active': isActiveItem(item),
+                },
               ]"
               @click="select(item)"
             >
               <slot name="item" v-bind="{ item, index, selected }">
-                {{ textField && item ? item[textField] : item }}
+                <span class="vc-select__item-default">
+                  {{ textField && item ? item[textField] : item }}
+                </span>
               </slot>
             </li>
           </ul>
@@ -61,7 +60,7 @@
       </transition>
     </div>
 
-    <div v-if="errorMessage" class="text-xs text-[color:var(--color-danger)]">{{ errorMessage }}</div>
+    <div v-if="errorMessage" class="vc-select__error-message">{{ errorMessage }}</div>
   </div>
 </template>
 
@@ -76,81 +75,33 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { computed, PropType, ref, shallowRef } from "vue";
+import { computed, ref, shallowRef } from "vue";
 
-const props = defineProps({
-  label: {
-    type: String,
-  },
+interface Props {
+  label?: string;
+  required?: boolean;
+  disabled?: boolean;
+  modelValue: object | string;
+  items: any[];
+  size?: "sm" | "md" | "lg";
+  kind?: "primary" | "secondary";
+  textField?: string;
+  valueField?: string;
+  placeholder?: string;
+  errorMessage?: string;
+}
 
-  isRequired: {
-    type: Boolean,
-    default: false,
-  },
-
-  isDisabled: {
-    type: Boolean,
-    default: false,
-  },
-
-  modelValue: {
-    type: [Object, String],
-    default: undefined,
-  },
-
-  items: {
-    type: Array as PropType<any[]>,
-    default: () => [],
-  },
-
-  /**
-   * The property of the object that will be displayed in the "selected" and "item" slots.
-   * (Optional) Only for objects array of modelValue.
-   */
-  textField: {
-    type: String,
-    default: undefined,
-  },
-
-  /**
-   * An object property passed as a new value for the "modelValue" or "change" events
-   * (Optional) Only for objects array of modelValue.
-   */
-  valueField: {
-    type: String,
-    default: undefined,
-  },
-
-  placeholder: {
-    type: String,
-    default: "",
-  },
-
-  color: {
-    type: String,
-    default: "[color:var(--color-primary)]",
-  },
-
-  size: {
-    type: String as PropType<"sm" | "md" | "lg">,
-    default: "md",
-    validator(value: string) {
-      return ["sm", "md", "lg"].includes(value);
-    },
-  },
-
-  errorMessage: {
-    type: String,
-    default: undefined,
-  },
-
-  // TODO: add size prop and etc...
-});
-
-const emit = defineEmits<{
+interface Emits {
   (event: "update:modelValue", value: any): void;
   (event: "change", value: any): void;
-}>();
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  size: "md",
+  kind: "secondary",
+});
+
+const emit = defineEmits<Emits>();
 
 const transitionDuration = 100;
 
@@ -165,20 +116,6 @@ const selected = computed(() => {
   }
 
   return props.modelValue;
-});
-
-const buttonClasses = computed<string>(() => {
-  switch (props.size) {
-    case "lg":
-      return "h-11 text-base";
-
-    case "sm":
-      return "h-8 text-sm";
-
-    case "md":
-    default:
-      return "h-9 text-base";
-  }
 });
 
 function isActiveItem(item: any): boolean {
@@ -197,7 +134,7 @@ function hideList() {
 }
 
 function toggle() {
-  if (props.isDisabled) {
+  if (props.disabled) {
     return;
   }
 
@@ -209,7 +146,7 @@ function toggle() {
 }
 
 function select(item?: any) {
-  if (props.isDisabled) {
+  if (props.disabled) {
     return;
   }
 
@@ -223,3 +160,133 @@ function select(item?: any) {
   hideList();
 }
 </script>
+
+<style lang="scss">
+.vc-select {
+  $sizeSm: "";
+  $sizeMd: "";
+  $sizeLg: "";
+  $kindPrimary: "";
+  $kindSecondary: "";
+  $disabled: "";
+  $opened: "";
+
+  &--size {
+    &--sm {
+      $sizeSm: &;
+    }
+
+    &--md {
+      $sizeMd: &;
+    }
+
+    &--lg {
+      $sizeLg: &;
+    }
+  }
+
+  &--kind {
+    &--primary {
+      $kindPrimary: &;
+    }
+
+    &--secondary {
+      $kindSecondary: &;
+    }
+  }
+
+  &--disabled {
+    $disabled: &;
+  }
+
+  &--opened {
+    $opened: &;
+  }
+
+  &__container {
+    @apply relative select-none;
+  }
+
+  &__button {
+    @apply relative flex items-center w-full rounded border appearance-none outline-none text-left;
+
+    #{$sizeSm} & {
+      @apply min-h-[2rem] text-sm;
+    }
+
+    #{$sizeMd} & {
+      @apply min-h-[2.25rem] text-sm;
+    }
+
+    #{$sizeLg} & {
+      @apply min-h-[2.75rem] text-base;
+    }
+
+    &:focus {
+      @apply outline outline-offset-0 outline-2 outline-[color:var(--color-primary-light)];
+    }
+
+    #{$disabled} &,
+    &:disabled {
+      @apply bg-gray-50 cursor-not-allowed;
+    }
+  }
+
+  &__placeholder-default {
+    @apply block p-3 text-gray-400 truncate;
+  }
+
+  &__selected-default {
+    @apply block p-3 text-[color:var(--color-body-text)] truncate;
+  }
+
+  &__icon {
+    @apply mr-3;
+
+    #{$kindPrimary} & {
+      @apply text-[var(--color-primary)];
+    }
+
+    #{$kindSecondary} & {
+      @apply text-[var(--color-secondary)];
+    }
+
+    #{$disabled} & {
+      @apply text-gray-300;
+    }
+
+    #{$opened} & {
+      @apply rotate-180;
+    }
+  }
+
+  &__dropdown {
+    @apply z-10 overflow-hidden absolute mt-1 w-full bg-white rounded border border-gray-200 shadow-lg;
+  }
+
+  &__list {
+    @apply overflow-auto max-h-52;
+  }
+
+  &__item {
+    @apply w-full cursor-pointer;
+
+    &:hover {
+      @apply bg-gray-100;
+    }
+
+    &--active,
+    &--active:hover {
+      @apply bg-[color:var(--color-primary-light)] cursor-default;
+    }
+  }
+
+  &__item-default {
+    @apply block p-2 text-13 truncate;
+  }
+
+  &__error-message {
+    @apply text-xs text-[color:var(--color-danger)];
+  }
+}
+</style>
