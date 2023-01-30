@@ -30,7 +30,7 @@
           </slot>
         </span>
 
-        <VcIcon class="vc-select__icon" name="chevron-down" size="sm" />
+        <VcIcon class="vc-select__icon" name="chevron-down" size="xs" />
       </button>
 
       <transition :leave-active-class="`transition duration-${transitionDuration} ease-in`" leave-to-class="opacity-0">

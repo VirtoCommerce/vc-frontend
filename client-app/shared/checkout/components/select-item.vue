@@ -24,6 +24,10 @@ defineProps<Props>();
 .select-item {
   @apply flex items-center gap-3 p-3;
 
+  @at-root *:not(:last-of-type) > & {
+    @apply border-b;
+  }
+
   &__img {
     @apply w-[3.125rem] h-[3.125rem];
   }
