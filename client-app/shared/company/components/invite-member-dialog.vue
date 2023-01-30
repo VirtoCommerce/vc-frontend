@@ -15,12 +15,13 @@
         :items="roles"
         :label="$t('shared.account.invite_member_dialog.role_label')"
         :placeholder="$t('shared.account.invite_member_dialog.role_placeholder')"
-        :is-disabled="loading"
-        :error-message="errors.roleId"
+        :disabled="loading"
+        :error="!!errors.roleId"
+        :message="errors.roleId"
         text-field="normalizedName"
         value-field="id"
         size="lg"
-        is-required
+        required
       />
 
       <VcTextarea

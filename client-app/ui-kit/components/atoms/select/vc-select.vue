@@ -60,7 +60,11 @@
       </transition>
     </div>
 
-    <div v-if="errorMessage" class="vc-select__error-message">{{ errorMessage }}</div>
+    <!-- Details -->
+    <div class="vc-textarea__details">
+      <!-- Message -->
+      <div v-if="message" class="vc-textarea__message" v-html="message"></div>
+    </div>
   </div>
 </template>
 
@@ -88,7 +92,9 @@ interface Props {
   textField?: string;
   valueField?: string;
   placeholder?: string;
-  errorMessage?: string;
+  showEmptyDetails?: boolean;
+  error?: boolean;
+  message?: string;
 }
 
 interface Emits {
@@ -170,6 +176,8 @@ function select(item?: any) {
   $kindSecondary: "";
   $disabled: "";
   $opened: "";
+  $hideEmptyDetails: "";
+  $error: "";
 
   &--size {
     &--sm {
@@ -201,6 +209,14 @@ function select(item?: any) {
 
   &--opened {
     $opened: &;
+  }
+
+  &--hide-empty-details {
+    $hideEmptyDetails: &;
+  }
+
+  &--error {
+    $error: &;
   }
 
   &__container {
@@ -285,8 +301,20 @@ function select(item?: any) {
     @apply block p-2 text-13 truncate;
   }
 
-  &__error-message {
-    @apply text-xs text-[color:var(--color-danger)];
+  &__details {
+    @apply flex justify-end gap-2 min-h-[0.875rem] text-11;
+
+    #{$hideEmptyDetails} & {
+      @apply empty:hidden;
+    }
+  }
+
+  &__message {
+    @apply grow text-gray-400;
+
+    #{$error} & {
+      @apply text-[color:var(--color-danger)];
+    }
   }
 }
 </style>
