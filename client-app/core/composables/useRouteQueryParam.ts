@@ -26,7 +26,7 @@ export function useRouteQueryParam<T = NonNullable<LocationQueryValue> | NonNull
 ) {
   const {
     validator,
-    defaultValue = "" as T,
+    defaultValue,
     updateMethod = "push",
     removeFalsyValue = true,
     removeNullishValue = true,
@@ -39,10 +39,13 @@ export function useRouteQueryParam<T = NonNullable<LocationQueryValue> | NonNull
     queryParam: computed<T>({
       get() {
         const queryValue = router.currentRoute.value.query[key] as T | null;
-        let value = queryValue ?? defaultValue;
+
+        const fallbackValue = defaultValue ?? ((Array.isArray(queryValue) ? [] : "") as T);
+
+        let value = queryValue ?? fallbackValue;
 
         if (queryValue && validator) {
-          value = validator(queryValue) ? queryValue : defaultValue;
+          value = validator(queryValue) ? queryValue : fallbackValue;
         }
 
         return value;
