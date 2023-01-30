@@ -38,6 +38,7 @@ declare global {
   }
 
   interface IStepsItem {
+    id?: string;
     text: string;
     icon?: string;
     route?: RouteLocationRaw;

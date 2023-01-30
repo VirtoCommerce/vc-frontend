@@ -1,6 +1,7 @@
 import { computed, readonly, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { keyBy, sumBy } from "lodash";
+import { computedEager } from "@vueuse/core";
 import { Logger } from "@/core";
 import {
   addBulkItemsCart,
@@ -83,6 +84,10 @@ const addedGiftsByIds = computed(() => keyBy(cart.value.gifts, "id"));
 
 const availableExtendedGifts = computed<ExtendedGiftItemType[]>(() =>
   (cart.value.availableGifts || []).map((gift) => ({ ...gift, isAddedInCart: !!addedGiftsByIds.value[gift.id] }))
+);
+
+const hasValidationErrors = computedEager<boolean>(
+  () => !!cart.value.validationErrors?.length || !!cart.value.items?.some((item) => item.validationErrors?.length)
 );
 
 export default function useCart() {
@@ -407,6 +412,7 @@ export default function useCart() {
     lineItemsGroupedByVendor,
     addedGiftsByIds,
     availableExtendedGifts,
+    hasValidationErrors,
     getItemsTotal,
     fetchCart,
     addToCart,

@@ -7,7 +7,7 @@ import "vue-router";
 
 declare module "vue-router" {
   interface RouteMeta {
-    layout?: "Main" | "Payment";
+    layout?: "Main" | "Secure";
     requiresAuth?: boolean;
     requiresOrganization?: boolean;
     hideNavigation?: boolean;

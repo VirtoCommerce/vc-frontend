@@ -9,19 +9,17 @@
     </div>
 
     <VcLayoutWithRightSidebar>
-      <template #main>
-        <!-- Quote products -->
-        <VcSectionWidget :title="$t('pages.account.quote_details.products')" icon="cube" hide-desktop-title>
-          <QuoteLineItems :items="quote.items!" readonly />
-        </VcSectionWidget>
+      <!-- Quote products -->
+      <VcSectionWidget :title="$t('pages.account.quote_details.products')" icon="cube" hide-desktop-title>
+        <QuoteLineItems :items="quote.items!" readonly />
+      </VcSectionWidget>
 
-        <!-- Quote comment -->
-        <VcSectionWidget :title="$t('pages.account.quote_details.remarks')" icon="document-text" v-if="quote.comment">
-          <div class="text-15 font-medium">
-            {{ quote.comment }}
-          </div>
-        </VcSectionWidget>
-      </template>
+      <!-- Quote comment -->
+      <VcSectionWidget :title="$t('pages.account.quote_details.remarks')" icon="document-text" v-if="quote.comment">
+        <div class="text-15 font-medium">
+          {{ quote.comment }}
+        </div>
+      </VcSectionWidget>
 
       <template #sidebar>
         <VcCardWidget :title="$t('pages.account.quote_details.quote_summary')" icon="cash">

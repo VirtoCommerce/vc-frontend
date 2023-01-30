@@ -1,8 +1,7 @@
 <template>
   <div class="vc-alert" :class="[type && `vc-alert--${type}`]">
-    <svg v-if="icon" class="vc-alert__icon">
-      <use :href="iconSrc"></use>
-    </svg>
+    <VcIcon v-if="icon" :name="iconName" size="sm" class="vc-alert__icon" />
+
     <div class="vc-alert__content">
       <slot />
     </div>
@@ -10,24 +9,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from "vue";
+import { computed } from "vue";
 
-const props = defineProps({
-  text: Boolean,
+interface Props {
+  type?: "success" | "warning" | "danger";
+  icon?: boolean | string;
+}
 
-  type: {
-    type: String as PropType<"info" | "success" | "warning" | "error">,
-    default: "",
-    validator: (value: string) => !value || ["info", "success", "warning", "error"].includes(value),
-  },
+const props = defineProps<Props>();
 
-  icon: {
-    type: [Boolean, String],
-    default: false,
-  },
-});
-
-const iconSrc = computed<string>(() => {
+const iconName = computed<string>(() => {
   const { icon } = props;
 
   if (icon && typeof icon === "string") {
@@ -35,50 +26,39 @@ const iconSrc = computed<string>(() => {
   }
 
   switch (props.type) {
-    case "error":
-      return "/static/images/x-circle.svg#main";
+    case "danger":
+      return "x-circle";
 
     case "warning":
-      return "/static/images/exclamation-circle.svg#main";
+      return "exclamation-circle";
 
     case "success":
-      return "/static/images/check-circle.svg#main";
-
-    case "info":
-      return "/static/images/information-circle.svg#main";
+      return "check-circle";
 
     default:
-      return "/static/images/information-circle.svg#main";
+      return "information-circle";
   }
 });
 </script>
 
 <style lang="scss">
+$colors: success, warning, danger;
+
 .vc-alert {
-  @apply flex items-stretch space-x-2 pr-3 pl-2.5 py-1.5 rounded;
+  @apply flex items-center space-x-2 py-1.5 px-2.5 rounded;
 
-  &--info {
-    @apply text-[color:var(--color-link)] bg-[color:var(--color-link-light)];
-  }
-
-  &--success {
-    @apply text-[color:var(--color-success)] bg-[color:var(--color-success-light)];
-  }
-
-  &--warning {
-    @apply text-[color:var(--color-warning)] bg-[color:var(--color-warning-light)];
-  }
-
-  &--error {
-    @apply text-[color:var(--color-danger)] bg-[color:var(--color-danger-light)];
+  @each $color in $colors {
+    &--#{$color} {
+      @apply text-[color:var(--color-#{$color})] bg-[color:var(--color-#{$color}-light)];
+    }
   }
 
   &__icon {
-    @apply shrink-0 w-5 h-5;
+    @apply shrink-0;
   }
 
   &__content {
-    @apply grow flex items-center text-11 text-[color:var(--color-secondary)];
+    @apply grow flex items-center text-11 text-[color:var(--color-body-text)];
   }
 }
 </style>

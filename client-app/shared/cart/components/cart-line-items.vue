@@ -37,10 +37,9 @@
           <VcAlert
             v-for="(validationError, index) in validationErrorsByItemId[item.id]"
             :key="index"
-            type="error"
+            type="danger"
             class="-mt-0.5 mb-3 mx-3 md:-mt-2 md:mb-2.5 md:mx-4"
             icon
-            text
           >
             {{ validationError.errorMessage }}
           </VcAlert>
