@@ -38,7 +38,7 @@ import _ from "lodash";
 import { Product } from "@/xapi/types";
 import { prepareProperties, ProductProperty, ProductTitledBlock, Vendor } from "@/shared/catalog";
 
-const MAX_DISPLAY_ITEMS = 1;
+const MAX_DISPLAY_ITEMS = 8;
 const showAll = ref(false);
 
 const props = defineProps({
