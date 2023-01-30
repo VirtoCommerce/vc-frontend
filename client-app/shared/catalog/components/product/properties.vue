@@ -31,25 +31,23 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType, ref } from "vue";
+import { computed, ref } from "vue";
 import _ from "lodash";
-import { Product } from "@/xapi/types";
+import { Product } from "@/xapi";
 import { prepareProperties, ProductProperty, ProductTitledBlock, Vendor } from "@/shared/catalog";
 
 const MAX_DISPLAY_ITEMS = 8;
 const showAll = ref(false);
 
-const props = defineProps({
-  product: {
-    type: Object as PropType<Product>,
-    required: true,
-  },
-
+interface Props {
+  product: Product;
   model: {
-    type: Object,
-    required: true,
-  },
-});
+    hidden: boolean;
+    title: string;
+  };
+}
+
+const props = defineProps<Props>();
 
 // TODO: move this logic to the separated helper. For variations properties also
 const groupedProperties = computed(() => {
