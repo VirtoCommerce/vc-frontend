@@ -25,9 +25,7 @@
       @click="showAll = !showAll"
     >
       <VcIcon :name="[showAll ? 'chevron-up' : 'chevron-down']" size="xs" class="text-[color:var(--color-primary)]" />
-      {{
-        showAll == true ? $t("shared.catalog.product_details.see_less") : $t("shared.catalog.product_details.see_more")
-      }}
+      {{ showAll ? $t("shared.catalog.product_details.see_less") : $t("shared.catalog.product_details.see_more") }}
     </a>
   </ProductTitledBlock>
 </template>
