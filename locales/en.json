@@ -449,7 +449,9 @@
           "variation_sku_label": "@:common.labels.sku",
           "price_label": "@:common.labels.product_price",
           "vendor_label": "@:shared.catalog.product_details.vendor_label"
-        }
+        },
+        "see_more": "See more",
+        "see_less": "See less"
       },
       "discount_badge": {
         "off": "off"

@@ -9,14 +9,21 @@
     <ProductProperty v-for="property in propertiesToShow" :key="property.name" :label="property.name" class="mb-4">
       {{ property.values }}
     </ProductProperty>
+
     <a
-      v-if="product.properties && product.properties.length >= MAX_DISPLAY_ITEMS"
-      class="my-0.5 !h-10 text-blue-600 dark:text-blue-500 underline hover:cursor-pointer decoration-dashed"
+      v-if="product.properties && product.properties.length > MAX_DISPLAY_ITEMS"
+      class="my-0.5 !h-10 text-14 text-blue-600 dark:text-blue-500 underline hover:cursor-pointer decoration-dashed"
       @click="showAll = !showAll"
     >
-      <i class="md:hidden px-2 fas fa-save text-2xl" />
-      <div class="hidden md:inline">{{ showAll == true ? "See less" : "See more" }}</div>
+      <i
+        class="fas text-[1rem] text-[color:var(--color-primary)] lg:text-[0.625rem]"
+        :class="[showAll ? 'fa-chevron-up' : 'fa-chevron-down']"
+      />
+      {{
+        showAll == true ? $t("shared.catalog.product_details.see_less") : $t("shared.catalog.product_details.see_more")
+      }}
     </a>
+
     <!-- Vendor -->
     <ProductProperty
       v-if="$cfg.vendor_enabled && !product.hasVariations && product.vendor"
@@ -34,8 +41,9 @@ import _ from "lodash";
 import { Product } from "@/xapi/types";
 import { prepareProperties, ProductProperty, ProductTitledBlock, Vendor } from "@/shared/catalog";
 
-const MAX_DISPLAY_ITEMS = 1;
+const MAX_DISPLAY_ITEMS = 8;
 const showAll = ref(false);
+
 const props = defineProps({
   product: {
     type: Object as PropType<Product>,
