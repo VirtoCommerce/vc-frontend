@@ -24,7 +24,7 @@
       class="flex gap-x-1 mb-4 items-center text-14 text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)] hover:cursor-pointer underline decoration-dashed"
       @click="showAll = !showAll"
     >
-      <VcIcon class="text-[color:var(--color-primary)]" :name="[showAll ? 'chevron-up' : 'chevron-down']" size="xs" />
+      <VcIcon :name="[showAll ? 'chevron-up' : 'chevron-down']" size="xs" class="text-[color:var(--color-primary)]" />
       {{
         showAll == true ? $t("shared.catalog.product_details.see_less") : $t("shared.catalog.product_details.see_more")
       }}
