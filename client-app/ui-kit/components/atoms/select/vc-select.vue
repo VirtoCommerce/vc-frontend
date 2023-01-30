@@ -285,7 +285,7 @@ function select(item?: any) {
   }
 
   &__list {
-    @apply overflow-auto max-h-52;
+    @apply overflow-auto max-h-60;
   }
 
   &__item {

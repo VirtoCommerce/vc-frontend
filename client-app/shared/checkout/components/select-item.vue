@@ -1,6 +1,6 @@
 <template>
   <span class="select-item">
-    <VcImage v-if="image" :src="image" class="select-item__img" />
+    <VcImage :src="image" class="select-item__img" />
 
     <span class="select-item__content">
       <span class="select-item__title">{{ title }}</span>

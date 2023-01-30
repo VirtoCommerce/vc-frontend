@@ -20,7 +20,10 @@
           <SelectItem image="" :title="`${item?.code} ${item?.optionName}`" />
         </template>
         <template #first>
-          <SelectItem image="" :title="$t('common.placeholders.not_selected_shippping_method')" />
+          <SelectItem
+            image="/static/icons/placeholder/select-shipping.svg"
+            :title="$t('common.placeholders.not_selected_shippping_method')"
+          />
         </template>
         <template #item="{ item }">
           <SelectItem image="" :title="`${item?.code} ${item?.optionName}`" />
@@ -46,7 +49,7 @@ interface Emits {
   (event: "change:method"): void;
 }
 
-const selectedShippingMethod = ref<ShippingMethodType | "">("");
+const selectedShippingMethod = ref<"">("");
 
 defineProps<Props>();
 defineEmits<Emits>();
