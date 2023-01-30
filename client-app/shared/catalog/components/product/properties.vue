@@ -10,20 +10,6 @@
       {{ property.values }}
     </ProductProperty>
 
-    <a
-      v-if="product.properties && product.properties.length > MAX_DISPLAY_ITEMS"
-      class="my-0.5 !h-10 text-14 text-blue-600 dark:text-blue-500 underline hover:cursor-pointer decoration-dashed"
-      @click="showAll = !showAll"
-    >
-      <i
-        class="fas text-[1rem] text-[color:var(--color-primary)] lg:text-[0.625rem]"
-        :class="[showAll ? 'fa-chevron-up' : 'fa-chevron-down']"
-      />
-      {{
-        showAll == true ? $t("shared.catalog.product_details.see_less") : $t("shared.catalog.product_details.see_more")
-      }}
-    </a>
-
     <!-- Vendor -->
     <ProductProperty
       v-if="$cfg.vendor_enabled && !product.hasVariations && product.vendor"
@@ -32,6 +18,17 @@
     >
       <Vendor :vendor="product.vendor" withRating />
     </ProductProperty>
+
+    <a
+      v-if="product.properties && product.properties.length > MAX_DISPLAY_ITEMS"
+      class="flex gap-x-1 mb-4 items-center text-14 text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)] hover:cursor-pointer underline decoration-dashed"
+      @click="showAll = !showAll"
+    >
+      <VcIcon class="text-[color:var(--color-primary)]" :name="[showAll ? 'chevron-up' : 'chevron-down']" size="xs" />
+      {{
+        showAll == true ? $t("shared.catalog.product_details.see_less") : $t("shared.catalog.product_details.see_more")
+      }}
+    </a>
   </ProductTitledBlock>
 </template>
 
@@ -41,7 +38,7 @@ import _ from "lodash";
 import { Product } from "@/xapi/types";
 import { prepareProperties, ProductProperty, ProductTitledBlock, Vendor } from "@/shared/catalog";
 
-const MAX_DISPLAY_ITEMS = 8;
+const MAX_DISPLAY_ITEMS = 1;
 const showAll = ref(false);
 
 const props = defineProps({
