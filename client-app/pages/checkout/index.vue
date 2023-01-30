@@ -1,69 +1,78 @@
 <template>
-  <VcContainer v-if="initialized">
-    <VcTypography tag="h1" variant="h2" weight="bold" class="mb-5"> {Dynamic step title}</VcTypography>
+  <router-view v-if="currentStepId === 'OrderCompleted'" />
 
-    <VcSteps class="mb-5" :steps="steps" :start-step="0" :current-step="3" />
+  <VcContainer v-else-if="initialized">
+    <VcTypography tag="h1" variant="h2" weight="bold" class="mb-5">
+      {{ pageTitle }}
+    </VcTypography>
 
-    <VcLayoutWithRightSidebar is-sidebar-sticky>
-      <template #main>
-        <router-view />
-      </template>
+    <VcSteps
+      :steps="steps"
+      :current-step-index="currentStepIndex"
+      :start-step-index="0"
+      :disabled="loadingCheckout"
+      class="mb-5"
+    />
 
-      <template #sidebar>
-        <OrderSummary :cart="cart">
-          <template #footer>
-            <p class="mt-6 mb-5 text-xs font-normal text-gray-400">
-              {{ $t("common.messages.checkout_pricing_warning") }}
-            </p>
+    <VcLoaderOverlay :visible="loadingCart || loadingCheckout" />
 
-            <VcButton class="uppercase w-full" is-disabled> {Dynamic next step}</VcButton>
-          </template>
-        </OrderSummary>
-      </template>
-    </VcLayoutWithRightSidebar>
+    <router-view />
   </VcContainer>
 
   <VcLoaderOverlay v-else no-bg />
 </template>
 
 <script setup lang="ts">
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { RouteRecordName, useRoute } from "vue-router";
 import { invoke } from "@vueuse/core";
 import { usePageHead } from "@/core";
 import { useCart } from "@/shared/cart";
-import { OrderSummary, useCheckout } from "@/shared/checkout";
+import { useCheckout } from "@/shared/checkout";
 
+const route = useRoute();
 const { t } = useI18n();
-const { cart } = useCart();
-const { initialized, initialize } = useCheckout();
+const { loading: loadingCart } = useCart();
+const { loading: loadingCheckout, initialize } = useCheckout();
 
-usePageHead({
-  title: [t("pages.checkout.meta.title"), "{Dynamic step title}"],
-});
+const initialized = ref(false);
 
 const steps: IStepsItem[] = [
   {
-    text: "Back to Cart",
     icon: "arrow-bold",
-    route: { name: "Cart" },
+    route: { name: "Cart", replace: true },
+    text: t("common.buttons.back_to_cart"),
   },
   {
-    text: "Shipping",
-    route: { name: "CheckoutShipping" },
+    id: "Shipping",
+    route: { name: "Shipping", replace: true },
+    text: t("pages.checkout.steps.shipping"),
   },
   {
-    text: "Billing",
-    route: { name: "CheckoutBilling" },
+    id: "Billing",
+    route: { name: "Billing", replace: true },
+    text: t("pages.checkout.steps.billing"),
   },
   {
-    text: "Order created",
-  },
-  {
-    text: "Completed",
+    id: "OrderCompleted",
+    text: t("pages.checkout.steps.completed"),
   },
 ];
 
+const currentStepId = computed<RouteRecordName>(() => route.name!);
+const currentStepIndex = computed<number>(() => steps.findIndex((step) => step.id === currentStepId.value));
+
+const pageTitle = computed<string>(() => steps[currentStepIndex.value]?.text ?? "<UNKNOWN__FOR_DEV_MODE>");
+
+usePageHead({
+  title: computed(() => [t("pages.checkout.meta.title"), pageTitle.value]),
+});
+
 invoke(async () => {
-  await initialize();
+  if (currentStepId.value !== "OrderCompleted") {
+    await initialize();
+    initialized.value = true;
+  }
 });
 </script>

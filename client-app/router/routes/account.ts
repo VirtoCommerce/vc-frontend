@@ -26,8 +26,6 @@ export const accountRoutes: RouteRecordRaw[] = [
       {
         path: ":orderId",
         component: RouterView,
-        props: true,
-        meta: { hideNavigation: true },
         children: [
           {
             path: "",
@@ -38,9 +36,11 @@ export const accountRoutes: RouteRecordRaw[] = [
             path: "payment",
             name: "OrderPayment",
             component: OrderPayment,
-            meta: { layout: "Payment" },
+            meta: { layout: "Secure" },
           },
         ],
+        meta: { hideNavigation: true },
+        props: true,
       },
     ],
   },
@@ -66,7 +66,6 @@ export const accountRoutes: RouteRecordRaw[] = [
       {
         path: ":quoteId",
         component: RouterView,
-        props: true,
         children: [
           {
             path: "",
@@ -82,6 +81,7 @@ export const accountRoutes: RouteRecordRaw[] = [
             props: true,
           },
         ],
+        props: true,
       },
     ],
     beforeEnter(_to, _from, next) {

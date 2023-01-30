@@ -6,7 +6,6 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "strict": true,
-    "composite": true,
     "jsx": "preserve",
     "allowJs": true,
     "sourceMap": true,

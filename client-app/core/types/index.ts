@@ -108,6 +108,7 @@ export interface IThemeConfigPreset {
   vendor_enabled?: boolean;
   rating_enabled?: boolean;
 
+  checkout_multistep_enabled?: boolean;
   checkout_comment_enabled?: boolean;
   checkout_purchase_order_enabled?: boolean;
   checkout_coupon_enabled?: boolean;
