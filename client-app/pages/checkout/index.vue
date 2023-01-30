@@ -14,7 +14,7 @@
       class="mb-5"
     />
 
-    <VcLoaderOverlay :visible="loadingCart || loadingCheckout" />
+    <VcLoaderOverlay :visible="loadingCart || loadingCheckout" fixed-spinner />
 
     <router-view />
   </VcContainer>

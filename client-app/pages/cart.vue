@@ -16,7 +16,9 @@
     </template>
   </VcEmptyPage>
 
-  <VcContainer v-else>
+  <VcContainer v-else class="relative z-0">
+    <VcLoaderOverlay :visible="loading" fixed-spinner />
+
     <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block mx-5 md:mx-0" />
 
     <!-- Page title -->
