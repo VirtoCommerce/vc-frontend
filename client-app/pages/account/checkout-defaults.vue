@@ -37,7 +37,24 @@
           class="mt-8 w-full"
           size="lg"
         >
-          <template #first>{{ $t("pages.account.checkout_defaults.not_selected_placeholder") }}</template>
+          <template #placeholder>
+            <SelectItem
+              image="/static/icons/placeholder/select-payment.svg"
+              :title="$t('common.placeholders.not_selected_payment_method')"
+            />
+          </template>
+          <template #selected="{ item }">
+            <SelectItem image="" :title="item?.code" />
+          </template>
+          <template #first>
+            <SelectItem
+              image="/static/icons/placeholder/select-payment.svg"
+              :title="$t('common.placeholders.not_selected_payment_method')"
+            />
+          </template>
+          <template #item="{ item }">
+            <SelectItem image="" :title="item?.code" />
+          </template>
         </VcSelect>
 
         <VcSelect
@@ -49,9 +66,24 @@
           class="mt-8 w-full"
           size="lg"
         >
-          <template #selected="{ item }">{{ item?.code }} {{ item?.optionName }}</template>
-          <template #first>{{ $t("pages.account.checkout_defaults.not_selected_placeholder") }}</template>
-          <template #item="{ item }"> {{ item?.code }} {{ item?.optionName }}</template>
+          <template #placeholder>
+            <SelectItem
+              image="/static/icons/placeholder/select-shipping.svg"
+              :title="$t('common.placeholders.not_selected_shippping_method')"
+            />
+          </template>
+          <template #selected="{ item }">
+            <SelectItem image="" :title="`${item?.code} ${item?.optionName}`" />
+          </template>
+          <template #first>
+            <SelectItem
+              image="/static/icons/placeholder/select-shipping.svg"
+              :title="$t('common.placeholders.not_selected_shippping_method')"
+            />
+          </template>
+          <template #item="{ item }">
+            <SelectItem image="" :title="`${item?.code} ${item?.optionName}`" />
+          </template>
         </VcSelect>
 
         <VcButton
@@ -74,6 +106,7 @@ import { usePopup } from "@/shared/popup";
 import { usePageHead } from "@/core/composables";
 import { useCart } from "@/shared/cart";
 import { useUserCheckoutDefaults, CheckoutDefaults, CheckoutDefaultsSuccessDialog } from "@/shared/account";
+import { SelectItem } from "@/shared/checkout";
 
 const { t } = useI18n();
 const { openPopup } = usePopup();

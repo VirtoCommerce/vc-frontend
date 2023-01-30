@@ -102,6 +102,7 @@
       "enter_value": "Please enter value",
       "not_selected": "Not selected",
       "not_selected_shippping_method": "Select delivery method",
+      "not_selected_payment_method": "Select payment method",
       "email": "Enter your email address",
       "password": "Enter your password",
       "purchase_order_number": "Enter purchase order number",
