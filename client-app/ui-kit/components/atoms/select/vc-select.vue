@@ -7,6 +7,8 @@
       {
         'vc-select--disabled': disabled,
         'vc-select--opened': open,
+        'vc-select--hide-empty-details': !showEmptyDetails,
+        'vc-select--error': error,
       },
     ]"
   >
@@ -15,7 +17,7 @@
     <div v-click-outside="() => open && hideList()" class="vc-select__container">
       <button type="button" :disabled="disabled" class="vc-select__button" @click="toggle">
         <span class="grow">
-          <slot v-if="placeholder && !selected" name="placeholder">
+          <slot v-if="($slots.placeholder || placeholder) && !selected" name="placeholder">
             <span class="vc-select__placeholder-default">
               {{ placeholder }}
             </span>
@@ -61,9 +63,9 @@
     </div>
 
     <!-- Details -->
-    <div class="vc-textarea__details">
+    <div class="vc-select__details">
       <!-- Message -->
-      <div v-if="message" class="vc-textarea__message" v-html="message"></div>
+      <div v-if="message" class="vc-select__message" v-html="message"></div>
     </div>
   </div>
 </template>
@@ -178,6 +180,8 @@ function select(item?: any) {
   $opened: "";
   $hideEmptyDetails: "";
   $error: "";
+
+  @apply flex flex-col gap-0.5;
 
   &--size {
     &--sm {

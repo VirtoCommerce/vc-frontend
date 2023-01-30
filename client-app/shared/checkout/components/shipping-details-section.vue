@@ -1,49 +1,52 @@
 <template>
   <VcSectionWidget :title="$t('shared.checkout.shipping_details_section.title')" icon="truck">
-    <VcAddress
-      :label="$t('shared.checkout.shipping_details_section.labels.shipping_address')"
-      :address="shipment?.deliveryAddress"
-      @change="$emit('change:address')"
-    />
+    <div class="flex flex-col gap-6 p-4 border rounded sm:flex-row sm:gap-7">
+      <ShippingAddress class="sm:grow" :address="shipment?.deliveryAddress" @change:address="$emit('change:address')" />
 
-    <CheckoutLabeledBlock :label="$t('shared.checkout.shipping_details_section.labels.shipping_method')">
-      <div class="flex flex-row items-center space-x-4">
-        <template v-if="shipment?.shipmentMethodCode">
-          <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" lazy />
-          <span>
-            {{ shipment.shipmentMethodCode }}
-            {{ shipment.shipmentMethodOption }}
-            (<VcPriceDisplay :value="shipment.price" />)
-          </span>
+      <VcSelect
+        class="sm:grow sm:max-w-[18.75rem]"
+        :label="$t('shared.checkout.shipping_details_section.labels.shipping_method')"
+        :items="availableShippingMethods"
+        :modelValue="selectedShippingMethod"
+        kind="primary"
+      >
+        <template #placeholder>
+          <SelectItem
+            image="/static/icons/placeholder/select-shipping.svg"
+            :title="$t('common.placeholders.not_selected_shippping_method')"
+          />
         </template>
-
-        <span v-else class="text-gray-600">
-          {{ $t("common.messages.not_defined") }}
-        </span>
-      </div>
-
-      <div>
-        <VcButton :is-disabled="disabled" size="sm" is-outline class="px-3 uppercase" @click="$emit('change:method')">
-          {{ shipment?.shipmentMethodCode ? $t("common.buttons.change") : $t("common.buttons.select") }}
-        </VcButton>
-      </div>
-    </CheckoutLabeledBlock>
+        <template #selected="{ item }">
+          <SelectItem image="" :title="`${item?.code} ${item?.optionName}`" />
+        </template>
+        <template #first>
+          <SelectItem image="" :title="$t('common.placeholders.not_selected_shippping_method')" />
+        </template>
+        <template #item="{ item }">
+          <SelectItem image="" :title="`${item?.code} ${item?.optionName}`" />
+        </template>
+      </VcSelect>
+    </div>
   </VcSectionWidget>
 </template>
 
 <script setup lang="ts">
-import { ShipmentType } from "@/xapi";
-import { CheckoutLabeledBlock } from "@/shared/checkout";
+import { ref } from "vue";
+import { ShipmentType, ShippingMethodType } from "@/xapi";
+import { SelectItem, ShippingAddress } from "@/shared/checkout";
 
 interface Props {
   disabled?: boolean;
   shipment?: ShipmentType;
+  availableShippingMethods?: ShippingMethodType[];
 }
 
 interface Emits {
   (event: "change:address"): void;
   (event: "change:method"): void;
 }
+
+const selectedShippingMethod = ref<ShippingMethodType | "">("");
 
 defineProps<Props>();
 defineEmits<Emits>();

@@ -7,40 +7,27 @@
       },
     ]"
   >
-    <VcLabel v-if="label" :text="label" />
-    <div class="vc-address__body">
-      <div class="vc-address__before">
-        <slot name="before" />
-      </div>
+    <template v-if="address">
+      <VcAddressLine class="vc-address__line" :address="address" />
 
-      <div class="vc-address__main">
-        <template v-if="address">
-          <VcAddressLine class="vc-address__line" :address="address" />
+      <VcButton v-if="!readonly" class="vc-address__button !w-7 !h-7" is-outline @click="$emit('change')">
+        <VcIcon name="pencil" size="xs" />
+      </VcButton>
+    </template>
 
-          <VcButton v-if="!readonly" class="vc-address__button !w-7 !h-7" is-outline @click="$emit('change')">
-            <VcIcon name="pencil" size="xs" />
-          </VcButton>
-        </template>
-
-        <i18n-t
-          v-else
-          class="vc-address__no-address"
-          keypath="shared.checkout.shipping_details_section.messages.no_addresses_message"
-          tag="p"
-          scope="global"
-        >
-          <template v-slot:linkedText>
-            <span class="vc-address__link" @click="$emit('change')">
-              {{ $t("shared.checkout.shipping_details_section.messages.linked_text") }}
-            </span>
-          </template>
-        </i18n-t>
-      </div>
-
-      <div class="vc-address__after">
-        <slot name="after" />
-      </div>
-    </div>
+    <i18n-t
+      v-else
+      class="vc-address__no-address"
+      keypath="shared.checkout.shipping_details_section.messages.no_addresses_message"
+      tag="p"
+      scope="global"
+    >
+      <template v-slot:linkedText>
+        <span class="vc-address__link" @click="$emit('change')">
+          {{ $t("shared.checkout.shipping_details_section.messages.linked_text") }}
+        </span>
+      </template>
+    </i18n-t>
   </div>
 </template>
 
@@ -49,7 +36,6 @@ import { OrderAddressType } from "@/xapi";
 
 interface Props {
   readonly?: boolean;
-  label?: string;
   address?: OrderAddressType;
 }
 
@@ -65,22 +51,10 @@ defineEmits<Emits>();
 .vc-address {
   $readonly: "";
 
-  @apply flex flex-col gap-1.5;
+  @apply grow flex items-center gap-2 p-3;
 
   &--readonly {
     $readonly: &;
-  }
-
-  &__body {
-    @apply flex flex-col min-h-[4.625rem] rounded border text-15;
-  }
-
-  &__before {
-    @apply p-3 border-b empty:hidden;
-  }
-
-  &__main {
-    @apply grow flex items-center gap-2 p-3;
   }
 
   &__line {
@@ -105,10 +79,6 @@ defineEmits<Emits>();
     &:hover {
       @apply text-[color:var(--color-link-hover)];
     }
-  }
-
-  &__after {
-    @apply p-3 border-t empty:hidden;
   }
 }
 </style>
