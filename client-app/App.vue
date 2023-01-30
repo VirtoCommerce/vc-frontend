@@ -15,9 +15,9 @@
 <script setup lang="ts">
 import type { Component } from "vue";
 import { markRaw } from "vue";
-import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
+import { breakpointsTailwind, computedEager, useBreakpoints } from "@vueuse/core";
 import { Head as PageHead } from "@vueuse/head";
-import { MainLayout, PaymentLayout, useSearchBar } from "./shared/layout";
+import { MainLayout, SecureLayout, useSearchBar } from "./shared/layout";
 import { PopupHost } from "@/shared/popup";
 import { NotificationsHost } from "@/shared/notification";
 import { useRoute, useRouter } from "vue-router";
@@ -50,10 +50,10 @@ const isMobile = breakpoints.smaller("lg");
 
 const layouts: Record<NonNullable<typeof route.meta.layout>, Component> = {
   Main: markRaw(MainLayout),
-  Payment: markRaw(PaymentLayout),
+  Secure: markRaw(SecureLayout),
 };
 
-const layout = eagerComputed(() => layouts[route.meta?.layout ?? "Main"]);
+const layout = computedEager(() => layouts[route.meta?.layout ?? "Main"]);
 
 router.beforeEach(async (to) => {
   // Animated hiding of the search bar or dropdown list of search results

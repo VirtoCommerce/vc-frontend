@@ -1,27 +1,24 @@
 import { RouteRecordRaw } from "vue-router";
-
-const Shipping = () => import("@/pages/checkout/shipping.vue");
-const Billing = () => import("@/pages/checkout/billing.vue");
-
-/** Guard * /
-const beforeEnter = (to: RouteLocationNormalized): RouteLocationRaw | boolean =>
-  !!to.params.continuity || {
-    name: "Cart",
-    replace: true,
-  };
-*/
+import Shipping from "@/pages/checkout/shipping.vue";
+import Billing from "@/pages/checkout/billing.vue";
+import Completed from "@/pages/checkout/completed.vue";
 
 export const checkoutRoutes: RouteRecordRaw[] = [
   {
     path: "shipping",
-    name: "CheckoutShipping",
+    name: "Shipping",
     component: Shipping,
-    //beforeEnter,
   },
   {
     path: "billing",
-    name: "CheckoutBilling",
+    name: "Billing",
     component: Billing,
-    //beforeEnter,
+  },
+  {
+    path: "completed/:orderNumber/:orderId",
+    name: "OrderCompleted",
+    component: Completed,
+    meta: { layout: "Main" },
+    props: true,
   },
 ];

@@ -16,3 +16,6 @@ quote_type = double
 [*.md]
 max_line_length = off
 trim_trailing_whitespace = false
+
+[*.svg]
+insert_final_newline = false

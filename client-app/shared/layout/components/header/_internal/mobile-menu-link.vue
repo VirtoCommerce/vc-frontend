@@ -8,7 +8,7 @@
         isLink && (isActive || isExactActive) ? 'text-white font-extrabold' : 'font-semibold',
         $attrs.class,
       ]"
-      @click.prevent="isLink ? navigate() && $emit('close') : $emit('select')"
+      @click.prevent="click(navigate)"
     >
       <slot name="icon" v-bind="{ isActive, isExactActive }">
         <svg
@@ -46,24 +46,33 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from "vue";
+import { computed } from "vue";
+import { NavigationFailure } from "vue-router";
 import { MenuLink, numberToShortString } from "@/core";
 
-defineEmits(["select", "close"]);
+interface Props {
+  link: MenuLink;
+  count?: number;
+}
 
-const props = defineProps({
-  link: {
-    type: Object as PropType<MenuLink>,
-    required: true,
-  },
+interface Emits {
+  (event: "select"): void;
+  (event: "close"): void;
+}
 
-  count: {
-    type: Number,
-    default: 0,
-  },
-});
+const props = withDefaults(defineProps<Props>(), { count: 0 });
+const emit = defineEmits<Emits>();
 
 const isParent = computed<boolean>(() => !!props.link.children?.length);
 const isLink = computed<boolean>(() => !!props.link.route && !isParent.value);
 const preparedCount = computed<string>(() => numberToShortString(props.count));
+
+function click(navigate: () => Promise<void | NavigationFailure>) {
+  if (isLink.value) {
+    navigate();
+    emit("close");
+  } else {
+    emit("select");
+  }
+}
 </script>

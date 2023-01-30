@@ -1,6 +1,6 @@
 <template>
   <VcCardWidget :title="$t('common.titles.order_summary')" icon="truck">
-    <slot name="header"></slot>
+    <slot name="header" />
 
     <!-- Totals block -->
     <div>
@@ -69,11 +69,19 @@
       </div>
     </div>
 
-    <slot name="footer"></slot>
+    <slot name="footer" />
+
+    <div v-if="footnote" class="mt-4 text-xs font-normal text-gray-400">
+      <slot name="footnote">
+        {{ $t("common.messages.checkout_pricing_warning") }}
+      </slot>
+    </div>
   </VcCardWidget>
 </template>
 
 <script setup lang="ts">
+import { computed, ref } from "vue";
+import { sumBy } from "lodash";
 import {
   CartType,
   CustomerOrderType,
@@ -82,16 +90,14 @@ import {
   OrderDiscountType,
   OrderLineItemType,
 } from "@/xapi/types";
-import { computed, PropType, ref } from "vue";
-import { sumBy } from "lodash";
 import { useCurrency, useLanguages } from "@/core/composables";
 
-const props = defineProps({
-  cart: {
-    type: Object as PropType<CartType | CustomerOrderType | Record<string, never>>,
-    required: true,
-  },
-});
+interface Props {
+  cart: CartType | CustomerOrderType;
+  footnote?: boolean;
+}
+
+const props = defineProps<Props>();
 
 const { currentLanguage } = useLanguages();
 const { currentCurrency } = useCurrency();
@@ -108,5 +114,3 @@ const lineItemsDiscountTotal = computed(() =>
 
 const hasDiscounts = computed(() => props.cart.discounts?.length || lineItemsDiscountTotal.value > 0);
 </script>
-
-<style scoped></style>
