@@ -169,7 +169,7 @@ function select(item?: any) {
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .vc-select {
   $sizeSm: "";
   $sizeMd: "";
@@ -228,7 +228,7 @@ function select(item?: any) {
   }
 
   &__button {
-    @apply relative flex items-center w-full rounded border appearance-none outline-none text-left;
+    @apply relative flex items-center w-full rounded border bg-white appearance-none outline-none text-left;
 
     #{$sizeSm} & {
       @apply min-h-[2rem] text-sm;
