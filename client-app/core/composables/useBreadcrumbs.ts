@@ -3,7 +3,7 @@ import { Breadcrumb } from "@/xapi/types";
 import { MaybeRef } from "@vueuse/core";
 import { computed, Ref, unref } from "vue";
 
-export interface UseBreadcrumbs {
+interface UseBreadcrumbs {
   breadcrumbs: Ref<ReadonlyArray<Readonly<IBreadcrumb>>>;
 }
 

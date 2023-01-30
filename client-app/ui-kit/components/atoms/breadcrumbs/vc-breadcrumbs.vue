@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-export interface Props {
+interface Props {
   items: ReadonlyArray<Readonly<IBreadcrumb>>;
 }
 
