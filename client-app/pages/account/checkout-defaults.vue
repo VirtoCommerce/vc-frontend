@@ -46,12 +46,6 @@
           <template #selected="{ item }">
             <SelectItem image="" :title="item?.code" />
           </template>
-          <template #first>
-            <SelectItem
-              image="/static/icons/placeholder/select-payment.svg"
-              :title="$t('common.placeholders.not_selected_payment_method')"
-            />
-          </template>
           <template #item="{ item }">
             <SelectItem image="" :title="item?.code" />
           </template>
@@ -74,12 +68,6 @@
           </template>
           <template #selected="{ item }">
             <SelectItem image="" :title="`${item?.code} ${item?.optionName}`" />
-          </template>
-          <template #first>
-            <SelectItem
-              image="/static/icons/placeholder/select-shipping.svg"
-              :title="$t('common.placeholders.not_selected_shippping_method')"
-            />
           </template>
           <template #item="{ item }">
             <SelectItem image="" :title="`${item?.code} ${item?.optionName}`" />

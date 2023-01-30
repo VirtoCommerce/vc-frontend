@@ -8,7 +8,6 @@
         :label="$t('shared.checkout.shipping_details_section.labels.shipping_method')"
         :items="availableShippingMethods"
         :modelValue="selectedShippingMethod"
-        kind="primary"
       >
         <template #placeholder>
           <SelectItem
@@ -18,12 +17,6 @@
         </template>
         <template #selected="{ item }">
           <SelectItem image="" :title="`${item?.code} ${item?.optionName}`" />
-        </template>
-        <template #first>
-          <SelectItem
-            image="/static/icons/placeholder/select-shipping.svg"
-            :title="$t('common.placeholders.not_selected_shippping_method')"
-          />
         </template>
         <template #item="{ item }">
           <SelectItem image="" :title="`${item?.code} ${item?.optionName}`" />

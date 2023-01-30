@@ -3,7 +3,6 @@
     :class="[
       'vc-select',
       `vc-select--size--${size}`,
-      `vc-select--kind--${kind}`,
       {
         'vc-select--disabled': disabled,
         'vc-select--opened': open,
@@ -90,7 +89,6 @@ interface Props {
   modelValue: object | string;
   items: any[];
   size?: "sm" | "md" | "lg";
-  kind?: "primary" | "secondary";
   textField?: string;
   valueField?: string;
   placeholder?: string;
@@ -106,7 +104,6 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   size: "md",
-  kind: "secondary",
 });
 
 const emit = defineEmits<Emits>();
@@ -174,8 +171,6 @@ function select(item?: any) {
   $sizeSm: "";
   $sizeMd: "";
   $sizeLg: "";
-  $kindPrimary: "";
-  $kindSecondary: "";
   $disabled: "";
   $opened: "";
   $hideEmptyDetails: "";
@@ -194,16 +189,6 @@ function select(item?: any) {
 
     &--lg {
       $sizeLg: &;
-    }
-  }
-
-  &--kind {
-    &--primary {
-      $kindPrimary: &;
-    }
-
-    &--secondary {
-      $kindSecondary: &;
     }
   }
 
@@ -261,15 +246,7 @@ function select(item?: any) {
   }
 
   &__icon {
-    @apply mr-3;
-
-    #{$kindPrimary} & {
-      @apply text-[var(--color-primary)];
-    }
-
-    #{$kindSecondary} & {
-      @apply text-[var(--color-secondary)];
-    }
+    @apply mr-3 text-[color:var(--color-body-text)];
 
     #{$disabled} & {
       @apply text-gray-300;
