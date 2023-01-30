@@ -928,6 +928,14 @@
           "phone_label": "@:common.labels.phone{':'}",
           "email_label": "@:common.labels.email{':'}"
         },
+        "order_data_card": {
+          "title": "Order data",
+          "creates_label": "Creates:",
+          "status_label": "@:common.labels.status{':'}"
+        },
+        "payment_method_card": {
+          "title": "Payment method"
+        },
         "line_items": {
           "product": "@:common.labels.product",
           "properties": "@:common.labels.properties",
