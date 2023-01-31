@@ -2,7 +2,7 @@
   <div class="vc-vendor">
     <VcIcon name="vendor" size="sm" class="vc-vendor__icon" />
     <span class="vc-vendor__title">
-      {{ $t("common.labels.vendor") }}: {{ vendor.name || $t("common.labels.empty_vendor_label") }}
+      {{ $t("common.labels.vendor") }}: {{ vendor.name || $t("common.labels.not_available") }}
     </span>
   </div>
 </template>
