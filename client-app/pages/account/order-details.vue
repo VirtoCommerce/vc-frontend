@@ -12,10 +12,10 @@
       </VcTypography>
       <div class="flex justify-between gap-x-5">
         <!-- US-3534 -->
-        <VcButton class="!hidden lg:!inline-flex uppercase px-3" is-outline>
+        <!-- <VcButton class="!hidden lg:!inline-flex uppercase px-3" is-outline>
           <VcIcon size="sm" name="printer" class="mr-2" />
           <span>{{ $t("pages.account.order_details.print_order_button") }}</span>
-        </VcButton>
+        </VcButton> -->
         <VcButton
           v-if="showReorderButton"
           :is-waiting="loadingAddItemsToCart"
