@@ -50,11 +50,13 @@
       <AcceptedGifts :items="giftItems" />
 
       <!-- Order comment section -->
-      <VcSectionWidget v-if="order?.comment && !isMobile">
-        <VcTypography tag="h3" variant="h3" weight="bold" class="text-24">
-          {{ $t("pages.account.order_details.order_comment_section.title") }}
-        </VcTypography>
-        <p class="break-words text-15 mt-4" v-for="line in order?.comment?.split('\n')" :key="line">{{ line }}</p>
+      <VcSectionWidget
+        v-if="order?.comment"
+        :title="$t('pages.account.order_details.order_comment_section.title')"
+        icon="document-text"
+        class="order-last"
+      >
+        <p class="break-words text-15" v-for="line in order?.comment?.split('\n')" :key="line">{{ line }}</p>
       </VcSectionWidget>
 
       <template #sidebar>
@@ -147,15 +149,6 @@
             <VcImage src="/static/images/checkout/invoice.svg" class="h-12 w-12" lazy />
             <span class="overflow-x-hidden break-words">{{ order?.inPayments[0]?.paymentMethod?.typeName }}</span>
           </div>
-        </VcCardWidget>
-
-        <!-- Order comment section -->
-        <VcCardWidget
-          v-if="order?.comment && isMobile"
-          :title="$t('pages.account.order_details.order_comment_section.title')"
-          icon="document-text"
-        >
-          <p class="break-words text-15" v-for="line in order?.comment?.split('\n')" :key="line">{{ line }}</p>
         </VcCardWidget>
       </template>
     </VcLayoutWithRightSidebar>
