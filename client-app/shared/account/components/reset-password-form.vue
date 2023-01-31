@@ -25,7 +25,7 @@
     />
 
     <div>
-      <VcAlert v-for="error in commonErrors" :key="error" type="error" class="mb-4 text-xs" icon text>
+      <VcAlert v-for="error in commonErrors" :key="error" type="danger" class="mb-4 text-xs" icon>
         {{ error }}
       </VcAlert>
 

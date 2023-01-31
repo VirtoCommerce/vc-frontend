@@ -166,11 +166,6 @@
             </button>
           </div>
         </div>
-
-        <!-- Error message -->
-        <!--<VcAlert class="-mt-0.5 mb-3 mx-3 md:-mt-2 md:mb-2.5 md:mx-4" icon type="error" text>
-          Error message example
-        </VcAlert>-->
       </div>
     </div>
 

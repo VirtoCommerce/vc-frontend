@@ -32,7 +32,10 @@
       "save_changes": "Save Changes",
       "new_address": "New address",
       "place_order": "Place order",
-      "create_quote": "Add cart items to quote"
+      "create_quote": "Add cart items to quote",
+      "back_to_cart": "Back to Cart",
+      "go_to_checkout": "Proceed to checkout",
+      "go_to_billing": "Proceed to billing"
     },
     "labels": {
       "actions": "Actions",
@@ -68,7 +71,8 @@
       "not_available": "N/A",
       "purchase_order_number": "Purchase order",
       "promotion_code": "Promotion code",
-      "vendor": "Vendor"
+      "vendor": "Vendor",
+      "secure_checkout": "Secure checkout"
     },
     "suffixes": {
       "from": "From",
@@ -93,9 +97,10 @@
       "min_value": "Minimum value is {value}",
       "empty_wish_list": "There are no items in the list",
       "not_defined": "Undefined",
-      "something_went_wrong": "Whoops! Something went wrong. Please check whether everything is correct and try again.",
       "invalid_coupon": "This code does not match any active coupons. Please check whether everything is correct and try again.",
-      "checkout_pricing_warning": "Availability, shipping, tax, and promotions are not final until you complete your order.",
+      "fill_all_required": "Please fill in all required information to proceed.",
+      "something_went_wrong": "Whoops! Something went wrong. Please check whether everything is correct and try again.",
+      "checkout_pricing_warning": "Availability, shipping, tax and promotions are not final until you complete your order.",
       "quote_request": "You can request items in your cart through a special service"
     },
     "placeholders": {
@@ -106,7 +111,7 @@
       "email": "Enter your email address",
       "password": "Enter your password",
       "purchase_order_number": "Enter purchase order number",
-      "promotion_code": "Enter your code"
+      "promotion_code": "Enter promo-coupon"
     },
     "links": {
       "home": "Home",
@@ -1113,7 +1118,12 @@
       "meta": {
         "title": "@:pages.checkout.title"
       },
-      "title": "Checkout"
+      "title": "Checkout",
+      "steps": {
+        "shipping": "Shipping",
+        "billing": "Billing",
+        "completed": "Completed"
+      }
     },
     "catalog": {
       "meta": {

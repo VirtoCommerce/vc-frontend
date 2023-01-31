@@ -2,7 +2,7 @@
   <div class="vc-layout-with-right-sidebar">
     <!-- Main section -->
     <div class="vc-layout-with-right-sidebar__main">
-      <slot name="main"></slot>
+      <slot />
     </div>
 
     <!-- Sidebar -->
@@ -10,7 +10,7 @@
       class="vc-layout-with-right-sidebar__sidebar"
       :class="{ 'vc-layout-with-right-sidebar__sidebar--sticky': isSidebarSticky }"
     >
-      <slot name="sidebar"></slot>
+      <slot name="sidebar" />
     </div>
   </div>
 </template>

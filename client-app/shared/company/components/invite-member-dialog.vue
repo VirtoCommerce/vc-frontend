@@ -5,7 +5,7 @@
     ref="popupComponent"
     is-mobile-fullscreen
   >
-    <VcAlert v-if="commonErrors.length" type="error" class="mx-6 mt-5 sm:mx-5">
+    <VcAlert v-if="commonErrors.length" type="danger" class="mx-6 mt-5 sm:mx-5">
       <p v-for="error in commonErrors" :key="error">{{ error }}</p>
     </VcAlert>
 

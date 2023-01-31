@@ -7,4 +7,4 @@ export { default as TwoColumn } from "./two-column.vue";
 export { default as LanguageSelector } from "./language-selector/language-selector.vue";
 export { default as MainLayout } from "./main-layout/main-layout.vue";
 export { default as NestedMobileHeader } from "./nested-mobile-header/nested-mobile-header";
-export { default as PaymentLayout } from "./payment-layout/payment-layout.vue";
+export { default as SecureLayout } from "./secure-layout/secure-layout.vue";

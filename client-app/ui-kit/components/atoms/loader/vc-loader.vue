@@ -1,5 +1,5 @@
 <template>
-  <svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+  <svg class="vc-loader" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
     <circle class="opacity-30" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
     <path
       class="opacity-80"
@@ -8,3 +8,9 @@
     />
   </svg>
 </template>
+
+<style lang="scss">
+.vc-loader {
+  @apply inline-block animate-spin;
+}
+</style>

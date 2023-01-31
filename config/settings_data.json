@@ -5,9 +5,12 @@
       "page_title_with_store_name": true,
       "page_title_store_name_align": "start",
       "page_title_divider": " · ",
+
       "quotes_enabled": true,
+
       "product_compare_enabled": true,
       "product_compare_limit": 5,
+
       "vendor_enabled": true,
       "rating_enabled": true,
       "categories_limit": 499,
@@ -15,14 +18,18 @@
       "search_min_chars": 3,
       "support_phone_number": "+31 416 652 803",
       "zero_price_product_enabled": false,
+
+      "checkout_multistep_enabled": true,
       "checkout_comment_enabled": true,
       "checkout_purchase_order_enabled": true,
       "checkout_coupon_enabled": true,
       "checkout_gifts_enabled": true,
+
       "logo_image": "/static/images/common/logo.svg",
       "logo_inverted_image": "/static/images/common/logo-white.svg",
       "favicon_image": "/static/icons/favicon-16x16.png",
       "homepage_background_image": "/static/images/home/main-banner.webp",
+
       "image_thumbnails_enabled": true,
       "image_thumbnails_original_fallback_enabled": true,
       "image_thumbnails_suffixes": {
@@ -31,6 +38,7 @@
         "lg": "lg"
       },
       "image_carousel_in_product_card_enabled": true,
+
       "orders_statuses": ["New", "Processing", "Pending", "Cancelled", "Completed"],
       "line_items_group_by_vendor_enabled": true,
       "social_sharing_services": [
@@ -55,6 +63,7 @@
           "url_template": "https://t.me/share/url?url={0}"
         }
       ],
+
       "color_primary": "#F0AD4E",
       "color_primary_light": "#FFE9C1",
       "color_primary_hover": "#EC951A",
@@ -151,9 +160,12 @@
       "page_title_with_store_name": true,
       "page_title_store_name_align": "start",
       "page_title_divider": " · ",
+
       "quotes_enabled": true,
+
       "product_compare_enabled": true,
       "product_compare_limit": 5,
+
       "vendor_enabled": true,
       "rating_enabled": true,
       "categories_limit": 499,
@@ -161,14 +173,18 @@
       "search_min_chars": 3,
       "support_phone_number": "+31 416 652 803",
       "zero_price_product_enabled": false,
+
+      "checkout_multistep_enabled": true,
       "checkout_comment_enabled": true,
       "checkout_purchase_order_enabled": true,
       "checkout_coupon_enabled": true,
       "checkout_gifts_enabled": true,
+
       "logo_image": "/static/images/common/logo.svg",
       "logo_inverted_image": "/static/images/common/logo-white.svg",
       "favicon_image": "/static/icons/favicon-16x16.png",
       "homepage_background_image": "/static/images/home/main-banner.webp",
+
       "image_thumbnails_enabled": true,
       "image_thumbnails_original_fallback_enabled": true,
       "image_thumbnails_suffixes": {
@@ -177,6 +193,7 @@
         "lg": "lg"
       },
       "image_carousel_in_product_card_enabled": true,
+
       "orders_statuses": ["New", "Processing", "Pending", "Cancelled", "Completed"],
       "line_items_group_by_vendor_enabled": false,
       "social_sharing_services": [
@@ -201,6 +218,7 @@
           "url_template": "https://t.me/share/url?url={0}"
         }
       ],
+
       "color_primary": "#3fcf4f",
       "color_primary_hover": "#38830f",
       "color_secondary": "#3b7a49",
