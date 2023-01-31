@@ -35,7 +35,11 @@
       "create_quote": "Add cart items to quote",
       "back_to_cart": "Back to Cart",
       "go_to_checkout": "Proceed to checkout",
-      "go_to_billing": "Proceed to billing"
+      "go_to_billing": "Proceed to billing",
+      "view_invoice": "View invoice",
+      "pay_now": "Pay now",
+      "reorder_all": "Reorder all",
+      "print_order": "Print order"
     },
     "labels": {
       "actions": "Actions",
@@ -72,7 +76,10 @@
       "purchase_order_number": "Purchase order",
       "promotion_code": "Promotion code",
       "vendor": "Vendor",
-      "secure_checkout": "Secure checkout"
+      "secure_checkout": "Secure checkout",
+      "creates_label": "Creates",
+      "payment_number": "Payment ID",
+      "payment_type": "Payment type"
     },
     "suffixes": {
       "from": "From",
@@ -133,7 +140,14 @@
     "titles": {
       "all_actions": "All actions",
       "order_summary": "Order summary",
-      "quote_request": "Quote request"
+      "quote_request": "Quote request",
+      "billing_address": "Billing address",
+      "payment_method": "Payment method",
+      "payment_details": "Payment details",
+      "shipping_method": "Shipping method",
+      "shipping_address": "Shipping address",
+      "order_comment": "Order comment",
+      "order_data": "Order data"
     },
     "roles": {
       "org-maintainer": "Organization maintainer",
@@ -897,45 +911,8 @@
         },
         "title": "Order #{0}",
         "created_title": "Order complete",
-        "status_label": "@:common.labels.status{':'} ",
         "purchase_order_label": "Purchase order: ",
         "placed_on_label": "Placed on: ",
-        "products_section": {
-          "title": "Purchased products"
-        },
-        "order_comment_section": {
-          "title": "Order comment"
-        },
-        "pay_now_button": "Pay Now",
-        "reorder_all_button": "Reorder all",
-        "print_order_button": "Print order",
-        "shipping_address_card": {
-          "title": "Shipping address",
-          "phone_label": "@:common.labels.phone{':'}",
-          "email_label": "@:common.labels.email{':'}"
-        },
-        "shipping_method_card": {
-          "title": "Shipping method"
-        },
-        "payment_details_card": {
-          "title": "Payment details",
-          "payment_number_label": "Payment ID:",
-          "payment_type_label": "Payment type:",
-          "view_invoice_button": "View invoice"
-        },
-        "billing_address_card": {
-          "title": "Billing address",
-          "phone_label": "@:common.labels.phone{':'}",
-          "email_label": "@:common.labels.email{':'}"
-        },
-        "order_data_card": {
-          "title": "Order data",
-          "creates_label": "Creates:",
-          "status_label": "@:common.labels.status{':'}"
-        },
-        "payment_method_card": {
-          "title": "Payment method"
-        },
         "line_items": {
           "product": "@:common.labels.product",
           "properties": "@:common.labels.properties",
@@ -944,7 +921,6 @@
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
         },
-        "vendor_label": "@:shared.catalog.product_details.vendor_label",
         "empty_vendor_label": "N/A"
       },
       "order_payment": {

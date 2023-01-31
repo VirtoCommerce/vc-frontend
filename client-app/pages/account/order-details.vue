@@ -14,7 +14,7 @@
         <!-- US-3534 -->
         <!-- <VcButton class="!hidden lg:!inline-flex uppercase px-3" is-outline>
           <VcIcon size="sm" name="printer" class="mr-2" />
-          <span>{{ $t("pages.account.order_details.print_order_button") }}</span>
+          <span>{{ $t("common.buttons.print_order") }}</span>
         </VcButton> -->
         <VcButton
           v-if="showReorderButton"
@@ -22,7 +22,7 @@
           class="uppercase flex-1 w-full px-4"
           @click="reorderItems"
         >
-          {{ $t("pages.account.order_details.reorder_all_button") }}
+          {{ $t("common.buttons.reorder_all") }}
         </VcButton>
       </div>
     </div>
@@ -52,7 +52,7 @@
       <!-- Order comment section -->
       <VcSectionWidget
         v-if="order.comment"
-        :title="$t('pages.account.order_details.order_comment_section.title')"
+        :title="$t('common.titles.order_comment')"
         icon="document-text"
         class="order-last"
       >
@@ -61,18 +61,14 @@
 
       <template #sidebar>
         <!-- Order Data Widget -->
-        <VcCardWidget :title="$t('pages.account.order_details.order_data_card.title')" class="order-first">
+        <VcCardWidget :title="$t('common.titles.order_data')" class="order-first">
           <div class="flex flex-col space-y-1.5 text-15">
             <p v-if="order.createdDate">
-              <span class="font-extrabold">
-                {{ $t("pages.account.order_details.order_data_card.creates_label") }}
-              </span>
+              <span class="font-extrabold"> {{ $t("common.labels.creates_label") }}: </span>
               {{ $d(order.createdDate, "long") }}
             </p>
             <p class="flex items-center" v-if="order.status">
-              <span class="font-extrabold mr-2">
-                {{ $t("pages.account.order_details.order_data_card.status_label") }}
-              </span>
+              <span class="font-extrabold mr-2"> {{ $t("common.labels.status") }}: </span>
               <TableStatusBadge :status="order.status" />
             </p>
           </div>
@@ -86,26 +82,18 @@
               class="uppercase w-full mt-4"
               @click="$router.push({ name: 'OrderPayment', params: { orderId } })"
             >
-              {{ $t("pages.account.order_details.pay_now_button") }}
+              {{ $t("common.buttons.pay_now") }}
             </VcButton>
           </template>
         </OrderSummary>
 
         <!-- Billing Address Widget -->
-        <VcCardWidget
-          v-if="billingAddress"
-          :title="$t('pages.account.order_details.billing_address_card.title')"
-          icon="truck"
-        >
+        <VcCardWidget v-if="billingAddress" :title="$t('common.titles.billing_address')" icon="truck">
           <VcAddressInfo :address="billingAddress" />
         </VcCardWidget>
 
         <!-- Shipping Method Card -->
-        <VcCardWidget
-          v-if="shipment"
-          :title="$t('pages.account.order_details.shipping_method_card.title')"
-          icon="truck"
-        >
+        <VcCardWidget v-if="shipment" :title="$t('common.titles.shipping_method')" icon="truck">
           <div class="flex items-center gap-4 text-15">
             <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" lazy />
 
@@ -118,45 +106,33 @@
         </VcCardWidget>
 
         <!-- Shipping Address Card -->
-        <VcCardWidget
-          v-if="deliveryAddress"
-          :title="$t('pages.account.order_details.shipping_address_card.title')"
-          icon="truck"
-        >
+        <VcCardWidget v-if="deliveryAddress" :title="$t('common.titles.shipping_address')" icon="truck">
           <VcAddressInfo :address="deliveryAddress" />
         </VcCardWidget>
 
         <!-- Payment Details Card -->
-        <VcCardWidget v-if="payment" :title="$t('pages.account.order_details.payment_details_card.title')" icon="truck">
+        <VcCardWidget v-if="payment" :title="$t('common.titles.payment_details')" icon="truck">
           <div class="flex flex-col space-y-1.5 text-15">
             <p>
-              <span class="font-extrabold">{{
-                $t("pages.account.order_details.payment_details_card.payment_number_label")
-              }}</span>
+              <span class="font-extrabold">{{ $t("common.labels.payment_number") }}:</span>
               {{ payment.number }}
             </p>
 
             <p class="overflow-x-hidden break-words">
-              <span class="font-extrabold">{{
-                $t("pages.account.order_details.payment_details_card.payment_type_label")
-              }}</span>
+              <span class="font-extrabold">{{ $t("common.labels.payment_type") }}:</span>
               {{ payment.gatewayCode }}
             </p>
           </div>
 
           <div class="mt-3">
             <VcButton class="px-2 py-1 uppercase !text-xs !h-auto" is-outline is-disabled>
-              {{ $t("pages.account.order_details.payment_details_card.view_invoice_button") }}
+              {{ $t("common.buttons.view_invoice") }}
             </VcButton>
           </div>
         </VcCardWidget>
 
-        <!-- Payment method section -->
-        <VcCardWidget
-          v-if="payment?.paymentMethod"
-          :title="$t('pages.account.order_details.payment_method_card.title')"
-          icon="document-text"
-        >
+        <!-- Payment Method section -->
+        <VcCardWidget v-if="payment?.paymentMethod" :title="$t('common.titles.payment_method')" icon="document-text">
           <div class="flex flex-row items-center space-x-4">
             <VcImage src="/static/images/checkout/invoice.svg" class="h-12 w-12" lazy />
             <span class="break-words">{{ payment.paymentMethod.typeName }}</span>
