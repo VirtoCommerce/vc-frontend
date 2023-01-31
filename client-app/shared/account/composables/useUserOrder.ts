@@ -5,13 +5,19 @@ import {
   CustomerOrderType,
   getOrder,
   InputAddOrUpdateOrderPaymentType,
+  OrderAddressType,
+  OrderShipmentType,
+  PaymentInType,
   QueryOrderArgs,
 } from "@/xapi";
 
 const loading = ref(false);
 const order = shallowRef<CustomerOrderType | null>(null);
-const itemsPerPage = ref(6);
-const pages = ref(0);
+
+const deliveryAddress = computed<OrderAddressType | undefined>(() => order.value?.shipments?.[0]?.deliveryAddress);
+const billingAddress = computed<OrderAddressType | undefined>(() => order.value?.inPayments?.[0]?.billingAddress);
+const shipment = computed<OrderShipmentType | undefined>(() => order.value?.shipments?.[0]);
+const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments?.[0]);
 
 export default function useUserOrder() {
   async function fetchOrder(payload: QueryOrderArgs) {
@@ -19,10 +25,6 @@ export default function useUserOrder() {
 
     try {
       order.value = await getOrder(payload);
-
-      if (order.value.items && order.value.items.length > 0) {
-        pages.value = Math.ceil(order.value.items.length / itemsPerPage.value);
-      }
     } catch (e) {
       Logger.error(`${useUserOrder.name}.${fetchOrder.name}`, e);
       throw e;
@@ -54,11 +56,11 @@ export default function useUserOrder() {
 
   return {
     loading: computed(() => loading.value),
-    pages: computed(() => pages.value),
-    itemsPerPage: computed(() => itemsPerPage.value),
     order: computed(() => order.value),
-    deliveryAddress: computed(() => order.value?.shipments?.[0]?.deliveryAddress),
-    billingAddress: computed(() => order.value?.inPayments?.[0]?.billingAddress),
+    deliveryAddress,
+    billingAddress,
+    shipment,
+    payment,
     fetchOrder,
     clearOrder,
     addOrUpdatePayment,

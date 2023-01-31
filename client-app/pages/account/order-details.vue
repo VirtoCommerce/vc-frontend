@@ -51,7 +51,7 @@
 
       <!-- Order comment section -->
       <VcSectionWidget
-        v-if="order?.comment"
+        v-if="order.comment"
         :title="$t('pages.account.order_details.order_comment_section.title')"
         icon="document-text"
         class="order-last"
@@ -79,7 +79,7 @@
         </VcCardWidget>
 
         <!-- Order summary -->
-        <OrderSummary v-if="order" :cart="order" class="order-last">
+        <OrderSummary :cart="order" class="order-last">
           <template #footer>
             <VcButton
               v-if="showPaymentButton"
@@ -92,43 +92,55 @@
         </OrderSummary>
 
         <!-- Billing Address Widget -->
-        <VcCardWidget :title="$t('pages.account.order_details.billing_address_card.title')" icon="truck">
+        <VcCardWidget
+          v-if="billingAddress"
+          :title="$t('pages.account.order_details.billing_address_card.title')"
+          icon="truck"
+        >
           <VcAddressInfo :address="billingAddress" />
         </VcCardWidget>
 
         <!-- Shipping Method Card -->
-        <VcCardWidget :title="$t('pages.account.order_details.shipping_method_card.title')" icon="truck">
+        <VcCardWidget
+          v-if="shipment"
+          :title="$t('pages.account.order_details.shipping_method_card.title')"
+          icon="truck"
+        >
           <div class="flex items-center gap-4 text-15">
             <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" lazy />
 
             <span>
-              {{ order?.shipments?.[0]?.shipmentMethodCode }} {{ order?.shipments?.[0]?.shipmentMethodOption }} ({{
-                order?.shipments?.[0]?.price?.formattedAmount
+              {{ shipment.shipmentMethodCode }} {{ shipment.shipmentMethodOption }} ({{
+                shipment.price?.formattedAmount
               }})
             </span>
           </div>
         </VcCardWidget>
 
         <!-- Shipping Address Card -->
-        <VcCardWidget :title="$t('pages.account.order_details.shipping_address_card.title')" icon="truck">
+        <VcCardWidget
+          v-if="deliveryAddress"
+          :title="$t('pages.account.order_details.shipping_address_card.title')"
+          icon="truck"
+        >
           <VcAddressInfo :address="deliveryAddress" />
         </VcCardWidget>
 
         <!-- Payment Details Card -->
-        <VcCardWidget :title="$t('pages.account.order_details.payment_details_card.title')" icon="truck">
+        <VcCardWidget v-if="payment" :title="$t('pages.account.order_details.payment_details_card.title')" icon="truck">
           <div class="flex flex-col space-y-1.5 text-15">
             <p>
               <span class="font-extrabold">{{
                 $t("pages.account.order_details.payment_details_card.payment_number_label")
               }}</span>
-              {{ order?.inPayments?.[0]?.number }}
+              {{ payment.number }}
             </p>
 
             <p class="overflow-x-hidden break-words">
               <span class="font-extrabold">{{
                 $t("pages.account.order_details.payment_details_card.payment_type_label")
               }}</span>
-              {{ order?.inPayments?.[0]?.gatewayCode }}
+              {{ payment.gatewayCode }}
             </p>
           </div>
 
@@ -141,13 +153,13 @@
 
         <!-- Payment method section -->
         <VcCardWidget
-          v-if="order?.inPayments[0]?.paymentMethod"
+          v-if="payment?.paymentMethod"
           :title="$t('pages.account.order_details.payment_method_card.title')"
           icon="document-text"
         >
           <div class="flex flex-row items-center space-x-4">
             <VcImage src="/static/images/checkout/invoice.svg" class="h-12 w-12" lazy />
-            <span class="break-words">{{ order?.inPayments[0]?.paymentMethod?.typeName }}</span>
+            <span class="break-words">{{ payment.paymentMethod.typeName }}</span>
           </div>
         </VcCardWidget>
       </template>
@@ -180,7 +192,7 @@ const props = defineProps({
 });
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { order, deliveryAddress, billingAddress, fetchOrder, clearOrder } = useUserOrder();
+const { order, deliveryAddress, billingAddress, shipment, payment, fetchOrder, clearOrder } = useUserOrder();
 const { addBulkItemsToCart } = useCart();
 const { openPopup } = usePopup();
 const { t } = useI18n();
