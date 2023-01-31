@@ -76,6 +76,7 @@
       "purchase_order_number": "Purchase order",
       "promotion_code": "Promotion code",
       "vendor": "Vendor",
+      "empty_vendor_label": "N/A",
       "secure_checkout": "Secure checkout",
       "creates_label": "Creates",
       "payment_number": "Payment ID",
@@ -920,8 +921,7 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
-        },
-        "empty_vendor_label": "N/A"
+        }
       },
       "order_payment": {
         "meta": {
