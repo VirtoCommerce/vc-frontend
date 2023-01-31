@@ -2,16 +2,12 @@
   <VcSectionWidget :title="$t('shared.checkout.billing_details_section.title')" icon="cash">
     <CheckoutLabeledBlock :label="$t('shared.checkout.billing_details_section.labels.shipping_address')">
       <div class="grow">
-        <VcCheckbox
-          v-model="billingAddressEqualsShippingAddress"
-          :disabled="disabled"
-          name="billingAddressEqualsShippingAddress"
-        >
+        <VcCheckbox v-model="billingAddressEqualsShipping" :disabled="disabled" name="billingAddressEqualsShipping">
           {{ $t("shared.checkout.billing_details_section.labels.same_as_shipping_address") }}
         </VcCheckbox>
 
         <div
-          v-if="!billingAddressEqualsShippingAddress"
+          v-if="!billingAddressEqualsShipping"
           class="flex flex-col space-y-2 lg:space-y-0 lg:flex-row lg:justify-between lg:space-x-3 lg:items-center -mx-5 mt-5 p-5 pb-0 border-t"
         >
           <template v-if="payment?.billingAddress">
@@ -102,5 +98,5 @@ const emit = defineEmits<Emits>();
 
 const { isAuthenticated } = useUser();
 
-const billingAddressEqualsShippingAddress = useVModel(props, "addressEqualsShippingAddress", emit);
+const billingAddressEqualsShipping = useVModel(props, "addressEqualsShippingAddress", emit);
 </script>

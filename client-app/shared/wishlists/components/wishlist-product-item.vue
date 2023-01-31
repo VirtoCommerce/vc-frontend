@@ -10,7 +10,7 @@
       </div>
 
       <router-link
-        v-if="listItem.product"
+        v-if="listItem.product && link"
         :to="link"
         class="text-sm text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)] break-words font-extrabold line-clamp-3 overflow-hidden"
         :title="listItem.product.name"
@@ -18,6 +18,7 @@
       >
         {{ listItem.product.name }}
       </router-link>
+
       <div v-else>
         <div class="text-sm break-words font-extrabold line-clamp-3 overflow-hidden">{{ listItem.name }}</div>
         <!-- todo: extract small alert component https://virtocommerce.atlassian.net/browse/ST-2488 -->

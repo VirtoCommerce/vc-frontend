@@ -24,8 +24,9 @@ import { AddressType, Logger, useGoogleAnalytics } from "@/core";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 
+const loading = ref(false);
 const comment = ref("");
-const billingAddressEqualsShippingAddress = ref(true);
+const billingAddressEqualsShipping = ref(true);
 
 export default function useCheckout() {
   const ga = useGoogleAnalytics();
@@ -36,28 +37,28 @@ export default function useCheckout() {
   const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
   const { addresses, fetchAddresses, isExistAddress, addOrUpdateAddresses } = useUserAddresses();
   const {
-    loading: loadingCart,
     cart,
     shipment,
     payment,
     availableShippingMethods,
     availablePaymentMethods,
+    hasValidationErrors,
     fetchCart,
     updateShipment,
     updatePayment,
     changeComment,
   } = useCart();
 
-  const initialized = ref(false);
-  const loading = ref(false);
-
-  const isValidShipment = computed(() => shipment.value?.shipmentMethodCode && shipment.value?.deliveryAddress);
-  const isValidPayment = computed(
-    () =>
-      payment.value?.paymentGatewayCode && (billingAddressEqualsShippingAddress.value || payment.value?.billingAddress)
+  const isValidDeliveryAddress = computed<boolean>(() => !!shipment.value?.deliveryAddress);
+  const isValidBillingAddress = computed<boolean>(
+    () => billingAddressEqualsShipping.value || !!payment.value?.billingAddress
   );
-  const isValidCheckout = computed(
-    () => !cart.value.validationErrors?.length && isValidShipment.value && isValidPayment.value
+  const isValidShipmentMethod = computed<boolean>(() => !!shipment.value?.shipmentMethodCode);
+  const isValidPaymentMethod = computed<boolean>(() => !!payment.value?.paymentGatewayCode);
+  const isValidShipment = computed<boolean>(() => isValidDeliveryAddress.value && isValidShipmentMethod.value);
+  const isValidPayment = computed<boolean>(() => isValidBillingAddress.value && isValidPaymentMethod.value);
+  const isValidCheckout = computed<boolean>(
+    () => isValidShipment.value && isValidPayment.value && !hasValidationErrors.value
   );
 
   async function setCheckoutDefaults() {
@@ -101,14 +102,12 @@ export default function useCheckout() {
   }
 
   async function initialize(): Promise<void> {
+    loading.value = true;
+
     await fetchCart();
 
-    if (!cart.value.items?.length) {
-      initialized.value = true;
-      return;
-    }
-
     if (isAuthenticated.value) {
+      // TODO: Remove. Addresses should be queried when the address selection modal opens.
       fetchAddresses();
     }
 
@@ -116,7 +115,7 @@ export default function useCheckout() {
 
     // TODO: Add ga.beginCheckout
 
-    initialized.value = true;
+    loading.value = false;
   }
 
   function openSelectShipmentMethodModal(): void {
@@ -243,10 +242,6 @@ export default function useCheckout() {
     shipmentAddress?: CartAddressType;
     billingAddress?: CartAddressType;
   }) {
-    if (!isAuthenticated.value) {
-      return;
-    }
-
     const { shipmentAddress, billingAddress } = payload;
     const newAddresses: MemberAddressType[] = [];
 
@@ -258,7 +253,7 @@ export default function useCheckout() {
       });
     }
 
-    if (billingAddress && !billingAddressEqualsShippingAddress.value && !isExistAddress(billingAddress)) {
+    if (billingAddress && !billingAddressEqualsShipping.value && !isExistAddress(billingAddress)) {
       newAddresses.push({
         ...billingAddress,
         isDefault: false,
@@ -277,7 +272,7 @@ export default function useCheckout() {
     };
 
     // Save shipping address as billing address
-    if (billingAddressEqualsShippingAddress.value) {
+    if (billingAddressEqualsShipping.value) {
       filledPayment.billingAddress = {
         ...shipment.value!.deliveryAddress,
         addressType: AddressType.Billing,
@@ -307,7 +302,7 @@ export default function useCheckout() {
 
   function resetVariables() {
     comment.value = "";
-    billingAddressEqualsShippingAddress.value = true;
+    billingAddressEqualsShipping.value = true;
   }
 
   async function createOrderFromCart(): Promise<CustomerOrderType | null> {
@@ -342,9 +337,13 @@ export default function useCheckout() {
 
   return {
     comment,
-    billingAddressEqualsShippingAddress,
+    billingAddressEqualsShipping,
     shipment,
     payment,
+    isValidDeliveryAddress,
+    isValidBillingAddress,
+    isValidShipmentMethod,
+    isValidPaymentMethod,
     isValidShipment,
     isValidPayment,
     isValidCheckout,
@@ -354,7 +353,6 @@ export default function useCheckout() {
     openSelectShipmentMethodModal,
     openSelectPaymentMethodModal,
     createOrderFromCart,
-    initialized: readonly(initialized),
-    loading: computed(() => loading.value || loadingCart.value),
+    loading: readonly(loading),
   };
 }
