@@ -1,7 +1,8 @@
 <template>
   <div class="vc-vendor">
     <VcIcon name="vendor" size="sm" class="vc-vendor__icon" />
-    <span class="vc-vendor__title">{{ $t("common.labels.vendor") }}: {{ vendor.name }}</span>
+    <span v-if="vendor.name" class="vc-vendor__title">{{ $t("common.labels.vendor") }}: {{ vendor.name }}</span>
+    <span v-else class="vc-vendor__title">{{ $t("common.labels.empty_vendor_label") }}</span>
   </div>
 </template>
 
