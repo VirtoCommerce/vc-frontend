@@ -28,65 +28,38 @@
     </div>
 
     <VcLayoutWithRightSidebar is-sidebar-sticky>
-      <!-- Order Data Widget -->
-      <VcCardWidget v-if="isMobile" :title="$t('pages.account.order_details.order_data_card.title')" hideMobileTitle>
-        <div class="flex flex-col space-y-1.5 text-15">
-          <p v-if="order.createdDate">
-            <span class="font-extrabold">
-              {{ $t("pages.account.order_details.order_data_card.creates_label") }}
-            </span>
-            {{ $d(order.createdDate, "long") }}
-          </p>
-          <p class="flex items-center" v-if="order.status">
-            <span class="font-extrabold mr-2">
-              {{ $t("pages.account.order_details.order_data_card.status_label") }}
-            </span>
-            <TableStatusBadge :status="order.status" />
-          </p>
-        </div>
-      </VcCardWidget>
-
       <!-- Items grouped by Vendor -->
-      <div
-        v-if="$cfg.line_items_group_by_vendor_enabled"
-        class="bg-white md:mx-0 lg:mb-6 lg:rounded lg:shadow-md-x lg:pt-5 lg:px-7"
-      >
-        <template v-for="(group, vendorId) in orderItemsGroupedByVendor" :key="vendorId">
-          <div
-            v-if="group.items.length"
-            class="bg-white shadow-light-lg mb-4 px-7 pt-4 lg:mb-0 lg:pb-5 lg:px-0 lg:pt-0 lg:rounded lg:shadow-none"
-          >
-            <!-- Vendor -->
-            <VcVendor v-if="group.vendor" :vendor="group.vendor" class="pb-3"></VcVendor>
-
-            <OrderLineItems :items="group.items" class="lg:rounded" />
-          </div>
-        </template>
-      </div>
+      <VcSectionWidget v-if="$cfg.line_items_group_by_vendor_enabled">
+        <div class="space-y-8">
+          <template v-for="(group, vendorId) in orderItemsGroupedByVendor" :key="vendorId">
+            <div v-if="group.items.length">
+              <!-- Vendor -->
+              <VcVendor v-if="group.vendor" :vendor="group.vendor" class="pb-3"></VcVendor>
+              <OrderLineItems :items="group.items" class="lg:rounded" />
+            </div>
+          </template>
+        </div>
+      </VcSectionWidget>
 
       <!-- Items not grouped by Vendor -->
-      <div v-else class="bg-white lg:mb-6 lg:rounded -mx-5 md:mx-0 lg:shadow-md-x lg:pt-5 lg:px-7">
-        <div class="bg-white shadow-light-lg mb-4 p-7 lg:mb-0 lg:pb-5 lg:px-0 lg:pt-0 lg:rounded lg:shadow-none">
-          <OrderLineItems :items="orderItems" class="lg:rounded" />
-        </div>
-      </div>
+      <VcSectionWidget v-else>
+        <OrderLineItems :items="orderItems" class="lg:rounded" />
+      </VcSectionWidget>
 
       <!-- Gifts section -->
       <AcceptedGifts :items="giftItems" />
 
       <!-- Order comment section -->
-      <VcSection v-if="order?.comment && !isMobile" class="shadow-inner mt-5 p-6 lg:shadow" content-classes="pt-4">
-        <template #title>
-          <h3 class="text-24 font-bold uppercase mb-4">
-            {{ $t("pages.account.order_details.order_comment_section.title") }}
-          </h3>
-        </template>
-        <p class="break-words text-15" v-for="line in order?.comment?.split('\n')" :key="line">{{ line }}</p>
-      </VcSection>
+      <VcSectionWidget v-if="order?.comment && !isMobile">
+        <VcTypography tag="h3" variant="h3" weight="bold" class="text-24">
+          {{ $t("pages.account.order_details.order_comment_section.title") }}
+        </VcTypography>
+        <p class="break-words text-15 mt-4" v-for="line in order?.comment?.split('\n')" :key="line">{{ line }}</p>
+      </VcSectionWidget>
 
       <template #sidebar>
         <!-- Order Data Widget -->
-        <VcCardWidget v-if="!isMobile" :title="$t('pages.account.order_details.order_data_card.title')">
+        <VcCardWidget :title="$t('pages.account.order_details.order_data_card.title')" class="order-first">
           <div class="flex flex-col space-y-1.5 text-15">
             <p v-if="order.createdDate">
               <span class="font-extrabold">
@@ -103,32 +76,22 @@
           </div>
         </VcCardWidget>
 
+        <!-- Order summary -->
+        <OrderSummary v-if="order" :cart="order" class="order-last">
+          <template #footer>
+            <VcButton
+              v-if="showPaymentButton"
+              class="uppercase w-full mt-4"
+              @click="$router.push({ name: 'OrderPayment', params: { orderId } })"
+            >
+              {{ $t("pages.account.order_details.pay_now_button") }}
+            </VcButton>
+          </template>
+        </OrderSummary>
+
         <!-- Billing Address Widget -->
         <VcCardWidget :title="$t('pages.account.order_details.billing_address_card.title')" icon="truck">
-          <div class="flex flex-col space-y-1.5 text-15">
-            <span class="font-extrabold">{{ billingAddress?.firstName }} {{ billingAddress?.lastName }}</span>
-            <p>
-              {{ billingAddress?.countryCode }}
-              {{ billingAddress?.regionName }}
-              {{ billingAddress?.city }}
-              {{ billingAddress?.line1 }}
-              {{ billingAddress?.postalCode }}
-            </p>
-
-            <p v-if="billingAddress?.phone">
-              <span class="font-extrabold">
-                {{ $t("pages.account.order_details.billing_address_card.phone_label") }}
-              </span>
-              {{ billingAddress?.phone }}
-            </p>
-
-            <p v-if="billingAddress?.email">
-              <span class="font-extrabold">
-                {{ $t("pages.account.order_details.billing_address_card.email_label") }}
-              </span>
-              {{ billingAddress?.email }}
-            </p>
-          </div>
+          <VcAddressInfo :address="billingAddress" />
         </VcCardWidget>
 
         <!-- Shipping Method Card -->
@@ -146,24 +109,7 @@
 
         <!-- Shipping Address Card -->
         <VcCardWidget :title="$t('pages.account.order_details.shipping_address_card.title')" icon="truck">
-          <div class="flex flex-col space-y-1.5 text-15">
-            <span class="font-extrabold">{{ deliveryAddress?.firstName }} {{ deliveryAddress?.lastName }}</span>
-            <p>
-              {{ deliveryAddress?.countryCode }}
-              {{ deliveryAddress?.regionName }}
-              {{ deliveryAddress?.city }}
-              {{ deliveryAddress?.line1 }}
-              {{ deliveryAddress?.postalCode }}
-            </p>
-            <p v-if="deliveryAddress?.phone">
-              <span class="font-extrabold" v-t="'pages.account.order_details.shipping_address_card.phone_label'" />
-              {{ deliveryAddress?.phone }}
-            </p>
-            <p v-if="deliveryAddress?.email">
-              <span class="font-extrabold" v-t="'pages.account.order_details.shipping_address_card.email_label'" />
-              {{ deliveryAddress?.email }}
-            </p>
-          </div>
+          <VcAddressInfo :address="deliveryAddress" />
         </VcCardWidget>
 
         <!-- Payment Details Card -->
@@ -211,19 +157,6 @@
         >
           <p class="break-words text-15" v-for="line in order?.comment?.split('\n')" :key="line">{{ line }}</p>
         </VcCardWidget>
-
-        <!-- Order summary -->
-        <OrderSummary v-if="order" :cart="order">
-          <template #footer>
-            <VcButton
-              v-if="showPaymentButton"
-              class="uppercase w-full mt-4"
-              @click="$router.push({ name: 'OrderPayment', params: { orderId } })"
-            >
-              {{ $t("pages.account.order_details.pay_now_button") }}
-            </VcButton>
-          </template>
-        </OrderSummary>
       </template>
     </VcLayoutWithRightSidebar>
   </div>
