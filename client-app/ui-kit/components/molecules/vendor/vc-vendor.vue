@@ -2,7 +2,10 @@
   <div class="vc-vendor">
     <VcIcon name="vendor" size="sm" class="vc-vendor__icon" />
     <span class="vc-vendor__title">
-      {{ $t("common.labels.vendor") }}: {{ vendor.name || $t("common.labels.not_available") }}
+      {{ $t("common.labels.vendor") }}:
+      <span :class="['vc-vendor__name', vendor?.name ?? 'vc-vendor__name--not-available']">
+        {{ vendor?.name || $t("common.labels.not_available") }}
+      </span>
     </span>
   </div>
 </template>
@@ -11,7 +14,7 @@
 import { Vendor } from "@/xapi/types";
 
 interface Props {
-  vendor: Vendor;
+  vendor?: Vendor;
 }
 
 defineProps<Props>();
@@ -27,6 +30,12 @@ defineProps<Props>();
 
   &__title {
     @apply font-bold uppercase text-base truncate;
+  }
+
+  &__name {
+    &--not-available {
+      @apply text-gray-400;
+    }
   }
 }
 </style>

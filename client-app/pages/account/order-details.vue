@@ -34,7 +34,7 @@
           <template v-for="(group, vendorId) in orderItemsGroupedByVendor" :key="vendorId">
             <div v-if="group.items.length">
               <!-- Vendor -->
-              <VcVendor v-if="group.vendor" :vendor="group.vendor" class="pb-3"></VcVendor>
+              <VcVendor :vendor="group.vendor" class="pb-3"></VcVendor>
               <OrderLineItems :items="group.items" />
             </div>
           </template>
@@ -150,15 +150,12 @@ import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { usePageHead } from "@/core";
-import { InputNewBulkItemType, OrderLineItemType, Vendor as VendorType } from "@/xapi";
+import { InputNewBulkItemType } from "@/xapi";
 import { AcceptedGifts, OrderSummary } from "@/shared/checkout";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useUserOrder, OrderLineItems } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
-
-type TGroupItem = { items: OrderLineItemType[]; vendor?: VendorType };
-type TGroupedItems = Record<string, TGroupItem>;
 
 const props = defineProps({
   orderId: {
@@ -168,7 +165,18 @@ const props = defineProps({
 });
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { order, deliveryAddress, billingAddress, shipment, payment, fetchOrder, clearOrder } = useUserOrder();
+const {
+  order,
+  giftItems,
+  orderItems,
+  orderItemsGroupedByVendor,
+  deliveryAddress,
+  billingAddress,
+  shipment,
+  payment,
+  fetchOrder,
+  clearOrder,
+} = useUserOrder();
 const { addBulkItemsToCart } = useCart();
 const { openPopup } = usePopup();
 const { t } = useI18n();
@@ -189,37 +197,6 @@ const breadcrumbs = computed<IBreadcrumbs[]>(() => [
 
 const showPaymentButton = computed<boolean>(() => !!order.value && order.value.status === "New");
 const showReorderButton = computed<boolean>(() => !!order.value && order.value.status === "Completed");
-
-const giftItems = computed<OrderLineItemType[]>(() => (order.value?.items || []).filter((item) => item.isGift));
-const orderItems = computed<OrderLineItemType[]>(() => (order.value?.items || []).filter((item) => !item.isGift));
-
-const orderItemsGroupedByVendor = computed<TGroupItem[]>(() => {
-  // NOTE: The group without the vendor should be displayed last.
-  const groupWithoutVendor: TGroupItem = { items: [] };
-  const map: TGroupedItems = {};
-
-  orderItems.value.forEach((item) => {
-    const vendor = item.product?.vendor;
-
-    if (vendor) {
-      const vendorId = vendor.id;
-
-      map[vendorId] = map[vendorId] || { vendor, items: [] };
-      map[vendorId].items.push(item);
-    } else {
-      groupWithoutVendor.items.push(item);
-    }
-  });
-
-  const result = Object.values(map)
-    // Sort by Vendor
-    .sort((a, b) => a.vendor!.name.localeCompare(b.vendor!.name));
-
-  // Add the group without the vendor to the end.
-  result.push(groupWithoutVendor);
-
-  return result;
-});
 
 async function reorderItems() {
   const items = order.value!.items!.filter((item) => !item.isGift);

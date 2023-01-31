@@ -1,3 +1,5 @@
+import { OrderLineItemType, Vendor } from "@/xapi";
+
 export enum RegistrationKind {
   personal = "personal",
   organization = "organization",
@@ -60,3 +62,6 @@ export type OrdersFilterChipsItem = {
   value: string | Date;
   label: string;
 };
+
+export type TGroupItem = { items: OrderLineItemType[]; vendor?: Vendor };
+export type TGroupedItems = Record<string, TGroupItem>;
