@@ -11,40 +11,15 @@ import {
   PaymentInType,
   QueryOrderArgs,
 } from "@/xapi";
-import { TGroupedItems, TGroupItem } from "../types";
+import { TGroupItem } from "../types";
+import { getItemsGroupedByVendor } from "../utilities";
 
 const loading = ref(false);
 const order = shallowRef<CustomerOrderType | null>(null);
 
 const giftItems = computed<OrderLineItemType[]>(() => (order.value?.items || []).filter((item) => item.isGift));
 const orderItems = computed<OrderLineItemType[]>(() => (order.value?.items || []).filter((item) => !item.isGift));
-const orderItemsGroupedByVendor = computed<TGroupItem[]>(() => {
-  // NOTE: The group without the vendor should be displayed last.
-  const groupWithoutVendor: TGroupItem = { items: [] };
-  const map: TGroupedItems = {};
-
-  orderItems.value?.forEach((item) => {
-    const vendor = item.product?.vendor;
-
-    if (vendor) {
-      const vendorId = vendor.id;
-
-      map[vendorId] = map[vendorId] || { vendor, items: [] };
-      map[vendorId].items.push(item);
-    } else {
-      groupWithoutVendor.items.push(item);
-    }
-  });
-
-  const result = Object.values(map)
-    // Sort by Vendor
-    .sort((a, b) => a.vendor!.name.localeCompare(b.vendor!.name));
-
-  // Add the group without the vendor to the end.
-  result.push(groupWithoutVendor);
-
-  return result;
-});
+const orderItemsGroupedByVendor = computed<TGroupItem[]>(() => getItemsGroupedByVendor(orderItems.value));
 
 const shipment = computed<OrderShipmentType | undefined>(() => order.value?.shipments?.[0]);
 const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments?.[0]);
