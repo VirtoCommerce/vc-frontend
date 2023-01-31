@@ -12,10 +12,10 @@
       </VcTypography>
       <div class="flex justify-between gap-x-5">
         <!-- US-3534 -->
-        <!-- <VcButton class="!hidden lg:!inline-flex uppercase px-3" is-outline>
-          <i class="fas fa-print mr-2" />
+        <VcButton class="!hidden lg:!inline-flex uppercase px-3" is-outline>
+          <VcIcon size="sm" name="printer" class="mr-2" />
           <span>{{ $t("pages.account.order_details.print_order_button") }}</span>
-        </VcButton> -->
+        </VcButton>
         <VcButton
           v-if="showReorderButton"
           :is-waiting="loadingAddItemsToCart"
@@ -35,7 +35,7 @@
             <div v-if="group.items.length">
               <!-- Vendor -->
               <VcVendor v-if="group.vendor" :vendor="group.vendor" class="pb-3"></VcVendor>
-              <OrderLineItems :items="group.items" class="lg:rounded" />
+              <OrderLineItems :items="group.items" />
             </div>
           </template>
         </div>
@@ -43,7 +43,7 @@
 
       <!-- Items not grouped by Vendor -->
       <VcSectionWidget v-else>
-        <OrderLineItems :items="orderItems" class="lg:rounded" />
+        <OrderLineItems :items="orderItems" />
       </VcSectionWidget>
 
       <!-- Gifts section -->
@@ -98,7 +98,7 @@
 
         <!-- Shipping Method Card -->
         <VcCardWidget :title="$t('pages.account.order_details.shipping_method_card.title')" icon="truck">
-          <div class="flex items-center space-x-4 text-15">
+          <div class="flex items-center gap-4 text-15">
             <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" lazy />
 
             <span>
@@ -147,7 +147,7 @@
         >
           <div class="flex flex-row items-center space-x-4">
             <VcImage src="/static/images/checkout/invoice.svg" class="h-12 w-12" lazy />
-            <span class="overflow-x-hidden break-words">{{ order?.inPayments[0]?.paymentMethod?.typeName }}</span>
+            <span class="break-words">{{ order?.inPayments[0]?.paymentMethod?.typeName }}</span>
           </div>
         </VcCardWidget>
       </template>
