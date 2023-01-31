@@ -33,8 +33,21 @@
         <div class="space-y-8">
           <template v-for="(group, vendorId) in orderItemsGroupedByVendor" :key="vendorId">
             <div v-if="group.items.length">
-              <!-- Vendor -->
-              <VcVendor :vendor="group.vendor" class="pb-3"></VcVendor>
+              <div class="flex flex-col gap-1.5 pb-3 md:flex-row md:items-center md:gap-3">
+                <!-- Vendor -->
+                <VcVendor :vendor="group.vendor" />
+                <VcRating
+                  v-if="
+                    $cfg.rating_enabled &&
+                    group.vendor?.rating &&
+                    group.vendor?.rating?.reviewCount !== undefined &&
+                    group.vendor?.rating?.reviewCount > 0
+                  "
+                  :rating="group.vendor.rating"
+                  class="ml-5 md:ml-0"
+                />
+              </div>
+
               <OrderLineItems :items="group.items" />
             </div>
           </template>
