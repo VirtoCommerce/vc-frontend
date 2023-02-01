@@ -10,16 +10,28 @@
         :modelValue="selectedShippingMethod"
       >
         <template #placeholder>
-          <SelectItem
-            image="/static/icons/placeholder/select-shipping.svg"
-            :title="$t('common.placeholders.not_selected_shippping_method')"
-          />
+          <VcSelectItem>
+            <VcSelectImage src="/static/icons/placeholder/select-shipping.svg" />
+            <VcSelectText>
+              {{ $t("common.placeholders.not_selected_shippping_method") }}
+            </VcSelectText>
+          </VcSelectItem>
         </template>
         <template #selected="{ item }">
-          <SelectItem image="" :title="`${item?.code} ${item?.optionName}`" />
+          <VcSelectItem>
+            <VcSelectImage src="" />
+            <VcSelectText>
+              {{ `${item?.code} ${item?.optionName}` }}
+            </VcSelectText>
+          </VcSelectItem>
         </template>
         <template #item="{ item }">
-          <SelectItem image="" :title="`${item?.code} ${item?.optionName}`" />
+          <VcSelectItem bordered>
+            <VcSelectImage src="" />
+            <VcSelectText>
+              {{ `${item?.code} ${item?.optionName}` }}
+            </VcSelectText>
+          </VcSelectItem>
         </template>
       </VcSelect>
     </div>
@@ -29,7 +41,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { ShipmentType, ShippingMethodType } from "@/xapi";
-import { SelectItem, ShippingAddress } from "@/shared/checkout";
+import { ShippingAddress } from "@/shared/checkout";
 
 interface Props {
   disabled?: boolean;

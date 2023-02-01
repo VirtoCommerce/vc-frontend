@@ -31,23 +31,36 @@
           v-model="localCheckoutDefaults.paymentMethodCode"
           :items="availablePaymentMethods"
           :label="$t('pages.account.checkout_defaults.payment_method_label')"
-          :placeholder="$t('pages.account.checkout_defaults.payment_method_placeholder')"
           text-field="code"
           value-field="code"
           class="mt-8 w-full"
           size="lg"
         >
           <template #placeholder>
-            <SelectItem
-              image="/static/icons/placeholder/select-payment.svg"
-              :title="$t('common.placeholders.not_selected_payment_method')"
-            />
+            <VcSelectItem>
+              <VcSelectImage src="/static/icons/placeholder/select-payment.svg" />
+              <VcSelectText>
+                {{ $t("common.placeholders.not_selected_payment_method") }}
+              </VcSelectText>
+            </VcSelectItem>
           </template>
+
           <template #selected="{ item }">
-            <SelectItem image="" :title="item?.code" />
+            <VcSelectItem>
+              <VcSelectImage :src="item.logoUrl" />
+              <VcSelectText>
+                {{ item?.code }}
+              </VcSelectText>
+            </VcSelectItem>
           </template>
+
           <template #item="{ item }">
-            <SelectItem image="" :title="item?.code" />
+            <VcSelectItem bordered>
+              <VcSelectImage :src="item.logoUrl" />
+              <VcSelectText>
+                {{ item?.code }}
+              </VcSelectText>
+            </VcSelectItem>
           </template>
         </VcSelect>
 
@@ -55,22 +68,35 @@
           v-model="localCheckoutDefaults.shippingMethodId"
           :items="availableShippingMethods"
           :label="$t('pages.account.checkout_defaults.shipping_method_label')"
-          :placeholder="$t('pages.account.checkout_defaults.shipping_method_placeholder')"
           value-field="id"
           class="mt-8 w-full"
           size="lg"
         >
           <template #placeholder>
-            <SelectItem
-              image="/static/icons/placeholder/select-shipping.svg"
-              :title="$t('common.placeholders.not_selected_shippping_method')"
-            />
+            <VcSelectItem>
+              <VcSelectImage src="/static/icons/placeholder/select-shipping.svg" />
+              <VcSelectText>
+                {{ $t("common.placeholders.not_selected_shippping_method") }}
+              </VcSelectText>
+            </VcSelectItem>
           </template>
+
           <template #selected="{ item }">
-            <SelectItem image="" :title="`${item?.code} ${item?.optionName}`" />
+            <VcSelectItem>
+              <VcSelectImage :src="item.logoUrl" />
+              <VcSelectText>
+                {{ `${item?.code} ${item?.optionName}` }}
+              </VcSelectText>
+            </VcSelectItem>
           </template>
+
           <template #item="{ item }">
-            <SelectItem image="" :title="`${item?.code} ${item?.optionName}`" />
+            <VcSelectItem bordered>
+              <VcSelectImage :src="item.logoUrl" />
+              <VcSelectText>
+                {{ `${item?.code} ${item?.optionName}` }}
+              </VcSelectText>
+            </VcSelectItem>
           </template>
         </VcSelect>
 
@@ -94,7 +120,6 @@ import { usePopup } from "@/shared/popup";
 import { usePageHead } from "@/core/composables";
 import { useCart } from "@/shared/cart";
 import { useUserCheckoutDefaults, CheckoutDefaults, CheckoutDefaultsSuccessDialog } from "@/shared/account";
-import { SelectItem } from "@/shared/checkout";
 
 const { t } = useI18n();
 const { openPopup } = usePopup();

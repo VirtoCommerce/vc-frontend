@@ -15,17 +15,21 @@
 
     <div v-click-outside="() => open && hideList()" class="vc-select__container">
       <button type="button" :disabled="disabled" class="vc-select__button" @click="toggle">
-        <span class="grow">
+        <span class="grow min-w-0">
           <slot v-if="($slots.placeholder || placeholder) && !selected" name="placeholder">
-            <span class="vc-select__placeholder-default">
-              {{ placeholder }}
-            </span>
+            <VcSelectItem class="opacity-75">
+              <VcSelectText>
+                {{ placeholder }}
+              </VcSelectText>
+            </VcSelectItem>
           </slot>
 
           <slot v-if="selected" name="selected" v-bind="{ item: selected }">
-            <span class="vc-select__selected-default">
-              {{ textField && selected ? selected[textField] : selected }}
-            </span>
+            <VcSelectItem>
+              <VcSelectText>
+                {{ textField && selected ? selected[textField] : selected }}
+              </VcSelectText>
+            </VcSelectItem>
           </slot>
         </span>
 
@@ -51,9 +55,11 @@
               @click="select(item)"
             >
               <slot name="item" v-bind="{ item, index, selected }">
-                <span class="vc-select__item-default">
-                  {{ textField && item ? item[textField] : item }}
-                </span>
+                <VcSelectItem>
+                  <VcSelectText>
+                    {{ textField && item ? item[textField] : item }}
+                  </VcSelectText>
+                </VcSelectItem>
               </slot>
             </li>
           </ul>
@@ -246,7 +252,7 @@ function select(item?: any) {
   }
 
   &__icon {
-    @apply mr-3 text-[color:var(--color-body-text)];
+    @apply shrink-0 mr-3 text-[color:var(--color-body-text)];
 
     #{$disabled} & {
       @apply text-gray-300;

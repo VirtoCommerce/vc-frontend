@@ -9,4 +9,3 @@ export { default as SelectPaymentMethodModal } from "./select-payment-method-mod
 export { default as SelectShippingMethodModal } from "./select-shipping-method-modal.vue";
 export { default as ShippingDetailsSection } from "./shipping-details-section.vue";
 export { default as ShippingAddress } from "./shipping-address.vue";
-export { default as SelectItem } from "./select-item.vue";

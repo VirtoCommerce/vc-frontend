@@ -10,6 +10,8 @@ export { default as VcLineItemPrice } from "./line-item-price/vc-line-item-price
 export { default as VcLoaderOverlay } from "./loader-overlay/vc-loader-overlay.vue";
 export { default as VcLoaderWithText } from "./loader-with-text/vc-loader-with-text.vue";
 export { default as VcLayoutWithRightSidebar } from "./layout-with-right-sidebar/vc-layout-with-right-sidebar.vue";
+export { default as VcSelect } from "./select/vc-select.vue";
+export { default as VcSelectImage } from "./select-image/vc-select-image.vue";
 export { default as VcSteps } from "./steps/vc-steps.vue";
 export { default as VcRating } from "./rating/vc-rating.vue";
 export { default as VcVendor } from "./vendor/vc-vendor.vue";
