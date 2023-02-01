@@ -31,7 +31,6 @@
           v-model="localCheckoutDefaults.paymentMethodCode"
           :items="availablePaymentMethods"
           :label="$t('pages.account.checkout_defaults.payment_method_label')"
-          text-field="code"
           value-field="code"
           class="mt-8 w-full"
           size="lg"
@@ -64,41 +63,12 @@
           </template>
         </VcSelect>
 
-        <VcSelect
-          v-model="localCheckoutDefaults.shippingMethodId"
-          :items="availableShippingMethods"
-          :label="$t('pages.account.checkout_defaults.shipping_method_label')"
-          value-field="id"
+        <SelectShippingMethod
           class="mt-8 w-full"
-          size="lg"
-        >
-          <template #placeholder>
-            <VcSelectItem>
-              <VcSelectImage src="/static/icons/placeholder/select-shipping.svg" />
-              <VcSelectText>
-                {{ $t("common.placeholders.not_selected_shippping_method") }}
-              </VcSelectText>
-            </VcSelectItem>
-          </template>
-
-          <template #selected="{ item }">
-            <VcSelectItem>
-              <VcSelectImage :src="item.logoUrl" />
-              <VcSelectText>
-                {{ `${item?.code} ${item?.optionName}` }}
-              </VcSelectText>
-            </VcSelectItem>
-          </template>
-
-          <template #item="{ item }">
-            <VcSelectItem bordered>
-              <VcSelectImage :src="item.logoUrl" />
-              <VcSelectText>
-                {{ `${item?.code} ${item?.optionName}` }}
-              </VcSelectText>
-            </VcSelectItem>
-          </template>
-        </VcSelect>
+          :available-methods="availableShippingMethods"
+          :current-method-id="localCheckoutDefaults.shippingMethodId"
+          @result="setLocalCheckoutDefaults"
+        />
 
         <VcButton
           :is-disabled="!isDirty"
@@ -116,10 +86,12 @@
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { clone, isEqual } from "lodash";
+import { ShippingMethodType } from "@/xapi/types";
 import { usePopup } from "@/shared/popup";
 import { usePageHead } from "@/core/composables";
 import { useCart } from "@/shared/cart";
 import { useUserCheckoutDefaults, CheckoutDefaults, CheckoutDefaultsSuccessDialog } from "@/shared/account";
+import { SelectShippingMethod } from "@/shared/checkout";
 
 const { t } = useI18n();
 const { openPopup } = usePopup();
@@ -134,6 +106,10 @@ const savedCheckoutDefaults = ref<CheckoutDefaults>(getUserCheckoutDefaults());
 const localCheckoutDefaults = ref<CheckoutDefaults>(clone(savedCheckoutDefaults.value));
 
 const isDirty = computed<boolean>(() => !isEqual(savedCheckoutDefaults.value, localCheckoutDefaults.value));
+
+function setLocalCheckoutDefaults(method: ShippingMethodType) {
+  localCheckoutDefaults.value.shippingMethodId = method.id;
+}
 
 function saveDefaults() {
   setUserCheckoutDefaults(localCheckoutDefaults.value);

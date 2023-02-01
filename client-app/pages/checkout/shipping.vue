@@ -1,9 +1,10 @@
 <template>
   <VcLayoutWithRightSidebar is-sidebar-sticky>
     <ShippingDetailsSection
-      :shipment="shipment"
+      :delivery-address="shipment?.deliveryAddress"
       :disabled="loading"
-      :availableMethods="availableShippingMethods"
+      :current-method-id="currentMethodId"
+      :available-methods="availableShippingMethods"
       @change:address="onDeliveryAddressChange"
       @change:method="updateShippingMethod"
     />
@@ -51,6 +52,14 @@ const isDisabledNextStep = computed<boolean>(
   () => loading.value || hasValidationErrors.value || !isValidShipment.value
 );
 const isShowInvalidCartWarning = computed<boolean>(() => hasValidationErrors.value);
+
+const currentMethodId = computed(
+  () =>
+    availableShippingMethods.value.find(
+      (item: ShippingMethodType) =>
+        item.code === shipment.value?.shipmentMethodCode && item.optionName === shipment.value?.shipmentMethodOption
+    )?.id
+);
 
 async function updateShippingMethod(method: ShippingMethodType) {
   await updateShipment({
