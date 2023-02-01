@@ -3,9 +3,9 @@
     <ShippingDetailsSection
       :shipment="shipment"
       :disabled="loading"
-      :availableShippingMethods="availableShippingMethods"
+      :availableMethods="availableShippingMethods"
       @change:address="onDeliveryAddressChange"
-      @change:method="openSelectShipmentMethodModal"
+      @change:method="updateShippingMethod"
     />
 
     <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
@@ -40,14 +40,24 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { ShippingMethodType } from "@/xapi";
 import { useCart } from "@/shared/cart";
 import { OrderCommentSection, OrderSummary, ShippingDetailsSection, useCheckout } from "@/shared/checkout";
 
-const { loading, cart, hasValidationErrors, availableShippingMethods } = useCart();
-const { comment, shipment, isValidShipment, openSelectShipmentMethodModal, onDeliveryAddressChange } = useCheckout();
+const { loading, cart, hasValidationErrors, availableShippingMethods, updateShipment } = useCart();
+const { comment, shipment, isValidShipment, onDeliveryAddressChange } = useCheckout();
 
 const isDisabledNextStep = computed<boolean>(
   () => loading.value || hasValidationErrors.value || !isValidShipment.value
 );
 const isShowInvalidCartWarning = computed<boolean>(() => hasValidationErrors.value);
+
+async function updateShippingMethod(method: ShippingMethodType) {
+  await updateShipment({
+    id: shipment.value?.id,
+    price: method.price?.amount,
+    shipmentMethodCode: method.code,
+    shipmentMethodOption: method.optionName,
+  });
+}
 </script>

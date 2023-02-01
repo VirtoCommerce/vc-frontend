@@ -2,7 +2,7 @@
   <div class="shipping-address">
     <VcLabel :text="$t('shared.checkout.shipping_details_section.labels.shipping_address')" />
     <div class="shipping-address__body">
-      <VcAddress @change="$emit('change:address')" />
+      <VcAddress :address="address" @change="$emit('change:address')" />
     </div>
   </div>
 </template>

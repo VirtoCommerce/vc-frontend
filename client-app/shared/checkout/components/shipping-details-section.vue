@@ -3,58 +3,30 @@
     <div class="flex flex-col gap-6 p-4 border rounded sm:flex-row sm:gap-7">
       <ShippingAddress class="sm:grow" :address="shipment?.deliveryAddress" @change:address="$emit('change:address')" />
 
-      <VcSelect
+      <SelectShippingMethod
         class="sm:grow sm:max-w-[18.75rem]"
-        :label="$t('shared.checkout.shipping_details_section.labels.shipping_method')"
-        :items="availableShippingMethods"
-        :modelValue="selectedShippingMethod"
-      >
-        <template #placeholder>
-          <VcSelectItem>
-            <VcSelectImage src="/static/icons/placeholder/select-shipping.svg" />
-            <VcSelectText>
-              {{ $t("common.placeholders.not_selected_shippping_method") }}
-            </VcSelectText>
-          </VcSelectItem>
-        </template>
-        <template #selected="{ item }">
-          <VcSelectItem>
-            <VcSelectImage src="" />
-            <VcSelectText>
-              {{ `${item?.code} ${item?.optionName}` }}
-            </VcSelectText>
-          </VcSelectItem>
-        </template>
-        <template #item="{ item }">
-          <VcSelectItem bordered>
-            <VcSelectImage src="" />
-            <VcSelectText>
-              {{ `${item?.code} ${item?.optionName}` }}
-            </VcSelectText>
-          </VcSelectItem>
-        </template>
-      </VcSelect>
+        :availableMethods="availableMethods"
+        :shipment="shipment"
+        @result="(method) => $emit('change:method', method)"
+      />
     </div>
   </VcSectionWidget>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
 import { ShipmentType, ShippingMethodType } from "@/xapi";
-import { ShippingAddress } from "@/shared/checkout";
+import { ShippingAddress, SelectShippingMethod } from "@/shared/checkout";
 
 interface Props {
   disabled?: boolean;
   shipment?: ShipmentType;
-  availableShippingMethods?: ShippingMethodType[];
+  availableMethods?: ShippingMethodType[];
 }
 
 interface Emits {
   (event: "change:address"): void;
-  (event: "change:method"): void;
+  (event: "change:method", method: ShippingMethodType): void;
 }
-
-const selectedShippingMethod = ref<"">("");
 
 defineProps<Props>();
 defineEmits<Emits>();
