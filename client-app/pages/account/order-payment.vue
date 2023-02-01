@@ -280,7 +280,7 @@ const executed = computed<boolean>(() => success.value || failure.value);
 const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments[0]);
 const paymentMethodType = computed<PaymentMethod | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);
 
-const breadcrumbs = useBreadcrumbs(
+const { breadcrumbs } = useBreadcrumbs(
   computed(() => [
     { title: t("common.links.account"), route: { name: "Account" } },
     { title: t("common.links.orders"), route: { name: "Orders" } },

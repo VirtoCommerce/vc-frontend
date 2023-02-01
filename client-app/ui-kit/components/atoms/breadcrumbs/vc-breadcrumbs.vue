@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 interface Props {
-  items: ReadonlyArray<Readonly<IBreadcrumb>>;
+  items: IBreadcrumb[];
 }
 
 defineProps<Props>();

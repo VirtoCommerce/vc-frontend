@@ -180,7 +180,7 @@ usePageHead({
   title: t("pages.demo_landing.meta.title"),
 });
 
-const breadcrumbs = useBreadcrumbs([{ title: t("shared.layout.footer.demo_landing_link") }]);
+const { breadcrumbs } = useBreadcrumbs([{ title: t("shared.layout.footer.demo_landing_link") }]);
 
 onMounted(async () => {
   await fetchProducts({

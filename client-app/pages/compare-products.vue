@@ -152,7 +152,7 @@ const isMobile = breakpoints.smaller("lg");
 const { fetchProducts, products } = useProducts();
 const { clearCompareList, productsLimit, removeFromCompareList, productsIds } = useCompareProducts();
 const productsRoutes = useProductsRoutes(products);
-const breadcrumbs = useBreadcrumbs([{ title: t("pages.compare.links.compare_products") }]);
+const { breadcrumbs } = useBreadcrumbs([{ title: t("pages.compare.links.compare_products") }]);
 
 const showOnlyDifferences = ref(false);
 

@@ -26,7 +26,7 @@ import { useStaticPage } from "@/shared/static-content";
 const template = useStaticPage();
 const templateName = computed(() => unref(template)?.settings?.name || unref(template)?.settings?.header || "");
 
-const breadcrumbs = useBreadcrumbs([{ title: templateName }]);
+const { breadcrumbs } = useBreadcrumbs([{ title: templateName }]);
 
 usePageHead({
   title: computed(() => unref(template)?.settings?.seoInfo?.pageTitle || unref(template)?.settings?.name),

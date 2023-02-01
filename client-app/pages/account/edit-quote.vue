@@ -181,7 +181,7 @@ usePageHead({
 const originalQuote = ref<QuoteType | undefined>();
 const billingAddressEqualsShipping = ref<boolean>(true);
 
-const breadcrumbs = useBreadcrumbs(
+const { breadcrumbs } = useBreadcrumbs(
   computed(() => [
     { title: t("common.links.account"), route: { name: "Account" } },
     { title: t("common.links.quote_requests"), route: { name: "Quotes" } },

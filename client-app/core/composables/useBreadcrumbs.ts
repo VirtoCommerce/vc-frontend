@@ -1,25 +1,17 @@
 import { useI18n } from "vue-i18n";
-import { Breadcrumb } from "@/xapi/types";
 import { MaybeRef } from "@vueuse/core";
 import { computed, Ref, unref } from "vue";
 
 interface UseBreadcrumbs {
-  breadcrumbs: Ref<ReadonlyArray<Readonly<IBreadcrumb>>>;
+  breadcrumbs: Ref<IBreadcrumb[]>;
 }
 
-export function useBreadcrumbs(
-  breadcrumbs: MaybeRef<ReadonlyArray<Readonly<IBreadcrumb>>>,
-  nativeBreadcrumbs?: MaybeRef<ReadonlyArray<Readonly<Breadcrumb>> | undefined>
-): UseBreadcrumbs {
+export function useBreadcrumbs(breadcrumbs: MaybeRef<IBreadcrumb[]>): UseBreadcrumbs {
   const { t } = useI18n();
 
   return {
     breadcrumbs: computed(() => {
-      const result =
-        unref(nativeBreadcrumbs)?.map((nativeBreadcrumb) => ({
-          title: nativeBreadcrumb.title,
-          route: `/${nativeBreadcrumb.seoPath}`,
-        })) ?? unref(breadcrumbs);
+      const result = unref(breadcrumbs);
       return [{ route: "/", title: t("common.links.home") }, ...result];
     }),
   };
