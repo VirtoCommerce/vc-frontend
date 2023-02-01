@@ -1,9 +1,6 @@
 import { Breadcrumb } from "@/xapi";
-import { MaybeRef } from "@vueuse/core";
-import { unref } from "vue";
 
-export function buildBreadcrumbs(xapiBreadcrumbsRef: MaybeRef<Breadcrumb[] | undefined>): IBreadcrumb[] | undefined {
-  const xapiBreadcrumbs = unref(xapiBreadcrumbsRef);
+export function buildBreadcrumbs(xapiBreadcrumbs: Breadcrumb[] | undefined): IBreadcrumb[] | undefined {
   if (xapiBreadcrumbs && xapiBreadcrumbs.length) {
     return xapiBreadcrumbs.map((xapiBreadcrumb) => ({
       title: xapiBreadcrumb.title,

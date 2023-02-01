@@ -1,9 +1,9 @@
 import { useI18n } from "vue-i18n";
 import { MaybeRef } from "@vueuse/core";
-import { computed, Ref, unref } from "vue";
+import { computed, ComputedRef, unref } from "vue";
 
 interface UseBreadcrumbs {
-  breadcrumbs: Ref<IBreadcrumb[]>;
+  breadcrumbs: ComputedRef<IBreadcrumb[]>;
 }
 
 export function useBreadcrumbs(breadcrumbs: MaybeRef<IBreadcrumb[]>): UseBreadcrumbs {
