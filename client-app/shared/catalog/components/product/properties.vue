@@ -20,12 +20,12 @@
     </ProductProperty>
 
     <a
-      v-if="product.properties && product.properties.length > MAX_DISPLAY_ITEMS"
+      v-if="groupedProperties && groupedProperties.length > MAX_DISPLAY_ITEMS"
       class="flex gap-x-1 mb-4 items-center text-14 text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)] hover:cursor-pointer underline decoration-dashed"
       @click="showAll = !showAll"
     >
-      <VcIcon :name="[showAll ? 'chevron-up' : 'chevron-down']" size="xs" class="text-[color:var(--color-primary)]" />
-      {{ showAll ? $t("shared.catalog.product_details.see_less") : $t("shared.catalog.product_details.see_more") }}
+      <VcIcon :name="showAll ? 'chevron-up' : 'chevron-down'" size="xs" class="text-[color:var(--color-primary)]" />
+      {{ showAll ? $t("common.buttons.see_less") : $t("common.buttons.see_more") }}
     </a>
   </ProductTitledBlock>
 </template>

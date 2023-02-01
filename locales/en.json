@@ -35,7 +35,9 @@
       "create_quote": "Add cart items to quote",
       "back_to_cart": "Back to Cart",
       "go_to_checkout": "Proceed to checkout",
-      "go_to_billing": "Proceed to billing"
+      "go_to_billing": "Proceed to billing",
+      "see_more": "See more",
+      "see_less": "See less"
     },
     "labels": {
       "actions": "Actions",
@@ -454,9 +456,7 @@
           "variation_sku_label": "@:common.labels.sku",
           "price_label": "@:common.labels.product_price",
           "vendor_label": "@:shared.catalog.product_details.vendor_label"
-        },
-        "see_more": "See more",
-        "see_less": "See less"
+        }
       },
       "discount_badge": {
         "off": "off"
