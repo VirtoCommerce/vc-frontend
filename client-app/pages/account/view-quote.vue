@@ -89,7 +89,7 @@ usePageHead({
   title: t("pages.account.quote_details.title", [quote!.value?.number]),
 });
 
-const { breadcrumbs } = useBreadcrumbs(
+const breadcrumbs = useBreadcrumbs(
   computed(() => [
     { title: t("common.links.account"), route: { name: "Account" } },
     { title: t("common.links.quote_requests"), route: { name: "Quotes" } },

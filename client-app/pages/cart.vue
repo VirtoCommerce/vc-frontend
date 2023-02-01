@@ -215,7 +215,7 @@ usePageHead({
   title: t("pages.cart.meta.title"),
 });
 
-const { breadcrumbs } = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: "Cart" } }]);
+const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: "Cart" } }]);
 
 const initialized = ref(false);
 const creatingOrder = ref(false);

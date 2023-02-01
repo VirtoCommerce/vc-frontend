@@ -84,7 +84,7 @@ usePageHead({
   },
 });
 
-const { breadcrumbs } = useBreadcrumbs([{ title: t("pages.bulk_order.title") }]);
+const breadcrumbs = useBreadcrumbs([{ title: t("pages.bulk_order.title") }]);
 
 const tabs = [
   { id: "manually", label: t("pages.bulk_order.manually_tab") },

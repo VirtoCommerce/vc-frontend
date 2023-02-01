@@ -478,7 +478,7 @@ const isMobileFilterDirty = eagerComputed<boolean>(
     } as ProductsFilters)
 );
 
-const { breadcrumbs } = useBreadcrumbs(
+const breadcrumbs = useBreadcrumbs(
   computed(() => buildBreadcrumbs(selectedCategory.value?.breadcrumbs) ?? [{ title: selectedCategory.value?.name }])
 );
 

@@ -235,7 +235,7 @@ usePageHead({
 const isMobile = breakpoints.smaller("lg");
 const loadingAddItemsToCart = ref(false);
 
-const { breadcrumbs } = useBreadcrumbs(
+const breadcrumbs = useBreadcrumbs(
   computed(() => [
     { title: t("common.links.account"), route: { name: "Account" } },
     { title: t("common.links.orders"), route: { name: "Orders" } },

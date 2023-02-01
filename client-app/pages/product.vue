@@ -119,7 +119,7 @@ usePageHead({
   },
 });
 
-const { breadcrumbs } = useBreadcrumbs(
+const breadcrumbs = useBreadcrumbs(
   computed(() => buildBreadcrumbs(product.value?.breadcrumbs) ?? [{ title: product.value?.name }])
 );
 
