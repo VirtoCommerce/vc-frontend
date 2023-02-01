@@ -94,7 +94,7 @@ interface Props {
   label?: string;
   required?: boolean;
   disabled?: boolean;
-  modelValue: object | string;
+  modelValue?: object | string;
   items: any[];
   size?: "sm" | "md" | "lg";
   textField?: string;
