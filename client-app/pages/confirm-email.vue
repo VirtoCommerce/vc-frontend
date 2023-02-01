@@ -68,8 +68,8 @@ usePageHead({
 
 const { confirmEmail } = useUser();
 
-const { queryParam: userId } = useRouteQueryParam<string>("UserId");
-const { queryParam: token } = useRouteQueryParam<string>("Token");
+const userId = useRouteQueryParam<string>("UserId");
+const token = useRouteQueryParam<string>("Token");
 
 const loaded = ref(false);
 const success = ref(false);

@@ -114,9 +114,9 @@ const { openPopup } = usePopup();
 const { loading, registerByInvite } = useUser();
 const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
-const { queryParam: userId } = useRouteQueryParam<string>("userId");
-const { queryParam: email } = useRouteQueryParam<string>("email");
-const { queryParam: token } = useRouteQueryParam<string>("token");
+const userId = useRouteQueryParam<string>("userId");
+const email = useRouteQueryParam<string>("email");
+const token = useRouteQueryParam<string>("token");
 
 const schema = yup.object({
   firstName: yup.string().required().max(64),

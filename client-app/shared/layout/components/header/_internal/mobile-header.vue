@@ -102,7 +102,7 @@ import { useCart } from "@/shared/cart";
 import { numberToShortString } from "@/core/utilities";
 
 const searchPhrase = ref("");
-const { queryParam: searchPhraseInUrl } = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
+const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const mobileMenuVisible = ref(false);
 const headerElement = ref(null);
 

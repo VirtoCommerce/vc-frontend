@@ -1,4 +1,4 @@
-import { computed } from "vue";
+import { computed, WritableComputedRef } from "vue";
 import {
   LocationAsRelativeRaw,
   LocationQueryValue,
@@ -23,7 +23,7 @@ export interface UseRouteQueryParamOptions<T = LocationQueryValue | LocationQuer
 export function useRouteQueryParam<T = NonNullable<LocationQueryValue> | NonNullable<LocationQueryValue>[]>(
   key: string,
   options: UseRouteQueryParamOptions<T> = {}
-) {
+): WritableComputedRef<T> {
   const {
     validator,
     defaultValue,
@@ -35,48 +35,46 @@ export function useRouteQueryParam<T = NonNullable<LocationQueryValue> | NonNull
 
   const router = useRouter();
 
-  return {
-    queryParam: computed<T>({
-      get() {
-        const queryValue = router.currentRoute.value.query[key] as T | null;
+  return computed<T>({
+    get() {
+      const queryValue = router.currentRoute.value.query[key] as T | null;
 
-        const fallbackValue = defaultValue ?? ((Array.isArray(queryValue) ? [] : "") as T);
+      const fallbackValue = defaultValue ?? ((Array.isArray(queryValue) ? [] : "") as T);
 
-        let value = queryValue ?? fallbackValue;
+      let value = queryValue ?? fallbackValue;
 
-        if (queryValue && validator) {
-          value = validator(queryValue) ? queryValue : fallbackValue;
-        }
+      if (queryValue && validator) {
+        value = validator(queryValue) ? queryValue : fallbackValue;
+      }
 
-        return value;
-      },
+      return value;
+    },
 
-      async set(value) {
-        const { hash, params, query } = router.currentRoute.value;
-        const newLocation: Required<RouteQueryAndHash & Pick<LocationAsRelativeRaw, "params">> = {
-          hash,
-          params,
-          query: {
-            ...query,
-          },
-        };
+    async set(value) {
+      const { hash, params, query } = router.currentRoute.value;
+      const newLocation: Required<RouteQueryAndHash & Pick<LocationAsRelativeRaw, "params">> = {
+        hash,
+        params,
+        query: {
+          ...query,
+        },
+      };
 
-        if (
-          (removeFalsyValue && !value) ||
-          (removeNullishValue && value === null) ||
-          (removeDefaultValue && value === defaultValue)
-        ) {
-          delete newLocation.query[key];
-        } else {
-          newLocation.query[key] = value as LocationQueryValueRaw | LocationQueryValueRaw[];
-        }
+      if (
+        (removeFalsyValue && !value) ||
+        (removeNullishValue && value === null) ||
+        (removeDefaultValue && value === defaultValue)
+      ) {
+        delete newLocation.query[key];
+      } else {
+        newLocation.query[key] = value as LocationQueryValueRaw | LocationQueryValueRaw[];
+      }
 
-        const mustBeDone = router.currentRoute.value.fullPath !== router.resolve(newLocation).fullPath;
+      const mustBeDone = router.currentRoute.value.fullPath !== router.resolve(newLocation).fullPath;
 
-        if (mustBeDone) {
-          await router[updateMethod](newLocation);
-        }
-      },
-    }),
-  };
+      if (mustBeDone) {
+        await router[updateMethod](newLocation);
+      }
+    },
+  });
 }
