@@ -1,5 +1,5 @@
 <template>
-  <header ref="headerElement" class="fixed z-40 w-full shadow-md bg-[color:var(--color-header-bottom-bg)]">
+  <div ref="headerElement" class="fixed z-40 w-full shadow-md bg-[color:var(--color-header-bottom-bg)]">
     <!-- region Default slot -->
     <transition :name="isAnimated ? 'slide-fade-top' : ''" mode="out-in">
       <div v-if="customSlots.default">
@@ -74,7 +74,7 @@
       </button>
     </div>
     <!-- endregion Mobile Search Bar -->
-  </header>
+  </div>
 
   <!-- Height placeholder for mobile header due to fixed position -->
   <div :style="placeholderStyle" class="h-14"></div>
