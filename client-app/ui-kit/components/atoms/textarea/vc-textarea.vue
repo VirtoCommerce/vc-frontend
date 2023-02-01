@@ -11,7 +11,9 @@
       $attrs.class,
     ]"
   >
-    <VcLabel v-if="label" :text="label" :for="componentId" :required="required" :error="error" />
+    <VcLabel v-if="label" :for="componentId" :required="required" :error="error">
+      {{ label }}
+    </VcLabel>
 
     <textarea
       v-model="text"

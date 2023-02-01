@@ -11,7 +11,9 @@
       },
     ]"
   >
-    <VcLabel v-if="label" :text="label" :required="required" />
+    <VcLabel v-if="label" :required="required">
+      {{ label }}
+    </VcLabel>
 
     <div v-click-outside="() => open && hideList()" class="vc-select__container">
       <button type="button" :disabled="disabled" class="vc-select__button" @click="toggle">

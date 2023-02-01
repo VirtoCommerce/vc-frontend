@@ -1,6 +1,9 @@
 <template>
   <div class="shipping-address">
-    <VcLabel :text="$t('shared.checkout.shipping_details_section.labels.shipping_address')" />
+    <VcLabel>
+      {{ $t("shared.checkout.shipping_details_section.labels.shipping_address") }}
+    </VcLabel>
+
     <div class="shipping-address__body">
       <VcAddress :address="address" @change="$emit('change:address')" />
     </div>

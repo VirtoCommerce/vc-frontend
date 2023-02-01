@@ -8,7 +8,7 @@
       },
     ]"
   >
-    {{ text }}
+    <slot />
     <span v-if="required" class="vc-label__asterisk">*</span>
   </component>
 </template>
@@ -18,7 +18,6 @@ interface Props {
   required?: boolean;
   error?: boolean;
   forId?: string;
-  text: string;
 }
 
 defineProps<Props>();
