@@ -30,7 +30,7 @@
     <VcLayoutWithRightSidebar is-sidebar-sticky>
       <!-- Items grouped by Vendor -->
       <VcSectionWidget v-if="$cfg.line_items_group_by_vendor_enabled">
-        <div class="space-y-8">
+        <div class="flex flex-col gap-8">
           <template v-for="(group, vendorId) in orderItemsGroupedByVendor" :key="vendorId">
             <div v-if="group.items.length">
               <div class="flex flex-col gap-1.5 pb-3 md:flex-row md:items-center md:gap-3">
@@ -70,7 +70,7 @@
       <template #sidebar>
         <!-- Order Data Widget -->
         <VcCardWidget :title="$t('common.titles.order_data')" class="order-first">
-          <div class="flex flex-col space-y-1.5 text-15">
+          <div class="flex flex-col gap-1.5 text-15">
             <p v-if="order.createdDate">
               <span class="font-extrabold"> {{ $t("common.labels.creates") }}: </span>
               {{ $d(order.createdDate, "long") }}
@@ -120,7 +120,7 @@
 
         <!-- Payment Details Card -->
         <VcCardWidget v-if="payment" :title="$t('common.titles.payment_details')" icon="truck">
-          <div class="flex flex-col space-y-1.5 text-15">
+          <div class="flex flex-col gap-1.5 text-15">
             <p>
               <span class="font-extrabold">{{ $t("common.labels.payment_number") }}:</span>
               {{ payment.number }}
@@ -141,7 +141,7 @@
 
         <!-- Payment Method section -->
         <VcCardWidget v-if="payment?.paymentMethod" :title="$t('common.titles.payment_method')" icon="document-text">
-          <div class="flex flex-row items-center space-x-4">
+          <div class="flex flex-row items-center gap-4">
             <VcImage src="/static/images/checkout/invoice.svg" class="h-12 w-12" lazy />
             <span class="break-words">{{ payment.paymentMethod.typeName }}</span>
           </div>
