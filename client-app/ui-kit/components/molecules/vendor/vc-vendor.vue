@@ -3,7 +3,7 @@
     <VcIcon name="vendor" size="sm" class="vc-vendor__icon" />
     <span class="vc-vendor__title">
       {{ $t("common.labels.vendor") }}:
-      <span :class="['vc-vendor__name', vendor?.name ?? 'vc-vendor__name--not-available']">
+      <span :class="['vc-vendor__name', { 'vc-vendor__name--not-available': !vendor?.name }]">
         {{ vendor?.name || $t("common.labels.not_available") }}
       </span>
     </span>

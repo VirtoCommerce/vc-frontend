@@ -77,7 +77,7 @@
       "promotion_code": "Promotion code",
       "vendor": "Vendor",
       "secure_checkout": "Secure checkout",
-      "creates_label": "Creates",
+      "creates": "Creates",
       "payment_number": "Payment ID",
       "payment_type": "Payment type"
     },
