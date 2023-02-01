@@ -50,8 +50,9 @@
         <ShippingDetailsSection
           :shipment="shipment"
           :disabled="loading"
+          :availableMethods="availableShippingMethods"
           @change:address="onDeliveryAddressChange"
-          @change:method="openSelectShipmentMethodModal"
+          @change:method="updateShippingMethod"
         />
 
         <BillingDetailsSection
@@ -160,7 +161,7 @@ import { computed, inject, ref } from "vue";
 import { invoke } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { LineItemType } from "@/xapi";
+import { LineItemType, ShippingMethodType } from "@/xapi";
 import { configInjectionKey, useGoogleAnalytics, usePageHead } from "@/core";
 import { useUser } from "@/shared/account";
 import { GiftsSection, ProductsSection, useCart, useCoupon, usePurchaseOrderNumber } from "@/shared/cart";
@@ -183,6 +184,7 @@ const {
   cart,
   lineItemsGroupedByVendor,
   availableExtendedGifts,
+  availableShippingMethods,
   hasValidationErrors,
   fetchCart,
   changeItemQuantity,
@@ -190,6 +192,7 @@ const {
   toggleGift,
   openClearCartModal,
   createQuoteFromCart,
+  updateShipment,
 } = useCart();
 const {
   comment,
@@ -200,7 +203,6 @@ const {
   isValidPayment,
   isValidCheckout,
   initialize: initCheckout,
-  openSelectShipmentMethodModal,
   openSelectPaymentMethodModal,
   onDeliveryAddressChange,
   onBillingAddressChange,
@@ -274,6 +276,15 @@ async function createQuote(): Promise<void> {
   await fetchCart();
 
   creatingQuote.value = false;
+}
+
+async function updateShippingMethod(method: ShippingMethodType) {
+  await updateShipment({
+    id: shipment.value?.id,
+    price: method.price?.amount,
+    shipmentMethodCode: method.code,
+    shipmentMethodOption: method.optionName,
+  });
 }
 
 invoke(async () => {
