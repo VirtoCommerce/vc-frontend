@@ -7,6 +7,7 @@ export * from "./category-tree";
 export * from "./currency";
 export * from "./facet";
 export * from "./global-variables";
+export * from "./line-items";
 export * from "./language";
 export * from "./menu";
 export * from "./modify";

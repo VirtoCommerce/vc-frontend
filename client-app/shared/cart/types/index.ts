@@ -1,7 +1,4 @@
-import { GiftItemType, LineItemType, ValidationErrorType, Vendor } from "@/xapi";
-
-export type TGroupItem = { items: LineItemType[]; vendor?: Vendor };
-export type TGroupedItems = Record<string, TGroupItem>;
+import { GiftItemType, ValidationErrorType } from "@/xapi";
 
 export type ExtendedGiftItemType = GiftItemType & { isAddedInCart?: boolean };
 

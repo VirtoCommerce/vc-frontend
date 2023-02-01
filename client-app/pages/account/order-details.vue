@@ -37,12 +37,7 @@
                 <!-- Vendor -->
                 <VcVendor :vendor="group.vendor" />
                 <VcRating
-                  v-if="
-                    $cfg.rating_enabled &&
-                    group.vendor?.rating &&
-                    group.vendor?.rating?.reviewCount !== undefined &&
-                    group.vendor?.rating?.reviewCount > 0
-                  "
+                  v-if="$cfg.rating_enabled && group.vendor?.rating"
                   :rating="group.vendor.rating"
                   class="ml-5 md:ml-0"
                 />

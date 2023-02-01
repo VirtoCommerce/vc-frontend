@@ -1,5 +1,5 @@
 import { computed, ref, shallowRef } from "vue";
-import { Logger } from "@/core";
+import { getLineItemsGroupedByVendor, Logger, TLineItemsGroupByVendor } from "@/core";
 import {
   addOrUpdateOrderPayment,
   CustomerOrderType,
@@ -11,15 +11,15 @@ import {
   PaymentInType,
   QueryOrderArgs,
 } from "@/xapi";
-import { TGroupItem } from "../types";
-import { getItemsGroupedByVendor } from "../utilities";
 
 const loading = ref(false);
 const order = shallowRef<CustomerOrderType | null>(null);
 
 const giftItems = computed<OrderLineItemType[]>(() => (order.value?.items || []).filter((item) => item.isGift));
 const orderItems = computed<OrderLineItemType[]>(() => (order.value?.items || []).filter((item) => !item.isGift));
-const orderItemsGroupedByVendor = computed<TGroupItem[]>(() => getItemsGroupedByVendor(orderItems.value));
+const orderItemsGroupedByVendor = computed<TLineItemsGroupByVendor<OrderLineItemType>[]>(() =>
+  getLineItemsGroupedByVendor(orderItems.value)
+);
 
 const shipment = computed<OrderShipmentType | undefined>(() => order.value?.shipments?.[0]);
 const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments?.[0]);
