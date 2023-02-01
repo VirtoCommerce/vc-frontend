@@ -40,7 +40,6 @@ export { default as VcTooltip } from "./tooltip/vc-tooltip.vue";
 export { default as VcTotalDisplay } from "./total-display/vc-total-display.vue";
 export { default as VcTransitionScale } from "./transition-scale/vc-transition-scale.vue";
 export { default as VcTypography } from "./typography/vc-typography.vue";
-export { default as VcAddressInfo } from "./address-info/vc-address-info.vue";
 export { default as VcAddressLine } from "./address-line/vc-address-line.vue";
 export { default as VcCountInCart } from "./count-in-cart/vc-count-in-cart.vue";
 export { default as VcLineItemProperty } from "./line-item-property/vc-line-item-property.vue";
