@@ -120,6 +120,7 @@ export interface IThemeConfigPreset {
   wishlists_limit?: number;
 
   search_min_chars?: number;
+  search_max_chars?: number;
 
   vendor_enabled?: boolean;
   rating_enabled?: boolean;
