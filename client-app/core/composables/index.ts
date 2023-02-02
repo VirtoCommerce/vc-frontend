@@ -11,7 +11,7 @@ export { default as useLanguages } from "./useLanguages";
 export { default as useNavigations } from "./useNavigations";
 export { default as usePageHead } from "./usePageHead";
 export { default as useProductsRoutes } from "./useProductsRoutes";
-export { default as useRouteQueryParam } from "./useRouteQueryParam";
+export * from "./useRouteQueryParam";
 export { default as useThemeContext } from "./useThemeContext";
 export { default as useComponentId } from "./useComponentId";
 export { default as useCategories } from "./useCategories";

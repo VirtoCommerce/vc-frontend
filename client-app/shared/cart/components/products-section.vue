@@ -52,14 +52,15 @@
 
 <script setup lang="ts">
 import { LineItemType, ValidationErrorType } from "@/xapi";
-import { CartLineItems, TGroupItem } from "@/shared/cart";
+import { TLineItemsGroupByVendor } from "@/core";
+import { CartLineItems } from "@/shared/cart";
 import { Vendor } from "@/shared/catalog";
 
 interface Props {
   grouped?: boolean;
   disabled?: boolean;
   items?: LineItemType[];
-  itemsGroupedByVendor?: TGroupItem[];
+  itemsGroupedByVendor?: TLineItemsGroupByVendor<LineItemType>[];
   /** @deprecated */
   validationErrors?: ValidationErrorType[];
 }
