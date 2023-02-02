@@ -73,7 +73,7 @@
 
         <!-- Sidebar -->
         <div v-else class="space-y-5 w-60 flex-shrink-0 pt-2">
-          <CategorySelector :selected-category="selectedCategory" :loading="loadingCategories" v-if="!isSearchPage" />
+          <CategorySelector v-if="!isSearchPage" :selected-category="category" :loading="loadingCategory" />
 
           <ProductsFiltersSidebar
             :keyword="keywordQueryParam"
@@ -96,7 +96,7 @@
               </i18n-t>
 
               <span v-else>
-                <span>{{ selectedCategory?.name }}</span>
+                <span>{{ category?.name }}</span>
               </span>
 
               <sup
@@ -309,6 +309,7 @@ import {
   shallowRef,
   triggerRef,
   WatchStopHandle,
+  watchEffect,
 } from "vue";
 import _ from "lodash";
 import { useI18n } from "vue-i18n";
@@ -329,12 +330,11 @@ import {
   getFilterExpressionFromFacets,
   PRODUCT_SORTING_LIST,
   QueryParamName,
-  searchCategoryTreeItemByKey,
-  useCategories,
   useElementVisibility,
   useGoogleAnalytics,
   usePageHead,
   useRouteQueryParam,
+  useCategories,
 } from "@/core";
 import {
   Breadcrumbs,
@@ -357,15 +357,16 @@ import { Product } from "@/xapi";
 const FILTERS_RESET_TIMEOUT_IN_MS = 500;
 const watchStopHandles: WatchStopHandle[] = [];
 
-const props = defineProps({
-  categoryId: String,
-});
+interface IProps {
+  categoryId?: string;
+}
+
+const props = defineProps<IProps>();
 
 const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const ga = useGoogleAnalytics();
 const { t } = useI18n();
-const { loading: loadingCategories, categoryTree } = useCategories();
 const {
   fetchProducts,
   fetchMoreProducts,
@@ -380,18 +381,13 @@ const {
 } = useProducts({
   withFacets: true,
 });
-
-const selectedCategory = computed(() =>
-  props.categoryId && categoryTree.value
-    ? searchCategoryTreeItemByKey(categoryTree.value, "id", props.categoryId)
-    : categoryTree.value
-);
+const { category, loading: loadingCategory, fetchCategory } = useCategories();
 
 usePageHead({
-  title: computed(() => selectedCategory.value?.seoInfo?.pageTitle || selectedCategory.value?.name),
+  title: computed<string | undefined>(() => category.value?.seoInfo?.pageTitle || category.value?.name),
   meta: {
-    keywords: computed(() => selectedCategory.value?.seoInfo?.metaKeywords),
-    description: computed(() => selectedCategory.value?.seoInfo?.metaDescription),
+    keywords: computed<string | undefined>(() => category.value?.seoInfo?.metaKeywords),
+    description: computed<string | undefined>(() => category.value?.seoInfo?.metaDescription),
   },
 });
 
@@ -470,19 +466,19 @@ const isMobileFilterDirty = eagerComputed<boolean>(
 const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
   const items: IBreadcrumbsItem[] = [{ url: "/", title: t("common.links.home") }];
 
-  if (!selectedCategory.value) {
+  if (!category.value) {
     return items;
   }
 
-  if (selectedCategory.value.breadcrumbs?.length) {
-    selectedCategory.value.breadcrumbs.forEach((breadcrumb) => {
+  if (category.value.breadcrumbs?.length) {
+    category.value.breadcrumbs.forEach((breadcrumb) => {
       items.push({
         title: breadcrumb.title,
         url: `/${breadcrumb.seoPath}`,
       });
     });
   } else {
-    items.push({ title: selectedCategory.value.name });
+    items.push({ title: category.value.name });
   }
 
   return items;
@@ -580,8 +576,8 @@ async function loadProducts() {
    * Send Google Analytics event for products.
    */
   ga.viewItemList(products.value, {
-    item_list_id: selectedCategory.value?.slug,
-    item_list_name: selectedCategory.value?.name,
+    item_list_id: category.value?.slug,
+    item_list_name: category.value?.name,
   });
 }
 
@@ -603,8 +599,8 @@ async function loadMoreProducts() {
    * Send Google Analytics event for products on next page.
    */
   ga.viewItemList(products.value, {
-    item_list_id: `${selectedCategory.value?.slug}_page_${nextPage}`,
-    item_list_name: `${selectedCategory.value?.name} (page ${nextPage})`,
+    item_list_id: `${category.value?.slug}_page_${nextPage}`,
+    item_list_name: `${category.value?.name} (page ${nextPage})`,
   });
 }
 
@@ -629,6 +625,14 @@ function openBranchesDialog(fromMobileFilter: boolean) {
     },
   });
 }
+
+watchEffect(async () => {
+  await fetchCategory({
+    categoryId: props.categoryId,
+    maxLevel: 1,
+    onlyActive: true,
+  });
+});
 
 onMounted(async () => {
   await loadProducts();

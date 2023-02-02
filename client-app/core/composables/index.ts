@@ -1,5 +1,4 @@
 export { default as useAppContext } from "./useAppContext";
-export { default as useCategories } from "./useCategories";
 export { default as useCategoriesRoutes } from "./useCategoriesRoutes";
 export { default as useCountries } from "./useCountries";
 export { default as useCurrency } from "./useCurrency";
@@ -14,5 +13,7 @@ export { default as usePageHead } from "./usePageHead";
 export { default as useProductsRoutes } from "./useProductsRoutes";
 export { default as useRouteQueryParam } from "./useRouteQueryParam";
 export { default as useThemeContext } from "./useThemeContext";
-export { default as useCatalogMenu } from "./useCatalogMenu";
 export { default as useComponentId } from "./useComponentId";
+export { default as useCategories } from "./useCategories";
+export { default as useCatalogMenu } from "./useCatalogMenu";
+export { default as useCategorySelector } from "./useCategorySelector";

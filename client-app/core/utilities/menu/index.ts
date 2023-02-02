@@ -1,12 +1,15 @@
 import { I18n } from "@/i18n";
-import { CategoryTreeItem, getCategoryRoute, MenuLink } from "@/core";
+import { getCategoryRoute, MenuLink } from "@/core";
+import { Category } from "@/xapi";
 
-export function categoryTreeItemToMenuLink(categoryTreeItem: CategoryTreeItem, priority?: number): MenuLink {
+export function categoryToMenuLink(category: Category, priority?: number): MenuLink {
   return {
+    id: "catalog",
+    categoryId: category.id,
     priority,
-    title: categoryTreeItem.name,
-    route: getCategoryRoute(categoryTreeItem),
-    children: categoryTreeItem.children.map(categoryTreeItemToMenuLink),
+    title: category.name,
+    route: getCategoryRoute(category),
+    children: category.childCategories?.map(categoryToMenuLink),
   };
 }
 

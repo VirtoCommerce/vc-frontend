@@ -2,28 +2,28 @@
   <div>
     <router-link
       class="block px-2 py-1 mb-2 text-base font-bold hover:bg-gray-100"
-      :to="categoriesRoutes[category.id]"
-      :title="category.name"
+      :to="menuItem.route"
+      :title="menuItem.title!"
       @click="clickCategory"
     >
-      {{ category.name }}
+      {{ menuItem.title }}
     </router-link>
     <div>
-      <template v-for="(subcategory, key) in displayedCategories" :key="key">
+      <template v-for="(item, index) in displayedItems" :key="index">
         <router-link
           class="block px-2 py-1 mb-1 text-sm !leading-4 text-gray-500 truncate hover:bg-gray-100"
-          :to="categoriesRoutes[subcategory.id]"
-          :title="subcategory.name"
+          :to="item.route"
+          :title="item.title!"
           @click="clickCategory"
         >
-          {{ subcategory.name }}
+          {{ item.title }}
         </router-link>
       </template>
 
       <button
-        v-if="subcategories.length > SHORT_VIEW_ITEMS_COUNT"
-        @click="toggleShowAll"
+        v-if="subItems.length > SHORT_VIEW_ITEMS_COUNT"
         class="px-2 py-1 text-sm cursor-pointer flex items-baseline"
+        @click="toggleShowAll"
       >
         <span
           class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
@@ -43,30 +43,26 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType, ref } from "vue";
-import { useCategoriesRoutes } from "@/core";
-import { Category } from "@/xapi";
+import { computed, ref } from "vue";
+import { MenuLink } from "@/core";
 
 const SHORT_VIEW_ITEMS_COUNT = 5;
 const showAll = ref(false);
 
-const props = defineProps({
-  category: {
-    type: Object as PropType<Category>,
-    required: true,
-  },
-});
+interface Props {
+  menuItem: MenuLink;
+}
+
+const props = defineProps<Props>();
 
 const emit = defineEmits<{
   (event: "select"): void;
 }>();
 
-const subcategories = computed<Category[]>(() => props.category.childCategories || []);
-const displayedCategories = computed<Category[]>(() =>
-  showAll.value ? subcategories.value : subcategories.value.slice(0, SHORT_VIEW_ITEMS_COUNT)
+const subItems = computed<MenuLink[]>(() => props.menuItem.children || []);
+const displayedItems = computed<MenuLink[]>(() =>
+  showAll.value ? subItems.value : subItems.value.slice(0, SHORT_VIEW_ITEMS_COUNT)
 );
-
-const categoriesRoutes = useCategoriesRoutes(computed(() => [props.category].concat(subcategories.value)));
 
 function toggleShowAll() {
   showAll.value = !showAll.value;

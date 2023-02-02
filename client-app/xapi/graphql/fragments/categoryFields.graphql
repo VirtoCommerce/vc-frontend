@@ -1,0 +1,14 @@
+fragment categoryFields on Category {
+  id
+  name
+  slug
+  seoInfo {
+    pageTitle
+    metaKeywords
+    metaDescription
+  }
+  breadcrumbs {
+    title
+    seoPath
+  }
+}

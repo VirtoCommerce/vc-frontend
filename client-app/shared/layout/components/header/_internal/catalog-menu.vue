@@ -1,11 +1,11 @@
 <template>
   <div class="w-full columns-4 xl:columns-5 pt-3 px-10 bg-[color:var(--color-header-bottom-bg)]">
     <CatalogMenuCategoryBlock
-      v-for="(category, index) in catalogMenuItems"
+      v-for="(item, index) in catalogMenuItems"
       :key="index"
-      class="w-full min-h-[15.5rem] break-inside-avoid p-5"
       :class="[(index + 1) % maxRowsNumber === 0 ? 'break-after-column' : 'break-after-avoid']"
-      :category="category"
+      :menu-item="item"
+      class="w-full min-h-[15.5rem] break-inside-avoid p-5"
       @select="$emit('select')"
     />
   </div>

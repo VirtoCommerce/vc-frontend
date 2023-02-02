@@ -1,0 +1,10 @@
+#import "../../../fragments/categoryFields.graphql"
+
+query GetCategory($id: String!, $storeId: String!, $userId: String, $currencyCode: String, $cultureName: String) {
+  category(id: $id, storeId: $storeId, userId: $userId, currencyCode: $currencyCode, cultureName: $cultureName) {
+    ...categoryFields
+    parent {
+      ...categoryFields
+    }
+  }
+}

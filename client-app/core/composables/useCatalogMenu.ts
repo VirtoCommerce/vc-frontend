@@ -1,27 +1,23 @@
-import { computed, readonly, ref, shallowRef } from "vue";
-import { getChildCategories, QueryChildCategoriesArgs, Category } from "@/xapi";
-import { Logger } from "@/core";
+import { computed, shallowRef } from "vue";
+import { sortBy } from "lodash";
+import { categoryToMenuLink, MenuLink, useCategories } from "@/core";
 
-const loading = ref(true);
-const catalogMenuItems = shallowRef<Category[]>([]);
+const { childCategories, fetchChildCategories } = useCategories();
+
+const catalogMenuItems = shallowRef<MenuLink[]>([]);
 
 export default function useCatalogMenu() {
-  async function fetchCatalogMenuItems(payload: QueryChildCategoriesArgs): Promise<void> {
-    loading.value = true;
+  async function fetchCatalogMenuItems(options?: { maxLevel?: number; onlyActive?: boolean }): Promise<void> {
+    await fetchChildCategories({
+      maxLevel: options?.maxLevel || 2,
+      onlyActive: options?.onlyActive,
+    });
 
-    try {
-      catalogMenuItems.value = await getChildCategories(payload);
-    } catch (e) {
-      Logger.error(`${useCatalogMenu.name}.${fetchCatalogMenuItems.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
+    catalogMenuItems.value = childCategories.value.map(categoryToMenuLink);
   }
 
   return {
-    loading: readonly(loading),
-    catalogMenuItems: computed(() => catalogMenuItems.value),
+    catalogMenuItems: computed(() => sortBy(catalogMenuItems.value, (item: MenuLink) => item.title)),
     fetchCatalogMenuItems,
   };
 }

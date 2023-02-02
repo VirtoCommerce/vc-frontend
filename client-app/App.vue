@@ -21,7 +21,7 @@ import { MainLayout, SecureLayout, useSearchBar } from "./shared/layout";
 import { PopupHost } from "@/shared/popup";
 import { NotificationsHost } from "@/shared/notification";
 import { useRoute, useRouter } from "vue-router";
-import { useCategories, useDomUtils, useNavigations, useCatalogMenu } from "@/core";
+import { useDomUtils, useNavigations, useCatalogMenu } from "@/core";
 import { useCart } from "@/shared/cart";
 
 const props = defineProps({
@@ -40,9 +40,8 @@ const route = useRoute();
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
-const { fetchCategories } = useCategories();
-const { fetchCatalogMenuItems } = useCatalogMenu();
 const { isBodyScrollable } = useDomUtils();
+const { fetchCatalogMenuItems } = useCatalogMenu();
 const { fetchMenus } = useNavigations();
 const { fetchCart } = useCart();
 
@@ -65,11 +64,12 @@ router.beforeEach(async (to) => {
 });
 
 fetchMenus();
-fetchCatalogMenuItems({
-  maxLevel: 2,
-  onlyActive: true,
-});
-fetchCategories();
+if (!isMobile.value) {
+  fetchCatalogMenuItems({
+    maxLevel: 2,
+    onlyActive: true,
+  });
+}
 fetchCart();
 </script>
 

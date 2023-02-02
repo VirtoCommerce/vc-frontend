@@ -1,37 +1,66 @@
-import { computed, readonly, ref, shallowRef } from "vue";
-import { buildCategoryTree, CategoryTreeItem, Logger, useThemeContext } from "@/core";
-import { searchCategories } from "@/xapi";
+import { computed, readonly, ref } from "vue";
+import { Category, getCategory, getChildCategories, QueryChildCategoriesArgs } from "@/xapi";
+import { Logger } from "@/core";
 import globals from "@/core/globals";
 
-const loading = ref(true);
-const categoryTree = shallowRef<CategoryTreeItem>();
-
 export default function useCategories() {
-  const { themeContext } = useThemeContext();
+  const loading = ref(false);
 
-  async function fetchCategories(): Promise<void> {
+  const childCategories = ref<Category[]>([]);
+  const category = ref<Category>();
+
+  function getCatalogHomeCategory(): Category {
+    const catalogCode: string = globals.router.resolve({ name: "Catalog" }).fullPath.slice(1);
+
+    return {
+      id: globals.catalogId,
+      code: catalogCode,
+      name: globals.i18n.global.t("pages.catalog.title"),
+      slug: catalogCode,
+      seoInfo: {
+        pageTitle: globals.i18n.global.t("pages.catalog.meta.title"),
+        metaKeywords: globals.i18n.global.t("pages.catalog.meta.keywords"),
+        metaDescription: globals.i18n.global.t("pages.catalog.meta.description"),
+      },
+    };
+  }
+
+  async function fetchChildCategories(payload: QueryChildCategoriesArgs): Promise<void> {
+    loading.value = true;
+
     try {
-      loading.value = true;
-
-      const { items = [] } = await searchCategories(themeContext.value.settings.categories_limit ?? 499, 1);
-
-      categoryTree.value = buildCategoryTree(
-        {
-          isRoot: true,
-          id: globals.catalogId,
-          name: globals.i18n.global.t("pages.catalog.title"),
-          slug: globals.router.resolve({ name: "Catalog" }).fullPath.slice(1),
-          children: [],
-          seoInfo: {
-            pageTitle: globals.i18n.global.t("pages.catalog.meta.title"),
-            metaKeywords: globals.i18n.global.t("pages.catalog.meta.keywords"),
-            metaDescription: globals.i18n.global.t("pages.catalog.meta.description"),
-          },
-        },
-        items
-      );
+      childCategories.value = await getChildCategories(payload);
     } catch (e) {
-      Logger.error(`${useCategories.name}.${fetchCategories.name}`, e);
+      Logger.error(`${useCategories.name}.${fetchChildCategories.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function fetchCategory(payload: QueryChildCategoriesArgs): Promise<void> {
+    loading.value = true;
+
+    try {
+      category.value = getCatalogHomeCategory();
+
+      if (payload.categoryId) {
+        category.value = await getCategory(payload.categoryId);
+        if (category.value && !category.value.parent) {
+          category.value.parent = getCatalogHomeCategory();
+        }
+      }
+
+      if (payload.maxLevel && payload.maxLevel > 0) {
+        await fetchChildCategories({
+          categoryId: category.value!.id !== globals.catalogId ? category.value!.id : undefined,
+          maxLevel: payload.maxLevel,
+          onlyActive: payload.onlyActive,
+        });
+        category.value!.childCategories = childCategories.value;
+      }
+    } catch (e) {
+      Logger.error(`${useCategories.name}.${fetchCategory.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -39,8 +68,10 @@ export default function useCategories() {
   }
 
   return {
-    fetchCategories,
     loading: readonly(loading),
-    categoryTree: computed(() => categoryTree.value),
+    childCategories: computed(() => childCategories.value),
+    category: computed(() => category.value),
+    fetchChildCategories,
+    fetchCategory,
   };
 }
