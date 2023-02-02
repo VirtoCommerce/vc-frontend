@@ -1,13 +1,30 @@
-import { computed } from "vue";
-import { LocationQueryValue, useRouter } from "vue-router";
-import { Dictionary, UseRouteQueryParamOptions } from "@/core/types";
+import { computed, WritableComputedRef } from "vue";
+import {
+  LocationAsRelativeRaw,
+  LocationQueryValue,
+  LocationQueryValueRaw,
+  RouteQueryAndHash,
+  useRouter,
+} from "vue-router";
 
-export default function useRouteQueryParam<T = LocationQueryValue | LocationQueryValue[]>(
+export interface UseRouteQueryParamOptions<T = LocationQueryValue | LocationQueryValue[]> {
+  defaultValue?: T;
+  validator?(queryValue: NonNullable<T>): boolean;
+  // @default push
+  updateMethod?: "push" | "replace";
+  // @default true
+  removeFalsyValue?: boolean;
+  // @default true
+  removeNullishValue?: boolean;
+  // @default true
+  removeDefaultValue?: boolean;
+}
+
+export function useRouteQueryParam<T = NonNullable<LocationQueryValue> | NonNullable<LocationQueryValue>[]>(
   key: string,
   options: UseRouteQueryParamOptions<T> = {}
-) {
+): WritableComputedRef<T> {
   const {
-    onChange,
     validator,
     defaultValue,
     updateMethod = "push",
@@ -20,19 +37,22 @@ export default function useRouteQueryParam<T = LocationQueryValue | LocationQuer
 
   return computed<T>({
     get() {
-      const queryValue = router.currentRoute.value.query[key];
-      let value = queryValue || defaultValue;
+      const queryValue = router.currentRoute.value.query[key] as T | null;
 
-      if (validator) {
-        value = validator(queryValue) ? queryValue : defaultValue;
+      const fallbackValue = defaultValue ?? ((Array.isArray(queryValue) ? [] : "") as T);
+
+      let value = queryValue ?? fallbackValue;
+
+      if (queryValue && validator) {
+        value = validator(queryValue) ? queryValue : fallbackValue;
       }
 
-      return value as T;
+      return value;
     },
 
     async set(value) {
       const { hash, params, query } = router.currentRoute.value;
-      const newLocation: Dictionary = {
+      const newLocation: Required<RouteQueryAndHash & Pick<LocationAsRelativeRaw, "params">> = {
         hash,
         params,
         query: {
@@ -47,18 +67,13 @@ export default function useRouteQueryParam<T = LocationQueryValue | LocationQuer
       ) {
         delete newLocation.query[key];
       } else {
-        newLocation.query[key] = value;
+        newLocation.query[key] = value as LocationQueryValueRaw | LocationQueryValueRaw[];
       }
 
       const mustBeDone = router.currentRoute.value.fullPath !== router.resolve(newLocation).fullPath;
-      let navigationFailure;
 
       if (mustBeDone) {
-        navigationFailure = await router[updateMethod](newLocation);
-      }
-
-      if (onChange) {
-        await onChange(value, mustBeDone && !navigationFailure);
+        await router[updateMethod](newLocation);
       }
     },
   });
