@@ -2,7 +2,7 @@
   <div>
     <router-link
       class="block px-2 py-1 mb-2 text-base font-bold hover:bg-gray-100"
-      :to="menuItem.route"
+      :to="menuItem.route!"
       :title="menuItem.title!"
       @click="clickCategory"
     >
@@ -12,7 +12,7 @@
       <template v-for="(item, index) in displayedItems" :key="index">
         <router-link
           class="block px-2 py-1 mb-1 text-sm !leading-4 text-gray-500 truncate hover:bg-gray-100"
-          :to="item.route"
+          :to="item.route!"
           :title="item.title!"
           @click="clickCategory"
         >
