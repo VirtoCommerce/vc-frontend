@@ -245,8 +245,8 @@ function select(item?: any) {
       @apply h-auto text-sm;
     }
 
-    &:focus {
-      @apply outline outline-offset-0 outline-2 outline-[color:var(--color-primary-light)];
+    #{$opened} & {
+      box-shadow: 0 0 0 2px var(--color-primary-light);
     }
 
     #{$disabled} &,

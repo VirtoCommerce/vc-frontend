@@ -129,8 +129,11 @@ const text = useVModel(props, "modelValue", emit);
       @apply resize-none;
     }
 
-    &:focus {
-      @apply outline outline-offset-0 outline-2 outline-[color:var(--color-primary-light)];
+    &:focus,
+    &:focus-visible {
+      @apply outline-none;
+
+      box-shadow: 0 0 0 2px var(--color-primary-light);
     }
 
     &[disabled],
