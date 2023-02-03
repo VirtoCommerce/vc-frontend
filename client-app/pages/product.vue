@@ -119,8 +119,8 @@ usePageHead({
   },
 });
 
-const breadcrumbs = useBreadcrumbs(
-  computed(() => buildBreadcrumbs(product.value?.breadcrumbs) ?? [{ title: product.value?.name }])
+const breadcrumbs = useBreadcrumbs(() =>
+  product.value ? buildBreadcrumbs(product.value.breadcrumbs) ?? [{ title: product.value.name }] : []
 );
 
 const variationsCartTotalAmount = eagerComputed<number>(() => {

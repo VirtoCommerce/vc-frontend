@@ -276,21 +276,19 @@ usePageHead({
   ]),
 });
 
+const breadcrumbs = useBreadcrumbs(() => [
+  { title: t("common.links.account"), route: { name: "Account" } },
+  { title: t("common.links.orders"), route: { name: "Orders" } },
+  {
+    title: t("pages.account.order_payment.processed_title", [order.value?.number]),
+    route: { name: "OrderDetails", params: { orderId: props.orderId } },
+  },
+  { title: t("pages.account.order_payment.breadcrumb_title") },
+]);
+
 const executed = computed<boolean>(() => success.value || failure.value);
 const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments[0]);
 const paymentMethodType = computed<PaymentMethod | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);
-
-const breadcrumbs = useBreadcrumbs(
-  computed(() => [
-    { title: t("common.links.account"), route: { name: "Account" } },
-    { title: t("common.links.orders"), route: { name: "Orders" } },
-    {
-      title: t("pages.account.order_payment.processed_title", [order.value?.number]),
-      route: { name: "OrderDetails", params: { orderId: props.orderId } },
-    },
-    { title: t("pages.account.order_payment.breadcrumb_title") },
-  ])
-);
 
 function tryAgain() {
   location.reload();

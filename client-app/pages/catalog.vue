@@ -406,6 +406,12 @@ usePageHead({
   },
 });
 
+const breadcrumbs = useBreadcrumbs(() =>
+  selectedCategory.value
+    ? buildBreadcrumbs(selectedCategory.value.breadcrumbs) ?? [{ title: selectedCategory.value.name }]
+    : []
+);
+
 const route = useRoute();
 const savedViewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
 const savedInStock = useLocalStorage<boolean>("viewInStockProducts", true);
@@ -476,10 +482,6 @@ const isMobileFilterDirty = eagerComputed<boolean>(
       inStock: savedInStock.value,
       branches: savedBranches.value,
     } as ProductsFilters)
-);
-
-const breadcrumbs = useBreadcrumbs(
-  computed(() => buildBreadcrumbs(selectedCategory.value?.breadcrumbs) ?? [{ title: selectedCategory.value?.name }])
 );
 
 function sendGASelectItemEvent(product: Product) {

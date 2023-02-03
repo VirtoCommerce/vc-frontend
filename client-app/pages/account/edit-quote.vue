@@ -178,16 +178,15 @@ usePageHead({
   title: t("pages.account.quote_details.title", [quote!.value?.number]),
 });
 
-const originalQuote = ref<QuoteType | undefined>();
+const breadcrumbs = useBreadcrumbs(() => [
+  { title: t("common.links.account"), route: { name: "Account" } },
+  { title: t("common.links.quote_requests"), route: { name: "Quotes" } },
+  { title: t("pages.account.quote_details.title", [quote?.value?.number]) },
+]);
+
+const originalQuote = ref<QuoteType>();
 const billingAddressEqualsShipping = ref<boolean>(true);
 
-const breadcrumbs = useBreadcrumbs(
-  computed(() => [
-    { title: t("common.links.account"), route: { name: "Account" } },
-    { title: t("common.links.quote_requests"), route: { name: "Quotes" } },
-    { title: t("pages.account.quote_details.title", [quote?.value?.number]) },
-  ])
-);
 const quoteChanged = computed<boolean>(() => !isEqual(originalQuote.value, quote.value));
 const quoteItemsValid = computed<boolean>(() =>
   every(quote.value?.items, (item: QuoteItemType) => item.selectedTierPrice?.quantity > 0)

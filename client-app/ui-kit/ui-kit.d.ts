@@ -30,7 +30,7 @@ declare global {
   }
 
   interface IBreadcrumb {
-    title: MaybeRef<string>;
+    title: string;
     /**
      * Not needed for last element
      */
