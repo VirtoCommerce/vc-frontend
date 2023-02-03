@@ -352,19 +352,6 @@ import { BranchesDialog, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { AddToCart } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import { Product } from "@/xapi";
-import {
-  VcBreadcrumbs,
-  VcPopupSidebar,
-  VcButton,
-  VcSelect,
-  VcTooltip,
-  VcCheckbox,
-  VcChip,
-  VcInfinityScrollLoader,
-  VcScrollTopButton,
-  VcEmptyView,
-  VcImage,
-} from "@/ui-kit/components";
 
 const FILTERS_RESET_TIMEOUT_IN_MS = 500;
 const watchStopHandles: WatchStopHandle[] = [];
