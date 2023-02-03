@@ -53,7 +53,7 @@ defineProps({
 
     &--sticky {
       @media (min-width: theme("screens.lg")) {
-        @apply sticky top-24;
+        @apply sticky top-[6.5rem];
       }
     }
   }
