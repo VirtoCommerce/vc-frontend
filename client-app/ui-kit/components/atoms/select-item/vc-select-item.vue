@@ -21,7 +21,7 @@ defineProps<Props>();
 
 <style lang="scss">
 .vc-select-item {
-  @apply flex items-center gap-3 p-3 max-w-full;
+  @apply flex items-center gap-3 p-3 max-w-full max-h-full;
 
   &--bordered {
     @at-root *:not(:last-of-type) > & {

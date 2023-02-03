@@ -33,7 +33,7 @@
           :label="$t('pages.account.checkout_defaults.payment_method_label')"
           value-field="code"
           class="mt-8 w-full"
-          size="lg"
+          size="auto"
         >
           <template #placeholder>
             <VcSelectItem>

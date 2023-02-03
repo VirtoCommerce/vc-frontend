@@ -17,7 +17,7 @@
 
     <div v-click-outside="() => open && hideList()" class="vc-select__container">
       <button type="button" :disabled="disabled" class="vc-select__button" @click="toggle">
-        <span class="grow min-w-0">
+        <span class="vc-select__button-content">
           <slot v-if="($slots.placeholder || placeholder) && !selected" name="placeholder">
             <VcSelectItem class="opacity-75">
               <VcSelectText>
@@ -96,7 +96,7 @@ interface Props {
   disabled?: boolean;
   modelValue?: object | string;
   items: any[];
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "auto";
   textField?: string;
   valueField?: string;
   placeholder?: string;
@@ -179,6 +179,8 @@ function select(item?: any) {
   $sizeSm: "";
   $sizeMd: "";
   $sizeLg: "";
+  $sizeAuto: "";
+
   $disabled: "";
   $opened: "";
   $hideEmptyDetails: "";
@@ -197,6 +199,10 @@ function select(item?: any) {
 
     &--lg {
       $sizeLg: &;
+    }
+
+    &--auto {
+      $sizeAuto: &;
     }
   }
 
@@ -224,15 +230,19 @@ function select(item?: any) {
     @apply relative flex items-center w-full rounded border bg-white appearance-none outline-none text-left;
 
     #{$sizeSm} & {
-      @apply min-h-[2rem] text-sm;
+      @apply h-8 text-sm;
     }
 
     #{$sizeMd} & {
-      @apply min-h-[2.25rem] text-sm;
+      @apply h-9 text-sm;
     }
 
     #{$sizeLg} & {
-      @apply min-h-[2.75rem] text-base;
+      @apply h-11 text-base;
+    }
+
+    #{$sizeAuto} & {
+      @apply h-auto text-sm;
     }
 
     &:focus {
@@ -245,12 +255,12 @@ function select(item?: any) {
     }
   }
 
-  &__placeholder-default {
-    @apply block p-3 text-gray-400 truncate;
-  }
+  &__button-content {
+    @apply grow overflow-y-hidden flex flex-col justify-center min-w-0 h-full;
 
-  &__selected-default {
-    @apply block p-3 text-[color:var(--color-body-text)] truncate;
+    #{$sizeAuto} & {
+      @apply overflow-y-visible;
+    }
   }
 
   &__icon {
@@ -284,10 +294,6 @@ function select(item?: any) {
     &--active:hover {
       @apply bg-[color:var(--color-primary-light)] cursor-default;
     }
-  }
-
-  &__item-default {
-    @apply block p-2 text-13 truncate;
   }
 
   &__details {

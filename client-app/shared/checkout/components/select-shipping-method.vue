@@ -1,5 +1,6 @@
 <template>
   <VcSelect
+    size="auto"
     :label="$t('shared.checkout.shipping_details_section.labels.shipping_method')"
     :items="availableMethods"
     :modelValue="selectedMethod"
