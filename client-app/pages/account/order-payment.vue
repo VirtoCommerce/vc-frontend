@@ -276,11 +276,7 @@ usePageHead({
   ]),
 });
 
-const executed = computed<boolean>(() => success.value || failure.value);
-const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments[0]);
-const paymentMethodType = computed<PaymentMethod | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);
-
-const breadcrumbs = useBreadcrumbs([
+const breadcrumbs = useBreadcrumbs(() => [
   { title: t("common.links.account"), route: { name: "Account" } },
   { title: t("common.links.orders"), route: { name: "Orders" } },
   {
@@ -289,6 +285,10 @@ const breadcrumbs = useBreadcrumbs([
   },
   { title: t("pages.account.order_payment.breadcrumb_title") },
 ]);
+
+const executed = computed<boolean>(() => success.value || failure.value);
+const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments[0]);
+const paymentMethodType = computed<PaymentMethod | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);
 
 function tryAgain() {
   location.reload();

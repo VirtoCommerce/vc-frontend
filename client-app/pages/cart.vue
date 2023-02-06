@@ -16,7 +16,9 @@
     </template>
   </VcEmptyPage>
 
-  <VcContainer v-else>
+  <VcContainer v-else class="relative z-0">
+    <VcLoaderOverlay :visible="loading" fixed-spinner />
+
     <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block mx-5 md:mx-0" />
 
     <!-- Page title -->
@@ -25,25 +27,26 @@
     </VcTypography>
 
     <VcLayoutWithRightSidebar is-sidebar-sticky>
-      <template #main>
-        <ProductsSection
-          :grouped="!!$cfg.line_items_group_by_vendor_enabled"
-          :items="cart.items"
-          :items-grouped-by-vendor="lineItemsGroupedByVendor"
-          :disabled="loading"
-          :validation-errors="cart.validationErrors"
-          @change:item:quantity="changeItemQuantity($event.item.id, $event.quantity)"
-          @remove:item="handleRemoveItem"
-          @clear:cart="openClearCartModal"
-        />
+      <ProductsSection
+        :grouped="!!$cfg.line_items_group_by_vendor_enabled"
+        :items="cart.items"
+        :items-grouped-by-vendor="lineItemsGroupedByVendor"
+        :disabled="loading"
+        :validation-errors="cart.validationErrors"
+        @change:item:quantity="changeItemQuantity($event.item.id, $event.quantity)"
+        @remove:item="handleRemoveItem"
+        @clear:cart="openClearCartModal"
+      />
 
-        <GiftsSection
-          v-if="$cfg.checkout_gifts_enabled && availableExtendedGifts.length"
-          :gifts="availableExtendedGifts"
-          :disabled="loading"
-          @toggle:gift="toggleGift"
-        />
+      <GiftsSection
+        v-if="$cfg.checkout_gifts_enabled && availableExtendedGifts.length"
+        :gifts="availableExtendedGifts"
+        :disabled="loading"
+        @toggle:gift="toggleGift"
+      />
 
+      <!-- Sections for single page checkout -->
+      <template v-if="!$cfg.checkout_multistep_enabled">
         <ShippingDetailsSection
           :shipment="shipment"
           :disabled="loading"
@@ -52,29 +55,29 @@
         />
 
         <BillingDetailsSection
-          v-model:address-equals-shipping-address="billingAddressEqualsShippingAddress"
+          v-model:address-equals-shipping-address="billingAddressEqualsShipping"
           :payment="payment"
           :disabled="loading"
           @change:address="onBillingAddressChange"
           @change:method="openSelectPaymentMethodModal"
         />
 
-        <OrderCommentSection v-model:comment="comment" :disabled="loading" />
+        <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" :disabled="loading" />
       </template>
 
       <template #sidebar>
-        <OrderSummary :cart="cart">
-          <template #header>
+        <OrderSummary :cart="cart" footnote>
+          <template #footer>
             <!-- Purchase order number -->
             <VcActionInput
-              v-if="$cfg.checkout_purchase_order_enabled"
+              v-if="$cfg.checkout_purchase_order_enabled && !$cfg.checkout_multistep_enabled"
               v-model="purchaseOrderNumber"
               :label="$t('common.labels.purchase_order_number')"
               :placeholder="$t('common.placeholders.purchase_order_number')"
               :is-applied="purchaseOrderNumberIsApplied"
               :is-disabled="loading"
               :max-length="128"
-              class="mb-5"
+              class="mt-4"
               @click:apply="setPurchaseOrderNumber"
               @click:deny="removePurchaseOrderNumber"
             />
@@ -88,34 +91,46 @@
               :is-applied="couponIsApplied"
               :error-message="couponValidationError"
               :is-disabled="loading"
-              class="mb-5"
+              class="mt-4"
               @click:apply="applyCoupon"
               @click:deny="removeCoupon"
               @update:model-value="clearCouponValidationError"
             />
-          </template>
 
-          <template #footer>
-            <p class="mt-6 mb-5 text-xs font-normal text-gray-400">
-              {{ $t("common.messages.checkout_pricing_warning") }}
-            </p>
-
+            <!-- Go to checkout button (Multistep checkout) -->
             <VcButton
-              :is-disabled="orderCreationDisabled"
+              v-if="$cfg.checkout_multistep_enabled"
+              :to="{ name: 'Checkout' }"
+              :is-disabled="isDisabledNextStep"
+              class="mt-4 uppercase w-full"
+            >
+              {{ $t("common.buttons.go_to_checkout") }}
+            </VcButton>
+
+            <!-- Place order button (Single page checkout) -->
+            <VcButton
+              v-else
+              :is-disabled="isDisabledOrderCreation"
               :is-waiting="creatingOrder"
-              class="uppercase w-full"
+              class="mt-4 uppercase w-full"
               @click="createOrder"
             >
               {{ $t("common.buttons.place_order") }}
             </VcButton>
 
-            <div
-              v-if="!isValidCheckout && !creatingOrder"
-              class="flex items-center space-x-2 bg-primary-100 rounded mt-3 p-3 text-xs"
-            >
-              <i class="fas fa-exclamation-triangle text-xl text-primary-600" />
-              <span>{{ $t("common.messages.something_went_wrong") }}</span>
-            </div>
+            <template v-if="!$cfg.checkout_multistep_enabled">
+              <transition name="slide-fade-top" mode="out-in" appear>
+                <VcAlert v-show="isShowIncompleteDataWarning" type="warning" class="mt-4" icon>
+                  {{ $t("common.messages.fill_all_required") }}
+                </VcAlert>
+              </transition>
+            </template>
+
+            <transition name="slide-fade-top" mode="out-in" appear>
+              <VcAlert v-show="isShowInvalidCartWarning" type="warning" class="mt-4" icon>
+                {{ $t("common.messages.something_went_wrong") }}
+              </VcAlert>
+            </transition>
           </template>
         </OrderSummary>
 
@@ -141,12 +156,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, inject, ref } from "vue";
 import { invoke } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { LineItemType } from "@/xapi";
-import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core";
+import { configInjectionKey, useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core";
 import { useUser } from "@/shared/account";
 import { GiftsSection, ProductsSection, useCart, useCoupon, usePurchaseOrderNumber } from "@/shared/cart";
 import {
@@ -157,14 +172,18 @@ import {
   useCheckout,
 } from "@/shared/checkout";
 
+const config = inject(configInjectionKey, {});
+
 const router = useRouter();
 const ga = useGoogleAnalytics();
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
 const {
+  loading: loadingCart,
   cart,
   lineItemsGroupedByVendor,
   availableExtendedGifts,
+  hasValidationErrors,
   fetchCart,
   changeItemQuantity,
   removeItem,
@@ -174,13 +193,13 @@ const {
 } = useCart();
 const {
   comment,
-  billingAddressEqualsShippingAddress,
-  loading: loadingCheckout,
+  billingAddressEqualsShipping,
   shipment,
   payment,
-  initialized,
+  isValidShipment,
+  isValidPayment,
   isValidCheckout,
-  initialize,
+  initialize: initCheckout,
   openSelectShipmentMethodModal,
   openSelectPaymentMethodModal,
   onDeliveryAddressChange,
@@ -198,11 +217,15 @@ usePageHead({
 
 const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: "Cart" } }]);
 
+const initialized = ref(false);
 const creatingOrder = ref(false);
 const creatingQuote = ref(false);
 
-const loading = computed<boolean>(() => creatingOrder.value || creatingQuote.value || loadingCheckout.value);
-const orderCreationDisabled = computed<boolean>(() => loading.value || !isValidCheckout.value);
+const loading = computed<boolean>(() => loadingCart.value || creatingQuote.value || creatingOrder.value);
+const isDisabledNextStep = computed<boolean>(() => loading.value || hasValidationErrors.value);
+const isDisabledOrderCreation = computed<boolean>(() => loading.value || !isValidCheckout.value);
+const isShowIncompleteDataWarning = computed<boolean>(() => !isValidShipment.value || !isValidPayment.value);
+const isShowInvalidCartWarning = computed<boolean>(() => hasValidationErrors.value && !creatingOrder.value);
 
 async function handleRemoveItem(lineItem: LineItemType): Promise<void> {
   await removeItem(lineItem.id);
@@ -220,7 +243,7 @@ async function createOrder(): Promise<void> {
 
   if (order) {
     await router.push({
-      name: "CheckoutComplete",
+      name: "OrderCompleted",
       params: {
         orderId: order.id,
         orderNumber: order.number,
@@ -251,7 +274,13 @@ async function createQuote(): Promise<void> {
 }
 
 invoke(async () => {
-  await initialize();
+  if (config.checkout_multistep_enabled) {
+    await fetchCart();
+  } else {
+    await initCheckout();
+  }
+
+  initialized.value = true;
 
   /**
    * Send a Google Analytics shopping cart view event.

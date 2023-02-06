@@ -9,19 +9,17 @@
     </div>
 
     <VcLayoutWithRightSidebar>
-      <template #main>
-        <!-- Quote products -->
-        <VcSectionWidget :title="$t('pages.account.quote_details.products')" icon="cube" hide-desktop-title>
-          <QuoteLineItems :items="quote.items!" readonly />
-        </VcSectionWidget>
+      <!-- Quote products -->
+      <VcSectionWidget :title="$t('pages.account.quote_details.products')" icon="cube" hide-desktop-title>
+        <QuoteLineItems :items="quote.items!" readonly />
+      </VcSectionWidget>
 
-        <!-- Quote comment -->
-        <VcSectionWidget :title="$t('pages.account.quote_details.remarks')" icon="document-text" v-if="quote.comment">
-          <div class="text-15 font-medium">
-            {{ quote.comment }}
-          </div>
-        </VcSectionWidget>
-      </template>
+      <!-- Quote comment -->
+      <VcSectionWidget :title="$t('pages.account.quote_details.remarks')" icon="document-text" v-if="quote.comment">
+        <div class="text-15 font-medium">
+          {{ quote.comment }}
+        </div>
+      </VcSectionWidget>
 
       <template #sidebar>
         <VcCardWidget :title="$t('pages.account.quote_details.quote_summary')" icon="cash">
@@ -71,7 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watchEffect } from "vue";
+import { watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useUserQuote, QuoteLineItems } from "@/shared/account";
 import { VcAddressInfo } from "@/ui-kit/components";
@@ -91,14 +89,11 @@ usePageHead({
   title: t("pages.account.quote_details.title", [quote!.value?.number]),
 });
 
-const breadcrumbs = useBreadcrumbs(
-  computed(() => [
-    { title: t("common.links.home"), route: { name: "Home" } },
-    { title: t("common.links.account"), route: { name: "Account" } },
-    { title: t("common.links.quote_requests"), route: { name: "Quotes" } },
-    { title: t("pages.account.quote_details.title", [quote?.value?.number]) },
-  ])
-);
+const breadcrumbs = useBreadcrumbs(() => [
+  { title: t("common.links.account"), route: { name: "Account" } },
+  { title: t("common.links.quote_requests"), route: { name: "Quotes" } },
+  { title: t("pages.account.quote_details.title", [quote?.value?.number]) },
+]);
 
 watchEffect(async () => {
   clearQuote();

@@ -66,6 +66,7 @@ import { useCart } from "@/shared/cart";
 import { useProduct, useRelatedProducts, CarouselProductCard } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useI18n } from "vue-i18n";
+import { buildBreadcrumbs } from "@/core";
 
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
@@ -118,9 +119,8 @@ usePageHead({
   },
 });
 
-const { breadcrumbs } = useBreadcrumbs(
-  computed(() => [{ title: product.value?.name }]),
-  computed(() => product.value?.breadcrumbs)
+const breadcrumbs = useBreadcrumbs(() =>
+  product.value ? buildBreadcrumbs(product.value.breadcrumbs) ?? [{ title: product.value.name }] : []
 );
 
 const variationsCartTotalAmount = eagerComputed<number>(() => {

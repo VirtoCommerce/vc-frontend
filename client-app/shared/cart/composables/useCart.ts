@@ -1,7 +1,8 @@
 import { computed, readonly, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { keyBy, sumBy } from "lodash";
-import { Logger } from "@/core";
+import { computedEager } from "@vueuse/core";
+import { getLineItemsGroupedByVendor, Logger, TLineItemsGroupByVendor } from "@/core";
 import {
   addBulkItemsCart,
   addCoupon,
@@ -20,6 +21,7 @@ import {
   InputNewCartItemType,
   InputPaymentType,
   InputShipmentType,
+  LineItemType,
   PaymentMethodType,
   PaymentType,
   QuoteType,
@@ -38,8 +40,6 @@ import {
   ExtendedGiftItemType,
   getLineItemValidationErrorsGroupedBySKU,
   OutputBulkItemType,
-  TGroupedItems,
-  TGroupItem,
 } from "@/shared/cart";
 
 const loading = ref(false);
@@ -51,38 +51,18 @@ const payment = computed<PaymentType | undefined>(() => cart.value.payments?.[0]
 const availableShippingMethods = computed<ShippingMethodType[]>(() => cart.value.availableShippingMethods ?? []);
 const availablePaymentMethods = computed<PaymentMethodType[]>(() => cart.value.availablePaymentMethods ?? []);
 
-const lineItemsGroupedByVendor = computed<TGroupItem[]>(() => {
-  // NOTE: The group without the vendor should be displayed last.
-  const groupWithoutVendor: TGroupItem = { items: [] };
-  const map: TGroupedItems = {};
-
-  cart.value.items?.forEach((item) => {
-    const vendor = item.product?.vendor;
-
-    if (vendor) {
-      const vendorId = vendor.id;
-
-      map[vendorId] = map[vendorId] || { vendor, items: [] };
-      map[vendorId].items.push(item);
-    } else {
-      groupWithoutVendor.items.push(item);
-    }
-  });
-
-  const result = Object.values(map)
-    // Sort by Vendor
-    .sort((a, b) => a.vendor!.name.localeCompare(b.vendor!.name));
-
-  // Add the group without the vendor to the end.
-  result.push(groupWithoutVendor);
-
-  return result;
-});
+const lineItemsGroupedByVendor = computed<TLineItemsGroupByVendor<LineItemType>[]>(() =>
+  getLineItemsGroupedByVendor(cart.value.items ?? [])
+);
 
 const addedGiftsByIds = computed(() => keyBy(cart.value.gifts, "id"));
 
 const availableExtendedGifts = computed<ExtendedGiftItemType[]>(() =>
   (cart.value.availableGifts || []).map((gift) => ({ ...gift, isAddedInCart: !!addedGiftsByIds.value[gift.id] }))
+);
+
+const hasValidationErrors = computedEager<boolean>(
+  () => !!cart.value.validationErrors?.length || !!cart.value.items?.some((item) => item.validationErrors?.length)
 );
 
 export default function useCart() {
@@ -407,6 +387,7 @@ export default function useCart() {
     lineItemsGroupedByVendor,
     addedGiftsByIds,
     availableExtendedGifts,
+    hasValidationErrors,
     getItemsTotal,
     fetchCart,
     addToCart,

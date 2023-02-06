@@ -1,4 +1,4 @@
-import { computed } from "vue";
+import { computed, WritableComputedRef } from "vue";
 import {
   LocationAsRelativeRaw,
   LocationQueryValue,
@@ -23,10 +23,10 @@ export interface UseRouteQueryParamOptions<T = LocationQueryValue | LocationQuer
 export function useRouteQueryParam<T = NonNullable<LocationQueryValue> | NonNullable<LocationQueryValue>[]>(
   key: string,
   options: UseRouteQueryParamOptions<T> = {}
-) {
+): WritableComputedRef<T> {
   const {
     validator,
-    defaultValue = "" as T,
+    defaultValue,
     updateMethod = "push",
     removeFalsyValue = true,
     removeNullishValue = true,
@@ -35,45 +35,46 @@ export function useRouteQueryParam<T = NonNullable<LocationQueryValue> | NonNull
 
   const router = useRouter();
 
-  return {
-    queryParam: computed<T>({
-      get() {
-        const queryValue = router.currentRoute.value.query[key] as T | null;
-        let value = queryValue ?? defaultValue;
+  return computed<T>({
+    get() {
+      const queryValue = router.currentRoute.value.query[key] as T | null;
 
-        if (queryValue && validator) {
-          value = validator(queryValue) ? queryValue : defaultValue;
-        }
+      const fallbackValue = defaultValue ?? ((Array.isArray(queryValue) ? [] : "") as T);
 
-        return value;
-      },
+      let value = queryValue ?? fallbackValue;
 
-      async set(value) {
-        const { hash, params, query } = router.currentRoute.value;
-        const newLocation: Required<RouteQueryAndHash & Pick<LocationAsRelativeRaw, "params">> = {
-          hash,
-          params,
-          query: {
-            ...query,
-          },
-        };
+      if (queryValue && validator) {
+        value = validator(queryValue) ? queryValue : fallbackValue;
+      }
 
-        if (
-          (removeFalsyValue && !value) ||
-          (removeNullishValue && value === null) ||
-          (removeDefaultValue && value === defaultValue)
-        ) {
-          delete newLocation.query[key];
-        } else {
-          newLocation.query[key] = value as LocationQueryValueRaw | LocationQueryValueRaw[];
-        }
+      return value;
+    },
 
-        const mustBeDone = router.currentRoute.value.fullPath !== router.resolve(newLocation).fullPath;
+    async set(value) {
+      const { hash, params, query } = router.currentRoute.value;
+      const newLocation: Required<RouteQueryAndHash & Pick<LocationAsRelativeRaw, "params">> = {
+        hash,
+        params,
+        query: {
+          ...query,
+        },
+      };
 
-        if (mustBeDone) {
-          await router[updateMethod](newLocation);
-        }
-      },
-    }),
-  };
+      if (
+        (removeFalsyValue && !value) ||
+        (removeNullishValue && value === null) ||
+        (removeDefaultValue && value === defaultValue)
+      ) {
+        delete newLocation.query[key];
+      } else {
+        newLocation.query[key] = value as LocationQueryValueRaw | LocationQueryValueRaw[];
+      }
+
+      const mustBeDone = router.currentRoute.value.fullPath !== router.resolve(newLocation).fullPath;
+
+      if (mustBeDone) {
+        await router[updateMethod](newLocation);
+      }
+    },
+  });
 }

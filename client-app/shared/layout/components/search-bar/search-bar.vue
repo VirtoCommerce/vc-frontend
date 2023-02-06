@@ -2,7 +2,7 @@
   <div class="flex flex-grow items-stretch relative" v-click-outside="hideSearchDropdown">
     <VcInput
       v-model="searchPhrase"
-      maxlength="30"
+      :maxlength="MAX_LENGTH"
       class="flex-grow text-sm"
       input-class="!pl-4 !pr-8 font-medium disabled:bg-gray-200 !rounded-r-none text-[0.95rem]"
       :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
@@ -124,6 +124,9 @@ const SEARCH_BAR_DEBOUNCE_TIME = 500;
 
 const config = inject(configInjectionKey);
 
+const MAX_LENGTH = config?.search_max_chars || 999;
+const MIN_LENGTH = config?.search_min_chars || 0;
+
 const {
   total,
   loading,
@@ -156,8 +159,6 @@ const categoriesColumns = computed<Array<Category[]>>(() => {
 });
 
 async function searchAndShowDropdownResults() {
-  const MAX_LENGTH = 30;
-  const MIN_LENGTH = config?.search_min_chars || 0;
   const COLUMNS = 5;
 
   if (searchDropdownVisible.value) {

@@ -20,7 +20,6 @@ const BulkOrder = () => import("@/pages/bulk-order.vue");
 const CompareProducts = () => import("@/pages/compare-products.vue");
 const Cart = () => import("@/pages/cart.vue");
 const Checkout = () => import("@/pages/checkout/index.vue");
-const CheckoutComplete = () => import("@/pages/checkout-complete.vue");
 const Catalog = () => import("@/pages/catalog.vue");
 const Product = () => import("@/pages/product.vue");
 const Branch = () => import("@/pages/branch.vue");
@@ -48,19 +47,19 @@ export const mainRoutes: RouteRecordRaw[] = [
     name: "Account",
     component: Account,
     children: accountRoutes,
-    meta: { requiresAuth: true },
     redirect: { name: accountRoutes[0].name },
+    meta: { requiresAuth: true },
   },
   {
     path: "/company",
     name: "Company",
     component: Company,
     children: corporateRoutes,
+    redirect: { name: corporateRoutes[0].name },
     meta: {
       requiresAuth: true,
       requiresOrganization: true,
     },
-    redirect: { name: corporateRoutes[0].name },
   },
   { path: "/demo-landing", name: "DemoLanding", component: DemoLanding },
   { path: "/branch/:branchId", name: "BranchPage", component: Branch, props: true },
@@ -74,13 +73,18 @@ export const mainRoutes: RouteRecordRaw[] = [
     component: Checkout,
     children: checkoutRoutes,
     redirect: { name: checkoutRoutes[0].name },
-  },
-  {
-    path: "/checkout/completed",
-    name: "CheckoutComplete",
-    component: CheckoutComplete,
-    beforeEnter: (to) => !!to.params.orderId || { name: "Cart", replace: true },
-    props: true,
+    meta: { layout: "Secure" },
+    beforeEnter(_, from, next) {
+      /**
+       * NOTE: Allow proceeding to checkout only from cart.
+       * Refreshing page will redirect to the cart. At any of the steps.
+       */
+      if (from.name === "Cart") {
+        next();
+      } else {
+        next({ name: "Cart", replace: true });
+      }
+    },
   },
   { path: "/catalog", name: "Catalog", component: Catalog, props: true },
   { path: "/category/:categoryId", name: "Category", component: Catalog, props: true },

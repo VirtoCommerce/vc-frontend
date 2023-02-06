@@ -1,26 +1,25 @@
 import { useI18n } from "vue-i18n";
-import { Breadcrumb } from "@/xapi/types";
-import { MaybeRef } from "@vueuse/core";
-import { computed, Ref, unref } from "vue";
+import { isFunction, MaybeRef } from "@vueuse/core";
+import { computed, ComputedRef, unref } from "vue";
 
-export interface UseBreadcrumbs {
-  breadcrumbs: Ref<ReadonlyArray<Readonly<IBreadcrumb>>>;
-}
-
-export default (
-  breadcrumbs: MaybeRef<ReadonlyArray<Readonly<IBreadcrumb>>>,
-  nativeBreadcrumbs?: MaybeRef<ReadonlyArray<Readonly<Breadcrumb>> | undefined>
-): UseBreadcrumbs => {
+/**
+ * Adds a link element to the home page at the beginning of the array.
+ *
+ * @example
+ * // For non-reactive data
+ * const breadcrumbs = useBreadcrumbs([{ title: "Test", route: "/test" }]);
+ *
+ * // For reactive data
+ * const breadcrumbs = useBreadcrumbs(() => [
+ *   { title: "Orders", route: { name: "Orders" } },
+ *   { title: `Order #${order.value.number}` },
+ * ]);
+ */
+export function useBreadcrumbs(sources: (() => IBreadcrumb[]) | MaybeRef<IBreadcrumb[]>): ComputedRef<IBreadcrumb[]> {
   const { t } = useI18n();
 
-  return {
-    breadcrumbs: computed(() => {
-      const result =
-        unref(nativeBreadcrumbs)?.map((nativeBreadcrumb) => ({
-          title: nativeBreadcrumb.title,
-          route: `/${nativeBreadcrumb.seoPath}`,
-        })) ?? unref(breadcrumbs);
-      return [{ route: "/", title: t("common.links.home") }, ...result];
-    }),
-  };
-};
+  const homepage: IBreadcrumb = { title: t("common.links.home"), route: "/" };
+  const breadcrumbs: MaybeRef<IBreadcrumb[]> = isFunction(sources) ? computed(sources) : sources;
+
+  return computed(() => [homepage].concat(unref(breadcrumbs)));
+}

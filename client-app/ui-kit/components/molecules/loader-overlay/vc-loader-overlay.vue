@@ -1,22 +1,10 @@
 <template>
-  <!-- Loader Overlay -->
   <transition name="fade" appear>
-    <span
-      v-if="visible"
-      v-bind="$attrs"
-      :class="[
-        'absolute inset-0 flex items-center justify-center z-[var(--loader-overlay-z-index,9999)]',
-        { 'bg-[color:var(--loader-overlay-bg,rgba(255,255,255,0.6))]': !noBg },
-      ]"
-    >
-      <VcLoader
-        :class="[
-          'inline-block text-[color:var(--loader-overlay-color,_var(--color-primary))]',
-          { fixed: fixedRunner },
-          runnerClasses,
-        ]"
-      />
-    </span>
+    <div v-if="visible" v-bind="$attrs" :class="['vc-loader-overlay', { 'vc-loader-overlay--with-bg': !noBg }]">
+      <div :class="['vc-loader-overlay__spinner', { 'vc-loader-overlay__spinner--fixed': fixedSpinner }]">
+        <VcLoader />
+      </div>
+    </div>
   </transition>
 </template>
 
@@ -27,18 +15,31 @@ export default {
 </script>
 
 <script setup lang="ts">
-defineProps({
-  fixedRunner: Boolean,
-  noBg: Boolean,
+interface Props {
+  visible?: boolean;
+  fixedSpinner?: boolean;
+  noBg?: boolean;
+}
 
-  visible: {
-    type: Boolean,
-    default: true,
-  },
-
-  runnerClasses: {
-    type: String,
-    default: "h-6 w-6",
-  },
+withDefaults(defineProps<Props>(), {
+  visible: true,
 });
 </script>
+
+<style lang="scss">
+.vc-loader-overlay {
+  @apply absolute inset-0 z-[996];
+
+  &--with-bg {
+    @apply bg-[color:rgba(255,255,255,0.6)];
+  }
+
+  &__spinner {
+    @apply absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 h-6 w-6 text-[color:var(--color-primary)];
+
+    &--fixed {
+      @apply fixed;
+    }
+  }
+}
+</style>

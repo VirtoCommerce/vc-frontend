@@ -73,7 +73,7 @@
 
         <div class="border rounded mt-2.5 p-5">
           <VcCheckbox
-            :model-value="billingAddressEqualsShippingAddress"
+            :model-value="billingAddressEqualsShipping"
             :disabled="fetching"
             @change="toggleBillingAddressEqualsShippingAddress"
           >
@@ -82,7 +82,7 @@
 
           <div
             class="flex flex-col gap-3 mt-4 md:flex-row md:items-center empty:hidden"
-            v-if="!billingAddressEqualsShippingAddress"
+            v-if="!billingAddressEqualsShipping"
           >
             <VcAddressInfo class="grow text-15" v-if="billingAddress" :address="billingAddress" />
 
@@ -178,25 +178,22 @@ usePageHead({
   title: t("pages.account.quote_details.title", [quote!.value?.number]),
 });
 
-const originalQuote = ref<QuoteType | undefined>();
-const billingAddressEqualsShippingAddress = ref<boolean>(true);
+const breadcrumbs = useBreadcrumbs(() => [
+  { title: t("common.links.account"), route: { name: "Account" } },
+  { title: t("common.links.quote_requests"), route: { name: "Quotes" } },
+  { title: t("pages.account.quote_details.title", [quote?.value?.number]) },
+]);
 
-const breadcrumbs = useBreadcrumbs(
-  computed(() => [
-    { title: t("common.links.account"), route: { name: "Account" } },
-    { title: t("common.links.quote_requests"), route: { name: "Quotes" } },
-    { title: t("pages.account.quote_details.title", [quote?.value?.number]) },
-  ])
-);
+const originalQuote = ref<QuoteType>();
+const billingAddressEqualsShipping = ref<boolean>(true);
+
 const quoteChanged = computed<boolean>(() => !isEqual(originalQuote.value, quote.value));
 const quoteItemsValid = computed<boolean>(() =>
   every(quote.value?.items, (item: QuoteItemType) => item.selectedTierPrice?.quantity > 0)
 );
 const quoteValid = computed<boolean>(
   () =>
-    !!shippingAddress.value &&
-    (!!billingAddress.value || billingAddressEqualsShippingAddress.value) &&
-    quoteItemsValid.value
+    !!shippingAddress.value && (!!billingAddress.value || billingAddressEqualsShipping.value) && quoteItemsValid.value
 );
 
 const userHasAddresses = computedEager<boolean>(() => !!addresses.value.length);
@@ -206,7 +203,7 @@ function onRemoveItem(item: QuoteItemType): void {
 }
 
 function toggleBillingAddressEqualsShippingAddress(): void {
-  billingAddressEqualsShippingAddress.value = !billingAddressEqualsShippingAddress.value;
+  billingAddressEqualsShipping.value = !billingAddressEqualsShipping.value;
 }
 
 function setBillingAddressEqualsShippingAddress(): void {
@@ -283,7 +280,7 @@ async function saveChanges(): Promise<void> {
   });
 
   if (quote.value!.addresses?.length && !isEqual(quote.value!.addresses, originalQuote.value!.addresses)) {
-    if (billingAddressEqualsShippingAddress.value) {
+    if (billingAddressEqualsShipping.value) {
       setBillingAddressEqualsShippingAddress();
     }
     await updateAddresses(quote.value!.id, quote.value!.addresses);

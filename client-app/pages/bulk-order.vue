@@ -14,7 +14,7 @@
           <VcAlert
             v-if="SKUsWithErrors.length"
             class="mx-6 md:mx-0 mb-5 lg:mb-0 col-span-1 lg:col-span-2"
-            type="error"
+            type="danger"
             key="sku"
             icon
           >
@@ -25,7 +25,7 @@
             v-else-if="incorrectData"
             key="incorrect"
             class="mx-6 md:mx-0 mb-5 lg:mb-0 col-span-1 lg:col-span-2"
-            type="error"
+            type="danger"
             icon
           >
             <span v-t="'pages.bulk_order.data_is_invalid_alert'"></span>
@@ -84,7 +84,7 @@ usePageHead({
   },
 });
 
-const { breadcrumbs } = useBreadcrumbs([{ title: t("pages.bulk_order.title") }]);
+const breadcrumbs = useBreadcrumbs([{ title: t("pages.bulk_order.title") }]);
 
 const tabs = [
   { id: "manually", label: t("pages.bulk_order.manually_tab") },

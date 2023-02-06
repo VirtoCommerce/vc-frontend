@@ -30,7 +30,7 @@ declare global {
   }
 
   interface IBreadcrumb {
-    title: MaybeRef<string>;
+    title: string;
     /**
      * Not needed for last element
      */
@@ -38,6 +38,7 @@ declare global {
   }
 
   interface IStepsItem {
+    id?: string;
     text: string;
     icon?: string;
     route?: RouteLocationRaw;
