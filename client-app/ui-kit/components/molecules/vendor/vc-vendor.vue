@@ -11,10 +11,10 @@
 </template>
 
 <script setup lang="ts">
-import { Vendor } from "@/xapi/types";
+import { CommonVendor } from "@/xapi";
 
 interface Props {
-  vendor?: Vendor;
+  vendor?: CommonVendor;
 }
 
 defineProps<Props>();
