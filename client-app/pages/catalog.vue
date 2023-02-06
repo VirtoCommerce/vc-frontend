@@ -5,7 +5,7 @@
   >
     <div class="px-5 mx-auto max-w-screen-2xl 2xl:px-18">
       <!-- Breadcrumbs -->
-      <Breadcrumbs class="mb-2.5 md:mb-4" :items="breadcrumbs" v-if="!isSearchPage" />
+      <VcBreadcrumbs class="mb-2.5 md:mb-4" :items="breadcrumbs" v-if="!isSearchPage" />
 
       <div class="flex items-start lg:gap-6">
         <!-- Mobile sidebar back cover -->
@@ -311,7 +311,6 @@ import {
   WatchStopHandle,
 } from "vue";
 import _ from "lodash";
-import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import {
   breakpointsTailwind,
@@ -323,6 +322,7 @@ import {
   whenever,
 } from "@vueuse/core";
 import {
+  buildBreadcrumbs,
   DEFAULT_PAGE_SIZE,
   FacetItem,
   FacetValueItem,
@@ -330,6 +330,7 @@ import {
   PRODUCT_SORTING_LIST,
   QueryParamName,
   searchCategoryTreeItemByKey,
+  useBreadcrumbs,
   useCategories,
   useElementVisibility,
   useGoogleAnalytics,
@@ -337,12 +338,10 @@ import {
   useRouteQueryParam,
 } from "@/core";
 import {
-  Breadcrumbs,
   CategorySelector,
   DisplayProducts,
   getFilterExpressionForAvailableIn,
   getFilterExpressionForInStock,
-  IBreadcrumbsItem,
   ProductsFilters,
   ProductsFiltersSidebar,
   ProductsSearchParams,
@@ -364,7 +363,6 @@ const props = defineProps({
 const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const ga = useGoogleAnalytics();
-const { t } = useI18n();
 const { loading: loadingCategories, categoryTree } = useCategories();
 const {
   fetchProducts,
@@ -394,6 +392,12 @@ usePageHead({
     description: computed(() => selectedCategory.value?.seoInfo?.metaDescription),
   },
 });
+
+const breadcrumbs = useBreadcrumbs(() =>
+  selectedCategory.value
+    ? buildBreadcrumbs(selectedCategory.value.breadcrumbs) ?? [{ title: selectedCategory.value.name }]
+    : []
+);
 
 const route = useRoute();
 const savedViewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
@@ -466,27 +470,6 @@ const isMobileFilterDirty = eagerComputed<boolean>(
       branches: savedBranches.value,
     } as ProductsFilters)
 );
-
-const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
-  const items: IBreadcrumbsItem[] = [{ url: "/", title: t("common.links.home") }];
-
-  if (!selectedCategory.value) {
-    return items;
-  }
-
-  if (selectedCategory.value.breadcrumbs?.length) {
-    selectedCategory.value.breadcrumbs.forEach((breadcrumb) => {
-      items.push({
-        title: breadcrumb.title,
-        url: `/${breadcrumb.seoPath}`,
-      });
-    });
-  } else {
-    items.push({ title: selectedCategory.value.name });
-  }
-
-  return items;
-});
 
 function sendGASelectItemEvent(product: Product) {
   ga.selectItem(product);

@@ -162,7 +162,7 @@ import { invoke } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { LineItemType, ShippingMethodType } from "@/xapi";
-import { configInjectionKey, useGoogleAnalytics, usePageHead } from "@/core";
+import { configInjectionKey, useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core";
 import { useUser } from "@/shared/account";
 import { GiftsSection, ProductsSection, useCart, useCoupon, usePurchaseOrderNumber } from "@/shared/cart";
 import {
@@ -217,10 +217,7 @@ usePageHead({
   title: t("pages.cart.meta.title"),
 });
 
-const breadcrumbs: IBreadcrumbs[] = [
-  { title: t("common.links.home"), route: { name: "Home" } },
-  { title: t("common.links.cart"), route: { name: "Cart" } },
-];
+const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: "Cart" } }]);
 
 const initialized = ref(false);
 const creatingOrder = ref(false);

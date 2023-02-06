@@ -1,12 +1,12 @@
 import { MaybeRef } from "@vueuse/core";
 import { CartAddressType, MemberAddressType, OrderAddressType, QuoteAddressType } from "@/xapi/types";
-import { LocationQueryValue } from "vue-router";
 
 export * from "./app-context";
 export * from "./category-tree";
 export * from "./currency";
 export * from "./facet";
 export * from "./global-variables";
+export * from "./line-items";
 export * from "./language";
 export * from "./menu";
 export * from "./modify";
@@ -30,20 +30,6 @@ export type UsePageSeoData = {
    */
   title?: MaybeRef<string | string[] | undefined>;
   meta?: Record<string, MaybeRef<string | undefined>>;
-};
-
-export type UseRouteQueryParamOptions<T = LocationQueryValue | LocationQueryValue[]> = {
-  defaultValue?: T | null;
-  validator?(queryValue: any): boolean;
-  onChange?(value: T, isChanged: boolean): void | Promise<void>;
-  // @default push
-  updateMethod?: "push" | "replace";
-  // @default true
-  removeFalsyValue?: boolean;
-  // @default true
-  removeNullishValue?: boolean;
-  // @default true
-  removeDefaultValue?: boolean;
 };
 
 export interface ISortInfo {
@@ -119,6 +105,7 @@ export interface IThemeConfigPreset {
   wishlists_limit?: number;
 
   search_min_chars?: number;
+  search_max_chars?: number;
 
   vendor_enabled?: boolean;
   rating_enabled?: boolean;

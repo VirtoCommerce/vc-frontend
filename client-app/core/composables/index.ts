@@ -1,4 +1,5 @@
 export { default as useAppContext } from "./useAppContext";
+export * from "./useBreadcrumbs";
 export { default as useCategories } from "./useCategories";
 export { default as useCategoriesRoutes } from "./useCategoriesRoutes";
 export { default as useCountries } from "./useCountries";
@@ -12,7 +13,7 @@ export { default as useLanguages } from "./useLanguages";
 export { default as useNavigations } from "./useNavigations";
 export { default as usePageHead } from "./usePageHead";
 export { default as useProductsRoutes } from "./useProductsRoutes";
-export { default as useRouteQueryParam } from "./useRouteQueryParam";
+export * from "./useRouteQueryParam";
 export { default as useThemeContext } from "./useThemeContext";
 export { default as useCatalogMenu } from "./useCatalogMenu";
 export { default as useComponentId } from "./useComponentId";

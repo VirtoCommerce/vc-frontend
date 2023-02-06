@@ -4,7 +4,7 @@
 
     <div class="max-w-screen-2xl px-5 md:px-12 mx-auto">
       <!-- Breadcrumbs -->
-      <Breadcrumbs class="hidden lg:block mb-3" :items="breadcrumbs" />
+      <VcBreadcrumbs class="hidden lg:block mb-3" :items="breadcrumbs" />
 
       <h1 class="text-2xl md:text-4xl font-bold uppercase">{{ product.name }}</h1>
 
@@ -60,19 +60,13 @@
 <script setup lang="ts">
 import { watchEffect, defineAsyncComponent, computed } from "vue";
 import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
-import { useGoogleAnalytics, usePageHead } from "@/core/composables";
+import { useGoogleAnalytics, useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useTemplate } from "@/shared/static-content";
 import { useCart } from "@/shared/cart";
-import {
-  useProduct,
-  useBreadcrumbs,
-  useRelatedProducts,
-  Breadcrumbs,
-  IBreadcrumbsItem,
-  CarouselProductCard,
-} from "@/shared/catalog";
+import { useProduct, useRelatedProducts, CarouselProductCard } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useI18n } from "vue-i18n";
+import { buildBreadcrumbs } from "@/core";
 
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
@@ -110,10 +104,10 @@ const relatedProductsCarouselOptions: CarouselOptions = {
 
 const { t } = useI18n();
 const { getItemsTotal } = useCart();
-const { buildBreadcrumbs } = useBreadcrumbs();
 const { product, loading, loadProduct } = useProduct();
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("lg");
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
 
@@ -125,9 +119,9 @@ usePageHead({
   },
 });
 
-const isMobile = breakpoints.smaller("lg");
-
-const breadcrumbs = computed<IBreadcrumbsItem[]>(() => buildBreadcrumbs(product.value?.breadcrumbs ?? []));
+const breadcrumbs = useBreadcrumbs(() =>
+  product.value ? buildBreadcrumbs(product.value.breadcrumbs) ?? [{ title: product.value.name }] : []
+);
 
 const variationsCartTotalAmount = eagerComputed<number>(() => {
   if (!product.value) {
