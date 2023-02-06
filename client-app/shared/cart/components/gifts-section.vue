@@ -1,7 +1,7 @@
 <template>
   <VcSectionWidget :title="$t('shared.cart.gifts_section.title')" icon="gift">
     <div class="border rounded divide-y">
-      <div v-for="gift in gifts" :key="gift.id" class="flex items-center justify-between px-6 py-3">
+      <div v-for="gift in gifts" :key="gift.id" class="flex items-center px-6 py-3">
         <VcCheckbox
           :model-value="gift.isAddedInCart"
           :disabled="disabled"
