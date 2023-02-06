@@ -7,10 +7,7 @@
           <!-- Vendor -->
           <div class="flex flex-wrap gap-x-3 max-w-full">
             <VcVendor :vendor="group.vendor" />
-            <VcRating
-              v-if="($cfg.rating_enabled && group.vendor?.rating) || true"
-              :rating="{ value: 2, reviewCount: 1245 }"
-            />
+            <VcRating v-if="$cfg.rating_enabled && group.vendor?.rating" :rating="group.vendor.rating" />
           </div>
 
           <CartLineItems
