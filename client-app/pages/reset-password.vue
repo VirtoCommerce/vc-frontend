@@ -69,8 +69,8 @@ usePageHead({
 
 const isSucceeded = ref(false);
 
-const { queryParam: userId } = useRouteQueryParam<string>("userId");
-const { queryParam: token } = useRouteQueryParam<string>("token");
+const userId = useRouteQueryParam<string>("userId");
+const token = useRouteQueryParam<string>("token");
 
 const isValidData = computed<boolean>(() => Boolean(userId.value && token.value));
 const isResetRoute = computed<boolean>(() => route.name === "ResetPassword");

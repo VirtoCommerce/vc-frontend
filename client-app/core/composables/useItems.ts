@@ -59,7 +59,7 @@ export function useItems<CustomSearchParams, Item>(
     ...overridingOptions,
   };
 
-  const { queryParam: sortQueryParam } = useRouteQueryParam<NonNullable<LocationQueryValue>>(QueryParamName.Sort, {
+  const sortQueryParam = useRouteQueryParam<NonNullable<LocationQueryValue>>(QueryParamName.Sort, {
     defaultValue: defaults.sort.toString(),
     validator: (sortValue: NonNullable<LocationQueryValue>) => {
       const sort = Sort.fromString(sortValue);
@@ -67,7 +67,7 @@ export function useItems<CustomSearchParams, Item>(
     },
   });
 
-  const { queryParam: filtersQueryParam } = useRouteQueryParam<NonNullable<LocationQueryValue>>(QueryParamName.Facets, {
+  const filtersQueryParam = useRouteQueryParam<NonNullable<LocationQueryValue>>(QueryParamName.Facets, {
     defaultValue: Filters.toString(defaults.filters),
     validator: (filtersValue: NonNullable<LocationQueryValue>) => {
       const filters = SearchPhraseParser.INSTANCE.parse(filtersValue).filters;
