@@ -18,19 +18,19 @@
     <div v-click-outside="() => open && hideList()" class="vc-select__container">
       <button type="button" :disabled="disabled" class="vc-select__button" @click="toggle">
         <span class="vc-select__button-content">
-          <slot v-if="($slots.placeholder || placeholder) && !selected" name="placeholder">
-            <VcSelectItem class="opacity-75">
-              <VcSelectText>
-                {{ placeholder }}
-              </VcSelectText>
+          <slot v-if="selected" name="selected" v-bind="{ item: selected }">
+            <VcSelectItem>
+              <VcSelectItemText>
+                {{ textField && selected ? selected[textField] : selected }}
+              </VcSelectItemText>
             </VcSelectItem>
           </slot>
 
-          <slot v-if="selected" name="selected" v-bind="{ item: selected }">
-            <VcSelectItem>
-              <VcSelectText>
-                {{ textField && selected ? selected[textField] : selected }}
-              </VcSelectText>
+          <slot v-else-if="$slots.placeholder || placeholder" name="placeholder">
+            <VcSelectItem class="opacity-75">
+              <VcSelectItemText>
+                {{ placeholder }}
+              </VcSelectItemText>
             </VcSelectItem>
           </slot>
         </span>
@@ -58,9 +58,9 @@
             >
               <slot name="item" v-bind="{ item, index, selected }">
                 <VcSelectItem>
-                  <VcSelectText>
+                  <VcSelectItemText>
                     {{ textField && item ? item[textField] : item }}
-                  </VcSelectText>
+                  </VcSelectItemText>
                 </VcSelectItem>
               </slot>
             </li>
@@ -186,7 +186,7 @@ function select(item?: any) {
   $hideEmptyDetails: "";
   $error: "";
 
-  @apply flex flex-col gap-0.5;
+  @apply flex flex-col;
 
   &--size {
     &--sm {
@@ -297,7 +297,7 @@ function select(item?: any) {
   }
 
   &__details {
-    @apply flex justify-end gap-2 min-h-[0.875rem] text-11;
+    @apply flex justify-end mt-0.5 gap-2 min-h-[0.875rem] text-11;
 
     #{$hideEmptyDetails} & {
       @apply empty:hidden;

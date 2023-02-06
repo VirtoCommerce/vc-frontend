@@ -48,11 +48,11 @@
       <!-- Sections for single page checkout -->
       <template v-if="!$cfg.checkout_multistep_enabled">
         <ShippingDetailsSection
+          :methods="availableShippingMethods"
           :shipment="shipment"
           :disabled="loading"
-          :availableMethods="availableShippingMethods"
           @change:address="onDeliveryAddressChange"
-          @change:method="updateShippingMethod"
+          @change:method="setShippingMethod"
         />
 
         <BillingDetailsSection
@@ -161,7 +161,7 @@ import { computed, inject, ref } from "vue";
 import { invoke } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { LineItemType, ShippingMethodType } from "@/xapi";
+import { LineItemType } from "@/xapi";
 import { configInjectionKey, useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core";
 import { useUser } from "@/shared/account";
 import { GiftsSection, ProductsSection, useCart, useCoupon, usePurchaseOrderNumber } from "@/shared/cart";
@@ -192,7 +192,6 @@ const {
   toggleGift,
   openClearCartModal,
   createQuoteFromCart,
-  updateShipment,
 } = useCart();
 const {
   comment,
@@ -206,6 +205,7 @@ const {
   openSelectPaymentMethodModal,
   onDeliveryAddressChange,
   onBillingAddressChange,
+  setShippingMethod,
   createOrderFromCart,
 } = useCheckout();
 const { purchaseOrderNumber, purchaseOrderNumberIsApplied, setPurchaseOrderNumber, removePurchaseOrderNumber } =
@@ -273,15 +273,6 @@ async function createQuote(): Promise<void> {
   await fetchCart();
 
   creatingQuote.value = false;
-}
-
-async function updateShippingMethod(method: ShippingMethodType) {
-  await updateShipment({
-    id: shipment.value?.id,
-    price: method.price?.amount,
-    shipmentMethodCode: method.code,
-    shipmentMethodOption: method.optionName,
-  });
 }
 
 invoke(async () => {

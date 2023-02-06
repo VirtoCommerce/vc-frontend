@@ -1,18 +1,18 @@
 <template>
-  <div>
+  <span>
     {{ address.line1 }},&nbsp;
     <template v-if="address.line2">{{ address.line2 }}&nbsp;</template>
     {{ address.city }},&nbsp; {{ address.countryName }},&nbsp;
     <template v-if="address.regionName">{{ address.regionName }},&nbsp;</template>
     {{ address.postalCode }}
-  </div>
+  </span>
 </template>
 
 <script setup lang="ts">
-import { OrderAddressType, QuoteAddressType } from "@/xapi";
+import { AnyAddressType } from "@/core";
 
 interface Props {
-  address: QuoteAddressType | OrderAddressType;
+  address: AnyAddressType;
 }
 
 defineProps<Props>();

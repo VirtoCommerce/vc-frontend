@@ -92,7 +92,7 @@ const text = useVModel(props, "modelValue", emit);
   $hideEmptyDetails: "";
   $error: "";
 
-  @apply flex flex-col gap-0.5 text-[color:var(--color-body-text)];
+  @apply flex flex-col text-[color:var(--color-body-text)];
 
   &--disabled {
     $disabled: &;
@@ -147,7 +147,7 @@ const text = useVModel(props, "modelValue", emit);
   }
 
   &__details {
-    @apply flex justify-end gap-2 min-h-[0.875rem] text-11;
+    @apply flex justify-end mt-0.5 gap-2 min-h-[0.875rem] text-11;
 
     #{$hideEmptyDetails} & {
       @apply empty:hidden;

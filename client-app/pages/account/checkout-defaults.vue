@@ -13,14 +13,12 @@
 
         <div class="mt-3 md:mt-1 flex flex-col space-y-5 md:space-y-0 md:flex-row md:space-x-7">
           <VcRadioButton
-            id="shipping"
             v-model="localCheckoutDefaults.deliveryMethod"
             value="shipping"
             :label="$t('pages.account.checkout_defaults.shipping_radio_label')"
           />
 
           <VcRadioButton
-            id="pickup"
             v-model="localCheckoutDefaults.deliveryMethod"
             value="pickup"
             :label="$t('pages.account.checkout_defaults.pickup_radio_label')"
@@ -37,38 +35,59 @@
         >
           <template #placeholder>
             <VcSelectItem>
-              <VcSelectImage src="/static/icons/placeholder/select-payment.svg" />
-              <VcSelectText>
-                {{ $t("common.placeholders.not_selected_payment_method") }}
-              </VcSelectText>
+              <VcSelectItemImage src="/static/icons/placeholder/select-payment.svg" />
+              <VcSelectItemText>
+                {{ $t("common.placeholders.select_payment_method") }}
+              </VcSelectItemText>
             </VcSelectItem>
           </template>
 
           <template #selected="{ item }">
             <VcSelectItem>
-              <VcSelectImage :src="item.logoUrl" />
-              <VcSelectText>
-                {{ item?.code }}
-              </VcSelectText>
+              <VcSelectItemImage :src="item.logoUrl" />
+              <VcSelectItemText>{{ item.code }}</VcSelectItemText>
             </VcSelectItem>
           </template>
 
           <template #item="{ item }">
             <VcSelectItem bordered>
-              <VcSelectImage :src="item.logoUrl" />
-              <VcSelectText>
-                {{ item?.code }}
-              </VcSelectText>
+              <VcSelectItemImage :src="item.logoUrl" />
+              <VcSelectItemText>{{ item.code }}</VcSelectItemText>
             </VcSelectItem>
           </template>
         </VcSelect>
 
-        <SelectShippingMethod
+        <VcSelect
+          v-model="localCheckoutDefaults.shippingMethodId"
+          :items="availableShippingMethods"
+          :label="$t('pages.account.checkout_defaults.shipping_method_label')"
+          value-field="id"
           class="mt-8 w-full"
-          :available-methods="availableShippingMethods"
-          :current-method-id="localCheckoutDefaults.shippingMethodId"
-          @result="setLocalCheckoutDefaults"
-        />
+          size="auto"
+        >
+          <template #placeholder>
+            <VcSelectItem>
+              <VcSelectItemImage src="/static/icons/placeholder/select-shipping.svg" />
+              <VcSelectItemText>
+                {{ $t("common.placeholders.select_delivery_method") }}
+              </VcSelectItemText>
+            </VcSelectItem>
+          </template>
+
+          <template #selected="{ item }">
+            <VcSelectItem>
+              <VcSelectItemImage :src="item.logoUrl" />
+              <VcSelectItemText>{{ item.code }} {{ item.optionName }}</VcSelectItemText>
+            </VcSelectItem>
+          </template>
+
+          <template #item="{ item }">
+            <VcSelectItem bordered>
+              <VcSelectItemImage :src="item.logoUrl" />
+              <VcSelectItemText>{{ item.code }} {{ item.optionName }}</VcSelectItemText>
+            </VcSelectItem>
+          </template>
+        </VcSelect>
 
         <VcButton
           :is-disabled="!isDirty"
@@ -86,12 +105,10 @@
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { clone, isEqual } from "lodash";
-import { ShippingMethodType } from "@/xapi/types";
 import { usePopup } from "@/shared/popup";
 import { usePageHead } from "@/core/composables";
 import { useCart } from "@/shared/cart";
 import { useUserCheckoutDefaults, CheckoutDefaults, CheckoutDefaultsSuccessDialog } from "@/shared/account";
-import { SelectShippingMethod } from "@/shared/checkout";
 
 const { t } = useI18n();
 const { openPopup } = usePopup();
@@ -106,10 +123,6 @@ const savedCheckoutDefaults = ref<CheckoutDefaults>(getUserCheckoutDefaults());
 const localCheckoutDefaults = ref<CheckoutDefaults>(clone(savedCheckoutDefaults.value));
 
 const isDirty = computed<boolean>(() => !isEqual(savedCheckoutDefaults.value, localCheckoutDefaults.value));
-
-function setLocalCheckoutDefaults(method: ShippingMethodType) {
-  localCheckoutDefaults.value.shippingMethodId = method.id;
-}
 
 function saveDefaults() {
   setUserCheckoutDefaults(localCheckoutDefaults.value);

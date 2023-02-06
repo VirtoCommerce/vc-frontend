@@ -1,22 +1,15 @@
 <template>
-  <span
-    :class="[
-      'vc-select-item',
-      {
-        'vc-select-item--bordered': bordered,
-      },
-    ]"
-  >
+  <span :class="['vc-select-item', { 'vc-select-item--bordered': bordered }]">
     <slot />
   </span>
 </template>
 
 <script setup lang="ts">
-interface Props {
+interface IProps {
   bordered?: boolean;
 }
 
-defineProps<Props>();
+defineProps<IProps>();
 </script>
 
 <style lang="scss">

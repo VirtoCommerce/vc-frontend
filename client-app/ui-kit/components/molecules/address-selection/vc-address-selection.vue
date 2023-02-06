@@ -1,0 +1,96 @@
+<template>
+  <div
+    :class="[
+      'vc-address-selection',
+      {
+        'vc-address-selection--readonly': readonly,
+        'vc-address-selection--disabled': disabled,
+      },
+    ]"
+  >
+    <template v-if="address">
+      <VcAddressLine class="vc-address-selection__address" :address="address" />
+
+      <VcButton
+        v-if="!readonly"
+        :is-disabled="disabled"
+        class="vc-address-selection__button !w-7 !h-7"
+        is-outline
+        @click="$emit('change')"
+      >
+        <VcIcon name="pencil" size="xs" />
+      </VcButton>
+    </template>
+
+    <p v-else class="vc-address-selection__no-address">
+      {{ $t("common.prefixes.please") }}
+      <button class="vc-address-selection__link" @click="!readonly && $emit('change')">
+        {{ placeholder || $t("common.placeholders.select_address") }}
+      </button>
+    </p>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { AnyAddressType } from "@/core";
+
+interface IEmits {
+  (event: "change"): void;
+}
+
+interface IProps {
+  readonly?: boolean;
+  disabled?: boolean;
+  address?: AnyAddressType;
+  placeholder?: string;
+}
+
+defineEmits<IEmits>();
+defineProps<IProps>();
+</script>
+
+<style lang="scss">
+.vc-address-selection {
+  $readonly: "";
+  $disabled: "";
+
+  @apply grow flex items-center gap-2;
+
+  &--readonly {
+    $readonly: &;
+  }
+
+  &--disabled {
+    $disabled: &;
+  }
+
+  &__address {
+    @apply grow;
+
+    #{$disabled} & {
+      @apply text-gray-500;
+    }
+  }
+
+  &__button {
+    @apply shrink-0;
+  }
+
+  &__no-address {
+    @apply grow select-none text-gray-500;
+  }
+
+  &__link {
+    @apply appearance-none lowercase border-b border-dashed border-current text-[color:var(--color-link)];
+
+    #{$readonly} &,
+    #{$disabled} & {
+      @apply text-gray-500 pointer-events-none;
+    }
+
+    &:hover {
+      @apply text-[color:var(--color-link-hover)];
+    }
+  }
+}
+</style>

@@ -1,20 +1,20 @@
 <template>
   <div class="space-y-2">
-    <div>
-      <div class="font-bold">{{ address.firstName }} {{ address.lastName }}</div>
+    <div class="flex flex-col">
+      <span class="font-bold">{{ address.firstName }} {{ address.lastName }}</span>
       <VcAddressLine :address="address" />
     </div>
 
-    <div>
-      <template v-if="address.phone">
+    <div class="empty:hidden flex flex-col">
+      <span v-if="address.phone">
         <span class="font-bold mr-1">{{ $t("common.labels.phone") }}:</span>
         {{ address.phone }}
-        <br />
-      </template>
-      <div v-if="address.email">
+      </span>
+
+      <span v-if="address.email">
         <span class="font-bold mr-1">{{ $t("common.labels.email") }}:</span>
         {{ address.email }}
-      </div>
+      </span>
     </div>
   </div>
 </template>

@@ -1,12 +1,11 @@
 <template>
   <VcLayoutWithRightSidebar is-sidebar-sticky>
     <ShippingDetailsSection
-      :delivery-address="shipment?.deliveryAddress"
+      :methods="availableShippingMethods"
+      :shipment="shipment"
       :disabled="loading"
-      :current-method-id="currentMethodId"
-      :available-methods="availableShippingMethods"
       @change:address="onDeliveryAddressChange"
-      @change:method="updateShippingMethod"
+      @change:method="setShippingMethod"
     />
 
     <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
@@ -41,32 +40,14 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { ShippingMethodType } from "@/xapi";
 import { useCart } from "@/shared/cart";
 import { OrderCommentSection, OrderSummary, ShippingDetailsSection, useCheckout } from "@/shared/checkout";
 
-const { loading, cart, hasValidationErrors, availableShippingMethods, updateShipment } = useCart();
-const { comment, shipment, isValidShipment, onDeliveryAddressChange } = useCheckout();
+const { loading, cart, hasValidationErrors, availableShippingMethods } = useCart();
+const { comment, shipment, isValidShipment, onDeliveryAddressChange, setShippingMethod } = useCheckout();
 
 const isDisabledNextStep = computed<boolean>(
   () => loading.value || hasValidationErrors.value || !isValidShipment.value
 );
 const isShowInvalidCartWarning = computed<boolean>(() => hasValidationErrors.value);
-
-const currentMethodId = computed(
-  () =>
-    availableShippingMethods.value.find(
-      (item: ShippingMethodType) =>
-        item.code === shipment.value?.shipmentMethodCode && item.optionName === shipment.value?.shipmentMethodOption
-    )?.id
-);
-
-async function updateShippingMethod(method: ShippingMethodType) {
-  await updateShipment({
-    id: shipment.value?.id,
-    price: method.price?.amount,
-    shipmentMethodCode: method.code,
-    shipmentMethodOption: method.optionName,
-  });
-}
 </script>
