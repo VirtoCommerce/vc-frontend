@@ -1,8 +1,8 @@
-import { LineItemType, OrderLineItemType, Vendor } from "@/xapi";
+import { CommonVendor, LineItemType, OrderLineItemType } from "@/xapi";
 
 export type TLineItemsGroupByVendor<T extends LineItemType | OrderLineItemType> = {
   items: T[];
-  vendor?: Vendor;
+  vendor?: CommonVendor;
 };
 
 export type TLineItemsGroupsByVendor<T extends LineItemType | OrderLineItemType> = Record<
