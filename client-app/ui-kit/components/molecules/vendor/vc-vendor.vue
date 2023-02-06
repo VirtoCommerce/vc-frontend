@@ -22,7 +22,7 @@ defineProps<Props>();
 
 <style lang="scss">
 .vc-vendor {
-  @apply flex gap-x-1.5 items-center text-[color:var(--color-primary)];
+  @apply flex gap-x-1.5 items-center min-w-0 text-[color:var(--color-primary)];
 
   &__icon {
     @apply flex-none;
