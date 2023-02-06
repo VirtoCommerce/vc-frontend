@@ -157,7 +157,7 @@
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { usePageHead } from "@/core";
+import { useBreadcrumbs, usePageHead } from "@/core";
 import { InputNewBulkItemType } from "@/xapi";
 import { AcceptedGifts, OrderSummary } from "@/shared/checkout";
 import { BackButtonInHeader } from "@/shared/layout";
@@ -193,15 +193,14 @@ usePageHead({
   title: computed(() => t("pages.account.order_details.meta.title", [order.value?.number])),
 });
 
-const isMobile = breakpoints.smaller("lg");
-const loadingAddItemsToCart = ref(false);
-
-const breadcrumbs = computed<IBreadcrumbs[]>(() => [
-  { title: t("common.links.home"), route: { name: "Home" } },
+const breadcrumbs = useBreadcrumbs(() => [
   { title: t("common.links.account"), route: { name: "Account" } },
   { title: t("common.links.orders"), route: { name: "Orders" } },
   { title: t("pages.account.order_details.title", [order.value?.number]) },
 ]);
+
+const isMobile = breakpoints.smaller("lg");
+const loadingAddItemsToCart = ref(false);
 
 const showPaymentButton = computed<boolean>(() => !!order.value && order.value.status === "New");
 const showReorderButton = computed<boolean>(() => !!order.value && order.value.status === "Completed");

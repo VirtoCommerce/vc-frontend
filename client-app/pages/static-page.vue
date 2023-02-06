@@ -20,15 +20,13 @@
 
 <script setup lang="ts">
 import { computed, unref } from "vue";
-import { useI18n } from "vue-i18n";
-import { usePageHead } from "@/core/composables";
+import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useStaticPage } from "@/shared/static-content";
-const { t } = useI18n();
 
 const template = useStaticPage();
 const templateName = computed(() => unref(template)?.settings?.name || unref(template)?.settings?.header || "");
 
-const breadcrumbs: IBreadcrumbs[] = [{ route: "/", title: t("pages.compare.links.home") }, { title: templateName }];
+const breadcrumbs = useBreadcrumbs(() => [{ title: templateName.value }]);
 
 usePageHead({
   title: computed(() => unref(template)?.settings?.seoInfo?.pageTitle || unref(template)?.settings?.name),
