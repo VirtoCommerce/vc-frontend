@@ -33,7 +33,7 @@ defineProps({
   }
 
   &__main {
-    @apply contents;
+    @apply contents min-w-0;
 
     @media (min-width: theme("screens.lg")) {
       @apply grow block space-y-6;

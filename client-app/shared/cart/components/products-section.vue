@@ -1,16 +1,13 @@
 <template>
-  <VcSectionWidget :title="$t('shared.cart.products_section.title')" icon="cube">
+  <VcSectionWidget :title="$t('shared.cart.products_section.title')" icon="cube" hide-desktop-title>
     <!-- Items grouped by Vendor -->
-    <template v-if="grouped">
+    <div v-if="grouped" class="space-y-8">
       <template v-for="(group, vendorId) in itemsGroupedByVendor" :key="vendorId">
-        <div v-if="group.items.length" class="lg:mb-5">
+        <div v-if="group.items.length" class="space-y-3">
           <!-- Vendor -->
-          <div class="pb-3 font-bold text-15">
-            <span class="mr-1">{{ $t("common.labels.vendor") }}:</span>
-            <Vendor v-if="group.vendor" :vendor="group.vendor" class="inline-flex flex-row items-end gap-x-3" />
-            <span v-else class="text-gray-400">
-              {{ $t("common.labels.not_available") }}
-            </span>
+          <div class="flex flex-wrap gap-x-3 max-w-full">
+            <VcVendor :vendor="group.vendor" />
+            <VcRating v-if="$cfg.rating_enabled && group.vendor?.rating" :rating="group.vendor.rating" />
           </div>
 
           <CartLineItems
@@ -22,10 +19,10 @@
           />
         </div>
       </template>
-    </template>
+    </div>
 
     <!-- Items not grouped by Vendor -->
-    <div v-else class="lg:mb-5">
+    <template v-else>
       <CartLineItems
         :items="items"
         :disabled="disabled"
@@ -33,9 +30,9 @@
         @change:item:quantity="$emit('change:item:quantity', $event)"
         @remove:item="$emit('remove:item', $event)"
       />
-    </div>
+    </template>
 
-    <div class="hidden md:flex justify-end">
+    <div class="hidden md:flex justify-end mt-5">
       <VcButton
         :is-disabled="disabled"
         kind="secondary"
@@ -54,7 +51,6 @@
 import { LineItemType, ValidationErrorType } from "@/xapi";
 import { TLineItemsGroupByVendor } from "@/core";
 import { CartLineItems } from "@/shared/cart";
-import { Vendor } from "@/shared/catalog";
 
 interface Props {
   grouped?: boolean;

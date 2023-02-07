@@ -1,21 +1,17 @@
 <template>
   <VcSectionWidget :title="$t('shared.cart.gifts_section.title')" icon="gift">
-    <div class="border rounded">
-      <div
-        v-for="gift in gifts"
-        :key="gift.id"
-        class="flex items-center justify-between px-7 py-6 border-b last:border-b-0"
-      >
+    <div class="border rounded divide-y">
+      <div v-for="gift in gifts" :key="gift.id" class="flex items-center px-6 py-3">
         <VcCheckbox
           :model-value="gift.isAddedInCart"
           :disabled="disabled"
-          class="mr-7"
+          class="mr-6"
           @change="$emit('toggle:gift', gift)"
         />
 
-        <VcImage :src="gift.imageUrl" class="mr-4 border aspect-square w-16 h-16" lazy />
+        <VcImage :src="gift.imageUrl" class="shrink-0 mr-4 w-[60px] h-[60px]" lazy />
 
-        <span class="flex-grow font-bold">
+        <span class="grow text-sm font-bold lg:text-13">
           {{ gift.name }}
         </span>
       </div>
