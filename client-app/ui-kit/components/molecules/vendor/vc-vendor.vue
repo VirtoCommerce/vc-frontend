@@ -1,9 +1,11 @@
 <template>
-  <div class="vc-vendor">
+  <div :class="['vc-vendor', { 'vc-vendor--not-available': !vendor?.name }]">
     <VcIcon name="vendor" size="sm" class="vc-vendor__icon" />
+
     <span class="vc-vendor__title">
       {{ $t("common.labels.vendor") }}:
-      <span :class="['vc-vendor__name', { 'vc-vendor__name--not-available': !vendor?.name }]">
+
+      <span class="vc-vendor__name">
         {{ vendor?.name || $t("common.labels.not_available") }}
       </span>
     </span>
@@ -11,10 +13,10 @@
 </template>
 
 <script setup lang="ts">
-import { Vendor } from "@/xapi/types";
+import { CommonVendor } from "@/xapi";
 
 interface Props {
-  vendor?: Vendor;
+  vendor?: CommonVendor;
 }
 
 defineProps<Props>();
@@ -22,7 +24,13 @@ defineProps<Props>();
 
 <style lang="scss">
 .vc-vendor {
-  @apply flex gap-x-1.5 items-center text-[color:var(--color-primary)];
+  $notAvailable: "";
+
+  @apply flex gap-x-1.5 items-center min-w-0 text-[color:var(--color-primary)];
+
+  &--not-available {
+    $notAvailable: &;
+  }
 
   &__icon {
     @apply flex-none;
@@ -33,7 +41,7 @@ defineProps<Props>();
   }
 
   &__name {
-    &--not-available {
+    #{$notAvailable} & {
       @apply text-gray-400;
     }
   }

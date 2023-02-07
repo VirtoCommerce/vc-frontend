@@ -58,7 +58,7 @@ defineProps({
   },
 
   breadcrumbs: {
-    type: Array as PropType<IBreadcrumbs[]>,
+    type: Array as PropType<IBreadcrumb[]>,
     default: () => [],
   },
 });

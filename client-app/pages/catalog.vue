@@ -5,7 +5,7 @@
   >
     <div class="px-5 mx-auto max-w-screen-2xl 2xl:px-18">
       <!-- Breadcrumbs -->
-      <Breadcrumbs class="mb-2.5 md:mb-4" :items="breadcrumbs" v-if="!isSearchPage" />
+      <VcBreadcrumbs class="mb-2.5 md:mb-4" :items="breadcrumbs" v-if="!isSearchPage" />
 
       <div class="flex items-start lg:gap-6">
         <!-- Mobile sidebar back cover -->
@@ -135,7 +135,7 @@
                 v-model="sortQueryParam"
                 text-field="name"
                 value-field="id"
-                :is-disabled="loading"
+                :disabled="loading"
                 :items="PRODUCT_SORTING_LIST"
                 class="w-full lg:w-48"
               />
@@ -312,7 +312,6 @@ import {
   watchEffect,
 } from "vue";
 import _ from "lodash";
-import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import {
   breakpointsTailwind,
@@ -324,12 +323,14 @@ import {
   whenever,
 } from "@vueuse/core";
 import {
+  buildBreadcrumbs,
   DEFAULT_PAGE_SIZE,
   FacetItem,
   FacetValueItem,
   getFilterExpressionFromFacets,
   PRODUCT_SORTING_LIST,
   QueryParamName,
+  useBreadcrumbs,
   useElementVisibility,
   useGoogleAnalytics,
   usePageHead,
@@ -337,12 +338,10 @@ import {
   useCategories,
 } from "@/core";
 import {
-  Breadcrumbs,
   CategorySelector,
   DisplayProducts,
   getFilterExpressionForAvailableIn,
   getFilterExpressionForInStock,
-  IBreadcrumbsItem,
   ProductsFilters,
   ProductsFiltersSidebar,
   ProductsSearchParams,
@@ -366,7 +365,6 @@ const props = defineProps<IProps>();
 const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const ga = useGoogleAnalytics();
-const { t } = useI18n();
 const {
   fetchProducts,
   fetchMoreProducts,
@@ -390,6 +388,10 @@ usePageHead({
     description: computed<string | undefined>(() => category.value?.seoInfo?.metaDescription),
   },
 });
+
+const breadcrumbs = useBreadcrumbs(() =>
+  category.value ? buildBreadcrumbs(category.value.breadcrumbs) ?? [{ title: category.value.name }] : []
+);
 
 const route = useRoute();
 const savedViewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
@@ -462,27 +464,6 @@ const isMobileFilterDirty = eagerComputed<boolean>(
       branches: savedBranches.value,
     } as ProductsFilters)
 );
-
-const breadcrumbs = computed<IBreadcrumbsItem[]>(() => {
-  const items: IBreadcrumbsItem[] = [{ url: "/", title: t("common.links.home") }];
-
-  if (!category.value) {
-    return items;
-  }
-
-  if (category.value.breadcrumbs?.length) {
-    category.value.breadcrumbs.forEach((breadcrumb) => {
-      items.push({
-        title: breadcrumb.title,
-        url: `/${breadcrumb.seoPath}`,
-      });
-    });
-  } else {
-    items.push({ title: category.value.name });
-  }
-
-  return items;
-});
 
 function sendGASelectItemEvent(product: Product) {
   ga.selectItem(product);

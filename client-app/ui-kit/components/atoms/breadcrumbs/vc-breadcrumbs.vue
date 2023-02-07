@@ -23,12 +23,9 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
+interface Props {
+  items: IBreadcrumb[];
+}
 
-defineProps({
-  items: {
-    type: Array as PropType<IBreadcrumbs[]>,
-    required: true,
-  },
-});
+defineProps<Props>();
 </script>

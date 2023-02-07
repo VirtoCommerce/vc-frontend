@@ -10,12 +10,12 @@
 </template>
 
 <script setup lang="ts">
-import { Vendor } from "@/xapi/types";
+import { CommonVendor } from "@/xapi";
 import { computed } from "vue";
 
 interface Props {
   withRating?: boolean;
-  vendor: Vendor;
+  vendor: CommonVendor;
 }
 
 const props = withDefaults(defineProps<Props>(), {

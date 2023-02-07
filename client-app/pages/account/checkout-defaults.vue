@@ -13,14 +13,12 @@
 
         <div class="mt-3 md:mt-1 flex flex-col space-y-5 md:space-y-0 md:flex-row md:space-x-7">
           <VcRadioButton
-            id="shipping"
             v-model="localCheckoutDefaults.deliveryMethod"
             value="shipping"
             :label="$t('pages.account.checkout_defaults.shipping_radio_label')"
           />
 
           <VcRadioButton
-            id="pickup"
             v-model="localCheckoutDefaults.deliveryMethod"
             value="pickup"
             :label="$t('pages.account.checkout_defaults.pickup_radio_label')"
@@ -31,27 +29,64 @@
           v-model="localCheckoutDefaults.paymentMethodCode"
           :items="availablePaymentMethods"
           :label="$t('pages.account.checkout_defaults.payment_method_label')"
-          :placeholder="$t('pages.account.checkout_defaults.payment_method_placeholder')"
-          text-field="code"
           value-field="code"
           class="mt-8 w-full"
-          size="lg"
+          size="auto"
         >
-          <template #first>{{ $t("pages.account.checkout_defaults.not_selected_placeholder") }}</template>
+          <template #placeholder>
+            <VcSelectItem>
+              <VcSelectItemImage src="/static/icons/placeholder/select-payment.svg" />
+              <VcSelectItemText>
+                {{ $t("common.placeholders.select_payment_method") }}
+              </VcSelectItemText>
+            </VcSelectItem>
+          </template>
+
+          <template #selected="{ item }">
+            <VcSelectItem>
+              <VcSelectItemImage :src="item.logoUrl" />
+              <VcSelectItemText>{{ item.code }}</VcSelectItemText>
+            </VcSelectItem>
+          </template>
+
+          <template #item="{ item }">
+            <VcSelectItem bordered>
+              <VcSelectItemImage :src="item.logoUrl" />
+              <VcSelectItemText>{{ item.code }}</VcSelectItemText>
+            </VcSelectItem>
+          </template>
         </VcSelect>
 
         <VcSelect
           v-model="localCheckoutDefaults.shippingMethodId"
           :items="availableShippingMethods"
           :label="$t('pages.account.checkout_defaults.shipping_method_label')"
-          :placeholder="$t('pages.account.checkout_defaults.shipping_method_placeholder')"
           value-field="id"
           class="mt-8 w-full"
-          size="lg"
+          size="auto"
         >
-          <template #selected="{ item }">{{ item?.code }} {{ item?.optionName }}</template>
-          <template #first>{{ $t("pages.account.checkout_defaults.not_selected_placeholder") }}</template>
-          <template #item="{ item }"> {{ item?.code }} {{ item?.optionName }}</template>
+          <template #placeholder>
+            <VcSelectItem>
+              <VcSelectItemImage src="/static/icons/placeholder/select-shipping.svg" />
+              <VcSelectItemText>
+                {{ $t("common.placeholders.select_delivery_method") }}
+              </VcSelectItemText>
+            </VcSelectItem>
+          </template>
+
+          <template #selected="{ item }">
+            <VcSelectItem>
+              <VcSelectItemImage :src="item.logoUrl" />
+              <VcSelectItemText>{{ item.code }} {{ item.optionName }}</VcSelectItemText>
+            </VcSelectItem>
+          </template>
+
+          <template #item="{ item }">
+            <VcSelectItem bordered>
+              <VcSelectItemImage :src="item.logoUrl" />
+              <VcSelectItemText>{{ item.code }} {{ item.optionName }}</VcSelectItemText>
+            </VcSelectItem>
+          </template>
         </VcSelect>
 
         <VcButton

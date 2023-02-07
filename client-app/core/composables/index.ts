@@ -1,4 +1,5 @@
 export { default as useAppContext } from "./useAppContext";
+export * from "./useBreadcrumbs";
 export { default as useCategoriesRoutes } from "./useCategoriesRoutes";
 export { default as useCountries } from "./useCountries";
 export { default as useCurrency } from "./useCurrency";

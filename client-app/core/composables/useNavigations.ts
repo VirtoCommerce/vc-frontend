@@ -1,7 +1,9 @@
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
 import { categoryToMenuLink, getTranslatedMenuLink, MenuLink, useCategories } from "@/core";
 import globals from "@/core/globals";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
+const breakpoints = useBreakpoints(breakpointsTailwind);
 const { category, fetchCategory } = useCategories();
 
 const loading = ref(true);
@@ -9,6 +11,8 @@ const loading = ref(true);
 const menuSchema = shallowRef<typeof import("../../../config/menu.json")>();
 const openedMenuLinksStack = shallowRef<MenuLink[]>([]);
 const matchedRouteName = ref("");
+
+const isMobile = breakpoints.smaller("lg");
 
 const desktopHeaderMenuLinks = computed<MenuLink[]>(() =>
   (menuSchema.value?.header.desktop || []).map((item: MenuLink) => getTranslatedMenuLink(item, globals.i18n))
@@ -64,10 +68,12 @@ async function fetchMenus() {
    */
   menuSchema.value = await import("../../../config/menu.json");
 
-  fetchCategory({
-    maxLevel: 2,
-    onlyActive: true,
-  });
+  if (isMobile.value) {
+    fetchCategory({
+      maxLevel: 2,
+      onlyActive: true,
+    });
+  }
 }
 
 function goBack() {

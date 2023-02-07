@@ -25,7 +25,7 @@
     </div>
     <div
       v-if="!isCollapsible || (isCollapsible && !collapsed)"
-      class="bg-white rounded-b border-l border-r border-b text-13 text-[color:var(--color-filter-card-content)]"
+      class="bg-white rounded-b border-l border-r border-b text-13 text-[color:var(--color-filter-card-content)] empty:hidden"
       :class="{ 'px-4 py-3.5': !fullWidthContent, 'border-t rounded-t': !withHeader }"
     >
       <slot></slot>

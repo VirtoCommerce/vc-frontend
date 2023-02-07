@@ -83,6 +83,9 @@
       "payment_number": "Payment ID",
       "payment_type": "Payment type"
     },
+    "prefixes": {
+      "please": "Please"
+    },
     "suffixes": {
       "from": "From",
       "per_item": " per item",
@@ -115,6 +118,9 @@
     "placeholders": {
       "enter_value": "Please enter value",
       "not_selected": "Not selected",
+      "select_address": "Select address",
+      "select_delivery_method": "Select delivery method",
+      "select_payment_method": "Select payment method",
       "email": "Enter your email address",
       "password": "Enter your password",
       "purchase_order_number": "Enter purchase order number",
@@ -497,11 +503,10 @@
         "title": "Shipping details",
         "labels": {
           "shipping_address": "Shipping address",
-          "shipping_method": "Shipping method"
+          "shipping_method": "Delivery method"
         },
-        "messages": {
-          "no_addresses_message": "You do not yet have any shipping address. Please choose or specify one.",
-          "unauthenticated_no_addresses_message": "You do not yet have any shipping address. Please specify one."
+        "links": {
+          "select_address": "select a shipping address"
         }
       },
       "billing_details_section": {

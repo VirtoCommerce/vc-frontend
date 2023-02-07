@@ -11,11 +11,9 @@
       $attrs.class,
     ]"
   >
-    <label v-if="label" :for="componentId" class="vc-textarea__label">
+    <VcLabel v-if="label" :for="componentId" :required="required" :error="error">
       {{ label }}
-
-      <span v-if="required" class="vc-textarea__asterisk">*</span>
-    </label>
+    </VcLabel>
 
     <textarea
       v-model="text"
@@ -94,7 +92,7 @@ const text = useVModel(props, "modelValue", emit);
   $hideEmptyDetails: "";
   $error: "";
 
-  @apply flex flex-col gap-1 text-[color:var(--color-body-text)];
+  @apply flex flex-col text-[color:var(--color-body-text)];
 
   &--disabled {
     $disabled: &;
@@ -131,8 +129,11 @@ const text = useVModel(props, "modelValue", emit);
       @apply resize-none;
     }
 
-    &:focus {
-      @apply outline outline-offset-0 outline-2 outline-[color:var(--color-primary-light)];
+    &:focus,
+    &:focus-visible {
+      @apply outline-none;
+
+      box-shadow: 0 0 0 2px var(--color-primary-light);
     }
 
     &[disabled],
@@ -146,7 +147,7 @@ const text = useVModel(props, "modelValue", emit);
   }
 
   &__details {
-    @apply flex justify-end gap-2 min-h-[0.875rem] text-11;
+    @apply flex justify-end mt-0.5 gap-2 min-h-[0.875rem] text-11;
 
     #{$hideEmptyDetails} & {
       @apply empty:hidden;

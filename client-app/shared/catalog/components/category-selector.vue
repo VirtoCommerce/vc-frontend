@@ -3,12 +3,12 @@
   <VcFilterCard v-if="!loading && displayedCategory" :with-header="!!parentCategory">
     <template #header>
       <router-link
-        :to="parentCategory?.route!"
+        :to="parentCategory!.route"
         class="grow py-0.5 px-1.5 -mx-1.5 rounded-sm text-[color:var(--color-filter-card-header)] hover:bg-gray-100"
       >
         <i class="fas fa-chevron-left text-[color:var(--color-primary)]"></i>
         <span class="font-bold ml-1.5">
-          {{ parentCategory?.title }}
+          {{ parentCategory!.title }}
         </span>
       </router-link>
     </template>
@@ -50,9 +50,9 @@
 </template>
 
 <script setup lang="ts">
+import { watchEffect } from "vue";
 import { Category } from "@/xapi";
 import { useCategorySelector } from "@/core";
-import { watchEffect } from "vue";
 
 interface IProps {
   selectedCategory?: Category;
