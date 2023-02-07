@@ -62,10 +62,10 @@
         class="flex-grow mr-4 h-10"
         input-class="!h-10 !px-4 font-medium text-sm"
         :without-border="true"
-        @keyup.enter="$router.push(searchPageLink)"
+        @keyup.enter="searchPhrase && $router.push(searchPageLink)"
       />
 
-      <VcButton class="w-10 !h-10" :to="searchPhrase ? searchPageLink : null">
+      <VcButton :to="searchPhrase && searchPageLink" class="w-10 !h-10">
         <i class="fas fa-search text-lg" />
       </VcButton>
 
