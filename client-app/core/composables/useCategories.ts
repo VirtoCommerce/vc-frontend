@@ -1,7 +1,6 @@
 import { computed, readonly, ref } from "vue";
 import { Category, getCategory, getChildCategories, QueryChildCategoriesArgs } from "@/xapi";
 import { Logger } from "@/core";
-import globals from "@/core/globals";
 
 export default function useCategories() {
   const loading = ref(false);
