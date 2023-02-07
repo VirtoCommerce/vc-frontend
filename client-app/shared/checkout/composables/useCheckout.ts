@@ -14,12 +14,7 @@ import {
 } from "@/xapi";
 import { useCart } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
-import {
-  AddOrUpdateAddressModal,
-  SelectAddressModal,
-  SelectPaymentMethodModal,
-  SelectShippingMethodModal,
-} from "@/shared/checkout";
+import { AddOrUpdateAddressModal, SelectAddressModal, SelectPaymentMethodModal } from "@/shared/checkout";
 import { AddressType, Logger, useGoogleAnalytics } from "@/core";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
@@ -61,6 +56,28 @@ export default function useCheckout() {
     () => isValidShipment.value && isValidPayment.value && !hasValidationErrors.value
   );
 
+  async function setShippingMethod(method: ShippingMethodType, options: { reloadCart?: boolean } = {}) {
+    await updateShipment(
+      {
+        id: shipment.value?.id,
+        price: method.price?.amount,
+        shipmentMethodCode: method.code,
+        shipmentMethodOption: method.optionName,
+      },
+      options.reloadCart
+    );
+  }
+
+  async function setPaymentMethod(method: PaymentMethodType, options: { reloadCart?: boolean } = {}) {
+    await updatePayment(
+      {
+        id: payment.value?.id,
+        paymentGatewayCode: method.code,
+      },
+      options.reloadCart
+    );
+  }
+
   async function setCheckoutDefaults() {
     const { shippingMethodId, paymentMethodCode } = getUserCheckoutDefaults();
     const defaultShippingMethod = availableShippingMethods.value.find((item) => item.id === shippingMethodId);
@@ -73,26 +90,12 @@ export default function useCheckout() {
       shippingMethodId &&
       defaultShippingMethod
     ) {
-      await updateShipment(
-        {
-          id: shipment.value?.id,
-          price: defaultShippingMethod.price?.amount,
-          shipmentMethodCode: defaultShippingMethod.code,
-          shipmentMethodOption: defaultShippingMethod.optionName,
-        },
-        false
-      );
+      await setShippingMethod(defaultShippingMethod, { reloadCart: false });
       reloadCart = true;
     }
 
     if (!payment.value?.paymentGatewayCode && paymentMethodCode && defaultPaymentMethod) {
-      await updatePayment(
-        {
-          id: payment.value?.id,
-          paymentGatewayCode: defaultPaymentMethod.code,
-        },
-        false
-      );
+      await setPaymentMethod(defaultPaymentMethod, { reloadCart: false });
       reloadCart = true;
     }
 
@@ -116,27 +119,6 @@ export default function useCheckout() {
     // TODO: Add ga.beginCheckout
 
     loading.value = false;
-  }
-
-  function openSelectShipmentMethodModal(): void {
-    openPopup({
-      component: SelectShippingMethodModal,
-      props: {
-        currentMethodCode: shipment.value?.shipmentMethodCode,
-        currentMethodOption: shipment.value?.shipmentMethodOption,
-        availableMethods: availableShippingMethods.value,
-        async onResult(method: ShippingMethodType) {
-          await updateShipment({
-            id: shipment.value?.id,
-            price: method.price?.amount,
-            shipmentMethodCode: method.code,
-            shipmentMethodOption: method.optionName,
-          });
-
-          ga.addShippingInfo(cart.value);
-        },
-      },
-    });
   }
 
   function openSelectPaymentMethodModal(): void {
@@ -350,7 +332,8 @@ export default function useCheckout() {
     initialize,
     onDeliveryAddressChange,
     onBillingAddressChange,
-    openSelectShipmentMethodModal,
+    setShippingMethod,
+    setPaymentMethod,
     openSelectPaymentMethodModal,
     createOrderFromCart,
     loading: readonly(loading),

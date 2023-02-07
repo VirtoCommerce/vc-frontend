@@ -1,90 +1,93 @@
 <template>
   <VcSectionWidget :title="$t('shared.checkout.shipping_details_section.title')" icon="truck">
-    <CheckoutLabeledBlock :label="$t('shared.checkout.shipping_details_section.labels.shipping_address')">
-      <template v-if="shipment?.deliveryAddress">
-        <VcAddressInfo :address="shipment.deliveryAddress" class="grow text-15" />
+    <div class="flex flex-col md:flex-row gap-6 md:gap-8">
+      <div class="md:w-3/5">
+        <VcLabel>
+          {{ $t("shared.checkout.shipping_details_section.labels.shipping_address") }}
+        </VcLabel>
 
-        <div>
-          <VcButton
-            :is-disabled="disabled"
-            size="sm"
-            is-outline
-            class="px-3 uppercase"
-            @click="$emit('change:address')"
-          >
-            {{ $t("common.buttons.change") }}
-          </VcButton>
+        <div :class="['flex flex-col min-h-[4.75rem] rounded border', { 'bg-gray-50 cursor-not-allowed': disabled }]">
+          <!--
+          <div class="p-3 border-b">
+            <VcCheckbox :disabled="disabled">
+              <span class="text-15 font-medium">Same as shipping address</span>
+            </VcCheckbox>
+          </div>
+          -->
+
+          <VcAddressSelection
+            :placeholder="$t('shared.checkout.shipping_details_section.links.select_address')"
+            :address="address"
+            :disabled="disabled"
+            class="p-3 text-15"
+            @change="$emit('change:address')"
+          />
         </div>
-      </template>
+      </div>
 
-      <template v-else>
-        <div class="text-[color:var(--color-danger)] flex items-center space-x-4">
-          <i class="fas fa-exclamation-triangle text-2xl" />
-          <span>
-            {{
-              isAuthenticated
-                ? $t("shared.checkout.shipping_details_section.messages.no_addresses_message")
-                : $t("shared.checkout.shipping_details_section.messages.unauthenticated_no_addresses_message")
-            }}
-          </span>
-        </div>
-
-        <div>
-          <VcButton
-            :is-disabled="disabled"
-            size="sm"
-            is-outline
-            class="px-3 uppercase"
-            @click="$emit('change:address')"
-          >
-            {{ $t("common.buttons.new_address") }}
-          </VcButton>
-        </div>
-      </template>
-    </CheckoutLabeledBlock>
-
-    <CheckoutLabeledBlock :label="$t('shared.checkout.shipping_details_section.labels.shipping_method')">
-      <div class="flex flex-row items-center space-x-4">
-        <template v-if="shipment?.shipmentMethodCode">
-          <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" lazy />
-          <span>
-            {{ shipment.shipmentMethodCode }}
-            {{ shipment.shipmentMethodOption }}
-            (<VcPriceDisplay :value="shipment.price" />)
-          </span>
+      <VcSelect
+        v-model="method"
+        :label="$t('shared.checkout.shipping_details_section.labels.shipping_method')"
+        :items="methods"
+        :disabled="disabled"
+        size="auto"
+        class="md:w-2/5"
+      >
+        <template #placeholder>
+          <VcSelectItem>
+            <VcSelectItemImage src="/static/icons/placeholder/select-shipping.svg" />
+            <VcSelectItemText>
+              {{ $t("common.placeholders.select_delivery_method") }}
+            </VcSelectItemText>
+          </VcSelectItem>
         </template>
 
-        <span v-else class="text-gray-600">
-          {{ $t("common.messages.not_defined") }}
-        </span>
-      </div>
+        <template #selected="{ item }">
+          <VcSelectItem>
+            <VcSelectItemImage :src="item.logoUrl" />
+            <VcSelectItemText>{{ item.code }} {{ item.optionName }}</VcSelectItemText>
+          </VcSelectItem>
+        </template>
 
-      <div>
-        <VcButton :is-disabled="disabled" size="sm" is-outline class="px-3 uppercase" @click="$emit('change:method')">
-          {{ shipment?.shipmentMethodCode ? $t("common.buttons.change") : $t("common.buttons.select") }}
-        </VcButton>
-      </div>
-    </CheckoutLabeledBlock>
+        <template #item="{ item }">
+          <VcSelectItem bordered>
+            <VcSelectItemImage :src="item.logoUrl" />
+            <VcSelectItemText>{{ item.code }} {{ item.optionName }}</VcSelectItemText>
+          </VcSelectItem>
+        </template>
+      </VcSelect>
+    </div>
   </VcSectionWidget>
 </template>
 
 <script setup lang="ts">
-import { ShipmentType } from "@/xapi";
-import { CheckoutLabeledBlock } from "@/shared/checkout";
-import { useUser } from "@/shared/account";
+import { computed } from "vue";
+import { CartAddressType, ShipmentType, ShippingMethodType } from "@/xapi";
 
-interface Props {
-  disabled?: boolean;
-  shipment?: ShipmentType;
-}
-
-interface Emits {
+interface IEmits {
   (event: "change:address"): void;
-  (event: "change:method"): void;
+  (event: "change:method", method: ShippingMethodType): void;
 }
 
-defineProps<Props>();
-defineEmits<Emits>();
+interface IProps {
+  methods: ShippingMethodType[];
+  shipment?: ShipmentType;
+  disabled?: boolean;
+}
 
-const { isAuthenticated } = useUser();
+const emit = defineEmits<IEmits>();
+const props = withDefaults(defineProps<IProps>(), {
+  methods: () => [],
+});
+
+const address = computed<CartAddressType | undefined>(() => props.shipment?.deliveryAddress);
+
+const method = computed<ShippingMethodType | undefined>({
+  get: () =>
+    props.methods.find(
+      (item) => item.id === props.shipment?.shipmentMethodCode + "_" + props.shipment?.shipmentMethodOption
+    ),
+
+  set: (value?: ShippingMethodType) => value && emit("change:method", value),
+});
 </script>

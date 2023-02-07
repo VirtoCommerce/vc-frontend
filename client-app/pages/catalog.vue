@@ -135,7 +135,7 @@
                 v-model="sortQueryParam"
                 text-field="name"
                 value-field="id"
-                :is-disabled="loading"
+                :disabled="loading"
                 :items="PRODUCT_SORTING_LIST"
                 class="w-full lg:w-48"
               />

@@ -66,14 +66,15 @@
           <VcSelect
             v-model="country"
             text-field="name"
-            :error-message="errors.countryCode"
-            :is-disabled="disabled"
+            :error="!!errors.countryCode"
+            :message="errors.countryCode"
+            :disabled="disabled"
             :items="countries"
             :label="$t('shared.account.address_form.country_label')"
             :placeholder="$t('shared.account.address_form.country_placeholder')"
             class="mb-4 w-full xl:w-7/12"
             size="lg"
-            is-required
+            required
           />
 
           <VcInput
@@ -90,9 +91,10 @@
             v-model="region"
             text-field="name"
             :items="regions"
-            :error-message="errors.regionId"
-            :is-required="!!regions.length"
-            :is-disabled="disabled || !regions.length"
+            :error="!!errors.regionId"
+            :message="errors.regionId"
+            :required="!!regions.length"
+            :disabled="disabled || !regions.length"
             :label="$t('shared.account.address_form.region_label')"
             :placeholder="$t('shared.account.address_form.region_placeholder')"
             class="mb-4 order-2 xl:order-none xl:w-5/12"

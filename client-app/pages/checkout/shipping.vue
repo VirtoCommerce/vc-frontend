@@ -1,10 +1,11 @@
 <template>
   <VcLayoutWithRightSidebar is-sidebar-sticky>
     <ShippingDetailsSection
+      :methods="availableShippingMethods"
       :shipment="shipment"
       :disabled="loading"
       @change:address="onDeliveryAddressChange"
-      @change:method="openSelectShipmentMethodModal"
+      @change:method="setShippingMethod"
     />
 
     <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
@@ -42,8 +43,8 @@ import { computed } from "vue";
 import { useCart } from "@/shared/cart";
 import { OrderCommentSection, OrderSummary, ShippingDetailsSection, useCheckout } from "@/shared/checkout";
 
-const { loading, cart, hasValidationErrors } = useCart();
-const { comment, shipment, isValidShipment, openSelectShipmentMethodModal, onDeliveryAddressChange } = useCheckout();
+const { loading, cart, hasValidationErrors, availableShippingMethods } = useCart();
+const { comment, shipment, isValidShipment, onDeliveryAddressChange, setShippingMethod } = useCheckout();
 
 const isDisabledNextStep = computed<boolean>(
   () => loading.value || hasValidationErrors.value || !isValidShipment.value

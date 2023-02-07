@@ -48,10 +48,11 @@
       <!-- Sections for single page checkout -->
       <template v-if="!$cfg.checkout_multistep_enabled">
         <ShippingDetailsSection
+          :methods="availableShippingMethods"
           :shipment="shipment"
           :disabled="loading"
           @change:address="onDeliveryAddressChange"
-          @change:method="openSelectShipmentMethodModal"
+          @change:method="setShippingMethod"
         />
 
         <BillingDetailsSection
@@ -183,6 +184,7 @@ const {
   cart,
   lineItemsGroupedByVendor,
   availableExtendedGifts,
+  availableShippingMethods,
   hasValidationErrors,
   fetchCart,
   changeItemQuantity,
@@ -200,10 +202,10 @@ const {
   isValidPayment,
   isValidCheckout,
   initialize: initCheckout,
-  openSelectShipmentMethodModal,
   openSelectPaymentMethodModal,
   onDeliveryAddressChange,
   onBillingAddressChange,
+  setShippingMethod,
   createOrderFromCart,
 } = useCheckout();
 const { purchaseOrderNumber, purchaseOrderNumberIsApplied, setPurchaseOrderNumber, removePurchaseOrderNumber } =
