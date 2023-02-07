@@ -30,17 +30,17 @@ const DemoLanding = () => import("@/pages/demo-landing.vue");
 const DevUIKit = () => import("@/pages/ui-kit.vue");
 
 export const mainRoutes: RouteRecordRaw[] = [
-  { path: "/", name: "Home", component: Home },
-  { path: "/403", name: "NoAccess", component: Error403 },
-  { path: "/404", name: "NotFound", component: Error404 },
-  { path: "/500", name: "InternalError", component: Error500 },
-  { path: "/sign-in", name: "SignIn", component: SingInPage },
-  { path: "/sign-up", name: "SignUp", component: SignUpPage },
-  { path: "/confirm-invitation", name: "ConfirmInvitation", component: ConfirmInvitation },
-  { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword },
-  { path: "/reset-password", name: "ResetPassword", component: ResetPassword },
-  { path: "/set-password", name: "SetPassword", component: ResetPassword },
-  { path: "/account/confirmemail", name: "ConfirmEmail", component: ConfirmEmail },
+  { path: "/", name: "Home", component: Home, meta: { public: true } },
+  { path: "/403", name: "NoAccess", component: Error403, meta: { public: true } },
+  { path: "/404", name: "NotFound", component: Error404, meta: { public: true } },
+  { path: "/500", name: "InternalError", component: Error500, meta: { public: true } },
+  { path: "/sign-in", name: "SignIn", component: SingInPage, meta: { public: true } },
+  { path: "/sign-up", name: "SignUp", component: SignUpPage, meta: { public: true } },
+  { path: "/confirm-invitation", name: "ConfirmInvitation", component: ConfirmInvitation, meta: { public: true } },
+  { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword, meta: { public: true } },
+  { path: "/reset-password", name: "ResetPassword", component: ResetPassword, meta: { public: true } },
+  { path: "/set-password", name: "SetPassword", component: ResetPassword, meta: { public: true } },
+  { path: "/account/confirmemail", name: "ConfirmEmail", component: ConfirmEmail, meta: { public: true } },
   {
     path: "/account",
     name: "Account",
@@ -60,7 +60,7 @@ export const mainRoutes: RouteRecordRaw[] = [
       requiresOrganization: true,
     },
   },
-  { path: "/demo-landing", name: "DemoLanding", component: DemoLanding },
+  { path: "/demo-landing", name: "DemoLanding", component: DemoLanding, meta: { public: true } },
   { path: "/branch/:branchId", name: "BranchPage", component: Branch, props: true },
   { path: "/search", name: "Search", component: Catalog },
   { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },
@@ -96,5 +96,6 @@ if (DEVELOPMENT || location.host.includes("dev-storefront.paas.govirto.")) {
     path: "/ui-kit",
     name: "DevUIKit",
     component: DevUIKit,
+    meta: { public: true },
   });
 }
