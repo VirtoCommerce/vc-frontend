@@ -516,6 +516,9 @@
           "shipping_method": "Payment method",
           "same_as_shipping_address": "Same as shipping address"
         },
+        "links": {
+          "select_address": "select a billing address"
+        },
         "messages": {
           "no_addresses": "You do not yet have any billing address. Please choose or specify one.",
           "unauthenticated_no_addresses": "You do not yet have any billing address. Please specify one."

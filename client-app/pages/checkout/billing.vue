@@ -3,6 +3,7 @@
     <BillingDetailsSection
       v-model:address-equals-shipping-address="billingAddressEqualsShipping"
       :payment="payment"
+      :shipment="shipment"
       :disabled="loading"
       @change:address="onBillingAddressChange"
       @change:method="openSelectPaymentMethodModal"
@@ -63,6 +64,7 @@ const router = useRouter();
 const { loading: loadingCart, cart, hasValidationErrors, fetchCart } = useCart();
 const {
   billingAddressEqualsShipping,
+  shipment,
   payment,
   isValidPayment,
   isValidCheckout,

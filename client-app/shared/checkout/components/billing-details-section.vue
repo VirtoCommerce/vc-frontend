@@ -1,58 +1,32 @@
 <template>
   <VcSectionWidget :title="$t('shared.checkout.billing_details_section.title')" icon="cash">
-    <CheckoutLabeledBlock :label="$t('shared.checkout.billing_details_section.labels.shipping_address')">
-      <div class="grow">
-        <VcCheckbox v-model="billingAddressEqualsShipping" :disabled="disabled" name="billingAddressEqualsShipping">
-          {{ $t("shared.checkout.billing_details_section.labels.same_as_shipping_address") }}
-        </VcCheckbox>
+    <div class="flex flex-col gap-6 md:flex-row md:gap-8">
+      <div class="flex flex-col md:grow">
+        <VcLabel>
+          {{ $t("shared.checkout.shipping_details_section.labels.shipping_address") }}
+        </VcLabel>
 
-        <div
-          v-if="!billingAddressEqualsShipping"
-          class="flex flex-col space-y-2 lg:space-y-0 lg:flex-row lg:justify-between lg:space-x-3 lg:items-center -mx-5 mt-5 p-5 pb-0 border-t"
-        >
-          <template v-if="payment?.billingAddress">
-            <VcAddressInfo :address="payment.billingAddress" class="grow text-15" />
+        <div :class="['grow rounded border divide-y', { 'bg-gray-50 cursor-not-allowed': disabled }]">
+          <VcCheckbox
+            class="p-3"
+            v-model="billingAddressEqualsShipping"
+            :disabled="disabled"
+            name="billingAddressEqualsShipping"
+          >
+            {{ $t("shared.checkout.billing_details_section.labels.same_as_shipping_address") }}
+          </VcCheckbox>
 
-            <div>
-              <VcButton
-                :is-disabled="disabled"
-                size="sm"
-                is-outline
-                class="px-3 uppercase"
-                @click="$emit('change:address')"
-              >
-                {{ $t("common.buttons.change") }}
-              </VcButton>
-            </div>
-          </template>
-
-          <template v-else>
-            <div class="text-[color:var(--color-danger)] flex items-center space-x-4">
-              <i class="fas fa-exclamation-triangle text-2xl" />
-              <span>
-                {{
-                  isAuthenticated
-                    ? $t("shared.checkout.billing_details_section.messages.no_addresses")
-                    : $t("shared.checkout.billing_details_section.messages.unauthenticated_no_addresses")
-                }}
-              </span>
-            </div>
-
-            <div>
-              <VcButton
-                :is-disabled="disabled"
-                size="sm"
-                is-outline
-                class="px-3 uppercase"
-                @click="$emit('change:address')"
-              >
-                {{ $t("common.buttons.new_address") }}
-              </VcButton>
-            </div>
-          </template>
+          <VcAddressSelection
+            :placeholder="$t('shared.checkout.billing_details_section.links.select_address')"
+            :address="billingAddressEqualsShipping ? shipment?.deliveryAddress : payment?.billingAddress"
+            :disabled="disabled"
+            @change="$emit('change:address')"
+            class="px-3 py-1.5 min-h-[3.313rem]"
+            :readonly="shipment?.deliveryAddress && billingAddressEqualsShipping"
+          />
         </div>
       </div>
-    </CheckoutLabeledBlock>
+    </div>
 
     <CheckoutLabeledBlock :label="$t('shared.checkout.billing_details_section.labels.shipping_method')">
       <div class="flex flex-row items-center space-x-4">
@@ -77,14 +51,14 @@
 
 <script setup lang="ts">
 import { useVModel } from "@vueuse/core";
-import { PaymentType } from "@/xapi";
+import { PaymentType, ShipmentType } from "@/xapi";
 import { CheckoutLabeledBlock } from "@/shared/checkout";
-import { useUser } from "@/shared/account";
 
 interface Props {
   disabled?: boolean;
   addressEqualsShippingAddress?: boolean;
   payment?: PaymentType;
+  shipment?: ShipmentType;
 }
 
 interface Emits {
@@ -95,8 +69,6 @@ interface Emits {
 
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
-
-const { isAuthenticated } = useUser();
 
 const billingAddressEqualsShipping = useVModel(props, "addressEqualsShippingAddress", emit);
 </script>
