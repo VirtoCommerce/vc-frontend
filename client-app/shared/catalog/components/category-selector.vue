@@ -54,12 +54,12 @@ import { Category } from "@/xapi";
 import { useCategorySelector } from "@/core";
 import { watchEffect } from "vue";
 
-interface Props {
+interface IProps {
   selectedCategory?: Category;
   loading: boolean;
 }
 
-const props = defineProps<Props>();
+const props = defineProps<IProps>();
 
 const { displayedCategory, parentCategory, subcategories, initCategorySelector } = useCategorySelector();
 
