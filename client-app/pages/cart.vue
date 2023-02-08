@@ -57,7 +57,9 @@
 
         <BillingDetailsSection
           v-model:address-equals-shipping-address="billingAddressEqualsShipping"
+          :methods="availablePaymentMethods"
           :payment="payment"
+          :shipment="shipment"
           :disabled="loading"
           @change:address="onBillingAddressChange"
           @change:method="openSelectPaymentMethodModal"
@@ -185,6 +187,7 @@ const {
   lineItemsGroupedByVendor,
   availableExtendedGifts,
   availableShippingMethods,
+  availablePaymentMethods,
   hasValidationErrors,
   fetchCart,
   changeItemQuantity,

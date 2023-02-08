@@ -2,11 +2,12 @@
   <VcLayoutWithRightSidebar is-sidebar-sticky>
     <BillingDetailsSection
       v-model:address-equals-shipping-address="billingAddressEqualsShipping"
+      :methods="availablePaymentMethods"
       :payment="payment"
       :shipment="shipment"
       :disabled="loading"
       @change:address="onBillingAddressChange"
-      @change:method="openSelectPaymentMethodModal"
+      @change:method="setPaymentMethod"
     />
 
     <template #sidebar>
@@ -61,15 +62,15 @@ import { useCart, usePurchaseOrderNumber } from "@/shared/cart";
 import { BillingDetailsSection, OrderSummary, useCheckout } from "@/shared/checkout";
 
 const router = useRouter();
-const { loading: loadingCart, cart, hasValidationErrors, fetchCart } = useCart();
+const { loading: loadingCart, cart, hasValidationErrors, fetchCart, availablePaymentMethods } = useCart();
 const {
   billingAddressEqualsShipping,
   shipment,
   payment,
   isValidPayment,
   isValidCheckout,
-  openSelectPaymentMethodModal,
   onBillingAddressChange,
+  setPaymentMethod,
   createOrderFromCart,
 } = useCheckout();
 const { purchaseOrderNumber, purchaseOrderNumberIsApplied, setPurchaseOrderNumber, removePurchaseOrderNumber } =
