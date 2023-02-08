@@ -1,5 +1,5 @@
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
-import { getTranslatedMenuLink, MenuLink, useCatalogMenu, useCategories } from "@/core";
+import { getTranslatedMenuLink, MenuLink, useCatalogMenu } from "@/core";
 import globals from "@/core/globals";
 
 const { catalogMenuItems, fetchCatalogMenuItems } = useCatalogMenu();
