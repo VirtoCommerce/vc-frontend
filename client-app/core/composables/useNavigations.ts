@@ -1,18 +1,14 @@
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
-import { categoryToMenuLink, getTranslatedMenuLink, MenuLink, useCategories } from "@/core";
+import { getTranslatedMenuLink, MenuLink, useCatalogMenu, useCategories } from "@/core";
 import globals from "@/core/globals";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const { category, fetchCategory } = useCategories();
+const { catalogMenuItems, fetchCatalogMenuItems } = useCatalogMenu();
 
 const loading = ref(true);
 
 const menuSchema = shallowRef<typeof import("../../../config/menu.json")>();
 const openedMenuLinksStack = shallowRef<MenuLink[]>([]);
 const matchedRouteName = ref("");
-
-const isMobile = breakpoints.smaller("lg");
 
 const desktopHeaderMenuLinks = computed<MenuLink[]>(() =>
   (menuSchema.value?.header.desktop || []).map((item: MenuLink) => getTranslatedMenuLink(item, globals.i18n))
@@ -23,7 +19,7 @@ const mobileMainMenuLinks = computed<MenuLink[]>(() =>
     const menuLink: MenuLink = getTranslatedMenuLink(item, globals.i18n);
 
     if (menuLink.id === "catalog") {
-      menuLink.children = category.value?.childCategories?.map(categoryToMenuLink);
+      menuLink.children = catalogMenuItems.value;
     }
 
     return menuLink;
@@ -67,13 +63,6 @@ async function fetchMenus() {
    * Fetch file (json) from Storefront to be able to edit file in Admin panel
    */
   menuSchema.value = await import("../../../config/menu.json");
-
-  if (isMobile.value) {
-    fetchCategory({
-      maxLevel: 2,
-      onlyActive: true,
-    });
-  }
 }
 
 function goBack() {
@@ -88,12 +77,13 @@ function goMainMenu() {
 
 async function selectMenuItem(item: MenuLink) {
   if (item.id === "catalog") {
-    await fetchCategory({
+    await fetchCatalogMenuItems({
       categoryId: item.categoryId,
       maxLevel: 2,
       onlyActive: true,
     });
-    item.children = category.value?.childCategories?.map(categoryToMenuLink);
+
+    item.children = catalogMenuItems.value;
   }
 
   if (!item.children) {

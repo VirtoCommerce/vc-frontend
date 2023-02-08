@@ -64,12 +64,10 @@ router.beforeEach(async (to) => {
 });
 
 fetchMenus();
-if (!isMobile.value) {
-  fetchCatalogMenuItems({
-    maxLevel: 2,
-    onlyActive: true,
-  });
-}
+fetchCatalogMenuItems({
+  maxLevel: 2,
+  onlyActive: true,
+});
 fetchCart();
 </script>
 
