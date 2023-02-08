@@ -36,14 +36,6 @@ fragment lineItemFields on LineItemType {
       valueType
       label
     }
-    vendor {
-      id
-      name
-      rating {
-        value
-        reviewCount
-      }
-    }
   }
   quantity
   sku
@@ -70,5 +62,13 @@ fragment lineItemFields on LineItemType {
   }
   taxTotal {
     ...moneyFields
+  }
+  vendor {
+    id
+    name
+    rating {
+      value
+      reviewCount
+    }
   }
 }

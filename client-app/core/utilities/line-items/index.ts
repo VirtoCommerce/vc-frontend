@@ -9,7 +9,7 @@ export function getLineItemsGroupedByVendor<T extends LineItemType | OrderLineIt
   const map: TLineItemsGroupsByVendor<T> = {};
 
   items.forEach((item) => {
-    const vendor = item.product?.vendor;
+    const vendor = item.vendor;
 
     if (vendor) {
       const vendorId = vendor.id;

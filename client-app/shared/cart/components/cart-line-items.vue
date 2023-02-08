@@ -63,7 +63,7 @@ import { groupBy, sumBy } from "lodash";
 import { LineItemType, ValidationErrorType } from "@/xapi";
 import CartLineItem from "./cart-line-item.vue";
 
-interface Props {
+interface IProps {
   disabled?: boolean;
   readonly?: boolean;
   items: LineItemType[];
@@ -71,17 +71,17 @@ interface Props {
   validationErrors: ValidationErrorType[];
 }
 
-interface Emits {
+interface IEmits {
   (event: "change:item:quantity", value: { item: LineItemType; quantity: number }): void;
   (event: "remove:item", value: LineItemType): void;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
   validationErrors: () => [],
 });
 
-defineEmits<Emits>();
+defineEmits<IEmits>();
 
 const subtotal = computed<number>(() => sumBy(props.items, (item: LineItemType) => item.extendedPrice?.amount));
 

@@ -22,14 +22,6 @@ fragment orderLineItemFields on OrderLineItemType {
       valueType
       label
     }
-    vendor {
-      id
-      name
-      rating {
-        value
-        reviewCount
-      }
-    }
   }
   quantity
   sku
@@ -46,4 +38,12 @@ fragment orderLineItemFields on OrderLineItemType {
     ...moneyFields
   }
   outerId
+  vendor {
+    id
+    name
+    rating {
+      value
+      reviewCount
+    }
+  }
 }
