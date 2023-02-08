@@ -14,7 +14,7 @@ import {
 } from "@/xapi";
 import { useCart } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
-import { AddOrUpdateAddressModal, SelectAddressModal, SelectPaymentMethodModal } from "@/shared/checkout";
+import { AddOrUpdateAddressModal, SelectAddressModal } from "@/shared/checkout";
 import { AddressType, Logger, useGoogleAnalytics } from "@/core";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
@@ -119,22 +119,6 @@ export default function useCheckout() {
     // TODO: Add ga.beginCheckout
 
     loading.value = false;
-  }
-
-  function openSelectPaymentMethodModal(): void {
-    openPopup({
-      component: SelectPaymentMethodModal,
-      props: {
-        currentMethodCode: payment.value?.paymentGatewayCode,
-        availableMethods: availablePaymentMethods.value,
-        async onResult(method: PaymentMethodType) {
-          await updatePayment({
-            id: payment.value?.id,
-            paymentGatewayCode: method.code,
-          });
-        },
-      },
-    });
   }
 
   async function updateBillingOrDeliveryAddress(
@@ -334,7 +318,6 @@ export default function useCheckout() {
     onBillingAddressChange,
     setShippingMethod,
     setPaymentMethod,
-    openSelectPaymentMethodModal,
     createOrderFromCart,
     loading: readonly(loading),
   };

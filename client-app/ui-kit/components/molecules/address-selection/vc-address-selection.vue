@@ -54,7 +54,7 @@ defineProps<IProps>();
   $readonly: "";
   $disabled: "";
 
-  @apply flex items-center gap-2 text-15;
+  @apply flex items-center gap-4 text-15;
 
   &--readonly {
     $readonly: &;

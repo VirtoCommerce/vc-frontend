@@ -1,7 +1,7 @@
 <template>
   <VcSectionWidget :title="$t('shared.checkout.shipping_details_section.title')" icon="truck">
-    <div class="flex flex-col gap-6 md:flex-row md:gap-8">
-      <div class="flex flex-col md:grow">
+    <div class="flex flex-col gap-6 lg:flex-row lg:gap-8">
+      <div class="lg:w-3/5">
         <VcLabel>
           {{ $t("shared.checkout.shipping_details_section.labels.shipping_address") }}
         </VcLabel>
@@ -11,7 +11,7 @@
             :placeholder="$t('shared.checkout.shipping_details_section.links.select_address')"
             :address="address"
             :disabled="disabled"
-            class="p-3 min-h-[4.625rem]"
+            class="px-3 py-1.5 min-h-[4.625rem]"
             @change="$emit('change:address')"
           />
         </div>
@@ -23,11 +23,11 @@
         :items="methods"
         :disabled="disabled"
         size="auto"
-        class="md:w-2/5"
+        class="lg:w-2/5"
       >
         <template #placeholder>
           <VcSelectItem>
-            <VcSelectItemImage src="/static/icons/placeholder/select-shipping.svg" />
+            <VcSelectItemImage src="/static/icons/placeholders/select-shipping.svg" class="bg-gray-100/80" />
             <VcSelectItemText>
               {{ $t("common.placeholders.select_delivery_method") }}
             </VcSelectItemText>
@@ -79,7 +79,6 @@ const method = computed<ShippingMethodType | undefined>({
     props.methods.find(
       (item) => item.id === props.shipment?.shipmentMethodCode + "_" + props.shipment?.shipmentMethodOption
     ),
-
   set: (value?: ShippingMethodType) => value && emit("change:method", value),
 });
 </script>
