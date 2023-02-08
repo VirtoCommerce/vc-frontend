@@ -24,7 +24,7 @@
           :class="{ 'opacity-25': !extendedItem.extended.isProductExists }"
         >
           <router-link
-            v-if="extendedItem.extended.route"
+            v-if="extendedItem.extended.isProductExists && extendedItem.extended.route"
             :to="extendedItem.extended.route"
             :title="extendedItem.name"
             class="text-[color:var(--color-link)] [word-break:break-word] hover:text-[color:var(--color-link-hover)]"
@@ -32,7 +32,7 @@
             {{ extendedItem.name }}
           </router-link>
 
-          <div class="[word-break:break-word]" v-else>
+          <div v-else class="[word-break:break-word]">
             {{ extendedItem.name }}
           </div>
         </div>
@@ -150,19 +150,19 @@ import { ref, computed, watchEffect } from "vue";
 import { LineItemType } from "@/xapi";
 import { extendCartItem } from "@/shared/checkout";
 
-interface Props {
+interface IProps {
   disabled?: boolean;
   readonly?: boolean;
   item: LineItemType;
 }
 
-interface Emits {
+interface IEmits {
   (event: "change:quantity", quantity: number): void;
   (event: "remove"): void;
 }
 
-const props = defineProps<Props>();
-const emit = defineEmits<Emits>();
+const props = defineProps<IProps>();
+const emit = defineEmits<IEmits>();
 
 let timeoutIdOfQuantityChange: number;
 
