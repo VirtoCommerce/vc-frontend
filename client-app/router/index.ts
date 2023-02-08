@@ -4,9 +4,11 @@ import { useUser } from "@/shared/account";
 import { useAppContext } from "@/core";
 
 export function createRouter(options: { base: string }) {
-  const { storeSettings } = useAppContext();
-  const { isAuthenticated, organization } = useUser();
   const { base } = options;
+  const { isAuthenticated, organization } = useUser();
+  const {
+    storeSettings: { anonymousAccessEnabled },
+  } = useAppContext();
 
   const router = _createRouter({
     routes: mainRoutes,
@@ -22,11 +24,10 @@ export function createRouter(options: { base: string }) {
 
   router.beforeEach((to, _from, next) => {
     // Protecting routes
-    if (
-      (to.meta.requiresAuth || !storeSettings.anonymousAccessEnabled) &&
-      !isAuthenticated.value &&
-      to.name !== "SignIn"
-    ) {
+    const unauthorizedAccessIsDenied: boolean =
+      !isAuthenticated.value && !to.meta.public && (to.meta.requiresAuth || !anonymousAccessEnabled);
+
+    if (unauthorizedAccessIsDenied) {
       return next({
         name: "SignIn",
         // save the location we were at to come back later

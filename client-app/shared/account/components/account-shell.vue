@@ -1,8 +1,8 @@
 <template>
-  <VcContainer :class="{ 'lg:pt-8': !$route.meta?.hideNavigation }">
+  <VcContainer :class="{ 'lg:pt-8': !$route.meta?.hideLeftSidebar }">
     <div class="flex gap-x-6">
       <!-- First column-->
-      <div v-if="!$route.meta?.hideNavigation" class="hidden shrink-0 lg:flex flex-col w-2/6 max-w-[236px] gap-y-6">
+      <div v-if="!$route.meta?.hideLeftSidebar" class="hidden shrink-0 lg:flex flex-col w-2/6 max-w-[236px] gap-y-6">
         <AccountNavigation />
       </div>
 

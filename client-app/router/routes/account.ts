@@ -39,7 +39,7 @@ export const accountRoutes: RouteRecordRaw[] = [
             meta: { layout: "Secure" },
           },
         ],
-        meta: { hideNavigation: true },
+        meta: { hideLeftSidebar: true },
         props: true,
       },
     ],
@@ -71,7 +71,7 @@ export const accountRoutes: RouteRecordRaw[] = [
             path: "",
             name: "ViewQuote",
             component: ViewQuote,
-            meta: { hideNavigation: true },
+            meta: { hideLeftSidebar: true },
             props: true,
           },
           {
