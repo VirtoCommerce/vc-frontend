@@ -12,13 +12,11 @@
     />
 
     <button v-if="searchPhrase" class="absolute right-[3.8rem] top-[0.95rem]" @click="reset">
-      <svg class="text-[color:var(--color-primary)]" height="14" width="14">
-        <use href="/static/images/delete.svg#main" />
-      </svg>
+      <VcIcon name="delete-2" size="xs" class="text-[color:var(--color-primary)]" />
     </button>
 
     <VcButton class="!rounded-l-none !rounded-r w-[2.75rem]" size="lg" @click="goToSearchResultsPage">
-      <i class="fas fa-search text-[color:var(--color-white)] cursor-pointer" />
+      <VcIcon name="search" size="md" class="text-[color:var(--color-white)]" />
     </VcButton>
 
     <!-- Dropdown -->
@@ -81,9 +79,7 @@
 
         <!-- Not found -->
         <div v-else-if="!loading" class="my-16 text-center">
-          <svg width="47" height="47" class="inline-block mr-5 text-primary">
-            <use href="/static/images/search-not-found.svg#search-not-found" />
-          </svg>
+          <VcIcon name="search-not-found" class="!w-12 !h-12 inline-block mr-5 text-[color:var(--color-primary)]" />
 
           <i18n-t class="inline-block" keypath="shared.layout.search_bar.no_results" tag="p">
             <template v-slot:keyword>
