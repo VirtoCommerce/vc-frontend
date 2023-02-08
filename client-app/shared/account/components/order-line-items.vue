@@ -51,7 +51,7 @@
               :class="{ 'opacity-25': !item.extended.isProductExists }"
             >
               <router-link
-                v-if="item.extended.route"
+                v-if="item.extended.isProductExists && item.extended.route"
                 :to="item.extended.route"
                 :title="item.name"
                 class="text-[color:var(--color-link)] [word-break:break-word]"
@@ -60,7 +60,7 @@
                 {{ item.name }}
               </router-link>
 
-              <div class="[word-break:break-word]" v-else>
+              <div v-else class="[word-break:break-word]">
                 {{ item.name }}
               </div>
             </div>
