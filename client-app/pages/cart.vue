@@ -57,10 +57,12 @@
 
         <BillingDetailsSection
           v-model:address-equals-shipping-address="billingAddressEqualsShipping"
+          :methods="availablePaymentMethods"
           :payment="payment"
+          :shipment="shipment"
           :disabled="loading"
-          @change:address="onBillingAddressChange"
-          @change:method="openSelectPaymentMethodModal"
+          @change:address="onChangeBillingAddress"
+          @change:method="setPaymentMethod"
         />
 
         <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" :disabled="loading" />
@@ -185,6 +187,7 @@ const {
   lineItemsGroupedByVendor,
   availableExtendedGifts,
   availableShippingMethods,
+  availablePaymentMethods,
   hasValidationErrors,
   fetchCart,
   changeItemQuantity,
@@ -202,10 +205,10 @@ const {
   isValidPayment,
   isValidCheckout,
   initialize: initCheckout,
-  openSelectPaymentMethodModal,
   onDeliveryAddressChange,
   onBillingAddressChange,
   setShippingMethod,
+  setPaymentMethod,
   createOrderFromCart,
 } = useCheckout();
 const { purchaseOrderNumber, purchaseOrderNumberIsApplied, setPurchaseOrderNumber, removePurchaseOrderNumber } =
@@ -236,6 +239,14 @@ async function handleRemoveItem(lineItem: LineItemType): Promise<void> {
    * Send Google Analytics event for an item was removed from cart.
    */
   ga.removeItemFromCart(lineItem);
+}
+
+function onChangeBillingAddress() {
+  if (billingAddressEqualsShipping.value) {
+    onDeliveryAddressChange();
+  } else {
+    onBillingAddressChange();
+  }
 }
 
 async function createOrder(): Promise<void> {

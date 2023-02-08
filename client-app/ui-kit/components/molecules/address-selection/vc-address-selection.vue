@@ -54,7 +54,7 @@ defineProps<IProps>();
   $readonly: "";
   $disabled: "";
 
-  @apply grow flex items-center gap-2;
+  @apply flex items-center gap-4 text-15;
 
   &--readonly {
     $readonly: &;
@@ -67,6 +67,7 @@ defineProps<IProps>();
   &__address {
     @apply grow;
 
+    #{$readonly} &,
     #{$disabled} & {
       @apply text-gray-500;
     }
@@ -83,7 +84,6 @@ defineProps<IProps>();
   &__link {
     @apply appearance-none lowercase border-b border-dashed border-current text-[color:var(--color-link)];
 
-    #{$readonly} &,
     #{$disabled} & {
       @apply text-gray-500 pointer-events-none;
     }

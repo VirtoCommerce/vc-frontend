@@ -35,7 +35,7 @@
         >
           <template #placeholder>
             <VcSelectItem>
-              <VcSelectItemImage src="/static/icons/placeholder/select-payment.svg" />
+              <VcSelectItemImage src="/static/icons/placeholders/select-payment.svg" class="bg-gray-100/80" />
               <VcSelectItemText>
                 {{ $t("common.placeholders.select_payment_method") }}
               </VcSelectItemText>
@@ -67,7 +67,7 @@
         >
           <template #placeholder>
             <VcSelectItem>
-              <VcSelectItemImage src="/static/icons/placeholder/select-shipping.svg" />
+              <VcSelectItemImage src="/static/icons/placeholders/select-shipping.svg" class="bg-gray-100/80" />
               <VcSelectItemText>
                 {{ $t("common.placeholders.select_delivery_method") }}
               </VcSelectItemText>

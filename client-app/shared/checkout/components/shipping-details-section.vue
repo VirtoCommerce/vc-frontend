@@ -1,25 +1,17 @@
 <template>
   <VcSectionWidget :title="$t('shared.checkout.shipping_details_section.title')" icon="truck">
-    <div class="flex flex-col md:flex-row gap-6 md:gap-8">
-      <div class="md:w-3/5">
+    <div class="flex flex-col gap-6 lg:flex-row lg:gap-8">
+      <div class="lg:w-3/5">
         <VcLabel>
           {{ $t("shared.checkout.shipping_details_section.labels.shipping_address") }}
         </VcLabel>
 
-        <div :class="['flex flex-col min-h-[4.75rem] rounded border', { 'bg-gray-50 cursor-not-allowed': disabled }]">
-          <!--
-          <div class="p-3 border-b">
-            <VcCheckbox :disabled="disabled">
-              <span class="text-15 font-medium">Same as shipping address</span>
-            </VcCheckbox>
-          </div>
-          -->
-
+        <div :class="['grow rounded border divide-y', { 'bg-gray-50 cursor-not-allowed': disabled }]">
           <VcAddressSelection
             :placeholder="$t('shared.checkout.shipping_details_section.links.select_address')"
             :address="address"
             :disabled="disabled"
-            class="p-3 text-15"
+            class="px-3 py-1.5 min-h-[4.625rem]"
             @change="$emit('change:address')"
           />
         </div>
@@ -31,11 +23,11 @@
         :items="methods"
         :disabled="disabled"
         size="auto"
-        class="md:w-2/5"
+        class="lg:w-2/5"
       >
         <template #placeholder>
           <VcSelectItem>
-            <VcSelectItemImage src="/static/icons/placeholder/select-shipping.svg" />
+            <VcSelectItemImage src="/static/icons/placeholders/select-shipping.svg" class="bg-gray-100/80" />
             <VcSelectItemText>
               {{ $t("common.placeholders.select_delivery_method") }}
             </VcSelectItemText>
@@ -87,7 +79,6 @@ const method = computed<ShippingMethodType | undefined>({
     props.methods.find(
       (item) => item.id === props.shipment?.shipmentMethodCode + "_" + props.shipment?.shipmentMethodOption
     ),
-
   set: (value?: ShippingMethodType) => value && emit("change:method", value),
 });
 </script>
