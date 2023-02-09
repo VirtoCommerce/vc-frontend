@@ -17,11 +17,11 @@
       <div class="vc-quote-line-items__total text-right">
         {{ $t("pages.account.quote_details.line_items.total") }}
       </div>
-      <div class="vc-quote-line-items__remove-button w-8" v-if="!readonly"></div>
+      <div v-if="!readonly" class="vc-quote-line-items__remove-button w-8"></div>
     </div>
 
     <!-- table body -->
-    <div class="flex flex-col gap-6 md:gap-0 md:border-x md:divide-y" v-if="items.length">
+    <div v-if="items.length" class="flex flex-col gap-6 md:gap-0 md:border-x md:divide-y">
       <div
         v-for="item in extendedItems"
         :key="item.id"
@@ -59,7 +59,7 @@
                 {{ item.name }}
               </router-link>
 
-              <div class="[word-break:break-word]" v-else>
+              <div v-else class="[word-break:break-word]">
                 {{ item.name }}
               </div>
             </div>
@@ -69,9 +69,9 @@
             <!-- PROPERTIES -->
             <div class="vc-quote-line-items__properties w-full">
               <div
-                class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[33%_1fr] lg:text-xs"
                 v-for="property in item.extended.displayProperties"
                 :key="property.id"
+                class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[33%_1fr] lg:text-xs"
               >
                 <div class="min-w-0 font-medium capitalize text-gray-600 md:font-bold md:text-gray-800">
                   <div class="truncate">{{ property.label }}:</div>
@@ -152,8 +152,8 @@
 
           <!-- REMOVE BUTTON -->
           <div
-            class="vc-quote-line-items__remove-button absolute -top-3 -right-3 md:static md:flex md:justify-end md:w-8"
             v-if="!readonly"
+            class="vc-quote-line-items__remove-button absolute -top-3 -right-3 md:static md:flex md:justify-end md:w-8"
           >
             <button
               type="button"
@@ -169,7 +169,7 @@
       </div>
     </div>
 
-    <div class="p-3 border-x" v-else>
+    <div v-else class="p-3 border-x">
       <VcAlert type="warning" icon>
         {{ $t("pages.account.quote_details.no_items_message") }}
       </VcAlert>

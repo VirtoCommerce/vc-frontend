@@ -2,7 +2,7 @@
   <div>
     <!-- Title block -->
     <div class="flex justify-between items-center mx-5 md:mx-0">
-      <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.account.orders.title'" />
+      <h2 v-t="'pages.account.orders.title'" class="text-gray-800 text-3xl font-bold uppercase" />
     </div>
 
     <!-- Mobile filters sidebar -->
@@ -49,7 +49,7 @@
       </div>
     </VcPopupSidebar>
 
-    <div class="-mt-5" ref="stickyMobileHeaderAnchor"></div>
+    <div ref="stickyMobileHeaderAnchor" class="-mt-5"></div>
 
     <!-- Page Toolbar -->
     <PageToolbarBlock
@@ -92,8 +92,8 @@
             class="w-full"
             input-class="font-medium rounded-r-none !text-sm disabled:bg-gray-200 !pl-4 !pr-11"
             :is-disabled="ordersLoading"
-            @keypress.enter="applyKeyword"
             :placeholder="$t('pages.account.orders.search_placeholder')"
+            @keypress.enter="applyKeyword"
           />
 
           <button v-if="localKeyword" class="absolute right-0 top-0 h-11 px-4" @click="resetKeyword">
@@ -168,14 +168,14 @@
         :sort="sort"
         :pages="pages"
         :page="page"
-        @itemClick="goToOrderDetails"
-        @headerClick="applySorting"
-        @pageChanged="changePage"
+        @item-click="goToOrderDetails"
+        @header-click="applySorting"
+        @page-changed="changePage"
       >
         <template #mobile-item="itemData">
           <div class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200 cursor-pointer">
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.orders.order_number_label'" />
+              <span v-t="'pages.account.orders.order_number_label'" class="text-sm text-gray-400" />
 
               <span class="pr-4 font-extrabold overflow-hidden overflow-ellipsis">
                 {{ itemData.item.number }}
@@ -187,7 +187,7 @@
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.orders.date_label'" />
+              <span v-t="'pages.account.orders.date_label'" class="text-sm text-gray-400" />
 
               <span class="overflow-hidden overflow-ellipsis">
                 {{ $d(itemData.item?.createdDate) }}
@@ -195,7 +195,7 @@
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.orders.total_label'" />
+              <span v-t="'pages.account.orders.total_label'" class="text-sm text-gray-400" />
 
               <span class="overflow-hidden overflow-ellipsis font-extrabold">
                 {{ itemData.item.total?.formattedAmount }}
@@ -207,22 +207,22 @@
         <template #mobile-skeleton>
           <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200">
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.orders.order_number_label'"></span>
+              <span v-t="'pages.account.orders.order_number_label'" class="text-sm text-gray-400"></span>
               <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.orders.date_label'"></span>
+              <span v-t="'pages.account.orders.date_label'" class="text-sm text-gray-400"></span>
               <div class="h-6 bg-gray-200 animate-pulse"></div>
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.orders.total_label'"></span>
+              <span v-t="'pages.account.orders.total_label'" class="text-sm text-gray-400"></span>
               <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.orders.status_label'"></span>
+              <span v-t="'pages.account.orders.status_label'" class="text-sm text-gray-400"></span>
               <div class="h-6 bg-gray-200 animate-pulse"></div>
             </div>
           </div>

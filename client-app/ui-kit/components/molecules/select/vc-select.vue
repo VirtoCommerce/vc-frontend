@@ -39,9 +39,17 @@
       </button>
 
       <transition :leave-active-class="`transition duration-${transitionDuration} ease-in`" leave-to-class="opacity-0">
-        <div v-show="open" class="vc-select__dropdown">
+        <div v-if="open" class="vc-select__dropdown">
           <ul ref="listElement" class="vc-select__list">
-            <li v-if="$slots.first" class="vc-select__item" @click="select()">
+            <li
+              v-if="$slots.first"
+              class="vc-select__item"
+              tabIndex="0"
+              role="option"
+              :aria-selected="!selected"
+              @click="select()"
+              @keyup.enter="select()"
+            >
               <slot name="first" />
             </li>
 
@@ -54,7 +62,11 @@
                   'vc-select__item--active': isActiveItem(item),
                 },
               ]"
+              tabIndex="0"
+              role="option"
+              :aria-selected="isActiveItem(item)"
               @click="select(item)"
+              @keyup.enter="select(item)"
             >
               <slot name="item" v-bind="{ item, index, selected }">
                 <VcSelectItem>
@@ -131,6 +143,7 @@ const selected = computed(() => {
   return props.modelValue;
 });
 
+/** @deprecated Replace with the prepared computed array */
 function isActiveItem(item: any): boolean {
   const itemValue = props.valueField && item ? item[props.valueField] : item;
   return itemValue === props.modelValue;
@@ -245,8 +258,9 @@ function select(item?: any) {
       @apply h-auto text-sm;
     }
 
-    #{$opened} & {
-      box-shadow: 0 0 0 2px var(--color-primary-light);
+    #{$opened} &,
+    &:focus {
+      @apply outline outline-offset-0 outline-2 outline-[color:var(--color-primary-light)];
     }
 
     #{$disabled} &,
@@ -288,6 +302,10 @@ function select(item?: any) {
 
     &:hover {
       @apply bg-gray-100;
+    }
+
+    &:focus {
+      @apply outline -outline-offset-2 outline-2 outline-[color:var(--color-primary-light)];
     }
 
     &--active,

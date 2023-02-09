@@ -22,16 +22,16 @@
 
       <button
         v-if="subcategories.length > SHORT_VIEW_ITEMS_COUNT"
-        @click="toggleShowAll"
         class="px-2 py-1 text-sm cursor-pointer flex items-baseline"
+        @click="toggleShowAll"
       >
         <span
-          class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
           v-t="
             showAll
               ? 'shared.layout.header.bottom_header.catalog_menu.hide_more'
               : 'shared.layout.header.bottom_header.catalog_menu.show_more'
           "
+          class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
         />
         <i
           class="ml-[5px] fas text-[color:var(--color-primary)]"

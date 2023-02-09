@@ -70,7 +70,7 @@
             :is-available="extendedItem.extended.isProductExists"
             :quantity="extendedItem.product?.availabilityData?.availableQuantity"
           />
-          <VcCountInCart :productId="extendedItem.product?.id" />
+          <VcCountInCart :product-id="extendedItem.product?.id" />
         </div>
       </div>
 

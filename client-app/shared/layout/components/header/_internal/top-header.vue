@@ -9,10 +9,10 @@
 
     <div class="flex items-center text-13">
       <!-- Call us block -->
-      <div class="flex items-center" v-if="$cfg.support_phone_number">
+      <div v-if="$cfg.support_phone_number" class="flex items-center">
         <i class="fas fa-phone text-[color:var(--color-primary)] mr-1.5 mt-0.5" />
 
-        <span class="font-thin mr-1" v-t="'shared.layout.header.top_header.call_us_label'" />
+        <span v-t="'shared.layout.header.top_header.call_us_label'" class="font-thin mr-1" />
 
         <a
           class="py-1 font-semibold text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
@@ -43,7 +43,7 @@
           <!-- Operator -->
           <template v-if="operator">
             <span class="font-bold">{{ operator.contact?.fullName || operator.userName }}</span>
-            <span class="text-gray-400" v-t="'shared.layout.header.top_header.logged_in_as'" />
+            <span v-t="'shared.layout.header.top_header.logged_in_as'" class="text-gray-400" />
           </template>
 
           <button

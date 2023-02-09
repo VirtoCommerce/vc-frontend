@@ -27,7 +27,7 @@
               class="transition-opacity duration-300 delay-100 ease-in-out"
               :is-text-truncate-enabled="!!selectedBranchesIds.length"
             >
-              <VcCheckbox class="mr-3 cursor-pointer" v-model="selectedBranchesIds" :value="branch.id"> </VcCheckbox>
+              <VcCheckbox v-model="selectedBranchesIds" class="mr-3 cursor-pointer" :value="branch.id"> </VcCheckbox>
             </BranchItem>
           </template>
         </transition-group>
@@ -71,7 +71,7 @@
               class="transition-opacity duration-300 delay-100 ease-in-out"
               :is-text-truncate-enabled="!!selectedBranchesIds.length"
             >
-              <VcCheckbox class="mr-3 cursor-pointer" v-model="selectedBranchesIds" :value="branch.id"> </VcCheckbox>
+              <VcCheckbox v-model="selectedBranchesIds" class="mr-3 cursor-pointer" :value="branch.id"> </VcCheckbox>
             </BranchItem>
           </template>
         </transition-group>
@@ -122,11 +122,11 @@
         <template v-for="(branch, index) in branches">
           <BranchItem
             v-if="(showSelectedBranchesMobile && isBranchSelected(index)) || !showSelectedBranchesMobile"
+            :key="branch.id"
             :branch="branch"
             :is-text-truncate-enabled="false"
-            :key="branch.id"
           >
-            <VcCheckbox class="mr-3 cursor-pointer" v-model="selectedBranchesIds" :value="branch.id"> </VcCheckbox>
+            <VcCheckbox v-model="selectedBranchesIds" class="mr-3 cursor-pointer" :value="branch.id"> </VcCheckbox>
           </BranchItem>
         </template>
       </div>
@@ -237,6 +237,7 @@ watch(selectedBranchesIds, () => {
   }
 });
 </script>
+
 <style lang="scss">
 .branch-enter-from,
 .branch-leave-to {

@@ -11,11 +11,11 @@ import { computed, readonly, ref } from "vue";
 import { eagerComputed } from "@vueuse/core";
 import {
   getMe,
+  inviteUser as _inviteUser,
   registerAccount,
+  registerByInvitation,
   requestPasswordReset,
   resetPasswordByToken,
-  inviteUser as _inviteUser,
-  registerByInvitation,
   updatePersonalData,
 } from "@/xapi/graphql/account";
 import { Logger } from "@/core/utilities";
@@ -202,12 +202,10 @@ export default function useUser() {
     try {
       loading.value = true;
 
-      const success = await requestPasswordReset({
+      return await requestPasswordReset({
         loginOrEmail: payload.email,
         urlSuffix: payload.resetPasswordUrlPath,
       });
-
-      return success;
     } catch (e) {
       Logger.error(`${useUser.name}.${forgotPassword.name}`, e);
       throw e;
@@ -220,13 +218,11 @@ export default function useUser() {
     try {
       loading.value = true;
 
-      const result = await resetPasswordByToken({
+      return await resetPasswordByToken({
         userId: payload.userId,
         token: payload.token,
         newPassword: payload.password,
       });
-
-      return result;
     } catch (e) {
       Logger.error(`${useUser.name}.${resetPassword.name}`, e);
       throw e;

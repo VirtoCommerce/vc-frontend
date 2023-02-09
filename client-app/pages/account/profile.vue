@@ -2,19 +2,19 @@
   <div>
     <!-- Title block -->
     <div class="flex justify-between items-center mx-5 md:mx-0">
-      <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.account.profile.title'" />
+      <h2 v-t="'pages.account.profile.title'" class="text-gray-800 text-3xl font-bold uppercase" />
     </div>
 
     <div
       class="flex flex-col bg-white shadow-sm p-6 md:rounded md:border polygon-bg [--polygon-bg-position:right_bottom_-180px]"
     >
-      <form @submit.prevent="onSubmit" class="lg:w-1/2 flex flex-col">
+      <form class="lg:w-1/2 flex flex-col" @submit.prevent="onSubmit">
         <!-- Errors block -->
         <VcAlert v-if="updateProfileError" class="mb-2" type="danger" icon>
           <span v-t="'pages.account.profile.update_error_alert'" />
         </VcAlert>
 
-        <VcInput name="userName" class="hidden" autocomplete="userName" v-model="userName" />
+        <VcInput v-model="userName" name="userName" class="hidden" autocomplete="userName" />
 
         <VcInput
           v-model="firstName"
@@ -55,8 +55,8 @@
           </svg>
 
           <h3
-            class="text-gray-800 text-xl font-extrabold uppercase"
             v-t="'pages.account.profile.change_password_title'"
+            class="text-gray-800 text-xl font-extrabold uppercase"
           />
         </div>
 

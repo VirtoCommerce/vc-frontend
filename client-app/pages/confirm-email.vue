@@ -2,7 +2,7 @@
   <!-- Success -->
   <VcEmptyPage v-if="success" image="/static/images/email.webp" class="flex flex-col grow">
     <template #description>
-      <h1 class="text-center lg:text-left text-3xl uppercase font-bold mb-8" v-t="'pages.confirm_email.header'" />
+      <h1 v-t="'pages.confirm_email.header'" class="text-center lg:text-left text-3xl uppercase font-bold mb-8" />
 
       <div class="flex flex-col items-center lg:flex-row gap-5 mb-10">
         <span
@@ -12,7 +12,7 @@
         </span>
 
         <p class="text-19 text-center lg:text-left max-w-md">
-          <strong class="block mb-2" v-t="'pages.confirm_email.subtitle'" />
+          <strong v-t="'pages.confirm_email.subtitle'" class="block mb-2" />
           {{ $t("pages.confirm_email.text") }}
         </p>
       </div>
@@ -28,7 +28,7 @@
   <!-- Error -->
   <VcEmptyPage v-else-if="loaded" image="/static/images/email.webp" class="flex flex-col grow">
     <template #description>
-      <h1 class="text-center lg:text-left text-3xl uppercase font-bold mb-8" v-t="'pages.confirm_email.header'" />
+      <h1 v-t="'pages.confirm_email.header'" class="text-center lg:text-left text-3xl uppercase font-bold mb-8" />
 
       <div class="flex flex-col lg:flex-row items-center gap-5 mb-10">
         <span
@@ -37,7 +37,7 @@
           <i class="fa fa-exclamation text-2xl" />
         </span>
 
-        <p class="text-19 text-center font-bold lg:text-left max-w-md" v-t="'identity_error.InvalidToken'" />
+        <p v-t="'identity_error.InvalidToken'" class="text-19 text-center font-bold lg:text-left max-w-md" />
       </div>
     </template>
 

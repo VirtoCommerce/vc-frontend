@@ -6,11 +6,11 @@
           {{ $t("shared.account.orders-filter.status-label") }}
         </div>
         <VcCheckbox
-          :class="{ 'font-bold': isSelectedStatus(status), 'text-gray-500': !isSelectedStatus(status) }"
           v-for="status in availableStatuses"
           :key="status"
           v-model="filterData.statuses"
           :value="status"
+          :class="{ 'font-bold': isSelectedStatus(status), 'text-gray-500': !isSelectedStatus(status) }"
         >
           {{ status }}
         </VcCheckbox>

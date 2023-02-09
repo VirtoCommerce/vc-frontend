@@ -6,8 +6,8 @@
         :navigation="navigationParams"
         :pagination="paginationParams"
         v-bind="attrs"
-        v-on="listeners"
         class="w-full"
+        v-on="listeners"
       >
         <SwiperSlide v-for="(slide, index) in slides" :key="index">
           <slot name="slide" v-bind="{ slide, index }">
@@ -17,7 +17,7 @@
       </Swiper>
 
       <!-- Navigation buttons-->
-      <div class="vc-carousel__navigation" v-if="navigation">
+      <div v-if="navigation" class="vc-carousel__navigation">
         <div class="vc-carousel__btn vc-carousel__btn--prev">
           <i class="fas fa-chevron-left -ml-px text-xl" />
         </div>

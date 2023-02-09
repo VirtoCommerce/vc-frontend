@@ -6,7 +6,7 @@
       </VcButton>
     </template>
     <div class="text-center px-5 py-10">
-      <span class="text-lg" v-t="'shared.wishlists.unsuccessful_create_wishlist_dialog.message'"></span>
+      <span v-t="'shared.wishlists.unsuccessful_create_wishlist_dialog.message'" class="text-lg"></span>
     </div>
   </VcPopup>
 </template>

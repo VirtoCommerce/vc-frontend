@@ -6,7 +6,7 @@
       tag="p"
       scope="global"
     >
-      <template v-slot:listName>
+      <template #listName>
         <span class="font-extrabold">{{ list.name }}</span>
       </template>
     </i18n-t>

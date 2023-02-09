@@ -2,7 +2,7 @@
   <div>
     <!-- Title block -->
     <div class="flex justify-between items-center mx-5 md:mx-0 lg:hidden">
-      <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.account.dashboard.title'" />
+      <h2 v-t="'pages.account.dashboard.title'" class="text-gray-800 text-3xl font-bold uppercase" />
     </div>
 
     <VcCard
@@ -13,12 +13,12 @@
     >
       <template #header-button>
         <div v-if="isMobile">
-          <VcButton :to="{ name: 'Orders' }" :is-outline="true" class="px-2 uppercase text-sm">
+          <VcButton :to="{ name: 'Orders' }" class="px-2 uppercase text-sm" is-outline>
             {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
           </VcButton>
         </div>
 
-        <div class="flex items-center" v-else>
+        <div v-else class="flex items-center">
           <router-link :to="{ name: 'Orders' }" class="text-xs text-blue-500 hover:text-blue-700 font-bold">
             {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
 
@@ -33,12 +33,12 @@
         :items="orders"
         :sort="sort"
         :footer="false"
-        @itemClick="openOrderDetails"
+        @item-click="openOrderDetails"
       >
         <template #mobile-item="itemData">
           <div class="grid grid-cols-3 p-6 gap-y-4 gap-x-8 border-b border-gray-200 cursor-pointer">
             <div class="flex flex-col text-sm">
-              <span class="text-gray-400" v-t="'pages.account.dashboard.last_orders_card.order_number_label'" />
+              <span v-t="'pages.account.dashboard.last_orders_card.order_number_label'" class="text-gray-400" />
 
               <span class="font-extrabold overflow-hidden overflow-ellipsis">
                 {{ itemData.item.number }}
@@ -46,7 +46,7 @@
             </div>
 
             <div class="flex flex-col text-sm">
-              <span class="text-gray-400" v-t="'pages.account.dashboard.last_orders_card.purchase_number_label'" />
+              <span v-t="'pages.account.dashboard.last_orders_card.purchase_number_label'" class="text-gray-400" />
 
               <span class="overflow-hidden overflow-ellipsis">
                 {{ itemData.item.purchaseOrderNumber }}
@@ -58,7 +58,7 @@
             </div>
 
             <div class="flex flex-col text-sm">
-              <span class="text-gray-400" v-t="'pages.account.dashboard.last_orders_card.invoice_label'" />
+              <span v-t="'pages.account.dashboard.last_orders_card.invoice_label'" class="text-gray-400" />
 
               <span class="overflow-hidden overflow-ellipsis">
                 {{ itemData.item.inPayments?.[0]?.number }}
@@ -66,7 +66,7 @@
             </div>
 
             <div class="flex flex-col text-sm">
-              <span class="text-gray-400" v-t="'pages.account.dashboard.last_orders_card.date_label'" />
+              <span v-t="'pages.account.dashboard.last_orders_card.date_label'" class="text-gray-400" />
 
               <span class="overflow-hidden overflow-ellipsis">
                 {{ $d(itemData.item?.createdDate) }}
@@ -74,7 +74,7 @@
             </div>
 
             <div class="flex flex-col text-sm">
-              <span class="text-gray-400" v-t="'pages.account.dashboard.last_orders_card.total_label'" />
+              <span v-t="'pages.account.dashboard.last_orders_card.total_label'" class="text-gray-400" />
 
               <span class="font-extrabold overflow-hidden overflow-ellipsis">
                 {{ itemData.item.total?.formattedAmount }}
@@ -91,46 +91,46 @@
             />
 
             <div class="flex flex-col space-y-2">
-              <span class="text-base" v-t="'pages.account.dashboard.last_orders_card.no_orders_message'" />
+              <span v-t="'pages.account.dashboard.last_orders_card.no_orders_message'" class="text-base" />
             </div>
           </div>
         </template>
 
         <template #mobile-skeleton>
-          <div v-for="i of itemsPerPage" :key="i" class="grid grid-cols-3 p-6 gap-y-4 gap-x-8 border-b border-gray-200">
+          <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-3 p-6 gap-y-4 gap-x-8 border-b border-gray-200">
             <div class="flex flex-col">
               <span
-                class="text-sm text-gray-400"
                 v-t="'pages.account.dashboard.last_orders_card.order_number_label'"
+                class="text-sm text-gray-400"
               ></span>
               <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
             </div>
 
             <div class="flex flex-col">
               <span
-                class="text-sm text-gray-400"
                 v-t="'pages.account.dashboard.last_orders_card.purchase_number_label'"
+                class="text-sm text-gray-400"
               ></span>
               <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.dashboard.last_orders_card.status_label'"></span>
+              <span v-t="'pages.account.dashboard.last_orders_card.status_label'" class="text-sm text-gray-400"></span>
               <div class="h-6 bg-gray-200 animate-pulse"></div>
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.dashboard.last_orders_card.invoice_label'"></span>
+              <span v-t="'pages.account.dashboard.last_orders_card.invoice_label'" class="text-sm text-gray-400"></span>
               <div class="h-6 bg-gray-200 animate-pulse"></div>
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.dashboard.last_orders_card.date_label'"></span>
+              <span v-t="'pages.account.dashboard.last_orders_card.date_label'" class="text-sm text-gray-400"></span>
               <div class="h-6 bg-gray-200 animate-pulse"></div>
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.dashboard.last_orders_card.total_label'"></span>
+              <span v-t="'pages.account.dashboard.last_orders_card.total_label'" class="text-sm text-gray-400"></span>
               <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
             </div>
           </div>
@@ -189,7 +189,7 @@
                 />
 
                 <div class="flex flex-col space-y-2">
-                  <span class="text-base" v-t="'pages.account.dashboard.last_orders_card.no_orders_message'" />
+                  <span v-t="'pages.account.dashboard.last_orders_card.no_orders_message'" class="text-base" />
                 </div>
               </div>
             </td>
@@ -197,7 +197,7 @@
         </template>
 
         <template #desktop-skeleton>
-          <tr v-for="i of itemsPerPage" :key="i" class="even:bg-gray-50">
+          <tr v-for="i in itemsPerPage" :key="i" class="even:bg-gray-50">
             <td class="p-5">
               <div class="h-6 bg-gray-200 animate-pulse"></div>
             </td>
@@ -241,8 +241,8 @@
           >
             <div class="flex flex-col lg:items-center lg:space-y-3">
               <span
-                class="text-xs text-gray-400 lg:text-gray-600 lg:font-bold"
                 v-t="'pages.account.dashboard.monthly_report_card.budget_title'"
+                class="text-xs text-gray-400 lg:text-gray-600 lg:font-bold"
               />
 
               <span class="text-xl font-extrabold">$58,152</span>
@@ -250,8 +250,8 @@
 
             <div class="flex flex-col lg:items-center lg:space-y-3">
               <span
-                class="text-xs text-gray-400 lg:text-gray-600 lg:font-bold"
                 v-t="'pages.account.dashboard.monthly_report_card.total_spend_label'"
+                class="text-xs text-gray-400 lg:text-gray-600 lg:font-bold"
               />
 
               <span class="text-xl font-extrabold">$530,152</span>

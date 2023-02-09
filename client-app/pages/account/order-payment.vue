@@ -47,11 +47,11 @@
           >
             <template #description>
               <h2
-                class="text-black-800 text-center lg:text-left text-2xl font-semibold mb-3"
                 v-t="'pages.account.order_payment.success.title'"
+                class="text-black-800 text-center lg:text-left text-2xl font-semibold mb-3"
               />
 
-              <p class="mb-8 text-center lg:text-left max-w-md" v-t="'pages.account.order_payment.success.text'" />
+              <p v-t="'pages.account.order_payment.success.text'" class="mb-8 text-center lg:text-left max-w-md" />
             </template>
 
             <template #actions>
@@ -85,11 +85,11 @@
           >
             <template #description>
               <h2
-                class="text-black-800 text-center lg:text-left text-2xl font-semibold mb-3"
                 v-t="'pages.account.order_payment.failure.title'"
+                class="text-black-800 text-center lg:text-left text-2xl font-semibold mb-3"
               />
 
-              <p class="mb-8 text-center lg:text-left max-w-md" v-t="'pages.account.order_payment.failure.text'" />
+              <p v-t="'pages.account.order_payment.failure.text'" class="mb-8 text-center lg:text-left max-w-md" />
             </template>
 
             <template #actions>
@@ -102,7 +102,7 @@
           <!-- Main content -->
           <template v-else>
             <!-- region Billing address -->
-            <h5 class="mb-1 font-extrabold" v-t="'pages.account.order_payment.billing_address_label'" />
+            <h5 v-t="'pages.account.order_payment.billing_address_label'" class="mb-1 font-extrabold" />
 
             <div class="rounded border mb-6">
               <div class="p-4 md:p-5 flex flex-row justify-between space-x-3">
@@ -123,12 +123,12 @@
                   </p>
 
                   <p class="truncate">
-                    <span class="font-extrabold" v-t="'pages.account.order_payment.phone_label'" />
+                    <span v-t="'pages.account.order_payment.phone_label'" class="font-extrabold" />
                     {{ payment?.billingAddress?.phone }}
                   </p>
 
                   <p class="truncate">
-                    <span class="font-extrabold" v-t="'pages.account.order_payment.email_label'" />
+                    <span v-t="'pages.account.order_payment.email_label'" class="font-extrabold" />
                     {{ payment?.billingAddress?.email }}
                   </p>
                 </div>
@@ -160,7 +160,7 @@
             <!-- endregion Billing address -->
 
             <!-- region Payment method -->
-            <h5 class="mb-1 font-extrabold" v-t="'pages.account.order_payment.payment_method_label'" />
+            <h5 v-t="'pages.account.order_payment.payment_method_label'" class="mb-1 font-extrabold" />
 
             <div class="rounded border overflow-hidden">
               <div class="flex flex-row items-center justify-between space-x-3 p-4 md:p-5 shadow-lg">

@@ -59,7 +59,7 @@
         icon="document-text"
         class="order-last"
       >
-        <p class="break-words text-15" v-for="line in order?.comment?.split('\n')" :key="line">{{ line }}</p>
+        <p v-for="line in order?.comment?.split('\n')" :key="line" class="break-words text-15">{{ line }}</p>
       </VcSectionWidget>
 
       <template #sidebar>
@@ -70,7 +70,7 @@
               <span class="font-extrabold"> {{ $t("common.labels.creates") }}: </span>
               {{ $d(order.createdDate, "long") }}
             </p>
-            <p class="flex items-center" v-if="order.status">
+            <p v-if="order.status" class="flex items-center">
               <span class="font-extrabold mr-2"> {{ $t("common.labels.status") }}: </span>
               <TableStatusBadge :status="order.status" />
             </p>

@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="link.route ?? ''" custom v-slot="{ href, navigate, isActive, isExactActive }">
+  <router-link v-slot="{ href, navigate, isActive, isExactActive }" :to="link.route ?? ''" custom>
     <component
       :is="isLink ? 'a' : 'button'"
       :href="isLink ? href : null"

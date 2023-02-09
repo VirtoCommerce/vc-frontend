@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-4 lg:space-y-5">
     <!-- Search results -->
-    <VcFilterCard :title="$t('pages.catalog.search_card.title')" v-if="withLocalSearch">
+    <VcFilterCard v-if="withLocalSearch" :title="$t('pages.catalog.search_card.title')">
       <div class="flex gap-2.5">
         <div class="relative">
           <VcInput
@@ -61,15 +61,15 @@
 
     <!-- Facet Filters Skeletons -->
     <template v-if="loading && !localFilters.facets.length">
-      <VcFilterCardSkeleton is-collapsible v-for="i in 6" :key="i" />
+      <VcFilterCardSkeleton v-for="i in 6" :key="i" is-collapsible />
     </template>
 
     <!-- Facet Filters -->
     <template v-else>
       <VcFilterCard
-        is-collapsible
         v-for="facet in localFilters.facets"
         :key="facet.paramName"
+        is-collapsible
         :title="facet.label"
         :is-collapsed="!filterHasSelectedValues(facet)"
       >

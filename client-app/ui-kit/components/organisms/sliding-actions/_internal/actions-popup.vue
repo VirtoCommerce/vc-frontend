@@ -7,8 +7,8 @@
             {{ $t("common.titles.all_actions") }}
           </span>
 
-          <button class="vc-actions-popup__close-button">
-            <i class="fas fa-times-circle" @click="$emit('close')" />
+          <button class="vc-actions-popup__close-button" @click="$emit('close')" @keyup.esc="$emit('close')">
+            <i class="fas fa-times-circle" />
           </button>
         </div>
 

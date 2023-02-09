@@ -48,9 +48,9 @@
       <VcButton
         :is-disabled="!isValidBankCard || disabled"
         :is-waiting="loading"
-        @click="sendPaymentData"
         size="lg"
         class="shrink-0 uppercase w-full md:w-60 md:order-first"
+        @click="sendPaymentData"
       >
         {{ $t("shared.payment.authorize_net.pay_now_button") }}
       </VcButton>

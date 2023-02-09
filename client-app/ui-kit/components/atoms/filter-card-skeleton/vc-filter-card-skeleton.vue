@@ -9,7 +9,7 @@
     <div class="px-4 py-3.5 bg-white rounded-b border-l border-r border-b">
       <slot />
       <template v-if="!$slots.default">
-        <div class="flex mt-3 first:mt-1 last:mb-2" v-for="i in 5" :key="i">
+        <div v-for="i in 5" :key="i" class="flex mt-3 first:mt-1 last:mb-2">
           <div class="w-5 h-5 bg-gray-100 inline-block"></div>
           <div class="flex-grow ml-2 text-sm bg-gray-100">&nbsp;</div>
         </div>

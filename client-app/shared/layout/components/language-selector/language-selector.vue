@@ -4,7 +4,7 @@
       class="relative flex items-center gap-x-1.5 py-3 appearance-none leading-none text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
       @click="toggle"
     >
-      <span class="hidden lg:inline text-white" v-t="'shared.layout.language_selector.label'"></span>
+      <span v-t="'shared.layout.language_selector.label'" class="hidden lg:inline text-white"></span>
 
       <span
         class="fi fis rounded-full fa-2x -my-3 !w-[30px] h-[30px] lg:!w-[14px] lg:h-[14px]"

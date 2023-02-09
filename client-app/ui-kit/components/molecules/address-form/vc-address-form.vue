@@ -3,7 +3,7 @@
     <slot name="prepend" v-bind="slotsData" />
 
     <div :class="{ 'md:flex md:flex-row': withPersonalInfo }">
-      <div class="md:w-1/2" v-if="withPersonalInfo">
+      <div v-if="withPersonalInfo" class="md:w-1/2">
         <VcInput
           v-model="firstName"
           :error-message="errors.firstName"
@@ -47,19 +47,19 @@
 
       <!-- Divider -->
       <div
-        class="border-t md:border-l border-[color:var(--color-primary)] mt-8 mb-6 md:mt-6 md:mb-4 -mx-96 md:mx-9"
         v-if="withPersonalInfo"
+        class="border-t md:border-l border-[color:var(--color-primary)] mt-8 mb-6 md:mt-6 md:mb-4 -mx-96 md:mx-9"
       ></div>
 
       <div :class="{ 'md:w-1/2': withPersonalInfo }">
         <VcInput
+          v-if="withDescriptionField"
           v-model="description"
           :error-message="errors.description"
           :is-disabled="disabled"
           :label="$t('shared.account.address_form.description_label')"
           class="mb-4"
           :maxlength="128"
-          v-if="withDescriptionField"
         />
 
         <div class="flex flex-col xl:flex-row xl:flex-wrap">

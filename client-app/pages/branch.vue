@@ -19,7 +19,7 @@
 
           <div class="flex flex-wrap mb-1">
             <div class="mr-1 font-bold">{{ $t("pages.branch.phone") }}</div>
-            <a :href="`tel:${fulfillmentCenter?.phone}`" v-if="fulfillmentCenter?.phone" class="hover:underline">
+            <a v-if="fulfillmentCenter?.phone" :href="`tel:${fulfillmentCenter?.phone}`" class="hover:underline">
               {{ fulfillmentCenter?.phone }}
             </a>
             <div v-else>&ndash;</div>
@@ -27,8 +27,8 @@
         </div>
 
         <div
-          class="mt-6 rounded border bg-white text-base drop-shadow-md-x lg:bg-transparent lg:drop-shadow-none lg:mt-0 lg:border-0 lg:rounded-none"
           v-if="fulfillmentCenter?.description"
+          class="mt-6 rounded border bg-white text-base drop-shadow-md-x lg:bg-transparent lg:drop-shadow-none lg:mt-0 lg:border-0 lg:rounded-none"
         >
           <div class="hidden h-[18px] bg-gradient-to-b from-[#94949421] lg:block"></div>
 
@@ -42,14 +42,14 @@
         </div>
         <div class="pt-5 pb-7 px-11 lg:pt-3.5 lg:px-12 lg:pb-9">
           <ul class="list-disc space-y-7">
-            <li class="text-primary marker:text-xl" v-for="(branch, index) in otherBranches" :key="index">
+            <li v-for="(branch, index) in otherBranches" :key="index" class="text-primary marker:text-xl">
               <router-link
                 :to="`/branch/${branch.id}`"
                 class="mb-1 text-link text-[1.063rem] font-extrabold lg:text-base"
               >
                 {{ branch.name }}
               </router-link>
-              <div class="text-[color:var(--color-body-text)] text-sm break-words" v-if="branch.address">
+              <div v-if="branch.address" class="text-[color:var(--color-body-text)] text-sm break-words">
                 {{ branch.address }}
               </div>
               <div class="text-[color:var(--color-body-text)] text-sm">

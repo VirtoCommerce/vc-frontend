@@ -16,7 +16,7 @@
                 model-value
                 :value="list.id"
                 :disabled="loading"
-                @update:modelValue="listsRemoveUpdate(list.id || '', $event)"
+                @update:model-value="listsRemoveUpdate(list.id || '', $event)"
               >
                 <span class="text-base line-clamp-1 font-medium sm:text-15">
                   {{ list.name }}
@@ -33,8 +33,8 @@
           <button
             class="flex items-center text-sm font-bold cursor-pointer text-[color:var(--color-link)]"
             :class="{ 'text-gray-400 cursor-not-allowed': creationButtonDisabled }"
-            @click="addInput"
             :disabled="creationButtonDisabled"
+            @click="addInput"
           >
             <svg
               class="mr-2 w-3.5 h-3.5 text-[color:var(--color-primary)]"
@@ -57,9 +57,9 @@
               <div class="absolute inset-0"></div>
             </button>
             <VcInput
+              v-model="input.listName"
               class="flex-grow ml-2.5 mr-3.5"
               :class="{ 'mb-4.5': !input.errorMessage }"
-              v-model="input.listName"
               :is-disabled="loading"
               :maxlength="25"
               is-required

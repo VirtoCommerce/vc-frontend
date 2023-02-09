@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="link.route ?? ''" custom v-slot="{ isActive, href, navigate }">
+  <router-link v-slot="{ isActive, href, navigate }" :to="link.route ?? ''" custom>
     <a
       v-bind="$attrs"
       :href="href"
@@ -10,7 +10,7 @@
       @click="navigate"
     >
       <span class="relative">
-        <svg v-if="link.icon" height="24" width="24" class="mb-1 text-[color:var(--color-primary)]">
+        <svg v-if="link.icon" height="24" width="24" class="mb-0.5 text-[color:var(--color-primary)]">
           <use :href="link.icon" />
         </svg>
 

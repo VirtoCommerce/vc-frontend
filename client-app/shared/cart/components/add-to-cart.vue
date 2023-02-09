@@ -3,8 +3,8 @@
     <div class="flex relative z-0">
       <input
         ref="input"
-        type="number"
         v-model.number="enteredQuantity"
+        type="number"
         :disabled="disabled"
         :max="maxQty"
         :min="minQty"
@@ -30,7 +30,7 @@
     </div>
 
     <!-- Info hint -->
-    <VcTooltip class="!block" v-if="errorMessage" :xOffset="28" placement="bottom-start" strategy="fixed">
+    <VcTooltip v-if="errorMessage" class="!block" :x-offset="28" placement="bottom-start" strategy="fixed">
       <template #trigger>
         <div class="pt-0.5 text-11 text-[color:var(--color-danger)] xs:line-clamp-1">
           {{ errorMessage }}

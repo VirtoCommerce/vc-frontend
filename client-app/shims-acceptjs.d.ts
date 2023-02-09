@@ -2,6 +2,7 @@
  * Accept.js (Authorize.net)
  * @link https://developer.authorize.net/api/reference/features/acceptjs.html#Integrating_Accept.js_into_Your_Payment_Form
  */
+/* eslint-disable @typescript-eslint/naming-convention */
 declare namespace Accept {
   interface AuthData {
     clientKey: string;

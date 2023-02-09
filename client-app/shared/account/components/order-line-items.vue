@@ -71,9 +71,9 @@
             <!-- PROPERTIES -->
             <div class="vc-order-line-items__properties w-full">
               <div
-                class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[33%_1fr] lg:text-xs"
                 v-for="property in item.extended.displayProperties"
                 :key="property.id"
+                class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[33%_1fr] lg:text-xs"
               >
                 <div class="min-w-0 font-medium capitalize text-gray-600 md:font-bold md:text-gray-800">
                   <div class="truncate">{{ property.label }}:</div>

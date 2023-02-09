@@ -1,24 +1,24 @@
 <template>
   <section>
     <h2
-      class="hidden lg:block px-5 py-2 border-b font-extrabold uppercase"
       v-t="'shared.bulk_order.manually.title'"
+      class="hidden lg:block px-5 py-2 border-b font-extrabold uppercase"
     ></h2>
 
     <div class="p-6 pb-5 md:p-5 pt-4">
       <p class="text-sm">
         {{ $t("shared.bulk_order.manually.subtitle_message_start") }}
         <router-link
+          v-t="'shared.bulk_order.manually.cart_link'"
           :to="{ name: 'Cart' }"
           class="text-[color:var(--color-link)]"
-          v-t="'shared.bulk_order.manually.cart_link'"
         ></router-link>
         {{ $t("shared.bulk_order.manually.subtitle_message_end") }}
       </p>
 
       <div class="flex flex-row gap-x-5 mt-3 mb-1.5">
-        <div class="w-full font-bold" v-t="'shared.bulk_order.manually.product_sku_label'"></div>
-        <div class="w-1/3 xl:w-1/4 max-w-[164px] font-bold" v-t="'shared.bulk_order.manually.quantity_label'"></div>
+        <div v-t="'shared.bulk_order.manually.product_sku_label'" class="w-full font-bold"></div>
+        <div v-t="'shared.bulk_order.manually.quantity_label'" class="w-1/3 xl:w-1/4 max-w-[164px] font-bold"></div>
       </div>
 
       <div class="flex flex-col gap-y-4">
@@ -35,7 +35,7 @@
               min="1"
               type="number"
               placeholder="0"
-              @update:modelValue="$nextTick(() => (item.quantity = String(validateQuantity($event) || '')))"
+              @update:model-value="$nextTick(() => (item.quantity = String(validateQuantity($event) || '')))"
               @keypress="onKeypress"
             />
           </div>
@@ -43,7 +43,7 @@
       </div>
 
       <div class="mt-4">
-        <button @click="increment" class="appearance-none inline-flex items-center py-1.5 md:py-0">
+        <button class="appearance-none inline-flex items-center py-1.5 md:py-0" @click="increment">
           <i class="fa fa-plus mr-1.5 mt-[3px] text-primary" />
           <span
             class="leading-tight text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)] border-b border-dashed border-link hover:border-link-hover"
@@ -56,11 +56,11 @@
       <div class="flex flex-row flex-wrap md:flex-nowrap justify-between gap-3 mt-6 mb-2 md:mb-0">
         <VcButton
           :is-disabled="!dirty || loading"
-          @click="resetItems"
           kind="secondary"
           size="lg"
           class="uppercase px-5 xl:px-8"
           is-outline
+          @click="resetItems"
         >
           {{ $t("shared.bulk_order.manually.reset_button") }}
         </VcButton>
@@ -68,9 +68,9 @@
         <VcButton
           :is-disabled="!valid"
           :is-waiting="loading"
-          @click="addToCart"
           size="lg"
           class="uppercase px-5 xl:px-8"
+          @click="addToCart"
         >
           {{ $t("shared.bulk_order.manually.add_to_cart_button") }}
         </VcButton>

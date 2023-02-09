@@ -39,9 +39,9 @@
       </VcCheckbox>
 
       <router-link
+        v-t="'shared.account.sign_in_form.forgot_password_link'"
         to="/forgot-password"
         class="text-blue-700 hover:text-blue-500 text-sm font-semibold"
-        v-t="'shared.account.sign_in_form.forgot_password_link'"
       >
       </router-link>
     </div>

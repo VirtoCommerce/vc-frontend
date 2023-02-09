@@ -1,10 +1,10 @@
 <template>
-  <div class="lg:!gap-y-7" v-if="quote">
+  <div v-if="quote" class="lg:!gap-y-7">
     <div class="flex flex-col gap-3">
       <VcBreadcrumbs :items="breadcrumbs" />
 
       <h2 class="text-3xl font-bold uppercase lg:text-28">
-        {{ $t("pages.account.quote_details.title", [quote?.number]) }}
+        {{ $t("pages.account.quote_details.title", [quote.number]) }}
       </h2>
     </div>
 
@@ -15,7 +15,7 @@
       </VcSectionWidget>
 
       <!-- Quote comment -->
-      <VcSectionWidget :title="$t('pages.account.quote_details.remarks')" icon="document-text" v-if="quote.comment">
+      <VcSectionWidget v-if="quote.comment" :title="$t('pages.account.quote_details.remarks')" icon="document-text">
         <div class="text-15 font-medium">
           {{ quote.comment }}
         </div>
@@ -24,10 +24,10 @@
       <template #sidebar>
         <VcCardWidget :title="$t('pages.account.quote_details.quote_summary')" icon="cash">
           <div class="flex justify-between text-base">
-            <span class="font-bold" v-t="'pages.account.quote_details.total'" />
+            <span v-t="'pages.account.quote_details.total'" class="font-bold" />
 
             <span class="text-[color:var(--color-price)] text-18 font-extrabold">
-              <VcPriceDisplay :value="quote!.totals!.grandTotalInclTax" />
+              <VcPriceDisplay :value="quote.totals?.grandTotalInclTax" />
             </span>
           </div>
         </VcCardWidget>
@@ -41,14 +41,14 @@
             <div class="flex text-base">
               <span class="font-bold mr-2">{{ $t("pages.account.quote_details.created") }}:</span>
 
-              <span>{{ $d(quote!.createdDate, "long") }}</span>
+              <span>{{ $d(quote.createdDate, "long") }}</span>
             </div>
 
             <div class="flex text-base">
               <span class="font-bold mr-2">{{ $t("pages.account.quote_details.status") }}:</span>
 
               <span>
-                <TableStatusBadge :status="quote!.status" />
+                <TableStatusBadge :status="quote.status" />
               </span>
             </div>
           </div>
@@ -71,9 +71,9 @@
 <script setup lang="ts">
 import { watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import { useUserQuote, QuoteLineItems } from "@/shared/account";
+import { QuoteLineItems, useUserQuote } from "@/shared/account";
 import { VcAddressInfo } from "@/ui-kit/components";
-import { usePageHead, useBreadcrumbs } from "@/core/composables";
+import { useBreadcrumbs, usePageHead } from "@/core/composables";
 
 const props = defineProps({
   quoteId: {

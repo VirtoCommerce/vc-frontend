@@ -1,4 +1,8 @@
 {
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  },
+  "prettier.endOfLine": "crlf",
   "i18n-ally.localesPaths": ["locales"],
   "i18n-ally.keystyle": "nested"
 }

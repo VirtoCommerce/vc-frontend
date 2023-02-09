@@ -1,6 +1,6 @@
 <template>
   <TransitionRoot appear :show="isOpen" as="template">
-    <Dialog as="div" :initialFocus="getActiveElement()" @close="() => {}">
+    <Dialog as="div" :initial-focus="getActiveElement()" @close="() => {}">
       <div class="fixed inset-0 z-50" :class="{ 'overflow-y-auto': !isMobileFullscreen }">
         <div class="text-center" :class="{ 'min-h-screen px-4': !isMobileFullscreen, 'sm:px-4': isMobileFullscreen }">
           <TransitionChild
@@ -12,7 +12,7 @@
             leave-from="opacity-100"
             leave-to="opacity-0"
           >
-            <DialogOverlay class="fixed inset-0 bg-gray-900 bg-opacity-30" />
+            <DialogOverlay class="fixed inset-0 bg-gray-900/30" />
           </TransitionChild>
 
           <span class="inline-block h-screen align-middle" aria-hidden="true"> &#8203; </span>
@@ -75,11 +75,19 @@
   </TransitionRoot>
 </template>
 
+<script lang="ts">
+export default {
+  inheritAttrs: false,
+};
+</script>
+
 <script setup lang="ts">
 import { TransitionRoot, TransitionChild, Dialog, DialogOverlay, DialogTitle } from "@headlessui/vue";
 import { computed, ref, watchSyncEffect } from "vue";
 
 const props = defineProps({
+  hideActions: Boolean,
+
   title: {
     type: String,
     default: undefined,
@@ -104,11 +112,6 @@ const props = defineProps({
   modalWidth: {
     type: String,
     default: "max-w-2xl",
-  },
-
-  hideActions: {
-    type: Boolean,
-    default: false,
   },
 
   isMobileFullscreen: {
@@ -155,10 +158,4 @@ watchSyncEffect(() => {
 });
 
 defineExpose({ close });
-</script>
-
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-};
 </script>

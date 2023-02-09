@@ -1,12 +1,12 @@
 <template>
   <section class="flex flex-col">
     <h2
-      class="hidden lg:block px-5 py-2 border-b font-extrabold uppercase"
       v-t="'shared.bulk_order.copy_n_paste.title'"
+      class="hidden lg:block px-5 py-2 border-b font-extrabold uppercase"
     ></h2>
 
     <div class="p-6 pb-5 md:p-5 pt-4 h-full">
-      <p class="font-bold mb-2 text-sm" v-t="'shared.bulk_order.copy_n_paste.subtitle_message'"></p>
+      <p v-t="'shared.bulk_order.copy_n_paste.subtitle_message'" class="font-bold mb-2 text-sm"></p>
 
       <p class="mb-2 text-sm text-gray-500" v-html="$t('shared.bulk_order.copy_n_paste.guide_message')"></p>
 
@@ -20,11 +20,11 @@
       <div class="flex flex-wrap justify-between gap-3 mt-5 mb-2 md:mt-2 md:mb-0">
         <VcButton
           :is-disabled="!text || loading"
-          @click="text = ''"
           kind="secondary"
           size="lg"
           class="uppercase px-5 xl:px-8"
           is-outline
+          @click="text = ''"
         >
           {{ $t("shared.bulk_order.copy_n_paste.reset_button") }}
         </VcButton>
@@ -32,9 +32,9 @@
         <VcButton
           :is-disabled="!text"
           :is-waiting="loading"
-          @click="addToCart"
           size="lg"
           class="flex justify-self-end uppercase px-5 xl:px-8"
+          @click="addToCart"
         >
           {{ $t("shared.bulk_order.copy_n_paste.add_to_cart_button") }}
         </VcButton>

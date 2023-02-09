@@ -8,7 +8,7 @@
 
       <div v-else class="relative w-full z-10 h-14 flex justify-between items-center gap-x-6">
         <!-- region Left slot -->
-        <component v-if="customSlots.left" :is="customSlots.left" />
+        <component :is="customSlots.left" v-if="customSlots.left" />
 
         <div v-else class="flex items-center h-full">
           <button class="h-full px-6" @click="mobileMenuVisible = true">
@@ -22,10 +22,10 @@
         <!-- endregion Left slot -->
 
         <!-- region Right slot -->
-        <component v-if="customSlots.right" :is="customSlots.right" />
+        <component :is="customSlots.right" v-if="customSlots.right" />
 
         <div v-else class="flex flex-row items-center h-full pr-4">
-          <a class="p-2.5" :href="`tel:${$cfg.support_phone_number}`" v-if="$cfg.support_phone_number">
+          <a v-if="$cfg.support_phone_number" class="p-2.5" :href="`tel:${$cfg.support_phone_number}`">
             <i class="fas fa-phone text-xl text-[color:var(--color-primary)]"></i>
           </a>
 
@@ -61,7 +61,7 @@
         :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
         class="flex-grow mr-4 h-10"
         input-class="!h-10 !px-4 font-medium text-sm"
-        :without-border="true"
+        without-border
         @keyup.enter="searchPhrase && $router.push(searchPageLink)"
       />
 
@@ -69,7 +69,7 @@
         <i class="fas fa-search text-lg" />
       </VcButton>
 
-      <button @click="hideSearchBar" class="h-10 px-2.5 ml-2 -mr-2 appearance-none">
+      <button class="h-10 px-2.5 ml-2 -mr-2 appearance-none" @click="hideSearchBar">
         <i class="fas fa-times text-2xl text-white" />
       </button>
     </div>
@@ -86,12 +86,12 @@
     enter-active-class="will-change-transform"
     leave-active-class="will-change-transform"
   >
-    <MobileMenu v-if="mobileMenuVisible" @close="mobileMenuVisible = false" class="transition-transform" />
+    <MobileMenu v-if="mobileMenuVisible" class="transition-transform" @close="mobileMenuVisible = false" />
   </transition>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, StyleValue, watchEffect, watch } from "vue";
+import { computed, ref, StyleValue, watch, watchEffect } from "vue";
 import { RouteLocationRaw } from "vue-router";
 import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
 import MobileMenu from "./mobile-menu.vue";

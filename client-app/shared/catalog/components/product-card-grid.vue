@@ -17,7 +17,7 @@
             rewind
             lazy
             @swiper="swiperInstance = $event"
-            @slideChange="slideChanged"
+            @slide-change="slideChanged"
           >
             <SwiperSlide v-for="(image, index) in product.images" :key="index" class="rounded">
               <VcImage
@@ -31,7 +31,7 @@
               />
             </SwiperSlide>
 
-            <template v-slot:container-end>
+            <template #container-end>
               <!-- Prev button -->
               <div
                 class="hidden carousel-button-prev group absolute top-0 left-0 z-[2] h-full md:flex items-center pl-1 pr-5 cursor-pointer"
@@ -91,7 +91,7 @@
         class="z-[2] absolute -top-4 -right-4 px-2 py-3.5 flex flex-col gap-2 rounded-3xl bg-white lg:-right-3 lg:py-2 lg:px-1.5 empty:hidden"
       >
         <AddToList :product="product" />
-        <AddToCompareCatalog class="relative" v-if="$cfg.product_compare_enabled" :product="product" />
+        <AddToCompareCatalog v-if="$cfg.product_compare_enabled" class="relative" :product="product" />
       </div>
     </div>
 
@@ -179,7 +179,7 @@
       <VcItemPriceCatalog :variations="product.variations" :value="product.price" />
     </div>
 
-    <div class="flex flex-col" v-if="product.hasVariations">
+    <div v-if="product.hasVariations" class="flex flex-col">
       <VcButton :to="link" class="w-full uppercase !text-13 !border" is-outline @click="$emit('link-click', $event)">
         {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
       </VcButton>
@@ -192,7 +192,7 @@
         <svg class="shrink-0 w-3 h-3 text-primary lg:w-2.5 lg:h-2.5">
           <use href="/static/images/link.svg#main"></use>
         </svg>
-        <span class="truncate" v-t="'pages.catalog.show_on_a_separate_page'"></span>
+        <span v-t="'pages.catalog.show_on_a_separate_page'" class="truncate"></span>
       </router-link>
     </div>
 
@@ -205,7 +205,7 @@
           :quantity="product.availabilityData?.availableQuantity"
         />
 
-        <VcCountInCart :productId="product.id" />
+        <VcCountInCart :product-id="product.id" />
       </div>
     </template>
   </div>

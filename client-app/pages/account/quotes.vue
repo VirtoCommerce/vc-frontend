@@ -2,10 +2,10 @@
   <div>
     <!-- Title block -->
     <div class="flex justify-between items-center mx-5 md:mx-0">
-      <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.account.quotes.title'" />
+      <h2 v-t="'pages.account.quotes.title'" class="text-gray-800 text-3xl font-bold uppercase" />
     </div>
 
-    <div class="-mt-5" ref="stickyMobileHeaderAnchor"></div>
+    <div ref="stickyMobileHeaderAnchor" class="-mt-5"></div>
 
     <!-- Page toolbar -->
     <PageToolbarBlock
@@ -49,7 +49,7 @@
     </VcEmptyView>
 
     <!-- Content block -->
-    <div class="flex flex-col bg-white shadow-sm md:rounded md:border" v-else>
+    <div v-else class="flex flex-col bg-white shadow-sm md:rounded md:border">
       <VcTable
         :loading="fetching"
         :columns="columns"
@@ -57,14 +57,14 @@
         :items="quotes"
         :pages="pages"
         :page="page"
-        @itemClick="navigateQuoteDetails"
-        @headerClick="applySorting"
-        @pageChanged="changePage"
+        @item-click="navigateQuoteDetails"
+        @header-click="applySorting"
+        @page-changed="changePage"
       >
         <template #mobile-item="itemData">
           <div class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200 cursor-pointer">
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.quotes.quote_number_label'" />
+              <span v-t="'pages.account.quotes.quote_number_label'" class="text-sm text-gray-400" />
 
               <span class="pr-4 font-extrabold overflow-hidden overflow-ellipsis">
                 {{ itemData.item.number }}
@@ -76,7 +76,7 @@
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.quotes.date_label'" />
+              <span v-t="'pages.account.quotes.date_label'" class="text-sm text-gray-400" />
 
               <span class="overflow-hidden overflow-ellipsis">
                 {{ $d(itemData.item?.createdDate) }}
@@ -84,7 +84,7 @@
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.quotes.total_label'" />
+              <span v-t="'pages.account.quotes.total_label'" class="text-sm text-gray-400" />
 
               <span class="overflow-hidden overflow-ellipsis font-extrabold">
                 {{ itemData.item.totals?.grandTotalInclTax?.formattedAmount }}
@@ -96,22 +96,22 @@
         <template #mobile-skeleton>
           <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200">
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.quotes.quote_number_label'"></span>
+              <span v-t="'pages.account.quotes.quote_number_label'" class="text-sm text-gray-400"></span>
               <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.quotes.date_label'"></span>
+              <span v-t="'pages.account.quotes.date_label'" class="text-sm text-gray-400"></span>
               <div class="h-6 bg-gray-200 animate-pulse"></div>
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.quotes.total_label'"></span>
+              <span v-t="'pages.account.quotes.total_label'" class="text-sm text-gray-400"></span>
               <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.quotes.status_label'"></span>
+              <span v-t="'pages.account.quotes.status_label'" class="text-sm text-gray-400"></span>
               <div class="h-6 bg-gray-200 animate-pulse"></div>
             </div>
           </div>

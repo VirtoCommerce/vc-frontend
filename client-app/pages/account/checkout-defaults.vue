@@ -2,14 +2,14 @@
   <div>
     <!-- Title block -->
     <div class="flex justify-between items-center mx-5 md:mx-0">
-      <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.account.checkout_defaults.title'" />
+      <h2 v-t="'pages.account.checkout_defaults.title'" class="text-gray-800 text-3xl font-bold uppercase" />
     </div>
 
     <div class="bg-white shadow-sm md:rounded border px-7 py-7 md:px-9 md:py-8">
       <VcLoaderWithText v-if="loading" />
 
       <div v-else class="flex flex-col lg:w-1/2">
-        <div class="font-bold" v-t="'pages.account.checkout_defaults.select_delivery_method_label'"></div>
+        <div v-t="'pages.account.checkout_defaults.select_delivery_method_label'" class="font-bold"></div>
 
         <div class="mt-3 md:mt-1 flex flex-col space-y-5 md:space-y-0 md:flex-row md:space-x-7">
           <VcRadioButton

@@ -40,7 +40,7 @@ const props = defineProps({
 
   // only for array of model value
   value: {
-    type: [Object, String, Number, Boolean],
+    type: [Boolean, String, Number, Object],
     default: undefined,
   },
 });

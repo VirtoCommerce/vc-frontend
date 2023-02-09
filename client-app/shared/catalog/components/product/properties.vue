@@ -1,7 +1,7 @@
 <template>
   <ProductTitledBlock
-    class="mt-5"
     v-if="!model.hidden"
+    class="mt-5"
     image-src="/static/images/technical_specs.svg"
     :title="model.title || $t('shared.catalog.product_details.technical_specs_block_title')"
   >
@@ -16,7 +16,7 @@
       :label="$t('shared.catalog.product_details.vendor_label')"
       class="mb-4"
     >
-      <Vendor :vendor="product.vendor" withRating />
+      <Vendor :vendor="product.vendor" with-rating />
     </ProductProperty>
 
     <a

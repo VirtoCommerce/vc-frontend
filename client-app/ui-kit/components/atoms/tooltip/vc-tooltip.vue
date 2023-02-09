@@ -1,8 +1,8 @@
 <template>
   <div class="inline-flex relative">
     <div
-      :aria-describedby="`popover-${$.uid}`"
       ref="triggerNode"
+      :aria-describedby="`popover-${$.uid}`"
       @mouseenter="trigger === 'hover' && toggleTooltip(true)"
       @mouseleave="trigger === 'hover' && toggleTooltip(false)"
       @click="trigger === 'click' && toggleTooltip(!isShown)"
@@ -10,7 +10,7 @@
       <slot name="trigger" />
     </div>
 
-    <div class="z-50" :id="`popover-${$.uid}`" ref="tooltipNode" v-show="isShown">
+    <div v-show="isShown" :id="`popover-${$.uid}`" ref="tooltipNode" class="z-50">
       <slot name="content" />
     </div>
   </div>

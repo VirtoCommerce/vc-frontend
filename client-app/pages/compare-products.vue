@@ -14,7 +14,7 @@
         </VcButton>
       </template>
     </VcEmptyPage>
-    <div class="w-full md:max-w-screen-2xl md:px-12 mx-auto pt-7" v-else>
+    <div v-else class="w-full md:max-w-screen-2xl md:px-12 mx-auto pt-7">
       <!-- Page header -->
       <VcBreadcrumbs :items="breadcrumbs" class="mb-3 px-5 md:px-0"></VcBreadcrumbs>
       <div class="flex flex-col lg:flex-row lg:space-x-12 px-5 md:px-0 lg:mb-5">
@@ -26,7 +26,7 @@
           ></span>
         </div>
         <div class="flex justify-between items-start grow mb-5 lg:mb-0">
-          <VcCheckbox class="mt-2" v-model="showOnlyDifferences" @change="onShowOnlyDifferencesChange">
+          <VcCheckbox v-model="showOnlyDifferences" class="mt-2" @change="onShowOnlyDifferencesChange">
             {{ $t("pages.compare.header_block.differences_checkbox_label") }}
           </VcCheckbox>
 
@@ -83,7 +83,7 @@
 
             <!-- Product price -->
             <div class="flex flex-col md:flex-row items-baseline justify-between text-sm mb-3 h-8">
-              <div class="font-bold text-xs" v-if="!isMobile">
+              <div v-if="!isMobile" class="font-bold text-xs">
                 {{ $t("pages.compare.main_block.price_label") }}
               </div>
               <VcItemPrice :value="product.price" />
@@ -97,23 +97,23 @@
 
         <!-- Properties block -->
         <div
-          class="items-start md:items-center space-x-5 px-8 lg:px-0 border-b border-gray-100 lg:border-0"
           v-for="(values, key, index) in computedProperties"
           :key="index"
+          class="items-start md:items-center space-x-5 px-8 lg:px-0 border-b border-gray-100 lg:border-0"
           :class="!isMobile ? 'even:bg-gray-50 flex' : productsIds.length >= 3 ? 'inline-flex' : 'flex'"
         >
-          <div class="w-56 pl-8 font-extrabold text-sm flex-shrink-0" v-if="!isMobile">{{ key }}</div>
-          <div class="w-32 flex-shrink-0 md:w-48 py-5 last:pr-8" v-for="(property, index) in values" :key="index">
+          <div v-if="!isMobile" class="w-56 pl-8 font-extrabold text-sm flex-shrink-0">{{ key }}</div>
+          <div v-for="(property, i) in values" :key="i" class="w-32 flex-shrink-0 md:w-48 py-5 last:pr-8">
             <span v-if="isMobile" class="block font-extrabold text-sm">{{ key }}</span>
             {{ property.value }}
           </div>
         </div>
         <div class="flex items-center space-x-5 px-5 lg:px-0">
-          <div class="w-56 flex-shrink-0" v-if="!isMobile"></div>
+          <div v-if="!isMobile" class="w-56 flex-shrink-0"></div>
           <div v-for="product in products" :key="product.id" class="w-32 flex-shrink-0 md:w-48">
             <!-- Product price -->
             <div class="flex flex-col md:flex-row items-baseline justify-between text-sm my-4 h-8">
-              <div class="font-bold text-xs" v-if="!isMobile">
+              <div v-if="!isMobile" class="font-bold text-xs">
                 {{ $t("pages.compare.main_block.price_label") }}
               </div>
               <VcItemPrice :value="product.price" />

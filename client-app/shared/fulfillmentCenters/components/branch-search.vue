@@ -27,6 +27,7 @@
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
 const emit = defineEmits(["update:input"]);
 

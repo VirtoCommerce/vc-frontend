@@ -6,8 +6,8 @@
 
     <template v-else>
       <component
-        v-for="(item, index) in products"
         :is="cardComponent"
+        v-for="(item, index) in products"
         :key="item.id + index"
         :product="item"
         @link-click="$emit('item-link-click', item, $event)"

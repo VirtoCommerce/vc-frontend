@@ -66,7 +66,7 @@
 
     <div class="vc-product-skeleton-list__add-to-cart flex flex-col gap-2 mt-3 w-full sm:mt-2.5">
       <!-- Add to cart -->
-      <div class="flex items-stretch h-9 rounded border border-2 border-gray-100">
+      <div class="flex items-stretch h-9 rounded border-2 border-gray-100">
         <div class="flex items-center justify-center w-1/2">
           <div class="h-4 w-1/5 bg-gray-100"></div>
         </div>

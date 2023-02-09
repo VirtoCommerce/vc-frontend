@@ -42,8 +42,8 @@
 
               <VcRadioButton
                 v-for="currencyItem in supportedCurrencies"
-                :model-value="currentCurrency?.code"
                 :key="currencyItem.code"
+                :model-value="currentCurrency?.code"
                 :value="currencyItem.code"
                 class="py-2.5"
                 @click="
@@ -132,8 +132,8 @@
                   </span>
 
                   <span
-                    class="inline-block text-[color:var(--color-mobile-menu-icon)]"
                     v-t="'shared.layout.header.top_header.logged_in_as'"
+                    class="inline-block text-[color:var(--color-mobile-menu-icon)]"
                   />
                 </template>
 
@@ -144,9 +144,9 @@
 
               <div>
                 <button
-                  @click="signOut"
-                  class="font-bold text-[color:var(--color-primary)]"
                   v-t="'shared.layout.header.link_logout'"
+                  class="font-bold text-[color:var(--color-primary)]"
+                  @click="signOut"
                 />
               </div>
             </div>

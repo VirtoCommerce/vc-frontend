@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-grow items-stretch relative" v-click-outside="hideSearchDropdown">
+  <div v-click-outside="hideSearchDropdown" class="flex flex-grow items-stretch relative">
     <VcInput
       v-model="searchPhrase"
       :maxlength="MAX_LENGTH"
@@ -23,7 +23,7 @@
     <transition name="slide-fade-top">
       <div
         v-if="searchDropdownVisible"
-        class="absolute top-[3.45rem] -left-[10rem] z-20 w-full flex flex-col gap-3 rounded bg-white shadow-lg overflow-hidden"
+        class="absolute top-[3.45rem] left-[-10rem] z-20 w-full flex flex-col gap-3 rounded bg-white shadow-lg overflow-hidden"
         style="min-width: calc(100% + 10rem)"
       >
         <!-- Results -->
@@ -82,7 +82,7 @@
           <VcIcon name="search-not-found" class="!w-12 !h-12 inline-block mr-5 text-[color:var(--color-primary)]" />
 
           <i18n-t class="inline-block" keypath="shared.layout.search_bar.no_results" tag="p">
-            <template v-slot:keyword>
+            <template #keyword>
               <strong>{{ searchPhrase }}</strong>
             </template>
           </i18n-t>

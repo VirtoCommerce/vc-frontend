@@ -2,7 +2,7 @@
   <div>
     <!-- Title block -->
     <div class="flex justify-between items-center mx-5 md:mx-0">
-      <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.company.info.title'" />
+      <h2 v-t="'pages.company.info.title'" class="text-gray-800 text-3xl font-bold uppercase" />
     </div>
 
     <div class="flex flex-col bg-white shadow-sm md:rounded md:border">
@@ -19,7 +19,7 @@
           class="w-full"
         />
 
-        <div class="pt-6" v-if="userCanEditOrganization">
+        <div v-if="userCanEditOrganization" class="pt-6">
           <VcButton
             :is-waiting="loadingOrganization || loadingUser"
             :is-disabled="!meta.valid || !meta.dirty"
@@ -39,7 +39,7 @@
           v-if="addresses.length || loadingAddresses"
           class="flex flex-row justify-between items-center gap-3 mx-6 md:mx-0 mt-9 md:mt-1.5 mb-5 md:mb-4"
         >
-          <h2 class="text-gray-800 text-xl font-extrabold uppercase py-0.5" v-t="'pages.company.info.content_header'" />
+          <h2 v-t="'pages.company.info.content_header'" class="text-gray-800 text-xl font-extrabold uppercase py-0.5" />
 
           <VcButton
             v-if="userCanEditOrganization"
@@ -66,7 +66,7 @@
             />
           </template>
 
-          <template #button v-if="userCanEditOrganization">
+          <template v-if="userCanEditOrganization" #button>
             <VcButton class="px-4 uppercase" size="lg" @click="openAddOrUpdateCompanyAddressDialog()">
               <i class="fa fa-plus -ml-px mr-3" />
               {{ $t("pages.company.info.buttons.add_new_address") }}
@@ -84,8 +84,8 @@
             :pages="pages"
             :page="page"
             layout="table-auto"
-            @headerClick="applySorting"
-            @pageChanged="onPageChange"
+            @header-click="applySorting"
+            @page-changed="onPageChange"
           >
             <template #mobile-item="{ item }">
               <div class="grid grid-cols-3 relative px-6 py-5 gap-4 text-sm border-t border-gray-200">
@@ -93,11 +93,11 @@
                   v-if="item.isDefault"
                   class="absolute top-0 right-0 border-[23px] border-transparent border-t-[color:var(--color-primary)] border-r-[color:var(--color-primary)]"
                 >
-                  <i class="absolute -top-[22px] -right-[21px] fas fa-check mr-1 text-base text-white" />
+                  <i class="absolute top-[-22px] right-[-21px] fas fa-check mr-1 text-base text-white" />
                 </div>
 
                 <div class="flex flex-col col-span-2">
-                  <span class="text-gray-400" v-t="'pages.company.info.labels.address'" />
+                  <span v-t="'pages.company.info.labels.address'" class="text-gray-400" />
 
                   <span class="leading-tight font-bold overflow-hidden overflow-ellipsis">
                     <span>{{ item.line1 }}</span>
@@ -107,7 +107,7 @@
                 </div>
 
                 <div class="flex flex-col">
-                  <span class="text-gray-400" v-t="'pages.company.info.labels.country'" />
+                  <span v-t="'pages.company.info.labels.country'" class="text-gray-400" />
 
                   <span class="leading-tight overflow-hidden overflow-ellipsis">
                     {{ item.countryName }}
@@ -115,7 +115,7 @@
                 </div>
 
                 <div class="flex flex-col col-span-2">
-                  <span class="text-gray-400" v-t="'pages.company.info.labels.description'" />
+                  <span v-t="'pages.company.info.labels.description'" class="text-gray-400" />
 
                   <span class="leading-tight overflow-hidden overflow-ellipsis">
                     {{ item.description }}
@@ -123,7 +123,7 @@
                 </div>
 
                 <div class="flex flex-col">
-                  <span class="text-gray-400" v-t="'pages.company.info.labels.zip'" />
+                  <span v-t="'pages.company.info.labels.zip'" class="text-gray-400" />
 
                   <span class="leading-tight overflow-hidden overflow-ellipsis">
                     {{ item.postalCode }}
@@ -139,22 +139,22 @@
                 class="grid grid-cols-3 relative px-6 py-5 gap-4 text-sm border-t border-gray-200"
               >
                 <div class="flex flex-col col-span-2">
-                  <span class="text-gray-400" v-t="'pages.company.info.labels.address'" />
+                  <span v-t="'pages.company.info.labels.address'" class="text-gray-400" />
                   <div class="h-4 bg-gray-200 animate-pulse"></div>
                 </div>
 
                 <div class="flex flex-col">
-                  <span class="text-gray-400" v-t="'pages.company.info.labels.country'" />
+                  <span v-t="'pages.company.info.labels.country'" class="text-gray-400" />
                   <div class="h-4 bg-gray-200 animate-pulse"></div>
                 </div>
 
                 <div class="flex flex-col col-span-2">
-                  <span class="text-gray-400" v-t="'pages.company.info.labels.description'" />
+                  <span v-t="'pages.company.info.labels.description'" class="text-gray-400" />
                   <div class="h-4 bg-gray-200 animate-pulse"></div>
                 </div>
 
                 <div class="flex flex-col">
-                  <span class="text-gray-400" v-t="'pages.company.info.labels.zip'" />
+                  <span v-t="'pages.company.info.labels.zip'" class="text-gray-400" />
                   <div class="h-4 bg-gray-200 animate-pulse"></div>
                 </div>
               </div>
@@ -220,7 +220,7 @@
 
             <template #desktop-skeleton>
               <tr v-for="i in itemsPerPage" :key="i" class="even:bg-gray-50">
-                <td v-for="column in columns.length" class="px-5 py-4" :key="column">
+                <td v-for="column in columns.length" :key="column" class="px-5 py-4">
                   <div class="h-5 bg-gray-200 animate-pulse" />
                 </td>
               </tr>

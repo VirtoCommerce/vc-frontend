@@ -22,10 +22,10 @@
       <div
         class="vc-product-card-list__buttons flex justify-center gap-3.5 mt-3 w-full sm:justify-start sm:place-self-end lg:mt-2 lg:gap-3"
       >
-        <AddToList customClass="w-5 h-5 lg:w-4 lg:h-4" :product="product" tooltip-placement="bottom" />
+        <AddToList custom-class="w-5 h-5 lg:w-4 lg:h-4" :product="product" tooltip-placement="bottom" />
         <AddToCompareCatalog
-          customClass="w-5 h-5 lg:w-4 lg:h-4"
           v-if="$cfg.product_compare_enabled"
+          custom-class="w-5 h-5 lg:w-4 lg:h-4"
           :product="product"
           tooltip-placement="bottom"
         />
@@ -123,7 +123,7 @@
           <svg class="shrink-0 w-3 h-3 text-primary lg:w-2.5 lg:h-2.5">
             <use href="/static/images/link.svg#main"></use>
           </svg>
-          <span class="truncate" v-t="'pages.catalog.show_on_a_separate_page'"></span>
+          <span v-t="'pages.catalog.show_on_a_separate_page'" class="truncate"></span>
         </router-link>
       </template>
 
@@ -136,7 +136,7 @@
             :quantity="product.availabilityData?.availableQuantity"
           />
 
-          <VcCountInCart :productId="product.id" />
+          <VcCountInCart :product-id="product.id" />
         </div>
       </template>
     </div>

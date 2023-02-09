@@ -43,10 +43,10 @@
           {{ column.title }}
           <template v-if="column.sortable && sort">
             <i
-              class="fas fa-caret-down ml-2"
               v-if="sort.column === column.id && sort.direction === SORT_DESCENDING"
+              class="fas fa-caret-down ml-2"
             ></i>
-            <i class="fas fa-caret-up ml-2" v-if="sort.column === column.id && sort.direction === SORT_ASCENDING"></i>
+            <i v-if="sort.column === column.id && sort.direction === SORT_ASCENDING" class="fas fa-caret-up ml-2"></i>
           </template>
         </th>
       </tr>
@@ -69,7 +69,7 @@
   </table>
 
   <!-- Table footer -->
-  <slot name="footer" v-if="($slots['footer'] || footer) && items && items.length">
+  <slot v-if="($slots['footer'] || footer) && items && items.length" name="footer">
     <!-- Table pagination -->
     <VcPagination
       v-if="pages > 1"

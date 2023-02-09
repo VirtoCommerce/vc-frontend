@@ -1,6 +1,6 @@
 <template>
   <!-- Mobile filters -->
-  <div class="flex flex-col gap-4 lg:gap-5" v-if="isMobile">
+  <div v-if="isMobile" class="flex flex-col gap-4 lg:gap-5">
     <VcCard
       v-if="availableStatuses.length"
       :title="$t('shared.account.orders-filter.status-label')"
@@ -9,11 +9,11 @@
     >
       <div class="flex flex-col space-y-4">
         <VcCheckbox
-          :class="{ 'font-bold': isSelectedStatus(status), 'text-gray-500': !isSelectedStatus(status) }"
           v-for="status in availableStatuses"
           :key="status"
           v-model="filterData.statuses"
           :value="status"
+          :class="{ 'font-bold': isSelectedStatus(status), 'text-gray-500': !isSelectedStatus(status) }"
         >
           {{ status }}
         </VcCheckbox>

@@ -85,17 +85,17 @@
         :loading="addressesLoading"
         :item-actions-builder="itemActionsBuilder"
         :columns="columns"
-        :items="paginatedAddresses"
         :sort="sort"
+        :items="paginatedAddresses"
         :pages="pages"
         :page="page"
-        @pageChanged="onPageChange"
-        @headerClick="applySorting"
+        @page-changed="onPageChange"
+        @header-click="applySorting"
       >
         <template #mobile-item="itemData">
           <div class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200">
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.addresses.recipient_name_label'" />
+              <span v-t="'pages.account.addresses.recipient_name_label'" class="text-sm text-gray-400" />
 
               <span class="pr-4 font-extrabold overflow-hidden overflow-ellipsis">
                 {{ itemData.item.firstName }} {{ itemData.item.lastName }}
@@ -103,7 +103,7 @@
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.addresses.address_label'" />
+              <span v-t="'pages.account.addresses.address_label'" class="text-sm text-gray-400" />
 
               <span class="overflow-hidden overflow-ellipsis">
                 {{ itemData.item.countryCode }} {{ itemData.item.regionName }} {{ itemData.item.city }}
@@ -113,7 +113,7 @@
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.addresses.phone_label'" />
+              <span v-t="'pages.account.addresses.phone_label'" class="text-sm text-gray-400" />
 
               <span class="pr-4 overflow-hidden overflow-ellipsis">
                 {{ itemData.item.phone }}
@@ -121,7 +121,7 @@
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.addresses.email_label'" />
+              <span v-t="'pages.account.addresses.email_label'" class="text-sm text-gray-400" />
 
               <span class="overflow-hidden overflow-ellipsis">
                 {{ itemData.item.email }}
@@ -131,24 +131,24 @@
         </template>
 
         <template #mobile-skeleton>
-          <div v-for="i of itemsPerPage" :key="i" class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200">
+          <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200">
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.addresses.recipient_name_label'"></span>
+              <span v-t="'pages.account.addresses.recipient_name_label'" class="text-sm text-gray-400"></span>
               <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.addresses.address_label'"></span>
+              <span v-t="'pages.account.addresses.address_label'" class="text-sm text-gray-400"></span>
               <div class="h-6 bg-gray-200 animate-pulse"></div>
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.addresses.phone_label'"></span>
+              <span v-t="'pages.account.addresses.phone_label'" class="text-sm text-gray-400"></span>
               <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.addresses.email_label'"></span>
+              <span v-t="'pages.account.addresses.email_label'" class="text-sm text-gray-400"></span>
               <div class="h-6 bg-gray-200 animate-pulse"></div>
             </div>
           </div>
@@ -177,8 +177,8 @@
                 <button
                   type="button"
                   class="h-7 w-7 shadow rounded text-[color:var(--color-primary)] hover:bg-gray-100"
-                  @click="openEditMode(address)"
                   :title="$t('pages.account.addresses.edit_label')"
+                  @click="openEditMode(address)"
                 >
                   <i class="fas fa-pencil-alt" />
                 </button>
@@ -186,8 +186,8 @@
                 <button
                   type="button"
                   class="h-7 w-7 shadow rounded text-[color:var(--color-danger)] hover:bg-gray-100"
-                  @click="removeAddress(address)"
                   :title="$t('pages.account.addresses.delete_label')"
+                  @click="removeAddress(address)"
                 >
                   <i class="fas fa-times" />
                 </button>
@@ -197,7 +197,7 @@
         </template>
 
         <template #desktop-skeleton>
-          <tr v-for="i of itemsPerPage" :key="i" class="even:bg-gray-50">
+          <tr v-for="i in itemsPerPage" :key="i" class="even:bg-gray-50">
             <td class="p-5">
               <div class="h-6 bg-gray-200 animate-pulse"></div>
             </td>

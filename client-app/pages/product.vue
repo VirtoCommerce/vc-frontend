@@ -14,15 +14,15 @@
 
       <template v-for="item in template.content">
         <component
+          :is="item.type"
           v-if="!item.hidden"
           :key="item.id"
-          :is="item.type"
           :product="product"
-          :relatedProducts="relatedProducts"
+          :related-products="relatedProducts"
           :model="item"
-          :isMobile="isMobile"
-          :productWithVariations="!!product.hasVariations"
-          :variationsCartTotalAmount="variationsCartTotalAmount"
+          :is-mobile="isMobile"
+          :product-with-variations="!!product.hasVariations"
+          :variations-cart-total-amount="variationsCartTotalAmount"
         />
       </template>
 
@@ -39,11 +39,10 @@
               :options="relatedProductsCarouselOptions"
               :pagination="isMobile"
               :navigation="!isMobile"
-              class="px-6 mb-8 lg:mb-2"
-              style="--navigation-offset: 3rem"
+              class="px-6 mb-8 lg:mb-2 [--navigation-offset:3rem]"
             >
-              <template #slide="{ slide: product }">
-                <CarouselProductCard :product="product" class="mb-6" @link-click="ga.selectItem(product)" />
+              <template #slide="{ slide: item }">
+                <CarouselProductCard :product="item" class="mb-6" @link-click="ga.selectItem(item)" />
               </template>
             </VcCarousel>
           </VcSection>
@@ -58,12 +57,12 @@
 </template>
 
 <script setup lang="ts">
-import { watchEffect, defineAsyncComponent, computed } from "vue";
+import { computed, defineAsyncComponent, watchEffect } from "vue";
 import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
-import { useGoogleAnalytics, useBreadcrumbs, usePageHead } from "@/core/composables";
+import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { useTemplate } from "@/shared/static-content";
 import { useCart } from "@/shared/cart";
-import { useProduct, useRelatedProducts, CarouselProductCard } from "@/shared/catalog";
+import { CarouselProductCard, useProduct, useRelatedProducts } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useI18n } from "vue-i18n";
 import { buildBreadcrumbs } from "@/core";

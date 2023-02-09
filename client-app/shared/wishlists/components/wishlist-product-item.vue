@@ -22,9 +22,9 @@
       <div v-else>
         <div class="text-sm break-words font-extrabold line-clamp-3 overflow-hidden">{{ listItem.name }}</div>
         <!-- todo: extract small alert component https://virtocommerce.atlassian.net/browse/ST-2488 -->
-        <div class="flex items-center space-x-1 mt-1" v-if="productAvailable">
+        <div v-if="productAvailable" class="flex items-center space-x-1 mt-1">
           <i class="fas fa-exclamation-circle text-[color:var(--color-primary)] self-start"></i>
-          <span class="text-xs text-gray-400" v-t="'common.messages.item_can_t_be_purchased'"></span>
+          <span v-t="'common.messages.item_can_t_be_purchased'" class="text-xs text-gray-400"></span>
         </div>
       </div>
     </div>

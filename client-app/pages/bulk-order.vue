@@ -4,8 +4,8 @@
       <VcBreadcrumbs class="mb-3 hidden lg:block" :items="breadcrumbs" />
 
       <h2
-        class="text-gray-800 px-6 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-5"
         v-t="'pages.bulk_order.title'"
+        class="text-gray-800 px-6 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-5"
       />
 
       <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-y-5 lg:gap-5">
@@ -13,9 +13,9 @@
         <transition name="slide-fade-top" mode="out-in">
           <VcAlert
             v-if="SKUsWithErrors.length"
+            key="sku"
             class="mx-6 md:mx-0 mb-5 lg:mb-0 col-span-1 lg:col-span-2"
             type="danger"
-            key="sku"
             icon
           >
             <span>{{ $t("pages.bulk_order.product_was_not_added_alert", [SKUsWithErrors.join(", ")]) }}</span>
@@ -45,9 +45,9 @@
         <div :class="{ hidden: activeTab !== 'manually' }" class="lg:block col-span-1 lg:col-span-2">
           <Manually
             :loading="loadingManually"
+            class="bg-white md:rounded-b lg:rounded md:border-x md:border-b lg:border shadow-sm"
             @add-to-cart="addManuallyItems"
             @error="showIncorrectDataError"
-            class="bg-white md:rounded-b lg:rounded md:border-x md:border-b lg:border shadow-sm"
           />
         </div>
 
@@ -55,9 +55,9 @@
         <div :class="{ hidden: activeTab !== 'copy&paste' }" class="lg:block col-span-1">
           <CopyAndPaste
             :loading="loadingCSV"
+            class="bg-white md:rounded-b lg:rounded md:border-x md:border-b lg:border shadow-sm"
             @add-to-cart="addItemsFromCSVText"
             @error="showIncorrectDataError"
-            class="bg-white md:rounded-b lg:rounded md:border-x md:border-b lg:border shadow-sm"
           />
         </div>
       </div>

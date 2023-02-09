@@ -2,8 +2,8 @@
   <VcSectionWidget v-if="items?.length" :title="$t('shared.checkout.accepted_gifts.title')" icon="gift">
     <div class="border rounded divide-y">
       <div class="flex items-center px-6 py-2 text-sm font-bold">
-        <div class="grow" v-t="'shared.checkout.accepted_gifts.gift_label'"></div>
-        <div class="ml-3 w-max" v-t="'shared.checkout.accepted_gifts.quantity_label'"></div>
+        <div v-t="'shared.checkout.accepted_gifts.gift_label'" class="grow"></div>
+        <div v-t="'shared.checkout.accepted_gifts.quantity_label'" class="ml-3 w-max"></div>
         <div class="hidden xl:block xl:w-[6.5rem]"></div>
       </div>
 

@@ -34,6 +34,7 @@
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
 import { PropType } from "vue";
 import { IFulfillmentCenter } from "@/shared/fulfillmentCenters";
@@ -49,6 +50,7 @@ defineProps({
   },
 });
 </script>
+
 <style lang="scss">
 .branch-item .closed {
   @apply text-[color:var(--color-branch-dialog-closed)];

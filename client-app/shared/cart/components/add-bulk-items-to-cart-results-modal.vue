@@ -36,8 +36,8 @@
               </span>
 
               <span
-                class="text-15 font-bold truncate"
                 v-t="'shared.cart.add_bulk_items_to_cart_results_popup.groups.' + group.name"
+                class="text-15 font-bold truncate"
               />
 
               <span
@@ -52,18 +52,18 @@
             <ul class="md:table w-full">
               <li class="hidden md:table-row md:sticky top-0 text-15 font-extrabold bg-gray-50">
                 <div
-                  class="table-cell px-4 py-2.5 border-b"
                   v-t="'shared.cart.add_bulk_items_to_cart_results_popup.labels.sku'"
-                />
-
-                <div
                   class="table-cell px-4 py-2.5 border-b"
-                  v-t="'shared.cart.add_bulk_items_to_cart_results_popup.labels.product_name'"
                 />
 
                 <div
-                  class="table-cell px-4 py-2.5 border-b text-right"
+                  v-t="'shared.cart.add_bulk_items_to_cart_results_popup.labels.product_name'"
+                  class="table-cell px-4 py-2.5 border-b"
+                />
+
+                <div
                   v-t="'shared.cart.add_bulk_items_to_cart_results_popup.labels.quantity'"
+                  class="table-cell px-4 py-2.5 border-b text-right"
                 />
               </li>
 
@@ -74,8 +74,8 @@
               >
                 <div class="flex flex-col w-3/5 md:w-auto pr-3 md:table-cell md:px-4 md:py-2.5 md:align-middle">
                   <span
-                    class="text-13 text-gray-400 md:hidden"
                     v-t="'shared.cart.add_bulk_items_to_cart_results_popup.labels.sku'"
+                    class="text-13 text-gray-400 md:hidden"
                   />
                   <span class="font-semibold">{{ item.sku }}</span>
                 </div>
@@ -96,8 +96,8 @@
                   class="flex flex-col w-2/5 md:w-auto md:table-cell md:px-4 md:py-2.5 md:align-middle md:text-right"
                 >
                   <span
-                    class="text-13 text-gray-400 md:hidden"
                     v-t="'shared.cart.add_bulk_items_to_cart_results_popup.labels.quantity'"
+                    class="text-13 text-gray-400 md:hidden"
                   />
                   <span class="font-bold">{{ $n(item.quantity) }}</span>
                 </div>
@@ -123,18 +123,23 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from "vue";
+import { computed } from "vue";
 import { useProductsRoutes } from "@/core";
 import { ItemForAddBulkItemsToCartResultsPopup } from "@/shared/cart";
 
 type Group = { name: "added" | "not_added"; items: ItemForAddBulkItemsToCartResultsPopup[] };
 
-const props = defineProps({
-  items: {
-    type: Array as PropType<ItemForAddBulkItemsToCartResultsPopup[]>,
-    default: () => [],
-    required: true,
-  },
+interface IEmits {
+  (event: "confirm"): void;
+}
+
+interface IProps {
+  items: ItemForAddBulkItemsToCartResultsPopup[];
+}
+
+defineEmits<IEmits>();
+const props = withDefaults(defineProps<IProps>(), {
+  items: () => [],
 });
 
 const links = useProductsRoutes(props.items, { productIdProperty: "productId" });

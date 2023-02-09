@@ -3,11 +3,8 @@
   <div class="banner flex items-center" :style="{ backgroundImage: `url(${$cfg.homepage_background_image})` }">
     <div class="container mx-auto flex flex-col lg:flex-row items-center space-y-10 lg:space-x-24 p-6 md:p-12">
       <div class="w-full lg:w-2/5 bg-white shadow-lg rounded p-6 md:p-10">
-        <h1
-          class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8"
-          v-t="'pages.home.sign_in_form_title'"
-        ></h1>
-        <SignInForm :grow-buttons="true" @succeeded="onSignIn" />
+        <h1 v-t="'pages.home.sign_in_form_title'" class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8" />
+        <SignInForm grow-buttons @succeeded="onSignIn" />
       </div>
       <div
         class="w-full lg:w-3/5 text-white font-bold filter drop-shadow-lg text-center lg:text-left text-3xl md:text-5xl select-none"
@@ -29,7 +26,7 @@
   <!-- Main content -->
   <div class="main">
     <div class="container mx-auto pt-32 pb-40 px-6 md:px-12">
-      <div class="font-bold text-3xl text-center px-6" v-t="'pages.home.feature_descriptions_block.title'"></div>
+      <div v-t="'pages.home.feature_descriptions_block.title'" class="font-bold text-3xl text-center px-6"></div>
       <div class="flex flex-wrap justify-between mx-auto mt-24">
         <div class="w-full md:w-1/2 lg:w-1/4 md:mt-44 mb-24 md:mb-0">
           <VcImage
@@ -39,8 +36,8 @@
             lazy
           />
           <div
-            class="px-8 font-bold text-2xl md:text-xl text-center mt-5"
             v-t="'pages.home.feature_descriptions_block.feature_1'"
+            class="px-8 font-bold text-2xl md:text-xl text-center mt-5"
           ></div>
         </div>
         <div class="w-full md:w-1/2 lg:w-1/4 mb-24 md:mb-0">
@@ -51,8 +48,8 @@
             lazy
           />
           <div
-            class="px-8 font-bold text-2xl md:text-xl text-center mt-5"
             v-t="'pages.home.feature_descriptions_block.feature_2'"
+            class="px-8 font-bold text-2xl md:text-xl text-center mt-5"
           ></div>
         </div>
         <div class="w-full md:w-1/2 lg:w-1/4 md:mt-44 mb-24 md:mb-0">
@@ -63,8 +60,8 @@
             lazy
           />
           <div
-            class="px-8 font-bold text-2xl md:text-xl text-center mt-5"
             v-t="'pages.home.feature_descriptions_block.feature_3'"
+            class="px-8 font-bold text-2xl md:text-xl text-center mt-5"
           ></div>
         </div>
         <div class="w-full md:w-1/2 lg:w-1/4 mb-24 md:mb-0">
@@ -75,8 +72,8 @@
             lazy
           />
           <div
-            class="px-8 font-bold text-2xl md:text-xl text-center mt-5"
             v-t="'pages.home.feature_descriptions_block.feature_4'"
+            class="px-8 font-bold text-2xl md:text-xl text-center mt-5"
           ></div>
         </div>
       </div>
@@ -87,8 +84,8 @@
   <div class="py-6 lg:py-10 bg-[color:var(--color-primary)]">
     <div class="container mx-auto flex flex-col lg:flex-row items-center space-y-2 lg:space-x-10 px-6 md:px-12">
       <div
-        class="uppercase font-extrabold text-3xl text-white whitespace-nowrap"
         v-t="'pages.home.subscription_block.subscribe_now'"
+        class="uppercase font-extrabold text-3xl text-white whitespace-nowrap"
       ></div>
       <div
         class="text-base font-medium leading-tight text-white max-w-max lg:max-w-min"
@@ -96,14 +93,14 @@
       ></div>
       <div class="flex flex-grow w-full space-x-6">
         <VcInput
-          class="flex-grow"
-          :without-border="true"
           :placeholder="$t('pages.home.subscription_block.email_placeholder')"
+          class="flex-grow"
+          without-border
         />
         <!-- todo: use VcButton -->
         <button
-          class="bg-white hover:bg-gray-200 px-6 uppercase text-sm font-roboto font-bold h-11 rounded shadow-md"
           v-t="'pages.home.subscription_block.subscribe_button'"
+          class="bg-white hover:bg-gray-200 px-6 uppercase text-sm font-roboto font-bold h-11 rounded shadow-md"
         ></button>
       </div>
     </div>

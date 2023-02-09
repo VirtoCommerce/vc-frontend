@@ -30,8 +30,8 @@
     <div class="pl-4 flex flex-col text-sm">
       <router-link
         v-for="(item, index) in subcategories"
-        :to="subcategoriesRoutes[item.id]"
         :key="index"
+        :to="subcategoriesRoutes[item.id]"
         :class="{ 'font-bold': item.id === selectedCategory?.id }"
         class="hover:bg-gray-100 py-0.5 px-2 -mx-2 mt-0.5 rounded-sm transition-colors truncate text-[color:var(--color-category-selector-link)]"
       >
@@ -43,7 +43,7 @@
   <!-- skeleton -->
   <VcFilterCardSkeleton v-else-if="loading">
     <div class="h-5 mb-1.5 bg-gray-100">&nbsp;</div>
-    <div class="ml-6 mb-1.5 h-4 bg-gray-100" v-for="i in 6" :key="i">&nbsp;</div>
+    <div v-for="i in 6" :key="i" class="ml-6 mb-1.5 h-4 bg-gray-100">&nbsp;</div>
   </VcFilterCardSkeleton>
 </template>
 

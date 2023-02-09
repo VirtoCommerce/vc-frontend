@@ -8,7 +8,7 @@
       <!-- Price & Delivery (with variations) -->
       <ProductPriceBlock v-if="productWithVariations" :product="product">
         <div class="flex items-baseline justify-between text-sm">
-          <div class="font-extrabold text-base" v-t="'pages.product.variations_total_label'"></div>
+          <div v-t="'pages.product.variations_total_label'" class="font-extrabold text-base"></div>
 
           <div class="font-extrabold">
             <!-- todo: extract a component for price and use it here -->
@@ -26,7 +26,7 @@
       <!-- Price & Delivery (without variations) -->
       <ProductPriceBlock v-else :product="product">
         <div class="flex items-baseline justify-between text-sm">
-          <div class="font-extrabold text-base" v-t="'pages.product.price_label'"></div>
+          <div v-t="'pages.product.price_label'" class="font-extrabold text-base"></div>
 
           <div>
             <VcItemPrice :value="product.price" />

@@ -38,7 +38,7 @@
         <div class="w-1/3">
           <VcPopover
             :title="$t('shared.catalog.product_details.share_product_label')"
-            :showCloseButton="true"
+            show-close-button
             @toggle="handleShareProductPopoverToggle"
           >
             <template #trigger>
@@ -57,10 +57,10 @@
             <template #content>
               <div class="flex justify-between items-center px-5 mt-1.5 mb-7 space-x-6">
                 <a
-                  target="_blank"
-                  :href="getProductSocialShareUrl(socialSharingService.url_template, pageUrl)"
                   v-for="socialSharingService in $cfg.social_sharing_services"
                   :key="socialSharingService.name"
+                  target="_blank"
+                  :href="getProductSocialShareUrl(socialSharingService.url_template, pageUrl)"
                 >
                   <img class="rounded-sm" width="40" height="40" :src="socialSharingService.icon" />
                 </a>
@@ -91,12 +91,12 @@
     </div>
   </div>
   <!-- free area for popover on mobile -->
-  <div v-show="isMobile" class="h-10" ref="divUnderSharedPopover"></div>
+  <div v-show="isMobile" ref="divUnderSharedPopover" class="h-10"></div>
 </template>
 
 <script setup lang="ts">
 import { Product } from "@/xapi/types";
-import { PropType, ref, computed, shallowRef } from "vue";
+import { computed, PropType, ref, shallowRef } from "vue";
 import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddToWishlistsModal } from "@/shared/wishlists";

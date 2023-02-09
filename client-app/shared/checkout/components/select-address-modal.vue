@@ -4,11 +4,11 @@
       <VcButton
         class="uppercase lg:mr-auto px-2"
         :class="[isMobile && 'flex-grow w-1/2']"
+        is-outline
         @click="
           $emit('addNewAddress');
           close();
         "
-        is-outline
       >
         {{ $t("shared.checkout.select_address_dialog.add_address_button") }}
       </VcButton>
@@ -18,8 +18,8 @@
           v-if="!isMobile"
           kind="secondary"
           class="w-1/2 md:w-auto uppercase flex-grow md:flex-grow-0 md:px-5"
-          @click="close"
           is-outline
+          @click="close"
         >
           {{ $t("shared.checkout.select_address_dialog.cancel_button") }}
         </VcButton>
@@ -40,7 +40,7 @@
       </div>
     </template>
 
-    <VcTable :columns="columns" :items="paginatedAddresses" :pages="pages" :page="page" @pageChanged="onPageChange">
+    <VcTable :columns="columns" :items="paginatedAddresses" :pages="pages" :page="page" @page-changed="onPageChange">
       <template #mobile-item="itemData">
         <div class="flex items-center space-x-3 p-6 border-b border-gray-200">
           <div class="w-1/2 flex-grow truncate">
@@ -62,9 +62,9 @@
 
           <div v-else class="w-1/4">
             <button
+              v-t="'shared.checkout.select_address_dialog.select_button'"
               class="uppercase flex-grow flex items-center mx-auto justify-center px-3 h-9 font-roboto-condensed text-base font-bold border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white rounded focus:outline-none"
               @click="setAddress(itemData.item)"
-              v-t="'shared.checkout.select_address_dialog.select_button'"
             ></button>
           </div>
         </div>
@@ -72,8 +72,8 @@
 
       <template #mobile-empty>
         <div
-          class="flex items-center space-x-3 p-6 border-b border-gray-200"
           v-t="'shared.checkout.select_address_dialog.no_addresses_message'"
+          class="flex items-center space-x-3 p-6 border-b border-gray-200"
         ></div>
       </template>
 
@@ -95,9 +95,9 @@
           </td>
           <td v-else class="p-5">
             <button
+              v-t="'shared.checkout.select_address_dialog.select_button'"
               class="uppercase flex-grow flex items-center mx-auto justify-center px-3 h-9 font-roboto-condensed text-base font-bold border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white rounded focus:outline-none"
               @click="setAddress(address)"
-              v-t="'shared.checkout.select_address_dialog.select_button'"
             ></button>
           </td>
         </tr>
@@ -115,7 +115,7 @@
         <tr>
           <td colspan="5">
             <div class="flex items-center p-5 border-b border-gray-200">
-              <span class="text-base" v-t="'shared.checkout.select_address_dialog.no_addresses_message'"></span>
+              <span v-t="'shared.checkout.select_address_dialog.no_addresses_message'" class="text-base"></span>
             </div>
           </td>
         </tr>

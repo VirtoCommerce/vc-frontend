@@ -5,13 +5,10 @@
     "name" : "Vue-i18n",
     "keyNamingPattern" : "SNAKE_CASE_PATTERN",
     "sink" : {
-      "id" : "adb7e72a-a84b-4dfe-9fee-109d6a13721a",
-      "type" : "namespaced",
-      "translationsDirectory" : "$PROJECT_DIR$/locales",
+      "id" : "b1baacbc-0fda-480d-b4b4-5e9029af3cf9",
+      "type" : "singleFile",
+      "pathToFile" : "$PROJECT_DIR$/locales/en.json",
       "fileType" : "json",
-      "defaultLocale" : "en",
-      "namespaces" : [ "messages" ],
-      "outputFilenameTemplate" : "%locale%.json",
       "nestingType" : "DOT",
       "placeholderFormatterName" : "I18NEXT"
     },

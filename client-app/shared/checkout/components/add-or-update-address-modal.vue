@@ -6,7 +6,7 @@
         : $t('shared.checkout.add_or_update_address_dialog.new_address_title')
     "
     modal-width="max-w-5xl"
-    :hide-actions="true"
+    hide-actions
     is-mobile-fullscreen
   >
     <template #default="{ close }">

@@ -1,7 +1,7 @@
 <template>
   <TwoColumn class="max-w-screen-xl">
     <template #left>
-      <h1 class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8 lg:mt-5" v-t="'pages.sign_up.header'"></h1>
+      <h1 v-t="'pages.sign_up.header'" class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8 lg:mt-5"></h1>
       <form @submit="onSubmit">
         <div class="mt-5 mb-5 flex flex-col space-y-5 md:space-y-0 md:flex-row md:space-x-7">
           <VcRadioButton

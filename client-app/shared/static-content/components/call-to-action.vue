@@ -6,7 +6,6 @@
         <div class="flex w-full items-center justify-center space-x-6">
           <VcButton
             v-for="(item, index) in model.buttons"
-            :isEnabled="true"
             :key="index"
             :to="item.link"
             class="w-1/2 lg:w-auto uppercase px-8"

@@ -42,9 +42,9 @@
         <!-- PROPERTIES -->
         <div class="vc-cart-line-item__properties w-full">
           <div
-            class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[45%_1fr] lg:text-xs"
             v-for="property in extendedItem.extended.displayProperties"
             :key="property.id"
+            class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[45%_1fr] lg:text-xs"
           >
             <div class="min-w-0 font-medium capitalize text-gray-600 md:font-bold md:text-gray-800">
               <div class="truncate">{{ property.label }}:</div>
@@ -80,8 +80,8 @@
 
             <!-- Price without discount -->
             <div
-              class="text-11 leading-3 line-through text-[color:var(--color-price-old)]"
               v-if="extendedItem.listPrice!.amount !== extendedItem.placedPrice!.amount"
+              class="text-11 leading-3 line-through text-[color:var(--color-price-old)]"
             >
               <VcPriceDisplay :value="extendedItem.listPrice" />
             </div>

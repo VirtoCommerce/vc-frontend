@@ -35,7 +35,7 @@
       />
 
       <template v-if="isListDetails">
-        <div class="px-3 ml-8 flex text-sm items-center space-x-2" v-for="list in lists" :key="list.id">
+        <div v-for="list in lists" :key="list.id" class="px-3 ml-8 flex text-sm items-center space-x-2">
           <i class="fas fa-minus text-[color:var(--color-primary)]" />
 
           <router-link
@@ -55,10 +55,10 @@
       />
 
       <AccountNavigationLink
+        v-if="$cfg.quotes_enabled"
         :to="{ name: 'Quotes' }"
         :text="$t('shared.account.navigation.links.quote_requests')"
         class="quotes-icon"
-        v-if="$cfg.quotes_enabled"
       />
     </div>
   </div>

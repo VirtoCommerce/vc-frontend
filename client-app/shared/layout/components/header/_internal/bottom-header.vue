@@ -24,8 +24,8 @@
         @click="catalogMenuVisible = !catalogMenuVisible"
       >
         <span
-          class="uppercase font-bold tracking-wide"
           v-t="'shared.layout.header.bottom_header.catalog_menu_button'"
+          class="uppercase font-bold tracking-wide"
         />
 
         <i
@@ -61,9 +61,9 @@
       leave-active-class="will-change-transform"
     >
       <CatalogMenu
-        ref="catalogMenuElement"
         v-if="catalogMenuVisible"
-        class="absolute transition-transform duration-200 shadow-md -mt-[1px]"
+        ref="catalogMenuElement"
+        class="absolute transition-transform duration-200 shadow-md mt-[-1px]"
         @select="catalogMenuVisible = false"
       />
     </transition>

@@ -8,12 +8,12 @@
         :value="value?.actual"
       />
       <VcPriceDisplay v-else class="text-green-700 font-bold" :value="value?.list" />
-      <span class="hidden sm:inline md:hidden xl:inline" v-t="'common.suffixes.per_item'"></span>
+      <span v-t="'common.suffixes.per_item'" class="hidden sm:inline md:hidden xl:inline"></span>
     </div>
     <div class="leading-4">
       <VcPriceDisplay
-        class="text-gray-400 text-xs font-semibold line-through"
         v-if="value?.list?.amount > value?.actual?.amount"
+        class="text-gray-400 text-xs font-semibold line-through"
         :value="value?.list"
       />
     </div>

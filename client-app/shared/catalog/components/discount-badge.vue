@@ -7,7 +7,7 @@
       'h-5 px-1.5': size === 'sm',
     }"
   >
-    <svg class="w-2.5 h-3" v-if="isHot">
+    <svg v-if="isHot" class="w-2.5 h-3">
       <use href="/static/images/fire-solid.svg#main" />
     </svg>
     <span

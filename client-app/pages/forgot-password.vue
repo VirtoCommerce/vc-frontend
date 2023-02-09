@@ -2,11 +2,11 @@
   <TwoColumn class="max-w-screen-xl">
     <template #left>
       <h1
-        class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8 lg:mt-5"
         v-t="'pages.forgot_password.header'"
+        class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8 lg:mt-5"
       ></h1>
       <div v-if="!isSucceeded">
-        <div class="text-lg md:text-base mb-4" v-t="'pages.forgot_password.email_will_be_sended_message'"></div>
+        <div v-t="'pages.forgot_password.email_will_be_sended_message'" class="text-lg md:text-base mb-4"></div>
         <ForgotPasswordForm @succeeded="onSucceeded()"></ForgotPasswordForm>
       </div>
       <div v-else class="flex flex-col items-center space-y-10 lg:space-y-12 lg:items-start lg:mt-12">

@@ -6,15 +6,15 @@
   >
     <template #title>
       <h1
-        class="lg:hidden text-center lg:text-left text-2xl uppercase font-bold mb-3"
         v-t="'pages.checkout_complete.title'"
+        class="lg:hidden text-center lg:text-left text-2xl uppercase font-bold mb-3"
       />
     </template>
 
     <template #description>
       <h1
-        class="hidden lg:block text-center lg:text-left text-3xl uppercase font-bold mb-8"
         v-t="'pages.checkout_complete.title'"
+        class="hidden lg:block text-center lg:text-left text-3xl uppercase font-bold mb-8"
       />
 
       <div class="flex flex-col lg:flex-row gap-5 mb-10">
@@ -25,7 +25,7 @@
         </div>
 
         <div class="text-19 text-center lg:text-left max-w-md">
-          <strong class="block mb-4" v-t="{ path: 'pages.checkout_complete.subtitle', args: [orderNumber] }" />
+          <strong v-t="{ path: 'pages.checkout_complete.subtitle', args: [orderNumber] }" class="block mb-4" />
           <span v-t="'pages.checkout_complete.text'" />
           <div class="flex flex-col md:flex-row items-center justify-center lg:justify-start gap-6 mt-10">
             <VcButton :to="{ name: 'OrderDetails', params: { orderId } }" class="uppercase w-40">

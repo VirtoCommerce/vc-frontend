@@ -54,7 +54,7 @@ const props = defineProps({
   isReadonly: Boolean,
   isDisabled: Boolean,
   isRequired: Boolean,
-  withoutBorder: { type: Boolean, default: false },
+  withoutBorder: Boolean,
   hidePasswordSwitcher: Boolean,
   label: String,
   name: String,

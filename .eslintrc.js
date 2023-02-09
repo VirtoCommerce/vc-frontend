@@ -3,62 +3,136 @@ module.exports = {
   env: {
     node: true,
   },
-  ignorePatterns: ["**/*.{es,umd}.js"],
-  plugins: ["vue", "import", "@typescript-eslint"],
   extends: [
     "eslint:recommended",
-    "plugin:vue/vue3-essential",
+    "plugin:vue/vue3-recommended", // See rules: https://eslint.vuejs.org/rules
+    "plugin:@typescript-eslint/recommended",
     "@vue/eslint-config-typescript/recommended",
     "@vue/eslint-config-prettier",
+    "@vue/prettier",
     "plugin:import/recommended",
     "plugin:import/typescript",
-    "@vue/prettier",
+    "plugin:sonarjs/recommended",
+    // TODO: enable "plugin:tailwindcss/recommended", // See rules: https://github.com/francoismassart/eslint-plugin-tailwindcss#supported-rules
+    // TODO: enable "plugin:vuejs-accessibility/recommended", // See rules: https://github.com/vue-a11y/eslint-plugin-vuejs-accessibility/tree/main/docs
   ],
   parser: "vue-eslint-parser",
   parserOptions: {
-    parser: {
-      // Script parser for `<script>`
-      js: "espree",
-
-      // Script parser for `<script lang="ts">`
-      ts: "@typescript-eslint/parser",
-
-      // Script parser for vue directives (e.g. `v-if=` or `:attribute=`)
-      // and vue interpolations (e.g. `{{variable}}`).
-      // If not specified, the parser determined by `<script lang ="...">` is used.
-      //"<template>": "espree",
-    },
-    ecmaVersion: 2020,
+    ecmaVersion: "latest",
+    parser: "@typescript-eslint/parser",
+    sourceType: "module",
   },
+  plugins: ["vue", "import", "@typescript-eslint", "sonarjs", "vuejs-accessibility"],
   rules: {
-    "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
-    "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
-    "@typescript-eslint/ban-ts-comment": "warn",
-    "vue/script-setup-uses-vars": "error",
-    "import/no-unresolved": "error",
+    /**
+     * Errors
+     */
     "@typescript-eslint/no-shadow": "error",
+    "import/no-unresolved": "error",
+    "vue/block-lang": ["error", { script: { lang: "ts" } }],
+    "vue/prefer-prop-type-boolean-first": "error",
+    "vue/prefer-true-attribute-shorthand": "error",
+    "vue/v-for-delimiter-style": "error",
+    "vue/no-irregular-whitespace": "error",
+
+    /**
+     * Warnings
+     */
+    "@typescript-eslint/ban-ts-comment": "warn",
+    "@typescript-eslint/naming-convention": [
+      "warn",
+      { selector: "interface", format: ["PascalCase"], prefix: ["I"] },
+      { selector: "typeAlias", format: ["PascalCase"], suffix: ["Type"] },
+    ],
+    /* TODO: enable
+    "import/order": [
+      "warn",
+      {
+        groups: ["builtin", "external", "internal", "unknown", "parent", "sibling", "index"],
+        pathGroups: [
+          {
+            pattern: "** /*.vue",
+            group: "external",
+            position: "before",
+          },
+        ],
+        alphabetize: {
+          order: "asc",
+        },
+        "newlines-between": "never",
+        // pathGroupsExcludedImportTypes: [],
+      },
+    ],
+    */
+    "no-console": "warn",
+    "no-debugger": "warn",
+    "vue/component-api-style": "warn",
+    "vue/component-name-in-template-casing": [
+      "warn",
+      "PascalCase",
+      {
+        registeredComponentsOnly: false,
+        ignores: [
+          "/^custom-/",
+          "component",
+          "transition",
+          "transition-group",
+          "teleport",
+          "router-view",
+          "router-link",
+          "i18n-t",
+        ],
+      },
+    ],
+    "vue/component-tags-order": [
+      "warn",
+      { order: ["template", "script:not([setup])", "script[setup]", "style:not([scoped])", "style[scoped]"] },
+    ],
+    "vue/custom-event-name-casing": [
+      "warn",
+      "camelCase",
+      {
+        // Example: $emit('change:itemQuantity', $event)
+        ignores: ["/^[a-z]+:[a-z]+(?:[A-Z][a-z]+)*$/u"],
+      },
+    ],
+    "vue/define-emits-declaration": "warn",
+    // TODO: enable "vue/define-macros-order": ["warn", { order: ["defineEmits", "defineProps"] }],
+    "vue/define-props-declaration": ["warn", "type-based"],
+    "vue/html-button-has-type": "warn",
+    "vue/no-duplicate-attr-inheritance": "warn",
+    "vue/no-multiple-objects-in-class": "warn",
+    "vue/no-required-prop-with-default": "warn",
+    "vue/no-static-inline-styles": "warn",
+    "vue/no-useless-v-bind": "warn",
+    "vue/padding-line-between-blocks": "warn",
+    /* TODO: enable
+    "vue/padding-line-between-tags": "warn",
+    "vue/padding-lines-in-component-definition": "warn",
+    */
+    "vue/require-emit-validator": "warn",
+
+    /**
+     * Disabled
+     */
     "@typescript-eslint/no-non-null-assertion": "off",
-    "vue/multi-word-component-names": "off",
+    curly: "error",
     "no-prototype-builtins": "off",
-    "curly": "error",
+    "sonarjs/no-duplicate-string": "off",
+    "tailwindcss/no-custom-classname": "off",
+    "vue/multi-word-component-names": "off",
+    "vue/require-default-prop": "off",
   },
   overrides: [
-    // Fix no-used-vars when importing ts types in .vue files
+    // Fix import of ts types in .vue files
     {
       files: ["*.vue"],
       rules: {
-        "no-unused-vars": "off",
         "no-undef": "off",
-        "@typescript-eslint/no-unused-vars": "error",
       },
     },
   ],
   globals: {
-    defineProps: "readonly",
-    defineEmits: "readonly",
-    defineExpose: "readonly",
-    withDefaults: "readonly",
-
     /**
      * Accept.js (Authorize.net)
      * @link https://developer.authorize.net/api/reference/features/acceptjs.html
@@ -73,6 +147,7 @@ module.exports = {
       typescript: {
         alwaysTryTypes: true,
       },
+      node: true,
     },
   },
 };

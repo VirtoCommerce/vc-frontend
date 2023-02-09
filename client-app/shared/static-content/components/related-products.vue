@@ -12,8 +12,7 @@
           :options="relatedProductsCarouselOptions"
           :pagination="isMobile"
           :navigation="!isMobile"
-          class="px-6 mb-8 lg:mb-2"
-          style="--navigation-offset: 3rem"
+          class="px-6 mb-8 lg:mb-2 [--navigation-offset:3rem]"
         >
           <template #slide="{ slide }">
             <CarouselProductCard :product="slide" class="mb-6" />

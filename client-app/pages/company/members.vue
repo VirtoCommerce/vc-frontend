@@ -2,7 +2,7 @@
   <div>
     <!-- Title block -->
     <div class="flex justify-between items-center mx-5 md:mx-0">
-      <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.company.members.title'" />
+      <h2 v-t="'pages.company.members.title'" class="text-gray-800 text-3xl font-bold uppercase" />
 
       <div class="flex flex-no-wrap space-x-2 md:space-x-4">
         <VcButton
@@ -30,7 +30,7 @@
       </div>
 
       <div class="flex flex-col grow gap-6">
-        <FilterFacet v-for="(_, index) in selectableFacets" v-model="selectableFacets[index]" :key="index" />
+        <FilterFacet v-for="(_, index) in selectableFacets" :key="index" v-model="selectableFacets[index]" />
       </div>
 
       <div class="sticky z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
@@ -63,7 +63,7 @@
       </div>
     </VcPopupSidebar>
 
-    <div class="-mt-5" ref="stickyMobileHeaderAnchor"></div>
+    <div ref="stickyMobileHeaderAnchor" class="-mt-5"></div>
 
     <!-- Page Toolbar -->
     <PageToolbarBlock
@@ -109,7 +109,7 @@
           </button>
 
           <div class="flex flex-row gap-6 pr-4">
-            <FilterFacet v-for="(_, index) in selectableFacets" v-model="selectableFacets[index]" :key="index" />
+            <FilterFacet v-for="(_, index) in selectableFacets" :key="index" v-model="selectableFacets[index]" />
           </div>
 
           <div class="flex flex-row justify-end gap-4 mt-6">
@@ -150,8 +150,8 @@
             class="w-full"
             input-class="font-medium rounded-r-none !text-sm disabled:bg-gray-200 !pl-4 !pr-11"
             :is-disabled="contactsLoading"
-            @keypress.enter="applyKeyword"
             :placeholder="$t('pages.company.members.search_placeholder')"
+            @keypress.enter="applyKeyword"
           />
 
           <button v-if="localKeyword" class="absolute right-0 top-0 h-11 px-4" @click="resetKeyword">
@@ -233,8 +233,8 @@
         :page="page"
         :item-actions-builder="itemActionsBuilder"
         layout="table-auto"
-        @headerClick="applySorting"
-        @pageChanged="changePage"
+        @header-click="applySorting"
+        @page-changed="changePage"
       >
         <template #desktop-body>
           <tr v-for="contact in contacts" :key="contact.id" class="even:bg-gray-50">

@@ -5,7 +5,7 @@
   >
     <div class="px-5 mx-auto max-w-screen-2xl 2xl:px-18">
       <!-- Breadcrumbs -->
-      <VcBreadcrumbs class="mb-2.5 md:mb-4" :items="breadcrumbs" v-if="!isSearchPage" />
+      <VcBreadcrumbs v-if="!isSearchPage" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
 
       <div class="flex items-start lg:gap-6">
         <!-- Mobile sidebar back cover -->
@@ -20,7 +20,7 @@
               {{ $t("common.buttons.filters") }}
             </div>
 
-            <button class="absolute top-2.5 right-1" @click="hideMobileSidebar()">
+            <button type="button" class="absolute top-2.5 right-1" @click="hideMobileSidebar()">
               <svg class="w-5 h-5 text-[color:var(--color-primary)]">
                 <use href="/static/images/delete.svg#main" />
               </svg>
@@ -32,13 +32,13 @@
             :keyword="keywordQueryParam"
             :filters="mobileFilters"
             :loading="loading || facetsLoading"
-            :withLocalSearch="!isSearchPage"
+            :with-local-search="!isSearchPage"
             @search="
               onSearchStart($event);
               hideMobileSidebar();
             "
             @change="updateMobileFilters($event)"
-            @openBranches="openBranchesDialog(true)"
+            @open-branches="openBranchesDialog(true)"
           />
 
           <div class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
@@ -73,13 +73,13 @@
 
         <!-- Sidebar -->
         <div v-else class="space-y-5 w-60 flex-shrink-0 pt-2">
-          <CategorySelector :selected-category="selectedCategory" :loading="loadingCategories" v-if="!isSearchPage" />
+          <CategorySelector v-if="!isSearchPage" :selected-category="selectedCategory" :loading="loadingCategories" />
 
           <ProductsFiltersSidebar
             :keyword="keywordQueryParam"
             :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
             :loading="loading"
-            :withLocalSearch="!isSearchPage"
+            :with-local-search="!isSearchPage"
             @search="onSearchStart($event)"
             @change="applyFilters($event)"
           />
@@ -89,8 +89,8 @@
         <div class="flex-grow">
           <div class="flex">
             <h2 class="text-gray-800 text-21 font-bold uppercase lg:my-px lg:text-25">
-              <i18n-t keypath="pages.search.header" tag="span" v-if="isSearchPage">
-                <template v-slot:keyword>
+              <i18n-t v-if="isSearchPage" keypath="pages.search.header" tag="span">
+                <template #keyword>
                   <strong>{{ searchParams.keyword }}</strong>
                 </template>
               </i18n-t>
@@ -100,7 +100,7 @@
               </span>
 
               <sup
-                class="ml-2 normal-case font-normal whitespace-nowrap text-sm lg:text-15 -top-1 lg:-top-[0.5em] text-[color:var(--color-category-page-results)]"
+                class="ml-2 normal-case font-normal whitespace-nowrap text-sm lg:text-15 -top-1 lg:top-[-0.5em] text-[color:var(--color-category-page-results)]"
               >
                 <b class="font-extrabold">{{ total }}</b>
                 {{ $t("pages.catalog.products_found_message", total) }}
@@ -108,7 +108,7 @@
             </h2>
           </div>
 
-          <div class="-mt-px" ref="stickyMobileHeaderAnchor"></div>
+          <div ref="stickyMobileHeaderAnchor" class="-mt-px"></div>
 
           <div
             class="sticky top-0 z-10 flex items-center h-14 my-1.5 lg:relative lg:justify-end lg:flex-wrap lg:mb-3.5 lg:mt-3 lg:h-auto"
@@ -127,8 +127,8 @@
             <!-- Sorting -->
             <div class="flex items-center flex-grow z-10 ml-auto lg:ml-4 lg:flex-grow-0 lg:order-4 xl:ml-8">
               <span
-                class="hidden lg:block shrink-0 mr-2 text-15 font-bold text-[color:var(--color-category-page-label)]"
                 v-t="'pages.catalog.sort_by_label'"
+                class="hidden lg:block shrink-0 mr-2 text-15 font-bold text-[color:var(--color-category-page-label)]"
               />
 
               <VcSelect
@@ -150,7 +150,7 @@
               class="order-3 flex items-center ml-4 xl:ml-6"
               @click.prevent="openBranchesDialog(false)"
             >
-              <VcTooltip :xOffset="28" placement="bottom-start" strategy="fixed">
+              <VcTooltip :x-offset="28" placement="bottom-start" strategy="fixed">
                 <template #trigger>
                   <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading">
                     <i18n-t
@@ -179,7 +179,7 @@
 
             <!-- In Stock -->
             <div v-if="!isMobile" class="order-2 flex items-center ml-4 xl:ml-8">
-              <VcTooltip :xOffset="28" placement="bottom-start" strategy="fixed">
+              <VcTooltip :x-offset="28" placement="bottom-start" strategy="fixed">
                 <template #trigger>
                   <VcCheckbox v-model="savedInStock" :disabled="loading">
                     <span
@@ -269,13 +269,13 @@
 
           <!-- Empty view -->
           <VcEmptyView
+            v-else
             :text="
               isExistSelectedFacets || savedInStock || savedBranches.length || keywordQueryParam
                 ? $t('pages.catalog.no_products_filtered_message')
                 : $t('pages.catalog.no_products_message')
             "
             class="h-96"
-            v-else
           >
             <template #icon>
               <VcImage src="/static/images/common/stock.svg" :alt="$t('pages.catalog.products_icon')" />
@@ -283,10 +283,10 @@
 
             <template #button>
               <VcButton
+                v-if="isExistSelectedFacets || keywordQueryParam"
                 class="px-6 uppercase"
                 size="lg"
                 @click="resetFacetFiltersWithKeyword"
-                v-if="isExistSelectedFacets || keywordQueryParam"
               >
                 <i class="fas fa-undo text-inherit -ml-0.5 mr-2.5"></i>
                 {{ $t("pages.catalog.no_products_button") }}
@@ -356,9 +356,11 @@ import { Product } from "@/xapi";
 const FILTERS_RESET_TIMEOUT_IN_MS = 500;
 const watchStopHandles: WatchStopHandle[] = [];
 
-const props = defineProps({
-  categoryId: String,
-});
+interface IProps {
+  categoryId?: string;
+}
+
+const props = defineProps<IProps>();
 
 const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);

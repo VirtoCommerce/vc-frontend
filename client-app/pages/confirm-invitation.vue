@@ -2,8 +2,8 @@
   <TwoColumn class="max-w-screen-xl">
     <template #left>
       <h1
-        class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-3 lg:mt-5"
         v-t="'pages.confirm_invitation.header'"
+        class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-3 lg:mt-5"
       />
 
       <p class="text-sm mb-4" v-html="$t('pages.confirm_invitation.text')" />

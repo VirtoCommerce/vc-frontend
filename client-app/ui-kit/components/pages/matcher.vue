@@ -1,17 +1,17 @@
 <template>
   <component
-    v-if="seoInfo?.entity?.objectType === 'Category'"
     :is="Category"
+    v-if="seoInfo?.entity?.objectType === 'Category'"
     :category-id="seoInfo?.entity?.objectId"
   />
 
   <component
-    v-else-if="seoInfo?.entity?.objectType === 'CatalogProduct'"
     :is="Product"
+    v-else-if="seoInfo?.entity?.objectType === 'CatalogProduct'"
     :product-id="seoInfo?.entity?.objectId"
   />
 
-  <component v-else-if="seoInfo?.page" :is="StaticPage" />
+  <component :is="StaticPage" v-else-if="seoInfo?.page" />
 
   <NotFound v-else-if="!loading" />
 </template>

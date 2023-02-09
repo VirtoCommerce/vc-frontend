@@ -8,9 +8,9 @@
     </div>
     <template v-for="item in template.content">
       <component
+        :is="getBlockType(item.type)"
         v-if="!item.hidden"
         :key="item.id"
-        :is="getBlockType(item.type)"
         :model="item"
         :settings="template.settings"
       />

@@ -16,12 +16,6 @@ export default defineComponent({
     },
   },
 
-  /**
-   * To find out which slots are used, see the file:
-   * client-app/shared/layout/components/header/_internal/mobile-header.vue
-   */
-  template: "<slot><slot name='left'></slot><slot name='right'></slot></slot>",
-
   setup(props) {
     const slots = useSlots();
     const { setSlots, resetSlots, isAnimated } = useNestedMobileHeader();
@@ -52,4 +46,10 @@ export default defineComponent({
 
     return () => h(createCommentVNode(" Nested Mobile Header "));
   },
+
+  /**
+   * To find out which slots are used, see the file:
+   * client-app/shared/layout/components/header/_internal/mobile-header.vue
+   */
+  template: "<slot><slot name='left'></slot><slot name='right'></slot></slot>",
 });

@@ -1,9 +1,9 @@
 <template>
   <TwoColumn class="max-w-screen-lg">
     <template #left>
-      <h1 class="text-black-800 text-7xl md:text-8xl font-black mb-5" v-t="'pages.500.error_code'"></h1>
-      <h2 class="text-black-800 text-2xl md:text-4xl font-bold mb-2" v-t="'pages.500.error_text'"></h2>
-      <p class="text-gray-700 text-base md:text-xl leading-relaxed mb-10" v-t="'pages.500.message'"></p>
+      <h1 v-t="'pages.500.error_code'" class="text-black-800 text-7xl md:text-8xl font-black mb-5"></h1>
+      <h2 v-t="'pages.500.error_text'" class="text-black-800 text-2xl md:text-4xl font-bold mb-2"></h2>
+      <p v-t="'pages.500.message'" class="text-gray-700 text-base md:text-xl leading-relaxed mb-10"></p>
       <div>
         <VcButton to="/" size="md" class="w-40 uppercase">
           {{ $t("pages.500.home_button") }}

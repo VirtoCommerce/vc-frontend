@@ -1,8 +1,8 @@
 <template>
   <VcPopup
+    ref="popupComponent"
     :title="$t('shared.account.invite_member_dialog.title')"
     modal-width="sm:max-w-[38rem]"
-    ref="popupComponent"
     is-mobile-fullscreen
   >
     <VcAlert v-if="commonErrors.length" type="danger" class="mx-6 mt-5 sm:mx-5">

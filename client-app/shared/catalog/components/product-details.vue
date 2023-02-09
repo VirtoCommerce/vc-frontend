@@ -11,7 +11,7 @@
     </div>
 
     <div v-if="section && section.blocks" class="flex flex-col lg:w-2/3">
-      <component v-for="item in section.blocks" :key="item.id" :is="item.type" :model="item" :product="product" />
+      <component :is="item.type" v-for="item in section.blocks" :key="item.id" :model="item" :product="product" />
     </div>
   </div>
 </template>

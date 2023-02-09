@@ -1,5 +1,5 @@
 <template>
-  <div class="!gap-y-4 lg:!gap-y-6" v-if="quote">
+  <div v-if="quote" class="!gap-y-4 lg:!gap-y-6">
     <div class="flex flex-col gap-3">
       <VcBreadcrumbs :items="breadcrumbs" />
 
@@ -16,8 +16,8 @@
         content-classes="px-6 pb-1 pt-2 lg:px-7 lg:pb-2"
       >
         <VcTextarea
-          :label="$t('pages.account.quote_details.remarks_field_label')"
           v-model="quote.comment"
+          :label="$t('pages.account.quote_details.remarks_field_label')"
           :disabled="fetching"
           :max-length="1000"
           :rows="4"
@@ -41,7 +41,7 @@
         </h4>
 
         <div class="flex flex-col gap-3 border rounded mt-2 p-5 md:flex-row md:items-center empty:hidden">
-          <VcAddressInfo class="grow text-15" v-if="shippingAddress" :address="shippingAddress" />
+          <VcAddressInfo v-if="shippingAddress" class="grow text-15" :address="shippingAddress" />
 
           <VcAlert v-else class="grow" type="warning" icon>
             {{ $t("pages.account.quote_details.no_address_message") }}
@@ -52,12 +52,12 @@
               :disabled="fetching"
               type="button"
               class="shrink-0 flex items-center justify-center h-9 w-9 rounded border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white"
+              :title="$t('pages.account.addresses.edit_label')"
               @click="
                 userHasAddresses
                   ? openAddressSelectionDialog(AddressType.Shipping)
                   : openAddOrUpdateAddressDialog(AddressType.Shipping, shippingAddress)
               "
-              :title="$t('pages.account.addresses.edit_label')"
             >
               <i class="fas fa-pencil-alt text-18" />
             </button>
@@ -81,12 +81,12 @@
           </VcCheckbox>
 
           <div
-            class="flex flex-col gap-3 mt-4 md:flex-row md:items-center empty:hidden"
             v-if="!billingAddressEqualsShipping"
+            class="flex flex-col gap-3 mt-4 md:flex-row md:items-center empty:hidden"
           >
-            <VcAddressInfo class="grow text-15" v-if="billingAddress" :address="billingAddress" />
+            <VcAddressInfo v-if="billingAddress" class="grow text-15" :address="billingAddress" />
 
-            <VcAlert class="grow" type="warning" icon v-else>
+            <VcAlert v-else class="grow" type="warning" icon>
               {{ $t("pages.account.quote_details.no_address_message") }}
             </VcAlert>
 
@@ -95,12 +95,12 @@
                 :disabled="fetching"
                 type="button"
                 class="shrink-0 flex items-center justify-center h-9 w-9 rounded border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white"
+                :title="$t('pages.account.addresses.edit_label')"
                 @click="
                   userHasAddresses
                     ? openAddressSelectionDialog(AddressType.Billing)
                     : openAddOrUpdateAddressDialog(AddressType.Billing, billingAddress)
                 "
-                :title="$t('pages.account.addresses.edit_label')"
               >
                 <i class="fas fa-pencil-alt text-18" />
               </button>
@@ -132,7 +132,7 @@
     </div>
   </div>
 
-  <VcLoaderOverlay no-bg v-else />
+  <VcLoaderOverlay v-else no-bg />
 </template>
 
 <script setup lang="ts">
