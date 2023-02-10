@@ -1,6 +1,6 @@
 <template>
   <div
-    class="vc-product-card-list grid gap-x-3.5 px-4 pt-4 pb-5 bg-white lg:outline lg:outline-offset-0 lg:outline-1 lg:outline-[color:var(--color-product-outline)] lg:py-3.5 lg:rounded lg:place-items-center lg:shadow-t-3sm lg:hover:shadow-lg"
+    class="vc-product-card-list grid gap-x-3.5 px-4 pt-4 pb-5 bg-white md:place-items-center lg:outline lg:outline-offset-0 lg:outline-1 lg:outline-[color:var(--color-product-outline)] lg:py-3.5 lg:rounded lg:shadow-t-3sm lg:hover:shadow-lg"
   >
     <div class="vc-product-card-list__mobile-left sm:contents">
       <!-- Product image -->
@@ -106,7 +106,7 @@
     </div>
 
     <div class="vc-product-card-list__price mt-2 w-full sm:mt-0 2xl:pr-2">
-      <VcItemPriceCatalog class="lg:flex-col lg:gap-0" :variations="product.variations" :value="product.price" />
+      <VcItemPriceCatalog class="md:flex-col md:gap-0" :variations="product.variations" :value="product.price" />
     </div>
 
     <div class="vc-product-card-list__add-to-cart flex flex-col gap-2 mt-3 w-full sm:mt-0">
@@ -178,15 +178,15 @@ const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, 
     "mobile-left .";
 
   @media (min-width: theme("screens.sm")) {
-    grid-template-columns: 72px 1fr 30%;
+    grid-template-columns: 72px 1fr 1fr;
     grid-template-areas:
       "img name price"
       "img properties add-to-cart"
       "img buttons add-to-cart";
   }
 
-  @media (min-width: theme("screens.lg")) {
-    grid-template-columns: 72px 1fr 126px 207px;
+  @media (min-width: theme("screens.md")) {
+    grid-template-columns: 72px 1fr 200px 207px;
     grid-template-areas:
       "img name price add-to-cart"
       "img properties price add-to-cart"
@@ -195,7 +195,7 @@ const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, 
   }
 
   @media (min-width: theme("screens.xl")) {
-    grid-template-columns: 86px 1fr 31.5% 140px 207px;
+    grid-template-columns: 86px 1fr 1fr 200px 207px;
     grid-template-areas:
       "img name properties price add-to-cart"
       "img buttons properties price add-to-cart"
