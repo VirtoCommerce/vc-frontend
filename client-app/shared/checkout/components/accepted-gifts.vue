@@ -1,34 +1,31 @@
 <template>
-  <VcSection
-    v-if="items?.length"
-    :title="$t('shared.checkout.accepted_gifts.title')"
-    icon-url="/static/images/checkout/gifts.svg"
-    class="shadow-inner pb-8 lg:shadow"
-  >
-    <div class="xl:ml-28 lg:ml-6 xl:mr-11 lg:mr-6 lg:border lg:rounded">
-      <div class="hidden lg:flex border-b font-bold items-center justify-between px-6 py-2">
-        <div class="flex-grow" v-t="'shared.checkout.accepted_gifts.gift_label'"></div>
-        <div class="lg:w-1/4" v-t="'shared.checkout.accepted_gifts.quantity_label'"></div>
+  <VcSectionWidget v-if="items?.length" :title="$t('shared.checkout.accepted_gifts.title')" icon="gift">
+    <div class="border rounded divide-y">
+      <div class="flex items-center px-6 py-2 text-sm font-bold">
+        <div class="grow" v-t="'shared.checkout.accepted_gifts.gift_label'"></div>
+        <div class="ml-3 w-max" v-t="'shared.checkout.accepted_gifts.quantity_label'"></div>
+        <div class="hidden xl:block xl:w-[6.5rem]"></div>
       </div>
-      <div
-        v-for="gift in items"
-        :key="gift.id"
-        class="border-b last:border-b-0 flex items-center justify-between px-6 py-6"
-      >
-        <div class="flex-grow flex items-center">
-          <VcImage :src="gift.imageUrl" class="mr-4 border aspect-square w-16 h-16" lazy />
-          <div>
-            <div class="flex-grow font-bold text-[color:var(--color-link)]">{{ gift.name }}</div>
-            <div class="lg:hidden">
-              <span class="font-bold">{{ $t("shared.checkout.accepted_gifts.quantity_label") }}:</span>
-              {{ gift.quantity }}
-            </div>
-          </div>
+
+      <div v-for="gift in items" :key="gift.id" class="flex items-center px-6 py-3">
+        <VcImage :src="gift.imageUrl" class="shrink-0 mr-4 w-[60px] h-[60px] border rounded" lazy />
+
+        <span class="grow text-sm font-bold lg:text-13">
+          {{ gift.name }}
+        </span>
+
+        <div class="ml-3 w-max">
+          <input
+            :disabled="true"
+            class="w-[5.5rem] h-8 border rounded text-center text-sm disabled:bg-gray-100 disabled:text-gray-400"
+            :value="gift.quantity"
+          />
         </div>
-        <div class="hidden lg:block lg:w-1/4">{{ gift.quantity }}</div>
+
+        <div class="hidden xl:block xl:w-[6.5rem]"></div>
       </div>
     </div>
-  </VcSection>
+  </VcSectionWidget>
 </template>
 
 <script setup lang="ts">
