@@ -7,8 +7,6 @@ import {
   VariationType,
   PaymentMethodType,
   CustomerOrderType,
-  OrderLineItemType,
-  OrderDiscountType,
 } from "@/xapi";
 import globals from "@/core/globals";
 
