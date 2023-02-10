@@ -116,7 +116,7 @@ export default function useCheckout() {
 
     await setCheckoutDefaults();
 
-    // TODO: Add ga.beginCheckout
+    ga.beginCheckout(cart.value);
 
     loading.value = false;
   }
