@@ -1,17 +1,17 @@
 import { useAppContext } from "@/core";
 import {
-  Product,
-  CartType,
-  LineItemType,
   Breadcrumb,
-  VariationType,
-  PaymentMethodType,
+  CartType,
   CustomerOrderType,
+  LineItemType,
+  PaymentMethodType,
+  Product,
+  VariationType,
 } from "@/xapi";
 import globals from "@/core/globals";
 
-type TEventParams = Gtag.ControlParams | Gtag.EventParams | Gtag.CustomParams;
-type TEventParamsForList = TEventParams | { item_list_id?: string; item_list_name?: string };
+type EventParamsType = Gtag.ControlParams | Gtag.EventParams | Gtag.CustomParams;
+type EventParamsExtendedType = EventParamsType | { item_list_id?: string; item_list_name?: string };
 
 const { storeSettings } = useAppContext();
 
@@ -62,7 +62,7 @@ function lineItemToGtagItem(item: LineItemType, index?: number): Gtag.Item {
   };
 }
 
-function getCartEventParams(cart: CartType): TEventParams {
+function getCartEventParams(cart: CartType): EventParamsType {
   return {
     currency: globals.currencyCode,
     value: cart.total?.amount,
@@ -70,27 +70,27 @@ function getCartEventParams(cart: CartType): TEventParams {
   };
 }
 
-function sendEvent(eventName: Gtag.EventNames | string, eventParams?: TEventParams): void {
+function sendEvent(eventName: Gtag.EventNames | string, eventParams?: EventParamsType): void {
   if (isAvailableGtag) {
     window.gtag("event", eventName, eventParams);
   }
 }
 
-function viewItemList(items: Product[], params?: TEventParamsForList): void {
+function viewItemList(items: Product[], params?: EventParamsExtendedType): void {
   sendEvent("view_item_list", {
     ...params,
     items: items.map(productToGtagItem),
   });
 }
 
-function selectItem(item: Product, params?: TEventParamsForList): void {
+function selectItem(item: Product, params?: EventParamsExtendedType): void {
   sendEvent("select_item", {
     ...params,
     items: [productToGtagItem(item)],
   });
 }
 
-function viewItem(item: Product, params?: TEventParamsForList): void {
+function viewItem(item: Product, params?: EventParamsExtendedType): void {
   sendEvent("view_item", {
     ...params,
     currency: globals.currencyCode,
@@ -99,7 +99,7 @@ function viewItem(item: Product, params?: TEventParamsForList): void {
   });
 }
 
-function addItemToWishList(item: Product, params?: TEventParamsForList): void {
+function addItemToWishList(item: Product, params?: EventParamsExtendedType): void {
   sendEvent("add_to_wishlist", {
     ...params,
     currency: globals.currencyCode,
@@ -108,7 +108,7 @@ function addItemToWishList(item: Product, params?: TEventParamsForList): void {
   });
 }
 
-function addItemToCart(item: Product | VariationType, quantity = 1, params?: TEventParamsForList): void {
+function addItemToCart(item: Product | VariationType, quantity = 1, params?: EventParamsExtendedType): void {
   const inputItem = productToGtagItem(item);
 
   inputItem.quantity = quantity;
@@ -121,7 +121,7 @@ function addItemToCart(item: Product | VariationType, quantity = 1, params?: TEv
   });
 }
 
-function removeItemFromCart(item: LineItemType, params?: TEventParamsForList): void {
+function removeItemFromCart(item: LineItemType, params?: EventParamsExtendedType): void {
   sendEvent("remove_from_cart", {
     ...params,
     currency: globals.currencyCode,
@@ -130,8 +130,8 @@ function removeItemFromCart(item: LineItemType, params?: TEventParamsForList): v
   });
 }
 
-function viewCart(cart: CartType, params?: TEventParamsForList): void {
-  const cartEventParams: TEventParams = getCartEventParams(cart);
+function viewCart(cart: CartType, params?: EventParamsExtendedType): void {
+  const cartEventParams: EventParamsType = getCartEventParams(cart);
 
   sendEvent("view_cart", {
     ...params,
@@ -139,8 +139,8 @@ function viewCart(cart: CartType, params?: TEventParamsForList): void {
   });
 }
 
-function beginCheckout(cart: CartType, params?: TEventParamsForList): void {
-  const cartEventParams: TEventParams = getCartEventParams(cart);
+function beginCheckout(cart: CartType, params?: EventParamsExtendedType): void {
+  const cartEventParams: EventParamsType = getCartEventParams(cart);
 
   sendEvent("begin_checkout", {
     ...params,
@@ -149,7 +149,7 @@ function beginCheckout(cart: CartType, params?: TEventParamsForList): void {
   });
 }
 
-function addShippingInfo(cart: CartType, params?: TEventParamsForList): void {
+function addShippingInfo(cart: CartType, params?: EventParamsExtendedType): void {
   sendEvent("add_shipping_info", {
     ...params,
     currency: cart.total?.currency?.code,
@@ -160,7 +160,7 @@ function addShippingInfo(cart: CartType, params?: TEventParamsForList): void {
   });
 }
 
-function addPaymentInfo(cart: CartType, params?: TEventParamsForList): void {
+function addPaymentInfo(cart: CartType, params?: EventParamsExtendedType): void {
   sendEvent("add_payment_info", {
     ...params,
     currency: cart.currency?.code,
@@ -173,14 +173,15 @@ function addPaymentInfo(cart: CartType, params?: TEventParamsForList): void {
   });
 }
 
-function purchase(order: CustomerOrderType, params?: TEventParamsForList): void {
+function purchase(order: CustomerOrderType, transactionId?: string, params?: EventParamsExtendedType): void {
   sendEvent("purchase", {
     ...params,
-    transaction_id: order.id,
+    currency: order.currency?.code,
+    transaction_id: transactionId,
     value: order.total!.amount,
     coupon: order.coupons?.[0],
-    shipping: order.shippingTotal,
-    tax: order.taxTotal,
+    shipping: order.shippingTotal?.amount,
+    tax: order.taxTotal?.amount,
     items: order.items!.map(lineItemToGtagItem),
   });
 }

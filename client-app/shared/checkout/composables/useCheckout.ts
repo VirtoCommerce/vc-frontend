@@ -285,8 +285,6 @@ export default function useCheckout() {
 
     try {
       order = await _createOrderFromCart(cartId);
-
-      ga.purchase(order);
     } catch (e) {
       Logger.error(`${useCheckout.name}.${createOrderFromCart.name}`, e);
     }
