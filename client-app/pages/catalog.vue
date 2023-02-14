@@ -308,6 +308,7 @@ import {
   shallowReactive,
   shallowRef,
   triggerRef,
+  watchEffect,
   WatchStopHandle,
 } from "vue";
 import _ from "lodash";
@@ -352,6 +353,7 @@ import { BranchesDialog, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { AddToCart } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import { Product } from "@/xapi";
+import { useWishlists } from "@/shared/wishlists";
 
 const FILTERS_RESET_TIMEOUT_IN_MS = 500;
 const watchStopHandles: WatchStopHandle[] = [];
@@ -378,6 +380,7 @@ const {
 } = useProducts({
   withFacets: true,
 });
+const { fetchWishlists } = useWishlists();
 
 const selectedCategory = computed(() =>
   props.categoryId && categoryTree.value
@@ -612,6 +615,10 @@ function openBranchesDialog(fromMobileFilter: boolean) {
     },
   });
 }
+
+watchEffect(async () => {
+  await fetchWishlists();
+});
 
 onMounted(async () => {
   await loadProducts();

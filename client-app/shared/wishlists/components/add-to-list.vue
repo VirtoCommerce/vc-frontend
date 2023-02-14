@@ -5,7 +5,9 @@
         <svg
           :class="[
             customClass,
-            true ? 'text-[color:var(--color-product-icon)]' : 'text-[color:var(--color-product-icon-active)]',
+            isProductInList
+              ? 'text-[color:var(--color-product-icon-active)]'
+              : 'text-[color:var(--color-product-icon)]',
           ]"
         >
           <use href="/static/images/star.svg#main"></use>
@@ -15,36 +17,43 @@
 
     <template #content>
       <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5">
-        {{ $t("pages.catalog.wishlist_tooltip") }}
+        <span v-if="isProductInList">
+          {{ $t("pages.catalog.product_is_in_list") }}
+        </span>
+        <span v-else>
+          {{ $t("pages.catalog.wishlist_tooltip") }}
+        </span>
       </div>
     </template>
   </VcTooltip>
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
+import { computed } from "vue";
+import { some } from "lodash";
 import { Product } from "@/xapi/types";
 import { usePopup } from "@/shared/popup";
 import { useUser } from "@/shared/account";
-import { AddToWishlistsModal } from "@/shared/wishlists";
+import { AddToWishlistsModal, useWishlists } from "@/shared/wishlists";
 
-const props = defineProps({
-  product: {
-    type: Object as PropType<Product>,
-    required: true,
-  },
-  customClass: {
-    type: String,
-    default: "w-6 h-6 lg:w-4 lg:h-4",
-  },
-  tooltipPlacement: {
-    type: String,
-    default: "left",
-  },
+interface IProps {
+  product: Product;
+  customClass?: string;
+  tooltipPlacement?: string;
+}
+
+const props = withDefaults(defineProps<IProps>(), {
+  customClass: "w-6 h-6 lg:w-4 lg:h-4",
+  tooltipPlacement: "left",
 });
 
 const { openPopup } = usePopup();
 const { isAuthenticated } = useUser();
+const { lists } = useWishlists();
+
+const isProductInList = computed(() =>
+  some(lists.value, (list) => list.items?.some((item) => item.productId === props.product.id))
+);
 
 function openAddToListModal() {
   if (!isAuthenticated.value) {

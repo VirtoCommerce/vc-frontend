@@ -1146,6 +1146,7 @@
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "wishlist_tooltip": "Add to list",
+      "product_is_in_list": "In the list",
       "add_to_compare_tooltip": "Add to compare",
       "variations_button": "{0} variations",
       "show_on_a_separate_page": "Show on a separate page",

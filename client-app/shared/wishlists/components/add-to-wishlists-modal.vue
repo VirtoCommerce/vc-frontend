@@ -256,6 +256,7 @@ async function save() {
   await createListsAndAddProduct();
   await removeProductFromWishlists();
   await addToWishlistsFromListOther();
+  await fetchWishlists();
 
   closePopup();
   loading.value = false;
