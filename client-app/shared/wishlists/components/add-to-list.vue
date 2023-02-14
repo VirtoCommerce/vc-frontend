@@ -21,7 +21,7 @@
           {{ $t("pages.catalog.product_is_in_list") }}
         </span>
         <span v-else>
-          {{ $t("pages.catalog.wishlist_tooltip") }}
+          {{ $t("pages.catalog.add_product_to_list") }}
         </span>
       </div>
     </template>
