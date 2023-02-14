@@ -267,8 +267,6 @@ async function save() {
     html: t("shared.wishlists.add_to_wishlists_dialog.notification_success"),
   });
 }
-
-fetchWishlists();
 </script>
 
 <style lang="scss">
