@@ -1,34 +1,24 @@
 module.exports = {
   root: true,
   env: {
-    node: true,
+    node: true
   },
   ignorePatterns: ["**/*.{es,umd}.js"],
   plugins: ["vue", "import", "@typescript-eslint"],
-  extends: [
-    "eslint:recommended",
-    "plugin:vue/vue3-essential",
-    "@vue/eslint-config-typescript/recommended",
-    "@vue/eslint-config-prettier",
-    "plugin:import/recommended",
-    "plugin:import/typescript",
-    "@vue/prettier",
-  ],
+  extends: ["eslint:recommended", "plugin:vue/vue3-essential", "@vue/eslint-config-typescript/recommended", "@vue/eslint-config-prettier", "plugin:import/recommended", "plugin:import/typescript", "@vue/prettier", "plugin:storybook/recommended"],
   parser: "vue-eslint-parser",
   parserOptions: {
     parser: {
       // Script parser for `<script>`
       js: "espree",
-
       // Script parser for `<script lang="ts">`
-      ts: "@typescript-eslint/parser",
-
-      // Script parser for vue directives (e.g. `v-if=` or `:attribute=`)
+      ts: "@typescript-eslint/parser" // Script parser for vue directives (e.g. `v-if=` or `:attribute=`)
       // and vue interpolations (e.g. `{{variable}}`).
       // If not specified, the parser determined by `<script lang ="...">` is used.
       //"<template>": "espree",
+
     },
-    ecmaVersion: 2020,
+    ecmaVersion: 2020
   },
   rules: {
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
@@ -40,19 +30,17 @@ module.exports = {
     "@typescript-eslint/no-non-null-assertion": "off",
     "vue/multi-word-component-names": "off",
     "no-prototype-builtins": "off",
-    "curly": "error",
+    "curly": "error"
   },
-  overrides: [
-    // Fix no-used-vars when importing ts types in .vue files
-    {
-      files: ["*.vue"],
-      rules: {
-        "no-unused-vars": "off",
-        "no-undef": "off",
-        "@typescript-eslint/no-unused-vars": "error",
-      },
-    },
-  ],
+  overrides: [// Fix no-used-vars when importing ts types in .vue files
+  {
+    files: ["*.vue"],
+    rules: {
+      "no-unused-vars": "off",
+      "no-undef": "off",
+      "@typescript-eslint/no-unused-vars": "error"
+    }
+  }],
   globals: {
     defineProps: "readonly",
     defineEmits: "readonly",
@@ -63,16 +51,16 @@ module.exports = {
      * Accept.js (Authorize.net)
      * @link https://developer.authorize.net/api/reference/features/acceptjs.html
      */
-    Accept: "readonly",
+    Accept: "readonly"
   },
   settings: {
     "import/parsers": {
-      "@typescript-eslint/parser": [".ts", ".tsx"],
+      "@typescript-eslint/parser": [".ts", ".tsx"]
     },
     "import/resolver": {
       typescript: {
-        alwaysTryTypes: true,
-      },
-    },
-  },
+        alwaysTryTypes: true
+      }
+    }
+  }
 };
