@@ -1,6 +1,6 @@
-import { unref } from "vue";
 import { eagerComputed, MaybeRef } from "@vueuse/core";
 import { HeadAttrs, useHead } from "@vueuse/head";
+import { unref } from "vue";
 import { UsePageSeoData, useThemeContext } from "@/core";
 
 export default function usePageHead(data: UsePageSeoData) {

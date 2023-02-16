@@ -90,10 +90,10 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { LineItemType } from "@/xapi";
 import { useGoogleAnalytics } from "@/core";
 import { AddToCart } from "@/shared/cart";
 import { extendWishListItem } from "@/shared/wishlists";
+import { LineItemType } from "@/xapi";
 
 interface Prop {
   item: LineItemType;

@@ -1,5 +1,5 @@
-import mutationDocument from "./inviteUserMutation.graphql";
 import { CustomIdentityResultType, InputInviteUserType, Mutations, MutationsInviteUserArgs } from "@/xapi/types";
+import mutationDocument from "./inviteUserMutation.graphql";
 
 export default async function inviteUser(payload: InputInviteUserType): Promise<CustomIdentityResultType> {
   const { $graphqlClient } = useNuxtApp();

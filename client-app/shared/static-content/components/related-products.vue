@@ -1,18 +1,18 @@
 <template>
   <!-- Related products section -->
-  <div v-show="relatedProducts.length" class="flex flex-col lg:flex-row lg:space-x-8 mt-10 lg:mt-6">
-    <div class="flex flex-col -mx-5 md:mx-0 lg:w-8/12 xl:w-9/12">
+  <div v-show="relatedProducts.length" class="mt-10 flex flex-col lg:mt-6 lg:flex-row lg:space-x-8">
+    <div class="-mx-5 flex flex-col md:mx-0 lg:w-8/12 xl:w-9/12">
       <VcSection
         :title="$t('pages.product.related_product_section_title')"
         icon-url="/static/images/checkout/products.svg"
-        class="shadow-sm border rounded-none md:rounded"
+        class="rounded-none border shadow-sm md:rounded"
       >
         <VcCarousel
           :slides="relatedProducts"
           :options="relatedProductsCarouselOptions"
           :pagination="isMobile"
           :navigation="!isMobile"
-          class="px-6 mb-8 lg:mb-2 [--navigation-offset:3rem]"
+          class="mb-8 px-6 [--navigation-offset:3rem] lg:mb-2"
         >
           <template #slide="{ slide }">
             <CarouselProductCard :product="slide" class="mb-6" />
@@ -27,14 +27,15 @@
 
 <script setup lang="ts">
 import { PropType } from "vue";
-import { Product } from "@/xapi/types";
 import { CarouselProductCard } from "@/shared/catalog";
+import { Product } from "@/xapi/types";
 
 defineProps({
   relatedProducts: {
     type: Array as PropType<Product[]>,
     required: true,
   },
+
   isMobile: {
     type: Boolean,
   },

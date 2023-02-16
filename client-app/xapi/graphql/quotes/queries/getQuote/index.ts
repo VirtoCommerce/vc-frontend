@@ -1,6 +1,6 @@
+import globals from "@/core/globals";
 import { Query, QueryQuoteArgs, QuoteType } from "@/xapi/types";
 import getQuoteQueryDocument from "./getQuoteQuery.graphql";
-import globals from "@/core/globals";
 
 export default async function getQuote(payload?: QueryQuoteArgs): Promise<QuoteType> {
   const { storeId, userId, cultureName, currencyCode } = globals;

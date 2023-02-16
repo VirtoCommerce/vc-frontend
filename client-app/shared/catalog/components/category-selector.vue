@@ -4,16 +4,16 @@
     <template #header>
       <router-link
         :to="getCategoryRoute(backCategory!)"
-        class="grow py-0.5 px-1.5 -mx-1.5 rounded-sm text-[color:var(--color-filter-card-header)] hover:bg-gray-100"
+        class="-mx-1.5 grow rounded-sm py-0.5 px-1.5 text-[color:var(--color-filter-card-header)] hover:bg-gray-100"
       >
         <i class="fas fa-chevron-left text-[color:var(--color-primary)]"></i>
-        <span class="font-bold ml-1.5">
+        <span class="ml-1.5 font-bold">
           {{ backCategory?.name }}
         </span>
       </router-link>
     </template>
 
-    <div class="uppercase font-extrabold -mt-1 mb-0.5 text-13-title text-[color:var(--color-filter-card-header)]">
+    <div class="-mt-1 mb-0.5 text-13-title font-extrabold uppercase text-[color:var(--color-filter-card-header)]">
       <span v-if="selectedCategory?.children.length" class="block py-0.5">
         {{ displayedCategory?.name }}
       </span>
@@ -21,19 +21,19 @@
       <router-link
         v-else
         :to="getCategoryRoute(displayedCategory)"
-        class="block py-0.5 px-2 -mx-2 rounded-sm hover:bg-gray-100 transition-colors"
+        class="-mx-2 block rounded-sm py-0.5 px-2 transition-colors hover:bg-gray-100"
       >
         {{ displayedCategory?.name }}
       </router-link>
     </div>
 
-    <div class="pl-4 flex flex-col text-sm">
+    <div class="flex flex-col pl-4 text-sm">
       <router-link
         v-for="(item, index) in subcategories"
         :key="index"
         :to="subcategoriesRoutes[item.id]"
         :class="{ 'font-bold': item.id === selectedCategory?.id }"
-        class="hover:bg-gray-100 py-0.5 px-2 -mx-2 mt-0.5 rounded-sm transition-colors truncate text-[color:var(--color-category-selector-link)]"
+        class="-mx-2 mt-0.5 truncate rounded-sm py-0.5 px-2 text-[color:var(--color-category-selector-link)] transition-colors hover:bg-gray-100"
       >
         {{ item.name }}
       </router-link>
@@ -42,7 +42,7 @@
 
   <!-- skeleton -->
   <VcFilterCardSkeleton v-else-if="loading">
-    <div class="h-5 mb-1.5 bg-gray-100">&nbsp;</div>
+    <div class="mb-1.5 h-5 bg-gray-100">&nbsp;</div>
     <div v-for="i in 6" :key="i" class="ml-6 mb-1.5 h-4 bg-gray-100">&nbsp;</div>
   </VcFilterCardSkeleton>
 </template>

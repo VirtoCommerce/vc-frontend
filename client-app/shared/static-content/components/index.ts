@@ -1,15 +1,15 @@
 import { Component } from "vue";
-import TextBlock from "./text-block.vue";
+import CallToActionWithImage from "./call-to-action-with-image.vue";
+import CallToAction from "./call-to-action.vue";
+import DemoProductList from "./demo-product-list.vue";
+import Features from "./features.vue";
 import ImageBlock from "./image-block.vue";
 import ProductInfo from "./product-info.vue";
-import CallToActionWithImage from "./call-to-action-with-image.vue";
-import PromoText from "./promo-text.vue";
-import Features from "./features.vue";
-import CallToAction from "./call-to-action.vue";
-import SubscribeForm from "./subscribe-form.vue";
 import ProductsBlock from "./products-block.vue";
+import PromoText from "./promo-text.vue";
+import SubscribeForm from "./subscribe-form.vue";
+import TextBlock from "./text-block.vue";
 import TitleBlock from "./title-block.vue";
-import DemoProductList from "./demo-product-list.vue";
 
 const templateBlocks: { [key: string]: Component } = {
   "text-block": TextBlock,

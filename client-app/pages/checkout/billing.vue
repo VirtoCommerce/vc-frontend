@@ -32,7 +32,7 @@
           <VcButton
             :is-disabled="isDisabledOrderCreation"
             :is-waiting="creatingOrder"
-            class="mt-4 uppercase w-full"
+            class="mt-4 w-full uppercase"
             @click="createOrder"
           >
             {{ $t("common.buttons.place_order") }}

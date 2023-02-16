@@ -4,8 +4,8 @@
       :is="isLink ? 'a' : 'button'"
       :href="isLink ? href : null"
       :class="[
-        'flex items-center gap-x-3.5 text-left leading-tight min-h-[2.25rem]',
-        isLink && (isActive || isExactActive) ? 'text-white font-extrabold' : 'font-semibold',
+        'flex min-h-[2.25rem] items-center gap-x-3.5 text-left leading-tight',
+        isLink && (isActive || isExactActive) ? 'font-extrabold text-white' : 'font-semibold',
         $attrs.class,
       ]"
       @click.prevent="click(navigate)"
@@ -34,13 +34,13 @@
       <VcTransitionScale mode="out-in">
         <span
           v-if="count"
-          class="flex items-center transition-transform rounded-full border border-[color:var(--color-primary)] px-2 font-bold text-sm text-white h-6"
+          class="flex h-6 items-center rounded-full border border-[color:var(--color-primary)] px-2 text-sm font-bold text-white transition-transform"
         >
           {{ preparedCount }}
         </span>
       </VcTransitionScale>
 
-      <i v-if="isParent" class="ml-auto fas fa-chevron-right text-[color:var(--color-primary)]" />
+      <i v-if="isParent" class="fas fa-chevron-right ml-auto text-[color:var(--color-primary)]" />
     </component>
   </router-link>
 </template>

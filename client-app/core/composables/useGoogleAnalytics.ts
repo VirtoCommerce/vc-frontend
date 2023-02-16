@@ -1,4 +1,5 @@
 import { useAppContext } from "@/core";
+import globals from "@/core/globals";
 import {
   Breadcrumb,
   CartType,
@@ -8,7 +9,6 @@ import {
   Product,
   VariationType,
 } from "@/xapi";
-import globals from "@/core/globals";
 
 type EventParamsType = Gtag.ControlParams | Gtag.EventParams | Gtag.CustomParams;
 type EventParamsExtendedType = EventParamsType | { item_list_id?: string; item_list_name?: string };

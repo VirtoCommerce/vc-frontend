@@ -1,10 +1,10 @@
 <template>
-  <div :class="['bg-white rounded border', { 'shadow-sm': shadow }]">
-    <div v-if="withHeader" :class="['relative font-extrabold text-sm', headerClasses]">
+  <div :class="['rounded border bg-white', { 'shadow-sm': shadow }]">
+    <div v-if="withHeader" :class="['relative text-sm font-extrabold', headerClasses]">
       <div class="flex items-center">
         <slot name="header" v-bind="{ isCollapsible, isCollapsed: _isCollapsed, toggleCollapse }">
           <slot name="header-content">
-            <span class="flex-grow text-xl font-extrabold uppercase">
+            <span class="grow text-xl font-extrabold uppercase">
               {{ title }}
             </span>
           </slot>
@@ -12,11 +12,11 @@
           <slot name="header-button" v-bind="{ isCollapsible, isCollapsed: _isCollapsed, toggleCollapse }">
             <button
               v-if="isCollapsible"
-              class="px-3 py-2 ml-2 -mr-3 -my-2 appearance-none before:absolute before:inset-0"
+              class="-my-2 ml-2 -mr-3 appearance-none px-3 py-2 before:absolute before:inset-0"
               @click="isCollapsible && toggleCollapse()"
             >
               <i
-                class="fas text-[color:var(--color-primary)] text-base"
+                class="fas text-base text-[color:var(--color-primary)]"
                 :class="!_isCollapsed ? 'fa-chevron-up' : 'fa-chevron-down'"
               />
             </button>
@@ -26,7 +26,7 @@
     </div>
 
     <div v-if="!isCollapsible || !_isCollapsed" class="overflow-hidden">
-      <div :class="['border-t rounded-b', { [contentClasses]: !fullWidthContent }]">
+      <div :class="['rounded-b border-t', { [contentClasses]: !fullWidthContent }]">
         <slot />
       </div>
     </div>

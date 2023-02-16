@@ -12,6 +12,7 @@ defineProps({
     type: String,
     default: "document-text",
   },
+
   size: {
     type: String as PropType<"xxs" | "xs" | "sm" | "md">,
     default: "md",

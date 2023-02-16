@@ -26,7 +26,7 @@
           <div class="flex justify-between text-base">
             <span v-t="'pages.account.quote_details.total'" class="font-bold" />
 
-            <span class="text-[color:var(--color-price)] text-18 font-extrabold">
+            <span class="text-18 font-extrabold text-[color:var(--color-price)]">
               <VcPriceDisplay :value="quote.totals?.grandTotalInclTax" />
             </span>
           </div>
@@ -39,13 +39,13 @@
         >
           <div class="space-y-1">
             <div class="flex text-base">
-              <span class="font-bold mr-2">{{ $t("pages.account.quote_details.created") }}:</span>
+              <span class="mr-2 font-bold">{{ $t("pages.account.quote_details.created") }}:</span>
 
               <span>{{ $d(quote.createdDate, "long") }}</span>
             </div>
 
             <div class="flex text-base">
-              <span class="font-bold mr-2">{{ $t("pages.account.quote_details.status") }}:</span>
+              <span class="mr-2 font-bold">{{ $t("pages.account.quote_details.status") }}:</span>
 
               <span>
                 <TableStatusBadge :status="quote.status" />
@@ -71,9 +71,9 @@
 <script setup lang="ts">
 import { watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
+import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { QuoteLineItems, useUserQuote } from "@/shared/account";
 import { VcAddressInfo } from "@/ui-kit/components";
-import { useBreadcrumbs, usePageHead } from "@/core/composables";
 
 const props = defineProps({
   quoteId: {

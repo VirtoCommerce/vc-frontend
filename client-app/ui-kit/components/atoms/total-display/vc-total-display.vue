@@ -10,10 +10,12 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+
   cultureName: {
     type: String,
     required: true,
   },
+
   currencyCode: {
     type: String,
     required: true,

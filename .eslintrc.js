@@ -13,8 +13,8 @@ module.exports = {
     "plugin:import/recommended",
     "plugin:import/typescript",
     "plugin:sonarjs/recommended",
-    // TODO: enable "plugin:tailwindcss/recommended", // See rules: https://github.com/francoismassart/eslint-plugin-tailwindcss#supported-rules
-    // TODO: enable "plugin:vuejs-accessibility/recommended", // See rules: https://github.com/vue-a11y/eslint-plugin-vuejs-accessibility/tree/main/docs
+    "plugin:tailwindcss/recommended", // See rules: https://github.com/francoismassart/eslint-plugin-tailwindcss#supported-rules
+    "plugin:vuejs-accessibility/recommended", // See rules: https://github.com/vue-a11y/eslint-plugin-vuejs-accessibility/tree/main/docs
   ],
   parser: "vue-eslint-parser",
   parserOptions: {
@@ -34,6 +34,20 @@ module.exports = {
     "vue/prefer-true-attribute-shorthand": "error",
     "vue/v-for-delimiter-style": "error",
     "vue/no-irregular-whitespace": "error",
+    "vuejs-accessibility/anchor-has-content": [
+      "error",
+      {
+        accessibleChildren: ["i", "img", "VcIcon"],
+        accessibleDirectives: ["t"],
+      },
+    ],
+    "vuejs-accessibility/heading-has-content": [
+      "error",
+      {
+        components: ["VcTypography"],
+        accessibleDirectives: ["t"],
+      },
+    ],
 
     /**
      * Warnings
@@ -44,14 +58,13 @@ module.exports = {
       { selector: "interface", format: ["PascalCase"], prefix: ["I"] },
       { selector: "typeAlias", format: ["PascalCase"], suffix: ["Type"] },
     ],
-    /* TODO: enable
     "import/order": [
       "warn",
       {
         groups: ["builtin", "external", "internal", "unknown", "parent", "sibling", "index"],
         pathGroups: [
           {
-            pattern: "** /*.vue",
+            pattern: "**/*.vue",
             group: "external",
             position: "before",
           },
@@ -60,10 +73,8 @@ module.exports = {
           order: "asc",
         },
         "newlines-between": "never",
-        // pathGroupsExcludedImportTypes: [],
       },
     ],
-    */
     "no-console": "warn",
     "no-debugger": "warn",
     "vue/component-api-style": "warn",
@@ -107,8 +118,12 @@ module.exports = {
     "vue/no-useless-v-bind": "warn",
     "vue/padding-line-between-blocks": "warn",
     // TODO: enable "vue/padding-line-between-tags": "warn",
-    // TODO: enable "vue/padding-lines-in-component-definition": "warn",
+    "vue/padding-lines-in-component-definition": "warn",
     "vue/require-emit-validator": "warn",
+    "vuejs-accessibility/click-events-have-key-events": "warn", // TODO: Remove (switch to error)
+    "vuejs-accessibility/form-control-has-label": "warn", // TODO: Remove (switch to error)
+    "vuejs-accessibility/label-has-for": ["warn", { components: ["VcLabel"] }], // TODO: Switch to error
+    "vuejs-accessibility/no-static-element-interactions": "warn", // TODO: Remove (switch to error)
 
     /**
      * Disabled

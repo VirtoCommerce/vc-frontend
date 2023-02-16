@@ -1,6 +1,6 @@
 import { App } from "vue";
-import { IThemeContext } from "../types";
 import { contextInjectionKey } from "@/core/constants";
+import { IThemeContext } from "../types";
 
 export default {
   install: (app: App, options: IThemeContext) => {

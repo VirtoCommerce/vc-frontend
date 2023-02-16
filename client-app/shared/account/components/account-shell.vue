@@ -2,12 +2,12 @@
   <VcContainer :class="{ 'lg:pt-8': !$route.meta?.hideLeftSidebar }">
     <div class="flex gap-x-6">
       <!-- First column-->
-      <div v-if="!$route.meta?.hideLeftSidebar" class="hidden shrink-0 lg:flex flex-col w-2/6 max-w-[236px] gap-y-6">
+      <div v-if="!$route.meta?.hideLeftSidebar" class="hidden w-2/6 max-w-[236px] shrink-0 flex-col gap-y-6 lg:flex">
         <AccountNavigation />
       </div>
 
       <!-- Second column-->
-      <router-view class="flex flex-col w-full min-w-0 gap-y-5" />
+      <router-view class="flex w-full min-w-0 flex-col gap-y-5" />
     </div>
   </VcContainer>
 </template>

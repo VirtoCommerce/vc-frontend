@@ -1,5 +1,5 @@
-import { ComponentPublicInstance, readonly, ref, unref } from "vue";
 import { defaultWindow, MaybeRef, tryOnMounted, unrefElement, useEventListener } from "@vueuse/core";
+import { ComponentPublicInstance, readonly, ref, unref } from "vue";
 
 export type useElementVisibilityOptions = {
   direction?: MaybeRef<"auto" | "top" | "bottom">; // TODO: add support for "right" and "left"

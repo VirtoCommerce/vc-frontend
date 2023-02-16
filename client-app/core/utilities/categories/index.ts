@@ -1,6 +1,6 @@
 import { RouteLocationRaw } from "vue-router";
-import { Category } from "@/xapi";
 import { CategoryTreeItem } from "@/core";
+import { Category } from "@/xapi";
 
 export function getCategoryRoute(category: Category | CategoryTreeItem): RouteLocationRaw {
   return category.slug ? `/${category.slug}` : { name: "Category", params: { categoryId: category.id } };

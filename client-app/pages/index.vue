@@ -1,22 +1,22 @@
 <template>
   <!-- Banner -->
   <div class="banner flex items-center" :style="{ backgroundImage: `url(${$cfg.homepage_background_image})` }">
-    <div class="container mx-auto flex flex-col lg:flex-row items-center space-y-10 lg:space-x-24 p-6 md:p-12">
-      <div class="w-full lg:w-2/5 bg-white shadow-lg rounded p-6 md:p-10">
-        <h1 v-t="'pages.home.sign_in_form_title'" class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8" />
+    <div class="container mx-auto flex flex-col items-center space-y-10 p-6 md:p-12 lg:flex-row lg:space-x-24">
+      <div class="w-full rounded bg-white p-6 shadow-lg md:p-10 lg:w-2/5">
+        <h1 v-t="'pages.home.sign_in_form_title'" class="mb-8 text-3xl font-bold uppercase tracking-wide lg:text-4xl" />
         <SignInForm grow-buttons @succeeded="onSignIn" />
       </div>
       <div
-        class="w-full lg:w-3/5 text-white font-bold filter drop-shadow-lg text-center lg:text-left text-3xl md:text-5xl select-none"
+        class="w-full select-none text-center text-3xl font-bold text-white drop-shadow-lg md:text-5xl lg:w-3/5 lg:text-left"
       >
-        <div class="uppercase mb-8 leading-tight" v-html="$t('pages.home.main_banner_block.message')"></div>
+        <div class="mb-8 uppercase leading-tight" v-html="$t('pages.home.main_banner_block.message')"></div>
         <div
-          class="flex flex-col md:flex-row items-center justify-center lg:justify-start space-y-2 md:space-y-0 md:space-x-7 text-xl md:text-2xl"
+          class="flex flex-col items-center justify-center space-y-2 text-xl md:flex-row md:space-y-0 md:space-x-7 md:text-2xl lg:justify-start"
         >
           <div v-t="'pages.home.main_banner_block.key_feature_1'"></div>
-          <div class="w-2.5 h-2.5 bg-[color:var(--color-primary)] rounded-full"></div>
+          <div class="h-2.5 w-2.5 rounded-full bg-[color:var(--color-primary)]"></div>
           <div v-t="'pages.home.main_banner_block.key_feature_2'"></div>
-          <div class="w-2.5 h-2.5 bg-[color:var(--color-primary)] rounded-full"></div>
+          <div class="h-2.5 w-2.5 rounded-full bg-[color:var(--color-primary)]"></div>
           <div v-t="'pages.home.main_banner_block.key_feature_3'"></div>
         </div>
       </div>
@@ -25,10 +25,10 @@
 
   <!-- Main content -->
   <div class="main">
-    <div class="container mx-auto pt-32 pb-40 px-6 md:px-12">
-      <div v-t="'pages.home.feature_descriptions_block.title'" class="font-bold text-3xl text-center px-6"></div>
-      <div class="flex flex-wrap justify-between mx-auto mt-24">
-        <div class="w-full md:w-1/2 lg:w-1/4 md:mt-44 mb-24 md:mb-0">
+    <div class="container mx-auto px-6 pt-32 pb-40 md:px-12">
+      <div v-t="'pages.home.feature_descriptions_block.title'" class="px-6 text-center text-3xl font-bold"></div>
+      <div class="mx-auto mt-24 flex flex-wrap justify-between">
+        <div class="mb-24 w-full md:mt-44 md:mb-0 md:w-1/2 lg:w-1/4">
           <VcImage
             src="/static/images/home/hexa-1.webp"
             :alt="$t('pages.home.feature_descriptions_block.feature_1')"
@@ -37,10 +37,10 @@
           />
           <div
             v-t="'pages.home.feature_descriptions_block.feature_1'"
-            class="px-8 font-bold text-2xl md:text-xl text-center mt-5"
+            class="mt-5 px-8 text-center text-2xl font-bold md:text-xl"
           ></div>
         </div>
-        <div class="w-full md:w-1/2 lg:w-1/4 mb-24 md:mb-0">
+        <div class="mb-24 w-full md:mb-0 md:w-1/2 lg:w-1/4">
           <VcImage
             src="/static/images/home/hexa-2.webp"
             :alt="$t('pages.home.feature_descriptions_block.feature_2')"
@@ -49,10 +49,10 @@
           />
           <div
             v-t="'pages.home.feature_descriptions_block.feature_2'"
-            class="px-8 font-bold text-2xl md:text-xl text-center mt-5"
+            class="mt-5 px-8 text-center text-2xl font-bold md:text-xl"
           ></div>
         </div>
-        <div class="w-full md:w-1/2 lg:w-1/4 md:mt-44 mb-24 md:mb-0">
+        <div class="mb-24 w-full md:mt-44 md:mb-0 md:w-1/2 lg:w-1/4">
           <VcImage
             src="/static/images/home/hexa-3.webp"
             :alt="$t('pages.home.feature_descriptions_block.feature_3')"
@@ -61,10 +61,10 @@
           />
           <div
             v-t="'pages.home.feature_descriptions_block.feature_3'"
-            class="px-8 font-bold text-2xl md:text-xl text-center mt-5"
+            class="mt-5 px-8 text-center text-2xl font-bold md:text-xl"
           ></div>
         </div>
-        <div class="w-full md:w-1/2 lg:w-1/4 mb-24 md:mb-0">
+        <div class="mb-24 w-full md:mb-0 md:w-1/2 lg:w-1/4">
           <VcImage
             src="/static/images/home/hexa-4.webp"
             :alt="$t('pages.home.feature_descriptions_block.feature_4')"
@@ -73,7 +73,7 @@
           />
           <div
             v-t="'pages.home.feature_descriptions_block.feature_4'"
-            class="px-8 font-bold text-2xl md:text-xl text-center mt-5"
+            class="mt-5 px-8 text-center text-2xl font-bold md:text-xl"
           ></div>
         </div>
       </div>
@@ -81,26 +81,22 @@
   </div>
 
   <!-- CTA -->
-  <div class="py-6 lg:py-10 bg-[color:var(--color-primary)]">
-    <div class="container mx-auto flex flex-col lg:flex-row items-center space-y-2 lg:space-x-10 px-6 md:px-12">
+  <div class="bg-[color:var(--color-primary)] py-6 lg:py-10">
+    <div class="container mx-auto flex flex-col items-center space-y-2 px-6 md:px-12 lg:flex-row lg:space-x-10">
       <div
         v-t="'pages.home.subscription_block.subscribe_now'"
-        class="uppercase font-extrabold text-3xl text-white whitespace-nowrap"
+        class="whitespace-nowrap text-3xl font-extrabold uppercase text-white"
       ></div>
       <div
-        class="text-base font-medium leading-tight text-white max-w-max lg:max-w-min"
+        class="max-w-max text-base font-medium leading-tight text-white lg:max-w-min"
         v-html="$t('pages.home.subscription_block.info_message')"
       ></div>
-      <div class="flex flex-grow w-full space-x-6">
-        <VcInput
-          :placeholder="$t('pages.home.subscription_block.email_placeholder')"
-          class="flex-grow"
-          without-border
-        />
+      <div class="flex w-full grow space-x-6">
+        <VcInput :placeholder="$t('pages.home.subscription_block.email_placeholder')" class="grow" without-border />
         <!-- todo: use VcButton -->
         <button
           v-t="'pages.home.subscription_block.subscribe_button'"
-          class="bg-white hover:bg-gray-200 px-6 uppercase text-sm font-roboto font-bold h-11 rounded shadow-md"
+          class="h-11 rounded bg-white px-6 font-roboto text-sm font-bold uppercase shadow-md hover:bg-gray-200"
         ></button>
       </div>
     </div>

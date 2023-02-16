@@ -1,5 +1,5 @@
-import { OrderLineItemType, ValidationErrorType } from "@/xapi";
 import { ItemForAddBulkItemsToCartResultsPopup, OutputBulkItemType } from "@/shared/cart";
+import { OrderLineItemType, ValidationErrorType } from "@/xapi";
 
 export function getLineItemValidationErrorsGroupedBySKU(
   errors: ValidationErrorType[] = []

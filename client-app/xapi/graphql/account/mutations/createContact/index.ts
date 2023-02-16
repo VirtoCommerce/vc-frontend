@@ -1,5 +1,5 @@
-import mutationDocument from "./createContact.graphql";
 import { ContactType, InputCreateContactType, Mutations, MutationsCreateContactArgs } from "@/xapi/types";
+import mutationDocument from "./createContact.graphql";
 
 export default async function createContact(contact: InputCreateContactType): Promise<ContactType> {
   const { $graphqlClient } = useNuxtApp();

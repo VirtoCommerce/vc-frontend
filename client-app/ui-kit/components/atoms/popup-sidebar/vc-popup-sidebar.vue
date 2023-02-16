@@ -2,7 +2,7 @@
   <teleport to="body">
     <!-- Sidebar back cover -->
     <transition name="fade">
-      <div v-if="isVisible" class="fixed z-50 inset-0 w-full h-full bg-gray-900/30" @click="onHide" />
+      <div v-if="isVisible" class="fixed inset-0 z-50 h-full w-full bg-gray-900/30" @click="onHide" />
     </transition>
 
     <!-- Sidebar content -->
@@ -15,7 +15,7 @@
       <div
         v-if="isVisible"
         v-bind="$attrs"
-        class="fixed z-50 inset-0 flex flex-col overflow-y-auto bg-white transition-transform"
+        class="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-white transition-transform"
       >
         <slot />
       </div>

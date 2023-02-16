@@ -1,5 +1,5 @@
 <template>
-  <label class="flex items-center select-none" :class="disabled ? 'cursor-not-allowed' : 'cursor-pointer'">
+  <label class="flex select-none items-center" :class="disabled ? 'cursor-not-allowed' : 'cursor-pointer'">
     <input
       type="checkbox"
       :name="name"
@@ -12,11 +12,11 @@
           ? `border-gray-200 ${checked ? 'bg-gray-300' : 'bg-gray-50'}`
           : `border-gray-300 bg-white checked:bg-[color:var(--color-primary)]`,
       ]"
-      class="form-tick appearance-none flex-shrink-0 w-5 h-5 border-2 rounded cursor-pointer disabled:cursor-not-allowed checked:border-transparent"
+      class="form-tick h-5 w-5 shrink-0 cursor-pointer appearance-none rounded border-2 checked:border-transparent disabled:cursor-not-allowed"
       @change="change"
     />
 
-    <span v-if="$slots.default" :class="{ 'opacity-60': disabled }" class="ml-2 text-sm overflow-hidden">
+    <span v-if="$slots.default" :class="{ 'opacity-60': disabled }" class="ml-2 overflow-hidden text-sm">
       <slot v-bind="{ checked }" />
     </span>
   </label>

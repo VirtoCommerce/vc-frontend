@@ -4,12 +4,12 @@
 
     <!-- Totals block -->
     <div>
-      <div class="flex justify-between font-extrabold text-base mb-4">
+      <div class="mb-4 flex justify-between text-base font-extrabold">
         <span>{{ $t("common.labels.subtotal") }}</span>
         <span><VcPriceDisplay :value="cart.subTotal" /></span>
       </div>
 
-      <div class="py-2 border-t border-b font-normal text-base">
+      <div class="border-y py-2 text-base font-normal">
         <div class="flex justify-between" @click="discountsCollapsed = !discountsCollapsed">
           <span class="flex items-center" :class="{ 'cursor-pointer': hasDiscounts }">
             {{ $t("common.labels.discount") }}
@@ -29,7 +29,7 @@
         <div v-if="hasDiscounts && discountsCollapsed">
           <ul class="list-disc pl-5 text-gray-400">
             <li v-for="(discount, index) in cart.discounts" :key="index">
-              <div class="flex justify-between items-center">
+              <div class="flex items-center justify-between">
                 <span class="text-sm">{{ discount.description || discount.coupon }}</span>
                 <VcTotalDisplay
                   :amount="-getDiscountAmmount(discount)"
@@ -40,7 +40,7 @@
             </li>
 
             <li v-if="lineItemsDiscountTotal > 0">
-              <div class="flex justify-between items-center">
+              <div class="flex items-center justify-between">
                 <span class="text-sm">{{ $t("common.labels.line_items") }}</span>
                 <VcTotalDisplay
                   :amount="-lineItemsDiscountTotal"
@@ -63,7 +63,7 @@
         </div>
       </div>
 
-      <div class="flex justify-between font-extrabold text-base mt-4">
+      <div class="mt-4 flex justify-between text-base font-extrabold">
         <span>{{ $t("common.labels.total") }}</span>
         <span class="text-green-700"><VcPriceDisplay :value="cart.total" /></span>
       </div>
@@ -80,8 +80,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
 import { sumBy } from "lodash";
+import { computed, ref } from "vue";
+import { useCurrency, useLanguages } from "@/core/composables";
 import {
   CartType,
   CustomerOrderType,
@@ -90,7 +91,6 @@ import {
   OrderDiscountType,
   OrderLineItemType,
 } from "@/xapi/types";
-import { useCurrency, useLanguages } from "@/core/composables";
 
 interface Props {
   cart: CartType | CustomerOrderType;

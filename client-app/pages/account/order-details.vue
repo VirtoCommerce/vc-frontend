@@ -21,7 +21,7 @@
         <VcButton
           v-if="showReorderButton"
           :is-waiting="loadingAddItemsToCart"
-          class="uppercase px-3 min-w-[8.5rem]"
+          class="min-w-[8.5rem] px-3 uppercase"
           @click="reorderItems"
         >
           {{ $t("common.buttons.reorder_all") }}
@@ -36,7 +36,7 @@
           <template v-for="(group, vendorId) in orderItemsGroupedByVendor" :key="vendorId">
             <div v-if="group.items.length" class="space-y-3">
               <!-- Vendor -->
-              <div class="flex flex-wrap gap-x-3 max-w-full">
+              <div class="flex max-w-full flex-wrap gap-x-3">
                 <VcVendor :vendor="group.vendor" />
                 <VcRating v-if="$cfg.rating_enabled && group.vendor?.rating" :rating="group.vendor.rating" />
               </div>
@@ -71,7 +71,7 @@
               {{ $d(order.createdDate, "long") }}
             </p>
             <p v-if="order.status" class="flex items-center">
-              <span class="font-extrabold mr-2"> {{ $t("common.labels.status") }}: </span>
+              <span class="mr-2 font-extrabold"> {{ $t("common.labels.status") }}: </span>
               <TableStatusBadge :status="order.status" />
             </p>
           </div>
@@ -82,7 +82,7 @@
           <template #footer>
             <VcButton
               v-if="showPaymentButton"
-              class="uppercase w-full mt-4"
+              class="mt-4 w-full uppercase"
               @click="$router.push({ name: 'OrderPayment', params: { orderId } })"
             >
               {{ $t("common.buttons.pay_now") }}
@@ -128,7 +128,7 @@
           </div>
 
           <div class="mt-3">
-            <VcButton class="px-2 py-1 uppercase !text-xs !h-auto" is-outline is-disabled>
+            <VcButton class="!h-auto px-2 py-1 !text-xs uppercase" is-outline is-disabled>
               {{ $t("common.buttons.view_invoice") }}
             </VcButton>
           </div>
@@ -149,16 +149,16 @@
 </template>
 
 <script setup lang="ts">
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useBreadcrumbs, usePageHead } from "@/core";
-import { InputNewBulkItemType } from "@/xapi";
+import { useUserOrder, OrderLineItems } from "@/shared/account";
+import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
 import { AcceptedGifts, OrderSummary } from "@/shared/checkout";
 import { BackButtonInHeader } from "@/shared/layout";
-import { useUserOrder, OrderLineItems } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
-import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
+import { InputNewBulkItemType } from "@/xapi";
 
 const props = defineProps({
   orderId: {

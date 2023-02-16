@@ -5,14 +5,14 @@
       <VcAddressLine :address="address" />
     </div>
 
-    <div class="empty:hidden flex flex-col">
+    <div class="flex flex-col empty:hidden">
       <span v-if="address.phone">
-        <span class="font-bold mr-1">{{ $t("common.labels.phone") }}:</span>
+        <span class="mr-1 font-bold">{{ $t("common.labels.phone") }}:</span>
         {{ address.phone }}
       </span>
 
       <span v-if="address.email">
-        <span class="font-bold mr-1">{{ $t("common.labels.email") }}:</span>
+        <span class="mr-1 font-bold">{{ $t("common.labels.email") }}:</span>
         {{ address.email }}
       </span>
     </div>
@@ -20,8 +20,8 @@
 </template>
 
 <script setup lang="ts">
-import { OrderAddressType, QuoteAddressType } from "@/xapi";
 import { PropType } from "vue";
+import { OrderAddressType, QuoteAddressType } from "@/xapi";
 
 defineProps({
   address: {

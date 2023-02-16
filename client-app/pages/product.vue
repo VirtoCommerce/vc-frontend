@@ -2,13 +2,13 @@
   <div v-if="product && template" class="bg-gray-100 pt-7 pb-8 shadow-inner">
     <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
-    <div class="max-w-screen-2xl px-5 md:px-12 mx-auto">
+    <div class="mx-auto max-w-screen-2xl px-5 md:px-12">
       <!-- Breadcrumbs -->
-      <VcBreadcrumbs class="hidden lg:block mb-3" :items="breadcrumbs" />
+      <VcBreadcrumbs class="mb-3 hidden lg:block" :items="breadcrumbs" />
 
-      <h1 class="text-2xl md:text-4xl font-bold uppercase">{{ product.name }}</h1>
+      <h1 class="text-2xl font-bold uppercase md:text-4xl">{{ product.name }}</h1>
 
-      <div v-if="!product.hasVariations && !isMobile" class="text-sm mt-1">
+      <div v-if="!product.hasVariations && !isMobile" class="mt-1 text-sm">
         {{ $t("pages.product.sku_label") }} <span class="font-extrabold">{{ product.code }}</span>
       </div>
 
@@ -27,19 +27,19 @@
       </template>
 
       <!-- Related products section -->
-      <div v-show="relatedProducts.length" class="flex flex-col lg:flex-row lg:space-x-8 mt-10 lg:mt-6">
-        <div class="flex flex-col -mx-5 md:mx-0 lg:w-8/12 xl:w-9/12">
+      <div v-show="relatedProducts.length" class="mt-10 flex flex-col lg:mt-6 lg:flex-row lg:space-x-8">
+        <div class="-mx-5 flex flex-col md:mx-0 lg:w-8/12 xl:w-9/12">
           <VcSection
             :title="$t('pages.product.related_product_section_title')"
             icon-url="/static/images/checkout/products.svg"
-            class="shadow-sm border rounded-none md:rounded"
+            class="rounded-none border shadow-sm md:rounded"
           >
             <VcCarousel
               :slides="relatedProducts"
               :options="relatedProductsCarouselOptions"
               :pagination="isMobile"
               :navigation="!isMobile"
-              class="px-6 mb-8 lg:mb-2 [--navigation-offset:3rem]"
+              class="mb-8 px-6 [--navigation-offset:3rem] lg:mb-2"
             >
               <template #slide="{ slide: item }">
                 <CarouselProductCard :product="item" class="mb-6" @link-click="ga.selectItem(item)" />
@@ -57,15 +57,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent, watchEffect } from "vue";
 import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
+import { computed, defineAsyncComponent, watchEffect } from "vue";
+import { useI18n } from "vue-i18n";
+import { buildBreadcrumbs } from "@/core";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
-import { useTemplate } from "@/shared/static-content";
 import { useCart } from "@/shared/cart";
 import { CarouselProductCard, useProduct, useRelatedProducts } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
-import { useI18n } from "vue-i18n";
-import { buildBreadcrumbs } from "@/core";
+import { useTemplate } from "@/shared/static-content";
 
 const props = defineProps({
   productId: {

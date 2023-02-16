@@ -9,7 +9,7 @@
       <p v-for="error in commonErrors" :key="error">{{ error }}</p>
     </VcAlert>
 
-    <form class="space-y-4 p-6 py-5 sm:p-5 sm:border-b h-full">
+    <form class="h-full space-y-4 p-6 py-5 sm:border-b sm:p-5">
       <VcSelect
         v-model="roleId"
         :items="roles"
@@ -50,7 +50,7 @@
     <template #actions="{ close }">
       <VcButton
         :is-disabled="loading"
-        class="uppercase w-full sm:w-auto sm:px-10"
+        class="w-full uppercase sm:w-auto sm:px-10"
         kind="secondary"
         is-outline
         @click="close"
@@ -61,7 +61,7 @@
       <VcButton
         :is-disabled="!meta.valid"
         :is-waiting="loading"
-        class="uppercase w-full sm:w-auto sm:px-10"
+        class="w-full uppercase sm:w-auto sm:px-10"
         @click="send"
       >
         {{ $t("shared.account.invite_member_dialog.send_button") }}
@@ -71,14 +71,14 @@
 </template>
 
 <script setup lang="ts">
+import { useField, useForm } from "vee-validate";
 import { ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
-import globals from "@/core/globals";
-import { B2B_ROLES } from "@/core/constants";
 import { useIdentityErrorTranslator } from "@/core/composables";
+import { B2B_ROLES } from "@/core/constants";
+import globals from "@/core/globals";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 

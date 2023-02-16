@@ -1,9 +1,10 @@
 <template>
-  <i
+  <button
     v-if="showScrollButton"
-    class="fas fa-arrow-circle-up text-[color:var(--color-primary)] cursor-pointer opacity-60 hover:opacity-100 text-5xl z-20 fixed bottom-10 right-3"
+    type="button"
+    class="fas fa-arrow-circle-up fixed bottom-10 right-3 z-20 cursor-pointer text-5xl text-[color:var(--color-primary)] opacity-60 hover:opacity-100"
     @click="scrollToTop"
-  ></i>
+  ></button>
 </template>
 
 <script setup lang="ts">

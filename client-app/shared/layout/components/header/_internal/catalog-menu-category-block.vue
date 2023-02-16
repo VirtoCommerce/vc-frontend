@@ -1,7 +1,7 @@
 <template>
   <div>
     <router-link
-      class="block px-2 py-1 mb-2 text-base font-bold hover:bg-gray-100"
+      class="mb-2 block px-2 py-1 text-base font-bold hover:bg-gray-100"
       :to="categoriesRoutes[category.id]"
       :title="category.name"
       @click="clickCategory"
@@ -11,7 +11,7 @@
     <div>
       <template v-for="(subcategory, key) in displayedCategories" :key="key">
         <router-link
-          class="block px-2 py-1 mb-1 text-sm !leading-4 text-gray-500 truncate hover:bg-gray-100"
+          class="mb-1 block truncate px-2 py-1 text-sm !leading-4 text-gray-500 hover:bg-gray-100"
           :to="categoriesRoutes[subcategory.id]"
           :title="subcategory.name"
           @click="clickCategory"
@@ -22,7 +22,7 @@
 
       <button
         v-if="subcategories.length > SHORT_VIEW_ITEMS_COUNT"
-        class="px-2 py-1 text-sm cursor-pointer flex items-baseline"
+        class="flex cursor-pointer items-baseline px-2 py-1 text-sm"
         @click="toggleShowAll"
       >
         <span
@@ -34,7 +34,7 @@
           class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
         />
         <i
-          class="ml-[5px] fas text-[color:var(--color-primary)]"
+          class="fas ml-[5px] text-[color:var(--color-primary)]"
           :class="[showAll ? 'fa-chevron-up' : 'fa-chevron-down']"
         />
       </button>

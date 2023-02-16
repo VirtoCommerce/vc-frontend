@@ -31,11 +31,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, PropType } from "vue";
-import { Pagination, Navigation } from "swiper";
-import { Swiper, SwiperSlide } from "swiper/vue"; // eslint-disable-line import/no-unresolved
-import { NavigationOptions, PaginationOptions } from "swiper/types";
 import _ from "lodash";
+import { Pagination, Navigation } from "swiper";
+import { NavigationOptions, PaginationOptions } from "swiper/types";
+import { Swiper, SwiperSlide } from "swiper/vue"; // eslint-disable-line import/no-unresolved
+import { computed, getCurrentInstance, PropType } from "vue";
 
 const props = defineProps({
   slides: {

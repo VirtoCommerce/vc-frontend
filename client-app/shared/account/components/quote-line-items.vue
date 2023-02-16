@@ -1,17 +1,17 @@
 <template>
   <div class="vc-quote-line-items">
     <!-- table header -->
-    <div class="vc-quote-line-items__header gap-x-3 px-4 py-3 border rounded-t text-sm font-bold hidden md:grid">
+    <div class="vc-quote-line-items__header hidden gap-x-3 rounded-t border px-4 py-3 text-sm font-bold md:grid">
       <div class="vc-quote-line-items__product">
         {{ $t("pages.account.quote_details.line_items.product") }}
       </div>
       <div class="vc-quote-line-items__properties">
         {{ $t("pages.account.quote_details.line_items.properties") }}
       </div>
-      <div class="vc-quote-line-items__price hidden xl:block pr-4 text-right">
+      <div class="vc-quote-line-items__price hidden pr-4 text-right xl:block">
         {{ $t("pages.account.quote_details.line_items.price_per_item") }}
       </div>
-      <div class="vc-quote-line-items__quantity hidden xl:block text-right">
+      <div class="vc-quote-line-items__quantity hidden text-right xl:block">
         {{ $t("pages.account.quote_details.line_items.quantity") }}
       </div>
       <div class="vc-quote-line-items__total text-right">
@@ -21,33 +21,33 @@
     </div>
 
     <!-- table body -->
-    <div v-if="items.length" class="flex flex-col gap-6 md:gap-0 md:border-x md:divide-y">
+    <div v-if="items.length" class="flex flex-col gap-6 md:gap-0 md:divide-y md:border-x">
       <div
         v-for="item in extendedItems"
         :key="item.id"
-        class="relative border rounded shadow-t-3sm md:rounded-none md:shadow-none md:border-0"
+        class="relative rounded border shadow-t-3sm md:rounded-none md:border-0 md:shadow-none"
       >
         <div
-          class="vc-quote-line-items__line-item grid gap-x-2.5 pt-3 pl-3 pr-3.5 pb-4 md:p-4 md:gap-x-3 md:place-items-center"
+          class="vc-quote-line-items__line-item grid gap-x-2.5 pt-3 pl-3 pr-3.5 pb-4 md:place-items-center md:gap-x-3 md:p-4"
         >
-          <div class="contents vc-quote-line-items__product md:flex md:gap-3 md:w-full">
+          <div class="vc-quote-line-items__product contents md:flex md:w-full md:gap-3">
             <!--  IMAGE -->
             <div
-              class="vc-quote-line-items__img shrink-0 w-16 h-16 md:w-[60px] md:h-[60px]"
+              class="vc-quote-line-items__img h-16 w-16 shrink-0 md:h-[60px] md:w-[60px]"
               :class="{ 'opacity-25': !item.extended.isProductExists }"
             >
               <VcImage
                 :src="item.imageUrl"
                 :alt="item.name"
                 size-suffix="sm"
-                class="w-full h-full object-cover object-center"
+                class="h-full w-full object-cover object-center"
                 lazy
               />
             </div>
 
             <!-- NAME -->
             <div
-              class="vc-quote-line-items__name text-sm font-extrabold md:grow lg:text-13 lg:leading-4 lg:font-bold"
+              class="vc-quote-line-items__name text-sm font-extrabold md:grow lg:text-13 lg:font-bold lg:leading-4"
               :class="{ 'opacity-25': !item.extended.isProductExists }"
             >
               <router-link
@@ -77,7 +77,7 @@
                   <div class="truncate">{{ property.label }}:</div>
                 </div>
 
-                <div class="grow mb-1 h-4 border-b-2 border-gray-200 border-dotted md:hidden"></div>
+                <div class="mb-1 h-4 grow border-b-2 border-dotted border-gray-200 md:hidden"></div>
 
                 <div class="min-w-0">
                   <div class="truncate font-semibold md:font-normal">
@@ -89,15 +89,15 @@
 
             <!-- PRICE -->
             <div
-              class="vc-quote-line-items__price grid grid-cols-[auto_1fr_auto] gap-1.5 w-full md:grid-cols-[45%_1fr] xl:contents"
+              class="vc-quote-line-items__price grid w-full grid-cols-[auto_1fr_auto] gap-1.5 md:grid-cols-[45%_1fr] xl:contents"
             >
               <div
-                class="min-w-0 font-medium capitalize text-13 lg:text-xs text-gray-600 md:font-bold md:text-gray-800 xl:hidden"
+                class="min-w-0 text-13 font-medium capitalize text-gray-600 md:font-bold md:text-gray-800 lg:text-xs xl:hidden"
               >
                 <div class="truncate">{{ $t("pages.account.quote_details.line_items.price_per_item") }}:</div>
               </div>
 
-              <div class="grow mb-1 h-4 border-b-2 border-gray-200 border-dotted md:hidden"></div>
+              <div class="mb-1 h-4 grow border-b-2 border-dotted border-gray-200 md:hidden"></div>
 
               <div class="xl:w-full xl:pr-4 xl:text-right">
                 <div class="text-13 font-semibold md:font-normal lg:text-xs xl:font-medium">
@@ -116,11 +116,11 @@
           </div>
 
           <!-- QUANTITY -->
-          <div class="vc-quote-line-items__quantity mt-3 md:place-self-end md:mt-0 xl:w-full xl:place-self-center">
+          <div class="vc-quote-line-items__quantity mt-3 md:mt-0 md:place-self-end xl:w-full xl:place-self-center">
             <input
               v-model="item.selectedTierPrice!.quantity"
               :disabled="readonly"
-              class="w-20 h-8 border rounded text-center text-sm disabled:bg-gray-100 xl:w-full disabled:text-gray-400"
+              class="h-8 w-20 rounded border text-center text-sm disabled:bg-gray-100 disabled:text-gray-400 xl:w-full"
               type="number"
               pattern="\d"
               min="1"
@@ -131,10 +131,10 @@
 
           <!-- TOTAL -->
           <div
-            class="vc-quote-line-items__total flex flex-col justify-center items-end min-h-[32px] mt-3 md:mt-0 md:min-h-auto md:w-full"
+            class="vc-quote-line-items__total md:min-h-auto mt-3 flex min-h-[32px] flex-col items-end justify-center md:mt-0 md:w-full"
           >
             <!-- Total -->
-            <div class="flex flex-wrap items-center justify-end text-right gap-x-1">
+            <div class="flex flex-wrap items-center justify-end gap-x-1 text-right">
               <div class="text-14 font-bold text-[color:var(--color-price-from)] md:hidden">
                 {{ $t("pages.account.quote_details.line_items.total") }}:
               </div>
@@ -153,14 +153,14 @@
           <!-- REMOVE BUTTON -->
           <div
             v-if="!readonly"
-            class="vc-quote-line-items__remove-button absolute -top-3 -right-3 md:static md:flex md:justify-end md:w-8"
+            class="vc-quote-line-items__remove-button absolute -top-3 -right-3 md:static md:flex md:w-8 md:justify-end"
           >
             <button
               type="button"
-              class="flex items-center justify-center h-[26px] w-[26px] rounded-full border bg-white text-[color:var(--color-danger)] md:border-2 md:w-7 md:h-7 md:rounded hover:bg-gray-100"
+              class="flex h-[26px] w-[26px] items-center justify-center rounded-full border bg-white text-[color:var(--color-danger)] hover:bg-gray-100 md:h-7 md:w-7 md:rounded md:border-2"
               @click="$emit('remove:item', item)"
             >
-              <svg class="w-3.5 h-3.5">
+              <svg class="h-3.5 w-3.5">
                 <use href="/static/images/delete.svg#main"></use>
               </svg>
             </button>
@@ -169,7 +169,7 @@
       </div>
     </div>
 
-    <div v-else class="p-3 border-x">
+    <div v-else class="border-x p-3">
       <VcAlert type="warning" icon>
         {{ $t("pages.account.quote_details.no_items_message") }}
       </VcAlert>
@@ -177,7 +177,7 @@
 
     <!-- table footer -->
     <div
-      class="flex items-center justify-end py-2.5 gap-2 text-[color:var(--color-price)] md:px-4 md:py-2.5 md:border md:rounded-b"
+      class="flex items-center justify-end gap-2 py-2.5 text-[color:var(--color-price)] md:rounded-b md:border md:px-4 md:py-2.5"
     >
       <div class="text-13 font-bold">{{ $t("pages.account.quote_details.line_items.subtotal") }}:</div>
 
@@ -187,11 +187,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from "vue";
 import { sumBy } from "lodash";
-import { QuoteItemType } from "@/xapi";
-import { VcPriceDisplay } from "@/ui-kit/components";
+import { computed, PropType } from "vue";
 import { extendQuoteItem } from "@/shared/account";
+import { VcPriceDisplay } from "@/ui-kit/components";
+import { QuoteItemType } from "@/xapi";
 
 defineEmits(["remove:item", "update:item"]);
 

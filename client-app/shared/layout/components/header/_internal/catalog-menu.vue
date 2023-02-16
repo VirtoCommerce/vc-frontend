@@ -1,9 +1,9 @@
 <template>
-  <div class="w-full columns-4 xl:columns-5 pt-3 px-10 bg-[color:var(--color-header-bottom-bg)]">
+  <div class="w-full columns-4 bg-[color:var(--color-header-bottom-bg)] px-10 pt-3 xl:columns-5">
     <CatalogMenuCategoryBlock
       v-for="(category, index) in catalogMenuItems"
       :key="index"
-      class="w-full min-h-[15.5rem] break-inside-avoid p-5"
+      class="min-h-[15.5rem] w-full break-inside-avoid p-5"
       :class="[(index + 1) % maxRowsNumber === 0 ? 'break-after-column' : 'break-after-avoid']"
       :category="category"
       @select="$emit('select')"
@@ -12,10 +12,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import CatalogMenuCategoryBlock from "./catalog-menu-category-block.vue";
+import { computed } from "vue";
 import { useCatalogMenu } from "@/core";
+import CatalogMenuCategoryBlock from "./catalog-menu-category-block.vue";
 
 defineEmits<{ (event: "select"): void }>();
 

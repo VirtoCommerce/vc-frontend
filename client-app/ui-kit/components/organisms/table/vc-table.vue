@@ -26,7 +26,7 @@
   </template>
 
   <!-- Desktop table view -->
-  <table v-else :class="[layout, 'text-sm text-left w-full']">
+  <table v-else :class="[layout, 'w-full text-left text-sm']">
     <thead v-if="columns.length" class="border-b border-gray-200">
       <tr>
         <th
@@ -76,18 +76,18 @@
       :page="page"
       :pages="pages"
       class="self-start"
-      :class="[isMobile ? 'px-6 py-10' : 'pb-5 px-5 mt-5']"
+      :class="[isMobile ? 'px-6 py-10' : 'mt-5 px-5 pb-5']"
       @update:page="onPageUpdate"
     ></VcPagination>
   </slot>
 </template>
 
 <script setup lang="ts">
-import { toggleSortDirection } from "@/core";
-import { ISortInfo } from "@/core/types";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 import { PropType } from "vue";
+import { toggleSortDirection } from "@/core";
+import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
+import { ISortInfo } from "@/core/types";
 
 const emit = defineEmits(["itemClick", "headerClick", "pageChanged"]);
 

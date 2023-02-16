@@ -1,99 +1,99 @@
 <template>
-  <div class="bg-gray-100 grow pt-6 pb-16 shadow-inner">
-    <div class="max-w-screen-2xl md:px-12 mx-auto space-y-6">
+  <div class="grow bg-gray-100 pt-6 pb-16 shadow-inner">
+    <div class="mx-auto max-w-screen-2xl space-y-6 md:px-12">
       <!-- region Buttons -->
-      <section class="bg-white md:rounded px-6 pt-5 pb-6">
-        <header class="text-2xl text-gray-600 font-bold font-roboto mb-5">Buttons</header>
+      <section class="bg-white px-6 pt-5 pb-6 md:rounded">
+        <header class="mb-5 font-roboto text-2xl font-bold text-gray-600">Buttons</header>
 
         <div class="space-y-8">
           <!-- Small -->
           <div class="space-y-4">
             <div class="flex flex-wrap items-center gap-4">
-              <VcButton size="sm" class="uppercase px-4" autofocus>primary</VcButton>
-              <VcButton size="sm" kind="secondary" class="uppercase px-4">secondary</VcButton>
-              <VcButton size="sm" kind="success" class="uppercase px-4">success</VcButton>
-              <VcButton size="sm" kind="warning" class="uppercase px-4">warning</VcButton>
-              <VcButton size="sm" kind="danger" class="uppercase px-4">danger</VcButton>
-              <VcButton size="sm" kind="danger" class="uppercase px-4" is-disabled>disabled</VcButton>
-              <VcButton size="sm" kind="danger" class="uppercase px-4" is-waiting>loading</VcButton>
+              <VcButton size="sm" class="px-4 uppercase">primary</VcButton>
+              <VcButton size="sm" kind="secondary" class="px-4 uppercase">secondary</VcButton>
+              <VcButton size="sm" kind="success" class="px-4 uppercase">success</VcButton>
+              <VcButton size="sm" kind="warning" class="px-4 uppercase">warning</VcButton>
+              <VcButton size="sm" kind="danger" class="px-4 uppercase">danger</VcButton>
+              <VcButton size="sm" kind="danger" class="px-4 uppercase" is-disabled>disabled</VcButton>
+              <VcButton size="sm" kind="danger" class="px-4 uppercase" is-waiting>loading</VcButton>
             </div>
 
             <div class="flex flex-wrap items-center gap-4">
-              <VcButton size="sm" class="uppercase px-4" is-outline>primary</VcButton>
-              <VcButton size="sm" kind="secondary" class="uppercase px-4" is-outline>secondary</VcButton>
-              <VcButton size="sm" kind="success" class="uppercase px-4" is-outline>success</VcButton>
-              <VcButton size="sm" kind="warning" class="uppercase px-4" is-outline>warning</VcButton>
-              <VcButton size="sm" kind="danger" class="uppercase px-4" is-outline>danger</VcButton>
-              <VcButton size="sm" kind="danger" class="uppercase px-4" is-disabled is-outline>disabled</VcButton>
-              <VcButton size="sm" kind="danger" class="uppercase px-4" is-waiting is-outline>loading</VcButton>
+              <VcButton size="sm" class="px-4 uppercase" is-outline>primary</VcButton>
+              <VcButton size="sm" kind="secondary" class="px-4 uppercase" is-outline>secondary</VcButton>
+              <VcButton size="sm" kind="success" class="px-4 uppercase" is-outline>success</VcButton>
+              <VcButton size="sm" kind="warning" class="px-4 uppercase" is-outline>warning</VcButton>
+              <VcButton size="sm" kind="danger" class="px-4 uppercase" is-outline>danger</VcButton>
+              <VcButton size="sm" kind="danger" class="px-4 uppercase" is-disabled is-outline>disabled</VcButton>
+              <VcButton size="sm" kind="danger" class="px-4 uppercase" is-waiting is-outline>loading</VcButton>
             </div>
           </div>
 
           <!-- Medium -->
           <div class="space-y-4">
             <div class="flex flex-wrap items-center gap-4">
-              <VcButton class="uppercase px-4">primary</VcButton>
-              <VcButton kind="secondary" class="uppercase px-4">secondary</VcButton>
-              <VcButton kind="success" class="uppercase px-4">success</VcButton>
-              <VcButton kind="warning" class="uppercase px-4">warning</VcButton>
-              <VcButton kind="danger" class="uppercase px-4">danger</VcButton>
-              <VcButton kind="danger" class="uppercase px-4" is-disabled>disabled</VcButton>
-              <VcButton kind="danger" class="uppercase px-4" is-waiting>loading</VcButton>
+              <VcButton class="px-4 uppercase">primary</VcButton>
+              <VcButton kind="secondary" class="px-4 uppercase">secondary</VcButton>
+              <VcButton kind="success" class="px-4 uppercase">success</VcButton>
+              <VcButton kind="warning" class="px-4 uppercase">warning</VcButton>
+              <VcButton kind="danger" class="px-4 uppercase">danger</VcButton>
+              <VcButton kind="danger" class="px-4 uppercase" is-disabled>disabled</VcButton>
+              <VcButton kind="danger" class="px-4 uppercase" is-waiting>loading</VcButton>
             </div>
 
             <div class="flex flex-wrap items-center gap-4">
-              <VcButton class="uppercase px-4" is-outline>primary</VcButton>
-              <VcButton kind="secondary" class="uppercase px-4" is-outline>secondary</VcButton>
-              <VcButton kind="success" class="uppercase px-4" is-outline>success</VcButton>
-              <VcButton kind="warning" class="uppercase px-4" is-outline>warning</VcButton>
-              <VcButton kind="danger" class="uppercase px-4" is-outline>danger</VcButton>
-              <VcButton kind="danger" class="uppercase px-4" is-disabled is-outline>disabled</VcButton>
-              <VcButton kind="danger" class="uppercase px-4" is-waiting is-outline>loading</VcButton>
+              <VcButton class="px-4 uppercase" is-outline>primary</VcButton>
+              <VcButton kind="secondary" class="px-4 uppercase" is-outline>secondary</VcButton>
+              <VcButton kind="success" class="px-4 uppercase" is-outline>success</VcButton>
+              <VcButton kind="warning" class="px-4 uppercase" is-outline>warning</VcButton>
+              <VcButton kind="danger" class="px-4 uppercase" is-outline>danger</VcButton>
+              <VcButton kind="danger" class="px-4 uppercase" is-disabled is-outline>disabled</VcButton>
+              <VcButton kind="danger" class="px-4 uppercase" is-waiting is-outline>loading</VcButton>
             </div>
           </div>
 
           <!-- Large -->
           <div class="space-y-4">
             <div class="flex flex-wrap items-center gap-4">
-              <VcButton size="lg" class="uppercase px-4">primary</VcButton>
-              <VcButton size="lg" kind="secondary" class="uppercase px-4">secondary</VcButton>
-              <VcButton size="lg" kind="success" class="uppercase px-4">success</VcButton>
-              <VcButton size="lg" kind="warning" class="uppercase px-4">warning</VcButton>
-              <VcButton size="lg" kind="danger" class="uppercase px-4">danger</VcButton>
-              <VcButton size="lg" kind="danger" class="uppercase px-4" is-disabled>disabled</VcButton>
-              <VcButton size="lg" kind="danger" class="uppercase px-4" is-waiting>loading</VcButton>
+              <VcButton size="lg" class="px-4 uppercase">primary</VcButton>
+              <VcButton size="lg" kind="secondary" class="px-4 uppercase">secondary</VcButton>
+              <VcButton size="lg" kind="success" class="px-4 uppercase">success</VcButton>
+              <VcButton size="lg" kind="warning" class="px-4 uppercase">warning</VcButton>
+              <VcButton size="lg" kind="danger" class="px-4 uppercase">danger</VcButton>
+              <VcButton size="lg" kind="danger" class="px-4 uppercase" is-disabled>disabled</VcButton>
+              <VcButton size="lg" kind="danger" class="px-4 uppercase" is-waiting>loading</VcButton>
             </div>
 
             <div class="flex flex-wrap items-center gap-4">
-              <VcButton size="lg" class="uppercase px-4" is-outline>primary</VcButton>
-              <VcButton size="lg" kind="secondary" class="uppercase px-4" is-outline>secondary</VcButton>
-              <VcButton size="lg" kind="success" class="uppercase px-4" is-outline>success</VcButton>
-              <VcButton size="lg" kind="warning" class="uppercase px-4" is-outline>warning</VcButton>
-              <VcButton size="lg" kind="danger" class="uppercase px-4" is-outline>danger</VcButton>
-              <VcButton size="lg" kind="danger" class="uppercase px-4" is-disabled is-outline>disabled</VcButton>
-              <VcButton size="lg" kind="danger" class="uppercase px-4" is-waiting is-outline>loading</VcButton>
+              <VcButton size="lg" class="px-4 uppercase" is-outline>primary</VcButton>
+              <VcButton size="lg" kind="secondary" class="px-4 uppercase" is-outline>secondary</VcButton>
+              <VcButton size="lg" kind="success" class="px-4 uppercase" is-outline>success</VcButton>
+              <VcButton size="lg" kind="warning" class="px-4 uppercase" is-outline>warning</VcButton>
+              <VcButton size="lg" kind="danger" class="px-4 uppercase" is-outline>danger</VcButton>
+              <VcButton size="lg" kind="danger" class="px-4 uppercase" is-disabled is-outline>disabled</VcButton>
+              <VcButton size="lg" kind="danger" class="px-4 uppercase" is-waiting is-outline>loading</VcButton>
             </div>
           </div>
 
           <!-- Custom colors -->
           <div class="space-y-4">
             <div class="flex flex-wrap items-center gap-4">
-              <VcButton class="uppercase px-4 [--color-primary:blue] [--color-primary-hover:green]">
+              <VcButton class="px-4 uppercase [--color-primary:blue] [--color-primary-hover:green]">
                 Custom color
               </VcButton>
 
-              <VcButton class="uppercase px-4 [--color-primary:blue] [--color-primary-hover:green]" is-outline>
+              <VcButton class="px-4 uppercase [--color-primary:blue] [--color-primary-hover:green]" is-outline>
                 Custom color
               </VcButton>
 
               <VcButton
-                class="uppercase px-4 [--color-primary:mediumaquamarine] [--color-primary-hover:teal] !text-black hover:!text-gray-50"
+                class="px-4 uppercase !text-black [--color-primary:mediumaquamarine] [--color-primary-hover:teal] hover:!text-gray-50"
               >
                 Custom color
               </VcButton>
 
               <VcButton
-                class="uppercase px-4 [--color-primary:mediumaquamarine] [--color-primary-hover:teal] !text-black hover:!text-red-700 hover:!bg-transparent"
+                class="px-4 uppercase !text-black [--color-primary:mediumaquamarine] [--color-primary-hover:teal] hover:!bg-transparent hover:!text-red-700"
                 is-outline
               >
                 Custom color
@@ -106,22 +106,22 @@
           <!-- Bugs & Solutions -->
           <div class="space-y-4">
             <div class="flex flex-wrap items-center gap-4">
-              <VcButton v-t="'common.buttons.submit'" class="uppercase px-4"> test</VcButton>
-              <VcButton v-t="'common.buttons.submit'" class="uppercase px-4" is-waiting> loading</VcButton>
-              <VcButton v-t="'common.buttons.submit'" class="uppercase px-4" is-waiting is-outline> loading</VcButton>
+              <VcButton v-t="'common.buttons.submit'" class="px-4 uppercase"> test</VcButton>
+              <VcButton v-t="'common.buttons.submit'" class="px-4 uppercase" is-waiting> loading</VcButton>
+              <VcButton v-t="'common.buttons.submit'" class="px-4 uppercase" is-waiting is-outline> loading</VcButton>
               <span>— &nbsp; Bugs</span>
             </div>
 
             <div class="flex flex-wrap items-center gap-4">
-              <VcButton class="uppercase px-4">
+              <VcButton class="px-4 uppercase">
                 {{ $t("common.buttons.submit") }}
               </VcButton>
 
-              <VcButton class="uppercase px-4" is-waiting>
+              <VcButton class="px-4 uppercase" is-waiting>
                 {{ $t("common.buttons.submit") }}
               </VcButton>
 
-              <VcButton class="uppercase px-4" is-waiting is-outline>
+              <VcButton class="px-4 uppercase" is-waiting is-outline>
                 {{ $t("common.buttons.submit") }}
               </VcButton>
 
@@ -134,8 +134,8 @@
       <!-- endregion Buttons -->
 
       <!-- region Chips -->
-      <section class="bg-white md:rounded px-6 pt-5 pb-6">
-        <header class="text-2xl text-gray-600 font-bold font-roboto mb-5">Chips</header>
+      <section class="bg-white px-6 pt-5 pb-6 md:rounded">
+        <header class="mb-5 font-roboto text-2xl font-bold text-gray-600">Chips</header>
 
         <div class="space-y-8">
           <!-- Small -->

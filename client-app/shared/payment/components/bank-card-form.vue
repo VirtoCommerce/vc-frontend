@@ -25,7 +25,7 @@
       @input="input"
     />
 
-    <div class="flex flex-col sm:flex-row gap-x-6 gap-y-3">
+    <div class="flex flex-col gap-x-6 gap-y-3 sm:flex-row">
       <VcInput
         v-model="expirationDate"
         v-mask="'## / ##'"
@@ -66,12 +66,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType, ref, watch } from "vue";
-import { useForm, useField } from "vee-validate";
-import * as yup from "yup";
 import { clone } from "lodash";
-import { BankCardErrorsType, BankCardType } from "@/shared/payment";
+import { useForm, useField } from "vee-validate";
+import { computed, PropType, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import * as yup from "yup";
+import { BankCardErrorsType, BankCardType } from "@/shared/payment";
 
 const emit = defineEmits<{
   (event: "update:modelValue", bankCardData: Partial<BankCardType>): void;

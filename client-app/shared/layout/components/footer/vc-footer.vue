@@ -3,9 +3,9 @@
     <!-- Top footer -->
     <div
       v-if="!compact"
-      class="hidden md:block bg-[color:var(--color-footer-top-bg)] text-[color:var(--color-footer-top-text)]"
+      class="hidden bg-[color:var(--color-footer-top-bg)] text-[color:var(--color-footer-top-text)] md:block"
     >
-      <div class="container mx-auto grid grid-cols-2 gap-4 lg:grid-cols-4 xl:grid-cols-5 p-12">
+      <div class="container mx-auto grid grid-cols-2 gap-4 p-12 lg:grid-cols-4 xl:grid-cols-5">
         <!-- Logo column -->
         <div class="hidden xl:block">
           <VcImage :src="$cfg.logo_inverted_image" :alt="$context.storeName" class="h-9" lazy />
@@ -15,7 +15,7 @@
         <div>
           <div
             v-t="'shared.layout.footer.company_information_link_group'"
-            class="uppercase font-extrabold text-base text-white mb-3"
+            class="mb-3 text-base font-extrabold uppercase text-white"
           ></div>
           <div class="flex flex-col space-y-1">
             <FooterLink v-t="'shared.layout.footer.about_us_link'" to="/about"></FooterLink>
@@ -29,7 +29,7 @@
         <div>
           <div
             v-t="'shared.layout.footer.customer_support_link_group'"
-            class="uppercase font-extrabold text-base text-white mb-3"
+            class="mb-3 text-base font-extrabold uppercase text-white"
           ></div>
           <div class="flex flex-col space-y-1">
             <FooterLink v-t="'shared.layout.footer.catalog_request_link'" to="/catalog-request"></FooterLink>
@@ -43,7 +43,7 @@
         <div>
           <div
             v-t="'shared.layout.footer.order_support_link_group'"
-            class="uppercase font-extrabold text-base text-white mb-3"
+            class="mb-3 text-base font-extrabold uppercase text-white"
           ></div>
           <div class="flex flex-col space-y-1">
             <FooterLink v-t="'shared.layout.footer.orders_link'" to="/orders"></FooterLink>
@@ -58,7 +58,7 @@
         <div>
           <div
             v-t="'shared.layout.footer.online_resources_ling_group'"
-            class="uppercase font-extrabold text-base text-white mb-3"
+            class="mb-3 text-base font-extrabold uppercase text-white"
           ></div>
           <div class="flex flex-col space-y-1">
             <FooterLink v-t="'shared.layout.footer.catalog_link'" :to="{ name: 'Catalog' }" />
@@ -75,7 +75,7 @@
 
     <!-- Bottom footer -->
     <div
-      class="flex flex-col md:flex-row items-center justify-between h-16 text-xs font-medium px-4 md:px-12 py-3 bg-[color:var(--color-footer-bottom-bg)] text-[color:var(--color-footer-bottom-text)]"
+      class="flex h-16 flex-col items-center justify-between bg-[color:var(--color-footer-bottom-bg)] px-4 py-3 text-xs font-medium text-[color:var(--color-footer-bottom-text)] md:flex-row md:px-12"
     >
       <span>
         {{ $t("shared.layout.footer.version") }} {{ version }}. © {{ new Date().getFullYear() }}
@@ -99,9 +99,9 @@
 </template>
 
 <script setup lang="ts">
+import { DEVELOPMENT } from "@/core/constants";
 import pkg from "../../../../../package.json";
 import FooterLink from "./_internal/footer-link.vue";
-import { DEVELOPMENT } from "@/core/constants";
 
 interface IProps {
   compact?: boolean;

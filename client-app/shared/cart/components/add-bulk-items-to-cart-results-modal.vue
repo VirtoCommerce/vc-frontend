@@ -14,10 +14,10 @@
           full-width-content
         >
           <template #header-content>
-            <div class="flex grow min-w-0 items-center gap-x-2.5">
+            <div class="flex min-w-0 grow items-center gap-x-2.5">
               <span
                 :class="[
-                  'flex shrink-0 items-center justify-center h-6 w-6 rounded-full text-white',
+                  'flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white',
                   {
                     'bg-[color:var(--color-success)]': group.name === 'added',
                     'bg-[color:var(--color-danger)]': group.name === 'not_added',
@@ -37,42 +37,42 @@
 
               <span
                 v-t="'shared.cart.add_bulk_items_to_cart_results_popup.groups.' + group.name"
-                class="text-15 font-bold truncate"
+                class="truncate text-15 font-bold"
               />
 
               <span
-                class="px-2 py-0.5 text-11 leading-3 font-extrabold rounded-full border border-[color:var(--color-primary)]"
+                class="rounded-full border border-[color:var(--color-primary)] px-2 py-0.5 text-11 font-extrabold leading-3"
               >
                 {{ group.items.length }}
               </span>
             </div>
           </template>
 
-          <div class="overflow-y-auto max-h-80 md:max-h-72 rounded-[inherit]">
-            <ul class="md:table w-full">
-              <li class="hidden md:table-row md:sticky top-0 text-15 font-extrabold bg-gray-50">
+          <div class="max-h-80 overflow-y-auto rounded-[inherit] md:max-h-72">
+            <ul class="w-full md:table">
+              <li class="top-0 hidden bg-gray-50 text-15 font-extrabold md:sticky md:table-row">
                 <div
                   v-t="'shared.cart.add_bulk_items_to_cart_results_popup.labels.sku'"
-                  class="table-cell px-4 py-2.5 border-b"
+                  class="table-cell border-b px-4 py-2.5"
                 />
 
                 <div
                   v-t="'shared.cart.add_bulk_items_to_cart_results_popup.labels.product_name'"
-                  class="table-cell px-4 py-2.5 border-b"
+                  class="table-cell border-b px-4 py-2.5"
                 />
 
                 <div
                   v-t="'shared.cart.add_bulk_items_to_cart_results_popup.labels.quantity'"
-                  class="table-cell px-4 py-2.5 border-b text-right"
+                  class="table-cell border-b px-4 py-2.5 text-right"
                 />
               </li>
 
               <li
                 v-for="item in group.items"
                 :key="item.sku"
-                class="flex flex-wrap px-4 py-2.5 md:p-0 border-b last:border-0 md:border-0 md:table-row md:odd:bg-gray-50"
+                class="flex flex-wrap border-b px-4 py-2.5 last:border-0 md:table-row md:border-0 md:p-0 md:odd:bg-gray-50"
               >
-                <div class="flex flex-col w-3/5 md:w-auto pr-3 md:table-cell md:px-4 md:py-2.5 md:align-middle">
+                <div class="flex w-3/5 flex-col pr-3 md:table-cell md:w-auto md:px-4 md:py-2.5 md:align-middle">
                   <span
                     v-t="'shared.cart.add_bulk_items_to_cart_results_popup.labels.sku'"
                     class="text-13 text-gray-400 md:hidden"
@@ -81,7 +81,7 @@
                 </div>
 
                 <div
-                  class="shrink-0 w-full md:w-auto order-first mb-2.5 md:mb-0 line-clamp-2 md:line-clamp-none md:table-cell md:px-4 md:py-2.5 md:align-middle"
+                  class="order-first mb-2.5 w-full shrink-0 line-clamp-2 md:mb-0 md:table-cell md:w-auto md:px-4 md:py-2.5 md:align-middle md:line-clamp-none"
                 >
                   <router-link
                     :to="links[item.productId]"
@@ -93,7 +93,7 @@
                 </div>
 
                 <div
-                  class="flex flex-col w-2/5 md:w-auto md:table-cell md:px-4 md:py-2.5 md:align-middle md:text-right"
+                  class="flex w-2/5 flex-col md:table-cell md:w-auto md:px-4 md:py-2.5 md:text-right md:align-middle"
                 >
                   <span
                     v-t="'shared.cart.add_bulk_items_to_cart_results_popup.labels.quantity'"
@@ -110,7 +110,7 @@
 
     <template #actions="{ close }">
       <VcButton
-        class="uppercase w-full sm:w-36"
+        class="w-full uppercase sm:w-36"
         @click="
           close();
           $emit('confirm');

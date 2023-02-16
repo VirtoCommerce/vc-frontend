@@ -1,9 +1,9 @@
 <template>
   <TwoColumn class="max-w-screen-xl">
     <template #left>
-      <h1 v-t="'pages.sign_up.header'" class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-8 lg:mt-5"></h1>
+      <h1 v-t="'pages.sign_up.header'" class="mb-8 text-3xl font-bold uppercase tracking-wide lg:mt-5 lg:text-4xl"></h1>
       <form @submit="onSubmit">
-        <div class="mt-5 mb-5 flex flex-col space-y-5 md:space-y-0 md:flex-row md:space-x-7">
+        <div class="my-5 flex flex-col space-y-5 md:flex-row md:space-y-0 md:space-x-7">
           <VcRadioButton
             id="shipping"
             v-model="registrationKind"
@@ -68,7 +68,7 @@
           autocomplete="off"
         />
 
-        <div class="block lg:flex justify-between lg:space-x-6">
+        <div class="block justify-between lg:flex lg:space-x-6">
           <VcInput
             v-model="password"
             class="mb-4 w-full lg:w-1/2"
@@ -103,7 +103,7 @@
             is-submit
             :is-disabled="!meta.valid || meta.pending"
             size="lg"
-            class="uppercase mt-6 lg:mt-3 w-full lg:w-48"
+            class="mt-6 w-full uppercase lg:mt-3 lg:w-48"
             :is-waiting="loading"
           >
             {{ $t("pages.sign_up.register_button") }}
@@ -119,17 +119,17 @@
 </template>
 
 <script setup lang="ts">
+import _ from "lodash";
+import { useField, useForm } from "vee-validate";
+import { ref } from "vue";
+import { useI18n } from "vue-i18n";
+import * as yup from "yup";
+import { useIdentityErrorTranslator, usePageHead } from "@/core/composables";
 import { RegistrationKind, RegistrationSuccessDialog, useUser } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
-import { useField, useForm } from "vee-validate";
-import * as yup from "yup";
-import { ref } from "vue";
 import { usePopup } from "@/shared/popup";
-import { AccountCreationResultType } from "@/xapi/types";
-import { useI18n } from "vue-i18n";
 import { checkEmailUniqueness } from "@/xapi/graphql/account";
-import _ from "lodash";
-import { useIdentityErrorTranslator, usePageHead } from "@/core/composables";
+import { AccountCreationResultType } from "@/xapi/types";
 
 const ASYNC_VALIDATION_TIMEOUT_IN_MS = 500;
 

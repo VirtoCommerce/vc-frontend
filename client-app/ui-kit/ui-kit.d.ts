@@ -1,5 +1,5 @@
-import { Ref } from "vue";
 import { SwiperOptions } from "swiper";
+import { Ref } from "vue";
 import { RouteLocationRaw } from "vue-router";
 
 declare global {

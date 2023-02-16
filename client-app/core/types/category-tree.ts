@@ -1,5 +1,5 @@
-import { Category } from "@/xapi";
 import { Modify } from "@/core";
+import { Category } from "@/xapi";
 
 export type CategoryTreeItem = Modify<
   Category,

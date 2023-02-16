@@ -1,6 +1,6 @@
+import _ from "lodash";
 import { computed, markRaw, ref } from "vue";
 import { ClosePopupHandle, IPopup } from "..";
-import _ from "lodash";
 
 const stack = ref<IPopup[]>([]);
 

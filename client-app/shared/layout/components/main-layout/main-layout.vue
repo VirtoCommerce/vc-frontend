@@ -1,9 +1,9 @@
 <template>
-  <div class="min-h-screen flex flex-col font-lato">
+  <div class="flex min-h-screen flex-col font-lato">
     <VcHeader />
 
     <!-- Main Content -->
-    <div class="relative flex flex-col grow">
+    <div class="relative flex grow flex-col">
       <slot />
     </div>
 

@@ -1,6 +1,6 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
-    <option name="LINE_SEPARATOR" value="&#13;&#10;" />
+    <option name="LINE_SEPARATOR" value="&#10;" />
     <HTMLCodeStyleSettings>
       <option name="HTML_ATTRIBUTE_WRAP" value="0" />
       <option name="HTML_SPACE_INSIDE_EMPTY_TAG" value="true" />

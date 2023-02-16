@@ -1,5 +1,5 @@
-import { computed } from "vue";
 import { useLocalStorage } from "@vueuse/core";
+import { computed } from "vue";
 import { useThemeContext } from "@/core/composables";
 import { Currency } from "@/core/types";
 

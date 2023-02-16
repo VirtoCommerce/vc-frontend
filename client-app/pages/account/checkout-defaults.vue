@@ -1,17 +1,17 @@
 <template>
   <div>
     <!-- Title block -->
-    <div class="flex justify-between items-center mx-5 md:mx-0">
-      <h2 v-t="'pages.account.checkout_defaults.title'" class="text-gray-800 text-3xl font-bold uppercase" />
+    <div class="mx-5 flex items-center justify-between md:mx-0">
+      <h2 v-t="'pages.account.checkout_defaults.title'" class="text-3xl font-bold uppercase text-gray-800" />
     </div>
 
-    <div class="bg-white shadow-sm md:rounded border px-7 py-7 md:px-9 md:py-8">
+    <div class="border bg-white p-7 shadow-sm md:rounded md:px-9 md:py-8">
       <VcLoaderWithText v-if="loading" />
 
       <div v-else class="flex flex-col lg:w-1/2">
         <div v-t="'pages.account.checkout_defaults.select_delivery_method_label'" class="font-bold"></div>
 
-        <div class="mt-3 md:mt-1 flex flex-col space-y-5 md:space-y-0 md:flex-row md:space-x-7">
+        <div class="mt-3 flex flex-col space-y-5 md:mt-1 md:flex-row md:space-y-0 md:space-x-7">
           <VcRadioButton
             v-model="localCheckoutDefaults.deliveryMethod"
             value="shipping"
@@ -91,7 +91,7 @@
 
         <VcButton
           :is-disabled="!isDirty"
-          class="uppercase mt-8 px-12 self-center lg:self-start"
+          class="mt-8 self-center px-12 uppercase lg:self-start"
           @click="saveDefaults()"
         >
           {{ $t("pages.account.checkout_defaults.update_button") }}
@@ -102,13 +102,13 @@
 </template>
 
 <script setup lang="ts">
+import { clone, isEqual } from "lodash";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { clone, isEqual } from "lodash";
-import { usePopup } from "@/shared/popup";
 import { usePageHead } from "@/core/composables";
-import { useCart } from "@/shared/cart";
 import { useUserCheckoutDefaults, CheckoutDefaults, CheckoutDefaultsSuccessDialog } from "@/shared/account";
+import { useCart } from "@/shared/cart";
+import { usePopup } from "@/shared/popup";
 
 const { t } = useI18n();
 const { openPopup } = usePopup();

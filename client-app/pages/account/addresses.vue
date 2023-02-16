@@ -3,8 +3,8 @@
     <BackButtonInHeader v-if="isMobile && editingMode" @click="closeEditMode" />
 
     <!-- Title block -->
-    <div class="flex justify-between items-center mx-5 md:mx-0">
-      <h2 class="text-gray-800 text-3xl font-bold uppercase truncate">
+    <div class="mx-5 flex items-center justify-between md:mx-0">
+      <h2 class="truncate text-3xl font-bold uppercase text-gray-800">
         {{ title }}
       </h2>
 
@@ -52,11 +52,11 @@
         @save="saveAddress"
       >
         <template #append="{ dirty, valid }">
-          <div class="flex flex-row space-x-4 pb-3 pt-7 sm:py-4 sm:float-right">
+          <div class="flex flex-row space-x-4 pb-3 pt-7 sm:float-right sm:py-4">
             <VcButton
               kind="secondary"
               :is-disabled="saveAddressLoading"
-              class="uppercase w-32 sm:w-auto sm:px-12"
+              class="w-32 uppercase sm:w-auto sm:px-12"
               is-outline
               @click="closeEditMode"
             >
@@ -66,7 +66,7 @@
             <VcButton
               :is-disabled="!dirty || !valid"
               :is-waiting="saveAddressLoading"
-              class="uppercase flex-grow sm:flex-none sm:px-16"
+              class="grow uppercase sm:flex-none sm:px-16"
               is-submit
             >
               {{
@@ -93,11 +93,11 @@
         @header-click="applySorting"
       >
         <template #mobile-item="itemData">
-          <div class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200">
+          <div class="grid grid-cols-2 gap-y-4 border-b border-gray-200 p-6">
             <div class="flex flex-col">
               <span v-t="'pages.account.addresses.recipient_name_label'" class="text-sm text-gray-400" />
 
-              <span class="pr-4 font-extrabold overflow-hidden overflow-ellipsis">
+              <span class="overflow-hidden text-ellipsis pr-4 font-extrabold">
                 {{ itemData.item.firstName }} {{ itemData.item.lastName }}
               </span>
             </div>
@@ -105,7 +105,7 @@
             <div class="flex flex-col">
               <span v-t="'pages.account.addresses.address_label'" class="text-sm text-gray-400" />
 
-              <span class="overflow-hidden overflow-ellipsis">
+              <span class="overflow-hidden text-ellipsis">
                 {{ itemData.item.countryCode }} {{ itemData.item.regionName }} {{ itemData.item.city }}
                 {{ itemData.item.line1 }}
                 {{ itemData.item.postalCode }}
@@ -115,7 +115,7 @@
             <div class="flex flex-col">
               <span v-t="'pages.account.addresses.phone_label'" class="text-sm text-gray-400" />
 
-              <span class="pr-4 overflow-hidden overflow-ellipsis">
+              <span class="overflow-hidden text-ellipsis pr-4">
                 {{ itemData.item.phone }}
               </span>
             </div>
@@ -123,7 +123,7 @@
             <div class="flex flex-col">
               <span v-t="'pages.account.addresses.email_label'" class="text-sm text-gray-400" />
 
-              <span class="overflow-hidden overflow-ellipsis">
+              <span class="overflow-hidden text-ellipsis">
                 {{ itemData.item.email }}
               </span>
             </div>
@@ -131,43 +131,43 @@
         </template>
 
         <template #mobile-skeleton>
-          <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200">
+          <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-gray-200 p-6">
             <div class="flex flex-col">
               <span v-t="'pages.account.addresses.recipient_name_label'" class="text-sm text-gray-400"></span>
-              <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
+              <div class="mr-4 h-6 animate-pulse bg-gray-200"></div>
             </div>
 
             <div class="flex flex-col">
               <span v-t="'pages.account.addresses.address_label'" class="text-sm text-gray-400"></span>
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </div>
 
             <div class="flex flex-col">
               <span v-t="'pages.account.addresses.phone_label'" class="text-sm text-gray-400"></span>
-              <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
+              <div class="mr-4 h-6 animate-pulse bg-gray-200"></div>
             </div>
 
             <div class="flex flex-col">
               <span v-t="'pages.account.addresses.email_label'" class="text-sm text-gray-400"></span>
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </div>
           </div>
         </template>
 
         <template #desktop-body>
           <tr v-for="address in paginatedAddresses" :key="address.id" class="even:bg-gray-50">
-            <td class="p-5 overflow-hidden overflow-ellipsis">{{ address.firstName }} {{ address.lastName }}</td>
+            <td class="overflow-hidden text-ellipsis p-5">{{ address.firstName }} {{ address.lastName }}</td>
 
-            <td class="p-5 overflow-hidden overflow-ellipsis">
+            <td class="overflow-hidden text-ellipsis p-5">
               {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
               {{ address.postalCode }}
             </td>
 
-            <td class="p-5 overflow-hidden overflow-ellipsis">
+            <td class="overflow-hidden text-ellipsis p-5">
               {{ address.phone }}
             </td>
 
-            <td class="p-5 overflow-hidden overflow-ellipsis">
+            <td class="overflow-hidden text-ellipsis p-5">
               {{ address.email }}
             </td>
             <!-- todo: https://virtocommerce.atlassian.net/browse/ST-2256 -->
@@ -176,7 +176,7 @@
                 <!-- todo: use VcButton -->
                 <button
                   type="button"
-                  class="h-7 w-7 shadow rounded text-[color:var(--color-primary)] hover:bg-gray-100"
+                  class="h-7 w-7 rounded text-[color:var(--color-primary)] shadow hover:bg-gray-100"
                   :title="$t('pages.account.addresses.edit_label')"
                   @click="openEditMode(address)"
                 >
@@ -185,7 +185,7 @@
 
                 <button
                   type="button"
-                  class="h-7 w-7 shadow rounded text-[color:var(--color-danger)] hover:bg-gray-100"
+                  class="h-7 w-7 rounded text-[color:var(--color-danger)] shadow hover:bg-gray-100"
                   :title="$t('pages.account.addresses.delete_label')"
                   @click="removeAddress(address)"
                 >
@@ -199,23 +199,23 @@
         <template #desktop-skeleton>
           <tr v-for="i in itemsPerPage" :key="i" class="even:bg-gray-50">
             <td class="p-5">
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </td>
 
             <td class="w-4/12 p-5">
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </td>
 
             <td class="p-5">
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </td>
 
             <td class="p-5">
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </td>
 
             <td class="p-5">
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </td>
           </tr>
         </template>
@@ -225,15 +225,15 @@
 </template>
 
 <script setup lang="ts">
-import { useUserAddresses } from "@/shared/account";
-import { computed, ComputedRef, onMounted, Ref, ref } from "vue";
-import { clone } from "lodash";
-import { MemberAddressType } from "@/xapi/types";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { BackButtonInHeader } from "@/shared/layout";
+import { clone } from "lodash";
+import { computed, ComputedRef, onMounted, Ref, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { useCountries, usePageHead } from "@/core/composables";
 import { AddressType, ISortInfo } from "@/core/types";
-import { useI18n } from "vue-i18n";
+import { useUserAddresses } from "@/shared/account";
+import { BackButtonInHeader } from "@/shared/layout";
+import { MemberAddressType } from "@/xapi/types";
 
 const { t } = useI18n();
 const breakpoints = useBreakpoints(breakpointsTailwind);

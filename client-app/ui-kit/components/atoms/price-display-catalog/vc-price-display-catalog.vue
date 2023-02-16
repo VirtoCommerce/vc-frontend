@@ -8,14 +8,15 @@
 </template>
 
 <script setup lang="ts">
-import { MoneyType } from "@/xapi/types";
 import { PropType, computed } from "vue";
+import { MoneyType } from "@/xapi/types";
 
 const props = defineProps({
   value: {
     type: Object as PropType<MoneyType>,
     default: undefined,
   },
+
   isOldPrice: {
     type: Boolean,
     default: false,

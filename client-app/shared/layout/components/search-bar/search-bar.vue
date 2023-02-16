@@ -1,9 +1,9 @@
 <template>
-  <div v-click-outside="hideSearchDropdown" class="flex flex-grow items-stretch relative">
+  <div v-click-outside="hideSearchDropdown" class="relative flex grow items-stretch">
     <VcInput
       v-model="searchPhrase"
       :maxlength="MAX_LENGTH"
-      class="flex-grow text-sm"
+      class="grow text-sm"
       input-class="!pl-4 !pr-8 font-medium disabled:bg-gray-200 !rounded-r-none text-[0.95rem]"
       :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
       @keyup.enter="goToSearchResultsPage"
@@ -15,7 +15,7 @@
       <VcIcon name="delete-2" size="xs" class="text-[color:var(--color-primary)]" />
     </button>
 
-    <VcButton class="!rounded-l-none !rounded-r w-[2.75rem]" size="lg" @click="goToSearchResultsPage">
+    <VcButton class="w-[2.75rem] !rounded-l-none !rounded-r" size="lg" @click="goToSearchResultsPage">
       <VcIcon name="search" size="md" class="text-[color:var(--color-white)]" />
     </VcButton>
 
@@ -23,21 +23,21 @@
     <transition name="slide-fade-top">
       <div
         v-if="searchDropdownVisible"
-        class="absolute top-[3.45rem] left-[-10rem] z-20 w-full flex flex-col gap-3 rounded bg-white shadow-lg overflow-hidden"
+        class="absolute top-[3.45rem] left-[-10rem] z-20 flex w-full flex-col gap-3 overflow-hidden rounded bg-white shadow-lg"
         style="min-width: calc(100% + 10rem)"
       >
         <!-- Results -->
         <template v-if="categories.length || products.length">
           <!-- Categories -->
           <section v-if="categories.length">
-            <header class="px-5 py-2 text-xs text-gray-500 bg-gray-100">
+            <header class="bg-gray-100 px-5 py-2 text-xs text-gray-500">
               {{ $t("shared.layout.search_bar.categories_label") }}
             </header>
 
             <div class="flex gap-5 px-5 pt-2.5 pb-3 text-sm">
               <ul v-for="(column, index) in categoriesColumns" :key="index" class="">
                 <li v-for="category in column" :key="category.name">
-                  <router-link :to="categoriesRoutes[category.id]" class="py-1 block" @click="hideSearchDropdown">
+                  <router-link :to="categoriesRoutes[category.id]" class="block py-1" @click="hideSearchDropdown">
                     <span v-html="category.name" />
                   </router-link>
                 </li>
@@ -47,11 +47,11 @@
 
           <!-- Products -->
           <section v-if="products.length" class="pb-4">
-            <header class="px-5 py-2 text-xs text-gray-500 bg-gray-100">
+            <header class="bg-gray-100 px-5 py-2 text-xs text-gray-500">
               {{ $t("shared.layout.search_bar.products_label") }}
             </header>
 
-            <div class="px-5 pt-[1.3rem] pb-3 grid grid-cols-2 gap-5 xl:gap-[1.9rem]">
+            <div class="grid grid-cols-2 gap-5 px-5 pt-[1.3rem] pb-3 xl:gap-[1.9rem]">
               <SearchBarProductCard
                 v-for="product in products"
                 :key="product.id"
@@ -65,10 +65,10 @@
           </section>
 
           <!-- Actions -->
-          <section v-if="total" class="mt-0.5 px-5 py-3 border-t border-gray-100">
+          <section v-if="total" class="mt-0.5 border-t border-gray-100 px-5 py-3">
             <VcButton
               :to="{ name: 'Search', query: { [QueryParamName.SearchPhrase]: searchPhrase } }"
-              class="uppercase px-4"
+              class="px-4 uppercase"
               size="sm"
               @click="hideSearchDropdown()"
             >
@@ -79,7 +79,7 @@
 
         <!-- Not found -->
         <div v-else-if="!loading" class="my-16 text-center">
-          <VcIcon name="search-not-found" class="!w-12 !h-12 inline-block mr-5 text-[color:var(--color-primary)]" />
+          <VcIcon name="search-not-found" class="mr-5 inline-block !h-12 !w-12 text-[color:var(--color-primary)]" />
 
           <i18n-t class="inline-block" keypath="shared.layout.search_bar.no_results" tag="p">
             <template #keyword>
@@ -108,10 +108,10 @@ import { useSearchBar } from "@/shared/layout";
 import { computed, inject, ref, watchEffect } from "vue";
 import { configInjectionKey, QueryParamName } from "@/core/constants";
 import { useCategoriesRoutes, useGoogleAnalytics, useRouteQueryParam } from "@/core/composables";
+import VcInput from "@/ui-kit/components/atoms/input/vc-input.vue";
 import { Category } from "@/xapi/types";
 import { useDebounceFn, whenever } from "@vueuse/core";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
-import VcInput from "@/ui-kit/components/atoms/input/vc-input.vue";
 
 // Number of categories column items in dropdown list
 const CATEGORIES_ITEMS_PER_COLUMN = 4;

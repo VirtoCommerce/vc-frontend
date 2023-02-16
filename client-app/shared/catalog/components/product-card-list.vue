@@ -1,26 +1,26 @@
 <template>
   <div
-    class="vc-product-card-list grid gap-x-3.5 px-4 pt-4 pb-5 bg-white md:place-items-center lg:outline lg:outline-offset-0 lg:outline-1 lg:outline-[color:var(--color-product-outline)] lg:py-3.5 lg:rounded lg:shadow-t-3sm lg:hover:shadow-lg"
+    class="vc-product-card-list grid gap-x-3.5 bg-white px-4 pt-4 pb-5 md:place-items-center lg:rounded lg:py-3.5 lg:shadow-t-3sm lg:outline lg:outline-1 lg:outline-offset-0 lg:outline-[color:var(--color-product-outline)] lg:hover:shadow-lg"
   >
     <div class="vc-product-card-list__mobile-left sm:contents">
       <!-- Product image -->
       <router-link
         :to="link"
-        class="vc-product-card-list__img relative block w-[72px] h-[72px] xl:w-[86px] xl:h-[86px]"
+        class="vc-product-card-list__img relative block h-[72px] w-[72px] xl:h-[86px] xl:w-[86px]"
         @click="$emit('link-click', $event)"
       >
         <VcImage
           :src="product.imgSrc"
           :alt="product.name"
           size-suffix="md"
-          class="w-full h-full rounded object-cover object-center"
+          class="h-full w-full rounded object-cover object-center"
           lazy
         />
         <DiscountBadge :price="product.price!" size="sm" />
       </router-link>
 
       <div
-        class="vc-product-card-list__buttons flex justify-center gap-3.5 mt-3 w-full sm:justify-start sm:place-self-end lg:mt-2 lg:gap-3"
+        class="vc-product-card-list__buttons mt-3 flex w-full justify-center gap-3.5 sm:justify-start sm:place-self-end lg:mt-2 lg:gap-3"
       >
         <AddToList custom-class="w-5 h-5 lg:w-4 lg:h-4" :product="product" tooltip-placement="bottom" />
         <AddToCompareCatalog
@@ -37,7 +37,7 @@
       <template #trigger>
         <router-link
           :to="link"
-          class="vc-product-card-list__name w-full text-[color:var(--color-link)] font-extrabold text-sm flex-grow sm:line-clamp-3 sm:overflow-hidden lg:h-[60px] lg:mt-1 2xl:pr-2"
+          class="vc-product-card-list__name w-full grow text-sm font-extrabold text-[color:var(--color-link)] sm:overflow-hidden sm:line-clamp-3 lg:mt-1 lg:h-[60px] 2xl:pr-2"
           @click="$emit('link-click', $event)"
         >
           {{ product.name }}
@@ -45,14 +45,14 @@
       </template>
 
       <template #content>
-        <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5">
+        <div class="rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y">
           {{ product.name }}
         </div>
       </template>
     </VcTooltip>
 
     <div
-      class="vc-product-card-list__properties grid grid-cols-[40%_1fr] gap-x-1.5 gap-y-0.5 mt-2 w-full text-tooltip text-14 leading-4 lg:mt-0.5 lg:text-xs empty:mt-0"
+      class="vc-product-card-list__properties mt-2 grid w-full grid-cols-[40%_1fr] gap-x-1.5 gap-y-0.5 text-14 leading-4 text-tooltip empty:mt-0 lg:mt-0.5 lg:text-xs"
     >
       <!-- Product props -->
       <template v-if="product.properties && !isSmallScreen">
@@ -77,7 +77,7 @@
         </div>
         <div class="flex items-center gap-1">
           <svg
-            class="shrink-0 w-3 h-3"
+            class="h-3 w-3 shrink-0"
             :class="{
               'text-[color:var(--color-success)]': true,
               'text-[color:var(--color-warning)]': false,
@@ -109,9 +109,9 @@
       <VcItemPriceCatalog class="md:flex-col md:gap-0" :variations="product.variations" :value="product.price" />
     </div>
 
-    <div class="vc-product-card-list__add-to-cart flex flex-col gap-2 mt-3 w-full sm:mt-0">
+    <div class="vc-product-card-list__add-to-cart mt-3 flex w-full flex-col gap-2 sm:mt-0">
       <template v-if="product.hasVariations">
-        <VcButton :to="link" class="w-full uppercase !text-13 !border" is-outline @click="$emit('link-click', $event)">
+        <VcButton :to="link" class="w-full !border !text-13 uppercase" is-outline @click="$emit('link-click', $event)">
           {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
         </VcButton>
 
@@ -120,7 +120,7 @@
           target="_blank"
           :to="link"
         >
-          <svg class="shrink-0 w-3 h-3 text-primary lg:w-2.5 lg:h-2.5">
+          <svg class="h-3 w-3 shrink-0 text-primary lg:h-2.5 lg:w-2.5">
             <use href="/static/images/link.svg#main"></use>
           </svg>
           <span v-t="'pages.catalog.show_on_a_separate_page'" class="truncate"></span>
@@ -144,14 +144,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { computed, PropType } from "vue";
+import { RouteLocationRaw } from "vue-router";
+import { getProductRoute } from "@/core";
+import { DiscountBadge, Vendor } from "@/shared/catalog";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import { Product } from "@/xapi/types";
-import { RouteLocationRaw } from "vue-router";
-import { DiscountBadge, Vendor } from "@/shared/catalog";
-import { getProductRoute } from "@/core";
 
 defineEmits<{ (eventName: "link-click", globalEvent: PointerEvent): void }>();
 

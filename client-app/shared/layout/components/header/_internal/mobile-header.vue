@@ -1,16 +1,16 @@
 <template>
-  <div ref="headerElement" class="fixed z-40 w-full shadow-md bg-[color:var(--color-header-bottom-bg)]">
+  <div ref="headerElement" class="fixed z-40 w-full bg-[color:var(--color-header-bottom-bg)] shadow-md">
     <!-- region Default slot -->
     <transition :name="isAnimated ? 'slide-fade-top' : ''" mode="out-in">
       <div v-if="customSlots.default">
         <component :is="customSlots.default" />
       </div>
 
-      <div v-else class="relative w-full z-10 h-14 flex justify-between items-center gap-x-6">
+      <div v-else class="relative z-10 flex h-14 w-full items-center justify-between gap-x-6">
         <!-- region Left slot -->
         <component :is="customSlots.left" v-if="customSlots.left" />
 
-        <div v-else class="flex items-center h-full">
+        <div v-else class="flex h-full items-center">
           <button class="h-full px-6" @click="mobileMenuVisible = true">
             <i class="fas fa-bars text-2xl text-[color:var(--color-primary)]" />
           </button>
@@ -24,7 +24,7 @@
         <!-- region Right slot -->
         <component :is="customSlots.right" v-if="customSlots.right" />
 
-        <div v-else class="flex flex-row items-center h-full pr-4">
+        <div v-else class="flex h-full flex-row items-center pr-4">
           <a v-if="$cfg.support_phone_number" class="p-2.5" :href="`tel:${$cfg.support_phone_number}`">
             <i class="fas fa-phone text-xl text-[color:var(--color-primary)]"></i>
           </a>
@@ -40,7 +40,7 @@
               <VcTransitionScale mode="out-in">
                 <span
                   v-if="cart?.itemsQuantity"
-                  class="absolute -top-2.5 -right-3 transition-transform bg-white rounded-full border border-[color:var(--color-primary)] px-1.5 py-0.5 font-extrabold text-11 leading-3 text-[color:var(--color-header-bottom-link)]"
+                  class="absolute -top-2.5 -right-3 rounded-full border border-[color:var(--color-primary)] bg-white px-1.5 py-0.5 text-11 font-extrabold leading-3 text-[color:var(--color-header-bottom-link)] transition-transform"
                 >
                   {{ preparedCartItemsQuantity }}
                 </span>
@@ -54,22 +54,22 @@
     <!-- endregion Default slot -->
 
     <!-- region Mobile Search Bar -->
-    <div v-show="searchBarVisible" class="flex p-4 bg-[color:var(--color-search-bar-bg)] select-none">
+    <div v-show="searchBarVisible" class="flex select-none bg-[color:var(--color-search-bar-bg)] p-4">
       <VcInput
         v-model="searchPhrase"
         maxlength="64"
         :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
-        class="flex-grow mr-4 h-10"
+        class="mr-4 h-10 grow"
         input-class="!h-10 !px-4 font-medium text-sm"
         without-border
         @keyup.enter="searchPhrase && $router.push(searchPageLink)"
       />
 
-      <VcButton :to="searchPhrase && searchPageLink" class="w-10 !h-10">
+      <VcButton :to="searchPhrase && searchPageLink" class="!h-10 w-10">
         <i class="fas fa-search text-lg" />
       </VcButton>
 
-      <button class="h-10 px-2.5 ml-2 -mr-2 appearance-none" @click="hideSearchBar">
+      <button class="ml-2 -mr-2 h-10 appearance-none px-2.5" @click="hideSearchBar">
         <i class="fas fa-times text-2xl text-white" />
       </button>
     </div>
@@ -91,15 +91,15 @@
 </template>
 
 <script setup lang="ts">
+import { useElementSize, whenever } from "@vueuse/core";
 import { computed, ref, StyleValue, watch, watchEffect } from "vue";
 import { RouteLocationRaw } from "vue-router";
-import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
-import MobileMenu from "./mobile-menu.vue";
 import { useDomUtils, useRouteQueryParam } from "@/core/composables";
 import { QueryParamName } from "@/core/constants";
-import { useElementSize, whenever } from "@vueuse/core";
-import { useCart } from "@/shared/cart";
 import { numberToShortString } from "@/core/utilities";
+import { useCart } from "@/shared/cart";
+import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
+import MobileMenu from "./mobile-menu.vue";
 
 const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);

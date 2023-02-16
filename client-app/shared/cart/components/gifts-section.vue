@@ -1,6 +1,6 @@
 <template>
   <VcSectionWidget :title="$t('shared.cart.gifts_section.title')" icon="gift">
-    <div class="border rounded divide-y">
+    <div class="divide-y rounded border">
       <div v-for="gift in gifts" :key="gift.id" class="flex items-center px-6 py-3">
         <VcCheckbox
           :model-value="gift.isAddedInCart"
@@ -9,7 +9,7 @@
           @change="$emit('toggle:gift', gift)"
         />
 
-        <VcImage :src="gift.imageUrl" class="shrink-0 mr-4 w-[60px] h-[60px] border rounded" lazy />
+        <VcImage :src="gift.imageUrl" class="mr-4 h-[60px] w-[60px] shrink-0 rounded border" lazy />
 
         <span class="grow text-sm font-bold lg:text-13">
           {{ gift.name }}

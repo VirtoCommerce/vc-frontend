@@ -1,8 +1,8 @@
-import { ProductAssociation, ProductAssociationsArgs, Query, QueryProductArgs } from "@/xapi/types";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
-import searchRelatedProductsQueryDocument from "./searchRelatedProducts.graphql";
-import { RelatedProductsSearchParams } from "../../types";
 import globals from "@/core/globals";
+import { ProductAssociation, ProductAssociationsArgs, Query, QueryProductArgs } from "@/xapi/types";
+import { RelatedProductsSearchParams } from "../../types";
+import searchRelatedProductsQueryDocument from "./searchRelatedProducts.graphql";
 
 export default async function searchRelatedProducts({
   productId,

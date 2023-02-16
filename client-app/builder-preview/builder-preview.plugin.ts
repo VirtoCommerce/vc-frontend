@@ -1,7 +1,7 @@
 import { App } from "vue";
 import { Router } from "vue-router";
-import { useStaticPage, useTemplate } from "@/shared/static-content";
 import { useFetch } from "@/core/composables";
+import { useStaticPage, useTemplate } from "@/shared/static-content";
 import templateBlocks from "@/shared/static-content/components";
 import ScrollToElement from "./scroll-to-element.vue";
 

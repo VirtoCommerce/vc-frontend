@@ -1,12 +1,12 @@
 <template>
   <dl>
-    <dt class="text-17 text-[#92897C] font-bold leading-5 mb-1.5">
+    <dt class="mb-1.5 text-17 font-bold leading-5 text-[#92897C]">
       {{ facet.label }}
     </dt>
 
     <dd v-for="(facetValue, index) in facet.values" :key="index">
       <VcCheckbox v-model="facetValue.selected" class="py-2" @change="change">
-        <span :class="{ 'text-gray-500': !facetValue.selected }" class="leading-5 font-medium whitespace-nowrap">
+        <span :class="{ 'text-gray-500': !facetValue.selected }" class="whitespace-nowrap font-medium leading-5">
           {{ facetValue.label }}
         </span>
       </VcCheckbox>
@@ -15,8 +15,8 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, ref, watch } from "vue";
 import _ from "lodash";
+import { PropType, ref, watch } from "vue";
 import { FacetItem } from "@/core/types";
 
 const emit = defineEmits<{

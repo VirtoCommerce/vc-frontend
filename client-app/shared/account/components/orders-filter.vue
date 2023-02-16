@@ -33,17 +33,17 @@
         </div>
       </div>
     </div>
-    <div class="flex-grow lg:flex-grow-0"></div>
-    <div class="mt-8 flex flex-col lg:flex-row-reverse space-y-4 lg:justify-start lg:space-y-0">
+    <div class="grow lg:grow-0"></div>
+    <div class="mt-8 flex flex-col space-y-4 lg:flex-row-reverse lg:justify-start lg:space-y-0">
       <VcButton
-        class="uppercase px-8 w-full lg:w-auto"
+        class="w-full px-8 uppercase lg:w-auto"
         :size="isMobile ? 'md' : 'sm'"
         :is-disabled="!isFilterDirty"
         @click="apply"
         >{{ $t("shared.account.orders-filter.apply-button") }}</VcButton
       >
       <VcButton
-        class="uppercase px-8 w-full lg:w-auto lg:mr-3"
+        class="w-full px-8 uppercase lg:mr-3 lg:w-auto"
         kind="secondary"
         is-outline
         :is-disabled="isFilterEmpty && !isFilterDirty"
@@ -56,9 +56,9 @@
 </template>
 
 <script setup lang="ts">
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { inject } from "vue";
 import { configInjectionKey } from "@/core/constants";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useUserOrdersFilter } from "@/shared/account/";
 
 const emit = defineEmits(["change"]);

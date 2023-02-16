@@ -1,7 +1,7 @@
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { ApolloClient, FetchPolicy } from "apollo-client";
-import { HttpLink } from "apollo-link-http";
 import { onError } from "apollo-link-error";
+import { HttpLink } from "apollo-link-http";
 
 const fetchPolicy: FetchPolicy = "no-cache";
 

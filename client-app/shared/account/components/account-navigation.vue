@@ -1,6 +1,6 @@
 <template>
-  <div class="bg-white border rounded shadow-md-s">
-    <div class="px-4 py-2.5 border-b text-base font-bold uppercase">
+  <div class="rounded border bg-white shadow-md-s">
+    <div class="border-b px-4 py-2.5 text-base font-bold uppercase">
       {{ $t("shared.account.navigation.main_title") }}
     </div>
     <div class="flex flex-col gap-0.5 px-4 py-3">
@@ -35,12 +35,12 @@
       />
 
       <template v-if="isListDetails">
-        <div v-for="list in lists" :key="list.id" class="px-3 ml-8 flex text-sm items-center space-x-2">
+        <div v-for="list in lists" :key="list.id" class="ml-8 flex items-center space-x-2 px-3 text-sm">
           <i class="fas fa-minus text-[color:var(--color-primary)]" />
 
           <router-link
             :to="{ name: 'ListDetails', params: { listId: list.id } }"
-            class="text-gray-500 font-semibold hover:text-black cursor-pointer py-0.5"
+            class="cursor-pointer py-0.5 font-semibold text-gray-500 hover:text-black"
             active-class="text-black"
           >
             {{ list.name }}
@@ -63,8 +63,8 @@
     </div>
   </div>
 
-  <div v-if="organization" class="bg-white border rounded shadow-md-s">
-    <div class="px-4 py-2.5 border-b text-base font-bold uppercase">
+  <div v-if="organization" class="rounded border bg-white shadow-md-s">
+    <div class="border-b px-4 py-2.5 text-base font-bold uppercase">
       {{ $t("shared.account.navigation.corporate_title") }}
     </div>
     <div class="flex flex-col gap-0.5 px-4 py-3">
@@ -84,12 +84,12 @@
 </template>
 
 <script setup lang="ts">
-import { AccountNavigationLink } from ".";
+import { eagerComputed } from "@vueuse/core";
 import { watchEffect } from "vue";
 import { useRoute } from "vue-router";
-import { eagerComputed } from "@vueuse/core";
-import { useWishlists } from "@/shared/wishlists";
 import { useUser } from "@/shared/account";
+import { useWishlists } from "@/shared/wishlists";
+import { AccountNavigationLink } from ".";
 
 const route = useRoute();
 const { organization } = useUser();

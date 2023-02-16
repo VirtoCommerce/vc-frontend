@@ -13,16 +13,16 @@
 </template>
 
 <script setup lang="ts">
-import type { Component } from "vue";
-import { markRaw } from "vue";
 import { breakpointsTailwind, computedEager, useBreakpoints } from "@vueuse/core";
 import { Head as PageHead } from "@vueuse/head";
-import { MainLayout, SecureLayout, useSearchBar } from "./shared/layout";
-import { PopupHost } from "@/shared/popup";
-import { NotificationsHost } from "@/shared/notification";
+import { markRaw } from "vue";
+import type { Component } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useCategories, useDomUtils, useNavigations, useCatalogMenu } from "@/core";
 import { useCart } from "@/shared/cart";
+import { NotificationsHost } from "@/shared/notification";
+import { PopupHost } from "@/shared/popup";
+import { MainLayout, SecureLayout, useSearchBar } from "./shared/layout";
 
 const props = defineProps({
   settings: {

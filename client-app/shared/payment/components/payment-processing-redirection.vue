@@ -1,19 +1,19 @@
 <template>
   <!-- Initialization Error -->
-  <p v-if="initializationError" class="font-bold text-center md:text-left text-[color:var(--color-danger)]">
+  <p v-if="initializationError" class="text-center font-bold text-[color:var(--color-danger)] md:text-left">
     {{ initializationError }}
   </p>
 
   <!-- Main -->
   <div v-else-if="initialized" class="text-center md:pt-10 md:pb-4">
-    <VcImage src="/static/images/payment/paysafecard.png" alt="paysafecard" class="inline-block mb-2 md:mb-3" lazy />
+    <VcImage src="/static/images/payment/paysafecard.png" alt="paysafecard" class="mb-2 inline-block md:mb-3" lazy />
 
     <p v-html="$t('shared.payment.redirection.text', [$t('shared.payment.redirection.pay_now_button')])" />
 
     <VcButton
       :title="redirectUrl ? null : $t('shared.payment.redirection.errors.missing_link')"
       :is-disabled="!redirectUrl"
-      class="uppercase w-full md:w-52 mt-3 md:mt-12"
+      class="mt-3 w-full uppercase md:mt-12 md:w-52"
       @click="redirect"
     >
       {{ $t("shared.payment.redirection.pay_now_button") }}
@@ -26,10 +26,10 @@
 
 <script setup lang="ts">
 import { PropType, ref } from "vue";
-import { CustomerOrderType } from "@/xapi/types";
-import { initializePayment } from "@/xapi/graphql/cart";
-import { PaymentActionType } from "@/shared/payment";
 import { useI18n } from "vue-i18n";
+import { PaymentActionType } from "@/shared/payment";
+import { initializePayment } from "@/xapi/graphql/cart";
+import { CustomerOrderType } from "@/xapi/types";
 
 const props = defineProps({
   disabled: Boolean,

@@ -1,14 +1,16 @@
-import {
-  AccountCreationResultType,
-  CustomIdentityResultType,
-  IdentityResultType,
-  InputInviteUserType,
-  InputRegisterByInvitationType,
-  Organization,
-  UserType,
-} from "@/xapi/types";
-import { computed, readonly, ref } from "vue";
 import { eagerComputed } from "@vueuse/core";
+import { computed, readonly, ref } from "vue";
+import { useFetch } from "@/core/composables";
+import globals from "@/core/globals";
+import { Logger } from "@/core/utilities";
+import {
+  ForgotPassword,
+  RegisterOrganization,
+  ResetPassword,
+  SignMeIn,
+  SignMeUp,
+  UserPersonalData,
+} from "@/shared/account";
 import {
   getMe,
   inviteUser as _inviteUser,
@@ -18,17 +20,15 @@ import {
   resetPasswordByToken,
   updatePersonalData,
 } from "@/xapi/graphql/account";
-import { Logger } from "@/core/utilities";
-import { useFetch } from "@/core/composables";
 import {
-  ForgotPassword,
-  RegisterOrganization,
-  ResetPassword,
-  SignMeIn,
-  SignMeUp,
-  UserPersonalData,
-} from "@/shared/account";
-import globals from "@/core/globals";
+  AccountCreationResultType,
+  CustomIdentityResultType,
+  IdentityResultType,
+  InputInviteUserType,
+  InputRegisterByInvitationType,
+  Organization,
+  UserType,
+} from "@/xapi/types";
 
 const loading = ref(false);
 const user = ref<UserType>();

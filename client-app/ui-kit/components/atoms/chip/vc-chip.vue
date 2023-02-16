@@ -46,6 +46,7 @@ defineProps({
   size: {
     type: String,
     default: "md",
+
     validator(value: string) {
       return ["sm", "md", "lg"].includes(value);
     },

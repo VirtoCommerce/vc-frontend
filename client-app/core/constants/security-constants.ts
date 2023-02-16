@@ -1,5 +1,5 @@
-import { Role } from "@/core/types";
 import { StorefrontPermissions, XApiPermissions } from "@/core/constants";
+import { Role } from "@/core/types";
 
 export const ORGANIZATION_MAINTAINER: Role = {
   id: "org-maintainer",

@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white border shadow-sm rounded">
+  <div class="rounded border bg-white shadow-sm">
     <div class="border-b px-5 py-4 md:px-7">
       <h2 class="text-xl font-extrabold uppercase">
         {{ $t("shared.catalog.product_details.price_block.title") }}
@@ -12,7 +12,7 @@
 
     <div class="flex">
       <div
-        class="flex items-center justify-center select-none py-4 px-1 border-r space-x-2 w-2/5"
+        class="flex w-2/5 select-none items-center justify-center space-x-2 border-r py-4 px-1"
         :class="{ 'cursor-pointer hover:bg-gray-100': isAuthenticated }"
         :title="
           !isAuthenticated
@@ -43,7 +43,7 @@
           >
             <template #trigger>
               <div
-                class="flex items-center justify-center select-none py-4 px-1 border-r space-x-2 cursor-pointer hover:bg-gray-100"
+                class="flex cursor-pointer select-none items-center justify-center space-x-2 border-r py-4 px-1 hover:bg-gray-100"
               >
                 <i
                   class="fas fa-share-square text-base"
@@ -55,14 +55,20 @@
               </div>
             </template>
             <template #content>
-              <div class="flex justify-between items-center px-5 mt-1.5 mb-7 space-x-6">
+              <div class="mt-1.5 mb-7 flex items-center justify-between space-x-6 px-5">
                 <a
                   v-for="socialSharingService in $cfg.social_sharing_services"
                   :key="socialSharingService.name"
                   target="_blank"
                   :href="getProductSocialShareUrl(socialSharingService.url_template, pageUrl)"
                 >
-                  <img class="rounded-sm" width="40" height="40" :src="socialSharingService.icon" />
+                  <img
+                    class="rounded-sm"
+                    width="40"
+                    height="40"
+                    :src="socialSharingService.icon"
+                    :alt="socialSharingService.name"
+                  />
                 </a>
               </div>
             </template>
@@ -73,7 +79,7 @@
           <a
             :href="mailToLink"
             target="_blank"
-            class="flex items-center justify-center select-none py-4 px-1 border-r cursor-pointer hover:bg-gray-100"
+            class="flex cursor-pointer select-none items-center justify-center border-r py-4 px-1 hover:bg-gray-100"
           >
             <i class="fas fa-envelope text-base text-[color:var(--color-primary)]" />
           </a>
@@ -81,7 +87,7 @@
 
         <div class="w-1/3">
           <div
-            class="flex items-center justify-center flex-1 select-none py-4 px-1 cursor-pointer hover:bg-gray-100"
+            class="flex flex-1 cursor-pointer select-none items-center justify-center py-4 px-1 hover:bg-gray-100"
             @click="print()"
           >
             <i class="fas fa-print text-base text-[color:var(--color-primary)]" />
@@ -95,15 +101,15 @@
 </template>
 
 <script setup lang="ts">
-import { Product } from "@/xapi/types";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed, PropType, ref, shallowRef } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
+import { stringFormat } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddToWishlistsModal } from "@/shared/wishlists";
-import { stringFormat } from "@/core/utilities";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { useI18n } from "vue-i18n";
-import { useRoute } from "vue-router";
+import { Product } from "@/xapi/types";
 
 const props = defineProps({
   product: {

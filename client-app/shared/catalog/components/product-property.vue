@@ -1,11 +1,11 @@
 <template>
   <div class="flex gap-x-3">
     <div class="flex w-1/2 gap-x-3">
-      <div class="flex-shrink text-gray-500">
+      <div class="shrink text-gray-500">
         {{ label }}
       </div>
 
-      <div class="flex-1 border-b border-grey-100 border-dotted h-5"></div>
+      <div class="border-grey-100 h-5 flex-1 border-b border-dotted"></div>
     </div>
 
     <div class="w-1/2 font-bold line-clamp-3">

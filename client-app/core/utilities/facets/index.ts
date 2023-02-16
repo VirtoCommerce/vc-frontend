@@ -1,5 +1,5 @@
-import { unref } from "vue";
 import { MaybeRef } from "@vueuse/core";
+import { unref } from "vue";
 import { FacetItem, FacetValueItem } from "@/core/types";
 import { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@/xapi/types";
 

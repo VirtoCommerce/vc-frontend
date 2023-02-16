@@ -2,7 +2,7 @@
   <div class="font-bold">
     <div class="text-link">{{ vendor.name }}</div>
     <div v-if="$cfg.rating_enabled && displayRating" class="text-12">
-      <i class="fas fa-star text-primary mr-0.5" />
+      <i class="fas fa-star mr-0.5 text-primary" />
       <span class="font-extrabold">{{ vendor.rating?.value }}</span
       >/5&nbsp;({{ vendor.rating?.reviewCount }})
     </div>
@@ -10,8 +10,8 @@
 </template>
 
 <script setup lang="ts">
-import { CommonVendor } from "@/xapi";
 import { computed } from "vue";
+import { CommonVendor } from "@/xapi";
 
 interface Props {
   withRating?: boolean;

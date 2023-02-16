@@ -1,11 +1,11 @@
 <template>
   <VcPopup :title="$t('shared.wishlists.add_to_wishlists_dialog.title')" modal-width="sm:max-w-xl" is-mobile-fullscreen>
-    <div class="flex-grow sm:max-h-screen-60 lg:max-h-screen-75 sm:overflow-y-auto sm:border-b">
+    <div class="grow sm:max-h-screen-60 sm:overflow-y-auto sm:border-b lg:max-h-screen-75">
       <!-- Lists -->
       <template v-if="!loadingLists">
         <template v-if="listsContain.length">
           <div
-            class="py-3 px-6 font-bold text-15 leading-5 bg-[color:var(--color-add-wishlist-dialog-subtitle-bg)] sm:py-2.5"
+            class="bg-[color:var(--color-add-wishlist-dialog-subtitle-bg)] py-3 px-6 text-15 font-bold leading-5 sm:py-2.5"
           >
             {{ $t("shared.wishlists.add_to_wishlists_dialog.already_in_the_lists") }}
           </div>
@@ -18,7 +18,7 @@
                 :disabled="loading"
                 @update:model-value="listsRemoveUpdate(list.id || '', $event)"
               >
-                <span class="text-base line-clamp-1 font-medium sm:text-15">
+                <span class="text-base font-medium line-clamp-1 sm:text-15">
                   {{ list.name }}
                 </span>
               </VcCheckbox>
@@ -26,18 +26,18 @@
           </ul>
         </template>
 
-        <div class="flex justify-between py-3 px-6 bg-[color:var(--color-add-wishlist-dialog-subtitle-bg)] sm:py-2.5">
-          <div class="font-bold text-15">
+        <div class="flex justify-between bg-[color:var(--color-add-wishlist-dialog-subtitle-bg)] py-3 px-6 sm:py-2.5">
+          <div class="text-15 font-bold">
             {{ $t("shared.wishlists.add_to_wishlists_dialog.add_to_other_lists") }}
           </div>
           <button
-            class="flex items-center text-sm font-bold cursor-pointer text-[color:var(--color-link)]"
-            :class="{ 'text-gray-400 cursor-not-allowed': creationButtonDisabled }"
+            class="flex cursor-pointer items-center text-sm font-bold text-[color:var(--color-link)]"
+            :class="{ 'cursor-not-allowed text-gray-400': creationButtonDisabled }"
             :disabled="creationButtonDisabled"
             @click="addInput"
           >
             <svg
-              class="mr-2 w-3.5 h-3.5 text-[color:var(--color-primary)]"
+              class="mr-2 h-3.5 w-3.5 text-[color:var(--color-primary)]"
               :class="{ 'text-gray-400': creationButtonDisabled }"
             >
               <use href="/static/images/plus.svg#main" />
@@ -50,7 +50,7 @@
           <li
             v-for="(input, index) in inputs"
             :key="index"
-            class="flex items-start px-6 list-input-item first:pt-3 first:sm:pt-4"
+            class="list-input-item flex items-start px-6 first:pt-3 first:sm:pt-4"
           >
             <button class="relative mt-3" @click="removeInput(index)">
               <VcCheckbox model-value class="relative" />
@@ -58,7 +58,7 @@
             </button>
             <VcInput
               v-model="input.listName"
-              class="flex-grow ml-2.5 mr-3.5"
+              class="ml-2.5 mr-3.5 grow"
               :class="{ 'mb-4.5': !input.errorMessage }"
               :is-disabled="loading"
               :maxlength="25"
@@ -71,10 +71,10 @@
               </svg>
             </button>
           </li>
-          <li v-for="list in listsOther" :key="list.id" class="px-6 pt-2 pb-5 sm:pt-3 sm:pb-4 last:pb-5">
+          <li v-for="list in listsOther" :key="list.id" class="px-6 pt-2 pb-5 last:pb-5 sm:pt-3 sm:pb-4">
             <VcCheckbox v-model="selectedListsOtherIds" :value="list.id" :disabled="loading">
               <span
-                class="text-base line-clamp-1 font-medium"
+                class="text-base font-medium line-clamp-1"
                 :class="{ 'text-gray-500': !selectedListsOtherIds.includes(list.id!) }"
               >
                 {{ list.name }}
@@ -86,22 +86,22 @@
 
       <!-- Skeletons -->
       <ul v-if="loadingLists">
-        <li v-for="item in lists.length || 3" :key="item" class="flex px-6 py-4 h-14 even:bg-gray-50">
+        <li v-for="item in lists.length || 3" :key="item" class="flex h-14 px-6 py-4 even:bg-gray-50">
           <div class="w-full bg-gray-100"></div>
         </li>
       </ul>
 
       <!-- Empty -->
-      <div v-else-if="!listsOther.length && !listsContain.length" class="bg-gray-50 text-center px-6 py-10">
+      <div v-else-if="!listsOther.length && !listsContain.length" class="bg-gray-50 px-6 py-10 text-center">
         {{ $t("shared.wishlists.add_to_wishlists_dialog.empty_list") }}
       </div>
     </div>
 
     <template #actions="{ close }">
-      <div class="flex-grow flex items-center justify-between -mx-6 px-6 pb-3 space-x-5 sm:pb-0 sm:space-x-auto">
+      <div class="sm:space-x-auto -mx-6 flex grow items-center justify-between space-x-5 px-6 pb-3 sm:pb-0">
         <VcButton
           kind="secondary"
-          class="uppercase basis-0 flex-grow sm:basis-auto sm:flex-grow-0 sm:px-4"
+          class="grow basis-0 uppercase sm:grow-0 sm:basis-auto sm:px-4"
           is-outline
           @click="close"
         >
@@ -111,7 +111,7 @@
         <VcButton
           :is-waiting="loading"
           :is-disabled="!inputs.length && !selectedListsOtherIds.length && !listsRemove.length"
-          class="uppercase basis-0 flex-grow sm:basis-auto sm:flex-grow-0 sm:px-5 sm:min-w-[9rem]"
+          class="grow basis-0 uppercase sm:min-w-[9rem] sm:grow-0 sm:basis-auto sm:px-5"
           @click="save"
         >
           {{ $t("shared.wishlists.add_to_wishlists_dialog.save_button") }}
@@ -122,17 +122,17 @@
 </template>
 
 <script setup lang="ts">
+import moment from "moment";
 import { computed, PropType, ref, inject, toRef } from "vue";
-import { Product as ProductType } from "@/xapi/types";
+import { useI18n } from "vue-i18n";
 import { asyncForEach } from "@/core";
-import { useWishlists } from "@/shared/wishlists";
-import { WishlistInputType } from "@/shared/wishlists/types";
+import { useGoogleAnalytics } from "@/core/composables";
+import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION, configInjectionKey } from "@/core/constants";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
-import moment from "moment";
-import { useI18n } from "vue-i18n";
-import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION, configInjectionKey } from "@/core/constants";
-import { useGoogleAnalytics } from "@/core/composables";
+import { useWishlists } from "@/shared/wishlists";
+import { WishlistInputType } from "@/shared/wishlists/types";
+import { Product as ProductType } from "@/xapi/types";
 
 const props = defineProps({
   product: {

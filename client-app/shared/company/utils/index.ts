@@ -1,5 +1,5 @@
-import { ContactType, RoleType } from "@/xapi";
 import { ContactDisplayStatusType, ContactStatus, ExtendedContactType } from "@/shared/company";
+import { ContactType, RoleType } from "@/xapi";
 
 export function getContactEmailAddresses(contact: ContactType): string[] {
   let emails: string[] = [];

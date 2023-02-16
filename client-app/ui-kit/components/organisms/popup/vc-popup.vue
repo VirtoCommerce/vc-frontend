@@ -17,6 +17,7 @@
 
           <span class="inline-block h-screen align-middle" aria-hidden="true"> &#8203; </span>
 
+          <!-- TODO: Revise the use of the `isolate` class. -->
           <TransitionChild
             as="template"
             enter="duration-300 ease-out"
@@ -28,39 +29,39 @@
             @after-leave="$emit('close')"
           >
             <div
-              class="w-full inline-block overflow-hidden text-left align-middle transition-all transform bg-white sm:shadow-xl sm:rounded-md"
+              class="isolate inline-block w-full overflow-hidden bg-white text-left align-middle transition-all sm:rounded-md sm:shadow-xl"
               :class="[
                 modalWidth,
                 isMobileFullscreen
                   ? 'fixed inset-0 flex flex-col sm:static sm:inset-auto sm:inline-block'
-                  : 'my-8 shadow-xl rounded-md',
+                  : 'my-8 rounded-md shadow-xl',
               ]"
             >
               <!-- Title bar -->
               <DialogTitle
                 as="h3"
-                class="text-19 font-extrabold text-white flex items-center px-6 py-3"
+                class="flex items-center px-6 py-3 text-19 font-extrabold text-white"
                 :class="headerStyle"
               >
                 <slot name="title">
-                  <span class="flex-grow">{{ title }}</span>
+                  <span class="grow">{{ title }}</span>
                 </slot>
 
-                <button v-if="!isPersistent" class="py-2 px-4 -my-3 -mr-4" @click="close">
+                <button v-if="!isPersistent" class="-my-3 -mr-4 py-2 px-4" @click="close">
                   <i class="fas fa-times text-2xl" />
                 </button>
               </DialogTitle>
 
               <!-- Dialog contents -->
-              <div :class="{ 'flex-grow flex flex-col overflow-y-auto sm:overflow-y-visible': isMobileFullscreen }">
+              <div :class="{ 'flex grow flex-col overflow-y-auto sm:overflow-y-visible': isMobileFullscreen }">
                 <slot :close="close" />
               </div>
 
               <!-- Dialog actions -->
-              <div v-if="!hideActions" class="px-6 py-4 flex items-center justify-between sm:justify-end space-x-4">
+              <div v-if="!hideActions" class="flex items-center justify-between space-x-4 px-6 py-4 sm:justify-end">
                 <slot name="actions" :close="close">
                   <button
-                    class="uppercase flex-grow sm:flex-grow-0 inline-flex items-center justify-center sm:px-4 h-9 font-roboto-condensed text-base font-bold border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white rounded focus:outline-none"
+                    class="inline-flex h-9 grow items-center justify-center rounded border-2 border-[color:var(--color-primary)] font-roboto-condensed text-base font-bold uppercase text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white focus:outline-none sm:grow-0 sm:px-4"
                     @click="close"
                   >
                     {{ $t("common.buttons.close") }}

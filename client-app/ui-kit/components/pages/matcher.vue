@@ -17,15 +17,14 @@
 </template>
 
 <script setup lang="ts">
+import NotFound from "@/pages/404.vue";
 import Category from "@/pages/catalog.vue";
 import Product from "@/pages/product.vue";
 import StaticPage from "@/pages/static-page.vue";
-import NotFound from "@/pages/404.vue";
-
-import { onBeforeUnmount, PropType, ref, watchEffect } from "vue";
-import { PageTemplate, useStaticPage } from "@/shared/static-content";
 import { asyncComputed, computedEager } from "@vueuse/core";
+import { onBeforeUnmount, PropType, ref, watchEffect } from "vue";
 import { useFetch, useLanguages, useNavigations } from "@/core";
+import { PageTemplate, useStaticPage } from "@/shared/static-content";
 
 type TEntityInfo = {
   id: string;

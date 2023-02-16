@@ -12,8 +12,8 @@
 
 <script setup lang="ts">
 import { computed, inject, PropType, ref, watch } from "vue";
-import { appendSuffixToFilename } from "@/core/utilities";
 import { configInjectionKey } from "@/core/constants";
+import { appendSuffixToFilename } from "@/core/utilities";
 
 const props = defineProps({
   lazy: Boolean,

@@ -1,20 +1,20 @@
 <template>
-  <div class="bg-gray-100 pt-7 pb-16 shadow-inner grow">
-    <div class="max-w-screen-2xl md:px-12 mx-auto">
+  <div class="grow bg-gray-100 pt-7 pb-16 shadow-inner">
+    <div class="mx-auto max-w-screen-2xl md:px-12">
       <VcBreadcrumbs class="mb-3 hidden lg:block" :items="breadcrumbs" />
 
       <h2
         v-t="'pages.bulk_order.title'"
-        class="text-gray-800 px-6 md:px-0 text-2xl lg:text-3xl font-bold uppercase mb-5"
+        class="mb-5 px-6 text-2xl font-bold uppercase text-gray-800 md:px-0 lg:text-3xl"
       />
 
-      <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-y-5 lg:gap-5">
+      <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-5">
         <!-- Error section -->
         <transition name="slide-fade-top" mode="out-in">
           <VcAlert
             v-if="SKUsWithErrors.length"
             key="sku"
-            class="mx-6 md:mx-0 mb-5 lg:mb-0 col-span-1 lg:col-span-2"
+            class="col-span-1 mx-6 mb-5 md:mx-0 lg:col-span-2 lg:mb-0"
             type="danger"
             icon
           >
@@ -24,7 +24,7 @@
           <VcAlert
             v-else-if="incorrectData"
             key="incorrect"
-            class="mx-6 md:mx-0 mb-5 lg:mb-0 col-span-1 lg:col-span-2"
+            class="col-span-1 mx-6 mb-5 md:mx-0 lg:col-span-2 lg:mb-0"
             type="danger"
             icon
           >
@@ -38,24 +38,24 @@
           :items="tabs"
           text-field="label"
           value-field="id"
-          class="lg:hidden col-span-1 px-3.5 md:px-3 bg-white border-y md:border md:rounded-t shadow-sm"
+          class="col-span-1 border-y bg-white px-3.5 shadow-sm md:rounded-t md:border md:px-3 lg:hidden"
         />
 
         <!-- Main section -->
-        <div :class="{ hidden: activeTab !== 'manually' }" class="lg:block col-span-1 lg:col-span-2">
+        <div :class="{ hidden: activeTab !== 'manually' }" class="col-span-1 lg:col-span-2 lg:block">
           <Manually
             :loading="loadingManually"
-            class="bg-white md:rounded-b lg:rounded md:border-x md:border-b lg:border shadow-sm"
+            class="bg-white shadow-sm md:rounded-b md:border-x md:border-b lg:rounded lg:border"
             @add-to-cart="addManuallyItems"
             @error="showIncorrectDataError"
           />
         </div>
 
         <!-- Sidebar -->
-        <div :class="{ hidden: activeTab !== 'copy&paste' }" class="lg:block col-span-1">
+        <div :class="{ hidden: activeTab !== 'copy&paste' }" class="col-span-1 lg:block">
           <CopyAndPaste
             :loading="loadingCSV"
-            class="bg-white md:rounded-b lg:rounded md:border-x md:border-b lg:border shadow-sm"
+            class="bg-white shadow-sm md:rounded-b md:border-x md:border-b lg:rounded lg:border"
             @add-to-cart="addItemsFromCSVText"
             @error="showIncorrectDataError"
           />
@@ -67,12 +67,12 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { CopyAndPaste, Manually } from "@/shared/bulk-order";
-import { InputNewBulkItemType } from "@/xapi/types";
-import { useCart } from "@/shared/cart";
-import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { CopyAndPaste, Manually } from "@/shared/bulk-order";
+import { useCart } from "@/shared/cart";
+import { InputNewBulkItemType } from "@/xapi/types";
 
 const { t } = useI18n();
 

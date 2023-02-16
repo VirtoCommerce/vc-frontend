@@ -14,7 +14,7 @@
     >
       <span
         :class="{ [isDisabled ? '!border-gray-400' : '!border-primary']: isActiveItem(item) }"
-        class="block pt-3 pb-2.5 font-bold appearance-none border-b-[3px] border-transparent"
+        class="block appearance-none border-b-[3px] border-transparent pt-3 pb-2.5 font-bold"
       >
         <slot name="item" v-bind="{ item, index }">
           {{ textField && item ? item[textField] : item }}
@@ -70,6 +70,7 @@ const props = defineProps({
   size: {
     type: String as PropType<"sm" | "md" | "lg">,
     default: "md",
+
     validator(value: string) {
       return ["sm", "md", "lg"].includes(value);
     },

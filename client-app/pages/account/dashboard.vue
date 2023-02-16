@@ -1,8 +1,8 @@
 <template>
   <div>
     <!-- Title block -->
-    <div class="flex justify-between items-center mx-5 md:mx-0 lg:hidden">
-      <h2 v-t="'pages.account.dashboard.title'" class="text-gray-800 text-3xl font-bold uppercase" />
+    <div class="mx-5 flex items-center justify-between md:mx-0 lg:hidden">
+      <h2 v-t="'pages.account.dashboard.title'" class="text-3xl font-bold uppercase text-gray-800" />
     </div>
 
     <VcCard
@@ -13,16 +13,16 @@
     >
       <template #header-button>
         <div v-if="isMobile">
-          <VcButton :to="{ name: 'Orders' }" class="px-2 uppercase text-sm" is-outline>
+          <VcButton :to="{ name: 'Orders' }" class="px-2 text-sm uppercase" is-outline>
             {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
           </VcButton>
         </div>
 
         <div v-else class="flex items-center">
-          <router-link :to="{ name: 'Orders' }" class="text-xs text-blue-500 hover:text-blue-700 font-bold">
+          <router-link :to="{ name: 'Orders' }" class="text-xs font-bold text-blue-500 hover:text-blue-700">
             {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
 
-            <i class="ml-3 fas fa-arrow-right text-[color:var(--color-primary)]" />
+            <i class="fas fa-arrow-right ml-3 text-[color:var(--color-primary)]" />
           </router-link>
         </div>
       </template>
@@ -36,11 +36,11 @@
         @item-click="openOrderDetails"
       >
         <template #mobile-item="itemData">
-          <div class="grid grid-cols-3 p-6 gap-y-4 gap-x-8 border-b border-gray-200 cursor-pointer">
+          <div class="grid cursor-pointer grid-cols-3 gap-y-4 gap-x-8 border-b border-gray-200 p-6">
             <div class="flex flex-col text-sm">
               <span v-t="'pages.account.dashboard.last_orders_card.order_number_label'" class="text-gray-400" />
 
-              <span class="font-extrabold overflow-hidden overflow-ellipsis">
+              <span class="overflow-hidden text-ellipsis font-extrabold">
                 {{ itemData.item.number }}
               </span>
             </div>
@@ -48,7 +48,7 @@
             <div class="flex flex-col text-sm">
               <span v-t="'pages.account.dashboard.last_orders_card.purchase_number_label'" class="text-gray-400" />
 
-              <span class="overflow-hidden overflow-ellipsis">
+              <span class="overflow-hidden text-ellipsis">
                 {{ itemData.item.purchaseOrderNumber }}
               </span>
             </div>
@@ -60,7 +60,7 @@
             <div class="flex flex-col text-sm">
               <span v-t="'pages.account.dashboard.last_orders_card.invoice_label'" class="text-gray-400" />
 
-              <span class="overflow-hidden overflow-ellipsis">
+              <span class="overflow-hidden text-ellipsis">
                 {{ itemData.item.inPayments?.[0]?.number }}
               </span>
             </div>
@@ -68,7 +68,7 @@
             <div class="flex flex-col text-sm">
               <span v-t="'pages.account.dashboard.last_orders_card.date_label'" class="text-gray-400" />
 
-              <span class="overflow-hidden overflow-ellipsis">
+              <span class="overflow-hidden text-ellipsis">
                 {{ $d(itemData.item?.createdDate) }}
               </span>
             </div>
@@ -76,7 +76,7 @@
             <div class="flex flex-col text-sm">
               <span v-t="'pages.account.dashboard.last_orders_card.total_label'" class="text-gray-400" />
 
-              <span class="font-extrabold overflow-hidden overflow-ellipsis">
+              <span class="overflow-hidden text-ellipsis font-extrabold">
                 {{ itemData.item.total?.formattedAmount }}
               </span>
             </div>
@@ -97,13 +97,13 @@
         </template>
 
         <template #mobile-skeleton>
-          <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-3 p-6 gap-y-4 gap-x-8 border-b border-gray-200">
+          <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-3 gap-y-4 gap-x-8 border-b border-gray-200 p-6">
             <div class="flex flex-col">
               <span
                 v-t="'pages.account.dashboard.last_orders_card.order_number_label'"
                 class="text-sm text-gray-400"
               ></span>
-              <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
+              <div class="mr-4 h-6 animate-pulse bg-gray-200"></div>
             </div>
 
             <div class="flex flex-col">
@@ -111,27 +111,27 @@
                 v-t="'pages.account.dashboard.last_orders_card.purchase_number_label'"
                 class="text-sm text-gray-400"
               ></span>
-              <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
+              <div class="mr-4 h-6 animate-pulse bg-gray-200"></div>
             </div>
 
             <div class="flex flex-col">
               <span v-t="'pages.account.dashboard.last_orders_card.status_label'" class="text-sm text-gray-400"></span>
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </div>
 
             <div class="flex flex-col">
               <span v-t="'pages.account.dashboard.last_orders_card.invoice_label'" class="text-sm text-gray-400"></span>
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </div>
 
             <div class="flex flex-col">
               <span v-t="'pages.account.dashboard.last_orders_card.date_label'" class="text-sm text-gray-400"></span>
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </div>
 
             <div class="flex flex-col">
               <span v-t="'pages.account.dashboard.last_orders_card.total_label'" class="text-sm text-gray-400"></span>
-              <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
+              <div class="mr-4 h-6 animate-pulse bg-gray-200"></div>
             </div>
           </div>
         </template>
@@ -140,30 +140,30 @@
           <tr
             v-for="order in orders"
             :key="order.id"
-            class="even:bg-gray-50 hover:bg-gray-200 cursor-pointer"
+            class="cursor-pointer even:bg-gray-50 hover:bg-gray-200"
             @click="openOrderDetails(order)"
           >
-            <td class="p-5 overflow-hidden overflow-ellipsis">
+            <td class="overflow-hidden text-ellipsis p-5">
               {{ order.number }}
             </td>
 
-            <td class="p-5 overflow-hidden overflow-ellipsis">
+            <td class="overflow-hidden text-ellipsis p-5">
               {{ order.purchaseOrderNumber }}
             </td>
 
-            <td class="p-5 overflow-hidden overflow-ellipsis">
+            <td class="overflow-hidden text-ellipsis p-5">
               {{ order.inPayments?.[0]?.number }}
             </td>
 
-            <td class="p-5 overflow-hidden overflow-ellipsis">
+            <td class="overflow-hidden text-ellipsis p-5">
               {{ $d(order?.createdDate) }}
             </td>
 
-            <td class="p-5 overflow-hidden overflow-ellipsis">
+            <td class="overflow-hidden text-ellipsis p-5">
               <TableStatusBadge :status="order.status" class="mx-auto" />
             </td>
 
-            <td class="p-5 overflow-hidden overflow-ellipsis text-right">
+            <td class="overflow-hidden text-ellipsis p-5 text-right">
               {{ order.total?.formattedAmount }}
             </td>
           </tr>
@@ -182,7 +182,7 @@
 
           <tr>
             <td colspan="6" class="polygons-bg">
-              <div class="flex items-center pl-56 space-x-10 h-80">
+              <div class="flex h-80 items-center space-x-10 pl-56">
                 <img
                   src="/static/images/account/icons/no-addresses.svg"
                   :alt="$t('pages.account.dashboard.last_orders_card.no_orders_img_alt')"
@@ -199,34 +199,34 @@
         <template #desktop-skeleton>
           <tr v-for="i in itemsPerPage" :key="i" class="even:bg-gray-50">
             <td class="p-5">
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </td>
 
             <td class="w-4/12 p-5">
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </td>
 
             <td class="p-5">
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </td>
 
             <td class="p-5">
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </td>
 
             <td class="p-5">
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </td>
 
             <td class="p-5">
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </td>
           </tr>
         </template>
       </VcTable>
     </VcCard>
 
-    <div class="flex flex-col lg:flex-row mx-5 md:mx-0 gap-y-5 lg:gap-y-0 lg:gap-x-5">
+    <div class="mx-5 flex flex-col gap-y-5 md:mx-0 lg:flex-row lg:gap-y-0 lg:gap-x-5">
       <VcCard :title="$t('pages.account.dashboard.monthly_report_card.title')" class="lg:w-1/2" shadow>
         <div class="flex content-center space-x-9 lg:space-x-4">
           <VcImage
@@ -237,12 +237,12 @@
           />
 
           <div
-            class="flex flex-col space-y-1 sm:space-y-0 sm:flex-row sm:flex-wrap sm:space-x-5 sm:items-center xl:space-x-7 justify-center"
+            class="flex flex-col justify-center space-y-1 sm:flex-row sm:flex-wrap sm:items-center sm:space-y-0 sm:space-x-5 xl:space-x-7"
           >
             <div class="flex flex-col lg:items-center lg:space-y-3">
               <span
                 v-t="'pages.account.dashboard.monthly_report_card.budget_title'"
-                class="text-xs text-gray-400 lg:text-gray-600 lg:font-bold"
+                class="text-xs text-gray-400 lg:font-bold lg:text-gray-600"
               />
 
               <span class="text-xl font-extrabold">$58,152</span>
@@ -251,7 +251,7 @@
             <div class="flex flex-col lg:items-center lg:space-y-3">
               <span
                 v-t="'pages.account.dashboard.monthly_report_card.total_spend_label'"
-                class="text-xs text-gray-400 lg:text-gray-600 lg:font-bold"
+                class="text-xs text-gray-400 lg:font-bold lg:text-gray-600"
               />
 
               <span class="text-xl font-extrabold">$530,152</span>
@@ -273,14 +273,14 @@
 </template>
 
 <script setup lang="ts">
-import { CustomerOrderType } from "@/xapi/types";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
+import { usePageHead } from "@/core/composables";
 import { SORT_DESCENDING } from "@/core/constants";
 import useUserOrders from "@/shared/account/composables/useUserOrders";
-import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { useI18n } from "vue-i18n";
-import { usePageHead } from "@/core/composables";
+import { CustomerOrderType } from "@/xapi/types";
 
 const { t } = useI18n();
 const router = useRouter();

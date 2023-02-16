@@ -2,25 +2,25 @@
   <div>
     <slot name="after" />
 
-    <div class="vc-cart-line-item grid gap-x-2.5 pt-3 pl-3 pr-3.5 pb-4 md:p-4 md:gap-x-3 md:place-items-center">
-      <div class="contents vc-cart-line-item__product md:flex md:gap-3 md:w-full">
+    <div class="vc-cart-line-item grid gap-x-2.5 pt-3 pl-3 pr-3.5 pb-4 md:place-items-center md:gap-x-3 md:p-4">
+      <div class="vc-cart-line-item__product contents md:flex md:w-full md:gap-3">
         <!--  IMAGE -->
         <div
-          class="vc-cart-line-item__img shrink-0 w-16 h-16 md:w-[60px] md:h-[60px]"
+          class="vc-cart-line-item__img h-16 w-16 shrink-0 md:h-[60px] md:w-[60px]"
           :class="{ 'opacity-25': !extendedItem.extended.isProductExists }"
         >
           <VcImage
             :src="extendedItem.imageUrl"
             :alt="extendedItem.name"
             size-suffix="sm"
-            class="w-full h-full object-cover object-center"
+            class="h-full w-full object-cover object-center"
             lazy
           />
         </div>
 
         <!-- NAME -->
         <div
-          class="vc-cart-line-item__name text-sm font-extrabold md:grow lg:text-13 lg:leading-4 lg:font-bold"
+          class="vc-cart-line-item__name text-sm font-extrabold md:grow lg:text-13 lg:font-bold lg:leading-4"
           :class="{ 'opacity-25': !extendedItem.extended.isProductExists }"
         >
           <router-link
@@ -50,7 +50,7 @@
               <div class="truncate">{{ property.label }}:</div>
             </div>
 
-            <div class="grow mb-1 h-4 border-b-2 border-gray-200 border-dotted md:hidden"></div>
+            <div class="mb-1 h-4 grow border-b-2 border-dotted border-gray-200 md:hidden"></div>
 
             <div class="min-w-0">
               <div class="truncate font-semibold md:font-normal">
@@ -62,15 +62,15 @@
 
         <!-- PRICE -->
         <div
-          class="vc-cart-line-item__price grid grid-cols-[auto_1fr_auto] gap-1.5 w-full md:grid-cols-[45%_1fr] xl:contents"
+          class="vc-cart-line-item__price grid w-full grid-cols-[auto_1fr_auto] gap-1.5 md:grid-cols-[45%_1fr] xl:contents"
         >
           <div
-            class="min-w-0 font-medium capitalize text-13 lg:text-xs text-gray-600 md:font-bold md:text-gray-800 xl:hidden"
+            class="min-w-0 text-13 font-medium capitalize text-gray-600 md:font-bold md:text-gray-800 lg:text-xs xl:hidden"
           >
             <div class="truncate">{{ $t("common.labels.price_per_item") }}:</div>
           </div>
 
-          <div class="grow mb-1 h-4 border-b-2 border-gray-200 border-dotted md:hidden"></div>
+          <div class="mb-1 h-4 grow border-b-2 border-dotted border-gray-200 md:hidden"></div>
 
           <div class="xl:w-full xl:pr-4 xl:text-right">
             <div class="text-13 font-semibold md:font-normal lg:text-xs xl:font-medium">
@@ -81,7 +81,7 @@
             <!-- Price without discount -->
             <div
               v-if="extendedItem.listPrice!.amount !== extendedItem.placedPrice!.amount"
-              class="text-11 leading-3 line-through text-[color:var(--color-price-old)]"
+              class="text-11 leading-3 text-[color:var(--color-price-old)] line-through"
             >
               <VcPriceDisplay :value="extendedItem.listPrice" />
             </div>
@@ -90,7 +90,7 @@
       </div>
 
       <!-- QUANTITY -->
-      <div class="vc-cart-line-items__quantity mt-3 md:place-self-end md:mt-0 xl:w-full xl:place-self-center">
+      <div class="vc-cart-line-items__quantity mt-3 md:mt-0 md:place-self-end xl:w-full xl:place-self-center">
         <input
           v-model="quantity"
           :name="extendedItem.id"
@@ -98,24 +98,24 @@
           :disabled="!extendedItem.extended.isProductExists || disabled"
           :min="extendedItem.extended.minQuantity"
           :max="extendedItem.extended.maxQuantity"
-          class="w-20 h-8 border rounded text-center text-sm disabled:bg-gray-100 xl:w-full disabled:text-gray-400"
+          class="h-8 w-20 rounded border text-center text-sm disabled:bg-gray-100 disabled:text-gray-400 xl:w-full"
           type="number"
           pattern="\d*"
           @keyup.enter="changeQuantity"
           @input="onQuantityChanged"
         />
 
-        <div class="flex flex-wrap justify-center gap-1 mt-1.5">
+        <div class="mt-1.5 flex flex-wrap justify-center gap-1">
           <VcInStock :quantity="extendedItem.inStockQuantity" is-in-stock />
         </div>
       </div>
 
       <!-- TOTAL -->
       <div
-        class="vc-cart-line-items__total flex flex-col justify-center items-end min-h-[32px] mt-3 md:mt-0 md:min-h-auto md:w-full"
+        class="vc-cart-line-items__total md:min-h-auto mt-3 flex min-h-[32px] flex-col items-end justify-center md:mt-0 md:w-full"
       >
         <!-- Total -->
-        <div class="flex flex-wrap items-center justify-end text-right gap-x-1">
+        <div class="flex flex-wrap items-center justify-end gap-x-1 text-right">
           <div class="text-14 font-bold text-[color:var(--color-price-from)] md:hidden">
             {{ $t("common.labels.total") }}:
           </div>
@@ -127,14 +127,14 @@
       </div>
 
       <!-- REMOVE BUTTON -->
-      <div class="vc-cart-line-item__remove-button absolute -top-3 -right-3 md:static md:flex md:justify-end md:w-8">
+      <div class="vc-cart-line-item__remove-button absolute -top-3 -right-3 md:static md:flex md:w-8 md:justify-end">
         <button
           type="button"
           :disabled="disabled"
-          class="flex items-center justify-center h-[26px] w-[26px] rounded-full border bg-white text-[color:var(--color-danger)] md:border-2 md:w-7 md:h-7 md:rounded hover:bg-gray-100 disabled:bg-gray-100 disabled:text-gray-400"
+          class="flex h-[26px] w-[26px] items-center justify-center rounded-full border bg-white text-[color:var(--color-danger)] hover:bg-gray-100 disabled:bg-gray-100 disabled:text-gray-400 md:h-7 md:w-7 md:rounded md:border-2"
           @click="$emit('remove')"
         >
-          <svg class="w-3.5 h-3.5">
+          <svg class="h-3.5 w-3.5">
             <use href="/static/images/delete.svg#main"></use>
           </svg>
         </button>
@@ -147,8 +147,8 @@
 
 <script setup lang="ts">
 import { ref, computed, watchEffect } from "vue";
-import { LineItemType } from "@/xapi";
 import { extendCartItem } from "@/shared/checkout";
+import { LineItemType } from "@/xapi";
 
 interface IProps {
   disabled?: boolean;

@@ -6,12 +6,12 @@
           {{ $t("shared.checkout.shipping_details_section.labels.shipping_address") }}
         </VcLabel>
 
-        <div :class="['grow rounded border divide-y', { 'bg-gray-50 cursor-not-allowed': disabled }]">
+        <div :class="['grow divide-y rounded border', { 'cursor-not-allowed bg-gray-50': disabled }]">
           <VcAddressSelection
             :placeholder="$t('shared.checkout.shipping_details_section.links.select_address')"
             :address="address"
             :disabled="disabled"
-            class="px-3 py-1.5 min-h-[4.625rem]"
+            class="min-h-[4.625rem] px-3 py-1.5"
             @change="$emit('change:address')"
           />
         </div>

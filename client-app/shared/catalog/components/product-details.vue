@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col lg:flex-row p-6 lg:space-x-12 bg-white">
-    <div class="lg:w-1/3 mb-4 lg:mb-0">
+  <div class="flex flex-col bg-white p-6 lg:flex-row lg:space-x-12">
+    <div class="mb-4 lg:mb-0 lg:w-1/3">
       <VcImageGallery :product="product">
         <template #badges>
           <DiscountBadge :price="product.price!" />
@@ -17,17 +17,18 @@
 </template>
 
 <script setup lang="ts">
-import { Product } from "@/xapi/types";
-import { PageContent } from "@/shared/static-content";
 import { PropType } from "vue";
-import { AddToCompare } from "@/shared/compare";
 import { DiscountBadge } from "@/shared/catalog";
+import { AddToCompare } from "@/shared/compare";
+import { PageContent } from "@/shared/static-content";
+import { Product } from "@/xapi/types";
 
 defineProps({
   product: {
     type: Object as PropType<Product>,
     required: true,
   },
+
   section: {
     type: Object as PropType<PageContent>,
     required: true,

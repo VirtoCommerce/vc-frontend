@@ -44,7 +44,7 @@
             <li
               v-if="$slots.first"
               class="vc-select__item"
-              tabIndex="0"
+              tabindex="0"
               role="option"
               :aria-selected="!selected"
               @click="select()"
@@ -62,7 +62,7 @@
                   'vc-select__item--active': isActiveItem(item),
                 },
               ]"
-              tabIndex="0"
+              tabindex="0"
               role="option"
               :aria-selected="isActiveItem(item)"
               @click="select(item)"

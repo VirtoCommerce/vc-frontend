@@ -4,7 +4,6 @@
     :to="isEnabled ? to : ''"
     :type="isLink ? null : isSubmit ? 'submit' : 'button'"
     :disabled="!isEnabled"
-    :autofocus="autofocus"
     :class="[
       'vc-button',
       `vc-button--${size}`,
@@ -24,9 +23,9 @@
 </template>
 
 <script setup lang="ts">
+import { eagerComputed } from "@vueuse/core";
 import { PropType } from "vue";
 import { RouteLocationRaw } from "vue-router";
-import { eagerComputed } from "@vueuse/core";
 
 defineEmits(["click"]);
 
@@ -41,11 +40,6 @@ const props = defineProps({
     type: String as PropType<"sm" | "md" | "lg">,
     default: "md",
     validator: (value: string) => ["sm", "md", "lg"].includes(value),
-  },
-
-  autofocus: {
-    type: Boolean,
-    default: false,
   },
 
   isSubmit: {
@@ -85,8 +79,8 @@ $colors: primary, secondary, success, warning, danger;
   $self: &;
 
   @apply relative inline-flex justify-center items-center rounded
-    border-2 border-transparent font-roboto-condensed select-none
-    focus:outline-dotted outline-1 outline-offset-[3px];
+  border-2 border-transparent font-roboto-condensed select-none
+  focus:outline-dotted outline-1 outline-offset-[3px];
 
   &__content {
     @apply flex justify-center items-center;
@@ -106,7 +100,7 @@ $colors: primary, secondary, success, warning, danger;
 
   &--disabled {
     @apply bg-gray-200 text-gray-400 cursor-not-allowed
-      [--tw-bg-opacity:0.7] [--tw-text-opacity:0.7] #{!important};
+    [--tw-bg-opacity:0.7] [--tw-text-opacity:0.7] #{!important};
 
     &#{$self}--outline {
       @apply bg-transparent border-gray-300 [--tw-border-opacity:0.8] #{!important};
@@ -143,12 +137,12 @@ $colors: primary, secondary, success, warning, danger;
   @each $color in $colors {
     &--#{$color} {
       @apply bg-[color:var(--color-#{$color})] hover:bg-[color:var(--color-#{$color}-hover)]
-        outline-[color:var(--color-#{$color})] text-white;
+      outline-[color:var(--color-#{$color})] text-white;
 
       &#{$self}--outline {
         @apply bg-transparent hover:bg-[color:var(--color-#{$color}-hover)]
-          border-[color:var(--color-#{$color})] hover:border-[color:var(--color-#{$color}-hover)]
-          text-[color:var(--color-#{$color})] hover:text-white;
+        border-[color:var(--color-#{$color})] hover:border-[color:var(--color-#{$color}-hover)]
+        text-[color:var(--color-#{$color})] hover:text-white;
       }
     }
   }

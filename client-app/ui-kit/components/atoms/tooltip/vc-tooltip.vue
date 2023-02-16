@@ -1,11 +1,14 @@
 <template>
-  <div class="inline-flex relative">
+  <div class="relative inline-flex">
     <div
       ref="triggerNode"
       :aria-describedby="`popover-${$.uid}`"
+      tabindex="0"
       @mouseenter="trigger === 'hover' && toggleTooltip(true)"
       @mouseleave="trigger === 'hover' && toggleTooltip(false)"
       @click="trigger === 'click' && toggleTooltip(!isShown)"
+      @focus="toggleTooltip(true)"
+      @blur="toggleTooltip(false)"
     >
       <slot name="trigger" />
     </div>
@@ -17,9 +20,9 @@
 </template>
 
 <script setup lang="ts">
-import { shallowRef, ref, onUnmounted, PropType, watch } from "vue";
 import { bottom, createPopper, Instance, Placement, PositioningStrategy } from "@popperjs/core";
 import { onClickOutside } from "@vueuse/core";
+import { onUnmounted, PropType, ref, shallowRef, watch } from "vue";
 
 const emit = defineEmits<{ (e: "shown", isShown: boolean): void }>();
 
@@ -28,18 +31,22 @@ const props = defineProps({
     type: String as PropType<Placement>,
     default: bottom,
   },
+
   strategy: {
     type: String as PropType<PositioningStrategy>,
     default: "absolute",
   },
+
   xOffset: {
     type: Number,
     default: 0,
   },
+
   yOffset: {
     type: Number,
     default: 6,
   },
+
   trigger: {
     type: String as PropType<"hover" | "click">,
     default: "hover",

@@ -3,16 +3,16 @@
     <slot name="trigger" />
   </div>
 
-  <div v-show="isShown" v-bind="$attrs" id="popover" ref="popoverNode" class="bg-white border shadow-lg rounded">
+  <div v-show="isShown" v-bind="$attrs" id="popover" ref="popoverNode" class="rounded border bg-white shadow-lg">
     <div id="arrow" class="border-t border-l" data-popper-arrow></div>
 
-    <h3 v-if="title || showCloseButton" class="flex justify-between font-bold items-center text-lg h-14 px-5">
-      <span v-if="title" class="flex flex-grow">
+    <h3 v-if="title || showCloseButton" class="flex h-14 items-center justify-between px-5 text-lg font-bold">
+      <span v-if="title" class="flex grow">
         {{ title }}
       </span>
       <i
         v-if="showCloseButton"
-        class="fas fa-times text-red-400 hover:text-red-700 cursor-pointer"
+        class="fas fa-times cursor-pointer text-red-400 hover:text-red-700"
         @click="togglePopover(false)"
       />
     </h3>
@@ -27,9 +27,9 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, shallowRef, onUnmounted, PropType } from "vue";
-import { isDefined, onClickOutside } from "@vueuse/core";
 import { bottom, createPopper, Instance, Placement } from "@popperjs/core";
+import { isDefined, onClickOutside } from "@vueuse/core";
+import { ref, shallowRef, onUnmounted, PropType } from "vue";
 
 const emit = defineEmits<{
   (event: "toggle", value: boolean): void;

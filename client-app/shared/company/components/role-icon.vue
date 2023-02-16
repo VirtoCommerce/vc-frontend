@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'bg-gray-200': !roleId || fallback }" class="rounded-full h-[34px] w-[34px]">
+  <div :class="{ 'bg-gray-200': !roleId || fallback }" class="h-[34px] w-[34px] rounded-full">
     <svg v-if="roleId" height="34" width="34">
       <use :href="`/static/images/account/roles/${roleId}.svg#main`" @error="fallback = true" />
     </svg>

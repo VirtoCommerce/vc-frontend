@@ -41,19 +41,19 @@
       <router-link
         v-t="'shared.account.sign_in_form.forgot_password_link'"
         to="/forgot-password"
-        class="text-blue-700 hover:text-blue-500 text-sm font-semibold"
+        class="text-sm font-semibold text-blue-700 hover:text-blue-500"
       >
       </router-link>
     </div>
 
     <!-- Form actions -->
-    <div class="flex mt-8 text-base font-roboto-condensed" :class="{ 'max-w-sm': !props.growButtons }">
+    <div class="mt-8 flex font-roboto-condensed text-base" :class="{ 'max-w-sm': !props.growButtons }">
       <VcButton
         :is-disabled="loading || isAuthenticated || !valid || authError"
         :is-waiting="loading"
         is-submit
         size="lg"
-        class="flex-1 flex-shrink px-2 uppercase"
+        class="flex-1 shrink px-2 uppercase"
       >
         {{ $t("shared.account.sign_in_form.login_button") }}
       </VcButton>
@@ -63,7 +63,7 @@
         :is-disabled="loading || isAuthenticated"
         size="lg"
         is-outline
-        class="flex-1 ml-4 px-2 uppercase"
+        class="ml-4 flex-1 px-2 uppercase"
       >
         {{ $t("shared.account.sign_in_form.registration_button") }}
       </VcButton>
@@ -72,15 +72,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch } from "vue";
-import { useForm, useField } from "vee-validate";
-import * as yup from "yup";
+import { eagerComputed } from "@vueuse/core";
 import { isEmpty } from "lodash";
-import { useUser } from "@/shared/account";
+import { useForm, useField } from "vee-validate";
+import { ref, reactive, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import * as yup from "yup";
+import { useUser } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { mergeCart } from "@/xapi/graphql/cart";
-import { eagerComputed } from "@vueuse/core";
 
 const emit = defineEmits(["succeeded"]);
 

@@ -21,7 +21,7 @@
 
     <a
       v-if="groupedProperties && groupedProperties.length > MAX_DISPLAY_ITEMS"
-      class="flex gap-x-1 mb-4 items-center text-14 text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)] hover:cursor-pointer underline decoration-dashed"
+      class="mb-4 flex items-center gap-x-1 text-14 text-[color:var(--color-link)] underline decoration-dashed hover:cursor-pointer hover:text-[color:var(--color-link-hover)]"
       @click="showAll = !showAll"
     >
       <VcIcon :name="showAll ? 'chevron-up' : 'chevron-down'" size="xs" class="text-[color:var(--color-primary)]" />
@@ -31,10 +31,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
 import _ from "lodash";
-import { Product } from "@/xapi";
+import { computed, ref } from "vue";
 import { prepareProperties, ProductProperty, ProductTitledBlock, Vendor } from "@/shared/catalog";
+import { Product } from "@/xapi";
 
 const props = defineProps<Props>();
 const MAX_DISPLAY_ITEMS = 8;

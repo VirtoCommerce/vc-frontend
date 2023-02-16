@@ -1,8 +1,8 @@
-import { computed, unref } from "vue";
 import { MaybeRef } from "@vueuse/core";
+import { computed, unref } from "vue";
 import { RouteLocationRaw } from "vue-router";
-import { Category } from "@/xapi";
 import { CategoryTreeItem, getCategoryRoute } from "@/core";
+import { Category } from "@/xapi";
 
 export default (categories: MaybeRef<(Category | CategoryTreeItem)[]>) => {
   return computed(() =>

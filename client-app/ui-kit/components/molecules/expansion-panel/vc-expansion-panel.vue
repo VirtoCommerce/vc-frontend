@@ -16,9 +16,9 @@
         </slot>
 
         <slot name="header-button" v-bind="{ isExpanded, toggle }">
-          <button class="px-3 py-2 ml-2 -mr-3 -my-2 appearance-none before:absolute before:inset-0" @click="toggle">
+          <button class="-my-2 ml-2 -mr-3 appearance-none px-3 py-2 before:absolute before:inset-0" @click="toggle">
             <i
-              class="fas text-[color:var(--color-primary)] text-base"
+              class="fas text-base text-[color:var(--color-primary)]"
               :class="isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'"
             />
           </button>
@@ -33,8 +33,8 @@
 </template>
 
 <script setup lang="ts">
-import { getCurrentInstance, inject, onBeforeUnmount, ref, watchEffect } from "vue";
 import { computedEager } from "@vueuse/core";
+import { getCurrentInstance, inject, onBeforeUnmount, ref, watchEffect } from "vue";
 
 /**
  * This component is used together with the parent component `VcExpansionPanels` or independently.

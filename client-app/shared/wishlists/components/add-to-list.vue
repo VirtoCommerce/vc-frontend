@@ -14,7 +14,7 @@
     </template>
 
     <template #content>
-      <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5">
+      <div class="rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y">
         {{ $t("pages.catalog.wishlist_tooltip") }}
       </div>
     </template>
@@ -23,20 +23,22 @@
 
 <script setup lang="ts">
 import { PropType } from "vue";
-import { Product } from "@/xapi/types";
-import { usePopup } from "@/shared/popup";
 import { useUser } from "@/shared/account";
+import { usePopup } from "@/shared/popup";
 import { AddToWishlistsModal } from "@/shared/wishlists";
+import { Product } from "@/xapi/types";
 
 const props = defineProps({
   product: {
     type: Object as PropType<Product>,
     required: true,
   },
+
   customClass: {
     type: String,
     default: "w-6 h-6 lg:w-4 lg:h-4",
   },
+
   tooltipPlacement: {
     type: String,
     default: "left",

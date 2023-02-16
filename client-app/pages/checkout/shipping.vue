@@ -16,7 +16,7 @@
           <VcButton
             :to="{ name: 'Billing', replace: true }"
             :is-disabled="isDisabledNextStep"
-            class="mt-4 uppercase w-full"
+            class="mt-4 w-full uppercase"
           >
             {{ $t("common.buttons.go_to_billing") }}
           </VcButton>

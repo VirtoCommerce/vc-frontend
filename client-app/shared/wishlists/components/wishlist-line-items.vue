@@ -31,8 +31,8 @@
 </template>
 
 <script setup lang="ts">
-import { LineItemType } from "@/xapi";
 import { WishlistLineItem } from "@/shared/wishlists";
+import { LineItemType } from "@/xapi";
 
 interface Prop {
   items: LineItemType[];

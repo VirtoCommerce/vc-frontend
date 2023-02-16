@@ -1,13 +1,13 @@
 <template>
   <div>
     <!-- Title block -->
-    <div class="flex justify-between items-center mx-5 md:mx-0">
-      <h2 v-t="'pages.company.members.title'" class="text-gray-800 text-3xl font-bold uppercase" />
+    <div class="mx-5 flex items-center justify-between md:mx-0">
+      <h2 v-t="'pages.company.members.title'" class="text-3xl font-bold uppercase text-gray-800" />
 
-      <div class="flex flex-no-wrap space-x-2 md:space-x-4">
+      <div class="flex-no-wrap flex space-x-2 md:space-x-4">
         <VcButton
           v-if="$can($permissions.storefront.CanInviteUsers)"
-          class="uppercase p-4"
+          class="p-4 uppercase"
           is-outline
           @click="openInviteDialog"
         >
@@ -18,22 +18,22 @@
     </div>
 
     <!-- Mobile filters sidebar -->
-    <VcPopupSidebar class="px-5 pt-6 w-72" :is-visible="isMobile && filtersVisible" @hide="hideFilters">
+    <VcPopupSidebar class="w-72 px-5 pt-6" :is-visible="isMobile && filtersVisible" @hide="hideFilters">
       <div class="relative">
         <button class="absolute -right-3 appearance-none px-3 py-1" @click="hideFilters">
-          <span class="text-2xl fas fa-times text-red-400 hover:text-red-700"></span>
+          <span class="fas fa-times text-2xl text-red-400 hover:text-red-700"></span>
         </button>
       </div>
 
-      <div class="font-semibold text-2xl pt-1 mb-6">
+      <div class="mb-6 pt-1 text-2xl font-semibold">
         {{ $t("common.buttons.filters") }}
       </div>
 
-      <div class="flex flex-col grow gap-6">
+      <div class="flex grow flex-col gap-6">
         <FilterFacet v-for="(_, index) in selectableFacets" :key="index" v-model="selectableFacets[index]" />
       </div>
 
-      <div class="sticky z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
+      <div class="z-100 sticky bottom-0 -mx-5 mt-4 bg-white p-5 shadow-t-md">
         <div class="flex gap-x-4">
           <VcButton
             :is-disabled="!numberOfFacetsApplied && !isFacetsDirty"
@@ -68,7 +68,7 @@
     <!-- Page Toolbar -->
     <PageToolbarBlock
       :stick="stickyMobileHeaderIsVisible"
-      class="flex flex-row lg:flex-row-reverse items-center py-3.5 -my-3.5 gap-x-2 lg:gap-x-5"
+      class="-my-3.5 flex flex-row items-center gap-x-2 py-3.5 lg:flex-row-reverse lg:gap-x-5"
       shadow
     >
       <div class="relative">
@@ -77,21 +77,21 @@
           :is-disabled="contactsLoading"
           :is-outline="!filtersVisible && !isMobile"
           size="lg"
-          class="w-11 lg:w-auto px-3.5 uppercase"
+          class="w-11 px-3.5 uppercase lg:w-auto"
           @click="filtersVisible = !filtersVisible"
         >
           <span class="hidden lg:inline-block">{{ $t("common.buttons.filters") }}</span>
-          <span class="lg:hidden fa fa-filter"></span>
+          <span class="fa fa-filter lg:hidden"></span>
 
           <transition :name="isMobile ? 'fade' : 'slide-fade-right'">
             <span
               v-if="numberOfFacetsApplied"
               :class="[
                 filtersVisible || isMobile
-                  ? 'text-[color:var(--color-primary)] bg-white'
-                  : 'text-white bg-[color:var(--color-primary)]',
+                  ? 'bg-white text-[color:var(--color-primary)]'
+                  : 'bg-[color:var(--color-primary)] text-white',
               ]"
-              class="absolute lg:relative -left-2.5 lg:left-auto -top-2.5 lg:top-auto lg:ml-2 border border-[color:var(--color-primary)] lg:border-0 h-5 w-5 rounded-full box-content font-lato text-13"
+              class="absolute -left-2.5 -top-2.5 box-content h-5 w-5 rounded-full border border-[color:var(--color-primary)] font-lato text-13 lg:relative lg:left-auto lg:top-auto lg:ml-2 lg:border-0"
             >
               {{ numberOfFacetsApplied }}
             </span>
@@ -102,22 +102,22 @@
         <div
           v-if="filtersVisible && !isMobile"
           ref="filtersDropdownElement"
-          class="absolute right-0 z-[1] bg-white shadow-lg rounded border mt-2 p-6"
+          class="absolute right-0 z-[1] mt-2 rounded border bg-white p-6 shadow-lg"
         >
           <button class="absolute top-0 right-0 appearance-none px-4 py-2" @click="hideFilters">
-            <span class="text-lg fa fa-times text-red-400 hover:text-red-500"></span>
+            <span class="fa fa-times text-lg text-red-400 hover:text-red-500"></span>
           </button>
 
           <div class="flex flex-row gap-6 pr-4">
             <FilterFacet v-for="(_, index) in selectableFacets" :key="index" v-model="selectableFacets[index]" />
           </div>
 
-          <div class="flex flex-row justify-end gap-4 mt-6">
+          <div class="mt-6 flex flex-row justify-end gap-4">
             <VcButton
               :is-disabled="!numberOfFacetsApplied && !isFacetsDirty"
               kind="secondary"
               size="sm"
-              class="uppercase px-8 w-full lg:w-auto"
+              class="w-full px-8 uppercase lg:w-auto"
               is-outline
               @click="
                 resetFilters();
@@ -130,7 +130,7 @@
             <VcButton
               :is-disabled="!isFacetsDirty"
               size="sm"
-              class="uppercase px-8 w-full lg:w-auto"
+              class="w-full px-8 uppercase lg:w-auto"
               @click="
                 applyFilters();
                 hideFilters();
@@ -161,14 +161,14 @@
           </button>
         </div>
 
-        <VcButton :is-disabled="contactsLoading" class="w-11 uppercase !rounded-l-none" size="lg" @click="applyKeyword">
+        <VcButton :is-disabled="contactsLoading" class="w-11 !rounded-l-none uppercase" size="lg" @click="applyKeyword">
           <i class="fas fa-search text-lg" />
         </VcButton>
       </div>
     </PageToolbarBlock>
 
     <!-- Filters chips -->
-    <div v-if="numberOfFacetsApplied" class="hidden lg:flex flex-wrap gap-x-3 gap-y-2">
+    <div v-if="numberOfFacetsApplied" class="hidden flex-wrap gap-x-3 gap-y-2 lg:flex">
       <VcChip
         class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
         size="sm"
@@ -212,7 +212,7 @@
 
       <template #button>
         <VcButton v-if="keyword || filter" class="px-6 uppercase" size="lg" @click="resetFiltersWithKeyword">
-          <i class="fas fa-undo text-inherit -ml-0.5 mr-2.5" />
+          <i class="fas fa-undo -ml-0.5 mr-2.5 text-inherit" />
           {{ $t("pages.company.members.buttons.reset_search") }}
         </VcButton>
 
@@ -238,7 +238,7 @@
       >
         <template #desktop-body>
           <tr v-for="contact in contacts" :key="contact.id" class="even:bg-gray-50">
-            <td class="pl-4 pr-0 py-2.5">
+            <td class="py-2.5 pl-4 pr-0">
               <RoleIcon :role-id="contact.extended.roles[0]?.id" />
             </td>
 
@@ -257,11 +257,16 @@
             <td class="px-4 py-3 text-center">
               <VcTooltip>
                 <template #trigger>
-                  <img width="20" height="20" :src="contact.extended.displayStatus.iconUrl" />
+                  <img
+                    width="20"
+                    height="20"
+                    :src="contact.extended.displayStatus.iconUrl"
+                    :alt="$t(contact.extended.displayStatus.localeLabel)"
+                  />
                 </template>
 
                 <template #content>
-                  <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5">
+                  <div class="rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y">
                     {{ $t(contact.extended.displayStatus.localeLabel) }}
                   </div>
                 </template>
@@ -277,20 +282,20 @@
 
                 <button
                   v-if="contact.status === ContactStatus.Locked"
-                  class="flex items-center p-3 whitespace-nowrap"
+                  class="flex items-center whitespace-nowrap p-3"
                   @click="openLockOrUnlockDialog(contact, true)"
                 >
-                  <i class="fas fa-check mr-2 leading-none text-base text-[color:var(--color-success)]" />
+                  <i class="fas fa-check mr-2 text-base leading-none text-[color:var(--color-success)]" />
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.unblock_user") }}</span>
                 </button>
 
-                <button v-else class="flex items-center p-3 whitespace-nowrap" @click="openLockOrUnlockDialog(contact)">
-                  <i class="fas fa-ban mr-2 leading-none text-base text-black" />
+                <button v-else class="flex items-center whitespace-nowrap p-3" @click="openLockOrUnlockDialog(contact)">
+                  <i class="fas fa-ban mr-2 text-base leading-none text-black" />
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.block_user") }}</span>
                 </button>
 
-                <button class="flex items-center p-3 whitespace-nowrap" @click="openDeleteDialog(contact)">
-                  <i class="fas fa-times mr-2 leading-none text-xl text-[color:var(--color-danger)]" />
+                <button class="flex items-center whitespace-nowrap p-3" @click="openDeleteDialog(contact)">
+                  <i class="fas fa-times mr-2 text-xl leading-none text-[color:var(--color-danger)]" />
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.delete") }}</span>
                 </button>
               </VcActionDropdownMenu>
@@ -300,12 +305,12 @@
 
         <template #desktop-skeleton>
           <tr v-for="row in itemsPerPage" :key="row" class="even:bg-gray-50">
-            <td class="pl-4 pr-0 py-2.5">
-              <div class="rounded-full bg-gray-200 animate-pulse h-9 w-9"></div>
+            <td class="py-2.5 pl-4 pr-0">
+              <div class="h-9 w-9 animate-pulse rounded-full bg-gray-200"></div>
             </td>
 
             <td v-for="column in columns.length - 1" :key="column" class="px-4 py-3">
-              <div class="h-5 bg-gray-200 animate-pulse"></div>
+              <div class="h-5 animate-pulse bg-gray-200"></div>
             </td>
           </tr>
         </template>
@@ -316,7 +321,7 @@
               <RoleIcon :role-id="item.extended.roles[0]?.id" />
             </div>
 
-            <div class="flex-grow py-4.5 pl-4">
+            <div class="grow py-4.5 pl-4">
               <div>
                 <b>{{ item.fullName }}</b>
               </div>
@@ -327,7 +332,7 @@
             </div>
 
             <div class="py-4.5 pr-6">
-              <div class="px-2.5 py-0.5 w-20 text-center rounded-sm" :class="item.extended.displayStatus.cssStyles">
+              <div class="w-20 rounded-sm px-2.5 py-0.5 text-center" :class="item.extended.displayStatus.cssStyles">
                 {{ $t(item.extended.displayStatus.localeLabel) }}
               </div>
             </div>
@@ -335,13 +340,13 @@
         </template>
 
         <template #mobile-skeleton>
-          <div v-for="row in itemsPerPage" :key="row" class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200">
+          <div v-for="row in itemsPerPage" :key="row" class="grid grid-cols-2 gap-y-4 border-b border-gray-200 p-6">
             <div class="flex flex-col">
-              <div class="py-6 pl-6 bg-gray-200 animate-pulse"></div>
+              <div class="animate-pulse bg-gray-200 py-6 pl-6"></div>
             </div>
 
             <div class="flex flex-col">
-              <div class="py-6 pl-4 bg-gray-200 animate-pulse"></div>
+              <div class="animate-pulse bg-gray-200 py-6 pl-4"></div>
             </div>
           </div>
         </template>
@@ -351,24 +356,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, shallowRef, computed } from "vue";
-import { useI18n } from "vue-i18n";
 import { breakpointsTailwind, computedEager, onClickOutside, useBreakpoints } from "@vueuse/core";
+import { computed, onMounted, ref, shallowRef } from "vue";
+import { useI18n } from "vue-i18n";
 import { useElementVisibility, usePageHead } from "@/core/composables";
+import { XApiPermissions } from "@/core/constants";
 import { FacetItem, FacetValueItem, ISortInfo } from "@/core/types";
 import { getFilterExpressionFromFacets } from "@/core/utilities";
-import { usePopup } from "@/shared/popup";
-import {
-  InviteMemberDialog,
-  useOrganizationContacts,
-  RoleIcon,
-  ExtendedContactType,
-  useOrganizationContactsFilterFacets,
-  FilterFacet,
-  ContactStatus,
-} from "@/shared/company";
 import { PageToolbarBlock, useUser } from "@/shared/account";
-import { XApiPermissions } from "@/core/constants";
+import {
+  ContactStatus,
+  ExtendedContactType,
+  FilterFacet,
+  InviteMemberDialog,
+  RoleIcon,
+  useOrganizationContacts,
+  useOrganizationContactsFilterFacets,
+} from "@/shared/company";
+import { usePopup } from "@/shared/popup";
 
 const { t } = useI18n();
 

@@ -1,6 +1,6 @@
+import globals from "@/core/globals";
 import { Product, Query, QueryProductArgs } from "@/xapi/types";
 import getProductsQueryDocument from "./getProductQuery.graphql";
-import globals from "@/core/globals";
 
 export default async function getProduct(id: string): Promise<Product | null> {
   const { storeId, userId, cultureName, currencyCode } = globals;

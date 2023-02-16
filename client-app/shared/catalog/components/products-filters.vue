@@ -6,7 +6,7 @@
         <div class="relative">
           <VcInput
             v-model="localKeyword"
-            class="flex-1 w-full h-8"
+            class="h-8 w-full flex-1"
             input-class="leading-8 !h-8 !pl-2 !pr-6"
             maxlength="30"
             :is-disabled="loading"
@@ -24,7 +24,7 @@
           :is-disabled="loading || isAppliedKeyword"
           kind="primary"
           size="sm"
-          class="px-3.5 uppercase !text-15"
+          class="px-3.5 !text-15 uppercase"
           is-outline
           @click="onSearchStart"
         >
@@ -81,7 +81,7 @@
           class="mt-3 first:mt-1 last:mb-2"
           @change="onFilterChanged"
         >
-          <div class="text-13" :class="[item.selected ? 'font-semibold' : 'text-gray-500 font-medium']">
+          <div class="text-13" :class="[item.selected ? 'font-semibold' : 'font-medium text-gray-500']">
             <span class="truncate">{{ item.label }}</span>
             <span class="ml-1">{{ $t("pages.catalog.facet_card.item_count_format", [item.count]) }}</span>
           </div>
@@ -92,11 +92,11 @@
 </template>
 
 <script setup lang="ts">
+import { eagerComputed, useBreakpoints, breakpointsTailwind } from "@vueuse/core";
+import _ from "lodash";
+import { watch, PropType, ref, shallowReactive } from "vue";
 import { FacetItem } from "@/core/types";
 import { ProductsFilters } from "@/shared/catalog";
-import { eagerComputed, useBreakpoints, breakpointsTailwind } from "@vueuse/core";
-import { watch, PropType, ref, shallowReactive } from "vue";
-import _ from "lodash";
 
 const emit = defineEmits<{
   (e: "search", keyword: string): void;

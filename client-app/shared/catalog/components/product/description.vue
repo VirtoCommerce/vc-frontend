@@ -10,15 +10,16 @@
 </template>
 
 <script setup lang="ts">
-import { Product } from "@/xapi/types";
 import { PropType } from "vue";
 import { ProductTitledBlock } from "@/shared/catalog";
+import { Product } from "@/xapi/types";
 
 defineProps({
   product: {
     type: Object as PropType<Product>,
     required: true,
   },
+
   model: {
     type: Object,
     required: true,

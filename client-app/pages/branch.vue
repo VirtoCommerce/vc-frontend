@@ -1,14 +1,14 @@
 <template>
   <div
-    class="flex-grow px-7 pt-5 pb-7 bg-[color:var(--color-body-bg)] shadow-inner xl:px-19 lg:pt-5 lg:pb-11 transition"
-    :class="{ 'opacity-50 pointer-events-none': loading }"
+    class="grow bg-[color:var(--color-body-bg)] px-7 pt-5 pb-7 shadow-inner transition lg:pt-5 lg:pb-11 xl:px-19"
+    :class="{ 'pointer-events-none opacity-50': loading }"
   >
-    <h1 class="-ml-0.5 text-28 uppercase font-bold lg:text-34">{{ fulfillmentCenter?.name }}</h1>
+    <h1 class="-ml-0.5 text-28 font-bold uppercase lg:text-34">{{ fulfillmentCenter?.name }}</h1>
 
-    <div class="mt-4 lg:flex lg:items-start lg:mt-6">
-      <div class="lg:flex-grow lg:rounded lg:border lg:drop-shadow-md-x lg:bg-white">
+    <div class="mt-4 lg:mt-6 lg:flex lg:items-start">
+      <div class="lg:drop-shadow-md-x lg:grow lg:rounded lg:border lg:bg-white">
         <div
-          class="py-5 px-[1.4rem] rounded border bg-white text-base drop-shadow-md-x lg:bg-transparent lg:drop-shadow-none lg:px-8 lg:pt-6 lg:pb-5 lg:rounded-none lg:border-0"
+          class="drop-shadow-md-x rounded border bg-white py-5 px-[1.4rem] text-base lg:rounded-none lg:border-0 lg:bg-transparent lg:px-8 lg:pt-6 lg:pb-5 lg:drop-shadow-none"
         >
           <div class="mt-0.5 mb-1 lg:mb-0.5">
             <div class="mb-1 mr-1 font-bold lg:mb-2">{{ $t("pages.branch.address") }}</div>
@@ -17,7 +17,7 @@
             </div>
           </div>
 
-          <div class="flex flex-wrap mb-1">
+          <div class="mb-1 flex flex-wrap">
             <div class="mr-1 font-bold">{{ $t("pages.branch.phone") }}</div>
             <a v-if="fulfillmentCenter?.phone" :href="`tel:${fulfillmentCenter?.phone}`" class="hover:underline">
               {{ fulfillmentCenter?.phone }}
@@ -28,7 +28,7 @@
 
         <div
           v-if="fulfillmentCenter?.description"
-          class="mt-6 rounded border bg-white text-base drop-shadow-md-x lg:bg-transparent lg:drop-shadow-none lg:mt-0 lg:border-0 lg:rounded-none"
+          class="drop-shadow-md-x mt-6 rounded border bg-white text-base lg:mt-0 lg:rounded-none lg:border-0 lg:bg-transparent lg:drop-shadow-none"
         >
           <div class="hidden h-[18px] bg-gradient-to-b from-[#94949421] lg:block"></div>
 
@@ -36,23 +36,23 @@
         </div>
       </div>
 
-      <div class="mt-6 rounded border bg-white text-base drop-shadow-md-x lg:mt-0 lg:ml-8 lg:shrink-0 lg:w-[21.125rem]">
-        <div class="py-4 px-6 border-b lg:pt-5 lg:pb-4">
-          <h2 class="uppercase text-19 font-extrabold lg:text-21">{{ $t("pages.branch.other_branches") }}</h2>
+      <div class="drop-shadow-md-x mt-6 rounded border bg-white text-base lg:mt-0 lg:ml-8 lg:w-[21.125rem] lg:shrink-0">
+        <div class="border-b py-4 px-6 lg:pt-5 lg:pb-4">
+          <h2 class="text-19 font-extrabold uppercase lg:text-21">{{ $t("pages.branch.other_branches") }}</h2>
         </div>
-        <div class="pt-5 pb-7 px-11 lg:pt-3.5 lg:px-12 lg:pb-9">
+        <div class="px-11 pt-5 pb-7 lg:px-12 lg:pt-3.5 lg:pb-9">
           <ul class="list-disc space-y-7">
             <li v-for="(branch, index) in otherBranches" :key="index" class="text-primary marker:text-xl">
               <router-link
                 :to="`/branch/${branch.id}`"
-                class="mb-1 text-link text-[1.063rem] font-extrabold lg:text-base"
+                class="mb-1 text-[1.063rem] font-extrabold text-link lg:text-base"
               >
                 {{ branch.name }}
               </router-link>
-              <div v-if="branch.address" class="text-[color:var(--color-body-text)] text-sm break-words">
+              <div v-if="branch.address" class="break-words text-sm text-[color:var(--color-body-text)]">
                 {{ branch.address }}
               </div>
-              <div class="text-[color:var(--color-body-text)] text-sm">
+              <div class="text-sm text-[color:var(--color-body-text)]">
                 <b>{{ $t("pages.branch.phone") }}</b>
                 <a v-if="branch.phone" :href="`tel:${branch.phone}`" class="hover:underline">{{ branch.phone }}</a>
                 <span v-else>&ndash;</span>

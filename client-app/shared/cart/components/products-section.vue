@@ -5,7 +5,7 @@
       <template v-for="(group, vendorId) in itemsGroupedByVendor" :key="vendorId">
         <div v-if="group.items.length" class="space-y-3">
           <!-- Vendor -->
-          <div class="flex flex-wrap gap-x-3 max-w-full">
+          <div class="flex max-w-full flex-wrap gap-x-3">
             <VcVendor :vendor="group.vendor" />
             <VcRating v-if="$cfg.rating_enabled && group.vendor?.rating" :rating="group.vendor.rating" />
           </div>
@@ -32,12 +32,12 @@
       />
     </template>
 
-    <div class="hidden md:flex justify-end mt-5">
+    <div class="mt-5 hidden justify-end md:flex">
       <VcButton
         :is-disabled="disabled"
         kind="secondary"
         size="sm"
-        class="px-3 self-start uppercase font-bold"
+        class="self-start px-3 font-bold uppercase"
         is-outline
         @click="$emit('clear:cart')"
       >
@@ -48,9 +48,9 @@
 </template>
 
 <script setup lang="ts">
-import { LineItemType, ValidationErrorType } from "@/xapi";
 import { TLineItemsGroupByVendor } from "@/core";
 import { CartLineItems } from "@/shared/cart";
+import { LineItemType, ValidationErrorType } from "@/xapi";
 
 interface Props {
   grouped?: boolean;

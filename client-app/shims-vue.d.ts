@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { IThemeConfigPreset, IThemeContext } from "@/core/types";
 import { StorefrontPermissions, XApiPermissions } from "@/core/constants";
+import { IThemeConfigPreset, IThemeContext } from "@/core/types";
 
 declare module "*.vue" {
   import { DefineComponent } from "vue";

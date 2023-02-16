@@ -24,10 +24,10 @@
 </template>
 
 <script setup lang="ts">
-import { ProductCardGrid, ProductCardList, ProductSkeletonGrid, ProductSkeletonList } from "@/shared/catalog";
 import { computed, PropType } from "vue";
-import { Product } from "@/xapi/types";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
+import { ProductCardGrid, ProductCardList, ProductSkeletonGrid, ProductSkeletonList } from "@/shared/catalog";
+import { Product } from "@/xapi/types";
 
 defineEmits<{ (eventName: "item-link-click", product: Product, globalEvent: PointerEvent): void }>();
 

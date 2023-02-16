@@ -1,6 +1,6 @@
+import globals from "@/core/globals";
 import { CategoryConnection, Query, QueryCategoriesArgs } from "@/xapi/types";
 import searchCategoriesQueryDocument from "./searchCategoriesQuery.graphql";
-import globals from "@/core/globals";
 
 export default async function searchCategories(itemsPerPage: number, page: number): Promise<CategoryConnection> {
   const { storeId, userId, cultureName, currencyCode } = globals;

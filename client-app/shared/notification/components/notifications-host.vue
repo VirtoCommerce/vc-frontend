@@ -7,7 +7,7 @@
         :class="[
           'vc-notifications__item',
           `vc-notifications__item--${notification.type}`,
-          notification.closeButton ? 'pl-5 md:pl-12 pr-12' : 'px-5 md:px-12',
+          notification.closeButton ? 'pl-5 pr-12 md:pl-12' : 'px-5 md:px-12',
           notification.classes,
         ]"
       >

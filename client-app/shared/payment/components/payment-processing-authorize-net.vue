@@ -1,6 +1,6 @@
 <template>
   <!-- Initialization Error -->
-  <p v-if="initializationError" class="font-bold text-center md:text-left text-[color:var(--color-danger)]">
+  <p v-if="initializationError" class="text-center font-bold text-[color:var(--color-danger)] md:text-left">
     {{ initializationError }}
   </p>
 
@@ -15,23 +15,23 @@
         class="xl:w-2/3"
       />
 
-      <div class="flex xl:w-1/3 mt-6 xl:ml-6 gap-3 xl:gap-4">
-        <svg width="70" height="45" class="flex shrink-0 border border-gray-200 rounded">
+      <div class="mt-6 flex gap-3 xl:ml-6 xl:w-1/3 xl:gap-4">
+        <svg width="70" height="45" class="flex shrink-0 rounded border border-gray-200">
           <use href="/static/images/payment/methods/visa.svg#main" />
         </svg>
 
-        <svg width="70" height="45" class="flex shrink-0 border border-gray-200 rounded">
+        <svg width="70" height="45" class="flex shrink-0 rounded border border-gray-200">
           <use href="/static/images/payment/methods/mastercard.svg#main" />
         </svg>
 
-        <svg width="70" height="45" class="flex shrink-0 border border-gray-200 rounded">
+        <svg width="70" height="45" class="flex shrink-0 rounded border border-gray-200">
           <use href="/static/images/payment/methods/maestro.svg#main" />
         </svg>
       </div>
     </div>
 
-    <div class="flex flex-col md:flex-row items-center mt-6 xl:mt-8 gap-x-6 gap-y-4">
-      <p class="text-sm text-gray-500 text-center md:text-left">
+    <div class="mt-6 flex flex-col items-center gap-x-6 gap-y-4 md:flex-row xl:mt-8">
+      <p class="text-center text-sm text-gray-500 md:text-left">
         {{ $t("shared.payment.authorize_net.accept_terms_text") }}
 
         <router-link to="/agreement" class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]">
@@ -49,7 +49,7 @@
         :is-disabled="!isValidBankCard || disabled"
         :is-waiting="loading"
         size="lg"
-        class="shrink-0 uppercase w-full md:w-60 md:order-first"
+        class="w-full shrink-0 uppercase md:order-first md:w-60"
         @click="sendPaymentData"
       >
         {{ $t("shared.payment.authorize_net.pay_now_button") }}
@@ -62,12 +62,12 @@
 </template>
 
 <script setup lang="ts">
+import { clone } from "lodash";
 import { computed, PropType, ref, shallowRef, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import { clone } from "lodash";
 import { Logger, useGoogleAnalytics } from "@/core";
-import { CustomerOrderType, initializePayment, KeyValueType } from "@/xapi";
 import { BankCardErrorsType, BankCardForm, BankCardType, PaymentActionType, useAuthorizeNet } from "@/shared/payment";
+import { CustomerOrderType, initializePayment, KeyValueType } from "@/xapi";
 
 const emit = defineEmits<{
   (event: "success"): void;

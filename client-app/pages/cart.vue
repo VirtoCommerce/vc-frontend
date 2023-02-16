@@ -10,7 +10,7 @@
     :breadcrumbs="breadcrumbs"
   >
     <template #actions>
-      <VcButton :to="{ name: 'Catalog' }" size="lg" class="w-48 uppercase font-bold">
+      <VcButton :to="{ name: 'Catalog' }" size="lg" class="w-48 font-bold uppercase">
         {{ $t("common.buttons.continue_shopping") }}
       </VcButton>
     </template>
@@ -19,7 +19,7 @@
   <VcContainer v-else class="relative z-0">
     <VcLoaderOverlay :visible="loading" fixed-spinner />
 
-    <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block mx-5 md:mx-0" />
+    <VcBreadcrumbs :items="breadcrumbs" class="mx-5 hidden md:mx-0 lg:block" />
 
     <!-- Page title -->
     <VcTypography tag="h1" variant="h2" weight="bold" class="mb-5">
@@ -105,7 +105,7 @@
               v-if="$cfg.checkout_multistep_enabled"
               :to="{ name: 'Checkout' }"
               :is-disabled="isDisabledNextStep"
-              class="mt-4 uppercase w-full"
+              class="mt-4 w-full uppercase"
             >
               {{ $t("common.buttons.go_to_checkout") }}
             </VcButton>
@@ -115,7 +115,7 @@
               v-else
               :is-disabled="isDisabledOrderCreation"
               :is-waiting="creatingOrder"
-              class="mt-4 uppercase w-full"
+              class="mt-4 w-full uppercase"
               @click="createOrder"
             >
               {{ $t("common.buttons.place_order") }}
@@ -159,11 +159,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, ref } from "vue";
 import { invoke } from "@vueuse/core";
-import { useRouter } from "vue-router";
+import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { LineItemType } from "@/xapi";
+import { useRouter } from "vue-router";
 import { configInjectionKey, useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core";
 import { useUser } from "@/shared/account";
 import { GiftsSection, ProductsSection, useCart, useCoupon, usePurchaseOrderNumber } from "@/shared/cart";
@@ -174,6 +173,7 @@ import {
   ShippingDetailsSection,
   useCheckout,
 } from "@/shared/checkout";
+import { LineItemType } from "@/xapi";
 
 const config = inject(configInjectionKey, {});
 

@@ -4,7 +4,7 @@
       keypath="shared.wishlists.delete_wishlist_product_dialog.message"
       scope="global"
       tag="p"
-      class="py-6 md:py-10 px-6 border-b"
+      class="border-b p-6 md:py-10"
     >
       <template #productName>
         <b class="font-extrabold">{{ listItem.name }}</b>
@@ -13,16 +13,11 @@
 
     <template #actions="{ close }">
       <div class="flex grow justify-between space-x-4">
-        <VcButton
-          :is-waiting="loading"
-          kind="danger"
-          class="uppercase flex-grow lg:flex-grow-0 lg:px-12"
-          @click="remove(close)"
-        >
+        <VcButton :is-waiting="loading" kind="danger" class="grow uppercase lg:grow-0 lg:px-12" @click="remove(close)">
           {{ $t("shared.wishlists.delete_wishlist_product_dialog.delete_button") }}
         </VcButton>
 
-        <VcButton kind="secondary" class="uppercase flex-grow lg:flex-grow-0 lg:px-5" is-outline @click="close">
+        <VcButton kind="secondary" class="grow uppercase lg:grow-0 lg:px-5" is-outline @click="close">
           {{ $t("shared.wishlists.delete_wishlist_product_dialog.cancel_button") }}
         </VcButton>
       </div>
@@ -31,8 +26,8 @@
 </template>
 
 <script setup lang="ts">
-import { useWishlists } from "@/shared/wishlists";
 import { PropType } from "vue";
+import { useWishlists } from "@/shared/wishlists";
 import { InputRemoveWishlistItemType, LineItemType } from "@/xapi/types";
 
 const emit = defineEmits(["result"]);
@@ -42,6 +37,7 @@ const props = defineProps({
     type: Object as PropType<LineItemType>,
     required: true,
   },
+
   listId: {
     type: String,
     required: true,
