@@ -24,15 +24,15 @@
       <div class="flex flex-col gap-y-4">
         <div v-for="(item, index) in items" :key="index" class="flex flex-row gap-x-5">
           <div class="w-full">
-            <VcInput v-model.trim="item.productSku" :is-disabled="loading" placeholder="SKU" />
+            <VcInput v-model.trim="item.productSku" :disabled="loading" placeholder="SKU" />
           </div>
 
           <div class="w-1/3 xl:w-1/4 max-w-[164px]">
             <VcInput
               v-model="item.quantity"
-              :is-disabled="loading"
+              :disabled="loading"
               :max="maxQuantity"
-              min="1"
+              :min="1"
               type="number"
               placeholder="0"
               @update:modelValue="$nextTick(() => (item.quantity = String(validateQuantity($event) || '')))"

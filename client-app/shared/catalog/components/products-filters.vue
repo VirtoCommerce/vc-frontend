@@ -9,7 +9,7 @@
             class="flex-1 w-full h-8"
             input-class="leading-8 !h-8 !pl-2 !pr-6"
             maxlength="30"
-            :is-disabled="loading"
+            :disabled="loading"
             @keypress.enter="onSearchStart"
           />
 

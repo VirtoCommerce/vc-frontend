@@ -95,11 +95,7 @@
         v-html="$t('pages.home.subscription_block.info_message')"
       ></div>
       <div class="flex flex-grow w-full space-x-6">
-        <VcInput
-          class="flex-grow"
-          :without-border="true"
-          :placeholder="$t('pages.home.subscription_block.email_placeholder')"
-        />
+        <VcInput class="flex-grow" :placeholder="$t('pages.home.subscription_block.email_placeholder')" no-border />
         <!-- todo: use VcButton -->
         <button
           class="bg-white hover:bg-gray-200 px-6 uppercase text-sm font-roboto font-bold h-11 rounded shadow-md"

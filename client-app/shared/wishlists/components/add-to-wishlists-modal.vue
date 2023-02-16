@@ -60,10 +60,11 @@
               class="flex-grow ml-2.5 mr-3.5"
               :class="{ 'mb-4.5': !input.errorMessage }"
               v-model="input.listName"
-              :is-disabled="loading"
+              :disabled="loading"
               :maxlength="25"
-              is-required
-              :error-message="input.errorMessage"
+              required
+              :message="input.errorMessage"
+              :error="!!input.errorMessage"
             ></VcInput>
             <button class="mt-3.5" @click="removeInput(index)">
               <svg class="text-[color:var(--color-add-wishlist-dialog-delete-icon)]" width="16" height="16">

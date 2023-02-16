@@ -5,23 +5,25 @@
       :model-value="number.replace(/(.{4})/g, '$1 ')"
       @update:model-value="number = $event.replace(/\D/g, '')"
       :label="$t('shared.payment.bank_card_form.number_label')"
-      :error-message="formErrors.number || errors.number"
-      :is-readonly="isReadonly"
-      :is-disabled="isDisabled"
+      :message="formErrors.number || errors.number"
+      :error="!!formErrors.number || !!errors.number"
+      :readonly="isReadonly"
+      :disabled="isDisabled"
       placeholder="1111 1111 1111 1111"
       minlength="14"
       maxlength="23"
-      is-required
+      required
       @input="input"
     />
 
     <VcInput
       v-model="cardholderName"
       :label="$t('shared.payment.bank_card_form.cardholder_name_label')"
-      :error-message="formErrors.cardholderName || errors.cardholderName"
-      :is-readonly="isReadonly"
-      :is-disabled="isDisabled"
-      is-required
+      :message="formErrors.cardholderName || errors.cardholderName"
+      :error="!!formErrors.cardholderName || !!errors.cardholderName"
+      :readonly="isReadonly"
+      :disabled="isDisabled"
+      required
       @input="input"
     />
 
@@ -31,25 +33,26 @@
         v-model="expirationDate"
         :label="$t('shared.payment.bank_card_form.expiration_date_label')"
         :placeholder="$t('shared.payment.bank_card_form.expiration_date_placeholder')"
-        :error-message="expirationDateErrors"
-        :is-readonly="isReadonly"
-        :is-disabled="isDisabled"
+        :message="expirationDateErrors"
+        :error="!!expirationDateErrors"
+        :readonly="isReadonly"
+        :disabled="isDisabled"
         name="expirationDate"
         autocomplete="off"
         minlength="7"
         maxlength="7"
         class="basis-1/4"
-        is-required
+        required
         @input="input"
       />
 
-      <VcInput
+      <VcPassword
         v-mask="'####'"
         v-model="securityCode"
         :label="$t('shared.payment.bank_card_form.security_code_label')"
         :error-message="formErrors.securityCode || errors.securityCode"
-        :is-readonly="isReadonly"
-        :is-disabled="isDisabled"
+        :readonly="isReadonly"
+        :disabled="isDisabled"
         type="password"
         placeholder="111"
         name="securityCode"
@@ -58,7 +61,7 @@
         maxlength="4"
         class="basis-1/4"
         hide-password-switcher
-        is-required
+        required
         @input="input"
       />
     </div>

@@ -12,9 +12,10 @@
         v-model="listName"
         :label="$t('shared.wishlists.add_or_update_wishlist_dialog.list_name_label')"
         :placeholder="$t('shared.wishlists.add_or_update_wishlist_dialog.list_name_placeholder')"
-        :is-disabled="loading"
-        :error-message="errors[0]"
-        is-required
+        :disabled="loading"
+        :message="errors[0]"
+        :error="!!errors[0]"
+        required
         autofocus
       />
     </div>

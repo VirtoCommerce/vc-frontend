@@ -20,11 +20,12 @@
           v-model="firstName"
           :label="$t('pages.account.profile.first_name_label')"
           :placeholder="$t('pages.account.profile.first_name_placeholder')"
-          :is-disabled="isSubmitting"
-          :error-message="errors.firstName"
+          :disabled="isSubmitting"
+          :message="errors.firstName"
+          :error="!!errors.firstName"
           name="firstName"
           class="mb-5"
-          is-required
+          required
           :maxlength="64"
         />
 
@@ -32,11 +33,12 @@
           v-model="lastName"
           :label="$t('pages.account.profile.last_name_label')"
           :placeholder="$t('pages.account.profile.last_name_placeholder')"
-          :is-disabled="isSubmitting"
-          :error-message="errors.lastName"
+          :disabled="isSubmitting"
+          :message="errors.lastName"
+          :error="!!errors.lastName"
           name="lastName"
           class="mb-5"
-          is-required
+          required
           :maxlength="64"
         />
 
@@ -46,7 +48,7 @@
           :placeholder="$t('pages.account.profile.email_placeholder')"
           name="email"
           class="mb-5"
-          is-disabled
+          disabled
         />
 
         <div class="flex items-center my-5">
@@ -60,7 +62,7 @@
           />
         </div>
 
-        <VcInput
+        <VcPassword
           v-model="oldPassword"
           :label="$t('pages.account.profile.old_password_label')"
           :placeholder="$t('pages.account.profile.old_password_placeholder')"
@@ -73,7 +75,7 @@
           :maxlength="64"
         />
 
-        <VcInput
+        <VcPassword
           :model-value="newPassword"
           :label="$t('pages.account.profile.new_password_label')"
           :placeholder="$t('pages.account.profile.new_password_placeholder')"
@@ -88,7 +90,7 @@
           @update:model-value="oldPassword ? (newPassword = $event.trim()) : null"
         />
 
-        <VcInput
+        <VcPassword
           :model-value="confirmNewPassword"
           :label="$t('pages.account.profile.confirm_new_password_label')"
           :placeholder="$t('pages.account.profile.confirm_new_password_placeholder')"

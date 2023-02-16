@@ -1,6 +1,6 @@
 <template>
   <form @submit="onSubmit">
-    <VcInput
+    <VcPassword
       v-model="password"
       class="mb-4 w-full"
       :label="$t(`shared.account.${localizationFormTerm}.password_label`)"
@@ -12,7 +12,7 @@
       :maxlength="64"
     />
 
-    <VcInput
+    <VcPassword
       v-model="confirmPassword"
       class="mb-4 w-full"
       :label="$t(`shared.account.${localizationFormTerm}.confirm_password_label`)"

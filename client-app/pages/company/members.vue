@@ -149,7 +149,7 @@
             maxlength="64"
             class="w-full"
             input-class="font-medium rounded-r-none !text-sm disabled:bg-gray-200 !pl-4 !pr-11"
-            :is-disabled="contactsLoading"
+            :disabled="contactsLoading"
             @keypress.enter="applyKeyword"
             :placeholder="$t('pages.company.members.search_placeholder')"
           />

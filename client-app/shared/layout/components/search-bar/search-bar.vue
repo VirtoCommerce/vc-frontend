@@ -111,7 +111,6 @@ import { useCategoriesRoutes, useGoogleAnalytics, useRouteQueryParam } from "@/c
 import { Category } from "@/xapi/types";
 import { useDebounceFn, whenever } from "@vueuse/core";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
-import VcInput from "@/ui-kit/components/atoms/input/vc-input.vue";
 
 // Number of categories column items in dropdown list
 const CATEGORIES_ITEMS_PER_COLUMN = 4;

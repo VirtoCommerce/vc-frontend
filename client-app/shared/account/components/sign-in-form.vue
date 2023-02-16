@@ -15,23 +15,24 @@
       class="mb-4"
       :label="$t('shared.account.sign_in_form.email_label')"
       :placeholder="$t('shared.account.sign_in_form.email_placeholder')"
-      :is-disabled="loading || isAuthenticated"
-      is-required
-      :error-message="errors.email"
+      :disabled="loading || isAuthenticated"
+      required
+      :message="errors.email"
+      :error="!!errors.email"
       autocomplete="email"
-    ></VcInput>
+    />
 
-    <VcInput
+    <VcPassword
       v-model="password"
+      name="password"
       class="mb-4"
       :label="$t('shared.account.sign_in_form.password_label')"
       :placeholder="$t('shared.account.sign_in_form.password_placeholder')"
-      :is-disabled="loading || isAuthenticated"
-      type="password"
-      is-required
-      :error-message="errors.password"
-      autocomplete="password"
-    ></VcInput>
+      :disabled="loading || isAuthenticated"
+      required
+      :message="errors.password"
+      :error="!!errors.password"
+    />
 
     <div class="flex justify-between">
       <VcCheckbox v-model="rememberMe" :disabled="loading || isAuthenticated">

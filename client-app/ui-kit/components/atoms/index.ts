@@ -19,7 +19,6 @@ export { default as VcHexagonIcon } from "./hexagon-icon/vc-hexagon-icon.vue";
 export { default as VcImage } from "./image/vc-image.vue";
 export { default as VcInStock } from "./in-stock/vc-in-stock.vue";
 export { default as VcInfinityScrollLoader } from "./infinity-scroll-loader/vc-infinity-scroll-loader.vue";
-export { default as VcInput } from "./input/vc-input.vue";
 export { default as VcLabel } from "./label/vc-label.vue";
 export { default as VcLoader } from "./loader/vc-loader.vue";
 export { default as VcMarkdownRender } from "./markdown-render/vc-markdown-render.vue";

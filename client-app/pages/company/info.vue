@@ -11,8 +11,9 @@
         <VcInput
           v-model.trim="organizationName"
           :label="$t('pages.company.info.labels.company_name')"
-          :is-disabled="!userCanEditOrganization || loadingOrganization || loadingUser"
-          :error-message="errors[0]"
+          :disabled="!userCanEditOrganization || loadingOrganization || loadingUser"
+          :message="errors[0]"
+          :error="!!errors[0]"
           name="organization-name"
           autocomplete="off"
           maxlength="64"

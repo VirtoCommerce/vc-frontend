@@ -17,7 +17,7 @@
         <div class="relative grow">
           <VcInput
             v-model="keyword"
-            :is-disabled="fetching"
+            :disabled="fetching"
             :placeholder="$t('pages.account.quotes.search_placeholder')"
             maxlength="64"
             class="w-full"
