@@ -8,15 +8,18 @@ export default {
   argTypes: {
     size: { control: "radio", options: ["sm", "md"] },
     type: { control: "radio", options: ["text", "password", "message"] },
+    onClick: { action: "click" },
+    onKeypress: { action: "keypress" },
   },
 } as Meta<typeof VcInput>;
 
 const Template: StoryFn<typeof VcInput> = (args) => ({
   components: { VcInput },
+  data: () => ({ inputValue: "" }),
   setup() {
     return { args };
   },
-  template: '<VcInput v-bind="args" />',
+  template: '<VcInput v-bind="args" @click="onClick" @keypress="onKeypress" v-model="inputValue" />',
 });
 
 //👇 Each story then reuses that template

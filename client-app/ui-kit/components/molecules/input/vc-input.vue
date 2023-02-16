@@ -34,6 +34,8 @@
         :step="stepValue"
         :autocomplete="autocomplete"
         @input="change"
+        @click="emit('click', $event)"
+        @keypress="emit('keypress', $event)"
       />
 
       <div class="vc-input__decorator" v-if="$slots.endDecorator">
@@ -79,6 +81,8 @@ interface Props {
 
 interface Emits {
   (event: "update:modelValue", value?: string | number): void;
+  (event: "click", value: MouseEvent): void;
+  (event: "keypress", value: KeyboardEvent): void;
 }
 
 const emit = defineEmits<Emits>();

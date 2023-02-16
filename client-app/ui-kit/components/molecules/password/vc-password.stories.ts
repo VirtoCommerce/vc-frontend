@@ -7,11 +7,9 @@ export default {
   component: VcPassword,
 } as Meta<typeof VcPassword>;
 
-const password = "";
-
 const Template: StoryFn<typeof VcPassword> = (args) => ({
   components: { VcPassword },
-  data: () => ({ password }),
+  data: () => ({ password: "" }),
   setup() {
     return { args };
   },
