@@ -25,14 +25,14 @@ defineProps<Props>();
 
 <style lang="scss">
 .vc-label {
-  @apply mb-0.5 text-15 font-bold text-[color:var(--color-body-text)];
+  @apply mb-0.5 text-15 font-lato font-bold text-[color:var(--color-body-text)];
 
   &--error {
     @apply text-[color:var(--color-danger)];
   }
 
   &__asterisk {
-    @apply text-[color:var(--color-danger)];
+    @apply ml-0.5 text-[color:var(--color-danger)];
   }
 }
 </style>
