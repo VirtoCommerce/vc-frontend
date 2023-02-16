@@ -19,7 +19,8 @@
         v-if="!hidePasswordSwitcher"
         tabindex="-1"
         type="button"
-        class="px-3 text-[color:var(--color-primary)]"
+        class="px-3 text-[color:var(--color-primary)] disabled:text-gray-300"
+        :disabled="disabled"
         @click="togglePasswordVisibility"
       >
         <VcIcon :name="passwordVisibilityIcon" />

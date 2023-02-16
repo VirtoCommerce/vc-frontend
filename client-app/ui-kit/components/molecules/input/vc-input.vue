@@ -11,7 +11,7 @@
       },
     ]"
   >
-    <VcLabel v-if="label" :required="required">{{ label }}</VcLabel>
+    <VcLabel v-if="label" :required="required" :error="error">{{ label }}</VcLabel>
 
     <div class="vc-input__container">
       <div class="vc-input__decorator" v-if="$slots.startDecorator">
@@ -130,7 +130,7 @@ watchEffect(() => {
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .vc-input {
   $sizeSm: "";
   $sizeMd: "";
@@ -196,7 +196,19 @@ watchEffect(() => {
     @apply relative px-3 appearance-none bg-transparent rounded text-base leading-none w-full outline-none min-w-0;
 
     &:autofill {
-      box-shadow: 0 0 0px 1000px #fff inset;
+      &:disabled {
+        box-shadow: 0 0 0px 1000px #f9fafb inset;
+      }
+
+      &:not(:disabled) {
+        box-shadow: 0 0 0px 1000px #fff inset;
+      }
+    }
+
+    &::placeholder {
+      #{$error} & {
+        @apply opacity-80 text-[color:var(--color-danger)];
+      }
     }
   }
 
@@ -208,8 +220,12 @@ watchEffect(() => {
     }
 
     #{$disabled} &,
-    &:disabled {
+    input:disabled ~ & {
       @apply bg-gray-50;
+    }
+
+    #{$error} & {
+      @apply border-[color:var(--color-danger)];
     }
 
     #{$noBorder} & {
