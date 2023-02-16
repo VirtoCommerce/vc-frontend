@@ -23,11 +23,11 @@ interface Emits {
   (event: "update:comment", value: string): void;
 }
 
+const emit = defineEmits<Emits>();
+
 const props = withDefaults(defineProps<Props>(), {
   comment: "",
 });
-
-const emit = defineEmits<Emits>();
 
 const text = useVModel(props, "comment", emit);
 </script>

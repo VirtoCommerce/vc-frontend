@@ -76,17 +76,17 @@ import { LineItemType } from "@/xapi/types";
 import { computedEager } from "@vueuse/shared";
 import { getProductRoute } from "@/core";
 
+defineEmits<{
+  (eventName: "link-click", globalEvent: PointerEvent): void;
+  (eventName: "remove"): void;
+}>();
+
 const props = defineProps({
   listItem: {
     type: Object as PropType<LineItemType>,
     required: true,
   },
 });
-
-defineEmits<{
-  (eventName: "link-click", globalEvent: PointerEvent): void;
-  (eventName: "remove"): void;
-}>();
 
 const link = computed<RouteLocationRaw | undefined>(() =>
   props.listItem.product ? getProductRoute(props.listItem.product.id, props.listItem.product.slug) : undefined

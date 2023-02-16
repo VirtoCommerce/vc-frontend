@@ -34,12 +34,12 @@
 </template>
 
 <script setup lang="ts">
+defineEmits(["update:mode"]);
+
 defineProps({
   mode: {
     type: String,
     default: "grid",
   },
 });
-
-defineEmits(["update:mode"]);
 </script>

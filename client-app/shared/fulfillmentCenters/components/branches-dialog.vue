@@ -178,12 +178,7 @@ import BranchItem from "./branch-item.vue";
 import BranchSearch from "./branch-search.vue";
 import { useFulfillmentCenters, IFulfillmentCenter } from "@/shared/fulfillmentCenters";
 
-const { loadFulfillmentCenters, fulfillmentCenters } = useFulfillmentCenters();
-
-const showSelectedBranchesMobile = ref(false);
-const searchInput = ref<string>("");
-const branches = computed(() => fulfillmentCenters.value.filter((item) => searchFilter(item)));
-const selectedBranchesIds = ref<string[]>([]);
+const emit = defineEmits(["save"]);
 
 const props = defineProps({
   selectedBranches: {
@@ -191,7 +186,13 @@ const props = defineProps({
     default: () => [],
   },
 });
-const emit = defineEmits(["save"]);
+
+const { loadFulfillmentCenters, fulfillmentCenters } = useFulfillmentCenters();
+
+const showSelectedBranchesMobile = ref(false);
+const searchInput = ref<string>("");
+const branches = computed(() => fulfillmentCenters.value.filter((item) => searchFilter(item)));
+const selectedBranchesIds = ref<string[]>([]);
 
 loadFulfillmentCenters();
 

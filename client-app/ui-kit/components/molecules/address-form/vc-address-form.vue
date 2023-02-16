@@ -145,6 +145,11 @@ import { CountryRegionType, CountryType, MemberAddressType } from "@/xapi/types"
 import { getAddressName, Logger } from "@/core/utilities";
 import * as yup from "yup";
 
+const emit = defineEmits<{
+  (event: "update:modelValue", address: MemberAddressType): void;
+  (event: "save", address: MemberAddressType): void;
+}>();
+
 const props = defineProps({
   disabled: Boolean,
   requiredEmail: Boolean,
@@ -164,11 +169,6 @@ const props = defineProps({
     required: true,
   },
 });
-
-const emit = defineEmits<{
-  (event: "update:modelValue", address: MemberAddressType): void;
-  (event: "save", address: MemberAddressType): void;
-}>();
 
 const _emptyAddress: Readonly<MemberAddressType> = {
   isDefault: false,

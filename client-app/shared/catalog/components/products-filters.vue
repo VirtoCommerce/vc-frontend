@@ -98,12 +98,11 @@ import { eagerComputed, useBreakpoints, breakpointsTailwind } from "@vueuse/core
 import { watch, PropType, ref, shallowReactive } from "vue";
 import _ from "lodash";
 
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("lg");
-
-const localKeyword = ref("");
-const localFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: false, branches: [] });
-
+const emit = defineEmits<{
+  (e: "search", keyword: string): void;
+  (e: "change", value: ProductsFilters): void;
+  (e: "openBranches"): void;
+}>();
 const props = defineProps({
   loading: {
     type: Boolean,
@@ -125,12 +124,11 @@ const props = defineProps({
     default: true,
   },
 });
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("lg");
 
-const emit = defineEmits<{
-  (e: "search", keyword: string): void;
-  (e: "change", value: ProductsFilters): void;
-  (e: "openBranches"): void;
-}>();
+const localKeyword = ref("");
+const localFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: false, branches: [] });
 
 watch(
   () => props.filters.facets,

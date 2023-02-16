@@ -42,8 +42,8 @@ interface Emits {
   (event: "remove:item", value: LineItemType): void;
 }
 
-defineProps<Prop>();
 defineEmits<Emits>();
+defineProps<Prop>();
 </script>
 
 <style scoped lang="scss">

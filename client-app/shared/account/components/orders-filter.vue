@@ -61,6 +61,8 @@ import { configInjectionKey } from "@/core/constants";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useUserOrdersFilter } from "@/shared/account/";
 
+const emit = defineEmits(["change"]);
+
 const config = inject(configInjectionKey);
 
 const { filterData, applyFilters, resetFilters, isFilterEmpty, isFilterDirty } = useUserOrdersFilter();
@@ -73,8 +75,6 @@ const availableStatuses = config?.orders_statuses || [];
 function isSelectedStatus(status: string) {
   return filterData.value.statuses.indexOf(status) !== -1;
 }
-
-const emit = defineEmits(["change"]);
 
 function onChange() {
   emit("change");

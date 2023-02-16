@@ -45,6 +45,8 @@ import { useCountries } from "@/core/composables";
 import { onMounted, PropType, ref, Ref, watchEffect } from "vue";
 import { clone } from "lodash";
 
+const emit = defineEmits(["result"]);
+
 const props = defineProps({
   address: {
     type: Object as PropType<MemberAddressType>,
@@ -54,8 +56,6 @@ const props = defineProps({
 
 const { countries, loadCountries } = useCountries();
 const editableAddress: Ref<MemberAddressType | null> = ref(null);
-
-const emit = defineEmits(["result"]);
 
 onMounted(async () => {
   if (!countries.value.length) {

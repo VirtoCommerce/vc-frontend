@@ -25,9 +25,6 @@ import { useProductsRoutes } from "@/core";
 import { ProductCardGrid, useProducts } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
 
-const { products, fetchProducts } = useProducts();
-const productsRoutes = useProductsRoutes(products);
-
 const props = defineProps({
   model: {
     type: Object,
@@ -38,6 +35,8 @@ const props = defineProps({
     required: true,
   },
 });
+const { products, fetchProducts } = useProducts();
+const productsRoutes = useProductsRoutes(products);
 
 watchEffect(async () => {
   await fetchProducts({

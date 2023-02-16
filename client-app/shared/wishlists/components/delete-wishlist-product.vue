@@ -35,6 +35,8 @@ import { useWishlists } from "@/shared/wishlists";
 import { PropType } from "vue";
 import { InputRemoveWishlistItemType, LineItemType } from "@/xapi/types";
 
+const emit = defineEmits(["result"]);
+
 const props = defineProps({
   listItem: {
     type: Object as PropType<LineItemType>,
@@ -45,8 +47,6 @@ const props = defineProps({
     required: true,
   },
 });
-
-const emit = defineEmits(["result"]);
 
 const { loading, removeItemsFromWishlists } = useWishlists();
 

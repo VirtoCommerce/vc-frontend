@@ -137,7 +137,7 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { isEqualAddresses } from "@/core/utilities";
 import { useI18n } from "vue-i18n";
 
-const { t } = useI18n();
+defineEmits(["result", "addNewAddress"]);
 
 const props = defineProps({
   currentAddress: {
@@ -156,7 +156,7 @@ const props = defineProps({
   },
 });
 
-defineEmits(["result", "addNewAddress"]);
+const { t } = useI18n();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");

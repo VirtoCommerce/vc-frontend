@@ -25,6 +25,11 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
+const emit = defineEmits<{
+  (event: "update:modelValue", value: boolean | any[]): void;
+  (event: "change", value: boolean | any[]): void;
+}>();
+
 const props = defineProps({
   disabled: Boolean,
 
@@ -44,11 +49,6 @@ const props = defineProps({
     default: undefined,
   },
 });
-
-const emit = defineEmits<{
-  (event: "update:modelValue", value: boolean | any[]): void;
-  (event: "change", value: boolean | any[]): void;
-}>();
 
 const checked = computed<boolean>(() =>
   typeof props.modelValue === "boolean" ? props.modelValue : props.modelValue.includes(props.value)

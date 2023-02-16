@@ -17,6 +17,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
+defineEmits(["update:modelValue"]);
+
 const props = defineProps({
   label: {
     type: String,
@@ -33,6 +35,4 @@ const props = defineProps({
 });
 
 const checked = computed(() => props.modelValue === props.value);
-
-defineEmits(["update:modelValue"]);
 </script>

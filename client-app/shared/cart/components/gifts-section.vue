@@ -32,9 +32,9 @@ interface Emits {
   (event: "toggle:gift", value: ExtendedGiftItemType): void;
 }
 
+defineEmits<Emits>();
+
 withDefaults(defineProps<Props>(), {
   gifts: () => [],
 });
-
-defineEmits<Emits>();
 </script>

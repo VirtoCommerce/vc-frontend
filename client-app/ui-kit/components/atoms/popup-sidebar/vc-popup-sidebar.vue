@@ -33,7 +33,7 @@ export default {
 import { toRefs, watch } from "vue";
 import { useDomUtils } from "@/core/composables";
 
-const { toggleBodyScrollable } = useDomUtils();
+const emit = defineEmits(["hide"]);
 
 const props = defineProps({
   isVisible: {
@@ -42,13 +42,13 @@ const props = defineProps({
   },
 });
 
+const { toggleBodyScrollable } = useDomUtils();
+
 const { isVisible } = toRefs(props);
 
 watch(isVisible, (value) => {
   toggleBodyScrollable(!value);
 });
-
-const emit = defineEmits(["hide"]);
 
 function onHide() {
   emit("hide");

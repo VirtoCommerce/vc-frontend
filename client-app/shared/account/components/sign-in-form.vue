@@ -82,15 +82,15 @@ import { useCart } from "@/shared/cart";
 import { mergeCart } from "@/xapi/graphql/cart";
 import { eagerComputed } from "@vueuse/core";
 
+const emit = defineEmits(["succeeded"]);
+
+const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButtons: false });
+
 const USER_IS_LOCKED_OUT_ERROR_CODE = "user_is_locked_out";
 
 const { t } = useI18n();
 const { cart, fetchCart } = useCart();
 const { signMeIn, user, isAuthenticated } = useUser();
-
-const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButtons: false });
-
-const emit = defineEmits(["succeeded"]);
 
 const loading = ref(false);
 const authError = ref(false);

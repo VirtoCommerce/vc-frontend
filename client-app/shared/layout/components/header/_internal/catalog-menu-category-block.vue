@@ -47,19 +47,17 @@ import { computed, PropType, ref } from "vue";
 import { useCategoriesRoutes } from "@/core";
 import { Category } from "@/xapi";
 
-const SHORT_VIEW_ITEMS_COUNT = 5;
-const showAll = ref(false);
-
+const emit = defineEmits<{
+  (event: "select"): void;
+}>();
 const props = defineProps({
   category: {
     type: Object as PropType<Category>,
     required: true,
   },
 });
-
-const emit = defineEmits<{
-  (event: "select"): void;
-}>();
+const SHORT_VIEW_ITEMS_COUNT = 5;
+const showAll = ref(false);
 
 const subcategories = computed<Category[]>(() => props.category.childCategories || []);
 const displayedCategories = computed<Category[]>(() =>

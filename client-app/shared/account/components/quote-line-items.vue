@@ -193,6 +193,8 @@ import { QuoteItemType } from "@/xapi";
 import { VcPriceDisplay } from "@/ui-kit/components";
 import { extendQuoteItem } from "@/shared/account";
 
+defineEmits(["remove:item", "update:item"]);
+
 const props = defineProps({
   items: {
     type: Array as PropType<QuoteItemType[]>,
@@ -203,8 +205,6 @@ const props = defineProps({
     type: Boolean,
   },
 });
-
-defineEmits(["remove:item", "update:item"]);
 
 const extendedItems = computed<ReturnType<typeof extendQuoteItem>[]>(() =>
   props.items.map((item: QuoteItemType) => extendQuoteItem(item))

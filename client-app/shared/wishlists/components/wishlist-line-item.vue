@@ -103,9 +103,8 @@ interface Emits {
   (event: "remove"): void;
 }
 
-const props = defineProps<Prop>();
 defineEmits<Emits>();
-
+const props = defineProps<Prop>();
 const ga = useGoogleAnalytics();
 
 const extendedItem = computed(() => extendWishListItem(props.item));

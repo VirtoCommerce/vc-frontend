@@ -43,14 +43,14 @@ import { Product as ProductType } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";
 import { getProductRoute } from "@/core";
 
+defineEmits<{ (eventName: "link-click", globalEvent: PointerEvent): void }>();
+
 const props = defineProps({
   product: {
     type: Object as PropType<ProductType>,
     required: true,
   },
 });
-
-defineEmits<{ (eventName: "link-click", globalEvent: PointerEvent): void }>();
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
 </script>

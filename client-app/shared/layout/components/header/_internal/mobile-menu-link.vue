@@ -60,9 +60,8 @@ interface Emits {
   (event: "close"): void;
 }
 
-const props = withDefaults(defineProps<Props>(), { count: 0 });
 const emit = defineEmits<Emits>();
-
+const props = withDefaults(defineProps<Props>(), { count: 0 });
 const isParent = computed<boolean>(() => !!props.link.children?.length);
 const isLink = computed<boolean>(() => !!props.link.route && !isParent.value);
 const preparedCount = computed<string>(() => numberToShortString(props.count));

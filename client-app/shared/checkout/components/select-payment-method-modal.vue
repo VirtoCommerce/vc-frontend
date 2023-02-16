@@ -47,6 +47,8 @@
 import { PaymentMethodType } from "@/xapi/types";
 import { PropType, ref } from "vue";
 
+defineEmits(["result"]);
+
 const props = defineProps({
   currentMethodCode: {
     type: String,
@@ -63,8 +65,6 @@ const props = defineProps({
     default: undefined,
   },
 });
-
-defineEmits(["result"]);
 
 const currentMethod = props.availableMethods.find((item) => item.code === props.currentMethodCode);
 const selectedMethod = ref(currentMethod);

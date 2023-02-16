@@ -122,11 +122,11 @@ interface Emits {
   (event: "change", value: any): void;
 }
 
+const emit = defineEmits<Emits>();
+
 const props = withDefaults(defineProps<Props>(), {
   size: "md",
 });
-
-const emit = defineEmits<Emits>();
 
 const transitionDuration = 100;
 

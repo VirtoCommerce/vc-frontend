@@ -161,9 +161,8 @@ interface IEmits {
   (event: "remove"): void;
 }
 
-const props = defineProps<IProps>();
 const emit = defineEmits<IEmits>();
-
+const props = defineProps<IProps>();
 let timeoutIdOfQuantityChange: number;
 
 const quantity = ref<number | undefined>(props.item.quantity);

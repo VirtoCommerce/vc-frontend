@@ -85,6 +85,8 @@ export default {
 import { TransitionRoot, TransitionChild, Dialog, DialogOverlay, DialogTitle } from "@headlessui/vue";
 import { computed, ref, watchSyncEffect } from "vue";
 
+defineEmits(["close"]);
+
 const props = defineProps({
   hideActions: Boolean,
 
@@ -119,8 +121,6 @@ const props = defineProps({
     default: false,
   },
 });
-
-defineEmits(["close"]);
 
 const isOpen = ref(true);
 

@@ -82,6 +82,8 @@
 </template>
 
 <script setup lang="ts">
+defineEmits(["update:page"]);
+
 defineProps({
   page: {
     type: Number,
@@ -93,6 +95,4 @@ defineProps({
     default: 1,
   },
 });
-
-defineEmits(["update:page"]);
 </script>

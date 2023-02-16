@@ -19,6 +19,11 @@
 import { dateToIsoDateString } from "@/core/utilities";
 import { computed } from "vue";
 
+const emit = defineEmits<{
+  (e: "update:modelValue", value: Date | undefined): void;
+  (e: "change", value: Date | undefined): void;
+}>();
+
 const props = defineProps({
   autofocus: Boolean,
   label: {
@@ -50,11 +55,6 @@ const props = defineProps({
 
 // convert input value to string format yyyy-MM-dd
 const inputValue = computed(() => dateToIsoDateString(props.modelValue));
-
-const emit = defineEmits<{
-  (e: "update:modelValue", value: Date | undefined): void;
-  (e: "change", value: Date | undefined): void;
-}>();
 
 function change(event: Event) {
   const newValue: string = (event.target as HTMLInputElement).value;

@@ -73,6 +73,11 @@ import { clone } from "lodash";
 import { BankCardErrorsType, BankCardType } from "@/shared/payment";
 import { useI18n } from "vue-i18n";
 
+const emit = defineEmits<{
+  (event: "update:modelValue", bankCardData: Partial<BankCardType>): void;
+  (event: "update:valid", value: boolean): void;
+}>();
+
 const props = defineProps({
   isReadonly: Boolean,
   isDisabled: Boolean,
@@ -92,11 +97,6 @@ const props = defineProps({
     default: () => ({}),
   },
 });
-
-const emit = defineEmits<{
-  (event: "update:modelValue", bankCardData: Partial<BankCardType>): void;
-  (event: "update:valid", value: boolean): void;
-}>();
 
 const { t } = useI18n();
 

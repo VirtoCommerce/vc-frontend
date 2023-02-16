@@ -28,6 +28,8 @@ import { PropType } from "vue";
 import { RouteLocationRaw } from "vue-router";
 import { eagerComputed } from "@vueuse/core";
 
+defineEmits(["click"]);
+
 const props = defineProps({
   kind: {
     type: String as PropType<"primary" | "secondary" | "success" | "warning" | "danger" | "custom">,
@@ -71,8 +73,6 @@ const props = defineProps({
     default: null,
   },
 });
-
-defineEmits(["click"]);
 
 const isEnabled = eagerComputed<boolean>(() => !props.isDisabled && !props.isWaiting);
 const isLink = eagerComputed<boolean>(() => !!props.to && isEnabled.value);

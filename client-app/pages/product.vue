@@ -67,14 +67,14 @@ import { BackButtonInHeader } from "@/shared/layout";
 import { useI18n } from "vue-i18n";
 import { buildBreadcrumbs } from "@/core";
 
-const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
-
 const props = defineProps({
   productId: {
     type: String,
     default: "",
   },
 });
+
+const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
 const relatedProductsCarouselOptions: CarouselOptions = {
   spaceBetween: 30,

@@ -21,6 +21,8 @@ import { shallowRef, ref, onUnmounted, PropType, watch } from "vue";
 import { bottom, createPopper, Instance, Placement, PositioningStrategy } from "@popperjs/core";
 import { onClickOutside } from "@vueuse/core";
 
+const emit = defineEmits<{ (e: "shown", isShown: boolean): void }>();
+
 const props = defineProps({
   placement: {
     type: String as PropType<Placement>,
@@ -75,8 +77,6 @@ function toggleTooltip(show: boolean): void {
     tooltipInstance = null;
   }
 }
-
-const emit = defineEmits<{ (e: "shown", isShown: boolean): void }>();
 
 watch(isShown, (value: boolean) => emit("shown", value));
 

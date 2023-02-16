@@ -353,14 +353,13 @@ import { AddToCart } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import { Product } from "@/xapi";
 
+const props = defineProps<IProps>();
 const FILTERS_RESET_TIMEOUT_IN_MS = 500;
 const watchStopHandles: WatchStopHandle[] = [];
 
 interface IProps {
   categoryId?: string;
 }
-
-const props = defineProps<IProps>();
 
 const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);

@@ -82,12 +82,12 @@ import { useIdentityErrorTranslator } from "@/core/composables";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 
-const emailsValidationPattern =
-  /^([a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]{2,})+([,;]|\r|\r\n|\n))*([a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]{2,})+)$/;
-
 const emit = defineEmits<{
   (e: "result", succeed: boolean): void;
 }>();
+
+const emailsValidationPattern =
+  /^([a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]{2,})+([,;]|\r|\r\n|\n))*([a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]{2,})+)$/;
 
 const popupComponent = shallowRef<any>(null);
 const loading = ref(false);

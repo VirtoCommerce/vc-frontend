@@ -67,11 +67,11 @@ interface Emits {
   (event: "clear:cart"): void;
 }
 
+defineEmits<Emits>();
+
 withDefaults(defineProps<Props>(), {
   items: () => [],
   itemsGroupedByVendor: () => [],
   validationErrors: () => [],
 });
-
-defineEmits<Emits>();
 </script>

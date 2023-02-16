@@ -160,6 +160,8 @@ import { OrderLineItemType } from "@/xapi";
 import { VcPriceDisplay } from "@/ui-kit/components";
 import { extendOrderItem } from "..";
 
+defineEmits(["remove:item", "update:item"]);
+
 const props = defineProps({
   readonly: Boolean,
 
@@ -169,8 +171,6 @@ const props = defineProps({
     required: true,
   },
 });
-
-defineEmits(["remove:item", "update:item"]);
 
 const extendedItems = computed<ReturnType<typeof extendOrderItem>[]>(() =>
   props.items.map((item: OrderLineItemType) => extendOrderItem(item))

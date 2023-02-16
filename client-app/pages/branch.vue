@@ -69,15 +69,15 @@
 import { watch, computed } from "vue";
 import { useFulfillmentCenters } from "@/shared/fulfillmentCenters";
 
-const { loading, loadFulfillmentCenter, fulfillmentCenter, loadFulfillmentCenters, fulfillmentCenters } =
-  useFulfillmentCenters();
-
 const props = defineProps({
   branchId: {
     type: String,
     default: "",
   },
 });
+
+const { loading, loadFulfillmentCenter, fulfillmentCenter, loadFulfillmentCenters, fulfillmentCenters } =
+  useFulfillmentCenters();
 
 const otherBranches = computed(() => fulfillmentCenters.value.filter((item) => item.id !== props.branchId));
 loadFulfillmentCenter(props.branchId);

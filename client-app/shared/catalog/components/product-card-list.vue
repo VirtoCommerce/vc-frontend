@@ -153,14 +153,14 @@ import { RouteLocationRaw } from "vue-router";
 import { DiscountBadge, Vendor } from "@/shared/catalog";
 import { getProductRoute } from "@/core";
 
+defineEmits<{ (eventName: "link-click", globalEvent: PointerEvent): void }>();
+
 const props = defineProps({
   product: {
     type: Object as PropType<Product>,
     required: true,
   },
 });
-
-defineEmits<{ (eventName: "link-click", globalEvent: PointerEvent): void }>();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isSmallScreen = breakpoints.smaller("xl");

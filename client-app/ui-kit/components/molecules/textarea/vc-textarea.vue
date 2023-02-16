@@ -74,12 +74,12 @@ interface Emits {
   (event: "update:modelValue", value: string): void;
 }
 
+const emit = defineEmits<Emits>();
+
 const props = withDefaults(defineProps<Props>(), {
   modelValue: "",
   rows: 2,
 });
-
-const emit = defineEmits<Emits>();
 
 const componentId = useComponentId("textarea-");
 const text = useVModel(props, "modelValue", emit);

@@ -61,8 +61,6 @@ import { useGoogleAnalytics } from "@/core";
 
 const emit = defineEmits(["update:lineitem"]);
 
-const input = ref<HTMLInputElement>();
-
 const props = defineProps({
   product: {
     type: Object as PropType<Product | VariationType>,
@@ -73,6 +71,8 @@ const props = defineProps({
     default: false,
   },
 });
+
+const input = ref<HTMLInputElement>();
 
 // Define max qty available to add
 const MAX_VALUE = 999999;

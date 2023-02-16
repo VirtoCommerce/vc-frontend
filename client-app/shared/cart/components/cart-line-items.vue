@@ -76,12 +76,12 @@ interface IEmits {
   (event: "remove:item", value: LineItemType): void;
 }
 
+defineEmits<IEmits>();
+
 const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
   validationErrors: () => [],
 });
-
-defineEmits<IEmits>();
 
 const subtotal = computed<number>(() => sumBy(props.items, (item: LineItemType) => item.extendedPrice?.amount));
 

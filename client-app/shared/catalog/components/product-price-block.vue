@@ -105,19 +105,19 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 
-const route = useRoute();
-
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const { t } = useI18n();
-
-const divUnderSharedPopover = shallowRef<HTMLElement | null>(null);
-
 const props = defineProps({
   product: {
     type: Object as PropType<Product>,
     required: true,
   },
 });
+
+const route = useRoute();
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const { t } = useI18n();
+
+const divUnderSharedPopover = shallowRef<HTMLElement | null>(null);
 
 const isMobile = breakpoints.smaller("lg");
 

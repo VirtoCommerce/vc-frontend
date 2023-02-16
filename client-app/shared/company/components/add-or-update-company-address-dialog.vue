@@ -45,6 +45,8 @@ import { useCountries } from "@/core/composables";
 import { onMounted, PropType } from "vue";
 import { MemberAddressType } from "@/xapi/types";
 
+const emit = defineEmits(["result"]);
+
 defineProps({
   address: {
     type: Object as PropType<MemberAddressType | null>,
@@ -54,8 +56,6 @@ defineProps({
     type: Boolean,
   },
 });
-
-const emit = defineEmits(["result"]);
 
 const { countries, loadCountries } = useCountries();
 

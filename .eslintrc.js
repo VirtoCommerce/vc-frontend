@@ -97,7 +97,7 @@ module.exports = {
       },
     ],
     "vue/define-emits-declaration": "warn",
-    // TODO: enable "vue/define-macros-order": ["warn", { order: ["defineEmits", "defineProps"] }],
+    "vue/define-macros-order": ["warn", { order: ["defineEmits", "defineProps"] }],
     "vue/define-props-declaration": ["warn", "type-based"],
     "vue/html-button-has-type": "warn",
     "vue/no-duplicate-attr-inheritance": "warn",
@@ -106,10 +106,8 @@ module.exports = {
     "vue/no-static-inline-styles": "warn",
     "vue/no-useless-v-bind": "warn",
     "vue/padding-line-between-blocks": "warn",
-    /* TODO: enable
-    "vue/padding-line-between-tags": "warn",
-    "vue/padding-lines-in-component-definition": "warn",
-    */
+    // TODO: enable "vue/padding-line-between-tags": "warn",
+    // TODO: enable "vue/padding-lines-in-component-definition": "warn",
     "vue/require-emit-validator": "warn",
 
     /**

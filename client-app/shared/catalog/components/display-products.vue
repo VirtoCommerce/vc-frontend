@@ -29,6 +29,8 @@ import { computed, PropType } from "vue";
 import { Product } from "@/xapi/types";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 
+defineEmits<{ (eventName: "item-link-click", product: Product, globalEvent: PointerEvent): void }>();
+
 const props = defineProps({
   loading: Boolean,
 
@@ -47,8 +49,6 @@ const props = defineProps({
     default: "grid",
   },
 });
-
-defineEmits<{ (eventName: "item-link-click", product: Product, globalEvent: PointerEvent): void }>();
 
 const cardComponent = computed(() => (props.viewMode === "list" ? ProductCardList : ProductCardGrid));
 const skeletonComponent = computed(() => (props.viewMode === "list" ? ProductSkeletonList : ProductSkeletonGrid));

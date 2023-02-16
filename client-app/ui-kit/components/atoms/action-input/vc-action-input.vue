@@ -42,6 +42,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
+const emit = defineEmits(["update:modelValue", "click:apply", "click:deny"]);
 const props = defineProps({
   label: {
     type: String,
@@ -76,7 +77,6 @@ const value = computed({
   get: () => props.modelValue,
   set: (newValue) => emit("update:modelValue", newValue),
 });
-const emit = defineEmits(["update:modelValue", "click:apply", "click:deny"]);
 </script>
 
 <style scoped></style>

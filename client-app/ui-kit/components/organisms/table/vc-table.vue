@@ -89,6 +89,8 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 import { PropType } from "vue";
 
+const emit = defineEmits(["itemClick", "headerClick", "pageChanged"]);
+
 defineProps({
   columns: {
     type: Array as PropType<ITableColumn[]>,
@@ -135,8 +137,6 @@ defineProps({
     default: "table-fixed",
   },
 });
-
-const emit = defineEmits(["itemClick", "headerClick", "pageChanged"]);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
