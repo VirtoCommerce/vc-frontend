@@ -73,27 +73,29 @@
         />
 
         <div class="block lg:flex justify-between lg:space-x-6">
-          <VcPassword
+          <VcInput
             v-model="password"
             class="mb-4 w-full lg:w-1/2"
             :label="$t('pages.sign_up.password_label')"
             :placeholder="$t('pages.sign_up.password_placeholder')"
             type="password"
             autocomplete="new-password"
-            is-required
-            :error-message="errors.password"
+            required
+            :error="!!errors.password"
+            :message="errors.password"
             :maxlength="64"
           />
 
-          <VcPassword
+          <VcInput
             v-model="confirmPassword"
             class="mb-4 w-full lg:w-1/2"
             :label="$t('pages.sign_up.confirm_password_label')"
             :placeholder="$t('pages.sign_up.confirm_password_placeholder')"
             type="password"
             autocomplete="off"
-            is-required
-            :error-message="errors.confirmPassword"
+            required
+            :error="!!errors.confirmPassword"
+            :message="errors.confirmPassword"
             :maxlength="64"
           />
         </div>

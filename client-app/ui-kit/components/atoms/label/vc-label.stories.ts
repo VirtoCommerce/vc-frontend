@@ -15,8 +15,15 @@ const Template: StoryFn<typeof VcLabel> = (args) => ({
   template: '<VcLabel v-bind="args">Label</VcLabel>',
 });
 
-//👇 Each story then reuses that template
 export const Label = Template.bind({});
-Label.args = {
+
+export const LabelRequired = Template.bind({});
+LabelRequired.args = {
   required: true,
+};
+
+export const LabelError = Template.bind({});
+LabelError.args = {
+  required: true,
+  error: true,
 };

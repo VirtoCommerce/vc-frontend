@@ -22,16 +22,17 @@
       autocomplete="email"
     />
 
-    <VcPassword
+    <VcInput
       v-model="password"
-      name="password"
       class="mb-4"
       :label="$t('shared.account.sign_in_form.password_label')"
       :placeholder="$t('shared.account.sign_in_form.password_placeholder')"
       :disabled="loading || isAuthenticated"
+      type="password"
       required
       :message="errors.password"
       :error="!!errors.password"
+      autocomplete="password"
     />
 
     <div class="flex justify-between">

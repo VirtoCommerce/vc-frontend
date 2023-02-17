@@ -38,8 +38,18 @@
         @keypress="emit('keypress', $event)"
       />
 
-      <div class="vc-input__decorator" v-if="$slots.endDecorator">
-        <slot name="endDecorator" />
+      <div class="vc-input__decorator" v-if="$slots.endDecorator || (type === 'password' && !hidePasswordSwitcher)">
+        <slot name="endDecorator">
+          <button
+            tabindex="-1"
+            type="button"
+            class="px-3 text-[color:var(--color-primary)] disabled:text-gray-300"
+            :disabled="disabled"
+            @click="togglePasswordVisibility"
+          >
+            <VcIcon :name="passwordVisibilityIcon" />
+          </button>
+        </slot>
       </div>
 
       <div class="vc-input__bg"></div>
@@ -56,13 +66,14 @@
 <script setup lang="ts">
 import { computed, ref, watchEffect } from "vue";
 
-interface Props {
+interface IProps {
   autofocus?: boolean;
   autocomplete?: string;
   readonly?: boolean;
   disabled?: boolean;
   required?: boolean;
   noBorder?: boolean;
+  hidePasswordSwitcher?: boolean;
   label?: string;
   name?: string;
   placeholder?: string;
@@ -71,32 +82,40 @@ interface Props {
   step?: string | number;
   minlength?: string | number;
   maxlength?: string | number;
+  error?: boolean;
+  message?: string;
   modelValue?: string | number;
   type?: "text" | "password" | "number";
   size?: "sm" | "md";
   showEmptyDetails?: boolean;
-  error?: boolean;
-  message?: string;
 }
 
-interface Emits {
+interface IEmits {
   (event: "update:modelValue", value?: string | number): void;
   (event: "click", value: MouseEvent): void;
   (event: "keypress", value: KeyboardEvent): void;
 }
 
-const emit = defineEmits<Emits>();
-const props = withDefaults(defineProps<Props>(), {
+const emit = defineEmits<IEmits>();
+const props = withDefaults(defineProps<IProps>(), {
   type: "text",
   size: "md",
 });
 
 const inputType = ref("");
+const isPasswordVisible = ref(false);
 const isNumberTypeSafari = ref(false);
 
 const minValue = computed(() => (props.type === "number" ? props.min : undefined));
 const maxValue = computed(() => (props.type === "number" ? props.max : undefined));
 const stepValue = computed(() => (props.type === "number" ? props.step : undefined));
+
+const passwordVisibilityIcon = computed<string>(() => (isPasswordVisible.value ? "eye-off" : "eye"));
+
+function togglePasswordVisibility() {
+  isPasswordVisible.value = !isPasswordVisible.value;
+  inputType.value = isPasswordVisible.value ? "text" : "password";
+}
 
 function change(event: Event) {
   if (props.disabled) {
@@ -193,11 +212,25 @@ watchEffect(() => {
   }
 
   &__decorator {
-    @apply flex items-stretch max-h-full;
+    @apply flex items-stretch h-full;
+
+    &:first-child {
+      @apply rounded-l-[3px];
+    }
+
+    &:nth-last-child(-n + 2) {
+      @apply rounded-r-[3px];
+    }
+
+    & > * {
+      @apply flex items-center;
+
+      height: 100% !important;
+    }
   }
 
   &__input {
-    @apply relative px-3 appearance-none bg-transparent rounded text-base leading-none w-full outline-none min-w-0;
+    @apply relative px-3 appearance-none bg-transparent rounded-[3px] text-base leading-none w-full outline-none min-w-0;
 
     &:autofill {
       &:disabled {
@@ -207,6 +240,10 @@ watchEffect(() => {
       &:not(:disabled) {
         box-shadow: 0 0 0px 1000px #fff inset;
       }
+    }
+
+    &:disabled {
+      @apply text-gray-400;
     }
 
     &::placeholder {

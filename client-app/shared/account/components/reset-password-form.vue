@@ -1,13 +1,14 @@
 <template>
   <form @submit="onSubmit">
-    <VcPassword
+    <VcInput
       v-model="password"
       class="mb-4 w-full"
       :label="$t(`shared.account.${localizationFormTerm}.password_label`)"
       :placeholder="$t(`shared.account.${localizationFormTerm}.password_placeholder`)"
       type="password"
-      is-required
-      :error-message="errors.password"
+      required
+      :error="!!errors.password"
+      :message="errors.password"
       autocomplete="new-password"
       :maxlength="64"
     />
@@ -18,8 +19,9 @@
       :label="$t(`shared.account.${localizationFormTerm}.confirm_password_label`)"
       :placeholder="$t(`shared.account.${localizationFormTerm}.confirm_password_placeholder`)"
       type="password"
-      is-required
-      :error-message="errors.confirmPassword"
+      required
+      :error="!!errors.confirmPassword"
+      :message="errors.confirmPassword"
       autocomplete="off"
       :maxlength="64"
     />

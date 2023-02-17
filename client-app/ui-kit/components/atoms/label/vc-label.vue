@@ -7,6 +7,7 @@
         'vc-label--error': error,
       },
     ]"
+    :for="forId"
   >
     <slot />
     <span v-if="required" class="vc-label__asterisk">*</span>

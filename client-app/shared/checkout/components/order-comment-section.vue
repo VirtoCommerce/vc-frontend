@@ -1,6 +1,7 @@
 <template>
   <VcSectionWidget :title="$t('shared.checkout.order_comment_section.title')" icon="document-text">
     <VcTextarea
+      label="Label"
       v-model="text"
       :placeholder="$t('common.placeholders.enter_value')"
       :disabled="disabled"

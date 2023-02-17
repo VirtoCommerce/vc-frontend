@@ -62,12 +62,13 @@
           />
         </div>
 
-        <VcPassword
+        <VcInput
           v-model="oldPassword"
           :label="$t('pages.account.profile.old_password_label')"
           :placeholder="$t('pages.account.profile.old_password_placeholder')"
-          :is-disabled="isSubmitting"
-          :error-message="errors.oldPassword"
+          :disabled="isSubmitting"
+          :error="!!errors.oldPassword"
+          :message="errors.oldPassword"
           autocomplete="off"
           type="password"
           name="oldPassword"
@@ -75,13 +76,14 @@
           :maxlength="64"
         />
 
-        <VcPassword
+        <VcInput
           :model-value="newPassword"
           :label="$t('pages.account.profile.new_password_label')"
           :placeholder="$t('pages.account.profile.new_password_placeholder')"
-          :is-disabled="isSubmitting"
-          :is-required="!!oldPassword"
-          :error-message="errors.newPassword"
+          :disabled="isSubmitting"
+          :required="!!oldPassword"
+          :error="!!errors.newPassword"
+          :message="errors.newPassword"
           type="password"
           name="newPassword"
           class="mb-5"
@@ -90,13 +92,14 @@
           @update:model-value="oldPassword ? (newPassword = $event.trim()) : null"
         />
 
-        <VcPassword
+        <VcInput
           :model-value="confirmNewPassword"
           :label="$t('pages.account.profile.confirm_new_password_label')"
           :placeholder="$t('pages.account.profile.confirm_new_password_placeholder')"
-          :is-disabled="isSubmitting"
-          :is-required="!!oldPassword"
-          :error-message="errors.confirmNewPassword"
+          :disabled="isSubmitting"
+          :required="!!oldPassword"
+          :error="!!errors.confirmNewPassword"
+          :message="errors.confirmNewPassword"
           type="password"
           name="confirmNewPassword"
           class="mb-5"

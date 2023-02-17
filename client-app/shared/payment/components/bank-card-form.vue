@@ -46,11 +46,12 @@
         @input="input"
       />
 
-      <VcPassword
+      <VcInput
         v-mask="'####'"
         v-model="securityCode"
         :label="$t('shared.payment.bank_card_form.security_code_label')"
-        :error-message="formErrors.securityCode || errors.securityCode"
+        :error="!!(formErrors.securityCode || errors.securityCode)"
+        :message="formErrors.securityCode || errors.securityCode"
         :readonly="isReadonly"
         :disabled="isDisabled"
         type="password"

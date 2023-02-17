@@ -44,30 +44,32 @@
         />
 
         <div class="flex flex-col md:flex-row gap-x-6 gap-y-4">
-          <VcPassword
+          <VcInput
             v-model="password"
             :label="$t('pages.confirm_invitation.password_label')"
             :placeholder="$t('pages.confirm_invitation.password_placeholder')"
-            :error-message="errors.password"
-            :is-disabled="loading"
+            :error="!!errors.password"
+            :message="errors.password"
+            :disabled="loading"
             :maxlength="64"
             type="password"
             autocomplete="new-password"
             class="md:w-1/2"
-            is-required
+            required
           />
 
           <VcPassword
             v-model="confirmPassword"
             :label="$t('pages.confirm_invitation.confirm_password_label')"
             :placeholder="$t('pages.confirm_invitation.confirm_password_placeholder')"
-            :error-message="errors.confirmPassword"
-            :is-disabled="loading"
+            :error="!!errors.confirmPassword"
+            :message="errors.confirmPassword"
+            :disabled="loading"
             :maxlength="64"
             type="password"
             autocomplete="off"
             class="md:w-1/2"
-            is-required
+            required
           />
         </div>
 
