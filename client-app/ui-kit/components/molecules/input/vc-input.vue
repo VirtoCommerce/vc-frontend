@@ -6,12 +6,11 @@
       {
         'vc-input--disabled': disabled,
         'vc-input--readonly': readonly,
-        'vc-input--hide-empty-details': !showEmptyDetails,
         'vc-input--error': error,
       },
     ]"
   >
-    <VcLabel v-if="label" :required="required" :error="error">{{ label }}</VcLabel>
+    <VcLabel v-if="label" :forId="id" :required="required" :error="error">{{ label }}</VcLabel>
 
     <div class="vc-input__container">
       <div class="vc-input__decorator" v-if="$slots.startDecorator">
@@ -19,6 +18,7 @@
       </div>
 
       <input
+        :id="id"
         class="vc-input__input"
         :value="modelValue"
         :type="inputType"
@@ -55,11 +55,7 @@
       <div class="vc-input__bg"></div>
     </div>
 
-    <!-- Details -->
-    <div class="vc-input__details">
-      <!-- Message -->
-      <div v-if="message" class="vc-input__message" v-html="message"></div>
-    </div>
+    <VcInputDetails :showEmpty="showEmptyDetails" :message="message" :error="error" />
   </div>
 </template>
 
@@ -67,6 +63,7 @@
 import { computed, ref, watchEffect } from "vue";
 
 interface IProps {
+  id?: string;
   autofocus?: boolean;
   autocomplete?: string;
   readonly?: boolean;
@@ -160,7 +157,6 @@ watchEffect(() => {
 
   $readonly: "";
   $disabled: "";
-  $hideEmptyDetails: "";
   $error: "";
   $noBorder: "";
 
@@ -180,10 +176,6 @@ watchEffect(() => {
 
   &--readonly {
     $readonly: &;
-  }
-
-  &--hide-empty-details {
-    $hideEmptyDetails: &;
   }
 
   &--error {
@@ -226,6 +218,7 @@ watchEffect(() => {
       @apply flex items-center;
 
       height: 100% !important;
+      border-radius: inherit !important;
     }
   }
 
@@ -271,22 +264,6 @@ watchEffect(() => {
 
     #{$noBorder} & {
       @apply border-none;
-    }
-  }
-
-  &__details {
-    @apply flex justify-end mt-0.5 gap-2 min-h-[0.875rem] text-11;
-
-    #{$hideEmptyDetails} & {
-      @apply empty:hidden;
-    }
-  }
-
-  &__message {
-    @apply grow text-gray-400;
-
-    #{$error} & {
-      @apply text-[color:var(--color-danger)];
     }
   }
 }

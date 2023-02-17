@@ -73,7 +73,7 @@ export const InputWithButton: StoryFn<typeof VcInput> = (args) => ({
   },
   template: `<VcInput v-bind="args" @click="onClick" @keypress="onKeypress" v-model="inputValue">
     <template #endDecorator>
-      <VcButton style="padding: 0 12px; border-radius: inherit;">Button</VcButton>
+      <VcButton style="padding: 0 12px;">Button</VcButton>
     </template>
   </VcInput>`,
 });

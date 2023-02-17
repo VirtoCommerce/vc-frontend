@@ -15,6 +15,7 @@ export { default as VcExpansionPanels } from "./expansion-panels/vc-expansion-pa
 export { default as VcFilterCard } from "./filter-card/vc-filter-card.vue";
 export { default as VcFilterCardSkeleton } from "./filter-card-skeleton/vc-filter-card-skeleton.vue";
 export { default as VcIcon } from "./icon/vc-icon.vue";
+export { default as VcInputDetails } from "./input-details/vc-input-details.vue";
 export { default as VcHexagonIcon } from "./hexagon-icon/vc-hexagon-icon.vue";
 export { default as VcImage } from "./image/vc-image.vue";
 export { default as VcInStock } from "./in-stock/vc-in-stock.vue";

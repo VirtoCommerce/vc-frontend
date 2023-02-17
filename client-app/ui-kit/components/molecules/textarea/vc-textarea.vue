@@ -5,7 +5,6 @@
       {
         'vc-textarea--disabled': disabled,
         'vc-textarea--no-resize': noResize,
-        'vc-textarea--hide-empty-details': !showEmptyDetails,
         'vc-textarea--error': error,
       },
       $attrs.class,
@@ -29,16 +28,14 @@
       class="vc-textarea__input"
     />
 
-    <!-- Details -->
-    <div class="vc-textarea__details">
-      <!-- Message -->
-      <div v-if="message" class="vc-textarea__message" v-html="message"></div>
-
-      <!-- Counter -->
-      <div v-if="counter" class="vc-textarea__counter">
-        {{ text.length }}<template v-if="maxLength"> / {{ maxLength }}</template>
-      </div>
-    </div>
+    <VcInputDetails
+      :showEmpty="showEmptyDetails"
+      :error="error"
+      :message="message"
+      :counter="counter"
+      :textLength="text.length"
+      :maxLength="maxLength"
+    />
   </div>
 </template>
 
@@ -89,7 +86,6 @@ const text = useVModel(props, "modelValue", emit);
 .vc-textarea {
   $disabled: "";
   $noResize: "";
-  $hideEmptyDetails: "";
   $error: "";
 
   @apply flex flex-col text-[color:var(--color-body-text)];
@@ -100,10 +96,6 @@ const text = useVModel(props, "modelValue", emit);
 
   &--no-resize {
     $noResize: &;
-  }
-
-  &--hide-empty-details {
-    $hideEmptyDetails: &;
   }
 
   &--error {
@@ -144,26 +136,6 @@ const text = useVModel(props, "modelValue", emit);
     #{$error} & {
       @apply border-[color:var(--color-danger)];
     }
-  }
-
-  &__details {
-    @apply flex justify-end mt-0.5 gap-2 min-h-[0.875rem] text-11;
-
-    #{$hideEmptyDetails} & {
-      @apply empty:hidden;
-    }
-  }
-
-  &__message {
-    @apply grow text-gray-400;
-
-    #{$error} & {
-      @apply text-[color:var(--color-danger)];
-    }
-  }
-
-  &__counter {
-    @apply font-medium text-right;
   }
 }
 </style>

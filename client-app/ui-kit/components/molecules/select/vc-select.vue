@@ -6,7 +6,6 @@
       {
         'vc-select--disabled': disabled,
         'vc-select--opened': open,
-        'vc-select--hide-empty-details': !showEmptyDetails,
         'vc-select--error': error,
       },
     ]"
@@ -69,11 +68,7 @@
       </transition>
     </div>
 
-    <!-- Details -->
-    <div class="vc-select__details">
-      <!-- Message -->
-      <div v-if="message" class="vc-select__message" v-html="message"></div>
-    </div>
+    <VcInputDetails :showEmpty="showEmptyDetails" :message="message" :error="error" />
   </div>
 </template>
 
@@ -183,7 +178,6 @@ function select(item?: any) {
 
   $disabled: "";
   $opened: "";
-  $hideEmptyDetails: "";
   $error: "";
 
   @apply flex flex-col;
@@ -212,10 +206,6 @@ function select(item?: any) {
 
   &--opened {
     $opened: &;
-  }
-
-  &--hide-empty-details {
-    $hideEmptyDetails: &;
   }
 
   &--error {
@@ -293,22 +283,6 @@ function select(item?: any) {
     &--active,
     &--active:hover {
       @apply bg-[color:var(--color-primary-light)] cursor-default;
-    }
-  }
-
-  &__details {
-    @apply flex justify-end mt-0.5 gap-2 min-h-[0.875rem] text-11;
-
-    #{$hideEmptyDetails} & {
-      @apply empty:hidden;
-    }
-  }
-
-  &__message {
-    @apply grow text-gray-400;
-
-    #{$error} & {
-      @apply text-[color:var(--color-danger)];
     }
   }
 }
