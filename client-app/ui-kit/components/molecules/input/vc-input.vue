@@ -161,6 +161,8 @@ watchEffect(() => {
   $error: "";
   $noBorder: "";
 
+  @apply font-lato;
+
   &--size {
     &--sm {
       $sizeSm: &;

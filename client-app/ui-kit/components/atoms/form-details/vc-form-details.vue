@@ -35,7 +35,7 @@ defineProps<Props>();
 .vc-form-details {
   $error: "";
 
-  @apply flex justify-end mt-0.5 gap-2 min-h-[0.875rem] text-11;
+  @apply flex justify-end mt-0.5 gap-2 min-h-[0.875rem] text-11 font-lato;
 
   &--error {
     $error: &;
