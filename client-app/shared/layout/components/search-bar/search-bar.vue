@@ -103,14 +103,13 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { useRouter } from "vue-router";
-import { useSearchBar } from "@/shared/layout";
-import { computed, inject, ref, watchEffect } from "vue";
-import { configInjectionKey, QueryParamName } from "@/core/constants";
-import { useCategoriesRoutes, useGoogleAnalytics, useRouteQueryParam } from "@/core/composables";
-import VcInput from "@/ui-kit/components/atoms/input/vc-input.vue";
-import { Category } from "@/xapi/types";
 import { useDebounceFn, whenever } from "@vueuse/core";
+import { computed, inject, ref, watchEffect } from "vue";
+import { useRouter } from "vue-router";
+import { useCategoriesRoutes, useGoogleAnalytics, useRouteQueryParam } from "@/core/composables";
+import { configInjectionKey, QueryParamName } from "@/core/constants";
+import { useSearchBar } from "@/shared/layout";
+import { Category } from "@/xapi/types";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 
 // Number of categories column items in dropdown list

@@ -156,7 +156,6 @@
 <script setup lang="ts">
 import { sumBy } from "lodash";
 import { computed, PropType } from "vue";
-import { VcPriceDisplay } from "@/ui-kit/components";
 import { OrderLineItemType } from "@/xapi";
 import { extendOrderItem } from "..";
 

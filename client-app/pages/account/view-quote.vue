@@ -73,7 +73,6 @@ import { watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { QuoteLineItems, useUserQuote } from "@/shared/account";
-import { VcAddressInfo } from "@/ui-kit/components";
 
 const props = defineProps({
   quoteId: {

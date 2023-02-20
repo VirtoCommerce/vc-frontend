@@ -1,10 +1,9 @@
-// Error pages
-import Error403 from "@/pages/403.vue";
-import Error404 from "@/pages/404.vue";
-import Error500 from "@/pages/500.vue";
 import { RouteRecordRaw } from "vue-router";
 import { DEVELOPMENT } from "@/core/constants";
 import { accountRoutes, checkoutRoutes, corporateRoutes } from "@/router/routes";
+import Error403 from "@/pages/403.vue";
+import Error404 from "@/pages/404.vue";
+import Error500 from "@/pages/500.vue";
 
 const Home = () => import("@/pages/index.vue");
 const SingInPage = () => import("@/pages/sign-in.vue");

@@ -190,7 +190,6 @@
 import { sumBy } from "lodash";
 import { computed, PropType } from "vue";
 import { extendQuoteItem } from "@/shared/account";
-import { VcPriceDisplay } from "@/ui-kit/components";
 import { QuoteItemType } from "@/xapi";
 
 defineEmits(["remove:item", "update:item"]);

@@ -65,8 +65,8 @@ module.exports = {
         pathGroups: [
           {
             pattern: "**/*.vue",
-            group: "external",
-            position: "before",
+            group: "index",
+            position: "after",
           },
         ],
         alphabetize: {
