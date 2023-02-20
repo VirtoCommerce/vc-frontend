@@ -58,7 +58,7 @@
             required
           />
 
-          <VcPassword
+          <VcInput
             v-model="confirmPassword"
             :label="$t('pages.confirm_invitation.confirm_password_label')"
             :placeholder="$t('pages.confirm_invitation.confirm_password_placeholder')"

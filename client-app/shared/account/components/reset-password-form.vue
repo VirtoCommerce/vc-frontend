@@ -13,7 +13,7 @@
       :maxlength="64"
     />
 
-    <VcPassword
+    <VcInput
       v-model="confirmPassword"
       class="mb-4 w-full"
       :label="$t(`shared.account.${localizationFormTerm}.confirm_password_label`)"
