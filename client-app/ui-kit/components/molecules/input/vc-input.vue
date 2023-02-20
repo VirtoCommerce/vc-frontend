@@ -7,6 +7,7 @@
         'vc-input--disabled': disabled,
         'vc-input--readonly': readonly,
         'vc-input--error': error,
+        'vc-input--no-border': noBorder,
       },
     ]"
   >
@@ -43,7 +44,7 @@
           <button
             tabindex="-1"
             type="button"
-            class="px-3 text-[color:var(--color-primary)] disabled:text-gray-300"
+            class="px-3 h-full text-[color:var(--color-primary)] disabled:text-gray-300"
             :disabled="disabled"
             @click="togglePasswordVisibility"
           >
@@ -55,7 +56,7 @@
       <div class="vc-input__bg"></div>
     </div>
 
-    <VcInputDetails :showEmpty="showEmptyDetails" :message="message" :error="error" />
+    <VcFormDetails :showEmpty="showEmptyDetails" :message="message" :error="error" />
   </div>
 </template>
 
@@ -204,7 +205,7 @@ watchEffect(() => {
   }
 
   &__decorator {
-    @apply flex items-stretch h-full;
+    @apply flex items-center h-full;
 
     &:first-child {
       @apply rounded-l-[3px];
@@ -215,10 +216,7 @@ watchEffect(() => {
     }
 
     & > * {
-      @apply flex items-center;
-
-      height: 100% !important;
-      border-radius: inherit !important;
+      @apply max-h-full;
     }
   }
 

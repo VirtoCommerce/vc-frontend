@@ -1,6 +1,7 @@
 import { app } from "@storybook/vue3";
 import SettingsData from "../config/settings_data.json";
 import VcLabel from "../client-app/ui-kit/components/atoms/label/vc-label.vue";
+import VcFormDetails from "../client-app/ui-kit/components/atoms/form-details/vc-form-details.vue";
 import VcIcon from "../client-app/ui-kit/components/atoms/icon/vc-icon.vue";
 import VcInput from "../client-app/ui-kit/components/molecules/input/vc-input.vue";
 
@@ -20,6 +21,7 @@ Object.entries(SettingsData.presets.Mercury)
 
 app.component("VcIcon", VcIcon);
 app.component("VcLabel", VcLabel);
+app.component("VcFormDetails", VcFormDetails);
 app.component("VcInput", VcInput);
 
 export const parameters = {
