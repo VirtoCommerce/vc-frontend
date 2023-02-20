@@ -63,12 +63,11 @@
 
 <script setup lang="ts">
 import { computed, PropType, ref, shallowRef, watch, watchEffect } from "vue";
-import { clone } from "lodash";
-import { initializePayment } from "@/xapi/graphql/cart";
-import { CustomerOrderType, KeyValueType } from "@/xapi/types";
-import { BankCardType, BankCardForm, useAuthorizeNet, BankCardErrorsType, PaymentActionType } from "@/shared/payment";
 import { useI18n } from "vue-i18n";
-import { Logger } from "@/core/utilities";
+import { clone } from "lodash";
+import { Logger, useGoogleAnalytics } from "@/core";
+import { CustomerOrderType, initializePayment, KeyValueType } from "@/xapi";
+import { BankCardErrorsType, BankCardForm, BankCardType, PaymentActionType, useAuthorizeNet } from "@/shared/payment";
 
 const emit = defineEmits<{
   (event: "success"): void;
@@ -104,6 +103,7 @@ const scriptURL = computed<string>(() => parameters.value.find(({ key }) => key 
 const apiLoginID = computed<string>(() => parameters.value.find(({ key }) => key === "apiLogin")?.value ?? "");
 const clientKey = computed<string>(() => parameters.value.find(({ key }) => key === "clientKey")?.value ?? "");
 
+const ga = useGoogleAnalytics();
 const { t } = useI18n();
 const { loadAcceptJS, dispatchData, sendOpaqueData } = useAuthorizeNet({ scriptURL, manualScriptLoading: true });
 
@@ -167,9 +167,8 @@ function showErrors(messages: Accept.Message[]) {
   });
 }
 
-async function authorizePayment(opaqueData: Accept.OpaqueData) {
+async function pay(opaqueData: Accept.OpaqueData) {
   const {
-    number,
     id: orderId,
     inPayments: [{ id: paymentId }],
   } = props.order;
@@ -178,9 +177,13 @@ async function authorizePayment(opaqueData: Accept.OpaqueData) {
 
   if (isSuccess) {
     emit("success");
+
+    /**
+     * Send Google Analytics purchase event.
+     */
+    ga.purchase(props.order);
   } else {
     emit("fail", errorMessage);
-    Logger.error(`[Order ${number}]: ${errorMessage}`);
   }
 
   bankCardData.value = clone(emptyBankCardData);
@@ -201,7 +204,7 @@ function sendPaymentData() {
     if (response.messages.resultCode === "Error") {
       showErrors(response.messages.message);
     } else if (response.opaqueData) {
-      await authorizePayment(response.opaqueData);
+      await pay(response.opaqueData);
     }
 
     loading.value = false;

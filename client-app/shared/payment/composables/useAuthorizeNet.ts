@@ -1,14 +1,11 @@
-import { readonly, ref } from "vue";
-import { MaybeRef, useScriptTag } from "@vueuse/core";
+import { MaybeRef, noop, useScriptTag } from "@vueuse/core";
 import { authorizePayment } from "@/xapi/graphql/cart";
 import { Logger } from "@/core/utilities";
 
 export default function useAuthorizeNet(options: { scriptURL: MaybeRef<string>; manualScriptLoading?: boolean }) {
   const { scriptURL, manualScriptLoading = false } = options;
 
-  const acceptJSLoaded = ref(false);
-
-  const { load: loadAcceptJS } = useScriptTag(scriptURL, () => (acceptJSLoaded.value = true), {
+  const { load: loadAcceptJS } = useScriptTag(scriptURL, noop, {
     manual: manualScriptLoading,
   });
 
@@ -41,6 +38,5 @@ export default function useAuthorizeNet(options: { scriptURL: MaybeRef<string>; 
     loadAcceptJS,
     dispatchData,
     sendOpaqueData,
-    acceptJSLoaded: readonly(acceptJSLoaded),
   };
 }
