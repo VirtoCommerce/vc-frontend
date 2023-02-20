@@ -68,7 +68,7 @@
       </transition>
     </div>
 
-    <VcInputDetails :showEmpty="showEmptyDetails" :message="message" :error="error" />
+    <VcFormDetails :showEmpty="showEmptyDetails" :message="message" :error="error" />
   </div>
 </template>
 

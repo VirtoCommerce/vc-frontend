@@ -28,7 +28,7 @@
       class="vc-textarea__input"
     />
 
-    <VcInputDetails
+    <VcFormDetails
       :showEmpty="showEmptyDetails"
       :error="error"
       :message="message"
