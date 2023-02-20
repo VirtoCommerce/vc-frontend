@@ -4,6 +4,7 @@
       'vc-select',
       `vc-select--size--${size}`,
       {
+        'vc-select--readonly': readonly,
         'vc-select--disabled': disabled,
         'vc-select--opened': open,
         'vc-select--hide-empty-details': !showEmptyDetails,
@@ -84,6 +85,7 @@
     <!-- Details -->
     <div class="vc-select__details">
       <!-- Message -->
+      <!-- eslint-disable-next-line vue/no-v-html-->
       <div v-if="message" class="vc-select__message" v-html="message"></div>
     </div>
   </div>
@@ -100,12 +102,14 @@ export default {
 </script>
 
 <script setup lang="ts">
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { computed, ref, shallowRef } from "vue";
 
-interface Props {
+interface IProps {
   label?: string;
   required?: boolean;
   disabled?: boolean;
+  readonly?: boolean;
   modelValue?: object | string;
   items: any[];
   size?: "sm" | "md" | "lg" | "auto";
@@ -117,14 +121,14 @@ interface Props {
   message?: string;
 }
 
-interface Emits {
+interface IEmits {
   (event: "update:modelValue", value: any): void;
   (event: "change", value: any): void;
 }
 
-const emit = defineEmits<Emits>();
+const emit = defineEmits<IEmits>();
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<IProps>(), {
   size: "md",
 });
 
@@ -160,7 +164,7 @@ function hideList() {
 }
 
 function toggle() {
-  if (props.disabled) {
+  if (props.disabled || props.readonly) {
     return;
   }
 
@@ -195,6 +199,7 @@ function select(item?: any) {
   $sizeAuto: "";
 
   $disabled: "";
+  $readonly: "";
   $opened: "";
   $hideEmptyDetails: "";
   $error: "";
@@ -221,6 +226,10 @@ function select(item?: any) {
 
   &--disabled {
     $disabled: &;
+  }
+
+  &--readonly {
+    $readonly: &;
   }
 
   &--opened {
@@ -267,6 +276,10 @@ function select(item?: any) {
     &:disabled {
       @apply bg-gray-50 cursor-not-allowed;
     }
+
+    #{$readonly}:not(#{$disabled}) & {
+      @apply pointer-events-none;
+    }
   }
 
   &__button-content {
@@ -282,6 +295,10 @@ function select(item?: any) {
 
     #{$disabled} & {
       @apply text-gray-300;
+    }
+
+    #{$readonly} & {
+      @apply hidden;
     }
 
     #{$opened} & {
