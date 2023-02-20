@@ -3,7 +3,7 @@
     <slot name="prepend" v-bind="slotsData" />
 
     <div :class="{ 'md:flex md:flex-row': withPersonalInfo }">
-      <div class="md:w-1/2" v-if="withPersonalInfo">
+      <div v-if="withPersonalInfo" class="md:w-1/2">
         <VcInput
           v-model="firstName"
           :error-message="errors.firstName"
@@ -47,19 +47,19 @@
 
       <!-- Divider -->
       <div
-        class="border-t md:border-l border-[color:var(--color-primary)] mt-8 mb-6 md:mt-6 md:mb-4 -mx-96 md:mx-9"
         v-if="withPersonalInfo"
+        class="-mx-96 mt-8 mb-6 border-t border-[color:var(--color-primary)] md:mx-9 md:mt-6 md:mb-4 md:border-l"
       ></div>
 
       <div :class="{ 'md:w-1/2': withPersonalInfo }">
         <VcInput
+          v-if="withDescriptionField"
           v-model="description"
           :error-message="errors.description"
           :is-disabled="disabled"
           :label="$t('shared.account.address_form.description_label')"
           class="mb-4"
           :maxlength="128"
-          v-if="withDescriptionField"
         />
 
         <div class="flex flex-col xl:flex-row xl:flex-wrap">
@@ -82,7 +82,7 @@
             :error-message="errors.postalCode"
             :is-disabled="disabled"
             :label="$t('shared.account.address_form.zip_label')"
-            class="mb-4 order-3 xl:order-none xl:ml-4 xl:w-4/12 xl:flex-grow"
+            class="order-3 mb-4 xl:order-none xl:ml-4 xl:w-4/12 xl:grow"
             is-required
             :maxlength="32"
           />
@@ -97,7 +97,7 @@
             :disabled="disabled || !regions.length"
             :label="$t('shared.account.address_form.region_label')"
             :placeholder="$t('shared.account.address_form.region_placeholder')"
-            class="mb-4 order-2 xl:order-none xl:w-5/12"
+            class="order-2 mb-4 xl:order-none xl:w-5/12"
             size="lg"
           />
 
@@ -106,7 +106,7 @@
             :error-message="errors.city"
             :is-disabled="disabled"
             :label="$t('shared.account.address_form.city_label')"
-            class="mb-4 order-4 xl:order-none xl:ml-4 xl:flex-grow"
+            class="order-4 mb-4 xl:order-none xl:ml-4 xl:grow"
             :is-required="requiredCity"
             :maxlength="128"
           />
@@ -138,12 +138,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType, ref, Ref, watch } from "vue";
 import { clone } from "lodash";
 import { useForm, useField } from "vee-validate";
-import { CountryRegionType, CountryType, MemberAddressType } from "@/xapi/types";
-import { getAddressName, Logger } from "@/core/utilities";
+import { computed, PropType, ref, Ref, watch } from "vue";
 import * as yup from "yup";
+import { getAddressName, Logger } from "@/core/utilities";
+import { CountryRegionType, CountryType, MemberAddressType } from "@/xapi/types";
+
+const emit = defineEmits<{
+  (event: "update:modelValue", address: MemberAddressType): void;
+  (event: "save", address: MemberAddressType): void;
+}>();
 
 const props = defineProps({
   disabled: Boolean,
@@ -164,11 +169,6 @@ const props = defineProps({
     required: true,
   },
 });
-
-const emit = defineEmits<{
-  (event: "update:modelValue", address: MemberAddressType): void;
-  (event: "save", address: MemberAddressType): void;
-}>();
 
 const _emptyAddress: Readonly<MemberAddressType> = {
   isDefault: false,

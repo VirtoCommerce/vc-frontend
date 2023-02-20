@@ -1,17 +1,17 @@
 <template>
   <div class="relative">
     <div
-      class="z-[2] relative px-5 xl:px-12 py-3 min-h-[5.5rem] flex items-center gap-x-5 bg-[color:var(--color-header-bottom-bg)]"
+      class="relative z-[2] flex min-h-[5.5rem] items-center gap-x-5 bg-[color:var(--color-header-bottom-bg)] px-5 py-3 xl:px-12"
     >
       <router-link to="/">
         <VcImage :src="$cfg.logo_image" :alt="$context.storeName" class="h-8 xl:h-[2.8rem]" lazy />
       </router-link>
 
       <template v-if="organization">
-        <div class="w-0.5 h-6 bg-[color:var(--color-primary)] hidden xl:block"></div>
+        <div class="hidden h-6 w-0.5 bg-[color:var(--color-primary)] xl:block"></div>
 
         <div
-          class="hidden xl:line-clamp-2 max-w-[9rem] text-base leading-[18px] font-medium italic text-[color:var(--color-header-bottom-text)]"
+          class="hidden max-w-[9rem] text-base font-medium italic leading-[18px] text-[color:var(--color-header-bottom-text)] xl:line-clamp-2"
         >
           {{ organization?.name }}
         </div>
@@ -20,23 +20,23 @@
       <!-- Catalog button -->
       <button
         ref="showCatalogMenuButton"
-        class="flex items-center cursor-pointer select-none px-[0.8rem] py-[0.55rem] border-2 border-primary rounded text-sm text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)]"
+        class="flex cursor-pointer select-none items-center rounded border-2 border-primary px-[0.8rem] py-[0.55rem] text-sm text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)]"
         @click="catalogMenuVisible = !catalogMenuVisible"
       >
         <span
-          class="uppercase font-bold tracking-wide"
           v-t="'shared.layout.header.bottom_header.catalog_menu_button'"
+          class="font-bold uppercase tracking-wide"
         />
 
         <i
-          class="fas ml-3 text-[color:var(--color-primary)] align-baseline"
+          class="fas ml-3 align-baseline text-[color:var(--color-primary)]"
           :class="[catalogMenuVisible ? 'fa-chevron-up' : 'fa-chevron-down']"
         />
       </button>
 
       <SearchBar />
 
-      <div class="flex items-center -mx-2">
+      <div class="-mx-2 flex items-center">
         <template v-for="item in desktopHeaderMenuLinks" :key="item.id">
           <BottomHeaderLink v-if="item.id === 'compare'" :link="item" :count="productsIds.length">
             {{ item.title }}
@@ -61,9 +61,9 @@
       leave-active-class="will-change-transform"
     >
       <CatalogMenu
-        ref="catalogMenuElement"
         v-if="catalogMenuVisible"
-        class="absolute transition-transform duration-200 shadow-md -mt-[1px]"
+        ref="catalogMenuElement"
+        class="absolute mt-[-1px] shadow-md transition-transform duration-200"
         @select="catalogMenuVisible = false"
       />
     </transition>
@@ -71,15 +71,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef } from "vue";
 import { onClickOutside } from "@vueuse/core";
+import { ref, shallowRef } from "vue";
 import { useNavigations } from "@/core";
-import { useCart } from "@/shared/cart";
-import { SearchBar } from "@/shared/layout";
-import { useCompareProducts } from "@/shared/compare";
 import { useUser } from "@/shared/account";
-import CatalogMenu from "./catalog-menu.vue";
+import { useCart } from "@/shared/cart";
+import { useCompareProducts } from "@/shared/compare";
+import { SearchBar } from "@/shared/layout";
 import BottomHeaderLink from "./bottom-header-link.vue";
+import CatalogMenu from "./catalog-menu.vue";
 
 const { organization } = useUser();
 const { cart } = useCart();

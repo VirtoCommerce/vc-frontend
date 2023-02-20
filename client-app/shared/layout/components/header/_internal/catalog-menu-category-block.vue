@@ -1,7 +1,7 @@
 <template>
   <div>
     <router-link
-      class="block px-2 py-1 mb-2 text-base font-bold hover:bg-gray-100"
+      class="mb-2 block px-2 py-1 text-base font-bold hover:bg-gray-100"
       :to="categoriesRoutes[category.id]"
       :title="category.name"
       @click="clickCategory"
@@ -11,7 +11,7 @@
     <div>
       <template v-for="(subcategory, key) in displayedCategories" :key="key">
         <router-link
-          class="block px-2 py-1 mb-1 text-sm !leading-4 text-gray-500 truncate hover:bg-gray-100"
+          class="mb-1 block truncate px-2 py-1 text-sm !leading-4 text-gray-500 hover:bg-gray-100"
           :to="categoriesRoutes[subcategory.id]"
           :title="subcategory.name"
           @click="clickCategory"
@@ -22,19 +22,19 @@
 
       <button
         v-if="subcategories.length > SHORT_VIEW_ITEMS_COUNT"
+        class="flex cursor-pointer items-baseline px-2 py-1 text-sm"
         @click="toggleShowAll"
-        class="px-2 py-1 text-sm cursor-pointer flex items-baseline"
       >
         <span
-          class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
           v-t="
             showAll
               ? 'shared.layout.header.bottom_header.catalog_menu.hide_more'
               : 'shared.layout.header.bottom_header.catalog_menu.show_more'
           "
+          class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
         />
         <i
-          class="ml-[5px] fas text-[color:var(--color-primary)]"
+          class="fas ml-[5px] text-[color:var(--color-primary)]"
           :class="[showAll ? 'fa-chevron-up' : 'fa-chevron-down']"
         />
       </button>
@@ -47,19 +47,17 @@ import { computed, PropType, ref } from "vue";
 import { useCategoriesRoutes } from "@/core";
 import { Category } from "@/xapi";
 
-const SHORT_VIEW_ITEMS_COUNT = 5;
-const showAll = ref(false);
-
+const emit = defineEmits<{
+  (event: "select"): void;
+}>();
 const props = defineProps({
   category: {
     type: Object as PropType<Category>,
     required: true,
   },
 });
-
-const emit = defineEmits<{
-  (event: "select"): void;
-}>();
+const SHORT_VIEW_ITEMS_COUNT = 5;
+const showAll = ref(false);
 
 const subcategories = computed<Category[]>(() => props.category.childCategories || []);
 const displayedCategories = computed<Category[]>(() =>

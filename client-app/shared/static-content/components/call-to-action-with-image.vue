@@ -1,26 +1,26 @@
 <template>
   <div class="pt-6 pb-16 lg:py-24" :class="model.background">
-    <div class="w-full max-w-screen-2xl mx-auto px-5 md:px-12">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-20 gap-y-10 items-center">
+    <div class="mx-auto w-full max-w-screen-2xl px-5 md:px-12">
+      <div class="grid grid-cols-1 items-center gap-x-20 gap-y-10 lg:grid-cols-2">
         <div :class="[model.imagePosition === 'right' ? 'order-2 lg:order-1' : 'order-1 lg:order-2']">
-          <div class="font-bold text-2xl lg:text-5xl mb-4">{{ model.title }}</div>
+          <div class="mb-4 text-2xl font-bold lg:text-5xl">{{ model.title }}</div>
           <div class="text-lg">{{ model.subtitle }}</div>
-          <div v-if="model.buttons && model.buttons.length" class="flex mt-6 lg:mt-14 space-x-6">
+          <div v-if="model.buttons && model.buttons.length" class="mt-6 flex space-x-6 lg:mt-14">
             <VcButton
               v-for="(item, index) in model.buttons"
               :key="index"
               :to="item.link"
-              class="w-1/2 lg:w-auto uppercase px-8"
+              class="w-1/2 px-8 uppercase lg:w-auto"
             >
               {{ item.label }}
             </VcButton>
           </div>
         </div>
         <div
-          class="bg-gray-200 rounded aspect-video"
+          class="aspect-video rounded bg-gray-200"
           :class="[model.imagePosition === 'right' ? 'order-1 lg:order-2' : 'order-2 lg:order-1']"
         >
-          <img :src="model.image" />
+          <img :src="model.image" alt="" />
         </div>
       </div>
     </div>
@@ -33,6 +33,7 @@ defineProps({
     type: Object,
     required: true,
   },
+
   settings: {
     type: Object,
     required: true,

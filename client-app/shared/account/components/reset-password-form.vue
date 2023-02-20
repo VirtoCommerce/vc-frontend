@@ -32,7 +32,7 @@
       <VcButton
         size="lg"
         is-submit
-        class="mt-6 w-full lg:w-52 uppercase"
+        class="mt-6 w-full uppercase lg:w-52"
         :is-waiting="loading"
         :is-disabled="!meta.valid || meta.pending"
       >
@@ -43,10 +43,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType, ref } from "vue";
-import * as yup from "yup";
 import { useField, useForm } from "vee-validate";
+import { computed, PropType, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import * as yup from "yup";
 import { useIdentityErrorTranslator } from "@/core/composables";
 import { useUser } from "@/shared/account";
 
@@ -57,10 +57,12 @@ const props = defineProps({
     type: String as PropType<"set" | "reset">,
     default: "reset",
   },
+
   userId: {
     type: String,
     required: true,
   },
+
   token: {
     type: String,
     required: true,

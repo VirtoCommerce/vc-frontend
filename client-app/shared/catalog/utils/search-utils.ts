@@ -1,5 +1,5 @@
-import { unref } from "vue";
 import { MaybeRef } from "@vueuse/core";
+import { unref } from "vue";
 
 export function getFilterExpressionForInStock(value: MaybeRef<boolean>): string {
   return unref(value) ? "instock_quantity:(0 TO)" : "";

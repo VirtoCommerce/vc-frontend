@@ -6,8 +6,8 @@
 
     <template v-else>
       <component
-        v-for="(item, index) in products"
         :is="cardComponent"
+        v-for="(item, index) in products"
         :key="item.id + index"
         :product="item"
         @link-click="$emit('item-link-click', item, $event)"
@@ -24,10 +24,12 @@
 </template>
 
 <script setup lang="ts">
-import { ProductCardGrid, ProductCardList, ProductSkeletonGrid, ProductSkeletonList } from "@/shared/catalog";
 import { computed, PropType } from "vue";
-import { Product } from "@/xapi/types";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
+import { ProductCardGrid, ProductCardList, ProductSkeletonGrid, ProductSkeletonList } from "@/shared/catalog";
+import { Product } from "@/xapi/types";
+
+defineEmits<{ (eventName: "item-link-click", product: Product, globalEvent: PointerEvent): void }>();
 
 const props = defineProps({
   loading: Boolean,
@@ -47,8 +49,6 @@ const props = defineProps({
     default: "grid",
   },
 });
-
-defineEmits<{ (eventName: "item-link-click", product: Product, globalEvent: PointerEvent): void }>();
 
 const cardComponent = computed(() => (props.viewMode === "list" ? ProductCardList : ProductCardGrid));
 const skeletonComponent = computed(() => (props.viewMode === "list" ? ProductSkeletonList : ProductSkeletonGrid));

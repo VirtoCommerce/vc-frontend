@@ -1,25 +1,25 @@
 <template>
   <VcPopup :title="$t('shared.wishlists.added_to_wishlists_dialog.title', listIds.length)" variant="success">
-    <div class="max-h-[50vh] lg:max-h-64 overflow-y-auto px-6 py-8 border-b">
+    <div class="max-h-[50vh] overflow-y-auto border-b px-6 py-8 lg:max-h-64">
       <div class="flex grow items-center">
         <router-link :to="link">
-          <div class="border border-gray-100 w-20 h-20 flex-shrink-0">
+          <div class="h-20 w-20 shrink-0 border border-gray-100">
             <VcImage
               :src="product.imgSrc"
               :alt="product.name"
               size-suffix="sm"
-              class="w-full h-full object-cover object-center"
+              class="h-full w-full object-cover object-center"
               lazy
             />
           </div>
         </router-link>
 
-        <div class="grow ml-4">
-          <router-link :to="link" class="text-[color:var(--color-link)] font-extrabold text-sm line-clamp-2">
+        <div class="ml-4 grow">
+          <router-link :to="link" class="text-sm font-extrabold text-[color:var(--color-link)] line-clamp-2">
             {{ product.name }}
           </router-link>
 
-          <p class="md:hidden text-sm mt-1">
+          <p class="mt-1 text-sm md:hidden">
             <span class="font-bold">{{ $t("shared.wishlists.added_to_wishlists_dialog.sku_label") }}:</span>
             {{ product.code }}
           </p>
@@ -27,19 +27,19 @@
 
         <VcPriceDisplay
           :value="product.price?.actual"
-          class="hidden md:block text-green-700 text-sm font-extrabold ml-8"
+          class="ml-8 hidden text-sm font-extrabold text-green-700 md:block"
         />
       </div>
     </div>
 
     <template #actions="{ close }">
-      <VcButton is-outline class="uppercase grow lg:grow-0 inline-flex lg:px-5" @click="close">
+      <VcButton is-outline class="inline-flex grow uppercase lg:grow-0 lg:px-5" @click="close">
         {{ $t("shared.wishlists.added_to_wishlists_dialog.continue_shopping_button") }}
       </VcButton>
 
       <VcButton
         :to="listIds.length === 1 ? { name: 'ListDetails', params: { listId: listIds[0] } } : { name: 'Lists' }"
-        class="uppercase grow lg:grow-0 inline-flex lg:px-5"
+        class="inline-flex grow uppercase lg:grow-0 lg:px-5"
         @click="close"
       >
         {{ $t("shared.wishlists.added_to_wishlists_dialog.view_your_list_button", listIds.length) }}
@@ -51,8 +51,8 @@
 <script setup lang="ts">
 import { computed, PropType } from "vue";
 import { RouteLocationRaw } from "vue-router";
-import { Product } from "@/xapi/types";
 import { getProductRoute } from "@/core";
+import { Product } from "@/xapi/types";
 
 const props = defineProps({
   product: {

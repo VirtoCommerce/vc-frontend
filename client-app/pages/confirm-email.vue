@@ -1,48 +1,48 @@
 <template>
   <!-- Success -->
-  <VcEmptyPage v-if="success" image="/static/images/email.webp" class="flex flex-col grow">
+  <VcEmptyPage v-if="success" image="/static/images/email.webp" class="flex grow flex-col">
     <template #description>
-      <h1 class="text-center lg:text-left text-3xl uppercase font-bold mb-8" v-t="'pages.confirm_email.header'" />
+      <h1 v-t="'pages.confirm_email.header'" class="mb-8 text-center text-3xl font-bold uppercase lg:text-left" />
 
-      <div class="flex flex-col items-center lg:flex-row gap-5 mb-10">
+      <div class="mb-10 flex flex-col items-center gap-5 lg:flex-row">
         <span
-          class="flex items-center justify-center shrink-0 h-12 w-12 rounded-full text-white bg-[color:var(--color-success)]"
+          class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[color:var(--color-success)] text-white"
         >
           <i class="fa fa-check text-2xl" />
         </span>
 
-        <p class="text-19 text-center lg:text-left max-w-md">
-          <strong class="block mb-2" v-t="'pages.confirm_email.subtitle'" />
+        <p class="max-w-md text-center text-19 lg:text-left">
+          <strong v-t="'pages.confirm_email.subtitle'" class="mb-2 block" />
           {{ $t("pages.confirm_email.text") }}
         </p>
       </div>
     </template>
 
     <template #actions>
-      <VcButton :to="{ name: 'SignIn' }" class="uppercase w-36">
+      <VcButton :to="{ name: 'SignIn' }" class="w-36 uppercase">
         {{ $t("pages.confirm_email.continue_button") }}
       </VcButton>
     </template>
   </VcEmptyPage>
 
   <!-- Error -->
-  <VcEmptyPage v-else-if="loaded" image="/static/images/email.webp" class="flex flex-col grow">
+  <VcEmptyPage v-else-if="loaded" image="/static/images/email.webp" class="flex grow flex-col">
     <template #description>
-      <h1 class="text-center lg:text-left text-3xl uppercase font-bold mb-8" v-t="'pages.confirm_email.header'" />
+      <h1 v-t="'pages.confirm_email.header'" class="mb-8 text-center text-3xl font-bold uppercase lg:text-left" />
 
-      <div class="flex flex-col lg:flex-row items-center gap-5 mb-10">
+      <div class="mb-10 flex flex-col items-center gap-5 lg:flex-row">
         <span
-          class="flex items-center justify-center shrink-0 h-12 w-12 rounded-full text-white bg-[color:var(--color-danger)]"
+          class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[color:var(--color-danger)] text-white"
         >
           <i class="fa fa-exclamation text-2xl" />
         </span>
 
-        <p class="text-19 text-center font-bold lg:text-left max-w-md" v-t="'identity_error.InvalidToken'" />
+        <p v-t="'identity_error.InvalidToken'" class="max-w-md text-center text-19 font-bold lg:text-left" />
       </div>
     </template>
 
     <template #actions>
-      <VcButton :to="{ name: 'Catalog' }" class="uppercase w-48">
+      <VcButton :to="{ name: 'Catalog' }" class="w-48 uppercase">
         {{ $t("pages.confirm_email.continue_shopping_button") }}
       </VcButton>
     </template>
@@ -53,12 +53,12 @@
 </template>
 
 <script setup lang="ts">
+import { invoke } from "@vueuse/core";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { invoke } from "@vueuse/core";
 import { usePageHead, useRouteQueryParam } from "@/core";
-import { IdentityResultType } from "@/xapi";
 import { useUser } from "@/shared/account";
+import { IdentityResultType } from "@/xapi";
 
 const { t } = useI18n();
 

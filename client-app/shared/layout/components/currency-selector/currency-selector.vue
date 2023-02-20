@@ -1,7 +1,7 @@
 <template>
   <div v-click-outside="() => open && hideList()" class="relative select-none text-[13px]">
     <button
-      class="relative flex items-center gap-x-1.5 py-3 appearance-none leading-none text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
+      class="relative flex appearance-none items-center gap-x-1.5 py-3 leading-none text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
       @click="toggle"
     >
       <span class="text-white">
@@ -13,14 +13,14 @@
       </span>
 
       <i
-        class="text-[color:var(--color-mobile-menu-link)] fas text-[1rem] lg:text-[color:var(--color-primary)] lg:text-[0.625rem]"
+        class="fas text-[1rem] text-[color:var(--color-mobile-menu-link)] lg:text-[0.625rem] lg:text-[color:var(--color-primary)]"
         :class="[open ? 'fa-chevron-up' : 'fa-chevron-down']"
       />
     </button>
 
     <transition name="slide-fade-top">
-      <div v-show="open" class="absolute right-0 z-30 bg-white shadow-lg max-h-56 rounded border overflow-hidden">
-        <ul ref="listElement" class="max-h-56 overflow-auto divide-y">
+      <div v-show="open" class="absolute right-0 z-30 max-h-56 overflow-hidden rounded border bg-white shadow-lg">
+        <ul ref="listElement" class="max-h-56 divide-y overflow-auto">
           <li
             v-for="item in supportedCurrencies"
             :key="item.code"
@@ -33,7 +33,7 @@
             @click="item.code === currentCurrency?.code ? null : select(item.code)"
           >
             <span
-              class="flex shrink-0 items-center justify-center w-6 h-6 rounded-[50%] bg-[color:var(--color-primary)] text-white text-base font-bold mr-2"
+              class="mr-2 flex h-6 w-6 shrink-0 items-center justify-center rounded-[50%] bg-[color:var(--color-primary)] text-base font-bold text-white"
             >
               {{ item.symbol }}
             </span>

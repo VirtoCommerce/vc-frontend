@@ -1,12 +1,12 @@
 <template>
   <VcPopup :title="$t('shared.wishlists.delete_wishlist_dialog.title')" modal-width="max-w-lg" variant="danger">
     <i18n-t
-      class="py-6 md:py-10 px-6 border-b"
+      class="border-b p-6 md:py-10"
       keypath="shared.wishlists.delete_wishlist_dialog.message"
       tag="p"
       scope="global"
     >
-      <template v-slot:listName>
+      <template #listName>
         <span class="font-extrabold">{{ list.name }}</span>
       </template>
     </i18n-t>
@@ -14,16 +14,11 @@
     <template #actions="{ close }">
       <div class="flex grow justify-between space-x-4">
         <!-- TODO: add color options (success, warning, danger) to VcButton -->
-        <VcButton
-          :is-waiting="loading"
-          kind="danger"
-          class="uppercase flex-grow lg:flex-grow-0 lg:px-12"
-          @click="remove(close)"
-        >
+        <VcButton :is-waiting="loading" kind="danger" class="grow uppercase lg:grow-0 lg:px-12" @click="remove(close)">
           {{ $t("shared.wishlists.delete_wishlist_dialog.delete_button") }}
         </VcButton>
 
-        <VcButton kind="secondary" class="uppercase flex-grow lg:flex-grow-0 lg:px-5" is-outline @click="close">
+        <VcButton kind="secondary" class="grow uppercase lg:grow-0 lg:px-5" is-outline @click="close">
           {{ $t("shared.wishlists.delete_wishlist_dialog.cancel_button") }}
         </VcButton>
       </div>
@@ -32,8 +27,8 @@
 </template>
 
 <script setup lang="ts">
-import { useWishlists } from "@/shared/wishlists";
 import { PropType } from "vue";
+import { useWishlists } from "@/shared/wishlists";
 import { WishlistType } from "@/xapi/types";
 
 const props = defineProps({

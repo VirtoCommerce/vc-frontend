@@ -3,8 +3,8 @@
     <VcBreadcrumbs :items="breadcrumbs" class="mx-5 md:mx-0" />
 
     <!-- Title block -->
-    <div class="flex justify-between items-center mx-5 md:mx-0" :class="{ '-mb-3': executed }">
-      <h2 class="text-gray-800 text-3xl font-bold uppercase">
+    <div class="mx-5 flex items-center justify-between md:mx-0" :class="{ '-mb-3': executed }">
+      <h2 class="text-3xl font-bold uppercase text-gray-800">
         {{
           executed
             ? $t("pages.account.order_payment.processed_title", [order.number])
@@ -14,7 +14,7 @@
     </div>
 
     <!-- Subtitle block -->
-    <div v-if="executed" class="md:flex mx-5 md:mx-0 gap-x-4">
+    <div v-if="executed" class="mx-5 gap-x-4 md:mx-0 md:flex">
       <div class="text-sm">
         <span class="font-bold">
           {{ $t("pages.account.order_payment.order_date") }}
@@ -33,29 +33,29 @@
 
     <div class="flex flex-col lg:flex-row lg:flex-nowrap lg:space-x-6">
       <!-- Main section -->
-      <div class="lg:w-3/4 xl:w-4/5 flex-grow w-full">
+      <div class="w-full grow lg:w-3/4 xl:w-4/5">
         <div
           :class="executed ? 'md:bg-white md:border md:shadow-sm' : 'bg-white border shadow-sm'"
-          class="md:rounded px-9 py-6 md:overflow-hidden"
+          class="px-9 py-6 md:overflow-hidden md:rounded"
         >
           <!-- Successful payment -->
           <VcEmptyPage
             v-if="success"
             image="/static/images/payment/payment-successful.png"
             mobile-image="/static/images/payment/payment-successful.png"
-            class="-mx-9 -mt-16 md:-mt-6 -mb-24 lg:pl-14"
+            class="-mx-9 -mt-16 -mb-24 md:-mt-6 lg:pl-14"
           >
             <template #description>
               <h2
-                class="text-black-800 text-center lg:text-left text-2xl font-semibold mb-3"
                 v-t="'pages.account.order_payment.success.title'"
+                class="text-black-800 mb-3 text-center text-2xl font-semibold lg:text-left"
               />
 
-              <p class="mb-8 text-center lg:text-left max-w-md" v-t="'pages.account.order_payment.success.text'" />
+              <p v-t="'pages.account.order_payment.success.text'" class="mb-8 max-w-md text-center lg:text-left" />
             </template>
 
             <template #actions>
-              <div class="hidden md:flex flex-wrap gap-x-5 gap-y-4">
+              <div class="hidden flex-wrap gap-x-5 gap-y-4 md:flex">
                 <VcButton
                   :to="{ name: 'OrderDetails', params: { orderId }, replace: true }"
                   class="px-5 uppercase"
@@ -65,12 +65,12 @@
                   {{ $t("pages.account.order_payment.back_to_order_button") }}
                 </VcButton>
 
-                <VcButton :to="{ name: 'Orders', replace: true }" class="px-5 uppercase w-40">
+                <VcButton :to="{ name: 'Orders', replace: true }" class="w-40 px-5 uppercase">
                   {{ $t("pages.account.order_payment.orders_list_button") }}
                 </VcButton>
               </div>
 
-              <VcButton :to="{ name: 'Catalog', replace: true }" class="md:!hidden uppercase w-48">
+              <VcButton :to="{ name: 'Catalog', replace: true }" class="w-48 uppercase md:!hidden">
                 {{ $t("pages.account.order_payment.continue_shopping_button") }}
               </VcButton>
             </template>
@@ -81,19 +81,19 @@
             v-else-if="failure"
             image="/static/images/payment/payment-failed.png"
             mobile-image="/static/images/payment/payment-failed.png"
-            class="-mx-9 -mt-16 md:-mt-6 -mb-24 lg:pl-14"
+            class="-mx-9 -mt-16 -mb-24 md:-mt-6 lg:pl-14"
           >
             <template #description>
               <h2
-                class="text-black-800 text-center lg:text-left text-2xl font-semibold mb-3"
                 v-t="'pages.account.order_payment.failure.title'"
+                class="text-black-800 mb-3 text-center text-2xl font-semibold lg:text-left"
               />
 
-              <p class="mb-8 text-center lg:text-left max-w-md" v-t="'pages.account.order_payment.failure.text'" />
+              <p v-t="'pages.account.order_payment.failure.text'" class="mb-8 max-w-md text-center lg:text-left" />
             </template>
 
             <template #actions>
-              <VcButton class="uppercase w-48" @click="tryAgain">
+              <VcButton class="w-48 uppercase" @click="tryAgain">
                 {{ $t("pages.account.order_payment.try_again_button") }}
               </VcButton>
             </template>
@@ -102,10 +102,10 @@
           <!-- Main content -->
           <template v-else>
             <!-- region Billing address -->
-            <h5 class="mb-1 font-extrabold" v-t="'pages.account.order_payment.billing_address_label'" />
+            <h5 v-t="'pages.account.order_payment.billing_address_label'" class="mb-1 font-extrabold" />
 
-            <div class="rounded border mb-6">
-              <div class="p-4 md:p-5 flex flex-row justify-between space-x-3">
+            <div class="mb-6 rounded border">
+              <div class="flex flex-row justify-between space-x-3 p-4 md:p-5">
                 <!-- TODO: create an atom component to display address -->
                 <div class="min-w-0 text-sm">
                   <span class="font-extrabold line-clamp-2">
@@ -123,12 +123,12 @@
                   </p>
 
                   <p class="truncate">
-                    <span class="font-extrabold" v-t="'pages.account.order_payment.phone_label'" />
+                    <span v-t="'pages.account.order_payment.phone_label'" class="font-extrabold" />
                     {{ payment?.billingAddress?.phone }}
                   </p>
 
                   <p class="truncate">
-                    <span class="font-extrabold" v-t="'pages.account.order_payment.email_label'" />
+                    <span v-t="'pages.account.order_payment.email_label'" class="font-extrabold" />
                     {{ payment?.billingAddress?.email }}
                   </p>
                 </div>
@@ -139,7 +139,7 @@
                     :is-waiting="changeAddressLoading"
                     size="sm"
                     is-outline
-                    class="!hidden md:!inline-flex px-5 self-start uppercase font-bold"
+                    class="!hidden self-start px-5 font-bold uppercase md:!inline-flex"
                     @click="showEditAddressDialog"
                   >
                     {{ $t("pages.account.order_payment.edit_button") }}
@@ -149,7 +149,7 @@
                   <button
                     :disabled="paymentMethodComponent?.loading || loading"
                     type="button"
-                    class="md:hidden h-8 w-8 shadow rounded text-[color:var(--color-primary)] hover:bg-gray-100"
+                    class="h-8 w-8 rounded text-[color:var(--color-primary)] shadow hover:bg-gray-100 md:hidden"
                     @click="paymentMethodComponent?.loading || loading ? null : showEditAddressDialog()"
                   >
                     <i class="fas fa-pencil-alt text-lg" />
@@ -160,14 +160,14 @@
             <!-- endregion Billing address -->
 
             <!-- region Payment method -->
-            <h5 class="mb-1 font-extrabold" v-t="'pages.account.order_payment.payment_method_label'" />
+            <h5 v-t="'pages.account.order_payment.payment_method_label'" class="mb-1 font-extrabold" />
 
-            <div class="rounded border overflow-hidden">
-              <div class="flex flex-row items-center justify-between space-x-3 p-4 md:p-5 shadow-lg">
+            <div class="overflow-hidden rounded border">
+              <div class="flex flex-row items-center justify-between space-x-3 p-4 shadow-lg md:p-5">
                 <div class="min-w-0 truncate">
                   <VcImage
                     :src="payment?.paymentMethod?.logoUrl"
-                    class="h-8 w-8 md:h-9 md:w-9 object-center inline-block mr-3.5"
+                    class="mr-3.5 inline-block h-8 w-8 object-center md:h-9 md:w-9"
                     lazy
                   />
 
@@ -180,7 +180,7 @@
                     :is-waiting="changeMethodLoading"
                     size="sm"
                     is-outline
-                    class="!hidden md:!inline-flex px-5 self-start uppercase font-bold"
+                    class="!hidden self-start px-5 font-bold uppercase md:!inline-flex"
                     @click="showChangePaymentMethodDialog"
                   >
                     {{ $t("pages.account.order_payment.edit_button") }}
@@ -190,7 +190,7 @@
                   <button
                     :disabled="paymentMethodComponent?.loading || loading"
                     type="button"
-                    class="md:hidden h-8 w-8 shadow rounded text-[color:var(--color-primary)] hover:bg-gray-100"
+                    class="h-8 w-8 rounded text-[color:var(--color-primary)] shadow hover:bg-gray-100 md:hidden"
                     @click="paymentMethodComponent?.loading || loading ? null : showChangePaymentMethodDialog()"
                   >
                     <i class="fas fa-pencil-alt text-lg" />
@@ -227,7 +227,7 @@
       <!-- Sidebar -->
       <div
         :class="executed ? 'hidden md:flex' : 'flex'"
-        class="flex-col px-5 mb-6 order-first md:px-0 lg:mb-0 lg:order-1 lg:w-1/4"
+        class="order-first mb-6 flex-col px-5 md:px-0 lg:order-1 lg:mb-0 lg:w-1/4"
       >
         <OrderSummary :cart="order" />
       </div>
@@ -237,7 +237,10 @@
 
 <script setup lang="ts">
 import { computed, ref, watchEffect } from "vue";
-import { InputOrderAddressType, OrderPaymentMethodType, PaymentInType } from "@/xapi/types";
+import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
+import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { useUserOrder } from "@/shared/account";
 import { AddOrUpdateAddressModal, OrderSummary, SelectPaymentMethodModal } from "@/shared/checkout";
 import {
   PaymentProcessingAuthorizeNet,
@@ -245,11 +248,8 @@ import {
   PaymentProcessingManual,
   PaymentProcessingRedirection,
 } from "@/shared/payment";
-import { useI18n } from "vue-i18n";
-import { useUserOrder } from "@/shared/account";
-import { useRouter } from "vue-router";
 import { usePopup } from "@/shared/popup";
-import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { InputOrderAddressType, OrderPaymentMethodType, PaymentInType } from "@/xapi/types";
 
 const props = defineProps({
   orderId: {

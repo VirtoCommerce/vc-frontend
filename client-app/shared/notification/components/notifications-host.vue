@@ -7,21 +7,21 @@
         :class="[
           'vc-notifications__item',
           `vc-notifications__item--${notification.type}`,
-          notification.closeButton ? 'pl-5 md:pl-12 pr-12' : 'px-5 md:px-12',
+          notification.closeButton ? 'pl-5 pr-12 md:pl-12' : 'px-5 md:px-12',
           notification.classes,
         ]"
       >
         <!-- Content -->
         <div>
-          <component v-if="notification.component" :is="notification.component" v-bind="notification.props" />
+          <component :is="notification.component" v-if="notification.component" v-bind="notification.props" />
           <span v-else-if="notification.html" v-html="notification.html" />
           <span v-else-if="notification.text" v-text="notification.text" />
         </div>
 
         <!-- Custom button -->
         <component
-          v-if="notification.button"
           :is="notification.button.to ? 'router-link' : 'button'"
+          v-if="notification.button"
           :to="notification.button.to"
           :class="['vc-notifications__button', notification.button.classes]"
           @click="notification.button?.clickHandler ? notification.button.clickHandler(notification.id!, $event) : null"

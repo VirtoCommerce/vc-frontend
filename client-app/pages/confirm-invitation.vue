@@ -2,11 +2,11 @@
   <TwoColumn class="max-w-screen-xl">
     <template #left>
       <h1
-        class="uppercase tracking-wide text-3xl lg:text-4xl font-bold mb-3 lg:mt-5"
         v-t="'pages.confirm_invitation.header'"
+        class="mb-3 text-3xl font-bold uppercase tracking-wide lg:mt-5 lg:text-4xl"
       />
 
-      <p class="text-sm mb-4" v-html="$t('pages.confirm_invitation.text')" />
+      <p class="mb-4 text-sm" v-html="$t('pages.confirm_invitation.text')" />
 
       <form @submit="onSubmit">
         <VcInput
@@ -40,7 +40,7 @@
           is-required
         />
 
-        <div class="flex flex-col md:flex-row gap-x-6 gap-y-4">
+        <div class="flex flex-col gap-x-6 gap-y-4 md:flex-row">
           <VcInput
             v-model="password"
             :label="$t('pages.confirm_invitation.password_label')"
@@ -77,7 +77,7 @@
             :is-waiting="loading"
             :is-disabled="!meta.valid"
             size="lg"
-            class="uppercase w-full lg:w-48 mt-4"
+            class="mt-4 w-full uppercase lg:w-48"
             is-submit
           >
             {{ $t("pages.confirm_invitation.register_button") }}
@@ -93,9 +93,9 @@
 </template>
 
 <script setup lang="ts">
+import { useForm, useField } from "vee-validate";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 import { useIdentityErrorTranslator, usePageHead, useRouteQueryParam } from "@/core/composables";
 import { RegistrationSuccessDialog, useUser } from "@/shared/account";

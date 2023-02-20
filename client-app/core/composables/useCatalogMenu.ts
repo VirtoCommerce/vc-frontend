@@ -1,6 +1,6 @@
 import { computed, readonly, ref, shallowRef } from "vue";
-import { getChildCategories, QueryChildCategoriesArgs, Category } from "@/xapi";
 import { Logger } from "@/core";
+import { getChildCategories, QueryChildCategoriesArgs, Category } from "@/xapi";
 
 const loading = ref(true);
 const catalogMenuItems = shallowRef<Category[]>([]);

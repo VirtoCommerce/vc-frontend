@@ -1,8 +1,16 @@
+import { computedEager } from "@vueuse/core";
+import { keyBy, sumBy } from "lodash";
 import { computed, readonly, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { keyBy, sumBy } from "lodash";
-import { computedEager } from "@vueuse/core";
 import { getLineItemsGroupedByVendor, Logger, TLineItemsGroupByVendor } from "@/core";
+import {
+  ClearCartModal,
+  ExtendedGiftItemType,
+  getLineItemValidationErrorsGroupedBySKU,
+  OutputBulkItemType,
+} from "@/shared/cart";
+import { useNotifications } from "@/shared/notification";
+import { usePopup } from "@/shared/popup";
 import {
   addBulkItemsCart,
   addCoupon,
@@ -33,14 +41,6 @@ import {
   ShippingMethodType,
   validateCoupon,
 } from "@/xapi";
-import { usePopup } from "@/shared/popup";
-import { useNotifications } from "@/shared/notification";
-import {
-  ClearCartModal,
-  ExtendedGiftItemType,
-  getLineItemValidationErrorsGroupedBySKU,
-  OutputBulkItemType,
-} from "@/shared/cart";
 
 const loading = ref(false);
 const cart = shallowRef<CartType>({ name: "" });

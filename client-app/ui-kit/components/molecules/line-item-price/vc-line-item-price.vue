@@ -3,7 +3,7 @@
     <div class="vc-line-item-price__actual">
       <VcPriceDisplay :value="listPrice?.amount > actualPrice?.amount ? actualPrice : listPrice" />
     </div>
-    <div class="vc-line-item-price__list" v-if="listPrice?.amount > actualPrice?.amount">
+    <div v-if="listPrice?.amount > actualPrice?.amount" class="vc-line-item-price__list">
       <VcPriceDisplay :value="listPrice" />
     </div>
   </div>

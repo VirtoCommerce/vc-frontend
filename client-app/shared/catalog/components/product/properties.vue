@@ -1,7 +1,7 @@
 <template>
   <ProductTitledBlock
-    class="mt-5"
     v-if="!model.hidden"
+    class="mt-5"
     image-src="/static/images/technical_specs.svg"
     :title="model.title || $t('shared.catalog.product_details.technical_specs_block_title')"
   >
@@ -16,12 +16,12 @@
       :label="$t('shared.catalog.product_details.vendor_label')"
       class="mb-4"
     >
-      <Vendor :vendor="product.vendor" withRating />
+      <Vendor :vendor="product.vendor" with-rating />
     </ProductProperty>
 
     <a
       v-if="groupedProperties && groupedProperties.length > MAX_DISPLAY_ITEMS"
-      class="flex gap-x-1 mb-4 items-center text-14 text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)] hover:cursor-pointer underline decoration-dashed"
+      class="mb-4 flex items-center gap-x-1 text-14 text-[color:var(--color-link)] underline decoration-dashed hover:cursor-pointer hover:text-[color:var(--color-link-hover)]"
       @click="showAll = !showAll"
     >
       <VcIcon :name="showAll ? 'chevron-up' : 'chevron-down'" size="xs" class="text-[color:var(--color-primary)]" />
@@ -31,11 +31,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
 import _ from "lodash";
-import { Product } from "@/xapi";
+import { computed, ref } from "vue";
 import { prepareProperties, ProductProperty, ProductTitledBlock, Vendor } from "@/shared/catalog";
+import { Product } from "@/xapi";
 
+const props = defineProps<Props>();
 const MAX_DISPLAY_ITEMS = 8;
 const showAll = ref(false);
 
@@ -46,8 +47,6 @@ interface Props {
     title: string;
   };
 }
-
-const props = defineProps<Props>();
 
 // TODO: move this logic to the separated helper. For variations properties also
 const groupedProperties = computed(() => {

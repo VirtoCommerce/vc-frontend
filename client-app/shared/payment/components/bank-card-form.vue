@@ -3,7 +3,6 @@
     <VcInput
       v-mask="'#### #### #### #### ###'"
       :model-value="number.replace(/(.{4})/g, '$1 ')"
-      @update:model-value="number = $event.replace(/\D/g, '')"
       :label="$t('shared.payment.bank_card_form.number_label')"
       :error-message="formErrors.number || errors.number"
       :is-readonly="isReadonly"
@@ -12,6 +11,7 @@
       minlength="14"
       maxlength="23"
       is-required
+      @update:model-value="number = $event.replace(/\D/g, '')"
       @input="input"
     />
 
@@ -25,10 +25,10 @@
       @input="input"
     />
 
-    <div class="flex flex-col sm:flex-row gap-x-6 gap-y-3">
+    <div class="flex flex-col gap-x-6 gap-y-3 sm:flex-row">
       <VcInput
-        v-mask="'## / ##'"
         v-model="expirationDate"
+        v-mask="'## / ##'"
         :label="$t('shared.payment.bank_card_form.expiration_date_label')"
         :placeholder="$t('shared.payment.bank_card_form.expiration_date_placeholder')"
         :error-message="expirationDateErrors"
@@ -44,8 +44,8 @@
       />
 
       <VcInput
-        v-mask="'####'"
         v-model="securityCode"
+        v-mask="'####'"
         :label="$t('shared.payment.bank_card_form.security_code_label')"
         :error-message="formErrors.securityCode || errors.securityCode"
         :is-readonly="isReadonly"
@@ -66,12 +66,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType, ref, watch } from "vue";
-import { useForm, useField } from "vee-validate";
-import * as yup from "yup";
 import { clone } from "lodash";
-import { BankCardErrorsType, BankCardType } from "@/shared/payment";
+import { useForm, useField } from "vee-validate";
+import { computed, PropType, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import * as yup from "yup";
+import { BankCardErrorsType, BankCardType } from "@/shared/payment";
+
+const emit = defineEmits<{
+  (event: "update:modelValue", bankCardData: Partial<BankCardType>): void;
+  (event: "update:valid", value: boolean): void;
+}>();
 
 const props = defineProps({
   isReadonly: Boolean,
@@ -92,11 +97,6 @@ const props = defineProps({
     default: () => ({}),
   },
 });
-
-const emit = defineEmits<{
-  (event: "update:modelValue", bankCardData: Partial<BankCardType>): void;
-  (event: "update:valid", value: boolean): void;
-}>();
 
 const { t } = useI18n();
 

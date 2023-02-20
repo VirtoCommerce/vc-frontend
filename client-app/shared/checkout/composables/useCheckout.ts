@@ -1,6 +1,12 @@
+import { omit } from "lodash";
 import { computed, readonly, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { omit } from "lodash";
+import { AddressType, Logger, useGoogleAnalytics } from "@/core";
+import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
+import { useCart } from "@/shared/cart";
+import { AddOrUpdateAddressModal, SelectAddressModal } from "@/shared/checkout";
+import { useNotifications } from "@/shared/notification";
+import { usePopup } from "@/shared/popup";
 import {
   CartAddressType,
   createOrderFromCart as _createOrderFromCart,
@@ -12,12 +18,6 @@ import {
   removeCart,
   ShippingMethodType,
 } from "@/xapi";
-import { useCart } from "@/shared/cart";
-import { usePopup } from "@/shared/popup";
-import { AddOrUpdateAddressModal, SelectAddressModal } from "@/shared/checkout";
-import { AddressType, Logger, useGoogleAnalytics } from "@/core";
-import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
-import { useNotifications } from "@/shared/notification";
 
 const loading = ref(false);
 const comment = ref("");

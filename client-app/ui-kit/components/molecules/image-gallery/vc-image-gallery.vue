@@ -1,12 +1,12 @@
 <template>
   <div
     ref="mainImageElement"
-    class="square relative flex flex-col justify-center items-center border border-gray-100 rounded-sm overflow-hidden"
+    class="square relative flex flex-col items-center justify-center overflow-hidden rounded-sm border border-gray-100"
   >
     <VcImage
       :src="activeSrc"
       size-suffix="md"
-      class="absolute top-0 w-full h-full object-cover object-center rounded-sm"
+      class="absolute top-0 h-full w-full rounded-sm object-cover object-center"
       lazy
     />
 
@@ -14,19 +14,27 @@
   </div>
 
   <div v-if="isMobile && images.length > 1" class="mt-4 flex flex-row justify-center space-x-2.5">
-    <div
+    <button
       v-for="(image, i) in images"
       :key="image.url || i"
-      class="border border-[color:var(--color-primary)] w-4 h-4 rounded-full cursor-pointer"
       :class="{ 'bg-[color:var(--color-primary)]': image.url === activeSrc }"
+      type="button"
+      class="h-4 w-4 cursor-pointer rounded-full border border-[color:var(--color-primary)]"
       @click="setActiveImage(image.url)"
+      @keyup.enter="setActiveImage(image.url)"
     />
   </div>
 
   <div v-if="!isMobile && images.length > 1" class="mt-6 grid grid-cols-3 gap-5">
-    <div v-for="(image, i) in images" :key="image.url || i" @click="setActiveImage(image.url)">
-      <div
-        class="square relative flex flex-col justify-center items-center cursor-pointer border border-gray-100 rounded-sm hover:ring hover:ring-[color:var(--color-primary-hover)]"
+    <button
+      v-for="(image, i) in images"
+      :key="image.url || i"
+      type="button"
+      @click="setActiveImage(image.url)"
+      @keyup.enter="setActiveImage(image.url)"
+    >
+      <span
+        class="square relative flex cursor-pointer flex-col items-center justify-center rounded-sm border border-gray-100 hover:ring hover:ring-[color:var(--color-primary-hover)]"
         :class="{
           'ring ring-[color:var(--color-primary)]': image.url === activeSrc,
         }"
@@ -35,19 +43,19 @@
           :src="image.url"
           :alt="image.name"
           size-suffix="sm"
-          class="absolute top-0 w-full h-full object-cover object-center rounded-sm"
+          class="absolute top-0 h-full w-full rounded-sm object-cover object-center"
           lazy
         />
-      </div>
-    </div>
+      </span>
+    </button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ImageType, Product } from "@/xapi/types";
-import { watchEffect, PropType, ref, computed } from "vue";
 import { breakpointsTailwind, SwipeDirection, useBreakpoints, useSwipe } from "@vueuse/core";
 import _ from "lodash";
+import { computed, PropType, ref, watchEffect } from "vue";
+import { ImageType, Product } from "@/xapi/types";
 
 const props = defineProps({
   product: {

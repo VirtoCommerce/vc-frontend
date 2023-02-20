@@ -2,38 +2,38 @@
   <VcEmptyPage
     image="/static/images/order-completed.webp"
     mobile-image="/static/images/order-completed.webp"
-    class="flex flex-col grow"
+    class="flex grow flex-col"
   >
     <template #title>
       <h1
-        class="lg:hidden text-center lg:text-left text-2xl uppercase font-bold mb-3"
         v-t="'pages.checkout_complete.title'"
+        class="mb-3 text-center text-2xl font-bold uppercase lg:hidden lg:text-left"
       />
     </template>
 
     <template #description>
       <h1
-        class="hidden lg:block text-center lg:text-left text-3xl uppercase font-bold mb-8"
         v-t="'pages.checkout_complete.title'"
+        class="mb-8 hidden text-center text-3xl font-bold uppercase lg:block lg:text-left"
       />
 
-      <div class="flex flex-col lg:flex-row gap-5 mb-10">
+      <div class="mb-10 flex flex-col gap-5 lg:flex-row">
         <div
-          class="hidden lg:flex items-center justify-center shrink-0 h-12 w-12 rounded-full text-white bg-[color:var(--color-success)]"
+          class="hidden h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[color:var(--color-success)] text-white lg:flex"
         >
           <i class="fa fa-check text-2xl" />
         </div>
 
-        <div class="text-19 text-center lg:text-left max-w-md">
-          <strong class="block mb-4" v-t="{ path: 'pages.checkout_complete.subtitle', args: [orderNumber] }" />
+        <div class="max-w-md text-center text-19 lg:text-left">
+          <strong v-t="{ path: 'pages.checkout_complete.subtitle', args: [orderNumber] }" class="mb-4 block" />
           <span v-t="'pages.checkout_complete.text'" />
-          <div class="flex flex-col md:flex-row items-center justify-center lg:justify-start gap-6 mt-10">
-            <VcButton :to="{ name: 'OrderDetails', params: { orderId } }" class="uppercase w-40">
+          <div class="mt-10 flex flex-col items-center justify-center gap-6 md:flex-row lg:justify-start">
+            <VcButton :to="{ name: 'OrderDetails', params: { orderId } }" class="w-40 uppercase">
               <i class="fas fa-file-lines mr-3" />
               {{ $t("pages.checkout_complete.buttons.show_order") }}
             </VcButton>
 
-            <VcButton to="/" class="uppercase w-40">
+            <VcButton to="/" class="w-40 uppercase">
               {{ $t("common.buttons.home") }}
             </VcButton>
           </div>

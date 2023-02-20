@@ -6,7 +6,7 @@
         : $t('shared.checkout.add_or_update_address_dialog.new_address_title')
     "
     modal-width="max-w-5xl"
-    :hide-actions="true"
+    hide-actions
     is-mobile-fullscreen
   >
     <template #default="{ close }">
@@ -20,12 +20,12 @@
         @save="saveAddress"
       >
         <template #append="{ dirty, valid }">
-          <div class="flex flex-row space-x-4 pb-3 pt-7 sm:py-4 sm:float-right">
-            <VcButton kind="secondary" size="md" class="uppercase w-1/2 sm:px-5" is-outline @click="close">
+          <div class="flex flex-row space-x-4 pb-3 pt-7 sm:float-right sm:py-4">
+            <VcButton kind="secondary" size="md" class="w-1/2 uppercase sm:px-5" is-outline @click="close">
               {{ $t("shared.checkout.add_or_update_address_dialog.cancel_button") }}
             </VcButton>
 
-            <VcButton size="md" :is-disabled="!dirty || !valid" class="uppercase w-1/2 sm:px-5" is-submit>
+            <VcButton size="md" :is-disabled="!dirty || !valid" class="w-1/2 uppercase sm:px-5" is-submit>
               {{
                 editableAddress
                   ? $t("shared.checkout.add_or_update_address_dialog.save_button")
@@ -40,10 +40,12 @@
 </template>
 
 <script setup lang="ts">
-import { MemberAddressType } from "@/xapi/types";
-import { useCountries } from "@/core/composables";
-import { onMounted, PropType, ref, Ref, watchEffect } from "vue";
 import { clone } from "lodash";
+import { onMounted, PropType, ref, Ref, watchEffect } from "vue";
+import { useCountries } from "@/core/composables";
+import { MemberAddressType } from "@/xapi/types";
+
+const emit = defineEmits(["result"]);
 
 const props = defineProps({
   address: {
@@ -54,8 +56,6 @@ const props = defineProps({
 
 const { countries, loadCountries } = useCountries();
 const editableAddress: Ref<MemberAddressType | null> = ref(null);
-
-const emit = defineEmits(["result"]);
 
 onMounted(async () => {
   if (!countries.value.length) {

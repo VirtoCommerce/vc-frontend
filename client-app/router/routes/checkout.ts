@@ -1,7 +1,7 @@
 import { RouteRecordRaw } from "vue-router";
-import Shipping from "@/pages/checkout/shipping.vue";
 import Billing from "@/pages/checkout/billing.vue";
 import Completed from "@/pages/checkout/completed.vue";
+import Shipping from "@/pages/checkout/shipping.vue";
 
 export const checkoutRoutes: RouteRecordRaw[] = [
   {

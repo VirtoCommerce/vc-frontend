@@ -1,5 +1,5 @@
-import { TLogger } from "./logger.type";
 import { noop } from "@vueuse/core";
+import { TLogger } from "./logger.type";
 
 const logger: TLogger = {
   debug: noop,

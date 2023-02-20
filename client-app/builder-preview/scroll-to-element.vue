@@ -1,5 +1,5 @@
 <template>
-  <div class="empty-block-for-scroll-to" :id="model.id"></div>
+  <div :id="model.id" class="empty-block-for-scroll-to"></div>
 </template>
 
 <script setup lang="ts">

@@ -1,16 +1,16 @@
 <template>
   <div>
     <!-- Title block -->
-    <div class="flex justify-between items-center mx-5 md:mx-0">
-      <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.account.quotes.title'" />
+    <div class="mx-5 flex items-center justify-between md:mx-0">
+      <h2 v-t="'pages.account.quotes.title'" class="text-3xl font-bold uppercase text-gray-800" />
     </div>
 
-    <div class="-mt-5" ref="stickyMobileHeaderAnchor"></div>
+    <div ref="stickyMobileHeaderAnchor" class="-mt-5"></div>
 
     <!-- Page toolbar -->
     <PageToolbarBlock
       :stick="stickyMobileHeaderIsVisible"
-      class="flex flex-row lg:flex-row-reverse items-center py-3.5 -my-3.5 gap-x-2 lg:gap-x-5"
+      class="-my-3.5 flex flex-row items-center gap-x-2 py-3.5 lg:flex-row-reverse lg:gap-x-5"
       shadow
     >
       <div class="flex grow">
@@ -49,7 +49,7 @@
     </VcEmptyView>
 
     <!-- Content block -->
-    <div class="flex flex-col bg-white shadow-sm md:rounded md:border" v-else>
+    <div v-else class="flex flex-col bg-white shadow-sm md:rounded md:border">
       <VcTable
         :loading="fetching"
         :columns="columns"
@@ -57,36 +57,36 @@
         :items="quotes"
         :pages="pages"
         :page="page"
-        @itemClick="navigateQuoteDetails"
-        @headerClick="applySorting"
-        @pageChanged="changePage"
+        @item-click="navigateQuoteDetails"
+        @header-click="applySorting"
+        @page-changed="changePage"
       >
         <template #mobile-item="itemData">
-          <div class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200 cursor-pointer">
+          <div class="grid cursor-pointer grid-cols-2 gap-y-4 border-b border-gray-200 p-6">
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.quotes.quote_number_label'" />
+              <span v-t="'pages.account.quotes.quote_number_label'" class="text-sm text-gray-400" />
 
-              <span class="pr-4 font-extrabold overflow-hidden overflow-ellipsis">
+              <span class="overflow-hidden text-ellipsis pr-4 font-extrabold">
                 {{ itemData.item.number }}
               </span>
             </div>
 
-            <div class="flex flex-col justify-center items-end">
+            <div class="flex flex-col items-end justify-center">
               <TableStatusBadge :status="itemData.item.status" />
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.quotes.date_label'" />
+              <span v-t="'pages.account.quotes.date_label'" class="text-sm text-gray-400" />
 
-              <span class="overflow-hidden overflow-ellipsis">
+              <span class="overflow-hidden text-ellipsis">
                 {{ $d(itemData.item?.createdDate) }}
               </span>
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.quotes.total_label'" />
+              <span v-t="'pages.account.quotes.total_label'" class="text-sm text-gray-400" />
 
-              <span class="overflow-hidden overflow-ellipsis font-extrabold">
+              <span class="overflow-hidden text-ellipsis font-extrabold">
                 {{ itemData.item.totals?.grandTotalInclTax?.formattedAmount }}
               </span>
             </div>
@@ -94,25 +94,25 @@
         </template>
 
         <template #mobile-skeleton>
-          <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200">
+          <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-gray-200 p-6">
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.quotes.quote_number_label'"></span>
-              <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
+              <span v-t="'pages.account.quotes.quote_number_label'" class="text-sm text-gray-400"></span>
+              <div class="mr-4 h-6 animate-pulse bg-gray-200"></div>
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.quotes.date_label'"></span>
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <span v-t="'pages.account.quotes.date_label'" class="text-sm text-gray-400"></span>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.quotes.total_label'"></span>
-              <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
+              <span v-t="'pages.account.quotes.total_label'" class="text-sm text-gray-400"></span>
+              <div class="mr-4 h-6 animate-pulse bg-gray-200"></div>
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.quotes.status_label'"></span>
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <span v-t="'pages.account.quotes.status_label'" class="text-sm text-gray-400"></span>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </div>
           </div>
         </template>
@@ -121,22 +121,22 @@
           <tr
             v-for="quote in quotes"
             :key="quote.id"
-            class="even:bg-gray-50 hover:bg-gray-200 cursor-pointer"
+            class="cursor-pointer even:bg-gray-50 hover:bg-gray-200"
             @click="navigateQuoteDetails(quote)"
           >
-            <td class="p-5 overflow-hidden overflow-ellipsis">
+            <td class="overflow-hidden text-ellipsis p-5">
               {{ quote.number }}
             </td>
 
-            <td class="p-5 overflow-hidden overflow-ellipsis">
+            <td class="overflow-hidden text-ellipsis p-5">
               {{ $d(quote.createdDate) }}
             </td>
 
-            <td class="p-5 overflow-hidden overflow-ellipsis">
+            <td class="overflow-hidden text-ellipsis p-5">
               <TableStatusBadge :status="quote.status" class="mx-auto" />
             </td>
 
-            <td class="p-5 overflow-hidden overflow-ellipsis text-right">
+            <td class="overflow-hidden text-ellipsis p-5 text-right">
               {{ quote.totals?.grandTotalInclTax?.formattedAmount }}
             </td>
           </tr>
@@ -145,7 +145,7 @@
         <template #desktop-skeleton>
           <tr v-for="i in itemsPerPage" :key="i" class="even:bg-gray-50">
             <td v-for="column in columns" :key="column.id" class="p-5">
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </td>
           </tr>
         </template>
@@ -155,14 +155,14 @@
 </template>
 
 <script setup lang="ts">
+import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import { computed, ref, shallowRef, watch } from "vue";
-import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
+import { getSortingExpression, ISortInfo, QueryParamName, getSortInfoFromStringExpression } from "@/core";
+import { useElementVisibility, useRouteQueryParam, usePageHead } from "@/core/composables";
 import { PageToolbarBlock, useUserQuotes } from "@/shared/account";
 import { QuoteType } from "@/xapi/types";
-import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
-import { useElementVisibility, useRouteQueryParam, usePageHead } from "@/core/composables";
-import { getSortingExpression, ISortInfo, QueryParamName, getSortInfoFromStringExpression } from "@/core";
 
 const { t } = useI18n();
 const router = useRouter();

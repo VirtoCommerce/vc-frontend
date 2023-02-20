@@ -1,6 +1,6 @@
 import { StorefrontPermissions, XApiPermissions } from "@/core/constants";
-import { RoleType } from "@/xapi/types";
 import { Modify } from "@/core/types/modify";
+import { RoleType } from "@/xapi/types";
 
 export type Role = Modify<
   RoleType,

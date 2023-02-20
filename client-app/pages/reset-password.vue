@@ -1,13 +1,13 @@
 <template>
   <TwoColumn class="max-w-screen-xl">
     <template #left>
-      <h1 class="uppercase text-3xl lg:text-4xl font-bold mb-5 lg:mt-5" v-t="`pages.${localizationPageTerm}.header`" />
+      <h1 v-t="`pages.${localizationPageTerm}.header`" class="mb-5 text-3xl font-bold uppercase lg:mt-5 lg:text-4xl" />
 
       <template v-if="isValidData">
         <template v-if="!isSucceeded">
           <p
-            class="text-lg md:text-base mb-5 lg:mb-4"
             v-t="`pages.${localizationPageTerm}.enter_new_password_message`"
+            class="mb-5 text-lg md:text-base lg:mb-4"
           />
 
           <ResetPasswordForm
@@ -18,10 +18,10 @@
           />
         </template>
 
-        <div v-else class="flex flex-col items-center space-y-10 lg:space-y-12 lg:items-start lg:mt-12">
-          <div class="flex flex-col items-center lg:flex-row space-x-0 space-y-10 lg:space-x-3 lg:space-y-0">
-            <i class="fas fa-check-circle text-7xl lg:text-4xl text-green-600"></i>
-            <div class="text-lg" v-t="`pages.${localizationPageTerm}.success_message`"></div>
+        <div v-else class="flex flex-col items-center space-y-10 lg:mt-12 lg:items-start lg:space-y-12">
+          <div class="flex flex-col items-center space-x-0 space-y-10 lg:flex-row lg:space-x-3 lg:space-y-0">
+            <i class="fas fa-check-circle text-7xl text-green-600 lg:text-4xl"></i>
+            <div v-t="`pages.${localizationPageTerm}.success_message`" class="text-lg"></div>
           </div>
 
           <VcButton :to="{ name: 'SignIn' }" class="w-48 uppercase">
@@ -30,10 +30,10 @@
         </div>
       </template>
 
-      <div v-else class="flex flex-col items-center space-y-10 lg:space-y-12 lg:items-start lg:mt-12">
-        <div class="flex flex-col items-center lg:flex-row space-x-0 space-y-10 lg:space-x-3 lg:space-y-0">
-          <i class="fas fa-times-circle text-7xl lg:text-4xl text-[color:var(--color-danger)]"></i>
-          <div class="text-lg" v-t="`pages.${localizationPageTerm}.data_invalid_error_message`"></div>
+      <div v-else class="flex flex-col items-center space-y-10 lg:mt-12 lg:items-start lg:space-y-12">
+        <div class="flex flex-col items-center space-x-0 space-y-10 lg:flex-row lg:space-x-3 lg:space-y-0">
+          <i class="fas fa-times-circle text-7xl text-[color:var(--color-danger)] lg:text-4xl"></i>
+          <div v-t="`pages.${localizationPageTerm}.data_invalid_error_message`" class="text-lg"></div>
         </div>
 
         <VcButton to="/" class="w-48 uppercase">
@@ -54,11 +54,11 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { TwoColumn } from "@/shared/layout";
-import { ResetPasswordForm } from "@/shared/account";
-import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 import { usePageHead, useRouteQueryParam } from "@/core/composables";
+import { ResetPasswordForm } from "@/shared/account";
+import { TwoColumn } from "@/shared/layout";
 
 const route = useRoute();
 const { t } = useI18n();

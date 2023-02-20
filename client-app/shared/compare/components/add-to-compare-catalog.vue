@@ -16,7 +16,7 @@
     </template>
 
     <template #content>
-      <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5">
+      <div class="rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y">
         {{ $t("pages.catalog.add_to_compare_tooltip") }}
       </div>
     </template>
@@ -24,8 +24,8 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
 import { eagerComputed } from "@vueuse/core";
+import { PropType } from "vue";
 import { useCompareProducts } from "@/shared/compare";
 import { Product } from "@/xapi/types";
 
@@ -34,10 +34,12 @@ const props = defineProps({
     type: Object as PropType<Product>,
     required: true,
   },
+
   customClass: {
     type: String,
     default: "w-6 h-6 lg:w-4 lg:h-4",
   },
+
   tooltipPlacement: {
     type: String,
     default: "left",

@@ -1,6 +1,6 @@
+import { clone, isEqual, pick } from "lodash";
 import { AnyAddressType } from "@/core/types";
 import { InputMemberAddressType, MemberAddressType } from "@/xapi/types";
-import { clone, isEqual, pick } from "lodash";
 
 export function toInputAddress(address: AnyAddressType): InputMemberAddressType {
   const newAddress = clone(address) as Record<keyof MemberAddressType, any>;

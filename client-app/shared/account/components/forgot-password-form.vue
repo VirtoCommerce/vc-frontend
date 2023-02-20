@@ -19,7 +19,7 @@
 
       <VcButton
         is-submit
-        class="mt-6 lg:mt-3 w-full lg:w-48 uppercase"
+        class="mt-6 w-full uppercase lg:mt-3 lg:w-48"
         :is-waiting="loading"
         :is-disabled="!meta.valid || meta.pending"
       >
@@ -30,12 +30,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
 import { useForm, useField } from "vee-validate";
-import * as yup from "yup";
-import { useUser } from "@/shared/account";
+import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
+import * as yup from "yup";
+import { useUser } from "@/shared/account";
 
 const emit = defineEmits(["succeeded"]);
 

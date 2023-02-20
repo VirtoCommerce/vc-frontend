@@ -1,13 +1,13 @@
 <template>
   <div
     v-if="discount"
-    class="z-[1] absolute top-0 left-0 flex items-center py-0.5 rounded-tl rounded-br bg-[color:var(--color-sale-badge-bg)] text-white space-x-1.5"
+    class="absolute top-0 left-0 z-[1] flex items-center space-x-1.5 rounded-tl rounded-br bg-[color:var(--color-sale-badge-bg)] py-0.5 text-white"
     :class="{
       'h-7 px-2 lg:h-6 lg:px-1.5': size === 'md',
       'h-5 px-1.5': size === 'sm',
     }"
   >
-    <svg class="w-2.5 h-3" v-if="isHot">
+    <svg v-if="isHot" class="h-3 w-2.5">
       <use href="/static/images/fire-solid.svg#main" />
     </svg>
     <span
@@ -24,19 +24,21 @@
 </template>
 
 <script setup lang="ts">
-import { PriceType } from "@/xapi/types";
 import { computedEager } from "@vueuse/shared";
 import { PropType } from "vue";
+import { PriceType } from "@/xapi/types";
 
 const props = defineProps({
   price: {
     type: Object as PropType<PriceType>,
     required: true,
   },
+
   isHot: {
     type: Boolean,
     default: false,
   },
+
   size: {
     type: String,
     default: "md",

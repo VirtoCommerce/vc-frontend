@@ -6,7 +6,7 @@
           {{ $t("shared.checkout.billing_details_section.labels.billing_address") }}
         </VcLabel>
 
-        <div :class="['grow rounded border divide-y', { 'bg-gray-50 cursor-not-allowed': disabled }]">
+        <div :class="['grow divide-y rounded border', { 'cursor-not-allowed bg-gray-50': disabled }]">
           <VcCheckbox
             v-model="billingAddressEqualsShipping"
             :disabled="disabled"
@@ -25,7 +25,7 @@
             :address="address"
             :disabled="disabled"
             :readonly="shipment?.deliveryAddress && billingAddressEqualsShipping"
-            class="px-3 py-1.5 min-h-[3.313rem]"
+            class="min-h-[3.313rem] px-3 py-1.5"
             @change="$emit('change:address')"
           />
         </div>
@@ -67,8 +67,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
 import { useVModel } from "@vueuse/core";
+import { computed } from "vue";
 import { PaymentType, PaymentMethodType, ShipmentType, CartAddressType } from "@/xapi";
 
 interface IEmits {

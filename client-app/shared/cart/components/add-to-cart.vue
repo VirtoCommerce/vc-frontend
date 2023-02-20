@@ -1,24 +1,24 @@
 <template>
   <div>
-    <div class="flex relative z-0">
+    <div class="relative z-0 flex">
       <input
         ref="input"
-        type="number"
         v-model.number="enteredQuantity"
+        type="number"
         :disabled="disabled"
         :max="maxQty"
         :min="minQty"
         :class="{
-          'border-[color:var(--color-danger)] focus:border-[color:var(--color-danger-hover)] z-10': !!errorMessage,
+          'z-10 border-[color:var(--color-danger)] focus:border-[color:var(--color-danger-hover)]': !!errorMessage,
         }"
-        class="appearance-none rounded-l rounded-r-none flex-1 w-full text-base lg:text-sm -mr-px border border-gray-300 focus:border-gray-400 h-9 outline-none px-3 leading-9 min-w-0 text-center"
+        class="-mr-px h-9 w-full min-w-0 flex-1 appearance-none rounded-l rounded-r-none border border-gray-300 px-3 text-center text-base leading-9 outline-none focus:border-gray-400 lg:text-sm"
         @input="onInput"
         @keypress="onKeypress"
         @click="onClick"
       />
 
       <VcButton
-        class="!rounded-l-none !border uppercase px-3 !text-13 min-w-[52%]"
+        class="min-w-[52%] !rounded-l-none !border px-3 !text-13 uppercase"
         :is-outline="!countInCart"
         :is-waiting="loading"
         :is-disabled="disabled || !!errorMessage"
@@ -30,7 +30,7 @@
     </div>
 
     <!-- Info hint -->
-    <VcTooltip class="!block" v-if="errorMessage" :xOffset="28" placement="bottom-start" strategy="fixed">
+    <VcTooltip v-if="errorMessage" class="!block" :x-offset="28" placement="bottom-start" strategy="fixed">
       <template #trigger>
         <div class="pt-0.5 text-11 text-[color:var(--color-danger)] xs:line-clamp-1">
           {{ errorMessage }}
@@ -38,7 +38,7 @@
       </template>
 
       <template #content>
-        <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5 w-52">
+        <div class="w-52 rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y">
           {{ errorMessage }}
         </div>
       </template>
@@ -49,30 +49,31 @@
 </template>
 
 <script setup lang="ts">
-import { LineItemType, Product, VariationType } from "@/xapi/types";
-import { useCart } from "@/shared/cart";
-import { useField } from "vee-validate";
-import { computed, PropType, ref, watchEffect } from "vue";
 import { eagerComputed } from "@vueuse/core";
 import { clone } from "lodash";
+import { useField } from "vee-validate";
+import { computed, PropType, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 import { useGoogleAnalytics } from "@/core";
+import { useCart } from "@/shared/cart";
+import { LineItemType, Product, VariationType } from "@/xapi/types";
 
 const emit = defineEmits(["update:lineitem"]);
-
-const input = ref<HTMLInputElement>();
 
 const props = defineProps({
   product: {
     type: Object as PropType<Product | VariationType>,
     required: true,
   },
+
   reservedSpace: {
     type: Boolean,
     default: false,
   },
 });
+
+const input = ref<HTMLInputElement>();
 
 // Define max qty available to add
 const MAX_VALUE = 999999;

@@ -1,5 +1,5 @@
-import mutationDocument from "./deleteWishlistItemMutation.graphql";
 import { InputRemoveWishlistItemType, Mutations, MutationsRemoveWishlistItemArgs, WishlistType } from "@/xapi/types";
+import mutationDocument from "./deleteWishlistItemMutation.graphql";
 
 export default async function deleteWishlistItem(payload: InputRemoveWishlistItemType): Promise<WishlistType> {
   const { $graphqlClient } = useNuxtApp();

@@ -7,7 +7,7 @@
     "
     modal-width="max-w-xl"
   >
-    <div class="px-6 pt-5 pb-6 border-b">
+    <div class="border-b px-6 pt-5 pb-6">
       <VcInput
         v-model="listName"
         :label="$t('shared.wishlists.add_or_update_wishlist_dialog.list_name_label')"
@@ -15,15 +15,14 @@
         :is-disabled="loading"
         :error-message="errors[0]"
         is-required
-        autofocus
       />
     </div>
 
     <template #actions="{ close }">
-      <div class="flex grow sm:justify-between space-x-4 sm:space-x-10">
+      <div class="flex grow space-x-4 sm:justify-between sm:space-x-10">
         <!-- TODO: add color options (success, warning, danger) to VcButton -->
         <div class="flex grow justify-end space-x-4">
-          <VcButton kind="secondary" class="uppercase grow sm:grow-0 sm:px-5" is-outline @click="close">
+          <VcButton kind="secondary" class="grow uppercase sm:grow-0 sm:px-5" is-outline @click="close">
             {{ $t("shared.wishlists.add_or_update_wishlist_dialog.cancel_button") }}
           </VcButton>
 
@@ -31,7 +30,7 @@
             :is-waiting="loading"
             :is-disabled="!meta.valid || !meta.dirty"
             :class="isEditMode ? 'px-4 sm:px-12' : 'sm:px-5'"
-            class="uppercase grow sm:grow-0"
+            class="grow uppercase sm:grow-0"
             @click="save(close)"
           >
             {{
@@ -47,13 +46,13 @@
 </template>
 
 <script setup lang="ts">
+import { eagerComputed } from "@vueuse/core";
 import { useField, useForm } from "vee-validate";
+import { PropType } from "vue";
+import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 import { useWishlists } from "@/shared/wishlists";
-import { PropType } from "vue";
 import { WishlistType } from "@/xapi/types";
-import { eagerComputed } from "@vueuse/core";
-import { useI18n } from "vue-i18n";
 
 const props = defineProps({
   list: {

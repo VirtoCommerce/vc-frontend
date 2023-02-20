@@ -7,13 +7,13 @@
         :class="priceColorClass"
         :value="value?.actual"
       />
-      <VcPriceDisplay v-else class="text-green-700 font-bold" :value="value?.list" />
-      <span class="hidden sm:inline md:hidden xl:inline" v-t="'common.suffixes.per_item'"></span>
+      <VcPriceDisplay v-else class="font-bold text-green-700" :value="value?.list" />
+      <span v-t="'common.suffixes.per_item'" class="hidden sm:inline md:hidden xl:inline"></span>
     </div>
     <div class="leading-4">
       <VcPriceDisplay
-        class="text-gray-400 text-xs font-semibold line-through"
         v-if="value?.list?.amount > value?.actual?.amount"
+        class="text-xs font-semibold text-gray-400 line-through"
         :value="value?.list"
       />
     </div>
@@ -29,6 +29,7 @@ defineProps({
     type: Object as PropType<PriceType | { list: MoneyType; actual: MoneyType }>,
     default: undefined,
   },
+
   priceColorClass: {
     type: String,
     default: "text-[color:var(--color-price)]",

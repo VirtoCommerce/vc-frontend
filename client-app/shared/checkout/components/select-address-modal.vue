@@ -2,30 +2,30 @@
   <VcPopup :title="$t('shared.checkout.select_address_dialog.title')" modal-width="max-w-5xl" is-mobile-fullscreen>
     <template #actions="{ close }">
       <VcButton
-        class="uppercase lg:mr-auto px-2"
-        :class="[isMobile && 'flex-grow w-1/2']"
+        class="px-2 uppercase lg:mr-auto"
+        :class="[isMobile && 'w-1/2 grow']"
+        is-outline
         @click="
           $emit('addNewAddress');
           close();
         "
-        is-outline
       >
         {{ $t("shared.checkout.select_address_dialog.add_address_button") }}
       </VcButton>
 
-      <div class="flex space-x-3" :class="[isMobile ? 'flex-grow w-1/2' : 'w-auto']">
+      <div class="flex space-x-3" :class="[isMobile ? 'w-1/2 grow' : 'w-auto']">
         <VcButton
           v-if="!isMobile"
           kind="secondary"
-          class="w-1/2 md:w-auto uppercase flex-grow md:flex-grow-0 md:px-5"
-          @click="close"
+          class="w-1/2 grow uppercase md:w-auto md:grow-0 md:px-5"
           is-outline
+          @click="close"
         >
           {{ $t("shared.checkout.select_address_dialog.cancel_button") }}
         </VcButton>
 
         <VcButton
-          class="w-1/2 md:w-auto uppercase flex-grow md:flex-grow-0 md:px-10"
+          class="w-1/2 grow uppercase md:w-auto md:grow-0 md:px-10"
           @click="
             $emit('result', selectedAddress);
             close();
@@ -40,31 +40,31 @@
       </div>
     </template>
 
-    <VcTable :columns="columns" :items="paginatedAddresses" :pages="pages" :page="page" @pageChanged="onPageChange">
+    <VcTable :columns="columns" :items="paginatedAddresses" :pages="pages" :page="page" @page-changed="onPageChange">
       <template #mobile-item="itemData">
-        <div class="flex items-center space-x-3 p-6 border-b border-gray-200">
-          <div class="w-1/2 flex-grow truncate">
-            <span class="font-bold text-base">{{ itemData.item.firstName }} {{ itemData.item.lastName }}</span>
+        <div class="flex items-center space-x-3 border-b border-gray-200 p-6">
+          <div class="w-1/2 grow truncate">
+            <span class="text-base font-bold">{{ itemData.item.firstName }} {{ itemData.item.lastName }}</span>
             <p class="text-sm">
               {{ itemData.item.countryCode }} {{ itemData.item.regionName }} {{ itemData.item.city }}
               {{ itemData.item.line1 }}
               {{ itemData.item.postalCode }}
             </p>
-            <p class="text-gray-400 text-sm"><span class="font-semibold">Phone: </span>{{ itemData.item.phone }}</p>
-            <p class="text-gray-400 text-sm"><span class="font-semibold">Email: </span>{{ itemData.item.email }}</p>
+            <p class="text-sm text-gray-400"><span class="font-semibold">Phone: </span>{{ itemData.item.phone }}</p>
+            <p class="text-sm text-gray-400"><span class="font-semibold">Email: </span>{{ itemData.item.email }}</p>
           </div>
 
           <div v-if="itemData.item.id === selectedAddress?.id" class="w-1/4">
-            <div class="flex items-center justify-center mx-auto rounded-full w-6 h-6 bg-green-600 text-white text-sm">
+            <div class="mx-auto flex h-6 w-6 items-center justify-center rounded-full bg-green-600 text-sm text-white">
               <i class="fas fa-check"></i>
             </div>
           </div>
 
           <div v-else class="w-1/4">
             <button
-              class="uppercase flex-grow flex items-center mx-auto justify-center px-3 h-9 font-roboto-condensed text-base font-bold border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white rounded focus:outline-none"
-              @click="setAddress(itemData.item)"
               v-t="'shared.checkout.select_address_dialog.select_button'"
+              class="mx-auto flex h-9 grow items-center justify-center rounded border-2 border-[color:var(--color-primary)] px-3 font-roboto-condensed text-base font-bold uppercase text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white focus:outline-none"
+              @click="setAddress(itemData.item)"
             ></button>
           </div>
         </div>
@@ -72,32 +72,32 @@
 
       <template #mobile-empty>
         <div
-          class="flex items-center space-x-3 p-6 border-b border-gray-200"
           v-t="'shared.checkout.select_address_dialog.no_addresses_message'"
+          class="flex items-center space-x-3 border-b border-gray-200 p-6"
         ></div>
       </template>
 
       <template #desktop-body>
         <tr v-for="(address, index) in paginatedAddresses" :key="address.id" :class="{ 'bg-gray-50': index % 2 }">
-          <td class="p-5 truncate">{{ address.firstName }} {{ address.lastName }}</td>
-          <td class="p-5 truncate">
+          <td class="truncate p-5">{{ address.firstName }} {{ address.lastName }}</td>
+          <td class="truncate p-5">
             {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
             {{ address.postalCode }}
           </td>
-          <td class="p-5 truncate">{{ address.phone }}</td>
-          <td class="p-5 truncate">{{ address.email }}</td>
+          <td class="truncate p-5">{{ address.phone }}</td>
+          <td class="truncate p-5">{{ address.email }}</td>
           <td v-if="address.id === selectedAddress?.id" class="p-5">
             <div
-              class="flex items-center justify-center mx-auto rounded-full w-6 h-6 bg-green-600 text-white text-sm my-1.5"
+              class="mx-auto my-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-green-600 text-sm text-white"
             >
               <i class="fas fa-check"></i>
             </div>
           </td>
           <td v-else class="p-5">
             <button
-              class="uppercase flex-grow flex items-center mx-auto justify-center px-3 h-9 font-roboto-condensed text-base font-bold border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white rounded focus:outline-none"
-              @click="setAddress(address)"
               v-t="'shared.checkout.select_address_dialog.select_button'"
+              class="mx-auto flex h-9 grow items-center justify-center rounded border-2 border-[color:var(--color-primary)] px-3 font-roboto-condensed text-base font-bold uppercase text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white focus:outline-none"
+              @click="setAddress(address)"
             ></button>
           </td>
         </tr>
@@ -114,8 +114,8 @@
         </tr>
         <tr>
           <td colspan="5">
-            <div class="flex items-center p-5 border-b border-gray-200">
-              <span class="text-base" v-t="'shared.checkout.select_address_dialog.no_addresses_message'"></span>
+            <div class="flex items-center border-b border-gray-200 p-5">
+              <span v-t="'shared.checkout.select_address_dialog.no_addresses_message'" class="text-base"></span>
             </div>
           </td>
         </tr>
@@ -123,7 +123,7 @@
 
       <template #footer>
         <div v-if="pages > 1" class="flex justify-start border-b border-gray-200">
-          <VcPagination v-model:page="page" :pages="pages" class="self-start pb-5 px-5 mt-5"></VcPagination>
+          <VcPagination v-model:page="page" :pages="pages" class="mt-5 self-start px-5 pb-5"></VcPagination>
         </div>
       </template>
     </VcTable>
@@ -131,13 +131,13 @@
 </template>
 
 <script setup lang="ts">
-import { AnyAddressType } from "@/core/types";
-import { computed, watchEffect, PropType, ref } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { isEqualAddresses } from "@/core/utilities";
+import { computed, watchEffect, PropType, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { AnyAddressType } from "@/core/types";
+import { isEqualAddresses } from "@/core/utilities";
 
-const { t } = useI18n();
+defineEmits(["result", "addNewAddress"]);
 
 const props = defineProps({
   currentAddress: {
@@ -156,7 +156,7 @@ const props = defineProps({
   },
 });
 
-defineEmits(["result", "addNewAddress"]);
+const { t } = useI18n();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");

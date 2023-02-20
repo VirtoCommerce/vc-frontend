@@ -1,5 +1,5 @@
-import { computed, ref, shallowRef, Slots, warn } from "vue";
 import { eagerComputed } from "@vueuse/core";
+import { computed, ref, shallowRef, Slots, warn } from "vue";
 
 const customSlots = shallowRef<Slots>({});
 const isAnimated = ref(false);

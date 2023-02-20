@@ -70,7 +70,7 @@
             :is-available="extendedItem.extended.isProductExists"
             :quantity="extendedItem.product?.availabilityData?.availableQuantity"
           />
-          <VcCountInCart :productId="extendedItem.product?.id" />
+          <VcCountInCart :product-id="extendedItem.product?.id" />
         </div>
       </div>
 
@@ -90,10 +90,10 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { LineItemType } from "@/xapi";
 import { useGoogleAnalytics } from "@/core";
 import { AddToCart } from "@/shared/cart";
 import { extendWishListItem } from "@/shared/wishlists";
+import { LineItemType } from "@/xapi";
 
 interface Prop {
   item: LineItemType;
@@ -103,9 +103,8 @@ interface Emits {
   (event: "remove"): void;
 }
 
-const props = defineProps<Prop>();
 defineEmits<Emits>();
-
+const props = defineProps<Prop>();
 const ga = useGoogleAnalytics();
 
 const extendedItem = computed(() => extendWishListItem(props.item));

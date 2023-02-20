@@ -26,7 +26,7 @@
   </template>
 
   <!-- Desktop table view -->
-  <table v-else :class="[layout, 'text-sm text-left w-full']">
+  <table v-else :class="[layout, 'w-full text-left text-sm']">
     <thead v-if="columns.length" class="border-b border-gray-200">
       <tr>
         <th
@@ -43,10 +43,10 @@
           {{ column.title }}
           <template v-if="column.sortable && sort">
             <i
-              class="fas fa-caret-down ml-2"
               v-if="sort.column === column.id && sort.direction === SORT_DESCENDING"
+              class="fas fa-caret-down ml-2"
             ></i>
-            <i class="fas fa-caret-up ml-2" v-if="sort.column === column.id && sort.direction === SORT_ASCENDING"></i>
+            <i v-if="sort.column === column.id && sort.direction === SORT_ASCENDING" class="fas fa-caret-up ml-2"></i>
           </template>
         </th>
       </tr>
@@ -69,25 +69,27 @@
   </table>
 
   <!-- Table footer -->
-  <slot name="footer" v-if="($slots['footer'] || footer) && items && items.length">
+  <slot v-if="($slots['footer'] || footer) && items && items.length" name="footer">
     <!-- Table pagination -->
     <VcPagination
       v-if="pages > 1"
       :page="page"
       :pages="pages"
       class="self-start"
-      :class="[isMobile ? 'px-6 py-10' : 'pb-5 px-5 mt-5']"
+      :class="[isMobile ? 'px-6 py-10' : 'mt-5 px-5 pb-5']"
       @update:page="onPageUpdate"
     ></VcPagination>
   </slot>
 </template>
 
 <script setup lang="ts">
-import { toggleSortDirection } from "@/core";
-import { ISortInfo } from "@/core/types";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 import { PropType } from "vue";
+import { toggleSortDirection } from "@/core";
+import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
+import { ISortInfo } from "@/core/types";
+
+const emit = defineEmits(["itemClick", "headerClick", "pageChanged"]);
 
 defineProps({
   columns: {
@@ -135,8 +137,6 @@ defineProps({
     default: "table-fixed",
   },
 });
-
-const emit = defineEmits(["itemClick", "headerClick", "pageChanged"]);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");

@@ -1,13 +1,13 @@
 <template>
   <div>
     <!-- Title block -->
-    <div class="flex justify-between items-center mx-5 md:mx-0">
-      <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.company.info.title'" />
+    <div class="mx-5 flex items-center justify-between md:mx-0">
+      <h2 v-t="'pages.company.info.title'" class="text-3xl font-bold uppercase text-gray-800" />
     </div>
 
     <div class="flex flex-col bg-white shadow-sm md:rounded md:border">
       <!-- Company name block -->
-      <div class="flex flex-row p-5 gap-3 shadow [--tw-shadow:0_10px_15px_0_rgb(0_0_0_/_0.06)]">
+      <div class="flex flex-row gap-3 p-5 shadow [--tw-shadow:0_10px_15px_0_rgb(0_0_0_/_0.06)]">
         <VcInput
           v-model.trim="organizationName"
           :label="$t('pages.company.info.labels.company_name')"
@@ -19,16 +19,16 @@
           class="w-full"
         />
 
-        <div class="pt-6" v-if="userCanEditOrganization">
+        <div v-if="userCanEditOrganization" class="pt-6">
           <VcButton
             :is-waiting="loadingOrganization || loadingUser"
             :is-disabled="!meta.valid || !meta.dirty"
             size="lg"
-            class="uppercase my-0.5 !h-10"
+            class="my-0.5 !h-10 uppercase"
             @click="saveOrganizationName"
           >
-            <i class="md:hidden px-2 fas fa-save text-2xl" />
-            <span class="hidden md:inline mx-12">{{ $t("common.buttons.save") }}</span>
+            <i class="fas fa-save px-2 text-2xl md:hidden" />
+            <span class="mx-12 hidden md:inline">{{ $t("common.buttons.save") }}</span>
           </VcButton>
         </div>
       </div>
@@ -37,9 +37,9 @@
       <div class="md:p-5">
         <div
           v-if="addresses.length || loadingAddresses"
-          class="flex flex-row justify-between items-center gap-3 mx-6 md:mx-0 mt-9 md:mt-1.5 mb-5 md:mb-4"
+          class="mx-6 mt-9 mb-5 flex flex-row items-center justify-between gap-3 md:mx-0 md:mt-1.5 md:mb-4"
         >
-          <h2 class="text-gray-800 text-xl font-extrabold uppercase py-0.5" v-t="'pages.company.info.content_header'" />
+          <h2 v-t="'pages.company.info.content_header'" class="py-0.5 text-xl font-extrabold uppercase text-gray-800" />
 
           <VcButton
             v-if="userCanEditOrganization"
@@ -66,7 +66,7 @@
             />
           </template>
 
-          <template #button v-if="userCanEditOrganization">
+          <template v-if="userCanEditOrganization" #button>
             <VcButton class="px-4 uppercase" size="lg" @click="openAddOrUpdateCompanyAddressDialog()">
               <i class="fa fa-plus -ml-px mr-3" />
               {{ $t("pages.company.info.buttons.add_new_address") }}
@@ -84,22 +84,22 @@
             :pages="pages"
             :page="page"
             layout="table-auto"
-            @headerClick="applySorting"
-            @pageChanged="onPageChange"
+            @header-click="applySorting"
+            @page-changed="onPageChange"
           >
             <template #mobile-item="{ item }">
-              <div class="grid grid-cols-3 relative px-6 py-5 gap-4 text-sm border-t border-gray-200">
+              <div class="relative grid grid-cols-3 gap-4 border-t border-gray-200 px-6 py-5 text-sm">
                 <div
                   v-if="item.isDefault"
                   class="absolute top-0 right-0 border-[23px] border-transparent border-t-[color:var(--color-primary)] border-r-[color:var(--color-primary)]"
                 >
-                  <i class="absolute -top-[22px] -right-[21px] fas fa-check mr-1 text-base text-white" />
+                  <i class="fas fa-check absolute top-[-22px] right-[-21px] mr-1 text-base text-white" />
                 </div>
 
-                <div class="flex flex-col col-span-2">
-                  <span class="text-gray-400" v-t="'pages.company.info.labels.address'" />
+                <div class="col-span-2 flex flex-col">
+                  <span v-t="'pages.company.info.labels.address'" class="text-gray-400" />
 
-                  <span class="leading-tight font-bold overflow-hidden overflow-ellipsis">
+                  <span class="overflow-hidden text-ellipsis font-bold leading-tight">
                     <span>{{ item.line1 }}</span>
                     <template v-if="item.city">, {{ item.city }}</template>
                     <template v-if="item.regionName">, {{ item.regionName }}</template>
@@ -107,25 +107,25 @@
                 </div>
 
                 <div class="flex flex-col">
-                  <span class="text-gray-400" v-t="'pages.company.info.labels.country'" />
+                  <span v-t="'pages.company.info.labels.country'" class="text-gray-400" />
 
-                  <span class="leading-tight overflow-hidden overflow-ellipsis">
+                  <span class="overflow-hidden text-ellipsis leading-tight">
                     {{ item.countryName }}
                   </span>
                 </div>
 
-                <div class="flex flex-col col-span-2">
-                  <span class="text-gray-400" v-t="'pages.company.info.labels.description'" />
+                <div class="col-span-2 flex flex-col">
+                  <span v-t="'pages.company.info.labels.description'" class="text-gray-400" />
 
-                  <span class="leading-tight overflow-hidden overflow-ellipsis">
+                  <span class="overflow-hidden text-ellipsis leading-tight">
                     {{ item.description }}
                   </span>
                 </div>
 
                 <div class="flex flex-col">
-                  <span class="text-gray-400" v-t="'pages.company.info.labels.zip'" />
+                  <span v-t="'pages.company.info.labels.zip'" class="text-gray-400" />
 
-                  <span class="leading-tight overflow-hidden overflow-ellipsis">
+                  <span class="overflow-hidden text-ellipsis leading-tight">
                     {{ item.postalCode }}
                   </span>
                 </div>
@@ -136,67 +136,64 @@
               <div
                 v-for="i in itemsPerPage"
                 :key="i"
-                class="grid grid-cols-3 relative px-6 py-5 gap-4 text-sm border-t border-gray-200"
+                class="relative grid grid-cols-3 gap-4 border-t border-gray-200 px-6 py-5 text-sm"
               >
-                <div class="flex flex-col col-span-2">
-                  <span class="text-gray-400" v-t="'pages.company.info.labels.address'" />
-                  <div class="h-4 bg-gray-200 animate-pulse"></div>
+                <div class="col-span-2 flex flex-col">
+                  <span v-t="'pages.company.info.labels.address'" class="text-gray-400" />
+                  <div class="h-4 animate-pulse bg-gray-200"></div>
                 </div>
 
                 <div class="flex flex-col">
-                  <span class="text-gray-400" v-t="'pages.company.info.labels.country'" />
-                  <div class="h-4 bg-gray-200 animate-pulse"></div>
+                  <span v-t="'pages.company.info.labels.country'" class="text-gray-400" />
+                  <div class="h-4 animate-pulse bg-gray-200"></div>
                 </div>
 
-                <div class="flex flex-col col-span-2">
-                  <span class="text-gray-400" v-t="'pages.company.info.labels.description'" />
-                  <div class="h-4 bg-gray-200 animate-pulse"></div>
+                <div class="col-span-2 flex flex-col">
+                  <span v-t="'pages.company.info.labels.description'" class="text-gray-400" />
+                  <div class="h-4 animate-pulse bg-gray-200"></div>
                 </div>
 
                 <div class="flex flex-col">
-                  <span class="text-gray-400" v-t="'pages.company.info.labels.zip'" />
-                  <div class="h-4 bg-gray-200 animate-pulse"></div>
+                  <span v-t="'pages.company.info.labels.zip'" class="text-gray-400" />
+                  <div class="h-4 animate-pulse bg-gray-200"></div>
                 </div>
               </div>
             </template>
 
             <template #desktop-body>
               <tr v-for="address in paginatedAddresses" :key="address.id" class="even:bg-gray-50">
-                <td class="px-5 py-3 overflow-hidden overflow-ellipsis">
+                <td class="overflow-hidden text-ellipsis px-5 py-3">
                   <span>{{ address.line1 }}</span>
                   <template v-if="address.city">, {{ address.city }}</template>
                   <template v-if="address.regionName">, {{ address.regionName }}</template>
                 </td>
 
-                <td class="px-5 py-3 overflow-hidden overflow-ellipsis">
+                <td class="overflow-hidden text-ellipsis px-5 py-3">
                   {{ address.description }}
                 </td>
 
-                <td class="px-5 py-3 overflow-hidden overflow-ellipsis">
+                <td class="overflow-hidden text-ellipsis px-5 py-3">
                   {{ address.postalCode }}
                 </td>
 
-                <td class="px-5 py-3 overflow-hidden overflow-ellipsis">
+                <td class="overflow-hidden text-ellipsis px-5 py-3">
                   {{ address.countryName }}
                 </td>
 
-                <td
-                  :class="{ 'text-right': !userCanEditOrganization }"
-                  class="px-5 py-3 overflow-hidden overflow-ellipsis"
-                >
+                <td :class="{ 'text-right': !userCanEditOrganization }" class="overflow-hidden text-ellipsis px-5 py-3">
                   <div v-if="address.isDefault" class="inline-flex flex-row items-center">
                     <i class="fas fa-check mr-1 text-17 text-[color:var(--color-primary)]" />
                     <b v-t="'pages.company.info.labels.default'" />
                   </div>
                 </td>
 
-                <td v-if="userCanEditOrganization" class="px-5 py-3 text-right relative">
+                <td v-if="userCanEditOrganization" class="relative px-5 py-3 text-right">
                   <VcActionDropdownMenu>
                     <button
-                      class="flex items-center p-3 whitespace-nowrap"
+                      class="flex items-center whitespace-nowrap p-3"
                       @click="openAddOrUpdateCompanyAddressDialog(address)"
                     >
-                      <i class="fas fa-pencil-alt mr-2 leading-none text-base text-[color:var(--color-warning)]" />
+                      <i class="fas fa-pencil-alt mr-2 text-base leading-none text-[color:var(--color-warning)]" />
                       <span class="text-15 font-medium">{{ $t("common.buttons.edit") }}</span>
                     </button>
 
@@ -204,12 +201,12 @@
                       :disabled="address.isDefault"
                       :class="{ 'text-gray-400': address.isDefault }"
                       :title="address.isDefault ? $t('pages.company.info.address_not_delete_message') : undefined"
-                      class="flex items-center p-3 whitespace-nowrap"
+                      class="flex items-center whitespace-nowrap p-3"
                       @click="openDeleteAddressDialog(address)"
                     >
                       <i
                         :class="{ 'text-[color:var(--color-danger)]': !address.isDefault }"
-                        class="fas fa-times mr-2 leading-none text-xl"
+                        class="fas fa-times mr-2 text-xl leading-none"
                       />
                       <span class="text-15 font-medium">{{ $t("common.buttons.delete") }}</span>
                     </button>
@@ -220,8 +217,8 @@
 
             <template #desktop-skeleton>
               <tr v-for="i in itemsPerPage" :key="i" class="even:bg-gray-50">
-                <td v-for="column in columns.length" class="px-5 py-4" :key="column">
-                  <div class="h-5 bg-gray-200 animate-pulse" />
+                <td v-for="column in columns.length" :key="column" class="px-5 py-4">
+                  <div class="h-5 animate-pulse bg-gray-200" />
                 </td>
               </tr>
             </template>
@@ -233,17 +230,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
-import { useI18n } from "vue-i18n";
 import { computedEager } from "@vueuse/core";
 import { useField } from "vee-validate";
+import { computed, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import * as yup from "yup";
-import { MemberAddressType } from "@/xapi";
 import { AddressType, ISortInfo, usePageHead, XApiPermissions } from "@/core";
 import { useUser } from "@/shared/account";
-import { usePopup } from "@/shared/popup";
 import { AddOrUpdateCompanyAddressDialog, useOrganization, useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
+import { usePopup } from "@/shared/popup";
+import { MemberAddressType } from "@/xapi";
 
 const page = ref(1);
 const itemsPerPage = ref(10);

@@ -1,7 +1,7 @@
 <template>
-  <router-link :to="to" class="flex items-center px-2.5 py-2.5 icon">
-    <div class="h-5 w-5 mr-2.5"></div>
-    <span class="text-gray-500 font-bold text-13">{{ text }}</span>
+  <router-link :to="to" class="icon flex items-center p-2.5">
+    <div class="mr-2.5 h-5 w-5"></div>
+    <span class="text-13 font-bold text-gray-500">{{ text }}</span>
   </router-link>
 </template>
 

@@ -1,8 +1,8 @@
 import { readonly, ref } from "vue";
 import { Logger } from "@/core/utilities";
-import { InputUpdateOrganizationType } from "@/xapi/types";
-import { updateOrganization as _updateOrganization } from "@/xapi/graphql/organization";
 import { useUser } from "@/shared/account";
+import { updateOrganization as _updateOrganization } from "@/xapi/graphql/organization";
+import { InputUpdateOrganizationType } from "@/xapi/types";
 
 export default function useOrganization() {
   const loading = ref(false);

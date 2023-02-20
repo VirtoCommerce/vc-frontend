@@ -1,10 +1,7 @@
-import { createApp, Plugin } from "vue";
 import { createHead } from "@vueuse/head";
-import { setLocale as setLocaleForYup } from "yup";
 import { maska } from "maska";
-import { createI18n } from "@/i18n";
-import { createRouter } from "@/router";
-import { graphqlClient } from "@/xapi";
+import { createApp, Plugin } from "vue";
+import { setLocale as setLocaleForYup } from "yup";
 import {
   configPlugin,
   contextPlugin,
@@ -16,11 +13,14 @@ import {
   useThemeContext,
 } from "@/core";
 import { setGlobalVariables } from "@/core/globals";
+import { createI18n } from "@/i18n";
+import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
-import App from "./App.vue";
-import * as UIKitComponents from "@/ui-kit/components";
-import { templateBlocks } from "@/shared/static-content";
 import ProductBlocks from "@/shared/catalog/components/product";
+import { templateBlocks } from "@/shared/static-content";
+import * as UIKitComponents from "@/ui-kit/components";
+import { graphqlClient } from "@/xapi";
+import App from "./App.vue";
 
 // Workaround before Nuxt3 migration, will be deleted later.
 window.useNuxtApp = () => {

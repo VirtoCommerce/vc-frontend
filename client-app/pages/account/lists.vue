@@ -1,8 +1,8 @@
 <template>
   <div>
     <!-- Title block -->
-    <div class="flex justify-between items-center mx-5 md:mx-0">
-      <h2 class="text-gray-800 text-3xl font-bold uppercase">
+    <div class="mx-5 flex items-center justify-between md:mx-0">
+      <h2 class="text-3xl font-bold uppercase text-gray-800">
         {{ $t("shared.account.navigation.links.lists") }}
       </h2>
 
@@ -14,7 +14,7 @@
         is-outline
         @click="openCreateListModal"
       >
-        <i class="fa fa-plus text-inherit -ml-0.5 mr-2" />
+        <i class="fa fa-plus -ml-0.5 mr-2 text-inherit" />
 
         <span class="hidden sm:inline">{{ $t("pages.account.lists.create_list_button") }}</span>
         <span class="sm:hidden">{{ $t("pages.account.lists.create_list_button_mobile") }}</span>
@@ -22,12 +22,12 @@
     </div>
 
     <!-- Skeletons -->
-    <div v-if="loading" class="flex flex-col md:space-y-3 divide-y md:divide-none">
+    <div v-if="loading" class="flex flex-col divide-y md:space-y-3 md:divide-none">
       <WishlistCardSkeleton v-for="item in 5" :key="item" />
     </div>
 
     <!-- Lists -->
-    <div v-else-if="lists.length" class="flex flex-col md:gap-y-3 overflow-x-hidden md:overflow-x-visible">
+    <div v-else-if="lists.length" class="flex flex-col overflow-x-hidden md:gap-y-3 md:overflow-x-visible">
       <template v-if="isMobile">
         <VcSlidingActions
           v-for="list in lists"
@@ -58,7 +58,7 @@
 
       <template #button>
         <VcButton class="px-6 uppercase" size="lg" @click="openCreateListModal">
-          <i class="fa fa-plus text-inherit -ml-0.5 mr-2.5" />
+          <i class="fa fa-plus -ml-0.5 mr-2.5 text-inherit" />
           {{ $t("pages.account.lists.create_list_button") }}
         </VcButton>
       </template>
@@ -67,9 +67,11 @@
 </template>
 
 <script setup lang="ts">
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed, inject } from "vue";
 import { useI18n } from "vue-i18n";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { configInjectionKey, DEFAULT_WISHLIST_LIMIT, usePageHead } from "@/core";
+import { usePopup } from "@/shared/popup";
 import {
   AddOrUpdateWishlistModal,
   DeleteWishlistsModal,
@@ -79,8 +81,6 @@ import {
   WishlistCardSkeleton,
 } from "@/shared/wishlists";
 import { WishlistType } from "@/xapi";
-import { configInjectionKey, DEFAULT_WISHLIST_LIMIT, usePageHead } from "@/core";
-import { usePopup } from "@/shared/popup";
 
 const { t } = useI18n();
 const { openPopup } = usePopup();

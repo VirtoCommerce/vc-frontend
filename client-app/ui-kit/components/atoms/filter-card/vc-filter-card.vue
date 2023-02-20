@@ -2,13 +2,13 @@
   <div class="rounded shadow-sm">
     <div
       v-if="withHeader"
-      class="px-3.5 pt-1.5 pb-1 border font-extrabold text-13-title rounded-t bg-white"
+      class="rounded-t border bg-white px-3.5 pt-1.5 pb-1 text-13-title font-extrabold"
       :class="{ 'cursor-pointer': isCollapsible, 'rounded-b': collapsed }"
       @click="isCollapsible && (collapsed = !collapsed)"
     >
       <div class="flex items-center">
         <slot name="header">
-          <div class="flex-grow uppercase text-[color:var(--color-filter-card-header)]">{{ title }}</div>
+          <div class="grow uppercase text-[color:var(--color-filter-card-header)]">{{ title }}</div>
           <div v-if="isCollapsible" class="ml-3">
             <svg
               width="12"
@@ -25,8 +25,8 @@
     </div>
     <div
       v-if="!isCollapsible || (isCollapsible && !collapsed)"
-      class="bg-white rounded-b border-l border-r border-b text-13 text-[color:var(--color-filter-card-content)]"
-      :class="{ 'px-4 py-3.5': !fullWidthContent, 'border-t rounded-t': !withHeader }"
+      class="rounded-b border-x border-b bg-white text-13 text-[color:var(--color-filter-card-content)]"
+      :class="{ 'px-4 py-3.5': !fullWidthContent, 'rounded-t border-t': !withHeader }"
     >
       <slot></slot>
     </div>
@@ -41,18 +41,22 @@ const props = defineProps({
     type: String,
     default: undefined,
   },
+
   withHeader: {
     type: Boolean,
     default: true,
   },
+
   isCollapsible: {
     type: Boolean,
     default: false,
   },
+
   isCollapsed: {
     type: Boolean,
     default: false,
   },
+
   fullWidthContent: {
     type: Boolean,
     default: false,

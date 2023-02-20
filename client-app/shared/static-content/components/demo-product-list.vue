@@ -1,17 +1,17 @@
 <template>
   <div class="pt-6 pb-16">
-    <div class="w-full max-w-screen-2xl mx-auto px-5 md:px-12">
-      <h2 class="text-2xl text-center mb-4">{{ model.title }}</h2>
-      <VcMarkdownRender :src="model.content" class="text-lg text-center" />
+    <div class="mx-auto w-full max-w-screen-2xl px-5 md:px-12">
+      <h2 class="mb-4 text-center text-2xl">{{ model.title }}</h2>
+      <VcMarkdownRender :src="model.content" class="text-center text-lg" />
     </div>
     <div class="flex flex-row justify-center space-x-4">
       <template v-for="(item, index) in model.products" :key="index">
-        <div v-if="item.product" class="flex flex-col w-48">
+        <div v-if="item.product" class="flex w-48 flex-col">
           <VcImage
             :src="item.product.imgSrc"
             :alt="item.product.name"
             size-suffix="md"
-            class="w-full h-full rounded object-cover object-center select-none space-x-4"
+            class="h-full w-full select-none space-x-4 rounded object-cover object-center"
           />
           <div class="flex flex-row space-x-4">
             <div class="grow truncate">{{ item.product.name }}</div>

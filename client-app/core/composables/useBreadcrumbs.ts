@@ -1,6 +1,6 @@
-import { useI18n } from "vue-i18n";
 import { isFunction, MaybeRef } from "@vueuse/core";
 import { computed, ComputedRef, unref } from "vue";
+import { useI18n } from "vue-i18n";
 
 /**
  * Adds a link element to the home page at the beginning of the array.

@@ -1,6 +1,6 @@
 import { cloneDeep } from "lodash";
-import { ISortInfo } from "@/core/types";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
+import { ISortInfo } from "@/core/types";
 
 export const defaultSortInfo: ISortInfo = {
   column: "createdDate",

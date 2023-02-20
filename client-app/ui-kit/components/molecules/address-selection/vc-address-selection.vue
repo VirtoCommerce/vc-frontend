@@ -14,7 +14,7 @@
       <VcButton
         v-if="!readonly"
         :is-disabled="disabled"
-        class="vc-address-selection__button !w-7 !h-7"
+        class="vc-address-selection__button !h-7 !w-7"
         is-outline
         @click="$emit('change')"
       >

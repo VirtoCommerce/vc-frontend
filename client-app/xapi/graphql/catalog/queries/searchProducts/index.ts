@@ -1,8 +1,8 @@
-import { ProductConnection, Query, QueryProductsArgs } from "@/xapi/types";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
-import searchProductsQueryDocument from "./searchProductsQuery.graphql";
-import { ProductsSearchParams } from "@/shared/catalog";
 import globals from "@/core/globals";
+import { ProductsSearchParams } from "@/shared/catalog";
+import { ProductConnection, Query, QueryProductsArgs } from "@/xapi/types";
+import searchProductsQueryDocument from "./searchProductsQuery.graphql";
 
 export default async function searchProducts(
   {

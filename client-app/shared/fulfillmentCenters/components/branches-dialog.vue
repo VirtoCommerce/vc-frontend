@@ -1,43 +1,43 @@
 <template>
   <VcPopup :title="$t('shared.catalog.branches_dialog.title')" modal-width="sm:max-w-[59.625rem]" is-mobile-fullscreen>
     <!-- DESKTOP content BEGIN -->
-    <div class="hidden sm:flex border-b">
+    <div class="hidden border-b sm:flex">
       <div
-        class="shrink-0 flex-grow flex flex-col transition-all delay-100"
+        class="flex shrink-0 grow flex-col transition-all delay-100"
         :class="[selectedBranchesIds.length ? 'w-1/2' : 'w-full']"
       >
-        <div class="flex items-center py-2 pl-4 pr-3.5 h-11 bg-[color:var(--color-branch-dialog-bg)]">
+        <div class="flex h-11 items-center bg-[color:var(--color-branch-dialog-bg)] py-2 pl-4 pr-3.5">
           <div class="text-15">
             {{ $t("shared.catalog.branches_dialog.all_branches") }}
           </div>
 
-          <BranchSearch class="flex-grow ml-1.5 md:ml-6" :model-value="searchInput" @update:input="search($event)" />
+          <BranchSearch class="ml-1.5 grow md:ml-6" :model-value="searchInput" @update:input="search($event)" />
         </div>
 
         <transition-group
           v-if="branches.length"
           tag="div"
           name="branch"
-          class="flex-grow h-[23.8rem] max-h-screen-60 overflow-y-auto"
+          class="h-[23.8rem] max-h-screen-60 grow overflow-y-auto"
         >
           <template v-for="(branch, index) in branches" :key="index">
             <BranchItem
               v-if="!isBranchSelected(index)"
               :branch="branch"
-              class="transition-opacity duration-300 delay-100 ease-in-out"
+              class="transition-opacity delay-100 duration-300 ease-in-out"
               :is-text-truncate-enabled="!!selectedBranchesIds.length"
             >
-              <VcCheckbox class="mr-3 cursor-pointer" v-model="selectedBranchesIds" :value="branch.id"> </VcCheckbox>
+              <VcCheckbox v-model="selectedBranchesIds" class="mr-3 cursor-pointer" :value="branch.id"> </VcCheckbox>
             </BranchItem>
           </template>
         </transition-group>
 
         <!-- NO RESULTS content BEGIN -->
-        <div v-else class="flex grow flex-col items-center justify-center space-y-3 h-[23.8rem] max-h-screen-60">
+        <div v-else class="flex h-[23.8rem] max-h-screen-60 grow flex-col items-center justify-center space-y-3">
           <img src="/static/images/common/stock.svg" alt="Product icon" class="w-20" />
           <div class="text-17">{{ $t("shared.catalog.branches_dialog.no_results") }}</div>
           <VcButton v-if="searchInput.length" size="md" class="px-3 uppercase" @click="searchInput = ''">
-            <i class="fas fa-undo text-inherit -ml-0.5 mr-2.5"></i>
+            <i class="fas fa-undo -ml-0.5 mr-2.5 text-inherit"></i>
             {{ $t("shared.catalog.branches_dialog.reset_search_button") }}
           </VcButton>
         </div>
@@ -46,32 +46,32 @@
 
       <div
         v-if="branches.length"
-        class="shrink-0 flex flex-col overflow-hidden transition-all"
+        class="flex shrink-0 flex-col overflow-hidden transition-all"
         :class="[selectedBranchesIds.length ? 'w-1/2 border-l' : 'w-0']"
       >
-        <div class="flex items-center justify-between py-2 pl-4 pr-3.5 h-11 bg-[color:var(--color-branch-dialog-bg)]">
+        <div class="flex h-11 items-center justify-between bg-[color:var(--color-branch-dialog-bg)] py-2 pl-4 pr-3.5">
           <div class="text-15">
             {{ $t("shared.catalog.branches_dialog.selected_branches") }}
           </div>
-          <div class="flex items-center pl-2 cursor-pointer" @click="clearSelection">
+          <div class="flex cursor-pointer items-center pl-2" @click="clearSelection">
             <svg class="text-primary" width="16" height="16">
               <use href="/static/images/clear.svg#main"></use>
             </svg>
-            <div class="pl-2 text-sm text-[color:var(--color-link)] font-bold">
+            <div class="pl-2 text-sm font-bold text-[color:var(--color-link)]">
               {{ $t("shared.catalog.branches_dialog.clear_selection") }}
             </div>
           </div>
         </div>
 
-        <transition-group tag="div" name="branch" class="flex-grow h-[23.8rem] max-h-screen-60 overflow-y-auto">
+        <transition-group tag="div" name="branch" class="h-[23.8rem] max-h-screen-60 grow overflow-y-auto">
           <template v-for="(branch, index) in branches" :key="index">
             <BranchItem
               v-if="isBranchSelected(index)"
               :branch="branch"
-              class="transition-opacity duration-300 delay-100 ease-in-out"
+              class="transition-opacity delay-100 duration-300 ease-in-out"
               :is-text-truncate-enabled="!!selectedBranchesIds.length"
             >
-              <VcCheckbox class="mr-3 cursor-pointer" v-model="selectedBranchesIds" :value="branch.id"> </VcCheckbox>
+              <VcCheckbox v-model="selectedBranchesIds" class="mr-3 cursor-pointer" :value="branch.id"> </VcCheckbox>
             </BranchItem>
           </template>
         </transition-group>
@@ -80,10 +80,10 @@
     <!-- DESKTOP content END -->
 
     <!-- MOBILE content BEGIN -->
-    <div class="flex-grow flex flex-col max-h-full sm:hidden">
-      <div class="flex items-stretch px-6 min-h-[2.75rem] text-15 bg-[color:var(--color-branch-dialog-bg)]">
+    <div class="flex max-h-full grow flex-col sm:hidden">
+      <div class="flex min-h-[2.75rem] items-stretch bg-[color:var(--color-branch-dialog-bg)] px-6 text-15">
         <button
-          class="flex items-center mr-auto py-2 font-bold"
+          class="mr-auto flex items-center py-2 font-bold"
           :class="{
             'text-[color:var(--color-link)]': showSelectedBranchesMobile && selectedBranchesIds.length,
           }"
@@ -104,7 +104,7 @@
           </button>
 
           <button
-            class="self-center flex items-center justify-center ml-2.5 w-7 h-7 rounded shadow-t-mds bg-white"
+            class="ml-2.5 flex h-7 w-7 items-center justify-center self-center rounded bg-white shadow-t-mds"
             @click="clearSelection"
           >
             <svg class="text-primary" width="16" height="16">
@@ -114,7 +114,7 @@
         </template>
       </div>
 
-      <div class="px-6 py-3 border-b">
+      <div class="border-b px-6 py-3">
         <BranchSearch :model-value="searchInput" @update:input="search($event)" />
       </div>
 
@@ -122,11 +122,11 @@
         <template v-for="(branch, index) in branches">
           <BranchItem
             v-if="(showSelectedBranchesMobile && isBranchSelected(index)) || !showSelectedBranchesMobile"
+            :key="branch.id"
             :branch="branch"
             :is-text-truncate-enabled="false"
-            :key="branch.id"
           >
-            <VcCheckbox class="mr-3 cursor-pointer" v-model="selectedBranchesIds" :value="branch.id"> </VcCheckbox>
+            <VcCheckbox v-model="selectedBranchesIds" class="mr-3 cursor-pointer" :value="branch.id"> </VcCheckbox>
           </BranchItem>
         </template>
       </div>
@@ -136,7 +136,7 @@
         <img src="/static/images/common/stock.svg" alt="Product icon" class="w-20" />
         <div class="text-17">{{ $t("shared.catalog.branches_dialog.no_results") }}</div>
         <VcButton v-if="searchInput.length" size="md" class="px-3 uppercase" @click="searchInput = ''">
-          <i class="fas fa-undo text-inherit -ml-0.5 mr-2.5"></i>
+          <i class="fas fa-undo -ml-0.5 mr-2.5 text-inherit"></i>
           {{ $t("shared.catalog.branches_dialog.reset_search_button") }}
         </VcButton>
       </div>
@@ -146,11 +146,11 @@
 
     <template #actions="{ close }">
       <div
-        class="relative flex-grow flex items-center justify-between -mt-4 pt-4 -mx-6 px-10 gap-5 shadow-t-lgs bg-white sm:shadow-none sm:mt-0 sm:px-6 sm:pt-0 sm:gap-auto"
+        class="sm:gap-auto relative -mx-6 -mt-4 flex grow items-center justify-between gap-5 bg-white px-10 pt-4 shadow-t-lgs sm:mt-0 sm:px-6 sm:pt-0 sm:shadow-none"
       >
         <VcButton
           kind="secondary"
-          class="uppercase basis-0 flex-grow sm:basis-auto sm:flex-grow-0 sm:px-4"
+          class="grow basis-0 uppercase sm:grow-0 sm:basis-auto sm:px-4"
           is-outline
           @click="close"
         >
@@ -158,7 +158,7 @@
         </VcButton>
 
         <VcButton
-          class="uppercase basis-0 flex-grow sm:basis-auto sm:flex-grow-0 sm:px-5 sm:min-w-[9rem]"
+          class="grow basis-0 uppercase sm:min-w-[9rem] sm:grow-0 sm:basis-auto sm:px-5"
           :is-disabled="isSaveButtonDisabled"
           @click="
             save();
@@ -174,16 +174,11 @@
 
 <script setup lang="ts">
 import { computed, ref, watch, PropType, onMounted } from "vue";
+import { useFulfillmentCenters, IFulfillmentCenter } from "@/shared/fulfillmentCenters";
 import BranchItem from "./branch-item.vue";
 import BranchSearch from "./branch-search.vue";
-import { useFulfillmentCenters, IFulfillmentCenter } from "@/shared/fulfillmentCenters";
 
-const { loadFulfillmentCenters, fulfillmentCenters } = useFulfillmentCenters();
-
-const showSelectedBranchesMobile = ref(false);
-const searchInput = ref<string>("");
-const branches = computed(() => fulfillmentCenters.value.filter((item) => searchFilter(item)));
-const selectedBranchesIds = ref<string[]>([]);
+const emit = defineEmits(["save"]);
 
 const props = defineProps({
   selectedBranches: {
@@ -191,7 +186,13 @@ const props = defineProps({
     default: () => [],
   },
 });
-const emit = defineEmits(["save"]);
+
+const { loadFulfillmentCenters, fulfillmentCenters } = useFulfillmentCenters();
+
+const showSelectedBranchesMobile = ref(false);
+const searchInput = ref<string>("");
+const branches = computed(() => fulfillmentCenters.value.filter((item) => searchFilter(item)));
+const selectedBranchesIds = ref<string[]>([]);
 
 loadFulfillmentCenters();
 
@@ -237,6 +238,7 @@ watch(selectedBranchesIds, () => {
   }
 });
 </script>
+
 <style lang="scss">
 .branch-enter-from,
 .branch-leave-to {

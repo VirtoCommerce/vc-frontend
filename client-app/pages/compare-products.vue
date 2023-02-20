@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-100 pb-16 shadow-inner grow">
+  <div class="grow bg-gray-100 pb-16 shadow-inner">
     <VcEmptyPage
       v-if="!productsIds.length"
       :breadcrumbs="breadcrumbs"
@@ -9,24 +9,24 @@
       mobile-image="/static/images/errors/emptyCompareListMobile.webp"
     >
       <template #actions>
-        <VcButton :to="{ name: 'Catalog' }" size="lg" class="p-4 uppercase font-bold">
+        <VcButton :to="{ name: 'Catalog' }" size="lg" class="p-4 font-bold uppercase">
           {{ $t("pages.compare.empty_list.button_text") }}
         </VcButton>
       </template>
     </VcEmptyPage>
-    <div class="w-full md:max-w-screen-2xl md:px-12 mx-auto pt-7" v-else>
+    <div v-else class="mx-auto w-full pt-7 md:max-w-screen-2xl md:px-12">
       <!-- Page header -->
       <VcBreadcrumbs :items="breadcrumbs" class="mb-3 px-5 md:px-0"></VcBreadcrumbs>
-      <div class="flex flex-col lg:flex-row lg:space-x-12 px-5 md:px-0 lg:mb-5">
+      <div class="flex flex-col px-5 md:px-0 lg:mb-5 lg:flex-row lg:space-x-12">
         <div class="flex flex-col space-y-1.5">
-          <h1 class="text-black-800 text-3xl uppercase font-bold">{{ $t("pages.compare.header_block.title") }}</h1>
+          <h1 class="text-black-800 text-3xl font-bold uppercase">{{ $t("pages.compare.header_block.title") }}</h1>
           <span
-            class="block mb-3"
+            class="mb-3 block"
             v-html="$t('pages.compare.header_block.counter_message', [productsIds.length, productsLimit])"
           ></span>
         </div>
-        <div class="flex justify-between items-start grow mb-5 lg:mb-0">
-          <VcCheckbox class="mt-2" v-model="showOnlyDifferences" @change="onShowOnlyDifferencesChange">
+        <div class="mb-5 flex grow items-start justify-between lg:mb-0">
+          <VcCheckbox v-model="showOnlyDifferences" class="mt-2" @change="onShowOnlyDifferencesChange">
             {{ $t("pages.compare.header_block.differences_checkbox_label") }}
           </VcCheckbox>
 
@@ -41,30 +41,30 @@
       </div>
 
       <!-- Main block -->
-      <div class="shadow py-8 bg-white md:rounded overflow-x-auto">
+      <div class="overflow-x-auto bg-white py-8 shadow md:rounded">
         <!-- Product cards block -->
-        <div class="flex gap-x-5 pr-8 pl-8 lg:pl-0">
-          <div class="w-56 flex-shrink-0 hidden lg:block"></div>
+        <div class="flex gap-x-5 px-8 lg:pl-0">
+          <div class="hidden w-56 shrink-0 lg:block"></div>
           <div
             v-for="product in products"
             :key="product.id"
-            class="w-32 flex-shrink-0 lg:flex-shrink md:w-48 md:pb-6 flex flex-col"
+            class="flex w-32 shrink-0 flex-col md:w-48 md:pb-6 lg:shrink"
           >
             <!-- Product image -->
-            <router-link :to="productsRoutes[product.id]" class="cursor-pointer mb-3" @click="ga.selectItem(product)">
+            <router-link :to="productsRoutes[product.id]" class="mb-3 cursor-pointer" @click="ga.selectItem(product)">
               <div
-                class="flex flex-col justify-center items-center border border-gray-100 h-32 w-32 md:h-48 md:w-48 relative"
+                class="relative flex h-32 w-32 flex-col items-center justify-center border border-gray-100 md:h-48 md:w-48"
               >
                 <VcImage
                   :src="product.imgSrc"
                   :alt="product.name"
                   size-suffix="md"
-                  class="w-full h-full object-cover object-center"
+                  class="h-full w-full object-cover object-center"
                   lazy
                 />
 
                 <div
-                  class="h-6 w-6 rounded-full border border-gray-200 flex items-center justify-center absolute -top-3 -right-3 bg-white hover:bg-gray-100"
+                  class="absolute -top-3 -right-3 flex h-6 w-6 items-center justify-center rounded-full border border-gray-200 bg-white hover:bg-gray-100"
                   @click.prevent="removeFromCompareList(product)"
                 >
                   <i class="fas fa-times text-red-500"></i>
@@ -75,15 +75,15 @@
             <!-- Product title -->
             <router-link
               :to="productsRoutes[product.id]"
-              class="text-[color:var(--color-link)] font-extrabold text-sm mb-3 flex-grow line-clamp-3 overflow-hidden cursor-pointer"
+              class="mb-3 grow cursor-pointer overflow-hidden text-sm font-extrabold text-[color:var(--color-link)] line-clamp-3"
               @click="ga.selectItem(product)"
             >
               {{ product.name }}
             </router-link>
 
             <!-- Product price -->
-            <div class="flex flex-col md:flex-row items-baseline justify-between text-sm mb-3 h-8">
-              <div class="font-bold text-xs" v-if="!isMobile">
+            <div class="mb-3 flex h-8 flex-col items-baseline justify-between text-sm md:flex-row">
+              <div v-if="!isMobile" class="text-xs font-bold">
                 {{ $t("pages.compare.main_block.price_label") }}
               </div>
               <VcItemPrice :value="product.price" />
@@ -97,23 +97,23 @@
 
         <!-- Properties block -->
         <div
-          class="items-start md:items-center space-x-5 px-8 lg:px-0 border-b border-gray-100 lg:border-0"
           v-for="(values, key, index) in computedProperties"
           :key="index"
+          class="items-start space-x-5 border-b border-gray-100 px-8 md:items-center lg:border-0 lg:px-0"
           :class="!isMobile ? 'even:bg-gray-50 flex' : productsIds.length >= 3 ? 'inline-flex' : 'flex'"
         >
-          <div class="w-56 pl-8 font-extrabold text-sm flex-shrink-0" v-if="!isMobile">{{ key }}</div>
-          <div class="w-32 flex-shrink-0 md:w-48 py-5 last:pr-8" v-for="(property, index) in values" :key="index">
-            <span v-if="isMobile" class="block font-extrabold text-sm">{{ key }}</span>
+          <div v-if="!isMobile" class="w-56 shrink-0 pl-8 text-sm font-extrabold">{{ key }}</div>
+          <div v-for="(property, i) in values" :key="i" class="w-32 shrink-0 py-5 last:pr-8 md:w-48">
+            <span v-if="isMobile" class="block text-sm font-extrabold">{{ key }}</span>
             {{ property.value }}
           </div>
         </div>
         <div class="flex items-center space-x-5 px-5 lg:px-0">
-          <div class="w-56 flex-shrink-0" v-if="!isMobile"></div>
-          <div v-for="product in products" :key="product.id" class="w-32 flex-shrink-0 md:w-48">
+          <div v-if="!isMobile" class="w-56 shrink-0"></div>
+          <div v-for="product in products" :key="product.id" class="w-32 shrink-0 md:w-48">
             <!-- Product price -->
-            <div class="flex flex-col md:flex-row items-baseline justify-between text-sm my-4 h-8">
-              <div class="font-bold text-xs" v-if="!isMobile">
+            <div class="my-4 flex h-8 flex-col items-baseline justify-between text-sm md:flex-row">
+              <div v-if="!isMobile" class="text-xs font-bold">
                 {{ $t("pages.compare.main_block.price_label") }}
               </div>
               <VcItemPrice :value="product.price" />
@@ -127,13 +127,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, watchEffect } from "vue";
-import { useI18n } from "vue-i18n";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import _ from "lodash";
+import { ref, watch, watchEffect } from "vue";
+import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead, useProductsRoutes } from "@/core";
-import { useProducts } from "@/shared/catalog";
 import { AddToCart } from "@/shared/cart";
+import { useProducts } from "@/shared/catalog";
 import { useCompareProducts } from "@/shared/compare";
 
 const { t } = useI18n();

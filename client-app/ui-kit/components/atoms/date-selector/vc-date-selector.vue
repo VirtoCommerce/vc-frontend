@@ -4,11 +4,10 @@
     <span v-if="isRequired" class="text-[color:var(--color-danger)]">*</span>
   </div>
   <input
-    class="appearance-none h-11 rounded px-3 py-3 text-base leading-none bg-white box-border border border-gray-300 w-full outline-none focus:border-gray-400 min-w-0"
+    class="box-border h-11 w-full min-w-0 appearance-none rounded border border-gray-300 bg-white p-3 text-base leading-none outline-none focus:border-gray-400"
     type="date"
     :value="inputValue"
     :disabled="isDisabled"
-    :autofocus="autofocus"
     :name="name"
     @change="change"
   />
@@ -16,27 +15,35 @@
 </template>
 
 <script setup lang="ts">
-import { dateToIsoDateString } from "@/core/utilities";
 import { computed } from "vue";
+import { dateToIsoDateString } from "@/core/utilities";
+
+const emit = defineEmits<{
+  (e: "update:modelValue", value: Date | undefined): void;
+  (e: "change", value: Date | undefined): void;
+}>();
 
 const props = defineProps({
-  autofocus: Boolean,
   label: {
     type: String,
     default: undefined,
   },
+
   name: {
     type: String,
     default: undefined,
   },
+
   isRequired: {
     type: Boolean,
     default: false,
   },
+
   isDisabled: {
     type: Boolean,
     default: false,
   },
+
   modelValue: {
     type: Date,
     default: undefined,
@@ -50,11 +57,6 @@ const props = defineProps({
 
 // convert input value to string format yyyy-MM-dd
 const inputValue = computed(() => dateToIsoDateString(props.modelValue));
-
-const emit = defineEmits<{
-  (e: "update:modelValue", value: Date | undefined): void;
-  (e: "change", value: Date | undefined): void;
-}>();
 
 function change(event: Event) {
   const newValue: string = (event.target as HTMLInputElement).value;

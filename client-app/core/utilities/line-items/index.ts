@@ -1,5 +1,5 @@
-import { LineItemType, OrderLineItemType } from "@/xapi";
 import { TLineItemsGroupsByVendor, TLineItemsGroupByVendor } from "@/core";
+import { LineItemType, OrderLineItemType } from "@/xapi";
 
 export function getLineItemsGroupedByVendor<T extends LineItemType | OrderLineItemType>(
   items: T[]

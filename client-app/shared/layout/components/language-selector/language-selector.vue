@@ -1,22 +1,22 @@
 <template>
   <div v-click-outside="() => open && hideList()" class="relative select-none text-[13px]">
     <button
-      class="relative flex items-center gap-x-1.5 py-3 appearance-none leading-none text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
+      class="relative flex appearance-none items-center gap-x-1.5 py-3 leading-none text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
       @click="toggle"
     >
-      <span class="hidden lg:inline text-white" v-t="'shared.layout.language_selector.label'"></span>
+      <span v-t="'shared.layout.language_selector.label'" class="hidden text-white lg:inline"></span>
 
       <span
-        class="fi fis rounded-full fa-2x -my-3 !w-[30px] h-[30px] lg:!w-[14px] lg:h-[14px]"
+        class="fi fis fa-2x -my-3 h-[30px] !w-[30px] rounded-full lg:h-[14px] lg:!w-[14px]"
         :class="`fi-${currentLanguage?.twoLetterRegionName.toLowerCase()}`"
       ></span>
 
-      <span class="hidden lg:inline uppercase">
+      <span class="hidden uppercase lg:inline">
         {{ currentLanguage?.twoLetterLanguageName }}
       </span>
 
       <i
-        class="text-[color:var(--color-mobile-menu-link)] fas text-[1rem] lg:text-[color:var(--color-primary)] lg:text-[0.625rem]"
+        class="fas text-[1rem] text-[color:var(--color-mobile-menu-link)] lg:text-[0.625rem] lg:text-[color:var(--color-primary)]"
         :class="[open ? 'fa-chevron-up' : 'fa-chevron-down']"
       />
     </button>
@@ -24,9 +24,9 @@
     <transition name="slide-fade-top">
       <div
         v-show="open"
-        class="absolute right-0 z-30 mt-2 lg:mt-0 bg-white shadow-lg max-h-[260px] rounded border overflow-hidden"
+        class="absolute right-0 z-30 mt-2 max-h-[260px] overflow-hidden rounded border bg-white shadow-lg lg:mt-0"
       >
-        <ul ref="listElement" class="max-h-[260px] overflow-auto divide-y">
+        <ul ref="listElement" class="max-h-[260px] divide-y overflow-auto">
           <li
             v-for="item in supportedLanguages"
             :key="item.twoLetterLanguageName"
@@ -43,7 +43,7 @@
             "
           >
             <span
-              class="fi fis rounded-full shrink-0 fa-2x"
+              class="fi fis fa-2x shrink-0 rounded-full"
               :class="`fi-${item.twoLetterRegionName.toLowerCase()}`"
             ></span>
 

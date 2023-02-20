@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div class="max-w-screen-2xl px-5 md:px-12 pt-7">
+    <div class="max-w-screen-2xl px-5 pt-7 md:px-12">
       <VcBreadcrumbs v-if="breadcrumbs.length" :items="breadcrumbs" class="mb-3" />
 
       <slot name="title">
-        <h1 v-if="title" class="text-black-800 text-2xl md:text-4xl font-bold mb-8 uppercase">
+        <h1 v-if="title" class="text-black-800 mb-8 text-2xl font-bold uppercase md:text-4xl">
           {{ title }}
         </h1>
       </slot>
@@ -12,11 +12,11 @@
 
     <TwoColumn class="max-w-screen-lg">
       <template #left>
-        <div class="flex flex-col h-full justify-center items-center lg:items-start">
-          <VcImage v-if="mobileImage" :src="mobileImage" class="lg:hidden mb-8" lazy />
+        <div class="flex h-full flex-col items-center justify-center lg:items-start">
+          <VcImage v-if="mobileImage" :src="mobileImage" class="mb-8 lg:hidden" lazy />
 
           <slot name="description">
-            <h2 class="text-black-800 text-center lg:text-left text-2xl font-semibold mb-8">
+            <h2 class="text-black-800 mb-8 text-center text-2xl font-semibold lg:text-left">
               {{ description }}
             </h2>
           </slot>

@@ -1,6 +1,6 @@
+import { MaybeRef } from "@vueuse/core";
 import { computed, ComputedRef, unref } from "vue";
 import { RouteLocationRaw } from "vue-router";
-import { MaybeRef } from "@vueuse/core";
 import { getProductRoute } from "@/core";
 
 export default function useProductsRoutes(

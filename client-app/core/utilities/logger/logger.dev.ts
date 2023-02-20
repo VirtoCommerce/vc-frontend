@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { TLogger } from "./logger.type";
 
 const logger: TLogger = {

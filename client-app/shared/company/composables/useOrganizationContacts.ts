@@ -1,7 +1,10 @@
-import { computed, readonly, ref, shallowRef, unref } from "vue";
-import _ from "lodash";
-import { useI18n } from "vue-i18n";
 import { MaybeRef } from "@vueuse/core";
+import _ from "lodash";
+import { computed, readonly, ref, shallowRef, unref } from "vue";
+import { useI18n } from "vue-i18n";
+import { DEFAULT_PAGE_SIZE, getSortingExpression, ISortInfo, Logger, SORT_ASCENDING } from "@/core";
+import { convertToExtendedContact, ExtendedContactType } from "@/shared/company";
+import { useNotifications } from "@/shared/notification";
 import {
   ContactType,
   getOrganizationContacts,
@@ -10,9 +13,6 @@ import {
   removeMemberFromOrganization as _removeMemberFromOrganization,
   unlockOrganizationContact,
 } from "@/xapi";
-import { DEFAULT_PAGE_SIZE, getSortingExpression, ISortInfo, Logger, SORT_ASCENDING } from "@/core";
-import { convertToExtendedContact, ExtendedContactType } from "@/shared/company";
-import { useNotifications } from "@/shared/notification";
 
 export default function useOrganizationContacts(organizationId: MaybeRef<string>) {
   const loading = ref(false);

@@ -5,8 +5,8 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, PropType, ref } from "vue";
 import { eagerComputed, useDebounceFn } from "@vueuse/core";
+import { nextTick, PropType, ref } from "vue";
 import { useCompareProducts } from "@/shared/compare";
 import { Product } from "@/xapi/types";
 

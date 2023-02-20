@@ -1,47 +1,53 @@
 <template>
-  <div aria-describedby="popover" ref="triggerNode" @click="togglePopover()">
+  <div ref="triggerNode" aria-describedby="popover" @click="togglePopover()">
     <slot name="trigger" />
   </div>
 
-  <div class="bg-white border shadow-lg rounded" v-bind="$attrs" id="popover" ref="popoverNode" v-show="isShown">
-    <div class="border-t border-l" id="arrow" data-popper-arrow></div>
+  <div v-show="isShown" v-bind="$attrs" id="popover" ref="popoverNode" class="rounded border bg-white shadow-lg">
+    <div id="arrow" class="border-t border-l" data-popper-arrow></div>
 
-    <h3 class="flex justify-between font-bold items-center text-lg h-14 px-5" v-if="title || showCloseButton">
-      <span class="flex flex-grow" v-if="title">
+    <h3 v-if="title || showCloseButton" class="flex h-14 items-center justify-between px-5 text-lg font-bold">
+      <span v-if="title" class="flex grow">
         {{ title }}
       </span>
       <i
-        class="fas fa-times text-red-400 hover:text-red-700 cursor-pointer"
-        @click="togglePopover(false)"
         v-if="showCloseButton"
+        class="fas fa-times cursor-pointer text-red-400 hover:text-red-700"
+        @click="togglePopover(false)"
       />
     </h3>
     <slot name="content" />
   </div>
 </template>
 
+<script lang="ts">
+export default {
+  inheritAttrs: false,
+};
+</script>
+
 <script setup lang="ts">
-import { ref, shallowRef, onUnmounted, PropType } from "vue";
-import { isDefined, onClickOutside } from "@vueuse/core";
 import { bottom, createPopper, Instance, Placement } from "@popperjs/core";
+import { isDefined, onClickOutside } from "@vueuse/core";
+import { ref, shallowRef, onUnmounted, PropType } from "vue";
 
 const emit = defineEmits<{
   (event: "toggle", value: boolean): void;
 }>();
 
 const props = defineProps({
+  showCloseButton: Boolean,
+
   title: {
     type: String,
     default: undefined,
   },
-  showCloseButton: {
-    type: Boolean,
-    default: true,
-  },
+
   xOffset: {
     type: Number,
     default: 0,
   },
+
   placement: {
     type: String as PropType<Placement>,
     default: bottom,

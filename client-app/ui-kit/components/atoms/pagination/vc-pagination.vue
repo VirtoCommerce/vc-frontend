@@ -1,9 +1,9 @@
 <template>
-  <div class="flex items-center justify-center z-0">
+  <div class="z-0 flex items-center justify-center">
     <!-- Previous page -->
     <button
       v-if="page > 1"
-      class="uppercase text-sm text-center w-10 h-9 rounded-l font-medium bg-white border border-solid border-gray-300"
+      class="h-9 w-10 rounded-l border border-solid border-gray-300 bg-white text-center text-sm font-medium uppercase"
       type="button"
       @click="$emit('update:page', page - 1)"
     >
@@ -11,7 +11,7 @@
     </button>
     <button
       v-else
-      class="uppercase text-sm text-center w-10 h-9 rounded-l font-medium bg-white border border-solid border-gray-300 text-gray-300 cursor-default"
+      class="h-9 w-10 cursor-default rounded-l border border-solid border-gray-300 bg-white text-center text-sm font-medium uppercase text-gray-300"
     >
       <i class="fas fa-chevron-left"></i>
     </button>
@@ -19,7 +19,7 @@
     <!-- Preprevious numbered page -->
     <button
       v-if="page > 2"
-      class="uppercase text-sm text-center w-10 h-9 -mx-px font-medium bg-white border border-solid border-gray-300"
+      class="-mx-px h-9 w-10 border border-solid border-gray-300 bg-white text-center text-sm font-medium uppercase"
       type="button"
       @click="$emit('update:page', page - 2)"
     >
@@ -29,7 +29,7 @@
     <!-- Previous numbered page -->
     <button
       v-if="page > 1"
-      class="uppercase text-sm text-center w-10 h-9 -mx-px font-medium bg-white border border-solid border-gray-300"
+      class="-mx-px h-9 w-10 border border-solid border-gray-300 bg-white text-center text-sm font-medium uppercase"
       type="button"
       @click="$emit('update:page', page - 1)"
     >
@@ -38,7 +38,7 @@
 
     <!-- Current page -->
     <div
-      class="uppercase text-sm leading-9 text-center w-10 h-9 -mx-px font-bold bg-[color:var(--color-primary)] text-white z-10 cursor-default"
+      class="z-10 -mx-px h-9 w-10 cursor-default bg-[color:var(--color-primary)] text-center text-sm font-bold uppercase leading-9 text-white"
     >
       {{ page }}
     </div>
@@ -46,7 +46,7 @@
     <!-- Next numbered page -->
     <button
       v-if="page < pages"
-      class="uppercase text-sm text-center w-10 h-9 -mx-px font-medium bg-white border border-solid border-gray-300"
+      class="-mx-px h-9 w-10 border border-solid border-gray-300 bg-white text-center text-sm font-medium uppercase"
       type="button"
       @click="$emit('update:page', page + 1)"
     >
@@ -56,7 +56,7 @@
     <!-- Postnext numbered page -->
     <button
       v-if="page < pages - 1"
-      class="uppercase text-sm text-center w-10 h-9 -mx-px font-medium bg-white border border-solid border-gray-300"
+      class="-mx-px h-9 w-10 border border-solid border-gray-300 bg-white text-center text-sm font-medium uppercase"
       type="button"
       @click="$emit('update:page', page + 2)"
     >
@@ -66,7 +66,7 @@
     <!-- Next page -->
     <button
       v-if="page < pages"
-      class="uppercase text-sm text-center w-10 h-9 rounded-r font-medium bg-white border border-solid border-gray-300"
+      class="h-9 w-10 rounded-r border border-solid border-gray-300 bg-white text-center text-sm font-medium uppercase"
       type="button"
       @click="$emit('update:page', page + 1)"
     >
@@ -74,7 +74,7 @@
     </button>
     <button
       v-else
-      class="uppercase text-sm text-center w-10 h-9 rounded-r font-medium bg-white border border-solid border-gray-300 text-gray-300 cursor-default"
+      class="h-9 w-10 cursor-default rounded-r border border-solid border-gray-300 bg-white text-center text-sm font-medium uppercase text-gray-300"
     >
       <i class="fas fa-chevron-right"></i>
     </button>
@@ -82,6 +82,8 @@
 </template>
 
 <script setup lang="ts">
+defineEmits(["update:page"]);
+
 defineProps({
   page: {
     type: Number,
@@ -93,6 +95,4 @@ defineProps({
     default: 1,
   },
 });
-
-defineEmits(["update:page"]);
 </script>

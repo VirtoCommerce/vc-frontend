@@ -7,7 +7,7 @@
 
     <div class="relative h-11">
       <input
-        class="appearance-none rounded h-full px-3 text-base leading-none box-border w-full outline-none min-w-0"
+        class="box-border h-full w-full min-w-0 appearance-none rounded px-3 text-base leading-none outline-none"
         :class="[
           inputClass,
           { 'pr-12': isPasswordIconVisible, 'border border-gray-300 focus:border-gray-400': !withoutBorder },
@@ -18,7 +18,6 @@
         :placeholder="placeholder"
         :readonly="isReadonly"
         :disabled="isDisabled"
-        :autofocus="autofocus"
         :min="minValue"
         :max="maxValue"
         :minlength="minlength"
@@ -32,7 +31,7 @@
         v-if="isPasswordIconVisible"
         tabindex="-1"
         type="button"
-        class="appearance-none absolute top-0 right-0 h-full w-12 flex items-center justify-center cursor-pointer text-[color:var(--color-primary)]"
+        class="absolute top-0 right-0 flex h-full w-12 cursor-pointer appearance-none items-center justify-center text-[color:var(--color-primary)]"
         @click="togglePasswordVisibility"
       >
         <i class="fa text-xl" :class="passwordVisibilityIcon" />
@@ -49,12 +48,11 @@ import { computed, PropType, ref, watchEffect } from "vue";
 const emit = defineEmits(["update:modelValue"]);
 
 const props = defineProps({
-  autofocus: Boolean,
   autocomplete: String,
   isReadonly: Boolean,
   isDisabled: Boolean,
   isRequired: Boolean,
-  withoutBorder: { type: Boolean, default: false },
+  withoutBorder: Boolean,
   hidePasswordSwitcher: Boolean,
   label: String,
   name: String,

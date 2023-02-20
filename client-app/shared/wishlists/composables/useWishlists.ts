@@ -1,21 +1,21 @@
 import { computed, readonly, Ref, ref, shallowRef } from "vue";
+import { SORT_ASCENDING } from "@/core/constants";
 import { Logger } from "@/core/utilities";
+import {
+  addWishlist,
+  addWishlistItem,
+  deleteWishlist,
+  deleteWishlistItem,
+  getWishList,
+  getWishlists,
+  renameWishlist as _renameWishlist,
+} from "@/xapi/graphql/account";
 import {
   InputAddWishlistItemType,
   InputRemoveWishlistItemType,
   InputRenameWishlistType,
   WishlistType,
 } from "@/xapi/types";
-import {
-  addWishlist,
-  addWishlistItem,
-  getWishlists,
-  deleteWishlist,
-  deleteWishlistItem,
-  renameWishlist as _renameWishlist,
-  getWishList,
-} from "@/xapi/graphql/account";
-import { SORT_ASCENDING } from "@/core/constants";
 
 const loading = ref(true);
 const lists = shallowRef<WishlistType[]>([]);
@@ -41,7 +41,7 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
     try {
       const newList = await addWishlist(name);
       if (!newList.id) {
-        console.error(`${useWishlists.name}.${createWishlistAndAddProduct.name}`, "newList.id error");
+        Logger.error(`${useWishlists.name}.${createWishlistAndAddProduct.name}`, "newList.id error");
       } else {
         await addItemsToWishlists([{ listId: newList.id, productId }]);
       }

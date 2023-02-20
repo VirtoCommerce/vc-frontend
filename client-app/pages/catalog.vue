@@ -1,27 +1,27 @@
 <template>
   <div
-    class="bg-gray-100 pt-4 pb-16 shadow-inner grow lg:pt-6"
+    class="grow bg-gray-100 pt-4 pb-16 shadow-inner lg:pt-6"
     :class="{ 'polygon-gray-bg': !products.length && !loading }"
   >
-    <div class="px-5 mx-auto max-w-screen-2xl 2xl:px-18">
+    <div class="mx-auto max-w-screen-2xl px-5 2xl:px-18">
       <!-- Breadcrumbs -->
-      <VcBreadcrumbs class="mb-2.5 md:mb-4" :items="breadcrumbs" v-if="!isSearchPage" />
+      <VcBreadcrumbs v-if="!isSearchPage" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
 
       <div class="flex items-start lg:gap-6">
         <!-- Mobile sidebar back cover -->
         <VcPopupSidebar
           v-if="isMobile"
           :is-visible="mobileSidebarVisible"
-          class="flex flex-col w-70 px-5 pt-5"
+          class="flex w-70 flex-col px-5 pt-5"
           @hide="hideMobileSidebar()"
         >
           <div class="relative mt-0.5 mb-6 pr-6">
-            <div class="font-semibold text-26 pt-1 break-words">
+            <div class="break-words pt-1 text-26 font-semibold">
               {{ $t("common.buttons.filters") }}
             </div>
 
-            <button class="absolute top-2.5 right-1" @click="hideMobileSidebar()">
-              <svg class="w-5 h-5 text-[color:var(--color-primary)]">
+            <button type="button" class="absolute top-2.5 right-1" @click="hideMobileSidebar()">
+              <svg class="h-5 w-5 text-[color:var(--color-primary)]">
                 <use href="/static/images/delete.svg#main" />
               </svg>
             </button>
@@ -32,16 +32,16 @@
             :keyword="keywordQueryParam"
             :filters="mobileFilters"
             :loading="loading || facetsLoading"
-            :withLocalSearch="!isSearchPage"
+            :with-local-search="!isSearchPage"
             @search="
               onSearchStart($event);
               hideMobileSidebar();
             "
             @change="updateMobileFilters($event)"
-            @openBranches="openBranchesDialog(true)"
+            @open-branches="openBranchesDialog(true)"
           />
 
-          <div class="sticky h-24 z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
+          <div class="z-100 sticky bottom-0 -mx-5 mt-4 h-24 bg-white p-5 shadow-t-md">
             <div class="flex space-x-4">
               <VcButton
                 class="flex-1 uppercase"
@@ -72,25 +72,25 @@
         </VcPopupSidebar>
 
         <!-- Sidebar -->
-        <div v-else class="space-y-5 w-60 flex-shrink-0 pt-2">
-          <CategorySelector :selected-category="selectedCategory" :loading="loadingCategories" v-if="!isSearchPage" />
+        <div v-else class="w-60 shrink-0 space-y-5 pt-2">
+          <CategorySelector v-if="!isSearchPage" :selected-category="selectedCategory" :loading="loadingCategories" />
 
           <ProductsFiltersSidebar
             :keyword="keywordQueryParam"
             :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
             :loading="loading"
-            :withLocalSearch="!isSearchPage"
+            :with-local-search="!isSearchPage"
             @search="onSearchStart($event)"
             @change="applyFilters($event)"
           />
         </div>
 
         <!-- Content -->
-        <div class="flex-grow">
+        <div class="grow">
           <div class="flex">
-            <h2 class="text-gray-800 text-21 font-bold uppercase lg:my-px lg:text-25">
-              <i18n-t keypath="pages.search.header" tag="span" v-if="isSearchPage">
-                <template v-slot:keyword>
+            <h2 class="text-21 font-bold uppercase text-gray-800 lg:my-px lg:text-25">
+              <i18n-t v-if="isSearchPage" keypath="pages.search.header" tag="span">
+                <template #keyword>
                   <strong>{{ searchParams.keyword }}</strong>
                 </template>
               </i18n-t>
@@ -100,7 +100,7 @@
               </span>
 
               <sup
-                class="ml-2 normal-case font-normal whitespace-nowrap text-sm lg:text-15 -top-1 lg:-top-[0.5em] text-[color:var(--color-category-page-results)]"
+                class="-top-1 ml-2 whitespace-nowrap text-sm font-normal normal-case text-[color:var(--color-category-page-results)] lg:top-[-0.5em] lg:text-15"
               >
                 <b class="font-extrabold">{{ total }}</b>
                 {{ $t("pages.catalog.products_found_message", total) }}
@@ -108,27 +108,27 @@
             </h2>
           </div>
 
-          <div class="-mt-px" ref="stickyMobileHeaderAnchor"></div>
+          <div ref="stickyMobileHeaderAnchor" class="-mt-px"></div>
 
           <div
-            class="sticky top-0 z-10 flex items-center h-14 my-1.5 lg:relative lg:justify-end lg:flex-wrap lg:mb-3.5 lg:mt-3 lg:h-auto"
+            class="sticky top-0 z-10 my-1.5 flex h-14 items-center lg:relative lg:mb-3.5 lg:mt-3 lg:h-auto lg:flex-wrap lg:justify-end"
             :class="{
-              'z-40 px-5 md:px-12 -mx-5 md:-mx-12 bg-[color:var(--color-header-bottom-bg)]':
+              'z-40 -mx-5 bg-[color:var(--color-header-bottom-bg)] px-5 md:-mx-12 md:px-12':
                 stickyMobileHeaderIsVisible,
             }"
           >
             <!-- Mobile filters toggler -->
-            <div class="lg:hidden mr-2.5">
-              <VcButton class="pl-2.5 pr-2 !text-15 font-bold !font-lato" size="md" @click="showMobileSidebar">
+            <div class="mr-2.5 lg:hidden">
+              <VcButton class="pl-2.5 pr-2 !font-lato !text-15 font-bold" size="md" @click="showMobileSidebar">
                 <i class="fas fa-filter mr-2"></i> {{ $t("pages.catalog.filters_button") }}
               </VcButton>
             </div>
 
             <!-- Sorting -->
-            <div class="flex items-center flex-grow z-10 ml-auto lg:ml-4 lg:flex-grow-0 lg:order-4 xl:ml-8">
+            <div class="z-10 ml-auto flex grow items-center lg:order-4 lg:ml-4 lg:grow-0 xl:ml-8">
               <span
-                class="hidden lg:block shrink-0 mr-2 text-15 font-bold text-[color:var(--color-category-page-label)]"
                 v-t="'pages.catalog.sort_by_label'"
+                class="mr-2 hidden shrink-0 text-15 font-bold text-[color:var(--color-category-page-label)] lg:block"
               />
 
               <VcSelect
@@ -142,15 +142,16 @@
             </div>
 
             <!-- View options -->
-            <ViewMode v-model:mode="savedViewMode" class="inline-flex ml-3 lg:order-1 lg:ml-0 lg:mr-auto" />
+            <ViewMode v-model:mode="savedViewMode" class="ml-3 inline-flex lg:order-1 lg:ml-0 lg:mr-auto" />
 
             <!-- Branch availability -->
             <div
               v-if="!isMobile"
-              class="order-3 flex items-center ml-4 xl:ml-6"
+              class="order-3 ml-4 flex items-center xl:ml-6"
               @click.prevent="openBranchesDialog(false)"
+              @keyup.enter.prevent="openBranchesDialog(false)"
             >
-              <VcTooltip :xOffset="28" placement="bottom-start" strategy="fixed">
+              <VcTooltip :x-offset="28" placement="bottom-start" strategy="fixed">
                 <template #trigger>
                   <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading">
                     <i18n-t
@@ -170,7 +171,7 @@
                 </template>
 
                 <template #content>
-                  <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5 w-52">
+                  <div class="w-52 rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y">
                     {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
                   </div>
                 </template>
@@ -178,12 +179,12 @@
             </div>
 
             <!-- In Stock -->
-            <div v-if="!isMobile" class="order-2 flex items-center ml-4 xl:ml-8">
-              <VcTooltip :xOffset="28" placement="bottom-start" strategy="fixed">
+            <div v-if="!isMobile" class="order-2 ml-4 flex items-center xl:ml-8">
+              <VcTooltip :x-offset="28" placement="bottom-start" strategy="fixed">
                 <template #trigger>
                   <VcCheckbox v-model="savedInStock" :disabled="loading">
                     <span
-                      class="text-15 whitespace-nowrap"
+                      class="whitespace-nowrap text-15"
                       :class="{
                         'text-[color:var(--color-category-page-checkbox-label)]': !savedInStock,
                       }"
@@ -194,7 +195,7 @@
                 </template>
 
                 <template #content>
-                  <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5 w-52">
+                  <div class="w-52 rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y">
                     {{ $t("pages.catalog.instock_filter_card.tooltip_text") }}
                   </div>
                 </template>
@@ -269,13 +270,13 @@
 
           <!-- Empty view -->
           <VcEmptyView
+            v-else
             :text="
               isExistSelectedFacets || savedInStock || savedBranches.length || keywordQueryParam
                 ? $t('pages.catalog.no_products_filtered_message')
                 : $t('pages.catalog.no_products_message')
             "
             class="h-96"
-            v-else
           >
             <template #icon>
               <VcImage src="/static/images/common/stock.svg" :alt="$t('pages.catalog.products_icon')" />
@@ -283,12 +284,12 @@
 
             <template #button>
               <VcButton
+                v-if="isExistSelectedFacets || keywordQueryParam"
                 class="px-6 uppercase"
                 size="lg"
                 @click="resetFacetFiltersWithKeyword"
-                v-if="isExistSelectedFacets || keywordQueryParam"
               >
-                <i class="fas fa-undo text-inherit -ml-0.5 mr-2.5"></i>
+                <i class="fas fa-undo -ml-0.5 mr-2.5 text-inherit"></i>
                 {{ $t("pages.catalog.no_products_button") }}
               </VcButton>
             </template>
@@ -301,6 +302,16 @@
 
 <script setup lang="ts">
 import {
+  breakpointsTailwind,
+  computedEager,
+  eagerComputed,
+  useBreakpoints,
+  useLocalStorage,
+  watchDebounced,
+  whenever,
+} from "@vueuse/core";
+import _ from "lodash";
+import {
   computed,
   onBeforeUnmount,
   onMounted,
@@ -310,17 +321,7 @@ import {
   triggerRef,
   WatchStopHandle,
 } from "vue";
-import _ from "lodash";
 import { useRoute } from "vue-router";
-import {
-  breakpointsTailwind,
-  computedEager,
-  eagerComputed,
-  useBreakpoints,
-  useLocalStorage,
-  watchDebounced,
-  whenever,
-} from "@vueuse/core";
 import {
   buildBreadcrumbs,
   DEFAULT_PAGE_SIZE,
@@ -337,6 +338,7 @@ import {
   usePageHead,
   useRouteQueryParam,
 } from "@/core";
+import { AddToCart } from "@/shared/cart";
 import {
   CategorySelector,
   DisplayProducts,
@@ -349,16 +351,16 @@ import {
   ViewMode,
 } from "@/shared/catalog";
 import { BranchesDialog, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
-import { AddToCart } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
 import { Product } from "@/xapi";
 
+const props = defineProps<IProps>();
 const FILTERS_RESET_TIMEOUT_IN_MS = 500;
 const watchStopHandles: WatchStopHandle[] = [];
 
-const props = defineProps({
-  categoryId: String,
-});
+interface IProps {
+  categoryId?: string;
+}
 
 const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);

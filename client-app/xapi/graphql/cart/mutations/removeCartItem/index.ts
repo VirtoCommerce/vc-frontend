@@ -1,6 +1,6 @@
-import mutationDocument from "./removeCartItemMutation.graphql";
-import { Mutations, MutationsRemoveCartItemArgs } from "@/xapi/types";
 import globals from "@/core/globals";
+import { Mutations, MutationsRemoveCartItemArgs } from "@/xapi/types";
+import mutationDocument from "./removeCartItemMutation.graphql";
 
 export default async function removeCartItem(lineItemId: string): Promise<void> {
   const { storeId, userId, cultureName, currencyCode } = globals;

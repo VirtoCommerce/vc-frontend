@@ -1,6 +1,6 @@
 <template>
   <router-link
-    class="footer-link font-medium text-xs text-[color:var(--color-footer-top-link)] hover:text-[color:var(--color-footer-top-link-hover)]"
+    class="footer-link text-xs font-medium text-[color:var(--color-footer-top-link)] hover:text-[color:var(--color-footer-top-link-hover)]"
     :to="to"
   >
     <slot>{{ title }}</slot>

@@ -1,10 +1,10 @@
-import mutationDocument from "./registerByInvitationMutation.graphql";
 import {
   CustomIdentityResultType,
   InputRegisterByInvitationType,
   Mutations,
   MutationsRegisterByInvitationArgs,
 } from "@/xapi/types";
+import mutationDocument from "./registerByInvitationMutation.graphql";
 
 export default async function registerByInvitation(
   payload: InputRegisterByInvitationType

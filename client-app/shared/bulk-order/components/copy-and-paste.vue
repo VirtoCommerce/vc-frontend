@@ -1,12 +1,12 @@
 <template>
   <section class="flex flex-col">
     <h2
-      class="hidden lg:block px-5 py-2 border-b font-extrabold uppercase"
       v-t="'shared.bulk_order.copy_n_paste.title'"
+      class="hidden border-b px-5 py-2 font-extrabold uppercase lg:block"
     ></h2>
 
-    <div class="p-6 pb-5 md:p-5 pt-4 h-full">
-      <p class="font-bold mb-2 text-sm" v-t="'shared.bulk_order.copy_n_paste.subtitle_message'"></p>
+    <div class="h-full p-6 pb-5 pt-4 md:p-5">
+      <p v-t="'shared.bulk_order.copy_n_paste.subtitle_message'" class="mb-2 text-sm font-bold"></p>
 
       <p class="mb-2 text-sm text-gray-500" v-html="$t('shared.bulk_order.copy_n_paste.guide_message')"></p>
 
@@ -17,14 +17,14 @@
         :rows="14"
       />
 
-      <div class="flex flex-wrap justify-between gap-3 mt-5 mb-2 md:mt-2 md:mb-0">
+      <div class="mt-5 mb-2 flex flex-wrap justify-between gap-3 md:mt-2 md:mb-0">
         <VcButton
           :is-disabled="!text || loading"
-          @click="text = ''"
           kind="secondary"
           size="lg"
-          class="uppercase px-5 xl:px-8"
+          class="px-5 uppercase xl:px-8"
           is-outline
+          @click="text = ''"
         >
           {{ $t("shared.bulk_order.copy_n_paste.reset_button") }}
         </VcButton>
@@ -32,9 +32,9 @@
         <VcButton
           :is-disabled="!text"
           :is-waiting="loading"
-          @click="addToCart"
           size="lg"
-          class="flex justify-self-end uppercase px-5 xl:px-8"
+          class="flex justify-self-end px-5 uppercase xl:px-8"
+          @click="addToCart"
         >
           {{ $t("shared.bulk_order.copy_n_paste.add_to_cart_button") }}
         </VcButton>
@@ -45,8 +45,8 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { InputNewBulkItemType } from "@/xapi/types";
 import { validateQuantity } from "@/shared/bulk-order";
+import { InputNewBulkItemType } from "@/xapi/types";
 
 const emit = defineEmits<{
   (event: "add-to-cart", value: InputNewBulkItemType[]): void;

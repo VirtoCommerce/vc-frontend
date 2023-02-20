@@ -1,17 +1,17 @@
 <template>
   <div
-    class="flex flex-col md:flex-row md:items-center bg-white pt-4.5 pb-4 md:py-0 shadow-sm md:rounded border-y md:border-x"
+    class="flex flex-col border-y bg-white pt-4.5 pb-4 shadow-sm md:flex-row md:items-center md:rounded md:border-x md:py-0"
   >
-    <div class="grow md:py-5 px-6 text-17 md:text-base">
-      <div class="bg-gray-100 w-8/12">&nbsp;</div>
+    <div class="grow px-6 text-17 md:py-5 md:text-base">
+      <div class="w-8/12 bg-gray-100">&nbsp;</div>
     </div>
 
-    <div class="shrink-0 mt-1.5 md:mt-0 px-6 text-13 md:text-base">
-      <div class="bg-gray-100 w-32">&nbsp;</div>
+    <div class="mt-1.5 shrink-0 px-6 text-13 md:mt-0 md:text-base">
+      <div class="w-32 bg-gray-100">&nbsp;</div>
     </div>
 
-    <div class="hidden md:flex shrink-0 px-6">
-      <div class="bg-gray-100 w-16 h-7">&nbsp;</div>
+    <div class="hidden shrink-0 px-6 md:flex">
+      <div class="h-7 w-16 bg-gray-100">&nbsp;</div>
     </div>
   </div>
 </template>

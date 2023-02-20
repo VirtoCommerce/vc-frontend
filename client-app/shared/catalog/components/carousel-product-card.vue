@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded border border-transparent lg:hover:border-gray-100 lg:hover:shadow-lg lg:p-2">
+  <div class="rounded border border-transparent bg-white lg:p-2 lg:hover:border-gray-100 lg:hover:shadow-lg">
     <!-- Product image -->
     <router-link :to="link" @click="$emit('link-click', $event)">
       <div class="square relative border border-gray-200">
@@ -7,7 +7,7 @@
           :src="product.imgSrc"
           :alt="product.name"
           size-suffix="md"
-          class="absolute top-0 w-full h-full object-cover object-center"
+          class="absolute top-0 h-full w-full object-cover object-center"
           lazy
         />
       </div>
@@ -18,14 +18,14 @@
       <router-link
         :to="link"
         :title="product.name"
-        class="text-[color:var(--color-link)] font-extrabold text-sm line-clamp-3 mt-2"
+        class="mt-2 text-sm font-extrabold text-[color:var(--color-link)] line-clamp-3"
         @click="$emit('link-click', $event)"
       >
         {{ product.name }}
       </router-link>
 
       <!-- Product price -->
-      <div class="text-sm mt-2">
+      <div class="mt-2 text-sm">
         <VcItemPrice class="items-center" :value="product.price"></VcItemPrice>
       </div>
     </div>
@@ -34,9 +34,11 @@
 
 <script setup lang="ts">
 import { computed, PropType } from "vue";
-import { Product } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";
 import { getProductRoute } from "@/core";
+import { Product } from "@/xapi/types";
+
+defineEmits<{ (eventName: "link-click", globalEvent: PointerEvent): void }>();
 
 const props = defineProps({
   product: {
@@ -44,8 +46,6 @@ const props = defineProps({
     required: true,
   },
 });
-
-defineEmits<{ (eventName: "link-click", globalEvent: PointerEvent): void }>();
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
 </script>

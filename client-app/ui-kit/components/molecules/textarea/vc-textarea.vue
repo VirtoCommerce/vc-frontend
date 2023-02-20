@@ -16,16 +16,16 @@
     </VcLabel>
 
     <textarea
-      v-model="text"
       :id="componentId"
+      v-model="text"
       :name="name"
       :placeholder="placeholder"
       :readonly="readonly"
       :disabled="disabled"
       :required="required"
-      :autofocus="autofocus"
       :maxlength="maxLength"
       :rows="rows"
+      :aria-labelledby="componentId"
       class="vc-textarea__input"
     />
 
@@ -36,7 +36,8 @@
 
       <!-- Counter -->
       <div v-if="counter" class="vc-textarea__counter">
-        {{ text.length }}<template v-if="maxLength"> / {{ maxLength }}</template>
+        {{ text.length }}
+        <template v-if="maxLength">/ {{ maxLength }}</template>
       </div>
     </div>
   </div>
@@ -57,7 +58,6 @@ interface Props {
   readonly?: boolean;
   disabled?: boolean;
   required?: boolean;
-  autofocus?: boolean;
   name?: string;
   label?: string;
   placeholder?: string;
@@ -74,12 +74,12 @@ interface Emits {
   (event: "update:modelValue", value: string): void;
 }
 
+const emit = defineEmits<Emits>();
+
 const props = withDefaults(defineProps<Props>(), {
   modelValue: "",
   rows: 2,
 });
-
-const emit = defineEmits<Emits>();
 
 const componentId = useComponentId("textarea-");
 const text = useVModel(props, "modelValue", emit);

@@ -3,14 +3,14 @@
     <!-- Product image -->
     <router-link
       :to="link"
-      class="shrink-0 w-[4.75rem] h-[4.75rem] border border-gray-200 p-1"
+      class="h-[4.75rem] w-[4.75rem] shrink-0 border border-gray-200 p-1"
       @click="$emit('link-click', $event)"
     >
       <VcImage
         :src="product.imgSrc"
         :alt="product.name"
         size-suffix="sm"
-        class="w-full h-full object-cover object-center"
+        class="h-full w-full object-cover object-center"
         lazy
       />
     </router-link>
@@ -19,18 +19,18 @@
       <!-- Product title -->
       <router-link
         :to="link"
-        class="shrink-0 h-8 text-[color:var(--color-link)] font-extrabold text-[13px] leading-[1.05rem] line-clamp-2"
+        class="h-8 shrink-0 text-[13px] font-extrabold leading-[1.05rem] text-[color:var(--color-link)] line-clamp-2"
         @click="$emit('link-click', $event)"
       >
         {{ product.name }}
       </router-link>
 
       <!-- Product props -->
-      <div class="text-xs overflow-hidden grid grid-cols-[auto_1fr] leading-[1.063rem]">
-        <span class="font-bold pr-3.5">{{ $t("common.labels.item") }}</span>
+      <div class="grid grid-cols-[auto_1fr] overflow-hidden text-xs leading-[1.063rem]">
+        <span class="pr-3.5 font-bold">{{ $t("common.labels.item") }}</span>
         <span class="truncate">{{ product.code }}</span>
 
-        <span class="font-bold pr-3.5">{{ $t("common.labels.price") }}</span>
+        <span class="pr-3.5 font-bold">{{ $t("common.labels.price") }}</span>
         <VcItemPrice :value="product.price" />
       </div>
     </div>
@@ -39,9 +39,11 @@
 
 <script setup lang="ts">
 import { computed, PropType } from "vue";
-import { Product as ProductType } from "@/xapi/types";
 import { RouteLocationRaw } from "vue-router";
 import { getProductRoute } from "@/core";
+import { Product as ProductType } from "@/xapi/types";
+
+defineEmits<{ (eventName: "link-click", globalEvent: PointerEvent): void }>();
 
 const props = defineProps({
   product: {
@@ -49,8 +51,6 @@ const props = defineProps({
     required: true,
   },
 });
-
-defineEmits<{ (eventName: "link-click", globalEvent: PointerEvent): void }>();
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
 </script>

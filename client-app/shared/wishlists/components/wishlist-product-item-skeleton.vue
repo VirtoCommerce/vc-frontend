@@ -1,35 +1,35 @@
 <template>
-  <div class="flex items-center gap-x-8 pb-5 py-3 px-6">
+  <div class="flex items-center gap-x-8 py-3 px-6 pb-5">
     <!-- Name and image -->
-    <div class="flex flex-grow items-center">
+    <div class="flex grow items-center">
       <!-- Product image -->
-      <div class="border border-gray-100 bg-gray-100 w-16 h-16 mr-4"></div>
+      <div class="mr-4 h-16 w-16 border border-gray-100 bg-gray-100"></div>
 
-      <div class="flex-grow">
+      <div class="grow">
         <!-- Product title -->
-        <div class="bg-gray-100 mb-1.5 h-4"></div>
-        <div class="w-3/5 bg-gray-100 h-4"></div>
+        <div class="mb-1.5 h-4 bg-gray-100"></div>
+        <div class="h-4 w-3/5 bg-gray-100"></div>
       </div>
     </div>
 
     <!-- Price -->
-    <div class="shrink-0 w-32 text-sm flex flex-col items-start">
-      <div class="bg-gray-100 h-4 w-3/5 mb-1.5"></div>
-      <div class="bg-gray-100 h-4 w-4/5"></div>
+    <div class="flex w-32 shrink-0 flex-col items-start text-sm">
+      <div class="mb-1.5 h-4 w-3/5 bg-gray-100"></div>
+      <div class="h-4 w-4/5 bg-gray-100"></div>
     </div>
 
     <!-- Add to cart -->
-    <div class="shrink-0 w-48 flex flex-col justify-center">
-      <div class="flex mb-4">
-        <div class="border border-r-0 flex-1 w-full border-gray-100 h-9"></div>
-        <div class="bg-gray-100 w-2/5"></div>
+    <div class="flex w-48 shrink-0 flex-col justify-center">
+      <div class="mb-4 flex">
+        <div class="h-9 w-full flex-1 border border-r-0 border-gray-100"></div>
+        <div class="w-2/5 bg-gray-100"></div>
       </div>
 
-      <div class="w-2/5 h-5 bg-gray-100"></div>
+      <div class="h-5 w-2/5 bg-gray-100"></div>
     </div>
 
     <!-- Actions -->
-    <div class="shrink-0 ml-auto">
+    <div class="ml-auto shrink-0">
       <div class="h-7 w-7 bg-gray-100"></div>
     </div>
   </div>

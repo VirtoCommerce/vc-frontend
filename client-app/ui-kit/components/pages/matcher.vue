@@ -1,31 +1,30 @@
 <template>
   <component
-    v-if="seoInfo?.entity?.objectType === 'Category'"
     :is="Category"
+    v-if="seoInfo?.entity?.objectType === 'Category'"
     :category-id="seoInfo?.entity?.objectId"
   />
 
   <component
-    v-else-if="seoInfo?.entity?.objectType === 'CatalogProduct'"
     :is="Product"
+    v-else-if="seoInfo?.entity?.objectType === 'CatalogProduct'"
     :product-id="seoInfo?.entity?.objectId"
   />
 
-  <component v-else-if="seoInfo?.page" :is="StaticPage" />
+  <component :is="StaticPage" v-else-if="seoInfo?.page" />
 
   <NotFound v-else-if="!loading" />
 </template>
 
 <script setup lang="ts">
+import { asyncComputed, computedEager } from "@vueuse/core";
+import { onBeforeUnmount, PropType, ref, watchEffect } from "vue";
+import { useFetch, useLanguages, useNavigations } from "@/core";
+import { PageTemplate, useStaticPage } from "@/shared/static-content";
+import NotFound from "@/pages/404.vue";
 import Category from "@/pages/catalog.vue";
 import Product from "@/pages/product.vue";
 import StaticPage from "@/pages/static-page.vue";
-import NotFound from "@/pages/404.vue";
-
-import { onBeforeUnmount, PropType, ref, watchEffect } from "vue";
-import { PageTemplate, useStaticPage } from "@/shared/static-content";
-import { asyncComputed, computedEager } from "@vueuse/core";
-import { useFetch, useLanguages, useNavigations } from "@/core";
 
 type TEntityInfo = {
   id: string;

@@ -1,10 +1,10 @@
 <template>
   <div
-    class="flex flex-col w-full bg-white rounded outline outline-offset-0 outline-1 outline-[color:var(--color-product-outline)] p-6 shadow-t-3sm hover:shadow-lg lg:px-5 lg:pt-5 lg:pb-3.5"
+    class="flex w-full flex-col rounded bg-white p-6 shadow-t-3sm outline outline-1 outline-offset-0 outline-[color:var(--color-product-outline)] hover:shadow-lg lg:px-5 lg:pt-5 lg:pb-3.5"
   >
     <!-- Product image -->
-    <div class="relative flex flex-col justify-center items-center pb-[87%]">
-      <div class="absolute top-0 w-full h-full rounded">
+    <div class="relative flex flex-col items-center justify-center pb-[87%]">
+      <div class="absolute top-0 h-full w-full rounded">
         <template v-if="$cfg.image_carousel_in_product_card_enabled && product.images?.length">
           <Swiper
             :modules="[Pagination, Navigation, Lazy]"
@@ -13,11 +13,11 @@
               prevEl: '.carousel-button-prev',
               lockClass: '!hidden',
             }"
-            class="w-full h-full"
+            class="h-full w-full"
             rewind
             lazy
             @swiper="swiperInstance = $event"
-            @slideChange="slideChanged"
+            @slide-change="slideChanged"
           >
             <SwiperSlide v-for="(image, index) in product.images" :key="index" class="rounded">
               <VcImage
@@ -25,48 +25,48 @@
                 :alt="product.name"
                 size-suffix="md"
                 :class="{ 'cursor-pointer': swiperInstance?.allowSlideNext }"
-                class="w-full h-full rounded object-cover object-center select-none"
+                class="h-full w-full select-none rounded object-cover object-center"
                 lazy
                 @click="swiperInstance?.slideNext()"
               />
             </SwiperSlide>
 
-            <template v-slot:container-end>
+            <template #container-end>
               <!-- Prev button -->
               <div
-                class="hidden carousel-button-prev group absolute top-0 left-0 z-[2] h-full md:flex items-center pl-1 pr-5 cursor-pointer"
+                class="carousel-button-prev group absolute top-0 left-0 z-[2] hidden h-full cursor-pointer items-center pl-1 pr-5 md:flex"
               >
                 <span
-                  class="group-hover:opacity-100 opacity-0 transition-opacity flex items-center justify-center w-6 h-6 bg-white rounded-full"
+                  class="flex h-6 w-6 items-center justify-center rounded-full bg-white opacity-0 transition-opacity group-hover:opacity-100"
                 >
-                  <i class="fas fa-chevron-left text-sm text-gray-400 -ml-0.5" />
+                  <i class="fas fa-chevron-left -ml-0.5 text-sm text-gray-400" />
                 </span>
               </div>
 
               <!-- Next button -->
               <div
-                class="hidden carousel-button-next group absolute top-0 right-0 z-[2] h-full md:flex items-center pl-5 pr-1 cursor-pointer"
+                class="carousel-button-next group absolute top-0 right-0 z-[2] hidden h-full cursor-pointer items-center pl-5 pr-1 md:flex"
               >
                 <span
-                  class="group-hover:opacity-100 opacity-0 transition-opacity flex items-center justify-center w-6 h-6 bg-white rounded-full"
+                  class="flex h-6 w-6 items-center justify-center rounded-full bg-white opacity-0 transition-opacity group-hover:opacity-100"
                 >
-                  <i class="fas fa-chevron-right text-sm text-gray-400 -mr-0.5" />
+                  <i class="fas fa-chevron-right -mr-0.5 text-sm text-gray-400" />
                 </span>
               </div>
 
               <!-- Bullets -->
               <div
                 v-if="product.images.length > 1"
-                class="absolute bottom-0 left-0 z-[1] flex gap-1 w-full justify-center py-2"
+                class="absolute bottom-0 left-0 z-[1] flex w-full justify-center gap-1 py-2"
               >
                 <template v-for="(state, index) in swiperBulletsState" :key="index">
                   <span
                     v-if="index !== 1 || product.images.length !== 2"
                     :class="[
-                      'inline-block w-2 h-2 rounded-full border',
+                      'inline-block h-2 w-2 rounded-full border',
                       state
-                        ? 'bg-gray-400 border-gray-400 outline outline-[1px] outline-white'
-                        : 'bg-white border-gray-400 box-border',
+                        ? 'border-gray-400 bg-gray-400 outline outline-[1px] outline-white'
+                        : 'box-border border-gray-400 bg-white',
                     ]"
                   />
                 </template>
@@ -80,7 +80,7 @@
           :src="product.imgSrc"
           :alt="product.name"
           size-suffix="md"
-          class="w-full h-full rounded object-cover object-center"
+          class="h-full w-full rounded object-cover object-center"
           lazy
         />
       </div>
@@ -88,20 +88,20 @@
       <DiscountBadge :price="product.price!" />
 
       <div
-        class="z-[2] absolute -top-4 -right-4 px-2 py-3.5 flex flex-col gap-2 rounded-3xl bg-white lg:-right-3 lg:py-2 lg:px-1.5 empty:hidden"
+        class="absolute -top-4 -right-4 z-[2] flex flex-col gap-2 rounded-3xl bg-white px-2 py-3.5 empty:hidden lg:-right-3 lg:py-2 lg:px-1.5"
       >
         <AddToList :product="product" />
-        <AddToCompareCatalog class="relative" v-if="$cfg.product_compare_enabled" :product="product" />
+        <AddToCompareCatalog v-if="$cfg.product_compare_enabled" class="relative" :product="product" />
       </div>
     </div>
 
-    <div class="flex flex-col flex-grow pt-3 lg:pt-2.5">
+    <div class="flex grow flex-col pt-3 lg:pt-2.5">
       <!-- Product title -->
       <VcTooltip placement="bottom" strategy="fixed">
         <template #trigger>
           <router-link
             :to="link"
-            class="my-px h-12 text-18 text-[color:var(--color-link)] font-extrabold line-clamp-2 cursor-pointer lg:h-10 lg:text-14"
+            class="my-px h-12 cursor-pointer text-18 font-extrabold text-[color:var(--color-link)] line-clamp-2 lg:h-10 lg:text-14"
             @click="$emit('link-click', $event)"
           >
             {{ product.name }}
@@ -109,14 +109,14 @@
         </template>
 
         <template #content>
-          <div class="bg-white rounded-sm text-xs text-tooltip shadow-sm-x-y py-1.5 px-3.5">
+          <div class="rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y">
             {{ product.name }}
           </div>
         </template>
       </VcTooltip>
 
       <div
-        class="grid grid-cols-2 gap-1.5 mt-2 w-full text-tooltip text-14 leading-4 lg:gap-y-0.5 lg:mt-0.5 lg:text-11 empty:hidden"
+        class="mt-2 grid w-full grid-cols-2 gap-1.5 text-14 leading-4 text-tooltip empty:hidden lg:mt-0.5 lg:gap-y-0.5 lg:text-11"
       >
         <!-- Product props -->
         <template v-if="product.properties">
@@ -179,49 +179,51 @@
       <VcItemPriceCatalog :variations="product.variations" :value="product.price" />
     </div>
 
-    <div class="flex flex-col" v-if="product.hasVariations">
-      <VcButton :to="link" class="w-full uppercase !text-13 !border" is-outline @click="$emit('link-click', $event)">
+    <div v-if="product.hasVariations" class="flex flex-col">
+      <VcButton :to="link" class="w-full !border !text-13 uppercase" is-outline @click="$emit('link-click', $event)">
         {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
       </VcButton>
 
       <router-link
-        class="flex items-center gap-1 mt-2 py-1 text-14 text-[color:var(--color-link)] lg:mt-5 lg:text-11"
+        class="mt-2 flex items-center gap-1 py-1 text-14 text-[color:var(--color-link)] lg:mt-5 lg:text-11"
         target="_blank"
         :to="link"
       >
-        <svg class="shrink-0 w-3 h-3 text-primary lg:w-2.5 lg:h-2.5">
+        <svg class="h-3 w-3 shrink-0 text-primary lg:h-2.5 lg:w-2.5">
           <use href="/static/images/link.svg#main"></use>
         </svg>
-        <span class="truncate" v-t="'pages.catalog.show_on_a_separate_page'"></span>
+        <span v-t="'pages.catalog.show_on_a_separate_page'" class="truncate"></span>
       </router-link>
     </div>
 
     <template v-else>
       <slot name="cart-handler"></slot>
 
-      <div class="flex items-center gap-1 mt-1">
+      <div class="mt-1 flex items-center gap-1">
         <VcInStock
           :is-in-stock="product.availabilityData?.isInStock"
           :quantity="product.availabilityData?.availableQuantity"
         />
 
-        <VcCountInCart :productId="product.id" />
+        <VcCountInCart :product-id="product.id" />
       </div>
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, PropType, ref } from "vue";
 import { Pagination, Navigation, Lazy } from "swiper";
-import { Swiper, SwiperSlide } from "swiper/vue";
 import { Swiper as SwiperInstance } from "swiper/types";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import { computed, PropType, ref } from "vue";
+import { RouteLocationRaw } from "vue-router";
+import { getProductRoute } from "@/core";
+import { DiscountBadge, Vendor } from "@/shared/catalog";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import { Product } from "@/xapi/types";
-import { RouteLocationRaw } from "vue-router";
-import { DiscountBadge, Vendor } from "@/shared/catalog";
-import { getProductRoute } from "@/core";
+
+defineEmits<{ (eventName: "link-click", globalEvent: PointerEvent): void }>();
 
 const props = defineProps({
   product: {
@@ -229,8 +231,6 @@ const props = defineProps({
     required: true,
   },
 });
-
-defineEmits<{ (eventName: "link-click", globalEvent: PointerEvent): void }>();
 
 const swiperInstance = ref<SwiperInstance>();
 const swiperBulletsState = ref<boolean[]>([true, false, false]);

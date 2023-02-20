@@ -1,20 +1,20 @@
 <template>
   <div>
     <!-- Title block -->
-    <div class="flex justify-between items-center mx-5 md:mx-0">
-      <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.account.profile.title'" />
+    <div class="mx-5 flex items-center justify-between md:mx-0">
+      <h2 v-t="'pages.account.profile.title'" class="text-3xl font-bold uppercase text-gray-800" />
     </div>
 
     <div
-      class="flex flex-col bg-white shadow-sm p-6 md:rounded md:border polygon-bg [--polygon-bg-position:right_bottom_-180px]"
+      class="polygon-bg flex flex-col bg-white p-6 shadow-sm [--polygon-bg-position:right_bottom_-180px] md:rounded md:border"
     >
-      <form @submit.prevent="onSubmit" class="lg:w-1/2 flex flex-col">
+      <form class="flex flex-col lg:w-1/2" @submit.prevent="onSubmit">
         <!-- Errors block -->
         <VcAlert v-if="updateProfileError" class="mb-2" type="danger" icon>
           <span v-t="'pages.account.profile.update_error_alert'" />
         </VcAlert>
 
-        <VcInput name="userName" class="hidden" autocomplete="userName" v-model="userName" />
+        <VcInput v-model="userName" name="userName" class="hidden" autocomplete="userName" />
 
         <VcInput
           v-model="firstName"
@@ -49,14 +49,14 @@
           is-disabled
         />
 
-        <div class="flex items-center my-5">
+        <div class="my-5 flex items-center">
           <svg width="54" height="54" class="-ml-0.5 mr-2 text-[color:var(--color-primary)]">
             <use href="/static/images/polygon-key.svg#main" />
           </svg>
 
           <h3
-            class="text-gray-800 text-xl font-extrabold uppercase"
             v-t="'pages.account.profile.change_password_title'"
+            class="text-xl font-extrabold uppercase text-gray-800"
           />
         </div>
 
@@ -109,7 +109,7 @@
             :is-disabled="!meta.dirty || !meta.valid || meta.pending"
             :is-waiting="isSubmitting"
             size="lg"
-            class="uppercase w-full lg:w-48"
+            class="w-full uppercase lg:w-48"
             is-submit
           >
             {{ $t("pages.account.profile.update_button") }}
@@ -121,14 +121,14 @@
 </template>
 
 <script setup lang="ts">
-import { ProfileUpdateSuccessDialog, useUser } from "@/shared/account";
-import { computed, Ref, ref } from "vue";
-import { useForm, useField } from "vee-validate";
-import * as yup from "yup";
-import { usePopup } from "@/shared/popup";
-import { useI18n } from "vue-i18n";
 import { whenever } from "@vueuse/core";
+import { useForm, useField } from "vee-validate";
+import { computed, Ref, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import * as yup from "yup";
 import { usePageHead } from "@/core/composables";
+import { ProfileUpdateSuccessDialog, useUser } from "@/shared/account";
+import { usePopup } from "@/shared/popup";
 
 const { t } = useI18n();
 const { user, updateUser, changePassword } = useUser();

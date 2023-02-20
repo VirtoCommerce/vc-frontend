@@ -1,14 +1,14 @@
 <template>
-  <div class="!gap-y-4 lg:!gap-y-6" v-if="quote">
+  <div v-if="quote" class="!gap-y-4 lg:!gap-y-6">
     <div class="flex flex-col gap-3">
       <VcBreadcrumbs :items="breadcrumbs" />
 
-      <h2 class="text-26 tracking-wide font-bold uppercase lg:text-3xl lg:leading-8">
+      <h2 class="text-26 font-bold uppercase tracking-wide lg:text-3xl lg:leading-8">
         {{ $t("pages.account.quote_details.title", [quote!.number]) }}
       </h2>
     </div>
 
-    <div class="-mx-5 bg-white shadow-md-x border-y lg:mx-0 lg:shadow-none lg:border-0 lg:bg-transparent lg:space-y-6">
+    <div class="-mx-5 border-y bg-white shadow-md-x lg:mx-0 lg:space-y-6 lg:border-0 lg:bg-transparent lg:shadow-none">
       <!-- Quote comment -->
       <VcSectionWidget
         :title="$t('pages.account.quote_details.remarks')"
@@ -16,8 +16,8 @@
         content-classes="px-6 pb-1 pt-2 lg:px-7 lg:pb-2"
       >
         <VcTextarea
-          :label="$t('pages.account.quote_details.remarks_field_label')"
           v-model="quote.comment"
+          :label="$t('pages.account.quote_details.remarks_field_label')"
           :disabled="fetching"
           :max-length="1000"
           :rows="4"
@@ -36,12 +36,12 @@
       </VcSectionWidget>
 
       <VcSectionWidget :title="$t('pages.account.quote_details.shipping_address')" icon="truck">
-        <h4 class="text-md leading-5 font-bold">
+        <h4 class="text-md font-bold leading-5">
           {{ $t("pages.account.quote_details.shipping_address") }}
         </h4>
 
-        <div class="flex flex-col gap-3 border rounded mt-2 p-5 md:flex-row md:items-center empty:hidden">
-          <VcAddressInfo class="grow text-15" v-if="shippingAddress" :address="shippingAddress" />
+        <div class="mt-2 flex flex-col gap-3 rounded border p-5 empty:hidden md:flex-row md:items-center">
+          <VcAddressInfo v-if="shippingAddress" class="grow text-15" :address="shippingAddress" />
 
           <VcAlert v-else class="grow" type="warning" icon>
             {{ $t("pages.account.quote_details.no_address_message") }}
@@ -51,13 +51,13 @@
             <button
               :disabled="fetching"
               type="button"
-              class="shrink-0 flex items-center justify-center h-9 w-9 rounded border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white"
+              class="flex h-9 w-9 shrink-0 items-center justify-center rounded border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white"
+              :title="$t('pages.account.addresses.edit_label')"
               @click="
                 userHasAddresses
                   ? openAddressSelectionDialog(AddressType.Shipping)
                   : openAddOrUpdateAddressDialog(AddressType.Shipping, shippingAddress)
               "
-              :title="$t('pages.account.addresses.edit_label')"
             >
               <i class="fas fa-pencil-alt text-18" />
             </button>
@@ -71,7 +71,7 @@
           {{ $t("pages.account.quote_details.billing_address") }}
         </h4>
 
-        <div class="border rounded mt-2.5 p-5">
+        <div class="mt-2.5 rounded border p-5">
           <VcCheckbox
             :model-value="billingAddressEqualsShipping"
             :disabled="fetching"
@@ -81,12 +81,12 @@
           </VcCheckbox>
 
           <div
-            class="flex flex-col gap-3 mt-4 md:flex-row md:items-center empty:hidden"
             v-if="!billingAddressEqualsShipping"
+            class="mt-4 flex flex-col gap-3 empty:hidden md:flex-row md:items-center"
           >
-            <VcAddressInfo class="grow text-15" v-if="billingAddress" :address="billingAddress" />
+            <VcAddressInfo v-if="billingAddress" class="grow text-15" :address="billingAddress" />
 
-            <VcAlert class="grow" type="warning" icon v-else>
+            <VcAlert v-else class="grow" type="warning" icon>
               {{ $t("pages.account.quote_details.no_address_message") }}
             </VcAlert>
 
@@ -94,13 +94,13 @@
               <button
                 :disabled="fetching"
                 type="button"
-                class="shrink-0 flex items-center justify-center h-9 w-9 rounded border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white"
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white"
+                :title="$t('pages.account.addresses.edit_label')"
                 @click="
                   userHasAddresses
                     ? openAddressSelectionDialog(AddressType.Billing)
                     : openAddOrUpdateAddressDialog(AddressType.Billing, billingAddress)
                 "
-                :title="$t('pages.account.addresses.edit_label')"
               >
                 <i class="fas fa-pencil-alt text-18" />
               </button>
@@ -113,7 +113,7 @@
         <VcButton
           :is-disabled="!quoteChanged || !quoteItemsValid || fetching"
           size="lg"
-          class="flex-1 p-2 uppercase font-bold lg:flex-none lg:min-w-[208px]"
+          class="flex-1 p-2 font-bold uppercase lg:min-w-[208px] lg:flex-none"
           is-outline
           @click="saveChanges"
         >
@@ -123,7 +123,7 @@
         <VcButton
           :is-disabled="!quoteValid || fetching"
           size="lg"
-          class="flex-1 p-2 uppercase font-bold lg:flex-none lg:min-w-[208px]"
+          class="flex-1 p-2 font-bold uppercase lg:min-w-[208px] lg:flex-none"
           @click="submit"
         >
           {{ $t("pages.account.quote_details.submit") }}
@@ -132,22 +132,22 @@
     </div>
   </div>
 
-  <VcLoaderOverlay no-bg v-else />
+  <VcLoaderOverlay v-else no-bg />
 </template>
 
 <script setup lang="ts">
+import { computedEager } from "@vueuse/core";
+import { cloneDeep, isEqual, remove, every } from "lodash";
 import { computed, ref, watchEffect, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { computedEager } from "@vueuse/core";
-import { cloneDeep, isEqual, remove, every } from "lodash";
-import { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi";
 import { AddressType, convertToType } from "@/core";
-import { useUserAddresses, useUserQuote, QuoteLineItems } from "@/shared/account";
-import { usePopup } from "@/shared/popup";
-import { AddOrUpdateAddressModal, SelectAddressModal } from "@/shared/checkout";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { asyncForEach } from "@/core/utilities";
+import { useUserAddresses, useUserQuote, QuoteLineItems } from "@/shared/account";
+import { AddOrUpdateAddressModal, SelectAddressModal } from "@/shared/checkout";
+import { usePopup } from "@/shared/popup";
+import { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi";
 
 const props = defineProps({
   quoteId: {

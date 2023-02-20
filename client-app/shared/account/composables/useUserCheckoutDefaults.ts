@@ -1,6 +1,6 @@
-import { useUser } from ".";
 import { Logger } from "@/core/utilities";
 import { CheckoutDefaults } from "@/shared/account";
+import { useUser } from ".";
 
 export default function useUserCheckoutDefaults() {
   const { user } = useUser();

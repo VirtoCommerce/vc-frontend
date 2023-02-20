@@ -1,25 +1,25 @@
 <template>
   <div>
     <!-- Title block -->
-    <div class="flex justify-between items-center mx-5 md:mx-0">
-      <h2 class="text-gray-800 text-3xl font-bold uppercase" v-t="'pages.account.orders.title'" />
+    <div class="mx-5 flex items-center justify-between md:mx-0">
+      <h2 v-t="'pages.account.orders.title'" class="text-3xl font-bold uppercase text-gray-800" />
     </div>
 
     <!-- Mobile filters sidebar -->
-    <VcPopupSidebar class="px-5 pt-6 w-72" :is-visible="isMobile && filtersVisible" @hide="hideFilters">
+    <VcPopupSidebar class="w-72 px-5 pt-6" :is-visible="isMobile && filtersVisible" @hide="hideFilters">
       <div class="relative">
         <button class="absolute -right-3 appearance-none px-3 py-1" @click="hideFilters">
-          <span class="text-2xl fas fa-times text-red-400 hover:text-red-700"></span>
+          <span class="fas fa-times text-2xl text-red-400 hover:text-red-700"></span>
         </button>
       </div>
 
-      <div class="font-semibold text-2xl pt-1 mb-6">
+      <div class="mb-6 pt-1 text-2xl font-semibold">
         {{ $t("common.buttons.filters") }}
       </div>
 
       <MobileOrdersFilter class="grow" />
 
-      <div class="sticky z-100 bottom-0 mt-4 -mx-5 px-5 py-5 shadow-t-md bg-white">
+      <div class="z-100 sticky bottom-0 -mx-5 mt-4 bg-white p-5 shadow-t-md">
         <div class="flex gap-x-4">
           <VcButton
             class="flex-1 uppercase"
@@ -49,12 +49,12 @@
       </div>
     </VcPopupSidebar>
 
-    <div class="-mt-5" ref="stickyMobileHeaderAnchor"></div>
+    <div ref="stickyMobileHeaderAnchor" class="-mt-5"></div>
 
     <!-- Page Toolbar -->
     <PageToolbarBlock
       :stick="stickyMobileHeaderIsVisible"
-      class="flex flex-row lg:flex-row-reverse items-center py-3.5 -my-3.5 gap-x-2 lg:gap-x-5"
+      class="-my-3.5 flex flex-row items-center gap-x-2 py-3.5 lg:flex-row-reverse lg:gap-x-5"
       shadow
     >
       <div class="relative">
@@ -63,21 +63,21 @@
           :is-disabled="ordersLoading"
           :is-outline="!filtersVisible && !isMobile"
           size="lg"
-          class="w-11 lg:w-auto px-3.5 uppercase"
+          class="w-11 px-3.5 uppercase lg:w-auto"
           @click="toggleFilters"
         >
           <span class="hidden lg:inline-block">{{ $t("common.buttons.filters") }}</span>
-          <span class="lg:hidden fa fa-filter"></span>
+          <span class="fa fa-filter lg:hidden"></span>
         </VcButton>
 
         <!-- Desktop filters dropdown -->
         <div
           v-if="filtersVisible && !isMobile"
           ref="filtersDropdownElement"
-          class="absolute right-0 z-[1] bg-white shadow-lg rounded border mt-2 p-6"
+          class="absolute right-0 z-[1] mt-2 rounded border bg-white p-6 shadow-lg"
         >
           <button class="absolute top-0 right-0 appearance-none px-4 py-2" @click="hideFilters">
-            <span class="text-lg fa fa-times text-red-400 hover:text-red-700"></span>
+            <span class="fa fa-times text-lg text-red-400 hover:text-red-700"></span>
           </button>
 
           <OrdersFilter @change="hideFilters" />
@@ -92,8 +92,8 @@
             class="w-full"
             input-class="font-medium rounded-r-none !text-sm disabled:bg-gray-200 !pl-4 !pr-11"
             :is-disabled="ordersLoading"
-            @keypress.enter="applyKeyword"
             :placeholder="$t('pages.account.orders.search_placeholder')"
+            @keypress.enter="applyKeyword"
           />
 
           <button v-if="localKeyword" class="absolute right-0 top-0 h-11 px-4" @click="resetKeyword">
@@ -110,7 +110,7 @@
     </PageToolbarBlock>
 
     <!-- Filters chips -->
-    <div v-if="!isFilterEmpty" class="hidden lg:flex flex-wrap gap-x-3 gap-y-2">
+    <div v-if="!isFilterEmpty" class="hidden flex-wrap gap-x-3 gap-y-2 lg:flex">
       <VcChip
         class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
         size="sm"
@@ -149,7 +149,7 @@
 
       <template #button>
         <VcButton v-if="keyword || !isFilterEmpty" class="px-6 uppercase" size="lg" @click="resetFiltersWithKeyword">
-          <i class="fas fa-undo text-inherit -ml-0.5 mr-2.5" />
+          <i class="fas fa-undo -ml-0.5 mr-2.5 text-inherit" />
           {{ $t("pages.account.orders.buttons.reset_search") }}
         </VcButton>
 
@@ -168,36 +168,36 @@
         :sort="sort"
         :pages="pages"
         :page="page"
-        @itemClick="goToOrderDetails"
-        @headerClick="applySorting"
-        @pageChanged="changePage"
+        @item-click="goToOrderDetails"
+        @header-click="applySorting"
+        @page-changed="changePage"
       >
         <template #mobile-item="itemData">
-          <div class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200 cursor-pointer">
+          <div class="grid cursor-pointer grid-cols-2 gap-y-4 border-b border-gray-200 p-6">
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.orders.order_number_label'" />
+              <span v-t="'pages.account.orders.order_number_label'" class="text-sm text-gray-400" />
 
-              <span class="pr-4 font-extrabold overflow-hidden overflow-ellipsis">
+              <span class="overflow-hidden text-ellipsis pr-4 font-extrabold">
                 {{ itemData.item.number }}
               </span>
             </div>
 
-            <div class="flex flex-col justify-center items-end">
+            <div class="flex flex-col items-end justify-center">
               <TableStatusBadge :status="itemData.item.status" />
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.orders.date_label'" />
+              <span v-t="'pages.account.orders.date_label'" class="text-sm text-gray-400" />
 
-              <span class="overflow-hidden overflow-ellipsis">
+              <span class="overflow-hidden text-ellipsis">
                 {{ $d(itemData.item?.createdDate) }}
               </span>
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.orders.total_label'" />
+              <span v-t="'pages.account.orders.total_label'" class="text-sm text-gray-400" />
 
-              <span class="overflow-hidden overflow-ellipsis font-extrabold">
+              <span class="overflow-hidden text-ellipsis font-extrabold">
                 {{ itemData.item.total?.formattedAmount }}
               </span>
             </div>
@@ -205,25 +205,25 @@
         </template>
 
         <template #mobile-skeleton>
-          <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 p-6 gap-y-4 border-b border-gray-200">
+          <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-gray-200 p-6">
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.orders.order_number_label'"></span>
-              <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
+              <span v-t="'pages.account.orders.order_number_label'" class="text-sm text-gray-400"></span>
+              <div class="mr-4 h-6 animate-pulse bg-gray-200"></div>
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.orders.date_label'"></span>
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <span v-t="'pages.account.orders.date_label'" class="text-sm text-gray-400"></span>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.orders.total_label'"></span>
-              <div class="h-6 mr-4 bg-gray-200 animate-pulse"></div>
+              <span v-t="'pages.account.orders.total_label'" class="text-sm text-gray-400"></span>
+              <div class="mr-4 h-6 animate-pulse bg-gray-200"></div>
             </div>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400" v-t="'pages.account.orders.status_label'"></span>
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <span v-t="'pages.account.orders.status_label'" class="text-sm text-gray-400"></span>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </div>
           </div>
         </template>
@@ -232,30 +232,30 @@
           <tr
             v-for="order in orders"
             :key="order.id"
-            class="even:bg-gray-50 hover:bg-gray-200 cursor-pointer"
+            class="cursor-pointer even:bg-gray-50 hover:bg-gray-200"
             @click="goToOrderDetails(order)"
           >
-            <td class="p-5 overflow-hidden overflow-ellipsis">
+            <td class="overflow-hidden text-ellipsis p-5">
               {{ order.number }}
             </td>
 
-            <td class="p-5 overflow-hidden overflow-ellipsis">
+            <td class="overflow-hidden text-ellipsis p-5">
               {{ order.purchaseOrderNumber }}
             </td>
 
-            <td class="p-5 overflow-hidden overflow-ellipsis">
+            <td class="overflow-hidden text-ellipsis p-5">
               {{ order.inPayments?.[0]?.number }}
             </td>
 
-            <td class="p-5 overflow-hidden overflow-ellipsis">
+            <td class="overflow-hidden text-ellipsis p-5">
               {{ $d(order?.createdDate) }}
             </td>
 
-            <td class="p-5 overflow-hidden overflow-ellipsis">
+            <td class="overflow-hidden text-ellipsis p-5">
               <TableStatusBadge :status="order.status" class="mx-auto" />
             </td>
 
-            <td class="p-5 overflow-hidden overflow-ellipsis text-right">
+            <td class="overflow-hidden text-ellipsis p-5 text-right">
               {{ order.total?.formattedAmount }}
             </td>
           </tr>
@@ -264,27 +264,27 @@
         <template #desktop-skeleton>
           <tr v-for="i in itemsPerPage" :key="i" class="even:bg-gray-50">
             <td class="p-5">
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </td>
 
             <td class="w-4/12 p-5">
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </td>
 
             <td class="p-5">
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </td>
 
             <td class="p-5">
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </td>
 
             <td class="p-5">
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </td>
 
             <td class="p-5">
-              <div class="h-6 bg-gray-200 animate-pulse"></div>
+              <div class="h-6 animate-pulse bg-gray-200"></div>
             </td>
           </tr>
         </template>
@@ -294,6 +294,12 @@
 </template>
 
 <script setup lang="ts">
+import { breakpointsTailwind, useBreakpoints, onClickOutside } from "@vueuse/core";
+import { computed, onMounted, ref, shallowRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
+import { ISortInfo } from "@/core";
+import { useElementVisibility, usePageHead } from "@/core/composables";
 import {
   OrdersFilter,
   MobileOrdersFilter,
@@ -301,13 +307,7 @@ import {
   useUserOrders,
   PageToolbarBlock,
 } from "@/shared/account";
-import { computed, onMounted, ref, shallowRef, watch } from "vue";
-import { breakpointsTailwind, useBreakpoints, onClickOutside } from "@vueuse/core";
-import { useRouter } from "vue-router";
 import { CustomerOrderType } from "@/xapi/types";
-import { useI18n } from "vue-i18n";
-import { useElementVisibility, usePageHead } from "@/core/composables";
-import { ISortInfo } from "@/core";
 
 const { t } = useI18n();
 const router = useRouter();

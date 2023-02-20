@@ -3,8 +3,8 @@
 </template>
 
 <script setup lang="ts">
-import { MoneyType } from "@/xapi/types";
 import { PropType } from "vue";
+import { MoneyType } from "@/xapi/types";
 
 defineProps({
   value: {
