@@ -6,7 +6,7 @@
       class="grow text-sm"
       input-class="!pl-4 !pr-8 font-medium disabled:bg-gray-200 !rounded-r-none text-[0.95rem]"
       :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
-      @keyup.enter="goToSearchResultsPage"
+      @keyup.enter="searchPhrase && goToSearchResultsPage()"
       @keyup.esc="searchDropdownVisible && hideSearchDropdown()"
       @input="onSearchPhraseChanged()"
     />
@@ -15,7 +15,7 @@
       <VcIcon name="delete-2" size="xs" class="text-[color:var(--color-primary)]" />
     </button>
 
-    <VcButton class="w-[2.75rem] !rounded-l-none !rounded-r" size="lg" @click="goToSearchResultsPage">
+    <VcButton class="w-[2.75rem] !rounded-l-none !rounded-r" size="lg" @click="searchPhrase && goToSearchResultsPage()">
       <VcIcon name="search" size="md" class="text-[color:var(--color-white)]" />
     </VcButton>
 
