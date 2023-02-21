@@ -15,6 +15,7 @@ module.exports = {
     "plugin:sonarjs/recommended",
     "plugin:tailwindcss/recommended", // See rules: https://github.com/francoismassart/eslint-plugin-tailwindcss#supported-rules
     "plugin:vuejs-accessibility/recommended", // See rules: https://github.com/vue-a11y/eslint-plugin-vuejs-accessibility/tree/main/docs
+    "plugin:storybook/recommended", // See rules: https://github.com/storybookjs/eslint-plugin-storybook/tree/main/docs/rules
   ],
   parser: "vue-eslint-parser",
   parserOptions: {
@@ -121,8 +122,6 @@ module.exports = {
     "vue/padding-lines-in-component-definition": "warn",
     "vue/require-emit-validator": "warn",
     "vuejs-accessibility/click-events-have-key-events": "warn", // TODO: Remove (switch to error)
-    "vuejs-accessibility/form-control-has-label": "warn", // TODO: Remove (switch to error)
-    "vuejs-accessibility/label-has-for": ["warn", { components: ["VcLabel"] }], // TODO: Switch to error
     "vuejs-accessibility/no-static-element-interactions": "warn", // TODO: Remove (switch to error)
 
     /**
@@ -135,6 +134,8 @@ module.exports = {
     "tailwindcss/no-custom-classname": "off",
     "vue/multi-word-component-names": "off",
     "vue/require-default-prop": "off",
+    "vuejs-accessibility/form-control-has-label": "off",
+    "vuejs-accessibility/label-has-for": "off",
   },
   overrides: [
     // Fix import of ts types in .vue files

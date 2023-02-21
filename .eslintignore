@@ -3,3 +3,4 @@
 client-app/xapi/types.ts
 node_modules
 assets
+!.storybook

@@ -62,8 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watchEffect } from "vue";
-import { useComponentId } from "@/core/composables";
+import { computed, getCurrentInstance, ref, watchEffect } from "vue";
 
 interface IProps {
   autocomplete?: string;
@@ -100,10 +99,10 @@ const props = withDefaults(defineProps<IProps>(), {
   size: "md",
 });
 
+const componentId = "input-" + getCurrentInstance()!.uid;
 const inputType = ref("");
 const isPasswordVisible = ref(false);
 const isNumberTypeSafari = ref(false);
-const componentId = useComponentId("input-");
 
 const minValue = computed(() => (props.type === "number" ? props.min : undefined));
 const maxValue = computed(() => (props.type === "number" ? props.max : undefined));
