@@ -213,7 +213,7 @@ function setBillingAddressEqualsShippingAddress(): void {
   setQuoteAddress(newBillingAddress);
 }
 
-function openAddressSelectionDialog(addressType: AddressType.Billing | AddressType.Shipping): void {
+function openAddressSelectionDialog(addressType: AddressType): void {
   openPopup({
     component: SelectAddressModal,
     props: {
@@ -238,10 +238,7 @@ function openAddressSelectionDialog(addressType: AddressType.Billing | AddressTy
   });
 }
 
-function openAddOrUpdateAddressDialog(
-  addressType: AddressType.Billing | AddressType.Shipping,
-  currentAddress?: QuoteAddressType
-): void {
+function openAddOrUpdateAddressDialog(addressType: AddressType, currentAddress?: QuoteAddressType): void {
   openPopup({
     component: AddOrUpdateAddressModal,
     props: {

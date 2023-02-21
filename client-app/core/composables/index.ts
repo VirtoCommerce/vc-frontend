@@ -11,7 +11,7 @@ export { default as useGoogleAnalytics } from "./useGoogleAnalytics";
 export { default as useIdentityErrorTranslator } from "./useIdentityErrorTranslator";
 export { default as useLanguages } from "./useLanguages";
 export { default as useNavigations } from "./useNavigations";
-export { default as usePageHead } from "./usePageHead";
+export * from "./usePageHead";
 export { default as useProductsRoutes } from "./useProductsRoutes";
 export * from "./useRouteQueryParam";
 export { default as useThemeContext } from "./useThemeContext";

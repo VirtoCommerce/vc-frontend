@@ -1,4 +1,3 @@
-import { MaybeRef } from "@vueuse/core";
 import { CartAddressType, MemberAddressType, OrderAddressType, QuoteAddressType } from "@/xapi/types";
 
 export * from "./app-context";
@@ -13,24 +12,14 @@ export * from "./modify";
 export * from "./role";
 export * from "./theme-context";
 
-export type Dictionary = { [key: string | symbol | number]: any };
-
 export enum AddressType {
+  Undefined = 0,
   Billing = 1,
   Shipping = 2,
-  BillingAndShipping = 3,
+  BillingAndShipping = Billing | Shipping,
 }
 
 export type AnyAddressType = MemberAddressType | OrderAddressType | CartAddressType | QuoteAddressType;
-
-export type UsePageSeoData = {
-  /**
-   * input chunks: ["title_part_1", "title_part_2"]
-   * output string: title_part_1<page_title_divider>title_part_2
-   */
-  title?: MaybeRef<string | string[] | undefined>;
-  meta?: Record<string, MaybeRef<string | undefined>>;
-};
 
 export interface ISortInfo {
   column: string;

@@ -35,7 +35,14 @@ export default defineConfig(({ mode }): UserConfig => {
       vue(),
       graphql(),
       checker({
+        typescript: true,
         vueTsc: true,
+        eslint: {
+          lintCommand: 'eslint "client-app/**/*.{js,ts,vue}" --cache --cache-location node_modules/.cache/.eslintcache',
+          dev: {
+            logLevel: ["error"],
+          },
+        },
       }),
       splitVendorChunkPlugin(),
     ],

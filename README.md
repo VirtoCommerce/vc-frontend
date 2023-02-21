@@ -86,7 +86,9 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 |   ├── main.ts                   // Application entry point. Main initialization script.
 |   ├── shims-acceptjs.d.ts       // Definition file to provide IDE IntelliSense support for Accept.js (Authorize.net).
 |   ├── shims-graphql.d.ts        // Definition file to provide IDE IntelliSense support for importing *.graphql files.
-|   └── shims-vue.d.ts            // Definition file to provide IDE IntelliSense support for importing *.vue files and specific Vue features.
+|   ├── shims-vue.d.ts            // Definition file to provide IDE IntelliSense support for importing *.vue files.
+|   ├── vue.d.ts                  // Definition file to provide IDE IntelliSense support for additional global Vue properties.
+|   └── vue-router.d.ts           // Definition file to provide IDE IntelliSense support for additional global Vue Router properties.
 |
 ├── config                        // The Virto theme settings.
 |   ├── menu.json                 // Theme menu settings file.
