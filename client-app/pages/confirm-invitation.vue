@@ -13,31 +13,34 @@
           v-model.trim="firstName"
           :label="$t('pages.confirm_invitation.first_name_label')"
           :placeholder="$t('pages.confirm_invitation.first_name_placeholder')"
-          :error-message="errors.firstName"
-          :is-disabled="loading"
+          :message="errors.firstName"
+          :error="!!errors.firstName"
+          :disabled="loading"
           :maxlength="64"
           class="mb-4"
-          is-required
+          required
         />
 
         <VcInput
           v-model.trim="lastName"
           :label="$t('pages.confirm_invitation.last_name_label')"
           :placeholder="$t('pages.confirm_invitation.last_name_placeholder')"
-          :error-message="errors.lastName"
-          :is-disabled="loading"
+          :message="errors.lastName"
+          :error="errors.lastName"
+          :disabled="loading"
           :maxlength="64"
           class="mb-4"
-          is-required
+          required
         />
 
         <VcInput
           :model-value="email"
           :label="$t('pages.confirm_invitation.email_label')"
-          :error-message="errors.email"
+          :message="errors.email"
+          :error="errors.email"
           class="mb-4"
-          is-disabled
-          is-required
+          disabled
+          required
         />
 
         <div class="flex flex-col gap-x-6 gap-y-4 md:flex-row">
@@ -45,26 +48,28 @@
             v-model="password"
             :label="$t('pages.confirm_invitation.password_label')"
             :placeholder="$t('pages.confirm_invitation.password_placeholder')"
-            :error-message="errors.password"
-            :is-disabled="loading"
+            :message="errors.password"
+            :error="!!errors.password"
+            :disabled="loading"
             :maxlength="64"
             type="password"
             autocomplete="new-password"
             class="md:w-1/2"
-            is-required
+            required
           />
 
           <VcInput
             v-model="confirmPassword"
             :label="$t('pages.confirm_invitation.confirm_password_label')"
             :placeholder="$t('pages.confirm_invitation.confirm_password_placeholder')"
-            :error-message="errors.confirmPassword"
-            :is-disabled="loading"
+            :message="errors.confirmPassword"
+            :error="!!errors.confirmPassword"
+            :disabled="loading"
             :maxlength="64"
             type="password"
             autocomplete="off"
             class="md:w-1/2"
-            is-required
+            required
           />
         </div>
 

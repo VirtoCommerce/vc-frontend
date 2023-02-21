@@ -7,7 +7,6 @@
         'vc-select--readonly': readonly,
         'vc-select--disabled': disabled,
         'vc-select--opened': open,
-        'vc-select--hide-empty-details': !showEmptyDetails,
         'vc-select--error': error,
       },
     ]"
@@ -82,12 +81,7 @@
       </transition>
     </div>
 
-    <!-- Details -->
-    <div class="vc-select__details">
-      <!-- Message -->
-      <!-- eslint-disable-next-line vue/no-v-html-->
-      <div v-if="message" class="vc-select__message" v-html="message"></div>
-    </div>
+    <VcFormDetails :show-empty="showEmptyDetails" :message="message" :error="error" />
   </div>
 </template>
 
@@ -201,7 +195,6 @@ function select(item?: any) {
   $disabled: "";
   $readonly: "";
   $opened: "";
-  $hideEmptyDetails: "";
   $error: "";
 
   @apply flex flex-col;
@@ -234,10 +227,6 @@ function select(item?: any) {
 
   &--opened {
     $opened: &;
-  }
-
-  &--hide-empty-details {
-    $hideEmptyDetails: &;
   }
 
   &--error {
@@ -328,22 +317,6 @@ function select(item?: any) {
     &--active,
     &--active:hover {
       @apply bg-[color:var(--color-primary-light)] cursor-default;
-    }
-  }
-
-  &__details {
-    @apply flex justify-end mt-0.5 gap-2 min-h-[0.875rem] text-11;
-
-    #{$hideEmptyDetails} & {
-      @apply empty:hidden;
-    }
-  }
-
-  &__message {
-    @apply grow text-gray-400;
-
-    #{$error} & {
-      @apply text-[color:var(--color-danger)];
     }
   }
 }

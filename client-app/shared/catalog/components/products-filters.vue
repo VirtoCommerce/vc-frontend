@@ -2,23 +2,16 @@
   <div class="space-y-4 lg:space-y-5">
     <!-- Search results -->
     <VcFilterCard v-if="withLocalSearch" :title="$t('pages.catalog.search_card.title')">
-      <div class="flex gap-2.5">
-        <div class="relative">
-          <VcInput
-            v-model="localKeyword"
-            class="h-8 w-full flex-1"
-            input-class="leading-8 !h-8 !pl-2 !pr-6"
-            maxlength="30"
-            :is-disabled="loading"
-            @keypress.enter="onSearchStart"
-          />
-
-          <button v-if="localKeyword" class="absolute right-[10px] top-[10px]" @click="reset">
-            <svg class="text-[color:var(--color-primary)]" height="12" width="12">
-              <use href="/static/images/delete.svg#main" />
-            </svg>
-          </button>
-        </div>
+      <div class="flex items-center gap-2.5">
+        <VcInput v-model="localKeyword" size="sm" maxlength="30" :disabled="loading" @keypress.enter="onSearchStart">
+          <template #endDecorator>
+            <button class="h-full px-3" :class="{ hidden: !localKeyword }" @click="reset">
+              <svg class="text-[color:var(--color-primary)]" height="12" width="12">
+                <use href="/static/images/delete.svg#main" />
+              </svg>
+            </button>
+          </template>
+        </VcInput>
 
         <VcButton
           :is-disabled="loading || isAppliedKeyword"

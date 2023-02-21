@@ -3,21 +3,22 @@
     <VcInput
       v-model="searchPhrase"
       :maxlength="MAX_LENGTH"
-      class="grow text-sm"
-      input-class="!pl-4 !pr-8 font-medium disabled:bg-gray-200 !rounded-r-none text-[0.95rem]"
+      class="w-full"
       :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
       @keyup.enter="goToSearchResultsPage"
       @keyup.esc="searchDropdownVisible && hideSearchDropdown()"
       @input="onSearchPhraseChanged()"
-    />
+    >
+      <template #endDecorator>
+        <button v-if="searchPhrase" class="h-full px-3" @click="reset">
+          <VcIcon name="delete-2" size="xs" class="text-[color:var(--color-primary)]" />
+        </button>
 
-    <button v-if="searchPhrase" class="absolute right-[3.8rem] top-[0.95rem]" @click="reset">
-      <VcIcon name="delete-2" size="xs" class="text-[color:var(--color-primary)]" />
-    </button>
-
-    <VcButton class="w-[2.75rem] !rounded-l-none !rounded-r" size="lg" @click="goToSearchResultsPage">
-      <VcIcon name="search" size="md" class="text-[color:var(--color-white)]" />
-    </VcButton>
+        <VcButton class="h-full w-[2.75rem] !rounded-[inherit]" size="lg" @click="goToSearchResultsPage">
+          <VcIcon name="search" size="md" class="text-[color:var(--color-white)]" />
+        </VcButton>
+      </template>
+    </VcInput>
 
     <!-- Dropdown -->
     <transition name="slide-fade-top">
