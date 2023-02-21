@@ -25,6 +25,7 @@
     },
     "types": [
       "node",
+      "vite/client",
       "@types/gtag.js"
     ]
   },

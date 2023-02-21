@@ -125,10 +125,7 @@ export default function useCheckout() {
     loading.value = false;
   }
 
-  async function updateBillingOrDeliveryAddress(
-    addressType: AddressType.Billing | AddressType.Shipping,
-    inputAddress: InputAddressType
-  ) {
+  async function updateBillingOrDeliveryAddress(addressType: AddressType, inputAddress: InputAddressType) {
     if (addressType === AddressType.Billing) {
       await updatePayment({
         id: payment.value?.id,
@@ -143,7 +140,7 @@ export default function useCheckout() {
   }
 
   function openAddOrUpdateAddressModal(
-    addressType: AddressType.Billing | AddressType.Shipping,
+    addressType: AddressType,
     editableAddress?: MemberAddressType | CartAddressType
   ) {
     openPopup({
@@ -165,7 +162,7 @@ export default function useCheckout() {
     });
   }
 
-  function openSelectAddressModal(addressType: AddressType.Billing | AddressType.Shipping): void {
+  function openSelectAddressModal(addressType: AddressType): void {
     openPopup({
       component: SelectAddressModal,
 

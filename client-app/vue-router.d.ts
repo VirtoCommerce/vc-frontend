@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+
 /**
  * https://router.vuejs.org/guide/advanced/meta.html#typescript
  */

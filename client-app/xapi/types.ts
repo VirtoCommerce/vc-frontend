@@ -1807,6 +1807,8 @@ export type InputRemoveCartAddressType = {
 export type InputRemoveCartType = {
   /** Cart Id */
   cartId: Scalars['String'];
+  /** User Id */
+  userId: Scalars['String'];
 };
 
 export type InputRemoveCouponType = {
