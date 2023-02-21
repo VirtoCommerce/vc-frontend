@@ -11,7 +11,7 @@
       },
     ]"
   >
-    <VcLabel v-if="label" :for-id="id" :required="required" :error="error">{{ label }}</VcLabel>
+    <VcLabel v-if="label" :for-id="componentId" :required="required" :error="error">{{ label }}</VcLabel>
 
     <div class="vc-input__container">
       <div v-if="$slots.startDecorator" class="vc-input__decorator">
@@ -19,7 +19,7 @@
       </div>
 
       <input
-        :id="id"
+        :id="componentId"
         class="vc-input__input"
         :value="modelValue"
         :type="inputType"
@@ -63,9 +63,9 @@
 
 <script setup lang="ts">
 import { computed, ref, watchEffect } from "vue";
+import { useComponentId } from "@/core/composables";
 
 interface IProps {
-  id?: string;
   autocomplete?: string;
   readonly?: boolean;
   disabled?: boolean;
@@ -103,6 +103,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const inputType = ref("");
 const isPasswordVisible = ref(false);
 const isNumberTypeSafari = ref(false);
+const componentId = useComponentId("input-");
 
 const minValue = computed(() => (props.type === "number" ? props.min : undefined));
 const maxValue = computed(() => (props.type === "number" ? props.max : undefined));

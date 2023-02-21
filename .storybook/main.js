@@ -1,3 +1,6 @@
+const { mergeConfig } = require("vite");
+const path = require("path");
+
 module.exports = {
   stories: [
     {
@@ -33,5 +36,14 @@ module.exports = {
       shouldExtractLiteralValuesFromEnum: true,
       propFilter: (prop) => (prop.parent ? !/node_modules/.test(prop.parent.fileName) : true),
     },
+  },
+  async viteFinal(config, { configType }) {
+    return mergeConfig(config, {
+      resolve: {
+        alias: {
+          "@/core/*": path.resolve(__dirname, "../client-app/core/*"),
+        },
+      },
+    });
   },
 };

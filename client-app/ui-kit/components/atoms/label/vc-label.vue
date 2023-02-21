@@ -1,6 +1,7 @@
 <template>
   <component
     :is="forId ? 'label' : 'div'"
+    :for="forId"
     :class="[
       'vc-label',
       {

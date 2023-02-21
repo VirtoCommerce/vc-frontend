@@ -122,5 +122,8 @@
   },
   "engines": {
     "node": ">=14.0.0"
+  },
+  "resolutions": {
+    "@types/react": "file:stub/@types/react"
   }
 }
