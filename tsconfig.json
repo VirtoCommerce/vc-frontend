@@ -43,6 +43,7 @@
     "content",
     "layout",
     "templates",
+    "**/*.stories.ts",
     "**/.*/",
     "**/.*",
     "**/*.js"
