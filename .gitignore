@@ -4,6 +4,7 @@ assets
 dist
 tmp
 out-tsc
+storybook-static
 # Only exists if Bazel was run
 bazel-out
 

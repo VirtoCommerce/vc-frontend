@@ -28,7 +28,7 @@ const config: StorybookViteConfig = {
     reactDocgen: "react-docgen-typescript",
     reactDocgenTypescriptOptions: {
       shouldExtractLiteralValuesFromEnum: true,
-      propFilter: (prop) => (prop.parent ? !/node_modules/.test(prop.parent.fileName) : true),
+      propFilter: (prop: any) => (prop.parent ? !/node_modules/.test(prop.parent.fileName) : true),
     },
   },
   framework: "@storybook/vue3",
