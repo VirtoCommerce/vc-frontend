@@ -28,7 +28,7 @@
       class="vc-textarea__input"
     />
 
-    <VcFormDetails
+    <VcInputDetails
       :show-empty="showEmptyDetails"
       :message="message"
       :error="error"
@@ -76,7 +76,7 @@ const props = withDefaults(defineProps<Props>(), {
   rows: 2,
 });
 
-const componentId = useComponentId("textarea-");
+const componentId = useComponentId("textarea");
 const text = useVModel(props, "modelValue", emit);
 </script>
 

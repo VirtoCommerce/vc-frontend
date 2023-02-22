@@ -1,28 +1,30 @@
 import { Meta, StoryFn } from "@storybook/vue3";
-import VcLabel from "./vc-label.vue";
+import { VcLabel } from "..";
 
 export default {
-  title: "Label",
+  title: "Components/Atoms/VcLabel",
   component: VcLabel,
+  args: {
+    error: false,
+    required: false,
+  },
 } as Meta<typeof VcLabel>;
 
 const Template: StoryFn<typeof VcLabel> = (args) => ({
   components: { VcLabel },
-  setup() {
-    return { args };
-  },
+  setup: () => ({ args }),
   template: '<VcLabel v-bind="args">Label</VcLabel>',
 });
 
-export const Label = Template.bind({});
+export const Basic = Template.bind({});
 
-export const LabelRequired = Template.bind({});
-LabelRequired.args = {
+export const Required = Template.bind({});
+Required.args = {
   required: true,
 };
 
-export const LabelError = Template.bind({});
-LabelError.args = {
+export const Error = Template.bind({});
+Error.args = {
   required: true,
   error: true,
 };

@@ -5,6 +5,7 @@
 .idea
 node_modules
 assets
+storybook-static
 package.json
 tsconfig.json
 client-app/xapi/types.ts

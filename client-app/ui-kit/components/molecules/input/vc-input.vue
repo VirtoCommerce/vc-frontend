@@ -57,12 +57,13 @@
       <div class="vc-input__bg"></div>
     </div>
 
-    <VcFormDetails :show-empty="showEmptyDetails" :message="message" :error="error" />
+    <VcInputDetails :show-empty="showEmptyDetails" :message="message" :error="error" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, ref, watchEffect } from "vue";
+import { computed, ref, watchEffect } from "vue";
+import { useComponentId } from "@/core";
 
 interface IProps {
   autocomplete?: string;
@@ -99,7 +100,8 @@ const props = withDefaults(defineProps<IProps>(), {
   size: "md",
 });
 
-const componentId = "input-" + getCurrentInstance()!.uid;
+const componentId = useComponentId("input");
+
 const inputType = ref("");
 const isPasswordVisible = ref(false);
 const isNumberTypeSafari = ref(false);

@@ -15,13 +15,13 @@
 </template>
 
 <script setup lang="ts">
-interface Props {
+interface IProps {
   required?: boolean;
   error?: boolean;
   forId?: string;
 }
 
-defineProps<Props>();
+defineProps<IProps>();
 </script>
 
 <style lang="scss">

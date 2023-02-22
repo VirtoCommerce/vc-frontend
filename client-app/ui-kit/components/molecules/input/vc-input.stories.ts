@@ -1,102 +1,109 @@
 import { Meta, StoryFn } from "@storybook/vue3";
-import VcButton from "../../atoms/button/vc-button.vue";
-import VcIcon from "../../atoms/icon/vc-icon.vue";
-import VcInput from "./vc-input.vue";
+import { VcInput } from "..";
+// import { VcButton, VcIcon } from "../../atoms";
 
 export default {
-  title: "Input",
+  title: "Components/Molecules/VcInput",
   component: VcInput,
   argTypes: {
-    size: { control: "radio", options: ["sm", "md"] },
     type: { control: "radio", options: ["text", "password", "number"] },
+    size: { control: "radio", options: ["sm", "md"] },
     onClick: { action: "inputClick" },
     onKeypress: { action: "inputKeypress" },
+  },
+  args: {
+    readonly: false,
+    disabled: false,
+    required: false,
+    noBorder: false,
+    hidePasswordSwitcher: false,
+    error: false,
+    showEmptyDetails: false,
+    type: "text",
+    size: "md",
   },
 } as Meta<typeof VcInput>;
 
 const Template: StoryFn<typeof VcInput> = (args) => ({
   components: { VcInput },
-  data: () => ({ inputValue: "" }),
-  setup() {
-    return { args };
-  },
-  template: '<VcInput v-bind="args" v-model="inputValue" />',
+  setup: () => ({ args }),
+  template: '<VcInput v-bind="args" />',
 });
 
-export const Input = Template.bind({});
-Input.args = {
-  id: "input-id",
-  label: "Input Label",
+export const Basic = Template.bind({});
+
+export const Common = Template.bind({});
+Common.args = {
+  label: "Label",
+  placeholder: "Placeholder",
+  message: "Hint message",
+};
+
+export const Required = Template.bind({});
+Required.args = {
+  ...Common.args,
   required: true,
-  placeholder: "Enter some value",
-  message: "Input tooltip message.",
 };
 
-export const InputError = Template.bind({});
-InputError.args = {
-  ...Input.args,
+export const Error = Template.bind({});
+Error.args = {
+  ...Required.args,
   error: true,
+  message: "Error message",
 };
 
-export const InputDefault = Template.bind({});
-
-export const Password = Template.bind({});
-Password.args = {
-  ...Input.args,
+export const TypePassword = Template.bind({});
+TypePassword.args = {
+  ...Common.args,
   autocomplete: "password",
   type: "password",
 };
 
-export const InputWithIcon: StoryFn<typeof VcInput> = (args) => ({
+/* TODO: Components should not have the "style" attribute * /
+export const AppendSlot: StoryFn<typeof VcInput> = (args) => ({
   components: { VcInput, VcIcon },
-  data: () => ({ inputValue: "" }),
-  setup() {
-    return { args };
-  },
-  template: `<VcInput v-bind="args" v-model="inputValue">
-    <template #endDecorator>
-      <VcIcon style="margin: 0 8px; color: darkgray;" name="calendar"/>
-    </template>
-  </VcInput>`,
+  setup: () => ({ args }),
+  template: `
+    <VcInput v-bind="args">
+      <template #endDecorator>
+        <VcIcon style="margin: 0 8px; color: darkgray;" name="calendar" />
+      </template>
+    </VcInput>
+  `,
 });
-InputWithIcon.args = {
-  ...Input.args,
+AppendSlot.args = {
+  ...Common.args,
 };
 
-export const InputWithButtonAndIcon: StoryFn<typeof VcInput> = (args) => ({
+export const AppendSlotWithButton: StoryFn<typeof VcInput> = (args) => ({
   components: { VcInput, VcButton, VcIcon },
-  data: () => ({ inputValue: "" }),
-  setup() {
-    return { args };
-  },
+  setup: () => ({ args }),
   template: `
-  <VcInput v-bind="args" v-model="inputValue">
-    <template #startDecorator>
-      <VcIcon style="margin-left: 12px; color: grey;" size="sm" name="currency-dollar"/>
-    </template>
-
-    <template #endDecorator>
-      <VcButton style="height: 100%; padding: 0 8px; border-radius: inherit;">
-        Button
-      </VcButton>
-    </template>
-  </VcInput>
+    <VcInput v-bind="args">
+      <template #endDecorator>
+        <VcButton size="sm" style="margin: 0 6px; padding: 4px;">
+          <VcIcon size="sm" name="calendar" />
+        </VcButton>
+      </template>
+    </VcInput>
   `,
 });
 
-export const InputWithButton: StoryFn<typeof VcInput> = (args) => ({
+export const PrependAndAppendSlots: StoryFn<typeof VcInput> = (args) => ({
   components: { VcInput, VcButton, VcIcon },
-  data: () => ({ inputValue: "" }),
-  setup() {
-    return { args };
-  },
+  setup: () => ({ args }),
   template: `
-  <VcInput v-bind="args" v-model="inputValue">
-    <template #endDecorator>
-      <VcButton size="sm" style="margin: 0 6px; padding: 4px;">
-        <VcIcon size="sm" name="calendar"/>
-      </VcButton>
-    </template>
-  </VcInput>
+    <VcInput v-bind="args">
+      <template #startDecorator>
+        <VcIcon style="margin-left: 12px; color: grey;" size="sm" name="currency-dollar" />
+      </template>
+
+      <template #endDecorator>
+        <VcButton style="height: 100%; padding: 0 8px; border-radius: inherit;">
+          Button
+        </VcButton>
+      </template>
+    </VcInput>
   `,
 });
+/**/

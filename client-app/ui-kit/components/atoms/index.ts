@@ -14,7 +14,7 @@ export { default as VcEmptyView } from "./empty-view/vc-empty-view.vue";
 export { default as VcExpansionPanels } from "./expansion-panels/vc-expansion-panels.vue";
 export { default as VcFilterCard } from "./filter-card/vc-filter-card.vue";
 export { default as VcFilterCardSkeleton } from "./filter-card-skeleton/vc-filter-card-skeleton.vue";
-export { default as VcFormDetails } from "./form-details/vc-form-details.vue";
+export { default as VcInputDetails } from "./input-details/vc-input-details.vue";
 export { default as VcIcon } from "./icon/vc-icon.vue";
 export { default as VcHexagonIcon } from "./hexagon-icon/vc-hexagon-icon.vue";
 export { default as VcImage } from "./image/vc-image.vue";

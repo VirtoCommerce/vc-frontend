@@ -81,11 +81,12 @@
       </transition>
     </div>
 
-    <VcFormDetails :show-empty="showEmptyDetails" :message="message" :error="error" />
+    <VcInputDetails :show-empty="showEmptyDetails" :message="message" :error="error" />
   </div>
 </template>
 
 <script lang="ts">
+/* eslint-disable-next-line import/order */
 import { clickOutside } from "@/core/directives";
 
 export default {

@@ -1,34 +1,20 @@
-import path from "path";
+import { resolve } from "path";
+import graphql from "@rollup/plugin-graphql";
 import type { StorybookViteConfig } from "@storybook/builder-vite";
-import { mergeConfig } from "vite";
+import type { PropItem } from "react-docgen-typescript";
+import { loadConfigFromFile, mergeConfig, splitVendorChunkPlugin } from "vite";
 
-const config: StorybookViteConfig = {
-  stories: [
-    {
-      directory: "../client-app/ui-kit/components/atoms/**",
-      titlePrefix: "UI-kit/Atoms",
-      files: "*.stories.ts",
-    },
-    {
-      directory: "../client-app/ui-kit/components/molecules/**",
-      titlePrefix: "UI-kit/Molecules",
-      files: "*.stories.ts",
-    },
-    {
-      directory: "../client-app/ui-kit/components/organisms/**",
-      titlePrefix: "UI-kit/Organisms",
-      files: "*.stories.ts",
-    },
-  ],
+const storybookConfig: StorybookViteConfig = {
+  stories: ["../client-app/**/*.stories.@(js|jsx|ts|tsx)"],
   staticDirs: ["../client-app/public"],
-  addons: ["@storybook/addon-links", "@storybook/addon-essentials", "@storybook/addon-interactions"],
+  addons: ["@storybook/addon-essentials", "@storybook/addon-interactions", "@storybook/addon-links"],
   typescript: {
     check: false,
     checkOptions: {},
     reactDocgen: "react-docgen-typescript",
     reactDocgenTypescriptOptions: {
       shouldExtractLiteralValuesFromEnum: true,
-      propFilter: (prop: any) => (prop.parent ? !/node_modules/.test(prop.parent.fileName) : true),
+      propFilter: (prop: PropItem) => (prop.parent ? !/node_modules/.test(prop.parent.fileName) : true),
     },
   },
   framework: "@storybook/vue3",
@@ -36,17 +22,30 @@ const config: StorybookViteConfig = {
     builder: "@storybook/builder-vite",
   },
   features: {
-    storyStoreV7: true,
+    // storyStoreV7: true, // NOTE: When enabled, `viewMode: "docs"` does not work.
   },
-  async viteFinal(cfg) {
-    return mergeConfig(cfg, {
-      resolve: {
-        alias: {
-          "@": path.resolve(__dirname, "../client-app"),
+  async viteFinal(storybookViteConfig, options) {
+    const isDevelopment = options.configType === "DEVELOPMENT";
+    const { config } = (await loadConfigFromFile(
+      isDevelopment ? { command: "serve", mode: "development" } : { command: "build", mode: "production" },
+      resolve(__dirname, "../vite.config.ts")
+    ))!;
+
+    return mergeConfig(storybookViteConfig, {
+      plugins: [graphql(), splitVendorChunkPlugin()],
+      build: {
+        cssCodeSplit: false,
+        reportCompressedSize: false,
+        rollupOptions: {
+          external: [/\/static\/.*/],
         },
       },
+      envPrefix: config.envPrefix,
+      resolve: config.resolve,
+      define: config.define,
+      optimizeDeps: config.optimizeDeps,
     });
   },
 };
 
-export default config;
+export default storybookConfig;
