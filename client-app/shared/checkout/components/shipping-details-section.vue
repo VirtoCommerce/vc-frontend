@@ -68,9 +68,7 @@ interface IProps {
 }
 
 const emit = defineEmits<IEmits>();
-const props = withDefaults(defineProps<IProps>(), {
-  methods: () => [],
-});
+const props = defineProps<IProps>();
 
 const address = computed<CartAddressType | undefined>(() => props.shipment?.deliveryAddress);
 

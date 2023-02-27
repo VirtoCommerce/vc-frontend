@@ -1,5 +1,5 @@
 import { computed, ref, shallowRef } from "vue";
-import { getLineItemsGroupedByVendor, Logger, TLineItemsGroupByVendor } from "@/core";
+import { getLineItemsGroupedByVendor, Logger, LineItemsGroupByVendorType } from "@/core";
 import {
   addOrUpdateOrderPayment,
   CustomerOrderType,
@@ -17,7 +17,7 @@ const order = shallowRef<CustomerOrderType | null>(null);
 
 const giftItems = computed<OrderLineItemType[]>(() => (order.value?.items || []).filter((item) => item.isGift));
 const orderItems = computed<OrderLineItemType[]>(() => (order.value?.items || []).filter((item) => !item.isGift));
-const orderItemsGroupedByVendor = computed<TLineItemsGroupByVendor<OrderLineItemType>[]>(() =>
+const orderItemsGroupedByVendor = computed<LineItemsGroupByVendorType<OrderLineItemType>[]>(() =>
   getLineItemsGroupedByVendor(orderItems.value)
 );
 

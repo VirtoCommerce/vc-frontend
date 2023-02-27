@@ -1,5 +1,5 @@
 <template>
-  <VcSectionWidget v-if="items?.length" :title="$t('shared.checkout.accepted_gifts.title')" icon="gift">
+  <VcSectionWidget :title="$t('shared.checkout.accepted_gifts.title')" icon="gift">
     <div class="divide-y rounded border">
       <div class="flex items-center px-6 py-2 text-sm font-bold">
         <div v-t="'shared.checkout.accepted_gifts.gift_label'" class="grow"></div>
@@ -29,13 +29,11 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
-import { OrderLineItemType } from "@/xapi/types";
+import { GiftItemType, OrderLineItemType } from "@/xapi/types";
 
-defineProps({
-  items: {
-    type: Array as PropType<OrderLineItemType[]>,
-    default: undefined,
-  },
-});
+interface IProps {
+  items: (GiftItemType | OrderLineItemType)[];
+}
+
+defineProps<IProps>();
 </script>

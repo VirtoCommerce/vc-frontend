@@ -1,6 +1,9 @@
 <template>
-  <VcSectionWidget :title="$t('shared.checkout.order_comment_section.title')" icon="document-text">
+  <VcSectionWidget :title="$t('common.titles.order_comment')" icon="document-text">
+    <p v-if="readonly">{{ comment }}</p>
+
     <VcTextarea
+      v-else
       v-model="text"
       :placeholder="$t('common.placeholders.enter_value')"
       :disabled="disabled"
@@ -14,18 +17,18 @@
 <script setup lang="ts">
 import { useVModel } from "@vueuse/core";
 
-interface Props {
-  disabled?: boolean;
-  comment: string;
-}
-
-interface Emits {
+interface IEmits {
   (event: "update:comment", value: string): void;
 }
 
-const emit = defineEmits<Emits>();
+interface IProps {
+  disabled?: boolean;
+  readonly?: boolean;
+  comment?: string;
+}
 
-const props = withDefaults(defineProps<Props>(), {
+const emit = defineEmits<IEmits>();
+const props = withDefaults(defineProps<IProps>(), {
   comment: "",
 });
 

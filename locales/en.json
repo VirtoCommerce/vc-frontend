@@ -36,6 +36,7 @@
       "back_to_cart": "Back to Cart",
       "go_to_checkout": "Proceed to checkout",
       "go_to_billing": "Proceed to billing",
+      "go_to_review_order": "Review order",
       "see_more": "See more",
       "see_less": "See less",
       "view_invoice": "View invoice",
@@ -155,7 +156,8 @@
       "shipping_method": "Shipping method",
       "shipping_address": "Shipping address",
       "order_comment": "Order comment",
-      "order_data": "Order data"
+      "order_data": "Order data",
+      "review_order": "Please review your order"
     },
     "roles": {
       "org-maintainer": "Organization maintainer",
@@ -523,9 +525,6 @@
           "no_addresses": "You do not yet have any billing address. Please choose or specify one.",
           "unauthenticated_no_addresses": "You do not yet have any billing address. Please specify one."
         }
-      },
-      "order_comment_section": {
-        "title": "Order comment"
       },
       "add_or_update_address_dialog": {
         "new_address_title": "New address",
@@ -1113,6 +1112,7 @@
       "steps": {
         "shipping": "Shipping",
         "billing": "Billing",
+        "review": "Order review",
         "completed": "Completed"
       }
     },

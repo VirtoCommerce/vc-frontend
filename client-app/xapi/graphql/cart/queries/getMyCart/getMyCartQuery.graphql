@@ -107,6 +107,7 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
       imageUrl
       name
       lineItemId
+      quantity
     }
 
     availableGifts {

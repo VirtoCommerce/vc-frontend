@@ -55,6 +55,11 @@ const steps: IStepsItem[] = [
     text: t("pages.checkout.steps.billing"),
   },
   {
+    id: "Review",
+    route: { name: "Review", replace: true },
+    text: t("pages.checkout.steps.review"),
+  },
+  {
     id: "OrderCompleted",
     text: t("pages.checkout.steps.completed"),
   },

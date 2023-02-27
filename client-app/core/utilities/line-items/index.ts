@@ -1,12 +1,12 @@
-import { TLineItemsGroupsByVendor, TLineItemsGroupByVendor } from "@/core";
-import { LineItemType, OrderLineItemType } from "@/xapi";
+import { ExtendedLineItemType, getProductRoute, LineItemsGroupByVendorType, LineItemsGroupsByVendorType } from "@/core";
+import { LineItemType, OrderLineItemType, QuoteItemType } from "@/xapi";
 
 export function getLineItemsGroupedByVendor<T extends LineItemType | OrderLineItemType>(
   items: T[]
-): TLineItemsGroupByVendor<T>[] {
+): LineItemsGroupByVendorType<T>[] {
   // NOTE: The group without the vendor should be displayed last.
-  const groupWithoutVendor: TLineItemsGroupByVendor<T> = { items: [] };
-  const map: TLineItemsGroupsByVendor<T> = {};
+  const groupWithoutVendor: LineItemsGroupByVendorType<T> = { items: [] };
+  const map: LineItemsGroupsByVendorType<T> = {};
 
   items.forEach((item) => {
     const vendor = item.vendor;
@@ -29,4 +29,22 @@ export function getLineItemsGroupedByVendor<T extends LineItemType | OrderLineIt
   result.push(groupWithoutVendor);
 
   return result;
+}
+
+export function extendLineItem<T extends LineItemType | OrderLineItemType | QuoteItemType>(
+  item: T
+): ExtendedLineItemType<T> {
+  return {
+    ...item,
+    extended: {
+      isProductExists: !!item.product,
+      route: getProductRoute(item.productId || item.product?.id || "", item.product?.slug),
+      displayProperties: item.product?.properties?.slice(0, 3) || [],
+      minQuantity: item.product?.minQuantity,
+      maxQuantity:
+        (<LineItemType>item).inStockQuantity ||
+        item.product?.availabilityData?.availableQuantity ||
+        item.product?.maxQuantity,
+    },
+  };
 }
