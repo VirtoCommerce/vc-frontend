@@ -28,7 +28,7 @@
           </transition>
 
           <transition name="slide-fade-top" mode="out-in" appear>
-            <VcAlert v-show="isShowInvalidCartWarning" type="warning" class="mt-4" icon>
+            <VcAlert v-show="hasValidationErrors" type="warning" class="mt-4" icon>
               {{ $t("common.messages.something_went_wrong") }}
             </VcAlert>
           </transition>
@@ -49,5 +49,4 @@ const { comment, shipment, isValidShipment, onDeliveryAddressChange, setShipping
 const isDisabledNextStep = computed<boolean>(
   () => loading.value || hasValidationErrors.value || !isValidShipment.value
 );
-const isShowInvalidCartWarning = computed<boolean>(() => hasValidationErrors.value);
 </script>

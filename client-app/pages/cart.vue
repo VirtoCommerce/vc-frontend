@@ -77,12 +77,12 @@
               v-model="purchaseOrderNumber"
               :label="$t('common.labels.purchase_order_number')"
               :placeholder="$t('common.placeholders.purchase_order_number')"
-              :is-applied="purchaseOrderNumberIsApplied"
-              :is-disabled="loading"
+              :applied="purchaseOrderNumberIsApplied"
+              :disabled="loading"
               :max-length="128"
               class="mt-4"
-              @click:apply="setPurchaseOrderNumber"
-              @click:deny="removePurchaseOrderNumber"
+              @apply="setPurchaseOrderNumber"
+              @deny="removePurchaseOrderNumber"
             />
 
             <!-- Promotion code -->
@@ -91,12 +91,12 @@
               v-model="couponCode"
               :label="$t('common.labels.promotion_code')"
               :placeholder="$t('common.placeholders.promotion_code')"
-              :is-applied="couponIsApplied"
+              :applied="couponIsApplied"
               :error-message="couponValidationError"
-              :is-disabled="loading"
+              :disabled="loading"
               class="mt-4"
-              @click:apply="applyCoupon"
-              @click:deny="removeCoupon"
+              @apply="applyCoupon"
+              @deny="removeCoupon"
               @update:model-value="clearCouponValidationError"
             />
 
@@ -130,7 +130,7 @@
             </template>
 
             <transition name="slide-fade-top" mode="out-in" appear>
-              <VcAlert v-show="isShowInvalidCartWarning" type="warning" class="mt-4" icon>
+              <VcAlert v-show="hasValidationErrors" type="warning" class="mt-4" icon>
                 {{ $t("common.messages.something_went_wrong") }}
               </VcAlert>
             </transition>
@@ -230,7 +230,6 @@ const loading = computed<boolean>(() => loadingCart.value || creatingQuote.value
 const isDisabledNextStep = computed<boolean>(() => loading.value || hasValidationErrors.value);
 const isDisabledOrderCreation = computed<boolean>(() => loading.value || !isValidCheckout.value);
 const isShowIncompleteDataWarning = computed<boolean>(() => !isValidShipment.value || !isValidPayment.value);
-const isShowInvalidCartWarning = computed<boolean>(() => hasValidationErrors.value && !creatingOrder.value);
 
 async function handleRemoveItem(lineItem: LineItemType): Promise<void> {
   await removeItem(lineItem.id);

@@ -9,7 +9,7 @@
         },
       ]"
     >
-      <VcHexagonIcon :icon="icon" />
+      <VcHexagonIcon :icon="icon" class="vc-section-widget__hexagon" />
 
       <VcTypography variant="h3" weight="extrabold">
         {{ title }}
@@ -73,6 +73,10 @@ defineProps({
 
       @apply lg:hidden;
     }
+  }
+
+  &__hexagon {
+    @apply shrink-0;
   }
 
   &__content {

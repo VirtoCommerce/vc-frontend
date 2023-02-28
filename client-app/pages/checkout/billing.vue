@@ -20,22 +20,21 @@
               v-model="purchaseOrderNumber"
               :label="$t('common.labels.purchase_order_number')"
               :placeholder="$t('common.placeholders.purchase_order_number')"
-              :is-applied="purchaseOrderNumberIsApplied"
-              :is-disabled="loading"
+              :applied="purchaseOrderNumberIsApplied"
+              :disabled="loading"
               :max-length="128"
               class="mt-4"
-              @click:apply="setPurchaseOrderNumber"
-              @click:deny="removePurchaseOrderNumber"
+              @apply="setPurchaseOrderNumber"
+              @deny="removePurchaseOrderNumber"
             />
           </transition>
 
           <VcButton
-            :is-disabled="isDisabledOrderCreation"
-            :is-waiting="creatingOrder"
+            :to="{ name: 'Review', replace: true }"
+            :is-disabled="isDisabledNextStep"
             class="mt-4 w-full uppercase"
-            @click="createOrder"
           >
-            {{ $t("common.buttons.place_order") }}
+            {{ $t("common.buttons.go_to_review_order") }}
           </VcButton>
 
           <transition name="slide-fade-top" mode="out-in" appear>
@@ -45,7 +44,7 @@
           </transition>
 
           <transition name="slide-fade-top" mode="out-in" appear>
-            <VcAlert v-show="isShowInvalidCartWarning" type="warning" class="mt-4" icon>
+            <VcAlert v-show="hasValidationErrors" type="warning" class="mt-4" icon>
               {{ $t("common.messages.something_went_wrong") }}
             </VcAlert>
           </transition>
@@ -56,13 +55,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { useRouter } from "vue-router";
+import { computed } from "vue";
 import { useCart, usePurchaseOrderNumber } from "@/shared/cart";
 import { BillingDetailsSection, OrderSummary, useCheckout } from "@/shared/checkout";
 
-const router = useRouter();
-const { loading: loadingCart, cart, hasValidationErrors, fetchCart, availablePaymentMethods } = useCart();
+const { loading, cart, hasValidationErrors, availablePaymentMethods } = useCart();
 const {
   billingAddressEqualsShipping,
   shipment,
@@ -71,34 +68,9 @@ const {
   isValidCheckout,
   onBillingAddressChange,
   setPaymentMethod,
-  createOrderFromCart,
 } = useCheckout();
 const { purchaseOrderNumber, purchaseOrderNumberIsApplied, setPurchaseOrderNumber, removePurchaseOrderNumber } =
   usePurchaseOrderNumber();
 
-const creatingOrder = ref(false);
-
-const loading = computed<boolean>(() => loadingCart.value || creatingOrder.value);
-const isDisabledOrderCreation = computed<boolean>(() => loading.value || !isValidCheckout.value);
-const isShowInvalidCartWarning = computed<boolean>(() => hasValidationErrors.value && !creatingOrder.value);
-
-async function createOrder(): Promise<void> {
-  creatingOrder.value = true;
-
-  const order = await createOrderFromCart();
-
-  if (order) {
-    await router.replace({
-      name: "OrderCompleted",
-      params: {
-        orderId: order.id,
-        orderNumber: order.number,
-      },
-    });
-  }
-
-  await fetchCart();
-
-  creatingOrder.value = false;
-}
+const isDisabledNextStep = computed<boolean>(() => loading.value || !isValidCheckout.value);
 </script>

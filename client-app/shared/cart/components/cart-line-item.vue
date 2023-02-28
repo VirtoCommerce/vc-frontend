@@ -147,7 +147,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watchEffect } from "vue";
-import { extendCartItem } from "@/shared/checkout";
+import { ExtendedLineItemType, extendLineItem } from "@/core";
 import { LineItemType } from "@/xapi";
 
 interface IProps {
@@ -167,7 +167,7 @@ let timeoutIdOfQuantityChange: number;
 
 const quantity = ref<number | undefined>(props.item.quantity);
 
-const extendedItem = computed(() => extendCartItem(props.item));
+const extendedItem = computed<ExtendedLineItemType<LineItemType>>(() => extendLineItem<LineItemType>(props.item));
 
 function changeQuantity() {
   clearTimeout(timeoutIdOfQuantityChange);

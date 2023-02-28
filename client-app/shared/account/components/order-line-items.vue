@@ -155,27 +155,22 @@
 
 <script setup lang="ts">
 import { sumBy } from "lodash";
-import { computed, PropType } from "vue";
-import { OrderLineItemType } from "@/xapi";
-import { extendOrderItem } from "..";
+import { computed } from "vue";
+import { ExtendedLineItemType, extendLineItem } from "@/core";
+import { LineItemType, OrderLineItemType } from "@/xapi";
 
-defineEmits(["remove:item", "update:item"]);
+interface IProps {
+  items?: (OrderLineItemType | LineItemType)[];
+}
 
-const props = defineProps({
-  readonly: Boolean,
-
-  items: {
-    type: Array as PropType<OrderLineItemType[]>,
-    default: () => [],
-    required: true,
-  },
+const props = withDefaults(defineProps<IProps>(), {
+  items: () => [],
 });
 
-const extendedItems = computed<ReturnType<typeof extendOrderItem>[]>(() =>
-  props.items.map((item: OrderLineItemType) => extendOrderItem(item))
+const extendedItems = computed<ExtendedLineItemType<OrderLineItemType | LineItemType>[]>(() =>
+  props.items.map((item: OrderLineItemType | LineItemType) => extendLineItem<OrderLineItemType | LineItemType>(item))
 );
-
-const subtotal = computed<number>(() => sumBy(props.items, (item: OrderLineItemType) => item.extendedPrice!.amount));
+const subtotal = computed<number>(() => sumBy(props.items, (item) => item.extendedPrice!.amount));
 </script>
 
 <style scoped lang="scss">
