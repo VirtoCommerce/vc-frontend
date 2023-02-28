@@ -67,7 +67,7 @@ export default function useCheckout() {
       options.reloadCart
     );
 
-    ga.addShippingInfo(cart.value);
+    ga.addShippingInfo(cart.value, {}, method.optionName);
   }
 
   async function setPaymentMethod(method: PaymentMethodType, options: { reloadCart?: boolean } = {}) {
@@ -79,7 +79,7 @@ export default function useCheckout() {
       options.reloadCart
     );
 
-    ga.addPaymentInfo(cart.value);
+    ga.addPaymentInfo(cart.value, {}, method.code);
   }
 
   async function setCheckoutDefaults() {
