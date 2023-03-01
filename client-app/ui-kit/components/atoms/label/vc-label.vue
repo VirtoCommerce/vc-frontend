@@ -26,7 +26,7 @@ defineProps<IProps>();
 
 <style lang="scss">
 .vc-label {
-  @apply mb-0.5 text-15 font-bold text-[color:var(--color-body-text)];
+  @apply block mb-0.5 text-15 font-bold text-[color:var(--color-body-text)];
 
   &--error {
     @apply text-[color:var(--color-danger)];
