@@ -65,7 +65,7 @@ export const AppendSlot: StoryFn<typeof VcInput> = (args) => ({
   setup: () => ({ args }),
   template: `
     <VcInput v-bind="args">
-      <template #endDecorator>
+      <template #append>
         <VcIcon style="margin: 0 8px; color: darkgray;" name="calendar" />
       </template>
     </VcInput>
@@ -80,7 +80,7 @@ export const AppendSlotWithButton: StoryFn<typeof VcInput> = (args) => ({
   setup: () => ({ args }),
   template: `
     <VcInput v-bind="args">
-      <template #endDecorator>
+      <template #append>
         <VcButton size="sm" style="margin: 0 6px; padding: 4px;">
           <VcIcon size="sm" name="calendar" />
         </VcButton>
@@ -94,11 +94,11 @@ export const PrependAndAppendSlots: StoryFn<typeof VcInput> = (args) => ({
   setup: () => ({ args }),
   template: `
     <VcInput v-bind="args">
-      <template #startDecorator>
+      <template #prepend>
         <VcIcon style="margin-left: 12px; color: grey;" size="sm" name="currency-dollar" />
       </template>
 
-      <template #endDecorator>
+      <template #append>
         <VcButton style="height: 100%; padding: 0 8px; border-radius: inherit;">
           Button
         </VcButton>

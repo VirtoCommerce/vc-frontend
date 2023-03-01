@@ -123,7 +123,7 @@ const text = useVModel(props, "modelValue", emit);
     &:focus-visible {
       @apply outline-none;
 
-      box-shadow: 0 0 0 2px var(--color-primary-light);
+      box-shadow: 0 0 0 3px var(--color-primary-light);
     }
 
     &[disabled],

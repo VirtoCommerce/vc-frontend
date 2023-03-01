@@ -96,6 +96,7 @@
         <!-- todo: use VcButton -->
         <button
           v-t="'pages.home.subscription_block.subscribe_button'"
+          type="button"
           class="h-11 rounded bg-white px-6 font-roboto text-sm font-bold uppercase shadow-md hover:bg-gray-200"
         ></button>
       </div>

@@ -43,7 +43,7 @@
       </div>
 
       <div class="mt-4">
-        <button class="inline-flex appearance-none items-center py-1.5 md:py-0" @click="increment">
+        <button type="button" class="inline-flex appearance-none items-center py-1.5 md:py-0" @click="increment">
           <i class="fa fa-plus mr-1.5 mt-[3px] text-primary" />
           <span
             class="border-b border-dashed border-link leading-tight text-[color:var(--color-link)] hover:border-link-hover hover:text-[color:var(--color-link-hover)]"

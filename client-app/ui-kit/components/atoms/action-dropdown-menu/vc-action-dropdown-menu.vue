@@ -1,7 +1,7 @@
 <template>
   <VcTooltip :y-offset="4" :x-offset="0" placement="bottom-end" trigger="click">
     <template #trigger>
-      <button class="h-7 w-7 rounded bg-white text-gray-400 shadow-sm-x-y-button">
+      <button type="button" class="h-7 w-7 rounded bg-white text-gray-400 shadow-sm-x-y-button">
         <i class="fas fa-cog" />
       </button>
     </template>

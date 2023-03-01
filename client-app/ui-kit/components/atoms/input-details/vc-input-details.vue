@@ -36,7 +36,7 @@ defineProps<IProps>();
 .vc-input-details {
   $error: "";
 
-  @apply flex justify-end mt-0.5 gap-2 min-h-[0.875rem] text-11 font-lato;
+  @apply flex justify-end mt-0.5 gap-2 min-h-[0.875rem] text-11;
 
   &--error {
     $error: &;

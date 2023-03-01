@@ -4,18 +4,20 @@
       'vc-input',
       `vc-input--size--${size}`,
       {
-        'vc-input--disabled': disabled,
         'vc-input--readonly': readonly,
+        'vc-input--disabled': disabled,
         'vc-input--error': error,
         'vc-input--no-border': noBorder,
       },
     ]"
   >
-    <VcLabel v-if="label" :for-id="componentId" :required="required" :error="error">{{ label }}</VcLabel>
+    <VcLabel v-if="label" :for-id="componentId" :required="required" :error="error">
+      {{ label }}
+    </VcLabel>
 
     <div class="vc-input__container">
-      <div v-if="$slots.startDecorator" class="vc-input__decorator">
-        <slot name="startDecorator" />
+      <div v-if="$slots.prepend" class="vc-input__decorator">
+        <slot name="prepend" />
       </div>
 
       <input
@@ -50,8 +52,8 @@
         </button>
       </div>
 
-      <div v-if="$slots.endDecorator" class="vc-input__decorator">
-        <slot name="endDecorator" />
+      <div v-if="$slots.append" class="vc-input__decorator">
+        <slot name="append" />
       </div>
 
       <div class="vc-input__bg"></div>
@@ -163,7 +165,7 @@ watchEffect(() => {
   $error: "";
   $noBorder: "";
 
-  @apply font-lato;
+  @apply flex flex-col;
 
   &--size {
     &--sm {
@@ -229,11 +231,11 @@ watchEffect(() => {
 
     &:autofill {
       &:disabled {
-        box-shadow: 0 0 0px 1000px #f9fafb inset;
+        box-shadow: 0 0 0 1000px #f9fafb inset;
       }
 
       &:not(:disabled) {
-        box-shadow: 0 0 0px 1000px #fff inset;
+        box-shadow: 0 0 0 1000px #fff inset;
       }
     }
 
@@ -252,7 +254,7 @@ watchEffect(() => {
     @apply content-[''] z-[-1] absolute inset-0 bg-white border rounded;
 
     input:focus ~ & {
-      box-shadow: 0 0 0 2px var(--color-primary-light);
+      box-shadow: 0 0 0 3px var(--color-primary-light);
     }
 
     #{$disabled} &,

@@ -24,8 +24,7 @@
           <VcButton
             :is-waiting="loadingOrganization || loadingUser"
             :is-disabled="!meta.valid || !meta.dirty"
-            size="lg"
-            class="my-0.5 !h-10 uppercase"
+            class="my-0.5 uppercase"
             @click="saveOrganizationName"
           >
             <i class="fas fa-save px-2 text-2xl md:hidden" />
@@ -191,6 +190,7 @@
                 <td v-if="userCanEditOrganization" class="relative px-5 py-3 text-right">
                   <VcActionDropdownMenu>
                     <button
+                      type="button"
                       class="flex items-center whitespace-nowrap p-3"
                       @click="openAddOrUpdateCompanyAddressDialog(address)"
                     >
@@ -199,6 +199,7 @@
                     </button>
 
                     <button
+                      type="button"
                       :disabled="address.isDefault"
                       :class="{ 'text-gray-400': address.isDefault }"
                       :title="address.isDefault ? $t('pages.company.info.address_not_delete_message') : undefined"

@@ -5,7 +5,7 @@ import type { PropItem } from "react-docgen-typescript";
 import { loadConfigFromFile, mergeConfig, splitVendorChunkPlugin } from "vite";
 
 const storybookConfig: StorybookViteConfig = {
-  stories: ["../client-app/**/*.stories.@(js|jsx|ts|tsx)"],
+  stories: ["../client-app/**/*.stories.@(ts|tsx|mdx)"],
   staticDirs: ["../client-app/public"],
   addons: ["@storybook/addon-essentials", "@storybook/addon-interactions", "@storybook/addon-links"],
   typescript: {

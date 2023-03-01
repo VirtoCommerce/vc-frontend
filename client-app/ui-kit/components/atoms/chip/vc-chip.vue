@@ -20,6 +20,7 @@
       <button
         v-if="closable"
         :disabled="isDisabled"
+        type="button"
         class="vc-chip__close-button"
         @click.stop="isDisabled ? null : $emit('close')"
       >
@@ -87,7 +88,7 @@ $colors: primary, secondary, success, warning, danger;
 
   @apply relative inline-flex justify-center items-center rounded
   border border-transparent font-bold whitespace-nowrap select-none
-  focus:outline-dotted outline-1 outline-offset-[3px] px-2.5;
+  focus:outline outline-[3px] outline-[color:var(--color-primary-light)] px-2.5;
 
   &__content {
     @apply flex items-center justify-center;
@@ -136,8 +137,7 @@ $colors: primary, secondary, success, warning, danger;
 
   @each $color in $colors {
     &--#{$color} {
-      @apply bg-[color:var(--color-#{$color})] hover:bg-[color:var(--color-#{$color}-hover)]
-      outline-[color:var(--color-#{$color})] text-white;
+      @apply bg-[color:var(--color-#{$color})] hover:bg-[color:var(--color-#{$color}-hover)] text-white;
 
       &#{$self}--outline {
         @apply bg-transparent

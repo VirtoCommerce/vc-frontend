@@ -22,8 +22,8 @@
           class="w-full"
           @keypress.enter="applyKeyword"
         >
-          <template #endDecorator>
-            <button v-if="keyword" class="h-full px-4" @click="resetKeyword">
+          <template #append>
+            <button v-if="keyword" type="button" class="h-full px-4" @click="resetKeyword">
               <svg class="text-[color:var(--color-primary)]" height="14" width="14">
                 <use href="/static/images/delete.svg#main" />
               </svg>

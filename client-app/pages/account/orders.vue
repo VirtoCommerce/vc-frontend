@@ -8,7 +8,7 @@
     <!-- Mobile filters sidebar -->
     <VcPopupSidebar class="w-72 px-5 pt-6" :is-visible="isMobile && filtersVisible" @hide="hideFilters">
       <div class="relative">
-        <button class="absolute -right-3 appearance-none px-3 py-1" @click="hideFilters">
+        <button type="button" class="absolute -right-3 appearance-none px-3 py-1" @click="hideFilters">
           <span class="fas fa-times text-2xl text-red-400 hover:text-red-700"></span>
         </button>
       </div>
@@ -76,7 +76,7 @@
           ref="filtersDropdownElement"
           class="absolute right-0 z-[1] mt-2 rounded border bg-white p-6 shadow-lg"
         >
-          <button class="absolute top-0 right-0 appearance-none px-4 py-2" @click="hideFilters">
+          <button type="button" class="absolute top-0 right-0 appearance-none px-4 py-2" @click="hideFilters">
             <span class="fa fa-times text-lg text-red-400 hover:text-red-700"></span>
           </button>
 
@@ -93,8 +93,8 @@
           :placeholder="$t('pages.account.orders.search_placeholder')"
           @keypress.enter="applyKeyword"
         >
-          <template #endDecorator>
-            <button v-if="localKeyword" class="h-full px-4" @click="resetKeyword">
+          <template #append>
+            <button v-if="localKeyword" type="button" class="h-full px-4" @click="resetKeyword">
               <svg class="text-[color:var(--color-primary)]" height="14" width="14">
                 <use href="/static/images/delete.svg#main" />
               </svg>

@@ -4,8 +4,8 @@
     <VcFilterCard v-if="withLocalSearch" :title="$t('pages.catalog.search_card.title')">
       <div class="flex items-center gap-2.5">
         <VcInput v-model="localKeyword" size="sm" maxlength="30" :disabled="loading" @keypress.enter="onSearchStart">
-          <template #endDecorator>
-            <button class="h-full px-3" :class="{ hidden: !localKeyword }" @click="reset">
+          <template #append>
+            <button type="button" class="h-full px-3" :class="{ hidden: !localKeyword }" @click="reset">
               <svg class="text-[color:var(--color-primary)]" height="12" width="12">
                 <use href="/static/images/delete.svg#main" />
               </svg>
@@ -16,7 +16,6 @@
         <VcButton
           :is-disabled="loading || isAppliedKeyword"
           kind="primary"
-          size="sm"
           class="px-3.5 !text-15 uppercase"
           is-outline
           @click="onSearchStart"
@@ -36,7 +35,7 @@
 
       <!-- Branch availability -->
       <VcFilterCard :with-header="false">
-        <button @click.prevent="onOpenBranches">
+        <button type="button" @click.prevent="onOpenBranches">
           <VcCheckbox :model-value="!!localFilters.branches.length" :disabled="loading">
             <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div" scope="global">
               <span :class="{ 'font-bold text-[color:var(--color-link)]': localFilters.branches.length }">

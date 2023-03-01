@@ -20,6 +20,7 @@
       <!-- Catalog button -->
       <button
         ref="showCatalogMenuButton"
+        type="button"
         class="flex cursor-pointer select-none items-center rounded border-2 border-primary px-[0.8rem] py-[0.55rem] text-sm text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)]"
         @click="catalogMenuVisible = !catalogMenuVisible"
       >

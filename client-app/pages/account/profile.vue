@@ -25,7 +25,7 @@
           :error="!!errors.firstName"
           name="firstName"
           class="mb-5"
-          is-required
+          required
           :maxlength="64"
         />
 

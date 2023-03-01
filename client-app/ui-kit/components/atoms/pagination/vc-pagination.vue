@@ -11,6 +11,7 @@
     </button>
     <button
       v-else
+      type="button"
       class="h-9 w-10 cursor-default rounded-l border border-solid border-gray-300 bg-white text-center text-sm font-medium uppercase text-gray-300"
     >
       <i class="fas fa-chevron-left"></i>
@@ -74,6 +75,7 @@
     </button>
     <button
       v-else
+      type="button"
       class="h-9 w-10 cursor-default rounded-r border border-solid border-gray-300 bg-white text-center text-sm font-medium uppercase text-gray-300"
     >
       <i class="fas fa-chevron-right"></i>
