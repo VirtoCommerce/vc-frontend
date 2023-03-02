@@ -1,5 +1,5 @@
 import { omit } from "lodash";
-import { computed, readonly, ref } from "vue";
+import { computed, readonly, Ref, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { AddressType, Logger, useGoogleAnalytics } from "@/core";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
@@ -22,6 +22,8 @@ import {
 const loading = ref(false);
 const comment = ref("");
 const billingAddressEqualsShipping = ref(true);
+const steps: Ref<IStepsItem[]> = ref([]);
+const orderCreated = ref(false);
 
 export default function useCheckout() {
   const ga = useGoogleAnalytics();
@@ -106,11 +108,12 @@ export default function useCheckout() {
     if (reloadCart) {
       await fetchCart();
     }
+
+    setStepsDefault();
   }
 
   async function initialize(): Promise<void> {
     loading.value = true;
-
     await fetchCart();
 
     if (isAuthenticated.value) {
@@ -302,6 +305,69 @@ export default function useCheckout() {
     return order;
   }
 
+  function setStepsDefault() {
+    steps.value = [
+      {
+        icon: "arrow-bold",
+        route: { name: "Cart", replace: true },
+        text: t("common.buttons.back_to_cart"),
+      },
+      {
+        id: "Shipping",
+        route: { name: "Shipping", replace: true },
+        text: t("pages.checkout.steps.shipping"),
+      },
+      {
+        id: "Billing",
+        route: { name: "Billing", replace: true },
+        text: t("pages.checkout.steps.billing"),
+      },
+      {
+        id: "Review",
+        route: { name: "Review", replace: true },
+        text: t("pages.checkout.steps.review"),
+      },
+      {
+        id: "OrderCompleted",
+        text: t("pages.checkout.steps.completed"),
+      },
+    ];
+  }
+
+  function setStepsWithPayments() {
+    steps.value = [
+      {
+        icon: "arrow-bold",
+        route: { name: "Cart", replace: true },
+        text: t("common.buttons.back_to_cart"),
+      },
+      {
+        id: "Shipping",
+        route: { name: "Shipping", replace: true },
+        text: t("pages.checkout.steps.shipping"),
+      },
+      {
+        id: "Billing",
+        route: { name: "Billing", replace: true },
+        text: t("pages.checkout.steps.billing"),
+      },
+      {
+        id: "Review",
+        route: { name: "Review", replace: true },
+        text: t("pages.checkout.steps.review"),
+      },
+      {
+        id: "CheckoutPayment",
+        route: { name: "CheckoutPayment", replace: true },
+        text: t("pages.checkout.steps.payment"),
+      },
+      {
+        id: "OrderCompleted",
+        text: t("pages.checkout.steps.completed"),
+      },
+    ];
+  }
+
   return {
     comment,
     billingAddressEqualsShipping,
@@ -314,12 +380,16 @@ export default function useCheckout() {
     isValidShipment,
     isValidPayment,
     isValidCheckout,
+    orderCreated,
     initialize,
     onDeliveryAddressChange,
     onBillingAddressChange,
     setShippingMethod,
     setPaymentMethod,
     createOrderFromCart,
+    setStepsDefault,
+    setStepsWithPayments,
     loading: readonly(loading),
+    steps: readonly(steps),
   };
 }

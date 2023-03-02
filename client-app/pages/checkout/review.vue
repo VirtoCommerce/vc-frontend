@@ -112,12 +112,16 @@
           </transition>
 
           <VcButton
+            v-if="!orderCreated"
             :is-disabled="isDisabledOrderCreation"
             :is-waiting="creatingOrder"
             class="mt-4 w-full uppercase"
             @click="createOrder"
           >
             {{ $t("common.buttons.place_order") }}
+          </VcButton>
+          <VcButton v-else class="mt-4 w-full uppercase" :to="{ name: 'CheckoutPayment', replace: true }">
+            {{ $t("common.buttons.go_to_payment_order") }}
           </VcButton>
 
           <transition name="slide-fade-top" mode="out-in" appear>
@@ -137,7 +141,7 @@ import { useRouter } from "vue-router";
 import { OrderLineItems } from "@/shared/account";
 import { useCart, useCoupon, usePurchaseOrderNumber } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
-import { CartAddressType } from "@/xapi";
+import { CartAddressType, CustomerOrderType } from "@/xapi";
 
 const router = useRouter();
 const {
@@ -148,7 +152,7 @@ const {
   availablePaymentMethods,
   availableShippingMethods,
 } = useCart();
-const { billingAddressEqualsShipping, shipment, payment, comment, isValidCheckout, createOrderFromCart } =
+const { billingAddressEqualsShipping, shipment, payment, comment, isValidCheckout, orderCreated, createOrderFromCart } =
   useCheckout();
 const { purchaseOrderNumber } = usePurchaseOrderNumber();
 const { couponCode } = useCoupon();
@@ -170,6 +174,23 @@ async function createOrder(): Promise<void> {
   const order = await createOrderFromCart();
 
   if (order) {
+    await createOrderProceed(order);
+  }
+
+  creatingOrder.value = false;
+}
+
+async function createOrderProceed(order: CustomerOrderType) {
+  orderCreated.value = true;
+
+  if (payment.value?.paymentGatewayCode === "AuthorizeNetPaymentMethod") {
+    await router.replace({
+      name: "CheckoutPayment",
+      params: {
+        orderId: order.id,
+      },
+    });
+  } else {
     await router.replace({
       name: "OrderCompleted",
       params: {
@@ -177,10 +198,7 @@ async function createOrder(): Promise<void> {
         orderNumber: order.number,
       },
     });
+    await fetchCart();
   }
-
-  await fetchCart();
-
-  creatingOrder.value = false;
 }
 </script>

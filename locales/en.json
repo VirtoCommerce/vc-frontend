@@ -37,12 +37,14 @@
       "go_to_checkout": "Proceed to checkout",
       "go_to_billing": "Proceed to billing",
       "go_to_review_order": "Review order",
+      "go_to_payment_order": "Pay now",
       "see_more": "See more",
       "see_less": "See less",
       "view_invoice": "View invoice",
       "pay_now": "Pay now",
       "reorder_all": "Reorder all",
-      "print_order": "Print order"
+      "print_order": "Print order",
+      "next_step": "Next step"
     },
     "labels": {
       "actions": "Actions",
@@ -1113,6 +1115,7 @@
         "shipping": "Shipping",
         "billing": "Billing",
         "review": "Order review",
+        "payment": "Payment",
         "completed": "Completed"
       }
     },
