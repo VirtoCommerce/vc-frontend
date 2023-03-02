@@ -196,7 +196,7 @@ async function searchAndShowDropdownResults() {
 }
 
 async function goToSearchResultsPage() {
-  if (!isBlankString(searchPhrase.value)) {
+  if (searchPhrase.value.trim()) {
     await hideSearchDropdown();
     router.push({
       name: "Search",
