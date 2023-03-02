@@ -103,3 +103,7 @@ export async function asyncForEach<T>(
     await callbackFn(array[i], i, array);
   }
 }
+
+export function isBlankString(str: string) {
+  return !str || /^\s*$/.test(str);
+}
