@@ -1,8 +1,8 @@
 import { StorefrontPermissions, XApiPermissions } from "@/core/constants";
-import { Modify } from "@/core/types/modify";
+import { ModifyType } from "@/core/types/modify";
 import { RoleType } from "@/xapi/types";
 
-export type Role = Modify<
+export type Role = ModifyType<
   RoleType,
   { normalizedName?: string; permissions: (StorefrontPermissions | XApiPermissions)[] }
 >;

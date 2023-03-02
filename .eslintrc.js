@@ -23,13 +23,21 @@ module.exports = {
     parser: "@typescript-eslint/parser",
     sourceType: "module",
   },
-  plugins: ["vue", "import", "@typescript-eslint", "sonarjs", "vuejs-accessibility"],
+  plugins: [
+    "vue",
+    "import",
+    "@typescript-eslint",
+    "sonarjs",
+    "vuejs-accessibility",
+  ],
   rules: {
     /**
      * Errors
      */
     "@typescript-eslint/no-shadow": "error",
+    // TODO: enable "import/no-cycle": "error",
     "import/no-unresolved": "error",
+    "no-debugger": process.env.NODE_ENV === "production" ? "error" : "warn",
     "vue/block-lang": ["error", { script: { lang: "ts" } }],
     "vue/prefer-prop-type-boolean-first": "error",
     "vue/prefer-true-attribute-shorthand": "error",
@@ -77,7 +85,6 @@ module.exports = {
       },
     ],
     "no-console": "warn",
-    "no-debugger": "warn",
     "vue/component-api-style": "warn",
     "vue/component-name-in-template-casing": [
       "warn",

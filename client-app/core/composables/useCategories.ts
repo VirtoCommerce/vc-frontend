@@ -1,12 +1,14 @@
 import { computed, readonly, ref, shallowRef } from "vue";
-import { buildCategoryTree, CategoryTreeItem, Logger, useThemeContext } from "@/core";
-import globals from "@/core/globals";
 import { searchCategories } from "@/xapi";
+import globals from "../globals";
+import type { CategoryTreeItemType } from "../types";
+import { buildCategoryTree, Logger } from "../utilities";
+import { useThemeContext } from "./useThemeContext";
 
 const loading = ref(true);
-const categoryTree = shallowRef<CategoryTreeItem>();
+const categoryTree = shallowRef<CategoryTreeItemType>();
 
-export default function useCategories() {
+export function useCategories() {
   const { themeContext } = useThemeContext();
 
   async function fetchCategories(): Promise<void> {

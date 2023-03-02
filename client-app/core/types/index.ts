@@ -9,6 +9,7 @@ export * from "./line-items";
 export * from "./language";
 export * from "./menu";
 export * from "./modify";
+export * from "./options";
 export * from "./role";
 export * from "./theme-context";
 

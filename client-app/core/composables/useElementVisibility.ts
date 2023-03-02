@@ -1,16 +1,10 @@
 import { defaultWindow, MaybeRef, tryOnMounted, unrefElement, useEventListener } from "@vueuse/core";
 import { ComponentPublicInstance, readonly, ref, unref } from "vue";
+import type { IUseElementVisibilityOptions } from "../types";
 
-export type useElementVisibilityOptions = {
-  direction?: MaybeRef<"auto" | "top" | "bottom">; // TODO: add support for "right" and "left"
-  margin?: MaybeRef<number>; // FIXME: Not used when "direction" is set to "auto"
-  scrollTarget?: MaybeRef<HTMLElement | SVGElement | ComponentPublicInstance | null>;
-  window?: Window;
-};
-
-export default function useElementVisibility(
+export function useElementVisibility(
   element: MaybeRef<HTMLElement | SVGElement | ComponentPublicInstance | null | undefined>,
-  options: useElementVisibilityOptions = {}
+  options: IUseElementVisibilityOptions = {}
 ) {
   const { scrollTarget, direction = "auto", margin = 0, window = defaultWindow } = options;
 

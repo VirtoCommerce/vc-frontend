@@ -1,7 +1,7 @@
 import { useLocalStorage } from "@vueuse/core";
 import { computed } from "vue";
-import { useThemeContext } from "@/core/composables";
-import { Currency } from "@/core/types";
+import type { Currency } from "../types";
+import { useThemeContext } from "./useThemeContext";
 
 const { themeContext } = useThemeContext();
 
@@ -18,7 +18,7 @@ function saveCurrencyCodeAndReload(code: string) {
   location.reload();
 }
 
-export default function useCurrency() {
+export function useCurrency() {
   return {
     savedCurrencyCode,
     defaultCurrency,

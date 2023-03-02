@@ -1,6 +1,8 @@
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
-import { categoryTreeItemToMenuLink, getTranslatedMenuLink, MenuLink, useCategories } from "@/core";
-import globals from "@/core/globals";
+import globals from "../globals";
+import type { MenuLink } from "../types";
+import { categoryTreeItemToMenuLink, getTranslatedMenuLink } from "../utilities/menu";
+import { useCategories } from "./useCategories";
 
 const menuSchema = shallowRef<typeof import("../../../config/menu.json")>();
 const openedMenuLinksStack = shallowRef<MenuLink[]>([]);
@@ -85,7 +87,7 @@ function setMatchedRouteName(value: string) {
   matchedRouteName.value = value;
 }
 
-export default function useNavigations() {
+export function useNavigations() {
   return {
     fetchMenus,
     goBack,

@@ -6,23 +6,11 @@ import {
   RouteQueryAndHash,
   useRouter,
 } from "vue-router";
-
-export interface UseRouteQueryParamOptions<T = LocationQueryValue | LocationQueryValue[]> {
-  defaultValue?: T;
-  validator?(queryValue: NonNullable<T>): boolean;
-  // @default push
-  updateMethod?: "push" | "replace";
-  // @default true
-  removeFalsyValue?: boolean;
-  // @default true
-  removeNullishValue?: boolean;
-  // @default true
-  removeDefaultValue?: boolean;
-}
+import { IUseRouteQueryParamOptions } from "../types/options";
 
 export function useRouteQueryParam<T = NonNullable<LocationQueryValue> | NonNullable<LocationQueryValue>[]>(
   key: string,
-  options: UseRouteQueryParamOptions<T> = {}
+  options: IUseRouteQueryParamOptions<T> = {}
 ): WritableComputedRef<T> {
   const {
     validator,

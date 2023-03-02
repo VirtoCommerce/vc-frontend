@@ -1,16 +1,8 @@
 import { eagerComputed, MaybeRef } from "@vueuse/core";
 import { HeadAttrs, useHead } from "@vueuse/head";
 import { unref } from "vue";
-import { useThemeContext } from "@/core";
-
-export interface IUsePageSeoData {
-  /**
-   * input chunks: ["title_part_1", "title_part_2"]
-   * output string: title_part_1<page_title_divider>title_part_2
-   */
-  title?: MaybeRef<string | string[] | undefined>;
-  meta?: Record<string, MaybeRef<string | undefined>>;
-}
+import type { IUsePageSeoData } from "../types";
+import { useThemeContext } from "./useThemeContext";
 
 export function usePageHead(data: IUsePageSeoData) {
   const { themeContext } = useThemeContext();

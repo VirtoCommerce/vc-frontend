@@ -1,6 +1,8 @@
 import { RouteRecordRaw } from "vue-router";
 import { DEVELOPMENT } from "@/core/constants";
-import { accountRoutes, checkoutRoutes, corporateRoutes } from "@/router/routes";
+import { accountRoutes } from "./account";
+import { checkoutRoutes } from "./checkout";
+import { corporateRoutes } from "./company";
 import Error403 from "@/pages/403.vue";
 import Error404 from "@/pages/404.vue";
 import Error500 from "@/pages/500.vue";

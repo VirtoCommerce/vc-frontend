@@ -1,10 +1,10 @@
 import { computed, ref } from "vue";
-import { DEVELOPMENT } from "@/core/constants";
-import { IThemeConfig, IThemeContext } from "@/core/types";
+import { DEVELOPMENT } from "../constants";
+import type { IThemeConfig, IThemeContext } from "../types";
 
 const themeContext = ref<IThemeContext>();
 
-export default function useThemeContext() {
+export function useThemeContext() {
   async function fetchThemeContext() {
     const result: IThemeContext = await (await fetch("/storefrontapi/theme/context")).json();
 

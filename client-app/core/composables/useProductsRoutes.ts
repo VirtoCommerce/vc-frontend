@@ -1,10 +1,10 @@
 import { MaybeRef } from "@vueuse/core";
 import { computed, ComputedRef, unref } from "vue";
 import { RouteLocationRaw } from "vue-router";
-import { getProductRoute } from "@/core";
+import { getProductRoute } from "../utilities";
 
-export default function useProductsRoutes(
-  products: MaybeRef<Record<string, any>[]>,
+export function useProductsRoutes(
+  products: MaybeRef<Record<string, any>[]>, // eslint-disable-line @typescript-eslint/no-explicit-any
   options: { productIdProperty?: string; slugProperty?: string } = {}
 ): ComputedRef<Record<string, RouteLocationRaw>> {
   const { productIdProperty = "id", slugProperty = "slug" } = options;

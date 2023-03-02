@@ -1,9 +1,9 @@
 import { useLocalStorage } from "@vueuse/core";
 import { computed } from "vue";
-import { Composer, VueI18n } from "vue-i18n";
-import { useThemeContext } from "@/core/composables/index";
-import { Language } from "@/core/types";
-import { I18n } from "@/i18n";
+import type { Composer, VueI18n } from "vue-i18n";
+import type { I18n } from "@/i18n";
+import type { Language } from "../types";
+import { useThemeContext } from "./useThemeContext";
 
 const { themeContext } = useThemeContext();
 
@@ -86,7 +86,7 @@ function saveLocaleAndReload(locale: string) {
   location.href = locale === defaultLocale.value ? path : `/${locale}${path}`;
 }
 
-export default function useLanguages() {
+export function useLanguages() {
   return {
     savedLocale,
     defaultLanguage,

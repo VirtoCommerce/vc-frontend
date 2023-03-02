@@ -49,11 +49,11 @@
 
 <script setup lang="ts">
 import { computed, PropType } from "vue";
-import { CategoryTreeItem, getCategoryRoute, useCategoriesRoutes } from "@/core";
+import { CategoryTreeItemType, getCategoryRoute, useCategoriesRoutes } from "@/core";
 
 const props = defineProps({
   selectedCategory: {
-    type: Object as PropType<CategoryTreeItem>,
+    type: Object as PropType<CategoryTreeItemType>,
     required: false,
   },
 
@@ -63,11 +63,11 @@ const props = defineProps({
   },
 });
 
-const displayedCategory = computed<CategoryTreeItem | undefined>(() =>
+const displayedCategory = computed<CategoryTreeItemType | undefined>(() =>
   props.selectedCategory?.children.length ? props.selectedCategory : props.selectedCategory?.parent
 );
-const backCategory = computed<CategoryTreeItem | undefined>(() => displayedCategory.value?.parent);
-const subcategories = computed<CategoryTreeItem[]>(() => displayedCategory.value?.children || []);
+const backCategory = computed<CategoryTreeItemType | undefined>(() => displayedCategory.value?.parent);
+const subcategories = computed<CategoryTreeItemType[]>(() => displayedCategory.value?.children || []);
 
 const subcategoriesRoutes = useCategoriesRoutes(subcategories);
 </script>
