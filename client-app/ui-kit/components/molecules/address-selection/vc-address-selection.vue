@@ -24,7 +24,7 @@
 
     <p v-else class="vc-address-selection__no-address">
       {{ $t("common.prefixes.please") }}
-      <button class="vc-address-selection__link" @click="!readonly && $emit('change')">
+      <button type="button" class="vc-address-selection__link" @click="!readonly && $emit('change')">
         {{ placeholder || $t("common.placeholders.select_address") }}
       </button>
     </p>

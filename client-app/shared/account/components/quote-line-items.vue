@@ -188,25 +188,25 @@
 
 <script setup lang="ts">
 import { sumBy } from "lodash";
-import { computed, PropType } from "vue";
-import { extendQuoteItem } from "@/shared/account";
+import { computed } from "vue";
+import { ExtendedLineItemType, extendLineItem } from "@/core";
 import { QuoteItemType } from "@/xapi";
 
-defineEmits(["remove:item", "update:item"]);
+interface IEmits {
+  (event: "update:item", value: ExtendedLineItemType<QuoteItemType>): void;
+  (event: "remove:item", value: ExtendedLineItemType<QuoteItemType>): void;
+}
 
-const props = defineProps({
-  items: {
-    type: Array as PropType<QuoteItemType[]>,
-    required: true,
-  },
+interface IProps {
+  readonly?: boolean;
+  items: QuoteItemType[];
+}
 
-  readonly: {
-    type: Boolean,
-  },
-});
+defineEmits<IEmits>();
+const props = defineProps<IProps>();
 
-const extendedItems = computed<ReturnType<typeof extendQuoteItem>[]>(() =>
-  props.items.map((item: QuoteItemType) => extendQuoteItem(item))
+const extendedItems = computed<ExtendedLineItemType<QuoteItemType>[]>(() =>
+  props.items.map((item: QuoteItemType) => extendLineItem<QuoteItemType>(item))
 );
 
 const subtotal = computed<number>(() =>

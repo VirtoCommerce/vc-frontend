@@ -47,7 +47,7 @@
                   <span class="grow">{{ title }}</span>
                 </slot>
 
-                <button v-if="!isPersistent" class="-my-3 -mr-4 py-2 px-4" @click="close">
+                <button v-if="!isPersistent" type="button" class="-my-3 -mr-4 py-2 px-4" @click="close">
                   <i class="fas fa-times text-2xl" />
                 </button>
               </DialogTitle>
@@ -61,6 +61,7 @@
               <div v-if="!hideActions" class="flex items-center justify-between space-x-4 px-6 py-4 sm:justify-end">
                 <slot name="actions" :close="close">
                   <button
+                    type="button"
                     class="inline-flex h-9 grow items-center justify-center rounded border-2 border-[color:var(--color-primary)] font-roboto-condensed text-base font-bold uppercase text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white focus:outline-none sm:grow-0 sm:px-4"
                     @click="close"
                   >

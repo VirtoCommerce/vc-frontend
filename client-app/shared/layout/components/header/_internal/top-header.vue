@@ -47,6 +47,7 @@
           </template>
 
           <button
+            type="button"
             class="flex cursor-pointer items-center py-1 text-white hover:text-[color:var(--color-header-top-link)]"
             @click="loginMenuVisible = !loginMenuVisible"
           >
@@ -75,6 +76,7 @@
               <div class="grow"></div>
 
               <button
+                type="button"
                 :title="$t('shared.layout.header.link_logout')"
                 class="ml-4 h-6 w-6 rounded border border-gray-200 text-gray-400 shadow hover:bg-gray-200"
                 @click="signOut"

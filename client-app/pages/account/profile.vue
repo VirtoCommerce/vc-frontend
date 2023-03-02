@@ -20,11 +20,12 @@
           v-model="firstName"
           :label="$t('pages.account.profile.first_name_label')"
           :placeholder="$t('pages.account.profile.first_name_placeholder')"
-          :is-disabled="isSubmitting"
-          :error-message="errors.firstName"
+          :disabled="isSubmitting"
+          :message="errors.firstName"
+          :error="!!errors.firstName"
           name="firstName"
           class="mb-5"
-          is-required
+          required
           :maxlength="64"
         />
 
@@ -32,11 +33,12 @@
           v-model="lastName"
           :label="$t('pages.account.profile.last_name_label')"
           :placeholder="$t('pages.account.profile.last_name_placeholder')"
-          :is-disabled="isSubmitting"
-          :error-message="errors.lastName"
+          :disabled="isSubmitting"
+          :message="errors.lastName"
+          :error="!!errors.lastName"
           name="lastName"
           class="mb-5"
-          is-required
+          required
           :maxlength="64"
         />
 
@@ -46,7 +48,7 @@
           :placeholder="$t('pages.account.profile.email_placeholder')"
           name="email"
           class="mb-5"
-          is-disabled
+          disabled
         />
 
         <div class="my-5 flex items-center">
@@ -64,8 +66,9 @@
           v-model="oldPassword"
           :label="$t('pages.account.profile.old_password_label')"
           :placeholder="$t('pages.account.profile.old_password_placeholder')"
-          :is-disabled="isSubmitting"
-          :error-message="errors.oldPassword"
+          :disabled="isSubmitting"
+          :message="errors.oldPassword"
+          :error="!!errors.oldPassword"
           autocomplete="off"
           type="password"
           name="oldPassword"
@@ -77,9 +80,10 @@
           :model-value="newPassword"
           :label="$t('pages.account.profile.new_password_label')"
           :placeholder="$t('pages.account.profile.new_password_placeholder')"
-          :is-disabled="isSubmitting"
-          :is-required="!!oldPassword"
-          :error-message="errors.newPassword"
+          :disabled="isSubmitting"
+          :required="!!oldPassword"
+          :message="errors.newPassword"
+          :error="!!errors.newPassword"
           type="password"
           name="newPassword"
           class="mb-5"
@@ -92,9 +96,10 @@
           :model-value="confirmNewPassword"
           :label="$t('pages.account.profile.confirm_new_password_label')"
           :placeholder="$t('pages.account.profile.confirm_new_password_placeholder')"
-          :is-disabled="isSubmitting"
-          :is-required="!!oldPassword"
-          :error-message="errors.confirmNewPassword"
+          :disabled="isSubmitting"
+          :required="!!oldPassword"
+          :message="errors.confirmNewPassword"
+          :error="!!errors.confirmNewPassword"
           type="password"
           name="confirmNewPassword"
           class="mb-5"

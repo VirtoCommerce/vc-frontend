@@ -31,6 +31,7 @@
             {{ $t("shared.wishlists.add_to_wishlists_dialog.add_to_other_lists") }}
           </div>
           <button
+            type="button"
             class="flex cursor-pointer items-center text-sm font-bold text-[color:var(--color-link)]"
             :class="{ 'cursor-not-allowed text-gray-400': creationButtonDisabled }"
             :disabled="creationButtonDisabled"
@@ -52,7 +53,7 @@
             :key="index"
             class="list-input-item flex items-start px-6 first:pt-3 first:sm:pt-4"
           >
-            <button class="relative mt-3" @click="removeInput(index)">
+            <button type="button" class="relative mt-3" @click="removeInput(index)">
               <VcCheckbox model-value class="relative" />
               <div class="absolute inset-0"></div>
             </button>
@@ -60,12 +61,13 @@
               v-model="input.listName"
               class="ml-2.5 mr-3.5 grow"
               :class="{ 'mb-4.5': !input.errorMessage }"
-              :is-disabled="loading"
+              :disabled="loading"
               :maxlength="25"
-              is-required
-              :error-message="input.errorMessage"
-            ></VcInput>
-            <button class="mt-3.5" @click="removeInput(index)">
+              required
+              :message="input.errorMessage"
+              :error="!!input.errorMessage"
+            />
+            <button type="button" class="mt-3.5" @click="removeInput(index)">
               <svg class="text-[color:var(--color-add-wishlist-dialog-delete-icon)]" width="16" height="16">
                 <use href="/static/images/delete.svg#main" />
               </svg>

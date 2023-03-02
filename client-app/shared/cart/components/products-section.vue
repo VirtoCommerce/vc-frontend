@@ -1,7 +1,7 @@
 <template>
   <VcSectionWidget :title="$t('shared.cart.products_section.title')" icon="cube" hide-desktop-title>
     <!-- Items grouped by Vendor -->
-    <div v-if="grouped" class="space-y-8">
+    <div v-if="grouped" class="space-y-5 md:space-y-7">
       <template v-for="(group, vendorId) in itemsGroupedByVendor" :key="vendorId">
         <div v-if="group.items.length" class="space-y-3">
           <!-- Vendor -->
@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { TLineItemsGroupByVendor } from "@/core";
+import { LineItemsGroupByVendorType } from "@/core";
 import { CartLineItems } from "@/shared/cart";
 import { LineItemType, ValidationErrorType } from "@/xapi";
 
@@ -56,7 +56,7 @@ interface Props {
   grouped?: boolean;
   disabled?: boolean;
   items?: LineItemType[];
-  itemsGroupedByVendor?: TLineItemsGroupByVendor<LineItemType>[];
+  itemsGroupedByVendor?: LineItemsGroupByVendorType<LineItemType>[];
   /** @deprecated */
   validationErrors?: ValidationErrorType[];
 }

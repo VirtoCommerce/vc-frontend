@@ -83,6 +83,7 @@
     <div class="flex max-h-full grow flex-col sm:hidden">
       <div class="flex min-h-[2.75rem] items-stretch bg-[color:var(--color-branch-dialog-bg)] px-6 text-15">
         <button
+          type="button"
           class="mr-auto flex items-center py-2 font-bold"
           :class="{
             'text-[color:var(--color-link)]': showSelectedBranchesMobile && selectedBranchesIds.length,
@@ -95,6 +96,7 @@
 
         <template v-if="selectedBranchesIds.length">
           <button
+            type="button"
             class="flex items-center py-2 font-bold"
             :class="{ 'text-[color:var(--color-link)]': !showSelectedBranchesMobile }"
             :disabled="showSelectedBranchesMobile"
@@ -104,6 +106,7 @@
           </button>
 
           <button
+            type="button"
             class="ml-2.5 flex h-7 w-7 items-center justify-center self-center rounded bg-white shadow-t-mds"
             @click="clearSelection"
           >

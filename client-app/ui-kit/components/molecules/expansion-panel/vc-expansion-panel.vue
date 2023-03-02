@@ -16,7 +16,11 @@
         </slot>
 
         <slot name="header-button" v-bind="{ isExpanded, toggle }">
-          <button class="-my-2 ml-2 -mr-3 appearance-none px-3 py-2 before:absolute before:inset-0" @click="toggle">
+          <button
+            type="button"
+            class="-my-2 ml-2 -mr-3 appearance-none px-3 py-2 before:absolute before:inset-0"
+            @click="toggle"
+          >
             <i
               class="fas text-base text-[color:var(--color-primary)]"
               :class="isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'"

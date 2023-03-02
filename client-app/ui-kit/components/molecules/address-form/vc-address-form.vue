@@ -6,29 +6,32 @@
       <div v-if="withPersonalInfo" class="md:w-1/2">
         <VcInput
           v-model="firstName"
-          :error-message="errors.firstName"
-          :is-disabled="disabled"
+          :message="errors.firstName"
+          :error="!!errors.firstName"
+          :disabled="disabled"
           :label="$t('shared.account.address_form.first_name_label')"
           class="mb-4"
-          is-required
+          required
           :maxlength="64"
         />
 
         <VcInput
           v-model="lastName"
-          :error-message="errors.lastName"
-          :is-disabled="disabled"
+          :message="errors.lastName"
+          :error="!!errors.lastName"
+          :disabled="disabled"
           :label="$t('shared.account.address_form.last_name_label')"
           class="mb-4"
-          is-required
+          required
           :maxlength="64"
         />
 
         <VcInput
           v-model="email"
-          :error-message="errors.email"
-          :is-disabled="disabled"
-          :is-required="requiredEmail"
+          :message="errors.email"
+          :error="!!errors.email"
+          :disabled="disabled"
+          :required="requiredEmail"
           :label="$t('shared.account.address_form.work_email_label')"
           class="mb-4"
           :maxlength="64"
@@ -36,9 +39,10 @@
 
         <VcInput
           v-model="phone"
-          :error-message="errors.phone"
-          :is-disabled="disabled"
-          :is-required="requiredPhone"
+          :message="errors.phone"
+          :error="!!errors.phone"
+          :disabled="disabled"
+          :required="requiredPhone"
           :label="$t('shared.account.address_form.phone_label')"
           class="mb-4"
           :maxlength="64"
@@ -55,8 +59,9 @@
         <VcInput
           v-if="withDescriptionField"
           v-model="description"
-          :error-message="errors.description"
-          :is-disabled="disabled"
+          :message="errors.description"
+          :error="!!errors.description"
+          :disabled="disabled"
           :label="$t('shared.account.address_form.description_label')"
           class="mb-4"
           :maxlength="128"
@@ -79,11 +84,12 @@
 
           <VcInput
             v-model="postalCode"
-            :error-message="errors.postalCode"
-            :is-disabled="disabled"
+            :message="errors.postalCode"
+            :error="!!errors.postalCode"
+            :disabled="disabled"
             :label="$t('shared.account.address_form.zip_label')"
             class="order-3 mb-4 xl:order-none xl:ml-4 xl:w-4/12 xl:grow"
-            is-required
+            required
             :maxlength="32"
           />
 
@@ -103,29 +109,32 @@
 
           <VcInput
             v-model="city"
-            :error-message="errors.city"
-            :is-disabled="disabled"
+            :message="errors.city"
+            :error="!!errors.city"
+            :disabled="disabled"
             :label="$t('shared.account.address_form.city_label')"
             class="order-4 mb-4 xl:order-none xl:ml-4 xl:grow"
-            :is-required="requiredCity"
+            :required="requiredCity"
             :maxlength="128"
           />
         </div>
 
         <VcInput
           v-model="line1"
-          :error-message="errors.line1"
-          :is-disabled="disabled"
+          :message="errors.line1"
+          :error="!!errors.line1"
+          :disabled="disabled"
           :label="$t('shared.account.address_form.line1_label')"
           class="mb-4"
-          is-required
+          required
           :maxlength="128"
         />
 
         <VcInput
           v-model="line2"
-          :error-message="errors.line2"
-          :is-disabled="disabled"
+          :message="errors.line2"
+          :error="errors.line2"
+          :disabled="disabled"
           :label="$t('shared.account.address_form.line2_label')"
           class="mb-4"
           :maxlength="128"

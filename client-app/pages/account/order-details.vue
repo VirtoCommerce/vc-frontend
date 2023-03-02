@@ -1,5 +1,4 @@
 <template>
-  <!-- Order Details -->
   <div v-if="order">
     <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
@@ -32,7 +31,7 @@
     <VcLayoutWithRightSidebar is-sidebar-sticky>
       <VcSectionWidget :title="$t('shared.cart.products_section.title')" icon="cube" hide-desktop-title>
         <!-- Items grouped by Vendor -->
-        <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-8">
+        <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
           <template v-for="(group, vendorId) in orderItemsGroupedByVendor" :key="vendorId">
             <div v-if="group.items.length" class="space-y-3">
               <!-- Vendor -->
@@ -46,21 +45,13 @@
           </template>
         </div>
 
+        <!-- Items not grouped by Vendor -->
         <OrderLineItems v-else :items="orderItems" />
       </VcSectionWidget>
 
-      <!-- Gifts section -->
-      <AcceptedGifts :items="giftItems" />
+      <AcceptedGifts v-if="giftItems.length" :items="giftItems" />
 
-      <!-- Order comment section -->
-      <VcSectionWidget
-        v-if="order.comment"
-        :title="$t('common.titles.order_comment')"
-        icon="document-text"
-        class="order-last"
-      >
-        <p v-for="line in order?.comment?.split('\n')" :key="line" class="break-words text-15">{{ line }}</p>
-      </VcSectionWidget>
+      <OrderCommentSection v-if="order.comment" :comment="order.comment" readonly />
 
       <template #sidebar>
         <!-- Order Data Widget -->
@@ -155,17 +146,16 @@ import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core";
 import { useUserOrder, OrderLineItems } from "@/shared/account";
 import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
-import { AcceptedGifts, OrderSummary } from "@/shared/checkout";
+import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
 import { BackButtonInHeader } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
 import { InputNewBulkItemType } from "@/xapi";
 
-const props = defineProps({
-  orderId: {
-    type: String,
-    default: "",
-  },
-});
+interface IProps {
+  orderId: string;
+}
+
+const props = defineProps<IProps>();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const {

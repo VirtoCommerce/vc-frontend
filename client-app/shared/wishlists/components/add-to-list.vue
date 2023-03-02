@@ -1,7 +1,7 @@
 <template>
   <VcTooltip :placement="tooltipPlacement" strategy="fixed">
     <template #trigger>
-      <button class="block disabled:opacity-40" :disabled="!isAuthenticated" @click="openAddToListModal">
+      <button type="button" class="block disabled:opacity-40" :disabled="!isAuthenticated" @click="openAddToListModal">
         <svg
           :class="[
             customClass,

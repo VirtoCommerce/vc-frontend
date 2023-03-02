@@ -1,11 +1,22 @@
-import { CommonVendor, LineItemType, OrderLineItemType } from "@/xapi";
+import { RouteLocationRaw } from "vue-router";
+import { CommonVendor, LineItemType, OrderLineItemType, Property, QuoteItemType } from "@/xapi";
 
-export type TLineItemsGroupByVendor<T extends LineItemType | OrderLineItemType> = {
+export type LineItemsGroupByVendorType<T extends LineItemType | OrderLineItemType> = {
   items: T[];
   vendor?: CommonVendor;
 };
 
-export type TLineItemsGroupsByVendor<T extends LineItemType | OrderLineItemType> = Record<
+export type LineItemsGroupsByVendorType<T extends LineItemType | OrderLineItemType> = Record<
   string,
-  TLineItemsGroupByVendor<T>
+  LineItemsGroupByVendorType<T>
 >;
+
+export type ExtendedLineItemType<T extends LineItemType | OrderLineItemType | QuoteItemType> = T & {
+  extended: {
+    isProductExists: boolean;
+    route: RouteLocationRaw;
+    displayProperties: Property[];
+    minQuantity?: number;
+    maxQuantity?: number;
+  };
+};

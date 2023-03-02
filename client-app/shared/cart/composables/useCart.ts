@@ -2,7 +2,7 @@ import { computedEager } from "@vueuse/core";
 import { keyBy, sumBy } from "lodash";
 import { computed, readonly, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { getLineItemsGroupedByVendor, Logger, TLineItemsGroupByVendor } from "@/core";
+import { getLineItemsGroupedByVendor, Logger, LineItemsGroupByVendorType } from "@/core";
 import {
   ClearCartModal,
   ExtendedGiftItemType,
@@ -51,7 +51,7 @@ const payment = computed<PaymentType | undefined>(() => cart.value.payments?.[0]
 const availableShippingMethods = computed<ShippingMethodType[]>(() => cart.value.availableShippingMethods ?? []);
 const availablePaymentMethods = computed<PaymentMethodType[]>(() => cart.value.availablePaymentMethods ?? []);
 
-const lineItemsGroupedByVendor = computed<TLineItemsGroupByVendor<LineItemType>[]>(() =>
+const lineItemsGroupedByVendor = computed<LineItemsGroupByVendorType<LineItemType>[]>(() =>
   getLineItemsGroupedByVendor(cart.value.items ?? [])
 );
 

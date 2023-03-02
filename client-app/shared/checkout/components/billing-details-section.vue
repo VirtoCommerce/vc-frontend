@@ -86,9 +86,7 @@ interface IProps {
 }
 
 const emit = defineEmits<IEmits>();
-const props = withDefaults(defineProps<IProps>(), {
-  methods: () => [],
-});
+const props = defineProps<IProps>();
 
 const billingAddressEqualsShipping = useVModel(props, "addressEqualsShippingAddress", emit);
 

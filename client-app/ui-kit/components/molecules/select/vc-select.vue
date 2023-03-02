@@ -6,13 +6,12 @@
       {
         'vc-select--readonly': readonly,
         'vc-select--disabled': disabled,
-        'vc-select--opened': open,
-        'vc-select--hide-empty-details': !showEmptyDetails,
         'vc-select--error': error,
+        'vc-select--opened': open,
       },
     ]"
   >
-    <VcLabel v-if="label" :required="required">
+    <VcLabel v-if="label" :required="required" :error="error">
       {{ label }}
     </VcLabel>
 
@@ -82,16 +81,12 @@
       </transition>
     </div>
 
-    <!-- Details -->
-    <div class="vc-select__details">
-      <!-- Message -->
-      <!-- eslint-disable-next-line vue/no-v-html-->
-      <div v-if="message" class="vc-select__message" v-html="message"></div>
-    </div>
+    <VcInputDetails :show-empty="showEmptyDetails" :message="message" :error="error" />
   </div>
 </template>
 
 <script lang="ts">
+/* eslint-disable-next-line import/order */
 import { clickOutside } from "@/core/directives";
 
 export default {
@@ -201,7 +196,6 @@ function select(item?: any) {
   $disabled: "";
   $readonly: "";
   $opened: "";
-  $hideEmptyDetails: "";
   $error: "";
 
   @apply flex flex-col;
@@ -236,10 +230,6 @@ function select(item?: any) {
     $opened: &;
   }
 
-  &--hide-empty-details {
-    $hideEmptyDetails: &;
-  }
-
   &--error {
     $error: &;
   }
@@ -269,7 +259,8 @@ function select(item?: any) {
 
     #{$opened} &,
     &:focus {
-      @apply outline outline-offset-0 outline-2 outline-[color:var(--color-primary-light)];
+      //fix for Safari. Do not change!
+      box-shadow: 0 0 0 3px var(--color-primary-light);
     }
 
     #{$disabled} &,
@@ -322,28 +313,12 @@ function select(item?: any) {
     }
 
     &:focus {
-      @apply outline -outline-offset-2 outline-2 outline-[color:var(--color-primary-light)];
+      @apply outline outline-offset-[-3px] outline-[3px] outline-[color:var(--color-primary-light)];
     }
 
     &--active,
     &--active:hover {
       @apply bg-[color:var(--color-primary-light)] cursor-default;
-    }
-  }
-
-  &__details {
-    @apply flex justify-end mt-0.5 gap-2 min-h-[0.875rem] text-11;
-
-    #{$hideEmptyDetails} & {
-      @apply empty:hidden;
-    }
-  }
-
-  &__message {
-    @apply grow text-gray-400;
-
-    #{$error} & {
-      @apply text-[color:var(--color-danger)];
     }
   }
 }
