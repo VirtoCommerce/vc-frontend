@@ -1,5 +1,5 @@
 import { RouteRecordRaw } from "vue-router";
-import { DEVELOPMENT } from "@/core/constants";
+import { IS_DEVELOPMENT } from "@/core/constants";
 import { accountRoutes } from "./account";
 import { checkoutRoutes } from "./checkout";
 import { corporateRoutes } from "./company";
@@ -93,7 +93,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/:pathMatch(.*)*", name: "Matcher", component: Matcher, props: true },
 ];
 
-if (DEVELOPMENT || location.host.includes("dev-storefront.paas.govirto.")) {
+if (IS_DEVELOPMENT || location.host.includes("dev-storefront.paas.govirto.")) {
   mainRoutes.push({
     path: "/ui-kit",
     name: "DevUIKit",

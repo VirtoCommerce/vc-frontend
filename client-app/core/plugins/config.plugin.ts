@@ -1,5 +1,5 @@
 import { App } from "vue";
-import { configInjectionKey } from "@/core/constants";
+import { configInjectionKey } from "../constants";
 import { IThemeConfigPreset } from "../types";
 
 export default {

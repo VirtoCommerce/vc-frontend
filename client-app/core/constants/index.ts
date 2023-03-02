@@ -1,4 +1,4 @@
-export * from "./constants";
+export * from "./settings";
 export * from "./injection-keys";
 export * from "./permissions";
 export * from "./query-param-name.enum";

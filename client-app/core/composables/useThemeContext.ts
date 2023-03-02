@@ -1,5 +1,5 @@
 import { computed, ref } from "vue";
-import { DEVELOPMENT } from "../constants";
+import { IS_DEVELOPMENT } from "../constants";
 import type { IThemeConfig, IThemeContext } from "../types";
 
 const themeContext = ref<IThemeContext>();
@@ -8,7 +8,7 @@ export function useThemeContext() {
   async function fetchThemeContext() {
     const result: IThemeContext = await (await fetch("/storefrontapi/theme/context")).json();
 
-    if (DEVELOPMENT) {
+    if (IS_DEVELOPMENT) {
       // TODO: remove this when switching to SSR
       const settings: IThemeConfig = await import("../../../config/settings_data.json");
 

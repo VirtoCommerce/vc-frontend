@@ -1,7 +1,7 @@
-import { StorefrontPermissions, XApiPermissions } from "@/core/constants";
-import { Role } from "@/core/types";
+import type { ExtendedRoleType } from "../types";
+import { StorefrontPermissions, XApiPermissions } from "./permissions";
 
-export const ORGANIZATION_MAINTAINER: Role = {
+export const ORGANIZATION_MAINTAINER: ExtendedRoleType = {
   id: "org-maintainer",
   name: "Organization maintainer",
   permissions: [
@@ -16,19 +16,19 @@ export const ORGANIZATION_MAINTAINER: Role = {
   ],
 };
 
-export const ORGANIZATION_EMPLOYEE: Role = {
+export const ORGANIZATION_EMPLOYEE: ExtendedRoleType = {
   id: "org-employee",
   name: "Organization employee",
   permissions: [StorefrontPermissions.CanSeeOrganizationDetail, StorefrontPermissions.CanViewUsers],
 };
 
-export const PURCHASING_AGENT: Role = {
+export const PURCHASING_AGENT: ExtendedRoleType = {
   id: "purchasing-agent",
   name: "Purchasing agent",
   permissions: [StorefrontPermissions.CanSeeOrganizationDetail, StorefrontPermissions.CanViewUsers],
 };
 
-export const STORE_ADMINISTRATOR: Role = {
+export const STORE_ADMINISTRATOR: ExtendedRoleType = {
   id: "store-admin",
   name: "Store administrator",
   permissions: [
@@ -44,7 +44,7 @@ export const STORE_ADMINISTRATOR: Role = {
   ],
 };
 
-export const STORE_MANAGER: Role = {
+export const STORE_MANAGER: ExtendedRoleType = {
   id: "store-manager",
   name: "Store manager",
   permissions: [
@@ -54,9 +54,9 @@ export const STORE_MANAGER: Role = {
   ],
 };
 
-export const B2B_ROLES: Role[] = [ORGANIZATION_EMPLOYEE, PURCHASING_AGENT, ORGANIZATION_MAINTAINER];
+export const B2B_ROLES: ExtendedRoleType[] = [ORGANIZATION_EMPLOYEE, PURCHASING_AGENT, ORGANIZATION_MAINTAINER];
 
-export const ALL_ROLES: Role[] = [
+export const ALL_ROLES: ExtendedRoleType[] = [
   ORGANIZATION_MAINTAINER,
   ORGANIZATION_EMPLOYEE,
   PURCHASING_AGENT,
