@@ -1,5 +1,5 @@
 <template>
-  <router-view v-if="currentStepId === 'OrderCompleted'" />
+  <router-view v-if="currentStepId === 'OrderCompleted' || currentStepId === 'OrderPaymentCompleted'" />
 
   <VcContainer v-else-if="initialized">
     <VcTypography tag="h1" variant="h2" weight="bold" class="mb-5">
