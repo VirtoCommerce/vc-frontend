@@ -1,5 +1,12 @@
 <template>
-  <div class="vc-property">
+  <div
+    :class="[
+      'vc-property',
+      {
+        'vc-property--removed': removed,
+      },
+    ]"
+  >
     <div class="vc-property__label">{{ label }}</div>
     <div class="vc-property__dots"></div>
     <div class="vc-property__value">
@@ -12,6 +19,7 @@
 interface IProps {
   label: string;
   value?: string;
+  removed?: boolean;
 }
 
 defineProps<IProps>();
@@ -19,10 +27,20 @@ defineProps<IProps>();
 
 <style lang="scss">
 .vc-property {
+  $removed: "";
+
   @apply grid grid-cols-[auto_1fr_auto] gap-1 font-lato text-xs text-gray-500;
+
+  &--removed {
+    $removed: &;
+  }
 
   &__label {
     @apply min-w-0 truncate;
+
+    #{$removed} & {
+      @apply text-slate-400;
+    }
   }
 
   &__dots {
@@ -31,6 +49,10 @@ defineProps<IProps>();
 
   &__value {
     @apply min-w-0 font-bold text-[color:var(--color-body-text)] truncate;
+
+    #{$removed} & {
+      @apply text-slate-400;
+    }
   }
 }
 </style>
