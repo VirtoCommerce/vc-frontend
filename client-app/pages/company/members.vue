@@ -20,7 +20,7 @@
     <!-- Mobile filters sidebar -->
     <VcPopupSidebar class="w-72 px-5 pt-6" :is-visible="isMobile && filtersVisible" @hide="hideFilters">
       <div class="relative">
-        <button class="absolute -right-3 appearance-none px-3 py-1" @click="hideFilters">
+        <button type="button" class="absolute -right-3 appearance-none px-3 py-1" @click="hideFilters">
           <span class="fas fa-times text-2xl text-red-400 hover:text-red-700"></span>
         </button>
       </div>
@@ -104,7 +104,7 @@
           ref="filtersDropdownElement"
           class="absolute right-0 z-[1] mt-2 rounded border bg-white p-6 shadow-lg"
         >
-          <button class="absolute top-0 right-0 appearance-none px-4 py-2" @click="hideFilters">
+          <button type="button" class="absolute top-0 right-0 appearance-none px-4 py-2" @click="hideFilters">
             <span class="fa fa-times text-lg text-red-400 hover:text-red-500"></span>
           </button>
 
@@ -143,27 +143,31 @@
       </div>
 
       <div class="flex grow">
-        <div class="relative grow">
-          <VcInput
-            v-model="localKeyword"
-            maxlength="64"
-            class="w-full"
-            input-class="font-medium rounded-r-none !text-sm disabled:bg-gray-200 !pl-4 !pr-11"
-            :is-disabled="contactsLoading"
-            :placeholder="$t('pages.company.members.search_placeholder')"
-            @keypress.enter="applyKeyword"
-          />
+        <VcInput
+          v-model="localKeyword"
+          maxlength="64"
+          class="w-full"
+          :disabled="contactsLoading"
+          :placeholder="$t('pages.company.members.search_placeholder')"
+          @keypress.enter="applyKeyword"
+        >
+          <template #append>
+            <button v-if="localKeyword" type="button" class="h-full px-4" @click="resetKeyword">
+              <svg class="text-[color:var(--color-primary)]" height="14" width="14">
+                <use href="/static/images/delete.svg#main" />
+              </svg>
+            </button>
 
-          <button v-if="localKeyword" class="absolute right-0 top-0 h-11 px-4" @click="resetKeyword">
-            <svg class="text-[color:var(--color-primary)]" height="14" width="14">
-              <use href="/static/images/delete.svg#main" />
-            </svg>
-          </button>
-        </div>
-
-        <VcButton :is-disabled="contactsLoading" class="w-11 !rounded-l-none uppercase" size="lg" @click="applyKeyword">
-          <i class="fas fa-search text-lg" />
-        </VcButton>
+            <VcButton
+              :is-disabled="contactsLoading"
+              class="w-11 !rounded-[inherit] uppercase"
+              size="lg"
+              @click="applyKeyword"
+            >
+              <i class="fas fa-search text-lg" />
+            </VcButton>
+          </template>
+        </VcInput>
       </div>
     </PageToolbarBlock>
 
@@ -275,13 +279,14 @@
 
             <td v-if="userCanEditOrganization" class="px-5 text-right">
               <VcActionDropdownMenu v-if="contact.id !== user.memberId">
-                <!--<button class="flex items-center p-3 whitespace-nowrap">
+                <!--<button type="button" class="flex items-center p-3 whitespace-nowrap">
                   <i class="fas fa-pencil-alt mr-2 leading-none text-base text-[color:var(--color-warning)]" />
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.edit_role") }}</span>
                 </button>-->
 
                 <button
                   v-if="contact.status === ContactStatus.Locked"
+                  type="button"
                   class="flex items-center whitespace-nowrap p-3"
                   @click="openLockOrUnlockDialog(contact, true)"
                 >
@@ -289,12 +294,21 @@
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.unblock_user") }}</span>
                 </button>
 
-                <button v-else class="flex items-center whitespace-nowrap p-3" @click="openLockOrUnlockDialog(contact)">
+                <button
+                  v-else
+                  type="button"
+                  class="flex items-center whitespace-nowrap p-3"
+                  @click="openLockOrUnlockDialog(contact)"
+                >
                   <i class="fas fa-ban mr-2 text-base leading-none text-black" />
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.block_user") }}</span>
                 </button>
 
-                <button class="flex items-center whitespace-nowrap p-3" @click="openDeleteDialog(contact)">
+                <button
+                  type="button"
+                  class="flex items-center whitespace-nowrap p-3"
+                  @click="openDeleteDialog(contact)"
+                >
                   <i class="fas fa-times mr-2 text-xl leading-none text-[color:var(--color-danger)]" />
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.delete") }}</span>
                 </button>

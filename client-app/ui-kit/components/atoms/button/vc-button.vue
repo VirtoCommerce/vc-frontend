@@ -80,7 +80,7 @@ $colors: primary, secondary, success, warning, danger;
 
   @apply relative inline-flex justify-center items-center rounded
   border-2 border-transparent font-roboto-condensed select-none
-  focus:outline-dotted outline-1 outline-offset-[3px];
+  focus:outline outline-[3px] outline-[color:var(--color-primary-light)];
 
   &__content {
     @apply flex justify-center items-center;
@@ -136,8 +136,7 @@ $colors: primary, secondary, success, warning, danger;
 
   @each $color in $colors {
     &--#{$color} {
-      @apply bg-[color:var(--color-#{$color})] hover:bg-[color:var(--color-#{$color}-hover)]
-      outline-[color:var(--color-#{$color})] text-white;
+      @apply bg-[color:var(--color-#{$color})] hover:bg-[color:var(--color-#{$color}-hover)] text-white;
 
       &#{$self}--outline {
         @apply bg-transparent hover:bg-[color:var(--color-#{$color}-hover)]

@@ -14,27 +14,26 @@
       shadow
     >
       <div class="flex grow">
-        <div class="relative grow">
-          <VcInput
-            v-model="keyword"
-            :is-disabled="fetching"
-            :placeholder="$t('pages.account.quotes.search_placeholder')"
-            maxlength="64"
-            class="w-full"
-            input-class="font-medium rounded-r-none !text-sm disabled:bg-gray-200 !pl-4 !pr-11"
-            @keypress.enter="applyKeyword"
-          />
+        <VcInput
+          v-model="keyword"
+          :disabled="fetching"
+          :placeholder="$t('pages.account.quotes.search_placeholder')"
+          maxlength="64"
+          class="w-full"
+          @keypress.enter="applyKeyword"
+        >
+          <template #append>
+            <button v-if="keyword" type="button" class="h-full px-4" @click="resetKeyword">
+              <svg class="text-[color:var(--color-primary)]" height="14" width="14">
+                <use href="/static/images/delete.svg#main" />
+              </svg>
+            </button>
 
-          <button v-if="keyword" class="absolute right-0 top-0 h-11 px-4" @click="resetKeyword">
-            <svg class="text-[color:var(--color-primary)]" height="14" width="14">
-              <use href="/static/images/delete.svg#main" />
-            </svg>
-          </button>
-        </div>
-
-        <VcButton :is-disabled="fetching" class="w-11 !rounded-l-none uppercase" size="lg" @click="applyKeyword">
-          <i class="fas fa-search text-lg" />
-        </VcButton>
+            <VcButton :is-disabled="fetching" class="w-11 !rounded-[inherit] uppercase" size="lg" @click="applyKeyword">
+              <i class="fas fa-search text-lg" />
+            </VcButton>
+          </template>
+        </VcInput>
       </div>
     </PageToolbarBlock>
 

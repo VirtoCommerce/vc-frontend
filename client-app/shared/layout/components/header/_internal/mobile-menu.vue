@@ -14,7 +14,7 @@
       <!-- Language block -->
       <LanguageSelector v-if="supportedLocales.length > 1" />
 
-      <button class="-mr-4 appearance-none p-4" @click="$emit('close')">
+      <button type="button" class="-mr-4 appearance-none p-4" @click="$emit('close')">
         <svg class="text-[color:var(--color-primary)]" height="20" width="20">
           <use href="/static/images/close.svg#main" />
         </svg>
@@ -24,7 +24,11 @@
     <!-- region Children links section -->
     <section v-if="openedItem" class="grow divide-y divide-white divide-opacity-20 overflow-y-auto">
       <div class="flex flex-col py-6 px-10">
-        <button class="appearance-none self-start text-[color:var(--color-mobile-menu-icon)]" @click="goBack">
+        <button
+          type="button"
+          class="appearance-none self-start text-[color:var(--color-mobile-menu-icon)]"
+          @click="goBack"
+        >
           <i class="fas fa-arrow-circle-left text-[2.5rem]" />
         </button>
 
@@ -145,6 +149,7 @@
               <div>
                 <button
                   v-t="'shared.layout.header.link_logout'"
+                  type="button"
                   class="font-bold text-[color:var(--color-primary)]"
                   @click="signOut"
                 />

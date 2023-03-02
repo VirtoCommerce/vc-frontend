@@ -31,7 +31,12 @@
         </component>
 
         <!-- Close button -->
-        <button v-if="notification.closeButton" class="vc-notifications__close-button" @click="close(notification.id!)">
+        <button
+          v-if="notification.closeButton"
+          type="button"
+          class="vc-notifications__close-button"
+          @click="close(notification.id!)"
+        >
           <i class="fa fa-times text-[25px] md:text-[22px]" />
         </button>
       </div>

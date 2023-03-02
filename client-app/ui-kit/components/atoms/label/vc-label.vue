@@ -1,6 +1,7 @@
 <template>
   <component
     :is="forId ? 'label' : 'div'"
+    :for="forId"
     :class="[
       'vc-label',
       {
@@ -14,18 +15,18 @@
 </template>
 
 <script setup lang="ts">
-interface Props {
+interface IProps {
   required?: boolean;
   error?: boolean;
   forId?: string;
 }
 
-defineProps<Props>();
+defineProps<IProps>();
 </script>
 
 <style lang="scss">
 .vc-label {
-  @apply mb-0.5 text-15 font-bold text-[color:var(--color-body-text)];
+  @apply block mb-0.5 text-15 font-bold text-[color:var(--color-body-text)];
 
   &--error {
     @apply text-[color:var(--color-danger)];

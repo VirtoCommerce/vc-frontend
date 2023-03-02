@@ -6,8 +6,9 @@
       :label="$t(`shared.account.${localizationFormTerm}.password_label`)"
       :placeholder="$t(`shared.account.${localizationFormTerm}.password_placeholder`)"
       type="password"
-      is-required
-      :error-message="errors.password"
+      required
+      :message="errors.password"
+      :error="!!errors.password"
       autocomplete="new-password"
       :maxlength="64"
     />
@@ -18,8 +19,9 @@
       :label="$t(`shared.account.${localizationFormTerm}.confirm_password_label`)"
       :placeholder="$t(`shared.account.${localizationFormTerm}.confirm_password_placeholder`)"
       type="password"
-      is-required
-      :error-message="errors.confirmPassword"
+      required
+      :message="errors.confirmPassword"
+      :error="!!errors.confirmPassword"
       autocomplete="off"
       :maxlength="64"
     />

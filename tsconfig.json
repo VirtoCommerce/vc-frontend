@@ -24,26 +24,27 @@
       "@/*": ["client-app/*"]
     },
     "types": [
-      "node",
       "vite/client",
-      "@types/gtag.js"
+      "@types/gtag.js",
+      "node"
     ]
   },
   "include": [
     "client-app/**/*.ts",
-    "client-app/**/*.json",
     "client-app/**/*.vue",
-    "**/*.json"
   ],
   "exclude": [
     "node_modules",
     "artifacts",
     "assets",
     "content",
-    "layout",
-    "templates",
-    "**/.*/",
-    "**/.*",
+    "**/*.spec.ts",
+    "**/*.stories.ts",
     "**/*.js"
-  ]
+  ],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  }
 }

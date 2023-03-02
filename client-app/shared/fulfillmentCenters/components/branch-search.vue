@@ -11,6 +11,7 @@
         @input="onInput($event)"
       />
       <button
+        type="button"
         class="flex h-5 w-6 items-center justify-center outline-none"
         :disabled="!modelValue.length"
         @click="emit('update:input', '')"

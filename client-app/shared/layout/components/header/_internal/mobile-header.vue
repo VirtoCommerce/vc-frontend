@@ -11,7 +11,7 @@
         <component :is="customSlots.left" v-if="customSlots.left" />
 
         <div v-else class="flex h-full items-center">
-          <button class="h-full px-6" @click="mobileMenuVisible = true">
+          <button type="button" class="h-full px-6" @click="mobileMenuVisible = true">
             <i class="fas fa-bars text-2xl text-[color:var(--color-primary)]" />
           </button>
 
@@ -29,7 +29,7 @@
             <i class="fas fa-phone text-xl text-[color:var(--color-primary)]"></i>
           </a>
 
-          <button class="p-2.5" @click="toggleSearchBar">
+          <button type="button" class="p-2.5" @click="toggleSearchBar">
             <i class="fas fa-search text-2xl text-[color:var(--color-primary)]" />
           </button>
 
@@ -54,22 +54,21 @@
     <!-- endregion Default slot -->
 
     <!-- region Mobile Search Bar -->
-    <div v-show="searchBarVisible" class="flex select-none bg-[color:var(--color-search-bar-bg)] p-4">
+    <div v-show="searchBarVisible" class="flex select-none items-center bg-[color:var(--color-search-bar-bg)] p-4">
       <VcInput
         v-model="searchPhrase"
         maxlength="64"
         :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
-        class="mr-4 h-10 grow"
-        input-class="!h-10 !px-4 font-medium text-sm"
-        without-border
+        class="mr-4 grow"
+        no-border
         @keyup.enter="searchPhrase && $router.push(searchPageLink)"
       />
 
-      <VcButton :to="searchPhrase && searchPageLink" class="!h-10 w-10">
+      <VcButton :to="searchPhrase && searchPageLink" size="lg" class="w-11">
         <i class="fas fa-search text-lg" />
       </VcButton>
 
-      <button class="ml-2 -mr-2 h-10 appearance-none px-2.5" @click="hideSearchBar">
+      <button type="button" class="ml-2 -mr-2 h-11 appearance-none px-3" @click="hideSearchBar">
         <i class="fas fa-times text-2xl text-white" />
       </button>
     </div>
