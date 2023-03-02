@@ -259,7 +259,8 @@ function select(item?: any) {
 
     #{$opened} &,
     &:focus {
-      @apply outline outline-offset-0 outline-[3px] outline-[color:var(--color-primary-light)];
+      //fix for Safari. Do not change!
+      box-shadow: 0 0 0 3px var(--color-primary-light);
     }
 
     #{$disabled} &,
