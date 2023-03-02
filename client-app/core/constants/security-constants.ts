@@ -1,5 +1,5 @@
 import type { ExtendedRoleType } from "../types";
-import { StorefrontPermissions, XApiPermissions } from "./permissions";
+import { StorefrontPermissions, XApiPermissions } from "./permissions.enum";
 
 export const ORGANIZATION_MAINTAINER: ExtendedRoleType = {
   id: "org-maintainer",
