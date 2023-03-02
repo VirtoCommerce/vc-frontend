@@ -9,6 +9,7 @@
           ? 'cursor-default'
           : 'text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]'
       "
+      type="button"
       class="appearance-none px-2.5 disabled:opacity-40"
       @click="select(item)"
     >

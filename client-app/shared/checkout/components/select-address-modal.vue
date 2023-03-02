@@ -63,6 +63,7 @@
           <div v-else class="w-1/4">
             <button
               v-t="'shared.checkout.select_address_dialog.select_button'"
+              type="button"
               class="mx-auto flex h-9 grow items-center justify-center rounded border-2 border-[color:var(--color-primary)] px-3 font-roboto-condensed text-base font-bold uppercase text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white focus:outline-none"
               @click="setAddress(itemData.item)"
             ></button>
@@ -96,6 +97,7 @@
           <td v-else class="p-5">
             <button
               v-t="'shared.checkout.select_address_dialog.select_button'"
+              type="button"
               class="mx-auto flex h-9 grow items-center justify-center rounded border-2 border-[color:var(--color-primary)] px-3 font-roboto-condensed text-base font-bold uppercase text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white focus:outline-none"
               @click="setAddress(address)"
             ></button>

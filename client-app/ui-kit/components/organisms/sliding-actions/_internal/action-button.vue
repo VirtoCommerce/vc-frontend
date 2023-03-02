@@ -1,5 +1,5 @@
 <template>
-  <button class="vc-action-button">
+  <button type="button" class="vc-action-button">
     <i v-if="icon" :class="['vc-action-button__icon', icon]" />
     <span class="vc-action-button__text">
       <slot />

@@ -7,8 +7,9 @@
       :placeholder="$t('shared.account.forgot_password_form.email_placeholder')"
       type="email"
       name="email"
-      is-required
-      :error-message="errors.email"
+      required
+      :message="errors.email"
+      :error="!!errors.email"
       :maxlength="64"
     />
 

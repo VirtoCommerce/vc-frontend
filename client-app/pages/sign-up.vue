@@ -24,8 +24,9 @@
           class="mb-4"
           :label="$t('pages.sign_up.first_name_label')"
           :placeholder="$t('pages.sign_up.first_name_placeholder')"
-          is-required
-          :error-message="errors.firstName"
+          required
+          :message="errors.firstName"
+          :error="!!errors.firstName"
           :maxlength="64"
           name="firstName"
           autocomplete="given-name"
@@ -36,8 +37,9 @@
           class="mb-4"
           :label="$t('pages.sign_up.last_name_label')"
           :placeholder="$t('pages.sign_up.last_name_placeholder')"
-          is-required
-          :error-message="errors.lastName"
+          required
+          :message="errors.lastName"
+          :error="!!errors.lastName"
           :maxlength="64"
           name="lastName"
           autocomplete="family-name"
@@ -48,8 +50,9 @@
           class="mb-4"
           :label="$t('pages.sign_up.email_label')"
           :placeholder="$t('pages.sign_up.email_placeholder')"
-          is-required
-          :error-message="errors.email"
+          required
+          :message="errors.email"
+          :error="!!errors.email"
           :maxlength="64"
           name="email"
           autocomplete="email"
@@ -61,8 +64,9 @@
           class="mb-4"
           :label="$t('pages.sign_up.organization_name_label')"
           :placeholder="$t('pages.sign_up.organization_name_placeholder')"
-          is-required
-          :error-message="errors.organizationName"
+          required
+          :message="errors.organizationName"
+          :error="!!errors.organizationName"
           :maxlength="64"
           name="organizationName"
           autocomplete="off"
@@ -76,8 +80,9 @@
             :placeholder="$t('pages.sign_up.password_placeholder')"
             type="password"
             autocomplete="new-password"
-            is-required
-            :error-message="errors.password"
+            required
+            :message="errors.password"
+            :error="!!errors.password"
             :maxlength="64"
           />
 
@@ -88,8 +93,9 @@
             :placeholder="$t('pages.sign_up.confirm_password_placeholder')"
             type="password"
             autocomplete="off"
-            is-required
-            :error-message="errors.confirmPassword"
+            required
+            :message="errors.confirmPassword"
+            :error="!!errors.confirmPassword"
             :maxlength="64"
           />
         </div>

@@ -22,6 +22,7 @@
 
       <button
         v-if="subcategories.length > SHORT_VIEW_ITEMS_COUNT"
+        type="button"
         class="flex cursor-pointer items-baseline px-2 py-1 text-sm"
         @click="toggleShowAll"
       >

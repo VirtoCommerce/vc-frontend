@@ -7,7 +7,12 @@
             {{ $t("common.titles.all_actions") }}
           </span>
 
-          <button class="vc-actions-popup__close-button" @click="$emit('close')" @keyup.esc="$emit('close')">
+          <button
+            type="button"
+            class="vc-actions-popup__close-button"
+            @click="$emit('close')"
+            @keyup.esc="$emit('close')"
+          >
             <i class="fas fa-times-circle" />
           </button>
         </div>
@@ -16,6 +21,7 @@
           <button
             v-for="(action, index) in actions"
             :key="index"
+            type="button"
             class="vc-actions-popup-button"
             @click="$emit('select', action)"
           >

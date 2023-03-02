@@ -24,13 +24,13 @@
       <div class="flex flex-col gap-y-4">
         <div v-for="(item, index) in items" :key="index" class="flex flex-row gap-x-5">
           <div class="w-full">
-            <VcInput v-model.trim="item.productSku" :is-disabled="loading" placeholder="SKU" />
+            <VcInput v-model.trim="item.productSku" :disabled="loading" placeholder="SKU" />
           </div>
 
           <div class="w-1/3 max-w-[164px] xl:w-1/4">
             <VcInput
               v-model="item.quantity"
-              :is-disabled="loading"
+              :disabled="loading"
               :max="maxQuantity"
               min="1"
               type="number"
@@ -43,7 +43,7 @@
       </div>
 
       <div class="mt-4">
-        <button class="inline-flex appearance-none items-center py-1.5 md:py-0" @click="increment">
+        <button type="button" class="inline-flex appearance-none items-center py-1.5 md:py-0" @click="increment">
           <i class="fa fa-plus mr-1.5 mt-[3px] text-primary" />
           <span
             class="border-b border-dashed border-link leading-tight text-[color:var(--color-link)] hover:border-link-hover hover:text-[color:var(--color-link-hover)]"
