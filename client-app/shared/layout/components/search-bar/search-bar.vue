@@ -5,7 +5,7 @@
       :maxlength="MAX_LENGTH"
       class="w-full"
       :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
-      @keyup.enter="searchPhrase && goToSearchResultsPage()"
+      @keyup.enter="goToSearchResultsPage"
       @keyup.esc="searchDropdownVisible && hideSearchDropdown()"
       @input="onSearchPhraseChanged()"
     >
@@ -195,13 +195,15 @@ async function searchAndShowDropdownResults() {
 }
 
 async function goToSearchResultsPage() {
-  await hideSearchDropdown();
-  router.push({
-    name: "Search",
-    query: {
-      [QueryParamName.SearchPhrase]: searchPhrase.value,
-    },
-  });
+  if (searchPhrase.value) {
+    await hideSearchDropdown();
+    router.push({
+      name: "Search",
+      query: {
+        [QueryParamName.SearchPhrase]: searchPhrase.value,
+      },
+    });
+  }
 }
 
 async function reset() {
