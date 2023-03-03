@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { computed, inject, PropType, ref, watch } from "vue";
-import { configInjectionKey } from "@/core/constants";
+import { configInjectionKey } from "@/core/injection-keys";
 import { appendSuffixToFilename } from "@/core/utilities";
 
 const props = defineProps({

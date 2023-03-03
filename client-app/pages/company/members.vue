@@ -374,8 +374,8 @@ import { breakpointsTailwind, computedEager, onClickOutside, useBreakpoints } fr
 import { computed, onMounted, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useElementVisibility, usePageHead } from "@/core/composables";
-import { XApiPermissions } from "@/core/constants";
-import { FacetItem, FacetValueItem, ISortInfo } from "@/core/types";
+import { XApiPermissions } from "@/core/enums";
+import { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
 import { getFilterExpressionFromFacets } from "@/core/utilities";
 import { PageToolbarBlock, useUser } from "@/shared/account";
 import {
@@ -511,7 +511,7 @@ async function applyFilters() {
   await fetchContacts();
 }
 
-async function resetFilterItem(facet: FacetItem, facetValue: FacetValueItem) {
+async function resetFilterItem(facet: FacetItemType, facetValue: FacetValueItemType) {
   resetFacetItem({ paramName: facet.paramName, value: facetValue.value });
   filter.value = getFilterExpressionFromFacets(appliedFacets);
   page.value = 1;

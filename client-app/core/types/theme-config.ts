@@ -1,4 +1,4 @@
-import { ISocialSharingService } from "./social-sharing";
+import type { ISocialSharingService } from "./social-sharing";
 
 export interface IThemeConfigPreset {
   page_title_with_store_name?: boolean;

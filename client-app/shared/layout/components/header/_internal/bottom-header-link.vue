@@ -40,11 +40,11 @@ export default {
 
 <script setup lang="ts">
 import { computed, PropType } from "vue";
-import { numberToShortString, MenuLink } from "@/core";
+import { numberToShortString, MenuLinkType } from "@/core";
 
 const props = defineProps({
   link: {
-    type: Object as PropType<MenuLink>,
+    type: Object as PropType<MenuLinkType>,
     required: true,
   },
 

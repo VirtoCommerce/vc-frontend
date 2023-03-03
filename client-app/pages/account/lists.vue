@@ -70,7 +70,8 @@
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed, inject } from "vue";
 import { useI18n } from "vue-i18n";
-import { configInjectionKey, DEFAULT_WISHLIST_LIMIT, usePageHead } from "@/core";
+import { DEFAULT_WISHLIST_LIMIT, usePageHead } from "@/core";
+import { configInjectionKey } from "@/core/injection-keys";
 import { usePopup } from "@/shared/popup";
 import {
   AddOrUpdateWishlistModal,

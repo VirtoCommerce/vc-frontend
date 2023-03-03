@@ -6,7 +6,7 @@ import {
   RouteQueryAndHash,
   useRouter,
 } from "vue-router";
-import { IUseRouteQueryParamOptions } from "../types/options";
+import type { IUseRouteQueryParamOptions } from "../types";
 
 export function useRouteQueryParam<T = NonNullable<LocationQueryValue> | NonNullable<LocationQueryValue>[]>(
   key: string,

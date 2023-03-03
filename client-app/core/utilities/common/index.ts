@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { cloneDeep } from "lodash";
 import { SORT_ASCENDING, SORT_DESCENDING } from "../../constants";
 import type { ISortInfo } from "../../types";
@@ -12,7 +13,6 @@ export function getBaseUrl(supportedLocales: string[]): string {
   return supportedLocales.includes(localeInPath) ? `/${localeInPath}/` : "";
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function sleep(ms: number, resolvedValue?: any): Promise<any> {
   return new Promise((resolve) => setTimeout(resolve, ms, resolvedValue));
 }

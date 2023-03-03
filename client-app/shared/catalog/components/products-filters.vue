@@ -87,7 +87,7 @@
 import { eagerComputed, useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import _ from "lodash";
 import { watch, PropType, ref, shallowReactive } from "vue";
-import { FacetItem } from "@/core/types";
+import { FacetItemType } from "@/core/types";
 import { ProductsFilters } from "@/shared/catalog";
 
 const emit = defineEmits<{
@@ -148,7 +148,7 @@ watch(
 
 const isAppliedKeyword = eagerComputed<boolean>(() => localKeyword.value === props.keyword);
 
-const filterHasSelectedValues = (facet: FacetItem) => _.some(facet.values, (value) => value.selected);
+const filterHasSelectedValues = (facet: FacetItemType) => _.some(facet.values, (value) => value.selected);
 
 function onFilterChanged() {
   emit("change", localFilters);

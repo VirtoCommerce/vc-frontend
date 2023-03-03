@@ -1,22 +1,22 @@
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
 import globals from "../globals";
-import type { MenuLink } from "../types";
+import type { MenuLinkType } from "../types";
 import { categoryTreeItemToMenuLink, getTranslatedMenuLink } from "../utilities/menu";
 import { useCategories } from "./useCategories";
 
 const menuSchema = shallowRef<typeof import("../../../config/menu.json")>();
-const openedMenuLinksStack = shallowRef<MenuLink[]>([]);
+const openedMenuLinksStack = shallowRef<MenuLinkType[]>([]);
 const matchedRouteName = ref("");
 
 const { categoryTree } = useCategories();
 
-const desktopHeaderMenuLinks = computed<MenuLink[]>(() =>
-  (menuSchema.value?.header.desktop || []).map((item: MenuLink) => getTranslatedMenuLink(item, globals.i18n))
+const desktopHeaderMenuLinks = computed<MenuLinkType[]>(() =>
+  (menuSchema.value?.header.desktop || []).map((item: MenuLinkType) => getTranslatedMenuLink(item, globals.i18n))
 );
 
-const mobileMainMenuLinks = computed<MenuLink[]>(() =>
-  (menuSchema.value?.header.mobile.main || []).map((item: MenuLink) => {
-    const menuLink: MenuLink = getTranslatedMenuLink(item, globals.i18n);
+const mobileMainMenuLinks = computed<MenuLinkType[]>(() =>
+  (menuSchema.value?.header.mobile.main || []).map((item: MenuLinkType) => {
+    const menuLink: MenuLinkType = getTranslatedMenuLink(item, globals.i18n);
 
     if (menuLink.id === "catalog") {
       menuLink.children = categoryTree.value?.children.map(categoryTreeItemToMenuLink);
@@ -26,25 +26,25 @@ const mobileMainMenuLinks = computed<MenuLink[]>(() =>
   })
 );
 
-const mobileCatalogMenuLink = computed<MenuLink | null>(
+const mobileCatalogMenuLink = computed<MenuLinkType | null>(
   () => mobileMainMenuLinks.value.find((item) => item.id === "catalog") || null
 );
 
-const mobileAccountMenuLink = computed<MenuLink | null>(() =>
+const mobileAccountMenuLink = computed<MenuLinkType | null>(() =>
   menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.account, globals.i18n) : null
 );
 
-const mobileCorporateMenuLink = computed<MenuLink | null>(() =>
+const mobileCorporateMenuLink = computed<MenuLinkType | null>(() =>
   menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.corporate, globals.i18n) : null
 );
 
-const mobilePreSelectedMenuLink = computed<MenuLink | null>(() => {
+const mobilePreSelectedMenuLink = computed<MenuLinkType | null>(() => {
   const matchedRouteNames = globals.router.currentRoute.value.matched
     .map((item) => item.name)
     .concat(matchedRouteName.value)
     .filter(Boolean);
 
-  let preSelectedLink: MenuLink | null = null;
+  let preSelectedLink: MenuLinkType | null = null;
 
   if (["Catalog", "Category", "Product"].some((item) => matchedRouteNames.includes(item))) {
     preSelectedLink = mobileCatalogMenuLink.value;
@@ -75,7 +75,7 @@ function goMainMenu() {
   triggerRef(openedMenuLinksStack);
 }
 
-function selectMenuItem(item: MenuLink) {
+function selectMenuItem(item: MenuLinkType) {
   if (!item.children) {
     return;
   }
@@ -101,6 +101,8 @@ export function useNavigations() {
     mobileCorporateMenuLink,
     mobilePreSelectedMenuLink,
     matchedRouteName: readonly(matchedRouteName),
-    openedItem: computed<MenuLink | undefined>(() => openedMenuLinksStack.value[openedMenuLinksStack.value.length - 1]),
+    openedItem: computed<MenuLinkType | undefined>(
+      () => openedMenuLinksStack.value[openedMenuLinksStack.value.length - 1]
+    ),
   };
 }

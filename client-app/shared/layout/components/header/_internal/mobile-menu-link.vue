@@ -48,10 +48,10 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { NavigationFailure } from "vue-router";
-import { MenuLink, numberToShortString } from "@/core";
+import { MenuLinkType, numberToShortString } from "@/core";
 
 interface Props {
-  link: MenuLink;
+  link: MenuLinkType;
   count?: number;
 }
 

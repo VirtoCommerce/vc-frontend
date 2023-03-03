@@ -1,6 +1,6 @@
 import { RouteLocationRaw } from "vue-router";
-import { CategoryTreeItemType } from "@/core";
-import { Category } from "@/xapi";
+import type { Category } from "@/xapi/types";
+import type { CategoryTreeItemType } from "../../types";
 
 export function getCategoryRoute(category: Category | CategoryTreeItemType): RouteLocationRaw {
   return category.slug ? `/${category.slug}` : { name: "Category", params: { categoryId: category.id } };
@@ -21,7 +21,7 @@ export function buildCategoryTree(parent: CategoryTreeItemType, categories: Cate
 export function searchCategoryTreeItemByKey(
   categoryTreeItem: CategoryTreeItemType,
   key: keyof CategoryTreeItemType,
-  value: any
+  value: any // eslint-disable-line @typescript-eslint/no-explicit-any
 ): CategoryTreeItemType | undefined {
   if (categoryTreeItem[key] === value) {
     return categoryTreeItem;

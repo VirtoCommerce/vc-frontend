@@ -1,5 +1,5 @@
 import { App, Plugin } from "vue";
-import { configInjectionKey } from "../constants";
+import { configInjectionKey } from "../injection-keys";
 import type { IThemeConfigPreset } from "../types";
 
 export const configPlugin: Plugin<IThemeConfigPreset> = {

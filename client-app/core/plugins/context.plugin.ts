@@ -1,5 +1,5 @@
 import { App, Plugin } from "vue";
-import { contextInjectionKey } from "../constants";
+import { contextInjectionKey } from "../injection-keys";
 import type { IThemeContext } from "../types";
 
 export const contextPlugin: Plugin<IThemeContext> = {

@@ -1,4 +1,6 @@
-import { Currency, IThemeConfigPreset, Language } from "@/core";
+import type { ICurrency } from "./currency";
+import type { ILanguage } from "./language";
+import type { IThemeConfigPreset } from "./theme-config";
 
 export interface IThemeContext {
   baseUrl: string;
@@ -7,9 +9,9 @@ export interface IThemeContext {
   catalogId: string;
   userId: string;
   userName: string;
-  defaultLanguage: Language;
-  defaultCurrency: Currency;
-  availLanguages: Language[];
-  availCurrencies: Currency[];
+  defaultLanguage: ILanguage;
+  defaultCurrency: ICurrency;
+  availLanguages: ILanguage[];
+  availCurrencies: ICurrency[];
   settings: IThemeConfigPreset;
 }

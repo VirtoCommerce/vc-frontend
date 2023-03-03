@@ -325,11 +325,10 @@ import { useRoute } from "vue-router";
 import {
   buildBreadcrumbs,
   DEFAULT_PAGE_SIZE,
-  FacetItem,
-  FacetValueItem,
+  FacetItemType,
+  FacetValueItemType,
   getFilterExpressionFromFacets,
   PRODUCT_SORTING_LIST,
-  QueryParamName,
   searchCategoryTreeItemByKey,
   useBreadcrumbs,
   useCategories,
@@ -338,6 +337,7 @@ import {
   usePageHead,
   useRouteQueryParam,
 } from "@/core";
+import { QueryParamName } from "@/core/enums";
 import { AddToCart } from "@/shared/cart";
 import {
   CategorySelector,
@@ -529,7 +529,7 @@ async function updateMobileFilters(newFilters: ProductsFilters) {
   mobileFilters.facets = await getFacets(searchParamsForFacets);
 }
 
-function removeFacetFilterItem(payload: Pick<FacetItem, "paramName"> & Pick<FacetValueItem, "value">) {
+function removeFacetFilterItem(payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">) {
   const facet = facets.value.find((item) => item.paramName === payload.paramName);
   const facetValue = facet?.values.find((item) => item.value === payload.value);
 

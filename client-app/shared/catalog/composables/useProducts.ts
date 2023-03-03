@@ -1,6 +1,6 @@
 import { computed, inject, readonly, ref, shallowRef } from "vue";
-import { configInjectionKey } from "@/core/constants";
-import { FacetItem } from "@/core/types";
+import { configInjectionKey } from "@/core/injection-keys";
+import { FacetItemType } from "@/core/types";
 import { Logger, rangeFacetToCommonFacet, termFacetToCommonFacet } from "@/core/utilities";
 import { searchProducts } from "@/xapi/graphql/catalog";
 import { Product } from "@/xapi/types";
@@ -29,7 +29,7 @@ export default (
   const loadingMore = ref(false);
   const facetsLoading = ref(false);
   const products = shallowRef<Product[]>([]);
-  const facets = shallowRef<FacetItem[]>([]);
+  const facets = shallowRef<FacetItemType[]>([]);
   const total = ref(0);
   const pages = ref(1);
 
@@ -55,7 +55,7 @@ export default (
         term_facets.sort((a, b) => a.label.localeCompare(b.label));
         range_facets.sort((a, b) => a.label.localeCompare(b.label));
 
-        facets.value = Array<FacetItem>().concat(
+        facets.value = Array<FacetItemType>().concat(
           term_facets.map(termFacetToCommonFacet),
           range_facets.map(rangeFacetToCommonFacet)
         );
@@ -85,7 +85,7 @@ export default (
     }
   }
 
-  async function getFacets(searchParams: Partial<ProductsSearchParams>): Promise<FacetItem[]> {
+  async function getFacets(searchParams: Partial<ProductsSearchParams>): Promise<FacetItemType[]> {
     facetsLoading.value = true;
 
     try {
@@ -98,7 +98,7 @@ export default (
       term_facets.sort((a, b) => a.label.localeCompare(b.label));
       range_facets.sort((a, b) => a.label.localeCompare(b.label));
 
-      return Array<FacetItem>().concat(
+      return Array<FacetItemType>().concat(
         term_facets.map(termFacetToCommonFacet),
         range_facets.map(rangeFacetToCommonFacet)
       );

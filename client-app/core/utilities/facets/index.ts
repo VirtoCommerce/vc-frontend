@@ -1,7 +1,7 @@
 import { MaybeRef } from "@vueuse/core";
 import { unref } from "vue";
-import { FacetItem, FacetValueItem } from "@/core/types";
-import { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@/xapi/types";
+import type { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@/xapi/types";
+import type { FacetItemType, FacetValueItemType } from "../../types";
 
 /**
  * Learn more about filter syntax:
@@ -9,7 +9,7 @@ import { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@/xapi/typ
  * - {@link https://github.com/VirtoCommerce/vc-module-experience-api/blob/master/docs/x-catalog-reference.md#filter-by-price}
  */
 
-export function getFilterExpressionFromFacets(facets: MaybeRef<FacetItem[]>): string {
+export function getFilterExpressionFromFacets(facets: MaybeRef<FacetItemType[]>): string {
   const result: string[] = [];
 
   for (const facet of unref(facets)) {
@@ -44,13 +44,13 @@ export function getFilterExpressionFromFacetRange(facetRange: FacetRangeType): s
   return `${firstBracket}${fromStr}TO${toStr}${lastBracket}`;
 }
 
-export function termFacetToCommonFacet(termFacet: TermFacet): FacetItem {
+export function termFacetToCommonFacet(termFacet: TermFacet): FacetItemType {
   return {
     type: "terms",
     label: termFacet.label,
     paramName: termFacet.name,
     values: termFacet
-      .terms!.map<FacetValueItem>((facetTerm: FacetTermType) => ({
+      .terms!.map<FacetValueItemType>((facetTerm: FacetTermType) => ({
         count: facetTerm.count,
         label: facetTerm.label,
         value: facetTerm.term!,
@@ -60,12 +60,12 @@ export function termFacetToCommonFacet(termFacet: TermFacet): FacetItem {
   };
 }
 
-export function rangeFacetToCommonFacet(rangeFacet: RangeFacet): FacetItem {
+export function rangeFacetToCommonFacet(rangeFacet: RangeFacet): FacetItemType {
   return {
     type: "range",
     label: rangeFacet.label,
     paramName: rangeFacet.name,
-    values: rangeFacet.ranges!.map<FacetValueItem>((facetRange: FacetRangeType) => ({
+    values: rangeFacet.ranges!.map<FacetValueItemType>((facetRange: FacetRangeType) => ({
       count: facetRange.count,
       label: facetRange.label!,
       value: getFilterExpressionFromFacetRange(facetRange),
