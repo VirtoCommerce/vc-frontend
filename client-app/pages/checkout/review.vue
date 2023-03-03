@@ -138,7 +138,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
-import { OrderLineItems } from "@/shared/account";
+import { OrderLineItems, useUserOrder } from "@/shared/account";
 import { useCart, useCoupon, usePurchaseOrderNumber } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
 import { CartAddressType, CustomerOrderType } from "@/xapi";
@@ -156,6 +156,7 @@ const { billingAddressEqualsShipping, shipment, payment, comment, isValidCheckou
   useCheckout();
 const { purchaseOrderNumber } = usePurchaseOrderNumber();
 const { couponCode } = useCoupon();
+const { fetchOrder } = useUserOrder();
 
 const creatingOrder = ref(false);
 
@@ -182,12 +183,13 @@ async function createOrder(): Promise<void> {
 
 async function createOrderProceed(order: CustomerOrderType) {
   orderCreated.value = true;
-
-  if (payment.value?.paymentGatewayCode === "AuthorizeNetPaymentMethod") {
+  if (order.inPayments[0].gatewayCode === "AuthorizeNetPaymentMethod") {
+    await fetchOrder({ id: order.id });
     await router.replace({
       name: "CheckoutPayment",
       params: {
         orderId: order.id,
+        orderNumber: order.number,
       },
     });
   } else {

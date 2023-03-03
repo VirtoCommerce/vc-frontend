@@ -39,17 +39,10 @@ import { OrderSummary } from "@/shared/checkout";
 import { PaymentProcessingAuthorizeNet } from "@/shared/payment";
 import { PaymentInType } from "@/xapi";
 
-const props = defineProps({
-  orderId: {
-    type: String,
-    default: "",
-  },
-});
-
 const paymentMethodComponent = ref<InstanceType<typeof PaymentProcessingAuthorizeNet> | null>(null);
 
 const router = useRouter();
-const { loading, order, fetchOrder } = useUserOrder();
+const { loading, order } = useUserOrder();
 
 const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments[0]);
 
@@ -62,9 +55,4 @@ async function onPaymentResult() {
     },
   });
 }
-watchEffect(() => {
-  if (props.orderId) {
-    fetchOrder({ id: props.orderId });
-  }
-});
 </script>
