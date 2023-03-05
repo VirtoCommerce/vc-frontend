@@ -1,8 +1,8 @@
 import { omit } from "lodash";
-import { computed, readonly, ref } from "vue";
+import { computed, readonly, Ref, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { AddressType, Logger, useGoogleAnalytics } from "@/core";
-import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
+import { useUser, useUserAddresses, useUserCheckoutDefaults, useUserOrder } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { AddOrUpdateAddressModal, SelectAddressModal } from "@/shared/checkout";
 import { useNotifications } from "@/shared/notification";
@@ -22,6 +22,7 @@ import {
 const loading = ref(false);
 const comment = ref("");
 const billingAddressEqualsShipping = ref(true);
+const orderCreated = ref(false);
 
 export default function useCheckout() {
   const ga = useGoogleAnalytics();
@@ -43,6 +44,7 @@ export default function useCheckout() {
     updatePayment,
     changeComment,
   } = useCart();
+  const { clearOrder } = useUserOrder();
 
   const isValidDeliveryAddress = computed<boolean>(() => !!shipment.value?.deliveryAddress);
   const isValidBillingAddress = computed<boolean>(
@@ -106,11 +108,13 @@ export default function useCheckout() {
     if (reloadCart) {
       await fetchCart();
     }
+
+    clearOrder();
+    orderCreated.value = false;
   }
 
   async function initialize(): Promise<void> {
     loading.value = true;
-
     await fetchCart();
 
     if (isAuthenticated.value) {
@@ -314,6 +318,7 @@ export default function useCheckout() {
     isValidShipment,
     isValidPayment,
     isValidCheckout,
+    orderCreated,
     initialize,
     onDeliveryAddressChange,
     onBillingAddressChange,

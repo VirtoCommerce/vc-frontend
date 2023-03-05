@@ -5,7 +5,7 @@
       :methods="availablePaymentMethods"
       :payment="payment"
       :shipment="shipment"
-      :disabled="loading"
+      :disabled="loading || orderCreated"
       @change:address="onBillingAddressChange"
       @change:method="setPaymentMethod"
     />
@@ -30,11 +30,16 @@
           </transition>
 
           <VcButton
+            v-if="!orderCreated"
             :to="{ name: 'Review', replace: true }"
             :is-disabled="isDisabledNextStep"
             class="mt-4 w-full uppercase"
           >
             {{ $t("common.buttons.go_to_review_order") }}
+          </VcButton>
+
+          <VcButton v-else class="mt-4 w-full uppercase" :to="{ name: 'CheckoutPayment', replace: true }">
+            {{ $t("common.buttons.go_to_payment_order") }}
           </VcButton>
 
           <transition name="slide-fade-top" mode="out-in" appear>
@@ -55,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, watchEffect } from "vue";
 import { useCart, usePurchaseOrderNumber } from "@/shared/cart";
 import { BillingDetailsSection, OrderSummary, useCheckout } from "@/shared/checkout";
 
@@ -66,6 +71,7 @@ const {
   payment,
   isValidPayment,
   isValidCheckout,
+  orderCreated,
   onBillingAddressChange,
   setPaymentMethod,
 } = useCheckout();

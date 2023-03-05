@@ -2,6 +2,7 @@ import { RouteRecordRaw } from "vue-router";
 import Billing from "@/pages/checkout/billing.vue";
 import Completed from "@/pages/checkout/completed.vue";
 import PaymentResult from "@/pages/checkout/payment-result.vue";
+import Payment from "@/pages/checkout/payment.vue";
 import Review from "@/pages/checkout/review.vue";
 import Shipping from "@/pages/checkout/shipping.vue";
 
@@ -20,6 +21,11 @@ export const checkoutRoutes: RouteRecordRaw[] = [
     path: "review",
     name: "Review",
     component: Review,
+  },
+  {
+    path: "payment",
+    name: "CheckoutPayment",
+    component: Payment,
   },
   {
     path: "completed/:orderNumber/:orderId",
