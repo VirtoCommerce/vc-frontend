@@ -13,9 +13,15 @@
         </div>
       </div>
 
-      <div class="p-5 md:p-6">
+      <div v-if="order" class="p-5 md:p-6">
+        <PaymentProcessingRedirection
+          v-if="paymentMethodType === PaymentMethod.Redirection"
+          :order="order"
+          :disabled="loading"
+        />
+
         <PaymentProcessingAuthorizeNet
-          v-if="order"
+          v-else-if="paymentMethodType === PaymentMethod.PreparedForm"
           ref="paymentMethodComponent"
           :order="order"
           :disabled="loading"
@@ -32,11 +38,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useUserOrder } from "@/shared/account";
 import { OrderSummary } from "@/shared/checkout";
-import { PaymentProcessingAuthorizeNet } from "@/shared/payment";
+import { PaymentMethod, PaymentProcessingAuthorizeNet } from "@/shared/payment";
 import { PaymentInType } from "@/xapi";
 
 const paymentMethodComponent = ref<InstanceType<typeof PaymentProcessingAuthorizeNet> | null>(null);
@@ -45,6 +51,7 @@ const router = useRouter();
 const { loading, order } = useUserOrder();
 
 const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments[0]);
+const paymentMethodType = computed<PaymentMethod | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);
 
 async function onPaymentResult() {
   await router.replace({

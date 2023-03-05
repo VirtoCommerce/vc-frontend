@@ -74,20 +74,9 @@ const {
   orderCreated,
   onBillingAddressChange,
   setPaymentMethod,
-  setStepsDefault,
-  setStepsWithPayments,
 } = useCheckout();
 const { purchaseOrderNumber, purchaseOrderNumberIsApplied, setPurchaseOrderNumber, removePurchaseOrderNumber } =
   usePurchaseOrderNumber();
 
 const isDisabledNextStep = computed<boolean>(() => loading.value || !isValidCheckout.value);
-
-watchEffect(() => {
-  console.log("There is effect");
-  if (payment.value?.paymentGatewayCode === "AuthorizeNetPaymentMethod") {
-    setStepsWithPayments();
-  } else {
-    setStepsDefault();
-  }
-});
 </script>
