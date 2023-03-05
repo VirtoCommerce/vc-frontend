@@ -24,13 +24,13 @@
 
 <script setup lang="ts">
 import { invoke } from "@vueuse/core";
-import { computed, onMounted, Ref, ref, watchEffect } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { RouteRecordName, useRoute } from "vue-router";
 import { usePageHead } from "@/core";
 import { useCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout";
-import { PaymentMethod, PaymentMethodGroupType } from "@/shared/payment";
+import { PaymentMethodGroupType } from "@/shared/payment";
 
 const route = useRoute();
 const { t } = useI18n();
