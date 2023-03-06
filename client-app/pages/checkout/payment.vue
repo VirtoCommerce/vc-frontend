@@ -25,8 +25,8 @@
           ref="paymentMethodComponent"
           :order="order"
           :disabled="loading"
-          @success="onPaymentResult"
-          @fail="onPaymentResult"
+          @success="onPaymentResult(true)"
+          @fail="onPaymentResult(false)"
         />
       </div>
     </div>
@@ -41,7 +41,7 @@
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useUserOrder } from "@/shared/account";
-import { OrderSummary } from "@/shared/checkout";
+import { OrderSummary, useCheckout } from "@/shared/checkout";
 import { PaymentMethod, PaymentProcessingAuthorizeNet } from "@/shared/payment";
 import { PaymentInType } from "@/xapi";
 
@@ -49,17 +49,16 @@ const paymentMethodComponent = ref<InstanceType<typeof PaymentProcessingAuthoriz
 
 const router = useRouter();
 const { loading, order } = useUserOrder();
+const { orderPaymentResult } = useCheckout();
 
 const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments[0]);
 const paymentMethodType = computed<PaymentMethod | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);
 
-async function onPaymentResult() {
+async function onPaymentResult(paymentResult: boolean) {
+  orderPaymentResult.value = paymentResult;
+
   await router.replace({
-    name: "OrderCompleted",
-    params: {
-      orderId: order.value!.id,
-      orderNumber: order.value!.number,
-    },
+    name: "OrderPaymentResult",
   });
 }
 </script>

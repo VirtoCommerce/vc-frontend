@@ -12,6 +12,20 @@ export enum PaymentMethodGroupType {
   Manual,
 }
 
+export enum PaymentActionGroupType {
+  // Paypal type, redirecting payer to paypal site
+  Paypal = "Paypal",
+
+  // Bank card type, information about card is entered on our site
+  BankCard = "BankCard",
+
+  // Alternative type, redirecting payer to external payment or using prepared html-form/iframe
+  Alternative = "Alternative",
+
+  // Manual payment method type, when user pay out of website by instruction (like Cash on Demand (COD), bank deposit)
+  Manual = "Manual",
+}
+
 export enum PaymentMethod {
   Unknown,
 

@@ -141,6 +141,7 @@ import { useRouter } from "vue-router";
 import { OrderLineItems, useUserOrder } from "@/shared/account";
 import { useCart, useCoupon, usePurchaseOrderNumber } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
+import { PaymentMethodGroupType } from "@/shared/payment";
 import { CartAddressType, CustomerOrderType } from "@/xapi";
 
 const router = useRouter();
@@ -183,7 +184,12 @@ async function createOrder(): Promise<void> {
 
 async function createOrderProceed(order: CustomerOrderType) {
   orderCreated.value = true;
-  if (order.inPayments[0].gatewayCode === "AuthorizeNetPaymentMethod") {
+
+  const selectedPaymentMethodGroupType = availablePaymentMethods.value.find(
+    (item) => item.code === payment.value?.paymentGatewayCode
+  )?.paymentMethodGroupType;
+
+  if (selectedPaymentMethodGroupType && selectedPaymentMethodGroupType !== PaymentMethodGroupType[3]) {
     await fetchOrder({ id: order.id });
     await router.replace({
       name: "CheckoutPayment",
