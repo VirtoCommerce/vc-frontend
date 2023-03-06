@@ -30,7 +30,7 @@ import { RouteRecordName, useRoute } from "vue-router";
 import { usePageHead } from "@/core";
 import { useCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout";
-import { PaymentMethodGroupType } from "@/shared/payment";
+import { PaymentMethodGroupActionType } from "@/shared/payment";
 
 const route = useRoute();
 const { t } = useI18n();
@@ -75,7 +75,7 @@ const steps = computed<IStepsItem[]>(() => {
     (item) => item.code === payment.value?.paymentGatewayCode
   )?.paymentMethodGroupType;
 
-  if (selectedPaymentMethodGroupType && selectedPaymentMethodGroupType !== PaymentMethodGroupType[3]) {
+  if (selectedPaymentMethodGroupType && selectedPaymentMethodGroupType !== PaymentMethodGroupActionType.Manual) {
     result.splice(
       4,
       1,
