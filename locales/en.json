@@ -1176,6 +1176,28 @@
         "home": "Home page"
       }
     },
+    "payment_result": {
+      "meta": {
+        "title": "Payment"
+      },
+      "title": {
+        "success": "Payment successful",
+        "failed": "Payment failed"
+      },
+      "subtitle": {
+        "success": "Order {0} has been successfully submitted.",
+        "failed": "Order {0} has not been paid."
+      },
+      "text": {
+        "success": "Thank you, we are checking your payment. You will be notified via email about the order status change.",
+        "failed": "There is a problem with your payment, try again please"
+      },
+      "buttons": {
+        "show_order": "Show order",
+        "home": "Home page",
+        "payment_details": "Payment details"
+      }
+    },
     "search": {
       "meta": {
         "title": "Search: {0}"

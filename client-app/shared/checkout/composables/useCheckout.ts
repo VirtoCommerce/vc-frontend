@@ -23,6 +23,7 @@ const loading = ref(false);
 const comment = ref("");
 const billingAddressEqualsShipping = ref(true);
 const orderCreated = ref(false);
+const orderPaymentResult = ref(false);
 
 export default function useCheckout() {
   const ga = useGoogleAnalytics();
@@ -319,6 +320,7 @@ export default function useCheckout() {
     isValidPayment,
     isValidCheckout,
     orderCreated,
+    orderPaymentResult,
     initialize,
     onDeliveryAddressChange,
     onBillingAddressChange,
