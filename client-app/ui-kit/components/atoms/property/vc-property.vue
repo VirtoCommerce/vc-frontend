@@ -3,7 +3,7 @@
     :class="[
       'vc-property',
       {
-        'vc-property--removed': removed,
+        'vc-property--no-product': noProduct,
       },
     ]"
   >
@@ -19,7 +19,7 @@
 interface IProps {
   label: string;
   value?: string;
-  removed?: boolean;
+  noProduct?: boolean;
 }
 
 defineProps<IProps>();
@@ -27,30 +27,30 @@ defineProps<IProps>();
 
 <style lang="scss">
 .vc-property {
-  $removed: "";
+  $noProduct: "";
 
   @apply grid grid-cols-[auto_1fr_auto] gap-1 font-lato text-xs text-gray-500;
 
-  &--removed {
-    $removed: &;
+  &--no-product {
+    $noProduct: &;
   }
 
   &__label {
     @apply min-w-0 truncate;
 
-    #{$removed} & {
+    #{$noProduct} & {
       @apply text-slate-400;
     }
   }
 
   &__dots {
-    @apply mb-1 border-b border-dashed border-gray-200;
+    @apply mb-[3px] border-b border-dashed border-gray-200;
   }
 
   &__value {
     @apply min-w-0 font-bold text-[color:var(--color-body-text)] truncate;
 
-    #{$removed} & {
+    #{$noProduct} & {
       @apply text-slate-400;
     }
   }

@@ -1,9 +1,21 @@
 import { app } from "@storybook/vue3";
+import vueRouter from "storybook-vue3-router";
+import { createI18n } from "vue-i18n";
 import * as UIKitComponents from "../client-app/ui-kit/components";
 import SettingsData from "../config/settings_data.json";
+import en from "../locales/en.json";
 
 /* Project Styles */
 import "../client-app/assets/styles/main.scss";
+
+const i18n = createI18n({
+  locale: "en",
+  messages: {
+    en,
+  },
+});
+
+app.use(i18n);
 
 /* Setting project CSS variables */
 Object.entries(SettingsData.presets.Mercury)
@@ -32,3 +44,5 @@ export const parameters = {
   previewTabs: { "storybook/docs/panel": { index: -1 } },
   viewMode: "docs",
 };
+
+export const decorators = [vueRouter()];

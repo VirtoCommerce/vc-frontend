@@ -23,18 +23,10 @@ defineProps<Props>();
 <style lang="scss">
 .vc-line-item-price {
   &__actual {
-    @apply text-13 font-semibold text-[color:var(--color-body-text)];
+    @apply text-xs font-bold text-[color:var(--color-body-text)];
 
-    @media (min-width: theme("screens.md")) {
+    @media (min-width: theme("screens.2xl")) {
       @apply font-normal;
-    }
-
-    @media (min-width: theme("screens.lg")) {
-      @apply text-xs;
-    }
-
-    @media (min-width: theme("screens.xl")) {
-      @apply font-medium;
     }
   }
 

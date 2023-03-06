@@ -5,7 +5,7 @@ export default {
   title: "Components/Atoms/VcProperty",
   component: VcProperty,
   args: {
-    removed: false,
+    noProduct: false,
   },
 } as Meta<typeof VcProperty>;
 
@@ -21,8 +21,8 @@ Basic.args = {
   value: "Blank with Shoulder",
 };
 
-export const Removed = Template.bind({});
-Removed.args = {
+export const NoProduct = Template.bind({});
+NoProduct.args = {
   ...Basic.args,
-  removed: true,
+  noProduct: true,
 };
