@@ -1,5 +1,5 @@
 <template>
-  <router-view v-if="currentStepId === 'OrderCompleted' || currentStepId === 'OrderPaymentCompleted'" />
+  <router-view v-if="currentStepId === 'OrderCompleted' || currentStepId === 'OrderPaymentResult'" />
 
   <VcContainer v-else-if="initialized">
     <VcTypography tag="h1" variant="h2" weight="bold" class="mb-5">
@@ -76,11 +76,19 @@ const steps = computed<IStepsItem[]>(() => {
   )?.paymentMethodGroupType;
 
   if (selectedPaymentMethodGroupType && selectedPaymentMethodGroupType !== PaymentMethodGroupType[3]) {
-    result.splice(4, 0, {
-      id: "CheckoutPayment",
-      route: { name: "CheckoutPayment", replace: true },
-      text: t("pages.checkout.steps.payment"),
-    });
+    result.splice(
+      4,
+      1,
+      {
+        id: "CheckoutPayment",
+        route: { name: "CheckoutPayment", replace: true },
+        text: t("pages.checkout.steps.payment"),
+      },
+      {
+        id: "OrderPaymentResult",
+        text: t("pages.checkout.steps.completed"),
+      }
+    );
   }
   return result;
 });
@@ -90,7 +98,7 @@ usePageHead({
 });
 
 invoke(async () => {
-  if (currentStepId.value !== "OrderCompleted") {
+  if (currentStepId.value !== "OrderCompleted" && currentStepId.value !== "OrderPaymentResult") {
     await initialize();
     initialized.value = true;
   }

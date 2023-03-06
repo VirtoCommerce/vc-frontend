@@ -1,11 +1,11 @@
 <template>
   <VcEmptyPage
     :image="
-      isPaymentSuccess
-        ? '/static/images/order-payment-successful.png'
-        : '/static/images/order-payment-completed-failed.png'
+      isPaymentSuccess ? '/static/images/order-payment-successful.png' : '/static/images/order-payment-failed.png'
     "
-    mobile-image="isPaymentSuccess ? '/static/images/order-payment-successful.png' : '/static/images/order-payment-completed-failed.png'"
+    :mobile-image="
+      isPaymentSuccess ? '/static/images/order-payment-successful.png' : '/static/images/order-payment-failed.png'
+    "
     class="flex grow flex-col"
   >
     <template #title>
@@ -38,14 +38,14 @@
         <div class="max-w-md text-center text-19 lg:text-left">
           <strong
             v-t="{
-              path: isPaymentSuccess ? 'pages.payment_result.title.success' : 'pages.payment_result.title.failed',
+              path: isPaymentSuccess ? 'pages.payment_result.subtitle.success' : 'pages.payment_result.subtitle.failed',
               args: [orderNumber],
             }"
             class="mb-4 block"
           />
           <span v-t="isPaymentSuccess ? 'pages.payment_result.text.success' : 'pages.payment_result.text.failed'" />
           <div class="mt-10 flex flex-col items-center justify-center gap-6 md:flex-row lg:justify-start">
-            <VcButton to="/" class="w-40 uppercase">
+            <VcButton v-if="!isPaymentSuccess" :to="{ name: 'CheckoutPayment', replace: true }" class="w-40 uppercase">
               <i class="fas fa-chevron-left mr-3" />
               {{ $t("pages.payment_result.buttons.payment_details") }}
             </VcButton>
@@ -69,18 +69,17 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core";
-
-const props = defineProps({
-  orderId: String,
-  orderNumber: String,
-  paymentStatus: String,
-});
+import { useUserOrder } from "@/shared/account";
+import { useCheckout } from "@/shared/checkout";
 
 const { t } = useI18n();
+const { orderPaymentResult: isPaymentSuccess } = useCheckout();
+const { order } = useUserOrder();
+
+const orderId = computed(() => order.value?.id);
+const orderNumber = computed(() => order.value?.number);
 
 usePageHead({
   title: t("pages.payment_result.meta.title"),
 });
-
-const isPaymentSuccess = computed<boolean>(() => props.paymentStatus === "Success");
 </script>

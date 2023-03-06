@@ -35,10 +35,8 @@ export const checkoutRoutes: RouteRecordRaw[] = [
     props: true,
   },
   {
-    path: "payment/:orderNumber/:orderId",
+    path: "payment",
     name: "OrderPaymentResult",
     component: PaymentResult,
-    meta: { layout: "Main" },
-    props: true,
   },
 ];
