@@ -1,5 +1,5 @@
 import { omit } from "lodash";
-import { computed, readonly, Ref, ref } from "vue";
+import { computed, readonly, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { AddressType, Logger, useGoogleAnalytics } from "@/core";
 import { useUser, useUserAddresses, useUserCheckoutDefaults, useUserOrder } from "@/shared/account";
