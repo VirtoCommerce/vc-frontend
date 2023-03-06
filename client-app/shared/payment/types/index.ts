@@ -12,7 +12,7 @@ export enum PaymentMethodGroupType {
   Manual,
 }
 
-export enum PaymentMethodGroupActionType {
+export enum PaymentActionGroupType {
   // Paypal type, redirecting payer to paypal site
   Paypal = "Paypal",
 
