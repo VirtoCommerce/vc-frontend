@@ -22,7 +22,8 @@ const Template: StoryFn<typeof VcLineItem> = (args) => ({
 export const Basic = Template.bind({});
 Basic.args = {
   item: {
-    imageUrl: null,
+    imageUrl: "https://vcst-dev.paas.govirto.com/cms-content/assets/catalog/7829d/38DJ66/5ZA21_AS01_sm.jpg",
+    name: "The product name",
     productId: "d4a775b8-b35e-4079-b5e1-6f42801f821b",
     product: {
       id: "d4a775b8-b35e-4079-b5e1-6f42801f821b",
@@ -59,51 +60,13 @@ Basic.args = {
         },
       ],
     },
-    quantity: 1,
-    sku: "XZH-79259286",
-    thumbnailImageUrl: null,
-    validationErrors: [],
-    extendedPrice: {
-      amount: 100,
-      decimalDigits: 2,
-      formattedAmount: "$100.00",
-      formattedAmountWithoutCurrency: "100.00",
-      formattedAmountWithoutPoint: "$100",
-      formattedAmountWithoutPointAndCurrency: "100",
-      currency: {
-        code: "USD",
-        customFormatting: null,
-        exchangeRate: 1,
-        symbol: "$",
-      },
-    },
-    placedPrice: {
-      amount: 100,
-      decimalDigits: 2,
-      formattedAmount: "$100.00",
-      formattedAmountWithoutCurrency: "100.00",
-      formattedAmountWithoutPoint: "$100",
-      formattedAmountWithoutPointAndCurrency: "100",
-      currency: {
-        code: "USD",
-        customFormatting: null,
-        exchangeRate: 1,
-        symbol: "$",
-      },
-    },
     listPrice: {
-      amount: 100,
+      amount: 200,
       decimalDigits: 2,
-      formattedAmount: "$100.00",
-      formattedAmountWithoutCurrency: "100.00",
-      formattedAmountWithoutPoint: "$100",
-      formattedAmountWithoutPointAndCurrency: "100",
-      currency: {
-        code: "USD",
-        customFormatting: null,
-        exchangeRate: 1,
-        symbol: "$",
-      },
+      formattedAmount: "$200.00",
+      formattedAmountWithoutCurrency: "200.00",
+      formattedAmountWithoutPoint: "$200",
+      formattedAmountWithoutPointAndCurrency: "200",
     },
     salePrice: {
       amount: 100,
@@ -112,12 +75,6 @@ Basic.args = {
       formattedAmountWithoutCurrency: "100.00",
       formattedAmountWithoutPoint: "$100",
       formattedAmountWithoutPointAndCurrency: "100",
-      currency: {
-        code: "USD",
-        customFormatting: null,
-        exchangeRate: 1,
-        symbol: "$",
-      },
     },
     vendor: {
       id: "bc7d18d7-0ae0-4bbd-9e06-7cfb08b7fa7c",
@@ -130,5 +87,43 @@ Basic.args = {
 export const Removable = Template.bind({});
 Removable.args = {
   ...Basic.args,
+  removable: true,
+};
+
+export const Disabled = Template.bind({});
+Disabled.args = {
+  ...Basic.args,
+  removable: true,
+  disabled: true,
+};
+
+export const NoProduct = Template.bind({});
+NoProduct.args = {
+  item: {
+    imageUrl: "https://vcst-dev.paas.govirto.com/cms-content/assets/catalog/7829d/38DJ66/5ZA21_AS01_sm.jpg",
+    name: "The product name",
+    productId: "d4a775b8-b35e-4079-b5e1-6f42801f821b",
+    listPrice: {
+      amount: 200,
+      decimalDigits: 2,
+      formattedAmount: "$200.00",
+      formattedAmountWithoutCurrency: "200.00",
+      formattedAmountWithoutPoint: "$200",
+      formattedAmountWithoutPointAndCurrency: "200",
+    },
+    salePrice: {
+      amount: 100,
+      decimalDigits: 2,
+      formattedAmount: "$100.00",
+      formattedAmountWithoutCurrency: "100.00",
+      formattedAmountWithoutPoint: "$100",
+      formattedAmountWithoutPointAndCurrency: "100",
+    },
+    vendor: {
+      id: "bc7d18d7-0ae0-4bbd-9e06-7cfb08b7fa7c",
+      name: "b2badmin test ltd",
+      rating: null,
+    },
+  },
   removable: true,
 };
