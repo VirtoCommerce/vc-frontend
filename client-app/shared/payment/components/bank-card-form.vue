@@ -6,8 +6,8 @@
       :label="$t('shared.payment.bank_card_form.number_label')"
       :message="formErrors.number || errors.number"
       :error="!!formErrors.number || !!errors.number"
-      :readonly="isReadonly"
-      :disabled="isDisabled"
+      :readonly="readonly"
+      :disabled="disabled"
       placeholder="1111 1111 1111 1111"
       minlength="14"
       maxlength="23"
@@ -21,8 +21,8 @@
       :label="$t('shared.payment.bank_card_form.cardholder_name_label')"
       :message="formErrors.cardholderName || errors.cardholderName"
       :error="!!formErrors.cardholderName || !!errors.cardholderName"
-      :readonly="isReadonly"
-      :disabled="isDisabled"
+      :readonly="readonly"
+      :disabled="disabled"
       required
       @input="input"
     />
@@ -35,8 +35,8 @@
         :placeholder="$t('shared.payment.bank_card_form.expiration_date_placeholder')"
         :message="expirationDateErrors"
         :error="!!expirationDateErrors"
-        :readonly="isReadonly"
-        :disabled="isDisabled"
+        :readonly="readonly"
+        :disabled="disabled"
         name="expirationDate"
         autocomplete="off"
         minlength="7"
@@ -52,8 +52,8 @@
         :label="$t('shared.payment.bank_card_form.security_code_label')"
         :message="formErrors.securityCode || errors.securityCode"
         :error="!!formErrors.securityCode || !!errors.securityCode"
-        :readonly="isReadonly"
-        :disabled="isDisabled"
+        :readonly="readonly"
+        :disabled="disabled"
         type="password"
         placeholder="111"
         name="securityCode"
@@ -64,6 +64,7 @@
         hide-password-switcher
         required
         @input="input"
+        @keyup.enter="$emit('submit')"
       />
     </div>
   </form>
@@ -72,34 +73,28 @@
 <script setup lang="ts">
 import { clone } from "lodash";
 import { useForm, useField } from "vee-validate";
-import { computed, PropType, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 import { BankCardErrorsType, BankCardType } from "@/shared/payment";
 
-const emit = defineEmits<{
+interface IEmits {
   (event: "update:modelValue", bankCardData: Partial<BankCardType>): void;
   (event: "update:valid", value: boolean): void;
-}>();
+  (event: "submit"): void;
+}
 
-const props = defineProps({
-  isReadonly: Boolean,
-  isDisabled: Boolean,
+interface IProps {
+  modelValue: BankCardType;
+  valid?: boolean;
+  readonly?: boolean;
+  disabled?: boolean;
+  errors?: BankCardErrorsType;
+}
 
-  modelValue: {
-    type: Object as PropType<BankCardType>,
-    required: true,
-  },
-
-  valid: {
-    type: Boolean,
-    default: false,
-  },
-
-  errors: {
-    type: Object as PropType<BankCardErrorsType>,
-    default: () => ({}),
-  },
+const emit = defineEmits<IEmits>();
+const props = withDefaults(defineProps<IProps>(), {
+  errors: () => ({}),
 });
 
 const { t } = useI18n();
@@ -119,7 +114,7 @@ const validationSchema = yup.object({
     .string()
     .label(t("shared.payment.bank_card_form.year_label"))
     .when("month", (valueMonth: string, schema) =>
-      valueMonth.length > 1
+      valueMonth?.length > 1
         ? schema
             .test(
               "year",

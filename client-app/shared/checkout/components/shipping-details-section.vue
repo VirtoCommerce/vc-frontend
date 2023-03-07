@@ -2,7 +2,7 @@
   <VcSectionWidget :title="$t('shared.checkout.shipping_details_section.title')" icon="truck">
     <div class="flex flex-col gap-6 lg:flex-row lg:gap-8">
       <div class="lg:w-3/5">
-        <VcLabel>
+        <VcLabel required>
           {{ $t("shared.checkout.shipping_details_section.labels.shipping_address") }}
         </VcLabel>
 
@@ -24,6 +24,7 @@
         :disabled="disabled"
         size="auto"
         class="lg:w-2/5"
+        required
       >
         <template #placeholder>
           <VcSelectItem>

@@ -25,12 +25,12 @@
         </div>
 
         <div class="max-w-md text-center text-19 lg:text-left">
-          <strong v-t="{ path: 'pages.checkout_complete.subtitle', args: [orderNumber] }" class="mb-4 block" />
+          <strong v-t="{ path: 'pages.checkout_complete.subtitle', args: [placedOrder?.number] }" class="mb-4 block" />
           <span v-t="'pages.checkout_complete.text'" />
           <div class="mt-10 flex flex-col items-center justify-center gap-6 md:flex-row lg:justify-start">
-            <VcButton :to="{ name: 'OrderDetails', params: { orderId } }" class="w-40 uppercase">
+            <VcButton :to="{ name: 'OrderDetails', params: { orderId: placedOrder?.id } }" class="w-40 uppercase">
               <i class="fas fa-file-lines mr-3" />
-              {{ $t("pages.checkout_complete.buttons.show_order") }}
+              {{ $t("common.buttons.show_order") }}
             </VcButton>
 
             <VcButton to="/" class="w-40 uppercase">
@@ -44,17 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-import { usePageHead } from "@/core";
+import { useCheckout } from "@/shared/checkout";
 
-defineProps({
-  orderId: String,
-  orderNumber: String,
-});
-
-const { t } = useI18n();
-
-usePageHead({
-  title: t("pages.checkout_complete.meta.title"),
-});
+const { placedOrder } = useCheckout();
 </script>

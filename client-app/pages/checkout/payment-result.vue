@@ -28,6 +28,7 @@
           size="md"
           class="hidden h-12 w-12 shrink-0 text-[color:var(--color-success)] lg:flex"
         />
+
         <VcIcon
           v-else
           name="x-circle"
@@ -39,20 +40,22 @@
           <strong
             v-t="{
               path: isPaymentSuccess ? 'pages.payment_result.subtitle.success' : 'pages.payment_result.subtitle.failed',
-              args: [orderNumber],
+              args: [placedOrder!.number],
             }"
             class="mb-4 block"
           />
+
           <span v-t="isPaymentSuccess ? 'pages.payment_result.text.success' : 'pages.payment_result.text.failed'" />
+
           <div class="mt-10 flex flex-col items-center justify-center gap-6 md:flex-row lg:justify-start">
-            <VcButton v-if="!isPaymentSuccess" :to="{ name: 'CheckoutPayment', replace: true }" class="w-40 uppercase">
-              <i class="fas fa-chevron-left mr-3" />
-              {{ $t("pages.payment_result.buttons.payment_details") }}
+            <VcButton v-if="!isPaymentSuccess" :to="{ name: 'CheckoutPayment', replace: true }" class="px-3 uppercase">
+              <i class="fas fa-chevron-left mr-2.5" />
+              {{ $t("common.buttons.payment_details") }}
             </VcButton>
 
-            <VcButton :to="{ name: 'OrderDetails', params: { orderId } }" class="w-40 uppercase">
+            <VcButton :to="{ name: 'OrderDetails', params: { orderId: placedOrder!.id } }" class="w-40 uppercase">
               <i class="fas fa-file-lines mr-3" />
-              {{ $t("pages.payment_result.buttons.show_order") }}
+              {{ $t("common.buttons.show_order") }}
             </VcButton>
 
             <VcButton v-if="isPaymentSuccess" to="/" class="w-40 uppercase">
@@ -67,19 +70,15 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useI18n } from "vue-i18n";
-import { usePageHead } from "@/core";
-import { useUserOrder } from "@/shared/account";
 import { useCheckout } from "@/shared/checkout";
 
-const { t } = useI18n();
-const { orderPaymentResult: isPaymentSuccess } = useCheckout();
-const { order } = useUserOrder();
+interface IProps {
+  status: "success" | "failure";
+}
 
-const orderId = computed(() => order.value?.id);
-const orderNumber = computed(() => order.value?.number);
+const props = defineProps<IProps>();
 
-usePageHead({
-  title: t("pages.payment_result.meta.title"),
-});
+const { placedOrder } = useCheckout();
+
+const isPaymentSuccess = computed<boolean>(() => props.status === "success");
 </script>

@@ -112,16 +112,12 @@
           </transition>
 
           <VcButton
-            v-if="!orderCreated"
             :is-disabled="isDisabledOrderCreation"
             :is-waiting="creatingOrder"
             class="mt-4 w-full uppercase"
             @click="createOrder"
           >
             {{ $t("common.buttons.place_order") }}
-          </VcButton>
-          <VcButton v-else class="mt-4 w-full uppercase" :to="{ name: 'CheckoutPayment', replace: true }">
-            {{ $t("common.buttons.go_to_payment_order") }}
           </VcButton>
 
           <transition name="slide-fade-top" mode="out-in" appear>
@@ -138,26 +134,25 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
-import { OrderLineItems, useUserOrder } from "@/shared/account";
+import { OrderLineItems } from "@/shared/account";
 import { useCart, useCoupon, usePurchaseOrderNumber } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
-import { PaymentMethodGroupType } from "@/shared/payment";
-import { CartAddressType, CustomerOrderType } from "@/xapi";
+import { CartAddressType } from "@/xapi";
 
 const router = useRouter();
 const {
   cart,
+  shipment,
+  payment,
   lineItemsGroupedByVendor,
+  availableShippingMethods,
+  availablePaymentMethods,
   hasValidationErrors,
   fetchCart,
-  availablePaymentMethods,
-  availableShippingMethods,
 } = useCart();
-const { billingAddressEqualsShipping, shipment, payment, comment, isValidCheckout, orderCreated, createOrderFromCart } =
-  useCheckout();
+const { billingAddressEqualsShipping, comment, canPayNow, isValidCheckout, createOrderFromCart } = useCheckout();
 const { purchaseOrderNumber } = usePurchaseOrderNumber();
 const { couponCode } = useCoupon();
-const { fetchOrder } = useUserOrder();
 
 const creatingOrder = ref(false);
 
@@ -176,37 +171,11 @@ async function createOrder(): Promise<void> {
   const order = await createOrderFromCart();
 
   if (order) {
-    await createOrderProceed(order);
+    await router.replace({ name: canPayNow.value ? "CheckoutPayment" : "CheckoutCompleted" });
   }
+
+  await fetchCart();
 
   creatingOrder.value = false;
-}
-
-async function createOrderProceed(order: CustomerOrderType) {
-  orderCreated.value = true;
-
-  const selectedPaymentMethodGroupType = availablePaymentMethods.value.find(
-    (item) => item.code === payment.value?.paymentGatewayCode
-  )?.paymentMethodGroupType;
-
-  if (selectedPaymentMethodGroupType && selectedPaymentMethodGroupType !== PaymentMethodGroupType[3]) {
-    await fetchOrder({ id: order.id });
-    await router.replace({
-      name: "CheckoutPayment",
-      params: {
-        orderId: order.id,
-        orderNumber: order.number,
-      },
-    });
-  } else {
-    await router.replace({
-      name: "OrderCompleted",
-      params: {
-        orderId: order.id,
-        orderNumber: order.number,
-      },
-    });
-    await fetchCart();
-  }
 }
 </script>

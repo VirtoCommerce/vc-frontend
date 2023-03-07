@@ -1,11 +1,12 @@
 import { omit } from "lodash";
-import { computed, readonly, ref } from "vue";
+import { computed, readonly, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { AddressType, Logger, useGoogleAnalytics } from "@/core";
-import { useUser, useUserAddresses, useUserCheckoutDefaults, useUserOrder } from "@/shared/account";
+import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { AddOrUpdateAddressModal, SelectAddressModal } from "@/shared/checkout";
 import { useNotifications } from "@/shared/notification";
+import { PaymentMethodGroupType } from "@/shared/payment";
 import { usePopup } from "@/shared/popup";
 import {
   CartAddressType,
@@ -22,8 +23,7 @@ import {
 const loading = ref(false);
 const comment = ref("");
 const billingAddressEqualsShipping = ref(true);
-const orderCreated = ref(false);
-const orderPaymentResult = ref(false);
+const placedOrder = shallowRef<CustomerOrderType | null>(null);
 
 export default function useCheckout() {
   const ga = useGoogleAnalytics();
@@ -45,7 +45,6 @@ export default function useCheckout() {
     updatePayment,
     changeComment,
   } = useCart();
-  const { clearOrder } = useUserOrder();
 
   const isValidDeliveryAddress = computed<boolean>(() => !!shipment.value?.deliveryAddress);
   const isValidBillingAddress = computed<boolean>(
@@ -57,6 +56,18 @@ export default function useCheckout() {
   const isValidPayment = computed<boolean>(() => isValidBillingAddress.value && isValidPaymentMethod.value);
   const isValidCheckout = computed<boolean>(
     () => isValidShipment.value && isValidPayment.value && !hasValidationErrors.value
+  );
+
+  const selectedPaymentMethodGroupType = computed<string | undefined>(() => {
+    const paymentMethodCode = payment.value?.paymentGatewayCode || placedOrder.value?.inPayments[0].paymentMethod?.code;
+    return availablePaymentMethods.value.find((item) => item.code === paymentMethodCode)?.paymentMethodGroupType;
+  });
+
+  const canPayNow = computed<boolean>(
+    () =>
+      isAuthenticated.value &&
+      !!selectedPaymentMethodGroupType.value &&
+      selectedPaymentMethodGroupType.value !== PaymentMethodGroupType[PaymentMethodGroupType.Manual]
   );
 
   async function setShippingMethod(method: ShippingMethodType, options: { reloadCart?: boolean } = {}) {
@@ -109,13 +120,12 @@ export default function useCheckout() {
     if (reloadCart) {
       await fetchCart();
     }
-
-    clearOrder();
-    orderCreated.value = false;
   }
 
   async function initialize(): Promise<void> {
+    placedOrder.value = null;
     loading.value = true;
+
     await fetchCart();
 
     if (isAuthenticated.value) {
@@ -279,19 +289,18 @@ export default function useCheckout() {
 
   async function createOrderFromCart(): Promise<CustomerOrderType | null> {
     const cartId = cart.value.id!;
-    let order: CustomerOrderType | null = null;
 
     loading.value = true;
 
     await prepareOrderData();
 
     try {
-      order = await _createOrderFromCart(cartId);
+      placedOrder.value = await _createOrderFromCart(cartId);
     } catch (e) {
       Logger.error(`${useCheckout.name}.${createOrderFromCart.name}`, e);
     }
 
-    if (order) {
+    if (placedOrder.value) {
       await removeCart(cartId);
       resetVariables();
     } else {
@@ -304,14 +313,12 @@ export default function useCheckout() {
 
     loading.value = false;
 
-    return order;
+    return placedOrder.value;
   }
 
   return {
     comment,
     billingAddressEqualsShipping,
-    shipment,
-    payment,
     isValidDeliveryAddress,
     isValidBillingAddress,
     isValidShipmentMethod,
@@ -319,8 +326,8 @@ export default function useCheckout() {
     isValidShipment,
     isValidPayment,
     isValidCheckout,
-    orderCreated,
-    orderPaymentResult,
+    selectedPaymentMethodGroupType,
+    canPayNow,
     initialize,
     onDeliveryAddressChange,
     onBillingAddressChange,
@@ -328,5 +335,6 @@ export default function useCheckout() {
     setPaymentMethod,
     createOrderFromCart,
     loading: readonly(loading),
+    placedOrder: computed(() => placedOrder.value),
   };
 }

@@ -31,20 +31,21 @@
       "clear_cart": "Clear cart",
       "save_changes": "Save Changes",
       "new_address": "New address",
+      "review_order": "Review order",
+      "show_order": "Show order",
+      "print_order": "Print order",
       "place_order": "Place order",
       "create_quote": "Add cart items to quote",
       "back_to_cart": "Back to Cart",
+      "back_to_order_details": "Back to order details",
       "go_to_checkout": "Proceed to checkout",
       "go_to_billing": "Proceed to billing",
-      "go_to_review_order": "Review order",
-      "go_to_payment_order": "Pay now",
       "see_more": "See more",
       "see_less": "See less",
       "view_invoice": "View invoice",
       "pay_now": "Pay now",
-      "reorder_all": "Reorder all",
-      "print_order": "Print order",
-      "next_step": "Next step"
+      "payment_details": "Payment details",
+      "reorder_all": "Reorder all"
     },
     "labels": {
       "actions": "Actions",
@@ -1165,21 +1166,11 @@
       "price_label": "@:common.labels.product_price{':'}"
     },
     "checkout_complete": {
-      "meta": {
-        "title": "@:pages.checkout_complete.title"
-      },
       "title": "Order completed",
       "subtitle": "Order {0} has been successfully submitted.",
-      "text": "You will be notified via email about the order status change.",
-      "buttons": {
-        "show_order": "Show order",
-        "home": "Home page"
-      }
+      "text": "You will be notified via email about the order status change."
     },
     "payment_result": {
-      "meta": {
-        "title": "Payment"
-      },
       "title": {
         "success": "Payment successful",
         "failed": "Payment failed"
@@ -1191,11 +1182,6 @@
       "text": {
         "success": "Thank you, we are checking your payment. You will be notified via email about the order status change.",
         "failed": "There is a problem with your payment, try again please"
-      },
-      "buttons": {
-        "show_order": "Show order",
-        "home": "Home page",
-        "payment_details": "Payment details"
       }
     },
     "search": {

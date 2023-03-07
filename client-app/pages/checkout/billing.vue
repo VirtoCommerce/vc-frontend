@@ -5,7 +5,7 @@
       :methods="availablePaymentMethods"
       :payment="payment"
       :shipment="shipment"
-      :disabled="loading || orderCreated"
+      :disabled="loading"
       @change:address="onBillingAddressChange"
       @change:method="setPaymentMethod"
     />
@@ -30,16 +30,11 @@
           </transition>
 
           <VcButton
-            v-if="!orderCreated"
             :to="{ name: 'Review', replace: true }"
             :is-disabled="isDisabledNextStep"
             class="mt-4 w-full uppercase"
           >
-            {{ $t("common.buttons.go_to_review_order") }}
-          </VcButton>
-
-          <VcButton v-else class="mt-4 w-full uppercase" :to="{ name: 'CheckoutPayment', replace: true }">
-            {{ $t("common.buttons.go_to_payment_order") }}
+            {{ $t("common.buttons.review_order") }}
           </VcButton>
 
           <transition name="slide-fade-top" mode="out-in" appear>
@@ -64,17 +59,9 @@ import { computed } from "vue";
 import { useCart, usePurchaseOrderNumber } from "@/shared/cart";
 import { BillingDetailsSection, OrderSummary, useCheckout } from "@/shared/checkout";
 
-const { loading, cart, hasValidationErrors, availablePaymentMethods } = useCart();
-const {
-  billingAddressEqualsShipping,
-  shipment,
-  payment,
-  isValidPayment,
-  isValidCheckout,
-  orderCreated,
-  onBillingAddressChange,
-  setPaymentMethod,
-} = useCheckout();
+const { loading, cart, shipment, payment, hasValidationErrors, availablePaymentMethods } = useCart();
+const { billingAddressEqualsShipping, isValidPayment, isValidCheckout, onBillingAddressChange, setPaymentMethod } =
+  useCheckout();
 const { purchaseOrderNumber, purchaseOrderNumberIsApplied, setPurchaseOrderNumber, removePurchaseOrderNumber } =
   usePurchaseOrderNumber();
 

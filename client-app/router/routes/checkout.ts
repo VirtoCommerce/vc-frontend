@@ -24,19 +24,25 @@ export const checkoutRoutes: RouteRecordRaw[] = [
   },
   {
     path: "payment",
-    name: "CheckoutPayment",
-    component: Payment,
+    children: [
+      {
+        path: "",
+        name: "CheckoutPayment",
+        component: Payment,
+      },
+      {
+        path: ":status(success|failure)",
+        name: "CheckoutPaymentResult",
+        component: PaymentResult,
+        props: true,
+        meta: { layout: "Main" },
+      },
+    ],
   },
   {
-    path: "completed/:orderNumber/:orderId",
-    name: "OrderCompleted",
+    path: "completed",
+    name: "CheckoutCompleted",
     component: Completed,
     meta: { layout: "Main" },
-    props: true,
-  },
-  {
-    path: "payment",
-    name: "OrderPaymentResult",
-    component: PaymentResult,
   },
 ];

@@ -3,27 +3,22 @@
     <ShippingDetailsSection
       :methods="availableShippingMethods"
       :shipment="shipment"
-      :disabled="loading || orderCreated"
+      :disabled="loading"
       @change:address="onDeliveryAddressChange"
       @change:method="setShippingMethod"
     />
 
-    <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" :disabled="orderCreated" />
+    <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
 
     <template #sidebar>
       <OrderSummary :cart="cart" footnote>
         <template #footer>
           <VcButton
-            v-if="!orderCreated"
             :to="{ name: 'Billing', replace: true }"
             :is-disabled="isDisabledNextStep"
             class="mt-4 w-full uppercase"
           >
             {{ $t("common.buttons.go_to_billing") }}
-          </VcButton>
-
-          <VcButton v-else class="mt-4 w-full uppercase" :to="{ name: 'CheckoutPayment', replace: true }">
-            {{ $t("common.buttons.go_to_payment_order") }}
           </VcButton>
 
           <transition name="slide-fade-top" mode="out-in" appear>
@@ -48,8 +43,8 @@ import { computed } from "vue";
 import { useCart } from "@/shared/cart";
 import { OrderCommentSection, OrderSummary, ShippingDetailsSection, useCheckout } from "@/shared/checkout";
 
-const { loading, cart, hasValidationErrors, availableShippingMethods } = useCart();
-const { comment, shipment, isValidShipment, orderCreated, onDeliveryAddressChange, setShippingMethod } = useCheckout();
+const { loading, cart, shipment, hasValidationErrors, availableShippingMethods } = useCart();
+const { comment, isValidShipment, onDeliveryAddressChange, setShippingMethod } = useCheckout();
 
 const isDisabledNextStep = computed<boolean>(
   () => loading.value || hasValidationErrors.value || !isValidShipment.value
