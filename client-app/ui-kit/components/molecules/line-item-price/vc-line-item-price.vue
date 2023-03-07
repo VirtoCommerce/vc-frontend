@@ -1,11 +1,14 @@
 <template>
   <div class="vc-line-item-price">
-    <div class="vc-line-item-price__actual">
-      <VcPriceDisplay :value="listPrice?.amount > actualPrice?.amount ? actualPrice : listPrice" />
-    </div>
-    <div v-if="listPrice?.amount > actualPrice?.amount" class="vc-line-item-price__list">
-      <VcPriceDisplay :value="listPrice" />
-    </div>
+    <VcPriceDisplay
+      class="vc-line-item-price__actual"
+      :value="listPrice?.amount > actualPrice?.amount ? actualPrice : listPrice"
+    />
+    <VcPriceDisplay
+      v-if="listPrice?.amount > actualPrice?.amount"
+      class="vc-line-item-price__list"
+      :value="listPrice"
+    />
   </div>
 </template>
 
@@ -22,8 +25,10 @@ defineProps<Props>();
 
 <style lang="scss">
 .vc-line-item-price {
+  @apply flex flex-col items-end;
+
   &__actual {
-    @apply text-xs font-bold text-[color:var(--color-body-text)];
+    @apply text-xs font-bold text-[color:var(--color-body-text)] [word-break:break-word];
 
     @media (min-width: theme("screens.2xl")) {
       @apply font-normal;

@@ -3,52 +3,46 @@
     :class="[
       'vc-line-item',
       {
-        'vc-line-item--no-product': !extendedItem.extended.isProductExists,
+        'vc-line-item--removable': removable,
+        'vc-line-item--disabled': disabled,
+        'vc-line-item--deleted': deleted,
       },
     ]"
   >
-    <slot name="before" />
+    <div v-if="$slots.before" class="vc-line-item__before">
+      <slot name="before" />
+    </div>
 
     <div class="vc-line-item__main">
       <!--  IMAGE -->
-      <VcImage class="vc-line-item__img" :src="extendedItem.imageUrl" :alt="extendedItem.name" size-suffix="sm" lazy />
+      <VcImage class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
 
       <div class="vc-line-item__content">
         <div class="vc-line-item__name">
-          <router-link
-            v-if="extendedItem.extended.isProductExists && extendedItem.extended.route"
-            :to="extendedItem.extended.route"
-            :title="extendedItem.name"
-            class="vc-line-item__name-link"
-          >
-            {{ extendedItem.name }}
+          <router-link v-if="!deleted && route" :to="route" :title="name" class="vc-line-item__name-link">
+            {{ name }}
           </router-link>
 
           <div v-else class="vc-line-item__name-text">
-            {{ extendedItem.name }}
+            {{ name }}
           </div>
         </div>
 
         <div class="vc-line-item__properties">
           <VcProperty
-            v-for="property in extendedItem.extended.displayProperties"
+            v-for="property in properties"
             :key="property.id"
             :label="property.label"
             :value="property.value"
-            :no-product="!extendedItem.extended.isProductExists"
           />
 
-          <VcProperty
-            class="2xl:hidden"
-            :label="$t('common.labels.price_per_item')"
-            :no-product="!extendedItem.extended.isProductExists"
-          >
-            <VcLineItemPrice :list-price="extendedItem.listPrice" :actual-price="extendedItem.salePrice" />
+          <VcProperty class="2xl:hidden" :label="$t('common.labels.price_per_item')">
+            <VcLineItemPrice :list-price="listPrice" :actual-price="actualPrice" />
           </VcProperty>
         </div>
 
         <div class="vc-line-item__price">
-          <VcLineItemPrice :list-price="extendedItem.listPrice" :actual-price="extendedItem.salePrice" />
+          <VcLineItemPrice :list-price="listPrice" :actual-price="actualPrice" />
         </div>
 
         <div class="vc-line-item__slot">
@@ -67,19 +61,25 @@
       </div>
     </div>
 
-    <slot name="after" />
+    <div v-if="$slots.after" class="vc-line-item__after">
+      <slot name="after" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { ExtendedLineItemType, extendLineItem } from "@/core";
-import { LineItemType } from "@/xapi";
+import { Property, MoneyType } from "@/xapi";
 
 interface IProps {
+  imageUrl?: string;
+  name: string;
+  route?: string;
+  properties?: Property[];
+  listPrice: MoneyType;
+  actualPrice: MoneyType;
   removable?: boolean;
   disabled?: boolean;
-  item: LineItemType;
+  deleted?: boolean;
 }
 
 interface IEmits {
@@ -87,19 +87,23 @@ interface IEmits {
 }
 
 defineEmits<IEmits>();
-const props = defineProps<IProps>();
-const extendedItem = computed<ExtendedLineItemType<LineItemType>>(() => extendLineItem<LineItemType>(props.item));
+defineProps<IProps>();
 </script>
 
 <style lang="scss">
 .vc-line-item {
-  $noProduct: "";
+  $removable: "";
+  $deleted: "";
   $disabled: "";
 
-  @apply p-3;
+  @apply p-3 rounded border shadow-t-3sm space-y-2 md:rounded-none md:border-0 md:shadow-none;
 
-  &--no-product {
-    $noProduct: &;
+  &--removable {
+    $removable: &;
+  }
+
+  &--deleted {
+    $deleted: &;
   }
 
   &--disabled {
@@ -115,7 +119,7 @@ const extendedItem = computed<ExtendedLineItemType<LineItemType>>(() => extendLi
   }
 
   &__main {
-    @apply flex items-start gap-3;
+    @apply relative flex items-start gap-3;
 
     @media (min-width: theme("screens.md")) {
       @apply items-center gap-2;
@@ -148,12 +152,16 @@ const extendedItem = computed<ExtendedLineItemType<LineItemType>>(() => extendLi
     @media (min-width: theme("screens.2xl")) {
       @apply w-44;
     }
+
+    #{$removable} & {
+      @apply pr-10 md:pr-0;
+    }
   }
 
   &__name-link {
     @apply text-[color:var(--color-link)] [word-break:break-word] hover:text-[color:var(--color-link-hover)];
 
-    #{$noProduct} & {
+    #{$deleted} & {
       @apply text-slate-400;
     }
   }
@@ -161,7 +169,7 @@ const extendedItem = computed<ExtendedLineItemType<LineItemType>>(() => extendLi
   &__name-text {
     @apply [word-break:break-word];
 
-    #{$noProduct} & {
+    #{$deleted} & {
       @apply text-slate-400;
     }
   }
@@ -172,13 +180,21 @@ const extendedItem = computed<ExtendedLineItemType<LineItemType>>(() => extendLi
     @media (min-width: theme("screens.md")) {
       @apply grow mt-0;
     }
+
+    #{$deleted} & {
+      @apply hidden md:block md:invisible;
+    }
   }
 
   &__price {
     @apply hidden;
 
     @media (min-width: theme("screens.2xl")) {
-      @apply block shrink-0 w-[7.875rem] text-right;
+      @apply block shrink-0 w-[8.75rem] text-right;
+    }
+
+    #{$deleted} & {
+      @apply hidden 2xl:block 2xl:invisible;
     }
   }
 
@@ -186,23 +202,32 @@ const extendedItem = computed<ExtendedLineItemType<LineItemType>>(() => extendLi
     @apply flex items-center gap-3 mt-4 empty:hidden;
 
     @media (min-width: theme("screens.md")) {
-      @apply shrink-0 gap-2 mt-0 w-[15.625rem] empty:block;
+      @apply shrink-0 gap-2 mt-0 w-[15.125rem] empty:block;
     }
 
     @media (min-width: theme("screens.2xl")) {
       @apply gap-3;
     }
+
+    #{$deleted} & {
+      @apply hidden md:block md:invisible;
+    }
   }
 
   &__remove-button {
-    @apply shrink-0 flex items-center justify-center h-7 w-7 rounded border-2 bg-white text-[color:var(--color-danger)];
+    @apply shrink-0 absolute top-0 right-0 flex items-center justify-center h-7 w-7 rounded border-2 bg-white text-[color:var(--color-danger)];
 
     &:hover {
       @apply bg-gray-100;
     }
 
+    #{$disabled} &,
     &:disabled {
       @apply bg-gray-100 text-gray-400;
+    }
+
+    @media (min-width: theme("screens.md")) {
+      @apply relative;
     }
   }
 }
