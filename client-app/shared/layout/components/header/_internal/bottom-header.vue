@@ -61,20 +61,21 @@
       enter-active-class="will-change-transform"
       leave-active-class="will-change-transform"
     >
-      <CatalogMenu
-        v-if="catalogMenuVisible"
-        ref="catalogMenuElement"
-        class="absolute mt-[-1px] shadow-md transition-transform duration-200"
-        @select="catalogMenuVisible = false"
-      />
+      <div
+        class="absolute w-full overflow-y-auto shadow-md transition-transform duration-200"
+        style="max-height: calc(100vh - 127px)"
+      >
+        <CatalogMenu v-if="catalogMenuVisible" ref="catalogMenuElement" @select="catalogMenuVisible = false" />
+      </div>
     </transition>
   </div>
 </template>
 
 <script setup lang="ts">
 import { onClickOutside } from "@vueuse/core";
-import { ref, shallowRef } from "vue";
+import { ref, shallowRef, watch } from "vue";
 import { useNavigations } from "@/core";
+import { useDomUtils } from "@/core/composables";
 import { useUser } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
@@ -82,6 +83,7 @@ import { SearchBar } from "@/shared/layout";
 import BottomHeaderLink from "./bottom-header-link.vue";
 import CatalogMenu from "./catalog-menu.vue";
 
+const { toggleBodyScrollable } = useDomUtils();
 const { organization } = useUser();
 const { cart } = useCart();
 const { desktopHeaderMenuLinks } = useNavigations();
@@ -98,4 +100,8 @@ onClickOutside(
   },
   { ignore: [showCatalogMenuButton] }
 );
+
+watch(catalogMenuVisible, (value) => {
+  toggleBodyScrollable(!value);
+});
 </script>
