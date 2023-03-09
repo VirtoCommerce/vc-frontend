@@ -9,11 +9,10 @@ export default {
 const Template: StoryFn<typeof VcProperty> = (args) => ({
   components: { VcProperty },
   setup: () => ({ args }),
-  template: '<VcProperty v-bind="args" />',
+  template: '<VcProperty v-bind="args">Value</VcProperty>',
 });
 
 export const Basic = Template.bind({});
 Basic.args = {
-  label: "Type",
-  value: "Blank with Shoulder",
+  label: "Label",
 };

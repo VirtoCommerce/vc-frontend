@@ -29,12 +29,9 @@
         </div>
 
         <div class="vc-line-item__properties">
-          <VcProperty
-            v-for="property in properties"
-            :key="property.id"
-            :label="property.label"
-            :value="property.value"
-          />
+          <VcProperty v-for="property in properties" :key="property.id" :label="property.label">
+            {{ property.value }}
+          </VcProperty>
 
           <VcProperty class="2xl:hidden" :label="$t('common.labels.price_per_item')">
             <VcLineItemPrice :list-price="listPrice" :actual-price="actualPrice" />
