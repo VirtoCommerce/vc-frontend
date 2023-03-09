@@ -1,0 +1,83 @@
+#import "./moneyFields.graphql"
+#import "./currencyFields.graphql"
+#import "./orderLineItemFields.graphql"
+#import "./orderAddressFields.graphql"
+
+fragment orderFields on CustomerOrderType {
+  id
+  number
+  comment
+  createdDate
+  status
+  purchaseOrderNumber
+  discounts {
+    amount {
+      amount
+      formattedAmount
+      currency {
+        code
+      }
+    }
+    coupon
+    description
+    promotionId
+  }
+  taxTotal {
+    ...moneyFields
+  }
+  subTotal {
+    ...moneyFields
+  }
+  total {
+    ...moneyFields
+  }
+  discountTotal {
+    ...moneyFields
+  }
+  shippingTotal {
+    ...moneyFields
+  }
+  currency {
+    ...currencyFields
+  }
+  items {
+    ...orderLineItemFields
+  }
+  shipments {
+    shipmentMethodCode
+    shipmentMethodOption
+    shippingMethod {
+      logoUrl
+      typeName
+    }
+    price {
+      ...moneyFields
+    }
+    deliveryAddress {
+      ...orderAddressFields
+    }
+  }
+  inPayments(first: 1, sort: "CreatedDate:desc") {
+    id
+    number
+    isApproved
+    gatewayCode
+    paymentMethod {
+      logoUrl
+      code
+      typeName
+      paymentMethodType
+      paymentMethodGroupType
+    }
+    billingAddress {
+      ...orderAddressFields
+    }
+  }
+  availablePaymentMethods {
+    code
+    logoUrl
+    price {
+      ...moneyFields
+    }
+  }
+}

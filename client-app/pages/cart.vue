@@ -184,6 +184,8 @@ const { isAuthenticated } = useUser();
 const {
   loading: loadingCart,
   cart,
+  shipment,
+  payment,
   lineItemsGroupedByVendor,
   availableExtendedGifts,
   availableShippingMethods,
@@ -199,11 +201,10 @@ const {
 const {
   comment,
   billingAddressEqualsShipping,
-  shipment,
-  payment,
   isValidShipment,
   isValidPayment,
   isValidCheckout,
+  canPayNow,
   initialize: initCheckout,
   onDeliveryAddressChange,
   onBillingAddressChange,
@@ -254,13 +255,7 @@ async function createOrder(): Promise<void> {
   const order = await createOrderFromCart();
 
   if (order) {
-    await router.push({
-      name: "OrderCompleted",
-      params: {
-        orderId: order.id,
-        orderNumber: order.number,
-      },
-    });
+    await router.push({ name: canPayNow.value ? "CheckoutPayment" : "CheckoutCompleted" });
   }
 
   await fetchCart();

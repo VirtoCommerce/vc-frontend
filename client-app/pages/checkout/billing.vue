@@ -34,7 +34,7 @@
             :is-disabled="isDisabledNextStep"
             class="mt-4 w-full uppercase"
           >
-            {{ $t("common.buttons.go_to_review_order") }}
+            {{ $t("common.buttons.review_order") }}
           </VcButton>
 
           <transition name="slide-fade-top" mode="out-in" appear>
@@ -59,16 +59,9 @@ import { computed } from "vue";
 import { useCart, usePurchaseOrderNumber } from "@/shared/cart";
 import { BillingDetailsSection, OrderSummary, useCheckout } from "@/shared/checkout";
 
-const { loading, cart, hasValidationErrors, availablePaymentMethods } = useCart();
-const {
-  billingAddressEqualsShipping,
-  shipment,
-  payment,
-  isValidPayment,
-  isValidCheckout,
-  onBillingAddressChange,
-  setPaymentMethod,
-} = useCheckout();
+const { loading, cart, shipment, payment, hasValidationErrors, availablePaymentMethods } = useCart();
+const { billingAddressEqualsShipping, isValidPayment, isValidCheckout, onBillingAddressChange, setPaymentMethod } =
+  useCheckout();
 const { purchaseOrderNumber, purchaseOrderNumberIsApplied, setPurchaseOrderNumber, removePurchaseOrderNumber } =
   usePurchaseOrderNumber();
 

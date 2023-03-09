@@ -43,8 +43,8 @@ import { computed } from "vue";
 import { useCart } from "@/shared/cart";
 import { OrderCommentSection, OrderSummary, ShippingDetailsSection, useCheckout } from "@/shared/checkout";
 
-const { loading, cart, hasValidationErrors, availableShippingMethods } = useCart();
-const { comment, shipment, isValidShipment, onDeliveryAddressChange, setShippingMethod } = useCheckout();
+const { loading, cart, shipment, hasValidationErrors, availableShippingMethods } = useCart();
+const { comment, isValidShipment, onDeliveryAddressChange, setShippingMethod } = useCheckout();
 
 const isDisabledNextStep = computed<boolean>(
   () => loading.value || hasValidationErrors.value || !isValidShipment.value

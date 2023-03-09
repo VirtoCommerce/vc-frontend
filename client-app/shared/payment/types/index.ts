@@ -12,7 +12,7 @@ export enum PaymentMethodGroupType {
   Manual,
 }
 
-export enum PaymentMethod {
+export enum PaymentActionType {
   Unknown,
 
   // All payment information is entered on the site
@@ -23,13 +23,6 @@ export enum PaymentMethod {
 
   // Payment system send prepared html form for request
   PreparedForm,
-}
-
-export enum PaymentActionType {
-  Unknown = "Unknown",
-  Standard = "Standard",
-  Redirection = "Redirection",
-  PreparedForm = "PreparedForm",
 }
 
 export type BankCardType = {

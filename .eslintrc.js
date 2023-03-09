@@ -86,6 +86,7 @@ module.exports = {
         registeredComponentsOnly: false,
         ignores: [
           "/^custom-/",
+          "keep-alive",
           "component",
           "transition",
           "transition-group",
