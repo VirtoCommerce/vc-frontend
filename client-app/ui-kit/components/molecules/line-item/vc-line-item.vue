@@ -75,8 +75,8 @@ interface IProps {
   name: string;
   route?: string;
   properties?: Property[];
-  listPrice: MoneyType;
-  actualPrice: MoneyType;
+  listPrice?: MoneyType;
+  actualPrice?: MoneyType;
   removable?: boolean;
   disabled?: boolean;
   deleted?: boolean;

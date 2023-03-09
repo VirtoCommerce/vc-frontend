@@ -1,5 +1,6 @@
 import { Meta, StoryFn } from "@storybook/vue3";
 import { VcLineItem } from "..";
+import { VcAlert } from "../../atoms";
 
 export default {
   title: "Components/Molecules/VcLineItem",
@@ -24,7 +25,7 @@ export const Basic = Template.bind({});
 Basic.args = {
   imageUrl: "https://vcst-dev.paas.govirto.com/cms-content/assets/catalog/7829d/38DJ66/5ZA21_AS01.jpg",
   name: 'Samsung JS9500 Series 65"-Class 4K SUHD Smart 3D Curved LED TV',
-  route: "/televisions/samsung/samsung-js9500-series-65-class-4k-suhd-smart",
+  route: "#",
   properties: [
     {
       value: "Sony",
@@ -62,7 +63,17 @@ Disabled.args = {
   disabled: true,
 };
 
-export const Deleted = Template.bind({});
+export const Deleted: StoryFn<typeof VcLineItem> = (args) => ({
+  components: { VcLineItem, VcAlert },
+  setup: () => ({ args }),
+  template: `<VcLineItem v-bind="args">
+    <template #after>
+      <VcAlert type="danger" icon>
+        Validation error
+      </VcAlert>
+    </template>
+  </VcLineItem>`,
+});
 Deleted.args = {
   ...Basic.args,
   removable: true,

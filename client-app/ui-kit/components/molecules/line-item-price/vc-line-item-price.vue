@@ -15,12 +15,12 @@
 <script setup lang="ts">
 import { MoneyType } from "@/xapi/types";
 
-interface Props {
+interface IProps {
   listPrice?: MoneyType;
   actualPrice?: MoneyType;
 }
 
-defineProps<Props>();
+defineProps<IProps>();
 </script>
 
 <style lang="scss">
