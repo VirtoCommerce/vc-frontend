@@ -127,10 +127,10 @@
 import moment from "moment";
 import { computed, PropType, ref, inject, toRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { asyncForEach } from "@/core";
 import { useGoogleAnalytics } from "@/core/composables";
 import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { configInjectionKey } from "@/core/injection-keys";
+import { asyncForEach } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import { useWishlists } from "@/shared/wishlists";

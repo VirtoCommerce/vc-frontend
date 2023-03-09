@@ -209,7 +209,8 @@
 <script setup lang="ts">
 import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { MenuLinkType, useCurrency, useLanguages, useNavigations } from "@/core";
+import { useCurrency, useLanguages, useNavigations } from "@/core/composables";
+import type { MenuLinkType } from "@/core/types";
 import { useUser } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";

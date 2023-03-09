@@ -323,21 +323,17 @@ import {
 } from "vue";
 import { useRoute } from "vue-router";
 import {
-  buildBreadcrumbs,
-  DEFAULT_PAGE_SIZE,
-  FacetItemType,
-  FacetValueItemType,
-  getFilterExpressionFromFacets,
-  PRODUCT_SORTING_LIST,
-  searchCategoryTreeItemByKey,
   useBreadcrumbs,
   useCategories,
   useElementVisibility,
   useGoogleAnalytics,
   usePageHead,
   useRouteQueryParam,
-} from "@/core";
+} from "@/core/composables";
+import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
+import type { FacetItemType, FacetValueItemType } from "@/core/types";
+import { buildBreadcrumbs, getFilterExpressionFromFacets, searchCategoryTreeItemByKey } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
 import {
   CategorySelector,

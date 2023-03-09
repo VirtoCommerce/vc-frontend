@@ -122,13 +122,13 @@
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import { useBreadcrumbs, usePageHead } from "@/core";
+import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useUserOrder, OrderLineItems } from "@/shared/account";
 import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
 import { BackButtonInHeader } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
-import { InputNewBulkItemType } from "@/xapi";
+import type { InputNewBulkItemType } from "@/xapi/types";
 
 interface IProps {
   orderId: string;

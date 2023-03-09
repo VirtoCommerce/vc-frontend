@@ -76,9 +76,8 @@
 
 <script setup lang="ts">
 import { onClickOutside, useElementBounding } from "@vueuse/core";
-import { ref, shallowRef, watch, computed, StyleValue } from "vue";
-import { useNavigations } from "@/core";
-import { useDomUtils } from "@/core/composables";
+import { computed, ref, shallowRef, StyleValue, watch } from "vue";
+import { useDomUtils, useNavigations } from "@/core/composables";
 import { useUser } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";

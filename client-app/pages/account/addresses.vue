@@ -231,10 +231,10 @@ import { computed, ComputedRef, onMounted, Ref, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCountries, usePageHead } from "@/core/composables";
 import { AddressType } from "@/core/enums";
-import { ISortInfo } from "@/core/types";
+import type { ISortInfo } from "@/core/types";
 import { useUserAddresses } from "@/shared/account";
 import { BackButtonInHeader } from "@/shared/layout";
-import { MemberAddressType } from "@/xapi/types";
+import type { MemberAddressType } from "@/xapi/types";
 
 const { t } = useI18n();
 const breakpoints = useBreakpoints(breakpointsTailwind);

@@ -35,7 +35,7 @@ import { invoke } from "@vueuse/core";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
-import { usePageHead } from "@/core";
+import { usePageHead } from "@/core/composables";
 import { useCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout";
 

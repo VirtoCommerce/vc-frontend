@@ -50,11 +50,11 @@
 
 <script setup lang="ts">
 import { PropType } from "vue";
-import { useCurrency } from "@/core";
+import { useCurrency } from "@/core/composables";
 import { AddToCart } from "@/shared/cart";
 import { ProductDetails, ProductPriceBlock } from "@/shared/catalog";
 import { PageContent } from "@/shared/static-content";
-import { Product } from "@/xapi";
+import type { Product } from "@/xapi/types";
 
 defineProps({
   product: {

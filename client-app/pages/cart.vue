@@ -165,7 +165,8 @@ import { invoke } from "@vueuse/core";
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { configInjectionKey, useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core";
+import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
+import { configInjectionKey } from "@/core/injection-keys";
 import { useUser } from "@/shared/account";
 import { GiftsSection, ProductsSection, useCart, useCoupon, usePurchaseOrderNumber } from "@/shared/cart";
 import {

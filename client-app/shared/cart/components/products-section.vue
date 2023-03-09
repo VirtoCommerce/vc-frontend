@@ -48,11 +48,17 @@
 </template>
 
 <script setup lang="ts">
-import { LineItemsGroupByVendorType } from "@/core";
+import type { LineItemsGroupByVendorType } from "@/core/types";
 import { CartLineItems } from "@/shared/cart";
-import { LineItemType, ValidationErrorType } from "@/xapi";
+import type { LineItemType, ValidationErrorType } from "@/xapi/types";
 
-interface Props {
+interface IEmits {
+  (event: "change:item:quantity", value: { item: LineItemType; quantity: number }): void;
+  (event: "remove:item", value: LineItemType): void;
+  (event: "clear:cart"): void;
+}
+
+interface IProps {
   grouped?: boolean;
   disabled?: boolean;
   items?: LineItemType[];
@@ -61,15 +67,8 @@ interface Props {
   validationErrors?: ValidationErrorType[];
 }
 
-interface Emits {
-  (event: "change:item:quantity", value: { item: LineItemType; quantity: number }): void;
-  (event: "remove:item", value: LineItemType): void;
-  (event: "clear:cart"): void;
-}
-
-defineEmits<Emits>();
-
-withDefaults(defineProps<Props>(), {
+defineEmits<IEmits>();
+withDefaults(defineProps<IProps>(), {
   items: () => [],
   itemsGroupedByVendor: () => [],
   validationErrors: () => [],

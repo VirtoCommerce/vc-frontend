@@ -40,7 +40,8 @@ export default {
 
 <script setup lang="ts">
 import { computed, PropType } from "vue";
-import { numberToShortString, MenuLinkType } from "@/core";
+import type { MenuLinkType } from "@/core/types";
+import { numberToShortString } from "@/core/utilities";
 
 const props = defineProps({
   link: {

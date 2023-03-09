@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { AnyAddressType } from "@/core";
+import type { AnyAddressType } from "@/core/types";
 
 interface IEmits {
   (event: "change"): void;

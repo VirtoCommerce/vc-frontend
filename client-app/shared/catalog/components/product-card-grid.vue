@@ -217,7 +217,7 @@ import { Swiper as SwiperInstance } from "swiper/types";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, PropType, ref } from "vue";
 import { RouteLocationRaw } from "vue-router";
-import { getProductRoute } from "@/core";
+import { getProductRoute } from "@/core/utilities";
 import { DiscountBadge, Vendor } from "@/shared/catalog";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";

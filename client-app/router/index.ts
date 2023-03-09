@@ -1,5 +1,5 @@
 import { createRouter as _createRouter, createWebHistory, RouteRecordName } from "vue-router";
-import { useAppContext } from "@/core";
+import { useAppContext } from "@/core/composables";
 import { useUser } from "@/shared/account";
 import { mainRoutes } from "./routes";
 

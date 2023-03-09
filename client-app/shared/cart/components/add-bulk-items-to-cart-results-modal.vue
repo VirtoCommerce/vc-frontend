@@ -124,17 +124,17 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useProductsRoutes } from "@/core";
+import { useProductsRoutes } from "@/core/composables";
 import { ItemForAddBulkItemsToCartResultsPopup } from "@/shared/cart";
 
-type Group = { name: "added" | "not_added"; items: ItemForAddBulkItemsToCartResultsPopup[] };
+type GroupType = { name: "added" | "not_added"; items: ItemForAddBulkItemsToCartResultsPopup[] };
 
 interface IEmits {
   (event: "confirm"): void;
 }
 
 interface IProps {
-  items: ItemForAddBulkItemsToCartResultsPopup[];
+  items?: ItemForAddBulkItemsToCartResultsPopup[];
 }
 
 defineEmits<IEmits>();
@@ -144,8 +144,8 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const links = useProductsRoutes(props.items, { productIdProperty: "productId" });
 
-const groups = computed<Group[]>(() => {
-  const result: Group[] = [];
+const groups = computed<GroupType[]>(() => {
+  const result: GroupType[] = [];
   const added: ItemForAddBulkItemsToCartResultsPopup[] = [];
   const notAdded: ItemForAddBulkItemsToCartResultsPopup[] = [];
 

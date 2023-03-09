@@ -147,7 +147,7 @@
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed, PropType } from "vue";
 import { RouteLocationRaw } from "vue-router";
-import { getProductRoute } from "@/core";
+import { getProductRoute } from "@/core/utilities";
 import { DiscountBadge, Vendor } from "@/shared/catalog";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";

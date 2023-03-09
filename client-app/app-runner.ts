@@ -2,17 +2,10 @@ import { createHead } from "@vueuse/head";
 import { maska } from "maska";
 import { createApp, Plugin } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
-import {
-  configPlugin,
-  contextPlugin,
-  getBaseUrl,
-  Logger,
-  permissionsPlugin,
-  useCurrency,
-  useLanguages,
-  useThemeContext,
-} from "@/core";
+import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";
 import { setGlobalVariables } from "@/core/globals";
+import { configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
+import { getBaseUrl, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";

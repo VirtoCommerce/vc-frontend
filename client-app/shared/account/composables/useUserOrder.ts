@@ -1,5 +1,6 @@
 import { computed, ref, shallowRef } from "vue";
-import { getLineItemsGroupedByVendor, Logger, LineItemsGroupByVendorType } from "@/core";
+import type { LineItemsGroupByVendorType } from "@/core/types";
+import { getLineItemsGroupedByVendor, Logger } from "@/core/utilities";
 import {
   addOrUpdateOrderPayment,
   CustomerOrderType,

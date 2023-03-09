@@ -189,8 +189,9 @@
 <script setup lang="ts">
 import { sumBy } from "lodash";
 import { computed } from "vue";
-import { ExtendedLineItemType, extendLineItem } from "@/core";
-import { QuoteItemType } from "@/xapi";
+import type { ExtendedLineItemType } from "@/core/types";
+import { extendLineItem } from "@/core/utilities";
+import type { QuoteItemType } from "@/xapi/types";
 
 interface IEmits {
   (event: "update:item", value: ExtendedLineItemType<QuoteItemType>): void;

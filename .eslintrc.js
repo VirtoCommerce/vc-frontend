@@ -98,6 +98,7 @@ module.exports = {
           "transition",
           "transition-group",
           "teleport",
+          "suspense",
           "router-view",
           "router-link",
           "i18n-t",

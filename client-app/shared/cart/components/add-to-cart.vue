@@ -55,9 +55,9 @@ import { useField } from "vee-validate";
 import { computed, PropType, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
-import { useGoogleAnalytics } from "@/core";
+import { useGoogleAnalytics } from "@/core/composables";
 import { useCart } from "@/shared/cart";
-import { LineItemType, Product, VariationType } from "@/xapi/types";
+import type { LineItemType, Product, VariationType } from "@/xapi/types";
 
 const emit = defineEmits(["update:lineitem"]);
 

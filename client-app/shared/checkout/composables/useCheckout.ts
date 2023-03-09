@@ -1,8 +1,10 @@
 import { omit } from "lodash";
 import { computed, readonly, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { AnyAddressType, isEqualAddresses, Logger, useGoogleAnalytics } from "@/core";
+import { useGoogleAnalytics } from "@/core/composables";
 import { AddressType } from "@/core/enums";
+import type { AnyAddressType } from "@/core/types";
+import { isEqualAddresses, Logger } from "@/core/utilities";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { AddOrUpdateAddressModal, SelectAddressModal } from "@/shared/checkout";

@@ -2,7 +2,9 @@ import { MaybeRef } from "@vueuse/core";
 import _ from "lodash";
 import { computed, readonly, ref, shallowRef, unref } from "vue";
 import { useI18n } from "vue-i18n";
-import { DEFAULT_PAGE_SIZE, getSortingExpression, ISortInfo, Logger, SORT_ASCENDING } from "@/core";
+import { DEFAULT_PAGE_SIZE, SORT_ASCENDING } from "@/core/constants";
+import type { ISortInfo } from "@/core/types";
+import { getSortingExpression, Logger } from "@/core/utilities";
 import { convertToExtendedContact, ExtendedContactType } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 import {

@@ -1,7 +1,7 @@
 import { omit, remove } from "lodash";
 import { computed, ref } from "vue";
-import { convertToType, Logger } from "@/core";
 import { AddressType } from "@/core/enums";
+import { convertToType, Logger } from "@/core/utilities";
 import {
   getQuote,
   changeQuoteComment,

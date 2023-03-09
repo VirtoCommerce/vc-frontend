@@ -2,7 +2,8 @@ import { computedEager } from "@vueuse/core";
 import { keyBy, sumBy } from "lodash";
 import { computed, readonly, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { getLineItemsGroupedByVendor, Logger, LineItemsGroupByVendorType } from "@/core";
+import type { LineItemsGroupByVendorType } from "@/core/types";
+import { getLineItemsGroupedByVendor, Logger } from "@/core/utilities";
 import {
   ClearCartModal,
   ExtendedGiftItemType,

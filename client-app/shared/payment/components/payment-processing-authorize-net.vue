@@ -66,7 +66,8 @@
 import { clone } from "lodash";
 import { computed, ref, shallowRef, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import { Logger, useGoogleAnalytics } from "@/core";
+import { useGoogleAnalytics } from "@/core/composables";
+import { Logger } from "@/core/utilities";
 import { BankCardErrorsType, BankCardForm, BankCardType, PaymentActionType, useAuthorizeNet } from "@/shared/payment";
 import { CustomerOrderType, initializePayment, KeyValueType } from "@/xapi";
 

@@ -49,7 +49,9 @@
 
 <script setup lang="ts">
 import { computed, PropType } from "vue";
-import { CategoryTreeItemType, getCategoryRoute, useCategoriesRoutes } from "@/core";
+import { useCategoriesRoutes } from "@/core/composables";
+import type { CategoryTreeItemType } from "@/core/types";
+import { getCategoryRoute } from "@/core/utilities";
 
 const props = defineProps({
   selectedCategory: {
