@@ -1,4 +1,4 @@
-import { RouteRecordRaw, RouterView } from "vue-router";
+import { RouteRecordRaw } from "vue-router";
 import { useThemeContext } from "@/core/composables";
 
 const Dashboard = () => import("@/pages/account/dashboard.vue");
@@ -20,33 +20,31 @@ export const accountRoutes: RouteRecordRaw[] = [
   { path: "addresses", name: "Addresses", component: Addresses },
   {
     path: "orders",
-    component: RouterView,
     children: [
       { path: "", name: "Orders", component: Orders },
       {
         path: ":orderId",
-        component: RouterView,
         children: [
           {
             path: "",
             name: "OrderDetails",
             component: OrderDetails,
+            props: true,
           },
           {
             path: "payment",
             name: "OrderPayment",
             component: OrderPayment,
+            props: true,
             meta: { layout: "Secure" },
           },
         ],
         meta: { hideLeftSidebar: true },
-        props: true,
       },
     ],
   },
   {
     path: "lists",
-    component: RouterView,
     children: [
       { path: "", name: "Lists", component: Lists },
       {
@@ -60,19 +58,17 @@ export const accountRoutes: RouteRecordRaw[] = [
   { path: "checkout-defaults", name: "CheckoutDefaults", component: CheckoutDefaults },
   {
     path: "quotes",
-    component: RouterView,
     children: [
       { path: "", name: "Quotes", component: Quotes },
       {
         path: ":quoteId",
-        component: RouterView,
         children: [
           {
             path: "",
             name: "ViewQuote",
             component: ViewQuote,
-            meta: { hideLeftSidebar: true },
             props: true,
+            meta: { hideLeftSidebar: true },
           },
           {
             path: "edit",
@@ -81,7 +77,6 @@ export const accountRoutes: RouteRecordRaw[] = [
             props: true,
           },
         ],
-        props: true,
       },
     ],
     beforeEnter(_to, _from, next) {

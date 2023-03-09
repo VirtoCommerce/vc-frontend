@@ -36,7 +36,7 @@
       <div class="w-full grow lg:w-3/4 xl:w-4/5">
         <div
           :class="executed ? 'md:bg-white md:border md:shadow-sm' : 'bg-white border shadow-sm'"
-          class="px-9 py-6 md:overflow-hidden md:rounded"
+          class="overflow-hidden px-9 py-6 md:rounded"
         >
           <!-- Successful payment -->
           <VcEmptyPage
@@ -200,17 +200,17 @@
 
               <div class="p-5 md:p-6">
                 <PaymentProcessingManual
-                  v-if="[PaymentMethod.Unknown, PaymentMethod.Standard].includes(paymentMethodType!)"
+                  v-if="[PaymentActionType.Unknown, PaymentActionType.Standard].includes(paymentMethodType!)"
                 />
 
                 <PaymentProcessingRedirection
-                  v-else-if="paymentMethodType === PaymentMethod.Redirection"
+                  v-else-if="paymentMethodType === PaymentActionType.Redirection"
                   :order="order"
                   :disabled="loading"
                 />
 
                 <PaymentProcessingAuthorizeNet
-                  v-else-if="paymentMethodType === PaymentMethod.PreparedForm"
+                  v-else-if="paymentMethodType === PaymentActionType.PreparedForm"
                   ref="paymentMethodComponent"
                   :order="order"
                   :disabled="loading"
@@ -244,19 +244,18 @@ import { useUserOrder } from "@/shared/account";
 import { AddOrUpdateAddressModal, OrderSummary, SelectPaymentMethodModal } from "@/shared/checkout";
 import {
   PaymentProcessingAuthorizeNet,
-  PaymentMethod,
+  PaymentActionType,
   PaymentProcessingManual,
   PaymentProcessingRedirection,
 } from "@/shared/payment";
 import { usePopup } from "@/shared/popup";
 import { InputOrderAddressType, OrderPaymentMethodType, PaymentInType } from "@/xapi/types";
 
-const props = defineProps({
-  orderId: {
-    type: String,
-    default: "",
-  },
-});
+interface IProps {
+  orderId: string;
+}
+
+const props = defineProps<IProps>();
 
 const success = ref(false);
 const failure = ref(false);
@@ -288,7 +287,7 @@ const breadcrumbs = useBreadcrumbs(() => [
 
 const executed = computed<boolean>(() => success.value || failure.value);
 const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments[0]);
-const paymentMethodType = computed<PaymentMethod | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);
+const paymentMethodType = computed<number | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);
 
 function tryAgain() {
   location.reload();

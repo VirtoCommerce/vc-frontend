@@ -11,8 +11,9 @@
         v-model="bankCardData"
         v-model:valid="isValidBankCard"
         :errors="bankCardErrors"
-        :is-disabled="loading"
+        :disabled="loading"
         class="xl:w-2/3"
+        @submit="sendPaymentData"
       />
 
       <div class="mt-5 flex gap-3 pt-0.5 xl:ml-6 xl:w-1/3 xl:gap-4">
@@ -63,25 +64,24 @@
 
 <script setup lang="ts">
 import { clone } from "lodash";
-import { computed, PropType, ref, shallowRef, watch, watchEffect } from "vue";
+import { computed, ref, shallowRef, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { Logger, useGoogleAnalytics } from "@/core";
 import { BankCardErrorsType, BankCardForm, BankCardType, PaymentActionType, useAuthorizeNet } from "@/shared/payment";
 import { CustomerOrderType, initializePayment, KeyValueType } from "@/xapi";
 
-const emit = defineEmits<{
+interface IEmits {
   (event: "success"): void;
   (event: "fail", message?: string | null): void;
-}>();
+}
 
-const props = defineProps({
-  disabled: Boolean,
+interface IProps {
+  order: CustomerOrderType;
+  disabled?: boolean;
+}
 
-  order: {
-    type: Object as PropType<CustomerOrderType>,
-    required: true,
-  },
-});
+const emit = defineEmits<IEmits>();
+const props = defineProps<IProps>();
 
 const emptyBankCardData: BankCardType = {
   cardholderName: "",
@@ -118,7 +118,7 @@ async function initPayment() {
     paymentId: props.order.inPayments[0]!.id,
   });
 
-  if (paymentActionType !== PaymentActionType.PreparedForm) {
+  if (paymentActionType !== PaymentActionType[PaymentActionType.PreparedForm]) {
     initializationError.value = t("shared.payment.authorize_net.errors.incorrect_payment_method");
     return;
   }

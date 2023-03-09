@@ -1,48 +1,51 @@
 <template>
   <ul class="vc-steps">
-    <li
-      v-for="(step, index) in steps"
-      :key="index"
-      :class="[
-        'vc-steps__item',
-        {
-          'vc-steps__item--active': index + startStepIndex === currentStepIndex,
-          'vc-steps__item--completed': index + startStepIndex < currentStepIndex,
-          'vc-steps__item--disabled': disabled,
-        },
-      ]"
-    >
-      <component
-        :is="step.route && index + startStepIndex < currentStepIndex && !disabled ? 'router-link' : 'span'"
-        :to="step.route"
-        class="vc-steps__step"
+    <transition-group :name="transitionName">
+      <li
+        v-for="(step, index) in steps"
+        :key="step.text"
+        :class="[
+          'vc-steps__item',
+          {
+            'vc-steps__item--active': index + startStepIndex === currentStepIndex,
+            'vc-steps__item--completed': index + startStepIndex < currentStepIndex,
+            'vc-steps__item--disabled': disabled,
+          },
+        ]"
       >
-        <span class="vc-steps__icon">
-          <!-- Custom icon -->
-          <VcIcon v-if="step.icon" :name="step.icon" size="xxs" />
+        <component
+          :is="step.route && index + startStepIndex < currentStepIndex && !disabled ? 'router-link' : 'span'"
+          :to="step.route"
+          class="vc-steps__step"
+        >
+          <span class="vc-steps__icon">
+            <!-- Custom icon -->
+            <VcIcon v-if="step.icon" :name="step.icon" size="xxs" />
 
-          <!-- Completed icon -->
-          <VcIcon v-else-if="index + startStepIndex < currentStepIndex" name="check-bold" size="xxs" />
+            <!-- Completed icon -->
+            <VcIcon v-else-if="index + startStepIndex < currentStepIndex" name="check-bold" size="xxs" />
 
-          <!-- Step number -->
-          <template v-else>{{ index + startStepIndex }}</template>
-        </span>
+            <!-- Step number -->
+            <template v-else>{{ index + startStepIndex }}</template>
+          </span>
 
-        <span class="vc-steps__text">{{ step.text }}</span>
-      </component>
-    </li>
+          <span class="vc-steps__text">{{ step.text }}</span>
+        </component>
+      </li>
+    </transition-group>
   </ul>
 </template>
 
 <script setup lang="ts">
-interface Props {
-  steps: IStepsItem[];
+interface IProps {
+  steps?: IStepsItem[];
   currentStepIndex?: number;
   startStepIndex?: number;
   disabled?: boolean;
+  transitionName?: string;
 }
 
-withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<IProps>(), {
   steps: () => [],
   currentStepIndex: -1,
   startStepIndex: 1,
