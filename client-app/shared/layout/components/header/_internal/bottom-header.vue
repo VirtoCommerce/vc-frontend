@@ -1,6 +1,7 @@
 <template>
   <div class="relative">
     <div
+      ref="bottomHeader"
       class="relative z-[2] flex min-h-[5.5rem] items-center gap-x-5 bg-[color:var(--color-header-bottom-bg)] px-5 py-3 xl:px-12"
     >
       <router-link to="/">
@@ -63,18 +64,19 @@
     >
       <div
         v-if="catalogMenuVisible"
+        ref="catalogMenuElement"
         class="absolute w-full overflow-y-auto shadow-md transition-transform duration-200"
-        style="max-height: calc(100vh - 127px)"
+        :style="catalogMenuStyle"
       >
-        <CatalogMenu ref="catalogMenuElement" @select="catalogMenuVisible = false" />
+        <CatalogMenu @select="catalogMenuVisible = false" />
       </div>
     </transition>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onClickOutside } from "@vueuse/core";
-import { ref, shallowRef, watch } from "vue";
+import { onClickOutside, useElementBounding } from "@vueuse/core";
+import { ref, shallowRef, watch, computed, StyleValue } from "vue";
 import { useNavigations } from "@/core";
 import { useDomUtils } from "@/core/composables";
 import { useUser } from "@/shared/account";
@@ -90,9 +92,16 @@ const { cart } = useCart();
 const { desktopHeaderMenuLinks } = useNavigations();
 const { productsIds } = useCompareProducts();
 
+const bottomHeader = ref<HTMLElement | null>(null);
 const catalogMenuElement = shallowRef<HTMLElement | null>(null);
 const showCatalogMenuButton = shallowRef<HTMLElement | null>(null);
 const catalogMenuVisible = ref(false);
+
+const { bottom } = useElementBounding(bottomHeader);
+
+const catalogMenuStyle = computed<StyleValue | undefined>(() =>
+  bottom.value ? { maxHeight: `calc(100vh - ${bottom.value}px)` } : undefined
+);
 
 onClickOutside(
   catalogMenuElement,
