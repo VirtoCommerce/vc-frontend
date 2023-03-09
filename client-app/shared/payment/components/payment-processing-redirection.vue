@@ -25,20 +25,18 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, ref } from "vue";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { PaymentActionType } from "@/shared/payment";
 import { initializePayment } from "@/xapi/graphql/cart";
 import { CustomerOrderType } from "@/xapi/types";
 
-const props = defineProps({
-  disabled: Boolean,
+interface IProps {
+  order: CustomerOrderType;
+  disabled?: boolean;
+}
 
-  order: {
-    type: Object as PropType<CustomerOrderType>,
-    required: true,
-  },
-});
+const props = defineProps<IProps>();
 
 const initialized = ref(false);
 const initializationError = ref("");
@@ -57,7 +55,7 @@ async function initPayment() {
     paymentId: props.order.inPayments[0]!.id,
   });
 
-  if (paymentActionType !== PaymentActionType.Redirection) {
+  if (paymentActionType !== PaymentActionType[PaymentActionType.Redirection]) {
     initializationError.value = t("shared.payment.redirection.errors.incorrect_payment_method");
     return;
   }

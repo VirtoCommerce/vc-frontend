@@ -142,14 +142,15 @@ import { CartAddressType } from "@/xapi";
 const router = useRouter();
 const {
   cart,
+  shipment,
+  payment,
   lineItemsGroupedByVendor,
+  availableShippingMethods,
+  availablePaymentMethods,
   hasValidationErrors,
   fetchCart,
-  availablePaymentMethods,
-  availableShippingMethods,
 } = useCart();
-const { billingAddressEqualsShipping, shipment, payment, comment, isValidCheckout, createOrderFromCart } =
-  useCheckout();
+const { billingAddressEqualsShipping, comment, canPayNow, isValidCheckout, createOrderFromCart } = useCheckout();
 const { purchaseOrderNumber } = usePurchaseOrderNumber();
 const { couponCode } = useCoupon();
 
@@ -170,13 +171,7 @@ async function createOrder(): Promise<void> {
   const order = await createOrderFromCart();
 
   if (order) {
-    await router.replace({
-      name: "OrderCompleted",
-      params: {
-        orderId: order.id,
-        orderNumber: order.number,
-      },
-    });
+    await router.replace({ name: canPayNow.value ? "CheckoutPayment" : "CheckoutCompleted" });
   }
 
   await fetchCart();
