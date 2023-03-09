@@ -36,7 +36,7 @@
       <div class="w-full grow lg:w-3/4 xl:w-4/5">
         <div
           :class="executed ? 'md:bg-white md:border md:shadow-sm' : 'bg-white border shadow-sm'"
-          class="px-9 py-6 md:overflow-hidden md:rounded"
+          class="overflow-hidden px-9 py-6 md:rounded"
         >
           <!-- Successful payment -->
           <VcEmptyPage
