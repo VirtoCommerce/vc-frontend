@@ -96,7 +96,7 @@ defineProps<IProps>();
   $deleted: "";
   $disabled: "";
 
-  @apply p-3 rounded border shadow-t-3sm space-y-2 md:rounded-none md:border-0 md:shadow-none;
+  @apply p-3 rounded border shadow-t-3sm space-y-2;
 
   &--removable {
     $removable: &;
@@ -111,7 +111,7 @@ defineProps<IProps>();
   }
 
   @media (min-width: theme("screens.md")) {
-    @apply px-2;
+    @apply px-2 rounded-none border-0 shadow-none;
   }
 
   @media (min-width: theme("screens.2xl")) {
@@ -159,7 +159,13 @@ defineProps<IProps>();
   }
 
   &__name-link {
-    @apply text-[color:var(--color-link)] [word-break:break-word] hover:text-[color:var(--color-link-hover)];
+    @apply text-[color:var(--color-link)];
+
+    word-break: break-word;
+
+    &:hover {
+      @apply text-[color:var(--color-link-hover)];
+    }
 
     #{$deleted} & {
       @apply text-slate-400;
@@ -167,7 +173,7 @@ defineProps<IProps>();
   }
 
   &__name-text {
-    @apply [word-break:break-word];
+    word-break: break-word;
 
     #{$deleted} & {
       @apply text-slate-400;
