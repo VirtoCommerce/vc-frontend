@@ -195,13 +195,15 @@ async function searchAndShowDropdownResults() {
 }
 
 async function goToSearchResultsPage() {
-  await hideSearchDropdown();
-  router.push({
-    name: "Search",
-    query: {
-      [QueryParamName.SearchPhrase]: searchPhrase.value,
-    },
-  });
+  if (searchPhrase.value.trim()) {
+    await hideSearchDropdown();
+    router.push({
+      name: "Search",
+      query: {
+        [QueryParamName.SearchPhrase]: searchPhrase.value,
+      },
+    });
+  }
 }
 
 async function reset() {
