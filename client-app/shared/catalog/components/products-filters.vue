@@ -73,7 +73,7 @@
           class="mt-3 first:mt-1 last:mb-2"
           @change="onFilterChanged"
         >
-          <div class="text-13" :class="[item.selected ? 'font-semibold' : 'font-medium text-gray-500']">
+          <div class="flex text-13" :class="[item.selected ? 'font-semibold' : 'font-medium text-gray-500']">
             <span class="truncate">{{ item.label }}</span>
             <span class="ml-1">{{ $t("pages.catalog.facet_card.item_count_format", [item.count]) }}</span>
           </div>
