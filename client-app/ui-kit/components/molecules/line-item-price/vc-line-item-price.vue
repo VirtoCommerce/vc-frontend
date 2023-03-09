@@ -1,40 +1,37 @@
 <template>
   <div class="vc-line-item-price">
-    <div class="vc-line-item-price__actual">
-      <VcPriceDisplay :value="listPrice?.amount > actualPrice?.amount ? actualPrice : listPrice" />
-    </div>
-    <div v-if="listPrice?.amount > actualPrice?.amount" class="vc-line-item-price__list">
-      <VcPriceDisplay :value="listPrice" />
-    </div>
+    <VcPriceDisplay
+      class="vc-line-item-price__actual"
+      :value="listPrice?.amount > actualPrice?.amount ? actualPrice : listPrice"
+    />
+    <VcPriceDisplay
+      v-if="listPrice?.amount > actualPrice?.amount"
+      class="vc-line-item-price__list"
+      :value="listPrice"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { MoneyType } from "@/xapi/types";
 
-interface Props {
+interface IProps {
   listPrice?: MoneyType;
   actualPrice?: MoneyType;
 }
 
-defineProps<Props>();
+defineProps<IProps>();
 </script>
 
 <style lang="scss">
 .vc-line-item-price {
+  @apply flex flex-col items-end;
+
   &__actual {
-    @apply text-13 font-semibold text-[color:var(--color-body-text)];
+    @apply text-xs font-bold text-[color:var(--color-body-text)] [word-break:break-word];
 
-    @media (min-width: theme("screens.md")) {
+    @media (min-width: theme("screens.2xl")) {
       @apply font-normal;
-    }
-
-    @media (min-width: theme("screens.lg")) {
-      @apply text-xs;
-    }
-
-    @media (min-width: theme("screens.xl")) {
-      @apply font-medium;
     }
   }
 

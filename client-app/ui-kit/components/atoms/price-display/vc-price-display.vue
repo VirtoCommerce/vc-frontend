@@ -3,13 +3,11 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
 import { MoneyType } from "@/xapi/types";
 
-defineProps({
-  value: {
-    type: Object as PropType<MoneyType>,
-    default: undefined,
-  },
-});
+interface IProps {
+  value: MoneyType;
+}
+
+defineProps<IProps>();
 </script>
