@@ -62,10 +62,11 @@
       leave-active-class="will-change-transform"
     >
       <div
+        v-if="catalogMenuVisible"
         class="absolute w-full overflow-y-auto shadow-md transition-transform duration-200"
         style="max-height: calc(100vh - 127px)"
       >
-        <CatalogMenu v-if="catalogMenuVisible" ref="catalogMenuElement" @select="catalogMenuVisible = false" />
+        <CatalogMenu ref="catalogMenuElement" @select="catalogMenuVisible = false" />
       </div>
     </transition>
   </div>
