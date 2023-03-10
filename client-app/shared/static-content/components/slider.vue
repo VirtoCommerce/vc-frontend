@@ -32,18 +32,12 @@ import { Navigation } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/vue"; // eslint-disable-line import/no-unresolved
 import { computed, getCurrentInstance } from "vue";
 
-// eslint-disable-next-line vue/define-props-declaration
-const props = defineProps({
-  model: {
-    type: Object,
-    required: true,
-  },
-
-  settings: {
-    type: Object,
-    required: true,
-  },
-});
+const props = defineProps<{
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  model: Record<string, any>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  settings: Record<string, any>;
+}>();
 
 const componentId = `vc-slider_${getCurrentInstance()!.uid}`;
 

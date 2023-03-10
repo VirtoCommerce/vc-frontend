@@ -5,16 +5,10 @@
 <script setup lang="ts">
 import { LoginForm } from "@/shared/login";
 
-// eslint-disable-next-line vue/define-props-declaration
-defineProps({
-  model: {
-    type: Object,
-    required: true,
-  },
-
-  settings: {
-    type: Object,
-    required: true,
-  },
-});
+defineProps<{
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  model: Record<string, any>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  settings: Record<string, any>;
+}>();
 </script>

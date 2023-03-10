@@ -17,18 +17,12 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-// eslint-disable-next-line vue/define-props-declaration
-const props = defineProps({
-  model: {
-    type: Object,
-    required: true,
-  },
-
-  settings: {
-    type: Object,
-    required: true,
-  },
-});
+const props = defineProps<{
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  model: Record<string, any>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  settings: Record<string, any>;
+}>();
 
 const classObject = computed(() => {
   const cols = props.model.columns.length;
