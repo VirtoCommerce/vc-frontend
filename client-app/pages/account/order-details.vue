@@ -104,27 +104,6 @@
           <VcAddressInfo :address="deliveryAddress" class="text-15" />
         </VcCardWidget>
 
-        <!-- Payment Details Card -->
-        <VcCardWidget v-if="payment" :title="$t('common.titles.payment_details')" icon="truck">
-          <div class="space-y-1.5 text-15">
-            <p>
-              <span class="font-extrabold">{{ $t("common.labels.payment_number") }}:</span>
-              {{ payment.number }}
-            </p>
-
-            <p class="break-words">
-              <span class="font-extrabold">{{ $t("common.labels.payment_type") }}:</span>
-              {{ payment.gatewayCode }}
-            </p>
-          </div>
-
-          <div class="mt-3">
-            <VcButton class="!h-auto px-2 py-1 !text-xs uppercase" is-outline is-disabled>
-              {{ $t("common.buttons.view_invoice") }}
-            </VcButton>
-          </div>
-        </VcCardWidget>
-
         <!-- Payment Method section -->
         <VcCardWidget v-if="payment?.paymentMethod" :title="$t('common.titles.payment_method')" icon="document-text">
           <div class="flex items-center gap-4 text-15">
