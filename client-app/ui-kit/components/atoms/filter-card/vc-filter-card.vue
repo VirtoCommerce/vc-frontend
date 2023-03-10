@@ -8,7 +8,9 @@
     >
       <div class="flex items-center">
         <slot name="header">
-          <div class="grow uppercase text-[color:var(--color-filter-card-header)]">{{ title }}</div>
+          <div class="grow uppercase text-[color:var(--color-filter-card-header)] [word-break:break-word]">
+            {{ title }}
+          </div>
           <div v-if="isCollapsible" class="ml-3">
             <svg
               width="12"
