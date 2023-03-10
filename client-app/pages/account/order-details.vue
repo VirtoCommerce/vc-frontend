@@ -89,7 +89,7 @@
         <!-- Shipping Method Card -->
         <VcCardWidget v-if="shipment" :title="$t('common.titles.shipping_method')" icon="truck">
           <div class="flex items-center gap-4 text-15">
-            <VcImage src="/static/images/checkout/fedex.svg" class="h-12 w-12" lazy />
+            <VcImage :src="shipment.shippingMethod?.logoUrl" class="h-12 w-12" lazy />
 
             <span class="min-w-0 break-words">
               {{ shipment.shipmentMethodCode }} {{ shipment.shipmentMethodOption }} ({{
@@ -107,7 +107,7 @@
         <!-- Payment Method section -->
         <VcCardWidget v-if="payment?.paymentMethod" :title="$t('common.titles.payment_method')" icon="document-text">
           <div class="flex items-center gap-4 text-15">
-            <VcImage src="/static/images/checkout/invoice.svg" class="h-12 w-12" lazy />
+            <VcImage :src="payment.paymentMethod.logoUrl" class="h-12 w-12" lazy />
             <span class="min-w-0 break-words">{{ payment.paymentMethod.typeName }}</span>
           </div>
         </VcCardWidget>
