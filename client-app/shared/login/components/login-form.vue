@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <div class="banner flex items-center" :style="{ backgroundImage: `url(${$cfg.homepage_background_image})` }">
     <div class="container mx-auto flex flex-col items-center space-y-10 p-6 md:p-12 lg:flex-row lg:space-x-24">
@@ -8,7 +9,6 @@
       <div
         class="w-full select-none text-center text-3xl font-bold text-white drop-shadow-lg md:text-5xl lg:w-3/5 lg:text-left"
       >
-        <!-- eslint-disable vue/no-v-html -->
         <div class="mb-8 uppercase leading-tight" v-html="$t('pages.home.main_banner_block.message')"></div>
         <div
           class="flex flex-col items-center justify-center space-y-2 text-xl md:flex-row md:space-y-0 md:space-x-7 md:text-2xl lg:justify-start"
