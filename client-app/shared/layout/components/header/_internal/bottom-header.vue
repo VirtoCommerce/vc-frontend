@@ -1,6 +1,7 @@
 <template>
   <div class="relative">
     <div
+      ref="bottomHeader"
       class="relative z-[2] flex min-h-[5.5rem] items-center gap-x-5 bg-[color:var(--color-header-bottom-bg)] px-5 py-3 xl:px-12"
     >
       <router-link to="/">
@@ -61,20 +62,23 @@
       enter-active-class="will-change-transform"
       leave-active-class="will-change-transform"
     >
-      <CatalogMenu
+      <div
         v-if="catalogMenuVisible"
         ref="catalogMenuElement"
-        class="absolute mt-[-1px] shadow-md transition-transform duration-200"
-        @select="catalogMenuVisible = false"
-      />
+        class="absolute w-full overflow-y-auto shadow-md transition-transform duration-200"
+        :style="catalogMenuStyle"
+      >
+        <CatalogMenu @select="catalogMenuVisible = false" />
+      </div>
     </transition>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onClickOutside } from "@vueuse/core";
-import { ref, shallowRef } from "vue";
+import { onClickOutside, useElementBounding } from "@vueuse/core";
+import { ref, shallowRef, watch, computed, StyleValue } from "vue";
 import { useNavigations } from "@/core";
+import { useDomUtils } from "@/core/composables";
 import { useUser } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
@@ -82,14 +86,22 @@ import { SearchBar } from "@/shared/layout";
 import BottomHeaderLink from "./bottom-header-link.vue";
 import CatalogMenu from "./catalog-menu.vue";
 
+const { toggleBodyScrollable } = useDomUtils();
 const { organization } = useUser();
 const { cart } = useCart();
 const { desktopHeaderMenuLinks } = useNavigations();
 const { productsIds } = useCompareProducts();
 
+const bottomHeader = ref<HTMLElement | null>(null);
 const catalogMenuElement = shallowRef<HTMLElement | null>(null);
 const showCatalogMenuButton = shallowRef<HTMLElement | null>(null);
 const catalogMenuVisible = ref(false);
+
+const { bottom } = useElementBounding(bottomHeader);
+
+const catalogMenuStyle = computed<StyleValue | undefined>(() =>
+  bottom.value ? { maxHeight: `calc(100vh - ${bottom.value}px)` } : undefined
+);
 
 onClickOutside(
   catalogMenuElement,
@@ -98,4 +110,8 @@ onClickOutside(
   },
   { ignore: [showCatalogMenuButton] }
 );
+
+watch(catalogMenuVisible, (value) => {
+  toggleBodyScrollable(!value);
+});
 </script>
