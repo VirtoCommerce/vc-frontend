@@ -111,6 +111,12 @@ const address = computed<CartAddressType | undefined>(() =>
 
 const method = computed<PaymentMethodType | undefined>({
   get: () => props.methods.find((item) => item.code === props.payment?.paymentGatewayCode),
-  set: (value?: PaymentMethodType) => value && emit("change:method", value),
+  set: (value?: PaymentMethodType) => {
+    if (value?.code !== "DefaultManualPaymentMethod") {
+      poNumber.value = "";
+    }
+
+    return value && emit("change:method", value);
+  },
 });
 </script>
