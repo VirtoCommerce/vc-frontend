@@ -64,12 +64,15 @@
           </template>
         </VcSelect>
 
-        <VcInput
-          v-if="method?.code === 'DefaultManualPaymentMethod'"
-          v-model="poNumber"
-          name="purchaseOrderNumber"
-          :placeholder="$t('shared.checkout.billing_details_section.purchase_order_placeholder')"
-        />
+        <transition name="slide-fade-top" mode="in-out">
+          <VcInput
+            v-if="purchaseOrderNumberEnabled"
+            v-model="poNumber"
+            :placeholder="$t('common.placeholders.purchase_order_number')"
+            :disabled="disabled"
+            name="purchaseOrderNumber"
+          />
+        </transition>
       </div>
     </div>
   </VcSectionWidget>
@@ -77,7 +80,7 @@
 
 <script setup lang="ts">
 import { useVModel } from "@vueuse/core";
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import { PaymentType, PaymentMethodType, ShipmentType, CartAddressType } from "@/xapi";
 
 interface IEmits {
@@ -94,6 +97,7 @@ interface IProps {
   payment?: PaymentType;
   shipment?: ShipmentType;
   purchaseOrderNumber?: string;
+  purchaseOrderNumberEnabled?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -111,12 +115,15 @@ const address = computed<CartAddressType | undefined>(() =>
 
 const method = computed<PaymentMethodType | undefined>({
   get: () => props.methods.find((item) => item.code === props.payment?.paymentGatewayCode),
-  set: (value?: PaymentMethodType) => {
-    if (value?.code !== "DefaultManualPaymentMethod") {
+  set: (value?: PaymentMethodType) => value && emit("change:method", value),
+});
+
+watch(
+  () => props.purchaseOrderNumberEnabled,
+  (value: boolean) => {
+    if (!value) {
       poNumber.value = "";
     }
-
-    return value && emit("change:method", value);
-  },
-});
+  }
+);
 </script>

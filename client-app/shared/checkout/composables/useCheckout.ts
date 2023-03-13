@@ -72,6 +72,12 @@ export default function useCheckout() {
       selectedPaymentMethodGroupType.value !== PaymentMethodGroupType[PaymentMethodGroupType.Manual]
   );
 
+  const isPurchaseOrderNumberEnabled = computed<boolean>(
+    () =>
+      !!selectedPaymentMethodGroupType.value &&
+      selectedPaymentMethodGroupType.value === PaymentMethodGroupType[PaymentMethodGroupType.Manual]
+  );
+
   async function setShippingMethod(method: ShippingMethodType, options: { reloadCart?: boolean } = {}) {
     await updateShipment(
       {
@@ -327,7 +333,7 @@ export default function useCheckout() {
   return {
     comment,
     billingAddressEqualsShipping,
-    _purchaseOrderNumber: purchaseOrderNumber,
+    purchaseOrderNumber,
     isValidDeliveryAddress,
     isValidBillingAddress,
     isValidShipmentMethod,
@@ -335,6 +341,7 @@ export default function useCheckout() {
     isValidShipment,
     isValidPayment,
     isValidCheckout,
+    isPurchaseOrderNumberEnabled,
     selectedPaymentMethodGroupType,
     canPayNow,
     initialize,

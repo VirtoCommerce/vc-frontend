@@ -79,7 +79,7 @@
               </template>
             </VcSelect>
 
-            <VcInput v-if="_purchaseOrderNumber" v-model="_purchaseOrderNumber" name="purchaseOrderNumber" readonly />
+            <VcInput v-if="purchaseOrderNumber" v-model="purchaseOrderNumber" name="purchaseOrderNumber" readonly />
           </div>
         </div>
       </div>
@@ -94,8 +94,8 @@
         <template #footer>
           <!-- Purchase order number -->
           <VcActionInput
-            v-if="purchaseOrderNumber"
-            :model-value="purchaseOrderNumber"
+            v-if="purchaseOrderNumberOld"
+            :model-value="purchaseOrderNumberOld"
             :label="$t('common.labels.purchase_order_number')"
             class="mt-4"
             disabled
@@ -153,9 +153,9 @@ const {
   hasValidationErrors,
   fetchCart,
 } = useCart();
-const { billingAddressEqualsShipping, comment, canPayNow, isValidCheckout, createOrderFromCart, _purchaseOrderNumber } =
+const { billingAddressEqualsShipping, comment, canPayNow, isValidCheckout, createOrderFromCart, purchaseOrderNumber } =
   useCheckout();
-const { purchaseOrderNumber } = usePurchaseOrderNumber();
+const { purchaseOrderNumber: purchaseOrderNumberOld } = usePurchaseOrderNumber();
 const { couponCode } = useCoupon();
 
 const creatingOrder = ref(false);
