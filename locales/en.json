@@ -521,6 +521,7 @@
           "payment_method": "Payment method",
           "same_as_shipping_address": "Same as shipping address"
         },
+        "purchase_order_placeholder": "Enter purchase order number",
         "links": {
           "select_address": "select a billing address"
         },

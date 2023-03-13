@@ -254,7 +254,11 @@ watchEffect(() => {
     @apply content-[''] z-[-1] absolute inset-0 bg-white border rounded;
 
     input:focus ~ & {
-      box-shadow: 0 0 0 3px var(--color-primary-light);
+      @apply ring ring-[color:var(--color-primary-light)];
+
+      #{$readonly} & {
+        @apply ring-transparent;
+      }
     }
 
     #{$disabled} &,

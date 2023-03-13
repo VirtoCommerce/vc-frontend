@@ -62,22 +62,25 @@
             </div>
           </div>
 
-          <VcSelect
-            :model-value="payment?.paymentGatewayCode"
-            :label="$t('shared.checkout.billing_details_section.labels.payment_method')"
-            :items="availablePaymentMethods"
-            value-field="code"
-            size="auto"
-            class="lg:w-2/5"
-            readonly
-          >
-            <template #selected="{ item }">
-              <VcSelectItem>
-                <VcSelectItemImage :src="item.logoUrl" />
-                <VcSelectItemText>{{ item.code }}</VcSelectItemText>
-              </VcSelectItem>
-            </template>
-          </VcSelect>
+          <div class="space-y-3 lg:w-2/5">
+            <VcSelect
+              :model-value="payment?.paymentGatewayCode"
+              :label="$t('shared.checkout.billing_details_section.labels.payment_method')"
+              :items="availablePaymentMethods"
+              value-field="code"
+              size="auto"
+              readonly
+            >
+              <template #selected="{ item }">
+                <VcSelectItem>
+                  <VcSelectItemImage :src="item.logoUrl" />
+                  <VcSelectItemText>{{ item.code }}</VcSelectItemText>
+                </VcSelectItem>
+              </template>
+            </VcSelect>
+
+            <VcInput v-if="_purchaseOrderNumber" v-model="_purchaseOrderNumber" name="purchaseOrderNumber" readonly />
+          </div>
         </div>
       </div>
     </VcSectionWidget>
@@ -150,7 +153,8 @@ const {
   hasValidationErrors,
   fetchCart,
 } = useCart();
-const { billingAddressEqualsShipping, comment, canPayNow, isValidCheckout, createOrderFromCart } = useCheckout();
+const { billingAddressEqualsShipping, comment, canPayNow, isValidCheckout, createOrderFromCart, _purchaseOrderNumber } =
+  useCheckout();
 const { purchaseOrderNumber } = usePurchaseOrderNumber();
 const { couponCode } = useCoupon();
 

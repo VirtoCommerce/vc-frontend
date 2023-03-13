@@ -2,6 +2,7 @@
   <VcLayoutWithRightSidebar is-sidebar-sticky>
     <BillingDetailsSection
       v-model:address-equals-shipping-address="billingAddressEqualsShipping"
+      v-model:purchase-order-number="_purchaseOrderNumber"
       :methods="availablePaymentMethods"
       :payment="payment"
       :shipment="shipment"
@@ -60,8 +61,14 @@ import { useCart, usePurchaseOrderNumber } from "@/shared/cart";
 import { BillingDetailsSection, OrderSummary, useCheckout } from "@/shared/checkout";
 
 const { loading, cart, shipment, payment, hasValidationErrors, availablePaymentMethods } = useCart();
-const { billingAddressEqualsShipping, isValidPayment, isValidCheckout, onBillingAddressChange, setPaymentMethod } =
-  useCheckout();
+const {
+  billingAddressEqualsShipping,
+  isValidPayment,
+  isValidCheckout,
+  onBillingAddressChange,
+  setPaymentMethod,
+  _purchaseOrderNumber,
+} = useCheckout();
 const { purchaseOrderNumber, purchaseOrderNumberIsApplied, setPurchaseOrderNumber, removePurchaseOrderNumber } =
   usePurchaseOrderNumber();
 
