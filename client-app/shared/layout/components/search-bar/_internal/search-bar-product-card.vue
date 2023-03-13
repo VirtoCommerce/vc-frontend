@@ -39,9 +39,9 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import type { RouteLocationRaw } from "vue-router";
 import { getProductRoute } from "@/core/utilities";
 import type { Product } from "@/xapi/types";
+import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
   (eventName: "link-click", globalEvent: PointerEvent): void;

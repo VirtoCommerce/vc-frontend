@@ -210,12 +210,12 @@
 import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCurrency, useLanguages, useNavigations } from "@/core/composables";
-import type { MenuLinkType } from "@/core/types";
 import { useUser } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
 import { LanguageSelector } from "@/shared/layout";
 import MobileMenuLink from "./mobile-menu-link.vue";
+import type { MenuLinkType } from "@/core/types";
 
 defineEmits(["close"]);
 

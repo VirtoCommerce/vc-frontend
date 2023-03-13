@@ -1,12 +1,8 @@
-import { computed, WritableComputedRef } from "vue";
-import {
-  LocationAsRelativeRaw,
-  LocationQueryValue,
-  LocationQueryValueRaw,
-  RouteQueryAndHash,
-  useRouter,
-} from "vue-router";
+import { computed } from "vue";
+import { useRouter } from "vue-router";
 import type { IUseRouteQueryParamOptions } from "../types";
+import type { WritableComputedRef } from "vue";
+import type { LocationAsRelativeRaw, LocationQueryValue, LocationQueryValueRaw, RouteQueryAndHash } from "vue-router";
 
 export function useRouteQueryParam<T = NonNullable<LocationQueryValue> | NonNullable<LocationQueryValue>[]>(
   key: string,

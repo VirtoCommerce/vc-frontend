@@ -1,5 +1,10 @@
-import { IdentityResultType, InputCreateApplicationUserType, Mutations, MutationsCreateUserArgs } from "@/xapi/types";
 import mutationDocument from "./createUser.graphql";
+import type {
+  IdentityResultType,
+  InputCreateApplicationUserType,
+  Mutations,
+  MutationsCreateUserArgs,
+} from "@/xapi/types";
 
 export default async function createUser(user: InputCreateApplicationUserType): Promise<IdentityResultType> {
   const { $graphqlClient } = useNuxtApp();

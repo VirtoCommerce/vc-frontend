@@ -1,6 +1,6 @@
-import type { LineItemType, OrderLineItemType, QuoteItemType } from "@/xapi/types";
-import type { ExtendedLineItemType, LineItemsGroupByVendorType, LineItemsGroupsByVendorType } from "../../types";
 import { getProductRoute } from "../product";
+import type { ExtendedLineItemType, LineItemsGroupByVendorType, LineItemsGroupsByVendorType } from "../../types";
+import type { LineItemType, OrderLineItemType, QuoteItemType } from "@/xapi/types";
 
 export function getLineItemsGroupedByVendor<T extends LineItemType | OrderLineItemType>(
   items: T[]

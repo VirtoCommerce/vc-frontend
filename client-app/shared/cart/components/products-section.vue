@@ -48,8 +48,8 @@
 </template>
 
 <script setup lang="ts">
-import type { LineItemsGroupByVendorType } from "@/core/types";
 import { CartLineItems } from "@/shared/cart";
+import type { LineItemsGroupByVendorType } from "@/core/types";
 import type { LineItemType, ValidationErrorType } from "@/xapi/types";
 
 interface IEmits {

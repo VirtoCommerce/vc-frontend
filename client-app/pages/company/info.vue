@@ -239,11 +239,11 @@ import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 import { usePageHead } from "@/core/composables";
 import { AddressType, XApiPermissions } from "@/core/enums";
-import type { ISortInfo } from "@/core/types";
 import { useUser } from "@/shared/account";
 import { AddOrUpdateCompanyAddressDialog, useOrganization, useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
+import type { ISortInfo } from "@/core/types";
 import type { MemberAddressType } from "@/xapi/types";
 
 const page = ref(1);

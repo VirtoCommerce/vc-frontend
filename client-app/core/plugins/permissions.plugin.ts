@@ -1,6 +1,6 @@
-import { App, Plugin } from "vue";
 import { useUser } from "@/shared/account";
 import { StorefrontPermissions, XApiPermissions } from "../enums";
+import type { App, Plugin } from "vue";
 
 export const permissionsPlugin: Plugin = {
   install: (app: App) => {

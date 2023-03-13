@@ -1,7 +1,8 @@
-import { createRouter as _createRouter, createWebHistory, RouteRecordName } from "vue-router";
+import { createRouter as _createRouter, createWebHistory } from "vue-router";
 import { useAppContext } from "@/core/composables";
 import { useUser } from "@/shared/account";
 import { mainRoutes } from "./routes";
+import type { RouteRecordName } from "vue-router";
 
 export function createRouter(options: { base: string }) {
   const { base } = options;

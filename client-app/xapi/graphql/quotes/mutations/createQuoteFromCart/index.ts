@@ -1,5 +1,5 @@
-import { Mutations, MutationsCreateQuoteFromCartArgs, QuoteType } from "@/xapi/types";
 import mutationDocument from "./createQuoteFromCartMutation.graphql";
+import type { Mutations, MutationsCreateQuoteFromCartArgs, QuoteType } from "@/xapi/types";
 
 export default async function createQuoteFromCart(cartId: string, comment: string): Promise<QuoteType> {
   const { $graphqlClient } = useNuxtApp();

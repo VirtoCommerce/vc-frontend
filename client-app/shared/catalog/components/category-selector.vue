@@ -48,10 +48,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from "vue";
+import { computed } from "vue";
 import { useCategoriesRoutes } from "@/core/composables";
-import type { CategoryTreeItemType } from "@/core/types";
 import { getCategoryRoute } from "@/core/utilities";
+import type { CategoryTreeItemType } from "@/core/types";
+import type { PropType } from "vue";
 
 const props = defineProps({
   selectedCategory: {

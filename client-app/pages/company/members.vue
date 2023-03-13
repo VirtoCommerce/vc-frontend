@@ -375,12 +375,10 @@ import { computed, onMounted, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useElementVisibility, usePageHead } from "@/core/composables";
 import { XApiPermissions } from "@/core/enums";
-import { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
 import { getFilterExpressionFromFacets } from "@/core/utilities";
 import { PageToolbarBlock, useUser } from "@/shared/account";
 import {
   ContactStatus,
-  ExtendedContactType,
   FilterFacet,
   InviteMemberDialog,
   RoleIcon,
@@ -388,6 +386,8 @@ import {
   useOrganizationContactsFilterFacets,
 } from "@/shared/company";
 import { usePopup } from "@/shared/popup";
+import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
+import type { ExtendedContactType } from "@/shared/company";
 
 const { t } = useI18n();
 

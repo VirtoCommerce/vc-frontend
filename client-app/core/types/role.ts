@@ -1,6 +1,6 @@
-import type { RoleType } from "@/xapi/types";
-import type { StorefrontPermissions, XApiPermissions } from "../enums";
 import type { ModifyType } from "./modify";
+import type { StorefrontPermissions, XApiPermissions } from "../enums";
+import type { RoleType } from "@/xapi/types";
 
 export type ExtendedRoleType = ModifyType<
   RoleType,

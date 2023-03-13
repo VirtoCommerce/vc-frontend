@@ -1,6 +1,6 @@
-import type { Breadcrumb, CartType, CustomerOrderType, LineItemType, Product, VariationType } from "@/xapi/types";
 import globals from "../globals";
 import { useAppContext } from "./useAppContext";
+import type { Breadcrumb, CartType, CustomerOrderType, LineItemType, Product, VariationType } from "@/xapi/types";
 
 type EventParamsType = Gtag.ControlParams & Gtag.EventParams & Gtag.CustomParams;
 type EventParamsExtendedType = EventParamsType & { item_list_id?: string; item_list_name?: string };

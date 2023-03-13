@@ -1,7 +1,7 @@
 import { computed, readonly, ref, shallowRef } from "vue";
 import { getCountries } from "@/xapi/graphql/common";
-import type { CountryType } from "@/xapi/types";
 import { Logger } from "../utilities";
+import type { CountryType } from "@/xapi/types";
 
 const loading = ref(false);
 const countries = shallowRef<CountryType[]>([]);

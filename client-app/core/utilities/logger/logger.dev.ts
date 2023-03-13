@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { LoggerType } from "./logger.type";
+import type { LoggerType } from "./logger.type";
 
 const logger: LoggerType = {
   debug: (message, ...args): void => console.debug("[VC][debug]", message, ...args),

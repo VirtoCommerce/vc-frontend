@@ -1,6 +1,6 @@
-import type { I18n } from "@/i18n";
-import type { CategoryTreeItemType, MenuLinkType } from "../../types";
 import { getCategoryRoute } from "../categories";
+import type { CategoryTreeItemType, MenuLinkType } from "../../types";
+import type { I18n } from "@/i18n";
 
 export function categoryTreeItemToMenuLink(categoryTreeItem: CategoryTreeItemType, priority?: number): MenuLinkType {
   return {

@@ -70,11 +70,12 @@
 
 <script setup lang="ts">
 import { computedEager } from "@vueuse/shared";
-import { computed, PropType } from "vue";
-import { RouteLocationRaw } from "vue-router";
+import { computed } from "vue";
 import { getProductRoute } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
-import { LineItemType } from "@/xapi/types";
+import type { LineItemType } from "@/xapi/types";
+import type { PropType } from "vue";
+import type { RouteLocationRaw } from "vue-router";
 
 defineEmits<{
   (eventName: "link-click", globalEvent: PointerEvent): void;

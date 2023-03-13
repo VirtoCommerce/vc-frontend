@@ -52,12 +52,13 @@
 import { eagerComputed } from "@vueuse/core";
 import { clone } from "lodash";
 import { useField } from "vee-validate";
-import { computed, PropType, ref, watchEffect } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 import { useGoogleAnalytics } from "@/core/composables";
 import { useCart } from "@/shared/cart";
 import type { LineItemType, Product, VariationType } from "@/xapi/types";
+import type { PropType } from "vue";
 
 const emit = defineEmits(["update:lineitem"]);
 

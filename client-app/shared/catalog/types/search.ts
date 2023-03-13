@@ -1,4 +1,4 @@
-import { FacetItemType } from "@/core/types";
+import type { FacetItemType } from "@/core/types";
 
 export type ProductsSearchParams = {
   page?: number;

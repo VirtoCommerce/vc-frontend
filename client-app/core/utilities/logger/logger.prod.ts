@@ -1,5 +1,5 @@
 import { noop } from "@vueuse/core";
-import { LoggerType } from "./logger.type";
+import type { LoggerType } from "./logger.type";
 
 const logger: LoggerType = {
   debug: noop,

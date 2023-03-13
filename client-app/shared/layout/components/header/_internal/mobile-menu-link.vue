@@ -47,9 +47,9 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import type { NavigationFailure } from "vue-router";
-import type { MenuLinkType } from "@/core/types";
 import { numberToShortString } from "@/core/utilities";
+import type { MenuLinkType } from "@/core/types";
+import type { NavigationFailure } from "vue-router";
 
 interface IEmits {
   (event: "select"): void;

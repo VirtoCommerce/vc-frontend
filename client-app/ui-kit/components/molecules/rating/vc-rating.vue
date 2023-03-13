@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { Rating } from "@/xapi/types";
+import type { Rating } from "@/xapi/types";
 
 interface Props {
   rating: Rating;

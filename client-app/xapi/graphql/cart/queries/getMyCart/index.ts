@@ -1,6 +1,6 @@
 import globals from "@/core/globals";
-import { CartType, Query, QueryCartArgs } from "@/xapi/types";
 import getMyCartQueryDocument from "./getMyCartQuery.graphql";
+import type { CartType, Query, QueryCartArgs } from "@/xapi/types";
 
 export default async function getMyCart(): Promise<CartType> {
   const { storeId, userId, cultureName, currencyCode } = globals;

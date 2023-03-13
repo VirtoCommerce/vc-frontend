@@ -54,8 +54,9 @@
 <script setup lang="ts">
 import { breakpointsTailwind, SwipeDirection, useBreakpoints, useSwipe } from "@vueuse/core";
 import _ from "lodash";
-import { computed, PropType, ref, watchEffect } from "vue";
-import { ImageType, Product } from "@/xapi/types";
+import { computed, ref, watchEffect } from "vue";
+import type { ImageType, Product } from "@/xapi/types";
+import type { PropType } from "vue";
 
 const props = defineProps({
   product: {

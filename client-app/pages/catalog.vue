@@ -311,16 +311,7 @@ import {
   whenever,
 } from "@vueuse/core";
 import _ from "lodash";
-import {
-  computed,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  shallowReactive,
-  shallowRef,
-  triggerRef,
-  WatchStopHandle,
-} from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, shallowReactive, shallowRef, triggerRef } from "vue";
 import { useRoute } from "vue-router";
 import {
   useBreadcrumbs,
@@ -332,7 +323,6 @@ import {
 } from "@/core/composables";
 import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
-import type { FacetItemType, FacetValueItemType } from "@/core/types";
 import { buildBreadcrumbs, getFilterExpressionFromFacets, searchCategoryTreeItemByKey } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
 import {
@@ -340,15 +330,16 @@ import {
   DisplayProducts,
   getFilterExpressionForAvailableIn,
   getFilterExpressionForInStock,
-  ProductsFilters,
   ProductsFiltersSidebar,
-  ProductsSearchParams,
   useProducts,
   ViewMode,
 } from "@/shared/catalog";
 import { BranchesDialog, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { usePopup } from "@/shared/popup";
-import { Product } from "@/xapi";
+import type { FacetItemType, FacetValueItemType } from "@/core/types";
+import type { ProductsFilters, ProductsSearchParams } from "@/shared/catalog";
+import type { Product } from "@/xapi/types";
+import type { WatchStopHandle } from "vue";
 
 const props = defineProps<IProps>();
 const FILTERS_RESET_TIMEOUT_IN_MS = 500;

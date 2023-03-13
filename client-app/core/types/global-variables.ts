@@ -1,5 +1,5 @@
-import type { Router } from "vue-router";
 import type { I18n } from "@/i18n";
+import type { Router } from "vue-router";
 
 export type GlobalsType = {
   storeId: string;

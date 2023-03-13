@@ -11,9 +11,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, PropType, ref, watch } from "vue";
+import { computed, inject, ref, watch } from "vue";
 import { configInjectionKey } from "@/core/injection-keys";
 import { appendSuffixToFilename } from "@/core/utilities";
+import type { PropType } from "vue";
 
 const props = defineProps({
   lazy: Boolean,

@@ -1,5 +1,5 @@
-import type { RouteLocationRaw } from "vue-router";
 import type { CommonVendor, LineItemType, OrderLineItemType, Property, QuoteItemType } from "@/xapi/types";
+import type { RouteLocationRaw } from "vue-router";
 
 export type LineItemsGroupByVendorType<T extends LineItemType | OrderLineItemType> = {
   items: T[];

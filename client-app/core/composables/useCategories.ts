@@ -1,9 +1,9 @@
 import { computed, readonly, ref, shallowRef } from "vue";
 import { searchCategories } from "@/xapi";
 import globals from "../globals";
-import type { CategoryTreeItemType } from "../types";
 import { buildCategoryTree, Logger } from "../utilities";
 import { useThemeContext } from "./useThemeContext";
+import type { CategoryTreeItemType } from "../types";
 
 const loading = ref(true);
 const categoryTree = shallowRef<CategoryTreeItemType>();

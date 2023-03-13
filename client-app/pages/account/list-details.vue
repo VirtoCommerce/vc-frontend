@@ -85,7 +85,7 @@ import {
   AddOrUpdateWishlistModal,
   DeleteWishlistProductModal,
 } from "@/shared/wishlists";
-import { LineItemType } from "@/xapi/types";
+import type { LineItemType } from "@/xapi/types";
 
 const props = defineProps({
   listId: {

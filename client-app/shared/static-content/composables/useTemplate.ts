@@ -1,6 +1,7 @@
-import { Ref, ref } from "vue";
+import { ref } from "vue";
 import { useFetch } from "@/core/composables";
-import { PageTemplate } from "../types";
+import type { PageTemplate } from "../types";
+import type { Ref } from "vue";
 
 const { innerFetch } = useFetch();
 const template: { [template: string]: Ref<PageTemplate | null> } = {};

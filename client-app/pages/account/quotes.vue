@@ -160,10 +160,10 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useElementVisibility, useRouteQueryParam, usePageHead } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
-import type { ISortInfo } from "@/core/types";
 import { getSortingExpression, getSortInfoFromStringExpression } from "@/core/utilities";
 import { PageToolbarBlock, useUserQuotes } from "@/shared/account";
-import { QuoteType } from "@/xapi/types";
+import type { ISortInfo } from "@/core/types";
+import type { QuoteType } from "@/xapi/types";
 
 const { t } = useI18n();
 const router = useRouter();

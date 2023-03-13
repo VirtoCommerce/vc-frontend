@@ -1,5 +1,5 @@
-import { Query, QueryCheckEmailUniquenessArgs } from "@/xapi/types";
 import checkEmailUniquenessQueryDocument from "./checkEmailUniquenessQuery.graphql";
+import type { Query, QueryCheckEmailUniquenessArgs } from "@/xapi/types";
 
 export default async function checkEmailUniqueness(payload: QueryCheckEmailUniquenessArgs): Promise<boolean> {
   const { $graphqlClient } = useNuxtApp();

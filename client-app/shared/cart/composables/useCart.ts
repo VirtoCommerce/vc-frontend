@@ -2,14 +2,8 @@ import { computedEager } from "@vueuse/core";
 import { keyBy, sumBy } from "lodash";
 import { computed, readonly, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
-import type { LineItemsGroupByVendorType } from "@/core/types";
 import { getLineItemsGroupedByVendor, Logger } from "@/core/utilities";
-import {
-  ClearCartModal,
-  ExtendedGiftItemType,
-  getLineItemValidationErrorsGroupedBySKU,
-  OutputBulkItemType,
-} from "@/shared/cart";
+import { ClearCartModal, getLineItemValidationErrorsGroupedBySKU } from "@/shared/cart";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import {
@@ -20,12 +14,21 @@ import {
   addItemToCart,
   addOrUpdateCartPayment,
   addOrUpdateCartShipment,
-  CartType,
   changeCartComment,
   changeCartItemQuantity,
   changePurchaseOrderNumber,
   createQuoteFromCart as _createQuoteFromCart,
   getMyCart,
+  rejectGiftItems,
+  removeCart as _removeCart,
+  removeCartItem,
+  removeCoupon,
+  validateCoupon,
+} from "@/xapi";
+import type { LineItemsGroupByVendorType } from "@/core/types";
+import type { ExtendedGiftItemType, OutputBulkItemType } from "@/shared/cart";
+import type {
+  CartType,
   InputNewBulkItemType,
   InputNewCartItemType,
   InputPaymentType,
@@ -34,14 +37,9 @@ import {
   PaymentMethodType,
   PaymentType,
   QuoteType,
-  rejectGiftItems,
-  removeCart as _removeCart,
-  removeCartItem,
-  removeCoupon,
   ShipmentType,
   ShippingMethodType,
-  validateCoupon,
-} from "@/xapi";
+} from "@/xapi/types";
 
 const loading = ref(false);
 const cart = shallowRef<CartType>({ name: "" });

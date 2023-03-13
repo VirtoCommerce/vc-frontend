@@ -111,8 +111,8 @@ import { useCategoriesRoutes, useGoogleAnalytics, useRouteQueryParam } from "@/c
 import { QueryParamName } from "@/core/enums";
 import { configInjectionKey } from "@/core/injection-keys";
 import { useSearchBar } from "@/shared/layout";
-import { Category } from "@/xapi/types";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
+import type { Category } from "@/xapi/types";
 
 // Number of categories column items in dropdown list
 const CATEGORIES_ITEMS_PER_COLUMN = 4;

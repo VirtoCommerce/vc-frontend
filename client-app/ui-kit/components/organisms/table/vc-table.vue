@@ -84,10 +84,10 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { PropType } from "vue";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
-import type { ISortInfo } from "@/core/types";
 import { toggleSortDirection } from "@/core/utilities";
+import type { ISortInfo } from "@/core/types";
+import type { PropType } from "vue";
 
 const emit = defineEmits(["itemClick", "headerClick", "pageChanged"]);
 

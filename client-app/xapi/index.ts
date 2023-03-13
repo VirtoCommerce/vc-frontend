@@ -8,4 +8,3 @@ export * from "./graphql/organization";
 export * from "./graphql/quotes";
 
 export * from "./client";
-export * from "./types";

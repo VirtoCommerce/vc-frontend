@@ -156,8 +156,8 @@
 <script setup lang="ts">
 import { sumBy } from "lodash";
 import { computed } from "vue";
-import type { ExtendedLineItemType } from "@/core/types";
 import { extendLineItem } from "@/core/utilities";
+import type { ExtendedLineItemType } from "@/core/types";
 import type { LineItemType, OrderLineItemType } from "@/xapi/types";
 
 interface IProps {

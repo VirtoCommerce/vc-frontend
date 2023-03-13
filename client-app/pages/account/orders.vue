@@ -303,7 +303,6 @@ import { computed, onMounted, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useElementVisibility, usePageHead } from "@/core/composables";
-import type { ISortInfo } from "@/core/types";
 import {
   OrdersFilter,
   MobileOrdersFilter,
@@ -311,6 +310,7 @@ import {
   useUserOrders,
   PageToolbarBlock,
 } from "@/shared/account";
+import type { ISortInfo } from "@/core/types";
 import type { CustomerOrderType } from "@/xapi/types";
 
 const { t } = useI18n();

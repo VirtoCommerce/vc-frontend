@@ -176,7 +176,7 @@ import {
   ShippingDetailsSection,
   useCheckout,
 } from "@/shared/checkout";
-import { LineItemType } from "@/xapi";
+import type { LineItemType } from "@/xapi/types";
 
 const config = inject(configInjectionKey, {});
 

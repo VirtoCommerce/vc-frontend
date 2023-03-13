@@ -1,7 +1,8 @@
-import { MaybeRef } from "@vueuse/core";
-import { computed, ComputedRef, unref } from "vue";
-import { RouteLocationRaw } from "vue-router";
+import { computed, unref } from "vue";
 import { getProductRoute } from "../utilities";
+import type { MaybeRef } from "@vueuse/core";
+import type { ComputedRef } from "vue";
+import type { RouteLocationRaw } from "vue-router";
 
 export function useProductsRoutes(
   products: MaybeRef<Record<string, any>[]>, // eslint-disable-line @typescript-eslint/no-explicit-any

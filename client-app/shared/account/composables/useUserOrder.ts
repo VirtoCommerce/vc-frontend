@@ -1,17 +1,16 @@
 import { computed, ref, shallowRef } from "vue";
-import type { LineItemsGroupByVendorType } from "@/core/types";
 import { getLineItemsGroupedByVendor, Logger } from "@/core/utilities";
-import {
-  addOrUpdateOrderPayment,
+import { addOrUpdateOrderPayment, getOrder } from "@/xapi";
+import type { LineItemsGroupByVendorType } from "@/core/types";
+import type {
   CustomerOrderType,
-  getOrder,
   InputAddOrUpdateOrderPaymentType,
   OrderAddressType,
   OrderLineItemType,
   OrderShipmentType,
   PaymentInType,
   QueryOrderArgs,
-} from "@/xapi";
+} from "@/xapi/types";
 
 const loading = ref(false);
 const order = shallowRef<CustomerOrderType | null>(null);

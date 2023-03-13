@@ -9,11 +9,8 @@ import {
   removeQuoteItem,
   updateQuoteAddresses,
   submitQuoteRequest,
-  QueryQuoteArgs,
-  QuoteType,
-  QuoteAddressType,
-  InputQuoteAddressType,
 } from "@/xapi";
+import type { QueryQuoteArgs, QuoteType, QuoteAddressType, InputQuoteAddressType } from "@/xapi/types";
 
 const fetching = ref<boolean>(false);
 const quote = ref<QuoteType | undefined>();

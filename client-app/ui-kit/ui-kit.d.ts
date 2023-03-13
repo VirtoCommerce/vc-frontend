@@ -1,6 +1,6 @@
-import { SwiperOptions } from "swiper";
-import { Ref } from "vue";
-import { RouteLocationRaw } from "vue-router";
+import type { SwiperOptions } from "swiper";
+import type { Ref } from "vue";
+import type { RouteLocationRaw } from "vue-router";
 
 declare global {
   type NonNullableSwiperOptions = {

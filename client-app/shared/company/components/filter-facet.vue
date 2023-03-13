@@ -16,8 +16,9 @@
 
 <script setup lang="ts">
 import _ from "lodash";
-import { PropType, ref, watch } from "vue";
-import { FacetItemType } from "@/core/types";
+import { ref, watch } from "vue";
+import type { FacetItemType } from "@/core/types";
+import type { PropType } from "vue";
 
 const emit = defineEmits<{
   (event: "update:modelValue", value: FacetItemType): void;

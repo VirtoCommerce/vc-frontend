@@ -1,8 +1,10 @@
-import { eagerComputed, MaybeRef } from "@vueuse/core";
-import { HeadAttrs, useHead } from "@vueuse/head";
+import { eagerComputed } from "@vueuse/core";
+import { useHead } from "@vueuse/head";
 import { unref } from "vue";
-import type { IUsePageSeoData } from "../types";
 import { useThemeContext } from "./useThemeContext";
+import type { IUsePageSeoData } from "../types";
+import type { MaybeRef } from "@vueuse/core";
+import type { HeadAttrs } from "@vueuse/head";
 
 export function usePageHead(data: IUsePageSeoData) {
   const { themeContext } = useThemeContext();

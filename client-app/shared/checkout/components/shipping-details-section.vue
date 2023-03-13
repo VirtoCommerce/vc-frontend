@@ -55,7 +55,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { CartAddressType, ShipmentType, ShippingMethodType } from "@/xapi";
+import type { CartAddressType, ShipmentType, ShippingMethodType } from "@/xapi/types";
 
 interface IEmits {
   (event: "change:address"): void;

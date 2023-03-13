@@ -9,8 +9,8 @@ import {
   STORE_ADMINISTRATOR,
   STORE_MANAGER,
 } from "@/core/security-constants";
-import { FacetItemType, FacetValueItemType } from "@/core/types";
 import { ContactStatus } from "@/shared/company";
+import type { FacetItemType, FacetValueItemType } from "@/core/types";
 
 export default function useOrganizationContactsFilterFacets() {
   const { t } = useI18n();

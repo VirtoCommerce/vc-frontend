@@ -44,8 +44,9 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, ref } from "vue";
-import { PaymentMethodType } from "@/xapi/types";
+import { ref } from "vue";
+import type { PaymentMethodType } from "@/xapi/types";
+import type { PropType } from "vue";
 
 defineEmits(["result"]);
 

@@ -1,4 +1,4 @@
-import { RouteRecordRaw } from "vue-router";
+import type { RouteRecordRaw } from "vue-router";
 
 const Info = () => import("@/pages/company/info.vue");
 const Members = () => import("@/pages/company/members.vue");

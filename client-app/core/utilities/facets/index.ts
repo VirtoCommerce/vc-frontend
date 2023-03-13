@@ -1,7 +1,7 @@
-import { MaybeRef } from "@vueuse/core";
 import { unref } from "vue";
-import type { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@/xapi/types";
 import type { FacetItemType, FacetValueItemType } from "../../types";
+import type { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@/xapi/types";
+import type { MaybeRef } from "@vueuse/core";
 
 /**
  * Learn more about filter syntax:

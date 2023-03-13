@@ -1,9 +1,9 @@
-import type { MaybeRef } from "@vueuse/core";
 import { computed, unref } from "vue";
-import type { RouteLocationRaw } from "vue-router";
-import type { Category } from "@/xapi/types";
-import type { CategoryTreeItemType } from "../types";
 import { getCategoryRoute } from "../utilities";
+import type { CategoryTreeItemType } from "../types";
+import type { Category } from "@/xapi/types";
+import type { MaybeRef } from "@vueuse/core";
+import type { RouteLocationRaw } from "vue-router";
 
 export function useCategoriesRoutes(categories: MaybeRef<(Category | CategoryTreeItemType)[]>) {
   return computed(() =>

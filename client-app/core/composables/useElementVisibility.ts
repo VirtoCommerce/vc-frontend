@@ -1,6 +1,8 @@
-import { defaultWindow, MaybeRef, tryOnMounted, unrefElement, useEventListener } from "@vueuse/core";
-import { ComponentPublicInstance, readonly, ref, unref } from "vue";
+import { defaultWindow, tryOnMounted, unrefElement, useEventListener } from "@vueuse/core";
+import { readonly, ref, unref } from "vue";
 import type { IUseElementVisibilityOptions } from "../types";
+import type { MaybeRef } from "@vueuse/core";
+import type { ComponentPublicInstance } from "vue";
 
 export function useElementVisibility(
   element: MaybeRef<HTMLElement | SVGElement | ComponentPublicInstance | null | undefined>,

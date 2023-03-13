@@ -49,10 +49,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from "vue";
-import type { RouteLocationRaw } from "vue-router";
+import { computed } from "vue";
 import { getProductRoute } from "@/core/utilities";
 import type { Product } from "@/xapi/types";
+import type { PropType } from "vue";
+import type { RouteLocationRaw } from "vue-router";
 
 const props = defineProps({
   product: {

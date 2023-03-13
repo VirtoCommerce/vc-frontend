@@ -1,5 +1,5 @@
-import { Meta, StoryFn } from "@storybook/vue3";
 import { VcInput } from "..";
+import type { Meta, StoryFn } from "@storybook/vue3";
 // import { VcButton, VcIcon } from "../../atoms";
 
 export default {

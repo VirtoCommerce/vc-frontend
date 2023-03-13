@@ -86,9 +86,10 @@
 <script setup lang="ts">
 import { eagerComputed, useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import _ from "lodash";
-import { watch, PropType, ref, shallowReactive } from "vue";
-import { FacetItemType } from "@/core/types";
-import { ProductsFilters } from "@/shared/catalog";
+import { watch, ref, shallowReactive } from "vue";
+import type { FacetItemType } from "@/core/types";
+import type { ProductsFilters } from "@/shared/catalog";
+import type { PropType } from "vue";
 
 const emit = defineEmits<{
   (e: "search", keyword: string): void;

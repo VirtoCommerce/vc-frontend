@@ -148,8 +148,8 @@
 
 <script setup lang="ts">
 import { computed, ref, watchEffect } from "vue";
-import type { ExtendedLineItemType } from "@/core/types";
 import { extendLineItem } from "@/core/utilities";
+import type { ExtendedLineItemType } from "@/core/types";
 import type { LineItemType } from "@/xapi/types";
 
 interface IProps {

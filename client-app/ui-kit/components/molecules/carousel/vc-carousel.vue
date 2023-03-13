@@ -33,9 +33,10 @@
 <script setup lang="ts">
 import _ from "lodash";
 import { Pagination, Navigation } from "swiper";
-import { NavigationOptions, PaginationOptions } from "swiper/types";
 import { Swiper, SwiperSlide } from "swiper/vue"; // eslint-disable-line import/no-unresolved
-import { computed, getCurrentInstance, PropType } from "vue";
+import { computed, getCurrentInstance } from "vue";
+import type { NavigationOptions, PaginationOptions } from "swiper/types";
+import type { PropType } from "vue";
 
 const props = defineProps({
   slides: {

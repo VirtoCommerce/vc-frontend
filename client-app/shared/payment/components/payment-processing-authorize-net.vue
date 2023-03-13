@@ -68,8 +68,10 @@ import { computed, ref, shallowRef, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useGoogleAnalytics } from "@/core/composables";
 import { Logger } from "@/core/utilities";
-import { BankCardErrorsType, BankCardForm, BankCardType, PaymentActionType, useAuthorizeNet } from "@/shared/payment";
-import { CustomerOrderType, initializePayment, KeyValueType } from "@/xapi";
+import { BankCardForm, PaymentActionType, useAuthorizeNet } from "@/shared/payment";
+import { initializePayment } from "@/xapi";
+import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
+import type { CustomerOrderType, KeyValueType } from "@/xapi/types";
 
 interface IEmits {
   (event: "success"): void;

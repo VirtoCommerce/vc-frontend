@@ -1,8 +1,8 @@
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
 import globals from "../globals";
-import type { MenuLinkType } from "../types";
 import { categoryTreeItemToMenuLink, getTranslatedMenuLink } from "../utilities/menu";
 import { useCategories } from "./useCategories";
+import type { MenuLinkType } from "../types";
 
 const menuSchema = shallowRef<typeof import("../../../config/menu.json")>();
 const openedMenuLinksStack = shallowRef<MenuLinkType[]>([]);

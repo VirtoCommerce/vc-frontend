@@ -13,9 +13,9 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
-import { RouteLocationRaw } from "vue-router";
 import NestedMobileHeader from "../nested-mobile-header/nested-mobile-header";
+import type { PropType } from "vue";
+import type { RouteLocationRaw } from "vue-router";
 
 defineEmits(["click"]);
 

@@ -3,7 +3,6 @@ import { computed, readonly, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useGoogleAnalytics } from "@/core/composables";
 import { AddressType } from "@/core/enums";
-import type { AnyAddressType } from "@/core/types";
 import { isEqualAddresses, Logger } from "@/core/utilities";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
 import { useCart } from "@/shared/cart";
@@ -12,17 +11,17 @@ import { useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 import { PaymentMethodGroupType } from "@/shared/payment";
 import { usePopup } from "@/shared/popup";
-import {
+import { createOrderFromCart as _createOrderFromCart, removeCart } from "@/xapi";
+import type { AnyAddressType } from "@/core/types";
+import type {
   CartAddressType,
-  createOrderFromCart as _createOrderFromCart,
   CustomerOrderType,
   InputAddressType,
   InputPaymentType,
   MemberAddressType,
   PaymentMethodType,
-  removeCart,
   ShippingMethodType,
-} from "@/xapi";
+} from "@/xapi/types";
 
 const loading = ref(false);
 const comment = ref("");

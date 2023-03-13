@@ -18,9 +18,11 @@
 
 <script setup lang="ts">
 import { asyncComputed, computedEager } from "@vueuse/core";
-import { onBeforeUnmount, PropType, ref, watchEffect } from "vue";
+import { onBeforeUnmount, ref, watchEffect } from "vue";
 import { useFetch, useLanguages, useNavigations } from "@/core/composables";
-import { PageTemplate, useStaticPage } from "@/shared/static-content";
+import { useStaticPage } from "@/shared/static-content";
+import type { PageTemplate } from "@/shared/static-content";
+import type { PropType } from "vue";
 import NotFound from "@/pages/404.vue";
 import Category from "@/pages/catalog.vue";
 import Product from "@/pages/product.vue";

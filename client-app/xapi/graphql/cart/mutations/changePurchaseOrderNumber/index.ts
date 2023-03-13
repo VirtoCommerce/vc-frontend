@@ -1,6 +1,6 @@
 import globals from "@/core/globals";
-import { Mutations, MutationsChangePurchaseOrderNumberArgs } from "@/xapi/types";
 import mutationDocument from "./changePurchaseOrderNumber.graphql";
+import type { Mutations, MutationsChangePurchaseOrderNumberArgs } from "@/xapi/types";
 
 export default async function changePurchaseOrderNumber(purchaseOrderNumber: string): Promise<void> {
   const { storeId, userId, cultureName, currencyCode } = globals;
