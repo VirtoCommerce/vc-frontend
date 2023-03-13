@@ -31,51 +31,63 @@
         </div>
       </div>
 
-      <VcSelect
-        v-model="method"
-        :label="$t('shared.checkout.billing_details_section.labels.payment_method')"
-        :items="methods"
-        :disabled="disabled"
-        size="auto"
-        class="lg:w-2/5"
-        required
-      >
-        <template #placeholder>
-          <VcSelectItem>
-            <VcSelectItemImage src="/static/icons/placeholders/select-payment.svg" class="bg-gray-100/80" />
-            <VcSelectItemText>
-              {{ $t("common.placeholders.select_payment_method") }}
-            </VcSelectItemText>
-          </VcSelectItem>
-        </template>
+      <div class="space-y-3 lg:w-2/5">
+        <VcSelect
+          v-model="method"
+          :label="$t('shared.checkout.billing_details_section.labels.payment_method')"
+          :items="methods"
+          :disabled="disabled"
+          size="auto"
+          required
+        >
+          <template #placeholder>
+            <VcSelectItem>
+              <VcSelectItemImage src="/static/icons/placeholders/select-payment.svg" class="bg-gray-100/80" />
+              <VcSelectItemText>
+                {{ $t("common.placeholders.select_payment_method") }}
+              </VcSelectItemText>
+            </VcSelectItem>
+          </template>
 
-        <template #selected="{ item }">
-          <VcSelectItem>
-            <VcSelectItemImage :src="item.logoUrl" />
-            <VcSelectItemText>{{ item.code }}</VcSelectItemText>
-          </VcSelectItem>
-        </template>
+          <template #selected="{ item }">
+            <VcSelectItem>
+              <VcSelectItemImage :src="item.logoUrl" />
+              <VcSelectItemText>{{ item.code }}</VcSelectItemText>
+            </VcSelectItem>
+          </template>
 
-        <template #item="{ item }">
-          <VcSelectItem bordered>
-            <VcSelectItemImage :src="item.logoUrl" />
-            <VcSelectItemText>{{ item.code }}</VcSelectItemText>
-          </VcSelectItem>
-        </template>
-      </VcSelect>
+          <template #item="{ item }">
+            <VcSelectItem bordered>
+              <VcSelectItemImage :src="item.logoUrl" />
+              <VcSelectItemText>{{ item.code }}</VcSelectItemText>
+            </VcSelectItem>
+          </template>
+        </VcSelect>
+
+        <transition name="slide-fade-top" mode="in-out">
+          <VcInput
+            v-if="purchaseOrderNumberEnabled"
+            v-model="poNumber"
+            :placeholder="$t('common.placeholders.purchase_order_number')"
+            :disabled="disabled"
+            name="purchaseOrderNumber"
+          />
+        </transition>
+      </div>
     </div>
   </VcSectionWidget>
 </template>
 
 <script setup lang="ts">
 import { useVModel } from "@vueuse/core";
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import { PaymentType, PaymentMethodType, ShipmentType, CartAddressType } from "@/xapi";
 
 interface IEmits {
   (event: "change:address"): void;
   (event: "change:method", method: PaymentMethodType): void;
   (event: "update:addressEqualsShippingAddress"): void;
+  (event: "update:purchaseOrderNumber", value: string): void;
 }
 
 interface IProps {
@@ -84,12 +96,18 @@ interface IProps {
   addressEqualsShippingAddress?: boolean;
   payment?: PaymentType;
   shipment?: ShipmentType;
+  purchaseOrderNumber?: string;
+  purchaseOrderNumberEnabled?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  purchaseOrderNumber: "",
+});
 
 const billingAddressEqualsShipping = useVModel(props, "addressEqualsShippingAddress", emit);
+
+const poNumber = useVModel(props, "purchaseOrderNumber", emit);
 
 const address = computed<CartAddressType | undefined>(() =>
   billingAddressEqualsShipping.value ? props.shipment?.deliveryAddress : props.payment?.billingAddress
@@ -99,4 +117,13 @@ const method = computed<PaymentMethodType | undefined>({
   get: () => props.methods.find((item) => item.code === props.payment?.paymentGatewayCode),
   set: (value?: PaymentMethodType) => value && emit("change:method", value),
 });
+
+watch(
+  () => props.purchaseOrderNumberEnabled,
+  (value: boolean) => {
+    if (!value) {
+      poNumber.value = "";
+    }
+  }
+);
 </script>

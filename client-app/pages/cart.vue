@@ -57,6 +57,8 @@
 
         <BillingDetailsSection
           v-model:address-equals-shipping-address="billingAddressEqualsShipping"
+          v-model:purchase-order-number="purchaseOrderNumber"
+          :purchase-order-number-enabled="isPurchaseOrderNumberEnabled"
           :methods="availablePaymentMethods"
           :payment="payment"
           :shipment="shipment"
@@ -74,7 +76,7 @@
             <!-- Purchase order number -->
             <VcActionInput
               v-if="$cfg.checkout_purchase_order_enabled && !$cfg.checkout_multistep_enabled"
-              v-model="purchaseOrderNumber"
+              v-model="purchaseOrderNumberOld"
               :label="$t('common.labels.purchase_order_number')"
               :placeholder="$t('common.placeholders.purchase_order_number')"
               :applied="purchaseOrderNumberIsApplied"
@@ -200,11 +202,13 @@ const {
 } = useCart();
 const {
   comment,
+  purchaseOrderNumber,
   billingAddressEqualsShipping,
   isValidShipment,
   isValidPayment,
   isValidCheckout,
   canPayNow,
+  isPurchaseOrderNumberEnabled,
   initialize: initCheckout,
   onDeliveryAddressChange,
   onBillingAddressChange,
@@ -212,8 +216,12 @@ const {
   setPaymentMethod,
   createOrderFromCart,
 } = useCheckout();
-const { purchaseOrderNumber, purchaseOrderNumberIsApplied, setPurchaseOrderNumber, removePurchaseOrderNumber } =
-  usePurchaseOrderNumber();
+const {
+  purchaseOrderNumber: purchaseOrderNumberOld,
+  purchaseOrderNumberIsApplied,
+  setPurchaseOrderNumber,
+  removePurchaseOrderNumber,
+} = usePurchaseOrderNumber();
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
   useCoupon();
 

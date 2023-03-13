@@ -23,6 +23,7 @@ import {
 const loading = ref(false);
 const comment = ref("");
 const billingAddressEqualsShipping = ref(true);
+const purchaseOrderNumber = ref("");
 const placedOrder = shallowRef<CustomerOrderType | null>(null);
 
 export default function useCheckout() {
@@ -44,6 +45,7 @@ export default function useCheckout() {
     updateShipment,
     updatePayment,
     changeComment,
+    updatePurchaseOrderNumber,
   } = useCart();
 
   const isValidDeliveryAddress = computed<boolean>(() => !!shipment.value?.deliveryAddress);
@@ -68,6 +70,12 @@ export default function useCheckout() {
       isAuthenticated.value &&
       !!selectedPaymentMethodGroupType.value &&
       selectedPaymentMethodGroupType.value !== PaymentMethodGroupType[PaymentMethodGroupType.Manual]
+  );
+
+  const isPurchaseOrderNumberEnabled = computed<boolean>(
+    () =>
+      !!selectedPaymentMethodGroupType.value &&
+      selectedPaymentMethodGroupType.value === PaymentMethodGroupType[PaymentMethodGroupType.Manual]
   );
 
   async function setShippingMethod(method: ShippingMethodType, options: { reloadCart?: boolean } = {}) {
@@ -273,6 +281,11 @@ export default function useCheckout() {
       await changeComment(comment.value, false);
     }
 
+    // Save purchase order number
+    if (purchaseOrderNumber.value) {
+      await updatePurchaseOrderNumber(purchaseOrderNumber.value);
+    }
+
     // Parallel saving of new addresses in account. Before cleaning shopping cart
     if (isAuthenticated.value) {
       saveNewAddressesInAccount({
@@ -285,6 +298,7 @@ export default function useCheckout() {
   function resetVariables() {
     comment.value = "";
     billingAddressEqualsShipping.value = true;
+    purchaseOrderNumber.value = "";
   }
 
   async function createOrderFromCart(): Promise<CustomerOrderType | null> {
@@ -319,6 +333,7 @@ export default function useCheckout() {
   return {
     comment,
     billingAddressEqualsShipping,
+    purchaseOrderNumber,
     isValidDeliveryAddress,
     isValidBillingAddress,
     isValidShipmentMethod,
@@ -326,6 +341,7 @@ export default function useCheckout() {
     isValidShipment,
     isValidPayment,
     isValidCheckout,
+    isPurchaseOrderNumberEnabled,
     selectedPaymentMethodGroupType,
     canPayNow,
     initialize,
