@@ -557,7 +557,10 @@
           "address": "Address",
           "phone": "Phone",
           "email": "Email",
-          "active_address": "Active address"
+          "active_address": "Active address",
+          "description": "@:pages.company.info.labels.description",
+          "zip_code": "@:pages.company.info.labels.zip",
+          "country": "@:pages.company.info.labels.country"
         }
       },
       "shipping_method_dialog": {

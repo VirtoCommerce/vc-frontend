@@ -44,14 +44,39 @@
       <template #mobile-item="itemData">
         <div class="flex items-center space-x-3 border-b border-gray-200 p-6">
           <div class="w-1/2 grow truncate">
-            <span class="text-base font-bold">{{ itemData.item.firstName }} {{ itemData.item.lastName }}</span>
-            <p class="text-sm">
-              {{ itemData.item.countryCode }} {{ itemData.item.regionName }} {{ itemData.item.city }}
-              {{ itemData.item.line1 }}
-              {{ itemData.item.postalCode }}
+            <p class="text-base font-bold">
+              <span v-if="isCorporateMember" class="text-base font-bold">
+                {{ itemData.item.countryCode }} {{ itemData.item.regionName }} {{ itemData.item.city }}
+                {{ itemData.item.line1 }}
+                {{ itemData.item.postalCode }}
+              </span>
+              <span v-else>{{ itemData.item.firstName }} {{ itemData.item.lastName }}</span>
             </p>
-            <p class="text-sm text-gray-400"><span class="font-semibold">Phone: </span>{{ itemData.item.phone }}</p>
-            <p class="text-sm text-gray-400"><span class="font-semibold">Email: </span>{{ itemData.item.email }}</p>
+
+            <p class="text-sm">
+              <span v-if="isCorporateMember">{{ itemData.item.descrition }}</span>
+              <span v-else>
+                {{ itemData.item.countryCode }} {{ itemData.item.regionName }} {{ itemData.item.city }}
+                {{ itemData.item.line1 }}
+                {{ itemData.item.postalCode }}
+              </span>
+            </p>
+
+            <p class="text-sm text-gray-400">
+              <span v-if="isCorporateMember">{{ itemData.item.postalCode }}</span>
+              <span v-else>
+                <span class="font-semibold">Phone: </span>
+                {{ itemData.item.phone }}
+              </span>
+            </p>
+
+            <p class="text-sm text-gray-400">
+              <span v-if="isCorporateMember">{{ itemData.item.countryName }}</span>
+              <span v-else>
+                <span class="font-semibold">Email: </span>
+                {{ itemData.item.email }}
+              </span>
+            </p>
           </div>
 
           <div v-if="itemData.item.id === selectedAddress?.id" class="w-1/4">
@@ -80,13 +105,42 @@
 
       <template #desktop-body>
         <tr v-for="(address, index) in paginatedAddresses" :key="address.id" :class="{ 'bg-gray-50': index % 2 }">
-          <td class="truncate p-5">{{ address.firstName }} {{ address.lastName }}</td>
           <td class="truncate p-5">
-            {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
-            {{ address.postalCode }}
+            <span v-if="isCorporateMember">
+              {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
+              {{ address.postalCode }}
+            </span>
+            <span v-else> {{ address.firstName }} {{ address.lastName }} </span>
           </td>
-          <td class="truncate p-5">{{ address.phone }}</td>
-          <td class="truncate p-5">{{ address.email }}</td>
+
+          <td class="truncate p-5">
+            <span v-if="isCorporateMember">
+              {{ address.description }}
+            </span>
+            <span v-else>
+              {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
+              {{ address.postalCode }}
+            </span>
+          </td>
+
+          <td class="truncate p-5">
+            <span v-if="isCorporateMember">
+              {{ address.postalCode }}
+            </span>
+            <span v-else>
+              {{ address.phone }}
+            </span>
+          </td>
+
+          <td class="truncate p-5">
+            <span v-if="isCorporateMember">
+              {{ address.countryName }}
+            </span>
+            <span v-else>
+              {{ address.email }}
+            </span>
+          </td>
+
           <td v-if="address.id === selectedAddress?.id" class="p-5">
             <div
               class="mx-auto my-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-green-600 text-sm text-white"
@@ -133,13 +187,19 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { breakpointsTailwind, computedEager, useBreakpoints } from "@vueuse/core";
 import { computed, watchEffect, PropType, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { AnyAddressType } from "@/core/types";
 import { isEqualAddresses } from "@/core/utilities";
+import { useUser } from "@/shared/account";
 
-defineEmits(["result", "addNewAddress"]);
+interface IEmits {
+  (event: "result"): void;
+  (event: "addNewAddress"): void;
+}
+
+defineEmits<IEmits>();
 
 const props = defineProps({
   currentAddress: {
@@ -159,7 +219,7 @@ const props = defineProps({
 });
 
 const { t } = useI18n();
-
+const { user } = useUser();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
@@ -167,6 +227,7 @@ const selectedAddress = ref<AnyAddressType>();
 const page = ref(1);
 const itemsPerPage = ref(4);
 
+const isCorporateMember = computedEager(() => !!user.value.contact?.organizationId);
 const pages = computed(() => Math.ceil(props.addresses.length / itemsPerPage.value));
 const paginatedAddresses = computed(() =>
   props.addresses.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
@@ -174,20 +235,28 @@ const paginatedAddresses = computed(() =>
 
 const columns = ref<ITableColumn[]>([
   {
-    id: "firstName",
-    title: t("shared.checkout.select_address_dialog.table_columns.recipient"),
+    id: isCorporateMember.value ? "address" : "firstName",
+    title: isCorporateMember.value
+      ? t("shared.checkout.select_address_dialog.table_columns.address")
+      : t("shared.checkout.select_address_dialog.table_columns.recipient"),
   },
   {
-    id: "countryCode",
-    title: t("shared.checkout.select_address_dialog.table_columns.address"),
+    id: isCorporateMember.value ? "description" : "countryCode",
+    title: isCorporateMember.value
+      ? t("shared.checkout.select_address_dialog.table_columns.description")
+      : t("shared.checkout.select_address_dialog.table_columns.address"),
   },
   {
-    id: "phone",
-    title: t("shared.checkout.select_address_dialog.table_columns.phone"),
+    id: isCorporateMember.value ? "postalCode" : "phone",
+    title: isCorporateMember.value
+      ? t("shared.checkout.select_address_dialog.table_columns.zip_code")
+      : t("shared.checkout.select_address_dialog.table_columns.phone"),
   },
   {
-    id: "email",
-    title: t("shared.checkout.select_address_dialog.table_columns.email"),
+    id: isCorporateMember.value ? "countryName" : "email",
+    title: isCorporateMember.value
+      ? t("shared.checkout.select_address_dialog.table_columns.country")
+      : t("shared.checkout.select_address_dialog.table_columns.email"),
   },
   {
     id: "activeAddress",
@@ -202,6 +271,8 @@ const onPageChange = async (newPage: number) => {
 
 function setAddress(address: AnyAddressType): void {
   selectedAddress.value = address;
+  selectedAddress.value.firstName = user.value.contact!.firstName;
+  selectedAddress.value.lastName = user.value.contact!.lastName;
 }
 
 watchEffect(() => {

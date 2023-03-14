@@ -5,6 +5,7 @@ import { AddressType, Logger, useGoogleAnalytics } from "@/core";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { AddOrUpdateAddressModal, SelectAddressModal } from "@/shared/checkout";
+import { useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 import { PaymentMethodGroupType } from "@/shared/payment";
 import { usePopup } from "@/shared/popup";
@@ -24,15 +25,26 @@ const loading = ref(false);
 const comment = ref("");
 const billingAddressEqualsShipping = ref(true);
 const placedOrder = shallowRef<CustomerOrderType | null>(null);
+const addresses = shallowRef<MemberAddressType[]>([]);
 
 export default function useCheckout() {
   const ga = useGoogleAnalytics();
   const notifications = useNotifications();
   const { openPopup, closePopup } = usePopup();
   const { t } = useI18n();
-  const { isAuthenticated } = useUser();
+  const { user, isAuthenticated } = useUser();
   const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
-  const { addresses, fetchAddresses, isExistAddress, addOrUpdateAddresses } = useUserAddresses();
+  const {
+    addresses: personalAddresses,
+    fetchAddresses: fetchPersonalAddresses,
+    isExistAddress: isExistPersonalAddress,
+    addOrUpdateAddresses: addOrUpdatePersonalAddresses,
+  } = useUserAddresses();
+  const {
+    addresses: organizationsAddresses,
+    fetchAddresses: fetchOrganizationAddresses,
+    addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
+  } = useOrganizationAddresses(user.value.contact?.organizationId || "");
   const {
     cart,
     shipment,
@@ -127,12 +139,6 @@ export default function useCheckout() {
     loading.value = true;
 
     await fetchCart();
-
-    if (isAuthenticated.value) {
-      // TODO: Remove. Addresses should be queried when the address selection modal opens.
-      fetchAddresses();
-    }
-
     await setCheckoutDefaults();
 
     ga.beginCheckout(cart.value);
@@ -172,6 +178,12 @@ export default function useCheckout() {
           };
 
           await updateBillingOrDeliveryAddress(addressType, inputAddress);
+
+          if (user.value.contact?.organizationId) {
+            await addOrUpdateOrganizationAddresses([address]);
+          } else {
+            await addOrUpdatePersonalAddresses([address]);
+          }
         },
       },
     });
@@ -182,7 +194,7 @@ export default function useCheckout() {
       component: SelectAddressModal,
 
       props: {
-        addresses: addresses.value,
+        addresses: user.value.contact!.organizationId ? organizationsAddresses.value : addresses.value,
         currentAddress:
           addressType === AddressType.Billing ? payment.value?.billingAddress : shipment.value?.deliveryAddress,
 
@@ -208,13 +220,29 @@ export default function useCheckout() {
     });
   }
 
-  function onDeliveryAddressChange() {
+  async function fetchAddresses(): Promise<void> {
+    if (isAuthenticated.value) {
+      if (user.value.contact!.organizationId) {
+        await fetchOrganizationAddresses();
+        addresses.value = organizationsAddresses.value;
+      } else {
+        await fetchPersonalAddresses();
+        addresses.value = personalAddresses.value;
+      }
+    }
+  }
+
+  async function onDeliveryAddressChange() {
+    await fetchAddresses();
+
     addresses.value.length
       ? openSelectAddressModal(AddressType.Shipping)
       : openAddOrUpdateAddressModal(AddressType.Shipping, shipment.value?.deliveryAddress);
   }
 
-  function onBillingAddressChange() {
+  async function onBillingAddressChange() {
+    await fetchAddresses();
+
     addresses.value.length
       ? openSelectAddressModal(AddressType.Billing)
       : openAddOrUpdateAddressModal(AddressType.Billing, payment.value?.billingAddress);
@@ -227,7 +255,7 @@ export default function useCheckout() {
     const { shipmentAddress, billingAddress } = payload;
     const newAddresses: MemberAddressType[] = [];
 
-    if (shipmentAddress && !isExistAddress(shipmentAddress)) {
+    if (shipmentAddress && !isExistPersonalAddress(shipmentAddress)) {
       newAddresses.push({
         ...shipmentAddress,
         isDefault: false,
@@ -235,7 +263,7 @@ export default function useCheckout() {
       });
     }
 
-    if (billingAddress && !billingAddressEqualsShipping.value && !isExistAddress(billingAddress)) {
+    if (billingAddress && !billingAddressEqualsShipping.value && !isExistPersonalAddress(billingAddress)) {
       newAddresses.push({
         ...billingAddress,
         isDefault: false,
@@ -243,7 +271,7 @@ export default function useCheckout() {
       });
     }
 
-    await addOrUpdateAddresses(newAddresses);
+    await addOrUpdatePersonalAddresses(newAddresses);
   }
 
   async function prepareOrderData() {
