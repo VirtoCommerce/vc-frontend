@@ -1,6 +1,4 @@
-import { SortDirection } from "@/core/enums";
-import { Sort } from "@/core/types";
-import type { ISortInfo } from "@/core/types";
+import type { ISortInfo } from "../types";
 
 export const DEFAULT_PAGE_SIZE = 16;
 /**
@@ -18,4 +16,3 @@ export const DEFAULT_SORT_INFO: ISortInfo = {
   column: "createdDate",
   direction: SORT_DESCENDING,
 };
-export const DEFAULT_SORT: Sort = new Sort("createdDate", SortDirection.Descending);

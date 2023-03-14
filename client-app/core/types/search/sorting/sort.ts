@@ -1,10 +1,13 @@
-import { DEFAULT_SORT } from "@/core/constants";
-import { SortDirection } from "@/core/enums";
-import { SearchEntity } from "@/core/types";
+import { SortDirection } from "../../../enums";
+import { SearchEntity } from "../../../types/search/entity";
 
 export class Sort extends SearchEntity {
-  constructor(public fieldName: string, public direction: SortDirection) {
+  constructor(public fieldName: string = "createdDate", public direction: SortDirection = SortDirection.Descending) {
     super();
+  }
+
+  toggle(): SortDirection {
+    return this.direction === SortDirection.Ascending ? SortDirection.Ascending : SortDirection.Descending;
   }
 
   override toString(): string {
@@ -13,9 +16,11 @@ export class Sort extends SearchEntity {
 
   static fromString(str: string): Sort {
     const [fieldName, direction] = str.split(":");
-    let result = DEFAULT_SORT;
+    let result: Sort;
     if (fieldName && direction && (direction == SortDirection.Ascending || direction == SortDirection.Descending)) {
       result = new Sort(fieldName, direction as SortDirection);
+    } else {
+      result = new Sort();
     }
     return result;
   }

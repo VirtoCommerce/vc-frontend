@@ -22,7 +22,7 @@ export function getSortInfoFromStringExpression(sortInfo: string): ISortInfo {
 }
 
 /**
- * @deprecated Use SortDirection.togle() instead
+ * @deprecated Use Sort.toggle() instead
  */
 export function toggleSortDirection(currentDirection: string): string {
   return currentDirection === SORT_ASCENDING ? SORT_DESCENDING : SORT_ASCENDING;
