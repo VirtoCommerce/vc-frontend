@@ -1,6 +1,6 @@
 import { DEFAULT_SORT } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
-import { SearchEntity } from "./entity";
+import { SearchEntity } from "@/core/types";
 
 export class Sort extends SearchEntity {
   constructor(public fieldName: string, public direction: SortDirection) {
