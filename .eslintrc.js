@@ -35,7 +35,6 @@ module.exports = {
      * Errors
      */
     "@typescript-eslint/no-shadow": "error",
-    // TODO: enable "import/no-cycle": "error",
     "import/no-unresolved": "error",
     "no-debugger": process.env.NODE_ENV === "production" ? "error" : "warn",
     "vue/block-lang": ["error", { script: { lang: "ts" } }],
@@ -69,6 +68,7 @@ module.exports = {
       { selector: "typeAlias", format: ["PascalCase"], suffix: ["Type"] },
     ],
     "import/consistent-type-specifier-style": "warn",
+    "import/no-cycle": "warn", // TODO: Switch to error
     "import/order": [
       "warn",
       {
