@@ -7,6 +7,6 @@ export enum SortDirection {
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace SortDirection {
   export function toggle(value: SortDirection): SortDirection {
-    return value === SortDirection.Ascending ? SortDirection.Descending : SortDirection.Ascending;
+    return value === SortDirection.Ascending ? SortDirection.Ascending : SortDirection.Descending;
   }
 }
