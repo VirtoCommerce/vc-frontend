@@ -1,4 +1,5 @@
 import { unref } from "vue";
+import { RangeFilterValue } from "../../types";
 import type { FacetItemType, FacetValueItemType } from "../../types";
 import type { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@/xapi/types";
 import type { MaybeRef } from "@vueuse/core";
@@ -32,18 +33,6 @@ export function getFilterExpressionFromFacets(facets: MaybeRef<FacetItemType[]>)
   return result.join(" ");
 }
 
-export function getFilterExpressionFromFacetRange(facetRange: FacetRangeType): string {
-  const { from, to, includeFrom, includeTo } = facetRange;
-
-  const firstBracket = includeFrom ? "[" : "(";
-  const lastBracket = includeTo ? "]" : ")";
-
-  const fromStr = from ? `${from} ` : "";
-  const toStr = to ? ` ${to}` : "";
-
-  return `${firstBracket}${fromStr}TO${toStr}${lastBracket}`;
-}
-
 export function termFacetToCommonFacet(termFacet: TermFacet): FacetItemType {
   return {
     type: "terms",
@@ -68,7 +57,7 @@ export function rangeFacetToCommonFacet(rangeFacet: RangeFacet): FacetItemType {
     values: rangeFacet.ranges!.map<FacetValueItemType>((facetRange: FacetRangeType) => ({
       count: facetRange.count,
       label: facetRange.label!,
-      value: getFilterExpressionFromFacetRange(facetRange),
+      value: RangeFilterValue.fromFacetRange(facetRange).toString(),
       selected: facetRange.isSelected!,
     })),
   };

@@ -1,5 +1,6 @@
 /*.js
 /*.ts
+client-app/core/utilities/search/search-phrase/generated
 client-app/xapi/types.ts
 node_modules
 assets

@@ -8,5 +8,6 @@ assets
 storybook-static
 package.json
 tsconfig.json
+client-app/core/utilities/search/search-phrase/generated
 client-app/xapi/types.ts
 client-app/xapi/schema.json
