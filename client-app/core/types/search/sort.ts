@@ -12,17 +12,10 @@ export class Sort extends SearchEntity {
   }
 
   static fromString(str: string): Sort {
-    const splitted: string[] = str.split(":");
+    const [fieldName, direction] = str.split(":");
     let result = DEFAULT_SORT;
-    if (splitted.length === 2) {
-      const fieldName = splitted[0];
-      const direction =
-        splitted[1] === SortDirection.Ascending || splitted[1] === SortDirection.Descending
-          ? (splitted[1] as SortDirection)
-          : null;
-      if (direction) {
-        result = new Sort(fieldName, direction);
-      }
+    if (fieldName && direction && (direction == SortDirection.Ascending || direction == SortDirection.Descending)) {
+      result = new Sort(fieldName, direction as SortDirection);
     }
     return result;
   }
