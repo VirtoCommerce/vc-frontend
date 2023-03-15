@@ -1,5 +1,6 @@
 <template>
-  <StaticPage :loading="loading" :static-template="page">
+  <StaticPage v-if="template" />
+  <template v-else-if="!loading">
     <LoginFormSection />
 
     <!-- Main content -->
@@ -81,7 +82,7 @@
         </div>
       </div>
     </div>
-  </StaticPage>
+  </template>
 </template>
 
 <script setup lang="ts">
@@ -105,17 +106,17 @@ usePageHead({
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const page: any = ref(null);
+const template: any = ref(null);
 const loading = ref(true);
 
 onMounted(async () => {
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const pageResult = await innerFetch<any>("/storefrontapi/slug/home");
-    if (pageResult.contentItem?.type === "page") {
-      const result = JSON.parse(pageResult.contentItem.content);
-      page.value = result;
-      useStaticPage(result);
+    const response = await innerFetch<any>("/storefrontapi/slug/home");
+    if (response.contentItem?.type === "page") {
+      const result = JSON.parse(response.contentItem.content);
+      template.value = result;
+      useStaticPage(template);
     }
   } finally {
     loading.value = false;
