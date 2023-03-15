@@ -65,7 +65,7 @@ import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composab
 import { useCart } from "@/shared/cart";
 import { CarouselProductCard, useProduct, useRelatedProducts } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
-import { useTemplate } from "@/shared/static-content";
+import { useTemplates } from "@/shared/static-content";
 
 const props = defineProps({
   productId: {
@@ -107,7 +107,7 @@ const { product, loading, loadProduct } = useProduct();
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
-const template = useTemplate("product");
+const template = useTemplates.useTemplate("product");
 const ga = useGoogleAnalytics();
 
 usePageHead({

@@ -1,7 +1,7 @@
 import { App } from "vue";
 import { Router } from "vue-router";
 import { useFetch } from "@/core/composables";
-import { useStaticPage, useTemplate } from "@/shared/static-content";
+import { useStaticPage, useTemplates } from "@/shared/static-content";
 import templateBlocks from "@/shared/static-content/components";
 import ScrollToElement from "./scroll-to-element.vue";
 
@@ -32,7 +32,7 @@ function updatePreview(data: any) {
   if (!data.templateKey) {
     useStaticPage(newTemplate);
   } else {
-    useTemplate(data.templateKey, newTemplate);
+    useTemplates.useTemplate(data.templateKey, newTemplate);
   }
 }
 
