@@ -85,7 +85,12 @@
       "secure_checkout": "Secure checkout",
       "creates": "Creates",
       "payment_number": "Payment ID",
-      "payment_type": "Payment type"
+      "payment_type": "Payment type",
+      "recipient_name": "Recipient name",
+      "description": "Description",
+      "zip_code": "Zip Code",
+      "country": "Country",
+      "active_address": "Active address"
     },
     "prefixes": {
       "please": "Please"
@@ -551,17 +556,7 @@
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "You do not have any addresses yet",
-        "title": "Select address",
-        "table_columns": {
-          "recipient": "Recipient name",
-          "address": "Address",
-          "phone": "Phone",
-          "email": "Email",
-          "active_address": "Active address",
-          "description": "@:pages.company.info.labels.description",
-          "zip_code": "@:pages.company.info.labels.zip",
-          "country": "@:pages.company.info.labels.country"
-        }
+        "title": "Select address"
       },
       "shipping_method_dialog": {
         "cancel_button": "@:common.buttons.cancel",

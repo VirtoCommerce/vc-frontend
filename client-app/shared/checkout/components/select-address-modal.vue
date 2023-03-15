@@ -54,7 +54,7 @@
             </p>
 
             <p class="text-sm">
-              <span v-if="isCorporateMember">{{ itemData.item.descrition }}</span>
+              <span v-if="isCorporateMember">{{ itemData.item.description }}</span>
               <span v-else>
                 {{ itemData.item.countryCode }} {{ itemData.item.regionName }} {{ itemData.item.city }}
                 {{ itemData.item.line1 }}
@@ -64,16 +64,16 @@
 
             <p class="text-sm text-gray-400">
               <span v-if="isCorporateMember">{{ itemData.item.postalCode }}</span>
-              <span v-else>
-                <span class="font-semibold">Phone: </span>
+              <span v-else-if="!!itemData.item.phone">
+                <span class="font-semibold">{{ $t("common.labels.phone") }}: </span>
                 {{ itemData.item.phone }}
               </span>
             </p>
 
             <p class="text-sm text-gray-400">
               <span v-if="isCorporateMember">{{ itemData.item.countryName }}</span>
-              <span v-else>
-                <span class="font-semibold">Email: </span>
+              <span v-else-if="!!itemData.item.email">
+                <span class="font-semibold">{{ $t("common.labels.email") }}: </span>
                 {{ itemData.item.email }}
               </span>
             </p>
@@ -187,12 +187,18 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, computedEager, useBreakpoints } from "@vueuse/core";
-import { computed, watchEffect, PropType, ref } from "vue";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { computed, watchEffect, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { AnyAddressType } from "@/core/types";
 import { isEqualAddresses } from "@/core/utilities";
 import { useUser } from "@/shared/account";
+
+interface IProps {
+  currentAddress?: AnyAddressType;
+  addresses?: AnyAddressType[];
+  isCorporateMember: boolean;
+}
 
 interface IEmits {
   (event: "result"): void;
@@ -201,21 +207,8 @@ interface IEmits {
 
 defineEmits<IEmits>();
 
-const props = defineProps({
-  currentAddress: {
-    type: Object as PropType<AnyAddressType>,
-    default: undefined,
-  },
-
-  addresses: {
-    type: Array as PropType<AnyAddressType[]>,
-    default: () => [],
-  },
-
-  onResult: {
-    type: Function,
-    default: undefined,
-  },
+const props = withDefaults(defineProps<IProps>(), {
+  addresses: () => [],
 });
 
 const { t } = useI18n();
@@ -227,40 +220,31 @@ const selectedAddress = ref<AnyAddressType>();
 const page = ref(1);
 const itemsPerPage = ref(4);
 
-const isCorporateMember = computedEager(() => !!user.value.contact?.organizationId);
 const pages = computed(() => Math.ceil(props.addresses.length / itemsPerPage.value));
 const paginatedAddresses = computed(() =>
   props.addresses.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
 );
 
-const columns = ref<ITableColumn[]>([
+const columns = computed<ITableColumn[]>(() => [
   {
-    id: isCorporateMember.value ? "address" : "firstName",
-    title: isCorporateMember.value
-      ? t("shared.checkout.select_address_dialog.table_columns.address")
-      : t("shared.checkout.select_address_dialog.table_columns.recipient"),
+    id: props.isCorporateMember ? "address" : "firstName",
+    title: props.isCorporateMember ? t("common.labels.address") : t("common.labels.recipient_name"),
   },
   {
-    id: isCorporateMember.value ? "description" : "countryCode",
-    title: isCorporateMember.value
-      ? t("shared.checkout.select_address_dialog.table_columns.description")
-      : t("shared.checkout.select_address_dialog.table_columns.address"),
+    id: props.isCorporateMember ? "description" : "countryCode",
+    title: props.isCorporateMember ? t("common.labels.description") : t("common.labels.address"),
   },
   {
-    id: isCorporateMember.value ? "postalCode" : "phone",
-    title: isCorporateMember.value
-      ? t("shared.checkout.select_address_dialog.table_columns.zip_code")
-      : t("shared.checkout.select_address_dialog.table_columns.phone"),
+    id: props.isCorporateMember ? "postalCode" : "phone",
+    title: props.isCorporateMember ? t("common.labels.zip_code") : t("common.labels.phone"),
   },
   {
-    id: isCorporateMember.value ? "countryName" : "email",
-    title: isCorporateMember.value
-      ? t("shared.checkout.select_address_dialog.table_columns.country")
-      : t("shared.checkout.select_address_dialog.table_columns.email"),
+    id: props.isCorporateMember ? "countryName" : "email",
+    title: props.isCorporateMember ? t("common.labels.country") : t("common.labels.email"),
   },
   {
     id: "activeAddress",
-    title: t("shared.checkout.select_address_dialog.table_columns.active_address"),
+    title: t("common.labels.active_address"),
     align: "center",
   },
 ]);
@@ -271,8 +255,11 @@ const onPageChange = async (newPage: number) => {
 
 function setAddress(address: AnyAddressType): void {
   selectedAddress.value = address;
-  selectedAddress.value.firstName = user.value.contact!.firstName;
-  selectedAddress.value.lastName = user.value.contact!.lastName;
+
+  if (props.isCorporateMember) {
+    selectedAddress.value.firstName = user.value.contact!.firstName;
+    selectedAddress.value.lastName = user.value.contact!.lastName;
+  }
 }
 
 watchEffect(() => {
