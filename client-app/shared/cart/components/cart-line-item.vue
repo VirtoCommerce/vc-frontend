@@ -185,7 +185,7 @@ function changeQuantity() {
 
 function onQuantityChanged(): void {
   clearTimeout(timeoutIdOfQuantityChange);
-  timeoutIdOfQuantityChange = +setTimeout(changeQuantity, 2000);
+  timeoutIdOfQuantityChange = +setTimeout(changeQuantity, 900);
 }
 
 function onFocusOut() {
