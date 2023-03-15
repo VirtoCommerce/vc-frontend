@@ -271,7 +271,7 @@ export default function useCheckout() {
     if (
       billingAddress &&
       !billingAddressEqualsShipping.value &&
-      ((isCorporateCustomer && !isExistPersonalAddress(billingAddress)) ||
+      ((isCorporateCustomer && !isExistOrganizationAddress(billingAddress)) ||
         (!isCorporateCustomer && !isExistPersonalAddress(billingAddress)))
     ) {
       newAddresses.push({
