@@ -8,8 +8,9 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, computed } from "vue";
-import { MoneyType } from "@/xapi/types";
+import { computed } from "vue";
+import type { MoneyType } from "@/xapi/types";
+import type { PropType } from "vue";
 
 const props = defineProps({
   value: {

@@ -167,7 +167,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { useBreadcrumbs, usePageHead, useProductsRoutes } from "@/core";
+import { useBreadcrumbs, usePageHead, useProductsRoutes } from "@/core/composables";
 import { AddToCart } from "@/shared/cart";
 import { ProductCardGrid, useProducts } from "@/shared/catalog";
 

@@ -24,8 +24,8 @@
 
 <script setup lang="ts">
 import { eagerComputed } from "@vueuse/core";
-import { PropType } from "vue";
-import { RouteLocationRaw } from "vue-router";
+import type { PropType } from "vue";
+import type { RouteLocationRaw } from "vue-router";
 
 defineEmits(["click"]);
 

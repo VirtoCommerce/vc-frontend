@@ -1,5 +1,5 @@
 // Temporary solution before Nuxt3 migration to simplify code merging.
-import { graphqlClient } from "@/xapi";
+import type { graphqlClient } from "@/xapi";
 
 declare global {
   export function useNuxtApp(): {

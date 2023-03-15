@@ -1,28 +1,12 @@
-import { computed, WritableComputedRef } from "vue";
-import {
-  LocationAsRelativeRaw,
-  LocationQueryValue,
-  LocationQueryValueRaw,
-  RouteQueryAndHash,
-  useRouter,
-} from "vue-router";
-
-export interface UseRouteQueryParamOptions<T = LocationQueryValue | LocationQueryValue[]> {
-  defaultValue?: T;
-  validator?(queryValue: NonNullable<T>): boolean;
-  // @default push
-  updateMethod?: "push" | "replace";
-  // @default true
-  removeFalsyValue?: boolean;
-  // @default true
-  removeNullishValue?: boolean;
-  // @default true
-  removeDefaultValue?: boolean;
-}
+import { computed } from "vue";
+import { useRouter } from "vue-router";
+import type { IUseRouteQueryParamOptions } from "../types";
+import type { WritableComputedRef } from "vue";
+import type { LocationAsRelativeRaw, LocationQueryValue, LocationQueryValueRaw, RouteQueryAndHash } from "vue-router";
 
 export function useRouteQueryParam<T = NonNullable<LocationQueryValue> | NonNullable<LocationQueryValue>[]>(
   key: string,
-  options: UseRouteQueryParamOptions<T> = {}
+  options: IUseRouteQueryParamOptions<T> = {}
 ): WritableComputedRef<T> {
   const {
     validator,

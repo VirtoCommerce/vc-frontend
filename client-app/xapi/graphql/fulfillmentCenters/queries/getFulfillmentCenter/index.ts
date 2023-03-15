@@ -1,5 +1,5 @@
-import { FulfillmentCenterType, Query, QueryFulfillmentCenterArgs } from "@/xapi/types";
 import fillmentCenterQueryDocument from "./getFulfillmentCenter.graphql";
+import type { FulfillmentCenterType, Query, QueryFulfillmentCenterArgs } from "@/xapi/types";
 
 export default async function getProduct(id: string): Promise<FulfillmentCenterType | null> {
   const { $graphqlClient } = useNuxtApp();

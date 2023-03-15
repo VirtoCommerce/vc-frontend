@@ -90,21 +90,22 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useGoogleAnalytics } from "@/core";
+import { useGoogleAnalytics } from "@/core/composables";
 import { AddToCart } from "@/shared/cart";
 import { extendWishListItem } from "@/shared/wishlists";
-import { LineItemType } from "@/xapi";
+import type { LineItemType } from "@/xapi/types";
 
-interface Prop {
-  item: LineItemType;
-}
-
-interface Emits {
+interface IEmits {
   (event: "remove"): void;
 }
 
-defineEmits<Emits>();
-const props = defineProps<Prop>();
+interface IProps {
+  item: LineItemType;
+}
+
+defineEmits<IEmits>();
+const props = defineProps<IProps>();
+
 const ga = useGoogleAnalytics();
 
 const extendedItem = computed(() => extendWishListItem(props.item));

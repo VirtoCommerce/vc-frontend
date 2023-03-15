@@ -1,10 +1,10 @@
-import {
+import mutationDocument from "./resetPasswordByToken.graphql";
+import type {
   IdentityResultType,
   InputResetPasswordByTokenType,
   Mutations,
   MutationsResetPasswordByTokenArgs,
 } from "@/xapi/types";
-import mutationDocument from "./resetPasswordByToken.graphql";
 
 export default async function resetPasswordByToken(
   payload: InputResetPasswordByTokenType

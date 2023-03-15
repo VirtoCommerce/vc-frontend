@@ -26,7 +26,8 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, PropType, shallowRef, watch } from "vue";
+import { onBeforeUnmount, onMounted, shallowRef, watch } from "vue";
+import type { PropType } from "vue";
 
 const emit = defineEmits<{ (event: "visible"): void }>();
 

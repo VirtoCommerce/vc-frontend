@@ -27,9 +27,11 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { bottom, createPopper, Instance, Placement } from "@popperjs/core";
+import { bottom, createPopper } from "@popperjs/core";
 import { isDefined, onClickOutside } from "@vueuse/core";
-import { ref, shallowRef, onUnmounted, PropType } from "vue";
+import { ref, shallowRef, onUnmounted } from "vue";
+import type { Instance, Placement } from "@popperjs/core";
+import type { PropType } from "vue";
 
 const emit = defineEmits<{
   (event: "toggle", value: boolean): void;

@@ -1,5 +1,5 @@
 import { shallowRef, unref } from "vue";
-import globals from "@/core/globals";
+import globals from "../globals";
 
 enum HTTP_ERRORS {
   NO_CONTENT = 204,
@@ -9,7 +9,7 @@ enum HTTP_ERRORS {
 
 let innerRequestEnricher: (x: Headers) => Headers = (x) => x;
 
-export default function useFetch() {
+export function useFetch() {
   const data = shallowRef<unknown | undefined>();
   const error = shallowRef<Error | undefined>();
   const statusCode = shallowRef<number | null>();

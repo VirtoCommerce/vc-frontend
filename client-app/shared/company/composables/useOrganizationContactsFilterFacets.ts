@@ -8,14 +8,14 @@ import {
   PURCHASING_AGENT,
   STORE_ADMINISTRATOR,
   STORE_MANAGER,
-} from "@/core/constants";
-import { FacetItem, FacetValueItem } from "@/core/types";
+} from "@/core/security-constants";
 import { ContactStatus } from "@/shared/company";
+import type { FacetItemType, FacetValueItemType } from "@/core/types";
 
 export default function useOrganizationContactsFilterFacets() {
   const { t } = useI18n();
 
-  const initialFacets: FacetItem[] = [
+  const initialFacets: FacetItemType[] = [
     {
       label: t("pages.company.members.labels.role"),
       paramName: "roleId",
@@ -40,8 +40,8 @@ export default function useOrganizationContactsFilterFacets() {
     },
   ];
 
-  const appliedFacets = ref<FacetItem[]>(_.cloneDeep(initialFacets));
-  const selectableFacets = ref<FacetItem[]>(_.cloneDeep(initialFacets));
+  const appliedFacets = ref<FacetItemType[]>(_.cloneDeep(initialFacets));
+  const selectableFacets = ref<FacetItemType[]>(_.cloneDeep(initialFacets));
 
   const isFacetsDirty = computedEager<boolean>(() => {
     return !_.isEqual(appliedFacets.value, selectableFacets.value);
@@ -68,7 +68,7 @@ export default function useOrganizationContactsFilterFacets() {
     selectableFacets.value = _.cloneDeep(appliedFacets.value);
   }
 
-  function resetFacetItem(payload: Pick<FacetItem, "paramName"> & Pick<FacetValueItem, "value">) {
+  function resetFacetItem(payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">) {
     const facet = appliedFacets.value.find((item) => item.paramName === payload.paramName);
     const facetValue = facet?.values.find((item) => item.value === payload.value);
 

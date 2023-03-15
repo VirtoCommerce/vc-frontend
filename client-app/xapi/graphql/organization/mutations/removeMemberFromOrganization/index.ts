@@ -1,9 +1,9 @@
-import {
+import mutationDocument from "./removeMemberFromOrganization.graphql";
+import type {
   InputRemoveMemberFromOrganizationType,
   Mutations,
   MutationsRemoveMemberFromOrganizationArgs,
 } from "@/xapi/types";
-import mutationDocument from "./removeMemberFromOrganization.graphql";
 
 export default async function removeMemberFromOrganization(
   payload: InputRemoveMemberFromOrganizationType

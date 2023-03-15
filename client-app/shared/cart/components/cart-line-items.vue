@@ -60,13 +60,13 @@
 <script setup lang="ts">
 import { groupBy, sumBy } from "lodash";
 import { computed } from "vue";
-import { LineItemType, ValidationErrorType } from "@/xapi";
 import CartLineItem from "./cart-line-item.vue";
+import type { LineItemType, ValidationErrorType } from "@/xapi/types";
 
 interface IProps {
   disabled?: boolean;
   readonly?: boolean;
-  items: LineItemType[];
+  items?: LineItemType[];
   /** @deprecated */
   validationErrors: ValidationErrorType[];
 }

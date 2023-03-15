@@ -83,7 +83,7 @@
 import { sumBy } from "lodash";
 import { computed, ref } from "vue";
 import { useCurrency, useLanguages } from "@/core/composables";
-import {
+import type {
   CartType,
   CustomerOrderType,
   DiscountType,

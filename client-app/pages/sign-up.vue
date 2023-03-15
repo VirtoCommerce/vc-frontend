@@ -135,7 +135,7 @@ import { RegistrationKind, RegistrationSuccessDialog, useUser } from "@/shared/a
 import { TwoColumn } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
 import { checkEmailUniqueness } from "@/xapi/graphql/account";
-import { AccountCreationResultType } from "@/xapi/types";
+import type { AccountCreationResultType } from "@/xapi/types";
 
 const ASYNC_VALIDATION_TIMEOUT_IN_MS = 500;
 

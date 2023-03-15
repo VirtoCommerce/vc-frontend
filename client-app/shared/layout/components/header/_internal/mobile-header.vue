@@ -91,14 +91,15 @@
 
 <script setup lang="ts">
 import { useElementSize, whenever } from "@vueuse/core";
-import { computed, ref, StyleValue, watch, watchEffect } from "vue";
-import { RouteLocationRaw } from "vue-router";
+import { computed, ref, watch, watchEffect } from "vue";
 import { useDomUtils, useRouteQueryParam } from "@/core/composables";
-import { QueryParamName } from "@/core/constants";
+import { QueryParamName } from "@/core/enums";
 import { numberToShortString } from "@/core/utilities";
 import { useCart } from "@/shared/cart";
 import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
 import MobileMenu from "./mobile-menu.vue";
+import type { StyleValue } from "vue";
+import type { RouteLocationRaw } from "vue-router";
 
 const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);

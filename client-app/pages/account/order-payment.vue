@@ -249,7 +249,7 @@ import {
   PaymentProcessingRedirection,
 } from "@/shared/payment";
 import { usePopup } from "@/shared/popup";
-import { InputOrderAddressType, OrderPaymentMethodType, PaymentInType } from "@/xapi/types";
+import type { InputOrderAddressType, OrderPaymentMethodType, PaymentInType } from "@/xapi/types";
 
 interface IProps {
   orderId: string;

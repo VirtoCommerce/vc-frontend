@@ -17,8 +17,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from "vue";
-import { MoneyType, PriceType, VariationType } from "@/xapi/types";
+import { computed } from "vue";
+import type { MoneyType, PriceType, VariationType } from "@/xapi/types";
+import type { PropType } from "vue";
 
 const props = defineProps({
   value: {

@@ -29,7 +29,7 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { PaymentActionType } from "@/shared/payment";
 import { initializePayment } from "@/xapi/graphql/cart";
-import { CustomerOrderType } from "@/xapi/types";
+import type { CustomerOrderType } from "@/xapi/types";
 
 interface IProps {
   order: CustomerOrderType;

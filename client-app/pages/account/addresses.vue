@@ -227,13 +227,15 @@
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { clone } from "lodash";
-import { computed, ComputedRef, onMounted, Ref, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCountries, usePageHead } from "@/core/composables";
-import { AddressType, ISortInfo } from "@/core/types";
+import { AddressType } from "@/core/enums";
 import { useUserAddresses } from "@/shared/account";
 import { BackButtonInHeader } from "@/shared/layout";
-import { MemberAddressType } from "@/xapi/types";
+import type { ISortInfo } from "@/core/types";
+import type { MemberAddressType } from "@/xapi/types";
+import type { ComputedRef, Ref } from "vue";
 
 const { t } = useI18n();
 const breakpoints = useBreakpoints(breakpointsTailwind);

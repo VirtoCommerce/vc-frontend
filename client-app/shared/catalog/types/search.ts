@@ -1,4 +1,4 @@
-import { FacetItem } from "@/core/types";
+import type { FacetItemType } from "@/core/types";
 
 export type ProductsSearchParams = {
   page?: number;
@@ -13,7 +13,7 @@ export type ProductsSearchParams = {
 };
 
 export type ProductsFilters = {
-  facets: FacetItem[];
+  facets: FacetItemType[];
   inStock: boolean;
   branches: string[];
 };

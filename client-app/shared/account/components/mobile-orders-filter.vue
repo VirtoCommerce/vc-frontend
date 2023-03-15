@@ -42,7 +42,7 @@
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { inject } from "vue";
-import { configInjectionKey } from "@/core/constants";
+import { configInjectionKey } from "@/core/injection-keys";
 import { useUserOrdersFilter } from "@/shared/account/";
 
 const config = inject(configInjectionKey);

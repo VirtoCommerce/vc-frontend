@@ -1,6 +1,6 @@
 import globals from "@/core/globals";
-import { InputShipmentType, Mutations, MutationsAddOrUpdateCartShipmentArgs } from "@/xapi/types";
 import mutationDocument from "./addOrUpdateCartShipmentMutation.graphql";
+import type { InputShipmentType, Mutations, MutationsAddOrUpdateCartShipmentArgs } from "@/xapi/types";
 
 export default async function addOrUpdateCartShipment(shipment: InputShipmentType, cartId?: string): Promise<void> {
   const { storeId, userId, cultureName, currencyCode } = globals;

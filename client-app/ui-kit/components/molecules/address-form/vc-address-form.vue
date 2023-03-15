@@ -149,10 +149,11 @@
 <script setup lang="ts">
 import { clone } from "lodash";
 import { useForm, useField } from "vee-validate";
-import { computed, PropType, ref, Ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import * as yup from "yup";
 import { getAddressName, Logger } from "@/core/utilities";
-import { CountryRegionType, CountryType, MemberAddressType } from "@/xapi/types";
+import type { CountryRegionType, CountryType, MemberAddressType } from "@/xapi/types";
+import type { PropType, Ref } from "vue";
 
 const emit = defineEmits<{
   (event: "update:modelValue", address: MemberAddressType): void;

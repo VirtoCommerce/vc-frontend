@@ -1,3 +1,3 @@
-export { default as configPlugin } from "./config.plugin";
-export { default as contextPlugin } from "./context.plugin";
-export { default as permissionsPlugin } from "./permissions.plugin";
+export * from "./config.plugin";
+export * from "./context.plugin";
+export * from "./permissions.plugin";

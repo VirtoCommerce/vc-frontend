@@ -44,19 +44,21 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType, ref } from "vue";
-import { useCategoriesRoutes } from "@/core";
-import { Category } from "@/xapi";
+import { computed, ref } from "vue";
+import { useCategoriesRoutes } from "@/core/composables";
+import type { Category } from "@/xapi/types";
 
-const emit = defineEmits<{
+interface IEmits {
   (event: "select"): void;
-}>();
-const props = defineProps({
-  category: {
-    type: Object as PropType<Category>,
-    required: true,
-  },
-});
+}
+
+interface IProps {
+  category: Category;
+}
+
+const emit = defineEmits<IEmits>();
+const props = defineProps<IProps>();
+
 const SHORT_VIEW_ITEMS_COUNT = 5;
 const showAll = ref(false);
 

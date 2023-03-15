@@ -128,12 +128,13 @@
 <script setup lang="ts">
 import { whenever } from "@vueuse/core";
 import { useForm, useField } from "vee-validate";
-import { computed, Ref, ref } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 import { usePageHead } from "@/core/composables";
 import { ProfileUpdateSuccessDialog, useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
+import type { Ref } from "vue";
 
 const { t } = useI18n();
 const { user, updateUser, changePassword } = useUser();

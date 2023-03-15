@@ -1,17 +1,17 @@
 import { useLocalStorage } from "@vueuse/core";
 import { computed } from "vue";
-import { Composer, VueI18n } from "vue-i18n";
-import { useThemeContext } from "@/core/composables/index";
-import { Language } from "@/core/types";
-import { I18n } from "@/i18n";
+import { useThemeContext } from "./useThemeContext";
+import type { ILanguage } from "../types";
+import type { I18n } from "@/i18n";
+import type { Composer, VueI18n } from "vue-i18n";
 
 const { themeContext } = useThemeContext();
 
 const savedLocale = useLocalStorage<string>("locale", "");
 
-const defaultLanguage = computed<Language>(() => themeContext.value.defaultLanguage);
+const defaultLanguage = computed<ILanguage>(() => themeContext.value.defaultLanguage);
 const defaultLocale = computed<string>(() => defaultLanguage.value.twoLetterLanguageName);
-const supportedLanguages = computed<Language[]>(() => themeContext.value.availLanguages);
+const supportedLanguages = computed<ILanguage[]>(() => themeContext.value.availLanguages);
 const supportedLocales = computed<string[]>(() => supportedLanguages.value.map((item) => item.twoLetterLanguageName));
 
 const currentLocale = computed<string>(() => {
@@ -27,7 +27,7 @@ const currentLocale = computed<string>(() => {
   return locale;
 });
 
-const currentLanguage = computed<Language>(
+const currentLanguage = computed<ILanguage>(
   () => supportedLanguages.value.find((x) => x.twoLetterLanguageName === currentLocale.value) || defaultLanguage.value
 );
 
@@ -86,7 +86,7 @@ function saveLocaleAndReload(locale: string) {
   location.href = locale === defaultLocale.value ? path : `/${locale}${path}`;
 }
 
-export default function useLanguages() {
+export function useLanguages() {
   return {
     savedLocale,
     defaultLanguage,

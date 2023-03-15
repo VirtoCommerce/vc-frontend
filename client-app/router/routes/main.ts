@@ -1,6 +1,8 @@
-import { RouteRecordRaw } from "vue-router";
-import { DEVELOPMENT } from "@/core/constants";
-import { accountRoutes, checkoutRoutes, corporateRoutes } from "@/router/routes";
+import { IS_DEVELOPMENT } from "@/core/constants";
+import { accountRoutes } from "./account";
+import { checkoutRoutes } from "./checkout";
+import { corporateRoutes } from "./company";
+import type { RouteRecordRaw } from "vue-router";
 import Error403 from "@/pages/403.vue";
 import Error404 from "@/pages/404.vue";
 import Error500 from "@/pages/500.vue";
@@ -91,7 +93,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/:pathMatch(.*)*", name: "Matcher", component: Matcher, props: true },
 ];
 
-if (DEVELOPMENT || location.host.includes("dev-storefront.paas.govirto.")) {
+if (IS_DEVELOPMENT || location.host.includes("dev-storefront.paas.govirto.")) {
   mainRoutes.push({
     path: "/ui-kit",
     name: "DevUIKit",

@@ -98,7 +98,7 @@ import { clickOutside } from "@/core/directives";
 
 export default {
   directives: {
-    clickOutside, // VueUse (v7.5.5) onClickOutside doesn't work in Safari
+    clickOutside, // TODO: Use directive from VueUse (https://vueuse.org/core/onClickOutside/#directive-usage)
   },
 };
 </script>
@@ -108,10 +108,11 @@ import { useDebounceFn, whenever } from "@vueuse/core";
 import { computed, inject, ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useGoogleAnalytics, useRouteQueryParam } from "@/core/composables";
-import { configInjectionKey, QueryParamName } from "@/core/constants";
+import { QueryParamName } from "@/core/enums";
+import { configInjectionKey } from "@/core/injection-keys";
 import { useSearchBar } from "@/shared/layout";
-import { Category } from "@/xapi/types";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
+import type { Category } from "@/xapi/types";
 
 // Number of categories column items in dropdown list
 const CATEGORIES_ITEMS_PER_COLUMN = 4;

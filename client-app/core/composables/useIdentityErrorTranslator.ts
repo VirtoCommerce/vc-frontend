@@ -1,7 +1,7 @@
 import { useI18n } from "vue-i18n";
-import { IdentityErrorInfoType, RegistrationErrorType } from "@/xapi/types";
+import type { IdentityErrorInfoType, RegistrationErrorType } from "@/xapi/types";
 
-export default function useIdentityErrorTranslator() {
+export function useIdentityErrorTranslator() {
   const { t } = useI18n();
 
   return (error: IdentityErrorInfoType | RegistrationErrorType): string | undefined => {

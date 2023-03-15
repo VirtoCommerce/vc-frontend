@@ -65,7 +65,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watchEffect } from "vue";
-import { useComponentId } from "@/core";
+import { useComponentId } from "@/core/composables";
 
 interface IProps {
   autocomplete?: string;

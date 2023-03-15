@@ -1,14 +1,15 @@
-import { MaybeRef } from "@vueuse/core";
 import { computed, unref } from "vue";
-import { RouteLocationRaw } from "vue-router";
-import { CategoryTreeItem, getCategoryRoute } from "@/core";
-import { Category } from "@/xapi";
+import { getCategoryRoute } from "../utilities";
+import type { CategoryTreeItemType } from "../types";
+import type { Category } from "@/xapi/types";
+import type { MaybeRef } from "@vueuse/core";
+import type { RouteLocationRaw } from "vue-router";
 
-export default (categories: MaybeRef<(Category | CategoryTreeItem)[]>) => {
+export function useCategoriesRoutes(categories: MaybeRef<(Category | CategoryTreeItemType)[]>) {
   return computed(() =>
     unref(categories).reduce<Record<string, RouteLocationRaw>>((result, category) => {
       result[category.id] = getCategoryRoute(category);
       return result;
     }, {})
   );
-};
+}

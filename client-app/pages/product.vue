@@ -60,8 +60,8 @@
 import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
 import { computed, defineAsyncComponent, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import { buildBreadcrumbs } from "@/core";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
+import { buildBreadcrumbs } from "@/core/utilities";
 import { useCart } from "@/shared/cart";
 import { CarouselProductCard, useProduct, useRelatedProducts } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";

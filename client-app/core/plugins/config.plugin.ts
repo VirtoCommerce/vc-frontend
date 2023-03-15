@@ -1,8 +1,8 @@
-import { App } from "vue";
-import { configInjectionKey } from "@/core/constants";
-import { IThemeConfigPreset } from "../types";
+import { configInjectionKey } from "../injection-keys";
+import type { IThemeConfigPreset } from "../types";
+import type { App, Plugin } from "vue";
 
-export default {
+export const configPlugin: Plugin<IThemeConfigPreset> = {
   install: (app: App, options: IThemeConfigPreset) => {
     app.config.globalProperties.$cfg = options;
     app.provide(configInjectionKey, options);

@@ -5,4 +5,4 @@
  *  type ModifiedType = Modify<OriginalType , { a: number; b: number; }>
  *  // ModifiedType = { a: number; b: number; c: number; }
  */
-export type Modify<T, R> = Omit<T, keyof R> & R;
+export type ModifyType<T, R> = Omit<T, keyof R> & R;

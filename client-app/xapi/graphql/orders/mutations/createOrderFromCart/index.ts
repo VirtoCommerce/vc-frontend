@@ -1,5 +1,5 @@
-import { CustomerOrderType, Mutations, MutationsCreateOrderFromCartArgs } from "@/xapi/types";
 import mutationDocument from "./createOrderFromCartMutation.graphql";
+import type { CustomerOrderType, Mutations, MutationsCreateOrderFromCartArgs } from "@/xapi/types";
 
 export default async function createOrderFromCart(cartId?: string): Promise<CustomerOrderType> {
   const { $graphqlClient } = useNuxtApp();

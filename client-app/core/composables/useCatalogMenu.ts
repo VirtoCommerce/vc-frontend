@@ -1,11 +1,12 @@
 import { computed, readonly, ref, shallowRef } from "vue";
-import { Logger } from "@/core";
-import { getChildCategories, QueryChildCategoriesArgs, Category } from "@/xapi";
+import { getChildCategories } from "@/xapi";
+import { Logger } from "../utilities";
+import type { QueryChildCategoriesArgs, Category } from "@/xapi/types";
 
 const loading = ref(true);
 const catalogMenuItems = shallowRef<Category[]>([]);
 
-export default function useCatalogMenu() {
+export function useCatalogMenu() {
   async function fetchCatalogMenuItems(payload: QueryChildCategoriesArgs): Promise<void> {
     loading.value = true;
 

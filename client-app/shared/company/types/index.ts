@@ -1,4 +1,4 @@
-import { ContactType, RoleType } from "@/xapi/types";
+import type { ContactType, RoleType } from "@/xapi/types";
 
 export enum ContactStatus {
   New = "New",

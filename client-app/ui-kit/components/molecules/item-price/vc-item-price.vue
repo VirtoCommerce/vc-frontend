@@ -21,8 +21,8 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
-import { MoneyType, PriceType } from "@/xapi/types";
+import type { MoneyType, PriceType } from "@/xapi/types";
+import type { PropType } from "vue";
 
 defineProps({
   value: {

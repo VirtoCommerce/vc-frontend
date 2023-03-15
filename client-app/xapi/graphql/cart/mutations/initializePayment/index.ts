@@ -1,10 +1,10 @@
-import {
+import mutationDocument from "./initializePaymentMutation.graphql";
+import type {
   InitializePaymentResultType,
   InputInitializePaymentType,
   Mutations,
   MutationsInitializePaymentArgs,
 } from "@/xapi/types";
-import mutationDocument from "./initializePaymentMutation.graphql";
 
 export default async function initializePayment(
   payload: InputInitializePaymentType

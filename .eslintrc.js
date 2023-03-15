@@ -23,13 +23,20 @@ module.exports = {
     parser: "@typescript-eslint/parser",
     sourceType: "module",
   },
-  plugins: ["vue", "import", "@typescript-eslint", "sonarjs", "vuejs-accessibility"],
+  plugins: [
+    "vue",
+    "import",
+    "@typescript-eslint",
+    "sonarjs",
+    "vuejs-accessibility",
+  ],
   rules: {
     /**
      * Errors
      */
     "@typescript-eslint/no-shadow": "error",
     "import/no-unresolved": "error",
+    "no-debugger": process.env.NODE_ENV === "production" ? "error" : "warn",
     "vue/block-lang": ["error", { script: { lang: "ts" } }],
     "vue/prefer-prop-type-boolean-first": "error",
     "vue/prefer-true-attribute-shorthand": "error",
@@ -54,30 +61,24 @@ module.exports = {
      * Warnings
      */
     "@typescript-eslint/ban-ts-comment": "warn",
+    "@typescript-eslint/consistent-type-imports": ["warn", { disallowTypeAnnotations: false }],
     "@typescript-eslint/naming-convention": [
       "warn",
       { selector: "interface", format: ["PascalCase"], prefix: ["I"] },
       { selector: "typeAlias", format: ["PascalCase"], suffix: ["Type"] },
     ],
+    "import/consistent-type-specifier-style": "warn",
+    "import/no-cycle": "warn", // TODO: Switch to error
     "import/order": [
       "warn",
       {
-        groups: ["builtin", "external", "internal", "unknown", "parent", "sibling", "index"],
-        pathGroups: [
-          {
-            pattern: "**/*.vue",
-            group: "index",
-            position: "after",
-          },
-        ],
-        alphabetize: {
-          order: "asc",
-        },
+        groups: ["builtin", "external", "internal", "unknown", "parent", "sibling", "index", "object", "type"],
+        pathGroups: [{ pattern: "**/*.vue", group: "type", position: "after" }],
+        alphabetize: { order: "asc", orderImportKind: "asc" },
         "newlines-between": "never",
       },
     ],
     "no-console": "warn",
-    "no-debugger": "warn",
     "vue/component-api-style": "warn",
     "vue/component-name-in-template-casing": [
       "warn",
@@ -91,6 +92,7 @@ module.exports = {
           "transition",
           "transition-group",
           "teleport",
+          "suspense",
           "router-view",
           "router-link",
           "i18n-t",
@@ -105,8 +107,7 @@ module.exports = {
       "warn",
       "camelCase",
       {
-        // Example: $emit('change:itemQuantity', $event)
-        ignores: ["/^[a-z]+:[a-z]+(?:[A-Z][a-z]+)*$/u"],
+        ignores: ["/^[a-z]+:[a-z]+(?:[A-Z][a-z]+)*$/u"], // Example: $emit('change:itemQuantity', $event)
       },
     ],
     "vue/define-emits-declaration": "warn",

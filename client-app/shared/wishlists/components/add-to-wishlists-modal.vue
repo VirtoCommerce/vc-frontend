@@ -125,16 +125,18 @@
 
 <script setup lang="ts">
 import moment from "moment";
-import { computed, PropType, ref, inject, toRef } from "vue";
+import { computed, ref, inject, toRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { asyncForEach } from "@/core";
 import { useGoogleAnalytics } from "@/core/composables";
-import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION, configInjectionKey } from "@/core/constants";
+import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
+import { configInjectionKey } from "@/core/injection-keys";
+import { asyncForEach } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import { useWishlists } from "@/shared/wishlists";
-import { WishlistInputType } from "@/shared/wishlists/types";
-import { Product as ProductType } from "@/xapi/types";
+import type { WishlistInputType } from "@/shared/wishlists/types";
+import type { Product as ProductType } from "@/xapi/types";
+import type { PropType } from "vue";
 
 const props = defineProps({
   product: {

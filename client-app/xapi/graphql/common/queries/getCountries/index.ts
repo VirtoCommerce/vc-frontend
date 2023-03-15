@@ -1,5 +1,5 @@
-import { CountryType, Query } from "@/xapi/types";
 import getCountriesQuery from "./getCountries.graphql";
+import type { CountryType, Query } from "@/xapi/types";
 
 export default async function getCountries(): Promise<CountryType[]> {
   const { $graphqlClient } = useNuxtApp();

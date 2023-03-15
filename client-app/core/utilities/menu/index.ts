@@ -1,7 +1,8 @@
-import { CategoryTreeItem, getCategoryRoute, MenuLink } from "@/core";
-import { I18n } from "@/i18n";
+import { getCategoryRoute } from "../categories";
+import type { CategoryTreeItemType, MenuLinkType } from "../../types";
+import type { I18n } from "@/i18n";
 
-export function categoryTreeItemToMenuLink(categoryTreeItem: CategoryTreeItem, priority?: number): MenuLink {
+export function categoryTreeItemToMenuLink(categoryTreeItem: CategoryTreeItemType, priority?: number): MenuLinkType {
   return {
     priority,
     title: categoryTreeItem.name,
@@ -10,7 +11,7 @@ export function categoryTreeItemToMenuLink(categoryTreeItem: CategoryTreeItem, p
   };
 }
 
-export function getTranslatedMenuLink(menuLink: MenuLink, i18n: I18n): MenuLink {
+export function getTranslatedMenuLink(menuLink: MenuLinkType, i18n: I18n): MenuLinkType {
   if (menuLink.title) {
     menuLink.title = i18n.global.t(menuLink.title);
   }

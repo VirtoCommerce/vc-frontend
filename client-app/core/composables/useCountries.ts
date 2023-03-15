@@ -1,7 +1,7 @@
 import { computed, readonly, ref, shallowRef } from "vue";
-import { Logger } from "@/core/utilities";
 import { getCountries } from "@/xapi/graphql/common";
-import { CountryType } from "@/xapi/types";
+import { Logger } from "../utilities";
+import type { CountryType } from "@/xapi/types";
 
 const loading = ref(false);
 const countries = shallowRef<CountryType[]>([]);
@@ -12,16 +12,16 @@ async function loadCountries() {
   try {
     countries.value = await getCountries();
   } catch (e) {
-    Logger.error(`useCountries.${loadCountries.name}`, e);
+    Logger.error(loadCountries.name, e);
   } finally {
     loading.value = false;
   }
 }
 
-export default () => {
+export function useCountries() {
   return {
     loadCountries,
     loading: readonly(loading),
     countries: computed(() => countries.value),
   };
-};
+}

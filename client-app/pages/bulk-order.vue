@@ -72,7 +72,7 @@ import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { CopyAndPaste, Manually } from "@/shared/bulk-order";
 import { useCart } from "@/shared/cart";
-import { InputNewBulkItemType } from "@/xapi/types";
+import type { InputNewBulkItemType } from "@/xapi/types";
 
 const { t } = useI18n();
 

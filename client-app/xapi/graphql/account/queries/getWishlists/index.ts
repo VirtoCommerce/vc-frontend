@@ -1,8 +1,8 @@
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import globals from "@/core/globals";
-import { WishlistsSearchParams } from "@/xapi/graphql/account";
-import { Query, QueryWishlistsArgs, WishlistConnection } from "@/xapi/types";
 import queryDocument from "./getWishlists.graphql";
+import type { WishlistsSearchParams } from "@/xapi/graphql/account";
+import type { Query, QueryWishlistsArgs, WishlistConnection } from "@/xapi/types";
 
 export default async function getWishlists({
   itemsPerPage = DEFAULT_PAGE_SIZE,

@@ -137,23 +137,23 @@
 
 <script setup lang="ts">
 import { computedEager } from "@vueuse/core";
-import { cloneDeep, isEqual, remove, every } from "lodash";
-import { computed, ref, watchEffect, onMounted } from "vue";
+import { cloneDeep, every, isEqual, remove } from "lodash";
+import { computed, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { AddressType, convertToType } from "@/core";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
-import { asyncForEach } from "@/core/utilities";
-import { useUserAddresses, useUserQuote, QuoteLineItems } from "@/shared/account";
+import { AddressType } from "@/core/enums";
+import { asyncForEach, convertToType } from "@/core/utilities";
+import { QuoteLineItems, useUserAddresses, useUserQuote } from "@/shared/account";
 import { AddOrUpdateAddressModal, SelectAddressModal } from "@/shared/checkout";
 import { usePopup } from "@/shared/popup";
-import { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi";
+import type { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi/types";
 
-const props = defineProps({
-  quoteId: {
-    type: String,
-  },
-});
+interface IProps {
+  quoteId: string;
+}
+
+const props = defineProps<IProps>();
 
 const router = useRouter();
 const { t } = useI18n();

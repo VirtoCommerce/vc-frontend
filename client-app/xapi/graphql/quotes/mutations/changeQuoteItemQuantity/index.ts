@@ -1,5 +1,5 @@
-import { Mutations, MutationsChangeQuoteItemQuantityArgs, QuoteType } from "@/xapi/types";
 import mutationDocument from "./changeQuoteItemQuantityMutation.graphql";
+import type { Mutations, MutationsChangeQuoteItemQuantityArgs, QuoteType } from "@/xapi/types";
 
 export default async function changeQuoteItemQuantity(
   payload: MutationsChangeQuoteItemQuantityArgs

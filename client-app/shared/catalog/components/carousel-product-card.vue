@@ -33,10 +33,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from "vue";
-import { RouteLocationRaw } from "vue-router";
-import { getProductRoute } from "@/core";
-import { Product } from "@/xapi/types";
+import { computed } from "vue";
+import { getProductRoute } from "@/core/utilities";
+import type { Product } from "@/xapi/types";
+import type { PropType } from "vue";
+import type { RouteLocationRaw } from "vue-router";
 
 defineEmits<{ (eventName: "link-click", globalEvent: PointerEvent): void }>();
 

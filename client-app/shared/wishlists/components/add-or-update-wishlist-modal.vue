@@ -49,11 +49,11 @@
 <script setup lang="ts">
 import { eagerComputed } from "@vueuse/core";
 import { useField, useForm } from "vee-validate";
-import { PropType } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 import { useWishlists } from "@/shared/wishlists";
-import { WishlistType } from "@/xapi/types";
+import type { WishlistType } from "@/xapi/types";
+import type { PropType } from "vue";
 
 const props = defineProps({
   list: {

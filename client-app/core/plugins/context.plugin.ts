@@ -1,8 +1,8 @@
-import { App } from "vue";
-import { contextInjectionKey } from "@/core/constants";
-import { IThemeContext } from "../types";
+import { contextInjectionKey } from "../injection-keys";
+import type { IThemeContext } from "../types";
+import type { App, Plugin } from "vue";
 
-export default {
+export const contextPlugin: Plugin<IThemeContext> = {
   install: (app: App, options: IThemeContext) => {
     app.config.globalProperties.$context = options;
     app.provide(contextInjectionKey, options);

@@ -131,7 +131,7 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import _ from "lodash";
 import { ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import { useBreadcrumbs, useGoogleAnalytics, usePageHead, useProductsRoutes } from "@/core";
+import { useBreadcrumbs, useGoogleAnalytics, usePageHead, useProductsRoutes } from "@/core/composables";
 import { AddToCart } from "@/shared/cart";
 import { useProducts } from "@/shared/catalog";
 import { useCompareProducts } from "@/shared/compare";

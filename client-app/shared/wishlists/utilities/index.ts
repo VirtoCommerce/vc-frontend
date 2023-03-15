@@ -1,5 +1,5 @@
-import { getProductRoute } from "@/core";
-import { LineItemType } from "@/xapi";
+import { getProductRoute } from "@/core/utilities";
+import type { LineItemType } from "@/xapi/types";
 
 export function extendWishListItem(item: LineItemType) {
   return {

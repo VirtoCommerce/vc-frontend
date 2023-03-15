@@ -124,17 +124,17 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useProductsRoutes } from "@/core";
-import { ItemForAddBulkItemsToCartResultsPopup } from "@/shared/cart";
+import { useProductsRoutes } from "@/core/composables";
+import type { ItemForAddBulkItemsToCartResultsPopupType } from "@/shared/cart";
 
-type Group = { name: "added" | "not_added"; items: ItemForAddBulkItemsToCartResultsPopup[] };
+type GroupType = { name: "added" | "not_added"; items: ItemForAddBulkItemsToCartResultsPopupType[] };
 
 interface IEmits {
   (event: "confirm"): void;
 }
 
 interface IProps {
-  items: ItemForAddBulkItemsToCartResultsPopup[];
+  items?: ItemForAddBulkItemsToCartResultsPopupType[];
 }
 
 defineEmits<IEmits>();
@@ -144,10 +144,10 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const links = useProductsRoutes(props.items, { productIdProperty: "productId" });
 
-const groups = computed<Group[]>(() => {
-  const result: Group[] = [];
-  const added: ItemForAddBulkItemsToCartResultsPopup[] = [];
-  const notAdded: ItemForAddBulkItemsToCartResultsPopup[] = [];
+const groups = computed<GroupType[]>(() => {
+  const result: GroupType[] = [];
+  const added: ItemForAddBulkItemsToCartResultsPopupType[] = [];
+  const notAdded: ItemForAddBulkItemsToCartResultsPopupType[] = [];
 
   props.items.forEach((item) => {
     if (item.errors?.length) {

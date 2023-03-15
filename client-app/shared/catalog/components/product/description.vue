@@ -10,9 +10,9 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
 import { ProductTitledBlock } from "@/shared/catalog";
-import { Product } from "@/xapi/types";
+import type { Product } from "@/xapi/types";
+import type { PropType } from "vue";
 
 defineProps({
   product: {

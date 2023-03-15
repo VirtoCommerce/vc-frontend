@@ -1,5 +1,10 @@
-import { InputPersonalDataType, IdentityResultType, Mutations, MutationsUpdatePersonalDataArgs } from "@/xapi/types";
 import mutationDocument from "./updatePersonalDataMutation.graphql";
+import type {
+  InputPersonalDataType,
+  IdentityResultType,
+  Mutations,
+  MutationsUpdatePersonalDataArgs,
+} from "@/xapi/types";
 
 export default async function updatePersonalData(personalData: InputPersonalDataType): Promise<IdentityResultType> {
   const { $graphqlClient } = useNuxtApp();

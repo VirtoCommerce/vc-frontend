@@ -16,13 +16,13 @@
 import { breakpointsTailwind, computedEager, useBreakpoints } from "@vueuse/core";
 import { Head as PageHead } from "@vueuse/head";
 import { markRaw } from "vue";
-import type { Component } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useCategories, useDomUtils, useNavigations, useCatalogMenu } from "@/core";
+import { useCategories, useDomUtils, useNavigations, useCatalogMenu } from "@/core/composables";
 import { useCart } from "@/shared/cart";
 import { NotificationsHost } from "@/shared/notification";
 import { PopupHost } from "@/shared/popup";
 import { MainLayout, SecureLayout, useSearchBar } from "./shared/layout";
+import type { Component } from "vue";
 
 const props = defineProps({
   settings: {

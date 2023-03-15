@@ -1,5 +1,6 @@
-import { Directive } from "vue";
+import type { Directive } from "vue";
 
+/** @deprecated */
 export const clickOutside: Directive = {
   beforeMount(el, binding) {
     const handler = binding.value;

@@ -38,8 +38,8 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
-import { WishlistType } from "@/xapi/types";
+import type { WishlistType } from "@/xapi/types";
+import type { PropType } from "vue";
 
 defineEmits(["settings", "remove"]);
 
