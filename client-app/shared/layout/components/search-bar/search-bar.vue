@@ -165,8 +165,8 @@ async function searchAndShowDropdownResults() {
   if (
     loading.value ||
     searchPhrase.value === "" ||
-    searchPhrase.value.length > MAX_LENGTH ||
-    searchPhrase.value.length < MIN_LENGTH
+    searchPhrase.value.trim().length > MAX_LENGTH ||
+    searchPhrase.value.trim().length < MIN_LENGTH
   ) {
     return;
   }

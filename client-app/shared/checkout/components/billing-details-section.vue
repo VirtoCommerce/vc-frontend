@@ -52,14 +52,14 @@
           <template #selected="{ item }">
             <VcSelectItem>
               <VcSelectItemImage :src="item.logoUrl" />
-              <VcSelectItemText>{{ item.code }}</VcSelectItemText>
+              <VcSelectItemText>{{ $t(`common.methods.payment_by_code.${item.code}`) }}</VcSelectItemText>
             </VcSelectItem>
           </template>
 
           <template #item="{ item }">
             <VcSelectItem bordered>
               <VcSelectItemImage :src="item.logoUrl" />
-              <VcSelectItemText>{{ item.code }}</VcSelectItemText>
+              <VcSelectItemText>{{ $t(`common.methods.payment_by_code.${item.code}`) }}</VcSelectItemText>
             </VcSelectItem>
           </template>
         </VcSelect>
