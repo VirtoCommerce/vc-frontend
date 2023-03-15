@@ -1,0 +1,90 @@
+{
+    "content": [
+        {
+            "background": "bg-gray-100",
+            "hidden": true,
+            "id": "loginh27b",
+            "type": "login"
+        },
+        {
+            "background": "bg-gray-100",
+            "id": "slider2e19",
+            "slides": [
+                {
+                    "image": "/assets/static/images/home/home-banner-1.png",
+                    "text": "",
+                    "title": ""
+                },
+                {
+                    "image": "/assets/static/images/home/home-banner-2.png",
+                    "text": "",
+                    "title": ""
+                },
+                {
+                    "image": "/assets/static/images/home/home-banner-3.png",
+                    "text": null,
+                    "title": null
+                },
+                {
+                    "image": "/assets/static/images/home/home-banner-4.png",
+                    "text": null,
+                    "title": null
+                },
+                {
+                    "image": "/assets/static/images/home/home-banner-5.png",
+                    "text": null,
+                    "title": null
+                }
+            ],
+            "subtitle": "",
+            "title": "",
+            "type": "slider"
+        },
+        {
+            "background": null,
+            "count": null,
+            "id": "productsREO0",
+            "query": null,
+            "subtitle": "",
+            "title": "Bolts",
+            "type": "products"
+        },
+        {
+            "background": "bg-gray-100",
+            "columns": [
+                {
+                    "image": "/assets/static/images/home/hexa-1.webp",
+                    "text": null,
+                    "title": "Corporate account management"
+                },
+                {
+                    "image": "/assets/static/images/home/hexa-2.webp",
+                    "text": null,
+                    "title": "Quote management and price negotiation"
+                },
+                {
+                    "image": "/assets/static/images/home/hexa-3.webp",
+                    "text": null,
+                    "title": "Multiple stores, channels, and locations"
+                },
+                {
+                    "image": "/assets/static/images/home/hexa-4.webp",
+                    "text": null,
+                    "title": "B2B customization and price management"
+                }
+            ],
+            "columnsCount": "4",
+            "id": "featurese7PU",
+            "subtitle": null,
+            "title": "Commercial management has never been that easy",
+            "type": "features"
+        }
+    ],
+    "settings": {
+        "header": null,
+        "hideBreadcrumbs": true,
+        "name": "Home",
+        "permalink": "/",
+        "type": "settings"
+    }
+}
