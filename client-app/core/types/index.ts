@@ -19,7 +19,9 @@ export enum AddressType {
   BillingAndShipping = Billing | Shipping,
 }
 
-export type AnyAddressType = MemberAddressType | OrderAddressType | CartAddressType | QuoteAddressType;
+export type AnyAddressType = (MemberAddressType | OrderAddressType | CartAddressType | QuoteAddressType) & {
+  description?: string;
+};
 
 export interface ISortInfo {
   column: string;

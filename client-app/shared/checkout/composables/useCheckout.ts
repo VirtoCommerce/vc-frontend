@@ -1,10 +1,11 @@
 import { omit } from "lodash";
 import { computed, readonly, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { AddressType, Logger, useGoogleAnalytics } from "@/core";
+import { AddressType, AnyAddressType, isEqualAddresses, Logger, useGoogleAnalytics } from "@/core";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { AddOrUpdateAddressModal, SelectAddressModal } from "@/shared/checkout";
+import { useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 import { PaymentMethodGroupType } from "@/shared/payment";
 import { usePopup } from "@/shared/popup";
@@ -31,9 +32,18 @@ export default function useCheckout() {
   const notifications = useNotifications();
   const { openPopup, closePopup } = usePopup();
   const { t } = useI18n();
-  const { isAuthenticated } = useUser();
+  const { user, isAuthenticated } = useUser();
   const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
-  const { addresses, fetchAddresses, isExistAddress, addOrUpdateAddresses } = useUserAddresses();
+  const {
+    addresses: personalAddresses,
+    fetchAddresses: fetchPersonalAddresses,
+    addOrUpdateAddresses: addOrUpdatePersonalAddresses,
+  } = useUserAddresses();
+  const {
+    addresses: organizationsAddresses,
+    fetchAddresses: fetchOrganizationAddresses,
+    addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
+  } = useOrganizationAddresses(user.value.contact?.organizationId || "");
   const {
     cart,
     shipment,
@@ -59,6 +69,7 @@ export default function useCheckout() {
   const isValidCheckout = computed<boolean>(
     () => isValidShipment.value && isValidPayment.value && !hasValidationErrors.value
   );
+  const isCorporateMember = computed<boolean>(() => !!user.value.contact?.organizationId);
 
   const selectedPaymentMethodGroupType = computed<string | undefined>(() => {
     const paymentMethodCode = payment.value?.paymentGatewayCode || placedOrder.value?.inPayments[0].paymentMethod?.code;
@@ -72,11 +83,19 @@ export default function useCheckout() {
       selectedPaymentMethodGroupType.value !== PaymentMethodGroupType[PaymentMethodGroupType.Manual]
   );
 
+  const addresses = computed<AnyAddressType[]>(() =>
+    isCorporateMember.value ? organizationsAddresses.value : personalAddresses.value
+  );
+
   const isPurchaseOrderNumberEnabled = computed<boolean>(
     () =>
       !!selectedPaymentMethodGroupType.value &&
       selectedPaymentMethodGroupType.value === PaymentMethodGroupType[PaymentMethodGroupType.Manual]
   );
+
+  function isExistAddress(address: AnyAddressType): boolean {
+    return addresses.value.some((item) => isEqualAddresses(item, address));
+  }
 
   async function setShippingMethod(method: ShippingMethodType, options: { reloadCart?: boolean } = {}) {
     await updateShipment(
@@ -135,12 +154,6 @@ export default function useCheckout() {
     loading.value = true;
 
     await fetchCart();
-
-    if (isAuthenticated.value) {
-      // TODO: Remove. Addresses should be queried when the address selection modal opens.
-      fetchAddresses();
-    }
-
     await setCheckoutDefaults();
 
     ga.beginCheckout(cart.value);
@@ -193,6 +206,7 @@ export default function useCheckout() {
         addresses: addresses.value,
         currentAddress:
           addressType === AddressType.Billing ? payment.value?.billingAddress : shipment.value?.deliveryAddress,
+        isCorporateAddresses: isCorporateMember.value,
 
         async onResult(address?: MemberAddressType) {
           if (!address) {
@@ -216,22 +230,38 @@ export default function useCheckout() {
     });
   }
 
-  function onDeliveryAddressChange() {
+  async function fetchAddresses(): Promise<void> {
+    if (!isAuthenticated.value) {
+      return;
+    }
+
+    if (isCorporateMember.value) {
+      await fetchOrganizationAddresses();
+    } else {
+      await fetchPersonalAddresses();
+    }
+  }
+
+  async function onDeliveryAddressChange() {
+    await fetchAddresses();
+
     addresses.value.length
       ? openSelectAddressModal(AddressType.Shipping)
       : openAddOrUpdateAddressModal(AddressType.Shipping, shipment.value?.deliveryAddress);
   }
 
-  function onBillingAddressChange() {
+  async function onBillingAddressChange() {
+    await fetchAddresses();
+
     addresses.value.length
       ? openSelectAddressModal(AddressType.Billing)
       : openAddOrUpdateAddressModal(AddressType.Billing, payment.value?.billingAddress);
   }
 
-  async function saveNewAddressesInAccount(payload: {
+  function getNewAddresses(payload: {
     shipmentAddress?: CartAddressType;
     billingAddress?: CartAddressType;
-  }) {
+  }): MemberAddressType[] {
     const { shipmentAddress, billingAddress } = payload;
     const newAddresses: MemberAddressType[] = [];
 
@@ -251,7 +281,20 @@ export default function useCheckout() {
       });
     }
 
-    await addOrUpdateAddresses(newAddresses);
+    return newAddresses;
+  }
+
+  async function saveNewAddresses(payload: {
+    shipmentAddress?: CartAddressType;
+    billingAddress?: CartAddressType;
+  }): Promise<void> {
+    const newAddresses: MemberAddressType[] = getNewAddresses(payload);
+
+    if (isCorporateMember.value) {
+      await addOrUpdateOrganizationAddresses(newAddresses);
+    } else {
+      await addOrUpdatePersonalAddresses(newAddresses);
+    }
   }
 
   async function prepareOrderData() {
@@ -288,7 +331,7 @@ export default function useCheckout() {
 
     // Parallel saving of new addresses in account. Before cleaning shopping cart
     if (isAuthenticated.value) {
-      saveNewAddressesInAccount({
+      saveNewAddresses({
         shipmentAddress: shipment.value!.deliveryAddress,
         billingAddress: payment.value!.billingAddress,
       });

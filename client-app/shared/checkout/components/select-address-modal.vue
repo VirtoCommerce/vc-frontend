@@ -44,14 +44,39 @@
       <template #mobile-item="itemData">
         <div class="flex items-center space-x-3 border-b border-gray-200 p-6">
           <div class="w-1/2 grow truncate">
-            <span class="text-base font-bold">{{ itemData.item.firstName }} {{ itemData.item.lastName }}</span>
-            <p class="text-sm">
-              {{ itemData.item.countryCode }} {{ itemData.item.regionName }} {{ itemData.item.city }}
-              {{ itemData.item.line1 }}
-              {{ itemData.item.postalCode }}
+            <p class="text-base font-bold">
+              <span v-if="isCorporateAddresses" class="text-base font-bold">
+                {{ itemData.item.countryCode }} {{ itemData.item.regionName }} {{ itemData.item.city }}
+                {{ itemData.item.line1 }}
+                {{ itemData.item.postalCode }}
+              </span>
+              <span v-else>{{ itemData.item.firstName }} {{ itemData.item.lastName }}</span>
             </p>
-            <p class="text-sm text-gray-400"><span class="font-semibold">Phone: </span>{{ itemData.item.phone }}</p>
-            <p class="text-sm text-gray-400"><span class="font-semibold">Email: </span>{{ itemData.item.email }}</p>
+
+            <p class="text-sm">
+              <span v-if="isCorporateAddresses">{{ itemData.item.description }}</span>
+              <span v-else>
+                {{ itemData.item.countryCode }} {{ itemData.item.regionName }} {{ itemData.item.city }}
+                {{ itemData.item.line1 }}
+                {{ itemData.item.postalCode }}
+              </span>
+            </p>
+
+            <p class="text-sm text-gray-400">
+              <span v-if="isCorporateAddresses">{{ itemData.item.postalCode }}</span>
+              <span v-else-if="!!itemData.item.phone">
+                <span class="font-semibold">{{ $t("common.labels.phone") }}: </span>
+                {{ itemData.item.phone }}
+              </span>
+            </p>
+
+            <p class="text-sm text-gray-400">
+              <span v-if="isCorporateAddresses">{{ itemData.item.countryName }}</span>
+              <span v-else-if="!!itemData.item.email">
+                <span class="font-semibold">{{ $t("common.labels.email") }}: </span>
+                {{ itemData.item.email }}
+              </span>
+            </p>
           </div>
 
           <div v-if="itemData.item.id === selectedAddress?.id" class="w-1/4">
@@ -80,13 +105,42 @@
 
       <template #desktop-body>
         <tr v-for="(address, index) in paginatedAddresses" :key="address.id" :class="{ 'bg-gray-50': index % 2 }">
-          <td class="truncate p-5">{{ address.firstName }} {{ address.lastName }}</td>
           <td class="truncate p-5">
-            {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
-            {{ address.postalCode }}
+            <span v-if="isCorporateAddresses">
+              {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
+              {{ address.postalCode }}
+            </span>
+            <span v-else> {{ address.firstName }} {{ address.lastName }} </span>
           </td>
-          <td class="truncate p-5">{{ address.phone }}</td>
-          <td class="truncate p-5">{{ address.email }}</td>
+
+          <td class="truncate p-5">
+            <span v-if="isCorporateAddresses">
+              {{ address.description }}
+            </span>
+            <span v-else>
+              {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
+              {{ address.postalCode }}
+            </span>
+          </td>
+
+          <td class="truncate p-5">
+            <span v-if="isCorporateAddresses">
+              {{ address.postalCode }}
+            </span>
+            <span v-else>
+              {{ address.phone }}
+            </span>
+          </td>
+
+          <td class="truncate p-5">
+            <span v-if="isCorporateAddresses">
+              {{ address.countryName }}
+            </span>
+            <span v-else>
+              {{ address.email }}
+            </span>
+          </td>
+
           <td v-if="address.id === selectedAddress?.id" class="p-5">
             <div
               class="mx-auto my-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-green-600 text-sm text-white"
@@ -134,32 +188,31 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { computed, watchEffect, PropType, ref } from "vue";
+import { computed, watchEffect, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { AnyAddressType } from "@/core/types";
 import { isEqualAddresses } from "@/core/utilities";
+import { useUser } from "@/shared/account";
 
-defineEmits(["result", "addNewAddress"]);
+interface IProps {
+  currentAddress?: AnyAddressType;
+  addresses?: AnyAddressType[];
+  isCorporateAddresses: boolean;
+}
 
-const props = defineProps({
-  currentAddress: {
-    type: Object as PropType<AnyAddressType>,
-    default: undefined,
-  },
+interface IEmits {
+  (event: "result"): void;
+  (event: "addNewAddress"): void;
+}
 
-  addresses: {
-    type: Array as PropType<AnyAddressType[]>,
-    default: () => [],
-  },
+defineEmits<IEmits>();
 
-  onResult: {
-    type: Function,
-    default: undefined,
-  },
+const props = withDefaults(defineProps<IProps>(), {
+  addresses: () => [],
 });
 
 const { t } = useI18n();
-
+const { user } = useUser();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
@@ -172,26 +225,26 @@ const paginatedAddresses = computed(() =>
   props.addresses.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
 );
 
-const columns = ref<ITableColumn[]>([
+const columns = computed<ITableColumn[]>(() => [
   {
-    id: "firstName",
-    title: t("shared.checkout.select_address_dialog.table_columns.recipient"),
+    id: props.isCorporateAddresses ? "address" : "firstName",
+    title: props.isCorporateAddresses ? t("common.labels.address") : t("common.labels.recipient_name"),
   },
   {
-    id: "countryCode",
-    title: t("shared.checkout.select_address_dialog.table_columns.address"),
+    id: props.isCorporateAddresses ? "description" : "countryCode",
+    title: props.isCorporateAddresses ? t("common.labels.description") : t("common.labels.address"),
   },
   {
-    id: "phone",
-    title: t("shared.checkout.select_address_dialog.table_columns.phone"),
+    id: props.isCorporateAddresses ? "postalCode" : "phone",
+    title: props.isCorporateAddresses ? t("common.labels.zip_code") : t("common.labels.phone"),
   },
   {
-    id: "email",
-    title: t("shared.checkout.select_address_dialog.table_columns.email"),
+    id: props.isCorporateAddresses ? "countryName" : "email",
+    title: props.isCorporateAddresses ? t("common.labels.country") : t("common.labels.email"),
   },
   {
     id: "activeAddress",
-    title: t("shared.checkout.select_address_dialog.table_columns.active_address"),
+    title: t("common.labels.active_address"),
     align: "center",
   },
 ]);
@@ -202,6 +255,11 @@ const onPageChange = async (newPage: number) => {
 
 function setAddress(address: AnyAddressType): void {
   selectedAddress.value = address;
+
+  if (props.isCorporateAddresses) {
+    selectedAddress.value.firstName = user.value.contact!.firstName;
+    selectedAddress.value.lastName = user.value.contact!.lastName;
+  }
 }
 
 watchEffect(() => {

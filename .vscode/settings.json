@@ -3,5 +3,6 @@
   "eslint.useESLintClass": true,
   "i18n-ally.localesPaths": ["locales"],
   "i18n-ally.keystyle": "nested",
-  "typescript.tsdk": "./node_modules/typescript/lib"
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "editor.formatOnSave": true,
 }
