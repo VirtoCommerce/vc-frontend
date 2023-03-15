@@ -1,7 +1,7 @@
 import { omit } from "lodash";
 import { computed, readonly, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { AddressType, AnyAddressType, Logger, useGoogleAnalytics } from "@/core";
+import { AddressType, AnyAddressType, isEqualAddresses, Logger, useGoogleAnalytics } from "@/core";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { AddOrUpdateAddressModal, SelectAddressModal } from "@/shared/checkout";
@@ -37,13 +37,11 @@ export default function useCheckout() {
   const {
     addresses: personalAddresses,
     fetchAddresses: fetchPersonalAddresses,
-    isExistAddress: isExistPersonalAddress,
     addOrUpdateAddresses: addOrUpdatePersonalAddresses,
   } = useUserAddresses();
   const {
     addresses: organizationsAddresses,
     fetchAddresses: fetchOrganizationAddresses,
-    isExistAddress: isExistOrganizationAddress,
     addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
   } = useOrganizationAddresses(user.value.contact?.organizationId || "");
   const {
@@ -86,7 +84,7 @@ export default function useCheckout() {
   );
 
   const addresses = computed<AnyAddressType[]>(() =>
-    user.value.contact?.organizationId ? organizationsAddresses.value : personalAddresses.value
+    isCorporateMember.value ? organizationsAddresses.value : personalAddresses.value
   );
 
   const isPurchaseOrderNumberEnabled = computed<boolean>(
@@ -94,6 +92,10 @@ export default function useCheckout() {
       !!selectedPaymentMethodGroupType.value &&
       selectedPaymentMethodGroupType.value === PaymentMethodGroupType[PaymentMethodGroupType.Manual]
   );
+
+  function isExistAddress(address: AnyAddressType): boolean {
+    return addresses.value.some((item) => isEqualAddresses(item, address));
+  }
 
   async function setShippingMethod(method: ShippingMethodType, options: { reloadCart?: boolean } = {}) {
     await updateShipment(
@@ -204,7 +206,7 @@ export default function useCheckout() {
         addresses: addresses.value,
         currentAddress:
           addressType === AddressType.Billing ? payment.value?.billingAddress : shipment.value?.deliveryAddress,
-        isCorporateMember: isCorporateMember.value,
+        isCorporateAddresses: isCorporateMember.value,
 
         async onResult(address?: MemberAddressType) {
           if (!address) {
@@ -233,7 +235,7 @@ export default function useCheckout() {
       return;
     }
 
-    if (user.value.contact!.organizationId) {
+    if (isCorporateMember.value) {
       await fetchOrganizationAddresses();
     } else {
       await fetchPersonalAddresses();
@@ -257,35 +259,25 @@ export default function useCheckout() {
   }
 
   function getNewAddresses(payload: {
-    isCorporateCustomer: boolean;
     shipmentAddress?: CartAddressType;
     billingAddress?: CartAddressType;
   }): MemberAddressType[] {
-    const { isCorporateCustomer, shipmentAddress, billingAddress } = payload;
+    const { shipmentAddress, billingAddress } = payload;
     const newAddresses: MemberAddressType[] = [];
 
-    if (
-      shipmentAddress &&
-      ((isCorporateCustomer && !isExistOrganizationAddress(shipmentAddress)) ||
-        (!isCorporateCustomer && !isExistPersonalAddress(shipmentAddress)))
-    ) {
+    if (shipmentAddress && !isExistAddress(shipmentAddress)) {
       newAddresses.push({
         ...shipmentAddress,
         isDefault: false,
-        addressType: AddressType.Shipping,
+        addressType: AddressType.BillingAndShipping,
       });
     }
 
-    if (
-      billingAddress &&
-      !billingAddressEqualsShipping.value &&
-      ((isCorporateCustomer && !isExistOrganizationAddress(billingAddress)) ||
-        (!isCorporateCustomer && !isExistPersonalAddress(billingAddress)))
-    ) {
+    if (billingAddress && !billingAddressEqualsShipping.value && !isExistAddress(billingAddress)) {
       newAddresses.push({
         ...billingAddress,
         isDefault: false,
-        addressType: AddressType.Billing,
+        addressType: AddressType.BillingAndShipping,
       });
     }
 
@@ -296,14 +288,7 @@ export default function useCheckout() {
     shipmentAddress?: CartAddressType;
     billingAddress?: CartAddressType;
   }): Promise<void> {
-    const newAddresses: MemberAddressType[] = getNewAddresses({
-      ...payload,
-      isCorporateCustomer: isCorporateMember.value,
-    });
-
-    if (!newAddresses.length) {
-      return;
-    }
+    const newAddresses: MemberAddressType[] = getNewAddresses(payload);
 
     if (isCorporateMember.value) {
       await addOrUpdateOrganizationAddresses(newAddresses);
