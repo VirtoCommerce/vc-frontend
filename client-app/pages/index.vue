@@ -86,14 +86,15 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { usePageHead } from "@/core/composables";
+import { useFetch, usePageHead } from "@/core/composables";
 import { LoginFormSection } from "@/shared/layout";
-import { useTemplates } from "@/shared/static-content";
+import { useStaticPage } from "@/shared/static-content";
 import StaticPage from "@/pages/static-page.vue";
 
+const { innerFetch } = useFetch();
 const { t } = useI18n();
-const { loading, useTemplate } = useTemplates;
 
 usePageHead({
   title: t("pages.home.meta.title"),
@@ -104,7 +105,22 @@ usePageHead({
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const template = useTemplate("home");
+const template: any = ref(null);
+const loading = ref(true);
+
+onMounted(async () => {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const response = await innerFetch<any>("/storefrontapi/slug/home");
+    if (response.contentItem?.type === "page") {
+      const result = JSON.parse(response.contentItem.content);
+      template.value = result;
+      useStaticPage(result);
+    }
+  } finally {
+    loading.value = false;
+  }
+});
 </script>
 
 <style scoped>

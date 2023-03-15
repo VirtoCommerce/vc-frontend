@@ -11,27 +11,27 @@
             "id": "slider2e19",
             "slides": [
                 {
-                    "image": "/assets/static/images/home/home-banner-1.png",
+                    "image": "/themes/assets/static/images/home/home-banner-1.png",
                     "text": "",
                     "title": ""
                 },
                 {
-                    "image": "/assets/static/images/home/home-banner-2.png",
+                    "image": "/themes/assets/static/images/home/home-banner-2.png",
                     "text": "",
                     "title": ""
                 },
                 {
-                    "image": "/assets/static/images/home/home-banner-3.png",
+                    "image": "/themes/assets/static/images/home/home-banner-3.png",
                     "text": null,
                     "title": null
                 },
                 {
-                    "image": "/assets/static/images/home/home-banner-4.png",
+                    "image": "/themes/assets/static/images/home/home-banner-4.png",
                     "text": null,
                     "title": null
                 },
                 {
-                    "image": "/assets/static/images/home/home-banner-5.png",
+                    "image": "/themes/assets/static/images/home/home-banner-5.png",
                     "text": null,
                     "title": null
                 }
@@ -53,22 +53,22 @@
             "background": "bg-gray-100",
             "columns": [
                 {
-                    "image": "/assets/static/images/home/hexa-1.webp",
+                    "image": "/themes/assets/static/images/home/hexa-1.webp",
                     "text": null,
                     "title": "Corporate account management"
                 },
                 {
-                    "image": "/assets/static/images/home/hexa-2.webp",
+                    "image": "/themes/assets/static/images/home/hexa-2.webp",
                     "text": null,
                     "title": "Quote management and price negotiation"
                 },
                 {
-                    "image": "/assets/static/images/home/hexa-3.webp",
+                    "image": "/themes/assets/static/images/home/hexa-3.webp",
                     "text": null,
                     "title": "Multiple stores, channels, and locations"
                 },
                 {
-                    "image": "/assets/static/images/home/hexa-4.webp",
+                    "image": "/themes/assets/static/images/home/hexa-4.webp",
                     "text": null,
                     "title": "B2B customization and price management"
                 }
