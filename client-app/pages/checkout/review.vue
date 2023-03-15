@@ -62,22 +62,25 @@
             </div>
           </div>
 
-          <VcSelect
-            :model-value="payment?.paymentGatewayCode"
-            :label="$t('shared.checkout.billing_details_section.labels.payment_method')"
-            :items="availablePaymentMethods"
-            value-field="code"
-            size="auto"
-            class="lg:w-2/5"
-            readonly
-          >
-            <template #selected="{ item }">
-              <VcSelectItem>
-                <VcSelectItemImage :src="item.logoUrl" />
-                <VcSelectItemText>{{ item.code }}</VcSelectItemText>
-              </VcSelectItem>
-            </template>
-          </VcSelect>
+          <div class="space-y-3 lg:w-2/5">
+            <VcSelect
+              :model-value="payment?.paymentGatewayCode"
+              :label="$t('shared.checkout.billing_details_section.labels.payment_method')"
+              :items="availablePaymentMethods"
+              value-field="code"
+              size="auto"
+              readonly
+            >
+              <template #selected="{ item }">
+                <VcSelectItem>
+                  <VcSelectItemImage :src="item.logoUrl" />
+                  <VcSelectItemText>{{ item.code }}</VcSelectItemText>
+                </VcSelectItem>
+              </template>
+            </VcSelect>
+
+            <VcInput v-if="purchaseOrderNumber" v-model="purchaseOrderNumber" name="purchaseOrderNumber" readonly />
+          </div>
         </div>
       </div>
     </VcSectionWidget>
@@ -91,8 +94,8 @@
         <template #footer>
           <!-- Purchase order number -->
           <VcActionInput
-            v-if="purchaseOrderNumber"
-            :model-value="purchaseOrderNumber"
+            v-if="purchaseOrderNumberOld"
+            :model-value="purchaseOrderNumberOld"
             :label="$t('common.labels.purchase_order_number')"
             class="mt-4"
             disabled
@@ -150,8 +153,9 @@ const {
   hasValidationErrors,
   fetchCart,
 } = useCart();
-const { billingAddressEqualsShipping, comment, canPayNow, isValidCheckout, createOrderFromCart } = useCheckout();
-const { purchaseOrderNumber } = usePurchaseOrderNumber();
+const { billingAddressEqualsShipping, comment, canPayNow, isValidCheckout, createOrderFromCart, purchaseOrderNumber } =
+  useCheckout();
+const { purchaseOrderNumber: purchaseOrderNumberOld } = usePurchaseOrderNumber();
 const { couponCode } = useCoupon();
 
 const creatingOrder = ref(false);

@@ -2,6 +2,8 @@
   <VcLayoutWithRightSidebar is-sidebar-sticky>
     <BillingDetailsSection
       v-model:address-equals-shipping-address="billingAddressEqualsShipping"
+      v-model:purchase-order-number="purchaseOrderNumber"
+      :purchase-order-number-enabled="isPurchaseOrderNumberEnabled"
       :methods="availablePaymentMethods"
       :payment="payment"
       :shipment="shipment"
@@ -17,7 +19,7 @@
           <transition name="slide-fade-top" mode="in-out" appear>
             <VcActionInput
               v-if="$cfg.checkout_purchase_order_enabled"
-              v-model="purchaseOrderNumber"
+              v-model="purchaseOrderNumberOld"
               :label="$t('common.labels.purchase_order_number')"
               :placeholder="$t('common.placeholders.purchase_order_number')"
               :applied="purchaseOrderNumberIsApplied"
@@ -60,10 +62,21 @@ import { useCart, usePurchaseOrderNumber } from "@/shared/cart";
 import { BillingDetailsSection, OrderSummary, useCheckout } from "@/shared/checkout";
 
 const { loading, cart, shipment, payment, hasValidationErrors, availablePaymentMethods } = useCart();
-const { billingAddressEqualsShipping, isValidPayment, isValidCheckout, onBillingAddressChange, setPaymentMethod } =
-  useCheckout();
-const { purchaseOrderNumber, purchaseOrderNumberIsApplied, setPurchaseOrderNumber, removePurchaseOrderNumber } =
-  usePurchaseOrderNumber();
+const {
+  purchaseOrderNumber,
+  billingAddressEqualsShipping,
+  isValidPayment,
+  isValidCheckout,
+  isPurchaseOrderNumberEnabled,
+  onBillingAddressChange,
+  setPaymentMethod,
+} = useCheckout();
+const {
+  purchaseOrderNumber: purchaseOrderNumberOld,
+  purchaseOrderNumberIsApplied,
+  setPurchaseOrderNumber,
+  removePurchaseOrderNumber,
+} = usePurchaseOrderNumber();
 
 const isDisabledNextStep = computed<boolean>(() => loading.value || !isValidCheckout.value);
 </script>

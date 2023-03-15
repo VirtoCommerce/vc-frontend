@@ -103,6 +103,7 @@
           pattern="\d*"
           @keyup.enter="changeQuantity"
           @input="onQuantityChanged"
+          @blur="onFocusOut"
         />
 
         <div class="mt-1.5 flex flex-wrap justify-center gap-1">
@@ -172,14 +173,9 @@ const extendedItem = computed<ExtendedLineItemType<LineItemType>>(() => extendLi
 function changeQuantity() {
   clearTimeout(timeoutIdOfQuantityChange);
 
-  let newQuantity = Number(quantity.value);
+  const newQuantity = Number(quantity.value);
 
-  if (isNaN(newQuantity) || newQuantity < 1) {
-    newQuantity = 1;
-    quantity.value = 1;
-  }
-
-  if (newQuantity === props.item.quantity) {
+  if (isNaN(newQuantity) || newQuantity < 1 || newQuantity === props.item.quantity) {
     return;
   }
 
@@ -188,7 +184,15 @@ function changeQuantity() {
 
 function onQuantityChanged(): void {
   clearTimeout(timeoutIdOfQuantityChange);
-  timeoutIdOfQuantityChange = +setTimeout(changeQuantity, 800);
+  timeoutIdOfQuantityChange = +setTimeout(changeQuantity, 2000);
+}
+
+function onFocusOut() {
+  const newQuantity = Number(quantity.value);
+
+  if (isNaN(newQuantity) || newQuantity < 1) {
+    quantity.value = props.item.quantity;
+  }
 }
 
 watchEffect(() => {
