@@ -1,6 +1,6 @@
 <template>
-  <div v-if="!page && !loading">
-    <LoginForm />
+  <StaticPage :loading="loading" :static-template="page">
+    <LoginFormSection />
 
     <!-- Main content -->
     <div class="main">
@@ -81,8 +81,7 @@
         </div>
       </div>
     </div>
-  </div>
-  <StaticPage v-if="page && !loading" />
+  </StaticPage>
 </template>
 
 <script setup lang="ts">
@@ -90,7 +89,7 @@ import { onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useFetch } from "@/core";
 import { usePageHead } from "@/core/composables";
-import { LoginForm } from "@/shared/login";
+import { LoginFormSection } from "@/shared/layout";
 import { useStaticPage } from "@/shared/static-content";
 import StaticPage from "@/pages/static-page.vue";
 

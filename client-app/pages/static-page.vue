@@ -1,23 +1,26 @@
 <template>
-  <div v-if="template">
-    <div
-      v-if="!template.settings?.hideBreadcrumbs || template.settings?.header"
-      class="mx-auto w-full max-w-screen-2xl px-5 pb-5 md:px-12 lg:pb-10"
-    >
-      <VcBreadcrumbs class="mb-3" :items="breadcrumbs"></VcBreadcrumbs>
-      <h1 v-if="template.settings?.header" class="text-3xl font-bold uppercase text-gray-900 lg:text-4xl">
-        {{ template.settings.header }}
-      </h1>
+  <div v-if="!loading">
+    <div v-if="currentPage">
+      <div
+        v-if="!currentPage.settings?.hideBreadcrumbs || currentPage.settings?.header"
+        class="mx-auto w-full max-w-screen-2xl px-5 pb-5 md:px-12 lg:pb-10"
+      >
+        <VcBreadcrumbs class="mb-3" :items="breadcrumbs"></VcBreadcrumbs>
+        <h1 v-if="currentPage.settings?.header" class="text-3xl font-bold uppercase text-gray-900 lg:text-4xl">
+          {{ currentPage.settings.header }}
+        </h1>
+      </div>
+      <template v-for="item in currentPage.content">
+        <component
+          :is="getBlockType(item.type)"
+          v-if="!item.hidden"
+          :key="item.id"
+          :model="item"
+          :settings="currentPage.settings"
+        />
+      </template>
     </div>
-    <template v-for="item in template.content">
-      <component
-        :is="getBlockType(item.type)"
-        v-if="!item.hidden"
-        :key="item.id"
-        :model="item"
-        :settings="template.settings"
-      />
-    </template>
+    <slot v-if="!currentPage" />
   </div>
 </template>
 
@@ -25,6 +28,12 @@
 import { computed, unref } from "vue";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useStaticPage } from "@/shared/static-content";
+
+const props = defineProps<{
+  loading: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  staticTemplate: any;
+}>();
 
 const template = useStaticPage();
 const templateName = computed(() => unref(template)?.settings?.name || unref(template)?.settings?.header || "");
@@ -37,6 +46,10 @@ usePageHead({
     keywords: computed(() => unref(template)?.settings?.seoInfo?.metaKeywords),
     description: computed(() => unref(template)?.settings?.seoInfo?.metaDescription),
   },
+});
+
+const currentPage = computed(() => {
+  return props.staticTemplate || template;
 });
 
 function getBlockType(type: string): string {

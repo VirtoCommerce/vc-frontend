@@ -1,9 +1,9 @@
 <template>
-  <LoginForm />
+  <LoginFormSection />
 </template>
 
 <script setup lang="ts">
-import { LoginForm } from "@/shared/login";
+import { LoginFormSection } from "@/shared/layout";
 
 defineProps<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
