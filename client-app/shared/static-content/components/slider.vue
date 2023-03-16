@@ -65,21 +65,6 @@ const wrapperClasses = computed(() => {
 
   --navigation-size: 36px;
   --navigation-offset: 0px;
-  --pagination-offset: -5px;
-
-  --swiper-pagination-bullet-size: 13px;
-  --swiper-pagination-bullet-inactive-color: transparent;
-  --swiper-pagination-bullet-inactive-opacity: 1;
-
-  &__wrapper {
-    @apply relative w-full;
-  }
-
-  &--navigation {
-    #{$self}__wrapper {
-      @apply px-12;
-    }
-  }
 
   &__navigation {
     @apply absolute w-full h-full top-0 -mx-12;
@@ -106,17 +91,6 @@ const wrapperClasses = computed(() => {
     &--lock {
       @apply hidden;
     }
-  }
-
-  .swiper-pagination-fraction,
-  .swiper-pagination-custom,
-  .swiper-horizontal > .swiper-pagination-bullets,
-  .swiper-pagination-bullets.swiper-pagination-horizontal {
-    bottom: var(--pagination-offset, 0);
-  }
-
-  .swiper-pagination-bullet {
-    @apply border-2 border-[color:var(--color-primary)];
   }
 }
 </style>
