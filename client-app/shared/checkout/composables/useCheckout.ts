@@ -168,11 +168,6 @@ export default function useCheckout() {
   }
 
   async function updateBillingOrDeliveryAddress(addressType: AddressType, inputAddress: InputAddressType) {
-    if (isCorporateMember.value) {
-      inputAddress.firstName = user.value.contact!.firstName;
-      inputAddress.lastName = user.value.contact!.lastName;
-    }
-
     if (addressType === AddressType.Billing) {
       await updatePayment({
         id: payment.value?.id,
