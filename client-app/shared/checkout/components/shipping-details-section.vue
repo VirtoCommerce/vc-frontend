@@ -38,14 +38,18 @@
         <template #selected="{ item }">
           <VcSelectItem>
             <VcSelectItemImage :src="item.logoUrl" />
-            <VcSelectItemText>{{ item.code }} {{ item.optionName }}</VcSelectItemText>
+            <VcSelectItemText>
+              {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
+            </VcSelectItemText>
           </VcSelectItem>
         </template>
 
         <template #item="{ item }">
           <VcSelectItem bordered>
             <VcSelectItemImage :src="item.logoUrl" />
-            <VcSelectItemText>{{ item.code }} {{ item.optionName }}</VcSelectItemText>
+            <VcSelectItemText>
+              {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
+            </VcSelectItemText>
           </VcSelectItem>
         </template>
       </VcSelect>

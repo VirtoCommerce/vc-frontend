@@ -92,9 +92,8 @@
             <VcImage :src="shipment.shippingMethod?.logoUrl" class="h-12 w-12" lazy />
 
             <span class="min-w-0 break-words">
-              {{ shipment.shipmentMethodCode }} {{ shipment.shipmentMethodOption }} ({{
-                shipment.price?.formattedAmount
-              }})
+              {{ $t(`common.methods.delivery_by_id.${shipment.shipmentMethodCode}_${shipment.shipmentMethodOption}`) }}
+              ({{ shipment.price?.formattedAmount }})
             </span>
           </div>
         </VcCardWidget>
@@ -108,7 +107,9 @@
         <VcCardWidget v-if="payment?.paymentMethod" :title="$t('common.titles.payment_method')" icon="document-text">
           <div class="flex items-center gap-4 text-15">
             <VcImage :src="payment.paymentMethod.logoUrl" class="h-12 w-12" lazy />
-            <span class="min-w-0 break-words">{{ payment.paymentMethod.typeName }}</span>
+            <span class="min-w-0 break-words">
+              {{ $t(`common.methods.payment_by_code.${payment.paymentMethod.code}`) }}
+            </span>
           </div>
         </VcCardWidget>
       </template>

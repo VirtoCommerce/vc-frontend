@@ -173,6 +173,16 @@
       "purchasing-agent": "Purchasing agent",
       "store-admin": "Store administrator",
       "store-manager": "Store manager"
+    },
+    "methods": {
+      "payment_by_code": {
+        "AuthorizeNetPaymentMethod": "Bank card (Authorize.Net)",
+        "DefaultManualPaymentMethod": "Manual"
+      },
+      "delivery_by_id": {
+        "FixedRate_Ground": "Fixed Rate (Ground)",
+        "FixedRate_Air": "Fixed Rate (Air)"
+      }
     }
   },
   "shared": {
