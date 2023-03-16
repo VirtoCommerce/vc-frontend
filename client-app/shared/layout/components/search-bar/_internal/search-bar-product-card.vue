@@ -38,19 +38,21 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from "vue";
-import { RouteLocationRaw } from "vue-router";
-import { getProductRoute } from "@/core";
-import { Product as ProductType } from "@/xapi/types";
+import { computed } from "vue";
+import { getProductRoute } from "@/core/utilities";
+import type { Product } from "@/xapi/types";
+import type { RouteLocationRaw } from "vue-router";
 
-defineEmits<{ (eventName: "link-click", globalEvent: PointerEvent): void }>();
+interface IEmits {
+  (eventName: "link-click", globalEvent: PointerEvent): void;
+}
 
-const props = defineProps({
-  product: {
-    type: Object as PropType<ProductType>,
-    required: true,
-  },
-});
+interface IProps {
+  product: Product;
+}
+
+defineEmits<IEmits>();
+const props = defineProps<IProps>();
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
 </script>

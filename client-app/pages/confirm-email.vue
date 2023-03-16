@@ -56,9 +56,9 @@
 import { invoke } from "@vueuse/core";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { usePageHead, useRouteQueryParam } from "@/core";
+import { usePageHead, useRouteQueryParam } from "@/core/composables";
 import { useUser } from "@/shared/account";
-import { IdentityResultType } from "@/xapi";
+import type { IdentityResultType } from "@/xapi/types";
 
 const { t } = useI18n();
 

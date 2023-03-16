@@ -17,11 +17,11 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
 import { DiscountBadge } from "@/shared/catalog";
 import { AddToCompare } from "@/shared/compare";
-import { PageContent } from "@/shared/static-content";
-import { Product } from "@/xapi/types";
+import type { PageContent } from "@/shared/static-content";
+import type { Product } from "@/xapi/types";
+import type { PropType } from "vue";
 
 defineProps({
   product: {

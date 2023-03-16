@@ -1,13 +1,13 @@
-export type FacetValueItem = {
+export type FacetValueItemType = {
   value: string;
   label: string;
   count?: number;
   selected: boolean;
 };
 
-export type FacetItem = {
+export type FacetItemType = {
   label: string;
   paramName: string;
   type: "terms" | "range";
-  values: FacetValueItem[];
+  values: FacetValueItemType[];
 };

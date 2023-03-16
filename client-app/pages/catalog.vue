@@ -311,48 +311,35 @@ import {
   whenever,
 } from "@vueuse/core";
 import _ from "lodash";
-import {
-  computed,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  shallowReactive,
-  shallowRef,
-  triggerRef,
-  WatchStopHandle,
-} from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, shallowReactive, shallowRef, triggerRef } from "vue";
 import { useRoute } from "vue-router";
 import {
-  buildBreadcrumbs,
-  DEFAULT_PAGE_SIZE,
-  FacetItem,
-  FacetValueItem,
-  getFilterExpressionFromFacets,
-  PRODUCT_SORTING_LIST,
-  QueryParamName,
-  searchCategoryTreeItemByKey,
   useBreadcrumbs,
   useCategories,
   useElementVisibility,
   useGoogleAnalytics,
   usePageHead,
   useRouteQueryParam,
-} from "@/core";
+} from "@/core/composables";
+import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
+import { QueryParamName } from "@/core/enums";
+import { buildBreadcrumbs, getFilterExpressionFromFacets, searchCategoryTreeItemByKey } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
 import {
   CategorySelector,
   DisplayProducts,
   getFilterExpressionForAvailableIn,
   getFilterExpressionForInStock,
-  ProductsFilters,
   ProductsFiltersSidebar,
-  ProductsSearchParams,
   useProducts,
   ViewMode,
 } from "@/shared/catalog";
 import { BranchesDialog, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { usePopup } from "@/shared/popup";
-import { Product } from "@/xapi";
+import type { FacetItemType, FacetValueItemType } from "@/core/types";
+import type { ProductsFilters, ProductsSearchParams } from "@/shared/catalog";
+import type { Product } from "@/xapi/types";
+import type { WatchStopHandle } from "vue";
 
 const props = defineProps<IProps>();
 const FILTERS_RESET_TIMEOUT_IN_MS = 500;
@@ -529,7 +516,7 @@ async function updateMobileFilters(newFilters: ProductsFilters) {
   mobileFilters.facets = await getFacets(searchParamsForFacets);
 }
 
-function removeFacetFilterItem(payload: Pick<FacetItem, "paramName"> & Pick<FacetValueItem, "value">) {
+function removeFacetFilterItem(payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">) {
   const facet = facets.value.find((item) => item.paramName === payload.paramName);
   const facetValue = facet?.values.find((item) => item.value === payload.value);
 

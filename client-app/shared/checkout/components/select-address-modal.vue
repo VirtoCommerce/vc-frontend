@@ -191,8 +191,8 @@
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed, watchEffect, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { AnyAddressType } from "@/core/types";
 import { isEqualAddresses } from "@/core/utilities";
+import type { AnyAddressType } from "@/core/types";
 
 interface IProps {
   currentAddress?: AnyAddressType;

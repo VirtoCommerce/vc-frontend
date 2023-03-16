@@ -18,8 +18,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType, ref } from "vue";
+import { computed, ref } from "vue";
 import ActionsBox from "./_internal/actions-box.vue";
+import type { PropType } from "vue";
 
 const props = defineProps({
   inputObject: Object,

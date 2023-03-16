@@ -1,7 +1,7 @@
-import { DEVELOPMENT } from "@/core";
+import { IS_DEVELOPMENT } from "../../constants";
 import loggerDev from "./logger.dev";
 import loggerProd from "./logger.prod";
 
-const Logger = DEVELOPMENT ? loggerDev : loggerProd;
+const Logger = IS_DEVELOPMENT ? loggerDev : loggerProd;
 
 export { Logger };

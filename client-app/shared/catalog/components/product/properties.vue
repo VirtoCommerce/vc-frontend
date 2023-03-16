@@ -34,19 +34,21 @@
 import _ from "lodash";
 import { computed, ref } from "vue";
 import { prepareProperties, ProductProperty, ProductTitledBlock, Vendor } from "@/shared/catalog";
-import { Product } from "@/xapi";
+import type { Product } from "@/xapi/types";
 
-const props = defineProps<Props>();
-const MAX_DISPLAY_ITEMS = 8;
-const showAll = ref(false);
-
-interface Props {
+interface IProps {
   product: Product;
   model: {
     hidden: boolean;
     title: string;
   };
 }
+
+const props = defineProps<IProps>();
+
+const MAX_DISPLAY_ITEMS = 8;
+
+const showAll = ref(false);
 
 // TODO: move this logic to the separated helper. For variations properties also
 const groupedProperties = computed(() => {

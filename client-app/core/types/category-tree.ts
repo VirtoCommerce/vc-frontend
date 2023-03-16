@@ -1,11 +1,11 @@
-import { Modify } from "@/core";
-import { Category } from "@/xapi";
+import type { ModifyType } from "./modify";
+import type { Category } from "@/xapi/types";
 
-export type CategoryTreeItem = Modify<
+export type CategoryTreeItemType = ModifyType<
   Category,
   {
-    children: CategoryTreeItem[];
-    parent?: CategoryTreeItem;
+    children: CategoryTreeItemType[];
+    parent?: CategoryTreeItemType;
     isRoot?: boolean;
     code?: string;
   }

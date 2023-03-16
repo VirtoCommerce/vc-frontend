@@ -76,7 +76,7 @@ import { useForm, useField } from "vee-validate";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
-import { BankCardErrorsType, BankCardType } from "@/shared/payment";
+import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
 
 interface IEmits {
   (event: "update:modelValue", bankCardData: Partial<BankCardType>): void;

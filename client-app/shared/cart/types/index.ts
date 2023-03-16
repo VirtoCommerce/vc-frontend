@@ -1,4 +1,4 @@
-import { GiftItemType, ValidationErrorType } from "@/xapi";
+import type { GiftItemType, ValidationErrorType } from "@/xapi/types";
 
 export type ExtendedGiftItemType = GiftItemType & { isAddedInCart?: boolean };
 
@@ -8,7 +8,8 @@ export type OutputBulkItemType = {
   errors?: ValidationErrorType[];
 };
 
-export type ItemForAddBulkItemsToCartResultsPopup = {
+/** @todo Rename */
+export type ItemForAddBulkItemsToCartResultsPopupType = {
   productId: string;
   name: string;
   quantity: number;

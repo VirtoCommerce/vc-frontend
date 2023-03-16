@@ -209,12 +209,13 @@
 <script setup lang="ts">
 import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { MenuLink, useCurrency, useLanguages, useNavigations } from "@/core";
+import { useCurrency, useLanguages, useNavigations } from "@/core/composables";
 import { useUser } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
 import { LanguageSelector } from "@/shared/layout";
 import MobileMenuLink from "./mobile-menu-link.vue";
+import type { MenuLinkType } from "@/core/types";
 
 defineEmits(["close"]);
 
@@ -235,18 +236,18 @@ const {
   goMainMenu,
 } = useNavigations();
 
-const unauthorizedMenuLinks: MenuLink[] = [
+const unauthorizedMenuLinks: MenuLinkType[] = [
   { route: { name: "SignIn" }, title: t("shared.layout.header.link_sign_in") },
   { route: { name: "SignUp" }, title: t("shared.layout.header.link_register_now") },
 ];
 
-const settingsMenuLink: MenuLink = {
+const settingsMenuLink: MenuLinkType = {
   id: "settings",
   icon: "/static/images/common/settings.svg#main",
   children: [{ id: "currency-setting" }], // see implementation in template
 };
 
-const homeLink = computed<MenuLink>(() =>
+const homeLink = computed<MenuLinkType>(() =>
   isAuthenticated.value
     ? {
         route: { name: "Dashboard" },

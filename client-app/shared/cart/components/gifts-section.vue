@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { ExtendedGiftItemType } from "@/shared/cart";
+import type { ExtendedGiftItemType } from "@/shared/cart";
 
 interface Props {
   disabled?: boolean;

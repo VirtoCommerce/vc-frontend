@@ -1,13 +1,18 @@
 import { resolve } from "path";
 import graphql from "@rollup/plugin-graphql";
+import { loadConfigFromFile, mergeConfig, splitVendorChunkPlugin } from "vite";
 import type { StorybookViteConfig } from "@storybook/builder-vite";
 import type { PropItem } from "react-docgen-typescript";
-import { loadConfigFromFile, mergeConfig, splitVendorChunkPlugin } from "vite";
 
 const storybookConfig: StorybookViteConfig = {
   stories: ["../client-app/**/*.stories.@(ts|tsx|mdx)"],
   staticDirs: ["../client-app/public"],
-  addons: ["@storybook/addon-essentials", "@storybook/addon-interactions", "@storybook/addon-links"],
+  addons: [
+    "@storybook/addon-essentials",
+    "@storybook/addon-links",
+    "@storybook/addon-a11y",
+    "@storybook/addon-interactions",
+  ],
   typescript: {
     check: false,
     checkOptions: {},

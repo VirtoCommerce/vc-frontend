@@ -41,9 +41,10 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, PropType } from "vue";
+import { onMounted } from "vue";
 import { useCountries } from "@/core/composables";
-import { MemberAddressType } from "@/xapi/types";
+import type { MemberAddressType } from "@/xapi/types";
+import type { PropType } from "vue";
 
 const emit = defineEmits(["result"]);
 

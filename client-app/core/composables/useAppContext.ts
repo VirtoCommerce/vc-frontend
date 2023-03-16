@@ -1,5 +1,5 @@
 import { readonly } from "vue";
-import { IAppContext } from "@/core";
+import type { IAppContext } from "../types";
 
 /** @see ~/snippets/head-content.liquid */
 const appContextString = document.getElementById("vcAppContext")?.textContent ?? "";
@@ -10,4 +10,6 @@ if (!appContextString) {
 
 const appContext: IAppContext = readonly(JSON.parse(appContextString));
 
-export default (): IAppContext => appContext;
+export function useAppContext(): IAppContext {
+  return appContext;
+}

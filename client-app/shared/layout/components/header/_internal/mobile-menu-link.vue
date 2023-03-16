@@ -47,21 +47,25 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { NavigationFailure } from "vue-router";
-import { MenuLink, numberToShortString } from "@/core";
+import { numberToShortString } from "@/core/utilities";
+import type { MenuLinkType } from "@/core/types";
+import type { NavigationFailure } from "vue-router";
 
-interface Props {
-  link: MenuLink;
-  count?: number;
-}
-
-interface Emits {
+interface IEmits {
   (event: "select"): void;
   (event: "close"): void;
 }
 
-const emit = defineEmits<Emits>();
-const props = withDefaults(defineProps<Props>(), { count: 0 });
+interface IProps {
+  link: MenuLinkType;
+  count?: number;
+}
+
+const emit = defineEmits<IEmits>();
+const props = withDefaults(defineProps<IProps>(), {
+  count: 0,
+});
+
 const isParent = computed<boolean>(() => !!props.link.children?.length);
 const isLink = computed<boolean>(() => !!props.link.route && !isParent.value);
 const preparedCount = computed<string>(() => numberToShortString(props.count));

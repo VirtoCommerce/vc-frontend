@@ -1,7 +1,7 @@
 import { noop } from "@vueuse/core";
-import { TLogger } from "./logger.type";
+import type { LoggerType } from "./logger.type";
 
-const logger: TLogger = {
+const logger: LoggerType = {
   debug: noop,
   info: noop,
   warn: noop,

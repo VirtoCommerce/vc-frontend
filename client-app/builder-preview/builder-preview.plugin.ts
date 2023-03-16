@@ -1,9 +1,9 @@
-import { App } from "vue";
-import { Router } from "vue-router";
 import { useFetch } from "@/core/composables";
 import { useStaticPage, useTemplate } from "@/shared/static-content";
 import templateBlocks from "@/shared/static-content/components";
 import ScrollToElement from "./scroll-to-element.vue";
+import type { App } from "vue";
+import type { Router } from "vue-router";
 
 const { enrichRequest } = useFetch();
 

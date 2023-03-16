@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { GiftItemType, OrderLineItemType } from "@/xapi/types";
+import type { GiftItemType, OrderLineItemType } from "@/xapi/types";
 
 interface IProps {
   items: (GiftItemType | OrderLineItemType)[];

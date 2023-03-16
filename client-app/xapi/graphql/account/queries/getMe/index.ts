@@ -1,5 +1,5 @@
-import { ContactTypeOrganizationsArgs, Query, UserType } from "@/xapi/types";
 import getMeQueryDocument from "./getMeQuery.graphql";
+import type { ContactTypeOrganizationsArgs, Query, UserType } from "@/xapi/types";
 
 export default async function getMe(): Promise<UserType> {
   const { $graphqlClient } = useNuxtApp();

@@ -158,10 +158,12 @@ import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import { computed, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { getSortingExpression, ISortInfo, QueryParamName, getSortInfoFromStringExpression } from "@/core";
 import { useElementVisibility, useRouteQueryParam, usePageHead } from "@/core/composables";
+import { QueryParamName } from "@/core/enums";
+import { getSortingExpression, getSortInfoFromStringExpression } from "@/core/utilities";
 import { PageToolbarBlock, useUserQuotes } from "@/shared/account";
-import { QuoteType } from "@/xapi/types";
+import type { ISortInfo } from "@/core/types";
+import type { QuoteType } from "@/xapi/types";
 
 const { t } = useI18n();
 const router = useRouter();

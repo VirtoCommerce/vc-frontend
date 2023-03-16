@@ -1,5 +1,5 @@
-import { Mutations, MutationsChangeQuoteCommentArgs, QuoteType } from "@/xapi/types";
 import mutationDocument from "./changeQuoteCommentMutation.graphql";
+import type { Mutations, MutationsChangeQuoteCommentArgs, QuoteType } from "@/xapi/types";
 
 export default async function changeQuoteComment(payload: MutationsChangeQuoteCommentArgs): Promise<QuoteType> {
   const { $graphqlClient } = useNuxtApp();

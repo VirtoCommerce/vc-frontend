@@ -1,5 +1,5 @@
-import { ContactType, Mutations, MutationsLockOrganizationContactArgs } from "@/xapi/types";
 import mutationDocument from "./lockOrganizationContact.graphql";
+import type { ContactType, Mutations, MutationsLockOrganizationContactArgs } from "@/xapi/types";
 
 export default async function lockOrganizationContact(userId: string): Promise<ContactType> {
   const { $graphqlClient } = useNuxtApp();

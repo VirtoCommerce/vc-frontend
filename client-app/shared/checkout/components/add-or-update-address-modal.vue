@@ -41,9 +41,10 @@
 
 <script setup lang="ts">
 import { clone } from "lodash";
-import { onMounted, PropType, ref, Ref, watchEffect } from "vue";
+import { onMounted, ref, watchEffect } from "vue";
 import { useCountries } from "@/core/composables";
-import { MemberAddressType } from "@/xapi/types";
+import type { MemberAddressType } from "@/xapi/types";
+import type { PropType, Ref } from "vue";
 
 const emit = defineEmits(["result"]);
 

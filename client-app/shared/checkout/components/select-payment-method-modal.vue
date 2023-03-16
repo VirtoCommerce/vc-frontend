@@ -24,7 +24,7 @@
       <div class="flex items-center justify-between space-x-4 border-b border-gray-300 px-5 py-6 lg:py-4">
         <VcImage :src="method.logoUrl" class="h-10 w-10 object-center" lazy />
         <div class="grow overflow-hidden text-ellipsis">
-          {{ method.code }}
+          {{ $t(`common.methods.payment_by_code.${method.code}`) }}
         </div>
         <div class="flex w-20 items-center justify-end lg:justify-center">
           <div
@@ -44,8 +44,9 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, ref } from "vue";
-import { PaymentMethodType } from "@/xapi/types";
+import { ref } from "vue";
+import type { PaymentMethodType } from "@/xapi/types";
+import type { PropType } from "vue";
 
 defineEmits(["result"]);
 

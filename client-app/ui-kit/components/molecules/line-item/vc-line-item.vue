@@ -65,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import { Property, MoneyType } from "@/xapi";
+import type { Property, MoneyType } from "@/xapi/types";
 
 interface IProps {
   imageUrl?: string;

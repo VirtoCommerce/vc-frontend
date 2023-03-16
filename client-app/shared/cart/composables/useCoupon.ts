@@ -1,7 +1,7 @@
 import { computed, readonly, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCart } from "@/shared/cart";
-import { CouponType } from "@/xapi";
+import type { CouponType } from "@/xapi/types";
 
 const couponCode = ref("");
 const validationError = ref("");

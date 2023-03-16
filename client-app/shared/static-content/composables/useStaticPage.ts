@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { PageTemplate } from "../types";
+import type { PageTemplate } from "../types";
 
 const pageTemplate = ref<PageTemplate | null>(null);
 

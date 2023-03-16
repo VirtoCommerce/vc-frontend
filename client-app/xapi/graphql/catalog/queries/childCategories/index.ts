@@ -1,7 +1,7 @@
-import { DocumentNode } from "graphql";
 import { gql } from "graphql-tag";
 import globals from "@/core/globals";
-import { Category, Query, QueryChildCategoriesArgs } from "@/xapi/types";
+import type { Category, Query, QueryChildCategoriesArgs } from "@/xapi/types";
+import type { DocumentNode } from "graphql";
 
 function getQueryResponseTree(level: number): string {
   const newLevel = level - 1;

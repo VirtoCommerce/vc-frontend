@@ -33,8 +33,8 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
 import { TwoColumn } from "@/shared/layout";
+import type { PropType } from "vue";
 
 defineProps({
   title: {

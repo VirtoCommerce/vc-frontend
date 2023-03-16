@@ -1,10 +1,10 @@
-import {
+import mutationDocument from "./requestRegistration.graphql";
+import type {
   InputRequestRegistrationType,
   RequestRegistrationType,
   Mutations,
   MutationsRequestRegistrationArgs,
 } from "@/xapi/types";
-import mutationDocument from "./requestRegistration.graphql";
 
 export default async function registerAccount(
   registrationData: InputRequestRegistrationType

@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, TransitionProps } from "vue";
+import type { PropType, TransitionProps } from "vue";
 
 defineProps({
   appear: Boolean,

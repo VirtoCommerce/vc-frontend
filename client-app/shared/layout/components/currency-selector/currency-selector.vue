@@ -54,7 +54,7 @@ import { clickOutside } from "@/core/directives";
 
 export default {
   directives: {
-    clickOutside, // VueUse (v7.5.5) onClickOutside doesn't work in Safari
+    clickOutside, // TODO: Use directive from VueUse (https://vueuse.org/core/onClickOutside/#directive-usage)
   },
 };
 </script>

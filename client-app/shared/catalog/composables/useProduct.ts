@@ -1,7 +1,8 @@
-import { Ref, ref, computed, readonly } from "vue";
+import { ref, computed, readonly } from "vue";
 import { Logger } from "@/core/utilities";
 import { getProduct } from "@/xapi/graphql/catalog";
-import { Product } from "@/xapi/types";
+import type { Product } from "@/xapi/types";
+import type { Ref } from "vue";
 
 export default () => {
   const loading: Ref<boolean> = ref(true);

@@ -14,7 +14,7 @@
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
-import { useCatalogMenu } from "@/core";
+import { useCatalogMenu } from "@/core/composables";
 import CatalogMenuCategoryBlock from "./catalog-menu-category-block.vue";
 
 defineEmits<{ (event: "select"): void }>();

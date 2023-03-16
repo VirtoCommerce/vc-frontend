@@ -1,6 +1,6 @@
 import globals from "@/core/globals";
-import { MemberAddressConnection, OrganizationAddressesArgs, Query, QueryOrganizationArgs } from "@/xapi/types";
 import queryDocument from "./getOrganizationAddressesQuery.graphql";
+import type { MemberAddressConnection, OrganizationAddressesArgs, Query, QueryOrganizationArgs } from "@/xapi/types";
 
 export default async function getOrganizationAddresses(
   organizationId: string,

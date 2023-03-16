@@ -62,10 +62,11 @@
 
 <script setup lang="ts">
 import _ from "lodash";
-import { computed, PropType } from "vue";
+import { computed } from "vue";
 import { AddToCart } from "@/shared/cart";
 import { prepareProperties, VariationProperty, Vendor } from "@/shared/catalog";
-import { Product, VariationType } from "@/xapi/types";
+import type { Product, VariationType } from "@/xapi/types";
+import type { PropType } from "vue";
 
 const props = defineProps({
   variation: {

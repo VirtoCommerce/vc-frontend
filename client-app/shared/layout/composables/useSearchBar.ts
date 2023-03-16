@@ -1,9 +1,10 @@
-import { MaybeRef } from "@vueuse/core";
 import { computed, reactive, readonly, ref, shallowRef, toRef, unref } from "vue";
 import { Logger, sleep } from "@/core/utilities";
 import { highlightSearchText, prepareSearchText } from "@/shared/layout";
-import { getSearchResults, SearchResultsParams } from "@/xapi/graphql/catalog";
-import { Category, Product } from "@/xapi/types";
+import { getSearchResults } from "@/xapi/graphql/catalog";
+import type { SearchResultsParams } from "@/xapi/graphql/catalog";
+import type { Category, Product } from "@/xapi/types";
+import type { MaybeRef } from "@vueuse/core";
 
 const DEFAULT_DURATION = 0; // No animation at the moment
 const DEFAULT_DROPDOWN_DURATION = 200;

@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { CommonVendor } from "@/xapi";
+import type { CommonVendor } from "@/xapi/types";
 
 interface Props {
   vendor?: CommonVendor;

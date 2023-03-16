@@ -1,6 +1,6 @@
-import { Meta, StoryFn } from "@storybook/vue3";
 import { VcLineItem } from "..";
 import { VcAlert } from "../../atoms";
+import type { Meta, StoryFn } from "@storybook/vue3";
 
 export default {
   title: "Components/Molecules/VcLineItem",

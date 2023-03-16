@@ -20,13 +20,11 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
-import { OrderAddressType, QuoteAddressType } from "@/xapi";
+import type { AnyAddressType } from "@/core/types";
 
-defineProps({
-  address: {
-    type: Object as PropType<QuoteAddressType | OrderAddressType>,
-    required: true,
-  },
-});
+interface IProps {
+  address: AnyAddressType;
+}
+
+defineProps<IProps>();
 </script>

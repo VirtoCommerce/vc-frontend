@@ -6,9 +6,10 @@
 
 <script setup lang="ts">
 import { eagerComputed, useDebounceFn } from "@vueuse/core";
-import { nextTick, PropType, ref } from "vue";
+import { nextTick, ref } from "vue";
 import { useCompareProducts } from "@/shared/compare";
-import { Product } from "@/xapi/types";
+import type { Product } from "@/xapi/types";
+import type { PropType } from "vue";
 
 const props = defineProps({
   product: {

@@ -16,21 +16,22 @@
 
 <script setup lang="ts">
 import _ from "lodash";
-import { PropType, ref, watch } from "vue";
-import { FacetItem } from "@/core/types";
+import { ref, watch } from "vue";
+import type { FacetItemType } from "@/core/types";
+import type { PropType } from "vue";
 
 const emit = defineEmits<{
-  (event: "update:modelValue", value: FacetItem): void;
+  (event: "update:modelValue", value: FacetItemType): void;
 }>();
 
 const props = defineProps({
   modelValue: {
-    type: Object as PropType<FacetItem>,
+    type: Object as PropType<FacetItemType>,
     required: true,
   },
 });
 
-const facet = ref<FacetItem>(_.cloneDeep(props.modelValue));
+const facet = ref<FacetItemType>(_.cloneDeep(props.modelValue));
 
 function change() {
   emit("update:modelValue", facet.value);

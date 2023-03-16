@@ -32,18 +32,18 @@
 
 <script setup lang="ts">
 import { WishlistLineItem } from "@/shared/wishlists";
-import { LineItemType } from "@/xapi";
+import type { LineItemType } from "@/xapi/types";
 
-interface Prop {
-  items: LineItemType[];
-}
-
-interface Emits {
+interface IEmits {
   (event: "remove:item", value: LineItemType): void;
 }
 
-defineEmits<Emits>();
-defineProps<Prop>();
+interface IProp {
+  items: LineItemType[];
+}
+
+defineEmits<IEmits>();
+defineProps<IProp>();
 </script>
 
 <style scoped lang="scss">

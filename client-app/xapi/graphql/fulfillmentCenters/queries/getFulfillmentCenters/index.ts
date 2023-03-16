@@ -1,6 +1,6 @@
 import globals from "@/core/globals";
-import { FulfillmentCenterConnection, Query, QueryFulfillmentCentersArgs } from "@/xapi/types";
 import fillmentCentersQueryDocument from "./getFulfillmentCenters.graphql";
+import type { FulfillmentCenterConnection, Query, QueryFulfillmentCentersArgs } from "@/xapi/types";
 
 export default async function getFulfillmentCenters(sort = "name"): Promise<FulfillmentCenterConnection> {
   const { storeId } = globals;

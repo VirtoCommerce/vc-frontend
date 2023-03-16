@@ -280,7 +280,7 @@ import { useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables";
 import { SORT_DESCENDING } from "@/core/constants";
 import useUserOrders from "@/shared/account/composables/useUserOrders";
-import { CustomerOrderType } from "@/xapi/types";
+import type { CustomerOrderType } from "@/xapi/types";
 
 const { t } = useI18n();
 const router = useRouter();

@@ -22,11 +22,11 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
 import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import { AddToWishlistsModal } from "@/shared/wishlists";
-import { Product } from "@/xapi/types";
+import type { Product } from "@/xapi/types";
+import type { PropType } from "vue";
 
 const props = defineProps({
   product: {

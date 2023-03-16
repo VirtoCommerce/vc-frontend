@@ -4,14 +4,6 @@ import { useFetch } from "@/core/composables";
 import globals from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import {
-  ForgotPassword,
-  RegisterOrganization,
-  ResetPassword,
-  SignMeIn,
-  SignMeUp,
-  UserPersonalData,
-} from "@/shared/account";
-import {
   getMe,
   inviteUser as _inviteUser,
   registerAccount,
@@ -20,7 +12,15 @@ import {
   resetPasswordByToken,
   updatePersonalData,
 } from "@/xapi/graphql/account";
-import {
+import type {
+  ForgotPassword,
+  RegisterOrganization,
+  ResetPassword,
+  SignMeIn,
+  SignMeUp,
+  UserPersonalData,
+} from "@/shared/account";
+import type {
   AccountCreationResultType,
   CustomIdentityResultType,
   IdentityResultType,

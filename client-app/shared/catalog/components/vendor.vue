@@ -11,14 +11,14 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { CommonVendor } from "@/xapi";
+import type { CommonVendor } from "@/xapi/types";
 
-interface Props {
+interface IProps {
   withRating?: boolean;
   vendor: CommonVendor;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<IProps>(), {
   withRating: false,
 });
 

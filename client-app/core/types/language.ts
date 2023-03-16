@@ -1,4 +1,4 @@
-export interface Language {
+export interface ILanguage {
   cultureName: string;
   nativeName: string;
   threeLetterLanguageName: string;

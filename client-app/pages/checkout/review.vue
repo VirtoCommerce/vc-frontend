@@ -44,7 +44,9 @@
             <template #selected="{ item }">
               <VcSelectItem>
                 <VcSelectItemImage :src="item.logoUrl" />
-                <VcSelectItemText>{{ item.code }} {{ item.optionName }}</VcSelectItemText>
+                <VcSelectItemText>
+                  {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
+                </VcSelectItemText>
               </VcSelectItem>
             </template>
           </VcSelect>
@@ -74,7 +76,7 @@
               <template #selected="{ item }">
                 <VcSelectItem>
                   <VcSelectItemImage :src="item.logoUrl" />
-                  <VcSelectItemText>{{ item.code }}</VcSelectItemText>
+                  <VcSelectItemText>{{ $t(`common.methods.payment_by_code.${item.code}`) }}</VcSelectItemText>
                 </VcSelectItem>
               </template>
             </VcSelect>
@@ -140,7 +142,7 @@ import { useRouter } from "vue-router";
 import { OrderLineItems } from "@/shared/account";
 import { useCart, useCoupon, usePurchaseOrderNumber } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
-import { CartAddressType } from "@/xapi";
+import type { CartAddressType } from "@/xapi/types";
 
 const router = useRouter();
 const {

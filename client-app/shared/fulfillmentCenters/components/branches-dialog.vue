@@ -176,10 +176,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, PropType, onMounted } from "vue";
-import { useFulfillmentCenters, IFulfillmentCenter } from "@/shared/fulfillmentCenters";
+import { computed, ref, watch, onMounted } from "vue";
+import { useFulfillmentCenters } from "@/shared/fulfillmentCenters";
 import BranchItem from "./branch-item.vue";
 import BranchSearch from "./branch-search.vue";
+import type { IFulfillmentCenter } from "@/shared/fulfillmentCenters";
+import type { PropType } from "vue";
 
 const emit = defineEmits(["save"]);
 

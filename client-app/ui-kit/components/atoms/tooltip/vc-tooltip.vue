@@ -20,9 +20,11 @@
 </template>
 
 <script setup lang="ts">
-import { bottom, createPopper, Instance, Placement, PositioningStrategy } from "@popperjs/core";
+import { bottom, createPopper } from "@popperjs/core";
 import { onClickOutside } from "@vueuse/core";
-import { onUnmounted, PropType, ref, shallowRef, watch } from "vue";
+import { onUnmounted, ref, shallowRef, watch } from "vue";
+import type { Instance, Placement, PositioningStrategy } from "@popperjs/core";
+import type { PropType } from "vue";
 
 const emit = defineEmits<{ (e: "shown", isShown: boolean): void }>();
 

@@ -1,5 +1,5 @@
-import { Meta, StoryFn } from "@storybook/vue3";
 import { VcLineItemPrice } from "..";
+import type { Meta, StoryFn } from "@storybook/vue3";
 
 export default {
   title: "Components/Molecules/VcLineItemPrice",

@@ -36,8 +36,8 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
-import { IFulfillmentCenter } from "@/shared/fulfillmentCenters";
+import type { IFulfillmentCenter } from "@/shared/fulfillmentCenters";
+import type { PropType } from "vue";
 
 defineProps({
   branch: {

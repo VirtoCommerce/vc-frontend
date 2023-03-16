@@ -12,7 +12,7 @@
 import { eagerComputed } from "@vueuse/core";
 import { computed } from "vue";
 import { useCart } from "@/shared/cart";
-import { LineItemType } from "@/xapi/types";
+import type { LineItemType } from "@/xapi/types";
 
 const props = defineProps({
   productId: {

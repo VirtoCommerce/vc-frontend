@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { onMounted, watchEffect } from "vue";
-import { useProductsRoutes } from "@/core";
+import { useProductsRoutes } from "@/core/composables";
 import { AddToCart } from "@/shared/cart";
 import { ProductCardGrid, useProducts } from "@/shared/catalog";
 

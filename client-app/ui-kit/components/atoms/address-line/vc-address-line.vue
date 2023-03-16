@@ -9,11 +9,11 @@
 </template>
 
 <script setup lang="ts">
-import { AnyAddressType } from "@/core";
+import type { AnyAddressType } from "@/core/types";
 
-interface Props {
+interface IProps {
   address: AnyAddressType;
 }
 
-defineProps<Props>();
+defineProps<IProps>();
 </script>

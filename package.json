@@ -63,6 +63,7 @@
     "@graphql-codegen/typescript": "^3.0.0",
     "@graphql-codegen/typescript-operations": "^3.0.0",
     "@rollup/plugin-graphql": "^2.0.3",
+    "@storybook/addon-a11y": "^6.5.16",
     "@storybook/addon-actions": "^6.5.16",
     "@storybook/addon-essentials": "^6.5.16",
     "@storybook/addon-interactions": "^6.5.16",

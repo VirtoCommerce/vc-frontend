@@ -46,11 +46,12 @@
 
 <script setup lang="ts">
 import { useField, useForm } from "vee-validate";
-import { computed, PropType, ref } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 import { useIdentityErrorTranslator } from "@/core/composables";
 import { useUser } from "@/shared/account";
+import type { PropType } from "vue";
 
 const emit = defineEmits(["succeeded"]);
 

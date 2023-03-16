@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { cloneDeep } from "lodash";
-import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
-import { ISortInfo } from "@/core/types";
+import { SORT_ASCENDING, SORT_DESCENDING } from "../../constants";
+import type { ISortInfo } from "../../types";
 
 export const defaultSortInfo: ISortInfo = {
   column: "createdDate",

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { app } from "@storybook/vue3";
 import vueRouter from "storybook-vue3-router";
 import { createI18n } from "vue-i18n";
@@ -18,7 +19,12 @@ const i18n = createI18n({
 app.use(i18n);
 
 /* Setting project CSS variables */
-Object.entries(SettingsData.presets.Mercury)
+const settings =
+  typeof SettingsData.current === "string"
+    ? (<Record<string, any>>SettingsData).presets[SettingsData.current]
+    : SettingsData.current;
+
+Object.entries(settings)
   .filter(([key]) => /^color/.test(key))
   .forEach(([key, value]) => {
     document.documentElement.style.setProperty(`--${key.replace(/_/g, "-")}`, `${value}`);

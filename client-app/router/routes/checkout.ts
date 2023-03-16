@@ -1,4 +1,4 @@
-import { RouteRecordRaw } from "vue-router";
+import type { RouteRecordRaw } from "vue-router";
 import Billing from "@/pages/checkout/billing.vue";
 import Completed from "@/pages/checkout/completed.vue";
 import PaymentResult from "@/pages/checkout/payment-result.vue";

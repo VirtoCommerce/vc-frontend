@@ -1,5 +1,5 @@
-import { InputMemberAddressType, Mutations, MutationsUpdateMemberAddressesArgs } from "@/xapi/types";
 import mutationDocument from "./updateMemberAddressesMutation.graphql";
+import type { InputMemberAddressType, Mutations, MutationsUpdateMemberAddressesArgs } from "@/xapi/types";
 
 export default async function updateMemberAddresses(
   memberId: string,

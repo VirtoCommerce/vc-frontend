@@ -147,9 +147,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watchEffect } from "vue";
-import { ExtendedLineItemType, extendLineItem } from "@/core";
-import { LineItemType } from "@/xapi";
+import { computed, ref, watchEffect } from "vue";
+import { extendLineItem } from "@/core/utilities";
+import type { ExtendedLineItemType } from "@/core/types";
+import type { LineItemType } from "@/xapi/types";
 
 interface IProps {
   disabled?: boolean;
@@ -184,7 +185,7 @@ function changeQuantity() {
 
 function onQuantityChanged(): void {
   clearTimeout(timeoutIdOfQuantityChange);
-  timeoutIdOfQuantityChange = +setTimeout(changeQuantity, 2000);
+  timeoutIdOfQuantityChange = +setTimeout(changeQuantity, 900);
 }
 
 function onFocusOut() {

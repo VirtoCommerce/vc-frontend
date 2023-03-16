@@ -171,7 +171,7 @@
                     lazy
                   />
 
-                  <span>{{ payment?.paymentMethod?.typeName }}</span>
+                  <span>{{ $t(`common.methods.payment_by_code.${payment?.paymentMethod?.code}`) }}</span>
                 </div>
 
                 <div>
@@ -249,7 +249,7 @@ import {
   PaymentProcessingRedirection,
 } from "@/shared/payment";
 import { usePopup } from "@/shared/popup";
-import { InputOrderAddressType, OrderPaymentMethodType, PaymentInType } from "@/xapi/types";
+import type { InputOrderAddressType, OrderPaymentMethodType, PaymentInType } from "@/xapi/types";
 
 interface IProps {
   orderId: string;

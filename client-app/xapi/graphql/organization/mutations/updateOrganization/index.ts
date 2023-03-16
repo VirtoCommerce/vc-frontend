@@ -1,5 +1,10 @@
-import { InputUpdateOrganizationType, Mutations, MutationsUpdateOrganizationArgs, Organization } from "@/xapi/types";
 import mutationDocument from "./updateOrganizationMutation.graphql";
+import type {
+  InputUpdateOrganizationType,
+  Mutations,
+  MutationsUpdateOrganizationArgs,
+  Organization,
+} from "@/xapi/types";
 
 export default async function updateOrganization(payload: InputUpdateOrganizationType): Promise<Organization> {
   const { $graphqlClient } = useNuxtApp();

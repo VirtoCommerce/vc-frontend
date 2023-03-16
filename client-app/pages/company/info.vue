@@ -237,12 +237,14 @@ import { useField } from "vee-validate";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
-import { AddressType, ISortInfo, usePageHead, XApiPermissions } from "@/core";
+import { usePageHead } from "@/core/composables";
+import { AddressType, XApiPermissions } from "@/core/enums";
 import { useUser } from "@/shared/account";
 import { AddOrUpdateCompanyAddressDialog, useOrganization, useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
-import { MemberAddressType } from "@/xapi";
+import type { ISortInfo } from "@/core/types";
+import type { MemberAddressType } from "@/xapi/types";
 
 const page = ref(1);
 const itemsPerPage = ref(10);

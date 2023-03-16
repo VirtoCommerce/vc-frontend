@@ -37,9 +37,10 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, ref } from "vue";
+import { ref } from "vue";
 import ActionButton from "./action-button.vue";
 import ActionsPopup from "./actions-popup.vue";
+import type { PropType } from "vue";
 
 defineProps({
   inputObject: Object,

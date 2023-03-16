@@ -1,6 +1,6 @@
-import { useAppContext } from "@/core";
-import globals from "@/core/globals";
-import { Breadcrumb, CartType, CustomerOrderType, LineItemType, Product, VariationType } from "@/xapi";
+import globals from "../globals";
+import { useAppContext } from "./useAppContext";
+import type { Breadcrumb, CartType, CustomerOrderType, LineItemType, Product, VariationType } from "@/xapi/types";
 
 type EventParamsType = Gtag.ControlParams & Gtag.EventParams & Gtag.CustomParams;
 type EventParamsExtendedType = EventParamsType & { item_list_id?: string; item_list_name?: string };
@@ -183,18 +183,20 @@ function purchase(order: CustomerOrderType, transactionId?: string, params?: Eve
   });
 }
 
-export default () => ({
-  isAvailableGtag,
-  sendEvent,
-  viewItemList,
-  selectItem,
-  viewItem,
-  addItemToWishList,
-  addItemToCart,
-  removeItemFromCart,
-  viewCart,
-  beginCheckout,
-  addShippingInfo,
-  addPaymentInfo,
-  purchase,
-});
+export function useGoogleAnalytics() {
+  return {
+    isAvailableGtag,
+    sendEvent,
+    viewItemList,
+    selectItem,
+    viewItem,
+    addItemToWishList,
+    addItemToCart,
+    removeItemFromCart,
+    viewCart,
+    beginCheckout,
+    addShippingInfo,
+    addPaymentInfo,
+    purchase,
+  };
+}

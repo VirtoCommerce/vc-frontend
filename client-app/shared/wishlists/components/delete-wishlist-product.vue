@@ -26,9 +26,9 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue";
 import { useWishlists } from "@/shared/wishlists";
-import { InputRemoveWishlistItemType, LineItemType } from "@/xapi/types";
+import type { InputRemoveWishlistItemType, LineItemType } from "@/xapi/types";
+import type { PropType } from "vue";
 
 const emit = defineEmits(["result"]);
 

@@ -1,4 +1,4 @@
-import { computed, readonly, Ref, ref, shallowRef } from "vue";
+import { computed, readonly, ref, shallowRef } from "vue";
 import { SORT_ASCENDING } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import {
@@ -10,12 +10,13 @@ import {
   getWishlists,
   renameWishlist as _renameWishlist,
 } from "@/xapi/graphql/account";
-import {
+import type {
   InputAddWishlistItemType,
   InputRemoveWishlistItemType,
   InputRenameWishlistType,
   WishlistType,
 } from "@/xapi/types";
+import type { Ref } from "vue";
 
 const loading = ref(true);
 const lists = shallowRef<WishlistType[]>([]);

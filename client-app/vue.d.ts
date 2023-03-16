@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { StorefrontPermissions, XApiPermissions } from "@/core/constants";
-import { IThemeConfigPreset, IThemeContext } from "@/core/types";
+import type { StorefrontPermissions, XApiPermissions } from "@/core/constants";
+import type { IThemeConfigPreset, IThemeContext } from "@/core/types";
 
 export {};
 

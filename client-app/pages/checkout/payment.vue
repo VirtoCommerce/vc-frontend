@@ -9,7 +9,7 @@
             lazy
           />
 
-          <span>{{ payment?.paymentMethod?.typeName }}</span>
+          <span>{{ $t(`common.methods.payment_by_code.${payment?.paymentMethod?.code}`) }}</span>
         </div>
       </div>
 
@@ -36,7 +36,7 @@ import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { OrderSummary, useCheckout } from "@/shared/checkout";
 import { PaymentActionType, PaymentProcessingAuthorizeNet, PaymentProcessingRedirection } from "@/shared/payment";
-import { PaymentInType } from "@/xapi";
+import type { PaymentInType } from "@/xapi/types";
 
 const router = useRouter();
 const { placedOrder } = useCheckout();

@@ -213,15 +213,16 @@
 
 <script setup lang="ts">
 import { Pagination, Navigation, Lazy } from "swiper";
-import { Swiper as SwiperInstance } from "swiper/types";
 import { Swiper, SwiperSlide } from "swiper/vue";
-import { computed, PropType, ref } from "vue";
-import { RouteLocationRaw } from "vue-router";
-import { getProductRoute } from "@/core";
+import { computed, ref } from "vue";
+import { getProductRoute } from "@/core/utilities";
 import { DiscountBadge, Vendor } from "@/shared/catalog";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
-import { Product } from "@/xapi/types";
+import type { Product } from "@/xapi/types";
+import type { Swiper as SwiperInstance } from "swiper/types";
+import type { PropType } from "vue";
+import type { RouteLocationRaw } from "vue-router";
 
 defineEmits<{ (eventName: "link-click", globalEvent: PointerEvent): void }>();
 

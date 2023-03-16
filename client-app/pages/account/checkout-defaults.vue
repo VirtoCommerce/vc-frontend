@@ -45,14 +45,14 @@
           <template #selected="{ item }">
             <VcSelectItem>
               <VcSelectItemImage :src="item.logoUrl" />
-              <VcSelectItemText>{{ item.code }}</VcSelectItemText>
+              <VcSelectItemText>{{ $t(`common.methods.payment_by_code.${item.code}`) }}</VcSelectItemText>
             </VcSelectItem>
           </template>
 
           <template #item="{ item }">
             <VcSelectItem bordered>
               <VcSelectItemImage :src="item.logoUrl" />
-              <VcSelectItemText>{{ item.code }}</VcSelectItemText>
+              <VcSelectItemText>{{ $t(`common.methods.payment_by_code.${item.code}`) }}</VcSelectItemText>
             </VcSelectItem>
           </template>
         </VcSelect>
@@ -77,14 +77,14 @@
           <template #selected="{ item }">
             <VcSelectItem>
               <VcSelectItemImage :src="item.logoUrl" />
-              <VcSelectItemText>{{ item.code }} {{ item.optionName }}</VcSelectItemText>
+              <VcSelectItemText>{{ $t(`common.methods.delivery_by_id.${item.id}`) }}</VcSelectItemText>
             </VcSelectItem>
           </template>
 
           <template #item="{ item }">
             <VcSelectItem bordered>
               <VcSelectItemImage :src="item.logoUrl" />
-              <VcSelectItemText>{{ item.code }} {{ item.optionName }}</VcSelectItemText>
+              <VcSelectItemText>{{ $t(`common.methods.delivery_by_id.${item.id}`) }}</VcSelectItemText>
             </VcSelectItem>
           </template>
         </VcSelect>
@@ -106,9 +106,10 @@ import { clone, isEqual } from "lodash";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
-import { useUserCheckoutDefaults, CheckoutDefaults, CheckoutDefaultsSuccessDialog } from "@/shared/account";
+import { useUserCheckoutDefaults, CheckoutDefaultsSuccessDialog } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { usePopup } from "@/shared/popup";
+import type { CheckoutDefaults } from "@/shared/account";
 
 const { t } = useI18n();
 const { openPopup } = usePopup();

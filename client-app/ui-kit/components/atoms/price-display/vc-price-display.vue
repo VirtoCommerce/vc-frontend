@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { MoneyType } from "@/xapi/types";
+import type { MoneyType } from "@/xapi/types";
 
 interface IProps {
   value: MoneyType;
