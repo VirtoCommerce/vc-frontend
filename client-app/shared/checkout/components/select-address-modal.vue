@@ -2,7 +2,7 @@
   <VcPopup :title="$t('shared.checkout.select_address_dialog.title')" modal-width="max-w-5xl" is-mobile-fullscreen>
     <template #actions="{ close }">
       <VcButton
-        v-if="!isCorporateAddresses || (isCorporateAddresses && $can($permissions.xApi.CanEditOrganization))"
+        v-if="!isCorporateAddresses || $can($permissions.xApi.CanEditOrganization)"
         class="px-2 uppercase lg:mr-auto"
         :class="[isMobile && 'w-1/2 grow']"
         is-outline
