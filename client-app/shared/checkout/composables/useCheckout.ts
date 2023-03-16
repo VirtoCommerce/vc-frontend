@@ -83,9 +83,13 @@ export default function useCheckout() {
       selectedPaymentMethodGroupType.value !== PaymentMethodGroupType[PaymentMethodGroupType.Manual]
   );
 
-  const addresses = computed<AnyAddressType[]>(() =>
-    isCorporateMember.value ? organizationsAddresses.value : personalAddresses.value
-  );
+  const addresses = computed<AnyAddressType[]>(() => {
+    const { firstName, lastName } = user.value.contact ?? {};
+
+    return isCorporateMember.value
+      ? organizationsAddresses.value.map((address) => ({ ...address, firstName, lastName }))
+      : personalAddresses.value;
+  });
 
   const isPurchaseOrderNumberEnabled = computed<boolean>(
     () =>
@@ -156,12 +160,19 @@ export default function useCheckout() {
     await fetchCart();
     await setCheckoutDefaults();
 
+    fetchAddresses();
+
     ga.beginCheckout(cart.value);
 
     loading.value = false;
   }
 
   async function updateBillingOrDeliveryAddress(addressType: AddressType, inputAddress: InputAddressType) {
+    if (isCorporateMember.value) {
+      inputAddress.firstName = user.value.contact!.firstName;
+      inputAddress.lastName = user.value.contact!.lastName;
+    }
+
     if (addressType === AddressType.Billing) {
       await updatePayment({
         id: payment.value?.id,
@@ -243,16 +254,12 @@ export default function useCheckout() {
   }
 
   async function onDeliveryAddressChange() {
-    await fetchAddresses();
-
     addresses.value.length
       ? openSelectAddressModal(AddressType.Shipping)
       : openAddOrUpdateAddressModal(AddressType.Shipping, shipment.value?.deliveryAddress);
   }
 
   async function onBillingAddressChange() {
-    await fetchAddresses();
-
     addresses.value.length
       ? openSelectAddressModal(AddressType.Billing)
       : openAddOrUpdateAddressModal(AddressType.Billing, payment.value?.billingAddress);

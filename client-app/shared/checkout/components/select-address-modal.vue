@@ -2,6 +2,7 @@
   <VcPopup :title="$t('shared.checkout.select_address_dialog.title')" modal-width="max-w-5xl" is-mobile-fullscreen>
     <template #actions="{ close }">
       <VcButton
+        v-if="$can($permissions.xApi.CanEditOrganization)"
         class="px-2 uppercase lg:mr-auto"
         :class="[isMobile && 'w-1/2 grow']"
         is-outline
@@ -192,7 +193,6 @@ import { computed, watchEffect, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { AnyAddressType } from "@/core/types";
 import { isEqualAddresses } from "@/core/utilities";
-import { useUser } from "@/shared/account";
 
 interface IProps {
   currentAddress?: AnyAddressType;
@@ -212,7 +212,6 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const { t } = useI18n();
-const { user } = useUser();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
@@ -255,11 +254,6 @@ const onPageChange = async (newPage: number) => {
 
 function setAddress(address: AnyAddressType): void {
   selectedAddress.value = address;
-
-  if (props.isCorporateAddresses) {
-    selectedAddress.value.firstName = user.value.contact!.firstName;
-    selectedAddress.value.lastName = user.value.contact!.lastName;
-  }
 }
 
 watchEffect(() => {
