@@ -9,14 +9,14 @@ import type { MaybeRef } from "@vueuse/core";
 
 const requestedAddressesQuantity = 9999;
 
-export default function useOrganizationAddresses(organizationId: MaybeRef<string>) {
-  const loading = ref(false);
-  const addresses = shallowRef<MemberAddressType[]>([]);
-  const sort = ref<ISortInfo>({
-    column: "createdDate",
-    direction: SORT_DESCENDING,
-  });
+const loading = ref(false);
+const addresses = shallowRef<MemberAddressType[]>([]);
+const sort = ref<ISortInfo>({
+  column: "createdDate",
+  direction: SORT_DESCENDING,
+});
 
+export default function useOrganizationAddresses(organizationId: MaybeRef<string>) {
   async function fetchAddresses() {
     try {
       loading.value = true;

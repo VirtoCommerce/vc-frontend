@@ -85,9 +85,13 @@ export default function useCheckout() {
       selectedPaymentMethodGroupType.value !== PaymentMethodGroupType[PaymentMethodGroupType.Manual]
   );
 
-  const addresses = computed<AnyAddressType[]>(() =>
-    isCorporateMember.value ? organizationsAddresses.value : personalAddresses.value
-  );
+  const addresses = computed<AnyAddressType[]>(() => {
+    const { firstName, lastName } = user.value.contact ?? {};
+
+    return isCorporateMember.value
+      ? organizationsAddresses.value.map((address) => ({ ...address, firstName, lastName }))
+      : personalAddresses.value;
+  });
 
   const isPurchaseOrderNumberEnabled = computed<boolean>(
     () =>
@@ -157,6 +161,8 @@ export default function useCheckout() {
 
     await fetchCart();
     await setCheckoutDefaults();
+
+    fetchAddresses();
 
     ga.beginCheckout(cart.value);
 
@@ -245,31 +251,27 @@ export default function useCheckout() {
   }
 
   async function onDeliveryAddressChange() {
-    await fetchAddresses();
-
     addresses.value.length
       ? openSelectAddressModal(AddressType.Shipping)
       : openAddOrUpdateAddressModal(AddressType.Shipping, shipment.value?.deliveryAddress);
   }
 
   async function onBillingAddressChange() {
-    await fetchAddresses();
-
     addresses.value.length
       ? openSelectAddressModal(AddressType.Billing)
       : openAddOrUpdateAddressModal(AddressType.Billing, payment.value?.billingAddress);
   }
 
   function getNewAddresses(payload: {
-    shipmentAddress?: CartAddressType;
+    shippingAddress?: CartAddressType;
     billingAddress?: CartAddressType;
   }): MemberAddressType[] {
-    const { shipmentAddress, billingAddress } = payload;
+    const { shippingAddress, billingAddress } = payload;
     const newAddresses: MemberAddressType[] = [];
 
-    if (shipmentAddress && !isExistAddress(shipmentAddress)) {
+    if (shippingAddress && !isExistAddress(shippingAddress)) {
       newAddresses.push({
-        ...shipmentAddress,
+        ...shippingAddress,
         isDefault: false,
         addressType: AddressType.BillingAndShipping,
       });
@@ -287,7 +289,7 @@ export default function useCheckout() {
   }
 
   async function saveNewAddresses(payload: {
-    shipmentAddress?: CartAddressType;
+    shippingAddress?: CartAddressType;
     billingAddress?: CartAddressType;
   }): Promise<void> {
     const newAddresses: MemberAddressType[] = getNewAddresses(payload);
@@ -334,7 +336,7 @@ export default function useCheckout() {
     // Parallel saving of new addresses in account. Before cleaning shopping cart
     if (isAuthenticated.value) {
       saveNewAddresses({
-        shipmentAddress: shipment.value!.deliveryAddress,
+        shippingAddress: shipment.value!.deliveryAddress,
         billingAddress: payment.value!.billingAddress,
       });
     }
