@@ -9,15 +9,14 @@ import { InputMemberAddressType, MemberAddressType } from "@/xapi/types";
 
 const requestedAddressesQuantity = 9999;
 
+const loading = ref(false);
 const addresses = shallowRef<MemberAddressType[]>([]);
+const sort = ref<ISortInfo>({
+  column: "createdDate",
+  direction: SORT_DESCENDING,
+});
 
 export default function useOrganizationAddresses(organizationId: MaybeRef<string>) {
-  const loading = ref(false);
-  const sort = ref<ISortInfo>({
-    column: "createdDate",
-    direction: SORT_DESCENDING,
-  });
-
   async function fetchAddresses() {
     try {
       loading.value = true;
