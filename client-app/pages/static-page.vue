@@ -1,7 +1,10 @@
 <template>
-  <div v-if="template" class="pt-7">
-    <div class="mx-auto w-full max-w-screen-2xl px-5 pb-5 md:px-12 lg:pb-10">
-      <VcBreadcrumbs v-if="!template.settings?.hideBreadcrumbs" class="mb-3" :items="breadcrumbs"></VcBreadcrumbs>
+  <div v-if="template">
+    <div
+      v-if="!template.settings?.hideBreadcrumbs || template.settings?.header"
+      class="mx-auto w-full max-w-screen-2xl px-5 pb-5 md:px-12 lg:pb-10"
+    >
+      <VcBreadcrumbs class="mb-3" :items="breadcrumbs"></VcBreadcrumbs>
       <h1 v-if="template.settings?.header" class="text-3xl font-bold uppercase text-gray-900 lg:text-4xl">
         {{ template.settings.header }}
       </h1>
