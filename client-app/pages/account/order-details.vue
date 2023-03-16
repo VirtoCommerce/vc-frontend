@@ -92,11 +92,7 @@
             <VcImage :src="shipment.shippingMethod?.logoUrl" class="h-12 w-12" lazy />
 
             <span class="min-w-0 break-words">
-              {{
-                $t(
-                  `common.methods.delivery_by_code_and_option.${shipment.shipmentMethodCode}.${shipment.shipmentMethodOption}`
-                )
-              }}
+              {{ $t(`common.methods.delivery_by_id.${shipment.shipmentMethodCode}_${shipment.shipmentMethodOption}`) }}
               ({{ shipment.price?.formattedAmount }})
             </span>
           </div>

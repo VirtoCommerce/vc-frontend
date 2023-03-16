@@ -45,7 +45,7 @@
               <VcSelectItem>
                 <VcSelectItemImage :src="item.logoUrl" />
                 <VcSelectItemText>
-                  {{ $t(`common.methods.delivery_by_code_and_option.${item.code}.${item.optionName}`) }}
+                  {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
                 </VcSelectItemText>
               </VcSelectItem>
             </template>

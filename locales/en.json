@@ -176,14 +176,12 @@
     },
     "methods": {
       "payment_by_code": {
-        "AuthorizeNetPaymentMethod": "Authorize Net",
-        "DefaultManualPaymentMethod": "Default Manual"
+        "AuthorizeNetPaymentMethod": "Bank card (Authorize.Net)",
+        "DefaultManualPaymentMethod": "Manual"
       },
-      "delivery_by_code_and_option": {
-        "FixedRate": {
-          "Ground": "FixedRate Ground",
-          "Air": "FixedRate Air"
-        }
+      "delivery_by_id": {
+        "FixedRate_Ground": "Fixed Rate (Ground)",
+        "FixedRate_Air": "Fixed Rate (Air)"
       }
     }
   },
