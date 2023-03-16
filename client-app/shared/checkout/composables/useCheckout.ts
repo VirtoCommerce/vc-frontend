@@ -261,15 +261,15 @@ export default function useCheckout() {
   }
 
   function getNewAddresses(payload: {
-    shipmentAddress?: CartAddressType;
+    shippingAddress?: CartAddressType;
     billingAddress?: CartAddressType;
   }): MemberAddressType[] {
-    const { shipmentAddress, billingAddress } = payload;
+    const { shippingAddress, billingAddress } = payload;
     const newAddresses: MemberAddressType[] = [];
 
-    if (shipmentAddress && !isExistAddress(shipmentAddress)) {
+    if (shippingAddress && !isExistAddress(shippingAddress)) {
       newAddresses.push({
-        ...shipmentAddress,
+        ...shippingAddress,
         isDefault: false,
         addressType: AddressType.BillingAndShipping,
       });
@@ -287,7 +287,7 @@ export default function useCheckout() {
   }
 
   async function saveNewAddresses(payload: {
-    shipmentAddress?: CartAddressType;
+    shippingAddress?: CartAddressType;
     billingAddress?: CartAddressType;
   }): Promise<void> {
     const newAddresses: MemberAddressType[] = getNewAddresses(payload);
@@ -334,7 +334,7 @@ export default function useCheckout() {
     // Parallel saving of new addresses in account. Before cleaning shopping cart
     if (isAuthenticated.value) {
       saveNewAddresses({
-        shipmentAddress: shipment.value!.deliveryAddress,
+        shippingAddress: shipment.value!.deliveryAddress,
         billingAddress: payment.value!.billingAddress,
       });
     }
