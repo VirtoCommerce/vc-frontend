@@ -1,5 +1,5 @@
-import { DEFAULT_SORT_INFO, SORT_ASCENDING, SORT_DESCENDING } from "../../constants";
-import type { ISortInfo } from "../../types";
+import { DEFAULT_SORT_INFO, SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants/search";
+import type { ISortInfo } from "@/core/types/sorting";
 
 /**
  * @deprecated Use Sort.toString() instead
