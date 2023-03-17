@@ -1,4 +1,4 @@
-import type { ISortInfo } from "../types";
+import type { ISortInfo } from "@/core/types/sorting";
 
 export const DEFAULT_PAGE_SIZE = 16;
 export const SORT_ASCENDING = "asc";
