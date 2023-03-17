@@ -1,6 +1,6 @@
 import { unref } from "vue";
-import { RangeFilterValue } from "../../types";
-import type { FacetItemType, FacetValueItemType } from "../../types";
+import { RangeFilterValue } from "@/core/types/search/filtering";
+import type { FacetItemType, FacetValueItemType } from "@/core/types/facet";
 import type { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@/xapi/types";
 import type { MaybeRef } from "@vueuse/core";
 
