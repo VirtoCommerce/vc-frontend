@@ -18,7 +18,7 @@ export interface IUseAsync<Payload = void, Result = void> extends IHasLoading {
  *   cart.value = await $graphqlClient.query<Required<Pick<Query, "cart">>, QueryCartArgs>(...);
  * });
  *
- * const { loading: removingCart, action: deleteCart } = useAsync(async () => {
+ * const { loading: removingCart, action: removeCart } = useAsync(async () => {
  *   await $graphqlClient.mutate<Required<Pick<Mutations, "removeCart">>, MutationsRemoveCartArgs>(...);
  * });
  *
@@ -26,7 +26,9 @@ export interface IUseAsync<Payload = void, Result = void> extends IHasLoading {
  *
  * return {
  *   loading,
- *   cart
+ *   cart,
+ *   getCart,
+ *   removeCart
  * }
  */
 export function useAsync<Payload = void, Result = void>(
