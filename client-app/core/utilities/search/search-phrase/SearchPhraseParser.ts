@@ -1,4 +1,5 @@
 import { CharStream, CommonTokenStream, ParseTreeWalker } from "antlr4";
+import { Filters } from "@/core/types/search/filtering";
 import { SearchPhraseListener } from "./SearchPhraseListener";
 import { SearchPhraseParseResult } from "./SearchPhraseParserResult";
 import { SearchPhraseLexer, SearchPhraseParserBase } from "./generated";
@@ -16,6 +17,6 @@ export class SearchPhraseParser {
 
     ParseTreeWalker.DEFAULT.walk(listener, parser.searchPhrase());
 
-    return new SearchPhraseParseResult(listener.keywords.join(" "), listener.filters);
+    return new SearchPhraseParseResult(listener.keywords.join(" "), new Filters(...listener.filters));
   }
 }
