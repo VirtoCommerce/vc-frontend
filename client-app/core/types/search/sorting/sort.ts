@@ -1,5 +1,5 @@
-import { SortDirection } from "../../../enums";
-import { SearchEntity } from "../../../types/search/entity";
+import { SortDirection } from "@/core/enums/sort-direction.enum";
+import { SearchEntity } from "@/core/types/search/entity";
 
 export class Sort extends SearchEntity {
   constructor(public fieldName: string = "createdDate", public direction: SortDirection = SortDirection.Descending) {
