@@ -1,4 +1,4 @@
-import { NotFilter, RangeBound, RangeFilter, RangeFilterValue, TermFilter } from "@/core/types";
+import { NotFilter, RangeBound, RangeFilter, RangeFilterValue, TermFilter } from "@/core/types/search/filtering";
 import { SearchPhraseListenerBase } from "./generated";
 import type {
   KeywordContext,
@@ -7,7 +7,7 @@ import type {
   RangeContext,
   RangeFilterContext,
 } from "./generated";
-import type { Filter } from "@/core/types";
+import type { Filter } from "@/core/types/search/filtering";
 
 export class SearchPhraseListener extends SearchPhraseListenerBase {
   public keywords: string[] = [];

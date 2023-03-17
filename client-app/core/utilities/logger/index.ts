@@ -1,4 +1,4 @@
-import { IS_DEVELOPMENT } from "../../constants";
+import { IS_DEVELOPMENT } from "@/core/constants/environment";
 import loggerDev from "./logger.dev";
 import loggerProd from "./logger.prod";
 

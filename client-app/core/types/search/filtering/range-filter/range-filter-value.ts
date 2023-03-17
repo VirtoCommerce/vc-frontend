@@ -1,4 +1,4 @@
-import { Logger } from "@/core/utilities";
+import { Logger } from "@/core/utilities/logger";
 import { RangeBound } from "./range-bound";
 import type { FacetRangeType } from "@/xapi/types";
 
