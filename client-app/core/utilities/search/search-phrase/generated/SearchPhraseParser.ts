@@ -42,17 +42,17 @@ export default class SearchPhraseParser extends Parser {
 	public static readonly RULE_upper = 13;
 	public static readonly RULE_string = 14;
 	public static readonly RULE_negation = 15;
-	public static readonly literalNames: (string | null)[] = [ null, "'!'", 
+	public static readonly literalNames: (string | null)[] = [ null, "'!'",
                                                             "':'", "','" ];
-	public static readonly symbolicNames: (string | null)[] = [ null, null, 
-                                                             "FD", "VD", 
-                                                             "RD", "RangeStart", 
-                                                             "RangeEnd", 
+	public static readonly symbolicNames: (string | null)[] = [ null, null,
+                                                             "FD", "VD",
+                                                             "RD", "RangeStart",
+                                                             "RangeEnd",
                                                              "String", "WS" ];
 	// tslint:disable:no-trailing-whitespace
 	public static readonly ruleNames: string[] = [
-		"searchPhrase", "phrase", "keyword", "filters", "attributeFilter", "rangeFilter", 
-		"fieldName", "attributeFilterValue", "rangeFilterValue", "range", "rangeStart", 
+		"searchPhrase", "phrase", "keyword", "filters", "attributeFilter", "rangeFilter",
+		"fieldName", "attributeFilterValue", "rangeFilterValue", "range", "rangeStart",
 		"rangeEnd", "lower", "upper", "string", "negation",
 	];
 	public get grammarFileName(): string { return "SearchPhrase.g4"; }
@@ -740,7 +740,7 @@ export default class SearchPhraseParser extends Parser {
 }
 
 export class SearchPhraseContext extends ParserRuleContext {
-	constructor(parser?: SearchPhraseParser, parent?: ParserRuleContext, invokingState?: number) {
+	constructor(parser?: Parser, parent?: ParserRuleContext, invokingState?: number) {
 		super(parent, invokingState);
     	this.parser = parser;
 	}
@@ -773,7 +773,7 @@ export class SearchPhraseContext extends ParserRuleContext {
 
 
 export class PhraseContext extends ParserRuleContext {
-	constructor(parser?: SearchPhraseParser, parent?: ParserRuleContext, invokingState?: number) {
+	constructor(parser?: Parser, parent?: ParserRuleContext, invokingState?: number) {
 		super(parent, invokingState);
     	this.parser = parser;
 	}
@@ -800,7 +800,7 @@ export class PhraseContext extends ParserRuleContext {
 
 
 export class KeywordContext extends ParserRuleContext {
-	constructor(parser?: SearchPhraseParser, parent?: ParserRuleContext, invokingState?: number) {
+	constructor(parser?: Parser, parent?: ParserRuleContext, invokingState?: number) {
 		super(parent, invokingState);
     	this.parser = parser;
 	}
@@ -824,7 +824,7 @@ export class KeywordContext extends ParserRuleContext {
 
 
 export class FiltersContext extends ParserRuleContext {
-	constructor(parser?: SearchPhraseParser, parent?: ParserRuleContext, invokingState?: number) {
+	constructor(parser?: Parser, parent?: ParserRuleContext, invokingState?: number) {
 		super(parent, invokingState);
     	this.parser = parser;
 	}
@@ -854,7 +854,7 @@ export class FiltersContext extends ParserRuleContext {
 
 
 export class AttributeFilterContext extends ParserRuleContext {
-	constructor(parser?: SearchPhraseParser, parent?: ParserRuleContext, invokingState?: number) {
+	constructor(parser?: Parser, parent?: ParserRuleContext, invokingState?: number) {
 		super(parent, invokingState);
     	this.parser = parser;
 	}
@@ -884,7 +884,7 @@ export class AttributeFilterContext extends ParserRuleContext {
 
 
 export class RangeFilterContext extends ParserRuleContext {
-	constructor(parser?: SearchPhraseParser, parent?: ParserRuleContext, invokingState?: number) {
+	constructor(parser?: Parser, parent?: ParserRuleContext, invokingState?: number) {
 		super(parent, invokingState);
     	this.parser = parser;
 	}
@@ -914,7 +914,7 @@ export class RangeFilterContext extends ParserRuleContext {
 
 
 export class FieldNameContext extends ParserRuleContext {
-	constructor(parser?: SearchPhraseParser, parent?: ParserRuleContext, invokingState?: number) {
+	constructor(parser?: Parser, parent?: ParserRuleContext, invokingState?: number) {
 		super(parent, invokingState);
     	this.parser = parser;
 	}
@@ -938,7 +938,7 @@ export class FieldNameContext extends ParserRuleContext {
 
 
 export class AttributeFilterValueContext extends ParserRuleContext {
-	constructor(parser?: SearchPhraseParser, parent?: ParserRuleContext, invokingState?: number) {
+	constructor(parser?: Parser, parent?: ParserRuleContext, invokingState?: number) {
 		super(parent, invokingState);
     	this.parser = parser;
 	}
@@ -971,7 +971,7 @@ export class AttributeFilterValueContext extends ParserRuleContext {
 
 
 export class RangeFilterValueContext extends ParserRuleContext {
-	constructor(parser?: SearchPhraseParser, parent?: ParserRuleContext, invokingState?: number) {
+	constructor(parser?: Parser, parent?: ParserRuleContext, invokingState?: number) {
 		super(parent, invokingState);
     	this.parser = parser;
 	}
@@ -1004,7 +1004,7 @@ export class RangeFilterValueContext extends ParserRuleContext {
 
 
 export class RangeContext extends ParserRuleContext {
-	constructor(parser?: SearchPhraseParser, parent?: ParserRuleContext, invokingState?: number) {
+	constructor(parser?: Parser, parent?: ParserRuleContext, invokingState?: number) {
 		super(parent, invokingState);
     	this.parser = parser;
 	}
@@ -1046,7 +1046,7 @@ export class RangeContext extends ParserRuleContext {
 
 
 export class RangeStartContext extends ParserRuleContext {
-	constructor(parser?: SearchPhraseParser, parent?: ParserRuleContext, invokingState?: number) {
+	constructor(parser?: Parser, parent?: ParserRuleContext, invokingState?: number) {
 		super(parent, invokingState);
     	this.parser = parser;
 	}
@@ -1070,7 +1070,7 @@ export class RangeStartContext extends ParserRuleContext {
 
 
 export class RangeEndContext extends ParserRuleContext {
-	constructor(parser?: SearchPhraseParser, parent?: ParserRuleContext, invokingState?: number) {
+	constructor(parser?: Parser, parent?: ParserRuleContext, invokingState?: number) {
 		super(parent, invokingState);
     	this.parser = parser;
 	}
@@ -1094,7 +1094,7 @@ export class RangeEndContext extends ParserRuleContext {
 
 
 export class LowerContext extends ParserRuleContext {
-	constructor(parser?: SearchPhraseParser, parent?: ParserRuleContext, invokingState?: number) {
+	constructor(parser?: Parser, parent?: ParserRuleContext, invokingState?: number) {
 		super(parent, invokingState);
     	this.parser = parser;
 	}
@@ -1118,7 +1118,7 @@ export class LowerContext extends ParserRuleContext {
 
 
 export class UpperContext extends ParserRuleContext {
-	constructor(parser?: SearchPhraseParser, parent?: ParserRuleContext, invokingState?: number) {
+	constructor(parser?: Parser, parent?: ParserRuleContext, invokingState?: number) {
 		super(parent, invokingState);
     	this.parser = parser;
 	}
@@ -1142,7 +1142,7 @@ export class UpperContext extends ParserRuleContext {
 
 
 export class StringContext extends ParserRuleContext {
-	constructor(parser?: SearchPhraseParser, parent?: ParserRuleContext, invokingState?: number) {
+	constructor(parser?: Parser, parent?: ParserRuleContext, invokingState?: number) {
 		super(parent, invokingState);
     	this.parser = parser;
 	}
@@ -1166,7 +1166,7 @@ export class StringContext extends ParserRuleContext {
 
 
 export class NegationContext extends ParserRuleContext {
-	constructor(parser?: SearchPhraseParser, parent?: ParserRuleContext, invokingState?: number) {
+	constructor(parser?: Parser, parent?: ParserRuleContext, invokingState?: number) {
 		super(parent, invokingState);
     	this.parser = parser;
 	}

@@ -23,15 +23,15 @@ export default class SearchPhraseLexer extends Lexer {
 	public static readonly EOF = Token.EOF;
 
 	public static readonly channelNames: string[] = [ "DEFAULT_TOKEN_CHANNEL", "HIDDEN" ];
-	public static readonly literalNames: string[] = [ null, "'!'", "':'", "','" ];
-	public static readonly symbolicNames: string[] = [ null, null, "FD", "VD", 
-                                                    "RD", "RangeStart", 
-                                                    "RangeEnd", "String", 
+	public static readonly literalNames: (string | null)[] = [ null, "'!'", "':'", "','" ];
+	public static readonly symbolicNames: (string | null)[] = [ null, null, "FD", "VD",
+                                                    "RD", "RangeStart",
+                                                    "RangeEnd", "String",
                                                     "WS" ];
 	public static readonly modeNames: string[] = [ "DEFAULT_MODE", ];
 
 	public static readonly ruleNames: string[] = [
-		"T__0", "FD", "VD", "RD", "RangeStart", "RangeEnd", "String", "SimpleString", 
+		"T__0", "FD", "VD", "RD", "RangeStart", "RangeEnd", "String", "SimpleString",
 		"QuotedString", "Esc", "WS",
 	];
 
