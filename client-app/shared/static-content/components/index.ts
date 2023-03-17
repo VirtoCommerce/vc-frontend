@@ -4,6 +4,7 @@ import DemoProductList from "./demo-product-list.vue";
 import Features from "./features.vue";
 import ImageBlock from "./image-block.vue";
 import Login from "./login.vue";
+import ProductAssets from "./product-assets.vue";
 import ProductInfo from "./product-info.vue";
 import ProductsBlock from "./products-block.vue";
 import PromoText from "./promo-text.vue";
@@ -20,6 +21,7 @@ const templateBlocks: { [key: string]: Component } = {
   features: Features,
   "image-block": ImageBlock,
   login: Login,
+  "product-assets": ProductAssets,
   "product-info": ProductInfo,
   products: ProductsBlock,
   "promo-text": PromoText,
