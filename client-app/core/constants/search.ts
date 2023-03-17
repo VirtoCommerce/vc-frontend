@@ -1,3 +1,4 @@
+import { Sort } from "../types";
 import type { ISortInfo } from "../types";
 
 export const DEFAULT_PAGE_SIZE = 16;
@@ -16,3 +17,4 @@ export const DEFAULT_SORT_INFO: ISortInfo = {
   column: "createdDate",
   direction: SORT_DESCENDING,
 };
+export const DEFAULT_SORT = new Sort();
