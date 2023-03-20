@@ -9,7 +9,7 @@
           :message="errors.firstName"
           :error="!!errors.firstName"
           :disabled="disabled"
-          :label="$t('shared.account.address_form.first_name_label')"
+          :label="$t('common.labels.first_name')"
           class="mb-4"
           required
           :maxlength="64"
@@ -20,7 +20,7 @@
           :message="errors.lastName"
           :error="!!errors.lastName"
           :disabled="disabled"
-          :label="$t('shared.account.address_form.last_name_label')"
+          :label="$t('common.labels.last_name')"
           class="mb-4"
           required
           :maxlength="64"
@@ -32,7 +32,7 @@
           :error="!!errors.email"
           :disabled="disabled"
           :required="requiredEmail"
-          :label="$t('shared.account.address_form.work_email_label')"
+          :label="$t('common.labels.work_email')"
           class="mb-4"
           :maxlength="64"
         />
@@ -43,7 +43,7 @@
           :error="!!errors.phone"
           :disabled="disabled"
           :required="requiredPhone"
-          :label="$t('shared.account.address_form.phone_label')"
+          :label="$t('common.labels.phone')"
           class="mb-4"
           :maxlength="64"
         />
@@ -59,10 +59,10 @@
         <VcInput
           v-if="withDescriptionField"
           v-model="description"
-          :message="errors.description"
-          :error="!!errors.description"
+          :message="(errors as Record<string, string>).description"
+          :error="!!(errors as Record<string, string>).description"
           :disabled="disabled"
-          :label="$t('shared.account.address_form.description_label')"
+          :label="$t('common.labels.description')"
           class="mb-4"
           :maxlength="128"
         />
@@ -71,12 +71,12 @@
           <VcSelect
             v-model="country"
             text-field="name"
-            :error="!!errors.countryCode"
             :message="errors.countryCode"
+            :error="!!errors.countryCode"
             :disabled="disabled"
             :items="countries"
-            :label="$t('shared.account.address_form.country_label')"
-            :placeholder="$t('shared.account.address_form.country_placeholder')"
+            :label="$t('common.labels.country')"
+            :placeholder="$t('common.placeholders.select_country')"
             class="mb-4 w-full xl:w-7/12"
             size="lg"
             required
@@ -87,7 +87,7 @@
             :message="errors.postalCode"
             :error="!!errors.postalCode"
             :disabled="disabled"
-            :label="$t('shared.account.address_form.zip_label')"
+            :label="$t('common.labels.zip_or_postal_code')"
             class="order-3 mb-4 xl:order-none xl:ml-4 xl:w-4/12 xl:grow"
             required
             :maxlength="32"
@@ -97,12 +97,12 @@
             v-model="region"
             text-field="name"
             :items="regions"
-            :error="!!errors.regionId"
             :message="errors.regionId"
+            :error="!!errors.regionId"
             :required="!!regions.length"
             :disabled="disabled || !regions.length"
-            :label="$t('shared.account.address_form.region_label')"
-            :placeholder="$t('shared.account.address_form.region_placeholder')"
+            :label="$t('common.labels.region')"
+            :placeholder="$t('common.placeholders.select_region')"
             class="order-2 mb-4 xl:order-none xl:w-5/12"
             size="lg"
           />
@@ -112,7 +112,7 @@
             :message="errors.city"
             :error="!!errors.city"
             :disabled="disabled"
-            :label="$t('shared.account.address_form.city_label')"
+            :label="$t('common.labels.city')"
             class="order-4 mb-4 xl:order-none xl:ml-4 xl:grow"
             :required="requiredCity"
             :maxlength="128"
@@ -124,7 +124,7 @@
           :message="errors.line1"
           :error="!!errors.line1"
           :disabled="disabled"
-          :label="$t('shared.account.address_form.line1_label')"
+          :label="$t('common.labels.address_line1')"
           class="mb-4"
           required
           :maxlength="128"
@@ -133,9 +133,9 @@
         <VcInput
           v-model="line2"
           :message="errors.line2"
-          :error="errors.line2"
+          :error="!!errors.line2"
           :disabled="disabled"
-          :label="$t('shared.account.address_form.line2_label')"
+          :label="$t('common.labels.address_line2')"
           class="mb-4"
           :maxlength="128"
         />
@@ -147,41 +147,37 @@
 </template>
 
 <script setup lang="ts">
+import { toTypedSchema } from "@vee-validate/yup";
 import { clone } from "lodash";
-import { useForm, useField } from "vee-validate";
+import { useField, useForm } from "vee-validate";
 import { computed, ref, watch } from "vue";
-import * as yup from "yup";
+import { string as yupString } from "yup";
 import { getAddressName, Logger } from "@/core/utilities";
-import type { CountryRegionType, CountryType, MemberAddressType } from "@/xapi/types";
-import type { PropType, Ref } from "vue";
+import type { AnyAddressType } from "@/core/types";
+import type { CountryRegionType, CountryType } from "@/xapi/types";
 
-const emit = defineEmits<{
-  (event: "update:modelValue", address: MemberAddressType): void;
-  (event: "save", address: MemberAddressType): void;
-}>();
+interface IEmits {
+  (event: "update:modelValue", address: AnyAddressType): void;
+  (event: "save", address: AnyAddressType): void;
+}
 
-const props = defineProps({
-  disabled: Boolean,
-  requiredEmail: Boolean,
-  requiredPhone: Boolean,
-  requiredCity: Boolean,
-  withDescriptionField: Boolean,
-  withPersonalInfo: Boolean,
+interface IProps {
+  modelValue?: AnyAddressType;
+  disabled?: boolean;
+  requiredEmail?: boolean;
+  requiredPhone?: boolean;
+  requiredCity?: boolean;
+  withDescriptionField?: boolean;
+  withPersonalInfo?: boolean;
+  countries?: CountryType[];
+}
 
-  modelValue: {
-    type: Object as PropType<MemberAddressType | null>,
-    default: null,
-  },
-
-  countries: {
-    type: Array as PropType<CountryType[]>,
-    default: () => [],
-    required: true,
-  },
+const emit = defineEmits<IEmits>();
+const props = withDefaults(defineProps<IProps>(), {
+  countries: () => [],
 });
 
-const _emptyAddress: Readonly<MemberAddressType> = {
-  isDefault: false,
+const _emptyAddress: Readonly<AnyAddressType> = {
   firstName: "",
   lastName: "",
   email: "",
@@ -195,10 +191,9 @@ const _emptyAddress: Readonly<MemberAddressType> = {
   line1: "",
   line2: "",
   phone: "",
-  // FIXME: The values may be NULL. Incorrect behavior of the "dirty" variable
 };
 
-const initialValues: Ref<MemberAddressType> = ref(clone(props.modelValue || _emptyAddress));
+const initialValues = ref<AnyAddressType>(clone(props.modelValue || _emptyAddress));
 
 const {
   values,
@@ -215,7 +210,6 @@ const slotsData = computed(() => ({
   setErrors,
   validate,
   reset,
-  clear,
   save,
   errors,
   values,
@@ -227,51 +221,51 @@ const slotsData = computed(() => ({
 }));
 
 const emailRules = computed(() => {
-  let rules = yup.string().max(64).email().nullable();
+  let rules = yupString().max(64).email().nullable();
   if (props.withPersonalInfo && props.requiredEmail) {
     rules = rules.required();
   }
-  return rules;
+  return toTypedSchema(rules);
 });
 
 const phoneRules = computed(() => {
-  let rules = yup.string().max(64).nullable();
+  let rules = yupString().max(64).nullable();
   if (props.withPersonalInfo && props.requiredPhone) {
     rules = rules.required();
   }
-  return rules;
+  return toTypedSchema(rules);
 });
 
 const cityRules = computed(() => {
-  let rules = yup.string().max(128).nullable();
+  let rules = yupString().max(128).nullable();
   if (props.requiredCity) {
     rules = rules.required();
   }
-  return rules;
+  return toTypedSchema(rules);
 });
 
 const regionRules = computed(() => {
-  let rules = yup.string().nullable();
+  let rules = yupString().nullable();
   if (regions.value.length) {
     rules = rules.required();
   }
-  return rules;
+  return toTypedSchema(rules);
 });
 
 const firstNameRules = computed(() => {
-  let rules = yup.string().max(64).nullable();
+  let rules = yupString().max(64).nullable();
   if (props.withPersonalInfo) {
     rules = rules.required();
   }
-  return rules;
+  return toTypedSchema(rules);
 });
 
 const lastNameRules = computed(() => {
-  let rules = yup.string().max(64).nullable();
+  let rules = yupString().max(64).nullable();
   if (props.withPersonalInfo) {
     rules = rules.required();
   }
-  return rules;
+  return toTypedSchema(rules);
 });
 
 const country = computed<CountryType | undefined>({
@@ -292,37 +286,31 @@ const region = computed<CountryRegionType | undefined>({
   },
 });
 
-const { value: email } = useField<string>("email", emailRules);
-const { value: city } = useField<string>("city", cityRules);
-const { value: phone } = useField<string>("phone", phoneRules);
-const { value: firstName } = useField<string>("firstName", firstNameRules);
-const { value: lastName } = useField<string>("lastName", lastNameRules);
-const { value: postalCode } = useField<string>("postalCode", yup.string().max(32).required().nullable());
-const { value: countryCode } = useField<string>("countryCode", yup.string().required().nullable());
-const { value: countryName } = useField<string>("countryName", yup.string().max(128).nullable());
-const { value: regionName } = useField<string>("regionName", yup.string().max(128).nullable());
-const { value: regionId } = useField<string>("regionId", regionRules);
-const { value: line1 } = useField<string>("line1", yup.string().max(128).required().nullable());
-const { value: line2 } = useField<string>("line2", yup.string().max(128).nullable());
-const { value: description } = useField<string>("description", yup.string().max(128).nullable());
+const { value: email } = useField("email", emailRules, { syncVModel: false });
+const { value: city } = useField("city", cityRules, { syncVModel: false });
+const { value: phone } = useField("phone", phoneRules, { syncVModel: false });
+const { value: firstName } = useField("firstName", firstNameRules, { syncVModel: false });
+const { value: lastName } = useField("lastName", lastNameRules, { syncVModel: false });
+const { value: postalCode } = useField("postalCode", yupString().max(32).required().nullable(), {
+  syncVModel: false,
+});
+const { value: countryCode } = useField("countryCode", yupString().required().nullable(), { syncVModel: false });
+const { value: countryName } = useField("countryName", yupString().max(128).nullable(), { syncVModel: false });
+const { value: regionName } = useField("regionName", yupString().max(128).nullable(), { syncVModel: false });
+const { value: regionId } = useField("regionId", regionRules, { syncVModel: false });
+const { value: line1 } = useField("line1", yupString().max(128).required().nullable(), { syncVModel: false });
+const { value: line2 } = useField("line2", yupString().max(128).nullable(), { syncVModel: false });
+const { value: description } = useField("description", yupString().max(128).nullable(), { syncVModel: false });
 
 const save = handleSubmit((address) => {
-  const newAddress: MemberAddressType = { ...address, name: getAddressName(address) };
+  const newAddress: AnyAddressType = { ...address, name: getAddressName(address) };
   emit("update:modelValue", newAddress);
   emit("save", newAddress);
 }, Logger.debug);
 
-function clear() {
-  setValues({
-    ...props.modelValue,
-    ..._emptyAddress,
-    isDefault: !!props.modelValue?.isDefault,
-  });
-}
-
 watch(
   () => props.modelValue,
-  (value: MemberAddressType | null) => {
+  (value) => {
     initialValues.value = clone(value || _emptyAddress);
     setValues(initialValues.value);
   },

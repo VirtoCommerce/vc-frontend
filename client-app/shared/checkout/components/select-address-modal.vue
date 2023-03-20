@@ -55,7 +55,9 @@
             </p>
 
             <p class="text-sm">
-              <span v-if="isCorporateAddresses">{{ itemData.item.description }}</span>
+              <span v-if="isCorporateAddresses">
+                {{ isMemberAddressType(itemData.item) ? itemData.item.description : "" }}
+              </span>
               <span v-else>
                 {{ itemData.item.countryCode }} {{ itemData.item.regionName }} {{ itemData.item.city }}
                 {{ itemData.item.line1 }}
@@ -116,7 +118,7 @@
 
           <td class="truncate p-5">
             <span v-if="isCorporateAddresses">
-              {{ address.description }}
+              {{ isMemberAddressType(address) ? address.description : "" }}
             </span>
             <span v-else>
               {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
@@ -191,7 +193,7 @@
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed, watchEffect, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { isEqualAddresses } from "@/core/utilities";
+import { isEqualAddresses, isMemberAddressType } from "@/core/utilities";
 import type { AnyAddressType } from "@/core/types";
 
 interface IProps {
@@ -224,29 +226,23 @@ const paginatedAddresses = computed(() =>
   props.addresses.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
 );
 
-const columns = computed<ITableColumn[]>(() => [
-  {
-    id: props.isCorporateAddresses ? "address" : "firstName",
-    title: props.isCorporateAddresses ? t("common.labels.address") : t("common.labels.recipient_name"),
-  },
-  {
-    id: props.isCorporateAddresses ? "description" : "countryCode",
-    title: props.isCorporateAddresses ? t("common.labels.description") : t("common.labels.address"),
-  },
-  {
-    id: props.isCorporateAddresses ? "postalCode" : "phone",
-    title: props.isCorporateAddresses ? t("common.labels.zip_code") : t("common.labels.phone"),
-  },
-  {
-    id: props.isCorporateAddresses ? "countryName" : "email",
-    title: props.isCorporateAddresses ? t("common.labels.country") : t("common.labels.email"),
-  },
-  {
-    id: "activeAddress",
-    title: t("common.labels.active_address"),
-    align: "center",
-  },
-]);
+const columns = computed<ITableColumn[]>(() =>
+  props.isCorporateAddresses
+    ? [
+        { id: "name", title: t("common.labels.address") },
+        { id: "description", title: t("common.labels.description") },
+        { id: "postalCode", title: t("common.labels.zip_or_postal_code") },
+        { id: "countryName", title: t("common.labels.country") },
+        { id: "id", title: t("common.labels.active_address"), align: "center" },
+      ]
+    : [
+        { id: "firstName", title: t("common.labels.recipient_name") },
+        { id: "name", title: t("common.labels.address") },
+        { id: "phone", title: t("common.labels.phone") },
+        { id: "email", title: t("common.labels.email") },
+        { id: "id", title: t("common.labels.active_address"), align: "center" },
+      ]
+);
 
 const onPageChange = async (newPage: number) => {
   page.value = newPage;

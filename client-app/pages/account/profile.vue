@@ -18,8 +18,8 @@
 
         <VcInput
           v-model="firstName"
-          :label="$t('pages.account.profile.first_name_label')"
-          :placeholder="$t('pages.account.profile.first_name_placeholder')"
+          :label="$t('common.labels.first_name')"
+          :placeholder="$t('common.placeholders.first_name')"
           :disabled="isSubmitting"
           :message="errors.firstName"
           :error="!!errors.firstName"
@@ -31,8 +31,8 @@
 
         <VcInput
           v-model="lastName"
-          :label="$t('pages.account.profile.last_name_label')"
-          :placeholder="$t('pages.account.profile.last_name_placeholder')"
+          :label="$t('common.labels.last_name')"
+          :placeholder="$t('common.placeholders.first_name')"
           :disabled="isSubmitting"
           :message="errors.lastName"
           :error="!!errors.lastName"
@@ -44,9 +44,10 @@
 
         <VcInput
           :model-value="email"
-          :label="$t('pages.account.profile.email_label')"
-          :placeholder="$t('pages.account.profile.email_placeholder')"
+          :label="$t('common.labels.email')"
+          :placeholder="$t('common.placeholders.first_name')"
           name="email"
+          autocomplete="off"
           class="mb-5"
           disabled
         />
@@ -117,7 +118,7 @@
             class="w-full uppercase lg:w-48"
             is-submit
           >
-            {{ $t("pages.account.profile.update_button") }}
+            {{ $t("common.buttons.update") }}
           </VcButton>
         </div>
       </form>
@@ -126,15 +127,15 @@
 </template>
 
 <script setup lang="ts">
+import { toTypedSchema } from "@vee-validate/yup";
 import { whenever } from "@vueuse/core";
-import { useForm, useField } from "vee-validate";
+import { useField, useForm } from "vee-validate";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import * as yup from "yup";
+import { object, ref as yupRef, string } from "yup";
 import { usePageHead } from "@/core/composables";
 import { ProfileUpdateSuccessDialog, useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
-import type { Ref } from "vue";
 
 const { t } = useI18n();
 const { user, updateUser, changePassword } = useUser();
@@ -144,34 +145,30 @@ usePageHead({
   title: computed(() => t("pages.account.profile.meta.title")),
 });
 
-const updateProfileError: Ref<boolean> = ref(false);
+const updateProfileError = ref<boolean>(false);
 
-const validationSchema = yup.object({
-  firstName: yup.string().label(t("pages.account.profile.first_name_label")).required().max(64),
-  lastName: yup.string().label(t("pages.account.profile.last_name_placeholder")).required().max(64),
-  email: yup.string().label(t("pages.account.profile.email_placeholder")),
-  oldPassword: yup.string().label(t("pages.account.profile.old_password_label")),
-  newPassword: yup
-    .string()
-    .label(t("pages.account.profile.new_password_label"))
-    .when("oldPassword", {
+const validationSchema = toTypedSchema(
+  object({
+    firstName: string().required().max(64),
+    lastName: string().required().max(64),
+    email: string(),
+    oldPassword: string(),
+    newPassword: string().when("oldPassword", {
       is: (value: string) => !!value,
-      then: yup
-        .string()
-        .required()
-        .notOneOf([yup.ref("oldPassword")], t("pages.account.profile.errors.password_new_same_old")),
+      then: (stringSchema) =>
+        stringSchema
+          .required()
+          .notOneOf([yupRef("oldPassword")], t("pages.account.profile.errors.password_new_same_old")),
     }),
-  confirmNewPassword: yup
-    .string()
-    .label(t("pages.account.profile.confirm_new_password_label"))
-    .when("oldPassword", {
+    confirmNewPassword: string().when("oldPassword", {
       is: (value: string) => !!value,
-      then: yup
-        .string()
-        .required()
-        .oneOf([yup.ref("newPassword")], t("pages.account.profile.errors.passwords_do_not_match")),
+      then: (stringSchema) =>
+        stringSchema
+          .required()
+          .oneOf([yupRef("newPassword")], t("pages.account.profile.errors.passwords_do_not_match")),
     }),
-});
+  })
+);
 
 const initialValues = computed(() => ({
   userName: user.value.userName,
