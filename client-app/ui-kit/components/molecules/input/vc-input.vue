@@ -227,7 +227,7 @@ watchEffect(() => {
   }
 
   &__input {
-    @apply relative px-3 appearance-none bg-transparent rounded-[3px] text-base leading-none w-full outline-none min-w-0;
+    @apply relative px-3 appearance-none bg-transparent rounded-[3px] text-base leading-none w-full min-w-0;
 
     &:autofill {
       &:disabled {
@@ -237,6 +237,10 @@ watchEffect(() => {
       &:not(:disabled) {
         box-shadow: 0 0 0 1000px #fff inset;
       }
+    }
+
+    &:focus {
+      @apply outline-none;
     }
 
     &:disabled {
