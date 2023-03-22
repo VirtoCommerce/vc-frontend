@@ -14,11 +14,7 @@
       <div
         class="flex w-2/5 select-none items-center justify-center space-x-2 border-r py-4 px-1"
         :class="{ 'cursor-pointer hover:bg-gray-100': isAuthenticated }"
-        :title="
-          !isAuthenticated
-            ? $t('shared.catalog.product_details.price_block.add_to_list_button_unauthorized_title')
-            : undefined
-        "
+        :title="!isAuthenticated ? $t('common.messages.wishlists_available_for_authorized') : undefined"
         @click="openAddToListModal"
       >
         <svg
