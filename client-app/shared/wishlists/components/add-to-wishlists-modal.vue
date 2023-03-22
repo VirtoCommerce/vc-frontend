@@ -133,17 +133,21 @@ import { configInjectionKey } from "@/core/injection-keys";
 import { asyncForEach } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
-import { useWishlists } from "@/shared/wishlists";
+import { useWishlists } from "../composables";
 import type { WishlistInputType } from "@/shared/wishlists/types";
 import type { Product as ProductType } from "@/xapi/types";
-import type { PropType } from "vue";
 
-const props = defineProps({
-  product: {
-    type: Object as PropType<ProductType>,
-    required: true,
-  },
-});
+interface IProps {
+  product: ProductType;
+}
+
+interface IEmits {
+  (event: "result", isInList: boolean): void;
+}
+
+const emit = defineEmits<IEmits>();
+
+const props = defineProps<IProps>();
 
 const { t } = useI18n();
 const { closePopup } = usePopup();
@@ -260,6 +264,9 @@ async function save() {
   await createListsAndAddProduct();
   await removeProductFromWishlists();
   await addToWishlistsFromListOther();
+  await fetchWishlists();
+
+  emit("result", !!listsContain.value.length);
 
   closePopup();
   loading.value = false;
