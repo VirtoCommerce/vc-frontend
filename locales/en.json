@@ -48,7 +48,9 @@
       "view_invoice": "View invoice",
       "pay_now": "Pay now",
       "payment_details": "Payment details",
-      "reorder_all": "Reorder all"
+      "reorder_all": "Reorder all",
+      "add_new": "Add new",
+      "add_new_address": "Add new address"
     },
     "labels": {
       "actions": "Actions",
@@ -788,25 +790,11 @@
         "meta": {
           "title": "@:pages.account.addresses.addresses_title"
         },
-        "edit_label": "Edit",
-        "delete_label": "Delete",
-        "add_new_address_button_mobile": "Add new",
-        "add_new_address_button": "Add new address",
-        "cancel_button": "@:common.buttons.cancel",
-        "save_button": "@:common.buttons.save",
-        "create_button": "@:common.buttons.create",
-        "recipient_name_label": "Recipient name",
-        "address_label": "@:common.labels.address",
-        "phone_label": "@:common.labels.phone",
-        "email_label": "@:common.labels.email",
         "no_addresses_message": "You do not have any addresses yet",
         "addresses_icon": "Address icon",
         "new_address_title": "New address",
         "edit_address_title": "Edit address",
         "addresses_title": "Addresses",
-        "actions_label": "@:common.labels.actions",
-        "edit_button": "@:common.buttons.edit",
-        "delete_button": "@:common.buttons.delete",
         "make_default_button": "Set as default",
         "confirm_delete_message": "Are you sure you want to delete this address?",
         "no_addresses_img_alt": "No addresses"

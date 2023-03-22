@@ -1,27 +1,25 @@
 <template>
   <div>
-    <BackButtonInHeader v-if="isMobile && editingMode" @click="closeEditMode" />
-
     <!-- Title block -->
     <div class="mx-5 flex items-center justify-between md:mx-0">
       <h2 class="truncate text-3xl font-bold uppercase text-gray-800">
-        {{ title }}
+        {{ $t("pages.account.addresses.addresses_title") }}
       </h2>
 
       <VcButton
-        v-if="!editingMode && paginatedAddresses.length"
+        v-if="paginatedAddresses.length"
         class="px-3 uppercase"
         size="sm"
         is-outline
-        @click="openEditMode()"
+        @click="openAddOrUpdateAddress()"
       >
-        <span class="sm:hidden">{{ $t("pages.account.addresses.add_new_address_button_mobile") }}</span>
-        <span class="hidden sm:inline">{{ $t("pages.account.addresses.add_new_address_button") }}</span>
+        <span class="sm:hidden">{{ $t("common.buttons.add_new") }}</span>
+        <span class="hidden sm:inline">{{ $t("common.buttons.add_new_address") }}</span>
       </VcButton>
     </div>
 
     <VcEmptyView
-      v-if="!paginatedAddresses.length && !editingMode && !addressesLoading"
+      v-if="!paginatedAddresses.length && !addressesLoading"
       :text="$t('pages.account.addresses.no_addresses_message')"
     >
       <template #icon>
@@ -32,56 +30,16 @@
       </template>
 
       <template #button>
-        <VcButton class="px-4 uppercase" size="lg" @click="openEditMode">
+        <VcButton class="px-4 uppercase" size="lg" @click="openAddOrUpdateAddress()">
           <i class="fa fa-plus -ml-px mr-3" />
-          {{ $t("pages.account.addresses.add_new_address_button") }}
+          {{ $t("common.buttons.add_new_address") }}
         </VcButton>
       </template>
     </VcEmptyView>
 
     <div v-else class="flex flex-col bg-white shadow-sm md:rounded md:border">
-      <VcAddressForm
-        v-if="editingMode"
-        :model-value="editableAddress"
-        :countries="countries"
-        :disabled="saveAddressLoading"
-        class="px-6 py-4"
-        with-personal-info
-        required-email
-        required-city
-        @save="saveAddress"
-      >
-        <template #append="{ dirty, valid }">
-          <div class="flex flex-row space-x-4 pb-3 pt-7 sm:float-right sm:py-4">
-            <VcButton
-              kind="secondary"
-              :is-disabled="saveAddressLoading"
-              class="w-32 uppercase sm:w-auto sm:px-12"
-              is-outline
-              @click="closeEditMode"
-            >
-              {{ $t("pages.account.addresses.cancel_button") }}
-            </VcButton>
-
-            <VcButton
-              :is-disabled="!dirty || !valid"
-              :is-waiting="saveAddressLoading"
-              class="grow uppercase sm:flex-none sm:px-16"
-              is-submit
-            >
-              {{
-                editableAddress
-                  ? $t("pages.account.addresses.save_button")
-                  : $t("pages.account.addresses.create_button")
-              }}
-            </VcButton>
-          </div>
-        </template>
-      </VcAddressForm>
-
       <!-- View Table -->
       <VcTable
-        v-else
         :loading="addressesLoading"
         :item-actions-builder="itemActionsBuilder"
         :columns="columns"
@@ -95,7 +53,9 @@
         <template #mobile-item="itemData">
           <div class="grid grid-cols-2 gap-y-4 border-b border-gray-200 p-6">
             <div class="flex flex-col">
-              <span v-t="'pages.account.addresses.recipient_name_label'" class="text-sm text-gray-400" />
+              <span class="text-sm text-gray-400">
+                {{ $t("common.labels.recipient_name") }}
+              </span>
 
               <span class="overflow-hidden text-ellipsis pr-4 font-extrabold">
                 {{ itemData.item.firstName }} {{ itemData.item.lastName }}
@@ -103,7 +63,9 @@
             </div>
 
             <div class="flex flex-col">
-              <span v-t="'pages.account.addresses.address_label'" class="text-sm text-gray-400" />
+              <span class="text-sm text-gray-400">
+                {{ $t("common.labels.address") }}
+              </span>
 
               <span class="overflow-hidden text-ellipsis">
                 {{ itemData.item.countryCode }} {{ itemData.item.regionName }} {{ itemData.item.city }}
@@ -113,7 +75,9 @@
             </div>
 
             <div class="flex flex-col">
-              <span v-t="'pages.account.addresses.phone_label'" class="text-sm text-gray-400" />
+              <span class="text-sm text-gray-400">
+                {{ $t("commmon.labels.phone") }}
+              </span>
 
               <span class="overflow-hidden text-ellipsis pr-4">
                 {{ itemData.item.phone }}
@@ -121,7 +85,9 @@
             </div>
 
             <div class="flex flex-col">
-              <span v-t="'pages.account.addresses.email_label'" class="text-sm text-gray-400" />
+              <span class="text-sm text-gray-400">
+                {{ $t("common.labels.email") }}
+              </span>
 
               <span class="overflow-hidden text-ellipsis">
                 {{ itemData.item.email }}
@@ -133,22 +99,30 @@
         <template #mobile-skeleton>
           <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-gray-200 p-6">
             <div class="flex flex-col">
-              <span v-t="'pages.account.addresses.recipient_name_label'" class="text-sm text-gray-400"></span>
+              <span class="text-sm text-gray-400">
+                {{ $t("common.labels.recipient_name") }}
+              </span>
               <div class="mr-4 h-6 animate-pulse bg-gray-200"></div>
             </div>
 
             <div class="flex flex-col">
-              <span v-t="'pages.account.addresses.address_label'" class="text-sm text-gray-400"></span>
+              <span class="text-sm text-gray-400">
+                {{ $t("common.labels.address") }}
+              </span>
               <div class="h-6 animate-pulse bg-gray-200"></div>
             </div>
 
             <div class="flex flex-col">
-              <span v-t="'pages.account.addresses.phone_label'" class="text-sm text-gray-400"></span>
+              <span class="text-sm text-gray-400">
+                {{ $t("common.labels.phone") }}
+              </span>
               <div class="mr-4 h-6 animate-pulse bg-gray-200"></div>
             </div>
 
             <div class="flex flex-col">
-              <span v-t="'pages.account.addresses.email_label'" class="text-sm text-gray-400"></span>
+              <span class="text-sm text-gray-400">
+                {{ $t("common.labels.email") }}
+              </span>
               <div class="h-6 animate-pulse bg-gray-200"></div>
             </div>
           </div>
@@ -177,8 +151,8 @@
                 <button
                   type="button"
                   class="h-7 w-7 rounded text-[color:var(--color-primary)] shadow hover:bg-gray-100"
-                  :title="$t('pages.account.addresses.edit_label')"
-                  @click="openEditMode(address)"
+                  :title="$t('common.buttons.edit')"
+                  @click="openAddOrUpdateAddress(address)"
                 >
                   <i class="fas fa-pencil-alt" />
                 </button>
@@ -186,7 +160,7 @@
                 <button
                   type="button"
                   class="h-7 w-7 rounded text-[color:var(--color-danger)] shadow hover:bg-gray-100"
-                  :title="$t('pages.account.addresses.delete_label')"
+                  :title="$t('common.buttons.delete')"
                   @click="removeAddress(address)"
                 >
                   <i class="fas fa-times" />
@@ -225,20 +199,17 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { clone } from "lodash";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCountries, usePageHead } from "@/core/composables";
 import { AddressType } from "@/core/enums";
 import { useUserAddresses } from "@/shared/account";
-import { BackButtonInHeader } from "@/shared/layout";
+import { AddOrUpdateAddressModal } from "@/shared/checkout";
+import { usePopup } from "@/shared/popup";
 import type { ISortInfo } from "@/core/types";
 import type { MemberAddressType } from "@/xapi/types";
-import type { ComputedRef, Ref } from "vue";
 
 const { t } = useI18n();
-const breakpoints = useBreakpoints(breakpointsTailwind);
 const { countries, loadCountries } = useCountries();
 const {
   loading: addressesLoading,
@@ -248,56 +219,44 @@ const {
   removeAddresses,
   addOrUpdateAddresses,
 } = useUserAddresses();
+const { openPopup, closePopup } = usePopup();
 
 usePageHead({
   title: t("pages.account.addresses.meta.title"),
 });
 
-const isMobile = breakpoints.smaller("lg");
-const editingMode: Ref<boolean> = ref(false);
-const editableAddress: Ref<MemberAddressType | null> = ref(null);
 const page = ref(1);
 const itemsPerPage = ref(6);
-const saveAddressLoading = ref(false);
 
-const pages: ComputedRef<number> = computed(() => Math.ceil(addresses.value.length / itemsPerPage.value));
-const paginatedAddresses: ComputedRef<MemberAddressType[]> = computed(() =>
+const pages = computed<number>(() => Math.ceil(addresses.value.length / itemsPerPage.value));
+const paginatedAddresses = computed<MemberAddressType[]>(() =>
   addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
 );
-const title: ComputedRef<string> = computed(() => {
-  if (editingMode.value) {
-    return editableAddress.value
-      ? t("pages.account.addresses.edit_address_title")
-      : t("pages.account.addresses.new_address_title");
-  } else {
-    return t("pages.account.addresses.addresses_title");
-  }
-});
 
-const columns = ref<ITableColumn[]>([
+const columns = computed<ITableColumn[]>(() => [
   {
     id: "firstName",
-    title: t("pages.account.addresses.recipient_name_label"),
+    title: t("common.labels.recipient_name"),
     sortable: true,
   },
   {
     id: "countryCode",
-    title: t("pages.account.addresses.address_label"),
+    title: t("common.labels.address"),
     sortable: true,
   },
   {
     id: "phone",
-    title: t("pages.account.addresses.phone_label"),
+    title: t("common.labels.phone"),
     sortable: true,
   },
   {
     id: "email",
-    title: t("pages.account.addresses.email_label"),
+    title: t("common.labels.email"),
     sortable: true,
   },
   {
     id: "actions",
-    title: t("pages.account.addresses.actions_label"),
+    title: t("common.labels.actions"),
     align: "center",
   },
 ]);
@@ -307,30 +266,33 @@ const onPageChange = async (newPage: number) => {
   page.value = newPage;
 };
 
-// if address parameter is NULL, then adding a new address will open
-async function openEditMode(address: MemberAddressType | null = null) {
-  editableAddress.value = clone(address);
-  editingMode.value = true;
-}
+function openAddOrUpdateAddress(address?: MemberAddressType): void {
+  openPopup({
+    component: AddOrUpdateAddressModal,
+    props: {
+      address,
 
-function closeEditMode() {
-  editableAddress.value = null;
-  editingMode.value = false;
+      async onResult(updatedAddress: MemberAddressType) {
+        await addOrUpdateAddresses([{ ...updatedAddress, addressType: AddressType.BillingAndShipping }]);
+        closePopup();
+      },
+    },
+  });
 }
 
 function itemActionsBuilder() {
   const actions: SlidingActionsItem[] = [
     {
       icon: "fas fa-pencil-alt",
-      title: t("pages.account.addresses.edit_button"),
+      title: t("common.buttons.edit"),
       classes: "bg-gray-550",
       clickHandler(address: MemberAddressType) {
-        openEditMode(address);
+        openAddOrUpdateAddress(address);
       },
     },
     {
       icon: "fas fa-trash-alt",
-      title: t("pages.account.addresses.delete_button"),
+      title: t("common.buttons.delete"),
       left: true,
       classes: "bg-[color:var(--color-danger)]",
       clickHandler(address: MemberAddressType) {
@@ -342,17 +304,10 @@ function itemActionsBuilder() {
   return actions;
 }
 
-const applySorting = async (sortInfo: ISortInfo): Promise<void> => {
+async function applySorting(sortInfo: ISortInfo): Promise<void> {
   sort.value = sortInfo;
   page.value = 1;
   await fetchAddresses();
-};
-
-async function saveAddress(address: MemberAddressType): Promise<void> {
-  saveAddressLoading.value = true;
-  await addOrUpdateAddresses([{ ...address, addressType: AddressType.BillingAndShipping }]);
-  closeEditMode();
-  saveAddressLoading.value = false;
 }
 
 async function removeAddress(address: MemberAddressType): Promise<void> {
