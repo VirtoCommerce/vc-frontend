@@ -3,7 +3,7 @@
     <div class="grow sm:max-h-screen-60 sm:overflow-y-auto sm:border-b lg:max-h-screen-75">
       <!-- Lists -->
       <template v-if="!loadingLists">
-        <template v-if="listsWithroduct.length">
+        <template v-if="listsWithProduct.length">
           <div
             class="bg-[color:var(--color-add-wishlist-dialog-subtitle-bg)] py-3 px-6 text-15 font-bold leading-5 sm:py-2.5"
           >
@@ -11,7 +11,7 @@
           </div>
 
           <ul>
-            <li v-for="list in listsWithroduct" :key="list.id" class="px-6 py-4 sm:pt-4 sm:pb-3 last:sm:pb-7">
+            <li v-for="list in listsWithProduct" :key="list.id" class="px-6 py-4 sm:pt-4 sm:pb-3 last:sm:pb-7">
               <VcCheckbox
                 model-value
                 :value="list.id"
@@ -94,7 +94,7 @@
       </ul>
 
       <!-- Empty -->
-      <div v-else-if="!listsOther.length && !listsWithroduct.length" class="bg-gray-50 px-6 py-10 text-center">
+      <div v-else-if="!listsOther.length && !listsWithProduct.length" class="bg-gray-50 px-6 py-10 text-center">
         {{ $t("shared.wishlists.add_to_wishlists_dialog.empty_list") }}
       </div>
     </div>
@@ -173,7 +173,7 @@ const listsLimit = config?.wishlists_limit || DEFAULT_WISHLIST_LIMIT;
 
 const creationButtonDisabled = computed(() => lists.value.length + newLists.value.length >= listsLimit);
 
-const listsWithroduct = computed(() => {
+const listsWithProduct = computed(() => {
   return lists.value.filter((list) => list.items!.some((item) => item.productId === product.value.id));
 });
 
@@ -234,7 +234,7 @@ async function createListsAndAddProduct() {
 
 async function removeProductFromWishlists() {
   const payload = removedLists.value.map((listId) => {
-    const listWithProduct = listsWithroduct.value.find((item) => item.id === listId);
+    const listWithProduct = listsWithProduct.value.find((item) => item.id === listId);
     const lineItemId = listWithProduct?.items?.find((item) => item.productId === product.value.id)?.id || "";
 
     return {
@@ -270,7 +270,7 @@ async function save() {
   await addToWishlistsFromListOther();
   await fetchWishlists();
 
-  emit("result", !!listsWithroduct.value.length);
+  emit("result", !!listsWithProduct.value.length);
 
   closePopup();
   loading.value = false;
