@@ -134,7 +134,8 @@
       "fill_all_required": "Please fill in all required information to proceed.",
       "something_went_wrong": "Whoops! Something went wrong. Please check whether everything is correct and try again.",
       "checkout_pricing_warning": "Availability, shipping, tax and promotions are not final until you complete your order.",
-      "quote_request": "You can request items in your cart through a special service"
+      "quote_request": "You can request items in your cart through a special service",
+      "wishlists_available_for_authorized": "Wishlists are available only for authenticated users"
     },
     "placeholders": {
       "enter_value": "Please enter value",
@@ -412,6 +413,14 @@
         "user_unblocked": "The user has been successfully unblocked"
       }
     },
+    "compare": {
+      "add_to_compare": {
+        "tooltips": {
+          "add": "Add to Compare",
+          "remove": "Remove from Compare"
+        }
+      }
+    },
     "cart": {
       "add_to_cart": {
         "errors": {
@@ -468,7 +477,6 @@
         "price_block": {
           "title": "Price and Delivery",
           "add_to_list_button": "Add to list",
-          "add_to_list_button_unauthorized_title": "Wishlists are available only for authenticated users",
           "product_email_title": "Please, have a look on the product: {0}"
         },
         "product_variation_card": {
@@ -1089,8 +1097,8 @@
       "filters_button": "@:common.buttons.filters",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
-      "wishlist_tooltip": "Add to list",
-      "add_to_compare_tooltip": "Add to compare",
+      "add_to_wishlist_tooltip": "Add to list",
+      "in_the_list_tooltip": "In the list",
       "variations_button": "{0} variations",
       "show_on_a_separate_page": "Show on a separate page",
       "no_products_message": "There are no products in this category",
