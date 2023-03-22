@@ -47,35 +47,25 @@
 </template>
 
 <script setup lang="ts">
-import { eagerComputed } from "@vueuse/core";
+import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
-import { useI18n } from "vue-i18n";
-import * as yup from "yup";
-import { useWishlists } from "@/shared/wishlists";
+import { computed } from "vue";
+import { string } from "yup";
+import useWishlists from "../composables/useWishlists";
 import type { WishlistType } from "@/xapi/types";
-import type { PropType } from "vue";
 
-const props = defineProps({
-  list: {
-    type: Object as PropType<WishlistType | null>,
-    default: null,
-  },
-});
+interface IProps {
+  list?: WishlistType;
+}
+
+const props = defineProps<IProps>();
 
 useForm({ initialValues: { listName: props.list?.name || "" } });
 
-const { t } = useI18n();
 const { loading, createWishlist, renameWishlist } = useWishlists();
-const {
-  value: listName,
-  meta,
-  errors,
-} = useField<string>(
-  "listName",
-  yup.string().label(t("shared.wishlists.add_or_update_wishlist_dialog.list_name_label")).max(25).required().nullable()
-);
+const { value: listName, meta, errors } = useField<string>("listName", toTypedSchema(string().required().max(25)));
 
-const isEditMode = eagerComputed(() => !!props.list);
+const isEditMode = computed(() => !!props.list);
 
 async function save(closingHandle: () => void) {
   if (!listName.value || errors.value.length) {

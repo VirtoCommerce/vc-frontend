@@ -8,3 +8,4 @@ export { default as LanguageSelector } from "./language-selector/language-select
 export { default as MainLayout } from "./main-layout/main-layout.vue";
 export { default as NestedMobileHeader } from "./nested-mobile-header/nested-mobile-header";
 export { default as SecureLayout } from "./secure-layout/secure-layout.vue";
+export { default as LoginFormSection } from "./login-form-section/login-form-section.vue";
