@@ -1,7 +1,7 @@
 <template>
   <VcTooltip :placement="tooltipPlacement" strategy="fixed">
     <template #trigger>
-      <button type="button" class="block disabled:opacity-40" :disabled="!isAuthenticated" @click="openAddToListModal">
+      <button type="button" class="block" :disabled="!isAuthenticated" @click="openAddToListModal">
         <svg
           :class="[
             customClass,
@@ -17,19 +17,15 @@
 
     <template #content>
       <div class="rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y">
-        <span v-if="isProductInList">
-          {{ $t("pages.catalog.in_the_list_tooltip") }}
-        </span>
-        <span v-else>
-          {{ $t("pages.catalog.add_to_wishlist_tooltip") }}
-        </span>
+        {{ tooltipText }}
       </div>
     </template>
   </VcTooltip>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import AddToWishlistsModal from "./add-to-wishlists-modal.vue";
@@ -46,10 +42,21 @@ const props = withDefaults(defineProps<IProps>(), {
   tooltipPlacement: "left",
 });
 
+const { t } = useI18n();
 const { openPopup } = usePopup();
 const { isAuthenticated } = useUser();
 
 const isProductInList = ref(props.product.inWishlist);
+
+const tooltipText = computed<string>(() => {
+  if (!isAuthenticated.value) {
+    return t("common.messages.wishlists_available_for_authorized");
+  } else if (isProductInList.value) {
+    return t("pages.catalog.in_the_list_tooltip");
+  } else {
+    return t("pages.catalog.add_to_wishlist_tooltip");
+  }
+});
 
 function openAddToListModal() {
   if (!isAuthenticated.value) {
