@@ -22,8 +22,8 @@
         <VcInput
           v-model="firstName"
           class="mb-4"
-          :label="$t('pages.sign_up.first_name_label')"
-          :placeholder="$t('pages.sign_up.first_name_placeholder')"
+          :label="$t('common.labels.first_name')"
+          :placeholder="$t('common.placeholders.first_name')"
           required
           :message="errors.firstName"
           :error="!!errors.firstName"
@@ -35,8 +35,8 @@
         <VcInput
           v-model="lastName"
           class="mb-4"
-          :label="$t('pages.sign_up.last_name_label')"
-          :placeholder="$t('pages.sign_up.last_name_placeholder')"
+          :label="$t('common.labels.last_name')"
+          :placeholder="$t('common.placeholders.last_name')"
           required
           :message="errors.lastName"
           :error="!!errors.lastName"
@@ -48,22 +48,23 @@
         <VcInput
           v-model="email"
           class="mb-4"
-          :label="$t('pages.sign_up.email_label')"
-          :placeholder="$t('pages.sign_up.email_placeholder')"
+          :label="$t('common.labels.email')"
+          :placeholder="$t('common.placeholders.email')"
           required
           :message="errors.email"
           :error="!!errors.email"
           :maxlength="64"
           name="email"
           autocomplete="email"
+          @input="emailValidationData.isChecked = false"
         />
 
         <VcInput
           v-if="registrationKind === RegistrationKind.organization"
           v-model="organizationName"
           class="mb-4"
-          :label="$t('pages.sign_up.organization_name_label')"
-          :placeholder="$t('pages.sign_up.organization_name_placeholder')"
+          :label="$t('common.labels.company_name')"
+          :placeholder="$t('common.placeholders.company_name')"
           required
           :message="errors.organizationName"
           :error="!!errors.organizationName"
@@ -76,8 +77,8 @@
           <VcInput
             v-model="password"
             class="mb-4 w-full lg:w-1/2"
-            :label="$t('pages.sign_up.password_label')"
-            :placeholder="$t('pages.sign_up.password_placeholder')"
+            :label="$t('common.labels.password')"
+            :placeholder="$t('common.placeholders.password')"
             type="password"
             autocomplete="new-password"
             required
@@ -89,8 +90,8 @@
           <VcInput
             v-model="confirmPassword"
             class="mb-4 w-full lg:w-1/2"
-            :label="$t('pages.sign_up.confirm_password_label')"
-            :placeholder="$t('pages.sign_up.confirm_password_placeholder')"
+            :label="$t('common.labels.confirm_password')"
+            :placeholder="$t('common.placeholders.confirm_password')"
             type="password"
             autocomplete="off"
             required
@@ -125,11 +126,12 @@
 </template>
 
 <script setup lang="ts">
-import _ from "lodash";
+import { toTypedSchema } from "@vee-validate/yup";
+import { debounce } from "lodash";
 import { useField, useForm } from "vee-validate";
-import { ref } from "vue";
+import { reactive, ref, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
-import * as yup from "yup";
+import { object, ref as yupRef, string } from "yup";
 import { useIdentityErrorTranslator, usePageHead } from "@/core/composables";
 import { RegistrationKind, RegistrationSuccessDialog, useUser } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
@@ -148,35 +150,39 @@ usePageHead({
   title: t("pages.sign_up.meta.title"),
 });
 
-const schema = yup.object({
-  registrationKind: yup.string().required(),
-  organizationName: yup.string().when("registrationKind", {
-    is: RegistrationKind.organization,
-    then: yup.string().label("Organization Name").required().max(64),
-  }),
-  email: yup
-    .string()
-    .label("Email")
-    .required()
-    .email()
-    .max(64)
-    .test(
-      "is-unique-email",
-      t("common.messages.email_not_unique"),
-      (value) => new Promise((resolve) => (value ? emailValidationDebounced(value, resolve) : resolve(true)))
-    ),
-  firstName: yup.string().label("First Name").required().max(64),
-  lastName: yup.string().label("Last Name").required().max(64),
-  password: yup.string().label("Password").required(),
-  confirmPassword: yup
-    .string()
-    .label("Confirm password")
-    .required()
-    .oneOf([yup.ref("password"), null], t("identity_error.PasswordMismatch")),
-});
+const validationSchema = toTypedSchema(
+  object({
+    registrationKind: string().required(),
+    organizationName: string().when("registrationKind", {
+      is: RegistrationKind.organization,
+      then: (stringSchema) => stringSchema.required().max(64),
+    }),
+    email: string()
+      .required()
+      .email()
+      .max(64)
+      .test({
+        message: t("common.messages.email_not_unique"),
+        test: (value) =>
+          new Promise((resolve) =>
+            nextTick(() =>
+              emailValidationData.isChecked
+                ? resolve(emailValidationData.isUnique)
+                : emailValidationDebounced(value, resolve)
+            )
+          ),
+      }),
+    firstName: string().required().max(64),
+    lastName: string().required().max(64),
+    password: string().required(),
+    confirmPassword: string()
+      .required()
+      .oneOf([yupRef("password")], t("identity_error.PasswordMismatch")),
+  })
+);
 
 const { errors, meta, handleSubmit, setFieldError } = useForm({
-  validationSchema: schema,
+  validationSchema,
   initialValues: {
     registrationKind: RegistrationKind.personal,
     email: "",
@@ -198,11 +204,22 @@ const { value: password } = useField<string>("password");
 const { value: confirmPassword } = useField<string>("confirmPassword");
 
 const commonErrors = ref<string[]>([]);
+const emailValidationData = reactive({
+  isChecked: false,
+  isUnique: false,
+});
+
+const emailValidationDebounced = debounce(async (value: string, resolve: (value: boolean) => void) => {
+  emailValidationData.isUnique = await checkEmailUniqueness({ email: value });
+  emailValidationData.isChecked = true;
+  resolve(emailValidationData.isUnique);
+}, ASYNC_VALIDATION_TIMEOUT_IN_MS);
 
 const onSubmit = handleSubmit(async (data) => {
+  let result: AccountCreationResultType;
+
   commonErrors.value = [];
 
-  let result: AccountCreationResultType;
   if (registrationKind.value === RegistrationKind.personal) {
     result = await registerUser({
       email: data.email!,
@@ -256,11 +273,4 @@ const onSubmit = handleSubmit(async (data) => {
     });
   }
 });
-
-const validateEmailUniqueness = async (value: string, resolve: (value: boolean) => void) => {
-  const unique = await checkEmailUniqueness({ email: value });
-  resolve(unique);
-};
-
-const emailValidationDebounced = _.debounce(validateEmailUniqueness, ASYNC_VALIDATION_TIMEOUT_IN_MS);
 </script>
