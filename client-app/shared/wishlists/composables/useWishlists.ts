@@ -1,6 +1,6 @@
 import { computed, readonly, ref, shallowRef } from "vue";
 import { SORT_ASCENDING } from "@/core/constants";
-import { Logger } from "@/core/utilities";
+import { Logger, asyncForEach } from "@/core/utilities";
 import {
   addWishlist,
   addWishlistItem,
@@ -139,18 +139,18 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
     loading.value = false;
   }
 
-  async function removeItemsFromWishlists(payloads: InputRemoveWishlistItemType[]) {
+  async function removeItemsFromWishlists(payload: InputRemoveWishlistItemType[]) {
     loading.value = true;
 
     // TODO: Use single query
-    for (const payload of payloads) {
+    await asyncForEach(payload, async (item) => {
       try {
-        await deleteWishlistItem(payload);
+        await deleteWishlistItem(item);
       } catch (e) {
         Logger.error(`${useWishlists.name}.${removeItemsFromWishlists.name}`, e);
         throw e;
       }
-    }
+    });
 
     loading.value = false;
   }
