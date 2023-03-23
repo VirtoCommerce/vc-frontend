@@ -2,8 +2,9 @@
   <VcInput
     v-model="quantity"
     class="w-[5.625rem] flex-none"
-    :name="item.id"
+    :name="item.id.toString()"
     :readonly="readonly"
+    :disabled="disabled"
     :min="item.extended.minQuantity"
     :max="item.extended.maxQuantity"
     :error="error"
@@ -11,6 +12,7 @@
     type="number"
     pattern="\d*"
     centered
+    truncate
     @keyup.enter="changeQuantity"
     @input="onQuantityChanged"
     @blur="onFocusOut"

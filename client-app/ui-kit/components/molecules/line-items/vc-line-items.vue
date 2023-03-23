@@ -96,7 +96,7 @@ const subtotal = computed<number>(() => sumBy(props.items, (item: LineItemType) 
     @apply hidden;
 
     @media (min-width: theme("screens.md")) {
-      @apply flex gap-4 p-3 text-sm font-bold;
+      @apply flex items-center gap-4 py-0.5 px-3 min-h-[2.75rem] text-sm font-bold;
     }
 
     @media (min-width: theme("screens.xl")) {
@@ -125,14 +125,18 @@ const subtotal = computed<number>(() => sumBy(props.items, (item: LineItemType) 
   }
 
   &__slot {
-    @apply shrink-0 flex justify-between w-[15.75rem];
+    @apply shrink-0 flex items-center justify-between w-[15.75rem];
+
+    @media (min-width: theme("screens.md")) {
+      @apply gap-4;
+    }
 
     @media (min-width: theme("screens.lg")) {
       @apply w-1/3;
     }
 
     @media (min-width: theme("screens.xl")) {
-      @apply gap-3 w-[15.75rem];
+      @apply w-[15.75rem];
     }
   }
 
@@ -151,7 +155,7 @@ const subtotal = computed<number>(() => sumBy(props.items, (item: LineItemType) 
   &__foot {
     @apply flex justify-end py-2.5;
 
-    @media (min-width: theme("screens.xl")) {
+    @media (min-width: theme("screens.md")) {
       @apply px-3;
     }
   }

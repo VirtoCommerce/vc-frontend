@@ -11,7 +11,7 @@
         {{ $t("common.labels.quantity") }}
       </div>
 
-      <div>
+      <div class="text-right">
         {{ $t("common.labels.total") }}
       </div>
     </template>

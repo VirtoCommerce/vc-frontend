@@ -9,6 +9,7 @@
         'vc-input--error': error,
         'vc-input--no-border': noBorder,
         'vc-input--centered': centered,
+        'vc-input--truncate': truncate,
       },
     ]"
   >
@@ -86,6 +87,7 @@ interface IProps {
   maxlength?: string | number;
   error?: boolean;
   centered?: boolean;
+  truncate?: boolean;
   message?: string;
   modelValue?: string | number;
   type?: "text" | "password" | "number";
@@ -169,6 +171,7 @@ watchEffect(() => {
   $error: "";
   $noBorder: "";
   $centered: "";
+  $truncate: "";
 
   @apply flex flex-col;
 
@@ -200,6 +203,10 @@ watchEffect(() => {
 
   &--centered {
     $centered: &;
+  }
+
+  &--truncate {
+    $truncate: &;
   }
 
   &__container {
@@ -264,6 +271,14 @@ watchEffect(() => {
 
     #{$centered} & {
       @apply text-center;
+    }
+
+    #{$truncate} & {
+      @apply truncate;
+    }
+
+    #{$error} & {
+      @apply text-[color:var(--color-danger)];
     }
   }
 

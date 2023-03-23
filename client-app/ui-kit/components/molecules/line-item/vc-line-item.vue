@@ -93,7 +93,7 @@ defineProps<IProps>();
   $deleted: "";
   $disabled: "";
 
-  @apply p-3 rounded border shadow-t-3sm space-y-2;
+  @apply flex flex-col gap-2 p-3 rounded border shadow-t-3sm;
 
   &--removable {
     $removable: &;
@@ -205,7 +205,7 @@ defineProps<IProps>();
   }
 
   &__slot {
-    @apply flex gap-3 mt-4 empty:hidden;
+    @apply flex items-start gap-1 mt-4 empty:hidden;
 
     @media (min-width: theme("screens.md")) {
       @apply flex-shrink-0 items-center gap-4 mt-0 w-[15.75rem] empty:block;
