@@ -3,7 +3,7 @@
     <!-- Title block -->
     <div class="mx-5 flex items-center justify-between md:mx-0">
       <h2 class="truncate text-3xl font-bold uppercase text-gray-800">
-        {{ $t("pages.account.addresses.addresses_title") }}
+        {{ $t("common.titles.addresses") }}
       </h2>
 
       <VcButton
@@ -11,26 +11,20 @@
         class="px-3 uppercase"
         size="sm"
         is-outline
-        @click="openAddOrUpdateAddress()"
+        @click="openAddOrUpdateAddressModal()"
       >
         <span class="sm:hidden">{{ $t("common.buttons.add_new") }}</span>
         <span class="hidden sm:inline">{{ $t("common.buttons.add_new_address") }}</span>
       </VcButton>
     </div>
 
-    <VcEmptyView
-      v-if="!paginatedAddresses.length && !addressesLoading"
-      :text="$t('pages.account.addresses.no_addresses_message')"
-    >
+    <VcEmptyView v-if="!paginatedAddresses.length && !addressesLoading" :text="$t('common.messages.no_addresses')">
       <template #icon>
-        <VcImage
-          src="/static/images/account/icons/no-addresses.svg"
-          :alt="$t('pages.account.addresses.addresses_icon')"
-        />
+        <VcImage :alt="$t('common.labels.addresses_icon')" src="/static/images/account/icons/no-addresses.svg" />
       </template>
 
       <template #button>
-        <VcButton class="px-4 uppercase" size="lg" @click="openAddOrUpdateAddress()">
+        <VcButton class="px-4 uppercase" size="lg" @click="openAddOrUpdateAddressModal()">
           <i class="fa fa-plus -ml-px mr-3" />
           {{ $t("common.buttons.add_new_address") }}
         </VcButton>
@@ -152,7 +146,7 @@
                   type="button"
                   class="h-7 w-7 rounded text-[color:var(--color-primary)] shadow hover:bg-gray-100"
                   :title="$t('common.buttons.edit')"
-                  @click="openAddOrUpdateAddress(address)"
+                  @click="openAddOrUpdateAddressModal(address)"
                 >
                   <i class="fas fa-pencil-alt" />
                 </button>
@@ -204,8 +198,8 @@ import { useI18n } from "vue-i18n";
 import { useCountries, usePageHead } from "@/core/composables";
 import { AddressType } from "@/core/enums";
 import { useUserAddresses } from "@/shared/account";
-import { AddOrUpdateAddressModal } from "@/shared/checkout";
 import { usePopup } from "@/shared/popup";
+import { VcAddOrUpdateAddressModal } from "@/ui-kit/components";
 import type { ISortInfo } from "@/core/types";
 import type { MemberAddressType } from "@/xapi/types";
 
@@ -266,9 +260,9 @@ const onPageChange = async (newPage: number) => {
   page.value = newPage;
 };
 
-function openAddOrUpdateAddress(address?: MemberAddressType): void {
+function openAddOrUpdateAddressModal(address?: MemberAddressType): void {
   openPopup({
-    component: AddOrUpdateAddressModal,
+    component: VcAddOrUpdateAddressModal,
     props: {
       address,
 
@@ -287,7 +281,7 @@ function itemActionsBuilder() {
       title: t("common.buttons.edit"),
       classes: "bg-gray-550",
       clickHandler(address: MemberAddressType) {
-        openAddOrUpdateAddress(address);
+        openAddOrUpdateAddressModal(address);
       },
     },
     {
@@ -311,7 +305,7 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
 }
 
 async function removeAddress(address: MemberAddressType): Promise<void> {
-  if (!window.confirm(t("pages.account.addresses.confirm_delete_message"))) {
+  if (!window.confirm(t("common.messages.confirm_delete_address"))) {
     return;
   }
 
