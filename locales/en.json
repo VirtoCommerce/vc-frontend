@@ -48,7 +48,8 @@
       "view_invoice": "View invoice",
       "pay_now": "Pay now",
       "payment_details": "Payment details",
-      "reorder_all": "Reorder all"
+      "reorder_all": "Reorder all",
+      "view_cart": "View cart"
     },
     "labels": {
       "actions": "Actions",
