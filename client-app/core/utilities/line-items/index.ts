@@ -49,3 +49,9 @@ export function extendLineItem<T extends LineItemType | OrderLineItemType | Quot
     },
   };
 }
+
+export function extendLineItems<T extends LineItemType | OrderLineItemType | QuoteItemType>(
+  items: T[]
+): ExtendedLineItemType<T>[] {
+  return items.map((item) => extendLineItem(item));
+}

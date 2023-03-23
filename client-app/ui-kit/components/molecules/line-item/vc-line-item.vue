@@ -108,22 +108,21 @@ defineProps<IProps>();
   }
 
   @media (min-width: theme("screens.md")) {
-    @apply px-2 rounded-none border-0 shadow-none;
+    @apply px-3 rounded-none border-0 shadow-none;
   }
 
-  @media (min-width: theme("screens.2xl")) {
-    @apply p-4;
+  &__before,
+  &__after {
+    &:empty {
+      @apply hidden;
+    }
   }
 
   &__main {
     @apply relative flex items-start gap-3;
 
     @media (min-width: theme("screens.md")) {
-      @apply items-center gap-2;
-    }
-
-    @media (min-width: theme("screens.2xl")) {
-      @apply gap-3;
+      @apply items-center gap-4;
     }
   }
 
@@ -197,19 +196,27 @@ defineProps<IProps>();
     }
 
     #{$deleted} & {
-      @apply hidden 2xl:block 2xl:invisible;
+      @apply hidden;
+
+      @media (min-width: theme("screens.2xl")) {
+        @apply block invisible;
+      }
     }
   }
 
   &__slot {
-    @apply flex items-center gap-3 mt-4 empty:hidden;
+    @apply flex gap-3 mt-4 empty:hidden;
 
     @media (min-width: theme("screens.md")) {
-      @apply shrink-0 gap-2 mt-0 w-[15.125rem] empty:block;
+      @apply flex-shrink-0 items-center gap-4 mt-0 w-[15.75rem] empty:block;
     }
 
-    @media (min-width: theme("screens.2xl")) {
-      @apply gap-3;
+    @media (min-width: theme("screens.lg")) {
+      @apply w-1/3;
+    }
+
+    @media (min-width: theme("screens.xl")) {
+      @apply w-[15.75rem];
     }
 
     #{$deleted} & {

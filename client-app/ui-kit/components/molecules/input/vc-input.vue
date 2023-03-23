@@ -8,6 +8,7 @@
         'vc-input--disabled': disabled,
         'vc-input--error': error,
         'vc-input--no-border': noBorder,
+        'vc-input--centered': centered,
       },
     ]"
   >
@@ -38,6 +39,7 @@
         @input="change"
         @click="emit('click', $event)"
         @keypress="emit('keypress', $event)"
+        @blur="emit('blur', $event)"
       />
 
       <div v-if="type === 'password' && !hidePasswordSwitcher" class="vc-input__decorator">
@@ -83,6 +85,7 @@ interface IProps {
   minlength?: string | number;
   maxlength?: string | number;
   error?: boolean;
+  centered?: boolean;
   message?: string;
   modelValue?: string | number;
   type?: "text" | "password" | "number";
@@ -94,6 +97,7 @@ interface IEmits {
   (event: "update:modelValue", value?: string | number): void;
   (event: "click", value: MouseEvent): void;
   (event: "keypress", value: KeyboardEvent): void;
+  (event: "blur", value: Event): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -164,6 +168,7 @@ watchEffect(() => {
   $disabled: "";
   $error: "";
   $noBorder: "";
+  $centered: "";
 
   @apply flex flex-col;
 
@@ -191,6 +196,10 @@ watchEffect(() => {
 
   &--no-border {
     $noBorder: &;
+  }
+
+  &--centered {
+    $centered: &;
   }
 
   &__container {
@@ -227,7 +236,7 @@ watchEffect(() => {
   }
 
   &__input {
-    @apply relative px-3 appearance-none bg-transparent rounded-[3px] text-base leading-none w-full min-w-0;
+    @apply relative px-3 appearance-none bg-transparent rounded-[3px] text-15 leading-none w-full min-w-0;
 
     &:autofill {
       &:disabled {
@@ -251,6 +260,10 @@ watchEffect(() => {
       #{$error} & {
         @apply opacity-80 text-[color:var(--color-danger)];
       }
+    }
+
+    #{$centered} & {
+      @apply text-center;
     }
   }
 
