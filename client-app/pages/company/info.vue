@@ -232,11 +232,12 @@
 </template>
 
 <script setup lang="ts">
+import { toTypedSchema } from "@vee-validate/yup";
 import { computedEager } from "@vueuse/core";
 import { useField } from "vee-validate";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import * as yup from "yup";
+import { string } from "yup";
 import { usePageHead } from "@/core/composables";
 import { AddressType, XApiPermissions } from "@/core/enums";
 import { useUser } from "@/shared/account";
@@ -269,14 +270,15 @@ const {
   addOrUpdateAddresses,
   loading: loadingAddresses,
 } = useOrganizationAddresses(organization.value!.id);
+const { openPopup } = usePopup();
+const notifications = useNotifications();
+
 const {
   meta,
   errors,
   value: organizationName,
   resetField: resetOrganizationField,
-} = useField<string>("organizationName", yup.string().max(64).required());
-const { openPopup } = usePopup();
-const notifications = useNotifications();
+} = useField<string>("organizationName", toTypedSchema(string().required().max(64)));
 
 const organizationId = computed<string>(() => organization.value!.id);
 const userCanEditOrganization = computedEager<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));

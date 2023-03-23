@@ -2,7 +2,7 @@
   <div>
     <div class="relative z-0 flex">
       <input
-        ref="input"
+        ref="inputElement"
         v-model.number="enteredQuantity"
         type="number"
         :disabled="disabled"
@@ -49,32 +49,27 @@
 </template>
 
 <script setup lang="ts">
-import { eagerComputed } from "@vueuse/core";
+import { toTypedSchema } from "@vee-validate/yup";
 import { clone } from "lodash";
 import { useField } from "vee-validate";
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref, shallowRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import * as yup from "yup";
+import { number } from "yup";
 import { useGoogleAnalytics } from "@/core/composables";
-import { useCart } from "@/shared/cart";
+import useCart from "../composables/useCart";
 import type { LineItemType, Product, VariationType } from "@/xapi/types";
-import type { PropType } from "vue";
 
-const emit = defineEmits(["update:lineitem"]);
+interface IEmits {
+  (event: "update:lineItem", lineItem: LineItemType): void;
+}
 
-const props = defineProps({
-  product: {
-    type: Object as PropType<Product | VariationType>,
-    required: true,
-  },
+interface IProps {
+  product: Product | VariationType;
+  reservedSpace?: boolean;
+}
 
-  reservedSpace: {
-    type: Boolean,
-    default: false,
-  },
-});
-
-const input = ref<HTMLInputElement>();
+const emit = defineEmits<IEmits>();
+const props = defineProps<IProps>();
 
 // Define max qty available to add
 const MAX_VALUE = 999999;
@@ -85,17 +80,18 @@ const ga = useGoogleAnalytics();
 
 const loading = ref(false);
 const initialValue = ref();
+const inputElement = shallowRef<HTMLInputElement>();
 
 const lineItemInCart = computed<LineItemType | undefined>(() =>
   cart.value?.items?.find((item) => item.productId === props.product.id)
 );
-const countInCart = eagerComputed<number>(() => lineItemInCart.value?.quantity || 0);
-const minQty = eagerComputed<number>(() => props.product.minQuantity || 1);
-const maxQty = eagerComputed<number>(() =>
+const countInCart = computed<number>(() => lineItemInCart.value?.quantity || 0);
+const minQty = computed<number>(() => props.product.minQuantity || 1);
+const maxQty = computed<number>(() =>
   Math.min(props.product.availabilityData?.availableQuantity, props.product.maxQuantity || MAX_VALUE)
 );
 
-const disabled = eagerComputed<boolean>(
+const disabled = computed<boolean>(
   () =>
     loading.value ||
     !(
@@ -107,20 +103,21 @@ const disabled = eagerComputed<boolean>(
 );
 
 const buttonText = computed<string>(() =>
-  countInCart.value ? t("shared.cart.add_to_cart.update_cart_button") : t("shared.cart.add_to_cart.add_to_cart_button")
+  countInCart.value ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart")
 );
 
 const rules = computed(() =>
-  yup
-    .number()
-    .typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message"))
-    .integer()
-    .positive()
-    .min(minQty.value, ({ min }) => t("shared.cart.add_to_cart.errors.min", [min]))
-    .max(maxQty.value, ({ max }) => t("shared.cart.add_to_cart.errors.max", [max]))
+  toTypedSchema(
+    number()
+      .typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message"))
+      .integer()
+      .positive()
+      .min(minQty.value, ({ min }) => t("shared.cart.add_to_cart.errors.min", [min]))
+      .max(maxQty.value, ({ max }) => t("shared.cart.add_to_cart.errors.max", [max]))
+  )
 );
 
-const { value: enteredQuantity, validate, errorMessage, setValue } = useField("qty", rules, { initialValue });
+const { value: enteredQuantity, validate, errorMessage, setValue } = useField("quantity", rules, { initialValue });
 
 /**
  * Process button click to add/update cart line item.
@@ -162,7 +159,11 @@ async function onChange() {
     lineItem = clone(lineItemInCart.value);
   }
 
-  emit("update:lineitem", lineItem);
+  if (!lineItem) {
+    throw new ReferenceError(`The variable "lineItem" must be defined`);
+  }
+
+  emit("update:lineItem", lineItem);
 
   loading.value = false;
 }
@@ -191,7 +192,7 @@ function onInput() {
  * Select input value.
  */
 function onClick() {
-  (input.value as HTMLInputElement).select();
+  inputElement.value!.select();
 }
 
 watchEffect(() => {

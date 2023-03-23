@@ -35,6 +35,7 @@ query SearchProducts(
       code
       minQuantity
       maxQuantity
+      inWishlist
       vendor {
         id
         name

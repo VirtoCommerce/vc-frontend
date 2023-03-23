@@ -3,7 +3,7 @@
     <div class="grow sm:max-h-screen-60 sm:overflow-y-auto sm:border-b lg:max-h-screen-75">
       <!-- Lists -->
       <template v-if="!loadingLists">
-        <template v-if="listsContain.length">
+        <template v-if="listsWithProduct.length">
           <div
             class="bg-[color:var(--color-add-wishlist-dialog-subtitle-bg)] py-3 px-6 text-15 font-bold leading-5 sm:py-2.5"
           >
@@ -11,7 +11,7 @@
           </div>
 
           <ul>
-            <li v-for="list in listsContain" :key="list.id" class="px-6 py-4 sm:pt-4 sm:pb-3 last:sm:pb-7">
+            <li v-for="list in listsWithProduct" :key="list.id" class="px-6 py-4 sm:pt-4 sm:pb-3 last:sm:pb-7">
               <VcCheckbox
                 model-value
                 :value="list.id"
@@ -35,7 +35,7 @@
             class="flex cursor-pointer items-center text-sm font-bold text-[color:var(--color-link)]"
             :class="{ 'cursor-not-allowed text-gray-400': creationButtonDisabled }"
             :disabled="creationButtonDisabled"
-            @click="addInput"
+            @click="addNewList"
           >
             <svg
               class="mr-2 h-3.5 w-3.5 text-[color:var(--color-primary)]"
@@ -49,11 +49,11 @@
 
         <transition-group name="list-input" tag="ul" class="pt-2 sm:pt-0.5">
           <li
-            v-for="(input, index) in inputs"
+            v-for="(input, index) in newLists"
             :key="index"
             class="list-input-item flex items-start px-6 first:pt-3 first:sm:pt-4"
           >
-            <button type="button" class="relative mt-3" @click="removeInput(index)">
+            <button type="button" class="relative mt-3" @click="removeNewList(index)">
               <VcCheckbox model-value class="relative" />
               <div class="absolute inset-0"></div>
             </button>
@@ -67,7 +67,7 @@
               :message="input.errorMessage"
               :error="!!input.errorMessage"
             />
-            <button type="button" class="mt-3.5" @click="removeInput(index)">
+            <button type="button" class="mt-3.5" @click="removeNewList(index)">
               <svg class="text-[color:var(--color-add-wishlist-dialog-delete-icon)]" width="16" height="16">
                 <use href="/static/images/delete.svg#main" />
               </svg>
@@ -94,7 +94,7 @@
       </ul>
 
       <!-- Empty -->
-      <div v-else-if="!listsOther.length && !listsContain.length" class="bg-gray-50 px-6 py-10 text-center">
+      <div v-else-if="!listsOther.length && !listsWithProduct.length" class="bg-gray-50 px-6 py-10 text-center">
         {{ $t("shared.wishlists.add_to_wishlists_dialog.empty_list") }}
       </div>
     </div>
@@ -112,7 +112,7 @@
 
         <VcButton
           :is-waiting="loading"
-          :is-disabled="!inputs.length && !selectedListsOtherIds.length && !listsRemove.length"
+          :is-disabled="!newLists.length && !selectedListsOtherIds.length && !removedLists.length"
           class="grow basis-0 uppercase sm:min-w-[9rem] sm:grow-0 sm:basis-auto sm:px-5"
           @click="save"
         >
@@ -133,17 +133,21 @@ import { configInjectionKey } from "@/core/injection-keys";
 import { asyncForEach } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
-import { useWishlists } from "@/shared/wishlists";
+import { useWishlists } from "../composables";
 import type { WishlistInputType } from "@/shared/wishlists/types";
 import type { Product as ProductType } from "@/xapi/types";
-import type { PropType } from "vue";
 
-const props = defineProps({
-  product: {
-    type: Object as PropType<ProductType>,
-    required: true,
-  },
-});
+interface IProps {
+  product: ProductType;
+}
+
+interface IEmits {
+  (event: "result", isInList: boolean): void;
+}
+
+const emit = defineEmits<IEmits>();
+
+const props = defineProps<IProps>();
 
 const { t } = useI18n();
 const { closePopup } = usePopup();
@@ -160,26 +164,26 @@ const ga = useGoogleAnalytics();
 
 const loading = ref(false);
 const selectedListsOtherIds = ref<string[]>([]);
-const listsRemove = ref<string[]>([]);
-const inputs = ref<WishlistInputType[]>([]);
+const removedLists = ref<string[]>([]);
+const newLists = ref<WishlistInputType[]>([]);
 
 const product = toRef(props, "product");
 const config = inject(configInjectionKey);
 const listsLimit = config?.wishlists_limit || DEFAULT_WISHLIST_LIMIT;
 
-const creationButtonDisabled = computed(() => lists.value.length + inputs.value.length >= listsLimit);
+const creationButtonDisabled = computed(() => lists.value.length + newLists.value.length >= listsLimit);
 
-const listsContain = computed(() => {
+const listsWithProduct = computed(() => {
   return lists.value.filter((list) => list.items!.some((item) => item.productId === product.value.id));
 });
 
 function listsRemoveUpdate(id: string, checked: boolean) {
-  const index = listsRemove.value.indexOf(id);
+  const index = removedLists.value.indexOf(id);
 
   if (!checked && index === -1) {
-    listsRemove.value.push(id);
+    removedLists.value.push(id);
   } else {
-    listsRemove.value.splice(index, 1);
+    removedLists.value.splice(index, 1);
   }
 }
 
@@ -187,15 +191,15 @@ const listsOther = computed(() => {
   return lists.value.filter((list) => !list.items!.some((item) => item.productId === product.value.id));
 });
 
-function addInput() {
-  inputs.value.push({
+function addNewList() {
+  newLists.value.push({
     listName: `${t("shared.wishlists.add_to_wishlists_dialog.new_list")} ${moment().format("YYYY-MM-DD • hh:mm")}`,
     errorMessage: "",
   });
 }
 
-function removeInput(index: number) {
-  inputs.value.splice(index, 1);
+function removeNewList(index: number) {
+  newLists.value.splice(index, 1);
 }
 
 async function addToWishlistsFromListOther() {
@@ -212,15 +216,15 @@ async function addToWishlistsFromListOther() {
 }
 
 async function createListsAndAddProduct() {
-  if (!inputs.value.length) {
+  if (!newLists.value.length) {
     return;
   }
 
-  await asyncForEach(inputs.value, async (input) => {
-    await createWishlistAndAddProduct(input.listName, product.value.id);
+  await asyncForEach(newLists.value, async (newList) => {
+    await createWishlistAndAddProduct(newList.listName, product.value.id);
   });
 
-  inputs.value = [];
+  newLists.value = [];
 
   /**
    * Send Google Analytics event for an item added to wish list.
@@ -229,9 +233,10 @@ async function createListsAndAddProduct() {
 }
 
 async function removeProductFromWishlists() {
-  const payload = listsRemove.value.map((listId) => {
-    const list = listsContain.value.find((item) => item.id === listId);
-    const lineItemId = list?.items?.find((item) => item.productId === product.value.id)?.id || "";
+  const payload = removedLists.value.map((listId) => {
+    const listWithProduct = listsWithProduct.value.find((item) => item.id === listId);
+    const lineItemId = listWithProduct?.items?.find((item) => item.productId === product.value.id)?.id || "";
+
     return {
       listId,
       lineItemId,
@@ -244,14 +249,17 @@ async function removeProductFromWishlists() {
 }
 
 async function save() {
-  inputs.value.forEach((input) => {
-    if (!input.listName.trim().length) {
-      input.errorMessage = t("shared.wishlists.add_to_wishlists_dialog.is_required_validation_error");
+  newLists.value.forEach((newList) => {
+    if (!newList.listName.trim().length) {
+      newList.errorMessage = t("shared.wishlists.add_to_wishlists_dialog.is_required_validation_error");
     } else {
-      input.errorMessage = "";
+      newList.errorMessage = "";
     }
   });
-  if (inputs.value.filter((input) => !!input.errorMessage?.length).length) {
+
+  const newListsWithErrors = newLists.value.filter((newList) => !!newList.errorMessage?.length);
+
+  if (newListsWithErrors.length) {
     return;
   }
 
@@ -260,6 +268,9 @@ async function save() {
   await createListsAndAddProduct();
   await removeProductFromWishlists();
   await addToWishlistsFromListOther();
+  await fetchWishlists();
+
+  emit("result", !!listsWithProduct.value.length);
 
   closePopup();
   loading.value = false;

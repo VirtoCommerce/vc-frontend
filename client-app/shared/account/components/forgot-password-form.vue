@@ -3,8 +3,8 @@
     <VcInput
       v-model="email"
       class="mb-4"
-      :label="$t('shared.account.forgot_password_form.email_label')"
-      :placeholder="$t('shared.account.forgot_password_form.email_placeholder')"
+      :label="$t('common.labels.email')"
+      :placeholder="$t('common.placeholders.email')"
       type="email"
       name="email"
       required
@@ -24,34 +24,34 @@
         :is-waiting="loading"
         :is-disabled="!meta.valid || meta.pending"
       >
-        {{ $t("shared.account.forgot_password_form.submit_button") }}
+        {{ $t("common.buttons.submit") }}
       </VcButton>
     </div>
   </form>
 </template>
 
 <script setup lang="ts">
-import { useForm, useField } from "vee-validate";
+import { toTypedSchema } from "@vee-validate/yup";
+import { useField, useForm } from "vee-validate";
 import { ref, watch } from "vue";
-import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import * as yup from "yup";
-import { useUser } from "@/shared/account";
+import { object, string } from "yup";
+import { useUser } from "../composables";
 
-const emit = defineEmits(["succeeded"]);
+interface IEmits {
+  (event: "succeeded"): void;
+}
 
-const { t } = useI18n();
+const emit = defineEmits<IEmits>();
+
 const router = useRouter();
 const { forgotPassword, loading } = useUser();
 
-const schema = yup.object({
-  email: yup
-    .string()
-    .label(t("shared.account.forgot_password_form.email_label"))
-    .required()
-    .email(t("shared.account.forgot_password_form.invalid_email_format_message"))
-    .max(64),
-});
+const schema = toTypedSchema(
+  object({
+    email: string().required().email().max(64),
+  })
+);
 
 const { errors, meta, handleSubmit } = useForm({
   validationSchema: schema,

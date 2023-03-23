@@ -21,8 +21,11 @@
       "filters": "Filters",
       "back": "Back",
       "reset": "Reset",
+      "register": "Register",
+      "reset_password": "Reset password",
       "reset_filters": "Reset filters",
       "add_to_cart": "Add to cart",
+      "update_cart": "Update cart",
       "apply": "Apply",
       "send": "Send",
       "more": "More",
@@ -52,11 +55,20 @@
       "user_name": "Username",
       "password": "Password",
       "confirm_password": "Confirm password",
+      "company_name": "Company name",
       "first_name": "First Name",
       "last_name": "Last Name",
       "address": "Address",
       "phone": "Phone",
       "email": "Email",
+      "work_email": "Corporate email address",
+      "country": "Country",
+      "zip_or_postal_code": "ZIP / Postal code",
+      "region": "State/Province",
+      "city": "City",
+      "address_line1": "Address",
+      "address_line2": "Apt., suite, building number, etc.",
+      "description": "Description",
       "quantity": "Quantity",
       "total": "Total",
       "compare": "Compare",
@@ -87,9 +99,6 @@
       "payment_number": "Payment ID",
       "payment_type": "Payment type",
       "recipient_name": "Recipient name",
-      "description": "Description",
-      "zip_code": "Zip Code",
-      "country": "Country",
       "active_address": "Active address"
     },
     "prefixes": {
@@ -112,6 +121,7 @@
       "item_can_t_be_purchased": "This item cannot be purchased",
       "item_is_out_of_stock": "This item is out of stock",
       "invalid_value": "Invalid value",
+      "invalid_user_id_or_token": "User ID or token is invalid.",
       "product_no_longer_available": "No longer available",
       "item_quantity_required_field": "Item quantity value cannot be null",
       "max_value": "Maximum value is {value}",
@@ -122,16 +132,23 @@
       "fill_all_required": "Please fill in all required information to proceed.",
       "something_went_wrong": "Whoops! Something went wrong. Please check whether everything is correct and try again.",
       "checkout_pricing_warning": "Availability, shipping, tax and promotions are not final until you complete your order.",
-      "quote_request": "You can request items in your cart through a special service"
+      "quote_request": "You can request items in your cart through a special service",
+      "wishlists_available_for_authorized": "Wishlists are available only for authenticated users"
     },
     "placeholders": {
       "enter_value": "Please enter value",
       "not_selected": "Not selected",
       "select_address": "Select address",
+      "select_country": "Select your country",
+      "select_region": "Select your state or province",
       "select_delivery_method": "Select delivery method",
       "select_payment_method": "Select payment method",
+      "company_name": "Enter your company name",
+      "first_name": "Enter your first name",
+      "last_name": "Enter your last name",
       "email": "Enter your email address",
       "password": "Enter your password",
+      "confirm_password": "Confirm your password",
       "purchase_order_number": "Enter purchase order number",
       "promotion_code": "Enter promo-coupon"
     },
@@ -299,26 +316,7 @@
           "quote_requests": "@:common.links.quote_requests"
         }
       },
-      "address_form": {
-        "first_name_label": "@:common.labels.first_name",
-        "last_name_label": "@:common.labels.last_name",
-        "work_email_label": "Corporate email address",
-        "phone_label": "@:common.labels.phone",
-        "country_label": "Country",
-        "zip_label": "ZIP / Postal code",
-        "region_label": "State/Province",
-        "region_placeholder": "Select your state or province",
-        "city_label": "City",
-        "line1_label": "Address",
-        "line2_label": "Apt., suite, building number, etc.",
-        "country_placeholder": "Select your country",
-        "description_label": "Description"
-      },
       "sign_in_form": {
-        "email_label": "@:common.labels.email",
-        "email_placeholder": "@:common.placeholders.email",
-        "password_label": "@:common.labels.password",
-        "password_placeholder": "@:common.placeholders.password",
         "remember_me_label": "Remember me",
         "forgot_password_link": "Forgot your password?",
         "login_button": "Log in",
@@ -326,25 +324,7 @@
         "email_or_password_incorrect_alert": "The <strong>email</strong>&nbsp;or <strong>password</strong>&nbsp;you provided are invalid",
         "user_is_locked_out_alert": "Your account is locked. Please, contact site administrator"
       },
-      "reset_password_form": {
-        "password_label": "@:common.labels.password",
-        "password_placeholder": "Enter your password",
-        "confirm_password_label": "@:common.labels.confirm_password",
-        "confirm_password_placeholder": "Confirm your password",
-        "reset_password_button": "Reset password"
-      },
-      "set_password_form": {
-        "password_label": "@:common.labels.password",
-        "password_placeholder": "Enter your password",
-        "confirm_password_label": "@:common.labels.confirm_password",
-        "confirm_password_placeholder": "Confirm your password",
-        "reset_password_button": "@:common.buttons.save"
-      },
       "forgot_password_form": {
-        "email_label": "@:common.labels.email",
-        "email_placeholder": "Enter your email",
-        "submit_button": "@:common.buttons.submit",
-        "invalid_email_format_message": "Please enter valid email address, e.g. johndoe{'@'}gmail.com",
         "error_alert": "Invalid result of reset password request. Please contact to administrator if it is repeating."
       },
       "checkout_default_success_dialog": {
@@ -431,10 +411,16 @@
         "user_unblocked": "The user has been successfully unblocked"
       }
     },
+    "compare": {
+      "add_to_compare": {
+        "tooltips": {
+          "add": "Add to Compare",
+          "remove": "Remove from Compare"
+        }
+      }
+    },
     "cart": {
       "add_to_cart": {
-        "add_to_cart_button": "@:common.buttons.add_to_cart",
-        "update_cart_button": "Update cart",
         "errors": {
           "in_cart": "in Cart",
           "already_in_cart_message": "{0} has already been added to cart",
@@ -489,7 +475,6 @@
         "price_block": {
           "title": "Price and Delivery",
           "add_to_list_button": "Add to list",
-          "add_to_list_button_unauthorized_title": "Wishlists are available only for authenticated users",
           "product_email_title": "Please, have a look on the product: {0}"
         },
         "product_variation_card": {
@@ -760,23 +745,19 @@
       "meta": {
         "title": "Reset password"
       },
-      "header": "reset your password",
-      "home_button": "@:common.buttons.home",
+      "header": "Reset your password",
       "enter_new_password_message": "Enter your new password",
       "success_message": "Your password has been reset successfully",
-      "log_in_button": "Log in",
-      "data_invalid_error_message": "User ID or token is invalid."
+      "log_in_button": "Log in"
     },
     "set_password": {
       "meta": {
         "title": "Registration"
       },
       "header": "Registration",
-      "home_button": "@:common.buttons.home",
       "enter_new_password_message": "An account has been created for you, please set a password to login.",
       "success_message": "Registration was successfully completed",
-      "log_in_button": "Continue",
-      "data_invalid_error_message": "User ID or token is invalid."
+      "log_in_button": "Continue"
     },
     "sign_in": {
       "meta": {
@@ -791,18 +772,6 @@
       "header": "Registration",
       "personal_registration_kind_label": "Personal account",
       "organization_registration_kind_label": "Company account",
-      "organization_name_label": "Company name",
-      "organization_name_placeholder": "Enter your company name",
-      "first_name_label": "@:common.labels.first_name",
-      "first_name_placeholder": "Enter your first name",
-      "last_name_label": "@:common.labels.last_name",
-      "last_name_placeholder": "Enter your last name",
-      "email_label": "@:common.labels.email",
-      "email_placeholder": "@:common.placeholders.email",
-      "password_label": "@:common.labels.password",
-      "password_placeholder": "@:common.placeholders.password",
-      "confirm_password_label": "@:common.labels.confirm_password",
-      "confirm_password_placeholder": "Confirm your password",
       "register_button": "Sign up"
     },
     "confirm_email": {
@@ -820,17 +789,7 @@
         "title": "@:pages.confirm_invitation.header"
       },
       "header": "Registration",
-      "text": "You received the invite to join your company.<br />Please complete the registration",
-      "first_name_label": "@:common.labels.first_name",
-      "first_name_placeholder": "Enter your first name",
-      "last_name_label": "@:common.labels.last_name",
-      "last_name_placeholder": "Enter your last name",
-      "email_label": "@:common.labels.email",
-      "password_label": "@:common.labels.password",
-      "password_placeholder": "@:common.placeholders.password",
-      "confirm_password_label": "@:common.labels.confirm_password",
-      "confirm_password_placeholder": "Confirm your password",
-      "register_button": "Register"
+      "text": "You received the invite to join your company.<br />Please complete the registration"
     },
     "account": {
       "addresses": {
@@ -991,19 +950,12 @@
         "title": "Profile",
         "change_password_title": "Change Password",
         "update_error_alert": "There was an error during profile update",
-        "first_name_label": "@:common.labels.first_name",
-        "first_name_placeholder": "@:common.labels.first_name",
-        "last_name_label": "@:common.labels.last_name",
-        "last_name_placeholder": "@:common.labels.last_name",
-        "email_label": "@:common.labels.email",
-        "email_placeholder": "@:common.labels.email",
         "old_password_label": "Current Password",
         "old_password_placeholder": "Enter your current password",
         "new_password_label": "New Password",
         "new_password_placeholder": "Enter your new password",
         "confirm_new_password_label": "Confirm New Password",
         "confirm_new_password_placeholder": "Repeat new password",
-        "update_button": "@:common.buttons.update",
         "errors": {
           "password_mismatch": "Incorrect current password",
           "passwords_do_not_match": "Passwords do not match",
@@ -1157,8 +1109,8 @@
       "filters_button": "@:common.buttons.filters",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
-      "wishlist_tooltip": "Add to list",
-      "add_to_compare_tooltip": "Add to compare",
+      "add_to_wishlist_tooltip": "Add to list",
+      "in_the_list_tooltip": "In the list",
       "variations_button": "{0} variations",
       "show_on_a_separate_page": "Show on a separate page",
       "no_products_message": "There are no products in this category",

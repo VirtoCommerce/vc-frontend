@@ -90,7 +90,7 @@
             </div>
 
             <div class="h-12">
-              <AddToCart :product="product" @update:lineitem="refreshProducts" />
+              <AddToCart :product="product" @update:line-item="refreshProducts" />
             </div>
           </div>
         </div>
@@ -118,7 +118,7 @@
               </div>
               <VcItemPrice :value="product.price" />
             </div>
-            <AddToCart :product="product" @update:lineitem="refreshProducts" />
+            <AddToCart :product="product" @update:line-item="refreshProducts" />
           </div>
         </div>
       </div>
