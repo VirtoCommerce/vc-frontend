@@ -18,8 +18,8 @@
     "generate:graphql:schema": "graphql-codegen -c \"codegen.schema.ts\" -r dotenv/config",
     "generate:graphql:types": "graphql-codegen -c \"codegen.types.ts\" -r dotenv/config",
     "generate:graphql": "yarn generate:graphql:schema && yarn generate:graphql:types",
-    "storybook:dev": "start-storybook -p 6006 --no-open --disable-telemetry",
-    "storybook:build": "build-storybook --docs --disable-telemetry",
+    "storybook:dev": "start-storybook -p 6006 --no-open",
+    "storybook:build": "build-storybook --docs",
     "postinstall": "husky install"
   },
   "dependencies": {

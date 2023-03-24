@@ -67,6 +67,12 @@
 import { computed, ref, watchEffect } from "vue";
 import { useComponentId } from "@/core/composables";
 
+interface IEmits {
+  (event: "update:modelValue", value?: string | number): void;
+  (event: "click", value: MouseEvent): void;
+  (event: "keypress", value: KeyboardEvent): void;
+}
+
 interface IProps {
   autocomplete?: string;
   readonly?: boolean;
@@ -88,12 +94,6 @@ interface IProps {
   type?: "text" | "password" | "number";
   size?: "sm" | "md";
   showEmptyDetails?: boolean;
-}
-
-interface IEmits {
-  (event: "update:modelValue", value?: string | number): void;
-  (event: "click", value: MouseEvent): void;
-  (event: "keypress", value: KeyboardEvent): void;
 }
 
 const emit = defineEmits<IEmits>();

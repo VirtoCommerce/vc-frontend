@@ -10,28 +10,29 @@
       <AddToCompare v-if="$cfg.product_compare_enabled" :product="product" class="mt-8 inline-flex" />
     </div>
 
-    <div v-if="section && section.blocks" class="flex flex-col lg:w-2/3">
-      <component :is="item.type" v-for="item in section.blocks" :key="item.id" :model="item" :product="product" />
+    <div v-if="section?.blocks?.length" class="flex flex-col lg:w-2/3">
+      <component
+        :is="block.type"
+        v-for="(block, index) in section.blocks"
+        :key="block.id || index"
+        :model="block"
+        :product="product"
+        class="mb-5 last:mb-0"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { DiscountBadge } from "@/shared/catalog";
 import { AddToCompare } from "@/shared/compare";
+import DiscountBadge from "./discount-badge.vue";
 import type { PageContent } from "@/shared/static-content";
 import type { Product } from "@/xapi/types";
-import type { PropType } from "vue";
 
-defineProps({
-  product: {
-    type: Object as PropType<Product>,
-    required: true,
-  },
+interface IProps {
+  product: Product;
+  section?: PageContent;
+}
 
-  section: {
-    type: Object as PropType<PageContent>,
-    required: true,
-  },
-});
+defineProps<IProps>();
 </script>
