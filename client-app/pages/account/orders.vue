@@ -423,7 +423,7 @@ function hideFilters() {
 
 function goToOrderDetails(order: CustomerOrderType): void {
   const orderRoute = router.resolve({ name: "OrderDetails", params: { orderId: order.id } });
-  window.open(orderRoute.href, "_blank")!.focus();
+  window.open(orderRoute.fullPath, "_blank")!.focus();
 }
 
 onClickOutside(
