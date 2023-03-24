@@ -103,13 +103,7 @@
     </div>
 
     <template #actions="{ close }">
-      <VcButton
-        class="w-full uppercase sm:w-36"
-        @click="
-          close();
-          $router.replace({ name: 'Cart' });
-        "
-      >
+      <VcButton :to="{ name: 'Cart' }" class="w-full uppercase sm:w-36" @click="close()">
         {{ $t("common.buttons.view_cart") }}
       </VcButton>
 
