@@ -20,18 +20,18 @@
     </div>
 
     <!-- table body -->
-    <div v-if="extendedItems.length" class="vc-line-items__body">
+    <div v-if="preparedLineItems.length" class="vc-line-items__body">
       <VcLineItem
-        v-for="item in extendedItems"
+        v-for="item in preparedLineItems"
         :key="item.id"
         :image-url="item.imageUrl"
         :name="item.name"
-        :route="item.extended.route"
-        :deleted="!item.extended.isProductExists"
-        :properties="item.extended.displayProperties"
+        :route="item.route"
+        :deleted="item.deleted"
+        :properties="item.displayProperties"
         :disabled="disabled"
         :list-price="item.listPrice"
-        :actual-price="item.salePrice"
+        :actual-price="item.actualPrice"
         :removable="removable"
         @remove="$emit('remove:item', item)"
       >
@@ -62,14 +62,14 @@
 <script setup lang="ts">
 import { sumBy } from "lodash";
 import { computed } from "vue";
-import { extendLineItems } from "@/core/utilities";
-import type { LineItemType } from "@/xapi/types";
+import { prepareLineItems } from "@/core/utilities";
+import type { LineItemType, OrderLineItemType, QuoteItemType } from "@/xapi/types";
 
 interface IProps {
   disabled?: boolean;
   readonly?: boolean;
   removable?: boolean;
-  items?: LineItemType[];
+  items?: LineItemType[] | OrderLineItemType[] | QuoteItemType[];
 }
 
 interface IEmits {
@@ -81,7 +81,7 @@ const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
 });
 
-const extendedItems = computed(() => extendLineItems<LineItemType>(props.items));
+const preparedLineItems = prepareLineItems(props.items);
 
 const subtotal = computed<number>(() => sumBy(props.items, (item: LineItemType) => item.extendedPrice?.amount));
 </script>

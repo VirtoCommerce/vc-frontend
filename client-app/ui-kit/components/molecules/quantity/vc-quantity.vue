@@ -5,8 +5,8 @@
     :name="item.id.toString()"
     :readonly="readonly"
     :disabled="disabled"
-    :min="item.extended.minQuantity"
-    :max="item.extended.maxQuantity"
+    :min="item.minQuantity"
+    :max="item.maxQuantity"
     :error="error"
     size="sm"
     type="number"
@@ -21,14 +21,12 @@
 
 <script setup lang="ts">
 import { ref, watchEffect } from "vue";
-import type { ExtendedLineItemType } from "@/core/types";
-import type { LineItemType } from "@/xapi/types";
 
 interface IProps {
   disabled?: boolean;
   readonly?: boolean;
   error?: boolean;
-  item: ExtendedLineItemType<LineItemType>;
+  item: any;
 }
 
 interface IEmits {
