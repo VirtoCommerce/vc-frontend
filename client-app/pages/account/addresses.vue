@@ -70,7 +70,7 @@
 
             <div class="flex flex-col">
               <span class="text-sm text-gray-400">
-                {{ $t("commmon.labels.phone") }}
+                {{ $t("common.labels.phone") }}
               </span>
 
               <span class="overflow-hidden text-ellipsis pr-4">
@@ -265,6 +265,7 @@ function openAddOrUpdateAddressModal(address?: MemberAddressType): void {
     component: VcAddOrUpdateAddressModal,
     props: {
       address,
+      loading: addressesLoading,
 
       async onResult(updatedAddress: MemberAddressType) {
         await addOrUpdateAddresses([{ ...updatedAddress, addressType: AddressType.BillingAndShipping }]);

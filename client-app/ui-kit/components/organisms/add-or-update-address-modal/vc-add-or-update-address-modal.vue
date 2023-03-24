@@ -4,6 +4,7 @@
       <VcAddressForm
         :model-value="editableAddress"
         :countries="countries"
+        :disabled="loading"
         class="px-6 py-4"
         with-personal-info
         required-email
@@ -16,7 +17,13 @@
               {{ $t("common.buttons.cancel") }}
             </VcButton>
 
-            <VcButton size="md" :is-disabled="!dirty || !valid" class="w-1/2 uppercase sm:px-5" is-submit>
+            <VcButton
+              :is-disabled="!dirty || !valid"
+              :is-waiting="loading"
+              ize="md"
+              class="w-1/2 uppercase sm:px-5"
+              is-submit
+            >
               {{ saveButtonLabel }}
             </VcButton>
           </div>
@@ -39,6 +46,7 @@ interface IEmits {
 
 interface IProps {
   address?: MemberAddressType;
+  loading: boolean;
 }
 
 const emit = defineEmits<IEmits>();
