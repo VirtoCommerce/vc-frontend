@@ -1,4 +1,5 @@
 import { VcLineItem } from "..";
+import { preparedLineItemMock as lineItem } from "../../../mocks";
 import { VcAlert } from "../../atoms";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
@@ -23,31 +24,12 @@ const Template: StoryFn<typeof VcLineItem> = (args) => ({
 
 export const Basic = Template.bind({});
 Basic.args = {
-  imageUrl: "https://vcst-dev.paas.govirto.com/cms-content/assets/catalog/7829d/38DJ66/5ZA21_AS01.jpg",
-  name: 'Samsung JS9500 Series 65"-Class 4K SUHD Smart 3D Curved LED TV',
-  route: "#",
-  properties: [
-    {
-      value: "Sony",
-      label: "Brand",
-    },
-    {
-      value: "Black",
-      label: "Color",
-    },
-    {
-      value: "Function",
-      label: "Function",
-    },
-  ],
-  listPrice: {
-    amount: 2000,
-    formattedAmount: "$2000.00",
-  },
-  actualPrice: {
-    amount: 1000,
-    formattedAmount: "$1000.00",
-  },
+  imageUrl: lineItem.imageUrl,
+  name: lineItem.name,
+  route: lineItem.route,
+  properties: lineItem.properties,
+  listPrice: lineItem.listPrice,
+  actualPrice: lineItem.actualPrice,
 };
 
 export const Removable = Template.bind({});

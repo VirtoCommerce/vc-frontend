@@ -67,6 +67,10 @@
 <script setup lang="ts">
 import type { Property, MoneyType } from "@/xapi/types";
 
+interface IEmits {
+  (event: "remove"): void;
+}
+
 interface IProps {
   imageUrl?: string;
   name: string;
@@ -77,10 +81,6 @@ interface IProps {
   removable?: boolean;
   disabled?: boolean;
   deleted?: boolean;
-}
-
-interface IEmits {
-  (event: "remove"): void;
 }
 
 defineEmits<IEmits>();

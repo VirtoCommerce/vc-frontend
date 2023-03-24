@@ -1,5 +1,5 @@
 import { VcLineItems } from "..";
-import { lineItemMock } from "../../mocks";
+import { lineItemMock } from "../../../mocks";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
 export default {
@@ -21,6 +21,12 @@ const Template: StoryFn<typeof VcLineItems> = (args) => ({
 export const Basic = Template.bind({});
 Basic.args = {
   items: [lineItemMock, lineItemMock, lineItemMock],
+};
+
+export const Removable = Template.bind({});
+Removable.args = {
+  ...Basic.args,
+  removable: true,
 };
 
 const TemplateQuantityAndTotal: StoryFn<typeof VcLineItems> = (args) => ({
@@ -63,17 +69,18 @@ QuantityAndTotal.args = {
   items: [
     {
       ...lineItemMock,
-      id: 1,
+      id: "1",
       quantity: 4,
     },
     {
       ...lineItemMock,
-      id: 2,
+      id: "2",
       quantity: 1999,
     },
     {
       ...lineItemMock,
-      id: 3,
+      id: "3",
     },
   ],
+  removable: true,
 };

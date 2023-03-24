@@ -28,7 +28,7 @@
         :name="item.name"
         :route="item.route"
         :deleted="item.deleted"
-        :properties="item.displayProperties"
+        :properties="item.properties"
         :disabled="disabled"
         :list-price="item.listPrice"
         :actual-price="item.actualPrice"

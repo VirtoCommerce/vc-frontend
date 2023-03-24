@@ -2,7 +2,7 @@
   <VcInput
     v-model="quantity"
     class="w-[5.625rem] flex-none"
-    :name="item.id.toString()"
+    :name="item.id"
     :readonly="readonly"
     :disabled="disabled"
     :min="item.minQuantity"
@@ -21,20 +21,22 @@
 
 <script setup lang="ts">
 import { ref, watchEffect } from "vue";
-
-interface IProps {
-  disabled?: boolean;
-  readonly?: boolean;
-  error?: boolean;
-  item: any;
-}
+import type { PreparedLineItemType } from "@/core/types";
 
 interface IEmits {
   (event: "change", quantity: number): void;
 }
 
+interface IProps {
+  disabled?: boolean;
+  readonly?: boolean;
+  error?: boolean;
+  item: PreparedLineItemType;
+}
+
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
+
 let timeoutIdOfQuantityChange: number;
 
 const quantity = ref<number | undefined>(props.item.quantity);

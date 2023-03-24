@@ -72,7 +72,7 @@ export function prepareLineItem(item: LineItemType | OrderLineItemType | QuoteIt
     quantity,
     deleted: !item.product,
     route: getProductRoute(item.productId || item.product?.id || "", item.product?.slug),
-    displayProperties: item.product?.properties?.slice(0, 3) || [],
+    properties: item.product?.properties?.slice(0, 3) || [],
     minQuantity: item.product?.minQuantity,
     maxQuantity:
       (<LineItemType>item).inStockQuantity ||

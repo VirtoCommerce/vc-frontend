@@ -1,5 +1,5 @@
 import { VcQuantity } from "..";
-import { extendedLineItemMock } from "../../mocks";
+import { preparedLineItemMock as lineItem } from "../../../mocks";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
 export default {
@@ -23,7 +23,7 @@ const Template: StoryFn<typeof VcQuantity> = (args) => ({
 
 export const Basic = Template.bind({});
 Basic.args = {
-  item: extendedLineItemMock,
+  item: lineItem,
 };
 
 export const Readonly = Template.bind({});
