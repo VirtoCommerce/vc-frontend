@@ -241,7 +241,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useUserOrder } from "@/shared/account";
-import { AddOrUpdateAddressModal, OrderSummary, SelectPaymentMethodModal } from "@/shared/checkout";
+import { OrderSummary, SelectPaymentMethodModal } from "@/shared/checkout";
 import {
   PaymentProcessingAuthorizeNet,
   PaymentActionType,
@@ -249,6 +249,7 @@ import {
   PaymentProcessingRedirection,
 } from "@/shared/payment";
 import { usePopup } from "@/shared/popup";
+import { VcAddOrUpdateAddressModal } from "@/ui-kit/components";
 import type { InputOrderAddressType, OrderPaymentMethodType, PaymentInType } from "@/xapi/types";
 
 interface IProps {
@@ -295,7 +296,7 @@ function tryAgain() {
 
 function showEditAddressDialog() {
   openPopup({
-    component: AddOrUpdateAddressModal,
+    component: VcAddOrUpdateAddressModal,
     props: {
       address: payment.value?.billingAddress,
       async onResult(address: InputOrderAddressType) {

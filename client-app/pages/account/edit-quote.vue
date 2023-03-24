@@ -145,8 +145,9 @@ import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { AddressType } from "@/core/enums";
 import { asyncForEach, convertToType } from "@/core/utilities";
 import { QuoteLineItems, useUserAddresses, useUserQuote } from "@/shared/account";
-import { AddOrUpdateAddressModal, SelectAddressModal } from "@/shared/checkout";
+import { SelectAddressModal } from "@/shared/checkout";
 import { usePopup } from "@/shared/popup";
+import { VcAddOrUpdateAddressModal } from "@/ui-kit/components";
 import type { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi/types";
 
 interface IProps {
@@ -240,7 +241,7 @@ function openAddressSelectionDialog(addressType: AddressType): void {
 
 function openAddOrUpdateAddressDialog(addressType: AddressType, currentAddress?: QuoteAddressType): void {
   openPopup({
-    component: AddOrUpdateAddressModal,
+    component: VcAddOrUpdateAddressModal,
     props: {
       address: currentAddress,
 
