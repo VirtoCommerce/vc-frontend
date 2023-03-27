@@ -1,7 +1,9 @@
 export { default as VcAddressInfo } from "./address-info/vc-address-info.vue";
 export { default as VcAddressForm } from "./address-form/vc-address-form.vue";
 export { default as VcAddressSelection } from "./address-selection/vc-address-selection.vue";
+export { default as VcButtonSeeMoreLess } from "./button-see-more-less/vc-button-see-more-less.vue";
 export { default as VcCarousel } from "./carousel/vc-carousel.vue";
+export { default as VcCollapsibleContent } from "./collapsible-content/vc-collapsible-content.vue";
 export { default as VcEmptyPage } from "./empty-page/vc-empty-page.vue";
 export { default as VcExpansionPanel } from "./expansion-panel/vc-expansion-panel.vue";
 export { default as VcImageGallery } from "./image-gallery/vc-image-gallery.vue";

@@ -24,11 +24,6 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
     }
     description {
       content
-      id
-    }
-    descriptions {
-      content
-      id
     }
     properties {
       name
