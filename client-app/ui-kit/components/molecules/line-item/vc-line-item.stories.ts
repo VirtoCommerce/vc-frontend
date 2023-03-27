@@ -1,5 +1,5 @@
 import { VcLineItem } from "..";
-import { preparedLineItemMock as lineItem } from "../../../mocks/line-item";
+import { preparedLineItemMock as lineItem } from "../../../mocks/line-item.mock";
 import { VcAlert } from "../../atoms";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
