@@ -2,16 +2,16 @@
   <VcInput
     v-model="quantity"
     class="w-[5.625rem] flex-none"
-    :name="item.id"
+    :name="name"
     :readonly="readonly"
     :disabled="disabled"
-    :min="item.minQuantity"
-    :max="item.maxQuantity"
+    :min="minQuantity"
+    :max="maxQuantity"
     :error="error"
     size="sm"
     type="number"
     pattern="\d*"
-    centered
+    center
     truncate
     @keyup.enter="changeQuantity"
     @input="onQuantityChanged"
@@ -21,17 +21,19 @@
 
 <script setup lang="ts">
 import { ref, watchEffect } from "vue";
-import type { PreparedLineItemType } from "@/core/types";
 
 interface IEmits {
-  (event: "change", quantity: number): void;
+  (event: "update:modelValue", value: number): void;
 }
 
 interface IProps {
+  name?: string;
+  minQuantity?: number;
+  maxQuantity?: number;
   disabled?: boolean;
   readonly?: boolean;
   error?: boolean;
-  item: PreparedLineItemType;
+  modelValue?: number;
 }
 
 const emit = defineEmits<IEmits>();
@@ -39,18 +41,18 @@ const props = defineProps<IProps>();
 
 let timeoutIdOfQuantityChange: number;
 
-const quantity = ref<number | undefined>(props.item.quantity);
+const quantity = ref<number | undefined>(props.modelValue);
 
 function changeQuantity() {
   clearTimeout(timeoutIdOfQuantityChange);
 
   const newQuantity = Number(quantity.value);
 
-  if (isNaN(newQuantity) || newQuantity < 1 || newQuantity === props.item.quantity) {
+  if (isNaN(newQuantity) || newQuantity < 1 || newQuantity === props.modelValue) {
     return;
   }
 
-  emit("change", newQuantity);
+  emit("update:modelValue", newQuantity);
 }
 
 function onQuantityChanged(): void {
@@ -62,11 +64,11 @@ function onFocusOut() {
   const newQuantity = Number(quantity.value);
 
   if (isNaN(newQuantity) || newQuantity < 1) {
-    quantity.value = props.item.quantity;
+    quantity.value = props.modelValue;
   }
 }
 
 watchEffect(() => {
-  quantity.value = props.item.quantity;
+  quantity.value = props.modelValue;
 });
 </script>

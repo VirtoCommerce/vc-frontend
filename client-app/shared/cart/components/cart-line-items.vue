@@ -19,10 +19,13 @@
     <template #default="{ item }">
       <div class="flex flex-col items-center gap-1.5">
         <VcQuantity
+          v-model="item.quantity"
+          :name="item.id"
+          :min-quantity="item.minQuantity"
+          :max-quantity="item.maxQuantity"
           :disabled="disabled"
           :readonly="readonly"
-          :item="item"
-          @change="$emit('change:itemQuantity', { item, quantity: $event })"
+          @update:model-value="$emit('change:itemQuantity', { item, quantity: $event })"
         />
 
         <VcInStock :quantity="item.inStockQuantity" is-in-stock />

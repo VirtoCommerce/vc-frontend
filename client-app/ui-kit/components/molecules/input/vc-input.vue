@@ -8,7 +8,7 @@
         'vc-input--disabled': disabled,
         'vc-input--error': error,
         'vc-input--no-border': noBorder,
-        'vc-input--centered': centered,
+        'vc-input--center': center,
         'vc-input--truncate': truncate,
       },
     ]"
@@ -86,7 +86,7 @@ interface IProps {
   minlength?: string | number;
   maxlength?: string | number;
   error?: boolean;
-  centered?: boolean;
+  center?: boolean;
   truncate?: boolean;
   message?: string;
   modelValue?: string | number;
@@ -170,7 +170,7 @@ watchEffect(() => {
   $disabled: "";
   $error: "";
   $noBorder: "";
-  $centered: "";
+  $center: "";
   $truncate: "";
 
   @apply flex flex-col;
@@ -201,8 +201,8 @@ watchEffect(() => {
     $noBorder: &;
   }
 
-  &--centered {
-    $centered: &;
+  &--center {
+    $center: &;
   }
 
   &--truncate {
@@ -269,7 +269,7 @@ watchEffect(() => {
       }
     }
 
-    #{$centered} & {
+    #{$center} & {
       @apply text-center;
     }
 

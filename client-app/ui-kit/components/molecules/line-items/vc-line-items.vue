@@ -63,7 +63,12 @@
 import { sumBy } from "lodash";
 import { computed } from "vue";
 import { prepareLineItems } from "@/core/utilities";
+import type { PreparedLineItemType } from "@/core/types";
 import type { LineItemType, OrderLineItemType, QuoteItemType } from "@/xapi/types";
+
+interface IEmits {
+  (event: "remove:item", value: LineItemType): void;
+}
 
 interface IProps {
   disabled?: boolean;
@@ -72,16 +77,12 @@ interface IProps {
   items?: LineItemType[] | OrderLineItemType[] | QuoteItemType[];
 }
 
-interface IEmits {
-  (event: "remove:item", value: LineItemType): void;
-}
-
 defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
 });
 
-const preparedLineItems = prepareLineItems(props.items);
+const preparedLineItems = computed<PreparedLineItemType[]>(() => prepareLineItems(props.items));
 
 const subtotal = computed<number>(() => sumBy(props.items, (item: LineItemType) => item.extendedPrice?.amount));
 </script>
