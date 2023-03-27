@@ -56,7 +56,8 @@ export function extendLineItem<T extends LineItemType | OrderLineItemType | Quot
 }
 
 export function prepareLineItem(item: LineItemType | OrderLineItemType | QuoteItemType): PreparedLineItemType {
-  const listPrice = "listPrice" in item ? item.listPrice : "placedPrice" in item ? item.placedPrice : undefined;
+  const placedPrice = "placedPrice" in item ? item.placedPrice : undefined;
+  const listPrice = "listPrice" in item ? item.listPrice : placedPrice;
   const actualPrice = "salePrice" in item ? item.salePrice : undefined;
   const extendedPrice = "extendedPrice" in item ? item.extendedPrice : undefined;
   const quantity = "quantity" in item ? item.quantity : undefined;
