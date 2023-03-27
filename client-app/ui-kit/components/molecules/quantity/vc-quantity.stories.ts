@@ -1,5 +1,4 @@
 import { VcQuantity } from "..";
-import { preparedLineItemMock as lineItem } from "../../../mocks";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
 export default {
@@ -23,7 +22,10 @@ const Template: StoryFn<typeof VcQuantity> = (args) => ({
 
 export const Basic = Template.bind({});
 Basic.args = {
-  item: lineItem,
+  modelValue: 5,
+  name: "quantity",
+  minQuantity: 1,
+  maxQuantity: 10,
 };
 
 export const Readonly = Template.bind({});

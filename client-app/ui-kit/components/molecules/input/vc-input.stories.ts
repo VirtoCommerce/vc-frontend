@@ -16,6 +16,7 @@ export default {
     disabled: false,
     required: false,
     noBorder: false,
+    center: false,
     hidePasswordSwitcher: false,
     error: false,
     showEmptyDetails: false,
@@ -57,6 +58,12 @@ TypePassword.args = {
   ...Common.args,
   autocomplete: "password",
   type: "password",
+};
+
+export const Center = Template.bind({});
+Center.args = {
+  ...Common.args,
+  center: true,
 };
 
 /* TODO: Components should not have the "style" attribute * /

@@ -139,10 +139,10 @@ defineProps<IProps>();
   }
 
   &__name {
-    @apply text-13 leading-4 font-bold line-clamp-4;
+    @apply min-h-[2rem] text-13 leading-4 font-bold line-clamp-4;
 
     @media (min-width: theme("screens.md")) {
-      @apply shrink-0 w-[8.5rem];
+      @apply shrink-0 min-h-0 w-[8.5rem];
     }
 
     @media (min-width: theme("screens.2xl")) {

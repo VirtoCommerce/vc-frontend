@@ -1,5 +1,5 @@
 import { VcLineItems } from "..";
-import { lineItemMock } from "../../../mocks";
+import { lineItemMock } from "../../../mocks/line-item";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
 export default {
