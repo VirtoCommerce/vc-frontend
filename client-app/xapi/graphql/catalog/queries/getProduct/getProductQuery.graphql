@@ -12,6 +12,10 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
     images {
       url
     }
+    assets {
+      name
+      url
+    }
     breadcrumbs {
       itemId
       typeName

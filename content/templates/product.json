@@ -18,6 +18,12 @@
           "id": "productdescriptionw4OT"
         },
         {
+          "name": null,
+          "type": "product-assets",
+          "id": "productassetsgi5C",
+          "title": "Specs Title"
+        },
+        {
           "type": "product-variations",
           "id": "productvariationsgIL5"
         }
