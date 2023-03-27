@@ -6,12 +6,13 @@ import { AddressType } from "@/core/enums";
 import { isEqualAddresses, Logger } from "@/core/utilities";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
 import { useCart } from "@/shared/cart";
-import { AddOrUpdateAddressModal, SelectAddressModal } from "@/shared/checkout";
 import { useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 import { PaymentMethodGroupType } from "@/shared/payment";
 import { usePopup } from "@/shared/popup";
+import { VcAddOrUpdateAddressModal } from "@/ui-kit/components";
 import { createOrderFromCart as _createOrderFromCart, removeCart } from "@/xapi";
+import { SelectAddressModal } from "../components";
 import type { AnyAddressType } from "@/core/types";
 import type {
   CartAddressType,
@@ -188,7 +189,7 @@ export default function useCheckout() {
     editableAddress?: MemberAddressType | CartAddressType
   ) {
     openPopup({
-      component: AddOrUpdateAddressModal,
+      component: VcAddOrUpdateAddressModal,
       props: {
         address: editableAddress,
 

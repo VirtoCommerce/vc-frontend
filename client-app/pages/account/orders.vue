@@ -421,8 +421,9 @@ function hideFilters() {
   filtersVisible.value = false;
 }
 
-function goToOrderDetails(order: CustomerOrderType) {
-  router.push({ name: "OrderDetails", params: { orderId: order.id } });
+function goToOrderDetails(order: CustomerOrderType): void {
+  const orderRoute = router.resolve({ name: "OrderDetails", params: { orderId: order.id } });
+  window.open(orderRoute.fullPath, "_blank")!.focus();
 }
 
 onClickOutside(
