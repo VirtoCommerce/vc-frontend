@@ -86,7 +86,7 @@
 
       <div class="flex grow">
         <VcInput
-          v-model="localKeyword"
+          v-model.trim="localKeyword"
           maxlength="64"
           class="w-full"
           :disabled="ordersLoading"
