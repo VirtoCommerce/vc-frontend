@@ -14,7 +14,6 @@ const Template: StoryFn<typeof VcLineItemTotal> = (args) => ({
 
 export const Basic = Template.bind({});
 Basic.args = {
-  label: "Total",
   listTotal: {
     amount: 2000,
     formattedAmount: "$2000.00",

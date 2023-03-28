@@ -1,6 +1,8 @@
 import type { CommonVendor, LineItemType, MoneyType, OrderLineItemType, Property, QuoteItemType } from "@/xapi/types";
 import type { RouteLocationRaw } from "vue-router";
 
+export type AnyLineItemType = LineItemType | OrderLineItemType | QuoteItemType;
+
 export type LineItemsGroupByVendorType<T extends LineItemType | OrderLineItemType> = {
   items: T[];
   vendor?: CommonVendor;
@@ -11,7 +13,7 @@ export type LineItemsGroupsByVendorType<T extends LineItemType | OrderLineItemTy
   LineItemsGroupByVendorType<T>
 >;
 
-export type ExtendedLineItemType<T extends LineItemType | OrderLineItemType | QuoteItemType> = T & {
+export type ExtendedLineItemType<T extends AnyLineItemType> = T & {
   extended: {
     isProductExists: boolean;
     route: RouteLocationRaw;

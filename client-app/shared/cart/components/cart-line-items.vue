@@ -4,7 +4,7 @@
     :disabled="disabled"
     :readonly="readonly"
     removable
-    @remove:item="emit('remove:item', $event)"
+    @remove:item="$emit('remove:item', $event)"
   >
     <template #titles>
       <div class="min-w-[5.5rem] text-center">
@@ -19,7 +19,7 @@
     <template #default="{ item }">
       <div class="flex flex-col items-center gap-1.5">
         <VcQuantity
-          v-model="item.quantity"
+          :model-value="item.quantity"
           :name="item.id"
           :min-quantity="item.minQuantity"
           :max-quantity="item.maxQuantity"
@@ -60,7 +60,7 @@ interface IEmits {
   (event: "remove:item", value: LineItemType): void;
 }
 
-const emit = defineEmits<IEmits>();
+defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
