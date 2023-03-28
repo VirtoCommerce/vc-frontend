@@ -1,6 +1,16 @@
 import { getProductRoute } from "../product";
-import type { ExtendedLineItemType, LineItemsGroupByVendorType, LineItemsGroupsByVendorType } from "../../types";
+import type {
+  AnyLineItemType,
+  ExtendedLineItemType,
+  LineItemsGroupByVendorType,
+  LineItemsGroupsByVendorType,
+  PreparedLineItemType,
+} from "../../types";
 import type { LineItemType, OrderLineItemType, QuoteItemType } from "@/xapi/types";
+
+export function isQuoteItemType(item: AnyLineItemType): item is QuoteItemType {
+  return "proposalPrices" in item || "selectedTierPrice" in item;
+}
 
 export function getLineItemsGroupedByVendor<T extends LineItemType | OrderLineItemType>(
   items: T[]
@@ -32,9 +42,7 @@ export function getLineItemsGroupedByVendor<T extends LineItemType | OrderLineIt
   return result;
 }
 
-export function extendLineItem<T extends LineItemType | OrderLineItemType | QuoteItemType>(
-  item: T
-): ExtendedLineItemType<T> {
+export function extendLineItem<T extends AnyLineItemType>(item: T): ExtendedLineItemType<T> {
   return {
     ...item,
     extended: {
@@ -48,4 +56,39 @@ export function extendLineItem<T extends LineItemType | OrderLineItemType | Quot
         item.product?.maxQuantity,
     },
   };
+}
+
+export function prepareLineItem(item: AnyLineItemType): PreparedLineItemType {
+  const placedPrice = "placedPrice" in item ? item.placedPrice : undefined;
+  const listPrice = "listPrice" in item ? item.listPrice : placedPrice;
+  const actualPrice = "salePrice" in item ? item.salePrice : undefined;
+  const extendedPrice = "extendedPrice" in item ? item.extendedPrice : undefined;
+  const quantity = isQuoteItemType(item) ? item.selectedTierPrice?.quantity : item.quantity;
+  const inStockQuantity =
+    "inStockQuantity" in item ? item.inStockQuantity : item.product?.availabilityData?.availableQuantity;
+
+  return {
+    id: item.id,
+    name: item.name || "",
+    imageUrl: item.imageUrl,
+    listPrice,
+    actualPrice,
+    extendedPrice,
+    quantity,
+    inStockQuantity,
+    deleted: !item.product,
+    route: getProductRoute(item.productId || item.product?.id || "", item.product?.slug),
+    properties: item.product?.properties?.slice(0, 3) || [],
+    minQuantity: item.product?.minQuantity,
+    maxQuantity:
+      (<LineItemType>item).inStockQuantity ||
+      item.product?.availabilityData?.availableQuantity ||
+      item.product?.maxQuantity,
+  };
+}
+
+export function prepareLineItems(
+  items: LineItemType[] | OrderLineItemType[] | QuoteItemType[]
+): PreparedLineItemType[] {
+  return items.map((item) => prepareLineItem(item));
 }

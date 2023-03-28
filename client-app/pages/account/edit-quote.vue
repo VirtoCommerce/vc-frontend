@@ -52,7 +52,7 @@
               :disabled="fetching"
               type="button"
               class="flex h-9 w-9 shrink-0 items-center justify-center rounded border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white"
-              :title="$t('pages.account.addresses.edit_label')"
+              :title="$t('common.buttons.edit')"
               @click="
                 userHasAddresses
                   ? openAddressSelectionDialog(AddressType.Shipping)
@@ -95,7 +95,7 @@
                 :disabled="fetching"
                 type="button"
                 class="flex h-9 w-9 shrink-0 items-center justify-center rounded border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white"
-                :title="$t('pages.account.addresses.edit_label')"
+                :title="$t('common.buttons.edit')"
                 @click="
                   userHasAddresses
                     ? openAddressSelectionDialog(AddressType.Billing)

@@ -8,6 +8,8 @@
         'vc-input--disabled': disabled,
         'vc-input--error': error,
         'vc-input--no-border': noBorder,
+        'vc-input--center': center,
+        'vc-input--truncate': truncate,
       },
     ]"
   >
@@ -36,8 +38,9 @@
         :step="stepValue"
         :autocomplete="autocomplete"
         @input="change"
-        @click="emit('click', $event)"
-        @keypress="emit('keypress', $event)"
+        @click="$emit('click', $event)"
+        @keypress="$emit('keypress', $event)"
+        @blur="$emit('blur', $event)"
       />
 
       <div v-if="type === 'password' && !hidePasswordSwitcher" class="vc-input__decorator">
@@ -71,6 +74,7 @@ interface IEmits {
   (event: "update:modelValue", value?: string | number): void;
   (event: "click", value: MouseEvent): void;
   (event: "keypress", value: KeyboardEvent): void;
+  (event: "blur", value: Event): void;
 }
 
 interface IProps {
@@ -89,6 +93,8 @@ interface IProps {
   minlength?: string | number;
   maxlength?: string | number;
   error?: boolean;
+  center?: boolean;
+  truncate?: boolean;
   message?: string;
   modelValue?: string | number;
   type?: "text" | "password" | "number";
@@ -164,6 +170,8 @@ watchEffect(() => {
   $disabled: "";
   $error: "";
   $noBorder: "";
+  $center: "";
+  $truncate: "";
 
   @apply flex flex-col;
 
@@ -191,6 +199,14 @@ watchEffect(() => {
 
   &--no-border {
     $noBorder: &;
+  }
+
+  &--center {
+    $center: &;
+  }
+
+  &--truncate {
+    $truncate: &;
   }
 
   &__container {
@@ -227,7 +243,7 @@ watchEffect(() => {
   }
 
   &__input {
-    @apply relative px-3 appearance-none bg-transparent rounded-[3px] text-base leading-none w-full min-w-0;
+    @apply relative px-3 appearance-none bg-transparent rounded-[3px] text-15 leading-none w-full min-w-0;
 
     &:autofill {
       &:disabled {
@@ -251,6 +267,18 @@ watchEffect(() => {
       #{$error} & {
         @apply opacity-80 text-[color:var(--color-danger)];
       }
+    }
+
+    #{$center} & {
+      @apply text-center;
+    }
+
+    #{$truncate} & {
+      @apply truncate;
+    }
+
+    #{$error} & {
+      @apply text-[color:var(--color-danger)];
     }
   }
 
