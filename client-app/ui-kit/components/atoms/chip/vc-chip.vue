@@ -25,9 +25,7 @@
         @click.stop="isDisabled ? null : $emit('close')"
       >
         <slot name="close-icon">
-          <svg width="10" height="10">
-            <use href="/static/images/close.svg#main" />
-          </svg>
+          <VcIcon name="x" size="xs" />
         </slot>
       </button>
     </span>
@@ -35,48 +33,24 @@
 </template>
 
 <script setup lang="ts">
-defineEmits(["close"]);
+interface IEmits {
+  (event: "close"): void;
+}
 
-defineProps({
-  variant: {
-    type: String,
-    default: "primary",
-    validator: (value: string) => ["primary", "secondary", "success", "warning", "danger"].includes(value),
-  },
+interface IProps {
+  variant?: "primary" | "secondary" | "success" | "warning" | "danger";
+  size?: "sm" | "md" | "lg";
+  clickable?: boolean;
+  closable?: boolean;
+  isOutline?: boolean;
+  isDisabled?: boolean;
+  isDraggable?: boolean;
+}
 
-  size: {
-    type: String,
-    default: "md",
-
-    validator(value: string) {
-      return ["sm", "md", "lg"].includes(value);
-    },
-  },
-
-  clickable: {
-    type: Boolean,
-    default: false,
-  },
-
-  closable: {
-    type: Boolean,
-    default: false,
-  },
-
-  isOutline: {
-    type: Boolean,
-    default: false,
-  },
-
-  isDisabled: {
-    type: Boolean,
-    default: false,
-  },
-
-  isDraggable: {
-    type: Boolean,
-    default: null,
-  },
+defineEmits<IEmits>();
+withDefaults(defineProps<IProps>(), {
+  variant: "primary",
+  size: "md",
 });
 </script>
 
