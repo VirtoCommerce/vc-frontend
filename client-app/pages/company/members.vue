@@ -173,25 +173,13 @@
 
     <!-- Filters chips -->
     <div v-if="numberOfFacetsApplied" class="hidden flex-wrap gap-x-3 gap-y-2 lg:flex">
-      <VcChip
-        class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
-        size="sm"
-        is-outline
-        clickable
-        closable
-        @click="resetFilters"
-        @close="resetFilters"
-      >
-        {{ $t("common.buttons.reset_filters") }}
-      </VcChip>
-
       <template v-for="facet in appliedFacets">
         <template v-for="facetValue in facet.values">
           <VcChip
             v-if="facetValue.selected"
             :key="facet.paramName + facetValue.value"
-            class="[--color-primary:#292D3B] [--color-primary-hover:#12141A]"
             size="sm"
+            variant="secondary"
             closable
             @close="resetFilterItem(facet, facetValue)"
           >
@@ -199,6 +187,12 @@
           </VcChip>
         </template>
       </template>
+
+      <VcChip size="sm" variant="secondary" is-outline clickable @click="resetFilters">
+        {{ $t("common.buttons.reset_filters") }}
+
+        <VcIcon class="ml-2" name="reset" size="xs" />
+      </VcChip>
     </div>
 
     <!-- Empty view -->
