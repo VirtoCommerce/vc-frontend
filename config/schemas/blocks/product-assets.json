@@ -6,19 +6,6 @@
       "label": "Title",
       "type": "string",
       "tab": "Content"
-    },
-    {
-      "id": "assets",
-      "label": "Assets",
-      "type": "files",
-      "tab": "Content",
-      "element": [
-        {
-          "id": "name",
-          "type": "string",
-          "label": "Name"
-        }
-      ]
     }
   ]
 }

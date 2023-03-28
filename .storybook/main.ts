@@ -8,8 +8,8 @@ const storybookConfig: StorybookViteConfig = {
   stories: ["../client-app/**/*.stories.@(ts|tsx|mdx)"],
   staticDirs: ["../client-app/public"],
   addons: [
-    "@storybook/addon-essentials",
     "@storybook/addon-links",
+    "@storybook/addon-essentials",
     "@storybook/addon-a11y",
     "@storybook/addon-interactions",
   ],
@@ -25,6 +25,7 @@ const storybookConfig: StorybookViteConfig = {
   framework: "@storybook/vue3",
   core: {
     builder: "@storybook/builder-vite",
+    disableTelemetry: true,
   },
   features: {
     // storyStoreV7: true, // NOTE: When enabled, `viewMode: "docs"` does not work.

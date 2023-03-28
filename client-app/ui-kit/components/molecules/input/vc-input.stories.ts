@@ -6,10 +6,38 @@ export default {
   title: "Components/Molecules/VcInput",
   component: VcInput,
   argTypes: {
-    type: { control: "radio", options: ["text", "password", "number"] },
-    size: { control: "radio", options: ["sm", "md"] },
-    onClick: { action: "inputClick" },
-    onKeypress: { action: "inputKeypress" },
+    /**
+     * Docs:
+     *  https://storybook.js.org/docs/vue/essentials/controls#annotation
+     *  https://storybook.js.org/docs/vue/api/argtypes#manual-specification
+     */
+    type: {
+      control: "radio",
+      options: ["text", "password", "number"],
+      table: { type: { summary: '"text" | "password" | "number"' } },
+    },
+    size: {
+      control: "radio",
+      options: ["sm", "md"],
+      type: { name: "string", required: false },
+      // description: "Description text",
+      table: {
+        type: {
+          summary: '"sm" | "md"',
+          // detail: "Tooltop text",
+        },
+        // defaultValue: {
+        //   summary: "md",
+        //   detail: "Tooltop text",
+        // },
+      },
+    },
+    min: { table: { type: { summary: "string|number" } } },
+    max: { table: { type: { summary: "string|number" } } },
+    step: { table: { type: { summary: "string|number" } } },
+    minlength: { table: { type: { summary: "string|number" } } },
+    maxlength: { table: { type: { summary: "string|number" } } },
+    modelValue: { table: { type: { summary: "string|number" } } },
   },
   args: {
     readonly: false,

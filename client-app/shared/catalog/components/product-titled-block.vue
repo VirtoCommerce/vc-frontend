@@ -4,13 +4,16 @@
       <VcImage :src="imageSrc" :alt="title" lazy />
       <h2 class="ml-2 text-xl font-extrabold uppercase">{{ title }}</h2>
     </div>
-    <slot></slot>
+
+    <slot />
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps({
-  imageSrc: { type: String, required: true },
-  title: { type: String, required: true },
-});
+interface IProps {
+  imageSrc: string;
+  title: string;
+}
+
+defineProps<IProps>();
 </script>

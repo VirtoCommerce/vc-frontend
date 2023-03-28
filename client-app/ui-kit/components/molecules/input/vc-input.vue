@@ -38,9 +38,9 @@
         :step="stepValue"
         :autocomplete="autocomplete"
         @input="change"
-        @click="emit('click', $event)"
-        @keypress="emit('keypress', $event)"
-        @blur="emit('blur', $event)"
+        @click="$emit('click', $event)"
+        @keypress="$emit('keypress', $event)"
+        @blur="$emit('blur', $event)"
       />
 
       <div v-if="type === 'password' && !hidePasswordSwitcher" class="vc-input__decorator">
@@ -70,6 +70,13 @@
 import { computed, ref, watchEffect } from "vue";
 import { useComponentId } from "@/core/composables";
 
+interface IEmits {
+  (event: "update:modelValue", value?: string | number): void;
+  (event: "click", value: MouseEvent): void;
+  (event: "keypress", value: KeyboardEvent): void;
+  (event: "blur", value: Event): void;
+}
+
 interface IProps {
   autocomplete?: string;
   readonly?: boolean;
@@ -93,13 +100,6 @@ interface IProps {
   type?: "text" | "password" | "number";
   size?: "sm" | "md";
   showEmptyDetails?: boolean;
-}
-
-interface IEmits {
-  (event: "update:modelValue", value?: string | number): void;
-  (event: "click", value: MouseEvent): void;
-  (event: "keypress", value: KeyboardEvent): void;
-  (event: "blur", value: Event): void;
 }
 
 const emit = defineEmits<IEmits>();

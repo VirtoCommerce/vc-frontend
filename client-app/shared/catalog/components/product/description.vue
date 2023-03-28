@@ -1,28 +1,29 @@
 <template>
   <ProductTitledBlock
-    v-if="product.description"
-    class="mt-5"
-    image-src="/static/images/description.svg"
+    v-if="!model.hidden && description"
     :title="model.title || $t('shared.catalog.product_details.description_block_title')"
+    image-src="/static/images/description.svg"
   >
-    <VcMarkdownRender :src="product.description?.content"></VcMarkdownRender>
+    <VcCollapsibleContent max-height="12rem">
+      <VcMarkdownRender :src="description" />
+    </VcCollapsibleContent>
   </ProductTitledBlock>
 </template>
 
 <script setup lang="ts">
-import { ProductTitledBlock } from "@/shared/catalog";
+import { computed } from "vue";
+import ProductTitledBlock from "../product-titled-block.vue";
 import type { Product } from "@/xapi/types";
-import type { PropType } from "vue";
 
-defineProps({
-  product: {
-    type: Object as PropType<Product>,
-    required: true,
-  },
-
+interface IProps {
+  product: Product;
   model: {
-    type: Object,
-    required: true,
-  },
-});
+    title?: string;
+    hidden?: boolean;
+  };
+}
+
+const props = defineProps<IProps>();
+
+const description = computed<string | undefined>(() => props.product.description?.content);
 </script>
