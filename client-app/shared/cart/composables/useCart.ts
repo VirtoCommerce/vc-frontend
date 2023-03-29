@@ -3,7 +3,6 @@ import { keyBy, sumBy } from "lodash";
 import { computed, readonly, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { getLineItemsGroupedByVendor, Logger } from "@/core/utilities";
-import { ClearCartModal, getLineItemValidationErrorsGroupedBySKU } from "@/shared/cart";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import {
@@ -25,6 +24,8 @@ import {
   removeCoupon,
   validateCoupon,
 } from "@/xapi";
+import { ClearCartModal } from "../components";
+import { getLineItemValidationErrorsGroupedBySKU } from "../utils";
 import type { LineItemsGroupByVendorType } from "@/core/types";
 import type { ExtendedGiftItemType, OutputBulkItemType } from "@/shared/cart";
 import type {

@@ -14,18 +14,17 @@
           {{ $t("shared.wishlists.list_card.list_settings_button") }}
         </VcButton>
 
-        <!--
         <VcButton
           v-if="listItems.length"
-          class="px-3 uppercase w-56"
-          size="sm"
           :is-disabled="!listItems.length"
+          :is-waiting="loadingAddItemsToCart"
+          class="w-56 px-3 uppercase"
+          size="sm"
           @click="addAllToCart"
         >
-          <i class="fa fa-shopping-cart text-inherit text-xs mr-2" />
+          <i class="fa fa-shopping-cart mr-2 text-xs text-inherit" />
           {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
         </VcButton>
-        -->
       </div>
     </div>
 
@@ -43,7 +42,7 @@
     <!-- List details -->
     <template v-else-if="listItems.length">
       <div class="flex flex-col gap-6 bg-white p-5 md:rounded md:border md:shadow-t-3sm">
-        <WishlistLineItems :items="listItems" @remove:item="openDeleteProductModal" />
+        <WishlistLineItems :items="listItems" @update:item="updateWishListItem" @remove:item="openDeleteProductModal" />
 
         <VcPagination
           v-if="pages > 1"
@@ -72,9 +71,11 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { clone } from "lodash";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useGoogleAnalytics, usePageHead } from "@/core/composables";
+import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
 import { ProductSkeletonGrid } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
@@ -85,18 +86,18 @@ import {
   AddOrUpdateWishlistModal,
   DeleteWishlistProductModal,
 } from "@/shared/wishlists";
-import type { LineItemType } from "@/xapi/types";
+import type { InputNewBulkItemType, LineItemType } from "@/xapi/types";
 
-const props = defineProps({
-  listId: {
-    type: String,
-    default: "",
-  },
-});
+interface IProps {
+  listId: string;
+}
+
+const props = defineProps<IProps>();
 
 const { t } = useI18n();
 const { openPopup } = usePopup();
 const { loading, list, fetchWishList, clearList } = useWishlists();
+const { addBulkItemsToCart } = useCart();
 const ga = useGoogleAnalytics();
 
 usePageHead({
@@ -105,6 +106,16 @@ usePageHead({
 
 const itemsPerPage = ref(6);
 const page = ref(1);
+const loadingAddItemsToCart = ref(false);
+const inputBulkItems = ref<InputNewBulkItemType[] | undefined>(
+  list.value?.items?.map<InputNewBulkItemType>((item) => ({
+    productSku: item.sku!,
+    quantity:
+      item.product && item.product.minQuantity && (item.quantity || 0) < item.product.minQuantity
+        ? item.product.minQuantity
+        : item.quantity,
+  }))
+);
 
 const pages = computed<number>(() => Math.ceil((list.value?.items?.length ?? 0) / itemsPerPage.value));
 const listItems = computed<LineItemType[]>(() =>
@@ -114,11 +125,40 @@ const listItems = computed<LineItemType[]>(() =>
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 
-/*
-function addAllToCart() {
-  // TODO: implement in another user story
+function updateWishListItem(item: LineItemType): void {
+  const inputBulkItem = inputBulkItems.value?.find((bulkItem) => bulkItem.productSku === item.sku);
+  if (inputBulkItem) {
+    inputBulkItem.quantity = item.quantity;
+  }
 }
-*/
+
+async function addAllToCart() {
+  if (!list.value || !inputBulkItems.value) {
+    return;
+  }
+
+  loadingAddItemsToCart.value = true;
+
+  const inputItems = clone(list.value.items!);
+  const resultItems = await addBulkItemsToCart(inputBulkItems.value);
+
+  inputItems.forEach((inputItem) => {
+    const inputBulkItem = inputBulkItems.value?.find((item) => item.productSku === inputItem.sku);
+    if (inputBulkItem) {
+      inputItem.quantity = inputBulkItem.quantity;
+    }
+  });
+
+  openPopup({
+    component: AddBulkItemsToCartResultsModal,
+
+    props: {
+      items: getItemsForAddBulkItemsToCartResultsPopup(inputItems, resultItems),
+    },
+  });
+
+  loadingAddItemsToCart.value = false;
+}
 
 function openDeleteProductModal(item: LineItemType) {
   openPopup({

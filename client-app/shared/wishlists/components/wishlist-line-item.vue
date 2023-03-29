@@ -62,7 +62,11 @@
 
       <!-- ADD-TO-CART -->
       <div class="vc-wishlist-line-item__quantity">
-        <AddToCart v-if="extendedItem.extended.isProductExists" :product="extendedItem.product!" />
+        <AddToCart
+          v-if="extendedItem.extended.isProductExists"
+          :product="extendedItem.product!"
+          @update:line-item="changeItemQuantity"
+        />
 
         <div class="vc-wishlist-line-item__quantity-badges">
           <VcInStock
@@ -92,23 +96,28 @@
 import { computed } from "vue";
 import { useGoogleAnalytics } from "@/core/composables";
 import { AddToCart } from "@/shared/cart";
-import { extendWishListItem } from "@/shared/wishlists";
+import { extendWishListItem } from "../utilities";
 import type { LineItemType } from "@/xapi/types";
 
 interface IEmits {
   (event: "remove"): void;
+  (event: "update", item: LineItemType): void;
 }
 
 interface IProps {
   item: LineItemType;
 }
 
-defineEmits<IEmits>();
+const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const ga = useGoogleAnalytics();
 
 const extendedItem = computed(() => extendWishListItem(props.item));
+
+function changeItemQuantity(lineItem: LineItemType): void {
+  emit("update", lineItem);
+}
 
 function sendGASelectItemEvent() {
   if (props.item.product) {

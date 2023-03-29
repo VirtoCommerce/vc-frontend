@@ -19,7 +19,13 @@
 
     <!-- table body -->
     <div v-if="items.length" class="vc-wishlist-line-items__body">
-      <WishlistLineItem v-for="item in items" :key="item.id" :item="item" @remove="$emit('remove:item', item)" />
+      <WishlistLineItem
+        v-for="item in items"
+        :key="item.id"
+        :item="item"
+        @update="changeLineItemQuantity"
+        @remove="$emit('remove:item', item)"
+      />
     </div>
 
     <div v-else class="vc-wishlist-line-items__empty">
@@ -31,10 +37,11 @@
 </template>
 
 <script setup lang="ts">
-import { WishlistLineItem } from "@/shared/wishlists";
+import WishlistLineItem from "./wishlist-line-item.vue";
 import type { LineItemType } from "@/xapi/types";
 
 interface IEmits {
+  (event: "update:item", value: LineItemType): void;
   (event: "remove:item", value: LineItemType): void;
 }
 
@@ -42,8 +49,12 @@ interface IProp {
   items: LineItemType[];
 }
 
-defineEmits<IEmits>();
+const emit = defineEmits<IEmits>();
 defineProps<IProp>();
+
+function changeLineItemQuantity(item: LineItemType): void {
+  emit("update:item", item);
+}
 </script>
 
 <style scoped lang="scss">

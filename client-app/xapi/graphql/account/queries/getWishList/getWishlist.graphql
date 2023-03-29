@@ -6,6 +6,8 @@ query GetWishlist($listId: String!) {
       id
       name
       imageUrl
+      sku
+      quantity
       salePrice {
         amount
         formattedAmount
