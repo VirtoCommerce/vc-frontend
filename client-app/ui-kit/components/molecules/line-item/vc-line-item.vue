@@ -67,6 +67,10 @@
 <script setup lang="ts">
 import type { Property, MoneyType } from "@/xapi/types";
 
+interface IEmits {
+  (event: "remove"): void;
+}
+
 interface IProps {
   imageUrl?: string;
   name: string;
@@ -79,10 +83,6 @@ interface IProps {
   deleted?: boolean;
 }
 
-interface IEmits {
-  (event: "remove"): void;
-}
-
 defineEmits<IEmits>();
 defineProps<IProps>();
 </script>
@@ -93,7 +93,7 @@ defineProps<IProps>();
   $deleted: "";
   $disabled: "";
 
-  @apply p-3 rounded border shadow-t-3sm space-y-2;
+  @apply flex flex-col gap-2 p-3 rounded border shadow-t-3sm;
 
   &--removable {
     $removable: &;
@@ -108,22 +108,21 @@ defineProps<IProps>();
   }
 
   @media (min-width: theme("screens.md")) {
-    @apply px-2 rounded-none border-0 shadow-none;
+    @apply px-3 rounded-none border-0 shadow-none;
   }
 
-  @media (min-width: theme("screens.2xl")) {
-    @apply p-4;
+  &__before,
+  &__after {
+    &:empty {
+      @apply hidden;
+    }
   }
 
   &__main {
     @apply relative flex items-start gap-3;
 
     @media (min-width: theme("screens.md")) {
-      @apply items-center gap-2;
-    }
-
-    @media (min-width: theme("screens.2xl")) {
-      @apply gap-3;
+      @apply items-center gap-4;
     }
   }
 
@@ -140,10 +139,10 @@ defineProps<IProps>();
   }
 
   &__name {
-    @apply text-13 leading-4 font-bold line-clamp-4;
+    @apply min-h-[2rem] text-13 leading-4 font-bold line-clamp-4;
 
     @media (min-width: theme("screens.md")) {
-      @apply shrink-0 w-[8.5rem];
+      @apply shrink-0 min-h-0 w-[8.5rem];
     }
 
     @media (min-width: theme("screens.2xl")) {
@@ -197,19 +196,27 @@ defineProps<IProps>();
     }
 
     #{$deleted} & {
-      @apply hidden 2xl:block 2xl:invisible;
+      @apply hidden;
+
+      @media (min-width: theme("screens.2xl")) {
+        @apply block invisible;
+      }
     }
   }
 
   &__slot {
-    @apply flex items-center gap-3 mt-4 empty:hidden;
+    @apply flex items-start gap-1 mt-4 empty:hidden;
 
     @media (min-width: theme("screens.md")) {
-      @apply shrink-0 gap-2 mt-0 w-[15.125rem] empty:block;
+      @apply flex-shrink-0 items-center gap-4 mt-0 w-[15.75rem] empty:block;
     }
 
-    @media (min-width: theme("screens.2xl")) {
-      @apply gap-3;
+    @media (min-width: theme("screens.lg")) {
+      @apply w-1/3;
+    }
+
+    @media (min-width: theme("screens.xl")) {
+      @apply w-[15.75rem];
     }
 
     #{$deleted} & {

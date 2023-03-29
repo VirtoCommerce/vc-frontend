@@ -1,9 +1,8 @@
 <template>
   <ProductTitledBlock
     v-if="!model.hidden"
-    class="mt-5"
-    image-src="/static/images/technical_specs.svg"
     :title="model.title || $t('shared.catalog.product_details.technical_specs_block_title')"
+    image-src="/static/images/technical_specs.svg"
   >
     <!-- Properties -->
     <ProductProperty v-for="property in propertiesToShow" :key="property.name" :label="property.name" class="mb-4">
@@ -19,14 +18,9 @@
       <Vendor :vendor="product.vendor" with-rating />
     </ProductProperty>
 
-    <a
-      v-if="groupedProperties && groupedProperties.length > MAX_DISPLAY_ITEMS"
-      class="mb-4 flex items-center gap-x-1 text-14 text-[color:var(--color-link)] underline decoration-dashed hover:cursor-pointer hover:text-[color:var(--color-link-hover)]"
-      @click="showAll = !showAll"
-    >
-      <VcIcon :name="showAll ? 'chevron-up' : 'chevron-down'" size="xs" class="text-[color:var(--color-primary)]" />
-      {{ showAll ? $t("common.buttons.see_less") : $t("common.buttons.see_more") }}
-    </a>
+    <div v-if="groupedProperties.length > MAX_DISPLAY_ITEMS" class="-mt-1 mb-4">
+      <VcButtonSeeMoreLess v-model="showAll" />
+    </div>
   </ProductTitledBlock>
 </template>
 
@@ -39,8 +33,8 @@ import type { Product } from "@/xapi/types";
 interface IProps {
   product: Product;
   model: {
-    hidden: boolean;
-    title: string;
+    title?: string;
+    hidden?: boolean;
   };
 }
 
@@ -60,6 +54,6 @@ const groupedProperties = computed(() => {
 });
 
 const propertiesToShow = computed(() =>
-  !showAll.value ? groupedProperties.value.slice(0, MAX_DISPLAY_ITEMS) : groupedProperties.value
+  showAll.value ? groupedProperties.value : groupedProperties.value.slice(0, MAX_DISPLAY_ITEMS)
 );
 </script>

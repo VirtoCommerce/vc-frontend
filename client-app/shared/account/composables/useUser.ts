@@ -110,14 +110,7 @@ export default function useUser() {
   async function signMeIn(payload: SignMeIn): Promise<IdentityResultType> {
     try {
       loading.value = true;
-      const url = "/storefrontapi/account/login";
-      const res = await innerFetch<IdentityResultType, SignMeIn>(url, "POST", payload);
-
-      if (res.succeeded) {
-        await fetchUser();
-      }
-
-      return res;
+      return await innerFetch<IdentityResultType, SignMeIn>("/storefrontapi/account/login", "POST", payload);
     } catch (e) {
       Logger.error(`${useUser.name}.${signMeIn.name}`, e);
       throw e;

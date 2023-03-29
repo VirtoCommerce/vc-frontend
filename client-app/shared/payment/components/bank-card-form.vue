@@ -17,7 +17,7 @@
     />
 
     <VcInput
-      v-model="cardholderName"
+      v-model.trim="cardholderName"
       :label="$t('shared.payment.bank_card_form.cardholder_name_label')"
       :message="formErrors.cardholderName || errors.cardholderName"
       :error="!!formErrors.cardholderName || !!errors.cardholderName"
@@ -71,11 +71,12 @@
 </template>
 
 <script setup lang="ts">
+import { toTypedSchema } from "@vee-validate/yup";
 import { clone } from "lodash";
-import { useForm, useField } from "vee-validate";
+import { useField, useForm } from "vee-validate";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import * as yup from "yup";
+import { object, string } from "yup";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
 
 interface IEmits {
@@ -101,38 +102,29 @@ const { t } = useI18n();
 
 const initialValues = ref<BankCardType>(clone(props.modelValue));
 
-const validationSchema = yup.object({
-  number: yup.string().label(t("shared.payment.bank_card_form.number_label")).min(12).max(19).required(),
-  cardholderName: yup.string().label(t("shared.payment.bank_card_form.cardholder_name_label")).max(64).required(),
-  month: yup
-    .string()
-    .label(t("shared.payment.bank_card_form.month_label"))
-    .matches(/^(0?[1-9]|1[012])$/, t("shared.payment.authorize_net.errors.month"))
-    .length(2)
-    .required(),
-  year: yup
-    .string()
-    .label(t("shared.payment.bank_card_form.year_label"))
-    .when("month", (valueMonth: string, schema) =>
-      valueMonth?.length > 1
-        ? schema
-            .test(
-              "year",
-              t("shared.payment.authorize_net.errors.expiration_date"),
-              (valueYear: string) => Number(valueYear) >= Number(new Date().getFullYear().toString().slice(-2))
-            )
-            .length(2)
-        : schema
-    ),
-  securityCode: yup.string().label(t("shared.payment.bank_card_form.security_code_label")).min(3).max(4).required(),
-});
-const { values, meta, errors: formErrors } = useForm<Partial<BankCardType>>({ validationSchema, initialValues });
+const validationSchema = toTypedSchema(
+  object({
+    number: string().required().min(12).max(19),
+    cardholderName: string().required().max(64),
+    month: string()
+      .required()
+      .length(2)
+      .matches(/^(0?[1-9]|1[012])$/, t("shared.payment.authorize_net.errors.month")),
+    year: string().when("month", {
+      is: (monthValue?: string) => monthValue?.length === 2,
+      then: (stringSchema) => stringSchema.length(2),
+    }),
+    securityCode: string().required().min(3).max(4),
+  })
+);
 
-const { value: number } = useField<string>("number");
-const { value: cardholderName } = useField<string>("cardholderName");
-const { value: month } = useField<string>("month");
-const { value: year } = useField<string>("year");
-const { value: securityCode } = useField<string>("securityCode");
+const { values, meta, errors: formErrors } = useForm<BankCardType>({ validationSchema, initialValues });
+
+const { value: number } = useField<string>("number", undefined, { syncVModel: false });
+const { value: cardholderName } = useField<string>("cardholderName", undefined, { syncVModel: false });
+const { value: month } = useField<string>("month", undefined, { syncVModel: false });
+const { value: year } = useField<string>("year", undefined, { syncVModel: false });
+const { value: securityCode } = useField<string>("securityCode", undefined, { syncVModel: false });
 
 const expirationDate = computed({
   get: () => (month.value.length > 1 || year.value ? `${month.value || "  "} / ${year.value}` : month.value),

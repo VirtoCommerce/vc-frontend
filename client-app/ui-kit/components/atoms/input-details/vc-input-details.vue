@@ -29,7 +29,9 @@ interface IProps {
   maxLength?: number | string;
 }
 
-defineProps<IProps>();
+withDefaults(defineProps<IProps>(), {
+  textLength: 0,
+});
 </script>
 
 <style lang="scss">

@@ -56,7 +56,7 @@
     <!-- region Mobile Search Bar -->
     <div v-show="searchBarVisible" class="flex select-none items-center bg-[color:var(--color-search-bar-bg)] p-4">
       <VcInput
-        v-model="searchPhrase"
+        v-model.trim="searchPhrase"
         maxlength="64"
         :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
         class="mr-4 grow"
