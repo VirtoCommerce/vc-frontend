@@ -8,7 +8,7 @@
       >
         <ul class="ml-6 list-disc">
           <li v-for="(asset, index) in product.assets" :key="index">
-            <a :href="asset.url" class="text-[color:var(--color-primary)] hover:underline">
+            <a :href="asset.url" class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]">
               {{ asset.name || asset.url }}
             </a>
           </li>
