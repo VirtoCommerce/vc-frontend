@@ -32,7 +32,7 @@
         :columns="columns"
         :items="orders"
         :sort="sort"
-        :footer="false"
+        hide-footer
         @item-click="openOrderDetails"
       >
         <template #mobile-item="itemData">
