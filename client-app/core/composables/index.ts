@@ -8,6 +8,8 @@ export * from "./useCurrency";
 export * from "./useDomUtils";
 export * from "./useElementVisibility";
 export * from "./useFetch";
+export * from "./useItem";
+export * from "./useItems";
 export * from "./useGoogleAnalytics";
 export * from "./useIdentityErrorTranslator";
 export * from "./useLanguages";

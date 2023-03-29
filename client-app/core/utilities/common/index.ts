@@ -79,3 +79,5 @@ export async function asyncForEach<T>(
     await callbackFn(array[i], i, array);
   }
 }
+
+export const nameof = <T>(name: keyof T) => name;

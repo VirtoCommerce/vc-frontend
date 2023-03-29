@@ -27,11 +27,14 @@ export interface IUseItems<Item> extends IHasLoading {
   keyword: Readonly<Ref<string>>;
   sort: Readonly<Ref<Sort>>;
   filters?: Readonly<Ref<DeepReadonly<Filters> | undefined>>;
-  items: Readonly<Ref<DeepReadonly<Item[]>>>;
+  items: Ref<Item[]>;
   load: AsyncActionType<Partial<ISearchParams>>;
-  changePage: (page: number, params: Partial<Omit<ISearchParams, "page">>) => Promise<void>;
-  applySort: (param: string | Sort) => Promise<void>;
-  applyFilters: (param: string | Filters | undefined) => Promise<void>;
+  changePage: (page: number, params?: Partial<Omit<ISearchParams, "page">>) => Promise<void>;
+  applySort: (param: string | Sort, params?: Partial<Omit<ISearchParams, "sort">>) => Promise<void>;
+  applyFilters: (
+    param: string | Filters | undefined,
+    params?: Partial<Omit<ISearchParams, "filters">>
+  ) => Promise<void>;
 }
 
 /**
@@ -163,23 +166,26 @@ export function useItems<Item>(
     items.value = connection.items || [];
   });
 
-  async function changePage(page: number, params: Partial<Omit<ISearchParams, "page">>): Promise<void> {
+  async function changePage(page: number, params?: Partial<Omit<ISearchParams, "page">>): Promise<void> {
     await load({ page, ...params });
   }
 
-  async function applySort(param: string | Sort): Promise<void> {
+  async function applySort(param: string | Sort, params?: Partial<Omit<ISearchParams, "sort">>): Promise<void> {
     const sort = param instanceof Sort ? param : Sort.fromString(param);
-    await changePage(1, { sort });
+    await changePage(1, { sort, ...params });
   }
 
-  async function applyFilters(param: string | Filters | undefined): Promise<void> {
+  async function applyFilters(
+    param: string | Filters | undefined,
+    params?: Partial<Omit<ISearchParams, "filters">>
+  ): Promise<void> {
     let filters: Filters | undefined;
     if (param === undefined) {
       filters = undefined;
     } else {
       filters = Array.isArray(param) ? param : SearchPhraseParser.INSTANCE.parse(param).filters;
     }
-    await changePage(1, { filters });
+    await changePage(1, { filters, ...params });
   }
 
   const { page, keyword, sort, filters } = toRefs(readonly(searchParams));
@@ -193,7 +199,7 @@ export function useItems<Item>(
     keyword,
     sort,
     filters,
-    items: readonly(items),
+    items: items,
     changePage,
     applySort,
     applyFilters,
