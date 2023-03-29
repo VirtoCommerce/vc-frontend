@@ -131,7 +131,7 @@
             <div class="flex flex-col leading-tight">
               <div class="flex flex-wrap items-center gap-x-1 text-[color:var(--color-mobile-menu-link)]">
                 <template v-if="operator">
-                  <span class="font-bold [word-break:break-word]">
+                  <span class="font-bold line-clamp-3 [word-break:break-word]">
                     {{ operator.contact?.fullName || operator.userName }}
                   </span>
 
@@ -141,7 +141,7 @@
                   />
                 </template>
 
-                <span class="font-bold [word-break:break-word]">
+                <span class="font-bold line-clamp-3 [word-break:break-word]">
                   {{ user.contact?.fullName || user.userName }}
                 </span>
               </div>
