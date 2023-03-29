@@ -2,8 +2,9 @@
   <span>
     {{ address.line1 }},&nbsp;
     <template v-if="address.line2">{{ address.line2 }}&nbsp;</template>
-    {{ address.city }},&nbsp; {{ address.countryName }},&nbsp;
+    {{ address.city }},&nbsp;
     <template v-if="address.regionName">{{ address.regionName }},&nbsp;</template>
+    {{ address.countryName }},&nbsp;
     {{ address.postalCode }}
   </span>
 </template>
