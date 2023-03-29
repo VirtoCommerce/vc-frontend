@@ -14,32 +14,30 @@
           <span v-t="'pages.account.profile.update_error_alert'" />
         </VcAlert>
 
-        <VcInput v-model="userName" name="userName" class="hidden" autocomplete="userName" />
-
         <VcInput
-          v-model="firstName"
+          v-model.trim="firstName"
           :label="$t('common.labels.first_name')"
           :placeholder="$t('common.placeholders.first_name')"
           :disabled="isSubmitting"
+          :maxlength="64"
           :message="errors.firstName"
           :error="!!errors.firstName"
           name="firstName"
           class="mb-5"
           required
-          :maxlength="64"
         />
 
         <VcInput
-          v-model="lastName"
+          v-model.trim="lastName"
           :label="$t('common.labels.last_name')"
           :placeholder="$t('common.placeholders.first_name')"
           :disabled="isSubmitting"
+          :maxlength="64"
           :message="errors.lastName"
           :error="!!errors.lastName"
           name="lastName"
           class="mb-5"
           required
-          :maxlength="64"
         />
 
         <VcInput
@@ -68,13 +66,13 @@
           :label="$t('pages.account.profile.old_password_label')"
           :placeholder="$t('pages.account.profile.old_password_placeholder')"
           :disabled="isSubmitting"
+          :maxlength="64"
           :message="errors.oldPassword"
           :error="!!errors.oldPassword"
           autocomplete="off"
           type="password"
           name="oldPassword"
           class="mb-5"
-          :maxlength="64"
         />
 
         <VcInput
@@ -82,6 +80,7 @@
           :label="$t('pages.account.profile.new_password_label')"
           :placeholder="$t('pages.account.profile.new_password_placeholder')"
           :disabled="isSubmitting"
+          :maxlength="64"
           :required="!!oldPassword"
           :message="errors.newPassword"
           :error="!!errors.newPassword"
@@ -89,7 +88,6 @@
           name="newPassword"
           class="mb-5"
           autocomplete="new-password"
-          :maxlength="64"
           @update:model-value="oldPassword ? (newPassword = $event.trim()) : null"
         />
 
@@ -98,6 +96,7 @@
           :label="$t('pages.account.profile.confirm_new_password_label')"
           :placeholder="$t('pages.account.profile.confirm_new_password_placeholder')"
           :disabled="isSubmitting"
+          :maxlength="64"
           :required="!!oldPassword"
           :message="errors.confirmNewPassword"
           :error="!!errors.confirmNewPassword"
@@ -105,7 +104,6 @@
           name="confirmNewPassword"
           class="mb-5"
           autocomplete="off"
-          :maxlength="64"
           @update:model-value="oldPassword ? (confirmNewPassword = $event.trim()) : null"
         />
 
@@ -171,7 +169,6 @@ const validationSchema = toTypedSchema(
 );
 
 const initialValues = computed(() => ({
-  userName: user.value.userName,
   firstName: user.value.contact?.firstName,
   lastName: user.value.contact?.lastName,
   email: user.value.email,
@@ -185,7 +182,6 @@ const { errors, isSubmitting, meta, handleSubmit, resetForm, setFieldError } = u
   initialValues,
 });
 
-const { value: userName } = useField<string>("userName");
 const { value: firstName } = useField<string>("firstName");
 const { value: lastName } = useField<string>("lastName");
 const { value: email } = useField<string>("email");

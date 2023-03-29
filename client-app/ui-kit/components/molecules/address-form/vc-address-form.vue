@@ -5,7 +5,7 @@
     <div :class="{ 'md:flex md:flex-row': withPersonalInfo }">
       <div v-if="withPersonalInfo" class="md:w-1/2">
         <VcInput
-          v-model="firstName"
+          v-model.trim="firstName"
           :message="errors.firstName"
           :error="!!errors.firstName"
           :disabled="disabled"
@@ -16,7 +16,7 @@
         />
 
         <VcInput
-          v-model="lastName"
+          v-model.trim="lastName"
           :message="errors.lastName"
           :error="!!errors.lastName"
           :disabled="disabled"
@@ -27,7 +27,7 @@
         />
 
         <VcInput
-          v-model="email"
+          v-model.trim="email"
           :message="errors.email"
           :error="!!errors.email"
           :disabled="disabled"
@@ -38,7 +38,7 @@
         />
 
         <VcInput
-          v-model="phone"
+          v-model.trim="phone"
           :message="errors.phone"
           :error="!!errors.phone"
           :disabled="disabled"
@@ -58,7 +58,7 @@
       <div :class="{ 'md:w-1/2': withPersonalInfo }">
         <VcInput
           v-if="withDescriptionField"
-          v-model="description"
+          v-model.trim="description"
           :message="(errors as Record<string, string>).description"
           :error="!!(errors as Record<string, string>).description"
           :disabled="disabled"
@@ -83,7 +83,7 @@
           />
 
           <VcInput
-            v-model="postalCode"
+            v-model.trim="postalCode"
             :message="errors.postalCode"
             :error="!!errors.postalCode"
             :disabled="disabled"
@@ -108,7 +108,7 @@
           />
 
           <VcInput
-            v-model="city"
+            v-model.trim="city"
             :message="errors.city"
             :error="!!errors.city"
             :disabled="disabled"
@@ -120,7 +120,7 @@
         </div>
 
         <VcInput
-          v-model="line1"
+          v-model.trim="line1"
           :message="errors.line1"
           :error="!!errors.line1"
           :disabled="disabled"
@@ -131,7 +131,7 @@
         />
 
         <VcInput
-          v-model="line2"
+          v-model.trim="line2"
           :message="errors.line2"
           :error="!!errors.line2"
           :disabled="disabled"

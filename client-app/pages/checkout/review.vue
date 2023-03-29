@@ -81,7 +81,12 @@
               </template>
             </VcSelect>
 
-            <VcInput v-if="purchaseOrderNumber" v-model="purchaseOrderNumber" name="purchaseOrderNumber" readonly />
+            <VcInput
+              v-if="purchaseOrderNumber"
+              :model-value="purchaseOrderNumber"
+              name="purchaseOrderNumber"
+              readonly
+            />
           </div>
         </div>
       </div>

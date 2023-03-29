@@ -10,7 +10,7 @@
     </VcAlert>
 
     <VcInput
-      v-model="email"
+      v-model.trim="email"
       name="email"
       class="mb-4"
       :label="$t('common.labels.email')"
@@ -18,7 +18,7 @@
       :disabled="loading || isAuthenticated"
       required
       :message="errors.email"
-      :error="errors.email"
+      :error="!!errors.email"
       autocomplete="email"
     />
 
@@ -81,6 +81,7 @@ import { useField, useForm } from "vee-validate";
 import { reactive, ref, watch } from "vue";
 import { object, string } from "yup";
 import { useCart } from "@/shared/cart";
+import { getMe } from "@/xapi";
 import { mergeCart } from "@/xapi/graphql/cart";
 import useUser from "../composables/useUser";
 
@@ -89,13 +90,12 @@ interface IEmits {
 }
 
 const emit = defineEmits<IEmits>();
-
 const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButtons: false });
 
 const USER_IS_LOCKED_OUT_ERROR_CODE = "user_is_locked_out";
 
 const { cart, fetchCart } = useCart();
-const { signMeIn, user, isAuthenticated } = useUser();
+const { signMeIn, isAuthenticated } = useUser();
 
 const loading = ref(false);
 const authError = ref(false);
@@ -129,19 +129,20 @@ const onSubmit = handleSubmit(async () => {
 
   const result = await signMeIn(model);
 
-  if (!result.succeeded) {
-    if (result.errors?.find((e) => e.code === USER_IS_LOCKED_OUT_ERROR_CODE)) {
-      userIsLockedError.value = true;
-    } else {
-      authError.value = true;
-    }
-
-    loading.value = false;
+  if (result.succeeded) {
+    const user = await getMe();
+    await mergeCart(user.id, cart.value.id!);
+    emit("succeeded");
     return;
   }
 
-  await mergeCart(user.value.id, cart.value.id!);
-  emit("succeeded");
+  if (result.errors?.find((e) => e.code === USER_IS_LOCKED_OUT_ERROR_CODE)) {
+    userIsLockedError.value = true;
+  } else {
+    authError.value = true;
+  }
+
+  loading.value = false;
 });
 
 watch(values, () => {
