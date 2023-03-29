@@ -14,7 +14,7 @@
             :items="group.items"
             :disabled="disabled"
             :validation-errors="validationErrors"
-            @change:item:quantity="$emit('change:item:quantity', $event)"
+            @change:item-quantity="$emit('change:itemQuantity', $event)"
             @remove:item="$emit('remove:item', $event)"
           />
         </div>
@@ -27,7 +27,7 @@
         :items="items"
         :disabled="disabled"
         :validation-errors="validationErrors"
-        @change:item:quantity="$emit('change:item:quantity', $event)"
+        @change:item-quantity="$emit('change:itemQuantity', $event)"
         @remove:item="$emit('remove:item', $event)"
       />
     </template>
@@ -53,7 +53,7 @@ import type { LineItemsGroupByVendorType } from "@/core/types";
 import type { LineItemType, ValidationErrorType } from "@/xapi/types";
 
 interface IEmits {
-  (event: "change:item:quantity", value: { item: LineItemType; quantity: number }): void;
+  (event: "change:itemQuantity", value: { item: LineItemType; quantity: number }): void;
   (event: "remove:item", value: LineItemType): void;
   (event: "clear:cart"): void;
 }

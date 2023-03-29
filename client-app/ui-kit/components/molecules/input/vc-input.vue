@@ -8,8 +8,11 @@
         'vc-input--disabled': disabled,
         'vc-input--error': error,
         'vc-input--no-border': noBorder,
+        'vc-input--center': center,
+        'vc-input--truncate': truncate,
       },
     ]"
+    v-bind="attrs"
   >
     <VcLabel v-if="label" :for-id="componentId" :required="required" :error="error">
       {{ label }}
@@ -22,8 +25,8 @@
 
       <input
         :id="componentId"
-        class="vc-input__input"
-        :value="modelValue"
+        v-model="inputValue"
+        v-bind="listeners"
         :type="inputType"
         :name="name"
         :placeholder="placeholder"
@@ -35,17 +38,15 @@
         :maxlength="maxlength"
         :step="stepValue"
         :autocomplete="autocomplete"
-        @input="change"
-        @click="emit('click', $event)"
-        @keypress="emit('keypress', $event)"
+        class="vc-input__input"
       />
 
       <div v-if="type === 'password' && !hidePasswordSwitcher" class="vc-input__decorator">
         <button
+          :disabled="disabled"
           tabindex="-1"
           type="button"
-          class="h-full px-3 text-[color:var(--color-primary)] disabled:text-gray-300"
-          :disabled="disabled"
+          class="vc-input__password-icon"
           @click="togglePasswordVisibility"
         >
           <VcIcon :name="passwordVisibilityIcon" />
@@ -63,50 +64,71 @@
   </div>
 </template>
 
+<script lang="ts">
+export default {
+  inheritAttrs: false,
+};
+</script>
+
 <script setup lang="ts">
 import { computed, ref, watchEffect } from "vue";
-import { useComponentId } from "@/core/composables";
+import { useAttrsOnly, useComponentId, useListeners } from "@/core/composables";
+
+interface IEmits {
+  (event: "update:modelValue", value?: string | number): void;
+}
 
 interface IProps {
+  modelValue?: string | number;
+  modelModifiers?: Record<string, boolean>;
   autocomplete?: string;
   readonly?: boolean;
   disabled?: boolean;
   required?: boolean;
+  name?: string;
+  label?: string;
+  placeholder?: string;
+  message?: string;
+  error?: boolean;
   noBorder?: boolean;
   hidePasswordSwitcher?: boolean;
-  label?: string;
-  name?: string;
-  placeholder?: string;
+  showEmptyDetails?: boolean;
   min?: string | number;
   max?: string | number;
   step?: string | number;
   minlength?: string | number;
   maxlength?: string | number;
-  error?: boolean;
-  message?: string;
-  modelValue?: string | number;
+  center?: boolean;
+  truncate?: boolean;
   type?: "text" | "password" | "number";
   size?: "sm" | "md";
-  showEmptyDetails?: boolean;
-}
-
-interface IEmits {
-  (event: "update:modelValue", value?: string | number): void;
-  (event: "click", value: MouseEvent): void;
-  (event: "keypress", value: KeyboardEvent): void;
 }
 
 const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   type: "text",
   size: "md",
+  modelModifiers: () => ({}),
 });
 
 const componentId = useComponentId("input");
+const listeners = useListeners();
+const attrs = useAttrsOnly();
 
 const inputType = ref("");
 const isPasswordVisible = ref(false);
 const isNumberTypeSafari = ref(false);
+
+const inputValue = computed({
+  get: () => props.modelValue,
+  set: (value) => {
+    if (props.disabled) {
+      return;
+    }
+
+    emit("update:modelValue", props.type === "number" ? Number(value) : value);
+  },
+});
 
 const minValue = computed(() => (props.type === "number" ? props.min : undefined));
 const maxValue = computed(() => (props.type === "number" ? props.max : undefined));
@@ -117,15 +139,6 @@ const passwordVisibilityIcon = computed<string>(() => (isPasswordVisible.value ?
 function togglePasswordVisibility() {
   isPasswordVisible.value = !isPasswordVisible.value;
   inputType.value = isPasswordVisible.value ? "text" : "password";
-}
-
-function change(event: Event) {
-  if (props.disabled) {
-    return;
-  }
-  const value: string = (event.target as HTMLInputElement).value;
-
-  emit("update:modelValue", props.type === "number" ? Number(value) : value);
 }
 
 watchEffect(() => {
@@ -164,6 +177,8 @@ watchEffect(() => {
   $disabled: "";
   $error: "";
   $noBorder: "";
+  $center: "";
+  $truncate: "";
 
   @apply flex flex-col;
 
@@ -177,12 +192,12 @@ watchEffect(() => {
     }
   }
 
-  &--disabled {
-    $disabled: &;
-  }
-
   &--readonly {
     $readonly: &;
+  }
+
+  &--disabled {
+    $disabled: &;
   }
 
   &--error {
@@ -191,6 +206,14 @@ watchEffect(() => {
 
   &--no-border {
     $noBorder: &;
+  }
+
+  &--center {
+    $center: &;
+  }
+
+  &--truncate {
+    $truncate: &;
   }
 
   &__container {
@@ -227,7 +250,7 @@ watchEffect(() => {
   }
 
   &__input {
-    @apply relative px-3 appearance-none bg-transparent rounded-[3px] text-base leading-none w-full outline-none min-w-0;
+    @apply relative px-3 appearance-none bg-transparent rounded-[3px] text-15 leading-none w-full min-w-0;
 
     &:autofill {
       &:disabled {
@@ -239,6 +262,10 @@ watchEffect(() => {
       }
     }
 
+    &:focus {
+      @apply outline-none;
+    }
+
     &:disabled {
       @apply text-gray-400;
     }
@@ -248,6 +275,18 @@ watchEffect(() => {
         @apply opacity-80 text-[color:var(--color-danger)];
       }
     }
+
+    #{$center} & {
+      @apply text-center;
+    }
+
+    #{$truncate} & {
+      @apply truncate;
+    }
+
+    #{$error} & {
+      @apply text-[color:var(--color-danger)];
+    }
   }
 
   &__bg {
@@ -255,10 +294,6 @@ watchEffect(() => {
 
     input:focus ~ & {
       @apply ring ring-[color:var(--color-primary-light)];
-
-      #{$readonly} & {
-        @apply ring-transparent;
-      }
     }
 
     #{$disabled} &,
@@ -273,6 +308,10 @@ watchEffect(() => {
     #{$noBorder} & {
       @apply border-none;
     }
+  }
+
+  &__password-icon {
+    @apply h-full px-3 text-[color:var(--color-primary)] disabled:text-gray-300;
   }
 }
 </style>

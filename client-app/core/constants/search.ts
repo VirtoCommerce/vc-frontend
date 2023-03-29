@@ -1,5 +1,5 @@
-import { Sort } from "../types";
-import type { ISortInfo } from "../types";
+import { Sort } from "@/core/types/search/sorting";
+import type { ISortInfo } from "@/core/types/search/sorting";
 
 export const DEFAULT_PAGE_SIZE = 16;
 /**

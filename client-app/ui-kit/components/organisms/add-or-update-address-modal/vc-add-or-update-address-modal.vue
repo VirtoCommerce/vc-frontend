@@ -1,18 +1,10 @@
 <template>
-  <VcPopup
-    :title="
-      editableAddress
-        ? $t('shared.checkout.add_or_update_address_dialog.edit_address_title')
-        : $t('shared.checkout.add_or_update_address_dialog.new_address_title')
-    "
-    modal-width="max-w-5xl"
-    hide-actions
-    is-mobile-fullscreen
-  >
+  <VcPopup :title="title" modal-width="max-w-5xl" hide-actions is-mobile-fullscreen>
     <template #default="{ close }">
       <VcAddressForm
         :model-value="editableAddress"
         :countries="countries"
+        :disabled="loading"
         class="px-6 py-4"
         with-personal-info
         required-email
@@ -22,15 +14,17 @@
         <template #append="{ dirty, valid }">
           <div class="flex flex-row space-x-4 pb-3 pt-7 sm:float-right sm:py-4">
             <VcButton kind="secondary" size="md" class="w-1/2 uppercase sm:px-5" is-outline @click="close">
-              {{ $t("shared.checkout.add_or_update_address_dialog.cancel_button") }}
+              {{ $t("common.buttons.cancel") }}
             </VcButton>
 
-            <VcButton size="md" :is-disabled="!dirty || !valid" class="w-1/2 uppercase sm:px-5" is-submit>
-              {{
-                editableAddress
-                  ? $t("shared.checkout.add_or_update_address_dialog.save_button")
-                  : $t("shared.checkout.add_or_update_address_dialog.create_button")
-              }}
+            <VcButton
+              :is-disabled="!dirty || !valid"
+              :is-waiting="loading"
+              ize="md"
+              class="w-1/2 uppercase sm:px-5"
+              is-submit
+            >
+              {{ saveButtonLabel }}
             </VcButton>
           </div>
         </template>
@@ -41,22 +35,33 @@
 
 <script setup lang="ts">
 import { clone } from "lodash";
-import { onMounted, ref, watchEffect } from "vue";
+import { computed, onMounted, ref, watchEffect } from "vue";
+import { useI18n } from "vue-i18n";
 import { useCountries } from "@/core/composables";
 import type { MemberAddressType } from "@/xapi/types";
-import type { PropType, Ref } from "vue";
 
-const emit = defineEmits(["result"]);
+interface IEmits {
+  (event: "result", address: MemberAddressType): void;
+}
 
-const props = defineProps({
-  address: {
-    type: Object as PropType<MemberAddressType>,
-    default: null,
-  },
-});
+interface IProps {
+  address?: MemberAddressType;
+  loading: boolean;
+}
+
+const emit = defineEmits<IEmits>();
+
+const props = defineProps<IProps>();
 
 const { countries, loadCountries } = useCountries();
-const editableAddress: Ref<MemberAddressType | null> = ref(null);
+const { t } = useI18n();
+
+const editableAddress = ref<MemberAddressType>();
+
+const title = computed<string>(() =>
+  editableAddress.value ? t("common.titles.edit_address") : t("common.titles.new_address")
+);
+const saveButtonLabel = computed(() => (editableAddress.value ? t("common.buttons.save") : t("common.buttons.create")));
 
 onMounted(async () => {
   if (!countries.value.length) {

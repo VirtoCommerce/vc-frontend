@@ -8,14 +8,20 @@
       "type": "product-info",
       "blocks": [
         {
+          "id": "block1",
+          "type": "product-properties",
+          "title": "",
+          "hidden": false
+        },
+        {
           "type": "product-description",
           "id": "productdescriptionw4OT"
         },
         {
-          "id": "block1",
-          "type": "product-properties",
-          "title": "Properties",
-          "hidden": false
+          "name": null,
+          "type": "product-assets",
+          "id": "productassetsgi5C",
+          "title": "Specs Title"
         },
         {
           "type": "product-variations",
