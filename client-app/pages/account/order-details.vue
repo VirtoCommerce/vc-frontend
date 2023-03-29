@@ -37,7 +37,7 @@
               <!-- Vendor -->
               <div class="flex max-w-full flex-wrap gap-x-3">
                 <VcVendor :vendor="group.vendor" />
-                <VcRating v-if="$cfg.rating_enabled && group.vendor?.rating" :rating="group.vendor.rating" />
+                <VcRating :rating="group.vendor?.rating?.value" :review-count="group.vendor?.rating?.reviewCount" />
               </div>
 
               <OrderLineItems :items="group.items" />
@@ -129,6 +129,20 @@ import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsPop
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
 import { BackButtonInHeader } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
+import {
+  VcBreadcrumbs,
+  VcTypography,
+  VcButton,
+  VcLoaderOverlay,
+  VcLayoutWithRightSidebar,
+  VcCardWidget,
+  VcAddressInfo,
+  VcImage,
+  TableStatusBadge,
+  VcSectionWidget,
+  VcVendor,
+  VcRating,
+} from "@/ui-kit/components";
 import type { InputNewBulkItemType } from "@/xapi/types";
 
 interface IProps {

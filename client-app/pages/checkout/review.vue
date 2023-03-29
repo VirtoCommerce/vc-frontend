@@ -8,7 +8,7 @@
             <!-- Vendor -->
             <div class="flex max-w-full flex-wrap gap-x-3">
               <VcVendor :vendor="group.vendor" />
-              <VcRating v-if="$cfg.rating_enabled && group.vendor?.rating" :rating="group.vendor.rating" />
+              <VcRating :rating="group.vendor?.rating?.value" :review-count="group.vendor?.rating?.reviewCount" />
             </div>
 
             <OrderLineItems :items="group.items" />
@@ -147,6 +147,22 @@ import { useRouter } from "vue-router";
 import { OrderLineItems } from "@/shared/account";
 import { useCart, useCoupon, usePurchaseOrderNumber } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
+import {
+  VcActionInput,
+  VcAlert,
+  VcAddressSelection,
+  VcButton,
+  VcInput,
+  VcLabel,
+  VcLayoutWithRightSidebar,
+  VcSelect,
+  VcSelectItem,
+  VcSelectItemImage,
+  VcSelectItemText,
+  VcSectionWidget,
+  VcVendor,
+  VcRating,
+} from "@/ui-kit/components";
 import type { CartAddressType } from "@/xapi/types";
 
 const router = useRouter();
