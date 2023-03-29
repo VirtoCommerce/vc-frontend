@@ -1,7 +1,16 @@
 import { SortDirection } from "@/core/enums/sort-direction.enum";
 import { SearchEntity } from "@/core/types/search/entity";
+import type { ISortInfo } from "./sort-info";
 
-export class Sort extends SearchEntity {
+export class Sort extends SearchEntity implements ISortInfo {
+  get column() {
+    return this.fieldName;
+  }
+
+  set column(value: string) {
+    this.fieldName = value;
+  }
+
   constructor(public fieldName: string = "createdDate", public direction: SortDirection = SortDirection.Descending) {
     super();
   }
