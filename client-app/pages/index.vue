@@ -111,7 +111,7 @@ const loading = ref(true);
 onMounted(async () => {
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const response = await innerFetch<any>("/storefrontapi/slug/home");
+    const response = await innerFetch<any>("/storefrontapi/slug/__index__home__page__");
     if (response.contentItem?.type === "page") {
       const result = JSON.parse(response.contentItem.content);
       template.value = result;
