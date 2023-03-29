@@ -3,7 +3,13 @@
     <!-- Search results -->
     <VcFilterCard v-if="withLocalSearch" :title="$t('pages.catalog.search_card.title')">
       <div class="flex items-center gap-2.5">
-        <VcInput v-model="localKeyword" size="sm" maxlength="30" :disabled="loading" @keypress.enter="onSearchStart">
+        <VcInput
+          v-model.trim="localKeyword"
+          size="sm"
+          maxlength="30"
+          :disabled="loading"
+          @keypress.enter="onSearchStart"
+        >
           <template #append>
             <button type="button" class="h-full px-3" :class="{ hidden: !localKeyword }" @click="reset">
               <svg class="text-[color:var(--color-primary)]" height="12" width="12">

@@ -13,15 +13,15 @@
           <ResetPasswordForm
             :user-id="userId"
             :token="token"
-            :kind="isResetRoute ? 'reset' : 'set'"
+            :mode="isResetMode ? 'reset' : 'set'"
             @succeeded="onSucceeded()"
           />
         </template>
 
         <div v-else class="flex flex-col items-center space-y-10 lg:mt-12 lg:items-start lg:space-y-12">
           <div class="flex flex-col items-center space-x-0 space-y-10 lg:flex-row lg:space-x-3 lg:space-y-0">
-            <i class="fas fa-check-circle text-7xl text-green-600 lg:text-4xl"></i>
-            <div v-t="`pages.${localizationPageTerm}.success_message`" class="text-lg"></div>
+            <i class="fas fa-check-circle text-7xl text-green-600 lg:text-4xl" />
+            <p v-t="`pages.${localizationPageTerm}.success_message`" class="text-lg" />
           </div>
 
           <VcButton :to="{ name: 'SignIn' }" class="w-48 uppercase">
@@ -32,12 +32,12 @@
 
       <div v-else class="flex flex-col items-center space-y-10 lg:mt-12 lg:items-start lg:space-y-12">
         <div class="flex flex-col items-center space-x-0 space-y-10 lg:flex-row lg:space-x-3 lg:space-y-0">
-          <i class="fas fa-times-circle text-7xl text-[color:var(--color-danger)] lg:text-4xl"></i>
-          <div v-t="`pages.${localizationPageTerm}.data_invalid_error_message`" class="text-lg"></div>
+          <i class="fas fa-times-circle text-7xl text-[color:var(--color-danger)] lg:text-4xl" />
+          <p v-t="'common.messages.invalid_user_id_or_token'" class="text-lg" />
         </div>
 
         <VcButton to="/" class="w-48 uppercase">
-          {{ $t(`pages.${localizationPageTerm}.home_button`) }}
+          {{ $t("common.buttons.home") }}
         </VcButton>
       </div>
     </template>
@@ -45,7 +45,7 @@
     <template #right>
       <VcImage
         class="max-w-md"
-        :src="isResetRoute ? '/static/images/sign-in/sign-in-page-image.webp' : '/static/images/sign-up/image.webp'"
+        :src="isResetMode ? '/static/images/sign-in/sign-in-page-image.webp' : '/static/images/sign-up/image.webp'"
         lazy
       />
     </template>
@@ -73,8 +73,8 @@ const userId = useRouteQueryParam<string>("userId");
 const token = useRouteQueryParam<string>("token");
 
 const isValidData = computed<boolean>(() => Boolean(userId.value && token.value));
-const isResetRoute = computed<boolean>(() => route.name === "ResetPassword");
-const localizationPageTerm = computed<string>(() => (isResetRoute.value ? "reset_password" : "set_password"));
+const isResetMode = computed<boolean>(() => route.name === "ResetPassword");
+const localizationPageTerm = computed<string>(() => (isResetMode.value ? "reset_password" : "set_password"));
 
 function onSucceeded() {
   isSucceeded.value = true;

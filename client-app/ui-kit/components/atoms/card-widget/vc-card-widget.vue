@@ -60,7 +60,11 @@ defineProps({
   }
 
   &__title {
-    @apply flex items-center gap-3 px-7 pt-6 pb-3;
+    @apply flex items-center gap-3 px-4 pt-6 pb-3;
+
+    @media (min-width: theme("screens.xs")) {
+      @apply px-7;
+    }
 
     @media (min-width: theme("screens.lg")) {
       @apply px-5 py-3 border-b;
@@ -82,7 +86,11 @@ defineProps({
   }
 
   &__content {
-    @apply px-7 pt-3 pb-7;
+    @apply px-4 pt-3 pb-7;
+
+    @media (min-width: theme("screens.xs")) {
+      @apply px-7;
+    }
 
     @media (min-width: theme("screens.lg")) {
       @apply p-5;

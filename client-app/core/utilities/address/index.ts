@@ -46,3 +46,7 @@ export function isEqualAddresses(
 
   return isEqual(first, second);
 }
+
+export function isMemberAddressType(address: AnyAddressType): address is MemberAddressType {
+  return "description" in address;
+}

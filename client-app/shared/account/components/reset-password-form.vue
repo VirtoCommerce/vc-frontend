@@ -3,8 +3,8 @@
     <VcInput
       v-model="password"
       class="mb-4 w-full"
-      :label="$t(`shared.account.${localizationFormTerm}.password_label`)"
-      :placeholder="$t(`shared.account.${localizationFormTerm}.password_placeholder`)"
+      :label="$t('common.labels.password')"
+      :placeholder="$t('common.placeholders.password')"
       type="password"
       required
       :message="errors.password"
@@ -16,8 +16,8 @@
     <VcInput
       v-model="confirmPassword"
       class="mb-4 w-full"
-      :label="$t(`shared.account.${localizationFormTerm}.confirm_password_label`)"
-      :placeholder="$t(`shared.account.${localizationFormTerm}.confirm_password_placeholder`)"
+      :label="$t('common.labels.confirm_password')"
+      :placeholder="$t('common.placeholders.confirm_password')"
       type="password"
       required
       :message="errors.confirmPassword"
@@ -38,55 +38,52 @@
         :is-waiting="loading"
         :is-disabled="!meta.valid || meta.pending"
       >
-        {{ $t(`shared.account.${localizationFormTerm}.reset_password_button`) }}
+        {{ $t(isResetMode ? "common.buttons.reset_password" : "common.buttons.save") }}
       </VcButton>
     </div>
   </form>
 </template>
 
 <script setup lang="ts">
+import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import * as yup from "yup";
+import { object, ref as yupRef, string } from "yup";
 import { useIdentityErrorTranslator } from "@/core/composables";
-import { useUser } from "@/shared/account";
-import type { PropType } from "vue";
+import useUser from "../composables/useUser";
 
-const emit = defineEmits(["succeeded"]);
+interface IEmits {
+  (event: "succeeded"): void;
+}
 
-const props = defineProps({
-  kind: {
-    type: String as PropType<"set" | "reset">,
-    default: "reset",
-  },
+interface IProps {
+  userId: string;
+  token: string;
+  mode?: "set" | "reset";
+}
 
-  userId: {
-    type: String,
-    required: true,
-  },
+const emit = defineEmits<IEmits>();
 
-  token: {
-    type: String,
-    required: true,
-  },
+const props = withDefaults(defineProps<IProps>(), {
+  mode: "reset",
 });
 
 const { t } = useI18n();
 const { resetPassword, loading } = useUser();
 const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
-const schema = yup.object({
-  password: yup.string().label(t("shared.account.reset_password_form.password_label")).required(),
-  confirmPassword: yup
-    .string()
-    .label(t("shared.account.reset_password_form.confirm_password_label"))
-    .required()
-    .oneOf([yup.ref("password"), null], t("identity_error.PasswordMismatch")),
-});
+const validationSchema = toTypedSchema(
+  object({
+    password: string().required(),
+    confirmPassword: string()
+      .required()
+      .oneOf([yupRef("password")], t("identity_error.PasswordMismatch")),
+  })
+);
 
 const { errors, meta, handleSubmit } = useForm({
-  validationSchema: schema,
+  validationSchema,
   initialValues: {
     password: "",
     confirmPassword: "",
@@ -99,7 +96,7 @@ const { value: confirmPassword } = useField<string>("confirmPassword");
 
 const commonErrors = ref<string[]>([]);
 
-const localizationFormTerm = computed(() => (props.kind === "set" ? "set_password_form" : "reset_password_form"));
+const isResetMode = computed(() => props.mode === "reset");
 
 const onSubmit = handleSubmit(async (data) => {
   commonErrors.value = [];
