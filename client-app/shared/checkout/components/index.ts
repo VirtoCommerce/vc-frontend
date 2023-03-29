@@ -5,3 +5,4 @@ export { default as OrderSummary } from "./order-summary.vue";
 export { default as SelectAddressModal } from "./select-address-modal.vue";
 export { default as SelectPaymentMethodModal } from "./select-payment-method-modal.vue";
 export { default as ShippingDetailsSection } from "./shipping-details-section.vue";
+export { default as Vendor } from "./vendor.vue";

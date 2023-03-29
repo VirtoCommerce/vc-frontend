@@ -7,7 +7,7 @@
           <div v-if="group.items.length" class="space-y-3">
             <!-- Vendor -->
             <div class="flex max-w-full flex-wrap gap-x-3">
-              <VcVendor :vendor="group.vendor" />
+              <Vendor :vendor="group.vendor" />
               <VcRating :rating="group.vendor?.rating?.value" :review-count="group.vendor?.rating?.reviewCount" />
             </div>
 
@@ -146,7 +146,7 @@ import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { OrderLineItems } from "@/shared/account";
 import { useCart, useCoupon, usePurchaseOrderNumber } from "@/shared/cart";
-import { AcceptedGifts, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
+import { AcceptedGifts, OrderCommentSection, OrderSummary, useCheckout, Vendor } from "@/shared/checkout";
 import {
   VcActionInput,
   VcAlert,
@@ -160,7 +160,6 @@ import {
   VcSelectItemImage,
   VcSelectItemText,
   VcSectionWidget,
-  VcVendor,
   VcRating,
 } from "@/ui-kit/components";
 import type { CartAddressType } from "@/xapi/types";

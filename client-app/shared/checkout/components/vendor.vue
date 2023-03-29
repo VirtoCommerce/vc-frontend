@@ -1,5 +1,5 @@
 <template>
-  <div :class="['vc-vendor', { 'vc-vendor--not-available': !vendor?.name }]">
+  <router-link :to="link" :class="['vc-vendor', { 'vc-vendor--not-available': !vendor?.name }]">
     <VcIcon name="vendor" size="sm" class="vc-vendor__icon" />
 
     <span class="vc-vendor__title">
@@ -9,17 +9,21 @@
         {{ vendor?.name || $t("common.labels.not_available") }}
       </span>
     </span>
-  </div>
+  </router-link>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import type { CommonVendor } from "@/xapi/types";
+import type { RouteLocationRaw } from "vue-router";
 
-interface Props {
+interface IProps {
   vendor?: CommonVendor;
 }
 
-defineProps<Props>();
+const props = defineProps<IProps>();
+
+const link = computed<RouteLocationRaw>(() => ({ name: "Vendor", params: { vendorId: props.vendor?.id } }));
 </script>
 
 <style lang="scss">

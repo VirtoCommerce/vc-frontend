@@ -36,7 +36,7 @@
             <div v-if="group.items.length" class="space-y-3">
               <!-- Vendor -->
               <div class="flex max-w-full flex-wrap gap-x-3">
-                <VcVendor :vendor="group.vendor" />
+                <Vendor :vendor="group.vendor" />
                 <VcRating :rating="group.vendor?.rating?.value" :review-count="group.vendor?.rating?.reviewCount" />
               </div>
 
@@ -126,7 +126,7 @@ import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useUserOrder, OrderLineItems } from "@/shared/account";
 import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
-import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
+import { AcceptedGifts, OrderCommentSection, OrderSummary, Vendor } from "@/shared/checkout";
 import { BackButtonInHeader } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
 import {
@@ -140,7 +140,6 @@ import {
   VcImage,
   TableStatusBadge,
   VcSectionWidget,
-  VcVendor,
   VcRating,
 } from "@/ui-kit/components";
 import type { InputNewBulkItemType } from "@/xapi/types";

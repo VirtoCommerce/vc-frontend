@@ -6,5 +6,6 @@ export * from "./graphql/fulfillmentCenters";
 export * from "./graphql/orders";
 export * from "./graphql/organization";
 export * from "./graphql/quotes";
+export * from "./graphql/vendor";
 
 export * from "./client";

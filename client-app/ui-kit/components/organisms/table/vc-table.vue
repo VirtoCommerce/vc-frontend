@@ -112,6 +112,7 @@ interface IProps {
   pages?: number;
   page?: number;
   loading?: boolean;
+  hideHeader?: boolean;
   hideFooter?: boolean;
   layout?: string;
 }
