@@ -71,20 +71,26 @@
 </template>
 
 <script setup lang="ts">
+import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
 import { ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import * as yup from "yup";
+import { string } from "yup";
 import { useIdentityErrorTranslator } from "@/core/composables";
 import { B2B_ROLES } from "@/core/constants";
 import globals from "@/core/globals";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 
-const emit = defineEmits<{
+interface IEmits {
   (e: "result", succeed: boolean): void;
-}>();
+}
+
+const emit = defineEmits<IEmits>();
+
+const MAX_INVITED_CONTACTS_COUNT = 200;
+const MAX_EMAIL_LENGTH = 120;
 
 const emailsValidationPattern =
   /^([a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]{2,})+([,;]|\r|\r\n|\n))*([a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]{2,})+)$/;
@@ -92,8 +98,6 @@ const emailsValidationPattern =
 const popupComponent = shallowRef<any>(null);
 const loading = ref(false);
 const commonErrors = ref<string[]>([]);
-const maxContactsValue = ref(200);
-const maxEmailLength = ref(120);
 
 const { t } = useI18n();
 const { organization, inviteUser } = useUser();
@@ -122,30 +126,31 @@ function normalizeEmails(emailAddresses: string[]): string[] {
   return [...new Set(emailAddresses.map((email: string) => email.toLowerCase()))];
 }
 
-const { value: roleId } = useField<string>("roleId", yup.string().required());
-const { value: message } = useField<string>("message", yup.string().max(1000));
+const { value: roleId } = useField<string>("roleId", toTypedSchema(string().required()));
+const { value: message } = useField<string>("message", toTypedSchema(string().max(1000)));
 const { value: emails } = useField<string>(
   "emails",
-  yup
-    .string()
-    .test(
-      "emails-quantity",
-      t("shared.account.invite_member_dialog.emails_quantity_exceeded", { maxValue: maxContactsValue.value }),
-      (value: string | undefined) => {
-        const emailAddresses: string[] = getEmailAddresses(value);
-        return emailAddresses.length <= maxContactsValue.value;
-      }
-    )
-    .test(
-      "email-length",
-      t("shared.account.invite_member_dialog.email_length_exceeded", { maxValue: maxEmailLength.value }),
-      (value: string | undefined) => {
-        const emailAddresses: string[] = getEmailAddresses(value);
-        return emailAddresses.every((emailAddress: string) => emailAddress.length <= maxEmailLength.value);
-      }
-    )
-    .matches(emailsValidationPattern, t("common.messages.invalid_value"))
-    .required()
+  toTypedSchema(
+    string()
+      .required()
+      .test(
+        "emails-quantity",
+        t("shared.account.invite_member_dialog.emails_quantity_exceeded", { maxValue: MAX_INVITED_CONTACTS_COUNT }),
+        (value: string | undefined) => {
+          const emailAddresses: string[] = getEmailAddresses(value);
+          return emailAddresses.length <= MAX_INVITED_CONTACTS_COUNT;
+        }
+      )
+      .test(
+        "email-length",
+        t("shared.account.invite_member_dialog.email_length_exceeded", { maxValue: MAX_EMAIL_LENGTH }),
+        (value: string | undefined) => {
+          const emailAddresses: string[] = getEmailAddresses(value);
+          return emailAddresses.every((emailAddress: string) => emailAddress.length <= MAX_EMAIL_LENGTH);
+        }
+      )
+      .matches(emailsValidationPattern, t("common.messages.invalid_value"))
+  )
 );
 
 const send = handleSubmit(async (data) => {

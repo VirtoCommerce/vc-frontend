@@ -4,7 +4,7 @@
 
     <VcTextarea
       v-else
-      v-model="text"
+      v-model.trim="text"
       :placeholder="$t('common.placeholders.enter_value')"
       :disabled="disabled"
       :max-length="1000"

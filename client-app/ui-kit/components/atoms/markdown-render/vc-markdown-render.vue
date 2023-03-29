@@ -1,5 +1,5 @@
 <template>
-  <div class="vc-markdown" v-html="markdown"></div>
+  <div class="vc-markdown-render" v-html="markdown" />
 </template>
 
 <script setup lang="ts">
@@ -7,18 +7,17 @@ import DOMPurify from "dompurify";
 import { marked } from "marked";
 import { computed } from "vue";
 
-const props = defineProps({
-  src: {
-    type: String,
-    required: true,
-  },
-});
+interface IProps {
+  src: string;
+}
+
+const props = defineProps<IProps>();
 
 const markdown = computed(() => DOMPurify.sanitize(marked(props.src), { USE_PROFILES: { html: true } }));
 </script>
 
 <style lang="scss">
-.vc-markdown {
+.vc-markdown-render {
   font-size: 1rem;
   line-height: 1.5rem;
 

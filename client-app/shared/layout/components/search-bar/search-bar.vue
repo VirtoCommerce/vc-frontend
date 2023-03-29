@@ -1,7 +1,7 @@
 <template>
   <div v-click-outside="hideSearchDropdown" class="relative flex grow items-stretch">
     <VcInput
-      v-model="searchPhrase"
+      v-model.trim="searchPhrase"
       :maxlength="MAX_LENGTH"
       class="w-full"
       :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"

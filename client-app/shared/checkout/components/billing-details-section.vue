@@ -67,7 +67,7 @@
         <transition name="slide-fade-top" mode="in-out">
           <VcInput
             v-if="purchaseOrderNumberEnabled"
-            v-model="poNumber"
+            v-model.trim="poNumber"
             :placeholder="$t('common.placeholders.purchase_order_number')"
             :disabled="disabled"
             name="purchaseOrderNumber"

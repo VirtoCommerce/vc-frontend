@@ -1,7 +1,7 @@
 <template>
   <VcTooltip :placement="tooltipPlacement" strategy="fixed">
     <template #trigger>
-      <div class="cursor-pointer" @click="toggle">
+      <button type="button" class="block" @click="toggle">
         <svg
           :class="[
             customClass,
@@ -12,12 +12,12 @@
         >
           <use href="/static/images/compare.svg#main"></use>
         </svg>
-      </div>
+      </button>
     </template>
 
     <template #content>
       <div class="rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y">
-        {{ $t("pages.catalog.add_to_compare_tooltip") }}
+        {{ tooltipText }}
       </div>
     </template>
   </VcTooltip>
@@ -25,30 +25,32 @@
 
 <script setup lang="ts">
 import { eagerComputed } from "@vueuse/core";
-import { useCompareProducts } from "@/shared/compare";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { useCompareProducts } from "../composables";
 import type { Product } from "@/xapi/types";
-import type { PropType } from "vue";
 
-const props = defineProps({
-  product: {
-    type: Object as PropType<Product>,
-    required: true,
-  },
+interface IProps {
+  product: Product;
+  customClass?: string;
+  tooltipPlacement?: string;
+}
 
-  customClass: {
-    type: String,
-    default: "w-6 h-6 lg:w-4 lg:h-4",
-  },
-
-  tooltipPlacement: {
-    type: String,
-    default: "left",
-  },
+const props = withDefaults(defineProps<IProps>(), {
+  customClass: "w-6 h-6 lg:w-4 lg:h-4",
+  tooltipPlacement: "left",
 });
 
+const { t } = useI18n();
 const { productsIds, addToCompareList, removeFromCompareList } = useCompareProducts();
 
 const isInCompareList = eagerComputed<boolean>(() => productsIds.value.includes(props.product.id));
+
+const tooltipText = computed<string>(() =>
+  isInCompareList.value
+    ? t("shared.compare.add_to_compare.tooltips.remove")
+    : t("shared.compare.add_to_compare.tooltips.add")
+);
 
 const toggle = () => {
   if (isInCompareList.value) {
