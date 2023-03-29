@@ -21,7 +21,7 @@
           <slot v-if="selected" name="selected" v-bind="{ item: selected }">
             <VcSelectItem>
               <VcSelectItemText>
-                {{ textField && selected ? selected[textField] : selected }}
+                {{ getValue(selected, textField) }}
               </VcSelectItemText>
             </VcSelectItem>
           </slot>
@@ -71,7 +71,7 @@
               <slot name="item" v-bind="{ item, index, selected }">
                 <VcSelectItem>
                   <VcSelectItemText>
-                    {{ textField && item ? item[textField] : item }}
+                    {{ getValue(item, textField) }}
                   </VcSelectItemText>
                 </VcSelectItem>
               </slot>
@@ -86,7 +86,7 @@
 </template>
 
 <script lang="ts">
-/* eslint-disable-next-line import/order */
+import { computed, ref, shallowRef } from "vue";
 import { clickOutside } from "@/core/directives";
 
 export default {
@@ -98,15 +98,13 @@ export default {
 
 <script setup lang="ts">
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { computed, ref, shallowRef } from "vue";
-
 interface IProps {
   label?: string;
   required?: boolean;
   disabled?: boolean;
   readonly?: boolean;
   modelValue?: object | string;
-  items: any[];
+  items: any[] | undefined;
   size?: "sm" | "md" | "lg" | "auto";
   textField?: string;
   valueField?: string;
@@ -132,20 +130,12 @@ const transitionDuration = 100;
 const open = ref(false);
 const listElement = shallowRef<HTMLElement | null>(null);
 
-const selected = computed(() => {
-  const returnValueKey: string | undefined = props.valueField;
-
-  if (returnValueKey) {
-    return props.items.find((item) => item[returnValueKey] === props.modelValue);
-  }
-
-  return props.modelValue;
-});
+const selected = computed(() => props.items?.find((item) => getValue(item, props.valueField) === props.modelValue));
 
 /** @deprecated Replace with the prepared computed array */
-function isActiveItem(item: any): boolean {
-  const itemValue = props.valueField && item ? item[props.valueField] : item;
-  return itemValue === props.modelValue;
+function isActiveItem(item: unknown): boolean {
+  const value = getValue(item, props.valueField);
+  return value === props.modelValue;
 }
 
 function hideList() {
@@ -170,19 +160,26 @@ function toggle() {
   }
 }
 
-function select(item?: any) {
+function select(item?: unknown) {
   if (props.disabled) {
     return;
   }
 
-  const newValue = props.valueField && item ? item[props.valueField] : item;
+  const value = getValue(item, props.valueField);
 
-  if (newValue !== props.modelValue) {
-    emit("update:modelValue", newValue);
-    emit("change", newValue);
+  if (value !== props.modelValue) {
+    emit("update:modelValue", value);
+    emit("change", value);
   }
 
   hideList();
+}
+
+function getValue(item: unknown, field: string | undefined): string {
+  if (field && item) {
+    return (item as Record<string, string>)[field];
+  }
+  return item as string;
 }
 </script>
 
