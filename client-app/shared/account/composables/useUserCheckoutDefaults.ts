@@ -1,5 +1,5 @@
 import { Logger } from "@/core/utilities";
-import { useUser } from ".";
+import useUser from "./useUser";
 import type { CheckoutDefaults } from "@/shared/account";
 
 export default function useUserCheckoutDefaults() {

@@ -3,12 +3,13 @@
     :class="[
       'vc-textarea',
       {
+        'vc-textarea--readonly': readonly,
         'vc-textarea--disabled': disabled,
         'vc-textarea--no-resize': noResize,
         'vc-textarea--error': error,
       },
-      $attrs.class,
     ]"
+    v-bind="attrs"
   >
     <VcLabel v-if="label" :for="componentId" :required="required" :error="error">
       {{ label }}
@@ -17,6 +18,7 @@
     <textarea
       :id="componentId"
       v-model="text"
+      v-bind="listeners"
       :name="name"
       :placeholder="placeholder"
       :readonly="readonly"
@@ -25,14 +27,16 @@
       :maxlength="maxLength"
       :rows="rows"
       :aria-labelledby="componentId"
+      :autocomplete="autocomplete"
       class="vc-textarea__input"
     />
 
     <VcInputDetails
       :show-empty="showEmptyDetails"
+      :counter="counter"
       :message="message"
       :error="error"
-      :textLength="text.length"
+      :textLength="text?.length"
       :max-length="maxLength"
     />
   </div>
@@ -46,10 +50,16 @@ export default {
 
 <script setup lang="ts">
 import { useVModel } from "@vueuse/core";
-import { useComponentId } from "@/core/composables";
+import { useAttrsOnly, useComponentId, useListeners } from "@/core/composables";
 
-interface Props {
-  modelValue: string;
+interface IEmits {
+  (event: "update:modelValue", value: string): void;
+}
+
+interface IProps {
+  modelValue?: string;
+  modelModifiers?: Record<string, boolean>;
+  autocomplete?: string;
   readonly?: boolean;
   disabled?: boolean;
   required?: boolean;
@@ -65,28 +75,30 @@ interface Props {
   rows?: number | string;
 }
 
-interface Emits {
-  (event: "update:modelValue", value: string): void;
-}
-
-const emit = defineEmits<Emits>();
-
-const props = withDefaults(defineProps<Props>(), {
-  modelValue: "",
+const emit = defineEmits<IEmits>();
+const props = withDefaults(defineProps<IProps>(), {
+  modelModifiers: () => ({}),
   rows: 2,
 });
 
 const componentId = useComponentId("textarea");
+const listeners = useListeners();
+const attrs = useAttrsOnly();
 const text = useVModel(props, "modelValue", emit);
 </script>
 
 <style lang="scss">
 .vc-textarea {
+  $readonly: "";
   $disabled: "";
   $noResize: "";
   $error: "";
 
   @apply flex flex-col text-[color:var(--color-body-text)];
+
+  &--readonly {
+    $readonly: &;
+  }
 
   &--disabled {
     $disabled: &;
@@ -121,9 +133,7 @@ const text = useVModel(props, "modelValue", emit);
 
     &:focus,
     &:focus-visible {
-      @apply outline-none;
-
-      box-shadow: 0 0 0 3px var(--color-primary-light);
+      @apply outline-none ring ring-[color:var(--color-primary-light)];
     }
 
     &[disabled],

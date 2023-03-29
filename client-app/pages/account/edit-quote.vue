@@ -16,7 +16,7 @@
         content-classes="px-6 pb-1 pt-2 lg:px-7 lg:pb-2"
       >
         <VcTextarea
-          v-model="quote.comment"
+          v-model.trim="quote.comment"
           :label="$t('pages.account.quote_details.remarks_field_label')"
           :disabled="fetching"
           :max-length="1000"
@@ -52,7 +52,7 @@
               :disabled="fetching"
               type="button"
               class="flex h-9 w-9 shrink-0 items-center justify-center rounded border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white"
-              :title="$t('pages.account.addresses.edit_label')"
+              :title="$t('common.buttons.edit')"
               @click="
                 userHasAddresses
                   ? openAddressSelectionDialog(AddressType.Shipping)
@@ -95,7 +95,7 @@
                 :disabled="fetching"
                 type="button"
                 class="flex h-9 w-9 shrink-0 items-center justify-center rounded border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white"
-                :title="$t('pages.account.addresses.edit_label')"
+                :title="$t('common.buttons.edit')"
                 @click="
                   userHasAddresses
                     ? openAddressSelectionDialog(AddressType.Billing)
@@ -145,8 +145,9 @@ import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { AddressType } from "@/core/enums";
 import { asyncForEach, convertToType } from "@/core/utilities";
 import { QuoteLineItems, useUserAddresses, useUserQuote } from "@/shared/account";
-import { AddOrUpdateAddressModal, SelectAddressModal } from "@/shared/checkout";
+import { SelectAddressModal } from "@/shared/checkout";
 import { usePopup } from "@/shared/popup";
+import { VcAddOrUpdateAddressModal } from "@/ui-kit/components";
 import type { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi/types";
 
 interface IProps {
@@ -240,7 +241,7 @@ function openAddressSelectionDialog(addressType: AddressType): void {
 
 function openAddOrUpdateAddressDialog(addressType: AddressType, currentAddress?: QuoteAddressType): void {
   openPopup({
-    component: AddOrUpdateAddressModal,
+    component: VcAddOrUpdateAddressModal,
     props: {
       address: currentAddress,
 

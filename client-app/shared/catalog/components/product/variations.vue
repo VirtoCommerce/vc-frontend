@@ -1,9 +1,8 @@
 <template>
   <ProductTitledBlock
-    v-if="product.variations?.length"
-    class="mt-5"
-    image-src="/static/images/variations_customize.svg"
+    v-if="!model.hidden && product.variations?.length"
     :title="model.title || $t('shared.catalog.product_details.variations_block_title')"
+    image-src="/static/images/variations_customize.svg"
   >
     <ProductVariationCard :variation="product" class="mb-5" />
 
@@ -16,17 +15,14 @@
 <script setup lang="ts">
 import { ProductTitledBlock, ProductVariationCard } from "@/shared/catalog";
 import type { Product } from "@/xapi/types";
-import type { PropType } from "vue";
 
-defineProps({
-  product: {
-    type: Object as PropType<Product>,
-    required: true,
-  },
-
+interface IProps {
+  product: Product;
   model: {
-    type: Object,
-    required: true,
-  },
-});
+    title?: string;
+    hidden?: boolean;
+  };
+}
+
+defineProps<IProps>();
 </script>

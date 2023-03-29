@@ -1,6 +1,6 @@
 {
   "name": "vc-theme-b2b-vue",
-  "version": "1.23.0",
+  "version": "1.24.0",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -18,8 +18,8 @@
     "generate:graphql:schema": "graphql-codegen -c \"codegen.schema.ts\" -r dotenv/config",
     "generate:graphql:types": "graphql-codegen -c \"codegen.types.ts\" -r dotenv/config",
     "generate:graphql": "yarn generate:graphql:schema && yarn generate:graphql:types",
-    "storybook:dev": "start-storybook -p 6006 --no-open --disable-telemetry",
-    "storybook:build": "build-storybook --docs --disable-telemetry",
+    "storybook:dev": "start-storybook -p 6006 --no-open",
+    "storybook:build": "build-storybook --docs",
     "postinstall": "husky install"
   },
   "dependencies": {
@@ -28,7 +28,8 @@
     "@popperjs/core": "^2.11.6",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/line-clamp": "^0.4.2",
-    "@vee-validate/rules": "^4.7.4",
+    "@vee-validate/rules": "^4.8.3",
+    "@vee-validate/yup": "^4.8.3",
     "@vueuse/components": "^9.13.0",
     "@vueuse/core": "^9.13.0",
     "@vueuse/head": "^0.9.8",
@@ -48,11 +49,11 @@
     "moment": "^2.29.4",
     "storybook-vue3-router": "^2.3.1",
     "swiper": "^8.4.7",
-    "vee-validate": "~4.5.11",
+    "vee-validate": "^4.8.3",
     "vue": "^3.2.47",
     "vue-i18n": "^9.2.2",
     "vue-router": "^4.1.6",
-    "yup": "^0.32.11"
+    "yup": "^1.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",

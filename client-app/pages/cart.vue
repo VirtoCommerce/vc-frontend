@@ -33,7 +33,7 @@
         :items-grouped-by-vendor="lineItemsGroupedByVendor"
         :disabled="loading"
         :validation-errors="cart.validationErrors"
-        @change:item:quantity="changeItemQuantity($event.item.id, $event.quantity)"
+        @change:item-quantity="changeItemQuantity($event.item.id, $event.quantity)"
         @remove:item="handleRemoveItem"
         @clear:cart="openClearCartModal"
       />

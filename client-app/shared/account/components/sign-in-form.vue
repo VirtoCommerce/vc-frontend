@@ -10,23 +10,23 @@
     </VcAlert>
 
     <VcInput
-      v-model="email"
+      v-model.trim="email"
       name="email"
       class="mb-4"
-      :label="$t('shared.account.sign_in_form.email_label')"
-      :placeholder="$t('shared.account.sign_in_form.email_placeholder')"
+      :label="$t('common.labels.email')"
+      :placeholder="$t('common.placeholders.email')"
       :disabled="loading || isAuthenticated"
       required
       :message="errors.email"
-      :error="errors.email"
+      :error="!!errors.email"
       autocomplete="email"
     />
 
     <VcInput
       v-model="password"
       class="mb-4"
-      :label="$t('shared.account.sign_in_form.password_label')"
-      :placeholder="$t('shared.account.sign_in_form.password_placeholder')"
+      :label="$t('common.labels.password')"
+      :placeholder="$t('common.placeholders.password')"
       :disabled="loading || isAuthenticated"
       type="password"
       required
@@ -74,34 +74,39 @@
 </template>
 
 <script setup lang="ts">
+import { toTypedSchema } from "@vee-validate/yup";
 import { eagerComputed } from "@vueuse/core";
 import { isEmpty } from "lodash";
-import { useForm, useField } from "vee-validate";
-import { ref, reactive, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import * as yup from "yup";
-import { useUser } from "@/shared/account";
+import { useField, useForm } from "vee-validate";
+import { reactive, ref, watch } from "vue";
+import { object, string } from "yup";
 import { useCart } from "@/shared/cart";
+import { getMe } from "@/xapi";
 import { mergeCart } from "@/xapi/graphql/cart";
+import useUser from "../composables/useUser";
 
-const emit = defineEmits(["succeeded"]);
+interface IEmits {
+  (event: "succeeded"): void;
+}
 
+const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButtons: false });
 
 const USER_IS_LOCKED_OUT_ERROR_CODE = "user_is_locked_out";
 
-const { t } = useI18n();
 const { cart, fetchCart } = useCart();
-const { signMeIn, user, isAuthenticated } = useUser();
+const { signMeIn, isAuthenticated } = useUser();
 
 const loading = ref(false);
 const authError = ref(false);
 const userIsLockedError = ref(false);
 
-const schema = yup.object({
-  email: yup.string().label(t("shared.account.sign_in_form.email_label")).required().email(),
-  password: yup.string().label(t("shared.account.sign_in_form.password_label")).required(),
-});
+const schema = toTypedSchema(
+  object({
+    email: string().required().email(),
+    password: string().required(),
+  })
+);
 
 const { errors, handleSubmit, values } = useForm({
   validationSchema: schema,
@@ -109,8 +114,8 @@ const { errors, handleSubmit, values } = useForm({
 
 const { value: email } = useField<string>("email");
 const { value: password } = useField<string>("password");
-const rememberMe = ref(false);
 
+const rememberMe = ref(false);
 const model = reactive({ email, password, rememberMe });
 
 const valid = eagerComputed<boolean>(() => isEmpty(errors.value));
@@ -124,19 +129,20 @@ const onSubmit = handleSubmit(async () => {
 
   const result = await signMeIn(model);
 
-  if (!result.succeeded) {
-    if (result.errors?.find((e) => e.code === USER_IS_LOCKED_OUT_ERROR_CODE)) {
-      userIsLockedError.value = true;
-    } else {
-      authError.value = true;
-    }
-
-    loading.value = false;
+  if (result.succeeded) {
+    const user = await getMe();
+    await mergeCart(user.id, cart.value.id!);
+    emit("succeeded");
     return;
   }
 
-  await mergeCart(user.value.id, cart.value.id!);
-  emit("succeeded");
+  if (result.errors?.find((e) => e.code === USER_IS_LOCKED_OUT_ERROR_CODE)) {
+    userIsLockedError.value = true;
+  } else {
+    authError.value = true;
+  }
+
+  loading.value = false;
 });
 
 watch(values, () => {
