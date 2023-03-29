@@ -1,7 +1,13 @@
 <template>
-  <ul class="list-disc space-y-1 pl-5">
+  <ul class="vc-list">
     <slot></slot>
   </ul>
 </template>
 
 <script setup lang="ts"></script>
+
+<style scoped lang="scss">
+.vc-list {
+  @apply list-disc space-y-1 pl-5;
+}
+</style>
