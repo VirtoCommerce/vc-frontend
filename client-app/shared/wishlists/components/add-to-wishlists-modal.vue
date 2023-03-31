@@ -58,7 +58,7 @@
               <div class="absolute inset-0"></div>
             </button>
             <VcInput
-              v-model="input.listName"
+              v-model.trim="input.listName"
               class="ml-2.5 mr-3.5 grow"
               :class="{ 'mb-4.5': !input.errorMessage }"
               :disabled="loading"

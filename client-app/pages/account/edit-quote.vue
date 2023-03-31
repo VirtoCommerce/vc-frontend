@@ -16,7 +16,7 @@
         content-classes="px-6 pb-1 pt-2 lg:px-7 lg:pb-2"
       >
         <VcTextarea
-          v-model="quote.comment"
+          v-model.trim="quote.comment"
           :label="$t('pages.account.quote_details.remarks_field_label')"
           :disabled="fetching"
           :max-length="1000"
