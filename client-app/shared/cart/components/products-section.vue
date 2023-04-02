@@ -7,7 +7,7 @@
           <!-- Vendor -->
           <div class="flex max-w-full flex-wrap gap-x-3">
             <VcVendor :vendor="group.vendor" />
-            <VcRating :rating="group.vendor?.rating?.value" :review-count="group.vendor?.rating?.reviewCount" />
+            <VcRatingInfo :rating="group.vendor?.rating?.value" :review-count="group.vendor?.rating?.reviewCount" />
           </div>
 
           <CartLineItems
@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { VcButton, VcSectionWidget, VcVendor, VcRating } from "@/ui-kit/components";
+import { VcButton, VcSectionWidget, VcVendor, VcRatingInfo } from "@/ui-kit/components";
 import { default as CartLineItems } from "./cart-line-items.vue";
 import type { LineItemsGroupByVendorType } from "@/core/types";
 import type { LineItemType, ValidationErrorType } from "@/xapi/types";

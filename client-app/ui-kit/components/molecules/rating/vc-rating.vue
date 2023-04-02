@@ -1,65 +1,82 @@
+<!-- eslint-disable vuejs-accessibility/no-static-element-interactions -->
 <template>
-  <div v-if="$cfg.rating_enabled && rating && (reviewCount === undefined || reviewCount > 0)">
-    <VcLabel v-if="label">{{ label }}</VcLabel>
-    <div class="vc-rating">
-      <template v-if="variant == 'stars'">
-        <VcIcon v-for="index in rating" :key="index" class="vc-rating__icon" name="star" size="xs" />
-        <template v-if="rating > 0">
-          <VcIcon
-            v-for="index in max - rating"
-            :key="index"
-            class="vc-rating__icon vc-rating__icon--disabled"
-            name="star"
-            size="xs"
-          />
-        </template>
-      </template>
-      <template v-else>
-        <VcIcon v-if="variant == 'star-and-text'" class="vc-rating__icon" name="star" size="xs" />
-        <div class="vc-rating__text">
-          <span class="vc-rating__current-rating">{{ rating }}</span
-          >/{{ max }}
-          <template v-if="reviewCount">({{ reviewCount }})</template>
-        </div>
-      </template>
+  <div v-if="$cfg.rating_enabled && modelValue">
+    <VcLabel v-if="label" class="vc-rating-info__label">{{ label }}</VcLabel>
+    <div class="vc-rating" @mouseleave="onLeave" @blur="onLeave">
+      <VcIcon
+        v-for="index in max"
+        :key="index"
+        class="vc-rating__icon"
+        :class="{ 'vc-rating__icon--disabled': !readonly && index > (hoveredValue ?? modelValue) }"
+        name="star"
+        :size="isMobile ? 'xl' : 'md'"
+        @mouseenter="onEnter(index)"
+        @focus="onEnter(index)"
+        @click="onClick(index)"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { ref, toRefs } from "vue";
+import { VcLabel, VcIcon } from "@/ui-kit/components/atoms";
+
 interface IProps {
   label?: string;
-  rating?: number;
-  reviewCount?: number;
+  modelValue: number | null | undefined;
   max?: number;
-  variant?: "stars" | "star-and-text" | "text";
+  readonly?: boolean;
 }
 
-withDefaults(defineProps<IProps>(), {
+interface IEmits {
+  (event: "update:modelValue", value: number): void;
+}
+
+const emit = defineEmits<IEmits>();
+
+const props = withDefaults(defineProps<IProps>(), {
   max: 5,
-  variant: "star-and-text",
-  withReviewCount: false,
+  readonly: false,
 });
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("lg");
+
+const { modelValue } = toRefs(props);
+const hoveredValue = ref<number | null>();
+
+function onEnter(value: number) {
+  hoveredValue.value = value;
+}
+
+function onLeave() {
+  hoveredValue.value = null;
+}
+
+function onClick(value: number) {
+  if (!props.readonly) {
+    modelValue.value = value;
+    emit("update:modelValue", value);
+  }
+}
 </script>
 
 <style lang="scss">
 .vc-rating {
   @apply flex items-center gap-0.5 whitespace-nowrap;
 
+  &__label {
+    @apply mb-1;
+  }
+
   &__icon {
-    @apply text-[color:var(--color-rating)];
+    @apply text-[color:var(--color-rating)] outline-none;
 
     &--disabled {
       @apply text-[color:var(--color-rating-disabled)];
     }
-  }
-
-  &__text {
-    @apply text-13 text-gray-800 font-semibold;
-  }
-
-  &__current-rating {
-    @apply font-extrabold;
   }
 }
 </style>
