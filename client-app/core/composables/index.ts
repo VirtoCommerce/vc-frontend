@@ -6,7 +6,6 @@ export * from "./useAttrsOnly";
 export * from "./useCountries";
 export * from "./useCurrency";
 export * from "./useDomUtils";
-export * from "./useElementVisibility";
 export * from "./useFetch";
 export * from "./useGoogleAnalytics";
 export * from "./useIdentityErrorTranslator";
