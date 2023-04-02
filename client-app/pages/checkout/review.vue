@@ -8,7 +8,7 @@
             <!-- Vendor -->
             <div class="flex max-w-full flex-wrap gap-x-3">
               <Vendor :vendor="group.vendor" />
-              <VcRating :rating="group.vendor?.rating?.value" :review-count="group.vendor?.rating?.reviewCount" />
+              <VcRatingInfo :rating="group.vendor?.rating?.value" :review-count="group.vendor?.rating?.reviewCount" />
             </div>
 
             <OrderLineItems :items="group.items" />
@@ -160,7 +160,7 @@ import {
   VcSelectItemImage,
   VcSelectItemText,
   VcSectionWidget,
-  VcRating,
+  VcRatingInfo,
 } from "@/ui-kit/components";
 import type { CartAddressType } from "@/xapi/types";
 
