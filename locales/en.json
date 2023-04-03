@@ -1239,6 +1239,7 @@
       "other_branches": "Other branches"
     },
     "vendor": {
+      "leave_feedback": "Leave feeback",
       "header_block": {
         "logo_alt": "Logo",
         "rating_label": "Rating"
@@ -1267,6 +1268,14 @@
         "address": "Address",
         "phone": "Phone",
         "email": "Email"
+      },
+      "leave_feedback_dialog": {
+        "title": "Leave feedback",
+        "rating_label": "Rate vendor",
+        "title_label": "Title",
+        "title_placeholder": "Describe your experience in few words",
+        "review_label": "Feedback",
+        "review_placeholder": "Leave detailed feedback"
       }
     }
   },

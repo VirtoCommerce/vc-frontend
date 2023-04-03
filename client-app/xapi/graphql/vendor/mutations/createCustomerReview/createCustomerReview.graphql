@@ -1,0 +1,5 @@
+mutation CreateCustomerReview($command: CreateCustomerReviewCommandType!) {
+  createCustomerReview(command: $command) {
+    id
+  }
+}

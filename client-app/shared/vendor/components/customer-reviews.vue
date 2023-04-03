@@ -109,6 +109,9 @@
           <template #icon>
             <VcImage src="/static/images/vendor/icons/no-feedback.svg"></VcImage>
           </template>
+          <template #button>
+            <LeaveFeedback :options="options" size="lg" class="px-5" with-icon />
+          </template>
         </VcEmptyView>
       </template>
     </VcTable>
@@ -141,6 +144,7 @@ import {
 import type { ISearchOptions } from "@/core/types";
 import type { ICustomerReviewOptions } from "@/shared/vendor/types";
 import type { CustomerReview } from "@/xapi/types";
+import { default as LeaveFeedback } from "@/shared/vendor/components/leave-feedback.vue";
 
 interface IProps {
   options: ICustomerReviewOptions;

@@ -24,6 +24,7 @@
                   :rating="vendor.rating?.value"
                   :review-count="vendor.rating?.reviewCount"
                 />
+                <LeaveFeedback :options="customerReviewOptions" is-outline class="px-3" />
               </div>
             </div>
           </template>
@@ -71,7 +72,7 @@ import { invoke } from "@vueuse/core";
 import { computed, defineAsyncComponent, inject, ref, toRefs } from "vue";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { configInjectionKey } from "@/core/injection-keys";
-import { CustomerReviews, useVendor } from "@/shared/vendor";
+import { CustomerReviews, LeaveFeedback, useVendor } from "@/shared/vendor";
 import {
   VcAddressInfo,
   VcBreadcrumbs,

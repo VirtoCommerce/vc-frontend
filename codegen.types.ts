@@ -9,8 +9,7 @@ const config: CodegenConfig = {
         {
           add: {
             content:
-              '// This file was generated based on "codegen.types.ts". Do not edit manually.\n\n' +
-              "/* eslint-disable */\n",
+              '// This file was generated based on "codegen.types.ts". Do not edit manually.\n',
           },
         },
         "typescript",

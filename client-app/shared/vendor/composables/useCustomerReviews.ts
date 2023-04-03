@@ -1,12 +1,12 @@
 import { unref } from "vue";
-import { useItems } from "@/core/composables";
+import { useAsync, useItems, useLoading } from "@/core/composables";
 import { SortDirection } from "@/core/enums";
 import { RangeFilter, RangeFilterValue, Sort, TermFilter, Filters } from "@/core/types";
 import { nameof } from "@/core/utilities";
-import { searchCustomerReviews } from "@/xapi";
+import { createCustomerReview, searchCustomerReviews } from "@/xapi";
 import { CustomerReviewStatus } from "@/xapi/types";
-import type { ICustomerReviewOptions } from "../types";
-import type { IUseItems } from "@/core/composables";
+import type { ICustomerReviewOptions, ICustomerReview } from "../types";
+import type { IUseItems, AsyncActionType } from "@/core/composables";
 import type { IPageSize, ISearchOptions, ISearchParams } from "@/core/types";
 import type { CustomerReview, CustomerReviewConnection } from "@/xapi/types";
 import type { MaybeRef } from "@vueuse/core";
@@ -24,14 +24,16 @@ export const REQUIRED_CUSTOMER_REVIEWS_FILTERS: Filters = new Filters(
   new TermFilter(nameof<CustomerReview>("reviewStatus"), [CustomerReviewStatus.Approved])
 );
 
-export type UseCustomerReviewsType = IUseItems<CustomerReview>;
+export interface IUseCustomerReviewsType extends IUseItems<CustomerReview> {
+  create: AsyncActionType<ICustomerReview>;
+}
 
 export function useCustomerReviews(
   customerReviewsOptions: MaybeRef<ICustomerReviewOptions>,
   overridingOptions?: Partial<ISearchOptions>,
   overridingDefaults?: Partial<ISearchParams & IPageSize>,
   requiredFilters: Filters = REQUIRED_CUSTOMER_REVIEWS_FILTERS
-): UseCustomerReviewsType {
+): IUseCustomerReviewsType {
   const defaults: Partial<ISearchParams & IPageSize> = {
     sort: DEFAULT_CUSTOMER_REVIEWS_SORT,
     filters: DEFAULT_CUSTOMER_REVIEWS_FILTERS,
@@ -44,12 +46,11 @@ export function useCustomerReviews(
     ...overridingOptions,
   };
 
-  const composable = useItems<CustomerReview>(
+  const useItemsComposable = useItems<CustomerReview>(
     async (searchQueryArguments): Promise<CustomerReviewConnection> => {
       return await searchCustomerReviews({
         ...searchQueryArguments,
-        entityId: unref(customerReviewsOptions).entityId,
-        entityType: unref(customerReviewsOptions).entityType,
+        ...unref(customerReviewsOptions),
       });
     },
     options,
@@ -57,7 +58,18 @@ export function useCustomerReviews(
     requiredFilters
   );
 
+  const { loading: createLoading, action: create } = useAsync<ICustomerReview>(async (args) => {
+    await createCustomerReview({
+      ...unref(customerReviewsOptions),
+      ...args!,
+    });
+  });
+
+  const loading = useLoading(useItemsComposable.loading, createLoading);
+
   return {
-    ...composable,
+    ...useItemsComposable,
+    create,
+    loading,
   };
 }
