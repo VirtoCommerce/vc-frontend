@@ -1,5 +1,7 @@
 query GetVendor($storeId: String!, $cultureName: String!, $id: String!) {
   vendor(id: $id) {
+    id
+    memberType
     iconUrl
     name
     about

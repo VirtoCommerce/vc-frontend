@@ -69,7 +69,7 @@
             <div class="text-13 text-gray-400">{{ $d(itemData.item.modifiedDate) }}</div>
             <div class="font-bold text-gray-700">{{ itemData.item.userName }}</div>
           </div>
-          <VcRating :rating="itemData.item.rating" variant="stars" class="mb-1"></VcRating>
+          <VcRating :model-value="itemData.item.rating" readonly class="mb-1"></VcRating>
           <div class="font-extrabold">{{ itemData.item.title }}</div>
           <div class="font-medium">{{ itemData.item.review }}</div>
         </div>
@@ -92,7 +92,7 @@
       <template #desktop-body>
         <tr v-for="customerReview in customerReviews" :key="customerReview.id" class="even:bg-gray-50">
           <td class="overflow-hidden text-ellipsis p-3">
-            <VcRating :rating="customerReview.rating" variant="stars"></VcRating>
+            <VcRating :model-value="customerReview.rating" readonly></VcRating>
           </td>
           <td class="overflow-hidden text-ellipsis whitespace-nowrap p-4">
             <div class="font-bold text-gray-700">{{ customerReview.userName }}</div>
@@ -109,12 +109,6 @@
           <template #icon>
             <VcImage src="/static/images/vendor/icons/no-feedback.svg"></VcImage>
           </template>
-          <template #button>
-            <VcButton size="lg" class="whitespace-nowrap px-5 uppercase">
-              <i class="far fa-comment mr-3" />
-              {{ $t("pages.vendor.header_block.leave_feedback") }}
-            </VcButton>
-          </template>
         </VcEmptyView>
       </template>
     </VcTable>
@@ -123,7 +117,7 @@
 
 <script setup lang="ts">
 import { invoke } from "@vueuse/core";
-import { computed, inject, ref, toRefs } from "vue";
+import { computed, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import { SortDirection } from "@/core/enums";
 import { configInjectionKey } from "@/core/injection-keys";
@@ -134,16 +128,25 @@ import {
   DEFAULT_CUSTOMER_REVIEWS_SORT,
   useCustomerReviews,
 } from "@/shared/vendor/composables";
-import { VcEmptyView, VcRating, VcSelect, VcTable, VcButton, VcImage } from "@/ui-kit/components";
+import {
+  VcEmptyView,
+  VcImage,
+  VcRating,
+  VcSelect,
+  VcSelectItem,
+  VcSelectItemText,
+  VcTable,
+  VcTypography,
+} from "@/ui-kit/components";
 import type { ISearchOptions } from "@/core/types";
+import type { ICustomerReviewOptions } from "@/shared/vendor/types";
 import type { CustomerReview } from "@/xapi/types";
 
 interface IProps {
-  vendorId: string;
+  options: ICustomerReviewOptions;
 }
 
 const props = defineProps<IProps>();
-const { vendorId } = toRefs(props);
 
 const { t } = useI18n();
 const config = inject(configInjectionKey, {});
@@ -170,7 +173,7 @@ const {
   changePage,
   applySort,
   applyFilters,
-} = useCustomerReviews(ref({ entityId: vendorId, entityType: "Organization" }), searchOptions);
+} = useCustomerReviews(props.options, searchOptions);
 
 const columns = computed<ITableColumn[]>(() => [
   {

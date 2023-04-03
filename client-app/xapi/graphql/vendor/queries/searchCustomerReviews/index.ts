@@ -2,10 +2,10 @@ import globals from "@/core/globals";
 import searchCustomerReviewsQueryDocument from "./searchCustomerReviewsQuery.graphql";
 import type { CustomerReviewConnection, SearchCustomerReviewsQueryVariables, Query } from "@/xapi/types";
 
-export type SearchCustomerReviewsQueryArguments = Omit<SearchCustomerReviewsQueryVariables, "storeId">;
+export type SearchCustomerReviewsQueryArgumentsType = Omit<SearchCustomerReviewsQueryVariables, "storeId">;
 
 export async function searchCustomerReviews(
-  searchQueryArguments: SearchCustomerReviewsQueryArguments
+  searchQueryArguments: SearchCustomerReviewsQueryArgumentsType
 ): Promise<CustomerReviewConnection> {
   const { storeId } = globals;
 

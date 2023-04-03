@@ -18,6 +18,7 @@ query SearchCustomerReviews(
     entityId: $entityId
     entityType: $entityType
   ) {
+    totalCount
     items {
       id
       modifiedDate

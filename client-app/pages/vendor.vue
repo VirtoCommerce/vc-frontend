@@ -19,19 +19,16 @@
               <VcImage :src="vendor.iconUrl" :alt="$t('pages.vendor.header_block.logo_alt')" class="h-20" lazy />
               <div class="mx-auto max-md:order-last max-md:basis-full">{{ vendor.about }}</div>
               <div class="flex flex-col justify-between self-stretch">
-                <VcRating
+                <VcRatingInfo
                   :label="$t('pages.vendor.header_block.rating_label')"
                   :rating="vendor.rating?.value"
                   :review-count="vendor.rating?.reviewCount"
                 />
-                <VcButton size="xs" is-outline class="whitespace-nowrap px-3 uppercase">
-                  {{ $t("pages.vendor.header_block.leave_feedback") }}
-                </VcButton>
               </div>
             </div>
           </template>
           <div class="mb-2 hidden h-[18px] bg-gradient-to-b from-[#94949421] lg:block"></div>
-          <CustomerReviews :vendor-id="vendorId"></CustomerReviews>
+          <CustomerReviews :options="customerReviewOptions" />
         </VcSection>
       </template>
       <template v-if="vendor.addresses?.items?.length || vendor.phones.length || vendor.emails.length" #sidebar>
@@ -78,7 +75,6 @@ import { CustomerReviews, useVendor } from "@/shared/vendor";
 import {
   VcAddressInfo,
   VcBreadcrumbs,
-  VcButton,
   VcCard,
   VcContainer,
   VcImage,
@@ -86,10 +82,11 @@ import {
   VcList,
   VcListItem,
   VcLoaderOverlay,
-  VcRating,
+  VcRatingInfo,
   VcSection,
   VcTypography,
 } from "@/ui-kit/components";
+import type { ICustomerReviewOptions } from "@/shared/vendor/types";
 
 interface IProps {
   vendorId: string;
@@ -114,6 +111,12 @@ usePageHead({
 });
 
 const breadcrumbs = useBreadcrumbs(() => (vendor.value?.name ? [{ title: vendor.value.name }] : []));
+
+const customerReviewOptions = computed<ICustomerReviewOptions>(() => ({
+  entityId: vendor.value!.id,
+  entityName: vendor.value!.name!,
+  entityType: vendor.value!.memberType,
+}));
 
 invoke(async () => {
   if (config.vendor_enabled) {

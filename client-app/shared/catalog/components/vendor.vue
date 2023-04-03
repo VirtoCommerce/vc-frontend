@@ -2,7 +2,7 @@
   <router-link :to="link" class="cursor-pointer font-bold text-link">
     {{ vendor.name }}
   </router-link>
-  <VcRating
+  <VcRatingInfo
     v-if="withRating"
     :rating="vendor?.rating?.value"
     :review-count="vendor?.rating?.reviewCount"
@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { VcRating } from "@/ui-kit/components";
+import { VcRatingInfo } from "@/ui-kit/components";
 import type { CommonVendor } from "@/xapi/types";
 import type { RouteLocationRaw } from "vue-router";
 

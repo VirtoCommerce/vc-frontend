@@ -5,7 +5,7 @@ import { RangeFilter, RangeFilterValue, Sort, TermFilter, Filters } from "@/core
 import { nameof } from "@/core/utilities";
 import { searchCustomerReviews } from "@/xapi";
 import { CustomerReviewStatus } from "@/xapi/types";
-import type { ISearchCustomerReviewsParams } from "../types";
+import type { ICustomerReviewOptions } from "../types";
 import type { IUseItems } from "@/core/composables";
 import type { IPageSize, ISearchOptions, ISearchParams } from "@/core/types";
 import type { CustomerReview, CustomerReviewConnection } from "@/xapi/types";
@@ -27,7 +27,7 @@ export const REQUIRED_CUSTOMER_REVIEWS_FILTERS: Filters = new Filters(
 export type UseCustomerReviewsType = IUseItems<CustomerReview>;
 
 export function useCustomerReviews(
-  searchCustomerReviewsParams: MaybeRef<ISearchCustomerReviewsParams>,
+  customerReviewsOptions: MaybeRef<ICustomerReviewOptions>,
   overridingOptions?: Partial<ISearchOptions>,
   overridingDefaults?: Partial<ISearchParams & IPageSize>,
   requiredFilters: Filters = REQUIRED_CUSTOMER_REVIEWS_FILTERS
@@ -48,8 +48,8 @@ export function useCustomerReviews(
     async (searchQueryArguments): Promise<CustomerReviewConnection> => {
       return await searchCustomerReviews({
         ...searchQueryArguments,
-        entityId: unref(searchCustomerReviewsParams).entityId,
-        entityType: unref(searchCustomerReviewsParams).entityType,
+        entityId: unref(customerReviewsOptions).entityId,
+        entityType: unref(customerReviewsOptions).entityType,
       });
     },
     options,

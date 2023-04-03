@@ -1239,11 +1239,9 @@
       "other_branches": "Other branches"
     },
     "vendor": {
-      "leave_feedback": "Leave feeback",
       "header_block": {
         "logo_alt": "Logo",
-        "rating_label": "Rating",
-        "leave_feedback": "@:pages.vendor.leave_feedback"
+        "rating_label": "Rating"
       },
       "main_block": {
         "title": "Feedback",
@@ -1261,8 +1259,7 @@
             "modifiedDate:desc": "Descending"
           }
         },
-        "no-feedback": "There is no feedback found",
-        "leave_feedback": "@:pages.vendor.leave_feedback"
+        "no-feedback": "There is no feedback found"
       },
       "contacts_card": {
         "title": "Contacts",
