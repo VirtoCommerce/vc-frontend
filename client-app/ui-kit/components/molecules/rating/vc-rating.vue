@@ -9,7 +9,7 @@
         class="vc-rating__icon"
         :class="{ 'vc-rating__icon--disabled': !readonly && index > (hoveredValue ?? modelValue) }"
         name="star"
-        :size="isMobile ? 'xl' : 'md'"
+        :size="isMobile ? 'md' : 'sm'"
         @mouseenter="onEnter(index)"
         @focus="onEnter(index)"
         @click="onClick(index)"
