@@ -113,6 +113,19 @@ function addItemToCart(item: Product | VariationType, quantity = 1, params?: Eve
   });
 }
 
+function addItemsToCart(items: LineItemType[], params?: EventParamsExtendedType): void {
+  items.forEach((item) => {
+    const inputItem = lineItemToGtagItem(item);
+
+    sendEvent("add_to_cart", {
+      ...params,
+      currency: globals.currencyCode,
+      value: item.extendedPrice?.amount,
+      items: [inputItem],
+    });
+  });
+}
+
 function removeItemFromCart(item: LineItemType, params?: EventParamsExtendedType): void {
   sendEvent("remove_from_cart", {
     ...params,
@@ -192,6 +205,7 @@ export function useGoogleAnalytics() {
     viewItem,
     addItemToWishList,
     addItemToCart,
+    addItemsToCart,
     removeItemFromCart,
     viewCart,
     beginCheckout,

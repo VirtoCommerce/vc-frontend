@@ -23,8 +23,9 @@
         v-for="item in items"
         :key="item.id"
         :item="item"
-        @update="changeLineItemQuantity"
-        @remove="$emit('remove:item', item)"
+        @update:cart-item-quantity="changeCartItemQuantity"
+        @update:list-item-quantity="changeItemQuantity"
+        @remove="$emit('remove:listItem', item)"
       />
     </div>
 
@@ -38,22 +39,28 @@
 
 <script setup lang="ts">
 import WishlistLineItem from "./wishlist-line-item.vue";
-import type { LineItemType } from "@/xapi/types";
+import type { ExtendedLineItemType } from "@/core/types";
+import type { InputNewBulkItemType, LineItemType } from "@/xapi/types";
 
 interface IEmits {
-  (event: "update:item", value: LineItemType): void;
-  (event: "remove:item", value: LineItemType): void;
+  (event: "update:cartItem", value: InputNewBulkItemType): void;
+  (event: "update:listItem", value: InputNewBulkItemType): void;
+  (event: "remove:listItem", value: LineItemType): void;
 }
 
 interface IProp {
-  items: LineItemType[];
+  items: ExtendedLineItemType<LineItemType>[];
 }
 
 const emit = defineEmits<IEmits>();
 defineProps<IProp>();
 
-function changeLineItemQuantity(item: LineItemType): void {
-  emit("update:item", item);
+function changeCartItemQuantity(item: InputNewBulkItemType): void {
+  emit("update:cartItem", item);
+}
+
+function changeItemQuantity(item: InputNewBulkItemType): void {
+  emit("update:listItem", item);
 }
 </script>
 

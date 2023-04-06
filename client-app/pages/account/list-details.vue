@@ -1,5 +1,7 @@
 <template>
   <div>
+    <VcLoaderOverlay :visible="loading" fixed-spinner />
+
     <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
     <!-- Title block -->
@@ -14,14 +16,7 @@
           {{ $t("shared.wishlists.list_card.list_settings_button") }}
         </VcButton>
 
-        <VcButton
-          v-if="listItems.length"
-          :is-disabled="!listItems.length"
-          :is-waiting="loadingAddItemsToCart"
-          class="w-56 px-3 uppercase"
-          size="sm"
-          @click="addAllToCart"
-        >
+        <VcButton v-if="pagedListItems.length" class="w-56 px-3 uppercase" size="sm" @click="addAllListItemsToCart">
           <i class="fa fa-shopping-cart mr-2 text-xs text-inherit" />
           {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
         </VcButton>
@@ -31,18 +26,23 @@
     <!-- Skeletons -->
     <template v-if="loading">
       <div v-if="isMobile" class="mx-5 grid grid-cols-2 gap-x-4 gap-y-6 md:mx-0">
-        <ProductSkeletonGrid v-for="i in listItems.length || itemsPerPage" :key="i" />
+        <ProductSkeletonGrid v-for="i in actualPageRowsCount" :key="i" />
       </div>
 
       <div v-else class="flex flex-col rounded border bg-white shadow-sm">
-        <WishlistProductItemSkeleton v-for="i in listItems.length || itemsPerPage" :key="i" class="even:bg-gray-50" />
+        <WishlistProductItemSkeleton v-for="i in actualPageRowsCount" :key="i" class="even:bg-gray-50" />
       </div>
     </template>
 
     <!-- List details -->
-    <template v-else-if="listItems.length">
+    <template v-else-if="pagedListItems.length">
       <div class="flex flex-col gap-6 bg-white p-5 md:rounded md:border md:shadow-t-3sm">
-        <WishlistLineItems :items="listItems" @update:item="updateWishListItem" @remove:item="openDeleteProductModal" />
+        <WishlistLineItems
+          :items="pagedListItems"
+          @update:cart-item="updateCartItem"
+          @update:list-item="updateWishListItem"
+          @remove:list-item="openDeleteProductModal"
+        />
 
         <VcPagination
           v-if="pages > 1"
@@ -85,8 +85,10 @@ import {
   useWishlists,
   AddOrUpdateWishlistModal,
   DeleteWishlistProductModal,
+  extendWishListItem,
 } from "@/shared/wishlists";
-import type { InputNewBulkItemType, LineItemType } from "@/xapi/types";
+import type { ExtendedLineItemType } from "@/core/types";
+import type { InputNewBulkItemType, LineItemType, Product } from "@/xapi/types";
 
 interface IProps {
   listId: string;
@@ -96,8 +98,8 @@ const props = defineProps<IProps>();
 
 const { t } = useI18n();
 const { openPopup } = usePopup();
-const { loading, list, fetchWishList, clearList } = useWishlists();
-const { addBulkItemsToCart } = useCart();
+const { loading: listLoading, list, fetchWishList, clearList } = useWishlists();
+const { cart, loading: cartLoading, addToCart, changeItemQuantity, addBulkItemsToCart } = useCart();
 const ga = useGoogleAnalytics();
 
 usePageHead({
@@ -106,41 +108,69 @@ usePageHead({
 
 const itemsPerPage = ref(6);
 const page = ref(1);
-const loadingAddItemsToCart = ref(false);
-const inputBulkItems = ref<InputNewBulkItemType[] | undefined>(
+
+const loading = computed<boolean>(() => listLoading.value || cartLoading.value);
+const extendedItems = computed<ExtendedLineItemType<LineItemType>[]>(() =>
+  (list.value?.items || []).map((listItem) => {
+    const countInCart = cart.value.items?.find((cartItem) => cartItem.sku === listItem.sku)?.quantity;
+
+    listItem.quantity =
+      countInCart ||
+      (listItem.product && listItem.product.minQuantity && (listItem.quantity || 0) < listItem.product.minQuantity
+        ? listItem.product.minQuantity
+        : listItem.quantity);
+    return extendWishListItem(listItem, countInCart);
+  })
+);
+const inputBulkItems = computed<InputNewBulkItemType[] | undefined>(() =>
   list.value?.items?.map<InputNewBulkItemType>((item) => ({
     productSku: item.sku!,
-    quantity:
-      item.product && item.product.minQuantity && (item.quantity || 0) < item.product.minQuantity
-        ? item.product.minQuantity
-        : item.quantity,
+    quantity: item.quantity,
   }))
 );
-
 const pages = computed<number>(() => Math.ceil((list.value?.items?.length ?? 0) / itemsPerPage.value));
-const listItems = computed<LineItemType[]>(() =>
-  (list.value?.items || []).slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
+const pagedListItems = computed<ExtendedLineItemType<LineItemType>[]>(() =>
+  extendedItems.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
 );
+const actualPageRowsCount = computed<number>(() => pagedListItems.value.length || itemsPerPage.value);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 
-function updateWishListItem(item: LineItemType): void {
-  const inputBulkItem = inputBulkItems.value?.find((bulkItem) => bulkItem.productSku === item.sku);
+function updateWishListItem(item: InputNewBulkItemType): void {
+  const inputBulkItem = inputBulkItems.value?.find((bulkItem) => bulkItem.productSku === item.productSku);
   if (inputBulkItem) {
     inputBulkItem.quantity = item.quantity;
   }
 }
 
-async function addAllToCart() {
+async function updateCartItem(item: InputNewBulkItemType): Promise<void> {
+  const product: Product | undefined = list.value?.items?.find((listItem) => listItem.sku === item.productSku)?.product;
+
+  if (!product) {
+    return;
+  }
+
+  const itemInCart: LineItemType | undefined = cart.value.items?.find((cartItem) => cartItem.sku === item.productSku);
+
+  if (itemInCart) {
+    await changeItemQuantity(itemInCart.id, item.quantity!);
+  } else {
+    await addToCart(product.id, item.quantity!);
+
+    ga.addItemToCart(product, item.quantity);
+  }
+}
+
+async function addAllListItemsToCart() {
   if (!list.value || !inputBulkItems.value) {
     return;
   }
 
-  loadingAddItemsToCart.value = true;
-
   const inputItems = clone(list.value.items!);
   const resultItems = await addBulkItemsToCart(inputBulkItems.value);
+
+  ga.addItemsToCart(inputItems);
 
   inputItems.forEach((inputItem) => {
     const inputBulkItem = inputBulkItems.value?.find((item) => item.productSku === inputItem.sku);
@@ -156,8 +186,6 @@ async function addAllToCart() {
       items: getItemsForAddBulkItemsToCartResultsPopup(inputItems, resultItems),
     },
   });
-
-  loadingAddItemsToCart.value = false;
 }
 
 function openDeleteProductModal(item: LineItemType) {
