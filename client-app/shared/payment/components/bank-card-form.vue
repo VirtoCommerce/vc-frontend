@@ -17,7 +17,7 @@
     />
 
     <VcInput
-      v-model="cardholderName"
+      v-model.trim="cardholderName"
       :label="$t('shared.payment.bank_card_form.cardholder_name_label')"
       :message="formErrors.cardholderName || errors.cardholderName"
       :error="!!formErrors.cardholderName || !!errors.cardholderName"

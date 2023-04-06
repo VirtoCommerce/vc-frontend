@@ -20,7 +20,7 @@
         </div>
 
         <VcInput
-          v-model="firstName"
+          v-model.trim="firstName"
           class="mb-4"
           :label="$t('common.labels.first_name')"
           :placeholder="$t('common.placeholders.first_name')"
@@ -33,7 +33,7 @@
         />
 
         <VcInput
-          v-model="lastName"
+          v-model.trim="lastName"
           class="mb-4"
           :label="$t('common.labels.last_name')"
           :placeholder="$t('common.placeholders.last_name')"
@@ -46,7 +46,7 @@
         />
 
         <VcInput
-          v-model="email"
+          v-model.trim="email"
           class="mb-4"
           :label="$t('common.labels.email')"
           :placeholder="$t('common.placeholders.email')"
@@ -61,7 +61,7 @@
 
         <VcInput
           v-if="registrationKind === RegistrationKind.organization"
-          v-model="organizationName"
+          v-model.trim="organizationName"
           class="mb-4"
           :label="$t('common.labels.company_name')"
           :placeholder="$t('common.placeholders.company_name')"

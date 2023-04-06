@@ -26,7 +26,7 @@
           :label="$t('common.labels.last_name')"
           :placeholder="$t('common.placeholders.first_name')"
           :message="errors.lastName"
-          :error="errors.lastName"
+          :error="!!errors.lastName"
           :disabled="loading"
           :maxlength="64"
           class="mb-4"
@@ -37,7 +37,7 @@
           :model-value="email"
           :label="$t('common.labels.email')"
           :message="errors.email"
-          :error="errors.email"
+          :error="!!errors.email"
           class="mb-4"
           disabled
           required

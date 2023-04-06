@@ -1,7 +1,7 @@
 <template>
   <form @submit="onSubmit">
     <VcInput
-      v-model="email"
+      v-model.trim="email"
       class="mb-4"
       :label="$t('common.labels.email')"
       :placeholder="$t('common.placeholders.email')"

@@ -78,7 +78,7 @@ const seoUrl = computedEager(() => {
    * NOTE: Because URL `/printers/` is an array of paths ["printers", ""], empty paths must be removed.
    */
   const paths = props.pathMatch.filter(Boolean);
-  return paths[paths.length - 1];
+  return paths.join("/");
 });
 
 const seoInfo = asyncComputed<TResult | undefined>(
