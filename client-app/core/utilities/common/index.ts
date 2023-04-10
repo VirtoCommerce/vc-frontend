@@ -1,12 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { cloneDeep } from "lodash";
-import { SORT_ASCENDING, SORT_DESCENDING } from "../../constants";
-import type { ISortInfo } from "../../types";
-
-export const defaultSortInfo: ISortInfo = {
-  column: "createdDate",
-  direction: SORT_DESCENDING,
-};
 
 export function getBaseUrl(supportedLocales: string[]): string {
   const localeInPath = location.pathname.split("/")[1];
@@ -62,24 +55,6 @@ export function numberToShortString(num: number): string {
   }
 
   return (num / sizes[index].value).toFixed(2).replace(/\.0+$|(\.[0-9]*[1-9])0+$/, "$1") + sizes[index].suffix;
-}
-
-export function getSortingExpression(sort: ISortInfo): string {
-  return `${sort.column}:${sort.direction}`;
-}
-
-export function getSortInfoFromStringExpression(sortInfo: string): ISortInfo {
-  const splitted: string[] = sortInfo.split(":");
-  return splitted.length > 1
-    ? {
-        column: splitted[0],
-        direction: splitted[1],
-      }
-    : defaultSortInfo;
-}
-
-export function toggleSortDirection(currentDirection: string): string {
-  return currentDirection === SORT_ASCENDING ? SORT_DESCENDING : SORT_ASCENDING;
 }
 
 // convert Date value to string with format 'yyyy-MM-dd'

@@ -77,8 +77,8 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { string } from "yup";
 import { useIdentityErrorTranslator } from "@/core/composables";
+import { B2B_ROLES } from "@/core/constants";
 import globals from "@/core/globals";
-import { B2B_ROLES } from "@/core/security-constants";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 
