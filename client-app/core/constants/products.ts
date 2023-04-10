@@ -1,11 +1,3 @@
-export const IS_DEVELOPMENT = import.meta.env.MODE === "development";
-
-export const DEFAULT_PAGE_SIZE = 16;
-export const SORT_ASCENDING = "asc";
-export const SORT_DESCENDING = "desc";
-export const DEFAULT_WISHLIST_LIMIT = 10;
-export const DEFAULT_NOTIFICATION_DURATION = 15000;
-
 export const PRODUCT_SORTING_LIST = [
   { id: "", name: "Featured" },
   { id: "name-ascending", name: "Alphabetically, A-Z" },

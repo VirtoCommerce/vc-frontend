@@ -1,5 +1,6 @@
 import { ref, shallowRef } from "vue";
-import { defaultSortInfo, getSortingExpression, Logger } from "@/core/utilities";
+import { DEFAULT_SORT_INFO } from "@/core/constants";
+import { getSortingExpression, Logger } from "@/core/utilities";
 import { getQuotes } from "@/xapi/graphql/quotes";
 import type { ISortInfo } from "@/core/types";
 import type { QuoteType } from "@/xapi/types";
@@ -14,7 +15,7 @@ export default () => {
   const pages: Ref<number> = ref(0);
   const page: Ref<number> = ref(1);
   const keyword: Ref<string> = ref("");
-  const sort: Ref<ISortInfo> = ref(defaultSortInfo);
+  const sort: Ref<ISortInfo> = ref(DEFAULT_SORT_INFO);
 
   async function fetchQuotes(): Promise<void> {
     fetching.value = true;
