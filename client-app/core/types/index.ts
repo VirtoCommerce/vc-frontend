@@ -10,6 +10,6 @@ export * from "./menu";
 export * from "./modify";
 export * from "./options";
 export * from "./role";
-export * from "./sorting";
+export * from "./search";
 export * from "./theme-config";
 export * from "./theme-context";
