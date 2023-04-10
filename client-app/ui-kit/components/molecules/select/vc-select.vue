@@ -15,13 +15,22 @@
       {{ label }}
     </VcLabel>
 
-    <div v-click-outside="() => open && hideList()" class="vc-select__container">
-      <button type="button" :disabled="disabled" class="vc-select__button" @click="toggle">
+    <div v-on-click-outside="hideList" class="vc-select__container">
+      <button
+        v-if="!autocomplete"
+        type="button"
+        :disabled="disabled"
+        class="vc-select__button"
+        @focus="openList"
+        @click="openList"
+        @keyup.escape="hideList"
+        @keydown.down.prevent="next(-1)"
+      >
         <span class="vc-select__button-content">
           <slot v-if="selected" name="selected" v-bind="{ item: selected }">
             <VcSelectItem>
               <VcSelectItemText>
-                {{ textField && selected ? selected[textField] : selected }}
+                {{ selectedText }}
               </VcSelectItemText>
             </VcSelectItem>
           </slot>
@@ -38,6 +47,27 @@
         <VcIcon class="vc-select__icon" name="chevron-down" size="xs" />
       </button>
 
+      <VcInput
+        v-else
+        v-model="filter"
+        :size="size"
+        :placeholder="selectedText || placeholder"
+        :disabled="disabled"
+        :readonly="readonly"
+        autocomplete="off"
+        truncate
+        @focus="openList"
+        @click="openList"
+        @keyup.enter="openList"
+        @keyup.escape="hideList"
+        @keydown.down.prevent="next(-1)"
+        @input="filtering = true"
+      >
+        <template #append>
+          <VcIcon class="vc-select__icon" name="chevron-down" size="xs" />
+        </template>
+      </VcInput>
+
       <transition :leave-active-class="`transition duration-${transitionDuration} ease-in`" leave-to-class="opacity-0">
         <div v-if="open" class="vc-select__dropdown">
           <ul ref="listElement" class="vc-select__list">
@@ -49,12 +79,15 @@
               :aria-selected="!selected"
               @click="select()"
               @keyup.enter="select()"
+              @keyup.escape="hideList"
+              @keydown.up.prevent="prev(0)"
+              @keydown.down.prevent="next(0)"
             >
               <slot name="first" />
             </li>
 
             <li
-              v-for="(item, index) in items"
+              v-for="(item, index) in filteredItems"
               :key="index"
               :class="[
                 'vc-select__item',
@@ -67,14 +100,23 @@
               :aria-selected="isActiveItem(item)"
               @click="select(item)"
               @keyup.enter="select(item)"
+              @keyup.escape="hideList"
+              @keydown.up.prevent="prev(index + ($slots.first ? 1 : 0))"
+              @keydown.down.prevent="next(index + ($slots.first ? 1 : 0))"
             >
               <slot name="item" v-bind="{ item, index, selected }">
                 <VcSelectItem>
                   <VcSelectItemText>
-                    {{ textField && item ? item[textField] : item }}
+                    {{ getItemText(item) }}
                   </VcSelectItemText>
                 </VcSelectItem>
               </slot>
+            </li>
+
+            <li v-if="filtering && !filteredItems.length" class="vc-select__item">
+              <VcSelectItem>
+                <VcSelectItemText> {{ $t("common.messages.no_results") }} </VcSelectItemText>
+              </VcSelectItem>
             </li>
           </ul>
         </div>
@@ -85,19 +127,9 @@
   </div>
 </template>
 
-<script lang="ts">
-/* eslint-disable-next-line import/order */
-import { clickOutside } from "@/core/directives";
-
-export default {
-  directives: {
-    clickOutside, // TODO: Use directive from VueUse (https://vueuse.org/core/onClickOutside/#directive-usage)
-  },
-};
-</script>
-
 <script setup lang="ts">
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { vOnClickOutside } from "@vueuse/components";
 import { computed, ref, shallowRef } from "vue";
 
 interface IProps {
@@ -107,13 +139,14 @@ interface IProps {
   readonly?: boolean;
   modelValue?: object | string;
   items: any[];
-  size?: "sm" | "md" | "lg" | "auto";
+  size?: "sm" | "md" | "auto";
   textField?: string;
   valueField?: string;
   placeholder?: string;
   showEmptyDetails?: boolean;
   error?: boolean;
   message?: string;
+  autocomplete?: boolean;
 }
 
 interface IEmits {
@@ -131,31 +164,58 @@ const transitionDuration = 100;
 
 const open = ref(false);
 const listElement = shallowRef<HTMLElement | null>(null);
+const filterValue = ref("");
+const filtering = ref<boolean>(false);
+
+const getItemText = (item: any) => (props.textField ? item[props.textField] : item);
+
+const isActiveItem = (item: any) =>
+  props.valueField ? item[props.valueField] === props.modelValue : item === props.modelValue;
 
 const selected = computed(() => {
-  const returnValueKey: string | undefined = props.valueField;
-
-  if (returnValueKey) {
-    return props.items.find((item) => item[returnValueKey] === props.modelValue);
-  }
-
-  return props.modelValue;
+  return props.valueField ? props.items.find((item) => item[props.valueField!] === props.modelValue) : props.modelValue;
 });
 
-/** @deprecated Replace with the prepared computed array */
-function isActiveItem(item: any): boolean {
-  const itemValue = props.valueField && item ? item[props.valueField] : item;
-  return itemValue === props.modelValue;
-}
+const filter = computed({
+  get() {
+    if (!filtering.value) {
+      return selectedText.value;
+    }
+
+    return filterValue.value;
+  },
+  set(value) {
+    filterValue.value = value;
+  },
+});
+
+const filteredItems = computed(() => {
+  if (!filtering.value) {
+    return props.items;
+  }
+
+  return props.items.filter((item) => getItemText(item).toLowerCase().includes(filterValue.value.toLowerCase()));
+});
+
+const selectedText = computed(() =>
+  props.textField && selected.value ? selected.value[props.textField] : selected.value
+);
 
 function hideList() {
   open.value = false;
+  filtering.value = false;
 
   setTimeout(() => {
     if (listElement.value) {
       listElement.value.scrollTop = 0;
     }
   }, transitionDuration);
+}
+
+function openList() {
+  if (!open.value) {
+    toggle();
+  }
 }
 
 function toggle() {
@@ -184,13 +244,34 @@ function select(item?: any) {
 
   hideList();
 }
+
+function next(index: number) {
+  const listItems = listElement.value?.children as HTMLElement[] | undefined;
+
+  if (!open.value) {
+    toggle();
+  }
+
+  if (listItems?.length) {
+    const focusItemIndex = index === listItems?.length - 1 ? 0 : index + 1;
+    listItems[focusItemIndex].focus();
+  }
+}
+
+function prev(index: number) {
+  const listItems = listElement.value?.children as HTMLElement[] | undefined;
+
+  if (listItems?.length) {
+    const focusItemIndex = index === 0 ? listItems?.length - 1 : index - 1;
+    listItems[focusItemIndex].focus();
+  }
+}
 </script>
 
 <style scoped lang="scss">
 .vc-select {
   $sizeSm: "";
   $sizeMd: "";
-  $sizeLg: "";
   $sizeAuto: "";
 
   $disabled: "";
@@ -207,10 +288,6 @@ function select(item?: any) {
 
     &--md {
       $sizeMd: &;
-    }
-
-    &--lg {
-      $sizeLg: &;
     }
 
     &--auto {
@@ -242,15 +319,11 @@ function select(item?: any) {
     @apply relative flex items-center w-full rounded border bg-white appearance-none outline-none text-left;
 
     #{$sizeSm} & {
-      @apply h-8 text-sm;
-    }
-
-    #{$sizeMd} & {
       @apply h-9 text-sm;
     }
 
-    #{$sizeLg} & {
-      @apply h-11 text-base;
+    #{$sizeMd} & {
+      @apply h-11 text-sm;
     }
 
     #{$sizeAuto} & {
@@ -259,8 +332,7 @@ function select(item?: any) {
 
     #{$opened} &,
     &:focus {
-      //fix for Safari. Do not change!
-      box-shadow: 0 0 0 3px var(--color-primary-light);
+      @apply ring ring-[color:var(--color-primary-light)];
     }
 
     #{$disabled} &,
