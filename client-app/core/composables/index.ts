@@ -5,7 +5,6 @@ export * from "./useCategoriesRoutes";
 export * from "./useAttrsOnly";
 export * from "./useCountries";
 export * from "./useCurrency";
-export * from "./useDomUtils";
 export * from "./useFetch";
 export * from "./useGoogleAnalytics";
 export * from "./useIdentityErrorTranslator";
