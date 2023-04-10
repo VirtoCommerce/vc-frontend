@@ -300,6 +300,7 @@ import {
   computedEager,
   eagerComputed,
   useBreakpoints,
+  useElementVisibility,
   useLocalStorage,
   watchDebounced,
   whenever,
@@ -307,14 +308,7 @@ import {
 import _ from "lodash";
 import { computed, onBeforeUnmount, onMounted, ref, shallowReactive, shallowRef, triggerRef } from "vue";
 import { useRoute } from "vue-router";
-import {
-  useBreadcrumbs,
-  useCategories,
-  useElementVisibility,
-  useGoogleAnalytics,
-  usePageHead,
-  useRouteQueryParam,
-} from "@/core/composables";
+import { useBreadcrumbs, useCategories, useGoogleAnalytics, usePageHead, useRouteQueryParam } from "@/core/composables";
 import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
 import { buildBreadcrumbs, getFilterExpressionFromFacets, searchCategoryTreeItemByKey } from "@/core/utilities";
@@ -417,7 +411,7 @@ const mobileFilters = shallowReactive<ProductsFilters>({
 });
 
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
-const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
+const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
 const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
 const isSearchPage = computedEager<boolean>(() => route.name === "Search");
