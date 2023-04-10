@@ -288,11 +288,11 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints, onClickOutside } from "@vueuse/core";
+import { breakpointsTailwind, useBreakpoints, onClickOutside, useElementVisibility } from "@vueuse/core";
 import { computed, onMounted, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { useElementVisibility, usePageHead } from "@/core/composables";
+import { usePageHead } from "@/core/composables";
 import {
   OrdersFilter,
   MobileOrdersFilter,
@@ -364,7 +364,7 @@ const columns = ref<ITableColumn[]>([
 ]);
 
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
-const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
+const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
 const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
 async function changePage(newPage: number) {
