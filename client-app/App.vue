@@ -1,7 +1,7 @@
 <template>
   <PageHead>
     <link rel="icon" :href="$cfg.favicon_image" />
-    <body class="font-lato" :class="{ 'touch-none': !isBodyScrollable, 'overflow-hidden': !isBodyScrollable }" />
+    <body class="font-lato" />
   </PageHead>
 
   <component :is="layout">
@@ -17,7 +17,7 @@ import { breakpointsTailwind, computedEager, useBreakpoints } from "@vueuse/core
 import { Head as PageHead } from "@vueuse/head";
 import { markRaw } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useCategories, useDomUtils, useNavigations, useCatalogMenu } from "@/core/composables";
+import { useCategories, useNavigations, useCatalogMenu } from "@/core/composables";
 import { useCart } from "@/shared/cart";
 import { NotificationsHost } from "@/shared/notification";
 import { PopupHost } from "@/shared/popup";
@@ -42,7 +42,6 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
 const { fetchCategories } = useCategories();
 const { fetchCatalogMenuItems } = useCatalogMenu();
-const { isBodyScrollable } = useDomUtils();
 const { fetchMenus } = useNavigations();
 const { fetchCart } = useCart();
 

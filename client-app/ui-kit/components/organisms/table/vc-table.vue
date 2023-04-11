@@ -28,35 +28,30 @@
   <!-- Desktop table view -->
   <table v-else :class="[layout, 'w-full text-left text-sm']">
     <slot name="header">
-      <template v-if="!hideHeader">
-        <thead v-if="columns.length" class="border-b border-gray-200">
-          <tr>
-            <th
-              v-for="column in columns"
-              :key="column.id"
-              class="py-3 px-5 font-extrabold"
-              :class="[{ 'cursor-pointer': column.sortable }, `text-${column.align || 'left'}`, column.classes]"
-              @click="
-                column.sortable
-                  ? $emit('headerClick', { column: column.id, direction: toggleSortDirection(sort!.direction) })
-                  : null
-              "
-            >
-              {{ column.title }}
-              <template v-if="column.sortable && sort">
-                <i
-                  v-if="sort.column === column.id && sort.direction === SORT_DESCENDING"
-                  class="fas fa-caret-down ml-2"
-                ></i>
-                <i
-                  v-if="sort.column === column.id && sort.direction === SORT_ASCENDING"
-                  class="fas fa-caret-up ml-2"
-                ></i>
-              </template>
-            </th>
-          </tr>
-        </thead>
-      </template>
+      <thead v-if="!hideDefaultHeader && columns.length" class="border-b border-gray-200">
+        <tr>
+          <th
+            v-for="column in columns"
+            :key="column.id"
+            class="py-3 px-5 font-extrabold"
+            :class="[{ 'cursor-pointer': column.sortable }, `text-${column.align || 'left'}`, column.classes]"
+            @click="
+              column.sortable
+                ? $emit('headerClick', { column: column.id, direction: toggleSortDirection(sort!.direction) })
+                : null
+            "
+          >
+            {{ column.title }}
+            <template v-if="column.sortable && sort">
+              <i
+                v-if="sort.column === column.id && sort.direction === SORT_DESCENDING"
+                class="fas fa-caret-down ml-2"
+              ></i>
+              <i v-if="sort.column === column.id && sort.direction === SORT_ASCENDING" class="fas fa-caret-up ml-2"></i>
+            </template>
+          </th>
+        </tr>
+      </thead>
     </slot>
 
     <!-- Desktop skeleton view -->
@@ -77,17 +72,14 @@
 
   <!-- Table footer -->
   <slot name="footer">
-    <template v-if="!hideFooter">
-      <!-- Table pagination -->
-      <VcPagination
-        v-if="items && items.length && pages > 1"
-        :page="page"
-        :pages="pages"
-        class="self-start"
-        :class="[isMobile ? 'px-6 py-10' : 'mt-5 px-5 pb-5']"
-        @update:page="onPageUpdate"
-      ></VcPagination>
-    </template>
+    <VcPagination
+      v-if="!hideDefaultFooter && items.length && pages > 1"
+      :page="page"
+      :pages="pages"
+      class="self-start"
+      :class="[isMobile ? 'px-6 py-10' : 'mt-5 px-5 pb-5']"
+      @update:page="onPageUpdate"
+    />
   </slot>
 </template>
 
@@ -99,8 +91,8 @@ import { toggleSortDirection } from "@/core/utilities";
 import type { ISortInfo } from "@/core/types";
 
 interface IEmits {
-  (event: "itemClick", item: MouseEvent): void;
-  (event: "headerClick", item: MouseEvent): void;
+  (event: "itemClick", item: any): void;
+  (event: "headerClick", item: ISortInfo): void;
   (event: "pageChanged", page: number): void;
 }
 
@@ -112,8 +104,8 @@ interface IProps {
   pages?: number;
   page?: number;
   loading?: boolean;
-  hideHeader?: boolean;
-  hideFooter?: boolean;
+  hideDefaultHeader?: boolean;
+  hideDefaultFooter?: boolean;
   layout?: string;
 }
 
@@ -124,9 +116,6 @@ withDefaults(defineProps<IProps>(), {
   items: () => [],
   pages: 0,
   page: 0,
-  loading: false,
-  hideHeader: false,
-  hideFooter: false,
   layout: "table-fixed",
 });
 

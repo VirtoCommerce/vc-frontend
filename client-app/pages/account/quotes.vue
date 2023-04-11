@@ -154,11 +154,11 @@
 </template>
 
 <script setup lang="ts">
-import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
+import { useBreakpoints, breakpointsTailwind, useElementVisibility } from "@vueuse/core";
 import { computed, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { useElementVisibility, useRouteQueryParam, usePageHead } from "@/core/composables";
+import { useRouteQueryParam, usePageHead } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
 import { getSortingExpression, getSortInfoFromStringExpression } from "@/core/utilities";
 import { PageToolbarBlock, useUserQuotes } from "@/shared/account";
@@ -178,7 +178,7 @@ const { quotes, fetching, itemsPerPage, pages, page, keyword, sort, fetchQuotes 
 const isMobile = breakpoints.smaller("lg");
 
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
-const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor, { direction: "top" });
+const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
 const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {

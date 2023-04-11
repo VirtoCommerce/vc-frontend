@@ -75,9 +75,9 @@
 </template>
 
 <script setup lang="ts">
-import { onClickOutside, useElementBounding } from "@vueuse/core";
-import { computed, ref, shallowRef, watch } from "vue";
-import { useDomUtils, useNavigations } from "@/core/composables";
+import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vueuse/core";
+import { computed, ref, shallowRef } from "vue";
+import { useNavigations } from "@/core/composables";
 import { useUser } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
@@ -86,7 +86,6 @@ import BottomHeaderLink from "./bottom-header-link.vue";
 import CatalogMenu from "./catalog-menu.vue";
 import type { StyleValue } from "vue";
 
-const { toggleBodyScrollable } = useDomUtils();
 const { organization } = useUser();
 const { cart } = useCart();
 const { desktopHeaderMenuLinks } = useNavigations();
@@ -111,7 +110,5 @@ onClickOutside(
   { ignore: [showCatalogMenuButton] }
 );
 
-watch(catalogMenuVisible, (value) => {
-  toggleBodyScrollable(!value);
-});
+syncRefs(catalogMenuVisible, useScrollLock(document.body));
 </script>

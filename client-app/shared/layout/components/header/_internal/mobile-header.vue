@@ -90,9 +90,9 @@
 </template>
 
 <script setup lang="ts">
-import { useElementSize, whenever } from "@vueuse/core";
-import { computed, ref, watch, watchEffect } from "vue";
-import { useDomUtils, useRouteQueryParam } from "@/core/composables";
+import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core";
+import { computed, ref, watchEffect } from "vue";
+import { useRouteQueryParam } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
 import { numberToShortString } from "@/core/utilities";
 import { useCart } from "@/shared/cart";
@@ -108,7 +108,6 @@ const headerElement = ref(null);
 
 const { customSlots, isAnimated } = useNestedMobileHeader();
 const { searchBarVisible, toggleSearchBar, hideSearchBar } = useSearchBar();
-const { toggleBodyScrollable } = useDomUtils();
 const { height } = useElementSize(headerElement);
 const { cart } = useCart();
 
@@ -125,9 +124,8 @@ const searchPageLink = computed<RouteLocationRaw>(() => ({
   },
 }));
 
-watch(mobileMenuVisible, (value) => {
-  toggleBodyScrollable(!value);
-});
+syncRefs(mobileMenuVisible, useScrollLock(document.body));
+
 watchEffect(() => (searchPhrase.value = searchPhraseInUrl.value ?? ""));
 whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });
 </script>
