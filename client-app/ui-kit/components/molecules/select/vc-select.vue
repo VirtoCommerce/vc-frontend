@@ -21,23 +21,22 @@
         type="button"
         :disabled="disabled"
         class="vc-select__button"
-        @focus="openList"
-        @click="openList"
-        @keyup.escape="hideList"
+        @click="toggle"
+        @keyup.escape="open && toggle()"
         @keydown.down.prevent="next(-1)"
       >
         <span class="vc-select__button-content">
-          <slot v-if="selected" name="selected" v-bind="{ item: selected }">
+          <slot v-if="selected" name="selected" v-bind="{ item: selected, error }">
             <VcSelectItem>
-              <VcSelectItemText>
+              <VcSelectItemText :error="error">
                 {{ selectedText }}
               </VcSelectItemText>
             </VcSelectItem>
           </slot>
 
-          <slot v-else-if="$slots.placeholder || placeholder" name="placeholder">
-            <VcSelectItem class="opacity-75">
-              <VcSelectItemText>
+          <slot v-else-if="$slots.placeholder || placeholder" name="placeholder" v-bind="{ error }">
+            <VcSelectItem>
+              <VcSelectItemText placeholder :error="error">
                 {{ placeholder }}
               </VcSelectItemText>
             </VcSelectItem>
@@ -50,16 +49,16 @@
       <VcInput
         v-else
         v-model="filter"
+        :required="required"
         :size="size"
         :placeholder="selectedText || placeholder"
         :disabled="disabled"
         :readonly="readonly"
-        autocomplete="off"
+        :error="error"
         truncate
-        @focus="openList"
-        @click="openList"
-        @keyup.enter="openList"
-        @keyup.escape="hideList"
+        @click="!open && toggle()"
+        @keyup.enter="!open && toggle()"
+        @keyup.escape="open && toggle()"
         @keydown.down.prevent="next(-1)"
         @input="filtering = true"
       >
@@ -79,7 +78,7 @@
               :aria-selected="!selected"
               @click="select()"
               @keyup.enter="select()"
-              @keyup.escape="hideList"
+              @keyup.escape="open && toggle()"
               @keydown.up.prevent="prev(0)"
               @keydown.down.prevent="next(0)"
             >
@@ -100,7 +99,7 @@
               :aria-selected="isActiveItem(item)"
               @click="select(item)"
               @keyup.enter="select(item)"
-              @keyup.escape="hideList"
+              @keyup.escape="open && toggle()"
               @keydown.up.prevent="prev(index + ($slots.first ? 1 : 0))"
               @keydown.down.prevent="next(index + ($slots.first ? 1 : 0))"
             >
@@ -210,12 +209,6 @@ function hideList() {
       listElement.value.scrollTop = 0;
     }
   }, transitionDuration);
-}
-
-function openList() {
-  if (!open.value) {
-    toggle();
-  }
 }
 
 function toggle() {
@@ -343,6 +336,10 @@ function prev(index: number) {
     #{$readonly}:not(#{$disabled}) & {
       @apply pointer-events-none;
     }
+
+    #{$error} & {
+      @apply border-[color:var(--color-danger)];
+    }
   }
 
   &__button-content {
@@ -350,6 +347,10 @@ function prev(index: number) {
 
     #{$sizeAuto} & {
       @apply overflow-y-visible;
+    }
+
+    #{$error} & {
+      @apply text-[color:var(--color-danger)];
     }
   }
 
