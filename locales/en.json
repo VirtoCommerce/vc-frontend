@@ -139,7 +139,8 @@
       "quote_request": "You can request items in your cart through a special service",
       "wishlists_available_for_authorized": "Wishlists are available only for authenticated users",
       "no_addresses": "You do not have any addresses yet",
-      "confirm_delete_address": "Are you sure you want to delete this address?"
+      "confirm_delete_address": "Are you sure you want to delete this address?",
+      "no_results": "No results found"
     },
     "placeholders": {
       "enter_value": "Please enter value",
