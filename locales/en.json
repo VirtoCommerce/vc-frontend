@@ -103,7 +103,8 @@
       "payment_type": "Payment type",
       "recipient_name": "Recipient name",
       "active_address": "Active address",
-      "addresses_icon": "Address icon"
+      "addresses_icon": "Address icon",
+      "digital": "Digital"
     },
     "prefixes": {
       "please": "Please"

@@ -50,6 +50,7 @@
 
             <VcInStock
               :is-in-stock="variation.availabilityData?.isInStock"
+              :is-digital="isDigital"
               :quantity="variation.availabilityData?.availableQuantity"
               class="mt-2.5 inline-block"
             />
@@ -63,17 +64,18 @@
 <script setup lang="ts">
 import _ from "lodash";
 import { computed } from "vue";
+import { ProductType } from "@/core/enums";
 import { AddToCart } from "@/shared/cart";
-import { prepareProperties, VariationProperty, Vendor } from "@/shared/catalog";
+import { prepareProperties } from "../utils";
+import VariationProperty from "./variation-property.vue";
+import Vendor from "./vendor.vue";
 import type { Product, VariationType } from "@/xapi/types";
-import type { PropType } from "vue";
 
-const props = defineProps({
-  variation: {
-    type: Object as PropType<VariationType | Product>,
-    required: true,
-  },
-});
+interface IProps {
+  variation: VariationType | Product;
+}
+
+const props = defineProps<IProps>();
 
 // TODO: move this logic to the separated helper. For product properties also
 const groupedProperties = computed(() => {
@@ -83,4 +85,7 @@ const groupedProperties = computed(() => {
     .map(prepareProperties)
     .value();
 });
+const isDigital = computed<boolean>(
+  () => "productType" in props.variation && props.variation.productType === ProductType.Digital
+);
 </script>

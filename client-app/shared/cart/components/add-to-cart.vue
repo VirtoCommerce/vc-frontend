@@ -56,8 +56,9 @@ import { computed, ref, shallowRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { number } from "yup";
 import { useGoogleAnalytics } from "@/core/composables";
+import { ProductType } from "@/core/enums";
 import useCart from "../composables/useCart";
-import type { LineItemType, Product, VariationType } from "@/xapi/types";
+import type { Product, LineItemType, VariationType } from "@/xapi/types";
 
 interface IEmits {
   (event: "update:lineItem", lineItem: LineItemType): void;
@@ -82,6 +83,10 @@ const loading = ref(false);
 const initialValue = ref();
 const inputElement = shallowRef<HTMLInputElement>();
 
+const isDigital = computed<boolean>(
+  () => "productType" in props.product && props.product.productType === ProductType.Digital
+);
+
 const lineItemInCart = computed<LineItemType | undefined>(() =>
   cart.value?.items?.find((item) => item.productId === props.product.id)
 );
@@ -94,28 +99,33 @@ const maxQty = computed<number>(() =>
 const disabled = computed<boolean>(
   () =>
     loading.value ||
-    !(
-      props.product.availabilityData?.isAvailable &&
-      props.product.availabilityData?.isInStock &&
-      props.product.availabilityData?.isBuyable &&
-      props.product.availabilityData?.availableQuantity
-    )
+    (!isDigital.value &&
+      !(
+        props.product.availabilityData?.isAvailable &&
+        props.product.availabilityData?.isInStock &&
+        props.product.availabilityData?.isBuyable &&
+        props.product.availabilityData?.availableQuantity
+      ))
 );
 
 const buttonText = computed<string>(() =>
   countInCart.value ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart")
 );
 
-const rules = computed(() =>
-  toTypedSchema(
-    number()
-      .typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message"))
-      .integer()
-      .positive()
+const rules = computed(() => {
+  const result = number()
+    .typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message"))
+    .integer()
+    .positive();
+
+  if (!isDigital.value) {
+    result
       .min(minQty.value, ({ min }) => t("shared.cart.add_to_cart.errors.min", [min]))
-      .max(maxQty.value, ({ max }) => t("shared.cart.add_to_cart.errors.max", [max]))
-  )
-);
+      .max(maxQty.value, ({ max }) => t("shared.cart.add_to_cart.errors.max", [max]));
+  }
+
+  return toTypedSchema(result);
+});
 
 const { value: enteredQuantity, validate, errorMessage, setValue } = useField("quantity", rules, { initialValue });
 
