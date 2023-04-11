@@ -1,3 +1,4 @@
+import { sumBy } from "lodash";
 import globals from "../globals";
 import { useAppContext } from "./useAppContext";
 import type { Breadcrumb, CartType, CustomerOrderType, LineItemType, Product, VariationType } from "@/xapi/types";
@@ -114,15 +115,14 @@ function addItemToCart(item: Product | VariationType, quantity = 1, params?: Eve
 }
 
 function addItemsToCart(items: LineItemType[], params?: EventParamsExtendedType): void {
-  items.forEach((item) => {
-    const inputItem = lineItemToGtagItem(item);
+  const subtotal: number = sumBy(items, (item) => item.extendedPrice?.amount);
+  const inputItems = items.map((item) => lineItemToGtagItem(item));
 
-    sendEvent("add_to_cart", {
-      ...params,
-      currency: globals.currencyCode,
-      value: item.extendedPrice?.amount,
-      items: [inputItem],
-    });
+  sendEvent("add_to_cart", {
+    ...params,
+    currency: globals.currencyCode,
+    value: subtotal,
+    items: inputItems,
   });
 }
 

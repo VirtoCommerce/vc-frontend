@@ -16,7 +16,7 @@
           {{ $t("shared.wishlists.list_card.list_settings_button") }}
         </VcButton>
 
-        <VcButton v-if="pagedListItems.length" class="w-56 px-3 uppercase" size="sm" @click="addAllListItemsToCart">
+        <VcButton :is-disabled="!pagedListItems.length" class="px-3 uppercase" size="sm" @click="addAllListItemsToCart">
           <i class="fa fa-shopping-cart mr-2 text-xs text-inherit" />
           {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
         </VcButton>
@@ -66,6 +66,23 @@
         </VcButton>
       </template>
     </VcEmptyView>
+
+    <div v-if="isMobile" class="flex gap-5 py-7 lg:justify-end lg:p-0">
+      <VcButton class="w-1/2 px-3 uppercase" size="sm" is-outline @click="openListSettingsModal">
+        <i class="fas fa-cog -ml-0.5 mr-2 text-inherit" />
+        {{ $t("shared.wishlists.list_card.list_settings_button") }}
+      </VcButton>
+
+      <VcButton
+        :is-disabled="!pagedListItems.length"
+        size="sm"
+        class="w-1/2 px-3 uppercase"
+        @click="addAllListItemsToCart"
+      >
+        <i class="fa fa-shopping-cart mr-2 text-xs text-inherit" />
+        {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
+      </VcButton>
+    </div>
   </div>
 </template>
 

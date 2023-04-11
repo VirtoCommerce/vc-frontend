@@ -20,7 +20,7 @@
           :is-waiting="loading"
           :is-disabled="disabled || !!errorMessage"
           :title="buttonText"
-          class="h-full w-28 !rounded-[inherit] uppercase"
+          class="!h-full w-28 !rounded-[inherit] uppercase"
           size="sm"
           @click="$emit('update:cartItemQuantity', enteredQuantity)"
         >
