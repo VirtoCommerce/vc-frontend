@@ -102,7 +102,7 @@ export const Custom: StoryFn<typeof VcSelect> = (args) => ({
 
 Custom.args = {
   required: true,
-  label: "Delivery method",
+  label: "Payment method",
   size: "auto",
   items: [
     {
