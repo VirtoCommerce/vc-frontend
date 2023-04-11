@@ -27,30 +27,32 @@
 
   <!-- Desktop table view -->
   <table v-else :class="[layout, 'w-full text-left text-sm']">
-    <thead v-if="columns.length" class="border-b border-gray-200">
-      <tr>
-        <th
-          v-for="column in columns"
-          :key="column.id"
-          class="py-3 px-5 font-extrabold"
-          :class="[{ 'cursor-pointer': column.sortable }, `text-${column.align || 'left'}`, column.classes]"
-          @click="
-            column.sortable
-              ? $emit('headerClick', { column: column.id, direction: toggleSortDirection(sort!.direction) })
-              : null
-          "
-        >
-          {{ column.title }}
-          <template v-if="column.sortable && sort">
-            <i
-              v-if="sort.column === column.id && sort.direction === SORT_DESCENDING"
-              class="fas fa-caret-down ml-2"
-            ></i>
-            <i v-if="sort.column === column.id && sort.direction === SORT_ASCENDING" class="fas fa-caret-up ml-2"></i>
-          </template>
-        </th>
-      </tr>
-    </thead>
+    <slot name="header">
+      <thead v-if="!hideDefaultHeader && columns.length" class="border-b border-gray-200">
+        <tr>
+          <th
+            v-for="column in columns"
+            :key="column.id"
+            class="py-3 px-5 font-extrabold"
+            :class="[{ 'cursor-pointer': column.sortable }, `text-${column.align || 'left'}`, column.classes]"
+            @click="
+              column.sortable
+                ? $emit('headerClick', { column: column.id, direction: toggleSortDirection(sort!.direction) })
+                : null
+            "
+          >
+            {{ column.title }}
+            <template v-if="column.sortable && sort">
+              <i
+                v-if="sort.column === column.id && sort.direction === SORT_DESCENDING"
+                class="fas fa-caret-down ml-2"
+              ></i>
+              <i v-if="sort.column === column.id && sort.direction === SORT_ASCENDING" class="fas fa-caret-up ml-2"></i>
+            </template>
+          </th>
+        </tr>
+      </thead>
+    </slot>
 
     <!-- Desktop skeleton view -->
     <tbody v-if="loading">
@@ -69,73 +71,52 @@
   </table>
 
   <!-- Table footer -->
-  <slot v-if="($slots['footer'] || footer) && items && items.length" name="footer">
-    <!-- Table pagination -->
+  <slot name="footer">
     <VcPagination
-      v-if="pages > 1"
+      v-if="!hideDefaultFooter && items.length && pages > 1"
       :page="page"
       :pages="pages"
       class="self-start"
       :class="[isMobile ? 'px-6 py-10' : 'mt-5 px-5 pb-5']"
       @update:page="onPageUpdate"
-    ></VcPagination>
+    />
   </slot>
 </template>
 
 <script setup lang="ts">
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 import { toggleSortDirection } from "@/core/utilities";
 import type { ISortInfo } from "@/core/types";
-import type { PropType } from "vue";
 
-const emit = defineEmits(["itemClick", "headerClick", "pageChanged"]);
+interface IEmits {
+  (event: "itemClick", item: any): void;
+  (event: "headerClick", item: ISortInfo): void;
+  (event: "pageChanged", page: number): void;
+}
 
-defineProps({
-  columns: {
-    type: Array as PropType<ITableColumn[]>,
-    default: () => [],
-  },
+interface IProps {
+  columns?: ITableColumn[];
+  items?: any[];
+  itemActionsBuilder?: (inputObject: any) => SlidingActionsItem[];
+  sort?: ISortInfo;
+  pages?: number;
+  page?: number;
+  loading?: boolean;
+  hideDefaultHeader?: boolean;
+  hideDefaultFooter?: boolean;
+  layout?: string;
+}
 
-  items: {
-    type: Array as PropType<any[]>,
-    default: () => [],
-  },
+const emit = defineEmits<IEmits>();
 
-  itemActionsBuilder: {
-    type: Function as PropType<(inputObject: any) => SlidingActionsItem[]>,
-    default: undefined,
-  },
-
-  sort: {
-    type: Object as PropType<ISortInfo>,
-    default: undefined,
-  },
-
-  pages: {
-    type: Number,
-    default: 0,
-  },
-
-  page: {
-    type: Number,
-    default: 0,
-  },
-
-  loading: {
-    type: Boolean,
-    default: false,
-  },
-
-  footer: {
-    type: Boolean,
-    default: true,
-  },
-
-  layout: {
-    type: String,
-    default: "table-fixed",
-  },
+withDefaults(defineProps<IProps>(), {
+  columns: () => [],
+  items: () => [],
+  pages: 0,
+  page: 0,
+  layout: "table-fixed",
 });
 
 const breakpoints = useBreakpoints(breakpointsTailwind);

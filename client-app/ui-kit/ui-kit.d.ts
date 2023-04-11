@@ -52,10 +52,6 @@ declare global {
     classes?: string;
   }
 
-  interface IProductProperties {
-    [key: string]: { value: string }[];
-  }
-
   type TProvidedObjectOfExpansionPanels = {
     panels: Ref<Record<string, boolean>>;
     toggle: (panelId: string) => void;
