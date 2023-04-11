@@ -22,7 +22,7 @@
         :disabled="disabled"
         class="vc-select__button"
         @click="toggle"
-        @keyup.escape="open && toggle()"
+        @keyup.esc="open && toggle()"
         @keydown.down.prevent="next(-1)"
       >
         <span class="vc-select__button-content">
@@ -58,7 +58,7 @@
         truncate
         @click="!open && toggle()"
         @keyup.enter="!open && toggle()"
-        @keyup.escape="open && toggle()"
+        @keyup.esc="open && toggle()"
         @keydown.down.prevent="next(-1)"
         @input="onFilter"
       >
@@ -78,7 +78,7 @@
               :aria-selected="!selected"
               @click="select()"
               @keyup.enter="select()"
-              @keyup.escape="open && toggle()"
+              @keyup.esc="open && toggle()"
               @keydown.up.prevent="prev(0)"
               @keydown.down.prevent="next(0)"
             >
@@ -99,7 +99,7 @@
               :aria-selected="isActiveItem(item)"
               @click="select(item)"
               @keyup.enter="select(item)"
-              @keyup.escape="open && toggle()"
+              @keyup.esc="open && toggle()"
               @keydown.up.prevent="prev(index + ($slots.first ? 1 : 0))"
               @keydown.down.prevent="next(index + ($slots.first ? 1 : 0))"
             >
@@ -166,10 +166,10 @@ const listElement = shallowRef<HTMLElement | null>(null);
 const filterValue = ref("");
 const filtering = ref<boolean>(false);
 
-const getItemText = (item: any) => (props.textField ? item[props.textField] : item);
+const getItemText = (item: any) => (props.textField && item ? item[props.textField] : item);
+const getItemValue = (item: any) => (props.valueField && item ? item[props.valueField] : item);
 
-const isActiveItem = (item: any) =>
-  props.valueField ? item[props.valueField] === props.modelValue : item === props.modelValue;
+const isActiveItem = (item: any) => getItemValue(item) === props.modelValue;
 
 const selected = computed(() => {
   return props.valueField ? props.items.find((item) => item[props.valueField!] === props.modelValue) : props.modelValue;
@@ -236,7 +236,7 @@ function select(item?: any) {
     return;
   }
 
-  const newValue = props.valueField && item ? item[props.valueField] : item;
+  const newValue = getItemValue(item);
 
   if (newValue !== props.modelValue) {
     emit("update:modelValue", newValue);
