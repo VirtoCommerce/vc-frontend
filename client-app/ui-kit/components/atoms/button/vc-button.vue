@@ -24,48 +24,32 @@
 
 <script setup lang="ts">
 import { eagerComputed } from "@vueuse/core";
-import type { PropType } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
-defineEmits(["click"]);
+export interface IEmits {
+  (event: "click", value: MouseEvent): void;
+}
 
-const props = defineProps({
-  kind: {
-    type: String as PropType<"primary" | "secondary" | "success" | "warning" | "danger" | "custom">,
-    default: "primary",
-    validator: (value: string) => ["primary", "secondary", "success", "warning", "danger", "custom"].includes(value),
-  },
+interface IProps {
+  kind?: "primary" | "secondary" | "success" | "warning" | "danger" | "custom";
+  size?: "xs" | "sm" | "md" | "lg";
+  isSubmit?: boolean;
+  isOutline?: boolean;
+  isDisabled?: boolean;
+  isWaiting?: boolean;
+  to?: RouteLocationRaw | null;
+}
 
-  size: {
-    type: String as PropType<"sm" | "md" | "lg">,
-    default: "md",
-    validator: (value: string) => ["sm", "md", "lg"].includes(value),
-  },
+defineEmits<IEmits>();
 
-  isSubmit: {
-    type: Boolean,
-    default: false,
-  },
-
-  isOutline: {
-    type: Boolean,
-    default: false,
-  },
-
-  isDisabled: {
-    type: Boolean,
-    default: false,
-  },
-
-  isWaiting: {
-    type: Boolean,
-    default: false,
-  },
-
-  to: {
-    type: [String, Object] as PropType<RouteLocationRaw>,
-    default: null,
-  },
+const props = withDefaults(defineProps<IProps>(), {
+  kind: "primary",
+  size: "md",
+  isSubmit: false,
+  isOutline: false,
+  isDisabled: false,
+  isWaiting: false,
+  to: null,
 });
 
 const isEnabled = eagerComputed<boolean>(() => !props.isDisabled && !props.isWaiting);
@@ -84,6 +68,10 @@ $colors: primary, secondary, success, warning, danger;
 
   &__content {
     @apply flex justify-center items-center;
+  }
+
+  &--xs {
+    @apply h-7 text-xs;
   }
 
   &--sm {
