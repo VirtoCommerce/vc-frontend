@@ -60,7 +60,7 @@
         @keyup.enter="!open && toggle()"
         @keyup.escape="open && toggle()"
         @keydown.down.prevent="next(-1)"
-        @input="filtering = true"
+        @input="onFilter"
       >
         <template #append>
           <VcIcon class="vc-select__icon" name="chevron-down" size="xs" />
@@ -195,6 +195,14 @@ const filteredItems = computed(() => {
 
   return props.items.filter((item) => getItemText(item).toLowerCase().includes(filterValue.value.toLowerCase()));
 });
+
+function onFilter() {
+  filtering.value = true;
+
+  if (!open.value) {
+    toggle();
+  }
+}
 
 const selectedText = computed(() =>
   props.textField && selected.value ? selected.value[props.textField] : selected.value
