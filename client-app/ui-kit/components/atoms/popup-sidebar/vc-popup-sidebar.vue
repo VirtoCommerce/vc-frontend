@@ -30,8 +30,8 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { toRefs, watch } from "vue";
-import { useDomUtils } from "@/core/composables";
+import { syncRefs, useScrollLock } from "@vueuse/core";
+import { toRefs } from "vue";
 
 const emit = defineEmits(["hide"]);
 
@@ -42,13 +42,9 @@ const props = defineProps({
   },
 });
 
-const { toggleBodyScrollable } = useDomUtils();
-
 const { isVisible } = toRefs(props);
 
-watch(isVisible, (value) => {
-  toggleBodyScrollable(!value);
-});
+syncRefs(isVisible, useScrollLock(document.body));
 
 function onHide() {
   emit("hide");

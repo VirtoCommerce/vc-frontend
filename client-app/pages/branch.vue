@@ -41,6 +41,7 @@
           <h2 class="text-19 font-extrabold uppercase lg:text-21">{{ $t("pages.branch.other_branches") }}</h2>
         </div>
         <div class="px-11 pt-5 pb-7 lg:px-12 lg:pt-3.5 lg:pb-9">
+          <!-- TODO: Replace with VcList -->
           <ul class="list-disc space-y-7">
             <li v-for="(branch, index) in otherBranches" :key="index" class="text-primary marker:text-xl">
               <router-link

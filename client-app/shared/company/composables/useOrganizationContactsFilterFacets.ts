@@ -8,7 +8,7 @@ import {
   PURCHASING_AGENT,
   STORE_ADMINISTRATOR,
   STORE_MANAGER,
-} from "@/core/security-constants";
+} from "@/core/constants";
 import { ContactStatus } from "@/shared/company";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 
