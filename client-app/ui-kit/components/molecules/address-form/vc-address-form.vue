@@ -78,8 +78,8 @@
             :label="$t('common.labels.country')"
             :placeholder="$t('common.placeholders.select_country')"
             class="mb-4 w-full xl:w-7/12"
-            size="lg"
             required
+            autocomplete
           />
 
           <VcInput
@@ -104,7 +104,7 @@
             :label="$t('common.labels.region')"
             :placeholder="$t('common.placeholders.select_region')"
             class="order-2 mb-4 xl:order-none xl:w-5/12"
-            size="lg"
+            autocomplete
           />
 
           <VcInput

@@ -138,6 +138,7 @@
                 :disabled="loading"
                 :items="PRODUCT_SORTING_LIST"
                 class="w-full lg:w-48"
+                size="sm"
               />
             </div>
 
