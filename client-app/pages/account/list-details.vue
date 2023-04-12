@@ -134,6 +134,7 @@ usePageHead({
   title: computed(() => t("pages.account.list_details.meta.title", [list.value?.name])),
 });
 
+const inputBulkItems = ref<InputNewBulkItemType[]>([]);
 const itemsPerPage = ref(6);
 const page = ref(1);
 
@@ -150,13 +151,6 @@ const extendedItems = computed<ExtendedLineItemType<LineItemType>[]>(() =>
         : listItem.quantity);
     return extendWishListItem(listItem, countInCart);
   })
-);
-
-const inputBulkItems = computed<InputNewBulkItemType[] | undefined>(() =>
-  list.value?.items?.map<InputNewBulkItemType>((item) => ({
-    productSku: item.sku!,
-    quantity: item.quantity,
-  }))
 );
 
 const pages = computed<number>(() => Math.ceil((list.value?.items?.length ?? 0) / itemsPerPage.value));
@@ -277,5 +271,13 @@ watchEffect(() => {
       item_list_name: `Wishlist "${list.value?.name}"`,
     });
   }
+});
+
+watchEffect(() => {
+  inputBulkItems.value =
+    list.value?.items?.map<InputNewBulkItemType>((item) => ({
+      productSku: item.sku!,
+      quantity: item.quantity,
+    })) || [];
 });
 </script>
