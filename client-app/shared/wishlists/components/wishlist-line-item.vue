@@ -3,7 +3,7 @@
     :class="[
       'vc-wishlist-line-item',
       {
-        'vc-wishlist-line-item--not-exists': !extendedItem.extended.isProductExists,
+        'vc-wishlist-line-item--not-exists': !item.extended.isProductExists,
       },
     ]"
   >
@@ -14,34 +14,28 @@
     <div class="vc-wishlist-line-item__grid">
       <div class="vc-wishlist-line-item__product">
         <!--  IMAGE -->
-        <VcImage
-          :src="extendedItem.imageUrl"
-          :alt="extendedItem.name"
-          size-suffix="sm"
-          class="vc-wishlist-line-item__img"
-          lazy
-        />
+        <VcImage :src="item.imageUrl" :alt="item.name" size-suffix="sm" class="vc-wishlist-line-item__img" lazy />
 
         <!-- NAME -->
         <router-link
-          v-if="extendedItem.extended.route"
-          :to="extendedItem.extended.route"
-          :title="extendedItem.name"
+          v-if="item.extended.route"
+          :to="item.extended.route"
+          :title="item.name"
           class="vc-wishlist-line-item__name vc-wishlist-line-item__name--link"
           @click="sendGASelectItemEvent"
         >
-          {{ extendedItem.name }}
+          {{ item.name }}
         </router-link>
 
         <div v-else class="vc-wishlist-line-item__name">
-          {{ extendedItem.name }}
+          {{ item.name }}
         </div>
       </div>
 
       <!-- PROPERTIES -->
       <div class="vc-wishlist-line-item__properties">
         <VcLineItemProperty
-          v-for="property in extendedItem.extended.displayProperties"
+          v-for="property in item.extended.displayProperties"
           :key="property.id"
           :label="property.label"
         >
@@ -50,27 +44,35 @@
 
         <div class="xl:hidden">
           <VcLineItemProperty :label="$t('common.labels.price_per_item')">
-            <VcLineItemPrice :list-price="extendedItem.listPrice" :actual-price="extendedItem.salePrice" />
+            <VcLineItemPrice :list-price="item.listPrice" :actual-price="item.salePrice" />
           </VcLineItemProperty>
         </div>
       </div>
 
       <!-- PRICE -->
       <div class="vc-wishlist-line-item__price">
-        <VcLineItemPrice :list-price="extendedItem.listPrice" :actual-price="extendedItem.salePrice" />
+        <VcLineItemPrice :list-price="item.listPrice" :actual-price="item.salePrice" />
       </div>
 
       <!-- ADD-TO-CART -->
       <div class="vc-wishlist-line-item__quantity">
-        <AddToCart v-if="extendedItem.extended.isProductExists" :product="extendedItem.product!" />
+        <VcAddToCart
+          v-if="item.extended.isProductExists"
+          :model-value="item.quantity"
+          :count-in-cart="item.extended.countInCart"
+          :availability-data="item.product?.availabilityData"
+          @update:model-value="changeItemQuantity"
+          @update:cart-item-quantity="changeCartItemQuantity"
+        />
 
         <div class="vc-wishlist-line-item__quantity-badges">
           <VcInStock
-            :is-in-stock="extendedItem.product?.availabilityData?.isInStock || false"
-            :is-available="extendedItem.extended.isProductExists"
-            :quantity="extendedItem.product?.availabilityData?.availableQuantity"
+            :is-in-stock="item.product?.availabilityData?.isInStock || false"
+            :is-available="item.extended.isProductExists"
+            :availability-data="item.product?.availabilityData"
+            :quantity="item.product?.availabilityData?.availableQuantity"
           />
-          <VcCountInCart :product-id="extendedItem.product?.id" />
+          <VcCountInCart :product-id="item.product?.id" />
         </div>
       </div>
 
@@ -89,26 +91,32 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
 import { useGoogleAnalytics } from "@/core/composables";
-import { AddToCart } from "@/shared/cart";
-import { extendWishListItem } from "@/shared/wishlists";
-import type { LineItemType } from "@/xapi/types";
+import type { ExtendedLineItemType } from "@/core/types";
+import type { InputNewBulkItemType, LineItemType } from "@/xapi/types";
 
 interface IEmits {
+  (event: "update:cartItemQuantity", item: InputNewBulkItemType): void;
+  (event: "update:listItemQuantity", item: InputNewBulkItemType): void;
   (event: "remove"): void;
 }
 
 interface IProps {
-  item: LineItemType;
+  item: ExtendedLineItemType<LineItemType>;
 }
 
-defineEmits<IEmits>();
+const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const ga = useGoogleAnalytics();
 
-const extendedItem = computed(() => extendWishListItem(props.item));
+function changeItemQuantity(quantity: number): void {
+  emit("update:listItemQuantity", { productSku: props.item.sku!, quantity });
+}
+
+function changeCartItemQuantity(quantity: number): void {
+  emit("update:cartItemQuantity", { productSku: props.item.sku!, quantity });
+}
 
 function sendGASelectItemEvent() {
   if (props.item.product) {

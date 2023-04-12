@@ -20,6 +20,7 @@ export type ExtendedLineItemType<T extends AnyLineItemType> = T & {
     displayProperties: Property[];
     minQuantity?: number;
     maxQuantity?: number;
+    countInCart?: number;
   };
 };
 

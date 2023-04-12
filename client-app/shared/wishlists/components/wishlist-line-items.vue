@@ -19,7 +19,14 @@
 
     <!-- table body -->
     <div v-if="items.length" class="vc-wishlist-line-items__body">
-      <WishlistLineItem v-for="item in items" :key="item.id" :item="item" @remove="$emit('remove:item', item)" />
+      <WishlistLineItem
+        v-for="item in items"
+        :key="item.id"
+        :item="item"
+        @update:cart-item-quantity="changeCartItemQuantity"
+        @update:list-item-quantity="changeItemQuantity"
+        @remove="$emit('remove:listItem', item)"
+      />
     </div>
 
     <div v-else class="vc-wishlist-line-items__empty">
@@ -31,19 +38,30 @@
 </template>
 
 <script setup lang="ts">
-import { WishlistLineItem } from "@/shared/wishlists";
-import type { LineItemType } from "@/xapi/types";
+import WishlistLineItem from "./wishlist-line-item.vue";
+import type { ExtendedLineItemType } from "@/core/types";
+import type { InputNewBulkItemType, LineItemType } from "@/xapi/types";
 
 interface IEmits {
-  (event: "remove:item", value: LineItemType): void;
+  (event: "update:cartItem", value: InputNewBulkItemType): void;
+  (event: "update:listItem", value: InputNewBulkItemType): void;
+  (event: "remove:listItem", value: LineItemType): void;
 }
 
 interface IProp {
-  items: LineItemType[];
+  items: ExtendedLineItemType<LineItemType>[];
 }
 
-defineEmits<IEmits>();
+const emit = defineEmits<IEmits>();
 defineProps<IProp>();
+
+function changeCartItemQuantity(item: InputNewBulkItemType): void {
+  emit("update:cartItem", item);
+}
+
+function changeItemQuantity(item: InputNewBulkItemType): void {
+  emit("update:listItem", item);
+}
 </script>
 
 <style scoped lang="scss">

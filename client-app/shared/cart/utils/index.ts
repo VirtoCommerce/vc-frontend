@@ -1,5 +1,5 @@
 import type { ItemForAddBulkItemsToCartResultsPopupType, OutputBulkItemType } from "@/shared/cart";
-import type { OrderLineItemType, ValidationErrorType } from "@/xapi/types";
+import type { LineItemType, OrderLineItemType, ValidationErrorType } from "@/xapi/types";
 
 export function getLineItemValidationErrorsGroupedBySKU(
   errors: ValidationErrorType[] = []
@@ -17,7 +17,7 @@ export function getLineItemValidationErrorsGroupedBySKU(
 }
 
 export function getItemsForAddBulkItemsToCartResultsPopup(
-  inputItems: OrderLineItemType[],
+  inputItems: OrderLineItemType[] | LineItemType[],
   resultItems: OutputBulkItemType[]
 ): ItemForAddBulkItemsToCartResultsPopupType[] {
   const errorsGroupedBySKU: Record<string, ValidationErrorType[] | undefined> = {};

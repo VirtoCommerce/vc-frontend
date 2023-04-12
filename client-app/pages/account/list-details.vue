@@ -1,5 +1,7 @@
 <template>
   <div>
+    <VcLoaderOverlay :visible="!listLoading && cartLoading" fixed-spinner />
+
     <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
     <!-- Title block -->
@@ -9,41 +11,49 @@
       </h2>
 
       <div v-if="!isMobile" class="flex gap-x-3">
-        <VcButton class="w-36 px-3 uppercase" size="sm" is-outline @click="openListSettingsModal">
+        <VcButton
+          :is-disabled="loading"
+          class="w-36 px-3 uppercase"
+          size="sm"
+          is-outline
+          @click="openListSettingsModal"
+        >
           <i class="fas fa-cog -ml-0.5 mr-2 text-inherit" />
           {{ $t("shared.wishlists.list_card.list_settings_button") }}
         </VcButton>
 
-        <!--
         <VcButton
-          v-if="listItems.length"
-          class="px-3 uppercase w-56"
+          :is-disabled="loading || !pagedListItems.length"
+          class="px-3 uppercase"
           size="sm"
-          :is-disabled="!listItems.length"
-          @click="addAllToCart"
+          @click="addAllListItemsToCart"
         >
-          <i class="fa fa-shopping-cart text-inherit text-xs mr-2" />
+          <VcIcon name="cart" size="sm" class="mr-2" />
           {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
         </VcButton>
-        -->
       </div>
     </div>
 
     <!-- Skeletons -->
-    <template v-if="loading">
+    <template v-if="listLoading">
       <div v-if="isMobile" class="mx-5 grid grid-cols-2 gap-x-4 gap-y-6 md:mx-0">
-        <ProductSkeletonGrid v-for="i in listItems.length || itemsPerPage" :key="i" />
+        <ProductSkeletonGrid v-for="i in actualPageRowsCount" :key="i" />
       </div>
 
       <div v-else class="flex flex-col rounded border bg-white shadow-sm">
-        <WishlistProductItemSkeleton v-for="i in listItems.length || itemsPerPage" :key="i" class="even:bg-gray-50" />
+        <WishlistProductItemSkeleton v-for="i in actualPageRowsCount" :key="i" class="even:bg-gray-50" />
       </div>
     </template>
 
     <!-- List details -->
-    <template v-else-if="listItems.length">
+    <template v-else-if="pagedListItems.length">
       <div class="flex flex-col gap-6 bg-white p-5 md:rounded md:border md:shadow-t-3sm">
-        <WishlistLineItems :items="listItems" @remove:item="openDeleteProductModal" />
+        <WishlistLineItems
+          :items="pagedListItems"
+          @update:cart-item="updateCartItem"
+          @update:list-item="updateWishListItem"
+          @remove:list-item="openDeleteProductModal"
+        />
 
         <VcPagination
           v-if="pages > 1"
@@ -67,14 +77,33 @@
         </VcButton>
       </template>
     </VcEmptyView>
+
+    <div v-if="isMobile" class="flex flex-wrap gap-5 py-7 lg:justify-end lg:p-0">
+      <VcButton class="w-full px-3 uppercase" size="sm" is-outline @click="openListSettingsModal">
+        <VcIcon name="cog" size="sm" class="mr-2" />
+        {{ $t("shared.wishlists.list_card.list_settings_button") }}
+      </VcButton>
+
+      <VcButton
+        :is-disabled="!pagedListItems.length"
+        size="sm"
+        class="w-full px-3 uppercase"
+        @click="addAllListItemsToCart"
+      >
+        <VcIcon name="cart" size="sm" class="mr-2" />
+        {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
+      </VcButton>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { cloneDeep } from "lodash";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useGoogleAnalytics, usePageHead } from "@/core/composables";
+import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
 import { ProductSkeletonGrid } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
@@ -84,41 +113,105 @@ import {
   useWishlists,
   AddOrUpdateWishlistModal,
   DeleteWishlistProductModal,
+  extendWishListItem,
 } from "@/shared/wishlists";
-import type { LineItemType } from "@/xapi/types";
+import type { ExtendedLineItemType } from "@/core/types";
+import type { InputNewBulkItemType, LineItemType, Product } from "@/xapi/types";
 
-const props = defineProps({
-  listId: {
-    type: String,
-    default: "",
-  },
-});
+interface IProps {
+  listId: string;
+}
+
+const props = defineProps<IProps>();
 
 const { t } = useI18n();
 const { openPopup } = usePopup();
-const { loading, list, fetchWishList, clearList } = useWishlists();
+const { loading: listLoading, list, fetchWishList, clearList } = useWishlists();
+const { cart, loading: cartLoading, addToCart, changeItemQuantity, addBulkItemsToCart } = useCart();
 const ga = useGoogleAnalytics();
 
 usePageHead({
   title: computed(() => t("pages.account.list_details.meta.title", [list.value?.name])),
 });
 
+const inputBulkItems = ref<InputNewBulkItemType[]>([]);
 const itemsPerPage = ref(6);
 const page = ref(1);
 
-const pages = computed<number>(() => Math.ceil((list.value?.items?.length ?? 0) / itemsPerPage.value));
-const listItems = computed<LineItemType[]>(() =>
-  (list.value?.items || []).slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
+const loading = computed<boolean>(() => listLoading.value || cartLoading.value);
+
+const extendedItems = computed<ExtendedLineItemType<LineItemType>[]>(() =>
+  (list.value?.items || []).map((listItem) => {
+    const countInCart = cart.value.items?.find((cartItem) => cartItem.sku === listItem.sku)?.quantity;
+
+    listItem.quantity =
+      countInCart ||
+      (listItem.product && listItem.product.minQuantity && (listItem.quantity || 0) < listItem.product.minQuantity
+        ? listItem.product.minQuantity
+        : listItem.quantity);
+    return extendWishListItem(listItem, countInCart);
+  })
 );
+
+const pages = computed<number>(() => Math.ceil((list.value?.items?.length ?? 0) / itemsPerPage.value));
+const pagedListItems = computed<ExtendedLineItemType<LineItemType>[]>(() =>
+  extendedItems.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
+);
+const actualPageRowsCount = computed<number>(() => pagedListItems.value.length || itemsPerPage.value);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 
-/*
-function addAllToCart() {
-  // TODO: implement in another user story
+function updateWishListItem(item: InputNewBulkItemType): void {
+  const inputBulkItem = inputBulkItems.value?.find((bulkItem) => bulkItem.productSku === item.productSku);
+  if (inputBulkItem) {
+    inputBulkItem.quantity = item.quantity;
+  }
 }
-*/
+
+async function updateCartItem(item: InputNewBulkItemType): Promise<void> {
+  const product: Product | undefined = list.value?.items?.find((listItem) => listItem.sku === item.productSku)?.product;
+
+  if (!product) {
+    return;
+  }
+
+  const itemInCart: LineItemType | undefined = cart.value.items?.find((cartItem) => cartItem.sku === item.productSku);
+
+  if (itemInCart) {
+    await changeItemQuantity(itemInCart.id, item.quantity!);
+  } else {
+    await addToCart(product.id, item.quantity!);
+
+    ga.addItemToCart(product, item.quantity);
+  }
+}
+
+async function addAllListItemsToCart() {
+  if (!list.value || !inputBulkItems.value) {
+    return;
+  }
+
+  const inputItems = cloneDeep(list.value.items!);
+  const resultItems = await addBulkItemsToCart(inputBulkItems.value);
+
+  ga.addItemsToCart(inputItems);
+
+  inputItems.forEach((inputItem) => {
+    const inputBulkItem = inputBulkItems.value?.find((item) => item.productSku === inputItem.sku);
+    if (inputBulkItem) {
+      inputItem.quantity = inputBulkItem.quantity;
+    }
+  });
+
+  openPopup({
+    component: AddBulkItemsToCartResultsModal,
+
+    props: {
+      items: getItemsForAddBulkItemsToCartResultsPopup(inputItems, resultItems),
+    },
+  });
+}
 
 function openDeleteProductModal(item: LineItemType) {
   openPopup({
@@ -178,5 +271,13 @@ watchEffect(() => {
       item_list_name: `Wishlist "${list.value?.name}"`,
     });
   }
+});
+
+watchEffect(() => {
+  inputBulkItems.value =
+    list.value?.items?.map<InputNewBulkItemType>((item) => ({
+      productSku: item.sku!,
+      quantity: item.quantity,
+    })) || [];
 });
 </script>
