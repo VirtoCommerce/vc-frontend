@@ -7,7 +7,7 @@
       <router-link
         :to="link"
         class="vc-product-card-list__img relative block h-[72px] w-[72px] xl:h-[86px] xl:w-[86px]"
-        @click="$emit('link-click', $event)"
+        @click="$emit('linkClick', $event)"
       >
         <VcImage
           :src="product.imgSrc"
@@ -38,7 +38,7 @@
         <router-link
           :to="link"
           class="vc-product-card-list__name w-full grow text-sm font-extrabold text-[color:var(--color-link)] sm:overflow-hidden sm:line-clamp-3 lg:mt-1 lg:h-[60px] 2xl:pr-2"
-          @click="$emit('link-click', $event)"
+          @click="$emit('linkClick', $event)"
         >
           {{ product.name }}
         </router-link>
@@ -111,7 +111,7 @@
 
     <div class="vc-product-card-list__add-to-cart mt-3 flex w-full flex-col gap-2 sm:mt-0">
       <template v-if="product.hasVariations">
-        <VcButton :to="link" class="w-full !border !text-13 uppercase" is-outline @click="$emit('link-click', $event)">
+        <VcButton :to="link" class="w-full !border !text-13 uppercase" is-outline @click="$emit('linkClick', $event)">
           {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
         </VcButton>
 
@@ -133,6 +133,7 @@
         <div class="flex items-center gap-1 lg:mt-0.5">
           <VcInStock
             :is-in-stock="product.availabilityData?.isInStock"
+            :is-digital="isDigital"
             :quantity="product.availabilityData?.availableQuantity"
           />
 
@@ -146,26 +147,28 @@
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
+import { ProductType } from "@/core/enums";
 import { getProductRoute } from "@/core/utilities";
-import { DiscountBadge, Vendor } from "@/shared/catalog";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
+import DiscountBadge from "./discount-badge.vue";
+import Vendor from "./vendor.vue";
 import type { Product } from "@/xapi/types";
-import type { PropType } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
-defineEmits<{ (eventName: "link-click", globalEvent: PointerEvent): void }>();
+defineEmits<{ (eventName: "linkClick", globalEvent: PointerEvent): void }>();
 
-const props = defineProps({
-  product: {
-    type: Object as PropType<Product>,
-    required: true,
-  },
-});
+const props = defineProps<IProps>();
+
+interface IProps {
+  product: Product;
+}
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isSmallScreen = breakpoints.smaller("xl");
+
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
+const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 </script>
 
 <style scoped lang="scss">

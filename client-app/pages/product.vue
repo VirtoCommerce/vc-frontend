@@ -67,12 +67,13 @@ import { CarouselProductCard, useProduct, useRelatedProducts } from "@/shared/ca
 import { BackButtonInHeader } from "@/shared/layout";
 import { useTemplate } from "@/shared/static-content";
 
-const props = defineProps({
-  productId: {
-    type: String,
-    default: "",
-  },
+const props = withDefaults(defineProps<IProps>(), {
+  productId: "",
 });
+
+interface IProps {
+  productId?: string;
+}
 
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 

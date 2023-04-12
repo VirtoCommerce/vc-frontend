@@ -39,6 +39,7 @@
           <div class="mt-2 flex">
             <VcInStock
               :is-in-stock="product.availabilityData?.isInStock"
+              :is-digital="isDigital"
               :quantity="product.availabilityData?.availableQuantity"
             ></VcInStock>
           </div>
@@ -49,38 +50,25 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { useCurrency } from "@/core/composables";
+import { ProductType } from "@/core/enums";
 import { AddToCart } from "@/shared/cart";
 import { ProductDetails, ProductPriceBlock } from "@/shared/catalog";
-import type { PageContent } from "@/shared/static-content";
+import type { PageContent } from "../types";
 import type { Product } from "@/xapi/types";
-import type { PropType } from "vue";
 
-defineProps({
-  product: {
-    type: Object as PropType<Product>,
-    required: true,
-  },
+interface IProps {
+  product: Product;
+  relatedProducts: Product[];
+  productWithVariations: boolean;
+  variationsCartTotalAmount: number;
+  model: PageContent;
+}
 
-  relatedProducts: {
-    type: Array as PropType<Product[]>,
-    required: true,
-  },
-
-  productWithVariations: {
-    type: Boolean,
-  },
-
-  variationsCartTotalAmount: {
-    type: Number,
-    required: true,
-  },
-
-  model: {
-    type: Object as PropType<PageContent>,
-    required: true,
-  },
-});
+const props = defineProps<IProps>();
 
 const { currentCurrency } = useCurrency();
+
+const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 </script>
