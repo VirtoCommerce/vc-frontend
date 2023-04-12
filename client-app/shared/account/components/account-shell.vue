@@ -13,5 +13,5 @@
 </template>
 
 <script setup lang="ts">
-import { AccountNavigation } from "@/shared/account";
+import AccountNavigation from "./account-navigation.vue";
 </script>

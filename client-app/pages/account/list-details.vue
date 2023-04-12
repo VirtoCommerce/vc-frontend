@@ -1,6 +1,6 @@
 <template>
   <div>
-    <VcLoaderOverlay :visible="loading" fixed-spinner />
+    <VcLoaderOverlay :visible="!listLoading && cartLoading" fixed-spinner />
 
     <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
@@ -35,7 +35,7 @@
     </div>
 
     <!-- Skeletons -->
-    <template v-if="loading">
+    <template v-if="listLoading">
       <div v-if="isMobile" class="mx-5 grid grid-cols-2 gap-x-4 gap-y-6 md:mx-0">
         <ProductSkeletonGrid v-for="i in actualPageRowsCount" :key="i" />
       </div>
@@ -138,6 +138,7 @@ const itemsPerPage = ref(6);
 const page = ref(1);
 
 const loading = computed<boolean>(() => listLoading.value || cartLoading.value);
+
 const extendedItems = computed<ExtendedLineItemType<LineItemType>[]>(() =>
   (list.value?.items || []).map((listItem) => {
     const countInCart = cart.value.items?.find((cartItem) => cartItem.sku === listItem.sku)?.quantity;
@@ -150,14 +151,14 @@ const extendedItems = computed<ExtendedLineItemType<LineItemType>[]>(() =>
     return extendWishListItem(listItem, countInCart);
   })
 );
+
 const inputBulkItems = computed<InputNewBulkItemType[] | undefined>(() =>
-  clone(
-    list.value?.items?.map<InputNewBulkItemType>((item) => ({
-      productSku: item.sku!,
-      quantity: item.quantity,
-    }))
-  )
+  list.value?.items?.map<InputNewBulkItemType>((item) => ({
+    productSku: item.sku!,
+    quantity: item.quantity,
+  }))
 );
+
 const pages = computed<number>(() => Math.ceil((list.value?.items?.length ?? 0) / itemsPerPage.value));
 const pagedListItems = computed<ExtendedLineItemType<LineItemType>[]>(() =>
   extendedItems.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
