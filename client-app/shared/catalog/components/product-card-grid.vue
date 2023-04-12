@@ -102,7 +102,7 @@
           <router-link
             :to="link"
             class="my-px h-12 cursor-pointer text-18 font-extrabold text-[color:var(--color-link)] line-clamp-2 lg:h-10 lg:text-14"
-            @click="$emit('link-click', $event)"
+            @click="$emit('linkClick', $event)"
           >
             {{ product.name }}
           </router-link>
@@ -180,7 +180,7 @@
     </div>
 
     <div v-if="product.hasVariations" class="flex flex-col">
-      <VcButton :to="link" class="w-full !border !text-13 uppercase" is-outline @click="$emit('link-click', $event)">
+      <VcButton :to="link" class="w-full !border !text-13 uppercase" is-outline @click="$emit('linkClick', $event)">
         {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
       </VcButton>
 
@@ -197,11 +197,12 @@
     </div>
 
     <template v-else>
-      <slot name="cart-handler"></slot>
+      <slot name="cart-handler" />
 
       <div class="mt-1 flex items-center gap-1">
         <VcInStock
           :is-in-stock="product.availabilityData?.isInStock"
+          :is-digital="isDigital"
           :quantity="product.availabilityData?.availableQuantity"
         />
 
@@ -215,28 +216,29 @@
 import { Pagination, Navigation, Lazy } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, ref } from "vue";
+import { ProductType } from "@/core/enums";
 import { getProductRoute } from "@/core/utilities";
-import { DiscountBadge, Vendor } from "@/shared/catalog";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
+import DiscountBadge from "./discount-badge.vue";
+import Vendor from "./vendor.vue";
 import type { Product } from "@/xapi/types";
 import type { Swiper as SwiperInstance } from "swiper/types";
-import type { PropType } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
-defineEmits<{ (eventName: "link-click", globalEvent: PointerEvent): void }>();
+defineEmits<{ (eventName: "linkClick", globalEvent: PointerEvent): void }>();
 
-const props = defineProps({
-  product: {
-    type: Object as PropType<Product>,
-    required: true,
-  },
-});
+const props = defineProps<IProps>();
+
+interface IProps {
+  product: Product;
+}
 
 const swiperInstance = ref<SwiperInstance>();
 const swiperBulletsState = ref<boolean[]>([true, false, false]);
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
+const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 
 function slideChanged(swiper: SwiperInstance) {
   const activeIndex: number = swiper.activeIndex;

@@ -20,7 +20,6 @@
         :message="errors.roleId"
         text-field="normalizedName"
         value-field="id"
-        size="lg"
         required
       />
 

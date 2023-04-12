@@ -10,7 +10,7 @@
         v-for="(item, index) in products"
         :key="item.id + index"
         :product="item"
-        @link-click="$emit('item-link-click', item, $event)"
+        @link-click="$emit('itemLinkClick', item, $event)"
       >
         <template #add-to-list-handler>
           <slot name="add-to-list-handler" v-bind="{ item }" />
@@ -26,30 +26,26 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
-import { ProductCardGrid, ProductCardList, ProductSkeletonGrid, ProductSkeletonList } from "@/shared/catalog";
+import ProductCardGrid from "./product-card-grid.vue";
+import ProductCardList from "./product-card-list.vue";
+import ProductSkeletonGrid from "./product-skeleton-grid.vue";
+import ProductSkeletonList from "./product-skeleton-list.vue";
 import type { Product } from "@/xapi/types";
-import type { PropType } from "vue";
 
-defineEmits<{ (eventName: "item-link-click", product: Product, globalEvent: PointerEvent): void }>();
+defineEmits<{ (eventName: "itemLinkClick", product: Product, globalEvent: PointerEvent): void }>();
 
-const props = defineProps({
-  loading: Boolean,
-
-  itemsPerPage: {
-    type: Number,
-    default: DEFAULT_PAGE_SIZE,
-  },
-
-  products: {
-    type: Array as PropType<Product[]>,
-    default: () => [],
-  },
-
-  viewMode: {
-    type: String as PropType<"grid" | "list">,
-    default: "grid",
-  },
+const props = withDefaults(defineProps<IProps>(), {
+  itemsPerPage: DEFAULT_PAGE_SIZE,
+  products: () => [],
+  viewMode: "grid",
 });
+
+interface IProps {
+  loading: boolean;
+  products?: Product[];
+  itemsPerPage?: number;
+  viewMode?: string;
+}
 
 const cardComponent = computed(() => (props.viewMode === "list" ? ProductCardList : ProductCardGrid));
 const skeletonComponent = computed(() => (props.viewMode === "list" ? ProductSkeletonList : ProductSkeletonGrid));

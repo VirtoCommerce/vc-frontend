@@ -65,7 +65,7 @@ defineProps<IProps>();
   }
 
   &__address {
-    @apply grow;
+    @apply grow [word-break:break-word];
 
     #{$readonly} &,
     #{$disabled} & {
