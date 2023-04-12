@@ -1,18 +1,19 @@
 <template>
   <div
-    v-if="isDigital || isInStock"
+    v-if="isDigital"
+    class="badge__digital whitespace-nowrap rounded-full py-[1px] px-[0.625rem] text-[13px] leading-5 lg:text-[11px]"
+  >
+    {{ $t("common.labels.digital_product") }}
+  </div>
+
+  <div
+    v-else-if="isInStock"
     class="whitespace-nowrap rounded-full bg-[color:var(--color-in-stock-available-bg)] py-0.5 px-[0.677rem] text-[13px] leading-5 text-[color:var(--color-in-stock-available)] lg:py-px lg:px-[0.53rem] lg:text-[11px]"
   >
-    <span v-if="isDigital">
-      {{ $t("common.labels.digital") }}
+    <span class="inline-block min-w-[1.438rem] text-center font-bold lg:min-w-[1.25rem]">
+      {{ quantity && quantity > 9999 ? "9999+" : quantity }}
     </span>
-
-    <span v-else-if="isInStock">
-      <span class="inline-block min-w-[1.438rem] text-center font-bold lg:min-w-[1.25rem]">
-        {{ quantity && quantity > 9999 ? "9999+" : quantity }}
-      </span>
-      {{ $t("common.suffixes.product_count_in_stock") }}
-    </span>
+    {{ $t("common.suffixes.product_count_in_stock") }}
   </div>
 
   <div
@@ -43,3 +44,13 @@ withDefaults(defineProps<IProps>(), {
   quantity: null,
 });
 </script>
+
+<!-- TODO: Replace this temporary solution with an actual markup requirements -->
+<style scoped lang="scss">
+.badge {
+  &__digital {
+    background-color: #ecf6ff;
+    color: #327393;
+  }
+}
+</style>
