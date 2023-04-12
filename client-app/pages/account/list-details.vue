@@ -99,7 +99,7 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { clone } from "lodash";
+import { cloneDeep } from "lodash";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useGoogleAnalytics, usePageHead } from "@/core/composables";
@@ -192,7 +192,7 @@ async function addAllListItemsToCart() {
     return;
   }
 
-  const inputItems = clone(list.value.items!);
+  const inputItems = cloneDeep(list.value.items!);
   const resultItems = await addBulkItemsToCart(inputBulkItems.value);
 
   ga.addItemsToCart(inputItems);
