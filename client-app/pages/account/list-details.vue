@@ -11,13 +11,24 @@
       </h2>
 
       <div v-if="!isMobile" class="flex gap-x-3">
-        <VcButton class="w-36 px-3 uppercase" size="sm" is-outline @click="openListSettingsModal">
+        <VcButton
+          :is-disabled="loading"
+          class="w-36 px-3 uppercase"
+          size="sm"
+          is-outline
+          @click="openListSettingsModal"
+        >
           <i class="fas fa-cog -ml-0.5 mr-2 text-inherit" />
           {{ $t("shared.wishlists.list_card.list_settings_button") }}
         </VcButton>
 
-        <VcButton :is-disabled="!pagedListItems.length" class="px-3 uppercase" size="sm" @click="addAllListItemsToCart">
-          <i class="fa fa-shopping-cart mr-2 text-xs text-inherit" />
+        <VcButton
+          :is-disabled="loading || !pagedListItems.length"
+          class="px-3 uppercase"
+          size="sm"
+          @click="addAllListItemsToCart"
+        >
+          <VcIcon name="cart" size="sm" class="mr-2" />
           {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
         </VcButton>
       </div>
@@ -67,19 +78,19 @@
       </template>
     </VcEmptyView>
 
-    <div v-if="isMobile" class="flex gap-5 py-7 lg:justify-end lg:p-0">
-      <VcButton class="w-1/2 px-3 uppercase" size="sm" is-outline @click="openListSettingsModal">
-        <i class="fas fa-cog -ml-0.5 mr-2 text-inherit" />
+    <div v-if="isMobile" class="flex flex-wrap gap-5 py-7 lg:justify-end lg:p-0">
+      <VcButton class="w-full px-3 uppercase" size="sm" is-outline @click="openListSettingsModal">
+        <VcIcon name="cog" size="sm" class="mr-2" />
         {{ $t("shared.wishlists.list_card.list_settings_button") }}
       </VcButton>
 
       <VcButton
         :is-disabled="!pagedListItems.length"
         size="sm"
-        class="w-1/2 px-3 uppercase"
+        class="w-full px-3 uppercase"
         @click="addAllListItemsToCart"
       >
-        <i class="fa fa-shopping-cart mr-2 text-xs text-inherit" />
+        <VcIcon name="cart" size="sm" class="mr-2" />
         {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
       </VcButton>
     </div>
@@ -140,10 +151,12 @@ const extendedItems = computed<ExtendedLineItemType<LineItemType>[]>(() =>
   })
 );
 const inputBulkItems = computed<InputNewBulkItemType[] | undefined>(() =>
-  list.value?.items?.map<InputNewBulkItemType>((item) => ({
-    productSku: item.sku!,
-    quantity: item.quantity,
-  }))
+  clone(
+    list.value?.items?.map<InputNewBulkItemType>((item) => ({
+      productSku: item.sku!,
+      quantity: item.quantity,
+    }))
+  )
 );
 const pages = computed<number>(() => Math.ceil((list.value?.items?.length ?? 0) / itemsPerPage.value));
 const pagedListItems = computed<ExtendedLineItemType<LineItemType>[]>(() =>

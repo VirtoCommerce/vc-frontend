@@ -1,13 +1,11 @@
 <template>
-  <div class="relative flex grow items-stretch">
+  <div>
     <VcInput
       v-model.number="enteredQuantity"
       :disabled="disabled"
       :min-quantity="minQuantity"
       :max-quantity="maxQuantity"
-      :class="{
-        'z-10 border-[color:var(--color-danger)] focus:border-[color:var(--color-danger-hover)]': !!errorMessage,
-      }"
+      :error="!!errorMessage"
       center
       class="w-full"
       type="number"
@@ -28,21 +26,21 @@
         </VcButton>
       </template>
     </VcInput>
+
+    <VcTooltip v-if="!!errorMessage" :x-offset="28" class="!block" placement="bottom-start" strategy="fixed">
+      <template #trigger>
+        <div class="pt-0.5 text-11 text-[color:var(--color-danger)] xs:line-clamp-1">
+          {{ errorMessage }}
+        </div>
+      </template>
+
+      <template #content>
+        <div class="w-52 rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y">
+          {{ errorMessage }}
+        </div>
+      </template>
+    </VcTooltip>
   </div>
-
-  <VcTooltip v-if="!!errorMessage" :x-offset="28" class="!block" placement="bottom-start" strategy="fixed">
-    <template #trigger>
-      <div class="pt-0.5 text-11 text-[color:var(--color-danger)] xs:line-clamp-1">
-        {{ errorMessage }}
-      </div>
-    </template>
-
-    <template #content>
-      <div class="w-52 rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y">
-        {{ errorMessage }}
-      </div>
-    </template>
-  </VcTooltip>
 </template>
 
 <script setup lang="ts">

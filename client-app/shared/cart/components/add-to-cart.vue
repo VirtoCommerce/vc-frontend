@@ -15,7 +15,6 @@
         @input="onInput"
         @keypress="onKeypress"
         @click="onClick"
-        @blur="$emit('update:lineItem', { sku: product.code, quantity: enteredQuantity })"
       />
 
       <VcButton
