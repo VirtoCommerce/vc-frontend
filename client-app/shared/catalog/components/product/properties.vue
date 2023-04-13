@@ -1,6 +1,6 @@
 <template>
   <ProductTitledBlock
-    v-if="!model.hidden"
+    v-if="!model.hidden && product.properties?.length"
     :title="model.title || $t('shared.catalog.product_details.technical_specs_block_title')"
     image-src="/static/images/technical_specs.svg"
   >
