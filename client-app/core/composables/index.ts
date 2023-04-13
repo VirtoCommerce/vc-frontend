@@ -17,3 +17,4 @@ export * from "./useRouteQueryParam";
 export * from "./useThemeContext";
 export * from "./useCatalogMenu";
 export * from "./useComponentId";
+export * from "./useValidationErrorTranslator";
