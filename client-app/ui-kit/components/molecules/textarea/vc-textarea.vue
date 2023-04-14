@@ -38,6 +38,7 @@
       :error="error"
       :textLength="text?.length"
       :max-length="maxLength"
+      :single-line="singleLineMessage"
     />
   </div>
 </template>
@@ -67,6 +68,7 @@ interface IProps {
   label?: string;
   placeholder?: string;
   message?: string;
+  singleLineMessage?: boolean;
   error?: boolean;
   counter?: boolean;
   noResize?: boolean;

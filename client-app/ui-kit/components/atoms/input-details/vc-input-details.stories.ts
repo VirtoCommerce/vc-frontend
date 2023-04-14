@@ -8,6 +8,7 @@ export default {
     error: false,
     counter: false,
     showEmpty: false,
+    singleLine: false,
   },
 } as Meta<typeof VcInputDetails>;
 
@@ -35,4 +36,12 @@ Error.args = {
   ...Counter.args,
   message: "Error message",
   error: true,
+};
+
+export const SingleLine = Template.bind({});
+SingleLine.args = {
+  ...Counter.args,
+  message:
+    "Long long long hint message. Very long hint message. Amet doloremque rerum debitis debitis officia Blanditiis impedit id distinctio voluptatibus enim. Ab magni explicabo consectetur explicabo omnis ex Qui dolorem numquam rerum temporibus sit Hic debitis error sapiente aperiam",
+  singleLine: true,
 };

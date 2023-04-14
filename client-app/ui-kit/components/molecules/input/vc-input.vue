@@ -60,7 +60,7 @@
       <div class="vc-input__bg"></div>
     </div>
 
-    <VcInputDetails :show-empty="showEmptyDetails" :message="message" :error="error" />
+    <VcInputDetails :show-empty="showEmptyDetails" :message="message" :error="error" :single-line="singleLineMessage" />
   </div>
 </template>
 
@@ -89,6 +89,7 @@ interface IProps {
   label?: string;
   placeholder?: string;
   message?: string;
+  singleLineMessage?: boolean;
   error?: boolean;
   noBorder?: boolean;
   hidePasswordSwitcher?: boolean;

@@ -6,6 +6,8 @@
       :min-quantity="minQuantity"
       :max-quantity="maxQuantity"
       :error="!!errorMessage"
+      :message="errorMessage"
+      single-line-message
       center
       class="w-full"
       type="number"
@@ -26,20 +28,6 @@
         </VcButton>
       </template>
     </VcInput>
-
-    <VcTooltip v-if="!!errorMessage" :x-offset="28" class="!block" placement="bottom-start" strategy="fixed">
-      <template #trigger>
-        <div class="pt-0.5 text-11 text-[color:var(--color-danger)] xs:line-clamp-1">
-          {{ errorMessage }}
-        </div>
-      </template>
-
-      <template #content>
-        <div class="w-52 rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y">
-          {{ errorMessage }}
-        </div>
-      </template>
-    </VcTooltip>
   </div>
 </template>
 
