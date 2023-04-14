@@ -1,11 +1,12 @@
 import { useI18n } from "vue-i18n";
 import type { ValidationErrorType } from "@/xapi/types";
 
-export function useValidationErrorTranslator() {
+export function useCartValidationErrorTranslator() {
   const { t, te } = useI18n();
 
   return (error: ValidationErrorType): string | undefined => {
+    const parameters = error.errorParameters?.reduce((a, b) => ({ ...a, [b.key]: b.value }), {}) || "";
     const translationKey = "validation_error." + error.errorCode;
-    return te(translationKey) ? t(translationKey) : error.errorMessage;
+    return te(translationKey) ? t(translationKey, parameters) : error.errorMessage;
   };
 }

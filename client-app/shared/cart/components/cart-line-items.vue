@@ -36,7 +36,7 @@
 
     <template #after-content="{ item }">
       <VcAlert v-for="(validationError, index) in validationErrorsByItemId[item.id]" :key="index" type="danger" icon>
-        {{ getValidationErrorTranslation(validationError) }}
+        {{ validationError.errorMessage }}
       </VcAlert>
     </template>
   </VcLineItems>
@@ -45,7 +45,7 @@
 <script setup lang="ts">
 import { groupBy } from "lodash";
 import { computed } from "vue";
-import { useValidationErrorTranslator } from "@/core/composables";
+import { useCartValidationErrorTranslator } from "@/core/composables";
 import type { LineItemType, ValidationErrorType } from "@/xapi/types";
 
 interface IProps {
@@ -68,9 +68,13 @@ const props = withDefaults(defineProps<IProps>(), {
   validationErrors: () => [],
 });
 
-const getValidationErrorTranslation = useValidationErrorTranslator();
+const getValidationErrorTranslation = useCartValidationErrorTranslator();
 
-const validationErrorsByItemId = computed<Record<string, ValidationErrorType[]>>(() =>
-  groupBy(props.validationErrors, (error: ValidationErrorType) => error.objectId)
-);
+const validationErrorsByItemId = computed<Record<string, ValidationErrorType[]>>(() => {
+  const validationErrorsWithTranslateMessage = props.validationErrors.map((item) => {
+    item.errorMessage = getValidationErrorTranslation(item);
+    return item;
+  });
+  return groupBy(validationErrorsWithTranslateMessage, (error: ValidationErrorType) => error.objectId);
+});
 </script>
