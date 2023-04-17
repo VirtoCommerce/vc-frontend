@@ -43,8 +43,8 @@
 </template>
 
 <script setup lang="ts">
-import { groupBy } from "lodash";
 import { computed } from "vue";
+import { useCartValidationErrorTranslator } from "@/core/composables";
 import type { LineItemType, ValidationErrorType } from "@/xapi/types";
 
 interface IProps {
@@ -67,7 +67,24 @@ const props = withDefaults(defineProps<IProps>(), {
   validationErrors: () => [],
 });
 
-const validationErrorsByItemId = computed<Record<string, ValidationErrorType[]>>(() =>
-  groupBy(props.validationErrors, (error: ValidationErrorType) => error.objectId)
-);
+const getValidationErrorTranslation = useCartValidationErrorTranslator();
+
+const validationErrorsByItemId = computed<Record<string, ValidationErrorType[]>>(() => {
+  const result: Record<string, ValidationErrorType[]> = props.validationErrors.reduce((records, item) => {
+    if (item.objectId) {
+      const key = item.objectId;
+      const editedItem = { ...item, errorMessage: getValidationErrorTranslation(item) };
+
+      if (records[key]) {
+        records[key].push(editedItem);
+      } else {
+        records[key] = [editedItem];
+      }
+    }
+
+    return records;
+  }, {} as Record<string, ValidationErrorType[]>);
+
+  return result;
+});
 </script>

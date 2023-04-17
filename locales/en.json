@@ -1258,5 +1258,9 @@
     "PasswordRequiresUpper": "Passwords must have at least one uppercase ('A'-'Z')",
     "PasswordRequiresUniqueChars": "Passwords must use different characters",
     "RecentPasswordUsed": "You have used this password in the past. Choose another one."
+  },
+  "validation_error": {
+    "PRODUCT_QTY_CHANGED": "The product available qty is changed",
+    "CART_PRODUCT_UNAVAILABLE": "The product available qty is changed"
   }
 }
