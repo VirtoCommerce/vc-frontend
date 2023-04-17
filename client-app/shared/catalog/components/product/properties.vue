@@ -1,6 +1,6 @@
 <template>
   <ProductTitledBlock
-    v-if="!model.hidden"
+    v-if="showPropertiesBlock"
     :title="model.title || $t('shared.catalog.product_details.technical_specs_block_title')"
     image-src="/static/images/technical_specs.svg"
   >
@@ -10,12 +10,8 @@
     </ProductProperty>
 
     <!-- Vendor -->
-    <ProductProperty
-      v-if="$cfg.vendor_enabled && !product.hasVariations && product.vendor"
-      :label="$t('shared.catalog.product_details.vendor_label')"
-      class="mb-4"
-    >
-      <Vendor :vendor="product.vendor" with-rating />
+    <ProductProperty v-if="showVendor" :label="$t('shared.catalog.product_details.vendor_label')" class="mb-4">
+      <Vendor :vendor="product.vendor!" with-rating />
     </ProductProperty>
 
     <div v-if="groupedProperties.length > MAX_DISPLAY_ITEMS" class="-mt-1 mb-4">
@@ -26,7 +22,8 @@
 
 <script setup lang="ts">
 import _ from "lodash";
-import { computed, ref } from "vue";
+import { computed, ref, inject } from "vue";
+import { configInjectionKey } from "@/core/injection-keys";
 import { prepareProperties, ProductProperty, ProductTitledBlock, Vendor } from "@/shared/catalog";
 import type { Product } from "@/xapi/types";
 
@@ -40,6 +37,8 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+const cfg = inject(configInjectionKey, {});
+
 const MAX_DISPLAY_ITEMS = 8;
 
 const showAll = ref(false);
@@ -52,7 +51,8 @@ const groupedProperties = computed(() => {
     .map(prepareProperties)
     .value();
 });
-
+const showVendor = computed(() => cfg.vendor_enabled && !props.product.hasVariations && props.product.vendor);
+const showPropertiesBlock = computed(() => !props.model.hidden && (groupedProperties.value.length || showVendor.value));
 const propertiesToShow = computed(() =>
   showAll.value ? groupedProperties.value : groupedProperties.value.slice(0, MAX_DISPLAY_ITEMS)
 );
