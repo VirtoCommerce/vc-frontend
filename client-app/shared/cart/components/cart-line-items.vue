@@ -74,7 +74,12 @@ const validationErrorsByItemId = computed<Record<string, ValidationErrorType[]>>
     if (item.objectId) {
       const key = item.objectId;
       const editedItem = { ...item, errorMessage: getValidationErrorTranslation(item) };
-      records[key] ? records[key].push(editedItem) : (records[key] = [editedItem]);
+
+      if (records[key]) {
+        records[key].push(editedItem);
+      } else {
+        records[key] = [editedItem];
+      }
     }
 
     return records;
