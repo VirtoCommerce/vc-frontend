@@ -73,7 +73,7 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 // Define max qty available to add
-const MAX_VALUE = 999999;
+const MAX_VALUE = 999999999;
 
 const { cart, addToCart, changeItemQuantity } = useCart();
 const { t } = useI18n();
@@ -93,39 +93,32 @@ const lineItemInCart = computed<LineItemType | undefined>(() =>
 const countInCart = computed<number>(() => lineItemInCart.value?.quantity || 0);
 const minQty = computed<number>(() => props.product.minQuantity || 1);
 const maxQty = computed<number>(() =>
-  Math.min(props.product.availabilityData?.availableQuantity, props.product.maxQuantity || MAX_VALUE)
+  Math.min(props.product.availabilityData?.availableQuantity || MAX_VALUE, props.product.maxQuantity || MAX_VALUE)
 );
 
 const disabled = computed<boolean>(
   () =>
     loading.value ||
-    (!isDigital.value &&
-      !(
-        props.product.availabilityData?.isAvailable &&
-        props.product.availabilityData?.isInStock &&
-        props.product.availabilityData?.isBuyable &&
-        props.product.availabilityData?.availableQuantity
-      ))
+    !props.product.availabilityData?.isAvailable ||
+    !props.product.availabilityData?.isInStock ||
+    !props.product.availabilityData?.isBuyable ||
+    (!props.product.availabilityData?.availableQuantity && !isDigital.value)
 );
 
 const buttonText = computed<string>(() =>
   countInCart.value ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart")
 );
 
-const rules = computed(() => {
-  const result = number()
-    .typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message"))
-    .integer()
-    .positive();
-
-  if (!isDigital.value) {
-    result
+const rules = computed(() =>
+  toTypedSchema(
+    number()
+      .typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message"))
+      .integer()
+      .positive()
       .min(minQty.value, ({ min }) => t("shared.cart.add_to_cart.errors.min", [min]))
-      .max(maxQty.value, ({ max }) => t("shared.cart.add_to_cart.errors.max", [max]));
-  }
-
-  return toTypedSchema(result);
-});
+      .max(maxQty.value, ({ max }) => t("shared.cart.add_to_cart.errors.max", [max]))
+  )
+);
 
 const { value: enteredQuantity, validate, errorMessage, setValue } = useField("quantity", rules, { initialValue });
 
