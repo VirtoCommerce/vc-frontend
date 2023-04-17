@@ -72,8 +72,9 @@ const getValidationErrorTranslation = useCartValidationErrorTranslator();
 const validationErrorsByItemId = computed<Record<string, ValidationErrorType[]>>(() => {
   const result: Record<string, ValidationErrorType[]> = props.validationErrors.reduce((records, item) => {
     if (item.objectId) {
+      const key = item.objectId;
       const editedItem = { ...item, errorMessage: getValidationErrorTranslation(item) };
-      records[item.objectId] ? records[item.objectId].push(editedItem) : (records[item.objectId] = [editedItem]);
+      records[key] ? records[key].push(editedItem) : (records[key] = [editedItem]);
     }
 
     return records;
