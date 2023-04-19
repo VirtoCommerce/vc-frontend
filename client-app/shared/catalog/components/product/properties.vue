@@ -5,7 +5,7 @@
     image-src="/static/images/technical_specs.svg"
   >
     <!-- Properties -->
-    <ProductProperty v-for="property in displayedProperties" :key="property.label" :label="property.name" class="mb-4">
+    <ProductProperty v-for="property in displayedProperties" :key="property.name" :label="property.label!" class="mb-4">
       {{ property.value }}
     </ProductProperty>
 

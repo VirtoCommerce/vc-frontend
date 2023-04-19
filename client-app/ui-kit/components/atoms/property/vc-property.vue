@@ -25,7 +25,7 @@ defineProps<IProps>();
   }
 
   &__dots {
-    @apply mb-[3px] h-3 border-b border-dashed border-gray-200;
+    @apply mb-[3px] h-3 border-b border-dotted border-gray-200;
   }
 
   &__value {

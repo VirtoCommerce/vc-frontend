@@ -66,6 +66,7 @@
 
 <script setup lang="ts">
 import type { Property, MoneyType } from "@/xapi/types";
+import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
   (event: "remove"): void;
@@ -74,7 +75,7 @@ interface IEmits {
 interface IProps {
   imageUrl?: string;
   name: string;
-  route?: string;
+  route?: RouteLocationRaw;
   properties?: Property[];
   listPrice?: MoneyType;
   actualPrice?: MoneyType;

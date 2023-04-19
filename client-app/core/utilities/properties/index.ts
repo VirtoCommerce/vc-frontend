@@ -17,11 +17,11 @@ export function getPropertyValue(property: Property): string {
   }
 }
 
-export function getPropertiesGroupedByName(items: Property[], type: PropertyType): Record<string, Property> {
+export function getPropertiesGroupedByName(items: Property[], type?: PropertyType): Record<string, Property> {
   return items.reduce<Record<string, Property>>((propertiesByName, item) => {
     if (
       item.hidden ||
-      item.type !== type ||
+      (type && type !== item.type) ||
       item.value === void 0 ||
       (item.value === null && item.valueType !== "Boolean")
     ) {

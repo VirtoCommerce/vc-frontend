@@ -25,7 +25,7 @@
       <div class="flex flex-1 flex-col xl:flex-row xl:space-x-3">
         <div class="flex flex-1 flex-col gap-y-3 max-xl:mb-2 md:gap-y-1">
           <!-- Properties -->
-          <VariationProperty v-for="property in propertiesByName" :key="property.name" :label="property.name">
+          <VariationProperty v-for="property in propertiesByName" :key="property.name" :label="property.label!">
             {{ property.value }}
           </VariationProperty>
 
