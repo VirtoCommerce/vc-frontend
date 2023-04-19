@@ -1,15 +1,16 @@
-import { useI18n } from "vue-i18n";
-import type { PropertyType } from "../../enums/property-type.enum";
+import globals from "@/core/globals";
+import { PropertyValueType } from "../../enums";
+import type { PropertyType } from "../../enums";
 import type { Property } from "@/xapi/types";
 
 export function getPropertyValue(property: Property): string {
-  const { t, d } = useI18n();
+  const { t, d } = globals.i18n.global;
 
   switch (property.valueType) {
-    case "Boolean":
+    case PropertyValueType.Boolean:
       return property.value ? t("common.labels.true_property") : t("common.labels.false_property");
 
-    case "DateTime":
+    case PropertyValueType.DateTime:
       return d(new Date(property.value), "long");
 
     default:
@@ -23,7 +24,7 @@ export function getPropertiesGroupedByName(items: Property[], type?: PropertyTyp
       item.hidden ||
       (type && type !== item.type) ||
       item.value === void 0 ||
-      (item.value === null && item.valueType !== "Boolean")
+      (item.value === null && item.valueType !== PropertyValueType.Boolean)
     ) {
       return propertiesByName;
     }

@@ -41,6 +41,7 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
       minQuantity
       maxQuantity
       code
+      productType
       properties {
         ...propertyFields
       }

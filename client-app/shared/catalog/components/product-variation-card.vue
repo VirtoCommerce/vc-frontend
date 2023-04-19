@@ -80,7 +80,5 @@ const propertiesByName = computed(() =>
   getPropertiesGroupedByName(props.variation.properties ?? [], PropertyType.Variation)
 );
 
-const isDigital = computed<boolean>(
-  () => "productType" in props.variation && props.variation.productType === ProductType.Digital
-);
+const isDigital = computed<boolean>(() => props.variation.productType === ProductType.Digital);
 </script>

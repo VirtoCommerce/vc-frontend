@@ -52,23 +52,21 @@
     </VcTooltip>
 
     <div
-      class="vc-product-card-list__properties mt-2 grid w-full grid-cols-[40%_1fr] gap-x-1.5 gap-y-0.5 text-14 leading-4 text-tooltip empty:mt-0 lg:mt-0.5 lg:text-xs"
+      class="vc-product-card-list__properties mt-2 hidden w-full grid-cols-[40%_1fr] gap-x-1.5 gap-y-0.5 text-14 leading-4 text-tooltip empty:mt-0 lg:mt-0.5 lg:text-xs xl:grid"
     >
-      <!-- Product props -->
-      <template v-if="product.properties && !isSmallScreen">
-        <template v-for="prop in product.properties.slice(0, 3)" :key="prop.id">
-          <div class="min-w-0">
-            <div class="truncate font-bold">{{ prop.label }}:</div>
+      <!-- Product properties -->
+      <template v-for="prop in properties" :key="prop.name">
+        <div class="min-w-0">
+          <div class="truncate font-bold">{{ prop.label }}:</div>
+        </div>
+        <div class="min-w-0">
+          <div class="truncate">
+            {{ prop.value }}
           </div>
-          <div class="min-w-0">
-            <div class="truncate">
-              {{ prop.value }}
-            </div>
-          </div>
-        </template>
+        </div>
       </template>
 
-      <!-- Raiting -->
+      <!-- Rating -->
       <template v-if="false">
         <div class="min-w-0">
           <div class="truncate font-bold">
@@ -145,10 +143,9 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
-import { ProductType } from "@/core/enums";
-import { getProductRoute } from "@/core/utilities";
+import { ProductType, PropertyType } from "@/core/enums";
+import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import DiscountBadge from "./discount-badge.vue";
@@ -164,11 +161,11 @@ interface IProps {
   product: Product;
 }
 
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const isSmallScreen = breakpoints.smaller("xl");
-
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
+const properties = computed(() =>
+  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3)
+);
 </script>
 
 <style scoped lang="scss">

@@ -29,7 +29,7 @@
         </div>
 
         <div class="vc-line-item__properties">
-          <VcProperty v-for="property in properties" :key="property.id" :label="property.label">
+          <VcProperty v-for="property in properties" :key="property.name" :label="property.label">
             {{ property.value }}
           </VcProperty>
 
@@ -85,7 +85,9 @@ interface IProps {
 }
 
 defineEmits<IEmits>();
-defineProps<IProps>();
+withDefaults(defineProps<IProps>(), {
+  properties: () => [],
+});
 </script>
 
 <style lang="scss">

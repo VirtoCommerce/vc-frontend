@@ -23,6 +23,7 @@ export function useCategories() {
           id: globals.catalogId,
           name: globals.i18n.global.t("pages.catalog.title"),
           slug: globals.router.resolve({ name: "Catalog" }).fullPath.slice(1),
+          priority: 0,
           children: [],
           seoInfo: {
             pageTitle: globals.i18n.global.t("pages.catalog.meta.title"),
