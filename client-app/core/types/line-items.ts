@@ -13,6 +13,7 @@ export type LineItemsGroupsByVendorType<T extends LineItemType | OrderLineItemTy
   LineItemsGroupByVendorType<T>
 >;
 
+/** @deprecated Use `PreparedLineItemType` */
 export type ExtendedLineItemType<T extends AnyLineItemType> = T & {
   extended: {
     isProductExists: boolean;

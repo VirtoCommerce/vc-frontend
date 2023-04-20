@@ -32,7 +32,7 @@
           :error="!!errors.email"
           :disabled="disabled"
           :required="requiredEmail"
-          :label="$t('common.labels.work_email')"
+          :label="$t('common.labels.email')"
           class="mb-4"
           :maxlength="64"
         />
@@ -53,7 +53,7 @@
       <div
         v-if="withPersonalInfo"
         class="-mx-96 mt-8 mb-6 border-t border-[color:var(--color-primary)] md:mx-9 md:mt-6 md:mb-4 md:border-l"
-      ></div>
+      />
 
       <div :class="{ 'md:w-1/2': withPersonalInfo }">
         <VcInput

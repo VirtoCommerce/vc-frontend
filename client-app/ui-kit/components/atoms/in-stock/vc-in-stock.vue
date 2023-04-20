@@ -33,9 +33,9 @@
 
 <script setup lang="ts">
 interface IProps {
-  isInStock: boolean;
+  isInStock?: boolean;
   isAvailable?: boolean;
-  isDigital: boolean;
+  isDigital?: boolean;
   quantity?: number | null;
 }
 
