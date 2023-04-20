@@ -83,9 +83,7 @@ const loading = ref(false);
 const initialValue = ref();
 const inputElement = shallowRef<HTMLInputElement>();
 
-const isDigital = computed<boolean>(
-  () => "productType" in props.product && props.product.productType === ProductType.Digital
-);
+const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 
 const lineItemInCart = computed<LineItemType | undefined>(() =>
   cart.value?.items?.find((item) => item.productId === props.product.id)

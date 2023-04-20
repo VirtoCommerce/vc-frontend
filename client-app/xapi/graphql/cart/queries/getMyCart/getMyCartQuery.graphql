@@ -2,6 +2,7 @@
 #import "../../../fragments/lineItemFields.graphql"
 #import "../../../fragments/moneyFields.graphql"
 #import "../../../fragments/currencyFields.graphql"
+#import "../../../fragments/validationErrorFields.graphql"
 
 query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cultureName: String) {
   cart(storeId: $storeId, userId: $userId, currencyCode: $currencyCode, cultureName: $cultureName) {
@@ -39,7 +40,6 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
         ...cartAddressFields
       }
     }
-
     addresses {
       ...cartAddressFields
     }
@@ -74,15 +74,11 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
       ...moneyFields
     }
     validationErrors(ruleSet: "items") {
-      errorCode
-      errorMessage
-      errorParameters {
-        key
-        value
-      }
-      objectId
+      ...validationErrorFields
     }
-
+    warnings {
+      ...validationErrorFields
+    }
     availablePaymentMethods {
       code
       name
@@ -90,7 +86,6 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
       logoUrl
       paymentMethodGroupType
     }
-
     availableShippingMethods {
       id
       code
@@ -101,7 +96,6 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
         ...moneyFields
       }
     }
-
     gifts {
       id
       imageUrl
@@ -109,7 +103,6 @@ query getMyCart($storeId: String!, $userId: String!, $currencyCode: String!, $cu
       lineItemId
       quantity
     }
-
     availableGifts {
       id
       imageUrl

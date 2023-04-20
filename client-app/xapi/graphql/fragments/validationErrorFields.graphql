@@ -1,0 +1,9 @@
+fragment validationErrorFields on ValidationErrorType {
+  errorCode
+  errorMessage
+  errorParameters {
+    key
+    value
+  }
+  objectId
+}

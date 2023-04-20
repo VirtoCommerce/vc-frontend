@@ -1,3 +1,5 @@
+#import "../../../fragments/propertyFields.graphql"
+
 query SearchProducts(
   $storeId: String!
   $userId: String!
@@ -108,10 +110,7 @@ query SearchProducts(
         discountPercent
       }
       properties {
-        name
-        value
-        id
-        label
+        ...propertyFields
       }
     }
     term_facets @include(if: $withFacets) {
