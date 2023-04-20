@@ -56,7 +56,7 @@
         :items="quotes"
         :pages="pages"
         :page="page"
-        @item-click="navigateQuoteDetails"
+        @item-click="goToQuoteDetails"
         @header-click="applySorting"
         @page-changed="changePage"
       >
@@ -121,7 +121,7 @@
             v-for="quote in quotes"
             :key="quote.id"
             class="cursor-pointer even:bg-gray-50 hover:bg-gray-200"
-            @click="navigateQuoteDetails(quote)"
+            @click="goToQuoteDetails(quote)"
           >
             <td class="overflow-hidden text-ellipsis p-5">
               {{ quote.number }}
@@ -215,9 +215,10 @@ async function changePage(newPage: number): Promise<void> {
   await fetchQuotes();
 }
 
-function navigateQuoteDetails(quote: QuoteType): void {
+function goToQuoteDetails(quote: QuoteType): void {
   const pathName: string = quote.status === "Draft" ? "EditQuote" : "ViewQuote";
-  router.push({ name: pathName, params: { quoteId: quote.id } });
+  const quoteRoute = router.resolve({ name: pathName, params: { quoteId: quote.id } });
+  window.open(quoteRoute.fullPath, "_blank")!.focus();
 }
 
 async function applyKeyword(): Promise<void> {
