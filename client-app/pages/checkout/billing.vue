@@ -13,7 +13,7 @@
     />
 
     <template #sidebar>
-      <OrderSummary :cart="cart" footnote>
+      <OrderSummary :cart="cart" :with-shipping-cost="!allItemsAreDigital" footnote>
         <template #footer>
           <!-- Purchase order number -->
           <transition name="slide-fade-top" mode="in-out" appear>
@@ -61,7 +61,8 @@ import { computed } from "vue";
 import { useCart, usePurchaseOrderNumber } from "@/shared/cart";
 import { BillingDetailsSection, OrderSummary, useCheckout } from "@/shared/checkout";
 
-const { loading, cart, shipment, payment, hasValidationErrors, availablePaymentMethods } = useCart();
+const { loading, cart, shipment, payment, hasValidationErrors, availablePaymentMethods, allItemsAreDigital } =
+  useCart();
 const {
   purchaseOrderNumber,
   billingAddressEqualsShipping,
