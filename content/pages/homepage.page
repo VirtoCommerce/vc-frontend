@@ -11,29 +11,14 @@
             "id": "slider2e19",
             "slides": [
                 {
-                    "image": "/themes/assets/static/images/home/home-banner-1.png",
+                    "image": "/static/images/home/slide-1.png",
                     "text": "",
                     "title": ""
                 },
                 {
-                    "image": "/themes/assets/static/images/home/home-banner-2.png",
+                    "image": "/static/images/home/slide-2.png",
                     "text": "",
                     "title": ""
-                },
-                {
-                    "image": "/themes/assets/static/images/home/home-banner-3.png",
-                    "text": null,
-                    "title": null
-                },
-                {
-                    "image": "/themes/assets/static/images/home/home-banner-4.png",
-                    "text": null,
-                    "title": null
-                },
-                {
-                    "image": "/themes/assets/static/images/home/home-banner-5.png",
-                    "text": null,
-                    "title": null
                 }
             ],
             "subtitle": "",
@@ -46,29 +31,29 @@
             "id": "productsREO0",
             "query": null,
             "subtitle": "",
-            "title": "Bolts",
+            "title": "Daily Deals",
             "type": "products"
         },
         {
             "background": "bg-gray-100",
             "columns": [
                 {
-                    "image": "/themes/assets/static/images/home/hexa-1.webp",
+                    "image": "/static/images/home/hexa-1.webp",
                     "text": null,
                     "title": "Corporate account management"
                 },
                 {
-                    "image": "/themes/assets/static/images/home/hexa-2.webp",
+                    "image": "/static/images/home/hexa-2.webp",
                     "text": null,
                     "title": "Quote management and price negotiation"
                 },
                 {
-                    "image": "/themes/assets/static/images/home/hexa-3.webp",
+                    "image": "/static/images/home/hexa-3.webp",
                     "text": null,
                     "title": "Multiple stores, channels, and locations"
                 },
                 {
-                    "image": "/themes/assets/static/images/home/hexa-4.webp",
+                    "image": "/static/images/home/hexa-4.webp",
                     "text": null,
                     "title": "B2B customization and price management"
                 }

@@ -122,7 +122,7 @@
       </transition>
     </div>
 
-    <VcInputDetails :show-empty="showEmptyDetails" :message="message" :error="error" />
+    <VcInputDetails :show-empty="showEmptyDetails" :message="message" :error="error" :single-line="singleLineMessage" />
   </div>
 </template>
 
@@ -146,6 +146,7 @@ interface IProps {
   error?: boolean;
   message?: string;
   autocomplete?: boolean;
+  singleLineMessage?: boolean;
 }
 
 interface IEmits {
