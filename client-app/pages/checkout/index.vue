@@ -8,7 +8,7 @@
 
     <VcSteps
       :steps="
-        currentStepName === 'CheckoutPayment'
+        currentStepId === 'CheckoutPayment'
           ? [
               {
                 icon: 'arrow-bold',
@@ -42,7 +42,7 @@ import { useCheckout } from "@/shared/checkout";
 const route = useRoute();
 const router = useRouter();
 const { t } = useI18n();
-const { loading: loadingCart, cart, allItemsAreDigital } = useCart();
+const { loading: loadingCart, allItemsAreDigital } = useCart();
 const { loading: loadingCheckout, placedOrder, canPayNow, initialize } = useCheckout();
 
 const stepIDsWithEmptyLayout = ["CheckoutPaymentResult", "CheckoutCompleted"];
@@ -96,9 +96,9 @@ const steps = computed<IStepsItem[]>(() => {
 
   return result;
 });
-const currentStepName = computed<string>(() => route.name as string);
-const currentStepIndex = computed<number>(() => steps.value.findIndex((step) => step.id === currentStepName.value));
-const isEmptyLayout = computed<boolean>(() => stepIDsWithEmptyLayout.includes(currentStepName.value));
+const currentStepId = computed<string>(() => route.name as string);
+const currentStepIndex = computed<number>(() => steps.value.findIndex((step) => step.id === currentStepId.value));
+const isEmptyLayout = computed<boolean>(() => stepIDsWithEmptyLayout.includes(currentStepId.value));
 const pageTitle = computed<string>(() => steps.value[currentStepIndex.value]?.text ?? "<UNKNOWN__FOR_DEV_MODE>");
 
 usePageHead({
@@ -106,11 +106,11 @@ usePageHead({
 });
 
 invoke(async () => {
-  if (currentStepName.value === "Shipping" || currentStepName.value === "Billing") {
+  if (currentStepId.value === "Shipping" || currentStepId.value === "Billing") {
     await initialize();
   }
 
-  if (allItemsAreDigital.value && currentStepName.value === "Shipping") {
+  if (allItemsAreDigital.value && currentStepId.value === "Shipping") {
     router.replace({ name: "Billing" });
   }
 });

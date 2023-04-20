@@ -64,7 +64,6 @@
           :payment="payment"
           :shipment="shipment"
           :disabled="loading"
-          :with-shipment="!allItemsAreDigital"
           @change:address="onChangeBillingAddress"
           @change:method="setPaymentMethod"
         />
@@ -256,7 +255,7 @@ async function handleRemoveItem(lineItem: LineItemType): Promise<void> {
 }
 
 function onChangeBillingAddress() {
-  if (billingAddressEqualsShipping.value) {
+  if (shipment.value && billingAddressEqualsShipping.value) {
     onDeliveryAddressChange();
   } else {
     onBillingAddressChange();
