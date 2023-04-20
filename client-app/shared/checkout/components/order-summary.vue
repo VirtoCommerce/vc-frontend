@@ -60,7 +60,7 @@
           </span>
         </div>
 
-        <div v-if="withShippingCost" class="flex justify-between">
+        <div v-if="!noShipping" class="flex justify-between">
           <span>{{ $t("common.labels.shipping_cost") }}</span>
           <span>
             {{ cart.shippingTotal?.amount > 0 ? "+" : "" }}
@@ -102,13 +102,11 @@ import type {
 
 interface IProps {
   cart: CartType | CustomerOrderType;
-  withShippingCost?: boolean;
+  noShipping?: boolean;
   footnote?: boolean;
 }
 
-const props = withDefaults(defineProps<IProps>(), {
-  withShippingCost: true,
-});
+const props = defineProps<IProps>();
 
 const { currentLanguage } = useLanguages();
 const { currentCurrency } = useCurrency();

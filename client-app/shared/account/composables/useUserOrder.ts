@@ -21,7 +21,9 @@ const orderItems = computed<OrderLineItemType[]>(() => (order.value?.items || []
 const orderItemsGroupedByVendor = computed<LineItemsGroupByVendorType<OrderLineItemType>[]>(() =>
   getLineItemsGroupedByVendor(orderItems.value)
 );
-
+const allItemsAreDigital = computed<boolean>(
+  () => !!order.value?.items?.every((item) => item.productType === ProductType.Digital)
+);
 const shipment = computed<OrderShipmentType | undefined>(() => order.value?.shipments?.[0]);
 const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments?.[0]);
 const deliveryAddress = computed<OrderAddressType | undefined>(() => shipment.value?.deliveryAddress);
@@ -65,9 +67,7 @@ export default function useUserOrder() {
   return {
     loading: computed(() => loading.value),
     order: computed(() => order.value),
-    allItemsAreDigital: computed<boolean>(
-      () => order.value?.items?.every((item) => item.productType === ProductType.Digital) || false
-    ),
+    allItemsAreDigital,
     giftItems,
     orderItems,
     orderItemsGroupedByVendor,

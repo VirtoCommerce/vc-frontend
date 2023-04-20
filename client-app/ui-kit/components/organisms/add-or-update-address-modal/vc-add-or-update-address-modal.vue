@@ -46,7 +46,7 @@ interface IEmits {
 
 interface IProps {
   address?: MemberAddressType;
-  loading: boolean;
+  loading?: boolean;
 }
 
 const emit = defineEmits<IEmits>();

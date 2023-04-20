@@ -6,14 +6,14 @@
       :purchase-order-number-enabled="isPurchaseOrderNumberEnabled"
       :methods="availablePaymentMethods"
       :payment="payment"
-      :shipment="shipment"
+      :shipment="allItemsAreDigital ? undefined : shipment"
       :disabled="loading"
       @change:address="onBillingAddressChange"
       @change:method="setPaymentMethod"
     />
 
     <template #sidebar>
-      <OrderSummary :cart="cart" :with-shipping-cost="!allItemsAreDigital" footnote>
+      <OrderSummary :cart="cart" :no-shipping="allItemsAreDigital" footnote>
         <template #footer>
           <!-- Purchase order number -->
           <transition name="slide-fade-top" mode="in-out" appear>

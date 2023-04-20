@@ -69,7 +69,7 @@
         </VcCardWidget>
 
         <!-- Order summary -->
-        <OrderSummary :cart="order" :with-shipping-cost="!allItemsAreDigital" class="order-last">
+        <OrderSummary :cart="order" :no-shipping="allItemsAreDigital" class="order-last">
           <template #footer>
             <VcButton
               v-if="showPaymentButton"

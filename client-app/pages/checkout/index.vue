@@ -34,13 +34,12 @@
 import { invoke } from "@vueuse/core";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { usePageHead } from "@/core/composables";
 import { useCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout";
 
 const route = useRoute();
-const router = useRouter();
 const { t } = useI18n();
 const { loading: loadingCart, allItemsAreDigital } = useCart();
 const { loading: loadingCheckout, placedOrder, canPayNow, initialize } = useCheckout();
@@ -75,6 +74,7 @@ const steps = computed<IStepsItem[]>(() => {
   ];
 
   if (allItemsAreDigital.value) {
+    // Remove "Shipping" step
     result.splice(1, 1);
   }
 
@@ -106,12 +106,9 @@ usePageHead({
 });
 
 invoke(async () => {
-  if (currentStepId.value === "Shipping" || currentStepId.value === "Billing") {
+  // Initialize on the first step
+  if (currentStepIndex.value === 1) {
     await initialize();
-  }
-
-  if (allItemsAreDigital.value && currentStepId.value === "Shipping") {
-    router.replace({ name: "Billing" });
   }
 });
 </script>

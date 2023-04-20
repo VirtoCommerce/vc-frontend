@@ -62,7 +62,7 @@
           :purchase-order-number-enabled="isPurchaseOrderNumberEnabled"
           :methods="availablePaymentMethods"
           :payment="payment"
-          :shipment="shipment"
+          :shipment="allItemsAreDigital ? undefined : shipment"
           :disabled="loading"
           @change:address="onChangeBillingAddress"
           @change:method="setPaymentMethod"
@@ -72,7 +72,7 @@
       </template>
 
       <template #sidebar>
-        <OrderSummary :cart="cart" :with-shipping-cost="!allItemsAreDigital" footnote>
+        <OrderSummary :cart="cart" :no-shipping="allItemsAreDigital" footnote>
           <template #footer>
             <!-- Purchase order number -->
             <VcActionInput
@@ -255,7 +255,7 @@ async function handleRemoveItem(lineItem: LineItemType): Promise<void> {
 }
 
 function onChangeBillingAddress() {
-  if (shipment.value && billingAddressEqualsShipping.value) {
+  if (!allItemsAreDigital.value && billingAddressEqualsShipping.value) {
     onDeliveryAddressChange();
   } else {
     onBillingAddressChange();

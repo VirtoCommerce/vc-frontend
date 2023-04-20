@@ -97,7 +97,7 @@
     <OrderCommentSection v-if="comment" :comment="comment" readonly />
 
     <template #sidebar>
-      <OrderSummary :cart="cart" :with-shipping-cost="!allItemsAreDigital" footnote>
+      <OrderSummary :cart="cart" :no-shipping="allItemsAreDigital" footnote>
         <template #footer>
           <!-- Purchase order number -->
           <VcActionInput

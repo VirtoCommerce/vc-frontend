@@ -1,0 +1,5 @@
+mutation RemoveShipment($command: InputRemoveShipmentType!) {
+  removeShipment(command: $command) {
+    name
+  }
+}

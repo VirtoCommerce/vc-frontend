@@ -15,6 +15,7 @@ export { default as rejectGiftItems } from "./mutations/rejectGiftItems";
 export { default as removeCart } from "./mutations/removeCart";
 export { default as removeCartItem } from "./mutations/removeCartItem";
 export { default as removeCoupon } from "./mutations/removeCoupon";
+export { default as removeShipment } from "./mutations/removeShipment";
 export { default as validateCoupon } from "./mutations/validateCoupon";
 
 export { default as getMyCart } from "./queries/getMyCart";
