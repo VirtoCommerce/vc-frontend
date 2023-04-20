@@ -48,6 +48,7 @@
       <!-- Sections for single page checkout -->
       <template v-if="!$cfg.checkout_multistep_enabled">
         <ShippingDetailsSection
+          v-if="!allItemsAreDigital"
           :methods="availableShippingMethods"
           :shipment="shipment"
           :disabled="loading"
@@ -63,6 +64,7 @@
           :payment="payment"
           :shipment="shipment"
           :disabled="loading"
+          :with-shipment="!allItemsAreDigital"
           @change:address="onChangeBillingAddress"
           @change:method="setPaymentMethod"
         />
@@ -71,7 +73,7 @@
       </template>
 
       <template #sidebar>
-        <OrderSummary :cart="cart" footnote>
+        <OrderSummary :cart="cart" :with-shipping-cost="!allItemsAreDigital" footnote>
           <template #footer>
             <!-- Purchase order number -->
             <VcActionInput
@@ -194,6 +196,7 @@ const {
   availableShippingMethods,
   availablePaymentMethods,
   hasValidationErrors,
+  allItemsAreDigital,
   fetchCart,
   changeItemQuantity,
   removeItem,
@@ -239,7 +242,9 @@ const creatingQuote = ref(false);
 const loading = computed<boolean>(() => loadingCart.value || creatingQuote.value || creatingOrder.value);
 const isDisabledNextStep = computed<boolean>(() => loading.value || hasValidationErrors.value);
 const isDisabledOrderCreation = computed<boolean>(() => loading.value || !isValidCheckout.value);
-const isShowIncompleteDataWarning = computed<boolean>(() => !isValidShipment.value || !isValidPayment.value);
+const isShowIncompleteDataWarning = computed<boolean>(
+  () => (!allItemsAreDigital.value && !isValidShipment.value) || !isValidPayment.value
+);
 
 async function handleRemoveItem(lineItem: LineItemType): Promise<void> {
   await removeItem(lineItem.id);

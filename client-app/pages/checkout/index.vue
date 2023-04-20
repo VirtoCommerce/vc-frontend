@@ -8,7 +8,7 @@
 
     <VcSteps
       :steps="
-        currentStepId === 'CheckoutPayment'
+        currentStepName === 'CheckoutPayment'
           ? [
               {
                 icon: 'arrow-bold',
@@ -34,14 +34,15 @@
 import { invoke } from "@vueuse/core";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables";
 import { useCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout";
 
 const route = useRoute();
+const router = useRouter();
 const { t } = useI18n();
-const { loading: loadingCart } = useCart();
+const { loading: loadingCart, cart, allItemsAreDigital } = useCart();
 const { loading: loadingCheckout, placedOrder, canPayNow, initialize } = useCheckout();
 
 const stepIDsWithEmptyLayout = ["CheckoutPaymentResult", "CheckoutCompleted"];
@@ -73,6 +74,10 @@ const steps = computed<IStepsItem[]>(() => {
     },
   ];
 
+  if (allItemsAreDigital.value) {
+    result.splice(1, 1);
+  }
+
   if (canPayNow.value) {
     // Replace the last step "Completed" with the payment steps.
     result.splice(
@@ -91,9 +96,9 @@ const steps = computed<IStepsItem[]>(() => {
 
   return result;
 });
-const currentStepId = computed<string>(() => route.name as string);
-const currentStepIndex = computed<number>(() => steps.value.findIndex((step) => step.id === currentStepId.value));
-const isEmptyLayout = computed<boolean>(() => stepIDsWithEmptyLayout.includes(currentStepId.value));
+const currentStepName = computed<string>(() => route.name as string);
+const currentStepIndex = computed<number>(() => steps.value.findIndex((step) => step.id === currentStepName.value));
+const isEmptyLayout = computed<boolean>(() => stepIDsWithEmptyLayout.includes(currentStepName.value));
 const pageTitle = computed<string>(() => steps.value[currentStepIndex.value]?.text ?? "<UNKNOWN__FOR_DEV_MODE>");
 
 usePageHead({
@@ -101,9 +106,12 @@ usePageHead({
 });
 
 invoke(async () => {
-  // Initialize on the first step
-  if (currentStepIndex.value == 1) {
+  if (currentStepName.value === "Shipping" || currentStepName.value === "Billing") {
     await initialize();
+  }
+
+  if (allItemsAreDigital.value && currentStepName.value === "Shipping") {
+    router.replace({ name: "Billing" });
   }
 });
 </script>

@@ -8,6 +8,7 @@
       :payment="payment"
       :shipment="shipment"
       :disabled="loading"
+      :with-shipment="!allItemsAreDigital"
       @change:address="onBillingAddressChange"
       @change:method="setPaymentMethod"
     />
@@ -61,7 +62,8 @@ import { computed } from "vue";
 import { useCart, usePurchaseOrderNumber } from "@/shared/cart";
 import { BillingDetailsSection, OrderSummary, useCheckout } from "@/shared/checkout";
 
-const { loading, cart, shipment, payment, hasValidationErrors, availablePaymentMethods } = useCart();
+const { loading, cart, shipment, payment, hasValidationErrors, availablePaymentMethods, allItemsAreDigital } =
+  useCart();
 const {
   purchaseOrderNumber,
   billingAddressEqualsShipping,

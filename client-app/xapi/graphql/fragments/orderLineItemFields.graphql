@@ -6,6 +6,7 @@ fragment orderLineItemFields on OrderLineItemType {
   isGift
   name
   productId
+  productType
   product {
     id
     brandName

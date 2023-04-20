@@ -54,6 +54,7 @@ export default function useCheckout() {
     availableShippingMethods,
     availablePaymentMethods,
     hasValidationErrors,
+    allItemsAreDigital,
     fetchCart,
     updateShipment,
     updatePayment,
@@ -69,8 +70,10 @@ export default function useCheckout() {
   const isValidPaymentMethod = computed<boolean>(() => !!payment.value?.paymentGatewayCode);
   const isValidShipment = computed<boolean>(() => isValidDeliveryAddress.value && isValidShipmentMethod.value);
   const isValidPayment = computed<boolean>(() => isValidBillingAddress.value && isValidPaymentMethod.value);
-  const isValidCheckout = computed<boolean>(
-    () => isValidShipment.value && isValidPayment.value && !hasValidationErrors.value
+  const isValidCheckout = computed<boolean>(() =>
+    !allItemsAreDigital.value
+      ? isValidShipment.value && isValidPayment.value && !hasValidationErrors.value
+      : isValidPayment.value && !hasValidationErrors.value
   );
   const isCorporateMember = computed<boolean>(() => !!user.value.contact?.organizationId);
 
@@ -310,7 +313,7 @@ export default function useCheckout() {
     };
 
     // Save shipping address as billing address
-    if (billingAddressEqualsShipping.value) {
+    if (!allItemsAreDigital.value && billingAddressEqualsShipping.value) {
       filledPayment.billingAddress = {
         ...shipment.value!.deliveryAddress,
         addressType: AddressType.Billing,
@@ -337,7 +340,7 @@ export default function useCheckout() {
     // Parallel saving of new addresses in account. Before cleaning shopping cart
     if (isAuthenticated.value) {
       saveNewAddresses({
-        shippingAddress: shipment.value!.deliveryAddress,
+        shippingAddress: !allItemsAreDigital.value ? shipment.value!.deliveryAddress : undefined,
         billingAddress: payment.value!.billingAddress,
       });
     }

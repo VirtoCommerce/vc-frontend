@@ -38,4 +38,5 @@ export type PreparedLineItemType = {
   properties: Property[];
   minQuantity?: number;
   maxQuantity?: number;
+  productType?: string;
 };

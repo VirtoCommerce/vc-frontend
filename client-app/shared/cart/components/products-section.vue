@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { CartLineItems } from "@/shared/cart";
+import CartLineItems from "./cart-line-items.vue";
 import type { LineItemsGroupByVendorType } from "@/core/types";
 import type { LineItemType, ValidationErrorType } from "@/xapi/types";
 

@@ -1,4 +1,5 @@
 import { computed, ref, shallowRef } from "vue";
+import { ProductType } from "@/core/enums";
 import { getLineItemsGroupedByVendor, Logger } from "@/core/utilities";
 import { addOrUpdateOrderPayment, getOrder } from "@/xapi";
 import type { LineItemsGroupByVendorType } from "@/core/types";
@@ -64,6 +65,9 @@ export default function useUserOrder() {
   return {
     loading: computed(() => loading.value),
     order: computed(() => order.value),
+    allItemsAreDigital: computed<boolean>(
+      () => order.value?.items?.every((item) => item.productType === ProductType.Digital) || false
+    ),
     giftItems,
     orderItems,
     orderItemsGroupedByVendor,

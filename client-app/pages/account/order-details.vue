@@ -69,7 +69,7 @@
         </VcCardWidget>
 
         <!-- Order summary -->
-        <OrderSummary :cart="order" class="order-last">
+        <OrderSummary :cart="order" :with-shipping-cost="!allItemsAreDigital" class="order-last">
           <template #footer>
             <VcButton
               v-if="showPaymentButton"
@@ -87,7 +87,7 @@
         </VcCardWidget>
 
         <!-- Shipping Method Card -->
-        <VcCardWidget v-if="shipment" :title="$t('common.titles.shipping_method')" icon="truck">
+        <VcCardWidget v-if="!allItemsAreDigital && shipment" :title="$t('common.titles.shipping_method')" icon="truck">
           <div class="flex items-center gap-4 text-15">
             <VcImage :src="shipment.shippingMethod?.logoUrl" class="h-12 w-12" lazy />
 
@@ -99,7 +99,11 @@
         </VcCardWidget>
 
         <!-- Shipping Address Card -->
-        <VcCardWidget v-if="deliveryAddress" :title="$t('common.titles.shipping_address')" icon="truck">
+        <VcCardWidget
+          v-if="!allItemsAreDigital && deliveryAddress"
+          :title="$t('common.titles.shipping_address')"
+          icon="truck"
+        >
           <VcAddressInfo :address="deliveryAddress" class="text-15" />
         </VcCardWidget>
 
@@ -147,6 +151,7 @@ const {
   billingAddress,
   shipment,
   payment,
+  allItemsAreDigital,
   fetchOrder,
   clearOrder,
 } = useUserOrder();

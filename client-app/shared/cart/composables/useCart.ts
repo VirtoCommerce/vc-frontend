@@ -2,6 +2,7 @@ import { computedEager } from "@vueuse/core";
 import { keyBy, sumBy } from "lodash";
 import { computed, readonly, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
+import { ProductType } from "@/core/enums";
 import { getLineItemsGroupedByVendor, Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
@@ -410,5 +411,8 @@ export default function useCart() {
     openClearCartModal,
     loading: readonly(loading),
     cart: computed(() => cart.value),
+    allItemsAreDigital: computed<boolean>(
+      () => cart.value?.items?.every((item) => item.productType === ProductType.Digital) || false
+    ),
   };
 }

@@ -28,7 +28,11 @@
           @update:model-value="$emit('change:itemQuantity', { item, quantity: $event })"
         />
 
-        <VcInStock :quantity="item.inStockQuantity" is-in-stock />
+        <VcInStock
+          :quantity="item.inStockQuantity"
+          :is-digital="item.productType === ProductType.Digital"
+          is-in-stock
+        />
       </div>
 
       <VcLineItemTotal :list-total="item.extendedPrice" />
@@ -45,6 +49,7 @@
 <script setup lang="ts">
 import { groupBy } from "lodash";
 import { computed } from "vue";
+import { ProductType } from "@/core/enums";
 import type { LineItemType, ValidationErrorType } from "@/xapi/types";
 
 interface IProps {
