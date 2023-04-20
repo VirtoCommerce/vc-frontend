@@ -1,4 +1,5 @@
 import { getProductRoute } from "../product";
+import { getPropertiesGroupedByName } from "../properties";
 import type {
   AnyLineItemType,
   ExtendedLineItemType,
@@ -42,6 +43,7 @@ export function getLineItemsGroupedByVendor<T extends LineItemType | OrderLineIt
   return result;
 }
 
+/** @deprecated Use `prepareLineItem` function */
 export function extendLineItem<T extends AnyLineItemType>(item: T): ExtendedLineItemType<T> {
   return {
     ...item,
@@ -59,6 +61,7 @@ export function extendLineItem<T extends AnyLineItemType>(item: T): ExtendedLine
 }
 
 export function prepareLineItem(item: AnyLineItemType): PreparedLineItemType {
+  const isVariation = !!item.product?.masterVariation;
   const placedPrice = "placedPrice" in item ? item.placedPrice : undefined;
   const listPrice = "listPrice" in item ? item.listPrice : placedPrice;
   const actualPrice = "salePrice" in item ? item.salePrice : undefined;
@@ -66,6 +69,10 @@ export function prepareLineItem(item: AnyLineItemType): PreparedLineItemType {
   const quantity = isQuoteItemType(item) ? item.selectedTierPrice?.quantity : item.quantity;
   const inStockQuantity =
     "inStockQuantity" in item ? item.inStockQuantity : item.product?.availabilityData?.availableQuantity;
+  const properties = Object.values(getPropertiesGroupedByName(item.product?.properties ?? []));
+  const route = isVariation
+    ? getProductRoute(item.product!.masterVariation!.id || "", item.product!.masterVariation!.slug)
+    : getProductRoute(item.productId || item.product?.id || "", item.product?.slug);
 
   return {
     id: item.id,
@@ -76,9 +83,9 @@ export function prepareLineItem(item: AnyLineItemType): PreparedLineItemType {
     extendedPrice,
     quantity,
     inStockQuantity,
+    route,
     deleted: !item.product,
-    route: getProductRoute(item.productId || item.product?.id || "", item.product?.slug),
-    properties: item.product?.properties?.slice(0, 3) || [],
+    properties: properties.slice(0, 3),
     minQuantity: item.product?.minQuantity,
     maxQuantity:
       (<LineItemType>item).inStockQuantity ||

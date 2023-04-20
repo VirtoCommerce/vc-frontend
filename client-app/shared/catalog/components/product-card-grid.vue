@@ -118,23 +118,20 @@
       <div
         class="mt-2 grid w-full grid-cols-2 gap-1.5 text-14 leading-4 text-tooltip empty:hidden lg:mt-0.5 lg:gap-y-0.5 lg:text-11"
       >
-        <!-- Product props -->
-        <template v-if="product.properties">
-          <template v-for="prop in product.properties.slice(0, 3)" :key="prop.id">
-            <div class="min-w-0">
-              <div class="truncate font-bold">{{ prop.label }}:</div>
+        <!-- Product properties -->
+        <template v-for="prop in properties" :key="prop.id">
+          <div class="min-w-0">
+            <div class="truncate font-bold">{{ prop.label }}:</div>
+          </div>
+          <div class="min-w-0">
+            <div class="truncate">
+              {{ prop.value }}
             </div>
-            <div class="min-w-0">
-              <div class="truncate">
-                {{ prop.value }}
-              </div>
-            </div>
-          </template>
+          </div>
         </template>
 
-        <!-- Raiting -->
-        <!--
-        <template v-if="true">
+        <!-- Rating -->
+        <template v-if="false">
           <div class="min-w-0">
             <div class="truncate font-bold">
               {{ $t("shared.catalog.product_card.product_rating") }}
@@ -142,7 +139,7 @@
           </div>
           <div class="flex items-center gap-1">
             <svg
-              class="shrink-0 w-3 h-3"
+              class="h-3 w-3 shrink-0"
               :class="{
                 'text-[color:var(--color-success)]': true,
                 'text-[color:var(--color-warning)]': false,
@@ -154,7 +151,6 @@
             <div class="font-bold">4,3/5</div>
           </div>
         </template>
-        -->
 
         <!-- Vendor -->
         <template v-if="$cfg.vendor_enabled && product.vendor">
@@ -216,8 +212,8 @@
 import { Pagination, Navigation, Lazy } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, ref } from "vue";
-import { ProductType } from "@/core/enums";
-import { getProductRoute } from "@/core/utilities";
+import { ProductType, PropertyType } from "@/core/enums";
+import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import DiscountBadge from "./discount-badge.vue";
@@ -239,6 +235,9 @@ const swiperBulletsState = ref<boolean[]>([true, false, false]);
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
+const properties = computed(() =>
+  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3)
+);
 
 function slideChanged(swiper: SwiperInstance) {
   const activeIndex: number = swiper.activeIndex;

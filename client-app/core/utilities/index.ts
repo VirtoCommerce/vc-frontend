@@ -6,4 +6,5 @@ export * from "./line-items";
 export * from "./logger";
 export * from "./menu";
 export * from "./product";
+export * from "./properties";
 export * from "./search";

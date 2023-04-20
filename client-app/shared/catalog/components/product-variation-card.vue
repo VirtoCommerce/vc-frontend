@@ -25,8 +25,8 @@
       <div class="flex flex-1 flex-col xl:flex-row xl:space-x-3">
         <div class="flex flex-1 flex-col gap-y-3 max-xl:mb-2 md:gap-y-1">
           <!-- Properties -->
-          <VariationProperty v-for="property in groupedProperties" :key="property.name" :label="property.name">
-            {{ property.values }}
+          <VariationProperty v-for="property in propertiesByName" :key="property.name" :label="property.label!">
+            {{ property.value }}
           </VariationProperty>
 
           <!-- Price -->
@@ -49,7 +49,7 @@
             <AddToCart :product="variation" />
 
             <VcInStock
-              :is-in-stock="variation.availabilityData?.isInStock"
+              :is-in-stock="!!variation.availabilityData?.isInStock"
               :is-digital="isDigital"
               :quantity="variation.availabilityData?.availableQuantity"
               class="mt-2.5 inline-block"
@@ -62,11 +62,10 @@
 </template>
 
 <script setup lang="ts">
-import _ from "lodash";
 import { computed } from "vue";
-import { ProductType } from "@/core/enums";
+import { ProductType, PropertyType } from "@/core/enums";
+import { getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
-import { prepareProperties } from "../utils";
 import VariationProperty from "./variation-property.vue";
 import Vendor from "./vendor.vue";
 import type { Product, VariationType } from "@/xapi/types";
@@ -77,15 +76,9 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-// TODO: move this logic to the separated helper. For product properties also
-const groupedProperties = computed(() => {
-  return _(props.variation.properties)
-    .filter((p) => !!p && p.type === "Variation" && p.value !== undefined && p.value !== null && !p.hidden)
-    .groupBy((p) => p.name)
-    .map(prepareProperties)
-    .value();
-});
-const isDigital = computed<boolean>(
-  () => "productType" in props.variation && props.variation.productType === ProductType.Digital
+const propertiesByName = computed(() =>
+  getPropertiesGroupedByName(props.variation.properties ?? [], PropertyType.Variation)
 );
+
+const isDigital = computed<boolean>(() => props.variation.productType === ProductType.Digital);
 </script>

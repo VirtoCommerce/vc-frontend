@@ -29,7 +29,7 @@
         </div>
 
         <div class="vc-line-item__properties">
-          <VcProperty v-for="property in properties" :key="property.id" :label="property.label">
+          <VcProperty v-for="property in properties" :key="property.name" :label="property.label">
             {{ property.value }}
           </VcProperty>
 
@@ -66,6 +66,7 @@
 
 <script setup lang="ts">
 import type { Property, MoneyType } from "@/xapi/types";
+import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
   (event: "remove"): void;
@@ -74,7 +75,7 @@ interface IEmits {
 interface IProps {
   imageUrl?: string;
   name: string;
-  route?: string;
+  route?: RouteLocationRaw;
   properties?: Property[];
   listPrice?: MoneyType;
   actualPrice?: MoneyType;
@@ -84,7 +85,9 @@ interface IProps {
 }
 
 defineEmits<IEmits>();
-defineProps<IProps>();
+withDefaults(defineProps<IProps>(), {
+  properties: () => [],
+});
 </script>
 
 <style lang="scss">

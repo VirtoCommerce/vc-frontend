@@ -87,7 +87,7 @@ const preparedLineItems = computed<PreparedLineItemType[]>(() => prepareLineItem
 const subtotal = computed<number>(() => sumBy(props.items, (item: LineItemType) => item.extendedPrice?.amount));
 </script>
 
-<style setup lang="scss">
+<style lang="scss">
 .vc-line-items {
   @media (min-width: theme("screens.md")) {
     @apply border rounded divide-y;

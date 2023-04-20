@@ -5,8 +5,8 @@
     image-src="/static/images/technical_specs.svg"
   >
     <!-- Properties -->
-    <ProductProperty v-for="property in propertiesToShow" :key="property.name" :label="property.name" class="mb-4">
-      {{ property.values }}
+    <ProductProperty v-for="property in displayedProperties" :key="property.name" :label="property.label!" class="mb-4">
+      {{ property.value }}
     </ProductProperty>
 
     <!-- Vendor -->
@@ -14,17 +14,18 @@
       <Vendor :vendor="product.vendor!" with-rating />
     </ProductProperty>
 
-    <div v-if="groupedProperties.length > MAX_DISPLAY_ITEMS" class="-mt-1 mb-4">
+    <div v-if="allProperties.length > MAX_DISPLAY_ITEMS" class="-mt-1 mb-4">
       <VcButtonSeeMoreLess v-model="showAll" />
     </div>
   </ProductTitledBlock>
 </template>
 
 <script setup lang="ts">
-import _ from "lodash";
-import { computed, ref, inject } from "vue";
+import { computed, inject, ref } from "vue";
+import { PropertyType } from "@/core/enums";
 import { configInjectionKey } from "@/core/injection-keys";
-import { prepareProperties, ProductProperty, ProductTitledBlock, Vendor } from "@/shared/catalog";
+import { getPropertiesGroupedByName } from "@/core/utilities";
+import { ProductProperty, ProductTitledBlock, Vendor } from "@/shared/catalog";
 import type { Product } from "@/xapi/types";
 
 interface IProps {
@@ -37,23 +38,20 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const cfg = inject(configInjectionKey, {});
+const config = inject(configInjectionKey, {});
 
 const MAX_DISPLAY_ITEMS = 8;
 
 const showAll = ref(false);
 
-// TODO: move this logic to the separated helper. For variations properties also
-const groupedProperties = computed(() => {
-  return _(props.product.properties)
-    .filter((p) => !!p && p.type === "Product" && p.value !== undefined && p.value !== null && !p.hidden)
-    .groupBy((p) => p.name)
-    .map(prepareProperties)
-    .value();
-});
-const showVendor = computed(() => cfg.vendor_enabled && !props.product.hasVariations && props.product.vendor);
-const showPropertiesBlock = computed(() => !props.model.hidden && (groupedProperties.value.length || showVendor.value));
-const propertiesToShow = computed(() =>
-  showAll.value ? groupedProperties.value : groupedProperties.value.slice(0, MAX_DISPLAY_ITEMS)
+const allProperties = computed(() =>
+  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product))
 );
+
+const displayedProperties = computed(() =>
+  showAll.value ? allProperties.value : allProperties.value.slice(0, MAX_DISPLAY_ITEMS)
+);
+
+const showVendor = computed(() => config.vendor_enabled && !props.product.hasVariations && props.product.vendor);
+const showPropertiesBlock = computed(() => !props.model.hidden && (allProperties.value.length || showVendor.value));
 </script>
