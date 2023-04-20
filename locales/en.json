@@ -64,7 +64,6 @@
       "address": "Address",
       "phone": "Phone",
       "email": "Email",
-      "work_email": "Corporate email address",
       "country": "Country",
       "zip_or_postal_code": "ZIP / Postal code",
       "region": "State/Province",
