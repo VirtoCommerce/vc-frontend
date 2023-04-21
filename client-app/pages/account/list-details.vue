@@ -11,6 +11,13 @@
       </h2>
 
       <div v-if="!isMobile" class="flex gap-x-3">
+        <VcButton :is-disabled="!canSaveChanges" class="px-3 uppercase" size="sm" is-outline @click="saveChanges">
+          <!-- TODO: Use actual icon from UI kit -->
+          <!--<VcIcon name="save" size="sm" class="mr-2" />-->
+          <i class="fas fa-floppy-disk mr-2" />
+          {{ $t("common.buttons.save_changes") }}
+        </VcButton>
+
         <VcButton
           :is-disabled="loading"
           class="w-36 px-3 uppercase"
@@ -18,7 +25,7 @@
           is-outline
           @click="openListSettingsModal"
         >
-          <i class="fas fa-cog -ml-0.5 mr-2 text-inherit" />
+          <VcIcon name="cog" size="sm" class="mr-2" />
           {{ $t("shared.wishlists.list_card.list_settings_button") }}
         </VcButton>
 
@@ -116,7 +123,7 @@ import {
   extendWishListItem,
 } from "@/shared/wishlists";
 import type { ExtendedLineItemType } from "@/core/types";
-import type { InputNewBulkItemType, LineItemType, Product } from "@/xapi/types";
+import type { InputNewBulkItemType, InputUpdateWishlistItemsType, LineItemType, Product } from "@/xapi/types";
 
 interface IProps {
   listId: string;
@@ -126,7 +133,7 @@ const props = defineProps<IProps>();
 
 const { t } = useI18n();
 const { openPopup } = usePopup();
-const { loading: listLoading, list, fetchWishList, clearList } = useWishlists();
+const { loading: listLoading, list, fetchWishList, clearList, updateWishlistItemsQuantities } = useWishlists();
 const { cart, loading: cartLoading, addToCart, changeItemQuantity, addBulkItemsToCart } = useCart();
 const ga = useGoogleAnalytics();
 
@@ -134,9 +141,16 @@ usePageHead({
   title: computed(() => t("pages.account.list_details.meta.title", [list.value?.name])),
 });
 
-const inputBulkItems = ref<InputNewBulkItemType[]>([]);
+const inputWishlistItems = ref<InputNewBulkItemType[]>([]);
 const itemsPerPage = ref(6);
 const page = ref(1);
+
+const originalItemQuantities = computed(() =>
+  list.value?.items?.map((item) => ({
+    productSku: item.sku,
+    quantity: item.quantity!,
+  }))
+);
 
 const loading = computed<boolean>(() => listLoading.value || cartLoading.value);
 
@@ -153,6 +167,16 @@ const extendedItems = computed<ExtendedLineItemType<LineItemType>[]>(() =>
   })
 );
 
+const changedItems = computed(() =>
+  inputWishlistItems.value?.filter((originalItem) =>
+    originalItemQuantities.value?.some(
+      (i) => i.productSku === originalItem.productSku && i.quantity !== originalItem.quantity
+    )
+  )
+);
+
+const canSaveChanges = computed<boolean>(() => loading.value || !!changedItems.value?.length);
+
 const pages = computed<number>(() => Math.ceil((list.value?.items?.length ?? 0) / itemsPerPage.value));
 const pagedListItems = computed<ExtendedLineItemType<LineItemType>[]>(() =>
   extendedItems.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
@@ -163,7 +187,7 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 
 function updateWishListItem(item: InputNewBulkItemType): void {
-  const inputBulkItem = inputBulkItems.value?.find((bulkItem) => bulkItem.productSku === item.productSku);
+  const inputBulkItem = inputWishlistItems.value?.find((bulkItem) => bulkItem.productSku === item.productSku);
   if (inputBulkItem) {
     inputBulkItem.quantity = item.quantity;
   }
@@ -188,17 +212,17 @@ async function updateCartItem(item: InputNewBulkItemType): Promise<void> {
 }
 
 async function addAllListItemsToCart() {
-  if (!list.value || !inputBulkItems.value) {
+  if (!list.value || !inputWishlistItems.value) {
     return;
   }
 
   const inputItems = cloneDeep(list.value.items!);
-  const resultItems = await addBulkItemsToCart(inputBulkItems.value);
+  const resultItems = await addBulkItemsToCart(inputWishlistItems.value);
 
   ga.addItemsToCart(inputItems);
 
   inputItems.forEach((inputItem) => {
-    const inputBulkItem = inputBulkItems.value?.find((item) => item.productSku === inputItem.sku);
+    const inputBulkItem = inputWishlistItems.value?.find((item) => item.productSku === inputItem.sku);
     if (inputBulkItem) {
       inputItem.quantity = inputBulkItem.quantity;
     }
@@ -245,6 +269,54 @@ function openListSettingsModal() {
   });
 }
 
+function getSaveChangesPayload(): InputUpdateWishlistItemsType {
+  const result: InputUpdateWishlistItemsType = {
+    listId: list.value!.id!,
+    items: [],
+  };
+
+  changedItems.value.forEach((item) => {
+    const wishlistItem = list.value?.items?.find((i) => i.sku === item.productSku);
+    if (wishlistItem) {
+      result.items.push({
+        lineItemId: wishlistItem.id,
+        quantity: item.quantity!,
+      });
+    }
+  });
+
+  return result;
+}
+
+function getDefaultListItemsValues(): InputNewBulkItemType[] {
+  return (
+    list.value?.items?.map<InputNewBulkItemType>((item) => ({
+      productSku: item.sku!,
+      quantity: item.quantity,
+    })) || []
+  );
+}
+
+async function saveChanges(): Promise<void> {
+  const closeDialog = openPopup({
+    component: "VcConfirmationDialog",
+    props: {
+      variant: "info",
+      noIcon: true,
+      title: t("common.labels.save_changes"),
+      text: t("common.messages.save_new_product_quantity"),
+      onConfirm: async () => {
+        closeDialog();
+
+        await updateWishlistItemsQuantities(getSaveChangesPayload());
+      },
+      onClose: () => {
+        inputWishlistItems.value = getDefaultListItemsValues();
+      },
+    },
+  });
+}
+
 /**
  * Scroll after page change.
  */
@@ -274,10 +346,6 @@ watchEffect(() => {
 });
 
 watchEffect(() => {
-  inputBulkItems.value =
-    list.value?.items?.map<InputNewBulkItemType>((item) => ({
-      productSku: item.sku!,
-      quantity: item.quantity,
-    })) || [];
+  inputWishlistItems.value = getDefaultListItemsValues();
 });
 </script>

@@ -40,7 +40,8 @@ import { number } from "yup";
 import type { AvailabilityData } from "@/xapi/types";
 
 interface IEmits {
-  (event: "update:modelValue", value: number): void;
+  (event: "update:modelValue", value: number): void; // WORKAROUND TO REMOVE WARNING!
+  (event: "update:listItemQuantity", value: number): void;
   (event: "update:cartItemQuantity", quantity: number): void;
 }
 
@@ -53,7 +54,7 @@ interface IProps {
   maxQuantity?: number;
 }
 
-defineEmits<IEmits>();
+const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const MAX_VALUE = 999999;
@@ -98,8 +99,8 @@ const { value: enteredQuantity, validate, errorMessage } = useField("quantity", 
 async function onChange(): Promise<void> {
   const { valid } = await validate();
 
-  if (!valid || disabled.value) {
-    return;
+  if (valid && !disabled.value) {
+    emit("update:listItemQuantity", enteredQuantity.value!);
   }
 }
 </script>

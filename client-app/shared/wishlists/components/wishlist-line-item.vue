@@ -61,7 +61,7 @@
           :model-value="item.quantity"
           :count-in-cart="item.extended.countInCart"
           :availability-data="item.product?.availabilityData"
-          @update:model-value="changeItemQuantity"
+          @update:list-item-quantity="changeListItemQuantity"
           @update:cart-item-quantity="changeCartItemQuantity"
         />
 
@@ -110,7 +110,7 @@ const props = defineProps<IProps>();
 
 const ga = useGoogleAnalytics();
 
-function changeItemQuantity(quantity: number): void {
+function changeListItemQuantity(quantity: number): void {
   emit("update:listItemQuantity", { productSku: props.item.sku!, quantity });
 }
 
