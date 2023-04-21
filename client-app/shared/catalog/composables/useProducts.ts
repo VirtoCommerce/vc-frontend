@@ -1,10 +1,11 @@
 import { computed, inject, readonly, ref, shallowRef } from "vue";
+import { SortDirection } from "@/core/enums";
 import { configInjectionKey } from "@/core/injection-keys";
 import { Logger, rangeFacetToCommonFacet, termFacetToCommonFacet } from "@/core/utilities";
 import { searchProducts } from "@/xapi/graphql/catalog";
 import type { ProductsSearchParams } from "../types";
 import type { FacetItemType } from "@/core/types";
-import type { Product } from "@/xapi/types";
+import type { Product, RangeFacet, TermFacet } from "@/xapi/types";
 
 const DEFAULT_ITEMS_PER_PAGE = 16;
 
@@ -18,11 +19,11 @@ export default (
     withZeroPrice?: boolean;
   } = {}
 ) => {
-  const config = inject(configInjectionKey);
+  const config = inject(configInjectionKey, {});
   const {
     withFacets = false,
-    withImages = config?.image_carousel_in_product_card_enabled,
-    withZeroPrice = config?.zero_price_product_enabled,
+    withImages = config.image_carousel_in_product_card_enabled,
+    withZeroPrice = config.zero_price_product_enabled,
   } = options;
 
   const loading = ref(true);
@@ -32,6 +33,20 @@ export default (
   const facets = shallowRef<FacetItemType[]>([]);
   const total = ref(0);
   const pages = ref(1);
+
+  function setFacets({ termFacets = [], rangeFacets = [] }: { termFacets?: TermFacet[]; rangeFacets?: RangeFacet[] }) {
+    if (config.product_filters_sorting) {
+      const ascDirection = config.product_filters_sorting_direction === SortDirection.Ascending;
+
+      termFacets.sort((a, b) => (ascDirection ? a.label.localeCompare(b.label) : b.label.localeCompare(a.label)));
+      rangeFacets.sort((a, b) => (ascDirection ? a.label.localeCompare(b.label) : b.label.localeCompare(a.label)));
+    }
+
+    facets.value = Array<FacetItemType>().concat(
+      termFacets.map(termFacetToCommonFacet),
+      rangeFacets.map(rangeFacetToCommonFacet)
+    );
+  }
 
   async function fetchProducts(searchParams: Partial<ProductsSearchParams>) {
     loading.value = true;
@@ -52,13 +67,10 @@ export default (
       pages.value = Math.ceil(total.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE));
 
       if (withFacets) {
-        term_facets.sort((a, b) => a.label.localeCompare(b.label));
-        range_facets.sort((a, b) => a.label.localeCompare(b.label));
-
-        facets.value = Array<FacetItemType>().concat(
-          term_facets.map(termFacetToCommonFacet),
-          range_facets.map(rangeFacetToCommonFacet)
-        );
+        setFacets({
+          termFacets: term_facets,
+          rangeFacets: range_facets,
+        });
       }
     } catch (e) {
       Logger.error(`useProducts.${fetchProducts.name}`, e);
