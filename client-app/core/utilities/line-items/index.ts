@@ -50,7 +50,7 @@ export function extendLineItem<T extends AnyLineItemType>(item: T): ExtendedLine
     extended: {
       isProductExists: !!item.product,
       route: getProductRoute(item.productId || item.product?.id || "", item.product?.slug),
-      displayProperties: item.product?.properties?.slice(0, 3) || [],
+      displayProperties: Object.values(getPropertiesGroupedByName(item.product?.properties ?? [])).slice(0, 3),
       minQuantity: item.product?.minQuantity,
       maxQuantity:
         (<LineItemType>item).inStockQuantity ||

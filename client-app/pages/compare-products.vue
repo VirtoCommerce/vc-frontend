@@ -139,6 +139,8 @@ import _ from "lodash";
 import { ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead, useProductsRoutes } from "@/core/composables";
+import { PropertyValueType } from "@/core/enums";
+import { getPropertyValue } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
 import { useProducts } from "@/shared/catalog";
 import { useCompareProducts } from "@/shared/compare";
@@ -203,7 +205,7 @@ function getProperties() {
       values: _.map(products.value, (product) => {
         const property = _.find(product.properties, ["name", name]);
 
-        return property?.value || "-";
+        return property?.value || property?.valueType === PropertyValueType.Boolean ? getPropertyValue(property) : "-";
       }),
     };
   });
