@@ -54,8 +54,10 @@ export default function useCheckout() {
     availableShippingMethods,
     availablePaymentMethods,
     hasValidationErrors,
+    allItemsAreDigital,
     fetchCart,
     updateShipment,
+    removeShipment,
     updatePayment,
     changeComment,
     updatePurchaseOrderNumber,
@@ -63,14 +65,16 @@ export default function useCheckout() {
 
   const isValidDeliveryAddress = computed<boolean>(() => !!shipment.value?.deliveryAddress);
   const isValidBillingAddress = computed<boolean>(
-    () => billingAddressEqualsShipping.value || !!payment.value?.billingAddress
+    () => (!allItemsAreDigital.value && billingAddressEqualsShipping.value) || !!payment.value?.billingAddress
   );
   const isValidShipmentMethod = computed<boolean>(() => !!shipment.value?.shipmentMethodCode);
   const isValidPaymentMethod = computed<boolean>(() => !!payment.value?.paymentGatewayCode);
   const isValidShipment = computed<boolean>(() => isValidDeliveryAddress.value && isValidShipmentMethod.value);
   const isValidPayment = computed<boolean>(() => isValidBillingAddress.value && isValidPaymentMethod.value);
-  const isValidCheckout = computed<boolean>(
-    () => isValidShipment.value && isValidPayment.value && !hasValidationErrors.value
+  const isValidCheckout = computed<boolean>(() =>
+    allItemsAreDigital.value
+      ? isValidPayment.value && !hasValidationErrors.value
+      : isValidShipment.value && isValidPayment.value && !hasValidationErrors.value
   );
   const isCorporateMember = computed<boolean>(() => !!user.value.contact?.organizationId);
 
@@ -136,7 +140,13 @@ export default function useCheckout() {
     const defaultPaymentMethod = availablePaymentMethods.value.find((item) => item.code === paymentMethodCode);
     let reloadCart = false;
 
+    if (allItemsAreDigital.value && shipment.value) {
+      await removeShipment(shipment.value.id!, false);
+      reloadCart = true;
+    }
+
     if (
+      !allItemsAreDigital.value &&
       !shipment.value?.shipmentMethodCode &&
       !shipment.value?.shipmentMethodOption &&
       shippingMethodId &&
@@ -310,7 +320,7 @@ export default function useCheckout() {
     };
 
     // Save shipping address as billing address
-    if (billingAddressEqualsShipping.value) {
+    if (!allItemsAreDigital.value && billingAddressEqualsShipping.value) {
       filledPayment.billingAddress = {
         ...shipment.value!.deliveryAddress,
         addressType: AddressType.Billing,
@@ -337,7 +347,7 @@ export default function useCheckout() {
     // Parallel saving of new addresses in account. Before cleaning shopping cart
     if (isAuthenticated.value) {
       saveNewAddresses({
-        shippingAddress: shipment.value!.deliveryAddress,
+        shippingAddress: !allItemsAreDigital.value ? shipment.value!.deliveryAddress : undefined,
         billingAddress: payment.value!.billingAddress,
       });
     }

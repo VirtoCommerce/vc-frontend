@@ -41,7 +41,7 @@ import { useCheckout } from "@/shared/checkout";
 
 const route = useRoute();
 const { t } = useI18n();
-const { loading: loadingCart } = useCart();
+const { loading: loadingCart, allItemsAreDigital } = useCart();
 const { loading: loadingCheckout, placedOrder, canPayNow, initialize } = useCheckout();
 
 const stepIDsWithEmptyLayout = ["CheckoutPaymentResult", "CheckoutCompleted"];
@@ -73,6 +73,11 @@ const steps = computed<IStepsItem[]>(() => {
     },
   ];
 
+  if (allItemsAreDigital.value) {
+    // Remove "Shipping" step
+    result.splice(1, 1);
+  }
+
   if (canPayNow.value) {
     // Replace the last step "Completed" with the payment steps.
     result.splice(
@@ -102,7 +107,7 @@ usePageHead({
 
 invoke(async () => {
   // Initialize on the first step
-  if (currentStepIndex.value == 1) {
+  if (currentStepIndex.value === 1) {
     await initialize();
   }
 });

@@ -1,7 +1,8 @@
 import { computedEager } from "@vueuse/core";
 import { keyBy, sumBy } from "lodash";
 import { computed, readonly, ref, shallowRef } from "vue";
-import { useI18n } from "vue-i18n";
+import { ProductType } from "@/core/enums";
+import globals from "@/core/globals";
 import { getLineItemsGroupedByVendor, Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
@@ -22,6 +23,7 @@ import {
   removeCart as _removeCart,
   removeCartItem,
   removeCoupon,
+  removeShipment as _removeShipment,
   validateCoupon,
 } from "@/xapi";
 import { ClearCartModal } from "../components";
@@ -55,6 +57,10 @@ const lineItemsGroupedByVendor = computed<LineItemsGroupByVendorType<LineItemTyp
   getLineItemsGroupedByVendor(cart.value.items ?? [])
 );
 
+const allItemsAreDigital = computed<boolean>(
+  () => !!cart.value?.items?.every((item) => item.productType === ProductType.Digital)
+);
+
 const addedGiftsByIds = computed(() => keyBy(cart.value.gifts, "id"));
 
 const availableExtendedGifts = computed<ExtendedGiftItemType[]>(() =>
@@ -67,7 +73,6 @@ const hasValidationErrors = computedEager<boolean>(
 
 export default function useCart() {
   const notifications = useNotifications();
-  const { t } = useI18n();
   const { openPopup } = usePopup();
 
   async function fetchCart(): Promise<CartType> {
@@ -278,6 +283,23 @@ export default function useCart() {
     }
   }
 
+  async function removeShipment(shipmentId: string, reloadCart = true) {
+    loading.value = true;
+
+    try {
+      await _removeShipment(shipmentId, cart.value.id);
+    } catch (e) {
+      Logger.error(`${useCart.name}.${removeShipment.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+
+    if (reloadCart) {
+      await fetchCart();
+    }
+  }
+
   async function updatePayment(newPayment: InputPaymentType, reloadCart = true) {
     loading.value = true;
 
@@ -308,7 +330,7 @@ export default function useCart() {
 
     if (!quote) {
       notifications.error({
-        text: t("common.messages.creating_quote_error"),
+        text: globals.i18n.global.t("common.messages.creating_quote_error"),
         duration: 15000,
         single: true,
       });
@@ -385,6 +407,7 @@ export default function useCart() {
     availableShippingMethods,
     availablePaymentMethods,
     lineItemsGroupedByVendor,
+    allItemsAreDigital,
     addedGiftsByIds,
     availableExtendedGifts,
     hasValidationErrors,
@@ -400,6 +423,7 @@ export default function useCart() {
     removeCartCoupon,
     changeComment,
     updateShipment,
+    removeShipment,
     updatePayment,
     updatePurchaseOrderNumber,
     removeCart,
