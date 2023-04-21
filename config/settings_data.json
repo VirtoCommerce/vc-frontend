@@ -10,6 +10,8 @@
 
       "product_compare_enabled": true,
       "product_compare_limit": 5,
+      "product_filters_sorting": false,
+      "product_filters_sorting_direction": "asc",
 
       "vendor_enabled": true,
       "rating_enabled": true,
@@ -166,6 +168,8 @@
 
       "product_compare_enabled": true,
       "product_compare_limit": 5,
+      "product_filters_sorting": false,
+      "product_filters_sorting_direction": "asc",
 
       "vendor_enabled": true,
       "rating_enabled": true,
