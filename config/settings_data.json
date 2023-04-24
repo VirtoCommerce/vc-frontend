@@ -11,7 +11,7 @@
       "product_compare_enabled": true,
       "product_compare_limit": 5,
       "product_filters_sorting": true,
-      "product_filters_sorting_direction": "asc",
+      "product_filters_sorting_direction": "desc",
 
       "vendor_enabled": true,
       "rating_enabled": true,
