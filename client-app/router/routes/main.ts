@@ -7,6 +7,7 @@ import type { RouteRecordRaw } from "vue-router";
 import Error403 from "@/pages/403.vue";
 import Error404 from "@/pages/404.vue";
 import Error500 from "@/pages/500.vue";
+import Matcher from "@/pages/matcher.vue";
 
 const Home = () => import("@/pages/index.vue");
 const SingInPage = () => import("@/pages/sign-in.vue");
@@ -21,10 +22,11 @@ const BulkOrder = () => import("@/pages/bulk-order.vue");
 const CompareProducts = () => import("@/pages/compare-products.vue");
 const Cart = () => import("@/pages/cart.vue");
 const Checkout = () => import("@/pages/checkout/index.vue");
+const Search = () => import("@/pages/search.vue");
 const Catalog = () => import("@/pages/catalog.vue");
+const Category = () => import("@/pages/category.vue");
 const Product = () => import("@/pages/product.vue");
 const Branch = () => import("@/pages/branch.vue");
-const Matcher = () => import("@/ui-kit/components/pages/matcher.vue");
 
 // Private development pages
 const DemoLanding = () => import("@/pages/demo-landing.vue");
@@ -63,7 +65,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   },
   { path: "/demo-landing", name: "DemoLanding", component: DemoLanding, meta: { public: true } },
   { path: "/branch/:branchId", name: "BranchPage", component: Branch, props: true },
-  { path: "/search", name: "Search", component: Catalog },
+  { path: "/search", name: "Search", component: Search },
   { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },
   { path: "/compare", name: "CompareProducts", component: CompareProducts },
   { path: "/cart", name: "Cart", component: Cart },
@@ -91,7 +93,7 @@ export const mainRoutes: RouteRecordRaw[] = [
     },
   },
   { path: "/catalog", name: "Catalog", component: Catalog, props: true },
-  { path: "/category/:categoryId", name: "Category", component: Catalog, props: true },
+  { path: "/category/:categoryId", name: "Category", component: Category, props: true },
   { path: "/product/:productId", name: "Product", component: Product, props: true },
 
   /** NOTE: Always leave it last. */
