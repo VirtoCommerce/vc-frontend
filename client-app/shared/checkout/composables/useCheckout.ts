@@ -2,7 +2,7 @@ import { omit } from "lodash";
 import { computed, readonly, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useGoogleAnalytics } from "@/core/composables";
-import { AddressType } from "@/core/enums";
+import { AddressType, ProductType } from "@/core/enums";
 import { isEqualAddresses, Logger } from "@/core/utilities";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
 import { useCart } from "@/shared/cart";
@@ -102,6 +102,10 @@ export default function useCheckout() {
     () =>
       !!selectedPaymentMethodGroupType.value &&
       selectedPaymentMethodGroupType.value === PaymentMethodGroupType[PaymentMethodGroupType.Manual]
+  );
+
+  const allOrderItemsAreDigital = computed<boolean>(
+    () => !!placedOrder.value?.items?.every((item) => item.productType === ProductType.Digital)
   );
 
   function isExistAddress(address: AnyAddressType): boolean {
@@ -410,5 +414,6 @@ export default function useCheckout() {
     createOrderFromCart,
     loading: readonly(loading),
     placedOrder: computed(() => placedOrder.value),
+    allItemsAreDigital: readonly(allOrderItemsAreDigital),
   };
 }
