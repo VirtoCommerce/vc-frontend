@@ -26,7 +26,7 @@
     </div>
 
     <template #sidebar>
-      <OrderSummary :cart="placedOrder" />
+      <OrderSummary :cart="placedOrder" :no-shipping="allItemsAreDigital" />
     </template>
   </VcLayoutWithRightSidebar>
 </template>
@@ -39,7 +39,7 @@ import { PaymentActionType, PaymentProcessingAuthorizeNet, PaymentProcessingRedi
 import type { PaymentInType } from "@/xapi/types";
 
 const router = useRouter();
-const { placedOrder } = useCheckout();
+const { placedOrder, allItemsAreDigital } = useCheckout();
 
 const payment = computed<PaymentInType | undefined>(() => placedOrder.value!.inPayments[0]);
 const paymentMethodType = computed<number | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);
