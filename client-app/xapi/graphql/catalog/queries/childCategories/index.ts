@@ -1,53 +1,13 @@
 import { gql } from "graphql-tag";
 import globals from "@/core/globals";
+import { getChildCategoriesTreeString } from "@/xapi/utils";
 import type { Category, Query, QueryChildCategoriesArgs } from "@/xapi/types";
 import type { DocumentNode } from "graphql";
 
-function getQueryResponseTree(level: number): string {
-  const newLevel = level - 1;
-
-  if (newLevel >= 0) {
-    return `
-      childCategories {
-        id
-        name
-        level
-        slug
-        parent {
-          id
-        }
-        seoInfo {
-          pageTitle
-          metaKeywords
-          metaDescription
-        }
-        breadcrumbs {
-          title
-          seoPath
-        }
-        ${getQueryResponseTree(newLevel)}
-      }
-    `;
-  }
-
-  return "";
-}
-
-function getChildCategoriesFragment(maxLevel: number): DocumentNode {
-  const tree: string = getQueryResponseTree(maxLevel);
+function getQueryDocument(maxLevel: number): DocumentNode {
+  const childCategoriesFragment = getChildCategoriesTreeString(maxLevel);
 
   return gql`
-    fragment childCategoriesFields on ChildCategoriesQueryResponseType {
-      ${tree}
-    }
-  `;
-}
-
-function getQueryDocument(maxLevel: number): DocumentNode {
-  const childCategorisFragment = getChildCategoriesFragment(maxLevel);
-
-  const query: DocumentNode = gql`
-    ${childCategorisFragment}
     query ChildCategories(
       $storeId: String
       $userId: String
@@ -66,12 +26,11 @@ function getQueryDocument(maxLevel: number): DocumentNode {
         maxLevel: $maxLevel
         onlyActive: $onlyActive
       ) {
-        ...childCategoriesFields
+        __typename
+        ${childCategoriesFragment}
       }
     }
   `;
-
-  return query;
 }
 
 export default async function getChildCategories(payload: QueryChildCategoriesArgs): Promise<Category[]> {
