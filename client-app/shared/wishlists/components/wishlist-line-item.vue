@@ -98,7 +98,7 @@
 
 <script setup lang="ts">
 import { useField } from "vee-validate";
-import { ref, watchEffect } from "vue";
+import { ref, watchEffect, toRef } from "vue";
 import { useGoogleAnalytics } from "@/core/composables";
 import { useQuantity } from "@/shared/cart";
 import type { ExtendedLineItemType } from "@/core/types";
@@ -117,17 +117,16 @@ interface IProps {
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
+const initialValue = ref();
 const ga = useGoogleAnalytics();
-const { getQuantityParams } = useQuantity();
 
-const qty = ref(props.item.quantity);
+const { disabled, buttonOutlined, buttonText, rules, minQty } = useQuantity(toRef(props, "item"));
 
-const { disabled, buttonOutlined, buttonText, rules } = getQuantityParams(props.item);
-
-const { value: enteredQuantity, errorMessage, validate } = useField("quantity", rules);
+const { value: enteredQuantity, validate, errorMessage, setValue } = useField("quantity", rules, { initialValue });
 
 async function changeItemQuantity(quantity: number): Promise<void> {
-  qty.value = quantity;
+  initialValue.value = quantity;
+  setValue(initialValue.value);
 
   const { valid } = await validate();
 
@@ -149,7 +148,10 @@ function sendGASelectItemEvent() {
 }
 
 watchEffect(() => {
-  enteredQuantity.value = disabled.value ? undefined : qty.value;
+  if (!disabled.value) {
+    initialValue.value = props.item.extended.countInCart || minQty.value;
+    setValue(initialValue.value);
+  }
 });
 </script>
 

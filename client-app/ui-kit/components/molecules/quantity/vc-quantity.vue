@@ -18,6 +18,7 @@
     type="number"
     pattern="\d*"
     single-line-message
+    select-on-click
     center
     truncate
     @keyup.enter="changeQuantity"
@@ -28,8 +29,7 @@
       <VcButton
         :is-outline="buttonOutlined"
         :is-waiting="loading"
-        :is-disabled="disabled || error"
-        :title="buttonText"
+        :is-disabled="disabled || error || readonly"
         class="!h-full w-28 !rounded-[inherit] uppercase"
         size="sm"
         @click="$emit('click:button', quantity)"

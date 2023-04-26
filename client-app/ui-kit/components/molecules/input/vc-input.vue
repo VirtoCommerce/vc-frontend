@@ -25,6 +25,7 @@
 
       <input
         :id="componentId"
+        ref="inputElement"
         v-model="inputValue"
         v-bind="listeners"
         :type="inputType"
@@ -39,6 +40,7 @@
         :step="stepValue"
         :autocomplete="autocomplete"
         class="vc-input__input"
+        @click="onInputClick"
       />
 
       <div v-if="type === 'password' && !hidePasswordSwitcher" class="vc-input__decorator">
@@ -71,7 +73,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref, watchEffect, shallowRef } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/core/composables";
 
 interface IEmits {
@@ -103,6 +105,7 @@ interface IProps {
   truncate?: boolean;
   type?: "text" | "password" | "number";
   size?: "sm" | "md";
+  selectOnClick?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -115,6 +118,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const componentId = useComponentId("input");
 const listeners = useListeners();
 const attrs = useAttrsOnly();
+const inputElement = shallowRef<HTMLInputElement>();
 
 const inputType = ref("");
 const isPasswordVisible = ref(false);
@@ -140,6 +144,12 @@ const passwordVisibilityIcon = computed<string>(() => (isPasswordVisible.value ?
 function togglePasswordVisibility() {
   isPasswordVisible.value = !isPasswordVisible.value;
   inputType.value = isPasswordVisible.value ? "text" : "password";
+}
+
+function onInputClick() {
+  if (props.selectOnClick) {
+    inputElement.value?.select();
+  }
 }
 
 watchEffect(() => {
