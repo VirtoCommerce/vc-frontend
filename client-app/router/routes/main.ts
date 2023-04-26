@@ -1,4 +1,5 @@
 import { IS_DEVELOPMENT } from "@/core/constants";
+import { useCart } from "@/shared/cart";
 import { accountRoutes } from "./account";
 import { checkoutRoutes } from "./checkout";
 import { corporateRoutes } from "./company";
@@ -73,15 +74,19 @@ export const mainRoutes: RouteRecordRaw[] = [
     children: checkoutRoutes,
     redirect: { name: checkoutRoutes[0].name },
     meta: { layout: "Secure" },
-    beforeEnter(_, from, next) {
+    beforeEnter(to, from, next) {
+      const { allItemsAreDigital } = useCart();
       /**
        * NOTE: Allow proceeding to checkout only from cart.
        * Refreshing page will redirect to the cart. At any of the steps.
+       * If all products are digital, then skip the "Shipping" step.
        */
-      if (from.name === "Cart") {
-        next();
-      } else {
+      if (from.name !== "Cart") {
         next({ name: "Cart", replace: true });
+      } else if (allItemsAreDigital.value && to.name === "Shipping") {
+        next({ name: "Billing" });
+      } else {
+        next();
       }
     },
   },

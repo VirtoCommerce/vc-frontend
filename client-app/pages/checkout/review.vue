@@ -21,7 +21,7 @@
 
       <div class="divide-y lg:divide-y-0">
         <!-- Shipping details -->
-        <div class="mt-6 flex flex-col gap-6 md:mt-8 lg:flex-row lg:gap-8">
+        <div v-if="!allItemsAreDigital" class="mt-6 flex flex-col gap-6 md:mt-8 lg:flex-row lg:gap-8">
           <div class="lg:w-3/5">
             <VcLabel>
               {{ $t("shared.checkout.shipping_details_section.labels.shipping_address") }}
@@ -97,7 +97,7 @@
     <OrderCommentSection v-if="comment" :comment="comment" readonly />
 
     <template #sidebar>
-      <OrderSummary :cart="cart" footnote>
+      <OrderSummary :cart="cart" :no-shipping="allItemsAreDigital" footnote>
         <template #footer>
           <!-- Purchase order number -->
           <VcActionInput
@@ -158,6 +158,7 @@ const {
   availableShippingMethods,
   availablePaymentMethods,
   hasValidationErrors,
+  allItemsAreDigital,
   fetchCart,
 } = useCart();
 const { billingAddressEqualsShipping, comment, canPayNow, isValidCheckout, createOrderFromCart, purchaseOrderNumber } =
@@ -173,7 +174,9 @@ const shippingMethodId = computed(
   () => shipment.value?.shipmentMethodCode + "_" + shipment.value?.shipmentMethodOption
 );
 const billingAddress = computed<CartAddressType | undefined>(() =>
-  billingAddressEqualsShipping.value ? shipment.value?.deliveryAddress : payment.value?.billingAddress
+  !allItemsAreDigital.value && billingAddressEqualsShipping.value
+    ? shipment.value?.deliveryAddress
+    : payment.value?.billingAddress
 );
 
 async function createOrder(): Promise<void> {

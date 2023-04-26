@@ -8,6 +8,7 @@
 
         <div :class="['grow divide-y rounded border', { 'cursor-not-allowed bg-gray-50': disabled }]">
           <VcCheckbox
+            v-if="shipment"
             v-model="billingAddressEqualsShipping"
             :disabled="disabled"
             name="billingAddressEqualsShipping"
@@ -18,7 +19,7 @@
 
           <VcAddressSelection
             :placeholder="
-              billingAddressEqualsShipping
+              shipment && billingAddressEqualsShipping
                 ? $t('shared.checkout.shipping_details_section.links.select_address')
                 : $t('shared.checkout.billing_details_section.links.select_address')
             "
@@ -101,6 +102,7 @@ interface IProps {
 }
 
 const emit = defineEmits<IEmits>();
+
 const props = withDefaults(defineProps<IProps>(), {
   purchaseOrderNumber: "",
 });
@@ -110,7 +112,9 @@ const billingAddressEqualsShipping = useVModel(props, "addressEqualsShippingAddr
 const poNumber = useVModel(props, "purchaseOrderNumber", emit);
 
 const address = computed<CartAddressType | undefined>(() =>
-  billingAddressEqualsShipping.value ? props.shipment?.deliveryAddress : props.payment?.billingAddress
+  !!props.shipment && billingAddressEqualsShipping.value
+    ? props.shipment?.deliveryAddress
+    : props.payment?.billingAddress
 );
 
 const method = computed<PaymentMethodType | undefined>({

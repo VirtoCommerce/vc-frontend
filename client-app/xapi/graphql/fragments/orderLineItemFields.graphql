@@ -1,4 +1,5 @@
 #import "./moneyFields.graphql"
+#import "./propertyFields.graphql"
 
 fragment orderLineItemFields on OrderLineItemType {
   id
@@ -6,6 +7,7 @@ fragment orderLineItemFields on OrderLineItemType {
   isGift
   name
   productId
+  productType
   product {
     id
     brandName
@@ -15,12 +17,7 @@ fragment orderLineItemFields on OrderLineItemType {
       slug
     }
     properties {
-      name
-      value
-      type
-      hidden
-      valueType
-      label
+      ...propertyFields
     }
   }
   quantity

@@ -1,4 +1,5 @@
 import type { ISocialSharingService } from "./social-sharing";
+import type { SortDirection } from "@/core/enums";
 
 export interface IThemeConfigPreset {
   page_title_with_store_name?: boolean;
@@ -13,6 +14,8 @@ export interface IThemeConfigPreset {
   bulk_order_enabled?: boolean;
   product_compare_enabled?: boolean;
   product_compare_limit?: number;
+  product_filters_sorting?: boolean;
+  product_filters_sorting_direction?: SortDirection | string;
   out_of_stock_order_enabled?: boolean;
   search_suggestions_category_enabled?: boolean;
   search_suggestions_category_limit?: number;

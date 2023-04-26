@@ -54,18 +54,26 @@
 
         <div class="flex justify-between">
           <span>{{ $t("common.labels.tax") }}</span>
-          <span>{{ cart.taxTotal?.amount > 0 ? "+" : "" }}<VcPriceDisplay :value="cart.taxTotal" /></span>
+          <span>
+            {{ cart.taxTotal?.amount > 0 ? "+" : "" }}
+            <VcPriceDisplay :value="cart.taxTotal" />
+          </span>
         </div>
 
-        <div class="flex justify-between">
+        <div v-if="!noShipping" class="flex justify-between">
           <span>{{ $t("common.labels.shipping_cost") }}</span>
-          <span>{{ cart.shippingTotal?.amount > 0 ? "+" : "" }}<VcPriceDisplay :value="cart.shippingTotal" /></span>
+          <span>
+            {{ cart.shippingTotal?.amount > 0 ? "+" : "" }}
+            <VcPriceDisplay :value="cart.shippingTotal" />
+          </span>
         </div>
       </div>
 
       <div class="mt-4 flex justify-between text-base font-extrabold">
         <span>{{ $t("common.labels.total") }}</span>
-        <span class="text-green-700"><VcPriceDisplay :value="cart.total" /></span>
+        <span class="text-green-700">
+          <VcPriceDisplay :value="cart.total" />
+        </span>
       </div>
     </div>
 
@@ -92,12 +100,13 @@ import type {
   OrderLineItemType,
 } from "@/xapi/types";
 
-interface Props {
+interface IProps {
   cart: CartType | CustomerOrderType;
+  noShipping?: boolean;
   footnote?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = defineProps<IProps>();
 
 const { currentLanguage } = useLanguages();
 const { currentCurrency } = useCurrency();

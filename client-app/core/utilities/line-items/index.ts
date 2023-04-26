@@ -50,7 +50,7 @@ export function extendLineItem<T extends AnyLineItemType>(item: T): ExtendedLine
     extended: {
       isProductExists: !!item.product,
       route: getProductRoute(item.productId || item.product?.id || "", item.product?.slug),
-      displayProperties: item.product?.properties?.slice(0, 3) || [],
+      displayProperties: Object.values(getPropertiesGroupedByName(item.product?.properties ?? [])).slice(0, 3),
       minQuantity: item.product?.minQuantity,
       maxQuantity:
         (<LineItemType>item).inStockQuantity ||
@@ -61,6 +61,7 @@ export function extendLineItem<T extends AnyLineItemType>(item: T): ExtendedLine
 }
 
 export function prepareLineItem(item: AnyLineItemType): PreparedLineItemType {
+  const productType = "productType" in item ? item.productType : undefined;
   const isVariation = !!item.product?.masterVariation;
   const placedPrice = "placedPrice" in item ? item.placedPrice : undefined;
   const listPrice = "listPrice" in item ? item.listPrice : placedPrice;
@@ -78,6 +79,7 @@ export function prepareLineItem(item: AnyLineItemType): PreparedLineItemType {
     id: item.id,
     name: item.name || "",
     imageUrl: item.imageUrl,
+    productType,
     listPrice,
     actualPrice,
     extendedPrice,
