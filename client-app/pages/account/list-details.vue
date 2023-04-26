@@ -12,9 +12,7 @@
 
       <div v-if="!isMobile" class="flex gap-x-3">
         <VcButton :is-disabled="!canSaveChanges" class="px-3 uppercase" size="sm" is-outline @click="saveChanges">
-          <!-- TODO: Use actual icon from UI kit -->
-          <!--<VcIcon name="save" size="sm" class="mr-2" />-->
-          <i class="fas fa-floppy-disk mr-2" />
+          <VcIcon name="save-v2" size="sm" class="mr-2" />
           {{ $t("common.buttons.save_changes") }}
         </VcButton>
 
@@ -288,15 +286,6 @@ function getSaveChangesPayload(): InputUpdateWishlistItemsType {
   return result;
 }
 
-function getDefaultListItemsValues(): InputNewBulkItemType[] {
-  return (
-    list.value?.items?.map<InputNewBulkItemType>((item) => ({
-      productSku: item.sku!,
-      quantity: item.quantity,
-    })) || []
-  );
-}
-
 async function saveChanges(): Promise<void> {
   const closeDialog = openPopup({
     component: "VcConfirmationDialog",
@@ -311,7 +300,7 @@ async function saveChanges(): Promise<void> {
         await updateWishlistItemsQuantities(getSaveChangesPayload());
       },
       onClose: () => {
-        inputWishlistItems.value = getDefaultListItemsValues();
+        console.log("Test");
       },
     },
   });
@@ -343,9 +332,5 @@ watchEffect(() => {
       item_list_name: `Wishlist "${list.value?.name}"`,
     });
   }
-});
-
-watchEffect(() => {
-  inputWishlistItems.value = getDefaultListItemsValues();
 });
 </script>
