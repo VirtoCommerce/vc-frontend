@@ -4066,6 +4066,7 @@ export type QueryVendorArgs = {
 
 
 export type QueryWishlistArgs = {
+  cultureName?: InputMaybe<Scalars['String']>;
   listId: Scalars['String'];
 };
 
@@ -4836,6 +4837,7 @@ export type GetMyAddressesQuery = { me?: { contact?: { addresses?: { items?: Arr
 
 export type GetWishlistQueryVariables = Exact<{
   listId: Scalars['String'];
+  cultureName?: InputMaybe<Scalars['String']>;
 }>;
 
 
