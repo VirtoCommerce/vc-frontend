@@ -1,22 +1,43 @@
 <template>
   <VcInput
-    v-model="quantity"
-    class="w-[5.625rem] flex-none"
+    v-model.number="quantity"
+    :class="[
+      'flex-none',
+      {
+        'w-[5.625rem]': !buttonText,
+      },
+    ]"
     :name="name"
     :readonly="readonly"
     :disabled="disabled"
     :min="minQuantity"
     :max="maxQuantity"
     :error="error"
+    :message="errorMessage"
     size="sm"
     type="number"
     pattern="\d*"
+    single-line-message
     center
     truncate
     @keyup.enter="changeQuantity"
     @input="onQuantityChanged"
     @blur="onFocusOut"
-  />
+  >
+    <template v-if="!!buttonText" #append>
+      <VcButton
+        :is-outline="buttonOutlined"
+        :is-waiting="loading"
+        :is-disabled="disabled || error"
+        :title="buttonText"
+        class="!h-full w-28 !rounded-[inherit] uppercase"
+        size="sm"
+        @click="$emit('click:button', quantity)"
+      >
+        {{ buttonText }}
+      </VcButton>
+    </template>
+  </VcInput>
 </template>
 
 <script setup lang="ts">
@@ -24,6 +45,7 @@ import { ref, watchEffect } from "vue";
 
 interface IEmits {
   (event: "update:modelValue", value: number): void;
+  (event: "click:button", value: number): void;
 }
 
 interface IProps {
@@ -33,7 +55,11 @@ interface IProps {
   disabled?: boolean;
   readonly?: boolean;
   error?: boolean;
+  errorMessage?: string;
   modelValue?: number;
+  buttonText?: string;
+  buttonOutlined?: boolean;
+  loading?: boolean;
 }
 
 const emit = defineEmits<IEmits>();

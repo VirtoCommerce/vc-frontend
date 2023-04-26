@@ -56,13 +56,15 @@
 
       <!-- ADD-TO-CART -->
       <div class="vc-wishlist-line-item__quantity">
-        <VcAddToCart
+        <VcQuantity
           v-if="item.extended.isProductExists"
-          :model-value="item.quantity"
-          :count-in-cart="item.extended.countInCart"
-          :availability-data="item.product?.availabilityData"
+          :model-value="enteredQuantity"
+          :disabled="disabled"
+          :button-outlined="buttonOutlined"
+          :button-text="buttonText"
+          :error="!!errorMessage"
           @update:model-value="changeItemQuantity"
-          @update:cart-item-quantity="changeCartItemQuantity"
+          @click:button="changeCartItemQuantity"
         />
 
         <div class="vc-wishlist-line-item__quantity-badges">
@@ -85,13 +87,20 @@
     </div>
 
     <div class="vc-wishlist-line-item__after">
+      <VcAlert v-if="errorMessage" type="danger" icon>
+        {{ errorMessage }}
+      </VcAlert>
+
       <slot name="after" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useField } from "vee-validate";
+import { ref, watchEffect } from "vue";
 import { useGoogleAnalytics } from "@/core/composables";
+import { useQuantity } from "@/shared/cart";
 import type { ExtendedLineItemType } from "@/core/types";
 import type { InputNewBulkItemType, LineItemType } from "@/xapi/types";
 
@@ -109,8 +118,23 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const ga = useGoogleAnalytics();
+const { getQuantityParams } = useQuantity();
 
-function changeItemQuantity(quantity: number): void {
+const qty = ref(props.item.quantity);
+
+const { disabled, buttonOutlined, buttonText, rules } = getQuantityParams(props.item);
+
+const { value: enteredQuantity, errorMessage, validate } = useField("quantity", rules);
+
+async function changeItemQuantity(quantity: number): Promise<void> {
+  qty.value = quantity;
+
+  const { valid } = await validate();
+
+  if (!valid || disabled.value) {
+    return;
+  }
+
   emit("update:listItemQuantity", { productSku: props.item.sku!, quantity });
 }
 
@@ -123,6 +147,10 @@ function sendGASelectItemEvent() {
     ga.selectItem(props.item.product);
   }
 }
+
+watchEffect(() => {
+  enteredQuantity.value = disabled.value ? undefined : qty.value;
+});
 </script>
 
 <style scoped lang="scss">
