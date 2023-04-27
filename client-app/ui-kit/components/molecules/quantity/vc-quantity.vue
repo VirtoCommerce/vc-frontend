@@ -29,7 +29,7 @@
       <VcButton
         :is-outline="buttonOutlined"
         :is-waiting="loading"
-        :is-disabled="disabled || error || readonly"
+        :is-disabled="disabled || error || readonly || quantity === modelValue"
         class="!h-full w-28 !rounded-[inherit] uppercase"
         size="sm"
         @click="$emit('click:button', quantity)"
@@ -74,7 +74,7 @@ function changeQuantity() {
 
   const newQuantity = Number(quantity.value);
 
-  if (isNaN(newQuantity) || newQuantity < 1 || newQuantity === props.modelValue) {
+  if (isNaN(newQuantity) || newQuantity < 1) {
     return;
   }
 
