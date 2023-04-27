@@ -29,7 +29,7 @@
       <VcButton
         :is-outline="buttonOutlined"
         :is-waiting="loading"
-        :is-disabled="disabled || error || readonly"
+        :is-disabled="disabled || error || readonly || buttonDisabled"
         class="!h-full w-28 !rounded-[inherit] uppercase"
         size="sm"
         @click="$emit('click:button', quantity)"
@@ -59,6 +59,7 @@ interface IProps {
   modelValue?: number;
   buttonText?: string;
   buttonOutlined?: boolean;
+  buttonDisabled?: boolean;
   loading?: boolean;
 }
 

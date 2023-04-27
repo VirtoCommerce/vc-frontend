@@ -60,7 +60,7 @@
           v-if="item.extended.isProductExists"
           :model-value="enteredQuantity"
           :disabled="disabled"
-          :readonly="enteredQuantity === item.extended.countInCart"
+          :button-disabled="enteredQuantity === item.extended.countInCart"
           :button-outlined="buttonOutlined"
           :button-text="buttonText"
           :error="!!errorMessage"
@@ -99,7 +99,7 @@
 
 <script setup lang="ts">
 import { useField } from "vee-validate";
-import { ref, watchEffect, toRef } from "vue";
+import { ref, toRef } from "vue";
 import { useGoogleAnalytics } from "@/core/composables";
 import { useQuantity } from "@/shared/cart";
 import type { ExtendedLineItemType } from "@/core/types";
@@ -118,10 +118,11 @@ interface IProps {
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
-const initialValue = ref();
 const ga = useGoogleAnalytics();
 
-const { disabled, buttonOutlined, buttonText, rules, minQty } = useQuantity(toRef(props, "item"));
+const { disabled, buttonOutlined, buttonText, rules, initialValue: _initialValue } = useQuantity(toRef(props, "item"));
+
+const initialValue = ref(_initialValue.value);
 
 const { value: enteredQuantity, validate, errorMessage, setValue } = useField("quantity", rules, { initialValue });
 
@@ -147,13 +148,6 @@ function sendGASelectItemEvent() {
     ga.selectItem(props.item.product);
   }
 }
-
-watchEffect(() => {
-  if (!disabled.value) {
-    initialValue.value = props.item.extended.countInCart || minQty.value;
-    setValue(initialValue.value);
-  }
-});
 </script>
 
 <style scoped lang="scss">

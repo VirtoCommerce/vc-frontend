@@ -1,36 +1,37 @@
 import { toTypedSchema } from "@vee-validate/yup";
-import { computed, unref } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { number } from "yup";
 import { ProductType } from "@/core/enums";
 import type { MaybeRef } from "@vueuse/core";
 
-export default function useQuantity(lineItem: MaybeRef<any>) {
+export default function useQuantity(item: MaybeRef<any>) {
   const { t } = useI18n();
 
   const MIN_VALUE = 1;
   const MAX_VALUE = 999999;
 
-  const item = unref(lineItem);
+  const buttonOutlined = computed<boolean>(() => !item.value.extended.countInCart);
+  const buttonText = computed<string>(() => {
+    return item.value.extended.countInCart ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart");
+  });
 
-  const buttonOutlined = computed<boolean>(() => item.extended.countInCart === 0);
-  const buttonText = computed<string>(() =>
-    item.extended.countInCart ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart")
-  );
+  const isDigital = computed<boolean>(() => item.value.product.productType === ProductType.Digital);
 
-  const isDigital = computed<boolean>(() => item?.product.productType === ProductType.Digital);
-
-  const minQty = computed<number>(() => item.product.minQuantity || MIN_VALUE);
+  const minQty = computed<number>(() => item.value.product.minQuantity || MIN_VALUE);
   const maxQty = computed<number>(() =>
-    Math.min(item.product.availabilityData?.availableQuantity || MAX_VALUE, item.product.maxQuantity || MAX_VALUE)
+    Math.min(
+      item.value.product.availabilityData?.availableQuantity || MAX_VALUE,
+      item.value.product.maxQuantity || MAX_VALUE
+    )
   );
 
   const disabled = computed<boolean>(
     () =>
-      !item.product.availabilityData?.isAvailable ||
-      !item.product.availabilityData?.isInStock ||
-      !item.product.availabilityData?.isBuyable ||
-      (!item.product.availabilityData?.availableQuantity && !isDigital.value)
+      !item.value.product.availabilityData?.isAvailable ||
+      !item.value.product.availabilityData?.isInStock ||
+      !item.value.product.availabilityData?.isBuyable ||
+      (!item.value.product.availabilityData?.availableQuantity && !isDigital.value)
   );
 
   const rules = computed(() =>
@@ -44,7 +45,10 @@ export default function useQuantity(lineItem: MaybeRef<any>) {
     )
   );
 
+  const initialValue = computed(() => item.value.extended.countInCart || minQty.value);
+
   return {
+    initialValue,
     disabled,
     minQty,
     maxQty,
