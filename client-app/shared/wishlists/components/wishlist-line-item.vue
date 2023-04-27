@@ -60,6 +60,7 @@
           v-if="item.extended.isProductExists"
           :model-value="enteredQuantity"
           :disabled="disabled"
+          :readonly="enteredQuantity === item.extended.countInCart"
           :button-outlined="buttonOutlined"
           :button-text="buttonText"
           :error="!!errorMessage"

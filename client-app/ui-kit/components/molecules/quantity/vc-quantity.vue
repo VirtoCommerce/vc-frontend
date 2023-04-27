@@ -29,7 +29,7 @@
       <VcButton
         :is-outline="buttonOutlined"
         :is-waiting="loading"
-        :is-disabled="disabled || error || readonly || quantity === modelValue"
+        :is-disabled="disabled || error || readonly"
         class="!h-full w-28 !rounded-[inherit] uppercase"
         size="sm"
         @click="$emit('click:button', quantity)"
