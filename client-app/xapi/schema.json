@@ -26771,6 +26771,17 @@
             "name": "wishlist",
             "args": [
               {
+                "name": "cultureName",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
                 "name": "listId",
                 "type": {
                   "kind": "NON_NULL",
