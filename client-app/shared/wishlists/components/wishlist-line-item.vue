@@ -3,7 +3,7 @@
     :class="[
       'vc-wishlist-line-item',
       {
-        'vc-wishlist-line-item--not-exists': !item.extended.isProductExists,
+        'vc-wishlist-line-item--not-exists': !item.product,
       },
     ]"
   >
@@ -18,8 +18,8 @@
 
         <!-- NAME -->
         <router-link
-          v-if="item.extended.route"
-          :to="item.extended.route"
+          v-if="item.route"
+          :to="item.route"
           :title="item.name"
           class="vc-wishlist-line-item__name vc-wishlist-line-item__name--link"
           @click="sendGASelectItemEvent"
@@ -34,43 +34,40 @@
 
       <!-- PROPERTIES -->
       <div class="vc-wishlist-line-item__properties">
-        <VcLineItemProperty
-          v-for="property in item.extended.displayProperties"
-          :key="property.id"
-          :label="property.label"
-        >
+        <VcLineItemProperty v-for="property in item.properties" :key="property.id" :label="property.label">
           {{ property.value }}
         </VcLineItemProperty>
 
         <div class="xl:hidden">
           <VcLineItemProperty :label="$t('common.labels.price_per_item')">
-            <VcLineItemPrice :list-price="item.listPrice" :actual-price="item.salePrice" />
+            <VcLineItemPrice :list-price="item.listPrice" :actual-price="item.actualPrice" />
           </VcLineItemProperty>
         </div>
       </div>
 
       <!-- PRICE -->
       <div class="vc-wishlist-line-item__price">
-        <VcLineItemPrice :list-price="item.listPrice" :actual-price="item.salePrice" />
+        <VcLineItemPrice :list-price="item.listPrice" :actual-price="item.actualPrice" />
       </div>
 
       <!-- ADD-TO-CART -->
       <div class="vc-wishlist-line-item__quantity">
         <VcAddToCart
-          v-if="item.extended.isProductExists"
+          v-if="!!item.product"
           :model-value="item.quantity"
-          :count-in-cart="item.extended.countInCart"
           :availability-data="item.product?.availabilityData"
+          :product-type="item.productType"
           @update:list-item-quantity="changeListItemQuantity"
           @update:cart-item-quantity="changeCartItemQuantity"
         />
 
         <div class="vc-wishlist-line-item__quantity-badges">
           <VcInStock
-            :is-in-stock="item.product?.availabilityData?.isInStock || false"
-            :is-available="item.extended.isProductExists"
+            :is-in-stock="item.product?.availabilityData?.isInStock"
+            :is-available="!!item.product"
             :availability-data="item.product?.availabilityData"
             :quantity="item.product?.availabilityData?.availableQuantity"
+            :is-digital="item.productType === ProductType.Digital"
           />
           <VcCountInCart :product-id="item.product?.id" />
         </div>
@@ -92,8 +89,9 @@
 
 <script setup lang="ts">
 import { useGoogleAnalytics } from "@/core/composables";
-import type { ExtendedLineItemType } from "@/core/types";
-import type { InputNewBulkItemType, LineItemType } from "@/xapi/types";
+import { ProductType } from "@/core/enums";
+import type { PreparedLineItemType } from "@/core/types";
+import type { InputNewBulkItemType } from "@/xapi/types";
 
 interface IEmits {
   (event: "update:cartItemQuantity", item: InputNewBulkItemType): void;
@@ -102,7 +100,7 @@ interface IEmits {
 }
 
 interface IProps {
-  item: ExtendedLineItemType<LineItemType>;
+  item: PreparedLineItemType;
 }
 
 const emit = defineEmits<IEmits>();

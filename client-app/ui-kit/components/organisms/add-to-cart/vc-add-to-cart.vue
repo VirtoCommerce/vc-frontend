@@ -37,6 +37,7 @@ import { useField } from "vee-validate";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { number } from "yup";
+import { ProductType } from "@/core/enums";
 import type { AvailabilityData } from "@/xapi/types";
 
 interface IEmits {
@@ -46,12 +47,13 @@ interface IEmits {
 }
 
 interface IProps {
-  modelValue: number;
+  modelValue?: number;
   loading?: boolean;
   countInCart?: number;
   availabilityData?: AvailabilityData;
   minQuantity?: number;
   maxQuantity?: number;
+  productType?: ProductType;
 }
 
 const emit = defineEmits<IEmits>();
@@ -64,7 +66,7 @@ const { t } = useI18n();
 const isButtonOutlined = computed<boolean>(() => props.countInCart === 0);
 const minQty = computed<number>(() => props.minQuantity || 1);
 const maxQty = computed<number>(() =>
-  Math.min(props.availabilityData?.availableQuantity, props.maxQuantity || MAX_VALUE)
+  Math.min(props.availabilityData?.availableQuantity || MAX_VALUE, props.maxQuantity || MAX_VALUE)
 );
 
 const buttonText = computed<string>(() =>
@@ -73,18 +75,17 @@ const buttonText = computed<string>(() =>
 
 const disabled = computed<boolean>(
   () =>
-    !(
-      props.availabilityData?.isAvailable &&
-      props.availabilityData?.isInStock &&
-      props.availabilityData?.isBuyable &&
-      props.availabilityData?.availableQuantity
-    )
+    !props.availabilityData?.isAvailable ||
+    !props.availabilityData?.isInStock ||
+    !props.availabilityData?.isBuyable ||
+    (!props.availabilityData?.availableQuantity && props.productType === ProductType.Physical)
 );
 
 const rules = computed(() =>
   toTypedSchema(
     number()
       .typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message"))
+      .required()
       .integer()
       .positive()
       .min(minQty.value, ({ min }) => t("shared.cart.add_to_cart.errors.min", [min]))
@@ -94,9 +95,17 @@ const rules = computed(() =>
 
 const initialValue = ref(disabled.value ? undefined : props.modelValue);
 
-const { value: enteredQuantity, validate, errorMessage } = useField("quantity", rules, { initialValue });
+const { value: enteredQuantity, errorMessage, validate, setValue } = useField("quantity", rules, { initialValue });
 
 async function onChange(): Promise<void> {
+  if (enteredQuantity.value && isNaN(enteredQuantity.value)) {
+    setValue(minQty.value);
+  }
+
+  if (!enteredQuantity.value) {
+    setValue(undefined);
+  }
+
   const { valid } = await validate();
 
   if (valid && !disabled.value) {

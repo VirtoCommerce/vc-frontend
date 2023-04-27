@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import WishlistLineItem from "./wishlist-line-item.vue";
-import type { ExtendedLineItemType } from "@/core/types";
+import type { PreparedLineItemType } from "@/core/types";
 import type { InputNewBulkItemType, LineItemType } from "@/xapi/types";
 
 interface IEmits {
@@ -49,7 +49,7 @@ interface IEmits {
 }
 
 interface IProp {
-  items: ExtendedLineItemType<LineItemType>[];
+  items: PreparedLineItemType[];
 }
 
 const emit = defineEmits<IEmits>();

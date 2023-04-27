@@ -11,18 +11,18 @@
       </h2>
 
       <div v-if="!isMobile" class="flex gap-x-3">
-        <VcButton :is-disabled="!canSaveChanges" class="px-3 uppercase" size="sm" is-outline @click="saveChanges">
+        <VcButton
+          :is-disabled="loading || !canSaveChanges"
+          class="px-3 uppercase"
+          size="sm"
+          is-outline
+          @click="saveChanges"
+        >
           <VcIcon name="save-v2" size="sm" class="mr-2" />
           {{ $t("common.buttons.save_changes") }}
         </VcButton>
 
-        <VcButton
-          :is-disabled="loading"
-          class="w-36 px-3 uppercase"
-          size="sm"
-          is-outline
-          @click="openListSettingsModal"
-        >
+        <VcButton :is-disabled="loading" class="px-3 uppercase" size="sm" is-outline @click="openListSettingsModal">
           <VcIcon name="cog" size="sm" class="mr-2" />
           {{ $t("shared.wishlists.list_card.list_settings_button") }}
         </VcButton>
@@ -55,22 +55,22 @@
       <div class="flex flex-col gap-6 bg-white p-5 md:rounded md:border md:shadow-t-3sm">
         <WishlistLineItems
           :items="pagedListItems"
-          @update:cart-item="updateCartItem"
+          @update:cart-item="addOrUpdateCartItem"
           @update:list-item="updateWishListItem"
           @remove:list-item="openDeleteProductModal"
         />
 
         <VcPagination
-          v-if="pages > 1"
+          v-if="pagesCount > 1"
           v-model:page="page"
-          :pages="pages"
+          :pages="pagesCount"
           class="self-start"
           @update:page="onUpdatePage()"
         />
       </div>
     </template>
 
-    <!-- Empty -->
+    <!-- Empty list -->
     <VcEmptyView v-else :text="$t('shared.wishlists.list_details.empty_list')">
       <template #icon>
         <VcImage :alt="$t('shared.wishlists.list_details.list_icon')" src="/static/images/common/list.svg" />
@@ -84,44 +84,69 @@
     </VcEmptyView>
 
     <div v-if="isMobile" class="flex flex-wrap gap-5 py-7 lg:justify-end lg:p-0">
-      <VcButton class="w-full px-3 uppercase" size="sm" is-outline @click="openListSettingsModal">
-        <VcIcon name="cog" size="sm" class="mr-2" />
-        {{ $t("shared.wishlists.list_card.list_settings_button") }}
+      <VcButton
+        :is-disabled="loading || !canSaveChanges"
+        class="w-full px-3 uppercase"
+        size="sm"
+        is-outline
+        @click="saveChanges"
+      >
+        <VcIcon name="save-v2" size="sm" class="mr-2" />
+        {{ $t("common.buttons.save_changes") }}
       </VcButton>
 
-      <VcButton
-        :is-disabled="!pagedListItems.length"
-        size="sm"
-        class="w-full px-3 uppercase"
-        @click="addAllListItemsToCart"
-      >
-        <VcIcon name="cart" size="sm" class="mr-2" />
-        {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
-      </VcButton>
+      <div class="flex w-full gap-x-5">
+        <VcButton
+          :is-disabled="loading"
+          class="w-1/2 px-3 uppercase"
+          size="sm"
+          is-outline
+          @click="openListSettingsModal"
+        >
+          <VcIcon name="cog" size="sm" class="mr-2" />
+          {{ $t("shared.wishlists.list_card.list_settings_button") }}
+        </VcButton>
+
+        <VcButton
+          :is-disabled="loading || !pagedListItems.length"
+          size="sm"
+          class="w-1/2 px-3 uppercase"
+          @click="addAllListItemsToCart"
+        >
+          <VcIcon name="cart" size="sm" class="mr-2" />
+          {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
+        </VcButton>
+      </div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { cloneDeep } from "lodash";
+import { cloneDeep, isEqual } from "lodash";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useGoogleAnalytics, usePageHead } from "@/core/composables";
-import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
+import { prepareLineItem } from "@/core/utilities";
+import { useCart, getItemsForAddBulkItemsToCartResultsPopup, AddBulkItemsToCartResultsModal } from "@/shared/cart";
 import { ProductSkeletonGrid } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
 import {
-  WishlistProductItemSkeleton,
-  WishlistLineItems,
   useWishlists,
   AddOrUpdateWishlistModal,
   DeleteWishlistProductModal,
-  extendWishListItem,
+  WishlistLineItems,
+  WishlistProductItemSkeleton,
 } from "@/shared/wishlists";
-import type { ExtendedLineItemType } from "@/core/types";
-import type { InputNewBulkItemType, InputUpdateWishlistItemsType, LineItemType, Product } from "@/xapi/types";
+import type { PreparedLineItemType } from "@/core/types";
+import type {
+  InputNewBulkItemType,
+  InputUpdateWishlistItemsType,
+  InputUpdateWishlistLineItemType,
+  LineItemType,
+  Product,
+} from "@/xapi/types";
 
 interface IProps {
   listId: string;
@@ -130,69 +155,103 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const { t } = useI18n();
+const ga = useGoogleAnalytics();
 const { openPopup } = usePopup();
 const { loading: listLoading, list, fetchWishList, clearList, updateWishlistItemsQuantities } = useWishlists();
-const { cart, loading: cartLoading, addToCart, changeItemQuantity, addBulkItemsToCart } = useCart();
-const ga = useGoogleAnalytics();
+const { loading: cartLoading, cart, addBulkItemsToCart, addToCart, changeItemQuantity } = useCart();
+const breakpoints = useBreakpoints(breakpointsTailwind);
 
 usePageHead({
   title: computed(() => t("pages.account.list_details.meta.title", [list.value?.name])),
 });
 
-const inputWishlistItems = ref<InputNewBulkItemType[]>([]);
 const itemsPerPage = ref(6);
 const page = ref(1);
+const wishlistItems = ref<LineItemType[]>([]);
 
-const originalItemQuantities = computed(() =>
-  list.value?.items?.map((item) => ({
-    productSku: item.sku,
-    quantity: item.quantity!,
-  }))
+const preparedLineItems = computed<PreparedLineItemType[]>(
+  () => wishlistItems.value.map((item) => prepareLineItem(item)) || []
 );
-
 const loading = computed<boolean>(() => listLoading.value || cartLoading.value);
-
-const extendedItems = computed<ExtendedLineItemType<LineItemType>[]>(() =>
-  (list.value?.items || []).map((listItem) => {
-    const countInCart = cart.value.items?.find((cartItem) => cartItem.sku === listItem.sku)?.quantity;
-
-    listItem.quantity =
-      countInCart ||
-      (listItem.product && listItem.product.minQuantity && (listItem.quantity || 0) < listItem.product.minQuantity
-        ? listItem.product.minQuantity
-        : listItem.quantity);
-    return extendWishListItem(listItem, countInCart);
-  })
-);
-
-const changedItems = computed(() =>
-  inputWishlistItems.value?.filter((originalItem) =>
-    originalItemQuantities.value?.some(
-      (i) => i.productSku === originalItem.productSku && i.quantity !== originalItem.quantity
-    )
-  )
-);
-
-const canSaveChanges = computed<boolean>(() => loading.value || !!changedItems.value?.length);
-
-const pages = computed<number>(() => Math.ceil((list.value?.items?.length ?? 0) / itemsPerPage.value));
-const pagedListItems = computed<ExtendedLineItemType<LineItemType>[]>(() =>
-  extendedItems.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
+const pagesCount = computed<number>(() => Math.ceil((wishlistItems.value.length ?? 0) / itemsPerPage.value));
+const pagedListItems = computed<PreparedLineItemType[]>(() =>
+  preparedLineItems.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
 );
 const actualPageRowsCount = computed<number>(() => pagedListItems.value.length || itemsPerPage.value);
+const canSaveChanges = computed<boolean>(() => !isEqual(list.value?.items, wishlistItems.value));
 
-const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 
+function openListSettingsModal(): void {
+  openPopup({
+    component: AddOrUpdateWishlistModal,
+    props: {
+      list: list.value,
+    },
+  });
+}
+
+async function addAllListItemsToCart(): Promise<void> {
+  if (!list.value || !wishlistItems.value.length) {
+    return;
+  }
+
+  const payload = wishlistItems.value.map<InputNewBulkItemType>((item) => ({
+    productSku: item.sku!,
+    quantity: item.quantity,
+  }));
+
+  const resultItems = await addBulkItemsToCart(payload);
+
+  ga.addItemsToCart(wishlistItems.value);
+
+  openPopup({
+    component: AddBulkItemsToCartResultsModal,
+    props: {
+      items: getItemsForAddBulkItemsToCartResultsPopup(wishlistItems.value, resultItems),
+    },
+  });
+}
+
+async function saveChanges(): Promise<void> {
+  const payload: InputUpdateWishlistItemsType = {
+    listId: list.value!.id!,
+    items: wishlistItems.value!.map<InputUpdateWishlistLineItemType>((item) => ({
+      lineItemId: item.id,
+      quantity: item.quantity!,
+    })),
+  };
+
+  const closeDialog = openPopup({
+    component: "VcConfirmationDialog",
+    props: {
+      variant: "info",
+      noIcon: true,
+      title: t("common.labels.save_changes"),
+      text: t("common.messages.save_new_product_quantity"),
+      onConfirm: async () => {
+        closeDialog();
+
+        await updateWishlistItemsQuantities(payload);
+      },
+      onClose: () => {
+        wishlistItems.value = cloneDeep(list.value!.items!);
+      },
+    },
+  });
+}
+
 function updateWishListItem(item: InputNewBulkItemType): void {
-  const inputBulkItem = inputWishlistItems.value?.find((bulkItem) => bulkItem.productSku === item.productSku);
-  if (inputBulkItem) {
-    inputBulkItem.quantity = item.quantity;
+  const existItem = wishlistItems.value?.find((i) => i.sku === item.productSku);
+  if (existItem) {
+    existItem.quantity = item.quantity;
   }
 }
 
-async function updateCartItem(item: InputNewBulkItemType): Promise<void> {
-  const product: Product | undefined = list.value?.items?.find((listItem) => listItem.sku === item.productSku)?.product;
+async function addOrUpdateCartItem(item: InputNewBulkItemType): Promise<void> {
+  const product: Product | undefined = wishlistItems.value.find(
+    (listItem) => listItem.sku === item.productSku
+  )?.product;
 
   if (!product) {
     return;
@@ -209,40 +268,15 @@ async function updateCartItem(item: InputNewBulkItemType): Promise<void> {
   }
 }
 
-async function addAllListItemsToCart() {
-  if (!list.value || !inputWishlistItems.value) {
-    return;
-  }
-
-  const inputItems = cloneDeep(list.value.items!);
-  const resultItems = await addBulkItemsToCart(inputWishlistItems.value);
-
-  ga.addItemsToCart(inputItems);
-
-  inputItems.forEach((inputItem) => {
-    const inputBulkItem = inputWishlistItems.value?.find((item) => item.productSku === inputItem.sku);
-    if (inputBulkItem) {
-      inputItem.quantity = inputBulkItem.quantity;
-    }
-  });
-
-  openPopup({
-    component: AddBulkItemsToCartResultsModal,
-
-    props: {
-      items: getItemsForAddBulkItemsToCartResultsPopup(inputItems, resultItems),
-    },
-  });
-}
-
-function openDeleteProductModal(item: LineItemType) {
+function openDeleteProductModal(item: LineItemType): void {
   openPopup({
     component: DeleteWishlistProductModal,
     props: {
-      listItem: item,
       listId: list.value?.id,
-      async onResult() {
-        const previousPagesCount = pages.value;
+      listItem: item,
+
+      async onResult(): Promise<void> {
+        const previousPagesCount = pagesCount.value;
 
         await fetchWishList(props.listId);
 
@@ -250,57 +284,9 @@ function openDeleteProductModal(item: LineItemType) {
          * If you were on the last page, and after deleting the product
          * the number of pages has decreased, go to the previous page
          */
-        if (previousPagesCount > 1 && previousPagesCount === page.value && previousPagesCount > pages.value) {
+        if (previousPagesCount > 1 && previousPagesCount === page.value && previousPagesCount > pagesCount.value) {
           page.value -= 1;
         }
-      },
-    },
-  });
-}
-
-function openListSettingsModal() {
-  openPopup({
-    component: AddOrUpdateWishlistModal,
-    props: {
-      list: list.value,
-    },
-  });
-}
-
-function getSaveChangesPayload(): InputUpdateWishlistItemsType {
-  const result: InputUpdateWishlistItemsType = {
-    listId: list.value!.id!,
-    items: [],
-  };
-
-  changedItems.value.forEach((item) => {
-    const wishlistItem = list.value?.items?.find((i) => i.sku === item.productSku);
-    if (wishlistItem) {
-      result.items.push({
-        lineItemId: wishlistItem.id,
-        quantity: item.quantity!,
-      });
-    }
-  });
-
-  return result;
-}
-
-async function saveChanges(): Promise<void> {
-  const closeDialog = openPopup({
-    component: "VcConfirmationDialog",
-    props: {
-      variant: "info",
-      noIcon: true,
-      title: t("common.labels.save_changes"),
-      text: t("common.messages.save_new_product_quantity"),
-      onConfirm: async () => {
-        closeDialog();
-
-        await updateWishlistItemsQuantities(getSaveChangesPayload());
-      },
-      onClose: () => {
-        console.log("Test");
       },
     },
   });
@@ -309,13 +295,15 @@ async function saveChanges(): Promise<void> {
 /**
  * Scroll after page change.
  */
-function onUpdatePage() {
+function onUpdatePage(): void {
   window.scroll({ top: 0, behavior: "smooth" });
 }
 
-watchEffect(() => {
+watchEffect(async () => {
   clearList();
-  fetchWishList(props.listId);
+  await fetchWishList(props.listId);
+
+  wishlistItems.value = cloneDeep(list.value?.items) || [];
 });
 
 /**
