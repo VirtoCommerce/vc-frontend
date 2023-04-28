@@ -57,7 +57,9 @@
           :model-value="item.quantity"
           :availability-data="item.product?.availabilityData"
           :product-type="item.productType"
-          @update:list-item-quantity="changeListItemQuantity"
+          :count-in-cart="item.countInCart"
+          :has-price="!!item.actualPrice"
+          @update:model-value="changeListItemQuantity"
           @update:cart-item-quantity="changeCartItemQuantity"
         />
 

@@ -50,4 +50,5 @@ export type PreparedLineItemType = {
   product?: Product;
   productType?: string;
   sku?: string;
+  countInCart?: number;
 };

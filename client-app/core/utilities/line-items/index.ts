@@ -60,7 +60,7 @@ export function extendLineItem<T extends AnyLineItemType>(item: T): ExtendedLine
   };
 }
 
-export function prepareLineItem(item: AnyLineItemType): PreparedLineItemType {
+export function prepareLineItem(item: AnyLineItemType, countInCart?: number): PreparedLineItemType {
   const product = "product" in item ? item.product : undefined;
   const productType = "productType" in item ? item.productType : undefined;
   const isVariation = !!item.product?.masterVariation;
@@ -91,6 +91,7 @@ export function prepareLineItem(item: AnyLineItemType): PreparedLineItemType {
     route,
     deleted: !item.product,
     properties: properties.slice(0, 3),
+    countInCart,
     minQuantity: item.product?.minQuantity,
     maxQuantity:
       (<LineItemType>item).inStockQuantity ||

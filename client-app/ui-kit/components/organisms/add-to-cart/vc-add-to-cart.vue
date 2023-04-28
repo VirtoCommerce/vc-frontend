@@ -41,8 +41,7 @@ import { ProductType } from "@/core/enums";
 import type { AvailabilityData } from "@/xapi/types";
 
 interface IEmits {
-  (event: "update:modelValue", value: number): void; // WORKAROUND TO REMOVE WARNING!
-  (event: "update:listItemQuantity", value: number): void;
+  (event: "update:modelValue", value: number): void;
   (event: "update:cartItemQuantity", quantity: number): void;
 }
 
@@ -54,6 +53,7 @@ interface IProps {
   minQuantity?: number;
   maxQuantity?: number;
   productType?: ProductType;
+  hasPrice: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -75,6 +75,7 @@ const buttonText = computed<string>(() =>
 
 const disabled = computed<boolean>(
   () =>
+    !props.hasPrice ||
     !props.availabilityData?.isAvailable ||
     !props.availabilityData?.isInStock ||
     !props.availabilityData?.isBuyable ||
@@ -85,7 +86,7 @@ const rules = computed(() =>
   toTypedSchema(
     number()
       .typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message"))
-      .required()
+      .required(t("common.messages.required_field"))
       .integer()
       .positive()
       .min(minQty.value, ({ min }) => t("shared.cart.add_to_cart.errors.min", [min]))
@@ -109,7 +110,7 @@ async function onChange(): Promise<void> {
   const { valid } = await validate();
 
   if (valid && !disabled.value) {
-    emit("update:listItemQuantity", enteredQuantity.value!);
+    emit("update:modelValue", enteredQuantity.value!);
   }
 }
 </script>
