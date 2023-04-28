@@ -169,12 +169,11 @@ const itemsPerPage = ref(6);
 const page = ref(1);
 const wishlistItems = ref<LineItemType[]>([]);
 
-const preparedLineItems = computed<PreparedLineItemType[]>(
-  () =>
-    wishlistItems.value.map((item) => {
-      const itemInCart = cart.value?.items?.find((i) => i.sku === item.sku);
-      return prepareLineItem(item, itemInCart?.quantity);
-    }) || []
+const preparedLineItems = computed<PreparedLineItemType[]>(() =>
+  wishlistItems.value.map((item) => {
+    const itemInCart = cart.value?.items?.find((i) => i.sku === item.sku);
+    return prepareLineItem(item, itemInCart?.quantity);
+  })
 );
 const loading = computed<boolean>(() => listLoading.value || cartLoading.value);
 const pagesCount = computed<number>(() => Math.ceil((wishlistItems.value.length ?? 0) / itemsPerPage.value));
