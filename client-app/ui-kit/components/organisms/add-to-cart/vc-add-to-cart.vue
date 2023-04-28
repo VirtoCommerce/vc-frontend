@@ -57,7 +57,7 @@ const MAX_VALUE = 999999;
 
 const { t } = useI18n();
 
-const isButtonOutlined = computed<boolean>(() => props.item.countInCart === 0);
+const isButtonOutlined = computed<boolean>(() => !props.item.countInCart);
 const minQty = computed<number>(() => props.item.minQuantity || 1);
 const maxQty = computed<number>(() =>
   Math.min(props.item.product?.availabilityData?.availableQuantity || MAX_VALUE, props.item.maxQuantity || MAX_VALUE)
