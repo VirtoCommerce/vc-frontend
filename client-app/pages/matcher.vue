@@ -17,18 +17,17 @@
 </template>
 
 <script setup lang="ts">
-import { asyncComputed, computedEager } from "@vueuse/core";
+import { computedAsync, computedEager } from "@vueuse/core";
 import { onBeforeUnmount, ref, watchEffect } from "vue";
 import { useFetch, useLanguages, useNavigations } from "@/core/composables";
 import { useStaticPage } from "@/shared/static-content";
 import type { PageTemplate } from "@/shared/static-content";
-import type { PropType } from "vue";
 import NotFound from "@/pages/404.vue";
-import Category from "@/pages/catalog.vue";
+import Category from "@/pages/category.vue";
 import Product from "@/pages/product.vue";
 import StaticPage from "@/pages/static-page.vue";
 
-type TEntityInfo = {
+type EntityInfoType = {
   id: string;
   objectId: string;
   objectType: string;
@@ -43,28 +42,29 @@ type TEntityInfo = {
   };
 };
 
-type TResult = {
-  entity?: TEntityInfo;
+type ResultType = {
+  entity?: EntityInfoType;
   page?: PageTemplate;
 };
 
-type TContentItem = {
+type ContentItemType = {
   type: "page" | "blog" | "html";
   name: string;
   permalink: string;
   content: string;
 };
 
-type TSlugInfoResult = {
-  contentItem?: TContentItem;
-  entityInfo?: TEntityInfo;
+type SlugInfoResultType = {
+  contentItem?: ContentItemType;
+  entityInfo?: EntityInfoType;
 };
 
-const props = defineProps({
-  pathMatch: {
-    type: Array as PropType<string[]>,
-    default: () => [],
-  },
+interface IProps {
+  pathMatch?: string[];
+}
+
+const props = withDefaults(defineProps<IProps>(), {
+  pathMatch: () => [],
 });
 
 const { innerFetch } = useFetch();
@@ -81,12 +81,13 @@ const seoUrl = computedEager(() => {
   return paths.join("/");
 });
 
-const seoInfo = asyncComputed<TResult | undefined>(
+const seoInfo = computedAsync<ResultType | undefined>(
   async () => {
     if (!seoUrl.value) {
       return undefined;
     }
-    const result = await innerFetch<TSlugInfoResult>(
+
+    const result = await innerFetch<SlugInfoResultType>(
       `/storefrontapi/slug/${seoUrl.value}?culture=${currentLanguage.value!.cultureName}`
     );
 

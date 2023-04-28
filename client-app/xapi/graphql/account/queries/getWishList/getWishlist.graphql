@@ -1,7 +1,7 @@
 #import "../../../fragments/propertyFields.graphql"
 
-query GetWishlist($listId: String!) {
-  wishlist(listId: $listId) {
+query GetWishlist($listId: String!, $cultureName: String) {
+  wishlist(listId: $listId, cultureName: $cultureName) {
     name
     id
     items {
