@@ -54,11 +54,7 @@
       <div class="vc-wishlist-line-item__quantity">
         <VcAddToCart
           v-if="!!item.product"
-          :model-value="item.quantity"
-          :availability-data="item.product?.availabilityData"
-          :product-type="item.productType"
-          :count-in-cart="item.countInCart"
-          :has-price="!!item.actualPrice"
+          :item="item"
           @update:model-value="changeListItemQuantity"
           @update:cart-item-quantity="changeCartItemQuantity"
         />

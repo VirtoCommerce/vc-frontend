@@ -3,8 +3,8 @@
     <VcInput
       v-model.number="enteredQuantity"
       :disabled="disabled"
-      :min-quantity="minQuantity"
-      :max-quantity="maxQuantity"
+      :min-quantity="item.minQuantity"
+      :max-quantity="item.maxQuantity"
       :error="!!errorMessage"
       :message="errorMessage"
       single-line-message
@@ -38,7 +38,7 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { number } from "yup";
 import { ProductType } from "@/core/enums";
-import type { AvailabilityData } from "@/xapi/types";
+import type { PreparedLineItemType } from "@/core/types";
 
 interface IEmits {
   (event: "update:modelValue", value: number): void;
@@ -46,14 +46,8 @@ interface IEmits {
 }
 
 interface IProps {
-  modelValue?: number;
   loading?: boolean;
-  countInCart?: number;
-  availabilityData?: AvailabilityData;
-  minQuantity?: number;
-  maxQuantity?: number;
-  productType?: ProductType;
-  hasPrice: boolean;
+  item: PreparedLineItemType;
 }
 
 const emit = defineEmits<IEmits>();
@@ -63,23 +57,23 @@ const MAX_VALUE = 999999;
 
 const { t } = useI18n();
 
-const isButtonOutlined = computed<boolean>(() => props.countInCart === 0);
-const minQty = computed<number>(() => props.minQuantity || 1);
+const isButtonOutlined = computed<boolean>(() => props.item.countInCart === 0);
+const minQty = computed<number>(() => props.item.minQuantity || 1);
 const maxQty = computed<number>(() =>
-  Math.min(props.availabilityData?.availableQuantity || MAX_VALUE, props.maxQuantity || MAX_VALUE)
+  Math.min(props.item.product?.availabilityData?.availableQuantity || MAX_VALUE, props.item.maxQuantity || MAX_VALUE)
 );
 
 const buttonText = computed<string>(() =>
-  props.countInCart ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart")
+  props.item.countInCart ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart")
 );
 
 const disabled = computed<boolean>(
   () =>
-    !props.hasPrice ||
-    !props.availabilityData?.isAvailable ||
-    !props.availabilityData?.isInStock ||
-    !props.availabilityData?.isBuyable ||
-    (!props.availabilityData?.availableQuantity && props.productType === ProductType.Physical)
+    !props.item.actualPrice ||
+    !props.item.product?.availabilityData?.isAvailable ||
+    !props.item.product?.availabilityData?.isInStock ||
+    !props.item.product?.availabilityData?.isBuyable ||
+    (!props.item.product?.availabilityData?.availableQuantity && props.item.productType === ProductType.Physical)
 );
 
 const rules = computed(() =>
@@ -94,7 +88,7 @@ const rules = computed(() =>
   )
 );
 
-const initialValue = ref(disabled.value ? undefined : props.modelValue);
+const initialValue = ref(disabled.value ? undefined : props.item.quantity);
 
 const { value: enteredQuantity, errorMessage, validate, setValue } = useField("quantity", rules, { initialValue });
 
