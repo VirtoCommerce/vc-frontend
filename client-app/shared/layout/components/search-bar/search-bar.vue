@@ -1,5 +1,5 @@
 <template>
-  <div v-click-outside="hideSearchDropdown" class="relative flex grow items-stretch">
+  <div ref="searchBarElement" class="relative flex grow items-stretch">
     <VcInput
       v-model.trim="searchPhrase"
       :maxlength="MAX_LENGTH"
@@ -24,8 +24,8 @@
     <transition name="slide-fade-top">
       <div
         v-if="searchDropdownVisible"
-        class="absolute top-[3.45rem] left-[-10rem] z-20 flex w-full flex-col gap-3 overflow-hidden rounded bg-white shadow-lg"
-        style="min-width: calc(100% + 10rem)"
+        class="absolute top-[3.45rem] left-[-10rem] z-20 flex w-full flex-col gap-3 overflow-y-auto rounded bg-white shadow-lg"
+        :style="searchDropdownStyle"
       >
         <!-- Results -->
         <template v-if="categories.length || products.length">
@@ -66,7 +66,7 @@
           </section>
 
           <!-- Actions -->
-          <section v-if="total" class="mt-0.5 border-t border-gray-100 px-5 py-3">
+          <section v-if="total" class="sticky bottom-0 mt-0.5 border-t border-gray-100 bg-white px-5 py-3">
             <VcButton
               :to="{ name: 'Search', query: { [QueryParamName.SearchPhrase]: searchPhrase } }"
               class="px-4 uppercase"
@@ -93,18 +93,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { clickOutside } from "@/core/directives";
-
-export default {
-  directives: {
-    clickOutside, // TODO: Use directive from VueUse (https://vueuse.org/core/onClickOutside/#directive-usage)
-  },
-};
-</script>
-
 <script setup lang="ts">
-import { useDebounceFn, whenever } from "@vueuse/core";
+import { useDebounceFn, whenever, useElementBounding, onClickOutside } from "@vueuse/core";
 import { computed, inject, ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useGoogleAnalytics, useRouteQueryParam } from "@/core/composables";
@@ -113,6 +103,9 @@ import { configInjectionKey } from "@/core/injection-keys";
 import { useSearchBar } from "@/shared/layout";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 import type { Category } from "@/xapi/types";
+import type { StyleValue } from "vue";
+
+const searchBarElement = ref<HTMLElement | null>(null);
 
 // Number of categories column items in dropdown list
 const CATEGORIES_ITEMS_PER_COLUMN = 4;
@@ -145,6 +138,14 @@ const categoriesRoutes = useCategoriesRoutes(categories);
 const searchPhrase = ref("");
 
 const isApplied = computed<boolean>(() => searchPhraseInUrl.value === searchPhrase.value);
+
+const { bottom } = useElementBounding(searchBarElement);
+
+const searchDropdownStyle = computed<StyleValue | undefined>(() => {
+  return { maxHeight: bottom.value ? `calc(100vh - ${bottom.value + 40}px)` : "auto", minWidth: `calc(100% + 10rem)` };
+});
+
+onClickOutside(searchBarElement, () => hideSearchDropdown());
 
 const categoriesColumns = computed<Array<Category[]>>(() => {
   const columnsCount: number = Math.ceil(categories.value.length / CATEGORIES_ITEMS_PER_COLUMN);
