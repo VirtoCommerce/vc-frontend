@@ -25,7 +25,7 @@
       <div
         v-if="searchDropdownVisible"
         class="absolute top-[3.45rem] left-[-10rem] z-20 flex w-full flex-col gap-3 overflow-y-auto rounded bg-white shadow-lg"
-        :style="catalogMenuStyle"
+        :style="searchDropdownStyle"
       >
         <!-- Results -->
         <template v-if="categories.length || products.length">
@@ -141,7 +141,7 @@ const isApplied = computed<boolean>(() => searchPhraseInUrl.value === searchPhra
 
 const { bottom } = useElementBounding(searchBarElement);
 
-const catalogMenuStyle = computed<StyleValue | undefined>(() => {
+const searchDropdownStyle = computed<StyleValue | undefined>(() => {
   return { maxHeight: bottom.value ? `calc(100vh - ${bottom.value + 40}px)` : "auto", minWidth: `calc(100% + 10rem)` };
 });
 
