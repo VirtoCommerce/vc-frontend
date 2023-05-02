@@ -6,6 +6,8 @@
       "page_title_store_name_align": "start",
       "page_title_divider": " · ",
 
+      "catalog_menu_link_list_name": "catalog-menu",
+
       "quotes_enabled": true,
 
       "product_compare_enabled": true,
@@ -258,10 +260,13 @@
       "color_price_old": "#9D9991",
       "color_price_from": "#9D9991"
     },
+
     "Watermelon": {
       "page_title_with_store_name": true,
       "page_title_store_name_align": "start",
       "page_title_divider": " · ",
+
+      "catalog_menu_link_list_name": "catalog-menu",
 
       "quotes_enabled": true,
 

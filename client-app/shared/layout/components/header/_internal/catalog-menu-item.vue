@@ -1,0 +1,74 @@
+<template>
+  <div>
+    <router-link
+      class="mb-2 block px-2 py-1 text-base font-bold hover:bg-gray-100"
+      :to="item.url ?? '#'"
+      @click="select"
+    >
+      {{ item.title }}
+    </router-link>
+
+    <div>
+      <template v-for="(child, key) in visibleChildren" :key="key">
+        <router-link
+          class="mb-1 block truncate px-2 py-1 text-sm !leading-4 text-gray-500 hover:bg-gray-100"
+          :to="child.url ?? '#'"
+          @click="select"
+        >
+          {{ child.title }}
+        </router-link>
+      </template>
+
+      <button
+        v-if="children.length > SHORT_VIEW_ITEMS_COUNT"
+        type="button"
+        class="flex items-center px-2 py-1 text-sm"
+        @click="toggleShowAll"
+      >
+        <span class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]">
+          {{ buttonText }}
+        </span>
+
+        <VcIcon :name="buttonIcon" size="xxs" class="ml-1 text-[color:var(--color-primary)]" />
+      </button>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import type { MenuLinkType } from "@/xapi/types";
+
+interface IEmits {
+  (event: "select"): void;
+}
+
+interface IProps {
+  item: MenuLinkType;
+}
+
+const emit = defineEmits<IEmits>();
+const props = defineProps<IProps>();
+
+const { t } = useI18n();
+
+const SHORT_VIEW_ITEMS_COUNT = 5;
+const showAll = ref(false);
+
+const children = computed<MenuLinkType[]>(() => props.item.childItems || []);
+const visibleChildren = computed<MenuLinkType[]>(() =>
+  showAll.value ? children.value : children.value.slice(0, SHORT_VIEW_ITEMS_COUNT)
+);
+
+const buttonIcon = computed<string>(() => (showAll.value ? "chevron-up" : "chevron-down"));
+const buttonText = computed<string>(() => (showAll.value ? t("common.buttons.hide") : t("common.buttons.show_more")));
+
+function toggleShowAll() {
+  showAll.value = !showAll.value;
+}
+
+function select() {
+  emit("select");
+}
+</script>
