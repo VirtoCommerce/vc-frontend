@@ -1,5 +1,5 @@
 <template>
-  <span :class="['vc-badge', `vc-badge--size--${size}`, `vc-badge--${color}--${variant}`]">
+  <span :class="['vc-badge', `vc-badge--size--${size}`, `vc-badge--${variant}--${color}`]">
     <slot />
   </span>
 </template>
@@ -39,30 +39,28 @@ withDefaults(defineProps<IProps>(), {
   }
 
   @each $color in $colors {
-    &--#{$color} {
-      &--solid {
-        @apply bg-[color:var(--color-#{$color}-500)]
-        border-[color:var(--color-#{$color}-500)]
-        text-[color:var(--color-additional-50)];
-      }
+    &--solid--#{$color} {
+      @apply bg-[color:var(--color-#{$color}-500)]
+      border-[color:var(--color-#{$color}-500)]
+      text-[color:var(--color-additional-50)];
+    }
 
-      &--solid-light {
-        @apply bg-[color:var(--color-#{$color}-50)]
-        border-[color:var(--color-#{$color}-50)]
-        text-[color:var(--color-#{$color}-800)];
-      }
+    &--solid-light--#{$color} {
+      @apply bg-[color:var(--color-#{$color}-50)]
+      border-[color:var(--color-#{$color}-50)]
+      text-[color:var(--color-#{$color}-800)];
+    }
 
-      &--outline {
-        @apply bg-[color:var(--color-additional-50)]
-        border-[color:var(--color-#{$color}-500)]
-        text-[color:var(--color-#{$color}-800)];
-      }
+    &--outline--#{$color} {
+      @apply bg-[color:var(--color-additional-50)]
+      border-[color:var(--color-#{$color}-500)]
+      text-[color:var(--color-#{$color}-800)];
+    }
 
-      &--outline-dark {
-        @apply bg-[color:var(--color-#{$color}-50)]
-        border-[color:var(--color-#{$color}-500)]
-        text-[color:var(--color-#{$color}-800)];
-      }
+    &--outline-dark--#{$color} {
+      @apply bg-[color:var(--color-#{$color}-50)]
+      border-[color:var(--color-#{$color}-500)]
+      text-[color:var(--color-#{$color}-800)];
     }
   }
 }
