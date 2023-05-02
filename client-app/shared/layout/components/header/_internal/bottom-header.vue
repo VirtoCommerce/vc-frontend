@@ -19,22 +19,25 @@
       </template>
 
       <!-- Catalog button -->
-      <button
+      <a
         ref="showCatalogMenuButton"
+        :href="catalogLink"
         type="button"
-        class="flex cursor-pointer select-none items-center rounded border-2 border-primary px-[0.8rem] py-[0.55rem] text-sm text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)]"
-        @click="catalogMenuVisible = !catalogMenuVisible"
+        class="flex select-none items-center rounded border-2 border-primary px-[0.8rem] py-[0.55rem] text-sm text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)]"
+        @click="toggleCatalogDropdown"
       >
         <span
           v-t="'shared.layout.header.bottom_header.catalog_menu_button'"
           class="font-bold uppercase tracking-wide"
         />
 
-        <i
-          class="fas ml-3 align-baseline text-[color:var(--color-primary)]"
-          :class="[catalogMenuVisible ? 'fa-chevron-up' : 'fa-chevron-down']"
+        <VcIcon
+          v-if="catalogMenuItems.length"
+          :name="catalogButtonIcon"
+          size="xs"
+          class="ml-3 text-[color:var(--color-primary)]"
         />
-      </button>
+      </a>
 
       <SearchBar />
 
@@ -57,6 +60,7 @@
 
     <!-- Catalog dropdown -->
     <transition
+      v-if="catalogMenuItems.length"
       enter-from-class="-translate-y-full"
       leave-to-class="-translate-y-full"
       enter-active-class="will-change-transform"
@@ -68,7 +72,7 @@
         class="absolute w-full overflow-y-auto shadow-md transition-transform duration-200"
         :style="catalogMenuStyle"
       >
-        <CatalogMenu @select="catalogMenuVisible = false" />
+        <CatalogMenu :items="catalogMenuItems" @select="catalogMenuVisible = false" />
       </div>
     </transition>
   </div>
@@ -77,7 +81,8 @@
 <script setup lang="ts">
 import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vueuse/core";
 import { computed, ref, shallowRef } from "vue";
-import { useNavigations } from "@/core/composables";
+import { useRouter } from "vue-router";
+import { useCatalogMenu, useNavigations } from "@/core/composables";
 import { useUser } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
@@ -86,9 +91,11 @@ import BottomHeaderLink from "./bottom-header-link.vue";
 import CatalogMenu from "./catalog-menu.vue";
 import type { StyleValue } from "vue";
 
+const router = useRouter();
 const { organization } = useUser();
 const { cart } = useCart();
 const { desktopHeaderMenuLinks } = useNavigations();
+const { catalogMenuItems } = useCatalogMenu();
 const { productsIds } = useCompareProducts();
 
 const bottomHeader = ref<HTMLElement | null>(null);
@@ -98,6 +105,8 @@ const catalogMenuVisible = ref(false);
 
 const { bottom } = useElementBounding(bottomHeader);
 
+const catalogLink = router.resolve({ name: "Catalog" }).fullPath;
+const catalogButtonIcon = computed<string>(() => (catalogMenuVisible.value ? "chevron-up" : "chevron-down"));
 const catalogMenuStyle = computed<StyleValue | undefined>(() =>
   bottom.value ? { maxHeight: `calc(100vh - ${bottom.value}px)` } : undefined
 );
@@ -111,4 +120,11 @@ onClickOutside(
 );
 
 syncRefs(catalogMenuVisible, useScrollLock(document.body));
+
+function toggleCatalogDropdown(event: Event) {
+  if (catalogMenuItems.value.length) {
+    event.preventDefault();
+    catalogMenuVisible.value = !catalogMenuVisible.value;
+  }
+}
 </script>

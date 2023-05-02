@@ -1,5 +1,6 @@
 import type { RouteLocationRaw } from "vue-router";
 
+/** @deprecated */
 export type MenuLinkType = {
   id?: string;
   title?: string;

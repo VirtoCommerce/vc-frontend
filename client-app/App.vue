@@ -24,16 +24,8 @@ import { PopupHost } from "@/shared/popup";
 import { MainLayout, SecureLayout, useSearchBar } from "./shared/layout";
 import type { Component } from "vue";
 
-const props = defineProps({
-  settings: {
-    type: String,
-    default: null,
-  },
-});
-
-/**
- * NOTE: As an example, here is the code for getting the settings from Liquid work context.
- */
+/** NOTE: As an example, here is the code for getting the settings from Liquid work context. */
+const props = withDefaults(defineProps<{ settings?: string }>(), { settings: "{}" });
 const settings = JSON.parse(props.settings); // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const route = useRoute();
@@ -41,7 +33,7 @@ const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
 const { fetchCategories } = useCategories();
-const { fetchCatalogMenuItems } = useCatalogMenu();
+const { fetchCatalogMenu } = useCatalogMenu();
 const { fetchMenus } = useNavigations();
 const { fetchCart } = useCart();
 
@@ -64,10 +56,7 @@ router.beforeEach(async (to) => {
 });
 
 fetchMenus();
-fetchCatalogMenuItems({
-  maxLevel: 2,
-  onlyActive: true,
-});
+fetchCatalogMenu();
 fetchCategories();
 fetchCart();
 </script>

@@ -1692,6 +1692,8 @@ export type InputOrderBankCardInfoType = {
 export type InputOrderPaymentType = {
   amount?: InputMaybe<Scalars['OptionalDecimal']>;
   billingAddress?: InputMaybe<InputOrderAddressType>;
+  /** Text comment */
+  comment?: InputMaybe<Scalars['OptionalString']>;
   currency?: InputMaybe<Scalars['OptionalString']>;
   /** Dynamic properties */
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
@@ -1709,6 +1711,8 @@ export type InputOrderPaymentType = {
 export type InputPaymentType = {
   amount?: InputMaybe<Scalars['OptionalDecimal']>;
   billingAddress?: InputMaybe<InputAddressType>;
+  /** Text comment */
+  comment?: InputMaybe<Scalars['OptionalString']>;
   currency?: InputMaybe<Scalars['OptionalString']>;
   /** Dynamic properties */
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
@@ -1719,6 +1723,7 @@ export type InputPaymentType = {
   /** Payment gateway code value */
   paymentGatewayCode?: InputMaybe<Scalars['OptionalString']>;
   price?: InputMaybe<Scalars['OptionalDecimal']>;
+  purpose?: InputMaybe<Scalars['OptionalString']>;
   vendorId?: InputMaybe<Scalars['OptionalString']>;
 };
 
@@ -1924,6 +1929,8 @@ export type InputSendVerifyEmailType = {
 };
 
 export type InputShipmentType = {
+  /** Text comment */
+  comment?: InputMaybe<Scalars['OptionalString']>;
   /** Currency value */
   currency?: InputMaybe<Scalars['OptionalString']>;
   /** Delivery address */
@@ -2426,6 +2433,7 @@ export type MenuLinkType = {
   associatedObjectName?: Maybe<Scalars['String']>;
   /** Menu item type name */
   associatedObjectType?: Maybe<Scalars['String']>;
+  childItems?: Maybe<Array<Maybe<MenuLinkType>>>;
   /** Menu item outerID */
   outerId?: Maybe<Scalars['String']>;
   /** Menu item priority */
@@ -3260,6 +3268,13 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['String']>;
 };
 
+export type PageType = {
+  /** Page relative url */
+  relativeUrl?: Maybe<Scalars['String']>;
+  /** Page title */
+  title?: Maybe<Scalars['String']>;
+};
+
 /** A connection from an object to a list of objects of type `PaymentIn`. */
 export type PaymentInConnection = {
   /** A list of all of the edges returned in the connection. */
@@ -3389,6 +3404,8 @@ export type PaymentType = {
   amount?: Maybe<MoneyType>;
   /** Billing address */
   billingAddress?: Maybe<CartAddressType>;
+  /** Text comment */
+  comment?: Maybe<Scalars['String']>;
   /** Currency */
   currency?: Maybe<CurrencyType>;
   /** Discount amount */
@@ -3409,6 +3426,7 @@ export type PaymentType = {
   price?: Maybe<MoneyType>;
   /** Price with tax */
   priceWithTax?: Maybe<MoneyType>;
+  purpose?: Maybe<Scalars['String']>;
   /** Tax details */
   taxDetails?: Maybe<Array<Maybe<TaxDetailType>>>;
   /** Tax percent rate */
@@ -3754,11 +3772,13 @@ export type Query = {
   fulfillmentCenter?: Maybe<FulfillmentCenterType>;
   fulfillmentCenters?: Maybe<FulfillmentCenterConnection>;
   me?: Maybe<UserType>;
+  menu?: Maybe<MenuLinkListType>;
   menus?: Maybe<Array<Maybe<MenuLinkListType>>>;
   order?: Maybe<CustomerOrderType>;
   orders?: Maybe<CustomerOrderConnection>;
   organization?: Maybe<Organization>;
   organizations?: Maybe<OrganizationConnection>;
+  page?: Maybe<Array<Maybe<PageType>>>;
   payments?: Maybe<PaymentInConnection>;
   product?: Maybe<Product>;
   products?: Maybe<ProductConnection>;
@@ -3917,6 +3937,13 @@ export type QueryFulfillmentCentersArgs = {
 };
 
 
+export type QueryMenuArgs = {
+  cultureName: Scalars['String'];
+  name: Scalars['String'];
+  storeId: Scalars['String'];
+};
+
+
 export type QueryMenusArgs = {
   cultureName?: InputMaybe<Scalars['String']>;
   keyword?: InputMaybe<Scalars['String']>;
@@ -3952,6 +3979,12 @@ export type QueryOrganizationsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   searchPhrase?: InputMaybe<Scalars['String']>;
   sort?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryPageArgs = {
+  keyword: Scalars['String'];
+  storeId: Scalars['String'];
 };
 
 
@@ -4338,6 +4371,8 @@ export type SeoInfo = {
 };
 
 export type ShipmentType = {
+  /** Text comment */
+  comment?: Maybe<Scalars['String']>;
   /** Currency */
   currency?: Maybe<CurrencyType>;
   /** Delivery address */
@@ -5091,6 +5126,15 @@ export type GetCountriesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetCountriesQuery = { countries?: Array<{ id: string, name: string, regions?: Array<{ id: string, name: string }> }> };
+
+export type GetMenuQueryVariables = Exact<{
+  storeId: Scalars['String'];
+  cultureName: Scalars['String'];
+  name: Scalars['String'];
+}>;
+
+
+export type GetMenuQuery = { menu?: { items?: Array<{ title?: string, url?: string, childItems?: Array<{ title?: string, url?: string }> }> } };
 
 export type GetMenusQueryVariables = Exact<{
   storeId: Scalars['String'];
