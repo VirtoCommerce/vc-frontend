@@ -1,9 +1,9 @@
 import type {
+  AvailabilityData,
   CommonVendor,
   LineItemType,
   MoneyType,
   OrderLineItemType,
-  Product,
   Property,
   QuoteItemType,
 } from "@/xapi/types";
@@ -47,8 +47,9 @@ export type PreparedLineItemType = {
   properties: Property[];
   minQuantity?: number;
   maxQuantity?: number;
-  product?: Product;
+  availabilityData?: AvailabilityData;
   productType?: string;
   sku?: string;
+  productId?: string;
   countInCart?: number;
 };

@@ -61,7 +61,6 @@ export function extendLineItem<T extends AnyLineItemType>(item: T): ExtendedLine
 }
 
 export function prepareLineItem(item: AnyLineItemType, countInCart?: number): PreparedLineItemType {
-  const product = "product" in item ? item.product : undefined;
   const productType = "productType" in item ? item.productType : undefined;
   const isVariation = !!item.product?.masterVariation;
   const placedPrice = "placedPrice" in item ? item.placedPrice : undefined;
@@ -80,9 +79,10 @@ export function prepareLineItem(item: AnyLineItemType, countInCart?: number): Pr
     id: item.id,
     name: item.name || "",
     imageUrl: item.imageUrl,
-    product,
+    availabilityData: item.product?.availabilityData,
     productType,
     sku: item.sku,
+    productId: item.productId,
     listPrice,
     actualPrice,
     extendedPrice,

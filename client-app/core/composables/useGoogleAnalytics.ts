@@ -76,10 +76,12 @@ function viewItemList(items: Product[], params?: EventParamsExtendedType): void 
   });
 }
 
-function selectItem(item: Product, params?: EventParamsExtendedType): void {
+function selectItem(item: Product | LineItemType, params?: EventParamsExtendedType): void {
+  const gtagItem = "productId" in item ? lineItemToGtagItem(item) : productToGtagItem(item);
+
   sendEvent("select_item", {
     ...params,
-    items: [productToGtagItem(item)],
+    items: [gtagItem],
   });
 }
 

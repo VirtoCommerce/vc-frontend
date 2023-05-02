@@ -123,7 +123,7 @@
 
 <script lang="ts" setup>
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { cloneDeep, isEqual } from "lodash";
+import { cloneDeep, isEqual, keyBy } from "lodash";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useGoogleAnalytics, usePageHead } from "@/core/composables";
@@ -169,11 +169,9 @@ const itemsPerPage = ref(6);
 const page = ref(1);
 const wishlistItems = ref<LineItemType[]>([]);
 
+const cartItemsGroupedBySkus = computed(() => keyBy(cart.value.items, "sku"));
 const preparedLineItems = computed<PreparedLineItemType[]>(() =>
-  wishlistItems.value.map((item) => {
-    const itemInCart = cart.value?.items?.find((i) => i.sku === item.sku);
-    return prepareLineItem(item, itemInCart?.quantity);
-  })
+  wishlistItems.value.map((item) => prepareLineItem(item, cartItemsGroupedBySkus.value[item.sku!]?.quantity))
 );
 const loading = computed<boolean>(() => listLoading.value || cartLoading.value);
 const pagesCount = computed<number>(() => Math.ceil((wishlistItems.value.length ?? 0) / itemsPerPage.value));
@@ -282,6 +280,8 @@ function openDeleteProductModal(item: LineItemType): void {
         const previousPagesCount = pagesCount.value;
 
         await fetchWishList(props.listId);
+
+        wishlistItems.value = list.value?.items || [];
 
         /**
          * If you were on the last page, and after deleting the product

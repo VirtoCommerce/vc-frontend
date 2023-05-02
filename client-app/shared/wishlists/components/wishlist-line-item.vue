@@ -3,7 +3,7 @@
     :class="[
       'vc-wishlist-line-item',
       {
-        'vc-wishlist-line-item--not-exists': !item.product,
+        'vc-wishlist-line-item--not-exists': item.deleted,
       },
     ]"
   >
@@ -22,7 +22,7 @@
           :to="item.route"
           :title="item.name"
           class="vc-wishlist-line-item__name vc-wishlist-line-item__name--link"
-          @click="sendGASelectItemEvent"
+          @click="ga.selectItem(item)"
         >
           {{ item.name }}
         </router-link>
@@ -53,21 +53,27 @@
       <!-- ADD-TO-CART -->
       <div class="vc-wishlist-line-item__quantity">
         <VcAddToCart
-          v-if="!!item.product"
-          :item="item"
+          v-if="!item.deleted"
+          :model-value="item.quantity"
+          :available-quantity="item.availabilityData?.availableQuantity"
+          :min-quantity="item.minQuantity"
+          :max-quantity="item.maxQuantity"
+          :count-in-cart="item.countInCart"
+          :disabled="addToCartDisabled"
+          required
           @update:model-value="changeListItemQuantity"
           @update:cart-item-quantity="changeCartItemQuantity"
         />
 
         <div class="vc-wishlist-line-item__quantity-badges">
           <VcInStock
-            :is-in-stock="item.product?.availabilityData?.isInStock"
-            :is-available="!!item.product"
-            :availability-data="item.product?.availabilityData"
-            :quantity="item.product?.availabilityData?.availableQuantity"
+            :is-in-stock="item.availabilityData?.isInStock"
+            :is-available="!item.deleted"
+            :availability-data="item.availabilityData"
+            :quantity="item.availabilityData?.availableQuantity"
             :is-digital="item.productType === ProductType.Digital"
           />
-          <VcCountInCart :product-id="item.product?.id" />
+          <VcCountInCart :product-id="item.productId" />
         </div>
       </div>
 
@@ -86,6 +92,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { useGoogleAnalytics } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import type { PreparedLineItemType } from "@/core/types";
@@ -106,18 +113,22 @@ const props = defineProps<IProps>();
 
 const ga = useGoogleAnalytics();
 
+const isDigital = computed<boolean>(() => props.item.productType === ProductType.Digital);
+const addToCartDisabled = computed<boolean>(
+  () =>
+    !props.item.actualPrice ||
+    !props.item.availabilityData?.isAvailable ||
+    !props.item.availabilityData?.isInStock ||
+    !props.item.availabilityData?.isBuyable ||
+    (!props.item.availabilityData?.availableQuantity && !isDigital.value)
+);
+
 function changeListItemQuantity(quantity: number): void {
   emit("update:listItemQuantity", { productSku: props.item.sku!, quantity });
 }
 
 function changeCartItemQuantity(quantity: number): void {
   emit("update:cartItemQuantity", { productSku: props.item.sku!, quantity });
-}
-
-function sendGASelectItemEvent() {
-  if (props.item.product) {
-    ga.selectItem(props.item.product);
-  }
 }
 </script>
 

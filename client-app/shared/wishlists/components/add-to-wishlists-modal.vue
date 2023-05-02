@@ -207,7 +207,13 @@ async function addToWishlistsFromListOther() {
     return;
   }
 
-  await addItemsToWishlists(selectedListsOtherIds.value.map((listId) => ({ listId, productId: product.value.id })));
+  await addItemsToWishlists(
+    selectedListsOtherIds.value.map((listId) => ({
+      listId,
+      productId: product.value.id,
+      quantity: product.value.minQuantity || 1,
+    }))
+  );
 
   /**
    * Send Google Analytics event for an item added to wish list.
