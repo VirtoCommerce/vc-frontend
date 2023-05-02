@@ -2,6 +2,7 @@ export { default as VcActionDropdownMenu } from "./action-dropdown-menu/vc-actio
 export { default as VcActionInput } from "./action-input/vc-action-input.vue";
 export { default as VcAlert } from "./alert/vc-alert.vue";
 export { default as VcAddressLine } from "./address-line/vc-address-line.vue";
+export { default as VcBadge } from "./badge/vc-badge.vue";
 export { default as VcBreadcrumbs } from "./breadcrumbs/vc-breadcrumbs.vue";
 export { default as VcButton } from "./button/vc-button.vue";
 export { default as VcCard } from "./card/vc-card.vue";

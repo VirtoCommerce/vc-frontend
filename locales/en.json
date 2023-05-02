@@ -45,6 +45,8 @@
       "go_to_billing": "Proceed to billing",
       "see_more": "See more",
       "see_less": "See less",
+      "show_more": "Show more",
+      "hide": "Hide",
       "view_invoice": "View invoice",
       "pay_now": "Pay now",
       "payment_details": "Payment details",
@@ -224,11 +226,7 @@
           "logged_in_as": "logged in as"
         },
         "bottom_header": {
-          "catalog_menu_button": "Catalog",
-          "catalog_menu": {
-            "show_more": "Show more",
-            "hide_more": "Hide"
-          }
+          "catalog_menu_button": "Catalog"
         },
         "link_sign_in": "Sign in",
         "link_register_now": "Sign up now",
