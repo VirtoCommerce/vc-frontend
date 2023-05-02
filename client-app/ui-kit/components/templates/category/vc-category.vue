@@ -32,7 +32,6 @@
             :keyword="keywordQueryParam"
             :filters="mobileFilters"
             :loading="loading || facetsLoading"
-            :with-local-search="!isSearchPage"
             @search="
               onSearchStart($event);
               hideMobileSidebar();
@@ -83,7 +82,6 @@
             :keyword="keywordQueryParam"
             :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
             :loading="loading"
-            :with-local-search="!isSearchPage"
             @search="onSearchStart($event)"
             @change="applyFilters($event)"
           />

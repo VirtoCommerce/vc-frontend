@@ -91,38 +91,27 @@
 
 <script setup lang="ts">
 import { eagerComputed, useBreakpoints, breakpointsTailwind } from "@vueuse/core";
-import _ from "lodash";
+import { cloneDeep } from "lodash";
 import { watch, ref, shallowReactive } from "vue";
 import type { FacetItemType } from "@/core/types";
 import type { ProductsFilters } from "@/shared/catalog";
-import type { PropType } from "vue";
 
-const emit = defineEmits<{
-  (e: "search", keyword: string): void;
-  (e: "change", value: ProductsFilters): void;
-  (e: "openBranches"): void;
-}>();
-const props = defineProps({
-  loading: {
-    type: Boolean,
-    default: false,
-  },
+interface IEmits {
+  (event: "search", keyword: string): void;
+  (event: "change", value: ProductsFilters): void;
+  (event: "openBranches"): void;
+}
 
-  keyword: {
-    type: String,
-    default: "",
-  },
+interface IProps {
+  loading?: boolean;
+  withLocalSearch?: boolean;
+  keyword?: string;
+  filters: ProductsFilters;
+}
 
-  filters: {
-    type: Object as PropType<ProductsFilters>,
-    required: true,
-  },
+const emit = defineEmits<IEmits>();
+const props = defineProps<IProps>();
 
-  withLocalSearch: {
-    type: Boolean,
-    default: true,
-  },
-});
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 
@@ -131,7 +120,7 @@ const localFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: fal
 
 watch(
   () => props.filters.facets,
-  (newFacets) => (localFilters.facets = _.cloneDeep(newFacets)),
+  (newFacets) => (localFilters.facets = cloneDeep(newFacets)),
   { immediate: true }
 );
 
@@ -155,7 +144,7 @@ watch(
 
 const isAppliedKeyword = eagerComputed<boolean>(() => localKeyword.value === props.keyword);
 
-const filterHasSelectedValues = (facet: FacetItemType) => _.some(facet.values, (value) => value.selected);
+const filterHasSelectedValues = (facet: FacetItemType) => facet.values.some((value) => value.selected);
 
 function onFilterChanged() {
   emit("change", localFilters);
