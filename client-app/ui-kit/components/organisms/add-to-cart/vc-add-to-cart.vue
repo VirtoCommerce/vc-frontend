@@ -62,7 +62,7 @@ const buttonText = computed<string>(() =>
 
 const quantity = ref<number | undefined>(props.modelValue);
 
-async function onChange(): Promise<void> {
+function onChange(): void {
   const newQuantity = Number(quantity.value);
 
   if (isNaN(newQuantity) || newQuantity < 1 || newQuantity === props.modelValue) {
