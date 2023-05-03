@@ -43,7 +43,6 @@ interface IProps {
   modelValue?: number;
   loading?: boolean;
   disabled?: boolean;
-  availableQuantity?: number;
   minQuantity?: number;
   maxQuantity?: number;
   countInCart?: number;

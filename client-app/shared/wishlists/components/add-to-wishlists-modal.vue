@@ -211,7 +211,7 @@ async function addToWishlistsFromListOther() {
     selectedListsOtherIds.value.map((listId) => ({
       listId,
       productId: product.value.id,
-      quantity: product.value.minQuantity || 1,
+      quantity: 1,
     }))
   );
 

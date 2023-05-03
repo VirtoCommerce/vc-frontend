@@ -55,12 +55,10 @@
         <VcAddToCart
           v-if="!item.deleted"
           :model-value="item.quantity"
-          :available-quantity="item.availabilityData?.availableQuantity"
           :min-quantity="item.minQuantity"
           :max-quantity="item.maxQuantity"
           :count-in-cart="item.countInCart"
           :disabled="addToCartDisabled"
-          required
           @update:model-value="changeListItemQuantity"
           @update:cart-item-quantity="changeCartItemQuantity"
         />
@@ -71,7 +69,7 @@
             :is-available="!item.deleted"
             :availability-data="item.availabilityData"
             :quantity="item.availabilityData?.availableQuantity"
-            :is-digital="item.productType === ProductType.Digital"
+            :is-digital="isDigital"
           />
           <VcCountInCart :product-id="item.productId" />
         </div>
