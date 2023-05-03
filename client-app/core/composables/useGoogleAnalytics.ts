@@ -1,6 +1,7 @@
 import { sumBy } from "lodash";
 import globals from "../globals";
 import { useAppContext } from "./useAppContext";
+import type { AnyLineItemType } from "../types";
 import type { Breadcrumb, CartType, CustomerOrderType, LineItemType, Product, VariationType } from "@/xapi/types";
 
 type EventParamsType = Gtag.ControlParams & Gtag.EventParams & Gtag.CustomParams;
@@ -76,10 +77,12 @@ function viewItemList(items: Product[], params?: EventParamsExtendedType): void 
   });
 }
 
-function selectItem(item: Product, params?: EventParamsExtendedType): void {
+function selectItem(item: Product | AnyLineItemType, params?: EventParamsExtendedType): void {
+  const gtagItem = "productId" in item || "product" in item ? lineItemToGtagItem(item) : productToGtagItem(item);
+
   sendEvent("select_item", {
     ...params,
-    items: [productToGtagItem(item)],
+    items: [gtagItem],
   });
 }
 
