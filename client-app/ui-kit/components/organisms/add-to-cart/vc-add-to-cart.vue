@@ -33,7 +33,6 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { invoke } from "@vueuse/core";
 import { useField } from "vee-validate";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -103,5 +102,5 @@ async function onChange(): Promise<void> {
   }
 }
 
-invoke(async () => await validate());
+validate();
 </script>
