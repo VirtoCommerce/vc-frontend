@@ -38,31 +38,16 @@
 <script setup lang="ts">
 import { toRefs, ref, watch, onMounted } from "vue";
 
-const props = defineProps({
-  title: {
-    type: String,
-    default: undefined,
-  },
+interface IProps {
+  title?: string;
+  withHeader?: boolean;
+  isCollapsible?: boolean;
+  isCollapsed?: boolean;
+  fullWidthContent?: boolean;
+}
 
-  withHeader: {
-    type: Boolean,
-    default: true,
-  },
-
-  isCollapsible: {
-    type: Boolean,
-    default: false,
-  },
-
-  isCollapsed: {
-    type: Boolean,
-    default: false,
-  },
-
-  fullWidthContent: {
-    type: Boolean,
-    default: false,
-  },
+const props = withDefaults(defineProps<IProps>(), {
+  withHeader: true,
 });
 
 const { isCollapsed } = toRefs(props);
