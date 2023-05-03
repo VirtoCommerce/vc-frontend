@@ -60,7 +60,7 @@ export function extendLineItem<T extends AnyLineItemType>(item: T): ExtendedLine
   };
 }
 
-export function prepareLineItem(item: AnyLineItemType): PreparedLineItemType {
+export function prepareLineItem(item: AnyLineItemType, countInCart?: number): PreparedLineItemType {
   const productType = "productType" in item ? item.productType : undefined;
   const isVariation = !!item.product?.masterVariation;
   const placedPrice = "placedPrice" in item ? item.placedPrice : undefined;
@@ -79,7 +79,10 @@ export function prepareLineItem(item: AnyLineItemType): PreparedLineItemType {
     id: item.id,
     name: item.name || "",
     imageUrl: item.imageUrl,
+    availabilityData: item.product?.availabilityData,
     productType,
+    sku: item.sku,
+    productId: item.productId,
     listPrice,
     actualPrice,
     extendedPrice,
@@ -88,6 +91,7 @@ export function prepareLineItem(item: AnyLineItemType): PreparedLineItemType {
     route,
     deleted: !item.product,
     properties: properties.slice(0, 3),
+    countInCart,
     minQuantity: item.product?.minQuantity,
     maxQuantity:
       (<LineItemType>item).inStockQuantity ||

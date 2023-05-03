@@ -9,6 +9,7 @@ query GetWishlist($listId: String!, $cultureName: String) {
       name
       imageUrl
       sku
+      productId
       quantity
       salePrice {
         amount
@@ -18,6 +19,7 @@ query GetWishlist($listId: String!, $cultureName: String) {
         amount
         formattedAmount
       }
+      productType
       product {
         name
         id

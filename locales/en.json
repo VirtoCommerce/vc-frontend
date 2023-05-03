@@ -105,7 +105,8 @@
       "recipient_name": "Recipient name",
       "active_address": "Active address",
       "addresses_icon": "Address icon",
-      "digital_product": "Digital product"
+      "digital_product": "Digital product",
+      "save_changes": "Save Changes"
     },
     "prefixes": {
       "please": "Please"
@@ -142,7 +143,8 @@
       "wishlists_available_for_authorized": "Wishlists are available only for authenticated users",
       "no_addresses": "You do not have any addresses yet",
       "confirm_delete_address": "Are you sure you want to delete this address?",
-      "no_results": "No results found"
+      "no_results": "No results found",
+      "save_new_product_quantity": "Do you want to save new quantity by product lines?"
     },
     "placeholders": {
       "enter_value": "Please enter value",

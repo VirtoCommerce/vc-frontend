@@ -8,19 +8,21 @@ import {
   deleteWishlistItem,
   getWishList,
   getWishlists,
+  updateWishListItems,
   renameWishlist as _renameWishlist,
 } from "@/xapi/graphql/account";
 import type {
   InputAddWishlistItemType,
   InputRemoveWishlistItemType,
   InputRenameWishlistType,
+  InputUpdateWishlistItemsType,
   WishlistType,
 } from "@/xapi/types";
 import type { Ref } from "vue";
 
 const loading = ref(true);
 const lists = shallowRef<WishlistType[]>([]);
-const list: Ref<WishlistType | null> = ref(null);
+const list: Ref<WishlistType | undefined> = ref();
 
 export default function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: true }) {
   async function createWishlist(name: string) {
@@ -155,8 +157,21 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
     loading.value = false;
   }
 
+  async function updateWishlistItemsQuantities(payload: InputUpdateWishlistItemsType): Promise<void> {
+    loading.value = true;
+
+    try {
+      await updateWishListItems(payload);
+      await fetchWishList(payload.listId);
+    } catch (e) {
+      Logger.error(`${useWishlists.name}.${updateWishlistItemsQuantities.name}`, e);
+    } finally {
+      loading.value = false;
+    }
+  }
+
   function clearList() {
-    list.value = null;
+    list.value = undefined;
   }
 
   return {
@@ -169,6 +184,7 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
     addItemsToWishlists,
     removeItemsFromWishlists,
     clearList,
+    updateWishlistItemsQuantities,
     loading: readonly(loading),
     lists: computed(() => lists.value),
     list: computed(() => list.value),

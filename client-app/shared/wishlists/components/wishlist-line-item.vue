@@ -3,7 +3,7 @@
     :class="[
       'vc-wishlist-line-item',
       {
-        'vc-wishlist-line-item--not-exists': !item.extended.isProductExists,
+        'vc-wishlist-line-item--not-exists': item.deleted,
       },
     ]"
   >
@@ -18,11 +18,11 @@
 
         <!-- NAME -->
         <router-link
-          v-if="item.extended.route"
-          :to="item.extended.route"
+          v-if="item.route"
+          :to="item.route"
           :title="item.name"
           class="vc-wishlist-line-item__name vc-wishlist-line-item__name--link"
-          @click="sendGASelectItemEvent"
+          @click="ga.selectItem(item)"
         >
           {{ item.name }}
         </router-link>
@@ -34,45 +34,44 @@
 
       <!-- PROPERTIES -->
       <div class="vc-wishlist-line-item__properties">
-        <VcLineItemProperty
-          v-for="property in item.extended.displayProperties"
-          :key="property.id"
-          :label="property.label"
-        >
+        <VcLineItemProperty v-for="property in item.properties" :key="property.id" :label="property.label">
           {{ property.value }}
         </VcLineItemProperty>
 
         <div class="xl:hidden">
           <VcLineItemProperty :label="$t('common.labels.price_per_item')">
-            <VcLineItemPrice :list-price="item.listPrice" :actual-price="item.salePrice" />
+            <VcLineItemPrice :list-price="item.listPrice" :actual-price="item.actualPrice" />
           </VcLineItemProperty>
         </div>
       </div>
 
       <!-- PRICE -->
       <div class="vc-wishlist-line-item__price">
-        <VcLineItemPrice :list-price="item.listPrice" :actual-price="item.salePrice" />
+        <VcLineItemPrice :list-price="item.listPrice" :actual-price="item.actualPrice" />
       </div>
 
       <!-- ADD-TO-CART -->
       <div class="vc-wishlist-line-item__quantity">
         <VcAddToCart
-          v-if="item.extended.isProductExists"
+          v-if="!item.deleted"
           :model-value="item.quantity"
-          :count-in-cart="item.extended.countInCart"
-          :availability-data="item.product?.availabilityData"
-          @update:model-value="changeItemQuantity"
+          :min-quantity="item.minQuantity"
+          :max-quantity="item.maxQuantity"
+          :count-in-cart="item.countInCart"
+          :disabled="addToCartDisabled"
+          @update:model-value="changeListItemQuantity"
           @update:cart-item-quantity="changeCartItemQuantity"
         />
 
         <div class="vc-wishlist-line-item__quantity-badges">
           <VcInStock
-            :is-in-stock="item.product?.availabilityData?.isInStock || false"
-            :is-available="item.extended.isProductExists"
-            :availability-data="item.product?.availabilityData"
-            :quantity="item.product?.availabilityData?.availableQuantity"
+            :is-in-stock="item.availabilityData?.isInStock"
+            :is-available="!item.deleted"
+            :availability-data="item.availabilityData"
+            :quantity="item.availabilityData?.availableQuantity"
+            :is-digital="isDigital"
           />
-          <VcCountInCart :product-id="item.product?.id" />
+          <VcCountInCart :product-id="item.productId" />
         </div>
       </div>
 
@@ -91,9 +90,11 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { useGoogleAnalytics } from "@/core/composables";
-import type { ExtendedLineItemType } from "@/core/types";
-import type { InputNewBulkItemType, LineItemType } from "@/xapi/types";
+import { ProductType } from "@/core/enums";
+import type { PreparedLineItemType } from "@/core/types";
+import type { InputNewBulkItemType } from "@/xapi/types";
 
 interface IEmits {
   (event: "update:cartItemQuantity", item: InputNewBulkItemType): void;
@@ -102,7 +103,7 @@ interface IEmits {
 }
 
 interface IProps {
-  item: ExtendedLineItemType<LineItemType>;
+  item: PreparedLineItemType;
 }
 
 const emit = defineEmits<IEmits>();
@@ -110,18 +111,22 @@ const props = defineProps<IProps>();
 
 const ga = useGoogleAnalytics();
 
-function changeItemQuantity(quantity: number): void {
+const isDigital = computed<boolean>(() => props.item.productType === ProductType.Digital);
+const addToCartDisabled = computed<boolean>(
+  () =>
+    !props.item.actualPrice ||
+    !props.item.availabilityData?.isAvailable ||
+    !props.item.availabilityData?.isInStock ||
+    !props.item.availabilityData?.isBuyable ||
+    (!props.item.availabilityData?.availableQuantity && !isDigital.value)
+);
+
+function changeListItemQuantity(quantity: number): void {
   emit("update:listItemQuantity", { productSku: props.item.sku!, quantity });
 }
 
 function changeCartItemQuantity(quantity: number): void {
   emit("update:cartItemQuantity", { productSku: props.item.sku!, quantity });
-}
-
-function sendGASelectItemEvent() {
-  if (props.item.product) {
-    ga.selectItem(props.item.product);
-  }
 }
 </script>
 

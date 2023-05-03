@@ -1,4 +1,12 @@
-import type { CommonVendor, LineItemType, MoneyType, OrderLineItemType, Property, QuoteItemType } from "@/xapi/types";
+import type {
+  AvailabilityData,
+  CommonVendor,
+  LineItemType,
+  MoneyType,
+  OrderLineItemType,
+  Property,
+  QuoteItemType,
+} from "@/xapi/types";
 import type { RouteLocationRaw } from "vue-router";
 
 export type AnyLineItemType = LineItemType | OrderLineItemType | QuoteItemType;
@@ -39,5 +47,9 @@ export type PreparedLineItemType = {
   properties: Property[];
   minQuantity?: number;
   maxQuantity?: number;
+  availabilityData?: AvailabilityData;
   productType?: string;
+  sku?: string;
+  productId?: string;
+  countInCart?: number;
 };

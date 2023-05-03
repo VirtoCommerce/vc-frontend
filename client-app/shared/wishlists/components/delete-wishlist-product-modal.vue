@@ -26,23 +26,21 @@
 </template>
 
 <script setup lang="ts">
-import { useWishlists } from "@/shared/wishlists";
+import useWishlists from "../composables/useWishlists";
 import type { InputRemoveWishlistItemType, LineItemType } from "@/xapi/types";
-import type { PropType } from "vue";
 
-const emit = defineEmits(["result"]);
+interface IEmits {
+  (event: "result"): void;
+}
 
-const props = defineProps({
-  listItem: {
-    type: Object as PropType<LineItemType>,
-    required: true,
-  },
+const emit = defineEmits<IEmits>();
 
-  listId: {
-    type: String,
-    required: true,
-  },
-});
+const props = defineProps<IProps>();
+
+interface IProps {
+  listItem: LineItemType;
+  listId: string;
+}
 
 const { loading, removeItemsFromWishlists } = useWishlists();
 

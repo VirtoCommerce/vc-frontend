@@ -8,6 +8,6 @@ export { default as WishlistLineItems } from "./wishlist-line-items.vue";
 export { default as WishlistLineItem } from "./wishlist-line-item.vue";
 export { default as WishlistProductItem } from "./wishlist-product-item.vue";
 export { default as WishlistProductItemSkeleton } from "./wishlist-product-item-skeleton.vue";
-export { default as DeleteWishlistProductModal } from "./delete-wishlist-product.vue";
+export { default as DeleteWishlistProductModal } from "./delete-wishlist-product-modal.vue";
 export { default as UnsuccessfulCreateWishlistModal } from "./unsuccessful-create-list-modal.vue";
 export { default as AddToList } from "./add-to-list.vue";
