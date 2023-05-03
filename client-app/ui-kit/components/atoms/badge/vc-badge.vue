@@ -22,7 +22,7 @@ withDefaults(defineProps<IProps>(), {
 .vc-badge {
   $colors: primary, secondary, success, info, neutral, warning, danger;
 
-  @apply inline-block border rounded-full font-bold;
+  @apply inline-block border rounded-full font-bold text-center;
 
   &--size {
     &--xs {
