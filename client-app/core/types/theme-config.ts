@@ -7,6 +7,8 @@ export interface IThemeConfigPreset {
   page_title_store_name_align?: string | "start" | "end";
   page_title_divider?: string;
 
+  catalog_menu_link_list_name?: string | null;
+
   anonymous_price_enabled?: boolean;
   anonymous_checkout?: boolean;
 
