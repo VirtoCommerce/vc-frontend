@@ -177,7 +177,7 @@
             </div>
 
             <div class="flex flex-col items-end justify-center">
-              <TableStatusBadge :status="itemData.item.status" />
+              <OrderStatus :status="itemData.item.status" />
             </div>
 
             <div class="flex flex-col">
@@ -245,8 +245,8 @@
               {{ $d(order?.createdDate) }}
             </td>
 
-            <td class="overflow-hidden text-ellipsis p-5">
-              <TableStatusBadge :status="order.status" class="mx-auto" />
+            <td class="overflow-hidden text-ellipsis p-5 text-center">
+              <OrderStatus :status="order.status" />
             </td>
 
             <td class="overflow-hidden text-ellipsis p-5 text-right">
@@ -299,6 +299,7 @@ import {
   useUserOrdersFilter,
   useUserOrders,
   PageToolbarBlock,
+  OrderStatus,
 } from "@/shared/account";
 import type { ISortInfo } from "@/core/types";
 import type { CustomerOrderType } from "@/xapi/types";

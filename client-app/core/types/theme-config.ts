@@ -1,3 +1,4 @@
+import type { IOrderStatus } from "./order-status";
 import type { ISocialSharingService } from "./social-sharing";
 import type { SortDirection } from "@/core/enums";
 
@@ -79,7 +80,7 @@ export interface IThemeConfigPreset {
   orders_search_enabled?: boolean;
   orders_filter_enabled?: boolean;
   orders_reorder_enabled?: boolean;
-  orders_statuses?: string[];
+  orders_statuses?: IOrderStatus[];
   line_items_group_by_vendor_enabled?: boolean;
 
   social_sharing_services?: ISocialSharingService[];

@@ -8,6 +8,7 @@ export { default as RegistrationSuccessDialog } from "./registration-success-dia
 export { default as CheckoutDefaultsSuccessDialog } from "./checkout-default-success-dialog.vue";
 export { default as ProfileUpdateSuccessDialog } from "./profile-update-success-dialog.vue";
 export { default as OrdersFilter } from "./orders-filter.vue";
+export { default as OrderStatus } from "./order-status.vue";
 export { default as MobileOrdersFilter } from "./mobile-orders-filter.vue";
 export { default as PageToolbarBlock } from "./page-toolbar-block.vue";
 export { default as QuoteLineItems } from "./quote-line-items.vue";

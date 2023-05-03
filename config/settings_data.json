@@ -44,7 +44,39 @@
       },
       "image_carousel_in_product_card_enabled": true,
 
-      "orders_statuses": ["New", "Processing", "Pending", "Cancelled", "Completed"],
+      "orders_statuses": [
+        {
+          "code": "New",
+          "color": "success",
+          "variant": "outline-dark"
+        },
+        {
+          "code": "Processing",
+          "color": "info",
+          "variant": "outline-dark"
+        },
+        {
+          "code": "Pending",
+          "color": "info",
+          "variant": "outline-dark"
+        },
+        {
+          "code": "Cancelled",
+          "color": "danger",
+          "variant": "outline"
+        },
+        {
+          "code": "Completed",
+          "color": "success",
+          "variant": "outline"
+        },
+        {
+          "code": "Payment required",
+          "color": "warning",
+          "variant": "outline-dark"
+        }
+      ],
+
       "line_items_group_by_vendor_enabled": true,
       "social_sharing_services": [
         {
@@ -304,7 +336,39 @@
       },
       "image_carousel_in_product_card_enabled": true,
 
-      "orders_statuses": ["New", "Processing", "Pending", "Cancelled", "Completed"],
+      "orders_statuses": [
+        {
+          "code": "New",
+          "color": "success",
+          "variant": "outline-dark"
+        },
+        {
+          "code": "Processing",
+          "color": "info",
+          "variant": "outline-dark"
+        },
+        {
+          "code": "Pending",
+          "color": "info",
+          "variant": "outline-dark"
+        },
+        {
+          "code": "Cancelled",
+          "color": "danger",
+          "variant": "outline"
+        },
+        {
+          "code": "Completed",
+          "color": "success",
+          "variant": "outline"
+        },
+        {
+          "code": "Payment required",
+          "color": "warning",
+          "variant": "outline-dark"
+        }
+      ],
+
       "line_items_group_by_vendor_enabled": false,
       "social_sharing_services": [
         {
