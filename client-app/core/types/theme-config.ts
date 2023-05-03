@@ -1,3 +1,4 @@
+import type { IOrderStatus } from "./order-status";
 import type { ISocialSharingService } from "./social-sharing";
 import type { SortDirection } from "@/core/enums";
 
@@ -5,6 +6,8 @@ export interface IThemeConfigPreset {
   page_title_with_store_name?: boolean;
   page_title_store_name_align?: string | "start" | "end";
   page_title_divider?: string;
+
+  catalog_menu_link_list_name?: string | null;
 
   anonymous_price_enabled?: boolean;
   anonymous_checkout?: boolean;
@@ -77,7 +80,7 @@ export interface IThemeConfigPreset {
   orders_search_enabled?: boolean;
   orders_filter_enabled?: boolean;
   orders_reorder_enabled?: boolean;
-  orders_statuses?: string[];
+  orders_statuses?: IOrderStatus[];
   line_items_group_by_vendor_enabled?: boolean;
 
   social_sharing_services?: ISocialSharingService[];

@@ -17,23 +17,3 @@ export function buildCategoryTree(parent: CategoryTreeItemType, categories: Cate
 
   return parent;
 }
-
-export function searchCategoryTreeItemByKey(
-  categoryTreeItem: CategoryTreeItemType,
-  key: keyof CategoryTreeItemType,
-  value: any // eslint-disable-line @typescript-eslint/no-explicit-any
-): CategoryTreeItemType | undefined {
-  if (categoryTreeItem[key] === value) {
-    return categoryTreeItem;
-  }
-
-  for (const item of categoryTreeItem.children) {
-    const category = searchCategoryTreeItemByKey(item, key, value);
-
-    if (category) {
-      return category;
-    }
-  }
-
-  return undefined;
-}
