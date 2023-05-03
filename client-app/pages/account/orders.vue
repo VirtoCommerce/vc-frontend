@@ -177,7 +177,7 @@
             </div>
 
             <div class="flex flex-col items-end justify-center">
-              <TableStatusBadge :status="itemData.item.status" />
+              <OrderStatus :status="itemData.item.status" />
             </div>
 
             <div class="flex flex-col">
