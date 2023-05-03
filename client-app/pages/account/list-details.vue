@@ -169,9 +169,9 @@ const itemsPerPage = ref(6);
 const page = ref(1);
 const wishlistItems = ref<LineItemType[]>([]);
 
-const cartItemsGroupedBySkus = computed(() => keyBy(cart.value.items, "sku"));
+const cartItemsBySkus = computed(() => keyBy(cart.value.items, "sku"));
 const preparedLineItems = computed<PreparedLineItemType[]>(() =>
-  wishlistItems.value.map((item) => prepareLineItem(item, cartItemsGroupedBySkus.value[item.sku!]?.quantity))
+  wishlistItems.value.map((item) => prepareLineItem(item, cartItemsBySkus.value[item.sku!]?.quantity))
 );
 const loading = computed<boolean>(() => listLoading.value || cartLoading.value);
 const pagesCount = computed<number>(() => Math.ceil((wishlistItems.value.length ?? 0) / itemsPerPage.value));
@@ -281,7 +281,7 @@ function openDeleteProductModal(item: LineItemType): void {
 
         await fetchWishList(props.listId);
 
-        wishlistItems.value = list.value?.items || [];
+        wishlistItems.value = cloneDeep(list.value?.items || []);
 
         /**
          * If you were on the last page, and after deleting the product

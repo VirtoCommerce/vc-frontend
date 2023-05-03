@@ -4833,6 +4833,13 @@ export type UpdatePersonalDataMutationVariables = Exact<{
 
 export type UpdatePersonalDataMutation = { updatePersonalData?: { succeeded: boolean, errors?: Array<{ code?: string, description?: string }> } };
 
+export type UpdateWishListItemsMutationVariables = Exact<{
+  command: InputUpdateWishlistItemsType;
+}>;
+
+
+export type UpdateWishListItemsMutation = { updateWishListItems?: { id?: string } };
+
 export type CheckEmailUniquenessQueryVariables = Exact<{
   email: Scalars['String'];
 }>;
@@ -4876,7 +4883,7 @@ export type GetWishlistQueryVariables = Exact<{
 }>;
 
 
-export type GetWishlistQuery = { wishlist?: { name: string, id?: string, items?: Array<{ id: string, name?: string, imageUrl?: string, sku?: string, quantity?: number, salePrice?: { amount: any, formattedAmount: string }, listPrice?: { amount: any, formattedAmount: string }, product?: { name: string, id: string, code: string, slug?: string, outline?: string, minQuantity?: number, maxQuantity?: number, imgSrc?: string, images?: Array<{ url?: string }>, vendor?: { id: string, name: string }, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, price?: { actual?: { amount: any, formattedAmount: string }, discountAmount?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string } } } }> } };
+export type GetWishlistQuery = { wishlist?: { name: string, id?: string, items?: Array<{ id: string, name?: string, imageUrl?: string, sku?: string, productId?: string, quantity?: number, productType?: string, salePrice?: { amount: any, formattedAmount: string }, listPrice?: { amount: any, formattedAmount: string }, product?: { name: string, id: string, code: string, slug?: string, outline?: string, minQuantity?: number, maxQuantity?: number, imgSrc?: string, images?: Array<{ url?: string }>, vendor?: { id: string, name: string }, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, price?: { actual?: { amount: any, formattedAmount: string }, discountAmount?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string } } } }> } };
 
 export type GetWishlistsQueryVariables = Exact<{
   storeId: Scalars['String'];

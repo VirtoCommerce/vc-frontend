@@ -18,7 +18,7 @@
         <VcButton
           :is-outline="isButtonOutlined"
           :is-waiting="loading"
-          :is-disabled="isButtonDisabled || !!errorMessage"
+          :is-disabled="buttonDisabled"
           :title="buttonText"
           class="!h-full w-28 !rounded-[inherit] uppercase"
           size="sm"
@@ -81,10 +81,13 @@ const rules = computed(() =>
   )
 );
 
-const isButtonDisabled = ref(props.disabled);
 const initialValue = ref(props.disabled ? undefined : props.modelValue);
 
 const { value: enteredQuantity, errorMessage, validate, setValue } = useField("quantity", rules, { initialValue });
+
+const buttonDisabled = computed<boolean>(
+  () => props.disabled || !!errorMessage || (props.required && !enteredQuantity)
+);
 
 async function onChange(): Promise<void> {
   if (!enteredQuantity.value) {
@@ -92,8 +95,6 @@ async function onChange(): Promise<void> {
   } else if (isNaN(enteredQuantity.value)) {
     setValue(minQty.value);
   }
-
-  isButtonDisabled.value = !enteredQuantity.value && props.required;
 
   const { valid } = await validate();
 
