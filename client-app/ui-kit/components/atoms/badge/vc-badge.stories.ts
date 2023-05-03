@@ -65,6 +65,15 @@ OutlineDark.args = {
   variant: "outline-dark",
 };
 
+export const Truncate: StoryFn<typeof VcBadge> = (args) => ({
+  components: { VcBadge },
+  setup: () => ({ args }),
+  template: '<VcBadge class="w-32" v-bind="args">Long long badge text</VcBadge>',
+});
+Truncate.args = {
+  truncate: true,
+};
+
 export const AllStates: StoryFn<typeof VcBadge> = () => ({
   components: { VcBadge },
   setup: () => ({ colors: COLORS, variants: VARIANTS, sizes: SIZES }),

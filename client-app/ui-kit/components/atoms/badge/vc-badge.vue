@@ -1,5 +1,12 @@
 <template>
-  <span :class="['vc-badge', `vc-badge--size--${size}`, `vc-badge--${variant}--${color}`]">
+  <span
+    :class="[
+      'vc-badge',
+      `vc-badge--size--${size}`,
+      `vc-badge--${variant}--${color}`,
+      { 'vc-badge--truncate': truncate },
+    ]"
+  >
     <slot />
   </span>
 </template>
@@ -9,6 +16,7 @@ interface IProps {
   color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger";
   size?: "xs" | "sm" | "md";
   variant?: "solid" | "solid-light" | "outline" | "outline-dark";
+  truncate?: boolean;
 }
 
 withDefaults(defineProps<IProps>(), {
@@ -22,7 +30,7 @@ withDefaults(defineProps<IProps>(), {
 .vc-badge {
   $colors: primary, secondary, success, info, neutral, warning, danger;
 
-  @apply inline-block border rounded-full font-bold;
+  @apply inline-block border rounded-full font-bold text-center;
 
   &--size {
     &--xs {
@@ -36,6 +44,10 @@ withDefaults(defineProps<IProps>(), {
     &--md {
       @apply py-[3px] px-3 text-sm;
     }
+  }
+
+  &--truncate {
+    @apply truncate;
   }
 
   @each $color in $colors {

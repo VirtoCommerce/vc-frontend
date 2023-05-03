@@ -32,7 +32,6 @@
             :keyword="keywordQueryParam"
             :filters="mobileFilters"
             :loading="loading || facetsLoading"
-            :with-local-search="!isSearchPage"
             @search="
               onSearchStart($event);
               hideMobileSidebar();
@@ -83,7 +82,6 @@
             :keyword="keywordQueryParam"
             :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
             :loading="loading"
-            :with-local-search="!isSearchPage"
             @search="onSearchStart($event)"
             @change="applyFilters($event)"
           />
@@ -109,6 +107,7 @@
               </span>
 
               <sup
+                v-if="!loading"
                 class="-top-1 ml-2 whitespace-nowrap text-sm font-normal normal-case text-[color:var(--color-category-page-results)] lg:top-[-0.5em] lg:text-15"
               >
                 <b class="font-extrabold">{{ total }}</b>

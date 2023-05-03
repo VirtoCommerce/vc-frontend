@@ -7,12 +7,12 @@
         </div>
         <VcCheckbox
           v-for="status in availableStatuses"
-          :key="status"
+          :key="status.code"
           v-model="filterData.statuses"
-          :value="status"
-          :class="{ 'font-bold': isSelectedStatus(status), 'text-gray-500': !isSelectedStatus(status) }"
+          :value="status.code"
+          :class="{ 'font-bold': isSelectedStatus(status.code), 'text-gray-500': !isSelectedStatus(status.code) }"
         >
-          {{ status }}
+          {{ status.code }}
         </VcCheckbox>
       </div>
       <div class="flex flex-col space-y-3">
