@@ -63,9 +63,10 @@ import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { buildBreadcrumbs } from "@/core/utilities";
 import { useCart } from "@/shared/cart";
-import { CarouselProductCard, useProduct, useRelatedProducts } from "@/shared/catalog";
+import { CarouselProductCard, useProduct, useRelatedProducts, useCategory } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useTemplate } from "@/shared/static-content";
+import type { Breadcrumb } from "@/xapi/types";
 
 const props = withDefaults(defineProps<IProps>(), {
   productId: "",
@@ -110,6 +111,7 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
+const { rootCategory } = useCategory();
 
 usePageHead({
   title: computed(() => product.value?.seoInfo?.pageTitle || product.value?.name),
@@ -119,9 +121,14 @@ usePageHead({
   },
 });
 
-const breadcrumbs = useBreadcrumbs(() =>
-  product.value ? buildBreadcrumbs(product.value.breadcrumbs) ?? [{ title: product.value.name }] : []
-);
+const breadcrumbs = useBreadcrumbs(() => {
+  const firstItem: Breadcrumb = { itemId: rootCategory.id, title: rootCategory.name, seoPath: rootCategory.slug };
+  const items = product.value
+    ? product.value.breadcrumbs ?? [{ itemId: product.value.id, title: product.value.name }]
+    : [];
+
+  return buildBreadcrumbs([firstItem].concat(items)) ?? [];
+});
 
 const variationsCartTotalAmount = eagerComputed<number>(() => {
   if (!product.value) {
