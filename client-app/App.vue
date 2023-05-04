@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, computedEager, useBreakpoints } from "@vueuse/core";
+import { computedEager } from "@vueuse/core";
 import { Head as PageHead } from "@vueuse/head";
 import { markRaw } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -30,12 +30,9 @@ const settings = JSON.parse(props.settings); // eslint-disable-line @typescript-
 
 const route = useRoute();
 const router = useRouter();
-const breakpoints = useBreakpoints(breakpointsTailwind);
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
 const { fetchMenus } = useNavigations();
 const { fetchCart } = useCart();
-
-const isMobile = breakpoints.smaller("lg");
 
 const layouts: Record<NonNullable<typeof route.meta.layout>, Component> = {
   Main: markRaw(MainLayout),
@@ -44,12 +41,13 @@ const layouts: Record<NonNullable<typeof route.meta.layout>, Component> = {
 
 const layout = computedEager(() => layouts[route.meta?.layout ?? "Main"]);
 
-router.beforeEach(async (to) => {
-  // Animated hiding of the search bar or dropdown list of search results
+router.beforeEach((to) => {
+  // Hiding the drop-down list of search results
+  hideSearchDropdown();
+
+  // Hiding the search bar on mobile devices
   if (to.name !== "Search") {
-    await hideSearchBar();
-  } else if (!isMobile.value) {
-    await hideSearchDropdown();
+    hideSearchBar();
   }
 });
 
