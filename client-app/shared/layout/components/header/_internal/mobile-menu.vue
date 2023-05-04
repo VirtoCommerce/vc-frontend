@@ -80,11 +80,11 @@
     <section v-else class="grow divide-y divide-white divide-opacity-20 overflow-y-auto">
       <div class="flex flex-col gap-y-2 py-6 px-9">
         <!-- Home link -->
-        <MobileMenuLink :link="homeLink" class="py-1 text-2xl" @close="$emit('close')">
-          {{ homeLink.title }}
+        <MobileMenuLink :link="homeMenuItem" class="py-1 text-2xl" @close="$emit('close')">
+          {{ homeMenuItem.title }}
         </MobileMenuLink>
 
-        <template v-for="item in mobileMainMenuLinks" :key="item.title">
+        <template v-for="item in mobileMainMenuItems" :key="item.title">
           <MobileMenuLink
             v-if="item.id === 'cart'"
             :link="item"
@@ -159,29 +159,29 @@
 
           <!-- Account link -->
           <MobileMenuLink
-            v-if="mobileAccountMenuLink"
-            :link="mobileAccountMenuLink"
+            v-if="mobileAccountMenuItem"
+            :link="mobileAccountMenuItem"
             class="py-1 text-2xl"
-            @select="selectMenuItem(mobileAccountMenuLink!)"
+            @select="selectMenuItem(mobileAccountMenuItem!)"
           >
-            {{ mobileAccountMenuLink.title }}
+            {{ mobileAccountMenuItem.title }}
           </MobileMenuLink>
 
           <!-- Corporate link -->
           <MobileMenuLink
-            v-if="mobileCorporateMenuLink && organization"
-            :link="mobileCorporateMenuLink"
+            v-if="mobileCorporateMenuItem && organization"
+            :link="mobileCorporateMenuItem"
             class="py-1 text-2xl"
-            @select="selectMenuItem(mobileCorporateMenuLink!)"
+            @select="selectMenuItem(mobileCorporateMenuItem!)"
           >
-            {{ mobileCorporateMenuLink.title }}
+            {{ mobileCorporateMenuItem.title }}
           </MobileMenuLink>
         </template>
 
         <!-- Unauthorized links -->
         <div v-else class="mb-1">
           <MobileMenuLink
-            v-for="item in unauthorizedMenuLinks"
+            v-for="item in unauthorizedMenuItems"
             :key="item.title"
             :link="item"
             class="py-1.5 text-2xl"
@@ -194,9 +194,9 @@
         <!-- Settings link -->
         <MobileMenuLink
           v-if="supportedCurrencies.length > 1"
-          :link="settingsMenuLink"
+          :link="settingsMenuItem"
           class="py-1 text-2xl"
-          @select="selectMenuItem(settingsMenuLink)"
+          @select="selectMenuItem(settingsMenuItem)"
         >
           {{ $t("shared.layout.header.mobile.settings") }}
         </MobileMenuLink>
@@ -215,9 +215,13 @@ import { useCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
 import { LanguageSelector } from "@/shared/layout";
 import MobileMenuLink from "./mobile-menu-link.vue";
-import type { MenuLinkType } from "@/core/types";
+import type { ExtendedMenuLinkType } from "@/core/types";
 
-defineEmits(["close"]);
+interface IEmits {
+  (event: "close"): void;
+}
+
+defineEmits<IEmits>();
 
 const { t } = useI18n();
 const { cart } = useCart();
@@ -226,28 +230,28 @@ const { supportedLocales } = useLanguages();
 const { currentCurrency, supportedCurrencies, saveCurrencyCodeAndReload } = useCurrency();
 const { user, operator, isAuthenticated, organization, signMeOut } = useUser();
 const {
-  mobileMainMenuLinks,
-  mobileAccountMenuLink,
-  mobileCorporateMenuLink,
-  mobilePreSelectedMenuLink,
+  mobileMainMenuItems,
+  mobileAccountMenuItem,
+  mobileCorporateMenuItem,
+  mobilePreSelectedMenuItem,
   openedItem,
   selectMenuItem,
   goBack,
   goMainMenu,
 } = useNavigations();
 
-const unauthorizedMenuLinks: MenuLinkType[] = [
+const unauthorizedMenuItems: ExtendedMenuLinkType[] = [
   { route: { name: "SignIn" }, title: t("shared.layout.header.link_sign_in") },
   { route: { name: "SignUp" }, title: t("shared.layout.header.link_register_now") },
 ];
 
-const settingsMenuLink: MenuLinkType = {
+const settingsMenuItem: ExtendedMenuLinkType = {
   id: "settings",
   icon: "/static/images/common/settings.svg#main",
   children: [{ id: "currency-setting" }], // see implementation in template
 };
 
-const homeLink = computed<MenuLinkType>(() =>
+const homeMenuItem = computed<ExtendedMenuLinkType>(() =>
   isAuthenticated.value
     ? {
         route: { name: "Dashboard" },
@@ -269,8 +273,8 @@ async function signOut() {
 onMounted(() => {
   goMainMenu();
 
-  if (mobilePreSelectedMenuLink.value) {
-    selectMenuItem(mobilePreSelectedMenuLink.value);
+  if (mobilePreSelectedMenuItem.value) {
+    selectMenuItem(mobilePreSelectedMenuItem.value);
   }
 });
 </script>

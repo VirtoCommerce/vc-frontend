@@ -17,7 +17,7 @@ import { breakpointsTailwind, computedEager, useBreakpoints } from "@vueuse/core
 import { Head as PageHead } from "@vueuse/head";
 import { markRaw } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useCategories, useNavigations, useCatalogMenu } from "@/core/composables";
+import { useNavigations } from "@/core/composables";
 import { useCart } from "@/shared/cart";
 import { NotificationsHost } from "@/shared/notification";
 import { PopupHost } from "@/shared/popup";
@@ -32,8 +32,6 @@ const route = useRoute();
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
-const { fetchCategories } = useCategories();
-const { fetchCatalogMenu } = useCatalogMenu();
 const { fetchMenus } = useNavigations();
 const { fetchCart } = useCart();
 
@@ -56,8 +54,6 @@ router.beforeEach(async (to) => {
 });
 
 fetchMenus();
-fetchCatalogMenu();
-fetchCategories();
 fetchCart();
 </script>
 
