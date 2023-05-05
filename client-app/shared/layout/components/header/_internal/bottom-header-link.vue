@@ -41,19 +41,15 @@ export default {
 <script setup lang="ts">
 import { computed } from "vue";
 import { numberToShortString } from "@/core/utilities";
-import type { MenuLinkType } from "@/core/types";
-import type { PropType } from "vue";
+import type { ExtendedMenuLinkType } from "@/core/types";
 
-const props = defineProps({
-  link: {
-    type: Object as PropType<MenuLinkType>,
-    required: true,
-  },
+interface IProps {
+  link: ExtendedMenuLinkType;
+  count?: number;
+}
 
-  count: {
-    type: Number,
-    default: 0,
-  },
+const props = withDefaults(defineProps<IProps>(), {
+  count: 0,
 });
 
 const preparedCount = computed<string>(() => numberToShortString(props.count));

@@ -48,7 +48,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { numberToShortString } from "@/core/utilities";
-import type { MenuLinkType } from "@/core/types";
+import type { ExtendedMenuLinkType } from "@/core/types";
 import type { NavigationFailure } from "vue-router";
 
 interface IEmits {
@@ -57,7 +57,7 @@ interface IEmits {
 }
 
 interface IProps {
-  link: MenuLinkType;
+  link: ExtendedMenuLinkType;
   count?: number;
 }
 

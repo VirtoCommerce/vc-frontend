@@ -69,7 +69,7 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const { innerFetch } = useFetch();
 const { currentLanguage } = useLanguages();
-const { setMatchedRouteName } = useNavigations();
+const { setMatchingRouteName } = useNavigations();
 
 const loading = ref(true);
 
@@ -108,21 +108,21 @@ const seoInfo = computedAsync<ResultType | undefined>(
 );
 
 onBeforeUnmount(() => {
-  setMatchedRouteName("");
+  setMatchingRouteName("");
 });
 
 watchEffect(() => {
-  let matchedRouteName = "";
+  let matchingRouteName = "";
 
   switch (seoInfo.value?.entity?.objectType) {
     case "CatalogProduct":
-      matchedRouteName = "Product";
+      matchingRouteName = "Product";
       break;
     case "Category":
-      matchedRouteName = "Category";
+      matchingRouteName = "Category";
       break;
   }
 
-  setMatchedRouteName(matchedRouteName);
+  setMatchingRouteName(matchingRouteName);
 });
 </script>
