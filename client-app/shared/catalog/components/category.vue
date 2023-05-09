@@ -7,7 +7,7 @@
       <!-- Breadcrumbs -->
       <VcBreadcrumbs v-if="!isSearchPage" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
 
-      <div class="flex items-start lg:gap-6">
+      <div class="flex items-stretch lg:gap-6">
         <!-- Mobile sidebar back cover -->
         <VcPopupSidebar
           v-if="isMobile"
@@ -71,20 +71,22 @@
         </VcPopupSidebar>
 
         <!-- Sidebar -->
-        <div v-else class="w-60 shrink-0 space-y-5">
-          <CategorySelector
-            v-if="!isSearchPage"
-            :category="currentCategory"
-            :loading="!currentCategory && loadingCategory"
-          />
+        <div v-else ref="containerElement" class="relative w-60 shrink-0">
+          <div ref="filtersElement" class="sticky w-60 space-y-5" :style="filtersStyle">
+            <CategorySelector
+              v-if="!isSearchPage"
+              :category="currentCategory"
+              :loading="!currentCategory && loadingCategory"
+            />
 
-          <ProductsFiltersSidebar
-            :keyword="keywordQueryParam"
-            :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
-            :loading="loading"
-            @search="onSearchStart($event)"
-            @change="applyFilters($event)"
-          />
+            <ProductsFiltersSidebar
+              :keyword="keywordQueryParam"
+              :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
+              :loading="loading"
+              @search="onSearchStart($event)"
+              @change="applyFilters($event)"
+            />
+          </div>
         </div>
 
         <!-- Content -->
@@ -308,13 +310,24 @@ import {
   breakpointsTailwind,
   computedEager,
   useBreakpoints,
+  useElementBounding,
   useElementVisibility,
   useLocalStorage,
   watchDebounced,
   whenever,
 } from "@vueuse/core";
 import { cloneDeep, isEqual } from "lodash";
-import { computed, ref, shallowReactive, shallowRef, triggerRef, watch } from "vue";
+import {
+  computed,
+  ref,
+  shallowReactive,
+  shallowRef,
+  triggerRef,
+  watch,
+  watchEffect,
+  onMounted,
+  onBeforeUnmount,
+} from "vue";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead, useRouteQueryParam } from "@/core/composables";
 import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
@@ -331,6 +344,7 @@ import ViewMode from "./view-mode.vue";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 import type { ProductsFilters, ProductsSearchParams } from "@/shared/catalog";
 import type { Breadcrumb, Product } from "@/xapi/types";
+import type { StyleValue } from "vue";
 
 interface IProps {
   categoryId?: string;
@@ -394,6 +408,15 @@ const mobileFilters = shallowReactive<ProductsFilters>({
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
 const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
+
+let scrollOld = 0;
+const maxOffsetTop = 108;
+const maxOffsetBottom = 20;
+const containerElement = ref<HTMLElement | null>(null);
+const filtersElement = ref<HTMLElement | null>(null);
+const filtersStyle = ref<StyleValue | undefined>();
+const { top: cTop, height: cHeight } = useElementBounding(containerElement);
+const { height: fHeight, top: fTop } = useElementBounding(filtersElement);
 
 usePageHead({
   title: computed(() => currentCategory.value?.seoInfo?.pageTitle || currentCategory.value?.name),
@@ -555,6 +578,8 @@ async function loadMoreProducts() {
     page: nextPage,
   });
 
+  setFiltersPosition();
+
   /**
    * Send Google Analytics event for products on next page.
    */
@@ -585,6 +610,46 @@ function openBranchesDialog(fromMobileFilter: boolean) {
     },
   });
 }
+
+function setFiltersPosition() {
+  const { clientHeight, scrollTop } = document.documentElement;
+
+  const containerHeight = cHeight.value;
+  const containerTop = cTop.value;
+  const containerBottom = containerTop + containerHeight;
+
+  const filterHeight = fHeight.value;
+  const filterTop = fTop.value;
+  const filterBottom = filterTop + filterHeight + maxOffsetBottom;
+
+  const down = scrollTop > scrollOld;
+  const up = scrollTop < scrollOld;
+
+  if (filterHeight <= clientHeight - maxOffsetTop || filterHeight >= containerHeight) {
+    filtersStyle.value = { top: `${maxOffsetTop}px` };
+  } else {
+    if (up && filterTop >= maxOffsetTop) {
+      filtersStyle.value = { top: `${maxOffsetTop}px` };
+    } else if (down && filterTop <= maxOffsetTop && filterBottom <= clientHeight && filterBottom < containerBottom) {
+      filtersStyle.value = { position: "fixed", bottom: `${maxOffsetBottom}px` };
+    } else if (filterBottom >= containerBottom) {
+      filtersStyle.value = { position: "absolute", bottom: `${maxOffsetBottom}px` };
+    } else {
+      filtersStyle.value = { position: "relative", marginTop: `${filterTop - containerTop}px` };
+    }
+  }
+
+  scrollOld = scrollTop;
+}
+
+onMounted(() => {
+  setFiltersPosition();
+  window.addEventListener("scroll", setFiltersPosition);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("scroll", setFiltersPosition);
+});
 
 whenever(() => !isMobile.value, hideMobileSidebar);
 
