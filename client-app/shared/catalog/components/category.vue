@@ -7,7 +7,7 @@
       <!-- Breadcrumbs -->
       <VcBreadcrumbs v-if="!isSearchPage" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
 
-      <div ref="containerElement" :style="containerStyle" class="flex items-stretch lg:gap-6">
+      <div ref="containerElement" :style="containerStyle" class="flex items-start lg:gap-6">
         <!-- Mobile sidebar back cover -->
         <VcPopupSidebar
           v-if="isMobile"
@@ -71,22 +71,20 @@
         </VcPopupSidebar>
 
         <!-- Sidebar -->
-        <div v-else class="relative w-60 shrink-0">
-          <div ref="filtersElement" class="sticky w-60 space-y-5" :style="filtersStyle">
-            <CategorySelector
-              v-if="!isSearchPage"
-              :category="currentCategory"
-              :loading="!currentCategory && loadingCategory"
-            />
+        <div v-else ref="filtersElement" class="sticky w-60 shrink-0 space-y-5" :style="filtersStyle">
+          <CategorySelector
+            v-if="!isSearchPage"
+            :category="currentCategory"
+            :loading="!currentCategory && loadingCategory"
+          />
 
-            <ProductsFiltersSidebar
-              :keyword="keywordQueryParam"
-              :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
-              :loading="loading"
-              @search="onSearchStart($event)"
-              @change="applyFilters($event)"
-            />
-          </div>
+          <ProductsFiltersSidebar
+            :keyword="keywordQueryParam"
+            :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
+            :loading="loading"
+            @search="onSearchStart($event)"
+            @change="applyFilters($event)"
+          />
         </div>
 
         <!-- Content -->
@@ -621,10 +619,11 @@ function setFiltersPosition() {
   } else {
     if (up && filterTop >= maxOffsetTop) {
       filtersStyle.value = { top: `${maxOffsetTop}px` };
-    } else if (down && filterTop <= maxOffsetTop && filterBottom <= clientHeight && filterBottom < containerBottom) {
-      filtersStyle.value = { position: "fixed", bottom: `${maxOffsetBottom}px` };
-    } else if (filterBottom >= containerBottom) {
-      filtersStyle.value = { position: "absolute", bottom: `${maxOffsetBottom}px` };
+    } else if (
+      (down && filterTop <= maxOffsetTop && filterBottom <= clientHeight && filterBottom < containerBottom) ||
+      filterBottom >= containerBottom
+    ) {
+      filtersStyle.value = { alignSelf: "flex-end", bottom: `${maxOffsetBottom}px` };
     } else {
       filtersStyle.value = { position: "relative", marginTop: `${filterTop - containerTop}px` };
     }
@@ -661,8 +660,6 @@ watch(
 watch(
   () => fHeight.value,
   (value, oldValue) => {
-    containerStyle.value = { minHeight: `${value}px` };
-
     if (value < oldValue) {
       setFiltersPosition();
     }
