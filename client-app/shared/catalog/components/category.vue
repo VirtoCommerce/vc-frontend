@@ -7,7 +7,7 @@
       <!-- Breadcrumbs -->
       <VcBreadcrumbs v-if="!isSearchPage" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
 
-      <div class="flex items-stretch lg:gap-6">
+      <div ref="containerElement" :style="containerStyle" class="flex items-stretch lg:gap-6">
         <!-- Mobile sidebar back cover -->
         <VcPopupSidebar
           v-if="isMobile"
@@ -71,7 +71,7 @@
         </VcPopupSidebar>
 
         <!-- Sidebar -->
-        <div v-else ref="containerElement" class="relative w-60 shrink-0">
+        <div v-else class="relative w-60 shrink-0">
           <div ref="filtersElement" class="sticky w-60 space-y-5" :style="filtersStyle">
             <CategorySelector
               v-if="!isSearchPage"
@@ -317,17 +317,7 @@ import {
   whenever,
 } from "@vueuse/core";
 import { cloneDeep, isEqual } from "lodash";
-import {
-  computed,
-  ref,
-  shallowReactive,
-  shallowRef,
-  triggerRef,
-  watch,
-  watchEffect,
-  onMounted,
-  onBeforeUnmount,
-} from "vue";
+import { computed, ref, shallowReactive, shallowRef, triggerRef, watch, onMounted, onBeforeUnmount } from "vue";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead, useRouteQueryParam } from "@/core/composables";
 import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
@@ -413,6 +403,7 @@ let scrollOld = 0;
 const maxOffsetTop = 108;
 const maxOffsetBottom = 20;
 const containerElement = ref<HTMLElement | null>(null);
+const containerStyle = ref<StyleValue | undefined>();
 const filtersElement = ref<HTMLElement | null>(null);
 const filtersStyle = ref<StyleValue | undefined>();
 const { top: cTop, height: cHeight } = useElementBounding(containerElement);
@@ -504,6 +495,8 @@ function applyFilters(newFilters: ProductsFilters) {
   if (!isEqual(savedBranches.value, newFilters.branches)) {
     savedBranches.value = newFilters.branches;
   }
+
+  setFiltersPosition();
 }
 
 async function updateMobileFilters(newFilters: ProductsFilters) {
@@ -577,8 +570,6 @@ async function loadMoreProducts() {
     ...searchParams.value,
     page: nextPage,
   });
-
-  setFiltersPosition();
 
   /**
    * Send Google Analytics event for products on next page.
@@ -665,6 +656,17 @@ watch(
     }
   },
   { immediate: true }
+);
+
+watch(
+  () => fHeight.value,
+  (value, oldValue) => {
+    containerStyle.value = { minHeight: `${value}px` };
+
+    if (value < oldValue) {
+      setFiltersPosition();
+    }
+  }
 );
 
 watchDebounced(
