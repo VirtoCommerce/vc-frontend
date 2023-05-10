@@ -15,3 +15,4 @@ export { default as ProductsFiltersSidebar } from "./products-filters.vue";
 export { default as CategorySelector } from "./category-selector.vue";
 export { default as DiscountBadge } from "./discount-badge.vue";
 export { default as Vendor } from "./vendor.vue";
+export { default as FacetValues } from "./facet-values.vue";

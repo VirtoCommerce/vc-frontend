@@ -71,7 +71,9 @@
         :title="facet.label"
         :is-collapsed="!filterHasSelectedValues(facet)"
       >
-        <VcCheckbox
+        <FacetValues :facet="facet" :loading="loading" @update:facet="onFacetValuesChanged" />
+
+        <!--<VcCheckbox
           v-for="item in facet.values"
           :key="item.value"
           v-model="item.selected"
@@ -83,7 +85,7 @@
             <span class="truncate">{{ item.label }}</span>
             <span class="ml-1">{{ $t("pages.catalog.facet_card.item_count_format", [item.count]) }}</span>
           </div>
-        </VcCheckbox>
+        </VcCheckbox>-->
       </VcFilterCard>
     </template>
   </div>
@@ -93,6 +95,7 @@
 import { eagerComputed, useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import { cloneDeep } from "lodash";
 import { watch, ref, shallowReactive } from "vue";
+import FacetValues from "./facet-values.vue";
 import type { FacetItemType } from "@/core/types";
 import type { ProductsFilters } from "@/shared/catalog";
 
@@ -146,19 +149,27 @@ const isAppliedKeyword = eagerComputed<boolean>(() => localKeyword.value === pro
 
 const filterHasSelectedValues = (facet: FacetItemType) => facet.values.some((value) => value.selected);
 
-function onFilterChanged() {
+function onFilterChanged(): void {
   emit("change", localFilters);
 }
 
-function onSearchStart() {
+function onFacetValuesChanged(facet: FacetItemType): void {
+  const existingFacet = localFilters.facets.find((item) => item.paramName === facet.paramName);
+  if (existingFacet) {
+    existingFacet.values = facet.values;
+    emit("change", localFilters);
+  }
+}
+
+function onSearchStart(): void {
   emit("search", localKeyword.value);
 }
 
-function onOpenBranches() {
+function onOpenBranches(): void {
   emit("openBranches");
 }
 
-function reset() {
+function reset(): void {
   localKeyword.value = "";
   emit("search", "");
 }

@@ -106,7 +106,8 @@
       "active_address": "Active address",
       "addresses_icon": "Address icon",
       "digital_product": "Digital product",
-      "save_changes": "Save Changes"
+      "save_changes": "Save Changes",
+      "search": "Search {0}"
     },
     "prefixes": {
       "please": "Please"
