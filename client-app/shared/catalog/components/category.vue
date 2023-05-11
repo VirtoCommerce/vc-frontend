@@ -7,7 +7,7 @@
       <!-- Breadcrumbs -->
       <VcBreadcrumbs v-if="!isSearchPage" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
 
-      <div ref="containerElement" :style="containerStyle" class="flex items-start lg:gap-6">
+      <div ref="containerElement" class="flex items-stretch lg:gap-6">
         <!-- Mobile sidebar back cover -->
         <VcPopupSidebar
           v-if="isMobile"
@@ -71,20 +71,22 @@
         </VcPopupSidebar>
 
         <!-- Sidebar -->
-        <div v-else ref="filtersElement" class="sticky w-60 shrink-0 space-y-5" :style="filtersStyle">
-          <CategorySelector
-            v-if="!isSearchPage"
-            :category="currentCategory"
-            :loading="!currentCategory && loadingCategory"
-          />
+        <div v-else :style="parentStyle" class="relative flex w-60 shrink-0 items-start">
+          <div ref="filtersElement" class="w-60 space-y-5" :style="filtersStyle">
+            <CategorySelector
+              v-if="!isSearchPage"
+              :category="currentCategory"
+              :loading="!currentCategory && loadingCategory"
+            />
 
-          <ProductsFiltersSidebar
-            :keyword="keywordQueryParam"
-            :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
-            :loading="loading"
-            @search="onSearchStart($event)"
-            @change="applyFilters($event)"
-          />
+            <ProductsFiltersSidebar
+              :keyword="keywordQueryParam"
+              :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
+              :loading="loading"
+              @search="onSearchStart($event)"
+              @change="applyFilters($event)"
+            />
+          </div>
         </div>
 
         <!-- Content -->
@@ -398,10 +400,12 @@ const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeade
 const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
 let scrollOld = 0;
-const maxOffsetTop = 108;
+const topHeaderHeight = 39;
+const bottomHeaderHeight = 88;
+const maxOffsetTop = 20;
 const maxOffsetBottom = 20;
 const containerElement = ref<HTMLElement | null>(null);
-const containerStyle = ref<StyleValue | undefined>();
+const parentStyle = ref<StyleValue | undefined>();
 const filtersElement = ref<HTMLElement | null>(null);
 const filtersStyle = ref<StyleValue | undefined>();
 const { top: cTop, height: cHeight } = useElementBounding(containerElement);
@@ -601,32 +605,44 @@ function openBranchesDialog(fromMobileFilter: boolean) {
 }
 
 function setFiltersPosition() {
-  const { clientHeight, scrollTop } = document.documentElement;
+  const { clientHeight, scrollTop } = document.documentElement || document.body.scrollTop;
+
+  const scrollBottom = scrollTop + clientHeight;
 
   const containerHeight = cHeight.value;
-  const containerTop = cTop.value;
-  const containerBottom = containerTop + containerHeight;
+  const containerTop = scrollTop + cTop.value;
+  const containerBottom = containerTop + containerHeight + maxOffsetBottom;
 
   const filterHeight = fHeight.value;
-  const filterTop = fTop.value;
+  const filterTop = scrollTop + fTop.value;
   const filterBottom = filterTop + filterHeight + maxOffsetBottom;
 
   const down = scrollTop > scrollOld;
   const up = scrollTop < scrollOld;
 
-  if (filterHeight <= clientHeight - maxOffsetTop || filterHeight >= containerHeight) {
-    filtersStyle.value = { top: `${maxOffsetTop}px` };
+  parentStyle.value = { minHeight: `${filterHeight}px` };
+
+  if (
+    filterHeight <= clientHeight - containerTop ||
+    filterHeight >= containerHeight ||
+    (filterTop === containerTop && scrollBottom <= filterBottom) ||
+    (up && scrollTop <= filterTop - bottomHeaderHeight - maxOffsetTop)
+  ) {
+    filtersStyle.value = { position: "sticky", top: `${bottomHeaderHeight + maxOffsetTop}px` };
+  } else if (
+    (down && scrollBottom >= filterBottom && scrollBottom < containerBottom) ||
+    scrollBottom >= containerBottom
+  ) {
+    filtersStyle.value = {
+      alignSelf: "flex-end",
+      position: "sticky",
+      bottom: `${maxOffsetBottom}px`,
+    };
   } else {
-    if (up && filterTop >= maxOffsetTop) {
-      filtersStyle.value = { top: `${maxOffsetTop}px` };
-    } else if (
-      (down && filterTop <= maxOffsetTop && filterBottom <= clientHeight && filterBottom < containerBottom) ||
-      filterBottom >= containerBottom
-    ) {
-      filtersStyle.value = { alignSelf: "flex-end", bottom: `${maxOffsetBottom}px` };
-    } else {
-      filtersStyle.value = { position: "relative", marginTop: `${filterTop - containerTop}px` };
-    }
+    filtersStyle.value = {
+      position: "relative",
+      transform: `translate3d(0, ${filterTop - containerTop}px, 0)`,
+    };
   }
 
   scrollOld = scrollTop;
@@ -660,9 +676,7 @@ watch(
 watch(
   () => fHeight.value,
   (value, oldValue) => {
-    if (value < oldValue) {
-      setFiltersPosition();
-    }
+    setFiltersPosition();
   }
 );
 
