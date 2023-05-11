@@ -1,18 +1,9 @@
-import { computed, reactive, readonly, ref, shallowRef, toRef, unref } from "vue";
-import { Logger, sleep } from "@/core/utilities";
-import { highlightSearchText, prepareSearchText } from "@/shared/layout";
+import { computed, readonly, ref, shallowRef } from "vue";
+import { Logger } from "@/core/utilities";
 import { getSearchResults } from "@/xapi/graphql/catalog";
+import { highlightSearchText, prepareSearchText } from "../utils";
 import type { SearchResultsParams } from "@/xapi/graphql/catalog";
 import type { Category, Product } from "@/xapi/types";
-import type { MaybeRef } from "@vueuse/core";
-
-const DEFAULT_DURATION = 0; // No animation at the moment
-const DEFAULT_DROPDOWN_DURATION = 200;
-
-const activeAnimations = reactive<Record<"bar" | "dropdown", Promise<void> | null>>({
-  bar: null,
-  dropdown: null,
-});
 
 const loading = ref(false);
 const searchBarVisible = ref(false);
@@ -22,69 +13,27 @@ const categories = shallowRef<Category[]>([]);
 const products = shallowRef<Product[]>([]);
 const total = ref(0);
 
-export default (
-  options: {
-    // @default 300
-    animationDuration?: MaybeRef<number>;
-    // @default 200
-    dropdownAnimationDuration?: MaybeRef<number>;
-  } = {}
-) => {
-  const { animationDuration = DEFAULT_DURATION, dropdownAnimationDuration = DEFAULT_DROPDOWN_DURATION } = options;
-
-  async function showSearchDropdown(): Promise<void> {
-    if (searchDropdownVisible.value) {
-      return;
-    }
-    searchDropdownVisible.value = true;
-    await sleep(unref(dropdownAnimationDuration));
-  }
-
-  async function hideSearchDropdown(): Promise<void> {
-    const activeAnimation = toRef(activeAnimations, "dropdown");
-
-    if (activeAnimation.value) {
-      return activeAnimation.value;
-    }
-
+export default function useSearchBar() {
+  function showSearchDropdown() {
     if (!searchDropdownVisible.value) {
-      return Promise.resolve();
+      searchDropdownVisible.value = true;
     }
-
-    searchDropdownVisible.value = false;
-    activeAnimation.value = sleep(unref(dropdownAnimationDuration)).finally(() => {
-      activeAnimation.value = null;
-    });
-
-    return activeAnimation.value;
   }
 
-  async function toggleSearchBar(): Promise<void> {
+  function hideSearchDropdown() {
+    if (searchDropdownVisible.value) {
+      searchDropdownVisible.value = false;
+    }
+  }
+
+  function toggleSearchBar() {
     searchBarVisible.value = !searchBarVisible.value;
-    await sleep(unref(animationDuration));
   }
 
-  async function hideSearchBar(): Promise<void> {
-    const activeAnimation = toRef(activeAnimations, "bar");
-
-    if (activeAnimation.value) {
-      return activeAnimation.value;
+  function hideSearchBar() {
+    if (searchBarVisible.value) {
+      searchBarVisible.value = false;
     }
-
-    if (!searchBarVisible.value) {
-      return Promise.resolve();
-    }
-
-    activeAnimation.value = hideSearchDropdown()
-      .then(() => {
-        searchBarVisible.value = false;
-        return sleep(unref(animationDuration));
-      })
-      .finally(() => {
-        activeAnimation.value = null;
-      });
-
-    return activeAnimation.value;
   }
 
   async function searchResults(params: SearchResultsParams) {
@@ -114,7 +63,7 @@ export default (
 
       searchPhraseOfUploadedResults.value = preparedParams.keyword;
     } catch (e) {
-      Logger.error(`useSearchBar.${searchResults.name}`, e);
+      Logger.error(`${useSearchBar.name}.${searchResults.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -135,4 +84,4 @@ export default (
     categories: computed(() => categories.value),
     products: computed(() => products.value),
   };
-};
+}

@@ -15,14 +15,14 @@
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
 import CatalogMenuItem from "./catalog-menu-item.vue";
-import type { MenuLinkType } from "@/xapi/types";
+import type { ExtendedMenuLinkType } from "@/core/types";
 
 interface IEmits {
   (event: "select"): void;
 }
 
 interface IProps {
-  items: MenuLinkType[];
+  items: ExtendedMenuLinkType[];
 }
 
 defineEmits<IEmits>();

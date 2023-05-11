@@ -6,8 +6,8 @@
       class="w-full"
       :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
       @keyup.enter="goToSearchResultsPage"
-      @keyup.esc="searchDropdownVisible && hideSearchDropdown()"
-      @input="onSearchPhraseChanged()"
+      @keyup.esc="hideSearchDropdown"
+      @input="onSearchPhraseChanged"
     >
       <template #append>
         <button v-if="searchPhrase" type="button" class="h-full px-3" @click="reset">
@@ -94,13 +94,13 @@
 </template>
 
 <script setup lang="ts">
-import { useDebounceFn, whenever, useElementBounding, onClickOutside } from "@vueuse/core";
+import { onClickOutside, useDebounceFn, useElementBounding, whenever } from "@vueuse/core";
 import { computed, inject, ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useGoogleAnalytics, useRouteQueryParam } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
 import { configInjectionKey } from "@/core/injection-keys";
-import { useSearchBar } from "@/shared/layout";
+import { useSearchBar } from "../../composables";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 import type { Category } from "@/xapi/types";
 import type { StyleValue } from "vue";
@@ -124,6 +124,7 @@ const {
   categories,
   searchBarVisible,
   searchDropdownVisible,
+  searchPhraseOfUploadedResults,
   hideSearchDropdown,
   showSearchDropdown,
   searchResults,
@@ -159,9 +160,7 @@ const categoriesColumns = computed<Array<Category[]>>(() => {
 async function searchAndShowDropdownResults() {
   const COLUMNS = 5;
 
-  if (searchDropdownVisible.value) {
-    await hideSearchDropdown();
-  }
+  hideSearchDropdown();
 
   if (
     loading.value ||
@@ -183,7 +182,7 @@ async function searchAndShowDropdownResults() {
   });
 
   if (!isApplied.value) {
-    await showSearchDropdown();
+    showSearchDropdown();
   }
 
   /**
@@ -196,9 +195,9 @@ async function searchAndShowDropdownResults() {
   }
 }
 
-async function goToSearchResultsPage() {
+function goToSearchResultsPage() {
   if (searchPhrase.value.trim()) {
-    await hideSearchDropdown();
+    hideSearchDropdown();
     router.push({
       name: "Search",
       query: {
@@ -208,21 +207,21 @@ async function goToSearchResultsPage() {
   }
 }
 
-async function reset() {
+function reset() {
   searchPhrase.value = "";
-  await hideSearchDropdown();
+  hideSearchDropdown();
 }
 
-const searchProductsDebounced = useDebounceFn(async () => {
+const searchProductsDebounced = useDebounceFn(() => {
   if (!isApplied.value) {
-    await searchAndShowDropdownResults();
+    searchAndShowDropdownResults();
   }
 }, SEARCH_BAR_DEBOUNCE_TIME);
 
-const onSearchPhraseChanged = () => {
+function onSearchPhraseChanged() {
   hideSearchDropdown();
   searchProductsDebounced();
-};
+}
 
 watchEffect(() => (searchPhrase.value = searchPhraseInUrl.value ?? ""));
 whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });

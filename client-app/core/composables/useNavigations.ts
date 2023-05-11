@@ -1,108 +1,142 @@
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
+import { useThemeContext } from "@/core/composables/useThemeContext";
+import { convertToExtendedMenuLink, Logger } from "@/core/utilities";
+import { getChildCategories, getMenu } from "@/xapi";
 import globals from "../globals";
-import { categoryTreeItemToMenuLink, getTranslatedMenuLink } from "../utilities/menu";
-import { useCategories } from "./useCategories";
-import type { MenuLinkType } from "../types";
+import { categoryToExtendedMenuLink, getTranslatedMenuLink } from "../utilities/menu";
+import type { ExtendedMenuLinkType } from "../types";
 
+const loading = ref(false);
+const matchingRouteName = ref("");
 const menuSchema = shallowRef<typeof import("../../../config/menu.json")>();
-const openedMenuLinksStack = shallowRef<MenuLinkType[]>([]);
-const matchedRouteName = ref("");
+const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
+const openedMenuItemsStack = shallowRef<ExtendedMenuLinkType[]>([]);
 
-const { categoryTree } = useCategories();
-
-const desktopHeaderMenuLinks = computed<MenuLinkType[]>(() =>
-  (menuSchema.value?.header.desktop || []).map((item: MenuLinkType) => getTranslatedMenuLink(item, globals.i18n))
+const openedItem = computed<ExtendedMenuLinkType | undefined>(
+  () => openedMenuItemsStack.value[openedMenuItemsStack.value.length - 1]
 );
 
-const mobileMainMenuLinks = computed<MenuLinkType[]>(() =>
-  (menuSchema.value?.header.mobile.main || []).map((item: MenuLinkType) => {
-    const menuLink: MenuLinkType = getTranslatedMenuLink(item, globals.i18n);
+const desktopMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
+  (menuSchema.value?.header.desktop || []).map((item: ExtendedMenuLinkType) => getTranslatedMenuLink(item))
+);
+
+const mobileMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
+  (menuSchema.value?.header.mobile.main || []).map((item: ExtendedMenuLinkType) => {
+    const menuLink: ExtendedMenuLinkType = getTranslatedMenuLink(item);
 
     if (menuLink.id === "catalog") {
-      menuLink.children = categoryTree.value?.children.map(categoryTreeItemToMenuLink);
+      menuLink.children = catalogMenuItems.value;
     }
 
     return menuLink;
   })
 );
 
-const mobileCatalogMenuLink = computed<MenuLinkType | null>(
-  () => mobileMainMenuLinks.value.find((item) => item.id === "catalog") || null
+const mobileCatalogMenuItem = computed<ExtendedMenuLinkType | null>(
+  () => mobileMainMenuItems.value.find((item) => item.id === "catalog") || null
 );
 
-const mobileAccountMenuLink = computed<MenuLinkType | null>(() =>
-  menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.account, globals.i18n) : null
+const mobileAccountMenuItem = computed<ExtendedMenuLinkType | null>(() =>
+  menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.account) : null
 );
 
-const mobileCorporateMenuLink = computed<MenuLinkType | null>(() =>
-  menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.corporate, globals.i18n) : null
+const mobileCorporateMenuItem = computed<ExtendedMenuLinkType | null>(() =>
+  menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.corporate) : null
 );
 
-const mobilePreSelectedMenuLink = computed<MenuLinkType | null>(() => {
+const mobilePreSelectedMenuItem = computed<ExtendedMenuLinkType | null>(() => {
   const matchedRouteNames = globals.router.currentRoute.value.matched
     .map((item) => item.name)
-    .concat(matchedRouteName.value)
+    .concat(matchingRouteName.value)
     .filter(Boolean);
 
-  let preSelectedLink: MenuLinkType | null = null;
+  let preSelectedLink: ExtendedMenuLinkType | null = null;
 
   if (["Catalog", "Category", "Product"].some((item) => matchedRouteNames.includes(item))) {
-    preSelectedLink = mobileCatalogMenuLink.value;
+    preSelectedLink = mobileCatalogMenuItem.value;
   } else if (matchedRouteNames.includes("Account") && !matchedRouteNames.includes("Dashboard")) {
-    preSelectedLink = mobileAccountMenuLink.value;
+    preSelectedLink = mobileAccountMenuItem.value;
   } else if (matchedRouteNames.includes("Company")) {
-    preSelectedLink = mobileCorporateMenuLink.value;
+    preSelectedLink = mobileCorporateMenuItem.value;
   }
 
   return preSelectedLink;
 });
 
-async function fetchMenus() {
-  /**
-   * FIXME: Don't use import
-   * Fetch file (json) from Storefront to be able to edit file in Admin panel
-   */
-  menuSchema.value = await import("../../../config/menu.json");
-}
-
-function goBack() {
-  openedMenuLinksStack.value.pop();
-  triggerRef(openedMenuLinksStack);
-}
-
-function goMainMenu() {
-  openedMenuLinksStack.value = [];
-  triggerRef(openedMenuLinksStack);
-}
-
-function selectMenuItem(item: MenuLinkType) {
-  if (!item.children) {
-    return;
-  }
-  openedMenuLinksStack.value.push(item);
-  triggerRef(openedMenuLinksStack);
-}
-
-function setMatchedRouteName(value: string) {
-  matchedRouteName.value = value;
-}
-
 export function useNavigations() {
+  const { themeContext } = useThemeContext();
+
+  async function fetchMenuSchema() {
+    try {
+      /**
+       * FIXME: Don't use import
+       * Fetch file (json) from Storefront to be able to edit file in Admin panel
+       */
+      menuSchema.value = await import("../../../config/menu.json");
+    } catch (e) {
+      Logger.error(`${useNavigations.name}.${fetchMenuSchema.name}`, e);
+    }
+  }
+
+  async function fetchCatalogMenu() {
+    const { catalog_menu_link_list_name } = themeContext.value.settings;
+
+    try {
+      catalogMenuItems.value = catalog_menu_link_list_name
+        ? (await getMenu(catalog_menu_link_list_name)).map(convertToExtendedMenuLink)
+        : (
+            await getChildCategories({
+              maxLevel: 2,
+              onlyActive: true,
+            })
+          ).map(categoryToExtendedMenuLink);
+    } catch (e) {
+      Logger.error(`${useNavigations.name}.${fetchCatalogMenu.name}`, e);
+    }
+  }
+
+  async function fetchMenus() {
+    loading.value = true;
+    await Promise.all([fetchMenuSchema(), fetchCatalogMenu()]);
+    loading.value = false;
+  }
+
+  function goBack() {
+    openedMenuItemsStack.value.pop();
+    triggerRef(openedMenuItemsStack);
+  }
+
+  function goMainMenu() {
+    openedMenuItemsStack.value = [];
+    triggerRef(openedMenuItemsStack);
+  }
+
+  function selectMenuItem(item: ExtendedMenuLinkType) {
+    if (!item.children) {
+      return;
+    }
+    openedMenuItemsStack.value.push(item);
+    triggerRef(openedMenuItemsStack);
+  }
+
+  function setMatchingRouteName(value: string) {
+    matchingRouteName.value = value;
+  }
+
   return {
     fetchMenus,
     goBack,
     goMainMenu,
     selectMenuItem,
-    setMatchedRouteName,
-    desktopHeaderMenuLinks,
-    mobileMainMenuLinks,
-    mobileCatalogMenuLink,
-    mobileAccountMenuLink,
-    mobileCorporateMenuLink,
-    mobilePreSelectedMenuLink,
-    matchedRouteName: readonly(matchedRouteName),
-    openedItem: computed<MenuLinkType | undefined>(
-      () => openedMenuLinksStack.value[openedMenuLinksStack.value.length - 1]
-    ),
+    setMatchingRouteName,
+    openedItem,
+    desktopMainMenuItems,
+    mobileMainMenuItems,
+    mobileCatalogMenuItem,
+    mobileAccountMenuItem,
+    mobileCorporateMenuItem,
+    mobilePreSelectedMenuItem,
+    matchingRouteName: readonly(matchingRouteName),
+    catalogMenuItems: computed(() => catalogMenuItems.value),
   };
 }

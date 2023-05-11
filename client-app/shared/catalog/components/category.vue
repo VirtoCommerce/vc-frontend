@@ -320,18 +320,14 @@ import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
 import { buildBreadcrumbs, getFilterExpressionFromFacets } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
-import {
-  CategorySelector,
-  DisplayProducts,
-  getFilterExpressionForAvailableIn,
-  getFilterExpressionForInStock,
-  ProductsFiltersSidebar,
-  useCategory,
-  useProducts,
-  ViewMode,
-} from "@/shared/catalog";
 import { BranchesDialog, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { usePopup } from "@/shared/popup";
+import { useCategory, useProducts } from "../composables";
+import { getFilterExpressionForAvailableIn, getFilterExpressionForInStock } from "../utils";
+import CategorySelector from "./category-selector.vue";
+import DisplayProducts from "./display-products.vue";
+import ProductsFiltersSidebar from "./products-filters.vue";
+import ViewMode from "./view-mode.vue";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 import type { ProductsFilters, ProductsSearchParams } from "@/shared/catalog";
 import type { Breadcrumb, Product } from "@/xapi/types";

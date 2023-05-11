@@ -42,7 +42,7 @@
       <SearchBar />
 
       <div class="-mx-2 flex items-center">
-        <template v-for="item in desktopHeaderMenuLinks" :key="item.id">
+        <template v-for="item in desktopMainMenuItems" :key="item.id">
           <BottomHeaderLink v-if="item.id === 'compare'" :link="item" :count="productsIds.length">
             {{ item.title }}
           </BottomHeaderLink>
@@ -82,7 +82,7 @@
 import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vueuse/core";
 import { computed, ref, shallowRef } from "vue";
 import { useRouter } from "vue-router";
-import { useCatalogMenu, useNavigations } from "@/core/composables";
+import { useNavigations } from "@/core/composables";
 import { useUser } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
@@ -94,8 +94,7 @@ import type { StyleValue } from "vue";
 const router = useRouter();
 const { organization } = useUser();
 const { cart } = useCart();
-const { desktopHeaderMenuLinks } = useNavigations();
-const { catalogMenuItems } = useCatalogMenu();
+const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
 const { productsIds } = useCompareProducts();
 
 const bottomHeader = ref<HTMLElement | null>(null);
