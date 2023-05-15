@@ -7,7 +7,7 @@
       <!-- Breadcrumbs -->
       <VcBreadcrumbs v-if="!isSearchPage" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
 
-      <div ref="containerElement" class="flex items-stretch lg:gap-6">
+      <div class="flex items-stretch lg:gap-6">
         <!-- Mobile sidebar back cover -->
         <VcPopupSidebar
           v-if="isMobile"
@@ -72,7 +72,7 @@
 
         <!-- Sidebar -->
         <div v-else :style="parentStyle" class="relative flex w-60 shrink-0 items-start">
-          <div ref="filtersElement" class="w-60 space-y-5" :style="filtersStyle">
+          <div ref="filtersElement" class="sticky w-60 space-y-5" :style="filtersStyle">
             <CategorySelector
               v-if="!isSearchPage"
               :category="currentCategory"
@@ -90,7 +90,7 @@
         </div>
 
         <!-- Content -->
-        <div class="grow">
+        <div ref="contentElement" class="grow">
           <div class="flex">
             <h2 class="text-21 font-bold uppercase text-gray-800 lg:my-px lg:text-25 lg:leading-none">
               <i18n-t v-if="isSearchPage" keypath="pages.search.header" tag="span">
@@ -310,13 +310,14 @@ import {
   breakpointsTailwind,
   computedEager,
   useBreakpoints,
+  useDevicePixelRatio,
   useElementBounding,
   useElementVisibility,
   useLocalStorage,
   watchDebounced,
   whenever,
 } from "@vueuse/core";
-import { cloneDeep, isEqual } from "lodash";
+import { cloneDeep, isEqual, throttle } from "lodash";
 import { computed, ref, shallowReactive, shallowRef, triggerRef, watch, onMounted, onBeforeUnmount } from "vue";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead, useRouteQueryParam } from "@/core/composables";
 import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
@@ -399,16 +400,18 @@ const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
 const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
+let actionOld = "";
 let scrollOld = 0;
-const topHeaderHeight = 39;
-const bottomHeaderHeight = 88;
-const maxOffsetTop = 20;
+let filterHeightOld = 0;
+const maxOffsetTop = 108;
 const maxOffsetBottom = 20;
-const containerElement = ref<HTMLElement | null>(null);
+
+const contentElement = ref<HTMLElement | null>(null);
 const parentStyle = ref<StyleValue | undefined>();
 const filtersElement = ref<HTMLElement | null>(null);
 const filtersStyle = ref<StyleValue | undefined>();
-const { top: cTop, height: cHeight } = useElementBounding(containerElement);
+
+const { top: cTop, height: cHeight } = useElementBounding(contentElement);
 const { height: fHeight, top: fTop } = useElementBounding(filtersElement);
 
 usePageHead({
@@ -573,6 +576,8 @@ async function loadMoreProducts() {
     page: nextPage,
   });
 
+  setFiltersPosition();
+
   /**
    * Send Google Analytics event for products on next page.
    */
@@ -604,57 +609,80 @@ function openBranchesDialog(fromMobileFilter: boolean) {
   });
 }
 
+function getZoom() {
+  return Math.round(((window.outerWidth - 10) / window.innerWidth) * 100) / 100;
+}
+
 function setFiltersPosition() {
   const { clientHeight, scrollTop } = document.documentElement || document.body.scrollTop;
 
   const scrollBottom = scrollTop + clientHeight;
 
-  const containerHeight = cHeight.value;
-  const containerTop = scrollTop + cTop.value;
-  const containerBottom = containerTop + containerHeight + maxOffsetBottom;
+  const contentHeight = cHeight.value;
+  const contentTop = scrollTop + cTop.value;
+  const contentBottom = contentTop + contentHeight;
 
   const filterHeight = fHeight.value;
   const filterTop = scrollTop + fTop.value;
-  const filterBottom = filterTop + filterHeight + maxOffsetBottom;
+  const filterBottom = filterTop + filterHeight;
 
   const down = scrollTop > scrollOld;
   const up = scrollTop < scrollOld;
 
-  parentStyle.value = { minHeight: `${filterHeight}px` };
+  const zoomCorrection = getZoom() != 1 ? 1 : 0;
+
+  const offsetTop = maxOffsetTop - zoomCorrection;
+  const offsetBottom = maxOffsetBottom - zoomCorrection;
+
+  let action = "BETWEEN";
 
   if (
-    filterHeight <= clientHeight - containerTop ||
-    filterHeight >= containerHeight ||
-    (filterTop === containerTop && scrollBottom <= filterBottom) ||
-    (up && scrollTop <= filterTop - bottomHeaderHeight - maxOffsetTop)
+    (up && scrollTop <= filterTop - offsetTop) ||
+    filterHeight <= clientHeight - offsetTop ||
+    filterHeight >= contentHeight
   ) {
-    filtersStyle.value = { position: "sticky", top: `${bottomHeaderHeight + maxOffsetTop}px` };
+    action = "TOP";
   } else if (
-    (down && scrollBottom >= filterBottom && scrollBottom < containerBottom) ||
-    scrollBottom >= containerBottom
+    (down && scrollBottom >= filterBottom + offsetBottom && scrollBottom <= contentBottom + offsetBottom) ||
+    (scrollBottom >= contentBottom + offsetBottom && filterBottom < contentBottom) ||
+    (!up && scrollBottom > filterBottom + offsetBottom && filterBottom < contentBottom) ||
+    filterBottom > contentBottom
   ) {
-    filtersStyle.value = {
-      alignSelf: "flex-end",
-      position: "sticky",
-      bottom: `${maxOffsetBottom}px`,
-    };
-  } else {
-    filtersStyle.value = {
-      position: "relative",
-      transform: `translate3d(0, ${filterTop - containerTop}px, 0)`,
-    };
+    action = "BOTTOM";
+  }
+
+  switch (action) {
+    case "BOTTOM":
+      filtersStyle.value = {
+        alignSelf: "flex-end",
+        bottom: `${maxOffsetBottom}px`,
+      };
+
+      break;
+    case "BETWEEN":
+      filtersStyle.value = {
+        marginTop: `${filterTop - contentTop}px`,
+      };
+      break;
+    default:
+      filtersStyle.value = {
+        top: `${maxOffsetTop}px`,
+      };
   }
 
   scrollOld = scrollTop;
+  actionOld = action;
 }
 
+const setFiltersPositionOptimized = throttle(setFiltersPosition, 50);
+
 onMounted(() => {
-  setFiltersPosition();
-  window.addEventListener("scroll", setFiltersPosition);
+  setFiltersPositionOptimized();
+  window.addEventListener("scroll", setFiltersPositionOptimized);
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener("scroll", setFiltersPosition);
+  window.removeEventListener("scroll", setFiltersPositionOptimized);
 });
 
 whenever(() => !isMobile.value, hideMobileSidebar);
@@ -676,6 +704,14 @@ watch(
 watch(
   () => fHeight.value,
   (value, oldValue) => {
+    filterHeightOld = oldValue;
+    setFiltersPosition();
+  }
+);
+
+watch(
+  () => cHeight.value,
+  () => {
     setFiltersPosition();
   }
 );
