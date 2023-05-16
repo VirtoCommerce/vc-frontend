@@ -1,8 +1,8 @@
 <template>
-  <VcContainer :class="{ 'lg:pt-8': !$route.meta?.hideLeftSidebar }">
+  <VcContainer :class="{ 'lg:pt-8': !route.meta?.hideLeftSidebar }">
     <div class="flex gap-x-6">
       <!-- First column-->
-      <div v-if="!$route.meta?.hideLeftSidebar" class="hidden w-2/6 max-w-[236px] shrink-0 flex-col gap-y-6 lg:flex">
+      <div v-if="!route.meta?.hideLeftSidebar" class="hidden w-2/6 max-w-[236px] shrink-0 flex-col gap-y-6 lg:flex">
         <AccountNavigation />
       </div>
 
@@ -13,5 +13,8 @@
 </template>
 
 <script setup lang="ts">
+import { useRoute } from "vue-router";
 import AccountNavigation from "./account-navigation.vue";
+
+const route = useRoute();
 </script>
