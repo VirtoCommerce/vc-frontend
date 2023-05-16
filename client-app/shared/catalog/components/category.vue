@@ -1,6 +1,6 @@
 <template>
   <div
-    class="grow bg-gray-100 pt-4 pb-16 shadow-inner lg:pt-6"
+    class="grow bg-gray-100 pb-16 pt-4 shadow-inner lg:pt-6"
     :class="{ 'polygon-gray-bg': !products.length && !loading }"
   >
     <div class="mx-auto max-w-screen-2xl px-5 2xl:px-18">
@@ -15,12 +15,12 @@
           class="flex w-70 flex-col px-5 pt-5"
           @hide="hideMobileSidebar()"
         >
-          <div class="relative mt-0.5 mb-6 pr-6">
+          <div class="relative mb-6 mt-0.5 pr-6">
             <div class="break-words pt-1 text-26 font-semibold">
               {{ $t("common.buttons.filters") }}
             </div>
 
-            <button type="button" class="absolute top-2.5 right-1" @click="hideMobileSidebar()">
+            <button type="button" class="absolute right-1 top-2.5" @click="hideMobileSidebar()">
               <svg class="h-5 w-5 text-[color:var(--color-primary)]">
                 <use href="/static/images/delete.svg#main" />
               </svg>
@@ -182,7 +182,7 @@
                 </template>
 
                 <template #content>
-                  <div class="w-52 rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y">
+                  <div class="w-52 rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
                     {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
                   </div>
                 </template>
@@ -206,7 +206,7 @@
                 </template>
 
                 <template #content>
-                  <div class="w-52 rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y">
+                  <div class="w-52 rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
                     {{ $t("pages.catalog.instock_filter_card.tooltip_text") }}
                   </div>
                 </template>
@@ -266,7 +266,7 @@
               v-if="!loading"
               :loading="loadingMore"
               distance="400"
-              class="mt-9 -mb-6"
+              class="-mb-6 mt-9"
               @visible="loadMoreProducts"
             />
 
@@ -310,7 +310,6 @@ import {
   breakpointsTailwind,
   computedEager,
   useBreakpoints,
-  useDevicePixelRatio,
   useElementBounding,
   useElementVisibility,
   useLocalStorage,
@@ -327,7 +326,7 @@ import { AddToCart } from "@/shared/cart";
 import { BranchesDialog, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { usePopup } from "@/shared/popup";
 import { useCategory, useProducts } from "../composables";
-import { getFilterExpressionForAvailableIn, getFilterExpressionForInStock } from "../utils";
+import { getFilterExpressionForAvailableIn, getFilterExpressionForInStock, getBrowserZoom } from "../utils";
 import CategorySelector from "./category-selector.vue";
 import DisplayProducts from "./display-products.vue";
 import ProductsFiltersSidebar from "./products-filters.vue";
@@ -400,9 +399,7 @@ const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
 const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
-let actionOld = "";
 let scrollOld = 0;
-let filterHeightOld = 0;
 const maxOffsetTop = 108;
 const maxOffsetBottom = 20;
 
@@ -576,8 +573,6 @@ async function loadMoreProducts() {
     page: nextPage,
   });
 
-  setFiltersPosition();
-
   /**
    * Send Google Analytics event for products on next page.
    */
@@ -609,10 +604,6 @@ function openBranchesDialog(fromMobileFilter: boolean) {
   });
 }
 
-function getZoom() {
-  return Math.round(((window.outerWidth - 10) / window.innerWidth) * 100) / 100;
-}
-
 function setFiltersPosition() {
   const { clientHeight, scrollTop } = document.documentElement || document.body.scrollTop;
 
@@ -629,7 +620,7 @@ function setFiltersPosition() {
   const down = scrollTop > scrollOld;
   const up = scrollTop < scrollOld;
 
-  const zoomCorrection = getZoom() != 1 ? 1 : 0;
+  const zoomCorrection = getBrowserZoom() !== 1 ? 1 : 0;
 
   const offsetTop = maxOffsetTop - zoomCorrection;
   const offsetBottom = maxOffsetBottom - zoomCorrection;
@@ -671,13 +662,11 @@ function setFiltersPosition() {
   }
 
   scrollOld = scrollTop;
-  actionOld = action;
 }
 
-const setFiltersPositionOptimized = throttle(setFiltersPosition, 50);
+const setFiltersPositionOptimized = throttle(setFiltersPosition, 100);
 
 onMounted(() => {
-  setFiltersPositionOptimized();
   window.addEventListener("scroll", setFiltersPositionOptimized);
 });
 
@@ -704,8 +693,9 @@ watch(
 watch(
   () => fHeight.value,
   (value, oldValue) => {
-    filterHeightOld = oldValue;
-    setFiltersPosition();
+    if (value !== oldValue) {
+      setFiltersPosition();
+    }
   }
 );
 
