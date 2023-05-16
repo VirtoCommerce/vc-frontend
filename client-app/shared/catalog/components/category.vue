@@ -71,7 +71,7 @@
         </VcPopupSidebar>
 
         <!-- Sidebar -->
-        <div v-else :style="parentStyle" class="relative flex w-60 shrink-0 items-start">
+        <div v-else class="relative flex w-60 shrink-0 items-start">
           <div ref="filtersElement" class="sticky w-60 space-y-5" :style="filtersStyle">
             <CategorySelector
               v-if="!isSearchPage"
@@ -404,7 +404,6 @@ const maxOffsetTop = 108;
 const maxOffsetBottom = 20;
 
 const contentElement = ref<HTMLElement | null>(null);
-const parentStyle = ref<StyleValue | undefined>();
 const filtersElement = ref<HTMLElement | null>(null);
 const filtersStyle = ref<StyleValue | undefined>();
 
