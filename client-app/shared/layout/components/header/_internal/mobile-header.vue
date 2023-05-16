@@ -40,7 +40,7 @@
               <VcTransitionScale mode="out-in">
                 <span
                   v-if="cart?.itemsQuantity"
-                  class="absolute -top-2.5 -right-3 rounded-full border border-[color:var(--color-primary)] bg-white px-1.5 py-0.5 text-11 font-extrabold leading-3 text-[color:var(--color-header-bottom-link)] transition-transform"
+                  class="absolute -right-3 -top-2.5 rounded-full border border-[color:var(--color-primary)] bg-white px-1.5 py-0.5 text-11 font-extrabold leading-3 text-[color:var(--color-header-bottom-link)] transition-transform"
                 >
                   {{ preparedCartItemsQuantity }}
                 </span>
@@ -61,14 +61,14 @@
         :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
         class="mr-4 grow"
         no-border
-        @keyup.enter="searchPhrase && $router.push(searchPageLink)"
+        @keyup.enter="searchPhrase && router.push(searchPageLink)"
       />
 
       <VcButton :to="searchPhrase && searchPageLink" size="lg" class="w-11">
         <i class="fas fa-search text-lg" />
       </VcButton>
 
-      <button type="button" class="ml-2 -mr-2 h-11 appearance-none px-3" @click="hideSearchBar">
+      <button type="button" class="-mr-2 ml-2 h-11 appearance-none px-3" @click="hideSearchBar">
         <i class="fas fa-times text-2xl text-white" />
       </button>
     </div>
@@ -92,6 +92,7 @@
 <script setup lang="ts">
 import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core";
 import { computed, ref, watchEffect } from "vue";
+import { useRouter } from "vue-router";
 import { useRouteQueryParam } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
 import { numberToShortString } from "@/core/utilities";
@@ -110,6 +111,7 @@ const { customSlots, isAnimated } = useNestedMobileHeader();
 const { searchBarVisible, toggleSearchBar, hideSearchBar } = useSearchBar();
 const { height } = useElementSize(headerElement);
 const { cart } = useCart();
+const router = useRouter();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined
