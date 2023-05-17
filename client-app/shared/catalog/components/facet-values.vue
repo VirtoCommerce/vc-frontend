@@ -7,7 +7,6 @@
       maxlength="30"
       :disabled="loading"
       :placeholder="$t('common.labels.search', [facet.label])"
-      @input="searchFacetValues"
     />
 
     <VcCheckbox
@@ -27,9 +26,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computedEager } from "@vueuse/core";
 import { cloneDeep } from "lodash";
-import { ref, watch } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import type { FacetItemType } from "@/core/types";
 
 interface IEmits {
@@ -47,23 +45,17 @@ const props = defineProps<IProps>();
 const facet = ref<FacetItemType>(cloneDeep(props.facet));
 
 const searchKeyword = ref("");
-const searchedValues = ref(facet.value.values);
 
-const searchFieldVisible = computedEager<boolean>(() => props.facet.values.length > 10);
+const searchFieldVisible = computed<boolean>(() => facet.value.values.length > 10);
+const searchedValues = computed(() =>
+  facet.value.values.filter((item) => item.label.indexOf(searchKeyword.value) >= 0)
+);
 
 function changeFacetValues(): void {
   emit("update:facet", facet.value);
 }
 
-function searchFacetValues(): void {
-  searchedValues.value = props.facet.values.filter((item) => item.label.indexOf(searchKeyword.value) >= 0);
-}
-
-watch(
-  () => props.facet,
-  (value: FacetItemType) => {
-    facet.value = cloneDeep(value);
-  },
-  { deep: true }
-);
+watchEffect(() => {
+  facet.value = cloneDeep(props.facet);
+});
 </script>
