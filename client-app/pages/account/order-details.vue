@@ -58,7 +58,7 @@
         <VcCardWidget :title="$t('common.titles.order_data')" class="order-first" hide-mobile-title>
           <div class="flex flex-col gap-1.5 text-15">
             <p v-if="order.createdDate">
-              <span class="font-extrabold"> {{ $t("common.labels.creates") }}: </span>
+              <span class="font-extrabold"> {{ $t("common.labels.created") }}: </span>
               {{ $d(order.createdDate, "long") }}
             </p>
             <p v-if="order.status" class="flex items-center">
