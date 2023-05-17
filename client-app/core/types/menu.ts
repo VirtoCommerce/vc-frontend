@@ -1,11 +1,10 @@
 import type { RouteLocationRaw } from "vue-router";
 
-/** @deprecated */
-export type MenuLinkType = {
+export type ExtendedMenuLinkType = {
   id?: string;
   title?: string;
   icon?: string;
   route?: RouteLocationRaw;
-  children?: MenuLinkType[];
+  children?: ExtendedMenuLinkType[];
   priority?: number;
 };

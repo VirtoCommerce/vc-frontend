@@ -2,17 +2,17 @@
   <div>
     <router-link
       class="mb-2 block px-2 py-1 text-base font-bold hover:bg-gray-100"
-      :to="item.url ?? '#'"
+      :to="item.route ?? '#'"
       @click="select"
     >
       {{ item.title }}
     </router-link>
 
     <div>
-      <template v-for="(child, key) in visibleChildren" :key="key">
+      <template v-for="(child, index) in visibleChildren" :key="index">
         <router-link
           class="mb-1 block truncate px-2 py-1 text-sm !leading-4 text-gray-500 hover:bg-gray-100"
-          :to="child.url ?? '#'"
+          :to="child.route ?? '#'"
           @click="select"
         >
           {{ child.title }}
@@ -38,14 +38,14 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import type { MenuLinkType } from "@/xapi/types";
+import type { ExtendedMenuLinkType } from "@/core/types";
 
 interface IEmits {
   (event: "select"): void;
 }
 
 interface IProps {
-  item: MenuLinkType;
+  item: ExtendedMenuLinkType;
 }
 
 const emit = defineEmits<IEmits>();
@@ -56,8 +56,8 @@ const { t } = useI18n();
 const SHORT_VIEW_ITEMS_COUNT = 5;
 const showAll = ref(false);
 
-const children = computed<MenuLinkType[]>(() => props.item.childItems || []);
-const visibleChildren = computed<MenuLinkType[]>(() =>
+const children = computed<ExtendedMenuLinkType[]>(() => props.item.children || []);
+const visibleChildren = computed<ExtendedMenuLinkType[]>(() =>
   showAll.value ? children.value : children.value.slice(0, SHORT_VIEW_ITEMS_COUNT)
 );
 

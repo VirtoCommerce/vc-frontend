@@ -1,4 +1,5 @@
 export { default as CarouselProductCard } from "./carousel-product-card.vue";
+export { default as Category } from "./category.vue";
 export { default as DisplayProducts } from "./display-products.vue";
 export { default as ProductCardGrid } from "./product-card-grid.vue";
 export { default as ProductCardList } from "./product-card-list.vue";

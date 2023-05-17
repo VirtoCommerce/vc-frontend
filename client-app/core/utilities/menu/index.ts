@@ -1,39 +1,34 @@
-import globals from "@/core/globals";
+import globals from "../../globals";
 import { getCategoryRoute } from "../categories";
-import type { CategoryTreeItemType, MenuLinkType as ExtendedMenuLinkType } from "../../types";
-import type { I18n } from "@/i18n";
+import type { ExtendedMenuLinkType } from "../../types";
 import type { Category, MenuLinkType } from "@/xapi/types";
 
-/** @deprecated */
-export function categoryTreeItemToMenuLink(
-  categoryTreeItem: CategoryTreeItemType,
-  priority?: number
-): ExtendedMenuLinkType {
+export function convertToExtendedMenuLink(item: MenuLinkType): ExtendedMenuLinkType {
   return {
-    priority,
-    title: categoryTreeItem.name,
-    route: getCategoryRoute(categoryTreeItem),
-    children: categoryTreeItem.children.map(categoryTreeItemToMenuLink),
+    title: item.title,
+    route: item.url,
+    children: item.childItems?.map((child) => convertToExtendedMenuLink(child)),
+    priority: item.priority,
   };
 }
 
-export function categoryToMenuLink(category: Category, router = globals.router): MenuLinkType {
-  const route = getCategoryRoute(category);
-
+export function categoryToExtendedMenuLink(category: Category): ExtendedMenuLinkType {
   return {
+    id: category.id,
     title: category.name,
-    url: typeof route === "string" ? route : router?.resolve(route).fullPath,
-    childItems: category.childCategories?.map((item) => categoryToMenuLink(item, router)),
+    route: getCategoryRoute(category),
+    children: category.childCategories?.map((child) => categoryToExtendedMenuLink(child)),
+    priority: category.priority,
   };
 }
 
-export function getTranslatedMenuLink(menuLink: ExtendedMenuLinkType, i18n: I18n): ExtendedMenuLinkType {
+export function getTranslatedMenuLink(menuLink: ExtendedMenuLinkType, i18n = globals.i18n): ExtendedMenuLinkType {
   if (menuLink.title) {
-    menuLink.title = i18n.global.t(menuLink.title);
+    menuLink.title = i18n?.global.t(menuLink.title);
   }
 
   if (menuLink.children?.length) {
-    menuLink.children = menuLink.children.map((item) => getTranslatedMenuLink(item, i18n));
+    menuLink.children = menuLink.children.map((child) => getTranslatedMenuLink(child, i18n));
   }
 
   return menuLink;

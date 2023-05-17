@@ -2,18 +2,21 @@
   <div>
     <VcLoaderOverlay :visible="!listLoading && cartLoading" fixed-spinner />
 
-    <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
+    <BackButtonInHeader v-if="isMobile" @click="router.back()" />
 
     <!-- Title block -->
-    <div class="mx-5 flex items-center justify-between md:mx-0">
-      <h2 class="truncate text-3xl font-bold uppercase text-gray-800">
-        {{ list?.name }}
+    <div class="mx-5 flex items-center justify-between gap-x-3 md:mx-0">
+      <h2 v-if="list?.name" class="truncate text-3xl font-bold uppercase text-gray-800">
+        {{ list.name }}
       </h2>
 
-      <div v-if="!isMobile" class="flex gap-x-3">
+      <!-- Title skeleton -->
+      <div v-else class="w-2/3 bg-gray-200 text-3xl md:w-1/3">&nbsp;</div>
+
+      <div class="hidden shrink-0 gap-x-3 lg:flex">
         <VcButton
-          :is-disabled="loading || !canSaveChanges"
-          class="px-3 uppercase"
+          :is-disabled="loading || !canSaveChanges || !list"
+          class="px-2.5 uppercase"
           size="sm"
           is-outline
           @click="saveChanges"
@@ -22,14 +25,20 @@
           {{ $t("common.buttons.save_changes") }}
         </VcButton>
 
-        <VcButton :is-disabled="loading" class="px-3 uppercase" size="sm" is-outline @click="openListSettingsModal">
+        <VcButton
+          :is-disabled="loading || !list"
+          class="px-2.5 uppercase"
+          size="sm"
+          is-outline
+          @click="openListSettingsModal"
+        >
           <VcIcon name="cog" size="sm" class="mr-2" />
           {{ $t("shared.wishlists.list_card.list_settings_button") }}
         </VcButton>
 
         <VcButton
           :is-disabled="loading || !pagedListItems.length"
-          class="px-3 uppercase"
+          class="px-2.5 uppercase"
           size="sm"
           @click="addAllListItemsToCart"
         >
@@ -83,22 +92,21 @@
       </template>
     </VcEmptyView>
 
-    <div v-if="isMobile" class="flex flex-wrap gap-5 py-7 lg:justify-end lg:p-0">
+    <div class="flex flex-wrap gap-5 py-7 lg:hidden lg:justify-end lg:p-0">
       <VcButton
-        :is-disabled="loading || !canSaveChanges"
-        class="w-full px-3 uppercase"
+        :is-disabled="loading || !pagedListItems.length"
         size="sm"
-        is-outline
-        @click="saveChanges"
+        class="w-full px-2.5 uppercase"
+        @click="addAllListItemsToCart"
       >
-        <VcIcon name="save-v2" size="sm" class="mr-2" />
-        {{ $t("common.buttons.save_changes") }}
+        <VcIcon name="cart" size="sm" class="mr-2" />
+        {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
       </VcButton>
 
       <div class="flex w-full gap-x-5">
         <VcButton
-          :is-disabled="loading"
-          class="w-1/2 px-3 uppercase"
+          :is-disabled="loading || !list"
+          class="w-1/2 px-2.5 uppercase"
           size="sm"
           is-outline
           @click="openListSettingsModal"
@@ -108,13 +116,14 @@
         </VcButton>
 
         <VcButton
-          :is-disabled="loading || !pagedListItems.length"
+          :is-disabled="loading || !canSaveChanges || !list"
+          class="w-1/2 px-2.5 uppercase"
           size="sm"
-          class="w-1/2 px-3 uppercase"
-          @click="addAllListItemsToCart"
+          is-outline
+          @click="saveChanges"
         >
-          <VcIcon name="cart" size="sm" class="mr-2" />
-          {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
+          <VcIcon name="save-v2" size="sm" class="mr-2" />
+          {{ $t("common.buttons.save_changes") }}
         </VcButton>
       </div>
     </div>
@@ -126,6 +135,7 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { cloneDeep, isEqual, keyBy } from "lodash";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 import { useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { prepareLineItem } from "@/core/utilities";
 import { useCart, getItemsForAddBulkItemsToCartResultsPopup, AddBulkItemsToCartResultsModal } from "@/shared/cart";
@@ -160,6 +170,7 @@ const { openPopup } = usePopup();
 const { loading: listLoading, list, fetchWishList, clearList, updateWishlistItemsQuantities } = useWishlists();
 const { loading: cartLoading, cart, addBulkItemsToCart, addToCart, changeItemQuantity } = useCart();
 const breakpoints = useBreakpoints(breakpointsTailwind);
+const router = useRouter();
 
 usePageHead({
   title: computed(() => t("pages.account.list_details.meta.title", [list.value?.name])),

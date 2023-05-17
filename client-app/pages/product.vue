@@ -1,6 +1,6 @@
 <template>
-  <div v-if="product && template" class="bg-gray-100 pt-7 pb-8 shadow-inner">
-    <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
+  <div v-if="product && template" class="bg-gray-100 pb-8 pt-7 shadow-inner">
+    <BackButtonInHeader v-if="isMobile" @click="router.back()" />
 
     <div class="mx-auto max-w-screen-2xl px-5 md:px-12">
       <!-- Breadcrumbs -->
@@ -60,12 +60,14 @@
 import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
 import { computed, defineAsyncComponent, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { buildBreadcrumbs } from "@/core/utilities";
 import { useCart } from "@/shared/cart";
-import { CarouselProductCard, useProduct, useRelatedProducts } from "@/shared/catalog";
+import { CarouselProductCard, useProduct, useRelatedProducts, useCategory } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useTemplate } from "@/shared/static-content";
+import type { Breadcrumb } from "@/xapi/types";
 
 const props = withDefaults(defineProps<IProps>(), {
   productId: "",
@@ -110,6 +112,8 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
+const { rootCategory } = useCategory();
+const router = useRouter();
 
 usePageHead({
   title: computed(() => product.value?.seoInfo?.pageTitle || product.value?.name),
@@ -119,9 +123,14 @@ usePageHead({
   },
 });
 
-const breadcrumbs = useBreadcrumbs(() =>
-  product.value ? buildBreadcrumbs(product.value.breadcrumbs) ?? [{ title: product.value.name }] : []
-);
+const breadcrumbs = useBreadcrumbs(() => {
+  const firstItem: Breadcrumb = { itemId: rootCategory.id, title: rootCategory.name, seoPath: rootCategory.slug };
+  const items = product.value
+    ? product.value.breadcrumbs ?? [{ itemId: product.value.id, title: product.value.name }]
+    : [];
+
+  return buildBreadcrumbs([firstItem].concat(items)) ?? [];
+});
 
 const variationsCartTotalAmount = eagerComputed<number>(() => {
   if (!product.value) {
