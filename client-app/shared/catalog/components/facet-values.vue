@@ -1,12 +1,14 @@
 <template>
-  <div>
+  <div class="space-y-3 py-1">
     <VcInput
       v-if="searchFieldVisible"
       v-model.trim="searchKeyword"
       size="sm"
+      class="mb-4"
       maxlength="30"
       :disabled="loading"
       :placeholder="$t('common.labels.search', [facet.label])"
+      truncate
     />
 
     <VcCheckbox
@@ -14,7 +16,6 @@
       :key="item.value"
       v-model="item.selected"
       :disabled="loading"
-      class="mt-3 first:mt-1 last:mb-2"
       @change="changeFacetValues"
     >
       <div :class="[item.selected ? 'font-semibold' : 'font-medium text-gray-500']" class="flex text-13">
