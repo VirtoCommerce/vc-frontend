@@ -97,6 +97,16 @@
           "code": "Draft",
           "color": "neutral",
           "variant": "outline-dark"
+        },
+         {
+          "code": "Processing",
+          "color": "info",
+          "variant": "outline-dark"
+        },
+        {
+          "code": "New",
+          "color": "success",
+          "variant": "outline-dark"
         }
       ],
 
