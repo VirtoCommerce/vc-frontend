@@ -3,7 +3,7 @@ import { Logger } from "@/core/utilities";
 import { getSearchResults } from "@/xapi/graphql/catalog";
 import { highlightSearchText, prepareSearchText } from "../utils";
 import type { SearchResultsParams } from "@/xapi/graphql/catalog";
-import type { Category, Product } from "@/xapi/types";
+import type { Category, PageType, Product } from "@/xapi/types";
 
 const loading = ref(false);
 const searchBarVisible = ref(false);
@@ -11,6 +11,7 @@ const searchDropdownVisible = ref(false);
 const searchPhraseOfUploadedResults = ref("");
 const categories = shallowRef<Category[]>([]);
 const products = shallowRef<Product[]>([]);
+const pages = shallowRef<PageType[]>([]);
 const total = ref(0);
 
 export default function useSearchBar() {
@@ -50,6 +51,7 @@ export default function useSearchBar() {
 
     try {
       const {
+        pages: { items: pagesItems = [] },
         categories: { items: categoriesItems = [] },
         products: { items: productsItems = [], totalCount = 0 },
       } = await getSearchResults(preparedParams);
@@ -60,6 +62,7 @@ export default function useSearchBar() {
         ...item,
         name: highlightSearchText(item.name, params.keyword),
       }));
+      pages.value = pagesItems;
 
       searchPhraseOfUploadedResults.value = preparedParams.keyword;
     } catch (e) {
@@ -83,5 +86,6 @@ export default function useSearchBar() {
     searchPhraseOfUploadedResults: readonly(searchPhraseOfUploadedResults),
     categories: computed(() => categories.value),
     products: computed(() => products.value),
+    pages: computed(() => pages.value),
   };
 }

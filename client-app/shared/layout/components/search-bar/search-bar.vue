@@ -29,6 +29,23 @@
       >
         <!-- Results -->
         <template v-if="categories.length || products.length">
+          <!-- Pages -->
+          <section v-if="pages.length">
+            <header class="bg-gray-100 px-5 py-2 text-xs text-gray-500">
+              {{ $t("shared.layout.search_bar.pages_label") }}
+            </header>
+
+            <div class="flex gap-5 px-5 pt-2.5 pb-3 text-sm">
+              <ul class="">
+                <li v-for="page in pages" :key="page.relativeUrl">
+                  <router-link :to="page.relativeUrl!" class="block py-1" @click="hideSearchDropdown">
+                    <span v-html="page.name" />
+                  </router-link>
+                </li>
+              </ul>
+            </div>
+          </section>
+
           <!-- Categories -->
           <section v-if="categories.length">
             <header class="bg-gray-100 px-5 py-2 text-xs text-gray-500">
@@ -120,11 +137,11 @@ const MIN_LENGTH = config?.search_min_chars || 0;
 const {
   total,
   loading,
+  pages,
   products,
   categories,
   searchBarVisible,
   searchDropdownVisible,
-  searchPhraseOfUploadedResults,
   hideSearchDropdown,
   showSearchDropdown,
   searchResults,

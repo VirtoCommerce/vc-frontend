@@ -4,7 +4,7 @@ import searchQueryDocument from "./getSearchResultsQuery.graphql";
 import type { SearchResultsParams } from "@/xapi/graphql/catalog";
 import type { GetSearchResultsQueryVariables, Query } from "@/xapi/types";
 
-type SearchResults = Required<Pick<Query, "categories" | "products">>;
+type SearchResults = Required<Pick<Query, "categories" | "products" | "pages">>;
 
 export default async function getSearchResults({
   keyword,
@@ -24,6 +24,8 @@ export default async function getSearchResults({
     fuzzy: categoriesFuzzy,
     fuzzyLevel: categoriesFuzzyLevel,
   } = {},
+
+  pages: { page: staticContentPage = 1, itemsPerPage: staticContentItemsPerPage = DEFAULT_PAGE_SIZE } = {},
 }: SearchResultsParams): Promise<SearchResults> {
   const { storeId, catalogId, userId, cultureName, currencyCode } = globals;
   const { $graphqlClient } = useNuxtApp();
@@ -47,6 +49,8 @@ export default async function getSearchResults({
       productsAfter: String((productsPage - 1) * productsItemsPerPage),
       categoriesFirst: categoriesItemsPerPage,
       categoriesAfter: String((categoriesPage - 1) * categoriesItemsPerPage),
+      pagesFirst: staticContentItemsPerPage,
+      pagesAfter: String((staticContentPage - 1) * staticContentItemsPerPage),
     },
   });
 

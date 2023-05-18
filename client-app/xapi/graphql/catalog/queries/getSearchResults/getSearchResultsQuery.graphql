@@ -3,7 +3,7 @@ query GetSearchResults(
   $userId: String!
   $currencyCode: String!
   $cultureName: String
-  $query: String
+  $query: String!
   $filter: String
   $productsAfter: String
   $productsFirst: Int
@@ -15,6 +15,8 @@ query GetSearchResults(
   $categoriesSort: String
   $categoriesFuzzy: Boolean
   $categoriesFuzzyLevel: Int
+  $pagesFirst: Int
+  $pagesAfter: String
 ) {
   products(
     storeId: $storeId
@@ -85,6 +87,13 @@ query GetSearchResults(
       seoInfo {
         semanticUrl
       }
+    }
+  }
+  pages(storeId: $storeId, keyword: $query, cultureName: $cultureName, first: $pagesFirst, after: $pagesAfter) {
+    totalCount
+    items {
+      name
+      relativeUrl
     }
   }
 }

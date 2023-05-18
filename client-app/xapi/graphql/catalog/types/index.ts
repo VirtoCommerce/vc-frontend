@@ -14,6 +14,10 @@ export type SearchResultsParams = {
     fuzzy?: boolean;
     fuzzyLevel?: number;
   };
+  pages?: {
+    page?: number;
+    itemsPerPage?: number;
+  };
 };
 
 export type RelatedProductsSearchParams = {
