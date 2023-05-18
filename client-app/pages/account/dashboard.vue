@@ -36,7 +36,7 @@
         @item-click="openOrderDetails"
       >
         <template #mobile-item="itemData">
-          <div class="grid cursor-pointer grid-cols-3 gap-y-4 gap-x-8 border-b border-gray-200 p-6">
+          <div class="grid cursor-pointer grid-cols-3 gap-x-8 gap-y-4 border-b border-gray-200 p-6">
             <div class="flex flex-col text-sm">
               <span v-t="'pages.account.dashboard.last_orders_card.order_number_label'" class="text-gray-400" />
 
@@ -54,7 +54,7 @@
             </div>
 
             <div class="flex flex-col justify-start">
-              <TableStatusBadge :status="itemData.item.status" />
+              <OrderStatus :status="itemData.item.status" />
             </div>
 
             <div class="flex flex-col text-sm">
@@ -97,7 +97,7 @@
         </template>
 
         <template #mobile-skeleton>
-          <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-3 gap-y-4 gap-x-8 border-b border-gray-200 p-6">
+          <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-3 gap-x-8 gap-y-4 border-b border-gray-200 p-6">
             <div class="flex flex-col">
               <span
                 v-t="'pages.account.dashboard.last_orders_card.order_number_label'"
@@ -160,7 +160,7 @@
             </td>
 
             <td class="overflow-hidden text-ellipsis p-5">
-              <TableStatusBadge :status="order.status" class="mx-auto" />
+              <OrderStatus :status="order.status" />
             </td>
 
             <td class="overflow-hidden text-ellipsis p-5 text-right">
@@ -226,7 +226,7 @@
       </VcTable>
     </VcCard>
 
-    <div class="mx-5 flex flex-col gap-y-5 md:mx-0 lg:flex-row lg:gap-y-0 lg:gap-x-5">
+    <div class="mx-5 flex flex-col gap-y-5 md:mx-0 lg:flex-row lg:gap-x-5 lg:gap-y-0">
       <VcCard :title="$t('pages.account.dashboard.monthly_report_card.title')" class="lg:w-1/2" shadow>
         <div class="flex content-center space-x-9 lg:space-x-4">
           <VcImage
@@ -237,7 +237,7 @@
           />
 
           <div
-            class="flex flex-col justify-center space-y-1 sm:flex-row sm:flex-wrap sm:items-center sm:space-y-0 sm:space-x-5 xl:space-x-7"
+            class="flex flex-col justify-center space-y-1 sm:flex-row sm:flex-wrap sm:items-center sm:space-x-5 sm:space-y-0 xl:space-x-7"
           >
             <div class="flex flex-col lg:items-center lg:space-y-3">
               <span
@@ -279,6 +279,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables";
 import { SORT_DESCENDING } from "@/core/constants";
+import { OrderStatus } from "@/shared/account";
 import useUserOrders from "@/shared/account/composables/useUserOrders";
 import type { CustomerOrderType } from "@/xapi/types";
 
