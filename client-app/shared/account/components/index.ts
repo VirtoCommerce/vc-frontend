@@ -9,6 +9,7 @@ export { default as CheckoutDefaultsSuccessDialog } from "./checkout-default-suc
 export { default as ProfileUpdateSuccessDialog } from "./profile-update-success-dialog.vue";
 export { default as OrdersFilter } from "./orders-filter.vue";
 export { default as OrderStatus } from "./order-status.vue";
+export { default as QuoteStatus } from "./quote-status.vue";
 export { default as MobileOrdersFilter } from "./mobile-orders-filter.vue";
 export { default as PageToolbarBlock } from "./page-toolbar-block.vue";
 export { default as QuoteLineItems } from "./quote-line-items.vue";
