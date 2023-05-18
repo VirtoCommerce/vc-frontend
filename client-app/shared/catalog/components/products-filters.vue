@@ -51,7 +51,7 @@
           </VcCheckbox>
         </button>
 
-        <div class="mt-1 ml-0.5 pl-6 text-xs font-medium">
+        <div class="ml-0.5 mt-1 pl-6 text-xs font-medium">
           {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
         </div>
       </VcFilterCard>
@@ -72,20 +72,6 @@
         :is-collapsed="!filterHasSelectedValues(facet)"
       >
         <FacetValues :facet="facet" :loading="loading" @update:facet="onFacetValuesChanged" />
-
-        <!--<VcCheckbox
-          v-for="item in facet.values"
-          :key="item.value"
-          v-model="item.selected"
-          :disabled="loading"
-          class="mt-3 first:mt-1 last:mb-2"
-          @change="onFilterChanged"
-        >
-          <div class="flex text-13" :class="[item.selected ? 'font-semibold' : 'font-medium text-gray-500']">
-            <span class="truncate">{{ item.label }}</span>
-            <span class="ml-1">{{ $t("pages.catalog.facet_card.item_count_format", [item.count]) }}</span>
-          </div>
-        </VcCheckbox>-->
       </VcFilterCard>
     </template>
   </div>
