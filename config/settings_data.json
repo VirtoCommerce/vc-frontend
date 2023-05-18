@@ -77,6 +77,29 @@
         }
       ],
 
+      "quote_statuses": [
+        {
+          "code": "Ordered",
+          "color": "success",
+          "variant": "outline-dark"
+        },
+        {
+          "code": "Proposal sent",
+          "color": "info",
+          "variant": "outline-dark"
+        },
+        {
+          "code": "On hold",
+          "color": "warning",
+          "variant": "outline-dark"
+        },
+        {
+          "code": "Draft",
+          "color": "neutral",
+          "variant": "outline-dark"
+        }
+      ],
+
       "line_items_group_by_vendor_enabled": true,
       "social_sharing_services": [
         {

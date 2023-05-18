@@ -131,8 +131,8 @@
               {{ $d(quote.createdDate) }}
             </td>
 
-            <td class="overflow-hidden text-ellipsis p-5">
-              <TableStatusBadge :status="quote.status" class="mx-auto" />
+            <td class="overflow-hidden text-ellipsis p-5 text-center">
+              <QuoteStatus :status="quote.status" />
             </td>
 
             <td class="overflow-hidden text-ellipsis p-5 text-right">
@@ -161,7 +161,7 @@ import { useRouter } from "vue-router";
 import { useRouteQueryParam, usePageHead } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
 import { getSortingExpression, getSortInfoFromStringExpression } from "@/core/utilities";
-import { PageToolbarBlock, useUserQuotes } from "@/shared/account";
+import { PageToolbarBlock, useUserQuotes, QuoteStatus } from "@/shared/account";
 import type { ISortInfo } from "@/core/types";
 import type { QuoteType } from "@/xapi/types";
 

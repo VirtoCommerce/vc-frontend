@@ -1,13 +1,13 @@
 <template>
   <div
-    class="grow bg-gray-100 pt-4 pb-16 shadow-inner lg:pt-6"
+    class="grow bg-gray-100 pb-16 pt-4 shadow-inner lg:pt-6"
     :class="{ 'polygon-gray-bg': !products.length && !loading }"
   >
     <div class="mx-auto max-w-screen-2xl px-5 2xl:px-18">
       <!-- Breadcrumbs -->
       <VcBreadcrumbs v-if="!isSearchPage" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
 
-      <div class="flex items-start lg:gap-6">
+      <div class="flex items-stretch lg:gap-6">
         <!-- Mobile sidebar back cover -->
         <VcPopupSidebar
           v-if="isMobile"
@@ -15,12 +15,12 @@
           class="flex w-70 flex-col px-5 pt-5"
           @hide="hideMobileSidebar()"
         >
-          <div class="relative mt-0.5 mb-6 pr-6">
+          <div class="relative mb-6 mt-0.5 pr-6">
             <div class="break-words pt-1 text-26 font-semibold">
               {{ $t("common.buttons.filters") }}
             </div>
 
-            <button type="button" class="absolute top-2.5 right-1" @click="hideMobileSidebar()">
+            <button type="button" class="absolute right-1 top-2.5" @click="hideMobileSidebar()">
               <svg class="h-5 w-5 text-[color:var(--color-primary)]">
                 <use href="/static/images/delete.svg#main" />
               </svg>
@@ -71,24 +71,26 @@
         </VcPopupSidebar>
 
         <!-- Sidebar -->
-        <div v-else class="w-60 shrink-0 space-y-5">
-          <CategorySelector
-            v-if="!isSearchPage"
-            :category="currentCategory"
-            :loading="!currentCategory && loadingCategory"
-          />
+        <div v-else class="relative flex w-60 shrink-0 items-start">
+          <div ref="filtersElement" class="sticky w-60 space-y-5" :style="filtersStyle">
+            <CategorySelector
+              v-if="!isSearchPage"
+              :category="currentCategory"
+              :loading="!currentCategory && loadingCategory"
+            />
 
-          <ProductsFiltersSidebar
-            :keyword="keywordQueryParam"
-            :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
-            :loading="loading"
-            @search="onSearchStart($event)"
-            @change="applyFilters($event)"
-          />
+            <ProductsFiltersSidebar
+              :keyword="keywordQueryParam"
+              :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
+              :loading="loading"
+              @search="onSearchStart($event)"
+              @change="applyFilters($event)"
+            />
+          </div>
         </div>
 
         <!-- Content -->
-        <div class="grow">
+        <div ref="contentElement" class="grow">
           <div class="flex">
             <h2 class="text-21 font-bold uppercase text-gray-800 lg:my-px lg:text-25 lg:leading-none">
               <i18n-t v-if="isSearchPage" keypath="pages.search.header" tag="span">
@@ -180,7 +182,7 @@
                 </template>
 
                 <template #content>
-                  <div class="w-52 rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y">
+                  <div class="w-52 rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
                     {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
                   </div>
                 </template>
@@ -204,7 +206,7 @@
                 </template>
 
                 <template #content>
-                  <div class="w-52 rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y">
+                  <div class="w-52 rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
                     {{ $t("pages.catalog.instock_filter_card.tooltip_text") }}
                   </div>
                 </template>
@@ -264,7 +266,7 @@
               v-if="!loading"
               :loading="loadingMore"
               distance="400"
-              class="mt-9 -mb-6"
+              class="-mb-6 mt-9"
               @visible="loadMoreProducts"
             />
 
@@ -308,13 +310,14 @@ import {
   breakpointsTailwind,
   computedEager,
   useBreakpoints,
+  useElementBounding,
   useElementVisibility,
   useLocalStorage,
   watchDebounced,
   whenever,
 } from "@vueuse/core";
-import { cloneDeep, isEqual } from "lodash";
-import { computed, ref, shallowReactive, shallowRef, triggerRef, watch } from "vue";
+import { cloneDeep, isEqual, throttle } from "lodash";
+import { computed, ref, shallowReactive, shallowRef, triggerRef, watch, onMounted, onBeforeUnmount } from "vue";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead, useRouteQueryParam } from "@/core/composables";
 import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
@@ -323,7 +326,7 @@ import { AddToCart } from "@/shared/cart";
 import { BranchesDialog, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { usePopup } from "@/shared/popup";
 import { useCategory, useProducts } from "../composables";
-import { getFilterExpressionForAvailableIn, getFilterExpressionForInStock } from "../utils";
+import { getFilterExpressionForAvailableIn, getFilterExpressionForInStock, getBrowserZoom } from "../utils";
 import CategorySelector from "./category-selector.vue";
 import DisplayProducts from "./display-products.vue";
 import ProductsFiltersSidebar from "./products-filters.vue";
@@ -331,6 +334,7 @@ import ViewMode from "./view-mode.vue";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 import type { ProductsFilters, ProductsSearchParams } from "@/shared/catalog";
 import type { Breadcrumb, Product } from "@/xapi/types";
+import type { StyleValue } from "vue";
 
 interface IProps {
   categoryId?: string;
@@ -394,6 +398,17 @@ const mobileFilters = shallowReactive<ProductsFilters>({
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
 const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
+
+let scrollOld = 0;
+const maxOffsetTop = 108;
+const maxOffsetBottom = 20;
+
+const contentElement = ref<HTMLElement | null>(null);
+const filtersElement = ref<HTMLElement | null>(null);
+const filtersStyle = ref<StyleValue | undefined>();
+
+const { top: cTop, height: cHeight } = useElementBounding(contentElement);
+const { height: fHeight, top: fTop } = useElementBounding(filtersElement);
 
 usePageHead({
   title: computed(() => currentCategory.value?.seoInfo?.pageTitle || currentCategory.value?.name),
@@ -481,6 +496,8 @@ function applyFilters(newFilters: ProductsFilters) {
   if (!isEqual(savedBranches.value, newFilters.branches)) {
     savedBranches.value = newFilters.branches;
   }
+
+  setFiltersPosition();
 }
 
 async function updateMobileFilters(newFilters: ProductsFilters) {
@@ -586,6 +603,76 @@ function openBranchesDialog(fromMobileFilter: boolean) {
   });
 }
 
+function setFiltersPosition() {
+  const { clientHeight, scrollTop } = document.documentElement || document.body.scrollTop;
+
+  const scrollBottom = scrollTop + clientHeight;
+
+  const contentHeight = cHeight.value;
+  const contentTop = scrollTop + cTop.value;
+  const contentBottom = contentTop + contentHeight;
+
+  const filterHeight = fHeight.value;
+  const filterTop = scrollTop + fTop.value;
+  const filterBottom = filterTop + filterHeight;
+
+  const down = scrollTop > scrollOld;
+  const up = scrollTop < scrollOld;
+
+  const zoomCorrection = getBrowserZoom() !== 1 ? 1 : 0;
+
+  const offsetTop = maxOffsetTop - zoomCorrection;
+  const offsetBottom = maxOffsetBottom - zoomCorrection;
+
+  let action = "BETWEEN";
+
+  if (
+    (up && scrollTop <= filterTop - offsetTop) ||
+    filterHeight <= clientHeight - offsetTop ||
+    filterHeight >= contentHeight
+  ) {
+    action = "TOP";
+  } else if (
+    (down && scrollBottom >= filterBottom + offsetBottom && scrollBottom <= contentBottom + offsetBottom) ||
+    (scrollBottom >= contentBottom + offsetBottom && filterBottom < contentBottom) ||
+    (!up && scrollBottom > filterBottom + offsetBottom && filterBottom < contentBottom) ||
+    filterBottom > contentBottom
+  ) {
+    action = "BOTTOM";
+  }
+
+  switch (action) {
+    case "BOTTOM":
+      filtersStyle.value = {
+        alignSelf: "flex-end",
+        bottom: `${maxOffsetBottom}px`,
+      };
+
+      break;
+    case "BETWEEN":
+      filtersStyle.value = {
+        marginTop: `${filterTop - contentTop}px`,
+      };
+      break;
+    default:
+      filtersStyle.value = {
+        top: `${maxOffsetTop}px`,
+      };
+  }
+
+  scrollOld = scrollTop;
+}
+
+const setFiltersPositionOptimized = throttle(setFiltersPosition, 100);
+
+onMounted(() => {
+  window.addEventListener("scroll", setFiltersPositionOptimized);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("scroll", setFiltersPositionOptimized);
+});
+
 whenever(() => !isMobile.value, hideMobileSidebar);
 
 watch(
@@ -600,6 +687,22 @@ watch(
     }
   },
   { immediate: true }
+);
+
+watch(
+  () => fHeight.value,
+  (value, oldValue) => {
+    if (value !== oldValue) {
+      setFiltersPosition();
+    }
+  }
+);
+
+watch(
+  () => cHeight.value,
+  () => {
+    setFiltersPosition();
+  }
 );
 
 watchDebounced(
