@@ -142,10 +142,12 @@ import { computed, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { AddressType } from "@/core/enums";
 import { asyncForEach, convertToType } from "@/core/utilities";
 import { QuoteLineItems, useUserAddresses, useUserQuote } from "@/shared/account";
 import { SelectAddressModal } from "@/shared/checkout";
+import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import { VcAddOrUpdateAddressModal } from "@/ui-kit/components";
 import type { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi/types";
@@ -174,6 +176,7 @@ const {
   removeItem,
   submitQuote,
 } = useUserQuote();
+const notifications = useNotifications();
 
 usePageHead({
   title: t("pages.account.quote_details.title", [quote!.value?.number]),
@@ -285,6 +288,12 @@ async function saveChanges(): Promise<void> {
   }
 
   await fetchQuote({ id: props.quoteId });
+
+  notifications.success({
+    duration: DEFAULT_NOTIFICATION_DURATION,
+    singleInGroup: true,
+    html: t("pages.account.quote_details.save_changes_notification_success"),
+  });
 
   originalQuote.value = cloneDeep(quote.value);
 }

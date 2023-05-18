@@ -976,6 +976,7 @@
         "created": "@:common.labels.created",
         "status": "@:common.labels.status",
         "no_items_message": "Quote request has not items",
+        "save_changes_notification_success": "The quote request has been successfully saved",
         "line_items": {
           "product": "@:common.labels.product",
           "properties": "@:common.labels.properties",
