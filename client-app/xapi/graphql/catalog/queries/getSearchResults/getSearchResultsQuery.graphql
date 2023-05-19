@@ -17,6 +17,8 @@ query GetSearchResults(
   $categoriesFuzzyLevel: Int
   $pagesFirst: Int
   $pagesAfter: String
+  $suggestionsSize: Int
+  $suggestionsFields: [String]
 ) {
   products(
     storeId: $storeId
@@ -95,5 +97,8 @@ query GetSearchResults(
       name
       relativeUrl
     }
+  }
+  productSuggestions(query: $query, fields: $suggestionsFields, size: $suggestionsSize) {
+    suggestions
   }
 }

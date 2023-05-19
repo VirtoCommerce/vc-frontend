@@ -12,6 +12,7 @@ const searchPhraseOfUploadedResults = ref("");
 const categories = shallowRef<Category[]>([]);
 const products = shallowRef<Product[]>([]);
 const pages = shallowRef<PageType[]>([]);
+const suggestions = shallowRef<string[]>([]);
 const total = ref(0);
 
 export default function useSearchBar() {
@@ -54,6 +55,7 @@ export default function useSearchBar() {
         pages: { items: pagesItems = [] },
         categories: { items: categoriesItems = [] },
         products: { items: productsItems = [], totalCount = 0 },
+        productSuggestions,
       } = await getSearchResults(preparedParams);
 
       total.value = totalCount;
@@ -63,6 +65,7 @@ export default function useSearchBar() {
         name: highlightSearchText(item.name, params.keyword),
       }));
       pages.value = pagesItems;
+      suggestions.value = productSuggestions.suggestions ?? [];
 
       searchPhraseOfUploadedResults.value = preparedParams.keyword;
     } catch (e) {
@@ -87,5 +90,6 @@ export default function useSearchBar() {
     categories: computed(() => categories.value),
     products: computed(() => products.value),
     pages: computed(() => pages.value),
+    suggestions: computed(() => suggestions.value),
   };
 }

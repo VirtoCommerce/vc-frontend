@@ -18,6 +18,10 @@ export type SearchResultsParams = {
     page?: number;
     itemsPerPage?: number;
   };
+  productSuggestions?: {
+    suggestionsSize?: number;
+    suggestionsFields?: string[];
+  };
 };
 
 export type RelatedProductsSearchParams = {

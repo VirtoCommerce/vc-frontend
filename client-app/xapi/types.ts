@@ -5204,10 +5204,12 @@ export type GetSearchResultsQueryVariables = Exact<{
   categoriesFuzzyLevel?: InputMaybe<Scalars['Int']>;
   pagesFirst?: InputMaybe<Scalars['Int']>;
   pagesAfter?: InputMaybe<Scalars['String']>;
+  suggestionsSize?: InputMaybe<Scalars['Int']>;
+  suggestionsFields?: InputMaybe<Array<InputMaybe<Scalars['String']>> | InputMaybe<Scalars['String']>>;
 }>;
 
 
-export type GetSearchResultsQuery = { products?: { totalCount?: number, items?: Array<{ id: string, name: string, code: string, slug?: string, imgSrc?: string, vendor?: { id: string, name: string }, availabilityData?: { availableQuantity: any }, price?: { actual?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, discountAmount?: { amount: any, formattedAmount: string } } }> }, categories?: { totalCount?: number, items?: Array<{ id: string, name: string, slug?: string, seoInfo?: { semanticUrl?: string } }> }, pages?: { totalCount?: number, items?: Array<{ name?: string, relativeUrl?: string }> } };
+export type GetSearchResultsQuery = { products?: { totalCount?: number, items?: Array<{ id: string, name: string, code: string, slug?: string, imgSrc?: string, vendor?: { id: string, name: string }, availabilityData?: { availableQuantity: any }, price?: { actual?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, discountAmount?: { amount: any, formattedAmount: string } } }> }, categories?: { totalCount?: number, items?: Array<{ id: string, name: string, slug?: string, seoInfo?: { semanticUrl?: string } }> }, pages?: { totalCount?: number, items?: Array<{ name?: string, relativeUrl?: string }> }, productSuggestions?: { suggestions?: Array<string> } };
 
 export type CategoriesQueryVariables = Exact<{
   storeId: Scalars['String'];

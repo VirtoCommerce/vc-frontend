@@ -24,18 +24,34 @@
     <transition name="slide-fade-top">
       <div
         v-if="searchDropdownVisible"
-        class="absolute top-[3.45rem] left-[-10rem] z-20 flex w-full flex-col gap-3 overflow-y-auto rounded bg-white shadow-lg"
+        class="absolute left-[-10rem] top-[3.45rem] z-20 flex w-full flex-col gap-3 overflow-y-auto rounded bg-white shadow-lg"
         :style="searchDropdownStyle"
       >
         <!-- Results -->
         <template v-if="categories.length || products.length">
+          <!-- Suggestions -->
+          <section v-if="suggestions.length">
+            <header class="bg-gray-100 px-5 py-2 text-xs text-gray-500">
+              {{ $t("shared.layout.search_bar.suggestions_label") }}
+            </header>
+            <div class="flex gap-5 px-5 pb-3 pt-2.5 text-sm">
+              <ul class="">
+                <li v-for="suggestion in suggestions" :key="suggestion">
+                  <router-link :to="getSearchRoute(suggestion)" class="block py-1" @click="hideSearchDropdown">
+                    <span v-html="suggestion" />
+                  </router-link>
+                </li>
+              </ul>
+            </div>
+          </section>
+
           <!-- Pages -->
           <section v-if="pages.length">
             <header class="bg-gray-100 px-5 py-2 text-xs text-gray-500">
               {{ $t("shared.layout.search_bar.pages_label") }}
             </header>
 
-            <div class="flex gap-5 px-5 pt-2.5 pb-3 text-sm">
+            <div class="flex gap-5 px-5 pb-3 pt-2.5 text-sm">
               <ul class="">
                 <li v-for="page in pages" :key="page.relativeUrl">
                   <router-link :to="page.relativeUrl!" class="block py-1" @click="hideSearchDropdown">
@@ -52,7 +68,7 @@
               {{ $t("shared.layout.search_bar.categories_label") }}
             </header>
 
-            <div class="flex gap-5 px-5 pt-2.5 pb-3 text-sm">
+            <div class="flex gap-5 px-5 pb-3 pt-2.5 text-sm">
               <ul v-for="(column, index) in categoriesColumns" :key="index" class="">
                 <li v-for="category in column" :key="category.name">
                   <router-link :to="categoriesRoutes[category.id]" class="block py-1" @click="hideSearchDropdown">
@@ -69,7 +85,7 @@
               {{ $t("shared.layout.search_bar.products_label") }}
             </header>
 
-            <div class="grid grid-cols-2 gap-5 px-5 pt-[1.3rem] pb-3 xl:gap-[1.9rem]">
+            <div class="grid grid-cols-2 gap-5 px-5 pb-3 pt-[1.3rem] xl:gap-[1.9rem]">
               <SearchBarProductCard
                 v-for="product in products"
                 :key="product.id"
@@ -121,6 +137,7 @@ import { useSearchBar } from "../../composables";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 import type { Category } from "@/xapi/types";
 import type { StyleValue } from "vue";
+import type { RouteLocationRaw } from "vue-router";
 
 const searchBarElement = ref<HTMLElement | null>(null);
 
@@ -139,6 +156,7 @@ const {
   loading,
   pages,
   products,
+  suggestions,
   categories,
   searchBarVisible,
   searchDropdownVisible,
@@ -196,6 +214,10 @@ async function searchAndShowDropdownResults() {
     categories: {
       itemsPerPage: CATEGORIES_ITEMS_PER_COLUMN * COLUMNS,
     },
+    productSuggestions: {
+      suggestionsSize: 4,
+      suggestionsFields: ["name"],
+    },
   });
 
   if (!isApplied.value) {
@@ -212,15 +234,20 @@ async function searchAndShowDropdownResults() {
   }
 }
 
+function getSearchRoute(phrase: string): RouteLocationRaw {
+  return {
+    name: "Search",
+    query: {
+      [QueryParamName.SearchPhrase]: phrase,
+    },
+  };
+}
+
 function goToSearchResultsPage() {
   if (searchPhrase.value.trim()) {
     hideSearchDropdown();
-    router.push({
-      name: "Search",
-      query: {
-        [QueryParamName.SearchPhrase]: searchPhrase.value,
-      },
-    });
+    const route = getSearchRoute(searchPhrase.value);
+    router.push(route);
   }
 }
 
