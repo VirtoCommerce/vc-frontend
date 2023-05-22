@@ -38,7 +38,7 @@
       </template>
 
       <template #content>
-        <div class="w-52 rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y">
+        <div class="w-52 rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
           {{ errorMessage }}
         </div>
       </template>
@@ -52,7 +52,7 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import { clone } from "lodash";
 import { useField } from "vee-validate";
-import { computed, ref, shallowRef, watchEffect } from "vue";
+import { computed, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { number } from "yup";
 import { useGoogleAnalytics } from "@/core/composables";
@@ -80,7 +80,6 @@ const { t } = useI18n();
 const ga = useGoogleAnalytics();
 
 const loading = ref(false);
-const initialValue = ref();
 const inputElement = shallowRef<HTMLInputElement>();
 
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
@@ -118,7 +117,9 @@ const rules = computed(() =>
   )
 );
 
-const { value: enteredQuantity, validate, errorMessage, setValue } = useField("quantity", rules, { initialValue });
+const enteredQuantity = ref(!disabled.value ? countInCart.value || minQty.value : undefined);
+
+const { validate, errorMessage, setValue } = useField("quantity", rules, { initialValue: enteredQuantity });
 
 /**
  * Process button click to add/update cart line item.
@@ -154,8 +155,8 @@ async function onChange() {
 
   if (isRemoving) {
     lineItem!.quantity = 0;
-    initialValue.value = minQty.value;
-    setValue(initialValue.value);
+    enteredQuantity.value = minQty.value;
+    setValue(enteredQuantity.value);
   } else {
     lineItem = clone(lineItemInCart.value);
   }
@@ -186,6 +187,8 @@ function onInput() {
     enteredQuantity.value = undefined;
   } else if (enteredQuantity.value > MAX_VALUE) {
     enteredQuantity.value = MAX_VALUE;
+  } else {
+    setValue(enteredQuantity.value);
   }
 }
 
@@ -195,11 +198,4 @@ function onInput() {
 function onClick() {
   inputElement.value!.select();
 }
-
-watchEffect(() => {
-  if (!disabled.value) {
-    initialValue.value = countInCart.value || minQty.value;
-    setValue(initialValue.value);
-  }
-});
 </script>
