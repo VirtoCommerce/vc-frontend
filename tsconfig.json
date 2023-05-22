@@ -31,7 +31,7 @@
   },
   "include": [
     "client-app/**/*.ts",
-    "client-app/**/*.vue",
+    "client-app/**/*.vue"
   ],
   "exclude": [
     "node_modules",

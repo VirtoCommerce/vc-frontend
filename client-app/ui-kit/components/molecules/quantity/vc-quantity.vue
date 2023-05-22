@@ -13,6 +13,7 @@
     pattern="\d*"
     center
     truncate
+    @keydown="onKeydown"
     @keyup.enter="changeQuantity"
     @input="onQuantityChanged"
     @blur="onFocusOut"
@@ -65,6 +66,12 @@ function onFocusOut() {
 
   if (isNaN(newQuantity) || newQuantity < 1) {
     quantity.value = props.modelValue;
+  }
+}
+
+function onKeydown(e: KeyboardEvent) {
+  if (e.key === "e" || e.key === "-" || e.key === "." || e.key === ",") {
+    e.preventDefault();
   }
 }
 
