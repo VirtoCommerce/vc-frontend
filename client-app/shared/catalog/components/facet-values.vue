@@ -49,7 +49,7 @@ const searchKeyword = ref("");
 
 const searchFieldVisible = computed<boolean>(() => facet.value.values.length > 10);
 const searchedValues = computed(() =>
-  facet.value.values.filter((item) => item.label.indexOf(searchKeyword.value) >= 0)
+  facet.value.values.filter((item) => item.label.toLowerCase().indexOf(searchKeyword.value.toLowerCase()) >= 0)
 );
 
 function changeFacetValues(): void {
