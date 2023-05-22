@@ -32,7 +32,7 @@
       />
     </template>
 
-    <div class="mt-5 hidden justify-end md:flex">
+    <div class="mt-2 flex justify-end md:mt-5">
       <VcButton
         :is-disabled="disabled"
         kind="secondary"
