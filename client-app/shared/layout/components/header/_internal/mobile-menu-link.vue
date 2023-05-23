@@ -26,7 +26,7 @@
         </svg>
       </slot>
 
-      <span class="break-words line-clamp-3">
+      <span class="line-clamp-3 break-words">
         <slot v-bind="{ isActive, isExactActive }" />
       </span>
 

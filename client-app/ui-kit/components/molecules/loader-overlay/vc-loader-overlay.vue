@@ -8,20 +8,18 @@
   </transition>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-};
-</script>
-
 <script setup lang="ts">
-interface Props {
+interface IProps {
   visible?: boolean;
   fixedSpinner?: boolean;
   noBg?: boolean;
 }
 
-withDefaults(defineProps<Props>(), {
+defineOptions({
+  inheritAttrs: false,
+});
+
+withDefaults(defineProps<IProps>(), {
   visible: true,
 });
 </script>

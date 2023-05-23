@@ -1,5 +1,5 @@
 <template>
-  <div class="grow bg-gray-100 pt-7 pb-16 shadow-inner">
+  <div class="grow bg-gray-100 pb-16 pt-7 shadow-inner">
     <div class="mx-auto max-w-screen-2xl md:px-12">
       <VcBreadcrumbs class="mb-3 hidden lg:block" :items="breadcrumbs" />
 

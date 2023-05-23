@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-6 pb-16">
+  <div class="pb-16 pt-6">
     <div class="mx-auto w-full max-w-screen-2xl px-5 md:px-12">
       <h2 class="mb-4 text-center text-2xl">{{ model.title }}</h2>
       <VcMarkdownRender :src="model.content" class="text-center text-lg" />

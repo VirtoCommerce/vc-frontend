@@ -1,5 +1,5 @@
 <template>
-  <div class="text-block pt-6 pb-16">
+  <div class="text-block pb-16 pt-6">
     <div class="mx-auto w-full max-w-screen-2xl px-5 md:px-12">
       <component :is="model.heading" class="text-2xl">{{ model.title }}</component>
       <div class="block-content text-lg" v-html="contentValue"></div>

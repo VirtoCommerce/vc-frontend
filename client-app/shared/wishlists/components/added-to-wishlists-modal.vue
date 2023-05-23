@@ -15,7 +15,7 @@
         </router-link>
 
         <div class="ml-4 grow">
-          <router-link :to="link" class="text-sm font-extrabold text-[color:var(--color-link)] line-clamp-2">
+          <router-link :to="link" class="line-clamp-2 text-sm font-extrabold text-[color:var(--color-link)]">
             {{ product.name }}
           </router-link>
 

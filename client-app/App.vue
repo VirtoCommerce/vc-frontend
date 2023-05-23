@@ -25,8 +25,8 @@ import { MainLayout, SecureLayout, useSearchBar } from "./shared/layout";
 import type { Component } from "vue";
 
 /** NOTE: As an example, here is the code for getting the settings from Liquid work context. */
-const props = withDefaults(defineProps<{ settings?: string }>(), { settings: "{}" });
-const settings = JSON.parse(props.settings); // eslint-disable-line @typescript-eslint/no-unused-vars
+const _props = withDefaults(defineProps<{ settings?: string }>(), { settings: "{}" });
+const _settings = JSON.parse(_props.settings); // eslint-disable-line @typescript-eslint/no-unused-vars
 
 const route = useRoute();
 const router = useRouter();

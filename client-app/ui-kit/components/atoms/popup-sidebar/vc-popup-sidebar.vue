@@ -23,24 +23,24 @@
   </teleport>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-};
-</script>
-
 <script setup lang="ts">
 import { syncRefs, useScrollLock } from "@vueuse/core";
 import { toRefs } from "vue";
 
-const emit = defineEmits(["hide"]);
+interface IEmits {
+  (event: "hide"): void;
+}
 
-const props = defineProps({
-  isVisible: {
-    type: Boolean,
-    required: true,
-  },
+interface IProps {
+  isVisible?: boolean;
+}
+
+defineOptions({
+  inheritAttrs: false,
 });
+
+const emit = defineEmits<IEmits>();
+const props = defineProps<IProps>();
 
 const { isVisible } = toRefs(props);
 

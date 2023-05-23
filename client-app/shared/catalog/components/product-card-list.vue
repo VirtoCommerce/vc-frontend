@@ -1,6 +1,6 @@
 <template>
   <div
-    class="vc-product-card-list grid gap-x-3.5 bg-white px-4 pt-4 pb-5 md:place-items-center lg:rounded lg:py-3.5 lg:shadow-t-3sm lg:outline lg:outline-1 lg:outline-offset-0 lg:outline-[color:var(--color-product-outline)] lg:hover:shadow-lg"
+    class="vc-product-card-list grid gap-x-3.5 bg-white px-4 pb-5 pt-4 md:place-items-center lg:rounded lg:py-3.5 lg:shadow-t-3sm lg:outline lg:outline-1 lg:outline-offset-0 lg:outline-[color:var(--color-product-outline)] lg:hover:shadow-lg"
   >
     <div class="vc-product-card-list__mobile-left sm:contents">
       <!-- Product image -->
@@ -37,7 +37,7 @@
       <template #trigger>
         <router-link
           :to="link"
-          class="vc-product-card-list__name w-full grow text-sm font-extrabold text-[color:var(--color-link)] sm:overflow-hidden sm:line-clamp-3 lg:mt-1 lg:h-[60px] 2xl:pr-2"
+          class="vc-product-card-list__name w-full grow text-sm font-extrabold text-[color:var(--color-link)] sm:line-clamp-3 sm:overflow-hidden lg:mt-1 lg:h-[60px] 2xl:pr-2"
           @click="$emit('linkClick', $event)"
         >
           {{ product.name }}
@@ -45,7 +45,7 @@
       </template>
 
       <template #content>
-        <div class="rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y">
+        <div class="rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
           {{ product.name }}
         </div>
       </template>

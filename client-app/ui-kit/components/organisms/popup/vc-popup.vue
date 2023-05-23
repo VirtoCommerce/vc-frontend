@@ -47,7 +47,7 @@
                   <span class="grow">{{ title }}</span>
                 </slot>
 
-                <button v-if="!isPersistent" type="button" class="-my-3 -mr-4 py-2 px-4" @click="close">
+                <button v-if="!isPersistent" type="button" class="-my-3 -mr-4 px-4 py-2" @click="close">
                   <i class="fas fa-times text-2xl" />
                 </button>
               </DialogTitle>
@@ -77,51 +77,34 @@
   </TransitionRoot>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-};
-</script>
-
 <script setup lang="ts">
 import { TransitionRoot, TransitionChild, Dialog, DialogOverlay, DialogTitle } from "@headlessui/vue";
 import { computed, ref, watchSyncEffect } from "vue";
 
-defineEmits(["close"]);
+interface IEmits {
+  (event: "close"): void;
+}
 
-const props = defineProps({
-  hideActions: Boolean,
+interface IProps {
+  show?: boolean;
+  hideActions?: boolean;
+  isPersistent?: boolean;
+  isMobileFullscreen?: boolean;
+  title?: string;
+  modalWidth?: string;
+  variant?: "info" | "success" | "warn" | "danger";
+}
 
-  title: {
-    type: String,
-    default: undefined,
-  },
+defineOptions({
+  inheritAttrs: false,
+});
 
-  variant: {
-    type: String,
-    default: "info",
-    validator: (value: string) => ["info", "success", "warn", "danger"].includes(value),
-  },
+defineEmits<IEmits>();
 
-  show: {
-    type: Boolean,
-    default: true,
-  },
-
-  isPersistent: {
-    type: Boolean,
-    default: false,
-  },
-
-  modalWidth: {
-    type: String,
-    default: "max-w-2xl",
-  },
-
-  isMobileFullscreen: {
-    type: Boolean,
-    default: false,
-  },
+const props = withDefaults(defineProps<IProps>(), {
+  show: true,
+  variant: "info",
+  modalWidth: "max-w-2xl",
 });
 
 const isOpen = ref(true);
