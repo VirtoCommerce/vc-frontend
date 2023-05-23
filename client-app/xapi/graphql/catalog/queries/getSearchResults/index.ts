@@ -27,10 +27,7 @@ export default async function getSearchResults({
 
   pages: { page: staticContentPage = 1, itemsPerPage: staticContentItemsPerPage = DEFAULT_PAGE_SIZE } = {},
 
-  productSuggestions: {
-    suggestionsSize: productSuggestionsSize = DEFAULT_PAGE_SIZE,
-    suggestionsFields: productSuggestionsFields,
-  } = {},
+  productSuggestions: { suggestionsSize: productSuggestionsSize = DEFAULT_PAGE_SIZE } = {},
 }: SearchResultsParams): Promise<SearchResults> {
   const { storeId, catalogId, userId, cultureName, currencyCode } = globals;
   const { $graphqlClient } = useNuxtApp();
@@ -57,7 +54,6 @@ export default async function getSearchResults({
       pagesFirst: staticContentItemsPerPage,
       pagesAfter: String((staticContentPage - 1) * staticContentItemsPerPage),
       suggestionsSize: productSuggestionsSize,
-      suggestionsFields: productSuggestionsFields,
     },
   });
 

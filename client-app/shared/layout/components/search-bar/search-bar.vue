@@ -216,7 +216,6 @@ async function searchAndShowDropdownResults() {
     },
     productSuggestions: {
       suggestionsSize: 4,
-      suggestionsFields: ["name"],
     },
   });
 

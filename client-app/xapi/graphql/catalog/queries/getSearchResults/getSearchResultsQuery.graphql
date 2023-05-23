@@ -18,7 +18,6 @@ query GetSearchResults(
   $pagesFirst: Int
   $pagesAfter: String
   $suggestionsSize: Int
-  $suggestionsFields: [String]
 ) {
   products(
     storeId: $storeId
@@ -98,7 +97,7 @@ query GetSearchResults(
       relativeUrl
     }
   }
-  productSuggestions(query: $query, fields: $suggestionsFields, size: $suggestionsSize) {
+  productSuggestions(storeId: $storeId, query: $query, size: $suggestionsSize) {
     suggestions
   }
 }

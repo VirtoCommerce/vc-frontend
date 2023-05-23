@@ -20,7 +20,6 @@ export type SearchResultsParams = {
   };
   productSuggestions?: {
     suggestionsSize?: number;
-    suggestionsFields?: string[];
   };
 };
 

@@ -4061,9 +4061,9 @@ export type QueryProductArgs = {
 
 
 export type QueryProductSuggestionsArgs = {
-  fields?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   query?: InputMaybe<Scalars['String']>;
   size?: InputMaybe<Scalars['Int']>;
+  storeId?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -5205,7 +5205,6 @@ export type GetSearchResultsQueryVariables = Exact<{
   pagesFirst?: InputMaybe<Scalars['Int']>;
   pagesAfter?: InputMaybe<Scalars['String']>;
   suggestionsSize?: InputMaybe<Scalars['Int']>;
-  suggestionsFields?: InputMaybe<Array<InputMaybe<Scalars['String']>> | InputMaybe<Scalars['String']>>;
 }>;
 
 
