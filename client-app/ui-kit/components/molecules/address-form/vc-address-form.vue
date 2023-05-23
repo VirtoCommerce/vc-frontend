@@ -52,7 +52,7 @@
       <!-- Divider -->
       <div
         v-if="withPersonalInfo"
-        class="-mx-96 mt-8 mb-6 border-t border-[color:var(--color-primary)] md:mx-9 md:mt-6 md:mb-4 md:border-l"
+        class="-mx-96 mb-6 mt-8 border-t border-[color:var(--color-primary)] md:mx-9 md:mb-4 md:mt-6 md:border-l"
       />
 
       <div :class="{ 'md:w-1/2': withPersonalInfo }">
@@ -80,6 +80,7 @@
             class="mb-4 w-full xl:w-7/12"
             required
             autocomplete
+            relevant-search
           />
 
           <VcInput
@@ -105,6 +106,7 @@
             :placeholder="$t('common.placeholders.select_region')"
             class="order-2 mb-4 xl:order-none xl:w-5/12"
             autocomplete
+            relevant-search
           />
 
           <VcInput

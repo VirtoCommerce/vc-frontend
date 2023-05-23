@@ -48,7 +48,7 @@
 
       <VcInput
         v-else
-        v-model="filter"
+        v-model="search"
         :required="required"
         :size="size"
         :placeholder="selectedText || placeholder"
@@ -129,6 +129,7 @@
 <script setup lang="ts">
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { vOnClickOutside } from "@vueuse/components";
+import { union, lowerCase, filter, startsWith } from "lodash";
 import { computed, ref, shallowRef } from "vue";
 
 interface IProps {
@@ -147,6 +148,7 @@ interface IProps {
   message?: string;
   autocomplete?: boolean;
   singleLineMessage?: boolean;
+  relevantSearch?: true;
 }
 
 interface IEmits {
@@ -176,7 +178,7 @@ const selected = computed(() => {
   return props.valueField ? props.items.find((item) => item[props.valueField!] === props.modelValue) : props.modelValue;
 });
 
-const filter = computed({
+const search = computed({
   get() {
     if (!filtering.value) {
       return selectedText.value;
@@ -194,7 +196,16 @@ const filteredItems = computed(() => {
     return props.items;
   }
 
-  return props.items.filter((item) => getItemText(item).toLowerCase().includes(filterValue.value.toLowerCase()));
+  const searching = lowerCase(filterValue.value);
+  const items = props.items.filter((item) => lowerCase(getItemText(item)).includes(searching));
+
+  if (props.relevantSearch) {
+    const first = filter(items, (item) => startsWith(lowerCase(getItemText(item)), searching));
+
+    return union(first, items);
+  }
+
+  return items;
 });
 
 function onFilter() {
