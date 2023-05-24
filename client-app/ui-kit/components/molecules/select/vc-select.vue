@@ -128,7 +128,6 @@
 
 <script setup lang="ts">
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { vOnClickOutside } from "@vueuse/components";
 import { union, lowerCase, filter, startsWith } from "lodash";
 import { computed, ref, shallowRef } from "vue";
 

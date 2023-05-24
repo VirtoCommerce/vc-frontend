@@ -43,7 +43,7 @@
             v-if="success"
             image="/static/images/payment/payment-successful.png"
             mobile-image="/static/images/payment/payment-successful.png"
-            class="-mx-9 -mt-16 -mb-24 md:-mt-6 lg:pl-14"
+            class="-mx-9 -mb-24 -mt-16 md:-mt-6 lg:pl-14"
           >
             <template #description>
               <h2
@@ -81,7 +81,7 @@
             v-else-if="failure"
             image="/static/images/payment/payment-failed.png"
             mobile-image="/static/images/payment/payment-failed.png"
-            class="-mx-9 -mt-16 -mb-24 md:-mt-6 lg:pl-14"
+            class="-mx-9 -mb-24 -mt-16 md:-mt-6 lg:pl-14"
           >
             <template #description>
               <h2
@@ -108,7 +108,7 @@
               <div class="flex flex-row justify-between space-x-3 p-4 md:p-5">
                 <!-- TODO: create an atom component to display address -->
                 <div class="min-w-0 text-sm">
-                  <span class="font-extrabold line-clamp-2">
+                  <span class="line-clamp-2 font-extrabold">
                     {{ payment?.billingAddress?.firstName }}
                     {{ payment?.billingAddress?.lastName }}
                   </span>

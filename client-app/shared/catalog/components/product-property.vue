@@ -8,7 +8,7 @@
       <div class="border-grey-100 h-5 flex-1 border-b border-dotted"></div>
     </div>
 
-    <div class="w-1/2 font-bold line-clamp-3">
+    <div class="line-clamp-3 w-1/2 font-bold">
       <slot />
     </div>
   </div>

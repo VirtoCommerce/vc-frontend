@@ -4,7 +4,7 @@
       {{ label }}
     </div>
 
-    <div class="w-1/2 font-bold line-clamp-3 xl:w-3/5">
+    <div class="line-clamp-3 w-1/2 font-bold xl:w-3/5">
       <slot />
     </div>
   </div>

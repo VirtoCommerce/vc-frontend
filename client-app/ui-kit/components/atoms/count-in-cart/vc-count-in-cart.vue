@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="countInCart > 0"
-    class="whitespace-nowrap rounded-full bg-[color:var(--color-add-to-cart-in-cart-bg)] py-0.5 px-[0.677rem] text-[13px] leading-5 text-[color:var(--color-add-to-cart-in-cart)] lg:py-px lg:px-[0.53rem] lg:text-[11px]"
+    class="whitespace-nowrap rounded-full bg-[color:var(--color-add-to-cart-in-cart-bg)] px-[0.677rem] py-0.5 text-[13px] leading-5 text-[color:var(--color-add-to-cart-in-cart)] lg:px-[0.53rem] lg:py-px lg:text-[11px]"
   >
     <span class="inline-block text-center font-bold">{{ countInCart }}</span>
     {{ $t("shared.cart.add_to_cart.errors.in_cart") }}

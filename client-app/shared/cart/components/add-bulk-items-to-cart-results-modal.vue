@@ -76,7 +76,7 @@
                 </div>
 
                 <div
-                  class="order-first mb-2.5 w-full shrink-0 line-clamp-2 md:mb-0 md:table-cell md:w-auto md:px-4 md:py-2.5 md:align-middle md:line-clamp-none"
+                  class="order-first mb-2.5 line-clamp-2 w-full shrink-0 md:mb-0 md:line-clamp-none md:table-cell md:w-auto md:px-4 md:py-2.5 md:align-middle"
                 >
                   <router-link
                     :to="links[item.productId]"

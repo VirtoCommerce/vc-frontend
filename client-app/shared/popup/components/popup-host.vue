@@ -8,13 +8,12 @@
   />
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-};
-</script>
-
 <script setup lang="ts">
-import { usePopup } from "@/shared/popup";
+import { usePopup } from "../composables";
+
+defineOptions({
+  inheritAttrs: false,
+});
+
 const { popupStack, closePopup } = usePopup();
 </script>

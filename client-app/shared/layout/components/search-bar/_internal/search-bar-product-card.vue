@@ -19,7 +19,7 @@
       <!-- Product title -->
       <router-link
         :to="link"
-        class="h-8 shrink-0 text-[13px] font-extrabold leading-[1.05rem] text-[color:var(--color-link)] line-clamp-2"
+        class="line-clamp-2 h-8 shrink-0 text-[13px] font-extrabold leading-[1.05rem] text-[color:var(--color-link)]"
         @click="$emit('link-click', $event)"
       >
         {{ product.name }}

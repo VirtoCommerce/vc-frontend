@@ -104,7 +104,7 @@
           ref="filtersDropdownElement"
           class="absolute right-0 z-[1] mt-2 rounded border bg-white p-6 shadow-lg"
         >
-          <button type="button" class="absolute top-0 right-0 appearance-none px-4 py-2" @click="hideFilters">
+          <button type="button" class="absolute right-0 top-0 appearance-none px-4 py-2" @click="hideFilters">
             <span class="fa fa-times text-lg text-red-400 hover:text-red-500"></span>
           </button>
 
@@ -264,7 +264,7 @@
                 </template>
 
                 <template #content>
-                  <div class="rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y">
+                  <div class="rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
                     {{ $t(contact.extended.displayStatus.localeLabel) }}
                   </div>
                 </template>

@@ -4,7 +4,7 @@
   >
     <header class="flex h-16 shrink-0 items-center gap-x-3 px-6">
       <div class="grow pr-6">
-        <span v-if="organization" class="text-xl font-medium italic leading-[22px] text-white line-clamp-2">
+        <span v-if="organization" class="line-clamp-2 text-xl font-medium italic leading-[22px] text-white">
           {{ organization?.name }}
         </span>
 
@@ -23,7 +23,7 @@
 
     <!-- region Children links section -->
     <section v-if="openedItem" class="grow divide-y divide-white divide-opacity-20 overflow-y-auto">
-      <div class="flex flex-col py-6 px-10">
+      <div class="flex flex-col px-10 py-6">
         <button
           type="button"
           class="appearance-none self-start text-[color:var(--color-mobile-menu-icon)]"
@@ -78,7 +78,7 @@
 
     <!-- region Main menu section -->
     <section v-else class="grow divide-y divide-white divide-opacity-20 overflow-y-auto">
-      <div class="flex flex-col gap-y-2 py-6 px-9">
+      <div class="flex flex-col gap-y-2 px-9 py-6">
         <!-- Home link -->
         <MobileMenuLink :link="homeMenuItem" class="py-1 text-2xl" @close="$emit('close')">
           {{ homeMenuItem.title }}
@@ -117,10 +117,10 @@
         </template>
       </div>
 
-      <div class="flex flex-col gap-y-2 py-6 px-9">
+      <div class="flex flex-col gap-y-2 px-9 py-6">
         <template v-if="isAuthenticated">
           <!-- Account -->
-          <div class="mt-2 mb-4 flex flex-row gap-4 text-xl">
+          <div class="mb-4 mt-2 flex flex-row gap-4 text-xl">
             <div
               class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 ring-[color:var(--color-mobile-menu-link)]"
             >
@@ -131,7 +131,7 @@
             <div class="flex flex-col leading-tight">
               <div class="flex flex-wrap items-center gap-x-1 text-[color:var(--color-mobile-menu-link)]">
                 <template v-if="operator">
-                  <span class="font-bold line-clamp-3 [word-break:break-word]">
+                  <span class="line-clamp-3 font-bold [word-break:break-word]">
                     {{ operator.contact?.fullName || operator.userName }}
                   </span>
 
@@ -141,7 +141,7 @@
                   />
                 </template>
 
-                <span class="font-bold line-clamp-3 [word-break:break-word]">
+                <span class="line-clamp-3 font-bold [word-break:break-word]">
                   {{ user.contact?.fullName || user.userName }}
                 </span>
               </div>

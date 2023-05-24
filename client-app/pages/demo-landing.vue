@@ -5,7 +5,7 @@
       <h1 v-t="'pages.demo_landing.header'" class="text-3xl font-bold uppercase text-gray-900 lg:text-4xl"></h1>
     </div>
 
-    <div class="bg-gray-100 pt-6 pb-16 lg:py-24">
+    <div class="bg-gray-100 pb-16 pt-6 lg:py-24">
       <div class="mx-auto w-full max-w-screen-2xl px-5 md:px-12">
         <div class="grid grid-cols-1 items-center gap-x-20 gap-y-10 lg:grid-cols-2">
           <div class="order-2 lg:order-1">

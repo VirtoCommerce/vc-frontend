@@ -5,10 +5,10 @@
 
     <!-- Main content -->
     <div class="main">
-      <div class="container mx-auto px-6 pt-32 pb-40 md:px-12">
+      <div class="container mx-auto px-6 pb-40 pt-32 md:px-12">
         <div v-t="'pages.home.feature_descriptions_block.title'" class="px-6 text-center text-3xl font-bold"></div>
         <div class="mx-auto mt-24 flex flex-wrap justify-between">
-          <div class="mb-24 w-full md:mt-44 md:mb-0 md:w-1/2 lg:w-1/4">
+          <div class="mb-24 w-full md:mb-0 md:mt-44 md:w-1/2 lg:w-1/4">
             <VcImage
               src="/static/images/home/hexa-1.webp"
               :alt="$t('pages.home.feature_descriptions_block.feature_1')"
@@ -32,7 +32,7 @@
               class="mt-5 px-8 text-center text-2xl font-bold md:text-xl"
             ></div>
           </div>
-          <div class="mb-24 w-full md:mt-44 md:mb-0 md:w-1/2 lg:w-1/4">
+          <div class="mb-24 w-full md:mb-0 md:mt-44 md:w-1/2 lg:w-1/4">
             <VcImage
               src="/static/images/home/hexa-3.webp"
               :alt="$t('pages.home.feature_descriptions_block.feature_3')"

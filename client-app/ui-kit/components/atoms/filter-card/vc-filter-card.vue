@@ -2,7 +2,7 @@
   <div class="rounded shadow-sm">
     <div
       v-if="withHeader"
-      class="rounded-t border bg-white px-3.5 pt-1.5 pb-1 text-13-title font-extrabold"
+      class="rounded-t border bg-white px-3.5 pb-1 pt-1.5 text-13-title font-extrabold"
       :class="{ 'cursor-pointer': isCollapsible, 'rounded-b': collapsed }"
       @click="isCollapsible && (collapsed = !collapsed)"
     >

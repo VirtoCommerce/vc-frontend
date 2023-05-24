@@ -16,7 +16,7 @@
     </template>
 
     <template #content>
-      <div class="rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y">
+      <div class="rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
         {{ tooltipText }}
       </div>
     </template>

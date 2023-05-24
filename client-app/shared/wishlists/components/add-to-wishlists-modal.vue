@@ -5,20 +5,20 @@
       <template v-if="!loadingLists">
         <template v-if="listsWithProduct.length">
           <div
-            class="bg-[color:var(--color-add-wishlist-dialog-subtitle-bg)] py-3 px-6 text-15 font-bold leading-5 sm:py-2.5"
+            class="bg-[color:var(--color-add-wishlist-dialog-subtitle-bg)] px-6 py-3 text-15 font-bold leading-5 sm:py-2.5"
           >
             {{ $t("shared.wishlists.add_to_wishlists_dialog.already_in_the_lists") }}
           </div>
 
           <ul>
-            <li v-for="list in listsWithProduct" :key="list.id" class="px-6 py-4 sm:pt-4 sm:pb-3 last:sm:pb-7">
+            <li v-for="list in listsWithProduct" :key="list.id" class="px-6 py-4 sm:pb-3 sm:pt-4 last:sm:pb-7">
               <VcCheckbox
                 model-value
                 :value="list.id"
                 :disabled="loading"
                 @update:model-value="listsRemoveUpdate(list.id || '', $event)"
               >
-                <span class="text-base font-medium line-clamp-1 sm:text-15">
+                <span class="line-clamp-1 text-base font-medium sm:text-15">
                   {{ list.name }}
                 </span>
               </VcCheckbox>
@@ -26,7 +26,7 @@
           </ul>
         </template>
 
-        <div class="flex justify-between bg-[color:var(--color-add-wishlist-dialog-subtitle-bg)] py-3 px-6 sm:py-2.5">
+        <div class="flex justify-between bg-[color:var(--color-add-wishlist-dialog-subtitle-bg)] px-6 py-3 sm:py-2.5">
           <div class="text-15 font-bold">
             {{ $t("shared.wishlists.add_to_wishlists_dialog.add_to_other_lists") }}
           </div>
@@ -73,10 +73,10 @@
               </svg>
             </button>
           </li>
-          <li v-for="list in listsOther" :key="list.id" class="px-6 pt-2 pb-5 last:pb-5 sm:pt-3 sm:pb-4">
+          <li v-for="list in listsOther" :key="list.id" class="px-6 pb-5 pt-2 last:pb-5 sm:pb-4 sm:pt-3">
             <VcCheckbox v-model="selectedListsOtherIds" :value="list.id" :disabled="loading">
               <span
-                class="text-base font-medium line-clamp-1"
+                class="line-clamp-1 text-base font-medium"
                 :class="{ 'text-gray-500': !selectedListsOtherIds.includes(list.id!) }"
               >
                 {{ list.name }}

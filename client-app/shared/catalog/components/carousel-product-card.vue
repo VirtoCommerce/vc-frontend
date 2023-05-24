@@ -18,7 +18,7 @@
       <router-link
         :to="link"
         :title="product.name"
-        class="mt-2 text-sm font-extrabold text-[color:var(--color-link)] line-clamp-3"
+        class="mt-2 line-clamp-3 text-sm font-extrabold text-[color:var(--color-link)]"
         @click="$emit('link-click', $event)"
       >
         {{ product.name }}

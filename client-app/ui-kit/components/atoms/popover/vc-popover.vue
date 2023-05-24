@@ -4,7 +4,7 @@
   </div>
 
   <div v-show="isShown" v-bind="$attrs" id="popover" ref="popoverNode" class="rounded border bg-white shadow-lg">
-    <div id="arrow" class="border-t border-l" data-popper-arrow></div>
+    <div id="arrow" class="border-l border-t" data-popper-arrow></div>
 
     <h3 v-if="title || showCloseButton" class="flex h-14 items-center justify-between px-5 text-lg font-bold">
       <span v-if="title" class="flex grow">
@@ -20,40 +20,31 @@
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-};
-</script>
-
 <script setup lang="ts">
 import { bottom, createPopper } from "@popperjs/core";
 import { isDefined, onClickOutside } from "@vueuse/core";
 import { ref, shallowRef, onUnmounted } from "vue";
 import type { Instance, Placement } from "@popperjs/core";
-import type { PropType } from "vue";
 
-const emit = defineEmits<{
+interface IEmits {
   (event: "toggle", value: boolean): void;
-}>();
+}
 
-const props = defineProps({
-  showCloseButton: Boolean,
+interface IProps {
+  showCloseButton?: boolean;
+  title?: string;
+  xOffset?: number | string;
+  placement?: Placement;
+}
 
-  title: {
-    type: String,
-    default: undefined,
-  },
+defineOptions({
+  inheritAttrs: false,
+});
 
-  xOffset: {
-    type: Number,
-    default: 0,
-  },
-
-  placement: {
-    type: String as PropType<Placement>,
-    default: bottom,
-  },
+const emit = defineEmits<IEmits>();
+const props = withDefaults(defineProps<IProps>(), {
+  xOffset: 0,
+  placement: bottom,
 });
 
 const triggerNode = shallowRef<HTMLElement | null>(null);
@@ -69,7 +60,7 @@ function createPopover(): void {
       {
         name: "offset",
         options: {
-          offset: [props.xOffset, 20],
+          offset: [+props.xOffset, 20],
         },
       },
       {

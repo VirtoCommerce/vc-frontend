@@ -37,7 +37,7 @@
       <div class="md:p-5">
         <div
           v-if="addresses.length || loadingAddresses"
-          class="mx-6 mt-9 mb-5 flex flex-row items-center justify-between gap-3 md:mx-0 md:mt-1.5 md:mb-4"
+          class="mx-6 mb-5 mt-9 flex flex-row items-center justify-between gap-3 md:mx-0 md:mb-4 md:mt-1.5"
         >
           <h2 v-t="'pages.company.info.content_header'" class="py-0.5 text-xl font-extrabold uppercase text-gray-800" />
 
@@ -91,9 +91,9 @@
               <div class="relative grid grid-cols-3 gap-4 border-t border-gray-200 px-6 py-5 text-sm">
                 <div
                   v-if="item.isDefault"
-                  class="absolute top-0 right-0 border-[23px] border-transparent border-t-[color:var(--color-primary)] border-r-[color:var(--color-primary)]"
+                  class="absolute right-0 top-0 border-[23px] border-transparent border-r-[color:var(--color-primary)] border-t-[color:var(--color-primary)]"
                 >
-                  <i class="fas fa-check absolute top-[-22px] right-[-21px] mr-1 text-base text-white" />
+                  <i class="fas fa-check absolute right-[-21px] top-[-22px] mr-1 text-base text-white" />
                 </div>
 
                 <div class="col-span-2 flex flex-col">

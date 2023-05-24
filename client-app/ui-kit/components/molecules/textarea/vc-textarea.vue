@@ -43,12 +43,6 @@
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-};
-</script>
-
 <script setup lang="ts">
 import { useVModel } from "@vueuse/core";
 import { useAttrsOnly, useComponentId, useListeners } from "@/core/composables";
@@ -76,6 +70,10 @@ interface IProps {
   maxLength?: number | string;
   rows?: number | string;
 }
+
+defineOptions({
+  inheritAttrs: false,
+});
 
 const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {

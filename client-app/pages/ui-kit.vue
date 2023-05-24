@@ -1,8 +1,8 @@
 <template>
-  <div class="grow bg-gray-100 pt-6 pb-16 shadow-inner">
+  <div class="grow bg-gray-100 pb-16 pt-6 shadow-inner">
     <div class="mx-auto max-w-screen-2xl space-y-6 md:px-12">
       <!-- region Buttons -->
-      <section class="bg-white px-6 pt-5 pb-6 md:rounded">
+      <section class="bg-white px-6 pb-6 pt-5 md:rounded">
         <header class="mb-5 font-roboto text-2xl font-bold text-gray-600">Buttons</header>
 
         <div class="space-y-8">
@@ -78,22 +78,22 @@
           <!-- Custom colors -->
           <div class="space-y-4">
             <div class="flex flex-wrap items-center gap-4">
-              <VcButton class="px-4 uppercase [--color-primary:blue] [--color-primary-hover:green]">
+              <VcButton class="px-4 uppercase [--color-primary-hover:green] [--color-primary:blue]">
                 Custom color
               </VcButton>
 
-              <VcButton class="px-4 uppercase [--color-primary:blue] [--color-primary-hover:green]" is-outline>
+              <VcButton class="px-4 uppercase [--color-primary-hover:green] [--color-primary:blue]" is-outline>
                 Custom color
               </VcButton>
 
               <VcButton
-                class="px-4 uppercase !text-black [--color-primary:mediumaquamarine] [--color-primary-hover:teal] hover:!text-gray-50"
+                class="px-4 uppercase !text-black [--color-primary-hover:teal] [--color-primary:mediumaquamarine] hover:!text-gray-50"
               >
                 Custom color
               </VcButton>
 
               <VcButton
-                class="px-4 uppercase !text-black [--color-primary:mediumaquamarine] [--color-primary-hover:teal] hover:!bg-transparent hover:!text-red-700"
+                class="px-4 uppercase !text-black [--color-primary-hover:teal] [--color-primary:mediumaquamarine] hover:!bg-transparent hover:!text-red-700"
                 is-outline
               >
                 Custom color
@@ -134,7 +134,7 @@
       <!-- endregion Buttons -->
 
       <!-- region Chips -->
-      <section class="bg-white px-6 pt-5 pb-6 md:rounded">
+      <section class="bg-white px-6 pb-6 pt-5 md:rounded">
         <header class="mb-5 font-roboto text-2xl font-bold text-gray-600">Chips</header>
 
         <div class="space-y-8">
