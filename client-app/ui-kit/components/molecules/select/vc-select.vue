@@ -128,7 +128,7 @@
 
 <script setup lang="ts">
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { union, lowerCase, filter, startsWith } from "lodash";
+import { union, lowerCase } from "lodash";
 import { computed, ref, shallowRef } from "vue";
 
 interface IProps {
@@ -147,7 +147,6 @@ interface IProps {
   message?: string;
   autocomplete?: boolean;
   singleLineMessage?: boolean;
-  relevantSearch?: true;
 }
 
 interface IEmits {
@@ -198,13 +197,9 @@ const filteredItems = computed(() => {
   const searching = lowerCase(filterValue.value);
   const items = props.items.filter((item) => lowerCase(getItemText(item)).includes(searching));
 
-  if (props.relevantSearch) {
-    const first = filter(items, (item) => startsWith(lowerCase(getItemText(item)), searching));
+  const first = items.filter((item) => lowerCase(getItemText(item)).indexOf(searching) === 0);
 
-    return union(first, items);
-  }
-
-  return items;
+  return union(first, items);
 });
 
 function onFilter() {

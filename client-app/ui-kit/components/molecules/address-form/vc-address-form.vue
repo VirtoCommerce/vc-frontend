@@ -80,7 +80,6 @@
             class="mb-4 w-full xl:w-7/12"
             required
             autocomplete
-            relevant-search
           />
 
           <VcInput
@@ -106,7 +105,6 @@
             :placeholder="$t('common.placeholders.select_region')"
             class="order-2 mb-4 xl:order-none xl:w-5/12"
             autocomplete
-            relevant-search
           />
 
           <VcInput
