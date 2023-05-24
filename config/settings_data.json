@@ -7,6 +7,7 @@
       "page_title_divider": " · ",
 
       "catalog_menu_link_list_name": "catalog-menu",
+      "catalog_empty_categories_enabled": false,
 
       "quotes_enabled": true,
 
@@ -332,6 +333,7 @@
       "page_title_divider": " · ",
 
       "catalog_menu_link_list_name": "catalog-menu",
+      "catalog_empty_categories_enabled": false,
 
       "quotes_enabled": true,
 
