@@ -11,7 +11,7 @@
       <div v-else class="flex flex-col lg:w-1/2">
         <div v-t="'pages.account.checkout_defaults.select_delivery_method_label'" class="font-bold"></div>
 
-        <div class="mt-3 flex flex-col space-y-5 md:mt-1 md:flex-row md:space-y-0 md:space-x-7">
+        <div class="mt-3 flex flex-col space-y-5 md:mt-1 md:flex-row md:space-x-7 md:space-y-0">
           <VcRadioButton
             v-model="localCheckoutDefaults.deliveryMethod"
             value="shipping"

@@ -1,3 +1,4 @@
+import { vOnClickOutside } from "@vueuse/components";
 import { createHead } from "@vueuse/head";
 import { maska } from "maska";
 import { createApp } from "vue";
@@ -99,6 +100,7 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
 
   // Directives
   app.directive("mask", maska);
+  app.directive("onClickOutside", vOnClickOutside);
 
   // Components
   // Register UI Kit components globally

@@ -15,6 +15,7 @@
         @input="onInput"
         @keypress="onKeypress"
         @click="onClick"
+        @blur="onBlur"
       />
 
       <VcButton
@@ -189,6 +190,12 @@ function onInput() {
     enteredQuantity.value = MAX_VALUE;
   } else {
     setValue(enteredQuantity.value);
+  }
+}
+
+function onBlur() {
+  if (!enteredQuantity.value || enteredQuantity.value < 1) {
+    enteredQuantity.value = countInCart.value || minQty.value;
   }
 }
 

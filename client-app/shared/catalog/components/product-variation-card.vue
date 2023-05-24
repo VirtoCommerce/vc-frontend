@@ -4,7 +4,7 @@
     <div class="h-12 w-12">
       <div
         v-if="variation.images?.length"
-        class="square relative -mt-2 -ml-2 flex flex-col items-center justify-center"
+        class="square relative -ml-2 -mt-2 flex flex-col items-center justify-center"
       >
         <VcImage
           :src="variation.images[0].url"

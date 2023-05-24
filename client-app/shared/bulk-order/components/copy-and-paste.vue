@@ -17,7 +17,7 @@
         :rows="14"
       />
 
-      <div class="mt-5 mb-2 flex flex-wrap justify-between gap-3 md:mt-2 md:mb-0">
+      <div class="mb-2 mt-5 flex flex-wrap justify-between gap-3 md:mb-0 md:mt-2">
         <VcButton
           :is-disabled="!text || loading"
           kind="secondary"
@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { validateQuantity } from "@/shared/bulk-order";
+import { validateQuantity } from "../utils";
 import type { InputNewBulkItemType } from "@/xapi/types";
 
 const emit = defineEmits<{
@@ -75,7 +75,7 @@ async function addToCart() {
       const [productSku, quantity] = item.split(",");
       return {
         productSku,
-        quantity: validateQuantity(quantity),
+        quantity: validateQuantity(+quantity),
       };
     });
 

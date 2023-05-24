@@ -24,7 +24,7 @@
     <transition name="slide-fade-top">
       <div
         v-if="searchDropdownVisible"
-        class="absolute top-[3.45rem] left-[-10rem] z-20 flex w-full flex-col gap-3 overflow-y-auto rounded bg-white shadow-lg"
+        class="absolute left-[-10rem] top-[3.45rem] z-20 flex w-full flex-col gap-3 overflow-y-auto rounded bg-white shadow-lg"
         :style="searchDropdownStyle"
       >
         <!-- Results -->
@@ -35,7 +35,7 @@
               {{ $t("shared.layout.search_bar.categories_label") }}
             </header>
 
-            <div class="flex gap-5 px-5 pt-2.5 pb-3 text-sm">
+            <div class="flex gap-5 px-5 pb-3 pt-2.5 text-sm">
               <ul v-for="(column, index) in categoriesColumns" :key="index" class="">
                 <li v-for="category in column" :key="category.name">
                   <router-link :to="categoriesRoutes[category.id]" class="block py-1" @click="hideSearchDropdown">
@@ -52,7 +52,7 @@
               {{ $t("shared.layout.search_bar.products_label") }}
             </header>
 
-            <div class="grid grid-cols-2 gap-5 px-5 pt-[1.3rem] pb-3 xl:gap-[1.9rem]">
+            <div class="grid grid-cols-2 gap-5 px-5 pb-3 pt-[1.3rem] xl:gap-[1.9rem]">
               <SearchBarProductCard
                 v-for="product in products"
                 :key="product.id"

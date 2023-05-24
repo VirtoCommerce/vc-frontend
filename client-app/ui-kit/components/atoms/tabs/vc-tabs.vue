@@ -15,7 +15,7 @@
     >
       <span
         :class="{ [isDisabled ? '!border-gray-400' : '!border-primary']: isActiveItem(item) }"
-        class="block appearance-none border-b-[3px] border-transparent pt-3 pb-2.5 font-bold"
+        class="block appearance-none border-b-[3px] border-transparent pb-2.5 pt-3 font-bold"
       >
         <slot name="item" v-bind="{ item, index }">
           {{ textField && item ? item[textField] : item }}

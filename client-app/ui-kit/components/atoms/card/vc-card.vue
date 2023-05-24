@@ -13,7 +13,7 @@
             <button
               v-if="isCollapsible"
               type="button"
-              class="-my-2 ml-2 -mr-3 appearance-none px-3 py-2 before:absolute before:inset-0"
+              class="-my-2 -mr-3 ml-2 appearance-none px-3 py-2 before:absolute before:inset-0"
               @click="isCollapsible && toggleCollapse()"
             >
               <i

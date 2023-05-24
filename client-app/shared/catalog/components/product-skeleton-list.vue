@@ -1,6 +1,6 @@
 <template>
   <div
-    class="vc-product-skeleton-list grid gap-x-3.5 bg-white px-4 pt-4 pb-5 lg:place-items-center lg:rounded lg:py-3.5 lg:shadow-t-3sm lg:outline lg:outline-1 lg:outline-offset-0 lg:outline-[color:var(--color-product-outline)] lg:hover:shadow-lg"
+    class="vc-product-skeleton-list grid gap-x-3.5 bg-white px-4 pb-5 pt-4 lg:place-items-center lg:rounded lg:py-3.5 lg:shadow-t-3sm lg:outline lg:outline-1 lg:outline-offset-0 lg:outline-[color:var(--color-product-outline)] lg:hover:shadow-lg"
   >
     <div class="vc-product-skeleton-list__mobile-left sm:contents">
       <!-- Product image -->
@@ -25,35 +25,35 @@
 
     <!-- Product props -->
     <div class="vc-product-skeleton-list__properties hidden w-full grid-cols-[40%_1fr] gap-x-1.5 xl:grid">
-      <div class="pt-0.5 pb-px">
+      <div class="pb-px pt-0.5">
         <div class="h-2.5 w-1/3 bg-gray-100"></div>
       </div>
       <div class="relative">
-        <div class="absolute inset-0 flex items-end pt-0.5 pb-px pl-1">
+        <div class="absolute inset-0 flex items-end pb-px pl-1 pt-0.5">
           <div class="h-2.5 w-2/3 bg-gray-100"></div>
         </div>
       </div>
-      <div class="pt-0.5 pb-px">
+      <div class="pb-px pt-0.5">
         <div class="h-2.5 w-4/5 bg-gray-100"></div>
       </div>
       <div class="relative">
-        <div class="absolute inset-0 flex items-end pt-0.5 pb-px pl-1">
+        <div class="absolute inset-0 flex items-end pb-px pl-1 pt-0.5">
           <div class="h-2.5 w-1/2 bg-gray-100"></div>
         </div>
       </div>
-      <div class="pt-0.5 pb-px">
+      <div class="pb-px pt-0.5">
         <div class="h-2.5 w-3/5 bg-gray-100"></div>
       </div>
       <div class="relative">
-        <div class="absolute inset-0 flex items-end pt-0.5 pb-px pl-1">
+        <div class="absolute inset-0 flex items-end pb-px pl-1 pt-0.5">
           <div class="h-2.5 w-full bg-gray-100"></div>
         </div>
       </div>
-      <div class="pt-0.5 pb-px">
+      <div class="pb-px pt-0.5">
         <div class="h-2.5 w-full bg-gray-100"></div>
       </div>
       <div class="relative">
-        <div class="absolute inset-0 flex items-end pt-0.5 pb-px pl-1">
+        <div class="absolute inset-0 flex items-end pb-px pl-1 pt-0.5">
           <div class="h-2.5 w-1/4 bg-gray-100"></div>
         </div>
       </div>

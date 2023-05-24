@@ -1,6 +1,6 @@
 <template>
   <div
-    class="grow bg-[color:var(--color-body-bg)] px-7 pt-5 pb-7 shadow-inner transition lg:pt-5 lg:pb-11 xl:px-19"
+    class="grow bg-[color:var(--color-body-bg)] px-7 pb-7 pt-5 shadow-inner transition lg:pb-11 lg:pt-5 xl:px-19"
     :class="{ 'pointer-events-none opacity-50': loading }"
   >
     <h1 class="-ml-0.5 text-28 font-bold uppercase lg:text-34">{{ fulfillmentCenter?.name }}</h1>
@@ -8,9 +8,9 @@
     <div class="mt-4 lg:mt-6 lg:flex lg:items-start">
       <div class="lg:drop-shadow-md-x lg:grow lg:rounded lg:border lg:bg-white">
         <div
-          class="drop-shadow-md-x rounded border bg-white py-5 px-[1.4rem] text-base lg:rounded-none lg:border-0 lg:bg-transparent lg:px-8 lg:pt-6 lg:pb-5 lg:drop-shadow-none"
+          class="drop-shadow-md-x rounded border bg-white px-[1.4rem] py-5 text-base lg:rounded-none lg:border-0 lg:bg-transparent lg:px-8 lg:pb-5 lg:pt-6 lg:drop-shadow-none"
         >
-          <div class="mt-0.5 mb-1 lg:mb-0.5">
+          <div class="mb-1 mt-0.5 lg:mb-0.5">
             <div class="mb-1 mr-1 font-bold lg:mb-2">{{ $t("pages.branch.address") }}</div>
             <div class="break-words">
               {{ fulfillmentCenter?.address ? fulfillmentCenter?.address : "&ndash;" }}
@@ -36,11 +36,11 @@
         </div>
       </div>
 
-      <div class="drop-shadow-md-x mt-6 rounded border bg-white text-base lg:mt-0 lg:ml-8 lg:w-[21.125rem] lg:shrink-0">
-        <div class="border-b py-4 px-6 lg:pt-5 lg:pb-4">
+      <div class="drop-shadow-md-x mt-6 rounded border bg-white text-base lg:ml-8 lg:mt-0 lg:w-[21.125rem] lg:shrink-0">
+        <div class="border-b px-6 py-4 lg:pb-4 lg:pt-5">
           <h2 class="text-19 font-extrabold uppercase lg:text-21">{{ $t("pages.branch.other_branches") }}</h2>
         </div>
-        <div class="px-11 pt-5 pb-7 lg:px-12 lg:pt-3.5 lg:pb-9">
+        <div class="px-11 pb-7 pt-5 lg:px-12 lg:pb-9 lg:pt-3.5">
           <!-- TODO: Replace with VcList -->
           <ul class="list-disc space-y-7">
             <li v-for="(branch, index) in otherBranches" :key="index" class="text-primary marker:text-xl">

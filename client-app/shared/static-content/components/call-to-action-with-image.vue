@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-6 pb-16 lg:py-24" :class="model.background">
+  <div class="pb-16 pt-6 lg:py-24" :class="model.background">
     <div class="mx-auto w-full max-w-screen-2xl px-5 md:px-12">
       <div class="grid grid-cols-1 items-center gap-x-20 gap-y-10 lg:grid-cols-2">
         <div :class="[model.imagePosition === 'right' ? 'order-2 lg:order-1' : 'order-1 lg:order-2']">

@@ -44,14 +44,12 @@
   </teleport>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-};
-</script>
-
 <script setup lang="ts">
-import { useNotifications } from "@/shared/notification";
+import { useNotifications } from "../composables";
+
+defineOptions({
+  inheritAttrs: false,
+});
 
 const { stack, close } = useNotifications();
 </script>

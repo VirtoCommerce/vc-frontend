@@ -2505,6 +2505,7 @@ export type Mutations = {
   moveWishlistItem?: Maybe<WishlistType>;
   /** @deprecated Obsolete. Use 'initializePayment' mutation */
   processOrderPayment?: Maybe<ProcessPaymentRequestResultType>;
+  refreshCart?: Maybe<CartType>;
   registerByInvitation?: Maybe<CustomIdentityResultType>;
   rejectGiftItems?: Maybe<CartType>;
   removeCart?: Maybe<Scalars['Boolean']>;
@@ -2750,6 +2751,11 @@ export type MutationsMoveWishlistItemArgs = {
 
 export type MutationsProcessOrderPaymentArgs = {
   command: InputProcessOrderPaymentType;
+};
+
+
+export type MutationsRefreshCartArgs = {
+  command: RefreshCartType;
 };
 
 
@@ -3019,6 +3025,7 @@ export type OrderLineItemType = {
   reserveQuantity: Scalars['Int'];
   shippingMethodCode?: Maybe<Scalars['String']>;
   sku: Scalars['String'];
+  status?: Maybe<Scalars['String']>;
   taxDetails: Array<Maybe<OrderTaxDetailType>>;
   taxPercentRate: Scalars['Decimal'];
   taxTotal?: Maybe<MoneyType>;
@@ -3256,6 +3263,26 @@ export type OutlineType = {
   items?: Maybe<Array<Maybe<OutlineItemType>>>;
 };
 
+/** A connection from an object to a list of objects of type `Page`. */
+export type PageConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<PageEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<PageType>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+/** An edge in a connection from an object to another object of type `Page`. */
+export type PageEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge */
+  node?: Maybe<PageType>;
+};
+
 /** Information about pagination in a connection. */
 export type PageInfo = {
   /** When paginating forwards, the cursor to continue. */
@@ -3269,10 +3296,10 @@ export type PageInfo = {
 };
 
 export type PageType = {
+  /** Page title */
+  name?: Maybe<Scalars['String']>;
   /** Page relative url */
   relativeUrl?: Maybe<Scalars['String']>;
-  /** Page title */
-  title?: Maybe<Scalars['String']>;
 };
 
 /** A connection from an object to a list of objects of type `PaymentIn`. */
@@ -3778,7 +3805,7 @@ export type Query = {
   orders?: Maybe<CustomerOrderConnection>;
   organization?: Maybe<Organization>;
   organizations?: Maybe<OrganizationConnection>;
-  page?: Maybe<Array<Maybe<PageType>>>;
+  pages?: Maybe<PageConnection>;
   payments?: Maybe<PaymentInConnection>;
   product?: Maybe<Product>;
   products?: Maybe<ProductConnection>;
@@ -3862,6 +3889,7 @@ export type QueryChildCategoriesArgs = {
   currencyCode?: InputMaybe<Scalars['String']>;
   maxLevel?: InputMaybe<Scalars['Int']>;
   onlyActive?: InputMaybe<Scalars['Boolean']>;
+  productFilter?: InputMaybe<Scalars['String']>;
   storeId?: InputMaybe<Scalars['String']>;
   userId?: InputMaybe<Scalars['String']>;
 };
@@ -3982,7 +4010,10 @@ export type QueryOrganizationsArgs = {
 };
 
 
-export type QueryPageArgs = {
+export type QueryPagesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
   keyword: Scalars['String'];
   storeId: Scalars['String'];
 };
@@ -4277,6 +4308,16 @@ export type Rating = {
   reviewCount: Scalars['Int'];
   /** Average rating */
   value: Scalars['Decimal'];
+};
+
+export type RefreshCartType = {
+  cartId?: InputMaybe<Scalars['String']>;
+  cartName?: InputMaybe<Scalars['String']>;
+  cartType?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']>;
+  currencyCode?: InputMaybe<Scalars['String']>;
+  storeId: Scalars['String'];
+  userId: Scalars['String'];
 };
 
 export type RegisterAccountType = {
