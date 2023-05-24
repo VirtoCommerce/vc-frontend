@@ -28,7 +28,7 @@
         :style="searchDropdownStyle"
       >
         <!-- Results -->
-        <template v-if="categories.length || products.length">
+        <template v-if="isExistResults">
           <!-- Suggestions -->
           <section v-if="suggestions.length">
             <header class="bg-gray-100 px-5 py-2 text-xs text-gray-500">
@@ -191,6 +191,10 @@ const categoriesColumns = computed<Array<Category[]>>(() => {
     return categories.value.slice((column - 1) * CATEGORIES_ITEMS_PER_COLUMN, column * CATEGORIES_ITEMS_PER_COLUMN);
   });
 });
+
+const isExistResults = computed(
+  () => categories.value.length || products.value.length || suggestions.value.length || pages.value.length
+);
 
 async function searchAndShowDropdownResults() {
   const COLUMNS = 5;
