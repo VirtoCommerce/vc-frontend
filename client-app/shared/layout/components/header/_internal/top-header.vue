@@ -61,7 +61,7 @@
 
           <div
             v-if="loginMenuVisible"
-            class="absolute top-full right-0 z-10 flex w-60 flex-col space-y-3 rounded-md bg-white px-3 py-4 text-black shadow-md"
+            class="absolute right-0 top-full z-10 flex w-60 flex-col space-y-3 rounded-md bg-white px-3 py-4 text-black shadow-md"
           >
             <div class="flex items-center justify-between">
               <router-link

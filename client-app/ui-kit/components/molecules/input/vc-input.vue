@@ -64,12 +64,6 @@
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-};
-</script>
-
 <script setup lang="ts">
 import { computed, ref, watchEffect } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/core/composables";
@@ -104,6 +98,10 @@ interface IProps {
   type?: "text" | "password" | "number";
   size?: "sm" | "md";
 }
+
+defineOptions({
+  inheritAttrs: false,
+});
 
 const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {

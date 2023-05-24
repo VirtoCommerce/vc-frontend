@@ -1,5 +1,5 @@
 <template>
-  <div class="branch-item border-t px-5 py-4 first:border-t-transparent sm:px-4 sm:pt-3 sm:pb-1.5">
+  <div class="branch-item border-t px-5 py-4 first:border-t-transparent sm:px-4 sm:pb-1.5 sm:pt-3">
     <div class="flex grow items-start">
       <slot></slot>
 

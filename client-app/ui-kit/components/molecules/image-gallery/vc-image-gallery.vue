@@ -52,18 +52,15 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, SwipeDirection, useBreakpoints, useSwipe } from "@vueuse/core";
-import _ from "lodash";
+import { breakpointsTailwind, useBreakpoints, useSwipe } from "@vueuse/core";
 import { computed, ref, watchEffect } from "vue";
 import type { ImageType, Product } from "@/xapi/types";
-import type { PropType } from "vue";
 
-const props = defineProps({
-  product: {
-    type: Object as PropType<Product>,
-    required: true,
-  },
-});
+interface IProps {
+  product: Product;
+}
+
+const props = defineProps<IProps>();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
@@ -79,18 +76,18 @@ function setActiveImage(url?: string) {
 
 useSwipe(mainImageElement, {
   onSwipeEnd: (e, direction) => {
-    if (direction !== SwipeDirection.LEFT && direction !== SwipeDirection.RIGHT && images.value.length < 2) {
+    if (direction !== "left" && direction !== "right" && images.value.length < 2) {
       return;
     }
 
-    const activeImageIndex = _.findIndex(images.value, (x) => x?.url === activeSrc.value);
+    const activeImageIndex = images.value.findIndex((x) => x.url === activeSrc.value);
 
-    if (direction === SwipeDirection.LEFT && activeImageIndex < images.value.length - 1) {
+    if (direction === "left" && activeImageIndex < images.value.length - 1) {
       const newActiveImageIndex = activeImageIndex + 1;
       activeSrc.value = images.value[newActiveImageIndex]?.url ?? "";
     }
 
-    if (direction === SwipeDirection.RIGHT && activeImageIndex > 0) {
+    if (direction === "right" && activeImageIndex > 0) {
       const newActiveImageIndex = activeImageIndex - 1;
       activeSrc.value = images.value[newActiveImageIndex]?.url ?? "";
     }

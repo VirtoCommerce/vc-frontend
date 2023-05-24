@@ -67,7 +67,6 @@
             <FooterLink v-t="'shared.layout.footer.replacement_parts_link'" to="/replacement-parts"></FooterLink>
             <FooterLink v-t="'shared.layout.footer.demo_landing_link'" :to="{ name: 'DemoLanding' }" />
             <FooterLink v-t="'shared.layout.footer.demo_page_link'" to="/demo-page" />
-            <FooterLink v-if="IS_DEVELOPMENT" :to="{ name: 'DevUIKit' }">Dev UI Kit</FooterLink>
           </div>
         </div>
       </div>
@@ -99,7 +98,6 @@
 </template>
 
 <script setup lang="ts">
-import { IS_DEVELOPMENT } from "@/core/constants";
 import pkg from "../../../../../package.json";
 import FooterLink from "./_internal/footer-link.vue";
 

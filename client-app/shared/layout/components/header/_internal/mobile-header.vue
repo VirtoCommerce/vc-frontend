@@ -61,7 +61,7 @@
         :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
         class="mr-4 grow"
         no-border
-        @keyup.enter="searchPhrase && router.push(searchPageLink)"
+        @keyup.enter="searchPhrase && $router.push(searchPageLink)"
       />
 
       <VcButton :to="searchPhrase && searchPageLink" size="lg" class="w-11">
@@ -92,7 +92,6 @@
 <script setup lang="ts">
 import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core";
 import { computed, ref, watchEffect } from "vue";
-import { useRouter } from "vue-router";
 import { useRouteQueryParam } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
 import { numberToShortString } from "@/core/utilities";
@@ -111,7 +110,6 @@ const { customSlots, isAnimated } = useNestedMobileHeader();
 const { searchBarVisible, toggleSearchBar, hideSearchBar } = useSearchBar();
 const { height } = useElementSize(headerElement);
 const { cart } = useCart();
-const router = useRouter();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined

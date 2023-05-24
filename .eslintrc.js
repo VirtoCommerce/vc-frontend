@@ -41,7 +41,9 @@ module.exports = {
     "vue/prefer-prop-type-boolean-first": "error",
     "vue/prefer-true-attribute-shorthand": "error",
     "vue/v-for-delimiter-style": "error",
+    "vue/no-duplicate-attr-inheritance": "error",
     "vue/no-irregular-whitespace": "error",
+    "vue/valid-define-options": "error",
     "vuejs-accessibility/anchor-has-content": [
       "error",
       {
@@ -111,10 +113,9 @@ module.exports = {
       },
     ],
     "vue/define-emits-declaration": "warn",
-    "vue/define-macros-order": ["warn", { order: ["defineEmits", "defineProps"] }],
+    "vue/define-macros-order": ["warn", { order: ["defineOptions", "defineEmits", "defineProps", "defineSlots"] }],
     "vue/define-props-declaration": ["warn", "type-based"],
     "vue/html-button-has-type": "warn",
-    "vue/no-duplicate-attr-inheritance": "warn",
     "vue/no-multiple-objects-in-class": "warn",
     "vue/no-required-prop-with-default": "warn",
     "vue/no-static-inline-styles": "warn",
@@ -122,6 +123,7 @@ module.exports = {
     "vue/padding-line-between-blocks": "warn",
     // TODO: enable "vue/padding-line-between-tags": "warn",
     "vue/padding-lines-in-component-definition": "warn",
+    "vue/prefer-define-options": "warn",
     "vue/require-emit-validator": "warn",
     "vuejs-accessibility/click-events-have-key-events": "warn", // TODO: Remove (switch to error)
     "vuejs-accessibility/no-static-element-interactions": "warn", // TODO: Remove (switch to error)
@@ -135,6 +137,7 @@ module.exports = {
     "sonarjs/no-duplicate-string": "off",
     "tailwindcss/no-custom-classname": "off",
     "vue/multi-word-component-names": "off",
+    "vue/no-dupe-keys": "off", // TODO: Remove (switch to error). Does not work correctly with <script setup>
     "vue/require-default-prop": "off",
     "vuejs-accessibility/form-control-has-label": "off",
     "vuejs-accessibility/label-has-for": "off",

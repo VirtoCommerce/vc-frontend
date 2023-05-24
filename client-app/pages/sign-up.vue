@@ -3,7 +3,7 @@
     <template #left>
       <h1 v-t="'pages.sign_up.header'" class="mb-8 text-3xl font-bold uppercase tracking-wide lg:mt-5 lg:text-4xl"></h1>
       <form @submit="onSubmit">
-        <div class="my-5 flex flex-col space-y-5 md:flex-row md:space-y-0 md:space-x-7">
+        <div class="my-5 flex flex-col space-y-5 md:flex-row md:space-x-7 md:space-y-0">
           <VcRadioButton
             id="shipping"
             v-model="registrationKind"

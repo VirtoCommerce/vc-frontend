@@ -28,7 +28,7 @@
         class="relative rounded border shadow-t-3sm md:rounded-none md:border-0 md:shadow-none"
       >
         <div
-          class="vc-quote-line-items__line-item grid gap-x-2.5 pt-3 pl-3 pr-3.5 pb-4 md:place-items-center md:gap-x-3 md:p-4"
+          class="vc-quote-line-items__line-item grid gap-x-2.5 pb-4 pl-3 pr-3.5 pt-3 md:place-items-center md:gap-x-3 md:p-4"
         >
           <div class="vc-quote-line-items__product contents md:flex md:w-full md:gap-3">
             <!--  IMAGE -->
@@ -153,7 +153,7 @@
           <!-- REMOVE BUTTON -->
           <div
             v-if="!readonly"
-            class="vc-quote-line-items__remove-button absolute -top-3 -right-3 md:static md:flex md:w-8 md:justify-end"
+            class="vc-quote-line-items__remove-button absolute -right-3 -top-3 md:static md:flex md:w-8 md:justify-end"
           >
             <button
               type="button"

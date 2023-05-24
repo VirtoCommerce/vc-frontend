@@ -68,7 +68,7 @@
                 />
 
                 <button
-                  class="absolute -top-3 -right-3 flex h-6 w-6 items-center justify-center rounded-full border border-gray-200 bg-white hover:bg-gray-100"
+                  class="absolute -right-3 -top-3 flex h-6 w-6 items-center justify-center rounded-full border border-gray-200 bg-white hover:bg-gray-100"
                   type="button"
                   @click.prevent="removeFromCompareList(product)"
                 >
@@ -80,7 +80,7 @@
             <!-- Product title -->
             <router-link
               :to="productsRoutes[product.id]"
-              class="mb-3 grow cursor-pointer overflow-hidden text-sm font-extrabold text-[color:var(--color-link)] line-clamp-3"
+              class="mb-3 line-clamp-3 grow cursor-pointer overflow-hidden text-sm font-extrabold text-[color:var(--color-link)]"
               @click="ga.selectItem(product)"
             >
               {{ product.name }}

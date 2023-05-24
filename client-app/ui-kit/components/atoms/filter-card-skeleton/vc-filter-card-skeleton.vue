@@ -1,6 +1,6 @@
 <template>
   <div class="rounded shadow-sm">
-    <div class="rounded-t border bg-white px-3.5 pt-2 pb-1.5">
+    <div class="rounded-t border bg-white px-3.5 pb-1.5 pt-2">
       <div class="flex items-center pb-px">
         <div class="h-5 grow bg-gray-100">&nbsp;</div>
         <div v-if="isCollapsible" class="ml-3 h-3 w-3.5 bg-gray-100">&nbsp;</div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center gap-x-8 py-3 px-6 pb-5">
+  <div class="flex items-center gap-x-8 px-6 py-3 pb-5">
     <!-- Name and image -->
     <div
       :class="{ 'opacity-25': !productAvailable }"
@@ -12,7 +12,7 @@
       <router-link
         v-if="listItem.product && link"
         :to="link"
-        class="overflow-hidden break-words text-sm font-extrabold text-[color:var(--color-link)] line-clamp-3 hover:text-[color:var(--color-link-hover)]"
+        class="line-clamp-3 overflow-hidden break-words text-sm font-extrabold text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
         :title="listItem.product.name"
         @click="$emit('link-click', $event)"
       >
@@ -20,7 +20,7 @@
       </router-link>
 
       <div v-else>
-        <div class="overflow-hidden break-words text-sm font-extrabold line-clamp-3">{{ listItem.name }}</div>
+        <div class="line-clamp-3 overflow-hidden break-words text-sm font-extrabold">{{ listItem.name }}</div>
         <!-- todo: extract small alert component https://virtocommerce.atlassian.net/browse/ST-2488 -->
         <div v-if="productAvailable" class="mt-1 flex items-center space-x-1">
           <i class="fas fa-exclamation-circle self-start text-[color:var(--color-primary)]"></i>

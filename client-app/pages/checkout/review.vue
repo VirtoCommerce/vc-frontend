@@ -53,7 +53,7 @@
         </div>
 
         <!-- Payment details -->
-        <div class="mt-6 mb-2 flex flex-col gap-6 pt-5 md:mt-8 lg:flex-row lg:gap-8 lg:pt-0">
+        <div class="mb-2 mt-6 flex flex-col gap-6 pt-5 md:mt-8 lg:flex-row lg:gap-8 lg:pt-0">
           <div class="lg:w-3/5">
             <VcLabel>
               {{ $t("shared.checkout.billing_details_section.labels.billing_address") }}

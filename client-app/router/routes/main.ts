@@ -1,4 +1,3 @@
-import { IS_DEVELOPMENT } from "@/core/constants";
 import { useCart } from "@/shared/cart";
 import { accountRoutes } from "./account";
 import { checkoutRoutes } from "./checkout";
@@ -27,10 +26,7 @@ const Catalog = () => import("@/pages/catalog.vue");
 const Category = () => import("@/pages/category.vue");
 const Product = () => import("@/pages/product.vue");
 const Branch = () => import("@/pages/branch.vue");
-
-// Private development pages
 const DemoLanding = () => import("@/pages/demo-landing.vue");
-const DevUIKit = () => import("@/pages/ui-kit.vue");
 
 export const mainRoutes: RouteRecordRaw[] = [
   { path: "/", name: "Home", component: Home, meta: { public: true } },
@@ -99,12 +95,3 @@ export const mainRoutes: RouteRecordRaw[] = [
   /** NOTE: Always leave it last. */
   { path: "/:pathMatch(.*)*", name: "Matcher", component: Matcher, props: true },
 ];
-
-if (IS_DEVELOPMENT || location.host.includes("dev-storefront.paas.govirto.")) {
-  mainRoutes.push({
-    path: "/ui-kit",
-    name: "DevUIKit",
-    component: DevUIKit,
-    meta: { public: true },
-  });
-}

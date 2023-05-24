@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center gap-x-8 py-3 px-6 pb-5">
+  <div class="flex items-center gap-x-8 px-6 py-3 pb-5">
     <!-- Name and image -->
     <div class="flex grow items-center">
       <!-- Product image -->
