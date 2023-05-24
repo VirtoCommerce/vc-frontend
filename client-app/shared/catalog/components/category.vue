@@ -318,7 +318,13 @@ import {
 } from "@vueuse/core";
 import { cloneDeep, isEqual, throttle } from "lodash";
 import { computed, ref, shallowReactive, shallowRef, triggerRef, watch, onMounted, onBeforeUnmount } from "vue";
-import { useBreadcrumbs, useGoogleAnalytics, usePageHead, useRouteQueryParam } from "@/core/composables";
+import {
+  useBreadcrumbs,
+  useGoogleAnalytics,
+  usePageHead,
+  useRouteQueryParam,
+  useThemeContext,
+} from "@/core/composables";
 import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
 import { buildBreadcrumbs, getFilterExpressionFromFacets } from "@/core/utilities";
@@ -343,6 +349,7 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+const { themeContext } = useThemeContext();
 const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const ga = useGoogleAnalytics();
@@ -683,6 +690,9 @@ watch(
         categoryId: props.categoryId,
         maxLevel: 1,
         onlyActive: true,
+        productFilter: themeContext.value.settings.catalog_empty_categories_enabled
+          ? undefined
+          : `category.subtree:${props.categoryId} price:(0 TO) instock_quantity:(0 TO)`,
       });
     }
   },
