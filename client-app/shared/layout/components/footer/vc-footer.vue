@@ -3,7 +3,7 @@
     <!-- Top footer -->
     <div
       v-if="!compact"
-      class="hidden bg-[color:var(--color-footer-top-bg)] text-[color:var(--color-footer-top-text)] md:block"
+      class="hidden bg-[color:var(--color-footer-top-bg)] text-[color:var(--color-footer-top-text)] print:!hidden md:block"
     >
       <div class="container mx-auto grid grid-cols-2 gap-4 p-12 lg:grid-cols-4 xl:grid-cols-5">
         <!-- Logo column -->
@@ -67,7 +67,6 @@
             <FooterLink v-t="'shared.layout.footer.replacement_parts_link'" to="/replacement-parts"></FooterLink>
             <FooterLink v-t="'shared.layout.footer.demo_landing_link'" :to="{ name: 'DemoLanding' }" />
             <FooterLink v-t="'shared.layout.footer.demo_page_link'" to="/demo-page" />
-            <FooterLink v-if="IS_DEVELOPMENT" :to="{ name: 'DevUIKit' }">Dev UI Kit</FooterLink>
           </div>
         </div>
       </div>
@@ -75,7 +74,7 @@
 
     <!-- Bottom footer -->
     <div
-      class="flex h-16 flex-col items-center justify-between bg-[color:var(--color-footer-bottom-bg)] px-4 py-3 text-xs font-medium text-[color:var(--color-footer-bottom-text)] md:flex-row md:px-12"
+      class="flex h-16 flex-col items-center justify-between bg-[color:var(--color-footer-bottom-bg)] px-4 py-3 text-xs font-medium text-[color:var(--color-footer-bottom-text)] print:flex-row print:px-3 md:flex-row md:px-12"
     >
       <span>
         {{ $t("shared.layout.footer.version") }} {{ version }}. © {{ new Date().getFullYear() }}
@@ -99,7 +98,6 @@
 </template>
 
 <script setup lang="ts">
-import { IS_DEVELOPMENT } from "@/core/constants";
 import pkg from "../../../../../package.json";
 import FooterLink from "./_internal/footer-link.vue";
 

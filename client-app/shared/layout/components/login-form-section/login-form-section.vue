@@ -11,7 +11,7 @@
         <!-- eslint-disable vue/no-v-html -->
         <div class="mb-8 uppercase leading-tight" v-html="$t('pages.home.main_banner_block.message')"></div>
         <div
-          class="flex flex-col items-center justify-center space-y-2 text-xl md:flex-row md:space-y-0 md:space-x-7 md:text-2xl lg:justify-start"
+          class="flex flex-col items-center justify-center space-y-2 text-xl md:flex-row md:space-x-7 md:space-y-0 md:text-2xl lg:justify-start"
         >
           <div v-t="'pages.home.main_banner_block.key_feature_1'"></div>
           <div class="h-2.5 w-2.5 rounded-full bg-[color:var(--color-primary)]"></div>

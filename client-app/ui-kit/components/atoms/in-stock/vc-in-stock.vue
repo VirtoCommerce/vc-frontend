@@ -1,14 +1,14 @@
 <template>
   <div
     v-if="isDigital"
-    class="badge__digital whitespace-nowrap rounded-full py-[1px] px-[0.625rem] text-[13px] leading-5 lg:text-[11px]"
+    class="badge__digital whitespace-nowrap rounded-full px-[0.625rem] py-[1px] text-[13px] leading-5 lg:text-[11px]"
   >
     {{ $t("common.labels.digital_product") }}
   </div>
 
   <div
     v-else-if="isInStock"
-    class="whitespace-nowrap rounded-full bg-[color:var(--color-in-stock-available-bg)] py-0.5 px-[0.677rem] text-[13px] leading-5 text-[color:var(--color-in-stock-available)] lg:py-px lg:px-[0.53rem] lg:text-[11px]"
+    class="whitespace-nowrap rounded-full bg-[color:var(--color-in-stock-available-bg)] px-[0.677rem] py-0.5 text-[13px] leading-5 text-[color:var(--color-in-stock-available)] lg:px-[0.53rem] lg:py-px lg:text-[11px]"
   >
     <span class="inline-block min-w-[1.438rem] text-center font-bold lg:min-w-[1.25rem]">
       {{ quantity && quantity > 9999 ? "9999+" : quantity }}
@@ -18,14 +18,14 @@
 
   <div
     v-else-if="!isAvailable"
-    class="whitespace-nowrap rounded-full bg-[color:var(--color-in-stock-out-bg)] py-[1px] px-[0.625rem] text-[13px] leading-5 text-[color:var(--color-in-stock-out)] lg:text-[11px]"
+    class="whitespace-nowrap rounded-full bg-[color:var(--color-in-stock-out-bg)] px-[0.625rem] py-[1px] text-[13px] leading-5 text-[color:var(--color-in-stock-out)] lg:text-[11px]"
   >
     {{ $t("common.messages.product_no_longer_available") }}
   </div>
 
   <div
     v-else
-    class="whitespace-nowrap rounded-full bg-[color:var(--color-in-stock-out-bg)] py-[1px] px-[0.625rem] text-[13px] leading-5 text-[color:var(--color-in-stock-out)] lg:text-[11px]"
+    class="whitespace-nowrap rounded-full bg-[color:var(--color-in-stock-out-bg)] px-[0.625rem] py-[1px] text-[13px] leading-5 text-[color:var(--color-in-stock-out)] lg:text-[11px]"
   >
     {{ $t("common.messages.product_out_of_stock") }}
   </div>

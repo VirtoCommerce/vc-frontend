@@ -106,7 +106,8 @@
       "active_address": "Active address",
       "addresses_icon": "Address icon",
       "digital_product": "Digital product",
-      "save_changes": "Save Changes"
+      "save_changes": "Save Changes",
+      "search": "Search {0}"
     },
     "prefixes": {
       "please": "Please"
@@ -261,7 +262,8 @@
           "currency": "Currency",
           "search_bar": {
             "input_placeholder": "Enter keyword, item, model, or replacement part number"
-          }
+          },
+          "view_all_catalog": "View all products in the category"
         }
       },
       "footer": {
@@ -977,6 +979,7 @@
         "created": "@:common.labels.created",
         "status": "@:common.labels.status",
         "no_items_message": "Quote request has not items",
+        "save_changes_notification_success": "The quote request has been successfully saved",
         "line_items": {
           "product": "@:common.labels.product",
           "properties": "@:common.labels.properties",

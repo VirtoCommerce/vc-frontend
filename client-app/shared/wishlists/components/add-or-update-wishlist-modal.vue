@@ -7,7 +7,7 @@
     "
     modal-width="max-w-xl"
   >
-    <div class="border-b px-6 pt-5 pb-6">
+    <div class="border-b px-6 pb-6 pt-5">
       <VcInput
         v-model.trim="listName"
         :label="$t('shared.wishlists.add_or_update_wishlist_dialog.list_name_label')"

@@ -1,4 +1,3 @@
-import { isFunction } from "@vueuse/core";
 import { computed, unref } from "vue";
 import { useI18n } from "vue-i18n";
 import type { MaybeRef } from "@vueuse/core";
@@ -21,7 +20,7 @@ export function useBreadcrumbs(sources: (() => IBreadcrumb[]) | MaybeRef<IBreadc
   const { t } = useI18n();
 
   const homepage: IBreadcrumb = { title: t("common.links.home"), route: "/" };
-  const breadcrumbs: MaybeRef<IBreadcrumb[]> = isFunction(sources) ? computed(sources) : sources;
+  const breadcrumbs: MaybeRef<IBreadcrumb[]> = typeof sources === "function" ? computed(sources) : sources;
 
   return computed(() => [homepage].concat(unref(breadcrumbs)));
 }

@@ -16,7 +16,7 @@
         {{ $t("shared.bulk_order.manually.subtitle_message_end") }}
       </p>
 
-      <div class="mt-3 mb-1.5 flex flex-row gap-x-5">
+      <div class="mb-1.5 mt-3 flex flex-row gap-x-5">
         <div v-t="'shared.bulk_order.manually.product_sku_label'" class="w-full font-bold"></div>
         <div v-t="'shared.bulk_order.manually.quantity_label'" class="w-1/3 max-w-[164px] font-bold xl:w-1/4"></div>
       </div>
@@ -53,7 +53,7 @@
         </button>
       </div>
 
-      <div class="mt-6 mb-2 flex flex-row flex-wrap justify-between gap-3 md:mb-0 md:flex-nowrap">
+      <div class="mb-2 mt-6 flex flex-row flex-wrap justify-between gap-3 md:mb-0 md:flex-nowrap">
         <VcButton
           :is-disabled="!dirty || loading"
           kind="secondary"
@@ -120,7 +120,7 @@ function addToCart() {
   const customItems: InputNewBulkItemType[] = items.value
     .map<InputNewBulkItemType>((item) => ({
       productSku: item.productSku,
-      quantity: validateQuantity(item.quantity!),
+      quantity: validateQuantity(+item.quantity!),
     }))
     .filter((item) => item.productSku);
 

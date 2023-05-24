@@ -16,6 +16,7 @@ function getQueryDocument(maxLevel: number): DocumentNode {
       $categoryId: String
       $maxLevel: Int
       $onlyActive: Boolean
+      $productFilter: String
     ) {
       childCategories(
         storeId: $storeId
@@ -25,6 +26,7 @@ function getQueryDocument(maxLevel: number): DocumentNode {
         categoryId: $categoryId
         maxLevel: $maxLevel
         onlyActive: $onlyActive
+        productFilter: $productFilter
       ) {
         __typename
         ${childCategoriesFragment}

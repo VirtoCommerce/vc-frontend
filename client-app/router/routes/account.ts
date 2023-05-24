@@ -1,4 +1,5 @@
 import { useThemeContext } from "@/core/composables";
+import { useUser } from "@/shared/account";
 import type { RouteRecordRaw } from "vue-router";
 
 const Dashboard = () => import("@/pages/account/dashboard.vue");
@@ -17,7 +18,20 @@ const ViewQuote = () => import("@/pages/account/view-quote.vue");
 export const accountRoutes: RouteRecordRaw[] = [
   { path: "dashboard", name: "Dashboard", component: Dashboard },
   { path: "profile", name: "Profile", component: Profile },
-  { path: "addresses", name: "Addresses", component: Addresses },
+  {
+    path: "addresses",
+    name: "Addresses",
+    component: Addresses,
+    beforeEnter(_to, _from, next) {
+      const { isCorporateMember } = useUser();
+
+      if (!isCorporateMember.value) {
+        next();
+      } else {
+        next({ name: "Dashboard" });
+      }
+    },
+  },
   {
     path: "orders",
     children: [

@@ -33,7 +33,7 @@
           <th
             v-for="column in columns"
             :key="column.id"
-            class="py-3 px-5 font-extrabold"
+            class="px-5 py-3 font-extrabold"
             :class="[{ 'cursor-pointer': column.sortable }, `text-${column.align || 'left'}`, column.classes]"
             @click="
               column.sortable

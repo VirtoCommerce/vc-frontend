@@ -1,10 +1,21 @@
 <template>
-  <div v-if="product" class="mt-5 flex flex-col lg:flex-row lg:space-x-8" :class="{ 'mb-6': !relatedProducts.length }">
-    <div class="-mx-5 md:mx-0 lg:w-8/12 xl:w-9/12">
-      <ProductDetails :product="product" :section="model" class="rounded-none border shadow-sm md:rounded" />
+  <div
+    v-if="product"
+    class="mt-5 flex flex-col print:flex-row print:space-x-6 lg:flex-row lg:space-x-8"
+    :class="{ 'mb-6': !relatedProducts.length }"
+  >
+    <div class="-mx-5 print:mx-0 print:grow md:mx-0 lg:w-8/12 xl:w-9/12">
+      <ProductDetails
+        :product="product"
+        :section="model"
+        class="rounded-none border shadow-sm print:border-none print:shadow-none md:rounded"
+      />
     </div>
 
-    <div class="mt-6 lg:sticky lg:top-4 lg:mt-0 lg:h-full lg:w-4/12 xl:w-3/12">
+    <div
+      class="mt-6 flex-none print:!relative print:mt-0 print:!w-[16.5rem] lg:sticky lg:top-4 lg:mt-0 lg:h-full lg:w-4/12 xl:w-3/12"
+      :class="{ 'print:hidden': productWithVariations }"
+    >
       <!-- Price & Delivery (with variations) -->
       <ProductPriceBlock v-if="productWithVariations" :product="product">
         <div class="flex items-baseline justify-between text-sm">
@@ -16,7 +27,7 @@
           </div>
         </div>
 
-        <div class="mt-7 md:mt-5">
+        <div class="mt-7 print:hidden md:mt-5">
           <VcButton :to="{ name: 'Cart' }" class="w-full px-2 uppercase">
             {{ $t("pages.product.view_cart_button") }}
           </VcButton>
@@ -33,7 +44,7 @@
           </div>
         </div>
 
-        <div class="mt-7 md:mt-5">
+        <div class="mt-7 print:hidden md:mt-5">
           <AddToCart :product="product" />
 
           <div class="mt-2 flex">

@@ -2,7 +2,7 @@
   <div>
     <VcLoaderOverlay :visible="!listLoading && cartLoading" fixed-spinner />
 
-    <BackButtonInHeader v-if="isMobile" @click="router.back()" />
+    <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
     <!-- Title block -->
     <div class="mx-5 flex items-center justify-between gap-x-3 md:mx-0">
@@ -135,7 +135,6 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { cloneDeep, isEqual, keyBy } from "lodash";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
 import { useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { prepareLineItem } from "@/core/utilities";
 import { useCart, getItemsForAddBulkItemsToCartResultsPopup, AddBulkItemsToCartResultsModal } from "@/shared/cart";
@@ -170,7 +169,6 @@ const { openPopup } = usePopup();
 const { loading: listLoading, list, fetchWishList, clearList, updateWishlistItemsQuantities } = useWishlists();
 const { loading: cartLoading, cart, addBulkItemsToCart, addToCart, changeItemQuantity } = useCart();
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const router = useRouter();
 
 usePageHead({
   title: computed(() => t("pages.account.list_details.meta.title", [list.value?.name])),
@@ -180,7 +178,7 @@ const itemsPerPage = ref(6);
 const page = ref(1);
 const wishlistItems = ref<LineItemType[]>([]);
 
-const cartItemsBySkus = computed(() => keyBy(cart.value.items, "sku"));
+const cartItemsBySkus = computed(() => keyBy(cart.value?.items, "sku"));
 const preparedLineItems = computed<PreparedLineItemType[]>(() =>
   wishlistItems.value.map((item) => prepareLineItem(item, cartItemsBySkus.value[item.sku!]?.quantity))
 );
@@ -269,7 +267,7 @@ async function addOrUpdateCartItem(item: InputNewBulkItemType): Promise<void> {
     return;
   }
 
-  const itemInCart: LineItemType | undefined = cart.value.items?.find((cartItem) => cartItem.sku === item.productSku);
+  const itemInCart: LineItemType | undefined = cart.value?.items?.find((cartItem) => cartItem.sku === item.productSku);
 
   if (itemInCart) {
     await changeItemQuantity(itemInCart.id, item.quantity!);

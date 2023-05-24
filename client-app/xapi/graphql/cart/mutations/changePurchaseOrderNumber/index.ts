@@ -1,12 +1,15 @@
 import globals from "@/core/globals";
 import mutationDocument from "./changePurchaseOrderNumber.graphql";
-import type { Mutations, MutationsChangePurchaseOrderNumberArgs } from "@/xapi/types";
+import type { CartType, Mutations, MutationsChangePurchaseOrderNumberArgs } from "@/xapi/types";
 
-export default async function changePurchaseOrderNumber(purchaseOrderNumber: string): Promise<void> {
+export async function changePurchaseOrderNumber(purchaseOrderNumber: string): Promise<CartType> {
   const { storeId, userId, cultureName, currencyCode } = globals;
   const { $graphqlClient } = useNuxtApp();
 
-  await $graphqlClient.mutate<Pick<Mutations, "changePurchaseOrderNumber">, MutationsChangePurchaseOrderNumberArgs>({
+  const { data } = await $graphqlClient.mutate<
+    Required<Pick<Mutations, "changePurchaseOrderNumber">>,
+    MutationsChangePurchaseOrderNumberArgs
+  >({
     mutation: mutationDocument,
     variables: {
       command: {
@@ -18,4 +21,6 @@ export default async function changePurchaseOrderNumber(purchaseOrderNumber: str
       },
     },
   });
+
+  return data!.changePurchaseOrderNumber;
 }

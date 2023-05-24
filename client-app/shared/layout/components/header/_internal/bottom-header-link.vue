@@ -18,7 +18,7 @@
         <VcTransitionScale mode="out-in">
           <span
             v-if="count"
-            class="absolute -top-2 -right-3 rounded-full border border-[color:var(--color-primary)] bg-white px-1.5 py-0.5 text-11 font-extrabold leading-3 text-[color:var(--color-header-bottom-link)] transition-transform"
+            class="absolute -right-3 -top-2 rounded-full border border-[color:var(--color-primary)] bg-white px-1.5 py-0.5 text-11 font-extrabold leading-3 text-[color:var(--color-header-bottom-link)] transition-transform"
           >
             {{ preparedCount }}
           </span>
@@ -32,12 +32,6 @@
   </router-link>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-};
-</script>
-
 <script setup lang="ts">
 import { computed } from "vue";
 import { numberToShortString } from "@/core/utilities";
@@ -47,6 +41,10 @@ interface IProps {
   link: ExtendedMenuLinkType;
   count?: number;
 }
+
+defineOptions({
+  inheritAttrs: false,
+});
 
 const props = withDefaults(defineProps<IProps>(), {
   count: 0,

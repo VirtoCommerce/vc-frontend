@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex w-full flex-col rounded bg-white p-6 shadow-t-3sm outline outline-1 outline-offset-0 outline-[color:var(--color-product-outline)] hover:shadow-lg lg:px-5 lg:pt-5 lg:pb-3.5"
+    class="flex w-full flex-col rounded bg-white p-6 shadow-t-3sm outline outline-1 outline-offset-0 outline-[color:var(--color-product-outline)] hover:shadow-lg lg:px-5 lg:pb-3.5 lg:pt-5"
   >
     <!-- Product image -->
     <div class="relative flex flex-col items-center justify-center pb-[87%]">
@@ -34,7 +34,7 @@
             <template #container-end>
               <!-- Prev button -->
               <div
-                class="carousel-button-prev group absolute top-0 left-0 z-[2] hidden h-full cursor-pointer items-center pl-1 pr-5 md:flex"
+                class="carousel-button-prev group absolute left-0 top-0 z-[2] hidden h-full cursor-pointer items-center pl-1 pr-5 md:flex"
               >
                 <span
                   class="flex h-6 w-6 items-center justify-center rounded-full bg-white opacity-0 transition-opacity group-hover:opacity-100"
@@ -45,7 +45,7 @@
 
               <!-- Next button -->
               <div
-                class="carousel-button-next group absolute top-0 right-0 z-[2] hidden h-full cursor-pointer items-center pl-5 pr-1 md:flex"
+                class="carousel-button-next group absolute right-0 top-0 z-[2] hidden h-full cursor-pointer items-center pl-5 pr-1 md:flex"
               >
                 <span
                   class="flex h-6 w-6 items-center justify-center rounded-full bg-white opacity-0 transition-opacity group-hover:opacity-100"
@@ -88,7 +88,7 @@
       <DiscountBadge :price="product.price!" />
 
       <div
-        class="absolute -top-4 -right-4 z-[2] flex flex-col gap-2 rounded-3xl bg-white px-2 py-3.5 empty:hidden lg:-right-3 lg:py-2 lg:px-1.5"
+        class="absolute -right-4 -top-4 z-[2] flex flex-col gap-2 rounded-3xl bg-white px-2 py-3.5 empty:hidden lg:-right-3 lg:px-1.5 lg:py-2"
       >
         <AddToList :product="product" />
         <AddToCompareCatalog v-if="$cfg.product_compare_enabled" class="relative" :product="product" />
@@ -101,7 +101,7 @@
         <template #trigger>
           <router-link
             :to="link"
-            class="my-px h-12 cursor-pointer text-18 font-extrabold text-[color:var(--color-link)] line-clamp-2 lg:h-10 lg:text-14"
+            class="my-px line-clamp-2 h-12 cursor-pointer text-18 font-extrabold text-[color:var(--color-link)] lg:h-10 lg:text-14"
             @click="$emit('linkClick', $event)"
           >
             {{ product.name }}
@@ -109,7 +109,7 @@
         </template>
 
         <template #content>
-          <div class="rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y">
+          <div class="rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
             {{ product.name }}
           </div>
         </template>

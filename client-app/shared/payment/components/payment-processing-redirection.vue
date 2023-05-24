@@ -5,7 +5,7 @@
   </p>
 
   <!-- Main -->
-  <div v-else-if="initialized" class="text-center md:pt-10 md:pb-4">
+  <div v-else-if="initialized" class="text-center md:pb-4 md:pt-10">
     <VcImage src="/static/images/payment/paysafecard.png" alt="paysafecard" class="mb-2 inline-block md:mb-3" lazy />
 
     <p v-html="$t('shared.payment.redirection.text', [$t('shared.payment.redirection.pay_now_button')])" />
@@ -27,8 +27,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { PaymentActionType } from "@/shared/payment";
-import { initializePayment } from "@/xapi/graphql/cart";
+import { initializePayment } from "@/xapi";
+import { PaymentActionType } from "../types";
 import type { CustomerOrderType } from "@/xapi/types";
 
 interface IProps {

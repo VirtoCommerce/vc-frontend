@@ -68,7 +68,7 @@
                 />
 
                 <button
-                  class="absolute -top-3 -right-3 flex h-6 w-6 items-center justify-center rounded-full border border-gray-200 bg-white hover:bg-gray-100"
+                  class="absolute -right-3 -top-3 flex h-6 w-6 items-center justify-center rounded-full border border-gray-200 bg-white hover:bg-gray-100"
                   type="button"
                   @click.prevent="removeFromCompareList(product)"
                 >
@@ -80,7 +80,7 @@
             <!-- Product title -->
             <router-link
               :to="productsRoutes[product.id]"
-              class="mb-3 grow cursor-pointer overflow-hidden text-sm font-extrabold text-[color:var(--color-link)] line-clamp-3"
+              class="mb-3 line-clamp-3 h-16 cursor-pointer text-sm font-extrabold text-[color:var(--color-link)]"
               @click="ga.selectItem(product)"
             >
               {{ product.name }}
@@ -96,6 +96,12 @@
 
             <div class="h-12">
               <AddToCart :product="product" @update:line-item="refreshProducts" />
+            </div>
+
+            <div v-if="product.productType === ProductType.Digital" class="mt-1 flex items-center gap-1">
+              <VcBadge size="sm" color="info" variant="solid-light">
+                {{ $t("common.labels.digital_product") }}
+              </VcBadge>
             </div>
           </div>
         </div>
@@ -139,7 +145,7 @@ import _ from "lodash";
 import { ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead, useProductsRoutes } from "@/core/composables";
-import { PropertyValueType } from "@/core/enums";
+import { PropertyValueType, ProductType } from "@/core/enums";
 import { getPropertyValue } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
 import { useProducts } from "@/shared/catalog";

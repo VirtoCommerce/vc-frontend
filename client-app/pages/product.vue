@@ -1,10 +1,10 @@
 <template>
-  <div v-if="product && template" class="bg-gray-100 pb-8 pt-7 shadow-inner">
-    <BackButtonInHeader v-if="isMobile" @click="router.back()" />
+  <div v-if="product && template" class="bg-[--color-neutral-50] pb-8 pt-7 print:bg-[--color-additional-50]">
+    <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
-    <div class="mx-auto max-w-screen-2xl px-5 md:px-12">
+    <div class="mx-auto max-w-screen-2xl px-5 print:!px-0 md:px-12">
       <!-- Breadcrumbs -->
-      <VcBreadcrumbs class="mb-3 hidden lg:block" :items="breadcrumbs" />
+      <VcBreadcrumbs class="mb-3 hidden print:block lg:block" :items="breadcrumbs" />
 
       <h1 class="text-2xl font-bold uppercase md:text-4xl">{{ product.name }}</h1>
 
@@ -27,7 +27,7 @@
       </template>
 
       <!-- Related products section -->
-      <div v-show="relatedProducts.length" class="mt-10 flex flex-col lg:mt-6 lg:flex-row lg:space-x-8">
+      <div v-show="relatedProducts.length" class="mt-10 flex flex-col print:hidden lg:mt-6 lg:flex-row lg:space-x-8">
         <div class="-mx-5 flex flex-col md:mx-0 lg:w-8/12 xl:w-9/12">
           <VcSection
             :title="$t('pages.product.related_product_section_title')"
@@ -60,7 +60,6 @@
 import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
 import { computed, defineAsyncComponent, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { buildBreadcrumbs } from "@/core/utilities";
 import { useCart } from "@/shared/cart";
@@ -113,7 +112,6 @@ const isMobile = breakpoints.smaller("lg");
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
 const { rootCategory } = useCategory();
-const router = useRouter();
 
 usePageHead({
   title: computed(() => product.value?.seoInfo?.pageTitle || product.value?.name),

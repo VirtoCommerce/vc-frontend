@@ -17,7 +17,7 @@
       </div>
 
       <!-- Items not grouped by Vendor -->
-      <OrderLineItems v-else :items="cart.items" />
+      <OrderLineItems v-else :items="cart!.items" />
 
       <div class="divide-y lg:divide-y-0">
         <!-- Shipping details -->
@@ -53,7 +53,7 @@
         </div>
 
         <!-- Payment details -->
-        <div class="mt-6 mb-2 flex flex-col gap-6 pt-5 md:mt-8 lg:flex-row lg:gap-8 lg:pt-0">
+        <div class="mb-2 mt-6 flex flex-col gap-6 pt-5 md:mt-8 lg:flex-row lg:gap-8 lg:pt-0">
           <div class="lg:w-3/5">
             <VcLabel>
               {{ $t("shared.checkout.billing_details_section.labels.billing_address") }}
@@ -92,12 +92,12 @@
       </div>
     </VcSectionWidget>
 
-    <AcceptedGifts v-if="cart.gifts?.length" :items="cart.gifts" />
+    <AcceptedGifts v-if="cart?.gifts?.length" :items="cart.gifts" />
 
     <OrderCommentSection v-if="comment" :comment="comment" readonly />
 
     <template #sidebar>
-      <OrderSummary :cart="cart" :no-shipping="allItemsAreDigital" footnote>
+      <OrderSummary :cart="cart!" :no-shipping="allItemsAreDigital" footnote>
         <template #footer>
           <!-- Purchase order number -->
           <VcActionInput
@@ -159,7 +159,7 @@ const {
   availablePaymentMethods,
   hasValidationErrors,
   allItemsAreDigital,
-  fetchCart,
+  fetchFullCart,
 } = useCart();
 const { billingAddressEqualsShipping, comment, canPayNow, isValidCheckout, createOrderFromCart, purchaseOrderNumber } =
   useCheckout();
@@ -188,7 +188,7 @@ async function createOrder(): Promise<void> {
     await router.replace({ name: canPayNow.value ? "CheckoutPayment" : "CheckoutCompleted" });
   }
 
-  await fetchCart();
+  await fetchFullCart();
 
   creatingOrder.value = false;
 }

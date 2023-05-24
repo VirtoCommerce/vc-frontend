@@ -1,5 +1,11 @@
+#import "../../../fragments/shortCartFields.graphql"
+
 mutation AddBulkItemsCart($command: InputAddBulkItemsType!) {
   addBulkItemsCart(command: $command) {
+    cart {
+      ...shortCartFields
+    }
+
     errors {
       objectId
       errorCode

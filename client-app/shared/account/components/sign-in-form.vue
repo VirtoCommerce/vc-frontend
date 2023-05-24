@@ -94,7 +94,7 @@ const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButto
 
 const USER_IS_LOCKED_OUT_ERROR_CODE = "user_is_locked_out";
 
-const { cart, fetchCart } = useCart();
+const { cart, fetchShortCart } = useCart();
 const { signMeIn, isAuthenticated } = useUser();
 
 const loading = ref(false);
@@ -123,15 +123,15 @@ const valid = eagerComputed<boolean>(() => isEmpty(errors.value));
 const onSubmit = handleSubmit(async () => {
   loading.value = true;
 
-  if (!cart.value.id) {
-    await fetchCart();
+  if (!cart.value) {
+    await fetchShortCart();
   }
 
   const result = await signMeIn(model);
 
   if (result.succeeded) {
     const user = await getMe();
-    await mergeCart(user.id, cart.value.id!);
+    await mergeCart(user.id, cart.value!.id!);
     emit("succeeded");
     return;
   }

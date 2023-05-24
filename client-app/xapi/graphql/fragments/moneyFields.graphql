@@ -2,11 +2,8 @@
 
 fragment moneyFields on MoneyType {
   amount
-  decimalDigits
   formattedAmount
   formattedAmountWithoutCurrency
-  formattedAmountWithoutPoint
-  formattedAmountWithoutPointAndCurrency
   currency {
     ...currencyFields
   }

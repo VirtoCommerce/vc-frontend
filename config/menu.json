@@ -38,7 +38,8 @@
           "id": "catalog",
           "route": { "name": "Catalog" },
           "title": "shared.layout.header.menu.catalog",
-          "icon": "/static/images/common/cube.svg#main"
+          "icon": "/static/images/common/cube.svg#main",
+          "isCatalogItem": true
         },
         {
           "id": "compare",
@@ -77,6 +78,7 @@
             "icon": "/static/images/dashboard/icons/profile.svg#main"
           },
           {
+            "id": "addresses",
             "route": { "name": "Addresses" },
             "title": "shared.layout.header.mobile.account_menu.addresses",
             "icon": "/static/images/dashboard/icons/building.svg#main"

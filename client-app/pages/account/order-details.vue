@@ -1,6 +1,6 @@
 <template>
   <div v-if="order">
-    <BackButtonInHeader v-if="isMobile" @click="router.back()" />
+    <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
     <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block" />
 
@@ -58,7 +58,7 @@
         <VcCardWidget :title="$t('common.titles.order_data')" class="order-first" hide-mobile-title>
           <div class="flex flex-col gap-1.5 text-15">
             <p v-if="order.createdDate">
-              <span class="font-extrabold"> {{ $t("common.labels.creates") }}: </span>
+              <span class="font-extrabold"> {{ $t("common.labels.created") }}: </span>
               {{ $d(order.createdDate, "long") }}
             </p>
             <p v-if="order.status" class="flex items-center">
@@ -74,7 +74,7 @@
             <VcButton
               v-if="showPaymentButton"
               class="mt-4 w-full uppercase"
-              @click="router.push({ name: 'OrderPayment', params: { orderId } })"
+              @click="$router.push({ name: 'OrderPayment', params: { orderId } })"
             >
               {{ $t("common.buttons.pay_now") }}
             </VcButton>
@@ -127,7 +127,6 @@
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useUserOrder, OrderLineItems, OrderStatus } from "@/shared/account";
 import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
@@ -159,7 +158,6 @@ const {
 const { addBulkItemsToCart } = useCart();
 const { openPopup } = usePopup();
 const { t } = useI18n();
-const router = useRouter();
 
 usePageHead({
   title: computed(() => t("pages.account.order_details.meta.title", [order.value?.number])),

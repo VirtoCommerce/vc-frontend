@@ -35,6 +35,7 @@ export default defineConfig(({ mode }): UserConfig => {
       vue(),
       graphql(),
       checker({
+        enableBuild: false,
         typescript: true,
         vueTsc: true,
         eslint: {

@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="discount"
-    class="absolute top-0 left-0 z-[1] flex items-center space-x-1.5 rounded-tl rounded-br bg-[color:var(--color-sale-badge-bg)] py-0.5 text-white"
+    class="absolute left-0 top-0 z-[1] flex items-center space-x-1.5 rounded-br rounded-tl bg-[color:var(--color-sale-badge-bg)] py-0.5 text-white"
     :class="{
       'h-7 px-2 lg:h-6 lg:px-1.5': size === 'md',
       'h-5 px-1.5': size === 'sm',

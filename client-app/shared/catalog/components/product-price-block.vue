@@ -1,18 +1,18 @@
 <template>
-  <div class="rounded border bg-white shadow-sm">
-    <div class="border-b px-5 py-4 md:px-7">
+  <div class="divide-y rounded border bg-white shadow-sm print:shadow-none">
+    <div class="px-5 py-4 md:px-7">
       <h2 class="text-xl font-extrabold uppercase">
         {{ $t("shared.catalog.product_details.price_block.title") }}
       </h2>
     </div>
 
-    <div class="border-b px-5 py-8 md:px-7 md:py-5">
+    <div class="px-5 py-8 md:px-7 md:py-5">
       <slot />
     </div>
 
-    <div class="flex">
+    <div class="flex print:hidden">
       <div
-        class="flex w-2/5 select-none items-center justify-center space-x-2 border-r py-4 px-1"
+        class="flex w-2/5 select-none items-center justify-center space-x-2 border-r px-1 py-4"
         :class="{ 'cursor-pointer hover:bg-gray-100': isAuthenticated }"
         :title="!isAuthenticated ? $t('common.messages.wishlists_available_for_authorized') : undefined"
         @click="openAddToListModal"
@@ -39,7 +39,7 @@
           >
             <template #trigger>
               <div
-                class="flex cursor-pointer select-none items-center justify-center space-x-2 border-r py-4 px-1 hover:bg-gray-100"
+                class="flex cursor-pointer select-none items-center justify-center space-x-2 border-r px-1 py-4 hover:bg-gray-100"
               >
                 <i
                   class="fas fa-share-square text-base"
@@ -51,7 +51,7 @@
               </div>
             </template>
             <template #content>
-              <div class="mt-1.5 mb-7 flex items-center justify-between space-x-6 px-5">
+              <div class="mb-7 mt-1.5 flex items-center justify-between space-x-6 px-5">
                 <a
                   v-for="socialSharingService in $cfg.social_sharing_services"
                   :key="socialSharingService.name"
@@ -75,7 +75,7 @@
           <a
             :href="mailToLink"
             target="_blank"
-            class="flex cursor-pointer select-none items-center justify-center border-r py-4 px-1 hover:bg-gray-100"
+            class="flex cursor-pointer select-none items-center justify-center border-r px-1 py-4 hover:bg-gray-100"
           >
             <i class="fas fa-envelope text-base text-[color:var(--color-primary)]" />
           </a>
@@ -83,7 +83,7 @@
 
         <div class="w-1/3">
           <div
-            class="flex flex-1 cursor-pointer select-none items-center justify-center py-4 px-1 hover:bg-gray-100"
+            class="flex flex-1 cursor-pointer select-none items-center justify-center px-1 py-4 hover:bg-gray-100"
             @click="print()"
           >
             <i class="fas fa-print text-base text-[color:var(--color-primary)]" />

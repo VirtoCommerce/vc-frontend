@@ -1,6 +1,7 @@
-mutation ChangeComment($command: InputChangeCommentType!) {
+#import "../../../fragments/fullCartFields.graphql"
+
+mutation ChangeCartComment($command: InputChangeCommentType!) {
   changeComment(command: $command) {
-    name
-    itemsQuantity
+    ...fullCartFields
   }
 }

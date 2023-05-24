@@ -4,7 +4,7 @@
     <div class="h-12 w-12">
       <div
         v-if="variation.images?.length"
-        class="square relative -mt-2 -ml-2 flex flex-col items-center justify-center"
+        class="square relative -ml-2 -mt-2 flex flex-col items-center justify-center"
       >
         <VcImage
           :src="variation.images[0].url"
@@ -44,7 +44,7 @@
         </div>
 
         <!-- Add to cart -->
-        <div class="flex flex-1 flex-row xl:self-start">
+        <div class="flex flex-1 flex-row print:hidden xl:self-start">
           <div class="w-full">
             <AddToCart :product="variation" />
 

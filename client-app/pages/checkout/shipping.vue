@@ -11,7 +11,7 @@
     <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
 
     <template #sidebar>
-      <OrderSummary :cart="cart" footnote>
+      <OrderSummary :cart="cart!" footnote>
         <template #footer>
           <VcButton
             :to="{ name: 'Billing', replace: true }"

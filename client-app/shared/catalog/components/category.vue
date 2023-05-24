@@ -317,16 +317,29 @@ import {
   whenever,
 } from "@vueuse/core";
 import { cloneDeep, isEqual, throttle } from "lodash";
-import { computed, ref, shallowReactive, shallowRef, triggerRef, watch, onMounted, onBeforeUnmount } from "vue";
-import { useBreadcrumbs, useGoogleAnalytics, usePageHead, useRouteQueryParam } from "@/core/composables";
+import { computed, onBeforeUnmount, onMounted, ref, shallowReactive, shallowRef, triggerRef, watch } from "vue";
+import {
+  useBreadcrumbs,
+  useGoogleAnalytics,
+  usePageHead,
+  useRouteQueryParam,
+  useThemeContext,
+} from "@/core/composables";
 import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
-import { buildBreadcrumbs, getFilterExpressionFromFacets } from "@/core/utilities";
+import globals from "@/core/globals";
+import {
+  buildBreadcrumbs,
+  getFilterExpressionForAvailableIn,
+  getFilterExpressionForCategorySubtree,
+  getFilterExpressionForInStock,
+  getFilterExpressionForZeroPrice,
+  getFilterExpressionFromFacets,
+} from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
 import { BranchesDialog, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { usePopup } from "@/shared/popup";
 import { useCategory, useProducts } from "../composables";
-import { getFilterExpressionForAvailableIn, getFilterExpressionForInStock, getBrowserZoom } from "../utils";
 import CategorySelector from "./category-selector.vue";
 import DisplayProducts from "./display-products.vue";
 import ProductsFiltersSidebar from "./products-filters.vue";
@@ -343,6 +356,9 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+const { catalogId, currencyCode } = globals;
+
+const { themeContext } = useThemeContext();
 const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const ga = useGoogleAnalytics();
@@ -619,7 +635,7 @@ function setFiltersPosition() {
   const down = scrollTop > scrollOld;
   const up = scrollTop < scrollOld;
 
-  const zoomCorrection = getBrowserZoom() !== 1 ? 1 : 0;
+  const zoomCorrection = window.devicePixelRatio === 1 ? 0 : 1;
 
   const offsetTop = maxOffsetTop - zoomCorrection;
   const offsetBottom = maxOffsetBottom - zoomCorrection;
@@ -677,12 +693,25 @@ whenever(() => !isMobile.value, hideMobileSidebar);
 
 watch(
   () => props.categoryId,
-  () => {
+  (categoryId) => {
     if (!props.isSearchPage) {
+      const { catalog_empty_categories_enabled, zero_price_product_enabled } = themeContext.value.settings;
+
+      const productFilter = catalog_empty_categories_enabled
+        ? undefined
+        : [
+            getFilterExpressionForCategorySubtree({ catalogId, categoryId }),
+            getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode),
+            getFilterExpressionForInStock(true),
+          ]
+            .filter(Boolean)
+            .join(" ");
+
       fetchCategory({
-        categoryId: props.categoryId,
+        categoryId,
         maxLevel: 1,
         onlyActive: true,
+        productFilter,
       });
     }
   },
