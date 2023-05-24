@@ -327,6 +327,7 @@ import {
 } from "@/core/composables";
 import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
+import globals from "@/core/globals";
 import { buildBreadcrumbs, getFilterExpressionFromFacets } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
 import { BranchesDialog, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
@@ -348,6 +349,8 @@ interface IProps {
 }
 
 const props = defineProps<IProps>();
+
+const { catalogId } = globals;
 
 const { themeContext } = useThemeContext();
 const { openPopup } = usePopup();
@@ -686,13 +689,21 @@ watch(
   () => props.categoryId,
   () => {
     if (!props.isSearchPage) {
+      const productFilter = themeContext.value.settings.catalog_empty_categories_enabled
+        ? undefined
+        : [
+            `category.subtree:${catalogId}${props.categoryId ? "/" + props.categoryId : ""}`,
+            themeContext.value.settings.zero_price_product_enabled ? "" : "price:(0 TO)",
+            "instock_quantity:(0 TO)",
+          ]
+            .filter(Boolean)
+            .join(" ");
+
       fetchCategory({
         categoryId: props.categoryId,
         maxLevel: 1,
         onlyActive: true,
-        productFilter: themeContext.value.settings.catalog_empty_categories_enabled
-          ? undefined
-          : `category.subtree:${props.categoryId} price:(0 TO) instock_quantity:(0 TO)`,
+        productFilter,
       });
     }
   },
