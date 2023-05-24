@@ -103,7 +103,7 @@
         ></h2>
         <div v-t="'pages.demo_landing.products_block.message'" class="text-center lg:text-lg"></div>
 
-        <div class="mt-12 grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-x-6 lg:grid-cols-4">
+        <div class="grid gap-6 xs:grid-cols-2 md:grid-cols-3 lg:gap-5 xl:grid-cols-4">
           <ProductCardGrid v-for="item in products" :key="item.id" :product="item">
             <template #cart-handler>
               <VcButton v-if="item.hasVariations" :to="productsRoutes[item.id]" class="mb-4 uppercase">
