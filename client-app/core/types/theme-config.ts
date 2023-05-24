@@ -9,6 +9,7 @@ export interface IThemeConfigPreset {
   page_title_divider?: string;
 
   catalog_menu_link_list_name?: string | null;
+  catalog_empty_categories_enabled?: boolean;
 
   anonymous_price_enabled?: boolean;
   anonymous_checkout?: boolean;

@@ -43,6 +43,7 @@ function getCategoryQueryDocument(categoryId: string, maxChildCategoriesLevel = 
       $currencyCode: String
       $maxLevel: Int
       $onlyActive: Boolean
+      $productFilter: String
     ) {
       ${categoryQueryString}
 
@@ -53,6 +54,7 @@ function getCategoryQueryDocument(categoryId: string, maxChildCategoriesLevel = 
         currencyCode: $currencyCode
         maxLevel: $maxLevel
         onlyActive: $onlyActive
+        productFilter: $productFilter
         ${categoryId ? `categoryId: "${categoryId}"` : ""}
       ) {
         __typename
