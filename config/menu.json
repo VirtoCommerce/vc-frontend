@@ -38,7 +38,8 @@
           "id": "catalog",
           "route": { "name": "Catalog" },
           "title": "shared.layout.header.menu.catalog",
-          "icon": "/static/images/common/cube.svg#main"
+          "icon": "/static/images/common/cube.svg#main",
+          "isCatalogItem": true
         },
         {
           "id": "compare",

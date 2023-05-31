@@ -4,8 +4,8 @@
       :is="isLink ? 'a' : 'button'"
       :href="isLink ? href : null"
       :class="[
-        'flex min-h-[2.25rem] items-center gap-x-3.5 text-left leading-tight',
-        isLink && (isActive || isExactActive) ? 'font-extrabold text-white' : 'font-semibold',
+        'flex min-h-[2.25rem] items-center gap-x-3.5 text-left leading-tight tracking-[0.01em]',
+        isLink && (isActive || isExactActive) ? 'text-[--color-additional-50]' : 'text-[--color-accent-200]',
         $attrs.class,
       ]"
       @click.prevent="click(navigate)"

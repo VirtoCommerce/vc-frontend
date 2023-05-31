@@ -83,13 +83,13 @@ export function useNavigations() {
 
     try {
       catalogMenuItems.value = catalog_menu_link_list_name
-        ? (await getMenu(catalog_menu_link_list_name)).map(convertToExtendedMenuLink)
+        ? (await getMenu(catalog_menu_link_list_name)).map((item) => convertToExtendedMenuLink(item, true))
         : (
             await getChildCategories({
               maxLevel: 2,
               onlyActive: true,
             })
-          ).map(categoryToExtendedMenuLink);
+          ).map((item) => categoryToExtendedMenuLink(item, true));
     } catch (e) {
       Logger.error(`${useNavigations.name}.${fetchCatalogMenu.name}`, e);
     }
