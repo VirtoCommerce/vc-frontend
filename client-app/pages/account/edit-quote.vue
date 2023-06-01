@@ -55,8 +55,8 @@
               :title="$t('common.buttons.edit')"
               @click="
                 userHasAddresses
-                  ? openAddressSelectionDialog(AddressType.Shipping)
-                  : openAddOrUpdateAddressDialog(AddressType.Shipping, shippingAddress)
+                  ? openSelectAddressModal(AddressType.Shipping)
+                  : openAddOrUpdateAddressModal(AddressType.Shipping, shippingAddress)
               "
             >
               <i class="fas fa-pencil-alt text-18" />
@@ -98,8 +98,8 @@
                 :title="$t('common.buttons.edit')"
                 @click="
                   userHasAddresses
-                    ? openAddressSelectionDialog(AddressType.Billing)
-                    : openAddOrUpdateAddressDialog(AddressType.Billing, billingAddress)
+                    ? openSelectAddressModal(AddressType.Billing)
+                    : openAddOrUpdateAddressModal(AddressType.Billing, billingAddress)
                 "
               >
                 <i class="fas fa-pencil-alt text-18" />
@@ -144,12 +144,14 @@ import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { AddressType } from "@/core/enums";
-import { asyncForEach, convertToType } from "@/core/utilities";
-import { QuoteLineItems, useUserAddresses, useUserQuote } from "@/shared/account";
+import { asyncForEach, convertToType, isEqualAddresses } from "@/core/utilities";
+import { QuoteLineItems, useUser, useUserAddresses, useUserQuote } from "@/shared/account";
 import { SelectAddressModal } from "@/shared/checkout";
+import { useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import { VcAddOrUpdateAddressModal } from "@/ui-kit/components";
+import type { AnyAddressType } from "@/core/types";
 import type { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi/types";
 
 interface IProps {
@@ -161,7 +163,17 @@ const props = defineProps<IProps>();
 const router = useRouter();
 const { t } = useI18n();
 const { openPopup, closePopup } = usePopup();
-const { addresses, fetchAddresses, addOrUpdateAddresses } = useUserAddresses();
+const { user, isAuthenticated } = useUser();
+const {
+  addresses: personalAddresses,
+  fetchAddresses: fetchPersonalAddresses,
+  addOrUpdateAddresses: addOrUpdatePersonalAddresses,
+} = useUserAddresses();
+const {
+  addresses: organizationsAddresses,
+  fetchAddresses: fetchOrganizationAddresses,
+  addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
+} = useOrganizationAddresses(user.value.contact?.organizationId || "");
 const {
   fetching,
   quote,
@@ -191,6 +203,14 @@ const breadcrumbs = useBreadcrumbs(() => [
 const originalQuote = ref<QuoteType>();
 const billingAddressEqualsShipping = ref<boolean>(true);
 
+const isCorporateMember = computed<boolean>(() => !!user.value.contact?.organizationId);
+const accountAddresses = computed<AnyAddressType[]>(() => {
+  const { firstName, lastName } = user.value.contact ?? {};
+
+  return isCorporateMember.value
+    ? organizationsAddresses.value.map((address) => ({ ...address, firstName, lastName }))
+    : personalAddresses.value;
+});
 const quoteChanged = computed<boolean>(() => !isEqual(originalQuote.value, quote.value));
 const quoteItemsValid = computed<boolean>(() =>
   every(quote.value?.items, (item: QuoteItemType) => item.selectedTierPrice?.quantity > 0)
@@ -200,7 +220,11 @@ const quoteValid = computed<boolean>(
     !!shippingAddress.value && (!!billingAddress.value || billingAddressEqualsShipping.value) && quoteItemsValid.value
 );
 
-const userHasAddresses = computedEager<boolean>(() => !!addresses.value.length);
+const userHasAddresses = computedEager<boolean>(() => !!accountAddresses.value.length);
+
+function accountAddressExists(address: AnyAddressType): boolean {
+  return accountAddresses.value.some((item) => isEqualAddresses(item, address));
+}
 
 function onRemoveItem(item: QuoteItemType): void {
   remove(quote.value!.items!, (i: QuoteItemType) => i.id === item.id);
@@ -217,32 +241,7 @@ function setBillingAddressEqualsShippingAddress(): void {
   setQuoteAddress(newBillingAddress);
 }
 
-function openAddressSelectionDialog(addressType: AddressType): void {
-  openPopup({
-    component: SelectAddressModal,
-    props: {
-      addresses: addresses.value,
-      currentAddress: convertToType<MemberAddressType>(
-        addressType === AddressType.Billing ? billingAddress.value : shippingAddress.value
-      ),
-
-      onResult(selectedAddress: MemberAddressType): void {
-        const quoteAddress = convertToType<QuoteAddressType>({ ...selectedAddress, addressType });
-
-        setQuoteAddress(quoteAddress);
-        closePopup();
-      },
-
-      onAddNewAddress() {
-        setTimeout(() => {
-          openAddOrUpdateAddressDialog(addressType);
-        }, 500);
-      },
-    },
-  });
-}
-
-function openAddOrUpdateAddressDialog(addressType: AddressType, currentAddress?: QuoteAddressType): void {
+function openAddOrUpdateAddressModal(addressType: AddressType, currentAddress?: QuoteAddressType): void {
   openPopup({
     component: VcAddOrUpdateAddressModal,
     props: {
@@ -255,7 +254,43 @@ function openAddOrUpdateAddressDialog(addressType: AddressType, currentAddress?:
         closePopup();
 
         // Save address in account
-        await addOrUpdateAddresses([{ ...updatedAddress, addressType: AddressType.BillingAndShipping }]);
+        const addressToSave = { ...updatedAddress, addressType: AddressType.BillingAndShipping };
+
+        if (accountAddressExists(addressToSave)) {
+          return;
+        }
+
+        if (isCorporateMember.value) {
+          await addOrUpdateOrganizationAddresses([addressToSave]);
+        } else {
+          await addOrUpdatePersonalAddresses([addressToSave]);
+        }
+      },
+    },
+  });
+}
+
+function openSelectAddressModal(addressType: AddressType): void {
+  openPopup({
+    component: SelectAddressModal,
+    props: {
+      addresses: accountAddresses.value,
+      currentAddress: convertToType<MemberAddressType>(
+        addressType === AddressType.Billing ? billingAddress.value : shippingAddress.value
+      ),
+      isCorporateAddresses: isCorporateMember.value,
+
+      onResult(selectedAddress: MemberAddressType): void {
+        const quoteAddress = convertToType<QuoteAddressType>({ ...selectedAddress, addressType });
+
+        setQuoteAddress(quoteAddress);
+        closePopup();
+      },
+
+      onAddNewAddress() {
+        setTimeout(() => {
+          openAddOrUpdateAddressModal(addressType);
+        }, 500);
       },
     },
   });
@@ -306,6 +341,18 @@ async function submit(): Promise<void> {
   await submitQuote(quote.value!.id, quote.value!.comment || "");
 
   router.replace({ name: "Quotes" });
+}
+
+async function fetchAddresses(): Promise<void> {
+  if (!isAuthenticated.value) {
+    return;
+  }
+
+  if (isCorporateMember.value) {
+    await fetchOrganizationAddresses();
+  } else {
+    await fetchPersonalAddresses();
+  }
 }
 
 onMounted(() => {
