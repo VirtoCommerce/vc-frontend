@@ -16,7 +16,9 @@
     </div>
 
     <slot v-if="showSeeMoreButton" name="toggle-button" v-bind="{ showAll }">
-      <VcButtonSeeMoreLess v-model="showAll" class="vc-collapsible-content__button" />
+      <div class="vc-collapsible-content__button">
+        <VcButtonSeeMoreLess v-model="showAll" />
+      </div>
     </slot>
   </div>
 </template>
@@ -67,17 +69,29 @@ watch(showAll, (value: boolean) => {
 
     &--collapsed {
       @apply overflow-y-hidden max-h-[#{v-bind("props.maxHeight")}];
+
+      @media print {
+        @apply max-h-none;
+      }
     }
 
     &--end-gradient {
       &:after {
         @apply absolute block bottom-0 content-[''] h-10 w-full bg-gradient-to-t from-white;
+
+        @media print {
+          @apply content-none;
+        }
       }
     }
   }
 
   &__button {
     @apply my-3;
+
+    @media print {
+      @apply hidden;
+    }
   }
 }
 </style>

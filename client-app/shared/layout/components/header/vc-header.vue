@@ -4,9 +4,13 @@
 
   <!-- Desktop header -->
   <template v-else>
-    <TopHeader class="relative z-[21]" />
-    <BottomHeader class="sticky top-0 z-20 shadow-md" />
+    <TopHeader class="relative z-[21] print:hidden" />
+    <BottomHeader class="sticky top-0 z-20 shadow-md print:hidden" />
   </template>
+
+  <div class="mx-auto hidden w-full max-w-screen-2xl print:block">
+    <VcImage :src="$cfg.logo_image" :alt="$context.storeName" class="h-[3rem]" />
+  </div>
 </template>
 
 <script setup lang="ts">

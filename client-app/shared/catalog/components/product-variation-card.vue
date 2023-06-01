@@ -44,7 +44,7 @@
         </div>
 
         <!-- Add to cart -->
-        <div class="flex flex-1 flex-row xl:self-start">
+        <div class="flex flex-1 flex-row print:hidden xl:self-start">
           <div class="w-full">
             <AddToCart :product="variation" />
 

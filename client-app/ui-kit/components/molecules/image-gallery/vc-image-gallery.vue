@@ -13,42 +13,44 @@
     <slot name="badges" />
   </div>
 
-  <div v-if="isMobile && images.length > 1" class="mt-4 flex flex-row justify-center space-x-2.5">
-    <button
-      v-for="(image, i) in images"
-      :key="image.url || i"
-      :class="{ 'bg-[color:var(--color-primary)]': image.url === activeSrc }"
-      type="button"
-      class="h-4 w-4 cursor-pointer rounded-full border border-[color:var(--color-primary)]"
-      @click="setActiveImage(image.url)"
-      @keyup.enter="setActiveImage(image.url)"
-    />
-  </div>
+  <template v-if="images.length > 1">
+    <div class="mt-3 flex flex-wrap justify-center gap-x-2.5 gap-y-1 print:hidden lg:hidden">
+      <button
+        v-for="(image, i) in images"
+        :key="image.url || i"
+        :class="{ 'bg-[color:var(--color-primary)]': image.url === activeSrc }"
+        type="button"
+        class="h-4 w-4 cursor-pointer rounded-full border border-[color:var(--color-primary)]"
+        @click="setActiveImage(image.url)"
+        @keyup.enter="setActiveImage(image.url)"
+      />
+    </div>
 
-  <div v-if="!isMobile && images.length > 1" class="mt-6 grid grid-cols-3 gap-5">
-    <button
-      v-for="(image, i) in images"
-      :key="image.url || i"
-      type="button"
-      @click="setActiveImage(image.url)"
-      @keyup.enter="setActiveImage(image.url)"
-    >
-      <span
-        class="square relative flex cursor-pointer flex-col items-center justify-center rounded-sm border border-gray-100 hover:ring hover:ring-[color:var(--color-primary-hover)]"
-        :class="{
-          'ring ring-[color:var(--color-primary)]': image.url === activeSrc,
-        }"
+    <div class="mt-6 hidden grid-cols-3 gap-5 print:grid print:ps-1 lg:grid">
+      <button
+        v-for="(image, i) in images"
+        :key="image.url || i"
+        type="button"
+        @click="setActiveImage(image.url)"
+        @keyup.enter="setActiveImage(image.url)"
       >
-        <VcImage
-          :src="image.url"
-          :alt="image.name"
-          size-suffix="sm"
-          class="absolute top-0 h-full w-full rounded-sm object-cover object-center"
-          lazy
-        />
-      </span>
-    </button>
-  </div>
+        <span
+          class="square relative flex cursor-pointer flex-col items-center justify-center rounded-sm border border-gray-100 hover:ring hover:ring-[color:var(--color-primary-hover)]"
+          :class="{
+            'ring ring-[color:var(--color-primary)]': image.url === activeSrc,
+          }"
+        >
+          <VcImage
+            :src="image.url"
+            :alt="image.name"
+            size-suffix="sm"
+            class="absolute top-0 h-full w-full rounded-sm object-cover object-center"
+            lazy
+          />
+        </span>
+      </button>
+    </div>
+  </template>
 </template>
 
 <script setup lang="ts">

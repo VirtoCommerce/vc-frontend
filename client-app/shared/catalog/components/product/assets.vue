@@ -1,5 +1,5 @@
 <template>
-  <div v-if="product.assets?.length" class="mt-5 flex flex-col lg:flex-row lg:space-x-8">
+  <div v-if="product.assets?.length" class="mt-5 flex flex-col print:hidden lg:flex-row lg:space-x-8">
     <div class="-mx-5 md:mx-0 lg:w-8/12 xl:w-9/12">
       <ProductTitledBlock
         class="mt-5"

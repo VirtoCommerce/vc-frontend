@@ -1,5 +1,5 @@
 <template>
-  <footer aria-label="Footer">
+  <footer aria-label="Footer" class="print:hidden">
     <!-- Top footer -->
     <div
       v-if="!compact"

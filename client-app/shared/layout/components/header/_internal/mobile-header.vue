@@ -1,5 +1,5 @@
 <template>
-  <div ref="headerElement" class="fixed z-40 w-full bg-[color:var(--color-header-bottom-bg)] shadow-md">
+  <div ref="headerElement" class="fixed z-40 w-full bg-[color:var(--color-header-bottom-bg)] shadow-md print:hidden">
     <!-- region Default slot -->
     <transition :name="isAnimated ? 'slide-fade-top' : ''" mode="out-in">
       <div v-if="customSlots.default">
@@ -76,7 +76,7 @@
   </div>
 
   <!-- Height placeholder for mobile header due to fixed position -->
-  <div :style="placeholderStyle" class="h-14"></div>
+  <div :style="placeholderStyle" class="h-14 print:hidden"></div>
 
   <!-- Mobile menu -->
   <transition
@@ -85,7 +85,7 @@
     enter-active-class="will-change-transform"
     leave-active-class="will-change-transform"
   >
-    <MobileMenu v-if="mobileMenuVisible" class="transition-transform" @close="mobileMenuVisible = false" />
+    <MobileMenu v-if="mobileMenuVisible" class="transition-transform print:hidden" @close="mobileMenuVisible = false" />
   </transition>
 </template>
 
