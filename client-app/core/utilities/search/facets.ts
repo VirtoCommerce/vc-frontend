@@ -9,6 +9,23 @@ import type { MaybeRef } from "@vueuse/core";
  * - {@link https://github.com/VirtoCommerce/vc-module-experience-api/blob/master/docs/x-catalog-reference.md#filter-by-price}
  */
 
+export function getFilterExpressionForCategorySubtree(payload: { catalogId: string; categoryId?: string }): string {
+  return `category.subtree:${payload.catalogId}${payload.categoryId ? "/" + payload.categoryId : ""}`;
+}
+
+export function getFilterExpressionForZeroPrice(value: MaybeRef<boolean>): string {
+  return unref(value) ? "" : "price:(0 TO)";
+}
+
+export function getFilterExpressionForInStock(value: MaybeRef<boolean>): string {
+  return unref(value) ? "availability:InStock" : "";
+}
+
+export function getFilterExpressionForAvailableIn(value: MaybeRef<string[]>): string {
+  const branches = unref(value);
+  return branches.length ? `available_in:"${branches.join('","')}"` : "";
+}
+
 export function getFilterExpressionFromFacets(facets: MaybeRef<FacetItemType[]>): string {
   const result: string[] = [];
 

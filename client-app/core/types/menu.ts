@@ -7,4 +7,5 @@ export type ExtendedMenuLinkType = {
   route?: RouteLocationRaw;
   children?: ExtendedMenuLinkType[];
   priority?: number;
+  isCatalogItem?: boolean;
 };

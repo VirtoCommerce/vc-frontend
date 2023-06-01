@@ -1,6 +1,12 @@
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
 import { useThemeContext } from "@/core/composables/useThemeContext";
-import { convertToExtendedMenuLink, Logger } from "@/core/utilities";
+import {
+  convertToExtendedMenuLink,
+  getFilterExpressionForCategorySubtree,
+  getFilterExpressionForInStock,
+  getFilterExpressionForZeroPrice,
+  Logger,
+} from "@/core/utilities";
 import { getChildCategories, getMenu } from "@/xapi";
 import globals from "../globals";
 import { categoryToExtendedMenuLink, getTranslatedMenuLink } from "../utilities/menu";
@@ -79,17 +85,37 @@ export function useNavigations() {
   }
 
   async function fetchCatalogMenu() {
-    const { catalog_menu_link_list_name } = themeContext.value.settings;
+    const { catalog_menu_link_list_name, catalog_empty_categories_enabled, zero_price_product_enabled } =
+      themeContext.value.settings;
 
     try {
-      catalogMenuItems.value = catalog_menu_link_list_name
-        ? (await getMenu(catalog_menu_link_list_name)).map(convertToExtendedMenuLink)
-        : (
-            await getChildCategories({
-              maxLevel: 2,
-              onlyActive: true,
-            })
-          ).map(categoryToExtendedMenuLink);
+      if (catalog_menu_link_list_name) {
+        // Use a list of links
+        catalogMenuItems.value = (await getMenu(catalog_menu_link_list_name)).map((item) =>
+          convertToExtendedMenuLink(item, true)
+        );
+      } else {
+        // Use the query `childCategories`, with `maxLevel` equal to 2
+        const { catalogId } = globals;
+
+        const productFilter = catalog_empty_categories_enabled
+          ? undefined
+          : [
+              getFilterExpressionForCategorySubtree({ catalogId }),
+              getFilterExpressionForZeroPrice(!!zero_price_product_enabled),
+              getFilterExpressionForInStock(true),
+            ]
+              .filter(Boolean)
+              .join(" ");
+
+        catalogMenuItems.value = (
+          await getChildCategories({
+            maxLevel: 2,
+            onlyActive: true,
+            productFilter,
+          })
+        ).map((item) => categoryToExtendedMenuLink(item, true));
+      }
     } catch (e) {
       Logger.error(`${useNavigations.name}.${fetchCatalogMenu.name}`, e);
     }
