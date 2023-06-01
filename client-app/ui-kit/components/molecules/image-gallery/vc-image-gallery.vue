@@ -7,7 +7,6 @@
       :src="activeSrc"
       size-suffix="md"
       class="absolute top-0 h-full w-full rounded-sm object-cover object-center"
-      lazy
     />
 
     <slot name="badges" />
