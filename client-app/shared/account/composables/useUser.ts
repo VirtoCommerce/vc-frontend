@@ -34,6 +34,7 @@ const loading = ref(false);
 const user = ref<UserType>();
 
 const isAuthenticated = eagerComputed<boolean>(() => !!user.value?.userName && user.value.userName !== "Anonymous");
+const isCorporateMember = computed<boolean>(() => !!user.value?.contact?.organizationId);
 const organization = eagerComputed<Organization | null>(() => user.value?.contact?.organizations?.items?.[0] ?? null);
 const operator = computed<UserType | null>(() => user.value?.operator ?? null);
 
@@ -248,6 +249,7 @@ export default function useUser() {
 
   return {
     isAuthenticated,
+    isCorporateMember,
     organization,
     operator,
     checkPermissions,

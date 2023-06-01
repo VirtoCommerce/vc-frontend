@@ -163,7 +163,7 @@ const props = defineProps<IProps>();
 const router = useRouter();
 const { t } = useI18n();
 const { openPopup, closePopup } = usePopup();
-const { user, isAuthenticated } = useUser();
+const { user, isAuthenticated, isCorporateMember } = useUser();
 const {
   addresses: personalAddresses,
   fetchAddresses: fetchPersonalAddresses,
@@ -203,7 +203,6 @@ const breadcrumbs = useBreadcrumbs(() => [
 const originalQuote = ref<QuoteType>();
 const billingAddressEqualsShipping = ref<boolean>(true);
 
-const isCorporateMember = computed<boolean>(() => !!user.value.contact?.organizationId);
 const accountAddresses = computed<AnyAddressType[]>(() => {
   const { firstName, lastName } = user.value.contact ?? {};
 

@@ -35,7 +35,7 @@ export default function useCheckout() {
   const notifications = useNotifications();
   const { openPopup, closePopup } = usePopup();
   const { t } = useI18n();
-  const { user, isAuthenticated } = useUser();
+  const { user, isAuthenticated, isCorporateMember } = useUser();
   const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
   const {
     addresses: personalAddresses,
@@ -76,7 +76,6 @@ export default function useCheckout() {
       ? isValidPayment.value && !hasValidationErrors.value
       : isValidShipment.value && isValidPayment.value && !hasValidationErrors.value
   );
-  const isCorporateMember = computed<boolean>(() => !!user.value.contact?.organizationId);
 
   const selectedPaymentMethodGroupType = computed<string | undefined>(() => {
     const paymentMethodCode = payment.value?.paymentGatewayCode || placedOrder.value?.inPayments[0].paymentMethod?.code;
