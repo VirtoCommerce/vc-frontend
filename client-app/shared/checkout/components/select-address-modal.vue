@@ -47,8 +47,10 @@
           <div class="w-1/2 grow truncate">
             <p class="text-base font-bold">
               <span v-if="isCorporateAddresses" class="text-base font-bold">
-                {{ itemData.item.countryCode }} {{ itemData.item.regionName }} {{ itemData.item.city }}
-                {{ itemData.item.line1 }}
+                {{ itemData.item.line1 }}<br />
+                <template v-if="itemData.item.line2">{{ itemData.item.line2 }}<br /></template>
+                {{ itemData.item.city }},
+                <template v-if="itemData.item.regionId">{{ itemData.item.regionId }}, </template>
                 {{ itemData.item.postalCode }}
               </span>
               <span v-else>{{ itemData.item.firstName }} {{ itemData.item.lastName }}</span>
@@ -59,15 +61,16 @@
                 {{ isMemberAddressType(itemData.item) ? itemData.item.description : "" }}
               </span>
               <span v-else>
-                {{ itemData.item.countryCode }} {{ itemData.item.regionName }} {{ itemData.item.city }}
-                {{ itemData.item.line1 }}
+                {{ itemData.item.line1 }}<br />
+                <template v-if="itemData.item.line2">{{ itemData.item.line2 }}<br /></template>
+                {{ itemData.item.city }},
+                <template v-if="itemData.item.regionId">{{ itemData.item.regionId }}, </template>
                 {{ itemData.item.postalCode }}
               </span>
             </p>
 
             <p class="text-sm text-gray-400">
-              <span v-if="isCorporateAddresses">{{ itemData.item.postalCode }}</span>
-              <span v-else-if="!!itemData.item.phone">
+              <span v-if="!isCorporateAddresses && !!itemData.item.phone">
                 <span class="font-semibold">{{ $t("common.labels.phone") }}: </span>
                 {{ itemData.item.phone }}
               </span>
@@ -110,7 +113,10 @@
         <tr v-for="(address, index) in paginatedAddresses" :key="address.id" :class="{ 'bg-gray-50': index % 2 }">
           <td class="truncate p-5">
             <span v-if="isCorporateAddresses">
-              {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
+              {{ address.line1 }}<br />
+              <template v-if="address.line2">{{ address.line2 }}<br /></template>
+              {{ address.city }},
+              <template v-if="address.regionId">{{ address.regionId }}, </template>
               {{ address.postalCode }}
             </span>
             <span v-else> {{ address.firstName }} {{ address.lastName }} </span>
@@ -121,18 +127,16 @@
               {{ isMemberAddressType(address) ? address.description : "" }}
             </span>
             <span v-else>
-              {{ address.countryCode }} {{ address.regionName }} {{ address.city }} {{ address.line1 }}
+              {{ address.line1 }}<br />
+              <template v-if="address.line2">{{ address.line2 }}<br /></template>
+              {{ address.city }},
+              <template v-if="address.regionId">, {{ address.regionId }}</template>
               {{ address.postalCode }}
             </span>
           </td>
 
-          <td class="truncate p-5">
-            <span v-if="isCorporateAddresses">
-              {{ address.postalCode }}
-            </span>
-            <span v-else>
-              {{ address.phone }}
-            </span>
+          <td v-if="!isCorporateAddresses" class="truncate p-5">
+            {{ address.phone }}
           </td>
 
           <td class="truncate p-5">
@@ -231,7 +235,6 @@ const columns = computed<ITableColumn[]>(() =>
     ? [
         { id: "name", title: t("common.labels.address") },
         { id: "description", title: t("common.labels.description") },
-        { id: "postalCode", title: t("common.labels.zip_or_postal_code") },
         { id: "countryName", title: t("common.labels.country") },
         { id: "id", title: t("common.labels.active_address"), align: "center" },
       ]
