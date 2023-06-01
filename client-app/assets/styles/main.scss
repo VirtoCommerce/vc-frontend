@@ -7,7 +7,11 @@
 
 @layer base {
   body {
-    color: var(--color-body-text);
+    @apply text-[--color-body-text];
+
+    @media print {
+      @apply min-w-[1024px] w-full;
+    }
   }
 }
 
