@@ -1,5 +1,7 @@
+#import "../../../fragments/cartFields.graphql"
+
 mutation AddGiftItems($command: InputAddGiftItemsType!) {
   addGiftItems(command: $command) {
-    name
+    ...cartFields
   }
 }

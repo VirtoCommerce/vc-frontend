@@ -75,64 +75,67 @@ export default function useCart() {
   const notifications = useNotifications();
   const { openPopup } = usePopup();
 
-  async function fetchCart(): Promise<CartType> {
+  async function fetchCart(): Promise<void> {
     loading.value = true;
 
     try {
       cart.value = await getMyCart();
     } catch (e) {
       Logger.error(`${useCart.name}.${fetchCart.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
     }
 
-    return cart.value;
+    loading.value = false;
   }
 
-  async function addToCart(productId: string, qty: number) {
+  async function removeCart(
+    cartId: string,
+    option: {
+      /** @default true */
+      reloadCart?: boolean;
+    } = {}
+  ): Promise<boolean> {
+    const { reloadCart = true } = option;
+    let result = false;
+
     loading.value = true;
 
     try {
-      await addItemToCart(productId, qty);
-    } catch (e) {
-      Logger.error(`${useCart.name}.${addToCart.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-
-    await fetchCart();
-  }
-
-  async function removeCart(cartId: string) {
-    loading.value = true;
-
-    try {
-      await _removeCart(cartId);
+      result = await _removeCart(cartId);
     } catch (e) {
       Logger.error(`${useCart.name}.${removeCart.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
     }
 
-    await fetchCart();
+    loading.value = false;
+
+    if (reloadCart) {
+      await fetchCart();
+    }
+
+    return result;
+  }
+
+  async function addToCart(productId: string, qty: number): Promise<void> {
+    loading.value = true;
+
+    try {
+      cart.value = await addItemToCart(productId, qty);
+    } catch (e) {
+      Logger.error(`${useCart.name}.${addToCart.name}`, e);
+    }
+
+    loading.value = false;
   }
 
   async function addItemsToCart(items: InputNewCartItemType[]): Promise<void> {
     loading.value = true;
 
     try {
-      await addItemsCart(items);
+      cart.value = await addItemsCart(items);
     } catch (e) {
       Logger.error(`${useCart.name}.${addItemsToCart.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
     }
 
-    await fetchCart();
+    loading.value = false;
   }
 
   async function addBulkItemsToCart(items: InputNewBulkItemType[]): Promise<OutputBulkItemType[]> {
@@ -141,8 +144,11 @@ export default function useCart() {
     loading.value = true;
 
     try {
-      const { errors } = await addBulkItemsCart(items);
-      const errorsGroupBySKU = getLineItemValidationErrorsGroupedBySKU(errors);
+      const data = await addBulkItemsCart(items);
+
+      cart.value = data.cart;
+
+      const errorsGroupBySKU = getLineItemValidationErrorsGroupedBySKU(data.errors);
 
       result = items.map<OutputBulkItemType>(({ productSku, quantity }) => ({
         productSku,
@@ -151,169 +157,166 @@ export default function useCart() {
       }));
     } catch (e) {
       Logger.error(`${useCart.name}.${addBulkItemsToCart.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
     }
 
-    await fetchCart();
+    loading.value = false;
 
     return result;
   }
 
-  async function changeItemQuantity(lineItemId: string, qty: number) {
+  async function removeItem(lineItemId: string): Promise<void> {
     loading.value = true;
 
     try {
-      await changeCartItemQuantity(lineItemId, qty);
+      cart.value = await removeCartItem(lineItemId);
+    } catch (e) {
+      Logger.error(`${useCart.name}.${removeItem.name}`, e);
+    }
+
+    loading.value = false;
+  }
+
+  async function changeItemQuantity(lineItemId: string, qty: number): Promise<void> {
+    loading.value = true;
+
+    try {
+      cart.value = await changeCartItemQuantity(lineItemId, qty);
     } catch (e) {
       Logger.error(`${useCart.name}.${changeItemQuantity.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
     }
 
-    await fetchCart();
+    loading.value = false;
   }
 
-  async function removeItem(lineItemId: string) {
+  async function validateCartCoupon(couponCode: string): Promise<boolean> {
+    let result = false;
+
     loading.value = true;
 
     try {
-      await removeCartItem(lineItemId);
-    } catch (e) {
-      Logger.error(`${useCart.name}.${removeItem}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-
-    await fetchCart();
-  }
-
-  async function validateCartCoupon(couponCode: string) {
-    loading.value = true;
-
-    try {
-      return await validateCoupon(couponCode);
+      result = await validateCoupon(couponCode);
     } catch (e) {
       Logger.error(`${useCart.name}.${validateCartCoupon.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
     }
+
+    loading.value = false;
+
+    return result;
   }
 
-  async function addCartCoupon(couponCode: string) {
+  async function addCartCoupon(couponCode: string): Promise<void> {
     loading.value = true;
 
     try {
-      await addCoupon(couponCode);
+      cart.value = await addCoupon(couponCode);
     } catch (e) {
       Logger.error(`${useCart.name}.${addCartCoupon.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
     }
 
-    await fetchCart();
+    loading.value = false;
   }
 
-  async function updatePurchaseOrderNumber(purchaseOrderNumber: string) {
+  async function removeCartCoupon(couponCode: string): Promise<void> {
     loading.value = true;
 
     try {
-      await changePurchaseOrderNumber(purchaseOrderNumber);
-    } catch (e) {
-      Logger.error(`${useCart.name}.${updatePurchaseOrderNumber.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-
-    await fetchCart();
-  }
-
-  async function removeCartCoupon(couponCode: string) {
-    loading.value = true;
-
-    try {
-      await removeCoupon(couponCode);
+      cart.value = await removeCoupon(couponCode);
     } catch (e) {
       Logger.error(`${useCart.name}.${removeCartCoupon.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
     }
 
-    await fetchCart();
+    loading.value = false;
   }
 
-  async function changeComment(comment: string, reloadCart = true) {
+  async function changeComment(comment: string): Promise<void> {
     loading.value = true;
 
     try {
-      await changeCartComment(comment);
+      cart.value = await changeCartComment(comment);
     } catch (e) {
       Logger.error(`${useCart.name}.${changeComment.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
     }
 
-    if (reloadCart) {
-      await fetchCart();
-    }
+    loading.value = false;
   }
 
-  async function updateShipment(newShipment: InputShipmentType, reloadCart = true) {
+  async function updatePurchaseOrderNumber(purchaseOrderNumber: string): Promise<void> {
     loading.value = true;
 
     try {
-      await addOrUpdateCartShipment(newShipment, cart.value.id);
+      cart.value = await changePurchaseOrderNumber(purchaseOrderNumber);
+    } catch (e) {
+      Logger.error(`${useCart.name}.${updatePurchaseOrderNumber.name}`, e);
+    }
+
+    loading.value = false;
+  }
+
+  async function updateShipment(newShipment: InputShipmentType): Promise<void> {
+    loading.value = true;
+
+    try {
+      cart.value = await addOrUpdateCartShipment(newShipment, cart.value.id);
     } catch (e) {
       Logger.error(`${useCart.name}.${updateShipment.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
     }
 
-    if (reloadCart) {
-      await fetchCart();
-    }
+    loading.value = false;
   }
 
-  async function removeShipment(shipmentId: string, reloadCart = true) {
+  async function removeShipment(shipmentId: string): Promise<void> {
     loading.value = true;
 
     try {
-      await _removeShipment(shipmentId, cart.value.id);
+      cart.value = await _removeShipment(shipmentId, cart.value.id);
     } catch (e) {
       Logger.error(`${useCart.name}.${removeShipment.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
     }
 
-    if (reloadCart) {
-      await fetchCart();
-    }
+    loading.value = false;
   }
 
-  async function updatePayment(newPayment: InputPaymentType, reloadCart = true) {
+  async function updatePayment(newPayment: InputPaymentType): Promise<void> {
     loading.value = true;
 
     try {
-      await addOrUpdateCartPayment(newPayment, cart.value.id);
+      cart.value = await addOrUpdateCartPayment(newPayment, cart.value.id);
     } catch (e) {
       Logger.error(`${useCart.name}.${updatePayment.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
     }
 
-    if (reloadCart) {
-      await fetchCart();
+    loading.value = false;
+  }
+
+  async function addGiftsToCart(giftIds: string[]): Promise<void> {
+    loading.value = true;
+
+    try {
+      cart.value = await addGiftItems(giftIds);
+    } catch (e) {
+      Logger.error(`${useCart.name}.${addGiftsToCart.name}`, e);
+    }
+
+    loading.value = false;
+  }
+
+  async function removeGiftsFromCart(giftLineItemIds: string[]): Promise<void> {
+    loading.value = true;
+
+    try {
+      cart.value = await rejectGiftItems(giftLineItemIds);
+    } catch (e) {
+      Logger.error(`${useCart.name}.${removeGiftsFromCart.name}`, e);
+    }
+
+    loading.value = false;
+  }
+
+  async function toggleGift(gift: ExtendedGiftItemType): Promise<void> {
+    if (gift.isAddedInCart) {
+      await removeGiftsFromCart([gift.lineItemId!]);
+    } else {
+      await addGiftsToCart([gift.id]);
     }
   }
 
@@ -339,44 +342,6 @@ export default function useCart() {
     loading.value = false;
 
     return quote;
-  }
-
-  async function addGiftsToCart(giftIds: string[]) {
-    loading.value = true;
-
-    try {
-      await addGiftItems(giftIds);
-    } catch (e) {
-      Logger.error(`${useCart.name}.${addGiftsToCart.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-
-    await fetchCart();
-  }
-
-  async function removeGiftsFromCart(giftLineItemIds: string[]) {
-    loading.value = true;
-
-    try {
-      await rejectGiftItems(giftLineItemIds);
-    } catch (e) {
-      Logger.error(`${useCart.name}.${removeGiftsFromCart.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-
-    await fetchCart();
-  }
-
-  async function toggleGift(gift: ExtendedGiftItemType) {
-    if (gift.isAddedInCart) {
-      await removeGiftsFromCart([gift.lineItemId!]);
-    } else {
-      await addGiftsToCart([gift.id]);
-    }
   }
 
   function openClearCartModal() {

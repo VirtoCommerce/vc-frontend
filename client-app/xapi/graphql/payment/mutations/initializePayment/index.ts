@@ -6,9 +6,7 @@ import type {
   MutationsInitializePaymentArgs,
 } from "@/xapi/types";
 
-export default async function initializePayment(
-  payload: InputInitializePaymentType
-): Promise<InitializePaymentResultType> {
+export async function initializePayment(payload: InputInitializePaymentType): Promise<InitializePaymentResultType> {
   const { $graphqlClient } = useNuxtApp();
 
   const { data } = await $graphqlClient.mutate<
