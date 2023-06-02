@@ -356,7 +356,7 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const { catalogId } = globals;
+const { catalogId, currencyCode } = globals;
 
 const { themeContext } = useThemeContext();
 const { openPopup } = usePopup();
@@ -701,7 +701,7 @@ watch(
         ? undefined
         : [
             getFilterExpressionForCategorySubtree({ catalogId, categoryId }),
-            getFilterExpressionForZeroPrice(!!zero_price_product_enabled),
+            getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode),
             getFilterExpressionForInStock(true),
           ]
             .filter(Boolean)

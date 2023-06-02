@@ -32,7 +32,7 @@ export default async function searchProducts(
 
   const filterString = [
     getFilterExpressionForCategorySubtree({ catalogId, categoryId }),
-    getFilterExpressionForZeroPrice(withZeroPrice),
+    getFilterExpressionForZeroPrice(withZeroPrice, currencyCode),
     filter,
   ]
     .filter(Boolean)
