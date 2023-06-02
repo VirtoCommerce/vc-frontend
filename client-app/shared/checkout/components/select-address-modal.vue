@@ -130,7 +130,7 @@
               {{ address.line1 }}<br />
               <template v-if="address.line2">{{ address.line2 }}<br /></template>
               {{ address.city }},
-              <template v-if="address.regionId">, {{ address.regionId }}</template>
+              <template v-if="address.regionId">{{ address.regionId }}, </template>
               {{ address.postalCode }}
             </span>
           </td>
