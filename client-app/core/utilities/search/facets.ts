@@ -13,8 +13,10 @@ export function getFilterExpressionForCategorySubtree(payload: { catalogId: stri
   return `category.subtree:${payload.catalogId}${payload.categoryId ? "/" + payload.categoryId : ""}`;
 }
 
-export function getFilterExpressionForZeroPrice(value: MaybeRef<boolean>): string {
-  return unref(value) ? "" : "price:(0 TO)";
+export function getFilterExpressionForZeroPrice(value: MaybeRef<boolean>, currencyCode?: string): string {
+  const priceFilterExpression = currencyCode ? `price.${currencyCode}:(0 TO)` : "price:(0 TO)";
+
+  return unref(value) ? "" : priceFilterExpression;
 }
 
 export function getFilterExpressionForInStock(value: MaybeRef<boolean>): string {

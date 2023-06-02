@@ -96,13 +96,13 @@ export function useNavigations() {
         );
       } else {
         // Use the query `childCategories`, with `maxLevel` equal to 2
-        const { catalogId } = globals;
+        const { catalogId, currencyCode } = globals;
 
         const productFilter = catalog_empty_categories_enabled
           ? undefined
           : [
               getFilterExpressionForCategorySubtree({ catalogId }),
-              getFilterExpressionForZeroPrice(!!zero_price_product_enabled),
+              getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode),
               getFilterExpressionForInStock(true),
             ]
               .filter(Boolean)
