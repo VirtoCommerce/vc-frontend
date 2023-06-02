@@ -14,7 +14,9 @@ export function getFilterExpressionForCategorySubtree(payload: { catalogId: stri
 }
 
 export function getFilterExpressionForZeroPrice(value: MaybeRef<boolean>, currencyCode?: string): string {
-  return unref(value) ? "" : currencyCode ? `price.${currencyCode}:(0 TO)` : "price:(0 TO)";
+  const priceFilterExpression = currencyCode ? `price.${currencyCode}:(0 TO)` : "price:(0 TO)";
+
+  return unref(value) ? "" : priceFilterExpression;
 }
 
 export function getFilterExpressionForInStock(value: MaybeRef<boolean>): string {
