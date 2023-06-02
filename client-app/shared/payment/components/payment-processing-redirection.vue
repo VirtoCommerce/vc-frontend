@@ -27,8 +27,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { PaymentActionType } from "@/shared/payment";
-import { initializePayment } from "@/xapi/graphql/cart";
+import { initializePayment } from "@/xapi";
+import { PaymentActionType } from "../types";
 import type { CustomerOrderType } from "@/xapi/types";
 
 interface IProps {
