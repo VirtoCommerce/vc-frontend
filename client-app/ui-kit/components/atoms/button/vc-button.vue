@@ -14,6 +14,7 @@
         'vc-button--disabled': !enabled,
         'vc-button--loading': loading,
         'vc-button--truncate': truncate,
+        'vc-button--full-width': fullWidth,
       },
     ]"
     @click="enabled ? $emit('click', $event) : null"
@@ -63,6 +64,7 @@ interface IProps {
   icon?: string;
   title?: string;
   truncate?: boolean;
+  fullWidth?: boolean;
 }
 
 defineEmits<IEmits>();
@@ -122,6 +124,10 @@ const iconSize = eagerComputed(() => {
 
   &--icon {
     $icon: &;
+  }
+
+  &--full-width {
+    @apply w-full;
   }
 
   &__loader {

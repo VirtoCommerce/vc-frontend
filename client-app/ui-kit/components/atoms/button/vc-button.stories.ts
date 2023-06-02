@@ -59,7 +59,7 @@ Outline.args = {
 export const Truncate: StoryFn<typeof VcButton> = (args) => ({
   components: { VcButton },
   setup: () => ({ args }),
-  template: '<VcButton class="w-32" v-bind="args">Long long button text</VcButton>',
+  template: '<VcButton class="w-48" v-bind="args">Long long button text</VcButton>',
 });
 Truncate.args = {
   truncate: true,
