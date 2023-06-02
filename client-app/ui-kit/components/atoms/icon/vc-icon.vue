@@ -1,24 +1,27 @@
 <template>
-  <svg :class="[`vc-icon`, `vc-icon--size--${size}`]">
+  <svg :class="[`vc-icon`, typeof size === 'string' ? `vc-icon--size--${size}` : '']" :style="style">
     <use :href="`/static/icons/basic/${name}.svg#icon`"></use>
   </svg>
 </template>
 
 <script setup lang="ts">
-import type { PropType } from "vue";
+interface IProps {
+  name?: string;
+  size?: "xxs" | "xs" | "sm" | "md" | number;
+}
 
-defineProps({
-  name: {
-    type: String,
-    default: "document-text",
-  },
-
-  size: {
-    type: String as PropType<"xxs" | "xs" | "sm" | "md">,
-    default: "md",
-    validator: (value: string) => !value || ["xxs", "xs", "sm", "md"].includes(value),
-  },
+const props = withDefaults(defineProps<IProps>(), {
+  name: "document-text",
+  size: "md",
 });
+
+const style =
+  typeof props.size === "number"
+    ? {
+        width: `${props.size}px`,
+        height: `${props.size}px`,
+      }
+    : {};
 </script>
 
 <style lang="scss">
