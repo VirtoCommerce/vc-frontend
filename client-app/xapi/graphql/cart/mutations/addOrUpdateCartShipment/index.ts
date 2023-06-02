@@ -1,12 +1,12 @@
 import globals from "@/core/globals";
 import mutationDocument from "./addOrUpdateCartShipmentMutation.graphql";
-import type { InputShipmentType, Mutations, MutationsAddOrUpdateCartShipmentArgs } from "@/xapi/types";
+import type { CartType, InputShipmentType, Mutations, MutationsAddOrUpdateCartShipmentArgs } from "@/xapi/types";
 
-export default async function addOrUpdateCartShipment(shipment: InputShipmentType, cartId?: string): Promise<void> {
+export default async function addOrUpdateCartShipment(shipment: InputShipmentType, cartId?: string): Promise<CartType> {
   const { storeId, userId, cultureName, currencyCode } = globals;
   const { $graphqlClient } = useNuxtApp();
 
-  await $graphqlClient.mutate<
+  const { data } = await $graphqlClient.mutate<
     Required<Pick<Mutations, "addOrUpdateCartShipment">>,
     MutationsAddOrUpdateCartShipmentArgs
   >({
@@ -22,4 +22,6 @@ export default async function addOrUpdateCartShipment(shipment: InputShipmentTyp
       },
     },
   });
+
+  return data!.addOrUpdateCartShipment;
 }

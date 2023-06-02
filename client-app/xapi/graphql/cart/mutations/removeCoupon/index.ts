@@ -1,12 +1,12 @@
 import globals from "@/core/globals";
 import mutationDocument from "./removeCouponMutation.graphql";
-import type { Mutations, MutationsRemoveCouponArgs } from "@/xapi/types";
+import type { CartType, Mutations, MutationsRemoveCouponArgs } from "@/xapi/types";
 
-export default async function removeCoupon(couponCode: string): Promise<void> {
+export default async function removeCoupon(couponCode: string): Promise<CartType> {
   const { storeId, userId, cultureName, currencyCode } = globals;
   const { $graphqlClient } = useNuxtApp();
 
-  await $graphqlClient.mutate<Required<Pick<Mutations, "removeCoupon">>, MutationsRemoveCouponArgs>({
+  const { data } = await $graphqlClient.mutate<Required<Pick<Mutations, "removeCoupon">>, MutationsRemoveCouponArgs>({
     mutation: mutationDocument,
     variables: {
       command: {
@@ -18,4 +18,6 @@ export default async function removeCoupon(couponCode: string): Promise<void> {
       },
     },
   });
+
+  return data!.removeCoupon;
 }

@@ -1,5 +1,7 @@
+#import "../../../fragments/cartFields.graphql"
+
 mutation RemoveShipment($command: InputRemoveShipmentType!) {
   removeShipment(command: $command) {
-    name
+    ...cartFields
   }
 }
