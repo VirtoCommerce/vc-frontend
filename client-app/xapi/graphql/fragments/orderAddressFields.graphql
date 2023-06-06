@@ -12,7 +12,6 @@ fragment orderAddressFields on OrderAddressType {
   regionId
   regionName
   postalCode
-  zip # deprecated
   phone
   email
   addressType

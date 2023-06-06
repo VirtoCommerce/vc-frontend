@@ -18,7 +18,7 @@ import {
   changeCartItemQuantity,
   changePurchaseOrderNumber,
   createQuoteFromCart as _createQuoteFromCart,
-  getMyCart,
+  getCart,
   rejectGiftItems,
   removeCart as _removeCart,
   removeCartItem,
@@ -30,6 +30,7 @@ import { ClearCartModal } from "../components";
 import { getLineItemValidationErrorsGroupedBySKU } from "../utils";
 import type { LineItemsGroupByVendorType } from "@/core/types";
 import type { ExtendedGiftItemType, OutputBulkItemType } from "@/shared/cart";
+import type { ChangeCartItemQuantityOptionsType } from "@/xapi";
 import type {
   CartType,
   InputNewBulkItemType,
@@ -45,56 +46,70 @@ import type {
 } from "@/xapi/types";
 
 const loading = ref(false);
-const cart = shallowRef<CartType>({ name: "" });
+const cart = shallowRef<CartType>();
 
-const shipment = computed<ShipmentType | undefined>(() => cart.value.shipments?.[0]);
-const payment = computed<PaymentType | undefined>(() => cart.value.payments?.[0]);
+const shipment = computed<ShipmentType | undefined>(() => cart.value?.shipments?.[0]);
+const payment = computed<PaymentType | undefined>(() => cart.value?.payments?.[0]);
 
-const availableShippingMethods = computed<ShippingMethodType[]>(() => cart.value.availableShippingMethods ?? []);
-const availablePaymentMethods = computed<PaymentMethodType[]>(() => cart.value.availablePaymentMethods ?? []);
+const availableShippingMethods = computed<ShippingMethodType[]>(() => cart.value?.availableShippingMethods ?? []);
+const availablePaymentMethods = computed<PaymentMethodType[]>(() => cart.value?.availablePaymentMethods ?? []);
 
 const lineItemsGroupedByVendor = computed<LineItemsGroupByVendorType<LineItemType>[]>(() =>
-  getLineItemsGroupedByVendor(cart.value.items ?? [])
+  getLineItemsGroupedByVendor(cart.value?.items ?? [])
 );
 
 const allItemsAreDigital = computed<boolean>(
   () => !!cart.value?.items?.every((item) => item.productType === ProductType.Digital)
 );
 
-const addedGiftsByIds = computed(() => keyBy(cart.value.gifts, "id"));
+const addedGiftsByIds = computed(() => keyBy(cart.value?.gifts, "id"));
 
 const availableExtendedGifts = computed<ExtendedGiftItemType[]>(() =>
-  (cart.value.availableGifts || []).map((gift) => ({ ...gift, isAddedInCart: !!addedGiftsByIds.value[gift.id] }))
+  (cart.value?.availableGifts || []).map((gift) => ({ ...gift, isAddedInCart: !!addedGiftsByIds.value[gift.id] }))
 );
 
 const hasValidationErrors = computedEager<boolean>(
-  () => !!cart.value.validationErrors?.length || !!cart.value.items?.some((item) => item.validationErrors?.length)
+  () => !!cart.value?.validationErrors?.length || !!cart.value?.items?.some((item) => item.validationErrors?.length)
 );
 
 export default function useCart() {
   const notifications = useNotifications();
   const { openPopup } = usePopup();
 
-  async function fetchCart(): Promise<void> {
+  async function fetchShortCart(): Promise<void> {
     loading.value = true;
 
     try {
-      cart.value = await getMyCart();
+      cart.value = await getCart();
     } catch (e) {
-      Logger.error(`${useCart.name}.${fetchCart.name}`, e);
+      Logger.error(`${useCart.name}.${fetchShortCart.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
     }
+  }
 
-    loading.value = false;
+  async function fetchFullCart(): Promise<void> {
+    loading.value = true;
+
+    try {
+      cart.value = await getCart({ full: true });
+    } catch (e) {
+      Logger.error(`${useCart.name}.${fetchFullCart.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
   }
 
   async function removeCart(
     cartId: string,
-    option: {
+    options: {
       /** @default true */
       reloadCart?: boolean;
     } = {}
   ): Promise<boolean> {
-    const { reloadCart = true } = option;
+    const { reloadCart = true } = options;
     let result = false;
 
     loading.value = true;
@@ -103,12 +118,13 @@ export default function useCart() {
       result = await _removeCart(cartId);
     } catch (e) {
       Logger.error(`${useCart.name}.${removeCart.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
     }
 
-    loading.value = false;
-
     if (reloadCart) {
-      await fetchCart();
+      await fetchFullCart();
     }
 
     return result;
@@ -121,9 +137,10 @@ export default function useCart() {
       cart.value = await addItemToCart(productId, qty);
     } catch (e) {
       Logger.error(`${useCart.name}.${addToCart.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
     }
-
-    loading.value = false;
   }
 
   async function addItemsToCart(items: InputNewCartItemType[]): Promise<void> {
@@ -133,14 +150,13 @@ export default function useCart() {
       cart.value = await addItemsCart(items);
     } catch (e) {
       Logger.error(`${useCart.name}.${addItemsToCart.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
     }
-
-    loading.value = false;
   }
 
   async function addBulkItemsToCart(items: InputNewBulkItemType[]): Promise<OutputBulkItemType[]> {
-    let result: OutputBulkItemType[] = [];
-
     loading.value = true;
 
     try {
@@ -150,18 +166,17 @@ export default function useCart() {
 
       const errorsGroupBySKU = getLineItemValidationErrorsGroupedBySKU(data.errors);
 
-      result = items.map<OutputBulkItemType>(({ productSku, quantity }) => ({
+      return items.map<OutputBulkItemType>(({ productSku, quantity }) => ({
         productSku,
         quantity,
         errors: errorsGroupBySKU[productSku],
       }));
     } catch (e) {
       Logger.error(`${useCart.name}.${addBulkItemsToCart.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
     }
-
-    loading.value = false;
-
-    return result;
   }
 
   async function removeItem(lineItemId: string): Promise<void> {
@@ -171,37 +186,40 @@ export default function useCart() {
       cart.value = await removeCartItem(lineItemId);
     } catch (e) {
       Logger.error(`${useCart.name}.${removeItem.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
     }
-
-    loading.value = false;
   }
 
-  async function changeItemQuantity(lineItemId: string, qty: number): Promise<void> {
+  async function changeItemQuantity(
+    lineItemId: string,
+    qty: number,
+    options: ChangeCartItemQuantityOptionsType = {}
+  ): Promise<void> {
     loading.value = true;
 
     try {
-      cart.value = await changeCartItemQuantity(lineItemId, qty);
+      cart.value = await changeCartItemQuantity(lineItemId, qty, options);
     } catch (e) {
       Logger.error(`${useCart.name}.${changeItemQuantity.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
     }
-
-    loading.value = false;
   }
 
   async function validateCartCoupon(couponCode: string): Promise<boolean> {
-    let result = false;
-
     loading.value = true;
 
     try {
-      result = await validateCoupon(couponCode);
+      return await validateCoupon(couponCode);
     } catch (e) {
       Logger.error(`${useCart.name}.${validateCartCoupon.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
     }
-
-    loading.value = false;
-
-    return result;
   }
 
   async function addCartCoupon(couponCode: string): Promise<void> {
@@ -211,9 +229,10 @@ export default function useCart() {
       cart.value = await addCoupon(couponCode);
     } catch (e) {
       Logger.error(`${useCart.name}.${addCartCoupon.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
     }
-
-    loading.value = false;
   }
 
   async function removeCartCoupon(couponCode: string): Promise<void> {
@@ -223,9 +242,10 @@ export default function useCart() {
       cart.value = await removeCoupon(couponCode);
     } catch (e) {
       Logger.error(`${useCart.name}.${removeCartCoupon.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
     }
-
-    loading.value = false;
   }
 
   async function changeComment(comment: string): Promise<void> {
@@ -235,9 +255,10 @@ export default function useCart() {
       cart.value = await changeCartComment(comment);
     } catch (e) {
       Logger.error(`${useCart.name}.${changeComment.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
     }
-
-    loading.value = false;
   }
 
   async function updatePurchaseOrderNumber(purchaseOrderNumber: string): Promise<void> {
@@ -247,45 +268,49 @@ export default function useCart() {
       cart.value = await changePurchaseOrderNumber(purchaseOrderNumber);
     } catch (e) {
       Logger.error(`${useCart.name}.${updatePurchaseOrderNumber.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
     }
-
-    loading.value = false;
   }
 
   async function updateShipment(newShipment: InputShipmentType): Promise<void> {
     loading.value = true;
 
     try {
-      cart.value = await addOrUpdateCartShipment(newShipment, cart.value.id);
+      cart.value = await addOrUpdateCartShipment(newShipment, cart.value?.id);
     } catch (e) {
       Logger.error(`${useCart.name}.${updateShipment.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
     }
-
-    loading.value = false;
   }
 
   async function removeShipment(shipmentId: string): Promise<void> {
     loading.value = true;
 
     try {
-      cart.value = await _removeShipment(shipmentId, cart.value.id);
+      cart.value = await _removeShipment(shipmentId, cart.value?.id);
     } catch (e) {
       Logger.error(`${useCart.name}.${removeShipment.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
     }
-
-    loading.value = false;
   }
 
   async function updatePayment(newPayment: InputPaymentType): Promise<void> {
     loading.value = true;
 
     try {
-      cart.value = await addOrUpdateCartPayment(newPayment, cart.value.id);
+      cart.value = await addOrUpdateCartPayment(newPayment, cart.value?.id);
     } catch (e) {
       Logger.error(`${useCart.name}.${updatePayment.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
     }
-
-    loading.value = false;
   }
 
   async function addGiftsToCart(giftIds: string[]): Promise<void> {
@@ -295,9 +320,10 @@ export default function useCart() {
       cart.value = await addGiftItems(giftIds);
     } catch (e) {
       Logger.error(`${useCart.name}.${addGiftsToCart.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
     }
-
-    loading.value = false;
   }
 
   async function removeGiftsFromCart(giftLineItemIds: string[]): Promise<void> {
@@ -307,9 +333,10 @@ export default function useCart() {
       cart.value = await rejectGiftItems(giftLineItemIds);
     } catch (e) {
       Logger.error(`${useCart.name}.${removeGiftsFromCart.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
     }
-
-    loading.value = false;
   }
 
   async function toggleGift(gift: ExtendedGiftItemType): Promise<void> {
@@ -326,7 +353,7 @@ export default function useCart() {
     loading.value = true;
 
     try {
-      quote = await _createQuoteFromCart(cart.value.id!, comment);
+      quote = await _createQuoteFromCart(cart.value!.id!, comment);
     } catch (e) {
       Logger.error(`${useCart.name}.${createQuoteFromCart.name}`, e);
     }
@@ -349,7 +376,7 @@ export default function useCart() {
       component: ClearCartModal,
       props: {
         async onResult() {
-          await removeCart(cart.value.id!);
+          await removeCart(cart.value!.id!);
         },
       },
     });
@@ -361,7 +388,7 @@ export default function useCart() {
       return 0;
     }
 
-    const filteredItems = cart.value.items.filter((item) => !!item.productId && productIds.includes(item.productId));
+    const filteredItems = cart.value.items.filter((item) => productIds.includes(item.productId!));
 
     return sumBy(filteredItems, (x) => x.extendedPrice?.amount);
   }
@@ -377,7 +404,8 @@ export default function useCart() {
     availableExtendedGifts,
     hasValidationErrors,
     getItemsTotal,
-    fetchCart,
+    fetchShortCart,
+    fetchFullCart,
     addToCart,
     addItemsToCart,
     addBulkItemsToCart,

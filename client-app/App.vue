@@ -23,6 +23,7 @@ import { NotificationsHost } from "@/shared/notification";
 import { PopupHost } from "@/shared/popup";
 import { MainLayout, SecureLayout, useSearchBar } from "./shared/layout";
 import type { Component } from "vue";
+import type { RouteRecordName } from "vue-router";
 
 /** NOTE: As an example, here is the code for getting the settings from Liquid work context. */
 const _props = withDefaults(defineProps<{ settings?: string }>(), { settings: "{}" });
@@ -32,7 +33,7 @@ const route = useRoute();
 const router = useRouter();
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
 const { fetchMenus } = useNavigations();
-const { fetchCart } = useCart();
+const { fetchShortCart } = useCart();
 
 const layouts: Record<NonNullable<typeof route.meta.layout>, Component> = {
   Main: markRaw(MainLayout),
@@ -52,7 +53,15 @@ router.beforeEach((to) => {
 });
 
 fetchMenus();
-fetchCart();
+
+/**
+ * NOTE: Load the short shopping cart.
+ * Except for pages that load a full cart.
+ */
+const pagesWithFullCartLoad: RouteRecordName[] = ["Cart", "CheckoutDefaults"];
+if (!pagesWithFullCartLoad.includes(route.name!)) {
+  fetchShortCart();
+}
 </script>
 
 <style lang="scss">

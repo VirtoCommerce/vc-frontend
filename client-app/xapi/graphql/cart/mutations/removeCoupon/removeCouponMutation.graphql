@@ -1,7 +1,7 @@
-#import "../../../fragments/cartFields.graphql"
+#import "../../../fragments/fullCartFields.graphql"
 
 mutation RemoveCoupon($command: InputRemoveCouponType!) {
   removeCoupon(command: $command) {
-    ...cartFields
+    ...fullCartFields
   }
 }
