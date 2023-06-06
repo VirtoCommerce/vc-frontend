@@ -12,11 +12,9 @@
       shadow
     >
       <template #header-button>
-        <div v-if="isMobile">
-          <VcButton :to="{ name: 'Orders' }" class="px-2 text-sm uppercase" is-outline>
-            {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
-          </VcButton>
-        </div>
+        <VcButton v-if="isMobile" :route="{ name: 'Orders' }" variant="outline" size="xs">
+          {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
+        </VcButton>
 
         <div v-else class="flex items-center">
           <router-link :to="{ name: 'Orders' }" class="text-xs font-bold text-blue-500 hover:text-blue-700">

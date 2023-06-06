@@ -12,15 +12,14 @@
 
       <div class="flex flex-wrap gap-3">
         <!-- US-3534 -->
-        <!-- <VcButton class="uppercase px-3 min-w-[8.5rem]" is-outline>
-          <VcIcon size="sm" name="printer" class="mr-2" />
-          <span>{{ $t("common.buttons.print_order") }}</span>
+        <!-- <VcButton class="min-w-[8.5rem]" variant="outline" prepend-icon="printer">
+          {{ $t("common.buttons.print_order") }}
         </VcButton> -->
 
         <VcButton
           v-if="showReorderButton"
-          :is-waiting="loadingAddItemsToCart"
-          class="min-w-[8.5rem] px-3 uppercase"
+          :loading="loadingAddItemsToCart"
+          class="min-w-[8.5rem]"
           @click="reorderItems"
         >
           {{ $t("common.buttons.reorder_all") }}
@@ -73,7 +72,8 @@
           <template #footer>
             <VcButton
               v-if="showPaymentButton"
-              class="mt-4 w-full uppercase"
+              class="mt-4"
+              full-width
               @click="$router.push({ name: 'OrderPayment', params: { orderId } })"
             >
               {{ $t("common.buttons.pay_now") }}

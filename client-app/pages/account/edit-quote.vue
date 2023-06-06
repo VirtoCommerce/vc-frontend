@@ -48,19 +48,18 @@
           </VcAlert>
 
           <div class="flex justify-end">
-            <button
+            <VcButton
               :disabled="fetching"
-              type="button"
-              class="flex h-9 w-9 shrink-0 items-center justify-center rounded border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white"
               :title="$t('common.buttons.edit')"
+              icon="pencil"
+              size="sm"
+              variant="outline"
               @click="
                 userHasAddresses
                   ? openAddressSelectionDialog(AddressType.Shipping)
                   : openAddOrUpdateAddressDialog(AddressType.Shipping, shippingAddress)
               "
-            >
-              <i class="fas fa-pencil-alt text-18" />
-            </button>
+            />
           </div>
         </div>
       </VcSectionWidget>
@@ -91,19 +90,18 @@
             </VcAlert>
 
             <div class="flex justify-end">
-              <button
+              <VcButton
                 :disabled="fetching"
-                type="button"
-                class="flex h-9 w-9 shrink-0 items-center justify-center rounded border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white"
                 :title="$t('common.buttons.edit')"
+                icon="pencil"
+                size="sm"
+                variant="outline"
                 @click="
                   userHasAddresses
                     ? openAddressSelectionDialog(AddressType.Billing)
                     : openAddOrUpdateAddressDialog(AddressType.Billing, billingAddress)
                 "
-              >
-                <i class="fas fa-pencil-alt text-18" />
-              </button>
+              />
             </div>
           </div>
         </div>
@@ -111,21 +109,15 @@
 
       <div class="flex flex-wrap gap-5 px-6 py-7 lg:justify-end lg:p-0">
         <VcButton
-          :is-disabled="!quoteChanged || !quoteItemsValid || fetching"
-          size="lg"
-          class="flex-1 p-2 font-bold uppercase lg:min-w-[208px] lg:flex-none"
-          is-outline
+          :disabled="!quoteChanged || !quoteItemsValid || fetching"
+          class="flex-1 lg:min-w-[208px] lg:flex-none"
+          variant="outline"
           @click="saveChanges"
         >
           {{ $t("pages.account.quote_details.save_changes") }}
         </VcButton>
 
-        <VcButton
-          :is-disabled="!quoteValid || fetching"
-          size="lg"
-          class="flex-1 p-2 font-bold uppercase lg:min-w-[208px] lg:flex-none"
-          @click="submit"
-        >
+        <VcButton :disabled="!quoteValid || fetching" class="flex-1 lg:min-w-[208px] lg:flex-none" @click="submit">
           {{ $t("pages.account.quote_details.submit") }}
         </VcButton>
       </div>

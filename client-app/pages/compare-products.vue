@@ -9,7 +9,7 @@
       mobile-image="/static/images/errors/emptyCompareListMobile.webp"
     >
       <template #actions>
-        <VcButton :to="{ name: 'Catalog' }" size="lg" class="p-4 font-bold uppercase">
+        <VcButton :route="{ name: 'Catalog' }">
           {{ $t("pages.compare.empty_list.button_text") }}
         </VcButton>
       </template>
@@ -34,7 +34,7 @@
             {{ $t("pages.compare.header_block.differences_checkbox_label") }}
           </VcCheckbox>
 
-          <VcButton is-outline class="p-3 uppercase" @click="clearCompareList">
+          <VcButton variant="outline" @click="clearCompareList">
             {{
               isMobile
                 ? $t("pages.compare.header_block.clear_button_mobile")

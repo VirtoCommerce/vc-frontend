@@ -57,20 +57,19 @@
             <template #actions>
               <div class="hidden flex-wrap gap-x-5 gap-y-4 md:flex">
                 <VcButton
-                  :to="{ name: 'OrderDetails', params: { orderId }, replace: true }"
-                  class="px-5 uppercase"
-                  is-outline
+                  :route="{ name: 'OrderDetails', params: { orderId }, replace: true }"
+                  variant="outline"
+                  prepend-icon="chevron-left"
                 >
-                  <i class="fas fa-arrow-left -ml-1 mr-2.5" />
                   {{ $t("pages.account.order_payment.back_to_order_button") }}
                 </VcButton>
 
-                <VcButton :to="{ name: 'Orders', replace: true }" class="w-40 px-5 uppercase">
+                <VcButton :route="{ name: 'Orders', replace: true }" class="w-40">
                   {{ $t("pages.account.order_payment.orders_list_button") }}
                 </VcButton>
               </div>
 
-              <VcButton :to="{ name: 'Catalog', replace: true }" class="w-48 uppercase md:!hidden">
+              <VcButton :route="{ name: 'Catalog', replace: true }" class="w-48">
                 {{ $t("pages.account.order_payment.continue_shopping_button") }}
               </VcButton>
             </template>
@@ -93,7 +92,7 @@
             </template>
 
             <template #actions>
-              <VcButton class="w-48 uppercase" @click="tryAgain">
+              <VcButton class="w-48" @click="tryAgain">
                 {{ $t("pages.account.order_payment.try_again_button") }}
               </VcButton>
             </template>
@@ -135,11 +134,11 @@
 
                 <div class="self-start md:self-center">
                   <VcButton
-                    :is-disabled="paymentMethodComponent?.loading || loading"
-                    :is-waiting="changeAddressLoading"
+                    :disabled="paymentMethodComponent?.loading || loading"
+                    :loading="changeAddressLoading"
                     size="sm"
-                    is-outline
-                    class="!hidden self-start px-5 font-bold uppercase md:!inline-flex"
+                    variant="outline"
+                    class="!hidden self-start md:!inline-flex"
                     @click="showEditAddressDialog"
                   >
                     {{ $t("pages.account.order_payment.edit_button") }}

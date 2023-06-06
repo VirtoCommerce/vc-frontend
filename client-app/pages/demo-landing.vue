@@ -14,12 +14,12 @@
               class="mb-4 text-2xl font-bold lg:text-5xl"
             ></div>
             <div v-t="'pages.demo_landing.primary_block.secondary_text'" class="text-lg"></div>
-            <div class="mt-6 flex space-x-6 lg:mt-14">
-              <VcButton class="w-1/2 px-8 uppercase lg:w-auto">
+            <div class="mt-6 flex gap-6 lg:mt-14">
+              <VcButton class="flex-1 lg:flex-none">
                 {{ $t("pages.demo_landing.primary_block.first_button") }}
               </VcButton>
 
-              <VcButton class="w-1/2 bg-gray-900 px-8 uppercase lg:w-auto">
+              <VcButton class="flex-1 lg:flex-none">
                 {{ $t("pages.demo_landing.primary_block.second_button") }}
               </VcButton>
             </div>
@@ -82,12 +82,12 @@
             v-t="'pages.demo_landing.booking_block.message'"
             class="text-center text-2xl font-bold text-white lg:text-3xl"
           ></div>
-          <div class="flex w-full items-center justify-center space-x-6">
-            <VcButton class="w-1/2 px-2 uppercase md:w-auto md:px-8">
+          <div class="flex w-full justify-center gap-6">
+            <VcButton class="flex-1 lg:flex-none">
               {{ $t("pages.demo_landing.booking_block.first_button") }}
             </VcButton>
 
-            <VcButton class="w-1/2 bg-gray-50 px-2 uppercase text-[color:var(--color-primary)] md:w-auto md:px-8">
+            <VcButton class="flex-1 lg:flex-none">
               {{ $t("pages.demo_landing.booking_block.second_button") }}
             </VcButton>
           </div>
@@ -106,7 +106,7 @@
         <div class="grid gap-6 xs:grid-cols-2 md:grid-cols-3 lg:gap-5 xl:grid-cols-4">
           <ProductCardGrid v-for="item in products" :key="item.id" :product="item">
             <template #cart-handler>
-              <VcButton v-if="item.hasVariations" :to="productsRoutes[item.id]" class="mb-4 uppercase">
+              <VcButton v-if="item.hasVariations" :route="productsRoutes[item.id]" class="mb-4">
                 {{ $t("pages.demo_landing.products_block.choose_button") }}
               </VcButton>
 
@@ -155,7 +155,7 @@
             </VcCheckbox>
           </div>
 
-          <VcButton class="mt-10 px-12 uppercase">
+          <VcButton class="mt-10">
             {{ $t("pages.demo_landing.subscription_block.submit_button") }}
           </VcButton>
         </div>

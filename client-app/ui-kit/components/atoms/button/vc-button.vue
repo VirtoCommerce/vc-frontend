@@ -77,6 +77,8 @@ const props = withDefaults(defineProps<IProps>(), {
   disabled: false,
   loading: false,
   route: null,
+  truncate: false,
+  fullWidth: false,
 });
 
 const enabled = eagerComputed<boolean>(() => !props.disabled && !props.loading);
@@ -108,7 +110,7 @@ const iconSize = eagerComputed(() => {
   $loading: "";
   $loader: "";
 
-  @apply relative inline-flex justify-center rounded border-2 select-none text-center;
+  @apply relative inline-flex justify-center items-center min-w-0 rounded border-2 select-none text-center;
 
   &--truncate {
     $truncate: &;
@@ -243,7 +245,7 @@ const iconSize = eagerComputed(() => {
   }
 
   &__content {
-    @apply flex min-w-0;
+    @apply grid grid-flow-col;
 
     #{$loading} & {
       @apply invisible;
@@ -252,16 +254,28 @@ const iconSize = eagerComputed(() => {
 
   &__slot {
     #{$truncate} & {
-      @apply truncate;
+      @apply grow min-w-0 truncate;
+    }
+
+    &:empty {
+      @apply hidden;
     }
   }
 
   &__prepend {
     $prepend: &;
+
+    &:empty {
+      @apply hidden;
+    }
   }
 
   &__append {
     $append: &;
+
+    &:empty {
+      @apply hidden;
+    }
   }
 
   &__icon {

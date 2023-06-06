@@ -56,6 +56,32 @@ Outline.args = {
   color: "secondary",
 };
 
+export const FullWidth = Template.bind({});
+FullWidth.args = {
+  fullWidth: true,
+};
+
+export const PrependIcon = Template.bind({});
+PrependIcon.args = {
+  variant: "outline",
+  color: "secondary",
+  prependIcon: "save-v2",
+};
+
+export const AppendIcon = Template.bind({});
+AppendIcon.args = {
+  variant: "outline",
+  color: "secondary",
+  appendIcon: "save-v2",
+};
+
+export const Icon = Template.bind({});
+Icon.args = {
+  variant: "outline",
+  color: "secondary",
+  icon: "save-v2",
+};
+
 export const Truncate: StoryFn<typeof VcButton> = (args) => ({
   components: { VcButton },
   setup: () => ({ args }),
@@ -63,27 +89,7 @@ export const Truncate: StoryFn<typeof VcButton> = (args) => ({
 });
 Truncate.args = {
   truncate: true,
-};
-
-export const PrependIcon = Template.bind({});
-PrependIcon.args = {
-  variant: "outline",
-  color: "secondary",
-  prependIcon: "apply",
-};
-
-export const AppendIcon = Template.bind({});
-AppendIcon.args = {
-  variant: "outline",
-  color: "secondary",
-  appendIcon: "apply",
-};
-
-export const Icon = Template.bind({});
-Icon.args = {
-  variant: "outline",
-  color: "secondary",
-  icon: "apply",
+  prependIcon: "save-v2",
 };
 
 export const AllStates: StoryFn<typeof VcButton> = () => ({

@@ -13,36 +13,33 @@
       <!-- Title skeleton -->
       <div v-else class="w-2/3 bg-gray-200 text-3xl md:w-1/3">&nbsp;</div>
 
-      <div class="hidden shrink-0 gap-x-3 lg:flex">
+      <div class="hidden shrink-0 space-x-3 lg:block">
         <VcButton
-          :is-disabled="loading || !canSaveChanges || !list"
-          class="px-2.5 uppercase"
+          :disabled="loading || !canSaveChanges || !list"
           size="sm"
-          is-outline
+          variant="outline"
+          prepend-icon="save-v2"
           @click="saveChanges"
         >
-          <VcIcon name="save-v2" size="sm" class="mr-2" />
           {{ $t("common.buttons.save_changes") }}
         </VcButton>
 
         <VcButton
-          :is-disabled="loading || !list"
-          class="px-2.5 uppercase"
+          :disabled="loading || !list"
           size="sm"
-          is-outline
+          variant="outline"
+          prepend-icon="cog"
           @click="openListSettingsModal"
         >
-          <VcIcon name="cog" size="sm" class="mr-2" />
           {{ $t("shared.wishlists.list_card.list_settings_button") }}
         </VcButton>
 
         <VcButton
-          :is-disabled="loading || !pagedListItems.length"
-          class="px-2.5 uppercase"
+          :disabled="loading || !pagedListItems.length"
           size="sm"
+          prepend-icon="cart"
           @click="addAllListItemsToCart"
         >
-          <VcIcon name="cart" size="sm" class="mr-2" />
           {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
         </VcButton>
       </div>
@@ -86,43 +83,43 @@
       </template>
 
       <template #button>
-        <VcButton :to="{ name: 'Catalog' }" size="lg" class="w-48 font-bold uppercase">
+        <VcButton :to="{ name: 'Catalog' }" size="lg" class="w-48">
           {{ $t("shared.wishlists.list_details.empty_list_button") }}
         </VcButton>
       </template>
     </VcEmptyView>
 
-    <div class="flex flex-wrap gap-5 py-7 lg:hidden lg:justify-end lg:p-0">
+    <div class="space-y-5 py-7 lg:hidden">
       <VcButton
-        :is-disabled="loading || !pagedListItems.length"
+        :disabled="loading || !pagedListItems.length"
         size="sm"
-        class="w-full px-2.5 uppercase"
+        prepend-icon="cart"
+        full-width
         @click="addAllListItemsToCart"
       >
-        <VcIcon name="cart" size="sm" class="mr-2" />
         {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
       </VcButton>
 
-      <div class="flex w-full gap-x-5">
+      <div class="flex flex-wrap gap-5">
         <VcButton
-          :is-disabled="loading || !list"
-          class="w-1/2 px-2.5 uppercase"
+          :disabled="loading || !list"
+          class="flex-1"
           size="sm"
-          is-outline
+          variant="outline"
+          prepend-icon="cog"
           @click="openListSettingsModal"
         >
-          <VcIcon name="cog" size="sm" class="mr-2" />
           {{ $t("shared.wishlists.list_card.list_settings_button") }}
         </VcButton>
 
         <VcButton
-          :is-disabled="loading || !canSaveChanges || !list"
-          class="w-1/2 px-2.5 uppercase"
+          :disabled="loading || !canSaveChanges || !list"
+          class="flex-1"
           size="sm"
-          is-outline
+          variant="outline"
+          prepend-icon="save-v2"
           @click="saveChanges"
         >
-          <VcIcon name="save-v2" size="sm" class="mr-2" />
           {{ $t("common.buttons.save_changes") }}
         </VcButton>
       </div>

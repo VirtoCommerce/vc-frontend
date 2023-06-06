@@ -10,7 +10,7 @@
     :breadcrumbs="breadcrumbs"
   >
     <template #actions>
-      <VcButton :to="{ name: 'Catalog' }" size="lg" class="w-48 font-bold uppercase">
+      <VcButton :route="{ name: 'Catalog' }" size="lg">
         {{ $t("common.buttons.continue_shopping") }}
       </VcButton>
     </template>
@@ -106,9 +106,10 @@
             <!-- Go to checkout button (Multistep checkout) -->
             <VcButton
               v-if="$cfg.checkout_multistep_enabled"
-              :to="{ name: 'Checkout' }"
-              :is-disabled="isDisabledNextStep"
-              class="mt-4 w-full uppercase"
+              :route="{ name: 'Checkout' }"
+              :disabled="isDisabledNextStep"
+              full-width
+              class="mt-4"
             >
               {{ $t("common.buttons.go_to_checkout") }}
             </VcButton>
@@ -116,9 +117,10 @@
             <!-- Place order button (Single page checkout) -->
             <VcButton
               v-else
-              :is-disabled="isDisabledOrderCreation"
-              :is-waiting="creatingOrder"
-              class="mt-4 w-full uppercase"
+              :disabled="isDisabledOrderCreation"
+              :loading="creatingOrder"
+              full-width
+              class="mt-4"
               @click="createOrder"
             >
               {{ $t("common.buttons.place_order") }}
@@ -146,13 +148,7 @@
             {{ $t("common.messages.quote_request") }}
           </p>
 
-          <VcButton
-            :is-disabled="loading"
-            :is-waiting="creatingQuote"
-            class="w-full uppercase"
-            is-outline
-            @click="createQuote"
-          >
+          <VcButton :disabled="loading" :loading="creatingQuote" variant="outline" @click="createQuote">
             {{ $t("common.buttons.create_quote") }}
           </VcButton>
         </VcCardWidget>

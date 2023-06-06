@@ -89,11 +89,7 @@
           </template>
         </VcSelect>
 
-        <VcButton
-          :is-disabled="!isDirty"
-          class="mt-8 self-center px-12 uppercase lg:self-start"
-          @click="saveDefaults()"
-        >
+        <VcButton :disabled="!isDirty" class="mt-8 self-center lg:self-start" @click="saveDefaults()">
           {{ $t("pages.account.checkout_defaults.update_button") }}
         </VcButton>
       </div>

@@ -26,7 +26,7 @@ const style =
 
 <style lang="scss">
 .vc-icon {
-  @apply text-inherit;
+  @apply inline-block align-top leading-none text-inherit;
 
   &--size {
     &--xxs {

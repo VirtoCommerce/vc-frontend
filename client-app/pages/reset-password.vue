@@ -24,7 +24,7 @@
             <p v-t="`pages.${localizationPageTerm}.success_message`" class="text-lg" />
           </div>
 
-          <VcButton :to="{ name: 'SignIn' }" class="w-48 uppercase">
+          <VcButton :route="{ name: 'SignIn' }" class="w-48">
             {{ $t(`pages.${localizationPageTerm}.log_in_button`) }}
           </VcButton>
         </div>
@@ -36,7 +36,7 @@
           <p v-t="'common.messages.invalid_user_id_or_token'" class="text-lg" />
         </div>
 
-        <VcButton to="/" class="w-48 uppercase">
+        <VcButton route="/" class="w-48">
           {{ $t("common.buttons.home") }}
         </VcButton>
       </div>
