@@ -26,8 +26,8 @@ import type {
 
 const loading = ref(false);
 const comment = ref("");
-const billingAddressEqualsShipping = ref(true);
 const purchaseOrderNumber = ref("");
+const billingAddressEqualsShipping = ref(true);
 const placedOrder = shallowRef<CustomerOrderType | null>(null);
 
 export default function useCheckout() {
@@ -35,7 +35,7 @@ export default function useCheckout() {
   const notifications = useNotifications();
   const { openPopup, closePopup } = usePopup();
   const { t } = useI18n();
-  const { user, isAuthenticated } = useUser();
+  const { user, isAuthenticated, isCorporateMember } = useUser();
   const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
   const {
     addresses: personalAddresses,
@@ -76,7 +76,6 @@ export default function useCheckout() {
       ? isValidPayment.value && !hasValidationErrors.value
       : isValidShipment.value && isValidPayment.value && !hasValidationErrors.value
   );
-  const isCorporateMember = computed<boolean>(() => !!user.value.contact?.organizationId);
 
   const selectedPaymentMethodGroupType = computed<string | undefined>(() => {
     const paymentMethodCode = payment.value?.paymentGatewayCode || placedOrder.value?.inPayments[0].paymentMethod?.code;
@@ -112,28 +111,22 @@ export default function useCheckout() {
     return addresses.value.some((item) => isEqualAddresses(item, address));
   }
 
-  async function setShippingMethod(method: ShippingMethodType, options: { reloadCart?: boolean } = {}) {
-    await updateShipment(
-      {
-        id: shipment.value?.id,
-        price: method.price?.amount,
-        shipmentMethodCode: method.code,
-        shipmentMethodOption: method.optionName,
-      },
-      options.reloadCart
-    );
+  async function setShippingMethod(method: ShippingMethodType) {
+    await updateShipment({
+      id: shipment.value?.id,
+      price: method.price?.amount,
+      shipmentMethodCode: method.code,
+      shipmentMethodOption: method.optionName,
+    });
 
     ga.addShippingInfo(cart.value, {}, method.optionName);
   }
 
-  async function setPaymentMethod(method: PaymentMethodType, options: { reloadCart?: boolean } = {}) {
-    await updatePayment(
-      {
-        id: payment.value?.id,
-        paymentGatewayCode: method.code,
-      },
-      options.reloadCart
-    );
+  async function setPaymentMethod(method: PaymentMethodType) {
+    await updatePayment({
+      id: payment.value?.id,
+      paymentGatewayCode: method.code,
+    });
 
     ga.addPaymentInfo(cart.value, {}, method.code);
   }
@@ -142,11 +135,9 @@ export default function useCheckout() {
     const { shippingMethodId, paymentMethodCode } = getUserCheckoutDefaults();
     const defaultShippingMethod = availableShippingMethods.value.find((item) => item.id === shippingMethodId);
     const defaultPaymentMethod = availablePaymentMethods.value.find((item) => item.code === paymentMethodCode);
-    let reloadCart = false;
 
     if (allItemsAreDigital.value && shipment.value) {
-      await removeShipment(shipment.value.id!, false);
-      reloadCart = true;
+      await removeShipment(shipment.value.id!);
     }
 
     if (
@@ -156,17 +147,11 @@ export default function useCheckout() {
       shippingMethodId &&
       defaultShippingMethod
     ) {
-      await setShippingMethod(defaultShippingMethod, { reloadCart: false });
-      reloadCart = true;
+      await setShippingMethod(defaultShippingMethod);
     }
 
     if (!payment.value?.paymentGatewayCode && paymentMethodCode && defaultPaymentMethod) {
-      await setPaymentMethod(defaultPaymentMethod, { reloadCart: false });
-      reloadCart = true;
-    }
-
-    if (reloadCart) {
-      await fetchCart();
+      await setPaymentMethod(defaultPaymentMethod);
     }
   }
 
@@ -211,7 +196,7 @@ export default function useCheckout() {
           closePopup();
 
           const inputAddress: InputAddressType = {
-            ...omit(address, ["isDefault", "description"]),
+            ...omit(address, ["id", "isDefault", "description"]),
             addressType,
           };
 
@@ -237,7 +222,7 @@ export default function useCheckout() {
           }
 
           const inputAddress: InputAddressType = {
-            ...omit(address, ["isDefault", "description"]),
+            ...omit(address, ["id", "isDefault", "description"]),
             addressType,
           };
 
@@ -326,7 +311,7 @@ export default function useCheckout() {
     // Save shipping address as billing address
     if (!allItemsAreDigital.value && billingAddressEqualsShipping.value) {
       filledPayment.billingAddress = {
-        ...shipment.value!.deliveryAddress,
+        ...omit(shipment.value!.deliveryAddress, ["id"]),
         addressType: AddressType.Billing,
       };
     }
@@ -340,7 +325,7 @@ export default function useCheckout() {
 
     // Save order comment
     if (comment.value) {
-      await changeComment(comment.value, false);
+      await changeComment(comment.value);
     }
 
     // Save purchase order number

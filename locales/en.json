@@ -262,7 +262,8 @@
           "currency": "Currency",
           "search_bar": {
             "input_placeholder": "Enter keyword, item, model, or replacement part number"
-          }
+          },
+          "view_all_catalog": "View all products in the category"
         }
       },
       "footer": {

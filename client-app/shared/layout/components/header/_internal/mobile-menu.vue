@@ -32,7 +32,7 @@
           <i class="fas fa-arrow-circle-left text-[2.5rem]" />
         </button>
 
-        <h2 v-if="openedItem?.title" class="mt-3 text-2xl uppercase text-white">
+        <h2 v-if="openedItem?.title" class="mt-5 text-2xl uppercase tracking-[0.01em] text-white">
           {{ openedItem?.title }}
         </h2>
 
@@ -64,7 +64,7 @@
             <MobileMenuLink
               v-else-if="childrenItem.id !== 'quotes' || $cfg.quotes_enabled"
               :link="childrenItem"
-              class="py-1 text-xl"
+              class="py-1 text-lg"
               @close="$emit('close')"
               @select="selectMenuItem(childrenItem)"
             >
@@ -72,6 +72,18 @@
             </MobileMenuLink>
           </template>
         </div>
+
+        <template v-if="openedItem?.isCatalogItem && openedItem?.route">
+          <div class="my-5 h-px bg-gradient-to-r from-[--color-accent-500] to-transparent"></div>
+
+          <router-link
+            class="text-lg tracking-[0.01em] text-[--color-additional-50]"
+            :to="openedItem.route"
+            @click="$emit('close')"
+          >
+            {{ $t("shared.layout.header.mobile.view_all_catalog") }}
+          </router-link>
+        </template>
       </div>
     </section>
     <!-- endregion Children links section -->
@@ -80,7 +92,7 @@
     <section v-else class="grow divide-y divide-white divide-opacity-20 overflow-y-auto">
       <div class="flex flex-col gap-y-2 px-9 py-6">
         <!-- Home link -->
-        <MobileMenuLink :link="homeMenuItem" class="py-1 text-2xl" @close="$emit('close')">
+        <MobileMenuLink :link="homeMenuItem" class="py-1 text-2xl font-bold" @close="$emit('close')">
           {{ homeMenuItem.title }}
         </MobileMenuLink>
 
@@ -89,7 +101,7 @@
             v-if="item.id === 'cart'"
             :link="item"
             :count="cart?.itemsQuantity"
-            class="py-1 text-2xl"
+            class="py-1 text-2xl font-bold"
             @close="$emit('close')"
           >
             {{ item.title }}
@@ -99,7 +111,7 @@
             v-else-if="item.id === 'compare'"
             :link="item"
             :count="productsIds.length"
-            class="py-1 text-2xl"
+            class="py-1 text-2xl font-bold"
             @close="$emit('close')"
           >
             {{ item.title }}
@@ -108,7 +120,7 @@
           <MobileMenuLink
             v-else
             :link="item"
-            class="py-1 text-2xl"
+            class="py-1 text-2xl font-bold"
             @close="$emit('close')"
             @select="selectMenuItem(item)"
           >
@@ -161,7 +173,7 @@
           <MobileMenuLink
             v-if="mobileAccountMenuItem"
             :link="mobileAccountMenuItem"
-            class="py-1 text-2xl"
+            class="py-1 text-2xl font-bold"
             @select="selectMenuItem(mobileAccountMenuItem!)"
           >
             {{ mobileAccountMenuItem.title }}
@@ -171,7 +183,7 @@
           <MobileMenuLink
             v-if="mobileCorporateMenuItem && organization"
             :link="mobileCorporateMenuItem"
-            class="py-1 text-2xl"
+            class="py-1 text-2xl font-bold"
             @select="selectMenuItem(mobileCorporateMenuItem!)"
           >
             {{ mobileCorporateMenuItem.title }}
@@ -184,7 +196,7 @@
             v-for="item in unauthorizedMenuItems"
             :key="item.title"
             :link="item"
-            class="py-1.5 text-2xl"
+            class="py-1.5 text-2xl font-bold"
             @close="$emit('close')"
           >
             {{ item.title }}
@@ -195,7 +207,7 @@
         <MobileMenuLink
           v-if="supportedCurrencies.length > 1"
           :link="settingsMenuItem"
-          class="py-1 text-2xl"
+          class="py-1 text-2xl font-bold"
           @select="selectMenuItem(settingsMenuItem)"
         >
           {{ $t("shared.layout.header.mobile.settings") }}

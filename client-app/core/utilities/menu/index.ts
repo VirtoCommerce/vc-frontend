@@ -3,21 +3,23 @@ import { getCategoryRoute } from "../categories";
 import type { ExtendedMenuLinkType } from "../../types";
 import type { Category, MenuLinkType } from "@/xapi/types";
 
-export function convertToExtendedMenuLink(item: MenuLinkType): ExtendedMenuLinkType {
+export function convertToExtendedMenuLink(item: MenuLinkType, isCatalogItem?: boolean): ExtendedMenuLinkType {
   return {
+    isCatalogItem,
     title: item.title,
     route: item.url,
-    children: item.childItems?.map((child) => convertToExtendedMenuLink(child)),
+    children: item.childItems?.map((child) => convertToExtendedMenuLink(child, isCatalogItem)),
     priority: item.priority,
   };
 }
 
-export function categoryToExtendedMenuLink(category: Category): ExtendedMenuLinkType {
+export function categoryToExtendedMenuLink(category: Category, isCatalogItem?: boolean): ExtendedMenuLinkType {
   return {
+    isCatalogItem,
     id: category.id,
     title: category.name,
     route: getCategoryRoute(category),
-    children: category.childCategories?.map((child) => categoryToExtendedMenuLink(child)),
+    children: category.childCategories?.map((child) => categoryToExtendedMenuLink(child, isCatalogItem)),
     priority: category.priority,
   };
 }

@@ -80,6 +80,16 @@
 
       "quote_statuses": [
         {
+          "code": "New",
+          "color": "success",
+          "variant": "outline-dark"
+        },
+        {
+          "code": "Processing",
+          "color": "info",
+          "variant": "outline-dark"
+        },
+        {
           "code": "Ordered",
           "color": "success",
           "variant": "outline-dark"
@@ -390,6 +400,39 @@
         {
           "code": "Payment required",
           "color": "warning",
+          "variant": "outline-dark"
+        }
+      ],
+
+      "quote_statuses": [
+        {
+          "code": "New",
+          "color": "success",
+          "variant": "outline-dark"
+        },
+        {
+          "code": "Processing",
+          "color": "info",
+          "variant": "outline-dark"
+        },
+        {
+          "code": "Ordered",
+          "color": "success",
+          "variant": "outline-dark"
+        },
+        {
+          "code": "Proposal sent",
+          "color": "info",
+          "variant": "outline-dark"
+        },
+        {
+          "code": "On hold",
+          "color": "warning",
+          "variant": "outline-dark"
+        },
+        {
+          "code": "Draft",
+          "color": "neutral",
           "variant": "outline-dark"
         }
       ],

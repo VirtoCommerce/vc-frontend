@@ -1,16 +1,16 @@
 <template>
-  <div class="rounded border bg-white shadow-sm">
-    <div class="border-b px-5 py-4 md:px-7">
+  <div class="divide-y rounded border bg-white shadow-sm print:shadow-none">
+    <div class="px-5 py-4 md:px-7">
       <h2 class="text-xl font-extrabold uppercase">
         {{ $t("shared.catalog.product_details.price_block.title") }}
       </h2>
     </div>
 
-    <div class="border-b px-5 py-8 md:px-7 md:py-5">
+    <div class="px-5 py-8 md:px-7 md:py-5">
       <slot />
     </div>
 
-    <div class="flex">
+    <div class="flex print:hidden">
       <div
         class="flex w-2/5 select-none items-center justify-center space-x-2 border-r px-1 py-4"
         :class="{ 'cursor-pointer hover:bg-gray-100': isAuthenticated }"
