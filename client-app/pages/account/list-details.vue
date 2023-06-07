@@ -178,7 +178,7 @@ const itemsPerPage = ref(6);
 const page = ref(1);
 const wishlistItems = ref<LineItemType[]>([]);
 
-const cartItemsBySkus = computed(() => keyBy(cart.value.items, "sku"));
+const cartItemsBySkus = computed(() => keyBy(cart.value?.items, "sku"));
 const preparedLineItems = computed<PreparedLineItemType[]>(() =>
   wishlistItems.value.map((item) => prepareLineItem(item, cartItemsBySkus.value[item.sku!]?.quantity))
 );
@@ -267,7 +267,7 @@ async function addOrUpdateCartItem(item: InputNewBulkItemType): Promise<void> {
     return;
   }
 
-  const itemInCart: LineItemType | undefined = cart.value.items?.find((cartItem) => cartItem.sku === item.productSku);
+  const itemInCart: LineItemType | undefined = cart.value?.items?.find((cartItem) => cartItem.sku === item.productSku);
 
   if (itemInCart) {
     await changeItemQuantity(itemInCart.id, item.quantity!);

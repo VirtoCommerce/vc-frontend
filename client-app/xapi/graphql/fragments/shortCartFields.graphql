@@ -1,0 +1,13 @@
+fragment shortCartFields on CartType {
+  id
+  itemsQuantity
+  items {
+    id
+    sku
+    quantity
+    productId
+    extendedPrice {
+      amount
+    }
+  }
+}

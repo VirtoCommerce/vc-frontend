@@ -1,12 +1,12 @@
 import { computed, ref, watchEffect } from "vue";
-import { useCart } from "@/shared/cart";
+import useCart from "./useCart";
 
 const purchaseOrderNumber = ref("");
 
 export default function usePurchaseOrderNumber() {
   const { cart, updatePurchaseOrderNumber } = useCart();
 
-  const isApplied = computed<boolean>(() => !!cart.value.purchaseOrderNumber);
+  const isApplied = computed<boolean>(() => !!cart.value?.purchaseOrderNumber);
 
   async function setPurchaseOrderNumber() {
     await updatePurchaseOrderNumber(purchaseOrderNumber.value);
@@ -17,7 +17,7 @@ export default function usePurchaseOrderNumber() {
   }
 
   watchEffect(() => {
-    purchaseOrderNumber.value = cart.value.purchaseOrderNumber ?? "";
+    purchaseOrderNumber.value = cart.value?.purchaseOrderNumber ?? "";
   });
 
   return {

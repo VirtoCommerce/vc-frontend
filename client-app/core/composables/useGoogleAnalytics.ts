@@ -163,7 +163,7 @@ function addShippingInfo(cart: CartType, params?: EventParamsExtendedType, shipm
   sendEvent("add_shipping_info", {
     ...params,
     shipping_tier,
-    currency: cart.total?.currency?.code,
+    currency: cart.currency?.code,
     value: cart.total?.amount,
     coupon: cart.coupons?.[0]?.code,
     items: cart.items!.map(lineItemToGtagItem),

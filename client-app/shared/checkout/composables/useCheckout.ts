@@ -55,7 +55,7 @@ export default function useCheckout() {
     availablePaymentMethods,
     hasValidationErrors,
     allItemsAreDigital,
-    fetchCart,
+    fetchFullCart,
     updateShipment,
     removeShipment,
     updatePayment,
@@ -119,7 +119,7 @@ export default function useCheckout() {
       shipmentMethodOption: method.optionName,
     });
 
-    ga.addShippingInfo(cart.value, {}, method.optionName);
+    ga.addShippingInfo(cart.value!, {}, method.optionName);
   }
 
   async function setPaymentMethod(method: PaymentMethodType) {
@@ -128,7 +128,7 @@ export default function useCheckout() {
       paymentGatewayCode: method.code,
     });
 
-    ga.addPaymentInfo(cart.value, {}, method.code);
+    ga.addPaymentInfo(cart.value!, {}, method.code);
   }
 
   async function setCheckoutDefaults() {
@@ -159,12 +159,12 @@ export default function useCheckout() {
     placedOrder.value = null;
     loading.value = true;
 
-    await fetchCart();
+    await fetchFullCart();
     await setCheckoutDefaults();
 
     fetchAddresses();
 
-    ga.beginCheckout(cart.value);
+    ga.beginCheckout(cart.value!);
 
     loading.value = false;
   }
@@ -305,7 +305,7 @@ export default function useCheckout() {
     // Update payment with required properties
     const filledPayment: InputPaymentType = {
       id: payment.value!.id,
-      amount: cart.value.total!.amount, // required
+      amount: cart.value!.total!.amount, // required
     };
 
     // Save shipping address as billing address
@@ -321,7 +321,7 @@ export default function useCheckout() {
     /**
      * Send a Google Analytics event about adding payment information.
      */
-    ga.addPaymentInfo(cart.value);
+    ga.addPaymentInfo(cart.value!);
 
     // Save order comment
     if (comment.value) {
@@ -349,7 +349,7 @@ export default function useCheckout() {
   }
 
   async function createOrderFromCart(): Promise<CustomerOrderType | null> {
-    const cartId = cart.value.id!;
+    const cartId = cart.value!.id!;
 
     loading.value = true;
 

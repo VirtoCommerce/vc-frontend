@@ -2,7 +2,7 @@ import globals from "@/core/globals";
 import mutationDocument from "./removeCartItemMutation.graphql";
 import type { CartType, Mutations, MutationsRemoveCartItemArgs } from "@/xapi/types";
 
-export default async function removeCartItem(lineItemId: string): Promise<CartType> {
+export async function removeCartItem(lineItemId: string): Promise<CartType> {
   const { storeId, userId, cultureName, currencyCode } = globals;
   const { $graphqlClient } = useNuxtApp();
 
