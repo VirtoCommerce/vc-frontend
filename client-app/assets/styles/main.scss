@@ -12,9 +12,10 @@
     @media print {
       @apply min-w-[1024px] w-full;
 
+      zoom: 0.7;
+
       @page {
         size: A4 portrait;
-        scale: 70;
       }
     }
   }
