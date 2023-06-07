@@ -198,6 +198,7 @@ import { useI18n } from "vue-i18n";
 import { useCountries, usePageHead } from "@/core/composables";
 import { AddressType } from "@/core/enums";
 import { useUserAddresses } from "@/shared/account";
+import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import { VcAddOrUpdateAddressModal } from "@/ui-kit/components";
 import type { ISortInfo } from "@/core/types";
@@ -214,6 +215,7 @@ const {
   addOrUpdateAddresses,
 } = useUserAddresses();
 const { openPopup, closePopup } = usePopup();
+const notifications = useNotifications();
 
 usePageHead({
   title: t("pages.account.addresses.meta.title"),
@@ -316,9 +318,15 @@ async function removeAddress(address: MemberAddressType): Promise<void> {
       text: t("common.messages.confirm_delete_address"),
 
       async onConfirm() {
+        const previousPagesCount = pages.value;
+
         await removeAddresses([address]);
 
-        const previousPagesCount = pages.value;
+        notifications.success({
+          text: t("common.messages.address_deletion_successful_message"),
+          duration: 10000,
+          single: true,
+        });
 
         /**
          * If you were on the last page, and after deleting the product
