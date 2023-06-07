@@ -13,7 +13,7 @@
     </div>
 
     <div
-      class="mt-6 flex-none print:!relative print:mt-0 print:!w-72 lg:sticky lg:top-4 lg:mt-0 lg:h-full lg:w-4/12 xl:w-3/12"
+      class="mt-6 flex-none print:!relative print:mt-0 print:!w-64 lg:sticky lg:top-4 lg:mt-0 lg:h-full lg:w-4/12 xl:w-3/12"
       :class="{ 'print:hidden': productWithVariations }"
     >
       <!-- Price & Delivery (with variations) -->

@@ -11,6 +11,11 @@
 
     @media print {
       @apply min-w-[1024px] w-full;
+
+      @page {
+        size: A4 portrait;
+        scale: 70;
+      }
     }
   }
 }
