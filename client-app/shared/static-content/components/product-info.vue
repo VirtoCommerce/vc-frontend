@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="product"
-    class="mt-5 flex flex-col print:flex-row print:space-x-12 lg:flex-row lg:space-x-8"
+    class="mt-5 flex flex-col print:flex-row print:space-x-6 lg:flex-row lg:space-x-8"
     :class="{ 'mb-6': !relatedProducts.length }"
   >
     <div class="-mx-5 print:mx-0 print:grow md:mx-0 lg:w-8/12 xl:w-9/12">
@@ -13,7 +13,7 @@
     </div>
 
     <div
-      class="mt-6 flex-none print:!relative print:mt-0 print:!w-72 lg:sticky lg:top-4 lg:mt-0 lg:h-full lg:w-4/12 xl:w-3/12"
+      class="mt-6 flex-none print:!relative print:mt-0 print:!w-[16.5rem] lg:sticky lg:top-4 lg:mt-0 lg:h-full lg:w-4/12 xl:w-3/12"
       :class="{ 'print:hidden': productWithVariations }"
     >
       <!-- Price & Delivery (with variations) -->
