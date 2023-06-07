@@ -6,4 +6,5 @@ fragment validationErrorFields on ValidationErrorType {
     value
   }
   objectId
+  objectType
 }

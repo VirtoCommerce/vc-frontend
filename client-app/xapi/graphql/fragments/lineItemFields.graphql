@@ -1,52 +1,34 @@
+#import "./propertyFields.graphql"
 #import "./moneyFields.graphql"
 
 fragment lineItemFields on LineItemType {
   id
-  imageUrl
-  inStockQuantity
-  isGift
-  isReadOnly
-  isReccuring
-  isValid
   name
+  sku
+  quantity
+  inStockQuantity
+  imageUrl
   productId
   productType
-  discountTotal {
-    ...moneyFields
-  }
   product {
     id
-    brandName
     slug
+    minQuantity
+    maxQuantity
     masterVariation {
       id
       slug
     }
-    minQuantity
-    maxQuantity
-    variations {
-      id
-      minQuantity
-      maxQuantity
-    }
     properties {
-      name
-      value
-      type
-      hidden
-      valueType
-      label
+      ...propertyFields
     }
   }
-  quantity
-  sku
-  thumbnailImageUrl
-  validationErrors {
-    errorCode
-    errorMessage
-    errorParameters {
-      key
+  vendor {
+    id
+    name
+    rating {
       value
+      reviewCount
     }
   }
   extendedPrice {
@@ -61,15 +43,15 @@ fragment lineItemFields on LineItemType {
   salePrice {
     ...moneyFields
   }
-  taxTotal {
+  discountTotal {
     ...moneyFields
   }
-  vendor {
-    id
-    name
-    rating {
+  validationErrors {
+    errorCode
+    errorMessage
+    errorParameters {
+      key
       value
-      reviewCount
     }
   }
 }

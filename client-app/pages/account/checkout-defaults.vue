@@ -109,7 +109,7 @@ import type { CheckoutDefaults } from "@/shared/account";
 
 const { t } = useI18n();
 const { openPopup } = usePopup();
-const { loading, availableShippingMethods, availablePaymentMethods, fetchCart } = useCart();
+const { loading, availableShippingMethods, availablePaymentMethods, fetchFullCart } = useCart();
 const { getUserCheckoutDefaults, setUserCheckoutDefaults } = useUserCheckoutDefaults();
 
 usePageHead({
@@ -131,5 +131,5 @@ function saveDefaults() {
   });
 }
 
-fetchCart();
+fetchFullCart();
 </script>

@@ -1,8 +1,19 @@
 import globals from "@/core/globals";
-import mutationDocument from "./changeCartItemQuantityMutation.graphql";
+import changeFullCartItemQuantityMutation from "./changeFullCartItemQuantityMutation.graphql";
+import changeShortCartItemQuantityMutation from "./changeShortCartItemQuantityMutation.graphql";
 import type { CartType, Mutations, MutationsChangeCartItemQuantityArgs } from "@/xapi/types";
 
-export default async function changeCartItemQuantity(lineItemId: string, quantity: number): Promise<CartType> {
+export type ChangeCartItemQuantityOptionsType = {
+  /** @default false */
+  reloadFullCart?: boolean;
+};
+
+export async function changeCartItemQuantity(
+  lineItemId: string,
+  quantity: number,
+  options: ChangeCartItemQuantityOptionsType = {}
+): Promise<CartType> {
+  const { reloadFullCart = false } = options;
   const { storeId, userId, cultureName, currencyCode } = globals;
   const { $graphqlClient } = useNuxtApp();
 
@@ -10,7 +21,7 @@ export default async function changeCartItemQuantity(lineItemId: string, quantit
     Required<Pick<Mutations, "changeCartItemQuantity">>,
     MutationsChangeCartItemQuantityArgs
   >({
-    mutation: mutationDocument,
+    mutation: reloadFullCart ? changeFullCartItemQuantityMutation : changeShortCartItemQuantityMutation,
     variables: {
       command: {
         storeId,

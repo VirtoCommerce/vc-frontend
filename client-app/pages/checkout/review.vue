@@ -17,7 +17,7 @@
       </div>
 
       <!-- Items not grouped by Vendor -->
-      <OrderLineItems v-else :items="cart.items" />
+      <OrderLineItems v-else :items="cart!.items" />
 
       <div class="divide-y lg:divide-y-0">
         <!-- Shipping details -->
@@ -92,12 +92,12 @@
       </div>
     </VcSectionWidget>
 
-    <AcceptedGifts v-if="cart.gifts?.length" :items="cart.gifts" />
+    <AcceptedGifts v-if="cart?.gifts?.length" :items="cart.gifts" />
 
     <OrderCommentSection v-if="comment" :comment="comment" readonly />
 
     <template #sidebar>
-      <OrderSummary :cart="cart" :no-shipping="allItemsAreDigital" footnote>
+      <OrderSummary :cart="cart!" :no-shipping="allItemsAreDigital" footnote>
         <template #footer>
           <!-- Purchase order number -->
           <VcActionInput
@@ -159,7 +159,7 @@ const {
   availablePaymentMethods,
   hasValidationErrors,
   allItemsAreDigital,
-  fetchCart,
+  fetchFullCart,
 } = useCart();
 const { billingAddressEqualsShipping, comment, canPayNow, isValidCheckout, createOrderFromCart, purchaseOrderNumber } =
   useCheckout();
@@ -188,7 +188,7 @@ async function createOrder(): Promise<void> {
     await router.replace({ name: canPayNow.value ? "CheckoutPayment" : "CheckoutCompleted" });
   }
 
-  await fetchCart();
+  await fetchFullCart();
 
   creatingOrder.value = false;
 }

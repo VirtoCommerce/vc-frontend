@@ -1,7 +1,7 @@
-#import "../../../fragments/cartFields.graphql"
+#import "../../../fragments/fullCartFields.graphql"
 
 mutation AddOrUpdateCartPayment($command: InputAddOrUpdateCartPaymentType!) {
   addOrUpdateCartPayment(command: $command) {
-    ...cartFields
+    ...fullCartFields
   }
 }

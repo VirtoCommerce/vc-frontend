@@ -2,7 +2,7 @@ import globals from "@/core/globals";
 import mutationDocument from "./addCouponMutation.graphql";
 import type { CartType, Mutations, MutationsAddCouponArgs } from "@/xapi/types";
 
-export default async function addCoupon(couponCode: string): Promise<CartType> {
+export async function addCoupon(couponCode: string): Promise<CartType> {
   const { storeId, userId, cultureName, currencyCode } = globals;
   const { $graphqlClient } = useNuxtApp();
 

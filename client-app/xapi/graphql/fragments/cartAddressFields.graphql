@@ -12,7 +12,6 @@ fragment cartAddressFields on CartAddressType {
   regionId
   regionName
   postalCode
-  zip # deprecated
   phone
   email
   addressType

@@ -2,7 +2,7 @@
   <VcLoaderOverlay v-if="!initialized" no-bg />
 
   <VcEmptyPage
-    v-else-if="!cart.items?.length"
+    v-else-if="!cart?.items?.length"
     :title="$t('pages.cart.title')"
     :description="$t('pages.cart.empty_cart_description')"
     image="/static/images/errors/emptyCart.webp"
@@ -33,7 +33,7 @@
         :items-grouped-by-vendor="lineItemsGroupedByVendor"
         :disabled="loading"
         :validation-errors="cart.validationErrors"
-        @change:item-quantity="changeItemQuantity($event.item.id, $event.quantity)"
+        @change:item-quantity="changeItemQuantity($event.item.id, $event.quantity, { reloadFullCart: true })"
         @remove:item="handleRemoveItem"
         @clear:cart="openClearCartModal"
       />
@@ -72,7 +72,7 @@
       </template>
 
       <template #sidebar>
-        <OrderSummary :cart="cart" :no-shipping="allItemsAreDigital" footnote>
+        <OrderSummary :cart="cart!" :no-shipping="allItemsAreDigital" footnote>
           <template #footer>
             <!-- Purchase order number -->
             <VcActionInput
@@ -192,7 +192,7 @@ const {
   availablePaymentMethods,
   hasValidationErrors,
   allItemsAreDigital,
-  fetchCart,
+  fetchFullCart,
   changeItemQuantity,
   removeItem,
   toggleGift,
@@ -267,7 +267,7 @@ async function createOrder(): Promise<void> {
     await router.push({ name: canPayNow.value ? "CheckoutPayment" : "CheckoutCompleted" });
   }
 
-  await fetchCart();
+  await fetchFullCart();
 
   creatingOrder.value = false;
 }
@@ -284,14 +284,14 @@ async function createQuote(): Promise<void> {
     });
   }
 
-  await fetchCart();
+  await fetchFullCart();
 
   creatingQuote.value = false;
 }
 
 invoke(async () => {
   if (config.checkout_multistep_enabled) {
-    await fetchCart();
+    await fetchFullCart();
   } else {
     await initCheckout();
   }
@@ -301,6 +301,6 @@ invoke(async () => {
   /**
    * Send a Google Analytics shopping cart view event.
    */
-  ga.viewCart(cart.value);
+  ga.viewCart(cart.value!);
 });
 </script>
