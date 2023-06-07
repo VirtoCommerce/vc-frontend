@@ -78,6 +78,7 @@
             "icon": "/static/images/dashboard/icons/profile.svg#main"
           },
           {
+            "id": "addresses",
             "route": { "name": "Addresses" },
             "title": "shared.layout.header.mobile.account_menu.addresses",
             "icon": "/static/images/dashboard/icons/building.svg#main"
