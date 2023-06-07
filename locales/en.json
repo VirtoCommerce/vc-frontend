@@ -146,7 +146,7 @@
       "confirm_delete_address": "Are you sure you want to delete this address?",
       "no_results": "No results found",
       "save_new_product_quantity": "Do you want to save new quantity by product lines?",
-      "address_deletion_successful_message": "Address has been successfully deleted"
+      "address_deletion_successful": "Address has been successfully deleted"
     },
     "placeholders": {
       "enter_value": "Please enter value",

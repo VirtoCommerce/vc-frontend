@@ -323,7 +323,7 @@ async function removeAddress(address: MemberAddressType): Promise<void> {
         await removeAddresses([address]);
 
         notifications.success({
-          text: t("common.messages.address_deletion_successful_message"),
+          text: t("common.messages.address_deletion_successful"),
           duration: 10000,
           single: true,
         });
