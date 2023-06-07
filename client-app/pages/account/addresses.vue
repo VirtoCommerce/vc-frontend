@@ -306,21 +306,32 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
 }
 
 async function removeAddress(address: MemberAddressType): Promise<void> {
-  if (!window.confirm(t("common.messages.confirm_delete_address"))) {
-    return;
-  }
+  const closeDeleteAddressDialog = openPopup({
+    component: "VcConfirmationDialog",
+    props: {
+      variant: "danger",
+      iconVariant: "danger",
+      loading: addressesLoading,
+      title: t("common.titles.delete_address"),
+      text: t("common.messages.confirm_delete_address"),
 
-  const previousPagesCount = pages.value;
+      async onConfirm() {
+        await removeAddresses([address]);
 
-  await removeAddresses([address]);
+        const previousPagesCount = pages.value;
 
-  /**
-   * If you were on the last page, and after deleting the product
-   * the number of pages has decreased, go to the previous page
-   */
-  if (previousPagesCount > 1 && previousPagesCount === page.value && previousPagesCount > pages.value) {
-    page.value -= 1;
-  }
+        /**
+         * If you were on the last page, and after deleting the product
+         * the number of pages has decreased, go to the previous page
+         */
+        if (previousPagesCount > 1 && previousPagesCount === page.value && previousPagesCount > pages.value) {
+          page.value -= 1;
+        }
+
+        closeDeleteAddressDialog();
+      },
+    },
+  });
 }
 
 onMounted(async () => {

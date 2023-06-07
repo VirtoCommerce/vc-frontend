@@ -197,7 +197,8 @@
       "review_order": "Please review your order",
       "new_address": "New address",
       "edit_address": "Edit address",
-      "addresses": "Addresses"
+      "addresses": "Addresses",
+      "delete_address": "Delete address"
     },
     "roles": {
       "org-maintainer": "Organization maintainer",
@@ -397,10 +398,6 @@
       }
     },
     "company": {
-      "delete_address_dialog": {
-        "title": "Delete address",
-        "text": "Are you sure you want to delete address from the list?"
-      },
       "add_or_update_address_dialog": {
         "address_title": "Address Info",
         "create_title": "Create new company address",
