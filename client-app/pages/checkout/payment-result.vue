@@ -48,17 +48,23 @@
           <span v-t="isPaymentSuccess ? 'pages.payment_result.text.success' : 'pages.payment_result.text.failed'" />
 
           <div class="mt-10 flex flex-col items-center justify-center gap-6 md:flex-row lg:justify-start">
-            <VcButton v-if="!isPaymentSuccess" :to="{ name: 'CheckoutPayment', replace: true }" class="px-3 uppercase">
-              <i class="fas fa-chevron-left mr-2.5" />
+            <VcButton
+              v-if="!isPaymentSuccess"
+              :route="{ name: 'CheckoutPayment', replace: true }"
+              prepend-icon="chevron-left"
+            >
               {{ $t("common.buttons.payment_details") }}
             </VcButton>
 
-            <VcButton :to="{ name: 'OrderDetails', params: { orderId: placedOrder!.id } }" class="w-40 uppercase">
-              <i class="fas fa-file-lines mr-3" />
+            <VcButton
+              :route="{ name: 'OrderDetails', params: { orderId: placedOrder!.id } }"
+              prepend-icon="document-text"
+              class="w-40"
+            >
               {{ $t("common.buttons.show_order") }}
             </VcButton>
 
-            <VcButton v-if="isPaymentSuccess" to="/" class="w-40 uppercase">
+            <VcButton v-if="isPaymentSuccess" route="/" class="w-40">
               {{ $t("common.buttons.home") }}
             </VcButton>
           </div>

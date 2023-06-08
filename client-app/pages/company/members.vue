@@ -5,12 +5,7 @@
       <h2 v-t="'pages.company.members.title'" class="text-3xl font-bold uppercase text-gray-800" />
 
       <div class="flex-no-wrap flex space-x-2 md:space-x-4">
-        <VcButton
-          v-if="$can($permissions.storefront.CanInviteUsers)"
-          class="p-4 uppercase"
-          is-outline
-          @click="openInviteDialog"
-        >
+        <VcButton v-if="$can($permissions.storefront.CanInviteUsers)" variant="outline" @click="openInviteDialog">
           <span class="md:hidden">{{ $t("pages.company.members.buttons.invite") }}</span>
           <span class="hidden md:inline">{{ $t("pages.company.members.buttons.invite_members") }}</span>
         </VcButton>
@@ -36,10 +31,9 @@
       <div class="z-100 sticky bottom-0 -mx-5 mt-4 bg-white p-5 shadow-t-md">
         <div class="flex gap-x-4">
           <VcButton
-            :is-disabled="!numberOfFacetsApplied && !isFacetsDirty"
-            class="flex-1 uppercase"
-            size="lg"
-            is-outline
+            :disabled="!numberOfFacetsApplied && !isFacetsDirty"
+            class="flex-1"
+            variant="outline"
             @click="
               resetFilters();
               hideFilters();
@@ -49,9 +43,8 @@
           </VcButton>
 
           <VcButton
-            :is-disabled="!isFacetsDirty"
-            class="flex-1 uppercase"
-            size="lg"
+            :disabled="!isFacetsDirty"
+            class="flex-1"
             @click="
               applyFilters();
               hideFilters();
@@ -74,24 +67,36 @@
       <div class="relative">
         <VcButton
           ref="filtersButtonElement"
-          :is-disabled="contactsLoading"
-          :is-outline="!filtersVisible && !isMobile"
-          size="lg"
-          class="w-11 px-3.5 uppercase lg:w-auto"
+          :disabled="contactsLoading"
+          icon="filter"
+          class="lg:!hidden"
+          @click="filtersVisible = !filtersVisible"
+        >
+          <template #prepend>
+            <transition name="fade">
+              <span
+                v-if="numberOfFacetsApplied"
+                class="absolute -left-2.5 -top-2.5 box-content h-5 min-w-[1.25rem] rounded-full border border-current bg-[--color-additional-50] px-px text-13 text-[--color-primary-500]"
+              >
+                {{ numberOfFacetsApplied }}
+              </span>
+            </transition>
+          </template>
+        </VcButton>
+
+        <VcButton
+          ref="filtersButtonElement"
+          :disabled="contactsLoading"
+          variant="outline"
+          class="!hidden lg:!inline-block"
           @click="filtersVisible = !filtersVisible"
         >
           <span class="hidden lg:inline-block">{{ $t("common.buttons.filters") }}</span>
-          <span class="fa fa-filter lg:hidden"></span>
 
-          <transition :name="isMobile ? 'fade' : 'slide-fade-right'">
+          <transition name="slide-fade-right">
             <span
               v-if="numberOfFacetsApplied"
-              :class="[
-                filtersVisible || isMobile
-                  ? 'bg-white text-[color:var(--color-primary)]'
-                  : 'bg-[color:var(--color-primary)] text-white',
-              ]"
-              class="absolute -left-2.5 -top-2.5 box-content h-5 w-5 rounded-full border border-[color:var(--color-primary)] font-lato text-13 lg:relative lg:left-auto lg:top-auto lg:ml-2 lg:border-0"
+              class="ms-2 box-content inline-block h-5 min-w-[1.25rem] rounded-full bg-[--color-primary-500] px-px text-[--color-additional-50]"
             >
               {{ numberOfFacetsApplied }}
             </span>
@@ -114,11 +119,11 @@
 
           <div class="mt-6 flex flex-row justify-end gap-4">
             <VcButton
-              :is-disabled="!numberOfFacetsApplied && !isFacetsDirty"
-              kind="secondary"
+              :disabled="!numberOfFacetsApplied && !isFacetsDirty"
+              color="secondary"
               size="sm"
-              class="w-full px-8 uppercase lg:w-auto"
-              is-outline
+              class="w-full lg:w-auto"
+              variant="outline"
               @click="
                 resetFilters();
                 hideFilters();
@@ -128,9 +133,9 @@
             </VcButton>
 
             <VcButton
-              :is-disabled="!isFacetsDirty"
+              :disabled="!isFacetsDirty"
               size="sm"
-              class="w-full px-8 uppercase lg:w-auto"
+              class="w-full lg:w-auto"
               @click="
                 applyFilters();
                 hideFilters();
@@ -152,20 +157,11 @@
           @keypress.enter="applyKeyword"
         >
           <template #append>
-            <button v-if="localKeyword" type="button" class="h-full px-4" @click="resetKeyword">
-              <svg class="text-[color:var(--color-primary)]" height="14" width="14">
-                <use href="/static/images/delete.svg#main" />
-              </svg>
+            <button v-if="localKeyword" type="button" class="flex h-full items-center px-4" @click="resetKeyword">
+              <VcIcon class="text-[--color-primary-500]" name="delete-2" size="xs" />
             </button>
 
-            <VcButton
-              :is-disabled="contactsLoading"
-              class="w-11 !rounded-[inherit] uppercase"
-              size="lg"
-              @click="applyKeyword"
-            >
-              <i class="fas fa-search text-lg" />
-            </VcButton>
+            <VcButton :disabled="contactsLoading" icon="search" @click="applyKeyword" />
           </template>
         </VcInput>
       </div>
@@ -209,12 +205,11 @@
       </template>
 
       <template #button>
-        <VcButton v-if="keyword || filter" class="px-6 uppercase" size="lg" @click="resetFiltersWithKeyword">
-          <i class="fas fa-undo -ml-0.5 mr-2.5 text-inherit" />
+        <VcButton v-if="keyword || filter" prepent-icon="reset" @click="resetFiltersWithKeyword">
           {{ $t("pages.company.members.buttons.reset_search") }}
         </VcButton>
 
-        <VcButton v-else :to="{ name: 'Catalog' }" class="px-6 uppercase" size="lg">
+        <VcButton v-else :route="{ name: 'Catalog' }">
           {{ $t("pages.company.members.buttons.no_members") }}
         </VcButton>
       </template>

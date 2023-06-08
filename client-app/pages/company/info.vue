@@ -7,7 +7,7 @@
 
     <div class="flex flex-col bg-white shadow-sm md:rounded md:border">
       <!-- Company name block -->
-      <div class="flex flex-row gap-3 p-5 shadow [--tw-shadow:0_10px_15px_0_rgb(0_0_0_/_0.06)]">
+      <div class="flex items-end gap-3 p-5 shadow [--tw-shadow:0_10px_15px_0_rgb(0_0_0_/_0.06)]">
         <VcInput
           v-model.trim="organizationName"
           :label="$t('pages.company.info.labels.company_name')"
@@ -20,17 +20,24 @@
           class="w-full"
         />
 
-        <div v-if="userCanEditOrganization" class="pt-6">
+        <template v-if="userCanEditOrganization">
           <VcButton
-            :is-waiting="loadingOrganization || loadingUser"
-            :is-disabled="!meta.valid || !meta.dirty"
-            class="my-0.5 uppercase"
+            :loading="loadingOrganization || loadingUser"
+            :disabled="!meta.valid || !meta.dirty"
+            icon="save-v2"
+            class="md:!hidden"
+            @click="saveOrganizationName"
+          />
+
+          <VcButton
+            :loading="loadingOrganization || loadingUser"
+            :disabled="!meta.valid || !meta.dirty"
+            class="!hidden md:!block"
             @click="saveOrganizationName"
           >
-            <i class="fas fa-save px-2 text-2xl md:hidden" />
-            <span class="mx-12 hidden md:inline">{{ $t("common.buttons.save") }}</span>
+            {{ $t("common.buttons.save") }}
           </VcButton>
-        </div>
+        </template>
       </div>
 
       <!-- Content block -->
@@ -43,9 +50,8 @@
 
           <VcButton
             v-if="userCanEditOrganization"
-            class="px-3 uppercase"
             size="sm"
-            is-outline
+            variant="outline"
             @click="openAddOrUpdateCompanyAddressDialog()"
           >
             <span class="sm:hidden">{{ $t("pages.company.info.buttons.add_new_address_mobile") }}</span>
@@ -67,8 +73,7 @@
           </template>
 
           <template v-if="userCanEditOrganization" #button>
-            <VcButton class="px-4 uppercase" size="lg" @click="openAddOrUpdateCompanyAddressDialog()">
-              <i class="fa fa-plus -ml-px mr-3" />
+            <VcButton prepend-icon="plus" @click="openAddOrUpdateCompanyAddressDialog()">
               {{ $t("pages.company.info.buttons.add_new_address") }}
             </VcButton>
           </template>

@@ -31,11 +31,7 @@
             />
           </transition>
 
-          <VcButton
-            :to="{ name: 'Review', replace: true }"
-            :is-disabled="isDisabledNextStep"
-            class="mt-4 w-full uppercase"
-          >
+          <VcButton :route="{ name: 'Review', replace: true }" :disabled="isDisabledNextStep" full-width class="mt-4">
             {{ $t("common.buttons.review_order") }}
           </VcButton>
 

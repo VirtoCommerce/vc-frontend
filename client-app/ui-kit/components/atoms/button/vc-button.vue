@@ -19,17 +19,17 @@
     ]"
     @click="enabled ? $emit('click', $event) : null"
   >
-    <VcIcon v-if="icon" class="vc-button__icon" :name="icon" :size="iconSize" />
-
-    <span v-else class="vc-button__content">
+    <span class="vc-button__content">
       <span v-if="$slots.prepend || prependIcon" class="vc-button__prepend">
         <slot name="prepend">
           <VcIcon v-if="prependIcon" class="vc-button__icon" :name="prependIcon" :size="iconSize" />
         </slot>
       </span>
 
-      <span v-if="$slots.default" class="vc-button__slot">
-        <slot />
+      <span class="vc-button__slot">
+        <VcIcon v-if="icon" class="vc-button__icon" :name="icon" :size="iconSize" />
+
+        <slot v-else-if="$slots.default" />
       </span>
 
       <span v-if="$slots.append || appendIcon" class="vc-button__append">
