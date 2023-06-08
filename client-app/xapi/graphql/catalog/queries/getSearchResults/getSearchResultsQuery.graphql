@@ -5,6 +5,10 @@ query GetSearchResults(
   $cultureName: String
   $query: String!
   $filter: String
+  $withProducts: Boolean!
+  $withCategories: Boolean!
+  $withPages: Boolean!
+  $withSuggestions: Boolean!
   $productsAfter: String
   $productsFirst: Int
   $productsSort: String
@@ -19,6 +23,43 @@ query GetSearchResults(
   $pagesAfter: String
   $suggestionsSize: Int
 ) {
+  productSuggestions(storeId: $storeId, query: $query, size: $suggestionsSize) @include(if: $withSuggestions) {
+    suggestions
+  }
+
+  pages(storeId: $storeId, keyword: $query, cultureName: $cultureName, first: $pagesFirst, after: $pagesAfter)
+    @include(if: $withPages) {
+    totalCount
+    items {
+      name
+      relativeUrl
+    }
+  }
+
+  categories(
+    storeId: $storeId
+    userId: $userId
+    currencyCode: $currencyCode
+    cultureName: $cultureName
+    query: $query
+    filter: $filter
+    after: $categoriesAfter
+    first: $categoriesFirst
+    sort: $categoriesSort
+    fuzzy: $categoriesFuzzy
+    fuzzyLevel: $categoriesFuzzyLevel
+  ) @include(if: $withCategories) {
+    totalCount
+    items {
+      id
+      name
+      slug
+      seoInfo {
+        semanticUrl
+      }
+    }
+  }
+
   products(
     storeId: $storeId
     userId: $userId
@@ -31,7 +72,7 @@ query GetSearchResults(
     sort: $productsSort
     fuzzy: $productsFuzzy
     fuzzyLevel: $productsFuzzyLevel
-  ) {
+  ) @include(if: $withProducts) {
     totalCount
     items {
       id
@@ -65,39 +106,5 @@ query GetSearchResults(
         }
       }
     }
-  }
-
-  categories(
-    storeId: $storeId
-    userId: $userId
-    currencyCode: $currencyCode
-    cultureName: $cultureName
-    query: $query
-    filter: $filter
-    after: $categoriesAfter
-    first: $categoriesFirst
-    sort: $categoriesSort
-    fuzzy: $categoriesFuzzy
-    fuzzyLevel: $categoriesFuzzyLevel
-  ) {
-    totalCount
-    items {
-      id
-      name
-      slug
-      seoInfo {
-        semanticUrl
-      }
-    }
-  }
-  pages(storeId: $storeId, keyword: $query, cultureName: $cultureName, first: $pagesFirst, after: $pagesAfter) {
-    totalCount
-    items {
-      name
-      relativeUrl
-    }
-  }
-  productSuggestions(storeId: $storeId, query: $query, size: $suggestionsSize) {
-    suggestions
   }
 }

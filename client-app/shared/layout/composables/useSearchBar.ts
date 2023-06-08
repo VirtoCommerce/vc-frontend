@@ -2,7 +2,7 @@ import { computed, readonly, ref, shallowRef } from "vue";
 import { Logger } from "@/core/utilities";
 import { getSearchResults } from "@/xapi/graphql/catalog";
 import { highlightSearchText, prepareSearchText } from "../utils";
-import type { SearchResultsParams } from "@/xapi/graphql/catalog";
+import type { GetSearchResultsParamsType } from "@/xapi/graphql/catalog";
 import type { Category, PageType, Product } from "@/xapi/types";
 
 const loading = ref(false);
@@ -12,7 +12,7 @@ const searchPhraseOfUploadedResults = ref("");
 const categories = shallowRef<Category[]>([]);
 const products = shallowRef<Product[]>([]);
 const pages = shallowRef<PageType[]>([]);
-const suggestions = shallowRef<string[]>([]);
+const suggestions = shallowRef<{ text: string; label: string }[]>([]);
 const total = ref(0);
 
 export default function useSearchBar() {
@@ -38,8 +38,8 @@ export default function useSearchBar() {
     }
   }
 
-  async function searchResults(params: SearchResultsParams) {
-    const preparedParams: SearchResultsParams = {
+  async function searchResults(params: GetSearchResultsParamsType) {
+    const preparedParams: GetSearchResultsParamsType = {
       ...params,
       keyword: prepareSearchText(params.keyword),
     };
@@ -52,21 +52,29 @@ export default function useSearchBar() {
 
     try {
       const {
+        productSuggestions: { suggestions: suggestionsItems = [] },
         pages: { items: pagesItems = [] },
         categories: { items: categoriesItems = [] },
         products: { items: productsItems = [], totalCount = 0 },
-        productSuggestions,
       } = await getSearchResults(preparedParams);
 
-      total.value = totalCount;
-      products.value = productsItems;
+      suggestions.value = suggestionsItems.map((item) => ({
+        text: item,
+        label: highlightSearchText(item, params.keyword),
+      }));
+
+      pages.value = pagesItems.map((item) => ({
+        ...item,
+        name: highlightSearchText(item.name ?? "", params.keyword),
+      }));
+
       categories.value = categoriesItems.map((item) => ({
         ...item,
         name: highlightSearchText(item.name, params.keyword),
       }));
-      pages.value = pagesItems;
-      suggestions.value = productSuggestions.suggestions ?? [];
 
+      total.value = totalCount;
+      products.value = productsItems;
       searchPhraseOfUploadedResults.value = preparedParams.keyword;
     } catch (e) {
       Logger.error(`${useSearchBar.name}.${searchResults.name}`, e);

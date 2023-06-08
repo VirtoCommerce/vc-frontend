@@ -1,61 +1,132 @@
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import globals from "@/core/globals";
 import searchQueryDocument from "./getSearchResultsQuery.graphql";
-import type { SearchResultsParams } from "@/xapi/graphql/catalog";
 import type { GetSearchResultsQueryVariables, Query } from "@/xapi/types";
 
-type SearchResults = Required<Pick<Query, "categories" | "products" | "pages" | "productSuggestions">>;
+export type SearchResultsType = Required<Pick<Query, "categories" | "products" | "pages" | "productSuggestions">>;
 
-export default async function getSearchResults({
-  keyword,
+export type GetSearchResultsParamsType = {
+  keyword: string;
+  filter?: string;
 
-  products: {
-    itemsPerPage: productsItemsPerPage = DEFAULT_PAGE_SIZE,
-    page: productsPage = 1,
-    sort: productsSort,
-    fuzzy: productsFuzzy,
-    fuzzyLevel: productsFuzzyLevel,
-  } = {},
+  productSuggestions?: {
+    suggestionsSize?: number;
+  };
 
-  categories: {
-    itemsPerPage: categoriesItemsPerPage = DEFAULT_PAGE_SIZE,
-    page: categoriesPage = 1,
-    sort: categoriesSort,
-    fuzzy: categoriesFuzzy,
-    fuzzyLevel: categoriesFuzzyLevel,
-  } = {},
+  pages?: {
+    page?: number;
+    itemsPerPage?: number;
+  };
 
-  pages: { page: staticContentPage = 1, itemsPerPage: staticContentItemsPerPage = DEFAULT_PAGE_SIZE } = {},
+  categories?: {
+    page?: number;
+    itemsPerPage?: number;
+    sort?: string;
+    fuzzy?: boolean;
+    fuzzyLevel?: number;
+  };
 
-  productSuggestions: { suggestionsSize: productSuggestionsSize = DEFAULT_PAGE_SIZE } = {},
-}: SearchResultsParams): Promise<SearchResults> {
-  const { storeId, catalogId, userId, cultureName, currencyCode } = globals;
+  products?: {
+    page?: number;
+    itemsPerPage?: number;
+    sort?: string;
+    fuzzy?: boolean;
+    fuzzyLevel?: number;
+  };
+};
+
+export async function getSearchResults(params: GetSearchResultsParamsType): Promise<SearchResultsType> {
+  const { storeId, userId, cultureName, currencyCode } = globals;
   const { $graphqlClient } = useNuxtApp();
 
-  const { data } = await $graphqlClient.query<SearchResults, GetSearchResultsQueryVariables>({
-    query: searchQueryDocument,
-    variables: {
-      storeId,
-      userId,
-      cultureName,
-      currencyCode,
-      productsSort,
-      productsFuzzy,
-      productsFuzzyLevel,
+  const withSuggestions = !!params.productSuggestions;
+  const withPages = !!params.pages;
+  const withCategories = !!params.categories;
+  const withProducts = !!params.products;
+
+  const {
+    keyword,
+    filter,
+
+    productSuggestions: { suggestionsSize: productSuggestionsSize = DEFAULT_PAGE_SIZE } = {},
+
+    pages: { page: staticContentPage = 1, itemsPerPage: staticContentItemsPerPage = DEFAULT_PAGE_SIZE } = {},
+
+    categories: {
+      itemsPerPage: categoriesItemsPerPage = DEFAULT_PAGE_SIZE,
+      page: categoriesPage = 1,
+      sort: categoriesSort,
+      fuzzy: categoriesFuzzy,
+      fuzzyLevel: categoriesFuzzyLevel,
+    } = {},
+
+    products: {
+      itemsPerPage: productsItemsPerPage = DEFAULT_PAGE_SIZE,
+      page: productsPage = 1,
+      sort: productsSort,
+      fuzzy: productsFuzzy,
+      fuzzyLevel: productsFuzzyLevel,
+    } = {},
+  } = params;
+
+  const variables: GetSearchResultsQueryVariables = {
+    storeId,
+    userId,
+    cultureName,
+    currencyCode,
+    withProducts,
+    withCategories,
+    withPages,
+    withSuggestions,
+    query: keyword,
+    filter,
+  };
+
+  if (withSuggestions) {
+    Object.assign(variables, <GetSearchResultsQueryVariables>{
+      suggestionsSize: productSuggestionsSize,
+    });
+  }
+
+  if (withPages) {
+    Object.assign(variables, <GetSearchResultsQueryVariables>{
+      pagesFirst: staticContentItemsPerPage,
+      pagesAfter: String((staticContentPage - 1) * staticContentItemsPerPage),
+    });
+  }
+
+  if (withCategories) {
+    Object.assign(variables, <GetSearchResultsQueryVariables>{
       categoriesSort,
       categoriesFuzzy,
       categoriesFuzzyLevel,
-      query: keyword,
-      filter: `category.subtree:${catalogId}`,
-      productsFirst: productsItemsPerPage,
-      productsAfter: String((productsPage - 1) * productsItemsPerPage),
       categoriesFirst: categoriesItemsPerPage,
       categoriesAfter: String((categoriesPage - 1) * categoriesItemsPerPage),
-      pagesFirst: staticContentItemsPerPage,
-      pagesAfter: String((staticContentPage - 1) * staticContentItemsPerPage),
-      suggestionsSize: productSuggestionsSize,
-    },
+    });
+  }
+
+  if (withProducts) {
+    Object.assign(variables, <GetSearchResultsQueryVariables>{
+      productsSort,
+      productsFuzzy,
+      productsFuzzyLevel,
+      productsFirst: productsItemsPerPage,
+      productsAfter: String((productsPage - 1) * productsItemsPerPage),
+    });
+  }
+
+  const { data } = await $graphqlClient.query<SearchResultsType, GetSearchResultsQueryVariables>({
+    query: searchQueryDocument,
+    variables,
   });
 
-  return data;
+  return Object.assign(
+    {
+      productSuggestions: {},
+      pages: {},
+      categories: {},
+      products: {},
+    },
+    data
+  );
 }

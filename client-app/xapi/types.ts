@@ -5122,6 +5122,10 @@ export type GetSearchResultsQueryVariables = Exact<{
   cultureName?: InputMaybe<Scalars['String']>;
   query: Scalars['String'];
   filter?: InputMaybe<Scalars['String']>;
+  withProducts: Scalars['Boolean'];
+  withCategories: Scalars['Boolean'];
+  withPages: Scalars['Boolean'];
+  withSuggestions: Scalars['Boolean'];
   productsAfter?: InputMaybe<Scalars['String']>;
   productsFirst?: InputMaybe<Scalars['Int']>;
   productsSort?: InputMaybe<Scalars['String']>;
@@ -5139,20 +5143,6 @@ export type GetSearchResultsQueryVariables = Exact<{
 
 
 export type GetSearchResultsQuery = { products?: { totalCount?: number, items?: Array<{ id: string, name: string, code: string, slug?: string, imgSrc?: string, vendor?: { id: string, name: string }, availabilityData?: { availableQuantity: any }, price?: { actual?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, discountAmount?: { amount: any, formattedAmount: string } } }> }, categories?: { totalCount?: number, items?: Array<{ id: string, name: string, slug?: string, seoInfo?: { semanticUrl?: string } }> }, pages?: { totalCount?: number, items?: Array<{ name?: string, relativeUrl?: string }> }, productSuggestions?: { suggestions?: Array<string> } };
-
-export type CategoriesQueryVariables = Exact<{
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
-  currencyCode: Scalars['String'];
-  cultureName?: InputMaybe<Scalars['String']>;
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  filter?: InputMaybe<Scalars['String']>;
-  sort?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type CategoriesQuery = { categories?: { totalCount?: number, items?: Array<{ id: string, name: string, slug?: string, parent?: { id: string }, seoInfo?: { pageTitle?: string, metaKeywords?: string, metaDescription?: string }, breadcrumbs?: Array<{ title: string, seoPath?: string }> }> } };
 
 export type SearchProductsQueryVariables = Exact<{
   storeId: Scalars['String'];

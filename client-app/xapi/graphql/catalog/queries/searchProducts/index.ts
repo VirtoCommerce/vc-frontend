@@ -5,7 +5,7 @@ import searchProductsQueryDocument from "./searchProductsQuery.graphql";
 import type { ProductsSearchParams } from "@/shared/catalog";
 import type { ProductConnection, Query, QueryProductsArgs } from "@/xapi/types";
 
-export default async function searchProducts(
+export async function searchProducts(
   {
     itemsPerPage = DEFAULT_PAGE_SIZE,
     page = 1,
