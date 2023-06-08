@@ -1,16 +1,23 @@
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import globals from "@/core/globals";
 import searchRelatedProductsQueryDocument from "./searchRelatedProducts.graphql";
-import type { RelatedProductsSearchParams } from "../../types";
 import type { ProductAssociation, ProductAssociationsArgs, Query, QueryProductArgs } from "@/xapi/types";
 
-export default async function searchRelatedProducts({
+export type RelatedProductsSearchParamsType = {
+  productId: string;
+  page?: number;
+  itemsPerPage?: number;
+  group?: string;
+  query?: string;
+};
+
+export async function searchRelatedProducts({
   productId,
   group,
   query,
   page = 1,
   itemsPerPage = DEFAULT_PAGE_SIZE,
-}: RelatedProductsSearchParams): Promise<ProductAssociation[]> {
+}: RelatedProductsSearchParamsType): Promise<ProductAssociation[]> {
   const { storeId, userId, cultureName, currencyCode } = globals;
   const { $graphqlClient } = useNuxtApp();
 

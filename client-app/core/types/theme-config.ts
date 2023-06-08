@@ -21,6 +21,7 @@ export interface IThemeConfigPreset {
   product_compare_limit?: number;
   product_filters_sorting?: boolean;
   product_filters_sorting_direction?: SortDirection | string;
+  product_search_phrase_suggestions_enabled?: boolean;
   out_of_stock_order_enabled?: boolean;
   search_suggestions_category_enabled?: boolean;
   search_suggestions_category_limit?: number;

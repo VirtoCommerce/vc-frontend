@@ -1,14 +1,14 @@
 import { ref, computed, readonly, shallowRef } from "vue";
 import { Logger } from "@/core/utilities";
 import { searchRelatedProducts } from "@/xapi/graphql/catalog";
-import type { RelatedProductsSearchParams } from "@/xapi/graphql/catalog";
+import type { RelatedProductsSearchParamsType } from "@/xapi/graphql/catalog";
 import type { Product } from "@/xapi/types";
 
 export default () => {
   const loading = ref(true);
   const relatedProducts = shallowRef<Product[]>([]);
 
-  async function fetchRelatedProducts(params: RelatedProductsSearchParams) {
+  async function fetchRelatedProducts(params: RelatedProductsSearchParamsType) {
     loading.value = true;
     try {
       const associations = await searchRelatedProducts(params);

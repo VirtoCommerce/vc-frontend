@@ -1,9 +1,6 @@
-export { default as getProduct } from "./queries/getProduct";
-export { default as getSearchResults } from "./queries/getSearchResults";
-export { default as searchCategories } from "./queries/searchCategories";
-export { default as searchProducts } from "./queries/searchProducts";
-export { default as searchRelatedProducts } from "./queries/searchRelatedProducts";
-export { default as getChildCategories } from "./queries/childCategories";
+export * from "./queries/getProduct";
+export * from "./queries/getSearchResults";
+export * from "./queries/searchProducts";
+export * from "./queries/searchRelatedProducts";
+export * from "./queries/childCategories";
 export * from "./queries/getCategory";
-
-export * from "./types";
