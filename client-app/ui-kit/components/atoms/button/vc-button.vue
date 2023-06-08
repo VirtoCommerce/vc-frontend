@@ -45,6 +45,7 @@
 
 <script setup lang="ts">
 import { eagerComputed } from "@vueuse/core";
+import { computed } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 export interface IEmits {
@@ -84,17 +85,24 @@ const props = withDefaults(defineProps<IProps>(), {
 const enabled = eagerComputed<boolean>(() => !props.disabled && !props.loading);
 const isLink = eagerComputed<boolean>(() => !!props.route && enabled.value);
 
-const iconSize = eagerComputed(() => {
+const iconSize = computed(() => {
+  let size;
+
   switch (props.size) {
     case "xs":
-      return 14;
+      size = 14;
+      break;
     case "sm":
-      return 16;
+      size = 16;
+      break;
     case "md":
-      return 20;
+      size = 20;
+      break;
     case "lg":
-      return 24;
+      size = 24;
   }
+
+  return size;
 });
 </script>
 

@@ -12,8 +12,8 @@
 
     <VcButton
       :title="redirectUrl ? null : $t('shared.payment.redirection.errors.missing_link')"
-      :is-disabled="!redirectUrl"
-      class="mt-3 w-full uppercase md:mt-12 md:w-52"
+      :disabled="!redirectUrl"
+      class="mt-3 w-full md:mt-12 md:w-auto"
       @click="redirect"
     >
       {{ $t("shared.payment.redirection.pay_now_button") }}

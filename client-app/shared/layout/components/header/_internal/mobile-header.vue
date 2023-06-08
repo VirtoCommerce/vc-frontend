@@ -64,12 +64,10 @@
         @keyup.enter="searchPhrase && $router.push(searchPageLink)"
       />
 
-      <VcButton :to="searchPhrase && searchPageLink" size="lg" class="w-11">
-        <i class="fas fa-search text-lg" />
-      </VcButton>
+      <VcButton :to="searchPhrase && searchPageLink" icon="search" />
 
       <button type="button" class="-mr-2 ml-2 h-11 appearance-none px-3" @click="hideSearchBar">
-        <i class="fas fa-times text-2xl text-white" />
+        <VcIcon name="x" class="text-[--color-additional-50]" />
       </button>
     </div>
     <!-- endregion Mobile Search Bar -->

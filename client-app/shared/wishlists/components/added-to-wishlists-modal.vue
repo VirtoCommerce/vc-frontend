@@ -33,13 +33,13 @@
     </div>
 
     <template #actions="{ close }">
-      <VcButton is-outline class="inline-flex grow uppercase lg:grow-0 lg:px-5" @click="close">
+      <VcButton variant="outline" class="flex-1 sm:flex-none" @click="close">
         {{ $t("shared.wishlists.added_to_wishlists_dialog.continue_shopping_button") }}
       </VcButton>
 
       <VcButton
-        :to="listIds.length === 1 ? { name: 'ListDetails', params: { listId: listIds[0] } } : { name: 'Lists' }"
-        class="inline-flex grow uppercase lg:grow-0 lg:px-5"
+        :route="listIds.length === 1 ? { name: 'ListDetails', params: { listId: listIds[0] } } : { name: 'Lists' }"
+        class="flex-1 sm:flex-none"
         @click="close"
       >
         {{ $t("shared.wishlists.added_to_wishlists_dialog.view_your_list_button", listIds.length) }}

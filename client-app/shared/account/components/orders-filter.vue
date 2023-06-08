@@ -34,23 +34,20 @@
       </div>
     </div>
     <div class="grow lg:grow-0"></div>
-    <div class="mt-8 flex flex-col space-y-4 lg:flex-row-reverse lg:justify-start lg:space-y-0">
+    <div class="mt-8 flex justify-end gap-3">
+      <VcButton size="sm" :disabled="!isFilterDirty" @click="apply">{{
+        $t("shared.account.orders-filter.apply-button")
+      }}</VcButton>
+
       <VcButton
-        class="w-full px-8 uppercase lg:w-auto"
-        :size="isMobile ? 'md' : 'sm'"
-        :is-disabled="!isFilterDirty"
-        @click="apply"
-        >{{ $t("shared.account.orders-filter.apply-button") }}</VcButton
-      >
-      <VcButton
-        class="w-full px-8 uppercase lg:mr-3 lg:w-auto"
-        kind="secondary"
-        is-outline
-        :is-disabled="isFilterEmpty && !isFilterDirty"
-        :size="isMobile ? 'md' : 'sm'"
+        color="secondary"
+        variant="outline"
+        :disabled="isFilterEmpty && !isFilterDirty"
+        size="sm"
         @click="reset"
-        >{{ $t("shared.account.orders-filter.reset-button") }}</VcButton
       >
+        {{ $t("shared.account.orders-filter.reset-button") }}
+      </VcButton>
     </div>
   </div>
 </template>

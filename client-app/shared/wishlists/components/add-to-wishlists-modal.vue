@@ -101,19 +101,14 @@
 
     <template #actions="{ close }">
       <div class="sm:space-x-auto -mx-6 flex grow items-center justify-between space-x-5 px-6 pb-3 sm:pb-0">
-        <VcButton
-          kind="secondary"
-          class="grow basis-0 uppercase sm:grow-0 sm:basis-auto sm:px-4"
-          is-outline
-          @click="close"
-        >
+        <VcButton color="secondary" variant="outline" class="flex-1 sm:flex-none" @click="close">
           {{ $t("shared.wishlists.add_to_wishlists_dialog.cancel_button") }}
         </VcButton>
 
         <VcButton
-          :is-waiting="loading"
-          :is-disabled="!newLists.length && !selectedListsOtherIds.length && !removedLists.length"
-          class="grow basis-0 uppercase sm:min-w-[9rem] sm:grow-0 sm:basis-auto sm:px-5"
+          :loading="loading"
+          :disabled="!newLists.length && !selectedListsOtherIds.length && !removedLists.length"
+          class="flex-1 sm:flex-none"
           @click="save"
         >
           {{ $t("shared.wishlists.add_to_wishlists_dialog.save_button") }}

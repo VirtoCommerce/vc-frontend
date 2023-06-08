@@ -11,7 +11,7 @@
           </VcCheckbox>
         </div>
 
-        <VcButton class="mt-10 px-12 uppercase">
+        <VcButton class="mt-10">
           {{ model.buttonText }}
         </VcButton>
       </div>

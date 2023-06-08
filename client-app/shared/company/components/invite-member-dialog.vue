@@ -47,22 +47,11 @@
     </form>
 
     <template #actions="{ close }">
-      <VcButton
-        :is-disabled="loading"
-        class="w-full uppercase sm:w-auto sm:px-10"
-        kind="secondary"
-        is-outline
-        @click="close"
-      >
+      <VcButton :disabled="loading" class="w-full sm:w-auto" color="secondary" variant="outline" @click="close">
         {{ $t("shared.account.invite_member_dialog.cancel_button") }}
       </VcButton>
 
-      <VcButton
-        :is-disabled="!meta.valid"
-        :is-waiting="loading"
-        class="w-full uppercase sm:w-auto sm:px-10"
-        @click="send"
-      >
+      <VcButton :disabled="!meta.valid" :loading="loading" class="w-full sm:w-auto" @click="send">
         {{ $t("shared.account.invite_member_dialog.send_button") }}
       </VcButton>
     </template>

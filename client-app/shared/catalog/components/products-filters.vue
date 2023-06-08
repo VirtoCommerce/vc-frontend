@@ -19,13 +19,7 @@
           </template>
         </VcInput>
 
-        <VcButton
-          :is-disabled="loading || isAppliedKeyword"
-          kind="primary"
-          class="px-3.5 !text-15 uppercase"
-          is-outline
-          @click="onSearchStart"
-        >
+        <VcButton :disabled="loading || isAppliedKeyword" color="primary" variant="outline" @click="onSearchStart">
           {{ $t("pages.catalog.search_card.search_button") }}
         </VcButton>
       </div>

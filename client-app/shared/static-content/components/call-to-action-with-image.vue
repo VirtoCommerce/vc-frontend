@@ -9,8 +9,8 @@
             <VcButton
               v-for="(item, index) in model.buttons"
               :key="index"
-              :to="item.link"
-              class="w-1/2 px-8 uppercase lg:w-auto"
+              :route="item.link"
+              class="flex-1 lg:flex-none"
             >
               {{ item.label }}
             </VcButton>

@@ -1,7 +1,7 @@
 <template>
   <VcPopup variant="success" :title="$t('shared.account.registration_success_dialog.title')" is-persistent>
     <template #actions="{ close }">
-      <VcButton to="/" class="mx-auto inline-flex px-10 uppercase" @click="close">
+      <VcButton to="/" class="mx-auto" @click="close">
         {{ $t("shared.account.registration_success_dialog.ok_button") }}
       </VcButton>
     </template>

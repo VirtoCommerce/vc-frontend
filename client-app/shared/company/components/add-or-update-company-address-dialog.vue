@@ -26,11 +26,11 @@
       >
         <template #append="{ dirty, valid }">
           <div class="flex flex-row space-x-4 pb-3 pt-7 sm:float-right sm:py-4">
-            <VcButton :is-disabled="loading" class="w-1/2 uppercase sm:px-5" kind="secondary" is-outline @click="close">
+            <VcButton :disabled="loading" class="w-1/2" color="secondary" variant="outline" @click="close">
               {{ $t("common.buttons.cancel") }}
             </VcButton>
 
-            <VcButton :is-disabled="!valid || !dirty" :is-waiting="loading" is-submit class="w-1/2 uppercase sm:px-5">
+            <VcButton :disabled="!valid || !dirty" :loading="loading" type="submit" class="w-1/2">
               {{ $t("common.buttons.save") }}
             </VcButton>
           </div>
