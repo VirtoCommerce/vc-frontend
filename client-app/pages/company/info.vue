@@ -360,15 +360,16 @@ async function openDeleteAddressDialog(address: MemberAddressType) {
       variant: "danger",
       iconVariant: "danger",
       loading: loadingAddresses,
-      title: t("shared.company.delete_address_dialog.title"),
-      text: t("shared.company.delete_address_dialog.text"),
+      title: t("common.titles.delete_address"),
+      text: t("common.messages.confirm_delete_address"),
+
       async onConfirm() {
         const previousPagesCount = pages.value;
 
         await removeAddresses([address]);
 
         notifications.success({
-          text: t("pages.company.info.address_deletion_successful_message"),
+          text: t("common.messages.address_deletion_successful"),
           duration: 10000,
           single: true,
         });

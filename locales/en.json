@@ -145,7 +145,8 @@
       "no_addresses": "You do not have any addresses yet",
       "confirm_delete_address": "Are you sure you want to delete this address?",
       "no_results": "No results found",
-      "save_new_product_quantity": "Do you want to save new quantity by product lines?"
+      "save_new_product_quantity": "Do you want to save new quantity by product lines?",
+      "address_deletion_successful": "Address has been successfully deleted"
     },
     "placeholders": {
       "enter_value": "Please enter value",
@@ -197,7 +198,8 @@
       "review_order": "Please review your order",
       "new_address": "New address",
       "edit_address": "Edit address",
-      "addresses": "Addresses"
+      "addresses": "Addresses",
+      "delete_address": "Delete address"
     },
     "roles": {
       "org-maintainer": "Organization maintainer",
@@ -397,10 +399,6 @@
       }
     },
     "company": {
-      "delete_address_dialog": {
-        "title": "Delete address",
-        "text": "Are you sure you want to delete address from the list?"
-      },
       "add_or_update_address_dialog": {
         "address_title": "Address Info",
         "create_title": "Create new company address",
@@ -997,7 +995,6 @@
         "content_header": "Addresses",
         "no_addresses_message": "There are no addresses yet",
         "address_not_delete_message": "The default address cannot be deleted",
-        "address_deletion_successful_message": "Address has been successfully deleted",
         "address_saved_successful_message": "Address has been successfully saved",
         "labels": {
           "company_name": "Company Name",

@@ -191,6 +191,7 @@ import { useI18n } from "vue-i18n";
 import { useCountries, usePageHead } from "@/core/composables";
 import { AddressType } from "@/core/enums";
 import { useUserAddresses } from "@/shared/account";
+import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import { VcAddOrUpdateAddressModal } from "@/ui-kit/components";
 import type { ISortInfo } from "@/core/types";
@@ -207,6 +208,7 @@ const {
   addOrUpdateAddresses,
 } = useUserAddresses();
 const { openPopup, closePopup } = usePopup();
+const notifications = useNotifications();
 
 usePageHead({
   title: t("pages.account.addresses.meta.title"),
@@ -299,21 +301,38 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
 }
 
 async function removeAddress(address: MemberAddressType): Promise<void> {
-  if (!window.confirm(t("common.messages.confirm_delete_address"))) {
-    return;
-  }
+  const closeDeleteAddressDialog = openPopup({
+    component: "VcConfirmationDialog",
+    props: {
+      variant: "danger",
+      iconVariant: "danger",
+      loading: addressesLoading,
+      title: t("common.titles.delete_address"),
+      text: t("common.messages.confirm_delete_address"),
 
-  const previousPagesCount = pages.value;
+      async onConfirm() {
+        const previousPagesCount = pages.value;
 
-  await removeAddresses([address]);
+        await removeAddresses([address]);
 
-  /**
-   * If you were on the last page, and after deleting the product
-   * the number of pages has decreased, go to the previous page
-   */
-  if (previousPagesCount > 1 && previousPagesCount === page.value && previousPagesCount > pages.value) {
-    page.value -= 1;
-  }
+        notifications.success({
+          text: t("common.messages.address_deletion_successful"),
+          duration: 10000,
+          single: true,
+        });
+
+        /**
+         * If you were on the last page, and after deleting the product
+         * the number of pages has decreased, go to the previous page
+         */
+        if (previousPagesCount > 1 && previousPagesCount === page.value && previousPagesCount > pages.value) {
+          page.value -= 1;
+        }
+
+        closeDeleteAddressDialog();
+      },
+    },
+  });
 }
 
 onMounted(async () => {

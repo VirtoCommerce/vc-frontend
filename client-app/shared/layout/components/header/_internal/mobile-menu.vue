@@ -37,9 +37,9 @@
         </h2>
 
         <div class="mt-4 flex flex-col gap-y-2">
-          <template v-for="childrenItem in openedItem?.children" :key="childrenItem.title">
+          <template v-for="childItem in openedItem?.children" :key="childItem.title">
             <!-- Currency setting -->
-            <div v-if="childrenItem.id === 'currency-setting'" class="flex grow flex-col gap-y-1 font-normal">
+            <div v-if="childItem.id === 'currency-setting'" class="flex grow flex-col gap-y-1 font-normal">
               <header class="-mt-1 mb-1 text-2xl uppercase text-white">
                 {{ $t("shared.layout.header.mobile.currency") }}
               </header>
@@ -62,13 +62,16 @@
 
             <!-- TODO: Remove rendering by condition -->
             <MobileMenuLink
-              v-else-if="childrenItem.id !== 'quotes' || $cfg.quotes_enabled"
-              :link="childrenItem"
+              v-else-if="
+                (childItem.id !== 'quotes' || $cfg.quotes_enabled) &&
+                (childItem.id !== 'addresses' || !isCorporateMember)
+              "
+              :link="childItem"
               class="py-1 text-lg"
               @close="$emit('close')"
-              @select="selectMenuItem(childrenItem)"
+              @select="selectMenuItem(childItem)"
             >
-              {{ childrenItem.title }}
+              {{ childItem.title }}
             </MobileMenuLink>
           </template>
         </div>
@@ -181,7 +184,7 @@
 
           <!-- Corporate link -->
           <MobileMenuLink
-            v-if="mobileCorporateMenuItem && organization"
+            v-if="mobileCorporateMenuItem && isCorporateMember"
             :link="mobileCorporateMenuItem"
             class="py-1 text-2xl font-bold"
             @select="selectMenuItem(mobileCorporateMenuItem!)"
@@ -240,7 +243,7 @@ const { cart } = useCart();
 const { productsIds } = useCompareProducts();
 const { supportedLocales } = useLanguages();
 const { currentCurrency, supportedCurrencies, saveCurrencyCodeAndReload } = useCurrency();
-const { user, operator, isAuthenticated, organization, signMeOut } = useUser();
+const { user, operator, isAuthenticated, organization, isCorporateMember, signMeOut } = useUser();
 const {
   mobileMainMenuItems,
   mobileAccountMenuItem,

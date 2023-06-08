@@ -17,6 +17,7 @@
       />
 
       <AccountNavigationLink
+        v-if="!isCorporateMember"
         :to="{ name: 'Addresses' }"
         :text="$t('shared.account.navigation.links.addresses')"
         class="addresses-icon"
@@ -63,7 +64,7 @@
     </div>
   </div>
 
-  <div v-if="organization" class="rounded border bg-white shadow-md-s">
+  <div v-if="isCorporateMember" class="rounded border bg-white shadow-md-s">
     <div class="border-b px-4 py-2.5 text-base font-bold uppercase">
       {{ $t("shared.account.navigation.corporate_title") }}
     </div>
@@ -92,7 +93,7 @@ import useUser from "../composables/useUser";
 import AccountNavigationLink from "./account-navigation-link.vue";
 
 const route = useRoute();
-const { organization } = useUser();
+const { isCorporateMember } = useUser();
 const { lists, fetchWishlists } = useWishlists();
 
 const isListDetails = eagerComputed(() => route.name === "ListDetails");
