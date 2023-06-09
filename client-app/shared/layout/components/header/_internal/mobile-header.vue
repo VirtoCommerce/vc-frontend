@@ -64,7 +64,7 @@
         @keyup.enter="searchPhrase && $router.push(searchPageLink)"
       />
 
-      <VcButton :to="searchPhrase && searchPageLink" icon="search" />
+      <VcButton :route="searchPhrase && searchPageLink" icon="search" />
 
       <button type="button" class="-mr-2 ml-2 h-11 appearance-none px-3" @click="hideSearchBar">
         <VcIcon name="x" class="text-[--color-additional-50]" />
