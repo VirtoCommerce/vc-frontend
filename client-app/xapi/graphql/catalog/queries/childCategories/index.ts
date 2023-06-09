@@ -35,7 +35,7 @@ function getQueryDocument(maxLevel: number): DocumentNode {
   `;
 }
 
-export default async function getChildCategories(payload: QueryChildCategoriesArgs): Promise<Category[]> {
+export async function getChildCategories(payload: QueryChildCategoriesArgs): Promise<Category[]> {
   const { storeId, userId, cultureName, currencyCode } = globals;
   const { $graphqlClient } = useNuxtApp();
 
