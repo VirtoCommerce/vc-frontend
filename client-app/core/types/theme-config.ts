@@ -4,6 +4,7 @@ import type { ISocialSharingService } from "./social-sharing";
 import type { SortDirection } from "@/core/enums";
 
 export interface IThemeConfigPreset {
+  search_by_static_content_enabled: boolean;
   page_title_with_store_name?: boolean;
   page_title_store_name_align?: string | "start" | "end";
   page_title_divider?: string;
