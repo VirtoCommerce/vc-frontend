@@ -105,7 +105,7 @@
           <!-- Actions -->
           <section v-if="total" class="sticky bottom-0 mt-0.5 border-t border-gray-100 bg-white px-5 py-3">
             <VcButton
-              :route="{ name: 'Search', query: { [QueryParamName.SearchPhrase]: searchPhrase } }"
+              :to="{ name: 'Search', query: { [QueryParamName.SearchPhrase]: searchPhrase } }"
               size="sm"
               @click="hideSearchDropdown()"
             >

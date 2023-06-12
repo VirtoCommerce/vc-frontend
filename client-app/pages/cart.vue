@@ -10,7 +10,7 @@
     :breadcrumbs="breadcrumbs"
   >
     <template #actions>
-      <VcButton :route="{ name: 'Catalog' }" size="lg">
+      <VcButton :to="{ name: 'Catalog' }" size="lg">
         {{ $t("common.buttons.continue_shopping") }}
       </VcButton>
     </template>
@@ -106,7 +106,7 @@
             <!-- Go to checkout button (Multistep checkout) -->
             <VcButton
               v-if="$cfg.checkout_multistep_enabled"
-              :route="{ name: 'Checkout' }"
+              :to="{ name: 'Checkout' }"
               :disabled="isDisabledNextStep"
               full-width
               class="mt-4"

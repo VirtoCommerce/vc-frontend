@@ -106,7 +106,7 @@
         <div class="grid gap-6 xs:grid-cols-2 md:grid-cols-3 lg:gap-5 xl:grid-cols-4">
           <ProductCardGrid v-for="item in products" :key="item.id" :product="item">
             <template #cart-handler>
-              <VcButton v-if="item.hasVariations" :route="productsRoutes[item.id]" class="mb-4">
+              <VcButton v-if="item.hasVariations" :to="productsRoutes[item.id]" class="mb-4">
                 {{ $t("pages.demo_landing.products_block.choose_button") }}
               </VcButton>
 

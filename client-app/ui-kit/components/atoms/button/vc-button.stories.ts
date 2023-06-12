@@ -43,7 +43,7 @@ export default {
 } as Meta<typeof VcButton>;
 
 const Template: StoryFn<typeof VcButton> = (args) => ({
-  components: { VcButton, VcIcon },
+  components: { VcButton },
   setup: () => ({ args }),
   template: '<VcButton v-bind="args">Button text</VcButton>',
 });
@@ -63,23 +63,56 @@ FullWidth.args = {
 
 export const PrependIcon = Template.bind({});
 PrependIcon.args = {
-  variant: "outline",
-  color: "secondary",
   prependIcon: "save-v2",
 };
 
+export const SlotPrependIcon: StoryFn<typeof VcButton> = (args) => ({
+  components: { VcButton, VcIcon },
+  setup: () => ({ args }),
+  template: `<VcButton v-bind="args">
+    <VcIcon name="save-v2" />
+    <span>Button text</span>
+  </VcButton>`,
+});
+
 export const AppendIcon = Template.bind({});
 AppendIcon.args = {
-  variant: "outline",
-  color: "secondary",
   appendIcon: "save-v2",
 };
 
+export const SlotAppendIcon: StoryFn<typeof VcButton> = (args) => ({
+  components: { VcButton, VcIcon },
+  setup: () => ({ args }),
+  template: `<VcButton v-bind="args">
+    <span>Button text</span>
+    <VcIcon name="save-v2" />
+  </VcButton>`,
+});
+
 export const Icon = Template.bind({});
 Icon.args = {
-  variant: "outline",
-  color: "secondary",
   icon: "save-v2",
+};
+
+export const SlotIcon: StoryFn<typeof VcButton> = (args) => ({
+  components: { VcButton, VcIcon },
+  setup: () => ({ args }),
+  template: `<VcButton v-bind="args">
+    <VcIcon name="save-v2" />
+  </VcButton>`,
+});
+SlotIcon.args = {
+  icon: true,
+};
+
+export const Link = Template.bind({});
+Link.args = {
+  to: "/some/link",
+};
+
+export const Loading = Template.bind({});
+Loading.args = {
+  loading: true,
 };
 
 export const Truncate: StoryFn<typeof VcButton> = (args) => ({

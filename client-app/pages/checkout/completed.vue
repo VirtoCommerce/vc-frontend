@@ -25,7 +25,7 @@
           <span v-t="'pages.checkout_complete.text'" />
           <div class="mt-10 flex flex-col justify-center gap-6 xs:flex-row">
             <VcButton
-              :route="{ name: 'OrderDetails', params: { orderId: placedOrder?.id } }"
+              :to="{ name: 'OrderDetails', params: { orderId: placedOrder?.id } }"
               prepend-icon="document-text"
               class="flex-1"
             >

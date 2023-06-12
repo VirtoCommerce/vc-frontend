@@ -26,6 +26,8 @@ const style =
 
 <style lang="scss">
 .vc-icon {
+  $self: &;
+
   @apply inline-block align-top leading-none text-inherit;
 
   &--size {
@@ -43,6 +45,38 @@ const style =
 
     &--md {
       @apply w-6 h-6;
+    }
+  }
+
+  @at-root .vc-button {
+    $icon: "";
+
+    &--icon {
+      $icon: &;
+    }
+
+    #{$self} {
+      @apply w-[--vc-button-line-height] h-[--vc-button-line-height];
+
+      &:first-child:not(:last-child) {
+        @apply me-2;
+      }
+
+      &:last-child:not(:first-child) {
+        @apply ms-2;
+      }
+    }
+
+    &__slot {
+      #{$icon} & {
+        & > #{$self} {
+          @apply mx-0 #{!important};
+        }
+
+        & > *:not(#{$self}) {
+          @apply hidden;
+        }
+      }
     }
   }
 }

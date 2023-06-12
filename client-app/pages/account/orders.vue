@@ -57,21 +57,15 @@
     >
       <div class="relative">
         <VcButton
-          v-if="isMobile"
           ref="filtersButtonElement"
           :disabled="ordersLoading"
-          icon="filter"
-          @click="toggleFilters"
-        />
-
-        <VcButton
-          v-if="!isMobile"
-          ref="filtersButtonElement"
-          :disabled="ordersLoading"
-          variant="outline"
+          :variant="isMobile ? 'solid' : 'outline'"
+          :icon="isMobile"
           @click="toggleFilters"
         >
-          {{ $t("common.buttons.filters") }}
+          <VcIcon name="filter" class="lg:hidden" />
+
+          <span>{{ $t("common.buttons.filters") }}</span>
         </VcButton>
 
         <!-- Desktop filters dropdown -->
@@ -141,7 +135,7 @@
           {{ $t("pages.account.orders.buttons.reset_search") }}
         </VcButton>
 
-        <VcButton v-else :route="{ name: 'Catalog' }">
+        <VcButton v-else :to="{ name: 'Catalog' }">
           {{ $t("pages.account.orders.buttons.no_orders") }}
         </VcButton>
       </template>

@@ -50,14 +50,14 @@
           <div class="mt-10 flex flex-col items-center justify-center gap-6 md:flex-row lg:justify-start">
             <VcButton
               v-if="!isPaymentSuccess"
-              :route="{ name: 'CheckoutPayment', replace: true }"
+              :to="{ name: 'CheckoutPayment', replace: true }"
               prepend-icon="chevron-left"
             >
               {{ $t("common.buttons.payment_details") }}
             </VcButton>
 
             <VcButton
-              :route="{ name: 'OrderDetails', params: { orderId: placedOrder!.id } }"
+              :to="{ name: 'OrderDetails', params: { orderId: placedOrder!.id } }"
               prepend-icon="document-text"
               class="w-40"
             >

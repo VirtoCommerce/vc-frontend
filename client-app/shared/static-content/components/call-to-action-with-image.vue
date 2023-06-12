@@ -6,12 +6,7 @@
           <div class="mb-4 text-2xl font-bold lg:text-5xl">{{ model.title }}</div>
           <div class="text-lg">{{ model.subtitle }}</div>
           <div v-if="model.buttons && model.buttons.length" class="mt-6 flex space-x-6 lg:mt-14">
-            <VcButton
-              v-for="(item, index) in model.buttons"
-              :key="index"
-              :route="item.link"
-              class="flex-1 lg:flex-none"
-            >
+            <VcButton v-for="(item, index) in model.buttons" :key="index" :to="item.link" class="flex-1 lg:flex-none">
               {{ item.label }}
             </VcButton>
           </div>

@@ -68,39 +68,24 @@
         <VcButton
           ref="filtersButtonElement"
           :disabled="contactsLoading"
-          icon="filter"
-          class="lg:!hidden"
+          :icon="isMobile"
+          :variant="isMobile ? 'solid' : 'outline'"
           @click="filtersVisible = !filtersVisible"
         >
-          <template #prepend>
-            <transition name="fade">
+          <VcIcon name="filter" class="lg:hidden" />
+
+          <span>{{ $t("common.buttons.filters") }}</span>
+
+          <template #append>
+            <transition :name="isMobile ? 'fade' : 'slide-fade-right'">
               <span
                 v-if="numberOfFacetsApplied"
-                class="absolute -left-2.5 -top-2.5 box-content h-5 min-w-[1.25rem] rounded-full border border-current bg-[--color-additional-50] px-px text-13 text-[--color-primary-500]"
+                class="absolute -left-2.5 -top-2.5 box-content inline-block h-5 w-5 rounded-full border border-[--color-primary-500] bg-[--color-additional-50] text-13 text-[--color-primary-500] lg:relative lg:left-auto lg:top-auto lg:ml-2 lg:border-0 lg:bg-[--color-primary-500] lg:text-[--color-additional-50]"
               >
                 {{ numberOfFacetsApplied }}
               </span>
             </transition>
           </template>
-        </VcButton>
-
-        <VcButton
-          ref="filtersButtonElement"
-          :disabled="contactsLoading"
-          variant="outline"
-          class="!hidden lg:!inline-block"
-          @click="filtersVisible = !filtersVisible"
-        >
-          <span class="hidden lg:inline-block">{{ $t("common.buttons.filters") }}</span>
-
-          <transition name="slide-fade-right">
-            <span
-              v-if="numberOfFacetsApplied"
-              class="ms-2 box-content inline-block h-5 min-w-[1.25rem] rounded-full bg-[--color-primary-500] px-px text-[--color-additional-50]"
-            >
-              {{ numberOfFacetsApplied }}
-            </span>
-          </transition>
         </VcButton>
 
         <!-- Desktop filters dropdown -->
@@ -209,7 +194,7 @@
           {{ $t("pages.company.members.buttons.reset_search") }}
         </VcButton>
 
-        <VcButton v-else :route="{ name: 'Catalog' }">
+        <VcButton v-else :to="{ name: 'Catalog' }">
           {{ $t("pages.company.members.buttons.no_members") }}
         </VcButton>
       </template>

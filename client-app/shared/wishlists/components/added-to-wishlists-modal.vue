@@ -38,7 +38,7 @@
       </VcButton>
 
       <VcButton
-        :route="listIds.length === 1 ? { name: 'ListDetails', params: { listId: listIds[0] } } : { name: 'Lists' }"
+        :to="listIds.length === 1 ? { name: 'ListDetails', params: { listId: listIds[0] } } : { name: 'Lists' }"
         class="flex-1 sm:flex-none"
         @click="close"
       >

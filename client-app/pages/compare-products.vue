@@ -9,7 +9,7 @@
       mobile-image="/static/images/errors/emptyCompareListMobile.webp"
     >
       <template #actions>
-        <VcButton :route="{ name: 'Catalog' }">
+        <VcButton :to="{ name: 'Catalog' }">
           {{ $t("pages.compare.empty_list.button_text") }}
         </VcButton>
       </template>

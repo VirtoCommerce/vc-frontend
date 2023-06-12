@@ -57,19 +57,19 @@
             <template #actions>
               <div class="hidden flex-wrap gap-x-5 gap-y-4 md:flex">
                 <VcButton
-                  :route="{ name: 'OrderDetails', params: { orderId }, replace: true }"
+                  :to="{ name: 'OrderDetails', params: { orderId }, replace: true }"
                   variant="outline"
                   prepend-icon="chevron-left"
                 >
                   {{ $t("pages.account.order_payment.back_to_order_button") }}
                 </VcButton>
 
-                <VcButton :route="{ name: 'Orders', replace: true }" class="w-40">
+                <VcButton :to="{ name: 'Orders', replace: true }" class="w-40">
                   {{ $t("pages.account.order_payment.orders_list_button") }}
                 </VcButton>
               </div>
 
-              <VcButton :route="{ name: 'Catalog', replace: true }" class="w-48">
+              <VcButton :to="{ name: 'Catalog', replace: true }" class="w-48">
                 {{ $t("pages.account.order_payment.continue_shopping_button") }}
               </VcButton>
             </template>
@@ -144,15 +144,14 @@
                     {{ $t("pages.account.order_payment.edit_button") }}
                   </VcButton>
 
-                  <!-- TODO: use VcButton -->
-                  <button
+                  <VcButton
                     :disabled="paymentMethodComponent?.loading || loading"
-                    type="button"
-                    class="h-8 w-8 rounded text-[color:var(--color-primary)] shadow hover:bg-gray-100 md:hidden"
+                    class="md:hidden"
+                    size="sm"
+                    icon="pencil"
+                    variant="outline"
                     @click="paymentMethodComponent?.loading || loading ? null : showEditAddressDialog()"
-                  >
-                    <i class="fas fa-pencil-alt text-lg" />
-                  </button>
+                  />
                 </div>
               </div>
             </div>
@@ -175,25 +174,24 @@
 
                 <div>
                   <VcButton
-                    :is-disabled="paymentMethodComponent?.loading || loading"
-                    :is-waiting="changeMethodLoading"
+                    :disabled="paymentMethodComponent?.loading || loading"
+                    :loading="changeMethodLoading"
                     size="sm"
-                    is-outline
+                    variant="outline"
                     class="!hidden self-start px-5 font-bold uppercase md:!inline-flex"
                     @click="showChangePaymentMethodDialog"
                   >
                     {{ $t("pages.account.order_payment.edit_button") }}
                   </VcButton>
 
-                  <!-- TODO: use VcButton -->
-                  <button
+                  <VcButton
                     :disabled="paymentMethodComponent?.loading || loading"
-                    type="button"
-                    class="h-8 w-8 rounded text-[color:var(--color-primary)] shadow hover:bg-gray-100 md:hidden"
+                    class="md:!hidden"
+                    size="sm"
+                    icon="pencil"
+                    variant="outline"
                     @click="paymentMethodComponent?.loading || loading ? null : showChangePaymentMethodDialog()"
-                  >
-                    <i class="fas fa-pencil-alt text-lg" />
-                  </button>
+                  />
                 </div>
               </div>
 

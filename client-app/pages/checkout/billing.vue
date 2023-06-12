@@ -31,7 +31,7 @@
             />
           </transition>
 
-          <VcButton :route="{ name: 'Review', replace: true }" :disabled="isDisabledNextStep" full-width class="mt-4">
+          <VcButton :to="{ name: 'Review', replace: true }" :disabled="isDisabledNextStep" full-width class="mt-4">
             {{ $t("common.buttons.review_order") }}
           </VcButton>
 

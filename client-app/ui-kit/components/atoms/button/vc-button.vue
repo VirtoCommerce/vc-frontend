@@ -1,7 +1,7 @@
 <template>
   <component
     :is="isLink ? 'router-link' : 'button'"
-    :to="enabled ? route : ''"
+    :to="enabled ? to : ''"
     :type="isLink ? null : submit ? 'submit' : 'button'"
     :disabled="!enabled"
     :title="title"
@@ -20,32 +20,37 @@
     @click="enabled ? $emit('click', $event) : null"
   >
     <span class="vc-button__content">
-      <span v-if="$slots.prepend || prependIcon" class="vc-button__prepend">
-        <slot name="prepend">
-          <VcIcon v-if="prependIcon" class="vc-button__icon" :name="prependIcon" :size="iconSize" />
-        </slot>
-      </span>
+      <VcIcon v-if="icon && typeof icon === 'string'" class="vc-button__icon" :name="icon" />
 
-      <span class="vc-button__slot">
-        <VcIcon v-if="icon" class="vc-button__icon" :name="icon" :size="iconSize" />
+      <template v-else>
+        <span v-if="$slots.prepend || prependIcon" class="vc-button__prepend">
+          <slot name="prepend">
+            <VcIcon v-if="prependIcon" class="vc-button__icon" :name="prependIcon" />
+          </slot>
+        </span>
 
-        <slot v-else-if="$slots.default" />
-      </span>
+        <span v-if="$slots.default" class="vc-button__slot">
+          <slot />
+        </span>
 
-      <span v-if="$slots.append || appendIcon" class="vc-button__append">
-        <slot name="append">
-          <VcIcon v-if="appendIcon" class="vc-button__icon" :name="appendIcon" :size="iconSize" />
-        </slot>
-      </span>
+        <span v-if="$slots.append || appendIcon" class="vc-button__append">
+          <slot name="append">
+            <VcIcon v-if="appendIcon" class="vc-button__icon" :name="appendIcon" />
+          </slot>
+        </span>
+      </template>
     </span>
 
-    <span class="vc-button__loader"></span>
+    <span class="vc-button__loader">
+      <slot name="loader">
+        <span class="vc-button__loader-icon"></span>
+      </slot>
+    </span>
   </component>
 </template>
 
 <script setup lang="ts">
 import { eagerComputed } from "@vueuse/core";
-import { computed } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 export interface IEmits {
@@ -59,10 +64,10 @@ interface IProps {
   submit?: boolean;
   disabled?: boolean;
   loading?: boolean;
-  route?: RouteLocationRaw | null;
+  to?: RouteLocationRaw | null;
   prependIcon?: string;
   appendIcon?: string;
-  icon?: string;
+  icon?: boolean | string;
   title?: string;
   truncate?: boolean;
   fullWidth?: boolean;
@@ -77,33 +82,13 @@ const props = withDefaults(defineProps<IProps>(), {
   submit: false,
   disabled: false,
   loading: false,
-  route: null,
+  to: null,
   truncate: false,
   fullWidth: false,
 });
 
 const enabled = eagerComputed<boolean>(() => !props.disabled && !props.loading);
-const isLink = eagerComputed<boolean>(() => !!props.route && enabled.value);
-
-const iconSize = computed(() => {
-  let size;
-
-  switch (props.size) {
-    case "xs":
-      size = 14;
-      break;
-    case "sm":
-      size = 16;
-      break;
-    case "md":
-      size = 20;
-      break;
-    case "lg":
-      size = 24;
-  }
-
-  return size;
-});
+const isLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
 </script>
 
 <style scoped lang="scss">
@@ -116,7 +101,7 @@ const iconSize = computed(() => {
   $truncate: "";
   $disabled: "";
   $loading: "";
-  $loader: "";
+  $loaderIcon: "";
 
   @apply relative inline-flex justify-center items-center min-w-0 rounded border-2 select-none text-center;
 
@@ -141,73 +126,73 @@ const iconSize = computed(() => {
   }
 
   &__loader {
-    $loader: &;
-
     @apply hidden;
 
     #{$loading} & {
       @apply absolute inset-0 flex justify-center items-center;
-
-      &:before {
-        @apply content-[''] rounded-full border-[--color-neutral-300] border-r-[--color-neutral-500] animate-spin;
-      }
     }
+  }
+
+  &__loader-icon {
+    $loaderIcon: &;
+
+    @apply block rounded-full border-[--color-neutral-300] border-r-[--color-neutral-500] animate-spin;
   }
 
   &--size {
     &--xs {
-      @apply px-2.5 py-1.5 text-xs/[0.875rem] font-bold;
+      --vc-button-line-height: 0.875rem;
+
+      @apply px-2.5 py-1.5 text-xs/[--vc-button-line-height] font-bold;
 
       &#{$icon} {
         @apply px-1.5;
       }
 
-      & #{$loader} {
-        &:before {
-          @apply border-2 w-3.5 h-3.5;
-        }
+      & #{$loaderIcon} {
+        @apply border-2 w-3.5 h-3.5;
       }
     }
 
     &--sm {
-      @apply px-3 py-2 text-xs uppercase font-black;
+      --vc-button-line-height: 1rem;
+
+      @apply px-3 py-2 text-xs/[--vc-button-line-height] uppercase font-black;
 
       &#{$icon} {
         @apply px-2;
       }
 
-      & #{$loader} {
-        &:before {
-          @apply border-2 w-4 h-4;
-        }
+      & #{$loaderIcon} {
+        @apply border-2 w-4 h-4;
       }
     }
 
     &--md {
-      @apply px-5 py-2.5 text-sm uppercase font-black;
+      --vc-button-line-height: 1.25rem;
+
+      @apply px-5 py-2.5 text-sm/[--vc-button-line-height] uppercase font-black;
 
       &#{$icon} {
         @apply px-2.5;
       }
 
-      & #{$loader} {
-        &:before {
-          @apply border-[3px] w-5 h-5;
-        }
+      & #{$loaderIcon} {
+        @apply border-[3px] w-5 h-5;
       }
     }
 
     &--lg {
-      @apply px-7 py-3.5 text-base uppercase font-black;
+      --vc-button-line-height: 1.75rem;
+
+      @apply px-7 py-3.5 text-base/[--vc-button-line-height] uppercase font-black;
 
       &#{$icon} {
         @apply px-3.5;
       }
 
-      & #{$loader} {
-        &:before {
-          @apply border-[3px] w-6 h-6;
-        }
+      & #{$loaderIcon} {
+        @apply border-[3px] w-6 h-6;
       }
     }
   }
@@ -261,6 +246,8 @@ const iconSize = computed(() => {
   }
 
   &__slot {
+    word-break: break-word;
+
     #{$truncate} & {
       @apply grow min-w-0 truncate;
     }

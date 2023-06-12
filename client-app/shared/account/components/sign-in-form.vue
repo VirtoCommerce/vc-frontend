@@ -59,12 +59,7 @@
         {{ $t("shared.account.sign_in_form.login_button") }}
       </VcButton>
 
-      <VcButton
-        :route="{ name: 'SignUp' }"
-        :disabled="loading || isAuthenticated"
-        variant="outline"
-        class="ml-4 flex-1"
-      >
+      <VcButton :to="{ name: 'SignUp' }" :disabled="loading || isAuthenticated" variant="outline" class="ml-4 flex-1">
         {{ $t("shared.account.sign_in_form.registration_button") }}
       </VcButton>
     </div>

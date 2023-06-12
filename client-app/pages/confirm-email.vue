@@ -19,7 +19,7 @@
     </template>
 
     <template #actions>
-      <VcButton :route="{ name: 'SignIn' }" class="w-36">
+      <VcButton :to="{ name: 'SignIn' }" class="w-36">
         {{ $t("pages.confirm_email.continue_button") }}
       </VcButton>
     </template>
@@ -42,7 +42,7 @@
     </template>
 
     <template #actions>
-      <VcButton :route="{ name: 'Catalog' }" class="w-48">
+      <VcButton :to="{ name: 'Catalog' }" class="w-48">
         {{ $t("pages.confirm_email.continue_shopping_button") }}
       </VcButton>
     </template>

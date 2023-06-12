@@ -12,7 +12,7 @@
       shadow
     >
       <template #header-button>
-        <VcButton v-if="isMobile" :route="{ name: 'Orders' }" variant="outline" size="xs">
+        <VcButton v-if="isMobile" :to="{ name: 'Orders' }" variant="outline" size="xs">
           {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
         </VcButton>
 

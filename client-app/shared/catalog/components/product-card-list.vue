@@ -109,7 +109,7 @@
 
     <div class="vc-product-card-list__add-to-cart mt-3 flex w-full flex-col gap-2 sm:mt-0">
       <template v-if="product.hasVariations">
-        <VcButton :route="link" variant="outline" size="sm" full-width @click="$emit('linkClick', $event)">
+        <VcButton :to="link" variant="outline" size="sm" full-width @click="$emit('linkClick', $event)">
           {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
         </VcButton>
 

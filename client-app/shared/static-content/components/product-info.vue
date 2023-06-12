@@ -28,7 +28,7 @@
         </div>
 
         <div class="mt-7 print:hidden md:mt-5">
-          <VcButton :route="{ name: 'Cart' }" full-width>
+          <VcButton :to="{ name: 'Cart' }" full-width>
             {{ $t("pages.product.view_cart_button") }}
           </VcButton>
         </div>

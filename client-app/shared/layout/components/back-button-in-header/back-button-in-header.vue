@@ -1,7 +1,7 @@
 <template>
   <NestedMobileHeader>
     <template #left>
-      <VcButton :route="to" prepend-icon="chevron-left" class="ml-6" @click="$emit('click')">
+      <VcButton :to="to" prepend-icon="chevron-left" class="ml-6" @click="$emit('click')">
         <slot>{{ $t("common.buttons.back") }}</slot>
       </VcButton>
     </template>

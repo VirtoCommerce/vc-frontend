@@ -24,7 +24,7 @@
             <p v-t="`pages.${localizationPageTerm}.success_message`" class="text-lg" />
           </div>
 
-          <VcButton :route="{ name: 'SignIn' }" class="w-48">
+          <VcButton :to="{ name: 'SignIn' }" class="w-48">
             {{ $t(`pages.${localizationPageTerm}.log_in_button`) }}
           </VcButton>
         </div>

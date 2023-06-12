@@ -13,7 +13,7 @@
     <template #sidebar>
       <OrderSummary :cart="cart!" footnote>
         <template #footer>
-          <VcButton :route="{ name: 'Billing', replace: true }" :disabled="isDisabledNextStep" full-width class="mt-4">
+          <VcButton :to="{ name: 'Billing', replace: true }" :disabled="isDisabledNextStep" full-width class="mt-4">
             {{ $t("common.buttons.go_to_billing") }}
           </VcButton>
 

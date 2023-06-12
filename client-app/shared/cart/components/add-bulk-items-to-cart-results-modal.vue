@@ -103,7 +103,7 @@
     </div>
 
     <template #actions="{ close }">
-      <VcButton :route="{ name: 'Cart' }" class="w-full sm:w-36" @click="close()">
+      <VcButton :to="{ name: 'Cart' }" class="w-full sm:w-36" @click="close()">
         {{ $t("common.buttons.view_cart") }}
       </VcButton>
 

@@ -176,7 +176,7 @@
     </div>
 
     <div v-if="product.hasVariations" class="flex flex-col">
-      <VcButton :route="link" variant="outline" size="sm" full-width @click="$emit('linkClick', $event)">
+      <VcButton :to="link" variant="outline" size="sm" full-width @click="$emit('linkClick', $event)">
         {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
       </VcButton>
 
