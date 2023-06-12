@@ -2,7 +2,7 @@
   <component
     :is="isLink ? 'router-link' : 'button'"
     :to="enabled ? to : ''"
-    :type="isLink ? null : submit ? 'submit' : 'button'"
+    :type="type"
     :disabled="!enabled"
     :title="title"
     :class="[
@@ -61,7 +61,7 @@ interface IProps {
   color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger";
   size?: "xs" | "sm" | "md" | "lg";
   variant?: "solid" | "outline";
-  submit?: boolean;
+  type?: "button" | "reset" | "submit";
   disabled?: boolean;
   loading?: boolean;
   to?: RouteLocationRaw | null;
@@ -79,7 +79,7 @@ const props = withDefaults(defineProps<IProps>(), {
   color: "primary",
   size: "md",
   variant: "solid",
-  submit: false,
+  type: "button",
   disabled: false,
   loading: false,
   to: null,

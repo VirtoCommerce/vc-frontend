@@ -4,6 +4,7 @@ import type { Meta, StoryFn } from "@storybook/vue3";
 const SIZES = ["xs", "sm", "md", "lg"];
 const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning", "danger"];
 const VARIANTS = ["solid", "outline"];
+const TYPES = ["button", "reset", "submit"];
 
 export default {
   title: "Components/Atoms/VcButton",
@@ -26,6 +27,16 @@ export default {
       table: {
         type: {
           summary: COLORS.join(" | "),
+        },
+      },
+    },
+    type: {
+      control: "select",
+      options: TYPES,
+      type: { name: "string", required: false },
+      table: {
+        type: {
+          summary: TYPES.join(" | "),
         },
       },
     },
