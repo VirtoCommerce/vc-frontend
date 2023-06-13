@@ -1,10 +1,12 @@
 <template>
-  <svg :class="[`vc-icon`, typeof size === 'string' ? `vc-icon--size--${size}` : '']" :style="style">
+  <svg :class="['vc-icon', sizeClass]" :style="style">
     <use :href="`/static/icons/basic/${name}.svg#icon`"></use>
   </svg>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+
 interface IProps {
   name?: string;
   size?: "xxs" | "xs" | "sm" | "md" | number;
@@ -15,13 +17,16 @@ const props = withDefaults(defineProps<IProps>(), {
   size: "md",
 });
 
-const style =
+const style = computed(() =>
   typeof props.size === "number"
     ? {
         width: `${props.size}px`,
         height: `${props.size}px`,
       }
-    : {};
+    : {}
+);
+
+const sizeClass = computed(() => (typeof props.size === "string" ? `vc-icon--size--${props.size}` : ""));
 </script>
 
 <style lang="scss">

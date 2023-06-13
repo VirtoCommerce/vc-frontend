@@ -15,7 +15,7 @@
           <div class="text-lg">{{ $t("pages.forgot_password.reset_link_was_sent_message") }}</div>
         </div>
 
-        <VcButton route="/" class="w-48">
+        <VcButton to="/" class="w-48">
           {{ $t("pages.forgot_password.home_button") }}
         </VcButton>
       </div>

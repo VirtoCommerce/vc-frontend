@@ -32,7 +32,7 @@
               {{ $t("common.buttons.show_order") }}
             </VcButton>
 
-            <VcButton route="/" class="flex-1">
+            <VcButton to="/" class="flex-1">
               {{ $t("common.buttons.home") }}
             </VcButton>
           </div>

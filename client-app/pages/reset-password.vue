@@ -36,7 +36,7 @@
           <p v-t="'common.messages.invalid_user_id_or_token'" class="text-lg" />
         </div>
 
-        <VcButton route="/" class="w-48">
+        <VcButton to="/" class="w-48">
           {{ $t("common.buttons.home") }}
         </VcButton>
       </div>

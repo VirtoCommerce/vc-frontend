@@ -41,7 +41,7 @@
       </template>
     </span>
 
-    <span class="vc-button__loader">
+    <span v-if="loading" class="vc-button__loader">
       <slot name="loader">
         <span class="vc-button__loader-icon"></span>
       </slot>

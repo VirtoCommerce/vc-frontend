@@ -64,7 +64,7 @@
               {{ $t("common.buttons.show_order") }}
             </VcButton>
 
-            <VcButton v-if="isPaymentSuccess" route="/" class="w-40">
+            <VcButton v-if="isPaymentSuccess" to="/" class="w-40">
               {{ $t("common.buttons.home") }}
             </VcButton>
           </div>

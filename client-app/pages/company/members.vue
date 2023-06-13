@@ -2,14 +2,17 @@
   <div>
     <!-- Title block -->
     <div class="mx-5 flex items-center justify-between md:mx-0">
-      <h2 v-t="'pages.company.members.title'" class="text-3xl font-bold uppercase text-gray-800" />
+      <h2 v-t="'pages.company.members.title'" class="grow text-3xl font-bold uppercase text-gray-800" />
 
-      <div class="flex-no-wrap flex space-x-2 md:space-x-4">
-        <VcButton v-if="$can($permissions.storefront.CanInviteUsers)" variant="outline" @click="openInviteDialog">
-          <span class="md:hidden">{{ $t("pages.company.members.buttons.invite") }}</span>
-          <span class="hidden md:inline">{{ $t("pages.company.members.buttons.invite_members") }}</span>
-        </VcButton>
-      </div>
+      <VcButton
+        v-if="$can($permissions.storefront.CanInviteUsers)"
+        variant="outline"
+        class="flex-none"
+        @click="openInviteDialog"
+      >
+        <span class="md:hidden">{{ $t("pages.company.members.buttons.invite") }}</span>
+        <span class="hidden md:inline">{{ $t("pages.company.members.buttons.invite_members") }}</span>
+      </VcButton>
     </div>
 
     <!-- Mobile filters sidebar -->
