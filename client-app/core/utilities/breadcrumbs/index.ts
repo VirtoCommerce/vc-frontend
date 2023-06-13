@@ -1,4 +1,4 @@
-import type { Breadcrumb } from "@/xapi/types";
+import type { Breadcrumb } from "@/core/api/graphql/types";
 
 export function buildBreadcrumbs(items?: Breadcrumb[]): IBreadcrumb[] | undefined {
   return items?.map<IBreadcrumb>(({ title, seoPath }) => ({

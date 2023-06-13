@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import type { CommonVendor } from "@/xapi/types";
+import type { CommonVendor } from "@/core/api/graphql/types";
 
 interface IProps {
   withRating?: boolean;

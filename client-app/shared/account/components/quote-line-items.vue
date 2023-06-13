@@ -190,8 +190,8 @@
 import { sumBy } from "lodash";
 import { computed } from "vue";
 import { extendLineItem } from "@/core/utilities";
+import type { QuoteItemType } from "@/core/api/graphql/types";
 import type { ExtendedLineItemType } from "@/core/types";
-import type { QuoteItemType } from "@/xapi/types";
 
 interface IEmits {
   (event: "update:item", value: ExtendedLineItemType<QuoteItemType>): void;

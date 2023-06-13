@@ -153,8 +153,8 @@ import { useField, useForm } from "vee-validate";
 import { computed, ref, watch } from "vue";
 import { string as yupString } from "yup";
 import { getAddressName, Logger } from "@/core/utilities";
+import type { CountryRegionType, CountryType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
-import type { CountryRegionType, CountryType } from "@/xapi/types";
 
 interface IEmits {
   (event: "update:modelValue", address: AnyAddressType): void;

@@ -1,6 +1,6 @@
 import { ContactStatus } from "@/shared/company";
+import type { ContactType, RoleType } from "@/core/api/graphql/types";
 import type { ContactDisplayStatusType, ExtendedContactType } from "@/shared/company";
-import type { ContactType, RoleType } from "@/xapi/types";
 
 export function getContactEmailAddresses(contact: ContactType): string[] {
   let emails: string[] = [];

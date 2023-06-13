@@ -289,8 +289,8 @@ import {
   PageToolbarBlock,
   OrderStatus,
 } from "@/shared/account";
+import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
-import type { CustomerOrderType } from "@/xapi/types";
 
 const { t } = useI18n();
 const router = useRouter();

@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Rating } from "@/xapi/types";
+import type { Rating } from "@/core/api/graphql/types";
 
 interface Props {
   rating: Rating;

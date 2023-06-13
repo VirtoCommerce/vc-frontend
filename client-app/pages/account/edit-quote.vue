@@ -143,8 +143,8 @@ import { useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import { VcAddOrUpdateAddressModal } from "@/ui-kit/components";
+import type { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
-import type { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi/types";
 
 interface IProps {
   quoteId: string;

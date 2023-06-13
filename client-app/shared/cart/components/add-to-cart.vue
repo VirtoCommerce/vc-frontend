@@ -61,7 +61,7 @@ import { number } from "yup";
 import { useGoogleAnalytics } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import useCart from "../composables/useCart";
-import type { Product, LineItemType, VariationType } from "@/xapi/types";
+import type { Product, LineItemType, VariationType } from "@/core/api/graphql/types";
 
 interface IEmits {
   (event: "update:lineItem", lineItem: LineItemType): void;

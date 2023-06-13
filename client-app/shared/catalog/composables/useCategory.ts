@@ -1,9 +1,9 @@
 import { computed, readonly, ref, shallowRef } from "vue";
-import globals from "@/core/globals";
+import { getCategory } from "@/core/api/graphql";
+import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
-import { getCategory } from "@/xapi";
-import type { ExtendedQueryCategoryArgsType } from "@/xapi";
-import type { Category } from "@/xapi/types";
+import type { ExtendedQueryCategoryArgsType } from "@/core/api/graphql";
+import type { Category } from "@/core/api/graphql/types";
 
 export function useCategory() {
   const loading = ref(false);

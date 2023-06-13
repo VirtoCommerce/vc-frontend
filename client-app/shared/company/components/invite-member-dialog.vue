@@ -67,7 +67,7 @@ import { useRouter } from "vue-router";
 import { string } from "yup";
 import { useIdentityErrorTranslator } from "@/core/composables";
 import { B2B_ROLES } from "@/core/constants";
-import globals from "@/core/globals";
+import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 

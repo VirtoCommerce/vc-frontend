@@ -4,7 +4,7 @@ import { maska } from "maska";
 import { createApp } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
 import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";
-import { setGlobalVariables } from "@/core/globals";
+import { setGlobals } from "@/core/globals";
 import { configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
 import { getBaseUrl, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
@@ -13,16 +13,8 @@ import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
 import { templateBlocks } from "@/shared/static-content";
 import * as UIKitComponents from "@/ui-kit/components";
-import { graphqlClient } from "@/xapi";
 import App from "./App.vue";
 import type { Plugin } from "vue";
-
-// Workaround before Nuxt3 migration, will be deleted later.
-window.useNuxtApp = () => {
-  return {
-    $graphqlClient: graphqlClient,
-  };
-};
 
 export default async (getPlugins: (options: any) => { plugin: Plugin; options: any }[] = () => []) => {
   const appSelector = "#app";
@@ -52,7 +44,7 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
   /**
    * Setting global variables
    */
-  setGlobalVariables({
+  setGlobals({
     i18n,
     router,
     storeId: themeContext.value.storeId,

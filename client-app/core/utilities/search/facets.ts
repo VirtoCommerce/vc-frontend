@@ -1,6 +1,6 @@
 import { unref } from "vue";
 import type { FacetItemType, FacetValueItemType } from "../../types";
-import type { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@/xapi/types";
+import type { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@/core/api/graphql/types";
 import type { MaybeRef } from "@vueuse/core";
 
 /**

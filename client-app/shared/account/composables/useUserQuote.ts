@@ -1,7 +1,5 @@
 import { omit, remove } from "lodash";
 import { computed, ref } from "vue";
-import { AddressType } from "@/core/enums";
-import { convertToType, Logger } from "@/core/utilities";
 import {
   getQuote,
   changeQuoteComment,
@@ -9,8 +7,10 @@ import {
   removeQuoteItem,
   updateQuoteAddresses,
   submitQuoteRequest,
-} from "@/xapi";
-import type { QueryQuoteArgs, QuoteType, QuoteAddressType, InputQuoteAddressType } from "@/xapi/types";
+} from "@/core/api/graphql";
+import { AddressType } from "@/core/enums";
+import { convertToType, Logger } from "@/core/utilities";
+import type { QueryQuoteArgs, QuoteType, QuoteAddressType, InputQuoteAddressType } from "@/core/api/graphql/types";
 
 const fetching = ref<boolean>(false);
 const quote = ref<QuoteType | undefined>();

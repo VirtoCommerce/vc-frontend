@@ -38,7 +38,7 @@ import { clone } from "lodash";
 import { computed, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCountries } from "@/core/composables";
-import type { MemberAddressType } from "@/xapi/types";
+import type { MemberAddressType } from "@/core/api/graphql/types";
 
 interface IEmits {
   (event: "result", address: MemberAddressType): void;

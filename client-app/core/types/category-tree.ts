@@ -1,5 +1,5 @@
 import type { ModifyType } from "./modify";
-import type { Category } from "@/xapi/types";
+import type { Category } from "@/core/api/graphql/types";
 
 export type CategoryTreeItemType = ModifyType<
   Category,

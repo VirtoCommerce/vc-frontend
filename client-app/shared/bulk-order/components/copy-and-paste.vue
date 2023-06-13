@@ -33,7 +33,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { validateQuantity } from "../utils";
-import type { InputNewBulkItemType } from "@/xapi/types";
+import type { InputNewBulkItemType } from "@/core/api/graphql/types";
 
 const emit = defineEmits<{
   (event: "add-to-cart", value: InputNewBulkItemType[]): void;

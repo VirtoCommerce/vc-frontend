@@ -323,7 +323,7 @@ import {
 } from "@/core/composables";
 import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
-import globals from "@/core/globals";
+import { globals } from "@/core/globals";
 import {
   buildBreadcrumbs,
   getFilterExpressionForAvailableIn,
@@ -340,9 +340,9 @@ import CategorySelector from "./category-selector.vue";
 import DisplayProducts from "./display-products.vue";
 import ProductsFiltersSidebar from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
+import type { Breadcrumb, Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 import type { ProductsFilters, ProductsSearchParams } from "@/shared/catalog";
-import type { Breadcrumb, Product } from "@/xapi/types";
 import type { StyleValue } from "vue";
 
 interface IProps {

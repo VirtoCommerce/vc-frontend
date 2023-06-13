@@ -82,7 +82,7 @@
 <script setup lang="ts">
 import { useVModel } from "@vueuse/core";
 import { computed, watch } from "vue";
-import type { PaymentType, PaymentMethodType, ShipmentType, CartAddressType } from "@/xapi/types";
+import type { PaymentType, PaymentMethodType, ShipmentType, CartAddressType } from "@/core/api/graphql/types";
 
 interface IEmits {
   (event: "change:address"): void;

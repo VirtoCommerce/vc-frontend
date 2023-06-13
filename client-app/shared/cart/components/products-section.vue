@@ -49,8 +49,8 @@
 
 <script setup lang="ts">
 import CartLineItems from "./cart-line-items.vue";
+import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { LineItemsGroupByVendorType } from "@/core/types";
-import type { LineItemType, ValidationErrorType } from "@/xapi/types";
 
 interface IEmits {
   (event: "change:itemQuantity", value: { item: LineItemType; quantity: number }): void;

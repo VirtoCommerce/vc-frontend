@@ -142,7 +142,7 @@ import { useRouter } from "vue-router";
 import { OrderLineItems } from "@/shared/account";
 import { useCart, useCoupon, usePurchaseOrderNumber } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
-import type { CartAddressType } from "@/xapi/types";
+import type { CartAddressType } from "@/core/api/graphql/types";
 
 const router = useRouter();
 const {

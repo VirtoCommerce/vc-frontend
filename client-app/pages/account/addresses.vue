@@ -194,8 +194,8 @@ import { useUserAddresses } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import { VcAddOrUpdateAddressModal } from "@/ui-kit/components";
+import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
-import type { MemberAddressType } from "@/xapi/types";
 
 const { t } = useI18n();
 const { countries, loadCountries } = useCountries();

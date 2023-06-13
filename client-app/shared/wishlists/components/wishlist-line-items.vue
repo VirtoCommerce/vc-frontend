@@ -39,8 +39,8 @@
 
 <script setup lang="ts">
 import WishlistLineItem from "./wishlist-line-item.vue";
+import type { InputNewBulkItemType, LineItemType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
-import type { InputNewBulkItemType, LineItemType } from "@/xapi/types";
 
 interface IEmits {
   (event: "update:cartItem", value: InputNewBulkItemType): void;

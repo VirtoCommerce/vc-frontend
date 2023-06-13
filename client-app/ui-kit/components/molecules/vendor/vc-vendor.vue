@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import type { CommonVendor } from "@/xapi/types";
+import type { CommonVendor } from "@/core/api/graphql/types";
 
 interface Props {
   vendor?: CommonVendor;
