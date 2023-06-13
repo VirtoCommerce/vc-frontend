@@ -79,8 +79,10 @@ import { eagerComputed } from "@vueuse/core";
 import { isEmpty } from "lodash";
 import { useField, useForm } from "vee-validate";
 import { reactive, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
 import { useCart } from "@/shared/cart";
+import { useNotifications } from "@/shared/notification";
 import { getMe } from "@/xapi";
 import { mergeCart } from "@/xapi/graphql/cart";
 import useUser from "../composables/useUser";
@@ -94,6 +96,8 @@ const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButto
 
 const USER_IS_LOCKED_OUT_ERROR_CODE = "user_is_locked_out";
 
+const notifications = useNotifications();
+const { t } = useI18n();
 const { cart, fetchShortCart } = useCart();
 const { signMeIn, isAuthenticated } = useUser();
 
@@ -123,23 +127,32 @@ const valid = eagerComputed<boolean>(() => isEmpty(errors.value));
 const onSubmit = handleSubmit(async () => {
   loading.value = true;
 
-  if (!cart.value) {
-    await fetchShortCart();
-  }
+  try {
+    if (!cart.value) {
+      await fetchShortCart();
+    }
 
-  const result = await signMeIn(model);
+    const result = await signMeIn(model);
 
-  if (result.succeeded) {
-    const user = await getMe();
-    await mergeCart(user.id, cart.value!.id!);
-    emit("succeeded");
-    return;
-  }
+    if (result.succeeded) {
+      const user = await getMe();
+      await mergeCart(user.id, cart.value!.id!);
+      emit("succeeded");
+      return;
+    }
 
-  if (result.errors?.find((e) => e.code === USER_IS_LOCKED_OUT_ERROR_CODE)) {
-    userIsLockedError.value = true;
-  } else {
-    authError.value = true;
+    if (result.errors?.find((e) => e.code === USER_IS_LOCKED_OUT_ERROR_CODE)) {
+      userIsLockedError.value = true;
+    } else {
+      authError.value = true;
+    }
+  } catch {
+    notifications.error({
+      text: t("common.messages.unknown_error"),
+      duration: 10000,
+    });
+
+    // (⌐■_■) ♪
   }
 
   loading.value = false;
