@@ -30,7 +30,7 @@
         >
           <VcIcon name="save-v2" class="lg:!hidden" />
 
-          {{ $t("common.buttons.save") }}
+          <span>{{ $t("common.buttons.save") }}</span>
         </VcButton>
       </div>
 
