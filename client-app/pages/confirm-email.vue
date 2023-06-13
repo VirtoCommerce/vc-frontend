@@ -19,7 +19,7 @@
     </template>
 
     <template #actions>
-      <VcButton :to="{ name: 'SignIn' }" class="w-36 uppercase">
+      <VcButton :to="{ name: 'SignIn' }" class="w-36">
         {{ $t("pages.confirm_email.continue_button") }}
       </VcButton>
     </template>
@@ -42,7 +42,7 @@
     </template>
 
     <template #actions>
-      <VcButton :to="{ name: 'Catalog' }" class="w-48 uppercase">
+      <VcButton :to="{ name: 'Catalog' }" class="w-48">
         {{ $t("pages.confirm_email.continue_shopping_button") }}
       </VcButton>
     </template>

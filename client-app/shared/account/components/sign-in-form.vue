@@ -49,24 +49,17 @@
     </div>
 
     <!-- Form actions -->
-    <div class="mt-8 flex font-roboto-condensed text-base" :class="{ 'max-w-sm': !props.growButtons }">
+    <div class="mt-8 flex" :class="{ 'max-w-sm': !props.growButtons }">
       <VcButton
-        :is-disabled="loading || isAuthenticated || !valid || authError"
-        :is-waiting="loading"
-        is-submit
-        size="lg"
-        class="flex-1 shrink px-2 uppercase"
+        :disabled="loading || isAuthenticated || !valid || authError"
+        :loading="loading"
+        type="submit"
+        class="flex-1 shrink"
       >
         {{ $t("shared.account.sign_in_form.login_button") }}
       </VcButton>
 
-      <VcButton
-        :to="{ name: 'SignUp' }"
-        :is-disabled="loading || isAuthenticated"
-        size="lg"
-        is-outline
-        class="ml-4 flex-1 px-2 uppercase"
-      >
+      <VcButton :to="{ name: 'SignUp' }" :disabled="loading || isAuthenticated" variant="outline" class="ml-4 flex-1">
         {{ $t("shared.account.sign_in_form.registration_button") }}
       </VcButton>
     </div>

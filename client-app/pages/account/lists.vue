@@ -8,14 +8,12 @@
 
       <VcButton
         v-if="lists.length || loading"
-        :is-disabled="creationButtonDisabled"
-        class="px-3 uppercase"
+        :disabled="creationButtonDisabled"
         size="sm"
-        is-outline
+        variant="outline"
+        prepend-icon="plus"
         @click="openCreateListModal"
       >
-        <i class="fa fa-plus -ml-0.5 mr-2 text-inherit" />
-
         <span class="hidden sm:inline">{{ $t("pages.account.lists.create_list_button") }}</span>
         <span class="sm:hidden">{{ $t("pages.account.lists.create_list_button_mobile") }}</span>
       </VcButton>
@@ -57,8 +55,7 @@
       </template>
 
       <template #button>
-        <VcButton class="px-6 uppercase" size="lg" @click="openCreateListModal">
-          <i class="fa fa-plus -ml-0.5 mr-2.5 text-inherit" />
+        <VcButton prepend-icon="plus" size="lg" @click="openCreateListModal">
           {{ $t("pages.account.lists.create_list_button") }}
         </VcButton>
       </template>

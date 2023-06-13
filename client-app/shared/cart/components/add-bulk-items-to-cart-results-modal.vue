@@ -103,12 +103,12 @@
     </div>
 
     <template #actions="{ close }">
-      <VcButton :to="{ name: 'Cart' }" class="w-full uppercase sm:w-36" @click="close()">
+      <VcButton :to="{ name: 'Cart' }" class="w-full sm:w-36" @click="close()">
         {{ $t("common.buttons.view_cart") }}
       </VcButton>
 
       <VcButton
-        class="w-full uppercase sm:w-36"
+        class="w-full sm:w-36"
         @click="
           close();
           $emit('confirm');

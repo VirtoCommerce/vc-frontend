@@ -110,11 +110,10 @@
         <!-- Form actions -->
         <div class="mt-5 w-1/2 self-center lg:self-auto">
           <VcButton
-            :is-disabled="!meta.dirty || !meta.valid || meta.pending"
-            :is-waiting="isSubmitting"
-            size="lg"
-            class="w-full uppercase lg:w-48"
-            is-submit
+            :disabled="!meta.dirty || !meta.valid || meta.pending"
+            :loading="isSubmitting"
+            type="submit"
+            class="w-full lg:w-48"
           >
             {{ $t("common.buttons.update") }}
           </VcButton>

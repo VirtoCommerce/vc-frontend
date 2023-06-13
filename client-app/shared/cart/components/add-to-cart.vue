@@ -19,11 +19,13 @@
       />
 
       <VcButton
-        class="min-w-[52%] !rounded-l-none !border px-3 !text-13 uppercase"
-        :is-outline="!countInCart"
-        :is-waiting="loading"
-        :is-disabled="disabled || !!errorMessage"
+        class="w-28 !rounded-l-none"
+        :variant="countInCart ? 'solid' : 'outline'"
+        :loading="loading"
+        :disabled="disabled || !!errorMessage"
         :title="buttonText"
+        size="sm"
+        truncate
         @click="onChange"
       >
         {{ buttonText }}

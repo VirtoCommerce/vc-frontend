@@ -20,12 +20,11 @@
       <MobileOrdersFilter class="grow" />
 
       <div class="z-100 sticky bottom-0 -mx-5 mt-4 bg-white p-5 shadow-t-md">
-        <div class="flex gap-x-4">
+        <div class="flex gap-4">
           <VcButton
-            class="flex-1 uppercase"
-            size="lg"
-            is-outline
-            :is-disabled="isFilterEmpty && !isFilterDirty"
+            :disabled="isFilterEmpty && !isFilterDirty"
+            class="flex-1"
+            variant="outline"
             @click="
               resetFilters();
               hideFilters();
@@ -35,9 +34,8 @@
           </VcButton>
 
           <VcButton
-            class="flex-1 uppercase"
-            size="lg"
-            :is-disabled="!isFilterDirty"
+            :disabled="!isFilterDirty"
+            class="flex-1"
             @click="
               applyFilters();
               hideFilters();
@@ -60,14 +58,14 @@
       <div class="relative">
         <VcButton
           ref="filtersButtonElement"
-          :is-disabled="ordersLoading"
-          :is-outline="!filtersVisible && !isMobile"
-          size="lg"
-          class="w-11 px-3.5 uppercase lg:w-auto"
+          :disabled="ordersLoading"
+          :variant="isMobile ? 'solid' : 'outline'"
+          :icon="isMobile"
           @click="toggleFilters"
         >
-          <span class="hidden lg:inline-block">{{ $t("common.buttons.filters") }}</span>
-          <span class="fa fa-filter lg:hidden"></span>
+          <VcIcon name="filter" class="lg:hidden" />
+
+          <span>{{ $t("common.buttons.filters") }}</span>
         </VcButton>
 
         <!-- Desktop filters dropdown -->
@@ -76,8 +74,8 @@
           ref="filtersDropdownElement"
           class="absolute right-0 z-[1] mt-2 rounded border bg-white p-6 shadow-lg"
         >
-          <button type="button" class="absolute right-0 top-0 appearance-none px-4 py-2" @click="hideFilters">
-            <span class="fa fa-times text-lg text-red-400 hover:text-red-700"></span>
+          <button type="button" class="absolute right-0 top-0 appearance-none px-4 py-3 align-top" @click="hideFilters">
+            <VcIcon class="text-[--color-danger-500]" name="x" :size="18" />
           </button>
 
           <OrdersFilter @change="hideFilters" />
@@ -94,20 +92,11 @@
           @keypress.enter="applyKeyword"
         >
           <template #append>
-            <button v-if="localKeyword" type="button" class="h-full px-4" @click="resetKeyword">
-              <svg class="text-[color:var(--color-primary)]" height="14" width="14">
-                <use href="/static/images/delete.svg#main" />
-              </svg>
+            <button v-if="localKeyword" type="button" class="flex h-full items-center px-4" @click="resetKeyword">
+              <VcIcon class="text-[--color-primary-500]" name="delete-2" size="xs" />
             </button>
 
-            <VcButton
-              :is-disabled="ordersLoading"
-              class="w-11 !rounded-[inherit] uppercase"
-              size="lg"
-              @click="applyKeyword"
-            >
-              <i class="fas fa-search text-lg" />
-            </VcButton>
+            <VcButton :disabled="ordersLoading" icon="search" @click="applyKeyword" />
           </template>
         </VcInput>
       </div>
@@ -142,12 +131,11 @@
       </template>
 
       <template #button>
-        <VcButton v-if="keyword || !isFilterEmpty" class="px-6 uppercase" size="lg" @click="resetFiltersWithKeyword">
-          <i class="fas fa-undo -ml-0.5 mr-2.5 text-inherit" />
+        <VcButton v-if="keyword || !isFilterEmpty" prepend-icon="reset" @click="resetFiltersWithKeyword">
           {{ $t("pages.account.orders.buttons.reset_search") }}
         </VcButton>
 
-        <VcButton v-else :to="{ name: 'Catalog' }" class="px-6 uppercase" size="lg">
+        <VcButton v-else :to="{ name: 'Catalog' }">
           {{ $t("pages.account.orders.buttons.no_orders") }}
         </VcButton>
       </template>

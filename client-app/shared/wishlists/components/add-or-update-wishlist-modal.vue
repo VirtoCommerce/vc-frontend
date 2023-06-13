@@ -21,17 +21,15 @@
 
     <template #actions="{ close }">
       <div class="flex grow space-x-4 sm:justify-between sm:space-x-10">
-        <!-- TODO: add color options (success, warning, danger) to VcButton -->
-        <div class="flex grow justify-end space-x-4">
-          <VcButton kind="secondary" class="grow uppercase sm:grow-0 sm:px-5" is-outline @click="close">
+        <div class="flex grow justify-end gap-4">
+          <VcButton color="secondary" variant="outline" class="flex-1 sm:flex-none" @click="close">
             {{ $t("shared.wishlists.add_or_update_wishlist_dialog.cancel_button") }}
           </VcButton>
 
           <VcButton
-            :is-waiting="loading"
-            :is-disabled="!meta.valid || !meta.dirty"
-            :class="isEditMode ? 'px-4 sm:px-12' : 'sm:px-5'"
-            class="grow uppercase sm:grow-0"
+            :loading="loading"
+            :disabled="!meta.valid || !meta.dirty"
+            class="flex-1 sm:flex-none"
             @click="save(close)"
           >
             {{

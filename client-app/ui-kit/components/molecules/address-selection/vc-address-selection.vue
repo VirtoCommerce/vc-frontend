@@ -13,9 +13,9 @@
 
       <VcButton
         v-if="!readonly"
-        :is-disabled="disabled"
-        class="vc-address-selection__button !h-7 !w-7"
-        is-outline
+        :disabled="disabled"
+        variant="outline"
+        class="vc-address-selection__button"
         @click="$emit('change')"
       >
         <VcIcon name="pencil" size="xs" />

@@ -106,13 +106,7 @@
             {{ error }}
           </VcAlert>
 
-          <VcButton
-            is-submit
-            :is-disabled="!meta.valid || meta.pending"
-            size="lg"
-            class="mt-6 w-full uppercase lg:mt-3 lg:w-48"
-            :is-waiting="loading"
-          >
+          <VcButton :disabled="!meta.valid || meta.pending" :loading="loading" class="mt-6 w-full lg:mt-3 lg:w-48">
             {{ $t("pages.sign_up.register_button") }}
           </VcButton>
         </div>

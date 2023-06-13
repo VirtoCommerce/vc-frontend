@@ -12,19 +12,18 @@
       shadow
     >
       <template #header-button>
-        <div v-if="isMobile">
-          <VcButton :to="{ name: 'Orders' }" class="px-2 text-sm uppercase" is-outline>
-            {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
-          </VcButton>
-        </div>
+        <VcButton :to="{ name: 'Orders' }" variant="outline" size="xs" class="flex-none lg:hidden">
+          {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
+        </VcButton>
 
-        <div v-else class="flex items-center">
-          <router-link :to="{ name: 'Orders' }" class="text-xs font-bold text-blue-500 hover:text-blue-700">
-            {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
+        <router-link
+          :to="{ name: 'Orders' }"
+          class="hidden text-xs font-bold text-blue-500 hover:text-blue-700 lg:block"
+        >
+          {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
 
-            <i class="fas fa-arrow-right ml-3 text-[color:var(--color-primary)]" />
-          </router-link>
-        </div>
+          <i class="fas fa-arrow-right ml-3 text-[color:var(--color-primary)]" />
+        </router-link>
       </template>
 
       <VcTable

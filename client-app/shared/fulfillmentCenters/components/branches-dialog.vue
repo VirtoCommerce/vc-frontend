@@ -36,8 +36,7 @@
         <div v-else class="flex h-[23.8rem] max-h-screen-60 grow flex-col items-center justify-center space-y-3">
           <img src="/static/images/common/stock.svg" alt="Product icon" class="w-20" />
           <div class="text-17">{{ $t("shared.catalog.branches_dialog.no_results") }}</div>
-          <VcButton v-if="searchInput.length" size="md" class="px-3 uppercase" @click="searchInput = ''">
-            <i class="fas fa-undo -ml-0.5 mr-2.5 text-inherit"></i>
+          <VcButton v-if="searchInput.length" size="md" prepend-icon="reset" @click="searchInput = ''">
             {{ $t("shared.catalog.branches_dialog.reset_search_button") }}
           </VcButton>
         </div>
@@ -138,8 +137,7 @@
       <div v-else class="flex grow flex-col items-center justify-center space-y-3 pb-16">
         <img src="/static/images/common/stock.svg" alt="Product icon" class="w-20" />
         <div class="text-17">{{ $t("shared.catalog.branches_dialog.no_results") }}</div>
-        <VcButton v-if="searchInput.length" size="md" class="px-3 uppercase" @click="searchInput = ''">
-          <i class="fas fa-undo -ml-0.5 mr-2.5 text-inherit"></i>
+        <VcButton v-if="searchInput.length" prepend-icon="reset" @click="searchInput = ''">
           {{ $t("shared.catalog.branches_dialog.reset_search_button") }}
         </VcButton>
       </div>
@@ -151,18 +149,13 @@
       <div
         class="sm:gap-auto relative -mx-6 -mt-4 flex grow items-center justify-between gap-5 bg-white px-10 pt-4 shadow-t-lgs sm:mt-0 sm:px-6 sm:pt-0 sm:shadow-none"
       >
-        <VcButton
-          kind="secondary"
-          class="grow basis-0 uppercase sm:grow-0 sm:basis-auto sm:px-4"
-          is-outline
-          @click="close"
-        >
+        <VcButton color="secondary" variant="outline" class="flex-1 md:flex-none" @click="close">
           {{ $t("shared.catalog.branches_dialog.cancel_button") }}
         </VcButton>
 
         <VcButton
-          class="grow basis-0 uppercase sm:min-w-[9rem] sm:grow-0 sm:basis-auto sm:px-5"
-          :is-disabled="isSaveButtonDisabled"
+          :disabled="isSaveButtonDisabled"
+          class="!min-w-[9rem] flex-1 md:flex-none"
           @click="
             save();
             close();

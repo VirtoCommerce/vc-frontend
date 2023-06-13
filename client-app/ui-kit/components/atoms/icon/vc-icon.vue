@@ -1,24 +1,39 @@
 <template>
-  <svg :class="[`vc-icon`, `vc-icon--size--${size}`]">
+  <svg :class="['vc-icon', sizeClass]" :style="style">
     <use :href="`/static/icons/basic/${name}.svg#icon`"></use>
   </svg>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+
 interface IProps {
   name?: string;
-  size?: "xxs" | "xs" | "sm" | "md" | "lg" | "xl" | "xxl";
+  size?: "xxs" | "xs" | "sm" | "md" | "lg" | "xl" | "xxl" | number;
 }
 
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   name: "document-text",
   size: "md",
 });
+
+const style = computed(() =>
+  typeof props.size === "number"
+    ? {
+        width: `${props.size}px`,
+        height: `${props.size}px`,
+      }
+    : {}
+);
+
+const sizeClass = computed(() => (typeof props.size === "string" ? `vc-icon--size--${props.size}` : ""));
 </script>
 
 <style lang="scss">
 .vc-icon {
-  @apply text-inherit;
+  $self: &;
+
+  @apply inline-block align-top leading-none text-inherit;
 
   &--size {
     &--xxs {
@@ -47,6 +62,38 @@ withDefaults(defineProps<IProps>(), {
 
     &--xxl {
       @apply w-16 h-16;
+    }
+  }
+
+  @at-root .vc-button {
+    $icon: "";
+
+    &--icon {
+      $icon: &;
+    }
+
+    #{$self} {
+      @apply w-[--vc-button-line-height] h-[--vc-button-line-height];
+
+      &:first-child:not(:last-child) {
+        @apply me-2;
+      }
+
+      &:last-child:not(:first-child) {
+        @apply ms-2;
+      }
+    }
+
+    &__slot {
+      #{$icon} & {
+        & > #{$self} {
+          @apply mx-0 #{!important};
+        }
+
+        & > *:not(#{$self}) {
+          @apply hidden;
+        }
+      }
     }
   }
 }

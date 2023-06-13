@@ -20,16 +20,16 @@
       <div class="flex flex-row justify-center gap-x-4 px-6 pb-10">
         <VcButton
           v-if="!singleButton"
-          :is-disabled="loading"
-          kind="secondary"
-          class="w-36 uppercase"
-          is-outline
+          :disabled="loading"
+          color="secondary"
+          variant="outline"
+          class="w-36"
           @click="close"
         >
           {{ $t("common.buttons.cancel") }}
         </VcButton>
 
-        <VcButton :is-waiting="loading" class="w-36 uppercase" @click="$emit('confirm')">
+        <VcButton :loading="loading" class="w-36" @click="$emit('confirm')">
           {{ $t("common.buttons.ok") }}
         </VcButton>
       </div>

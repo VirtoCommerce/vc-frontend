@@ -14,9 +14,7 @@
           <VcIcon name="delete-2" size="xs" class="text-[color:var(--color-primary)]" />
         </button>
 
-        <VcButton class="h-full w-[2.75rem] !rounded-[inherit]" size="lg" @click="goToSearchResultsPage">
-          <VcIcon name="search" size="md" class="text-[color:var(--color-white)]" />
-        </VcButton>
+        <VcButton icon="search" @click="goToSearchResultsPage" />
       </template>
     </VcInput>
 
@@ -108,7 +106,6 @@
           <section v-if="total" class="sticky bottom-0 mt-0.5 border-t border-gray-100 bg-white px-5 py-3">
             <VcButton
               :to="{ name: 'Search', query: { [QueryParamName.SearchPhrase]: searchPhrase } }"
-              class="px-4 uppercase"
               size="sm"
               @click="hideSearchDropdown()"
             >

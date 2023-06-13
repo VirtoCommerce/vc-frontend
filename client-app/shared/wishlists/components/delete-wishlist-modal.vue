@@ -13,12 +13,11 @@
 
     <template #actions="{ close }">
       <div class="flex grow justify-between space-x-4">
-        <!-- TODO: add color options (success, warning, danger) to VcButton -->
-        <VcButton :is-waiting="loading" kind="danger" class="grow uppercase lg:grow-0 lg:px-12" @click="remove(close)">
+        <VcButton :loading="loading" color="danger" class="flex-1 sm:flex-none" @click="remove(close)">
           {{ $t("shared.wishlists.delete_wishlist_dialog.delete_button") }}
         </VcButton>
 
-        <VcButton kind="secondary" class="grow uppercase lg:grow-0 lg:px-5" is-outline @click="close">
+        <VcButton color="secondary" variant="outline" class="flex-1 sm:flex-none" @click="close">
           {{ $t("shared.wishlists.delete_wishlist_dialog.cancel_button") }}
         </VcButton>
       </div>

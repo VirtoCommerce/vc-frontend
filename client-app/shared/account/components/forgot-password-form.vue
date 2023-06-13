@@ -19,10 +19,10 @@
       </VcAlert>
 
       <VcButton
-        is-submit
-        class="mt-6 w-full uppercase lg:mt-3 lg:w-48"
-        :is-waiting="loading"
-        :is-disabled="!meta.valid || meta.pending"
+        type="submit"
+        class="mt-6 w-full lg:mt-3 lg:w-48"
+        :loading="loading"
+        :disabled="!meta.valid || meta.pending"
       >
         {{ $t("common.buttons.submit") }}
       </VcButton>

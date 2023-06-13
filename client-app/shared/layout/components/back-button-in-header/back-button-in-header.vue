@@ -1,12 +1,8 @@
 <template>
   <NestedMobileHeader>
     <template #left>
-      <VcButton :to="to" class="ml-6 px-3" @click="$emit('click')">
-        <i class="fas fa-chevron-left -ml-0.5" />
-
-        <span class="ml-2">
-          <slot>{{ $t("common.buttons.back") }}</slot>
-        </span>
+      <VcButton :to="to" prepend-icon="chevron-left" class="ml-6" @click="$emit('click')">
+        <slot>{{ $t("common.buttons.back") }}</slot>
       </VcButton>
     </template>
   </NestedMobileHeader>

@@ -34,11 +34,11 @@
 
     <div class="mt-2 flex justify-end md:mt-5">
       <VcButton
-        :is-disabled="disabled"
-        kind="secondary"
+        :disabled="disabled"
+        color="secondary"
         size="sm"
-        class="self-start px-3 font-bold uppercase"
-        is-outline
+        class="self-start"
+        variant="outline"
         @click="$emit('clear:cart')"
       >
         {{ $t("common.buttons.clear_cart") }}
