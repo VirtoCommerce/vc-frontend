@@ -25,6 +25,7 @@
           :loading="loadingOrganization || loadingUser"
           :disabled="!meta.valid || !meta.dirty"
           :icon="isMobile"
+          class="flex-none"
           @click="saveOrganizationName"
         >
           <VcIcon name="save-v2" class="lg:!hidden" />
