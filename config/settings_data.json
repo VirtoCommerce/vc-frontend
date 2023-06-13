@@ -2,7 +2,6 @@
   "current": "Mercury",
   "presets": {
     "Mercury": {
-      "search_by_static_content_enabled": true,
       "page_title_with_store_name": true,
       "page_title_store_name_align": "start",
       "page_title_divider": " · ",
@@ -16,14 +15,17 @@
       "product_compare_limit": 5,
       "product_filters_sorting": false,
       "product_filters_sorting_direction": "asc",
-      "product_search_phrase_suggestions_enabled": false,
 
       "vendor_enabled": true,
       "rating_enabled": true,
       "categories_limit": 499,
       "wishlists_limit": 10,
+
       "search_min_chars": 2,
       "search_max_chars": 400,
+      "search_static_content_suggestions_enabled": true,
+      "search_product_phrase_suggestions_enabled": false,
+
       "support_phone_number": "+31 416 652 803",
       "zero_price_product_enabled": false,
 
@@ -330,7 +332,6 @@
     },
 
     "Watermelon": {
-      "search_by_static_content_enabled": false,
       "page_title_with_store_name": true,
       "page_title_store_name_align": "start",
       "page_title_divider": " · ",
@@ -344,14 +345,17 @@
       "product_compare_limit": 5,
       "product_filters_sorting": false,
       "product_filters_sorting_direction": "asc",
-      "product_search_phrase_suggestions_enabled": false,
 
       "vendor_enabled": true,
       "rating_enabled": true,
       "categories_limit": 499,
       "wishlists_limit": 10,
+
       "search_min_chars": 2,
       "search_max_chars": 400,
+      "search_static_content_suggestions_enabled": true,
+      "search_product_phrase_suggestions_enabled": false,
+
       "support_phone_number": "+31 416 652 803",
       "zero_price_product_enabled": false,
 

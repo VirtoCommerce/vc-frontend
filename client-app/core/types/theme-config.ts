@@ -22,7 +22,6 @@ export interface IThemeConfigPreset {
   product_compare_limit?: number;
   product_filters_sorting?: boolean;
   product_filters_sorting_direction?: SortDirection | string;
-  product_search_phrase_suggestions_enabled?: boolean;
   out_of_stock_order_enabled?: boolean;
   search_suggestions_category_enabled?: boolean;
   search_suggestions_category_limit?: number;
@@ -68,6 +67,8 @@ export interface IThemeConfigPreset {
 
   search_min_chars?: number;
   search_max_chars?: number;
+  search_static_content_suggestions_enabled?: boolean;
+  search_product_phrase_suggestions_enabled?: boolean;
 
   vendor_enabled?: boolean;
   rating_enabled?: boolean;
