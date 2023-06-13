@@ -5,19 +5,14 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from "vue";
+interface IProps {
+  name?: string;
+  size?: "xxs" | "xs" | "sm" | "md" | "lg" | "xl" | "xxl";
+}
 
-defineProps({
-  name: {
-    type: String,
-    default: "document-text",
-  },
-
-  size: {
-    type: String as PropType<"xxs" | "xs" | "sm" | "md">,
-    default: "md",
-    validator: (value: string) => !value || ["xxs", "xs", "sm", "md"].includes(value),
-  },
+withDefaults(defineProps<IProps>(), {
+  name: "document-text",
+  size: "md",
 });
 </script>
 
@@ -40,6 +35,18 @@ defineProps({
 
     &--md {
       @apply w-6 h-6;
+    }
+
+    &--lg {
+      @apply w-10 h-10;
+    }
+
+    &--xl {
+      @apply w-12 h-12;
+    }
+
+    &--xxl {
+      @apply w-16 h-16;
     }
   }
 }

@@ -9,7 +9,8 @@
     </template>
 
     <div class="flex items-center justify-center px-5 py-10">
-      <i class="fas fa-circle-xmark mr-4 text-5xl text-[color:var(--color-danger)]" />
+      <VcIcon name="x-circle" size="xxl" class="mr-4 text-[color:var(--color-danger)]" />
+
       <span class="text-lg">
         {{ $t("common.messages.cart_contains_deleted_products") }}
       </span>
