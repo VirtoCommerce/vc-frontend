@@ -17,27 +17,20 @@
           name="organization-name"
           autocomplete="off"
           maxlength="64"
-          class="w-full"
+          class="grow"
         />
 
-        <template v-if="userCanEditOrganization">
-          <VcButton
-            :loading="loadingOrganization || loadingUser"
-            :disabled="!meta.valid || !meta.dirty"
-            icon="save-v2"
-            class="md:!hidden"
-            @click="saveOrganizationName"
-          />
+        <VcButton
+          v-if="userCanEditOrganization"
+          :loading="loadingOrganization || loadingUser"
+          :disabled="!meta.valid || !meta.dirty"
+          :icon="isMobile"
+          @click="saveOrganizationName"
+        >
+          <VcIcon name="save-v2" class="lg:!hidden" />
 
-          <VcButton
-            :loading="loadingOrganization || loadingUser"
-            :disabled="!meta.valid || !meta.dirty"
-            class="!hidden md:!block"
-            @click="saveOrganizationName"
-          >
-            {{ $t("common.buttons.save") }}
-          </VcButton>
-        </template>
+          {{ $t("common.buttons.save") }}
+        </VcButton>
       </div>
 
       <!-- Content block -->
@@ -238,7 +231,7 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { computedEager } from "@vueuse/core";
+import { breakpointsTailwind, useBreakpoints, computedEager } from "@vueuse/core";
 import { useField } from "vee-validate";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -256,6 +249,9 @@ const page = ref(1);
 const itemsPerPage = ref(10);
 
 const { t } = useI18n();
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("lg");
 
 usePageHead({
   title: t("pages.company.info.meta.title"),

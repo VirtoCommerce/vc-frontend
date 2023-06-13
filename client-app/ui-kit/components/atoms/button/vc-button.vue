@@ -103,7 +103,7 @@ const isLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
   $loading: "";
   $loaderIcon: "";
 
-  @apply relative inline-flex justify-center items-center min-w-0 rounded border-2 select-none text-center;
+  @apply relative rounded border-2 select-none text-center;
 
   &--truncate {
     $truncate: &;
