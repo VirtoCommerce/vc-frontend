@@ -83,7 +83,7 @@
       </template>
 
       <template #button>
-        <VcButton :to="{ name: 'Catalog' }" class="w-48">
+        <VcButton :to="{ name: 'Catalog' }">
           {{ $t("shared.wishlists.list_details.empty_list_button") }}
         </VcButton>
       </template>
