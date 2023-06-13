@@ -9,7 +9,7 @@ import { computed } from "vue";
 
 interface IProps {
   name?: string;
-  size?: "xxs" | "xs" | "sm" | "md" | number;
+  size?: "xxs" | "xs" | "sm" | "md" | "lg" | "xl" | "xxl" | number;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -50,6 +50,18 @@ const sizeClass = computed(() => (typeof props.size === "string" ? `vc-icon--siz
 
     &--md {
       @apply w-6 h-6;
+    }
+
+    &--lg {
+      @apply w-10 h-10;
+    }
+
+    &--xl {
+      @apply w-12 h-12;
+    }
+
+    &--xxl {
+      @apply w-16 h-16;
     }
   }
 

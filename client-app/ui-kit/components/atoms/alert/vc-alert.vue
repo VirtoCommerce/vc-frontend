@@ -11,12 +11,12 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-interface Props {
+interface IProps {
   type?: "success" | "warning" | "danger";
   icon?: boolean | string;
 }
 
-const props = defineProps<Props>();
+const props = defineProps<IProps>();
 
 const iconName = computed<string>(() => {
   const { icon } = props;

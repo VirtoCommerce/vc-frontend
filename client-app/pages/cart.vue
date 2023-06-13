@@ -166,6 +166,7 @@ import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composab
 import { configInjectionKey } from "@/core/injection-keys";
 import { useUser } from "@/shared/account";
 import { GiftsSection, ProductsSection, useCart, useCoupon, usePurchaseOrderNumber } from "@/shared/cart";
+import { CartDeletedProductsModal } from "@/shared/cart/components";
 import {
   BillingDetailsSection,
   OrderCommentSection,
@@ -173,6 +174,7 @@ import {
   ShippingDetailsSection,
   useCheckout,
 } from "@/shared/checkout";
+import { usePopup } from "@/shared/popup";
 import type { LineItemType } from "@/xapi/types";
 
 const config = inject(configInjectionKey, {});
@@ -181,6 +183,7 @@ const router = useRouter();
 const ga = useGoogleAnalytics();
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
+const { openPopup } = usePopup();
 const {
   loading: loadingCart,
   cart,
@@ -237,6 +240,9 @@ const creatingQuote = ref(false);
 const loading = computed<boolean>(() => loadingCart.value || creatingQuote.value || creatingOrder.value);
 const isDisabledNextStep = computed<boolean>(() => loading.value || hasValidationErrors.value);
 const isDisabledOrderCreation = computed<boolean>(() => loading.value || !isValidCheckout.value);
+const cartContainsDeletedProducts = computed<boolean | undefined>(() =>
+  cart.value?.items?.some((item) => !item.product)
+);
 const isShowIncompleteDataWarning = computed<boolean>(
   () => (!allItemsAreDigital.value && !isValidShipment.value) || !isValidPayment.value
 );
@@ -273,6 +279,14 @@ async function createOrder(): Promise<void> {
 }
 
 async function createQuote(): Promise<void> {
+  if (cartContainsDeletedProducts.value) {
+    openPopup({
+      component: CartDeletedProductsModal,
+    });
+
+    return;
+  }
+
   creatingQuote.value = true;
 
   const quote = await createQuoteFromCart();
