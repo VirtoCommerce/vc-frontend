@@ -15,3 +15,4 @@ export * from "./role";
 export * from "./search";
 export * from "./theme-config";
 export * from "./theme-context";
+export * from "./password-options";

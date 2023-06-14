@@ -27,6 +27,8 @@
     />
 
     <div>
+      <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
+
       <VcAlert v-for="error in commonErrors" :key="error" type="danger" class="mb-4 text-xs" icon>
         {{ error }}
       </VcAlert>
@@ -47,11 +49,13 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
 import { useIdentityErrorTranslator } from "@/core/composables";
 import useUser from "../composables/useUser";
+import PasswordTips from "./password-tips.vue";
+import type { PasswordOptionsType } from "@/core/types";
 
 interface IEmits {
   (event: "succeeded"): void;
@@ -70,7 +74,7 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const { t } = useI18n();
-const { resetPassword, loading } = useUser();
+const { resetPassword, getPasswordRequirements, loading } = useUser();
 const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
 const validationSchema = toTypedSchema(
@@ -95,6 +99,7 @@ const { value: password } = useField<string>("password");
 const { value: confirmPassword } = useField<string>("confirmPassword");
 
 const commonErrors = ref<string[]>([]);
+const passwordRequirements = ref<PasswordOptionsType | undefined>();
 
 const isResetMode = computed(() => props.mode === "reset");
 
@@ -118,5 +123,9 @@ const onSubmit = handleSubmit(async (data) => {
       }
     });
   }
+});
+
+onMounted(async () => {
+  passwordRequirements.value = await getPasswordRequirements();
 });
 </script>

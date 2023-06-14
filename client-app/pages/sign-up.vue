@@ -102,6 +102,8 @@
         </div>
 
         <div class="mt-6 lg:mt-4">
+          <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
+
           <VcAlert v-for="error in commonErrors" :key="error" type="danger" class="mb-4 text-xs" icon>
             {{ error }}
           </VcAlert>
@@ -129,21 +131,22 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import { debounce } from "lodash";
 import { useField, useForm } from "vee-validate";
-import { reactive, ref, nextTick } from "vue";
+import { onMounted, reactive, ref, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
 import { useIdentityErrorTranslator, usePageHead } from "@/core/composables";
-import { RegistrationKind, RegistrationSuccessDialog, useUser } from "@/shared/account";
+import { PasswordTips, RegistrationKind, RegistrationSuccessDialog, useUser } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
 import { checkEmailUniqueness } from "@/xapi/graphql/account";
+import type { PasswordOptionsType } from "@/core/types";
 import type { AccountCreationResultType } from "@/xapi/types";
 
 const ASYNC_VALIDATION_TIMEOUT_IN_MS = 500;
 
 const { t } = useI18n();
 const { openPopup } = usePopup();
-const { registerUser, registerOrganization, loading } = useUser();
+const { registerUser, registerOrganization, getPasswordRequirements, loading } = useUser();
 const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
 usePageHead({
@@ -204,6 +207,7 @@ const { value: password } = useField<string>("password");
 const { value: confirmPassword } = useField<string>("confirmPassword");
 
 const commonErrors = ref<string[]>([]);
+const passwordRequirements = ref<PasswordOptionsType | undefined>();
 const emailValidationData = reactive({
   isChecked: false,
   isUnique: false,
@@ -272,5 +276,9 @@ const onSubmit = handleSubmit(async (data) => {
       }
     });
   }
+});
+
+onMounted(async () => {
+  passwordRequirements.value = await getPasswordRequirements();
 });
 </script>

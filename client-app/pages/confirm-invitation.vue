@@ -74,6 +74,8 @@
         </div>
 
         <div class="mt-6">
+          <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
+
           <VcAlert v-for="error in commonErrors" :key="error" type="danger" class="mb-4 text-xs" icon>
             {{ error }}
           </VcAlert>
@@ -100,15 +102,17 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
 import { useIdentityErrorTranslator, usePageHead, useRouteQueryParam } from "@/core/composables";
-import { RegistrationSuccessDialog, useUser } from "@/shared/account";
+import { PasswordTips, RegistrationSuccessDialog, useUser } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
+import type { PasswordOptionsType } from "@/core/types";
 
 const commonErrors = ref<string[]>([]);
+const passwordRequirements = ref<PasswordOptionsType | undefined>();
 
 const { t } = useI18n();
 
@@ -117,7 +121,7 @@ usePageHead({
 });
 
 const { openPopup } = usePopup();
-const { loading, registerByInvite } = useUser();
+const { loading, registerByInvite, getPasswordRequirements } = useUser();
 const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
 const userId = useRouteQueryParam<string>("userId");
@@ -192,5 +196,9 @@ const onSubmit = handleSubmit(async (data) => {
       }
     });
   }
+});
+
+onMounted(async () => {
+  passwordRequirements.value = await getPasswordRequirements();
 });
 </script>

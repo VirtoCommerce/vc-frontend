@@ -1262,6 +1262,15 @@
     "PasswordRequiresUniqueChars": "Passwords must use different characters",
     "RecentPasswordUsed": "You have used this password in the past. Choose another one."
   },
+  "password_tips": {
+    "title": "Tips for creating a strong password:",
+    "required_digit": "Digits are required",
+    "required_lowercase": "Lowercase symbols are required",
+    "required_non_alphanumeric": "Special symbols are required",
+    "required_uppercase": "Uppercase symbols are required",
+    "required_length": "Minimum {0} characters",
+    "required_unique_chars": "Minimum {0} unique characters"
+  },
   "validation_error": {
     "PRODUCT_QTY_CHANGED": "The product available qty is changed",
     "CART_PRODUCT_UNAVAILABLE": "The product available qty is changed"

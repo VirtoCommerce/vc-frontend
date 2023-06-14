@@ -107,6 +107,8 @@
           @update:model-value="oldPassword ? (confirmNewPassword = $event.trim()) : null"
         />
 
+        <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
+
         <!-- Form actions -->
         <div class="mt-5 w-1/2 self-center lg:self-auto">
           <VcButton
@@ -128,15 +130,16 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import { whenever } from "@vueuse/core";
 import { useField, useForm } from "vee-validate";
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
 import { usePageHead } from "@/core/composables";
-import { ProfileUpdateSuccessDialog, useUser } from "@/shared/account";
+import { PasswordTips, ProfileUpdateSuccessDialog, useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
+import type { PasswordOptionsType } from "@/core/types";
 
 const { t } = useI18n();
-const { user, updateUser, changePassword } = useUser();
+const { user, updateUser, changePassword, getPasswordRequirements } = useUser();
 const { openPopup } = usePopup();
 
 usePageHead({
@@ -144,6 +147,7 @@ usePageHead({
 });
 
 const updateProfileError = ref<boolean>(false);
+const passwordRequirements = ref<PasswordOptionsType | undefined>();
 
 const validationSchema = toTypedSchema(
   object({
@@ -236,4 +240,8 @@ whenever(
     confirmNewPassword.value = "";
   }
 );
+
+onMounted(async () => {
+  passwordRequirements.value = await getPasswordRequirements();
+});
 </script>
