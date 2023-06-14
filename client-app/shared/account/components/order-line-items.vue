@@ -157,8 +157,8 @@
 import { sumBy } from "lodash";
 import { computed } from "vue";
 import { extendLineItem } from "@/core/utilities";
+import type { LineItemType, OrderLineItemType } from "@/core/api/graphql/types";
 import type { ExtendedLineItemType } from "@/core/types";
-import type { LineItemType, OrderLineItemType } from "@/xapi/types";
 
 interface IProps {
   items?: (OrderLineItemType | LineItemType)[];

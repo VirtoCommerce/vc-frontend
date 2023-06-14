@@ -5,7 +5,7 @@
       <h2 v-t="'pages.403.error_text'" class="text-black-800 mb-2 text-2xl font-bold md:text-4xl"></h2>
       <p v-t="'pages.403.message'" class="mb-10 text-base leading-relaxed text-gray-700 md:text-xl"></p>
       <div>
-        <VcButton to="/" size="md" class="w-40 uppercase">
+        <VcButton to="/" class="w-40">
           {{ $t("pages.403.home_button") }}
         </VcButton>
       </div>

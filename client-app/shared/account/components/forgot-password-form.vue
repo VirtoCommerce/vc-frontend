@@ -14,15 +14,15 @@
     />
 
     <div class="mt-8 md:mt-9">
-      <VcAlert v-if="isError" type="danger" class="mb-4 text-xs" icon>
+      <VcAlert v-if="isError" color="danger" class="mb-4 text-xs" icon>
         <span v-html="$t('shared.account.forgot_password_form.error_alert')"></span>
       </VcAlert>
 
       <VcButton
-        is-submit
-        class="mt-6 w-full uppercase lg:mt-3 lg:w-48"
-        :is-waiting="loading"
-        :is-disabled="!meta.valid || meta.pending"
+        type="submit"
+        class="mt-6 w-full lg:mt-3 lg:w-48"
+        :loading="loading"
+        :disabled="!meta.valid || meta.pending"
       >
         {{ $t("common.buttons.submit") }}
       </VcButton>

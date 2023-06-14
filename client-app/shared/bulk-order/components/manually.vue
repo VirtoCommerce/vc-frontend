@@ -54,24 +54,11 @@
       </div>
 
       <div class="mb-2 mt-6 flex flex-row flex-wrap justify-between gap-3 md:mb-0 md:flex-nowrap">
-        <VcButton
-          :is-disabled="!dirty || loading"
-          kind="secondary"
-          size="lg"
-          class="px-5 uppercase xl:px-8"
-          is-outline
-          @click="resetItems"
-        >
+        <VcButton :disabled="!dirty || loading" color="secondary" variant="outline" @click="resetItems">
           {{ $t("shared.bulk_order.manually.reset_button") }}
         </VcButton>
 
-        <VcButton
-          :is-disabled="!valid"
-          :is-waiting="loading"
-          size="lg"
-          class="px-5 uppercase xl:px-8"
-          @click="addToCart"
-        >
+        <VcButton :disabled="!valid" :loading="loading" @click="addToCart">
           {{ $t("shared.bulk_order.manually.add_to_cart_button") }}
         </VcButton>
       </div>
@@ -82,7 +69,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { maxQuantity, validateQuantity } from "@/shared/bulk-order";
-import type { InputNewBulkItemType } from "@/xapi/types";
+import type { InputNewBulkItemType } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 
 type InputNewBulkItemExtendedType = { [prop in keyof InputNewBulkItemType]: string };

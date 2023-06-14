@@ -18,22 +18,21 @@
       />
 
       <div class="mb-10 flex flex-col gap-5 lg:flex-row">
-        <div
-          class="hidden h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[color:var(--color-success)] text-white lg:flex"
-        >
-          <i class="fa fa-check text-2xl" />
-        </div>
+        <VcIcon name="check-circle" :size="48" class="hidden text-[--color-success-500] lg:block" />
 
         <div class="max-w-md text-center text-19 lg:text-left">
           <strong v-t="{ path: 'pages.checkout_complete.subtitle', args: [placedOrder?.number] }" class="mb-4 block" />
           <span v-t="'pages.checkout_complete.text'" />
-          <div class="mt-10 flex flex-col items-center justify-center gap-6 md:flex-row lg:justify-start">
-            <VcButton :to="{ name: 'OrderDetails', params: { orderId: placedOrder?.id } }" class="w-40 uppercase">
-              <i class="fas fa-file-lines mr-3" />
+          <div class="mt-10 flex flex-col justify-center gap-6 xs:flex-row">
+            <VcButton
+              :to="{ name: 'OrderDetails', params: { orderId: placedOrder?.id } }"
+              prepend-icon="document-text"
+              class="flex-1"
+            >
               {{ $t("common.buttons.show_order") }}
             </VcButton>
 
-            <VcButton to="/" class="w-40 uppercase">
+            <VcButton to="/" class="flex-1">
               {{ $t("common.buttons.home") }}
             </VcButton>
           </div>

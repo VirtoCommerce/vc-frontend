@@ -1,17 +1,12 @@
 <template>
   <VcPopup :title="$t('shared.checkout.payment_method_dialog.title')">
     <template #actions="{ close }">
-      <VcButton
-        class="inline-flex w-1/2 grow uppercase lg:w-auto lg:grow-0 lg:px-5"
-        kind="secondary"
-        is-outline
-        @click="close"
-      >
+      <VcButton class="flex-1 lg:flex-none" variant="outline" color="secondary" @click="close">
         {{ $t("shared.checkout.payment_method_dialog.cancel_button") }}
       </VcButton>
 
       <VcButton
-        class="inline-flex w-1/2 grow uppercase lg:w-auto lg:grow-0 lg:px-10"
+        class="flex-1 lg:flex-none"
         @click="
           $emit('result', selectedMethod);
           close();
@@ -34,7 +29,7 @@
             <i class="fas fa-check"></i>
           </div>
 
-          <VcButton v-else is-outline class="grow px-3 uppercase" @click="setMethod(method)">
+          <VcButton v-else variant="outline" size="sm" @click="setMethod(method)">
             {{ $t("shared.checkout.payment_method_dialog.select_button") }}
           </VcButton>
         </div>
@@ -45,7 +40,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import type { PaymentMethodType } from "@/xapi/types";
+import type { PaymentMethodType } from "@/core/api/graphql/types";
 import type { PropType } from "vue";
 
 defineEmits(["result"]);

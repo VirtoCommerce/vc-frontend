@@ -43,10 +43,9 @@
           <div class="z-100 sticky bottom-0 -mx-5 mt-4 h-24 bg-white p-5 shadow-t-md">
             <div class="flex space-x-4">
               <VcButton
-                class="flex-1 uppercase"
-                size="lg"
-                is-outline
-                :is-disabled="!isExistSelectedFacets && !isExistSelectedMobileFacets"
+                class="flex-1"
+                variant="outline"
+                :disabled="!isExistSelectedFacets && !isExistSelectedMobileFacets"
                 @click="
                   resetFacetFilters();
                   hideMobileSidebar();
@@ -56,9 +55,8 @@
               </VcButton>
 
               <VcButton
-                class="flex-1 uppercase"
-                size="lg"
-                :is-disabled="!isMobileFilterDirty"
+                class="flex-1"
+                :disabled="!isMobileFilterDirty"
                 @click="
                   applyFilters(mobileFilters);
                   hideMobileSidebar();
@@ -129,8 +127,8 @@
           >
             <!-- Mobile filters toggler -->
             <div class="mr-2.5 lg:hidden">
-              <VcButton class="pl-2.5 pr-2 !font-lato !text-15 font-bold" size="md" @click="showMobileSidebar">
-                <i class="fas fa-filter mr-2"></i> {{ $t("pages.catalog.filters_button") }}
+              <VcButton class="pl-2.5 pr-2" prepend-icon="filter" size="sm" @click="showMobileSidebar">
+                {{ $t("pages.catalog.filters_button") }}
               </VcButton>
             </div>
 
@@ -290,11 +288,9 @@
             <template #button>
               <VcButton
                 v-if="isExistSelectedFacets || keywordQueryParam"
-                class="px-6 uppercase"
-                size="lg"
+                prepend-icon="reset"
                 @click="resetFacetFiltersWithKeyword"
               >
-                <i class="fas fa-undo -ml-0.5 mr-2.5 text-inherit"></i>
                 {{ $t("pages.catalog.no_products_button") }}
               </VcButton>
             </template>
@@ -327,7 +323,7 @@ import {
 } from "@/core/composables";
 import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
-import globals from "@/core/globals";
+import { globals } from "@/core/globals";
 import {
   buildBreadcrumbs,
   getFilterExpressionForAvailableIn,
@@ -344,9 +340,9 @@ import CategorySelector from "./category-selector.vue";
 import DisplayProducts from "./display-products.vue";
 import ProductsFiltersSidebar from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
+import type { Breadcrumb, Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 import type { ProductsFilters, ProductsSearchParams } from "@/shared/catalog";
-import type { Breadcrumb, Product } from "@/xapi/types";
 import type { StyleValue } from "vue";
 
 interface IProps {

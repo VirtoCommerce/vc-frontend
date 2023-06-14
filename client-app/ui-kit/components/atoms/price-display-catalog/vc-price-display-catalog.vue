@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import type { MoneyType } from "@/xapi/types";
+import type { MoneyType } from "@/core/api/graphql/types";
 import type { PropType } from "vue";
 
 const props = defineProps({

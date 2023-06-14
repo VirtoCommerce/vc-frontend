@@ -63,8 +63,8 @@
 import { sumBy } from "lodash";
 import { computed } from "vue";
 import { prepareLineItems } from "@/core/utilities";
+import type { LineItemType, OrderLineItemType, QuoteItemType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
-import type { LineItemType, OrderLineItemType, QuoteItemType } from "@/xapi/types";
 
 interface IEmits {
   (event: "remove:item", value: LineItemType): void;

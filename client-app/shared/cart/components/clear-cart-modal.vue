@@ -3,9 +3,9 @@
     <template #actions="{ close }">
       <div class="mx-auto flex space-x-5">
         <VcButton
-          class="mx-auto inline-flex px-10 uppercase"
-          kind="secondary"
-          is-outline
+          class="mx-auto"
+          color="secondary"
+          variant="outline"
           @click="
             $emit('result');
             close();
@@ -14,7 +14,7 @@
           {{ $t("common.buttons.yes") }}
         </VcButton>
 
-        <VcButton class="mx-auto inline-flex px-10 uppercase" @click="close()">
+        <VcButton class="mx-auto" @click="close()">
           {{ $t("common.buttons.no") }}
         </VcButton>
       </div>

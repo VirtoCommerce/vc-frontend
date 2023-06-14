@@ -170,7 +170,7 @@
     </div>
 
     <div v-else class="border-x p-3">
-      <VcAlert type="warning" icon>
+      <VcAlert color="warning" icon>
         {{ $t("pages.account.quote_details.no_items_message") }}
       </VcAlert>
     </div>
@@ -190,8 +190,8 @@
 import { sumBy } from "lodash";
 import { computed } from "vue";
 import { extendLineItem } from "@/core/utilities";
+import type { QuoteItemType } from "@/core/api/graphql/types";
 import type { ExtendedLineItemType } from "@/core/types";
-import type { QuoteItemType } from "@/xapi/types";
 
 interface IEmits {
   (event: "update:item", value: ExtendedLineItemType<QuoteItemType>): void;

@@ -1,23 +1,50 @@
 <template>
   <component
     :is="isLink ? 'router-link' : 'button'"
-    :to="isEnabled ? to : ''"
-    :type="isLink ? null : isSubmit ? 'submit' : 'button'"
-    :disabled="!isEnabled"
+    :to="enabled ? to : ''"
+    :type="type"
+    :disabled="!enabled"
+    :title="title"
     :class="[
       'vc-button',
-      `vc-button--${size}`,
-      `vc-button--${kind}`,
+      `vc-button--size--${size}`,
+      `vc-button--${variant}--${color}`,
       {
-        'vc-button--outline': isOutline,
-        'vc-button--disabled': !isEnabled,
-        'vc-button--loading': isWaiting,
+        'vc-button--icon': !!icon,
+        'vc-button--disabled': !enabled,
+        'vc-button--loading': loading,
+        'vc-button--truncate': truncate,
+        'vc-button--full-width': fullWidth,
       },
     ]"
-    @click="isEnabled ? $emit('click', $event) : null"
+    @click="enabled ? $emit('click', $event) : null"
   >
     <span class="vc-button__content">
-      <slot />
+      <VcIcon v-if="icon && typeof icon === 'string'" class="vc-button__icon" :name="icon" />
+
+      <template v-else>
+        <span v-if="$slots.prepend || prependIcon" class="vc-button__prepend">
+          <slot name="prepend">
+            <VcIcon v-if="prependIcon" class="vc-button__icon" :name="prependIcon" />
+          </slot>
+        </span>
+
+        <span v-if="$slots.default" class="vc-button__slot">
+          <slot />
+        </span>
+
+        <span v-if="$slots.append || appendIcon" class="vc-button__append">
+          <slot name="append">
+            <VcIcon v-if="appendIcon" class="vc-button__icon" :name="appendIcon" />
+          </slot>
+        </span>
+      </template>
+    </span>
+
+    <span v-if="loading" class="vc-button__loader">
+      <slot name="loader">
+        <span class="vc-button__loader-icon"></span>
+      </slot>
     </span>
   </component>
 </template>
@@ -31,107 +58,233 @@ export interface IEmits {
 }
 
 interface IProps {
-  kind?: "primary" | "secondary" | "success" | "warning" | "danger" | "custom";
+  color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger";
   size?: "xs" | "sm" | "md" | "lg";
-  isSubmit?: boolean;
-  isOutline?: boolean;
-  isDisabled?: boolean;
-  isWaiting?: boolean;
+  variant?: "solid" | "outline";
+  type?: "button" | "reset" | "submit";
+  disabled?: boolean;
+  loading?: boolean;
   to?: RouteLocationRaw | null;
+  prependIcon?: string;
+  appendIcon?: string;
+  icon?: boolean | string;
+  title?: string;
+  truncate?: boolean;
+  fullWidth?: boolean;
 }
 
 defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
-  kind: "primary",
+  color: "primary",
   size: "md",
-  isSubmit: false,
-  isOutline: false,
-  isDisabled: false,
-  isWaiting: false,
+  variant: "solid",
+  type: "button",
+  disabled: false,
+  loading: false,
   to: null,
+  truncate: false,
+  fullWidth: false,
 });
 
-const isEnabled = eagerComputed<boolean>(() => !props.isDisabled && !props.isWaiting);
-const isLink = eagerComputed<boolean>(() => !!props.to && isEnabled.value);
+const enabled = eagerComputed<boolean>(() => !props.disabled && !props.loading);
+const isLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
 </script>
 
 <style scoped lang="scss">
-$colors: primary, secondary, success, warning, danger;
-
 .vc-button {
-  $self: &;
+  $colors: primary, secondary, success, info, neutral, warning, danger;
 
-  @apply relative inline-flex justify-center items-center rounded
-  border-2 border-transparent font-roboto-condensed select-none
-  focus:outline outline-[3px] outline-[color:var(--color-primary-light)];
+  $prepend: "";
+  $append: "";
+  $icon: "";
+  $truncate: "";
+  $disabled: "";
+  $loading: "";
+  $loaderIcon: "";
 
-  &__content {
-    @apply flex justify-center items-center;
-  }
+  @apply relative rounded border-2 select-none text-center;
 
-  &--xs {
-    @apply h-7 text-xs;
-  }
-
-  &--sm {
-    @apply h-8 text-sm;
-  }
-
-  &--md {
-    @apply h-9 text-base;
-  }
-
-  &--lg {
-    @apply h-11 text-lg;
+  &--truncate {
+    $truncate: &;
   }
 
   &--disabled {
-    @apply bg-gray-200 text-gray-400 cursor-not-allowed
-    [--tw-bg-opacity:0.7] [--tw-text-opacity:0.7] #{!important};
-
-    &#{$self}--outline {
-      @apply bg-transparent border-gray-300 [--tw-border-opacity:0.8] #{!important};
-    }
+    $disabled: &;
   }
 
   &--loading {
-    #{$self}__content {
-      visibility: hidden;
+    $loading: &;
+  }
+
+  &--icon {
+    $icon: &;
+  }
+
+  &--full-width {
+    @apply w-full;
+  }
+
+  &__loader {
+    @apply hidden;
+
+    #{$loading} & {
+      @apply absolute inset-0 flex justify-center items-center;
+    }
+  }
+
+  &__loader-icon {
+    $loaderIcon: &;
+
+    @apply block rounded-full border-[--color-neutral-300] border-r-[--color-neutral-500] animate-spin;
+  }
+
+  &--size {
+    &--xs {
+      --vc-button-line-height: 0.875rem;
+
+      @apply px-2.5 py-1.5 text-xs/[--vc-button-line-height] font-bold;
+
+      &#{$icon} {
+        @apply px-1.5;
+      }
+
+      & #{$loaderIcon} {
+        @apply border-2 w-3.5 h-3.5;
+      }
     }
 
-    &::after {
-      @apply border-[3px] rounded-full animate-spin border-gray-400 border-r-gray-300;
+    &--sm {
+      --vc-button-line-height: 1rem;
 
-      --tw-border-opacity: 0.7 !important;
+      @apply px-3 py-2 text-xs/[--vc-button-line-height] uppercase font-black;
 
-      content: " ";
-      height: 1.25rem;
-      width: 1.25rem;
-      margin: -0.625rem 0 0 -0.625rem;
-      position: absolute;
-      left: 50%;
-      top: 50%;
+      &#{$icon} {
+        @apply px-2;
+      }
+
+      & #{$loaderIcon} {
+        @apply border-2 w-4 h-4;
+      }
     }
 
-    &#{$self}--outline {
-      &::after {
-        @apply border-gray-400 border-r-gray-200;
-        --tw-border-opacity: 0.6 !important;
+    &--md {
+      --vc-button-line-height: 1.25rem;
+
+      @apply px-5 py-2.5 text-sm/[--vc-button-line-height] uppercase font-black;
+
+      &#{$icon} {
+        @apply px-2.5;
+      }
+
+      & #{$loaderIcon} {
+        @apply border-[3px] w-5 h-5;
+      }
+    }
+
+    &--lg {
+      --vc-button-line-height: 1.75rem;
+
+      @apply px-7 py-3.5 text-base/[--vc-button-line-height] uppercase font-black;
+
+      &#{$icon} {
+        @apply px-3.5;
+      }
+
+      & #{$loaderIcon} {
+        @apply border-[3px] w-6 h-6;
       }
     }
   }
 
   @each $color in $colors {
-    &--#{$color} {
-      @apply bg-[color:var(--color-#{$color})] hover:bg-[color:var(--color-#{$color}-hover)] text-white;
+    &--solid--#{$color} {
+      @apply bg-[--color-#{$color}-500]
+      border-[--color-#{$color}-500]
+      text-[--color-additional-50];
 
-      &#{$self}--outline {
-        @apply bg-transparent hover:bg-[color:var(--color-#{$color}-hover)]
-        border-[color:var(--color-#{$color})] hover:border-[color:var(--color-#{$color}-hover)]
-        text-[color:var(--color-#{$color})] hover:text-white;
+      &:hover {
+        @apply bg-[--color-#{$color}-700]
+        border-[--color-#{$color}-700];
+      }
+
+      &:focus {
+        @apply outline-[--color-#{$color}-100];
       }
     }
+
+    &--outline--#{$color} {
+      @apply text-[--color-#{$color}-500] border-current;
+
+      &:hover {
+        @apply text-[--color-#{$color}-700];
+      }
+
+      &:focus {
+        @apply outline-[--color-#{$color}-100];
+      }
+    }
+  }
+
+  &:disabled,
+  #{$disabled} {
+    &[class*="--solid--"] {
+      @apply bg-[--color-neutral-50] border-[--color-neutral-50] text-[--color-neutral-300];
+    }
+
+    &[class*="--outline--"] {
+      @apply text-[--color-neutral-300];
+    }
+  }
+
+  &__content {
+    @apply grid grid-flow-col;
+
+    #{$loading} & {
+      @apply invisible;
+    }
+  }
+
+  &__slot {
+    word-break: break-word;
+
+    #{$truncate} & {
+      @apply grow min-w-0 truncate;
+    }
+
+    &:empty {
+      @apply hidden;
+    }
+  }
+
+  &__prepend {
+    $prepend: &;
+
+    &:empty {
+      @apply hidden;
+    }
+  }
+
+  &__append {
+    $append: &;
+
+    &:empty {
+      @apply hidden;
+    }
+  }
+
+  &__icon {
+    #{$prepend} & {
+      @apply me-2;
+    }
+
+    #{$append} & {
+      @apply ms-2;
+    }
+  }
+
+  &:focus {
+    @apply outline outline-[3px];
   }
 }
 </style>

@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import ProductTitledBlock from "../product-titled-block.vue";
-import type { Product } from "@/xapi/types";
+import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
   product: Product;

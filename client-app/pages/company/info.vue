@@ -7,7 +7,7 @@
 
     <div class="flex flex-col bg-white shadow-sm md:rounded md:border">
       <!-- Company name block -->
-      <div class="flex flex-row gap-3 p-5 shadow [--tw-shadow:0_10px_15px_0_rgb(0_0_0_/_0.06)]">
+      <div class="flex items-end gap-3 p-5 shadow [--tw-shadow:0_10px_15px_0_rgb(0_0_0_/_0.06)]">
         <VcInput
           v-model.trim="organizationName"
           :label="$t('pages.company.info.labels.company_name')"
@@ -17,20 +17,21 @@
           name="organization-name"
           autocomplete="off"
           maxlength="64"
-          class="w-full"
+          class="grow"
         />
 
-        <div v-if="userCanEditOrganization" class="pt-6">
-          <VcButton
-            :is-waiting="loadingOrganization || loadingUser"
-            :is-disabled="!meta.valid || !meta.dirty"
-            class="my-0.5 uppercase"
-            @click="saveOrganizationName"
-          >
-            <i class="fas fa-save px-2 text-2xl md:hidden" />
-            <span class="mx-12 hidden md:inline">{{ $t("common.buttons.save") }}</span>
-          </VcButton>
-        </div>
+        <VcButton
+          v-if="userCanEditOrganization"
+          :loading="loadingOrganization || loadingUser"
+          :disabled="!meta.valid || !meta.dirty"
+          :icon="isMobile"
+          class="flex-none"
+          @click="saveOrganizationName"
+        >
+          <VcIcon name="save-v2" class="lg:!hidden" />
+
+          <span>{{ $t("common.buttons.save") }}</span>
+        </VcButton>
       </div>
 
       <!-- Content block -->
@@ -43,9 +44,8 @@
 
           <VcButton
             v-if="userCanEditOrganization"
-            class="px-3 uppercase"
             size="sm"
-            is-outline
+            variant="outline"
             @click="openAddOrUpdateCompanyAddressDialog()"
           >
             <span class="sm:hidden">{{ $t("pages.company.info.buttons.add_new_address_mobile") }}</span>
@@ -67,8 +67,7 @@
           </template>
 
           <template v-if="userCanEditOrganization" #button>
-            <VcButton class="px-4 uppercase" size="lg" @click="openAddOrUpdateCompanyAddressDialog()">
-              <i class="fa fa-plus -ml-px mr-3" />
+            <VcButton prepend-icon="plus" @click="openAddOrUpdateCompanyAddressDialog()">
               {{ $t("pages.company.info.buttons.add_new_address") }}
             </VcButton>
           </template>
@@ -233,7 +232,7 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { computedEager } from "@vueuse/core";
+import { breakpointsTailwind, useBreakpoints, computedEager } from "@vueuse/core";
 import { useField } from "vee-validate";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -244,13 +243,16 @@ import { useUser } from "@/shared/account";
 import { AddOrUpdateCompanyAddressDialog, useOrganization, useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
+import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
-import type { MemberAddressType } from "@/xapi/types";
 
 const page = ref(1);
 const itemsPerPage = ref(10);
 
 const { t } = useI18n();
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("lg");
 
 usePageHead({
   title: t("pages.company.info.meta.title"),

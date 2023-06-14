@@ -104,17 +104,11 @@
         <div class="mt-6 lg:mt-4">
           <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
 
-          <VcAlert v-for="error in commonErrors" :key="error" type="danger" class="mb-4 text-xs" icon>
+          <VcAlert v-for="error in commonErrors" :key="error" color="danger" class="mb-4 text-xs" icon>
             {{ error }}
           </VcAlert>
 
-          <VcButton
-            is-submit
-            :is-disabled="!meta.valid || meta.pending"
-            size="lg"
-            class="mt-6 w-full uppercase lg:mt-3 lg:w-48"
-            :is-waiting="loading"
-          >
+          <VcButton :disabled="!meta.valid || meta.pending" :loading="loading" class="mt-6 w-full lg:mt-3 lg:w-48">
             {{ $t("pages.sign_up.register_button") }}
           </VcButton>
         </div>
@@ -134,13 +128,13 @@ import { useField, useForm } from "vee-validate";
 import { onMounted, reactive, ref, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
+import { checkEmailUniqueness } from "@/core/api/graphql/account";
 import { useIdentityErrorTranslator, usePageHead } from "@/core/composables";
 import { PasswordTips, RegistrationKind, RegistrationSuccessDialog, useUser } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
-import { checkEmailUniqueness } from "@/xapi/graphql/account";
+import type { AccountCreationResultType } from "@/core/api/graphql/types";
 import type { PasswordOptionsType } from "@/core/types";
-import type { AccountCreationResultType } from "@/xapi/types";
 
 const ASYNC_VALIDATION_TIMEOUT_IN_MS = 500;
 

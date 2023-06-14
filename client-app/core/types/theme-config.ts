@@ -4,6 +4,7 @@ import type { ISocialSharingService } from "./social-sharing";
 import type { SortDirection } from "@/core/enums";
 
 export interface IThemeConfigPreset {
+  search_by_static_content_enabled?: boolean;
   page_title_with_store_name?: boolean;
   page_title_store_name_align?: string | "start" | "end";
   page_title_divider?: string;
@@ -21,7 +22,6 @@ export interface IThemeConfigPreset {
   product_compare_limit?: number;
   product_filters_sorting?: boolean;
   product_filters_sorting_direction?: SortDirection | string;
-  product_search_phrase_suggestions_enabled?: boolean;
   out_of_stock_order_enabled?: boolean;
   search_suggestions_category_enabled?: boolean;
   search_suggestions_category_limit?: number;
@@ -67,6 +67,8 @@ export interface IThemeConfigPreset {
 
   search_min_chars?: number;
   search_max_chars?: number;
+  search_static_content_suggestions_enabled?: boolean;
+  search_product_phrase_suggestions_enabled?: boolean;
 
   vendor_enabled?: boolean;
   rating_enabled?: boolean;

@@ -28,7 +28,7 @@
         </div>
 
         <div class="mt-7 print:hidden md:mt-5">
-          <VcButton :to="{ name: 'Cart' }" class="w-full px-2 uppercase">
+          <VcButton :to="{ name: 'Cart' }" full-width>
             {{ $t("pages.product.view_cart_button") }}
           </VcButton>
         </div>
@@ -67,7 +67,7 @@ import { ProductType } from "@/core/enums";
 import { AddToCart } from "@/shared/cart";
 import { ProductDetails, ProductPriceBlock } from "@/shared/catalog";
 import type { PageContent } from "../types";
-import type { Product } from "@/xapi/types";
+import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
   product: Product;

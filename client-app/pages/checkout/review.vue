@@ -121,17 +121,12 @@
             />
           </transition>
 
-          <VcButton
-            :is-disabled="isDisabledOrderCreation"
-            :is-waiting="creatingOrder"
-            class="mt-4 w-full uppercase"
-            @click="createOrder"
-          >
+          <VcButton :disabled="isDisabledOrderCreation" :loading="creatingOrder" class="mt-4" @click="createOrder">
             {{ $t("common.buttons.place_order") }}
           </VcButton>
 
           <transition name="slide-fade-top" mode="out-in" appear>
-            <VcAlert v-show="hasValidationErrors" type="warning" class="mt-4" icon>
+            <VcAlert v-show="hasValidationErrors" color="warning" class="mt-4" icon>
               {{ $t("common.messages.something_went_wrong") }}
             </VcAlert>
           </transition>
@@ -147,7 +142,7 @@ import { useRouter } from "vue-router";
 import { OrderLineItems } from "@/shared/account";
 import { useCart, useCoupon, usePurchaseOrderNumber } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
-import type { CartAddressType } from "@/xapi/types";
+import type { CartAddressType } from "@/core/api/graphql/types";
 
 const router = useRouter();
 const {

@@ -6,13 +6,7 @@
         {{ $t("common.titles.addresses") }}
       </h2>
 
-      <VcButton
-        v-if="paginatedAddresses.length"
-        class="px-3 uppercase"
-        size="sm"
-        is-outline
-        @click="openAddOrUpdateAddressModal()"
-      >
+      <VcButton v-if="paginatedAddresses.length" size="sm" variant="outline" @click="openAddOrUpdateAddressModal()">
         <span class="sm:hidden">{{ $t("common.buttons.add_new") }}</span>
         <span class="hidden sm:inline">{{ $t("common.buttons.add_new_address") }}</span>
       </VcButton>
@@ -24,8 +18,7 @@
       </template>
 
       <template #button>
-        <VcButton class="px-4 uppercase" size="lg" @click="openAddOrUpdateAddressModal()">
-          <i class="fa fa-plus -ml-px mr-3" />
+        <VcButton size="lg" prepend-icon="plus" @click="openAddOrUpdateAddressModal()">
           {{ $t("common.buttons.add_new_address") }}
         </VcButton>
       </template>
@@ -201,8 +194,8 @@ import { useUserAddresses } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import { VcAddOrUpdateAddressModal } from "@/ui-kit/components";
+import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
-import type { MemberAddressType } from "@/xapi/types";
 
 const { t } = useI18n();
 const { countries, loadCountries } = useCountries();

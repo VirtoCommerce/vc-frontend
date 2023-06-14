@@ -23,15 +23,11 @@
           @keypress.enter="applyKeyword"
         >
           <template #append>
-            <button v-if="keyword" type="button" class="h-full px-4" @click="resetKeyword">
-              <svg class="text-[color:var(--color-primary)]" height="14" width="14">
-                <use href="/static/images/delete.svg#main" />
-              </svg>
+            <button v-if="keyword" type="button" class="flex h-full items-center px-4" @click="resetKeyword">
+              <VcIcon class="text-[--color-primary-500]" name="delete-2" size="xs" />
             </button>
 
-            <VcButton :is-disabled="fetching" class="w-11 !rounded-[inherit] uppercase" size="lg" @click="applyKeyword">
-              <i class="fas fa-search text-lg" />
-            </VcButton>
+            <VcButton :disabled="fetching" icon="search" @click="applyKeyword" />
           </template>
         </VcInput>
       </div>
@@ -162,8 +158,8 @@ import { useRouteQueryParam, usePageHead } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
 import { getSortingExpression, getSortInfoFromStringExpression } from "@/core/utilities";
 import { PageToolbarBlock, useUserQuotes, QuoteStatus } from "@/shared/account";
+import type { QuoteType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
-import type { QuoteType } from "@/xapi/types";
 
 const { t } = useI18n();
 const router = useRouter();

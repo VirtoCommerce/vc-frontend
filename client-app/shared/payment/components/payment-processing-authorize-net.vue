@@ -47,10 +47,9 @@
       </p>
 
       <VcButton
-        :is-disabled="!isValidBankCard || disabled"
-        :is-waiting="loading"
-        size="lg"
-        class="w-full shrink-0 uppercase md:order-first md:w-60"
+        :disabled="!isValidBankCard || disabled"
+        :loading="loading"
+        class="flex-1 md:order-first md:flex-none"
         @click="sendPaymentData"
       >
         {{ $t("shared.payment.authorize_net.pay_now_button") }}
@@ -66,12 +65,12 @@
 import { clone } from "lodash";
 import { computed, ref, shallowRef, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
+import { initializePayment } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import { BankCardForm, PaymentActionType, useAuthorizeNet } from "@/shared/payment";
-import { initializePayment } from "@/xapi";
+import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
-import type { CustomerOrderType, KeyValueType } from "@/xapi/types";
 
 interface IEmits {
   (event: "success"): void;

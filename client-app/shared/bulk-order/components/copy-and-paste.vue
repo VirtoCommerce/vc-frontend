@@ -18,24 +18,11 @@
       />
 
       <div class="mb-2 mt-5 flex flex-wrap justify-between gap-3 md:mb-0 md:mt-2">
-        <VcButton
-          :is-disabled="!text || loading"
-          kind="secondary"
-          size="lg"
-          class="px-5 uppercase xl:px-8"
-          is-outline
-          @click="text = ''"
-        >
+        <VcButton :disabled="!text || loading" color="secondary" variant="outline" @click="text = ''">
           {{ $t("shared.bulk_order.copy_n_paste.reset_button") }}
         </VcButton>
 
-        <VcButton
-          :is-disabled="!text"
-          :is-waiting="loading"
-          size="lg"
-          class="flex justify-self-end px-5 uppercase xl:px-8"
-          @click="addToCart"
-        >
+        <VcButton :disabled="!text" :loading="loading" @click="addToCart">
           {{ $t("shared.bulk_order.copy_n_paste.add_to_cart_button") }}
         </VcButton>
       </div>
@@ -46,7 +33,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { validateQuantity } from "../utils";
-import type { InputNewBulkItemType } from "@/xapi/types";
+import type { InputNewBulkItemType } from "@/core/api/graphql/types";
 
 const emit = defineEmits<{
   (event: "add-to-cart", value: InputNewBulkItemType[]): void;

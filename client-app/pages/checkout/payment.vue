@@ -36,7 +36,7 @@ import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { OrderSummary, useCheckout } from "@/shared/checkout";
 import { PaymentActionType, PaymentProcessingAuthorizeNet, PaymentProcessingRedirection } from "@/shared/payment";
-import type { PaymentInType } from "@/xapi/types";
+import type { PaymentInType } from "@/core/api/graphql/types";
 
 const router = useRouter();
 const { placedOrder, allItemsAreDigital } = useCheckout();

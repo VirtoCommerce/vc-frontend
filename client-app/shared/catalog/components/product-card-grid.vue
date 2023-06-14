@@ -176,7 +176,7 @@
     </div>
 
     <div v-if="product.hasVariations" class="flex flex-col">
-      <VcButton :to="link" class="w-full !border !text-13 uppercase" is-outline @click="$emit('linkClick', $event)">
+      <VcButton :to="link" variant="outline" size="sm" full-width @click="$emit('linkClick', $event)">
         {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
       </VcButton>
 
@@ -218,7 +218,7 @@ import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import DiscountBadge from "./discount-badge.vue";
 import Vendor from "./vendor.vue";
-import type { Product } from "@/xapi/types";
+import type { Product } from "@/core/api/graphql/types";
 import type { Swiper as SwiperInstance } from "swiper/types";
 import type { RouteLocationRaw } from "vue-router";
 

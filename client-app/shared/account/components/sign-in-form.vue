@@ -1,11 +1,11 @@
 <template>
   <form @submit="onSubmit">
     <!-- Errors block -->
-    <VcAlert v-if="authError" class="mb-2" type="danger" icon>
+    <VcAlert v-if="authError" class="mb-2" color="danger" icon>
       <span v-html="$t('shared.account.sign_in_form.email_or_password_incorrect_alert')"></span>
     </VcAlert>
 
-    <VcAlert v-if="userIsLockedError" class="mb-2" type="danger" icon>
+    <VcAlert v-if="userIsLockedError" class="mb-2" color="danger" icon>
       <span v-html="$t('shared.account.sign_in_form.user_is_locked_out_alert')"></span>
     </VcAlert>
 
@@ -49,24 +49,17 @@
     </div>
 
     <!-- Form actions -->
-    <div class="mt-8 flex font-roboto-condensed text-base" :class="{ 'max-w-sm': !props.growButtons }">
+    <div class="mt-8 flex" :class="{ 'max-w-sm': !props.growButtons }">
       <VcButton
-        :is-disabled="loading || isAuthenticated || !valid || authError"
-        :is-waiting="loading"
-        is-submit
-        size="lg"
-        class="flex-1 shrink px-2 uppercase"
+        :disabled="loading || isAuthenticated || !valid || authError"
+        :loading="loading"
+        type="submit"
+        class="flex-1 shrink"
       >
         {{ $t("shared.account.sign_in_form.login_button") }}
       </VcButton>
 
-      <VcButton
-        :to="{ name: 'SignUp' }"
-        :is-disabled="loading || isAuthenticated"
-        size="lg"
-        is-outline
-        class="ml-4 flex-1 px-2 uppercase"
-      >
+      <VcButton :to="{ name: 'SignUp' }" :disabled="loading || isAuthenticated" variant="outline" class="ml-4 flex-1">
         {{ $t("shared.account.sign_in_form.registration_button") }}
       </VcButton>
     </div>
@@ -79,10 +72,12 @@ import { eagerComputed } from "@vueuse/core";
 import { isEmpty } from "lodash";
 import { useField, useForm } from "vee-validate";
 import { reactive, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
+import { getMe } from "@/core/api/graphql";
+import { mergeCart } from "@/core/api/graphql/cart";
 import { useCart } from "@/shared/cart";
-import { getMe } from "@/xapi";
-import { mergeCart } from "@/xapi/graphql/cart";
+import { useNotifications } from "@/shared/notification";
 import useUser from "../composables/useUser";
 
 interface IEmits {
@@ -94,6 +89,8 @@ const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButto
 
 const USER_IS_LOCKED_OUT_ERROR_CODE = "user_is_locked_out";
 
+const notifications = useNotifications();
+const { t } = useI18n();
 const { cart, fetchShortCart } = useCart();
 const { signMeIn, isAuthenticated } = useUser();
 
@@ -123,23 +120,32 @@ const valid = eagerComputed<boolean>(() => isEmpty(errors.value));
 const onSubmit = handleSubmit(async () => {
   loading.value = true;
 
-  if (!cart.value) {
-    await fetchShortCart();
-  }
+  try {
+    if (!cart.value) {
+      await fetchShortCart();
+    }
 
-  const result = await signMeIn(model);
+    const result = await signMeIn(model);
 
-  if (result.succeeded) {
-    const user = await getMe();
-    await mergeCart(user.id, cart.value!.id!);
-    emit("succeeded");
-    return;
-  }
+    if (result.succeeded) {
+      const user = await getMe();
+      await mergeCart(user.id, cart.value!.id!);
+      emit("succeeded");
+      return;
+    }
 
-  if (result.errors?.find((e) => e.code === USER_IS_LOCKED_OUT_ERROR_CODE)) {
-    userIsLockedError.value = true;
-  } else {
-    authError.value = true;
+    if (result.errors?.find((e) => e.code === USER_IS_LOCKED_OUT_ERROR_CODE)) {
+      userIsLockedError.value = true;
+    } else {
+      authError.value = true;
+    }
+  } catch {
+    notifications.error({
+      text: t("common.messages.unknown_error"),
+      duration: 10000,
+    });
+
+    // (⌐■_■) ♪
   }
 
   loading.value = false;

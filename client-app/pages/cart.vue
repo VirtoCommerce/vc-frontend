@@ -10,7 +10,7 @@
     :breadcrumbs="breadcrumbs"
   >
     <template #actions>
-      <VcButton :to="{ name: 'Catalog' }" size="lg" class="w-48 font-bold uppercase">
+      <VcButton :to="{ name: 'Catalog' }" size="lg">
         {{ $t("common.buttons.continue_shopping") }}
       </VcButton>
     </template>
@@ -107,8 +107,9 @@
             <VcButton
               v-if="$cfg.checkout_multistep_enabled"
               :to="{ name: 'Checkout' }"
-              :is-disabled="isDisabledNextStep"
-              class="mt-4 w-full uppercase"
+              :disabled="isDisabledNextStep"
+              full-width
+              class="mt-4"
             >
               {{ $t("common.buttons.go_to_checkout") }}
             </VcButton>
@@ -116,9 +117,10 @@
             <!-- Place order button (Single page checkout) -->
             <VcButton
               v-else
-              :is-disabled="isDisabledOrderCreation"
-              :is-waiting="creatingOrder"
-              class="mt-4 w-full uppercase"
+              :disabled="isDisabledOrderCreation"
+              :loading="creatingOrder"
+              full-width
+              class="mt-4"
               @click="createOrder"
             >
               {{ $t("common.buttons.place_order") }}
@@ -126,14 +128,14 @@
 
             <template v-if="!$cfg.checkout_multistep_enabled">
               <transition name="slide-fade-top" mode="out-in" appear>
-                <VcAlert v-show="isShowIncompleteDataWarning" type="warning" class="mt-4" icon>
+                <VcAlert v-show="isShowIncompleteDataWarning" color="warning" class="mt-4" icon>
                   {{ $t("common.messages.fill_all_required") }}
                 </VcAlert>
               </transition>
             </template>
 
             <transition name="slide-fade-top" mode="out-in" appear>
-              <VcAlert v-show="hasValidationErrors" type="warning" class="mt-4" icon>
+              <VcAlert v-show="hasValidationErrors" color="warning" class="mt-4" icon>
                 {{ $t("common.messages.something_went_wrong") }}
               </VcAlert>
             </transition>
@@ -146,13 +148,7 @@
             {{ $t("common.messages.quote_request") }}
           </p>
 
-          <VcButton
-            :is-disabled="loading"
-            :is-waiting="creatingQuote"
-            class="w-full uppercase"
-            is-outline
-            @click="createQuote"
-          >
+          <VcButton :disabled="loading" :loading="creatingQuote" variant="outline" @click="createQuote">
             {{ $t("common.buttons.create_quote") }}
           </VcButton>
         </VcCardWidget>
@@ -179,7 +175,7 @@ import {
   useCheckout,
 } from "@/shared/checkout";
 import { usePopup } from "@/shared/popup";
-import type { LineItemType } from "@/xapi/types";
+import type { LineItemType } from "@/core/api/graphql/types";
 
 const config = inject(configInjectionKey, {});
 

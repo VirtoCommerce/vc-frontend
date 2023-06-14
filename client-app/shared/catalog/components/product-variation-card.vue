@@ -68,7 +68,7 @@ import { getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
 import VariationProperty from "./variation-property.vue";
 import Vendor from "./vendor.vue";
-import type { Product, VariationType } from "@/xapi/types";
+import type { Product, VariationType } from "@/core/api/graphql/types";
 
 interface IProps {
   variation: VariationType | Product;

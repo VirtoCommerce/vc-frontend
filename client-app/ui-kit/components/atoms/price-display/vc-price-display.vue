@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import type { MoneyType } from "@/xapi/types";
+import type { MoneyType } from "@/core/api/graphql/types";
 
 interface IProps {
   value: MoneyType;

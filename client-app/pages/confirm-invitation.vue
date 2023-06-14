@@ -76,17 +76,11 @@
         <div class="mt-6">
           <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
 
-          <VcAlert v-for="error in commonErrors" :key="error" type="danger" class="mb-4 text-xs" icon>
+          <VcAlert v-for="error in commonErrors" :key="error" color="danger" class="mb-4 text-xs" icon>
             {{ error }}
           </VcAlert>
 
-          <VcButton
-            :is-waiting="loading"
-            :is-disabled="!meta.valid"
-            size="lg"
-            class="mt-4 w-full uppercase lg:w-48"
-            is-submit
-          >
+          <VcButton :loading="loading" :disabled="!meta.valid" type="submit" class="mt-4 w-full lg:w-48">
             {{ $t("common.buttons.register") }}
           </VcButton>
         </div>

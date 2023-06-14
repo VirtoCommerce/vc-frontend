@@ -15,12 +15,13 @@
     >
       <template #append>
         <VcButton
-          :is-outline="isButtonOutlined"
-          :is-waiting="loading"
-          :is-disabled="disabled"
+          :variant="isButtonOutlined ? 'outline' : 'solid'"
+          :loading="loading"
+          :disabled="disabled"
           :title="buttonText"
-          class="!h-full w-28 !rounded-[inherit] uppercase"
           size="sm"
+          class="w-28"
+          truncate
           @click="$emit('update:cartItemQuantity', quantity)"
         >
           {{ buttonText }}

@@ -12,8 +12,8 @@
 
     <VcButton
       :title="redirectUrl ? null : $t('shared.payment.redirection.errors.missing_link')"
-      :is-disabled="!redirectUrl"
-      class="mt-3 w-full uppercase md:mt-12 md:w-52"
+      :disabled="!redirectUrl"
+      class="mt-3 w-full md:mt-12 md:w-auto"
       @click="redirect"
     >
       {{ $t("shared.payment.redirection.pay_now_button") }}
@@ -27,9 +27,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { initializePayment } from "@/xapi";
+import { initializePayment } from "@/core/api/graphql";
 import { PaymentActionType } from "../types";
-import type { CustomerOrderType } from "@/xapi/types";
+import type { CustomerOrderType } from "@/core/api/graphql/types";
 
 interface IProps {
   order: CustomerOrderType;

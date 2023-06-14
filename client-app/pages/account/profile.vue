@@ -10,7 +10,7 @@
     >
       <form class="flex flex-col lg:w-1/2" @submit.prevent="onSubmit">
         <!-- Errors block -->
-        <VcAlert v-if="updateProfileError" class="mb-2" type="danger" icon>
+        <VcAlert v-if="updateProfileError" class="mb-2" color="danger" icon>
           <span v-t="'pages.account.profile.update_error_alert'" />
         </VcAlert>
 
@@ -112,11 +112,10 @@
         <!-- Form actions -->
         <div class="mt-5 w-1/2 self-center lg:self-auto">
           <VcButton
-            :is-disabled="!meta.dirty || !meta.valid || meta.pending"
-            :is-waiting="isSubmitting"
-            size="lg"
-            class="w-full uppercase lg:w-48"
-            is-submit
+            :disabled="!meta.dirty || !meta.valid || meta.pending"
+            :loading="isSubmitting"
+            type="submit"
+            class="w-full lg:w-48"
           >
             {{ $t("common.buttons.update") }}
           </VcButton>

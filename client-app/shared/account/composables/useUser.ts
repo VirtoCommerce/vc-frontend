@@ -1,8 +1,5 @@
 import { eagerComputed } from "@vueuse/core";
 import { computed, readonly, ref } from "vue";
-import { useFetch } from "@/core/composables";
-import globals from "@/core/globals";
-import { Logger } from "@/core/utilities";
 import {
   getMe,
   inviteUser as _inviteUser,
@@ -11,7 +8,19 @@ import {
   requestPasswordReset,
   resetPasswordByToken,
   updatePersonalData,
-} from "@/xapi/graphql/account";
+} from "@/core/api/graphql/account";
+import { useFetch } from "@/core/composables";
+import { globals } from "@/core/globals";
+import { Logger } from "@/core/utilities";
+import type {
+  AccountCreationResultType,
+  CustomIdentityResultType,
+  IdentityResultType,
+  InputInviteUserType,
+  InputRegisterByInvitationType,
+  Organization,
+  UserType,
+} from "@/core/api/graphql/types";
 import type { PasswordOptionsType } from "@/core/types";
 import type {
   ForgotPassword,
@@ -21,15 +30,6 @@ import type {
   SignMeUp,
   UserPersonalData,
 } from "@/shared/account";
-import type {
-  AccountCreationResultType,
-  CustomIdentityResultType,
-  IdentityResultType,
-  InputInviteUserType,
-  InputRegisterByInvitationType,
-  Organization,
-  UserType,
-} from "@/xapi/types";
 
 const loading = ref(false);
 const user = ref<UserType>();

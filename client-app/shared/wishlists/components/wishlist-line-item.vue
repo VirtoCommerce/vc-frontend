@@ -93,8 +93,8 @@
 import { computed } from "vue";
 import { useGoogleAnalytics } from "@/core/composables";
 import { ProductType } from "@/core/enums";
+import type { InputNewBulkItemType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
-import type { InputNewBulkItemType } from "@/xapi/types";
 
 interface IEmits {
   (event: "update:cartItemQuantity", item: InputNewBulkItemType): void;

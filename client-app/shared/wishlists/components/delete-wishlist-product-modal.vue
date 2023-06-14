@@ -13,11 +13,11 @@
 
     <template #actions="{ close }">
       <div class="flex grow justify-between space-x-4">
-        <VcButton :is-waiting="loading" kind="danger" class="grow uppercase lg:grow-0 lg:px-12" @click="remove(close)">
+        <VcButton :loading="loading" color="danger" class="flex-1 sm:flex-none" @click="remove(close)">
           {{ $t("shared.wishlists.delete_wishlist_product_dialog.delete_button") }}
         </VcButton>
 
-        <VcButton kind="secondary" class="grow uppercase lg:grow-0 lg:px-5" is-outline @click="close">
+        <VcButton color="secondary" variant="outline" class="flex-1 sm:flex-none" @click="close">
           {{ $t("shared.wishlists.delete_wishlist_product_dialog.cancel_button") }}
         </VcButton>
       </div>
@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import useWishlists from "../composables/useWishlists";
-import type { InputRemoveWishlistItemType, LineItemType } from "@/xapi/types";
+import type { InputRemoveWishlistItemType, LineItemType } from "@/core/api/graphql/types";
 
 interface IEmits {
   (event: "result"): void;

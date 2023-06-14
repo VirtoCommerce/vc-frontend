@@ -1,6 +1,6 @@
 {
   "name": "GraphQL Schema",
-  "schemaPath": "client-app/xapi/schema.json",
+  "schemaPath": "client-app/core/api/graphql/schema.json",
   "extensions": {
     "endpoints": {
       "GraphQL Endpoint": {

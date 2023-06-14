@@ -30,7 +30,7 @@
     </div>
 
     <div v-else class="vc-wishlist-line-items__empty">
-      <VcAlert type="warning" icon>
+      <VcAlert color="warning" icon>
         {{ $t("common.messages.empty_wish_list") }}
       </VcAlert>
     </div>
@@ -39,8 +39,8 @@
 
 <script setup lang="ts">
 import WishlistLineItem from "./wishlist-line-item.vue";
+import type { InputNewBulkItemType, LineItemType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
-import type { InputNewBulkItemType, LineItemType } from "@/xapi/types";
 
 interface IEmits {
   (event: "update:cartItem", value: InputNewBulkItemType): void;

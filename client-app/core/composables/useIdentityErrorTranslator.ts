@@ -1,5 +1,5 @@
 import { useI18n } from "vue-i18n";
-import type { IdentityErrorInfoType, RegistrationErrorType } from "@/xapi/types";
+import type { IdentityErrorInfoType, RegistrationErrorType } from "@/core/api/graphql/types";
 
 export function useIdentityErrorTranslator() {
   const { t, te } = useI18n();

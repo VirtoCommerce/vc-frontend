@@ -69,7 +69,7 @@ $colors: primary, secondary, success, warning, danger;
   }
 
   &__close-button {
-    @apply p-2 -mr-2;
+    @apply flex p-2 w-8 -mr-2;
   }
 
   &--sm {
@@ -80,7 +80,7 @@ $colors: primary, secondary, success, warning, danger;
     @apply h-9 text-base;
 
     #{$self}__close-button {
-      @apply scale-110 ml-px;
+      @apply flex;
     }
   }
 

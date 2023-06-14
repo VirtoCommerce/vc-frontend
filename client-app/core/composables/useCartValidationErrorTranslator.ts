@@ -1,5 +1,5 @@
 import { useI18n } from "vue-i18n";
-import type { ValidationErrorType } from "@/xapi/types";
+import type { ValidationErrorType } from "@/core/api/graphql/types";
 
 export function useCartValidationErrorTranslator() {
   const { t, te } = useI18n();

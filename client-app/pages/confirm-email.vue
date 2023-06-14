@@ -19,7 +19,7 @@
     </template>
 
     <template #actions>
-      <VcButton :to="{ name: 'SignIn' }" class="w-36 uppercase">
+      <VcButton :to="{ name: 'SignIn' }" class="w-36">
         {{ $t("pages.confirm_email.continue_button") }}
       </VcButton>
     </template>
@@ -42,7 +42,7 @@
     </template>
 
     <template #actions>
-      <VcButton :to="{ name: 'Catalog' }" class="w-48 uppercase">
+      <VcButton :to="{ name: 'Catalog' }" class="w-48">
         {{ $t("pages.confirm_email.continue_shopping_button") }}
       </VcButton>
     </template>
@@ -58,7 +58,7 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead, useRouteQueryParam } from "@/core/composables";
 import { useUser } from "@/shared/account";
-import type { IdentityResultType } from "@/xapi/types";
+import type { IdentityResultType } from "@/core/api/graphql/types";
 
 const { t } = useI18n();
 

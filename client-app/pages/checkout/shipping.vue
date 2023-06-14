@@ -13,22 +13,18 @@
     <template #sidebar>
       <OrderSummary :cart="cart!" footnote>
         <template #footer>
-          <VcButton
-            :to="{ name: 'Billing', replace: true }"
-            :is-disabled="isDisabledNextStep"
-            class="mt-4 w-full uppercase"
-          >
+          <VcButton :to="{ name: 'Billing', replace: true }" :disabled="isDisabledNextStep" full-width class="mt-4">
             {{ $t("common.buttons.go_to_billing") }}
           </VcButton>
 
           <transition name="slide-fade-top" mode="out-in" appear>
-            <VcAlert v-show="!isValidShipment" type="warning" class="mt-4" icon>
+            <VcAlert v-show="!isValidShipment" color="warning" class="mt-4" icon>
               {{ $t("common.messages.fill_all_required") }}
             </VcAlert>
           </transition>
 
           <transition name="slide-fade-top" mode="out-in" appear>
-            <VcAlert v-show="hasValidationErrors" type="warning" class="mt-4" icon>
+            <VcAlert v-show="hasValidationErrors" color="warning" class="mt-4" icon>
               {{ $t("common.messages.something_went_wrong") }}
             </VcAlert>
           </transition>

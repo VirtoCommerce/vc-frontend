@@ -30,7 +30,7 @@ import ProductCardGrid from "./product-card-grid.vue";
 import ProductCardList from "./product-card-list.vue";
 import ProductSkeletonGrid from "./product-skeleton-grid.vue";
 import ProductSkeletonList from "./product-skeleton-list.vue";
-import type { Product } from "@/xapi/types";
+import type { Product } from "@/core/api/graphql/types";
 
 defineEmits<{ (eventName: "itemLinkClick", product: Product, globalEvent: PointerEvent): void }>();
 

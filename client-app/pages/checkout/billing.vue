@@ -31,22 +31,18 @@
             />
           </transition>
 
-          <VcButton
-            :to="{ name: 'Review', replace: true }"
-            :is-disabled="isDisabledNextStep"
-            class="mt-4 w-full uppercase"
-          >
+          <VcButton :to="{ name: 'Review', replace: true }" :disabled="isDisabledNextStep" full-width class="mt-4">
             {{ $t("common.buttons.review_order") }}
           </VcButton>
 
           <transition name="slide-fade-top" mode="out-in" appear>
-            <VcAlert v-show="!isValidPayment" type="warning" class="mt-4" icon>
+            <VcAlert v-show="!isValidPayment" color="warning" class="mt-4" icon>
               {{ $t("common.messages.fill_all_required") }}
             </VcAlert>
           </transition>
 
           <transition name="slide-fade-top" mode="out-in" appear>
-            <VcAlert v-show="hasValidationErrors" type="warning" class="mt-4" icon>
+            <VcAlert v-show="hasValidationErrors" color="warning" class="mt-4" icon>
               {{ $t("common.messages.something_went_wrong") }}
             </VcAlert>
           </transition>

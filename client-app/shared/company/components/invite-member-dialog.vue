@@ -5,7 +5,7 @@
     modal-width="sm:max-w-[38rem]"
     is-mobile-fullscreen
   >
-    <VcAlert v-if="commonErrors.length" type="danger" class="mx-6 mt-5 sm:mx-5">
+    <VcAlert v-if="commonErrors.length" color="danger" class="mx-6 mt-5 sm:mx-5">
       <p v-for="error in commonErrors" :key="error">{{ error }}</p>
     </VcAlert>
 
@@ -47,22 +47,11 @@
     </form>
 
     <template #actions="{ close }">
-      <VcButton
-        :is-disabled="loading"
-        class="w-full uppercase sm:w-auto sm:px-10"
-        kind="secondary"
-        is-outline
-        @click="close"
-      >
+      <VcButton :disabled="loading" class="w-full sm:w-auto" color="secondary" variant="outline" @click="close">
         {{ $t("shared.account.invite_member_dialog.cancel_button") }}
       </VcButton>
 
-      <VcButton
-        :is-disabled="!meta.valid"
-        :is-waiting="loading"
-        class="w-full uppercase sm:w-auto sm:px-10"
-        @click="send"
-      >
+      <VcButton :disabled="!meta.valid" :loading="loading" class="w-full sm:w-auto" @click="send">
         {{ $t("shared.account.invite_member_dialog.send_button") }}
       </VcButton>
     </template>
@@ -78,7 +67,7 @@ import { useRouter } from "vue-router";
 import { string } from "yup";
 import { useIdentityErrorTranslator } from "@/core/composables";
 import { B2B_ROLES } from "@/core/constants";
-import globals from "@/core/globals";
+import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 

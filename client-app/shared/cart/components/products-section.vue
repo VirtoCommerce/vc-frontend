@@ -34,11 +34,11 @@
 
     <div class="mt-2 flex justify-end md:mt-5">
       <VcButton
-        :is-disabled="disabled"
-        kind="secondary"
+        :disabled="disabled"
+        color="secondary"
         size="sm"
-        class="self-start px-3 font-bold uppercase"
-        is-outline
+        class="self-start"
+        variant="outline"
         @click="$emit('clear:cart')"
       >
         {{ $t("common.buttons.clear_cart") }}
@@ -49,8 +49,8 @@
 
 <script setup lang="ts">
 import CartLineItems from "./cart-line-items.vue";
+import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { LineItemsGroupByVendorType } from "@/core/types";
-import type { LineItemType, ValidationErrorType } from "@/xapi/types";
 
 interface IEmits {
   (event: "change:itemQuantity", value: { item: LineItemType; quantity: number }): void;

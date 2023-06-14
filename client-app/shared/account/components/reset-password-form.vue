@@ -29,17 +29,11 @@
     <div>
       <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
 
-      <VcAlert v-for="error in commonErrors" :key="error" type="danger" class="mb-4 text-xs" icon>
+      <VcAlert v-for="error in commonErrors" :key="error" color="danger" class="mb-4 text-xs" icon>
         {{ error }}
       </VcAlert>
 
-      <VcButton
-        size="lg"
-        is-submit
-        class="mt-6 w-full uppercase lg:w-52"
-        :is-waiting="loading"
-        :is-disabled="!meta.valid || meta.pending"
-      >
+      <VcButton type="submit" class="mt-6 w-full lg:w-52" :loading="loading" :disabled="!meta.valid || meta.pending">
         {{ $t(isResetMode ? "common.buttons.reset_password" : "common.buttons.save") }}
       </VcButton>
     </div>

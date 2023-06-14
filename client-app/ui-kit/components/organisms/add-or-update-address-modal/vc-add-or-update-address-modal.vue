@@ -12,17 +12,17 @@
         @save="saveAddress"
       >
         <template #append="{ dirty, valid }">
-          <div class="flex flex-row space-x-4 pb-3 pt-7 sm:float-right sm:py-4">
-            <VcButton kind="secondary" size="md" class="w-1/2 uppercase sm:px-5" is-outline @click="close">
+          <div class="flex justify-end gap-4 pb-3 pt-7 sm:py-4">
+            <VcButton size="sm" color="secondary" variant="outline" class="flex-1 sm:flex-none" @click="close">
               {{ $t("common.buttons.cancel") }}
             </VcButton>
 
             <VcButton
-              :is-disabled="!dirty || !valid"
-              :is-waiting="loading"
-              ize="md"
-              class="w-1/2 uppercase sm:px-5"
-              is-submit
+              :disabled="!dirty || !valid"
+              :loading="loading"
+              size="sm"
+              class="flex-1 sm:flex-none"
+              type="submit"
             >
               {{ saveButtonLabel }}
             </VcButton>
@@ -38,7 +38,7 @@ import { clone } from "lodash";
 import { computed, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCountries } from "@/core/composables";
-import type { MemberAddressType } from "@/xapi/types";
+import type { MemberAddressType } from "@/core/api/graphql/types";
 
 interface IEmits {
   (event: "result", address: MemberAddressType): void;

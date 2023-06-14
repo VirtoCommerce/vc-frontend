@@ -1,7 +1,7 @@
-import globals from "../../globals";
+import { globals } from "../../globals";
 import { getCategoryRoute } from "../categories";
 import type { ExtendedMenuLinkType } from "../../types";
-import type { Category, MenuLinkType } from "@/xapi/types";
+import type { Category, MenuLinkType } from "@/core/api/graphql/types";
 
 export function convertToExtendedMenuLink(item: MenuLinkType, isCatalogItem?: boolean): ExtendedMenuLinkType {
   return {
