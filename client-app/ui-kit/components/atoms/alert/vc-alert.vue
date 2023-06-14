@@ -1,6 +1,6 @@
 <template>
-  <div class="vc-alert" :class="[type && `vc-alert--${type}`]">
-    <VcIcon v-if="icon" :name="iconName" size="sm" class="vc-alert__icon" />
+  <div class="vc-alert" :class="[`vc-alert--${variant}--${color}`]">
+    <VcIcon v-if="icon" :name="iconName" :size="16" class="vc-alert__icon" />
 
     <div class="vc-alert__content">
       <slot />
@@ -12,11 +12,15 @@
 import { computed } from "vue";
 
 interface IProps {
-  type?: "success" | "warning" | "danger";
+  color?: "success" | "warning" | "danger" | "info";
   icon?: boolean | string;
+  variant?: "solid" | "outline";
 }
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  variant: "solid",
+  color: "info",
+});
 
 const iconName = computed<string>(() => {
   const { icon } = props;
@@ -25,7 +29,7 @@ const iconName = computed<string>(() => {
     return icon;
   }
 
-  switch (props.type) {
+  switch (props.color) {
     case "danger":
       return "x-circle";
 
@@ -42,14 +46,18 @@ const iconName = computed<string>(() => {
 </script>
 
 <style lang="scss">
-$colors: success, warning, danger;
+$colors: success, warning, danger, info;
 
 .vc-alert {
-  @apply flex items-center space-x-2 py-1.5 px-2.5 rounded;
+  @apply flex items-start space-x-2 p-2 border rounded;
 
   @each $color in $colors {
-    &--#{$color} {
-      @apply text-[color:var(--color-#{$color})] bg-[color:var(--color-#{$color}-light)];
+    &--solid--#{$color} {
+      @apply text-[--color-#{$color}-500] bg-[--color-#{$color}-50] border-[--color-#{$color}-50];
+    }
+
+    &--outline--#{$color} {
+      @apply text-[--color-#{$color}-500] border-current;
     }
   }
 
@@ -58,7 +66,11 @@ $colors: success, warning, danger;
   }
 
   &__content {
-    @apply grow flex items-center text-11 text-[color:var(--color-body-text)];
+    @apply grow text-xs text-[--color-neutral-950];
+
+    &:first-child:last-child {
+      @apply px-1;
+    }
   }
 }
 </style>
