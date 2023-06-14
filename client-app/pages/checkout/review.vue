@@ -126,7 +126,7 @@
           </VcButton>
 
           <transition name="slide-fade-top" mode="out-in" appear>
-            <VcAlert v-show="hasValidationErrors" type="warning" class="mt-4" icon>
+            <VcAlert v-show="hasValidationErrors" color="warning" class="mt-4" icon>
               {{ $t("common.messages.something_went_wrong") }}
             </VcAlert>
           </transition>

@@ -39,7 +39,7 @@
     </template>
 
     <template #after-content="{ item }">
-      <VcAlert v-for="(validationError, index) in validationErrorsByItemId[item.id]" :key="index" type="danger" icon>
+      <VcAlert v-for="(validationError, index) in validationErrorsByItemId[item.id]" :key="index" color="danger" icon>
         {{ validationError.errorMessage }}
       </VcAlert>
     </template>

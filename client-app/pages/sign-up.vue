@@ -102,7 +102,7 @@
         </div>
 
         <div class="mt-6 lg:mt-4">
-          <VcAlert v-for="error in commonErrors" :key="error" type="danger" class="mb-4 text-xs" icon>
+          <VcAlert v-for="error in commonErrors" :key="error" color="danger" class="mb-4 text-xs" icon>
             {{ error }}
           </VcAlert>
 

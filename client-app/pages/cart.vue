@@ -128,14 +128,14 @@
 
             <template v-if="!$cfg.checkout_multistep_enabled">
               <transition name="slide-fade-top" mode="out-in" appear>
-                <VcAlert v-show="isShowIncompleteDataWarning" type="warning" class="mt-4" icon>
+                <VcAlert v-show="isShowIncompleteDataWarning" color="warning" class="mt-4" icon>
                   {{ $t("common.messages.fill_all_required") }}
                 </VcAlert>
               </transition>
             </template>
 
             <transition name="slide-fade-top" mode="out-in" appear>
-              <VcAlert v-show="hasValidationErrors" type="warning" class="mt-4" icon>
+              <VcAlert v-show="hasValidationErrors" color="warning" class="mt-4" icon>
                 {{ $t("common.messages.something_went_wrong") }}
               </VcAlert>
             </transition>

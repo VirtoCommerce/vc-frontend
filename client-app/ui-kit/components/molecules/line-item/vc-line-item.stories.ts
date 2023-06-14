@@ -50,7 +50,7 @@ export const Deleted: StoryFn<typeof VcLineItem> = (args) => ({
   setup: () => ({ args }),
   template: `<VcLineItem v-bind="args">
     <template #after>
-      <VcAlert type="danger" icon>
+      <VcAlert color="danger" icon>
         Validation error
       </VcAlert>
     </template>
