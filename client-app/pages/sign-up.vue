@@ -126,12 +126,12 @@ import { useField, useForm } from "vee-validate";
 import { reactive, ref, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
+import { checkEmailUniqueness } from "@/core/api/graphql/account";
 import { useIdentityErrorTranslator, usePageHead } from "@/core/composables";
 import { RegistrationKind, RegistrationSuccessDialog, useUser } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
-import { checkEmailUniqueness } from "@/xapi/graphql/account";
-import type { AccountCreationResultType } from "@/xapi/types";
+import type { AccountCreationResultType } from "@/core/api/graphql/types";
 
 const ASYNC_VALIDATION_TIMEOUT_IN_MS = 500;
 

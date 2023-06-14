@@ -145,14 +145,14 @@ import {
   WishlistLineItems,
   WishlistProductItemSkeleton,
 } from "@/shared/wishlists";
-import type { PreparedLineItemType } from "@/core/types";
 import type {
   InputNewBulkItemType,
   InputUpdateWishlistItemsType,
   InputUpdateWishlistLineItemType,
   LineItemType,
   Product,
-} from "@/xapi/types";
+} from "@/core/api/graphql/types";
+import type { PreparedLineItemType } from "@/core/types";
 
 interface IProps {
   listId: string;

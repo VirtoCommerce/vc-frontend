@@ -129,8 +129,8 @@ import { asyncForEach } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import { useWishlists } from "../composables";
+import type { Product as ProductType } from "@/core/api/graphql/types";
 import type { WishlistInputType } from "@/shared/wishlists/types";
-import type { Product as ProductType } from "@/xapi/types";
 
 interface IProps {
   product: ProductType;

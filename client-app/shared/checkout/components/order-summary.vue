@@ -99,7 +99,7 @@ import type {
   LineItemType,
   OrderDiscountType,
   OrderLineItemType,
-} from "@/xapi/types";
+} from "@/core/api/graphql/types";
 
 interface IProps {
   cart: CartType | CustomerOrderType;

@@ -8,5 +8,5 @@ assets
 storybook-static
 package.json
 tsconfig.json
-client-app/xapi/types.ts
-client-app/xapi/schema.json
+client-app/core/api/graphql/types.ts
+client-app/core/api/graphql/schema.json

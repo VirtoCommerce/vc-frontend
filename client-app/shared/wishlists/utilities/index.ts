@@ -1,5 +1,5 @@
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
-import type { LineItemType } from "@/xapi/types";
+import type { LineItemType } from "@/core/api/graphql/types";
 
 /** @deprecated Use `prepareLineItem` function */
 export function extendWishListItem(item: LineItemType, countInCart?: number) {

@@ -74,10 +74,10 @@ import { useField, useForm } from "vee-validate";
 import { reactive, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
+import { getMe } from "@/core/api/graphql";
+import { mergeCart } from "@/core/api/graphql/cart";
 import { useCart } from "@/shared/cart";
 import { useNotifications } from "@/shared/notification";
-import { getMe } from "@/xapi";
-import { mergeCart } from "@/xapi/graphql/cart";
 import useUser from "../composables/useUser";
 
 interface IEmits {

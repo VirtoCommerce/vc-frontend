@@ -158,8 +158,8 @@ import { useRouteQueryParam, usePageHead } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
 import { getSortingExpression, getSortInfoFromStringExpression } from "@/core/utilities";
 import { PageToolbarBlock, useUserQuotes, QuoteStatus } from "@/shared/account";
+import type { QuoteType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
-import type { QuoteType } from "@/xapi/types";
 
 const { t } = useI18n();
 const router = useRouter();

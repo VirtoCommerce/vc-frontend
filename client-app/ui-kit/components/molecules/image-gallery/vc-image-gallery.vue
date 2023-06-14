@@ -55,7 +55,7 @@
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints, useSwipe } from "@vueuse/core";
 import { computed, ref, watchEffect } from "vue";
-import type { ImageType, Product } from "@/xapi/types";
+import type { ImageType, Product } from "@/core/api/graphql/types";
 
 interface IProps {
   product: Product;

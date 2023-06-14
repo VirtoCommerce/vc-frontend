@@ -4,7 +4,7 @@ const config: CodegenConfig = {
   schema: `${process.env.APP_BACKEND_URL}/xapi/graphql`,
   documents: "client-app/**/*.(graphql|gql)",
   generates: {
-    "client-app/xapi/types.ts": {
+    "client-app/core/api/graphql/types.ts": {
       plugins: [
         {
           add: {

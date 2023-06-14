@@ -1,10 +1,10 @@
 import { computed, readonly, ref, shallowRef } from "vue";
+import { deleteMemberAddresses, getMyAddresses, updateMemberAddresses } from "@/core/api/graphql/account";
 import { SORT_ASCENDING } from "@/core/constants";
 import { getSortingExpression, isEqualAddresses, Logger, toInputAddress } from "@/core/utilities";
-import { deleteMemberAddresses, getMyAddresses, updateMemberAddresses } from "@/xapi/graphql/account";
 import useUser from "./useUser";
+import type { InputMemberAddressType, MemberAddressType } from "@/core/api/graphql/types";
 import type { AnyAddressType, ISortInfo } from "@/core/types";
-import type { InputMemberAddressType, MemberAddressType } from "@/xapi/types";
 
 const loading = ref(false);
 const addresses = shallowRef<MemberAddressType[]>([]);

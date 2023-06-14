@@ -1,7 +1,7 @@
-import globals from "@/core/globals";
+import { globals } from "@/core/globals";
 import { PropertyValueType } from "../../enums";
 import type { PropertyType } from "../../enums";
-import type { Property } from "@/xapi/types";
+import type { Property } from "@/core/api/graphql/types";
 
 export function getPropertyValue(property: Property): string {
   const { t, d } = globals.i18n.global;

@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import type { MoneyType, PriceType } from "@/xapi/types";
+import type { MoneyType, PriceType } from "@/core/api/graphql/types";
 import type { PropType } from "vue";
 
 defineProps({

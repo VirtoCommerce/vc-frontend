@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import useWishlists from "../composables/useWishlists";
-import type { InputRemoveWishlistItemType, LineItemType } from "@/xapi/types";
+import type { InputRemoveWishlistItemType, LineItemType } from "@/core/api/graphql/types";
 
 interface IEmits {
   (event: "result"): void;

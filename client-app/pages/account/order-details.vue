@@ -133,7 +133,7 @@ import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsPop
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
 import { BackButtonInHeader } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
-import type { InputNewBulkItemType } from "@/xapi/types";
+import type { InputNewBulkItemType } from "@/core/api/graphql/types";
 
 interface IProps {
   orderId: string;

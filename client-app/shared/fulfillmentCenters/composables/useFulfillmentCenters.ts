@@ -1,6 +1,6 @@
 import { computed, readonly, ref } from "vue";
+import { getFulfillmentCenter, getFulfillmentCenters } from "@/core/api/graphql/fulfillmentCenters";
 import { Logger } from "@/core/utilities";
-import { getFulfillmentCenter, getFulfillmentCenters } from "@/xapi/graphql/fulfillmentCenters";
 import type { IFulfillmentCenter } from "../types";
 
 export default () => {

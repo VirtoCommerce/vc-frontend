@@ -1,5 +1,5 @@
 import { shallowRef, unref } from "vue";
-import globals from "../globals";
+import { globals } from "../globals";
 
 enum HTTP_ERRORS {
   NO_CONTENT = 204,

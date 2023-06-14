@@ -1,6 +1,6 @@
 /*.js
 /*.ts
-client-app/xapi/types.ts
+client-app/core/api/graphql/types.ts
 node_modules
 assets
 storybook-static

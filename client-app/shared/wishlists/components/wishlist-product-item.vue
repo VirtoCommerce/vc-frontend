@@ -73,7 +73,7 @@ import { computedEager } from "@vueuse/shared";
 import { computed } from "vue";
 import { getProductRoute } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
-import type { LineItemType } from "@/xapi/types";
+import type { LineItemType } from "@/core/api/graphql/types";
 import type { PropType } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 

@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import type { PaymentMethodType } from "@/xapi/types";
+import type { PaymentMethodType } from "@/core/api/graphql/types";
 import type { PropType } from "vue";
 
 defineEmits(["result"]);

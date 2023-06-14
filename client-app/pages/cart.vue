@@ -175,7 +175,7 @@ import {
   useCheckout,
 } from "@/shared/checkout";
 import { usePopup } from "@/shared/popup";
-import type { LineItemType } from "@/xapi/types";
+import type { LineItemType } from "@/core/api/graphql/types";
 
 const config = inject(configInjectionKey, {});
 

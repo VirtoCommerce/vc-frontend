@@ -1,4 +1,4 @@
-import type { ContactType, RoleType } from "@/xapi/types";
+import type { ContactType, RoleType } from "@/core/api/graphql/types";
 
 export enum ContactStatus {
   New = "New",
