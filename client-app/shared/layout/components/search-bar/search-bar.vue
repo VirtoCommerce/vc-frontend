@@ -10,7 +10,7 @@
       @input="onSearchPhraseChanged"
     >
       <template #append>
-        <button v-if="searchPhrase" type="button" class="h-full px-3" @click="reset">
+        <button v-if="searchPhrase" type="button" class="flex h-full items-center px-3" @click="reset">
           <VcIcon name="delete-2" size="xs" class="text-[color:var(--color-primary)]" />
         </button>
 
