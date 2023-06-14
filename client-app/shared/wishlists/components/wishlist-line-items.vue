@@ -30,7 +30,7 @@
     </div>
 
     <div v-else class="vc-wishlist-line-items__empty">
-      <VcAlert type="warning" icon>
+      <VcAlert color="warning" icon>
         {{ $t("common.messages.empty_wish_list") }}
       </VcAlert>
     </div>
