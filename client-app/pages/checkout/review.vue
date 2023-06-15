@@ -121,7 +121,13 @@
             />
           </transition>
 
-          <VcButton :disabled="isDisabledOrderCreation" :loading="creatingOrder" class="mt-4" @click="createOrder">
+          <VcButton
+            :disabled="isDisabledOrderCreation"
+            :loading="creatingOrder"
+            full-width
+            class="mt-4"
+            @click="createOrder"
+          >
             {{ $t("common.buttons.place_order") }}
           </VcButton>
 
