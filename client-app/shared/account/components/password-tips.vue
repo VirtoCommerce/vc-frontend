@@ -1,15 +1,13 @@
 <template>
-  <VcAlert type="warning" icon="information-circle">
+  <VcAlert color="info" variant="outline" icon="information-circle">
     <div class="flex flex-col">
-      <VcTypography variant="medium" weight="bold">
-        {{ $t("password_tips.title") }}
-      </VcTypography>
+      <b>{{ $t("password_tips.title") }}</b>
 
-      <VcTypography variant="small">
+      <ul class="ml-4 mt-1 list-disc">
         <li v-for="(requirementLabel, index) in requirementsLabels" :key="index">
           {{ requirementLabel }}
         </li>
-      </VcTypography>
+      </ul>
     </div>
   </VcAlert>
 </template>
