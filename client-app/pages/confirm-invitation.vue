@@ -114,7 +114,7 @@ usePageHead({
 
 const { openPopup } = usePopup();
 const { loading, registerByInvite } = useUser();
-const { passwordRequirements, getPasswordRequirements } = usePasswordRequirements();
+const { passwordRequirements, fetchPasswordRequirements } = usePasswordRequirements();
 const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
 const userId = useRouteQueryParam<string>("userId");
@@ -192,6 +192,6 @@ const onSubmit = handleSubmit(async (data) => {
 });
 
 if (!passwordRequirements.value) {
-  getPasswordRequirements();
+  fetchPasswordRequirements();
 }
 </script>

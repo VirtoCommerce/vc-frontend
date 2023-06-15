@@ -8,20 +8,20 @@ const passwordRequirements = ref<PasswordOptionsType>();
 export default function usePasswordRequirements() {
   const { innerFetch } = useFetch();
 
-  async function getPasswordRequirements(): Promise<void> {
+  async function fetchPasswordRequirements(): Promise<void> {
     try {
       passwordRequirements.value = await innerFetch<PasswordOptionsType>(
         "/storefrontapi/account/passwordrequirements",
         "GET"
       );
     } catch (e) {
-      Logger.error(`${usePasswordRequirements.name}.${getPasswordRequirements.name}`, e);
+      Logger.error(`${usePasswordRequirements.name}.${fetchPasswordRequirements.name}`, e);
       throw e;
     }
   }
 
   return {
     passwordRequirements: computed(() => passwordRequirements.value),
-    getPasswordRequirements,
+    fetchPasswordRequirements,
   };
 }

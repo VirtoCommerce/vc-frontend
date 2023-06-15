@@ -138,7 +138,7 @@ import { usePopup } from "@/shared/popup";
 
 const { t } = useI18n();
 const { user, updateUser, changePassword } = useUser();
-const { passwordRequirements, getPasswordRequirements } = usePasswordRequirements();
+const { passwordRequirements, fetchPasswordRequirements } = usePasswordRequirements();
 const { openPopup } = usePopup();
 
 usePageHead({
@@ -240,6 +240,6 @@ whenever(
 );
 
 if (!passwordRequirements.value) {
-  getPasswordRequirements();
+  fetchPasswordRequirements();
 }
 </script>
