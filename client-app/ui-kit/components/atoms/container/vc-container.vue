@@ -11,7 +11,7 @@
   @apply grow pt-6 pb-8 bg-[color:var(--color-body-bg)];
 
   &__wrapper {
-    @apply px-5 mx-auto max-w-screen-2xl 2xl:px-18;
+    @apply mx-auto max-w-screen-2xl lg:px-5 2xl:px-18;
   }
 }
 </style>

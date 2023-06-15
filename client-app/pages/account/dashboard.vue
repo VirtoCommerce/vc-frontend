@@ -1,16 +1,11 @@
 <template>
-  <div>
+  <div class="mx-5 lg:mx-0">
     <!-- Title block -->
-    <div class="mx-5 flex items-center justify-between md:mx-0 lg:hidden">
+    <div class="flex items-center justify-between lg:hidden">
       <h2 v-t="'pages.account.dashboard.title'" class="text-3xl font-bold uppercase text-gray-800" />
     </div>
 
-    <VcCard
-      :title="$t('pages.account.dashboard.last_orders_card.title')"
-      class="mx-5 md:mx-0"
-      full-width-content
-      shadow
-    >
+    <VcCard :title="$t('pages.account.dashboard.last_orders_card.title')" full-width-content shadow>
       <template #header-button>
         <VcButton :to="{ name: 'Orders' }" variant="outline" size="xs" class="flex-none lg:hidden">
           {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
