@@ -27,6 +27,8 @@
     />
 
     <div>
+      <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
+
       <VcAlert v-for="error in commonErrors" :key="error" color="danger" class="mb-4 text-xs" icon>
         {{ error }}
       </VcAlert>
@@ -45,7 +47,8 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
 import { useIdentityErrorTranslator } from "@/core/composables";
-import useUser from "../composables/useUser";
+import { usePasswordRequirements, useUser } from "../composables";
+import PasswordTips from "./password-tips.vue";
 
 interface IEmits {
   (event: "succeeded"): void;
@@ -65,6 +68,7 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const { t } = useI18n();
 const { resetPassword, loading } = useUser();
+const { passwordRequirements, fetchPasswordRequirements } = usePasswordRequirements();
 const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
 const validationSchema = toTypedSchema(
@@ -113,4 +117,8 @@ const onSubmit = handleSubmit(async (data) => {
     });
   }
 });
+
+if (!passwordRequirements.value) {
+  fetchPasswordRequirements();
+}
 </script>

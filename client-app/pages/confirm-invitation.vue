@@ -74,6 +74,8 @@
         </div>
 
         <div class="mt-6">
+          <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
+
           <VcAlert v-for="error in commonErrors" :key="error" color="danger" class="mb-4 text-xs" icon>
             {{ error }}
           </VcAlert>
@@ -98,7 +100,7 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
 import { useIdentityErrorTranslator, usePageHead, useRouteQueryParam } from "@/core/composables";
-import { RegistrationSuccessDialog, useUser } from "@/shared/account";
+import { PasswordTips, RegistrationSuccessDialog, usePasswordRequirements, useUser } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
 
@@ -112,6 +114,7 @@ usePageHead({
 
 const { openPopup } = usePopup();
 const { loading, registerByInvite } = useUser();
+const { passwordRequirements, fetchPasswordRequirements } = usePasswordRequirements();
 const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
 const userId = useRouteQueryParam<string>("userId");
@@ -187,4 +190,8 @@ const onSubmit = handleSubmit(async (data) => {
     });
   }
 });
+
+if (!passwordRequirements.value) {
+  fetchPasswordRequirements();
+}
 </script>

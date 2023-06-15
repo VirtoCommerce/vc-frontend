@@ -107,6 +107,8 @@
           @update:model-value="oldPassword ? (confirmNewPassword = $event.trim()) : null"
         />
 
+        <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
+
         <!-- Form actions -->
         <div class="mt-5 w-1/2 self-center lg:self-auto">
           <VcButton
@@ -131,11 +133,12 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
 import { usePageHead } from "@/core/composables";
-import { ProfileUpdateSuccessDialog, useUser } from "@/shared/account";
+import { PasswordTips, ProfileUpdateSuccessDialog, usePasswordRequirements, useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 
 const { t } = useI18n();
 const { user, updateUser, changePassword } = useUser();
+const { passwordRequirements, fetchPasswordRequirements } = usePasswordRequirements();
 const { openPopup } = usePopup();
 
 usePageHead({
@@ -235,4 +238,8 @@ whenever(
     confirmNewPassword.value = "";
   }
 );
+
+if (!passwordRequirements.value) {
+  fetchPasswordRequirements();
+}
 </script>
