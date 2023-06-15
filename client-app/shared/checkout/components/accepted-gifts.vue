@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import type { GiftItemType, OrderLineItemType } from "@/xapi/types";
+import type { GiftItemType, OrderLineItemType } from "@/core/api/graphql/types";
 
 interface IProps {
   items: (GiftItemType | OrderLineItemType)[];

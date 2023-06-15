@@ -66,7 +66,7 @@ import { useCart } from "@/shared/cart";
 import { CarouselProductCard, useProduct, useRelatedProducts, useCategory } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useTemplate } from "@/shared/static-content";
-import type { Breadcrumb } from "@/xapi/types";
+import type { Breadcrumb } from "@/core/api/graphql/types";
 
 const props = withDefaults(defineProps<IProps>(), {
   productId: "",

@@ -1,17 +1,20 @@
-import type { GlobalsType, NonNullableGlobalsType } from "./types/global-variables";
+import type { I18n } from "@/i18n";
+import type { Router } from "vue-router";
 
-const globals: GlobalsType = {
-  storeId: "",
-  catalogId: "",
-  userId: "",
-  cultureName: "",
-  currencyCode: "",
-  i18n: null,
-  router: null,
+type GlobalVariablesType = {
+  storeId?: string;
+  catalogId?: string;
+  userId?: string;
+  cultureName?: string;
+  currencyCode?: string;
+  i18n?: I18n;
+  router?: Router;
 };
 
-export default globals as Readonly<NonNullableGlobalsType>;
+const globalVariables: GlobalVariablesType = {};
 
-export function setGlobalVariables(variables: Partial<NonNullableGlobalsType>) {
-  Object.assign(globals, variables);
+export const globals = globalVariables as Readonly<Required<GlobalVariablesType>>;
+
+export function setGlobals(variables: GlobalVariablesType) {
+  Object.assign(globalVariables, variables);
 }

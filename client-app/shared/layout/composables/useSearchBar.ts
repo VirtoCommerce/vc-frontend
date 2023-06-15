@@ -1,9 +1,9 @@
 import { computed, readonly, ref, shallowRef } from "vue";
+import { getSearchResults } from "@/core/api/graphql/catalog";
 import { Logger } from "@/core/utilities";
-import { getSearchResults } from "@/xapi/graphql/catalog";
 import { highlightSearchText, prepareSearchText } from "../utils";
-import type { GetSearchResultsParamsType } from "@/xapi/graphql/catalog";
-import type { Category, PageType, Product } from "@/xapi/types";
+import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
+import type { Category, PageType, Product } from "@/core/api/graphql/types";
 
 const loading = ref(false);
 const searchBarVisible = ref(false);

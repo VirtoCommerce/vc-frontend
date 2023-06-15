@@ -1,4 +1,5 @@
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
+import { getChildCategories, getMenu } from "@/core/api/graphql";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import {
   convertToExtendedMenuLink,
@@ -7,8 +8,7 @@ import {
   getFilterExpressionForZeroPrice,
   Logger,
 } from "@/core/utilities";
-import { getChildCategories, getMenu } from "@/xapi";
-import globals from "../globals";
+import { globals } from "../globals";
 import { categoryToExtendedMenuLink, getTranslatedMenuLink } from "../utilities/menu";
 import type { ExtendedMenuLinkType } from "../types";
 

@@ -59,7 +59,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import type { CartAddressType, ShipmentType, ShippingMethodType } from "@/xapi/types";
+import type { CartAddressType, ShipmentType, ShippingMethodType } from "@/core/api/graphql/types";
 
 interface IEmits {
   (event: "change:address"): void;

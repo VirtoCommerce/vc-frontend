@@ -42,7 +42,7 @@
 import { computed } from "vue";
 import { useCategoriesRoutes } from "@/core/composables";
 import { getCategoryRoute } from "@/core/utilities";
-import type { Category } from "@/xapi/types";
+import type { Category } from "@/core/api/graphql/types";
 
 interface IProps {
   category?: Category | null;

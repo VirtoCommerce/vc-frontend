@@ -43,7 +43,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useCountries } from "@/core/composables";
-import type { MemberAddressType } from "@/xapi/types";
+import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { PropType } from "vue";
 
 const emit = defineEmits(["result"]);

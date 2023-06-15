@@ -39,7 +39,7 @@
     </template>
 
     <template #after-content="{ item }">
-      <VcAlert v-for="(validationError, index) in validationErrorsByItemId[item.id]" :key="index" type="danger" icon>
+      <VcAlert v-for="(validationError, index) in validationErrorsByItemId[item.id]" :key="index" color="danger" icon>
         {{ validationError.errorMessage }}
       </VcAlert>
     </template>
@@ -50,7 +50,7 @@
 import { computed } from "vue";
 import { useCartValidationErrorTranslator } from "@/core/composables";
 import { ProductType } from "@/core/enums";
-import type { LineItemType, ValidationErrorType } from "@/xapi/types";
+import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 
 interface IProps {
   disabled?: boolean;

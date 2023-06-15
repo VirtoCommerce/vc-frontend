@@ -65,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Property, MoneyType } from "@/xapi/types";
+import type { Property, MoneyType } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {

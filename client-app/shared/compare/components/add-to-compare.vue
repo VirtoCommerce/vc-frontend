@@ -8,7 +8,7 @@
 import { eagerComputed, useDebounceFn } from "@vueuse/core";
 import { nextTick, ref } from "vue";
 import { useCompareProducts } from "@/shared/compare";
-import type { Product } from "@/xapi/types";
+import type { Product } from "@/core/api/graphql/types";
 import type { PropType } from "vue";
 
 const props = defineProps({

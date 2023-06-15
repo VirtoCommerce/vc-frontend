@@ -7,7 +7,7 @@ import type {
   LineItemsGroupsByVendorType,
   PreparedLineItemType,
 } from "../../types";
-import type { LineItemType, OrderLineItemType, QuoteItemType } from "@/xapi/types";
+import type { LineItemType, OrderLineItemType, QuoteItemType } from "@/core/api/graphql/types";
 
 export function isQuoteItemType(item: AnyLineItemType): item is QuoteItemType {
   return "proposalPrices" in item || "selectedTierPrice" in item;

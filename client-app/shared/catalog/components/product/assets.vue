@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { ProductTitledBlock } from "@/shared/catalog";
-import type { Product } from "@/xapi/types";
+import type { Product } from "@/core/api/graphql/types";
 
 defineProps<{
   product: Product;

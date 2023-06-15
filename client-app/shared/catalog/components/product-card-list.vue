@@ -150,7 +150,7 @@ import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import DiscountBadge from "./discount-badge.vue";
 import Vendor from "./vendor.vue";
-import type { Product } from "@/xapi/types";
+import type { Product } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
 defineEmits<{ (eventName: "linkClick", globalEvent: PointerEvent): void }>();

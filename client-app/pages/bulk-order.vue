@@ -15,7 +15,7 @@
             v-if="SKUsWithErrors.length"
             key="sku"
             class="col-span-1 mx-6 mb-5 md:mx-0 lg:col-span-2 lg:mb-0"
-            type="danger"
+            color="danger"
             icon
           >
             <span>{{ $t("pages.bulk_order.product_was_not_added_alert", [SKUsWithErrors.join(", ")]) }}</span>
@@ -25,7 +25,7 @@
             v-else-if="incorrectData"
             key="incorrect"
             class="col-span-1 mx-6 mb-5 md:mx-0 lg:col-span-2 lg:mb-0"
-            type="danger"
+            color="danger"
             icon
           >
             <span v-t="'pages.bulk_order.data_is_invalid_alert'"></span>
@@ -72,7 +72,7 @@ import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { CopyAndPaste, Manually } from "@/shared/bulk-order";
 import { useCart } from "@/shared/cart";
-import type { InputNewBulkItemType } from "@/xapi/types";
+import type { InputNewBulkItemType } from "@/core/api/graphql/types";
 
 const { t } = useI18n();
 

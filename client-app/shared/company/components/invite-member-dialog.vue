@@ -5,7 +5,7 @@
     modal-width="sm:max-w-[38rem]"
     is-mobile-fullscreen
   >
-    <VcAlert v-if="commonErrors.length" type="danger" class="mx-6 mt-5 sm:mx-5">
+    <VcAlert v-if="commonErrors.length" color="danger" class="mx-6 mt-5 sm:mx-5">
       <p v-for="error in commonErrors" :key="error">{{ error }}</p>
     </VcAlert>
 
@@ -67,7 +67,7 @@ import { useRouter } from "vue-router";
 import { string } from "yup";
 import { useIdentityErrorTranslator } from "@/core/composables";
 import { B2B_ROLES } from "@/core/constants";
-import globals from "@/core/globals";
+import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 

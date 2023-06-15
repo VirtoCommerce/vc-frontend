@@ -28,7 +28,7 @@ import { eagerComputed } from "@vueuse/core";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCompareProducts } from "../composables";
-import type { Product } from "@/xapi/types";
+import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
   product: Product;

@@ -25,8 +25,8 @@
 <script setup lang="ts">
 import { AddToCompare } from "@/shared/compare";
 import DiscountBadge from "./discount-badge.vue";
+import type { Product } from "@/core/api/graphql/types";
 import type { PageContent } from "@/shared/static-content";
-import type { Product } from "@/xapi/types";
 
 interface IProps {
   product: Product;

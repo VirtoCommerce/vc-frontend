@@ -1,11 +1,6 @@
 import { computedEager } from "@vueuse/core";
 import { keyBy, sumBy } from "lodash";
 import { computed, readonly, ref, shallowRef } from "vue";
-import { ProductType } from "@/core/enums";
-import globals from "@/core/globals";
-import { getLineItemsGroupedByVendor, Logger } from "@/core/utilities";
-import { useNotifications } from "@/shared/notification";
-import { usePopup } from "@/shared/popup";
 import {
   addBulkItemsCart,
   addCoupon,
@@ -25,12 +20,15 @@ import {
   removeCoupon,
   removeShipment as _removeShipment,
   validateCoupon,
-} from "@/xapi";
+} from "@/core/api/graphql";
+import { ProductType } from "@/core/enums";
+import { globals } from "@/core/globals";
+import { getLineItemsGroupedByVendor, Logger } from "@/core/utilities";
+import { useNotifications } from "@/shared/notification";
+import { usePopup } from "@/shared/popup";
 import { ClearCartModal } from "../components";
 import { getLineItemValidationErrorsGroupedBySKU } from "../utils";
-import type { LineItemsGroupByVendorType } from "@/core/types";
-import type { ExtendedGiftItemType, OutputBulkItemType } from "@/shared/cart";
-import type { ChangeCartItemQuantityOptionsType } from "@/xapi";
+import type { ChangeCartItemQuantityOptionsType } from "@/core/api/graphql";
 import type {
   CartType,
   InputNewBulkItemType,
@@ -43,7 +41,9 @@ import type {
   QuoteType,
   ShipmentType,
   ShippingMethodType,
-} from "@/xapi/types";
+} from "@/core/api/graphql/types";
+import type { LineItemsGroupByVendorType } from "@/core/types";
+import type { ExtendedGiftItemType, OutputBulkItemType } from "@/shared/cart";
 
 const loading = ref(false);
 const cart = shallowRef<CartType>();

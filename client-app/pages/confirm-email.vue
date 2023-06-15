@@ -58,7 +58,7 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead, useRouteQueryParam } from "@/core/composables";
 import { useUser } from "@/shared/account";
-import type { IdentityResultType } from "@/xapi/types";
+import type { IdentityResultType } from "@/core/api/graphql/types";
 
 const { t } = useI18n();
 

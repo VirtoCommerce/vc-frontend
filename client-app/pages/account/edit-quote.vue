@@ -43,7 +43,7 @@
         <div class="mt-2 flex flex-col gap-3 rounded border p-5 empty:hidden md:flex-row md:items-center">
           <VcAddressInfo v-if="shippingAddress" class="grow text-15" :address="shippingAddress" />
 
-          <VcAlert v-else class="grow" type="warning" icon>
+          <VcAlert v-else class="grow" color="warning" icon>
             {{ $t("pages.account.quote_details.no_address_message") }}
           </VcAlert>
 
@@ -85,7 +85,7 @@
           >
             <VcAddressInfo v-if="billingAddress" class="grow text-15" :address="billingAddress" />
 
-            <VcAlert v-else class="grow" type="warning" icon>
+            <VcAlert v-else class="grow" color="warning" icon>
               {{ $t("pages.account.quote_details.no_address_message") }}
             </VcAlert>
 
@@ -143,8 +143,8 @@ import { useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import { VcAddOrUpdateAddressModal } from "@/ui-kit/components";
+import type { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
-import type { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/xapi/types";
 
 interface IProps {
   quoteId: string;

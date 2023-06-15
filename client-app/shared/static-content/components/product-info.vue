@@ -67,7 +67,7 @@ import { ProductType } from "@/core/enums";
 import { AddToCart } from "@/shared/cart";
 import { ProductDetails, ProductPriceBlock } from "@/shared/catalog";
 import type { PageContent } from "../types";
-import type { Product } from "@/xapi/types";
+import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
   product: Product;

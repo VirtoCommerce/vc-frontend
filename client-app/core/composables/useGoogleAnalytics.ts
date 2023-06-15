@@ -1,8 +1,15 @@
 import { sumBy } from "lodash";
-import globals from "../globals";
+import { globals } from "../globals";
 import { useAppContext } from "./useAppContext";
 import type { AnyLineItemType } from "../types";
-import type { Breadcrumb, CartType, CustomerOrderType, LineItemType, Product, VariationType } from "@/xapi/types";
+import type {
+  Breadcrumb,
+  CartType,
+  CustomerOrderType,
+  LineItemType,
+  Product,
+  VariationType,
+} from "@/core/api/graphql/types";
 
 type EventParamsType = Gtag.ControlParams & Gtag.EventParams & Gtag.CustomParams;
 type EventParamsExtendedType = EventParamsType & { item_list_id?: string; item_list_name?: string };

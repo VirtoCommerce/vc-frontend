@@ -1,11 +1,11 @@
 <template>
   <form @submit="onSubmit">
     <!-- Errors block -->
-    <VcAlert v-if="authError" class="mb-2" type="danger" icon>
+    <VcAlert v-if="authError" class="mb-2" color="danger" icon>
       <span v-html="$t('shared.account.sign_in_form.email_or_password_incorrect_alert')"></span>
     </VcAlert>
 
-    <VcAlert v-if="userIsLockedError" class="mb-2" type="danger" icon>
+    <VcAlert v-if="userIsLockedError" class="mb-2" color="danger" icon>
       <span v-html="$t('shared.account.sign_in_form.user_is_locked_out_alert')"></span>
     </VcAlert>
 
@@ -74,10 +74,10 @@ import { useField, useForm } from "vee-validate";
 import { reactive, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
+import { getMe } from "@/core/api/graphql";
+import { mergeCart } from "@/core/api/graphql/cart";
 import { useCart } from "@/shared/cart";
 import { useNotifications } from "@/shared/notification";
-import { getMe } from "@/xapi";
-import { mergeCart } from "@/xapi/graphql/cart";
 import useUser from "../composables/useUser";
 
 interface IEmits {

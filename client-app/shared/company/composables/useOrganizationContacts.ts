@@ -1,19 +1,19 @@
 import _ from "lodash";
 import { computed, readonly, ref, shallowRef, unref } from "vue";
 import { useI18n } from "vue-i18n";
-import { DEFAULT_PAGE_SIZE, SORT_ASCENDING } from "@/core/constants";
-import { getSortingExpression, Logger } from "@/core/utilities";
-import { convertToExtendedContact } from "@/shared/company";
-import { useNotifications } from "@/shared/notification";
 import {
   getOrganizationContacts,
   lockOrganizationContact,
   removeMemberFromOrganization as _removeMemberFromOrganization,
   unlockOrganizationContact,
-} from "@/xapi";
+} from "@/core/api/graphql";
+import { DEFAULT_PAGE_SIZE, SORT_ASCENDING } from "@/core/constants";
+import { getSortingExpression, Logger } from "@/core/utilities";
+import { convertToExtendedContact } from "@/shared/company";
+import { useNotifications } from "@/shared/notification";
+import type { ContactType, InputRemoveMemberFromOrganizationType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 import type { ExtendedContactType } from "@/shared/company";
-import type { ContactType, InputRemoveMemberFromOrganizationType } from "@/xapi/types";
 import type { MaybeRef } from "@vueuse/core";
 
 export default function useOrganizationContacts(organizationId: MaybeRef<string>) {

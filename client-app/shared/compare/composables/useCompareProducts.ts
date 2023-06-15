@@ -3,7 +3,7 @@ import { inject, computed } from "vue";
 import { configInjectionKey } from "@/core/injection-keys";
 import { truncate } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
-import type { Product } from "@/xapi/types";
+import type { Product } from "@/core/api/graphql/types";
 
 const NOTIFICATIONS_GROUP = "compare-pruducts";
 const DEFAULT_MAX_PRODUCTS = 5;

@@ -1,7 +1,7 @@
 import { computed, unref } from "vue";
 import { getCategoryRoute } from "../utilities";
 import type { CategoryTreeItemType } from "../types";
-import type { Category } from "@/xapi/types";
+import type { Category } from "@/core/api/graphql/types";
 import type { MaybeRef } from "@vueuse/core";
 import type { RouteLocationRaw } from "vue-router";
 

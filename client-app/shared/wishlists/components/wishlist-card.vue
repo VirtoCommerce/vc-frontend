@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import type { WishlistType } from "@/xapi/types";
+import type { WishlistType } from "@/core/api/graphql/types";
 import type { PropType } from "vue";
 
 defineEmits(["settings", "remove"]);

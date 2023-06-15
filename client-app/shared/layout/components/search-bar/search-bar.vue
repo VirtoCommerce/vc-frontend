@@ -136,13 +136,13 @@ import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useGoogleAnalytics, useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
-import globals from "@/core/globals";
+import { globals } from "@/core/globals";
 import { configInjectionKey } from "@/core/injection-keys";
 import { getFilterExpressionForCategorySubtree } from "@/core/utilities";
 import { useSearchBar } from "../../composables";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
-import type { GetSearchResultsParamsType } from "@/xapi/graphql/catalog";
-import type { Category } from "@/xapi/types";
+import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
+import type { Category } from "@/core/api/graphql/types";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
@@ -207,7 +207,8 @@ const isExistResults = computed(
 async function searchAndShowDropdownResults() {
   const COLUMNS = 5;
   const { catalogId } = globals;
-  const { product_search_phrase_suggestions_enabled, search_by_static_content_enabled } = themeContext.value.settings;
+  const { search_product_phrase_suggestions_enabled, search_static_content_suggestions_enabled } =
+    themeContext.value.settings;
 
   hideSearchDropdown();
 
@@ -231,11 +232,11 @@ async function searchAndShowDropdownResults() {
     },
   };
 
-  if (product_search_phrase_suggestions_enabled) {
+  if (search_product_phrase_suggestions_enabled) {
     params.productSuggestions = { suggestionsSize: 4 };
   }
 
-  if (search_by_static_content_enabled) {
+  if (search_static_content_suggestions_enabled) {
     params.pages = { itemsPerPage: DEFAULT_PAGE_SIZE };
   }
 

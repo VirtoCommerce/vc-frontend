@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import { CarouselProductCard } from "@/shared/catalog";
-import type { Product } from "@/xapi/types";
+import type { Product } from "@/core/api/graphql/types";
 import type { PropType } from "vue";
 
 defineProps({

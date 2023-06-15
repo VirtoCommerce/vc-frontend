@@ -3,7 +3,6 @@ export * from "./app-context";
 export * from "./category-tree";
 export * from "./currency";
 export * from "./facet";
-export * from "./global-variables";
 export * from "./language";
 export * from "./line-items";
 export * from "./menu";

@@ -29,7 +29,7 @@ import { useI18n } from "vue-i18n";
 import { useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import AddToWishlistsModal from "./add-to-wishlists-modal.vue";
-import type { Product } from "@/xapi/types";
+import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
   product: Product;
