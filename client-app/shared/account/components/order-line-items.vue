@@ -1,177 +1,41 @@
 <template>
-  <div class="vc-order-line-items">
-    <!-- table header -->
-    <div class="vc-order-line-items__header hidden gap-x-3 rounded-t border px-4 py-3 text-sm font-bold md:grid">
-      <div class="vc-order-line-items__product">
-        {{ $t("pages.account.order_details.line_items.product") }}
+  <VcLineItems :items="items">
+    <template #titles>
+      <div class="min-w-[5.5rem] text-center">
+        {{ $t("common.labels.quantity") }}
       </div>
-      <div class="vc-order-line-items__properties">
-        {{ $t("pages.account.order_details.line_items.properties") }}
+
+      <div class="text-right">
+        {{ $t("common.labels.total") }}
       </div>
-      <div class="vc-order-line-items__price hidden pr-4 text-right xl:block">
-        {{ $t("pages.account.order_details.line_items.price_per_item") }}
+    </template>
+
+    <template #default="{ item }">
+      <div class="flex flex-col items-center gap-1.5">
+        <VcQuantity
+          :model-value="item.quantity"
+          :name="item.id"
+          :min-quantity="item.minQuantity"
+          :max-quantity="item.maxQuantity"
+          disabled
+        />
       </div>
-      <div class="vc-order-line-items__quantity hidden text-right xl:block">
-        {{ $t("pages.account.order_details.line_items.quantity") }}
-      </div>
-      <div class="vc-order-line-items__total text-right">
-        {{ $t("pages.account.order_details.line_items.total") }}
-      </div>
-    </div>
 
-    <!-- table body -->
-    <div class="flex flex-col gap-6 md:gap-0 md:divide-y md:border-x">
-      <div
-        v-for="item in extendedItems"
-        :key="item.id"
-        class="relative rounded border shadow-t-3sm md:rounded-none md:border-0 md:shadow-none"
-      >
-        <div
-          class="vc-order-line-items__line-item grid gap-x-2.5 pb-4 pl-3 pr-3.5 pt-3 md:place-items-center md:gap-x-3 md:p-4"
-        >
-          <!-- Product -->
-          <div class="vc-order-line-items__product contents md:flex md:w-full md:gap-3">
-            <!--  IMAGE -->
-            <div
-              class="vc-order-line-items__img h-16 w-16 shrink-0 md:h-[60px] md:w-[60px]"
-              :class="{ 'opacity-25': !item.extended.isProductExists }"
-            >
-              <VcImage
-                :src="item.imageUrl"
-                :alt="item.name"
-                size-suffix="sm"
-                class="h-full w-full object-cover object-center"
-                lazy
-              />
-            </div>
-
-            <!-- NAME -->
-            <div
-              class="vc-order-line-items__name text-sm font-extrabold md:grow lg:text-13 lg:font-bold lg:leading-4"
-              :class="{ 'opacity-25': !item.extended.isProductExists }"
-            >
-              <router-link
-                v-if="item.extended.isProductExists && item.extended.route"
-                :to="item.extended.route"
-                :title="item.name"
-                class="text-[color:var(--color-link)] [word-break:break-word]"
-                target="_blank"
-              >
-                {{ item.name }}
-              </router-link>
-
-              <div v-else class="[word-break:break-word]">
-                {{ item.name }}
-              </div>
-            </div>
-          </div>
-
-          <!-- Properties -->
-          <div class="vc-order-line-items__props w-full xl:contents">
-            <!-- PROPERTIES -->
-            <div class="vc-order-line-items__properties w-full">
-              <div
-                v-for="property in item.extended.displayProperties"
-                :key="property.id"
-                class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[33%_1fr] lg:text-xs"
-              >
-                <div class="min-w-0 font-medium capitalize text-gray-600 md:font-bold md:text-gray-800">
-                  <div class="truncate">{{ property.label }}:</div>
-                </div>
-
-                <div class="mb-1 h-4 grow border-b-2 border-dotted border-gray-200 md:hidden"></div>
-
-                <div class="min-w-0">
-                  <div class="truncate font-semibold md:font-normal">
-                    {{ property.value }}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- PRICE -->
-            <div
-              class="vc-order-line-items__price grid w-full grid-cols-[auto_1fr_auto] gap-1.5 md:grid-cols-[33%_1fr] xl:contents"
-            >
-              <div
-                class="min-w-0 text-13 font-medium capitalize text-gray-600 md:font-bold md:text-gray-800 lg:text-xs xl:hidden"
-              >
-                <div class="truncate">{{ $t("pages.account.order_details.line_items.price_per_item") }}:</div>
-              </div>
-
-              <div class="mb-1 h-4 grow border-b-2 border-dotted border-gray-200 md:hidden"></div>
-
-              <div class="xl:w-full xl:pr-4 xl:text-right">
-                <div class="text-13 font-semibold md:font-normal lg:text-xs xl:font-medium">
-                  <!-- Price per item -->
-                  <VcPriceDisplay :value="item.placedPrice" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- QUANTITY -->
-          <div class="vc-order-line-items__quantity mt-3 md:mt-0 md:place-self-end xl:w-full xl:place-self-center">
-            <input
-              v-model="item.quantity"
-              disabled
-              class="h-8 w-20 rounded border text-center text-sm disabled:bg-gray-100 disabled:text-gray-400 xl:w-full"
-              type="number"
-              pattern="\d"
-              min="1"
-              required
-            />
-          </div>
-
-          <!-- TOTAL -->
-          <div
-            class="vc-quote-line-items__total md:min-h-auto mt-3 flex min-h-[32px] flex-col items-end justify-center md:mt-0 md:w-full"
-          >
-            <!-- Total -->
-            <div class="flex flex-wrap items-center justify-end gap-x-1 text-right">
-              <div class="text-14 font-bold text-[color:var(--color-price-from)] md:hidden">
-                {{ $t("pages.account.order_details.line_items.total") }}:
-              </div>
-
-              <div class="text-15 font-bold [word-break:break-word]">
-                {{ $n(item.extendedPrice!.amount, "currency") }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- table footer -->
-    <div
-      class="flex items-center justify-end gap-2 py-2.5 text-[color:var(--color-price)] md:rounded-b md:border md:px-4 md:py-2.5"
-    >
-      <div class="text-13 font-bold">{{ $t("pages.account.order_details.line_items.subtotal") }}:</div>
-
-      <div class="text-17 font-extrabold">{{ $n(subtotal, "currency") }}</div>
-    </div>
-  </div>
+      <VcLineItemTotal :list-total="item.extendedPrice" />
+    </template>
+  </VcLineItems>
 </template>
 
 <script setup lang="ts">
-import { sumBy } from "lodash";
-import { computed } from "vue";
-import { extendLineItem } from "@/core/utilities";
 import type { LineItemType, OrderLineItemType } from "@/core/api/graphql/types";
-import type { ExtendedLineItemType } from "@/core/types";
 
 interface IProps {
   items?: (OrderLineItemType | LineItemType)[];
 }
 
-const props = withDefaults(defineProps<IProps>(), {
+withDefaults(defineProps<IProps>(), {
   items: () => [],
 });
-
-const extendedItems = computed<ExtendedLineItemType<OrderLineItemType | LineItemType>[]>(() =>
-  props.items.map((item: OrderLineItemType | LineItemType) => extendLineItem<OrderLineItemType | LineItemType>(item))
-);
-const subtotal = computed<number>(() => sumBy(props.items, (item) => item.extendedPrice!.amount));
 </script>
 
 <style scoped lang="scss">
