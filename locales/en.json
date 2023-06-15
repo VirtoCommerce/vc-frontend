@@ -1269,8 +1269,8 @@
     "required_lowercase": "Lowercase symbols are required",
     "required_non_alphanumeric": "Special symbols are required",
     "required_uppercase": "Uppercase symbols are required",
-    "required_length": "Minimum {0} characters",
-    "required_unique_chars": "Minimum {0} unique characters"
+    "required_length": "At least one character | Minimum {0} characters",
+    "required_unique_chars": "At least one unique characters | Minimum {0} unique characters"
   },
   "validation_error": {
     "PRODUCT_QTY_CHANGED": "The product available qty is changed",

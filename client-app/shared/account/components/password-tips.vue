@@ -40,9 +40,17 @@ if (props.requirements.requireUppercase) {
   requirementsLabels.value.push(t("password_tips.required_uppercase"));
 }
 if (props.requirements.requiredLength) {
-  requirementsLabels.value.push(t("password_tips.required_length", [props.requirements.requiredLength]));
+  requirementsLabels.value.push(
+    t("password_tips.required_length", [props.requirements.requiredLength], props.requirements.requiredLength)
+  );
 }
 if (props.requirements.requiredUniqueChars) {
-  requirementsLabels.value.push(t("password_tips.required_unique_chars", [props.requirements.requiredUniqueChars]));
+  requirementsLabels.value.push(
+    t(
+      "password_tips.required_unique_chars",
+      [props.requirements.requiredUniqueChars],
+      props.requirements.requiredUniqueChars
+    )
+  );
 }
 </script>
