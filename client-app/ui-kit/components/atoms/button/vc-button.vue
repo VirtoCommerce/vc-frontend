@@ -238,7 +238,7 @@ const isLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
   }
 
   &__content {
-    @apply grid grid-flow-col;
+    @apply grid grid-flow-col justify-center;
 
     #{$loading} & {
       @apply invisible;
