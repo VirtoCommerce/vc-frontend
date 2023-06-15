@@ -1,16 +1,14 @@
 <template>
   <div>
     <!-- Title block -->
-    <div class="mx-5 flex items-center justify-between md:mx-0">
-      <h2 v-t="'pages.account.quotes.title'" class="text-3xl font-bold uppercase text-gray-800" />
-    </div>
+    <h2 v-t="'pages.account.quotes.title'" class="mx-5 text-3xl font-bold uppercase text-gray-800 lg:mx-0" />
 
     <div ref="stickyMobileHeaderAnchor" class="-mt-5"></div>
 
     <!-- Page toolbar -->
     <PageToolbarBlock
       :stick="stickyMobileHeaderIsVisible"
-      class="-my-3.5 flex flex-row items-center gap-x-2 py-3.5 lg:flex-row-reverse lg:gap-x-5"
+      class="flex flex-row items-center gap-x-2 lg:flex-row-reverse lg:gap-x-5"
       shadow
     >
       <div class="flex grow">
@@ -44,7 +42,7 @@
     </VcEmptyView>
 
     <!-- Content block -->
-    <div v-else class="flex flex-col bg-white shadow-sm md:rounded md:border">
+    <div v-else class="flex flex-col bg-white shadow-sm lg:rounded lg:border">
       <VcTable
         :loading="fetching"
         :columns="columns"

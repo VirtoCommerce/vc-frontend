@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Title block -->
-    <div class="mx-5 flex items-center justify-between md:mx-0">
+    <div class="mx-5 flex items-center justify-between lg:mx-0">
       <h2 v-t="'pages.account.orders.title'" class="text-3xl font-bold uppercase text-gray-800" />
     </div>
 
@@ -19,7 +19,7 @@
 
       <MobileOrdersFilter class="grow" />
 
-      <div class="z-100 sticky bottom-0 -mx-5 mt-4 bg-white p-5 shadow-t-md">
+      <div class="z-100 sticky bottom-0 mx-5 mt-4 bg-white p-5 shadow-t-md">
         <div class="flex gap-4">
           <VcButton
             :disabled="isFilterEmpty && !isFilterDirty"
@@ -52,7 +52,7 @@
     <!-- Page Toolbar -->
     <PageToolbarBlock
       :stick="stickyMobileHeaderIsVisible"
-      class="-my-3.5 flex flex-row items-center gap-x-2 py-3.5 lg:flex-row-reverse lg:gap-x-5"
+      class="flex flex-row items-center gap-x-2 lg:flex-row-reverse lg:gap-x-5"
       shadow
     >
       <div class="relative">
@@ -142,7 +142,7 @@
     </VcEmptyView>
 
     <!-- Content block -->
-    <div v-else class="flex flex-col bg-white shadow-sm md:rounded md:border">
+    <div v-else class="flex flex-col bg-white shadow-sm lg:rounded lg:border">
       <VcTable
         :loading="ordersLoading"
         :columns="columns"
