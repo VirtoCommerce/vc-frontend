@@ -1,12 +1,12 @@
 <template>
   <div>
     <!-- Title block -->
-    <div class="mx-5 flex items-center justify-between md:mx-0">
+    <div class="mx-5 flex items-center justify-between lg:mx-0">
       <h2 v-t="'pages.account.profile.title'" class="text-3xl font-bold uppercase text-gray-800" />
     </div>
 
     <div
-      class="polygon-bg flex flex-col bg-white p-6 shadow-sm [--polygon-bg-position:right_bottom_-180px] md:rounded md:border"
+      class="polygon-bg flex flex-col bg-white p-6 shadow-sm [--polygon-bg-position:right_bottom_-180px] lg:rounded lg:border"
     >
       <form class="flex flex-col lg:w-1/2" @submit.prevent="onSubmit">
         <!-- Errors block -->

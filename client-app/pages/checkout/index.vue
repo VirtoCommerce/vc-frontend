@@ -2,27 +2,29 @@
   <router-view v-if="isEmptyLayout" />
 
   <VcContainer v-else>
-    <VcTypography tag="h1" variant="h2" weight="bold" class="mb-5">
-      {{ pageTitle }}
-    </VcTypography>
+    <div class="px-5 lg:px-0">
+      <VcTypography tag="h1" variant="h2" weight="bold" class="mb-5">
+        {{ pageTitle }}
+      </VcTypography>
 
-    <VcSteps
-      :steps="
-        currentStepId === 'CheckoutPayment'
-          ? [
-              {
-                icon: 'arrow-bold',
-                route: { name: 'OrderDetails', params: { orderId: placedOrder?.id }, replace: true },
-                text: $t('common.buttons.back_to_order_details'),
-              },
-            ]
-          : steps
-      "
-      :current-step-index="currentStepIndex"
-      :start-step-index="0"
-      :disabled="loadingCheckout"
-      class="mb-5"
-    />
+      <VcSteps
+        :steps="
+          currentStepId === 'CheckoutPayment'
+            ? [
+                {
+                  icon: 'arrow-bold',
+                  route: { name: 'OrderDetails', params: { orderId: placedOrder?.id }, replace: true },
+                  text: $t('common.buttons.back_to_order_details'),
+                },
+              ]
+            : steps
+        "
+        :current-step-index="currentStepIndex"
+        :start-step-index="0"
+        :disabled="loadingCheckout"
+        class="mb-5"
+      />
+    </div>
 
     <VcLoaderOverlay :visible="loadingCart || loadingCheckout" fixed-spinner />
 
