@@ -55,7 +55,7 @@
             </template>
 
             <template #actions>
-              <div class="hidden flex-wrap gap-x-5 gap-y-4 md:flex">
+              <div class="hidden flex-wrap gap-5 md:flex">
                 <VcButton
                   :to="{ name: 'OrderDetails', params: { orderId }, replace: true }"
                   variant="outline"
@@ -69,7 +69,7 @@
                 </VcButton>
               </div>
 
-              <VcButton :to="{ name: 'Catalog', replace: true }" class="w-48">
+              <VcButton :to="{ name: 'Catalog', replace: true }">
                 {{ $t("pages.account.order_payment.continue_shopping_button") }}
               </VcButton>
             </template>
