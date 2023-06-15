@@ -15,6 +15,8 @@
         v-if="!readonly"
         :disabled="disabled"
         variant="outline"
+        icon
+        size="sm"
         class="vc-address-selection__button"
         @click="$emit('change')"
       >

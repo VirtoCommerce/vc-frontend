@@ -3,8 +3,7 @@
     <template #actions="{ close }">
       <VcButton
         v-if="!isCorporateAddresses || $can($permissions.xApi.CanEditOrganization)"
-        class="lg:mr-auto"
-        :class="[isMobile && 'w-1/2 grow']"
+        class="grow xs:w-1/2 md:me-auto md:w-auto md:flex-none"
         variant="outline"
         @click="
           $emit('addNewAddress');
@@ -14,8 +13,8 @@
         {{ $t("shared.checkout.select_address_dialog.add_address_button") }}
       </VcButton>
 
-      <div class="flex space-x-3" :class="[isMobile ? 'w-1/2 grow' : 'w-auto']">
-        <VcButton v-if="!isMobile" color="secondary" variant="outline" class="flex-1 md:flex-none" @click="close">
+      <div class="flex grow space-x-3 xs:w-1/2 md:w-auto md:flex-none">
+        <VcButton color="secondary" variant="outline" class="hidden flex-1 md:block md:flex-none" @click="close">
           {{ $t("shared.checkout.select_address_dialog.cancel_button") }}
         </VcButton>
 

@@ -35,10 +35,6 @@
     </div>
     <div class="grow lg:grow-0"></div>
     <div class="mt-8 flex justify-end gap-3">
-      <VcButton size="sm" :disabled="!isFilterDirty" @click="apply">{{
-        $t("shared.account.orders-filter.apply-button")
-      }}</VcButton>
-
       <VcButton
         color="secondary"
         variant="outline"
@@ -47,6 +43,10 @@
         @click="reset"
       >
         {{ $t("shared.account.orders-filter.reset-button") }}
+      </VcButton>
+
+      <VcButton size="sm" :disabled="!isFilterDirty" @click="apply">
+        {{ $t("shared.account.orders-filter.apply-button") }}
       </VcButton>
     </div>
   </div>

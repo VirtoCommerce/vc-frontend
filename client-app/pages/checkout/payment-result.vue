@@ -56,15 +56,11 @@
               {{ $t("common.buttons.payment_details") }}
             </VcButton>
 
-            <VcButton
-              :to="{ name: 'OrderDetails', params: { orderId: placedOrder!.id } }"
-              prepend-icon="document-text"
-              class="w-40"
-            >
+            <VcButton :to="{ name: 'OrderDetails', params: { orderId: placedOrder!.id } }" prepend-icon="document-text">
               {{ $t("common.buttons.show_order") }}
             </VcButton>
 
-            <VcButton v-if="isPaymentSuccess" to="/" class="w-40">
+            <VcButton v-if="isPaymentSuccess" to="/">
               {{ $t("common.buttons.home") }}
             </VcButton>
           </div>

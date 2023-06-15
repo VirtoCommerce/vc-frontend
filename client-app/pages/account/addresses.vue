@@ -18,7 +18,7 @@
       </template>
 
       <template #button>
-        <VcButton size="lg" prepend-icon="plus" @click="openAddOrUpdateAddressModal()">
+        <VcButton prepend-icon="plus" @click="openAddOrUpdateAddressModal()">
           {{ $t("common.buttons.add_new_address") }}
         </VcButton>
       </template>
