@@ -6,3 +6,4 @@ export { default as useUserOrders } from "./useUserOrders";
 export { default as useUserOrdersFilter } from "./useUserOrdersFilter";
 export { default as useUserQuotes } from "./useUserQuotes";
 export { default as useUserQuote } from "./useUserQuote";
+export { default as usePasswordRequirements } from "./usePasswordRequirements";

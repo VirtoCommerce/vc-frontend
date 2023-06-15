@@ -130,22 +130,28 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import { debounce } from "lodash";
 import { useField, useForm } from "vee-validate";
-import { onMounted, reactive, ref, nextTick } from "vue";
+import { reactive, ref, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
 import { checkEmailUniqueness } from "@/core/api/graphql/account";
 import { useIdentityErrorTranslator, usePageHead } from "@/core/composables";
-import { PasswordTips, RegistrationKind, RegistrationSuccessDialog, useUser } from "@/shared/account";
+import {
+  PasswordTips,
+  RegistrationKind,
+  RegistrationSuccessDialog,
+  usePasswordRequirements,
+  useUser,
+} from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
 import type { AccountCreationResultType } from "@/core/api/graphql/types";
-import type { PasswordOptionsType } from "@/core/types";
 
 const ASYNC_VALIDATION_TIMEOUT_IN_MS = 500;
 
 const { t } = useI18n();
 const { openPopup } = usePopup();
-const { registerUser, registerOrganization, getPasswordRequirements, loading } = useUser();
+const { registerUser, registerOrganization, loading } = useUser();
+const { passwordRequirements, getPasswordRequirements } = usePasswordRequirements();
 const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
 usePageHead({
@@ -206,7 +212,6 @@ const { value: password } = useField<string>("password");
 const { value: confirmPassword } = useField<string>("confirmPassword");
 
 const commonErrors = ref<string[]>([]);
-const passwordRequirements = ref<PasswordOptionsType | undefined>();
 const emailValidationData = reactive({
   isChecked: false,
   isUnique: false,
@@ -277,7 +282,7 @@ const onSubmit = handleSubmit(async (data) => {
   }
 });
 
-onMounted(async () => {
-  passwordRequirements.value = await getPasswordRequirements();
-});
+if (!passwordRequirements.value) {
+  getPasswordRequirements();
+}
 </script>

@@ -96,17 +96,15 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
 import { useIdentityErrorTranslator, usePageHead, useRouteQueryParam } from "@/core/composables";
-import { PasswordTips, RegistrationSuccessDialog, useUser } from "@/shared/account";
+import { PasswordTips, RegistrationSuccessDialog, usePasswordRequirements, useUser } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
-import type { PasswordOptionsType } from "@/core/types";
 
 const commonErrors = ref<string[]>([]);
-const passwordRequirements = ref<PasswordOptionsType | undefined>();
 
 const { t } = useI18n();
 
@@ -115,7 +113,8 @@ usePageHead({
 });
 
 const { openPopup } = usePopup();
-const { loading, registerByInvite, getPasswordRequirements } = useUser();
+const { loading, registerByInvite } = useUser();
+const { passwordRequirements, getPasswordRequirements } = usePasswordRequirements();
 const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
 const userId = useRouteQueryParam<string>("userId");
@@ -192,7 +191,7 @@ const onSubmit = handleSubmit(async (data) => {
   }
 });
 
-onMounted(async () => {
-  passwordRequirements.value = await getPasswordRequirements();
-});
+if (!passwordRequirements.value) {
+  getPasswordRequirements();
+}
 </script>

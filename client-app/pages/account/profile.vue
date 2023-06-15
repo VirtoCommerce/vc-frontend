@@ -129,16 +129,16 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import { whenever } from "@vueuse/core";
 import { useField, useForm } from "vee-validate";
-import { computed, ref, onMounted } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
 import { usePageHead } from "@/core/composables";
-import { PasswordTips, ProfileUpdateSuccessDialog, useUser } from "@/shared/account";
+import { PasswordTips, ProfileUpdateSuccessDialog, usePasswordRequirements, useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
-import type { PasswordOptionsType } from "@/core/types";
 
 const { t } = useI18n();
-const { user, updateUser, changePassword, getPasswordRequirements } = useUser();
+const { user, updateUser, changePassword } = useUser();
+const { passwordRequirements, getPasswordRequirements } = usePasswordRequirements();
 const { openPopup } = usePopup();
 
 usePageHead({
@@ -146,7 +146,6 @@ usePageHead({
 });
 
 const updateProfileError = ref<boolean>(false);
-const passwordRequirements = ref<PasswordOptionsType | undefined>();
 
 const validationSchema = toTypedSchema(
   object({
@@ -240,7 +239,7 @@ whenever(
   }
 );
 
-onMounted(async () => {
-  passwordRequirements.value = await getPasswordRequirements();
-});
+if (!passwordRequirements.value) {
+  getPasswordRequirements();
+}
 </script>

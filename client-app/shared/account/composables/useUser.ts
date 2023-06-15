@@ -21,7 +21,6 @@ import type {
   Organization,
   UserType,
 } from "@/core/api/graphql/types";
-import type { PasswordOptionsType } from "@/core/types";
 import type {
   ForgotPassword,
   RegisterOrganization,
@@ -248,19 +247,6 @@ export default function useUser() {
     }
   }
 
-  async function getPasswordRequirements(): Promise<PasswordOptionsType> {
-    loading.value = true;
-
-    try {
-      return await innerFetch<PasswordOptionsType>("/storefrontapi/account/passwordrequirements", "GET");
-    } catch (e) {
-      Logger.error(`${useUser.name}.${getPasswordRequirements.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-  }
-
   return {
     isAuthenticated,
     isCorporateMember,
@@ -279,7 +265,6 @@ export default function useUser() {
     resetPassword,
     inviteUser,
     registerByInvite,
-    getPasswordRequirements,
     loading: readonly(loading),
     user: computed({
       get() {
