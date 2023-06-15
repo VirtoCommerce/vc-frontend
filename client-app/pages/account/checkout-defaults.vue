@@ -1,11 +1,11 @@
 <template>
   <div>
     <!-- Title block -->
-    <div class="mx-5 flex items-center justify-between md:mx-0">
+    <div class="mx-5 flex items-center justify-between lg:mx-0">
       <h2 v-t="'pages.account.checkout_defaults.title'" class="text-3xl font-bold uppercase text-gray-800" />
     </div>
 
-    <div class="border bg-white p-7 shadow-sm md:rounded md:px-9 md:py-8">
+    <div class="border bg-white p-7 shadow-sm lg:rounded lg:px-9 lg:py-8">
       <VcLoaderWithText v-if="loading" />
 
       <div v-else class="flex flex-col lg:w-1/2">

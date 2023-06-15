@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Title block -->
-    <div class="mx-5 flex items-center justify-between md:mx-0">
+    <div class="mx-5 flex items-center justify-between lg:mx-0">
       <h2 class="text-3xl font-bold uppercase text-gray-800">
         {{ $t("shared.account.navigation.links.lists") }}
       </h2>
@@ -20,12 +20,12 @@
     </div>
 
     <!-- Skeletons -->
-    <div v-if="loading" class="flex flex-col divide-y md:space-y-3 md:divide-none">
+    <div v-if="loading" class="flex flex-col divide-y lg:space-y-3 lg:divide-none">
       <WishlistCardSkeleton v-for="item in 5" :key="item" />
     </div>
 
     <!-- Lists -->
-    <div v-else-if="lists.length" class="flex flex-col overflow-x-hidden md:gap-y-3 md:overflow-x-visible">
+    <div v-else-if="lists.length" class="flex flex-col overflow-x-hidden lg:gap-y-3 lg:overflow-x-visible">
       <template v-if="isMobile">
         <VcSlidingActions
           v-for="list in lists"
