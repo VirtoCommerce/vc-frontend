@@ -1,5 +1,5 @@
 <template>
-  <VcAlert color="info" variant="outline" icon="information-circle">
+  <VcAlert color="info" variant="outline" icon>
     <div class="flex flex-col">
       <b>{{ $t("password_tips.title") }}</b>
 

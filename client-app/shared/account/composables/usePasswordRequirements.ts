@@ -3,10 +3,10 @@ import { useFetch } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import type { PasswordOptionsType } from "@/core/types";
 
+const passwordRequirements = ref<PasswordOptionsType>();
+
 export default function usePasswordRequirements() {
   const { innerFetch } = useFetch();
-
-  const passwordRequirements = ref<PasswordOptionsType>();
 
   async function getPasswordRequirements(): Promise<void> {
     try {
