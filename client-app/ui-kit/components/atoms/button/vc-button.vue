@@ -233,7 +233,7 @@ const isLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
     }
 
     &[class*="--outline--"] {
-      @apply text-[--color-neutral-300];
+      @apply text-[--color-neutral-400] border-[--color-neutral-300];
     }
   }
 
