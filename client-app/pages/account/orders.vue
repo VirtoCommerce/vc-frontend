@@ -63,7 +63,7 @@
           :icon="isMobile"
           @click="toggleFilters"
         >
-          <VcIcon name="filter" class="lg:hidden" />
+          <VcIcon name="filter" class="lg:!hidden" />
 
           <span>{{ $t("common.buttons.filters") }}</span>
         </VcButton>

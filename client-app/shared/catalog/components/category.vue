@@ -126,7 +126,7 @@
             }"
           >
             <!-- Mobile filters toggler -->
-            <VcButton class="mr-2.5 flex-none lg:hidden" icon="filter" size="sm" @click="showMobileSidebar" />
+            <VcButton class="mr-2.5 flex-none lg:!hidden" icon="filter" size="sm" @click="showMobileSidebar" />
 
             <!-- Sorting -->
             <div class="z-10 ml-auto flex grow items-center lg:order-4 lg:ml-4 lg:grow-0 xl:ml-8">

@@ -146,7 +146,7 @@
 
                   <VcButton
                     :disabled="paymentMethodComponent?.loading || loading"
-                    class="md:hidden"
+                    class="md:!hidden"
                     size="sm"
                     icon="pencil"
                     variant="outline"
