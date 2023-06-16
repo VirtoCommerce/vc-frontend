@@ -5,7 +5,7 @@
     <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block" />
 
     <!-- Title block -->
-    <div class="flex flex-col gap-2.5 lg:flex-row lg:justify-between">
+    <div class="mx-5 flex flex-col gap-2.5 lg:mx-0 lg:flex-row lg:justify-between">
       <VcTypography tag="h1" variant="h2" weight="bold">
         {{ $t("pages.account.order_details.title", [order?.number]) }}
       </VcTypography>
