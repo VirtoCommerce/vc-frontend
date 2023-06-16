@@ -1,6 +1,6 @@
 <template>
   <div v-if="quote" class="!gap-y-4 lg:!gap-y-6">
-    <div class="flex flex-col gap-3">
+    <div class="mx-5 flex flex-col gap-3 lg:mx-0">
       <VcBreadcrumbs :items="breadcrumbs" />
 
       <h2 class="text-26 font-bold uppercase tracking-wide lg:text-3xl lg:leading-8">
@@ -8,7 +8,7 @@
       </h2>
     </div>
 
-    <div class="-mx-5 border-y bg-white shadow-md-x lg:mx-0 lg:space-y-6 lg:border-0 lg:bg-transparent lg:shadow-none">
+    <div class="border-y bg-white shadow-md-x lg:space-y-6 lg:border-0 lg:bg-transparent lg:shadow-none">
       <!-- Quote comment -->
       <VcSectionWidget
         :title="$t('pages.account.quote_details.remarks')"

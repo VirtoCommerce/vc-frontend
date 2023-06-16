@@ -5,7 +5,7 @@
     <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
     <!-- Title block -->
-    <div class="mx-5 flex items-center justify-between gap-x-3 md:mx-0">
+    <div class="mx-5 flex items-center justify-between gap-x-3 lg:mx-0">
       <h2 v-if="list?.name" class="truncate text-3xl font-bold uppercase text-gray-800">
         {{ list.name }}
       </h2>
@@ -47,7 +47,7 @@
 
     <!-- Skeletons -->
     <template v-if="listLoading">
-      <div v-if="isMobile" class="mx-5 grid grid-cols-2 gap-x-4 gap-y-6 md:mx-0">
+      <div v-if="isMobile" class="mx-5 grid grid-cols-2 gap-x-4 gap-y-6 lg:mx-0">
         <ProductSkeletonGrid v-for="i in actualPageRowsCount" :key="i" />
       </div>
 
@@ -89,7 +89,7 @@
       </template>
     </VcEmptyView>
 
-    <div class="space-y-5 py-7 lg:hidden">
+    <div class="space-y-5 px-5 py-7 lg:hidden">
       <VcButton
         :disabled="loading || !pagedListItems.length"
         size="sm"

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex grow flex-col items-center justify-center space-y-5" :class="{ 'h-96': isMobile }">
+  <div class="mx-5 flex grow flex-col items-center justify-center space-y-5 lg:mx-0" :class="{ 'h-96': isMobile }">
     <slot name="icon"></slot>
     <slot>
       <p class="text-xl leading-tight">

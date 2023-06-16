@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Title block -->
-    <div class="mx-5 flex items-center justify-between md:mx-0">
+    <div class="mx-5 flex items-center justify-between lg:mx-0">
       <h2 class="truncate text-3xl font-bold uppercase text-gray-800">
         {{ $t("common.titles.addresses") }}
       </h2>
@@ -24,7 +24,7 @@
       </template>
     </VcEmptyView>
 
-    <div v-else class="flex flex-col bg-white shadow-sm md:rounded md:border">
+    <div v-else class="flex flex-col bg-white shadow-sm lg:rounded lg:border">
       <!-- View Table -->
       <VcTable
         :loading="addressesLoading"
