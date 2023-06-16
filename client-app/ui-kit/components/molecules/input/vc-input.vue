@@ -216,7 +216,7 @@ watchEffect(() => {
   }
 
   &__container {
-    @apply z-0 relative p-px flex items-stretch select-none;
+    @apply z-0 relative flex items-stretch select-none;
 
     #{$sizeSm} & {
       @apply h-9 text-sm;
@@ -236,11 +236,11 @@ watchEffect(() => {
     @apply flex items-center h-full;
 
     &:first-child > * {
-      @apply rounded-r-none rounded-l-[3px];
+      @apply rounded-r-none;
     }
 
     &:nth-last-child(-n + 2) > * {
-      @apply rounded-l-none rounded-r-[3px];
+      @apply rounded-l-none;
     }
 
     & > * {

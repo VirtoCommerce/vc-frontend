@@ -229,7 +229,7 @@ const isLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
   &:disabled,
   #{$disabled} {
     &[class*="--solid--"] {
-      @apply bg-[--color-neutral-50] border-[--color-neutral-50] text-[--color-neutral-300];
+      @apply bg-[--color-neutral-100] border-[--color-neutral-100] text-[--color-neutral-400];
     }
 
     &[class*="--outline--"] {
