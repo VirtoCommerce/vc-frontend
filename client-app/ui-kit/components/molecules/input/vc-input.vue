@@ -249,7 +249,7 @@ watchEffect(() => {
   }
 
   &__input {
-    @apply relative px-3 appearance-none bg-transparent rounded-[3px] text-15 leading-none w-full min-w-0;
+    @apply relative m-px px-3 appearance-none bg-transparent rounded-[3px] text-15 leading-none w-full min-w-0;
 
     &:autofill {
       &:disabled {
