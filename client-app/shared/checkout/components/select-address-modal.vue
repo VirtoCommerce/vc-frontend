@@ -14,7 +14,7 @@
       </VcButton>
 
       <div class="flex grow space-x-3 xs:w-1/2 md:w-auto md:flex-none">
-        <VcButton color="secondary" variant="outline" class="hidden flex-1 md:block md:flex-none" @click="close">
+        <VcButton color="secondary" variant="outline" class="!hidden flex-1 md:!block md:flex-none" @click="close">
           {{ $t("shared.checkout.select_address_dialog.cancel_button") }}
         </VcButton>
 

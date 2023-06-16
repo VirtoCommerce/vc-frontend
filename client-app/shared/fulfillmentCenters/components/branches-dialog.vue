@@ -35,8 +35,10 @@
         <!-- NO RESULTS content BEGIN -->
         <div v-else class="flex h-[23.8rem] max-h-screen-60 grow flex-col items-center justify-center space-y-3">
           <img src="/static/images/common/stock.svg" alt="Product icon" class="w-20" />
+
           <div class="text-17">{{ $t("shared.catalog.branches_dialog.no_results") }}</div>
-          <VcButton v-if="searchInput.length" size="md" prepend-icon="reset" @click="searchInput = ''">
+
+          <VcButton v-if="searchInput.length" prepend-icon="reset" @click="searchInput = ''">
             {{ $t("shared.catalog.branches_dialog.reset_search_button") }}
           </VcButton>
         </div>

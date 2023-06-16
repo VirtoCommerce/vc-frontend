@@ -126,11 +126,7 @@
             }"
           >
             <!-- Mobile filters toggler -->
-            <div class="mr-2.5 lg:hidden">
-              <VcButton class="pl-2.5 pr-2" prepend-icon="filter" size="sm" @click="showMobileSidebar">
-                {{ $t("pages.catalog.filters_button") }}
-              </VcButton>
-            </div>
+            <VcButton class="mr-2.5 flex-none lg:!hidden" icon="filter" size="sm" @click="showMobileSidebar" />
 
             <!-- Sorting -->
             <div class="z-10 ml-auto flex grow items-center lg:order-4 lg:ml-4 lg:grow-0 xl:ml-8">
@@ -145,7 +141,7 @@
                 value-field="id"
                 :disabled="loading"
                 :items="PRODUCT_SORTING_LIST"
-                class="w-full lg:w-48"
+                class="w-0 grow lg:w-48"
                 size="sm"
               />
             </div>

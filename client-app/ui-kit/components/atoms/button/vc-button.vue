@@ -103,7 +103,7 @@ const isLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
   $loading: "";
   $loaderIcon: "";
 
-  @apply relative rounded border-2 select-none text-center;
+  @apply relative inline-block rounded border-2 select-none text-center;
 
   &--truncate {
     $truncate: &;
@@ -229,7 +229,7 @@ const isLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
   &:disabled,
   #{$disabled} {
     &[class*="--solid--"] {
-      @apply bg-[--color-neutral-50] border-[--color-neutral-50] text-[--color-neutral-300];
+      @apply bg-[--color-neutral-100] border-[--color-neutral-100] text-[--color-neutral-400];
     }
 
     &[class*="--outline--"] {

@@ -67,11 +67,11 @@
                 <VcButton :to="{ name: 'Orders', replace: true }" class="w-40">
                   {{ $t("pages.account.order_payment.orders_list_button") }}
                 </VcButton>
-              </div>
 
-              <VcButton :to="{ name: 'Catalog', replace: true }">
-                {{ $t("pages.account.order_payment.continue_shopping_button") }}
-              </VcButton>
+                <VcButton :to="{ name: 'Catalog', replace: true }">
+                  {{ $t("pages.account.order_payment.continue_shopping_button") }}
+                </VcButton>
+              </div>
             </template>
           </VcEmptyPage>
 
@@ -146,7 +146,7 @@
 
                   <VcButton
                     :disabled="paymentMethodComponent?.loading || loading"
-                    class="md:hidden"
+                    class="md:!hidden"
                     size="sm"
                     icon="pencil"
                     variant="outline"

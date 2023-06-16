@@ -21,7 +21,7 @@
         class="mb-8 hidden text-center text-3xl font-bold uppercase lg:block lg:text-left"
       />
 
-      <div class="mb-10 flex flex-col gap-5 lg:flex-row">
+      <div class="mb-10 flex flex-col gap-4 lg:flex-row">
         <VcIcon
           v-if="isPaymentSuccess"
           name="check-circle"
@@ -47,7 +47,7 @@
 
           <span v-t="isPaymentSuccess ? 'pages.payment_result.text.success' : 'pages.payment_result.text.failed'" />
 
-          <div class="mt-10 flex flex-col items-center justify-center gap-6 md:flex-row lg:justify-start">
+          <div class="mt-10 flex flex-wrap justify-center gap-3 lg:justify-start">
             <VcButton
               v-if="!isPaymentSuccess"
               :to="{ name: 'CheckoutPayment', replace: true }"

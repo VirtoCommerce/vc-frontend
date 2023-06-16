@@ -11,7 +11,7 @@
         :class="{
           'z-10 border-[color:var(--color-danger)] focus:border-[color:var(--color-danger-hover)]': !!errorMessage,
         }"
-        class="-mr-px h-9 w-full min-w-0 flex-1 appearance-none rounded-l rounded-r-none border border-gray-300 px-3 text-center text-base leading-9 outline-none focus:border-gray-400 lg:text-sm"
+        class="-mr-px h-9 w-full min-w-0 flex-1 appearance-none rounded-l rounded-r-none border border-gray-300 px-1 text-center text-base leading-9 outline-none focus:border-gray-400 lg:text-sm"
         @input="onInput"
         @keypress="onKeypress"
         @click="onClick"
