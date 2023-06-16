@@ -55,7 +55,7 @@
       </template>
 
       <template #button>
-        <VcButton prepend-icon="plus" size="lg" @click="openCreateListModal">
+        <VcButton prepend-icon="plus" @click="openCreateListModal">
           {{ $t("pages.account.lists.create_list_button") }}
         </VcButton>
       </template>
