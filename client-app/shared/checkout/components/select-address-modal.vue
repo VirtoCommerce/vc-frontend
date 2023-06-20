@@ -20,6 +20,7 @@
 
         <VcButton
           class="flex-1 md:flex-none"
+          no-wrap
           @click="
             $emit('result', selectedAddress);
             close();
