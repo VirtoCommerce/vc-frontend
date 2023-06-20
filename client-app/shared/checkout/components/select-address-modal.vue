@@ -1,5 +1,5 @@
 <template>
-  <VcPopup :title="$t('shared.checkout.select_address_dialog.title')" modal-width="max-w-5xl" is-mobile-fullscreen>
+  <VcPopup :title="$t('shared.checkout.select_address_dialog.title')" modal-width="max-w-5xl">
     <template #actions="{ close }">
       <VcButton
         v-if="!isCorporateAddresses || $can($permissions.xApi.CanEditOrganization)"
@@ -20,6 +20,7 @@
 
         <VcButton
           class="flex-1 md:flex-none"
+          no-wrap
           @click="
             $emit('result', selectedAddress);
             close();

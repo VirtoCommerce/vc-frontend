@@ -15,6 +15,7 @@
         'vc-button--loading': loading,
         'vc-button--truncate': truncate,
         'vc-button--full-width': fullWidth,
+        'vc-button--no-wrap': noWrap,
       },
     ]"
     @click="enabled ? $emit('click', $event) : null"
@@ -71,6 +72,7 @@ interface IProps {
   title?: string;
   truncate?: boolean;
   fullWidth?: boolean;
+  noWrap?: boolean;
 }
 
 defineEmits<IEmits>();
@@ -85,6 +87,7 @@ const props = withDefaults(defineProps<IProps>(), {
   to: null,
   truncate: false,
   fullWidth: false,
+  noWrap: false,
 });
 
 const enabled = eagerComputed<boolean>(() => !props.disabled && !props.loading);
@@ -102,6 +105,7 @@ const isLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
   $disabled: "";
   $loading: "";
   $loaderIcon: "";
+  $noWrap: "";
 
   @apply relative inline-block rounded border-2 select-none text-center;
 
@@ -123,6 +127,10 @@ const isLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
 
   &--full-width {
     @apply w-full;
+  }
+
+  &--no-wrap {
+    $noWrap: &;
   }
 
   &__loader {
@@ -250,6 +258,10 @@ const isLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
 
     #{$truncate} & {
       @apply grow min-w-0 truncate;
+    }
+
+    #{$noWrap} & {
+      @apply whitespace-nowrap;
     }
 
     &:empty {
