@@ -40,8 +40,8 @@ Disabled.args = {
   disabled: true,
 };
 
-export const Error = Template.bind({});
-Error.args = {
+export const ErrorState = Template.bind({});
+ErrorState.args = {
   ...Basic.args,
   error: true,
 };
