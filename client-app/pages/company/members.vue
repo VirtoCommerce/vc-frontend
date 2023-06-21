@@ -599,7 +599,10 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
 
           await fetchContacts();
         } else {
-          notifications.error({ ...notification, text: t("common.messages.role_update_failed", [result?.errors]) });
+          notifications.error({
+            ...notification,
+            text: t("common.messages.role_update_failed", [result?.errors?.join(" ")]),
+          });
         }
 
         closeEditCustomerRoleModal();
