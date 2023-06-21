@@ -52,12 +52,12 @@
           <div
             v-for="product in products"
             :key="product.id"
-            class="flex w-32 shrink-0 flex-col md:w-48 md:pb-6 lg:shrink"
+            class="flex w-40 shrink-0 flex-col md:w-48 md:pb-6 lg:shrink"
           >
             <!-- Product image -->
             <router-link :to="productsRoutes[product.id]" class="mb-3 cursor-pointer" @click="ga.selectItem(product)">
               <div
-                class="relative flex h-32 w-32 flex-col items-center justify-center border border-gray-100 md:h-48 md:w-48"
+                class="relative flex h-32 w-40 flex-col items-center justify-center border border-gray-100 md:h-48 md:w-48"
               >
                 <VcImage
                   :src="product.imgSrc"
@@ -115,7 +115,7 @@
         >
           <div v-if="!isMobile" class="w-56 shrink-0 pl-8 text-sm font-extrabold">{{ prop.label }}</div>
 
-          <div v-for="(value, i) in prop.values" :key="i" class="w-32 shrink-0 py-5 last:pr-8 md:w-48">
+          <div v-for="(value, i) in prop.values" :key="i" class="w-40 shrink-0 py-5 last:pr-8 md:w-48">
             <span v-if="isMobile" class="block text-sm font-extrabold">{{ prop.label }}</span>
             {{ value }}
           </div>
@@ -123,7 +123,7 @@
 
         <div class="flex items-center space-x-5 px-5 lg:px-0">
           <div v-if="!isMobile" class="w-56 shrink-0"></div>
-          <div v-for="product in products" :key="product.id" class="w-32 shrink-0 md:w-48">
+          <div v-for="product in products" :key="product.id" class="w-40 shrink-0 md:w-48">
             <!-- Product price -->
             <div class="my-4 flex h-8 flex-col items-baseline justify-between text-sm md:flex-row">
               <div v-if="!isMobile" class="text-xs font-bold">

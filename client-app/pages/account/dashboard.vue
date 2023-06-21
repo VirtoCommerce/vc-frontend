@@ -7,7 +7,7 @@
 
     <VcCard :title="$t('pages.account.dashboard.last_orders_card.title')" full-width-content shadow>
       <template #header-button>
-        <VcButton :to="{ name: 'Orders' }" variant="outline" size="xs" class="flex-none lg:hidden">
+        <VcButton :to="{ name: 'Orders' }" variant="outline" size="xs" class="flex-none lg:!hidden">
           {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
         </VcButton>
 

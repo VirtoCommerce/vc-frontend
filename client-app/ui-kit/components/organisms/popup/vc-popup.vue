@@ -1,23 +1,26 @@
 <template>
   <TransitionRoot appear :show="isOpen" as="template">
     <Dialog as="div" :initial-focus="getActiveElement()" @close="() => {}">
-      <div class="fixed inset-0 z-50" :class="{ 'overflow-y-auto': !isMobileFullscreen }">
-        <div class="text-center" :class="{ 'min-h-screen px-4': !isMobileFullscreen, 'sm:px-4': isMobileFullscreen }">
-          <TransitionChild
-            as="template"
-            enter="duration-300 ease-out"
-            enter-from="opacity-0"
-            enter-to="opacity-100"
-            leave="duration-200 ease-in"
-            leave-from="opacity-100"
-            leave-to="opacity-0"
-          >
-            <DialogOverlay class="fixed inset-0 bg-gray-900/30" />
-          </TransitionChild>
+      <TransitionChild
+        as="template"
+        enter="duration-300 ease-out"
+        enter-from="opacity-0"
+        enter-to="opacity-100"
+        leave="duration-200 ease-in"
+        leave-from="opacity-100"
+        leave-to="opacity-0"
+      >
+        <DialogOverlay class="fixed inset-0 z-50 bg-gray-900/30" />
+      </TransitionChild>
 
-          <span class="inline-block h-screen align-middle" aria-hidden="true"> &#8203; </span>
-
-          <!-- TODO: Revise the use of the `isolate` class. -->
+      <div
+        class="fixed inset-0 z-50"
+        :class="{
+          'min-h-screen overflow-y-auto p-4 lg:p-8': !isMobileFullscreen,
+          'h-screen sm:h-auto sm:min-h-screen sm:overflow-y-auto sm:p-4 lg:p-8': isMobileFullscreen,
+        }"
+      >
+        <div class="flex min-h-full items-center justify-center">
           <TransitionChild
             as="template"
             enter="duration-300 ease-out"
@@ -29,12 +32,10 @@
             @after-leave="$emit('close')"
           >
             <div
-              class="isolate inline-block w-full overflow-hidden bg-white text-left align-middle transition-all sm:rounded-md sm:shadow-xl"
+              class="inline-block w-full overflow-hidden bg-white text-left transition-all sm:rounded-md sm:shadow-xl"
               :class="[
                 modalWidth,
-                isMobileFullscreen
-                  ? 'fixed inset-0 flex flex-col sm:static sm:inset-auto sm:inline-block'
-                  : 'my-8 rounded-md shadow-xl',
+                isMobileFullscreen ? 'fixed inset-0 flex flex-col sm:static sm:inset-auto' : 'rounded-md shadow-xl',
               ]"
             >
               <!-- Title bar -->
