@@ -33,7 +33,10 @@
           >
             <div
               class="inline-block w-full overflow-hidden bg-white text-left transition-all sm:rounded-md sm:shadow-xl"
-              :class="[modalWidth, isMobileFullscreen ? 'flex h-screen flex-col sm:h-auto' : 'rounded-md shadow-xl']"
+              :class="[
+                modalWidth,
+                isMobileFullscreen ? 'fixed inset-0 flex flex-col sm:static sm:inset-auto' : 'rounded-md shadow-xl',
+              ]"
             >
               <!-- Title bar -->
               <DialogTitle
