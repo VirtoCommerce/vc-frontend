@@ -14,6 +14,7 @@ import { useNotifications } from "@/shared/notification";
 import { convertToExtendedContact } from "../utils";
 import type {
   ContactType,
+  CustomIdentityResultType,
   InputChangeOrganizationContactRoleType,
   InputRemoveMemberFromOrganizationType,
 } from "@/core/api/graphql/types";
@@ -123,11 +124,13 @@ export default function useOrganizationContacts(organizationId: MaybeRef<string>
     await fetchContacts();
   }
 
-  async function changeContactOrganizationRole(payload: InputChangeOrganizationContactRoleType): Promise<void> {
+  async function changeContactOrganizationRole(
+    payload: InputChangeOrganizationContactRoleType
+  ): Promise<CustomIdentityResultType | undefined> {
     loading.value = true;
 
     try {
-      await changeOrganizationContactRole(payload);
+      return await changeOrganizationContactRole(payload);
     } catch (e) {
       Logger.error(`${useOrganizationContacts.name}.${changeContactOrganizationRole.name}`, e);
       throw e;

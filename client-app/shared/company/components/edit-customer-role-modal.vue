@@ -25,9 +25,9 @@
 
         <VcButton
           full-width
-          :disabled="!corporateContactWithRole || selectedRoleId === roleId"
+          :disabled="selectedRoleId === currentRoleId"
           :loading="loading"
-          @click="$emit('confirm', { userId: contact.securityAccounts![0].id, roleIds: [selectedRoleId] })"
+          @click="$emit('confirm', selectedRoleId)"
         >
           {{ $t("common.buttons.save") }}
         </VcButton>
@@ -37,30 +37,28 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { ref, watchEffect } from "vue";
 import { VcPopup, VcRadioButton } from "@/ui-kit/components";
 import RoleIcon from "./role-icon.vue";
-import type { ExtendedContactType } from "../types";
-import type { InputChangeOrganizationContactRoleType } from "@/core/api/graphql/types";
 import type { ExtendedRoleType } from "@/core/types";
+
+interface IEmits {
+  (event: "confirm", value: string): void;
+}
 
 defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
 interface IProps {
-  contact: ExtendedContactType;
+  currentRoleId?: string;
   roles: ExtendedRoleType[];
   loading: boolean;
 }
 
-const roleId = props.contact.extended.roles[0]?.id?.slice();
+const selectedRoleId = ref<string>();
 
-const selectedRoleId = ref<string>(roleId);
-
-const corporateContactWithRole = computed<boolean>(() => !!props.contact.extended?.roles?.length);
-
-interface IEmits {
-  (event: "confirm", value: InputChangeOrganizationContactRoleType): void;
-}
+watchEffect(() => {
+  selectedRoleId.value = props.currentRoleId;
+});
 </script>

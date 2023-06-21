@@ -261,7 +261,7 @@
                   class="flex items-center whitespace-nowrap p-3"
                   @click="openEditCustomerRoleModal(contact)"
                 >
-                  <i class="fas fa-pencil-alt mr-2 text-base leading-none text-[color:var(--color-warning)]" />
+                  <VcIcon name="pencil" class="mr-2 text-base leading-none text-[color:var(--color-warning)]" />
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.edit_role") }}</span>
                 </button>
 
@@ -271,7 +271,7 @@
                   class="flex items-center whitespace-nowrap p-3"
                   @click="openLockOrUnlockModal(contact, true)"
                 >
-                  <i class="fas fa-check mr-2 text-base leading-none text-[color:var(--color-success)]" />
+                  <VcIcon name="check" class="mr-2 text-base leading-none text-[color:var(--color-success)]" />
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.unblock_user") }}</span>
                 </button>
 
@@ -281,12 +281,12 @@
                   class="flex items-center whitespace-nowrap p-3"
                   @click="openLockOrUnlockModal(contact)"
                 >
-                  <i class="fas fa-ban mr-2 text-base leading-none text-black" />
+                  <VcIcon name="ban" class="mr-2 text-base leading-none text-black" />
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.block_user") }}</span>
                 </button>
 
                 <button type="button" class="flex items-center whitespace-nowrap p-3" @click="openDeleteModal(contact)">
-                  <i class="fas fa-times mr-2 text-xl leading-none text-[color:var(--color-danger)]" />
+                  <VcIcon name="x" class="mr-2 text-xl leading-none text-[color:var(--color-danger)]" />
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.delete") }}</span>
                 </button>
               </VcActionDropdownMenu>
@@ -364,10 +364,11 @@ import {
   useOrganizationContacts,
   useOrganizationContactsFilterFacets,
 } from "@/shared/company";
+import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
-import type { InputChangeOrganizationContactRoleType } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
 import type { ExtendedContactType } from "@/shared/company";
+import type { INotification } from "@/shared/notification";
 
 const { t } = useI18n();
 
@@ -407,6 +408,7 @@ const {
 } = useOrganizationContactsFilterFacets();
 const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);
+const notifications = useNotifications();
 
 const isMobile = breakpoints.smaller("lg");
 
@@ -578,14 +580,27 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
     component: EditCustomerRoleModal,
     props: {
       roles: B2B_ROLES,
-      contact,
       currentRoleId: contact.extended.roles[0]?.id,
       loading: contactsLoading,
 
-      async onConfirm(payload: InputChangeOrganizationContactRoleType) {
-        await changeContactOrganizationRole(payload);
+      async onConfirm(selectedRoleId: string): Promise<void> {
+        const result = await changeContactOrganizationRole({
+          userId: contact.securityAccounts![0].id,
+          roleIds: [selectedRoleId],
+        });
 
-        await fetchContacts();
+        const notification: INotification = {
+          duration: 5000,
+          single: true,
+        };
+
+        if (result?.succeeded) {
+          notifications.success({ ...notification, text: t("common.messages.role_update_successfull") });
+
+          await fetchContacts();
+        } else {
+          notifications.error({ ...notification, text: t("common.messages.role_update_failed", [result?.errors]) });
+        }
 
         closeEditCustomerRoleModal();
       },
