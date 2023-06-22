@@ -261,7 +261,7 @@
                   class="flex items-center whitespace-nowrap p-3"
                   @click="openEditCustomerRoleModal(contact)"
                 >
-                  <VcIcon name="pencil" class="mr-2 text-base leading-none text-[color:var(--color-warning)]" />
+                  <VcIcon name="pencil" class="mr-2 text-[--color-warning-500]" />
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.edit_role") }}</span>
                 </button>
 
@@ -271,7 +271,7 @@
                   class="flex items-center whitespace-nowrap p-3"
                   @click="openLockOrUnlockModal(contact, true)"
                 >
-                  <VcIcon name="check" class="mr-2 text-base leading-none text-[color:var(--color-success)]" />
+                  <VcIcon name="check" class="mr-2 text-[--color-success-500]" />
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.unblock_user") }}</span>
                 </button>
 
@@ -281,12 +281,12 @@
                   class="flex items-center whitespace-nowrap p-3"
                   @click="openLockOrUnlockModal(contact)"
                 >
-                  <VcIcon name="ban" class="mr-2 text-base leading-none text-black" />
+                  <VcIcon name="ban" class="mr-2 text-[--color-neutral-900]" />
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.block_user") }}</span>
                 </button>
 
                 <button type="button" class="flex items-center whitespace-nowrap p-3" @click="openDeleteModal(contact)">
-                  <VcIcon name="x" class="mr-2 text-xl leading-none text-[color:var(--color-danger)]" />
+                  <VcIcon name="x" class="mr-2 text-[--color-danger-500]" />
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.delete") }}</span>
                 </button>
               </VcActionDropdownMenu>
