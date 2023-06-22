@@ -70,7 +70,7 @@ function onFocusOut() {
 }
 
 function onKeydown(e: KeyboardEvent) {
-  if (e.key === "e" || e.key === "-" || e.key === "." || e.key === ",") {
+  if (e.key.toLowerCase() === "e" || e.key === "-" || e.key === "." || e.key === ",") {
     e.preventDefault();
   }
 }
