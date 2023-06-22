@@ -103,26 +103,35 @@
     </div>
 
     <template #actions="{ close }">
-      <VcButton :to="{ name: 'Cart' }" class="w-full sm:w-36" @click="close()">
-        {{ $t("common.buttons.view_cart") }}
-      </VcButton>
+      <div class="flex w-full flex-wrap gap-2">
+        <VcButton :to="{ name: 'Cart' }" class="w-full sm:me-auto sm:w-36" @click="close()">
+          {{ $t("common.buttons.view_cart") }}
+        </VcButton>
 
-      <VcButton
-        class="w-full sm:w-36"
-        @click="
-          close();
-          $emit('confirm');
-        "
-      >
-        {{ $t("common.buttons.ok") }}
-      </VcButton>
+        <VcButton class="w-full sm:w-36" variant="outline" @click="print()">
+          {{ $t("common.buttons.print") }}
+        </VcButton>
+
+        <VcButton
+          class="w-full sm:w-36"
+          @click="
+            close();
+            $emit('confirm');
+          "
+        >
+          {{ $t("common.buttons.ok") }}
+        </VcButton>
+      </div>
     </template>
   </VcPopup>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import moment from "moment";
+import { computed, inject } from "vue";
+import { useI18n } from "vue-i18n";
 import { useProductsRoutes } from "@/core/composables";
+import { configInjectionKey } from "@/core/injection-keys";
 import { VcButton } from "@/ui-kit/components";
 import type { ItemForAddBulkItemsToCartResultsPopupType } from "@/shared/cart";
 
@@ -141,7 +150,10 @@ const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
 });
 
+const config = inject(configInjectionKey, {});
+
 const links = useProductsRoutes(props.items, { productIdProperty: "productId" });
+const { t } = useI18n();
 
 const groups = computed<GroupType[]>(() => {
   const result: GroupType[] = [];
@@ -166,4 +178,118 @@ const groups = computed<GroupType[]>(() => {
 
   return result;
 });
+
+function getTableRowsHtml(items: ItemForAddBulkItemsToCartResultsPopupType[]) {
+  let rows = "";
+
+  items.forEach((item: ItemForAddBulkItemsToCartResultsPopupType) => {
+    rows += `
+    <tr class="even:bg-[--color-neutral-50]">
+      <td class="px-2.5 py-2">${item.name}</td>
+      <td class="px-2.5 py-2">${item.sku}</td>
+      <td class="px-2.5 py-2">${item.quantity}</td>
+    </tr>`;
+  });
+
+  return rows;
+}
+
+function print() {
+  const logo = config?.logo_image;
+  const htmlStyle = document.documentElement.attributes.getNamedItem("style")?.textContent;
+  const styleLinks = Array.from(document.head.querySelectorAll("link[rel=stylesheet], style"))
+    .map((el) => el.outerHTML)
+    .join("");
+
+  const headerHtml = `
+  <header class="flex justify-between items-start">
+    <img class="h-7" src="${logo}" alt="">
+
+    <div class="p-2 border border-[--color-neutral-100] rounded text-xs">
+      <div class="font-black">${t("common.labels.created_date")}</div>
+      <div class="mt-1">${moment().format("DD MMMM YYYY")}</div>
+    </div>
+  </header>`;
+
+  let contentHtml = "";
+
+  groups.value.forEach((group) => {
+    contentHtml += `
+    <div class="space-y-3">
+      <h3 class="flex items-center gap-1.5 text-sm font-bold">
+        <svg class="vc-icon vc-icon--size--sm text-[--color-secondary-300] flex-none">
+          <use href="/static/icons/basic/${
+            group.name === "added" ? "check-circle" : group.name === "not_added" ? "exclamation-circle" : ""
+          }.svg#icon" />
+        </svg>
+        ${t(`shared.cart.add_bulk_items_to_cart_results_popup.groups.${group.name}`)}
+      </h3>
+
+      <div class="overflow-hidden border border-[--color-neutral-100] rounded">
+        <table class="w-full border-collapse text-xs">
+          <thead class="bg-[--color-neutral-50] font-bold text-left">
+            <th class="px-2.5 py-2 w-1/2">
+              ${t("shared.cart.add_bulk_items_to_cart_results_popup.labels.product_name")}
+            </th>
+            <th class="px-2.5 py-2 w-1/6">
+              ${t("shared.cart.add_bulk_items_to_cart_results_popup.labels.sku")}
+            </th>
+            <th class="px-2.5 py-2 w-2/6">
+              ${t("shared.cart.add_bulk_items_to_cart_results_popup.labels.quantity")}
+            </th>
+          </thead>
+
+          ${getTableRowsHtml(group.items)}
+        </table>
+      </div>
+    </div>`;
+  });
+
+  const footerHtml = `
+  <div class="flex items-center justify-between py-3 text-xs">
+    <div>
+      &copy;
+      ${new Date().getFullYear()}
+      <strong>${t("shared.layout.footer.company_name")}</strong>.
+      ${t("shared.layout.footer.all_rights_reserved")}
+    </div>
+
+    <div>
+      ${t("shared.layout.footer.asp_net_e_commerce_platform")}
+      ${t("shared.layout.footer.by_virto")}
+    </div>
+  </div>`;
+
+  const printWindow = window.open("", "print")!;
+
+  printWindow.document.write(`
+  <html style="${htmlStyle}">
+    <head>${styleLinks}</head>
+    <body class="font-lato">
+      <div class="flex flex-col mx-auto h-full min-h-screen w-full max-w-[1024px] p-6 print:p-0">
+        ${headerHtml}
+
+        <div class="grow mt-6 px-4 space-y-6">
+          <h2 class="text-xl font-bold uppercase">
+            ${t("shared.cart.add_bulk_items_to_cart_results_popup.print.title")}
+          </h2>
+
+          ${contentHtml}
+        </div>
+
+        ${footerHtml}
+      </div>
+    </body>
+  </html>`);
+
+  printWindow.onload = () => {
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
+  };
+
+  printWindow.document.close();
+  printWindow.focus();
+}
 </script>
