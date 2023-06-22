@@ -23,8 +23,8 @@ Required.args = {
   required: true,
 };
 
-export const Error = Template.bind({});
-Error.args = {
+export const ErrorState = Template.bind({});
+ErrorState.args = {
   required: true,
   error: true,
 };

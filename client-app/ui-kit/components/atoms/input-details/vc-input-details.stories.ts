@@ -31,8 +31,8 @@ Counter.args = {
   counter: true,
 };
 
-export const Error = Template.bind({});
-Error.args = {
+export const ErrorState = Template.bind({});
+ErrorState.args = {
   ...Counter.args,
   message: "Error message",
   error: true,

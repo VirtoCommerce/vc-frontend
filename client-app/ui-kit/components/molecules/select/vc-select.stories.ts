@@ -55,8 +55,8 @@ Required.args = {
   required: true,
 };
 
-export const Error = Template.bind({});
-Error.args = {
+export const ErrorState = Template.bind({});
+ErrorState.args = {
   ...Required.args,
   modelValue: "Belgium",
   error: true,
