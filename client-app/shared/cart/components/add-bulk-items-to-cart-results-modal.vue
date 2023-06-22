@@ -212,15 +212,21 @@ function print() {
   </header>`;
 
   let contentHtml = "";
+  const iconName = (groupName: string) => {
+    switch (groupName) {
+      case "added":
+        return "check-circle";
+      case "not_added":
+        return "exclamation-circle";
+    }
+  };
 
   groups.value.forEach((group) => {
     contentHtml += `
     <div class="space-y-3">
       <h3 class="flex items-center gap-1.5 text-sm font-bold">
         <svg class="vc-icon vc-icon--size--sm text-[--color-secondary-300] flex-none">
-          <use href="/static/icons/basic/${
-            group.name === "added" ? "check-circle" : group.name === "not_added" ? "exclamation-circle" : ""
-          }.svg#icon" />
+          <use href="/static/icons/basic/${iconName(group.name)}.svg#icon" />
         </svg>
         ${t(`shared.cart.add_bulk_items_to_cart_results_popup.groups.${group.name}`)}
       </h3>
