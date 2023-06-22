@@ -6,6 +6,12 @@ export function getBaseUrl(supportedLocales: string[]): string {
   return supportedLocales.includes(localeInPath) ? `/${localeInPath}/` : "";
 }
 
+export function getReturnUrlValue(): string | null {
+  const { searchParams } = new URL(location.href);
+  // FIXME: The `ReturnUrl` parameter is hardcoded in vc-storefront
+  return searchParams.get("returnUrl") || searchParams.get("ReturnUrl");
+}
+
 export function sleep(ms: number, resolvedValue?: any): Promise<any> {
   return new Promise((resolve) => setTimeout(resolve, ms, resolvedValue));
 }

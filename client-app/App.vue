@@ -15,8 +15,9 @@
 <script setup lang="ts">
 import { computedEager } from "@vueuse/core";
 import { Head as PageHead } from "@vueuse/head";
-import { markRaw } from "vue";
+import { markRaw, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { setupBroadcastGlobalListeners } from "@/broadcast";
 import { useNavigations } from "@/core/composables";
 import { useCart } from "@/shared/cart";
 import { NotificationsHost } from "@/shared/notification";
@@ -62,6 +63,8 @@ const pagesWithFullCartLoad: RouteRecordName[] = ["Cart", "CheckoutDefaults"];
 if (!pagesWithFullCartLoad.includes(route.name!)) {
   fetchShortCart();
 }
+
+onMounted(setupBroadcastGlobalListeners);
 </script>
 
 <style lang="scss">

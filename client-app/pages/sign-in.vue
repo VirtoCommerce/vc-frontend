@@ -12,12 +12,11 @@
 
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
-import { useRoute } from "vue-router";
 import { usePageHead } from "@/core/composables";
+import { getReturnUrlValue } from "@/core/utilities";
 import { SignInForm } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 
-const { query } = useRoute();
 const { t } = useI18n();
 
 usePageHead({
@@ -25,7 +24,6 @@ usePageHead({
 });
 
 async function onSignIn() {
-  // FIXME: The `ReturnUrl` parameter is hardcoded in vc-storefront
-  location.href = (query.returnUrl as string) || (query.ReturnUrl as string) || "/";
+  location.href = getReturnUrlValue() || "/";
 }
 </script>
