@@ -138,7 +138,7 @@ import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { configInjectionKey } from "@/core/injection-keys";
-import { getFilterExpressionForCategorySubtree } from "@/core/utilities";
+import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice } from "@/core/utilities";
 import { useSearchBar } from "../../composables";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
@@ -206,7 +206,7 @@ const isExistResults = computed(
 
 async function searchAndShowDropdownResults() {
   const COLUMNS = 5;
-  const { catalogId } = globals;
+  const { catalogId, currencyCode } = globals;
   const { search_product_phrase_suggestions_enabled, search_static_content_suggestions_enabled } =
     themeContext.value.settings;
 
@@ -221,9 +221,19 @@ async function searchAndShowDropdownResults() {
     return;
   }
 
+  const { catalog_empty_categories_enabled, zero_price_product_enabled } = themeContext.value.settings;
+  const filterExpression = catalog_empty_categories_enabled
+    ? undefined
+    : [
+        getFilterExpressionForCategorySubtree({ catalogId }),
+        getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode),
+      ]
+        .filter(Boolean)
+        .join(" ");
+
   const params: GetSearchResultsParamsType = {
     keyword: searchPhrase.value,
-    filter: getFilterExpressionForCategorySubtree({ catalogId }),
+    filter: filterExpression,
     categories: {
       itemsPerPage: CATEGORIES_ITEMS_PER_COLUMN * COLUMNS,
     },
