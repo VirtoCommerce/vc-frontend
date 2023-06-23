@@ -213,7 +213,7 @@
         :pages="pages"
         :page="page"
         :item-actions-builder="itemActionsBuilder"
-        layout="table-auto"
+        layout="table-fixed"
         @header-click="applySorting"
         @page-changed="changePage"
       >
@@ -231,7 +231,7 @@
               {{ contact.extended.roles[0]?.name }}
             </td>
 
-            <td class="px-4 py-2.5">
+            <td class="w-1/4 truncate px-4 py-2.5">
               {{ contact.extended.emails[0] }}
             </td>
 
