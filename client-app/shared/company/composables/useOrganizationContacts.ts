@@ -6,12 +6,18 @@ import {
   lockOrganizationContact,
   removeMemberFromOrganization as _removeMemberFromOrganization,
   unlockOrganizationContact,
+  changeOrganizationContactRole,
 } from "@/core/api/graphql";
 import { DEFAULT_PAGE_SIZE, SORT_ASCENDING } from "@/core/constants";
 import { getSortingExpression, Logger } from "@/core/utilities";
-import { convertToExtendedContact } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
-import type { ContactType, InputRemoveMemberFromOrganizationType } from "@/core/api/graphql/types";
+import { convertToExtendedContact } from "../utils";
+import type {
+  ContactType,
+  CustomIdentityResultType,
+  InputChangeOrganizationContactRoleType,
+  InputRemoveMemberFromOrganizationType,
+} from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 import type { ExtendedContactType } from "@/shared/company";
 import type { MaybeRef } from "@vueuse/core";
@@ -118,6 +124,21 @@ export default function useOrganizationContacts(organizationId: MaybeRef<string>
     await fetchContacts();
   }
 
+  async function changeContactOrganizationRole(
+    payload: InputChangeOrganizationContactRoleType
+  ): Promise<CustomIdentityResultType | undefined> {
+    loading.value = true;
+
+    try {
+      return await changeOrganizationContactRole(payload);
+    } catch (e) {
+      Logger.error(`${useOrganizationContacts.name}.${changeContactOrganizationRole.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     sort,
     itemsPerPage,
@@ -128,6 +149,7 @@ export default function useOrganizationContacts(organizationId: MaybeRef<string>
     lockContact,
     unlockContact,
     removeMemberFromOrganization,
+    changeContactOrganizationRole,
     pages: readonly(pages),
     loading: readonly(loading),
     contacts: computed(() => contacts.value),

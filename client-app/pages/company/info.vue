@@ -46,7 +46,7 @@
             v-if="userCanEditOrganization"
             size="sm"
             variant="outline"
-            @click="openAddOrUpdateCompanyAddressDialog()"
+            @click="openAddOrUpdateCompanyAddressModal()"
           >
             <span class="sm:hidden">{{ $t("pages.company.info.buttons.add_new_address_mobile") }}</span>
             <span class="hidden sm:inline">{{ $t("pages.company.info.buttons.add_new_address") }}</span>
@@ -67,7 +67,7 @@
           </template>
 
           <template v-if="userCanEditOrganization" #button>
-            <VcButton prepend-icon="plus" @click="openAddOrUpdateCompanyAddressDialog()">
+            <VcButton prepend-icon="plus" @click="openAddOrUpdateCompanyAddressModal()">
               {{ $t("pages.company.info.buttons.add_new_address") }}
             </VcButton>
           </template>
@@ -191,7 +191,7 @@
                     <button
                       type="button"
                       class="flex items-center whitespace-nowrap p-3"
-                      @click="openAddOrUpdateCompanyAddressDialog(address)"
+                      @click="openAddOrUpdateCompanyAddressModal(address)"
                     >
                       <i class="fas fa-pencil-alt mr-2 text-base leading-none text-[color:var(--color-warning)]" />
                       <span class="text-15 font-medium">{{ $t("common.buttons.edit") }}</span>
@@ -203,7 +203,7 @@
                       :class="{ 'text-gray-400': address.isDefault }"
                       :title="address.isDefault ? $t('pages.company.info.address_not_delete_message') : undefined"
                       class="flex items-center whitespace-nowrap p-3"
-                      @click="openDeleteAddressDialog(address)"
+                      @click="openDeleteAddressModal(address)"
                     >
                       <i
                         :class="{ 'text-[color:var(--color-danger)]': !address.isDefault }"
@@ -240,7 +240,7 @@ import { string } from "yup";
 import { usePageHead } from "@/core/composables";
 import { AddressType, XApiPermissions } from "@/core/enums";
 import { useUser } from "@/shared/account";
-import { AddOrUpdateCompanyAddressDialog, useOrganization, useOrganizationAddresses } from "@/shared/company";
+import { AddOrUpdateCompanyAddressModal, useOrganization, useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import type { MemberAddressType } from "@/core/api/graphql/types";
@@ -346,12 +346,12 @@ async function saveOrganizationName() {
   });
 }
 
-async function openDeleteAddressDialog(address: MemberAddressType) {
+async function openDeleteAddressModal(address: MemberAddressType) {
   if (address.isDefault) {
     return;
   }
 
-  const closeDeleteAddressDialog = openPopup({
+  const closeDeleteAddressModal = openPopup({
     component: "VcConfirmationDialog",
     props: {
       variant: "danger",
@@ -379,15 +379,15 @@ async function openDeleteAddressDialog(address: MemberAddressType) {
           page.value -= 1;
         }
 
-        closeDeleteAddressDialog();
+        closeDeleteAddressModal();
       },
     },
   });
 }
 
-async function openAddOrUpdateCompanyAddressDialog(address?: MemberAddressType): Promise<void> {
-  const closeAddOrUpdateAddressDialog = openPopup({
-    component: AddOrUpdateCompanyAddressDialog,
+async function openAddOrUpdateCompanyAddressModal(address?: MemberAddressType): Promise<void> {
+  const closeAddOrUpdateAddressModal = openPopup({
+    component: AddOrUpdateCompanyAddressModal,
     props: {
       address,
       loading: loadingAddresses,
@@ -402,7 +402,7 @@ async function openAddOrUpdateCompanyAddressDialog(address?: MemberAddressType):
           single: true,
         });
 
-        closeAddOrUpdateAddressDialog();
+        closeAddOrUpdateAddressModal();
       },
     },
   });
@@ -419,7 +419,7 @@ function itemActionsBuilder(inputObject: MemberAddressType) {
         left: true,
         classes: inputObject.isDefault ? "bg-gray-200" : "bg-[color:var(--color-danger)]",
         clickHandler(address: MemberAddressType) {
-          openDeleteAddressDialog(address);
+          openDeleteAddressModal(address);
         },
       },
       {
@@ -427,7 +427,7 @@ function itemActionsBuilder(inputObject: MemberAddressType) {
         title: t("common.buttons.edit"),
         classes: "bg-gray-550",
         clickHandler(address: MemberAddressType) {
-          openAddOrUpdateCompanyAddressDialog(address);
+          openAddOrUpdateCompanyAddressModal(address);
         },
       }
     );

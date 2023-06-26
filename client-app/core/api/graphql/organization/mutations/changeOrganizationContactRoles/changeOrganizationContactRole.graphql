@@ -1,0 +1,10 @@
+mutation ChangeOrganizationContactRole($command: InputChangeOrganizationContactRoleType!) {
+  changeOrganizationContactRole(command: $command) {
+    succeeded
+    errors {
+      code
+      parameter
+      description
+    }
+  }
+}
