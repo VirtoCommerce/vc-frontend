@@ -8,7 +8,7 @@
         v-if="$can($permissions.storefront.CanInviteUsers)"
         variant="outline"
         class="flex-none"
-        @click="openInviteDialog"
+        @click="openInviteModal"
       >
         <span class="md:hidden">{{ $t("pages.company.members.buttons.invite") }}</span>
         <span class="hidden md:inline">{{ $t("pages.company.members.buttons.invite_members") }}</span>
@@ -213,7 +213,7 @@
         :pages="pages"
         :page="page"
         :item-actions-builder="itemActionsBuilder"
-        layout="table-auto"
+        layout="table-fixed"
         @header-click="applySorting"
         @page-changed="changePage"
       >
@@ -231,7 +231,7 @@
               {{ contact.extended.roles[0]?.name }}
             </td>
 
-            <td class="px-4 py-2.5">
+            <td class="w-1/4 truncate px-4 py-2.5">
               {{ contact.extended.emails[0] }}
             </td>
 
@@ -256,18 +256,22 @@
 
             <td v-if="userCanEditOrganization" class="px-5 text-right">
               <VcActionDropdownMenu v-if="contact.id !== user.memberId">
-                <!--<button type="button" class="flex items-center p-3 whitespace-nowrap">
-                  <i class="fas fa-pencil-alt mr-2 leading-none text-base text-[color:var(--color-warning)]" />
+                <button
+                  type="button"
+                  class="flex items-center whitespace-nowrap p-3"
+                  @click="openEditCustomerRoleModal(contact)"
+                >
+                  <VcIcon name="pencil" class="mr-2 text-[--color-warning-500]" />
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.edit_role") }}</span>
-                </button>-->
+                </button>
 
                 <button
                   v-if="contact.status === ContactStatus.Locked"
                   type="button"
                   class="flex items-center whitespace-nowrap p-3"
-                  @click="openLockOrUnlockDialog(contact, true)"
+                  @click="openLockOrUnlockModal(contact, true)"
                 >
-                  <i class="fas fa-check mr-2 text-base leading-none text-[color:var(--color-success)]" />
+                  <VcIcon name="check" class="mr-2 text-[--color-success-500]" />
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.unblock_user") }}</span>
                 </button>
 
@@ -275,18 +279,14 @@
                   v-else
                   type="button"
                   class="flex items-center whitespace-nowrap p-3"
-                  @click="openLockOrUnlockDialog(contact)"
+                  @click="openLockOrUnlockModal(contact)"
                 >
-                  <i class="fas fa-ban mr-2 text-base leading-none text-black" />
+                  <VcIcon name="ban" class="mr-2 text-[--color-neutral-900]" />
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.block_user") }}</span>
                 </button>
 
-                <button
-                  type="button"
-                  class="flex items-center whitespace-nowrap p-3"
-                  @click="openDeleteDialog(contact)"
-                >
-                  <i class="fas fa-times mr-2 text-xl leading-none text-[color:var(--color-danger)]" />
+                <button type="button" class="flex items-center whitespace-nowrap p-3" @click="openDeleteModal(contact)">
+                  <VcIcon name="x" class="mr-2 text-[--color-danger-500]" />
                   <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.delete") }}</span>
                 </button>
               </VcActionDropdownMenu>
@@ -351,20 +351,24 @@ import { breakpointsTailwind, computedEager, onClickOutside, useBreakpoints, use
 import { computed, onMounted, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
+import { B2B_ROLES } from "@/core/constants";
 import { XApiPermissions } from "@/core/enums";
 import { getFilterExpressionFromFacets } from "@/core/utilities";
 import { PageToolbarBlock, useUser } from "@/shared/account";
 import {
   ContactStatus,
+  EditCustomerRoleModal,
   FilterFacet,
-  InviteMemberDialog,
+  InviteMemberModal,
   RoleIcon,
   useOrganizationContacts,
   useOrganizationContactsFilterFacets,
 } from "@/shared/company";
+import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
 import type { ExtendedContactType } from "@/shared/company";
+import type { INotification } from "@/shared/notification";
 
 const { t } = useI18n();
 
@@ -390,6 +394,7 @@ const {
   lockContact,
   unlockContact,
   removeMemberFromOrganization,
+  changeContactOrganizationRole,
 } = useOrganizationContacts(organization.value!.id);
 const {
   selectableFacets,
@@ -403,6 +408,7 @@ const {
 } = useOrganizationContactsFilterFacets();
 const { openPopup } = usePopup();
 const breakpoints = useBreakpoints(breakpointsTailwind);
+const notifications = useNotifications();
 
 const isMobile = breakpoints.smaller("lg");
 
@@ -513,9 +519,9 @@ function hideFilters() {
   resetSelectableToAppliedFacets();
 }
 
-function openInviteDialog() {
+function openInviteModal() {
   openPopup({
-    component: InviteMemberDialog,
+    component: InviteMemberModal,
     props: {
       onResult(succeed: boolean) {
         if (succeed) {
@@ -526,8 +532,8 @@ function openInviteDialog() {
   });
 }
 
-function openLockOrUnlockDialog(contact: ExtendedContactType, isUnlock?: boolean): void {
-  const closeLockOrUnlockDialog = openPopup({
+function openLockOrUnlockModal(contact: ExtendedContactType, isUnlock?: boolean): void {
+  const closeLockOrUnlockModal = openPopup({
     component: "VcConfirmationDialog",
     props: {
       variant: "info",
@@ -541,14 +547,14 @@ function openLockOrUnlockDialog(contact: ExtendedContactType, isUnlock?: boolean
         } else {
           await lockContact(contact);
         }
-        closeLockOrUnlockDialog();
+        closeLockOrUnlockModal();
       },
     },
   });
 }
 
-function openDeleteDialog(contact: ExtendedContactType): void {
-  const closeDeleteDialog = openPopup({
+function openDeleteModal(contact: ExtendedContactType): void {
+  const closeDeleteModal = openPopup({
     component: "VcConfirmationDialog",
     props: {
       variant: "danger",
@@ -563,7 +569,43 @@ function openDeleteDialog(contact: ExtendedContactType): void {
           contactId: contact.id,
           organizationId: organization.value!.id,
         });
-        closeDeleteDialog();
+        closeDeleteModal();
+      },
+    },
+  });
+}
+
+function openEditCustomerRoleModal(contact: ExtendedContactType): void {
+  const closeEditCustomerRoleModal = openPopup({
+    component: EditCustomerRoleModal,
+    props: {
+      roles: B2B_ROLES,
+      currentRoleId: contact.extended.roles[0]?.id,
+      loading: contactsLoading,
+
+      async onConfirm(selectedRoleId: string): Promise<void> {
+        const result = await changeContactOrganizationRole({
+          userId: contact.securityAccounts![0].id,
+          roleIds: [selectedRoleId],
+        });
+
+        const notification: INotification = {
+          duration: 5000,
+          single: true,
+        };
+
+        if (result?.succeeded) {
+          notifications.success({ ...notification, text: t("common.messages.role_update_successfull") });
+
+          await fetchContacts();
+        } else {
+          notifications.error({
+            ...notification,
+            text: t("common.messages.role_update_failed", [result?.errors?.join(" ")]),
+          });
+        }
+
+        closeEditCustomerRoleModal();
       },
     },
   });
@@ -580,7 +622,7 @@ function itemActionsBuilder(item: ExtendedContactType) {
             title: t("pages.company.members.buttons.unblock_user"),
             classes: "bg-[color:var(--color-success)]",
             clickHandler(contact: ExtendedContactType) {
-              openLockOrUnlockDialog(contact, true);
+              openLockOrUnlockModal(contact, true);
             },
           }
         : {
@@ -588,26 +630,24 @@ function itemActionsBuilder(item: ExtendedContactType) {
             title: t("pages.company.members.buttons.block_user"),
             classes: "bg-[color:#292D3B]",
             clickHandler(contact: ExtendedContactType) {
-              openLockOrUnlockDialog(contact);
+              openLockOrUnlockModal(contact);
             },
           },
-      /*
       {
         icon: "fas fa-pencil-alt",
         title: t("pages.company.members.buttons.edit_role"),
         classes: "bg-gray-550",
         clickHandler(contact: ExtendedContactType) {
-          console.log(contact);
+          openEditCustomerRoleModal(contact);
         },
       },
-      */
       {
         icon: "fas fa-trash-alt",
         title: t("pages.company.members.buttons.delete"),
         left: true,
         classes: "bg-[color:var(--color-danger)]",
         clickHandler(contact: ExtendedContactType) {
-          openDeleteDialog(contact);
+          openDeleteModal(contact);
         },
       }
     );

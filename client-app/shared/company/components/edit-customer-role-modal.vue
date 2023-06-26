@@ -1,0 +1,64 @@
+<template>
+  <VcPopup :title="$t('common.titles.change_role')" modal-width="max-w-md">
+    <div class="space-y-4 p-6">
+      <div v-for="role in roles" :key="role.id" class="flex items-start gap-2">
+        <div class="pt-0.5">
+          <VcRadioButton v-model="selectedRoleId" :value="role.id" />
+        </div>
+        <div class="grow">
+          <b>{{ role.name }}</b>
+          <div v-if="role.description">
+            {{ role.description }}
+          </div>
+        </div>
+        <div class="pt-0.5">
+          <RoleIcon :role-id="role.id" />
+        </div>
+      </div>
+    </div>
+
+    <template #actions="{ close }">
+      <div class="flex grow items-center justify-between gap-16">
+        <VcButton :disabled="loading" color="secondary" variant="outline" full-width @click="close">
+          {{ $t("common.buttons.cancel") }}
+        </VcButton>
+
+        <VcButton
+          full-width
+          :disabled="selectedRoleId === currentRoleId"
+          :loading="loading"
+          @click="$emit('confirm', selectedRoleId)"
+        >
+          {{ $t("common.buttons.save") }}
+        </VcButton>
+      </div>
+    </template>
+  </VcPopup>
+</template>
+
+<script setup lang="ts">
+import { ref, watchEffect } from "vue";
+import { VcPopup, VcRadioButton } from "@/ui-kit/components";
+import RoleIcon from "./role-icon.vue";
+import type { ExtendedRoleType } from "@/core/types";
+
+interface IEmits {
+  (event: "confirm", value: string): void;
+}
+
+defineEmits<IEmits>();
+
+const props = defineProps<IProps>();
+
+interface IProps {
+  currentRoleId?: string;
+  roles: ExtendedRoleType[];
+  loading: boolean;
+}
+
+const selectedRoleId = ref<string>();
+
+watchEffect(() => {
+  selectedRoleId.value = props.currentRoleId;
+});
+</script>
