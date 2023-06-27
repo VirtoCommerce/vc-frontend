@@ -7,7 +7,7 @@
     </template>
 
     <template #default="{ item }">
-      <div class="flex flex-wrap gap-1.5">
+      <div class="flex max-w-[16rem] flex-wrap gap-1.5 md:max-w-none">
         <VcAddToCart
           v-if="!item.deleted"
           class="w-full"
