@@ -12,6 +12,7 @@ import {
 import { useFetch } from "@/core/composables";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
+import { pageReloadEvent, useBroadcast, userReloadEvent } from "@/shared/broadcast";
 import type {
   AccountCreationResultType,
   CustomIdentityResultType,
@@ -33,12 +34,13 @@ import type {
 const loading = ref(false);
 const user = ref<UserType>();
 
-const isAuthenticated = eagerComputed<boolean>(() => !!user.value?.userName && user.value.userName !== "Anonymous");
+const isAuthenticated = computed<boolean>(() => !!user.value?.userName && user.value.userName !== "Anonymous");
 const isCorporateMember = computed<boolean>(() => !!user.value?.contact?.organizationId);
 const organization = eagerComputed<Organization | null>(() => user.value?.contact?.organizations?.items?.[0] ?? null);
 const operator = computed<UserType | null>(() => user.value?.operator ?? null);
 
 export default function useUser() {
+  const broadcast = useBroadcast();
   const { innerFetch } = useFetch();
 
   function checkPermissions(...permissions: string[]): boolean {
@@ -51,10 +53,15 @@ export default function useUser() {
     return access;
   }
 
-  async function fetchUser() {
+  async function fetchUser(withBroadcast = false) {
     try {
       loading.value = true;
+
       user.value = await getMe();
+
+      if (withBroadcast) {
+        broadcast.emit(userReloadEvent);
+      }
     } catch (e) {
       Logger.error(`${useUser.name}.${fetchUser.name}`, e);
       throw e;
@@ -66,10 +73,13 @@ export default function useUser() {
   async function updateUser(personalData: UserPersonalData): Promise<IdentityResultType> {
     try {
       loading.value = true;
+
       const result = await updatePersonalData(personalData);
+
       if (result.succeeded) {
-        await fetchUser();
+        await fetchUser(true);
       }
+
       return result;
     } catch (e) {
       Logger.error(`${useUser.name}.${updatePersonalData.name}`, e);
@@ -111,7 +121,14 @@ export default function useUser() {
   async function signMeIn(payload: SignMeIn): Promise<IdentityResultType> {
     try {
       loading.value = true;
-      return await innerFetch<IdentityResultType, SignMeIn>("/storefrontapi/account/login", "POST", payload);
+
+      const result = await innerFetch<IdentityResultType, SignMeIn>("/storefrontapi/account/login", "POST", payload);
+
+      if (result.succeeded) {
+        broadcast.emit(pageReloadEvent);
+      }
+
+      return result;
     } catch (e) {
       Logger.error(`${useUser.name}.${signMeIn.name}`, e);
       throw e;
@@ -182,8 +199,8 @@ export default function useUser() {
   async function signMeOut(): Promise<void> {
     try {
       loading.value = true;
-      const url = "/storefrontapi/account/logout";
-      await innerFetch(url);
+      await innerFetch("/storefrontapi/account/logout");
+      broadcast.emit(pageReloadEvent);
     } catch (e) {
       Logger.error(`${useUser.name}.${signMeOut.name}`, e);
       throw e;

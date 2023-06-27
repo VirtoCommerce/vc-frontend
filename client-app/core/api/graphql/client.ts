@@ -2,11 +2,14 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import { ApolloClient } from "apollo-client";
 import { onError } from "apollo-link-error";
 import { HttpLink } from "apollo-link-http";
+import { pageReloadEvent, useBroadcast } from "@/shared/broadcast";
 import type { FetchPolicy } from "apollo-client";
 
 const fetchPolicy: FetchPolicy = "no-cache";
 
 const httpLink = new HttpLink({ uri: `/xapi/graphql` });
+
+const broadcast = useBroadcast();
 
 const errorHandler = onError(({ graphQLErrors = [] }) => {
   for (let l = graphQLErrors.length, i = 0; i < l; i += 1) {
@@ -15,6 +18,7 @@ const errorHandler = onError(({ graphQLErrors = [] }) => {
     } = graphQLErrors[i];
 
     if (code === "Unauthorized") {
+      broadcast.emit(pageReloadEvent);
       const { hash, pathname, search } = location;
       location.href = `/sign-in?returnUrl=${pathname + search + hash}`;
       return;
