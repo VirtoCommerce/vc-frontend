@@ -5,7 +5,6 @@ export { default as DeleteWishlistsModal } from "./delete-wishlist-modal.vue";
 export { default as WishlistCard } from "./wishlist-card.vue";
 export { default as WishlistCardSkeleton } from "./wishlist-card-skeleton.vue";
 export { default as WishlistLineItems } from "./wishlist-line-items.vue";
-export { default as WishlistLineItem } from "./wishlist-line-item.vue";
 export { default as WishlistProductItem } from "./wishlist-product-item.vue";
 export { default as WishlistProductItemSkeleton } from "./wishlist-product-item-skeleton.vue";
 export { default as DeleteWishlistProductModal } from "./delete-wishlist-product-modal.vue";
