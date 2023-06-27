@@ -20,9 +20,9 @@
     </div>
 
     <!-- table body -->
-    <div v-if="preparedLineItems.length" class="vc-line-items__body">
+    <div v-if="items.length" class="vc-line-items__body">
       <VcLineItem
-        v-for="item in preparedLineItems"
+        v-for="item in items"
         :key="item.id"
         :image-url="item.imageUrl"
         :name="item.name"
@@ -50,7 +50,7 @@
     </div>
 
     <!-- table footer -->
-    <div class="vc-line-items__foot">
+    <div v-if="!disableSubtotal" class="vc-line-items__foot">
       <div class="vc-line-items__subtotal">
         <span class="vc-line-items__subtotal-label">{{ $t("common.labels.subtotal") }}:</span>
         <span class="vc-line-items__subtotal-sum">{{ $n(subtotal, "currency") }}</span>
@@ -62,19 +62,18 @@
 <script setup lang="ts">
 import { sumBy } from "lodash";
 import { computed } from "vue";
-import { prepareLineItems } from "@/core/utilities";
-import type { LineItemType, OrderLineItemType, QuoteItemType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 
 interface IEmits {
-  (event: "remove:item", value: LineItemType): void;
+  (event: "remove:item", value: PreparedLineItemType): void;
 }
 
 interface IProps {
   disabled?: boolean;
   readonly?: boolean;
   removable?: boolean;
-  items?: LineItemType[] | OrderLineItemType[] | QuoteItemType[];
+  items?: PreparedLineItemType[];
+  disableSubtotal?: boolean;
 }
 
 defineEmits<IEmits>();
@@ -82,9 +81,7 @@ const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
 });
 
-const preparedLineItems = computed<PreparedLineItemType[]>(() => prepareLineItems(props.items));
-
-const subtotal = computed<number>(() => sumBy(props.items, (item: LineItemType) => item.extendedPrice?.amount));
+const subtotal = computed<number>(() => sumBy(props.items, (item: PreparedLineItemType) => item.extendedPrice?.amount));
 </script>
 
 <style lang="scss">

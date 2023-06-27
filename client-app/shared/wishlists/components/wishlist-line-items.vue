@@ -1,44 +1,47 @@
 <template>
-  <div class="vc-wishlist-line-items">
-    <!-- table header -->
-    <div class="vc-wishlist-line-items__header">
-      <div class="vc-wishlist-line-items__product">
-        {{ $t("common.labels.product") }}
-      </div>
-      <div class="vc-wishlist-line-items__properties">
-        {{ $t("common.labels.properties") }}
-      </div>
-      <div class="vc-wishlist-line-items__price">
-        {{ $t("common.labels.price_per_item") }}
-      </div>
-      <div class="vc-wishlist-line-items__quantity">
+  <VcLineItems :items="items" removable disable-subtotal @remove:item="$emit('remove:listItem', $event)">
+    <template #titles>
+      <div class="ps-2">
         {{ $t("common.labels.quantity") }}
       </div>
-      <div class="vc-wishlist-line-items__remove-button"></div>
-    </div>
+    </template>
 
-    <!-- table body -->
-    <div v-if="items.length" class="vc-wishlist-line-items__body">
-      <WishlistLineItem
-        v-for="item in items"
-        :key="item.id"
-        :item="item"
-        @update:cart-item-quantity="changeCartItemQuantity"
-        @update:list-item-quantity="changeItemQuantity"
-        @remove="$emit('remove:listItem', item)"
-      />
-    </div>
+    <template #default="{ item }">
+      <div class="flex flex-wrap gap-1.5">
+        <VcAddToCart
+          v-if="!item.deleted"
+          class="w-full"
+          :model-value="item.quantity"
+          :min-quantity="item.minQuantity"
+          :max-quantity="item.maxQuantity"
+          :count-in-cart="item.countInCart"
+          :disabled="addToCartDisabled(item)"
+          @update:model-value="changeItemQuantity(item.sku, $event)"
+          @update:cart-item-quantity="changeCartItemQuantity(item.sku, $event)"
+        />
 
-    <div v-else class="vc-wishlist-line-items__empty">
-      <VcAlert color="warning" icon>
-        {{ $t("common.messages.empty_wish_list") }}
-      </VcAlert>
-    </div>
-  </div>
+        <VcInStock
+          :is-in-stock="item.availabilityData?.isInStock"
+          :is-available="!item.deleted"
+          :availability-data="item.availabilityData"
+          :quantity="item.availabilityData?.availableQuantity"
+          :is-digital="item.productType === ProductType.Digital"
+        />
+
+        <VcCountInCart :product-id="item.productId" />
+      </div>
+    </template>
+
+    <!-- Line item Alerts
+    <template #after-content>
+      <VcAlert color="danger" icon>Line item error</VcAlert>
+    </template>
+    -->
+  </VcLineItems>
 </template>
 
 <script setup lang="ts">
-import WishlistLineItem from "./wishlist-line-item.vue";
+import { ProductType } from "@/core/enums";
 import type { InputNewBulkItemType, LineItemType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 
@@ -55,81 +58,21 @@ interface IProp {
 const emit = defineEmits<IEmits>();
 defineProps<IProp>();
 
-function changeCartItemQuantity(item: InputNewBulkItemType): void {
-  emit("update:cartItem", item);
+function addToCartDisabled(item: PreparedLineItemType) {
+  return (
+    !item.actualPrice ||
+    !item.availabilityData?.isAvailable ||
+    !item.availabilityData?.isInStock ||
+    !item.availabilityData?.isBuyable ||
+    (!item.availabilityData?.availableQuantity && item.productType !== ProductType.Digital)
+  );
 }
 
-function changeItemQuantity(item: InputNewBulkItemType): void {
-  emit("update:listItem", item);
+function changeCartItemQuantity(sku: string, quantity: number): void {
+  emit("update:cartItem", { productSku: sku, quantity });
+}
+
+function changeItemQuantity(sku: string, quantity: number): void {
+  emit("update:listItem", { productSku: sku, quantity });
 }
 </script>
-
-<style scoped lang="scss">
-.vc-wishlist-line-items {
-  @media (min-width: theme("screens.md")) {
-    @apply border rounded bg-white divide-y;
-  }
-
-  &__header {
-    @apply hidden;
-
-    @media (min-width: theme("screens.md")) {
-      @apply grid gap-x-3 px-4 py-3 text-sm font-bold;
-
-      grid-template-columns: 200px 1fr 170px min-content;
-      grid-template-areas: "product properties quantity remove-button";
-    }
-
-    @media (min-width: theme("screens.xl")) {
-      grid-template-columns: 250px 1fr 120px 207px min-content;
-      grid-template-areas: "product properties price quantity remove-button";
-    }
-  }
-
-  &__product {
-    grid-area: product;
-  }
-
-  &__properties {
-    grid-area: properties;
-  }
-
-  &__price {
-    @apply hidden;
-
-    grid-area: price;
-
-    @media (min-width: theme("screens.xl")) {
-      @apply block pr-4 text-right;
-    }
-  }
-
-  &__quantity {
-    @apply hidden;
-
-    grid-area: quantity;
-
-    @media (min-width: theme("screens.md")) {
-      @apply block pl-4 text-left;
-    }
-  }
-
-  &__remove-button {
-    @apply w-8;
-
-    grid-area: remove-button;
-  }
-
-  &__body {
-    @apply flex flex-col gap-6;
-
-    @media (min-width: theme("screens.md")) {
-      @apply gap-0 divide-y;
-    }
-  }
-
-  &__empty {
-    @apply p-3;
-  }
-}
-</style>

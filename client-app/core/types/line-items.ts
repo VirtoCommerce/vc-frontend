@@ -44,7 +44,7 @@ export type PreparedLineItemType = {
   quantity?: number;
   deleted?: boolean;
   route?: RouteLocationRaw;
-  properties: Property[];
+  properties?: Property[];
   minQuantity?: number;
   maxQuantity?: number;
   availabilityData?: AvailabilityData;
