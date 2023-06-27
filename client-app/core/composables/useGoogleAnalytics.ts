@@ -1,4 +1,6 @@
 import { sumBy } from "lodash";
+import { IS_CLIENT } from "@/core/constants";
+import { Logger } from "@/core/utilities";
 import { globals } from "../globals";
 import { useAppContext } from "./useAppContext";
 import type { AnyLineItemType } from "../types";
@@ -16,7 +18,7 @@ type EventParamsExtendedType = EventParamsType & { item_list_id?: string; item_l
 
 const { storeSettings } = useAppContext();
 
-const isAvailableGtag: Readonly<boolean> = Boolean(storeSettings.googleAnalyticsEnabled && window.gtag);
+const isAvailableGtag: Readonly<boolean> = Boolean(IS_CLIENT && storeSettings.googleAnalyticsEnabled && window.gtag);
 
 function getCategories(breadcrumbs: Breadcrumb[] = []): Record<string, string> {
   const categories: Record<string, string> = {};
@@ -74,6 +76,8 @@ function getCartEventParams(cart: CartType): EventParamsType {
 function sendEvent(eventName: Gtag.EventNames | string, eventParams?: EventParamsType): void {
   if (isAvailableGtag) {
     window.gtag("event", eventName, eventParams);
+  } else {
+    Logger.debug("[GA]", eventName, eventParams);
   }
 }
 
