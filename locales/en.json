@@ -36,6 +36,7 @@
       "new_address": "New address",
       "review_order": "Review order",
       "show_order": "Show order",
+      "print": "Print",
       "print_order": "Print order",
       "place_order": "Place order",
       "create_quote": "Add cart items to quote",
@@ -85,6 +86,7 @@
       "shipping_cost": "Shipping cost",
       "status": "Status",
       "date": "Date",
+      "created_date": "Created date",
       "sort_by": "Sort by:",
       "sku": "Item #",
       "item": "Item",
@@ -148,7 +150,9 @@
       "save_new_product_quantity": "Do you want to save new quantity by product lines?",
       "address_deletion_successful": "Address has been successfully deleted",
       "cart_contains_deleted_products": "Cart contains products, that cannot be purchased any more. Please remove those products and try once again",
-      "unknown_error": "An error occurred, please try again later."
+      "unknown_error": "An error occurred, please try again later.",
+      "role_update_successfull": "The customer role has been updated successfully.",
+      "role_update_failed": "Errors occurred during the role updating: {0}"
     },
     "placeholders": {
       "enter_value": "Please enter value",
@@ -202,7 +206,8 @@
       "edit_address": "Edit address",
       "addresses": "Addresses",
       "delete_address": "Delete address",
-      "remove_products": "Remove products"
+      "remove_products": "Remove products",
+      "change_role": "Change role"
     },
     "roles": {
       "org-maintainer": "Organization maintainer",
@@ -460,6 +465,9 @@
           "sku": "SKU",
           "product_name": "Product name",
           "quantity": "Quantity"
+        },
+        "print": {
+          "title": "Office Appliances"
         }
       },
       "clear_cart_modal": {

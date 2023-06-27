@@ -1,4 +1,4 @@
-import { ContactStatus } from "@/shared/company";
+import { ContactStatus } from "../types";
 import type { ContactType, RoleType } from "@/core/api/graphql/types";
 import type { ContactDisplayStatusType, ExtendedContactType } from "@/shared/company";
 

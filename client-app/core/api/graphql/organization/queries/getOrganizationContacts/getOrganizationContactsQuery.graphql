@@ -17,6 +17,7 @@ query GetOrganizationContacts(
         emails
         status
         securityAccounts {
+          id
           email
           roles {
             id
