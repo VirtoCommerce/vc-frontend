@@ -1,5 +1,5 @@
 <template>
-  <VcLineItems :items="items">
+  <VcLineItems :items="preparedLineItems">
     <template #titles>
       <div class="min-w-[5.5rem] text-center">
         {{ $t("common.labels.quantity") }}
@@ -27,15 +27,19 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import { prepareLineItems } from "@/core/utilities";
 import type { LineItemType, OrderLineItemType } from "@/core/api/graphql/types";
 
 interface IProps {
   items?: (OrderLineItemType | LineItemType)[];
 }
 
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
 });
+
+const preparedLineItems = computed(() => prepareLineItems(props.items));
 </script>
 
 <style scoped lang="scss">

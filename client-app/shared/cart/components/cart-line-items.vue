@@ -1,6 +1,6 @@
 <template>
   <VcLineItems
-    :items="items"
+    :items="preparedLineItems"
     :disabled="disabled"
     :readonly="readonly"
     removable
@@ -50,6 +50,7 @@
 import { computed } from "vue";
 import { useCartValidationErrorTranslator } from "@/core/composables";
 import { ProductType } from "@/core/enums";
+import { prepareLineItems } from "@/core/utilities";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -71,6 +72,8 @@ const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
   validationErrors: () => [],
 });
+
+const preparedLineItems = computed(() => prepareLineItems(props.items));
 
 const getValidationErrorTranslation = useCartValidationErrorTranslator();
 
