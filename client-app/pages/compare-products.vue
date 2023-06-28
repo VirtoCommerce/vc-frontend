@@ -34,12 +34,8 @@
             {{ $t("pages.compare.header_block.differences_checkbox_label") }}
           </VcCheckbox>
 
-          <VcButton variant="outline" @click="clearCompareList">
-            {{
-              isMobile
-                ? $t("pages.compare.header_block.clear_button_mobile")
-                : $t("pages.compare.header_block.clear_button_desktop")
-            }}
+          <VcButton variant="outline" @click="openClearListModal">
+            {{ $t("pages.compare.header_block.clear_button") }}
           </VcButton>
         </div>
       </div>
@@ -150,6 +146,8 @@ import { getPropertyValue } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
 import { useProducts } from "@/shared/catalog";
 import { useCompareProducts } from "@/shared/compare";
+import { usePopup } from "@/shared/popup";
+import { VcConfirmationDialog } from "@/ui-kit/components";
 
 interface ICompareProductProperties {
   [key: string]: { label: string; values: string[] };
@@ -172,6 +170,7 @@ const { fetchProducts, products } = useProducts();
 const { clearCompareList, productsLimit, removeFromCompareList, productsIds } = useCompareProducts();
 const productsRoutes = useProductsRoutes(products);
 const breadcrumbs = useBreadcrumbs([{ title: t("pages.compare.links.compare_products") }]);
+const { openPopup, closePopup } = usePopup();
 
 const showOnlyDifferences = ref(false);
 
@@ -214,6 +213,22 @@ function getProperties() {
         return property?.value || property?.valueType === PropertyValueType.Boolean ? getPropertyValue(property) : "-";
       }),
     };
+  });
+}
+
+function openClearListModal() {
+  openPopup({
+    component: VcConfirmationDialog,
+    props: {
+      variant: "danger",
+      title: t("shared.compare.clear_list_modal.title"),
+      text: t("shared.compare.clear_list_modal.message"),
+      noIcon: true,
+      onConfirm() {
+        clearCompareList();
+        closePopup();
+      },
+    },
   });
 }
 
