@@ -74,20 +74,6 @@
       <template #sidebar>
         <OrderSummary :cart="cart!" :no-shipping="allItemsAreDigital" footnote>
           <template #footer>
-            <!-- Purchase order number -->
-            <VcActionInput
-              v-if="$cfg.checkout_purchase_order_enabled && !$cfg.checkout_multistep_enabled"
-              v-model="purchaseOrderNumberOld"
-              :label="$t('common.labels.purchase_order_number')"
-              :placeholder="$t('common.placeholders.purchase_order_number')"
-              :applied="purchaseOrderNumberIsApplied"
-              :disabled="loading"
-              :max-length="128"
-              class="mt-4"
-              @apply="setPurchaseOrderNumber"
-              @deny="removePurchaseOrderNumber"
-            />
-
             <!-- Promotion code -->
             <VcActionInput
               v-if="$cfg.checkout_coupon_enabled"
@@ -165,7 +151,7 @@ import { useRouter } from "vue-router";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { configInjectionKey } from "@/core/injection-keys";
 import { useUser } from "@/shared/account";
-import { GiftsSection, ProductsSection, useCart, useCoupon, usePurchaseOrderNumber } from "@/shared/cart";
+import { GiftsSection, ProductsSection, useCart, useCoupon } from "@/shared/cart";
 import { CartDeletedProductsModal } from "@/shared/cart/components";
 import {
   BillingDetailsSection,
@@ -218,12 +204,6 @@ const {
   setPaymentMethod,
   createOrderFromCart,
 } = useCheckout();
-const {
-  purchaseOrderNumber: purchaseOrderNumberOld,
-  purchaseOrderNumberIsApplied,
-  setPurchaseOrderNumber,
-  removePurchaseOrderNumber,
-} = usePurchaseOrderNumber();
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
   useCoupon();
 

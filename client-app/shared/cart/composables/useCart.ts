@@ -24,6 +24,7 @@ import {
 import { ProductType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { getLineItemsGroupedByVendor, Logger } from "@/core/utilities";
+import { cartReloadEvent, useBroadcast } from "@/shared/broadcast";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import { ClearCartModal } from "../components";
@@ -73,6 +74,7 @@ const hasValidationErrors = computedEager<boolean>(
 );
 
 export default function useCart() {
+  const broadcast = useBroadcast();
   const notifications = useNotifications();
   const { openPopup } = usePopup();
 
@@ -116,6 +118,7 @@ export default function useCart() {
 
     try {
       result = await _removeCart(cartId);
+      broadcast.emit(cartReloadEvent);
     } catch (e) {
       Logger.error(`${useCart.name}.${removeCart.name}`, e);
       throw e;
@@ -135,6 +138,7 @@ export default function useCart() {
 
     try {
       cart.value = await addItemToCart(productId, qty);
+      broadcast.emit(cartReloadEvent);
     } catch (e) {
       Logger.error(`${useCart.name}.${addToCart.name}`, e);
       throw e;
@@ -148,6 +152,7 @@ export default function useCart() {
 
     try {
       cart.value = await addItemsCart(items);
+      broadcast.emit(cartReloadEvent);
     } catch (e) {
       Logger.error(`${useCart.name}.${addItemsToCart.name}`, e);
       throw e;
@@ -161,6 +166,8 @@ export default function useCart() {
 
     try {
       const data = await addBulkItemsCart(items);
+
+      broadcast.emit(cartReloadEvent);
 
       cart.value = data.cart;
 
@@ -184,6 +191,7 @@ export default function useCart() {
 
     try {
       cart.value = await removeCartItem(lineItemId);
+      broadcast.emit(cartReloadEvent);
     } catch (e) {
       Logger.error(`${useCart.name}.${removeItem.name}`, e);
       throw e;
@@ -201,6 +209,7 @@ export default function useCart() {
 
     try {
       cart.value = await changeCartItemQuantity(lineItemId, qty, options);
+      broadcast.emit(cartReloadEvent);
     } catch (e) {
       Logger.error(`${useCart.name}.${changeItemQuantity.name}`, e);
       throw e;
@@ -227,6 +236,7 @@ export default function useCart() {
 
     try {
       cart.value = await addCoupon(couponCode);
+      broadcast.emit(cartReloadEvent);
     } catch (e) {
       Logger.error(`${useCart.name}.${addCartCoupon.name}`, e);
       throw e;
@@ -240,6 +250,7 @@ export default function useCart() {
 
     try {
       cart.value = await removeCoupon(couponCode);
+      broadcast.emit(cartReloadEvent);
     } catch (e) {
       Logger.error(`${useCart.name}.${removeCartCoupon.name}`, e);
       throw e;
@@ -253,6 +264,7 @@ export default function useCart() {
 
     try {
       cart.value = await changeCartComment(comment);
+      broadcast.emit(cartReloadEvent);
     } catch (e) {
       Logger.error(`${useCart.name}.${changeComment.name}`, e);
       throw e;
@@ -266,6 +278,7 @@ export default function useCart() {
 
     try {
       cart.value = await changePurchaseOrderNumber(purchaseOrderNumber);
+      broadcast.emit(cartReloadEvent);
     } catch (e) {
       Logger.error(`${useCart.name}.${updatePurchaseOrderNumber.name}`, e);
       throw e;
@@ -274,11 +287,20 @@ export default function useCart() {
     }
   }
 
-  async function updateShipment(newShipment: InputShipmentType): Promise<void> {
+  async function updateShipment(
+    newShipment: InputShipmentType,
+    options: { withBroadcast?: boolean } = {}
+  ): Promise<void> {
+    const { withBroadcast = false } = options;
+
     loading.value = true;
 
     try {
       cart.value = await addOrUpdateCartShipment(newShipment, cart.value?.id);
+
+      if (withBroadcast) {
+        broadcast.emit(cartReloadEvent);
+      }
     } catch (e) {
       Logger.error(`${useCart.name}.${updateShipment.name}`, e);
       throw e;
@@ -287,11 +309,17 @@ export default function useCart() {
     }
   }
 
-  async function removeShipment(shipmentId: string): Promise<void> {
+  async function removeShipment(shipmentId: string, options: { withBroadcast?: boolean } = {}): Promise<void> {
+    const { withBroadcast = false } = options;
+
     loading.value = true;
 
     try {
       cart.value = await _removeShipment(shipmentId, cart.value?.id);
+
+      if (withBroadcast) {
+        broadcast.emit(cartReloadEvent);
+      }
     } catch (e) {
       Logger.error(`${useCart.name}.${removeShipment.name}`, e);
       throw e;
@@ -300,11 +328,17 @@ export default function useCart() {
     }
   }
 
-  async function updatePayment(newPayment: InputPaymentType): Promise<void> {
+  async function updatePayment(newPayment: InputPaymentType, options: { withBroadcast?: boolean } = {}): Promise<void> {
+    const { withBroadcast = false } = options;
+
     loading.value = true;
 
     try {
       cart.value = await addOrUpdateCartPayment(newPayment, cart.value?.id);
+
+      if (withBroadcast) {
+        broadcast.emit(cartReloadEvent);
+      }
     } catch (e) {
       Logger.error(`${useCart.name}.${updatePayment.name}`, e);
       throw e;
@@ -318,6 +352,7 @@ export default function useCart() {
 
     try {
       cart.value = await addGiftItems(giftIds);
+      broadcast.emit(cartReloadEvent);
     } catch (e) {
       Logger.error(`${useCart.name}.${addGiftsToCart.name}`, e);
       throw e;
@@ -331,6 +366,7 @@ export default function useCart() {
 
     try {
       cart.value = await rejectGiftItems(giftLineItemIds);
+      broadcast.emit(cartReloadEvent);
     } catch (e) {
       Logger.error(`${useCart.name}.${removeGiftsFromCart.name}`, e);
       throw e;
@@ -365,6 +401,8 @@ export default function useCart() {
         single: true,
       });
     }
+
+    broadcast.emit(cartReloadEvent);
 
     loading.value = false;
 

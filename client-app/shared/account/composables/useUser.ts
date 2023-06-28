@@ -53,7 +53,9 @@ export default function useUser() {
     return access;
   }
 
-  async function fetchUser(withBroadcast = false) {
+  async function fetchUser(options: { withBroadcast?: boolean } = {}) {
+    const { withBroadcast = false } = options;
+
     try {
       loading.value = true;
 
@@ -77,7 +79,7 @@ export default function useUser() {
       const result = await updatePersonalData(personalData);
 
       if (result.succeeded) {
-        await fetchUser(true);
+        await fetchUser({ withBroadcast: true });
       }
 
       return result;

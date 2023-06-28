@@ -128,7 +128,7 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { debounce } from "lodash";
+import { useDebounceFn } from "@vueuse/core";
 import { useField, useForm } from "vee-validate";
 import { reactive, ref, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
@@ -217,7 +217,7 @@ const emailValidationData = reactive({
   isUnique: false,
 });
 
-const emailValidationDebounced = debounce(async (value: string, resolve: (value: boolean) => void) => {
+const emailValidationDebounced = useDebounceFn(async (value: string, resolve: (value: boolean) => void) => {
   emailValidationData.isUnique = await checkEmailUniqueness({ email: value });
   emailValidationData.isChecked = true;
   resolve(emailValidationData.isUnique);

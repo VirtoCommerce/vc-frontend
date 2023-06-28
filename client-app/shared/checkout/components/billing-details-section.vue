@@ -81,7 +81,7 @@
 
 <script setup lang="ts">
 import { useVModel } from "@vueuse/core";
-import { computed, watch } from "vue";
+import { computed } from "vue";
 import type { PaymentType, PaymentMethodType, ShipmentType, CartAddressType } from "@/core/api/graphql/types";
 
 interface IEmits {
@@ -108,7 +108,6 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const billingAddressEqualsShipping = useVModel(props, "addressEqualsShippingAddress", emit);
-
 const poNumber = useVModel(props, "purchaseOrderNumber", emit);
 
 const address = computed<CartAddressType | undefined>(() =>
@@ -121,13 +120,4 @@ const method = computed<PaymentMethodType | undefined>({
   get: () => props.methods.find((item) => item.code === props.payment?.paymentGatewayCode),
   set: (value?: PaymentMethodType) => value && emit("change:method", value),
 });
-
-watch(
-  () => props.purchaseOrderNumberEnabled,
-  (value: boolean) => {
-    if (!value) {
-      poNumber.value = "";
-    }
-  }
-);
 </script>
