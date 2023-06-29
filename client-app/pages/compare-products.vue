@@ -23,10 +23,15 @@
         <div class="flex flex-col space-y-1.5">
           <h1 class="text-black-800 text-3xl font-bold uppercase">{{ $t("pages.compare.header_block.title") }}</h1>
 
-          <span
-            class="mb-3 block"
-            v-html="$t('pages.compare.header_block.counter_message', [productsIds.length, productsLimit])"
-          ></span>
+          <i18n-t keypath="pages.compare.header_block.counter_message" scope="global" tag="span" class="mb-3 block">
+            <template #productsNumber>
+              <strong>{{ productsIds.length }}</strong>
+            </template>
+
+            <template #productsLimit>
+              <strong>{{ productsLimit }}</strong>
+            </template>
+          </i18n-t>
         </div>
 
         <div class="mb-5 flex grow items-start justify-between lg:mb-0">
@@ -34,12 +39,8 @@
             {{ $t("pages.compare.header_block.differences_checkbox_label") }}
           </VcCheckbox>
 
-          <VcButton variant="outline" @click="clearCompareList">
-            {{
-              isMobile
-                ? $t("pages.compare.header_block.clear_button_mobile")
-                : $t("pages.compare.header_block.clear_button_desktop")
-            }}
+          <VcButton variant="outline" @click="openClearListModal">
+            {{ $t("pages.compare.header_block.clear_button") }}
           </VcButton>
         </div>
       </div>
@@ -150,6 +151,8 @@ import { getPropertyValue } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
 import { useProducts } from "@/shared/catalog";
 import { useCompareProducts } from "@/shared/compare";
+import { usePopup } from "@/shared/popup";
+import { VcConfirmationDialog } from "@/ui-kit/components";
 
 interface ICompareProductProperties {
   [key: string]: { label: string; values: string[] };
@@ -172,6 +175,7 @@ const { fetchProducts, products } = useProducts();
 const { clearCompareList, productsLimit, removeFromCompareList, productsIds } = useCompareProducts();
 const productsRoutes = useProductsRoutes(products);
 const breadcrumbs = useBreadcrumbs([{ title: t("pages.compare.links.compare_products") }]);
+const { openPopup, closePopup } = usePopup();
 
 const showOnlyDifferences = ref(false);
 
@@ -214,6 +218,22 @@ function getProperties() {
         return property?.value || property?.valueType === PropertyValueType.Boolean ? getPropertyValue(property) : "-";
       }),
     };
+  });
+}
+
+function openClearListModal() {
+  openPopup({
+    component: VcConfirmationDialog,
+    props: {
+      variant: "danger",
+      title: t("shared.compare.clear_list_modal.title"),
+      text: t("shared.compare.clear_list_modal.message"),
+      noIcon: true,
+      onConfirm() {
+        clearCompareList();
+        closePopup();
+      },
+    },
   });
 }
 
