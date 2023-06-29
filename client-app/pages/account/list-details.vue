@@ -215,6 +215,7 @@ async function addAllListItemsToCart(): Promise<void> {
   openPopup({
     component: AddBulkItemsToCartResultsModal,
     props: {
+      listName: list.value.name,
       items: getItemsForAddBulkItemsToCartResultsPopup(wishlistItems.value, resultItems),
     },
   });

@@ -142,6 +142,7 @@ interface IEmits {
 }
 
 interface IProps {
+  listName: string;
   items?: ItemForAddBulkItemsToCartResultsPopupType[];
 }
 
@@ -217,7 +218,7 @@ function print() {
       case "added":
         return "check-circle";
       case "not_added":
-        return "exclamation-circle";
+        return "x-circle";
     }
   };
 
@@ -277,7 +278,7 @@ function print() {
 
         <div class="grow mt-6 px-4 space-y-6">
           <h2 class="text-xl font-bold uppercase">
-            ${t("shared.cart.add_bulk_items_to_cart_results_popup.print.title")}
+            ${props.listName}
           </h2>
 
           ${contentHtml}
