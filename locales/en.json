@@ -465,9 +465,6 @@
           "sku": "SKU",
           "product_name": "Product name",
           "quantity": "Quantity"
-        },
-        "print": {
-          "title": "Office Appliances"
         }
       },
       "clear_cart_modal": {
