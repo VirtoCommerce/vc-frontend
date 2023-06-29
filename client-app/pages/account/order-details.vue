@@ -187,6 +187,7 @@ async function reorderItems() {
     component: AddBulkItemsToCartResultsModal,
     props: {
       items: getItemsForAddBulkItemsToCartResultsPopup(items, resultItems),
+      listName: t("pages.account.order_details.title", [order.value?.number]),
     },
   });
 
