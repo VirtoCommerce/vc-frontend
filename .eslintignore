@@ -3,5 +3,6 @@
 client-app/core/api/graphql/types.ts
 node_modules
 assets
+scripts
 storybook-static
 !.storybook

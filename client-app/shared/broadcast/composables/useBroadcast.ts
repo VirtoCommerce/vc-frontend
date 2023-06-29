@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any,sonarjs/cognitive-complexity */
-import { tryOnScopeDispose, useEventListener } from "@vueuse/core";
+import { noop, tryOnScopeDispose, useEventListener } from "@vueuse/core";
 import type { InjectionEvent } from "../types";
 
 interface IUseBroadcastReturn {
@@ -122,13 +122,19 @@ function localStorageApiFactory(): IUseBroadcastReturn {
   return <IUseBroadcastReturn>{ on, off, emit };
 }
 
-const api = (() => {
-  if ("BroadcastChannel" in window) {
+const api = ((global) => {
+  if ("BroadcastChannel" in global) {
     return broadcastChannelApiFactory();
+  } else if ("localStorage" in global) {
+    return localStorageApiFactory();
   }
 
-  return localStorageApiFactory();
-})();
+  /**
+   * When there is no support for any of the APIs we use for messaging,
+   * it is sufficient to present an empty api.
+   */
+  return { on: noop, off: noop, emit: noop };
+})(globalThis);
 
 export function useBroadcast(): IUseBroadcastReturn {
   return api;
