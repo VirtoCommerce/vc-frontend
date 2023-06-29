@@ -67,15 +67,15 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const isParent = computed<boolean>(() => !!props.link.children?.length);
-const isLink = computed<boolean>(() => !!props.link.route && !isParent.value);
+const isLink = computed<boolean>(() => !!props.link.route);
 const preparedCount = computed<string>(() => numberToShortString(props.count));
 
 function click(navigate: () => Promise<void | NavigationFailure>) {
-  if (isLink.value) {
+  if (isParent.value) {
+    emit("select");
+  } else {
     navigate();
     emit("close");
-  } else {
-    emit("select");
   }
 }
 </script>

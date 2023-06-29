@@ -108,6 +108,7 @@
       },
       "corporate": {
         "id": "corporate",
+        "route": { "name": "Company" },
         "title": "shared.layout.header.mobile.corporate",
         "icon": "/static/images/dashboard/icons/company.svg#main",
         "children": [
