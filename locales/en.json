@@ -440,11 +440,7 @@
       },
       "clear_list_modal": {
         "title": "Confirm Clear",
-        "message": "Do you confirm removal of all products from the compare list?",
-        "buttons": {
-          "clear_list": "Clear list",
-          "cancel": "Cancel"
-        }
+        "message": "Do you confirm removal of all products from the compare list?"
       }
     },
     "cart": {
