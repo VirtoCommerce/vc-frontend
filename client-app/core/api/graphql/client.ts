@@ -2,12 +2,13 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import { ApolloClient } from "apollo-client";
 import { onError } from "apollo-link-error";
 import { HttpLink } from "apollo-link-http";
+import fetch from "isomorphic-fetch";
 import { pageReloadEvent, useBroadcast } from "@/shared/broadcast";
 import type { FetchPolicy } from "apollo-client";
 
 const fetchPolicy: FetchPolicy = "no-cache";
 
-const httpLink = new HttpLink({ uri: `/xapi/graphql` });
+const httpLink = new HttpLink({ uri: `/xapi/graphql`, fetch });
 
 const broadcast = useBroadcast();
 
