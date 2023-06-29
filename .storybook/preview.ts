@@ -2,19 +2,24 @@
 import { app } from "@storybook/vue3";
 import vueRouter from "storybook-vue3-router";
 import { createI18n } from "vue-i18n";
+import { setGlobals } from "../client-app/core/globals";
 import * as UIKitComponents from "../client-app/ui-kit/components";
 import SettingsData from "../config/settings_data.json";
 import en from "../locales/en.json";
+import type { I18n } from "../client-app/i18n";
 
 /* Project Styles */
 import "../client-app/assets/styles/main.scss";
 
-const i18n = createI18n({
+const i18n: I18n = createI18n({
+  legacy: false,
   locale: "en",
   messages: {
     en,
   },
 });
+
+setGlobals({ i18n });
 
 app.use(i18n);
 

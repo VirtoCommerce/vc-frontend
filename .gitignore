@@ -51,7 +51,7 @@ Thumbs.db
 # Custom
 config/draft
 config/drafts
-content/pages
+config/routes.json
 
 dist-ssr
 *.local
