@@ -218,7 +218,7 @@ function print() {
       case "added":
         return "check-circle";
       case "not_added":
-        return "exclamation-circle";
+        return "x-circle";
     }
   };
 
