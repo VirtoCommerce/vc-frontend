@@ -1242,7 +1242,7 @@
       },
       "header_block": {
         "title": "Compare products",
-        "counter_message": "<strong>{0}</strong> items out of <strong>{1}</strong> added",
+        "counter_message": "{productsNumber} items out of {productsLimit} added",
         "differences_checkbox_label": "Show differences only",
         "clear_button": "Clear list"
       },

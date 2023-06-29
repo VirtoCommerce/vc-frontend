@@ -23,10 +23,15 @@
         <div class="flex flex-col space-y-1.5">
           <h1 class="text-black-800 text-3xl font-bold uppercase">{{ $t("pages.compare.header_block.title") }}</h1>
 
-          <span
-            class="mb-3 block"
-            v-html="$t('pages.compare.header_block.counter_message', [productsIds.length, productsLimit])"
-          ></span>
+          <i18n-t keypath="pages.compare.header_block.counter_message" scope="global" tag="span" class="mb-3 block">
+            <template #productsNumber>
+              <strong>{{ productsIds.length }}</strong>
+            </template>
+
+            <template #productsLimit>
+              <strong>{{ productsLimit }}</strong>
+            </template>
+          </i18n-t>
         </div>
 
         <div class="mb-5 flex grow items-start justify-between lg:mb-0">
