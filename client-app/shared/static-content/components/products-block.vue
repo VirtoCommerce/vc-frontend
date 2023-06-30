@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, watchEffect } from "vue";
+import { watchEffect } from "vue";
 import { useProductsRoutes } from "@/core/composables";
 import { AddToCart } from "@/shared/cart";
 import { ProductCardGrid, useProducts } from "@/shared/catalog";
@@ -40,13 +40,6 @@ const { products, fetchProducts } = useProducts();
 const productsRoutes = useProductsRoutes(products);
 
 watchEffect(async () => {
-  await fetchProducts({
-    itemsPerPage: props.model.count || 4,
-    keyword: props.model.query,
-  });
-});
-
-onMounted(async () => {
   await fetchProducts({
     itemsPerPage: props.model.count || 4,
     keyword: props.model.query,
