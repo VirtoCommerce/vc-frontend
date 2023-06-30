@@ -82,7 +82,7 @@
             </VcSelect>
 
             <VcInput
-              v-if="purchaseOrderNumber"
+              v-if="isPurchaseOrderNumberEnabled"
               :model-value="purchaseOrderNumber"
               name="purchaseOrderNumber"
               readonly
@@ -99,16 +99,6 @@
     <template #sidebar>
       <OrderSummary :cart="cart!" :no-shipping="allItemsAreDigital" footnote>
         <template #footer>
-          <!-- Purchase order number -->
-          <VcActionInput
-            v-if="purchaseOrderNumberOld"
-            :model-value="purchaseOrderNumberOld"
-            :label="$t('common.labels.purchase_order_number')"
-            class="mt-4"
-            disabled
-            readonly
-          />
-
           <!-- Promotion code -->
           <transition name="slide-fade-top" mode="in-out" appear>
             <VcActionInput
@@ -146,7 +136,7 @@
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { OrderLineItems } from "@/shared/account";
-import { useCart, useCoupon, usePurchaseOrderNumber } from "@/shared/cart";
+import { useCart, useCoupon } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
 import type { CartAddressType } from "@/core/api/graphql/types";
 
@@ -162,9 +152,15 @@ const {
   allItemsAreDigital,
   fetchFullCart,
 } = useCart();
-const { billingAddressEqualsShipping, comment, canPayNow, isValidCheckout, createOrderFromCart, purchaseOrderNumber } =
-  useCheckout();
-const { purchaseOrderNumber: purchaseOrderNumberOld } = usePurchaseOrderNumber();
+const {
+  billingAddressEqualsShipping,
+  comment,
+  purchaseOrderNumber,
+  isPurchaseOrderNumberEnabled,
+  canPayNow,
+  isValidCheckout,
+  createOrderFromCart,
+} = useCheckout();
 const { couponCode } = useCoupon();
 
 const creatingOrder = ref(false);

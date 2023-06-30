@@ -20,7 +20,7 @@ export default function useOrganization() {
       loading.value = false;
     }
 
-    await fetchUser(true);
+    await fetchUser({ withBroadcast: true });
   }
 
   return {

@@ -15,3 +15,4 @@ import type { InjectionEvent } from "../types";
 
 export const pageReloadEvent = "page_reload" as InjectionEvent<void>;
 export const userReloadEvent = "user_reload" as InjectionEvent<void>;
+export const cartReloadEvent = "cart_reload" as InjectionEvent<void>;

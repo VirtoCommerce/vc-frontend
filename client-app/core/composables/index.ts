@@ -13,6 +13,7 @@ export * from "./useLanguages";
 export * from "./useListeners";
 export * from "./useNavigations";
 export * from "./usePageHead";
+export * from "./usePagesWithFullCartLoad";
 export * from "./useProductsRoutes";
 export * from "./useRouteQueryParam";
 export * from "./useThemeContext";

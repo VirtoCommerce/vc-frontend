@@ -18,13 +18,12 @@ import { Head as PageHead } from "@vueuse/head";
 import { markRaw, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { setupBroadcastGlobalListeners } from "@/broadcast";
-import { useNavigations } from "@/core/composables";
+import { useNavigations, usePagesWithFullCartLoad } from "@/core/composables";
 import { useCart } from "@/shared/cart";
 import { NotificationsHost } from "@/shared/notification";
 import { PopupHost } from "@/shared/popup";
 import { MainLayout, SecureLayout, useSearchBar } from "./shared/layout";
 import type { Component } from "vue";
-import type { RouteRecordName } from "vue-router";
 
 /** NOTE: As an example, here is the code for getting the settings from Liquid work context. */
 const _props = withDefaults(defineProps<{ settings?: string }>(), { settings: "{}" });
@@ -33,6 +32,7 @@ const _settings = JSON.parse(_props.settings); // eslint-disable-line @typescrip
 const route = useRoute();
 const router = useRouter();
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
+const { pagesWithFullCartLoad, registerPagesWithFullCartLoad } = usePagesWithFullCartLoad();
 const { fetchMenus } = useNavigations();
 const { fetchShortCart } = useCart();
 
@@ -53,14 +53,15 @@ router.beforeEach((to) => {
   }
 });
 
+registerPagesWithFullCartLoad("Cart", "CheckoutDefaults");
+
 fetchMenus();
 
 /**
  * NOTE: Load the short shopping cart.
  * Except for pages that load a full cart.
  */
-const pagesWithFullCartLoad: RouteRecordName[] = ["Cart", "CheckoutDefaults"];
-if (!pagesWithFullCartLoad.includes(route.name!)) {
+if (!pagesWithFullCartLoad.has(route.name!)) {
   fetchShortCart();
 }
 

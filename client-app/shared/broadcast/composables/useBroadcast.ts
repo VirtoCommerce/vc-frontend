@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any,sonarjs/cognitive-complexity */
 import { noop, tryOnScopeDispose, useEventListener } from "@vueuse/core";
+import { Logger } from "@/core/utilities";
 import type { InjectionEvent } from "../types";
 
 interface IUseBroadcastReturn {
@@ -49,6 +50,8 @@ function on(event: string, listener: (data: any) => void) {
 }
 
 function broadcast(event: string, data: any) {
+  Logger.debug("[Broadcast][Event]", event, data);
+
   if (!listeners[event]) {
     return;
   }
@@ -62,6 +65,8 @@ function broadcastChannelApiFactory(): IUseBroadcastReturn {
   channel.onmessage = ({ data: { event, data } }) => broadcast(event, data);
 
   function emit(event: string, data: any, includeSelf = false) {
+    Logger.debug("[Broadcast][Emit]", event, data);
+
     channel.postMessage({ event, data });
 
     if (includeSelf) {
@@ -78,6 +83,8 @@ function localStorageApiFactory(): IUseBroadcastReturn {
   const queue: Record<string, any[]> = {};
 
   function emit(event: string, data: any, includeSelf = false) {
+    Logger.debug("[Broadcast][Emit]", event, data);
+
     const key = prefix + event;
 
     if (storage.getItem(key) === null) {
