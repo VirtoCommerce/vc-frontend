@@ -1,8 +1,9 @@
-import { computed, inject, readonly, ref, shallowRef } from "vue";
+import { computed, inject, readonly, ref, shallowRef, triggerRef } from "vue";
 import { searchProducts } from "@/core/api/graphql/catalog";
 import { SortDirection } from "@/core/enums";
 import { configInjectionKey } from "@/core/injection-keys";
 import { Logger, rangeFacetToCommonFacet, termFacetToCommonFacet } from "@/core/utilities";
+import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
 import type { ProductsSearchParams } from "../types";
 import type { Product, RangeFacet, TermFacet } from "@/core/api/graphql/types";
 import type { FacetItemType } from "@/core/types";
@@ -25,6 +26,7 @@ export default (
     withImages = config.image_carousel_in_product_card_enabled,
     withZeroPrice = config.zero_price_product_enabled,
   } = options;
+  const broadcast = useBroadcast();
 
   const loading = ref(true);
   const loadingMore = ref(false);
@@ -33,6 +35,13 @@ export default (
   const facets = shallowRef<FacetItemType[]>([]);
   const total = ref(0);
   const pages = ref(1);
+
+  const productsById = computed(() =>
+    products.value.reduce((result, product, index) => {
+      result[product.id] = { index, product };
+      return result;
+    }, {} as Record<string, { index: number; product: Product }>)
+  );
 
   function setFacets({ termFacets = [], rangeFacets = [] }: { termFacets?: TermFacet[]; rangeFacets?: RangeFacet[] }) {
     if (config.product_filters_sorting) {
@@ -122,8 +131,26 @@ export default (
     }
   }
 
+  broadcast.on(productsInWishlistEvent, (eventItems) => {
+    let trigger = false;
+
+    eventItems.forEach(({ productId, inWishlist }) => {
+      const { index, product } = productsById.value[productId] ?? {};
+
+      if (product) {
+        products.value.splice(index, 1, { ...product, inWishlist });
+        trigger = true;
+      }
+    });
+
+    if (trigger) {
+      triggerRef(products);
+    }
+  });
+
   return {
     facets,
+    productsById,
     fetchProducts,
     fetchMoreProducts,
     getFacets,
@@ -132,6 +159,6 @@ export default (
     loading: readonly(loading),
     loadingMore: readonly(loadingMore),
     facetsLoading: readonly(facetsLoading),
-    products: computed(() => products.value),
+    products: computed(() => /** @see: https://github.com/vuejs/core/issues/8036 */ products.value.slice()),
   };
 };

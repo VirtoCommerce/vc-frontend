@@ -42,13 +42,13 @@
 
 <script setup lang="ts">
 import { ProductType } from "@/core/enums";
-import type { InputNewBulkItemType, LineItemType } from "@/core/api/graphql/types";
+import type { InputNewBulkItemType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 
 interface IEmits {
   (event: "update:cartItem", value: InputNewBulkItemType): void;
   (event: "update:listItem", value: InputNewBulkItemType): void;
-  (event: "remove:listItem", value: LineItemType): void;
+  (event: "remove:listItem", value: PreparedLineItemType): void;
 }
 
 interface IProp {

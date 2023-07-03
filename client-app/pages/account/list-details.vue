@@ -134,6 +134,7 @@ import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { prepareLineItem } from "@/core/utilities";
+import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
 import { useCart, getItemsForAddBulkItemsToCartResultsPopup, AddBulkItemsToCartResultsModal } from "@/shared/cart";
 import { ProductSkeletonGrid } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
@@ -162,6 +163,7 @@ const props = defineProps<IProps>();
 
 const { t } = useI18n();
 const ga = useGoogleAnalytics();
+const broadcast = useBroadcast();
 const { openPopup } = usePopup();
 const { loading: listLoading, list, fetchWishList, clearList, updateWishlistItemsQuantities } = useWishlists();
 const { loading: cartLoading, cart, addBulkItemsToCart, addToCart, changeItemQuantity } = useCart();
@@ -276,7 +278,7 @@ async function addOrUpdateCartItem(item: InputNewBulkItemType): Promise<void> {
   }
 }
 
-function openDeleteProductModal(item: LineItemType): void {
+function openDeleteProductModal(item: PreparedLineItemType): void {
   openPopup({
     component: DeleteWishlistProductModal,
     props: {
@@ -285,6 +287,8 @@ function openDeleteProductModal(item: LineItemType): void {
 
       async onResult(): Promise<void> {
         const previousPagesCount = pagesCount.value;
+
+        broadcast.emit(productsInWishlistEvent, [{ productId: item.productId, inWishlist: false }]);
 
         await fetchWishList(props.listId);
 

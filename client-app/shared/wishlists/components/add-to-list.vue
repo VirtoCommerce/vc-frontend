@@ -5,7 +5,7 @@
         <svg
           :class="[
             customClass,
-            isProductInList
+            product.inWishlist
               ? 'text-[color:var(--color-product-icon-active)]'
               : 'text-[color:var(--color-product-icon)]',
           ]"
@@ -24,9 +24,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useUser } from "@/shared/account";
+import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
 import { usePopup } from "@/shared/popup";
 import AddToWishlistsModal from "./add-to-wishlists-modal.vue";
 import type { Product } from "@/core/api/graphql/types";
@@ -45,13 +46,12 @@ const props = withDefaults(defineProps<IProps>(), {
 const { t } = useI18n();
 const { openPopup } = usePopup();
 const { isAuthenticated } = useUser();
-
-const isProductInList = ref(props.product.inWishlist);
+const broadcast = useBroadcast();
 
 const tooltipText = computed<string>(() => {
   if (!isAuthenticated.value) {
     return t("common.messages.wishlists_available_for_authorized");
-  } else if (isProductInList.value) {
+  } else if (props.product.inWishlist) {
     return t("pages.catalog.in_the_list_tooltip");
   } else {
     return t("pages.catalog.add_to_wishlist_tooltip");
@@ -67,8 +67,18 @@ function openAddToListModal() {
     component: AddToWishlistsModal,
     props: {
       product: props.product,
-
-      onResult: (isInList: boolean) => (isProductInList.value = isInList),
+      onResult: (isInList: boolean) => {
+        broadcast.emit(
+          productsInWishlistEvent,
+          [
+            {
+              productId: props.product.id,
+              inWishlist: isInList,
+            },
+          ],
+          true
+        );
+      },
     },
   });
 }
