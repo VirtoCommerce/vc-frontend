@@ -40,27 +40,17 @@
           {{ $t("pages.account.quote_details.shipping_address") }}
         </h4>
 
-        <div class="mt-2 flex flex-col gap-3 rounded border p-5 empty:hidden md:flex-row md:items-center">
-          <VcAddressInfo v-if="shippingAddress" class="grow text-15" :address="shippingAddress" />
-
-          <VcAlert v-else class="grow" color="warning" icon>
-            {{ $t("pages.account.quote_details.no_address_message") }}
-          </VcAlert>
-
-          <div class="flex justify-end">
-            <VcButton
-              :disabled="fetching"
-              :title="$t('common.buttons.edit')"
-              icon="pencil"
-              size="sm"
-              variant="outline"
-              @click="
-                userHasAddresses
-                  ? openSelectAddressModal(AddressType.Shipping)
-                  : openAddOrUpdateAddressModal(AddressType.Shipping, shippingAddress)
-              "
-            />
-          </div>
+        <div :class="['mt-2.5 grow divide-y rounded border p-5', { 'cursor-not-allowed bg-gray-50': fetching }]">
+          <VcAddressSelection
+            :placeholder="$t('shared.checkout.shipping_details_section.links.select_address')"
+            :address="shippingAddress"
+            :disabled="fetching"
+            @change="
+              userHasAddresses
+                ? openSelectAddressModal(AddressType.Shipping)
+                : openAddOrUpdateAddressModal(AddressType.Shipping, shippingAddress)
+            "
+          />
         </div>
       </VcSectionWidget>
 
@@ -70,7 +60,7 @@
           {{ $t("pages.account.quote_details.billing_address") }}
         </h4>
 
-        <div class="mt-2.5 rounded border p-5">
+        <div class="mt-2.5 space-y-1.5 rounded border p-5">
           <VcCheckbox
             :model-value="billingAddressEqualsShipping"
             :disabled="fetching"
@@ -79,37 +69,33 @@
             {{ $t("pages.account.quote_details.same_as_shipping_address") }}
           </VcCheckbox>
 
-          <div
-            v-if="!billingAddressEqualsShipping"
-            class="mt-4 flex flex-col gap-3 empty:hidden md:flex-row md:items-center"
-          >
-            <VcAddressInfo v-if="billingAddress" class="grow text-15" :address="billingAddress" />
-
-            <VcAlert v-else class="grow" color="warning" icon>
-              {{ $t("pages.account.quote_details.no_address_message") }}
-            </VcAlert>
-
-            <div class="flex justify-end">
-              <VcButton
-                :disabled="fetching"
-                :title="$t('common.buttons.edit')"
-                icon="pencil"
-                size="sm"
-                variant="outline"
-                @click="
-                  userHasAddresses
-                    ? openSelectAddressModal(AddressType.Billing)
-                    : openAddOrUpdateAddressModal(AddressType.Billing, billingAddress)
-                "
-              />
-            </div>
-          </div>
+          <VcAddressSelection
+            :placeholder="
+              shippingAddress && billingAddressEqualsShipping
+                ? $t('pages.account.quote_details.select_shipping_address')
+                : $t('pages.account.quote_details.select_billing_address')
+            "
+            :address="billingAddressEqualsShipping ? shippingAddress : billingAddress"
+            :readonly="billingAddressEqualsShipping"
+            :disabled="fetching"
+            class="min-h-[3.313rem]"
+            @change="
+              userHasAddresses
+                ? openSelectAddressModal(AddressType.Billing)
+                : openAddOrUpdateAddressModal(AddressType.Billing, billingAddress)
+            "
+          />
         </div>
       </VcSectionWidget>
 
       <div class="flex flex-wrap gap-5 px-6 py-7 lg:justify-end lg:p-0">
         <VcButton
-          :disabled="!quoteChanged || !quoteItemsValid || fetching"
+          :disabled="
+            !quoteChanged ||
+            (!quote.comment && !quoteItemsValid) ||
+            fetching ||
+            (shippingAddress && !billingAddress && !billingAddressEqualsShipping)
+          "
           class="flex-1 lg:min-w-[208px] lg:flex-none"
           variant="outline"
           @click="saveChanges"
@@ -129,7 +115,7 @@
 
 <script setup lang="ts">
 import { computedEager } from "@vueuse/core";
-import { cloneDeep, every, isEqual, remove } from "lodash";
+import { cloneDeep, every, isEqual, remove, pick } from "lodash";
 import { computed, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -203,15 +189,44 @@ const accountAddresses = computed<AnyAddressType[]>(() => {
     : personalAddresses.value;
 });
 const quoteChanged = computed<boolean>(() => !isEqual(originalQuote.value, quote.value));
-const quoteItemsValid = computed<boolean>(() =>
-  every(quote.value?.items, (item: QuoteItemType) => item.selectedTierPrice?.quantity > 0)
+const quoteItemsValid = computed<boolean>(
+  () =>
+    !!quote.value?.items?.length &&
+    every(quote.value?.items, (item: QuoteItemType) => item.selectedTierPrice?.quantity > 0)
 );
 const quoteValid = computed<boolean>(
   () =>
-    !!shippingAddress.value && (!!billingAddress.value || billingAddressEqualsShipping.value) && quoteItemsValid.value
+    !!shippingAddress.value &&
+    (!!billingAddress.value || billingAddressEqualsShipping.value) &&
+    (!!quote.value?.comment || quoteItemsValid.value)
 );
 
 const userHasAddresses = computedEager<boolean>(() => !!accountAddresses.value.length);
+
+const isBillingAddressEqualsShipping = computed<boolean>(() => {
+  if (shippingAddress.value && billingAddress.value) {
+    const fields = [
+      "city",
+      "countryCode",
+      "countryName",
+      "email",
+      "firstName",
+      "lastName",
+      "line1",
+      "line2",
+      "phone",
+      "postalCode",
+      "regionId",
+      "regionName",
+    ];
+
+    return isEqual(pick(shippingAddress.value, fields), pick(billingAddress.value, fields));
+  } else if (shippingAddress.value && !billingAddress.value) {
+    return true;
+  }
+
+  return false;
+});
 
 function accountAddressExists(address: AnyAddressType): boolean {
   return accountAddresses.value.some((item) => isEqualAddresses(item, address));
@@ -230,6 +245,10 @@ function setBillingAddressEqualsShippingAddress(): void {
   newBillingAddress.key = undefined;
   newBillingAddress.addressType = AddressType.Billing;
   setQuoteAddress(newBillingAddress);
+}
+
+function setBillingAddressEqualsShipping(): void {
+  billingAddressEqualsShipping.value = isBillingAddressEqualsShipping.value;
 }
 
 function openAddOrUpdateAddressModal(addressType: AddressType, currentAddress?: QuoteAddressType): void {
@@ -256,6 +275,8 @@ function openAddOrUpdateAddressModal(addressType: AddressType, currentAddress?: 
         } else {
           await addOrUpdatePersonalAddresses([addressToSave]);
         }
+
+        setBillingAddressEqualsShipping();
       },
     },
   });
@@ -275,6 +296,7 @@ function openSelectAddressModal(addressType: AddressType): void {
         const quoteAddress = convertToType<QuoteAddressType>({ ...selectedAddress, addressType });
 
         setQuoteAddress(quoteAddress);
+        setBillingAddressEqualsShipping();
         closePopup();
       },
 
@@ -307,10 +329,10 @@ async function saveChanges(): Promise<void> {
   });
 
   if (quote.value!.addresses?.length && !isEqual(quote.value!.addresses, originalQuote.value!.addresses)) {
-    if (billingAddressEqualsShipping.value) {
-      setBillingAddressEqualsShippingAddress();
-    }
     await updateAddresses(quote.value!.id, quote.value!.addresses);
+
+    setBillingAddressEqualsShippingAddress();
+    setBillingAddressEqualsShipping();
   }
 
   await fetchQuote({ id: props.quoteId });
@@ -359,5 +381,6 @@ watchEffect(async () => {
   await fetchQuote({ id: props.quoteId });
 
   originalQuote.value = cloneDeep(quote.value);
+  setBillingAddressEqualsShipping();
 });
 </script>

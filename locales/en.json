@@ -990,6 +990,8 @@
         "status": "@:common.labels.status",
         "no_items_message": "Quote request has not items",
         "save_changes_notification_success": "The quote request has been successfully saved",
+        "select_shipping_address": "select a shipping address",
+        "select_billing_address": "select a billing address",
         "line_items": {
           "product": "@:common.labels.product",
           "properties": "@:common.labels.properties",
