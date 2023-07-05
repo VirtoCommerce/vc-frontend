@@ -1,4 +1,4 @@
-import type { InjectionEvent } from "../types";
+import type { InjectionEvent, ProductInWishlistEventDataType } from "../types";
 
 /**
  * Designed to sync the value type between `emit()` and `on()`.
@@ -16,3 +16,4 @@ import type { InjectionEvent } from "../types";
 export const pageReloadEvent = "page_reload" as InjectionEvent<void>;
 export const userReloadEvent = "user_reload" as InjectionEvent<void>;
 export const cartReloadEvent = "cart_reload" as InjectionEvent<void>;
+export const productsInWishlistEvent = "products_in_wishlist" as InjectionEvent<ProductInWishlistEventDataType[]>;
