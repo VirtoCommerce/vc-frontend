@@ -115,7 +115,7 @@
 
 <script setup lang="ts">
 import { computedEager } from "@vueuse/core";
-import { cloneDeep, every, isEqual, remove, pick } from "lodash";
+import { cloneDeep, every, isEqual, remove } from "lodash";
 import { computed, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -205,22 +205,7 @@ const userHasAddresses = computedEager<boolean>(() => !!accountAddresses.value.l
 
 const isBillingAddressEqualsShipping = computed<boolean>(() => {
   if (shippingAddress.value && billingAddress.value) {
-    const fields = [
-      "city",
-      "countryCode",
-      "countryName",
-      "email",
-      "firstName",
-      "lastName",
-      "line1",
-      "line2",
-      "phone",
-      "postalCode",
-      "regionId",
-      "regionName",
-    ];
-
-    return isEqual(pick(shippingAddress.value, fields), pick(billingAddress.value, fields));
+    return isEqualAddresses(shippingAddress.value, billingAddress.value);
   } else if (shippingAddress.value && !billingAddress.value) {
     return true;
   }
