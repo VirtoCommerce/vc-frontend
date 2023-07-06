@@ -6,7 +6,9 @@
         {{ $t("common.labels.product") }}
       </div>
 
-      <div class="vc-line-items__properties">{{ $t("common.labels.properties") }}</div>
+      <div class="vc-line-items__properties">
+        {{ $t("common.labels.properties") }}
+      </div>
 
       <div class="vc-line-items__price">
         {{ $t("common.labels.price_per_item") }}

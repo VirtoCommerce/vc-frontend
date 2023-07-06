@@ -23,8 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { useThemeContext } from "@/core/composables";
+import { usePrice } from "@/core/composables";
 import type { MoneyType, PriceType } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -36,14 +35,5 @@ const props = withDefaults(defineProps<IProps>(), {
   priceColorClass: "text-[color:var(--color-price)]",
 });
 
-const { themeContext } = useThemeContext();
-
-const { show_prices_with_taxes } = themeContext.value.settings;
-
-const actualPrice = computed<MoneyType | undefined>(() =>
-  show_prices_with_taxes ? props.value?.actualWithTax : props.value?.actual
-);
-const listPrice = computed<MoneyType | undefined>(() =>
-  show_prices_with_taxes ? props.value?.listWithTax : props.value?.list
-);
+const { listPrice, actualPrice } = usePrice(props.value);
 </script>

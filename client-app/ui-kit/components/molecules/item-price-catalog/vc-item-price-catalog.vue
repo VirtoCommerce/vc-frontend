@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import { minBy } from "lodash";
 import { computed } from "vue";
-import { useThemeContext } from "@/core/composables";
+import { usePrice, useThemeContext } from "@/core/composables";
 import type { MoneyType, PriceType, VariationType } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -32,16 +32,12 @@ const props = withDefaults(defineProps<IProps>(), {
   priceColorClass: "text-[color:var(--color-price-current)]",
 });
 
+const { listPrice, actualPrice } = usePrice(props.value);
+
 const { themeContext } = useThemeContext();
 
 const { show_prices_with_taxes } = themeContext.value.settings;
 
-const actualPrice = computed<MoneyType | undefined>(() =>
-  show_prices_with_taxes ? props.value?.actualWithTax : props.value?.actual
-);
-const listPrice = computed<MoneyType | undefined>(() =>
-  show_prices_with_taxes ? props.value?.listWithTax : props.value?.list
-);
 const variationsMinPrice = computed<MoneyType | undefined>(() => {
   const variationWithMinPrice: VariationType | undefined = minBy(props.variations, (variation) =>
     show_prices_with_taxes ? variation.price?.actualWithTax : variation.price?.actual
