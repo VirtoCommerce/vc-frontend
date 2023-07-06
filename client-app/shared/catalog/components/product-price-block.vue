@@ -103,6 +103,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { stringFormat } from "@/core/utilities";
 import { useUser } from "@/shared/account";
+import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
 import { usePopup } from "@/shared/popup";
 import { AddToWishlistsModal } from "@/shared/wishlists";
 import type { Product } from "@/core/api/graphql/types";
@@ -118,6 +119,7 @@ const props = defineProps({
 const route = useRoute();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
+const broadcast = useBroadcast();
 const { t } = useI18n();
 
 const divUnderSharedPopover = shallowRef<HTMLElement | null>(null);
@@ -139,6 +141,9 @@ function openAddToListModal() {
     component: AddToWishlistsModal,
     props: {
       product: props.product,
+      onResult: (inWishlist: boolean) => {
+        broadcast.emit(productsInWishlistEvent, [{ inWishlist, productId: props.product.id }], true);
+      },
     },
   });
 }
