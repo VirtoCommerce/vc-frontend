@@ -190,7 +190,11 @@ const accountAddresses = computed<AnyAddressType[]>(() => {
     ? organizationsAddresses.value.map((address) => ({ ...address, firstName, lastName }))
     : personalAddresses.value;
 });
-const quoteChanged = computed<boolean>(() => !isEqual(originalQuote.value, quote.value));
+const quoteChanged = computed<boolean>(
+  () =>
+    !isEqual(originalQuote.value, quote.value) ||
+    (billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value)
+);
 const quoteItemsValid = computed<boolean>(
   () =>
     !!quote.value?.items?.length &&
@@ -315,7 +319,11 @@ async function saveChanges(): Promise<void> {
     }
   });
 
-  if (quote.value!.addresses?.length && !isEqual(quote.value!.addresses, originalQuote.value!.addresses)) {
+  if (
+    quote.value!.addresses?.length &&
+    (!isEqual(quote.value!.addresses, originalQuote.value!.addresses) ||
+      (billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value))
+  ) {
     if (billingAddressEqualsShipping.value) {
       setBillingAddressEqualsShippingAddress();
     }
