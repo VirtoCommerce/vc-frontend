@@ -150,6 +150,8 @@ export interface IThemeConfigPreset {
   color_footer_bottom_text?: string;
   color_footer_bottom_link?: string;
   color_footer_bottom_link_hover?: string;
+  // builder.io integration
+  builderIoKey?: string;
 }
 
 export interface IThemeConfig {
