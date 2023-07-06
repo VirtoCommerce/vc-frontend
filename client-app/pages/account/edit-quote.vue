@@ -40,7 +40,7 @@
           {{ $t("pages.account.quote_details.shipping_address") }}
         </h4>
 
-        <div :class="['mt-2.5 grow divide-y rounded border p-5', { 'cursor-not-allowed bg-gray-50': fetching }]">
+        <div :class="['mt-2.5 rounded border p-5', { 'cursor-not-allowed bg-[--color-neutral-50]': fetching }]">
           <VcAddressSelection
             :placeholder="$t('shared.checkout.shipping_details_section.links.select_address')"
             :address="shippingAddress"
@@ -60,7 +60,9 @@
           {{ $t("pages.account.quote_details.billing_address") }}
         </h4>
 
-        <div class="mt-2.5 space-y-1.5 rounded border p-5">
+        <div
+          :class="['mt-2.5 space-y-1.5 rounded border p-5', { 'cursor-not-allowed bg-[--color-neutral-50]': fetching }]"
+        >
           <VcCheckbox
             :model-value="billingAddressEqualsShipping"
             :disabled="fetching"
@@ -314,9 +316,12 @@ async function saveChanges(): Promise<void> {
   });
 
   if (quote.value!.addresses?.length && !isEqual(quote.value!.addresses, originalQuote.value!.addresses)) {
+    if (billingAddressEqualsShipping.value) {
+      setBillingAddressEqualsShippingAddress();
+    }
+
     await updateAddresses(quote.value!.id, quote.value!.addresses);
 
-    setBillingAddressEqualsShippingAddress();
     setBillingAddressEqualsShipping();
   }
 
