@@ -7,7 +7,7 @@ import type {
   LineItemsGroupsByVendorType,
   PreparedLineItemType,
 } from "../../types";
-import type { LineItemType, OrderLineItemType, QuoteItemType } from "@/core/api/graphql/types";
+import type { LineItemType, MoneyType, OrderLineItemType, QuoteItemType } from "@/core/api/graphql/types";
 
 export function isQuoteItemType(item: AnyLineItemType): item is QuoteItemType {
   return "proposalPrices" in item || "selectedTierPrice" in item;
@@ -60,23 +60,38 @@ export function extendLineItem<T extends AnyLineItemType>(item: T): ExtendedLine
   };
 }
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
-export function prepareLineItem(item: AnyLineItemType, countInCart?: number): PreparedLineItemType {
-  const productType = "productType" in item ? item.productType : undefined;
-  const isVariation = !!item.product?.masterVariation;
-
+function prepareItemPrices(item: AnyLineItemType): {
+  listPrice?: MoneyType;
+  listPriceWithTax?: MoneyType;
+  salePrice?: MoneyType;
+  salePriceWithTax?: MoneyType;
+  actualPrice?: MoneyType;
+  actualPriceWithTax?: MoneyType;
+  extendedPrice?: MoneyType;
+  extendedPriceWithTax?: MoneyType;
+} {
   const placedPrice = "placedPrice" in item ? item.placedPrice : undefined;
   const placedPriceWithTax = "placedPriceWithTax" in item ? item.placedPriceWithTax : undefined;
 
-  const listPrice = "listPrice" in item ? item.listPrice : placedPrice;
-  const listPriceWithTax = "listPriceWithTax" in item ? item.listPriceWithTax : placedPriceWithTax;
+  const salePrice = "salePrice" in item ? item.salePrice : undefined;
+  const salePriceWithTax = "salePriceWithTax" in item ? item.salePriceWithTax : undefined;
 
-  const actualPrice = placedPrice || ("salePrice" in item ? item.salePrice : undefined);
-  const actualPriceWithTax = placedPriceWithTax || ("salePriceWithTax" in item ? item.salePriceWithTax : undefined);
+  return {
+    listPrice: "listPrice" in item ? item.listPrice : placedPrice,
+    listPriceWithTax: "listPriceWithTax" in item ? item.listPriceWithTax : placedPriceWithTax,
+    salePrice: salePrice,
+    salePriceWithTax: salePriceWithTax,
+    actualPrice: placedPrice || salePrice,
+    actualPriceWithTax: placedPriceWithTax || salePriceWithTax,
+    extendedPrice: "extendedPrice" in item ? item.extendedPrice : undefined,
+    extendedPriceWithTax: "extendedPriceWithTax" in item ? item.extendedPriceWithTax : undefined,
+  };
+}
 
-  const extendedPrice = "extendedPrice" in item ? item.extendedPrice : undefined;
-  const extendedPriceWithTax = "extendedPriceWithTax" in item ? item.extendedPriceWithTax : undefined;
-
+export function prepareLineItem(item: AnyLineItemType, countInCart?: number): PreparedLineItemType {
+  const productType = "productType" in item ? item.productType : undefined;
+  const isVariation = !!item.product?.masterVariation;
+  const prices = prepareItemPrices(item);
   const quantity = isQuoteItemType(item) ? item.selectedTierPrice?.quantity : item.quantity;
   const inStockQuantity =
     "inStockQuantity" in item ? item.inStockQuantity : item.product?.availabilityData?.availableQuantity;
@@ -86,6 +101,7 @@ export function prepareLineItem(item: AnyLineItemType, countInCart?: number): Pr
     : getProductRoute(item.productId || item.product?.id || "", item.product?.slug);
 
   return {
+    ...prices,
     id: item.id,
     name: item.name || "",
     imageUrl: item.imageUrl,
@@ -93,12 +109,6 @@ export function prepareLineItem(item: AnyLineItemType, countInCart?: number): Pr
     productType,
     sku: item.sku,
     productId: item.productId,
-    listPrice,
-    listPriceWithTax,
-    actualPrice,
-    actualPriceWithTax,
-    extendedPrice,
-    extendedPriceWithTax,
     quantity,
     inStockQuantity,
     route,

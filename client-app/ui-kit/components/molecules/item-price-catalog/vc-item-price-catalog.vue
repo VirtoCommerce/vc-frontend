@@ -49,20 +49,4 @@ const variationsMinPrice = computed<MoneyType | undefined>(() => {
 
   return show_prices_with_taxes ? variationWithMinPrice?.price?.actualWithTax : variationWithMinPrice?.price?.actual;
 });
-
-/*const variationsMinPrice = computed(() => {
-  if (props.variations?.length) {
-    let min = props.variations[0].price?.actual;
-    let tmp;
-    for (let i = 1; i <= props.variations.length - 1; i++) {
-      tmp = props.variations[i].price?.actual;
-      if (tmp?.amount < min?.amount) {
-        min = tmp;
-      }
-    }
-    return min;
-  }
-
-  return null;
-});*/
 </script>
