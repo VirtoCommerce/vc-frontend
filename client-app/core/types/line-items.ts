@@ -39,8 +39,11 @@ export type PreparedLineItemType = {
   imageUrl?: string;
   inStockQuantity?: number;
   listPrice?: MoneyType;
+  listPriceWithTax?: MoneyType;
   actualPrice?: MoneyType;
+  actualPriceWithTax?: MoneyType;
   extendedPrice?: MoneyType;
+  extendedPriceWithTax?: MoneyType;
   quantity?: number;
   deleted?: boolean;
   route?: RouteLocationRaw;

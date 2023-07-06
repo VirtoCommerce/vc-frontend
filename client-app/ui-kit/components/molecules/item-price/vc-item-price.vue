@@ -2,37 +2,48 @@
   <div class="flex flex-col">
     <div class="flex space-x-1">
       <VcPriceDisplay
-        v-if="value?.list?.amount > value?.actual?.amount"
-        class="font-extrabold"
+        v-if="listPrice?.amount > actualPrice?.amount"
         :class="priceColorClass"
-        :value="value?.actual"
+        :value="actualPrice"
+        class="font-extrabold"
       />
-      <VcPriceDisplay v-else class="font-bold text-green-700" :value="value?.list" />
-      <span v-t="'common.suffixes.per_item'" class="hidden print:!block sm:inline md:hidden xl:inline"></span>
+      <VcPriceDisplay v-else :value="listPrice" class="font-bold text-green-700" />
+      <span class="hidden print:!block sm:inline md:hidden xl:inline">
+        {{ $t("common.suffixes.per_item") }}
+      </span>
     </div>
     <div class="leading-4">
       <VcPriceDisplay
-        v-if="value?.list?.amount > value?.actual?.amount"
+        v-if="listPrice?.amount > actualPrice?.amount"
+        :value="listPrice"
         class="text-xs font-semibold text-gray-400 line-through"
-        :value="value?.list"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import { useThemeContext } from "@/core/composables";
 import type { MoneyType, PriceType } from "@/core/api/graphql/types";
-import type { PropType } from "vue";
 
-defineProps({
-  value: {
-    type: Object as PropType<PriceType | { list: MoneyType; actual: MoneyType }>,
-    default: undefined,
-  },
+interface IProps {
+  value?: PriceType | { list: MoneyType; listWithTax: MoneyType; actual: MoneyType; actualWithTax: MoneyType };
+  priceColorClass?: string;
+}
 
-  priceColorClass: {
-    type: String,
-    default: "text-[color:var(--color-price)]",
-  },
+const props = withDefaults(defineProps<IProps>(), {
+  priceColorClass: "text-[color:var(--color-price)]",
 });
+
+const { themeContext } = useThemeContext();
+
+const { show_prices_with_taxes } = themeContext.value.settings;
+
+const actualPrice = computed<MoneyType | undefined>(() =>
+  show_prices_with_taxes ? props.value?.actualWithTax : props.value?.actual
+);
+const listPrice = computed<MoneyType | undefined>(() =>
+  show_prices_with_taxes ? props.value?.listWithTax : props.value?.list
+);
 </script>

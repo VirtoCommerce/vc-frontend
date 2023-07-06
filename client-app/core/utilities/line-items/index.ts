@@ -60,13 +60,23 @@ export function extendLineItem<T extends AnyLineItemType>(item: T): ExtendedLine
   };
 }
 
+// eslint-disable-next-line sonarjs/cognitive-complexity
 export function prepareLineItem(item: AnyLineItemType, countInCart?: number): PreparedLineItemType {
   const productType = "productType" in item ? item.productType : undefined;
   const isVariation = !!item.product?.masterVariation;
+
   const placedPrice = "placedPrice" in item ? item.placedPrice : undefined;
+  const placedPriceWithTax = "placedPriceWithTax" in item ? item.placedPriceWithTax : undefined;
+
   const listPrice = "listPrice" in item ? item.listPrice : placedPrice;
-  const actualPrice = "salePrice" in item ? item.salePrice : undefined;
+  const listPriceWithTax = "listPriceWithTax" in item ? item.listPriceWithTax : placedPriceWithTax;
+
+  const actualPrice = placedPrice || ("salePrice" in item ? item.salePrice : undefined);
+  const actualPriceWithTax = placedPriceWithTax || ("salePriceWithTax" in item ? item.salePriceWithTax : undefined);
+
   const extendedPrice = "extendedPrice" in item ? item.extendedPrice : undefined;
+  const extendedPriceWithTax = "extendedPriceWithTax" in item ? item.extendedPriceWithTax : undefined;
+
   const quantity = isQuoteItemType(item) ? item.selectedTierPrice?.quantity : item.quantity;
   const inStockQuantity =
     "inStockQuantity" in item ? item.inStockQuantity : item.product?.availabilityData?.availableQuantity;
@@ -84,8 +94,11 @@ export function prepareLineItem(item: AnyLineItemType, countInCart?: number): Pr
     sku: item.sku,
     productId: item.productId,
     listPrice,
+    listPriceWithTax,
     actualPrice,
+    actualPriceWithTax,
     extendedPrice,
+    extendedPriceWithTax,
     quantity,
     inStockQuantity,
     route,

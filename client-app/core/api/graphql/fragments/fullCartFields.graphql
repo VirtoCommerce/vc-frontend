@@ -78,10 +78,19 @@ fragment fullCartFields on CartType {
   discountTotal {
     ...moneyFields
   }
+  discountTotalWithTax {
+    ...moneyFields
+  }
   subTotal {
     ...moneyFields
   }
+  subTotalWithTax {
+    ...moneyFields
+  }
   shippingTotal {
+    ...moneyFields
+  }
+  shippingTotalWithTax {
     ...moneyFields
   }
   taxTotal {

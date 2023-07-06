@@ -28,13 +28,22 @@ fragment orderFields on CustomerOrderType {
   subTotal {
     ...moneyFields
   }
+  subTotalWithTax {
+    ...moneyFields
+  }
   total {
     ...moneyFields
   }
   discountTotal {
     ...moneyFields
   }
+  discountTotalWithTax {
+    ...moneyFields
+  }
   shippingTotal {
+    ...moneyFields
+  }
+  shippingTotalWithTax {
     ...moneyFields
   }
   currency {

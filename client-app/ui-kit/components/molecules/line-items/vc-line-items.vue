@@ -30,8 +30,8 @@
         :deleted="item.deleted"
         :properties="item.properties"
         :disabled="disabled"
-        :list-price="item.listPrice"
-        :actual-price="item.actualPrice"
+        :list-price="$cfg.show_prices_with_taxes ? item.listPriceWithTax : item.listPrice"
+        :actual-price="$cfg.show_prices_with_taxes ? item.actualPriceWithTax : item.actualPrice"
         :removable="removable"
         @remove="$emit('remove:item', item)"
       >
@@ -62,7 +62,16 @@
 <script setup lang="ts">
 import { sumBy } from "lodash";
 import { computed } from "vue";
+import { useThemeContext } from "@/core/composables";
 import type { PreparedLineItemType } from "@/core/types";
+
+defineEmits<IEmits>();
+
+const props = withDefaults(defineProps<IProps>(), {
+  items: () => [],
+});
+
+const { themeContext } = useThemeContext();
 
 interface IEmits {
   (event: "remove:item", value: PreparedLineItemType): void;
@@ -76,12 +85,13 @@ interface IProps {
   disableSubtotal?: boolean;
 }
 
-defineEmits<IEmits>();
-const props = withDefaults(defineProps<IProps>(), {
-  items: () => [],
-});
+const { show_prices_with_taxes } = themeContext.value.settings;
 
-const subtotal = computed<number>(() => sumBy(props.items, (item: PreparedLineItemType) => item.extendedPrice?.amount));
+const subtotal = computed<number>(() =>
+  sumBy(props.items, (item: PreparedLineItemType) =>
+    show_prices_with_taxes ? item.extendedPriceWithTax?.amount : item.extendedPrice?.amount
+  )
+);
 </script>
 
 <style lang="scss">

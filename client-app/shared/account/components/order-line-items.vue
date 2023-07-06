@@ -21,7 +21,7 @@
         />
       </div>
 
-      <VcLineItemTotal :list-total="item.extendedPrice" />
+      <VcLineItemTotal :list-total="$cfg.show_prices_with_taxes ? item.extendedPriceWithTax : item.extendedPrice" />
     </template>
   </VcLineItems>
 </template>
