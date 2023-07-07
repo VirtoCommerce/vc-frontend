@@ -153,12 +153,13 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 - Open the **appsettings.json** file in a text editor
 - In the **Endpoint** section change **Url**, **UserName**, **Password** with correct path and credentials for Virto Commerce Platform:
 
-```json
-...
- "Endpoint": {
-     "Url": "https://localhost:5001",
-     "UserName": "admin",
-     "Password": "store",
+```
+  ...
+  "Endpoint": {
+    "Url": "https://localhost:5001",
+    "UserName": "admin",
+    "Password": "store",
+  ...
 ```
 
 ### Run `vc-storefront` application
