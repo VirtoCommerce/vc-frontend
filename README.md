@@ -172,11 +172,12 @@ dotnet run
 dotnet run --no-build
 ```
 
-### Setup `B2B Mercury theme`
+### Setup current theme
 
 ```bash
 # Clone repo into the folder where storefront is installed
-git clone https://github.com/VirtoCommerce/vue-starter-theme.git "C:\vc-storefront\VirtoCommerce.Storefront\wwwroot\cms-content\themes\{store-name}\default"
+# `store-code` can be found in the platform running locally. More -> Shops -> Shop Name -> Code
+git clone https://github.com/VirtoCommerce/vc-theme-b2b-vue.git "C:\vc-storefront\VirtoCommerce.Storefront\wwwroot\cms-content\themes\{store-code}\default"
 # Change the current directory
 cd C:\vc-storefront\VirtoCommerce.Storefront\VirtoCommerce.Storefront\wwwroot\cms-content\themes\{store-name}\default
 # install dependencies
