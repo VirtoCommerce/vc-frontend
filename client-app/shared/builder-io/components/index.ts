@@ -1,1 +1,1 @@
-export { default as LandingPage } from "./landing.vue";
+export { default as LandingPage } from "./landing-page.vue";

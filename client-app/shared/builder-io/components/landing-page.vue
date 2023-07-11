@@ -1,16 +1,14 @@
 <template>
-  <div>
-    <div v-if="canShowContent">
-      <RenderContent
-        model="page"
-        :content="content"
-        :api-key="themeContext.settings.builderIoKey"
-        :custom-components="getRegisteredComponents()"
-      />
-    </div>
-    <div v-if="!canShowContent">
-      <slot></slot>
-    </div>
+  <div v-if="canShowContent">
+    <RenderContent
+      model="page"
+      :content="content"
+      :api-key="themeContext.settings.builderIoKey"
+      :custom-components="getRegisteredComponents()"
+    />
+  </div>
+  <div v-else>
+    <slot></slot>
   </div>
 </template>
 
