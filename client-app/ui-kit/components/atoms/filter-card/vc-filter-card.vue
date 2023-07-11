@@ -26,21 +26,31 @@
       </div>
     </div>
     <div
-      v-if="!isCollapsible || (isCollapsible && !collapsed)"
-      class="rounded-b border-x border-b bg-white text-13 text-[color:var(--color-filter-card-content)]"
-      :class="{ 'px-4 py-3.5': !fullWidthContent, 'rounded-t border-t': !withHeader }"
+      v-if="isContentVisible"
+      class="border-x bg-white text-13 text-[color:var(--color-filter-card-content)]"
+      :class="{
+        'px-4 py-3.5': !fullWidthContent,
+        'rounded-t border-t': !withHeader,
+        'rounded-b border-b': !withFooter,
+      }"
     >
       <slot></slot>
+    </div>
+    <div v-if="withFooter && isContentVisible" class="rounded-b border bg-white px-4 py-3">
+      <div class="flex items-center">
+        <slot name="footer"></slot>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { toRefs, ref, watch, onMounted } from "vue";
+import { toRefs, ref, watch, onMounted, computed } from "vue";
 
 interface IProps {
   title?: string;
   withHeader?: boolean;
+  withFooter?: boolean;
   isCollapsible?: boolean;
   isCollapsed?: boolean;
   fullWidthContent?: boolean;
@@ -58,4 +68,6 @@ watch(isCollapsed, (value: boolean) => (collapsed.value = value));
 onMounted(() => {
   collapsed.value = isCollapsed.value;
 });
+
+const isContentVisible = computed(() => !props.isCollapsible || (props.isCollapsible && !collapsed.value));
 </script>
