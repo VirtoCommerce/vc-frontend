@@ -1,25 +1,22 @@
 <template>
-  <div class="rounded shadow-sm">
+  <div class="divide-y overflow-hidden rounded border shadow-sm">
     <div
-      v-if="withHeader"
-      class="rounded-t border bg-white px-3.5 pb-1 pt-1.5 text-13-title font-extrabold"
+      v-if="title || $slots.header"
+      class="bg-white px-3.5 pb-1 pt-1.5 text-13-title font-extrabold"
       :class="{ 'cursor-pointer': isCollapsible, 'rounded-b': collapsed }"
       @click="isCollapsible && (collapsed = !collapsed)"
     >
       <div class="flex items-center">
         <slot name="header">
-          <div class="grow uppercase text-[color:var(--color-filter-card-header)] [word-break:break-word]">
+          <div class="grow uppercase text-[color:var(--color-neutral-950)] [word-break:break-word]">
             {{ title }}
           </div>
           <div v-if="isCollapsible" class="ml-3">
-            <svg
-              width="12"
-              height="12"
-              class="text-[color:var(--color-primary)]"
-              :class="[collapsed ? '' : 'rotate-180']"
-            >
-              <use href="/static/images/common/arrow-down.svg#main"></use>
-            </svg>
+            <VcIcon
+              :name="collapsed ? 'chevron-down' : 'chevron-up'"
+              :size="12"
+              class="flex items-center text-[var(--color-primary-500)]"
+            />
           </div>
           <slot name="header-button"></slot>
         </slot>
@@ -27,16 +24,14 @@
     </div>
     <div
       v-if="isContentVisible"
-      class="border-x bg-white text-13 text-[color:var(--color-filter-card-content)]"
+      class="bg-white text-13 text-[color:var(--color-neutral-800)]"
       :class="{
         'px-4 py-3.5': !fullWidthContent,
-        'rounded-t border-t': !withHeader,
-        'rounded-b border-b': !withFooter,
       }"
     >
       <slot></slot>
     </div>
-    <div v-if="withFooter && isContentVisible" class="rounded-b border bg-white px-4 py-3">
+    <div v-if="$slots.footer && isContentVisible" class="bg-white px-4 py-3">
       <div class="flex items-center">
         <slot name="footer"></slot>
       </div>
@@ -49,16 +44,12 @@ import { toRefs, ref, watch, onMounted, computed } from "vue";
 
 interface IProps {
   title?: string;
-  withHeader?: boolean;
-  withFooter?: boolean;
   isCollapsible?: boolean;
   isCollapsed?: boolean;
   fullWidthContent?: boolean;
 }
 
-const props = withDefaults(defineProps<IProps>(), {
-  withHeader: true,
-});
+const props = defineProps<IProps>();
 
 const { isCollapsed } = toRefs(props);
 const collapsed = ref(false);

@@ -27,14 +27,14 @@
 
     <template v-if="isMobile">
       <!-- In Stock -->
-      <VcFilterCard :with-header="false">
+      <VcFilterCard>
         <VcCheckbox v-model="localFilters.inStock" :disabled="loading" @change="onFilterChanged">
           {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
         </VcCheckbox>
       </VcFilterCard>
 
       <!-- Branch availability -->
-      <VcFilterCard :with-header="false">
+      <VcFilterCard>
         <button type="button" @click.prevent="onOpenBranches">
           <VcCheckbox :model-value="!!localFilters.branches.length" :disabled="loading">
             <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div" scope="global">
