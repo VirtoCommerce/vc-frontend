@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import { minBy } from "lodash";
 import { computed } from "vue";
-import { usePrice, useThemeContext } from "@/core/composables";
+import { useCatalogPrice, useThemeContext } from "@/core/composables";
 import type { MoneyType, PriceType, VariationType } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -32,7 +32,7 @@ const props = withDefaults(defineProps<IProps>(), {
   priceColorClass: "text-[color:var(--color-price-current)]",
 });
 
-const { listPrice, actualPrice } = usePrice(props.value);
+const { listPrice, actualPrice } = useCatalogPrice(props.value);
 
 const { themeContext } = useThemeContext();
 

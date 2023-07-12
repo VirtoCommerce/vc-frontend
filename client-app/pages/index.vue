@@ -10,8 +10,8 @@
         <div class="mx-auto mt-24 flex flex-wrap justify-between">
           <div class="mb-24 w-full md:mb-0 md:mt-44 md:w-1/2 lg:w-1/4">
             <VcImage
-              src="/static/images/home/hexa-1.webp"
               :alt="$t('pages.home.feature_descriptions_block.feature_1')"
+              src="/static/images/home/hexa-1.webp"
               class="mx-auto w-full"
               lazy
             />

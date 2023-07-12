@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { usePrice } from "@/core/composables";
+import { useCatalogPrice } from "@/core/composables";
 import type { MoneyType, PriceType } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -35,5 +35,5 @@ const props = withDefaults(defineProps<IProps>(), {
   priceColorClass: "text-[color:var(--color-price)]",
 });
 
-const { listPrice, actualPrice } = usePrice(props.value);
+const { listPrice, actualPrice } = useCatalogPrice(props.value);
 </script>
