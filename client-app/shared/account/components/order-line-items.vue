@@ -21,13 +21,14 @@
         />
       </div>
 
-      <VcLineItemTotal :list-total="$cfg.show_prices_with_taxes ? item.extendedPriceWithTax : item.extendedPrice" />
+      <VcLineItemTotal :list-total="item.extendedPrice" />
     </template>
   </VcLineItems>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useThemeContext } from "@/core/composables";
 import { prepareLineItems } from "@/core/utilities";
 import type { LineItemType, OrderLineItemType } from "@/core/api/graphql/types";
 
@@ -39,7 +40,11 @@ const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
 });
 
-const preparedLineItems = computed(() => prepareLineItems(props.items));
+const { themeContext } = useThemeContext();
+
+const { show_prices_with_taxes } = themeContext.value.settings;
+
+const preparedLineItems = computed(() => prepareLineItems({ items: props.items, includeVat: show_prices_with_taxes }));
 </script>
 
 <style scoped lang="scss">
