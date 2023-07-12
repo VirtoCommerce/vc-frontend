@@ -1,6 +1,6 @@
 <template>
   <VcFilterCard is-collapsible :title="facet.label" :is-collapsed="!filterHasSelectedValues">
-    <div class="py-1">
+    <div :class="['py-1', { 'fade-bottom': hasFade }]">
       <VcInput
         v-if="searchFieldVisible"
         v-model.trim="searchKeyword"
@@ -26,6 +26,7 @@
           </div>
         </VcCheckbox>
         <p v-if="isNoResults" class="text-sm font-medium">{{ $t("pages.catalog.no_facet_found_message") }}</p>
+        <div v-if="isAnchorAdded" ref="fadeVisibilityAnchor" class="!-mt-px"></div>
       </div>
     </div>
     <template v-if="isShowMoreVisible" #footer>
@@ -35,8 +36,9 @@
 </template>
 
 <script lang="ts" setup>
+import { useElementVisibility } from "@vueuse/core";
 import { cloneDeep } from "lodash";
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref, watchEffect, shallowRef } from "vue";
 import type { FacetItemType } from "@/core/types";
 import VcFilterCard from "@/ui-kit/components/atoms/filter-card/vc-filter-card.vue";
 import VcButtonSeeMoreLess from "@/ui-kit/components/molecules/button-see-more-less/vc-button-see-more-less.vue";
@@ -55,8 +57,10 @@ const props = defineProps<IProps>();
 const SHOW_MORE_AMOUNT = 8;
 const SEARCH_FIELD_AMOUNT = 10;
 
-// approx item height 30px plus space
-const MAX_HEIGHT = 30 * 14 + 16;
+const ITEM_HEIGHT = 30;
+const MAX_ITEMS_VISIBLE = 14;
+
+const MAX_HEIGHT = ITEM_HEIGHT * MAX_ITEMS_VISIBLE + 16;
 
 const facet = ref<FacetItemType>(cloneDeep(props.facet));
 
@@ -70,12 +74,13 @@ const searchedValues = computed(() => {
   const filtered = facet.value.values.filter(
     (item) => item.label.toLowerCase().indexOf(searchKeyword.value.toLowerCase()) >= 0
   );
-  return isExpanded.value ? filtered : filtered.slice(0, SHOW_MORE_AMOUNT);
+  // 1 - for fade at the bottom
+  return isExpanded.value ? filtered : filtered.slice(0, SHOW_MORE_AMOUNT + 1);
 });
 
-const isNoResults = computed(
-  () => searchKeyword.value.length && searchFieldVisible.value && !searchedValues.value.length
-);
+const isSearchPerformed = computed(() => searchKeyword.value.length);
+
+const isNoResults = computed(() => !searchedValues.value.length && isSearchPerformed.value);
 
 function changeFacetValues(): void {
   emit("update:facet", facet.value);
@@ -86,4 +91,31 @@ watchEffect(() => {
 });
 
 const filterHasSelectedValues = computed(() => facet.value.values.some((value) => value.selected));
+
+const fadeVisibilityAnchor = shallowRef<HTMLElement | null>(null);
+const fadeVisibilityAnchorIsVisible = useElementVisibility(fadeVisibilityAnchor);
+
+const isAnchorAdded = computed(() => searchedValues.value.length > MAX_ITEMS_VISIBLE);
+
+const hasFade = computed(
+  () =>
+    (searchedValues.value.length > SHOW_MORE_AMOUNT && !isExpanded.value) ||
+    (isAnchorAdded.value && !fadeVisibilityAnchorIsVisible.value)
+);
 </script>
+
+<style scoped lang="scss">
+.fade-bottom {
+  --scrollbar-width: 15px;
+
+  position: relative;
+  &:after {
+    width: calc(100% - var(--scrollbar-width));
+    @apply absolute block bottom-0 content-[''] h-10 bg-gradient-to-t from-white;
+
+    @media print {
+      @apply content-none;
+    }
+  }
+}
+</style>
