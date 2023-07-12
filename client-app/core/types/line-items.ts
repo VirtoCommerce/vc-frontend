@@ -40,6 +40,8 @@ export type PreparedLineItemType = {
   inStockQuantity?: number;
   listPrice?: MoneyType;
   listPriceWithTax?: MoneyType;
+  salePrice?: MoneyType;
+  slePriceWithTax?: MoneyType;
   actualPrice?: MoneyType;
   actualPriceWithTax?: MoneyType;
   extendedPrice?: MoneyType;
