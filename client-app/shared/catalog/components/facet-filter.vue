@@ -1,5 +1,5 @@
 <template>
-  <VcFilterCard is-collapsible :title="facet.label" :is-collapsed="!filterHasSelectedValues">
+  <VcFilterCard is-collapsible :title="facet.label" is-collapsed>
     <div :class="['py-1', { 'fade-bottom': hasFade }]">
       <VcInput
         v-if="searchFieldVisible"
@@ -92,8 +92,6 @@ function changeFacetValues(): void {
 watchEffect(() => {
   facet.value = cloneDeep(props.facet);
 });
-
-const filterHasSelectedValues = computed(() => facet.value.values.some((value) => value.selected));
 
 const fadeVisibilityAnchor = shallowRef<HTMLElement | null>(null);
 const fadeVisibilityAnchorIsVisible = useElementVisibility(fadeVisibilityAnchor);
