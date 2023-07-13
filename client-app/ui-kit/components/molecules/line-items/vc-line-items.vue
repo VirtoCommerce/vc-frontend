@@ -6,7 +6,9 @@
         {{ $t("common.labels.product") }}
       </div>
 
-      <div class="vc-line-items__properties">{{ $t("common.labels.properties") }}</div>
+      <div class="vc-line-items__properties">
+        {{ $t("common.labels.properties") }}
+      </div>
 
       <div class="vc-line-items__price">
         {{ $t("common.labels.price_per_item") }}
@@ -64,6 +66,12 @@ import { sumBy } from "lodash";
 import { computed } from "vue";
 import type { PreparedLineItemType } from "@/core/types";
 
+defineEmits<IEmits>();
+
+const props = withDefaults(defineProps<IProps>(), {
+  items: () => [],
+});
+
 interface IEmits {
   (event: "remove:item", value: PreparedLineItemType): void;
 }
@@ -75,11 +83,6 @@ interface IProps {
   items?: PreparedLineItemType[];
   disableSubtotal?: boolean;
 }
-
-defineEmits<IEmits>();
-const props = withDefaults(defineProps<IProps>(), {
-  items: () => [],
-});
 
 const subtotal = computed<number>(() => sumBy(props.items, (item: PreparedLineItemType) => item.extendedPrice?.amount));
 </script>

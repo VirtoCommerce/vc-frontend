@@ -1,13 +1,13 @@
 <template>
   <div class="vc-line-item-price">
     <VcPriceDisplay
-      class="vc-line-item-price__actual"
       :value="listPrice?.amount > actualPrice?.amount ? actualPrice : listPrice"
+      class="vc-line-item-price__actual"
     />
     <VcPriceDisplay
       v-if="listPrice?.amount > actualPrice?.amount"
-      class="vc-line-item-price__list"
       :value="listPrice"
+      class="vc-line-item-price__list"
     />
   </div>
 </template>

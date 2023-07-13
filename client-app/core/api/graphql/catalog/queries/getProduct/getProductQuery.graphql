@@ -1,4 +1,5 @@
 #import "../../../fragments/propertyFields.graphql"
+#import "../../../fragments/shortMoneyFields.graphql"
 
 query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String, $id: String!) {
   product(storeId: $storeId, id: $id, currencyCode: $currencyCode, cultureName: $cultureName) {
@@ -62,20 +63,28 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
       }
       price {
         actual {
-          amount
-          formattedAmount
+          ...shortMoneyFields
+        }
+        actualWithTax {
+          ...shortMoneyFields
         }
         discountAmount {
-          amount
-          formattedAmount
+          ...shortMoneyFields
+        }
+        discountAmountWithTax {
+          ...shortMoneyFields
         }
         sale {
-          amount
-          formattedAmount
+          ...shortMoneyFields
+        }
+        saleWithTax {
+          ...shortMoneyFields
         }
         list {
-          amount
-          formattedAmount
+          ...shortMoneyFields
+        }
+        listWithTax {
+          ...shortMoneyFields
         }
       }
     }
@@ -96,20 +105,28 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
     }
     price {
       actual {
-        amount
-        formattedAmount
+        ...shortMoneyFields
+      }
+      actualWithTax {
+        ...shortMoneyFields
       }
       discountAmount {
-        amount
-        formattedAmount
+        ...shortMoneyFields
+      }
+      discountAmountWithTax {
+        ...shortMoneyFields
       }
       sale {
-        amount
-        formattedAmount
+        ...shortMoneyFields
+      }
+      saleWithTax {
+        ...shortMoneyFields
       }
       list {
-        amount
-        formattedAmount
+        ...shortMoneyFields
+      }
+      listWithTax {
+        ...shortMoneyFields
       }
       discountPercent
     }

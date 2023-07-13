@@ -6,7 +6,7 @@
     <div>
       <div class="mb-4 flex justify-between text-base font-extrabold">
         <span>{{ $t("common.labels.subtotal") }}</span>
-        <span><VcPriceDisplay :value="cart.subTotal!" /></span>
+        <span><VcPriceDisplay :value="subTotal!" /></span>
       </div>
 
       <div class="border-y py-2 text-base font-normal">
@@ -24,7 +24,10 @@
             />
           </component>
 
-          <span>{{ cart.discountTotal?.amount > 0 ? "-" : "" }}<VcPriceDisplay :value="cart.discountTotal!" /></span>
+          <span>
+            {{ discountTotal?.amount > 0 ? "-" : "" }}
+            <VcPriceDisplay :value="discountTotal!" />
+          </span>
         </div>
 
         <div v-if="hasDiscounts && discountsCollapsed">
@@ -56,16 +59,16 @@
         <div class="flex justify-between">
           <span>{{ $t("common.labels.tax") }}</span>
           <span>
-            {{ cart.taxTotal?.amount > 0 ? "+" : "" }}
-            <VcPriceDisplay :value="cart.taxTotal!" />
+            {{ taxTotal?.amount > 0 ? "+" : "" }}
+            <VcPriceDisplay :value="taxTotal" />
           </span>
         </div>
 
         <div v-if="!noShipping" class="flex justify-between">
           <span>{{ $t("common.labels.shipping_cost") }}</span>
           <span>
-            {{ cart.shippingTotal?.amount > 0 ? "+" : "" }}
-            <VcPriceDisplay :value="cart.shippingTotal!" />
+            {{ shippingTotal?.amount > 0 ? "+" : "" }}
+            <VcPriceDisplay :value="shippingTotal!" />
           </span>
         </div>
       </div>
@@ -91,12 +94,13 @@
 <script setup lang="ts">
 import { sumBy } from "lodash";
 import { computed, ref } from "vue";
-import { useCurrency, useLanguages } from "@/core/composables";
+import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";
 import type {
   CartType,
   CustomerOrderType,
   DiscountType,
   LineItemType,
+  MoneyType,
   OrderDiscountType,
   OrderLineItemType,
 } from "@/core/api/graphql/types";
@@ -111,15 +115,32 @@ const props = defineProps<IProps>();
 
 const { currentLanguage } = useLanguages();
 const { currentCurrency } = useCurrency();
+const { themeContext } = useThemeContext();
 
 const discountsCollapsed = ref(false);
+
+const { show_prices_with_taxes } = themeContext.value.settings;
+
+const subTotal = computed<MoneyType | undefined>(() =>
+  show_prices_with_taxes ? props.cart.subTotalWithTax : props.cart.subTotal
+);
+const discountTotal = computed<MoneyType | undefined>(() =>
+  show_prices_with_taxes ? props.cart.discountTotalWithTax : props.cart.discountTotal
+);
+const taxTotal = computed<MoneyType | undefined>(() => (show_prices_with_taxes ? props.cart.taxTotal : undefined));
+const shippingTotal = computed<MoneyType | undefined>(() =>
+  show_prices_with_taxes ? props.cart.shippingTotalWithTax : props.cart.shippingTotal
+);
 
 const getDiscountAmmount = (discount: DiscountType | OrderDiscountType) => {
   return typeof discount?.amount === "object" && discount?.amount !== null ? discount?.amount.amount : discount?.amount;
 };
 
 const lineItemsDiscountTotal = computed(() =>
-  sumBy<LineItemType | OrderLineItemType>(props.cart.items, (item) => item.discountTotal?.amount || 0)
+  sumBy<LineItemType | OrderLineItemType>(
+    props.cart.items,
+    (item) => (show_prices_with_taxes ? item.discountTotalWithTax?.amount : item.discountTotal?.amount) || 0
+  )
 );
 
 const hasDiscounts = computed(() => props.cart.discounts?.length || lineItemsDiscountTotal.value > 0);

@@ -7,7 +7,7 @@ import type {
   LineItemsGroupsByVendorType,
   PreparedLineItemType,
 } from "../../types";
-import type { LineItemType, OrderLineItemType, QuoteItemType } from "@/core/api/graphql/types";
+import type { LineItemType, MoneyType, OrderLineItemType, QuoteItemType } from "@/core/api/graphql/types";
 
 export function isQuoteItemType(item: AnyLineItemType): item is QuoteItemType {
   return "proposalPrices" in item || "selectedTierPrice" in item;
@@ -60,48 +60,89 @@ export function extendLineItem<T extends AnyLineItemType>(item: T): ExtendedLine
   };
 }
 
-export function prepareLineItem(item: AnyLineItemType, countInCart?: number): PreparedLineItemType {
-  const productType = "productType" in item ? item.productType : undefined;
-  const isVariation = !!item.product?.masterVariation;
-  const placedPrice = "placedPrice" in item ? item.placedPrice : undefined;
-  const listPrice = "listPrice" in item ? item.listPrice : placedPrice;
-  const actualPrice = "salePrice" in item ? item.salePrice : undefined;
-  const extendedPrice = "extendedPrice" in item ? item.extendedPrice : undefined;
-  const quantity = isQuoteItemType(item) ? item.selectedTierPrice?.quantity : item.quantity;
-  const inStockQuantity =
-    "inStockQuantity" in item ? item.inStockQuantity : item.product?.availabilityData?.availableQuantity;
-  const properties = Object.values(getPropertiesGroupedByName(item.product?.properties ?? []));
-  const route = isVariation
-    ? getProductRoute(item.product!.masterVariation!.id || "", item.product!.masterVariation!.slug)
-    : getProductRoute(item.productId || item.product?.id || "", item.product?.slug);
+function prepareItemPrices(
+  item: AnyLineItemType,
+  includeVat?: boolean
+): {
+  listPrice?: MoneyType;
+  salePrice?: MoneyType;
+  actualPrice?: MoneyType;
+  extendedPrice?: MoneyType;
+} {
+  let placedPrice = "placedPrice" in item ? item.placedPrice : undefined;
+  if (includeVat && "placedPriceWithTax" in item) {
+    placedPrice = item.placedPriceWithTax;
+  }
+
+  let salePrice = "salePrice" in item ? item.salePrice : undefined;
+  if (includeVat && "salePriceWithTax" in item) {
+    salePrice = item.salePriceWithTax;
+  }
+
+  let listPrice = "listPrice" in item ? item.listPrice : placedPrice;
+  if (includeVat && "listPriceWithTax" in item) {
+    listPrice = item.listPriceWithTax;
+  }
+
+  let extendedPrice = "extendedPrice" in item ? item.extendedPrice : undefined;
+  if (includeVat && "extendedPriceWithTax" in item) {
+    extendedPrice = item.extendedPriceWithTax;
+  }
 
   return {
-    id: item.id,
-    name: item.name || "",
-    imageUrl: item.imageUrl,
-    availabilityData: item.product?.availabilityData,
-    productType,
-    sku: item.sku,
-    productId: item.productId,
     listPrice,
-    actualPrice,
+    salePrice: salePrice,
+    actualPrice: placedPrice || salePrice,
     extendedPrice,
-    quantity,
-    inStockQuantity,
-    route,
-    deleted: !item.product,
-    properties: properties.slice(0, 3),
-    countInCart,
-    minQuantity: item.product?.minQuantity,
-    maxQuantity:
-      (<LineItemType>item).inStockQuantity ||
-      item.product?.availabilityData?.availableQuantity ||
-      item.product?.maxQuantity,
   };
 }
 
-export function prepareLineItems(
-  items: LineItemType[] | OrderLineItemType[] | QuoteItemType[]
-): PreparedLineItemType[] {
-  return items.map((item) => prepareLineItem(item));
+export function prepareLineItem(_payload: {
+  item: AnyLineItemType;
+  countInCart?: number;
+  includeVat?: boolean;
+}): PreparedLineItemType {
+  const productType = "productType" in _payload.item ? _payload.item.productType : undefined;
+  const isVariation = !!_payload.item.product?.masterVariation;
+  const prices = prepareItemPrices(_payload.item, _payload.includeVat);
+  const quantity = isQuoteItemType(_payload.item) ? _payload.item.selectedTierPrice?.quantity : _payload.item.quantity;
+  const inStockQuantity =
+    "inStockQuantity" in _payload.item
+      ? _payload.item.inStockQuantity
+      : _payload.item.product?.availabilityData?.availableQuantity;
+  const properties = Object.values(getPropertiesGroupedByName(_payload.item.product?.properties ?? []));
+  const route = isVariation
+    ? getProductRoute(_payload.item.product!.masterVariation!.id || "", _payload.item.product!.masterVariation!.slug)
+    : getProductRoute(_payload.item.productId || _payload.item.product?.id || "", _payload.item.product?.slug);
+
+  return {
+    ...prices,
+    id: _payload.item.id,
+    name: _payload.item.name || "",
+    imageUrl: _payload.item.imageUrl,
+    availabilityData: _payload.item.product?.availabilityData,
+    productType,
+    sku: _payload.item.sku,
+    productId: _payload.item.productId,
+    quantity,
+    inStockQuantity,
+    route,
+    deleted: !_payload.item.product,
+    properties: properties.slice(0, 3),
+    countInCart: _payload.countInCart,
+    minQuantity: _payload.item.product?.minQuantity,
+    maxQuantity:
+      (<LineItemType>_payload.item).inStockQuantity ||
+      _payload.item.product?.availabilityData?.availableQuantity ||
+      _payload.item.product?.maxQuantity,
+  };
+}
+
+export function prepareLineItems(_payload: { items: AnyLineItemType[]; includeVat?: boolean }): PreparedLineItemType[] {
+  return _payload.items.map((item) =>
+    prepareLineItem({
+      item,
+      includeVat: _payload.includeVat,
+    })
+  );
 }

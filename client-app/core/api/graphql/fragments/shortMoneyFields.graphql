@@ -1,0 +1,4 @@
+fragment shortMoneyFields on MoneyType {
+  amount
+  formattedAmount
+}
