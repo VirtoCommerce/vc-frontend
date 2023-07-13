@@ -138,15 +138,10 @@ export function prepareLineItem(_payload: {
   };
 }
 
-export function prepareLineItems(_payload: {
-  items: LineItemType[] | OrderLineItemType[] | QuoteItemType[];
-  countInCart?: number;
-  includeVat?: boolean;
-}): PreparedLineItemType[] {
+export function prepareLineItems(_payload: { items: AnyLineItemType[]; includeVat?: boolean }): PreparedLineItemType[] {
   return _payload.items.map((item) =>
     prepareLineItem({
       item,
-      countInCart: _payload.countInCart,
       includeVat: _payload.includeVat,
     })
   );
