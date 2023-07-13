@@ -28,7 +28,7 @@
 
         <div v-if="isNoResults" class="text-sm font-medium">{{ $t("pages.catalog.no_facet_found_message") }}</div>
 
-        <div v-if="isAnchorAdded" ref="fadeVisibilityAnchor" class="!-mt-px"></div>
+        <div v-if="isAnchorAdded" ref="fadeVisibilityAnchor" class="!mt-0 h-px"></div>
       </div>
     </div>
 
