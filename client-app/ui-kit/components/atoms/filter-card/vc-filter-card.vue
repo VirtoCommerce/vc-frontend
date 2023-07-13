@@ -1,54 +1,54 @@
 <template>
-  <div class="rounded shadow-sm">
+  <div class="divide-y rounded border bg-[--color-additional-50] shadow-sm">
     <div
-      v-if="withHeader"
-      class="rounded-t border bg-white px-3.5 pb-1 pt-1.5 text-13-title font-extrabold"
-      :class="{ 'cursor-pointer': isCollapsible, 'rounded-b': collapsed }"
+      v-if="title || $slots.header"
+      class="flex items-center gap-3 px-3.5 pb-1 pt-1.5 text-13-title font-black"
+      :class="{ 'cursor-pointer': isCollapsible }"
       @click="isCollapsible && (collapsed = !collapsed)"
     >
-      <div class="flex items-center">
-        <slot name="header">
-          <div class="grow uppercase text-[color:var(--color-filter-card-header)] [word-break:break-word]">
-            {{ title }}
-          </div>
-          <div v-if="isCollapsible" class="ml-3">
-            <svg
-              width="12"
-              height="12"
-              class="text-[color:var(--color-primary)]"
-              :class="[collapsed ? '' : 'rotate-180']"
-            >
-              <use href="/static/images/common/arrow-down.svg#main"></use>
-            </svg>
-          </div>
-          <slot name="header-button"></slot>
-        </slot>
-      </div>
+      <slot name="header">
+        <div class="grow uppercase text-[--color-neutral-950] [word-break:break-word]">
+          {{ title }}
+        </div>
+
+        <VcIcon
+          v-if="isCollapsible"
+          class="text-[--color-primary-500]"
+          :name="collapsed ? 'chevron-down' : 'chevron-up'"
+          :size="12"
+        />
+
+        <slot name="header-button"></slot>
+      </slot>
     </div>
+
     <div
-      v-if="!isCollapsible || (isCollapsible && !collapsed)"
-      class="rounded-b border-x border-b bg-white text-13 text-[color:var(--color-filter-card-content)]"
-      :class="{ 'px-4 py-3.5': !fullWidthContent, 'rounded-t border-t': !withHeader }"
+      v-if="isContentVisible"
+      class="text-13 text-[--color-neutral-800]"
+      :class="{
+        'px-4 py-3.5': !fullWidthContent,
+      }"
     >
       <slot></slot>
+    </div>
+
+    <div v-if="$slots.footer && isContentVisible" class="flex items-center px-4 py-2">
+      <slot name="footer"></slot>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { toRefs, ref, watch, onMounted } from "vue";
+import { toRefs, ref, watch, onMounted, computed } from "vue";
 
 interface IProps {
   title?: string;
-  withHeader?: boolean;
   isCollapsible?: boolean;
   isCollapsed?: boolean;
   fullWidthContent?: boolean;
 }
 
-const props = withDefaults(defineProps<IProps>(), {
-  withHeader: true,
-});
+const props = defineProps<IProps>();
 
 const { isCollapsed } = toRefs(props);
 const collapsed = ref(false);
@@ -58,4 +58,6 @@ watch(isCollapsed, (value: boolean) => (collapsed.value = value));
 onMounted(() => {
   collapsed.value = isCollapsed.value;
 });
+
+const isContentVisible = computed(() => !props.isCollapsible || (props.isCollapsible && !collapsed.value));
 </script>

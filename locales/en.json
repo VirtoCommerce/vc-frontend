@@ -1117,6 +1117,7 @@
       "show_on_a_separate_page": "Show on a separate page",
       "no_products_message": "There are no products in this category",
       "no_products_filtered_message": "No results found",
+      "no_facet_found_message": "No results",
       "no_products_button": "Reset search",
       "products_icon": "Product icon"
     },
