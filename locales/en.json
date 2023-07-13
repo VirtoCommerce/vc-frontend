@@ -54,7 +54,9 @@
       "reorder_all": "Reorder all",
       "view_cart": "View cart",
       "add_new": "Add new",
-      "add_new_address": "Add new address"
+      "add_new_address": "Add new address",
+      "remove_selected": "Remove Selected",
+      "remove_all": "Remove all"
     },
     "labels": {
       "actions": "Actions",

@@ -1,9 +1,13 @@
 <template>
   <VcLineItems
     :items="preparedLineItems"
+    :selected-items="selectedItems"
     :disabled="disabled"
     :readonly="readonly"
     removable
+    selectable
+    @select:item="handleSelectItem"
+    @select:all-items="handleSelectAllItems"
     @remove:item="$emit('remove:item', $event)"
   >
     <template #titles>
@@ -39,7 +43,13 @@
     </template>
 
     <template #after-content="{ item }">
-      <VcAlert v-for="(validationError, index) in validationErrorsByItemId[item.id]" :key="index" color="danger" icon>
+      <VcAlert
+        v-for="(validationError, index) in validationErrorsByItemId[item.id]"
+        :key="index"
+        color="danger"
+        icon
+        variant="outline"
+      >
         {{ validationError.errorMessage }}
       </VcAlert>
     </template>
@@ -47,7 +57,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import _ from "lodash";
+import { computed, ref } from "vue";
 import { useCartValidationErrorTranslator } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { prepareLineItems } from "@/core/utilities";
@@ -73,9 +84,30 @@ const props = withDefaults(defineProps<IProps>(), {
   validationErrors: () => [],
 });
 
+const selectedItems = ref<string[]>([]);
 const preparedLineItems = computed(() => prepareLineItems(props.items));
 
 const getValidationErrorTranslation = useCartValidationErrorTranslator();
+
+function handleSelectItem(value: { id: string; selected: boolean }) {
+  if (value.selected && !selectedItems.value.includes(value.id)) {
+    selectedItems.value.push(value.id);
+  } else if (!value.selected) {
+    _.pull(selectedItems.value, value.id);
+  }
+
+  console.log("handleSelectItem", value.id, value.selected, selectedItems.value);
+}
+
+function handleSelectAllItems(selectAll: boolean) {
+  selectedItems.value = [];
+
+  if (selectAll) {
+    selectedItems.value = _.map(props.items, "id");
+  }
+
+  console.log("handleSelectAllItems", selectedItems.value);
+}
 
 const validationErrorsByItemId = computed<Record<string, ValidationErrorType[]>>(() => {
   const result: Record<string, ValidationErrorType[]> = props.validationErrors.reduce((records, item) => {

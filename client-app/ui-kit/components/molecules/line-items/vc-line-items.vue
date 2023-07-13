@@ -1,7 +1,18 @@
 <template>
-  <div class="vc-line-items">
+  <div
+    :class="[
+      'vc-line-items',
+      {
+        'vc-line-items--selectable': selectable,
+      },
+    ]"
+  >
     <!-- table header -->
     <div class="vc-line-items__head">
+      <div v-if="selectable" class="vc-line-items__checkbox">
+        <VcCheckbox v-model="selectAll" @change="$emit('select:allItems', selectAll)" />
+      </div>
+
       <div class="vc-line-items__product">
         {{ $t("common.labels.product") }}
       </div>
@@ -33,6 +44,9 @@
         :list-price="item.listPrice"
         :actual-price="item.actualPrice"
         :removable="removable"
+        :selectable="selectable"
+        :selected="selectedItems.includes(item.id)"
+        @select="$emit('select:item', { id: item.id, selected: $event })"
         @remove="$emit('remove:item', item)"
       >
         <template #before>
@@ -50,8 +64,22 @@
     </div>
 
     <!-- table footer -->
-    <div v-if="!disableSubtotal" class="vc-line-items__foot">
-      <div class="vc-line-items__subtotal">
+    <div class="vc-line-items__foot">
+      <template v-if="selectable">
+        <VcButton
+          class="vc-line-items__button vc-line-items__button--desktop"
+          size="xs"
+          :disabled="!selectedItems.length"
+        >
+          {{ $t("common.buttons.remove_selected") }}
+        </VcButton>
+
+        <VcButton class="vc-line-items__button vc-line-items__button--mobile" size="xs" variant="outline">
+          {{ $t("common.buttons.remove_all") }}
+        </VcButton>
+      </template>
+
+      <div v-if="!disableSubtotal" class="vc-line-items__subtotal">
         <span class="vc-line-items__subtotal-label">{{ $t("common.labels.subtotal") }}:</span>
         <span class="vc-line-items__subtotal-sum">{{ $n(subtotal, "currency") }}</span>
       </div>
@@ -61,11 +89,13 @@
 
 <script setup lang="ts">
 import { sumBy } from "lodash";
-import { computed } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import type { PreparedLineItemType } from "@/core/types";
 
 interface IEmits {
   (event: "remove:item", value: PreparedLineItemType): void;
+  (event: "select:item", value: { id: string; selected: boolean }): void;
+  (event: "select:allItems", value: boolean): void;
 }
 
 interface IProps {
@@ -73,19 +103,34 @@ interface IProps {
   readonly?: boolean;
   removable?: boolean;
   items?: PreparedLineItemType[];
+  selectedItems: string[];
   disableSubtotal?: boolean;
+  selectable?: boolean;
 }
 
 defineEmits<IEmits>();
+
 const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
 });
 
+const selectAll = ref<boolean>(false);
+
 const subtotal = computed<number>(() => sumBy(props.items, (item: PreparedLineItemType) => item.extendedPrice?.amount));
+
+watchEffect(() => {
+  selectAll.value = props.selectedItems.length === props.items.length;
+});
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .vc-line-items {
+  $selectable: "";
+
+  &--selectable {
+    $selectable: &;
+  }
+
   @media (min-width: theme("screens.md")) {
     @apply border rounded divide-y;
   }
@@ -94,16 +139,24 @@ const subtotal = computed<number>(() => sumBy(props.items, (item: PreparedLineIt
     @apply hidden;
 
     @media (min-width: theme("screens.md")) {
-      @apply flex items-center gap-4 py-0.5 px-3 min-h-[2.75rem] text-sm font-bold;
+      @apply flex items-center gap-3 py-0.5 px-3 min-h-[2.75rem] text-sm font-bold;
     }
 
-    @media (min-width: theme("screens.xl")) {
-      @apply px-3;
+    @media (min-width: theme("screens.2xl")) {
+      @apply px-3 gap-4;
     }
   }
 
   &__product {
-    @apply flex-none w-[13.5rem];
+    @apply flex-none w-[12.75rem];
+
+    @media (min-width: theme("screens.lg")) {
+      @apply w-[11.75rem];
+    }
+
+    @media (min-width: theme("screens.xl")) {
+      @apply w-[12.75rem];
+    }
 
     @media (min-width: theme("screens.2xl")) {
       @apply w-64;
@@ -156,10 +209,32 @@ const subtotal = computed<number>(() => sumBy(props.items, (item: PreparedLineIt
     @media (min-width: theme("screens.md")) {
       @apply px-3;
     }
+
+    &:empty {
+      @apply hidden;
+    }
+  }
+
+  &__button {
+    @apply me-auto;
+
+    &--mobile.vc-button {
+      @media (min-width: theme("screens.md")) {
+        @apply hidden;
+      }
+    }
+
+    &--desktop.vc-button {
+      @apply hidden;
+
+      @media (min-width: theme("screens.md")) {
+        @apply inline-block;
+      }
+    }
   }
 
   &__subtotal {
-    @apply justify-self-end flex items-center gap-2 text-[color:var(--color-price)];
+    @apply ms-1 justify-self-end flex items-center gap-2 text-[color:var(--color-price)];
   }
 
   &__subtotal-label {
@@ -167,7 +242,7 @@ const subtotal = computed<number>(() => sumBy(props.items, (item: PreparedLineIt
   }
 
   &__subtotal-sum {
-    @apply text-17 font-extrabold;
+    @apply text-17 font-black;
   }
 }
 </style>

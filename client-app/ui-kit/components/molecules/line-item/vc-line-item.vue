@@ -5,6 +5,7 @@
       {
         'vc-line-item--removable': removable,
         'vc-line-item--disabled': disabled,
+        'vc-line-item--selected': selected,
         'vc-line-item--deleted': deleted,
       },
     ]"
@@ -14,6 +15,13 @@
     </div>
 
     <div class="vc-line-item__main">
+      <VcCheckbox
+        v-if="selectable"
+        v-model="isSelected"
+        class="vc-line-item__checkbox"
+        @change="$emit('select', isSelected)"
+      />
+
       <!--  IMAGE -->
       <VcImage class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
 
@@ -46,15 +54,18 @@
           <slot />
         </div>
 
-        <button
+        <VcButton
           v-if="removable"
           class="vc-line-item__remove-button"
-          type="button"
+          color="secondary"
+          size="xs"
+          variant="outline"
+          icon
           :disabled="disabled"
           @click="$emit('remove')"
         >
-          <VcIcon name="delete-2" size="xs" />
-        </button>
+          <VcIcon class="text-[--color-danger-500]" name="delete-2" size="xs" />
+        </VcButton>
       </div>
     </div>
 
@@ -65,11 +76,13 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watchEffect } from "vue";
 import type { Property, MoneyType } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
   (event: "remove"): void;
+  (event: "select", value: boolean): void;
 }
 
 interface IProps {
@@ -79,24 +92,44 @@ interface IProps {
   properties?: Property[];
   listPrice?: MoneyType;
   actualPrice?: MoneyType;
+  selectable?: boolean;
+  selected?: boolean;
   removable?: boolean;
   disabled?: boolean;
   deleted?: boolean;
 }
 
 defineEmits<IEmits>();
-withDefaults(defineProps<IProps>(), {
+
+const props = withDefaults(defineProps<IProps>(), {
   properties: () => [],
+});
+
+const isSelected = ref<boolean>(false);
+
+watchEffect(() => {
+  isSelected.value = props.selected;
 });
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .vc-line-item {
+  $selected: "";
   $removable: "";
   $deleted: "";
   $disabled: "";
 
   @apply flex flex-col gap-2 p-3 rounded border shadow-t-3sm;
+
+  @media (min-width: theme("screens.md")) {
+    @apply px-3 rounded-none border-0 shadow-none;
+  }
+
+  &--selected {
+    $selected: &;
+
+    @apply bg-[--color-secondary-50];
+  }
 
   &--removable {
     $removable: &;
@@ -110,10 +143,6 @@ withDefaults(defineProps<IProps>(), {
     $disabled: &;
   }
 
-  @media (min-width: theme("screens.md")) {
-    @apply px-3 rounded-none border-0 shadow-none;
-  }
-
   &__before,
   &__after {
     &:empty {
@@ -125,12 +154,36 @@ withDefaults(defineProps<IProps>(), {
     @apply relative flex items-start gap-3;
 
     @media (min-width: theme("screens.md")) {
-      @apply items-center gap-4;
+      @apply items-center;
+    }
+
+    @media (min-width: theme("screens.2xl")) {
+      @apply gap-4;
+    }
+  }
+
+  &__checkbox {
+    @apply flex-none absolute -top-2 -left-2 p-2 rounded bg-[--color-additional-50];
+
+    @media (min-width: theme("screens.md")) {
+      @apply static top-auto left-auto -mx-2;
+    }
+
+    #{$selected} & {
+      @apply bg-[--color-secondary-50];
     }
   }
 
   &__img {
     @apply shrink-0 w-16 h-16 rounded border;
+
+    @media (min-width: theme("screens.lg")) {
+      @apply w-12 h-12;
+    }
+
+    @media (min-width: theme("screens.xl")) {
+      @apply w-16 h-16;
+    }
   }
 
   &__content {
@@ -145,7 +198,7 @@ withDefaults(defineProps<IProps>(), {
     @apply min-h-[2rem] text-13 leading-4 font-bold line-clamp-4;
 
     @media (min-width: theme("screens.md")) {
-      @apply shrink-0 min-h-0 w-[8.5rem];
+      @apply shrink-0 min-h-0 w-[8rem];
     }
 
     @media (min-width: theme("screens.2xl")) {
@@ -158,12 +211,12 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__name-link {
-    @apply text-[color:var(--color-link)];
+    @apply text-[--color-accent-600];
 
     word-break: break-word;
 
     &:hover {
-      @apply text-[color:var(--color-link-hover)];
+      @apply text-[--color-accent-700];
     }
 
     #{$deleted} & {
@@ -175,7 +228,7 @@ withDefaults(defineProps<IProps>(), {
     word-break: break-word;
 
     #{$deleted} & {
-      @apply text-slate-400;
+      @apply text-[--color-neutral-500];
     }
   }
 
@@ -195,7 +248,7 @@ withDefaults(defineProps<IProps>(), {
     @apply hidden;
 
     @media (min-width: theme("screens.2xl")) {
-      @apply block shrink-0 w-[8.75rem] text-right;
+      @apply block shrink-0 w-[7.25rem] text-right;
     }
 
     #{$deleted} & {
@@ -228,16 +281,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__remove-button {
-    @apply shrink-0 absolute top-0 right-0 flex items-center justify-center h-7 w-7 rounded border-2 bg-white text-[color:var(--color-danger)];
-
-    &:hover {
-      @apply bg-gray-100;
-    }
-
-    #{$disabled} &,
-    &:disabled {
-      @apply bg-gray-100 text-gray-400;
-    }
+    @apply shrink-0 absolute top-0 right-0;
 
     @media (min-width: theme("screens.md")) {
       @apply relative;
