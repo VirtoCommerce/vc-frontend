@@ -67,6 +67,7 @@
             <FooterLink v-t="'shared.layout.footer.replacement_parts_link'" to="/replacement-parts"></FooterLink>
             <FooterLink v-t="'shared.layout.footer.demo_landing_link'" :to="{ name: 'DemoLanding' }" />
             <FooterLink v-t="'shared.layout.footer.demo_page_link'" to="/demo-page" />
+            <FooterLink v-t="'shared.layout.footer.builder_io_page_link'" to="/landing/virto-start" />
           </div>
         </div>
       </div>
