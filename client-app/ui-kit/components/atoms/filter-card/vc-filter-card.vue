@@ -1,40 +1,39 @@
 <template>
-  <div class="divide-y overflow-hidden rounded border shadow-sm">
+  <div class="divide-y rounded border bg-[--color-additional-50] shadow-sm">
     <div
       v-if="title || $slots.header"
-      class="bg-white px-3.5 pb-1 pt-1.5 text-13-title font-extrabold"
-      :class="{ 'cursor-pointer': isCollapsible, 'rounded-b': collapsed }"
+      class="flex items-center gap-3 px-3.5 pb-1 pt-1.5 text-13-title font-black"
+      :class="{ 'cursor-pointer': isCollapsible }"
       @click="isCollapsible && (collapsed = !collapsed)"
     >
-      <div class="flex items-center">
-        <slot name="header">
-          <div class="grow uppercase text-[color:var(--color-neutral-950)] [word-break:break-word]">
-            {{ title }}
-          </div>
-          <div v-if="isCollapsible" class="ml-3">
-            <VcIcon
-              :name="collapsed ? 'chevron-down' : 'chevron-up'"
-              :size="12"
-              class="flex items-center text-[var(--color-primary-500)]"
-            />
-          </div>
-          <slot name="header-button"></slot>
-        </slot>
-      </div>
+      <slot name="header">
+        <div class="grow uppercase text-[--color-neutral-950] [word-break:break-word]">
+          {{ title }}
+        </div>
+
+        <VcIcon
+          v-if="isCollapsible"
+          class="text-[--color-primary-500]"
+          :name="collapsed ? 'chevron-down' : 'chevron-up'"
+          :size="12"
+        />
+
+        <slot name="header-button"></slot>
+      </slot>
     </div>
+
     <div
       v-if="isContentVisible"
-      class="bg-white text-13 text-[color:var(--color-neutral-800)]"
+      class="text-13 text-[--color-neutral-800]"
       :class="{
         'px-4 py-3.5': !fullWidthContent,
       }"
     >
       <slot></slot>
     </div>
-    <div v-if="$slots.footer && isContentVisible" class="bg-white px-4 py-3">
-      <div class="flex items-center">
-        <slot name="footer"></slot>
-      </div>
+
+    <div v-if="$slots.footer && isContentVisible" class="flex items-center px-4 py-2">
+      <slot name="footer"></slot>
     </div>
   </div>
 </template>

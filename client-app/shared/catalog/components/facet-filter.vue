@@ -12,7 +12,7 @@
         truncate
       />
 
-      <div class="space-y-3 overflow-y-auto" :style="{ maxHeight: `${MAX_HEIGHT}px` }">
+      <div class="-me-1 space-y-3 overflow-y-auto pe-1" :style="{ maxHeight: `${MAX_HEIGHT}px` }">
         <VcCheckbox
           v-for="item in searchedValues"
           :key="item.value"
@@ -20,17 +20,20 @@
           :disabled="loading"
           @change="changeFacetValues"
         >
-          <div :class="[item.selected ? 'font-semibold' : 'font-medium text-gray-500']" class="flex text-13">
+          <div :class="['flex text-13', item.selected ? 'font-semibold' : 'font-medium text-gray-500']">
             <span class="truncate">{{ item.label }}</span>
             <span class="ml-1">{{ $t("pages.catalog.facet_card.item_count_format", [item.count]) }}</span>
           </div>
         </VcCheckbox>
-        <p v-if="isNoResults" class="text-sm font-medium">{{ $t("pages.catalog.no_facet_found_message") }}</p>
+
+        <div v-if="isNoResults" class="text-sm font-medium">{{ $t("pages.catalog.no_facet_found_message") }}</div>
+
         <div v-if="isAnchorAdded" ref="fadeVisibilityAnchor" class="!-mt-px"></div>
       </div>
     </div>
+
     <template v-if="isShowMoreVisible" #footer>
-      <VcButtonSeeMoreLess v-model="isExpanded" class="!py-0" />
+      <VcButtonSeeMoreLess v-model="isExpanded" />
     </template>
   </VcFilterCard>
 </template>
