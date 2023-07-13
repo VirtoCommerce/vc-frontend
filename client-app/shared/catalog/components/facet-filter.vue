@@ -12,7 +12,7 @@
         truncate
       />
 
-      <div class="-me-1 space-y-3 overflow-y-auto pe-1" :style="{ maxHeight: `${MAX_HEIGHT}px` }">
+      <div class="-me-1 space-y-3 overflow-y-auto pe-1" :style="{ maxHeight }">
         <VcCheckbox
           v-for="item in searchedValues"
           :key="item.value"
@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useElementVisibility } from "@vueuse/core";
+import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { cloneDeep } from "lodash";
 import { computed, ref, watchEffect, shallowRef } from "vue";
 import type { FacetItemType } from "@/core/types";
@@ -57,15 +57,27 @@ interface IProps {
 
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
+
 const SHOW_MORE_AMOUNT = 8;
 const SEARCH_FIELD_AMOUNT = 10;
-
 const ITEM_HEIGHT = 30;
 const MAX_ITEMS_VISIBLE = 14;
 
+const isMobile = breakpoints.smaller("lg");
+
 const MAX_HEIGHT = ITEM_HEIGHT * MAX_ITEMS_VISIBLE + 16;
+const maxHeight = computed(() => (isMobile.value ? "unset" : `${MAX_HEIGHT}px`));
 
 const facet = ref<FacetItemType>(cloneDeep(props.facet));
+
+function changeFacetValues(): void {
+  emit("update:facet", facet.value);
+}
+watchEffect(() => {
+  facet.value = cloneDeep(props.facet);
+});
 
 const isShowMoreVisible = computed(() => facet.value.values.length > SHOW_MORE_AMOUNT);
 const isExpanded = ref(false);
@@ -84,14 +96,6 @@ const searchedValues = computed(() => {
 const isSearchPerformed = computed(() => searchKeyword.value.length);
 
 const isNoResults = computed(() => !searchedValues.value.length && isSearchPerformed.value);
-
-function changeFacetValues(): void {
-  emit("update:facet", facet.value);
-}
-
-watchEffect(() => {
-  facet.value = cloneDeep(props.facet);
-});
 
 const fadeVisibilityAnchor = shallowRef<HTMLElement | null>(null);
 const fadeVisibilityAnchorIsVisible = useElementVisibility(fadeVisibilityAnchor);
