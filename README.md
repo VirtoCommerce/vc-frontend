@@ -153,12 +153,13 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 - Open the **appsettings.json** file in a text editor
 - In the **Endpoint** section change **Url**, **UserName**, **Password** with correct path and credentials for Virto Commerce Platform:
 
-```json
-...
- "Endpoint": {
-     "Url": "https://localhost:5001",
-     "UserName": "admin",
-     "Password": "store",
+```
+  ...
+  "Endpoint": {
+    "Url": "https://localhost:5001",
+    "UserName": "admin",
+    "Password": "store",
+  ...
 ```
 
 ### Run `vc-storefront` application
@@ -172,13 +173,14 @@ dotnet run
 dotnet run --no-build
 ```
 
-### Setup `B2B Mercury theme`
+### Setup current theme
 
 ```bash
 # Clone repo into the folder where storefront is installed
-git clone https://github.com/VirtoCommerce/vue-starter-theme.git "C:\vc-storefront\VirtoCommerce.Storefront\wwwroot\cms-content\themes\{store-name}\default"
+# `store-code` can be found in the platform running locally. More -> Shops -> Shop Name -> Code
+git clone https://github.com/VirtoCommerce/vc-theme-b2b-vue.git "C:\vc-storefront\VirtoCommerce.Storefront\wwwroot\cms-content\themes\{store-code}\default"
 # Change the current directory
-cd C:\vc-storefront\VirtoCommerce.Storefront\VirtoCommerce.Storefront\wwwroot\cms-content\themes\{store-name}\default
+cd C:\vc-storefront\VirtoCommerce.Storefront\VirtoCommerce.Storefront\wwwroot\cms-content\themes\{store-code}\default
 # install dependencies
 yarn install
 ```
