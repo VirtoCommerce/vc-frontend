@@ -28,7 +28,6 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useThemeContext } from "@/core/composables";
 import { prepareLineItems } from "@/core/utilities";
 import type { LineItemType, OrderLineItemType } from "@/core/api/graphql/types";
 
@@ -40,11 +39,7 @@ const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
 });
 
-const { themeContext } = useThemeContext();
-
-const { show_prices_with_taxes } = themeContext.value.settings;
-
-const preparedLineItems = computed(() => prepareLineItems({ items: props.items, includeVat: show_prices_with_taxes }));
+const preparedLineItems = computed(() => prepareLineItems(props.items));
 </script>
 
 <style scoped lang="scss">

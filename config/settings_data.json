@@ -28,7 +28,6 @@
 
       "support_phone_number": "+31 416 652 803",
       "zero_price_product_enabled": false,
-      "show_prices_with_taxes": false,
 
       "checkout_multistep_enabled": true,
       "checkout_comment_enabled": true,
@@ -360,7 +359,6 @@
 
       "support_phone_number": "+31 416 652 803",
       "zero_price_product_enabled": false,
-      "show_prices_with_taxes": false,
 
       "checkout_multistep_enabled": true,
       "checkout_comment_enabled": true,

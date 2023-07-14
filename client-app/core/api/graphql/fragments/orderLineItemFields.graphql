@@ -25,22 +25,13 @@ fragment orderLineItemFields on OrderLineItemType {
   extendedPrice {
     ...moneyFields
   }
-  extendedPriceWithTax {
-    ...moneyFields
-  }
   placedPrice {
-    ...moneyFields
-  }
-  placedPriceWithTax {
     ...moneyFields
   }
   taxTotal {
     ...moneyFields
   }
   discountTotal {
-    ...moneyFields
-  }
-  discountTotalWithTax {
     ...moneyFields
   }
   outerId

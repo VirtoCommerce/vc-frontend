@@ -1,5 +1,4 @@
 #import "../../../fragments/propertyFields.graphql"
-#import "../../../fragments/shortMoneyFields.graphql"
 
 query GetWishlist($listId: String!, $cultureName: String) {
   wishlist(listId: $listId, cultureName: $cultureName) {
@@ -13,16 +12,12 @@ query GetWishlist($listId: String!, $cultureName: String) {
       productId
       quantity
       salePrice {
-        ...shortMoneyFields
-      }
-      salePriceWithTax {
-        ...shortMoneyFields
+        amount
+        formattedAmount
       }
       listPrice {
-        ...shortMoneyFields
-      }
-      listPriceWithTax {
-        ...shortMoneyFields
+        amount
+        formattedAmount
       }
       productType
       product {

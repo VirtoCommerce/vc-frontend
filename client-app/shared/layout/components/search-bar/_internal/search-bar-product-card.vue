@@ -4,7 +4,7 @@
     <router-link
       :to="link"
       class="h-[4.75rem] w-[4.75rem] shrink-0 border border-gray-200 p-1"
-      @click="$emit('linkClick', $event)"
+      @click="$emit('link-click', $event)"
     >
       <VcImage
         :src="product.imgSrc"
@@ -20,7 +20,7 @@
       <router-link
         :to="link"
         class="line-clamp-2 h-8 shrink-0 text-[13px] font-extrabold leading-[1.05rem] text-[color:var(--color-link)]"
-        @click="$emit('linkClick', $event)"
+        @click="$emit('link-click', $event)"
       >
         {{ product.name }}
       </router-link>
@@ -44,7 +44,7 @@ import type { Product } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
-  (eventName: "linkClick", globalEvent: PointerEvent): void;
+  (eventName: "link-click", globalEvent: PointerEvent): void;
 }
 
 interface IProps {

@@ -39,7 +39,6 @@ export type PreparedLineItemType = {
   imageUrl?: string;
   inStockQuantity?: number;
   listPrice?: MoneyType;
-  salePrice?: MoneyType;
   actualPrice?: MoneyType;
   extendedPrice?: MoneyType;
   quantity?: number;

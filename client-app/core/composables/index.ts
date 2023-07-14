@@ -17,4 +17,3 @@ export * from "./usePagesWithFullCartLoad";
 export * from "./useProductsRoutes";
 export * from "./useRouteQueryParam";
 export * from "./useThemeContext";
-export * from "./useCatalogPrice";

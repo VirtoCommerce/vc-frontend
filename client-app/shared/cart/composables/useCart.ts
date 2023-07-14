@@ -21,7 +21,6 @@ import {
   removeShipment as _removeShipment,
   validateCoupon,
 } from "@/core/api/graphql";
-import { useThemeContext } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { getLineItemsGroupedByVendor, Logger } from "@/core/utilities";
@@ -78,9 +77,6 @@ export default function useCart() {
   const broadcast = useBroadcast();
   const notifications = useNotifications();
   const { openPopup } = usePopup();
-  const { themeContext } = useThemeContext();
-
-  const { show_prices_with_taxes } = themeContext.value.settings;
 
   async function fetchShortCart(): Promise<void> {
     loading.value = true;
@@ -432,9 +428,7 @@ export default function useCart() {
 
     const filteredItems = cart.value.items.filter((item) => productIds.includes(item.productId!));
 
-    return sumBy(filteredItems, (x) =>
-      show_prices_with_taxes ? x.extendedPriceWithTax?.amount : x.extendedPrice?.amount
-    );
+    return sumBy(filteredItems, (x) => x.extendedPrice?.amount);
   }
 
   return {

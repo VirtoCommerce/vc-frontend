@@ -107,12 +107,14 @@ import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
 import { usePopup } from "@/shared/popup";
 import { AddToWishlistsModal } from "@/shared/wishlists";
 import type { Product } from "@/core/api/graphql/types";
+import type { PropType } from "vue";
 
-interface IProps {
-  product: Product;
-}
-
-const props = defineProps<IProps>();
+const props = defineProps({
+  product: {
+    type: Object as PropType<Product>,
+    required: true,
+  },
+});
 
 const route = useRoute();
 

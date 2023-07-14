@@ -1,6 +1,4 @@
 #import "../../../fragments/propertyFields.graphql"
-#import "../../../fragments/moneyFields.graphql"
-#import "../../../fragments/shortMoneyFields.graphql"
 
 query SearchProducts(
   $storeId: String!
@@ -49,16 +47,20 @@ query SearchProducts(
         id
         price {
           list {
-            ...moneyFields
-          }
-          listWithTax {
-            ...moneyFields
+            amount
+            formattedAmount
+            formattedAmountWithoutCurrency
+            currency {
+              symbol
+            }
           }
           actual {
-            ...moneyFields
-          }
-          actualWithTax {
-            ...moneyFields
+            amount
+            formattedAmount
+            formattedAmountWithoutCurrency
+            currency {
+              symbol
+            }
           }
         }
       }
@@ -82,28 +84,28 @@ query SearchProducts(
       }
       price {
         actual {
-          ...moneyFields
-        }
-        actualWithTax {
-          ...moneyFields
+          amount
+          formattedAmount
+          formattedAmountWithoutCurrency
+          currency {
+            symbol
+          }
         }
         discountAmount {
-          ...shortMoneyFields
-        }
-        discountAmountWithTax {
-          ...shortMoneyFields
+          amount
+          formattedAmount
         }
         sale {
-          ...shortMoneyFields
-        }
-        saleWithTax {
-          ...shortMoneyFields
+          amount
+          formattedAmount
         }
         list {
-          ...moneyFields
-        }
-        listWithTax {
-          ...moneyFields
+          amount
+          formattedAmount
+          formattedAmountWithoutCurrency
+          currency {
+            symbol
+          }
         }
         discountPercent
       }

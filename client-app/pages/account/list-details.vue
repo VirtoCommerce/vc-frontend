@@ -132,7 +132,7 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { cloneDeep, isEqual, keyBy } from "lodash";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import { useGoogleAnalytics, usePageHead, useThemeContext } from "@/core/composables";
+import { useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { prepareLineItem } from "@/core/utilities";
 import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
 import { useCart, getItemsForAddBulkItemsToCartResultsPopup, AddBulkItemsToCartResultsModal } from "@/shared/cart";
@@ -168,13 +168,10 @@ const { openPopup } = usePopup();
 const { loading: listLoading, list, fetchWishList, clearList, updateWishlistItemsQuantities } = useWishlists();
 const { loading: cartLoading, cart, addBulkItemsToCart, addToCart, changeItemQuantity } = useCart();
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { themeContext } = useThemeContext();
 
 usePageHead({
   title: computed(() => t("pages.account.list_details.meta.title", [list.value?.name])),
 });
-
-const { show_prices_with_taxes } = themeContext.value.settings;
 
 const itemsPerPage = ref(6);
 const page = ref(1);
@@ -182,13 +179,7 @@ const wishlistItems = ref<LineItemType[]>([]);
 
 const cartItemsBySkus = computed(() => keyBy(cart.value?.items, "sku"));
 const preparedLineItems = computed<PreparedLineItemType[]>(() =>
-  wishlistItems.value.map((item) =>
-    prepareLineItem({
-      item,
-      countInCart: cartItemsBySkus.value[item.sku!]?.quantity,
-      includeVat: show_prices_with_taxes,
-    })
-  )
+  wishlistItems.value.map((item) => prepareLineItem(item, cartItemsBySkus.value[item.sku!]?.quantity))
 );
 const loading = computed<boolean>(() => listLoading.value || cartLoading.value);
 const pagesCount = computed<number>(() => Math.ceil((wishlistItems.value.length ?? 0) / itemsPerPage.value));
