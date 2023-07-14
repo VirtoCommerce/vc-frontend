@@ -1,5 +1,3 @@
-#import "../../../fragments/shortMoneyFields.graphql"
-
 query GetSearchResults(
   $storeId: String!
   $userId: String!
@@ -91,28 +89,20 @@ query GetSearchResults(
       }
       price {
         actual {
-          ...shortMoneyFields
-        }
-        actualWithTax {
-          ...shortMoneyFields
+          amount
+          formattedAmount
         }
         list {
-          ...shortMoneyFields
-        }
-        listWithTax {
-          ...shortMoneyFields
+          amount
+          formattedAmount
         }
         sale {
-          ...shortMoneyFields
-        }
-        saleWithTax {
-          ...shortMoneyFields
+          amount
+          formattedAmount
         }
         discountAmount {
-          ...shortMoneyFields
-        }
-        discountAmountWithTax {
-          ...shortMoneyFields
+          amount
+          formattedAmount
         }
       }
     }

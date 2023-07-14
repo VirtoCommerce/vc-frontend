@@ -9,8 +9,5 @@ fragment shortCartFields on CartType {
     extendedPrice {
       amount
     }
-    extendedPriceWithTax {
-      amount
-    }
   }
 }

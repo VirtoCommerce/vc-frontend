@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useCartValidationErrorTranslator, useThemeContext } from "@/core/composables";
+import { useCartValidationErrorTranslator } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { prepareLineItems } from "@/core/utilities";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
@@ -73,11 +73,7 @@ const props = withDefaults(defineProps<IProps>(), {
   validationErrors: () => [],
 });
 
-const { themeContext } = useThemeContext();
-
-const { show_prices_with_taxes } = themeContext.value.settings;
-
-const preparedLineItems = computed(() => prepareLineItems({ items: props.items, includeVat: show_prices_with_taxes }));
+const preparedLineItems = computed(() => prepareLineItems(props.items));
 
 const getValidationErrorTranslation = useCartValidationErrorTranslator();
 

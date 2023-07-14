@@ -34,31 +34,16 @@ fragment lineItemFields on LineItemType {
   extendedPrice {
     ...moneyFields
   }
-  extendedPriceWithTax {
-    ...moneyFields
-  }
   placedPrice {
-    ...moneyFields
-  }
-  placedPriceWithTax {
     ...moneyFields
   }
   listPrice {
     ...moneyFields
   }
-  listPriceWithTax {
-    ...moneyFields
-  }
   salePrice {
     ...moneyFields
   }
-  salePriceWithTax {
-    ...moneyFields
-  }
   discountTotal {
-    ...moneyFields
-  }
-  discountTotalWithTax {
     ...moneyFields
   }
   validationErrors {
