@@ -12,6 +12,7 @@ export * from "./mutations/mergeCart";
 export * from "./mutations/rejectGiftItems";
 export * from "./mutations/removeCart";
 export * from "./mutations/removeCartItem";
+export * from "./mutations/removeCartItems";
 export * from "./mutations/removeCoupon";
 export * from "./mutations/removeShipment";
 export * from "./mutations/validateCoupon";

@@ -189,6 +189,7 @@ const {
   fetchFullCart,
   changeItemQuantity,
   removeItem,
+  removeItems,
   toggleGift,
   openClearCartModal,
   createQuoteFromCart,
@@ -226,7 +227,7 @@ const loading = computed<boolean>(() => loadingCart.value || creatingQuote.value
 const isDisabledNextStep = computed<boolean>(() => loading.value || hasValidationErrors.value);
 const isDisabledOrderCreation = computed<boolean>(() => loading.value || !isValidCheckout.value);
 const cartContainsDeletedProducts = computed<boolean | undefined>(() =>
-  cart.value?.items?.some((item) => !item.product)
+  cart.value?.items?.some((item: LineItemType) => !item.product)
 );
 const isShowIncompleteDataWarning = computed<boolean>(
   () => (!allItemsAreDigital.value && !isValidShipment.value) || !isValidPayment.value
@@ -234,6 +235,7 @@ const isShowIncompleteDataWarning = computed<boolean>(
 
 async function handleRemoveSelectedItems(items: string[]): Promise<void> {
   console.log("handleRemoveSelectedItems", items);
+  await removeItems(items);
 }
 
 const selectedItems = ref<string[]>([]);

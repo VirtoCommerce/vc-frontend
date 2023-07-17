@@ -1363,6 +1363,15 @@ export type InputChangeOrganizationContactRoleType = {
   userId?: InputMaybe<Scalars['String']>;
 };
 
+export type InputChangePasswordType = {
+  /** New password according with system security policy */
+  newPassword: Scalars['String'];
+  /** Old user password */
+  oldPassword: Scalars['String'];
+  /** User identifier */
+  userId: Scalars['String'];
+};
+
 export type InputChangePurchaseOrderNumber = {
   cartId?: InputMaybe<Scalars['String']>;
   cartName?: InputMaybe<Scalars['String']>;
@@ -1855,6 +1864,18 @@ export type InputRemoveItemType = {
   currencyCode?: InputMaybe<Scalars['String']>;
   /** Line item Id */
   lineItemId: Scalars['String'];
+  storeId: Scalars['String'];
+  userId: Scalars['String'];
+};
+
+export type InputRemoveItemsType = {
+  cartId?: InputMaybe<Scalars['String']>;
+  cartName?: InputMaybe<Scalars['String']>;
+  cartType?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']>;
+  currencyCode?: InputMaybe<Scalars['String']>;
+  /** Array of line item Id */
+  lineItemIds: Array<InputMaybe<Scalars['String']>>;
   storeId: Scalars['String'];
   userId: Scalars['String'];
 };
@@ -2479,6 +2500,7 @@ export type Mutations = {
   changeComment?: Maybe<CartType>;
   changeOrderStatus?: Maybe<Scalars['Boolean']>;
   changeOrganizationContactRole?: Maybe<CustomIdentityResultType>;
+  changePassword?: Maybe<CustomIdentityResultType>;
   changePurchaseOrderNumber?: Maybe<CartType>;
   changeQuoteComment?: Maybe<QuoteType>;
   changeQuoteItemQuantity?: Maybe<QuoteType>;
@@ -2508,6 +2530,7 @@ export type Mutations = {
   removeCart?: Maybe<Scalars['Boolean']>;
   removeCartAddress?: Maybe<CartType>;
   removeCartItem?: Maybe<CartType>;
+  removeCartItems?: Maybe<CartType>;
   removeCoupon?: Maybe<CartType>;
   removeMemberFromOrganization?: Maybe<ContactType>;
   removeQuoteItem?: Maybe<QuoteType>;
@@ -2638,6 +2661,11 @@ export type MutationsChangeOrderStatusArgs = {
 
 export type MutationsChangeOrganizationContactRoleArgs = {
   command: InputChangeOrganizationContactRoleType;
+};
+
+
+export type MutationsChangePasswordArgs = {
+  command?: InputMaybe<InputChangePasswordType>;
 };
 
 
@@ -2778,6 +2806,11 @@ export type MutationsRemoveCartAddressArgs = {
 
 export type MutationsRemoveCartItemArgs = {
   command: InputRemoveItemType;
+};
+
+
+export type MutationsRemoveCartItemsArgs = {
+  command: InputRemoveItemsType;
 };
 
 
@@ -3805,6 +3838,7 @@ export type Query = {
   order?: Maybe<CustomerOrderType>;
   orders?: Maybe<CustomerOrderConnection>;
   organization?: Maybe<Organization>;
+  organizationOrders?: Maybe<CustomerOrderConnection>;
   organizations?: Maybe<OrganizationConnection>;
   pages?: Maybe<PageConnection>;
   payments?: Maybe<PaymentInConnection>;
@@ -4001,6 +4035,16 @@ export type QueryOrdersArgs = {
 export type QueryOrganizationArgs = {
   id: Scalars['String'];
   userId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryOrganizationOrdersArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']>;
+  filter?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  organizationId?: InputMaybe<Scalars['String']>;
+  sort?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -4560,6 +4604,8 @@ export type UserType = {
   createdDate?: Maybe<Scalars['DateTime']>;
   email?: Maybe<Scalars['String']>;
   emailConfirmed: Scalars['Boolean'];
+  /** Make this user change their password when they sign in next time */
+  forcePasswordChange?: Maybe<Scalars['Boolean']>;
   id: Scalars['String'];
   isAdministrator: Scalars['Boolean'];
   /** Account locked state */
@@ -5280,6 +5326,13 @@ export type GetOrdersQueryVariables = Exact<{
 
 export type GetOrdersQuery = { orders?: { totalCount?: number, items?: Array<{ id: string, createdDate: any, status?: string, number: string, customerId: string, purchaseOrderNumber?: string, currency?: { code: string }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, inPayments: Array<{ number: string }> }> } };
 
+export type ChangeOrganizationContactRoleMutationVariables = Exact<{
+  command: InputChangeOrganizationContactRoleType;
+}>;
+
+
+export type ChangeOrganizationContactRoleMutation = { changeOrganizationContactRole?: { succeeded: boolean, errors?: Array<{ code: string, parameter?: string, description?: string }> } };
+
 export type LockOrganizationContactMutationVariables = Exact<{
   command: InputLockUnlockOrganizationContactType;
 }>;
@@ -5329,7 +5382,7 @@ export type GetOrganizationContactsQueryVariables = Exact<{
 }>;
 
 
-export type GetOrganizationContactsQuery = { organization?: { contacts?: { totalCount?: number, items?: Array<{ id: string, name?: string, firstName: string, lastName: string, fullName: string, emails: Array<string>, status?: string, securityAccounts?: Array<{ email?: string, roles?: Array<{ id: string, name: string }> }> }> } } };
+export type GetOrganizationContactsQuery = { organization?: { contacts?: { totalCount?: number, items?: Array<{ id: string, name?: string, firstName: string, lastName: string, fullName: string, emails: Array<string>, status?: string, securityAccounts?: Array<{ id: string, email?: string, roles?: Array<{ id: string, name: string }> }> }> } } };
 
 export type AuthorizePaymentMutationVariables = Exact<{
   command: InputAuthorizePaymentType;
