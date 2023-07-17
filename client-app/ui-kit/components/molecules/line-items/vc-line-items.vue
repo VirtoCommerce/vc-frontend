@@ -45,7 +45,7 @@
         :actual-price="item.actualPrice"
         :removable="removable"
         :selectable="selectable"
-        :selected="selectedItems.includes(item.id)"
+        :selected="selectedItems?.includes(item.id)"
         @select="$emit('select:item', { id: item.id, selected: $event })"
         @remove="$emit('remove:item', item)"
       >
@@ -110,7 +110,7 @@ interface IProps {
   readonly?: boolean;
   removable?: boolean;
   items?: PreparedLineItemType[];
-  selectedItems: string[];
+  selectedItems?: string[];
   disableSubtotal?: boolean;
   selectable?: boolean;
 }
@@ -186,7 +186,7 @@ function removeAllItems() {
     @apply hidden;
 
     @media (min-width: theme("screens.2xl")) {
-      @apply block w-[8.75rem] text-right;
+      @apply flex-none block w-[8.75rem] text-right;
     }
   }
 
@@ -202,7 +202,7 @@ function removeAllItems() {
     }
 
     @media (min-width: theme("screens.xl")) {
-      @apply w-[15.75rem];
+      @apply w-[15.85rem];
     }
   }
 
@@ -211,7 +211,7 @@ function removeAllItems() {
   }
 
   &__body {
-    @apply flex flex-col gap-5 md:gap-0 md:divide-y;
+    @apply flex flex-col gap-4 md:gap-0 md:divide-y;
 
     @media (min-width: theme("screens.md")) {
       @apply space-y-0 divide-y;
@@ -249,15 +249,15 @@ function removeAllItems() {
   }
 
   &__subtotal {
-    @apply ms-1 justify-self-end flex items-center gap-2 text-[color:var(--color-price)];
+    @apply ms-1 justify-self-end flex items-center gap-2 text-[--color-success-600];
   }
 
   &__subtotal-label {
-    @apply text-13 font-bold;
+    @apply text-xs font-bold;
   }
 
   &__subtotal-sum {
-    @apply text-17 font-black;
+    @apply text-base font-black;
   }
 }
 </style>

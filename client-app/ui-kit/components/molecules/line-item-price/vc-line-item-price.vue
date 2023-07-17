@@ -31,7 +31,7 @@ defineProps<IProps>();
   @apply flex flex-col items-end;
 
   &__actual {
-    @apply text-xs font-bold text-[--actual-color] [word-break:break-word];
+    @apply max-w-full text-xs font-bold text-[--actual-color] truncate [word-break:break-word];
 
     @media (min-width: theme("screens.2xl")) {
       @apply text-sm font-normal;
@@ -39,7 +39,7 @@ defineProps<IProps>();
   }
 
   &__list {
-    @apply text-xs line-through text-[--list-color] font-normal;
+    @apply max-w-full text-xs line-through text-[--list-color] font-normal truncate;
   }
 }
 </style>
