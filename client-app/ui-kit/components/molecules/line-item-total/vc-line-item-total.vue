@@ -31,7 +31,7 @@ defineProps<IProps>();
   @apply flex flex-col justify-end w-full gap-x-1 text-right;
 
   &__label {
-    @apply text-14 font-bold;
+    @apply text-sm font-bold;
 
     @media (min-width: theme("screens.md")) {
       @apply hidden;
@@ -39,11 +39,11 @@ defineProps<IProps>();
   }
 
   &__actual {
-    @apply text-15 font-bold [word-break:break-word];
+    @apply text-base font-bold [word-break:break-word];
   }
 
   &__list {
-    @apply text-11 leading-3 line-through text-[color:var(--color-price-old)];
+    @apply text-xs line-through text-[--color-neutral-500];
   }
 }
 </style>

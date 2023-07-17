@@ -6,9 +6,10 @@
     :readonly="readonly"
     removable
     selectable
-    @select:item="handleSelectItem"
-    @select:all-items="handleSelectAllItems"
+    @select:item="$emit('select:item', $event)"
+    @select:all-items="$emit('select:allItems', $event)"
     @remove:item="$emit('remove:item', $event)"
+    @remove:selected-items="$emit('remove:selectedItems', $event)"
   >
     <template #titles>
       <div class="min-w-[5.5rem] text-center">
@@ -57,8 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import _ from "lodash";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useCartValidationErrorTranslator } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { prepareLineItems } from "@/core/utilities";
@@ -70,11 +70,15 @@ interface IProps {
   items?: LineItemType[];
   /** @deprecated */
   validationErrors?: ValidationErrorType[];
+  selectedItems?: any[];
 }
 
 interface IEmits {
   (event: "change:itemQuantity", value: { item: LineItemType; quantity: number }): void;
   (event: "remove:item", value: LineItemType): void;
+  (event: "remove:selectedItems", value: string[]): void;
+  (event: "select:item", value: { id: string; selected: boolean }): void;
+  (event: "select:allItems", value: boolean): void;
 }
 
 defineEmits<IEmits>();
@@ -84,30 +88,9 @@ const props = withDefaults(defineProps<IProps>(), {
   validationErrors: () => [],
 });
 
-const selectedItems = ref<string[]>([]);
 const preparedLineItems = computed(() => prepareLineItems(props.items));
 
 const getValidationErrorTranslation = useCartValidationErrorTranslator();
-
-function handleSelectItem(value: { id: string; selected: boolean }) {
-  if (value.selected && !selectedItems.value.includes(value.id)) {
-    selectedItems.value.push(value.id);
-  } else if (!value.selected) {
-    _.pull(selectedItems.value, value.id);
-  }
-
-  console.log("handleSelectItem", value.id, value.selected, selectedItems.value);
-}
-
-function handleSelectAllItems(selectAll: boolean) {
-  selectedItems.value = [];
-
-  if (selectAll) {
-    selectedItems.value = _.map(props.items, "id");
-  }
-
-  console.log("handleSelectAllItems", selectedItems.value);
-}
 
 const validationErrorsByItemId = computed<Record<string, ValidationErrorType[]>>(() => {
   const result: Record<string, ValidationErrorType[]> = props.validationErrors.reduce((records, item) => {

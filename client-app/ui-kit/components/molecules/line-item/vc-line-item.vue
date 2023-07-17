@@ -37,7 +37,7 @@
         </div>
 
         <div class="vc-line-item__properties">
-          <VcProperty v-for="property in properties" :key="property.name" :label="property.label">
+          <VcProperty v-for="property in properties" :key="property.name" :label="property.label" :disabled="deleted">
             {{ property.value }}
           </VcProperty>
 
@@ -156,10 +156,6 @@ watchEffect(() => {
     @media (min-width: theme("screens.md")) {
       @apply items-center;
     }
-
-    @media (min-width: theme("screens.2xl")) {
-      @apply gap-4;
-    }
   }
 
   &__checkbox {
@@ -195,14 +191,14 @@ watchEffect(() => {
   }
 
   &__name {
-    @apply min-h-[2rem] text-13 leading-4 font-bold line-clamp-4;
+    @apply min-h-[2rem] text-sm/[1rem] font-bold line-clamp-4;
 
     @media (min-width: theme("screens.md")) {
       @apply shrink-0 min-h-0 w-[8rem];
     }
 
-    @media (min-width: theme("screens.2xl")) {
-      @apply w-44;
+    @media (min-width: theme("screens.xl")) {
+      @apply w-48;
     }
 
     #{$removable} & {
@@ -220,7 +216,7 @@ watchEffect(() => {
     }
 
     #{$deleted} & {
-      @apply text-slate-400;
+      @apply text-[--color-neutral-500];
     }
   }
 
@@ -233,14 +229,10 @@ watchEffect(() => {
   }
 
   &__properties {
-    @apply mt-3;
+    @apply space-y-px mt-3;
 
     @media (min-width: theme("screens.md")) {
       @apply grow mt-0;
-    }
-
-    #{$deleted} & {
-      @apply hidden md:block md:invisible;
     }
   }
 
@@ -248,7 +240,7 @@ watchEffect(() => {
     @apply hidden;
 
     @media (min-width: theme("screens.2xl")) {
-      @apply block shrink-0 w-[7.25rem] text-right;
+      @apply block shrink-0 w-[8.5rem] text-right;
     }
 
     #{$deleted} & {
@@ -264,7 +256,7 @@ watchEffect(() => {
     @apply flex items-start gap-1 mt-4 empty:hidden;
 
     @media (min-width: theme("screens.md")) {
-      @apply flex-shrink-0 items-center gap-4 mt-0 w-[15.75rem] empty:block;
+      @apply flex-shrink-0 items-center gap-2 mt-0 w-64 empty:block;
     }
 
     @media (min-width: theme("screens.lg")) {
@@ -272,7 +264,7 @@ watchEffect(() => {
     }
 
     @media (min-width: theme("screens.xl")) {
-      @apply w-[15.75rem];
+      @apply w-64;
     }
 
     #{$deleted} & {

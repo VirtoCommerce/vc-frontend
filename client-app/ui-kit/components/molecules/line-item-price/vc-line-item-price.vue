@@ -28,15 +28,15 @@ defineProps<IProps>();
   @apply flex flex-col items-end;
 
   &__actual {
-    @apply text-xs font-bold text-[color:var(--color-body-text)] [word-break:break-word];
+    @apply text-xs font-bold text-[--color-neutral-900] [word-break:break-word];
 
     @media (min-width: theme("screens.2xl")) {
-      @apply font-normal;
+      @apply text-sm font-normal;
     }
   }
 
   &__list {
-    @apply text-11 leading-3 line-through text-[color:var(--color-price-old)];
+    @apply text-xs line-through text-[--color-neutral-400] font-normal;
   }
 }
 </style>

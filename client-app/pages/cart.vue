@@ -31,10 +31,14 @@
         :grouped="!!$cfg.line_items_group_by_vendor_enabled"
         :items="cart.items"
         :items-grouped-by-vendor="lineItemsGroupedByVendor"
+        :selected-items="selectedItems"
         :disabled="loading"
         :validation-errors="cart.validationErrors"
         @change:item-quantity="changeItemQuantity($event.item.id, $event.quantity, { reloadFullCart: true })"
+        @select:item="handleSelectItem"
+        @select:all-items="handleSelectAllItems"
         @remove:item="handleRemoveItem"
+        @remove:selected-items="handleRemoveSelectedItems"
         @clear:cart="openClearCartModal"
       />
 
@@ -145,6 +149,7 @@
 
 <script setup lang="ts">
 import { invoke } from "@vueuse/core";
+import _ from "lodash";
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -226,6 +231,28 @@ const cartContainsDeletedProducts = computed<boolean | undefined>(() =>
 const isShowIncompleteDataWarning = computed<boolean>(
   () => (!allItemsAreDigital.value && !isValidShipment.value) || !isValidPayment.value
 );
+
+async function handleRemoveSelectedItems(items: string[]): Promise<void> {
+  console.log("handleRemoveSelectedItems", items);
+}
+
+const selectedItems = ref<string[]>([]);
+
+function handleSelectItem(value: { id: string; selected: boolean }) {
+  if (value.selected && !selectedItems.value.includes(value.id)) {
+    selectedItems.value.push(value.id);
+  } else if (!value.selected) {
+    _.pull(selectedItems.value, value.id);
+  }
+}
+
+function handleSelectAllItems(value: { items: LineItemType[]; selectAll: boolean }) {
+  _.pullAll(selectedItems.value, _.map(value.items, "id"));
+
+  if (value.selectAll) {
+    selectedItems.value = [...selectedItems.value, ..._.map(value.items, "id")];
+  }
+}
 
 async function handleRemoveItem(lineItem: LineItemType): Promise<void> {
   await removeItem(lineItem.id);

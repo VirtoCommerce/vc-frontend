@@ -69,12 +69,18 @@
         <VcButton
           class="vc-line-items__button vc-line-items__button--desktop"
           size="xs"
-          :disabled="!selectedItems.length"
+          :disabled="!filteredSelectedItems.length"
+          @click="removeSelectedItems"
         >
           {{ $t("common.buttons.remove_selected") }}
         </VcButton>
 
-        <VcButton class="vc-line-items__button vc-line-items__button--mobile" size="xs" variant="outline">
+        <VcButton
+          class="vc-line-items__button vc-line-items__button--mobile"
+          size="xs"
+          variant="outline"
+          @click="removeAllItems"
+        >
           {{ $t("common.buttons.remove_all") }}
         </VcButton>
       </template>
@@ -88,12 +94,13 @@
 </template>
 
 <script setup lang="ts">
-import { sumBy } from "lodash";
+import _, { sumBy } from "lodash";
 import { computed, ref, watchEffect } from "vue";
 import type { PreparedLineItemType } from "@/core/types";
 
 interface IEmits {
   (event: "remove:item", value: PreparedLineItemType): void;
+  (event: "remove:selectedItems", value: string[]): void;
   (event: "select:item", value: { id: string; selected: boolean }): void;
   (event: "select:allItems", value: boolean): void;
 }
@@ -108,7 +115,7 @@ interface IProps {
   selectable?: boolean;
 }
 
-defineEmits<IEmits>();
+const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
@@ -118,9 +125,21 @@ const selectAll = ref<boolean>(false);
 
 const subtotal = computed<number>(() => sumBy(props.items, (item: PreparedLineItemType) => item.extendedPrice?.amount));
 
+const filteredSelectedItems = computed(() => _.intersection(props.selectedItems, _.map(props.items, "id")));
+
+const allItemsSelected = computed<boolean>(() => filteredSelectedItems.value.length === props.items.length);
+
 watchEffect(() => {
-  selectAll.value = props.selectedItems.length === props.items.length;
+  selectAll.value = allItemsSelected.value;
 });
+
+function removeSelectedItems() {
+  emit("remove:selectedItems", filteredSelectedItems.value);
+}
+
+function removeAllItems() {
+  emit("remove:selectedItems", _.map(props.items, "id"));
+}
 </script>
 
 <style scoped lang="scss">
@@ -143,7 +162,7 @@ watchEffect(() => {
     }
 
     @media (min-width: theme("screens.2xl")) {
-      @apply px-3 gap-4;
+      @apply px-3;
     }
   }
 
@@ -155,11 +174,7 @@ watchEffect(() => {
     }
 
     @media (min-width: theme("screens.xl")) {
-      @apply w-[12.75rem];
-    }
-
-    @media (min-width: theme("screens.2xl")) {
-      @apply w-64;
+      @apply w-[16.75rem];
     }
   }
 
