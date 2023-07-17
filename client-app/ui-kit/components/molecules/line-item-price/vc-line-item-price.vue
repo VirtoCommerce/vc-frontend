@@ -28,7 +28,7 @@ defineProps<IProps>();
   @apply flex flex-col items-end;
 
   &__actual {
-    @apply text-xs font-bold text-[--color-neutral-900] [word-break:break-word];
+    @apply text-xs font-bold [word-break:break-word];
 
     @media (min-width: theme("screens.2xl")) {
       @apply text-sm font-normal;

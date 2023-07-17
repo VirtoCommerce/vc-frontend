@@ -7,6 +7,7 @@
         'vc-line-item--disabled': disabled,
         'vc-line-item--selected': selected,
         'vc-line-item--deleted': deleted,
+        'vc-line-item--removed': removed,
       },
     ]"
   >
@@ -19,6 +20,7 @@
         v-if="selectable"
         v-model="isSelected"
         class="vc-line-item__checkbox"
+        :disabled="disabled"
         @change="$emit('select', isSelected)"
       />
 
@@ -37,7 +39,12 @@
         </div>
 
         <div class="vc-line-item__properties">
-          <VcProperty v-for="property in properties" :key="property.name" :label="property.label" :disabled="deleted">
+          <VcProperty
+            v-for="property in properties"
+            :key="property.name"
+            :label="property.label"
+            :disabled="deleted || removed"
+          >
             {{ property.value }}
           </VcProperty>
 
@@ -64,7 +71,8 @@
           :disabled="disabled"
           @click="$emit('remove')"
         >
-          <VcIcon class="text-[--color-danger-500]" name="delete-2" size="xs" />
+          <VcIcon v-if="removed" class="text-[--color-success-500]" name="reset" size="xs" />
+          <VcIcon v-else class="text-[--color-danger-500]" name="delete-2" size="xs" />
         </VcButton>
       </div>
     </div>
@@ -97,6 +105,7 @@ interface IProps {
   removable?: boolean;
   disabled?: boolean;
   deleted?: boolean;
+  removed?: boolean;
 }
 
 defineEmits<IEmits>();
@@ -116,6 +125,7 @@ watchEffect(() => {
 .vc-line-item {
   $selected: "";
   $removable: "";
+  $removed: "";
   $deleted: "";
   $disabled: "";
 
@@ -137,6 +147,10 @@ watchEffect(() => {
 
   &--deleted {
     $deleted: &;
+  }
+
+  &--removed {
+    $removed: &;
   }
 
   &--disabled {
@@ -215,15 +229,17 @@ watchEffect(() => {
       @apply text-[--color-accent-700];
     }
 
-    #{$deleted} & {
-      @apply text-[--color-neutral-500];
+    #{$deleted} &,
+    #{$removed} & {
+      @apply text-[--color-neutral-500] cursor-not-allowed;
     }
   }
 
   &__name-text {
     word-break: break-word;
 
-    #{$deleted} & {
+    #{$deleted} &,
+    #{$removed} & {
       @apply text-[--color-neutral-500];
     }
   }
@@ -240,7 +256,11 @@ watchEffect(() => {
     @apply hidden;
 
     @media (min-width: theme("screens.2xl")) {
-      @apply block shrink-0 w-[8.5rem] text-right;
+      @apply block shrink-0 w-[8.5rem] text-right text-[--color-neutral-900];
+    }
+
+    #{$removed} & {
+      @apply text-[--color-neutral-500];
     }
 
     #{$deleted} & {
@@ -253,7 +273,7 @@ watchEffect(() => {
   }
 
   &__slot {
-    @apply flex items-start gap-1 mt-4 empty:hidden;
+    @apply flex items-start gap-1 mt-4 text-[--color-neutral-900] empty:hidden;
 
     @media (min-width: theme("screens.md")) {
       @apply flex-shrink-0 items-center gap-2 mt-0 w-64 empty:block;
@@ -265,6 +285,10 @@ watchEffect(() => {
 
     @media (min-width: theme("screens.xl")) {
       @apply w-64;
+    }
+
+    #{$removed} & {
+      @apply text-[--color-neutral-500];
     }
 
     #{$deleted} & {
