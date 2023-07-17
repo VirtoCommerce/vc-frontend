@@ -3,6 +3,11 @@ import { noop, tryOnScopeDispose, useEventListener } from "@vueuse/core";
 import { Logger } from "@/core/utilities";
 import type { InjectionEvent } from "../types";
 
+export enum TabsType {
+  CURRENT = "current",
+  OTHERS = "others",
+  ALL = "all",
+}
 interface IUseBroadcastReturn {
   /** Add a listener function for the specified event. Automatic deletion on unmounting. */
   on: <T>(event: InjectionEvent<T> | string, listener: (data: T) => void) => void;
@@ -16,10 +21,9 @@ interface IUseBroadcastReturn {
     /** The data to be sent. This must be a JSON-serializable object. */
     data?: T,
     /**
-     * Boolean indicating whether the data should also be sent to the current tab.
-     * @default false
+     * Enum indicating whether an event will be send to the current or to the other or to the all tabs.
      */
-    includeSelf?: boolean
+    tabsType?: TabsType
   ) => void;
 }
 
@@ -64,12 +68,14 @@ function broadcastChannelApiFactory(): IUseBroadcastReturn {
 
   channel.onmessage = ({ data: { event, data } }) => broadcast(event, data);
 
-  function emit(event: string, data: any, includeSelf = false) {
+  function emit(event: string, data: any, tabsType: TabsType = TabsType.OTHERS) {
     Logger.debug("[Broadcast][Emit]", event, data);
 
-    channel.postMessage({ event, data });
+    if ([TabsType.ALL, TabsType.OTHERS].includes(tabsType)) {
+      channel.postMessage({ event, data });
+    }
 
-    if (includeSelf) {
+    if ([TabsType.ALL, TabsType.CURRENT].includes(tabsType)) {
       broadcast(event, data);
     }
   }
