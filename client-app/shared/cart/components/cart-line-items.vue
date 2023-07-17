@@ -64,7 +64,7 @@ interface IProps {
   items?: LineItemType[];
   /** @deprecated */
   validationErrors?: ValidationErrorType[];
-  selectedItems?: any[];
+  selectedItems?: string[];
 }
 
 interface IEmits {
