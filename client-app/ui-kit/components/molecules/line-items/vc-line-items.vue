@@ -2,9 +2,7 @@
   <div class="vc-line-items">
     <!-- table header -->
     <div class="vc-line-items__head">
-      <div v-if="selectable" class="vc-line-items__checkbox">
-        <VcCheckbox v-model="selectAll" @change="$emit('select:allItems', selectAll)" />
-      </div>
+      <VcCheckbox v-if="selectable" v-model="selectAll" @change="$emit('select:allItems', selectAll)" />
 
       <div class="vc-line-items__product">
         {{ $t("common.labels.product") }}
@@ -135,7 +133,7 @@ function removeAllItems() {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .vc-line-items {
   @media (min-width: theme("screens.md")) {
     @apply border rounded divide-y;
