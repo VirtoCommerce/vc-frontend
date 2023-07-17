@@ -18,8 +18,6 @@ defineProps<IProps>();
 
 <style lang="scss">
 .vc-property {
-  $disabled: "";
-
   --label-color: var(--vc-property-label-color, var(--color-neutral-600));
   --value-color: var(--vc-property-value-color, var(--color-neutral-900));
 

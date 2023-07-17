@@ -1,12 +1,5 @@
 <template>
-  <div
-    :class="[
-      'vc-line-items',
-      {
-        'vc-line-items--selectable': selectable,
-      },
-    ]"
-  >
+  <div class="vc-line-items">
     <!-- table header -->
     <div class="vc-line-items__head">
       <div v-if="selectable" class="vc-line-items__checkbox">
@@ -144,12 +137,6 @@ function removeAllItems() {
 
 <style scoped lang="scss">
 .vc-line-items {
-  $selectable: "";
-
-  &--selectable {
-    $selectable: &;
-  }
-
   @media (min-width: theme("screens.md")) {
     @apply border rounded divide-y;
   }
