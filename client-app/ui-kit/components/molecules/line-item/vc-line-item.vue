@@ -71,8 +71,8 @@
           :disabled="disabled"
           @click="$emit('remove')"
         >
-          <VcIcon v-if="removed" class="text-[--color-success-500]" name="reset" size="xs" />
-          <VcIcon v-else class="text-[--color-danger-500]" name="delete-2" size="xs" />
+          <VcIcon v-if="removed" class="text-[--color-success-500]" name="reset" />
+          <VcIcon v-else class="text-[--color-danger-500]" name="delete-2" />
         </VcButton>
       </div>
     </div>
