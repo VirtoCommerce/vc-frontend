@@ -250,17 +250,23 @@ watchEffect(() => {
     @media (min-width: theme("screens.md")) {
       @apply grow mt-0;
     }
+
+    #{$removed} &,
+    #{$deleted} & {
+      --vc-property-label-color: var(--color-neutral-500);
+      --vc-property-value-color: var(--color-neutral-500);
+    }
   }
 
   &__price {
     @apply hidden;
 
     @media (min-width: theme("screens.2xl")) {
-      @apply block shrink-0 w-[8.5rem] text-right text-[--color-neutral-900];
+      @apply block shrink-0 w-[8.5rem] text-right;
     }
 
     #{$removed} & {
-      @apply text-[--color-neutral-500];
+      --vc-line-item-price-actual-color: var(--color-neutral-500);
     }
 
     #{$deleted} & {
@@ -273,7 +279,7 @@ watchEffect(() => {
   }
 
   &__slot {
-    @apply flex items-start gap-1 mt-4 text-[--color-neutral-900] empty:hidden;
+    @apply flex items-start gap-1 mt-4 empty:hidden;
 
     @media (min-width: theme("screens.md")) {
       @apply flex-shrink-0 items-center gap-2 mt-0 w-64 empty:block;
@@ -288,7 +294,7 @@ watchEffect(() => {
     }
 
     #{$removed} & {
-      @apply text-[--color-neutral-500];
+      --vc-line-item-total-actual-color: var(--color-neutral-500);
     }
 
     #{$deleted} & {

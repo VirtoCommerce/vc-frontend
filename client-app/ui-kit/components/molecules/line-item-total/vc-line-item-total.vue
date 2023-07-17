@@ -28,6 +28,9 @@ defineProps<IProps>();
 
 <style lang="scss">
 .vc-line-item-total {
+  --actual-color: var(--vc-line-item-total-actual-color, var(--color-neutral-900));
+  --list-color: var(--vc-line-item-total-list-color, var(--color-neutral-500));
+
   @apply flex flex-col justify-end w-full gap-x-1 text-right;
 
   &__label {
@@ -39,11 +42,11 @@ defineProps<IProps>();
   }
 
   &__actual {
-    @apply text-base font-bold [word-break:break-word];
+    @apply text-base font-bold text-[--actual-color] [word-break:break-word];
   }
 
   &__list {
-    @apply text-xs line-through text-[--color-neutral-500];
+    @apply text-xs line-through text-[--list-color];
   }
 }
 </style>

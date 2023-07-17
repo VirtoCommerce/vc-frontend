@@ -1,12 +1,5 @@
 <template>
-  <div
-    :class="[
-      'vc-property',
-      {
-        'vc-property--disabled': disabled,
-      },
-    ]"
-  >
+  <div class="vc-property">
     <div class="vc-property__label">{{ label }}</div>
     <div class="vc-property__dots"></div>
     <div class="vc-property__value">
@@ -18,7 +11,6 @@
 <script setup lang="ts">
 interface IProps {
   label: string;
-  disabled?: boolean;
 }
 
 defineProps<IProps>();
@@ -28,18 +20,13 @@ defineProps<IProps>();
 .vc-property {
   $disabled: "";
 
-  --vc-property-label-color: var(--color-neutral-600);
-  --vc-property-value-color: var(--color-neutral-900);
+  --label-color: var(--vc-property-label-color, var(--color-neutral-600));
+  --value-color: var(--vc-property-value-color, var(--color-neutral-900));
 
   @apply grid grid-cols-[auto_1fr_auto] gap-1 font-lato text-xs;
 
-  &--disabled {
-    --vc-property-label-color: var(--color-neutral-500);
-    --vc-property-value-color: var(--color-neutral-500);
-  }
-
   &__label {
-    @apply min-w-0 truncate text-[--vc-property-label-color];
+    @apply min-w-0 truncate text-[--label-color];
   }
 
   &__dots {
@@ -47,7 +34,7 @@ defineProps<IProps>();
   }
 
   &__value {
-    @apply min-w-0 font-bold text-[--vc-property-value-color] truncate;
+    @apply min-w-0 font-bold text-[--value-color] truncate;
   }
 }
 </style>

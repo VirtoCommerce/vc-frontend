@@ -25,10 +25,13 @@ defineProps<IProps>();
 
 <style lang="scss">
 .vc-line-item-price {
+  --actual-color: var(--vc-line-item-price-actual-color, var(--color-neutral-900));
+  --list-color: var(--vc-line-item-price-list-color, var(--color-neutral-400));
+
   @apply flex flex-col items-end;
 
   &__actual {
-    @apply text-xs font-bold [word-break:break-word];
+    @apply text-xs font-bold text-[--actual-color] [word-break:break-word];
 
     @media (min-width: theme("screens.2xl")) {
       @apply text-sm font-normal;
@@ -36,7 +39,7 @@ defineProps<IProps>();
   }
 
   &__list {
-    @apply text-xs line-through text-[--color-neutral-400] font-normal;
+    @apply text-xs line-through text-[--list-color] font-normal;
   }
 }
 </style>
