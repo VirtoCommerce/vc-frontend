@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { computed, markRaw, ref } from "vue";
+import { computed, markRaw, ref, unref } from "vue";
 import type { ClosePopupHandle, IPopup } from "..";
 
 const stack = ref<IPopup[]>([]);
@@ -33,9 +33,14 @@ export default function usePopup() {
     stack.value.splice(index, 1);
   }
 
+  function isPopupOpened(id: string) {
+    return !!stack.value.find((el) => el.id === id);
+  }
+
   return {
     openPopup,
     closePopup,
+    isPopupOpened,
     popupStack: computed(() => stack.value),
   };
 }

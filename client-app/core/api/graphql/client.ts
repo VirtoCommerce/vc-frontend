@@ -3,7 +3,7 @@ import { ApolloClient } from "apollo-client";
 import { onError } from "apollo-link-error";
 import { HttpLink } from "apollo-link-http";
 import fetch from "isomorphic-fetch";
-import { pageReloadEvent, useBroadcast } from "@/shared/broadcast";
+import { TabsType, unauthorizedErrorEvent, useBroadcast } from "@/shared/broadcast";
 import type { FetchPolicy } from "apollo-client";
 
 const fetchPolicy: FetchPolicy = "no-cache";
@@ -19,10 +19,7 @@ const errorHandler = onError(({ graphQLErrors = [] }) => {
     } = graphQLErrors[i];
 
     if (code === "Unauthorized") {
-      broadcast.emit(pageReloadEvent);
-      const { hash, pathname, search } = location;
-      location.href = `/sign-in?returnUrl=${pathname + search + hash}`;
-      return;
+      broadcast.emit(unauthorizedErrorEvent, undefined, TabsType.CURRENT);
     }
 
     if (code === "Forbidden") {

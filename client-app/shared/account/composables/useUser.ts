@@ -8,11 +8,13 @@ import {
   requestPasswordReset,
   resetPasswordByToken,
   updatePersonalData,
+  changePassword as _changeExpiredPassword,
 } from "@/core/api/graphql/account";
 import { useFetch } from "@/core/composables";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { pageReloadEvent, useBroadcast, userReloadEvent } from "@/shared/broadcast";
+import { usePopup } from "@/shared/popup";
 import type {
   AccountCreationResultType,
   CustomIdentityResultType,
@@ -26,10 +28,12 @@ import type {
   ForgotPassword,
   RegisterOrganization,
   ResetPassword,
+  ChangePassword,
   SignMeIn,
   SignMeUp,
   UserPersonalData,
 } from "@/shared/account";
+import ChangePasswordModal from "@/shared/account/components/change-password-modal.vue";
 
 const loading = ref(false);
 const user = ref<UserType>();
@@ -42,6 +46,7 @@ const operator = computed<UserType | null>(() => user.value?.operator ?? null);
 export default function useUser() {
   const broadcast = useBroadcast();
   const { innerFetch } = useFetch();
+  const { openPopup, closePopup, isPopupOpened } = usePopup();
 
   function checkPermissions(...permissions: string[]): boolean {
     let access = !!user.value?.isAdministrator;
@@ -63,6 +68,9 @@ export default function useUser() {
 
       if (withBroadcast) {
         broadcast.emit(userReloadEvent);
+      }
+      if (isPasswordNeedToBeChanged()) {
+        openChangePasswordModal();
       }
     } catch (e) {
       Logger.error(`${useUser.name}.${fetchUser.name}`, e);
@@ -89,6 +97,10 @@ export default function useUser() {
     } finally {
       loading.value = false;
     }
+  }
+
+  function isPasswordNeedToBeChanged() {
+    return user.value?.forcePasswordChange || user.value?.passwordExpired;
   }
 
   async function changePassword(oldPassword: string, newPassword: string): Promise<IdentityResultType> {
@@ -243,6 +255,22 @@ export default function useUser() {
       loading.value = false;
     }
   }
+  async function changeExpiredPassword(payload: ChangePassword): Promise<IdentityResultType> {
+    try {
+      loading.value = true;
+
+      return await _changeExpiredPassword({
+        userId: payload.userId,
+        oldPassword: payload.oldPassword,
+        newPassword: payload.newPassword,
+      });
+    } catch (e) {
+      Logger.error(`${useUser.name}.${resetPassword.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
 
   async function inviteUser(payload: InputInviteUserType): Promise<CustomIdentityResultType> {
     try {
@@ -266,6 +294,21 @@ export default function useUser() {
     }
   }
 
+  function openChangePasswordModal() {
+    const ID = "change_password_modal";
+    if (!isPopupOpened(ID)) {
+      openPopup({
+        id: ID,
+        component: ChangePasswordModal,
+        props: {
+          onClose() {
+            closePopup(ID);
+          },
+        },
+      });
+    }
+  }
+
   return {
     isAuthenticated,
     isCorporateMember,
@@ -284,6 +327,8 @@ export default function useUser() {
     resetPassword,
     inviteUser,
     registerByInvite,
+    changeExpiredPassword,
+    isPasswordNeedToBeChanged,
     loading: readonly(loading),
     user: computed({
       get() {

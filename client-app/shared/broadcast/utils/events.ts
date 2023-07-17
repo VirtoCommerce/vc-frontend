@@ -17,3 +17,4 @@ export const pageReloadEvent = "page_reload" as InjectionEvent<void>;
 export const userReloadEvent = "user_reload" as InjectionEvent<void>;
 export const cartReloadEvent = "cart_reload" as InjectionEvent<void>;
 export const productsInWishlistEvent = "products_in_wishlist" as InjectionEvent<ProductInWishlistEventDataType[]>;
+export const unauthorizedErrorEvent = "unauthorized_error" as InjectionEvent<void>;
