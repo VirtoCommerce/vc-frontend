@@ -148,9 +148,14 @@
     <transition name="slide-fade-bottom">
       <div
         v-if="selectedItems.length"
-        class="fixed bottom-0 left-0 z-10 flex w-full justify-center bg-[--color-additional-50] p-7 shadow-t-lgs md:hidden"
+        class="fixed bottom-0 left-0 z-10 flex w-full justify-center bg-[--color-additional-50] p-6 shadow-t-lgs md:hidden"
       >
-        <VcButton variant="outline" prepend-icon="trash" @click="handleRemoveSelectedItems(selectedItems)">
+        <VcButton
+          variant="outline"
+          prepend-icon="trash"
+          :disabled="loading"
+          @click="handleRemoveSelectedItems(selectedItems)"
+        >
           {{ $t("common.buttons.remove_selected") }}
         </VcButton>
       </div>
