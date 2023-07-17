@@ -27,14 +27,14 @@
 
     <template v-if="isMobile">
       <!-- In Stock -->
-      <VcFilterCard :with-header="false">
+      <VcFilterCard>
         <VcCheckbox v-model="localFilters.inStock" :disabled="loading" @change="onFilterChanged">
           {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
         </VcCheckbox>
       </VcFilterCard>
 
       <!-- Branch availability -->
-      <VcFilterCard :with-header="false">
+      <VcFilterCard>
         <button type="button" @click.prevent="onOpenBranches">
           <VcCheckbox :model-value="!!localFilters.branches.length" :disabled="loading">
             <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div" scope="global">
@@ -58,15 +58,13 @@
 
     <!-- Facet Filters -->
     <template v-else>
-      <VcFilterCard
+      <FacetFilter
         v-for="facet in localFilters.facets"
         :key="facet.paramName"
-        is-collapsible
-        :title="facet.label"
-        :is-collapsed="!filterHasSelectedValues(facet)"
-      >
-        <FacetValues :facet="facet" :loading="loading" @update:facet="onFacetValuesChanged" />
-      </VcFilterCard>
+        :facet="facet"
+        :loading="loading"
+        @update:facet="onFacetFilterChanged"
+      />
     </template>
   </div>
 </template>
@@ -75,7 +73,7 @@
 import { eagerComputed, useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import { cloneDeep } from "lodash";
 import { watch, ref, shallowReactive } from "vue";
-import FacetValues from "./facet-values.vue";
+import FacetFilter from "./facet-filter.vue";
 import type { FacetItemType } from "@/core/types";
 import type { ProductsFilters } from "@/shared/catalog";
 
@@ -127,13 +125,11 @@ watch(
 
 const isAppliedKeyword = eagerComputed<boolean>(() => localKeyword.value === props.keyword);
 
-const filterHasSelectedValues = (facet: FacetItemType) => facet.values.some((value) => value.selected);
-
 function onFilterChanged(): void {
   emit("change", localFilters);
 }
 
-function onFacetValuesChanged(facet: FacetItemType): void {
+function onFacetFilterChanged(facet: FacetItemType): void {
   const existingFacet = localFilters.facets.find((item) => item.paramName === facet.paramName);
   if (existingFacet) {
     existingFacet.values = facet.values;

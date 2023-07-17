@@ -1,25 +1,27 @@
 <template>
-  <component
-    :is="Category"
-    v-if="seoInfo?.entity?.objectType === 'Category'"
-    :category-id="seoInfo?.entity?.objectId"
-  />
+  <LandingPage>
+    <component
+      :is="Category"
+      v-if="seoInfo?.entity?.objectType === 'Category'"
+      :category-id="seoInfo?.entity?.objectId"
+    />
+    <component
+      :is="Product"
+      v-else-if="seoInfo?.entity?.objectType === 'CatalogProduct'"
+      :product-id="seoInfo?.entity?.objectId"
+    />
 
-  <component
-    :is="Product"
-    v-else-if="seoInfo?.entity?.objectType === 'CatalogProduct'"
-    :product-id="seoInfo?.entity?.objectId"
-  />
+    <component :is="StaticPage" v-else-if="seoInfo?.page" />
 
-  <component :is="StaticPage" v-else-if="seoInfo?.page" />
-
-  <NotFound v-else-if="!loading" />
+    <NotFound v-else-if="!loading" />
+  </LandingPage>
 </template>
 
 <script setup lang="ts">
 import { computedAsync, computedEager } from "@vueuse/core";
 import { onBeforeUnmount, ref, watchEffect } from "vue";
 import { useFetch, useLanguages, useNavigations } from "@/core/composables";
+import { LandingPage } from "@/shared/builder-io";
 import { useStaticPage } from "@/shared/static-content";
 import type { PageTemplate } from "@/shared/static-content";
 import NotFound from "@/pages/404.vue";

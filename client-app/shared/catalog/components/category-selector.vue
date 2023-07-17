@@ -4,8 +4,8 @@
     <div v-for="i in 6" :key="i" class="mb-1.5 ml-6 h-4 bg-gray-100">&nbsp;</div>
   </VcFilterCardSkeleton>
 
-  <VcFilterCard v-else :with-header="!!parentCategory" :full-width-content="!category?.childCategories?.length">
-    <template #header>
+  <VcFilterCard v-else :full-width-content="!category?.childCategories?.length">
+    <template v-if="!!parentCategory" #header>
       <router-link
         :to="getCategoryRoute(parentCategory!)"
         class="-mx-1.5 grow rounded-sm px-1.5 py-0.5 text-[color:var(--color-filter-card-header)] hover:bg-gray-100"
