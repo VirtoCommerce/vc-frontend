@@ -165,11 +165,7 @@ const isLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
     &--sm {
       --vc-button-line-height: 1rem;
 
-      @apply px-3 py-2 text-xs/[--vc-button-line-height] uppercase font-black;
-
-      &#{$icon} {
-        @apply px-2;
-      }
+      @apply p-2 text-xs/[--vc-button-line-height] uppercase font-black;
 
       & #{$loaderIcon} {
         @apply border-2 w-4 h-4;
@@ -179,11 +175,7 @@ const isLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
     &--md {
       --vc-button-line-height: 1.25rem;
 
-      @apply px-5 py-2.5 text-sm/[--vc-button-line-height] uppercase font-black;
-
-      &#{$icon} {
-        @apply px-2.5;
-      }
+      @apply p-2.5 text-sm/[--vc-button-line-height] uppercase font-black;
 
       & #{$loaderIcon} {
         @apply border-[3px] w-5 h-5;
@@ -193,11 +185,7 @@ const isLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
     &--lg {
       --vc-button-line-height: 1.5rem;
 
-      @apply px-7 py-3.5 text-base/[--vc-button-line-height] uppercase font-black;
-
-      &#{$icon} {
-        @apply px-3.5;
-      }
+      @apply p-3.5 text-base/[--vc-button-line-height] uppercase font-black;
 
       & #{$loaderIcon} {
         @apply border-[3px] w-6 h-6;

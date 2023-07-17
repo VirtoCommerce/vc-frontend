@@ -28,18 +28,18 @@ defineProps<IProps>();
 .vc-property {
   $disabled: "";
 
-  --label-color: var(--color-neutral-600);
-  --value-color: var(--color-neutral-900);
+  --vc-property-label-color: var(--color-neutral-600);
+  --vc-property-value-color: var(--color-neutral-900);
 
   @apply grid grid-cols-[auto_1fr_auto] gap-1 font-lato text-xs;
 
   &--disabled {
-    --label-color: var(--color-neutral-500);
-    --value-color: var(--color-neutral-500);
+    --vc-property-label-color: var(--color-neutral-500);
+    --vc-property-value-color: var(--color-neutral-500);
   }
 
   &__label {
-    @apply min-w-0 truncate text-[--label-color];
+    @apply min-w-0 truncate text-[--vc-property-label-color];
   }
 
   &__dots {
@@ -47,7 +47,7 @@ defineProps<IProps>();
   }
 
   &__value {
-    @apply min-w-0 font-bold text-[--value-color] truncate;
+    @apply min-w-0 font-bold text-[--vc-property-value-color] truncate;
   }
 }
 </style>
