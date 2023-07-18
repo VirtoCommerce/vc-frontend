@@ -219,7 +219,10 @@ export default function useCheckout() {
   }
 
   async function updateBillingOrDeliveryAddress(addressType: AddressType, inputAddress: InputAddressType) {
-    if (addressType === AddressType.Billing) {
+    if (
+      addressType === AddressType.Billing &&
+      (!payment.value?.billingAddress || !isEqualAddresses(payment.value?.billingAddress, inputAddress))
+    ) {
       await updatePayment(
         {
           id: payment.value?.id,
@@ -227,7 +230,10 @@ export default function useCheckout() {
         },
         { withBroadcast: true }
       );
-    } else {
+    } else if (
+      addressType === AddressType.Shipping &&
+      (!shipment.value?.deliveryAddress || !isEqualAddresses(shipment.value?.deliveryAddress, inputAddress))
+    ) {
       await updateShipment(
         {
           id: shipment.value?.id,
