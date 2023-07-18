@@ -32,20 +32,36 @@ Basic.args = {
   actualPrice: lineItem.actualPrice,
 };
 
+export const Selectable = Template.bind({});
+Selectable.args = {
+  ...Basic.args,
+  selectable: true,
+  removable: true,
+};
+
 export const Removable = Template.bind({});
 Removable.args = {
   ...Basic.args,
   removable: true,
 };
 
+export const Removed = Template.bind({});
+Removed.args = {
+  ...Basic.args,
+  selectable: true,
+  removable: true,
+  removed: true,
+};
+
 export const Disabled = Template.bind({});
 Disabled.args = {
   ...Basic.args,
+  selectable: true,
   removable: true,
   disabled: true,
 };
 
-export const Deleted: StoryFn<typeof VcLineItem> = (args) => ({
+export const DeletedProduct: StoryFn<typeof VcLineItem> = (args) => ({
   components: { VcLineItem, VcAlert },
   setup: () => ({ args }),
   template: `<VcLineItem v-bind="args">
@@ -56,7 +72,7 @@ export const Deleted: StoryFn<typeof VcLineItem> = (args) => ({
     </template>
   </VcLineItem>`,
 });
-Deleted.args = {
+DeletedProduct.args = {
   ...Basic.args,
   removable: true,
   deleted: true,

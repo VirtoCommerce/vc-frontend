@@ -49,7 +49,11 @@ function changeQuantity() {
 
   const newQuantity = Number(quantity.value);
 
-  if (isNaN(newQuantity) || newQuantity < 1 || newQuantity === props.modelValue) {
+  if (props.maxQuantity && newQuantity > props.maxQuantity) {
+    quantity.value = props.modelValue;
+
+    return;
+  } else if (isNaN(newQuantity) || newQuantity < 1 || newQuantity === props.modelValue) {
     return;
   }
 

@@ -31,10 +31,14 @@
         :grouped="!!$cfg.line_items_group_by_vendor_enabled"
         :items="cart.items"
         :items-grouped-by-vendor="lineItemsGroupedByVendor"
+        :selected-items="selectedItems"
         :disabled="loading"
         :validation-errors="cart.validationErrors"
         @change:item-quantity="changeItemQuantity($event.item.id, $event.quantity, { reloadFullCart: true })"
+        @select:item="handleSelectItem"
+        @select:all-items="handleSelectAllItems"
         @remove:item="handleRemoveItem"
+        @remove:selected-items="handleRemoveSelectedItems"
         @clear:cart="openClearCartModal"
       />
 
@@ -140,11 +144,28 @@
         </VcCardWidget>
       </template>
     </VcLayoutWithRightSidebar>
+
+    <transition name="slide-fade-bottom">
+      <div
+        v-if="selectedItems.length"
+        class="fixed bottom-0 left-0 z-10 flex w-full justify-center bg-[--color-additional-50] p-6 shadow-t-lgs md:hidden"
+      >
+        <VcButton
+          variant="outline"
+          prepend-icon="trash"
+          :disabled="loading"
+          @click="handleRemoveSelectedItems(selectedItems)"
+        >
+          {{ $t("common.buttons.remove_selected") }}
+        </VcButton>
+      </div>
+    </transition>
   </VcContainer>
 </template>
 
 <script setup lang="ts">
 import { invoke } from "@vueuse/core";
+import _ from "lodash";
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -184,6 +205,7 @@ const {
   fetchFullCart,
   changeItemQuantity,
   removeItem,
+  removeItems,
   toggleGift,
   openClearCartModal,
   createQuoteFromCart,
@@ -221,11 +243,35 @@ const loading = computed<boolean>(() => loadingCart.value || creatingQuote.value
 const isDisabledNextStep = computed<boolean>(() => loading.value || hasValidationErrors.value);
 const isDisabledOrderCreation = computed<boolean>(() => loading.value || !isValidCheckout.value);
 const cartContainsDeletedProducts = computed<boolean | undefined>(() =>
-  cart.value?.items?.some((item) => !item.product)
+  cart.value?.items?.some((item: LineItemType) => !item.product)
 );
 const isShowIncompleteDataWarning = computed<boolean>(
   () => (!allItemsAreDigital.value && !isValidShipment.value) || !isValidPayment.value
 );
+
+async function handleRemoveSelectedItems(items: string[]): Promise<void> {
+  await removeItems(items);
+
+  selectedItems.value = _.intersection(selectedItems.value, _.map(cart.value?.items, "id"));
+}
+
+const selectedItems = ref<string[]>([]);
+
+function handleSelectItem(value: { id: string; selected: boolean }) {
+  if (value.selected && !selectedItems.value.includes(value.id)) {
+    selectedItems.value.push(value.id);
+  } else if (!value.selected) {
+    _.pull(selectedItems.value, value.id);
+  }
+}
+
+function handleSelectAllItems(value: { items: LineItemType[]; selectAll: boolean }) {
+  _.pullAll(selectedItems.value, _.map(value.items, "id"));
+
+  if (value.selectAll) {
+    selectedItems.value = [...selectedItems.value, ..._.map(value.items, "id")];
+  }
+}
 
 async function handleRemoveItem(lineItem: LineItemType): Promise<void> {
   await removeItem(lineItem.id);

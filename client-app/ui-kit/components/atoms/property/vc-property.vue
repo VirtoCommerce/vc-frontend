@@ -18,18 +18,21 @@ defineProps<IProps>();
 
 <style lang="scss">
 .vc-property {
-  @apply grid grid-cols-[auto_1fr_auto] gap-1 font-lato text-xs text-gray-500;
+  --label-color: var(--vc-property-label-color, var(--color-neutral-600));
+  --value-color: var(--vc-property-value-color, var(--color-neutral-900));
+
+  @apply grid grid-cols-[auto_1fr_auto] gap-1 font-lato text-xs;
 
   &__label {
-    @apply min-w-0 truncate;
+    @apply min-w-0 truncate text-[--label-color];
   }
 
   &__dots {
-    @apply mb-[3px] h-3 border-b border-dotted border-gray-200;
+    @apply mb-[3px] h-3 border-b border-dotted border-[--color-neutral-200];
   }
 
   &__value {
-    @apply min-w-0 font-bold text-[color:var(--color-body-text)] truncate;
+    @apply min-w-0 font-bold text-[--value-color] truncate;
   }
 }
 </style>
