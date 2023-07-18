@@ -17,6 +17,7 @@ import {
   rejectGiftItems,
   removeCart as _removeCart,
   removeCartItem,
+  removeCartItems,
   removeCoupon,
   removeShipment as _removeShipment,
   validateCoupon,
@@ -192,6 +193,20 @@ export default function useCart() {
       broadcast.emit(cartReloadEvent);
     } catch (e) {
       Logger.error(`${useCart.name}.${removeItem.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function removeItems(lineItemIds: string[]): Promise<void> {
+    loading.value = true;
+
+    try {
+      cart.value = await removeCartItems(lineItemIds);
+      broadcast.emit(cartReloadEvent);
+    } catch (e) {
+      Logger.error(`${useCart.name}.${removeItems.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -447,6 +462,7 @@ export default function useCart() {
     addBulkItemsToCart,
     changeItemQuantity,
     removeItem,
+    removeItems,
     validateCartCoupon,
     addCartCoupon,
     removeCartCoupon,
