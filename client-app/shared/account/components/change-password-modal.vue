@@ -1,53 +1,57 @@
 <template>
-  <VcPopup :title="$t('shared.account.change_password_form.title')" hide-actions @close="$emit('close')">
-    <form class="p-4" @submit="onSubmit">
-      <VcInput
-        v-model="oldPassword"
-        class="mb-4 w-full"
-        :label="$t('shared.account.change_password_form.current_pass_label')"
-        :placeholder="$t('shared.account.change_password_form.current_pass_placeholder')"
-        type="password"
-        required
-        :message="errors.oldPassword"
-        :error="!!errors.oldPassword"
-        autocomplete="off"
-        :maxlength="MAX_PASS_LENGTH"
-      />
+  <VcPopup :title="$t('shared.account.change_password_form.title')" modal-width="max-w-xl" is-persistent hide-actions>
+    <form class="divide-y" @submit="onSubmit">
+      <div class="px-8 pb-8 pt-5">
+        <h2 class="mb-3 text-2xl font-bold uppercase text-[--color-neutral-950]">
+          {{ $t("shared.account.change_password_form.header") }}
+        </h2>
+        <VcInput
+          v-model="oldPassword"
+          class="mb-4 w-full"
+          :label="$t('shared.account.change_password_form.current_pass_label')"
+          :placeholder="$t('shared.account.change_password_form.current_pass_placeholder')"
+          type="password"
+          required
+          :message="errors.oldPassword"
+          :error="!!errors.oldPassword"
+          autocomplete="off"
+          :maxlength="MAX_PASS_LENGTH"
+        />
 
-      <VcInput
-        v-model="newPassword"
-        class="mb-4 w-full"
-        :label="$t('shared.account.change_password_form.new_pass_label')"
-        :placeholder="$t('shared.account.change_password_form.new_pass_placeholder')"
-        type="password"
-        required
-        :message="errors.newPassword"
-        :error="!!errors.newPassword"
-        autocomplete="off"
-        :maxlength="MAX_PASS_LENGTH"
-      />
+        <VcInput
+          v-model="newPassword"
+          class="mb-4 w-full"
+          :label="$t('shared.account.change_password_form.new_pass_label')"
+          :placeholder="$t('shared.account.change_password_form.new_pass_placeholder')"
+          type="password"
+          required
+          :message="errors.newPassword"
+          :error="!!errors.newPassword"
+          autocomplete="off"
+          :maxlength="MAX_PASS_LENGTH"
+        />
 
-      <VcInput
-        v-model="confirmPassword"
-        class="mb-4 w-full"
-        :label="$t('shared.account.change_password_form.confirm_new_pass_label')"
-        :placeholder="$t('shared.account.change_password_form.confirm_new_pass_placeholder')"
-        type="password"
-        required
-        :message="errors.confirmPassword"
-        :error="!!errors.confirmPassword"
-        autocomplete="off"
-        :maxlength="MAX_PASS_LENGTH"
-      />
+        <VcInput
+          v-model="confirmPassword"
+          class="mb-4 w-full"
+          :label="$t('shared.account.change_password_form.confirm_new_pass_label')"
+          :placeholder="$t('shared.account.change_password_form.confirm_new_pass_placeholder')"
+          type="password"
+          required
+          :message="errors.confirmPassword"
+          :error="!!errors.confirmPassword"
+          autocomplete="off"
+          :maxlength="MAX_PASS_LENGTH"
+        />
 
-      <div>
         <VcAlert v-for="error in commonErrors" :key="error" color="danger" class="my-4 text-xs" icon>
           {{ error }}
         </VcAlert>
 
         <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
-
-        <VcButton type="submit" class="mt-6 w-full lg:w-52" :loading="loading" :disabled="!meta.valid || meta.pending">
+      </div>
+      <div class="flex justify-end px-8 py-4.5">
+        <VcButton class="w-28" size="sm" type="submit" :loading="loading" :disabled="!meta.valid || meta.pending">
           {{ $t("shared.account.change_password_form.submit_btn") }}
         </VcButton>
       </div>

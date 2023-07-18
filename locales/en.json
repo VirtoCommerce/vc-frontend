@@ -344,15 +344,16 @@
         }
       },
       "change_password_form": {
-        "title": "Please, set up a new password",
+        "title": "Create new password",
+        "header": "password change",
         "current_pass_label": "Current password",
         "current_pass_placeholder": "Enter your current password",
         "new_pass_label": "New password",
         "new_pass_placeholder": "Create a new password",
         "confirm_new_pass_label": "Confirm new password",
         "confirm_new_pass_placeholder": "Repeat your new password",
-        "submit_btn": "Confirm",
-        "wrong_current_pass": "You entered the wrong current password, please try again or call to support"
+        "submit_btn": "create",
+        "wrong_current_pass": "You entered the wrong current password, please try again or call support"
       },
       "sign_in_form": {
         "remember_me_label": "Remember me",
