@@ -34,7 +34,7 @@ export default function usePopup() {
   }
 
   function isPopupOpened(id: string) {
-    return !!stack.value.find((el) => el.id === id);
+    return stack.value.some((el) => el.id === id);
   }
 
   return {

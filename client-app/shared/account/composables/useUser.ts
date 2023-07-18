@@ -33,7 +33,6 @@ import type {
   SignMeUp,
   UserPersonalData,
 } from "@/shared/account";
-import ChangePasswordModal from "@/shared/account/components/change-password-modal.vue";
 
 const loading = ref(false);
 const user = ref<UserType>();
@@ -70,7 +69,11 @@ export default function useUser() {
         broadcast.emit(userReloadEvent);
       }
       if (isPasswordNeedToBeChanged()) {
-        openChangePasswordModal();
+        const { hash, pathname, search } = location;
+
+        if (pathname !== "/change-password") {
+          location.href = `/change-password?returnUrl=${pathname + search + hash}`;
+        }
       }
     } catch (e) {
       Logger.error(`${useUser.name}.${fetchUser.name}`, e);
@@ -266,7 +269,7 @@ export default function useUser() {
       });
     } catch (e) {
       Logger.error(`${useUser.name}.${resetPassword.name}`, e);
-      throw e;
+      return { succeeded: false };
     } finally {
       loading.value = false;
     }
@@ -291,21 +294,6 @@ export default function useUser() {
       throw e;
     } finally {
       loading.value = false;
-    }
-  }
-
-  function openChangePasswordModal() {
-    const ID = "change_password_modal";
-    if (!isPopupOpened(ID)) {
-      openPopup({
-        id: ID,
-        component: ChangePasswordModal,
-        props: {
-          onClose() {
-            closePopup(ID);
-          },
-        },
-      });
     }
   }
 
