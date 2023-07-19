@@ -79,7 +79,6 @@ watchEffect(() => {
   facet.value = cloneDeep(props.facet);
 });
 
-const isShowMoreVisible = computed(() => facet.value.values.length > SHOW_MORE_AMOUNT);
 const isExpanded = ref(false);
 
 const searchKeyword = ref("");
@@ -92,6 +91,8 @@ const searchedValues = computed(() => {
   // 1 - for fade at the bottom
   return isExpanded.value ? filtered : filtered.slice(0, SHOW_MORE_AMOUNT + 1);
 });
+
+const isShowMoreVisible = computed(() => searchedValues.value.length > SHOW_MORE_AMOUNT);
 
 const isSearchPerformed = computed(() => searchKeyword.value.length);
 
