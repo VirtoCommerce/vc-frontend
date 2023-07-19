@@ -1,20 +1,18 @@
 import { computed, readonly, ref, shallowRef } from "vue";
 import {
   addWishlist,
-  addWishlistItem,
+  addWishlistBulkItem,
   deleteWishlist,
   deleteWishlistItem,
   getWishList,
   getWishlists,
   updateWishListItems,
   renameWishlist as _renameWishlist,
-  addWishlistBulkItem,
 } from "@/core/api/graphql/account";
 import { SORT_ASCENDING } from "@/core/constants";
 import { Logger, asyncForEach } from "@/core/utilities";
 import type {
   InputAddWishlistBulkItemType,
-  InputAddWishlistItemType,
   InputRemoveWishlistItemType,
   InputRenameWishlistType,
   InputUpdateWishlistItemsType,
