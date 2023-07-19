@@ -14,7 +14,7 @@
       </TransitionChild>
 
       <div
-        class="fixed inset-0 z-5000"
+        class="fixed inset-0"
         :class="{
           'min-h-screen overflow-y-auto p-4 lg:p-8': !isMobileFullscreen,
           'h-screen sm:h-auto sm:min-h-screen sm:overflow-y-auto sm:p-4 lg:p-8': isMobileFullscreen,

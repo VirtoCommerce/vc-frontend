@@ -279,9 +279,6 @@ module.exports = {
       maxHeight: {
         "screen-60": "60vh",
         "screen-75": "75vh",
-      },
-      zIndex: {
-        5000: 5000
       }
     }
   },
