@@ -8,10 +8,12 @@ import {
   getWishlists,
   updateWishListItems,
   renameWishlist as _renameWishlist,
+  addWishlistBulkItem,
 } from "@/core/api/graphql/account";
 import { SORT_ASCENDING } from "@/core/constants";
 import { Logger, asyncForEach } from "@/core/utilities";
 import type {
+  InputAddWishlistBulkItemType,
   InputAddWishlistItemType,
   InputRemoveWishlistItemType,
   InputRenameWishlistType,
@@ -46,7 +48,7 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
       if (!newList.id) {
         Logger.error(`${useWishlists.name}.${createWishlistAndAddProduct.name}`, "newList.id error");
       } else {
-        await addItemsToWishlists([{ listId: newList.id, productId }]);
+        await addItemsToWishlists({ listIds: [newList.id], productId });
       }
     } catch (e) {
       Logger.error(`${useWishlists.name}.${createWishlistAndAddProduct.name}`, e);
@@ -125,17 +127,14 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
     return result;
   }
 
-  async function addItemsToWishlists(payloads: InputAddWishlistItemType[]) {
+  async function addItemsToWishlists(payloads: InputAddWishlistBulkItemType) {
     loading.value = true;
 
-    // TODO: Use single query
-    for (const payload of payloads) {
-      try {
-        await addWishlistItem(payload);
-      } catch (e) {
-        Logger.error(`${useWishlists.name}.${addItemsToWishlists.name}`, e);
-        throw e;
-      }
+    try {
+      await addWishlistBulkItem(payloads);
+    } catch (e) {
+      Logger.error(`${useWishlists.name}.${addItemsToWishlists.name}`, e);
+      throw e;
     }
 
     loading.value = false;

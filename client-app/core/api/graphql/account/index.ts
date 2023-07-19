@@ -1,5 +1,6 @@
 export { default as addWishlist } from "./mutations/addWishlist";
 export { default as addWishlistItem } from "./mutations/addWishlistItem";
+export { default as addWishlistBulkItem } from "./mutations/addWishlistBulkItem";
 export { default as deleteMemberAddresses } from "./mutations/deleteMemberAddresses";
 export { default as deleteWishlist } from "./mutations/deleteWishlist";
 export { default as deleteWishlistItem } from "./mutations/deleteWishlistItem";
