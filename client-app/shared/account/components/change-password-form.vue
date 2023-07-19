@@ -45,18 +45,8 @@
       </VcAlert>
 
       <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
-      <!--   todo   -->
-      <!-- <router-link
-        v-t="'shared.account.change_password_form.forgot_password'"
-        to="/forgot-password"
-        class="mt-1 text-sm font-semibold text-blue-700 hover:text-blue-500"
-      >
-      </router-link>-->
     </div>
     <div class="flex justify-end gap-x-2 px-8 py-4.5">
-      <VcButton class="w-28" size="sm" type="button" color="danger" @click="onLogout">
-        {{ $t("shared.account.change_password_form.logout") }}
-      </VcButton>
       <VcButton class="w-28" size="sm" type="submit" :loading="loading" :disabled="!meta.valid || meta.pending">
         {{ $t("shared.account.change_password_form.submit_btn") }}
       </VcButton>
@@ -71,13 +61,11 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
 import { useIdentityErrorTranslator } from "@/core/composables";
-import { getReturnUrlValue } from "@/core/utilities";
 import { usePasswordRequirements, useUser } from "../composables";
 import PasswordTips from "./password-tips.vue";
 
 interface IEmits {
   (event: "succeeded"): void;
-  (event: "logout"): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -85,8 +73,9 @@ const emit = defineEmits<IEmits>();
 const MAX_PASS_LENGTH = 64;
 
 const { t } = useI18n();
-const { changeExpiredPassword, loading, user, signMeOut, fetchUser } = useUser();
+const { changeExpiredPassword, loading, user } = useUser();
 const { passwordRequirements, fetchPasswordRequirements } = usePasswordRequirements();
+
 const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
 const validationSchema = toTypedSchema(
@@ -118,14 +107,10 @@ const commonErrors = ref<string[]>([]);
 const onSubmit = handleSubmit(async (data) => {
   commonErrors.value = [];
 
-  if (!user.value.id) {
-    await fetchUser();
-  }
-
   const result = await changeExpiredPassword({
     userId: user.value.id,
-    newPassword: `${data.newPassword}`,
-    oldPassword: `${data.oldPassword}`,
+    newPassword: data.newPassword,
+    oldPassword: data.oldPassword,
   });
 
   if (result.succeeded) {
@@ -145,11 +130,6 @@ const onSubmit = handleSubmit(async (data) => {
     });
   }
 });
-
-const onLogout = async () => {
-  await signMeOut();
-  location.href = getReturnUrlValue() || "/";
-};
 
 if (!passwordRequirements.value) {
   fetchPasswordRequirements();

@@ -14,7 +14,6 @@ import { useFetch } from "@/core/composables";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { pageReloadEvent, useBroadcast, userReloadEvent } from "@/shared/broadcast";
-import { usePopup } from "@/shared/popup";
 import type {
   AccountCreationResultType,
   CustomIdentityResultType,
@@ -45,7 +44,6 @@ const operator = computed<UserType | null>(() => user.value?.operator ?? null);
 export default function useUser() {
   const broadcast = useBroadcast();
   const { innerFetch } = useFetch();
-  const { openPopup, closePopup, isPopupOpened } = usePopup();
 
   function checkPermissions(...permissions: string[]): boolean {
     let access = !!user.value?.isAdministrator;

@@ -19,7 +19,7 @@ const errorHandler = onError(({ graphQLErrors = [] }) => {
     } = graphQLErrors[i];
 
     if (code === "Unauthorized") {
-      broadcast.emit(unauthorizedErrorEvent, undefined, TabsType.CURRENT);
+      broadcast.emit(unauthorizedErrorEvent, undefined, TabsType.ALL);
     }
 
     if (code === "Forbidden") {
