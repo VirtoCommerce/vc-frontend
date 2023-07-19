@@ -33,14 +33,9 @@ export default function usePopup() {
     stack.value.splice(index, 1);
   }
 
-  function isPopupOpened(id: string) {
-    return stack.value.some((el) => el.id === id);
-  }
-
   return {
     openPopup,
     closePopup,
-    isPopupOpened,
     popupStack: computed(() => stack.value),
   };
 }

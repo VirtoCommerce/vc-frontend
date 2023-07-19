@@ -39,7 +39,7 @@ export function setupBroadcastGlobalListeners() {
   });
   on(unauthorizedErrorEvent, async () => {
     await fetchUser();
-    if (!isPasswordNeedToBeChanged()) {
+    if (!isPasswordNeedToBeChanged.value) {
       const { hash, pathname, search } = location;
 
       if (pathname !== "/sign-in") {

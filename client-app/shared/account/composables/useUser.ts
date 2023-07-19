@@ -38,6 +38,9 @@ const user = ref<UserType>();
 
 const isAuthenticated = computed<boolean>(() => !!user.value?.userName && user.value.userName !== "Anonymous");
 const isCorporateMember = computed<boolean>(() => !!user.value?.contact?.organizationId);
+const isPasswordNeedToBeChanged = computed<boolean>(
+  () => !!user.value?.forcePasswordChange || !!user.value?.passwordExpired
+);
 const organization = eagerComputed<Organization | null>(() => user.value?.contact?.organizations?.items?.[0] ?? null);
 const operator = computed<UserType | null>(() => user.value?.operator ?? null);
 
@@ -66,7 +69,7 @@ export default function useUser() {
       if (withBroadcast) {
         broadcast.emit(userReloadEvent);
       }
-      if (isPasswordNeedToBeChanged()) {
+      if (isPasswordNeedToBeChanged.value) {
         const { hash, pathname, search } = location;
 
         if (pathname !== "/change-password") {
@@ -98,10 +101,6 @@ export default function useUser() {
     } finally {
       loading.value = false;
     }
-  }
-
-  function isPasswordNeedToBeChanged() {
-    return user.value?.forcePasswordChange || user.value?.passwordExpired;
   }
 
   async function changePassword(oldPassword: string, newPassword: string): Promise<IdentityResultType> {
