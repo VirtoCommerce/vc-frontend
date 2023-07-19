@@ -1,0 +1,7 @@
+mutation AddWishlistBulkItem($command: InputAddWishlistBulkItemType!) {
+  addWishlistBulkItem(command: $command) {
+    wishlists {
+      id
+    }
+  }
+}

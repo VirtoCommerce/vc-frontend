@@ -1,7 +1,7 @@
 import { computed, readonly, ref, shallowRef } from "vue";
 import {
   addWishlist,
-  addWishlistItem,
+  addWishlistBulkItem,
   deleteWishlist,
   deleteWishlistItem,
   getWishList,
@@ -12,7 +12,7 @@ import {
 import { SORT_ASCENDING } from "@/core/constants";
 import { Logger, asyncForEach } from "@/core/utilities";
 import type {
-  InputAddWishlistItemType,
+  InputAddWishlistBulkItemType,
   InputRemoveWishlistItemType,
   InputRenameWishlistType,
   InputUpdateWishlistItemsType,
@@ -46,7 +46,7 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
       if (!newList.id) {
         Logger.error(`${useWishlists.name}.${createWishlistAndAddProduct.name}`, "newList.id error");
       } else {
-        await addItemsToWishlists([{ listId: newList.id, productId }]);
+        await addItemsToWishlists({ listIds: [newList.id], productId });
       }
     } catch (e) {
       Logger.error(`${useWishlists.name}.${createWishlistAndAddProduct.name}`, e);
@@ -125,17 +125,14 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
     return result;
   }
 
-  async function addItemsToWishlists(payloads: InputAddWishlistItemType[]) {
+  async function addItemsToWishlists(payloads: InputAddWishlistBulkItemType) {
     loading.value = true;
 
-    // TODO: Use single query
-    for (const payload of payloads) {
-      try {
-        await addWishlistItem(payload);
-      } catch (e) {
-        Logger.error(`${useWishlists.name}.${addItemsToWishlists.name}`, e);
-        throw e;
-      }
+    try {
+      await addWishlistBulkItem(payloads);
+    } catch (e) {
+      Logger.error(`${useWishlists.name}.${addItemsToWishlists.name}`, e);
+      throw e;
     }
 
     loading.value = false;
