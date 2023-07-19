@@ -1,4 +1,3 @@
-import { useUser } from "@/shared/account";
 import { useCart } from "@/shared/cart";
 import { accountRoutes } from "./account";
 import { checkoutRoutes } from "./checkout";
