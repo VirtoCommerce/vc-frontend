@@ -25,7 +25,7 @@ const lists = shallowRef<WishlistType[]>([]);
 const list: Ref<WishlistType | undefined> = ref();
 
 export default function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: true }) {
-  async function createWishlist(name: string) {
+  async function createWishlist(name: string): Promise<string | undefined> {
     let newList: WishlistType;
     loading.value = true;
 
