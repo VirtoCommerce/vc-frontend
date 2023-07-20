@@ -38,14 +38,14 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
     await fetchWishlists();
   }
 
-  async function createWishlistAndGetId(name: string): Promise<string | undefined> {
+  async function createList(name: string): Promise<string | undefined> {
     let newList: WishlistType;
     loading.value = true;
 
     try {
       newList = await addWishlist(name);
     } catch (e) {
-      Logger.error(`${useWishlists.name}.${createWishlistAndGetId.name}`, e);
+      Logger.error(`${useWishlists.name}.${createList.name}`, e);
       throw e;
     }
 
@@ -173,7 +173,7 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
     fetchWishlists,
     fetchWishList,
     createWishlist,
-    createWishlistAndGetId,
+    createList,
     renameWishlist,
     removeWishlist,
     addItemsToWishlists,

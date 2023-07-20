@@ -151,7 +151,7 @@ const {
   lists,
   fetchWishlists,
   addItemsToWishlists,
-  createWishlistAndGetId,
+  createList,
   removeItemsFromWishlists,
 } = useWishlists();
 const notifications = useNotifications();
@@ -220,7 +220,7 @@ async function createLists() {
   }
 
   await asyncForEach(newLists.value, async (newList) => {
-    const newListId = await createWishlistAndGetId(newList.listName);
+    const newListId = await createList(newList.listName);
 
     if (newListId) {
       selectedListsOtherIds.value.push(newListId);
