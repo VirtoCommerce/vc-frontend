@@ -97,24 +97,10 @@ export default function useUser() {
       return result;
     } catch (e) {
       Logger.error(`${useUser.name}.${updatePersonalData.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-  }
-
-  async function changePassword(oldPassword: string, newPassword: string): Promise<IdentityResultType> {
-    try {
-      loading.value = true;
-
-      return await innerFetch<IdentityResultType>("/storefrontapi/account/password", "POST", {
-        oldPassword,
-        newPassword,
-        newPasswordConfirm: newPassword,
-      });
-    } catch (e) {
-      Logger.error(`${useUser.name}.${changePassword.name}`, e);
-      throw e;
+      return {
+        succeeded: false,
+        errors: [{ code: "CustomUpdateNameError" }],
+      };
     } finally {
       loading.value = false;
     }
@@ -302,7 +288,6 @@ export default function useUser() {
     checkPermissions,
     fetchUser,
     updateUser,
-    changePassword,
     confirmEmail,
     signMeIn,
     registerUser,

@@ -9,11 +9,6 @@
       class="polygon-bg flex flex-col bg-white p-6 shadow-sm [--polygon-bg-position:right_bottom_-180px] lg:rounded lg:border"
     >
       <form class="flex flex-col lg:w-1/2" @submit.prevent="onSubmit">
-        <!-- Errors block -->
-        <VcAlert v-if="updateProfileError" class="mb-2" color="danger" icon>
-          <span v-t="'pages.account.profile.update_error_alert'" />
-        </VcAlert>
-
         <VcInput
           v-model.trim="firstName"
           :label="$t('common.labels.first_name')"
@@ -109,6 +104,10 @@
 
         <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
 
+        <VcAlert v-for="error in commonErrors" :key="error" color="danger" class="my-4 text-xs" icon>
+          {{ error }}
+        </VcAlert>
+
         <!-- Form actions -->
         <div class="mt-5 w-1/2 self-center lg:self-auto">
           <VcButton
@@ -132,20 +131,19 @@ import { useField, useForm } from "vee-validate";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
-import { usePageHead } from "@/core/composables";
+import { useIdentityErrorTranslator, usePageHead } from "@/core/composables";
 import { PasswordTips, ProfileUpdateSuccessDialog, usePasswordRequirements, useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
+import type { IdentityErrorType } from "@/core/api/graphql/types";
 
 const { t } = useI18n();
-const { user, updateUser, changePassword } = useUser();
+const { user, updateUser, changeExpiredPassword } = useUser();
 const { passwordRequirements, fetchPasswordRequirements } = usePasswordRequirements();
 const { openPopup } = usePopup();
 
 usePageHead({
   title: computed(() => t("pages.account.profile.meta.title")),
 });
-
-const updateProfileError = ref<boolean>(false);
 
 const validationSchema = toTypedSchema(
   object({
@@ -179,7 +177,7 @@ const initialValues = computed(() => ({
   confirmNewPassword: "",
 }));
 
-const { errors, isSubmitting, meta, handleSubmit, resetForm, setFieldError } = useForm({
+const { errors, isSubmitting, meta, handleSubmit, resetForm } = useForm({
   validationSchema,
   initialValues,
 });
@@ -191,43 +189,64 @@ const { value: oldPassword } = useField<string>("oldPassword");
 const { value: newPassword } = useField<string>("newPassword");
 const { value: confirmNewPassword } = useField<string>("confirmNewPassword");
 
+const commonErrors = ref<string[]>([]);
+const showErrors = (responseErrors: IdentityErrorType[]) => {
+  responseErrors.forEach((error) => {
+    let errorDescription;
+    if (error.code === "PasswordMismatch") {
+      errorDescription = t("shared.account.change_password_form.wrong_current_pass");
+    } else {
+      errorDescription = getIdentityErrorTranslation(error);
+    }
+
+    if (errorDescription) {
+      commonErrors.value.push(errorDescription);
+    }
+  });
+};
+
+const getIdentityErrorTranslation = useIdentityErrorTranslator();
+
 const onSubmit = handleSubmit(async (data) => {
   const results: boolean[] = [];
-
-  updateProfileError.value = false;
-
+  commonErrors.value = [];
   // updating user password
-  if (oldPassword.value) {
-    const userPasswordUpdateResult = await changePassword(data.oldPassword!, data.newPassword!);
+  if (data.newPassword && data.oldPassword) {
+    const userPasswordUpdateResult = await changeExpiredPassword({
+      userId: user.value.id,
+      newPassword: data.newPassword,
+      oldPassword: data.oldPassword,
+    });
 
     results.push(userPasswordUpdateResult.succeeded);
-
-    userPasswordUpdateResult.errors?.forEach(({ code, description }) => {
-      if (code === "password_mismatch") {
-        setFieldError("oldPassword", t("pages.account.profile.errors.password_mismatch"));
-      } else if (description) {
-        setFieldError("newPassword", description); // TODO: Localize all messages
-      }
-    });
+    if (userPasswordUpdateResult.errors?.length) {
+      showErrors(userPasswordUpdateResult.errors);
+    }
   }
 
   // updating user data
-  if (initialValues.value.firstName !== data.firstName || initialValues.value.lastName !== data.lastName) {
+  if (
+    (data.firstName && initialValues.value.firstName !== data.firstName) ||
+    (data.lastName && initialValues.value.lastName !== data.lastName)
+  ) {
     const userDataUpdateResult = await updateUser({
       firstName: data.firstName!,
       lastName: data.lastName!,
     });
 
     results.push(userDataUpdateResult.succeeded);
+
+    if (userDataUpdateResult.errors?.length) {
+      showErrors(userDataUpdateResult.errors);
+    }
   }
 
   if (results.every((item) => item)) {
     resetForm();
+    commonErrors.value = [];
     openPopup({
       component: ProfileUpdateSuccessDialog,
     });
-  } else {
-    updateProfileError.value = true;
   }
 });
 

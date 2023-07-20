@@ -1296,7 +1296,8 @@
     "PasswordRequiresNonAlphanumeric": "Passwords must have at least one non alphanumeric character",
     "PasswordRequiresUpper": "Passwords must have at least one uppercase ('A'-'Z')",
     "PasswordRequiresUniqueChars": "Passwords must use different characters",
-    "RecentPasswordUsed": "You have used this password in the past. Choose another one."
+    "RecentPasswordUsed": "You have used this password in the past. Choose another one.",
+    "CustomUpdateNameError": "Can't update your name. Please contact support"
   },
   "password_tips": {
     "title": "Tips for creating a strong password:",
