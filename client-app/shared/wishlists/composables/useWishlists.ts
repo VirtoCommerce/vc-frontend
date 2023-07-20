@@ -26,27 +26,18 @@ const list: Ref<WishlistType | undefined> = ref();
 
 export default function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: true }) {
   async function createWishlist(name: string) {
-    loading.value = true;
-
-    try {
-      await addWishlist(name);
-    } catch (e) {
-      Logger.error(`${useWishlists.name}.${createWishlist.name}`, e);
-      throw e;
-    }
-
-    await fetchWishlists();
-  }
-
-  async function createList(name: string): Promise<string | undefined> {
     let newList: WishlistType;
     loading.value = true;
 
     try {
       newList = await addWishlist(name);
     } catch (e) {
-      Logger.error(`${useWishlists.name}.${createList.name}`, e);
+      Logger.error(`${useWishlists.name}.${createWishlist.name}`, e);
       throw e;
+    }
+
+    if (options.autoRefetch) {
+      await fetchWishlists();
     }
 
     return newList.id;
@@ -173,7 +164,6 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
     fetchWishlists,
     fetchWishList,
     createWishlist,
-    createList,
     renameWishlist,
     removeWishlist,
     addItemsToWishlists,

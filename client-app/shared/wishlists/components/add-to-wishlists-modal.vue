@@ -151,9 +151,9 @@ const {
   lists,
   fetchWishlists,
   addItemsToWishlists,
-  createList,
+  createWishlist,
   removeItemsFromWishlists,
-} = useWishlists();
+} = useWishlists({ autoRefetch: false });
 const notifications = useNotifications();
 const ga = useGoogleAnalytics();
 
@@ -220,7 +220,7 @@ async function createLists() {
   }
 
   await asyncForEach(newLists.value, async (newList) => {
-    const newListId = await createList(newList.listName);
+    const newListId = await createWishlist(newList.listName);
 
     if (newListId) {
       selectedListsOtherIds.value.push(newListId);
