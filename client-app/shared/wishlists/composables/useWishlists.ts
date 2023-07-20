@@ -25,33 +25,22 @@ const lists = shallowRef<WishlistType[]>([]);
 const list: Ref<WishlistType | undefined> = ref();
 
 export default function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: true }) {
-  async function createWishlist(name: string) {
+  async function createWishlist(name: string): Promise<string | undefined> {
+    let newList: WishlistType;
     loading.value = true;
 
     try {
-      await addWishlist(name);
+      newList = await addWishlist(name);
     } catch (e) {
       Logger.error(`${useWishlists.name}.${createWishlist.name}`, e);
       throw e;
     }
 
-    await fetchWishlists();
-  }
-
-  async function createWishlistAndAddProduct(name: string, productId: string) {
-    loading.value = true;
-
-    try {
-      const newList = await addWishlist(name);
-      if (!newList.id) {
-        Logger.error(`${useWishlists.name}.${createWishlistAndAddProduct.name}`, "newList.id error");
-      } else {
-        await addItemsToWishlists({ listIds: [newList.id], productId });
-      }
-    } catch (e) {
-      Logger.error(`${useWishlists.name}.${createWishlistAndAddProduct.name}`, e);
-      throw e;
+    if (options.autoRefetch) {
+      await fetchWishlists();
     }
+
+    return newList.id;
   }
 
   async function fetchWishlists() {
@@ -175,7 +164,6 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
     fetchWishlists,
     fetchWishList,
     createWishlist,
-    createWishlistAndAddProduct,
     renameWishlist,
     removeWishlist,
     addItemsToWishlists,
