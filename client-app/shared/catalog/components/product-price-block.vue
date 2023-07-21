@@ -103,7 +103,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { stringFormat } from "@/core/utilities";
 import { useUser } from "@/shared/account";
-import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
+import { productsInWishlistEvent, TabsType, useBroadcast } from "@/shared/broadcast";
 import { usePopup } from "@/shared/popup";
 import { AddToWishlistsModal } from "@/shared/wishlists";
 import type { Product } from "@/core/api/graphql/types";
@@ -142,7 +142,7 @@ function openAddToListModal() {
     props: {
       product: props.product,
       onResult: (inWishlist: boolean) => {
-        broadcast.emit(productsInWishlistEvent, [{ inWishlist, productId: props.product.id }], true);
+        broadcast.emit(productsInWishlistEvent, [{ inWishlist, productId: props.product.id }], TabsType.ALL);
       },
     },
   });
