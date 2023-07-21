@@ -2,7 +2,7 @@
   <form @submit="onSubmit">
     <VcInput
       v-model="oldPassword"
-      class="mb-4"
+      class="mb-5"
       :label="$t('shared.account.change_password_form.current_pass_label')"
       :placeholder="$t('shared.account.change_password_form.current_pass_placeholder')"
       type="password"
@@ -15,7 +15,7 @@
 
     <VcInput
       v-model="newPassword"
-      class="mb-4"
+      class="mb-5"
       :label="$t('shared.account.change_password_form.new_pass_label')"
       :placeholder="$t('shared.account.change_password_form.new_pass_placeholder')"
       type="password"
@@ -28,7 +28,7 @@
 
     <VcInput
       v-model="confirmPassword"
-      class="mb-4"
+      class="mb-5"
       :label="$t('shared.account.change_password_form.confirm_new_pass_label')"
       :placeholder="$t('shared.account.change_password_form.confirm_new_pass_placeholder')"
       type="password"
@@ -38,22 +38,15 @@
       autocomplete="off"
       :maxlength="MAX_PASS_LENGTH"
     />
-    <div class="mt-6 lg:mt-8">
-      <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
+    <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
 
-      <VcAlert v-for="error in commonErrors" :key="error" color="danger" class="my-4 text-xs" icon>
-        {{ error }}
-      </VcAlert>
+    <VcAlert v-for="error in commonErrors" :key="error" color="danger" class="my-5 text-xs" icon>
+      {{ error }}
+    </VcAlert>
 
-      <VcButton
-        :disabled="!meta.valid || meta.pending"
-        :loading="loading"
-        type="submit"
-        class="mt-6 w-full lg:mt-3 lg:w-48"
-      >
-        {{ $t("shared.account.change_password_form.submit_btn") }}
-      </VcButton>
-    </div>
+    <VcButton :disabled="!meta.valid || meta.pending" :loading="loading" type="submit" class="mt-5 w-full lg:w-48">
+      {{ $t("shared.account.change_password_form.submit_btn") }}
+    </VcButton>
   </form>
 </template>
 

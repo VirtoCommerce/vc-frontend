@@ -97,10 +97,7 @@ export default function useUser() {
       return result;
     } catch (e) {
       Logger.error(`${useUser.name}.${updatePersonalData.name}`, e);
-      return {
-        succeeded: false,
-        errors: [{ code: "CustomUpdateNameError" }],
-      };
+      throw e;
     } finally {
       loading.value = false;
     }

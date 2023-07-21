@@ -86,6 +86,7 @@ export default function useCart() {
       cart.value = await getCart();
     } catch (e) {
       Logger.error(`${useCart.name}.${fetchShortCart.name}`, e);
+      throw e;
     } finally {
       loading.value = false;
     }
@@ -98,6 +99,7 @@ export default function useCart() {
       cart.value = await getCart({ full: true });
     } catch (e) {
       Logger.error(`${useCart.name}.${fetchFullCart.name}`, e);
+      throw e;
     } finally {
       loading.value = false;
     }
