@@ -68,8 +68,7 @@ const INNER_MARGIN = 16;
 
 const isMobile = breakpoints.smaller("lg");
 
-// ITEM_HEIGHT - add height of item hidden under shadow
-const MAX_HEIGHT = ITEM_HEIGHT * MAX_ITEMS_VISIBLE + INNER_MARGIN + ITEM_HEIGHT;
+const MAX_HEIGHT = ITEM_HEIGHT * (MAX_ITEMS_VISIBLE + 1) + INNER_MARGIN;
 const maxHeight = computed(() => (isMobile.value ? "unset" : `${MAX_HEIGHT}px`));
 
 const facet = ref<FacetItemType>(cloneDeep(props.facet));
