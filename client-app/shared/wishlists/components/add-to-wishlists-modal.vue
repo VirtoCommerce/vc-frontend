@@ -151,9 +151,9 @@ const {
   lists,
   fetchWishlists,
   addItemsToWishlists,
-  createWishlistAndAddProduct,
+  createWishlist,
   removeItemsFromWishlists,
-} = useWishlists();
+} = useWishlists({ autoRefetch: false });
 const notifications = useNotifications();
 const ga = useGoogleAnalytics();
 
@@ -202,13 +202,11 @@ async function addToWishlistsFromListOther() {
     return;
   }
 
-  await addItemsToWishlists(
-    selectedListsOtherIds.value.map((listId) => ({
-      listId,
-      productId: product.value.id,
-      quantity: 1,
-    }))
-  );
+  await addItemsToWishlists({
+    listIds: selectedListsOtherIds.value,
+    productId: product.value.id,
+    quantity: 1,
+  });
 
   /**
    * Send Google Analytics event for an item added to wish list.
@@ -216,13 +214,17 @@ async function addToWishlistsFromListOther() {
   ga.addItemToWishList(product.value);
 }
 
-async function createListsAndAddProduct() {
+async function createLists() {
   if (!newLists.value.length) {
     return;
   }
 
   await asyncForEach(newLists.value, async (newList) => {
-    await createWishlistAndAddProduct(newList.listName, product.value.id);
+    const newListId = await createWishlist(newList.listName);
+
+    if (newListId) {
+      selectedListsOtherIds.value.push(newListId);
+    }
   });
 
   newLists.value = [];
@@ -266,7 +268,7 @@ async function save() {
 
   loading.value = true;
 
-  await createListsAndAddProduct();
+  await createLists();
   await removeProductFromWishlists();
   await addToWishlistsFromListOther();
   await fetchWishlists();
