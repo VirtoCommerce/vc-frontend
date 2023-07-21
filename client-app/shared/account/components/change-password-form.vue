@@ -45,7 +45,7 @@
     </VcAlert>
 
     <VcButton :disabled="!meta.valid || meta.pending" :loading="loading" type="submit" class="mt-5 w-full lg:w-48">
-      {{ $t("shared.account.change_password_form.submit_btn") }}
+      {{ $t("common.buttons.change") }}
     </VcButton>
   </form>
 </template>
