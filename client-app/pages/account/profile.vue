@@ -58,8 +58,8 @@
 
         <VcInput
           v-model="oldPassword"
-          :label="$t('pages.account.profile.old_password_label')"
-          :placeholder="$t('pages.account.profile.old_password_placeholder')"
+          :label="$t('shared.account.change_password_form.current_pass_label')"
+          :placeholder="$t('shared.account.change_password_form.current_pass_placeholder')"
           :disabled="isSubmitting"
           :maxlength="64"
           :message="errors.oldPassword"
@@ -72,8 +72,8 @@
 
         <VcInput
           :model-value="newPassword"
-          :label="$t('pages.account.profile.new_password_label')"
-          :placeholder="$t('pages.account.profile.new_password_placeholder')"
+          :label="$t('shared.account.change_password_form.new_pass_label')"
+          :placeholder="$t('shared.account.change_password_form.new_pass_placeholder')"
           :disabled="isSubmitting"
           :maxlength="64"
           :required="!!oldPassword"
@@ -88,8 +88,8 @@
 
         <VcInput
           :model-value="confirmNewPassword"
-          :label="$t('pages.account.profile.confirm_new_password_label')"
-          :placeholder="$t('pages.account.profile.confirm_new_password_placeholder')"
+          :label="$t('shared.account.change_password_form.confirm_new_pass_label')"
+          :placeholder="$t('shared.account.change_password_form.confirm_new_pass_placeholder')"
           :disabled="isSubmitting"
           :maxlength="64"
           :required="!!oldPassword"
@@ -156,14 +156,12 @@ const validationSchema = toTypedSchema(
       then: (stringSchema) =>
         stringSchema
           .required()
-          .notOneOf([yupRef("oldPassword")], t("pages.account.profile.errors.password_new_same_old")),
+          .notOneOf([yupRef("oldPassword")], t("shared.account.change_password_form.errors.password_new_same_old")),
     }),
     confirmNewPassword: string().when("oldPassword", {
       is: (value: string) => !!value,
       then: (stringSchema) =>
-        stringSchema
-          .required()
-          .oneOf([yupRef("newPassword")], t("pages.account.profile.errors.passwords_do_not_match")),
+        stringSchema.required().oneOf([yupRef("newPassword")], t("identity_error.PasswordMismatch")),
     }),
   })
 );
@@ -194,7 +192,7 @@ const showErrors = (responseErrors: IdentityErrorType[]) => {
   responseErrors.forEach((error) => {
     let errorDescription;
     if (error.code === "PasswordMismatch") {
-      errorDescription = t("shared.account.change_password_form.wrong_current_pass");
+      errorDescription = t("shared.account.change_password_form.errors.wrong_current_pass");
     } else {
       errorDescription = getIdentityErrorTranslation(error);
     }

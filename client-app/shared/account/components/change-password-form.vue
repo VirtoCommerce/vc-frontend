@@ -77,7 +77,15 @@ const getIdentityErrorTranslation = useIdentityErrorTranslator();
 const validationSchema = toTypedSchema(
   object({
     oldPassword: string().required(),
-    newPassword: string().required(),
+    newPassword: string()
+      .required()
+      .when("oldPassword", {
+        is: (value: string) => !!value,
+        then: (stringSchema) =>
+          stringSchema
+            .required()
+            .notOneOf([yupRef("oldPassword")], t("shared.account.change_password_form.errors.password_new_same_old")),
+      }),
     confirmPassword: string()
       .required()
       .oneOf([yupRef("newPassword")], t("identity_error.PasswordMismatch")),
@@ -115,7 +123,7 @@ const onSubmit = handleSubmit(async (data) => {
     result.errors.forEach((error) => {
       let errorDescription;
       if (error.code === "PasswordMismatch") {
-        errorDescription = t("shared.account.change_password_form.wrong_current_pass");
+        errorDescription = t("shared.account.change_password_form.errors.wrong_current_pass");
       } else {
         errorDescription = getIdentityErrorTranslation(error);
       }
