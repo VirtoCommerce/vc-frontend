@@ -121,12 +121,7 @@ const onSubmit = handleSubmit(async (data) => {
     emit("succeeded");
   } else if (result.errors?.length) {
     result.errors.forEach((error) => {
-      let errorDescription;
-      if (error.code === "PasswordMismatch") {
-        errorDescription = t("shared.account.change_password_form.errors.wrong_current_pass");
-      } else {
-        errorDescription = getIdentityErrorTranslation(error);
-      }
+      const errorDescription = getIdentityErrorTranslation(error);
 
       if (errorDescription) {
         commonErrors.value.push(errorDescription);

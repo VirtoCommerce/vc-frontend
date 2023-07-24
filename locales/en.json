@@ -352,8 +352,7 @@
         "confirm_new_pass_label": "Confirm new password",
         "confirm_new_pass_placeholder": "Repeat your new password",
         "errors": {
-          "password_new_same_old": "Your current password and new password must be different",
-          "wrong_current_pass": "You entered the wrong current password, please try again or call support"
+          "password_new_same_old": "Your current password and new password must be different"
         }
       },
       "sign_in_form": {
