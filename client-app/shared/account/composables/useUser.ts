@@ -103,6 +103,23 @@ export default function useUser() {
     }
   }
 
+  async function changePassword(oldPassword: string, newPassword: string): Promise<IdentityResultType> {
+    try {
+      loading.value = true;
+
+      return await innerFetch<IdentityResultType>("/storefrontapi/account/password", "POST", {
+        oldPassword,
+        newPassword,
+        newPasswordConfirm: newPassword,
+      });
+    } catch (e) {
+      Logger.error(`${useUser.name}.${changePassword.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   async function confirmEmail(payload: { userId: string; token: string }): Promise<IdentityResultType> {
     try {
       loading.value = true;
@@ -285,6 +302,7 @@ export default function useUser() {
     checkPermissions,
     fetchUser,
     updateUser,
+    changePassword,
     confirmEmail,
     signMeIn,
     registerUser,
