@@ -88,7 +88,7 @@ const validationSchema = toTypedSchema(
       }),
     confirmPassword: string()
       .required()
-      .oneOf([yupRef("newPassword")], t("identity_error.PasswordMismatch")),
+      .oneOf([yupRef("newPassword")], t("shared.account.change_password_form.errors.passwords_do_not_match")),
   })
 );
 
