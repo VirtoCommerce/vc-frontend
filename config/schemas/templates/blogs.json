@@ -1,0 +1,41 @@
+{
+  "name": "Blogs",
+  "previewUrl": "",
+  "request": [
+    {
+      "url": "/api/pagebuilder/search?storeId={{location.params.storeId}}&theme={{config.themeName}}&type=pages",
+      "method": "get",
+      "cacheable": true,
+      "response": {
+        "selector": "Object.keys(this.response).map(x => ({ ...this.item, ...this.response[x], request: undefined })).reduce((acc, x) => ({ ...acc, [x.name]: x }), {})",
+        "isArray": true
+      }
+    }
+  ],
+  "type": "pages",
+  "sections": [
+    "call-to-action",
+    "call-to-action-with-image",
+    "features",
+    "slider",
+    "login",
+    "image",
+    "page-header",
+    "products",
+    "text",
+    "title",
+    "demo-product-list"
+  ],
+  "settings": [
+    {
+      "id": "header",
+      "label": "Page Header / H1",
+      "type": "string"
+    },
+    {
+      "id": "hideBreadcrumbs",
+      "label": "Hide Breadcrumbs",
+      "type": "checkbox"
+    }
+  ]
+}
