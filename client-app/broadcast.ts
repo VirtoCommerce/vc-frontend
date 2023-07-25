@@ -1,9 +1,14 @@
 import { useRouter } from "vue-router";
 import { usePagesWithFullCartLoad } from "@/core/composables";
 import { useUser } from "@/shared/account";
-import { cartReloadEvent, pageReloadEvent, useBroadcast, userReloadEvent } from "@/shared/broadcast";
+import {
+  cartReloadEvent,
+  pageReloadEvent,
+  userReloadEvent,
+  unauthorizedErrorEvent,
+  useBroadcast,
+} from "@/shared/broadcast";
 import { useCart } from "@/shared/cart";
-
 let installed = false;
 
 export function setupBroadcastGlobalListeners() {
@@ -15,7 +20,7 @@ export function setupBroadcastGlobalListeners() {
 
   const router = useRouter();
   const { on } = useBroadcast();
-  const { fetchUser } = useUser();
+  const { fetchUser, isPasswordNeedToBeChanged } = useUser();
   const { pagesWithFullCartLoad } = usePagesWithFullCartLoad();
   const { fetchShortCart, fetchFullCart } = useCart();
 
@@ -30,6 +35,16 @@ export function setupBroadcastGlobalListeners() {
       await fetchFullCart();
     } else {
       await fetchShortCart();
+    }
+  });
+  on(unauthorizedErrorEvent, async () => {
+    await fetchUser();
+    if (!isPasswordNeedToBeChanged.value) {
+      const { hash, pathname, search } = location;
+
+      if (pathname !== "/sign-in") {
+        location.href = `/sign-in?returnUrl=${pathname + search + hash}`;
+      }
     }
   });
 }

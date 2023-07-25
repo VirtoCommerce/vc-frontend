@@ -343,6 +343,19 @@
           "quote_requests": "@:common.links.quote_requests"
         }
       },
+      "change_password_form": {
+        "title": "Create new password",
+        "current_pass_label": "Current password",
+        "current_pass_placeholder": "Enter your current password",
+        "new_pass_label": "New password",
+        "new_pass_placeholder": "Create a new password",
+        "confirm_new_pass_label": "Confirm new password",
+        "confirm_new_pass_placeholder": "Repeat your new password",
+        "errors": {
+          "passwords_do_not_match": "Passwords do not match",
+          "password_new_same_old": "Your current password and new password must be different"
+        }
+      },
       "sign_in_form": {
         "remember_me_label": "Remember me",
         "forgot_password_link": "Forgot your password?",
@@ -779,6 +792,13 @@
       "enter_new_password_message": "An account has been created for you, please set a password to login.",
       "success_message": "Registration was successfully completed",
       "log_in_button": "Continue"
+    },
+    "change_password": {
+      "meta": {
+        "title": "Change password"
+      },
+      "header": "Change your password",
+      "success_message": "Your password has been successfully changed"
     },
     "sign_in": {
       "meta": {

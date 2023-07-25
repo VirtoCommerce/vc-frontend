@@ -8,6 +8,7 @@ import {
   requestPasswordReset,
   resetPasswordByToken,
   updatePersonalData,
+  changePassword as _changeExpiredPassword,
 } from "@/core/api/graphql/account";
 import { useFetch } from "@/core/composables";
 import { globals } from "@/core/globals";
@@ -26,6 +27,7 @@ import type {
   ForgotPassword,
   RegisterOrganization,
   ResetPassword,
+  ChangePassword,
   SignMeIn,
   SignMeUp,
   UserPersonalData,
@@ -36,6 +38,9 @@ const user = ref<UserType>();
 
 const isAuthenticated = computed<boolean>(() => !!user.value?.userName && user.value.userName !== "Anonymous");
 const isCorporateMember = computed<boolean>(() => !!user.value?.contact?.organizationId);
+const isPasswordNeedToBeChanged = computed<boolean>(
+  () => !!user.value?.forcePasswordChange || !!user.value?.passwordExpired
+);
 const organization = eagerComputed<Organization | null>(() => user.value?.contact?.organizations?.items?.[0] ?? null);
 const operator = computed<UserType | null>(() => user.value?.operator ?? null);
 
@@ -63,6 +68,13 @@ export default function useUser() {
 
       if (withBroadcast) {
         broadcast.emit(userReloadEvent);
+      }
+      if (isPasswordNeedToBeChanged.value) {
+        const { hash, pathname, search } = location;
+
+        if (pathname !== "/change-password") {
+          location.href = `/change-password?returnUrl=${pathname + search + hash}`;
+        }
       }
     } catch (e) {
       Logger.error(`${useUser.name}.${fetchUser.name}`, e);
@@ -243,6 +255,22 @@ export default function useUser() {
       loading.value = false;
     }
   }
+  async function changeExpiredPassword(payload: ChangePassword): Promise<IdentityResultType> {
+    try {
+      loading.value = true;
+
+      return await _changeExpiredPassword({
+        userId: payload.userId,
+        oldPassword: payload.oldPassword,
+        newPassword: payload.newPassword,
+      });
+    } catch (e) {
+      Logger.error(`${useUser.name}.${resetPassword.name}`, e);
+      return { succeeded: false };
+    } finally {
+      loading.value = false;
+    }
+  }
 
   async function inviteUser(payload: InputInviteUserType): Promise<CustomIdentityResultType> {
     try {
@@ -284,6 +312,8 @@ export default function useUser() {
     resetPassword,
     inviteUser,
     registerByInvite,
+    changeExpiredPassword,
+    isPasswordNeedToBeChanged,
     loading: readonly(loading),
     user: computed({
       get() {
