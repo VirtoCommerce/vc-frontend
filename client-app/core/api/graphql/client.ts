@@ -3,10 +3,7 @@ import { ApolloClient } from "apollo-client";
 import { onError } from "apollo-link-error";
 import { HttpLink } from "apollo-link-http";
 import fetch from "isomorphic-fetch";
-import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
-import { globals } from "@/core/globals";
-import { TabsType, unauthorizedErrorEvent, useBroadcast } from "@/shared/broadcast";
-import { useNotifications } from "@/shared/notification";
+import { TabsType, unauthorizedErrorEvent, unhandledErrorEvent, useBroadcast } from "@/shared/broadcast";
 import type { FetchPolicy } from "apollo-client";
 import type { GraphQLError } from "graphql";
 
@@ -15,26 +12,18 @@ const fetchPolicy: FetchPolicy = "no-cache";
 const httpLink = new HttpLink({ uri: `/xapi/graphql`, fetch });
 
 const broadcast = useBroadcast();
-const notifications = useNotifications();
 
 function hasErrorCode(graphQLErrors: ReadonlyArray<GraphQLError> | undefined, errorCode: string) {
   return graphQLErrors?.some((graphQLError) => graphQLError.extensions.code === errorCode);
 }
 
 const errorHandler = onError(({ networkError, graphQLErrors }) => {
-  const { t } = globals.i18n.global;
-
   const unauthorized = hasErrorCode(graphQLErrors, "Unauthorized");
   const forbidden = hasErrorCode(graphQLErrors, "Forbidden");
   const unhandledError = hasErrorCode(graphQLErrors, "");
 
   if (networkError || unhandledError) {
-    notifications.error({
-      duration: DEFAULT_NOTIFICATION_DURATION,
-      group: "UnhandledError",
-      singleInGroup: true,
-      text: t("common.messages.unhandled_error"),
-    });
+    broadcast.emit(unhandledErrorEvent, undefined, TabsType.ALL);
   }
 
   if (unauthorized) {
