@@ -25,11 +25,12 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
-import { getReturnUrlValue } from "@/core/utilities";
 import { ChangePasswordForm } from "@/shared/account";
+import { openReturnUrl, TabsType, useBroadcast } from "@/shared/broadcast";
 import { TwoColumn } from "@/shared/layout";
 
 const { t } = useI18n();
+const broadcast = useBroadcast();
 
 usePageHead({
   title: t("pages.change_password.meta.title"),
@@ -39,8 +40,9 @@ const isSucceeded = ref(false);
 
 function onSucceeded() {
   isSucceeded.value = true;
+  broadcast.emit(openReturnUrl, undefined, TabsType.OTHERS);
   setTimeout(() => {
-    location.href = getReturnUrlValue() || "/";
+    broadcast.emit(openReturnUrl, undefined, TabsType.CURRENT);
   }, 3000);
 }
 </script>

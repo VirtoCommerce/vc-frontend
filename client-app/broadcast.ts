@@ -1,5 +1,6 @@
 import { useRouter } from "vue-router";
 import { usePagesWithFullCartLoad } from "@/core/composables";
+import { getReturnUrlValue } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import {
   cartReloadEvent,
@@ -7,8 +8,10 @@ import {
   userReloadEvent,
   unauthorizedErrorEvent,
   useBroadcast,
+  openReturnUrl,
 } from "@/shared/broadcast";
 import { useCart } from "@/shared/cart";
+
 let installed = false;
 
 export function setupBroadcastGlobalListeners() {
@@ -46,5 +49,8 @@ export function setupBroadcastGlobalListeners() {
         location.href = `/sign-in?returnUrl=${pathname + search + hash}`;
       }
     }
+  });
+  on(openReturnUrl, () => {
+    location.href = getReturnUrlValue() || "/";
   });
 }
