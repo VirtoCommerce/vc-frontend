@@ -1,0 +1,8 @@
+fragment availabilityDataFields on AvailabilityData {
+  isActive
+  isAvailable
+  isBuyable
+  isInStock
+  isTrackInventory
+  availableQuantity
+}

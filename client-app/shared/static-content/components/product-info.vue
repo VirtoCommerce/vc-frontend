@@ -50,6 +50,7 @@
           <div class="mt-2 flex">
             <VcInStock
               :is-in-stock="product.availabilityData?.isInStock"
+              :is-track-inventory="product.availabilityData?.isTrackInventory"
               :is-digital="isDigital"
               :quantity="product.availabilityData?.availableQuantity"
             ></VcInStock>

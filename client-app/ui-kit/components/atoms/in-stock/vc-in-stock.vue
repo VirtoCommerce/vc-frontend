@@ -7,10 +7,10 @@
   </div>
 
   <div
-    v-else-if="isInStock"
+    v-else-if="!isTrackInventory || isInStock"
     class="whitespace-nowrap rounded-full bg-[color:var(--color-in-stock-available-bg)] px-[0.677rem] py-0.5 text-[13px] leading-5 text-[color:var(--color-in-stock-available)] lg:px-[0.53rem] lg:py-px lg:text-[11px]"
   >
-    <span class="inline-block min-w-[1.438rem] text-center font-bold lg:min-w-[1.25rem]">
+    <span v-if="isTrackInventory" class="inline-block min-w-[1.438rem] text-center font-bold lg:min-w-[1.25rem]">
       {{ quantity && quantity > 9999 ? "9999+" : quantity }}
     </span>
     {{ $t("common.suffixes.product_count_in_stock") }}
@@ -36,6 +36,7 @@ interface IProps {
   isInStock?: boolean;
   isAvailable?: boolean;
   isDigital?: boolean;
+  isTrackInventory?: boolean;
   quantity?: number | null;
 }
 

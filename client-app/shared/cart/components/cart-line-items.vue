@@ -35,6 +35,7 @@
 
         <VcInStock
           :quantity="item.inStockQuantity"
+          :is-track-inventory="item.availabilityData?.isTrackInventory"
           :is-digital="item.productType === ProductType.Digital"
           is-in-stock
         />

@@ -102,7 +102,9 @@ const disabled = computed<boolean>(
     !props.product.availabilityData?.isAvailable ||
     !props.product.availabilityData?.isInStock ||
     !props.product.availabilityData?.isBuyable ||
-    (!props.product.availabilityData?.availableQuantity && !isDigital.value)
+    (!props.product.availabilityData?.availableQuantity &&
+      !!props.product.availabilityData?.isTrackInventory &&
+      !isDigital.value)
 );
 
 const buttonText = computed<string>(() =>

@@ -50,6 +50,7 @@
 
             <VcInStock
               :is-in-stock="!!variation.availabilityData?.isInStock"
+              :is-track-inventory="variation.availabilityData?.isTrackInventory"
               :is-digital="isDigital"
               :quantity="variation.availabilityData?.availableQuantity"
               class="mt-2.5 inline-block"

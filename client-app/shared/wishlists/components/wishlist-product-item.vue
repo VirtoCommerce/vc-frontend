@@ -14,7 +14,7 @@
         :to="link"
         class="line-clamp-3 overflow-hidden break-words text-sm font-extrabold text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
         :title="listItem.product.name"
-        @click="$emit('link-click', $event)"
+        @click="$emit('linkClick', $event)"
       >
         {{ listItem.product.name }}
       </router-link>
@@ -48,6 +48,7 @@
         <VcInStock
           :is-in-stock="listItem.product?.availabilityData?.isInStock || false"
           :is-available="productAvailable"
+          :is-track-inventory="listItem.product?.availabilityData?.isTrackInventory"
           :quantity="listItem.product ? listItem.product.availabilityData?.availableQuantity : undefined"
         ></VcInStock>
       </div>
@@ -74,20 +75,18 @@ import { computed } from "vue";
 import { getProductRoute } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
 import type { LineItemType } from "@/core/api/graphql/types";
-import type { PropType } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
+interface IProps {
+  listItem: LineItemType;
+}
+
 defineEmits<{
-  (eventName: "link-click", globalEvent: PointerEvent): void;
+  (eventName: "linkClick", globalEvent: PointerEvent): void;
   (eventName: "remove"): void;
 }>();
 
-const props = defineProps({
-  listItem: {
-    type: Object as PropType<LineItemType>,
-    required: true,
-  },
-});
+const props = defineProps<IProps>();
 
 const link = computed<RouteLocationRaw | undefined>(() =>
   props.listItem.product ? getProductRoute(props.listItem.product.id, props.listItem.product.slug) : undefined
