@@ -116,7 +116,7 @@
     "vue-eslint-parser": "^9.3.0",
     "vue-loader": "^17.1.2",
     "vue-tsc": "1.6.5",
-    "yarn": "^1.22.19"
+    "yarn": "1.22.19"
   },
   "lint-staged": {
     "*.{js,ts,vue}": [
@@ -131,5 +131,6 @@
   },
   "resolutions": {
     "@types/react": "file:stub/@types/react"
-  }
+  },
+  "packageManager": "yarn@1.22.19"
 }
