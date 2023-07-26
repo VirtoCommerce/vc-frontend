@@ -15,7 +15,6 @@ export const configPlugin: Plugin<IThemeConfigPreset> = {
         const cssNode = document.createTextNode(`--${key.replace(/_/g, "-")}: ${value};`);
         styleElement.appendChild(cssNode);
       });
-    const headElement = document.head || document.getElementsByTagName("head")[0];
-    headElement.prepend(styleElement);
+    document.head.prepend(styleElement);
   },
 };
