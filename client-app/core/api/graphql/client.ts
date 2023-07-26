@@ -26,9 +26,9 @@ const errorHandler = onError(({ networkError, graphQLErrors }) => {
 
   const unauthorized = hasErrorCode(graphQLErrors, "Unauthorized");
   const forbidden = hasErrorCode(graphQLErrors, "Forbidden");
-  const unhandled = hasErrorCode(graphQLErrors, "");
+  const unhandledError = hasErrorCode(graphQLErrors, "");
 
-  if (networkError || unhandled) {
+  if (networkError || unhandledError) {
     notifications.error({
       duration: DEFAULT_NOTIFICATION_DURATION,
       group: "UnhandledError",
