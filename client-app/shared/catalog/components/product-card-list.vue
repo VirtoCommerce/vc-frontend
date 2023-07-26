@@ -37,6 +37,7 @@
       <template #trigger>
         <router-link
           :to="link"
+          :target="openInNewTab ? '_blank' : '_self'"
           class="vc-product-card-list__name w-full grow text-sm font-extrabold text-[color:var(--color-link)] sm:line-clamp-3 sm:overflow-hidden lg:mt-1 lg:h-[60px] 2xl:pr-2"
           @click="$emit('linkClick', $event)"
         >
@@ -114,9 +115,9 @@
         </VcButton>
 
         <router-link
+          :to="link"
           class="flex items-center gap-1 text-14 text-[color:var(--color-link)] lg:mt-1 lg:text-11"
           target="_blank"
-          :to="link"
         >
           <svg class="h-3 w-3 shrink-0 text-primary lg:h-2.5 lg:w-2.5">
             <use href="/static/images/link.svg#main"></use>
@@ -159,6 +160,7 @@ const props = defineProps<IProps>();
 
 interface IProps {
   product: Product;
+  openInNewTab?: boolean;
 }
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
