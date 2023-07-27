@@ -8,10 +8,13 @@ export const configPlugin: Plugin<IThemeConfigPreset> = {
     app.provide(configInjectionKey, options);
 
     // Set CSS variables to use as TailwindCSS arbitrary values: https://tailwindcss.com/docs/adding-custom-styles#using-arbitrary-values
+    const styleElement = document.createElement("style");
     Object.entries(options)
       .filter(([key]) => /^color/.test(key))
       .forEach(([key, value]) => {
-        document.documentElement.style.setProperty(`--${key.replace(/_/g, "-")}`, value);
+        const cssNode = document.createTextNode(`--${key.replace(/_/g, "-")}: ${value};`);
+        styleElement.appendChild(cssNode);
       });
+    document.head.prepend(styleElement);
   },
 };
