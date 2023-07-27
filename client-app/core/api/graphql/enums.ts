@@ -1,5 +1,5 @@
 export enum GraphQLErrorCode {
-  Unauthorized = "Unauthorized",
   Forbidden = "Forbidden",
+  Unauthorized = "Unauthorized",
   Unhandled = "",
 }
