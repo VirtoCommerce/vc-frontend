@@ -1,5 +1,6 @@
 import { useRouter } from "vue-router";
 import { usePagesWithFullCartLoad } from "@/core/composables";
+import { globals } from "@/core/globals";
 import { getReturnUrlValue } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import {
@@ -9,8 +10,11 @@ import {
   unauthorizedErrorEvent,
   useBroadcast,
   openReturnUrl,
+  unhandledErrorEvent,
 } from "@/shared/broadcast";
 import { useCart } from "@/shared/cart";
+import { useNotifications } from "@/shared/notification";
+import { DEFAULT_NOTIFICATION_DURATION } from "./core/constants";
 
 let installed = false;
 
@@ -23,6 +27,7 @@ export function setupBroadcastGlobalListeners() {
 
   const router = useRouter();
   const { on } = useBroadcast();
+  const notifications = useNotifications();
   const { fetchUser, isPasswordNeedToBeChanged } = useUser();
   const { pagesWithFullCartLoad } = usePagesWithFullCartLoad();
   const { fetchShortCart, fetchFullCart } = useCart();
@@ -49,6 +54,15 @@ export function setupBroadcastGlobalListeners() {
         location.href = `/sign-in?returnUrl=${pathname + search + hash}`;
       }
     }
+  });
+  on(unhandledErrorEvent, () => {
+    const { t } = globals.i18n.global;
+    notifications.error({
+      duration: DEFAULT_NOTIFICATION_DURATION,
+      group: "UnhandledError",
+      singleInGroup: true,
+      text: t("common.messages.unhandled_error"),
+    });
   });
   on(openReturnUrl, () => {
     location.href = getReturnUrlValue() || "/";
