@@ -72,12 +72,11 @@ import { eagerComputed } from "@vueuse/core";
 import { isEmpty } from "lodash";
 import { useField, useForm } from "vee-validate";
 import { reactive, ref, watch } from "vue";
-import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
 import { getMe } from "@/core/api/graphql";
 import { mergeCart } from "@/core/api/graphql/cart";
+import { Logger } from "@/core/utilities";
 import { useCart } from "@/shared/cart";
-import { useNotifications } from "@/shared/notification";
 import useUser from "../composables/useUser";
 
 interface IEmits {
@@ -89,8 +88,6 @@ const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButto
 
 const USER_IS_LOCKED_OUT_ERROR_CODE = "user_is_locked_out";
 
-const notifications = useNotifications();
-const { t } = useI18n();
 const { cart, fetchShortCart } = useCart();
 const { signMeIn, isAuthenticated } = useUser();
 
@@ -139,13 +136,8 @@ const onSubmit = handleSubmit(async () => {
     } else {
       authError.value = true;
     }
-  } catch {
-    notifications.error({
-      text: t("common.messages.unknown_error"),
-      duration: 10000,
-    });
-
-    // (⌐■_■) ♪
+  } catch (e) {
+    Logger.error(useUser.name, e);
   }
 
   loading.value = false;
