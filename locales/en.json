@@ -972,18 +972,7 @@
         },
         "title": "Profile",
         "change_password_title": "Change Password",
-        "update_error_alert": "There was an error during profile update",
-        "old_password_label": "Current Password",
-        "old_password_placeholder": "Enter your current password",
-        "new_password_label": "New Password",
-        "new_password_placeholder": "Enter your new password",
-        "confirm_new_password_label": "Confirm New Password",
-        "confirm_new_password_placeholder": "Repeat new password",
-        "errors": {
-          "password_mismatch": "Incorrect current password",
-          "passwords_do_not_match": "Passwords do not match",
-          "password_new_same_old": "Your current password and new password must be different"
-        }
+        "update_error_alert": "There was an error during profile update"
       },
       "quotes": {
         "title": "Quote Requests",
