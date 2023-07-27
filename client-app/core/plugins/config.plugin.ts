@@ -9,12 +9,13 @@ export const configPlugin: Plugin<IThemeConfigPreset> = {
 
     // Set CSS variables to use as TailwindCSS arbitrary values: https://tailwindcss.com/docs/adding-custom-styles#using-arbitrary-values
     const styleElement = document.createElement("style");
+    styleElement.innerText = ":root {";
     Object.entries(options)
       .filter(([key]) => /^color/.test(key))
       .forEach(([key, value]) => {
-        const cssNode = document.createTextNode(`--${key.replace(/_/g, "-")}: ${value};`);
-        styleElement.appendChild(cssNode);
+        styleElement.innerText += `--${key.replace(/_/g, "-")}: ${value};`;
       });
+    styleElement.innerText += "}";
     document.head.prepend(styleElement);
   },
 };
