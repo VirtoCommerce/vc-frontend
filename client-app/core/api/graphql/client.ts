@@ -4,8 +4,9 @@ import { onError } from "apollo-link-error";
 import { HttpLink } from "apollo-link-http";
 import fetch from "isomorphic-fetch";
 import { TabsType, unauthorizedErrorEvent, unhandledErrorEvent, useBroadcast } from "@/shared/broadcast";
+import { GraphQLErrorCode } from "./enums";
+import { hasErrorCode } from "./utils";
 import type { FetchPolicy } from "apollo-client";
-import type { GraphQLError } from "graphql";
 
 const fetchPolicy: FetchPolicy = "no-cache";
 
@@ -13,14 +14,10 @@ const httpLink = new HttpLink({ uri: `/xapi/graphql`, fetch });
 
 const broadcast = useBroadcast();
 
-function hasErrorCode(graphQLErrors: ReadonlyArray<GraphQLError> | undefined, errorCode: string) {
-  return graphQLErrors?.some((graphQLError) => graphQLError.extensions.code === errorCode);
-}
-
 const errorHandler = onError(({ networkError, graphQLErrors }) => {
-  const unauthorized = hasErrorCode(graphQLErrors, "Unauthorized");
-  const forbidden = hasErrorCode(graphQLErrors, "Forbidden");
-  const unhandledError = hasErrorCode(graphQLErrors, "");
+  const unauthorized = hasErrorCode(graphQLErrors, GraphQLErrorCode.Unauthorized);
+  const forbidden = hasErrorCode(graphQLErrors, GraphQLErrorCode.Forbidden);
+  const unhandledError = hasErrorCode(graphQLErrors, GraphQLErrorCode.Unhandled);
 
   if (networkError || unhandledError) {
     broadcast.emit(unhandledErrorEvent, undefined, TabsType.ALL);
