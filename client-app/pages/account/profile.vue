@@ -137,7 +137,7 @@ import { usePopup } from "@/shared/popup";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
 
 const { t } = useI18n();
-const { user, updateUser, changeExpiredPassword } = useUser();
+const { user, updateUser, changePassword } = useUser();
 const { passwordRequirements, fetchPasswordRequirements } = usePasswordRequirements();
 const { openPopup } = usePopup();
 
@@ -205,7 +205,7 @@ const onSubmit = handleSubmit(async (data) => {
   commonErrors.value = [];
 
   if (data.newPassword && data.oldPassword) {
-    const userPasswordUpdateResult = await changeExpiredPassword({
+    const userPasswordUpdateResult = await changePassword({
       userId: user.value.id,
       newPassword: data.newPassword,
       oldPassword: data.oldPassword,

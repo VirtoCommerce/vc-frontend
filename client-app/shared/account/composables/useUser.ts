@@ -8,7 +8,7 @@ import {
   requestPasswordReset,
   resetPasswordByToken,
   updatePersonalData,
-  changePassword as _changeExpiredPassword,
+  changePassword as _changePassword,
 } from "@/core/api/graphql/account";
 import { useFetch } from "@/core/composables";
 import { globals } from "@/core/globals";
@@ -238,11 +238,11 @@ export default function useUser() {
       loading.value = false;
     }
   }
-  async function changeExpiredPassword(payload: ChangePassword): Promise<IdentityResultType> {
+  async function changePassword(payload: ChangePassword): Promise<IdentityResultType> {
     try {
       loading.value = true;
 
-      return await _changeExpiredPassword({
+      return await _changePassword({
         userId: payload.userId,
         oldPassword: payload.oldPassword,
         newPassword: payload.newPassword,
@@ -294,7 +294,7 @@ export default function useUser() {
     resetPassword,
     inviteUser,
     registerByInvite,
-    changeExpiredPassword,
+    changePassword,
     isPasswordNeedToBeChanged,
     loading: readonly(loading),
     user: computed({
