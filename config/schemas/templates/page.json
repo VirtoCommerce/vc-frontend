@@ -1,13 +1,13 @@
 {
   "name": "Pages",
-  "previewUrl": "",
+  "previewRule": "{{item.settings.permalink}}",
   "request": [
     {
       "url": "/api/pagebuilder/search?storeId={{location.params.storeId}}&theme={{config.themeName}}&type=pages",
       "method": "get",
       "cacheable": true,
       "response": {
-        "selector": "Object.keys(this.response).map(x => ({ ...this.item, ...this.response[x], request: undefined })).reduce((acc, x) => ({ ...acc, [x.name]: x }), {})",
+        "selector": "Object.keys(this.response).map(x => ({ ...this.item, ...this.response[x], request: undefined, key: x })).reduce((acc, x) => ({ ...acc, [x.key]: x }), {})",
         "isArray": true
       }
     }
@@ -37,5 +37,12 @@
       "label": "Hide Breadcrumbs",
       "type": "checkbox"
     }
-  ]
+  ],
+  "default": {
+    "metadata": {
+      "parent": "page",
+      "template": "page",
+      "contentType": "pages"
+    }
+  }
 }

@@ -1,18 +1,18 @@
 {
-  "name": "Blogs",
-  "previewUrl": "",
+  "name": "Blog",
+  "previewRule": "{{item.settings.permalink}}",
   "request": [
     {
-      "url": "/api/pagebuilder/search?storeId={{location.params.storeId}}&theme={{config.themeName}}&type=pages",
+      "url": "/api/pagebuilder/search?storeId={{location.params.storeId}}&type=blogs&folder=news",
       "method": "get",
       "cacheable": true,
       "response": {
-        "selector": "Object.keys(this.response).map(x => ({ ...this.item, ...this.response[x], request: undefined })).reduce((acc, x) => ({ ...acc, [x.name]: x }), {})",
+        "selector": "Object.keys(this.response).map(x => ({ ...this.item, ...this.response[x], key: x, request: undefined })).reduce((acc, x) => ({ ...acc, [x.key]: x }), {})",
         "isArray": true
       }
     }
   ],
-  "type": "pages",
+  "type": "blogs",
   "sections": [
     "call-to-action",
     "call-to-action-with-image",
