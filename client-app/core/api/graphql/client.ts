@@ -3,7 +3,9 @@ import { ApolloClient } from "apollo-client";
 import { onError } from "apollo-link-error";
 import { HttpLink } from "apollo-link-http";
 import fetch from "isomorphic-fetch";
-import { pageReloadEvent, useBroadcast } from "@/shared/broadcast";
+import { TabsType, unauthorizedErrorEvent, unhandledErrorEvent, useBroadcast } from "@/shared/broadcast";
+import { GraphQLErrorCode } from "./enums";
+import { hasErrorCode } from "./utils";
 import type { FetchPolicy } from "apollo-client";
 
 const fetchPolicy: FetchPolicy = "no-cache";
@@ -12,23 +14,22 @@ const httpLink = new HttpLink({ uri: `/xapi/graphql`, fetch });
 
 const broadcast = useBroadcast();
 
-const errorHandler = onError(({ graphQLErrors = [] }) => {
-  for (let l = graphQLErrors.length, i = 0; i < l; i += 1) {
-    const {
-      extensions: { code },
-    } = graphQLErrors[i];
+const errorHandler = onError(({ networkError, graphQLErrors }) => {
+  const unauthorized = hasErrorCode(graphQLErrors, GraphQLErrorCode.Unauthorized);
+  const forbidden = hasErrorCode(graphQLErrors, GraphQLErrorCode.Forbidden);
+  const unhandledError = hasErrorCode(graphQLErrors, GraphQLErrorCode.Unhandled);
 
-    if (code === "Unauthorized") {
-      broadcast.emit(pageReloadEvent);
-      const { hash, pathname, search } = location;
-      location.href = `/sign-in?returnUrl=${pathname + search + hash}`;
-      return;
-    }
+  if (networkError || unhandledError) {
+    broadcast.emit(unhandledErrorEvent, undefined, TabsType.ALL);
+  }
 
-    if (code === "Forbidden") {
-      // TODO: Use notification
-      alert("User doesn't have the required permission.");
-    }
+  if (unauthorized) {
+    broadcast.emit(unauthorizedErrorEvent, undefined, TabsType.ALL);
+  }
+
+  if (forbidden) {
+    // TODO: Use notification
+    alert("User doesn't have the required permission.");
   }
 });
 

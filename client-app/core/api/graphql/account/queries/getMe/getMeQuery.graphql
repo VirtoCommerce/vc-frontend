@@ -9,6 +9,8 @@ query GetMe($after: String, $first: Int, $sort: String) {
     phoneNumber
     permissions
     isAdministrator
+    passwordExpired
+    forcePasswordChange
     contact {
       firstName
       lastName

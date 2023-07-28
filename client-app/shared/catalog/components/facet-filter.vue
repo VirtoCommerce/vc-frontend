@@ -64,10 +64,11 @@ const SHOW_MORE_AMOUNT = 8;
 const SEARCH_FIELD_AMOUNT = 10;
 const ITEM_HEIGHT = 30;
 const MAX_ITEMS_VISIBLE = 14;
+const INNER_MARGIN = 16;
 
 const isMobile = breakpoints.smaller("lg");
 
-const MAX_HEIGHT = ITEM_HEIGHT * MAX_ITEMS_VISIBLE + 16;
+const MAX_HEIGHT = ITEM_HEIGHT * (MAX_ITEMS_VISIBLE + 1) + INNER_MARGIN;
 const maxHeight = computed(() => (isMobile.value ? "unset" : `${MAX_HEIGHT}px`));
 
 const facet = ref<FacetItemType>(cloneDeep(props.facet));

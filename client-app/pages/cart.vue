@@ -348,6 +348,8 @@ invoke(async () => {
   /**
    * Send a Google Analytics shopping cart view event.
    */
-  ga.viewCart(cart.value!);
+  if (cart.value) {
+    ga.viewCart(cart.value);
+  }
 });
 </script>

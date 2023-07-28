@@ -38,6 +38,12 @@ export type ResetPassword = {
   password: string;
 };
 
+export type ChangePassword = {
+  userId: string;
+  oldPassword: string;
+  newPassword: string;
+};
+
 export type CheckoutDefaults = {
   deliveryMethod?: string;
   shippingMethodId?: string;

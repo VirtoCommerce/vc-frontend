@@ -152,7 +152,7 @@
       "save_new_product_quantity": "Do you want to save new quantity by product lines?",
       "address_deletion_successful": "Address has been successfully deleted",
       "cart_contains_deleted_products": "Cart contains products, that cannot be purchased any more. Please remove those products and try once again",
-      "unknown_error": "An error occurred, please try again later.",
+      "unhandled_error": "Apologies for the inconvenience. Our server is currently experiencing technical issues. Please try again later.",
       "role_update_successfull": "The customer role has been updated successfully.",
       "role_update_failed": "Errors occurred during the role updating: {0}"
     },
@@ -341,6 +341,19 @@
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "quote_requests": "@:common.links.quote_requests"
+        }
+      },
+      "change_password_form": {
+        "title": "Create new password",
+        "current_pass_label": "Current password",
+        "current_pass_placeholder": "Enter your current password",
+        "new_pass_label": "New password",
+        "new_pass_placeholder": "Create a new password",
+        "confirm_new_pass_label": "Confirm new password",
+        "confirm_new_pass_placeholder": "Repeat your new password",
+        "errors": {
+          "passwords_do_not_match": "Passwords do not match",
+          "password_new_same_old": "Your current password and new password must be different"
         }
       },
       "sign_in_form": {
@@ -779,6 +792,13 @@
       "enter_new_password_message": "An account has been created for you, please set a password to login.",
       "success_message": "Registration was successfully completed",
       "log_in_button": "Continue"
+    },
+    "change_password": {
+      "meta": {
+        "title": "Change password"
+      },
+      "header": "Change your password",
+      "success_message": "Your password has been successfully changed"
     },
     "sign_in": {
       "meta": {

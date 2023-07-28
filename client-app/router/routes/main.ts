@@ -15,6 +15,7 @@ const ConfirmEmail = () => import("@/pages/confirm-email.vue");
 const ConfirmInvitation = () => import("@/pages/confirm-invitation.vue");
 const ForgotPassword = () => import("@/pages/forgot-password.vue");
 const ResetPassword = () => import("@/pages/reset-password.vue");
+const ChangePassword = () => import("@/pages/change-password.vue");
 const Account = () => import("@/pages/account/index.vue");
 const Company = () => import("@/pages/company/index.vue");
 const BulkOrder = () => import("@/pages/bulk-order.vue");
@@ -38,6 +39,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/confirm-invitation", name: "ConfirmInvitation", component: ConfirmInvitation, meta: { public: true } },
   { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword, meta: { public: true } },
   { path: "/reset-password", name: "ResetPassword", component: ResetPassword, meta: { public: true } },
+  { path: "/change-password", name: "ChangePassword", component: ChangePassword, meta: { public: false } },
   { path: "/set-password", name: "SetPassword", component: ResetPassword, meta: { public: true } },
   { path: "/account/confirmemail", name: "ConfirmEmail", component: ConfirmEmail, meta: { public: true } },
   {
