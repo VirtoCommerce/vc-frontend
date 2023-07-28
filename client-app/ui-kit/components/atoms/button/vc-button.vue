@@ -61,7 +61,7 @@ export interface IEmits {
 interface IProps {
   color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger";
   size?: "xs" | "sm" | "md" | "lg";
-  variant?: "solid" | "solid-lightest" | "outline";
+  variant?: "solid" | "outline";
   type?: "button" | "reset" | "submit";
   disabled?: boolean;
   loading?: boolean;
