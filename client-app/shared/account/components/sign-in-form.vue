@@ -1,11 +1,11 @@
 <template>
   <form @submit="onSubmit">
     <!-- Errors block -->
-    <VcAlert v-if="authError" class="mb-2" color="danger" icon>
+    <VcAlert v-if="authError" class="mb-2" color="danger" size="sm" variant="solid-light" icon>
       <span v-html="$t('shared.account.sign_in_form.email_or_password_incorrect_alert')"></span>
     </VcAlert>
 
-    <VcAlert v-if="userIsLockedError" class="mb-2" color="danger" icon>
+    <VcAlert v-if="userIsLockedError" class="mb-2" color="danger" size="sm" variant="solid-light" icon>
       <span v-html="$t('shared.account.sign_in_form.user_is_locked_out_alert')"></span>
     </VcAlert>
 

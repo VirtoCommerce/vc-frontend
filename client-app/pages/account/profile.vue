@@ -10,7 +10,7 @@
     >
       <form class="flex flex-col lg:w-1/2" @submit.prevent="onSubmit">
         <!-- Errors block -->
-        <VcAlert v-if="updateProfileError" class="mb-2" color="danger" icon>
+        <VcAlert v-if="updateProfileError" class="mb-2" color="danger" size="sm" variant="solid-light" icon>
           <span v-t="'pages.account.profile.update_error_alert'" />
         </VcAlert>
 

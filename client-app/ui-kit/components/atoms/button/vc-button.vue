@@ -61,7 +61,7 @@ export interface IEmits {
 interface IProps {
   color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger";
   size?: "xs" | "sm" | "md" | "lg";
-  variant?: "solid" | "outline";
+  variant?: "solid" | "solid-lightest" | "outline";
   type?: "button" | "reset" | "submit";
   disabled?: boolean;
   loading?: boolean;
@@ -108,6 +108,8 @@ const isLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
   $noWrap: "";
 
   @apply relative inline-block rounded border-2 select-none text-center;
+
+  --vc-icon-size: var(--vc-button-line-height);
 
   &--truncate {
     $truncate: &;

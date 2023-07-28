@@ -104,7 +104,15 @@
         <div class="mt-6 lg:mt-4">
           <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
 
-          <VcAlert v-for="error in commonErrors" :key="error" color="danger" class="mb-4 text-xs" icon>
+          <VcAlert
+            v-for="error in commonErrors"
+            :key="error"
+            color="danger"
+            size="sm"
+            variant="solid-light"
+            class="mt-3 text-xs"
+            icon
+          >
             {{ error }}
           </VcAlert>
 
