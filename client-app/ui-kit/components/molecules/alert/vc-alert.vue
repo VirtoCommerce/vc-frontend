@@ -10,7 +10,7 @@
       },
     ]"
   >
-    <slot name="icon">
+    <slot name="main-icon">
       <VcIcon v-if="icon" :name="iconName" class="vc-alert__icon" />
     </slot>
 
