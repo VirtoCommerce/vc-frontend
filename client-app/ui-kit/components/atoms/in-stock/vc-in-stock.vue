@@ -12,7 +12,7 @@
   >
     <div v-if="quantity">
       <span class="inline-block min-w-[1.438rem] text-center font-bold lg:min-w-[1.25rem]">
-        {{ quantity && quantity > 9999 ? "9999+" : quantity }}
+        {{ inStockQuantityLabel }}
       </span>
       {{ $t("common.suffixes.product_count_in_stock") }}
     </div>
@@ -38,6 +38,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+
 interface IProps {
   isInStock?: boolean;
   isAvailable?: boolean;
@@ -45,10 +47,18 @@ interface IProps {
   quantity?: number | null;
 }
 
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   isAvailable: true,
   quantity: null,
 });
+
+const MAX_DISPLAY_IN_STOCK_QUANTITY = 9999;
+
+const inStockQuantityLabel = computed<string>(() =>
+  props.quantity && props.quantity > MAX_DISPLAY_IN_STOCK_QUANTITY
+    ? `${MAX_DISPLAY_IN_STOCK_QUANTITY}+`
+    : props.quantity!.toString()
+);
 </script>
 
 <!-- TODO: Replace this temporary solution with an actual markup requirements -->
