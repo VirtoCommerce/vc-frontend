@@ -198,7 +198,6 @@
       <div class="mt-1 flex items-center gap-1">
         <VcInStock
           :is-in-stock="product.availabilityData?.isInStock"
-          :is-track-inventory="product.availabilityData?.isTrackInventory"
           :is-digital="isDigital"
           :quantity="product.availabilityData?.availableQuantity"
         />

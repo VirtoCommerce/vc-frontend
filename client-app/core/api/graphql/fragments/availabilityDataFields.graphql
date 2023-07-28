@@ -3,6 +3,5 @@ fragment availabilityDataFields on AvailabilityData {
   isAvailable
   isBuyable
   isInStock
-  isTrackInventory
   availableQuantity
 }

@@ -48,7 +48,6 @@
         <VcInStock
           :is-in-stock="listItem.product?.availabilityData?.isInStock || false"
           :is-available="productAvailable"
-          :is-track-inventory="listItem.product?.availabilityData?.isTrackInventory"
           :quantity="listItem.product ? listItem.product.availabilityData?.availableQuantity : undefined"
         ></VcInStock>
       </div>

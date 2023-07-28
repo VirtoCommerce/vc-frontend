@@ -99,21 +99,9 @@
               <AddToCart :product="product" @update:line-item="refreshProducts" />
             </div>
 
-            <div
-              v-if="product.productType === ProductType.Digital || !product.availabilityData?.isTrackInventory"
-              class="mt-1 flex items-center gap-1"
-            >
-              <VcBadge v-if="product.productType === ProductType.Digital" size="sm" color="info" variant="solid-light">
+            <div v-if="product.productType === ProductType.Digital" class="mt-1 flex items-center gap-1">
+              <VcBadge size="sm" color="info" variant="solid-light">
                 {{ $t("common.labels.digital_product") }}
-              </VcBadge>
-
-              <VcBadge
-                v-else-if="!product.availabilityData?.isTrackInventory"
-                size="sm"
-                color="success"
-                variant="solid-light"
-              >
-                {{ $t("common.suffixes.product_count_in_stock") }}
               </VcBadge>
             </div>
           </div>
