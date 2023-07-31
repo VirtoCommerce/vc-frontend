@@ -1,5 +1,4 @@
 <template>
-  <!--  Title in tab? -->
   <VcEmptyPage image="/static/images/illustrations/emails.webp" mobile-image="/static/images/illustrations/emails.webp">
     <template #description>
       <VcTypography tag="h1" variant="h2" weight="bold" class="mb-8">
