@@ -1,9 +1,9 @@
 <template>
   <div v-if="order">
-    <VcBreadcrumbs :items="breadcrumbs" class="mx-5 md:mx-0" />
+    <VcBreadcrumbs :items="breadcrumbs" class="side-space" />
 
     <!-- Title block -->
-    <div class="mx-5 flex items-center justify-between md:mx-0" :class="{ '-mb-3': executed }">
+    <div class="side-space flex items-center justify-between" :class="{ '-mb-3': executed }">
       <h2 class="text-3xl font-bold uppercase text-gray-800">
         {{
           executed
@@ -14,7 +14,7 @@
     </div>
 
     <!-- Subtitle block -->
-    <div v-if="executed" class="mx-5 gap-x-4 md:mx-0 md:flex">
+    <div v-if="executed" class="side-space gap-x-4 md:flex">
       <div class="text-sm">
         <span class="font-bold">
           {{ $t("pages.account.order_payment.order_date") }}
@@ -350,3 +350,13 @@ watchEffect(() => {
   }
 });
 </script>
+
+<style lang="scss" scoped>
+.side-space {
+  @apply mx-5;
+
+  @media (min-width: theme("screens.lg")) {
+    @apply mx-0;
+  }
+}
+</style>
