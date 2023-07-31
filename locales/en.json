@@ -1277,6 +1277,13 @@
       "address": "Address",
       "phone": "Phone: ",
       "other_branches": "Other branches"
+    },
+    "welcome": {
+      "meta": {
+        "title": "Registration completed"
+      },
+      "title": "Registration completed",
+      "description": "Thank you for showing you interest in registering with us. We kindly ask you to check your mailbox in order to verify email address you’ve entered."
     }
   },
   "identity_error": {
