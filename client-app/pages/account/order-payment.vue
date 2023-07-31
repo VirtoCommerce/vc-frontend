@@ -1,9 +1,9 @@
 <template>
   <div v-if="order">
-    <VcBreadcrumbs :items="breadcrumbs" :class="SIDE_SPACE_CLASSES" />
+    <VcBreadcrumbs :items="breadcrumbs" class="side-space" />
 
     <!-- Title block -->
-    <div class="flex items-center justify-between" :class="[...SIDE_SPACE_CLASSES, { '-mb-3': executed }]">
+    <div class="side-space flex items-center justify-between" :class="{ '-mb-3': executed }">
       <h2 class="text-3xl font-bold uppercase text-gray-800">
         {{
           executed
@@ -14,7 +14,7 @@
     </div>
 
     <!-- Subtitle block -->
-    <div v-if="executed" class="gap-x-4 md:flex" :class="SIDE_SPACE_CLASSES">
+    <div v-if="executed" class="side-space gap-x-4 md:flex">
       <div class="text-sm">
         <span class="font-bold">
           {{ $t("pages.account.order_payment.order_date") }}
@@ -266,8 +266,6 @@ const { loading, order, fetchOrder, addOrUpdatePayment } = useUserOrder();
 const { openPopup, closePopup } = usePopup();
 const router = useRouter();
 
-const SIDE_SPACE_CLASSES = ["mx-5", "lg:mx-0"];
-
 usePageHead({
   title: computed(() => [
     t("pages.account.order_details.meta.title", [order.value?.number]),
@@ -352,3 +350,13 @@ watchEffect(() => {
   }
 });
 </script>
+
+<style lang="scss" scoped>
+.side-space {
+  @apply mx-5;
+
+  @media (min-width: theme("screens.lg")) {
+    @apply mx-0;
+  }
+}
+</style>
