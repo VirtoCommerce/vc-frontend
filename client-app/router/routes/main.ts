@@ -28,6 +28,7 @@ const Category = () => import("@/pages/category.vue");
 const Product = () => import("@/pages/product.vue");
 const Branch = () => import("@/pages/branch.vue");
 const DemoLanding = () => import("@/pages/demo-landing.vue");
+const Welcome = () => import("@/pages/welcome.vue");
 
 export const mainRoutes: RouteRecordRaw[] = [
   { path: "/", name: "Home", component: Home, meta: { public: true } },
@@ -67,6 +68,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },
   { path: "/compare", name: "CompareProducts", component: CompareProducts },
   { path: "/cart", name: "Cart", component: Cart },
+  { path: "/successful-registration", name: "Welcome", component: Welcome },
   {
     path: "/checkout",
     name: "Checkout",
