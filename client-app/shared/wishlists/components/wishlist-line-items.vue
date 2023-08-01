@@ -34,7 +34,7 @@
 
     <!-- Line item Alerts
     <template #after-content>
-      <VcAlert color="danger" icon>Line item error</VcAlert>
+      <VcAlert color="danger" size="sm" variant="outline-dark" icon>Line item error</VcAlert>
     </template>
     -->
   </VcLineItems>

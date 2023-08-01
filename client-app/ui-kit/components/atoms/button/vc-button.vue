@@ -114,6 +114,8 @@ const target = computed<string | undefined>(() => (isLink.value ? props.target :
 
   @apply relative inline-block rounded border-2 select-none text-center;
 
+  --vc-icon-size: var(--vc-button-line-height);
+
   &--truncate {
     $truncate: &;
   }

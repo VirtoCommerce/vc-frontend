@@ -14,7 +14,7 @@
     />
 
     <div class="mt-8 md:mt-9">
-      <VcAlert v-if="isError" color="danger" class="mb-4 text-xs" icon>
+      <VcAlert v-if="isError" color="danger" size="sm" variant="solid-light" class="mb-4 text-xs" icon>
         <span v-html="$t('shared.account.forgot_password_form.error_alert')"></span>
       </VcAlert>
 
