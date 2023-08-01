@@ -104,7 +104,15 @@
         <div class="mt-6 lg:mt-4">
           <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
 
-          <VcAlert v-for="error in commonErrors" :key="error" color="danger" class="mb-4 text-xs" icon>
+          <VcAlert
+            v-for="error in commonErrors"
+            :key="error"
+            color="danger"
+            size="sm"
+            variant="solid-light"
+            class="mt-3 text-xs"
+            icon
+          >
             {{ error }}
           </VcAlert>
 
@@ -132,24 +140,18 @@ import { useDebounceFn } from "@vueuse/core";
 import { useField, useForm } from "vee-validate";
 import { reactive, ref, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 import { object, ref as yupRef, string } from "yup";
 import { checkEmailUniqueness } from "@/core/api/graphql/account";
 import { useIdentityErrorTranslator, usePageHead } from "@/core/composables";
-import {
-  PasswordTips,
-  RegistrationKind,
-  RegistrationSuccessDialog,
-  usePasswordRequirements,
-  useUser,
-} from "@/shared/account";
+import { PasswordTips, RegistrationKind, usePasswordRequirements, useUser } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
-import { usePopup } from "@/shared/popup";
 import type { AccountCreationResultType } from "@/core/api/graphql/types";
+const router = useRouter();
 
 const ASYNC_VALIDATION_TIMEOUT_IN_MS = 500;
 
 const { t } = useI18n();
-const { openPopup } = usePopup();
 const { registerUser, registerOrganization, loading } = useUser();
 const { passwordRequirements, fetchPasswordRequirements } = usePasswordRequirements();
 const getIdentityErrorTranslation = useIdentityErrorTranslator();
@@ -248,9 +250,7 @@ const onSubmit = handleSubmit(async (data) => {
   }
 
   if (result.succeeded) {
-    openPopup({
-      component: RegistrationSuccessDialog,
-    });
+    router.push({ name: "Welcome" });
   } else if (result.errors?.length) {
     result.errors.forEach((error) => {
       const errorDescription = getIdentityErrorTranslation(error);

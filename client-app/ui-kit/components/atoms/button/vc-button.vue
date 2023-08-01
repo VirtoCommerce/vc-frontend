@@ -2,6 +2,7 @@
   <component
     :is="isLink ? 'router-link' : 'button'"
     :to="enabled ? to : ''"
+    :target="target"
     :type="type"
     :disabled="!enabled"
     :title="title"
@@ -52,6 +53,7 @@
 
 <script setup lang="ts">
 import { eagerComputed } from "@vueuse/core";
+import { computed } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 export interface IEmits {
@@ -66,6 +68,7 @@ interface IProps {
   disabled?: boolean;
   loading?: boolean;
   to?: RouteLocationRaw | null;
+  target?: "_self" | "_blank";
   prependIcon?: string;
   appendIcon?: string;
   icon?: boolean | string;
@@ -92,6 +95,7 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const enabled = eagerComputed<boolean>(() => !props.disabled && !props.loading);
 const isLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
+const target = computed<string | undefined>(() => (props.target && isLink.value ? props.target : undefined));
 </script>
 
 <style scoped lang="scss">
@@ -108,6 +112,8 @@ const isLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
   $noWrap: "";
 
   @apply relative inline-block rounded border-2 select-none text-center;
+
+  --vc-icon-size: var(--vc-button-line-height);
 
   &--truncate {
     $truncate: &;

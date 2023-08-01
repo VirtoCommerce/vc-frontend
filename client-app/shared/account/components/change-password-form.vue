@@ -69,7 +69,7 @@ const emit = defineEmits<IEmits>();
 const MAX_PASS_LENGTH = 64;
 
 const { t } = useI18n();
-const { changeExpiredPassword, loading, user } = useUser();
+const { changePassword, loading, user } = useUser();
 const { passwordRequirements, fetchPasswordRequirements } = usePasswordRequirements();
 
 const getIdentityErrorTranslation = useIdentityErrorTranslator();
@@ -111,7 +111,7 @@ const commonErrors = ref<string[]>([]);
 const onSubmit = handleSubmit(async (data) => {
   commonErrors.value = [];
 
-  const result = await changeExpiredPassword({
+  const result = await changePassword({
     userId: user.value.id,
     newPassword: data.newPassword,
     oldPassword: data.oldPassword,

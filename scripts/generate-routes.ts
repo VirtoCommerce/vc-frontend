@@ -1,4 +1,4 @@
-import fs from "fs";
+import { promises as fs } from "fs";
 import path from "path";
 import { createRouterMatcher } from "vue-router";
 import { mainRoutes } from "../client-app/router/routes";
@@ -16,20 +16,18 @@ function getRoutes(): string[] {
     .map((route) => route.re.toString());
 }
 
-function createFile(): void {
+async function createFile(): Promise<void> {
   const routes = getRoutes();
   const filePath = path.resolve(__dirname, "../config/routes.json");
   const fileContent = JSON.stringify(routes, null, "  ");
 
   console.log("Routes (RegExp):", routes);
 
-  fs.writeFile(filePath, fileContent, (error) => {
-    if (error) {
-      throw error;
-    }
+  await fs.writeFile(filePath, fileContent);
 
-    console.log(`The file "config/routes.json" has been created!`);
-  });
+  console.log(`The file "config/routes.json" has been created!`);
 }
 
-createFile();
+await createFile();
+
+process.exit();

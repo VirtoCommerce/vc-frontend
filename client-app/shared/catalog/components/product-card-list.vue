@@ -37,6 +37,7 @@
       <template #trigger>
         <router-link
           :to="link"
+          :target="target"
           class="vc-product-card-list__name w-full grow text-sm font-extrabold text-[color:var(--color-link)] sm:line-clamp-3 sm:overflow-hidden lg:mt-1 lg:h-[60px] 2xl:pr-2"
           @click="$emit('linkClick', $event)"
         >
@@ -109,14 +110,21 @@
 
     <div class="vc-product-card-list__add-to-cart mt-3 flex w-full flex-col gap-2 sm:mt-0">
       <template v-if="product.hasVariations">
-        <VcButton :to="link" variant="outline" size="sm" full-width @click="$emit('linkClick', $event)">
+        <VcButton
+          :to="link"
+          :target="target"
+          variant="outline"
+          size="sm"
+          full-width
+          @click="$emit('linkClick', $event)"
+        >
           {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
         </VcButton>
 
         <router-link
+          :to="link"
           class="flex items-center gap-1 text-14 text-[color:var(--color-link)] lg:mt-1 lg:text-11"
           target="_blank"
-          :to="link"
         >
           <svg class="h-3 w-3 shrink-0 text-primary lg:h-2.5 lg:w-2.5">
             <use href="/static/images/link.svg#main"></use>
@@ -145,7 +153,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { ProductType, PropertyType } from "@/core/enums";
-import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
+import { getLinkTarget, getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import DiscountBadge from "./discount-badge.vue";
@@ -159,9 +167,11 @@ const props = defineProps<IProps>();
 
 interface IProps {
   product: Product;
+  openInNewTab?: boolean;
 }
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
+const target = computed<string>(() => getLinkTarget(props.openInNewTab));
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3)

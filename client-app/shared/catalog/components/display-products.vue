@@ -10,6 +10,7 @@
         v-for="(item, index) in products"
         :key="item.id + index"
         :product="item"
+        :open-in-new-tab="openProductInNewTab"
         @link-click="$emit('itemLinkClick', item, $event)"
       >
         <template #add-to-list-handler>
@@ -45,6 +46,7 @@ interface IProps {
   products?: Product[];
   itemsPerPage?: number;
   viewMode?: string;
+  openProductInNewTab?: boolean;
 }
 
 const cardComponent = computed(() => (props.viewMode === "list" ? ProductCardList : ProductCardGrid));
