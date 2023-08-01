@@ -1,14 +1,10 @@
 <template>
-  <VcAlert color="info" variant="outline" icon>
-    <div class="flex flex-col">
-      <b>{{ $t("password_tips.title") }}</b>
-
-      <ul class="ml-4 mt-1 list-disc">
-        <li v-for="(requirementLabel, index) in requirementsLabels" :key="index">
-          {{ requirementLabel }}
-        </li>
-      </ul>
-    </div>
+  <VcAlert color="info" variant="outline" icon :title="$t('password_tips.title')">
+    <ul class="ml-3.5 mt-1 list-disc">
+      <li v-for="(requirementLabel, index) in requirementsLabels" :key="index">
+        {{ requirementLabel }}
+      </li>
+    </ul>
   </VcAlert>
 </template>
 

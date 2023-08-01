@@ -57,7 +57,7 @@ const TemplateQuantityAndTotal: StoryFn<typeof VcLineItems> = (args) => ({
     </template>
 
     <template #after-content="{ item }">
-      <VcAlert v-if="item.id === 2" :key="index" color="danger" icon>
+      <VcAlert v-if="item.id === 2" :key="index" color="danger" size="sm" variant="outline-dark" icon>
         Validation Error Message
       </VcAlert>
     </template>

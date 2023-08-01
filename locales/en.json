@@ -111,7 +111,8 @@
       "addresses_icon": "Address icon",
       "digital_product": "Digital product",
       "save_changes": "Save Changes",
-      "search": "Search {0}"
+      "search": "Search {0}",
+      "in_stock": "In stock"
     },
     "prefixes": {
       "please": "Please"

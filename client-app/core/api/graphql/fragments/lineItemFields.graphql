@@ -1,5 +1,6 @@
 #import "./propertyFields.graphql"
 #import "./moneyFields.graphql"
+#import "./availabilityDataFields.graphql"
 
 fragment lineItemFields on LineItemType {
   id
@@ -21,6 +22,9 @@ fragment lineItemFields on LineItemType {
     }
     properties {
       ...propertyFields
+    }
+    availabilityData {
+      ...availabilityDataFields
     }
   }
   vendor {
