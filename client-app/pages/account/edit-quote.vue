@@ -65,7 +65,7 @@
         >
           <VcCheckbox
             :model-value="billingAddressEqualsShipping"
-            :disabled="fetching"
+            :disabled="fetching || !shippingAddress"
             @change="toggleBillingAddressEqualsShippingAddress"
           >
             {{ $t("pages.account.quote_details.same_as_shipping_address") }}
@@ -92,12 +92,7 @@
 
       <div class="flex flex-wrap gap-5 px-6 py-7 lg:justify-end lg:p-0">
         <VcButton
-          :disabled="
-            !quoteChanged ||
-            (!quote.comment && !quoteItemsValid) ||
-            fetching ||
-            (shippingAddress && !billingAddress && !billingAddressEqualsShipping)
-          "
+          :disabled="!quoteChanged || fetching"
           class="flex-1 lg:min-w-[208px] lg:flex-none"
           variant="outline"
           @click="saveChanges"
@@ -193,7 +188,16 @@ const accountAddresses = computed<AnyAddressType[]>(() => {
 const quoteChanged = computed<boolean>(
   () =>
     !isEqual(originalQuote.value, quote.value) ||
-    (billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value)
+    (quote.value?.comment && originalQuote.value?.comment !== quote.value?.comment && quoteItemsValid.value) ||
+    (!!shippingAddress.value &&
+      !billingAddress.value &&
+      billingAddressEqualsShipping.value &&
+      !isBillingAddressEqualsShipping.value) ||
+    (!!shippingAddress.value &&
+      !!billingAddress.value &&
+      !isEqualAddresses(shippingAddress.value, billingAddress.value) &&
+      !billingAddressEqualsShipping.value &&
+      isBillingAddressEqualsShipping.value)
 );
 const quoteItemsValid = computed<boolean>(
   () =>
