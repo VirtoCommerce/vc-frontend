@@ -139,6 +139,7 @@ import {
   PasswordTips,
   RegistrationKind,
   RegistrationSuccessDialog,
+  RegistrationConfirmEmailDialog,
   usePasswordRequirements,
   useUser,
 } from "@/shared/account";
@@ -247,9 +248,13 @@ const onSubmit = handleSubmit(async (data) => {
     });
   }
 
-  if (result.succeeded) {
+  if (result.succeeded && !result.requireEmailVerification) {
     openPopup({
       component: RegistrationSuccessDialog,
+    });
+  } else if (result.succeeded && result.requireEmailVerification) {
+    openPopup({
+      component: RegistrationConfirmEmailDialog,
     });
   } else if (result.errors?.length) {
     result.errors.forEach((error) => {

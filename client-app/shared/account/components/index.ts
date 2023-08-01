@@ -6,6 +6,7 @@ export { default as ForgotPasswordForm } from "./forgot-password-form.vue";
 export { default as ResetPasswordForm } from "./reset-password-form.vue";
 export { default as ChangePasswordForm } from "./change-password-form.vue";
 export { default as RegistrationSuccessDialog } from "./registration-success-dialog.vue";
+export { default as RegistrationConfirmEmailDialog } from "./registration-confirm-email-dialog.vue";
 export { default as CheckoutDefaultsSuccessDialog } from "./checkout-default-success-dialog.vue";
 export { default as ProfileUpdateSuccessDialog } from "./profile-update-success-dialog.vue";
 export { default as OrdersFilter } from "./orders-filter.vue";

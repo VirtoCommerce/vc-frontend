@@ -11,6 +11,7 @@ mutation requestRegistration($command: InputRequestRegistrationType!) {
     }
     result {
       succeeded
+      requireEmailVerification
       errors {
         code
         description

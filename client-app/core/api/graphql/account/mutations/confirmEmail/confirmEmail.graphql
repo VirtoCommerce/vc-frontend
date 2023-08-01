@@ -1,0 +1,10 @@
+mutation confirmEmail($command: InputConfirmEmailType!) {
+  confirmEmail(command: $command) {
+    succeeded
+    errors {
+      code
+      description
+      parameter
+    }
+  }
+}

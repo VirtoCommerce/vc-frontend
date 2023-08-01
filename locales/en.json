@@ -395,6 +395,11 @@
         "message": "Registration successfully complete!",
         "ok_button": "@:common.buttons.home"
       },
+      "registration_confirm_email_dialog": {
+        "title": "Registration",
+        "message": "An email with a link to activate your account has been sent to your email.",
+        "ok_button": "@:common.buttons.home"
+      },
       "reorder_info_popup": {
         "title": "Reorder confirmation",
         "cancel_button": "@:common.buttons.cancel",

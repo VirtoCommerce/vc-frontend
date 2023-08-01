@@ -58,7 +58,7 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead, useRouteQueryParam } from "@/core/composables";
 import { useUser } from "@/shared/account";
-import type { IdentityResultType } from "@/core/api/graphql/types";
+import type { CustomIdentityResultType } from "@/core/api/graphql/types";
 
 const { t } = useI18n();
 
@@ -75,7 +75,7 @@ const loaded = ref(false);
 const success = ref(false);
 
 invoke(async () => {
-  const result: IdentityResultType = await confirmEmail({
+  const result: CustomIdentityResultType = await confirmEmail({
     userId: userId.value,
     token: token.value,
   });
