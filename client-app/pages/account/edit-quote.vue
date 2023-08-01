@@ -92,7 +92,7 @@
 
       <div class="flex flex-wrap gap-5 px-6 py-7 lg:justify-end lg:p-0">
         <VcButton
-          :disabled="!isQuoteCanBeSaved"
+          :disabled="!quoteChanged || fetching"
           class="flex-1 lg:min-w-[208px] lg:flex-none"
           variant="outline"
           @click="saveChanges"
@@ -185,7 +185,20 @@ const accountAddresses = computed<AnyAddressType[]>(() => {
     ? organizationsAddresses.value.map((address) => ({ ...address, firstName, lastName }))
     : personalAddresses.value;
 });
-const quoteChanged = computed<boolean>(() => !isEqual(originalQuote.value, quote.value));
+const quoteChanged = computed<boolean>(
+  () =>
+    !isEqual(originalQuote.value, quote.value) ||
+    (quote.value?.comment && originalQuote.value?.comment !== quote.value?.comment && quoteItemsValid.value) ||
+    (!!shippingAddress.value &&
+      !billingAddress.value &&
+      billingAddressEqualsShipping.value &&
+      !isBillingAddressEqualsShipping.value) ||
+    (!!shippingAddress.value &&
+      !!billingAddress.value &&
+      !isEqualAddresses(shippingAddress.value, billingAddress.value) &&
+      !billingAddressEqualsShipping.value &&
+      isBillingAddressEqualsShipping.value)
+);
 const quoteItemsValid = computed<boolean>(
   () =>
     !!quote.value?.items?.length &&
@@ -199,22 +212,6 @@ const quoteValid = computed<boolean>(
 );
 
 const userHasAddresses = computedEager<boolean>(() => !!accountAddresses.value.length);
-
-const isQuoteCanBeSaved = computed<boolean>(
-  () =>
-    !fetching.value &&
-    (quoteChanged.value ||
-      (quote.value?.comment && quoteItemsValid.value) ||
-      (!!shippingAddress.value &&
-        !billingAddress.value &&
-        billingAddressEqualsShipping.value &&
-        !isBillingAddressEqualsShipping.value) ||
-      (!!shippingAddress.value &&
-        !!billingAddress.value &&
-        !isEqualAddresses(shippingAddress.value, billingAddress.value) &&
-        !billingAddressEqualsShipping.value &&
-        isBillingAddressEqualsShipping.value))
-);
 
 const isBillingAddressEqualsShipping = computed<boolean>(() => {
   if (shippingAddress.value && billingAddress.value) {
