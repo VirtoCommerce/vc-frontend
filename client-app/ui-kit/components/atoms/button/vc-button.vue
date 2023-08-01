@@ -2,7 +2,7 @@
   <component
     :is="isLink ? 'router-link' : 'button'"
     :to="enabled ? to : ''"
-    :target="isLink ? target : '_self'"
+    :target="target"
     :type="type"
     :disabled="!enabled"
     :title="title"
@@ -53,6 +53,7 @@
 
 <script setup lang="ts">
 import { eagerComputed } from "@vueuse/core";
+import { computed } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 export interface IEmits {
@@ -95,6 +96,7 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const enabled = eagerComputed<boolean>(() => !props.disabled && !props.loading);
 const isLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
+const target = computed<string | undefined>(() => (isLink.value ? props.target : undefined));
 </script>
 
 <style scoped lang="scss">
