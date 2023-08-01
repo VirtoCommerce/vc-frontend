@@ -1,3 +1,5 @@
+require('@rushstack/eslint-patch/modern-module-resolution')
+
 module.exports = {
   root: true,
   env: {
@@ -119,6 +121,8 @@ module.exports = {
     "vue/no-multiple-objects-in-class": "warn",
     "vue/no-required-prop-with-default": "warn",
     "vue/no-static-inline-styles": "warn",
+    // TODO: Revert back after refactoring
+    "vue/no-setup-props-destructure": "warn",
     "vue/no-useless-v-bind": "warn",
     "vue/padding-line-between-blocks": "warn",
     // TODO: enable "vue/padding-line-between-tags": "warn",
