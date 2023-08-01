@@ -19,7 +19,7 @@
 
       <MobileOrdersFilter class="grow" />
 
-      <div class="z-100 sticky bottom-0 mx-5 mt-4 bg-white p-5 shadow-t-md">
+      <div class="sticky bottom-0 -mx-5 bg-[--color-additional-50] p-5 shadow-t-md">
         <div class="flex gap-4">
           <VcButton
             :disabled="isFilterEmpty && !isFilterDirty"
