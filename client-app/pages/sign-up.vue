@@ -152,12 +152,14 @@ import {
   RegistrationConfirmEmailDialog,
 } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
+import { usePopup } from "@/shared/popup";
 import type { AccountCreationResultType } from "@/core/api/graphql/types";
 const router = useRouter();
 
 const ASYNC_VALIDATION_TIMEOUT_IN_MS = 500;
 
 const { t } = useI18n();
+const { openPopup } = usePopup();
 const { registerUser, registerOrganization, loading } = useUser();
 const { passwordRequirements, fetchPasswordRequirements } = usePasswordRequirements();
 const getIdentityErrorTranslation = useIdentityErrorTranslator();
