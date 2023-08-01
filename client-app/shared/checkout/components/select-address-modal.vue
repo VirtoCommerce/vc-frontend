@@ -3,7 +3,7 @@
     <template #actions="{ close }">
       <VcButton
         v-if="!isCorporateAddresses || $can($permissions.xApi.CanEditOrganization)"
-        class="grow xs:w-1/2 md:me-auto md:w-auto md:flex-none"
+        class="me-auto flex-1 md:w-auto md:flex-none"
         variant="outline"
         @click="
           $emit('addNewAddress');
@@ -13,26 +13,25 @@
         {{ $t("shared.checkout.select_address_dialog.add_address_button") }}
       </VcButton>
 
-      <div class="flex grow space-x-3 xs:w-1/2 md:w-auto md:flex-none">
-        <VcButton color="secondary" variant="outline" class="!hidden flex-1 md:!block md:flex-none" @click="close">
-          {{ $t("shared.checkout.select_address_dialog.cancel_button") }}
-        </VcButton>
+      <VcButton color="secondary" variant="outline" class="!hidden min-w-[6rem] flex-none md:!block" @click="close">
+        {{ $t("shared.checkout.select_address_dialog.cancel_button") }}
+      </VcButton>
 
-        <VcButton
-          class="flex-1 md:flex-none"
-          no-wrap
-          @click="
-            $emit('result', selectedAddress);
-            close();
-          "
-        >
-          {{
-            isMobile
-              ? $t("shared.checkout.select_address_dialog.save_button")
-              : $t("shared.checkout.select_address_dialog.ok_button")
-          }}
-        </VcButton>
-      </div>
+      <VcButton
+        class="min-w-[6rem] xs:flex-1 md:flex-none"
+        no-wrap
+        :disabled="!selectedAddress"
+        @click="
+          save();
+          close();
+        "
+      >
+        {{
+          isMobile
+            ? $t("shared.checkout.select_address_dialog.save_button")
+            : $t("shared.checkout.select_address_dialog.ok_button")
+        }}
+      </VcButton>
     </template>
 
     <VcTable :columns="columns" :items="paginatedAddresses" :pages="pages" :page="page" @page-changed="onPageChange">
@@ -201,11 +200,11 @@ interface IProps {
 }
 
 interface IEmits {
-  (event: "result"): void;
+  (event: "result", value: AnyAddressType): void;
   (event: "addNewAddress"): void;
 }
 
-defineEmits<IEmits>();
+const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   addresses: () => [],
@@ -247,6 +246,12 @@ const onPageChange = async (newPage: number) => {
 
 function setAddress(address: AnyAddressType): void {
   selectedAddress.value = address;
+}
+
+function save() {
+  if (selectedAddress.value) {
+    emit("result", selectedAddress.value);
+  }
 }
 
 watchEffect(() => {
