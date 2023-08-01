@@ -29,7 +29,15 @@
     <div>
       <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
 
-      <VcAlert v-for="error in commonErrors" :key="error" color="danger" class="mb-4 text-xs" icon>
+      <VcAlert
+        v-for="error in commonErrors"
+        :key="error"
+        class="mb-4 text-xs"
+        color="danger"
+        size="sm"
+        variant="solid-light"
+        icon
+      >
         {{ error }}
       </VcAlert>
 

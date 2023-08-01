@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Title block -->
-    <div class="mx-5 flex items-center justify-between md:mx-0">
+    <div class="mx-5 flex items-center justify-between gap-3 lg:mx-0">
       <h2 v-t="'pages.company.members.title'" class="grow text-3xl font-bold uppercase text-gray-800" />
 
       <VcButton

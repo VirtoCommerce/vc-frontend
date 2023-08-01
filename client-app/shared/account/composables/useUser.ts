@@ -8,7 +8,7 @@ import {
   requestPasswordReset,
   resetPasswordByToken,
   updatePersonalData,
-  changePassword as _changeExpiredPassword,
+  changePassword as _changePassword,
   confirmEmailByToken,
 } from "@/core/api/graphql/account";
 import { useFetch } from "@/core/composables";
@@ -105,26 +105,7 @@ export default function useUser() {
     }
   }
 
-  async function changePassword(oldPassword: string, newPassword: string): Promise<IdentityResultType> {
-    try {
-      loading.value = true;
-
-      return await innerFetch<IdentityResultType>("/storefrontapi/account/password", "POST", {
-        oldPassword,
-        newPassword,
-        newPasswordConfirm: newPassword,
-      });
-    } catch (e) {
-      Logger.error(`${useUser.name}.${changePassword.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-  }
-
-  async function confirmEmail(payload: InputConfirmEmailType): Promise<CustomIdentityResultType> {
-    loading.value = true;
-
+  async function confirmEmail(payload: { userId: string; token: string }): Promise<IdentityResultType> {
     try {
       return await confirmEmailByToken(payload);
     } catch (e) {
@@ -258,11 +239,11 @@ export default function useUser() {
       loading.value = false;
     }
   }
-  async function changeExpiredPassword(payload: ChangePassword): Promise<IdentityResultType> {
+  async function changePassword(payload: ChangePassword): Promise<IdentityResultType> {
     try {
       loading.value = true;
 
-      return await _changeExpiredPassword({
+      return await _changePassword({
         userId: payload.userId,
         oldPassword: payload.oldPassword,
         newPassword: payload.newPassword,
@@ -305,7 +286,6 @@ export default function useUser() {
     checkPermissions,
     fetchUser,
     updateUser,
-    changePassword,
     confirmEmail,
     signMeIn,
     registerUser,
@@ -315,7 +295,7 @@ export default function useUser() {
     resetPassword,
     inviteUser,
     registerByInvite,
-    changeExpiredPassword,
+    changePassword,
     isPasswordNeedToBeChanged,
     loading: readonly(loading),
     user: computed({

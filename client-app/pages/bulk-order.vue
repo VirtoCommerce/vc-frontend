@@ -16,6 +16,8 @@
             key="sku"
             class="col-span-1 mx-6 mb-5 md:mx-0 lg:col-span-2 lg:mb-0"
             color="danger"
+            size="sm"
+            variant="solid-light"
             icon
           >
             <span>{{ $t("pages.bulk_order.product_was_not_added_alert", [SKUsWithErrors.join(", ")]) }}</span>
@@ -26,6 +28,8 @@
             key="incorrect"
             class="col-span-1 mx-6 mb-5 md:mx-0 lg:col-span-2 lg:mb-0"
             color="danger"
+            size="sm"
+            variant="solid-light"
             icon
           >
             <span v-t="'pages.bulk_order.data_is_invalid_alert'"></span>
