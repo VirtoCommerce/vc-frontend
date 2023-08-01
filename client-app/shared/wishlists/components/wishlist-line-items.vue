@@ -60,11 +60,8 @@ defineProps<IProp>();
 
 function addToCartDisabled(item: PreparedLineItemType) {
   return (
-    !item.actualPrice ||
-    !item.availabilityData?.isAvailable ||
-    !item.availabilityData?.isInStock ||
-    !item.availabilityData?.isBuyable ||
-    (!item.availabilityData?.availableQuantity && item.productType !== ProductType.Digital)
+    item.productType === ProductType.Physical &&
+    (!item.availabilityData?.isAvailable || !item.availabilityData?.isInStock)
   );
 }
 
