@@ -99,12 +99,7 @@ const maxQty = computed<number>(() =>
 const disabled = computed<boolean>(
   () =>
     loading.value ||
-    !props.product.availabilityData?.isAvailable ||
-    !props.product.availabilityData?.isInStock ||
-    !props.product.availabilityData?.isBuyable ||
-    (!props.product.availabilityData?.isAvailable &&
-      !props.product.availabilityData?.availableQuantity &&
-      !isDigital.value)
+    (!isDigital.value && (!props.product.availabilityData?.isAvailable || !props.product.availabilityData?.isInStock))
 );
 
 const buttonText = computed<string>(() =>
