@@ -9,11 +9,6 @@
       class="polygon-bg flex flex-col bg-white p-6 shadow-sm [--polygon-bg-position:right_bottom_-180px] lg:rounded lg:border"
     >
       <form class="flex flex-col lg:w-1/2" @submit.prevent="onSubmit">
-        <!-- Errors block -->
-        <VcAlert v-if="updateProfileError" class="mb-2" color="danger" size="sm" variant="solid-light" icon>
-          <span v-t="'pages.account.profile.update_error_alert'" />
-        </VcAlert>
-
         <VcInput
           v-model.trim="firstName"
           :label="$t('common.labels.first_name')"
@@ -63,8 +58,8 @@
 
         <VcInput
           v-model="oldPassword"
-          :label="$t('pages.account.profile.old_password_label')"
-          :placeholder="$t('pages.account.profile.old_password_placeholder')"
+          :label="$t('shared.account.change_password_form.current_pass_label')"
+          :placeholder="$t('shared.account.change_password_form.current_pass_placeholder')"
           :disabled="isSubmitting"
           :maxlength="64"
           :message="errors.oldPassword"
@@ -77,8 +72,8 @@
 
         <VcInput
           :model-value="newPassword"
-          :label="$t('pages.account.profile.new_password_label')"
-          :placeholder="$t('pages.account.profile.new_password_placeholder')"
+          :label="$t('shared.account.change_password_form.new_pass_label')"
+          :placeholder="$t('shared.account.change_password_form.new_pass_placeholder')"
           :disabled="isSubmitting"
           :maxlength="64"
           :required="!!oldPassword"
@@ -93,8 +88,8 @@
 
         <VcInput
           :model-value="confirmNewPassword"
-          :label="$t('pages.account.profile.confirm_new_password_label')"
-          :placeholder="$t('pages.account.profile.confirm_new_password_placeholder')"
+          :label="$t('shared.account.change_password_form.confirm_new_pass_label')"
+          :placeholder="$t('shared.account.change_password_form.confirm_new_pass_placeholder')"
           :disabled="isSubmitting"
           :maxlength="64"
           :required="!!oldPassword"
@@ -108,6 +103,18 @@
         />
 
         <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
+
+        <VcAlert
+          v-for="error in commonErrors"
+          :key="error"
+          color="danger"
+          class="my-4 text-xs"
+          size="sm"
+          variant="solid-light"
+          icon
+        >
+          {{ error }}
+        </VcAlert>
 
         <!-- Form actions -->
         <div class="mt-5 w-1/2 self-center lg:self-auto">
@@ -132,9 +139,10 @@ import { useField, useForm } from "vee-validate";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
-import { usePageHead } from "@/core/composables";
+import { useIdentityErrorTranslator, usePageHead } from "@/core/composables";
 import { PasswordTips, ProfileUpdateSuccessDialog, usePasswordRequirements, useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
+import type { IdentityErrorType } from "@/core/api/graphql/types";
 
 const { t } = useI18n();
 const { user, updateUser, changePassword } = useUser();
@@ -144,8 +152,6 @@ const { openPopup } = usePopup();
 usePageHead({
   title: computed(() => t("pages.account.profile.meta.title")),
 });
-
-const updateProfileError = ref<boolean>(false);
 
 const validationSchema = toTypedSchema(
   object({
@@ -158,14 +164,12 @@ const validationSchema = toTypedSchema(
       then: (stringSchema) =>
         stringSchema
           .required()
-          .notOneOf([yupRef("oldPassword")], t("pages.account.profile.errors.password_new_same_old")),
+          .notOneOf([yupRef("oldPassword")], t("shared.account.change_password_form.errors.password_new_same_old")),
     }),
     confirmNewPassword: string().when("oldPassword", {
       is: (value: string) => !!value,
       then: (stringSchema) =>
-        stringSchema
-          .required()
-          .oneOf([yupRef("newPassword")], t("pages.account.profile.errors.passwords_do_not_match")),
+        stringSchema.required().oneOf([yupRef("newPassword")], t("identity_error.PasswordMismatch")),
     }),
   })
 );
@@ -179,7 +183,7 @@ const initialValues = computed(() => ({
   confirmNewPassword: "",
 }));
 
-const { errors, isSubmitting, meta, handleSubmit, resetForm, setFieldError } = useForm({
+const { errors, isSubmitting, meta, handleSubmit, resetForm } = useForm({
   validationSchema,
   initialValues,
 });
@@ -191,43 +195,58 @@ const { value: oldPassword } = useField<string>("oldPassword");
 const { value: newPassword } = useField<string>("newPassword");
 const { value: confirmNewPassword } = useField<string>("confirmNewPassword");
 
+const commonErrors = ref<string[]>([]);
+const showErrors = (responseErrors: IdentityErrorType[]) => {
+  responseErrors.forEach((error) => {
+    const errorDescription = getIdentityErrorTranslation(error);
+
+    if (errorDescription) {
+      commonErrors.value.push(errorDescription);
+    }
+  });
+};
+
+const getIdentityErrorTranslation = useIdentityErrorTranslator();
+
 const onSubmit = handleSubmit(async (data) => {
   const results: boolean[] = [];
+  commonErrors.value = [];
 
-  updateProfileError.value = false;
-
-  // updating user password
-  if (oldPassword.value) {
-    const userPasswordUpdateResult = await changePassword(data.oldPassword!, data.newPassword!);
+  if (data.newPassword && data.oldPassword) {
+    const userPasswordUpdateResult = await changePassword({
+      userId: user.value.id,
+      newPassword: data.newPassword,
+      oldPassword: data.oldPassword,
+    });
 
     results.push(userPasswordUpdateResult.succeeded);
-
-    userPasswordUpdateResult.errors?.forEach(({ code, description }) => {
-      if (code === "password_mismatch") {
-        setFieldError("oldPassword", t("pages.account.profile.errors.password_mismatch"));
-      } else if (description) {
-        setFieldError("newPassword", description); // TODO: Localize all messages
-      }
-    });
+    if (userPasswordUpdateResult.errors?.length) {
+      showErrors(userPasswordUpdateResult.errors);
+    }
   }
 
-  // updating user data
-  if (initialValues.value.firstName !== data.firstName || initialValues.value.lastName !== data.lastName) {
+  if (
+    (data.firstName && initialValues.value.firstName !== data.firstName) ||
+    (data.lastName && initialValues.value.lastName !== data.lastName)
+  ) {
     const userDataUpdateResult = await updateUser({
       firstName: data.firstName!,
       lastName: data.lastName!,
     });
 
     results.push(userDataUpdateResult.succeeded);
+
+    if (userDataUpdateResult.errors?.length) {
+      showErrors(userDataUpdateResult.errors);
+    }
   }
 
   if (results.every((item) => item)) {
     resetForm();
+    commonErrors.value = [];
     openPopup({
       component: ProfileUpdateSuccessDialog,
     });
-  } else {
-    updateProfileError.value = true;
   }
 });
 
