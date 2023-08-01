@@ -105,7 +105,9 @@ export default function useUser() {
     }
   }
 
-  async function confirmEmail(payload: { userId: string; token: string }): Promise<IdentityResultType> {
+  async function confirmEmail(payload: InputConfirmEmailType): Promise<CustomIdentityResultType> {
+    loading.value = true;
+
     try {
       return await confirmEmailByToken(payload);
     } catch (e) {
