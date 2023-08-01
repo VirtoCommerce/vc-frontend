@@ -101,7 +101,7 @@
         <template #trigger>
           <router-link
             :to="link"
-            :target="openInNewTab ? '_blank' : '_self'"
+            :target="target"
             class="my-px line-clamp-2 h-12 cursor-pointer text-18 font-extrabold text-[color:var(--color-link)] lg:h-10 lg:text-14"
             @click="$emit('linkClick', $event)"
           >

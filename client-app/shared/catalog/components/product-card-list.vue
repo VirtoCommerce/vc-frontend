@@ -37,7 +37,7 @@
       <template #trigger>
         <router-link
           :to="link"
-          :target="openInNewTab ? '_blank' : '_self'"
+          :target="target"
           class="vc-product-card-list__name w-full grow text-sm font-extrabold text-[color:var(--color-link)] sm:line-clamp-3 sm:overflow-hidden lg:mt-1 lg:h-[60px] 2xl:pr-2"
           @click="$emit('linkClick', $event)"
         >
