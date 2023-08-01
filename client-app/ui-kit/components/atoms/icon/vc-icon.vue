@@ -14,7 +14,6 @@ interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   name: "document-text",
-  size: "md",
 });
 
 const style = computed(() =>
@@ -31,9 +30,12 @@ const sizeClass = computed(() => (typeof props.size === "string" ? `vc-icon--siz
 
 <style lang="scss">
 .vc-icon {
+  --size: var(--vc-icon-size, 1.5rem);
+  --color: var(--vc-icon-color, inherit);
+
   $self: &;
 
-  @apply inline-block align-top leading-none text-inherit;
+  @apply inline-block align-top w-[--size] h-[--size] leading-none text-[--color];
 
   &--size {
     &--xxs {
@@ -46,10 +48,6 @@ const sizeClass = computed(() => (typeof props.size === "string" ? `vc-icon--siz
 
     &--sm {
       @apply w-5 h-5;
-    }
-
-    &--md {
-      @apply w-6 h-6;
     }
 
     &--lg {
@@ -73,8 +71,6 @@ const sizeClass = computed(() => (typeof props.size === "string" ? `vc-icon--siz
     }
 
     #{$self} {
-      @apply w-[--vc-button-line-height] h-[--vc-button-line-height];
-
       &:first-child:not(:last-child) {
         @apply me-2;
       }
