@@ -1,4 +1,5 @@
 #import "../../../fragments/propertyFields.graphql"
+#import "../../../fragments/availabilityDataFields.graphql"
 
 query GetWishlist($listId: String!, $cultureName: String) {
   wishlist(listId: $listId, cultureName: $cultureName) {
@@ -37,11 +38,7 @@ query GetWishlist($listId: String!, $cultureName: String) {
           name
         }
         availabilityData {
-          isActive
-          isAvailable
-          isBuyable
-          isInStock
-          availableQuantity
+          ...availabilityDataFields
         }
         properties {
           ...propertyFields
