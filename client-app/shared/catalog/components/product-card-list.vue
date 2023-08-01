@@ -110,7 +110,14 @@
 
     <div class="vc-product-card-list__add-to-cart mt-3 flex w-full flex-col gap-2 sm:mt-0">
       <template v-if="product.hasVariations">
-        <VcButton :to="link" variant="outline" size="sm" full-width @click="$emit('linkClick', $event)">
+        <VcButton
+          :to="link"
+          :target="target"
+          variant="outline"
+          size="sm"
+          full-width
+          @click="$emit('linkClick', $event)"
+        >
           {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
         </VcButton>
 
@@ -146,7 +153,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { ProductType, PropertyType } from "@/core/enums";
-import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
+import { getLinkTarget, getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import DiscountBadge from "./discount-badge.vue";
@@ -164,6 +171,7 @@ interface IProps {
 }
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
+const target = computed<string>(() => getLinkTarget(props.openInNewTab));
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3)

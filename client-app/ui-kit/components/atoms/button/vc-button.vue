@@ -2,6 +2,7 @@
   <component
     :is="isLink ? 'router-link' : 'button'"
     :to="enabled ? to : ''"
+    :target="isLink ? target : '_self'"
     :type="type"
     :disabled="!enabled"
     :title="title"
@@ -66,6 +67,7 @@ interface IProps {
   disabled?: boolean;
   loading?: boolean;
   to?: RouteLocationRaw | null;
+  target?: "_self" | "_blank";
   prependIcon?: string;
   appendIcon?: string;
   icon?: boolean | string;
@@ -85,6 +87,7 @@ const props = withDefaults(defineProps<IProps>(), {
   disabled: false,
   loading: false,
   to: null,
+  target: "_blank",
   truncate: false,
   fullWidth: false,
   noWrap: false,

@@ -177,7 +177,7 @@
     </div>
 
     <div v-if="product.hasVariations" class="flex flex-col">
-      <VcButton :to="link" variant="outline" size="sm" full-width @click="$emit('linkClick', $event)">
+      <VcButton :to="link" :target="target" variant="outline" size="sm" full-width @click="$emit('linkClick', $event)">
         {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
       </VcButton>
 
@@ -214,7 +214,7 @@ import { Pagination, Navigation, Lazy } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, ref } from "vue";
 import { ProductType, PropertyType } from "@/core/enums";
-import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
+import { getLinkTarget, getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import DiscountBadge from "./discount-badge.vue";
@@ -236,6 +236,7 @@ const swiperInstance = ref<SwiperInstance>();
 const swiperBulletsState = ref<boolean[]>([true, false, false]);
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
+const target = computed<string>(() => getLinkTarget(props.openInNewTab));
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3)
