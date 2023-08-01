@@ -1,6 +1,5 @@
-import { VcLineItem } from "..";
+import { VcLineItem, VcAlert } from "..";
 import { preparedLineItemMock as lineItem } from "../../../mocks/line-item.mock";
-import { VcAlert } from "../../atoms";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
 export default {
@@ -66,7 +65,7 @@ export const DeletedProduct: StoryFn<typeof VcLineItem> = (args) => ({
   setup: () => ({ args }),
   template: `<VcLineItem v-bind="args">
     <template #after>
-      <VcAlert color="danger" icon>
+      <VcAlert color="danger" size="sm" variant="outline-dark" icon>
         Validation error
       </VcAlert>
     </template>

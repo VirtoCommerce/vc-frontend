@@ -5,7 +5,7 @@
     modal-width="sm:max-w-[38rem]"
     is-mobile-fullscreen
   >
-    <VcAlert v-if="commonErrors.length" color="danger" class="mx-6 mt-5 sm:mx-5">
+    <VcAlert v-if="commonErrors.length" color="danger" size="sm" variant="solid-light" class="mx-6 mt-5 sm:mx-5">
       <p v-for="error in commonErrors" :key="error">{{ error }}</p>
     </VcAlert>
 

@@ -170,7 +170,7 @@
     </div>
 
     <div v-else class="border-x p-3">
-      <VcAlert color="warning" icon>
+      <VcAlert color="warning" size="sm" variant="outline-light" icon>
         {{ $t("pages.account.quote_details.no_items_message") }}
       </VcAlert>
     </div>
