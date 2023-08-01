@@ -88,7 +88,6 @@ const props = withDefaults(defineProps<IProps>(), {
   disabled: false,
   loading: false,
   to: null,
-  target: "_blank",
   truncate: false,
   fullWidth: false,
   noWrap: false,
@@ -96,7 +95,7 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const enabled = eagerComputed<boolean>(() => !props.disabled && !props.loading);
 const isLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
-const target = computed<string | undefined>(() => (isLink.value ? props.target : undefined));
+const target = computed<string | undefined>(() => (props.target && isLink.value ? props.target : undefined));
 </script>
 
 <style scoped lang="scss">
