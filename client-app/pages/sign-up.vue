@@ -9,6 +9,7 @@
             v-model="registrationKind"
             :value="RegistrationKind.personal"
             :label="$t('pages.sign_up.personal_registration_kind_label')"
+            :disabled="loading"
           />
 
           <VcRadioButton
@@ -16,45 +17,49 @@
             v-model="registrationKind"
             :value="RegistrationKind.organization"
             :label="$t('pages.sign_up.organization_registration_kind_label')"
+            :disabled="loading"
           />
         </div>
 
         <VcInput
           v-model.trim="firstName"
-          class="mb-4"
           :label="$t('common.labels.first_name')"
           :placeholder="$t('common.placeholders.first_name')"
-          required
           :message="errors.firstName"
           :error="!!errors.firstName"
           :maxlength="64"
+          :disabled="loading"
+          class="mb-4"
           name="firstName"
+          required
           autocomplete="given-name"
         />
 
         <VcInput
           v-model.trim="lastName"
-          class="mb-4"
           :label="$t('common.labels.last_name')"
           :placeholder="$t('common.placeholders.last_name')"
-          required
           :message="errors.lastName"
           :error="!!errors.lastName"
           :maxlength="64"
+          :disabled="loading"
+          class="mb-4"
           name="lastName"
+          required
           autocomplete="family-name"
         />
 
         <VcInput
           v-model.trim="email"
-          class="mb-4"
           :label="$t('common.labels.email')"
           :placeholder="$t('common.placeholders.email')"
-          required
           :message="errors.email"
           :error="!!errors.email"
           :maxlength="64"
+          :disabled="loading"
+          class="mb-4"
           name="email"
+          required
           autocomplete="email"
           @input="emailValidationData.isChecked = false"
         />
@@ -62,13 +67,14 @@
         <VcInput
           v-if="registrationKind === RegistrationKind.organization"
           v-model.trim="organizationName"
-          class="mb-4"
           :label="$t('common.labels.company_name')"
           :placeholder="$t('common.placeholders.company_name')"
-          required
           :message="errors.organizationName"
           :error="!!errors.organizationName"
           :maxlength="64"
+          :disabled="loading"
+          class="mb-4"
+          required
           name="organizationName"
           autocomplete="off"
         />
@@ -76,28 +82,30 @@
         <div class="block justify-between lg:flex lg:space-x-6">
           <VcInput
             v-model="password"
-            class="mb-4 w-full lg:w-1/2"
             :label="$t('common.labels.password')"
             :placeholder="$t('common.placeholders.password')"
-            type="password"
-            autocomplete="new-password"
-            required
             :message="errors.password"
             :error="!!errors.password"
             :maxlength="64"
+            :disabled="loading"
+            class="mb-4 w-full lg:w-1/2"
+            type="password"
+            autocomplete="new-password"
+            required
           />
 
           <VcInput
             v-model="confirmPassword"
-            class="mb-4 w-full lg:w-1/2"
             :label="$t('common.labels.confirm_password')"
             :placeholder="$t('common.placeholders.confirm_password')"
-            type="password"
-            autocomplete="off"
-            required
             :message="errors.confirmPassword"
             :error="!!errors.confirmPassword"
             :maxlength="64"
+            :disabled="loading"
+            class="mb-4 w-full lg:w-1/2"
+            type="password"
+            autocomplete="off"
+            required
           />
         </div>
 
@@ -116,12 +124,7 @@
             {{ error }}
           </VcAlert>
 
-          <VcButton
-            :disabled="!meta.valid || meta.pending"
-            :loading="loading"
-            type="submit"
-            class="mt-6 w-full lg:mt-3 lg:w-48"
-          >
+          <VcButton :disabled="loading" :loading="loading" type="submit" class="mt-6 w-full lg:mt-3 lg:w-48">
             {{ $t("pages.sign_up.register_button") }}
           </VcButton>
         </div>

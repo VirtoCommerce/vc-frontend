@@ -15,7 +15,7 @@
       class="mb-4"
       :label="$t('common.labels.email')"
       :placeholder="$t('common.placeholders.email')"
-      :disabled="loading || isAuthenticated"
+      :disabled="loading"
       required
       :message="errors.email"
       :error="!!errors.email"
@@ -27,7 +27,7 @@
       class="mb-4"
       :label="$t('common.labels.password')"
       :placeholder="$t('common.placeholders.password')"
-      :disabled="loading || isAuthenticated"
+      :disabled="loading"
       type="password"
       required
       :message="errors.password"
@@ -36,7 +36,7 @@
     />
 
     <div class="flex justify-between">
-      <VcCheckbox v-model="rememberMe" :disabled="loading || isAuthenticated">
+      <VcCheckbox v-model="rememberMe" :disabled="loading">
         {{ $t("shared.account.sign_in_form.remember_me_label") }}
       </VcCheckbox>
 
@@ -50,16 +50,11 @@
 
     <!-- Form actions -->
     <div class="mt-8 flex" :class="{ 'max-w-sm': !props.growButtons }">
-      <VcButton
-        :disabled="loading || isAuthenticated || !valid || authError"
-        :loading="loading"
-        type="submit"
-        class="flex-1 shrink"
-      >
+      <VcButton :disabled="loading" :loading="loading" type="submit" class="flex-1 shrink">
         {{ $t("shared.account.sign_in_form.login_button") }}
       </VcButton>
 
-      <VcButton :to="{ name: 'SignUp' }" :disabled="loading || isAuthenticated" variant="outline" class="ml-4 flex-1">
+      <VcButton :to="{ name: 'SignUp' }" :disabled="loading" variant="outline" class="ml-4 flex-1">
         {{ $t("shared.account.sign_in_form.registration_button") }}
       </VcButton>
     </div>
@@ -68,8 +63,6 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { eagerComputed } from "@vueuse/core";
-import { isEmpty } from "lodash";
 import { useField, useForm } from "vee-validate";
 import { reactive, ref, watch } from "vue";
 import { object, string } from "yup";
@@ -89,7 +82,7 @@ const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButto
 const USER_IS_LOCKED_OUT_ERROR_CODE = "user_is_locked_out";
 
 const { cart, fetchShortCart } = useCart();
-const { signMeIn, isAuthenticated } = useUser();
+const { signMeIn } = useUser();
 
 const loading = ref(false);
 const authError = ref(false);
@@ -111,8 +104,6 @@ const { value: password } = useField<string>("password");
 
 const rememberMe = ref(false);
 const model = reactive({ email, password, rememberMe });
-
-const valid = eagerComputed<boolean>(() => isEmpty(errors.value));
 
 const onSubmit = handleSubmit(async () => {
   loading.value = true;
