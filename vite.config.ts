@@ -2,8 +2,8 @@ import path from "path";
 import { defineConfig, loadEnv, ProxyOptions, splitVendorChunkPlugin, UserConfig } from "vite";
 import mkcert from "vite-plugin-mkcert";
 import vue from "@vitejs/plugin-vue";
-import graphql from "@rollup/plugin-graphql";
-import checker from "vite-plugin-checker";
+//import graphql from "@rollup/plugin-graphql";
+//import checker from "vite-plugin-checker";
 
 function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "target"> = {}): ProxyOptions {
   const dontTrustSelfSignedCertificate = false;
@@ -33,21 +33,21 @@ export default defineConfig(({ mode }): UserConfig => {
     plugins: [
       mkcert(),
       vue(),
-      graphql(),
-      isDevelopment
-        ? checker({
-            enableBuild: false,
-            typescript: true,
-            vueTsc: true,
-            eslint: {
-              lintCommand:
-                'eslint "client-app/**/*.{js,ts,vue}" --cache --cache-location node_modules/.cache/.eslintcache',
-              dev: {
-                logLevel: ["error"],
-              },
-            },
-          })
-        : undefined,
+      //graphql(),
+      // isDevelopment
+      //   ? checker({
+      //       enableBuild: false,
+      //       typescript: true,
+      //       vueTsc: true,
+      //       eslint: {
+      //         lintCommand:
+      //           'eslint "client-app/**/*.{js,ts,vue}" --cache --cache-location node_modules/.cache/.eslintcache',
+      //         dev: {
+      //           logLevel: ["error"],
+      //         },
+      //       },
+      //     })
+      //   : undefined,
       splitVendorChunkPlugin(),
     ],
     resolve: {
