@@ -50,7 +50,7 @@
 
     <!-- Form actions -->
     <div class="mt-8 flex" :class="{ 'max-w-sm': !props.growButtons }">
-      <VcButton :loading="loading" type="submit" class="flex-1 shrink">
+      <VcButton :disabled="loading" :loading="loading" type="submit" class="flex-1 shrink">
         {{ $t("shared.account.sign_in_form.login_button") }}
       </VcButton>
 
