@@ -80,7 +80,7 @@ jobs:
 
       - name: Build
         id: build
-        uses: VirtoCommerce/vc-github-actions/build-vue-theme@master
+        uses: VirtoCommerce/vc-github-actions/build-vue-theme@vc-theme-b2b-vue-yarn-berry
         with:
           versionSuffix:  ${{ env.VERSION_SUFFIX }}
 
