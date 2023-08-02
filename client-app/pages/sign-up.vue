@@ -194,7 +194,7 @@ const validationSchema = toTypedSchema(
   })
 );
 
-const { errors, meta, handleSubmit, setFieldError } = useForm({
+const { errors, handleSubmit, setFieldError } = useForm({
   validationSchema,
   initialValues: {
     registrationKind: RegistrationKind.personal,
