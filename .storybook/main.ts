@@ -40,6 +40,10 @@ const storybookConfig: StorybookConfig = {
       plugins: [splitVendorChunkPlugin()],
       resolve: config.resolve,
       define: config.define,
+      build: {
+        cssCodeSplit: false,
+        reportCompressedSize: false,
+      },
       optimizeDeps: config.optimizeDeps,
     });
   },
