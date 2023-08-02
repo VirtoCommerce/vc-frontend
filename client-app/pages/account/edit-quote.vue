@@ -16,7 +16,7 @@
         content-classes="px-6 pb-1 pt-2 lg:px-7 lg:pb-2"
       >
         <VcTextarea
-          v-model.trim="quote.comment"
+          v-model.trim="comment"
           :label="$t('pages.account.quote_details.remarks_field_label')"
           :disabled="fetching"
           :max-length="1000"
@@ -177,6 +177,7 @@ const breadcrumbs = useBreadcrumbs(() => [
 
 const originalQuote = ref<QuoteType>();
 const billingAddressEqualsShipping = ref<boolean>(true);
+const comment = ref<string>();
 
 const accountAddresses = computed<AnyAddressType[]>(() => {
   const { firstName, lastName } = user.value.contact ?? {};
@@ -188,7 +189,7 @@ const accountAddresses = computed<AnyAddressType[]>(() => {
 const quoteChanged = computed<boolean>(
   () =>
     !isEqual(originalQuote.value, quote.value) ||
-    (quote.value?.comment && originalQuote.value?.comment !== quote.value?.comment && quoteItemsValid.value) ||
+    (comment.value && originalQuote.value?.comment !== comment.value && quoteItemsValid.value) ||
     (!!shippingAddress.value && billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value)
 );
 const quoteItemsValid = computed<boolean>(
@@ -200,7 +201,7 @@ const quoteValid = computed<boolean>(
   () =>
     !!shippingAddress.value &&
     (!!billingAddress.value || billingAddressEqualsShipping.value) &&
-    (!!quote.value?.comment || quoteItemsValid.value)
+    (!!comment.value || quoteItemsValid.value)
 );
 
 const userHasAddresses = computedEager<boolean>(() => !!accountAddresses.value.length);
@@ -298,8 +299,8 @@ function openSelectAddressModal(addressType: AddressType): void {
 
 // Due API concurrency errors each query will be sended consecutively
 async function saveChanges(): Promise<void> {
-  if (originalQuote.value?.comment !== quote.value?.comment) {
-    await changeComment(quote.value!.id, quote.value!.comment!);
+  if (originalQuote.value?.comment !== comment.value) {
+    await changeComment(quote.value!.id, comment.value!);
   }
 
   await asyncForEach(originalQuote.value!.items!, async (originalItem: QuoteItemType) => {
@@ -345,7 +346,7 @@ async function submit(): Promise<void> {
     await saveChanges();
   }
 
-  await submitQuote(quote.value!.id, quote.value!.comment || "");
+  await submitQuote(quote.value!.id, comment.value || "");
 
   router.replace({ name: "Quotes" });
 }
@@ -375,6 +376,7 @@ watchEffect(async () => {
   await fetchQuote({ id: props.quoteId });
 
   originalQuote.value = cloneDeep(quote.value);
+  comment.value = quote.value?.comment;
   setBillingAddressEqualsShipping();
 });
 </script>
