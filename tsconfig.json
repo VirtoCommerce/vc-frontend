@@ -8,4 +8,11 @@
       "path": "./tsconfig.app.json"
     }
   ],
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["client-app/*"]
+    }
+  },
 }

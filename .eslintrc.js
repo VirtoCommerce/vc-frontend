@@ -1,4 +1,4 @@
-require('@rushstack/eslint-patch/modern-module-resolution')
+//require('@rushstack/eslint-patch/modern-module-resolution')
 
 module.exports = {
   root: true,
@@ -169,6 +169,7 @@ module.exports = {
     "import/resolver": {
       typescript: {
         alwaysTryTypes: true,
+        project: "./tsconfig.app.json",
       },
       node: true,
     },
