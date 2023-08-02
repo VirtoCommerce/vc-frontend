@@ -2,7 +2,6 @@ import { vOnClickOutside } from "@vueuse/components";
 import { createHead } from "@vueuse/head";
 import { maska } from "maska";
 import { createApp } from "vue";
-import { setLocale as setLocaleForYup } from "yup";
 import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";
 import { setGlobals } from "@/core/globals";
 import { configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
@@ -58,16 +57,6 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
    * Other settings
    */
   await setLocale(i18n, currentLocale.value);
-
-  setLocaleForYup({
-    mixed: {
-      required: i18n.global.t("common.messages.required_field"),
-    },
-    string: {
-      email: i18n.global.t("common.messages.email_is_not_correct"),
-      max: ({ max }) => i18n.global.t("common.messages.max_length", { max }),
-    },
-  });
 
   /**
    * Create and mount application
