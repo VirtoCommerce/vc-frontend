@@ -83,6 +83,8 @@ jobs:
         uses: VirtoCommerce/vc-github-actions/build-vue-theme@master
         with:
           versionSuffix:  ${{ env.VERSION_SUFFIX }}
+        env:
+          YARN_ENABLE_IMMUTABLE_INSTALLS=true
 
       - name: Publish
         if: ${{ github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
