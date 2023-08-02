@@ -1,12 +1,10 @@
 import { setup } from "@storybook/vue3";
-import { vOnClickOutside } from "@vueuse/components";
-import { maska } from "maska";
 import { vueRouter } from "storybook-vue3-router";
 import { useLanguages } from "../client-app/core/composables";
 import { setGlobals } from "../client-app/core/globals";
 import { configPlugin } from "../client-app/core/plugins";
 import { createI18n } from "../client-app/i18n";
-import * as UIKitComponents from "../client-app/ui-kit/components";
+import { uiKit } from "../client-app/ui-kit";
 import type { IThemeConfig } from "../client-app/core/types";
 import type { I18n } from "../client-app/i18n";
 import type { Preview } from "@storybook/vue3";
@@ -32,17 +30,11 @@ async function configureI18N() {
 
 setup((app) => {
   configureThemeSettings(app);
-  configureI18N();
 
+  configureI18N();
   app.use(i18n);
 
-  // Directives
-  app.directive("mask", maska);
-  app.directive("onClickOutside", vOnClickOutside);
-
-  // Components
-  // Register UI Kit components globally
-  Object.entries(UIKitComponents).forEach(([name, component]) => app.component(name, component));
+  app.use(uiKit);
 });
 
 const preview: Preview = {

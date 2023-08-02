@@ -1,6 +1,4 @@
-import { vOnClickOutside } from "@vueuse/components";
 import { createHead } from "@vueuse/head";
-import { maska } from "maska";
 import { createApp } from "vue";
 import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";
 import { setGlobals } from "@/core/globals";
@@ -11,11 +9,12 @@ import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
 import { templateBlocks } from "@/shared/static-content";
-import * as UIKitComponents from "@/ui-kit/components";
+import { uiKit } from "@/ui-kit";
 import App from "./App.vue";
 import type { Plugin } from "vue";
+import type { Router } from "vue-router";
 
-export default async (getPlugins: (options: any) => { plugin: Plugin; options: any }[] = () => []) => {
+export default async (getPlugins: (options: { router: Router }) => { plugin: Plugin; options: any }[] = () => []) => {
   const appSelector = "#app";
   const appElement = document.querySelector<HTMLElement | SVGElement>(appSelector);
 
@@ -75,17 +74,9 @@ export default async (getPlugins: (options: any) => { plugin: Plugin; options: a
   app.use(permissionsPlugin);
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value!.settings);
+  app.use(uiKit);
 
-  const plugins = getPlugins({ router });
-  plugins.forEach(({ plugin, options }) => app.use(plugin, options));
-
-  // Directives
-  app.directive("mask", maska);
-  app.directive("onClickOutside", vOnClickOutside);
-
-  // Components
-  // Register UI Kit components globally
-  Object.entries(UIKitComponents).forEach(([name, component]) => app.component(name, component));
+  getPlugins({ router }).forEach(({ plugin, options }) => app.use(plugin, options));
 
   // Register Page builder components globally
   Object.entries(templateBlocks).forEach(([name, component]) => app.component(name, component));
