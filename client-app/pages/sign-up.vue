@@ -124,7 +124,7 @@
             {{ error }}
           </VcAlert>
 
-          <VcButton :disabled="loading" :loading="loading" type="submit" class="mt-6 w-full lg:mt-3 lg:w-48">
+          <VcButton :loading="loading" type="submit" class="mt-6 w-full lg:mt-3 lg:w-48">
             {{ $t("pages.sign_up.register_button") }}
           </VcButton>
         </div>
