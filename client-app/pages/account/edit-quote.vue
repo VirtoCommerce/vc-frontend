@@ -190,14 +190,11 @@ const quoteChanged = computed<boolean>(
     !isEqual(originalQuote.value, quote.value) ||
     (quote.value?.comment && originalQuote.value?.comment !== quote.value?.comment && quoteItemsValid.value) ||
     (!!shippingAddress.value &&
-      !billingAddress.value &&
-      billingAddressEqualsShipping.value &&
-      !isBillingAddressEqualsShipping.value) ||
-    (!!shippingAddress.value &&
       !!billingAddress.value &&
       !isEqualAddresses(shippingAddress.value, billingAddress.value) &&
       !billingAddressEqualsShipping.value &&
-      isBillingAddressEqualsShipping.value)
+      isBillingAddressEqualsShipping.value) ||
+    (!!shippingAddress.value && billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value)
 );
 const quoteItemsValid = computed<boolean>(
   () =>
