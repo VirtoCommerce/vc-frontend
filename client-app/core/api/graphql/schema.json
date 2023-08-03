@@ -13281,6 +13281,17 @@
             "defaultValue": null,
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "userId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "interfaces": null,
@@ -21102,6 +21113,17 @@
             "deprecationReason": null
           },
           {
+            "name": "description",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "id",
             "args": [],
             "type": {
@@ -21133,6 +21155,17 @@
           },
           {
             "name": "logoUrl",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "name",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -23894,6 +23927,17 @@
             "type": {
               "kind": "SCALAR",
               "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "minVariationPrice",
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "PriceType",
               "ofType": null
             },
             "isDeprecated": false,
@@ -30155,6 +30199,17 @@
             "deprecationReason": null
           },
           {
+            "name": "shippingMethod",
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "ShippingMethodType",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "taxDetails",
             "args": [],
             "type": {
@@ -30312,6 +30367,17 @@
             "deprecationReason": null
           },
           {
+            "name": "description",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "discountAmount",
             "args": [],
             "type": {
@@ -30346,6 +30412,17 @@
           },
           {
             "name": "logoUrl",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "name",
             "args": [],
             "type": {
               "kind": "SCALAR",

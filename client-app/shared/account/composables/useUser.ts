@@ -9,6 +9,7 @@ import {
   resetPasswordByToken,
   updatePersonalData,
   changePassword as _changePassword,
+  sendVerifyEmail as _sendVerifyEmail,
 } from "@/core/api/graphql/account";
 import { useFetch } from "@/core/composables";
 import { globals } from "@/core/globals";
@@ -20,6 +21,7 @@ import type {
   IdentityResultType,
   InputInviteUserType,
   InputRegisterByInvitationType,
+  InputSendVerifyEmailType,
   Organization,
   UserType,
 } from "@/core/api/graphql/types";
@@ -277,6 +279,19 @@ export default function useUser() {
     }
   }
 
+  async function sendVerifyEmail(userId: string): Promise<void> {
+    loading.value = true;
+
+    try {
+      await _sendVerifyEmail(userId);
+    } catch (e) {
+      Logger.error(`${useUser.name}.${sendVerifyEmail.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     isAuthenticated,
     isCorporateMember,
@@ -295,6 +310,7 @@ export default function useUser() {
     inviteUser,
     registerByInvite,
     changePassword,
+    sendVerifyEmail,
     isPasswordNeedToBeChanged,
     loading: readonly(loading),
     user: computed({
