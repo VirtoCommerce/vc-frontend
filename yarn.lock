@@ -13811,7 +13811,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.1.10, postcss@npm:^8.4.23, postcss@npm:^8.4.26, postcss@npm:^8.4.4":
+"postcss@npm:^8.1.10, postcss@npm:^8.4.23, postcss@npm:^8.4.26, postcss@npm:^8.4.27, postcss@npm:^8.4.4":
   version: 8.4.27
   resolution: "postcss@npm:8.4.27"
   dependencies:
@@ -17034,6 +17034,7 @@ __metadata:
     marked: ~4.3.0
     maska: ~1.5.2
     moment: ^2.29.4
+    postcss: ^8.4.27
     prettier: ^3.0.0
     react: ^18.2.0
     react-dom: ^18.2.0
