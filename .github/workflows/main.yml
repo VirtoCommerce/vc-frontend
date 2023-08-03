@@ -51,10 +51,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install Node.js 16
-        uses: actions/setup-node@v1
+      - name: Install Node.js 18
+        uses: actions/setup-node@v3
         with:
-          node-version: '16.x'
+          node-version: '18'
 
       - name: Get Image Version
         uses: VirtoCommerce/vc-github-actions/get-image-version@master
