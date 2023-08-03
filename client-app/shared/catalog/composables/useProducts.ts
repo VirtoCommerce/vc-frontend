@@ -19,7 +19,7 @@ export default (
     withImages?: boolean;
     /** @default config.zero_price_product_enabled */
     withZeroPrice?: boolean;
-  } = {},
+  } = {}
 ) => {
   const config = inject(configInjectionKey, {});
   const {
@@ -43,8 +43,8 @@ export default (
         result[product.id] = { index, product };
         return result;
       },
-      {} as Record<string, { index: number; product: Product }>,
-    ),
+      {} as Record<string, { index: number; product: Product }>
+    )
   );
 
   function setFacets({ termFacets = [], rangeFacets = [] }: { termFacets?: TermFacet[]; rangeFacets?: RangeFacet[] }) {
@@ -57,7 +57,7 @@ export default (
 
     facets.value = Array<FacetItemType>().concat(
       termFacets.map(termFacetToCommonFacet),
-      rangeFacets.map(rangeFacetToCommonFacet),
+      rangeFacets.map(rangeFacetToCommonFacet)
     );
   }
 
@@ -125,7 +125,7 @@ export default (
 
       return Array<FacetItemType>().concat(
         term_facets.map(termFacetToCommonFacet),
-        range_facets.map(rangeFacetToCommonFacet),
+        range_facets.map(rangeFacetToCommonFacet)
       );
     } catch (e) {
       Logger.error(`useProducts.${getFacets.name}`, e);

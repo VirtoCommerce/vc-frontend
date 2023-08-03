@@ -4,7 +4,7 @@ import { setLocale as setLocaleForYup } from "yup";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
-import type { Composer, VueI18n } from "vue-i18n";
+import type { Composer } from "vue-i18n";
 
 const { themeContext } = useThemeContext();
 
@@ -29,7 +29,7 @@ const currentLocale = computed<string>(() => {
 });
 
 const currentLanguage = computed<ILanguage>(
-  () => supportedLanguages.value.find((x) => x.twoLetterLanguageName === currentLocale.value) || defaultLanguage.value,
+  () => supportedLanguages.value.find((x) => x.twoLetterLanguageName === currentLocale.value) || defaultLanguage.value
 );
 
 function fetchLocaleMessages(locale: string): Promise<any> {

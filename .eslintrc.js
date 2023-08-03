@@ -121,8 +121,7 @@ module.exports = {
     "vue/no-multiple-objects-in-class": "warn",
     "vue/no-required-prop-with-default": "warn",
     "vue/no-static-inline-styles": "warn",
-    // TODO: Revert back after refactoring
-    "vue/no-setup-props-destructure": "warn",
+    "vue/no-setup-props-destructure": "warn", // TODO: Remove (switch to error) after refactoring
     "vue/no-useless-v-bind": "warn",
     "vue/padding-line-between-blocks": "warn",
     // TODO: enable "vue/padding-line-between-tags": "warn",
