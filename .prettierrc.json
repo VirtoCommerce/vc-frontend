@@ -1,5 +1,4 @@
 {
   "$schema": "https://json.schemastore.org/prettierrc",
-  "endOfLine": "auto",
-  "trailingComma": "es5"
+  "endOfLine": "auto"
 }
