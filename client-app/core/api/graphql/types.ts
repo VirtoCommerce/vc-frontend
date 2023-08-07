@@ -1944,6 +1944,7 @@ export type InputSendVerifyEmailType = {
   languageCode?: InputMaybe<Scalars['String']>;
   /** Store ID */
   storeId: Scalars['String'];
+  userId?: InputMaybe<Scalars['String']>;
 };
 
 export type InputShipmentType = {
@@ -3177,9 +3178,11 @@ export type OrderShipmentTypeDynamicPropertiesArgs = {
 
 export type OrderShippingMethodType = {
   code: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   isActive: Scalars['Boolean'];
   logoUrl?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
   priority: Scalars['Int'];
   storeId: Scalars['String'];
   taxType?: Maybe<Scalars['String']>;
@@ -3591,6 +3594,8 @@ export type Product = {
   maxQuantity?: Maybe<Scalars['Int']>;
   /** Min. quantity */
   minQuantity?: Maybe<Scalars['Int']>;
+  /** Minimim product variation price */
+  minVariationPrice?: Maybe<PriceType>;
   /** The name of the product. */
   name: Scalars['String'];
   /** The outer identifier */
@@ -4499,6 +4504,7 @@ export type ShipmentType = {
   shipmentMethodCode?: Maybe<Scalars['String']>;
   /** Shipment method option */
   shipmentMethodOption?: Maybe<Scalars['String']>;
+  shippingMethod?: Maybe<ShippingMethodType>;
   /** Tax details */
   taxDetails?: Maybe<Array<Maybe<TaxDetailType>>>;
   /** Tax percent rate */
@@ -4532,6 +4538,8 @@ export type ShippingMethodType = {
   code?: Maybe<Scalars['String']>;
   /** Currency */
   currency?: Maybe<CurrencyType>;
+  /** Shipping method description */
+  description?: Maybe<Scalars['String']>;
   /** Discount amount */
   discountAmount?: Maybe<MoneyType>;
   /** Discount amount with tax */
@@ -4539,6 +4547,8 @@ export type ShippingMethodType = {
   id?: Maybe<Scalars['String']>;
   /** Value of shipping method logo absolute URL */
   logoUrl?: Maybe<Scalars['String']>;
+  /** Shipping method name */
+  name?: Maybe<Scalars['String']>;
   /** Value of shipping method option description */
   optionDescription?: Maybe<Scalars['String']>;
   /** Value of shipping method option name */
@@ -4921,6 +4931,13 @@ export type ResetPasswordByTokenMutationVariables = Exact<{
 
 
 export type ResetPasswordByTokenMutation = { resetPasswordByToken?: { succeeded: boolean, errors?: Array<{ code: string, description?: string, parameter?: string }> } };
+
+export type SendVerifyEmailMutationVariables = Exact<{
+  command?: InputMaybe<InputSendVerifyEmailType>;
+}>;
+
+
+export type SendVerifyEmailMutation = { sendVerifyEmail?: boolean };
 
 export type UpdateContactMutationVariables = Exact<{
   command: InputUpdateContactType;
