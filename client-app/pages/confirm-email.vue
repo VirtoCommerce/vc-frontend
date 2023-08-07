@@ -27,13 +27,7 @@
 
     <template #actions>
       <VcButton v-if="linkSent" :to="{ name: 'Home' }" class="w-36">
-        <span v-if="isAuthenticated">
-          {{ $t("common.links.dashboard") }}
-        </span>
-
-        <span v-else>
-          {{ $t("common.links.home") }}
-        </span>
+        {{ $t("common.links.home") }}
       </VcButton>
 
       <VcButton v-else-if="emailConfirmed" :to="{ name: 'SignIn' }" class="w-36">
