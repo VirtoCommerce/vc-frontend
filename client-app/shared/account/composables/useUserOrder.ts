@@ -2,6 +2,7 @@ import { computed, ref, shallowRef } from "vue";
 import { addOrUpdateOrderPayment, getOrder } from "@/core/api/graphql";
 import { ProductType } from "@/core/enums";
 import { getLineItemsGroupedByVendor, Logger } from "@/core/utilities";
+import type { GetOrderPayloadType } from "@/core/api/graphql/orders/queries/getOrder";
 import type {
   CustomerOrderType,
   InputAddOrUpdateOrderPaymentType,
@@ -9,7 +10,6 @@ import type {
   OrderLineItemType,
   OrderShipmentType,
   PaymentInType,
-  QueryOrderArgs,
 } from "@/core/api/graphql/types";
 import type { LineItemsGroupByVendorType } from "@/core/types";
 
@@ -30,13 +30,26 @@ const deliveryAddress = computed<OrderAddressType | undefined>(() => shipment.va
 const billingAddress = computed<OrderAddressType | undefined>(() => payment.value?.billingAddress);
 
 export default function useUserOrder() {
-  async function fetchOrder(payload: QueryOrderArgs) {
+  async function fetchShortOrder(payload: GetOrderPayloadType) {
     loading.value = true;
 
     try {
       order.value = await getOrder(payload);
     } catch (e) {
-      Logger.error(`${useUserOrder.name}.${fetchOrder.name}`, e);
+      Logger.error(`${useUserOrder.name}.${fetchShortOrder.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function fetchFullOrder(payload: GetOrderPayloadType) {
+    loading.value = true;
+
+    try {
+      order.value = await getOrder(payload, { full: true });
+    } catch (e) {
+      Logger.error(`${useUserOrder.name}.${fetchFullOrder.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -60,7 +73,7 @@ export default function useUserOrder() {
     }
 
     if (reloadOrder) {
-      await fetchOrder({ id: payload.orderId });
+      await fetchFullOrder({ id: payload.orderId });
     }
   }
 
@@ -75,7 +88,10 @@ export default function useUserOrder() {
     billingAddress,
     shipment,
     payment,
-    fetchOrder,
+    fetchShortOrder,
+    fetchFullOrder,
+    /** @deprecated Use fetchFullOrder */
+    fetchOrder: fetchFullOrder,
     clearOrder,
     addOrUpdatePayment,
   };

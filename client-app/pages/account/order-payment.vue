@@ -233,7 +233,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
@@ -262,7 +262,7 @@ const changeMethodLoading = ref(false);
 const paymentMethodComponent = ref<InstanceType<typeof PaymentProcessingAuthorizeNet> | null>(null);
 
 const { t } = useI18n();
-const { loading, order, fetchOrder, addOrUpdatePayment } = useUserOrder();
+const { loading, order, fetchShortOrder, fetchFullOrder, addOrUpdatePayment } = useUserOrder();
 const { openPopup, closePopup } = usePopup();
 const router = useRouter();
 
@@ -341,12 +341,18 @@ function showChangePaymentMethodDialog(): void {
   });
 }
 
-watchEffect(() => {
+watch(success, async (value) => {
+  if (value) {
+    await fetchShortOrder({ id: props.orderId });
+  }
+});
+
+watchEffect(async () => {
   if (props.orderId !== order.value?.id) {
-    fetchOrder({ id: props.orderId });
+    await fetchFullOrder({ id: props.orderId });
   } else if (order.value?.inPayments[0]?.isApproved) {
     // If the order is paid
-    router.replace({ name: "OrderDetails", params: { orderId: props.orderId } });
+    await router.replace({ name: "OrderDetails", params: { orderId: props.orderId } });
   }
 });
 </script>
