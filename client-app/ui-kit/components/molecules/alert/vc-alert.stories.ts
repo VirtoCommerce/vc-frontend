@@ -2,10 +2,11 @@ import { VcAlert } from "..";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
 const COLORS = ["info", "success", "warning", "danger"];
-const VARIANTS = ["solid", "outline"];
+const VARIANTS = ["solid", "solid-light", "outline", "outline-dark"];
+const SIZES = ["sm", "md"];
 
 export default {
-  title: "Components/Atoms/VcAlert",
+  title: "Components/Molecules/VcAlert",
   component: VcAlert,
   argTypes: {
     color: {
@@ -28,6 +29,16 @@ export default {
         },
       },
     },
+    size: {
+      control: "inline-radio",
+      options: SIZES,
+      type: { name: "string", required: false },
+      table: {
+        type: {
+          summary: SIZES.join(" | "),
+        },
+      },
+    },
   },
 } as Meta<typeof VcAlert>;
 
@@ -35,12 +46,16 @@ const Template: StoryFn<typeof VcAlert> = (args) => ({
   components: { VcAlert },
   setup: () => ({ args }),
   template: `<VcAlert v-bind="args">
-    <b>Alert</b><br />
     Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
   </VcAlert>`,
 });
 
 export const Basic = Template.bind({});
+
+export const Title = Template.bind({});
+Title.args = {
+  title: "Alert",
+};
 
 export const Outline = Template.bind({});
 Outline.args = {
@@ -52,25 +67,32 @@ Icon.args = {
   icon: true,
 };
 
+export const Shadow = Template.bind({});
+Shadow.args = {
+  shadow: true,
+};
+
+export const Closable = Template.bind({});
+Closable.args = {
+  closable: true,
+};
+
 export const AllStates: StoryFn<typeof VcAlert> = () => ({
   components: { VcAlert },
-  setup: () => ({ colors: COLORS, variants: VARIANTS }),
+  setup: () => ({ colors: COLORS, variants: VARIANTS, sizes: SIZES }),
   template: `<div class="space-y-6">
-    <div class="flex flex-wrap gap-1 items-center" v-for="variant in variants">
-      <div class="w-32 text-xs">Variant: <b>{{ variant }}</b></div>
+    <div v-for="size in sizes" class="space-y-6">
+      <div class="text-sm font-bold border-b">Size: {{ size }}</div>
 
-      <VcAlert v-for="color in colors" :color="color" :variant="variant">
-        Color: {{ color }}
-      </VcAlert>
+      <div class="flex flex-wrap gap-1 items-center" v-for="variant in variants">
+        <div class="w-32 text-xs">Variant: <b>{{ variant }}</b></div>
+
+        <div class="grow space-y-1">
+          <VcAlert v-for="color in colors" :color="color" :variant="variant" :size="size" icon closable>
+            Color: {{ color }}
+          </VcAlert>
+        </div>
+      </div>
     </div>
-
-    <div class="flex flex-wrap gap-1 items-center" v-for="variant in variants">
-      <div class="w-32 text-xs">Variant: <b>{{ variant }}</b></div>
-
-      <VcAlert v-for="color in colors" :color="color" :variant="variant" icon>
-        Color: {{ color }}
-      </VcAlert>
-    </div>
-  </div>
-  `,
+  </div>`,
 });

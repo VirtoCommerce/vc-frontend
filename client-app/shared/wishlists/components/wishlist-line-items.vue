@@ -34,7 +34,7 @@
 
     <!-- Line item Alerts
     <template #after-content>
-      <VcAlert color="danger" icon>Line item error</VcAlert>
+      <VcAlert color="danger" size="sm" variant="outline-dark" icon>Line item error</VcAlert>
     </template>
     -->
   </VcLineItems>
@@ -60,11 +60,8 @@ defineProps<IProp>();
 
 function addToCartDisabled(item: PreparedLineItemType) {
   return (
-    !item.actualPrice ||
-    !item.availabilityData?.isAvailable ||
-    !item.availabilityData?.isInStock ||
-    !item.availabilityData?.isBuyable ||
-    (!item.availabilityData?.availableQuantity && item.productType !== ProductType.Digital)
+    item.productType === ProductType.Physical &&
+    (!item.availabilityData?.isAvailable || !item.availabilityData?.isInStock)
   );
 }
 

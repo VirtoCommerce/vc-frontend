@@ -9,6 +9,7 @@
             v-model="registrationKind"
             :value="RegistrationKind.personal"
             :label="$t('pages.sign_up.personal_registration_kind_label')"
+            :disabled="loading"
           />
 
           <VcRadioButton
@@ -16,45 +17,49 @@
             v-model="registrationKind"
             :value="RegistrationKind.organization"
             :label="$t('pages.sign_up.organization_registration_kind_label')"
+            :disabled="loading"
           />
         </div>
 
         <VcInput
           v-model.trim="firstName"
-          class="mb-4"
           :label="$t('common.labels.first_name')"
           :placeholder="$t('common.placeholders.first_name')"
-          required
           :message="errors.firstName"
           :error="!!errors.firstName"
           :maxlength="64"
+          :disabled="loading"
+          class="mb-4"
           name="firstName"
+          required
           autocomplete="given-name"
         />
 
         <VcInput
           v-model.trim="lastName"
-          class="mb-4"
           :label="$t('common.labels.last_name')"
           :placeholder="$t('common.placeholders.last_name')"
-          required
           :message="errors.lastName"
           :error="!!errors.lastName"
           :maxlength="64"
+          :disabled="loading"
+          class="mb-4"
           name="lastName"
+          required
           autocomplete="family-name"
         />
 
         <VcInput
           v-model.trim="email"
-          class="mb-4"
           :label="$t('common.labels.email')"
           :placeholder="$t('common.placeholders.email')"
-          required
           :message="errors.email"
           :error="!!errors.email"
           :maxlength="64"
+          :disabled="loading"
+          class="mb-4"
           name="email"
+          required
           autocomplete="email"
           @input="emailValidationData.isChecked = false"
         />
@@ -62,13 +67,14 @@
         <VcInput
           v-if="registrationKind === RegistrationKind.organization"
           v-model.trim="organizationName"
-          class="mb-4"
           :label="$t('common.labels.company_name')"
           :placeholder="$t('common.placeholders.company_name')"
-          required
           :message="errors.organizationName"
           :error="!!errors.organizationName"
           :maxlength="64"
+          :disabled="loading"
+          class="mb-4"
+          required
           name="organizationName"
           autocomplete="off"
         />
@@ -76,44 +82,49 @@
         <div class="block justify-between lg:flex lg:space-x-6">
           <VcInput
             v-model="password"
-            class="mb-4 w-full lg:w-1/2"
             :label="$t('common.labels.password')"
             :placeholder="$t('common.placeholders.password')"
-            type="password"
-            autocomplete="new-password"
-            required
             :message="errors.password"
             :error="!!errors.password"
             :maxlength="64"
+            :disabled="loading"
+            class="mb-4 w-full lg:w-1/2"
+            type="password"
+            autocomplete="new-password"
+            required
           />
 
           <VcInput
             v-model="confirmPassword"
-            class="mb-4 w-full lg:w-1/2"
             :label="$t('common.labels.confirm_password')"
             :placeholder="$t('common.placeholders.confirm_password')"
-            type="password"
-            autocomplete="off"
-            required
             :message="errors.confirmPassword"
             :error="!!errors.confirmPassword"
             :maxlength="64"
+            :disabled="loading"
+            class="mb-4 w-full lg:w-1/2"
+            type="password"
+            autocomplete="off"
+            required
           />
         </div>
 
         <div class="mt-6 lg:mt-4">
           <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
 
-          <VcAlert v-for="error in commonErrors" :key="error" color="danger" class="mb-4 text-xs" icon>
+          <VcAlert
+            v-for="error in commonErrors"
+            :key="error"
+            color="danger"
+            size="sm"
+            variant="solid-light"
+            class="mt-3 text-xs"
+            icon
+          >
             {{ error }}
           </VcAlert>
 
-          <VcButton
-            :disabled="!meta.valid || meta.pending"
-            :loading="loading"
-            type="submit"
-            class="mt-6 w-full lg:mt-3 lg:w-48"
-          >
+          <VcButton :loading="loading" type="submit" class="mt-6 w-full lg:mt-3 lg:w-48">
             {{ $t("pages.sign_up.register_button") }}
           </VcButton>
         </div>
@@ -132,24 +143,18 @@ import { useDebounceFn } from "@vueuse/core";
 import { useField, useForm } from "vee-validate";
 import { reactive, ref, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 import { object, ref as yupRef, string } from "yup";
 import { checkEmailUniqueness } from "@/core/api/graphql/account";
 import { useIdentityErrorTranslator, usePageHead } from "@/core/composables";
-import {
-  PasswordTips,
-  RegistrationKind,
-  RegistrationSuccessDialog,
-  usePasswordRequirements,
-  useUser,
-} from "@/shared/account";
+import { PasswordTips, RegistrationKind, usePasswordRequirements, useUser } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
-import { usePopup } from "@/shared/popup";
 import type { AccountCreationResultType } from "@/core/api/graphql/types";
+const router = useRouter();
 
 const ASYNC_VALIDATION_TIMEOUT_IN_MS = 500;
 
 const { t } = useI18n();
-const { openPopup } = usePopup();
 const { registerUser, registerOrganization, loading } = useUser();
 const { passwordRequirements, fetchPasswordRequirements } = usePasswordRequirements();
 const getIdentityErrorTranslation = useIdentityErrorTranslator();
@@ -189,7 +194,7 @@ const validationSchema = toTypedSchema(
   })
 );
 
-const { errors, meta, handleSubmit, setFieldError } = useForm({
+const { errors, handleSubmit, setFieldError } = useForm({
   validationSchema,
   initialValues: {
     registrationKind: RegistrationKind.personal,
@@ -248,9 +253,7 @@ const onSubmit = handleSubmit(async (data) => {
   }
 
   if (result.succeeded) {
-    openPopup({
-      component: RegistrationSuccessDialog,
-    });
+    router.push({ name: "Welcome" });
   } else if (result.errors?.length) {
     result.errors.forEach((error) => {
       const errorDescription = getIdentityErrorTranslation(error);

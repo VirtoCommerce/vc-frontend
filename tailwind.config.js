@@ -137,6 +137,7 @@ module.exports = {
       },
 
       boxShadow: {
+        /** @deprecated waiting for shadow styles design */
         "t-sm": "0 -1px 2px 0 rgba(0, 0, 0, 0.05)",
         "t-2sm": "1px 2px 4px rgba(0, 0, 0, 0.15)",
         "t-3sm": "1px 2px 4px rgba(0, 0, 0, 0.05)",

@@ -172,7 +172,9 @@ const breadcrumbs = useBreadcrumbs(() => [
 const isMobile = breakpoints.smaller("lg");
 const loadingAddItemsToCart = ref(false);
 
-const showPaymentButton = computed<boolean>(() => !!order.value && order.value.status === "New");
+const showPaymentButton = computed<boolean>(
+  () => !!order.value && (order.value.status === "New" || order.value.status === "Payment required")
+);
 const showReorderButton = computed<boolean>(() => !!order.value && order.value.status === "Completed");
 
 async function reorderItems() {
