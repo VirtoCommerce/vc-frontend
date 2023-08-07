@@ -1,0 +1,3 @@
+mutation SendVerifyEmail($command: InputSendVerifyEmailType) {
+  sendVerifyEmail(command: $command)
+}
