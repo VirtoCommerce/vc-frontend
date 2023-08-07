@@ -21,7 +21,6 @@ import type {
   IdentityResultType,
   InputInviteUserType,
   InputRegisterByInvitationType,
-  InputSendVerifyEmailType,
   Organization,
   UserType,
 } from "@/core/api/graphql/types";
