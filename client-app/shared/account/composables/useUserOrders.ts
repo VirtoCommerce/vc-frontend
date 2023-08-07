@@ -68,7 +68,7 @@ function getFilterExpression(keyword: string, filterData: OrdersFilterData): str
     filterExpression += `${keyword} `;
   }
   if (filterData.statuses.length) {
-    filterExpression += `status:${filterData.statuses.join(",")} `;
+    filterExpression += `status:"${filterData.statuses.join(",")}" `;
   }
 
   if (filterData.startDate && filterData.endDate) {
