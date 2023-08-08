@@ -9,6 +9,7 @@ import {
   resetPasswordByToken,
   updatePersonalData,
   changePassword as _changePassword,
+  sendVerifyEmail as _sendVerifyEmail,
   confirmEmailByToken,
 } from "@/core/api/graphql/account";
 import { useFetch } from "@/core/composables";
@@ -280,6 +281,19 @@ export default function useUser() {
     }
   }
 
+  async function sendVerifyEmail(userId: string): Promise<void> {
+    loading.value = true;
+
+    try {
+      await _sendVerifyEmail(userId);
+    } catch (e) {
+      Logger.error(`${useUser.name}.${sendVerifyEmail.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     isAuthenticated,
     isCorporateMember,
@@ -298,6 +312,7 @@ export default function useUser() {
     inviteUser,
     registerByInvite,
     changePassword,
+    sendVerifyEmail,
     isPasswordNeedToBeChanged,
     loading: readonly(loading),
     user: computed({

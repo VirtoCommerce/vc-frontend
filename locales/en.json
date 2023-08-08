@@ -56,7 +56,8 @@
       "add_new": "Add new",
       "add_new_address": "Add new address",
       "remove_selected": "Remove Selected",
-      "remove_all": "Remove all"
+      "remove_all": "Remove all",
+      "resend_link": "Resend link"
     },
     "labels": {
       "actions": "Actions",
@@ -829,7 +830,8 @@
       "subtitle": "Thank you for verifying your email.",
       "text": "Please use your username and password to login to your account.",
       "continue_button": "@:shared.layout.header.link_sign_in",
-      "continue_shopping_button": "@:common.buttons.continue_shopping"
+      "continue_shopping_button": "@:common.buttons.continue_shopping",
+      "link_sent_text": "We sent you a email confirmation link to your email."
     },
     "confirm_invitation": {
       "meta": {
