@@ -8,7 +8,7 @@
 
       <h1 class="text-2xl font-bold uppercase md:text-4xl">{{ product.name }}</h1>
 
-      <div v-if="!product.hasVariations && !isMobile" class="mt-1 flex items-center text-sm">
+      <div v-if="!product.hasVariations" class="mt-1 flex items-center text-sm">
         {{ $t("pages.product.sku_label") }}
         <span class="font-extrabold">{{ product.code }}</span>
         <VcButton
