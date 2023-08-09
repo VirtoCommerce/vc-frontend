@@ -1,6 +1,6 @@
 import { CodegenConfig } from "@graphql-codegen/cli";
 
-const config: CodegenConfig = {
+const graphQLCodegenTypesConfig: CodegenConfig = {
   schema: `${process.env.APP_BACKEND_URL}/xapi/graphql`,
   documents: "client-app/**/*.(graphql|gql)",
   generates: {
@@ -24,4 +24,4 @@ const config: CodegenConfig = {
   },
 };
 
-export default config;
+export default graphQLCodegenTypesConfig;

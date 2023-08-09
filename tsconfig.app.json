@@ -1,0 +1,14 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "include": ["client-app/**/*.ts", "client-app/**/*.vue"],
+  "exclude": ["artifacts", "assets", "content", "**/*.spec.ts", "**/*.stories.ts", "**/*.js"],
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": ".",
+    "resolvePackageJsonExports": false,
+    "paths": {
+      "@/*": ["client-app/*"]
+    }
+  },
+  "types": ["@types/gtag.js"]
+}

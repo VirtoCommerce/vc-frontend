@@ -112,26 +112,35 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 ├── templates                     // Liquid templates, used in SSR and MPA. Each MPA page needs to have a liquid template here if you want SSR.
 |   └──index.liquid               // Entry point for SPA, providing container with necessary scripts and styles.
 |
-├── .browserslistrc               // Browserslist config file to support actual versions of browsers.
-├── .commitlintrc.json            // Config for Conventional commit hook.
-├── .editorconfig                 // Common editor settings to sync codestyle.
-├── .env                          // Envfile to define different Environment Variables.
-├── .eslintignore                 // Ignore some files from ESlint.
-├── .eslintrc                     // ESlint configuration file.
-├── .gitignore                    // Ignore some files from GIT.
-├── .graphqlconfig                // Config file for JS GraphQL IntelliJ Plugin (https://plugins.jetbrains.com/plugin/8097-graphql).
-├── .prettierignore               // Ignore some files from Prettier.
-├── .prettierrc                   // Config for Prettier.
-├── codegen.schema.ts             // GraphQL configuration file to generate schema from your Virto Backoffice url.
-├── codegen.types.ts              // GraphQL configuration file to generate types from your Virto Backoffice url.
-├── gulpfile.js                   // Artifact build script to product zip-file installable by VC Storefront.
-├── index.html                    // Vite Development entry point.
-├── package.json                  // NPM Package description.
-├── postcss.config.js             // PostCSS configuration for Tailwind.
-├── README.md                     // This file.
-├── tailwind.config.js            // TailwindCSS configuration file.
-├── tsconfig.json                 // TypeScript configuration file.
-└── vite.config.ts                // Vite configuration file.
+├── .babelrc                         // Babel configuration for storybook
+├── .browserslistrc                  // Browserslist config file to support actual versions of browsers.
+├── .commitlintrc.json               // Config for Conventional commit hook.
+├── .editorconfig                    // Common editor settings to sync codestyle.
+├── .env                             // Envfile to define different Environment Variables.
+├── .env.local                       // Local envfile to override Environment Variables.
+├── .eslintignore                    // Ignore some files from ESlint.
+├── .eslintrc.js                     // ESlint configuration file.
+├── .gitattributes                   // Set attributes to specified path in Git.
+├── .gitignore                       // Ignore some files from Git.
+├── .graphqlconfig                   // Config file for JS GraphQL IntelliJ Plugin (https://plugins.jetbrains.com/plugin/8097-graphql).
+├── .npmrc                           // Node.js package manager settings and Node.js restrictions
+├── .prettierignore                  // Ignore some files from Prettier.
+├── .prettierrc                      // Config for Prettier.
+├── .yarnrc                          // Yarn package manager configuration
+├── builder-preview.html             // Page Builder entry point
+├── graphql-codegen.schema.config.ts // GraphQL configuration file to generate schema from your VirtoCommerce Storefront url.
+├── graphql-codegen.types.types.ts   // GraphQL configuration file to generate types from your VirtoCommerce Storefront url.
+├── gulpfile.js                      // Artifact build script to product zip-file installable by VirtoCommerce Storefront.
+├── index.html                       // Vite Development entry point.
+├── package.json                     // NPM Package description.
+├── postcss.config.js                // PostCSS configuration for Tailwind.
+├── README.md                        // This file.
+├── tailwind.config.js               // TailwindCSS configuration file.
+├── tsconfig.app.json                // Typescript configuration for application.
+├── tsconfig.json                    // Main TypeScript configuration file.
+├── tsconfig.node.json               // Typescript configuration for Node.js.
+├── vite.config.ts                   // Vite configuration file.
+└── yarn.lock                        // Yarn dependencies lock file.
 ```
 
 ## Getting started

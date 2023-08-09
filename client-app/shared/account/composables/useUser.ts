@@ -42,7 +42,7 @@ const user = ref<UserType>();
 const isAuthenticated = computed<boolean>(() => !!user.value?.userName && user.value.userName !== "Anonymous");
 const isCorporateMember = computed<boolean>(() => !!user.value?.contact?.organizationId);
 const isPasswordNeedToBeChanged = computed<boolean>(
-  () => !!user.value?.forcePasswordChange || !!user.value?.passwordExpired
+  () => !!user.value?.forcePasswordChange || !!user.value?.passwordExpired,
 );
 const organization = eagerComputed<Organization | null>(() => user.value?.contact?.organizations?.items?.[0] ?? null);
 const operator = computed<UserType | null>(() => user.value?.operator ?? null);

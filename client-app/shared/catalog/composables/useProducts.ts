@@ -7,6 +7,7 @@ import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
 import type { ProductsSearchParams } from "../types";
 import type { Product, RangeFacet, TermFacet } from "@/core/api/graphql/types";
 import type { FacetItemType } from "@/core/types";
+import type { ProductInWishlistEventDataType } from "@/shared/broadcast";
 
 const DEFAULT_ITEMS_PER_PAGE = 16;
 
@@ -37,10 +38,13 @@ export default (
   const pages = ref(1);
 
   const productsById = computed(() =>
-    products.value.reduce((result, product, index) => {
-      result[product.id] = { index, product };
-      return result;
-    }, {} as Record<string, { index: number; product: Product }>)
+    products.value.reduce(
+      (result, product, index) => {
+        result[product.id] = { index, product };
+        return result;
+      },
+      {} as Record<string, { index: number; product: Product }>
+    )
   );
 
   function setFacets({ termFacets = [], rangeFacets = [] }: { termFacets?: TermFacet[]; rangeFacets?: RangeFacet[] }) {
@@ -131,7 +135,7 @@ export default (
     }
   }
 
-  broadcast.on(productsInWishlistEvent, (eventItems) => {
+  broadcast.on(productsInWishlistEvent, (eventItems: ProductInWishlistEventDataType[]) => {
     let trigger = false;
 
     eventItems.forEach(({ productId, inWishlist }) => {
