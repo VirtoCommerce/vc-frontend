@@ -13,7 +13,7 @@ export enum GetOrderFeldsType {
 }
 
 export type GetOrderOptionsType = {
-  /** @default {@link GetOrderFeldsType.Full} */
+  /** @default GetOrderFeldsType.Full */
   fields?: GetOrderFeldsType;
 };
 

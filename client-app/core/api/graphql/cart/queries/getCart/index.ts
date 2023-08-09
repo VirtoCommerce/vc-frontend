@@ -11,7 +11,7 @@ export enum GetCartFeldsType {
 }
 
 export type GetCartOptionsType = {
-  /** @default {@link GetOrderFeldsType.Full} */
+  /** @default GetCartFeldsType.Full */
   fields?: GetCartFeldsType;
 };
 
