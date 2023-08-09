@@ -352,7 +352,7 @@ watchEffect(async () => {
     await fetchFullOrder({ id: props.orderId });
   } else if (order.value?.inPayments[0]?.isApproved) {
     // If the order is paid
-    await router.replace({ name: "OrderDetails", params: { orderId: props.orderId } });
+    router.replace({ name: "OrderDetails", params: { orderId: props.orderId } });
   }
 });
 </script>
