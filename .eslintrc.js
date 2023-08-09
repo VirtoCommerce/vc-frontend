@@ -1,3 +1,5 @@
+require('@rushstack/eslint-patch/modern-module-resolution')
+
 module.exports = {
   root: true,
   env: {
@@ -119,6 +121,7 @@ module.exports = {
     "vue/no-multiple-objects-in-class": "warn",
     "vue/no-required-prop-with-default": "warn",
     "vue/no-static-inline-styles": "warn",
+    "vue/no-setup-props-destructure": "warn", // TODO: Remove (switch to error) after refactoring
     "vue/no-useless-v-bind": "warn",
     "vue/padding-line-between-blocks": "warn",
     // TODO: enable "vue/padding-line-between-tags": "warn",
@@ -160,11 +163,12 @@ module.exports = {
   },
   settings: {
     "import/parsers": {
-      "@typescript-eslint/parser": [".ts", ".tsx"],
+      "@typescript-eslint/parser": [".ts"],
     },
     "import/resolver": {
       typescript: {
         alwaysTryTypes: true,
+        project: "./tsconfig.app.json",
       },
       node: true,
     },

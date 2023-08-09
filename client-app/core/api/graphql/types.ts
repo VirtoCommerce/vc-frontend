@@ -4876,6 +4876,13 @@ export type ChangePasswordMutationVariables = Exact<{
 
 export type ChangePasswordMutation = { changePassword?: { succeeded: boolean, errors?: Array<{ code: string, description?: string, parameter?: string }> } };
 
+export type ConfirmEmailMutationVariables = Exact<{
+  command: InputConfirmEmailType;
+}>;
+
+
+export type ConfirmEmailMutation = { confirmEmail?: { succeeded: boolean, errors?: Array<{ code: string, description?: string, parameter?: string }> } };
+
 export type CreateContactMutationVariables = Exact<{
   command: InputCreateContactType;
 }>;
@@ -4923,7 +4930,7 @@ export type RequestRegistrationMutationVariables = Exact<{
 }>;
 
 
-export type RequestRegistrationMutation = { requestRegistration?: { account?: { id: string }, organization?: { id: string }, contact?: { id: string }, result?: { succeeded: boolean, errors?: Array<{ code?: string, description?: string, parameter?: string }> } } };
+export type RequestRegistrationMutation = { requestRegistration?: { account?: { id: string }, organization?: { id: string }, contact?: { id: string }, result?: { succeeded: boolean, requireEmailVerification: boolean, errors?: Array<{ code?: string, description?: string, parameter?: string }> } } };
 
 export type RegisterByInvitationMutationVariables = Exact<{
   command: InputRegisterByInvitationType;

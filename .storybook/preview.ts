@@ -1,59 +1,59 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { app } from "@storybook/vue3";
-import vueRouter from "storybook-vue3-router";
-import { createI18n } from "vue-i18n";
+import { setup } from "@storybook/vue3";
+import { vueRouter } from "storybook-vue3-router";
+import { useLanguages } from "../client-app/core/composables";
 import { setGlobals } from "../client-app/core/globals";
-import * as UIKitComponents from "../client-app/ui-kit/components";
-import SettingsData from "../config/settings_data.json";
-import en from "../locales/en.json";
+import { configPlugin } from "../client-app/core/plugins";
+import { createI18n } from "../client-app/i18n";
+import { uiKit } from "../client-app/ui-kit";
+import type { IThemeConfig } from "../client-app/core/types";
 import type { I18n } from "../client-app/i18n";
-
-/* Project Styles */
+import type { Preview } from "@storybook/vue3";
+import type { App } from "vue";
 import "../client-app/assets/styles/main.scss";
 
-const i18n: I18n = createI18n({
-  legacy: false,
-  locale: "en",
-  messages: {
-    en,
-  },
-});
+const i18n: I18n = createI18n("en", "USD");
 
 setGlobals({ i18n });
 
-app.use(i18n);
+async function configureThemeSettings(app: App) {
+  const settings: IThemeConfig = await import("../config/settings_data.json");
+  const themeSettings = settings.presets[settings.current as string];
 
-/* Setting project CSS variables */
-const settings =
-  typeof SettingsData.current === "string"
-    ? (<Record<string, any>>SettingsData).presets[SettingsData.current]
-    : SettingsData.current;
+  app.use(configPlugin, themeSettings);
+}
 
-Object.entries(settings)
-  .filter(([key]) => /^color/.test(key))
-  .forEach(([key, value]) => {
-    document.documentElement.style.setProperty(`--${key.replace(/_/g, "-")}`, `${value}`);
-  });
+async function configureI18N() {
+  const { setLocale } = useLanguages();
 
-// Register UI Kit components
-Object.entries(UIKitComponents).forEach(([name, component]) => app.component(name, component));
+  await setLocale(i18n, "en");
+}
 
-export const parameters = {
-  actions: { argTypesRegex: "^on[A-Z].*" },
-  controls: {
-    matchers: {
-      color: /(background|color)$/i,
-      date: /Date$/,
+setup((app) => {
+  configureThemeSettings(app);
+
+  configureI18N();
+  app.use(i18n);
+
+  app.use(uiKit);
+});
+
+const preview: Preview = {
+  decorators: [vueRouter()],
+  parameters: {
+    actions: { argTypesRegex: "^on[A-Z].*" },
+    controls: {
+      matchers: {
+        color: /(background|color)$/i,
+        date: /Date$/,
+      },
+      expanded: true,
     },
-    expanded: true,
-  },
-  options: {
-    storySort: {
-      order: ["*", "Components", ["Atoms", "Molecules", "Organisms", "Templates", "Pages"]],
+    options: {
+      storySort: {
+        order: ["*", "Components", ["Atoms", "Molecules", "Organisms", "Templates", "Pages"]],
+      },
     },
   },
-  previewTabs: { "storybook/docs/panel": { index: -1 } },
-  viewMode: "docs",
 };
 
-export const decorators = [vueRouter()];
+export default preview;
