@@ -8,7 +8,7 @@ const template: { [template: string]: Ref<PageTemplate | null> } = {};
 
 export default function useTemplate(
   templateName: string,
-  pageContent: PageTemplate | null = null
+  pageContent: PageTemplate | null = null,
 ): Ref<PageTemplate | null> {
   if (!template[templateName]) {
     template[templateName] = ref(null);

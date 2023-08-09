@@ -51,7 +51,7 @@ const props = defineProps({
 });
 
 const checked = computed<boolean>(() =>
-  typeof props.modelValue === "boolean" ? props.modelValue : props.modelValue.includes(props.value)
+  typeof props.modelValue === "boolean" ? props.modelValue : props.modelValue.includes(props.value),
 );
 
 function change() {

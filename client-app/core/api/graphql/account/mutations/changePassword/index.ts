@@ -14,7 +14,7 @@ export default async function resetPasswordByToken(payload: InputChangePasswordT
       variables: {
         command: payload,
       },
-    }
+    },
   );
 
   return data!.changePassword;

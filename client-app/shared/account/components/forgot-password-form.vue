@@ -50,7 +50,7 @@ const { forgotPassword, loading } = useUser();
 const schema = toTypedSchema(
   object({
     email: string().required().email().max(64),
-  })
+  }),
 );
 
 const { errors, meta, handleSubmit } = useForm({

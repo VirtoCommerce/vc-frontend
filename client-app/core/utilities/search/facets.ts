@@ -38,7 +38,7 @@ export function getFilterExpressionFromFacets(facets: MaybeRef<FacetItemType[]>)
         item.value
           // https://github.com/VirtoCommerce/vc-module-experience-api/blob/dev/docs/filter-syntax.md#escaping-special-characters
           .replace(/\\/g, "\\\\")
-          .replace(/"/g, '\\"')
+          .replace(/"/g, '\\"'),
       );
 
     if (!selectedValues.length) {

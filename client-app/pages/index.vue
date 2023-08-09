@@ -129,12 +129,20 @@ onMounted(async () => {
     url(/static/images/home/hexa-left.png), url(/static/images/home/hexa-right.png);
   background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
   background-size: 100%, 100%, auto, auto;
-  background-position: top, bottom, left top 40%, right bottom;
+  background-position:
+    top,
+    bottom,
+    left top 40%,
+    right bottom;
 }
 
 @media (max-width: 768px) {
   .main {
-    background-position: top, bottom, left -140px top 40%, right -140px bottom;
+    background-position:
+      top,
+      bottom,
+      left -140px top 40%,
+      right -140px bottom;
   }
 }
 </style>

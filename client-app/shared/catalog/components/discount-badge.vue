@@ -46,6 +46,6 @@ const props = defineProps({
 });
 
 const discount = computedEager<string | null>(() =>
-  props.price.discountPercent >= 0.05 ? `${Math.round(props.price.discountPercent * 100)}%` : null
+  props.price.discountPercent >= 0.05 ? `${Math.round(props.price.discountPercent * 100)}%` : null,
 );
 </script>

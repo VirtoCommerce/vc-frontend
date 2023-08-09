@@ -183,9 +183,8 @@ function addShippingInfo(cart: CartType, params?: EventParamsExtendedType, shipm
 
 function addPaymentInfo(cart: CartType, params?: EventParamsExtendedType, paymentGatewayCode?: string): void {
   const paymentMethodCode = paymentGatewayCode || cart.payments?.[0]?.paymentGatewayCode;
-  const payment_type = cart.availablePaymentMethods?.find(
-    (paymentMethod) => paymentMethod.code === paymentMethodCode
-  )?.paymentMethodGroupType;
+  const payment_type = cart.availablePaymentMethods?.find((paymentMethod) => paymentMethod.code === paymentMethodCode)
+    ?.paymentMethodGroupType;
 
   sendEvent("add_payment_info", {
     ...params,

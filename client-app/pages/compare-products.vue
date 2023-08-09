@@ -206,7 +206,7 @@ function getProperties() {
         name: prop!.name,
         label: prop!.label!,
       };
-    })
+    }),
   );
 
   _.each(names, ({ name, label }) => {
@@ -242,7 +242,7 @@ watch(
   () => {
     refreshProducts();
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 /**

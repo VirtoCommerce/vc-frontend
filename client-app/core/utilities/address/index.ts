@@ -21,7 +21,7 @@ export function getAddressName(address: AnyAddressType): string {
 export function isEqualAddresses(
   address1: AnyAddressType,
   address2: AnyAddressType,
-  options: { skipDescription?: boolean } = {}
+  options: { skipDescription?: boolean } = {},
 ): boolean {
   const { skipDescription = true } = options;
   const verifiableProperties: Array<keyof MemberAddressType> = [

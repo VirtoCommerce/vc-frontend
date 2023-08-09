@@ -107,7 +107,7 @@ const { bottom } = useElementBounding(bottomHeader);
 const catalogLink = router.resolve({ name: "Catalog" }).fullPath;
 const catalogButtonIcon = computed<string>(() => (catalogMenuVisible.value ? "chevron-up" : "chevron-down"));
 const catalogMenuStyle = computed<StyleValue | undefined>(() =>
-  bottom.value ? { maxHeight: `calc(100vh - ${bottom.value}px)` } : undefined
+  bottom.value ? { maxHeight: `calc(100vh - ${bottom.value}px)` } : undefined,
 );
 
 onClickOutside(
@@ -115,7 +115,7 @@ onClickOutside(
   () => {
     catalogMenuVisible.value = false;
   },
-  { ignore: [showCatalogMenuButton] }
+  { ignore: [showCatalogMenuButton] },
 );
 
 syncRefs(catalogMenuVisible, useScrollLock(document.body));

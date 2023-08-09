@@ -19,10 +19,10 @@ const order = shallowRef<CustomerOrderType | null>(null);
 const giftItems = computed<OrderLineItemType[]>(() => (order.value?.items || []).filter((item) => item.isGift));
 const orderItems = computed<OrderLineItemType[]>(() => (order.value?.items || []).filter((item) => !item.isGift));
 const orderItemsGroupedByVendor = computed<LineItemsGroupByVendorType<OrderLineItemType>[]>(() =>
-  getLineItemsGroupedByVendor(orderItems.value)
+  getLineItemsGroupedByVendor(orderItems.value),
 );
 const allItemsAreDigital = computed<boolean>(
-  () => !!order.value?.items?.every((item) => item.productType === ProductType.Digital)
+  () => !!order.value?.items?.every((item) => item.productType === ProductType.Digital),
 );
 const shipment = computed<OrderShipmentType | undefined>(() => order.value?.shipments?.[0]);
 const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments?.[0]);

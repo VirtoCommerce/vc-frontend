@@ -86,6 +86,6 @@ watch(
   () => {
     fallbackEnabled.value = false;
     originalEnabled.value = false;
-  }
+  },
 );
 </script>

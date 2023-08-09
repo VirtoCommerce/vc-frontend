@@ -11,7 +11,7 @@ export default async function deleteWishlist(listId: string): Promise<boolean> {
           listId,
         },
       },
-    }
+    },
   );
 
   return data!.removeWishlist;

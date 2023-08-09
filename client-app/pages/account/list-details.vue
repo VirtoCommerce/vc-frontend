@@ -179,12 +179,12 @@ const wishlistItems = ref<LineItemType[]>([]);
 
 const cartItemsBySkus = computed(() => keyBy(cart.value?.items, "sku"));
 const preparedLineItems = computed<PreparedLineItemType[]>(() =>
-  wishlistItems.value.map((item) => prepareLineItem(item, cartItemsBySkus.value[item.sku!]?.quantity))
+  wishlistItems.value.map((item) => prepareLineItem(item, cartItemsBySkus.value[item.sku!]?.quantity)),
 );
 const loading = computed<boolean>(() => listLoading.value || cartLoading.value);
 const pagesCount = computed<number>(() => Math.ceil((wishlistItems.value.length ?? 0) / itemsPerPage.value));
 const pagedListItems = computed<PreparedLineItemType[]>(() =>
-  preparedLineItems.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
+  preparedLineItems.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
 const actualPageRowsCount = computed<number>(() => pagedListItems.value.length || itemsPerPage.value);
 const canSaveChanges = computed<boolean>(() => !isEqual(list.value?.items, wishlistItems.value));
@@ -259,9 +259,8 @@ function updateWishListItem(item: InputNewBulkItemType): void {
 }
 
 async function addOrUpdateCartItem(item: InputNewBulkItemType): Promise<void> {
-  const product: Product | undefined = wishlistItems.value.find(
-    (listItem) => listItem.sku === item.productSku
-  )?.product;
+  const product: Product | undefined = wishlistItems.value.find((listItem) => listItem.sku === item.productSku)
+    ?.product;
 
   if (!product) {
     return;

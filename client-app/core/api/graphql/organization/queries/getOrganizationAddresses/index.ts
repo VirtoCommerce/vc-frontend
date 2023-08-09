@@ -10,7 +10,7 @@ import type {
 
 export default async function getOrganizationAddresses(
   organizationId: string,
-  payload?: OrganizationAddressesArgs
+  payload?: OrganizationAddressesArgs,
 ): Promise<MemberAddressConnection> {
   const { userId } = globals;
 

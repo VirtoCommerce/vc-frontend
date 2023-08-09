@@ -239,7 +239,7 @@ const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, 
 const target = computed<string>(() => getLinkTarget(props.openInNewTab));
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 const properties = computed(() =>
-  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3)
+  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3),
 );
 
 function slideChanged(swiper: SwiperInstance) {
