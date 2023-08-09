@@ -244,11 +244,6 @@
               :view-mode="savedViewMode"
               :items-per-page="itemsPerPage"
               :products="products"
-              :class="
-                savedViewMode === 'list'
-                  ? '-mx-5 divide-y lg:divide-y-0 lg:mx-0 lg:space-y-3.5'
-                  : 'grid gap-6 xs:grid-cols-2 md:grid-cols-3 lg:gap-5 xl:grid-cols-4'
-              "
               open-product-in-new-tab
               @item-link-click="sendGASelectItemEvent"
             >
@@ -318,7 +313,7 @@ import {
   useRouteQueryParam,
   useThemeContext,
 } from "@/core/composables";
-import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
+import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import {
@@ -351,9 +346,11 @@ const props = defineProps<IProps>();
 
 const { catalogId, currencyCode } = globals;
 
+const t = breakpointsTailwind;
+
 const { themeContext } = useThemeContext();
 const { openPopup } = usePopup();
-const breakpoints = useBreakpoints(breakpointsTailwind);
+const breakpoints = useBreakpoints(BREAKPOINTS);
 const ga = useGoogleAnalytics();
 const {
   fetchProducts,
@@ -451,11 +448,11 @@ const searchParams = computedEager<ProductsSearchParams>(() => ({
 }));
 
 const isExistSelectedFacets = computedEager<boolean>(() =>
-  facets.value.some((facet) => facet.values.some((value) => value.selected))
+  facets.value.some((facet) => facet.values.some((value) => value.selected)),
 );
 
 const isExistSelectedMobileFacets = computedEager<boolean>(() =>
-  mobileFilters.facets.some((facet) => facet.values.some((value) => value.selected))
+  mobileFilters.facets.some((facet) => facet.values.some((value) => value.selected)),
 );
 
 const isMobileFilterDirty = computedEager<boolean>(
@@ -465,7 +462,7 @@ const isMobileFilterDirty = computedEager<boolean>(
       facets: facets.value,
       inStock: savedInStock.value,
       branches: savedBranches.value,
-    } as ProductsFilters)
+    } as ProductsFilters),
 );
 
 function sendGASelectItemEvent(product: Product) {
@@ -708,7 +705,7 @@ watch(
       });
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -717,14 +714,14 @@ watch(
     if (value !== oldValue) {
       setFiltersPosition();
     }
-  }
+  },
 );
 
 watch(
   () => cHeight.value,
   () => {
     setFiltersPosition();
-  }
+  },
 );
 
 watchDebounced(
@@ -734,6 +731,6 @@ watchDebounced(
     immediate: true,
     flush: "post",
     debounce: 20,
-  }
+  },
 );
 </script>

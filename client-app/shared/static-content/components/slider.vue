@@ -6,7 +6,7 @@
       <Swiper :slides-per-view="1" class="w-full" :modules="modules" :navigation="navigationOptions">
         <SwiperSlide v-for="(item, index) in model.slides" :key="index" class="text-center">
           <div>
-            <VcImage :src="item.image" class="place-items-center" lazy />
+            <VcImage :src="item.image" class="place-items-center" :lazy="index > 0" />
             <div v-if="item.title" class="mb-3 font-roboto-condensed text-2xl font-bold uppercase">
               {{ item.title }}
             </div>
