@@ -10,6 +10,7 @@ import {
   updatePersonalData,
   changePassword as _changePassword,
   sendVerifyEmail as _sendVerifyEmail,
+  confirmEmailByToken,
 } from "@/core/api/graphql/account";
 import { useFetch } from "@/core/composables";
 import { globals } from "@/core/globals";
@@ -19,6 +20,7 @@ import type {
   AccountCreationResultType,
   CustomIdentityResultType,
   IdentityResultType,
+  InputConfirmEmailType,
   InputInviteUserType,
   InputRegisterByInvitationType,
   Organization,
@@ -104,10 +106,11 @@ export default function useUser() {
     }
   }
 
-  async function confirmEmail(payload: { userId: string; token: string }): Promise<IdentityResultType> {
+  async function confirmEmail(payload: InputConfirmEmailType): Promise<CustomIdentityResultType> {
+    loading.value = true;
+
     try {
-      loading.value = true;
-      return await innerFetch<IdentityResultType>("/storefrontapi/account/confirmemail", "POST", payload);
+      return await confirmEmailByToken(payload);
     } catch (e) {
       Logger.error(`${useUser.name}.${confirmEmail.name}`, e);
       throw e;

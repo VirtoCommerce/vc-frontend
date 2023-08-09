@@ -28,6 +28,7 @@ export type Scalars = {
 export type AccountCreationResultType = {
   /** The errors that occurred during the operation. */
   errors?: Maybe<Array<Maybe<RegistrationErrorType>>>;
+  requireEmailVerification: Scalars['Boolean'];
   succeeded: Scalars['Boolean'];
 };
 
@@ -1414,6 +1415,13 @@ export type InputClearShipmentsType = {
   userId: Scalars['String'];
 };
 
+export type InputConfirmEmailType = {
+  /** Confirm email token */
+  token: Scalars['String'];
+  /** User identifier */
+  userId: Scalars['String'];
+};
+
 export type InputCreateApplicationUserType = {
   /** Username of the creator */
   createdBy?: InputMaybe<Scalars['String']>;
@@ -2508,6 +2516,7 @@ export type Mutations = {
   clearCart?: Maybe<CartType>;
   clearPayments?: Maybe<CartType>;
   clearShipments?: Maybe<CartType>;
+  confirmEmail?: Maybe<CustomIdentityResultType>;
   createContact?: Maybe<ContactType>;
   createCustomerReview?: Maybe<CustomerReview>;
   createOrderFromCart?: Maybe<CustomerOrderType>;
@@ -2697,6 +2706,11 @@ export type MutationsClearPaymentsArgs = {
 
 export type MutationsClearShipmentsArgs = {
   command: InputClearShipmentsType;
+};
+
+
+export type MutationsConfirmEmailArgs = {
+  command: InputConfirmEmailType;
 };
 
 
@@ -4862,6 +4876,13 @@ export type ChangePasswordMutationVariables = Exact<{
 
 export type ChangePasswordMutation = { changePassword?: { succeeded: boolean, errors?: Array<{ code: string, description?: string, parameter?: string }> } };
 
+export type ConfirmEmailMutationVariables = Exact<{
+  command: InputConfirmEmailType;
+}>;
+
+
+export type ConfirmEmailMutation = { confirmEmail?: { succeeded: boolean, errors?: Array<{ code: string, description?: string, parameter?: string }> } };
+
 export type CreateContactMutationVariables = Exact<{
   command: InputCreateContactType;
 }>;
@@ -4909,7 +4930,7 @@ export type RequestRegistrationMutationVariables = Exact<{
 }>;
 
 
-export type RequestRegistrationMutation = { requestRegistration?: { account?: { id: string }, organization?: { id: string }, contact?: { id: string }, result?: { succeeded: boolean, errors?: Array<{ code?: string, description?: string, parameter?: string }> } } };
+export type RequestRegistrationMutation = { requestRegistration?: { account?: { id: string }, organization?: { id: string }, contact?: { id: string }, result?: { succeeded: boolean, requireEmailVerification: boolean, errors?: Array<{ code?: string, description?: string, parameter?: string }> } } };
 
 export type RegisterByInvitationMutationVariables = Exact<{
   command: InputRegisterByInvitationType;
