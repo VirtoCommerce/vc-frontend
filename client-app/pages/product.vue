@@ -8,19 +8,15 @@
 
       <h1 class="text-2xl font-bold uppercase md:text-4xl">{{ product.name }}</h1>
 
-      <div v-if="!product.hasVariations" class="mt-1 flex items-center text-sm">
+      <VcCopyText
+        v-if="!product.hasVariations"
+        class="mt-1 text-sm"
+        :text="product.code"
+        :notification="$t('pages.product.sku_copied_message')"
+      >
         {{ $t("pages.product.sku_label") }}
         <span class="font-extrabold">{{ product.code }}</span>
-        <VcButton
-          v-if="isSupported"
-          class="ml-1.5"
-          size="xs"
-          variant="outline"
-          icon="document-duplicate"
-          color="secondary"
-          @click="copySKU(product.code)"
-        />
-      </div>
+      </VcCopyText>
 
       <template v-for="item in template.content">
         <component
@@ -67,7 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, eagerComputed, useBreakpoints, useClipboard } from "@vueuse/core";
+import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
 import { computed, defineAsyncComponent, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
@@ -75,9 +71,9 @@ import { buildBreadcrumbs } from "@/core/utilities";
 import { useCart } from "@/shared/cart";
 import { CarouselProductCard, useProduct, useRelatedProducts, useCategory } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
-import { useNotifications } from "@/shared/notification";
 import { useTemplate } from "@/shared/static-content";
 import type { Breadcrumb } from "@/core/api/graphql/types";
+import VcCopyText from "@/ui-kit/components/molecules/copy-text/vc-copy-text.vue";
 
 const props = withDefaults(defineProps<IProps>(), {
   productId: "",
@@ -123,17 +119,6 @@ const isMobile = breakpoints.smaller("lg");
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
 const { rootCategory } = useCategory();
-const { copy, isSupported } = useClipboard();
-const notifications = useNotifications();
-
-const copySKU = async (SKU: string) => {
-  await copy(SKU);
-  notifications.success({
-    text: t("pages.product.sku_copied_message"),
-    duration: 4000,
-    single: true,
-  });
-};
 
 usePageHead({
   title: computed(() => product.value?.seoInfo?.pageTitle || product.value?.name),

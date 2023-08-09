@@ -25,3 +25,4 @@ export { default as VcSteps } from "./steps/vc-steps.vue";
 export { default as VcTextarea } from "./textarea/vc-textarea.vue";
 export { default as VcRating } from "./rating/vc-rating.vue";
 export { default as VcVendor } from "./vendor/vc-vendor.vue";
+export { default as VcCopyText } from "./copy-text/vc-copy-text.vue";
