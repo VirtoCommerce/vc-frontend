@@ -295,7 +295,6 @@
 
 <script setup lang="ts">
 import {
-  breakpointsTailwind,
   computedEager,
   useBreakpoints,
   useElementBounding,
@@ -345,8 +344,6 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const { catalogId, currencyCode } = globals;
-
-const t = breakpointsTailwind;
 
 const { themeContext } = useThemeContext();
 const { openPopup } = usePopup();
