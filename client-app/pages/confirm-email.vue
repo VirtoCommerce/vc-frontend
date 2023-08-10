@@ -1,6 +1,10 @@
 <template>
   <!-- Success -->
-  <VcEmptyPage v-if="emailConfirmed || linkSent" image="/static/images/email.webp" class="flex grow flex-col">
+  <VcEmptyPage
+    v-if="emailConfirmed || linkSentSuccessfully"
+    image="/static/images/email.webp"
+    class="flex grow flex-col"
+  >
     <template #description>
       <h1 class="mb-8 text-center text-3xl font-bold uppercase lg:text-left">
         {{ $t("pages.confirm_email.header") }}
@@ -10,11 +14,11 @@
         <VcIcon name="check" size="xxl" class="text-[color:var(--color-success)]" />
 
         <p class="max-w-md text-center text-19 lg:text-left">
-          <span v-if="linkSent">
-            {{ $t("pages.confirm_email.link_sent_text") }}
+          <span v-if="linkSentSuccessfully">
+            {{ $t("pages.confirm_email.link_sent_successfully_text") }}
           </span>
 
-          <span v-else-if="emailConfirmed">
+          <span v-if="emailConfirmed">
             <strong class="mb-2 block">
               {{ $t("pages.confirm_email.subtitle") }}
             </strong>
@@ -26,7 +30,7 @@
     </template>
 
     <template #actions>
-      <VcButton v-if="linkSent" :to="{ name: 'Home' }" class="w-36">
+      <VcButton v-if="linkSentSuccessfully" :to="{ name: 'Home' }" class="w-36">
         {{ $t("common.links.home") }}
       </VcButton>
 
@@ -37,7 +41,11 @@
   </VcEmptyPage>
 
   <!-- Error -->
-  <VcEmptyPage v-else-if="loaded" image="/static/images/email.webp" class="flex grow flex-col">
+  <VcEmptyPage
+    v-else-if="loaded && (!emailConfirmed || !linkSentSuccessfully)"
+    image="/static/images/email.webp"
+    class="flex grow flex-col"
+  >
     <template #description>
       <h1 class="mb-8 text-center text-3xl font-bold uppercase lg:text-left">
         {{ $t("pages.confirm_email.header") }}
@@ -47,7 +55,13 @@
         <VcIcon name="exclamation-circle" size="xxl" class="text-[color:var(--color-danger)]" />
 
         <p class="max-w-md text-center text-19 font-bold lg:text-left">
-          {{ $t("identity_error.InvalidToken") }}
+          <span v-if="!emailConfirmed">
+            {{ $t("pages.confirm_email.email_confirmation_failed_text") }}
+          </span>
+
+          <span v-if="linkSentSuccessfully === false">
+            {{ $t("pages.confirm_email.link_sent_error_text") }}
+          </span>
         </p>
       </div>
     </template>
@@ -84,17 +98,12 @@ const token = useRouteQueryParam<string>("Token");
 
 const loaded = ref(false);
 const emailConfirmed = ref(false);
-const linkSent = ref(false);
+const linkSentSuccessfully = ref<boolean | undefined>();
 
 async function resendLink(): Promise<void> {
-  if (!userId.value) {
-    return;
-  }
-
-  await sendVerifyEmail(userId.value);
+  linkSentSuccessfully.value = await sendVerifyEmail(userId.value);
 
   emailConfirmed.value = false;
-  linkSent.value = true;
 }
 
 invoke(async () => {
@@ -104,7 +113,7 @@ invoke(async () => {
   });
 
   emailConfirmed.value = result.succeeded;
-  linkSent.value = false;
+  linkSentSuccessfully.value = undefined;
   loaded.value = true;
 });
 </script>
