@@ -281,11 +281,11 @@ export default function useUser() {
     }
   }
 
-  async function sendVerifyEmail(userId: string): Promise<void> {
+  async function sendVerifyEmail(userId: string): Promise<boolean | undefined> {
     loading.value = true;
 
     try {
-      await _sendVerifyEmail(userId);
+      return await _sendVerifyEmail(userId);
     } catch (e) {
       Logger.error(`${useUser.name}.${sendVerifyEmail.name}`, e);
       throw e;
