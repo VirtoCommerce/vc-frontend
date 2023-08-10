@@ -113,7 +113,9 @@
       "digital_product": "Digital product",
       "save_changes": "Save Changes",
       "search": "Search {0}",
-      "in_stock": "In stock"
+      "in_stock": "In stock",
+      "starts_from": "Start: {0}",
+      "ends_to": "End: {0}"
     },
     "prefixes": {
       "please": "Please"

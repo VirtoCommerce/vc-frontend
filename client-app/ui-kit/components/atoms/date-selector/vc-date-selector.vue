@@ -23,37 +23,16 @@ const emit = defineEmits<{
   (e: "change", value: Date | undefined): void;
 }>();
 
-const props = defineProps({
-  label: {
-    type: String,
-    default: undefined,
-  },
+const props = defineProps<IProps>();
 
-  name: {
-    type: String,
-    default: undefined,
-  },
-
-  isRequired: {
-    type: Boolean,
-    default: false,
-  },
-
-  isDisabled: {
-    type: Boolean,
-    default: false,
-  },
-
-  modelValue: {
-    type: Date,
-    default: undefined,
-  },
-
-  errorMessage: {
-    type: String,
-    default: undefined,
-  },
-});
+interface IProps {
+  label?: string;
+  name?: string;
+  isRequired?: boolean;
+  isDisabled?: boolean;
+  modelValue?: Date;
+  errorMessage?: string;
+}
 
 // convert input value to string format yyyy-MM-dd
 const inputValue = computed(() => dateToIsoDateString(props.modelValue));

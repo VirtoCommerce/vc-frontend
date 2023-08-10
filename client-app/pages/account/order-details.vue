@@ -58,7 +58,7 @@
           <div class="flex flex-col gap-1.5 text-15">
             <p v-if="order.createdDate">
               <span class="font-extrabold"> {{ $t("common.labels.created") }}: </span>
-              {{ $d(order.createdDate, "long") }}
+              {{ $d(order.createdDate) }}
             </p>
             <p v-if="order.status" class="flex items-center">
               <span class="mr-2 font-extrabold"> {{ $t("common.labels.status") }}: </span>
@@ -173,7 +173,7 @@ const isMobile = breakpoints.smaller("lg");
 const loadingAddItemsToCart = ref(false);
 
 const showPaymentButton = computed<boolean>(
-  () => !!order.value && (order.value.status === "New" || order.value.status === "Payment required")
+  () => !!order.value && (order.value.status === "New" || order.value.status === "Payment required"),
 );
 const showReorderButton = computed<boolean>(() => !!order.value && order.value.status === "Completed");
 

@@ -1,5 +1,5 @@
-import moment from "moment";
 import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import type { OrdersFilterData, OrdersFilterChipsItem } from "@/shared/account";
 import type { Ref } from "vue";
 
@@ -7,6 +7,8 @@ const filterData: Ref<OrdersFilterData> = ref({ statuses: [] });
 const appliedFilterData: Ref<OrdersFilterData> = ref({ ...filterData.value });
 
 export default () => {
+  const { d, t } = useI18n();
+
   const isFilterEmpty = computed(() => {
     const { statuses, startDate, endDate } = appliedFilterData.value;
     return !statuses.length && !startDate && !endDate;
@@ -25,19 +27,19 @@ export default () => {
       }
     }
     if (appliedFilterData.value.startDate) {
-      const formattedDate = moment(appliedFilterData.value.startDate).format("YYYY-MM-DD");
+      const formattedDate = d(appliedFilterData.value.startDate);
       items.push({
         fieldName: "startDate",
         value: appliedFilterData.value.startDate,
-        label: `Start: ${formattedDate}`,
+        label: t("common.labels.starts_from", [formattedDate]),
       });
     }
     if (appliedFilterData.value.endDate) {
-      const formattedDate = moment(appliedFilterData.value.endDate).format("YYYY-MM-DD");
+      const formattedDate = d(appliedFilterData.value.endDate);
       items.push({
         fieldName: "endDate",
         value: appliedFilterData.value.endDate,
-        label: `End: ${formattedDate}`,
+        label: t("common.labels.ends_to", [formattedDate]),
       });
     }
     return items;
