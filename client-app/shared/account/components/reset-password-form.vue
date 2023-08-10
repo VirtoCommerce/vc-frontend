@@ -84,7 +84,7 @@ const validationSchema = toTypedSchema(
     password: string().required(),
     confirmPassword: string()
       .required()
-      .oneOf([yupRef("password")], t("identity_error.PasswordMismatch")),
+      .oneOf([yupRef("password")], t("common.messages.passwords_do_not_match")),
   }),
 );
 

@@ -156,7 +156,9 @@
       "cart_contains_deleted_products": "Cart contains products, that cannot be purchased any more. Please remove those products and try once again",
       "unhandled_error": "Apologies for the inconvenience. Our server is currently experiencing technical issues. Please try again later.",
       "role_update_successfull": "The customer role has been updated successfully.",
-      "role_update_failed": "Errors occurred during the role updating: {0}"
+      "role_update_failed": "Errors occurred during the role updating: {0}",
+      "passwords_do_not_match": "Password fields values must be equal",
+      "password_new_same_old": "Your current password and new password must be different"
     },
     "placeholders": {
       "enter_value": "Please enter value",
@@ -352,11 +354,7 @@
         "new_pass_label": "New password",
         "new_pass_placeholder": "Create a new password",
         "confirm_new_pass_label": "Confirm new password",
-        "confirm_new_pass_placeholder": "Repeat your new password",
-        "errors": {
-          "passwords_do_not_match": "Passwords do not match",
-          "password_new_same_old": "Your current password and new password must be different"
-        }
+        "confirm_new_pass_placeholder": "Repeat your new password"
       },
       "sign_in_form": {
         "remember_me_label": "Remember me",
@@ -1289,9 +1287,9 @@
     "InvalidToken": "Token is invalid or expired",
     "InvalidUserName": "User name is invalid, can only contain letters or digits",
     "LoginAlreadyAssociated": "A user with this login already exists",
-    "PasswordMismatch": "Passwords must match",
     "PasswordTooShort": "Your password must be at least {0} characters long",
     "PasswordRequiresDigit": "Passwords must have at least one digit ('0'-'9')",
+    "PasswordMismatch": "You entered the wrong current password, please try again or call support",
     "PasswordRequiresLower": "Passwords must have at least one lowercase ('a'-'z')",
     "PasswordRequiresNonAlphanumeric": "Passwords must have at least one non alphanumeric character",
     "PasswordRequiresUpper": "Passwords must have at least one uppercase ('A'-'Z')",

@@ -162,14 +162,12 @@ const validationSchema = toTypedSchema(
     newPassword: string().when("oldPassword", {
       is: (value: string) => !!value,
       then: (stringSchema) =>
-        stringSchema
-          .required()
-          .notOneOf([yupRef("oldPassword")], t("shared.account.change_password_form.errors.password_new_same_old")),
+        stringSchema.required().notOneOf([yupRef("oldPassword")], t("common.messages.password_new_same_old")),
     }),
     confirmNewPassword: string().when("oldPassword", {
       is: (value: string) => !!value,
       then: (stringSchema) =>
-        stringSchema.required().oneOf([yupRef("newPassword")], t("identity_error.PasswordMismatch")),
+        stringSchema.required().oneOf([yupRef("newPassword")], t("common.messages.passwords_do_not_match")),
     }),
   }),
 );
