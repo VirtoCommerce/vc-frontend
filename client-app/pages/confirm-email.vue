@@ -91,7 +91,7 @@ usePageHead({
   title: t("pages.confirm_email.meta.title"),
 });
 
-const { confirmEmail, sendVerifyEmail, loading, isAuthenticated } = useUser();
+const { confirmEmail, sendVerifyEmail, loading } = useUser();
 
 const userId = useRouteQueryParam<string>("UserId");
 const token = useRouteQueryParam<string>("Token");
