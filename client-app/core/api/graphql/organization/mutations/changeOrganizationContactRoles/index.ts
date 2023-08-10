@@ -8,7 +8,7 @@ import type {
 } from "@/core/api/graphql/types";
 
 export default async function changeOrganizationContactRole(
-  payload: InputChangeOrganizationContactRoleType
+  payload: InputChangeOrganizationContactRoleType,
 ): Promise<CustomIdentityResultType | undefined> {
   const { data } = await graphqlClient.mutate<
     Required<Pick<Mutations, "changeOrganizationContactRole">>,

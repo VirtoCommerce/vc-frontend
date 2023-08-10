@@ -168,12 +168,12 @@ const creatingOrder = ref(false);
 const isDisabledOrderCreation = computed<boolean>(() => !isValidCheckout.value);
 
 const shippingMethodId = computed(
-  () => shipment.value?.shipmentMethodCode + "_" + shipment.value?.shipmentMethodOption
+  () => shipment.value?.shipmentMethodCode + "_" + shipment.value?.shipmentMethodOption,
 );
 const billingAddress = computed<CartAddressType | undefined>(() =>
   !allItemsAreDigital.value && billingAddressEqualsShipping.value
     ? shipment.value?.deliveryAddress
-    : payment.value?.billingAddress
+    : payment.value?.billingAddress,
 );
 
 async function createOrder(): Promise<void> {

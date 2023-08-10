@@ -4,7 +4,7 @@ import type { InputMemberAddressType, Mutations, MutationsUpdateMemberAddressesA
 
 export default async function updateMemberAddresses(
   memberId: string,
-  addresses: InputMemberAddressType[]
+  addresses: InputMemberAddressType[],
 ): Promise<void> {
   await graphqlClient.mutate<Required<Pick<Mutations, "updateMemberAddresses">>, MutationsUpdateMemberAddressesArgs>({
     mutation: mutationDocument,

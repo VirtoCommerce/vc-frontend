@@ -11,7 +11,10 @@ export class Sort extends SearchEntity implements ISortInfo {
     this.fieldName = value;
   }
 
-  constructor(public fieldName: string = "createdDate", public direction: SortDirection = SortDirection.Descending) {
+  constructor(
+    public fieldName: string = "createdDate",
+    public direction: SortDirection = SortDirection.Descending,
+  ) {
     super();
   }
 

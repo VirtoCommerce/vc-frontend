@@ -14,11 +14,11 @@ import type { QueryQuoteArgs, QuoteType, QuoteAddressType, InputQuoteAddressType
 
 const fetching = ref<boolean>(false);
 const quote = ref<QuoteType | undefined>();
-const billingAddress = computed<QuoteAddressType | undefined>(() =>
-  quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Billing)
+const billingAddress = computed<QuoteAddressType | undefined>(
+  () => quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Billing),
 );
-const shippingAddress = computed<QuoteAddressType | undefined>(() =>
-  quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Shipping)
+const shippingAddress = computed<QuoteAddressType | undefined>(
+  () => quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Shipping),
 );
 
 export default function useUserQuote() {
@@ -89,7 +89,7 @@ export default function useUserQuote() {
     try {
       const inputAddresses: InputQuoteAddressType[] = addresses.map<InputQuoteAddressType>(
         (address: QuoteAddressType) =>
-          convertToType<InputQuoteAddressType>(omit(address, ["id", "isDefault", "description"]))
+          convertToType<InputQuoteAddressType>(omit(address, ["id", "isDefault", "description"])),
       );
 
       await updateQuoteAddresses({ command: { quoteId, addresses: inputAddresses } });

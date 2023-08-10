@@ -10,7 +10,7 @@ import type {
 
 export default async function getOrganizationContacts(
   organizationId: string,
-  payload: OrganizationContactsArgs
+  payload: OrganizationContactsArgs,
 ): Promise<ContactConnection> {
   const { userId } = globals;
 

@@ -14,7 +14,7 @@ export default async function renameWishlist(payload: InputRenameWishlistType): 
       variables: {
         command: payload,
       },
-    }
+    },
   );
 
   return data!.renameWishlist;

@@ -12,7 +12,7 @@ export type ChangeCartItemQuantityOptionsType = {
 export async function changeCartItemQuantity(
   lineItemId: string,
   quantity: number,
-  options: ChangeCartItemQuantityOptionsType = {}
+  options: ChangeCartItemQuantityOptionsType = {},
 ): Promise<CartType> {
   const { reloadFullCart = false } = options;
   const { storeId, userId, cultureName, currencyCode } = globals;

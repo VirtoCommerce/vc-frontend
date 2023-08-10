@@ -57,7 +57,7 @@ const { t } = useI18n();
 const isButtonOutlined = computed<boolean>(() => !props.countInCart);
 
 const buttonText = computed<string>(() =>
-  props.countInCart ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart")
+  props.countInCart ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart"),
 );
 
 const quantity = ref<number | undefined>(props.modelValue);

@@ -201,7 +201,7 @@ const categoriesColumns = computed<Array<Category[]>>(() => {
 });
 
 const isExistResults = computed(
-  () => categories.value.length || products.value.length || suggestions.value.length || pages.value.length
+  () => categories.value.length || products.value.length || suggestions.value.length || pages.value.length,
 );
 
 async function searchAndShowDropdownResults() {

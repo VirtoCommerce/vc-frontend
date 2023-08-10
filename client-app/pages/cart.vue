@@ -249,11 +249,11 @@ const creatingQuote = ref(false);
 const loading = computed<boolean>(() => loadingCart.value || creatingQuote.value || creatingOrder.value);
 const isDisabledNextStep = computed<boolean>(() => loading.value || hasValidationErrors.value);
 const isDisabledOrderCreation = computed<boolean>(() => loading.value || !isValidCheckout.value);
-const cartContainsDeletedProducts = computed<boolean | undefined>(() =>
-  cart.value?.items?.some((item: LineItemType) => !item.product)
+const cartContainsDeletedProducts = computed<boolean | undefined>(
+  () => cart.value?.items?.some((item: LineItemType) => !item.product),
 );
 const isShowIncompleteDataWarning = computed<boolean>(
-  () => (!allItemsAreDigital.value && !isValidShipment.value) || !isValidPayment.value
+  () => (!allItemsAreDigital.value && !isValidShipment.value) || !isValidPayment.value,
 );
 
 async function handleRemoveSelectedItems(items: string[]): Promise<void> {

@@ -1,7 +1,9 @@
 import { computed, ref, shallowRef } from "vue";
 import { addOrUpdateOrderPayment, getOrder } from "@/core/api/graphql";
+import { GetOrderFeldsType } from "@/core/api/graphql/orders/queries/getOrder";
 import { ProductType } from "@/core/enums";
 import { getLineItemsGroupedByVendor, Logger } from "@/core/utilities";
+import type { GetOrderPayloadType } from "@/core/api/graphql/orders/queries/getOrder";
 import type {
   CustomerOrderType,
   InputAddOrUpdateOrderPaymentType,
@@ -9,7 +11,6 @@ import type {
   OrderLineItemType,
   OrderShipmentType,
   PaymentInType,
-  QueryOrderArgs,
 } from "@/core/api/graphql/types";
 import type { LineItemsGroupByVendorType } from "@/core/types";
 
@@ -19,10 +20,10 @@ const order = shallowRef<CustomerOrderType | null>(null);
 const giftItems = computed<OrderLineItemType[]>(() => (order.value?.items || []).filter((item) => item.isGift));
 const orderItems = computed<OrderLineItemType[]>(() => (order.value?.items || []).filter((item) => !item.isGift));
 const orderItemsGroupedByVendor = computed<LineItemsGroupByVendorType<OrderLineItemType>[]>(() =>
-  getLineItemsGroupedByVendor(orderItems.value)
+  getLineItemsGroupedByVendor(orderItems.value),
 );
 const allItemsAreDigital = computed<boolean>(
-  () => !!order.value?.items?.every((item) => item.productType === ProductType.Digital)
+  () => !!order.value?.items?.every((item) => item.productType === ProductType.Digital),
 );
 const shipment = computed<OrderShipmentType | undefined>(() => order.value?.shipments?.[0]);
 const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments?.[0]);
@@ -30,13 +31,26 @@ const deliveryAddress = computed<OrderAddressType | undefined>(() => shipment.va
 const billingAddress = computed<OrderAddressType | undefined>(() => payment.value?.billingAddress);
 
 export default function useUserOrder() {
-  async function fetchOrder(payload: QueryOrderArgs) {
+  async function fetchShortOrder(payload: GetOrderPayloadType) {
+    loading.value = true;
+
+    try {
+      order.value = await getOrder(payload, { fields: GetOrderFeldsType.Short });
+    } catch (e) {
+      Logger.error(`${useUserOrder.name}.${fetchShortOrder.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function fetchFullOrder(payload: GetOrderPayloadType) {
     loading.value = true;
 
     try {
       order.value = await getOrder(payload);
     } catch (e) {
-      Logger.error(`${useUserOrder.name}.${fetchOrder.name}`, e);
+      Logger.error(`${useUserOrder.name}.${fetchFullOrder.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -60,7 +74,7 @@ export default function useUserOrder() {
     }
 
     if (reloadOrder) {
-      await fetchOrder({ id: payload.orderId });
+      await fetchFullOrder({ id: payload.orderId });
     }
   }
 
@@ -75,7 +89,10 @@ export default function useUserOrder() {
     billingAddress,
     shipment,
     payment,
-    fetchOrder,
+    fetchShortOrder,
+    fetchFullOrder,
+    /** @deprecated Use fetchFullOrder */
+    fetchOrder: fetchFullOrder,
     clearOrder,
     addOrUpdatePayment,
   };

@@ -211,7 +211,7 @@ function onFilter() {
 }
 
 const selectedText = computed(() =>
-  props.textField && selected.value ? selected.value[props.textField] : selected.value
+  props.textField && selected.value ? selected.value[props.textField] : selected.value,
 );
 
 function hideList() {

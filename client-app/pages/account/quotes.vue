@@ -240,7 +240,7 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 
 fetchQuotes();

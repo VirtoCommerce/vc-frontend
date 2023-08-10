@@ -99,7 +99,7 @@ export default function useCheckout() {
 
   const isValidDeliveryAddress = computed<boolean>(() => !!shipment.value?.deliveryAddress);
   const isValidBillingAddress = computed<boolean>(
-    () => (!allItemsAreDigital.value && billingAddressEqualsShipping.value) || !!payment.value?.billingAddress
+    () => (!allItemsAreDigital.value && billingAddressEqualsShipping.value) || !!payment.value?.billingAddress,
   );
   const isValidShipmentMethod = computed<boolean>(() => !!shipment.value?.shipmentMethodCode);
   const isValidPaymentMethod = computed<boolean>(() => !!payment.value?.paymentGatewayCode);
@@ -108,7 +108,7 @@ export default function useCheckout() {
   const isValidCheckout = computed<boolean>(() =>
     allItemsAreDigital.value
       ? isValidPayment.value && !hasValidationErrors.value
-      : isValidShipment.value && isValidPayment.value && !hasValidationErrors.value
+      : isValidShipment.value && isValidPayment.value && !hasValidationErrors.value,
   );
 
   const selectedPaymentMethodGroupType = computed<string | undefined>(() => {
@@ -120,7 +120,7 @@ export default function useCheckout() {
     () =>
       isAuthenticated.value &&
       !!selectedPaymentMethodGroupType.value &&
-      selectedPaymentMethodGroupType.value !== PaymentMethodGroupType[PaymentMethodGroupType.Manual]
+      selectedPaymentMethodGroupType.value !== PaymentMethodGroupType[PaymentMethodGroupType.Manual],
   );
 
   const addresses = computed<AnyAddressType[]>(() => {
@@ -134,11 +134,11 @@ export default function useCheckout() {
   const isPurchaseOrderNumberEnabled = computed<boolean>(
     () =>
       !!selectedPaymentMethodGroupType.value &&
-      selectedPaymentMethodGroupType.value === PaymentMethodGroupType[PaymentMethodGroupType.Manual]
+      selectedPaymentMethodGroupType.value === PaymentMethodGroupType[PaymentMethodGroupType.Manual],
   );
 
   const allOrderItemsAreDigital = computed<boolean>(
-    () => !!placedOrder.value?.items?.every((item) => item.productType === ProductType.Digital)
+    () => !!placedOrder.value?.items?.every((item) => item.productType === ProductType.Digital),
   );
 
   function isExistAddress(address: AnyAddressType): boolean {
@@ -153,7 +153,7 @@ export default function useCheckout() {
         shipmentMethodCode: method.code,
         shipmentMethodOption: method.optionName,
       },
-      options
+      options,
     );
 
     ga.addShippingInfo(cart.value!, {}, method.optionName);
@@ -165,7 +165,7 @@ export default function useCheckout() {
         id: payment.value?.id,
         paymentGatewayCode: method.code,
       },
-      options
+      options,
     );
 
     ga.addPaymentInfo(cart.value!, {}, method.code);
@@ -228,7 +228,7 @@ export default function useCheckout() {
           id: payment.value?.id,
           billingAddress: inputAddress,
         },
-        { withBroadcast: true }
+        { withBroadcast: true },
       );
     } else if (
       addressType === AddressType.Shipping &&
@@ -239,14 +239,14 @@ export default function useCheckout() {
           id: shipment.value?.id,
           deliveryAddress: inputAddress,
         },
-        { withBroadcast: true }
+        { withBroadcast: true },
       );
     }
   }
 
   function openAddOrUpdateAddressModal(
     addressType: AddressType,
-    editableAddress?: MemberAddressType | CartAddressType
+    editableAddress?: MemberAddressType | CartAddressType,
   ) {
     openPopup({
       component: VcAddOrUpdateAddressModal,

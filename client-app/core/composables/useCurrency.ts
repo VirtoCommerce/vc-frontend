@@ -10,7 +10,7 @@ const savedCurrencyCode = useLocalStorage<string | null>("currency", "");
 const defaultCurrency = computed<ICurrency>(() => themeContext.value.defaultCurrency);
 const supportedCurrencies = computed<ICurrency[]>(() => themeContext.value.availCurrencies);
 const currentCurrency = computed<ICurrency>(
-  () => supportedCurrencies.value?.find((item) => item.code === savedCurrencyCode.value) || defaultCurrency.value
+  () => supportedCurrencies.value?.find((item) => item.code === savedCurrencyCode.value) || defaultCurrency.value,
 );
 
 function saveCurrencyCodeAndReload(code: string) {

@@ -58,7 +58,7 @@ const showAll = ref(false);
 
 const children = computed<ExtendedMenuLinkType[]>(() => props.item.children || []);
 const visibleChildren = computed<ExtendedMenuLinkType[]>(() =>
-  showAll.value ? children.value : children.value.slice(0, SHORT_VIEW_ITEMS_COUNT)
+  showAll.value ? children.value : children.value.slice(0, SHORT_VIEW_ITEMS_COUNT),
 );
 
 const buttonIcon = computed<string>(() => (showAll.value ? "chevron-up" : "chevron-down"));

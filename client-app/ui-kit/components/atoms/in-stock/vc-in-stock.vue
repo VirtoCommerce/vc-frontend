@@ -57,7 +57,7 @@ const MAX_DISPLAY_IN_STOCK_QUANTITY = 9999;
 const inStockQuantityLabel = computed<string>(() =>
   props.quantity && props.quantity > MAX_DISPLAY_IN_STOCK_QUANTITY
     ? `${MAX_DISPLAY_IN_STOCK_QUANTITY}+`
-    : props.quantity!.toString()
+    : props.quantity!.toString(),
 );
 </script>
 

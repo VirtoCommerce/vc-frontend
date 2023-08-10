@@ -314,6 +314,6 @@ watch(
     initialValues.value = clone(value || _emptyAddress);
     setValues(initialValues.value);
   },
-  { deep: true }
+  { deep: true },
 );
 </script>

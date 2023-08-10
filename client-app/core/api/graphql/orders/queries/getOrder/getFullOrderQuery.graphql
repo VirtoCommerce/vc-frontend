@@ -1,0 +1,7 @@
+#import "../../../fragments/fullOrderFields.graphql"
+
+query GetFullOrder($id: String, $number: String, $cultureName: String) {
+  order(id: $id, number: $number, cultureName: $cultureName) {
+    ...fullOrderFields
+  }
+}

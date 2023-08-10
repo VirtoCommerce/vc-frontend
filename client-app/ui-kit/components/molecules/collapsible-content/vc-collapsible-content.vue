@@ -48,7 +48,7 @@ const { height: contentWrapperElementHeight } = useElementSize(contentWrapperEle
 const { height: contentElementHeight } = useElementSize(contentElement);
 
 const showSeeMoreButton = computed<boolean>(
-  () => contentElementHeight.value > contentWrapperElementHeight.value || showAll.value
+  () => contentElementHeight.value > contentWrapperElementHeight.value || showAll.value,
 );
 
 watchEffect(() => {

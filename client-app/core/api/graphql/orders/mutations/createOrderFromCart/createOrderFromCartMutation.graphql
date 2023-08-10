@@ -1,7 +1,7 @@
-#import "../../../fragments/orderFields.graphql"
+#import "../../../fragments/fullOrderFields.graphql"
 
 mutation CreateOrderFromCart($command: InputCreateOrderFromCartType!) {
   createOrderFromCart(command: $command) {
-    ...orderFields
+    ...fullOrderFields
   }
 }

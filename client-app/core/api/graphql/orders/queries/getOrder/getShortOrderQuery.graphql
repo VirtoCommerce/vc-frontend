@@ -1,0 +1,7 @@
+#import "../../../fragments/shortOrderFields.graphql"
+
+query GetShortOrder($id: String, $number: String, $cultureName: String) {
+  order(id: $id, number: $number, cultureName: $cultureName) {
+    ...shortOrderFields
+  }
+}
