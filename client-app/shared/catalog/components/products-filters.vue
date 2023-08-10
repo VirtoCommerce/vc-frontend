@@ -102,25 +102,25 @@ const localFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: fal
 watch(
   () => props.filters.facets,
   (newFacets) => (localFilters.facets = cloneDeep(newFacets)),
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
   () => props.filters.inStock,
   (newValue) => (localFilters.inStock = newValue),
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
   () => props.filters.branches,
   (newValue) => (localFilters.branches = newValue.slice()),
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
   () => props.keyword,
   (newKeyword) => (localKeyword.value = newKeyword ?? ""),
-  { immediate: true }
+  { immediate: true },
 );
 
 const isAppliedKeyword = eagerComputed<boolean>(() => localKeyword.value === props.keyword);

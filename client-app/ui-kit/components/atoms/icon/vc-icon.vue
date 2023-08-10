@@ -22,7 +22,7 @@ const style = computed(() =>
         width: `${props.size}px`,
         height: `${props.size}px`,
       }
-    : {}
+    : {},
 );
 
 const sizeClass = computed(() => (typeof props.size === "string" ? `vc-icon--size--${props.size}` : ""));

@@ -93,7 +93,7 @@ onClickOutside(
       togglePopover(false);
     }
   },
-  { ignore: [triggerNode] }
+  { ignore: [triggerNode] },
 );
 </script>
 

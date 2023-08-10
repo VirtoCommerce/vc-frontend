@@ -119,7 +119,7 @@ const getDiscountAmmount = (discount: DiscountType | OrderDiscountType) => {
 };
 
 const lineItemsDiscountTotal = computed(() =>
-  sumBy<LineItemType | OrderLineItemType>(props.cart.items, (item) => item.discountTotal?.amount || 0)
+  sumBy<LineItemType | OrderLineItemType>(props.cart.items, (item) => item.discountTotal?.amount || 0),
 );
 
 const hasDiscounts = computed(() => props.cart.discounts?.length || lineItemsDiscountTotal.value > 0);

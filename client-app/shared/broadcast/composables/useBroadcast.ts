@@ -23,7 +23,7 @@ interface IUseBroadcastReturn {
     /**
      * Enum indicating whether an event will be send to the current or to the other or to the all tabs.
      */
-    tabsType?: TabsType
+    tabsType?: TabsType,
   ) => void;
 }
 

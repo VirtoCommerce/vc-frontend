@@ -410,7 +410,7 @@ onClickOutside(
   () => {
     hideFilters();
   },
-  { ignore: [filtersButtonElement] }
+  { ignore: [filtersButtonElement] },
 );
 
 onMounted(() => {
@@ -423,6 +423,6 @@ watch(
     page.value = 1;
     loadOrders();
   },
-  { deep: true }
+  { deep: true },
 );
 </script>

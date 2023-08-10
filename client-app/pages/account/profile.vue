@@ -171,7 +171,7 @@ const validationSchema = toTypedSchema(
       then: (stringSchema) =>
         stringSchema.required().oneOf([yupRef("newPassword")], t("identity_error.PasswordMismatch")),
     }),
-  })
+  }),
 );
 
 const initialValues = computed(() => ({
@@ -255,7 +255,7 @@ whenever(
   () => {
     newPassword.value = "";
     confirmNewPassword.value = "";
-  }
+  },
 );
 
 if (!passwordRequirements.value) {

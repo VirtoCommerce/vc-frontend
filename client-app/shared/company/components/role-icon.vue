@@ -17,6 +17,6 @@ const fallback = ref(false);
 
 watch(
   () => props.roleId,
-  () => (fallback.value = false)
+  () => (fallback.value = false),
 );
 </script>

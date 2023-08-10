@@ -80,7 +80,7 @@ const navigationParams = computed<NavigationOptions | boolean>(() =>
         hiddenClass: "vc-carousel__btn--hidden",
         disabledClass: "vc-carousel__btn--disabled",
       }
-    : false
+    : false,
 );
 
 const paginationParams = computed<PaginationOptions | boolean>(() =>
@@ -88,7 +88,7 @@ const paginationParams = computed<PaginationOptions | boolean>(() =>
     ? {
         clickable: true,
       }
-    : false
+    : false,
 );
 </script>
 

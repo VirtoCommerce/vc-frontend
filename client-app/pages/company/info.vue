@@ -287,7 +287,7 @@ const userCanEditOrganization = computedEager<boolean>(() => checkPermissions(XA
 
 const pages = computed<number>(() => Math.ceil(addresses.value.length / itemsPerPage.value));
 const paginatedAddresses = computed<MemberAddressType[]>(() =>
-  addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
+  addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
 
 const columns = computed<ITableColumn[]>(() => {
@@ -429,7 +429,7 @@ function itemActionsBuilder(inputObject: MemberAddressType) {
         clickHandler(address: MemberAddressType) {
           openAddOrUpdateCompanyAddressModal(address);
         },
-      }
+      },
     );
   }
 
@@ -441,6 +441,6 @@ fetchAddresses();
 watch(
   () => organization.value!.name!,
   (name) => resetOrganizationField({ value: name }),
-  { immediate: true }
+  { immediate: true },
 );
 </script>

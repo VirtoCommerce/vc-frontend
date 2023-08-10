@@ -649,7 +649,7 @@ function itemActionsBuilder(item: ExtendedContactType) {
         clickHandler(contact: ExtendedContactType) {
           openDeleteModal(contact);
         },
-      }
+      },
     );
   }
 
@@ -661,7 +661,7 @@ onClickOutside(
   () => {
     hideFilters();
   },
-  { ignore: [filtersButtonElement] }
+  { ignore: [filtersButtonElement] },
 );
 
 onMounted(() => {

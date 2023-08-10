@@ -88,7 +88,7 @@ watch(
   () => props.branchId,
   () => {
     loadFulfillmentCenter(props.branchId);
-  }
+  },
 );
 </script>
 

@@ -6,7 +6,7 @@ import type { RouteLocationRaw } from "vue-router";
 
 export function useProductsRoutes(
   products: MaybeRef<Record<string, any>[]>, // eslint-disable-line @typescript-eslint/no-explicit-any
-  options: { productIdProperty?: string; slugProperty?: string } = {}
+  options: { productIdProperty?: string; slugProperty?: string } = {},
 ): ComputedRef<Record<string, RouteLocationRaw>> {
   const { productIdProperty = "id", slugProperty = "slug" } = options;
 
@@ -14,6 +14,6 @@ export function useProductsRoutes(
     unref(products).reduce<Record<string, RouteLocationRaw>>((result, item) => {
       result[item[productIdProperty]] = getProductRoute(item[productIdProperty], item[slugProperty]);
       return result;
-    }, {})
+    }, {}),
   );
 }

@@ -25,6 +25,6 @@ const props = defineProps({
 });
 
 const isSignFirst = computed<boolean>(
-  () => (props.value?.formattedAmount.search(/\d/) && props.value?.formattedAmount.search(/\d/) > 0) || false
+  () => (props.value?.formattedAmount.search(/\d/) && props.value?.formattedAmount.search(/\d/) > 0) || false,
 );
 </script>
