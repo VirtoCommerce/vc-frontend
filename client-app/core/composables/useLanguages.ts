@@ -29,7 +29,7 @@ const currentLocale = computed<string>(() => {
 });
 
 const currentLanguage = computed<ILanguage>(
-  () => supportedLanguages.value.find((x) => x.twoLetterLanguageName === currentLocale.value) || defaultLanguage.value
+  () => supportedLanguages.value.find((x) => x.twoLetterLanguageName === currentLocale.value) || defaultLanguage.value,
 );
 
 function fetchLocaleMessages(locale: string): Promise<any> {

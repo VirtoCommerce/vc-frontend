@@ -190,18 +190,18 @@ const quoteChanged = computed<boolean>(
   () =>
     !isEqual(originalQuote.value, quote.value) ||
     (comment.value && originalQuote.value?.comment !== comment.value && quoteItemsValid.value) ||
-    (!!shippingAddress.value && billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value)
+    (!!shippingAddress.value && billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value),
 );
 const quoteItemsValid = computed<boolean>(
   () =>
     !!quote.value?.items?.length &&
-    every(quote.value?.items, (item: QuoteItemType) => item.selectedTierPrice?.quantity > 0)
+    every(quote.value?.items, (item: QuoteItemType) => item.selectedTierPrice?.quantity > 0),
 );
 const quoteValid = computed<boolean>(
   () =>
     !!shippingAddress.value &&
     (!!billingAddress.value || billingAddressEqualsShipping.value) &&
-    (!!comment.value || quoteItemsValid.value)
+    (!!comment.value || quoteItemsValid.value),
 );
 
 const userHasAddresses = computedEager<boolean>(() => !!accountAddresses.value.length);
@@ -276,7 +276,7 @@ function openSelectAddressModal(addressType: AddressType): void {
     props: {
       addresses: accountAddresses.value,
       currentAddress: convertToType<MemberAddressType>(
-        addressType === AddressType.Billing ? billingAddress.value : shippingAddress.value
+        addressType === AddressType.Billing ? billingAddress.value : shippingAddress.value,
       ),
       isCorporateAddresses: isCorporateMember.value,
 
@@ -305,7 +305,7 @@ async function saveChanges(): Promise<void> {
 
   await asyncForEach(originalQuote.value!.items!, async (originalItem: QuoteItemType) => {
     const quoteItem: QuoteItemType | undefined = quote.value!.items?.find(
-      (item: QuoteItemType) => item.id === originalItem.id
+      (item: QuoteItemType) => item.id === originalItem.id,
     );
     if (quoteItem) {
       if (quoteItem.selectedTierPrice!.quantity !== originalItem.selectedTierPrice!.quantity) {

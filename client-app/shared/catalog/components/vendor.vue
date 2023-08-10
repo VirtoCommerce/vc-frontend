@@ -23,6 +23,6 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const displayRating = computed(
-  () => props.withRating && props.vendor.rating?.reviewCount !== undefined && props.vendor.rating?.reviewCount > 0
+  () => props.withRating && props.vendor.rating?.reviewCount !== undefined && props.vendor.rating?.reviewCount > 0,
 );
 </script>

@@ -19,11 +19,11 @@ const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
 const openedMenuItemsStack = shallowRef<ExtendedMenuLinkType[]>([]);
 
 const openedItem = computed<ExtendedMenuLinkType | undefined>(
-  () => openedMenuItemsStack.value[openedMenuItemsStack.value.length - 1]
+  () => openedMenuItemsStack.value[openedMenuItemsStack.value.length - 1],
 );
 
 const desktopMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
-  (menuSchema.value?.header.desktop || []).map((item: ExtendedMenuLinkType) => getTranslatedMenuLink(item))
+  (menuSchema.value?.header.desktop || []).map((item: ExtendedMenuLinkType) => getTranslatedMenuLink(item)),
 );
 
 const mobileMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
@@ -35,19 +35,19 @@ const mobileMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
     }
 
     return menuLink;
-  })
+  }),
 );
 
 const mobileCatalogMenuItem = computed<ExtendedMenuLinkType | null>(
-  () => mobileMainMenuItems.value.find((item) => item.id === "catalog") || null
+  () => mobileMainMenuItems.value.find((item) => item.id === "catalog") || null,
 );
 
 const mobileAccountMenuItem = computed<ExtendedMenuLinkType | null>(() =>
-  menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.account) : null
+  menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.account) : null,
 );
 
 const mobileCorporateMenuItem = computed<ExtendedMenuLinkType | null>(() =>
-  menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.corporate) : null
+  menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.corporate) : null,
 );
 
 const mobilePreSelectedMenuItem = computed<ExtendedMenuLinkType | null>(() => {
@@ -92,7 +92,7 @@ export function useNavigations() {
       if (catalog_menu_link_list_name) {
         // Use a list of links
         catalogMenuItems.value = (await getMenu(catalog_menu_link_list_name)).map((item) =>
-          convertToExtendedMenuLink(item, true)
+          convertToExtendedMenuLink(item, true),
         );
       } else {
         // Use the query `childCategories`, with `maxLevel` equal to 2

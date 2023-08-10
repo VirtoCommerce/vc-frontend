@@ -77,7 +77,7 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const propertiesByName = computed(() =>
-  getPropertiesGroupedByName(props.variation.properties ?? [], PropertyType.Variation)
+  getPropertiesGroupedByName(props.variation.properties ?? [], PropertyType.Variation),
 );
 
 const isDigital = computed<boolean>(() => props.variation.productType === ProductType.Digital);

@@ -85,7 +85,7 @@ const validationSchema = toTypedSchema(
     confirmPassword: string()
       .required()
       .oneOf([yupRef("password")], t("identity_error.PasswordMismatch")),
-  })
+  }),
 );
 
 const { errors, meta, handleSubmit } = useForm({

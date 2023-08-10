@@ -40,7 +40,7 @@ export function usePageHead(data: IUsePageSeoData) {
 
   if (data.meta) {
     Object.entries(data.meta).forEach(([name, content]) =>
-      headObject.meta.push({ name, content: () => unref(content) ?? "" })
+      headObject.meta.push({ name, content: () => unref(content) ?? "" }),
     );
   }
 

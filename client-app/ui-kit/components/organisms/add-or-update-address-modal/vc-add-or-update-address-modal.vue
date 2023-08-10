@@ -59,7 +59,7 @@ const { t } = useI18n();
 const editableAddress = ref<MemberAddressType>();
 
 const title = computed<string>(() =>
-  editableAddress.value ? t("common.titles.edit_address") : t("common.titles.new_address")
+  editableAddress.value ? t("common.titles.edit_address") : t("common.titles.new_address"),
 );
 const saveButtonLabel = computed(() => (editableAddress.value ? t("common.buttons.save") : t("common.buttons.create")));
 

@@ -72,7 +72,7 @@ const { panels, toggle: providedToggleFn } = inject<TProvidedObjectOfExpansionPa
     toggle: (id: string) => {
       panels.value[id] = !panels.value[id];
     },
-  }
+  },
 );
 
 const isExpanded = computedEager<boolean>(() => panels.value[panelId] ?? props.expanded);

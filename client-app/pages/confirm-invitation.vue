@@ -138,7 +138,7 @@ const schema = toTypedSchema(
     confirmPassword: string()
       .required()
       .oneOf([yupRef("password")], t("identity_error.PasswordMismatch")),
-  })
+  }),
 );
 
 const { errors, meta, handleSubmit, setFieldError } = useForm({

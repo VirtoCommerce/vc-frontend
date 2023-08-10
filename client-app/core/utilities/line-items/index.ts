@@ -14,7 +14,7 @@ export function isQuoteItemType(item: AnyLineItemType): item is QuoteItemType {
 }
 
 export function getLineItemsGroupedByVendor<T extends LineItemType | OrderLineItemType>(
-  items: T[]
+  items: T[],
 ): LineItemsGroupByVendorType<T>[] {
   // NOTE: The group without the vendor should be displayed last.
   const groupWithoutVendor: LineItemsGroupByVendorType<T> = { items: [] };
@@ -101,7 +101,7 @@ export function prepareLineItem(item: AnyLineItemType, countInCart?: number): Pr
 }
 
 export function prepareLineItems(
-  items: LineItemType[] | OrderLineItemType[] | QuoteItemType[]
+  items: LineItemType[] | OrderLineItemType[] | QuoteItemType[],
 ): PreparedLineItemType[] {
   return items.map((item) => prepareLineItem(item));
 }

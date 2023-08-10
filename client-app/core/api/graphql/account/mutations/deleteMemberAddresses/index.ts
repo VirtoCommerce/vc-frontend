@@ -4,7 +4,7 @@ import type { InputMemberAddressType, Mutations, MutationsDeleteMemberAddressesA
 
 export default async function deleteMemberAddresses(
   addresses: InputMemberAddressType[],
-  memberId: string
+  memberId: string,
 ): Promise<void> {
   await graphqlClient.mutate<Required<Pick<Mutations, "deleteMemberAddresses">>, MutationsDeleteMemberAddressesArgs>({
     mutation: mutationDocument,

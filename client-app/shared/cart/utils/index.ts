@@ -2,7 +2,7 @@ import type { LineItemType, OrderLineItemType, ValidationErrorType } from "@/cor
 import type { ItemForAddBulkItemsToCartResultsPopupType, OutputBulkItemType } from "@/shared/cart";
 
 export function getLineItemValidationErrorsGroupedBySKU(
-  errors: ValidationErrorType[] = []
+  errors: ValidationErrorType[] = [],
 ): Record<string, ValidationErrorType[]> {
   const result: Record<string, ValidationErrorType[]> = {};
 
@@ -18,7 +18,7 @@ export function getLineItemValidationErrorsGroupedBySKU(
 
 export function getItemsForAddBulkItemsToCartResultsPopup(
   inputItems: OrderLineItemType[] | LineItemType[],
-  resultItems: OutputBulkItemType[]
+  resultItems: OutputBulkItemType[],
 ): ItemForAddBulkItemsToCartResultsPopupType[] {
   const errorsGroupedBySKU: Record<string, ValidationErrorType[] | undefined> = {};
 

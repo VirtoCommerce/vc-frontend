@@ -49,7 +49,7 @@ const isInCompareList = eagerComputed<boolean>(() => productsIds.value.includes(
 const tooltipText = computed<string>(() =>
   isInCompareList.value
     ? t("shared.compare.add_to_compare.tooltips.remove")
-    : t("shared.compare.add_to_compare.tooltips.add")
+    : t("shared.compare.add_to_compare.tooltips.add"),
 );
 
 const toggle = () => {

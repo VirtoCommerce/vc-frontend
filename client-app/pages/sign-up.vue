@@ -181,8 +181,8 @@ const validationSchema = toTypedSchema(
             nextTick(() =>
               emailValidationData.isChecked
                 ? resolve(emailValidationData.isUnique)
-                : emailValidationDebounced(value, resolve)
-            )
+                : emailValidationDebounced(value, resolve),
+            ),
           ),
       }),
     firstName: string().required().max(64),
@@ -191,7 +191,7 @@ const validationSchema = toTypedSchema(
     confirmPassword: string()
       .required()
       .oneOf([yupRef("password")], t("identity_error.PasswordMismatch")),
-  })
+  }),
 );
 
 const { errors, handleSubmit, setFieldError } = useForm({

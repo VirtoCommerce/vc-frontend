@@ -26,6 +26,6 @@ const formattedAmount = computed(() =>
   new Intl.NumberFormat(props.cultureName, {
     currency: props.currencyCode,
     style: "currency",
-  }).format(props.amount)
+  }).format(props.amount),
 );
 </script>
