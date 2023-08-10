@@ -21,6 +21,7 @@ import {
   removeCoupon,
   removeShipment as _removeShipment,
   validateCoupon,
+  GetCartFeldsType,
 } from "@/core/api/graphql";
 import { ProductType } from "@/core/enums";
 import { globals } from "@/core/globals";
@@ -83,7 +84,7 @@ export default function useCart() {
     loading.value = true;
 
     try {
-      cart.value = await getCart();
+      cart.value = await getCart({ fields: GetCartFeldsType.Short });
     } catch (e) {
       Logger.error(`${useCart.name}.${fetchShortCart.name}`, e);
       throw e;
@@ -96,7 +97,7 @@ export default function useCart() {
     loading.value = true;
 
     try {
-      cart.value = await getCart({ full: true });
+      cart.value = await getCart();
     } catch (e) {
       Logger.error(`${useCart.name}.${fetchFullCart.name}`, e);
       throw e;
