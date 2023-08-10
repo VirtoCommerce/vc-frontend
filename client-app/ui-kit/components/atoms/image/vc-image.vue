@@ -12,6 +12,7 @@
 
 <script setup lang="ts">
 import { computed, inject, ref, watch } from "vue";
+import { NO_IMAGE_URL } from "@/core/constants";
 import { configInjectionKey } from "@/core/injection-keys";
 import { appendSuffixToFilename } from "@/core/utilities";
 
@@ -30,7 +31,7 @@ export interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   src: "",
-  fallbackSrc: "/static/images/common/no-image.svg",
+  fallbackSrc: NO_IMAGE_URL,
 });
 
 const cfg = inject(configInjectionKey);
