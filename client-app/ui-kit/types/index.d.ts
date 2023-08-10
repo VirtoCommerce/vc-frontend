@@ -14,13 +14,6 @@ declare global {
     swipeHandler?: boolean;
   }
 
-  interface IValidationRules {
-    required?: boolean;
-    min?: number;
-    max?: number;
-    regex?: RegExp;
-  }
-
   interface SlidingActionsItem {
     icon: string;
     title: string;

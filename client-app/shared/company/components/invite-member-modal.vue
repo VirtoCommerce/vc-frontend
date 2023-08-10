@@ -127,7 +127,7 @@ const { value: emails } = useField<string>(
         (value: string | undefined) => {
           const emailAddresses: string[] = getEmailAddresses(value);
           return emailAddresses.length <= MAX_INVITED_CONTACTS_COUNT;
-        }
+        },
       )
       .test(
         "email-length",
@@ -135,10 +135,10 @@ const { value: emails } = useField<string>(
         (value: string | undefined) => {
           const emailAddresses: string[] = getEmailAddresses(value);
           return emailAddresses.every((emailAddress: string) => emailAddress.length <= MAX_EMAIL_LENGTH);
-        }
+        },
       )
-      .matches(emailsValidationPattern, t("common.messages.invalid_value"))
-  )
+      .matches(emailsValidationPattern, t("common.messages.invalid_value")),
+  ),
 );
 
 const send = handleSubmit(async (data) => {

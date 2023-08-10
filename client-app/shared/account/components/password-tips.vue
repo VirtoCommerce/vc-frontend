@@ -38,7 +38,7 @@ const requirementsLabels = computed<string[]>(() => {
   }
   if (props.requirements.requiredLength) {
     result.push(
-      t("password_tips.required_length", [props.requirements.requiredLength], props.requirements.requiredLength)
+      t("password_tips.required_length", [props.requirements.requiredLength], props.requirements.requiredLength),
     );
   }
   if (props.requirements.requiredUniqueChars) {
@@ -46,8 +46,8 @@ const requirementsLabels = computed<string[]>(() => {
       t(
         "password_tips.required_unique_chars",
         [props.requirements.requiredUniqueChars],
-        props.requirements.requiredUniqueChars
-      )
+        props.requirements.requiredUniqueChars,
+      ),
     );
   }
 

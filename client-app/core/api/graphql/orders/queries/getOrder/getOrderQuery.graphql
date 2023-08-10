@@ -1,7 +1,0 @@
-#import "../../../fragments/orderFields.graphql"
-
-query GetOrder($id: String, $number: String, $cultureName: String) {
-  order(id: $id, number: $number, cultureName: $cultureName) {
-    ...orderFields
-  }
-}

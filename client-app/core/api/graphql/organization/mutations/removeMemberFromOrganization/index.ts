@@ -7,7 +7,7 @@ import type {
 } from "@/core/api/graphql/types";
 
 export default async function removeMemberFromOrganization(
-  payload: InputRemoveMemberFromOrganizationType
+  payload: InputRemoveMemberFromOrganizationType,
 ): Promise<void> {
   await graphqlClient.mutate<
     Required<Pick<Mutations, "removeMemberFromOrganization">>,

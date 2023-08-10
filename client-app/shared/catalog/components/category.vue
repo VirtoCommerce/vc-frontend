@@ -451,11 +451,11 @@ const searchParams = computedEager<ProductsSearchParams>(() => ({
 }));
 
 const isExistSelectedFacets = computedEager<boolean>(() =>
-  facets.value.some((facet) => facet.values.some((value) => value.selected))
+  facets.value.some((facet) => facet.values.some((value) => value.selected)),
 );
 
 const isExistSelectedMobileFacets = computedEager<boolean>(() =>
-  mobileFilters.facets.some((facet) => facet.values.some((value) => value.selected))
+  mobileFilters.facets.some((facet) => facet.values.some((value) => value.selected)),
 );
 
 const isMobileFilterDirty = computedEager<boolean>(
@@ -465,7 +465,7 @@ const isMobileFilterDirty = computedEager<boolean>(
       facets: facets.value,
       inStock: savedInStock.value,
       branches: savedBranches.value,
-    } as ProductsFilters)
+    } as ProductsFilters),
 );
 
 function sendGASelectItemEvent(product: Product) {
@@ -708,7 +708,7 @@ watch(
       });
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -717,14 +717,14 @@ watch(
     if (value !== oldValue) {
       setFiltersPosition();
     }
-  }
+  },
 );
 
 watch(
   () => cHeight.value,
   () => {
     setFiltersPosition();
-  }
+  },
 );
 
 watchDebounced(
@@ -734,6 +734,6 @@ watchDebounced(
     immediate: true,
     flush: "post",
     debounce: 20,
-  }
+  },
 );
 </script>

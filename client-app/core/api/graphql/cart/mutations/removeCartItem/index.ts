@@ -18,7 +18,7 @@ export async function removeCartItem(lineItemId: string): Promise<CartType> {
           lineItemId,
         },
       },
-    }
+    },
   );
 
   return data!.removeCartItem;

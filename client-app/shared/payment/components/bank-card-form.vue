@@ -115,7 +115,7 @@ const validationSchema = toTypedSchema(
       then: (stringSchema) => stringSchema.length(2),
     }),
     securityCode: string().required().min(3).max(4),
-  })
+  }),
 );
 
 const { values, meta, errors: formErrors } = useForm<BankCardType>({ validationSchema, initialValues });
@@ -136,7 +136,7 @@ const expirationDate = computed({
 });
 
 const expirationDateErrors = computed<string>(() =>
-  [formErrors.value.month, formErrors.value.year, props.errors.month, props.errors.year].filter(Boolean).join(". ")
+  [formErrors.value.month, formErrors.value.year, props.errors.month, props.errors.year].filter(Boolean).join(". "),
 );
 
 function input() {
@@ -146,12 +146,12 @@ function input() {
 watch(
   () => props.modelValue,
   (value) => (initialValues.value = clone(value)),
-  { deep: true }
+  { deep: true },
 );
 
 watch(
   () => meta.value.valid,
   (value) => emit("update:valid", value),
-  { immediate: true }
+  { immediate: true },
 );
 </script>

@@ -39,6 +39,6 @@ function change() {
 
 watch(
   () => props.modelValue,
-  (value) => (facet.value = _.cloneDeep(value))
+  (value) => (facet.value = _.cloneDeep(value)),
 );
 </script>

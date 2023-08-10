@@ -55,7 +55,7 @@ export default function useOrganizationContacts(organizationId: MaybeRef<string>
       const contactFullNameFallback: string = t("pages.company.members.invite_sent");
 
       contacts.value = _.map(response.items, (item: ContactType) =>
-        convertToExtendedContact(item, contactFullNameFallback)
+        convertToExtendedContact(item, contactFullNameFallback),
       );
       pages.value = Math.ceil((response.totalCount ?? 0) / itemsPerPage.value);
     } catch (e) {
@@ -125,7 +125,7 @@ export default function useOrganizationContacts(organizationId: MaybeRef<string>
   }
 
   async function changeContactOrganizationRole(
-    payload: InputChangeOrganizationContactRoleType
+    payload: InputChangeOrganizationContactRoleType,
   ): Promise<CustomIdentityResultType | undefined> {
     loading.value = true;
 

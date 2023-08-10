@@ -151,8 +151,8 @@ function openAddToListModal() {
 const mailToLink = computed(
   () =>
     `mailto:?subject=${encodeURIComponent(
-      t("shared.catalog.product_details.price_block.product_email_title", [props.product?.name])
-    )}&body=${encodeURIComponent(pageUrl.value)}`
+      t("shared.catalog.product_details.price_block.product_email_title", [props.product?.name]),
+    )}&body=${encodeURIComponent(pageUrl.value)}`,
 );
 
 function getProductSocialShareUrl(urlTemplate: string, url: string): string {

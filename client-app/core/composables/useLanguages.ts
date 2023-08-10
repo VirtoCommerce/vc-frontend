@@ -1,9 +1,10 @@
 import { useLocalStorage } from "@vueuse/core";
 import { computed } from "vue";
+import { setLocale as setLocaleForYup } from "yup";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
-import type { Composer, VueI18n } from "vue-i18n";
+import type { Composer } from "vue-i18n";
 
 const { themeContext } = useThemeContext();
 
@@ -28,7 +29,7 @@ const currentLocale = computed<string>(() => {
 });
 
 const currentLanguage = computed<ILanguage>(
-  () => supportedLanguages.value.find((x) => x.twoLetterLanguageName === currentLocale.value) || defaultLanguage.value
+  () => supportedLanguages.value.find((x) => x.twoLetterLanguageName === currentLocale.value) || defaultLanguage.value,
 );
 
 function fetchLocaleMessages(locale: string): Promise<any> {
@@ -54,13 +55,19 @@ async function setLocale(i18n: I18n, locale: string): Promise<void> {
     i18n.global.setLocaleMessage(locale, messages);
   }
 
-  if (i18n.mode === "legacy") {
-    (i18n.global as unknown as VueI18n).locale = locale;
-  } else {
-    (i18n.global as unknown as Composer).locale.value = locale;
-  }
+  (i18n.global as unknown as Composer).locale.value = locale;
 
   savedLocale.value = locale;
+
+  setLocaleForYup({
+    mixed: {
+      required: i18n.global.t("common.messages.required_field"),
+    },
+    string: {
+      email: i18n.global.t("common.messages.email_is_not_correct"),
+      max: ({ max }) => i18n.global.t("common.messages.max_length", { max }),
+    },
+  });
 
   /**
    * NOTE:

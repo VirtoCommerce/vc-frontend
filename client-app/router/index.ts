@@ -52,7 +52,7 @@ export function createRouter(options: { base: string }) {
         "ForgotPassword",
         "ResetPassword",
         "SetPassword",
-        "ConfirmInvitation"
+        "ConfirmInvitation",
       ).includes(to.name!)
     ) {
       return next(getReturnUrlValue() || { name: "Dashboard" });

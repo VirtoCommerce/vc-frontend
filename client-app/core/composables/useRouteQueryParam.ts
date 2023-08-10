@@ -6,7 +6,7 @@ import type { LocationAsRelativeRaw, LocationQueryValue, LocationQueryValueRaw, 
 
 export function useRouteQueryParam<T = NonNullable<LocationQueryValue> | NonNullable<LocationQueryValue>[]>(
   key: string,
-  options: IUseRouteQueryParamOptions<T> = {}
+  options: IUseRouteQueryParamOptions<T> = {},
 ): WritableComputedRef<T> {
   const {
     validator,

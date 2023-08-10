@@ -1,50 +1,18 @@
 {
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    }
+  ],
   "compilerOptions": {
-    "target": "ESNext",
+    "composite": true,
     "baseUrl": ".",
-    "useDefineForClassFields": true,
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "strict": true,
-    "jsx": "preserve",
-    "allowJs": true,
-    "sourceMap": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "lib": [
-      "ESNext",
-      "DOM",
-      "DOM.Iterable"
-    ],
     "paths": {
       "@/*": ["client-app/*"]
-    },
-    "types": [
-      "vite/client",
-      "@types/gtag.js",
-      "node"
-    ]
-  },
-  "include": [
-    "client-app/**/*.ts",
-    "client-app/**/*.vue"
-  ],
-  "exclude": [
-    "node_modules",
-    "artifacts",
-    "assets",
-    "content",
-    "**/*.spec.ts",
-    "**/*.stories.ts",
-    "**/*.js"
-  ],
-  "ts-node": {
-    "compilerOptions": {
-      "module": "CommonJS"
     }
   }
 }

@@ -207,11 +207,11 @@ defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const extendedItems = computed<ExtendedLineItemType<QuoteItemType>[]>(() =>
-  props.items.map((item: QuoteItemType) => extendLineItem<QuoteItemType>(item))
+  props.items.map((item: QuoteItemType) => extendLineItem<QuoteItemType>(item)),
 );
 
 const subtotal = computed<number>(() =>
-  sumBy(props.items, (item: QuoteItemType) => item.selectedTierPrice!.price!.amount * item.selectedTierPrice!.quantity)
+  sumBy(props.items, (item: QuoteItemType) => item.selectedTierPrice!.price!.amount * item.selectedTierPrice!.quantity),
 );
 </script>
 

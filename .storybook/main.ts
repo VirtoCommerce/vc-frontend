@@ -1,11 +1,9 @@
 import { resolve } from "path";
-import graphql from "@rollup/plugin-graphql";
 import { loadConfigFromFile, mergeConfig, splitVendorChunkPlugin } from "vite";
-import type { StorybookViteConfig } from "@storybook/builder-vite";
-import type { PropItem } from "react-docgen-typescript";
+import type { StorybookConfig } from "@storybook/vue3-vite";
 
-const storybookConfig: StorybookViteConfig = {
-  stories: ["../client-app/**/*.stories.@(ts|tsx|mdx)"],
+const storybookConfig: StorybookConfig = {
+  stories: ["../client-app/**/*.stories.ts"],
   staticDirs: ["../client-app/public"],
   addons: [
     "@storybook/addon-links",
@@ -13,45 +11,44 @@ const storybookConfig: StorybookViteConfig = {
     "@storybook/addon-a11y",
     "@storybook/addon-interactions",
   ],
+  framework: {
+    name: "@storybook/vue3-vite",
+    options: {},
+  },
   typescript: {
     check: false,
-    checkOptions: {},
-    reactDocgen: "react-docgen-typescript",
-    reactDocgenTypescriptOptions: {
-      shouldExtractLiteralValuesFromEnum: true,
-      propFilter: (prop: PropItem) => (prop.parent ? !/node_modules/.test(prop.parent.fileName) : true),
-    },
   },
-  framework: "@storybook/vue3",
   core: {
-    builder: "@storybook/builder-vite",
     disableTelemetry: true,
-  },
-  features: {
-    // storyStoreV7: true, // NOTE: When enabled, `viewMode: "docs"` does not work.
   },
   async viteFinal(storybookViteConfig, options) {
     const isDevelopment = options.configType === "DEVELOPMENT";
     const { config } = (await loadConfigFromFile(
-      isDevelopment ? { command: "serve", mode: "development" } : { command: "build", mode: "production" },
-      resolve(__dirname, "../vite.config.ts")
+      isDevelopment
+        ? {
+            command: "serve",
+            mode: "development",
+          }
+        : {
+            command: "build",
+            mode: "production",
+          },
+      resolve(__dirname, "../vite.config.ts"),
     ))!;
-
     return mergeConfig(storybookViteConfig, {
-      plugins: [graphql(), splitVendorChunkPlugin()],
+      envPrefix: config.envPrefix,
+      plugins: [splitVendorChunkPlugin()],
+      resolve: config.resolve,
+      define: config.define,
       build: {
         cssCodeSplit: false,
         reportCompressedSize: false,
-        rollupOptions: {
-          external: [/\/static\/.*/],
-        },
       },
-      envPrefix: config.envPrefix,
-      resolve: config.resolve,
-      define: config.define,
       optimizeDeps: config.optimizeDeps,
     });
   },
+  docs: {
+    autodocs: true,
+  },
 };
-
 export default storybookConfig;

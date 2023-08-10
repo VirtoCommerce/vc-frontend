@@ -39,7 +39,7 @@ const props = defineProps<IProps>();
 const config = inject(configInjectionKey, {});
 
 const properties = computed(() =>
-  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product))
+  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)),
 );
 
 const showVendor = computed(() => config.vendor_enabled && !props.product.hasVariations && props.product.vendor);

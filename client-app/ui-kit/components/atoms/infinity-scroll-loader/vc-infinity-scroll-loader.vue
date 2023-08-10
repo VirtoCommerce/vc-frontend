@@ -3,7 +3,7 @@
     <slot v-if="loading" name="loader">
       <p class="flex items-center justify-center">
         <img
-          src="/static/images/loader.png"
+          src="/static/images/loader.webp"
           class="inline-block animate-spin"
           alt="spinner"
           width="29"
