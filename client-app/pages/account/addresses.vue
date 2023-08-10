@@ -219,7 +219,7 @@ const itemsPerPage = ref(6);
 
 const pages = computed<number>(() => Math.ceil(addresses.value.length / itemsPerPage.value));
 const paginatedAddresses = computed<MemberAddressType[]>(() =>
-  addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
+  addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
 
 const columns = computed<ITableColumn[]>(() => [

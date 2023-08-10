@@ -92,7 +92,7 @@ const steps = computed<IStepsItem[]>(() => {
       {
         id: "CheckoutPaymentResult",
         text: t("pages.checkout.steps.completed"),
-      }
+      },
     );
   }
 

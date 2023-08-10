@@ -110,7 +110,7 @@ const { height } = useElementSize(headerElement);
 const { cart } = useCart();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
-  height.value ? { height: height.value + "px" } : undefined
+  height.value ? { height: height.value + "px" } : undefined,
 );
 
 const preparedCartItemsQuantity = computed<string>(() => numberToShortString(cart.value?.itemsQuantity ?? 0));

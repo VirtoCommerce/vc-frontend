@@ -18,7 +18,7 @@ export default async function addWishlist(listName?: string): Promise<WishlistTy
           listName,
         },
       },
-    }
+    },
   );
 
   return data!.createWishlist;

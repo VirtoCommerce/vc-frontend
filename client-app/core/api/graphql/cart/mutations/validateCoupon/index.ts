@@ -18,7 +18,7 @@ export async function validateCoupon(coupon: string): Promise<boolean> {
           coupon,
         },
       },
-    }
+    },
   );
 
   return data!.validateCoupon;

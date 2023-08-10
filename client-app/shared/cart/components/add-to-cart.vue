@@ -87,23 +87,23 @@ const inputElement = shallowRef<HTMLInputElement>();
 
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 
-const lineItemInCart = computed<LineItemType | undefined>(() =>
-  cart.value?.items?.find((item) => item.productId === props.product.id)
+const lineItemInCart = computed<LineItemType | undefined>(
+  () => cart.value?.items?.find((item) => item.productId === props.product.id),
 );
 const countInCart = computed<number>(() => lineItemInCart.value?.quantity || 0);
 const minQty = computed<number>(() => props.product.minQuantity || 1);
 const maxQty = computed<number>(() =>
-  Math.min(props.product.availabilityData?.availableQuantity || MAX_VALUE, props.product.maxQuantity || MAX_VALUE)
+  Math.min(props.product.availabilityData?.availableQuantity || MAX_VALUE, props.product.maxQuantity || MAX_VALUE),
 );
 
 const disabled = computed<boolean>(
   () =>
     loading.value ||
-    (!isDigital.value && (!props.product.availabilityData?.isAvailable || !props.product.availabilityData?.isInStock))
+    (!isDigital.value && (!props.product.availabilityData?.isAvailable || !props.product.availabilityData?.isInStock)),
 );
 
 const buttonText = computed<string>(() =>
-  countInCart.value ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart")
+  countInCart.value ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart"),
 );
 
 const rules = computed(() =>
@@ -113,8 +113,8 @@ const rules = computed(() =>
       .integer()
       .positive()
       .min(minQty.value, ({ min }) => t("shared.cart.add_to_cart.errors.min", [min]))
-      .max(maxQty.value, ({ max }) => t("shared.cart.add_to_cart.errors.max", [max]))
-  )
+      .max(maxQty.value, ({ max }) => t("shared.cart.add_to_cart.errors.max", [max])),
+  ),
 );
 
 const enteredQuantity = ref(!disabled.value ? countInCart.value || minQty.value : undefined);

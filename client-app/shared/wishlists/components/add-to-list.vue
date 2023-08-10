@@ -76,7 +76,7 @@ function openAddToListModal() {
               inWishlist: isInList,
             },
           ],
-          TabsType.ALL
+          TabsType.ALL,
         );
       },
     },

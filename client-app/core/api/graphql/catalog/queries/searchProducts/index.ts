@@ -25,7 +25,7 @@ export async function searchProducts(
     withImages?: boolean;
     /** @default false */
     withZeroPrice?: boolean;
-  } = {}
+  } = {},
 ): Promise<ProductConnection> {
   const { storeId, catalogId, userId, cultureName, currencyCode } = globals;
   const { withFacets = false, withImages = true, withZeroPrice = false } = options;

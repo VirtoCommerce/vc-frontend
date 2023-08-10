@@ -220,7 +220,7 @@ const itemsPerPage = ref(4);
 
 const pages = computed(() => Math.ceil(props.addresses.length / itemsPerPage.value));
 const paginatedAddresses = computed(() =>
-  props.addresses.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value)
+  props.addresses.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
 
 const columns = computed<ITableColumn[]>(() =>
@@ -237,7 +237,7 @@ const columns = computed<ITableColumn[]>(() =>
         { id: "phone", title: t("common.labels.phone") },
         { id: "email", title: t("common.labels.email") },
         { id: "id", title: t("common.labels.active_address"), align: "center" },
-      ]
+      ],
 );
 
 const onPageChange = async (newPage: number) => {

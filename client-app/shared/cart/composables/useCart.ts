@@ -21,6 +21,7 @@ import {
   removeCoupon,
   removeShipment as _removeShipment,
   validateCoupon,
+  GetCartFeldsType,
 } from "@/core/api/graphql";
 import { ProductType } from "@/core/enums";
 import { globals } from "@/core/globals";
@@ -57,21 +58,21 @@ const availableShippingMethods = computed<ShippingMethodType[]>(() => cart.value
 const availablePaymentMethods = computed<PaymentMethodType[]>(() => cart.value?.availablePaymentMethods ?? []);
 
 const lineItemsGroupedByVendor = computed<LineItemsGroupByVendorType<LineItemType>[]>(() =>
-  getLineItemsGroupedByVendor(cart.value?.items ?? [])
+  getLineItemsGroupedByVendor(cart.value?.items ?? []),
 );
 
 const allItemsAreDigital = computed<boolean>(
-  () => !!cart.value?.items?.every((item) => item.productType === ProductType.Digital)
+  () => !!cart.value?.items?.every((item) => item.productType === ProductType.Digital),
 );
 
 const addedGiftsByIds = computed(() => keyBy(cart.value?.gifts, "id"));
 
 const availableExtendedGifts = computed<ExtendedGiftItemType[]>(() =>
-  (cart.value?.availableGifts || []).map((gift) => ({ ...gift, isAddedInCart: !!addedGiftsByIds.value[gift.id] }))
+  (cart.value?.availableGifts || []).map((gift) => ({ ...gift, isAddedInCart: !!addedGiftsByIds.value[gift.id] })),
 );
 
 const hasValidationErrors = computedEager<boolean>(
-  () => !!cart.value?.validationErrors?.length || !!cart.value?.items?.some((item) => item.validationErrors?.length)
+  () => !!cart.value?.validationErrors?.length || !!cart.value?.items?.some((item) => item.validationErrors?.length),
 );
 
 export default function useCart() {
@@ -83,7 +84,7 @@ export default function useCart() {
     loading.value = true;
 
     try {
-      cart.value = await getCart();
+      cart.value = await getCart({ fields: GetCartFeldsType.Short });
     } catch (e) {
       Logger.error(`${useCart.name}.${fetchShortCart.name}`, e);
       throw e;
@@ -96,7 +97,7 @@ export default function useCart() {
     loading.value = true;
 
     try {
-      cart.value = await getCart({ full: true });
+      cart.value = await getCart();
     } catch (e) {
       Logger.error(`${useCart.name}.${fetchFullCart.name}`, e);
       throw e;
@@ -110,7 +111,7 @@ export default function useCart() {
     options: {
       /** @default true */
       reloadCart?: boolean;
-    } = {}
+    } = {},
   ): Promise<boolean> {
     const { reloadCart = true } = options;
     let result = false;
@@ -218,7 +219,7 @@ export default function useCart() {
   async function changeItemQuantity(
     lineItemId: string,
     qty: number,
-    options: ChangeCartItemQuantityOptionsType = {}
+    options: ChangeCartItemQuantityOptionsType = {},
   ): Promise<void> {
     loading.value = true;
 
@@ -304,7 +305,7 @@ export default function useCart() {
 
   async function updateShipment(
     newShipment: InputShipmentType,
-    options: { withBroadcast?: boolean } = {}
+    options: { withBroadcast?: boolean } = {},
   ): Promise<void> {
     const { withBroadcast = false } = options;
 

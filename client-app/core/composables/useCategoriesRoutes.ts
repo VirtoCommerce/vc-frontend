@@ -10,6 +10,6 @@ export function useCategoriesRoutes(categories: MaybeRef<(Category | CategoryTre
     unref(categories).reduce<Record<string, RouteLocationRaw>>((result, category) => {
       result[category.id] = getCategoryRoute(category);
       return result;
-    }, {})
+    }, {}),
   );
 }

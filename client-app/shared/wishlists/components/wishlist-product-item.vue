@@ -88,7 +88,7 @@ defineEmits<{
 const props = defineProps<IProps>();
 
 const link = computed<RouteLocationRaw | undefined>(() =>
-  props.listItem.product ? getProductRoute(props.listItem.product.id, props.listItem.product.slug) : undefined
+  props.listItem.product ? getProductRoute(props.listItem.product.id, props.listItem.product.slug) : undefined,
 );
 
 const productAvailable = computedEager(() => !!props.listItem.product);

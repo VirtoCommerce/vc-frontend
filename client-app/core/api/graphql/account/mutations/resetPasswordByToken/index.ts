@@ -8,7 +8,7 @@ import type {
 } from "@/core/api/graphql/types";
 
 export default async function resetPasswordByToken(
-  payload: InputResetPasswordByTokenType
+  payload: InputResetPasswordByTokenType,
 ): Promise<IdentityResultType> {
   const { data } = await graphqlClient.mutate<
     Required<Pick<Mutations, "resetPasswordByToken">>,

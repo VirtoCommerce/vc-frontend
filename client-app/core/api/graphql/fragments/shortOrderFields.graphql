@@ -1,0 +1,6 @@
+fragment shortOrderFields on CustomerOrderType {
+  id
+  number
+  createdDate
+  status
+}

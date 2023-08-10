@@ -824,7 +824,9 @@
       "text": "Please use your username and password to login to your account.",
       "continue_button": "@:shared.layout.header.link_sign_in",
       "continue_shopping_button": "@:common.buttons.continue_shopping",
-      "link_sent_text": "We sent you a email confirmation link to your email."
+      "email_confirmation_failed_text": "In order to continue you still need to finalize verification process. Please use the button below to request a new link.",
+      "link_sent_successfully_text": "We sent you a email confirmation link to your email.",
+      "link_sent_error_text": "Some problems are occured while sending a comfirmation link. Please try again later."
     },
     "confirm_invitation": {
       "meta": {
