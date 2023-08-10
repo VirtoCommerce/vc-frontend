@@ -1287,6 +1287,7 @@
     "LoginAlreadyAssociated": "A user with this login already exists",
     "PasswordTooShort": "Your password must be at least {0} characters long",
     "PasswordRequiresDigit": "Passwords must have at least one digit ('0'-'9')",
+    "PasswordMismatch": "Passwords must match",
     "PasswordRequiresLower": "Passwords must have at least one lowercase ('a'-'z')",
     "PasswordRequiresNonAlphanumeric": "Passwords must have at least one non alphanumeric character",
     "PasswordRequiresUpper": "Passwords must have at least one uppercase ('A'-'Z')",
