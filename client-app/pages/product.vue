@@ -8,9 +8,15 @@
 
       <h1 class="text-2xl font-bold uppercase md:text-4xl">{{ product.name }}</h1>
 
-      <div v-if="!product.hasVariations && !isMobile" class="mt-1 text-sm">
-        {{ $t("pages.product.sku_label") }} <span class="font-extrabold">{{ product.code }}</span>
-      </div>
+      <VcCopyText
+        v-if="!product.hasVariations"
+        class="mt-1 text-sm"
+        :text="product.code"
+        :notification="$t('pages.product.sku_copied_message')"
+      >
+        {{ $t("pages.product.sku_label") }}
+        <span class="font-extrabold">{{ product.code }}</span>
+      </VcCopyText>
 
       <template v-for="item in template.content">
         <component
