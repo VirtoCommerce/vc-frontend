@@ -49,14 +49,14 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
     loading.value = true;
 
     try {
-      const setups = { itemsPerPage: 9999, sort: `name:${SortDirection.Ascending}` };
+      const searchParams = { itemsPerPage: 9999, sort: `name:${SortDirection.Ascending}` };
 
-      lists.value = (await getWishlists(setups)).items || [];
+      lists.value = (await getWishlists(searchParams)).items || [];
 
       if (!lists.value.length) {
         // create default list
         await createWishlist(DEFAULT_WISHLIST_NAME);
-        lists.value = (await getWishlists(setups)).items || [];
+        lists.value = (await getWishlists(searchParams)).items || [];
       }
     } catch (e) {
       Logger.error(`${useWishlists.name}.${fetchWishlists.name}`, e);
