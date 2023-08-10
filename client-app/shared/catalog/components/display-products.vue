@@ -70,6 +70,7 @@ const columns = {
   md: 3,
   xl: 4,
 };
+
 const cssColumns = computed(() =>
   Object.entries(columns)
     .map(([key, value]) => {
@@ -78,31 +79,50 @@ const cssColumns = computed(() =>
     })
     .join(" "),
 );
+
 const lazyCardsCount = computed(() => {
   if (props.viewMode === "grid") {
-    const rowCount = 2;
-    if (breakpoints.isSmaller("xs")) {
-      return columns.null;
-    } else if (breakpoints.isInBetween("xs", "md")) {
-      return columns.xs * rowCount;
-    } else if (breakpoints.isInBetween("md", "xl")) {
-      return columns.md * rowCount;
-    } else if (breakpoints.isGreaterOrEqual("xl")) {
-      return columns.xl * rowCount;
-    }
-  } else if (props.viewMode == "list") {
-    if (breakpoints.isSmaller("xs")) {
-      return 2;
-    } else if (breakpoints.isInBetween("xs", "sm")) {
-      return 4;
-    } else if (breakpoints.isInBetween("sm", "lg")) {
-      return 6;
-    } else if (breakpoints.isInBetween("lg", "2xl")) {
-      return 4;
-    } else if (breakpoints.isGreaterOrEqual("2xl")) {
-      return 5;
-    }
+    return getGridLazyCardsCount();
+  }
+  if (props.viewMode == "list") {
+    return getListLazyCardsCount();
   }
   return 0;
 });
+
+function getGridLazyCardsCount() {
+  const rowCount = 2;
+  if (breakpoints.isSmaller("xs")) {
+    return columns.null;
+  }
+  if (breakpoints.isInBetween("xs", "md")) {
+    return columns.xs * rowCount;
+  }
+  if (breakpoints.isInBetween("md", "xl")) {
+    return columns.md * rowCount;
+  }
+  if (breakpoints.isGreaterOrEqual("xl")) {
+    return columns.xl * rowCount;
+  }
+  return 0;
+}
+
+function getListLazyCardsCount() {
+  if (breakpoints.isSmaller("xs")) {
+    return 2;
+  }
+  if (breakpoints.isInBetween("xs", "sm")) {
+    return 4;
+  }
+  if (breakpoints.isInBetween("sm", "lg")) {
+    return 6;
+  }
+  if (breakpoints.isInBetween("lg", "2xl")) {
+    return 4;
+  }
+  if (breakpoints.isGreaterOrEqual("2xl")) {
+    return 5;
+  }
+  return 0;
+}
 </script>
