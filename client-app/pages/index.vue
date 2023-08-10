@@ -125,8 +125,8 @@ onMounted(async () => {
 
 <style scoped>
 .main {
-  background-image: url(/static/images/home/bevel-top.png), url(/static/images/home/bevel-bottom.png),
-    url(/static/images/home/hexa-left.png), url(/static/images/home/hexa-right.png);
+  background-image: url(/static/images/home/bevel-top.webp), url(/static/images/home/bevel-bottom.webp),
+    url(/static/images/home/hexa-left.webp), url(/static/images/home/hexa-right.webp);
   background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
   background-size: 100%, 100%, auto, auto;
   background-position:
