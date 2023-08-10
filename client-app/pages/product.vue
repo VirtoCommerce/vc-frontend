@@ -73,7 +73,6 @@ import { CarouselProductCard, useProduct, useRelatedProducts, useCategory } from
 import { BackButtonInHeader } from "@/shared/layout";
 import { useTemplate } from "@/shared/static-content";
 import type { Breadcrumb } from "@/core/api/graphql/types";
-import VcCopyText from "@/ui-kit/components/molecules/copy-text/vc-copy-text.vue";
 
 const props = withDefaults(defineProps<IProps>(), {
   productId: "",

@@ -1,9 +1,10 @@
 <template>
-  <div class="flex items-center">
+  <div class="vc-copy-text">
     <slot />
     <VcButton
       v-if="isSupported"
-      :class="{ 'ml-1.5': $slots.default }"
+      class="vc-copy-text__button"
+      :class="{ 'vc-copy-text__button--space': $slots.default }"
       size="xs"
       variant="outline"
       icon="document-duplicate"
@@ -35,3 +36,15 @@ const copyText = async () => {
   });
 };
 </script>
+
+<style scoped lang="scss">
+.vc-copy-text {
+  @apply flex items-center;
+
+  &__button {
+    &--space {
+      @apply ml-1.5;
+    }
+  }
+}
+</style>
