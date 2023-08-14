@@ -2,7 +2,7 @@
   <img
     :src="preparedSrc"
     :alt="alt"
-    :loading="lazy ? 'lazy' : null"
+    :loading="lazy ? 'lazy' : 'eager'"
     :data-src="fallbackEnabled ? src : null"
     :data-size-suffix="fallbackEnabled || originalEnabled ? sizeSuffix : null"
     :class="{ 'object-scale-down object-center': preparedSrc === fallbackSrc }"
@@ -12,37 +12,26 @@
 
 <script setup lang="ts">
 import { computed, inject, ref, watch } from "vue";
+import { NO_IMAGE_URL } from "@/core/constants";
 import { configInjectionKey } from "@/core/injection-keys";
 import { appendSuffixToFilename } from "@/core/utilities";
-import type { PropType } from "vue";
 
-const props = defineProps({
-  lazy: Boolean,
-
-  src: {
-    type: String,
-    default: "",
-  },
-
-  alt: {
-    type: String,
-    default: null,
-  },
-
-  fallbackSrc: {
-    type: String,
-    default: "/static/images/common/no-image.svg",
-  },
-
+export interface IProps {
+  lazy?: boolean;
+  src?: string;
+  alt?: string;
+  fallbackSrc?: string;
   /**
    * First you need to generate thumbnails in admin panel, section "Thumbnails" (vc-module-image-tools).
    * You can also set suffixes there.
    * @see https://github.com/VirtoCommerce/vc-module-image-tools
    */
-  sizeSuffix: {
-    type: String as PropType<"sm" | "md" | "lg">,
-    validator: (value: string) => ["sm", "md", "lg"].includes(value),
-  },
+  sizeSuffix?: "sm" | "md" | "lg";
+}
+
+const props = withDefaults(defineProps<IProps>(), {
+  src: "",
+  fallbackSrc: NO_IMAGE_URL,
 });
 
 const cfg = inject(configInjectionKey);

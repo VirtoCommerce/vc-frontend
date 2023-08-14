@@ -244,11 +244,6 @@
               :view-mode="savedViewMode"
               :items-per-page="itemsPerPage"
               :products="products"
-              :class="
-                savedViewMode === 'list'
-                  ? '-mx-5 divide-y lg:divide-y-0 lg:mx-0 lg:space-y-3.5'
-                  : 'grid gap-6 xs:grid-cols-2 md:grid-cols-3 lg:gap-5 xl:grid-cols-4'
-              "
               open-product-in-new-tab
               @item-link-click="sendGASelectItemEvent"
             >
@@ -300,7 +295,6 @@
 
 <script setup lang="ts">
 import {
-  breakpointsTailwind,
   computedEager,
   useBreakpoints,
   useElementBounding,
@@ -318,7 +312,7 @@ import {
   useRouteQueryParam,
   useThemeContext,
 } from "@/core/composables";
-import { DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
+import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import {
@@ -353,7 +347,7 @@ const { catalogId, currencyCode } = globals;
 
 const { themeContext } = useThemeContext();
 const { openPopup } = usePopup();
-const breakpoints = useBreakpoints(breakpointsTailwind);
+const breakpoints = useBreakpoints(BREAKPOINTS);
 const ga = useGoogleAnalytics();
 const {
   fetchProducts,

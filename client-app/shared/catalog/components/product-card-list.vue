@@ -14,7 +14,7 @@
           :alt="product.name"
           size-suffix="md"
           class="h-full w-full rounded object-cover object-center"
-          lazy
+          :lazy="lazy"
         />
         <DiscountBadge :price="product.price!" size="sm" />
       </router-link>
@@ -167,6 +167,7 @@ const props = defineProps<IProps>();
 
 interface IProps {
   product: Product;
+  lazy: boolean;
   openInNewTab?: boolean;
 }
 

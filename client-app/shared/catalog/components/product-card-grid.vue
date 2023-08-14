@@ -7,7 +7,7 @@
       <div class="absolute top-0 h-full w-full rounded">
         <template v-if="$cfg.image_carousel_in_product_card_enabled && product.images?.length">
           <Swiper
-            :modules="[Pagination, Navigation, Lazy]"
+            :modules="[Pagination, Navigation]"
             :navigation="{
               nextEl: '.carousel-button-next',
               prevEl: '.carousel-button-prev',
@@ -15,7 +15,6 @@
             }"
             class="h-full w-full"
             rewind
-            lazy
             @swiper="swiperInstance = $event"
             @slide-change="slideChanged"
           >
@@ -26,7 +25,7 @@
                 size-suffix="md"
                 :class="{ 'cursor-pointer': swiperInstance?.allowSlideNext }"
                 class="h-full w-full select-none rounded object-cover object-center"
-                lazy
+                :lazy="lazy || index > 0"
                 @click="swiperInstance?.slideNext()"
               />
             </SwiperSlide>
@@ -81,7 +80,7 @@
           :alt="product.name"
           size-suffix="md"
           class="h-full w-full rounded object-cover object-center"
-          lazy
+          :lazy="lazy"
         />
       </div>
 
@@ -210,7 +209,7 @@
 </template>
 
 <script setup lang="ts">
-import { Pagination, Navigation, Lazy } from "swiper";
+import { Pagination, Navigation } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, ref } from "vue";
 import { ProductType, PropertyType } from "@/core/enums";
@@ -229,6 +228,7 @@ const props = defineProps<IProps>();
 
 interface IProps {
   product: Product;
+  lazy: boolean;
   openInNewTab?: boolean;
 }
 
