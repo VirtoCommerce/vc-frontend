@@ -5,8 +5,8 @@
       <div v-if="model.subtitle" class="text-center text-base">{{ model.subtitle }}</div>
       <Swiper :slides-per-view="1" class="w-full" :modules="modules" :navigation="navigationOptions">
         <SwiperSlide v-for="(item, index) in model.slides" :key="index" class="text-center">
-          <div>
-            <VcImage :src="item.image" class="place-items-center" :lazy="index > 0" />
+          <div class="image-container">
+            <VcImage :src="item.image" class="slider__image" :lazy="index > 0" />
             <div v-if="item.title" class="mb-3 font-roboto-condensed text-2xl font-bold uppercase">
               {{ item.title }}
             </div>
@@ -28,9 +28,11 @@
 </template>
 
 <script setup lang="ts">
+import { useBreakpoints } from "@vueuse/core/index";
 import { Navigation } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/vue"; // eslint-disable-line import/no-unresolved
 import { computed, getCurrentInstance } from "vue";
+import { BREAKPOINTS } from "@/core/constants";
 
 const props = defineProps<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,6 +40,14 @@ const props = defineProps<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   settings: Record<string, any>;
 }>();
+const breakpoints = useBreakpoints(BREAKPOINTS);
+
+/* CLS fix */
+const imageHeights = { xs: 250, sm: 250, md: 400, lg: 400, xl: 450, "2xl": 450 };
+const imageHeight = computed(() => {
+  const currentBreakpoint = (breakpoints.current().value.at(-1) || "xs") as keyof typeof imageHeights;
+  return imageHeights[currentBreakpoint] + "px";
+});
 
 const componentId = `vc-slider_${getCurrentInstance()!.uid}`;
 
@@ -92,5 +102,16 @@ const wrapperClasses = computed(() => {
       @apply hidden;
     }
   }
+}
+
+.slider__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left;
+}
+
+.image-container {
+  height: v-bind(imageHeight);
 }
 </style>
