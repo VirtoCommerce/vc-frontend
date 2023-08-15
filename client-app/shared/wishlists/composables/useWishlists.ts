@@ -146,14 +146,14 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
     loading.value = false;
   }
 
-  async function updateWishlistItemsQuantities(payload: InputUpdateWishlistItemsType): Promise<void> {
+  async function updateItemsInWishlist(payload: InputUpdateWishlistItemsType): Promise<void> {
     loading.value = true;
 
     try {
       await updateWishListItems(payload);
       await fetchWishList(payload.listId);
     } catch (e) {
-      Logger.error(`${useWishlists.name}.${updateWishlistItemsQuantities.name}`, e);
+      Logger.error(`${useWishlists.name}.${updateItemsInWishlist.name}`, e);
     } finally {
       loading.value = false;
     }
@@ -170,9 +170,9 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
     renameWishlist,
     removeWishlist,
     addItemsToWishlists,
+    updateItemsInWishlist,
     removeItemsFromWishlists,
     clearList,
-    updateWishlistItemsQuantities,
     loading: readonly(loading),
     lists: computed(() => lists.value),
     list: computed(() => list.value),
