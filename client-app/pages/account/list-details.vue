@@ -147,6 +147,7 @@ import {
   WishlistLineItems,
   WishlistProductItemSkeleton,
 } from "@/shared/wishlists";
+import { VcConfirmationDialog } from "@/ui-kit/components";
 import type {
   InputNewBulkItemType,
   InputUpdateWishlistItemsType,
@@ -238,7 +239,7 @@ async function updateItems() {
 async function openSaveChangesModal(): Promise<boolean> {
   return new Promise<boolean>((resolve) => {
     const closeDialog = openPopup({
-      component: "VcConfirmationDialog",
+      component: VcConfirmationDialog,
       props: {
         variant: "info",
         noIcon: true,
