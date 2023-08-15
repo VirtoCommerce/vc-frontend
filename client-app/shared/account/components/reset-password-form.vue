@@ -32,7 +32,7 @@
       <VcAlert
         v-for="error in commonErrors"
         :key="error"
-        class="mb-4 text-xs"
+        class="my-5 text-xs"
         color="danger"
         size="sm"
         variant="solid-light"
