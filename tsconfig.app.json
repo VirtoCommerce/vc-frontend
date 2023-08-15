@@ -8,7 +8,7 @@
     "resolvePackageJsonExports": false,
     "paths": {
       "@/*": ["client-app/*"]
-    }
-  },
-  "types": ["@types/gtag.js"]
+    },
+    "types": ["@types/gtag.js"]
+  }
 }
