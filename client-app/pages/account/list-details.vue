@@ -245,9 +245,9 @@ function openSaveChangesModal(): Promise<boolean> {
         noIcon: true,
         title: t("pages.account.list_details.save_changes"),
         text: t("pages.account.list_details.save_changes_message"),
-        onConfirm: async () => {
-          await updateItems();
+        onConfirm: () => {
           closeDialog();
+          updateItems();
           resolve(true);
         },
         onClose: () => {
