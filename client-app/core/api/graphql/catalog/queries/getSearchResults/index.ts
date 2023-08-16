@@ -127,6 +127,6 @@ export async function getSearchResults(params: GetSearchResultsParamsType): Prom
       categories: {},
       products: {},
     },
-    data
+    data,
   );
 }

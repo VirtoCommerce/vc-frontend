@@ -92,7 +92,7 @@ const schema = toTypedSchema(
   object({
     email: string().required().email(),
     password: string().required(),
-  })
+  }),
 );
 
 const { errors, handleSubmit, values } = useForm({

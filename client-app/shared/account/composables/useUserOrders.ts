@@ -68,12 +68,13 @@ function getFilterExpression(keyword: string, filterData: OrdersFilterData): str
     filterExpression += `${keyword} `;
   }
   if (filterData.statuses.length) {
-    filterExpression += `status:${filterData.statuses.join(",")} `;
+    const statuses = filterData.statuses.map((status) => `"${status}"`);
+    filterExpression += `status:${statuses.join(",")} `;
   }
 
   if (filterData.startDate && filterData.endDate) {
     filterExpression += `createddate:[${dateToIsoDateString(filterData.startDate)} TO ${dateToIsoDateString(
-      filterData.endDate
+      filterData.endDate,
     )}] `;
   } else if (filterData.startDate) {
     filterExpression += `createddate:[${dateToIsoDateString(filterData.startDate)} TO] `;

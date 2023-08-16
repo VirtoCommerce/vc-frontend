@@ -43,6 +43,6 @@ const { loading, cart, shipment, hasValidationErrors, availableShippingMethods }
 const { comment, isValidShipment, onDeliveryAddressChange, setShippingMethod } = useCheckout();
 
 const isDisabledNextStep = computed<boolean>(
-  () => loading.value || hasValidationErrors.value || !isValidShipment.value
+  () => loading.value || hasValidationErrors.value || !isValidShipment.value,
 );
 </script>

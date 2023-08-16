@@ -9,7 +9,7 @@ import {
   updateWishListItems,
   renameWishlist as _renameWishlist,
 } from "@/core/api/graphql/account";
-import { SORT_ASCENDING } from "@/core/constants";
+import { SortDirection } from "@/core/enums";
 import { Logger, asyncForEach } from "@/core/utilities";
 import type {
   InputAddWishlistBulkItemType,
@@ -23,6 +23,8 @@ import type { Ref } from "vue";
 const loading = ref(true);
 const lists = shallowRef<WishlistType[]>([]);
 const list: Ref<WishlistType | undefined> = ref();
+
+const DEFAULT_WISHLIST_NAME = "My wish list";
 
 export default function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: true }) {
   async function createWishlist(name: string): Promise<string | undefined> {
@@ -47,13 +49,14 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
     loading.value = true;
 
     try {
-      const { items = [] } = await getWishlists({ itemsPerPage: 9999, sort: `name:${SORT_ASCENDING}` });
+      const searchParams = { itemsPerPage: 9999, sort: `name:${SortDirection.Ascending}` };
 
-      lists.value = items;
+      lists.value = (await getWishlists(searchParams)).items || [];
 
-      if (!items.length) {
+      if (!lists.value.length) {
         // create default list
-        await createWishlist("My wish list");
+        await createWishlist(DEFAULT_WISHLIST_NAME);
+        lists.value = (await getWishlists(searchParams)).items || [];
       }
     } catch (e) {
       Logger.error(`${useWishlists.name}.${fetchWishlists.name}`, e);

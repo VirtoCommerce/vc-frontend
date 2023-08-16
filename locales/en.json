@@ -158,7 +158,9 @@
       "cart_contains_deleted_products": "Cart contains products, that cannot be purchased any more. Please remove those products and try once again",
       "unhandled_error": "Apologies for the inconvenience. Our server is currently experiencing technical issues. Please try again later.",
       "role_update_successfull": "The customer role has been updated successfully.",
-      "role_update_failed": "Errors occurred during the role updating: {0}"
+      "role_update_failed": "Errors occurred during the role updating: {0}",
+      "passwords_do_not_match": "Password fields values must be equal",
+      "password_new_same_old": "Your current password and new password must be different"
     },
     "placeholders": {
       "enter_value": "Please enter value",
@@ -354,11 +356,7 @@
         "new_pass_label": "New password",
         "new_pass_placeholder": "Create a new password",
         "confirm_new_pass_label": "Confirm new password",
-        "confirm_new_pass_placeholder": "Repeat your new password",
-        "errors": {
-          "passwords_do_not_match": "Passwords do not match",
-          "password_new_same_old": "Your current password and new password must be different"
-        }
+        "confirm_new_pass_placeholder": "Repeat your new password"
       },
       "sign_in_form": {
         "remember_me_label": "Remember me",
@@ -828,7 +826,9 @@
       "text": "Please use your username and password to login to your account.",
       "continue_button": "@:shared.layout.header.link_sign_in",
       "continue_shopping_button": "@:common.buttons.continue_shopping",
-      "link_sent_text": "We sent you a email confirmation link to your email."
+      "email_confirmation_failed_text": "In order to continue you still need to finalize verification process. Please use the button below to request a new link.",
+      "link_sent_successfully_text": "We sent you a email confirmation link to your email.",
+      "link_sent_error_text": "Some problems are occured while sending a comfirmation link. Please try again later."
     },
     "confirm_invitation": {
       "meta": {
@@ -1139,7 +1139,8 @@
       "products_icon": "Product icon"
     },
     "product": {
-      "sku_label": "@:common.labels.sku",
+      "sku_label": "SKU #",
+      "sku_copied_message": "Product SKU successfully copied",
       "variations_total_label": "Total in your cart:",
       "view_cart_button": "View cart",
       "related_product_section_title": "Related products",
@@ -1289,9 +1290,9 @@
     "InvalidToken": "Token is invalid or expired",
     "InvalidUserName": "User name is invalid, can only contain letters or digits",
     "LoginAlreadyAssociated": "A user with this login already exists",
-    "PasswordMismatch": "Passwords must match",
     "PasswordTooShort": "Your password must be at least {0} characters long",
     "PasswordRequiresDigit": "Passwords must have at least one digit ('0'-'9')",
+    "PasswordMismatch": "You entered the wrong current password, please try again or call support",
     "PasswordRequiresLower": "Passwords must have at least one lowercase ('a'-'z')",
     "PasswordRequiresNonAlphanumeric": "Passwords must have at least one non alphanumeric character",
     "PasswordRequiresUpper": "Passwords must have at least one uppercase ('A'-'Z')",

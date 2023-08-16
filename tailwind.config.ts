@@ -1,18 +1,11 @@
-const colors = require("tailwindcss/colors");
+import { BREAKPOINTS } from "./client-app/core/constants/tailwind";
+import type { Config } from "tailwindcss";
 
-/** @type {import("tailwindcss").Config} */
 module.exports = {
   content: ["./index.html", "./client-app/**/*.{vue,js,ts,jsx,tsx}"],
 
   theme: {
-    screens: {
-      xs: "480px",
-      sm: "640px",
-      md: "768px",
-      lg: "1024px",
-      xl: "1280px",
-      "2xl": "1500px",
-    },
+    screens: BREAKPOINTS,
     fontFamily: {
       lato: ["Lato", "sans-serif"],
       roboto: ["Roboto", "sans-serif"],
@@ -164,9 +157,7 @@ module.exports = {
             lineHeight: "0.875rem", //14px
           },
         ],
-        10: [
-          "0.625rem", //10px
-        ],
+        10: "0.625rem", //10px
         11: [
           "0.6875rem", //11px
           {
@@ -230,9 +221,7 @@ module.exports = {
             lineHeight: "1.563rem", //25px
           },
         ],
-        24: [
-          "1.5rem", //24px
-        ],
+        24: "1.5rem", //24px
         25: [
           "1.5625rem", //25px
           {
@@ -283,4 +272,4 @@ module.exports = {
       },
     },
   },
-};
+} satisfies Config;

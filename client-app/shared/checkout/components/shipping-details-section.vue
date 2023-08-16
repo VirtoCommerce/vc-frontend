@@ -80,7 +80,7 @@ const address = computed<CartAddressType | undefined>(() => props.shipment?.deli
 const method = computed<ShippingMethodType | undefined>({
   get: () =>
     props.methods.find(
-      (item) => item.id === props.shipment?.shipmentMethodCode + "_" + props.shipment?.shipmentMethodOption
+      (item) => item.id === props.shipment?.shipmentMethodCode + "_" + props.shipment?.shipmentMethodOption,
     ),
   set: (value?: ShippingMethodType) => value && emit("change:method", value),
 });

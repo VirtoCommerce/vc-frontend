@@ -4,7 +4,7 @@
       $t(
         !address
           ? 'shared.company.add_or_update_address_dialog.create_title'
-          : 'shared.company.add_or_update_address_dialog.edit_title'
+          : 'shared.company.add_or_update_address_dialog.edit_title',
       )
     "
     hide-actions

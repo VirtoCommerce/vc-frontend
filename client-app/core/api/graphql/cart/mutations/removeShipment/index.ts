@@ -19,7 +19,7 @@ export async function removeShipment(shipmentId: string, cartId?: string): Promi
           shipmentId,
         },
       },
-    }
+    },
   );
 
   return data!.removeShipment;

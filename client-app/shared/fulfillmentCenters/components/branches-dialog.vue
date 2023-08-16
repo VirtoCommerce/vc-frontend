@@ -225,7 +225,7 @@ function toggleShowSelectedBranchesMobile(show: boolean) {
 }
 
 const isSaveButtonDisabled = computed(
-  () => JSON.stringify(props.selectedBranches) === JSON.stringify(selectedBranchesIds.value)
+  () => JSON.stringify(props.selectedBranches) === JSON.stringify(selectedBranchesIds.value),
 );
 
 function save() {

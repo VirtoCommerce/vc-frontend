@@ -50,7 +50,7 @@ export default function useOrganizationContactsFilterFacets() {
   const numberOfFacetsApplied = computedEager<number>(() =>
     appliedFacets.value.reduce((result, filterFacet) => {
       return result + filterFacet.values.filter((value) => value.selected).length;
-    }, 0)
+    }, 0),
   );
 
   function applyFacets() {

@@ -1,47 +1,14 @@
 #import "./moneyFields.graphql"
 #import "./currencyFields.graphql"
-#import "./orderLineItemFields.graphql"
+#import "./shortOrderFields.graphql"
 #import "./orderAddressFields.graphql"
 
-fragment orderFields on CustomerOrderType {
-  id
-  number
+fragment fullOrderFields on CustomerOrderType {
+  ...shortOrderFields
   comment
-  createdDate
-  status
   purchaseOrderNumber
-  discounts {
-    amount {
-      amount
-      formattedAmount
-      currency {
-        code
-      }
-    }
-    coupon
-    description
-    promotionId
-  }
-  taxTotal {
-    ...moneyFields
-  }
-  subTotal {
-    ...moneyFields
-  }
-  total {
-    ...moneyFields
-  }
-  discountTotal {
-    ...moneyFields
-  }
-  shippingTotal {
-    ...moneyFields
-  }
   currency {
     ...currencyFields
-  }
-  items {
-    ...orderLineItemFields
   }
   shipments {
     shipmentMethodCode

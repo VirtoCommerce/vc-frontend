@@ -37,7 +37,7 @@ export default defineComponent({
           warn("Component content is empty.");
         }
       },
-      { immediate: true }
+      { immediate: true },
     );
 
     watchEffect(async () => {

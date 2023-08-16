@@ -94,7 +94,7 @@ onClickOutside(
   () => {
     toggleTooltip(false);
   },
-  { ignore: [triggerNode] }
+  { ignore: [triggerNode] },
 );
 
 onUnmounted(() => {

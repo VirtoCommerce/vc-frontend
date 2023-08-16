@@ -277,7 +277,7 @@ const homeMenuItem = computed<ExtendedMenuLinkType>(() =>
         route: "/",
         title: t("shared.layout.header.menu.home"),
         icon: "/static/images/dashboard/icons/dashboard.svg#main",
-      }
+      },
 );
 
 async function signOut() {

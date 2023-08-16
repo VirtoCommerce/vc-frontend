@@ -12,7 +12,7 @@ export default function usePasswordRequirements() {
     try {
       passwordRequirements.value = await innerFetch<PasswordOptionsType>(
         "/storefrontapi/account/passwordrequirements",
-        "GET"
+        "GET",
       );
     } catch (e) {
       Logger.error(`${usePasswordRequirements.name}.${fetchPasswordRequirements.name}`, e);

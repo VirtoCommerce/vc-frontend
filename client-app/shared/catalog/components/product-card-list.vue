@@ -14,7 +14,7 @@
           :alt="product.name"
           size-suffix="md"
           class="h-full w-full rounded object-cover object-center"
-          lazy
+          :lazy="lazy"
         />
         <DiscountBadge :price="product.price!" size="sm" />
       </router-link>
@@ -167,6 +167,7 @@ const props = defineProps<IProps>();
 
 interface IProps {
   product: Product;
+  lazy: boolean;
   openInNewTab?: boolean;
 }
 
@@ -174,7 +175,7 @@ const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, 
 const target = computed<string>(() => getLinkTarget(props.openInNewTab));
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 const properties = computed(() =>
-  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3)
+  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3),
 );
 </script>
 

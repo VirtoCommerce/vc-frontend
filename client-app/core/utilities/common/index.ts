@@ -83,7 +83,7 @@ export function convertToType<To, From = Record<any, any>>(value?: From): To {
 
 export async function asyncForEach<T>(
   array: T[],
-  callbackFn: (value: T, index: number, arr: T[]) => Promise<void>
+  callbackFn: (value: T, index: number, arr: T[]) => Promise<void>,
 ): Promise<void> {
   for (let i = 0, l = array.length; i < l; i++) {
     await callbackFn(array[i], i, array);
