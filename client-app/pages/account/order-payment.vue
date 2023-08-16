@@ -19,7 +19,7 @@
         <span class="font-bold">
           {{ $t("pages.account.order_payment.order_date") }}
         </span>
-        {{ $d(order.createdDate, "short") }}
+        {{ $d(order.createdDate) }}
       </div>
 
       <div class="text-sm">
