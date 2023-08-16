@@ -4,7 +4,7 @@
     <span v-if="isRequired" class="text-[color:var(--color-danger)]">*</span>
   </div>
   <input
-    v-model="value"
+    :value="dateToIsoDateString(props.modelValue)"
     :disabled="isDisabled"
     :name="name"
     class="box-border h-11 w-full min-w-0 appearance-none rounded border border-gray-300 bg-white p-3 text-base leading-none outline-none focus:border-gray-400"
@@ -15,7 +15,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
 import { dateToIsoDateString } from "@/core/utilities";
 
 const emit = defineEmits<{
@@ -33,15 +32,9 @@ interface IProps {
   errorMessage?: string;
 }
 
-const value = ref<string | undefined>();
-
 function change(event: Event): void {
   const newValue: string = (event.target as HTMLInputElement).value;
   const dateValue = newValue ? new Date(Date.parse(newValue)) : undefined;
   emit("update:modelValue", dateValue);
 }
-
-watchEffect(() => {
-  value.value = dateToIsoDateString(props.modelValue);
-});
 </script>
