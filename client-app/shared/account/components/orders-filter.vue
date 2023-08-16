@@ -20,18 +20,10 @@
           {{ $t("shared.account.orders-filter.created-date-label") }}
         </div>
         <div>
-          <VcDateSelector
-            v-model="filterData.startDate"
-            :label="$t('shared.account.orders-filter.start-date-label')"
-            @change="setDateFrom"
-          />
+          <VcDateSelector v-model="filterData.startDate" :label="$t('shared.account.orders-filter.start-date-label')" />
         </div>
         <div>
-          <VcDateSelector
-            v-model="filterData.endDate"
-            :label="$t('shared.account.orders-filter.end-date-label')"
-            @change="setDateTo"
-          />
+          <VcDateSelector v-model="filterData.endDate" :label="$t('shared.account.orders-filter.end-date-label')" />
         </div>
       </div>
     </div>
@@ -64,14 +56,6 @@ interface IEmits {
 }
 
 const emit = defineEmits<IEmits>();
-
-function setDateFrom(date: Date): void {
-  filterData.value.startDate = date;
-}
-
-function setDateTo(date: Date): void {
-  filterData.value.endDate = date;
-}
 
 const config = inject(configInjectionKey);
 
