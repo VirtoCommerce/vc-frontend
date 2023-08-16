@@ -83,7 +83,9 @@
       </div>
     </div>
   </template>
-  <div v-else-if="loading" class="min-h-[80vh]"></div>
+  <div v-else-if="loading" class="min-h-[80vh]">
+    <VcLoaderOverlay />
+  </div>
 </template>
 
 <script setup lang="ts">
