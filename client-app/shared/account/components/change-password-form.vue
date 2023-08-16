@@ -82,13 +82,11 @@ const validationSchema = toTypedSchema(
       .when("oldPassword", {
         is: (value: string) => !!value,
         then: (stringSchema) =>
-          stringSchema
-            .required()
-            .notOneOf([yupRef("oldPassword")], t("shared.account.change_password_form.errors.password_new_same_old")),
+          stringSchema.required().notOneOf([yupRef("oldPassword")], t("common.messages.password_new_same_old")),
       }),
     confirmPassword: string()
       .required()
-      .oneOf([yupRef("newPassword")], t("shared.account.change_password_form.errors.passwords_do_not_match")),
+      .oneOf([yupRef("newPassword")], t("common.messages.passwords_do_not_match")),
   }),
 );
 
