@@ -23,18 +23,10 @@
     <VcCard :title="$t('shared.account.orders-filter.created-date-label')" shadow>
       <div class="flex flex-col space-y-3">
         <div>
-          <VcDateSelector
-            v-model="filterData.startDate"
-            :label="$t('shared.account.orders-filter.start-date-label')"
-            @change="setDateFrom"
-          />
+          <VcDateSelector v-model="filterData.startDate" :label="$t('shared.account.orders-filter.start-date-label')" />
         </div>
         <div>
-          <VcDateSelector
-            v-model="filterData.endDate"
-            :label="$t('shared.account.orders-filter.end-date-label')"
-            @change="setDateTo"
-          />
+          <VcDateSelector v-model="filterData.endDate" :label="$t('shared.account.orders-filter.end-date-label')" />
         </div>
       </div>
     </VcCard>
@@ -55,14 +47,6 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 
 const availableStatuses = config?.orders_statuses || [];
-
-function setDateFrom(date: Date): void {
-  filterData.value.startDate = date;
-}
-
-function setDateTo(date: Date): void {
-  filterData.value.endDate = date;
-}
 
 function isSelectedStatus(status: string) {
   return filterData.value.statuses.indexOf(status) !== -1;
