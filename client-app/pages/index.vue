@@ -83,6 +83,7 @@
       </div>
     </div>
   </template>
+  <div v-else-if="loading" class="min-h-[80vh]"></div>
 </template>
 
 <script setup lang="ts">
