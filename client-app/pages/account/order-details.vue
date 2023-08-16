@@ -58,7 +58,7 @@
           <div class="flex flex-col gap-1.5 text-15">
             <p v-if="order.createdDate">
               <span class="font-extrabold"> {{ $t("common.labels.created") }}: </span>
-              {{ $d(order.createdDate, "long") }}
+              {{ $d(order.createdDate) }}
             </p>
             <p v-if="order.status" class="flex items-center">
               <span class="mr-2 font-extrabold"> {{ $t("common.labels.status") }}: </span>

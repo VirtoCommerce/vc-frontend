@@ -37,7 +37,7 @@
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { inject } from "vue";
 import { configInjectionKey } from "@/core/injection-keys";
-import { useUserOrdersFilter } from "@/shared/account/";
+import { useUserOrdersFilter } from "../composables";
 
 const config = inject(configInjectionKey);
 
