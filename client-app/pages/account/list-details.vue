@@ -132,7 +132,7 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { cloneDeep, isEqual, keyBy } from "lodash";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import { onBeforeRouteLeave } from "vue-router";
+import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { prepareLineItem } from "@/core/utilities";
 import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
@@ -320,9 +320,12 @@ function onUpdatePage(): void {
   window.scroll({ top: 0, behavior: "smooth" });
 }
 
-onBeforeRouteLeave(async () => {
+async function canChangeRoute() {
   return !isDirty.value || (await openSaveChangesModal());
-});
+}
+
+onBeforeRouteLeave(canChangeRoute);
+onBeforeRouteUpdate(canChangeRoute);
 
 watchEffect(async () => {
   clearList();
