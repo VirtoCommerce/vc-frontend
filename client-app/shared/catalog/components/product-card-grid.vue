@@ -224,11 +224,13 @@ import type { RouteLocationRaw } from "vue-router";
 
 defineEmits<{ (eventName: "linkClick", globalEvent: PointerEvent): void }>();
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  lazy: true,
+});
 
 interface IProps {
   product: Product;
-  lazy: boolean;
+  lazy?: boolean;
   openInNewTab?: boolean;
 }
 
