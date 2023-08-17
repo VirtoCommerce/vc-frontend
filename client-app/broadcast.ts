@@ -46,10 +46,16 @@ export function setupBroadcastGlobalListeners() {
     }
   });
   on(unauthorizedErrorEvent, async () => {
+    const route = router.currentRoute.value;
+
+    if (route.name === "OrderDetails") {
+      router.replace({ name: "Orders" });
+      return;
+    }
+
     await fetchUser();
     if (!isPasswordNeedToBeChanged.value) {
       const { hash, pathname, search } = location;
-
       if (pathname !== "/sign-in") {
         location.href = `/sign-in?returnUrl=${pathname + search + hash}`;
       }
