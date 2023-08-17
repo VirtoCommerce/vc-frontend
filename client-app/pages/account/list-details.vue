@@ -236,8 +236,8 @@ async function updateItems() {
   await updateItemsInWishlist(payload);
 }
 
-function openSaveChangesModal(): Promise<boolean> {
-  return new Promise<boolean>((resolve) => {
+async function openSaveChangesModal(): Promise<boolean> {
+  return await new Promise<boolean>((resolve) => {
     const closeDialog = openPopup({
       component: VcConfirmationDialog,
       props: {
@@ -245,9 +245,9 @@ function openSaveChangesModal(): Promise<boolean> {
         noIcon: true,
         title: t("pages.account.list_details.save_changes"),
         text: t("pages.account.list_details.save_changes_message"),
-        onConfirm: () => {
+        onConfirm: async () => {
           closeDialog();
-          updateItems();
+          await updateItems();
           resolve(true);
         },
         onClose: () => {
