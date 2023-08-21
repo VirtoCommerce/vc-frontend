@@ -10,12 +10,17 @@
       <span v-if="title" class="flex grow">
         {{ title }}
       </span>
-      <i
+
+      <button
         v-if="showCloseButton"
-        class="fas fa-times cursor-pointer text-red-400 hover:text-red-700"
+        class="-me-1 flex p-1 text-[--color-danger-400] hover:text-[--color-danger-700]"
+        type="button"
         @click="togglePopover(false)"
-      />
+      >
+        <VcIcon name="x" size="sm" />
+      </button>
     </h3>
+
     <slot name="content" />
   </div>
 </template>

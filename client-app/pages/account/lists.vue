@@ -129,18 +129,18 @@ function openDeleteListModal(list: WishlistType) {
 function itemActionsBuilder() {
   const actions: SlidingActionsItem[] = [
     {
-      icon: "fas fa-trash-alt",
+      icon: "trash",
       title: t("common.buttons.delete"),
       left: true,
-      classes: "bg-[color:var(--color-danger)]",
+      classes: "bg-[--color-danger-500]",
       clickHandler(list: WishlistType) {
         openDeleteListModal(list);
       },
     },
     {
-      icon: "fas fa-cog",
+      icon: "cog",
       title: t("common.buttons.settings"),
-      classes: "bg-gray-550",
+      classes: "bg-[--color-neutral-500]",
       clickHandler(list: WishlistType) {
         openListSettingsModal(list);
       },

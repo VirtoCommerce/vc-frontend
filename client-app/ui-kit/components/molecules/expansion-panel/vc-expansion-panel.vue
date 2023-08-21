@@ -10,7 +10,7 @@
     <template #header>
       <slot name="header" v-bind="{ isExpanded, toggle }">
         <slot name="header-content" v-bind="{ isExpanded }">
-          <span class="grow text-15 font-bold">
+          <span class="grow text-sm font-bold">
             {{ title }}
           </span>
         </slot>
@@ -21,10 +21,7 @@
             class="-my-2 -mr-3 ml-2 appearance-none px-3 py-2 before:absolute before:inset-0"
             @click="toggle"
           >
-            <i
-              class="fas text-base text-[color:var(--color-primary)]"
-              :class="isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'"
-            />
+            <VcIcon :name="isExpanded ? 'chevron-up' : 'chevron-down'" size="sm" class="text-[--color-primary-500]" />
           </button>
         </slot>
       </slot>

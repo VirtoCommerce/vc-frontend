@@ -21,7 +21,7 @@
 
     <!-- Other actions -->
     <template v-if="actions.length > 2">
-      <ActionButton icon="fas fa-ellipsis-h" @click.stop="isActionsPopupVisible = true">
+      <ActionButton icon="dots-horizontal" @click.stop="isActionsPopupVisible = true">
         {{ $t("common.buttons.more") }}
       </ActionButton>
 

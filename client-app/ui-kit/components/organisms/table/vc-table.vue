@@ -41,14 +41,14 @@
                 : null
             "
           >
-            {{ column.title }}
-            <template v-if="column.sortable && sort">
-              <i
-                v-if="sort.column === column.id && sort.direction === SORT_DESCENDING"
-                class="fas fa-caret-down ml-2"
-              ></i>
-              <i v-if="sort.column === column.id && sort.direction === SORT_ASCENDING" class="fas fa-caret-up ml-2"></i>
-            </template>
+            <div class="flex items-center gap-2">
+              {{ column.title }}
+
+              <template v-if="column.sortable && sort && sort.column === column.id">
+                <VcIcon v-if="sort.direction === SORT_DESCENDING" name="chevron-up" size="xxs" />
+                <VcIcon v-else-if="sort.direction === SORT_ASCENDING" name="chevron-down" size="xxs" />
+              </template>
+            </div>
           </th>
         </tr>
       </thead>

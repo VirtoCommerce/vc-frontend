@@ -13,7 +13,7 @@
             @click="$emit('close')"
             @keyup.esc="$emit('close')"
           >
-            <i class="fas fa-times-circle" />
+            <VcIcon name="x-circle" />
           </button>
         </div>
 
@@ -25,7 +25,8 @@
             class="vc-actions-popup-button"
             @click="$emit('select', action)"
           >
-            <i :class="['vc-actions-popup-button__icon', action.icon]" />
+            <VcIcon class="vc-actions-popup-button__icon" :name="action.icon" />
+
             <span class="vc-actions-popup-button__text">
               {{ action.title }}
             </span>
@@ -81,11 +82,11 @@ defineProps({
     @apply flex grow flex-col items-center min-w-[80px] max-w-[80px] py-3 text-[#319ed4] select-none;
 
     &__icon {
-      @apply text-xl leading-none mb-2;
+      @apply mb-2;
     }
 
     &__text {
-      @apply block font-roboto text-sm text-center leading-none;
+      @apply block text-sm text-center leading-none;
     }
   }
 }
