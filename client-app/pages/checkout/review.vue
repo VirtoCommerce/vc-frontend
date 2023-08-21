@@ -135,6 +135,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
+import { useGoogleAnalytics } from "@/core/composables";
 import { OrderLineItems } from "@/shared/account";
 import { useCart, useCoupon } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
@@ -176,12 +177,15 @@ const billingAddress = computed<CartAddressType | undefined>(() =>
     : payment.value?.billingAddress,
 );
 
+const ga = useGoogleAnalytics();
+
 async function createOrder(): Promise<void> {
   creatingOrder.value = true;
 
   const order = await createOrderFromCart();
 
   if (order) {
+    ga.placeOrder(order);
     await router.replace({ name: canPayNow.value ? "CheckoutPayment" : "CheckoutCompleted" });
   }
 

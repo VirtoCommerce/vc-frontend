@@ -13,6 +13,7 @@ import type {
   VariationType,
 } from "@/core/api/graphql/types";
 
+type CustomEventNamesType = "place_order";
 type EventParamsType = Gtag.ControlParams & Gtag.EventParams & Gtag.CustomParams;
 type EventParamsExtendedType = EventParamsType & { item_list_id?: string; item_list_name?: string };
 
@@ -73,7 +74,7 @@ function getCartEventParams(cart: CartType): EventParamsType {
   };
 }
 
-function sendEvent(eventName: Gtag.EventNames | string, eventParams?: EventParamsType): void {
+function sendEvent(eventName: Gtag.EventNames | CustomEventNamesType, eventParams?: EventParamsType): void {
   if (isAvailableGtag) {
     window.gtag("event", eventName, eventParams);
   } else {
@@ -209,6 +210,17 @@ function purchase(order: CustomerOrderType, transactionId?: string, params?: Eve
   });
 }
 
+function placeOrder(order: CustomerOrderType): void {
+  sendEvent("place_order", {
+    currency: order.currency?.code,
+    value: order.total!.amount,
+    coupon: order.coupons?.[0],
+    shipping: order.shippingTotal?.amount,
+    tax: order.taxTotal?.amount,
+    items: order.items!.map(lineItemToGtagItem),
+  });
+}
+
 export function useGoogleAnalytics() {
   return {
     isAvailableGtag,
@@ -225,5 +237,6 @@ export function useGoogleAnalytics() {
     addShippingInfo,
     addPaymentInfo,
     purchase,
+    placeOrder,
   };
 }
