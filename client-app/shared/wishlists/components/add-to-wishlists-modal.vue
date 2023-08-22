@@ -205,7 +205,7 @@ async function addToWishlistsFromListOther() {
   await addItemsToWishlists({
     listIds: selectedListsOtherIds.value,
     productId: product.value.id,
-    quantity: 1,
+    quantity: product.value.minQuantity || 1,
   });
 
   /**

@@ -41,7 +41,7 @@
             <div class="flex text-base">
               <span class="mr-2 font-bold">{{ $t("pages.account.quote_details.created") }}:</span>
 
-              <span>{{ $d(quote.createdDate, "long") }}</span>
+              <span>{{ $d(quote.createdDate) }}</span>
             </div>
 
             <div class="flex text-base">
@@ -74,12 +74,11 @@ import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { QuoteLineItems, useUserQuote } from "@/shared/account";
 
-const props = defineProps({
-  quoteId: {
-    type: String,
-    required: true,
-  },
-});
+interface IProps {
+  quoteId: string;
+}
+
+const props = defineProps<IProps>();
 
 const { t } = useI18n();
 const { quote, billingAddress, shippingAddress, clearQuote, fetchQuote } = useUserQuote();

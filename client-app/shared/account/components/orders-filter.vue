@@ -20,16 +20,10 @@
           {{ $t("shared.account.orders-filter.created-date-label") }}
         </div>
         <div>
-          <VcDateSelector
-            v-model="filterData.startDate"
-            :label="$t('shared.account.orders-filter.start-date-label')"
-          ></VcDateSelector>
+          <VcDateSelector v-model="filterData.startDate" :label="$t('shared.account.orders-filter.start-date-label')" />
         </div>
         <div>
-          <VcDateSelector
-            v-model="filterData.endDate"
-            :label="$t('shared.account.orders-filter.end-date-label')"
-          ></VcDateSelector>
+          <VcDateSelector v-model="filterData.endDate" :label="$t('shared.account.orders-filter.end-date-label')" />
         </div>
       </div>
     </div>
@@ -53,19 +47,19 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { inject } from "vue";
 import { configInjectionKey } from "@/core/injection-keys";
-import { useUserOrdersFilter } from "@/shared/account/";
+import { useUserOrdersFilter } from "../composables";
 
-const emit = defineEmits(["change"]);
+interface IEmits {
+  (event: "change"): void;
+}
+
+const emit = defineEmits<IEmits>();
 
 const config = inject(configInjectionKey);
 
 const { filterData, applyFilters, resetFilters, isFilterEmpty, isFilterDirty } = useUserOrdersFilter();
-
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("lg");
 
 const availableStatuses = config?.orders_statuses || [];
 

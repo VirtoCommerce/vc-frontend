@@ -111,9 +111,10 @@
       "active_address": "Active address",
       "addresses_icon": "Address icon",
       "digital_product": "Digital product",
-      "save_changes": "Save Changes",
       "search": "Search {0}",
-      "in_stock": "In stock"
+      "in_stock": "In stock",
+      "starts_from": "Start: {0}",
+      "ends_to": "End: {0}"
     },
     "prefixes": {
       "please": "Please"
@@ -151,7 +152,7 @@
       "no_addresses": "You do not have any addresses yet",
       "confirm_delete_address": "Are you sure you want to delete this address?",
       "no_results": "No results found",
-      "save_new_product_quantity": "Do you want to save new quantity by product lines?",
+      "save_changes": "Would you like to save changes",
       "address_deletion_successful": "Address has been successfully deleted",
       "cart_contains_deleted_products": "Cart contains products, that cannot be purchased any more. Please remove those products and try once again",
       "unhandled_error": "Apologies for the inconvenience. Our server is currently experiencing technical issues. Please try again later.",
@@ -213,7 +214,8 @@
       "addresses": "Addresses",
       "delete_address": "Delete address",
       "remove_products": "Remove products",
-      "change_role": "Change role"
+      "change_role": "Change role",
+      "save_changes": "Save Changes"
     },
     "roles": {
       "org-maintainer": "Organization maintainer",
@@ -967,7 +969,9 @@
       "list_details": {
         "meta": {
           "title": "List: {0}"
-        }
+        },
+        "save_changes": "@:common.titles.save_changes",
+        "save_changes_message": "@:common.messages.save_changes in the list?"
       },
       "profile": {
         "meta": {

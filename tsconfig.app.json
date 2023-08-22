@@ -1,6 +1,7 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["client-app/**/*.ts", "client-app/**/*.vue"],
+  "include": ["client-app/**/*.ts", "client-app/**/*.vue", "locales/*.json"],
   "exclude": ["artifacts", "assets", "content", "**/*.spec.ts", "**/*.stories.ts", "**/*.js"],
   "compilerOptions": {
     "composite": true,
@@ -8,7 +9,7 @@
     "resolvePackageJsonExports": false,
     "paths": {
       "@/*": ["client-app/*"]
-    }
-  },
-  "types": ["@types/gtag.js"]
+    },
+    "types": ["@types/gtag.js"]
+  }
 }

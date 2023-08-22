@@ -15,11 +15,11 @@
 
       <div class="hidden shrink-0 space-x-3 lg:block">
         <VcButton
-          :disabled="loading || !canSaveChanges || !list"
+          :disabled="loading || !isDirty || !list"
           size="sm"
           variant="outline"
           prepend-icon="save-v2"
-          @click="saveChanges"
+          @click="openSaveChangesModal"
         >
           {{ $t("common.buttons.save_changes") }}
         </VcButton>
@@ -113,12 +113,12 @@
         </VcButton>
 
         <VcButton
-          :disabled="loading || !canSaveChanges || !list"
+          :disabled="loading || !isDirty || !list"
           class="flex-1"
           size="sm"
           variant="outline"
           prepend-icon="save-v2"
-          @click="saveChanges"
+          @click="openSaveChangesModal"
         >
           {{ $t("common.buttons.save_changes") }}
         </VcButton>
@@ -132,6 +132,7 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { cloneDeep, isEqual, keyBy } from "lodash";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
+import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { prepareLineItem } from "@/core/utilities";
 import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
@@ -146,6 +147,7 @@ import {
   WishlistLineItems,
   WishlistProductItemSkeleton,
 } from "@/shared/wishlists";
+import { VcConfirmationDialog } from "@/ui-kit/components";
 import type {
   InputNewBulkItemType,
   InputUpdateWishlistItemsType,
@@ -165,7 +167,7 @@ const { t } = useI18n();
 const ga = useGoogleAnalytics();
 const broadcast = useBroadcast();
 const { openPopup } = usePopup();
-const { loading: listLoading, list, fetchWishList, clearList, updateWishlistItemsQuantities } = useWishlists();
+const { loading: listLoading, list, fetchWishList, clearList, updateItemsInWishlist } = useWishlists();
 const { loading: cartLoading, cart, addBulkItemsToCart, addToCart, changeItemQuantity } = useCart();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
@@ -187,7 +189,7 @@ const pagedListItems = computed<PreparedLineItemType[]>(() =>
   preparedLineItems.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
 const actualPageRowsCount = computed<number>(() => pagedListItems.value.length || itemsPerPage.value);
-const canSaveChanges = computed<boolean>(() => !isEqual(list.value?.items, wishlistItems.value));
+const isDirty = computed<boolean>(() => !isEqual(list.value?.items, wishlistItems.value));
 
 const isMobile = breakpoints.smaller("lg");
 
@@ -223,7 +225,7 @@ async function addAllListItemsToCart(): Promise<void> {
   });
 }
 
-async function saveChanges(): Promise<void> {
+async function updateItems() {
   const payload: InputUpdateWishlistItemsType = {
     listId: list.value!.id!,
     items: wishlistItems.value!.map<InputUpdateWishlistLineItemType>((item) => ({
@@ -231,23 +233,29 @@ async function saveChanges(): Promise<void> {
       quantity: item.quantity!,
     })),
   };
+  await updateItemsInWishlist(payload);
+}
 
-  const closeDialog = openPopup({
-    component: "VcConfirmationDialog",
-    props: {
-      variant: "info",
-      noIcon: true,
-      title: t("common.labels.save_changes"),
-      text: t("common.messages.save_new_product_quantity"),
-      onConfirm: async () => {
-        closeDialog();
-
-        await updateWishlistItemsQuantities(payload);
+async function openSaveChangesModal(): Promise<boolean> {
+  return await new Promise<boolean>((resolve) => {
+    const closeDialog = openPopup({
+      component: VcConfirmationDialog,
+      props: {
+        variant: "info",
+        noIcon: true,
+        title: t("pages.account.list_details.save_changes"),
+        text: t("pages.account.list_details.save_changes_message"),
+        onConfirm: async () => {
+          closeDialog();
+          await updateItems();
+          resolve(true);
+        },
+        onClose: () => {
+          wishlistItems.value = cloneDeep(list.value!.items!);
+          resolve(false);
+        },
       },
-      onClose: () => {
-        wishlistItems.value = cloneDeep(list.value!.items!);
-      },
-    },
+    });
   });
 }
 
@@ -311,6 +319,13 @@ function openDeleteProductModal(item: PreparedLineItemType): void {
 function onUpdatePage(): void {
   window.scroll({ top: 0, behavior: "smooth" });
 }
+
+async function canChangeRoute() {
+  return !isDirty.value || (await openSaveChangesModal());
+}
+
+onBeforeRouteLeave(canChangeRoute);
+onBeforeRouteUpdate(canChangeRoute);
 
 watchEffect(async () => {
   clearList();

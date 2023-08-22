@@ -11,7 +11,7 @@ export function getPropertyValue(property: Property): string {
       return property.value ? t("common.labels.true_property") : t("common.labels.false_property");
 
     case PropertyValueType.DateTime:
-      return d(new Date(property.value), "long");
+      return d(new Date(property.value));
 
     default:
       return String(property.value);
