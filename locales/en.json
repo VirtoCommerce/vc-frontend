@@ -128,9 +128,9 @@
       "loading_text": "Loading...",
       "product_out_of_stock": "Out of stock",
       "required_field": "This field is required",
-      "email_is_not_correct": "Please enter valid email address, e.g. johndoe{'@'}gmail.com",
+      "email_is_not_correct": "Please enter a valid email address, e.g. johndoe{'@'}gmail.com",
       "email_not_unique": "This email is already registered with us",
-      "max_length": "This field must not contain over {max} characters",
+      "max_length": "This field must not contain more than {max} characters",
       "creating_order_error": "Error when creating an order",
       "creating_quote_error": "Error when creating an quote",
       "item_can_t_be_purchased": "This item cannot be purchased",
@@ -138,14 +138,14 @@
       "invalid_value": "Invalid value",
       "invalid_user_id_or_token": "User ID or token is invalid.",
       "product_no_longer_available": "No longer available",
-      "item_quantity_required_field": "Item quantity value cannot be null",
-      "max_value": "Maximum value is {value}",
-      "min_value": "Minimum value is {value}",
+      "item_quantity_required_field": "Item quantity value cannot be empty",
+      "max_value": "The maximum value is {value}",
+      "min_value": "The minimum value is {value}",
       "empty_wish_list": "There are no items in the list",
       "not_defined": "Undefined",
-      "invalid_coupon": "This code does not match any active coupons. Please check whether everything is correct and try again.",
-      "fill_all_required": "Please fill in all required information to proceed.",
-      "something_went_wrong": "Whoops! Something went wrong. Please check whether everything is correct and try again.",
+      "invalid_coupon": "This code does not match any active coupons. Please double-check that everything is correct and try again.",
+      "fill_all_required": "Please complete all required information to proceed.",
+      "something_went_wrong": "Oops! Something went wrong. Please double-check that everything is correct and try again.",
       "checkout_pricing_warning": "Availability, shipping, tax and promotions are not final until you complete your order.",
       "quote_request": "You can request items in your cart through a special service",
       "wishlists_available_for_authorized": "Wishlists are available only for authenticated users",
@@ -158,25 +158,25 @@
       "unhandled_error": "Apologies for the inconvenience. Our server is currently experiencing technical issues. Please try again later.",
       "role_update_successfull": "The customer role has been updated successfully.",
       "role_update_failed": "Errors occurred during the role updating: {0}",
-      "passwords_do_not_match": "Password fields values must be equal",
-      "password_new_same_old": "Your current password and new password must be different"
+      "passwords_do_not_match": "The password fields must have matching values.",
+      "password_new_same_old": "Your current password and new password must be different."
     },
     "placeholders": {
-      "enter_value": "Please enter value",
+      "enter_value": "Please enter a value",
       "not_selected": "Not selected",
-      "select_address": "Select address",
+      "select_address": "Select an address",
       "select_country": "Select your country",
       "select_region": "Select your state or province",
-      "select_delivery_method": "Select delivery method",
-      "select_payment_method": "Select payment method",
+      "select_delivery_method": "Select a delivery method",
+      "select_payment_method": "Select a payment method",
       "company_name": "Enter your company name",
       "first_name": "Enter your first name",
       "last_name": "Enter your last name",
       "email": "Enter your email address",
       "password": "Enter your password",
       "confirm_password": "Confirm your password",
-      "purchase_order_number": "Enter purchase order number",
-      "promotion_code": "Enter promo-coupon"
+      "purchase_order_number": "Enter a purchase order number",
+      "promotion_code": "Enter a promo-coupon"
     },
     "links": {
       "home": "Home",
@@ -363,11 +363,11 @@
         "forgot_password_link": "Forgot your password?",
         "login_button": "Log in",
         "registration_button": "Sign up",
-        "email_or_password_incorrect_alert": "The <strong>email</strong>&nbsp;or <strong>password</strong>&nbsp;you provided are invalid",
-        "user_is_locked_out_alert": "Your account is locked. Please, contact site administrator"
+        "email_or_password_incorrect_alert": "The <strong>email</strong>&nbsp;or <strong>password</strong>&nbsp;you provided is invalid",
+        "user_is_locked_out_alert": "Your account is locked. Please contact the site administrator"
       },
       "forgot_password_form": {
-        "error_alert": "Invalid result of reset password request. Please contact to administrator if it is repeating."
+        "error_alert": "Invalid result of the reset password request. Please contact the administrator if this issue persists."
       },
       "checkout_default_success_dialog": {
         "title": "Checkout Defaults",
@@ -1286,7 +1286,7 @@
   "identity_error": {
     "DuplicateEmail": "Email {0} is already taken",
     "DuplicateUserName": "User name {0} is already taken",
-    "InvalidEmail": "Please enter valid email address, e.g. johndoe@gmail.com",
+    "InvalidEmail": "Please enter a valid email address, e.g. johndoe@gmail.com",
     "InvalidPasswordHasherCompatibilityMode": "The provided PasswordHasherCompatibilityMode is invalid",
     "InvalidPasswordHasherIterationCount": "The iteration count must be a positive integer",
     "InvalidToken": "Token is invalid or expired",
