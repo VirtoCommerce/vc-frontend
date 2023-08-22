@@ -37,7 +37,7 @@
           class="vc-notifications__close-button"
           @click="close(notification.id!)"
         >
-          <i class="fa fa-times text-[25px] md:text-[22px]" />
+          <VcIcon name="x" />
         </button>
       </div>
     </transition-group>

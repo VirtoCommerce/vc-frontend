@@ -19,7 +19,7 @@
     <VcPopupSidebar class="w-72 px-5 pt-6" :is-visible="isMobile && filtersVisible" @hide="hideFilters">
       <div class="relative">
         <button type="button" class="absolute -right-3 appearance-none px-3 py-1" @click="hideFilters">
-          <span class="fas fa-times text-2xl text-red-400 hover:text-red-700"></span>
+          <VcIcon class="text-[--color-danger-400]" name="x" />
         </button>
       </div>
 
@@ -618,34 +618,34 @@ function itemActionsBuilder(item: ExtendedContactType) {
     actions.push(
       item.status === ContactStatus.Locked
         ? {
-            icon: "fas fa-check",
+            icon: "check-bold",
             title: t("pages.company.members.buttons.unblock_user"),
-            classes: "bg-[color:var(--color-success)]",
+            classes: "bg-[--color-success-500]",
             clickHandler(contact: ExtendedContactType) {
               openLockOrUnlockModal(contact, true);
             },
           }
         : {
-            icon: "fas fa-ban",
+            icon: "ban",
             title: t("pages.company.members.buttons.block_user"),
-            classes: "bg-[color:#292D3B]",
+            classes: "bg-[--color-secondary-900]",
             clickHandler(contact: ExtendedContactType) {
               openLockOrUnlockModal(contact);
             },
           },
       {
-        icon: "fas fa-pencil-alt",
+        icon: "pencil",
         title: t("pages.company.members.buttons.edit_role"),
-        classes: "bg-gray-550",
+        classes: "bg-[--color-secondary-500]",
         clickHandler(contact: ExtendedContactType) {
           openEditCustomerRoleModal(contact);
         },
       },
       {
-        icon: "fas fa-trash-alt",
+        icon: "trash",
         title: t("pages.company.members.buttons.delete"),
         left: true,
-        classes: "bg-[color:var(--color-danger)]",
+        classes: "bg-[--color-danger-500]",
         clickHandler(contact: ExtendedContactType) {
           openDeleteModal(contact);
         },

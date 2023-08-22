@@ -17,9 +17,7 @@
           width="36"
           :class="[
             'shrink-0',
-            isLink && (isActive || isExactActive)
-              ? 'text-[color:var(--color-primary)]'
-              : 'text-[color:var(--color-mobile-menu-icon)]',
+            isLink && (isActive || isExactActive) ? 'text-[--color-primary-500]' : 'text-[--color-accent-300]',
           ]"
         >
           <use :href="link.icon" />
@@ -34,13 +32,13 @@
       <VcTransitionScale mode="out-in">
         <span
           v-if="count"
-          class="flex h-6 items-center rounded-full border border-[color:var(--color-primary)] px-2 text-sm font-bold text-white transition-transform"
+          class="flex h-6 items-center rounded-full border border-[--color-primary-500] px-2 text-sm font-bold text-[--color-additional-50] transition-transform"
         >
           {{ preparedCount }}
         </span>
       </VcTransitionScale>
 
-      <i v-if="isParent" class="fas fa-chevron-right ml-auto text-[color:var(--color-primary)]" />
+      <VcIcon v-if="isParent" class="ml-auto text-[--color-primary-500]" name="chevron-right" />
     </component>
   </router-link>
 </template>

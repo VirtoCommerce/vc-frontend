@@ -38,7 +38,7 @@
                 <span
                   class="flex h-6 w-6 items-center justify-center rounded-full bg-white opacity-0 transition-opacity group-hover:opacity-100"
                 >
-                  <i class="fas fa-chevron-left -ml-0.5 text-sm text-gray-400" />
+                  <VcIcon class="text-[--color-neutral-400]" name="chevron-left" size="xs" />
                 </span>
               </div>
 
@@ -49,7 +49,7 @@
                 <span
                   class="flex h-6 w-6 items-center justify-center rounded-full bg-white opacity-0 transition-opacity group-hover:opacity-100"
                 >
-                  <i class="fas fa-chevron-right -mr-0.5 text-sm text-gray-400" />
+                  <VcIcon class="text-[--color-neutral-400]" name="chevron-right" size="xs" />
                 </span>
               </div>
 

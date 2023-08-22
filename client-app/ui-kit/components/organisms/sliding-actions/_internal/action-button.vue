@@ -1,6 +1,6 @@
 <template>
   <button type="button" class="vc-action-button">
-    <VcIcon v-if="icon" class="vc-action-button__icon" :name="icon" />
+    <VcIcon v-if="icon" class="vc-action-button__icon" :name="icon" :size="20" />
 
     <span class="vc-action-button__text">
       <slot />
