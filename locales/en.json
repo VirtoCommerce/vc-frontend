@@ -378,14 +378,14 @@
         "title": "Invite member",
         "role_label": "Role",
         "role_placeholder": "Select role",
-        "emails_label": "Enter email addresses of the persons you wish to invite",
-        "emails_placeholder": "Use commas, semicolons or carriage returns to separate multiple entries",
+        "emails_label": "Enter email addresses of the people you wish to invite",
+        "emails_placeholder": "Use commas, semicolons, or line breaks to separate multiple entries",
         "message_label": "Message",
         "cancel_button": "@:common.buttons.cancel",
         "send_button": "@:common.buttons.send",
         "invite_successfully_text": "The invite has been successfully sent",
         "emails_quantity_exceeded": "You can invite up to {maxValue} users at once",
-        "email_length_exceeded": "Maximum length of email address is {maxValue} symbols"
+        "email_length_exceeded": "The maximum length of an email address is {maxValue} characters"
       },
       "profile_update_success_dialog": {
         "title": "Profile update",
@@ -428,8 +428,8 @@
     },
     "company": {
       "add_or_update_address_dialog": {
-        "address_title": "Address Info",
-        "create_title": "Create new company address",
+        "address_title": "Address information",
+        "create_title": "Create a new company address",
         "edit_title": "Edit company address"
       },
       "block_member_dialog": {
@@ -445,8 +445,8 @@
         "text": "Are you sure you want to delete the user {name} from the company members list?"
       },
       "notifications": {
-        "user_blocked": "The user has been successfully blocked",
-        "user_unblocked": "The user has been successfully unblocked"
+        "user_blocked": "The user has been successfully blocked.",
+        "user_unblocked": "The user has been successfully unblocked."
       }
     },
     "compare": {
@@ -458,17 +458,17 @@
       },
       "clear_list_modal": {
         "title": "Confirm Clear",
-        "message": "Do you confirm removal of all products from the compare list?"
+        "message": "Do you confirm the removal of all products from the compare list?"
       }
     },
     "cart": {
       "add_to_cart": {
         "errors": {
           "in_cart": "in Cart",
-          "already_in_cart_message": "{0} has already been added to cart",
-          "enter_correct_number_message": "Please enter valid number",
-          "min": "Min qty is {0} product(s)",
-          "max": "Max qty is {0} product(s)"
+          "already_in_cart_message": "{0} has already been added to the cart",
+          "enter_correct_number_message": "Please enter a valid number",
+          "min": "Minimum quantity is {0} product(s)",
+          "max": "Maximum quantity is {0} product(s)"
         }
       },
       "products_section": {
@@ -518,7 +518,7 @@
         "price_block": {
           "title": "Price and Delivery",
           "add_to_list_button": "Add to list",
-          "product_email_title": "Please, have a look on the product: {0}"
+          "product_email_title": "Please have a look on the product: {0}"
         },
         "product_variation_card": {
           "variation_sku_label": "@:common.labels.sku",
@@ -568,8 +568,8 @@
           "select_address": "select a billing address"
         },
         "messages": {
-          "no_addresses": "You do not yet have any billing address. Please choose or specify one.",
-          "unauthenticated_no_addresses": "You do not yet have any billing address. Please specify one."
+          "no_addresses": "You do not yet have any billing addresses. Please choose or specify one.",
+          "unauthenticated_no_addresses": "You do not yet have any billing addresses. Please specify one."
         }
       },
       "payment_method_dialog": {
