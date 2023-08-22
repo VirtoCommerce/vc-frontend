@@ -565,7 +565,7 @@
           "same_as_shipping_address": "Same as shipping address"
         },
         "links": {
-          "select_address": "select a billing address"
+          "select_address": "Select a billing address"
         },
         "messages": {
           "no_addresses": "You do not yet have any billing addresses. Please choose or specify one.",
@@ -637,21 +637,21 @@
         "processing_personal_data_text": "and agree that we may process your personal data as per our",
         "pay_now_button": "Pay Now",
         "errors": {
-          "number": "Please provide valid credit card number",
-          "month": "Please provide valid expiration month",
-          "year": "Please provide valid expiration year",
+          "number": "Please provide a valid credit card number",
+          "month": "Please provide a valid expiration month",
+          "year": "Please provide a valid expiration year",
           "expiration_date": "Expiration date must be in the future",
-          "security_code": "Please provide valid security code",
-          "cardholder_name": "Please provide valid card holder name",
+          "security_code": "Please provide a valid security code",
+          "cardholder_name": "Please provide a valid cardholder name",
           "incorrect_payment_method": "Incorrect payment method"
         }
       },
       "manual": {
-        "text": "The payment method you selected does not support paying online. Please choose another method or",
+        "text": "The payment method you selected does not support online payment. Please choose another method or",
         "link": "contact the website administrator"
       },
       "redirection": {
-        "text": "After you click <strong>{0}</strong>, you will be redirected to the third party payment service",
+        "text": "After you click <strong>{0}</strong>, you will be redirected to the third-party payment service",
         "pay_now_button": "Pay Now",
         "try_again_button": "Try Again",
         "errors": {
@@ -826,9 +826,9 @@
       "text": "Please use your username and password to login to your account.",
       "continue_button": "@:shared.layout.header.link_sign_in",
       "continue_shopping_button": "@:common.buttons.continue_shopping",
-      "email_confirmation_failed_text": "In order to continue you still need to finalize verification process. Please use the button below to request a new link.",
-      "link_sent_successfully_text": "We sent you a email confirmation link to your email.",
-      "link_sent_error_text": "Some problems are occured while sending a comfirmation link. Please try again later."
+      "email_confirmation_failed_text": "In order to continue, you still need to finalize verification process. Please use the button below to request a new link.",
+      "link_sent_successfully_text": "We sent you the confirmation link to your email.",
+      "link_sent_error_text": "Some problems have occurred while sending the confirmation link. Please try again later."
     },
     "confirm_invitation": {
       "meta": {
@@ -954,7 +954,7 @@
         },
         "failure": {
           "title": "Payment failed",
-          "text": "There is a problem with your payment, try again please."
+          "text": "There is a problem with your payment, please try again."
         }
       },
       "lists": {
@@ -1000,17 +1000,17 @@
         "billing_address": "Billing Address",
         "save_changes": "@:common.buttons.save_changes",
         "submit": "@:common.buttons.submit",
-        "no_address_message": "You do not set an address. Please specify one.",
+        "no_address_message": "You have not set an address. Please specify one.",
         "same_as_shipping_address": "Same as shipping address",
         "quote_summary": "Quote Summary",
         "quote_data": "Quote Data",
         "total": "@:common.labels.total",
         "created": "@:common.labels.created",
         "status": "@:common.labels.status",
-        "no_items_message": "Quote request has not items",
+        "no_items_message": "Quote request has no items",
         "save_changes_notification_success": "The quote request has been successfully saved",
-        "select_shipping_address": "select a shipping address",
-        "select_billing_address": "select a billing address",
+        "select_shipping_address": "Select a shipping address",
+        "select_billing_address": "Select a billing address",
         "line_items": {
           "product": "@:common.labels.product",
           "properties": "@:common.labels.properties",
@@ -1030,7 +1030,7 @@
         "content_header": "Addresses",
         "no_addresses_message": "There are no addresses yet",
         "address_not_delete_message": "The default address cannot be deleted",
-        "address_saved_successful_message": "Address has been successfully saved",
+        "address_saved_successful_message": "The address has been successfully saved",
         "labels": {
           "company_name": "Company Name",
           "address": "Address",
@@ -1049,11 +1049,11 @@
           "title": "@:pages.company.members.title"
         },
         "title": "Company Members",
-        "search_placeholder": "User search",
+        "search_placeholder": "Search for users",
         "no_members_img_alt": "No members",
         "no_members_message": "There are no members yet",
         "no_results_message": "No results found",
-        "invite_sent": "Invite Sent",
+        "invite_sent": "Invite sent",
         "labels": {
           "role": "Role",
           "status": "Status"
@@ -1180,8 +1180,8 @@
     "bulk_order": {
       "meta": {
         "title": "Bulk order",
-        "keywords": "test, balk, order, keywords",
-        "description": "Test balk order page description"
+        "keywords": "test, bulk, order, keywords",
+        "description": "Test bulk order page description"
       },
       "title": "Bulk Order Pad",
       "product_was_not_added_alert": "Products with following SKUs were not added to the cart: {0}",
@@ -1206,7 +1206,7 @@
       },
       "features_block": {
         "primary_text": "Explore the features",
-        "secondary_text": "With a crystal-clear camera, real time HD video display, and intuitive flight controls, what will you create?",
+        "secondary_text": "With a crystal-clear camera, real-time HD video display, and intuitive flight controls, what will you create?",
         "feature_1": {
           "title": "Epic Aerial Video",
           "text": "With the Phantom 3 Professional, you can shoot 4K videos at up to 30 frames per second and capture 12MP photos."
@@ -1227,7 +1227,7 @@
       },
       "products_block": {
         "title": "Gaming laptops",
-        "message": "With a crystal-clear camera, real time HD video display, and intuitive flight controls, what will you create?",
+        "message": "With a crystal-clear camera, real-time HD video display, and intuitive flight controls, what will you create?",
         "choose_button": "Choose"
       },
       "after_products_block": {
@@ -1280,26 +1280,26 @@
         "title": "Registration completed"
       },
       "title": "Registration completed",
-      "description": "Thank you for showing you interest in registering with us. We kindly ask you to check your mailbox in order to verify email address you’ve entered."
+      "description": "Thank you for showing your interest in registering with us. We kindly ask you to check your mailbox to verify the email address you’ve entered."
     }
   },
   "identity_error": {
     "DuplicateEmail": "Email {0} is already taken",
-    "DuplicateUserName": "User name {0} is already taken",
+    "DuplicateUserName": "Username {0} is already taken",
     "InvalidEmail": "Please enter a valid email address, e.g. johndoe@gmail.com",
     "InvalidPasswordHasherCompatibilityMode": "The provided PasswordHasherCompatibilityMode is invalid",
     "InvalidPasswordHasherIterationCount": "The iteration count must be a positive integer",
-    "InvalidToken": "Token is invalid or expired",
-    "InvalidUserName": "User name is invalid, can only contain letters or digits",
+    "InvalidToken": "The token is invalid or expired",
+    "InvalidUserName": "Username is invalid, and can only contain letters or digits",
     "LoginAlreadyAssociated": "A user with this login already exists",
     "PasswordTooShort": "Your password must be at least {0} characters long",
     "PasswordRequiresDigit": "Passwords must have at least one digit ('0'-'9')",
     "PasswordMismatch": "You entered the wrong current password, please try again or call support",
-    "PasswordRequiresLower": "Passwords must have at least one lowercase ('a'-'z')",
-    "PasswordRequiresNonAlphanumeric": "Passwords must have at least one non alphanumeric character",
-    "PasswordRequiresUpper": "Passwords must have at least one uppercase ('A'-'Z')",
+    "PasswordRequiresLower": "Passwords must have at least one lowercase letter ('a'-'z')",
+    "PasswordRequiresNonAlphanumeric": "Passwords must have at least one non-alphanumeric character",
+    "PasswordRequiresUpper": "Passwords must have at least one uppercase letter ('A'-'Z')",
     "PasswordRequiresUniqueChars": "Passwords must use different characters",
-    "RecentPasswordUsed": "You have used this password in the past. Choose another one."
+    "RecentPasswordUsed": "You have used this password in the past. Please choose another one."
   },
   "password_tips": {
     "title": "Tips for creating a strong password:",
@@ -1311,7 +1311,7 @@
     "required_unique_chars": "At least one unique character | Minimum {0} unique characters"
   },
   "validation_error": {
-    "PRODUCT_QTY_CHANGED": "The product available qty is changed",
-    "CART_PRODUCT_UNAVAILABLE": "The product available qty is changed"
+    "PRODUCT_QTY_CHANGED": "The product's available quantity has changed",
+    "CART_PRODUCT_UNAVAILABLE": "The product's available quantity has changed"
   }
 }
