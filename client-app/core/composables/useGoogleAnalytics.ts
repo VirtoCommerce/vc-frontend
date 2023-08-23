@@ -13,7 +13,7 @@ import type {
   VariationType,
 } from "@/core/api/graphql/types";
 
-type CustomEventNamesType = "place_order";
+type CustomEventNamesType = "place_order" | "clear_cart";
 type EventParamsType = Gtag.ControlParams & Gtag.EventParams & Gtag.CustomParams;
 type EventParamsExtendedType = EventParamsType & { item_list_id?: string; item_list_name?: string };
 
@@ -159,6 +159,15 @@ function viewCart(cart: CartType, params?: EventParamsExtendedType): void {
   });
 }
 
+function clearCart(cart: CartType, params?: EventParamsExtendedType): void {
+  const cartEventParams: EventParamsType = getCartEventParams(cart);
+
+  sendEvent("clear_cart", {
+    ...params,
+    ...cartEventParams,
+  });
+}
+
 function beginCheckout(cart: CartType, params?: EventParamsExtendedType): void {
   const cartEventParams: EventParamsType = getCartEventParams(cart);
 
@@ -210,8 +219,9 @@ function purchase(order: CustomerOrderType, transactionId?: string, params?: Eve
   });
 }
 
-function placeOrder(order: CustomerOrderType): void {
+function placeOrder(order: CustomerOrderType, params?: EventParamsExtendedType): void {
   sendEvent("place_order", {
+    ...params,
     currency: order.currency?.code,
     value: order.total!.amount,
     coupon: order.coupons?.[0],
@@ -220,7 +230,6 @@ function placeOrder(order: CustomerOrderType): void {
     items: order.items!.map(lineItemToGtagItem),
   });
 }
-
 export function useGoogleAnalytics() {
   return {
     isAvailableGtag,
@@ -233,6 +242,7 @@ export function useGoogleAnalytics() {
     addItemsToCart,
     removeItemFromCart,
     viewCart,
+    clearCart,
     beginCheckout,
     addShippingInfo,
     addPaymentInfo,
