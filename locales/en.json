@@ -467,8 +467,8 @@
           "in_cart": "in Cart",
           "already_in_cart_message": "{0} has already been added to the cart",
           "enter_correct_number_message": "Please enter a valid number",
-          "min": "Minimum quantity is {0} product(s)",
-          "max": "Maximum quantity is {0} product(s)"
+          "min": "The minimum quantity is {0} product(s)",
+          "max": "The maximum quantity is {0} product(s)"
         }
       },
       "products_section": {
@@ -568,8 +568,8 @@
           "select_address": "Select a billing address"
         },
         "messages": {
-          "no_addresses": "You do not yet have any billing addresses. Please choose or specify one.",
-          "unauthenticated_no_addresses": "You do not yet have any billing addresses. Please specify one."
+          "no_addresses": "You do not have any billing addresses. Please select or specify one.",
+          "unauthenticated_no_addresses": "You do not have any billing addresses. Please specify one."
         }
       },
       "payment_method_dialog": {
@@ -647,7 +647,7 @@
         }
       },
       "manual": {
-        "text": "The payment method you selected does not support online payment. Please choose another method or",
+        "text": "The payment method you selected does not support online payment. Please select another method or",
         "link": "contact the website administrator"
       },
       "redirection": {
@@ -774,7 +774,7 @@
       },
       "header": "reset your password",
       "email_will_be_sended_message": "We will send you an email with reset password instructions",
-      "reset_link_was_sent_message": "We sent you a reset password link to your email.",
+      "reset_link_was_sent_message": "We sent you a reset password link to your inbox.",
       "home_button": "@:common.buttons.home"
     },
     "reset_password": {
@@ -827,8 +827,8 @@
       "continue_button": "@:shared.layout.header.link_sign_in",
       "continue_shopping_button": "@:common.buttons.continue_shopping",
       "email_confirmation_failed_text": "In order to continue, you still need to finalize verification process. Please use the button below to request a new link.",
-      "link_sent_successfully_text": "We sent you the confirmation link to your email.",
-      "link_sent_error_text": "Some problems have occurred while sending the confirmation link. Please try again later."
+      "link_sent_successfully_text": "We sent you the confirmation link to your inbox.",
+      "link_sent_error_text": "A problem has occurred while sending the confirmation link. Please try again later."
     },
     "confirm_invitation": {
       "meta": {
@@ -1180,8 +1180,8 @@
     "bulk_order": {
       "meta": {
         "title": "Bulk order",
-        "keywords": "test, bulk, order, keywords",
-        "description": "Test bulk order page description"
+        "keywords": "bulk, order",
+        "description": "Bulk order page"
       },
       "title": "Bulk Order Pad",
       "product_was_not_added_alert": "Products with following SKUs were not added to the cart: {0}",
@@ -1299,7 +1299,7 @@
     "PasswordRequiresNonAlphanumeric": "Passwords must have at least one non-alphanumeric character",
     "PasswordRequiresUpper": "Passwords must have at least one uppercase letter ('A'-'Z')",
     "PasswordRequiresUniqueChars": "Passwords must use different characters",
-    "RecentPasswordUsed": "You have used this password in the past. Please choose another one."
+    "RecentPasswordUsed": "You have used this password in the past. Please create another one."
   },
   "password_tips": {
     "title": "Tips for creating a strong password:",
