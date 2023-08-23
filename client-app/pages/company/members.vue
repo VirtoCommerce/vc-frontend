@@ -98,7 +98,7 @@
           class="absolute right-0 z-[1] mt-2 rounded border bg-white p-6 shadow-lg"
         >
           <button type="button" class="absolute right-0 top-0 appearance-none px-4 py-2" @click="hideFilters">
-            <span class="fa fa-times text-lg text-red-400 hover:text-red-500"></span>
+            <VcIcon class="text-[--color-danger-500]" name="x" :size="18" />
           </button>
 
           <div class="flex flex-row gap-6 pr-4">

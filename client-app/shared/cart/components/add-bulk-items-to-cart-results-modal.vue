@@ -15,25 +15,8 @@
         >
           <template #header-content>
             <div class="flex min-w-0 grow items-center gap-x-2.5">
-              <span
-                :class="[
-                  'flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white',
-                  {
-                    'bg-[color:var(--color-success)]': group.name === 'added',
-                    'bg-[color:var(--color-danger)]': group.name === 'not_added',
-                  },
-                ]"
-              >
-                <i
-                  :class="[
-                    'fas',
-                    {
-                      'fa-check': group.name === 'added',
-                      'fa-times': group.name === 'not_added',
-                    },
-                  ]"
-                />
-              </span>
+              <VcIcon v-if="group.name === 'added'" class="text-[--color-success-500]" name="check-circle" />
+              <VcIcon v-else-if="group.name === 'not_added'" class="text-[--color-danger-500]" name="x-circle" />
 
               <span class="truncate text-15 font-bold">
                 {{ $t(`shared.cart.add_bulk_items_to_cart_results_popup.groups.${group.name}`) }}

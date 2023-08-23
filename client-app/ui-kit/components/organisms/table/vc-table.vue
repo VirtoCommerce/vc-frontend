@@ -41,14 +41,17 @@
                 : null
             "
           >
-            <div class="flex items-center gap-2">
-              {{ column.title }}
+            {{ column.title }}
 
-              <template v-if="column.sortable && sort && sort.column === column.id">
-                <VcIcon v-if="sort.direction === SORT_DESCENDING" name="chevron-up" size="xxs" />
-                <VcIcon v-else-if="sort.direction === SORT_ASCENDING" name="chevron-down" size="xxs" />
-              </template>
-            </div>
+            <template v-if="column.sortable && sort && sort.column === column.id">
+              <VcIcon v-if="sort.direction === SORT_DESCENDING" class="ms-1 mt-1.5" name="chevron-up" size="xxs" />
+              <VcIcon
+                v-else-if="sort.direction === SORT_ASCENDING"
+                class="ms-1 mt-1.5"
+                name="chevron-down"
+                size="xxs"
+              />
+            </template>
           </th>
         </tr>
       </thead>
