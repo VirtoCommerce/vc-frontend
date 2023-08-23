@@ -132,16 +132,17 @@ export default {
           }
           break;
         }
-        case "navigate":
-          options.router.push(event.data.url);
+        case "navigate": {
+          const url = event.data.url?.startsWith("/") ? event.data.url : "/" + event.data.url;
+          options.router.push(url);
           break;
-
+        }
         case "settings":
           updateSettings(app, event.data.settings);
           break;
       }
     });
-
+    options.router.push("/");
     window.parent.postMessage({ source: "preview", type: "loaded" }, window.location.origin);
   },
 };
