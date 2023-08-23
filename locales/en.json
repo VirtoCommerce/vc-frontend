@@ -505,7 +505,7 @@
       "product_card": {
         "product_sku_label": "@:common.labels.sku",
         "price_label": "@:common.labels.product_price",
-        "product_rating": "Raiting:",
+        "product_rating": "Rating:",
         "product_vendor": "Vendor:"
       },
       "product_details": {
