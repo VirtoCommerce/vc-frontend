@@ -81,15 +81,11 @@ const FIXED_HEIGHTS: FixedHeightsType = {
   large: { xs: 350, sm: 350, md: 500, lg: 500, xl: 550, "2xl": 550 },
 };
 
-const slideHeight = computed<SlideHeightType>(() => {
-  const availableOptions: SlideHeightType[] = ["small", "medium", "large", "auto"];
-  return availableOptions.includes(modelWithDefaults.value.height) ? modelWithDefaults.value.height : "auto";
-});
-
 const imageHeight = computed(() => {
   const currentBreakpoint = (breakpoints.current().value.at(-1) || "xs") as BreakpointsType;
+  const slideHeight = modelWithDefaults.value.height;
 
-  return slideHeight.value === "auto" ? "auto" : `${FIXED_HEIGHTS[slideHeight.value][currentBreakpoint]}px`;
+  return slideHeight === "auto" ? "auto" : `${FIXED_HEIGHTS[slideHeight][currentBreakpoint]}px`;
 });
 
 const componentId = `vc-slider_${getCurrentInstance()!.uid}`;
