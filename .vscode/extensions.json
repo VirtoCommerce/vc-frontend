@@ -8,7 +8,8 @@
     "esbenp.prettier-vscode",
     "bradlc.vscode-tailwindcss",
     "vue.volar",
-    "Vue.vscode-typescript-vue-plugin"
+    "Vue.vscode-typescript-vue-plugin",
+    "lokalise.i18n-ally"
   ],
   "unwantedRecommendations": [
     "octref.vetur"
