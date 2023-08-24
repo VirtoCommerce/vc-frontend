@@ -41,6 +41,31 @@
           "multiline": true
         }
       ]
+    },
+    {
+      "id": "height",
+      "label": "Slide height",
+      "type": "select",
+      "tab": "Content",
+      "default": "medium",
+      "options": [
+        {
+          "label": "Auto",
+          "value": "auto"
+        },
+        {
+          "label": "Small",
+          "value": "small"
+        },
+        {
+          "label": "Medium",
+          "value": "medium"
+        },
+        {
+          "label": "Large",
+          "value": "large"
+        }
+      ]
     }
   ]
 }
