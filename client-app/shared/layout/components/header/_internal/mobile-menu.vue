@@ -166,7 +166,7 @@
                   v-t="'shared.layout.header.link_logout'"
                   type="button"
                   class="font-bold text-[color:var(--color-primary)]"
-                  @click="() => signMeOut({ reloadPage: true })"
+                  @click="() => signMeOut()"
                 />
               </div>
             </div>

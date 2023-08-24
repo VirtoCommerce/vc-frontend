@@ -77,7 +77,7 @@ export default function useUser() {
       }
 
       if (user.value?.lockedState) {
-        await signMeOut();
+        await signMeOut({ reloadPage: false });
 
         broadcast.emit(userBlockedEvent, undefined, TabsType.ALL);
       }
@@ -199,7 +199,7 @@ export default function useUser() {
     }
   }
 
-  async function signMeOut(options: { reloadPage?: boolean } = {}): Promise<void> {
+  async function signMeOut(options: { reloadPage?: boolean } = { reloadPage: true }): Promise<void> {
     try {
       loading.value = true;
       await innerFetch("/storefrontapi/account/logout");

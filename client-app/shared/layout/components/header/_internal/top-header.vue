@@ -79,7 +79,7 @@
                 type="button"
                 :title="$t('shared.layout.header.link_logout')"
                 class="ml-4 h-6 w-6 rounded border border-gray-200 text-gray-400 shadow hover:bg-gray-200"
-                @click="() => signMeOut({ reloadPage: true })"
+                @click="() => signMeOut()"
               >
                 <i class="fas fa-sign-out-alt" />
               </button>
