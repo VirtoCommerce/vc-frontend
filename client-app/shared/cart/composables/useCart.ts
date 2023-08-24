@@ -23,6 +23,7 @@ import {
   validateCoupon,
   GetCartFeldsType,
 } from "@/core/api/graphql";
+import { useGoogleAnalytics } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { getLineItemsGroupedByVendor, Logger } from "@/core/utilities";
@@ -79,6 +80,7 @@ export default function useCart() {
   const broadcast = useBroadcast();
   const notifications = useNotifications();
   const { openPopup } = usePopup();
+  const ga = useGoogleAnalytics();
 
   async function fetchShortCart(): Promise<void> {
     loading.value = true;
@@ -430,6 +432,7 @@ export default function useCart() {
       component: ClearCartModal,
       props: {
         async onResult() {
+          ga.clearCart(cart.value!);
           await removeCart(cart.value!.id!);
         },
       },
