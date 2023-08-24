@@ -28,7 +28,7 @@ withDefaults(defineProps<IProps>(), {
 
 <style scoped lang="scss">
 .vc-badge {
-  $colors: primary, secondary, success, info, neutral, warning, danger;
+  $colors: primary, secondary, neutral, info, success, warning, danger;
 
   @apply inline-block border rounded-full font-bold text-center;
 
