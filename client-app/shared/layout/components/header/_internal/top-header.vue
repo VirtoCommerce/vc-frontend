@@ -79,7 +79,7 @@
                 type="button"
                 :title="$t('shared.layout.header.link_logout')"
                 class="ml-4 h-6 w-6 rounded border border-gray-200 text-gray-400 shadow hover:bg-gray-200"
-                @click="signOut"
+                @click="() => signMeOut({ reloadPage: true })"
               >
                 <i class="fas fa-sign-out-alt" />
               </button>
@@ -120,11 +120,6 @@ import TopHeaderLink from "./top-header-link.vue";
 const { isAuthenticated, user, operator, signMeOut } = useUser();
 const loginMenu = ref(null);
 const loginMenuVisible = ref(false);
-
-async function signOut() {
-  await signMeOut();
-  location.href = "/";
-}
 
 onClickOutside(loginMenu, () => {
   loginMenuVisible.value = false;

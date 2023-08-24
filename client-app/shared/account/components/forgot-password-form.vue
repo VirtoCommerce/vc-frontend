@@ -15,7 +15,8 @@
 
     <div class="mt-8 md:mt-9">
       <VcAlert v-if="isError" color="danger" size="sm" variant="solid-light" class="mb-4 text-xs" icon>
-        <span v-html="$t('shared.account.forgot_password_form.error_alert')"></span>
+        {{ $t("shared.account.forgot_password_form.error_alert") }}
+        <ContactAdministratorLink />
       </VcAlert>
 
       <VcButton
@@ -36,6 +37,7 @@ import { useField, useForm } from "vee-validate";
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { object, string } from "yup";
+import { ContactAdministratorLink } from "@/shared/common";
 import { useUser } from "../composables";
 
 interface IEmits {

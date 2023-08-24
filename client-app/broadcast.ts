@@ -11,6 +11,7 @@ import {
   useBroadcast,
   openReturnUrl,
   unhandledErrorEvent,
+  userBlockedEvent,
 } from "@/shared/broadcast";
 import { useCart } from "@/shared/cart";
 import { useNotifications } from "@/shared/notification";
@@ -28,12 +29,15 @@ export function setupBroadcastGlobalListeners() {
   const router = useRouter();
   const { on } = useBroadcast();
   const notifications = useNotifications();
-  const { fetchUser, isPasswordNeedToBeChanged } = useUser();
+  const { fetchUser, user } = useUser();
   const { pagesWithFullCartLoad } = usePagesWithFullCartLoad();
   const { fetchShortCart, fetchFullCart } = useCart();
 
   on(pageReloadEvent, () => location.reload());
   on(userReloadEvent, () => fetchUser());
+  on(userBlockedEvent, async () => {
+    location.href = "/blocked";
+  });
   on(cartReloadEvent, async () => {
     const route = router.currentRoute.value;
 
@@ -47,12 +51,15 @@ export function setupBroadcastGlobalListeners() {
   });
   on(unauthorizedErrorEvent, async () => {
     await fetchUser();
-    if (!isPasswordNeedToBeChanged.value) {
-      const { hash, pathname, search } = location;
 
-      if (pathname !== "/sign-in") {
-        location.href = `/sign-in?returnUrl=${pathname + search + hash}`;
-      }
+    if (user.value?.forcePasswordChange || user.value?.passwordExpired || user.value?.lockedState) {
+      return;
+    }
+
+    const { hash, pathname, search } = location;
+
+    if (pathname !== "/sign-in") {
+      location.href = `/sign-in?returnUrl=${pathname + search + hash}`;
     }
   });
   on(unhandledErrorEvent, () => {

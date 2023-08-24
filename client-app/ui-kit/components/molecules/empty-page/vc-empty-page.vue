@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="max-w-screen-2xl px-5 pt-7 md:px-12">
-      <VcBreadcrumbs v-if="breadcrumbs.length" :items="breadcrumbs" class="mb-3" />
+      <VcBreadcrumbs v-if="breadcrumbs?.length" :items="breadcrumbs" class="mb-3" />
 
       <slot name="title">
         <h1 v-if="title" class="text-black-800 mb-8 text-2xl font-bold uppercase md:text-4xl">
@@ -10,7 +10,7 @@
       </slot>
     </div>
 
-    <TwoColumn class="max-w-screen-lg">
+    <TwoColumn class="max-w-screen-xl">
       <template #left>
         <div class="flex h-full flex-col items-center justify-center lg:items-start">
           <VcImage v-if="mobileImage" :src="mobileImage" class="mb-8 lg:hidden" lazy />
@@ -26,7 +26,7 @@
       </template>
 
       <template #right>
-        <VcImage :src="image" lazy />
+        <VcImage class="max-w-md" :src="image" lazy />
       </template>
     </TwoColumn>
   </div>
@@ -34,32 +34,14 @@
 
 <script setup lang="ts">
 import { TwoColumn } from "@/shared/layout";
-import type { PropType } from "vue";
 
-defineProps({
-  title: {
-    type: String,
-    default: "",
-  },
+export interface IProps {
+  title?: string;
+  description?: string;
+  image?: string;
+  mobileImage?: string;
+  breadcrumbs?: IBreadcrumb[];
+}
 
-  description: {
-    type: String,
-    default: "",
-  },
-
-  image: {
-    type: String,
-    default: "",
-  },
-
-  mobileImage: {
-    type: String,
-    default: "",
-  },
-
-  breadcrumbs: {
-    type: Array as PropType<IBreadcrumb[]>,
-    default: () => [],
-  },
-});
+defineProps<IProps>();
 </script>
