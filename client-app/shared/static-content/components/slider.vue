@@ -7,8 +7,8 @@
       <div v-if="modelWithDefaults.subtitle" class="text-center text-base">{{ modelWithDefaults.subtitle }}</div>
       <Swiper :slides-per-view="1" class="w-full" :modules="modules" :navigation="navigationOptions">
         <SwiperSlide v-for="(item, index) in modelWithDefaults.slides" :key="index" class="text-center">
-          <div class="image-container">
-            <VcImage :src="item.image" class="slider__image" :lazy="index > 0" />
+          <div :style="{ height: imageHeight }">
+            <VcImage :src="item.image" class="vc-slider__image" :lazy="index > 0" />
             <div v-if="item.title" class="mb-3 font-roboto-condensed text-2xl font-bold uppercase">
               {{ item.title }}
             </div>
@@ -141,16 +141,9 @@ const wrapperClasses = computed(() => {
       @apply hidden;
     }
   }
-}
 
-.slider__image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: left;
-}
-
-.image-container {
-  height: v-bind(imageHeight);
+  &__image {
+    @apply w-full h-full object-cover object-left;
+  }
 }
 </style>
