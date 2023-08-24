@@ -47,7 +47,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &--truncate {
-    @apply truncate;
+    @apply truncate max-w-full;
   }
 
   @each $color in $colors {
