@@ -36,7 +36,11 @@ export function setupBroadcastGlobalListeners() {
   on(pageReloadEvent, () => location.reload());
   on(userReloadEvent, () => fetchUser());
   on(userBlockedEvent, async () => {
-    location.href = "/blocked";
+    const { pathname } = location;
+
+    if (pathname !== "/blocked") {
+      location.href = "/blocked";
+    }
   });
   on(cartReloadEvent, async () => {
     const route = router.currentRoute.value;
