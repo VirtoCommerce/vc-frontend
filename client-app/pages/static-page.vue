@@ -10,10 +10,12 @@
       </h1>
     </div>
     <template v-for="item in template.content">
+      <!-- @deprecated. TODO Keep only v-bind="item". Remove settings and model from all components -->
       <component
         :is="getBlockType(item.type)"
         v-if="!item.hidden"
         :key="item.id"
+        v-bind="item"
         :model="item"
         :settings="template.settings"
       />

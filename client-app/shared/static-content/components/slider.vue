@@ -1,13 +1,13 @@
 <template>
-  <div :id="componentId" :class="wrapperClasses">
+  <div :id="id" :class="wrapperClasses">
     <div class="relative mx-auto w-full max-w-screen-xl px-5 md:px-12">
-      <div v-if="modelWithDefaults.title" class="mb-6 text-center text-2xl font-bold lg:text-5xl">
-        {{ modelWithDefaults.title }}
+      <div v-if="title" class="mb-6 text-center text-2xl font-bold lg:text-5xl">
+        {{ title }}
       </div>
-      <div v-if="modelWithDefaults.subtitle" class="text-center text-base">{{ modelWithDefaults.subtitle }}</div>
+      <div v-if="subtitle" class="text-center text-base">{{ subtitle }}</div>
       <Swiper :slides-per-view="1" class="w-full" :modules="modules" :navigation="navigationOptions">
-        <SwiperSlide v-for="(item, index) in modelWithDefaults.slides" :key="index" class="text-center">
-          <div :style="{ height: imageHeight }">
+        <SwiperSlide v-for="(item, index) in slides" :key="index" class="text-center">
+          <div class="vc-slider__image-wrap">
             <VcImage :src="item.image" class="vc-slider__image" :lazy="index > 0" />
             <div v-if="item.title" class="mb-3 font-roboto-condensed text-2xl font-bold uppercase">
               {{ item.title }}
@@ -33,44 +33,31 @@
 import { useBreakpoints } from "@vueuse/core/index";
 import { Navigation } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/vue";
-import { computed, getCurrentInstance } from "vue";
+import { computed } from "vue";
 import { BREAKPOINTS } from "@/core/constants";
 
 type BreakpointsType = keyof typeof BREAKPOINTS;
 
 // synced with config/schemas/sections/slider.json
 type SlideHeightType = "small" | "medium" | "large" | "auto";
-
 type FixedHeightsType = { [K in Exclude<SlideHeightType, "auto">]: { [V in BreakpointsType]: number } };
 type SlideType = {
   image: string;
   text: string;
   title: string;
 };
-
-type ModelType = {
-  height: SlideHeightType;
-  background: string;
+interface IProps {
+  id: string;
+  height?: SlideHeightType;
+  background?: string;
   slides?: SlideType[];
   title?: string;
   subtitle?: string;
-};
-interface IProps {
-  model?: ModelType;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  settings?: Record<string, any>;
 }
 
-const props = defineProps<IProps>();
-
-const DEFAULT_MODEL: ModelType = {
-  height: "small",
+const props = withDefaults(defineProps<IProps>(), {
+  height: "auto",
   background: "bg-gray-100",
-};
-
-// props withDefaults not working. props.model totally replaced by object from page builder and defaults erased
-const modelWithDefaults = computed(() => {
-  return Object.assign(DEFAULT_MODEL, props.model);
 });
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
@@ -83,27 +70,26 @@ const FIXED_HEIGHTS: FixedHeightsType = {
 
 const imageHeight = computed(() => {
   const currentBreakpoint = (breakpoints.current().value.at(-1) || "xs") as BreakpointsType;
-  const slideHeight = modelWithDefaults.value.height;
 
-  return slideHeight === "auto" ? "auto" : `${FIXED_HEIGHTS[slideHeight][currentBreakpoint]}px`;
+  return props.height === "auto" ? "auto" : `${FIXED_HEIGHTS[props.height][currentBreakpoint]}px`;
 });
 
-const componentId = `vc-slider_${getCurrentInstance()!.uid}`;
-
-const navigationOptions = {
-  prevEl: `#${componentId} .vc-slider__btn--prev`,
-  nextEl: `#${componentId} .vc-slider__btn--next`,
-  lockClass: "vc-slider__btn--lock",
-  hiddenClass: "vc-slider__btn--hidden",
-  disabledClass: "vc-slider__btn--disabled",
-};
+const navigationOptions = computed(() => {
+  return {
+    prevEl: `#${props.id} .vc-slider__btn--prev`,
+    nextEl: `#${props.id} .vc-slider__btn--next`,
+    lockClass: "vc-slider__btn--lock",
+    hiddenClass: "vc-slider__btn--hidden",
+    disabledClass: "vc-slider__btn--disabled",
+  };
+});
 
 const modules = [Navigation];
 
 const wrapperClasses = computed(() => {
   return {
-    [modelWithDefaults.value.background]: true,
-    "py-10 lg:py-24": modelWithDefaults.value.title || modelWithDefaults.value.subtitle,
+    [props.background]: true,
+    "py-10 lg:py-24": props.title || props.subtitle,
   };
 });
 </script>
@@ -115,10 +101,6 @@ const wrapperClasses = computed(() => {
   --navigation-size: 36px;
   --navigation-offset: 0px;
 
-  &__navigation {
-    @apply absolute w-full h-full top-0 -mx-12;
-  }
-
   &__btn {
     @apply absolute top-1/2 z-10 w-[var(--navigation-size)] h-[var(--navigation-size)]
     flex items-center justify-center text-[color:var(--color-primary)] cursor-pointer;
@@ -126,11 +108,11 @@ const wrapperClasses = computed(() => {
     margin-top: calc(0px - (var(--navigation-size) / 2) - var(--navigation-offset));
 
     &--prev {
-      @apply left-0;
+      @apply left-2 -translate-y-1/2;
     }
 
     &--next {
-      @apply right-0;
+      @apply right-2 -translate-y-1/2;
     }
 
     &--disabled {
@@ -140,6 +122,10 @@ const wrapperClasses = computed(() => {
     &--lock {
       @apply hidden;
     }
+  }
+
+  &__image-wrap {
+    height: v-bind(imageHeight);
   }
 
   &__image {
