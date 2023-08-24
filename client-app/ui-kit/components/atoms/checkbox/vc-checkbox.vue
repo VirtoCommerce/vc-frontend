@@ -22,36 +22,28 @@
   </label>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="V, T extends boolean | V[]">
+import { isBoolean } from "lodash";
 import { computed } from "vue";
 
-const emit = defineEmits<{
-  (event: "update:modelValue", value: boolean | any[]): void;
-  (event: "change", value: boolean | any[]): void;
-}>();
+export interface IEmits<T> {
+  (event: "update:modelValue", value: T): void;
+  (event: "change", value: T): void;
+}
 
-const props = defineProps({
-  disabled: Boolean,
+export interface IProps<V, T extends boolean | V[]> {
+  modelValue?: T;
+  value?: T extends boolean ? never : V;
+  disabled?: boolean;
+  name?: string;
+}
 
-  modelValue: {
-    type: [Boolean, Array],
-    default: () => [],
-  },
+const emit = defineEmits<IEmits<T>>();
 
-  name: {
-    type: String,
-    default: null,
-  },
-
-  // only for array of model value
-  value: {
-    type: [Boolean, String, Number, Object],
-    default: undefined,
-  },
-});
+const props = defineProps<IProps<V, T>>();
 
 const checked = computed<boolean>(() =>
-  typeof props.modelValue === "boolean" ? props.modelValue : props.modelValue.includes(props.value),
+  isBoolean(props.modelValue) ? props.modelValue : props.modelValue?.includes(props.value!) ?? false,
 );
 
 function change() {
@@ -59,22 +51,24 @@ function change() {
     return;
   }
 
-  if (typeof props.modelValue === "boolean") {
-    const newValue = !props.modelValue;
-    emit("update:modelValue", newValue);
-    emit("change", newValue);
+  let newValue: T;
+
+  if (isBoolean(props.modelValue)) {
+    newValue = !props.modelValue as T;
   } else {
-    const newArray = [...props.modelValue];
-    const index = newArray.indexOf(props.value);
+    const newArray = [...(props.modelValue as V[])];
+    const index = newArray.indexOf(props.value!);
 
     if (index === -1) {
-      newArray.push(props.value);
+      newArray.push(props.value!);
     } else {
       newArray.splice(index, 1);
     }
 
-    emit("update:modelValue", newArray);
-    emit("change", newArray);
+    newValue = newArray as T;
   }
+
+  emit("update:modelValue", newValue);
+  emit("change", newValue);
 }
 </script>

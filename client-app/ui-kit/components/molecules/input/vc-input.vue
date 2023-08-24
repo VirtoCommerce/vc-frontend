@@ -64,16 +64,16 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends string | number | null">
 import { computed, ref, watchEffect } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/core/composables";
 
-interface IEmits {
-  (event: "update:modelValue", value?: string | number): void;
+export interface IEmits<T> {
+  (event: "update:modelValue", value?: T): void;
 }
 
-interface IProps {
-  modelValue?: string | number;
+export interface IProps<T> {
+  modelValue?: T;
   modelModifiers?: Record<string, boolean>;
   autocomplete?: string;
   readonly?: boolean;
@@ -95,16 +95,16 @@ interface IProps {
   maxlength?: string | number;
   center?: boolean;
   truncate?: boolean;
-  type?: "text" | "password" | "number";
-  size?: "sm" | "md";
+  type?: "text" | "password" | "number" | "email";
+  size?: "sm" | "md" | "auto";
 }
 
 defineOptions({
   inheritAttrs: false,
 });
 
-const emit = defineEmits<IEmits>();
-const props = withDefaults(defineProps<IProps>(), {
+const emit = defineEmits<IEmits<T>>();
+const props = withDefaults(defineProps<IProps<T>>(), {
   type: "text",
   size: "md",
   modelModifiers: () => ({}),
@@ -125,7 +125,7 @@ const inputValue = computed({
       return;
     }
 
-    emit("update:modelValue", props.type === "number" ? Number(value) : value);
+    emit("update:modelValue", (props.type === "number" ? Number(value) : value) as T);
   },
 });
 
@@ -162,7 +162,7 @@ watchEffect(() => {
   }
 
   if (isNaN(props.modelValue as number)) {
-    emit("update:modelValue");
+    emit("update:modelValue", null as T);
   }
 });
 </script>

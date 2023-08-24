@@ -20,7 +20,7 @@ export function truncate(str: string, length: number): string {
   return str.length > length ? `${str.slice(0, length)}...` : str;
 }
 
-export function getLinkTarget(openInNewTab: boolean): string {
+export function getLinkTarget(openInNewTab: boolean): "_blank" | "_self" {
   return openInNewTab ? "_blank" : "_self";
 }
 

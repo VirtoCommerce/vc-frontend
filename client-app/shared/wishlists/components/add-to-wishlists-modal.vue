@@ -13,7 +13,7 @@
           <ul>
             <li v-for="list in listsWithProduct" :key="list.id" class="px-6 py-4 sm:pb-3 sm:pt-4 last:sm:pb-7">
               <VcCheckbox
-                model-value
+                :model-value="[]"
                 :value="list.id"
                 :disabled="loading"
                 @update:model-value="listsRemoveUpdate(list.id || '', $event)"

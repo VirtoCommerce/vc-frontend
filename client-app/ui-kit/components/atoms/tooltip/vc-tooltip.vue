@@ -23,36 +23,28 @@
 import { bottom, createPopper } from "@popperjs/core";
 import { onClickOutside } from "@vueuse/core";
 import { onUnmounted, ref, shallowRef, watch } from "vue";
-import type { Instance, Placement, PositioningStrategy } from "@popperjs/core";
-import type { PropType } from "vue";
+import type { Instance, PositioningStrategy } from "@popperjs/core";
 
-const emit = defineEmits<{ (e: "shown", isShown: boolean): void }>();
+export interface IEmits {
+  (event: "shown", isShown: boolean): void;
+}
 
-const props = defineProps({
-  placement: {
-    type: String as PropType<Placement>,
-    default: bottom,
-  },
+export interface IProps {
+  placement?: VcTooltipPlacement;
+  strategy?: PositioningStrategy;
+  xOffset?: number;
+  yOffset?: number;
+  trigger?: "hover" | "click";
+}
 
-  strategy: {
-    type: String as PropType<PositioningStrategy>,
-    default: "absolute",
-  },
+const emit = defineEmits<IEmits>();
 
-  xOffset: {
-    type: Number,
-    default: 0,
-  },
-
-  yOffset: {
-    type: Number,
-    default: 6,
-  },
-
-  trigger: {
-    type: String as PropType<"hover" | "click">,
-    default: "hover",
-  },
+const props = withDefaults(defineProps<IProps>(), {
+  placement: bottom,
+  strategy: "absolute",
+  xOffset: 0,
+  yOffset: 6,
+  trigger: "hover",
 });
 
 const triggerNode = shallowRef<HTMLElement | null>(null);

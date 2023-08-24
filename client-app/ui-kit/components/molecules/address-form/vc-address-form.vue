@@ -153,16 +153,15 @@ import { useField, useForm } from "vee-validate";
 import { computed, ref, watch } from "vue";
 import { string as yupString } from "yup";
 import { getAddressName, Logger } from "@/core/utilities";
-import type { CountryRegionType, CountryType } from "@/core/api/graphql/types";
-import type { AnyAddressType } from "@/core/types";
+import type { CountryRegionType, CountryType, MemberAddressType } from "@/core/api/graphql/types";
 
 interface IEmits {
-  (event: "update:modelValue", address: AnyAddressType): void;
-  (event: "save", address: AnyAddressType): void;
+  (event: "update:modelValue", address: MemberAddressType): void;
+  (event: "save", address: MemberAddressType): void;
 }
 
 interface IProps {
-  modelValue?: AnyAddressType;
+  modelValue?: MemberAddressType;
   disabled?: boolean;
   requiredEmail?: boolean;
   requiredPhone?: boolean;
@@ -177,7 +176,8 @@ const props = withDefaults(defineProps<IProps>(), {
   countries: () => [],
 });
 
-const _emptyAddress: Readonly<AnyAddressType> = {
+const _emptyAddress: Readonly<MemberAddressType> = {
+  isDefault: false,
   firstName: "",
   lastName: "",
   email: "",
@@ -193,7 +193,7 @@ const _emptyAddress: Readonly<AnyAddressType> = {
   phone: "",
 };
 
-const initialValues = ref<AnyAddressType>(clone(props.modelValue || _emptyAddress));
+const initialValues = ref<MemberAddressType>(clone(props.modelValue || _emptyAddress));
 
 const {
   values,
@@ -291,19 +291,29 @@ const { value: city } = useField("city", cityRules, { syncVModel: false });
 const { value: phone } = useField("phone", phoneRules, { syncVModel: false });
 const { value: firstName } = useField("firstName", firstNameRules, { syncVModel: false });
 const { value: lastName } = useField("lastName", lastNameRules, { syncVModel: false });
-const { value: postalCode } = useField("postalCode", yupString().max(32).required().nullable(), {
+const { value: postalCode } = useField("postalCode", toTypedSchema(yupString().max(32).required().nullable()), {
   syncVModel: false,
 });
-const { value: countryCode } = useField("countryCode", yupString().required().nullable(), { syncVModel: false });
-const { value: countryName } = useField("countryName", yupString().max(128).nullable(), { syncVModel: false });
-const { value: regionName } = useField("regionName", yupString().max(128).nullable(), { syncVModel: false });
+const { value: countryCode } = useField("countryCode", toTypedSchema(yupString().required().nullable()), {
+  syncVModel: false,
+});
+const { value: countryName } = useField("countryName", toTypedSchema(yupString().max(128).nullable()), {
+  syncVModel: false,
+});
+const { value: regionName } = useField("regionName", toTypedSchema(yupString().max(128).nullable()), {
+  syncVModel: false,
+});
 const { value: regionId } = useField("regionId", regionRules, { syncVModel: false });
-const { value: line1 } = useField("line1", yupString().max(128).required().nullable(), { syncVModel: false });
-const { value: line2 } = useField("line2", yupString().max(128).nullable(), { syncVModel: false });
-const { value: description } = useField("description", yupString().max(128).nullable(), { syncVModel: false });
+const { value: line1 } = useField("line1", toTypedSchema(yupString().max(128).required().nullable()), {
+  syncVModel: false,
+});
+const { value: line2 } = useField("line2", toTypedSchema(yupString().max(128).nullable()), { syncVModel: false });
+const { value: description } = useField("description", toTypedSchema(yupString().max(128).nullable()), {
+  syncVModel: false,
+});
 
 const save = handleSubmit((address) => {
-  const newAddress: AnyAddressType = { ...address, name: getAddressName(address) };
+  const newAddress: MemberAddressType = { ...address, name: getAddressName(address) };
   emit("update:modelValue", newAddress);
   emit("save", newAddress);
 }, Logger.debug);

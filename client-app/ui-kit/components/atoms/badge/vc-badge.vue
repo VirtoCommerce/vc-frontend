@@ -13,9 +13,9 @@
 
 <script setup lang="ts">
 interface IProps {
-  color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger";
+  color?: VcBadgeColorType;
   size?: "xs" | "sm" | "md";
-  variant?: "solid" | "solid-light" | "outline" | "outline-dark";
+  variant?: VcBadgeVariantType;
   truncate?: boolean;
 }
 

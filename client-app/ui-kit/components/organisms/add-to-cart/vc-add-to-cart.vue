@@ -3,8 +3,8 @@
     <VcInput
       v-model.number="quantity"
       :disabled="disabled"
-      :min-quantity="minQuantity"
-      :max-quantity="maxQuantity"
+      :min="minQuantity"
+      :max="maxQuantity"
       single-line-message
       center
       class="w-full"
