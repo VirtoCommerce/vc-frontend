@@ -1284,10 +1284,10 @@
       "description": "Thank you for showing you interest in registering with us. We kindly ask you to check your mailbox in order to verify email address you’ve entered."
     },
     "blocked": {
-      "title": "Your account is blocked",
       "meta": {
         "title": "Blocked"
       },
+      "title": "Your account is blocked",
       "message": "@:common.messages.blocked"
     }
   },
