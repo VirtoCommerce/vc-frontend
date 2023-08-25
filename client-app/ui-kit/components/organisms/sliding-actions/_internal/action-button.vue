@@ -1,6 +1,7 @@
 <template>
   <button type="button" class="vc-action-button">
-    <i v-if="icon" :class="['vc-action-button__icon', icon]" />
+    <VcIcon v-if="icon" class="vc-action-button__icon" :name="icon" :size="20" />
+
     <span class="vc-action-button__text">
       <slot />
     </span>
@@ -8,12 +9,11 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
-  icon: {
-    type: String,
-    default: "",
-  },
-});
+interface IProps {
+  icon?: string;
+}
+
+defineProps<IProps>();
 </script>
 
 <style scoped lang="scss">
@@ -21,11 +21,11 @@ defineProps({
   @apply flex grow flex-col items-center justify-center text-white;
 
   &__icon {
-    @apply text-xl leading-none mb-1.5;
+    @apply mb-1.5;
   }
 
   &__text {
-    @apply block font-roboto text-sm text-center leading-none;
+    @apply block text-sm text-center leading-none;
   }
 }
 </style>

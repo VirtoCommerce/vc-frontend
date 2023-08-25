@@ -62,7 +62,7 @@
             </p>
             <p v-if="order.status" class="flex items-center">
               <span class="mr-2 font-extrabold"> {{ $t("common.labels.status") }}: </span>
-              <OrderStatus :status="order.status" />
+              <OrderStatus class="min-w-[7.785rem]" :status="order.status" />
             </p>
           </div>
         </VcCardWidget>

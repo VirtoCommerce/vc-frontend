@@ -11,8 +11,8 @@
         <component :is="customSlots.left" v-if="customSlots.left" />
 
         <div v-else class="flex h-full items-center">
-          <button type="button" class="h-full px-6" @click="mobileMenuVisible = true">
-            <i class="fas fa-bars text-2xl text-[color:var(--color-primary)]" />
+          <button type="button" class="h-full px-5" @click="mobileMenuVisible = true">
+            <VcIcon class="text-[--color-primary-500]" name="menu" :size="32" />
           </button>
 
           <router-link to="/">
@@ -25,17 +25,17 @@
         <component :is="customSlots.right" v-if="customSlots.right" />
 
         <div v-else class="flex h-full flex-row items-center pr-4">
-          <a v-if="$cfg.support_phone_number" class="p-2.5" :href="`tel:${$cfg.support_phone_number}`">
-            <i class="fas fa-phone text-xl text-[color:var(--color-primary)]"></i>
+          <a v-if="$cfg.support_phone_number" class="p-2" :href="`tel:${$cfg.support_phone_number}`">
+            <VcIcon class="text-[--color-primary-500]" name="phone" :size="28" />
           </a>
 
-          <button type="button" class="p-2.5" @click="toggleSearchBar">
-            <i class="fas fa-search text-2xl text-[color:var(--color-primary)]" />
+          <button type="button" class="p-2" @click="toggleSearchBar">
+            <VcIcon class="text-[--color-primary-500]" name="search" :size="28" />
           </button>
 
-          <router-link :to="{ name: 'Cart' }" class="p-2.5">
+          <router-link :to="{ name: 'Cart' }" class="p-2">
             <span class="relative">
-              <i class="fas fa-shopping-cart text-xl text-[color:var(--color-primary)]" />
+              <VcIcon class="text-[--color-primary-500]" name="cart" :size="28" />
 
               <VcTransitionScale mode="out-in">
                 <span

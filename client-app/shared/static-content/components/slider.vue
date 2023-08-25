@@ -9,7 +9,7 @@
         <SwiperSlide v-for="(item, index) in slides" :key="index" class="text-center">
           <div class="vc-slider__image-wrap">
             <VcImage :src="item.image" class="vc-slider__image" :lazy="index > 0" />
-            <div v-if="item.title" class="mb-3 font-roboto-condensed text-2xl font-bold uppercase">
+            <div v-if="item.title" class="mb-3 text-2xl font-bold uppercase">
               {{ item.title }}
             </div>
             <div v-if="item.text" class="text-sm">{{ item.text }}</div>
@@ -18,11 +18,11 @@
       </Swiper>
       <div class="vc-slider__navigation">
         <div class="vc-slider__btn vc-slider__btn--prev">
-          <i class="fas fa-chevron-left -ml-px text-xl" />
+          <VcIcon class="-ml-px" name="chevron-left" />
         </div>
 
         <div class="vc-slider__btn vc-slider__btn--next">
-          <i class="fas fa-chevron-right -mr-px text-xl" />
+          <VcIcon class="-mr-px" name="chevron-right" />
         </div>
       </div>
     </div>

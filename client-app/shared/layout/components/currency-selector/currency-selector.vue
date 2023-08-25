@@ -13,9 +13,9 @@
         {{ currentCurrency?.code }}
       </span>
 
-      <i
-        class="fas text-[1rem] text-[color:var(--color-mobile-menu-link)] lg:text-[0.625rem] lg:text-[color:var(--color-primary)]"
-        :class="[open ? 'fa-chevron-up' : 'fa-chevron-down']"
+      <VcIcon
+        class="text-[--color-accent-200] [--vc-icon-size:1rem] lg:text-[--color-primary-500] lg:[--vc-icon-size:0.625rem]"
+        :name="open ? 'chevron-up' : 'chevron-down'"
       />
     </button>
 

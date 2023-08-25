@@ -37,7 +37,7 @@
 
       <template v-if="isListDetails">
         <div v-for="list in lists" :key="list.id" class="ml-8 flex items-center space-x-2 px-3 text-sm">
-          <i class="fas fa-minus text-[color:var(--color-primary)]" />
+          <VcIcon class="flex-none text-[--color-primary-500]" name="minus" />
 
           <router-link
             :to="{ name: 'ListDetails', params: { listId: list.id } }"

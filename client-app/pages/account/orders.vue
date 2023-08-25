@@ -9,7 +9,7 @@
     <VcPopupSidebar class="w-72 px-5 pt-6" :is-visible="isMobile && filtersVisible" @hide="hideFilters">
       <div class="relative">
         <button type="button" class="absolute -right-3 appearance-none px-3 py-1" @click="hideFilters">
-          <span class="fas fa-times text-2xl text-red-400 hover:text-red-700"></span>
+          <VcIcon class="text-[--color-danger-400]" name="x" />
         </button>
       </div>
 
@@ -165,7 +165,7 @@
             </div>
 
             <div class="flex flex-col items-end justify-center">
-              <OrderStatus :status="itemData.item.status" />
+              <OrderStatus class="min-w-[7rem]" :status="itemData.item.status" />
             </div>
 
             <div class="flex flex-col">
@@ -233,8 +233,18 @@
               {{ $d(order?.createdDate) }}
             </td>
 
-            <td class="overflow-hidden text-ellipsis p-5 text-center">
-              <OrderStatus :status="order.status" />
+            <td class="p-5 text-center">
+              <VcTooltip class="!block">
+                <template #trigger>
+                  <OrderStatus class="!block" :status="order.status" />
+                </template>
+
+                <template #content>
+                  <div class="rounded-sm bg-[--color-additional-50] px-3.5 py-1.5 text-xs shadow-sm-x-y">
+                    {{ order.status }}
+                  </div>
+                </template>
+              </VcTooltip>
             </td>
 
             <td class="overflow-hidden text-ellipsis p-5 text-right">

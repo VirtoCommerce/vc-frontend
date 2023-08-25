@@ -2044,13 +2044,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fortawesome/fontawesome-free@npm:^6.4.0":
-  version: 6.4.0
-  resolution: "@fortawesome/fontawesome-free@npm:6.4.0"
-  checksum: 0197cd7df96de375862fea561d69427deebb918cadc26074cc8d490180d536e7e58853d138ca74d081b46b2cbdec2783d01cdaccb8bd723d6ef6b4cc8455b84b
-  languageName: node
-  linkType: hard
-
 "@graphql-codegen/add@npm:^4.0.1":
   version: 4.0.1
   resolution: "@graphql-codegen/add@npm:4.0.1"
@@ -5056,8 +5049,8 @@ __metadata:
 
 "@types/react@file:stub/@types/react::locator=vc-theme-b2b-vue%40workspace%3A.":
   version: 0.0.0
-  resolution: "@types/react@file:stub/@types/react#stub/@types/react::hash=361817&locator=vc-theme-b2b-vue%40workspace%3A."
-  checksum: 2638969f6ce7788d5d3d68f6d1028ceb8ee4cf1d1b5a5bd285cc8b64def457768014e40eeab8bb8e3162e0f9281db6ba30faf436a38333d4accedd7ac036542b
+  resolution: "@types/react@file:stub/@types/react#stub/@types/react::hash=f7c8d5&locator=vc-theme-b2b-vue%40workspace%3A."
+  checksum: bad42e412134cc9d11032b67eb48a05c36ae0effec48beec3b275924ec4ae5650ede439ca7c30b20fdff46d5f48e871396d526dae5591a0a4164b167a6a6d0c4
   languageName: node
   linkType: hard
 
@@ -16971,7 +16964,6 @@ __metadata:
     "@builder.io/sdk-vue": ^0.3.1
     "@commitlint/cli": ^17.6.7
     "@commitlint/config-conventional": ^17.6.7
-    "@fortawesome/fontawesome-free": ^6.4.0
     "@graphql-codegen/add": ^4.0.1
     "@graphql-codegen/cli": ^3.3.1
     "@graphql-codegen/introspection": ^3.0.1

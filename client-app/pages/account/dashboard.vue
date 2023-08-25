@@ -13,11 +13,11 @@
 
         <router-link
           :to="{ name: 'Orders' }"
-          class="hidden text-xs font-bold text-blue-500 hover:text-blue-700 lg:block"
+          class="hidden items-center gap-1 text-xs font-bold text-[--color-accent-600] hover:text-[--color-accent-700] lg:flex"
         >
           {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
 
-          <i class="fas fa-arrow-right ml-3 text-[color:var(--color-primary)]" />
+          <VcIcon class="text-[--color-primary-500]" name="arrow-right" size="xs" />
         </router-link>
       </template>
 
@@ -153,8 +153,18 @@
               {{ $d(order?.createdDate) }}
             </td>
 
-            <td class="overflow-hidden text-ellipsis p-5">
-              <OrderStatus :status="order.status" />
+            <td class="p-5">
+              <VcTooltip class="!block">
+                <template #trigger>
+                  <OrderStatus class="!block" :status="order.status" />
+                </template>
+
+                <template #content>
+                  <div class="rounded-sm bg-[--color-additional-50] px-3.5 py-1.5 text-xs shadow-sm-x-y">
+                    {{ order.status }}
+                  </div>
+                </template>
+              </VcTooltip>
             </td>
 
             <td class="overflow-hidden text-ellipsis p-5 text-right">

@@ -1,8 +1,8 @@
 <template>
   <VcTooltip :y-offset="4" :x-offset="0" placement="bottom-end" trigger="click">
     <template #trigger>
-      <button type="button" class="h-7 w-7 rounded bg-white text-gray-400 shadow-sm-x-y-button">
-        <i class="fas fa-cog" />
+      <button type="button" class="rounded bg-[--color-additional-50] p-1.5 shadow-sm-x-y-button">
+        <VcIcon class="block text-[--color-neutral-400]" name="cog" :size="16" />
       </button>
     </template>
 
