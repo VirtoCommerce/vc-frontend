@@ -7,6 +7,7 @@ export enum Colors {
   success = "success",
   warning = "warning",
   danger = "danger",
+  additional = "additional",
 }
 
 export type ColorType = `${Colors}`;
