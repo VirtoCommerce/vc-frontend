@@ -47,7 +47,7 @@
       "label": "Slide height",
       "type": "select",
       "tab": "Content",
-      "default": "medium",
+      "default": "auto",
       "options": [
         {
           "label": "Auto",
