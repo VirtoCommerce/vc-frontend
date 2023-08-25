@@ -50,20 +50,19 @@
 import { onMounted } from "vue";
 import { useCountries } from "@/core/composables";
 import type { MemberAddressType } from "@/core/api/graphql/types";
-import type { PropType } from "vue";
 
-const emit = defineEmits(["result"]);
+export interface IEmits {
+  (event: "result", addess: MemberAddressType): void;
+}
 
-defineProps({
-  address: {
-    type: Object as PropType<MemberAddressType | null>,
-    default: null,
-  },
+export interface IProps {
+  address?: MemberAddressType;
+  loading?: boolean;
+}
 
-  loading: {
-    type: Boolean,
-  },
-});
+const emit = defineEmits<IEmits>();
+
+defineProps<IProps>();
 
 const { countries, loadCountries } = useCountries();
 

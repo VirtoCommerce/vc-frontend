@@ -19,11 +19,11 @@
       <!-- Navigation buttons-->
       <div v-if="navigation" class="vc-carousel__navigation">
         <div class="vc-carousel__btn vc-carousel__btn--prev">
-          <VcIcon name="chevron-left" size="28" />
+          <VcIcon name="chevron-left" :size="28" />
         </div>
 
         <div class="vc-carousel__btn vc-carousel__btn--next">
-          <VcIcon name="chevron-right" size="28" />
+          <VcIcon name="chevron-right" :size="28" />
         </div>
       </div>
     </div>

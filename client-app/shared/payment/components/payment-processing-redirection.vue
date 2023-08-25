@@ -11,7 +11,7 @@
     <p v-html="$t('shared.payment.redirection.text', [$t('shared.payment.redirection.pay_now_button')])" />
 
     <VcButton
-      :title="redirectUrl ? null : $t('shared.payment.redirection.errors.missing_link')"
+      :title="redirectUrl ? undefined : $t('shared.payment.redirection.errors.missing_link')"
       :disabled="!redirectUrl"
       class="mt-3 w-full md:mt-12 md:w-auto"
       @click="redirect"
@@ -39,18 +39,13 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const initialized = ref(false);
-const initializationError = ref("");
-const redirectUrl = ref("");
+const initializationError = ref<string>();
+const redirectUrl = ref<string>();
 
 const { t } = useI18n();
 
 async function initPayment() {
-  const {
-    isSuccess,
-    paymentActionType,
-    actionRedirectUrl = "",
-    errorMessage = "",
-  } = await initializePayment({
+  const { isSuccess, paymentActionType, actionRedirectUrl, errorMessage } = await initializePayment({
     orderId: props.order.id,
     paymentId: props.order.inPayments[0]!.id,
   });
@@ -69,7 +64,9 @@ async function initPayment() {
 }
 
 function redirect() {
-  location.href = redirectUrl.value;
+  if (redirectUrl.value) {
+    location.href = redirectUrl.value;
+  }
 }
 
 initPayment();

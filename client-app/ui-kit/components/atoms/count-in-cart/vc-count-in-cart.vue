@@ -14,12 +14,11 @@ import { computed } from "vue";
 import { useCart } from "@/shared/cart";
 import type { LineItemType } from "@/core/api/graphql/types";
 
-const props = defineProps({
-  productId: {
-    type: String,
-    required: true,
-  },
-});
+export interface IProps {
+  productId?: string;
+}
+
+const props = defineProps<IProps>();
 
 const { cart } = useCart();
 

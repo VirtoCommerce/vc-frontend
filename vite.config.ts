@@ -38,11 +38,22 @@ export default defineConfig(({ mode }): UserConfig => {
         ? checker({
             enableBuild: false,
             typescript: true,
-            vueTsc: true,
+            vueTsc: {
+              tsconfigPath: path.resolve(__dirname, "tsconfig.app.json"),
+            },
             eslint: {
               lintCommand:
-                'eslint "client-app/**/*.{js,ts,vue}" --cache --cache-location node_modules/.cache/.eslintcache',
+                'eslint "client-app/**/*.{js,ts,vue}"',
               dev: {
+                overrideConfig: {
+                  cwd: process.cwd(),
+                  globInputPaths: true,
+                  ignore: true,
+                  ignorePath: ".eslintignore",
+                  useEslintrc: true,
+                  cache: true,
+                  cacheLocation: "node_modules/.cache/.eslintcache",
+                },
                 logLevel: ["error"],
               },
             },

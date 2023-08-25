@@ -16,7 +16,7 @@
                 model-value
                 :value="list.id"
                 :disabled="loading"
-                @update:model-value="listsRemoveUpdate(list.id || '', $event)"
+                @update:model-value="listsRemoveUpdate(list.id || '', !!$event)"
               >
                 <span class="line-clamp-1 text-base font-medium sm:text-15">
                   {{ list.name }}

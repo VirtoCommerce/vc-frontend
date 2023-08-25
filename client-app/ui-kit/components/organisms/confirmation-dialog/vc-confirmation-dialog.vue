@@ -38,29 +38,26 @@
 </template>
 
 <script setup lang="ts">
-defineEmits(["confirm", "close"]);
+export interface IEmits {
+  (event: "confirm"): void;
+  (event: "close"): void;
+}
 
-defineProps({
-  singleButton: Boolean,
-  noIcon: Boolean,
-  title: String,
-  text: String,
+export interface IProps {
+  singleButton?: boolean;
+  noIcon?: boolean;
+  title?: string;
+  text?: string;
+  variant?: "info" | "success" | "warn" | "danger";
+  iconVariant?: "info" | "success" | "warning" | "danger";
+  loading?: boolean;
+}
 
-  variant: {
-    type: String,
-    default: "danger",
-    validator: (value: string) => ["info", "success", "warn", "danger"].includes(value),
-  },
+defineEmits<IEmits>();
 
-  iconVariant: {
-    type: String,
-    default: "danger",
-    validator: (value: string) => ["info", "success", "warning", "danger"].includes(value),
-  },
-
-  loading: {
-    type: Boolean,
-    default: false,
-  },
+withDefaults(defineProps<IProps>(), {
+  variant: "danger",
+  iconVariant: "danger",
+  loading: false,
 });
 </script>

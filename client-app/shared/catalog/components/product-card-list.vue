@@ -159,7 +159,6 @@ import { AddToList } from "@/shared/wishlists";
 import DiscountBadge from "./discount-badge.vue";
 import Vendor from "./vendor.vue";
 import type { Product } from "@/core/api/graphql/types";
-import type { RouteLocationRaw } from "vue-router";
 
 defineEmits<{ (eventName: "linkClick", globalEvent: PointerEvent): void }>();
 
@@ -173,9 +172,9 @@ interface IProps {
   openInNewTab?: boolean;
 }
 
-const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
-const target = computed<string>(() => getLinkTarget(props.openInNewTab));
-const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
+const link = computed(() => getProductRoute(props.product.id, props.product.slug));
+const target = computed(() => getLinkTarget(props.openInNewTab));
+const isDigital = computed(() => props.product.productType === ProductType.Digital);
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3),
 );

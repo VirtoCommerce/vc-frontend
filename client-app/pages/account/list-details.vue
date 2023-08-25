@@ -259,29 +259,31 @@ async function openSaveChangesModal(): Promise<boolean> {
   });
 }
 
-function updateWishListItem(item: InputNewBulkItemType): void {
-  const existItem = wishlistItems.value?.find((i) => i.sku === item.productSku);
+function updateWishListItem(item: PreparedLineItemType, quantity: number): void {
+  const existItem = wishlistItems.value?.find((i) => i.id === item.id);
   if (existItem) {
-    existItem.quantity = item.quantity;
+    existItem.quantity = quantity;
   }
 }
 
-async function addOrUpdateCartItem(item: InputNewBulkItemType): Promise<void> {
-  const product: Product | undefined = wishlistItems.value.find((listItem) => listItem.sku === item.productSku)
+async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number): Promise<void> {
+  const product: Product | undefined = wishlistItems.value.find((listItem) => listItem.productId === item.productId)
     ?.product;
 
   if (!product) {
     return;
   }
 
-  const itemInCart: LineItemType | undefined = cart.value?.items?.find((cartItem) => cartItem.sku === item.productSku);
+  const itemInCart: LineItemType | undefined = cart.value?.items?.find(
+    (cartItem) => cartItem.productId === item.productId,
+  );
 
   if (itemInCart) {
-    await changeItemQuantity(itemInCart.id, item.quantity!);
+    await changeItemQuantity(itemInCart.id, quantity);
   } else {
-    await addToCart(product.id, item.quantity!);
+    await addToCart(product.id, quantity);
 
-    ga.addItemToCart(product, item.quantity);
+    ga.addItemToCart(product, quantity);
   }
 }
 
