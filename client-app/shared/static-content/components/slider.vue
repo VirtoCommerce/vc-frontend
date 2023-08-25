@@ -35,12 +35,11 @@ import { Navigation } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed } from "vue";
 import { BREAKPOINTS } from "@/core/constants";
-
-type BreakpointsType = keyof typeof BREAKPOINTS;
+import type { BreakpointsType } from "@/core/constants";
 
 // synced with config/schemas/sections/slider.json
 type SlideHeightType = "small" | "medium" | "large" | "auto";
-type FixedHeightsType = { [K in Exclude<SlideHeightType, "auto">]: { [V in BreakpointsType]: number } };
+
 type SlideType = {
   image: string;
   text: string;
@@ -61,6 +60,8 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
+
+type FixedHeightsType = { [K in Exclude<SlideHeightType, "auto">]: { [V in BreakpointsType]: number } };
 
 const FIXED_HEIGHTS: FixedHeightsType = {
   small: { xs: 250, sm: 250, md: 400, lg: 400, xl: 450, "2xl": 450 },
