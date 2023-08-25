@@ -5049,8 +5049,8 @@ __metadata:
 
 "@types/react@file:stub/@types/react::locator=vc-theme-b2b-vue%40workspace%3A.":
   version: 0.0.0
-  resolution: "@types/react@file:stub/@types/react#stub/@types/react::hash=f7c8d5&locator=vc-theme-b2b-vue%40workspace%3A."
-  checksum: bad42e412134cc9d11032b67eb48a05c36ae0effec48beec3b275924ec4ae5650ede439ca7c30b20fdff46d5f48e871396d526dae5591a0a4164b167a6a6d0c4
+  resolution: "@types/react@file:stub/@types/react#stub/@types/react::hash=361817&locator=vc-theme-b2b-vue%40workspace%3A."
+  checksum: 2638969f6ce7788d5d3d68f6d1028ceb8ee4cf1d1b5a5bd285cc8b64def457768014e40eeab8bb8e3162e0f9281db6ba30faf436a38333d4accedd7ac036542b
   languageName: node
   linkType: hard
 
