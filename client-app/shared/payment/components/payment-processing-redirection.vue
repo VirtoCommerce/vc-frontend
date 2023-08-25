@@ -64,7 +64,9 @@ async function initPayment() {
 }
 
 function redirect() {
-  location.href = redirectUrl.value!;
+  if (redirectUrl.value) {
+    location.href = redirectUrl.value;
+  }
 }
 
 initPayment();
