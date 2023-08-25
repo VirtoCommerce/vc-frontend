@@ -83,7 +83,7 @@
                 color="neutral"
                 size="xs"
                 icon
-                @click="signMeOut"
+                @click="() => signMeOut()"
               >
                 <VcIcon name="logout" />
               </VcButton>
