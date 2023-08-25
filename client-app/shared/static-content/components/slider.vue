@@ -5,7 +5,7 @@
         {{ title }}
       </div>
       <div v-if="subtitle" class="text-center text-base">{{ subtitle }}</div>
-      <Swiper :slides-per-view="1" class="w-full" :modules="modules" :navigation="navigationOptions">
+      <Swiper :slides-per-view="1" :space-between="1" class="w-full" :modules="modules" :navigation="navigationOptions">
         <SwiperSlide v-for="(item, index) in slides" :key="index" class="text-center">
           <div class="vc-slider__image-wrap">
             <VcImage :src="item.image" class="vc-slider__image" :lazy="index > 0" />
