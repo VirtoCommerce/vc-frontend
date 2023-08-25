@@ -69,11 +69,11 @@
                 />
 
                 <button
-                  class="absolute -right-3 -top-3 flex h-6 w-6 items-center justify-center rounded-full border border-gray-200 bg-white hover:bg-gray-100"
+                  class="absolute -right-3 -top-3 flex rounded-full border border-[--color-neutral-200] bg-[--color-additional-50] p-1 hover:bg-[--color-neutral-100]"
                   type="button"
                   @click.prevent="removeFromCompareList(product)"
                 >
-                  <i class="fas fa-times text-red-500"></i>
+                  <VcIcon class="text-[--color-danger-500]" name="delete-mini" size="xs" />
                 </button>
               </div>
             </router-link>
@@ -81,7 +81,7 @@
             <!-- Product title -->
             <router-link
               :to="productsRoutes[product.id]"
-              class="mb-3 line-clamp-3 h-16 cursor-pointer text-sm font-extrabold text-[color:var(--color-link)]"
+              class="mb-3 line-clamp-3 h-16 cursor-pointer text-sm font-extrabold text-[--color-accent-600]"
               @click="ga.selectItem(product)"
             >
               {{ product.name }}

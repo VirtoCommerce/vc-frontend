@@ -90,9 +90,13 @@
               <div class="relative grid grid-cols-3 gap-4 border-t border-gray-200 px-6 py-5 text-sm">
                 <div
                   v-if="item.isDefault"
-                  class="absolute right-0 top-0 border-[23px] border-transparent border-r-[color:var(--color-primary)] border-t-[color:var(--color-primary)]"
+                  class="absolute right-0 top-0 border-[23px] border-transparent border-r-[--color-primary-500] border-t-[--color-primary-500]"
                 >
-                  <i class="fas fa-check absolute right-[-21px] top-[-22px] mr-1 text-base text-white" />
+                  <VcIcon
+                    class="absolute right-[-1.125rem] top-[-0.875rem] text-[--color-additional-50]"
+                    name="check-bold"
+                    size="xs"
+                  />
                 </div>
 
                 <div class="col-span-2 flex flex-col">
@@ -180,8 +184,9 @@
                 </td>
 
                 <td :class="{ 'text-right': !userCanEditOrganization }" class="overflow-hidden text-ellipsis px-5 py-3">
-                  <div v-if="address.isDefault" class="inline-flex flex-row items-center">
-                    <i class="fas fa-check mr-1 text-17 text-[color:var(--color-primary)]" />
+                  <div v-if="address.isDefault" class="flex items-center gap-1">
+                    <VcIcon class="text-[--color-primary-500]" name="check-bold" size="xs" />
+
                     <b v-t="'pages.company.info.labels.default'" />
                   </div>
                 </td>
@@ -193,23 +198,24 @@
                       class="flex items-center whitespace-nowrap p-3"
                       @click="openAddOrUpdateCompanyAddressModal(address)"
                     >
-                      <i class="fas fa-pencil-alt mr-2 text-base leading-none text-[color:var(--color-warning)]" />
-                      <span class="text-15 font-medium">{{ $t("common.buttons.edit") }}</span>
+                      <VcIcon class="mr-1 text-[--color-primary-500]" name="pencil" :size="18" />
+
+                      <span class="text-sm">{{ $t("common.buttons.edit") }}</span>
                     </button>
 
                     <button
                       type="button"
                       :disabled="address.isDefault"
-                      :class="{ 'text-gray-400': address.isDefault }"
                       :title="address.isDefault ? $t('pages.company.info.address_not_delete_message') : undefined"
-                      class="flex items-center whitespace-nowrap p-3"
+                      class="flex items-center whitespace-nowrap p-3 disabled:text-[--color-neutral-400]"
                       @click="openDeleteAddressModal(address)"
                     >
-                      <i
-                        :class="{ 'text-[color:var(--color-danger)]': !address.isDefault }"
-                        class="fas fa-times mr-2 text-xl leading-none"
+                      <VcIcon
+                        :class="['mr-1', { 'text-[--color-danger-500]': !address.isDefault }]"
+                        name="x"
+                        :size="18"
                       />
-                      <span class="text-15 font-medium">{{ $t("common.buttons.delete") }}</span>
+                      <span class="text-sm">{{ $t("common.buttons.delete") }}</span>
                     </button>
                   </VcActionDropdownMenu>
                 </td>
@@ -414,18 +420,18 @@ function itemActionsBuilder(inputObject: MemberAddressType) {
   if (userCanEditOrganization.value) {
     actions.push(
       {
-        icon: "fas fa-trash-alt",
+        icon: "trash",
         title: t("common.buttons.delete"),
         left: true,
-        classes: inputObject.isDefault ? "bg-gray-200" : "bg-[color:var(--color-danger)]",
+        classes: inputObject.isDefault ? "bg-[--color-neutral-200]" : "bg-[--color-danger-500]",
         clickHandler(address: MemberAddressType) {
           openDeleteAddressModal(address);
         },
       },
       {
-        icon: "fas fa-pencil-alt",
+        icon: "pencil",
         title: t("common.buttons.edit"),
-        classes: "bg-gray-550",
+        classes: "bg-[--color-neutral-500]",
         clickHandler(address: MemberAddressType) {
           openAddOrUpdateCompanyAddressModal(address);
         },

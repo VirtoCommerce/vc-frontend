@@ -1,13 +1,13 @@
-import type { Config } from "tailwindcss";
-
-export const BREAKPOINTS: Config["screens"] = {
+export const BREAKPOINTS = {
   xs: "480px",
   sm: "640px",
   md: "768px",
   lg: "1024px",
   xl: "1280px",
   "2xl": "1500px",
-};
+} as const;
+
+export type BreakpointsType = keyof typeof BREAKPOINTS;
 
 export const COLORS = {
   primary: "primary",
@@ -19,3 +19,5 @@ export const COLORS = {
   danger: "danger",
   additional: "additional",
 };
+
+export type ColorsType = keyof typeof COLORS;

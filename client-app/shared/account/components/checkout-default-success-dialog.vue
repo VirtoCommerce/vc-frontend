@@ -5,8 +5,9 @@
         {{ $t("shared.account.checkout_default_success_dialog.ok_button") }}
       </VcButton>
     </template>
-    <div class="flex items-center justify-center px-5 py-10">
-      <i class="fas fa-check-circle mr-4 text-5xl text-green-500"></i>
+    <div class="flex items-center justify-center gap-4 px-5 py-10">
+      <VcIcon class="text-[--color-success-500]" name="check-circle" size="lg" />
+
       <span v-t="'shared.account.checkout_default_success_dialog.message'" class="text-lg"></span>
     </div>
   </VcPopup>

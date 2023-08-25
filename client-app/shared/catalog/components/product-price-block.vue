@@ -11,24 +11,37 @@
     </div>
 
     <div class="flex print:hidden">
-      <div
-        class="flex w-2/5 select-none items-center justify-center space-x-2 border-r px-1 py-4"
-        :class="{ 'cursor-pointer hover:bg-gray-100': isAuthenticated }"
+      <button
+        :class="[
+          'flex h-14 w-2/5 select-none items-center justify-center border-r p-2',
+          { 'hover:bg-gray-100': isAuthenticated },
+        ]"
+        type="button"
+        :disabled="!isAuthenticated"
         :title="!isAuthenticated ? $t('common.messages.wishlists_available_for_authorized') : undefined"
         @click="openAddToListModal"
       >
-        <svg
-          height="16"
-          width="16"
-          name="icon"
-          :class="isAuthenticated ? 'text-[color:var(--color-primary)]' : 'text-gray-400'"
+        <VcIcon
+          name="whishlist"
+          :size="16"
+          :class="{
+            'text-[--color-primary-500]': isAuthenticated,
+            'text-[--color-neutral-400]': !isAuthenticated,
+          }"
+        />
+
+        <span
+          :class="[
+            'ms-2 text-sm font-bold',
+            {
+              'text-[--color-accent-600]': isAuthenticated,
+              'text-[--color-neutral-400]': !isAuthenticated,
+            },
+          ]"
         >
-          <use href="/static/images/common/favorities.svg#main"></use>
-        </svg>
-        <span :class="isAuthenticated ? 'text-[color:var(--color-link)]' : 'text-gray-400'" class="text-sm font-bold">
           {{ $t("shared.catalog.product_details.price_block.add_to_list_button") }}
         </span>
-      </div>
+      </button>
 
       <div class="flex w-3/5">
         <div class="w-1/3">
@@ -39,17 +52,19 @@
           >
             <template #trigger>
               <div
-                class="flex cursor-pointer select-none items-center justify-center space-x-2 border-r px-1 py-4 hover:bg-gray-100"
+                class="flex h-14 cursor-pointer select-none items-center justify-center space-x-2 border-r p-2 hover:bg-gray-100"
               >
-                <i
-                  class="fas fa-share-square text-base"
+                <VcIcon
+                  name="share"
+                  :size="18"
                   :class="{
-                    'text-[color:var(--color-primary)]': !shareProductPopoverShown,
-                    'text-gray-400': shareProductPopoverShown,
+                    'text-[--color-primary-500]': !shareProductPopoverShown,
+                    'text-[--color-neutral-400]': shareProductPopoverShown,
                   }"
                 />
               </div>
             </template>
+
             <template #content>
               <div class="mb-7 mt-1.5 flex items-center justify-between space-x-6 px-5">
                 <a
@@ -75,19 +90,20 @@
           <a
             :href="mailToLink"
             target="_blank"
-            class="flex cursor-pointer select-none items-center justify-center border-r px-1 py-4 hover:bg-gray-100"
+            class="flex h-14 cursor-pointer select-none items-center justify-center border-r p-2 hover:bg-gray-100"
           >
-            <i class="fas fa-envelope text-base text-[color:var(--color-primary)]" />
+            <VcIcon name="mail" :size="18" class="text-[--color-primary-500]" />
           </a>
         </div>
 
         <div class="w-1/3">
-          <div
-            class="flex flex-1 cursor-pointer select-none items-center justify-center px-1 py-4 hover:bg-gray-100"
+          <button
+            class="flex h-14 w-full cursor-pointer select-none items-center justify-center p-2 hover:bg-gray-100"
+            type="button"
             @click="print()"
           >
-            <i class="fas fa-print text-base text-[color:var(--color-primary)]" />
-          </div>
+            <VcIcon name="printer" :size="18" class="text-[--color-primary-500]" />
+          </button>
         </div>
       </div>
     </div>
@@ -106,6 +122,7 @@ import { useUser } from "@/shared/account";
 import { productsInWishlistEvent, TabsType, useBroadcast } from "@/shared/broadcast";
 import { usePopup } from "@/shared/popup";
 import { AddToWishlistsModal } from "@/shared/wishlists";
+import { VcIcon } from "@/ui-kit/components";
 import type { Product } from "@/core/api/graphql/types";
 import type { PropType } from "vue";
 

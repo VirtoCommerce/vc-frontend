@@ -24,9 +24,9 @@
         <div class="flex w-20 items-center justify-end lg:justify-center">
           <div
             v-if="method.code === selectedMethod?.code"
-            class="flex h-6 w-6 items-center justify-center rounded-full bg-green-600 text-sm text-white"
+            class="flex h-6 w-6 items-center justify-center rounded-full bg-[--color-success-600] text-sm text-[--color-additional-50]"
           >
-            <i class="fas fa-check"></i>
+            <VcIcon name="check-bold" />
           </div>
 
           <VcButton v-else variant="outline" size="sm" @click="setMethod(method)">

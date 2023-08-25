@@ -1,10 +1,5 @@
 <template>
-  <VcBadge
-    class="w-full max-w-[7.875rem]"
-    :variant="orderStatus?.variant"
-    :color="orderStatus?.color || defaultColor"
-    truncate
-  >
+  <VcBadge :variant="orderStatus?.variant" :color="orderStatus?.color || defaultColor" truncate>
     {{ status }}
   </VcBadge>
 </template>
