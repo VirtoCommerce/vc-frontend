@@ -8,3 +8,14 @@ export const BREAKPOINTS: Config["screens"] = {
   xl: "1280px",
   "2xl": "1500px",
 };
+
+export const COLORS = {
+  primary: "primary",
+  secondary: "secondary",
+  neutral: "neutral",
+  info: "info",
+  success: "success",
+  warning: "warning",
+  danger: "danger",
+  additional: "additional",
+};
