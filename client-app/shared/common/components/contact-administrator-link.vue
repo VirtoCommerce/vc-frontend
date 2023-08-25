@@ -1,5 +1,5 @@
 <template>
-  <router-link to="/contact" class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]">
+  <router-link to="/contact" class="text-[--color-accent-600] hover:text-[--color-accent-700]">
     {{ $t("common.links.contact_administrator") }}
   </router-link>
 </template>
