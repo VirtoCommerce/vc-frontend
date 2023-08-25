@@ -165,7 +165,7 @@
             </div>
 
             <div class="flex flex-col items-end justify-center">
-              <OrderStatus :status="itemData.item.status" />
+              <OrderStatus class="min-w-[7rem]" :status="itemData.item.status" />
             </div>
 
             <div class="flex flex-col">
@@ -233,8 +233,18 @@
               {{ $d(order?.createdDate) }}
             </td>
 
-            <td class="overflow-hidden text-ellipsis p-5 text-center">
-              <OrderStatus :status="order.status" />
+            <td class="p-5 text-center">
+              <VcTooltip class="!block">
+                <template #trigger>
+                  <OrderStatus class="!block" :status="order.status" />
+                </template>
+
+                <template #content>
+                  <div class="rounded-sm bg-[--color-additional-50] px-3.5 py-1.5 text-xs shadow-sm-x-y">
+                    {{ order.status }}
+                  </div>
+                </template>
+              </VcTooltip>
             </td>
 
             <td class="overflow-hidden text-ellipsis p-5 text-right">
