@@ -78,10 +78,8 @@
             </p>
           </div>
 
-          <div v-if="itemData.item.id === selectedAddress?.id" class="w-1/4">
-            <div class="mx-auto flex h-6 w-6 items-center justify-center rounded-full bg-green-600 text-sm text-white">
-              <i class="fas fa-check"></i>
-            </div>
+          <div v-if="itemData.item.id === selectedAddress?.id" class="w-1/4 text-center">
+            <VcIcon class="text-[--color-success-500]" name="check-circle" />
           </div>
 
           <div v-else class="w-1/4">
@@ -141,12 +139,8 @@
             </span>
           </td>
 
-          <td v-if="address.id === selectedAddress?.id" class="p-5">
-            <div
-              class="mx-auto my-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-green-600 text-sm text-white"
-            >
-              <i class="fas fa-check"></i>
-            </div>
+          <td v-if="address.id === selectedAddress?.id" class="p-5 text-center">
+            <VcIcon class="text-[--color-success-500]" name="check-circle" />
           </td>
           <td v-else class="p-5">
             <button

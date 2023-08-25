@@ -5,16 +5,18 @@
         v-t="'pages.change_password.header'"
         class="mb-8 text-3xl font-bold uppercase tracking-wide lg:mt-5 lg:text-4xl"
       ></h1>
+
       <div v-if="!isSucceeded">
-        <ChangePasswordForm @succeeded="onSucceeded()"></ChangePasswordForm>
+        <ChangePasswordForm @succeeded="onSucceeded()" />
       </div>
-      <div v-else class="flex flex-col items-center space-y-10 lg:mt-12 lg:items-start lg:space-y-12">
-        <div class="flex flex-col items-center space-x-0 space-y-10 lg:flex-row lg:space-x-3 lg:space-y-0">
-          <i class="fas fa-check-circle text-7xl text-green-600 lg:text-4xl"></i>
-          <div class="text-lg">{{ $t("pages.change_password.success_message") }}</div>
-        </div>
+
+      <div v-else class="flex flex-col items-center gap-10 lg:flex-row lg:gap-3">
+        <VcIcon class="text-[--color-success-500]" name="check-circle" :size="36" />
+
+        <div class="text-lg">{{ $t("pages.change_password.success_message") }}</div>
       </div>
     </template>
+
     <template #right>
       <VcImage class="max-w-md" src="/static/images/sign-in/sign-in-page-image.webp" lazy />
     </template>

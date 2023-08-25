@@ -137,20 +137,20 @@
                 <!-- todo: use VcButton -->
                 <button
                   type="button"
-                  class="h-7 w-7 rounded text-[color:var(--color-primary)] shadow hover:bg-gray-100"
+                  class="inline-flex rounded p-1.5 shadow hover:bg-[--color-neutral-100]"
                   :title="$t('common.buttons.edit')"
                   @click="openAddOrUpdateAddressModal(address)"
                 >
-                  <i class="fas fa-pencil-alt" />
+                  <VcIcon class="text-[--color-primary-500]" name="pencil" size="xs" />
                 </button>
 
                 <button
                   type="button"
-                  class="h-7 w-7 rounded text-[color:var(--color-danger)] shadow hover:bg-gray-100"
+                  class="inline-flex rounded p-1.5 shadow hover:bg-[--color-neutral-100]"
                   :title="$t('common.buttons.delete')"
                   @click="removeAddress(address)"
                 >
-                  <i class="fas fa-times" />
+                  <VcIcon class="text-[--color-danger-500]" name="delete-mini" size="xs" />
                 </button>
               </div>
             </td>
@@ -273,18 +273,18 @@ function openAddOrUpdateAddressModal(address?: MemberAddressType): void {
 function itemActionsBuilder() {
   const actions: SlidingActionsItem[] = [
     {
-      icon: "fas fa-pencil-alt",
+      icon: "pencil",
       title: t("common.buttons.edit"),
-      classes: "bg-gray-550",
+      classes: "bg-[--color-neutral-500]",
       clickHandler(address: MemberAddressType) {
         openAddOrUpdateAddressModal(address);
       },
     },
     {
-      icon: "fas fa-trash-alt",
+      icon: "trash",
       title: t("common.buttons.delete"),
       left: true,
-      classes: "bg-[color:var(--color-danger)]",
+      classes: "bg-[--color-danger-500]",
       clickHandler(address: MemberAddressType) {
         removeAddress(address);
       },

@@ -18,9 +18,9 @@
           />
         </template>
 
-        <div v-else class="flex flex-col items-center space-y-10 lg:mt-12 lg:items-start lg:space-y-12">
-          <div class="flex flex-col items-center space-x-0 space-y-10 lg:flex-row lg:space-x-3 lg:space-y-0">
-            <i class="fas fa-check-circle text-7xl text-green-600 lg:text-4xl" />
+        <div v-else class="space-y-10 text-center lg:mt-12 lg:space-y-12 lg:text-left">
+          <div class="space-x-0 space-y-10 lg:flex lg:items-center lg:space-x-3 lg:space-y-0">
+            <VcIcon class="text-[--color-success-500]" name="check-circle" :size="36" />
             <p v-t="`pages.${localizationPageTerm}.success_message`" class="text-lg" />
           </div>
 
@@ -30,9 +30,9 @@
         </div>
       </template>
 
-      <div v-else class="flex flex-col items-center space-y-10 lg:mt-12 lg:items-start lg:space-y-12">
-        <div class="flex flex-col items-center space-x-0 space-y-10 lg:flex-row lg:space-x-3 lg:space-y-0">
-          <i class="fas fa-times-circle text-7xl text-[color:var(--color-danger)] lg:text-4xl" />
+      <div v-else class="space-y-10 text-center lg:mt-12 lg:space-y-12 lg:text-left">
+        <div class="space-x-0 space-y-10 lg:flex lg:items-center lg:space-x-3 lg:space-y-0">
+          <VcIcon class="text-[--color-danger-500]" name="x-circle" :size="36" />
           <p v-t="'common.messages.invalid_user_id_or_token'" class="text-lg" />
         </div>
 

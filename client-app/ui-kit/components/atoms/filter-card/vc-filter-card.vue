@@ -2,7 +2,7 @@
   <div class="divide-y rounded border bg-[--color-additional-50] shadow-sm">
     <div
       v-if="title || $slots.header"
-      class="flex items-center gap-3 px-3.5 pb-1 pt-1.5 text-13-title font-black"
+      class="flex items-center gap-3 px-3.5 pb-1 pt-1.5 text-sm font-black"
       :class="{ 'cursor-pointer': isCollapsible }"
       @click="isCollapsible && (collapsed = !collapsed)"
     >
@@ -24,7 +24,7 @@
 
     <div
       v-if="isContentVisible"
-      class="text-13 text-[--color-neutral-800]"
+      class="text-sm text-[--color-neutral-800]"
       :class="{
         'px-4 py-3.5': !fullWidthContent,
       }"

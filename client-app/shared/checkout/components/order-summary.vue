@@ -17,10 +17,11 @@
             @click="discountsCollapsed = !discountsCollapsed"
           >
             {{ $t("common.labels.discount") }}
-            <i
+            <VcIcon
               v-if="hasDiscounts"
-              class="fas ml-1 text-[color:var(--color-primary)]"
-              :class="discountsCollapsed ? 'fa-caret-up' : 'fa-caret-down'"
+              class="ml-1 text-[--color-primary-500]"
+              :name="discountsCollapsed ? 'chevron-up' : 'chevron-down'"
+              size="xs"
             />
           </component>
 

@@ -1,26 +1,27 @@
 <template>
-  <div class="z-0 flex items-center justify-center">
+  <div class="z-0 flex items-stretch justify-center text-center text-sm">
     <!-- Previous page -->
     <button
       v-if="page > 1"
-      class="h-9 w-10 rounded-l border border-solid border-gray-300 bg-white text-center text-sm font-medium uppercase"
+      class="inline-flex h-9 w-10 items-center justify-center rounded-l border border-[--color-neutral-200] bg-[--color-additional-50]"
       type="button"
       @click="$emit('update:page', page - 1)"
     >
-      <i class="fas fa-chevron-left"></i>
+      <VcIcon class="text-[--color-neutral-800]" name="chevron-left" size="xs" />
     </button>
+
     <button
       v-else
       type="button"
-      class="h-9 w-10 cursor-default rounded-l border border-solid border-gray-300 bg-white text-center text-sm font-medium uppercase text-gray-300"
+      class="inline-flex h-9 w-10 cursor-default items-center justify-center rounded-l border border-[--color-neutral-200] bg-[--color-additional-50]"
     >
-      <i class="fas fa-chevron-left"></i>
+      <VcIcon class="text-[--color-neutral-200]" name="chevron-left" size="xs" />
     </button>
 
     <!-- Preprevious numbered page -->
     <button
       v-if="page > 2"
-      class="-mx-px h-9 w-10 border border-solid border-gray-300 bg-white text-center text-sm font-medium uppercase"
+      class="-mx-px h-9 w-10 border border-[--color-neutral-200] bg-[--color-additional-50]"
       type="button"
       @click="$emit('update:page', page - 2)"
     >
@@ -30,7 +31,7 @@
     <!-- Previous numbered page -->
     <button
       v-if="page > 1"
-      class="-mx-px h-9 w-10 border border-solid border-gray-300 bg-white text-center text-sm font-medium uppercase"
+      class="-mx-px h-9 w-10 border border-[--color-neutral-200] bg-[--color-additional-50]"
       type="button"
       @click="$emit('update:page', page - 1)"
     >
@@ -39,7 +40,7 @@
 
     <!-- Current page -->
     <div
-      class="z-10 -mx-px h-9 w-10 cursor-default bg-[color:var(--color-primary)] text-center text-sm font-bold uppercase leading-9 text-white"
+      class="z-10 -mx-px h-9 w-10 cursor-default bg-[--color-primary-500] font-bold leading-9 text-[--color-additional-50]"
     >
       {{ page }}
     </div>
@@ -47,7 +48,7 @@
     <!-- Next numbered page -->
     <button
       v-if="page < pages"
-      class="-mx-px h-9 w-10 border border-solid border-gray-300 bg-white text-center text-sm font-medium uppercase"
+      class="-mx-px h-9 w-10 border border-[--color-neutral-200] bg-[--color-additional-50]"
       type="button"
       @click="$emit('update:page', page + 1)"
     >
@@ -57,7 +58,7 @@
     <!-- Postnext numbered page -->
     <button
       v-if="page < pages - 1"
-      class="-mx-px h-9 w-10 border border-solid border-gray-300 bg-white text-center text-sm font-medium uppercase"
+      class="-mx-px h-9 w-10 border border-[--color-neutral-200] bg-[--color-additional-50]"
       type="button"
       @click="$emit('update:page', page + 2)"
     >
@@ -67,18 +68,19 @@
     <!-- Next page -->
     <button
       v-if="page < pages"
-      class="h-9 w-10 rounded-r border border-solid border-gray-300 bg-white text-center text-sm font-medium uppercase"
+      class="inline-flex h-9 w-10 items-center justify-center rounded-r border border-[--color-neutral-200] bg-[--color-additional-50]"
       type="button"
       @click="$emit('update:page', page + 1)"
     >
-      <i class="fas fa-chevron-right"></i>
+      <VcIcon class="text-[--color-neutral-800]" name="chevron-right" size="xs" />
     </button>
+
     <button
       v-else
       type="button"
-      class="h-9 w-10 cursor-default rounded-r border border-solid border-gray-300 bg-white text-center text-sm font-medium uppercase text-gray-300"
+      class="inline-flex h-9 w-10 cursor-default items-center justify-center rounded-r border border-[--color-neutral-200] bg-[--color-additional-50]"
     >
-      <i class="fas fa-chevron-right"></i>
+      <VcIcon class="text-[--color-neutral-200]" name="chevron-right" size="xs" />
     </button>
   </div>
 </template>

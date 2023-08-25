@@ -10,7 +10,7 @@
     <div class="flex items-center text-13">
       <!-- Call us block -->
       <div v-if="$cfg.support_phone_number" class="flex items-center">
-        <i class="fas fa-phone mr-1.5 mt-0.5 text-[color:var(--color-primary)]" />
+        <VcIcon class="me-1.5 text-[--color-primary-500]" name="phone" size="sm" />
 
         <span v-t="'shared.layout.header.top_header.call_us_label'" class="mr-1 font-thin" />
 
@@ -53,9 +53,9 @@
           >
             <span class="font-bold">{{ user.contact?.fullName || user.userName }}</span>
 
-            <i
-              class="fas ml-1 align-baseline text-[0.625rem] text-[color:var(--color-primary)]"
-              :class="[loginMenuVisible ? 'fa-chevron-up' : 'fa-chevron-down']"
+            <VcIcon
+              class="ms-1.5 text-[--color-accent-200] [--vc-icon-size:1rem] lg:text-[--color-primary-500] lg:[--vc-icon-size:0.625rem]"
+              :name="loginMenuVisible ? 'chevron-up' : 'chevron-down'"
             />
           </button>
 
@@ -69,20 +69,24 @@
                 class="flex items-center hover:text-[color:var(--color-primary)]"
                 @click="loginMenuVisible = false"
               >
-                <i class="fa fa-user-circle fa-2x fa-fw text-[color:var(--color-primary)]" />
+                <VcIcon class="text-[--color-primary-500]" name="user-circle" />
+
                 <span class="ml-2">{{ user.contact?.fullName }}</span>
               </router-link>
 
               <div class="grow"></div>
 
-              <button
-                type="button"
+              <VcButton
                 :title="$t('shared.layout.header.link_logout')"
-                class="ml-4 h-6 w-6 rounded border border-gray-200 text-gray-400 shadow hover:bg-gray-200"
-                @click="() => signMeOut()"
+                class="ml-4"
+                variant="outline"
+                color="neutral"
+                size="xs"
+                icon
+                @click="signMeOut"
               >
-                <i class="fas fa-sign-out-alt" />
-              </button>
+                <VcIcon name="logout" />
+              </VcButton>
             </div>
           </div>
         </div>

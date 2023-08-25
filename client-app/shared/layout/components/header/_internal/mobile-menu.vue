@@ -24,12 +24,8 @@
     <!-- region Children links section -->
     <section v-if="openedItem" class="grow divide-y divide-white divide-opacity-20 overflow-y-auto">
       <div class="flex flex-col px-10 py-6">
-        <button
-          type="button"
-          class="appearance-none self-start text-[color:var(--color-mobile-menu-icon)]"
-          @click="goBack"
-        >
-          <i class="fas fa-arrow-circle-left text-[2.5rem]" />
+        <button type="button" class="appearance-none self-start text-[--color-accent-100]" @click="goBack">
+          <VcIcon name="arrow-circle-left" size="lg" />
         </button>
 
         <h2 v-if="openedItem?.title" class="mt-5 text-2xl uppercase tracking-[0.01em] text-white">
@@ -137,10 +133,10 @@
           <!-- Account -->
           <div class="mb-4 mt-2 flex flex-row gap-4 text-xl">
             <div
-              class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 ring-[color:var(--color-mobile-menu-link)]"
+              class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 ring-[--color-accent-300]"
             >
               <VcImage v-if="user.photoUrl" :src="user.photoUrl" :alt="user.contact?.fullName" class="h-12 w-12" lazy />
-              <i v-else class="fa fa-user-alt text-2xl" />
+              <VcIcon v-else name="user" />
             </div>
 
             <div class="flex flex-col leading-tight">
