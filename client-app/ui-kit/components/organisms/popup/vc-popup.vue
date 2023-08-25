@@ -49,7 +49,7 @@
                 </slot>
 
                 <button v-if="!isPersistent" type="button" class="-my-3 -mr-4 px-4 py-2" @click="close">
-                  <i class="fas fa-times text-2xl" />
+                  <VcIcon name="x" size="md" />
                 </button>
               </DialogTitle>
 

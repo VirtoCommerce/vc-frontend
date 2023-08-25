@@ -2,25 +2,30 @@
   <div :id="componentId" :class="wrapperClasses">
     <div class="relative mx-auto w-full max-w-screen-xl px-5 md:px-12">
       <div v-if="model.title" class="mb-6 text-center text-2xl font-bold lg:text-5xl">{{ model.title }}</div>
+
       <div v-if="model.subtitle" class="text-center text-base">{{ model.subtitle }}</div>
+
       <Swiper :slides-per-view="1" class="w-full" :modules="modules" :navigation="navigationOptions">
         <SwiperSlide v-for="(item, index) in model.slides" :key="index" class="text-center">
           <div>
             <VcImage :src="item.image" class="place-items-center" :lazy="index > 0" />
-            <div v-if="item.title" class="mb-3 font-roboto-condensed text-2xl font-bold uppercase">
+
+            <div v-if="item.title" class="mb-3 text-2xl font-bold uppercase">
               {{ item.title }}
             </div>
+
             <div v-if="item.text" class="text-sm">{{ item.text }}</div>
           </div>
         </SwiperSlide>
       </Swiper>
+
       <div class="vc-slider__navigation">
         <div class="vc-slider__btn vc-slider__btn--prev">
-          <i class="fas fa-chevron-left -ml-px text-xl" />
+          <VcIcon class="-ml-px" name="chevron-left" />
         </div>
 
         <div class="vc-slider__btn vc-slider__btn--next">
-          <i class="fas fa-chevron-right -mr-px text-xl" />
+          <VcIcon class="-mr-px" name="chevron-right" />
         </div>
       </div>
     </div>

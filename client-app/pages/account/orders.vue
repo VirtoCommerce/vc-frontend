@@ -9,7 +9,7 @@
     <VcPopupSidebar class="w-72 px-5 pt-6" :is-visible="isMobile && filtersVisible" @hide="hideFilters">
       <div class="relative">
         <button type="button" class="absolute -right-3 appearance-none px-3 py-1" @click="hideFilters">
-          <span class="fas fa-times text-2xl text-red-400 hover:text-red-700"></span>
+          <VcIcon class="text-[--color-danger-400]" name="x" />
         </button>
       </div>
 

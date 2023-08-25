@@ -13,11 +13,11 @@
 
         <router-link
           :to="{ name: 'Orders' }"
-          class="hidden text-xs font-bold text-blue-500 hover:text-blue-700 lg:block"
+          class="hidden items-center gap-1 text-xs font-bold text-[--color-accent-600] hover:text-[--color-accent-700] lg:flex"
         >
           {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
 
-          <i class="fas fa-arrow-right ml-3 text-[color:var(--color-primary)]" />
+          <VcIcon class="text-[--color-primary-500]" name="arrow-right" size="xs" />
         </router-link>
       </template>
 

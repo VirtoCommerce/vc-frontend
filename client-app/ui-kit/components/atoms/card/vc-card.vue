@@ -1,10 +1,10 @@
 <template>
   <div :class="['rounded border bg-white', { 'shadow-sm': shadow }]">
-    <div v-if="withHeader" :class="['relative text-sm font-extrabold', headerClasses]">
+    <div v-if="withHeader" :class="['relative text-sm font-black', headerClasses]">
       <div class="flex items-center">
         <slot name="header" v-bind="{ isCollapsible, isCollapsed: _isCollapsed, toggleCollapse }">
           <slot name="header-content">
-            <span class="grow text-xl font-extrabold uppercase">
+            <span class="grow text-xl font-black uppercase">
               {{ title }}
             </span>
           </slot>
@@ -13,12 +13,13 @@
             <button
               v-if="isCollapsible"
               type="button"
-              class="-my-2 -mr-3 ml-2 appearance-none px-3 py-2 before:absolute before:inset-0"
+              class="-my-2 -mr-3 ml-2 flex appearance-none p-2 before:absolute before:inset-0"
               @click="isCollapsible && toggleCollapse()"
             >
-              <i
-                class="fas text-base text-[color:var(--color-primary)]"
-                :class="!_isCollapsed ? 'fa-chevron-up' : 'fa-chevron-down'"
+              <VcIcon
+                class="text-[--color-primary-500]"
+                :name="!_isCollapsed ? 'chevron-up' : 'chevron-down'"
+                :size="16"
               />
             </button>
           </slot>
